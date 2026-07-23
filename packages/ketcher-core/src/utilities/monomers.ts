@@ -18,6 +18,11 @@ export const IDT_ALIAS_LENGTH_MAX = 10;
 
 export const IDT_ALIAS_LENGTH_ERROR_MESSAGE = `The maximum number of characters of an IDT alias without slashes (/) is ${IDT_ALIAS_LENGTH_MAX}.`;
 
+export const IDT_ALIAS_FORMAT_ERROR_MESSAGE =
+  'The IDT alias must consist of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and slashes (/) (spaces prohibited).';
+
+export const IDT_ALIAS_CHARSET_REGEX = /^[A-Za-z0-9_/-]+$/;
+
 export const MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH = 200;
 
 export const MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE = `The monomer group template name must not exceed ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH} characters.`;
@@ -80,6 +85,15 @@ const HELM_ALIAS_REGEX = /^(?!.*\s)[A-Za-z0-9_*.[\]()-]+$/;
 const BILN_ALIAS_REGEX = /^[A-Za-z0-9_*-]+$/;
 
 /**
+ * Validates that an IDT alias uses only the allowed character set
+ * (letters, digits, hyphens, underscores, and slashes; no spaces).
+ */
+export function isValidIdtAliasFormat(alias: string): boolean {
+  if (!alias) return true;
+  return IDT_ALIAS_CHARSET_REGEX.test(alias);
+}
+
+/**
  * Validates that slashes in an IDT alias only appear as the first
  * and/or last character. Slashes in the middle are not allowed.
  */
@@ -109,6 +123,78 @@ export function getTooLongIdtAliasEntries(
       Boolean(entry.value),
     )
     .filter(({ value }) => !isValidIdtAliasLength(value));
+}
+
+const stripTerminalSlashes = (value: string): string =>
+  value.replace(/^\//, '').replace(/\/$/, '');
+
+const stripPositionIndicator = (
+  core: string,
+  indicator: '5' | 'i' | '3',
+): string =>
+  core.startsWith(indicator) && core.length > 1 ? core.slice(1) : core;
+
+/**
+ * Builds a canonical `IKetIdtAliases` from the three wizard IDT inputs.
+ * Collapses matching 5′/internal/3′ indicator forms to `{ base }` when possible;
+ * otherwise stores a `base` plus per-position slash-wrapped modifications.
+ * Returns `undefined` when no position yields content (empty or slash-only input).
+ */
+export function buildIdtAliasesFromWizardInputs(
+  idt5?: string,
+  idtInternal?: string,
+  idt3?: string,
+): IKetIdtAliases | undefined {
+  const endpoint5 = idt5?.trim() || undefined;
+  const internal = idtInternal?.trim() || undefined;
+  const endpoint3 = idt3?.trim() || undefined;
+
+  if (!endpoint5 && !internal && !endpoint3) {
+    return undefined;
+  }
+
+  const core5 = endpoint5 ? stripTerminalSlashes(endpoint5) : undefined;
+  const coreInternal = internal ? stripTerminalSlashes(internal) : undefined;
+  const core3 = endpoint3 ? stripTerminalSlashes(endpoint3) : undefined;
+
+  if (
+    core5 &&
+    coreInternal &&
+    core3 &&
+    core5.startsWith('5') &&
+    coreInternal.startsWith('i') &&
+    core3.startsWith('3') &&
+    core5.slice(1).length > 0 &&
+    core5.slice(1) === coreInternal.slice(1) &&
+    coreInternal.slice(1) === core3.slice(1)
+  ) {
+    return { base: core5.slice(1) };
+  }
+
+  let base: string;
+  if (core5) {
+    base = stripPositionIndicator(core5, '5');
+  } else if (coreInternal) {
+    base = stripPositionIndicator(coreInternal, 'i');
+  } else if (core3) {
+    base = stripPositionIndicator(core3, '3');
+  } else {
+    // Every provided position stripped to empty (e.g. only slashes were entered) — no base to derive.
+    return undefined;
+  }
+
+  const modifications: NonNullable<IKetIdtAliases['modifications']> = {};
+  if (core5) {
+    modifications.endpoint5 = `/${core5}/`;
+  }
+  if (coreInternal) {
+    modifications.internal = `/${coreInternal}/`;
+  }
+  if (core3) {
+    modifications.endpoint3 = `/${core3}/`;
+  }
+
+  return { base, modifications };
 }
 
 export function isValidHelmAlias(alias: string) {

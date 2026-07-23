@@ -75,7 +75,17 @@ const MonomerCreationWizardFields = (
     attachmentPointsExtra,
   } = props;
   const { values, errors } = wizardState;
-  const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
+  const {
+    type,
+    symbol,
+    name,
+    naturalAnalogue,
+    aliasHELM,
+    aliasBILN,
+    idtAlias5,
+    idtAliasInternal,
+    idtAlias3,
+  } = values;
   const [modificationTypes, setModificationTypes] = useState<
     ModificationTypeItem[]
   >([]);
@@ -146,6 +156,7 @@ const MonomerCreationWizardFields = (
     displayAliases,
     displayHelmAlias,
     displayBilnAlias,
+    displayIdtAlias,
   } = getMonomerPropertyVisibility(type);
 
   return (
@@ -396,6 +407,103 @@ const MonomerCreationWizardFields = (
                     />
                   </div>
                 )}
+              </AccordionDetails>
+            </Accordion>
+          </div>
+        </>
+      )}
+
+      {displayIdtAlias && (
+        <>
+          <div className={styles.divider} />
+
+          <div className={styles.accordionContainer}>
+            <Accordion
+              className={clsx(accordionClasses.accordion, styles.accordion)}
+              square
+            >
+              <AccordionSummary
+                className={styles.accordionSummary}
+                expandIcon={
+                  <Icon
+                    className={accordionClasses.expandIcon}
+                    name="chevron"
+                  />
+                }
+                data-testid="idt-alias-accordion"
+              >
+                IDT alias
+              </AccordionSummary>
+              <AccordionDetails>
+                <div className={styles.aliasField}>
+                  <p className={styles.inputLabel}>5&apos;</p>
+                  <Autocomplete
+                    freeSolo
+                    options={[]}
+                    value={idtAlias5}
+                    onInputChange={(_event, newValue) =>
+                      onFieldChange('idtAlias5', newValue)
+                    }
+                    data-testid="idt-alias-5-input"
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="standard"
+                        className={clsx(
+                          styles.inputField,
+                          errors.idtAlias5 && styles.error,
+                        )}
+                        error={Boolean(errors.idtAlias5)}
+                      />
+                    )}
+                  />
+                </div>
+                <div className={styles.aliasField}>
+                  <p className={styles.inputLabel}>Internal</p>
+                  <Autocomplete
+                    freeSolo
+                    options={[]}
+                    value={idtAliasInternal}
+                    onInputChange={(_event, newValue) =>
+                      onFieldChange('idtAliasInternal', newValue)
+                    }
+                    data-testid="idt-alias-internal-input"
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="standard"
+                        className={clsx(
+                          styles.inputField,
+                          errors.idtAliasInternal && styles.error,
+                        )}
+                        error={Boolean(errors.idtAliasInternal)}
+                      />
+                    )}
+                  />
+                </div>
+                <div className={styles.aliasField}>
+                  <p className={styles.inputLabel}>3&apos;</p>
+                  <Autocomplete
+                    freeSolo
+                    options={[]}
+                    value={idtAlias3}
+                    onInputChange={(_event, newValue) =>
+                      onFieldChange('idtAlias3', newValue)
+                    }
+                    data-testid="idt-alias-3-input"
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="standard"
+                        className={clsx(
+                          styles.inputField,
+                          errors.idtAlias3 && styles.error,
+                        )}
+                        error={Boolean(errors.idtAlias3)}
+                      />
+                    )}
+                  />
+                </div>
               </AccordionDetails>
             </Accordion>
           </div>

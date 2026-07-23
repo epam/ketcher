@@ -1221,6 +1221,104 @@ describe('CoreEditor', () => {
     });
   });
 
+  describe('checkIfIdtAliasesCollide', () => {
+    let canvas: SVGSVGElement;
+    let editor: CoreEditor;
+
+    beforeEach(() => {
+      canvas = createPolymerEditorCanvas();
+      editor = new CoreEditor({
+        canvas,
+        theme: polymerEditorTheme,
+        renderersContainer: createRenderersManager(polymerEditorTheme),
+      });
+    });
+
+    afterEach(() => {
+      editor.destroy();
+      canvas.remove();
+    });
+
+    it('reports per-field collisions against the monomers library', () => {
+      const monomerWithIdtAliases = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-CHEM_IDT' }],
+        },
+        'monomerTemplate-CHEM_IDT': {
+          type: 'monomerTemplate',
+          id: 'CHEM_IDT',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem IDT',
+          name: 'CHEM_IDT',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM_IDT',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM_IDT',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'WzIdtBase',
+            modifications: {
+              endpoint5: '/5WzEp/',
+              internal: '/iWzIn/',
+              endpoint3: '/3WzEp/',
+            },
+          },
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtAliases));
+
+      expect(
+        editor.checkIfIdtAliasesCollide({
+          base: 'WzIdtBase',
+          modifications: {
+            endpoint5: '/5Other/',
+            internal: '/iOther/',
+            endpoint3: '/3Other/',
+          },
+        }),
+      ).toEqual({
+        base: true,
+        endpoint5: false,
+        internal: false,
+        endpoint3: false,
+      });
+
+      expect(
+        editor.checkIfIdtAliasesCollide({
+          base: 'Unique',
+          modifications: {
+            endpoint5: '/5WzEp/',
+            internal: '/iWzIn/',
+            endpoint3: '/3WzEp/',
+          },
+        }),
+      ).toEqual({
+        base: false,
+        endpoint5: true,
+        internal: true,
+        endpoint3: true,
+      });
+
+      expect(
+        editor.checkIfIdtAliasesCollide({
+          base: 'Unique',
+          modifications: {
+            endpoint5: '/5Unique/',
+          },
+        }),
+      ).toEqual({
+        base: false,
+        endpoint5: false,
+        internal: false,
+        endpoint3: false,
+      });
+    });
+  });
+
   describe('window blur handling', () => {
     let canvas: SVGSVGElement;
     let editor: CoreEditor;

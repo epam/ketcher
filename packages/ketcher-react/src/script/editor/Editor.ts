@@ -231,6 +231,9 @@ type SaveNewMonomerData = {
   modificationTypes: string[];
   aliasHELM: string;
   aliasBILN: string;
+  idtAlias5?: string;
+  idtAliasInternal?: string;
+  idtAlias3?: string;
   hidden?: boolean;
   structure: Struct;
   attachmentPoints: Map<AttachmentPointName, [number, number]>;

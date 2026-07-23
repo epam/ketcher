@@ -697,8 +697,6 @@ const validateInputs = (
           type: 'error',
           message: NotificationMessages.idtAliasTooLong,
         });
-
-        return;
       }
     }
   });

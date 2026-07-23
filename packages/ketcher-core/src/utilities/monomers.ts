@@ -138,6 +138,7 @@ const stripPositionIndicator = (
  * Builds a canonical `IKetIdtAliases` from the three wizard IDT inputs.
  * Collapses matching 5′/internal/3′ indicator forms to `{ base }` when possible;
  * otherwise stores a `base` plus per-position slash-wrapped modifications.
+ * Returns `undefined` when no position yields content (empty or slash-only input).
  */
 export function buildIdtAliasesFromWizardInputs(
   idt5?: string,
@@ -178,7 +179,7 @@ export function buildIdtAliasesFromWizardInputs(
   } else if (core3) {
     base = stripPositionIndicator(core3, '3');
   } else {
-    // Unreachable: at least one position is defined above.
+    // Every provided position stripped to empty (e.g. only slashes were entered) — no base to derive.
     return undefined;
   }
 

@@ -56,6 +56,35 @@ export const MonomerCodeToGroup: Record<MonomerGroupCodes, MonomerGroups> = {
   P: MonomerGroups.PHOSPHATES,
 } as const;
 
+export const AMINO_ACID_ONE_TO_THREE_LETTER_CODE: Record<string, string> = {
+  A: 'Ala',
+  B: 'Asx',
+  C: 'Cys',
+  D: 'Asp',
+  E: 'Glu',
+  F: 'Phe',
+  G: 'Gly',
+  H: 'His',
+  I: 'Ile',
+  J: 'Xle',
+  K: 'Lys',
+  L: 'Leu',
+  M: 'Met',
+  N: 'Asn',
+  O: 'Pyl',
+  P: 'Pro',
+  Q: 'Gln',
+  R: 'Arg',
+  S: 'Ser',
+  T: 'Thr',
+  U: 'Sec',
+  V: 'Val',
+  W: 'Trp',
+  X: 'Xaa',
+  Y: 'Tyr',
+  Z: 'Glx',
+} as const;
+
 export const FAVORITE_ITEMS_UNIQUE_KEYS = 'favoriteItemsUniqueKeys';
 export const CUSTOM_PRESETS = 'ketcher_custom_presets';
 export const PRESET_PHOSPHATE_FILTER_STORAGE_KEY =

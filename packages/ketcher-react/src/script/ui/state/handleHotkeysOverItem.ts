@@ -9,6 +9,7 @@ import {
   Atom,
   Action,
   KetcherLogger,
+  bondChangingAction,
 } from 'ketcher-core';
 import { STRUCT_TYPE } from 'src/constants';
 import { openDialog } from './modal';
@@ -261,6 +262,9 @@ function getToolHandler(itemType: string, toolName = '') {
       hand: ({ dispatch }: HandlersProps) =>
         dispatch(onAction({ tool: 'hand' })),
     },
+    bonds: {
+      bond: (props: HandlersProps) => handleBondTypeChangeTool(props),
+    },
     sgroups: {
       atom: (props: HandlersProps) => handleSgroupsTool(props),
     },
@@ -318,6 +322,21 @@ function handleBondTool({ hoveredItemId, newAction, editor }: HandlersProps) {
     { label: 'C' },
   )[0];
   editor.update(newBond);
+}
+
+function handleBondTypeChangeTool({
+  hoveredItemId,
+  newAction,
+  editor,
+}: HandlersProps) {
+  const restruct = editor.render.ctab;
+  const bond = restruct.bonds.get(hoveredItemId)?.b;
+  if (!bond) return;
+
+  const action = bondChangingAction(restruct, hoveredItemId, bond, {
+    ...newAction.opts,
+  });
+  editor.update(action);
 }
 
 function handleChargeTool({ hoveredItemId, newAction, editor }: HandlersProps) {

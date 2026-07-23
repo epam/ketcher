@@ -165,8 +165,15 @@ function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
     }
 
     sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const attachmentPointAtom = struct.atoms.get(attachmentPoint.atomId)!;
+      const attachmentPointAtom = struct.atoms.get(attachmentPoint.atomId);
+      if (!attachmentPointAtom) {
+        // An sgroup attachment point must always reference an existing atom
+        // in the same struct; a missing atom indicates a programming error
+        // (e.g. the atom was removed without updating the attachment point).
+        throw new Error(
+          `Atom with id ${attachmentPoint.atomId} not found in struct while converting sgroup attachment points`,
+        );
+      }
       attachmentPointAtom.setRGAttachmentPointForDisplayPurpose();
       const rgroupAttachmentPoint =
         attachmentPoint.convertToRGroupAttachmentPointForDisplayPurpose(

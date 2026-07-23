@@ -48,6 +48,12 @@ class TemplatePreview {
   private floatingPreview: {
     atoms: number[];
     bonds: number[];
+    rxnArrows: number[];
+    rxnPluses: number[];
+    texts: number[];
+    images: number[];
+    simpleObjects: number[];
+    multitailArrows: number[];
   } | null;
 
   private position: Vec2;
@@ -164,7 +170,7 @@ class TemplatePreview {
   }
 
   private showFloatingPreview(position: Vec2) {
-    [this.floatingPreviewAction, this.floatingPreview] = fromTemplateOnCanvas(
+    [this.floatingPreviewAction, , this.floatingPreview] = fromTemplateOnCanvas(
       this.restruct,
       this.template,
       position,

@@ -43,7 +43,7 @@ import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type { Image } from 'domain/entities/image';
 
-type CreatedItems = {
+export type CreatedItems = {
   atoms: number[];
   bonds: number[];
   rxnArrows: number[];

@@ -882,6 +882,81 @@ export const preparedKet = `{
             ]
         }
     }`;
+
+export const sgroupPartiallyInvalidAtomKet = `{
+        "root": {
+            "nodes": [
+                {
+                    "$ref": "mol0"
+                }
+            ]
+        },
+        "mol0": {
+            "type": "molecule",
+            "atoms": [
+                {
+                    "label": "C",
+                    "location": [
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                {
+                    "label": "C",
+                    "location": [
+                        1,
+                        0,
+                        0
+                    ]
+                }
+            ],
+            "sgroups": [
+                {
+                    "type": "SUP",
+                    "atoms": [
+                        0,
+                        1,
+                        2
+                    ],
+                    "name": "Thr"
+                }
+            ]
+        }
+    }`;
+
+export const sgroupAllInvalidAtomsKet = `{
+        "root": {
+            "nodes": [
+                {
+                    "$ref": "mol0"
+                }
+            ]
+        },
+        "mol0": {
+            "type": "molecule",
+            "atoms": [
+                {
+                    "label": "C",
+                    "location": [
+                        0,
+                        0,
+                        0
+                    ]
+                }
+            ],
+            "sgroups": [
+                {
+                    "type": "SUP",
+                    "atoms": [
+                        5
+                    ],
+                    "name": "Thr"
+                }
+            ]
+        }
+    }`;
+
 export const errorKet = ` {
         "root": {
             "nodes": [

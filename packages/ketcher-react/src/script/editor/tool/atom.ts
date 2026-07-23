@@ -205,37 +205,43 @@ class AtomTool implements Tool {
       atomId = sGroup?.getAttachmentAtomId();
     }
 
-    if (atomId !== undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const atom = molecule.atoms.get(atomId)!;
-      let angle = vectorUtils.calcAngle(
-        atom.pp,
-        CoordinateTransformation.pageToModel(event, rnd),
-      );
-      if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
-      const degrees = vectorUtils.degrees(angle);
-      editor.event.message.dispatch({ info: degrees + 'º' });
-      const newAtomPos = vectorUtils.calcNewAtomPos(
-        atom.pp,
-        CoordinateTransformation.pageToModel(event, rnd),
-        event.ctrlKey,
-      );
-
-      if (dragCtx.action) {
-        dragCtx.action.perform(reStruct);
-      }
-
-      dragCtx.action = fromBondAddition(
-        rnd.ctab,
-        this.#bondProps,
-        atomId,
-        { ...(atomProps ?? {}) },
-        undefined,
-        newAtomPos,
-      )[0];
-
-      editor.update(dragCtx.action, true);
+    if (atomId === undefined) {
+      return;
     }
+
+    const atom = molecule.atoms.get(atomId);
+
+    if (!atom) {
+      return;
+    }
+
+    let angle = vectorUtils.calcAngle(
+      atom.pp,
+      CoordinateTransformation.pageToModel(event, rnd),
+    );
+    if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
+    const degrees = vectorUtils.degrees(angle);
+    editor.event.message.dispatch({ info: degrees + 'º' });
+    const newAtomPos = vectorUtils.calcNewAtomPos(
+      atom.pp,
+      CoordinateTransformation.pageToModel(event, rnd),
+      event.ctrlKey,
+    );
+
+    if (dragCtx.action) {
+      dragCtx.action.perform(reStruct);
+    }
+
+    dragCtx.action = fromBondAddition(
+      rnd.ctab,
+      this.#bondProps,
+      atomId,
+      { ...(atomProps ?? {}) },
+      undefined,
+      newAtomPos,
+    )[0];
+
+    editor.update(dragCtx.action, true);
   }
 
   mouseup(event) {

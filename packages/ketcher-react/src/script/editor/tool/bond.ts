@@ -269,8 +269,7 @@ class BondTool implements Tool {
     const editor = this.editor;
     const beginAtom = dragCtx.item.id;
     let endAtom = editor.findItem(event, ['atoms'], dragCtx.item);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const closestSGroup = editor.findItem(event, ['functionalGroups'])!;
+    const closestSGroup = editor.findItem(event, ['functionalGroups']);
     const sgroup = molecule.sgroups.get(closestSGroup?.id);
 
     if (sgroup) {
@@ -364,9 +363,12 @@ class BondTool implements Tool {
       endPos = vectorUtils.calcNewAtomPos(beginPos, xy1, event.ctrlKey);
     } else {
       const atom = rnd.ctab.molecule.atoms.get(beginAtom);
+      if (!atom) {
+        // beginAtom is the id of the atom the drag started from, so it must exist in the molecule
+        throw new Error(`Atom with id ${beginAtom} not found`);
+      }
       endPos = vectorUtils.calcNewAtomPos(
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        atom!.pp.get_xy0(),
+        atom.pp.get_xy0(),
         xy1,
         event.ctrlKey,
       );

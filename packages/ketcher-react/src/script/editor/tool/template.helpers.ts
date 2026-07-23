@@ -14,23 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type Bond, type Struct, Vec2, vectorUtils } from 'ketcher-core';
+import {
+  type Bond,
+  type ReStruct,
+  type Struct,
+  Vec2,
+  vectorUtils,
+} from 'ketcher-core';
+import type { ClosestItemWithMap } from '../shared/closest.types';
 
-export function getSign(molecule, bond, v) {
-  const begin = molecule.atoms.get(bond.begin).pp;
-  const end = molecule.atoms.get(bond.end).pp;
+export function getSign(molecule: Struct, bond: Bond, v: Vec2): number {
+  const begin = molecule.atoms.get(bond.begin)?.pp;
+  const end = molecule.atoms.get(bond.end)?.pp;
 
-  const sign = Vec2.cross(Vec2.diff(begin, end), Vec2.diff(v, end));
-
-  if (sign > 0) {
-    return 1;
+  if (!begin || !end) {
+    return 0;
   }
 
-  if (sign < 0) {
-    return -1;
-  }
-
-  return 0;
+  return Math.sign(Vec2.cross(Vec2.diff(begin, end), Vec2.diff(v, end)));
 }
 
 export function getBondFlipSign(struct: Struct, bond: Bond): number {
@@ -74,7 +75,11 @@ export function getBondFlipSign(struct: Struct, bond: Bond): number {
   return getSign(struct, bond, v0) || 1;
 }
 
-export function getAngleFromEvent(event, ci, restruct) {
+export function getAngleFromEvent(
+  event: MouseEvent | PointerEvent,
+  ci: Pick<ClosestItemWithMap, 'id'>,
+  restruct: ReStruct,
+) {
   const degree = restruct.atoms.get(ci.id)?.a.neighbors.length;
   let angle;
   if (degree && degree > 1) {
@@ -83,13 +88,19 @@ export function getAngleFromEvent(event, ci, restruct) {
   } else if (degree === 1) {
     // on chain end
     const atom = restruct.molecule.atoms.get(ci.id);
-    const neiId =
-      atom && restruct.molecule.halfBonds.get(atom.neighbors[0])?.end;
-    const nei = (neiId || neiId === 0) && restruct.molecule.atoms.get(neiId);
+    const neiId = atom
+      ? restruct.molecule.halfBonds.get(atom.neighbors[0])?.end
+      : undefined;
+    const nei =
+      neiId !== undefined ? restruct.molecule.atoms.get(neiId) : undefined;
 
-    angle = event.ctrlKey
-      ? vectorUtils.calcAngle(nei?.pp, atom?.pp)
-      : vectorUtils.fracAngle(vectorUtils.calcAngle(nei.pp, atom?.pp), null);
+    if (!atom || !nei) {
+      angle = 0;
+    } else {
+      angle = event.ctrlKey
+        ? vectorUtils.calcAngle(nei.pp, atom.pp)
+        : vectorUtils.fracAngle(vectorUtils.calcAngle(nei.pp, atom.pp), null);
+    }
   } else {
     // on single atom
     angle = 0;

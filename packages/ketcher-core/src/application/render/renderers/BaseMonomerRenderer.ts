@@ -43,6 +43,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
   private hoveredAttachmentPoint: AttachmentPointName | null = null;
+  private _dragTargetAttachmentPoint: AttachmentPointName | null = null;
+  private _dragCircleHoverAttachmentPoint: AttachmentPointName | null = null;
 
   private readonly monomerSymbolElement?: SVGUseElement | SVGRectElement;
   public readonly monomerSize: { width: number; height: number };
@@ -213,22 +215,26 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
 
     const appendFnToUse = appendFn ?? this.appendAttachmentPoint.bind(this);
+    const hasDragTarget = this._dragTargetAttachmentPoint !== null;
 
-    // draw used attachment points
-    this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
-      const attachmentPoint = appendFnToUse(item);
-      const angle: number = attachmentPoint.getAngle();
+    // draw used attachment points (hidden when a drag target is active)
+    if (!hasDragTarget) {
+      this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
+        const attachmentPoint = appendFnToUse(item);
+        const angle: number = attachmentPoint.getAngle();
 
-      this.attachmentPoints.push(attachmentPoint as never);
+        this.attachmentPoints.push(attachmentPoint as never);
 
-      // remove this sector from list of free sectors
-      const newList = this.freeSectorsList.filter((item) => {
-        return (
-          anglesToSector[item].min > angle || anglesToSector[item].max <= angle
-        );
+        // remove this sector from list of free sectors
+        const newList = this.freeSectorsList.filter((item) => {
+          return (
+            anglesToSector[item].min > angle ||
+            anglesToSector[item].max <= angle
+          );
+        });
+        this.freeSectorsList = checkFor0and360(newList);
       });
-      this.freeSectorsList = checkFor0and360(newList);
-    });
+    }
 
     const unrenderedAtPoints: AttachmentPointName[] = [];
 
@@ -299,6 +305,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       applyZoomForPositionCalculation: true,
       // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
       isSnake: this.isSnakeBondForAttachmentPoint(attachmentPointName),
+      isDragTarget: this._dragTargetAttachmentPoint === attachmentPointName,
+      isDragCircleHover:
+        this._dragCircleHoverAttachmentPoint === attachmentPointName,
     };
   }
 
@@ -324,6 +333,18 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   public hoverAttachmentPoint(attachmentPointName: AttachmentPointName): void {
     this.hoveredAttachmentPoint = attachmentPointName;
+  }
+
+  public setDragTargetAttachmentPoint(
+    attachmentPointName: AttachmentPointName | null,
+  ): void {
+    this._dragTargetAttachmentPoint = attachmentPointName;
+  }
+
+  public setDragCircleHoverAttachmentPoint(
+    attachmentPointName: AttachmentPointName | null,
+  ): void {
+    this._dragCircleHoverAttachmentPoint = attachmentPointName;
   }
 
   protected raiseAttachmentPoints() {

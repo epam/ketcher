@@ -1,9 +1,5 @@
 import { drawnStructuresSelector } from 'application/editor/constants';
-import {
-  type Editor,
-  type LibraryItemDragState,
-  EditorType,
-} from 'application/editor/editor.types';
+import { type Editor, EditorType } from 'application/editor/editor.types';
 import {
   type IEditorEvents,
   createEditorEvents,
@@ -129,7 +125,6 @@ import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { debounce } from 'lodash';
 import type { D3SvgElementSelection } from 'application/render/types';
-import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import {
   getKetRef,
@@ -137,6 +132,10 @@ import {
   KetSerializer,
 } from 'domain/serializers';
 import type { SequenceMode } from './modes/types/sequenceMode';
+import {
+  LibraryItemDragDropHandler,
+  type IAutochainMonomerAddResult,
+} from 'application/editor/libraryItemDragDrop';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 
@@ -216,13 +215,6 @@ interface ModifyAminoAcidsHandlerParams {
   modificationType: string;
 }
 
-interface IAutochainMonomerAddResult {
-  modelChanges: Command;
-  firstMonomer: BaseMonomer;
-  lastMonomer: BaseMonomer;
-  drawingEntities: DrawingEntity[];
-}
-
 export const EditorClassName = 'Ketcher-polymer-editor-root';
 export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
 export const NATURAL_AMINO_ACID_MODIFICATION_TYPE = 'Natural amino acid';
@@ -269,8 +261,10 @@ export class CoreEditor {
 
   public nextAutochainPosition?: Vec2 = undefined;
 
-  private libraryItemDragState: LibraryItemDragState = null;
   private libraryItemDragCancelled = false;
+
+  /** Handles all drag-and-drop attachment-point logic for library items. */
+  private dragDropHandler!: LibraryItemDragDropHandler;
 
   public theme;
   public zoomTool: ZoomTool;
@@ -320,6 +314,20 @@ export class CoreEditor {
     this.renderersContainer = renderersContainer;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.viewModel = new ViewModel();
+    this.dragDropHandler = new LibraryItemDragDropHandler({
+      drawingEntitiesManager: this.drawingEntitiesManager,
+      renderersContainer: this.renderersContainer,
+      events: this.events,
+      getCanvasOffset: () => this.canvasOffset,
+      getKetcherRootRect: () => this.ketcherRootElementBoundingClientRect,
+      getModeName: () => this.mode.modeName,
+      getEditor: () => this,
+      placeItemOnCanvas: (item, position) =>
+        this.placeItemOnCanvasForHandler(item, position),
+      calculateAndStoreNextAutochainPosition: (lastMonomer) =>
+        this.calculateAndStoreNextAutochainPosition(lastMonomer),
+    });
+    this.dragDropHandler.subscribe();
     this.domEventSetup();
     this.setupContextMenuEvents();
     this.setupKeyboardEvents();
@@ -874,7 +882,7 @@ export class CoreEditor {
   }
 
   public cancelLibraryItemDrag() {
-    if (this.libraryItemDragState) {
+    if (this.dragDropHandler.isDragging) {
       this.libraryItemDragCancelled = true;
       this.events.setLibraryItemDragState.dispatch(null);
     }
@@ -970,7 +978,7 @@ export class CoreEditor {
 
       event.preventDefault();
 
-      if (this.libraryItemDragState) {
+      if (this.dragDropHandler.isDragging) {
         this.cancelLibraryItemDrag();
         return;
       }
@@ -1209,61 +1217,6 @@ export class CoreEditor {
       },
     );
 
-    this.events.setLibraryItemDragState.add((state: LibraryItemDragState) => {
-      this.libraryItemDragState = state;
-    });
-
-    this.events.placeLibraryItemOnCanvas.add(
-      (
-        item: IRnaPreset | MonomerOrAmbiguousType,
-        position: { x: number; y: number },
-      ) => {
-        const modelChanges = new Command();
-        const history = EditorHistory.getInstance(this);
-        const { x, y } = position;
-
-        let monomersAddResult: IAutochainMonomerAddResult | undefined;
-
-        if (isLibraryItemRnaPreset(item)) {
-          if (!item.sugar) {
-            return;
-          }
-
-          monomersAddResult = this.onPlaceRnaPresetOnCanvas(
-            item,
-            Coordinates.canvasToModel(new Vec2(x, y)),
-          );
-        } else if (isAmbiguousMonomerLibraryItem(item)) {
-          monomersAddResult = this.onPlaceAmbiguousMonomerOnCanvas(
-            item,
-            Coordinates.canvasToModel(new Vec2(x, y)),
-          );
-        } else {
-          monomersAddResult = this.onPlaceMonomerOnCanvas(
-            item,
-            Coordinates.canvasToModel(new Vec2(x, y)),
-          );
-        }
-
-        if (!monomersAddResult) {
-          return;
-        }
-
-        modelChanges.merge(monomersAddResult.modelChanges);
-
-        modelChanges.merge(
-          this.drawingEntitiesManager.selectDrawingEntities(
-            monomersAddResult.drawingEntities,
-          ),
-        );
-
-        history.update(modelChanges);
-        this.renderersContainer.update(modelChanges);
-        this.calculateAndStoreNextAutochainPosition(
-          monomersAddResult.lastMonomer,
-        );
-      },
-    );
     this.events.autochain.add((monomerItem) => this.onAutochain(monomerItem));
     this.events.previewAutochain.add((monomerItem) =>
       this.onPreviewAutochain(monomerItem),
@@ -1543,6 +1496,25 @@ export class CoreEditor {
 
     this.onRemoveAutochainPreview();
     this.onPreviewAutochain(monomerOrRnaItem);
+  }
+
+  /**
+   * Bridge method called by LibraryItemDragDropHandler to route item placement
+   * to the correct private handler based on item type.
+   */
+  private placeItemOnCanvasForHandler(
+    item: IRnaPreset | MonomerOrAmbiguousType,
+    position: Vec2,
+  ): IAutochainMonomerAddResult | undefined {
+    const modelPosition = Coordinates.canvasToModel(position);
+    if (isLibraryItemRnaPreset(item)) {
+      if (!item.sugar) return undefined;
+      return this.onPlaceRnaPresetOnCanvas(item, modelPosition);
+    } else if (isAmbiguousMonomerLibraryItem(item)) {
+      return this.onPlaceAmbiguousMonomerOnCanvas(item, modelPosition);
+    } else {
+      return this.onPlaceMonomerOnCanvas(item, modelPosition);
+    }
   }
 
   private onPlaceRnaPresetOnCanvas(
@@ -1889,12 +1861,22 @@ export class CoreEditor {
 
     if (this.tool instanceof PolymerBondTool) {
       this.tool.handleBondCreation(payload);
+      return;
+    }
+
+    // Drag-drop from library: bond creation via modal
+    if (this.dragDropHandler.isModalOpen) {
+      this.dragDropHandler.handleMonomerConnection(payload);
     }
   }
 
   private onCancelBondCreation(secondMonomer: BaseMonomer) {
     if (this.tool instanceof PolymerBondTool) {
       this.tool.handleBondCreationCancellation(secondMonomer);
+      return;
+    }
+    if (this.dragDropHandler.isModalOpen) {
+      this.dragDropHandler.handleMonomerConnectionCancel();
     }
   }
 

@@ -259,14 +259,21 @@ export class Struct {
     fid: number | number[],
     aidMap?: Map<number, number>,
   ): Struct {
+    const atomSet = this.getFragmentIds(fid);
+    const rgroupAttachmentPointSet = new Pile<number>();
+    this.rgroupAttachmentPoints.forEach((point, id) => {
+      if (atomSet.has(point.atomId)) {
+        rgroupAttachmentPointSet.add(id);
+      }
+    });
     return this.clone(
-      this.getFragmentIds(fid),
+      atomSet,
       null,
       true,
       aidMap,
       new Pile(),
       new Pile(),
-      new Pile(),
+      rgroupAttachmentPointSet,
       new Pile(),
       new Pile(),
     );

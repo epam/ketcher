@@ -15,7 +15,6 @@ import {
   takeElementScreenshot,
   takeEditorScreenshot,
   dragMouseTo,
-  takeTopToolbarScreenshot,
   selectByAtomAndBondIds,
   clickInTheMiddleOfTheCanvas,
   pasteFromClipboardAndOpenAsNewProject,
@@ -139,7 +138,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
       MacromoleculesTopToolbar(page).createAntisenseStrandDropdownButton,
       {
         paddingWidth: 1,
-        paddingHeight: 35,
+        paddingHeight: 13,
       },
     );
   });

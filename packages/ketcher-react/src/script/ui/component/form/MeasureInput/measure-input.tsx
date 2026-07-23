@@ -128,7 +128,7 @@ const MeasureInput = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [internalValue]);
 
-  const handleChange = (value: number | string) => {
+  const handleChange = (value: unknown) => {
     const stringifiedValue = String(value);
     const startsWithZero =
       stringifiedValue !== '0' && stringifiedValue.startsWith('0');

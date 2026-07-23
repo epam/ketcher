@@ -36,7 +36,7 @@ interface SelectCheckboxProps {
   schema: Schema;
   type: string;
   value: number | string | boolean;
-  onChange: (val: number | string | boolean) => void;
+  onChange: (val: unknown) => void;
   component?: ComponentType;
   children?: ReactNode;
   className?: string;

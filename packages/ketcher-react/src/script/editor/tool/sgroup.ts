@@ -21,6 +21,7 @@ import {
   checkOverlapping,
   fromSeveralSgroupAddition,
   fromSgroupAction,
+  fromSgroupAttrs,
   fromSgroupDeletion,
   FunctionalGroup,
   SGroup,
@@ -781,6 +782,21 @@ class SGroupTool implements Tool {
 
           const canReplaceExistingDataSg =
             sg?.getAttrs().context === newSg.attrs.context && !isQuerySGroup;
+
+          const currentSGroupType =
+            sg?.type === SGroup.TYPES.SUP && sg.data.class
+              ? SGroup.TYPES.nucleotideComponent
+              : sg?.type;
+
+          if (
+            sg &&
+            canReplaceExistingDataSg &&
+            currentSGroupType === newSg.type
+          ) {
+            editor.update(fromSgroupAttrs(restruct, id, newSg.attrs));
+            editor.selection(selection);
+            return;
+          }
 
           if (sg && canReplaceExistingDataSg) {
             const action = fromSeveralSgroupAddition(

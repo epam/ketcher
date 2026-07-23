@@ -65,7 +65,13 @@ export function fromAtomMerge(
       // replace old bond with new bond
       const attrs = Bond.getAttrHash(bond);
       Object.keys(attrs).forEach((key) => {
-        action.addOp(new BondAttr(mergeBondId, key, attrs[key]));
+        action.addOp(
+          new BondAttr(
+            mergeBondId,
+            key as keyof typeof attrs,
+            attrs[key as keyof typeof attrs],
+          ),
+        );
       });
     }
 

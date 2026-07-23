@@ -14,17 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import action, { UiAction, UiActionAction } from '../../../action';
+import action, { type Tools, type UiActionAction } from '../../../action';
 
-import { ActionButton, ActionButtonProps } from './ActionButton';
-import { ToolbarItem } from '../toolbar.types';
+import { type ActionButtonProps, ActionButton } from './ActionButton';
+import type { ToolbarItem } from '../toolbar.types';
 import { ToolbarMultiToolItem } from './ToolbarMultiToolItem';
 import { getIconName } from 'components';
 
 interface ToolbarGroupItemProps extends ToolbarItem {
-  status: {
-    [key in string]?: UiAction;
-  };
+  status: Tools;
   opened: string | null;
   disableableButtons: string[];
   indigoVerification: boolean;

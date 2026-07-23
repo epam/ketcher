@@ -28,4 +28,8 @@ interface BaseCallProps {
   onOk: (result: any) => void;
 }
 
-export type { BaseProps, BaseCallProps };
+interface ModalContainerProps {
+  ketcherId: string;
+}
+
+export type { BaseProps, BaseCallProps, ModalContainerProps };

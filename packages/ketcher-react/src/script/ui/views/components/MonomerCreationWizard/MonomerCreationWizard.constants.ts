@@ -1,0 +1,136 @@
+import {
+  BILN_ALIAS_FORMAT_ERROR_MESSAGE,
+  HELM_ALIAS_FORMAT_ERROR_MESSAGE,
+  KetMonomerClass,
+} from 'ketcher-core';
+
+import type {
+  MonomerTypeSelectItem,
+  WizardNotificationMessageMap,
+  WizardNotificationTypeMap,
+} from './MonomerCreationWizard.types';
+
+export const MonomerTypeSelectConfig: MonomerTypeSelectItem[] = [
+  {
+    value: KetMonomerClass.AminoAcid,
+    label: 'Amino acid',
+    iconName: 'peptide',
+  },
+  { value: KetMonomerClass.Sugar, label: 'Sugar', iconName: 'sugar' },
+  { value: KetMonomerClass.Base, label: 'Base', iconName: 'base' },
+  {
+    value: KetMonomerClass.Phosphate,
+    label: 'Phosphate',
+    iconName: 'phosphate',
+  },
+  {
+    value: KetMonomerClass.RNA,
+    label: 'Nucleotide (monomer)',
+    iconName: 'nucleotide',
+  },
+  { value: 'rnaPreset', label: 'Nucleotide (preset)', iconName: 'preset' },
+  { value: KetMonomerClass.CHEM, label: 'CHEM', iconName: 'chem' },
+];
+
+export const MAX_MODIFICATION_TYPES = 5;
+
+export const NotificationMessages: WizardNotificationMessageMap = {
+  defaultAttachmentPoints:
+    'Attachment points are set by default with hydrogens as leaving groups.',
+  emptyMandatoryFields: 'Mandatory fields must be filled.',
+  invalidSymbol:
+    'The monomer code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+  symbolExists:
+    'The code must be unique amongst peptide, RNA, or CHEM monomers.',
+  editingIsNotAllowed: 'Editing of the structure is not allowed.',
+  noAttachmentPoints: 'The monomer must have at least one attachment point.',
+  incorrectAttachmentPointsOrder:
+    'Attachment point numbers must be in order, but R1 and R2 may be skipped.',
+  attachmentPointsNotUnique:
+    'Only one attachment point can have the same number.',
+  creationSuccessful: 'The monomer was successfully added to the library.',
+  creationRNASuccessful: 'The preset was successfully added to the library.',
+  incontinuousStructure: 'All monomers must have a continuous structure.',
+  notUniqueModificationTypes:
+    'Only one amino acid within a natural analogue can have the same modification type.',
+  modificationTypeExists:
+    'Only one amino acid within a natural analogue can have the same modification type.',
+  notMinimalViableStructure:
+    'Minimal monomer structure is two atoms connected via a single bond.',
+  impureStructure:
+    'Monomer structure cannot contain S-groups, R-groups, special atoms, or any other query properties.',
+  invalidHELMAlias: HELM_ALIAS_FORMAT_ERROR_MESSAGE,
+  notUniqueHELMAlias:
+    'The HELM alias must be unique amongst peptide or RNA monomers.',
+  invalidBILNAlias: BILN_ALIAS_FORMAT_ERROR_MESSAGE,
+  notUniqueBILNAlias:
+    'The BILN alias must be unique amongst peptide and CHEM monomers.',
+  invalidRnaPresetStructure:
+    'Structure of rna preset component contains issues. Please adjust the structure.',
+  rnaPresetAtomsOutsideComponents:
+    'Every atom in the loaded structure must belong to a sugar, base, or a phosphate.',
+  rnaPresetAtomsInMultipleComponents:
+    'Every atom in the loaded structure must belong only to one of the components (sugar, base, or phosphate).',
+  rnaPresetMissingComponents:
+    'Every preset must contain at least two components, with sugar being a mandatory component.',
+  rnaPresetInvalidSugarConnectionBonds:
+    'Sugar can only have one single bond with base and one single bond with phosphate.',
+  rnaPresetUnexpectedBasePhosphateBond:
+    "Phosphate and base mustn't have a bond.",
+  rnaPresetInvalidSugarBaseConnectionAttachmentPoints:
+    'The bond between sugar and base must be established between R3 of the sugar and R1 of the base.',
+  rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints:
+    'The bond between sugar and phosphate must be established between R2 of one monomer and R1 of the other.',
+  notUniquePresetCode: 'The preset code must be unique amongst other presets.',
+  invalidPresetCode:
+    'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+  invalidName:
+    'The monomer name must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), asterisks (*), and spaces.',
+  invalidPhosphatePositionAttachmentPoints:
+    '3′ position requires phosphate R1 and sugar R2, 5′ position requires phosphate R2 and sugar R1.',
+  phosphatePositionNotSelected:
+    "You must chose the position of the phosphate (5' or 3').",
+};
+
+export const NotificationTypes: WizardNotificationTypeMap = {
+  defaultAttachmentPoints: 'info',
+  emptyMandatoryFields: 'error',
+  invalidSymbol: 'error',
+  symbolExists: 'error',
+  editingIsNotAllowed: 'error',
+  noAttachmentPoints: 'error',
+  incorrectAttachmentPointsOrder: 'error',
+  attachmentPointsNotUnique: 'error',
+  creationSuccessful: 'info',
+  creationRNASuccessful: 'info',
+  incontinuousStructure: 'error',
+  notUniqueModificationTypes: 'error',
+  modificationTypeExists: 'error',
+  notMinimalViableStructure: 'error',
+  impureStructure: 'error',
+  invalidHELMAlias: 'error',
+  notUniqueHELMAlias: 'error',
+  invalidBILNAlias: 'error',
+  notUniqueBILNAlias: 'error',
+  invalidRnaPresetStructure: 'error',
+  rnaPresetAtomsOutsideComponents: 'error',
+  rnaPresetAtomsInMultipleComponents: 'error',
+  rnaPresetMissingComponents: 'error',
+  rnaPresetInvalidSugarConnectionBonds: 'error',
+  rnaPresetUnexpectedBasePhosphateBond: 'error',
+  rnaPresetInvalidSugarBaseConnectionAttachmentPoints: 'error',
+  rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints: 'error',
+  notUniquePresetCode: 'error',
+  invalidPresetCode: 'error',
+  invalidName: 'error',
+  invalidPhosphatePositionAttachmentPoints: 'error',
+  phosphatePositionNotSelected: 'error',
+};
+
+export const MonomerCreationExternalNotificationAction =
+  'MonomerCreationExternalNotification';
+
+export const MonomerCreationMarkAsComponentAction =
+  'MonomerCreationMarkAsComponent';
+
+export type RnaPresetComponentType = 'base' | 'sugar' | 'phosphate';

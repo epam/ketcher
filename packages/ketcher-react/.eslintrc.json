@@ -15,9 +15,22 @@
     "jsx-a11y/no-autofocus": "warn",
     "jsx-a11y/no-noninteractive-element-interactions": "warn",
     "jsx-a11y/alt-text": "warn",
-    "jsx-a11y/click-events-have-key-events": "warn"
+    "jsx-a11y/click-events-have-key-events": "warn",
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "separate-type-imports"
+      }
+    ]
   },
   "overrides": [
+    {
+      "files": ["**/*.d.ts"],
+      "rules": {
+        "@typescript-eslint/consistent-type-imports": "off"
+      }
+    },
     {
       "files": [
         "**/__tests__/**/*.[jt]s?(x)",
@@ -37,6 +50,7 @@
         "src/script/editor/tool/text.ts",
         "src/script/editor/utils/functionalGroupsTooltip.ts",
         "src/script/ui/App/initApp.tsx",
+        "src/script/ui/data/convert/structconv.ts",
         "src/script/ui/dialog/template/TemplateTable.tsx",
         "src/script/ui/views/components/ContextMenu/hooks/useBondSGroupAttach.ts",
         "src/script/ui/views/components/ContextMenu/hooks/useBondSGroupEdit.ts",
@@ -82,6 +96,7 @@
         "src/script/ui/component/structrender.tsx",
         "src/script/ui/component/view/savebutton.tsx",
         "src/script/ui/data/convert/structConverter.ts",
+        "src/script/ui/data/convert/structconv.ts",
         "src/script/ui/data/schema/options-schema.ts",
         "src/script/ui/dialog/index.ts",
         "src/script/ui/dialog/template/TemplateDialog.tsx",
@@ -92,7 +107,6 @@
         "src/script/ui/state/hotkeys.ts",
         "src/script/ui/state/shared.ts",
         "src/script/ui/utils/index.ts",
-        "src/script/ui/utils/settingsManager.ts",
         "src/script/ui/views/AppClipArea.tsx",
         "src/script/ui/views/components/Dialog/Dialog.tsx",
         "src/script/ui/views/components/StructEditor/InfoPanel.tsx",

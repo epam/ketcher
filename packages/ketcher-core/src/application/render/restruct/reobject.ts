@@ -14,11 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs } from 'domain/entities';
-import ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type { Box2Abs } from 'domain/entities/box2Abs';
+import type ReStruct from './restruct';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import Visel from './visel';
+import { IMAGE_KEY } from 'domain/constants';
 
 class ReObject {
   public visel: Visel;
@@ -31,9 +32,9 @@ class ReObject {
     this.visel = new Visel(viselType);
   }
 
-  changeSelectionStyle(options: any) {
+  changeSelectionStyle(options: any, drawOutline = true) {
     const { hoverStyle } = options;
-    if (this.visel.type === 'simpleObject') {
+    if (['simpleObject', IMAGE_KEY].includes(this.visel.type)) {
       this.hovering?.attr({
         'fill-opacity': this.selected ? 1 : 0,
       });
@@ -41,6 +42,7 @@ class ReObject {
       this.hovering?.attr({
         fill: hoverStyle.fill,
         'fill-opacity': this.selected ? 1 : 0,
+        stroke: drawOutline ? hoverStyle.stroke : 'none',
       });
     }
   }
@@ -51,10 +53,10 @@ class ReObject {
     if (render.options.offset) {
       vbox = vbox.translate(render.options.offset.negated());
     }
-    return vbox.transform(Scale.scaled2obj, render.options);
+    return vbox.transform(Scale.canvasToModel, render.options);
   }
 
-  setHover(hover: boolean, render: Render): void {
+  setHover(hover: boolean, render: Render, drawOutline = true): void {
     // TODO render should be field
     const { options } = render;
     if (hover) {
@@ -68,22 +70,22 @@ class ReObject {
         }
       }
       if (noredraw) {
-        this.changeSelectionStyle(options);
+        this.changeSelectionStyle(options, drawOutline);
         this.hovering.show();
       } else {
         render.paper.setStart();
-        this.drawHover(render);
+        this.drawHover(render, drawOutline);
         this.hovering = render.paper.setFinish();
       }
     } else if (this.hovering) {
-      this.changeSelectionStyle(options);
+      this.changeSelectionStyle(options, drawOutline);
       this.hovering.hide();
     }
 
     this.hover = hover;
   }
 
-  drawHover(_render: Render): any {
+  drawHover(_render: Render, _drawOutline?: boolean): any {
     throw new Error('ReObject.drawHover is not overridden.');
   }
 

@@ -28,10 +28,11 @@ import {
   ElementColor,
   vectorUtils,
   KetcherLogger,
+  CoordinateTransformation,
 } from 'ketcher-core';
 
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 import { deleteFunctionalGroups } from './helper/deleteFunctionalGroups';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 
@@ -53,9 +54,25 @@ class AtomTool implements Tool {
       if (editorSelection.atoms) {
         const struct = editor.render.ctab;
         const action = new Action();
-        const selectedSGroupsId =
-          editorSelection &&
-          getGroupIdsFromItemArrays(struct.molecule, editorSelection);
+        const selectedSGroupsId = getGroupIdsFromItemArrays(
+          struct.molecule,
+          editorSelection,
+        );
+        const sgroups = struct.molecule.functionalGroups;
+        const atomsInFunctionalGroup = editorSelection.atoms
+          .filter((atomId) => {
+            return !Atom.isSuperatomLeavingGroupAtom(struct.molecule, atomId);
+          })
+          .map((atom) => {
+            return FunctionalGroup.atomsInFunctionalGroup(sgroups, atom);
+          });
+        if (atomsInFunctionalGroup.some((atom) => atom !== null)) {
+          editor.event.removeFG.dispatch({ fgIds: [...selectedSGroupsId] });
+          this.editor.hoverIcon.hide();
+          this.isNotActiveTool = true;
+          return;
+        }
+
         const deletedAtomsInSGroups = deleteFunctionalGroups(
           selectedSGroupsId,
           struct,
@@ -64,7 +81,11 @@ class AtomTool implements Tool {
         const updatedAtoms = editorSelection?.atoms?.filter(
           (selectAtomId) =>
             !deletedAtomsInSGroups?.includes(selectAtomId) &&
-            struct.atoms.has(selectAtomId),
+            struct.atoms.has(selectAtomId) &&
+            !Atom.isSuperatomLeavingGroupAtom(
+              this.editor.render.ctab.molecule,
+              selectAtomId,
+            ),
         );
         action.mergeWith(fromAtomsAttrs(struct, updatedAtoms, atomProps, true));
         editor.update(action);
@@ -98,6 +119,11 @@ class AtomTool implements Tool {
 
     const eventMaps = ['atoms', 'functionalGroups'];
     const ci = editor.findItem(event, eventMaps);
+    const struct = editor.struct();
+
+    if (struct.isTargetFromMacromolecule(ci)) {
+      return;
+    }
 
     if (ci?.map === 'atoms') {
       const atomId = ci.id;
@@ -143,6 +169,11 @@ class AtomTool implements Tool {
 
     const eventMaps = ['atoms', 'functionalGroups'];
     const ci = editor.findItem(event, eventMaps);
+    const struct = editor.struct();
+
+    if (struct.isTargetFromMacromolecule(ci)) {
+      return;
+    }
 
     if (
       !dragCtx?.item ||
@@ -177,13 +208,16 @@ class AtomTool implements Tool {
     if (atomId !== undefined) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const atom = molecule.atoms.get(atomId)!;
-      let angle = vectorUtils.calcAngle(atom.pp, rnd.page2obj(event));
+      let angle = vectorUtils.calcAngle(
+        atom.pp,
+        CoordinateTransformation.pageToModel(event, rnd),
+      );
       if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
       const degrees = vectorUtils.degrees(angle);
       editor.event.message.dispatch({ info: degrees + 'º' });
       const newAtomPos = vectorUtils.calcNewAtomPos(
         atom.pp,
-        rnd.page2obj(event),
+        CoordinateTransformation.pageToModel(event, rnd),
         event.ctrlKey,
       );
 
@@ -195,7 +229,7 @@ class AtomTool implements Tool {
         rnd.ctab,
         this.#bondProps,
         atomId,
-        Object.assign({}, atomProps),
+        { ...(atomProps ?? {}) },
         undefined,
         newAtomPos,
       )[0];
@@ -222,11 +256,20 @@ class AtomTool implements Tool {
     } = this;
 
     const ci = editor.findItem(event, ['atoms', 'bonds', 'functionalGroups']);
+    const struct = editor.struct();
     const action = new Action();
+
+    if (struct.isTargetFromMacromolecule(ci) || !dragCtx) {
+      return;
+    }
 
     if ((!dragCtx.item || dragCtx?.isSaltOrSolvent) && !ci) {
       action.mergeWith(
-        fromAtomAddition(reStruct, rnd.page2obj(event), atomProps),
+        fromAtomAddition(
+          reStruct,
+          CoordinateTransformation.pageToModel(event, rnd),
+          atomProps,
+        ),
       );
     } else if (dragCtx.item && ci) {
       if (dragCtx.item.id === ci.id) {
@@ -257,10 +300,19 @@ class AtomTool implements Tool {
         } else if (ci.map === 'atoms') {
           const atomId = ci.id;
 
+          const isAttachmentPointLabel = Atom.isSuperatomLeavingGroupAtom(
+            editor.render.ctab.molecule,
+            atomId,
+          );
+
           if (
+            !isAttachmentPointLabel &&
             dragCtx.action === undefined &&
-            FunctionalGroup.atomsInFunctionalGroup(functionalGroups, atomId) ===
-              null
+            FunctionalGroup.atomsInFunctionalGroup(
+              functionalGroups,
+              atomId,
+              true,
+            ) === null
           ) {
             action.mergeWith(fromAtomsAttrs(reStruct, atomId, atomProps, true));
           }

@@ -14,11 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RenderOptions } from 'application/render/render.types';
-import { Struct } from 'ketcher-core';
+import type { Struct, RenderOptions } from 'ketcher-core';
 
+interface CasheOptions {
+  cachePrefix?: string;
+  needCache?: boolean;
+}
 export interface IStructRenderProps {
   struct: Struct;
-  options?: RenderOptions & { cachePrefix?: string; needCache?: boolean };
+  options?: (RenderOptions & CasheOptions) | CasheOptions;
   className?: string;
+  update?: boolean;
+  fullsize?: boolean;
+  testId?: string;
 }

@@ -4,32 +4,36 @@
   "workspaces": [
     "packages/ketcher-core",
     "packages/ketcher-standalone",
-    "packages/ketcher-polymer-editor-react",
+    "packages/ketcher-macromolecules",
     "packages/ketcher-react",
     "ketcher-autotests",
     "example",
+    "example-ssr",
+    "example-separate-editors",
     "demo"
   ],
   "scripts": {
     "postinstall": "husky install",
     "precommit": "lint-staged --allow-empty && npm run prettier:write --workspaces --if-present",
-    "prepush": "npm run test && npm run check:autotests",
+    "prepush": "npm run test && npm run test:types",
     "build": "npm run build:packages && npm run build:example",
     "build:example:standalone": "npm run build:standalone -w example",
     "build:example:remote": "npm run build:remote -w example",
     "build:core": "npm run build -w ketcher-core",
     "build:standalone": "npm run build -w ketcher-standalone",
     "build:react": "npm run build -w ketcher-react",
-    "build:polymer-editor": "npm run build -w ketcher-polymer-editor-react",
-    "build:packages": "npm run build:core && run-p build:standalone build:react && npm run build:polymer-editor",
+    "build:macromolecules": "npm run build -w ketcher-macromolecules",
+    "build:packages": "npm run build:core && run-p build:standalone build:react && npm run build:macromolecules",
     "build:example": "npm run build -w example",
     "build:demo": "npm run build:packages && npm run build -w demo",
-    "test": "npm run test --workspace=packages/ketcher-core --workspace=packages/ketcher-react --workspace=packages/ketcher-standalone --workspace=packages/ketcher-standalone",
+    "test": "npm run test --workspace=packages/ketcher-core --workspace=packages/ketcher-react --workspace=packages/ketcher-standalone --workspace=packages/ketcher-macromolecules",
+    "test:types": "npm run test:types --workspaces",
     "check:autotests": "cd ketcher-autotests && npm run check:code",
     "serve:remote": "cd example && npm run serve:remote",
     "serve:standalone": "cd example && npm run serve:standalone",
     "serve": "run-p serve:remote serve:standalone",
-    "serve:demo": "cd demo && npm run serve"
+    "serve:demo": "cd demo && npm run serve",
+    "up": "node ./scripts/build-run.mjs"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.61.0",
@@ -40,30 +44,54 @@
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-workspaces": "^0.7.0",
-    "husky": "^8.0.2",
-    "lint-staged": "^12.1.2",
+    "husky": "^8.0.3",
+    "lint-staged": "^16.1.0",
     "npm-run-all": "^4.1.5",
+    "postcss": "^8.5.10",
+    "postcss-less": "^6.0.0",
     "prettier": "2.8.0",
     "prettier-config-standard": "^5.0.0",
-    "stylelint": "^13.13.1",
-    "stylelint-config-prettier": "^9.0.3",
-    "stylelint-config-standard": "22.0.0"
+    "stylelint": "^14.16.1",
+    "stylelint-config-prettier": "^9.0.5",
+    "stylelint-config-standard": "^23.0.0"
   },
   "resolutions": {
     "react-error-overlay": "6.0.9"
   },
   "engines": {
     "npm": ">=7.0.0",
-    "node": ">=16.0.0",
+    "node": ">=24.14.1",
     "yarn": "YARN IS NO LONGER USED, PLEASE USE NPM\nConversion instructions can be found in DEVNOTES.md"
   },
   "overrides": {
-    "minimatch": "^9.0.3",
     "nth-check": "^2.1.1",
-    "postcss": "8.4.31"
+    "@isaacs/brace-expansion": "5.0.1"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.59.1",
+    "minimatch": "^10.2.4",
+    "playwright": "^1.59.1",
+    "playwright-core": "^1.59.1",
+    "react-router": "^7.13.0",
+    "react-router-dom": "^7.13.0",
+    "serve-handler": "^6.1.7"
+  },
+  "stylelint": {
+    "overrides": [
+      {
+        "files": [
+          "**/*.less"
+        ],
+        "customSyntax": "postcss-less"
+      }
+    ],
+    "rules": {
+      "selector-class-pattern": null
+    }
   }
 }

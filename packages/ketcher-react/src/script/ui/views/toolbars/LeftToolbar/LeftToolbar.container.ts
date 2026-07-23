@@ -15,19 +15,19 @@
  ***************************************************************************/
 
 import {
+  type LeftToolbarCallProps,
+  type LeftToolbarProps,
   LeftToolbar,
-  LeftToolbarCallProps,
-  LeftToolbarProps,
 } from './LeftToolbar';
 
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { onAction } from '../../../state';
 
 type StateProps = Omit<LeftToolbarProps, 'className'>;
 const disableableButtons = [];
 const mapStateToProps = (state: any): StateProps => ({
-  status: state.actionState || {},
+  status: state.actionState ?? {},
   opened: state.toolbar.opened,
   indigoVerification: state.requestsStatuses.indigoVerification,
   disableableButtons,

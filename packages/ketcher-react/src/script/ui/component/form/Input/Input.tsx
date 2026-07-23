@@ -14,17 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { PureComponent, ComponentType, useRef, useEffect } from 'react';
+import React, {
+  type ComponentType,
+  PureComponent,
+  useRef,
+  useEffect,
+} from 'react';
 
 import classes from './Input.module.less';
 import clsx from 'clsx';
 
 type Props = {
+  name?: string;
   component?: ComponentType;
   children?: React.ReactNode;
   className?: string;
-  type: string;
-  value: number | string | boolean;
+  type?: string;
+  value?: unknown;
   onChange: (val: any) => void;
   placeholder?: string;
   isFocused?: boolean;
@@ -63,7 +69,6 @@ export function GenericInput({
       <input
         type={type}
         value={value ?? ''}
-        onInput={onChange}
         onChange={onChange}
         className={clsx(classes.input, classes.genericInput)}
         ref={inputRef}
@@ -77,13 +82,21 @@ export function GenericInput({
 
 GenericInput.val = function (ev, schema) {
   const input = ev.target;
+  const isInteger = schema?.type === 'integer';
+  const isFloat = schema?.type === 'number';
+
   const isNumber =
-    input.type === 'number' ||
-    input.type === 'range' ||
-    (schema && (schema.type === 'number' || schema.type === 'integer'));
+    input.type === 'number' || input.type === 'range' || isInteger || isFloat;
+
   const value = isNumber ? input.value.replace(/,/g, '.') : input.value;
 
-  return isNumber && !isNaN(value - 0) ? value - 0 : value; // eslint-disable-line
+  if (isInteger) {
+    return Number(value) || 0;
+  }
+
+  // When the value can be a float the validation is passed to the parent component
+  // because it's more complicated
+  return value;
 };
 
 function TextArea({
@@ -181,7 +194,7 @@ function FieldSet({
   ...rest
 }) {
   return (
-    <fieldset onClick={onSelect}>
+    <fieldset>
       {enumSchema(schema, (title, val) => (
         <li key={title} className={classes.fieldSetItem}>
           <label className={classes.fieldSetLabel}>
@@ -195,6 +208,12 @@ function FieldSet({
               value={typeof val !== 'object' && val}
               className={classes.input}
               {...rest}
+              data-testid={
+                rest['data-testid']
+                  ? rest['data-testid'] + '-' + val
+                  : undefined
+              }
+              onClick={onSelect}
             />
             {type === 'checkbox' && <span className={classes.checkbox} />}
             {type === 'radio' && <span className={classes.radioButton} />}
@@ -262,12 +281,10 @@ function enumSchema(schema, cbOrIndex) {
 
   if (typeof cbOrIndex === 'function') {
     return (isTypeValue ? schema : schema.enum).map((item, i) => {
-      const title = isTypeValue
-        ? item.title
-        : schema.enumNames && schema.enumNames[i];
+      const title = isTypeValue ? item.title : schema.enumNames?.[i];
       return cbOrIndex(
         title !== undefined ? title : item,
-        item && item.value !== undefined ? item.value : item,
+        item?.value !== undefined ? item.value : item,
       );
     });
   }
@@ -308,7 +325,7 @@ function singleSelectCtrl(component, schema, onChange) {
 function multipleSelectCtrl(component, schema, onChange) {
   return {
     multiple: true,
-    selected: (testVal, values) => values && values.indexOf(testVal) >= 0,
+    selected: (testVal, values) => values?.indexOf(testVal) >= 0,
     onSelect: (ev, values) => {
       if (component.val) {
         const val = component.val(ev, schema);
@@ -345,7 +362,7 @@ function componentMap(props: Props) {
   }
 
   if (!schema || (!schema.enum && !schema.items && !Array.isArray(schema))) {
-    if (type === 'checkbox' || (schema && schema.type === 'boolean')) {
+    if (type === 'checkbox' || schema?.type === 'boolean') {
       return CheckBox;
     }
 

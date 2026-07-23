@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconName } from '../../Icon/types';
+import type { IconName } from '../../Icon/types';
+import type { ReactNode } from 'react';
 
-export interface IIconButtonProps {
-  iconName: IconName;
+export interface IIconButtonBaseProps {
   onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   title?: string;
   className?: string;
@@ -26,6 +26,22 @@ export interface IIconButtonProps {
   isActive?: boolean;
   shortcut?: string;
   testId?: string;
+  children: ReactNode;
+}
+
+type IIconButtonBasePropsWithoutChildren = Omit<
+  IIconButtonBaseProps,
+  'children'
+>;
+
+export interface IIconButtonProps extends IIconButtonBasePropsWithoutChildren {
+  iconName: IconName;
+  testid?: string;
+}
+
+export interface IIconButtonCustomIconProps
+  extends IIconButtonBasePropsWithoutChildren {
+  link: string;
 }
 
 export interface IStyledButtonProps {

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import * as CFB from 'cfb';
 
 export function fileOpener(server) {
   return new Promise((resolve, reject) => {
@@ -24,13 +25,14 @@ export function fileOpener(server) {
         const fso = new ActiveXObject('Scripting.FileSystemObject'); // eslint-disable-line no-undef
         resolve((file) => Promise.resolve(throughFileSystemObject(fso, file)));
       } catch (e) {
-        reject(e);
+        reject(
+          e instanceof Error ? e : new Error('Failed to open file via ActiveX'),
+        );
       }
     } else if (server) {
       resolve(
         server.then(() => {
           throw Error("Server doesn't still support echo method");
-          // return resolve(throughForm2IframePosting);
         }),
       );
     } else {
@@ -39,27 +41,73 @@ export function fileOpener(server) {
   });
 }
 
+function arrayBufferToBase64(buffer) {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 function throughFileReader(file) {
-  const isCDX = file.name.endsWith('cdx') && !file.name.endsWith('b64cdx');
+  const CDX = 'cdx';
+  const PPTX = 'pptx';
+  let fileType;
+  if (file.name.endsWith('cdx') && !file.name.endsWith('b64cdx')) {
+    fileType = CDX;
+  } else if (file.name.endsWith('pptx')) {
+    fileType = PPTX;
+  }
+
   return new Promise((resolve, reject) => {
     const rd = new FileReader(); // eslint-disable-line no-undef
 
-    rd.onload = () => {
-      let content;
-      if (isCDX) {
-        const base64String = rd.result.split(',').at(-1);
-        content = base64String;
-      } else {
-        content = rd.result;
+    rd.onload = (e) => {
+      let content, structures;
+      let cfb;
+      switch (fileType) {
+        case CDX:
+          content = rd.result.split(',').at(-1);
+          break;
+        case PPTX:
+          cfb = CFB.read(new Uint8Array(e.target.result), { type: 'array' });
+          structures = [];
+          cfb.FullPaths.forEach((path) => {
+            if (path.endsWith('.bin')) {
+              const ole = CFB.find(cfb, path);
+              const sdf = CFB.find(CFB.parse(ole?.content), 'CONTENTS');
+              const base64String = arrayBufferToBase64(sdf?.content);
+              if (base64String.startsWith('VmpDRDAxMDAEAw')) {
+                structures.push(base64String);
+              }
+            }
+          });
+          content = { structures, isPPTX: true };
+          break;
+        default:
+          content = rd.result;
+          break;
       }
       if (file.msClose) file.msClose();
       resolve(content);
     };
 
-    rd.onerror = (event) => {
-      reject(event);
+    rd.onerror = () => {
+      reject(new Error(`Failed to read file: ${file.name}`));
     };
-    isCDX ? rd.readAsDataURL(file) : rd.readAsText(file, 'UTF-8');
+    switch (fileType) {
+      case CDX:
+        rd.readAsDataURL(file);
+        break;
+      case PPTX:
+        rd.readAsArrayBuffer(file);
+        break;
+      default:
+        rd.readAsText(file, 'UTF-8');
+        break;
+    }
   });
 }
 

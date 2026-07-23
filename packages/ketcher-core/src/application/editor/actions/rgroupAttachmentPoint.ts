@@ -1,12 +1,13 @@
 import assert from 'assert';
-import { ReStruct } from 'application/render';
-import { AttachmentPoints, Struct } from 'domain/entities';
+import type { ReStruct } from 'application/render';
+import { AttachmentPoints } from 'domain/entities/atom';
+import type { Struct } from 'domain/entities/struct';
 import {
   RGroupAttachmentPointAdd,
   RGroupAttachmentPointRemove,
 } from '../operations';
 import { Action } from './action';
-import { fromAtomsAttrs } from '.';
+import { fromAtomsAttrs } from './atom';
 
 export function fromRGroupAttachmentPointUpdate(
   restruct: ReStruct,

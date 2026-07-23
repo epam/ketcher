@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Field } from '../../../../../../../component/form/form/form';
-import { RgroupLogicProps } from '../../RgroupLogic';
+import type { RgroupLogicProps } from '../../RgroupLogic';
 import classes from './IfThenSelect.module.less';
 import { useFormContext } from '../../../../../../../../../hooks';
 import Select from '../../../../../../../component/form/Select';
@@ -25,9 +25,9 @@ type Props = Pick<RgroupLogicProps, 'label' | 'rgroupLabels' | 'name'>;
 
 const IfThenSelect = (props: Props) => {
   const { rgroupLabels, label, name } = props;
-  const { schema } = useFormContext() as any;
+  const { schema } = useFormContext();
   const desc = {
-    title: schema.properties[name!].title,
+    title: schema.properties?.[name ?? '']?.title,
     enum: [0],
     enumNames: ['Always'],
   };

@@ -16,7 +16,7 @@
 
 import { useRef } from 'react';
 
-import { BaseCallProps } from './modal.types';
+import type { BaseCallProps, ModalContainerProps } from './modal.types';
 import classes from './Modal.module.less';
 import selectClasses from '../../component/form/Select/Select.module.less';
 import clsx from 'clsx';
@@ -32,16 +32,17 @@ interface ModalProps extends BaseCallProps {
   };
 }
 
-type Props = ModalProps & BaseCallProps;
+type Props = ModalProps & BaseCallProps & ModalContainerProps;
 
-function Modal(props: Props) {
-  const { modal, ...rest } = props;
+type ModalContentProps = Omit<Props, 'modal'> & {
+  modal: NonNullable<Props['modal']>;
+};
+
+function ModalContent({ modal, ...rest }: ModalContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { height, width } = useResizeObserver<HTMLDivElement>({
     ref: containerRef,
   });
-
-  if (!modal) return null;
 
   const Component = modals[modal.name];
 
@@ -64,6 +65,14 @@ function Modal(props: Props) {
       />
     </div>
   );
+}
+
+function Modal(props: Props) {
+  const { modal, ...rest } = props;
+
+  if (!modal) return null;
+
+  return <ModalContent modal={modal} {...rest} />;
 }
 
 export type { ModalProps };

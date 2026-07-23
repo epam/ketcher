@@ -1,18 +1,24 @@
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import { mapAtomIdsToAtoms } from 'src/script/editor/tool/select';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
-import { ItemEventParams } from '../contextMenu.types';
+import type {
+  AtomContextMenuProps,
+  ItemEventParams,
+} from '../contextMenu.types';
+import { ketcherProvider } from 'ketcher-core';
+
+type Params = ItemEventParams<AtomContextMenuProps>;
 
 const useAtomEdit = () => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
 
   const handler = useCallback(
-    async ({ props }: ItemEventParams) => {
-      const editor = getKetcherInstance().editor as Editor;
+    async ({ props }: Params) => {
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const molecule = editor.render.ctab;
-      const atomIds = props?.atomIds || [];
+      const atomIds = props?.atomIds ?? [];
       const atoms = mapAtomIdsToAtoms(atomIds, molecule);
 
       const newAtom = editor.event.elementEdit.dispatch(atoms);
@@ -23,10 +29,10 @@ const useAtomEdit = () => {
         editor,
       });
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
-  const disabled = useCallback(({ props }: ItemEventParams) => {
+  const disabled = useCallback(({ props }: Params) => {
     const atomIds = props?.atomIds;
     if (Array.isArray(atomIds) && atomIds.length !== 0) {
       return false;

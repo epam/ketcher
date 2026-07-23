@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AbbreviationLookupState } from './abbreviationLookup.types';
+import type { AbbreviationLookupState } from './abbreviationLookup.types';
 
 const initialState: AbbreviationLookupState = {
   isOpen: false,

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ChemicalMimeType } from 'domain/services';
+import type { ChemicalMimeType } from 'domain/services';
 
 export class SupportedFormatProperties {
   name: string;

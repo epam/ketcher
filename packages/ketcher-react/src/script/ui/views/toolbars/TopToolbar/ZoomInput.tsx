@@ -15,11 +15,11 @@
  ***************************************************************************/
 
 import {
-  FocusEvent,
-  KeyboardEvent,
+  type FocusEvent,
+  type KeyboardEvent,
+  type RefObject,
   useEffect,
   useCallback,
-  RefObject,
 } from 'react';
 import styled from '@emotion/styled';
 
@@ -114,6 +114,7 @@ export const ZoomInput = ({
   return (
     <StyledInput
       ref={inputRef}
+      data-testid="zoom-value"
       onFocus={onFocusHandler}
       onKeyDown={onKeyDown}
     />

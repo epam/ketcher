@@ -15,18 +15,30 @@
  ***************************************************************************/
 
 import {
-  StereLabelStyleType,
+  StereoLabelStyleType,
   StereoColoringType,
   ShowHydrogenLabels,
   ShowHydrogenLabelNames,
   defaultBondThickness,
 } from 'ketcher-core';
-import Ajv, { SchemaObject } from 'ajv';
+import { type Schema, Validator } from 'jsonschema';
 
-type ExtendedSchema = SchemaObject & {
+type ExtendedSchema = Schema & {
   enumNames?: Array<string>;
   default?: any;
 };
+
+export enum MeasurementUnits {
+  Px = 'px',
+  Cm = 'cm',
+  Pt = 'pt',
+  Inch = 'inch',
+}
+
+export enum ImageResolution {
+  high = '600',
+  low = '72',
+}
 
 const editor: {
   resetToSelect: ExtendedSchema;
@@ -64,15 +76,26 @@ const render: {
   orFlagLabel: ExtendedSchema;
   font: ExtendedSchema;
   fontsz: ExtendedSchema;
+  fontszUnit: ExtendedSchema;
   fontszsub: ExtendedSchema;
+  fontszsubUnit: ExtendedSchema;
   carbonExplicitly: ExtendedSchema;
   showCharge: ExtendedSchema;
   showValence: ExtendedSchema;
   showHydrogenLabels: ExtendedSchema;
   aromaticCircle: ExtendedSchema;
-  doubleBondWidth: ExtendedSchema;
+  bondSpacing: ExtendedSchema;
   bondThickness: ExtendedSchema;
+  bondThicknessUnit: ExtendedSchema;
   stereoBondWidth: ExtendedSchema;
+  stereoBondWidthUnit: ExtendedSchema;
+  bondLength: ExtendedSchema;
+  bondLengthUnit: ExtendedSchema;
+  reactionComponentMarginSize: ExtendedSchema;
+  reactionComponentMarginSizeUnit: ExtendedSchema;
+  hashSpacing: ExtendedSchema;
+  hashSpacingUnit: ExtendedSchema;
+  imageResolution: ExtendedSchema;
 } = {
   showValenceWarnings: {
     title: 'Show valence warnings',
@@ -95,13 +118,13 @@ const render: {
   stereoLabelStyle: {
     title: 'Label display at\u00A0stereogenic\u00A0centers',
     enum: [
-      StereLabelStyleType.IUPAC,
-      StereLabelStyleType.Classic,
-      StereLabelStyleType.On,
-      StereLabelStyleType.Off,
+      StereoLabelStyleType.IUPAC,
+      StereoLabelStyleType.Classic,
+      StereoLabelStyleType.On,
+      StereoLabelStyleType.Off,
     ],
     enumNames: ['IUPAC style', 'Classic', 'On', 'Off'],
-    default: StereLabelStyleType.IUPAC,
+    default: StereoLabelStyleType.IUPAC,
   },
   colorOfAbsoluteCenters: {
     title: ' Absolute Center color',
@@ -168,17 +191,29 @@ const render: {
   },
   fontsz: {
     title: 'Font size',
-    type: 'integer',
+    type: 'number',
     default: 13,
-    minimum: 1,
+    minimum: 0.1,
     maximum: 96,
+  },
+  fontszUnit: {
+    title: 'Font size unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
   },
   fontszsub: {
     title: 'Sub font size',
-    type: 'integer',
+    type: 'number',
     default: 13,
-    minimum: 1,
+    minimum: 0.1,
     maximum: 96,
+  },
+  fontszsubUnit: {
+    title: 'Sub font size unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
   },
   // Atom
   carbonExplicitly: {
@@ -212,26 +247,83 @@ const render: {
     description: 'slider',
     default: true,
   },
-  doubleBondWidth: {
-    title: 'Double bond width',
+  bondSpacing: {
+    title: 'Bond spacing',
     type: 'integer',
-    default: 6,
+    default: 15,
     minimum: 1,
-    maximum: 96,
+    maximum: 100,
   },
   bondThickness: {
     title: 'Bond thickness',
-    type: 'integer',
+    type: 'number',
     default: defaultBondThickness,
-    minimum: 1,
+    minimum: 0.1,
     maximum: 96,
+  },
+  bondThicknessUnit: {
+    title: 'Bond thickness unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
   },
   stereoBondWidth: {
     title: 'Stereo (Wedge) bond width',
-    type: 'integer',
+    type: 'number',
     default: 6,
-    minimum: 1,
+    minimum: 0.1,
     maximum: 96,
+  },
+  stereoBondWidthUnit: {
+    title: 'Stereo (Wedge) bond width unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
+  bondLength: {
+    title: 'Bond length',
+    type: 'number',
+    default: 40,
+    minimum: 0.1,
+    maximum: 1000,
+  },
+  bondLengthUnit: {
+    title: 'Bond length unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
+  reactionComponentMarginSize: {
+    title: 'Reaction component margin size',
+    type: 'number',
+    default: 20, // half of bond length
+    minimum: 0.1,
+    maximum: 1000,
+  },
+  reactionComponentMarginSizeUnit: {
+    title: 'Reaction component margin size unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
+  hashSpacing: {
+    title: 'Hash spacing',
+    type: 'number',
+    default: 1.2,
+    minimum: 0.1,
+    maximum: 1000,
+  },
+  hashSpacingUnit: {
+    title: 'Hash spacing unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
+  imageResolution: {
+    title: 'Image resolution',
+    enum: Object.values(ImageResolution),
+    enumNames: Object.keys(ImageResolution),
+    default: ImageResolution.low,
   },
 };
 
@@ -242,6 +334,7 @@ const server: {
   'gross-formula-add-rsites': ExtendedSchema;
   'gross-formula-add-isotopes': ExtendedSchema;
   'dearomatize-on-load': ExtendedSchema;
+  ignoreChiralFlag: ExtendedSchema;
 } = {
   'dearomatize-on-load': {
     title: 'dearomatize-on-load',
@@ -254,6 +347,12 @@ const server: {
     type: 'boolean',
     description: 'slider',
     default: true,
+  },
+  ignoreChiralFlag: {
+    title: 'Ignore the chiral flag',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
   },
   'ignore-stereochemistry-errors': {
     title: 'Ignore stereochemistry errors',
@@ -358,10 +457,11 @@ const optionsSchema: ExtendedSchema = {
 export default optionsSchema;
 
 export function getDefaultOptions(): Record<string, any> {
-  if (!optionsSchema.properties) return {};
+  const props = optionsSchema.properties;
+  if (!props) return {};
 
-  return Object.keys(optionsSchema.properties).reduce((res, prop) => {
-    res[prop] = (optionsSchema.properties[prop] as ExtendedSchema).default;
+  return Object.keys(props).reduce((res, prop) => {
+    res[prop] = props[prop].default;
     return res;
   }, {});
 }
@@ -369,20 +469,17 @@ export function getDefaultOptions(): Record<string, any> {
 export function validation(settings): Record<string, string> | null {
   if (typeof settings !== 'object' || settings === null) return null;
 
-  const ajv = new Ajv({
-    allErrors: true,
-    keywords: [{ keyword: 'enumNames', schemaType: 'array' }],
+  const result = new Validator().validate(settings, optionsSchema as Schema, {
+    base: 'https://ketcher.local/',
   });
-
-  const validate = ajv.compile(optionsSchema);
-  validate(settings);
-  const errors = validate.errors || [];
-  const errorsProps = errors.map((el) => el.instancePath.slice(1));
+  const errorsProps = result.errors.map((e) =>
+    e.property.replace(/^instance\./, ''),
+  );
 
   return Object.keys(settings).reduce((res, prop) => {
     if (!optionsSchema.properties) return res;
 
-    if (optionsSchema.properties[prop] && errorsProps.indexOf(prop) === -1)
+    if (optionsSchema.properties[prop] && !errorsProps.includes(prop))
       res[prop] = settings[prop];
 
     return res;

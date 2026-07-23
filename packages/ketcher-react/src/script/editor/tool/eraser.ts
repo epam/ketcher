@@ -20,18 +20,23 @@ import {
   fromOneAtomDeletion,
   fromOneBondDeletion,
   fromPlusDeletion,
+  fromImageDeletion,
   fromRGroupAttachmentPointDeletion,
   fromSgroupDeletion,
   fromSimpleObjectDeletion,
   fromTextDeletion,
   FunctionalGroup,
   SGroup,
+  IMAGE_KEY,
+  MULTITAIL_ARROW_KEY,
+  fromMultitailArrowDeletion,
+  MonomerMicromolecule,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
 import { selMerge } from './select';
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 
 class EraserTool implements Tool {
   private readonly editor: Editor;
@@ -52,6 +57,8 @@ class EraserTool implements Tool {
       'simpleObjects',
       'texts',
       'rgroupAttachmentPoints',
+      IMAGE_KEY,
+      MULTITAIL_ARROW_KEY,
     ];
     this.lassoHelper = new LassoHelper(mode || 0, editor, null);
 
@@ -115,7 +122,6 @@ class EraserTool implements Tool {
             atomFromStruct,
             sgroups,
             functionalGroups,
-            true,
           )
         ) {
           const sgroupAtoms =
@@ -135,7 +141,6 @@ class EraserTool implements Tool {
             atomFromStruct,
             sgroups,
             functionalGroups,
-            true,
           )
         ) {
           atomsResult.push(atomId);
@@ -266,7 +271,6 @@ class EraserTool implements Tool {
           atomFromStruct,
           sgroups,
           functionalGroups,
-          true,
         )
       ) {
         atomResult.push(atomId);
@@ -339,10 +343,11 @@ class EraserTool implements Tool {
     } else if (ci.map === 'bonds') {
       this.editor.update(fromOneBondDeletion(restruct, ci.id));
     } else if (
-      ci.map === 'functionalGroups' &&
+      (ci.map === 'sgroups' || ci.map === 'functionalGroups') &&
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
     ) {
       const sGroup = sgroups.get(ci.id);
+
       this.editor.update(
         fromFragmentDeletion(rnd.ctab, {
           atoms: [...SGroup.getAtoms(molecule, sGroup?.item)],
@@ -352,7 +357,10 @@ class EraserTool implements Tool {
     } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
       const sGroup = sgroups.get(ci.id);
 
-      if (FunctionalGroup.isFunctionalGroup(sGroup?.item)) {
+      if (
+        FunctionalGroup.isFunctionalGroup(sGroup?.item) ||
+        sGroup?.item instanceof MonomerMicromolecule
+      ) {
         this.editor.event.removeFG.dispatch({ fgIds: [ci.id] });
       } else {
         this.editor.update(fromSgroupDeletion(restruct, ci.id));
@@ -367,6 +375,10 @@ class EraserTool implements Tool {
       this.editor.update(fromTextDeletion(restruct, ci.id));
     } else if (ci.map === 'rgroupAttachmentPoints') {
       this.editor.update(fromRGroupAttachmentPointDeletion(restruct, ci.id));
+    } else if (ci.map === IMAGE_KEY) {
+      this.editor.update(fromImageDeletion(restruct, ci.id));
+    } else if (ci.map === MULTITAIL_ARROW_KEY) {
+      this.editor.update(fromMultitailArrowDeletion(restruct, ci.id));
     } else {
       // TODO re-factoring needed - should be "map-independent"
       console.error(

@@ -1,0 +1,363 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer2"
+            },
+            {
+                "$ref": "monomer3"
+            },
+            {
+                "$ref": "monomer13"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer13",
+                    "attachmentPointId": "R2"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-Rsp___(Rp)-Phosphorothioate"
+            },
+            {
+                "$ref": "monomerTemplate-5A6___6-amino-hexanol (5' end)"
+            }
+        ]
+    },
+    "monomer2": {
+        "type": "monomer",
+        "id": "2",
+        "position": {
+            "x": 12.75,
+            "y": -11.125
+        },
+        "alias": "Rsp",
+        "templateId": "Rsp___(Rp)-Phosphorothioate"
+    },
+    "monomerTemplate-Rsp___(Rp)-Phosphorothioate": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "O",
+                "location": [
+                    -0.5998702079620551,
+                    -0.6927374228643826,
+                    0
+                ]
+            },
+            {
+                "label": "P",
+                "location": [
+                    -0.09993392328685492,
+                    0.17333435660161628,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.4000023613883452,
+                    -0.6927374228643826,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.9000719801840082,
+                    0.1730676883606907,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    -0.6002702103234434,
+                    1.0391394678266894,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    0
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    4
+                ]
+            }
+        ],
+        "classHELM": "RNA",
+        "id": "Rsp___(Rp)-Phosphorothioate",
+        "alias": "Rsp",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": []
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        2
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "P"
+    },
+    "monomer3": {
+        "type": "monomer",
+        "id": "3",
+        "position": {
+            "x": 18.3,
+            "y": -11.225000000000001
+        },
+        "alias": "Rsp",
+        "templateId": "Rsp___(Rp)-Phosphorothioate"
+    },
+    "monomer13": {
+        "type": "monomer",
+        "id": "13",
+        "position": {
+            "x": 15.75,
+            "y": -11.175
+        },
+        "alias": "5A6",
+        "templateId": "5A6___6-amino-hexanol (5' end)"
+    },
+    "monomerTemplate-5A6___6-amino-hexanol (5' end)": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    2.5749981725733315,
+                    -0.3771540740622797,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.700099971820964,
+                    0.22849014674863297,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.7380026148474307,
+                    -0.22572529545381553,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.13682469228199245,
+                    0.37984803173415316,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.09899294287847,
+                    -0.07429651684535134,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.973820250007893,
+                    0.5312768103426172,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -2.9359885006043704,
+                    0.0770613681401688,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -3.635424984570245,
+                    0.5613357064708892,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    3.537166423169809,
+                    0.0770613681401688,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    4.236602907135683,
+                    -0.4071420765676076,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -3.0058896128271915,
+                    -0.770755468647576,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    10
+                ]
+            }
+        ],
+        "classHELM": "RNA",
+        "id": "5A6___6-amino-hexanol (5' end)",
+        "alias": "5A6",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 6,
+                "leavingGroup": {
+                    "atoms": [
+                        7
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 8,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 6,
+                "leavingGroup": {
+                    "atoms": [
+                        10
+                    ]
+                },
+                "type": "side"
+            }
+        ],
+        "naturalAnalogShort": "R"
+    }
+}

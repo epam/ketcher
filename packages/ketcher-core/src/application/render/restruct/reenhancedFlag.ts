@@ -14,12 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Fragment, StereoFlag } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Fragment, StereoFlag } from 'domain/entities/fragment';
 
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
-import ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type ReStruct from './restruct';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 
 class ReEnhancedFlag extends ReObject {
@@ -67,7 +68,7 @@ class ReEnhancedFlag extends ReObject {
       : Fragment.getDefaultStereoFlagPosition(restruct.molecule, fragmentId)!;
 
     const paper = render.paper;
-    const ps = Scale.obj2scaled(position, options);
+    const ps = Scale.modelToCanvas(position, options);
 
     const stereoFlagMap = {
       [StereoFlag.Abs]: options.absFlagLabel,
@@ -87,7 +88,7 @@ class ReEnhancedFlag extends ReObject {
         )
         .attr({
           font: options.font,
-          'font-size': options.fontsz,
+          'font-size': options.fontszInPx,
           fill: '#000',
         });
     }

@@ -37,32 +37,49 @@ import { generateCommonProperties } from './utils';
 import { saveSettings } from '../options';
 import { memoizedDebounce } from '../../utils';
 import { updateFloatingTools } from '../floatingTools';
+import { openInfoModalWithCustomMessage } from '../shared';
 
 export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
   const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
+  const getSelectedSruCount = () => {
+    const editor = getState().editor;
+    if (!editor?.structSelected) return 0;
+    const selectedStruct = editor.structSelected();
+    let count = 0;
+    for (const sgroup of selectedStruct.sgroups.values()) {
+      if (sgroup.type === 'SRU') {
+        count += 1;
+      }
+    }
+    return count;
+  };
 
-  function resetToSelect(dispatch) {
-    // eslint-disable-line no-shadow
-    const state = global.currentState;
-    const activeTool = state.actionState.activeTool.tool;
-    if (activeTool === 'select') return;
-    const selectMode = state.toolbar.visibleTools.select;
-    const resetOption = state.options.settings.resetToSelect;
-    if (resetOption === true || resetOption === activeTool)
-      // example: 'paste'
-      dispatch({ type: 'ACTION', action: acts[selectMode].action });
-    else updateAction();
-  }
+  const resetToSelect =
+    (force = false) =>
+    async (dispatch) => {
+      const state = getState();
+      const activeTool = state.actionState?.activeTool.tool;
+      if (!activeTool || (activeTool === 'select' && !force)) return;
+      const selectMode = state.toolbar.visibleTools.select;
+      const resetOption = state.options.settings.resetToSelect;
+      if (resetOption === true || resetOption === activeTool || force === true)
+        // example: 'paste'
+        dispatch({ type: 'ACTION', action: acts[selectMode].action });
+      else updateAction();
+    };
 
   return {
     onInit: (editor) => {
       dispatch({ type: 'INIT', editor });
     },
     onChange: (action) => {
-      if (action === undefined) sleep(0).then(() => dispatch(resetToSelect));
+      if (action === undefined) sleep(0).then(() => dispatch(resetToSelect()));
+      // Editor switched to view only mode
+      if (action === 'force')
+        sleep(0).then(() => dispatch(resetToSelect(true)));
       // new tool in reducer
-      else dispatch(resetToSelect);
+      else sleep(0).then(() => dispatch(resetToSelect()));
     },
     onSelectionChange: () => {
       updateAction();
@@ -89,12 +106,6 @@ export default function initEditor(dispatch, getState) {
         dlg = openDialog(dispatch, 'attachmentPoints', elem.ap).then((res) => ({
           ap: res,
         }));
-      } else if (elem.type === 'list' || elem.type === 'not-list') {
-        dlg = openDialog(
-          dispatch,
-          !elem.pseudo ? 'period-table' : 'extended-table',
-          { ...elem, pseudo: elem.pseudo },
-        );
       } else if (elem.type === 'rlabel') {
         const rgroups = getState().editor.struct().rgroups;
         const params = {
@@ -114,6 +125,7 @@ export default function initEditor(dispatch, getState) {
           type: 'rlabel',
         }));
       } else {
+        // list/not-list and all other pseudo elements share this dialog flow
         dlg = openDialog(
           dispatch,
           !elem.pseudo ? 'period-table' : 'extended-table',
@@ -149,11 +161,7 @@ export default function initEditor(dispatch, getState) {
         const rgroupLabels = Array.from(struct.rgroups.keys());
         if (!rgroup.range) rgroup.range = '>0';
 
-        return openDialog(
-          dispatch,
-          'rgroupLogic',
-          Object.assign({ rgroupLabels }, rgroup),
-        );
+        return openDialog(dispatch, 'rgroupLogic', { rgroupLabels, ...rgroup });
       }
 
       const disabledIds = Array.from(struct.atoms.values()).reduce(
@@ -176,7 +184,12 @@ export default function initEditor(dispatch, getState) {
     },
     onSgroupEdit: (sgroup) =>
       sleep(0) // huck to open dialog after dispatch sgroup tool action
-        .then(() => openDialog(dispatch, 'sgroup', fromSgroup(sgroup)))
+        .then(() =>
+          openDialog(dispatch, 'sgroup', {
+            ...fromSgroup(sgroup),
+            selectedSruCount: getSelectedSruCount(),
+          }),
+        )
         .then(toSgroup),
     onRemoveFG: (result) =>
       sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),
@@ -238,5 +251,9 @@ export default function initEditor(dispatch, getState) {
 
     onZoomIn: updateAction,
     onZoomOut: updateAction,
+    onZoomChanged: updateAction,
+
+    onShowMacromoleculesErrorMessage: (payload) =>
+      dispatch(openInfoModalWithCustomMessage(payload)),
   };
 }

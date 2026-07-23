@@ -20,9 +20,10 @@ import {
   fromAtomsAttrs,
   FunctionalGroup,
   KetcherLogger,
+  CoordinateTransformation,
 } from 'ketcher-core';
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 
 class RGroupAtomTool implements Tool {
   private readonly editor: Editor;
@@ -61,7 +62,13 @@ class RGroupAtomTool implements Tool {
         functionalGroups,
         ci.id,
       );
-
+      const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
+        molecule,
+        ci.id,
+      );
+      if (isAtomSuperatomLeavingGroup) {
+        return;
+      }
       if (atomId !== null) {
         atomResult.push(atomId);
       }
@@ -78,14 +85,20 @@ class RGroupAtomTool implements Tool {
           result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result });
-      return;
+      if (result.length > 0) {
+        this.editor.event.removeFG.dispatch({ fgIds: result });
+        return;
+      }
     }
 
     if (!ci) {
       //  ci.type == 'Canvas'
       this.editor.hover(null);
-      propsDialog(this.editor, null, rnd.page2obj(event));
+      propsDialog(
+        this.editor,
+        null,
+        CoordinateTransformation.pageToModel(event, rnd),
+      );
       return true;
     } else if (ci.map === 'atoms') {
       const struct = this.editor.render.ctab.molecule;
@@ -118,7 +131,7 @@ function propsDialog(editor, id, pos) {
   Promise.resolve(res)
     .then((elem) => {
       // TODO review: using Atom.attrlist as a source of default property values
-      elem = Object.assign({}, Atom.attrlist, elem);
+      elem = { ...Atom.attrlist, ...(elem || {}) };
 
       if (!id && id !== 0 && elem.rglabel) {
         editor.update(fromAtomAddition(editor.render.ctab, pos, elem));

@@ -1,6 +1,5 @@
-import { Peptide } from 'domain/entities/Peptide';
 import { peptideMonomerItem } from '../../mock-data';
-import { Vec2 } from 'domain/entities';
+import { Vec2, Peptide } from 'domain/entities';
 
 describe('Peptide', () => {
   it('should store its position and change it properly', () => {

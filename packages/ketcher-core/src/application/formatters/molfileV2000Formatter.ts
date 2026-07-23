@@ -14,18 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializer } from 'domain/serializers';
-import { Struct } from 'domain/entities';
-import { StructFormatter } from './structFormatter.types';
+import type { MolSerializer } from 'domain/serializers/mol/molSerializer';
+import type { Struct } from 'domain/entities/struct';
+import type { StructFormatter } from './structFormatter.types';
 
 export class MolfileV2000Formatter implements StructFormatter {
-  #molSerializer: MolSerializer;
+  readonly #molSerializer: MolSerializer;
 
   constructor(molSerializer: MolSerializer) {
     this.#molSerializer = molSerializer;
   }
 
-  async getStructureFromStructAsync(struct: Struct): Promise<string> {
+  async getStringFromStructureAsync(struct: Struct): Promise<string> {
     const stringifiedMolfile = this.#molSerializer.serialize(struct);
     return stringifiedMolfile;
   }

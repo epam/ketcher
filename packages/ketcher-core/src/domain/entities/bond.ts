@@ -16,15 +16,14 @@
 
 import { Atom } from './atom';
 import { Pile } from './pile';
-import { Struct } from './struct';
+import type { Struct } from './struct';
 import { Vec2 } from './vec2';
-
-enum CIP {
-  E = 'E',
-  Z = 'Z',
-  M = 'M',
-  P = 'P',
-}
+import {
+  type initiallySelectedType,
+  BaseMicromoleculeEntity,
+} from 'domain/entities/BaseMicromoleculeEntity';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { BondCIP } from 'domain/entities/types';
 
 export interface BondAttributes {
   reactingCenterStatus?: number | null;
@@ -35,12 +34,17 @@ export interface BondAttributes {
   type: number;
   end: number;
   begin: number;
-  cip?: CIP | null;
+  cip?: BondCIP | null;
   isPreview?: boolean;
+  initiallySelected?: initiallySelectedType;
+  beginSuperatomAttachmentPointNumber?: number;
+  endSuperatomAttachmentPointNumber?: number;
+  beginSgroup?: SGroup;
+  endSgroup?: SGroup;
 }
 
-export class Bond {
-  static PATTERN = {
+export class Bond extends BaseMicromoleculeEntity {
+  static readonly PATTERN = {
     TYPE: {
       SINGLE: 1,
       DOUBLE: 2,
@@ -79,7 +83,7 @@ export class Bond {
     },
   };
 
-  static attrlist = {
+  static readonly attrlist = {
     type: Bond.PATTERN.TYPE.SINGLE,
     stereo: Bond.PATTERN.STEREO.NONE,
     topology: Bond.PATTERN.TOPOLOGY.EITHER,
@@ -92,25 +96,30 @@ export class Bond {
   end: number;
   readonly type: number;
   readonly xxx: string;
-  readonly stereo: number;
+  stereo: number;
   readonly topology: number | null;
   readonly reactingCenterStatus: number | null;
   customQuery: string | null;
   len: number;
   sb: number;
   sa: number;
-  cip?: CIP | null;
+  cip?: BondCIP | null;
   hb1?: number;
   hb2?: number;
   angle: number;
   center: Vec2;
   isPreview: boolean;
+  beginSuperatomAttachmentPointNumber?: number;
+  endSuperatomAttachmentPointNumber?: number;
+  beginSgroup?: SGroup;
+  endSgroup?: SGroup;
 
   constructor(attributes: BondAttributes) {
+    super(attributes.initiallySelected);
     this.begin = attributes.begin;
     this.end = attributes.end;
     this.type = attributes.type;
-    this.xxx = attributes.xxx || '';
+    this.xxx = attributes.xxx ?? '';
     this.stereo = Bond.PATTERN.STEREO.NONE;
     this.topology = Bond.PATTERN.TOPOLOGY.EITHER;
     this.customQuery = null;
@@ -121,6 +130,10 @@ export class Bond {
     this.sa = 0;
     this.angle = 0;
     this.isPreview = false;
+    this.beginSuperatomAttachmentPointNumber =
+      attributes.beginSuperatomAttachmentPointNumber;
+    this.endSuperatomAttachmentPointNumber =
+      attributes.endSuperatomAttachmentPointNumber;
 
     if (attributes.stereo) this.stereo = attributes.stereo;
     if (attributes.topology) this.topology = attributes.topology;
@@ -261,6 +274,22 @@ export class Bond {
     }
   }
 
+  isQuery(): boolean {
+    const TYPES = Bond.PATTERN.TYPE;
+    const QUERY_BOND_TYPES = [
+      TYPES.ANY,
+      TYPES.SINGLE_OR_DOUBLE,
+      TYPES.SINGLE_OR_AROMATIC,
+      TYPES.DOUBLE_OR_AROMATIC,
+      TYPES.AROMATIC,
+    ];
+    return (
+      this.customQuery !== null ||
+      QUERY_BOND_TYPES.includes(this.type) ||
+      (TYPES.SINGLE === this.type && this.stereo === Bond.PATTERN.STEREO.EITHER)
+    );
+  }
+
   hasRxnProps(): boolean {
     return !!this.reactingCenterStatus;
   }
@@ -288,8 +317,66 @@ export class Bond {
 
   getAttachedSGroups(struct: Struct) {
     const sGroupsWithBeginAtom =
-      struct.atoms.get(this.begin)?.sgs || new Pile();
-    const sGroupsWithEndAtom = struct.atoms.get(this.end)?.sgs || new Pile();
+      struct.atoms.get(this.begin)?.sgs ?? new Pile();
+    const sGroupsWithEndAtom = struct.atoms.get(this.end)?.sgs ?? new Pile();
     return sGroupsWithBeginAtom?.intersection(sGroupsWithEndAtom);
+  }
+
+  isExternalBondBetweenMonomers(struct: Struct) {
+    if (!struct.isBondFromMacromolecule(this)) {
+      return false;
+    }
+
+    const sGroup1 = struct.getGroupFromAtomId(this.begin);
+    const sGroup2 = struct.getGroupFromAtomId(this.end);
+
+    if (!sGroup1 || !sGroup2) {
+      return false;
+    }
+
+    return sGroup1 !== sGroup2;
+  }
+
+  public static isBondToHiddenLeavingGroup(
+    struct: Struct,
+    bond: Bond,
+    includeAtomsInCollapsedSgroups = false,
+  ) {
+    const beginSuperatomAttachmentPoint =
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);
+    const endSuperatomAttachmentPoint =
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.end);
+
+    return (
+      (beginSuperatomAttachmentPoint &&
+        Atom.isHiddenLeavingGroupAtom(
+          struct,
+          bond.begin,
+          false,
+          includeAtomsInCollapsedSgroups,
+        ) &&
+        bond.end === beginSuperatomAttachmentPoint.atomId) ||
+      (endSuperatomAttachmentPoint &&
+        Atom.isHiddenLeavingGroupAtom(
+          struct,
+          bond.end,
+          false,
+          includeAtomsInCollapsedSgroups,
+        ) &&
+        bond.begin === endSuperatomAttachmentPoint.atomId)
+    );
+  }
+
+  public static isBondToExpandedMonomer(struct: Struct, bond: Bond) {
+    return [...struct.sgroups.values()].some((sgroup) => {
+      return (
+        ((sgroup.atoms.includes(bond.begin) &&
+          !sgroup.atoms.includes(bond.end)) ||
+          (sgroup.atoms.includes(bond.end) &&
+            !sgroup.atoms.includes(bond.begin))) &&
+        sgroup.isExpanded() &&
+        sgroup.isMonomer
+      );
+    });
   }
 }

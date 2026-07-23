@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 @import '../../../../../../../style/variables.less';
+@import '../../../../../../../style/mixins.less';
 
 .headerContent {
   display: flex;
@@ -30,15 +31,15 @@
     color: @color-icon-active;
     padding: 0;
     font-size: 0;
-  
+
     input[type='file'] {
       display: none;
     }
-  
+
     &:hover {
       color: @color-icon-hover;
     }
-    
+
     &:disabled {
       color: @color-icon-disabled;
     }
@@ -54,7 +55,7 @@
   }
 
   ul {
-    > li {
+    >li {
       padding: 10px 16px;
     }
   }
@@ -73,8 +74,9 @@
       top: 0;
     }
 
-    span > div,
-    select, input {
+    span>div,
+    select,
+    input {
       width: 120px;
       margin-right: auto;
     }
@@ -92,23 +94,29 @@
   overflow: hidden;
 
   fieldset[disabled] {
-    label > span {
+    label>span {
       opacity: 0.3;
     }
 
-    label > div {
+    label>div {
       opacity: 0.6;
     }
   }
 
-   > header{
-      flex-shrink: 0;
-      box-shadow: 0 2px 4px 0 @color-accordion-shadow;
-      z-index: 10; 
-   }
+  >header {
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px 0 @color-accordion-shadow;
+    z-index: 10;
+  }
 
-   > footer {
-      box-shadow: 0 -2px 4px 0 @color-accordion-shadow;
-      z-index: 10;
-   }
+  >footer {
+    box-shadow: 0 -2px 4px 0 @color-accordion-shadow;
+    z-index: 10;
+  }
+}
+
+.acsStyleButton {
+  margin-right: auto;
+
+  .button-primary();
 }

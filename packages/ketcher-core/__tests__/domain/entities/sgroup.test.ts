@@ -1,8 +1,8 @@
-import { ReStruct } from 'application/render/restruct';
+import type { ReStruct } from 'application/render/restruct';
 import { restruct } from '../../mock-data';
 import { SGroup } from 'domain/entities';
 import { mock } from 'jest-mock-extended';
-import { Render } from 'src';
+import type { Render } from 'src';
 
 describe('sgroup should calculate S-Group bounding box correctly', () => {
   it('should calculate S-Group attachments points bounding box', () => {
@@ -14,7 +14,7 @@ describe('sgroup should calculate S-Group bounding box correctly', () => {
       render.ctab,
       'getRGroupAttachmentPointsVBoxByAtomIds',
     );
-    SGroup.bracketPos(sGroup, restruct.molecule, {}, undefined, render);
+    SGroup.bracketPos(sGroup, restruct.molecule, undefined, render);
     expect(attachmentsSpy).toHaveBeenCalled();
   });
 });

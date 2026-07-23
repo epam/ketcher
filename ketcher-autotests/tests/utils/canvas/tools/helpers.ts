@@ -1,66 +1,13 @@
+/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { pressButton, selectOption } from '@utils';
-import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
-import {
-  AtomButton,
-  BondIds,
-  LeftPanelButton,
-  RingButton,
-  TopPanelButton,
-} from '@utils/selectors';
-
-/**
- * Selects an atom from Atom toolbar
- * Usage: await selectAtom(AtomButton.Carbon, page)
- **/
-export async function selectAtom(type: AtomButton, page: Page) {
-  await selectButtonByTitle(type, page);
-}
-
-/**
- *  Select button from left panel
- * Usage: await selectTool(LeftPanelButton.HandTool, page)
- */
-export async function selectTool(type: LeftPanelButton, page: Page) {
-  await selectButtonByTitle(type, page);
-}
-
-/**
- * Select button from top panel
- * Usage: await selectAction(TopPanelButton.Open, page)
- */
-export async function selectAction(type: TopPanelButton, page: Page) {
-  await selectButtonByTitle(type, page);
-}
-
-/**
- * Usage: await selectAtomInToolbar(AtomButton.Carbon, page)
- * Select an atom from Atom toolbar
- * **/
-export async function selectAtomInToolbar(atomName: AtomButton, page: Page) {
-  const atomButton = page.locator(`button[title*="${atomName}"]`);
-  await atomButton.click();
-}
-
-export async function selectSingleBondTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Single Bond"]`);
-  await bondToolButton.click();
-}
-
-export async function selectSnakeBondTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Snake mode"]`);
-  await bondToolButton.click();
-}
-
-export async function selectEraseTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Erase"]`);
-  await bondToolButton.click();
-}
-
-export async function selectRectangleSelectionTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Select Rectangle"]`);
-  await bondToolButton.click();
-}
+import { takeEditorScreenshot } from '../helpers';
+import { waitForRender } from '../../common/loaders/waitForRender';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 
 export async function selectRectangleArea(
   page: Page,
@@ -69,44 +16,73 @@ export async function selectRectangleArea(
   endX: number,
   endY: number,
 ) {
-  await selectRectangleSelectionTool(page);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await page.mouse.move(startX, startY);
   await page.mouse.down();
   await page.mouse.move(endX, endY);
   await page.mouse.up();
 }
 
-export async function selectTopPanelButton(
-  buttonName: TopPanelButton,
+export async function saveStructureWithReaction(
   page: Page,
+  format?: MoleculesFileFormatType,
 ) {
-  const topPanelButton = page.locator(`button[title*="${buttonName}"]`);
-  await topPanelButton.click();
-}
-
-export async function selectRingButton(buttonName: RingButton, page: Page) {
-  const bottomPanelButton = page.locator(`button[title*="${buttonName}"]`);
-  await bottomPanelButton.click();
-}
-
-export async function selectLeftPanelButton(
-  buttonName: LeftPanelButton,
-  page: Page,
-) {
-  const leftPanelButton = page.locator(`button[title*="${buttonName}"]`);
-  await leftPanelButton.click();
-}
-
-export async function selectButtonById(buttonId: BondIds | 'OK', page: Page) {
-  const element = page.getByTestId(buttonId);
-  await element.click();
-}
-
-export async function saveStructureWithReaction(page: Page, format?: string) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await CommonTopLeftToolbar(page).saveFile();
   if (format) {
-    await pressButton(page, 'MDL Rxnfile V2000');
-    await selectOption(page, format);
+    await SaveStructureDialog(page).chooseFileFormat(format);
   }
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await SaveStructureDialog(page).save();
+}
+
+export async function selectWithLasso(
+  page: Page,
+  startX: number,
+  startY: number,
+  coords: { x: number; y: number }[],
+) {
+  await page.mouse.move(startX, startY);
+  await page.mouse.down();
+  for (const coord of coords) {
+    await page.mouse.move(coord.x, coord.y);
+  }
+  await waitForRender(page, async () => {
+    await page.mouse.up();
+  });
+}
+
+export async function selectAndDeselectWithLasso(
+  page: Page,
+  startX: number,
+  startY: number,
+  coords: { x: number; y: number }[],
+) {
+  const steps = 14;
+  const dx = 1;
+  const dy = 1;
+
+  await page.mouse.move(startX, startY);
+  await page.mouse.down();
+  for (const p of coords) {
+    await page.mouse.move(p.x, p.y, { steps });
+  }
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.move(startX + dx, startY + dy, { steps });
+  for (const p of coords) {
+    await page.mouse.move(p.x + dx, p.y + dy, { steps });
+  }
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.up();
+}
+
+export async function saveToTemplates(page: Page, templateName: string) {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).saveToTemplates();
+  await TemplateEditDialog(page).setMoleculeName(templateName);
+  await TemplateEditDialog(page).save();
 }

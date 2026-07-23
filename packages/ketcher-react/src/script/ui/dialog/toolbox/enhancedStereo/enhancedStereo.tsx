@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { Field } from '../../../component/form/form/form';
-import { StereoLabel, Struct } from 'ketcher-core';
+import Form, { type FormState, Field } from '../../../component/form/form/form';
+import type { ComponentType, FC } from 'react';
+import { type Struct, StereoLabel } from 'ketcher-core';
 
 import { Dialog } from '../../../views/components';
-import { FC } from 'react';
 import classes from './enhancedStereo.module.less';
 import { connect } from 'react-redux';
 import { range } from 'lodash';
@@ -29,11 +29,7 @@ interface EnhancedStereoResult {
   type: StereoLabel;
 }
 
-interface EnhancedStereoFormState {
-  result: EnhancedStereoResult;
-  valid: boolean;
-  errors: string[];
-}
+type EnhancedStereoFormState = FormState<EnhancedStereoResult>;
 
 interface EnhancedStereoProps {
   className: string;
@@ -44,7 +40,7 @@ interface EnhancedStereoProps {
 
 interface EnhancedStereoCallProps {
   onCancel: () => void;
-  onOk: (res: any) => void;
+  onOk: (res: unknown) => void;
 }
 
 type Props = EnhancedStereoProps & EnhancedStereoCallProps;
@@ -99,6 +95,7 @@ const EnhancedStereo: FC<Props> = (props) => {
               type="radio"
               value={StereoLabel.Abs}
               checked={result.type === StereoLabel.Abs}
+              data-testid="abs-radio"
             />
             ABS
           </label>
@@ -111,6 +108,7 @@ const EnhancedStereo: FC<Props> = (props) => {
                 type="radio"
                 value={StereoLabel.And}
                 checked={result.type === StereoLabel.And}
+                data-testid="add-to-and-group-radio"
               />
               Add to AND
               <Field
@@ -118,6 +116,7 @@ const EnhancedStereo: FC<Props> = (props) => {
                 schema={range(1, maxAnd + 1)}
                 type="text"
                 className={classes.labelGroupSelect}
+                data-testid="add-to-and-group"
               />
               Group
             </label>
@@ -131,6 +130,7 @@ const EnhancedStereo: FC<Props> = (props) => {
                 type="radio"
                 value={StereoLabel.Or}
                 checked={result.type === StereoLabel.Or}
+                data-testid="add-to-or-group-radio"
               />
               Add to OR
               <Field
@@ -138,6 +138,7 @@ const EnhancedStereo: FC<Props> = (props) => {
                 schema={range(1, maxOr + 1)}
                 type="text"
                 className={classes.labelGroupSelect}
+                data-testid="add-to-or-group"
               />
               Group
             </label>
@@ -150,6 +151,7 @@ const EnhancedStereo: FC<Props> = (props) => {
               type="radio"
               value={`${StereoLabel.And}${maxAnd + 1}`}
               checked={result.type === `${StereoLabel.And}${maxAnd + 1}`}
+              data-testid="create-new-and-group-radio"
             />
             Create new AND Group
           </label>
@@ -161,6 +163,7 @@ const EnhancedStereo: FC<Props> = (props) => {
               type="radio"
               value={`${StereoLabel.Or}${maxOr + 1}`}
               checked={result.type === `${StereoLabel.Or}${maxOr + 1}`}
+              data-testid="create-new-or-group-radio"
             />
             Create new OR Group
           </label>
@@ -182,17 +185,25 @@ function maxOfAnds(stereLabels): number {
   const numbers = stereLabels.map((label) => {
     return label.match(/&/) ? +label.match(/\d+/)?.join() : 0;
   });
-  return Math.max(...numbers);
+  return numbers.length === 0 ? 0 : Math.max(...numbers);
 }
 
 function maxOfOrs(stereLabels): number {
   const numbers = stereLabels.map((label) => {
     return label.match(/or/) ? +label.match(/\d+/)?.join() : 0;
   });
-  return Math.max(...numbers);
+  return numbers.length === 0 ? 0 : Math.max(...numbers);
 }
 
-export default connect((state) => ({
-  formState: (state as any).modal.form || { result: {}, valid: false },
-  struct: (state as any).editor.struct(),
-}))(EnhancedStereo);
+interface State {
+  modal: { form: EnhancedStereoFormState };
+  editor: { struct: () => Struct };
+}
+
+// Workaround: @types/react version conflict with connect()
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const EnhancedStereoAny = EnhancedStereo as any;
+export default connect((state: State) => ({
+  formState: state.modal.form || { result: {}, valid: false },
+  struct: state.editor.struct(),
+}))(EnhancedStereoAny) as ComponentType<EnhancedStereoCallProps>;

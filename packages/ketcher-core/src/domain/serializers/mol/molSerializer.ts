@@ -14,14 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializerOptions } from './mol.types';
+import type { MolSerializerOptions } from './mol.types';
 import { Molfile } from './molfile';
-import { Serializer } from '../serializers.types';
-import { Struct } from 'domain/entities';
+import type { Serializer } from '../serializers.types';
+import type { Struct } from 'domain/entities/struct';
 import { KetcherLogger } from 'utilities';
+import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 
 export class MolSerializer implements Serializer<Struct> {
-  static DefaultOptions: MolSerializerOptions = {
+  static readonly DefaultOptions: MolSerializerOptions = {
     badHeaderRecover: false,
     ignoreErrors: false,
     noRgroups: false,
@@ -75,13 +76,14 @@ export class MolSerializer implements Serializer<Struct> {
     }
   }
 
-  serialize(struct: Struct): string {
+  serialize(_struct: Struct): string {
+    const struct = KetSerializer.removeLeavingGroupsFromConnectedAtoms(_struct);
+
     return new Molfile().saveMolecule(
       struct,
       this.options.ignoreErrors,
       this.options.noRgroups,
       this.options.preserveIndigoDesc,
-      this.options.ignoreChiralFlag,
     );
   }
 }

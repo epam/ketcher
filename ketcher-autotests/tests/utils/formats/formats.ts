@@ -1,8 +1,73 @@
-import { Page } from '@playwright/test';
-import { MolfileFormat } from 'ketcher-core';
+/* eslint-disable no-magic-numbers */
+import { Page, expect } from '@playwright/test';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  MolfileFormat,
+  Struct,
+  SupportedModes,
+  UpdateMonomersLibraryParams,
+} from 'ketcher-core';
+
+export enum MolFileFormat {
+  v2000 = 'v2000',
+  v3000 = 'v3000',
+}
+
+export enum RxnFileFormat {
+  v2000 = 'v2000',
+  v3000 = 'v3000',
+}
+
+export enum SdfFileFormat {
+  v2000 = 'v2000',
+  v3000 = 'v3000',
+}
+
+export enum RdfFileFormat {
+  v2000 = 'v2000',
+  v3000 = 'v3000',
+}
+
+export enum SequenceFileFormat {
+  oneLetter = '1-letter',
+  threeLetter = '3-letter',
+}
+
+export declare type FileFormat =
+  | MolFileFormat
+  | RxnFileFormat
+  | SdfFileFormat
+  | RdfFileFormat
+  | SequenceFileFormat;
 
 export async function getKet(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getKet());
+}
+
+export async function getFasta(page: Page): Promise<string> {
+  return await page.evaluate(() => window.ketcher.getFasta());
+}
+
+export async function getIdt(page: Page): Promise<string> {
+  return await page.evaluate(() => window.ketcher.getIdt());
+}
+
+export async function getSequence(
+  page: Page,
+  fileFormat?: SequenceFileFormat,
+): Promise<string> {
+  return await page.evaluate(
+    (fileFormat) => window.ketcher.getSequence(fileFormat),
+    fileFormat,
+  );
+}
+
+export async function setZoom(page: Page, value: number) {
+  return await page.evaluate((value) => window.ketcher.setZoom(value), value);
+}
+
+export async function setMode(page: Page, mode: SupportedModes) {
+  return await page.evaluate((mode) => window.ketcher.setMode(mode), mode);
 }
 
 export async function getCml(page: Page): Promise<string> {
@@ -53,6 +118,16 @@ export async function getRxn(
   );
 }
 
+export async function getRdf(
+  page: Page,
+  fileFormat?: MolfileFormat,
+): Promise<string> {
+  return await page.evaluate(
+    (fileFormat) => window.ketcher.getRdf(fileFormat),
+    fileFormat,
+  );
+}
+
 export async function getSmarts(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getSmarts());
 }
@@ -70,10 +145,62 @@ export async function getSdf(
 export async function setMolecule(
   page: Page,
   structStr: string,
+  position?: { x: number; y: number },
+): Promise<void> {
+  await page.waitForLoadState('domcontentloaded');
+  await page.waitForFunction(
+    () => window.ketcher && typeof window.ketcher.setMolecule === 'function',
+  );
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      return await page.evaluate(
+        ({ structStr, position }) =>
+          window.ketcher.setMolecule(structStr, { position }),
+        { structStr, position },
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      if (
+        attempt === 0 &&
+        errorMessage.includes('Execution context was destroyed')
+      ) {
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForFunction(
+          () =>
+            window.ketcher && typeof window.ketcher.setMolecule === 'function',
+        );
+        continue;
+      }
+
+      throw error;
+    }
+  }
+}
+
+export async function updateMonomersLibrary(
+  page: Page,
+  rawMonomersData: string | JSON,
+  params?: UpdateMonomersLibraryParams,
 ): Promise<void> {
   return await page.evaluate(
-    (structStr) => window.ketcher.setMolecule(structStr),
-    structStr,
+    ({ rawMonomersData, params }) =>
+      window.ketcher.updateMonomersLibrary(rawMonomersData, params),
+    { rawMonomersData, params },
+  );
+}
+
+export async function replaceMonomersLibrary(
+  page: Page,
+  rawMonomersData: string | JSON,
+  params?: UpdateMonomersLibraryParams,
+): Promise<void> {
+  return await page.evaluate(
+    ({ rawMonomersData, params }) =>
+      window.ketcher.replaceMonomersLibrary(rawMonomersData, params),
+    { rawMonomersData, params },
   );
 }
 
@@ -82,8 +209,26 @@ export async function addFragment(
   structStr: string,
 ): Promise<void> {
   return await page.evaluate(
-    (structStr) => window.ketcher.setMolecule(structStr),
+    (structStr) => window.ketcher.addFragment(structStr),
     structStr,
+  );
+}
+
+export async function layout(page: Page): Promise<void> {
+  return await page.evaluate(() => window.ketcher.layout());
+}
+
+export async function recognize(
+  page: Page,
+  image: Blob,
+  version?: string,
+): Promise<Struct> {
+  return await page.evaluate(
+    (params: { img: Blob; ver?: string }) => {
+      const { img, ver } = params;
+      return window.ketcher.recognize(img, ver);
+    },
+    { img: image, ver: version },
   );
 }
 
@@ -91,6 +236,59 @@ export async function enableDearomatizeOnLoad(page: Page): Promise<void> {
   return await page.evaluate(() =>
     window.ketcher.setSettings({ 'general.dearomatize-on-load': 'true' }),
   );
+}
+
+export async function enableViewOnlyMode(page: Page): Promise<void> {
+  await page.evaluate(() =>
+    window.ketcher.editor.options({ viewOnlyMode: true }),
+  );
+
+  await waitForViewOnlyModeState(page, true);
+}
+
+export async function disableViewOnlyMode(page: Page): Promise<void> {
+  await page.evaluate(() =>
+    window.ketcher.editor.options({ viewOnlyMode: false }),
+  );
+
+  await waitForViewOnlyModeState(page, false);
+}
+
+export async function enableViewOnlyModeBySetOptions(
+  page: Page,
+): Promise<void> {
+  await page.evaluate(() =>
+    window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: true })),
+  );
+
+  await waitForViewOnlyModeState(page, true);
+}
+
+export async function disableViewOnlyModeBySetOptions(
+  page: Page,
+): Promise<void> {
+  await page.evaluate(() =>
+    window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: false })),
+  );
+
+  await waitForViewOnlyModeState(page, false);
+}
+
+/*
+ * Waits until View Only Mode is in the specified state by checking the state of the "Erase" button.
+ */
+export async function waitForViewOnlyModeState(
+  page: Page,
+  isEnabled: boolean,
+  timeout = 100000,
+): Promise<void> {
+  const eraseButton = CommonLeftToolbar(page).eraseButton;
+
+  if (isEnabled) {
+    await expect(eraseButton).toBeDisabled({ timeout });
+  } else {
+    await expect(eraseButton).toBeEnabled({ timeout });
+  }
 }
 
 export async function disableQueryElements(page: Page): Promise<void> {

@@ -1,0 +1,353 @@
+/* eslint-disable no-magic-numbers */
+import { test } from '@fixtures';
+import {
+  clickInTheMiddleOfTheCanvas,
+  takeEditorScreenshot,
+  openFileAndAddToCanvas,
+  waitForPageInit,
+  clickOnCanvas,
+  MolFileFormat,
+  keyboardPressOnCanvas,
+} from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import {
+  contractAbbreviation,
+  expandAbbreviation,
+  removeAbbreviation,
+} from '@utils/sgroup/helpers';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
+
+test.describe('Superatom S-Group tool', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test('Brackets rendering for atom', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1537
+      Description: The brackets are rendered correctly around Atom
+    */
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
+    await LeftToolbar(page).sGroup();
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Superatom,
+      Name: 'Test@!#$%12345',
+    });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Brackets rendering for bond', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1537
+      Description: The brackets are rendered correctly around Bond
+    */
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
+    await LeftToolbar(page).sGroup();
+    await getBondLocator(page, { bondId: 9 }).click({ force: true });
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Superatom,
+      Name: 'Test@!#$%12345',
+    });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Brackets rendering for whole structure', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1537
+      Description: The brackets are rendered correctly around whole structure
+    */
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Superatom,
+      Name: 'Test@!#$%12345',
+    });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Edit Superatom S-Group', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1538
+      Description: User is able to edit the Superatom S-group.
+    */
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
+    await LeftToolbar(page).sGroup();
+    await clickOnCanvas(page, 570, 380, {
+      from: 'pageTopLeft',
+    });
+    await SGroupPropertiesDialog(page).setNameValue('Test@!#$%12345');
+    await SGroupPropertiesDialog(page).apply();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Add atom on Chain with Superatom S-Group', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1539
+      Description: User is unable to add atom on structure with Superatom S-group.
+      EDIT ABBREVIATION modal appears.
+    */
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
+    await RightToolbar(page).clickAtom(Atom.Oxygen);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Delete atom on Chain with Superatom S-Group', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1539
+      Description: User is unable to delete atom on structure with Superatom S-group.
+      EDIT ABBREVIATION modal appears.
+    */
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
+    await CommonLeftToolbar(page).erase();
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Delete whole Chain with Superatom S-Group and Undo/Redo', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-1539
+      Description: User is able to delete whole Chain with Superatom S-Group and undo/redo.
+    */
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await selectAllStructuresOnCanvas(page);
+    await RotationTool(page).delete();
+    await takeEditorScreenshot(page);
+
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Add Template on Chain with Superatom S-Group', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1539
+      Description: User is unable to add Template on structure with Superatom S-group.
+      EDIT ABBREVIATION modal appears.
+    */
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Add R-Group Label on Chain with Superatom S-Group', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-1539
+      Description: User is unable to add R-Group Label on structure with SRU polymer S-group.
+      EDIT ABBREVIATION modal appears.
+    */
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that hotkeys for atoms working after Remove Abbreviation on Chain with Superatom S-Group', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-12989
+      Description: User is able select atom by hotkey after Remove Abbreviation on Chain with Superatom S-Group.
+    */
+    const atomToolbar = RightToolbar(page);
+
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
+    await atomToolbar.clickAtom(Atom.Nitrogen);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
+    await EditAbbreviationDialog(page).removeAbbreviation();
+    await keyboardPressOnCanvas(page, 'o');
+    await clickInTheMiddleOfTheCanvas(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Copy/Paste structure with Superatom S-Group', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1540
+      Description: User is able to copy and paste structure with Superatom S-group.
+    */
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
+    await copyAndPaste(page);
+    await clickOnCanvas(page, 600, 600, {
+      from: 'pageTopLeft',
+    });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Cut/Paste structure with Superatom S-Group', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1540
+      Description: User is able to cut and paste structure with Superatom S-group.
+    */
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
+    await cutAndPaste(page);
+    await clickInTheMiddleOfTheCanvas(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Save/Open Superatom S-Group', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1541
+      Description: User is able to save and open structure with Superatom S-group.
+    */
+    await openFileAndAddToCanvas(page, 'KET/superatom-all-chain.ket');
+
+    await verifyFileExport(
+      page,
+      'Molfiles-V2000/superatom-all-chain-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v2000,
+      [1],
+    );
+  });
+
+  test('Contract/expand/remove abbreviation on whole Chain structure with Superatom S-group', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-12990
+      Description: User is able to contract/expand/remove abbreviation on structure with Superatom S-group.
+    */
+    await openFileAndAddToCanvas(page, 'KET/superatom-all-chain.ket');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await contractAbbreviation(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 3 }),
+    );
+    await takeEditorScreenshot(page);
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Test@!#$%12345' }),
+    );
+    await takeEditorScreenshot(page);
+    await removeAbbreviation(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 3 }),
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Atom Contract/expand/remove abbreviation on Chain structure with Superatom S-group', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-12991
+      Description: User is able to contract/expand/remove abbreviation on atom with Superatom S-group.
+    */
+    await openFileAndAddToCanvas(page, 'KET/superatom-one-atom-on-chain.ket');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await contractAbbreviation(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 3 }),
+    );
+    await takeEditorScreenshot(page);
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Test@!#$%12345' }),
+    );
+    await takeEditorScreenshot(page);
+
+    await removeAbbreviation(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 3 }),
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Add S-Group properties to structure and atom', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3949
+      Description: S-Group added to the structure and represent in .ket file.
+      The test is currently not functioning correctly as the bug has not been fixed.
+    */
+    await openFileAndAddToCanvas(page, 'KET/cyclopropane-and-h2o.ket');
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Superatom,
+      Name: 'Test@!#$%12345',
+    });
+    await verifyFileExport(
+      page,
+      'KET/cyclopropane-and-h2o-superatom-expected.ket',
+      FileType.KET,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Add S-Group Query component properties to structure and atom', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3949
+      Description: S-Group added to the structure and represent in .ket file.
+      The test is currently not functioning correctly as the bug has not been fixed.
+    */
+    await openFileAndAddToCanvas(page, 'KET/cyclopropane-and-h2o.ket');
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.QueryComponent,
+    });
+
+    await verifyFileExport(
+      page,
+      'KET/cyclopropane-and-h2o-query-expected.ket',
+      FileType.KET,
+    );
+    await takeEditorScreenshot(page);
+  });
+});

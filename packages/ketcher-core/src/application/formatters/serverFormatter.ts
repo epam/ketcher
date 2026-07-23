@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
+import type {
   ConvertData,
   ConvertResult,
   LayoutData,
@@ -22,10 +22,11 @@ import {
   StructService,
   StructServiceOptions,
 } from 'domain/services';
-import { StructFormatter, SupportedFormat } from './structFormatter.types';
+import { type StructFormatter, SupportedFormat } from './structFormatter.types';
 
-import { KetSerializer } from 'domain/serializers';
-import { Struct } from 'domain/entities';
+import type { KetSerializer } from 'domain/serializers/ket/ketSerializer';
+import type { Struct } from 'domain/entities/struct';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { getPropertiesByFormat } from './formatProperties';
 import { KetcherLogger } from 'utilities';
 import { SmilesFormatter } from './smilesFormatter';
@@ -41,10 +42,10 @@ type LayoutPromise = (
 ) => Promise<LayoutResult>;
 
 export class ServerFormatter implements StructFormatter {
-  #structService: StructService;
-  #ketSerializer: KetSerializer;
-  #format: SupportedFormat;
-  #options?: StructServiceOptions;
+  readonly #structService: StructService;
+  readonly #ketSerializer: KetSerializer;
+  readonly #format: SupportedFormat;
+  readonly #options?: StructServiceOptions;
 
   constructor(
     structService: StructService,
@@ -58,11 +59,17 @@ export class ServerFormatter implements StructFormatter {
     this.#options = options;
   }
 
-  async getStructureFromStructAsync(struct: Struct): Promise<string> {
+  async getStringFromStructureAsync(
+    struct: Struct,
+    drawingEntitiesManager?: DrawingEntitiesManager,
+  ): Promise<string> {
     const formatProperties = getPropertiesByFormat(this.#format);
 
     try {
-      const stringifiedStruct = this.#ketSerializer.serialize(struct);
+      const stringifiedStruct = this.#ketSerializer.serialize(
+        struct,
+        drawingEntitiesManager,
+      );
       const convertResult = await this.#structService.convert(
         {
           struct: stringifiedStruct,
@@ -72,14 +79,15 @@ export class ServerFormatter implements StructFormatter {
       );
 
       return convertResult.struct;
-    } catch (e: any) {
+    } catch (e: unknown) {
       let message;
-      if (e.message === 'Server is not compatible') {
+      if (e instanceof Error && e.message === 'Server is not compatible') {
         message = `${formatProperties.name} is not supported.`;
       } else {
-        message = `Convert error!\n${e.message || e}`;
+        const details = e instanceof Error ? e.message : String(e);
+        message = `Convert error!\n${details}`;
       }
-      KetcherLogger.error('serverFormatter.ts::getStructureFromStructAsync', e);
+      KetcherLogger.error('serverFormatter.ts::getStringFromStructureAsync', e);
       throw new Error(message);
     }
   }
@@ -133,13 +141,14 @@ export class ServerFormatter implements StructFormatter {
         parsedStruct.rescale();
       }
       return parsedStruct;
-    } catch (e: any) {
-      if (e.message !== 'Server is not compatible') {
+    } catch (e: unknown) {
+      if (!(e instanceof Error) || e.message !== 'Server is not compatible') {
         KetcherLogger.error(
           'serverFormatter.ts::getStructureFromStringAsync',
           e,
         );
-        throw Error(`Convert error!\n${e.message || e}`);
+        const details = e instanceof Error ? e.message : String(e);
+        throw Error(`Convert error!\n${details}`);
       }
 
       const formatError =

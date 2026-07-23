@@ -1,10 +1,10 @@
 import {
+  type ReStruct,
+  type Action,
   FunctionalGroup,
   SGroup,
   fromSgroupDeletion,
   fromFragmentDeletion,
-  ReStruct,
-  Action,
 } from 'ketcher-core';
 
 export function deleteFunctionalGroups(

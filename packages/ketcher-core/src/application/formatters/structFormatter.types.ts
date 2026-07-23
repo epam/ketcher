@@ -14,12 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializerOptions } from 'domain/serializers';
-import { Struct } from 'domain/entities';
-import { StructServiceOptions } from 'domain/services';
+import type { MolSerializerOptions } from 'domain/serializers/mol/mol.types';
+import type { Struct } from 'domain/entities/struct';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { StructServiceOptions } from 'domain/services';
+import type { EditorSelection } from 'application/editor/editor.types';
 
 export interface StructFormatter {
-  getStructureFromStructAsync: (struct: Struct) => Promise<string>;
+  getStringFromStructureAsync: (
+    struct: Struct,
+    drawingEntitiesManager?: DrawingEntitiesManager,
+    selection?: EditorSelection,
+  ) => Promise<string>;
   getStructureFromStringAsync: (stringifiedStruct: string) => Promise<Struct>;
   parseMacromoleculeString?: (stringifiedStruct: string) => void;
 }
@@ -43,7 +49,16 @@ export enum SupportedFormat {
   binaryCdx = 'binaryCdx',
   sdf = 'sdf',
   sdfV3000 = 'sdfV3000',
+  fasta = 'fasta',
+  sequence = 'sequence',
+  sequence3Letter = 'sequence-3-letter',
+  idt = 'idt',
+  axoLabs = 'axoLabs',
+  helm = 'helm',
+  biln = 'biln',
   unknown = 'unknown',
+  rdf = 'rdf',
+  rdfV3000 = 'rdfV3000',
 }
 
 export type FormatterFactoryOptions = Partial<

@@ -1,0 +1,30 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    12.15,
+                    -7.925000000000001,
+                    0
+                ],
+                "isotope": 11
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 12.15,
+            "y": 6.925000000000001,
+            "z": 0
+        }
+    }
+}

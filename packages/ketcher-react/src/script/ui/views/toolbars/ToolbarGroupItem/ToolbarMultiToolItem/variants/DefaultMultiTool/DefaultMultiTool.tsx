@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MultiToolCallProps, MultiToolProps } from '../variants.types';
+import type { MultiToolCallProps, MultiToolProps } from '../variants.types';
 
-import { ActionButton, ActionButtonProps } from '../../../ActionButton';
+import { type ActionButtonProps, ActionButton } from '../../../ActionButton';
 import action from '../../../../../../action';
 import { getIconName } from 'components';
 

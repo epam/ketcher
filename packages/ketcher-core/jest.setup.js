@@ -1,0 +1,3 @@
+jest.mock('paper', () => {
+  return {};
+});

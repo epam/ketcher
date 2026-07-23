@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { filterFGLib } from '../../utils';
-import { Template } from './TemplateTable';
+import type { Template } from './TemplateTable';
 
 const SALTS_AND_SOLVENTS = 'Salts and Solvents';
 const batchDelay = 300;

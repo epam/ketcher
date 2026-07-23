@@ -1,0 +1,322 @@
+import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
+import type { D3SvgElementSelection } from 'application/render/types';
+import { Pool } from 'domain/entities/pool';
+import { Vec2 } from 'domain/entities/vec2';
+import { Coordinates } from 'application/editor/shared/coordinates';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import type { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
+import { PathBuilder } from 'application/render/pathBuilder';
+import { ARROW_HEAD_LENGHT, ARROW_HEAD_WIDTH } from 'application/render/draw';
+import { ReMultitailArrow } from 'application/render/restruct/remultitailArrow';
+
+const ARROW_STROKE_WIDTH = 2;
+const MULTITAIL_ARROW_TEST_ID = 'multitail-arrow';
+const RXN_ARROW_TEST_ID = 'rxn-arrow';
+
+export class MultitailArrowRenderer extends BaseRenderer {
+  private selectionElement:
+    | D3SvgElementSelection<SVGPathElement, void>
+    | undefined;
+
+  constructor(public arrow: MultitailArrow) {
+    super(arrow);
+    this.arrow.setRenderer(this);
+  }
+
+  public override get selectionPoints() {
+    return this.getReferencePositionsArray();
+  }
+
+  getReferencePositionsArray(): Array<Vec2> {
+    const { tails, ...positions } = this.getReferencePositions();
+    return Object.values(positions).concat(Array.from(tails.values()));
+  }
+
+  private getReferencePositions(): ReturnType<
+    MultitailArrow['getReferencePositions']
+  > {
+    const positions = this.arrow.getReferencePositions();
+    const tails = new Pool<Vec2>();
+    positions.tails.forEach((item, key) => {
+      tails.set(key, Coordinates.modelToCanvas(item));
+    });
+
+    return {
+      head: Coordinates.modelToCanvas(positions.head),
+      topTail: Coordinates.modelToCanvas(positions.topTail),
+      bottomTail: Coordinates.modelToCanvas(positions.bottomTail),
+      topSpine: Coordinates.modelToCanvas(positions.topSpine),
+      bottomSpine: Coordinates.modelToCanvas(positions.bottomSpine),
+      tails,
+    };
+  }
+
+  private getArrowPaths() {
+    const macroModeScale = provideEditorSettings().macroModeScale;
+    const pathBuilder = new PathBuilder();
+    const headPathBuilder = new PathBuilder();
+    const { topTail, topSpine, bottomSpine, head, tails } =
+      this.getReferencePositions();
+    const topTailOffsetX = topSpine.sub(topTail).x;
+    const headLineStartOffset = Math.min(
+      ReMultitailArrow.HEAD_LINE_START_OFFSET,
+      Math.max(0, head.x - topSpine.x),
+    );
+    const arrowStart = new Vec2(topSpine.x + headLineStartOffset, head.y);
+    const arrowLength = head.x - arrowStart.x;
+    const arrowHeadLength = ARROW_HEAD_LENGHT * macroModeScale;
+    const arrowHeadWidth = ARROW_HEAD_WIDTH * macroModeScale;
+
+    pathBuilder.addMultitailArrowBase(
+      topSpine.y,
+      bottomSpine.y,
+      topSpine.x,
+      topTailOffsetX,
+    );
+    headPathBuilder.addFilledTriangleArrowPathParts(
+      arrowStart,
+      arrowLength,
+      arrowHeadLength,
+      arrowHeadWidth,
+    );
+    tails.forEach((tail) => {
+      pathBuilder.addLine(tail, { x: topSpine.x, y: tail.y });
+    });
+
+    return {
+      arrowBody: pathBuilder.build(),
+      arrowHead: headPathBuilder.build(),
+    };
+  }
+
+  private getSelectionContour() {
+    const macroModeScale = provideEditorSettings().macroModeScale;
+    const offset = ReMultitailArrow.FRAME_OFFSET * macroModeScale;
+    const { topSpine, bottomSpine, topTail, bottomTail, head, tails } =
+      this.getReferencePositions();
+    const builder = new PathBuilder();
+    const tailsPoints = Array.from(tails.values()).sort((a, b) => a.y - b.y);
+
+    const start = topSpine.add(new Vec2(offset, offset));
+
+    builder
+      .addMovement(start)
+      .addLine(
+        topSpine.add(
+          new Vec2(offset, -offset + ReMultitailArrow.CUBIC_BEZIER_OFFSET),
+        ),
+      )
+      .addQuadraticBezierCurve(
+        topSpine.add(new Vec2(offset, -offset)),
+        topSpine.add(
+          new Vec2(offset - ReMultitailArrow.CUBIC_BEZIER_OFFSET, -offset),
+        ),
+      );
+    ReMultitailArrow.drawSingleLineHover(
+      builder,
+      offset,
+      topSpine,
+      topTail,
+      -1,
+      -1,
+    );
+    tailsPoints.forEach((tailPoint) => {
+      ReMultitailArrow.drawSingleLineHover(
+        builder,
+        offset,
+        new Vec2(topSpine.x, tailPoint.y),
+        tailPoint,
+        -1,
+        -1,
+      );
+    });
+    ReMultitailArrow.drawSingleLineHover(
+      builder,
+      offset,
+      bottomSpine,
+      bottomTail,
+      -1,
+      -1,
+    );
+    builder
+      .addLine(
+        bottomSpine.add(
+          new Vec2(offset - ReMultitailArrow.CUBIC_BEZIER_OFFSET, offset),
+        ),
+      )
+      .addQuadraticBezierCurve(
+        bottomSpine.add(new Vec2(offset, offset)),
+        bottomSpine.add(
+          new Vec2(offset, offset - ReMultitailArrow.CUBIC_BEZIER_OFFSET),
+        ),
+      );
+    ReMultitailArrow.drawSingleLineHover(
+      builder,
+      offset,
+      new Vec2(topSpine.x, head.y),
+      head,
+      1,
+      1,
+    );
+    builder.addLine(start);
+
+    return builder.build();
+  }
+
+  public show() {
+    const arrowId =
+      typeof this.arrow.arrowId === 'number'
+        ? String(this.arrow.arrowId)
+        : undefined;
+
+    this.rootElement = this.canvas
+      .insert('g', `.monomer`)
+      .data([this])
+      .attr(
+        'data-testid',
+        MULTITAIL_ARROW_TEST_ID,
+      ) as never as D3SvgElementSelection<SVGGElement, void>;
+
+    if (arrowId) {
+      this.rootElement.attr('data-arrow-id', arrowId);
+    }
+
+    const arrowPaths = this.getArrowPaths();
+
+    const bodyPath = this.rootElement
+      .append('path')
+      .attr('data-testid', RXN_ARROW_TEST_ID)
+      .attr('data-arrowtype', MULTITAIL_ARROW_TEST_ID)
+      .attr('stroke', '#000')
+      .attr('stroke-width', ARROW_STROKE_WIDTH)
+      .attr('fill', 'none')
+      .attr('d', arrowPaths.arrowBody);
+
+    if (arrowId) {
+      bodyPath.attr('data-arrow-id', arrowId);
+    }
+
+    const headPath = this.rootElement
+      .append('path')
+      .attr('d', arrowPaths.arrowHead)
+      .attr('stroke', '#000')
+      .attr('stroke-width', ARROW_STROKE_WIDTH)
+      .attr('fill', '#000');
+
+    if (arrowId) {
+      headPath.attr('data-arrow-id', arrowId);
+    }
+
+    this.appendHoverAreaElement();
+    this.drawSelection();
+  }
+
+  protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
+    const selectionPathDAttr = this.getSelectionContour();
+    const arrowId =
+      typeof this.arrow.arrowId === 'number'
+        ? String(this.arrow.arrowId)
+        : undefined;
+
+    this.hoverElement = this.rootElement
+      ?.insert('path', ':first-child')
+      .attr('d', selectionPathDAttr)
+      .attr('fill', 'none')
+      .attr('stroke', '#0097A8')
+      .attr('stroke-width', 1.2)
+      .attr('class', 'dynamic-element');
+
+    if (arrowId) {
+      this.hoverElement?.attr('data-arrow-id', arrowId);
+    }
+  }
+
+  protected appendHoverAreaElement(): void {
+    const selectionPathDAttr = this.getSelectionContour();
+    const arrowId =
+      typeof this.arrow.arrowId === 'number'
+        ? String(this.arrow.arrowId)
+        : undefined;
+
+    this.hoverAreaElement = this.rootElement
+      ?.append('path')
+      .attr('d', selectionPathDAttr)
+      .attr('fill', 'none')
+      .attr('stroke', 'none')
+      .attr('pointer-events', 'all')
+      .attr('class', 'dynamic-element');
+
+    if (arrowId) {
+      this.hoverAreaElement?.attr('data-arrow-id', arrowId);
+    }
+
+    this.hoverAreaElement
+      ?.on('mouseover', () => {
+        this.appendHover();
+      })
+      .on('mouseout', () => {
+        this.removeHover();
+      });
+
+    this.hoverAreaElement?.data([this]);
+  }
+
+  public drawSelection() {
+    if (!this.rootElement) {
+      return;
+    }
+    if (this.arrow.selected) {
+      this.appendSelection();
+    } else {
+      this.removeSelection();
+    }
+  }
+
+  public appendSelection(): void {
+    const selectionPathDAttr = this.getSelectionContour();
+    const arrowId =
+      typeof this.arrow.arrowId === 'number'
+        ? String(this.arrow.arrowId)
+        : undefined;
+
+    this.selectionElement = this.canvas
+      ?.insert('path', ':first-child')
+      .attr('stroke', SELECTION_COLOR)
+      .attr('fill', SELECTION_COLOR)
+      .attr('d', selectionPathDAttr);
+
+    if (arrowId) {
+      this.selectionElement?.attr('data-arrow-id', arrowId);
+    }
+  }
+
+  public removeSelection() {
+    this.selectionElement?.remove();
+    this.selectionElement = undefined;
+  }
+
+  public move() {
+    if (!this.rootElement) {
+      return;
+    }
+
+    this.remove();
+    this.show();
+  }
+
+  protected removeHover(): void {
+    this.hoverElement?.remove();
+    this.hoverElement = undefined;
+  }
+
+  public remove() {
+    super.remove();
+    this.removeHover();
+    this.removeSelection();
+  }
+
+  public moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
+}

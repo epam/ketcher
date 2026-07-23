@@ -15,13 +15,14 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { SimpleObject, SimpleObjectMode, Vec2 } from 'domain/entities';
+import { SimpleObject, SimpleObjectMode } from 'domain/entities/simpleObject';
+import { Vec2 } from 'domain/entities/vec2';
 
-import Base from './base';
+import Base from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReSimpleObject } from '../../render';
 import { Scale } from 'domain/helpers';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 interface SimpleObjectAddData {
   id?: number;
@@ -30,7 +31,7 @@ interface SimpleObjectAddData {
   toCircle: boolean;
 }
 export class SimpleObjectAdd extends Base {
-  data: SimpleObjectAddData;
+  readonly data: SimpleObjectAddData;
 
   constructor(
     pos: Array<Vec2> = [],
@@ -50,7 +51,7 @@ export class SimpleObjectAdd extends Base {
       const index = struct.simpleObjects.add(item);
       this.data.id = index;
     } else {
-      struct.simpleObjects.set(this.data.id!, item);
+      struct.simpleObjects.set(this.data.id, item);
     }
 
     const itemId = this.data.id!;
@@ -82,7 +83,7 @@ interface SimpleObjectDeleteData {
 }
 
 export class SimpleObjectDelete extends Base {
-  data: SimpleObjectDeleteData;
+  readonly data: SimpleObjectDeleteData;
   performed: boolean;
 
   constructor(id: number) {
@@ -93,7 +94,7 @@ export class SimpleObjectDelete extends Base {
 
   execute(restruct: any): void {
     const struct = restruct.molecule;
-    const item = struct.simpleObjects.get(this.data.id) as any;
+    const item = struct.simpleObjects.get(this.data.id);
     // save to data current values. In future they could be used in invert for restoring simple object
     this.data.pos = item.pos;
     this.data.mode = item.mode;
@@ -139,7 +140,7 @@ export class SimpleObjectMove extends Base {
     item.pos.forEach((p) => p.add_(d));
     restruct.simpleObjects
       .get(id)
-      .visel.translate(Scale.obj2scaled(d, restruct.render.options));
+      .visel.translate(Scale.modelToCanvas(d, restruct.render.options));
     this.data.d = d.negated();
     if (!this.data.noinvalidate) {
       Base.invalidateItem(restruct, 'simpleObjects', id, 1);
@@ -171,26 +172,26 @@ function handleRectangleChangeWithAnchor(item, anchor, current) {
   const previousPos0 = item.pos[0].get_xy0();
   const previousPos1 = item.pos[1].get_xy0();
 
-  if (tfx(anchor.x) === tfx(item.pos[1].x)) {
+  if (toFixed(anchor.x) === toFixed(item.pos[1].x)) {
     item.pos[1].x = anchor.x = current.x;
     current.x = previousPos1.x;
   }
-  if (tfx(anchor.y) === tfx(item.pos[1].y)) {
+  if (toFixed(anchor.y) === toFixed(item.pos[1].y)) {
     item.pos[1].y = anchor.y = current.y;
     current.y = previousPos1.y;
   }
-  if (tfx(anchor.x) === tfx(item.pos[0].x)) {
+  if (toFixed(anchor.x) === toFixed(item.pos[0].x)) {
     item.pos[0].x = anchor.x = current.x;
     current.x = previousPos0.x;
   }
-  if (tfx(anchor.y) === tfx(item.pos[0].y)) {
+  if (toFixed(anchor.y) === toFixed(item.pos[0].y)) {
     item.pos[0].y = anchor.y = current.y;
     current.y = previousPos0.y;
   }
 }
 
 export class SimpleObjectResize extends Base {
-  data: SimpleObjectResizeData;
+  readonly data: SimpleObjectResizeData;
 
   constructor(
     id: number,
@@ -231,8 +232,8 @@ export class SimpleObjectResize extends Base {
       const previousPos1 = item.pos[1].get_xy0();
 
       if (
-        tfx(anchor.x) === tfx(item.pos[1].x) &&
-        tfx(anchor.y) === tfx(item.pos[1].y)
+        toFixed(anchor.x) === toFixed(item.pos[1].x) &&
+        toFixed(anchor.y) === toFixed(item.pos[1].y)
       ) {
         item.pos[1].x = anchor.x = current.x;
         current.x = previousPos1.x;
@@ -241,8 +242,8 @@ export class SimpleObjectResize extends Base {
       }
 
       if (
-        tfx(anchor.x) === tfx(item.pos[0].x) &&
-        tfx(anchor.y) === tfx(item.pos[0].y)
+        toFixed(anchor.x) === toFixed(item.pos[0].x) &&
+        toFixed(anchor.y) === toFixed(item.pos[0].y)
       ) {
         item.pos[0].x = anchor.x = current.x;
         current.x = previousPos0.x;
@@ -255,7 +256,7 @@ export class SimpleObjectResize extends Base {
 
     restruct.simpleObjects
       .get(id)
-      .visel.translate(Scale.obj2scaled(d, restruct.render.options));
+      .visel.translate(Scale.modelToCanvas(d, restruct.render.options));
     this.data.d = d.negated();
     if (!this.data.noinvalidate) {
       Base.invalidateItem(restruct, 'simpleObjects', id, 1);

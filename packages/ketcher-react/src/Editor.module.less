@@ -162,3 +162,39 @@
     // TODO: style focus, active, etc
   }
 }
+
+.switchingLoader {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+:global {
+  .blinking {
+    /* stylelint-disable-next-line selector-pseudo-class-no-unknown */
+    & :local {
+      animation: blink 1s infinite;
+    }
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+
+  30% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.editorsWrapper {
+  height: 100%;
+  width: 100%;
+}

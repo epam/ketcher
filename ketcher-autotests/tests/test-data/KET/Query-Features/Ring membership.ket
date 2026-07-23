@@ -1,0 +1,1221 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            },
+            {
+                "$ref": "mol9"
+            },
+            {
+                "type": "text",
+                "data": {
+                    "content": "{\"blocks\":[{\"key\":\"6rdao\",\"text\":\"Ring membership\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
+                    "position": {
+                        "x": -59.202904179854286,
+                        "y": 34.503443761885336,
+                        "z": 0
+                    },
+                    "pos": [
+                        {
+                            "x": -59.202904179854286,
+                            "y": 34.503443761885336,
+                            "z": 0
+                        },
+                        {
+                            "x": -59.202904179854286,
+                            "y": 34.13759009462612,
+                            "z": 0
+                        },
+                        {
+                            "x": -56.65389733628739,
+                            "y": 34.13759009462612,
+                            "z": 0
+                        },
+                        {
+                            "x": -56.65389733628739,
+                            "y": 34.503443761885336,
+                            "z": 0
+                        }
+                    ]
+                }
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -55.78851505421379,
+                    34.92521858475822,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 0
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -54.05804899840429,
+                    34.925703818843274,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 0
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -54.921644361272,
+                    35.42537361792349,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 0
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -54.05804899840429,
+                    33.924665901385154,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 0
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -55.78851505421379,
+                    33.920177486098446,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 0
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -54.91946080788927,
+                    33.4251174108262,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 0
+                }
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -52.638215838064866,
+                    34.87521383529554,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 1
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -50.907749782255365,
+                    34.87569906938059,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 1
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -51.771345145123064,
+                    35.37536886846081,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 1
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -50.907749782255365,
+                    33.874661151922474,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 1
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -52.638215838064866,
+                    33.870172736635766,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 1
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -51.76916159174034,
+                    33.37511266136352,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 1
+                }
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -49.262895249333866,
+                    34.82520908583286,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 2
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -47.532429193524365,
+                    34.82569431991791,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 2
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -48.39602455639207,
+                    35.325364118998124,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 2
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -47.532429193524365,
+                    33.824656402459794,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 2
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -49.262895249333866,
+                    33.82016798717308,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 2
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -48.39384100300934,
+                    33.32510791190084,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 2
+                }
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -43.83207773328594,
+                    33.77525819560343,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 3
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -45.562543789095436,
+                    33.77477296151838,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 3
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -44.69894842622773,
+                    33.27510316243816,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 3
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -45.562543789095436,
+                    34.775810878976486,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 3
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -43.83207773328594,
+                    34.7802992942632,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 3
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -44.70113197961046,
+                    35.27535936953545,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 3
+                }
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -42.26223032455846,
+                    34.77520433637018,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 4
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -40.531764268748965,
+                    34.77568957045523,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 4
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -41.39535963161667,
+                    35.27535936953545,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 4
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -40.531764268748965,
+                    33.774651652997115,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 4
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -42.26223032455846,
+                    33.770163237710406,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 4
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -41.39317607823395,
+                    33.27510316243816,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 4
+                }
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -38.73689548743942,
+                    34.67519483744481,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 5
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -37.00642943162992,
+                    34.67568007152987,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 5
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -37.870024794497624,
+                    35.17534987061008,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 5
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -37.00642943162992,
+                    33.67464215407175,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 5
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -38.73689548743942,
+                    33.67015373878504,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 5
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -37.867841241114895,
+                    33.17509366351279,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 5
+                }
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -35.21156065032038,
+                    34.60018771325079,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 6
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -33.48109459451088,
+                    34.60067294733584,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 6
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -34.34468995737859,
+                    35.10034274641606,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 6
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -33.48109459451088,
+                    33.599635029877724,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 6
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -35.21156065032038,
+                    33.595146614591016,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 6
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -34.342506403995856,
+                    33.10008653931877,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 6
+                }
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -31.53621156481329,
+                    34.525180589056774,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 7
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -29.805745509003792,
+                    34.52566582314182,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 7
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -30.669340871871498,
+                    35.02533562222204,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 7
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -29.805745509003792,
+                    33.52462790568371,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 7
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -31.53621156481329,
+                    33.520139490397,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 7
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -30.667157318488776,
+                    33.02507941512475,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 7
+                }
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -27.910867228768893,
+                    34.55018296378811,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 8
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -26.180401172959392,
+                    34.550668197873165,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 8
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -27.04399653582709,
+                    35.050337996953374,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 8
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -26.180401172959392,
+                    33.549630280415045,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 8
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -27.910867228768893,
+                    33.545141865128336,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 8
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -27.041812982444373,
+                    33.05008178985609,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 8
+                }
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol9": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -24.060501520142413,
+                    34.57518533851945,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 9
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -22.330035464332916,
+                    34.575670572604494,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 9
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -23.193630827200625,
+                    35.07534037168472,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 9
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -22.330035464332916,
+                    33.57463265514639,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 9
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -24.060501520142413,
+                    33.57014423985967,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 9
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -23.191447273817893,
+                    33.07508416458743,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 9
+                }
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    }
+}

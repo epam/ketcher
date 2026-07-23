@@ -1,0 +1,114 @@
+import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
+import {
+  buildRnaPresetConnections,
+  IKetTemplateConnection,
+  IKetMonomerGroupTemplate,
+  monomerFactory,
+  MonomerItemType,
+  setMonomerTemplatePrefix,
+  KetMonomerClass,
+  IRnaLabeledPreset,
+  getRnaPresetPhosphatePosition,
+  isAmbiguousMonomerLibraryItem,
+  setAmbiguousMonomerTemplatePrefix,
+} from 'ketcher-core';
+import { getMonomerUniqueKey } from 'state/library';
+
+interface RnaPresetsTemplatesType
+  extends Pick<
+      IKetMonomerGroupTemplate,
+      'templates' | 'idtAliases' | 'aliasAxoLabs'
+    >,
+    Partial<Pick<IKetMonomerGroupTemplate, 'connections'>>,
+    Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {
+  connections?: IKetTemplateConnection[];
+}
+
+export const getPresets = (
+  monomers: ReadonlyArray<MonomerItemType>,
+  rnaPresetsTemplates: ReadonlyArray<RnaPresetsTemplatesType>,
+  isDefault?: boolean,
+): IRnaPreset[] => {
+  const monomerLibraryItemByMonomerIDMap = new Map<string, MonomerItemType>(
+    monomers.map((monomer) => {
+      const monomerID = isAmbiguousMonomerLibraryItem(monomer)
+        ? setAmbiguousMonomerTemplatePrefix(monomer.id)
+        : setMonomerTemplatePrefix(
+            monomer.props.id || getMonomerUniqueKey(monomer),
+          );
+      return [monomerID, monomer];
+    }),
+  );
+  return rnaPresetsTemplates
+    .filter((rnaPresetsTemplate) => {
+      return rnaPresetsTemplate.templates.every((rnaPartsMonomerTemplateRef) =>
+        Boolean(
+          monomerLibraryItemByMonomerIDMap.get(rnaPartsMonomerTemplateRef.$ref),
+        ),
+      );
+    })
+    .map((rnaPresetsTemplate: RnaPresetsTemplatesType): IRnaPreset => {
+      const rnaPartsMonomerLibraryItemByMonomerClassMap = new Map<
+        KetMonomerClass,
+        MonomerItemType
+      >(
+        rnaPresetsTemplate.templates.map((rnaPartsMonomerTemplateRef) => {
+          const monomer = monomerLibraryItemByMonomerIDMap.get(
+            rnaPartsMonomerTemplateRef.$ref,
+          ) as MonomerItemType;
+
+          const [, , monomerClass] = monomerFactory(monomer);
+
+          return [monomerClass, monomer];
+        }),
+      );
+
+      // TODO: Do we need to check for existence? Suddenly there is `undefined`.
+      const ribose = rnaPartsMonomerLibraryItemByMonomerClassMap.get(
+        KetMonomerClass.Sugar,
+      ) as MonomerItemType;
+      const rnaBase = rnaPartsMonomerLibraryItemByMonomerClassMap.get(
+        KetMonomerClass.Base,
+      ) as MonomerItemType;
+      const phosphate = rnaPartsMonomerLibraryItemByMonomerClassMap.get(
+        KetMonomerClass.Phosphate,
+      ) as MonomerItemType;
+
+      const connections =
+        rnaPresetsTemplate.connections ??
+        buildRnaPresetConnections({
+          base: rnaBase,
+          sugar: ribose,
+          phosphate,
+        });
+
+      const result: IRnaPreset = {
+        base: rnaBase ? { ...rnaBase, label: rnaBase.label } : undefined,
+        name: rnaPresetsTemplate.name,
+        phosphate: phosphate
+          ? { ...phosphate, label: phosphate.label }
+          : undefined,
+        connections,
+        sugar: ribose ? { ...ribose, label: ribose.label } : undefined,
+        phosphatePosition: getRnaPresetPhosphatePosition({
+          sugar: ribose,
+          phosphate,
+          connections,
+        }),
+        favorite: rnaPresetsTemplate.favorite,
+        default: isDefault || rnaPresetsTemplate.default,
+      };
+
+      const presetWithAliases: IRnaPreset = {
+        ...result,
+        ...(rnaPresetsTemplate.idtAliases && {
+          idtAliases: rnaPresetsTemplate.idtAliases,
+        }),
+        ...(rnaPresetsTemplate.aliasAxoLabs && {
+          aliasAxoLabs: rnaPresetsTemplate.aliasAxoLabs,
+        }),
+      };
+
+      return presetWithAliases;
+    });
+};

@@ -14,13 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { SimpleObject, SimpleObjectMode, Struct, Vec2 } from 'domain/entities';
+import { SimpleObject, SimpleObjectMode } from 'domain/entities/simpleObject';
+import type { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {
   const object =
     ketItem.data.mode === 'circle' ? circleToEllipse(ketItem) : ketItem.data;
-  struct.simpleObjects.add(new SimpleObject(getNodeWithInvertedYCoord(object)));
+  const simpleObject = new SimpleObject(getNodeWithInvertedYCoord(object));
+  simpleObject.setInitiallySelected(ketItem.selected);
+  struct.simpleObjects.add(simpleObject);
   return struct;
 }
 

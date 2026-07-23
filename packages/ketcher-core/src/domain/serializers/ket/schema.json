@@ -5,6 +5,9 @@
   "type": "object",
   "required": ["root"],
   "properties": {
+    "ket_version": {
+      "type": "string"
+    },
     "root": {
       "type": "object",
       "required": ["nodes"],
@@ -25,6 +28,12 @@
               },
               {
                 "$ref": "#/definitions/plus"
+              },
+              {
+                "$ref": "#/definitions/image"
+              },
+              {
+                "$ref": "#/definitions/multitailArrow"
               },
               {
                 "type": "object",
@@ -60,6 +69,21 @@
       "properties": {
         "moleculeName": {
           "type": "string"
+        }
+      }
+    },
+    "point": {
+      "type": "object",
+      "required": ["x", "y"],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
         }
       }
     },
@@ -109,6 +133,9 @@
             "type": "number"
           }
         },
+        "selected": {
+          "type": "boolean"
+        },
         "charge": {
           "type": "integer",
           "minimum": -1000,
@@ -141,7 +168,7 @@
         },
         "ringBondCount": {
           "type": "integer",
-          "enum": [0, -2, -1, 2, 3, 4, 6, 7, 8, 9]
+          "enum": [0, -2, -1, 2, 3, 4, 5, 6, 7, 8, 9]
         },
         "substitutionCount": {
           "type": "integer",
@@ -252,6 +279,9 @@
             "type": "integer",
             "minimum": 0
           }
+        },
+        "selected": {
+          "type": "boolean"
         },
         "stereobox": {
           "type": "integer",
@@ -376,8 +406,12 @@
           "items": {
             "type": "object",
             "properties": {
-              "key": { "type": "string" },
-              "value": { "type": "string" }
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
             }
           }
         },
@@ -474,7 +508,7 @@
           },
           "type": {
             "type": "string",
-            "enum": ["GEN", "MUL", "SRU", "SUP", "DAT", "queryComponent"]
+            "enum": ["GEN", "MUL", "SRU", "SUP", "DAT", "queryComponent", "COP"]
           }
         },
         "if": {
@@ -608,6 +642,9 @@
           "items": {
             "type": "number"
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     },
@@ -647,6 +684,9 @@
               "type": "number"
             }
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     },
@@ -722,37 +762,326 @@
               }
             }
           }
+        },
+        "selected": {
+          "type": "boolean"
+        }
+      }
+    },
+    "textIndent": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "first_line": {
+              "type": "number"
+            },
+            "left": {
+              "type": "number"
+            },
+            "right": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    },
+    "textFont": {
+      "type": "object",
+      "properties": {
+        "family": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer"
+        },
+        "color": {
+          "type": "string",
+          "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+        },
+        "bold": {
+          "type": "boolean"
+        },
+        "italic": {
+          "type": "boolean"
+        },
+        "subscript": {
+          "type": "boolean"
+        },
+        "superscript": {
+          "type": "boolean"
+        }
+      }
+    },
+    "textPart": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "font": {
+          "$ref": "#/definitions/textFont"
+        },
+        "color": {
+          "type": "string"
+        },
+        "bold": {
+          "type": "boolean"
+        },
+        "italic": {
+          "type": "boolean"
+        },
+        "subscript": {
+          "type": "boolean"
+        },
+        "superscript": {
+          "type": "boolean"
+        }
+      }
+    },
+    "textParagraph": {
+      "type": "object",
+      "required": ["parts"],
+      "properties": {
+        "alignment": {
+          "type": "string",
+          "enum": ["left", "center", "right"]
+        },
+        "indent": {
+          "$ref": "#/definitions/textIndent"
+        },
+        "font": {
+          "$ref": "#/definitions/textFont"
+        },
+        "color": {
+          "type": "string"
+        },
+        "bold": {
+          "type": "boolean"
+        },
+        "italic": {
+          "type": "boolean"
+        },
+        "subscript": {
+          "type": "boolean"
+        },
+        "superscript": {
+          "type": "boolean"
+        },
+        "parts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/textPart"
+          }
         }
       }
     },
     "text": {
       "type": "object",
-      "required": ["type", "data"],
+      "required": ["type"],
       "properties": {
         "type": {
           "const": "text"
         },
-        "data": {
-          "type": "object",
-          "required": ["content"],
+        "selected": {
+          "type": "boolean"
+        }
+      },
+      "oneOf": [
+        {
+          "required": ["data"],
           "properties": {
-            "content": {
-              "type": "string"
+            "data": {
+              "type": "object",
+              "required": ["content"],
+              "properties": {
+                "content": {
+                  "type": "string"
+                },
+                "position": {
+                  "type": "object",
+                  "properties": {
+                    "x": {
+                      "type": "number"
+                    },
+                    "y": {
+                      "type": "number"
+                    },
+                    "z": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "pos": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "x": {
+                        "type": "number"
+                      },
+                      "y": {
+                        "type": "number"
+                      },
+                      "z": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "required": ["boundingBox", "paragraphs"],
+          "properties": {
+            "boundingBox": {
+              "type": "object",
+              "required": ["x", "y", "width", "height"],
+              "properties": {
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                },
+                "z": {
+                  "type": "number"
+                },
+                "width": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "height": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              }
             },
-            "pos": {
+            "paragraphs": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "x": {
-                    "type": "number"
+                "$ref": "#/definitions/textParagraph"
+              }
+            },
+            "alignment": {
+              "type": "string",
+              "enum": ["left", "center", "right"]
+            },
+            "indent": {
+              "$ref": "#/definitions/textIndent"
+            },
+            "font": {
+              "$ref": "#/definitions/textFont"
+            },
+            "color": {
+              "type": "string"
+            },
+            "bold": {
+              "type": "boolean"
+            },
+            "italic": {
+              "type": "boolean"
+            },
+            "subscript": {
+              "type": "boolean"
+            },
+            "superscript": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
+    "image": {
+      "type": "object",
+      "required": ["type", "format", "boundingBox", "data"],
+      "properties": {
+        "type": {
+          "const": "image"
+        },
+        "format": {
+          "type": "string",
+          "pattern": "^image/(png|svg\\+xml)$"
+        },
+        "boundingBox": {
+          "type": "object",
+          "required": ["width", "height", "x", "y"],
+          "properties": {
+            "width": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "height": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "z": {
+              "type": "number"
+            }
+          }
+        },
+        "data": {
+          "type": "string",
+          "minLength": 160
+        }
+      }
+    },
+    "multitailArrow": {
+      "type": "object",
+      "required": ["type", "data"],
+      "properties": {
+        "type": {
+          "const": "multi-tailed-arrow"
+        },
+        "data": {
+          "type": "object",
+          "required": ["head", "spine", "tails"],
+          "properties": {
+            "head": {
+              "type": "object",
+              "required": ["position"],
+              "properties": {
+                "position": {
+                  "$ref": "#/definitions/point"
+                }
+              }
+            },
+            "spine": {
+              "type": "object",
+              "required": ["pos"],
+              "properties": {
+                "pos": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/point"
                   },
-                  "y": {
-                    "type": "number"
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            },
+            "tails": {
+              "type": "object",
+              "required": ["pos"],
+              "properties": {
+                "pos": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/point"
                   },
-                  "z": {
-                    "type": "number"
-                  }
+                  "minItems": 2
                 }
               }
             }

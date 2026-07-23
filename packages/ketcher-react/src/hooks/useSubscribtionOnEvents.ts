@@ -14,17 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useDispatch } from 'react-redux';
 import { indigoVerification } from '../script/ui/state/request';
-import { Ketcher, KetcherAsyncEvents } from 'ketcher-core';
+import {
+  type Ketcher,
+  KetcherAsyncEvents,
+  ketcherProvider,
+} from 'ketcher-core';
 import { useEffect } from 'react';
 import { useAppContext } from './useAppContext';
-import { KETCHER_INIT_EVENT_NAME } from '../constants';
+import { ketcherInitEventName } from '../constants';
+import { useAppDispatch } from '../script/ui/state/hooks';
 
 export const useSubscriptionOnEvents = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
 
   const loadingHandler = () => {
     dispatch(indigoVerification(true));
@@ -59,17 +63,18 @@ export const useSubscriptionOnEvents = () => {
 
   useEffect(() => {
     const subscribeOnInit = () => {
-      subscribe(getKetcherInstance());
+      subscribe(ketcherProvider.getKetcher(ketcherId));
     };
 
     const unsubscribeOnUnMount = () => {
-      unsubscribe(getKetcherInstance());
+      unsubscribe(ketcherProvider.getKetcher(ketcherId));
     };
 
-    window.addEventListener(KETCHER_INIT_EVENT_NAME, subscribeOnInit);
+    const initEventName = ketcherInitEventName(ketcherId);
+    window.addEventListener(initEventName, subscribeOnInit);
     return () => {
       unsubscribeOnUnMount();
-      window.removeEventListener(KETCHER_INIT_EVENT_NAME, subscribeOnInit);
+      window.removeEventListener(initEventName, subscribeOnInit);
     };
   }, []);
 };

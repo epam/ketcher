@@ -1,4 +1,4 @@
-import { Struct } from 'ketcher-core';
+import type { Struct } from 'ketcher-core';
 
 /**
  * return only such elements ids that not part of collapsed group
@@ -39,4 +39,20 @@ function isNotCollapsedSGroup(groupId: number | null, struct: Struct): boolean {
     );
   }
   return sGroup.checkAttr('expanded', true);
+}
+
+export function filterNotPartOfSuperatomWithoutLabel(
+  itemsToFilter: { atoms?: number[]; bonds?: number[] },
+  struct: Struct,
+) {
+  return {
+    atoms:
+      itemsToFilter.atoms?.filter((atomId) => {
+        return !struct.getGroupFromAtomId(atomId)?.isSuperatomWithoutLabel;
+      }) ?? [],
+    bonds:
+      itemsToFilter.bonds?.filter((bondId) => {
+        return !struct.getGroupFromBondId(bondId)?.isSuperatomWithoutLabel;
+      }) ?? [],
+  };
 }

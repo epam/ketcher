@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
+
 export const SgContexts = {
   Fragment: 'Fragment',
   Multifragment: 'Multifragment',
@@ -33,6 +35,8 @@ export const selectionKeys = [
   'rxnPluses',
   'simpleObjects',
   'texts',
+  IMAGE_KEY,
+  MULTITAIL_ARROW_KEY,
 ] as const;
 
 export const defaultBondThickness = 2;
@@ -41,6 +45,8 @@ export enum MonomerGroups {
   SUGARS = 'Sugars',
   BASES = 'Bases',
   PHOSPHATES = 'Phosphates',
+  PEPTIDES = 'Amino Acids',
+  NUCLEOTIDES = 'Nucleotides',
 }
 
 export enum MonomerGroupCodes {

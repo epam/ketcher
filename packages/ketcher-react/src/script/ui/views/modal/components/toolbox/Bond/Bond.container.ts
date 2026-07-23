@@ -14,14 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseProps } from '../../../modal.types';
+import type { BaseProps } from '../../../modal.types';
 import Bond from './Bond';
 import { connect } from 'react-redux';
 
-type StateProps = Pick<BaseProps, 'formState'>;
+type StateProps = Pick<BaseProps, 'formState'> & {
+  isMonomerCreationWizardActive?: boolean;
+};
 
 const mapStateToProps = (state: any): StateProps => ({
   formState: state.modal.form,
+  isMonomerCreationWizardActive: state.editor.isMonomerCreationWizardActive,
 });
 
 const BondContainer = connect(mapStateToProps)(Bond);

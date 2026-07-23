@@ -15,3 +15,4 @@
  ***************************************************************************/
 
 export { IconButton } from './IconButton';
+export { IconButtonCustomIcon } from './IconButtonCustomIcon';

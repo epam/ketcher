@@ -1,5 +1,5 @@
 import { saveAs } from 'file-saver';
-import { FileSaverReturnType } from './saveButton.types';
+import type { FileSaverReturnType } from './saveButton.types';
 
 export const fileSaver = (server): FileSaverReturnType => {
   return new Promise((resolve, reject) => {

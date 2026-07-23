@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Open, { OpenProps } from './Open';
+import Open, { type OpenProps } from './Open';
 
-import { BaseCallProps } from '../../../modal.types';
+import type { BaseCallProps } from '../../../modal.types';
 import { connect } from 'react-redux';
 import { exec } from '../../../../../component/cliparea/cliparea';
 import { load } from '../../../../../state';

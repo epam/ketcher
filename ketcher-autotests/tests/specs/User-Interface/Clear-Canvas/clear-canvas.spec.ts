@@ -1,0 +1,105 @@
+import { test, expect } from '@fixtures';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import {
+  addTextBoxToCanvas,
+  TextEditorDialog,
+} from '@tests/pages/molecules/canvas/TextEditorDialog';
+import {
+  takeEditorScreenshot,
+  openFileAndAddToCanvas,
+  clickInTheMiddleOfTheCanvas,
+  waitForPageInit,
+  clearCanvasByKeyboard,
+  clickOnCanvas,
+} from '@utils';
+
+test.describe('Clear canvas', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test('Clear Canvas - checking button tooltip', async ({ page }) => {
+    // Test case: EPMLSOPKET-1702
+    await CommonTopLeftToolbar(page).clearCanvas();
+    const button = CommonTopLeftToolbar(page).clearCanvasButton;
+    await expect(button).toHaveAttribute('title', 'Clear Canvas (Ctrl+Del)');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Clear Canvas - "Clear canvas" button', async ({ page }) => {
+    // Test case: EPMLSOPKET-1702
+    await addTextBoxToCanvas(page);
+    await TextEditorDialog(page).setText('one two three');
+    await TextEditorDialog(page).apply();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Clear Canvas - Undo/Redo', async ({ page }) => {
+    // Test case: EPMLSOPKET-1704
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
+    await clickInTheMiddleOfTheCanvas(page);
+    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await clickInTheMiddleOfTheCanvas(page);
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Clear Canvas - Structure is opened from ket-file ', async ({
+    page,
+  }) => {
+    // Test case:EPMLSOPKET-1705
+    await openFileAndAddToCanvas(page, 'KET/ketcher.ket');
+    await clickInTheMiddleOfTheCanvas(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Clear Canvas - Structure is opened from ket-file + hothey', async ({
+    page,
+  }) => {
+    // Test case:EPMLSOPKET-1705
+    // Checking clearing canvas with hotkey
+    await openFileAndAddToCanvas(page, 'KET/ketcher.ket');
+    await clearCanvasByKeyboard(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Clear Canvas - Hotkeys', async ({ page }) => {
+    // Test case:EPMLSOPKET-2864
+    const x = 500;
+    const y = 250;
+    await addTextBoxToCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page);
+    await TextEditorDialog(page).setText('one two three');
+    await TextEditorDialog(page).apply();
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickOnCanvas(page, x, y);
+    await takeEditorScreenshot(page);
+    await clearCanvasByKeyboard(page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/ketcher.mol');
+    await takeEditorScreenshot(page);
+    await clearCanvasByKeyboard(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Clear Canvas - Structure is opened from smile-string', async ({
+    page,
+  }) => {
+    // Test case: EPMLSOPKET-1706
+    await openFileAndAddToCanvas(page, 'SMILES/chain-with-r-group.smi');
+    await clickInTheMiddleOfTheCanvas(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
+    await takeEditorScreenshot(page);
+  });
+});

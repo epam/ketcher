@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { IKetMacromoleculesContent } from 'ketcher-core';
 
 // TODO add typings for Indigo standalone object
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type IndigoStandalone = any;
 
 export const enum Command {
   Info,
@@ -31,6 +30,8 @@ export const enum Command {
   Calculate,
   GenerateImageAsBase64,
   GetInChIKey,
+  ExplicitHydrogens,
+  CalculateMacromoleculeProperties,
 }
 
 export const enum WorkerEvent {
@@ -46,6 +47,8 @@ export const enum WorkerEvent {
   Calculate = 'calculate',
   GenerateImageAsBase64 = 'generateImageAsBase64',
   GetInChIKey = 'getInChIKey',
+  ExplicitHydrogens = 'convert_explicit_hydrogens',
+  CalculateMacromoleculeProperties = 'calculateMacroProperties',
 }
 
 export enum SupportedFormat {
@@ -61,6 +64,15 @@ export enum SupportedFormat {
   CDX = 'cdx',
   CDXML = 'cdxml',
   SDF = 'sdf',
+  FASTA = 'fasta',
+  SEQUENCE = 'sequence',
+  SEQUENCE_3_LETTER = 'peptide-sequence-3-letter',
+  IDT = 'idt',
+  AXOLABS = 'axo-labs',
+  HELM = 'helm',
+  BILN = 'biln',
+  RDF = 'rdf',
+  MonomerLibrary = 'monomer-library',
 }
 
 export interface WithStruct {
@@ -76,7 +88,12 @@ export interface WithSelection {
 }
 
 export interface CommandOptions {
-  [key: string]: string | number | boolean | undefined;
+  [key: string]:
+    | IKetMacromoleculesContent
+    | string
+    | number
+    | boolean
+    | undefined;
 }
 
 export interface CommandData {
@@ -148,6 +165,17 @@ export interface AutomapCommandData
   mode: string;
 }
 
+export interface ExplicitHydrogensCommandData
+  extends CommandData,
+    WithStruct,
+    WithFormat {
+  mode: 'auto' | 'fold' | 'unfold';
+}
+
+export interface CalculateMacromoleculePropertiesCommandData
+  extends CommandData,
+    WithStruct {}
+
 interface OutputMessageBase {
   type?: Command;
   hasError?: boolean;
@@ -156,11 +184,13 @@ interface OutputMessageBase {
 interface OutputMessageWithError extends OutputMessageBase {
   hasError: true;
   error: string;
+  inputData?: string;
 }
 
 interface OutputMessageWithoutError<T> extends OutputMessageBase {
   hasError?: false;
   payload: T;
+  inputData?: string;
 }
 
 export type OutputMessage<T> =

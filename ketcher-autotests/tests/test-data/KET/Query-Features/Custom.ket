@@ -1,0 +1,159 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "type": "text",
+                "data": {
+                    "content": "{\"blocks\":[{\"key\":\"foj9o\",\"text\":\"Custom Queries\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
+                    "position": {
+                        "x": -124.90038777688058,
+                        "y": -28.08326949685584,
+                        "z": 0
+                    },
+                    "pos": [
+                        {
+                            "x": -124.90038777688058,
+                            "y": -28.08326949685584,
+                            "z": 0
+                        },
+                        {
+                            "x": -124.90038777688058,
+                            "y": -28.449123164115058,
+                            "z": 0
+                        },
+                        {
+                            "x": -122.47099496224435,
+                            "y": -28.449123164115058,
+                            "z": 0
+                        },
+                        {
+                            "x": -122.47099496224435,
+                            "y": -28.08326949685584,
+                            "z": 0
+                        }
+                    ]
+                }
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    -119.09069066617737,
+                    -27.53699964440979,
+                    0
+                ],
+                "queryProperties": {
+                    "customQuery": "Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query __6"
+                }
+            },
+            {
+                "label": "A",
+                "location": [
+                    -117.36022461036787,
+                    -27.53651441032474,
+                    0
+                ],
+                "queryProperties": {
+                    "customQuery": "Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query __2"
+                }
+            },
+            {
+                "label": "A",
+                "location": [
+                    -118.22381997323558,
+                    -27.03684461124452,
+                    0
+                ],
+                "queryProperties": {
+                    "customQuery": "Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query __1"
+                }
+            },
+            {
+                "label": "A",
+                "location": [
+                    -117.36022461036787,
+                    -28.537552327782855,
+                    0
+                ],
+                "queryProperties": {
+                    "customQuery": "Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query __3"
+                }
+            },
+            {
+                "label": "A",
+                "location": [
+                    -119.09069066617737,
+                    -28.542040743069563,
+                    0
+                ],
+                "queryProperties": {
+                    "customQuery": "Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query __5"
+                }
+            },
+            {
+                "label": "A",
+                "location": [
+                    -118.22163641985284,
+                    -29.037100818341806,
+                    0
+                ],
+                "queryProperties": {
+                    "customQuery": "Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query __4"
+                }
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    }
+}

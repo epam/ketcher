@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,23 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  StereoFlag,
-  Struct,
-  SGroupAttachmentPoint,
-  SGroup,
-} from 'domain/entities';
+import { StereoFlag } from 'domain/entities/fragment';
+import type { Struct } from 'domain/entities/struct';
+import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { SGroup } from 'domain/entities/sgroup';
 
 import { Elements } from 'domain/constants';
 import common from './common';
+import type { Mapping } from './mol.types';
 import utils from './utils';
 import { KetcherLogger } from 'utilities';
 
 const END_V2000 = '2D 1   1.00000     0.00000     0';
-
-type Mapping = {
-  [key in number]: number;
-};
 type NumberTuple = [number, number];
 
 interface ParseCTFileProps {
@@ -77,14 +72,16 @@ export class Molfile {
 
   prepareSGroups(skipErrors: boolean, preserveIndigoDesc?: boolean) {
     const mol = this.molecule;
+    if (!mol) return;
+
     const toRemove: any[] = [];
     let errors = 0;
 
-    this.molecule?.sGroupForest
+    mol.sGroupForest
       .getSGroupsBFS()
       .reverse()
       .forEach((id) => {
-        const sgroup = mol!.sgroups.get(id)!;
+        const sgroup = mol.sgroups.get(id)!;
         let errorIgnore = false;
 
         try {
@@ -115,8 +112,8 @@ export class Molfile {
       );
     }
 
-    for (let i = 0; i < toRemove.length; ++i) {
-      mol?.sGroupDelete(toRemove[i]);
+    for (const sgroupId of toRemove) {
+      mol?.sGroupDelete(sgroupId);
     }
   }
 
@@ -134,7 +131,6 @@ export class Molfile {
     skipSGroupErrors: boolean,
     norgroups?: boolean,
     preserveIndigoDesc?: boolean,
-    ignoreChiralFlag?: boolean,
   ) {
     // eslint-disable-line max-statements
     /* saver */
@@ -159,9 +155,9 @@ export class Molfile {
         utils.paddedNum(products.length, 3) +
         utils.paddedNum(0, 3) +
         '\n';
-      for (let i = 0; i < all.length; ++i) {
+      for (const component of all) {
         const saver = new Molfile();
-        const submol = molecule.clone(all[i], null, true);
+        const submol = molecule.clone(component, null, true);
         const molfile = saver.saveMolecule(submol, false, true);
         this.molfile += '$MOL\n' + molfile;
       }
@@ -201,7 +197,7 @@ export class Molfile {
     this.prepareSGroups(skipSGroupErrors, preserveIndigoDesc);
 
     this.writeHeader();
-    this.writeCTab2000(undefined, ignoreChiralFlag);
+    this.writeCTab2000();
 
     return this.molfile;
   }
@@ -268,7 +264,7 @@ export class Molfile {
     this.write(utils.paddedNum(number, width, precision));
   }
 
-  writeCTab2000Header(ignoreChiralFlag) {
+  writeCTab2000Header() {
     /* saver */
     this.writePaddedNumber(this.molecule!.atoms.size, 3);
     this.writePaddedNumber(this.molecule!.bonds.size, 3);
@@ -279,7 +275,7 @@ export class Molfile {
       fr ? fr.enhancedStereoFlag === StereoFlag.Abs : false,
     );
 
-    this.writePaddedNumber(isAbsFlag || ignoreChiralFlag ? 1 : 0, 3);
+    this.writePaddedNumber(isAbsFlag ? 1 : 0, 3);
     this.writePaddedNumber(0, 3);
     this.writePaddedNumber(0, 3);
     this.writePaddedNumber(0, 3);
@@ -289,10 +285,13 @@ export class Molfile {
     this.writeCR(' V2000');
   }
 
-  writeCTab2000(rgroups?: Map<any, any>, ignoreChiralFlag?: boolean) {
+  writeCTab2000(rgroups?: Map<any, any>) {
     // eslint-disable-line max-statements
     /* saver */
-    this.writeCTab2000Header(ignoreChiralFlag);
+    const molecule = this.molecule;
+    if (!molecule) return;
+
+    this.writeCTab2000Header();
 
     this.mapping = {};
     let i = 1;
@@ -302,7 +301,7 @@ export class Molfile {
       id: number;
       value: string;
     }[] = [];
-    this.molecule!.atoms.forEach((atom, id) => {
+    molecule.atoms.forEach((atom, id) => {
       let label = atom.label;
       if (atom.atomList != null) {
         label = 'L';
@@ -330,7 +329,7 @@ export class Molfile {
 
     this.bondMapping = {};
     i = 1;
-    this.molecule!.bonds.forEach((bond, id) => {
+    molecule.bonds.forEach((bond, id) => {
       this.bondMapping[id] = i++;
       this.writeBond(bond);
     }, this);
@@ -350,7 +349,7 @@ export class Molfile {
     const unsaturatedList: NumberTuple[] = [];
     const substcountList: NumberTuple[] = [];
 
-    this.molecule!.atoms.forEach((atom, id) => {
+    molecule.atoms.forEach((atom, id) => {
       if (atom.charge !== 0 && atom.charge !== null) {
         chargeList.push([id, atom.charge]);
       }
@@ -403,8 +402,8 @@ export class Molfile {
     this.writeAtomPropList('M  ISO', isotopeList);
     this.writeAtomPropList('M  RAD', radicalList);
     this.writeAtomPropList('M  RGP', rglabelList);
-    for (let j = 0; j < rglogicList.length; ++j) {
-      this.write('M  LOG' + rglogicList[j] + '\n');
+    for (const logic of rglogicList) {
+      this.write('M  LOG' + logic + '\n');
     }
 
     this.writeAtomPropList('M  APO', aplabelList);
@@ -413,9 +412,8 @@ export class Molfile {
     this.writeAtomPropList('M  UNS', unsaturatedList);
 
     if (atomsIds.length > 0) {
-      for (let j = 0; j < atomsIds.length; ++j) {
-        const atomId = atomsIds[j];
-        const atomList = this.molecule!.atoms.get(atomId)!.atomList!;
+      for (const atomId of atomsIds) {
+        const atomList = molecule.atoms.get(atomId)!.atomList!;
         this.write('M  ALS');
         this.writePaddedNumber(atomId + 1, 4);
         this.writePaddedNumber(atomList.ids.length, 3);
@@ -423,9 +421,9 @@ export class Molfile {
         this.write(atomList.notList ? 'T' : 'F');
 
         const labelList = atomList.labelList();
-        for (let k = 0; k < labelList.length; ++k) {
+        for (const label of labelList) {
           this.writeWhiteSpace();
-          this.writePadded(labelList[k], 3);
+          this.writePadded(label, 3);
         }
         this.writeWhiteSpace();
         this.writeCR();
@@ -435,15 +433,18 @@ export class Molfile {
     const sgmap = {};
     let cnt = 1;
     const sgmapback = {};
-    const sgorder = this.molecule!.sGroupForest.getSGroupsBFS();
+    const sgorder = molecule.sGroupForest.getSGroupsBFS();
     sgorder.forEach((id) => {
       sgmapback[cnt] = id;
       sgmap[id] = cnt++;
     });
-    for (let sGroupIdInCTab = 1; sGroupIdInCTab < cnt; ++sGroupIdInCTab) {
+    for (const sGroupIdInCTab of Array.from(
+      { length: cnt - 1 },
+      (_, index) => index + 1,
+    )) {
       // each group on its own
       const id = sgmapback[sGroupIdInCTab];
-      const sgroup = this.molecule!.sgroups.get(id)!;
+      const sgroup = molecule.sgroups.get(id)!;
       if (SGroup.isQuerySGroup(sgroup)) {
         console.warn('Query group does not support in mol format');
         continue;
@@ -456,7 +457,15 @@ export class Molfile {
       this.writePadded(sgroup.type, 3);
       this.writeCR();
 
-      // TODO: write subtype, M SST
+      if (sgroup.type === 'COP' && sgroup.data.subtype) {
+        this.write('M  SST');
+        this.writePaddedNumber(1, 3);
+        this.writeWhiteSpace(1);
+        this.writePaddedNumber(sGroupIdInCTab, 3);
+        this.writeWhiteSpace(1);
+        this.writePadded(sgroup.data.subtype.toUpperCase(), 3);
+        this.writeCR();
+      }
 
       this.write('M  SLB');
       this.writePaddedNumber(1, 3);
@@ -466,7 +475,7 @@ export class Molfile {
       this.writePaddedNumber(sGroupIdInCTab, 3);
       this.writeCR();
 
-      const parentId = this.molecule!.sGroupForest.parent.get(id)!;
+      const parentId = molecule.sGroupForest.parent.get(id)!;
       if (parentId >= 0) {
         this.write('M  SPL');
         this.writePaddedNumber(1, 3);
@@ -478,7 +487,7 @@ export class Molfile {
       }
 
       // connectivity
-      if (sgroup.type === 'SRU' && sgroup.data.connectivity) {
+      if (['SRU', 'COP'].includes(sgroup.type) && sgroup.data.connectivity) {
         const connectivity = ` ${sGroupIdInCTab.toString().padStart(3)} ${(
           sgroup.data.connectivity || ''
         ).padEnd(3)}`;
@@ -503,7 +512,7 @@ export class Molfile {
       this.writeCR(
         common.saveToMolfile[sgroup.type](
           sgroup,
-          this.molecule,
+          molecule,
           sgmap,
           this.mapping,
           this.bondMapping,
@@ -517,7 +526,7 @@ export class Molfile {
     // TODO: write M  LOG
 
     const expandedGroups: number[] = [];
-    this.molecule!.sgroups.forEach((sg) => {
+    molecule.sgroups.forEach((sg) => {
       if (sg.isExpanded() && !SGroup.isQuerySGroup(sg))
         expandedGroups.push(sg.id + 1);
     });

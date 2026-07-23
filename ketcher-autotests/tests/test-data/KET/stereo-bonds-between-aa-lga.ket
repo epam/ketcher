@@ -1,0 +1,1443 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            },
+            {
+                "$ref": "monomer1"
+            },
+            {
+                "$ref": "monomer2"
+            },
+            {
+                "$ref": "monomer3"
+            },
+            {
+                "$ref": "monomer4"
+            },
+            {
+                "$ref": "monomer5"
+            },
+            {
+                "$ref": "monomer6"
+            },
+            {
+                "$ref": "monomer7"
+            },
+            {
+                "$ref": "monomer8"
+            },
+            {
+                "$ref": "monomer9"
+            },
+            {
+                "$ref": "monomer10"
+            },
+            {
+                "$ref": "monomer11"
+            },
+            {
+                "$ref": "monomer12"
+            },
+            {
+                "$ref": "monomer13"
+            },
+            {
+                "$ref": "monomer14"
+            },
+            {
+                "$ref": "monomer15"
+            },
+            {
+                "$ref": "monomer16"
+            },
+            {
+                "$ref": "monomer17"
+            },
+            {
+                "$ref": "monomer18"
+            },
+            {
+                "$ref": "monomer19"
+            },
+            {
+                "$ref": "monomer20"
+            },
+            {
+                "$ref": "monomer21"
+            },
+            {
+                "$ref": "monomer22"
+            },
+            {
+                "$ref": "monomer23"
+            },
+            {
+                "$ref": "monomer24"
+            },
+            {
+                "$ref": "monomer25"
+            },
+            {
+                "$ref": "monomer26"
+            },
+            {
+                "$ref": "monomer27"
+            },
+            {
+                "$ref": "monomer28"
+            },
+            {
+                "$ref": "monomer29"
+            },
+            {
+                "$ref": "monomer30"
+            },
+            {
+                "$ref": "monomer31"
+            },
+            {
+                "$ref": "monomer32"
+            },
+            {
+                "$ref": "monomer33"
+            },
+            {
+                "$ref": "monomer34"
+            },
+            {
+                "$ref": "monomer35"
+            },
+            {
+                "$ref": "monomer36"
+            },
+            {
+                "$ref": "monomer37"
+            },
+            {
+                "$ref": "monomer38"
+            },
+            {
+                "$ref": "monomer39"
+            },
+            {
+                "$ref": "monomer40"
+            },
+            {
+                "$ref": "monomer41"
+            },
+            {
+                "$ref": "monomer42"
+            },
+            {
+                "$ref": "monomer43"
+            },
+            {
+                "$ref": "monomer44"
+            },
+            {
+                "$ref": "monomer45"
+            },
+            {
+                "$ref": "monomer46"
+            },
+            {
+                "$ref": "monomer47"
+            },
+            {
+                "$ref": "monomer48"
+            },
+            {
+                "$ref": "monomer49"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer5",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer0",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer7",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer2",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer9",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer4",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer14",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer19",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer20",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer25",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer22",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer27",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer24",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer29",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer30",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer35",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer31",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer36",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer32",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer37",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer33",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer38",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer34",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer39",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer40",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer45",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer42",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer47",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer44",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer49",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer1",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer6",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer8",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer26",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer21",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer28",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer23",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer46",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer41",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer48",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer43",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer13",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer18",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer12",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer17",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer11",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer16",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer10",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer15",
+                    "attachmentPointId": "R1"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-Single___Single"
+            },
+            {
+                "$ref": "monomerTemplate-SingleUP___SingleUP"
+            },
+            {
+                "$ref": "monomerTemplate-SingleUP2___SingleUP2"
+            },
+            {
+                "$ref": "monomerTemplate-SingleDOWN___SingleDOWN"
+            },
+            {
+                "$ref": "monomerTemplate-SingleDOWN2___SingleDOWN2"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 14.50023615311014,
+            "y": 8.20000034570694
+        },
+        "alias": "Single",
+        "templateId": "Single___Single",
+        "expanded": true
+    },
+    "monomerTemplate-Single___Single": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    -1.299,
+                    0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.433,
+                    -0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.433,
+                    0.25,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    1.299,
+                    -0.25,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "Single___Single",
+        "fullName": "Single",
+        "alias": "Single",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": [
+                        3
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "modificationTypes": [],
+        "naturalAnalogShort": "A"
+    },
+    "monomer1": {
+        "type": "monomer",
+        "id": "1",
+        "position": {
+            "x": 14.50023615311014,
+            "y": 6.700000345706941
+        },
+        "alias": "SingleUP",
+        "templateId": "SingleUP___SingleUP",
+        "expanded": true
+    },
+    "monomerTemplate-SingleUP___SingleUP": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    -1.299,
+                    0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.433,
+                    -0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.433,
+                    0.25,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    1.299,
+                    -0.25,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    0
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "stereo": 1
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "SingleUP___SingleUP",
+        "fullName": "SingleUP",
+        "alias": "SingleUP",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": [
+                        3
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "modificationTypes": [],
+        "naturalAnalogShort": "C"
+    },
+    "monomer2": {
+        "type": "monomer",
+        "id": "2",
+        "position": {
+            "x": 14.50023615311014,
+            "y": 5.200000345706941
+        },
+        "alias": "SingleUP2",
+        "templateId": "SingleUP2___SingleUP2",
+        "expanded": true
+    },
+    "monomerTemplate-SingleUP2___SingleUP2": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    -1.299,
+                    0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.433,
+                    -0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.433,
+                    0.25,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    1.299,
+                    -0.25,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    2
+                ],
+                "stereo": 1
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "SingleUP2___SingleUP2",
+        "fullName": "SingleUP2",
+        "alias": "SingleUP2",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": [
+                        3
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "modificationTypes": [],
+        "naturalAnalogShort": "D"
+    },
+    "monomer3": {
+        "type": "monomer",
+        "id": "3",
+        "position": {
+            "x": 14.50023615311014,
+            "y": 3.7000003457069406
+        },
+        "alias": "SingleDOWN",
+        "templateId": "SingleDOWN___SingleDOWN",
+        "expanded": true
+    },
+    "monomerTemplate-SingleDOWN___SingleDOWN": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    -1.299,
+                    0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.433,
+                    -0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.433,
+                    0.25,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    1.299,
+                    -0.25,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    0
+                ],
+                "stereo": 6
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "SingleDOWN___SingleDOWN",
+        "fullName": "SingleDOWN",
+        "alias": "SingleDOWN",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": [
+                        3
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "modificationTypes": [],
+        "naturalAnalogShort": "E"
+    },
+    "monomer4": {
+        "type": "monomer",
+        "id": "4",
+        "position": {
+            "x": 14.50023615311014,
+            "y": 2.2000003457069406
+        },
+        "alias": "SingleDOWN2",
+        "templateId": "SingleDOWN2___SingleDOWN2",
+        "expanded": true
+    },
+    "monomerTemplate-SingleDOWN2___SingleDOWN2": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    -1.299,
+                    0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.433,
+                    -0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.433,
+                    0.25,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    1.299,
+                    -0.25,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    2
+                ],
+                "stereo": 6
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "SingleDOWN2___SingleDOWN2",
+        "fullName": "SingleDOWN2",
+        "alias": "SingleDOWN2",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": [
+                        3
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "modificationTypes": [],
+        "naturalAnalogShort": "F"
+    },
+    "monomer5": {
+        "type": "monomer",
+        "id": "5",
+        "position": {
+            "x": 8.549763482809066,
+            "y": 8.20000034570694
+        },
+        "alias": "Single",
+        "templateId": "Single___Single",
+        "expanded": true
+    },
+    "monomer6": {
+        "type": "monomer",
+        "id": "6",
+        "position": {
+            "x": 8.549763482809066,
+            "y": 6.70000034570694
+        },
+        "alias": "Single",
+        "templateId": "Single___Single",
+        "expanded": true
+    },
+    "monomer7": {
+        "type": "monomer",
+        "id": "7",
+        "position": {
+            "x": 8.549763482809066,
+            "y": 5.20000034570694
+        },
+        "alias": "Single",
+        "templateId": "Single___Single",
+        "expanded": true
+    },
+    "monomer8": {
+        "type": "monomer",
+        "id": "8",
+        "position": {
+            "x": 8.549763482809066,
+            "y": 3.7000003457069397
+        },
+        "alias": "Single",
+        "templateId": "Single___Single",
+        "expanded": true
+    },
+    "monomer9": {
+        "type": "monomer",
+        "id": "9",
+        "position": {
+            "x": 8.549763482809066,
+            "y": 2.2000003457069397
+        },
+        "alias": "Single",
+        "templateId": "Single___Single",
+        "expanded": true
+    },
+    "monomer10": {
+        "type": "monomer",
+        "id": "10",
+        "position": {
+            "x": 8.549763482809066,
+            "y": 0.7000003457069397
+        },
+        "alias": "SingleUP",
+        "templateId": "SingleUP___SingleUP",
+        "expanded": true
+    },
+    "monomer11": {
+        "type": "monomer",
+        "id": "11",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -0.7999996542930603
+        },
+        "alias": "SingleUP",
+        "templateId": "SingleUP___SingleUP",
+        "expanded": true
+    },
+    "monomer12": {
+        "type": "monomer",
+        "id": "12",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -2.2999996542930603
+        },
+        "alias": "SingleUP",
+        "templateId": "SingleUP___SingleUP",
+        "expanded": true
+    },
+    "monomer13": {
+        "type": "monomer",
+        "id": "13",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -3.7999996542930603
+        },
+        "alias": "SingleUP",
+        "templateId": "SingleUP___SingleUP",
+        "expanded": true
+    },
+    "monomer14": {
+        "type": "monomer",
+        "id": "14",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -5.29999965429306
+        },
+        "alias": "SingleUP",
+        "templateId": "SingleUP___SingleUP",
+        "expanded": true
+    },
+    "monomer15": {
+        "type": "monomer",
+        "id": "15",
+        "position": {
+            "x": 14.50023615311014,
+            "y": 0.7000003457069397
+        },
+        "alias": "Single",
+        "templateId": "Single___Single",
+        "expanded": true
+    },
+    "monomer16": {
+        "type": "monomer",
+        "id": "16",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -0.7999996542930603
+        },
+        "alias": "SingleUP",
+        "templateId": "SingleUP___SingleUP",
+        "expanded": true
+    },
+    "monomer17": {
+        "type": "monomer",
+        "id": "17",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -2.2999996542930603
+        },
+        "alias": "SingleUP2",
+        "templateId": "SingleUP2___SingleUP2",
+        "expanded": true
+    },
+    "monomer18": {
+        "type": "monomer",
+        "id": "18",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -3.7999996542930603
+        },
+        "alias": "SingleDOWN",
+        "templateId": "SingleDOWN___SingleDOWN",
+        "expanded": true
+    },
+    "monomer19": {
+        "type": "monomer",
+        "id": "19",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -5.29999965429306
+        },
+        "alias": "SingleDOWN2",
+        "templateId": "SingleDOWN2___SingleDOWN2",
+        "expanded": true
+    },
+    "monomer20": {
+        "type": "monomer",
+        "id": "20",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -6.79999965429306
+        },
+        "alias": "SingleUP2",
+        "templateId": "SingleUP2___SingleUP2",
+        "expanded": true
+    },
+    "monomer21": {
+        "type": "monomer",
+        "id": "21",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -8.29999965429306
+        },
+        "alias": "SingleUP2",
+        "templateId": "SingleUP2___SingleUP2",
+        "expanded": true
+    },
+    "monomer22": {
+        "type": "monomer",
+        "id": "22",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -9.79999965429306
+        },
+        "alias": "SingleUP2",
+        "templateId": "SingleUP2___SingleUP2",
+        "expanded": true
+    },
+    "monomer23": {
+        "type": "monomer",
+        "id": "23",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -11.29999965429306
+        },
+        "alias": "SingleUP2",
+        "templateId": "SingleUP2___SingleUP2",
+        "expanded": true
+    },
+    "monomer24": {
+        "type": "monomer",
+        "id": "24",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -12.79999965429306
+        },
+        "alias": "SingleUP2",
+        "templateId": "SingleUP2___SingleUP2",
+        "expanded": true
+    },
+    "monomer25": {
+        "type": "monomer",
+        "id": "25",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -6.799999654293064
+        },
+        "alias": "Single",
+        "templateId": "Single___Single",
+        "expanded": true
+    },
+    "monomer26": {
+        "type": "monomer",
+        "id": "26",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -8.299999654293064
+        },
+        "alias": "SingleUP",
+        "templateId": "SingleUP___SingleUP",
+        "expanded": true
+    },
+    "monomer27": {
+        "type": "monomer",
+        "id": "27",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -9.799999654293064
+        },
+        "alias": "SingleUP2",
+        "templateId": "SingleUP2___SingleUP2",
+        "expanded": true
+    },
+    "monomer28": {
+        "type": "monomer",
+        "id": "28",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -11.299999654293064
+        },
+        "alias": "SingleDOWN",
+        "templateId": "SingleDOWN___SingleDOWN",
+        "expanded": true
+    },
+    "monomer29": {
+        "type": "monomer",
+        "id": "29",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -12.799999654293064
+        },
+        "alias": "SingleDOWN2",
+        "templateId": "SingleDOWN2___SingleDOWN2",
+        "expanded": true
+    },
+    "monomer30": {
+        "type": "monomer",
+        "id": "30",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -14.29999965429306
+        },
+        "alias": "SingleDOWN",
+        "templateId": "SingleDOWN___SingleDOWN",
+        "expanded": true
+    },
+    "monomer31": {
+        "type": "monomer",
+        "id": "31",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -15.79999965429306
+        },
+        "alias": "SingleDOWN",
+        "templateId": "SingleDOWN___SingleDOWN",
+        "expanded": true
+    },
+    "monomer32": {
+        "type": "monomer",
+        "id": "32",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -17.29999965429306
+        },
+        "alias": "SingleDOWN",
+        "templateId": "SingleDOWN___SingleDOWN",
+        "expanded": true
+    },
+    "monomer33": {
+        "type": "monomer",
+        "id": "33",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -18.79999965429306
+        },
+        "alias": "SingleDOWN",
+        "templateId": "SingleDOWN___SingleDOWN",
+        "expanded": true
+    },
+    "monomer34": {
+        "type": "monomer",
+        "id": "34",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -20.29999965429306
+        },
+        "alias": "SingleDOWN",
+        "templateId": "SingleDOWN___SingleDOWN",
+        "expanded": true
+    },
+    "monomer35": {
+        "type": "monomer",
+        "id": "35",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -14.299999654293064
+        },
+        "alias": "Single",
+        "templateId": "Single___Single",
+        "expanded": true
+    },
+    "monomer36": {
+        "type": "monomer",
+        "id": "36",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -15.799999654293064
+        },
+        "alias": "SingleUP",
+        "templateId": "SingleUP___SingleUP",
+        "expanded": true
+    },
+    "monomer37": {
+        "type": "monomer",
+        "id": "37",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -17.299999654293064
+        },
+        "alias": "SingleUP2",
+        "templateId": "SingleUP2___SingleUP2",
+        "expanded": true
+    },
+    "monomer38": {
+        "type": "monomer",
+        "id": "38",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -18.799999654293064
+        },
+        "alias": "SingleDOWN",
+        "templateId": "SingleDOWN___SingleDOWN",
+        "expanded": true
+    },
+    "monomer39": {
+        "type": "monomer",
+        "id": "39",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -20.299999654293064
+        },
+        "alias": "SingleDOWN2",
+        "templateId": "SingleDOWN2___SingleDOWN2",
+        "expanded": true
+    },
+    "monomer40": {
+        "type": "monomer",
+        "id": "40",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -21.79999965429306
+        },
+        "alias": "SingleDOWN2",
+        "templateId": "SingleDOWN2___SingleDOWN2",
+        "expanded": true
+    },
+    "monomer41": {
+        "type": "monomer",
+        "id": "41",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -23.29999965429306
+        },
+        "alias": "SingleDOWN2",
+        "templateId": "SingleDOWN2___SingleDOWN2",
+        "expanded": true
+    },
+    "monomer42": {
+        "type": "monomer",
+        "id": "42",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -24.79999965429306
+        },
+        "alias": "SingleDOWN2",
+        "templateId": "SingleDOWN2___SingleDOWN2",
+        "expanded": true
+    },
+    "monomer43": {
+        "type": "monomer",
+        "id": "43",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -26.29999965429306
+        },
+        "alias": "SingleDOWN2",
+        "templateId": "SingleDOWN2___SingleDOWN2",
+        "expanded": true
+    },
+    "monomer44": {
+        "type": "monomer",
+        "id": "44",
+        "position": {
+            "x": 8.549763482809066,
+            "y": -27.79999965429306
+        },
+        "alias": "SingleDOWN2",
+        "templateId": "SingleDOWN2___SingleDOWN2",
+        "expanded": true
+    },
+    "monomer45": {
+        "type": "monomer",
+        "id": "45",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -21.799999654293064
+        },
+        "alias": "Single",
+        "templateId": "Single___Single",
+        "expanded": true
+    },
+    "monomer46": {
+        "type": "monomer",
+        "id": "46",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -23.299999654293053
+        },
+        "alias": "SingleUP",
+        "templateId": "SingleUP___SingleUP",
+        "expanded": true
+    },
+    "monomer47": {
+        "type": "monomer",
+        "id": "47",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -24.799999654293053
+        },
+        "alias": "SingleUP2",
+        "templateId": "SingleUP2___SingleUP2",
+        "expanded": true
+    },
+    "monomer48": {
+        "type": "monomer",
+        "id": "48",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -26.299999654293053
+        },
+        "alias": "SingleDOWN",
+        "templateId": "SingleDOWN___SingleDOWN",
+        "expanded": true
+    },
+    "monomer49": {
+        "type": "monomer",
+        "id": "49",
+        "position": {
+            "x": 14.50023615311014,
+            "y": -27.799999654293053
+        },
+        "alias": "SingleDOWN2",
+        "templateId": "SingleDOWN2___SingleDOWN2",
+        "expanded": true
+    }
+}

@@ -29,6 +29,18 @@ export enum ChemicalMimeType {
   KET = 'chemical/x-indigo-ket',
   UNKNOWN = 'chemical/x-unknown',
   SDF = 'chemical/x-sdf',
+  FASTA = 'chemical/x-fasta',
+  SEQUENCE = 'chemical/x-sequence',
+  PeptideSequenceThreeLetter = 'chemical/x-peptide-sequence-3-letter',
+  RNA = 'chemical/x-rna-sequence',
+  DNA = 'chemical/x-dna-sequence',
+  PEPTIDE = 'chemical/x-peptide-sequence',
+  IDT = 'chemical/x-idt',
+  AXOLABS = 'chemical/x-axo-labs',
+  HELM = 'chemical/x-helm',
+  BILN = 'chemical/x-biln',
+  RDF = 'chemical/x-rdf',
+  MonomerLibrary = 'chemical/x-monomer-library',
 }
 
 export interface WithStruct {
@@ -41,6 +53,9 @@ export interface WithFormat {
 
 export interface WithOutputFormat {
   output_format: ChemicalMimeType;
+}
+export interface WithInputFormat {
+  input_format?: ChemicalMimeType;
 }
 
 export interface WithSelection {
@@ -68,7 +83,10 @@ export interface CheckResult {
   [key: string]: string;
 }
 
-export interface ConvertData extends WithStruct, WithOutputFormat {}
+export interface ConvertData
+  extends WithStruct,
+    WithOutputFormat,
+    WithInputFormat {}
 
 export interface ConvertResult extends WithStruct, WithFormat {}
 
@@ -94,6 +112,31 @@ export interface DearomatizeResult extends WithStruct, WithFormat {}
 export interface CalculateCipData extends WithStruct, WithOutputFormat {}
 
 export interface CalculateCipResult extends WithStruct, WithFormat {}
+
+export interface ExplicitHydrogensData extends WithStruct, WithOutputFormat {
+  mode?: 'auto' | 'fold' | 'unfold';
+}
+
+export type CalculateMacromoleculePropertiesData = WithStruct;
+
+export interface SingleChainMacromoleculeProperties {
+  grossFormula?: string;
+  mass?: number;
+  monomerCount: {
+    nucleotides?: Record<string, number>;
+    peptides?: Record<string, number>;
+  };
+  pKa?: number;
+  extinctionCoefficient?: number;
+  hydrophobicity?: number[];
+  Tm?: number;
+}
+
+export interface CalculateMacromoleculePropertiesResult {
+  properties: string;
+}
+
+export interface ExplicitHydrogensResult extends WithStruct, WithFormat {}
 
 export type CalculateProps =
   | 'molecular-weight'
@@ -134,10 +177,10 @@ export type OutputFormatType = 'png' | 'svg';
 export interface GenerateImageOptions extends StructServiceOptions {
   outputFormat: OutputFormatType;
   backgroundColor?: string;
-  bondThickness: number;
 }
 
 export interface StructService {
+  addKetcherId: (id: string) => void;
   info: () => Promise<InfoResult>;
   convert: (
     data: ConvertData,
@@ -181,4 +224,13 @@ export interface StructService {
     data: string,
     options?: GenerateImageOptions,
   ) => Promise<string>;
+  toggleExplicitHydrogens: (
+    data: ExplicitHydrogensData,
+    options?: StructServiceOptions,
+  ) => Promise<ExplicitHydrogensResult>;
+  calculateMacromoleculeProperties: (
+    data: CalculateMacromoleculePropertiesData,
+    options?: StructServiceOptions,
+  ) => Promise<CalculateMacromoleculePropertiesResult>;
+  destroy?: () => void;
 }

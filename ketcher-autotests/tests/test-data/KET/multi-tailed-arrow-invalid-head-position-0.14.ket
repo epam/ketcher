@@ -1,0 +1,49 @@
+{
+		"root": {
+			"nodes": [
+				{
+					"type": "multi-tailed-arrow",
+					"data": {
+						"head": {
+							"position": {
+								"x": 0.5,
+								"y": 0.14,
+								"z": 0
+							}
+						},
+						"spine": {
+							"pos": [
+								{
+									"x": 0,
+									"y": 0.5,
+									"z": 0
+								},
+								{
+									"x": 0,
+									"y": 0,
+									"z": 0
+								}
+							]
+						},
+						"tails": {
+							"pos": [
+								{
+									"x": -0.4,
+									"y": 0.5,
+									"z": 0
+								},
+								{
+									"x": -0.4,
+									"y": 0,
+									"z": 0
+								}
+							]
+						},
+						"zOrder": 0
+					}
+				}
+			],
+			"connections": [],
+			"templates": []
+		}
+	}

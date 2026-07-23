@@ -1,0 +1,152 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "type": "arrow",
+                "data": {
+                    "mode": "both-ends-filled-triangle",
+                    "pos": [
+                        {
+                            "x": 6.625,
+                            "y": -4.3500000000000005,
+                            "z": 0
+                        },
+                        {
+                            "x": 7.625,
+                            "y": -4.3500000000000005,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "arrow",
+                "data": {
+                    "mode": "equilibrium-filled-half-bow",
+                    "pos": [
+                        {
+                            "x": 7.175000000000001,
+                            "y": -6.125,
+                            "z": 0
+                        },
+                        {
+                            "x": 8.175,
+                            "y": -6.125,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "arrow",
+                "data": {
+                    "mode": "equilibrium-filled-triangle",
+                    "pos": [
+                        {
+                            "x": 7.825,
+                            "y": -7.7,
+                            "z": 0
+                        },
+                        {
+                            "x": 8.825,
+                            "y": -7.7,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "arrow",
+                "data": {
+                    "mode": "equilibrium-open-angle",
+                    "pos": [
+                        {
+                            "x": 9.05,
+                            "y": -9.625,
+                            "z": 0
+                        },
+                        {
+                            "x": 10.05,
+                            "y": -9.625,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "arrow",
+                "data": {
+                    "mode": "unbalanced-equilibrium-filled-half-bow",
+                    "pos": [
+                        {
+                            "x": 11.4,
+                            "y": -7.8500000000000005,
+                            "z": 0
+                        },
+                        {
+                            "x": 12.4,
+                            "y": -7.8500000000000005,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "arrow",
+                "data": {
+                    "mode": "unbalanced-equilibrium-open-half-angle",
+                    "pos": [
+                        {
+                            "x": 12.125,
+                            "y": -6.175000000000001,
+                            "z": 0
+                        },
+                        {
+                            "x": 13.125,
+                            "y": -6.175000000000001,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "arrow",
+                "data": {
+                    "mode": "unbalanced-equilibrium-large-filled-half-bow",
+                    "pos": [
+                        {
+                            "x": 12.875,
+                            "y": -4.3500000000000005,
+                            "z": 0
+                        },
+                        {
+                            "x": 13.875,
+                            "y": -4.3500000000000005,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "arrow",
+                "data": {
+                    "mode": "unbalanced-equilibrium-filled-half-triangle",
+                    "pos": [
+                        {
+                            "x": 10.200000000000001,
+                            "y": -3.9000000000000004,
+                            "z": 0
+                        },
+                        {
+                            "x": 11.200000000000001,
+                            "y": -3.9000000000000004,
+                            "z": 0
+                        }
+                    ]
+                }
+            }
+        ],
+        "connections": [],
+        "templates": []
+    }
+}

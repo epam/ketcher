@@ -1,6 +1,6 @@
 import assert from 'assert';
-import { Bond, SGroup, Struct } from 'ketcher-core';
-import Editor from '../Editor';
+import { MonomerMicromolecule, SGroup, Struct } from 'ketcher-core';
+import type Editor from '../Editor';
 
 let showTooltipTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -43,11 +43,13 @@ function makeStruct(editor: Editor, sGroup: SGroup) {
   makeRGroupAttachmentPoints(sGroup, existingStruct, struct, atomsIdMapping);
   makeBonds(sGroup, existingStruct, struct, atomsIdMapping);
 
-  convertSGroupAttachmentPointsToRGroupAttachmentPoints(
-    struct,
-    sGroup,
-    atomsIdMapping,
-  );
+  if (!(sGroup instanceof MonomerMicromolecule)) {
+    convertSGroupAttachmentPointsToRGroupAttachmentPoints(
+      struct,
+      sGroup,
+      atomsIdMapping,
+    );
+  }
 
   return struct;
 }
@@ -59,7 +61,7 @@ function makeBonds(
   atomsIdMapping: Map<number, number>,
 ) {
   Array.from(existingStruct.bonds).forEach((value) => {
-    const [_, bond] = value as [number, Bond];
+    const [_, bond] = value;
     const clonedBond = bond.clone(atomsIdMapping);
     const isInsideSGroup =
       sGroup.atoms.includes(bond.begin) || sGroup.atoms.includes(bond.end);
@@ -110,6 +112,13 @@ function hideTooltip(editor: Editor) {
 
 function showTooltip(editor: Editor, infoPanelData: InfoPanelData | null) {
   hideTooltip(editor);
+
+  if (
+    infoPanelData?.sGroup instanceof MonomerMicromolecule &&
+    infoPanelData.sGroup.monomer.monomerItem.props.unresolved
+  ) {
+    return;
+  }
 
   showTooltipTimer = setTimeout(() => {
     editor.event.showInfo.dispatch(infoPanelData);

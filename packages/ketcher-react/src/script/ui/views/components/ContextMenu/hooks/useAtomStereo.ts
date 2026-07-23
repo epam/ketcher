@@ -1,22 +1,27 @@
-import { findStereoAtoms, KetcherLogger } from 'ketcher-core';
+import { findStereoAtoms, KetcherLogger, ketcherProvider } from 'ketcher-core';
 import { useCallback, useRef } from 'react';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import EnhancedStereoTool from 'src/script/editor/tool/enhanced-stereo';
-import { ItemEventParams } from '../contextMenu.types';
+import type {
+  AtomContextMenuProps,
+  ItemEventParams,
+} from '../contextMenu.types';
 import { noOperation } from '../utils';
 
+type Params = ItemEventParams<AtomContextMenuProps>;
+
 const useAtomStereo = () => {
-  const { getKetcherInstance } = useAppContext();
-  const stereoAtomIdsRef = useRef<number[] | undefined>();
+  const { ketcherId } = useAppContext();
+  const stereoAtomIdsRef = useRef<number[] | undefined>(undefined);
 
   const handler = useCallback(
-    async ({ props }: ItemEventParams) => {
+    async ({ props }: Params) => {
       if (!props || !stereoAtomIdsRef.current) {
         return;
       }
 
-      const editor = getKetcherInstance().editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
 
       try {
         const action = await EnhancedStereoTool.changeAtomsStereoAction(
@@ -30,12 +35,12 @@ const useAtomStereo = () => {
         noOperation();
       }
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   const disabled = useCallback(
-    ({ props }: ItemEventParams) => {
-      const editor = getKetcherInstance().editor as Editor;
+    ({ props }: Params) => {
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const stereoAtomIds: number[] = findStereoAtoms(
         editor.struct(),
         props?.atomIds,
@@ -48,7 +53,7 @@ const useAtomStereo = () => {
 
       return true;
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   return [handler, disabled] as const;

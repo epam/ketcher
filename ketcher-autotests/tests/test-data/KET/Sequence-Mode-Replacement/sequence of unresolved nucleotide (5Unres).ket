@@ -1,0 +1,179 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer420"
+            },
+            {
+                "$ref": "monomer422"
+            },
+            {
+                "$ref": "monomer424"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer420",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer422",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer422",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer424",
+                    "attachmentPointId": "R1"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-unknown_monomer_with_idt_alias_5Unres"
+            }
+        ]
+    },
+    "monomer420": {
+        "type": "monomer",
+        "id": "420",
+        "position": {
+            "x": 14.574999999999996,
+            "y": -8.374999999999998
+        },
+        "alias": "5Unres",
+        "templateId": "unknown_monomer_with_idt_alias_5Unres",
+        "seqid": 0
+    },
+    "monomerTemplate-unknown_monomer_with_idt_alias_5Unres": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    0,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1,
+                    1,
+                    1
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2,
+                    2,
+                    2
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3,
+                    3,
+                    3
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "id": "unknown_monomer_with_idt_alias_5Unres",
+        "fullName": "5Unres",
+        "alias": "5Unres",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": []
+                }
+            },
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": []
+                }
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": []
+                }
+            },
+            {
+                "attachmentAtom": 3,
+                "leavingGroup": {
+                    "atoms": []
+                }
+            }
+        ],
+        "idtAliases": {
+            "base": "5Unres"
+        },
+        "unresolved": true,
+        "naturalAnalogShort": ""
+    },
+    "monomer422": {
+        "type": "monomer",
+        "id": "422",
+        "position": {
+            "x": 16.075000000000003,
+            "y": -8.374999999999998
+        },
+        "alias": "5Unres",
+        "templateId": "unknown_monomer_with_idt_alias_5Unres",
+        "seqid": 0
+    },
+    "monomer424": {
+        "type": "monomer",
+        "id": "424",
+        "position": {
+            "x": 17.575000000000003,
+            "y": -8.374999999999998
+        },
+        "alias": "5Unres",
+        "templateId": "unknown_monomer_with_idt_alias_5Unres",
+        "seqid": 0
+    }
+}

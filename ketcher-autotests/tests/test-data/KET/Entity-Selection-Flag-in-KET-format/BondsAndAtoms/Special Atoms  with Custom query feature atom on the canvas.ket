@@ -1,0 +1,779 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            },
+            {
+                "$ref": "mol9"
+            },
+            {
+                "$ref": "mol10"
+            },
+            {
+                "$ref": "mol11"
+            },
+            {
+                "$ref": "mol12"
+            },
+            {
+                "$ref": "mol13"
+            },
+            {
+                "$ref": "mol14"
+            },
+            {
+                "$ref": "mol15"
+            },
+            {
+                "$ref": "mol16"
+            },
+            {
+                "$ref": "mol17"
+            },
+            {
+                "$ref": "mol18"
+            },
+            {
+                "$ref": "mol19"
+            },
+            {
+                "$ref": "mol20"
+            },
+            {
+                "$ref": "mol21"
+            },
+            {
+                "$ref": "mol22"
+            },
+            {
+                "$ref": "mol23"
+            },
+            {
+                "$ref": "mol24"
+            },
+            {
+                "$ref": "mol25"
+            },
+            {
+                "$ref": "mol26"
+            },
+            {
+                "$ref": "mol27"
+            },
+            {
+                "$ref": "mol28"
+            },
+            {
+                "$ref": "mol29"
+            },
+            {
+                "$ref": "mol30"
+            },
+            {
+                "$ref": "mol31"
+            },
+            {
+                "$ref": "mol32"
+            },
+            {
+                "$ref": "mol33"
+            },
+            {
+                "$ref": "mol34"
+            },
+            {
+                "$ref": "mol35"
+            },
+            {
+                "$ref": "mol36"
+            },
+            {
+                "$ref": "mol37"
+            },
+            {
+                "$ref": "mol38"
+            },
+            {
+                "$ref": "mol39"
+            },
+            {
+                "$ref": "mol40"
+            },
+            {
+                "$ref": "mol41"
+            },
+            {
+                "$ref": "mol42"
+            },
+            {
+                "$ref": "mol43"
+            },
+            {
+                "$ref": "mol44"
+            },
+            {
+                "$ref": "mol45"
+            },
+            {
+                "$ref": "mol46"
+            },
+            {
+                "$ref": "mol47"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    11.88144045070177,
+                    -5.962800654770522,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "AH",
+                "location": [
+                    13.273849155230632,
+                    -5.884721661993202,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Q",
+                "location": [
+                    14.614205197907944,
+                    -5.923761158381863,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "QH",
+                "location": [
+                    15.928534909659483,
+                    -5.923761158381863,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "M",
+                "location": [
+                    11.907466781627544,
+                    -6.977827560875672,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "MH",
+                "location": [
+                    13.19577016245331,
+                    -6.964814395412785,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "X",
+                "location": [
+                    14.58817886698217,
+                    -6.886735402635466,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "XH",
+                "location": [
+                    15.915521744196596,
+                    -6.899748568098352,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "H+",
+                "location": [
+                    18.296931023904833,
+                    -5.923761158381863,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol9": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "D",
+                "location": [
+                    19.507155411953278,
+                    -5.93677432384475,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol10": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "T",
+                "location": [
+                    20.613274476298635,
+                    -5.949787489307635,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol11": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "R",
+                "location": [
+                    21.82349886434708,
+                    -5.949787489307635,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol12": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Pol",
+                "location": [
+                    23.02071008693264,
+                    -5.949787489307635,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol13": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "G",
+                "location": [
+                    11.89445361616466,
+                    -8.018880797906593,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol14": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "GH",
+                "location": [
+                    13.221796493379085,
+                    -7.979841301517934,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol15": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "G*",
+                "location": [
+                    14.575165701519284,
+                    -7.979841301517934,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol16": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "GH*",
+                "location": [
+                    15.902508578733709,
+                    -7.979841301517934,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol17": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "ACY",
+                "location": [
+                    11.959519443479092,
+                    -9.098973531326177,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol18": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "ACH",
+                "location": [
+                    13.286862320693519,
+                    -9.059934034937516,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol19": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "ABC",
+                "location": [
+                    11.959519443479092,
+                    -10.087974106505552,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol20": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "ABH",
+                "location": [
+                    13.234809658841971,
+                    -10.114000437431326,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol21": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "AYL",
+                "location": [
+                    14.62721836337083,
+                    -10.114000437431326,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol22": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "AYH",
+                "location": [
+                    15.811416420493504,
+                    -10.100987271968439,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol23": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "ALK",
+                "location": [
+                    11.920479947090431,
+                    -11.063961516222042,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol24": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "ALH",
+                "location": [
+                    13.221796493379085,
+                    -11.037935185296268,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol25": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "AEL",
+                "location": [
+                    14.614205197907944,
+                    -11.063961516222042,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol26": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "AEH",
+                "location": [
+                    15.811416420493504,
+                    -11.037935185296268,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol27": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "AHC",
+                "location": [
+                    11.933493112553318,
+                    -12.07898842232719,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol28": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "AHH",
+                "location": [
+                    13.208783327916198,
+                    -12.065975256864304,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol29": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "AOX",
+                "location": [
+                    14.640231528833716,
+                    -12.026935760475645,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol30": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "AOH",
+                "location": [
+                    15.824429585956391,
+                    -12.03994892593853,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol31": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "CBC",
+                "location": [
+                    18.192825700201738,
+                    -10.140026768357098,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol32": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "CYC",
+                "location": [
+                    18.15378620381308,
+                    -9.111986696789064,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol33": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "CYH",
+                "location": [
+                    19.481129081027504,
+                    -9.08596036586329,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol34": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "CXX",
+                "location": [
+                    20.652313972687296,
+                    -9.08596036586329,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol35": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "CXH",
+                "location": [
+                    21.9015778571244,
+                    -9.072947200400403,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol36": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "CBH",
+                "location": [
+                    19.468115915564617,
+                    -10.114000437431326,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol37": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "ARY",
+                "location": [
+                    20.691353469075953,
+                    -10.087974106505552,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol38": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "ARH",
+                "location": [
+                    21.927604188050175,
+                    -10.087974106505552,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol39": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "CAL",
+                "location": [
+                    18.192825700201738,
+                    -11.063961516222042,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol40": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "CAH",
+                "location": [
+                    19.42907641917596,
+                    -11.076974681684927,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol41": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "CEL",
+                "location": [
+                    20.652313972687296,
+                    -11.037935185296268,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol42": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "CEH",
+                "location": [
+                    21.9015778571244,
+                    -11.050948350759155,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol43": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "CHC",
+                "location": [
+                    18.179812534738854,
+                    -12.026935760475645,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol44": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "CHH",
+                "location": [
+                    19.481129081027504,
+                    -12.013922595012758,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol45": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "HAR",
+                "location": [
+                    20.691353469075953,
+                    -11.974883098624097,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol46": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "HAH",
+                "location": [
+                    21.836512029809967,
+                    -11.948856767698325,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol47": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    26.40268817204301,
+                    -9.170027085170949,
+                    0
+                ],
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ]
+    }
+}

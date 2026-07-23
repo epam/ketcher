@@ -1,0 +1,2868 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer1"
+            },
+            {
+                "$ref": "monomer3"
+            },
+            {
+                "$ref": "monomer5"
+            },
+            {
+                "$ref": "monomer7"
+            },
+            {
+                "$ref": "monomer9"
+            },
+            {
+                "$ref": "monomer11"
+            },
+            {
+                "$ref": "monomer13"
+            },
+            {
+                "$ref": "monomer15"
+            },
+            {
+                "$ref": "monomer17"
+            },
+            {
+                "$ref": "monomer19"
+            },
+            {
+                "$ref": "monomer21"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-Test-6-Ch___Test-6-AP-Chem"
+            },
+            {
+                "$ref": "monomerTemplate-A6OH___6-amino-hexanol"
+            },
+            {
+                "$ref": "monomerTemplate-Az___Azide"
+            },
+            {
+                "$ref": "monomerTemplate-EG___Ethylene Glycol"
+            },
+            {
+                "$ref": "monomerTemplate-MCC___4-(N-maleimidomethyl)cyclohexane-1-carboxylate"
+            },
+            {
+                "$ref": "monomerTemplate-PEG2___Diethylene Glycol"
+            },
+            {
+                "$ref": "monomerTemplate-SMCC___SMCC linker from Pierce"
+            },
+            {
+                "$ref": "monomerTemplate-SMPEG2___SM(PEG)2 linker from Pierce"
+            },
+            {
+                "$ref": "monomerTemplate-SS3___Dipropanol-disulfide"
+            },
+            {
+                "$ref": "monomerTemplate-hxy___Hexynyl alcohol"
+            },
+            {
+                "$ref": "monomerTemplate-sDBL___Symmetric Doubler"
+            }
+        ]
+    },
+    "monomer1": {
+        "type": "monomer",
+        "id": "1",
+        "position": {
+            "x": 0.8866666666666667,
+            "y": -0.8600000000000001
+        },
+        "alias": "Test-6-Ch",
+        "templateId": "Test-6-Ch___Test-6-AP-Chem"
+    },
+    "monomerTemplate-Test-6-Ch___Test-6-AP-Chem": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    12.083841486076295,
+                    -6.55002248744598,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.137338236554521,
+                    -6.103220953493176,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.276735281944443,
+                    -6.698922998649142,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.330332032765988,
+                    -6.252221465039658,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.469729078155911,
+                    -6.847823509852303,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.523325828977456,
+                    -6.401121976242818,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.662722874367379,
+                    -6.996824021398784,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.716219624845604,
+                    -6.55002248744598,
+                    0
+                ]
+            },
+            {
+                "label": "I",
+                "location": [
+                    12.771843848116424,
+                    -6.07362085187052,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    5.0282172628054775,
+                    -7.026424123021441,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.023324112378527,
+                    -5.535119003093472,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.023324112378527,
+                    -4.535115569895613,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.31622168476432,
+                    -3.828013142281406,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.575022573275927,
+                    -2.8621098261555935,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.609119257150113,
+                    -2.603208937300668,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.86792014566172,
+                    -1.6373056211748553,
+                    0
+                ]
+            },
+            {
+                "label": "Br",
+                "location": [
+                    4.8679167124638605,
+                    -1.6373056211748553,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    10.276735281944443,
+                    -7.698926431847001,
+                    0
+                ]
+            },
+            {
+                "label": "Cl",
+                "location": [
+                    7.575026006473786,
+                    -2.8621098261555935,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.469729078155911,
+                    -7.847826943050163,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.969727361556981,
+                    -8.71392991654283,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    7.969727361556981,
+                    -9.713933349740689,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    18
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    21
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "Test-6-Ch___Test-6-AP-Chem",
+        "fullName": "Test-6-AP-Chem",
+        "alias": "Test-6-Ch",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 7,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 15,
+                "leavingGroup": {
+                    "atoms": [
+                        16
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 13,
+                "leavingGroup": {
+                    "atoms": [
+                        18
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": [
+                        17
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 20,
+                "leavingGroup": {
+                    "atoms": [
+                        21
+                    ]
+                },
+                "type": "side"
+            }
+        ]
+    },
+    "monomer3": {
+        "type": "monomer",
+        "id": "3",
+        "position": {
+            "x": 1.6066666666666667,
+            "y": -0.8400000000000001
+        },
+        "alias": "A6OH",
+        "templateId": "A6OH___6-amino-hexanol"
+    },
+    "monomerTemplate-A6OH___6-amino-hexanol": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    4.5654,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.2082,
+                    0.6407,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.9742,
+                    -0.2135,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.617,
+                    0.4271,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.617,
+                    -0.4271,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.9741,
+                    0.2135,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.2082,
+                    -0.6407,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -4.5654,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    5.552,
+                    0.6831,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -5.552,
+                    -0.6831,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    9
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "A6OH___6-amino-hexanol",
+        "fullName": "6-amino-hexanol",
+        "alias": "A6OH",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 7,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "right"
+            }
+        ]
+    },
+    "monomer5": {
+        "type": "monomer",
+        "id": "5",
+        "position": {
+            "x": 2.3600000000000003,
+            "y": -0.8600000000000001
+        },
+        "alias": "Az",
+        "templateId": "Az___Azide"
+    },
+    "monomerTemplate-Az___Azide": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "O",
+                "location": [
+                    3.0997,
+                    0.9106,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.5,
+                    1.95,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.25,
+                    3.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.5,
+                    4.55,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.25,
+                    5.85,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    2.5,
+                    7.15,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    3.25,
+                    8.4499,
+                    0
+                ],
+                "charge": 1
+            },
+            {
+                "label": "N",
+                "location": [
+                    3.8497,
+                    9.4894,
+                    0
+                ],
+                "charge": -1
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.3,
+                    1.95,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    8
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "Az___Azide",
+        "fullName": "Azide",
+        "alias": "Az",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "left"
+            }
+        ]
+    },
+    "monomer7": {
+        "type": "monomer",
+        "id": "7",
+        "position": {
+            "x": 0.8266666666666668,
+            "y": -1.4600000000000002
+        },
+        "alias": "EG",
+        "templateId": "EG___Ethylene Glycol"
+    },
+    "monomerTemplate-EG___Ethylene Glycol": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "O",
+                "location": [
+                    -1.3,
+                    0.3899,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0,
+                    -0.3601,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -2.3394,
+                    -0.2098,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.3,
+                    0.3899,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.3394,
+                    -0.2098,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "EG___Ethylene Glycol",
+        "fullName": "Ethylene Glycol",
+        "alias": "EG",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        2
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 3,
+                "leavingGroup": {
+                    "atoms": [
+                        4
+                    ]
+                },
+                "type": "right"
+            }
+        ]
+    },
+    "monomer9": {
+        "type": "monomer",
+        "id": "9",
+        "position": {
+            "x": 1.6733333333333333,
+            "y": -1.4133333333333333
+        },
+        "alias": "MCC",
+        "templateId": "MCC___4-(N-maleimidomethyl)cyclohexane-1-carboxylate"
+    },
+    "monomerTemplate-MCC___4-(N-maleimidomethyl)cyclohexane-1-carboxylate": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    4.8398,
+                    3.5052,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.5875,
+                    2.2049,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.0875,
+                    2.2023,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.8397,
+                    3.5,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.092,
+                    4.8003,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.592,
+                    4.803,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.8375,
+                    0.9049,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.4372,
+                    -0.1345,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    3.6375,
+                    0.9049,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.842,
+                    6.1003,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    7.092,
+                    7.4003,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.7107,
+                    8.7528,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.6109,
+                    7.5356,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.2965,
+                    9.0023,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.5942,
+                    9.7545,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    8.8856,
+                    8.9973,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    4.8148,
+                    6.6378,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    6
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    14
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    11,
+                    15
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    12,
+                    16
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "MCC___4-(N-maleimidomethyl)cyclohexane-1-carboxylate",
+        "fullName": "4-(N-maleimidomethyl)cyclohexane-1-carboxylate",
+        "alias": "MCC",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 6,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "left"
+            }
+        ]
+    },
+    "monomer11": {
+        "type": "monomer",
+        "id": "11",
+        "position": {
+            "x": 2.4333333333333336,
+            "y": -1.4333333333333333
+        },
+        "alias": "PEG2",
+        "templateId": "PEG2___Diethylene Glycol"
+    },
+    "monomerTemplate-PEG2___Diethylene Glycol": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "O",
+                "location": [
+                    -2.735573959497841,
+                    -0.26886471414024016,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.8236925914250204,
+                    0.25722069051715646,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.9118813680728208,
+                    -0.26886471414024016,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0,
+                    0.25722069051715646,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.9118813680728208,
+                    -0.26886471414024016,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.8237627361456417,
+                    0.25722069051715646,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.735644104218462,
+                    -0.26886471414024016,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    3.464728330352993,
+                    0.15179317542381418,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -3.464728330352993,
+                    0.15179317542381418,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    8
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "PEG2___Diethylene Glycol",
+        "fullName": "Diethylene Glycol",
+        "alias": "PEG2",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 6,
+                "leavingGroup": {
+                    "atoms": [
+                        7
+                    ]
+                },
+                "type": "right"
+            }
+        ]
+    },
+    "monomer13": {
+        "type": "monomer",
+        "id": "13",
+        "position": {
+            "x": 0.8133333333333334,
+            "y": -2.0733333333333333
+        },
+        "alias": "SMCC",
+        "templateId": "SMCC___SMCC linker from Pierce"
+    },
+    "monomerTemplate-SMCC___SMCC linker from Pierce": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    0.4966,
+                    -1.0108,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.8438,
+                    -1.686,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -2.0992,
+                    -0.8637,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.4215,
+                    -0.2334,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.4845,
+                    -1.4048,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.1504,
+                    0.6228,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.597,
+                    1.0196,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.209,
+                    1.3667,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -3.7953,
+                    -2.5638,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -4.0204,
+                    2.1426,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.9171,
+                    1.1645,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.173,
+                    0.3443,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.0908,
+                    -1.1534,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.7526,
+                    -1.831,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.5789,
+                    0.487,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.5135,
+                    1.0196,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.5173,
+                    0.3621,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    4.5813,
+                    2.2177,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    6
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    5,
+                    7
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    15
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    17
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "SMCC___SMCC linker from Pierce",
+        "fullName": "SMCC linker from Pierce",
+        "alias": "SMCC",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 6,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 15,
+                "leavingGroup": {
+                    "atoms": [
+                        17
+                    ]
+                },
+                "type": "right"
+            }
+        ]
+    },
+    "monomer15": {
+        "type": "monomer",
+        "id": "15",
+        "position": {
+            "x": 1.7066666666666668,
+            "y": -2.04
+        },
+        "alias": "SMPEG2",
+        "templateId": "SMPEG2___SM(PEG)2 linker from Pierce"
+    },
+    "monomerTemplate-SMPEG2___SM(PEG)2 linker from Pierce": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    0.6984289335294861,
+                    -0.01683806570035928,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.5300189033059801,
+                    -0.6627883611303922,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.505434017606376,
+                    -0.26618175527984633,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.3370239873828704,
+                    -0.9120618921027944,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    4.310755295113231,
+                    -0.5162270309301816,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.008874220994464,
+                    -0.39015201399874155,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.205558169873156,
+                    -1.0699889166507475,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.560940887977735,
+                    0.5060540329028813,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.610443491359713,
+                    0.5839300867670429,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    4.017001207249046,
+                    1.1486367151928423,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.267929171571571,
+                    -1.9096471262419972,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    6.053495095100415,
+                    1.299758354853567,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.4148886290797735,
+                    -1.4967637235477704,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.2769160221638253,
+                    -0.4134446715509052,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.108576150547404,
+                    0.2324354652720429,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.084061423454885,
+                    -0.16410098197141815,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.9155110760172094,
+                    0.4817791548515299,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.890996348924691,
+                    0.08517254900098403,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -4.722586318701184,
+                    0.7311930030381018,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -5.698001433001581,
+                    0.3345863971875559,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -6.529521244170991,
+                    0.9805366926175888,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -7.504936358471387,
+                    0.5839300867670429,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -7.619926315483424,
+                    -0.25011543425742017,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -8.169829477814323,
+                    1.1002974349113943,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    8
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    7,
+                    9
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    6,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    11
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    17,
+                    18
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    18,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    21
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    21,
+                    22
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    21,
+                    23
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "SMPEG2___SM(PEG)2 linker from Pierce",
+        "fullName": "SM(PEG)2 linker from Pierce",
+        "alias": "SMPEG2",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 21,
+                "leavingGroup": {
+                    "atoms": [
+                        22
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 8,
+                "leavingGroup": {
+                    "atoms": [
+                        11
+                    ]
+                },
+                "type": "right"
+            }
+        ]
+    },
+    "monomer17": {
+        "type": "monomer",
+        "id": "17",
+        "position": {
+            "x": 2.5,
+            "y": -2.026666666666667
+        },
+        "alias": "SS3",
+        "templateId": "SS3___Dipropanol-disulfide"
+    },
+    "monomerTemplate-SS3___Dipropanol-disulfide": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    -6.8609,
+                    -0.665,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -5.862,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.5166,
+                    -0.6653,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.2673,
+                    0.1663,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.922,
+                    -0.499,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    -0.6726,
+                    0.3327,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    0.6726,
+                    -0.3327,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.922,
+                    0.499,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.2673,
+                    -0.1663,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.5166,
+                    0.6653,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.862,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    6.8609,
+                    0.665,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "SS3___Dipropanol-disulfide",
+        "fullName": "Dipropanol-disulfide",
+        "alias": "SS3",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": []
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 10,
+                "leavingGroup": {
+                    "atoms": [
+                        11
+                    ]
+                },
+                "type": "right"
+            }
+        ]
+    },
+    "monomer19": {
+        "type": "monomer",
+        "id": "19",
+        "position": {
+            "x": 0.7666666666666667,
+            "y": -2.74
+        },
+        "alias": "hxy",
+        "templateId": "hxy___Hexynyl alcohol"
+    },
+    "monomerTemplate-hxy___Hexynyl alcohol": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "O",
+                "location": [
+                    1.4606,
+                    0.1503,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.2118,
+                    -1.149,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    0.2606,
+                    0.1503,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.7126,
+                    -1.1491,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.4638,
+                    -2.4484,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.9647,
+                    -2.4484,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.7158,
+                    -3.7477,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.3165,
+                    -4.7866,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 3,
+                "atoms": [
+                    6,
+                    7
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "hxy___Hexynyl alcohol",
+        "fullName": "Hexynyl alcohol",
+        "alias": "hxy",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        2
+                    ]
+                },
+                "type": "left"
+            }
+        ]
+    },
+    "monomer21": {
+        "type": "monomer",
+        "id": "21",
+        "position": {
+            "x": 1.6600000000000001,
+            "y": -2.7133333333333334
+        },
+        "alias": "sDBL",
+        "templateId": "sDBL___Symmetric Doubler"
+    },
+    "monomerTemplate-sDBL___Symmetric Doubler": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    5.1451,
+                    -1.0717,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.9656,
+                    -0.1437,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    2.5718,
+                    -0.7004,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.3922,
+                    0.2275,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.0015,
+                    -0.3292,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.1811,
+                    0.5987,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -2.5749,
+                    0.042,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.7544,
+                    0.97,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -5.1483,
+                    0.4133,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -0.2189,
+                    -1.8141,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -6.3278,
+                    1.3412,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -7.7215,
+                    0.7845,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -8.9011,
+                    1.7124,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -10.2948,
+                    1.1557,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.5389,
+                    -0.515,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.7185,
+                    -1.4429,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.1122,
+                    -0.8862,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    10.2918,
+                    -1.8141,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -3.5831,
+                    2.1577,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    4.137,
+                    1.044,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -1.3338,
+                    -2.2581,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    11.4062,
+                    -1.369,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -11.2381,
+                    1.8977,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    17
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    7,
+                    18
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    17,
+                    21
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    22
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "sDBL___Symmetric Doubler",
+        "fullName": "Symmetric Doubler",
+        "alias": "sDBL",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 9,
+                "leavingGroup": {
+                    "atoms": [
+                        20
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 17,
+                "leavingGroup": {
+                    "atoms": [
+                        21
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 13,
+                "leavingGroup": {
+                    "atoms": [
+                        22
+                    ]
+                },
+                "type": "side"
+            }
+        ]
+    }
+}

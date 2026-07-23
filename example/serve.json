@@ -1,0 +1,20 @@
+{
+  "rewrites": [
+    {
+      "source": "/popup",
+      "destination": "/popup.html"
+    },
+    {
+      "source": "/duo",
+      "destination": "/duo.html"
+    },
+    {
+      "source": "/iframe",
+      "destination": "/iframe.html"
+    },
+    {
+      "source": "!/**/*.html",
+      "destination": "/index.html"
+    }
+  ]
+}

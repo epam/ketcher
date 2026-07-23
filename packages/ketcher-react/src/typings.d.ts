@@ -8,6 +8,11 @@ declare module '*.sdf' {
   export default content;
 }
 
+declare module '*.ket' {
+  const content: string;
+  export default content;
+}
+
 declare module '*.svg' {
   export const ReactComponent: React.FunctionComponent<
     React.SVGProps<SVGSVGElement> & { title?: string }
@@ -68,4 +73,14 @@ declare module 'subscription' {
   > extends Subscription<TDispatchEvent> {
     dispatch: (event: TDispatchEvent) => boolean;
   }
+}
+
+declare module 'ketcher-macromolecules' {
+  import type * as React from 'react';
+  interface MacromoleculesEditorProps {
+    ketcherId: string;
+    togglerComponent?: JSX.Element;
+  }
+  const MacromoleculesEditor: React.ComponentType<MacromoleculesEditorProps>;
+  export default MacromoleculesEditor;
 }

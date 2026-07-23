@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
 import {
+  type ToolbarGroupItemCallProps,
+  type ToolbarGroupItemProps,
   ToolbarGroupItem,
-  ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps,
 } from '../ToolbarGroupItem';
 
 import { TemplatesList } from './TemplatesList';
@@ -45,17 +45,11 @@ type Props = BottomToolbarProps & BottomToolbarCallProps;
 
 const BottomToolbar = (props: Props) => {
   const { className, ...rest } = props;
-  const { active, disableableButtons, indigoVerification, onAction } = rest;
 
   return (
     <div data-testid="bottom-toolbar" className={clsx(classes.root, className)}>
       <Group>
-        <TemplatesList
-          active={active}
-          indigoVerification={indigoVerification}
-          disableableButtons={disableableButtons}
-          onAction={onAction}
-        />
+        <TemplatesList {...rest} />
         <ToolbarGroupItem id="template-lib" {...rest} />
       </Group>
     </div>

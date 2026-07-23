@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import { useCallback } from 'react';
-import { Menu, MenuProps } from 'react-contexify';
+import { type FC, useCallback, useEffect } from 'react';
+import { type MenuProps, contextMenu, Menu } from 'react-contexify';
 import 'react-contexify/ReactContexify.css';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import styles from './ContextMenu.module.less';
 import { CONTEXT_MENU_ID } from './contextMenu.types';
 import AtomMenuItems from './menuItems/AtomMenuItems';
@@ -26,79 +25,274 @@ import BondMenuItems from './menuItems/BondMenuItems';
 import FunctionalGroupMenuItems from './menuItems/FunctionalGroupMenuItems';
 import SelectionMenuItems from './menuItems/SelectionMenuItems';
 import RGroupAttachmentPointMenuItems from './menuItems/RGroupAttachmentPointMenuItems';
+import { createPortal } from 'react-dom';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
+import { MultitailArrowMenuItems } from './menuItems/MultitailArrowMenuItems';
+import MacromoleculeMenuItems from './menuItems/MacromoleculeMenuItems';
+import { ketcherProvider } from 'ketcher-core';
+import AttachmentPointLabelMenuItems from './menuItems/AttachmentPointLabelMenuItems';
 
 const props: Partial<MenuProps> = {
   animation: false,
   className: styles.contextMenu,
 };
 
-const ContextMenu: React.FC = () => {
-  const { getKetcherInstance } = useAppContext();
+const ContextMenu: FC = () => {
+  const { ketcherId } = useAppContext();
+
+  useEffect(() => {
+    const handleEscapeKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
+      const isAnyContextMenuVisible = Object.values(editor.contextMenu).some(
+        Boolean,
+      );
+
+      if (!isAnyContextMenuVisible) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      contextMenu.hideAll();
+    };
+
+    document.addEventListener('keydown', handleEscapeKeyDown, true);
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKeyDown, true);
+    };
+  }, [ketcherId]);
+
+  const adjustSubmenuPosition = (submenuElement: HTMLElement) => {
+    const rect = submenuElement.getBoundingClientRect();
+    const ketcherRootElement = document.querySelector(
+      KETCHER_ROOT_NODE_CSS_SELECTOR,
+    );
+    const ketcherRootElementRect = ketcherRootElement?.getBoundingClientRect();
+    const ketcherEditorWidth = ketcherRootElementRect?.width ?? 0;
+    const ketcherEditorHeight = ketcherRootElementRect?.height ?? 0;
+    const ketcherEditorLeft = ketcherRootElementRect?.left ?? 0;
+    const ketcherEditorTop = ketcherRootElementRect?.top ?? 0;
+
+    if (rect.right - ketcherEditorLeft > ketcherEditorWidth) {
+      submenuElement.style.left = 'auto';
+      submenuElement.style.right = '100%';
+    } else {
+      submenuElement.style.left = '100%';
+      submenuElement.style.right = 'auto';
+    }
+
+    if (rect.bottom - ketcherEditorTop > ketcherEditorHeight) {
+      submenuElement.style.top = 'auto';
+      submenuElement.style.bottom = '0';
+    } else {
+      submenuElement.style.top = '0';
+      submenuElement.style.bottom = 'auto';
+    }
+  };
+
+  const resetMenuPosition = (menuElement: HTMLElement) => {
+    const contextMenuElement = menuElement;
+    const ketcherRootElement = document.querySelectorAll(
+      KETCHER_ROOT_NODE_CSS_SELECTOR,
+    )[ketcherProvider.getIndexById(ketcherId)];
+
+    if (!contextMenuElement || !ketcherRootElement) {
+      return;
+    }
+
+    const contextMenuElementBoundingBox =
+      contextMenuElement.getBoundingClientRect();
+    const ketcherRootElementBoundingBox =
+      ketcherRootElement.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    if (!contextMenuElementBoundingBox || !ketcherRootElementBoundingBox) {
+      return;
+    }
+
+    let left = contextMenuElementBoundingBox.left;
+    let top = contextMenuElementBoundingBox.top;
+
+    // Ensure the menu is within the Ketcher root element
+    if (
+      contextMenuElementBoundingBox.right > ketcherRootElementBoundingBox.right
+    ) {
+      left =
+        ketcherRootElementBoundingBox.right -
+        contextMenuElementBoundingBox.width;
+    }
+
+    if (
+      contextMenuElementBoundingBox.bottom >
+      ketcherRootElementBoundingBox.bottom
+    ) {
+      top =
+        ketcherRootElementBoundingBox.bottom -
+        contextMenuElementBoundingBox.height;
+    }
+
+    // Ensure the menu is within the viewport
+    if (left < 0) {
+      left = 0;
+    }
+
+    if (top < 0) {
+      top = 0;
+    }
+
+    if (contextMenuElementBoundingBox.right > viewportWidth) {
+      left = viewportWidth - contextMenuElementBoundingBox.width - 10;
+    }
+
+    if (contextMenuElementBoundingBox.bottom > viewportHeight) {
+      top = viewportHeight - contextMenuElementBoundingBox.height - 10;
+    }
+
+    contextMenuElement.style.left = `${left}px`;
+    contextMenuElement.style.top = `${top}px`;
+  };
 
   const trackVisibility = useCallback(
-    (id: CONTEXT_MENU_ID, visible: boolean) => {
-      const editor = getKetcherInstance().editor as Editor;
+    (id: string, visible: boolean) => {
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       if (visible) {
         editor.hoverIcon.hide();
+        const contextMenuElement = document.querySelector<HTMLElement>(
+          '.contexify:last-of-type',
+        );
+        const submenuElements =
+          document.querySelectorAll<HTMLElement>('.contexify_submenu');
+        if (contextMenuElement) {
+          // Timeout is needed to ensure that the context menu is rendered by react-contexify library.
+          // Without timeout library overrides the position of the context menu which we set.
+          setTimeout(() => resetMenuPosition(contextMenuElement), 0);
+        }
+
+        if (submenuElements.length) {
+          submenuElements.forEach((submenuElement) => {
+            adjustSubmenuPosition(submenuElement);
+          });
+        }
       }
       editor.contextMenu[id] = visible;
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
-  return (
-    <>
-      <Menu
-        {...props}
-        id={CONTEXT_MENU_ID.FOR_BONDS}
-        onVisibilityChange={(visible) =>
-          trackVisibility(CONTEXT_MENU_ID.FOR_BONDS, visible)
-        }
-      >
-        <BondMenuItems />
-      </Menu>
-
-      <Menu
-        {...props}
-        id={CONTEXT_MENU_ID.FOR_ATOMS}
-        onVisibilityChange={(visible) =>
-          trackVisibility(CONTEXT_MENU_ID.FOR_ATOMS, visible)
-        }
-      >
-        <AtomMenuItems />
-      </Menu>
-
-      <Menu
-        {...props}
-        id={CONTEXT_MENU_ID.FOR_SELECTION}
-        onVisibilityChange={(visible) =>
-          trackVisibility(CONTEXT_MENU_ID.FOR_SELECTION, visible)
-        }
-      >
-        <SelectionMenuItems />
-      </Menu>
-
-      <Menu
-        {...props}
-        id={CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS}
-        onVisibilityChange={(visible) =>
-          trackVisibility(CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS, visible)
-        }
-      >
-        <FunctionalGroupMenuItems />
-      </Menu>
-
-      <Menu
-        {...props}
-        id={CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT}
-        onVisibilityChange={(visible) =>
-          trackVisibility(CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT, visible)
-        }
-      >
-        <RGroupAttachmentPointMenuItems />
-      </Menu>
-    </>
+  const ketcherEditorRootElement = document.querySelector(
+    KETCHER_ROOT_NODE_CSS_SELECTOR,
   );
+
+  return ketcherEditorRootElement
+    ? createPortal(
+        <>
+          <Menu
+            {...props}
+            id={CONTEXT_MENU_ID.FOR_BONDS + ketcherId}
+            onVisibilityChange={(visible) =>
+              trackVisibility(CONTEXT_MENU_ID.FOR_BONDS + ketcherId, visible)
+            }
+          >
+            <BondMenuItems />
+          </Menu>
+
+          <Menu
+            {...props}
+            id={CONTEXT_MENU_ID.FOR_ATOMS + ketcherId}
+            onVisibilityChange={(visible) =>
+              trackVisibility(CONTEXT_MENU_ID.FOR_ATOMS + ketcherId, visible)
+            }
+          >
+            <AtomMenuItems />
+          </Menu>
+
+          <Menu
+            {...props}
+            id={CONTEXT_MENU_ID.FOR_SELECTION + ketcherId}
+            onVisibilityChange={(visible) =>
+              trackVisibility(
+                CONTEXT_MENU_ID.FOR_SELECTION + ketcherId,
+                visible,
+              )
+            }
+          >
+            <SelectionMenuItems />
+          </Menu>
+
+          <Menu
+            {...props}
+            id={CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS + ketcherId}
+            onVisibilityChange={(visible) =>
+              trackVisibility(
+                CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS + ketcherId,
+                visible,
+              )
+            }
+          >
+            <FunctionalGroupMenuItems />
+          </Menu>
+
+          <Menu
+            {...props}
+            id={CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT + ketcherId}
+            onVisibilityChange={(visible) =>
+              trackVisibility(
+                CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT + ketcherId,
+                visible,
+              )
+            }
+          >
+            <RGroupAttachmentPointMenuItems />
+          </Menu>
+
+          <Menu
+            {...props}
+            id={CONTEXT_MENU_ID.FOR_MULTITAIL_ARROW + ketcherId}
+            onVisibilityChange={(visible) =>
+              trackVisibility(
+                CONTEXT_MENU_ID.FOR_MULTITAIL_ARROW + ketcherId,
+                visible,
+              )
+            }
+          >
+            <MultitailArrowMenuItems />
+          </Menu>
+
+          <Menu
+            {...props}
+            id={CONTEXT_MENU_ID.FOR_MACROMOLECULE + ketcherId}
+            onVisibilityChange={(visible) =>
+              trackVisibility(
+                CONTEXT_MENU_ID.FOR_MACROMOLECULE + ketcherId,
+                visible,
+              )
+            }
+          >
+            <MacromoleculeMenuItems />
+          </Menu>
+
+          <Menu
+            {...props}
+            id={CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId}
+            onVisibilityChange={(visible) =>
+              trackVisibility(
+                CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId,
+                visible,
+              )
+            }
+          >
+            <AttachmentPointLabelMenuItems />
+          </Menu>
+        </>,
+        ketcherEditorRootElement,
+      )
+    : null;
 };
 
 export default ContextMenu;

@@ -1,8 +1,8 @@
 import {
+  type AtomPropertiesInContextMenu,
+  type AtomQueryProperties,
   Action,
   Atom,
-  AtomPropertiesInContextMenu,
-  AtomQueryProperties,
   fromAtomsAttrs,
   KetcherLogger,
 } from 'ketcher-core';

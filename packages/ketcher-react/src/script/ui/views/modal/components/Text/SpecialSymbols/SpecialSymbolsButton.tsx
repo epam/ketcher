@@ -14,15 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { EditorState, Modifier } from 'draft-js';
+import { type LexicalEditor, $getSelection, $isRangeSelection } from 'lexical';
 
 import { SpecialSymbolsList } from '../SpecialSymbolsList/SpecialSymbolsList';
 import classes from './SpecialSymbolsButton.module.less';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { Icon } from 'components';
 
-const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
+const SpecialSymbolsButton = ({ editor }: { editor: LexicalEditor }) => {
   const [showSpecialSymbols, setShowSpecialSymbols] = useState(false);
+  const pickerId = 'special-symbols-picker-' + useId();
 
   const handleClose = (event) => {
     event.stopPropagation();
@@ -38,27 +39,20 @@ const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
 
   const addSymbol = (e, value) => {
     e.preventDefault();
-    const selection = editorState.getSelection();
-    const contentState = editorState.getCurrentContent();
-    const nextContentState = Modifier.replaceText(
-      contentState,
-      selection,
-      value,
-      styles,
-    );
-    const nextEditorState = EditorState.push(
-      editorState,
-      nextContentState,
-      'insert-characters',
-    );
-    setEditorState(nextEditorState);
+    editor.update(() => {
+      const selection = $getSelection();
+      if ($isRangeSelection(selection)) {
+        selection.insertText(value);
+      }
+    });
     setShowSpecialSymbols(false);
   };
 
   return (
-    <div onBlur={closeSymbolsList}>
+    <div onBlur={closeSymbolsList} role="none">
       <button
         title="symbols"
+        data-testid="special-symbols-button"
         onMouseDown={(e) => {
           e.preventDefault();
           setShowSpecialSymbols(!showSpecialSymbols);
@@ -66,10 +60,15 @@ const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
         className={
           showSpecialSymbols ? classes.activeTextButton : classes.textButton
         }
+        aria-controls={pickerId}
+        aria-expanded={showSpecialSymbols}
+        aria-haspopup="true"
       >
         <Icon name="text-special-symbols" />
       </button>
-      {showSpecialSymbols && <SpecialSymbolsList select={addSymbol} />}
+      {showSpecialSymbols && (
+        <SpecialSymbolsList id={pickerId} onSelect={addSymbol} />
+      )}
     </div>
   );
 };

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import Form, { Field } from '../../../../../component/form/form/form';
 
 import { Dialog } from '../../../../components';
@@ -70,7 +70,7 @@ function rangeConv(range) {
 
   return res
     .split(',')
-    .every((s) => s.match(/^[>,<=]?[0-9]+$/g) || s.match(/^[0-9]+-[0-9]+$/g));
+    .every((s) => s.match(/^[>,<=]?\d+$/g) || s.match(/^\d+-\d+$/g));
 }
 
 export type { RgroupLogicProps };

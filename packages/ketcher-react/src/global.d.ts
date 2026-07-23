@@ -1,4 +1,4 @@
-import { BaseRenderer, Ketcher } from 'ketcher-core';
+import type { BaseRenderer, Ketcher } from 'ketcher-core';
 
 declare global {
   export interface Window {
@@ -7,6 +7,10 @@ declare global {
   }
 
   export interface Element {
+    __data__?: BaseRenderer;
+  }
+
+  export interface EventTarget {
     __data__?: BaseRenderer;
   }
 }

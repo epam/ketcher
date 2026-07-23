@@ -14,13 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { lazy, Suspense, useCallback, useRef, useState } from 'react';
+import {
+  type ComponentType,
+  lazy,
+  Suspense,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Dialog, LoadingCircles } from '../../../../components';
 import {
+  type Struct,
+  type StructService,
   FormatterFactory,
   KetcherLogger,
-  Struct,
-  StructService,
+  ketcherProvider,
   SupportedFormat,
 } from 'ketcher-core';
 import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema';
@@ -28,10 +37,15 @@ import classes from './Miew.module.less';
 import { connect } from 'react-redux';
 import { load } from '../../../../../state';
 import { pick } from 'lodash/fp';
-import { Miew as MiewAsType } from 'miew';
+import type { Miew as MiewAsType } from 'miew';
 import { createSelector } from 'reselect';
+import { useAppContext } from 'src/hooks';
 
-const Viewer = lazy(() => import('miew-react'));
+const Viewer = lazy(() =>
+  import('miew-react').then((module) => ({
+    default: module.default as unknown as ComponentType<any>,
+  })),
+);
 
 type MiewDialogProps = {
   miewOpts: any;
@@ -119,8 +133,19 @@ const MiewDialog = ({
   miewTheme = 'light',
   ...prop
 }: Props) => {
-  const miewRef = useRef<MiewAsType>();
-  const [isInitialized, setIsIsInitialized] = useState(false);
+  const miewRef = useRef<MiewAsType>(undefined);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const { ketcherId } = useAppContext();
+  const ketcher = useMemo(
+    () => ketcherProvider.getKetcher(ketcherId),
+    [ketcherId],
+  );
+
+  const isDisabled = useMemo(() => {
+    return (
+      !isInitialized || ketcher?.editor.render.options.viewOnlyMode === true
+    );
+  }, [ketcher, isInitialized]);
 
   const onMiewInit = useCallback(
     (miew: MiewAsType) => {
@@ -129,13 +154,13 @@ const MiewDialog = ({
       const service = factory.create(SupportedFormat.cml);
 
       service
-        .getStructureFromStructAsync(struct)
+        .getStringFromStructureAsync(struct)
         .then((res) =>
           miew.load(res, { sourceType: 'immediate', fileType: 'cml' }),
         )
         .then(() => {
           miew.setOptions(miewOpts);
-          setIsIsInitialized(true);
+          setIsInitialized(true);
         })
         .catch((e) => {
           KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', e);
@@ -163,7 +188,7 @@ const MiewDialog = ({
           key="apply"
           onClick={exportCML}
           className={classes.applyButton}
-          disabled={!isInitialized}
+          disabled={isDisabled}
           data-testid="miew-modal-button"
         >
           Apply

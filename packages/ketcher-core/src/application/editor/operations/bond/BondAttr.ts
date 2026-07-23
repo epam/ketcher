@@ -14,29 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
-import { ReStruct } from '../../../render';
+import type { ReStruct } from '../../../render';
 
 type Data = {
   bid: any;
   attribute: any;
   value: any;
+  needInvalidateBond?: boolean;
 };
 
 export class BondAttr extends BaseOperation {
   data: Data | null;
   data2: Data | null;
 
-  constructor(bondId?: any, attribute?: any, value?: any) {
+  constructor(
+    bondId?: any,
+    attribute?: any,
+    value?: any,
+    needInvalidateBond = true,
+  ) {
     super(OperationType.BOND_ATTR, OperationPriority.BOND_ATTR);
-    this.data = { bid: bondId, attribute, value };
+    this.data = { bid: bondId, attribute, value, needInvalidateBond };
     this.data2 = null;
   }
 
   execute(restruct: ReStruct) {
     if (this.data) {
-      const { attribute, bid, value } = this.data;
+      const { attribute, bid, value, needInvalidateBond } = this.data;
       const bond = restruct.molecule.bonds.get(bid)!;
 
       if (!this.data2) {
@@ -44,12 +50,15 @@ export class BondAttr extends BaseOperation {
           bid,
           attribute,
           value: bond[attribute],
+          needInvalidateBond,
         };
       }
 
       bond[attribute] = value;
 
-      BaseOperation.invalidateBond(restruct, bid);
+      if (this.data.needInvalidateBond) {
+        BaseOperation.invalidateBond(restruct, bid);
+      }
       if (attribute === 'type') {
         BaseOperation.invalidateLoop(restruct, bid);
       }

@@ -15,11 +15,11 @@
  ***************************************************************************/
 
 import { useMemo } from 'react';
-import { useDropzone, DropzoneOptions } from 'react-dropzone';
+import { type DropzoneOptions, useDropzone } from 'react-dropzone';
 
 import parentStyles from './OpenOptions.module.less';
 import styles from './FileDrop.module.less';
-import { Icon, IconName } from 'components';
+import { type IconName, Icon } from 'components';
 
 type FileDropProps = {
   buttonLabel: string;
@@ -27,6 +27,7 @@ type FileDropProps = {
   iconName: IconName;
   disabled?: boolean;
   disabledText?: string;
+  testId?: string;
 } & DropzoneOptions;
 
 const FileDrop = ({
@@ -35,11 +36,28 @@ const FileDrop = ({
   iconName,
   disabled,
   disabledText,
+  testId,
   ...rest
 }: FileDropProps) => {
-  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     disabled,
+    onFileDialogOpen: () => {
+      if (document.fullscreenElement) {
+        (
+          window as unknown as Record<string, unknown>
+        ).isKetcherFullscreenBeforeFilePicker = true;
+      }
+    },
+    onFileDialogCancel: () => {
+      const windowContext = window as unknown as Record<string, unknown>;
+      if (windowContext.isKetcherFullscreenBeforeFilePicker) {
+        document.documentElement.requestFullscreen?.().catch(() => {
+          /* Restore fullscreen silently if failed */
+        });
+        windowContext.isKetcherFullscreenBeforeFilePicker = false;
+      }
+    },
     ...rest,
   });
 
@@ -50,11 +68,11 @@ const FileDrop = ({
       disabled ? styles.isDisabled : null,
     ];
     return classes.join(' ');
-  }, [isDragActive]);
+  }, [isDragActive, disabled]);
 
   return (
     <div
-      onKeyDown={open}
+      data-testid={testId}
       {...getRootProps({
         className: getClassesString,
       })}

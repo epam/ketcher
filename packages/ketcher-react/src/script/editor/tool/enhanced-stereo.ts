@@ -20,8 +20,8 @@ import {
   fromStereoFlagUpdate,
 } from 'ketcher-core';
 
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 
 class EnhancedStereoTool implements Tool {
   private readonly editor: Editor;
@@ -55,7 +55,7 @@ class EnhancedStereoTool implements Tool {
     const restruct = editor.render.ctab;
     const stereoLabels = stereoAtoms.map((stereoAtom) => {
       const atom = struct.atoms.get(stereoAtom);
-      return atom && atom.stereoLabel;
+      return atom?.stereoLabel;
     });
     const hasAnotherLabel = stereoLabels.some(
       (stereoLabel) => stereoLabel !== stereoLabels[0],
@@ -71,12 +71,14 @@ class EnhancedStereoTool implements Tool {
 
       const action = stereoAtoms.reduce(
         (acc, stereoAtom) => {
-          return acc.mergeWith(
-            fromStereoFlagUpdate(
-              restruct,
-              struct.atoms.get(stereoAtom)?.fragment,
-            ),
-          );
+          const frid = struct.atoms.get(stereoAtom)?.fragment;
+          const frag =
+            frid !== undefined ? restruct.molecule.frags.get(frid) : null;
+
+          if (frag?.stereoAtoms) {
+            return acc.mergeWith(fromStereoFlagUpdate(restruct, frid));
+          }
+          return acc;
         },
         fromAtomsAttrs(
           restruct,

@@ -1,7 +1,23 @@
-import { expect, Page } from '@playwright/test';
-import { POLYMER_TOGGLER } from '@constants/testIdConstants';
+/* eslint-disable no-magic-numbers */
+import { Page } from '@playwright/test';
+import { moveMouseToTheMiddleOfTheScreen } from '../clicks';
+import { waitForRender } from '../common/loaders/waitForRender';
 
-export async function turnOnMacromoleculesEditor(page: Page) {
-  await expect(page.getByTestId(POLYMER_TOGGLER)).toBeVisible();
-  await page.getByTestId(POLYMER_TOGGLER).click();
+export async function zoomWithMouseWheel(page: Page, zoomLevelDelta: number) {
+  await moveMouseToTheMiddleOfTheScreen(page);
+  await page.keyboard.down('ControlOrMeta');
+  await waitForRender(page, async () => {
+    await page.mouse.wheel(0, zoomLevelDelta);
+  });
+  await page.keyboard.up('ControlOrMeta');
+}
+
+export async function scrollDown(page: Page, scrollDelta: number) {
+  await moveMouseToTheMiddleOfTheScreen(page);
+  await page.mouse.wheel(0, scrollDelta);
+}
+
+export async function scrollUp(page: Page, scrollDelta: number) {
+  await moveMouseToTheMiddleOfTheScreen(page);
+  await page.mouse.wheel(0, -scrollDelta);
 }

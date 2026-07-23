@@ -1,4 +1,4 @@
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import {
   fromAtomAddition,
   fromAtomsAttrs,
@@ -14,11 +14,18 @@ import { STRUCT_TYPE } from 'src/constants';
 import { openDialog } from './modal';
 import { getSelectedAtoms } from '../../editor/tool/select';
 import { onAction } from './shared';
-import { Editor } from '../../editor';
+import type { Editor } from '../../editor';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
-import { fromAtom, toAtom, fromBond, toBond } from '../data/convert/structconv';
+import {
+  type ElementFormData,
+  fromAtom,
+  toAtom,
+  fromBond,
+  toBond,
+} from '../data/convert/structconv';
 import SGroupTool from '../../editor/tool/sgroup';
 import { deleteFunctionalGroups } from '../../editor/tool/helper/deleteFunctionalGroups';
+import TemplateTool from '../../editor/tool/template';
 
 type TNewAction = {
   tool?: string;
@@ -80,6 +87,11 @@ function handleEraser({
 }: HandleHotkeyOverItemProps) {
   const item = mapItemsToArrays(hoveredItem);
   const itemType = Object.keys(hoveredItem)[0];
+  const activeTool = editor.tool();
+
+  if (activeTool instanceof TemplateTool) {
+    activeTool.templatePreview?.hideConnectedPreview();
+  }
 
   if ([STRUCT_TYPE.atoms, STRUCT_TYPE.bonds].includes(itemType)) {
     isFunctionalGroupChange(
@@ -88,11 +100,9 @@ function handleEraser({
     ).then((res) => {
       res && eraseItem({ editor, item });
     });
-
-    return;
+  } else {
+    eraseItem({ editor, item });
   }
-
-  eraseItem({ editor, item });
 }
 
 function handleDialog({
@@ -133,10 +143,9 @@ function handleAtomPropsDialog({
   dispatch,
 }: HandlersProps) {
   const selection = editor.selection();
-  const atomsSelected = selection?.atoms;
   const restruct = editor.render.ctab;
 
-  if (atomsSelected && atomsSelected.includes(hoveredItemId)) {
+  if (selection?.atoms?.includes(hoveredItemId)) {
     const atoms = getSelectedAtoms(selection, restruct.molecule);
     const changeAtomPromise = editor.event.elementEdit.dispatch(atoms);
 
@@ -149,12 +158,14 @@ function handleAtomPropsDialog({
     const atomFromStruct = restruct.atoms.get(hoveredItemId);
     const convertedAtomForModal = fromAtom(atomFromStruct?.a);
 
-    openDialog(dispatch, newAction.dialog, convertedAtomForModal)
+    if (!newAction.dialog) return;
+
+    openDialog(dispatch, newAction.dialog, convertedAtomForModal ?? undefined)
       .then((res) => {
         const updatedAtom = fromAtomsAttrs(
           restruct,
           hoveredItemId,
-          toAtom(res),
+          toAtom(res as ElementFormData),
           false,
         );
 
@@ -179,12 +190,17 @@ function handleBondPropsDialog({
   const bondFromStruct = restruct.bonds.get(hoveredItemId);
   const convertedBondForModal = fromBond(bondFromStruct?.b);
 
-  openDialog(dispatch, newAction.dialog, convertedBondForModal)
+  if (!newAction.dialog) return;
+
+  openDialog(dispatch, newAction.dialog, convertedBondForModal ?? undefined)
     .then((res) => {
+      const convertedBond = toBond(res as ReturnType<typeof fromBond>);
+      if (!convertedBond) return;
+
       const updatedBond = fromBondsAttrs(
         restruct,
         hoveredItemId,
-        toBond(res),
+        convertedBond,
         false,
       );
 
@@ -344,7 +360,7 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
       rglabel,
       fragId: atom ? atom.fragment : null,
     });
-    element = Object.assign({}, Atom.attrlist, element);
+    element = { ...Atom.attrlist, ...(element || {}) };
 
     if (!hoveredItemId && hoveredItemId !== 0 && element.rglabel) {
       editor.update(fromAtomAddition(editor.render.ctab, null, element));

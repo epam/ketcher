@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReStruct } from '../../render';
+import type { ReStruct } from '../../render';
 
 import { HighlightAdd, HighlightDelete } from '../operations/highlight';
 
@@ -23,6 +23,7 @@ import { Action } from './action';
 type HighlightType = {
   atoms: number[];
   bonds: number[];
+  rgroupAttachmentPoints: number[];
   color: string;
 };
 
@@ -33,9 +34,9 @@ export function fromHighlightCreate(
   const action = new Action();
 
   highlights.forEach((highlight) => {
-    const { atoms, bonds, color } = highlight;
+    const { atoms, bonds, rgroupAttachmentPoints, color } = highlight;
 
-    action.addOp(new HighlightAdd(atoms, bonds, color));
+    action.addOp(new HighlightAdd(atoms, bonds, rgroupAttachmentPoints, color));
   });
   return action.perform(restruct);
 }
@@ -51,46 +52,3 @@ export function fromHighlightClear(restruct: ReStruct): Action {
 
   return action.perform(restruct);
 }
-
-/*
-// Update highlight by placing new one on the given id
-export function fromHighlightUpdate(
-  highlightId: number,
-  restruct: ReStruct,
-  atoms: number[],
-  bonds: number[],
-  color: string
-): Action {
-  const action = new Action()
-
-  const highlights = restruct.molecule.highlights
-
-  const selectedHighlight = highlights.get(highlightId)
-  if (!selectedHighlight) {
-    return action
-  }
-
-  const updateOperation = new HighlightUpdate(highlightId, atoms, bonds, color)
-  action.addOp(updateOperation)
-
-  return action.perform(restruct)
-}
-*/
-
-/*
-// Delete single highlight by id
-export function fromHighlightDelete(
-  restruct: ReStruct,
-  highlightId: number
-): Action {
-  const action = new Action()
-
-  const highlights = restruct.molecule.highlights
-  if (highlights.has(highlightId)) {
-    action.addOp(new HighlightDelete(highlightId))
-
-    return action.perform(restruct)
-  }
-  return action
-}
-*/

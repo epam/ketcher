@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useState } from 'react';
+import { type ReactElement, useState } from 'react';
 import classes from './Accordion.module.less';
 import clsx from 'clsx';
 import { Icon } from 'components';
 
-const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
+const Accordion = ({ tabs, className, changedGroups }): ReactElement => {
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     'General',
   ]);
@@ -41,9 +41,11 @@ const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
         const shouldGroupBeRended = expandedAccordions.includes(label);
         return (
           <div key={key}>
-            <div
+            <button
               onClick={handleAccordionChange(label)}
               className={classes.accordionSummaryWrapper}
+              data-testid={`${label}-accordion`}
+              type="button"
             >
               <div className={classes.accordionSummary}>
                 <Icon
@@ -61,7 +63,7 @@ const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
                   <span className={classes.changeMarker}></span>
                 )}
               </div>
-            </div>
+            </button>
             <div
               className={clsx({
                 [classes.accordionDetailsWrapper]: true,

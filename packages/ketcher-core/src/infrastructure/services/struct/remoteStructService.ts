@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,34 +15,40 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { defaultBondThickness } from 'application/editor';
 import {
-  AromatizeData,
-  AromatizeResult,
-  AutomapData,
-  AutomapResult,
-  CalculateCipData,
-  CalculateCipResult,
-  CalculateData,
-  CalculateResult,
-  CheckData,
-  CheckResult,
-  CleanData,
-  CleanResult,
-  ConvertData,
-  ConvertResult,
-  DearomatizeData,
-  DearomatizeResult,
-  GenerateImageOptions,
-  InfoResult,
-  LayoutData,
-  LayoutResult,
-  OutputFormatType,
-  RecognizeResult,
-  StructService,
-  StructServiceOptions,
+  type AromatizeData,
+  type AromatizeResult,
+  type AutomapData,
+  type AutomapResult,
+  type CalculateCipData,
+  type CalculateCipResult,
+  type CalculateData,
+  type CalculateMacromoleculePropertiesData,
+  type CalculateMacromoleculePropertiesResult,
+  type CalculateResult,
+  type CheckData,
+  type CheckResult,
+  type CleanData,
+  type CleanResult,
+  type ConvertData,
+  type ConvertResult,
+  type DearomatizeData,
+  type DearomatizeResult,
+  type ExplicitHydrogensData,
+  type ExplicitHydrogensResult,
+  type GenerateImageOptions,
+  type InfoResult,
+  type LayoutData,
+  type LayoutResult,
+  type OutputFormatType,
+  type RecognizeResult,
+  type StructService,
+  type StructServiceOptions,
+  ChemicalMimeType,
 } from 'domain/services';
-import { KetcherLogger } from 'utilities';
+import { KetcherLogger, normalizeError } from 'utilities';
+import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
+import { ketcherProvider } from 'application/ketcherProvider';
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -53,13 +60,13 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
             else setTimeout(iterate, timeGap);
           } catch (error) {
             KetcherLogger.error('remoteStructService.ts::pollDeferred', error);
-            reject(error);
+            reject(normalizeError(error));
           }
         },
-        (err) => reject(err),
+        (err) => reject(normalizeError(err)),
       );
     }
-    setTimeout(iterate, startTimeGap || 0);
+    setTimeout(iterate, startTimeGap ?? 0);
   });
 }
 
@@ -78,12 +85,10 @@ function request(
   if (data && method === 'GET') requestUrl = parametrizeUrl(url, data);
   let response: any = fetch(requestUrl, {
     method,
-    headers: Object.assign(
-      {
-        Accept: 'application/json',
-      },
-      headers,
-    ),
+    headers: {
+      Accept: 'application/json',
+      ...(headers ?? {}),
+    },
     body: method !== 'GET' ? data : undefined,
     credentials: 'same-origin',
   });
@@ -94,7 +99,9 @@ function request(
     response = response.then((response) =>
       response
         .json()
-        .then((res) => (response.ok ? res : Promise.reject(res.error))),
+        .then((res) =>
+          response.ok ? res : Promise.reject(new Error(res.error)),
+        ),
     );
   }
 
@@ -113,8 +120,12 @@ function indigoCall(
     options,
     responseHandler?: (promise: Promise<any>) => Promise<any>,
   ) {
-    const body = Object.assign({}, data);
-    body.options = Object.assign(body.options || {}, defaultOptions, options);
+    const body = { ...(data ?? {}) };
+    body.options = {
+      ...(body.options ?? {}),
+      ...(defaultOptions ?? {}),
+      ...(options ?? {}),
+    };
     return request(
       method,
       baseUrl + url,
@@ -128,10 +139,31 @@ function indigoCall(
   };
 }
 
+export function pickStandardServerOptions(
+  ketcherId: string,
+  options?: StructServiceOptions,
+) {
+  const ketcherInstance = ketcherProvider.getKetcher(ketcherId);
+
+  return {
+    'dearomatize-on-load': options?.['dearomatize-on-load'],
+    'aromaticity-model': 'generic',
+    'smart-layout': options?.['smart-layout'],
+    'ignore-stereochemistry-errors': options?.['ignore-stereochemistry-errors'],
+    'mass-skip-error-on-pseudoatoms':
+      options?.['mass-skip-error-on-pseudoatoms'],
+    'gross-formula-add-rsites': options?.['gross-formula-add-rsites'],
+    'gross-formula-add-isotopes': options?.['gross-formula-add-isotopes'],
+    'ignore-no-chiral-flag': ketcherInstance.editor.options().ignoreChiralFlag,
+    'aromatize-skip-superatoms': true,
+  };
+}
+
 export class RemoteStructService implements StructService {
   private readonly apiPath: string;
   private readonly defaultOptions: StructServiceOptions;
   private readonly customHeaders?: Record<string, string>;
+  private ketcherId: string | null;
 
   constructor(
     apiPath: string,
@@ -141,6 +173,11 @@ export class RemoteStructService implements StructService {
     this.apiPath = apiPath;
     this.defaultOptions = defaultOptions;
     this.customHeaders = customHeaders;
+    this.ketcherId = null;
+  }
+
+  addKetcherId(ketcherId: string) {
+    this.ketcherId = ketcherId;
   }
 
   getInChIKey(struct: string): Promise<string> {
@@ -153,10 +190,21 @@ export class RemoteStructService implements StructService {
     )(
       {
         struct,
-        output_format: 'chemical/x-inchi',
+        output_format: ChemicalMimeType.InChIKey,
       },
       {},
     );
+  }
+
+  private getStandardServerOptions(options?: StructServiceOptions) {
+    if (!options) {
+      return this.defaultOptions;
+    }
+    if (!this.ketcherId) {
+      throw new Error('ketcherId is missed when options getting');
+    }
+
+    return pickStandardServerOptions(this.ketcherId, options);
   }
 
   async info(): Promise<InfoResult> {
@@ -190,26 +238,66 @@ export class RemoteStructService implements StructService {
     data: ConvertData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
+    const monomerLibrary = JSON.stringify(
+      provideEditorInstance()?.monomersLibraryParsedJson,
+    );
+    const expandedOptions = {
+      monomerLibrary,
+      ...this.getStandardServerOptions(options),
+      'bond-length-unit': options?.['bond-length-unit'],
+      'bond-length': options?.['bond-length'],
+      'reaction-component-margin-size-unit':
+        options?.['reaction-component-margin-size-unit'],
+      'reaction-component-margin-size':
+        options?.['reaction-component-margin-size'],
+      'image-resolution': options?.['image-resolution'],
+      'molfile-saving-mode': options?.['molfile-saving-mode'],
+      'monomer-library-saving-mode': options?.['monomer-library-saving-mode'],
+      'molfile-saving-skip-date': options?.['molfile-saving-skip-date'],
+      'output-content-type': options?.['output-content-type'],
+      'sequence-type': options?.['sequence-type'],
+    };
+
     return indigoCall(
       'POST',
       'indigo/convert',
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, expandedOptions);
   }
 
   layout(
     data: LayoutData,
     options?: StructServiceOptions,
   ): Promise<LayoutResult> {
+    const expandedOptions = {
+      ...this.getStandardServerOptions(options),
+
+      'render-label-mode': this.ketcherId
+        ? getLabelRenderModeForIndigo(this.ketcherId)
+        : undefined,
+      'render-font-size': options?.['render-font-size'],
+      'render-font-size-unit': options?.['render-font-size-unit'],
+      'render-font-size-sub': options?.['render-font-size-sub'],
+      'render-font-size-sub-unit': options?.['render-font-size-sub-unit'],
+      'output-content-type': 'application/json',
+      'bond-length-unit': options?.['bond-length-unit'],
+      'bond-length': options?.['bond-length'],
+      'reaction-component-margin-size-unit':
+        options?.['reaction-component-margin-size-unit'],
+      'reaction-component-margin-size':
+        options?.['reaction-component-margin-size'],
+      'image-resolution': options?.['image-resolution'],
+    };
+
     return indigoCall(
       'POST',
       'indigo/layout',
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, expandedOptions);
   }
 
   clean(data: CleanData, options?: StructServiceOptions): Promise<CleanResult> {
@@ -219,7 +307,7 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, this.getStandardServerOptions(options));
   }
 
   aromatize(
@@ -232,7 +320,7 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, this.getStandardServerOptions(options));
   }
 
   dearomatize(
@@ -245,7 +333,7 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, this.getStandardServerOptions(options));
   }
 
   calculateCip(
@@ -258,7 +346,7 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, this.getStandardServerOptions(options));
   }
 
   automap(
@@ -271,7 +359,7 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, this.getStandardServerOptions(options));
   }
 
   check(data: CheckData, options?: StructServiceOptions): Promise<CheckResult> {
@@ -281,7 +369,7 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, this.getStandardServerOptions(options));
   }
 
   calculate(
@@ -294,7 +382,7 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, this.getStandardServerOptions(options));
   }
 
   recognize(blob: Blob, version: string): Promise<RecognizeResult> {
@@ -304,7 +392,7 @@ export class RemoteStructService implements StructService {
       this.apiPath + `imago/uploads${parVersion}`,
       blob,
       {
-        'Content-Type': blob.type || 'application/octet-stream',
+        'Content-Type': blob.type ?? 'application/octet-stream',
       },
     );
     const status = request.bind(
@@ -317,7 +405,8 @@ export class RemoteStructService implements StructService {
         pollDeferred(
           status.bind(null, { id: data.upload_id }),
           (response: any) => {
-            if (response.state === 'FAILURE') throw response;
+            if (response.state === 'FAILURE')
+              throw new Error(JSON.stringify(response));
             return response.state === 'SUCCESS';
           },
           500,
@@ -331,9 +420,7 @@ export class RemoteStructService implements StructService {
     data: string,
     options?: GenerateImageOptions,
   ): Promise<string> {
-    const outputFormat: OutputFormatType = options?.outputFormat || 'png';
-    const bondThickness: number =
-      options?.bondThickness || defaultBondThickness;
+    const outputFormat: OutputFormatType = options?.outputFormat ?? 'png';
 
     return indigoCall(
       'POST',
@@ -344,10 +431,62 @@ export class RemoteStructService implements StructService {
     )(
       { struct: data },
       {
+        ...this.getStandardServerOptions(options),
+        'render-coloring': options?.['render-coloring'],
+        'render-font-size': options?.['render-font-size'],
+        'render-font-size-unit': options?.['render-font-size-unit'],
+        'render-font-size-sub': options?.['render-font-size-sub'],
+        'render-font-size-sub-unit': options?.['render-font-size-sub-unit'],
+        'image-resolution': options?.['image-resolution'],
+        'bond-length-unit': options?.['bond-length-unit'],
+        'bond-length': options?.['bond-length'],
+        'render-bond-thickness': options?.['render-bond-thickness'],
+        'render-bond-thickness-unit': options?.['render-bond-thickness-unit'],
+        'render-bond-spacing': options?.['render-bond-spacing'],
+        'render-stereo-bond-width': options?.['render-stereo-bond-width'],
+        'render-stereo-bond-width-unit':
+          options?.['render-stereo-bond-width-unit'],
+        'render-stereo-style': options?.['render-stereo-style'],
+        'render-hash-spacing': options?.['render-hash-spacing'],
+        'render-hash-spacing-unit': options?.['render-hash-spacing-unit'],
+        'render-output-sheet-width': options?.['render-output-sheet-width'],
+        'render-output-sheet-height': options?.['render-output-sheet-height'],
         'render-output-format': outputFormat,
-        'render-bond-line-width': bondThickness,
+        'render-label-mode': this.ketcherId
+          ? getLabelRenderModeForIndigo(this.ketcherId)
+          : undefined,
       },
       (response) => response.then((resp) => resp.text()),
     );
+  }
+
+  toggleExplicitHydrogens(
+    data: ExplicitHydrogensData,
+    options?: StructServiceOptions,
+  ): Promise<ExplicitHydrogensResult> {
+    return indigoCall(
+      'POST',
+      'indigo/convert_explicit_hydrogens',
+      this.apiPath,
+      this.defaultOptions,
+      this.customHeaders,
+    )(data, this.getStandardServerOptions(options));
+  }
+
+  calculateMacromoleculeProperties(
+    data: CalculateMacromoleculePropertiesData,
+    options?: StructServiceOptions,
+  ): Promise<CalculateMacromoleculePropertiesResult> {
+    return indigoCall(
+      'POST',
+      'indigo/calculateMacroProperties',
+      this.apiPath,
+      this.defaultOptions,
+      this.customHeaders,
+    )(data, {
+      ...this.getStandardServerOptions(options),
+      upc: options?.upc,
+      nac: options?.nac,
+    });
   }
 }

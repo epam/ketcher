@@ -28,21 +28,27 @@ function ErrorInfoModal(props) {
 
   const defaultCutCopyMessage = `This action is unavailable via menu. Instead, use shortcut to ${props.message}.`;
 
-  const headerContent = <div>{error.message}</div>;
+  const headerContent = <div>{props.title ?? error.message}</div>;
 
   return (
     <Dialog
       className={styles.infoModal}
       params={props}
       buttons={[
-        <button onClick={props.onOk} className={styles.ok} key="ok">
-          Close
+        <button
+          onClick={props.onOk}
+          className={styles.ok}
+          key="ok"
+          data-testid={props.testId || 'info-modal-close'}
+        >
+          {props.button || 'Close'}
         </button>,
       ]}
       headerContent={headerContent}
     >
       <div>
-        {isPasteError ? <PasteErrorModalBody /> : defaultCutCopyMessage}
+        {props.customText ||
+          (isPasteError ? <PasteErrorModalBody /> : defaultCutCopyMessage)}
       </div>
     </Dialog>
   );

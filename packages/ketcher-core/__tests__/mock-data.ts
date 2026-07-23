@@ -1,20 +1,23 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-import { ReAtom, ReBond, ReRGroupAttachmentPoint } from 'application/render';
-
 import {
+  type ReRGroupAttachmentPoint,
+  ReAtom,
+  ReBond,
+} from 'application/render';
+import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
+import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
+import {
+  type Loop,
+  type RGroupAttachmentPoint,
   Box2Abs,
-  Loop,
   Pool,
-  RGroupAttachmentPoint,
   Struct,
   Vec2,
 } from 'domain/entities';
-import { mockFn } from 'jest-mock-extended';
-import { MonomerItemType } from 'domain/types';
 import { Peptide } from 'domain/entities/Peptide';
-import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
+import type { MonomerItemType } from 'domain/types';
+import { mockFn } from 'jest-mock-extended';
+import { KetMonomerClass } from 'application/formatters';
 
 const mockAtoms = [
   {
@@ -755,10 +758,11 @@ export const peptideMonomerItem: MonomerItemType = {
   label: 'Abc',
   props: {
     BranchMonomer: '',
-    MonomerCaps: '',
+    MonomerCaps: {},
     MonomerCode: '',
     MonomerName: '',
     MonomerType: 'PEPTIDE',
+    MonomerClass: KetMonomerClass.AminoAcid,
     Name: '',
     MonomerNaturalAnalogCode: 'A',
   },
@@ -767,6 +771,7 @@ export const peptideMonomerItem: MonomerItemType = {
 
 export const polymerEditorTheme = {
   monomer: { color: { A: { regular: 'yellow' } } },
+  peptide: { color: { A: { regular: 'yellow' } } },
 };
 
 export const getFinishedPolymerBond = (x1, y1, x2, y2) => {
@@ -774,16 +779,15 @@ export const getFinishedPolymerBond = (x1, y1, x2, y2) => {
   const peptide2 = new Peptide(peptideMonomerItem);
   peptide.moveAbsolute(new Vec2(x1, y1));
   peptide2.moveAbsolute(new Vec2(x2, y2));
-  // eslint-disable-next-line no-new
-  new PeptideRenderer(peptide);
-  // eslint-disable-next-line no-new
-  new PeptideRenderer(peptide2);
+  // @ts-expect-error TS6133: Instantiated for side effects (renderer self-registers with monomer)
+  const _renderer1 = new PeptideRenderer(peptide);
+  // @ts-expect-error TS6133: Instantiated for side effects (renderer self-registers with monomer)
+  const _renderer2 = new PeptideRenderer(peptide2);
 
   const polymerBond = new PolymerBond(peptide);
   polymerBond.setSecondMonomer(peptide2);
 
-  // eslint-disable-next-line no-new
-  new PolymerBondRenderer(polymerBond);
+  PolymerBondRendererFactory.createInstance(polymerBond);
 
   return polymerBond;
 };

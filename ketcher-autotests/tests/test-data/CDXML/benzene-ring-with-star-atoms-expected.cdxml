@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CDXML SYSTEM "http://www.cambridgesoft.com/xml/cdxml.dtd">
+<CDXML BondLength="30.000000" LabelFont="3" CaptionFont="4">
+    <fonttable id="1">
+        <font id="2" charset="utf-8" name="Arial"/>
+        <font id="3" charset="utf-8" name="Times New Roman"/>
+    </fonttable>
+    <colortable>
+        <color r="1" g="1" b="1"/>
+        <color r="0" g="0" b="0"/>
+        <color r="1" g="0" b="0"/>
+        <color r="1" g="1" b="0"/>
+        <color r="0" g="1" b="0"/>
+        <color r="0" g="1" b="1"/>
+        <color r="0" g="0" b="1"/>
+        <color r="1" g="0" b="1"/>
+        <color r="0.5" g="0.5" b="0.5"/>
+    </colortable>
+    <page HeightPages="1" WidthPages="1" BoundingBox="235.417664 257.437500 287.379211 197.437500">
+        <fragment id="4">
+            <n id="5" p="25.980778 -0.000000">
+                <t p="25.980778 -0.000000" LabelJustification="Left">
+                    <s font="3" size="10" face="96">*</s>
+                </t>
+            </n>
+            <n id="6" p="0.000000 15.000000"/>
+            <n id="7" p="0.000000 45.000000">
+                <t p="0.000000 45.000000" LabelJustification="Left">
+                    <s font="3" size="10" face="96">*</s>
+                </t>
+            </n>
+            <n id="8" p="25.980778 60.000000"/>
+            <n id="9" p="51.961525 45.000000">
+                <t p="51.961525 45.000000" LabelJustification="Left">
+                    <s font="3" size="10" face="96">*</s>
+                </t>
+            </n>
+            <n id="10" p="51.961525 15.000000"/>
+            <b id="11" B="5" E="6"/>
+            <b id="12" B="6" E="7" Order="2"/>
+            <b id="13" B="7" E="8"/>
+            <b id="14" B="8" E="9" Order="2"/>
+            <b id="15" B="9" E="10"/>
+            <b id="16" B="10" E="5" Order="2"/>
+        </fragment>
+    </page>
+</CDXML>

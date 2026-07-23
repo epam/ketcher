@@ -1,33 +1,96 @@
-import { IKetConnection } from 'application/formatters/types/ket';
-import { CoreEditor } from 'application/editor';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
+import type { IKetConnection } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
-import assert from 'assert';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { AttachmentPointName } from 'domain/types';
 
-export function polymerBondToDrawingEntity(connection: IKetConnection) {
-  const editor = CoreEditor.provideEditorInstance();
+export function polymerBondToDrawingEntity(
+  connection: IKetConnection,
+  drawingEntitiesManager: DrawingEntitiesManager,
+  atomIdMap: Map<number, number>,
+  superatomMonomerToUsedAttachmentPoint: Map<BaseMonomer, Set<string>>,
+  firstMonomer: BaseMonomer,
+  secondMonomer: BaseMonomer,
+) {
   const command = new Command();
-  const firstMonomer = editor.drawingEntitiesManager.monomers.get(
-    Number(connection.endPoint1.monomerId),
-  );
-  const secondMonomer = editor.drawingEntitiesManager.monomers.get(
-    Number(connection.endPoint2.monomerId),
-  );
 
-  assert(firstMonomer?.renderer);
-  assert(secondMonomer?.renderer);
-  const { command: bondAdditionCommand, polymerBond } =
-    editor.drawingEntitiesManager.addPolymerBond(
-      firstMonomer,
-      firstMonomer.renderer.center,
-      secondMonomer.renderer.center,
+  const firstAttachmentPoint =
+    connection.endpoint1.attachmentPointId ??
+    getAttachmentPointLabel(
+      firstMonomer.monomerItem.struct.sgroups
+        .get(0)
+        ?.getAttachmentPoints()
+        .find(
+          (attachmentPoint) =>
+            attachmentPoint.atomId ===
+              atomIdMap.get(Number(connection.endpoint1.atomId)) &&
+            !superatomMonomerToUsedAttachmentPoint
+              .get(firstMonomer)
+              ?.has(
+                getAttachmentPointLabel(
+                  attachmentPoint.attachmentPointNumber as number,
+                ),
+              ),
+        )?.attachmentPointNumber as number,
     );
-  command.merge(bondAdditionCommand);
+  const secondAttachmentPoint =
+    connection.endpoint2.attachmentPointId ??
+    getAttachmentPointLabel(
+      secondMonomer.monomerItem.struct.sgroups
+        .get(0)
+        ?.getAttachmentPoints()
+        .find(
+          (attachmentPoint) =>
+            attachmentPoint.atomId ===
+              atomIdMap.get(Number(connection.endpoint2.atomId)) &&
+            !superatomMonomerToUsedAttachmentPoint
+              .get(secondMonomer)
+              ?.has(
+                getAttachmentPointLabel(
+                  attachmentPoint.attachmentPointNumber as number,
+                ),
+              ),
+        )?.attachmentPointNumber as number,
+    );
+
+  if (
+    !firstMonomer.isAttachmentPointExistAndFree(
+      firstAttachmentPoint as AttachmentPointName,
+    ) ||
+    !secondMonomer.isAttachmentPointExistAndFree(
+      secondAttachmentPoint as AttachmentPointName,
+    )
+  ) {
+    const editor = provideEditorInstance();
+    editor.events.error.dispatch(
+      'There is no free attachment point for bond creation.',
+    );
+    return new Command();
+  }
+
+  if (!superatomMonomerToUsedAttachmentPoint.get(firstMonomer)) {
+    superatomMonomerToUsedAttachmentPoint.set(firstMonomer, new Set());
+  }
+
+  if (!superatomMonomerToUsedAttachmentPoint.get(secondMonomer)) {
+    superatomMonomerToUsedAttachmentPoint.set(secondMonomer, new Set());
+  }
+
+  superatomMonomerToUsedAttachmentPoint
+    .get(firstMonomer)
+    ?.add(firstAttachmentPoint);
+  superatomMonomerToUsedAttachmentPoint
+    .get(secondMonomer)
+    ?.add(secondAttachmentPoint);
+
   command.merge(
-    editor.drawingEntitiesManager.finishPolymerBondCreation(
-      polymerBond,
+    drawingEntitiesManager.createPolymerBond(
+      firstMonomer,
       secondMonomer,
-      connection.endPoint1.attachmentPointId,
-      connection.endPoint2.attachmentPointId,
+      firstAttachmentPoint as AttachmentPointName,
+      secondAttachmentPoint as AttachmentPointName,
     ),
   );
   return command;

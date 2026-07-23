@@ -1,0 +1,240 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    13.334849152128568,
+                    -8.175074417174608,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.065150847871434,
+                    -8.174589229177204,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "alias": "alias123",
+                "location": [
+                    14.20163750949124,
+                    -7.674966888850188,
+                    0
+                ],
+                "charge": 2,
+                "explicitValence": 5,
+                "isotope": 1,
+                "radical": 1,
+                "ringBondCount": 7,
+                "substitutionCount": 5,
+                "unsaturatedAtom": true,
+                "hCount": 4,
+                "queryProperties": {
+                    "aromaticity": "aromatic",
+                    "ringMembership": 7,
+                    "ringSize": 8,
+                    "connectivity": 9
+                },
+                "implicitHCount": 3
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.065150847871434,
+                    -9.175532067822148,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    13.334849152128568,
+                    -9.180020056798138,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.20382085547956,
+                    -9.675033111149812,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    18.40984915212857,
+                    -8.325074417174608,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    20.140150847871436,
+                    -8.324589229177205,
+                    0
+                ]
+            },
+            {
+                "label": "Br",
+                "alias": "alias123",
+                "location": [
+                    19.27663750949124,
+                    -7.824966888850188,
+                    0
+                ],
+                "charge": 2,
+                "explicitValence": 5,
+                "isotope": 1,
+                "radical": 3,
+                "ringBondCount": 7,
+                "substitutionCount": 6,
+                "unsaturatedAtom": true,
+                "hCount": 4,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 9,
+                    "ringSize": 7,
+                    "connectivity": 1
+                },
+                "implicitHCount": 8
+            },
+            {
+                "label": "C",
+                "location": [
+                    20.140150847871436,
+                    -9.325532067822149,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    18.40984915212857,
+                    -9.330020056798139,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    19.27882085547956,
+                    -9.825033111149814,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    }
+}

@@ -1,13 +1,14 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`InfoModal should be rendered correctly should render Paste shortcut message if Paste message dispatched to props 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <div
+      <dialog
         class="dialog infoModal"
-        role="dialog"
+        data-testid="info-modal-window"
+        open=""
         tabindex="-1"
       >
         <header
@@ -21,20 +22,22 @@ Object {
           >
             <button
               class="buttonTop"
-              data-testid="close-icon"
+              data-testid="close-window-button"
             >
               <icon-close.svg
-                classname="closeButton"
+                class="closeButton"
               />
             </button>
           </div>
         </header>
         <div
           class="body withMargin"
+          data-testid="info-modal-body"
         >
           <div>
             <div
               class="pasteErrorModalBody"
+              data-testid="error-message-body"
             >
               <div>
                 Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.
@@ -64,17 +67,19 @@ Object {
         >
           <button
             class="ok"
+            data-testid="info-modal-close"
           >
             Close
           </button>
         </footer>
-      </div>
+      </dialog>
     </div>
   </body>,
   "container": <div>
-    <div
+    <dialog
       class="dialog infoModal"
-      role="dialog"
+      data-testid="info-modal-window"
+      open=""
       tabindex="-1"
     >
       <header
@@ -88,20 +93,22 @@ Object {
         >
           <button
             class="buttonTop"
-            data-testid="close-icon"
+            data-testid="close-window-button"
           >
             <icon-close.svg
-              classname="closeButton"
+              class="closeButton"
             />
           </button>
         </div>
       </header>
       <div
         class="body withMargin"
+        data-testid="info-modal-body"
       >
         <div>
           <div
             class="pasteErrorModalBody"
+            data-testid="error-message-body"
           >
             <div>
               Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.
@@ -131,11 +138,12 @@ Object {
       >
         <button
           class="ok"
+          data-testid="info-modal-close"
         >
           Close
         </button>
       </footer>
-    </div>
+    </dialog>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
@@ -187,7 +195,7 @@ Object {
   "queryByText": [Function],
   "queryByTitle": [Function],
   "rerender": [Function],
-  "store": Object {
+  "store": {
     "@@observable": [Function],
     "dispatch": [Function],
     "getState": [Function],
@@ -199,13 +207,14 @@ Object {
 `;
 
 exports[`InfoModal should be rendered correctly should render default error message for Cut and Copy actions 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <div
+      <dialog
         class="dialog infoModal"
-        role="dialog"
+        data-testid="info-modal-window"
+        open=""
         tabindex="-1"
       >
         <header
@@ -219,16 +228,17 @@ Object {
           >
             <button
               class="buttonTop"
-              data-testid="close-icon"
+              data-testid="close-window-button"
             >
               <icon-close.svg
-                classname="closeButton"
+                class="closeButton"
               />
             </button>
           </div>
         </header>
         <div
           class="body withMargin"
+          data-testid="info-modal-body"
         >
           <div>
             This action is unavailable via menu. Instead, use shortcut to Cut.
@@ -239,17 +249,19 @@ Object {
         >
           <button
             class="ok"
+            data-testid="info-modal-close"
           >
             Close
           </button>
         </footer>
-      </div>
+      </dialog>
     </div>
   </body>,
   "container": <div>
-    <div
+    <dialog
       class="dialog infoModal"
-      role="dialog"
+      data-testid="info-modal-window"
+      open=""
       tabindex="-1"
     >
       <header
@@ -263,16 +275,17 @@ Object {
         >
           <button
             class="buttonTop"
-            data-testid="close-icon"
+            data-testid="close-window-button"
           >
             <icon-close.svg
-              classname="closeButton"
+              class="closeButton"
             />
           </button>
         </div>
       </header>
       <div
         class="body withMargin"
+        data-testid="info-modal-body"
       >
         <div>
           This action is unavailable via menu. Instead, use shortcut to Cut.
@@ -283,11 +296,12 @@ Object {
       >
         <button
           class="ok"
+          data-testid="info-modal-close"
         >
           Close
         </button>
       </footer>
-    </div>
+    </dialog>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
@@ -339,7 +353,7 @@ Object {
   "queryByText": [Function],
   "queryByTitle": [Function],
   "rerender": [Function],
-  "store": Object {
+  "store": {
     "@@observable": [Function],
     "dispatch": [Function],
     "getState": [Function],

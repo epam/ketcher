@@ -22,8 +22,8 @@ import {
   FunctionalGroup,
   KetcherLogger,
 } from 'ketcher-core';
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 
 class RGroupFragmentTool implements Tool {
   private readonly editor: Editor;
@@ -87,8 +87,10 @@ class RGroupFragmentTool implements Tool {
           result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result });
-      return;
+      if (result.length > 0) {
+        this.editor.event.removeFG.dispatch({ fgIds: result });
+        return;
+      }
     } else if (bondResult.length > 0) {
       for (const id of bondResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
@@ -116,10 +118,12 @@ class RGroupFragmentTool implements Tool {
         ? ci.id
         : RGroup.findRGroupByFragment(molecule.rgroups, ci.id);
 
-    const rg = Object.assign(
-      { label },
-      ci.map === 'frags' ? { fragId: ci.id } : molecule.rgroups.get(ci.id),
-    );
+    const rg = {
+      label,
+      ...(ci.map === 'frags'
+        ? { fragId: ci.id }
+        : molecule.rgroups.get(ci.id) || {}),
+    };
 
     const res = editor.event.rgroupEdit.dispatch(rg);
 

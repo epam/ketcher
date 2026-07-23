@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Template } from '../template/TemplateTable';
-import { Element } from 'ketcher-core';
+import type { Template } from '../template/TemplateTable';
+import type { Element } from 'ketcher-core';
 
 export enum AbbreviationType {
   Template = 'Template',

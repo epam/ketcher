@@ -3,7 +3,14 @@
   "extends": "plugin:jest/recommended",
   "rules": {
     "@typescript-eslint/no-empty-function": "off",
-    "no-useless-constructor": "off"
+    "no-useless-constructor": "off",
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "separate-type-imports"
+      }
+    ]
   },
   "overrides": [
     {

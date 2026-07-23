@@ -1,0 +1,313 @@
+{
+    "ket_version": "2.0.0",
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    12.325,
+                    -2.625,
+                    0
+                ]
+            },
+            {
+                "label": "Zn",
+                "location": [
+                    13.325,
+                    -2.625,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            }
+        ]
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    11.65,
+                    -4.3,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.65,
+                    -4.3,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            }
+        ]
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    11.575,
+                    -5.95,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "alias": "Test",
+                "location": [
+                    12.6,
+                    -5.95,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            }
+        ]
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    11.675,
+                    -7.375,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.675,
+                    -7.375,
+                    0
+                ],
+                "charge": 2
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            }
+        ]
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    11.4,
+                    -8.75,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.4,
+                    -8.75,
+                    0
+                ],
+                "isotope": 2
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            }
+        ]
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    11.15,
+                    -9.85,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.15,
+                    -9.85,
+                    0
+                ],
+                "explicitValence": 3
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            }
+        ]
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    11.1,
+                    -11.15,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.1,
+                    -11.15,
+                    0
+                ],
+                "radical": 2
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            }
+        ]
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    10.9,
+                    -12.625,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.9,
+                    -12.625,
+                    0
+                ],
+                "radical": 1
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            }
+        ]
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    10.475,
+                    -14.025,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.475,
+                    -14.025,
+                    0
+                ],
+                "radical": 3
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            }
+        ]
+    }
+}

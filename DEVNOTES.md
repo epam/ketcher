@@ -1,6 +1,6 @@
 ## Prerequisites
 
-- Stable [Node.js](https://nodejs.org) version >= 16
+- Stable [Node.js](https://nodejs.org) version >= 24.14.1
 - Stable [npm](https://npmjs.com) version >= 7
 
 # NOTES
@@ -15,7 +15,7 @@ rm -rf node_modules
 rm -rf ./packages/ketcher-core/node_modules
 rm -rf ./packages/ketcher-react/node_modules
 rm -rf ./packages/ketcher-standalone/node_modules
-rm -rf ./packages/ketcher-polymer-editor-react/node_modules
+rm -rf ./packages/ketcher-macromolecules/node_modules
 rm -rf ./example/node_modules
 rm -rf ./demo/node_modules
 ```
@@ -248,3 +248,43 @@ docker-compose up -d
 ```
 
 Service with Ketcher will be run under localhost:8080/ketcher.html
+
+## Custom Buttons
+
+Custom buttons enable developers who embed Ketcher into their applications to extend its functionality by implementing custom workflows using existing Ketcher APIs. To add custom buttons to the Ketcher top toolbar, follow these steps:
+
+1. **Provide an Array of Custom Buttons to the Editor Component**
+
+   Pass an array of custom buttons to the `<Editor>` component using the `customButtons` prop:
+
+    ```jsx
+    <Editor customButtons={array_of_custom_buttons_here} />
+    ```
+
+   Each custom button should follow this schema:
+
+    ```ts
+    {
+      id: string,       // unique identifier of the button
+      title: string,    // optional button tooltip
+      imageLink: string // absolute link to the image icon
+    }
+    ```
+
+   Once added, all the buttons will appear on the top toolbar.
+
+2. **Subscribe to the `'CUSTOM_BUTTON_PRESSED'` Event on the Ketcher Bus**
+
+   Subscribe to the event using the following code:
+
+    ```js
+    ketcher.eventBus.on('CUSTOM_BUTTON_PRESSED', (id: string) => {
+      // Your custom logic here
+    });
+    ```
+
+   This function receives a single parameter, `id`, which is the identifier of the pressed button. The function is invoked each time a user presses one of the custom buttons. It is up to the developer to use Ketcher APIs to implement the custom workflow logic.
+
+### Limitations
+
+Currently, custom buttons have a slightly different visual appearance compared to native buttons. Since images are used via links, it is not possible to change the color of the icons based on user actions like hovering.

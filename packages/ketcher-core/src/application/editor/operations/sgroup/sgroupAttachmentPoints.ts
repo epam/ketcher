@@ -1,7 +1,7 @@
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
-import { ReStruct } from '../../../render';
-import { SGroupAttachmentPoint } from 'domain/entities';
+import type { ReStruct } from '../../../render';
+import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import assert from 'assert';
 
 type Data = {
@@ -10,7 +10,7 @@ type Data = {
 };
 
 export class SGroupAttachmentPointAdd extends BaseOperation {
-  data: Data;
+  readonly data: Data;
 
   constructor(sGroupId: number, attachmentPoint: SGroupAttachmentPoint) {
     super(
@@ -27,6 +27,11 @@ export class SGroupAttachmentPointAdd extends BaseOperation {
     assert(sgroup != null);
 
     const attachmentPoint = this.data.attachmentPoint;
+
+    if (attachmentPoint.atomId === undefined) {
+      return;
+    }
+
     const apAtom = struct.atoms.get(attachmentPoint.atomId);
 
     if (!apAtom) {
@@ -48,7 +53,7 @@ export class SGroupAttachmentPointAdd extends BaseOperation {
 }
 
 export class SGroupAttachmentPointRemove extends BaseOperation {
-  data: Data;
+  readonly data: Data;
 
   constructor(sGroupId: number, attachmentPoint: SGroupAttachmentPoint) {
     super(OperationType.S_GROUP_ATTACHMENT_POINT_REMOVE, 4);
@@ -59,7 +64,7 @@ export class SGroupAttachmentPointRemove extends BaseOperation {
     const { sGroupId, attachmentPoint } = this.data;
     const struct = restruct.molecule;
     const sgroup = struct.sgroups.get(sGroupId);
-    sgroup?.removeAttachmentPoint(attachmentPoint.atomId);
+    sgroup?.removeAttachmentPoint(attachmentPoint);
   }
 
   invert() {

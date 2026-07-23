@@ -1,0 +1,264 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            },
+            {
+                "$ref": "monomer1"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer0",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer1",
+                    "attachmentPointId": "R1"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-25d3r___3-Deoxyribose (2,5 connectivity)"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 1.25,
+            "y": -1.25
+        },
+        "alias": "25d3r",
+        "templateId": "25d3r___3-Deoxyribose (2,5 connectivity)"
+    },
+    "monomerTemplate-25d3r___3-Deoxyribose (2,5 connectivity)": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -0.424,
+                    0.103,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.208,
+                    0.878,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.14,
+                    0.516,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.084,
+                    -0.482,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.117,
+                    -0.736,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.98,
+                    1.055,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.421,
+                    0.161,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.858,
+                    -1.113,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    2.869,
+                    0.597,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.871,
+                    1.055,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -2.869,
+                    1.113,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    5
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    6
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    7
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            }
+        ],
+        "class": "Sugar",
+        "classHELM": "RNA",
+        "id": "25d3r___3-Deoxyribose (2,5 connectivity)",
+        "fullName": "3-Deoxyribose (2,5 connectivity)",
+        "alias": "25d3r",
+        "aliasHELM": "25d3r",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 9,
+                "leavingGroup": {
+                    "atoms": [
+                        10
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 5,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 3,
+                "leavingGroup": {
+                    "atoms": [
+                        7
+                    ]
+                },
+                "type": "side"
+            }
+        ],
+        "naturalAnalogShort": "R"
+    },
+    "monomer1": {
+        "type": "monomer",
+        "id": "1",
+        "position": {
+            "x": 2.75,
+            "y": -1.25
+        },
+        "alias": "25d3r",
+        "templateId": "25d3r___3-Deoxyribose (2,5 connectivity)"
+    }
+}

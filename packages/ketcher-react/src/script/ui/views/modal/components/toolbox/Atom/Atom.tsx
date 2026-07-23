@@ -14,16 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 
 import Form, {
   Field,
   CustomQueryField,
 } from '../../../../../component/form/form/form';
-import { FC, useMemo, useState } from 'react';
+import { type FC, useMemo, useState } from 'react';
 
 import { Dialog } from '../../../../components';
-import { AtomAllAttributeName, getAtomCustomQuery } from 'ketcher-core';
+import {
+  type AtomAllAttributeName,
+  SettingsManager,
+  getAtomCustomQuery,
+} from 'ketcher-core';
 import { atom as atomSchema } from '../../../../../data/schema/struct-schema';
 import classes from './Atom.module.less';
 import Select from '../../../../../component/form/Select';
@@ -59,6 +63,7 @@ interface AtomProps extends BaseCallProps, BaseProps {
 type Props = AtomProps & {
   isMultipleAtoms?: boolean;
   isRestoredModal: boolean;
+  isMonomerCreationWizardActive?: boolean;
 };
 
 const atomProps = atomSchema.properties;
@@ -88,6 +93,7 @@ const Atom: FC<Props> = (props: Props) => {
     /* eslint-enable @typescript-eslint/no-unused-vars */
     isMultipleAtoms = false,
     isRestoredModal,
+    isMonomerCreationWizardActive = false,
     ...rest
   } = props;
   const [isCustomQuery, setIsCustomQuery] = useState(Boolean(rest.customQuery));
@@ -95,7 +101,14 @@ const Atom: FC<Props> = (props: Props) => {
     isCustomQuery ? [] : ['General'],
   );
   const handleAccordionChange = (accordion) => () => {
-    if (isCustomQuery) return;
+    if (isMonomerCreationWizardActive) {
+      return;
+    }
+
+    if (isCustomQuery) {
+      return;
+    }
+
     const isExpand = !expandedAccordions.includes(accordion);
     setExpandedAccordions(
       isExpand
@@ -111,6 +124,10 @@ const Atom: FC<Props> = (props: Props) => {
     formState,
     setCustomQuery: (value: string) => void,
   ) => {
+    if (isMonomerCreationWizardActive) {
+      return;
+    }
+
     const query = value ? getAtomCustomQuery(formState) : '';
     setCustomQuery(query);
     setIsCustomQuery(value);
@@ -119,14 +136,17 @@ const Atom: FC<Props> = (props: Props) => {
 
   const customValid = useMemo(() => {
     const atomType = formState.result.atomType;
+    const disableQueryElements =
+      SettingsManager.getOptions().disableQueryElements;
     return {
       label: (label: string) =>
         atomValid(label, isMultipleAtoms, atomType, isCustomQuery),
       pseudo: (value: string) =>
-        pseudoAtomValid(value, atomType, isCustomQuery),
+        pseudoAtomValid(value, atomType, isCustomQuery, disableQueryElements),
       atomList: (value: string) =>
         AtomListValid(value, atomType, isCustomQuery),
-      charge: (charge) => chargeValid(charge, isMultipleAtoms, isCustomQuery),
+      charge: (charge) =>
+        chargeValid(charge, isMultipleAtoms, isCustomQuery) ?? false,
       customQuery: (value: string) => customQueryValid(value, isCustomQuery),
     };
   }, [formState.result.atomType, isCustomQuery, isMultipleAtoms]);
@@ -193,6 +213,7 @@ const Atom: FC<Props> = (props: Props) => {
             name="invRet"
             component={Select}
             options={getSelectOptionsFromSchema(atomProps.invRet)}
+            data-testid="inversion"
           />
           <Field
             name="exactChangeFlag"
@@ -224,12 +245,18 @@ const Atom: FC<Props> = (props: Props) => {
         <div className={classes.accordionWrapper}>
           {itemGroups.map(({ groupName, component }) => {
             const shouldGroupBeRended = expandedAccordions.includes(groupName);
+            const isDisabled =
+              isMonomerCreationWizardActive &&
+              (groupName === 'Query specific' ||
+                groupName === 'Reaction flags');
+
             return (
               <div key={groupName} data-testid={`${groupName}-section`}>
-                <div
+                <button
                   onClick={handleAccordionChange(groupName)}
                   className={classes.accordionSummaryWrapper}
-                  aria-disabled={isCustomQuery}
+                  disabled={isCustomQuery || isDisabled}
+                  type="button"
                 >
                   <div className={classes.accordionSummary}>
                     <span>{groupName}</span>
@@ -241,29 +268,35 @@ const Atom: FC<Props> = (props: Props) => {
                       name="chevron"
                     />
                   </div>
-                </div>
+                </button>
                 <div
                   className={clsx({
                     [classes.accordionDetailsWrapper]: true,
                     [classes.hiddenAccordion]: !shouldGroupBeRended,
                   })}
+                  data-testid={`${groupName}-wrapper`}
                 >
                   <div className={classes.accordionDetails}>{component}</div>
                 </div>
               </div>
             );
           })}
-          <div className={classes.customQueryWrapper}>
-            <CustomQueryField
-              name="customQuery"
-              labelPos="after"
-              className={classes.checkbox}
-              disabled={!isCustomQuery}
-              checkboxValue={isCustomQuery}
-              onCheckboxChange={handleCustomQueryCheckBoxChange}
-              data-testid="atom-custom-query"
-            />
-          </div>
+          {!SettingsManager.disableCustomQuery && (
+            <div
+              className={classes.customQueryWrapper}
+              aria-disabled={isMonomerCreationWizardActive}
+            >
+              <CustomQueryField
+                name="customQuery"
+                labelPos="after"
+                className={classes.checkbox}
+                disabled={!isCustomQuery}
+                checkboxValue={isCustomQuery}
+                onCheckboxChange={handleCustomQueryCheckBoxChange}
+                data-testid="atom-custom-query"
+              />
+            </div>
+          )}
         </div>
       </Form>
     </Dialog>

@@ -19,11 +19,12 @@ import {
   getDefaultOptions,
   validation,
 } from '../../data/schema/options-schema';
+import { KETCHER_SAVED_OPTIONS_KEY } from 'ketcher-core';
 
 import { pick } from 'lodash/fp';
 import { storage } from '../../storage-ext';
 import { reinitializeTemplateLibrary } from '../templates/init-lib';
-import { KETCHER_SAVED_OPTIONS_KEY } from 'src/constants';
+import { APP_OPTIONS_ACTION } from './actions';
 
 export const initOptionsState = {
   app: {
@@ -63,22 +64,72 @@ export const initOptionsState = {
     getDefaultOptions(),
     validation(storage.getItem(KETCHER_SAVED_OPTIONS_KEY)),
   ),
+  getSettings() {
+    this.settings = Object.assign(
+      getDefaultOptions(),
+      validation(storage.getItem(KETCHER_SAVED_OPTIONS_KEY)),
+    );
+  },
   getServerSettings() {
-    return pick(SERVER_OPTIONS, this.settings);
+    const seriliazedServerOptions = getSerilizedServerOptions(this.settings);
+    const defaultServerOptions = pick(SERVER_OPTIONS, this.settings);
+
+    return {
+      ...defaultServerOptions,
+      ...seriliazedServerOptions,
+    };
   },
 };
 
-export function appUpdate(data) {
-  return (dispatch) => {
-    dispatch({ type: 'APP_OPTIONS', data });
-    dispatch({ type: 'UPDATE' });
+function getSerilizedServerOptions(options) {
+  let renderStereoStyle;
+  if (!options.showStereoFlags) {
+    renderStereoStyle = 'none';
+  } else if (options.ignoreChiralFlag) {
+    renderStereoStyle = 'ext';
+  } else {
+    renderStereoStyle = 'old';
+  }
+
+  let newOptions = {
+    'render-coloring': options.atomColoring,
+    'render-font-size': options.fontsz,
+    'render-font-size-unit': options.fontszUnit,
+    'render-font-size-sub': options.fontszsub,
+    'render-font-size-sub-unit': options.fontszsubUnit,
+    'image-resolution': Number(options.imageResolution),
+    'bond-length': options.bondLength,
+    'bond-length-unit': options.bondLengthUnit,
+    'render-bond-thickness': options.bondThickness,
+    'render-bond-thickness-unit': options.bondThicknessUnit,
+    'render-bond-spacing': options.bondSpacing / 100,
+    'render-stereo-bond-width': options.stereoBondWidth,
+    'render-stereo-bond-width-unit': options.stereoBondWidthUnit,
+    'render-hash-spacing': options.hashSpacing,
+    'render-hash-spacing-unit': options.hashSpacingUnit,
+    'reaction-component-margin-size': options.reactionComponentMarginSize,
+    'reaction-component-margin-size-unit':
+      options.reactionComponentMarginSizeUnit,
+    'render-stereo-style': renderStereoStyle,
   };
+
+  if (options.imageResolution === '600') {
+    newOptions = {
+      ...newOptions,
+      // TODO: change to the values from settings once they are implemented
+      'render-output-sheet-width': 11,
+      'render-output-sheet-height': 8.5,
+    };
+  }
+
+  return newOptions;
 }
 
 /* SETTINGS */
 export function saveSettings(newSettings) {
   storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
   reinitializeTemplateLibrary();
+  initOptionsState.getSettings();
 
   return {
     type: 'SAVE_SETTINGS',
@@ -144,7 +195,7 @@ export function checkOpts(data) {
 /* REDUCER */
 function optionsReducer(state = {}, action) {
   const { type, data } = action;
-  if (type === 'APP_OPTIONS')
+  if (type === APP_OPTIONS_ACTION)
     return { ...state, app: { ...state.app, ...data } };
 
   if (type === 'SAVE_SETTINGS') {

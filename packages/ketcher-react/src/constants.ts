@@ -14,11 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const KETCHER_INIT_EVENT_NAME = 'ketcher-init';
+import {
+  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+  EditorClassName,
+} from 'ketcher-core';
 
-export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings';
-
-export const KETCHER_SAVED_OPTIONS_KEY = 'ketcher-opts';
+export const ketcherInitEventName = (ketcherId?: string) =>
+  ketcherId ? `ketcher-init-${ketcherId}` : 'ketcher-init';
 
 export const MODES = {
   FG: 'fg',
@@ -31,3 +33,27 @@ export const STRUCT_TYPE = {
 
 export const KETCHER_ROOT_NODE_CLASS_NAME = 'Ketcher-root';
 export const KETCHER_ROOT_NODE_CSS_SELECTOR = `.${KETCHER_ROOT_NODE_CLASS_NAME}`;
+export { EditorClassName, KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR };
+export const STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT =
+  'struct-service-no-render-initialized';
+export const STRUCT_SERVICE_INITIALIZED_EVENT = 'struct-service-initialized';
+export const ACS_STYLE_DEFAULT_SETTINGS = {
+  atomColoring: false,
+  font: '30px Arial',
+  fontsz: 10,
+  fontszUnit: 'pt',
+  fontszsub: 10,
+  fontszsubUnit: 'pt',
+  reactionComponentMarginSize: 1.6,
+  reactionComponentMarginSizeUnit: 'pt',
+  imageResolution: '600',
+  bondLength: 14.4,
+  bondLengthUnit: 'pt',
+  bondSpacing: 18,
+  bondThickness: 0.6,
+  bondThicknessUnit: 'pt',
+  stereoBondWidth: 2,
+  stereoBondWidthUnit: 'pt',
+  hashSpacing: 2.5,
+  hashSpacingUnit: 'pt',
+};

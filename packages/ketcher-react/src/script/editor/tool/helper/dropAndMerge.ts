@@ -1,14 +1,14 @@
 import {
+  type ReStruct,
   Action,
   fromFragmentDeletion,
   fromItemsFuse,
   fromSgroupDeletion,
-  ReStruct,
   setExpandSGroup,
   SGroup,
   ReBond,
 } from 'ketcher-core';
-import Editor from '../../Editor';
+import type Editor from '../../Editor';
 import { getGroupIdsFromItemMaps } from './getGroupIdsFromItems';
 
 type MergeItems = {
@@ -20,12 +20,12 @@ type MergeItems = {
 export function dropAndMerge(
   editor: Editor,
   mergeItems: any,
-  action?: Action,
-  resizeCanvas?: boolean,
+  action?: Action | null,
+  copyAction?: Action,
 ): Action {
   const restruct = editor.render.ctab;
   const isMerging = !!mergeItems;
-  let dropItemAction = new Action();
+  let dropItemAction = copyAction || new Action();
 
   if (isMerging) {
     const expandGroupsAction = getExpandGroupsInMergeAction(
@@ -48,7 +48,7 @@ export function dropAndMerge(
     dropItemAction = dropItemAction.mergeWith(action);
   }
 
-  const bonds = editor.selection()?.bonds ?? [];
+  const bonds = editor.explicitSelected()?.bonds ?? [];
   for (const bondId of bonds) {
     const rebond = restruct.bonds.get(bondId);
     if (rebond) {
@@ -60,7 +60,7 @@ export function dropAndMerge(
   if (isMerging) editor.selection(null);
 
   if (dropItemAction?.operations.length > 0) {
-    editor.update(dropItemAction, false, { resizeCanvas: !!resizeCanvas });
+    editor.update(dropItemAction, false);
   }
 
   return dropItemAction;

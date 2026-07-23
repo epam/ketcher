@@ -1,0 +1,2092 @@
+import styles from './MonomerCreationWizard.module.less';
+import selectStyles from '../../../component/form/Select/Select.module.less';
+import { Dialog, Icon } from 'components';
+import {
+  type AtomLabel,
+  type AttachmentPointClickData,
+  type BaseMonomer,
+  type ComponentStructureUpdateData,
+  type IKetMonomerTemplate,
+  type MonomerCreationInitialValues,
+  type MonomerCreationState,
+  type RnaPresetComponentKey,
+  type Struct,
+  AttachmentPointName,
+  CREATE_MONOMER_TOOL_NAME,
+  getAttachmentPointLabel,
+  getAttachmentPointNumberFromLabel,
+  isValidBilnAlias,
+  isValidHelmAlias,
+  KetcherLogger,
+  ketcherProvider,
+  KetMonomerClass,
+  MonomerCreationAttachmentPointClickEvent,
+  MonomerCreationComponentStructureUpdateEvent,
+  NO_NATURAL_ANALOGUE,
+  provideEditorInstance,
+} from 'ketcher-core';
+import Select from '../../../component/form/Select';
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import clsx from 'clsx';
+import { isNaturalAnalogueRequired } from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
+import {
+  findBondBetweenRnaPresetComponents,
+  getRnaPresetComponentKeysToSave,
+  getRnaPresetStructureValidationResult,
+} from './RnaPresetStructureValidation';
+import { useDispatch, useSelector } from 'react-redux';
+import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
+import { onAction } from '../../../state/shared';
+import AttributeField from './components/AttributeField/AttributeField';
+import Notification from './components/Notification/Notification';
+import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPointEditPopup';
+import type {
+  AssignedAttachmentPointsByMonomerType,
+  RnaPresetWizardAction,
+  RnaPresetWizardComponentStateFieldId,
+  RnaPresetWizardState,
+  RnaPresetWizardStateFieldId,
+  WizardAction,
+  WizardFormFieldId,
+  WizardNotification,
+  WizardNotificationId,
+  WizardState,
+  WizardValues,
+} from './MonomerCreationWizard.types';
+import {
+  MonomerCreationExternalNotificationAction,
+  MonomerTypeSelectConfig,
+  NotificationMessages,
+  NotificationTypes,
+} from './MonomerCreationWizard.constants';
+import { validateMonomerLeavingGroups } from './MonomerLeavingGroupValidator';
+import { useAppContext } from '../../../../../hooks';
+import Editor from '../../../../editor';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from '../../../../../constants';
+import { createPortal } from 'react-dom';
+import tools from '../../../action/tools';
+import MonomerCreationWizardFields from './MonomerCreationWizardFields';
+import { RnaPresetTabs } from './RnaPresetTabs';
+import { inferPhosphatePosition } from './PhosphatePositionInference';
+import {
+  getLeavingAtomForAttachmentPoint,
+  hasPhosphatePositionAttachmentPointConflict,
+} from './RnaPresetAttachmentPointValidation';
+import type { Selection } from '../../../../editor/Editor';
+import { isNumber } from 'lodash';
+import { showSnackbarNotification } from '../../../state/notifications';
+
+const getInitialWizardState = (
+  type = KetMonomerClass.CHEM,
+  naturalAnalogue = '',
+): WizardState => ({
+  values: {
+    type,
+    symbol: '',
+    name: '',
+    naturalAnalogue,
+    aliasHELM: '',
+    aliasBILN: '',
+  },
+  errors: {},
+  notifications: new Map(),
+  structure: undefined,
+});
+
+const initialWizardState: WizardState = getInitialWizardState();
+
+/**
+ * Builds initial wizard state seeded with values from an existing monomer
+ * being edited. When `initialValues` is undefined returns the default empty
+ * wizard state.
+ */
+const getInitialWizardStateForEdit = (
+  initialValues?: MonomerCreationInitialValues,
+): WizardState => {
+  if (!initialValues) {
+    return initialWizardState;
+  }
+
+  return {
+    ...initialWizardState,
+    values: {
+      type: initialValues.type,
+      symbol: initialValues.symbol,
+      name: initialValues.name,
+      naturalAnalogue: initialValues.naturalAnalogue,
+      aliasHELM: initialValues.aliasHELM,
+      aliasBILN: initialValues.aliasBILN,
+    },
+  };
+};
+
+// BILN alias errors remain visible until the next submit attempt.
+const fieldsValidatedOnSubmit = new Set<WizardFormFieldId>(['aliasBILN']);
+
+const initialRnaPresetWizardState: RnaPresetWizardState = {
+  base: getInitialWizardState(KetMonomerClass.Base, NO_NATURAL_ANALOGUE),
+  sugar: getInitialWizardState(KetMonomerClass.Sugar),
+  phosphate: getInitialWizardState(KetMonomerClass.Phosphate),
+  preset: {
+    name: '',
+    errors: {
+      name: undefined,
+      phosphatePosition: undefined,
+    },
+    notifications: new Map(),
+    manuallyModifiedSymbols: {
+      base: false,
+      sugar: false,
+      phosphate: false,
+    },
+  },
+};
+
+const getComponentSuffix = (componentType: KetMonomerClass): string => {
+  switch (componentType) {
+    case KetMonomerClass.Base:
+      return 'B';
+    case KetMonomerClass.Sugar:
+      return 'S';
+    case KetMonomerClass.Phosphate:
+      return 'P';
+    default:
+      return '';
+  }
+};
+
+const wizardReducer = (
+  state: WizardState,
+  action: WizardAction,
+): WizardState => {
+  switch (action.type) {
+    case 'SetFieldValue': {
+      const { fieldId, value } = action;
+
+      const values = {
+        ...state.values,
+        [fieldId]: value,
+      };
+
+      if (fieldId === 'type') {
+        values.naturalAnalogue = '';
+      }
+
+      return {
+        ...state,
+        values,
+        errors: {
+          ...state.errors,
+          ...(fieldsValidatedOnSubmit.has(fieldId)
+            ? {}
+            : { [fieldId]: undefined }),
+        },
+      };
+    }
+
+    case 'SetErrors': {
+      return {
+        ...state,
+        errors: {
+          ...state.errors,
+          ...action.errors,
+        },
+      };
+    }
+
+    case 'SetNotifications': {
+      return {
+        ...state,
+        notifications: new Map([
+          ...state.notifications,
+          ...action.notifications,
+        ]),
+      };
+    }
+
+    case 'AddNotification': {
+      const notifications = new Map(state.notifications);
+      const { id } = action;
+      if (!notifications.has(id)) {
+        notifications.set(id, {
+          type: NotificationTypes[id],
+          message: NotificationMessages[id],
+        });
+      }
+
+      return {
+        ...state,
+        notifications,
+      };
+    }
+
+    case 'ResetErrors': {
+      return {
+        ...state,
+        errors: {},
+      };
+    }
+
+    case 'ResetWizard': {
+      return initialWizardState;
+    }
+
+    case 'RemoveNotification': {
+      const notifications = new Map(state.notifications);
+      notifications.delete(action.id);
+
+      return {
+        ...state,
+        notifications,
+      };
+    }
+
+    default:
+      return state;
+  }
+};
+
+const rnaPresetWizardReducer = (
+  state: RnaPresetWizardState,
+  action: RnaPresetWizardAction,
+): RnaPresetWizardState => {
+  if (action.type === 'ResetErrors') {
+    return {
+      ...state,
+      preset: {
+        ...state.preset,
+        errors: {},
+      },
+    };
+  }
+
+  if (action.type === 'ResetWizard') {
+    return initialRnaPresetWizardState;
+  }
+
+  if (action.type === 'RemoveNotification') {
+    const presetNotifications = new Map(state.preset.notifications);
+    const baseNotifications = new Map(state.base.notifications);
+    const sugarNotifications = new Map(state.sugar.notifications);
+    const phosphateNotifications = new Map(state.phosphate.notifications);
+
+    presetNotifications.delete(action.id);
+    baseNotifications.delete(action.id);
+    sugarNotifications.delete(action.id);
+    phosphateNotifications.delete(action.id);
+
+    return {
+      ...state,
+      preset: {
+        ...state.preset,
+        notifications: presetNotifications,
+      },
+      sugar: {
+        ...state.sugar,
+        notifications: sugarNotifications,
+      },
+      base: {
+        ...state.base,
+        notifications: baseNotifications,
+      },
+      phosphate: {
+        ...state.phosphate,
+        notifications: phosphateNotifications,
+      },
+    };
+  }
+
+  if (!action.rnaComponentKey) {
+    return state;
+  }
+
+  // Handle UpdateRnaPresetComponentStructure action
+  if (action.type === 'UpdateRnaPresetComponentStructure') {
+    return {
+      ...state,
+      [action.rnaComponentKey]: {
+        ...state[action.rnaComponentKey],
+        structure: {
+          atoms: action.atomIds,
+          bonds: action.bondIds,
+        },
+      },
+    };
+  }
+
+  const { rnaComponentKey, ...restAction } = action;
+
+  if (action.type === 'SetNotifications') {
+    return {
+      ...state,
+      [action.rnaComponentKey]: {
+        ...state[action.rnaComponentKey],
+        notifications: action.notifications,
+      },
+    };
+  }
+
+  if (restAction.type === 'SetRnaPresetComponentStructure') {
+    return {
+      ...state,
+      [rnaComponentKey]: {
+        ...state[rnaComponentKey],
+        structure: restAction.editor?.explicitSelected(),
+      },
+    };
+  }
+
+  if (rnaComponentKey !== 'preset') {
+    const updatedState = {
+      ...state,
+      [rnaComponentKey]: wizardReducer(state[rnaComponentKey], restAction),
+    };
+
+    // Track manual symbol modifications
+    if (
+      restAction.type === 'SetFieldValue' &&
+      restAction.fieldId === 'symbol'
+    ) {
+      return {
+        ...updatedState,
+        preset: {
+          ...updatedState.preset,
+          manuallyModifiedSymbols: {
+            ...updatedState.preset.manuallyModifiedSymbols,
+            [rnaComponentKey]: true,
+          },
+        },
+      };
+    }
+
+    return updatedState;
+  }
+
+  if (restAction.type === 'SetErrors') {
+    return {
+      ...state,
+      preset: {
+        ...state.preset,
+        errors: {
+          ...state.preset.errors,
+          ...restAction.errors,
+        },
+      },
+    };
+  }
+
+  if (restAction.type === 'SetFieldValue') {
+    let updatedState = {
+      ...state,
+      preset: {
+        ...state.preset,
+        [restAction.fieldId]: restAction.value,
+        errors: {
+          ...state.preset.errors,
+          [restAction.fieldId]: undefined,
+        },
+      },
+    };
+
+    // When preset code changes, update monomer symbols that haven't been manually modified
+    if (restAction.fieldId === 'name') {
+      const newPresetCode = restAction.value;
+      const { manuallyModifiedSymbols } = state.preset;
+
+      if (!manuallyModifiedSymbols.base) {
+        updatedState = {
+          ...updatedState,
+          base: {
+            ...updatedState.base,
+            values: {
+              ...updatedState.base.values,
+              symbol: newPresetCode
+                ? newPresetCode + getComponentSuffix(KetMonomerClass.Base)
+                : '',
+            },
+          },
+        };
+      }
+
+      if (!manuallyModifiedSymbols.sugar) {
+        updatedState = {
+          ...updatedState,
+          sugar: {
+            ...updatedState.sugar,
+            values: {
+              ...updatedState.sugar.values,
+              symbol: newPresetCode
+                ? newPresetCode + getComponentSuffix(KetMonomerClass.Sugar)
+                : '',
+            },
+          },
+        };
+      }
+
+      if (!manuallyModifiedSymbols.phosphate) {
+        updatedState = {
+          ...updatedState,
+          phosphate: {
+            ...updatedState.phosphate,
+            values: {
+              ...updatedState.phosphate.values,
+              symbol: newPresetCode
+                ? newPresetCode + getComponentSuffix(KetMonomerClass.Phosphate)
+                : '',
+            },
+          },
+        };
+      }
+    }
+
+    return updatedState;
+  }
+
+  return {
+    ...state,
+  };
+};
+
+/**
+ * Checks if all mandatory properties required for a non-hidden monomer are filled.
+ * Note: 'name' is not mandatory and will be auto-generated from symbol if empty.
+ * @param values - The wizard form values to check
+ * @returns true if Code (symbol) is filled and Natural analogue is filled (when required)
+ */
+const hasAllMandatoryPropertiesFilled = (values: WizardValues): boolean => {
+  const { type, symbol, naturalAnalogue } = values;
+
+  // Check if Code/symbol is filled
+  if (!symbol?.trim()) {
+    return false;
+  }
+
+  // Check if Natural analogue is filled (only required for certain types)
+  if (isNaturalAnalogueRequired(type) && !naturalAnalogue?.trim()) {
+    return false;
+  }
+
+  return true;
+};
+
+const autoAssignPropertiesForHiddenMonomer = (
+  values: WizardValues,
+  presetCode: string,
+): WizardValues => {
+  const suffix = getComponentSuffix(values.type as KetMonomerClass);
+  const autoCode = `${presetCode}${suffix}`;
+
+  return {
+    ...values,
+    // Use auto-generated code if symbol is empty or only whitespace
+    symbol: values.symbol?.trim() || autoCode,
+    // Use auto-generated name if name is empty or only whitespace
+    name: values.name?.trim() || autoCode,
+    // For bases, default to 'X' if naturalAnalogue is empty or whitespace
+    // For other types, clear whitespace-only values
+    naturalAnalogue:
+      values.type === KetMonomerClass.Base
+        ? values.naturalAnalogue?.trim() || NO_NATURAL_ANALOGUE
+        : values.naturalAnalogue?.trim() || '',
+  };
+};
+
+const validateInputs = (
+  values: WizardValues,
+  skipUniquenessChecks = false,
+  skipMandatoryCheck = false,
+) => {
+  const editor = provideEditorInstance();
+  const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
+  const notifications = new Map<WizardNotificationId, WizardNotification>();
+  const optionalFields = new Set(['aliasHELM', 'aliasBILN', 'name']);
+
+  Object.entries(values).forEach(([key, value]) => {
+    if (!value?.trim()) {
+      if (
+        !skipMandatoryCheck &&
+        !optionalFields.has(key) &&
+        (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type))
+      ) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('emptyMandatoryFields', {
+          type: 'error',
+          message: NotificationMessages.emptyMandatoryFields,
+        });
+      }
+      return;
+    }
+
+    if (key === 'symbol') {
+      const symbolRegex = /^[a-zA-Z0-9-_*]*$/;
+      if (!symbolRegex.test(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('invalidSymbol', {
+          type: 'error',
+          message: NotificationMessages.invalidSymbol,
+        });
+
+        return;
+      }
+
+      if (
+        !skipUniquenessChecks &&
+        editor.checkIfMonomerSymbolClassPairExists(value, values.type)
+      ) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('symbolExists', {
+          type: 'error',
+          message: NotificationMessages.symbolExists,
+        });
+      }
+    }
+
+    if (key === 'name') {
+      const nameRegex = /^[a-zA-Z0-9-_* ]*$/;
+      if (!nameRegex.test(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('invalidName', {
+          type: 'error',
+          message: NotificationMessages.invalidName,
+        });
+
+        return;
+      }
+    }
+
+    if (key === 'aliasHELM') {
+      if (value && !isValidHelmAlias(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('invalidHELMAlias', {
+          type: 'error',
+          message: NotificationMessages.invalidHELMAlias,
+        });
+
+        return;
+      }
+
+      if (
+        !skipUniquenessChecks &&
+        editor.checkIfMonomerSymbolClassPairExists(value, values.type)
+      ) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('notUniqueHELMAlias', {
+          type: 'error',
+          message: NotificationMessages.notUniqueHELMAlias,
+        });
+      }
+    }
+
+    if (key === 'aliasBILN') {
+      if (value && !isValidBilnAlias(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('invalidBILNAlias', {
+          type: 'error',
+          message: NotificationMessages.invalidBILNAlias,
+        });
+
+        return;
+      }
+
+      if (!skipUniquenessChecks && editor.checkIfBilnAliasExists(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('notUniqueBILNAlias', {
+          type: 'error',
+          message: NotificationMessages.notUniqueBILNAlias,
+        });
+      }
+    }
+  });
+
+  return { errors, notifications };
+};
+
+const validateAttachmentPoints = (attachmentPoints: AttachmentPointName[]) => {
+  const notifications = new Map<WizardNotificationId, WizardNotification>();
+  const problematicAttachmentPoints = new Set<AttachmentPointName>();
+
+  if (attachmentPoints.length === 0) {
+    notifications.set('noAttachmentPoints', {
+      type: 'error',
+      message: NotificationMessages.noAttachmentPoints,
+    });
+
+    return { notifications, problematicAttachmentPoints };
+  }
+
+  const sideAttachmentPoints = attachmentPoints.filter(
+    (attachmentPointName) => {
+      const pointNumber =
+        getAttachmentPointNumberFromLabel(attachmentPointName);
+      return pointNumber > 2;
+    },
+  );
+
+  if (sideAttachmentPoints.length === 0) {
+    return { notifications, problematicAttachmentPoints };
+  }
+
+  const expectedSequence: number[] = [];
+  for (let i = 3; i < 3 + sideAttachmentPoints.length; i++) {
+    expectedSequence.push(i);
+  }
+
+  const actualNumbers = sideAttachmentPoints
+    .map(getAttachmentPointNumberFromLabel)
+    .sort((a, b) => a - b);
+
+  actualNumbers.forEach((actualNumber) => {
+    if (!expectedSequence.includes(actualNumber)) {
+      const problematicPointName = getAttachmentPointLabel(actualNumber);
+      problematicAttachmentPoints.add(problematicPointName);
+    }
+  });
+
+  if (problematicAttachmentPoints.size > 0) {
+    notifications.set('incorrectAttachmentPointsOrder', {
+      type: 'error',
+      message: NotificationMessages.incorrectAttachmentPointsOrder,
+    });
+  }
+
+  return { notifications, problematicAttachmentPoints };
+};
+
+const validateStructure = (structure: Struct, editor: Editor) => {
+  const notifications = new Map<WizardNotificationId, WizardNotification>();
+  const isStructureImpure = Editor.isStructureImpure(structure);
+  if (isStructureImpure) {
+    notifications.set('impureStructure', {
+      type: 'error',
+      message: NotificationMessages.impureStructure,
+    });
+  }
+
+  const isMinimalViableStructure = Editor.isMinimalViableStructure(
+    structure,
+    editor.monomerCreationState,
+  );
+  if (!isMinimalViableStructure) {
+    notifications.set('notMinimalViableStructure', {
+      type: 'error',
+      message: NotificationMessages.notMinimalViableStructure,
+    });
+    return notifications;
+  }
+
+  const isStructureContinuous = Editor.isStructureContinuous(structure);
+  if (!isStructureContinuous) {
+    notifications.set('incontinuousStructure', {
+      type: 'error',
+      message: NotificationMessages.incontinuousStructure,
+    });
+  }
+
+  return notifications;
+};
+
+const validateModificationTypes = (
+  modificationTypes: string[],
+  naturalAnalogue: string,
+) => {
+  const editor = provideEditorInstance();
+  const notifications = new Map<WizardNotificationId, WizardNotification>();
+  const errors: Record<string, boolean> = {};
+  const modificationTypesGroupedByNaturalAnalogue =
+    editor.getAllAminoAcidsModificationTypesGroupedByNaturalAnalogue();
+  const hasEmptyType = modificationTypes.some(
+    (modificationType) => !modificationType.trim(),
+  );
+
+  // Check for empty modification types
+  if (hasEmptyType) {
+    errors.emptyModificationType = true;
+    notifications.set('emptyMandatoryFields', {
+      type: 'error',
+      message: NotificationMessages.emptyMandatoryFields,
+    });
+  }
+
+  // Check for duplicate modification types
+  modificationTypes.forEach((modificationType) => {
+    const occurrences = modificationTypes.filter(
+      (type) => type === modificationType,
+    ).length;
+
+    if (occurrences > 1) {
+      errors[modificationType] = true;
+      notifications.set('symbolExists', {
+        type: 'error',
+        message: NotificationMessages.notUniqueModificationTypes,
+      });
+    }
+  });
+
+  // Check if same modification types exist for same natural analogues
+  modificationTypesGroupedByNaturalAnalogue[naturalAnalogue]?.forEach(
+    (modificationTypeInsideSameNaturalAnalogue) => {
+      if (
+        modificationTypes.includes(modificationTypeInsideSameNaturalAnalogue)
+      ) {
+        errors[modificationTypeInsideSameNaturalAnalogue] = true;
+        notifications.set('modificationTypeExists', {
+          type: 'error',
+          message: NotificationMessages.modificationTypeExists,
+        });
+      }
+    },
+  );
+
+  return { notifications, errors };
+};
+
+type MonomerCreationWizardInternalProps = {
+  monomerCreationState: NonNullable<MonomerCreationState>;
+};
+
+const MonomerCreationWizardInternal = ({
+  monomerCreationState,
+}: MonomerCreationWizardInternalProps) => {
+  const { ketcherId } = useAppContext();
+  const ketcher = ketcherProvider.getKetcher(ketcherId);
+  const editor = ketcher.editor as Editor;
+  const dispatch = useDispatch();
+
+  // Initial wizard values are derived once on mount. The wizard is mounted
+  // only while `monomerCreationState` is set (see the wrapper below), so
+  // edit-mode initial values from `editInstanceInitialValues` are seeded via
+  // the lazy initializer instead of a useEffect that would race with user
+  // input.
+  const [wizardState, wizardStateDispatch] = useReducer(
+    wizardReducer,
+    monomerCreationState.editInstanceInitialValues,
+    getInitialWizardStateForEdit,
+  );
+  const [rnaPresetWizardState, rnaPresetWizardStateDispatch] = useReducer(
+    rnaPresetWizardReducer,
+    initialRnaPresetWizardState,
+  );
+
+  const [attachmentPointEditPopupData, setAttachmentPointEditPopupData] =
+    useState<AttachmentPointClickData | null>(null);
+
+  const {
+    values,
+    notifications: monomerWizardNotifications,
+    errors,
+  } = wizardState;
+  const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
+  const [modificationTypes, setModificationTypes] = useState<string[]>([]);
+  const [leavingGroupDialogMessage, setLeavingGroupDialogMessage] =
+    useState('');
+  const [pendingType, setPendingType] = useState<
+    KetMonomerClass | string | null
+  >(null);
+  const [showTypeChangeDialog, setShowTypeChangeDialog] = useState(false);
+  const [phosphatePosition, setPhosphatePosition] = useState<
+    '3' | '5' | undefined
+  >();
+  /**
+   * Stores user-overridden leaving atom labels for connection (readonly)
+   * attachment points, keyed by "<componentKey>:<apName>" to handle cases
+   * where two components share the same AP name (e.g. base R1 / phosphate R1).
+   */
+  const [connectionLeavingAtoms, setConnectionLeavingAtoms] = useState<
+    Map<string, AtomLabel>
+  >(new Map());
+  const [
+    hasActiveRnaPresetAtomValidationErrors,
+    setHasActiveRnaPresetAtomValidationErrors,
+  ] = useState(false);
+
+  const handleConnectionLeavingAtomChange = useCallback(
+    (
+      apName: AttachmentPointName,
+      newLeavingAtomLabel: AtomLabel,
+      componentKey: RnaPresetComponentKey,
+    ) => {
+      setConnectionLeavingAtoms((prev) => {
+        const next = new Map(prev);
+        next.set(`${componentKey}:${apName}`, newLeavingAtomLabel);
+        return next;
+      });
+    },
+    [],
+  );
+  const isRnaPresetType = type === 'rnaPreset';
+  const rnaPresetComponentStructures = useMemo(
+    () => ({
+      base: {
+        structure: rnaPresetWizardState.base.structure,
+      },
+      sugar: {
+        structure: rnaPresetWizardState.sugar.structure,
+      },
+      phosphate: {
+        structure: rnaPresetWizardState.phosphate.structure,
+      },
+    }),
+    [
+      rnaPresetWizardState.base.structure,
+      rnaPresetWizardState.phosphate.structure,
+      rnaPresetWizardState.sugar.structure,
+    ],
+  );
+  const notifications = isRnaPresetType
+    ? new Map([
+        ...(rnaPresetWizardState.preset.notifications || []),
+        ...(rnaPresetWizardState.sugar.notifications || []),
+        ...(rnaPresetWizardState.base.notifications || []),
+        ...(rnaPresetWizardState.phosphate.notifications || []),
+      ])
+    : monomerWizardNotifications;
+
+  useEffect(() => {
+    const externalNotificationEventListener = (event: Event) => {
+      const notificationId = (event as CustomEvent<WizardNotificationId>)
+        .detail;
+      if (notificationId) {
+        wizardStateDispatch({ type: 'AddNotification', id: notificationId });
+      }
+    };
+
+    window.addEventListener(
+      MonomerCreationExternalNotificationAction,
+      externalNotificationEventListener,
+    );
+
+    return () => {
+      window.removeEventListener(
+        MonomerCreationExternalNotificationAction,
+        externalNotificationEventListener,
+      );
+    };
+  }, []);
+
+  useEffect(() => {
+    const attachmentPointClickHandler = (event: Event) => {
+      const clickData = (event as CustomEvent<AttachmentPointClickData>).detail;
+      const { attachmentPointName, position } = clickData;
+
+      setAttachmentPointEditPopupData({
+        attachmentPointName,
+        position,
+      });
+    };
+
+    window.addEventListener(
+      MonomerCreationAttachmentPointClickEvent,
+      attachmentPointClickHandler,
+    );
+
+    return () => {
+      window.removeEventListener(
+        MonomerCreationAttachmentPointClickEvent,
+        attachmentPointClickHandler,
+      );
+    };
+  }, []);
+
+  // Listen for component structure updates from the Editor
+  // This handles auto-assignment of new atoms to components
+  useEffect(() => {
+    const isValidRnaComponentKey = (
+      key: string,
+    ): key is RnaPresetWizardComponentStateFieldId => {
+      return key === 'base' || key === 'sugar' || key === 'phosphate';
+    };
+
+    const componentStructureUpdateHandler = (event: Event) => {
+      const updateData = (event as CustomEvent<ComponentStructureUpdateData>)
+        .detail;
+      const { componentKey, atomIds, bondIds } = updateData;
+
+      // Only handle updates for valid RNA component keys (not 'preset')
+      if (!isValidRnaComponentKey(componentKey)) {
+        return;
+      }
+
+      rnaPresetWizardStateDispatch({
+        type: 'UpdateRnaPresetComponentStructure',
+        rnaComponentKey: componentKey,
+        atomIds,
+        bondIds,
+      });
+    };
+
+    window.addEventListener(
+      MonomerCreationComponentStructureUpdateEvent,
+      componentStructureUpdateHandler,
+    );
+
+    return () => {
+      window.removeEventListener(
+        MonomerCreationComponentStructureUpdateEvent,
+        componentStructureUpdateHandler,
+      );
+    };
+  }, []);
+
+  const applyTypeChange = (newType: KetMonomerClass | string) => {
+    setModificationTypes([]);
+    setPhosphatePosition(undefined);
+    if ((type === 'rnaPreset' || newType === 'rnaPreset') && type !== newType) {
+      wizardStateDispatch({
+        type: 'ResetWizard',
+      });
+      rnaPresetWizardStateDispatch({
+        type: 'ResetWizard',
+      });
+    } else {
+      wizardStateDispatch({
+        type: 'SetFieldValue',
+        fieldId: 'aliasHELM',
+        value: '',
+      });
+      wizardStateDispatch({
+        type: 'SetFieldValue',
+        fieldId: 'aliasBILN',
+        value: '',
+      });
+    }
+
+    wizardStateDispatch({
+      type: 'SetFieldValue',
+      fieldId: 'type',
+      value: newType as KetMonomerClass,
+    });
+
+    editor.setRnaMonomerCreationMode(newType === 'rnaPreset');
+  };
+
+  const handleFieldChange = (
+    fieldId: WizardFormFieldId,
+    value: KetMonomerClass | string,
+  ) => {
+    if (fieldId === 'type') {
+      if (type === 'rnaPreset' && value !== 'rnaPreset') {
+        setPendingType(value as KetMonomerClass);
+        setShowTypeChangeDialog(true);
+        return;
+      }
+      applyTypeChange(value);
+    } else {
+      if (fieldId === 'naturalAnalogue') {
+        setModificationTypes([]);
+      }
+      wizardStateDispatch({
+        type: 'SetFieldValue',
+        fieldId,
+        value,
+      });
+    }
+  };
+
+  useEffect(() => {
+    editor?.setMonomerCreationSelectedType?.(values.type);
+  }, [editor, values.type]);
+
+  const monomerTypeSelectOptions = useMemo(
+    () =>
+      MonomerTypeSelectConfig.map((option) => ({
+        ...option,
+        children: (
+          <div className={styles.typeOption}>
+            <Icon name={option.iconName} />
+            {option.label}
+          </div>
+        ),
+      })),
+    [],
+  );
+
+  const resetWizard = () => {
+    wizardStateDispatch({ type: 'ResetWizard' });
+    rnaPresetWizardStateDispatch({ type: 'ResetWizard' });
+    setPhosphatePosition(undefined);
+    setAttachmentPointEditPopupData(null);
+  };
+
+  const handlePhosphatePositionChange = useCallback(
+    (value: '3' | '5' | undefined) => {
+      setPhosphatePosition(value);
+      rnaPresetWizardStateDispatch({
+        type: 'SetErrors',
+        errors: {
+          phosphatePosition: undefined,
+        },
+        rnaComponentKey: 'preset',
+      });
+      rnaPresetWizardStateDispatch({
+        type: 'RemoveNotification',
+        id: 'phosphatePositionNotSelected',
+      });
+      rnaPresetWizardStateDispatch({
+        type: 'RemoveNotification',
+        id: 'invalidPhosphatePositionAttachmentPoints',
+      });
+    },
+    [],
+  );
+
+  const selectRectangleAction = tools['select-rectangle'].action;
+
+  const handleAttachmentPointNameChange = (
+    currentName: AttachmentPointName,
+    newName: AttachmentPointName,
+  ) => {
+    editor.reassignAttachmentPoint(currentName, newName);
+  };
+
+  const handleLeavingAtomChange = (
+    apName: AttachmentPointName,
+    newLeavingAtomLabel: AtomLabel,
+  ) => {
+    editor.changeLeavingAtomLabel(apName, newLeavingAtomLabel);
+  };
+
+  const handleAttachmentPointEditPopupClose = () => {
+    setAttachmentPointEditPopupData(null);
+    editor.cleanupCloseAttachmentPointEditPopup();
+  };
+
+  const handleDiscard = () => {
+    editor.closeMonomerCreationWizard(true);
+
+    dispatch(onAction(selectRectangleAction));
+    resetWizard();
+  };
+
+  // Recompute atom ownership highlights only after component structures change
+  // while ownership validation errors are active.
+  useEffect(() => {
+    if (
+      !editor?.render?.monomerCreationState ||
+      !isRnaPresetType ||
+      !hasActiveRnaPresetAtomValidationErrors
+    ) {
+      return;
+    }
+
+    const { problematicAtomIds } = getRnaPresetStructureValidationResult(
+      editor.struct(),
+      rnaPresetComponentStructures,
+    );
+
+    editor.setProblematicAtoms(problematicAtomIds);
+    if (problematicAtomIds.size === 0) {
+      setHasActiveRnaPresetAtomValidationErrors(false);
+    }
+  }, [
+    editor,
+    hasActiveRnaPresetAtomValidationErrors,
+    isRnaPresetType,
+    rnaPresetComponentStructures,
+  ]);
+
+  useEffect(() => {
+    if (monomerCreationState?.hasDefaultAttachmentPoints) {
+      wizardStateDispatch({
+        type: 'AddNotification',
+        id: 'defaultAttachmentPoints',
+      });
+    }
+  }, [monomerCreationState?.hasDefaultAttachmentPoints]);
+
+  useEffect(() => {
+    if (!monomerCreationState || !isRnaPresetType) {
+      return;
+    }
+
+    const sugarAttachmentPoints = new Map<
+      AttachmentPointName,
+      [number, number]
+    >();
+    const phosphateAttachmentPoints = new Map<
+      AttachmentPointName,
+      [number, number]
+    >();
+
+    monomerCreationState.assignedAttachmentPoints.forEach(
+      ([attachmentAtomId, leavingGroupAtomId], attachmentPointName) => {
+        if (
+          rnaPresetWizardState.sugar.structure?.atoms?.includes(
+            attachmentAtomId,
+          )
+        ) {
+          sugarAttachmentPoints.set(attachmentPointName, [
+            attachmentAtomId,
+            leavingGroupAtomId,
+          ]);
+        }
+
+        if (
+          rnaPresetWizardState.phosphate.structure?.atoms?.includes(
+            attachmentAtomId,
+          )
+        ) {
+          phosphateAttachmentPoints.set(attachmentPointName, [
+            attachmentAtomId,
+            leavingGroupAtomId,
+          ]);
+        }
+      },
+    );
+    const autoPhosphatePosition = inferPhosphatePosition(
+      sugarAttachmentPoints,
+      phosphateAttachmentPoints,
+    );
+
+    handlePhosphatePositionChange(autoPhosphatePosition);
+  }, [
+    isRnaPresetType,
+    monomerCreationState?.assignedAttachmentPoints,
+    rnaPresetWizardState.phosphate.structure,
+    rnaPresetWizardState.sugar.structure,
+    handlePhosphatePositionChange,
+  ]);
+
+  const { assignedAttachmentPoints } = monomerCreationState;
+
+  const validateMonomerWizard = (
+    assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
+  ) => {
+    let needSaveMonomers = true;
+
+    if (!wizardState.structure) {
+      KetcherLogger.error('Monomer structure is undefined');
+
+      return;
+    }
+
+    const monomerAssignedAttachmentPoints =
+      assignedAttachmentPointsByMonomer.get(wizardState);
+
+    if (!monomerAssignedAttachmentPoints) {
+      KetcherLogger.error('Monomer attachment points map is undefined');
+
+      return;
+    }
+
+    const structure = editor.structSelected(wizardState.structure);
+    const { values: valuesToSave } = wizardState;
+    const { errors: inputsErrors, notifications: inputsNotifications } =
+      validateInputs(valuesToSave);
+    if (Object.keys(inputsErrors).length > 0) {
+      wizardStateDispatch({ type: 'SetErrors', errors: inputsErrors });
+      wizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: inputsNotifications,
+      });
+      return;
+    }
+
+    const {
+      notifications: attachmentPointsNotifications,
+      problematicAttachmentPoints,
+    } = validateAttachmentPoints(
+      Array.from(monomerAssignedAttachmentPoints.keys()),
+    );
+    if (attachmentPointsNotifications.size > 0) {
+      wizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: attachmentPointsNotifications,
+      });
+      editor.setProblematicAttachmentPoints(problematicAttachmentPoints);
+      return;
+    }
+
+    const {
+      errors: modificationTypesErrors,
+      notifications: modificationTypesNotifications,
+    } = validateModificationTypes(modificationTypes, naturalAnalogue);
+    if (Object.keys(modificationTypesErrors).length > 0) {
+      wizardStateDispatch({
+        type: 'SetErrors',
+        errors: modificationTypesErrors,
+      });
+      wizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: modificationTypesNotifications,
+      });
+      return;
+    }
+
+    const structureNotifications = validateStructure(structure, editor);
+    if (structureNotifications.size > 0) {
+      wizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: structureNotifications,
+      });
+      return;
+    }
+
+    if (type) {
+      const leavingGroupNotifications = validateMonomerLeavingGroups(
+        editor,
+        type,
+        monomerAssignedAttachmentPoints,
+      );
+      if (leavingGroupNotifications.size > 0) {
+        needSaveMonomers = false;
+        const firstMessage = Array.from(leavingGroupNotifications.values())[0]
+          .message;
+        setLeavingGroupDialogMessage(firstMessage);
+      }
+    }
+
+    return needSaveMonomers;
+  };
+
+  const validateRnaPresetWizard = (
+    assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
+  ) => {
+    let needSaveMonomers = true;
+    const componentsToValidate: Array<{
+      name: Exclude<RnaPresetWizardStateFieldId, 'preset'>;
+      wizardState: WizardState;
+    }> = [
+      {
+        name: 'base',
+        wizardState: rnaPresetWizardState.base,
+      },
+      {
+        name: 'phosphate',
+        wizardState: rnaPresetWizardState.phosphate,
+      },
+      {
+        name: 'sugar',
+        wizardState: rnaPresetWizardState.sugar,
+      },
+    ];
+
+    // check structure
+    const presetNotifications = new Map<
+      WizardNotificationId,
+      WizardNotification
+    >();
+    const wizardStruct = editor.struct();
+    const { issues: structureIssues, problematicAtomIds } =
+      getRnaPresetStructureValidationResult(
+        wizardStruct,
+        rnaPresetComponentStructures,
+      );
+
+    if (structureIssues.length > 0) {
+      needSaveMonomers = false;
+      structureIssues.forEach((issueId) => {
+        presetNotifications.set(issueId, {
+          type: NotificationTypes[issueId],
+          message: NotificationMessages[issueId],
+        });
+      });
+
+      if (structureIssues.includes('rnaPresetMissingComponents')) {
+        rnaPresetWizardStateDispatch({
+          type: 'SetErrors',
+          errors: {
+            components: true,
+          },
+          rnaComponentKey: 'preset',
+        });
+      }
+    }
+
+    if (problematicAtomIds.size > 0) {
+      setHasActiveRnaPresetAtomValidationErrors(true);
+      editor.setProblematicAtoms(problematicAtomIds);
+    }
+
+    const sugarAttachmentPoints = assignedAttachmentPointsByMonomer.get(
+      rnaPresetWizardState.sugar,
+    );
+    const phosphateAttachmentPoints = assignedAttachmentPointsByMonomer.get(
+      rnaPresetWizardState.phosphate,
+    );
+
+    const bondBetweenSugarAndBase = findBondBetweenRnaPresetComponents(
+      wizardStruct,
+      rnaPresetWizardState.sugar.structure?.atoms || [],
+      rnaPresetWizardState.base.structure?.atoms || [],
+    );
+    const bondBetweenSugarAndPhosphate = findBondBetweenRnaPresetComponents(
+      wizardStruct,
+      rnaPresetWizardState.sugar.structure?.atoms || [],
+      rnaPresetWizardState.phosphate.structure?.atoms || [],
+    );
+
+    if (
+      bondBetweenSugarAndPhosphate &&
+      phosphatePosition &&
+      hasPhosphatePositionAttachmentPointConflict(
+        phosphatePosition,
+        sugarAttachmentPoints,
+        phosphateAttachmentPoints,
+      )
+    ) {
+      needSaveMonomers = false;
+      presetNotifications.set(
+        'rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints',
+        {
+          type: 'error',
+          message:
+            NotificationMessages.rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints,
+        },
+      );
+    }
+
+    if (
+      bondBetweenSugarAndBase &&
+      (sugarAttachmentPoints?.get(AttachmentPointName.R3) ||
+        assignedAttachmentPointsByMonomer
+          .get(rnaPresetWizardState.base)
+          ?.get(AttachmentPointName.R1))
+    ) {
+      needSaveMonomers = false;
+      presetNotifications.set(
+        'rnaPresetInvalidSugarBaseConnectionAttachmentPoints',
+        {
+          type: 'error',
+          message:
+            NotificationMessages.rnaPresetInvalidSugarBaseConnectionAttachmentPoints,
+        },
+      );
+    }
+
+    if (presetNotifications.size > 0) {
+      rnaPresetWizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: presetNotifications,
+        rnaComponentKey: 'preset',
+        editor,
+      });
+    }
+
+    if (
+      rnaPresetWizardState.phosphate.structure?.atoms?.length &&
+      !phosphatePosition
+    ) {
+      needSaveMonomers = false;
+      rnaPresetWizardStateDispatch({
+        type: 'SetErrors',
+        errors: {
+          phosphatePosition: true,
+        },
+        rnaComponentKey: 'preset',
+      });
+      rnaPresetWizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: new Map([
+          [
+            'phosphatePositionNotSelected',
+            {
+              type: 'error',
+              message: NotificationMessages.phosphatePositionNotSelected,
+            },
+          ],
+        ]),
+        rnaComponentKey: 'preset',
+        editor,
+      });
+    }
+
+    // check rna preset code
+    const presetCode = rnaPresetWizardState.preset.name?.trim();
+    if (!presetCode) {
+      needSaveMonomers = false;
+      rnaPresetWizardStateDispatch({
+        type: 'SetErrors',
+        errors: {
+          name: true,
+        },
+        rnaComponentKey: 'preset',
+        editor,
+      });
+      rnaPresetWizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: new Map([
+          [
+            'emptyMandatoryFields',
+            {
+              type: 'error',
+              message: NotificationMessages.emptyMandatoryFields,
+            },
+          ],
+        ]),
+        rnaComponentKey: 'preset',
+        editor,
+      });
+    } else {
+      // Validate preset code format (only letters, numbers, hyphens, underscores, asterisks)
+      const presetCodeRegex = /^[a-zA-Z0-9-_*]+$/;
+      if (!presetCodeRegex.test(presetCode)) {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetErrors',
+          errors: {
+            name: true,
+          },
+          rnaComponentKey: 'preset',
+          editor,
+        });
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: new Map([
+            [
+              'invalidPresetCode',
+              {
+                type: 'error',
+                message: NotificationMessages.invalidPresetCode,
+              },
+            ],
+          ]),
+          rnaComponentKey: 'preset',
+          editor,
+        });
+      } else {
+        // Validate preset code uniqueness (only if format is valid)
+        const coreEditor = provideEditorInstance();
+        if (coreEditor.checkIfPresetCodeExists(presetCode)) {
+          needSaveMonomers = false;
+          rnaPresetWizardStateDispatch({
+            type: 'SetErrors',
+            errors: {
+              name: true,
+            },
+            rnaComponentKey: 'preset',
+            editor,
+          });
+          rnaPresetWizardStateDispatch({
+            type: 'SetNotifications',
+            notifications: new Map([
+              [
+                'notUniquePresetCode',
+                {
+                  type: 'error',
+                  message: NotificationMessages.notUniquePresetCode,
+                },
+              ],
+            ]),
+            rnaComponentKey: 'preset',
+            editor,
+          });
+        }
+      }
+    }
+
+    componentsToValidate.forEach((componentToValidate) => {
+      // Next validation is copy pasted from validateMonomerWizard and extended
+      // Need to move same part in separate method
+      const wizardState = componentToValidate.wizardState;
+      const rnaComponentKey = componentToValidate.name;
+
+      if (!wizardState.structure) {
+        KetcherLogger.error('Monomer structure is undefined');
+
+        return;
+      }
+
+      const monomerAssignedAttachmentPoints =
+        assignedAttachmentPointsByMonomer.get(wizardState);
+
+      if (!monomerAssignedAttachmentPoints) {
+        KetcherLogger.error('Monomer attachment points map is undefined');
+
+        return;
+      }
+
+      const structure = editor.structSelected(wizardState.structure);
+      const { values: valuesToSave } = wizardState;
+
+      // Check if all mandatory properties are filled.
+      // If not, skip mandatory-emptiness errors (properties will be auto-assigned),
+      // but still validate format/characters of any user-entered values.
+      const hasMandatoryProperties =
+        hasAllMandatoryPropertiesFilled(valuesToSave);
+
+      // Skip uniqueness checks for RNA preset components - they are saved as hidden monomers
+      const { errors: inputsErrors, notifications: inputsNotifications } =
+        validateInputs(valuesToSave, true, !hasMandatoryProperties);
+      if (Object.keys(inputsErrors).length > 0) {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetErrors',
+          errors: inputsErrors,
+          rnaComponentKey,
+          editor,
+        });
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: inputsNotifications,
+          rnaComponentKey,
+          editor,
+        });
+        return;
+      }
+
+      const structureNotifications = validateStructure(structure, editor);
+      if (structureNotifications.size > 0) {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: structureNotifications,
+          rnaComponentKey,
+          editor,
+        });
+      }
+    });
+
+    return needSaveMonomers;
+  };
+
+  const validateOnSubmit = (
+    assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
+  ) => {
+    if (isRnaPresetType) {
+      return validateRnaPresetWizard(assignedAttachmentPointsByMonomer);
+    } else {
+      return validateMonomerWizard(assignedAttachmentPointsByMonomer);
+    }
+  };
+
+  const handleSubmit = () => {
+    wizardStateDispatch({ type: 'ResetErrors' });
+    rnaPresetWizardStateDispatch({ type: 'ResetErrors' });
+    editor.setProblematicAttachmentPoints(new Set());
+    editor.setProblematicAtoms(new Set());
+    setHasActiveRnaPresetAtomValidationErrors(false);
+
+    const monomersToSave = isRnaPresetType
+      ? getRnaPresetComponentKeysToSave(rnaPresetWizardState).map(
+          (componentKey) => rnaPresetWizardState[componentKey],
+        )
+      : [wizardState];
+    const monomersData: Array<{
+      atomIdMap: Map<number, number>;
+      monomerStructureInWizard: Selection | null | undefined;
+      monomer: BaseMonomer;
+      monomerTemplate: IKetMonomerTemplate;
+      monomerRef: string;
+    }> = [];
+    const assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType =
+      new Map();
+
+    if (!isRnaPresetType) {
+      wizardState.structure = {
+        atoms: [...editor.render.ctab.molecule.atoms.keys()],
+        bonds: [...editor.render.ctab.molecule.bonds.keys()],
+      };
+    }
+
+    // separate attachment points by preset components
+    if (isRnaPresetType) {
+      monomersToSave.forEach((componentWizardState) => {
+        const assignedAttachmentPointsForComponent = new Map();
+
+        assignedAttachmentPoints.forEach(
+          ([attachmentAtomId, leavingGroupAtomId], attachmentPointName) => {
+            if (
+              componentWizardState.structure?.atoms?.includes(attachmentAtomId)
+            ) {
+              assignedAttachmentPointsForComponent.set(attachmentPointName, [
+                attachmentAtomId,
+                leavingGroupAtomId,
+              ]);
+            }
+          },
+        );
+
+        assignedAttachmentPointsByMonomer.set(
+          componentWizardState,
+          assignedAttachmentPointsForComponent,
+        );
+      });
+    } else {
+      assignedAttachmentPointsByMonomer.set(
+        wizardState,
+        assignedAttachmentPoints,
+      );
+    }
+
+    // validation
+    const needSaveMonomers = validateOnSubmit(
+      assignedAttachmentPointsByMonomer,
+    );
+
+    // save
+    if (needSaveMonomers) {
+      if (isRnaPresetType) {
+        // fill attachment points between RNA preset components
+        const struct = editor.struct();
+        const baseStructure = rnaPresetWizardState.base.structure;
+        const sugarStructure = rnaPresetWizardState.sugar.structure;
+        const phosphateStructure = rnaPresetWizardState.phosphate.structure;
+
+        const bondBetweenSugarAndBase =
+          sugarStructure && baseStructure
+            ? findBondBetweenRnaPresetComponents(
+                struct,
+                sugarStructure.atoms || [],
+                baseStructure.atoms || [],
+              )
+            : undefined;
+        const bondBetweenSugarAndPhosphate =
+          sugarStructure && phosphateStructure
+            ? findBondBetweenRnaPresetComponents(
+                struct,
+                sugarStructure.atoms || [],
+                phosphateStructure.atoms || [],
+              )
+            : undefined;
+        const sugarPhosphateAttachmentPointName =
+          phosphatePosition === '5'
+            ? AttachmentPointName.R1
+            : AttachmentPointName.R2;
+        const phosphateSugarAttachmentPointName =
+          phosphatePosition === '5'
+            ? AttachmentPointName.R2
+            : AttachmentPointName.R1;
+
+        // Helper: returns user override if set, otherwise falls back to default.
+        // Composite key "<componentKey>:<apName>" disambiguates components that
+        // share the same AP name (e.g. base:R1 vs phosphate:R1 at position 3').
+        const monomerClassToComponentKey: Partial<
+          Record<KetMonomerClass, RnaPresetComponentKey>
+        > = {
+          [KetMonomerClass.Base]: 'base',
+          [KetMonomerClass.Sugar]: 'sugar',
+          [KetMonomerClass.Phosphate]: 'phosphate',
+        };
+        const getConnectionLeavingAtom = (
+          componentType: KetMonomerClass,
+          apName: AttachmentPointName,
+        ): AtomLabel => {
+          const componentKey = monomerClassToComponentKey[componentType];
+          const override = componentKey
+            ? connectionLeavingAtoms.get(`${componentKey}:${apName}`)
+            : undefined;
+          return (
+            override ?? getLeavingAtomForAttachmentPoint(componentType, apName)
+          );
+        };
+
+        if (bondBetweenSugarAndBase && sugarStructure && baseStructure) {
+          const sugarAtoms = sugarStructure.atoms || [];
+          const baseAtoms = baseStructure.atoms || [];
+          const sugarR3AttachmentPointAtomId = sugarAtoms.includes(
+            bondBetweenSugarAndBase.begin,
+          )
+            ? bondBetweenSugarAndBase.begin
+            : bondBetweenSugarAndBase.end;
+          const sugarR3AttachmentAtom = struct.atoms.get(
+            sugarR3AttachmentPointAtomId,
+          );
+          const baseR1AttachmentPointAtomId = baseAtoms.includes(
+            bondBetweenSugarAndBase.begin,
+          )
+            ? bondBetweenSugarAndBase.begin
+            : bondBetweenSugarAndBase.end;
+          const baseR1AttachmentAtom = struct.atoms.get(
+            baseR1AttachmentPointAtomId,
+          );
+
+          editor.assignConnectionPointAtom(
+            baseR1AttachmentPointAtomId,
+            AttachmentPointName.R1,
+            assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.base),
+            rnaPresetWizardState.base.structure,
+            true,
+            getConnectionLeavingAtom(
+              KetMonomerClass.Base,
+              AttachmentPointName.R1,
+            ),
+            sugarR3AttachmentAtom?.pp,
+          );
+          editor.assignConnectionPointAtom(
+            sugarR3AttachmentPointAtomId,
+            AttachmentPointName.R3,
+            assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
+            rnaPresetWizardState.sugar.structure,
+            true,
+            getConnectionLeavingAtom(
+              KetMonomerClass.Sugar,
+              AttachmentPointName.R3,
+            ),
+            baseR1AttachmentAtom?.pp,
+          );
+        }
+
+        if (
+          bondBetweenSugarAndPhosphate &&
+          sugarStructure &&
+          phosphateStructure
+        ) {
+          const sugarAtoms = sugarStructure.atoms || [];
+          const phosphateAtoms = phosphateStructure.atoms || [];
+          const sugarPhosphateAttachmentPointAtomId = sugarAtoms.includes(
+            bondBetweenSugarAndPhosphate.begin,
+          )
+            ? bondBetweenSugarAndPhosphate.begin
+            : bondBetweenSugarAndPhosphate.end;
+          const sugarPhosphateAttachmentAtom = struct.atoms.get(
+            sugarPhosphateAttachmentPointAtomId,
+          );
+          const phosphateSugarAttachmentPointAtomId = phosphateAtoms.includes(
+            bondBetweenSugarAndPhosphate.begin,
+          )
+            ? bondBetweenSugarAndPhosphate.begin
+            : bondBetweenSugarAndPhosphate.end;
+          const phosphateSugarAttachmentAtom = struct.atoms.get(
+            phosphateSugarAttachmentPointAtomId,
+          );
+
+          editor.assignConnectionPointAtom(
+            sugarPhosphateAttachmentPointAtomId,
+            sugarPhosphateAttachmentPointName,
+            assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
+            rnaPresetWizardState.sugar.structure,
+            true,
+            getConnectionLeavingAtom(
+              KetMonomerClass.Sugar,
+              sugarPhosphateAttachmentPointName,
+            ),
+            phosphateSugarAttachmentAtom?.pp,
+          );
+          editor.assignConnectionPointAtom(
+            phosphateSugarAttachmentPointAtomId,
+            phosphateSugarAttachmentPointName,
+            assignedAttachmentPointsByMonomer.get(
+              rnaPresetWizardState.phosphate,
+            ),
+            rnaPresetWizardState.phosphate.structure,
+            true,
+            getConnectionLeavingAtom(
+              KetMonomerClass.Phosphate,
+              phosphateSugarAttachmentPointName,
+            ),
+            sugarPhosphateAttachmentAtom?.pp,
+          );
+        }
+      }
+
+      monomersToSave.forEach((monomerToSave) => {
+        const atomIdMap = new Map<number, number>();
+        const bondIdMap = new Map<number, number>();
+        const structure = editor.structSelected(
+          monomerToSave.structure,
+          atomIdMap,
+          bondIdMap,
+        );
+        const monomerAssignedAttachmentPoints =
+          assignedAttachmentPointsByMonomer.get(monomerToSave);
+
+        monomerAssignedAttachmentPoints?.forEach(
+          ([attachmentAtomId, leavingGroupAtomId], attachmentPointKey) => {
+            const mappedAttachmentAtomId = atomIdMap.get(attachmentAtomId);
+            const mappedLeavingGroupAtomId = atomIdMap.get(leavingGroupAtomId);
+
+            if (
+              !isNumber(mappedAttachmentAtomId) ||
+              !isNumber(mappedLeavingGroupAtomId)
+            ) {
+              return;
+            }
+
+            monomerAssignedAttachmentPoints.set(attachmentPointKey, [
+              mappedAttachmentAtomId,
+              mappedLeavingGroupAtomId,
+            ]);
+          },
+        );
+
+        // Determine if this monomer should be hidden
+        const shouldBeHidden = isRnaPresetType;
+
+        // Auto-assign properties for hidden monomers
+        let valuesToSave = monomerToSave.values;
+        if (shouldBeHidden) {
+          valuesToSave = autoAssignPropertiesForHiddenMonomer(
+            monomerToSave.values,
+            rnaPresetWizardState.preset.name,
+          );
+        }
+
+        const result = editor.saveNewMonomer({
+          type: valuesToSave.type,
+          symbol: valuesToSave.symbol,
+          name: valuesToSave.name || valuesToSave.symbol,
+          naturalAnalogue: valuesToSave.naturalAnalogue,
+          modificationTypes,
+          aliasHELM: valuesToSave.aliasHELM,
+          aliasBILN: valuesToSave.aliasBILN,
+          structure,
+          attachmentPoints: monomerAssignedAttachmentPoints,
+          // Mark monomers as hidden when they are part of a preset and don't have all properties filled
+          hidden: shouldBeHidden,
+        });
+
+        monomersData.push({
+          ...result,
+          monomerStructureInWizard: monomerToSave.structure,
+          atomIdMap,
+        });
+      });
+
+      editor.finishNewMonomersCreation(
+        monomersData,
+        rnaPresetWizardState.preset.name,
+        phosphatePosition,
+      );
+
+      dispatch(onAction(selectRectangleAction));
+      resetWizard();
+      dispatch(
+        showSnackbarNotification(
+          isRnaPresetType
+            ? NotificationMessages.creationRNASuccessful
+            : NotificationMessages.creationSuccessful,
+        ),
+      );
+    }
+  };
+
+  const ketcherEditorRootElement = document.querySelector(
+    KETCHER_ROOT_NODE_CSS_SELECTOR,
+  );
+  const displayEditDialog =
+    attachmentPointEditPopupData !== null && ketcherEditorRootElement !== null;
+  const isPresetType = type === 'rnaPreset';
+
+  return (
+    <div
+      className={styles.monomerCreationWizard}
+      data-testid="monomer-creation-wizard"
+    >
+      <div className={styles.leftColumn}>
+        <p className={styles.wizardTitle}>
+          <Icon name={CREATE_MONOMER_TOOL_NAME} />
+          Create Monomer
+        </p>
+
+        <div className={styles.notificationsArea}>
+          {Array.from(notifications.entries()).map(
+            ([id, { type, message }]) => (
+              <Notification
+                id={id}
+                type={type}
+                message={message}
+                key={id}
+                wizardStateDispatch={
+                  isRnaPresetType
+                    ? rnaPresetWizardStateDispatch
+                    : wizardStateDispatch
+                }
+              />
+            ),
+          )}
+        </div>
+      </div>
+
+      <div className={styles.rightColumn}>
+        <div className={styles.attributesWindow}>
+          <div
+            className={clsx(
+              styles.attributesFields,
+              selectStyles.selectContainer,
+            )}
+          >
+            <AttributeField
+              title="Type"
+              control={
+                <Select
+                  className={styles.input}
+                  options={monomerTypeSelectOptions}
+                  placeholder="Select monomer type"
+                  data-testid="type-select"
+                  value={type}
+                  onChange={(value) => {
+                    handleFieldChange('type', value);
+                  }}
+                  error={errors.type}
+                />
+              }
+              required
+            />
+            <p className={styles.attributesTitle}>Attributes</p>
+            {isPresetType ? (
+              <RnaPresetTabs
+                wizardState={rnaPresetWizardState}
+                wizardStateDispatch={rnaPresetWizardStateDispatch}
+                editor={editor}
+                phosphatePosition={phosphatePosition}
+                onPhosphatePositionChange={handlePhosphatePositionChange}
+                connectionLeavingAtoms={connectionLeavingAtoms}
+                onConnectionLeavingAtomChange={
+                  handleConnectionLeavingAtomChange
+                }
+              />
+            ) : (
+              <MonomerCreationWizardFields
+                wizardState={wizardState}
+                assignedAttachmentPoints={assignedAttachmentPoints}
+                onFieldChange={(fieldId: WizardFormFieldId, value: string) => {
+                  handleFieldChange(fieldId, value);
+                }}
+                onChangeModificationTypes={(modificationTypes: string[]) => {
+                  setModificationTypes(modificationTypes);
+                }}
+              />
+            )}
+          </div>
+        </div>
+
+        {displayEditDialog &&
+          createPortal(
+            <AttachmentPointEditPopup
+              data={attachmentPointEditPopupData}
+              onNameChange={handleAttachmentPointNameChange}
+              onLeavingAtomChange={handleLeavingAtomChange}
+              onClose={handleAttachmentPointEditPopupClose}
+              editor={editor}
+            />,
+            ketcherEditorRootElement,
+          )}
+
+        <div className={styles.buttonsContainer}>
+          <button
+            className={styles.buttonDiscard}
+            onClick={handleDiscard}
+            data-testid="discard-button"
+          >
+            Discard
+          </button>
+          <button
+            className={styles.buttonSubmit}
+            onClick={handleSubmit}
+            data-testid="submit-button"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+      {showTypeChangeDialog &&
+        ketcherEditorRootElement &&
+        createPortal(
+          <div className={styles.dialogOverlay}>
+            <Dialog
+              className={styles.smallDialog}
+              title="Confirm type change"
+              withDivider={true}
+              valid={() => true}
+              params={{
+                onOk: () => {
+                  if (pendingType !== null) {
+                    applyTypeChange(pendingType);
+                  }
+                  setPendingType(null);
+                  setShowTypeChangeDialog(false);
+                },
+                onCancel: () => {
+                  setPendingType(null);
+                  setShowTypeChangeDialog(false);
+                },
+              }}
+              buttons={['OK', 'Cancel']}
+              buttonsNameMap={{ OK: 'Yes', Cancel: 'Cancel' }}
+              primaryButtons={['Cancel']}
+            >
+              <div className={styles.DialogMessage}>
+                Changing the type will result in a loss of inputted data. Do you
+                wish to proceed?
+              </div>
+            </Dialog>
+          </div>,
+          ketcherEditorRootElement,
+        )}
+      {leavingGroupDialogMessage &&
+        ketcherEditorRootElement &&
+        createPortal(
+          <div className={styles.dialogOverlay}>
+            <Dialog
+              className={styles.smallDialog}
+              title="Non-typical attachment points"
+              withDivider={true}
+              valid={() => true}
+              params={{
+                onOk: () => {
+                  setLeavingGroupDialogMessage('');
+
+                  wizardState.structure = {
+                    atoms: [...editor.render.ctab.molecule.atoms.keys()],
+                    bonds: [...editor.render.ctab.molecule.bonds.keys()],
+                  };
+
+                  const atomIdMap = new Map<number, number>();
+                  const bondIdMap = new Map<number, number>();
+                  const structure = editor.structSelected(
+                    wizardState.structure,
+                    atomIdMap,
+                    bondIdMap,
+                  );
+                  const monomerData = editor.saveNewMonomer({
+                    type,
+                    symbol,
+                    name: name || symbol,
+                    naturalAnalogue,
+                    modificationTypes,
+                    aliasHELM,
+                    aliasBILN,
+                    attachmentPoints: assignedAttachmentPoints,
+                    structure,
+                  });
+
+                  editor.finishNewMonomersCreation([
+                    {
+                      ...monomerData,
+                      monomerStructureInWizard: wizardState.structure,
+                      atomIdMap,
+                    },
+                  ]);
+
+                  dispatch(onAction(selectRectangleAction));
+                  resetWizard();
+                },
+                onCancel: () => setLeavingGroupDialogMessage(''),
+              }}
+              buttons={['OK', 'Cancel']}
+              buttonsNameMap={{ OK: 'Yes', Cancel: 'Cancel' }}
+              primaryButtons={['Cancel']}
+            >
+              <div className={styles.DialogMessage}>
+                {leavingGroupDialogMessage}
+              </div>
+            </Dialog>
+          </div>,
+          ketcherEditorRootElement,
+        )}
+    </div>
+  );
+};
+
+/**
+ * Outer wrapper that gates the wizard on the Redux `monomerCreationState`.
+ * The internal component is mounted only while the wizard is active, which
+ * lets it receive `monomerCreationState` (including `editInstanceInitialValues`
+ * used to prefill the form when editing an existing monomer) as a prop and
+ * seed its initial reducer state synchronously on mount.
+ */
+const MonomerCreationWizard = () => {
+  const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
+
+  if (!monomerCreationState) {
+    return null;
+  }
+
+  return (
+    <MonomerCreationWizardInternal
+      monomerCreationState={monomerCreationState}
+    />
+  );
+};
+
+export default MonomerCreationWizard;

@@ -15,22 +15,43 @@
  ***************************************************************************/
 
 import {
+  type Struct,
   expandSGroupWithMultipleAttachmentPoint,
   fromItemsFuse,
   fromPaste,
   fromTemplateOnAtom,
   getHoverToFuse,
   getItemsToFuse,
+  notifyItemsToMergeInitializationComplete,
   SGroup,
-  Struct,
   Vec2,
   vectorUtils,
+  CoordinateTransformation,
 } from 'ketcher-core';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { dropAndMerge } from './helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
-import { Tool } from './Tool';
+import type { Tool } from './Tool';
+import { debounce } from 'lodash';
+
+let isMovePreviewCalculationInProgress = false;
+
+const debouncedSetAndHoverMergeItems = debounce(function (
+  editor,
+  pasteItems,
+  pasteToolInstance,
+  needResetTool = false,
+) {
+  const mergeItems = getItemsToFuse(editor, pasteItems);
+  editor.hover(
+    getHoverToFuse(mergeItems),
+    needResetTool ? pasteToolInstance : undefined,
+  );
+  pasteToolInstance.setMergeItems(mergeItems);
+  notifyItemsToMergeInitializationComplete();
+},
+50);
 
 class PasteTool implements Tool {
   private readonly editor: Editor;
@@ -50,12 +71,16 @@ class PasteTool implements Tool {
 
     const rnd = this.editor.render;
     const { clientHeight, clientWidth } = rnd.clientArea;
+    const clientAreaRect = rnd.clientArea.getBoundingClientRect();
     const point = this.editor.lastEvent
-      ? rnd.page2obj(this.editor.lastEvent)
-      : rnd.page2obj({
-          pageX: clientWidth / 2,
-          pageY: clientHeight / 2,
-        } as MouseEvent);
+      ? CoordinateTransformation.pageToModel(this.editor.lastEvent, rnd)
+      : CoordinateTransformation.pageToModel(
+          {
+            clientX: clientAreaRect.left + clientWidth / 2,
+            clientY: clientAreaRect.top + clientHeight / 2,
+          },
+          rnd,
+        );
 
     const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point);
     this.action = action;
@@ -65,8 +90,11 @@ class PasteTool implements Tool {
 
     this.editor.update(this.action, true);
 
-    this.mergeItems = getItemsToFuse(this.editor, pasteItems);
-    this.editor.hover(getHoverToFuse(this.mergeItems), this);
+    debouncedSetAndHoverMergeItems(this.editor, pasteItems, this, true);
+  }
+
+  public setMergeItems(mergeItems) {
+    this.mergeItems = mergeItems;
   }
 
   private get restruct() {
@@ -86,7 +114,8 @@ class PasteTool implements Tool {
       this.action?.perform(this.restruct);
     }
 
-    const closestGroupItem = this.editor.findItem(event, ['functionalGroups']);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const closestGroupItem = this.editor.findItem(event, ['functionalGroups'])!;
     const closestGroup = this.editor.struct().sgroups.get(closestGroupItem?.id);
 
     // not dropping on a group (tmp, should be removed when dealing with other entities)
@@ -95,7 +124,7 @@ class PasteTool implements Tool {
       const [action] = fromPaste(
         this.restruct,
         this.struct,
-        this.editor.render.page2obj(event),
+        CoordinateTransformation.pageToModel(event, this.editor.render),
       );
       this.action = action;
       return;
@@ -105,12 +134,18 @@ class PasteTool implements Tool {
     this.action = null;
 
     this.dragCtx = {
-      xy0: this.editor.render.page2obj(event),
+      xy0: CoordinateTransformation.pageToModel(event, this.editor.render),
       item: closestGroupItem,
     };
   }
 
   mousemove(event) {
+    this.mergeItems = null;
+    this.editor.hover(null);
+    if (isMovePreviewCalculationInProgress) {
+      return;
+    }
+    isMovePreviewCalculationInProgress = true;
     if (this.action) {
       this.action?.perform(this.restruct);
     }
@@ -118,7 +153,10 @@ class PasteTool implements Tool {
     if (this.dragCtx) {
       // template-like logic for group-on-group actions
       let pos0: Vec2 | null | undefined = null;
-      const pos1 = this.editor.render.page2obj(event);
+      const pos1 = CoordinateTransformation.pageToModel(
+        event,
+        this.editor.render,
+      );
 
       const extraBond = true;
 
@@ -147,8 +185,12 @@ class PasteTool implements Tool {
         // eslint-disable-next-line no-prototype-builtins
         this.dragCtx.hasOwnProperty('angle') &&
         this.dragCtx.angle === degrees
-      )
+      ) {
+        requestAnimationFrame(() => {
+          isMovePreviewCalculationInProgress = false;
+        });
         return;
+      }
 
       if (this.dragCtx.action) {
         this.dragCtx.action.perform(this.restruct);
@@ -167,29 +209,25 @@ class PasteTool implements Tool {
       this.dragCtx.action = action;
       this.editor.update(this.dragCtx.action, true);
     } else {
-      // todo delete after supporting expand - collapse for 2 attachment points
-      const struct = this.editor.struct();
-      this.struct.sgroups.forEach((sgroup) => {
-        if (sgroup.isNotContractible(struct)) {
-          sgroup.setAttr('expanded', true);
-        }
-      });
       // common paste logic
       const [action, pasteItems] = fromPaste(
         this.restruct,
         this.struct,
-        this.editor.render.page2obj(event),
+        CoordinateTransformation.pageToModel(event, this.editor.render),
       );
       this.action = action;
-      this.editor.update(this.action, true, { resizeCanvas: false });
+      this.editor.update(this.action, true);
       const visiblePasteItems = filterNotInContractedSGroup(
         pasteItems,
         this.editor.struct(),
       );
 
-      this.mergeItems = getItemsToFuse(this.editor, visiblePasteItems);
-      this.editor.hover(getHoverToFuse(this.mergeItems));
+      debouncedSetAndHoverMergeItems(this.editor, visiblePasteItems, this);
     }
+
+    requestAnimationFrame(() => {
+      isMovePreviewCalculationInProgress = false;
+    });
   }
 
   mouseup() {
@@ -230,8 +268,9 @@ class PasteTool implements Tool {
       const action = this.action;
       delete this.action;
       if (!this.isSingleContractedGroup || !this.mergeItems) {
-        dropAndMerge(this.editor, this.mergeItems, action, true);
+        dropAndMerge(this.editor, this.mergeItems, action);
       }
+      this.editor.tool('select');
     }
   }
 
@@ -272,7 +311,7 @@ function prepareTemplateFromSingleGroup(molecule: Struct): Template | null {
     xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
   });
 
-  template.aid = sgroup?.getAttachmentAtomId() || 0;
+  template.aid = sgroup?.getAttachmentAtomId() ?? 0;
   template.molecule = molecule;
   template.xy0 = xy0.scaled(1 / (molecule.atoms.size || 1)); // template center
 

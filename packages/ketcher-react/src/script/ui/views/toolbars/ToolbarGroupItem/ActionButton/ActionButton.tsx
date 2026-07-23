@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { UiAction, UiActionAction } from '../../../../action';
+import type { UiAction, UiActionAction } from '../../../../action';
 
 import classes from './ActionButton.module.less';
 import clsx from 'clsx';
-import { shortcutStr } from '../../shortcutStr';
-import { Icon, IconName } from 'components';
+import { shortcutStr } from 'ketcher-core';
+import { type IconName, Icon } from 'components';
 
 interface ActionButtonProps {
   name: IconName;
@@ -71,7 +71,7 @@ const ActionButton = (props: Props) => {
 
   return (
     <button
-      data-testid={dataTestId || name}
+      data-testid={dataTestId ?? name}
       disabled={disabled}
       onClick={handleClick}
       title={shortcut ? `${action?.title} (${shortcut})` : action?.title}

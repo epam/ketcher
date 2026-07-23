@@ -15,12 +15,12 @@
  ***************************************************************************/
 
 import {
-  Atom,
+  type Atom,
+  type Struct,
+  type SupportedFormat,
   Bond,
   RxnArrowMode,
   StereoFlag,
-  Struct,
-  SupportedFormat,
   getPropertiesByFormat,
 } from 'ketcher-core';
 
@@ -47,7 +47,7 @@ export function couldBeSaved(
     );
     const bondsHaveUnsupportedProperties = arrayOfBonds.some(
       (bond) =>
-        bond.reactingCenterStatus ||
+        Boolean(bond.reactingCenterStatus) ||
         bond.type === Bond.PATTERN.TYPE.DATIVE ||
         bond.type === Bond.PATTERN.TYPE.HYDROGEN,
     );
@@ -72,7 +72,11 @@ export function couldBeSaved(
     if (hasRxnArrow) {
       const arrayOfArrows: Array<any> = Array.from(struct.rxnArrows.values());
       const rxnArrowMode: RxnArrowMode = arrayOfArrows[0].mode;
-      if (rxnArrowMode !== RxnArrowMode.OpenAngle) {
+      if (
+        ![RxnArrowMode.OpenAngle, RxnArrowMode.Retrosynthetic].includes(
+          rxnArrowMode,
+        )
+      ) {
         warnings.push(
           `The ${formatName} format does not support drawn elements: the reaction ${rxnArrowMode} arrow will be replaced with the reaction arrow`,
         );

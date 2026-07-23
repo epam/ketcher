@@ -1,0 +1,1278 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer17"
+            },
+            {
+                "$ref": "monomer19"
+            },
+            {
+                "$ref": "monomer20"
+            },
+            {
+                "$ref": "monomer21"
+            },
+            {
+                "$ref": "monomer22"
+            },
+            {
+                "$ref": "monomer23"
+            },
+            {
+                "$ref": "monomer24"
+            },
+            {
+                "$ref": "monomer25"
+            },
+            {
+                "$ref": "monomer26"
+            },
+            {
+                "$ref": "monomer27"
+            },
+            {
+                "$ref": "monomer28"
+            },
+            {
+                "$ref": "monomer29"
+            },
+            {
+                "$ref": "monomer35"
+            },
+            {
+                "$ref": "monomer36"
+            },
+            {
+                "$ref": "monomer37"
+            },
+            {
+                "$ref": "monomer38"
+            },
+            {
+                "$ref": "monomer39"
+            },
+            {
+                "$ref": "monomer40"
+            },
+            {
+                "$ref": "monomer41"
+            },
+            {
+                "$ref": "monomer42"
+            },
+            {
+                "$ref": "monomer34"
+            },
+            {
+                "$ref": "monomer33"
+            },
+            {
+                "$ref": "monomer32"
+            },
+            {
+                "$ref": "monomer31"
+            },
+            {
+                "$ref": "monomer88"
+            },
+            {
+                "$ref": "monomer89"
+            },
+            {
+                "$ref": "monomer90"
+            },
+            {
+                "$ref": "monomer91"
+            },
+            {
+                "$ref": "monomer92"
+            },
+            {
+                "$ref": "monomer93"
+            },
+            {
+                "$ref": "monomer94"
+            },
+            {
+                "$ref": "monomer95"
+            },
+            {
+                "$ref": "monomer97"
+            },
+            {
+                "$ref": "monomer98"
+            },
+            {
+                "$ref": "monomer99"
+            },
+            {
+                "$ref": "monomer100"
+            },
+            {
+                "$ref": "monomer101"
+            },
+            {
+                "$ref": "monomer102"
+            },
+            {
+                "$ref": "monomer103"
+            },
+            {
+                "$ref": "monomer104"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer17",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer19",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer19",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer20",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer20",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer21",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer21",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer22",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer22",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer23",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer23",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer24",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer24",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer25",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer25",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer26",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer26",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer27",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer27",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer28",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer28",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer29",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer31",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer32",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer32",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer33",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer33",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer34",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer34",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer35",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer35",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer36",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer36",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer37",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer37",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer38",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer38",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer39",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer39",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer40",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer40",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer41",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer41",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer42",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer29",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer88",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer88",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer89",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer89",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer90",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer90",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer91",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer91",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer92",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer92",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer93",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer93",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer94",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer94",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer95",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer42",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer97",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer97",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer98",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer98",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer99",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer99",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer100",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer100",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer101",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer101",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer102",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer102",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer103",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer103",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer104",
+                    "attachmentPointId": "R1"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-Bal___beta-Alanine"
+            },
+            {
+                "$ref": "monomerTemplate-Edc___S-ethylthiocysteine"
+            }
+        ]
+    },
+    "monomer17": {
+        "type": "monomer",
+        "id": "17",
+        "position": {
+            "x": 2.25,
+            "y": -3.25
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomerTemplate-Bal___beta-Alanine": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    0.16205056722094371,
+                    0.46760986560150064,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.1069222130860072,
+                    0.140291426272259,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.2958118763409319,
+                    -0.841748557633554,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.8628195297780585,
+                    0.7949283049307422,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.5939314153891955,
+                    -0.1870270130569826,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -1.5388877271723476,
+                    0.140291426272259,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -2.2947850438643984,
+                    -0.5143454523862242,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "Bal___beta-Alanine",
+        "fullName": "beta-Alanine",
+        "alias": "Bal",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 5,
+                "leavingGroup": {
+                    "atoms": [
+                        6
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        3
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "A"
+    },
+    "monomer19": {
+        "type": "monomer",
+        "id": "19",
+        "position": {
+            "x": 4.525000000000004,
+            "y": -3.1750000000000003
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer20": {
+        "type": "monomer",
+        "id": "20",
+        "position": {
+            "x": 6.775,
+            "y": -3.1750000000000003
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer21": {
+        "type": "monomer",
+        "id": "21",
+        "position": {
+            "x": 9.4,
+            "y": -3.1500000000000004
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer22": {
+        "type": "monomer",
+        "id": "22",
+        "position": {
+            "x": 11.4,
+            "y": -3.2
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer23": {
+        "type": "monomer",
+        "id": "23",
+        "position": {
+            "x": 13.850000000000001,
+            "y": -3.2
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer24": {
+        "type": "monomer",
+        "id": "24",
+        "position": {
+            "x": 16.05,
+            "y": -3.1
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer25": {
+        "type": "monomer",
+        "id": "25",
+        "position": {
+            "x": 18.35,
+            "y": -3.1
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer26": {
+        "type": "monomer",
+        "id": "26",
+        "position": {
+            "x": 20.400000000000002,
+            "y": -3.1
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer27": {
+        "type": "monomer",
+        "id": "27",
+        "position": {
+            "x": 22.6,
+            "y": -3.1750000000000003
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer28": {
+        "type": "monomer",
+        "id": "28",
+        "position": {
+            "x": 24.625,
+            "y": -3.1750000000000003
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer29": {
+        "type": "monomer",
+        "id": "29",
+        "position": {
+            "x": 26.975,
+            "y": -3.1750000000000003
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer35": {
+        "type": "monomer",
+        "id": "35",
+        "position": {
+            "x": 11.700000000000001,
+            "y": -5.825
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomerTemplate-Edc___S-ethylthiocysteine": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    1.371397600566702,
+                    -1.4618727539106597,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.42941289753641504,
+                    -0.9190942719200461,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.42774682185434054,
+                    0.16805632967012193,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    -0.5141654431028126,
+                    0.7108348116607355,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.5125718054938719,
+                    -1.4618727539106597,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.372701485883108,
+                    -2.331129631514739,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.1236669900598986,
+                    -1.0263026201578827,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -1.2652758234258705,
+                    -1.027099438962353,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    -0.5158315187848872,
+                    1.7979854132509037,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.4578162218151742,
+                    2.3406914571683837,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.4591925452047139,
+                    3.2100207728455965,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    5,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "Edc___S-ethylthiocysteine",
+        "fullName": "S-ethylthiocysteine",
+        "alias": "Edc",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 4,
+                "leavingGroup": {
+                    "atoms": [
+                        7
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        6
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "C"
+    },
+    "monomer36": {
+        "type": "monomer",
+        "id": "36",
+        "position": {
+            "x": 13.75,
+            "y": -5.8500000000000005
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer37": {
+        "type": "monomer",
+        "id": "37",
+        "position": {
+            "x": 16.025000000000002,
+            "y": -5.800000000000001
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer38": {
+        "type": "monomer",
+        "id": "38",
+        "position": {
+            "x": 18.3,
+            "y": -5.775
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer39": {
+        "type": "monomer",
+        "id": "39",
+        "position": {
+            "x": 20.650000000000002,
+            "y": -5.6000000000000005
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer40": {
+        "type": "monomer",
+        "id": "40",
+        "position": {
+            "x": 22.675,
+            "y": -5.625
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer41": {
+        "type": "monomer",
+        "id": "41",
+        "position": {
+            "x": 24.825000000000003,
+            "y": -5.675000000000001
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer42": {
+        "type": "monomer",
+        "id": "42",
+        "position": {
+            "x": 27.325000000000003,
+            "y": -5.875
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer34": {
+        "type": "monomer",
+        "id": "34",
+        "position": {
+            "x": 9.4,
+            "y": -5.825
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer33": {
+        "type": "monomer",
+        "id": "33",
+        "position": {
+            "x": 6.775,
+            "y": -6.1000000000000005
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer32": {
+        "type": "monomer",
+        "id": "32",
+        "position": {
+            "x": 4.6000000000000005,
+            "y": -6.125
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer31": {
+        "type": "monomer",
+        "id": "31",
+        "position": {
+            "x": 2.225,
+            "y": -6.125
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer88": {
+        "type": "monomer",
+        "id": "88",
+        "position": {
+            "x": 29.049999999999997,
+            "y": -3.212500000000001
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer89": {
+        "type": "monomer",
+        "id": "89",
+        "position": {
+            "x": 31.199999999999996,
+            "y": -3.262500000000001
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer90": {
+        "type": "monomer",
+        "id": "90",
+        "position": {
+            "x": 33.199999999999996,
+            "y": -3.212500000000001
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer91": {
+        "type": "monomer",
+        "id": "91",
+        "position": {
+            "x": 35.24999999999999,
+            "y": -3.212500000000001
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer92": {
+        "type": "monomer",
+        "id": "92",
+        "position": {
+            "x": 36.849999999999994,
+            "y": -3.212500000000001
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer93": {
+        "type": "monomer",
+        "id": "93",
+        "position": {
+            "x": 38.74999999999999,
+            "y": -3.212500000000001
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer94": {
+        "type": "monomer",
+        "id": "94",
+        "position": {
+            "x": 40.64999999999999,
+            "y": -3.212500000000001
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer95": {
+        "type": "monomer",
+        "id": "95",
+        "position": {
+            "x": 42.39999999999999,
+            "y": -3.212500000000001
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomer97": {
+        "type": "monomer",
+        "id": "97",
+        "position": {
+            "x": 29.349999999999994,
+            "y": -5.862500000000001
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer98": {
+        "type": "monomer",
+        "id": "98",
+        "position": {
+            "x": 31.399999999999995,
+            "y": -5.8125
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer99": {
+        "type": "monomer",
+        "id": "99",
+        "position": {
+            "x": 33.15,
+            "y": -5.8125
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer100": {
+        "type": "monomer",
+        "id": "100",
+        "position": {
+            "x": 35.24999999999999,
+            "y": -5.8125
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer101": {
+        "type": "monomer",
+        "id": "101",
+        "position": {
+            "x": 37.15,
+            "y": -5.8125
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer102": {
+        "type": "monomer",
+        "id": "102",
+        "position": {
+            "x": 38.74999999999999,
+            "y": -5.8125
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer103": {
+        "type": "monomer",
+        "id": "103",
+        "position": {
+            "x": 40.49999999999999,
+            "y": -5.8125
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomer104": {
+        "type": "monomer",
+        "id": "104",
+        "position": {
+            "x": 42.599999999999994,
+            "y": -5.612500000000001
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    }
+}

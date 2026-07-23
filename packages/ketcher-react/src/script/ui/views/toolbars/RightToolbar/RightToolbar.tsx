@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, MutableRefObject, PropsWithChildren, useRef } from 'react';
+import { type FC, type PropsWithChildren, type RefObject, useRef } from 'react';
 import {
+  type ToolbarGroupItemCallProps,
+  type ToolbarGroupItemProps,
   ToolbarGroupItem,
-  ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps,
 } from '../ToolbarGroupItem';
 
 import { ArrowScroll } from '../ArrowScroll';
@@ -51,18 +51,26 @@ type Props = RightToolbarProps & RightToolbarCallProps;
 
 const RightToolbar = (props: Props) => {
   const { className, ...rest } = props;
-  const { active, onAction, freqAtoms } = rest;
+  const { active, onAction, freqAtoms, status } = rest;
   const { ref, height } = useResizeObserver<HTMLDivElement>();
   const [startRef, startInView] = useInView({ threshold: 1 });
   const [endRef, endInView] = useInView({ threshold: 1 });
-  const sizeRef = useRef() as MutableRefObject<HTMLDivElement>;
-  const scrollRef = useRef() as MutableRefObject<HTMLDivElement>;
+  const sizeRef = useRef(null) as RefObject<HTMLDivElement | null>;
+  const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
 
   const scrollUp = () => {
+    if (!scrollRef.current || !sizeRef.current) {
+      return;
+    }
+
     scrollRef.current.scrollTop -= sizeRef.current.offsetHeight;
   };
 
   const scrollDown = () => {
+    if (!scrollRef.current || !sizeRef.current) {
+      return;
+    }
+
     scrollRef.current.scrollTop += sizeRef.current.offsetHeight;
   };
 
@@ -85,19 +93,27 @@ const RightToolbar = (props: Props) => {
               atoms={basicAtoms.slice(0, 1)}
               active={active}
               onAction={onAction}
+              status={status}
             />
             <AtomsList
               atoms={basicAtoms.slice(1, 5)}
               active={active}
               onAction={onAction}
+              status={status}
             />
             <HorizontalDivider></HorizontalDivider>
             <AtomsList
               atoms={basicAtoms.slice(5)}
               active={active}
               onAction={onAction}
+              status={status}
             />
-            <AtomsList atoms={freqAtoms} active={active} onAction={onAction} />
+            <AtomsList
+              atoms={freqAtoms}
+              status={status}
+              active={active}
+              onAction={onAction}
+            />
             <ToolbarGroupItem id="period-table" {...rest} />
           </Group>
         </div>
@@ -113,12 +129,12 @@ const RightToolbar = (props: Props) => {
           </Group>
         </div>
       </div>
-      {height && scrollRef?.current?.scrollHeight > height && (
+      {height && (scrollRef?.current?.scrollHeight || 0) > height && (
         <ArrowScroll
           startInView={startInView}
           endInView={endInView}
-          scrollUp={scrollUp}
-          scrollDown={scrollDown}
+          scrollForward={scrollDown}
+          scrollBack={scrollUp}
         />
       )}
     </div>

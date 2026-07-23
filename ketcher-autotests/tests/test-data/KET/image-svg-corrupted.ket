@@ -1,0 +1,24 @@
+{
+    "root": {
+        "nodes": [
+            			{
+                "type": "raster1Image",
+                "center": {
+                    "x": 4,
+                    "y": -4,
+                    "z": 0
+                },
+                "data1": {
+                    "bitmap1": "data:image/sv1g+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0zIDEzLjY0OTNDMyAxNi42MDQ0IDUuNDE3NjYgMTkgOC40IDE5TDE2LjUgMTlDMTguOTg1MyAxOSAyMSAxNi45ODM5IDIxIDE0LjQ5NjlDMjEgMTIuNjUwMyAxOS44ODkzIDEwLjk0NDkgMTguMyAxMC4yNUMxOC4xMzE3IDcuMzIyNTEgMTUuNjg0IDUgMTIuNjg5MyA1QzEwLjM1MTQgNSA4LjM0Njk0IDYuNDg2MzcgNy41IDguNUM0LjggOC45Mzc1IDMgMTEuMjAwMSAzIDEzLjY0OTNaIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8L3N2Zz4=",
+                    "halfSize": {
+                        "x": -1.425,
+                        "y": -2,
+                        "z": 0
+                    }
+                }
+            }
+        ],
+        "connections": [],
+        "templates": []
+    }
+}

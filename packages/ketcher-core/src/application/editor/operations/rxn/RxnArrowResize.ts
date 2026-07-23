@@ -14,15 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 import assert from 'assert';
-import { RxnArrow, Vec2 } from 'domain/entities';
+import { RxnArrow } from 'domain/entities/rxnArrow';
+import { Vec2 } from 'domain/entities/vec2';
 import { Scale } from 'domain/helpers';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 import { OperationType } from '../OperationType';
-import Base from '../base';
+import Base from '../BaseOperation';
 
-export const ARROW_MAX_SNAPPING_ANGLE = Math.PI / 12; // 15°
+export const ARROW_MAX_SNAPPING_ANGLE = Math.PI / 36; // 5°
 
 interface RxnArrowResizeData {
   id: number;
@@ -32,8 +33,8 @@ interface RxnArrowResizeData {
   noinvalidate: boolean;
 }
 export class RxnArrowResize extends Base {
-  data: RxnArrowResizeData;
-  isSnappingEnabled: boolean;
+  readonly data: RxnArrowResizeData;
+  readonly isSnappingEnabled: boolean;
 
   constructor(
     id: number,
@@ -75,8 +76,8 @@ export class RxnArrowResize extends Base {
          *
          * more details: ./RxnArrowResize.doc.png
          */
-        tfx(anchor.x) === tfx(item.pos[1].x) &&
-        tfx(anchor.y) === tfx(item.pos[1].y)
+        toFixed(anchor.x) === toFixed(item.pos[1].x) &&
+        toFixed(anchor.y) === toFixed(item.pos[1].y)
       ) {
         if (this.isSnappingEnabled) {
           const currentArrowVector = current.sub(item.pos[0]);
@@ -100,8 +101,8 @@ export class RxnArrowResize extends Base {
          *
          * more details: ./RxnArrowResize.doc.png
          */
-        tfx(anchor.x) === tfx(item.pos[0].x) &&
-        tfx(anchor.y) === tfx(item.pos[0].y)
+        toFixed(anchor.x) === toFixed(item.pos[0].x) &&
+        toFixed(anchor.y) === toFixed(item.pos[0].y)
       ) {
         if (this.isSnappingEnabled) {
           const currentArrowVector = current.sub(item.pos[1]);
@@ -117,8 +118,8 @@ export class RxnArrowResize extends Base {
       }
 
       if (
-        tfx(anchor.x) === tfx(middlePoint?.x) &&
-        tfx(anchor.y) === tfx(middlePoint?.y)
+        toFixed(anchor.x) === toFixed(middlePoint?.x) &&
+        toFixed(anchor.y) === toFixed(middlePoint?.y)
       ) {
         const { angle } = reItem.getArrowParams(
           item.pos[0].x,
@@ -150,7 +151,7 @@ export class RxnArrowResize extends Base {
       item.pos[1].add_(d);
     }
 
-    reItem.visel.translate(Scale.obj2scaled(d, restruct.render.options));
+    reItem.visel.translate(Scale.modelToCanvas(d, restruct.render.options));
     this.data.d = d.negated();
 
     if (!this.data.noinvalidate) {

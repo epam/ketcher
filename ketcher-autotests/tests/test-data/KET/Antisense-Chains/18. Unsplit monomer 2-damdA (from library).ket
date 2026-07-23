@@ -1,0 +1,446 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-AmdA___2, 6-Diaminopurine"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 9.6625,
+            "y": -5.924999999999996
+        },
+        "alias": "2-damdA",
+        "templateId": "AmdA___2, 6-Diaminopurine"
+    },
+    "monomerTemplate-AmdA___2, 6-Diaminopurine": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    15.27368166456315,
+                    -8.096931197906855,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "O",
+                "location": [
+                    16.187220060139033,
+                    -7.690221693402063,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.856388517475764,
+                    -8.433364320969021,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.356394722265833,
+                    -9.299378977741815,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.378230099489361,
+                    -9.091433408060443,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.40765626077871,
+                    -7.596931197906856,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    14.40765626077871,
+                    -6.596931197906856,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    13.54163085699427,
+                    -6.096931197906856,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    14.635082705075886,
+                    -9.760561161315726,
+                    0
+                ]
+            },
+            {
+                "label": "P",
+                "location": [
+                    13.684027375172867,
+                    -9.451540515625085,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    12.940879980759393,
+                    -10.120668268880369,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    13.476119439683323,
+                    -8.473392116679161,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    13.891935310662411,
+                    -10.42968891457101,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    17.850908865779402,
+                    -8.328821139412243,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    18.4387015714282,
+                    -7.519831178762572,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    19.389789768676533,
+                    -7.828827344202311,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    19.389789768676533,
+                    -8.828814934622176,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    18.4387015714282,
+                    -9.137811100061914,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    18.23073900172178,
+                    -10.11599460167291,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    18.97386462926369,
+                    -10.785181937844166,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    19.924952826512023,
+                    -10.47618577240443,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    20.132915396218444,
+                    -9.498002270793435,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    21.083986945683954,
+                    -9.189031547589323,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    18.765911562090665,
+                    -11.76332074284749,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    5
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    8
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    11
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    9,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    13
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    17
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    17,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    15
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    15,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    17,
+                    18
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    18,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    20
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    20,
+                    21
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    21,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    21,
+                    22
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    23
+                ]
+            }
+        ],
+        "class": "RNA",
+        "classHELM": "RNA",
+        "id": "AmdA___2, 6-Diaminopurine",
+        "fullName": "2,6-Diaminopurine",
+        "alias": "2-damdA",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 6,
+                "leavingGroup": {
+                    "atoms": [
+                        7
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 9,
+                "leavingGroup": {
+                    "atoms": [
+                        10
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "idtAliases": {
+            "base": "AmdA",
+            "modifications": {
+                "endpoint5": "5AmdA",
+                "internal": "i6diPr",
+                "endpoint3": "3AmdA"
+            }
+        },
+        "naturalAnalogShort": "A"
+    }
+}

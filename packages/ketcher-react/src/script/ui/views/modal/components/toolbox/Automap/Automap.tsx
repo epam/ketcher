@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import Form, { Field } from '../../../../../component/form/form/form';
 import { Dialog } from '../../../../components';
 import classes from './Automap.module.less';
@@ -56,6 +56,7 @@ const Automap = (props: Props) => {
           options={getSelectOptionsFromSchema(automapSchema.properties.mode)}
           {...props}
           component={Select}
+          data-testid="automap-mode"
         />
       </Form>
     </Dialog>

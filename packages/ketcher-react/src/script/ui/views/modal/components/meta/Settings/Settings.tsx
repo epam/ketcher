@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import Form, { Field } from '../../../../../component/form/form/form';
 import {
   setDefaultSettings,
@@ -29,7 +29,7 @@ import OpenButton from '../../../../../component/view/openbutton';
 import { SaveButton } from '../../../../../component/view/savebutton';
 import Select from '../../../../../component/form/Select';
 import Accordion from './Accordion';
-import { KetcherLogger, StructService } from 'ketcher-core';
+import { type StructService, KetcherLogger } from 'ketcher-core';
 import SystemFonts from '../../../../../component/form/systemfonts';
 import classes from './Settings.module.less';
 import { connect } from 'react-redux';
@@ -41,6 +41,8 @@ import settingsSchema, {
 import fieldGroups from './fieldGroups';
 import { isEqual } from 'lodash';
 import { Icon } from 'components';
+import { ACS_STYLE_DEFAULT_SETTINGS } from 'src/constants';
+import { onAction } from 'src/script/ui/state/shared';
 
 interface SettingsProps extends BaseProps {
   initState: any;
@@ -59,6 +61,7 @@ interface SettingsProps extends BaseProps {
 interface SettingsCallProps extends BaseCallProps {
   onOpenFile: (any) => void;
   onReset: () => void;
+  onACSStyle: (result) => void;
 }
 
 const defaultSettings = getDefaultOptions();
@@ -84,6 +87,7 @@ const HeaderContent = ({
         server={server}
         onLoad={onOpenFile}
         className={classes.button}
+        data-testid="open-settings-from-file-button"
       >
         <Icon name="open-1" />
       </OpenButton>
@@ -93,6 +97,7 @@ const HeaderContent = ({
         data={JSON.stringify(formState.result)}
         filename="ketcher-settings"
         className={classes.button}
+        data-testid="save-settings-to-file-button"
       >
         <Icon name="save-1" />
       </SaveButton>
@@ -101,6 +106,7 @@ const HeaderContent = ({
         key="settings-button"
         onClick={onReset}
         className={classes.button}
+        data-testid="reset-settings-button"
         disabled={getIsResetDisabled()}
       >
         <Icon name="reset" />
@@ -147,13 +153,41 @@ const SettingsDialog = (props: Props) => {
           name="resetToSelect"
           component={Select}
           options={getSelectOptionsFromSchema(settingsProps?.resetToSelect)}
+          data-testid="reset-to-select"
         />
-        <Field name="rotationStep" />
-        <Field name="showValenceWarnings" />
-        <Field name="atomColoring" />
-        <Field name="font" component={SystemFonts} />
-        <Field name="fontsz" component={MeasureInput} labelPos={false} />
-        <Field name="fontszsub" component={MeasureInput} labelPos={false} />
+        <Field name="rotationStep" data-testid="rotation-step" />
+        <Field name="showValenceWarnings" data-testid="show-valence-warnings" />
+        <Field name="atomColoring" data-testid="atom-coloring" />
+        <Field
+          name="font"
+          component={SystemFonts}
+          data-testid="font-selection"
+        />
+        <Field
+          name="fontsz"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="fontszUnit"
+        />
+        <Field
+          name="fontszsub"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="fontszsubUnit"
+        />
+        <Field
+          name="reactionComponentMarginSize"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="reactionComponentMarginSizeUnit"
+        />
+        <Field
+          name="imageResolution"
+          tooltip="option applicable to PNG/SVG pictures renderer"
+          component={Select}
+          options={getSelectOptionsFromSchema(settingsProps?.imageResolution)}
+          data-testid="image-resolution"
+        />
       </fieldset>
     ),
   };
@@ -162,30 +196,48 @@ const SettingsDialog = (props: Props) => {
     label: 'Stereochemistry',
     content: (
       <fieldset>
-        <Field name="showStereoFlags" />
+        <Field name="showStereoFlags" data-testid="show-stereo-flags" />
         <Field
           name="stereoLabelStyle"
           component={Select}
           options={getSelectOptionsFromSchema(settingsProps?.stereoLabelStyle)}
+          data-testid="stereo-label-style"
         />
-        <Field name="colorOfAbsoluteCenters" component={ColorPicker} />
-        <Field name="colorOfAndCenters" component={ColorPicker} />
-        <Field name="colorOfOrCenters" component={ColorPicker} />
+        <Field
+          name="colorOfAbsoluteCenters"
+          component={ColorPicker}
+          data-testid="color-of-absolute-centers"
+        />
+        <Field
+          name="colorOfAndCenters"
+          component={ColorPicker}
+          data-testid="color-of-and-centers"
+        />
+        <Field
+          name="colorOfOrCenters"
+          component={ColorPicker}
+          data-testid="color-of-or-centers"
+        />
         <Field
           name="colorStereogenicCenters"
           component={Select}
           options={getSelectOptionsFromSchema(
             settingsProps?.colorStereogenicCenters,
           )}
+          data-testid="color-stereogenic-centers"
         />
-        <Field name="autoFadeOfStereoLabels" />
-        <Field name="absFlagLabel" />
-        <Field name="andFlagLabel" />
-        <Field name="orFlagLabel" />
-        <Field name="mixedFlagLabel" />
+        <Field
+          name="autoFadeOfStereoLabels"
+          data-testid="auto-fade-of-stereo-labels"
+        />
+        <Field name="absFlagLabel" data-testid="abs-flag-label" />
+        <Field name="andFlagLabel" data-testid="and-flag-label" />
+        <Field name="orFlagLabel" data-testid="or-flag-label" />
+        <Field name="mixedFlagLabel" data-testid="mixed-flag-label" />
         <Field
           name="ignoreChiralFlag"
           tooltip="Ignore chiral flag while loading from molfiles. By default all the stereo will be ABS"
+          data-testid="ignore-chiral-flag"
         />
       </fieldset>
     ),
@@ -195,15 +247,16 @@ const SettingsDialog = (props: Props) => {
     label: 'Atoms',
     content: (
       <fieldset>
-        <Field name="carbonExplicitly" />
-        <Field name="showCharge" />
-        <Field name="showValence" />
+        <Field name="carbonExplicitly" data-testid="carbon-explicitly" />
+        <Field name="showCharge" data-testid="show-charge" />
+        <Field name="showValence" data-testid="show-valence" />
         <Field
           name="showHydrogenLabels"
           component={Select}
           options={getSelectOptionsFromSchema(
             settingsProps?.showHydrogenLabels,
           )}
+          data-testid="show-hydrogen-labels"
         />
       </fieldset>
     ),
@@ -213,17 +266,31 @@ const SettingsDialog = (props: Props) => {
     label: 'Bonds',
     content: (
       <fieldset>
-        <Field name="aromaticCircle" />
+        <Field name="aromaticCircle" data-testid="aromatic-circle" />
         <Field
-          name="doubleBondWidth"
+          name="bondLength"
           component={MeasureInput}
           labelPos={false}
+          extraName="bondLengthUnit"
         />
-        <Field name="bondThickness" component={MeasureInput} labelPos={false} />
+        <Field name="bondSpacing" extraLabel="% of length" />
+        <Field
+          name="bondThickness"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="bondThicknessUnit"
+        />
         <Field
           name="stereoBondWidth"
           component={MeasureInput}
           labelPos={false}
+          extraName="stereoBondWidthUnit"
+        />
+        <Field
+          name="hashSpacing"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="hashSpacingUnit"
         />
       </fieldset>
     ),
@@ -233,11 +300,23 @@ const SettingsDialog = (props: Props) => {
     label: 'Server',
     content: (
       <fieldset disabled={!appOpts.server}>
-        <Field name="smart-layout" />
-        <Field name="ignore-stereochemistry-errors" />
-        <Field name="mass-skip-error-on-pseudoatoms" />
-        <Field name="gross-formula-add-rsites" />
-        <Field name="gross-formula-add-isotopes" />
+        <Field name="smart-layout" data-testid="smart-layout" />
+        <Field
+          name="ignore-stereochemistry-errors"
+          data-testid="ignore-stereochemistry-errors"
+        />
+        <Field
+          name="mass-skip-error-on-pseudoatoms"
+          data-testid="mass-skip-error-on-pseudoatoms"
+        />
+        <Field
+          name="gross-formula-add-rsites"
+          data-testid="gross-formula-add-rsites"
+        />
+        <Field
+          name="gross-formula-add-isotopes"
+          data-testid="gross-formula-add-isotopes"
+        />
       </fieldset>
     ),
   };
@@ -251,16 +330,19 @@ const SettingsDialog = (props: Props) => {
           name="miewMode"
           component={Select}
           options={getSelectOptionsFromSchema(settingsProps?.miewMode)}
+          data-testid="display-mode"
         />
         <Field
           name="miewTheme"
           component={Select}
           options={getSelectOptionsFromSchema(settingsProps?.miewTheme)}
+          data-testid="background-color"
         />
         <Field
           name="miewAtomLabel"
           component={Select}
           options={getSelectOptionsFromSchema(settingsProps?.miewAtomLabel)}
+          data-testid="label-coloring"
         />
       </fieldset>
     ),
@@ -270,13 +352,31 @@ const SettingsDialog = (props: Props) => {
     label: 'Options for Debugging',
     content: (
       <fieldset>
-        <Field name="showAtomIds" />
-        <Field name="showBondIds" />
-        <Field name="showHalfBondIds" />
-        <Field name="showLoopIds" />
+        <Field name="showAtomIds" data-testid="show-atom-ids" />
+        <Field name="showBondIds" data-testid="show-bond-ids" />
+        <Field name="showHalfBondIds" data-testid="show-half-bond-ids" />
+        <Field name="showLoopIds" data-testid="show-loop-ids" />
       </fieldset>
     ),
   };
+
+  const onACSStyle = () => {
+    prop.onACSStyle({
+      ...formState.result,
+      ...ACS_STYLE_DEFAULT_SETTINGS,
+    });
+  };
+
+  const ACSStyleButton = (
+    <button
+      className={classes.acsStyleButton}
+      key="acsstylebutton"
+      onClick={onACSStyle}
+      data-testid="acs-style-button"
+    >
+      Set ACS Settings
+    </button>
+  );
 
   const tabs = [
     generalTab,
@@ -291,11 +391,11 @@ const SettingsDialog = (props: Props) => {
   return (
     <Dialog
       className={classes.settings}
-      result={() => formState.result}
+      result={() => [formState.result, initState]}
       valid={() => formState.valid}
       params={prop}
       buttonsNameMap={{ OK: 'Apply' }}
-      buttons={['Cancel', 'OK']}
+      buttons={[ACSStyleButton, 'Cancel', 'OK']}
       withDivider
       needMargin={false}
       headerContent={
@@ -337,8 +437,30 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   onReset: () => dispatch(setDefaultSettings()),
   onOk: (res) => {
-    dispatch(saveSettings(res));
-    ownProps.onOk(res);
+    const [result, initState] = res;
+
+    dispatch(saveSettings(result));
+    ownProps.onOk(result);
+
+    const showNotification =
+      initState.reactionComponentMarginSize !==
+      result.reactionComponentMarginSize;
+
+    showNotification &&
+      dispatch(
+        onAction({
+          dialog: 'info-modal',
+          prop: {
+            title: '',
+            customText:
+              'To fully apply these changes, you need to apply the layout.',
+            button: 'OK',
+          },
+        }),
+      );
+  },
+  onACSStyle: (result) => {
+    dispatch(updateFormState({ result }));
   },
 });
 

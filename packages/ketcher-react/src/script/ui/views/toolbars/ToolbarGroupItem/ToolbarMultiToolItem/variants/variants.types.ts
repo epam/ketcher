@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { UiAction, UiActionAction } from '../../../../../action';
+import type { UiAction, UiActionAction } from '../../../../../action';
 
-import { ToolbarItem } from '../../../toolbar.types';
+import type { ToolbarItem } from '../../../toolbar.types';
 
 type GroupDescriptor = {
   start: number;

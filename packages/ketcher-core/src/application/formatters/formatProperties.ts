@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { ChemicalMimeType } from 'domain/services';
-import { SupportedFormat } from './structFormatter.types';
+import type { SupportedFormat } from './structFormatter.types';
 import { SupportedFormatProperties } from './supportedFormatProperties';
 
 type FormatPropertiesMap = {
@@ -126,11 +126,68 @@ const formatProperties: FormatPropertiesMap = {
     true,
     { 'molfile-saving-mode': '3000' },
   ),
+  fasta: new SupportedFormatProperties(
+    'FASTA',
+    ChemicalMimeType.FASTA,
+    ['.fasta'],
+    true,
+  ),
+  idt: new SupportedFormatProperties(
+    'IDT',
+    ChemicalMimeType.IDT,
+    ['.idt'],
+    false,
+  ),
+  axoLabs: new SupportedFormatProperties(
+    'AxoLabs',
+    ChemicalMimeType.AXOLABS,
+    ['.axolabs'],
+    true,
+  ),
+  helm: new SupportedFormatProperties(
+    'HELM',
+    ChemicalMimeType.HELM,
+    ['.helm'],
+    true,
+  ),
+  biln: new SupportedFormatProperties(
+    'BILN',
+    ChemicalMimeType.BILN,
+    ['.biln'],
+    true,
+  ),
+  sequence: new SupportedFormatProperties(
+    'SEQUENCE',
+    ChemicalMimeType.SEQUENCE,
+    ['.seq'],
+    false,
+    {},
+  ),
+  'sequence-3-letter': new SupportedFormatProperties(
+    'SEQUENCE (3-letter code)',
+    ChemicalMimeType.SEQUENCE,
+    ['.seq'],
+    false,
+    {},
+  ),
   unknown: new SupportedFormatProperties(
     'Unknown',
     ChemicalMimeType.UNKNOWN,
     ['.'],
     true,
+  ),
+  rdf: new SupportedFormatProperties(
+    'RDF V2000',
+    ChemicalMimeType.RDF,
+    ['.rdf'],
+    true,
+  ),
+  rdfV3000: new SupportedFormatProperties(
+    'RDF V3000',
+    ChemicalMimeType.RDF,
+    ['.rdf'],
+    true,
+    { 'molfile-saving-mode': '3000' },
   ),
 };
 

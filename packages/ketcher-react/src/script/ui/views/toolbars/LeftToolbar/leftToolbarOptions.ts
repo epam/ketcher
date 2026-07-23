@@ -1,6 +1,7 @@
+import { MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
 import { bondCommon, bondQuery, bondSpecial, bondStereo } from './Bond/options';
 import { makeItems } from '../ToolbarGroupItem/utils';
-import { ToolbarItem } from '../toolbar.types';
+import type { ToolbarItem } from '../toolbar.types';
 
 const rGroupOptions: ToolbarItem[] = makeItems([
   'rgroup-label',
@@ -17,6 +18,7 @@ const shapeOptions: ToolbarItem[] = makeItems([
 const selectOptions: ToolbarItem[] = makeItems([
   'select-rectangle',
   'select-lasso',
+  'select-structure',
   'select-fragment',
 ]);
 
@@ -26,6 +28,7 @@ const arrowsOptions: ToolbarItem[] = makeItems([
   'reaction-arrow-filled-bow',
   'reaction-arrow-dashed-open-angle',
   'reaction-arrow-failed',
+  'reaction-arrow-retrosynthetic',
   'reaction-arrow-both-ends-filled-triangle',
   'reaction-arrow-equilibrium-filled-half-bow',
   'reaction-arrow-equilibrium-filled-triangle',
@@ -34,10 +37,13 @@ const arrowsOptions: ToolbarItem[] = makeItems([
   'reaction-arrow-unbalanced-equilibrium-open-half-angle',
   'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow',
   'reaction-arrow-unbalanced-equilibrium-filled-half-triangle',
+
   'reaction-arrow-elliptical-arc-arrow-filled-bow',
   'reaction-arrow-elliptical-arc-arrow-filled-triangle',
   'reaction-arrow-elliptical-arc-arrow-open-angle',
   'reaction-arrow-elliptical-arc-arrow-open-half-angle',
+
+  MULTITAIL_ARROW_TOOL_NAME,
 ]);
 
 const mappingOptions: ToolbarItem[] = makeItems([

@@ -14,12 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RaphaelAxisAlignedBoundingBox, RaphaelPaper } from 'raphael';
-import { Atom, Bond, Box2Abs, HalfBond, Vec2 } from 'domain/entities';
+import type { RaphaelAxisAlignedBoundingBox, RaphaelPaper } from 'raphael';
+import { Atom } from 'domain/entities/atom';
+import type { Bond } from 'domain/entities/bond';
+import type { Box2Abs } from 'domain/entities/box2Abs';
+import type { HalfBond } from 'domain/entities/halfBond';
+import { Vec2 } from 'domain/entities/vec2';
 import assert from 'assert';
-import { ReStruct, LayerMap } from './restruct';
-import Visel from './restruct/visel';
-import { RelativeBox, RenderOptions } from './render.types';
+import { LayerMap } from './restruct/generalEnumTypes';
+import type ReStruct from './restruct/restruct';
+import type Visel from './restruct/visel';
+import {
+  type RelativeBox,
+  type RenderOptions,
+  UsageInMacromolecule,
+} from './render.types';
 
 function relBox(box: RaphaelAxisAlignedBoundingBox): RelativeBox {
   return {
@@ -139,7 +148,7 @@ function getCIPValuePath({
     .text(cipLabelPosition.x, cipLabelPosition.y, `(${atomOrBond.cip})`)
     .attr({
       font: options.font,
-      'font-size': options.fontsz,
+      'font-size': options.fontszInPx,
     });
   const box = text.getBBox();
   const path = paper.set();
@@ -169,16 +178,20 @@ function drawCIPLabel({
   const { options, paper } = restruct.render;
   const path = paper.set();
 
-  const cipLabelPosition = position.scaled(options.scale);
+  const cipLabelPosition = position.scaled(options.microModeScale);
   const cipValuePath = getCIPValuePath({
     paper,
     cipLabelPosition,
     atomOrBond,
     options,
   });
-  const box = relBox(cipValuePath.path.getBBox());
 
-  cipValuePath.path.translateAbs(0.5 * box.width, -0.5 * box.height);
+  if (atomOrBond instanceof Atom) {
+    const box = relBox(cipValuePath.path.getBBox());
+
+    cipValuePath.path.translateAbs(0.5 * box.width, -0.5 * box.height);
+  }
+
   path.push(cipValuePath.path.toFront());
 
   restruct.addReObjectPath(LayerMap.additionalInfo, visel, path, null, true);
@@ -200,12 +213,66 @@ function updateHalfBondCoordinates(
 
   return [hb1, hb2];
 }
+
+function escapeHtml(str) {
+  return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function useLabelStyles(
+  attachmentPointSelected: boolean,
+  attachmentPointUsed: boolean,
+  usageInMacromolecule: UsageInMacromolecule,
+): {
+  color: string;
+  fill: string;
+  stroke: string;
+} {
+  let color = '#585858';
+  let fill = '#FFF';
+  let stroke = '#7C7C7F';
+
+  switch (usageInMacromolecule) {
+    case UsageInMacromolecule.MonomerPreview:
+      stroke = 'none';
+      if (attachmentPointUsed) {
+        fill = '#E1E5EA';
+        color = '#B4B9D6';
+      }
+      break;
+    case UsageInMacromolecule.MonomerConnectionsModal:
+      if (attachmentPointSelected) {
+        fill = '#167782';
+        color = '#FFF';
+      } else if (attachmentPointUsed) {
+        fill = '#E1E5EA';
+        color = '#B4B9D6';
+        stroke = '#B4B9D6';
+      }
+      break;
+    case UsageInMacromolecule.BondPreview:
+      if (attachmentPointSelected) {
+        fill = '#CDF1FC';
+      } else if (attachmentPointUsed) {
+        fill = '#E1E5EA';
+        color = '#B4B9D6';
+      }
+      stroke = 'none';
+      break;
+    default:
+      break;
+  }
+
+  return { color, fill, stroke };
+}
+
 const util = {
   relBox,
   shiftRayBox,
   calcCoordinates,
   drawCIPLabel,
   updateHalfBondCoordinates,
+  escapeHtml,
+  useLabelStyles,
 };
 
 export default util;

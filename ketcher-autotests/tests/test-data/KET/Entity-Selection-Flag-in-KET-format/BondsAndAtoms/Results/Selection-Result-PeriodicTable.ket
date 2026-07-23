@@ -1,0 +1,2604 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            },
+            {
+                "$ref": "mol9"
+            },
+            {
+                "$ref": "mol10"
+            },
+            {
+                "$ref": "mol11"
+            },
+            {
+                "$ref": "mol12"
+            },
+            {
+                "$ref": "mol13"
+            },
+            {
+                "$ref": "mol14"
+            },
+            {
+                "$ref": "mol15"
+            },
+            {
+                "$ref": "mol16"
+            },
+            {
+                "$ref": "mol17"
+            },
+            {
+                "$ref": "mol18"
+            },
+            {
+                "$ref": "mol19"
+            },
+            {
+                "$ref": "mol20"
+            },
+            {
+                "$ref": "mol21"
+            },
+            {
+                "$ref": "mol22"
+            },
+            {
+                "$ref": "mol23"
+            },
+            {
+                "$ref": "mol24"
+            },
+            {
+                "$ref": "mol25"
+            },
+            {
+                "$ref": "mol26"
+            },
+            {
+                "$ref": "mol27"
+            },
+            {
+                "$ref": "mol28"
+            },
+            {
+                "$ref": "mol29"
+            },
+            {
+                "$ref": "mol30"
+            },
+            {
+                "$ref": "mol31"
+            },
+            {
+                "$ref": "mol32"
+            },
+            {
+                "$ref": "mol33"
+            },
+            {
+                "$ref": "mol34"
+            },
+            {
+                "$ref": "mol35"
+            },
+            {
+                "$ref": "mol36"
+            },
+            {
+                "$ref": "mol37"
+            },
+            {
+                "$ref": "mol38"
+            },
+            {
+                "$ref": "mol39"
+            },
+            {
+                "$ref": "mol40"
+            },
+            {
+                "$ref": "mol41"
+            },
+            {
+                "$ref": "mol42"
+            },
+            {
+                "$ref": "mol43"
+            },
+            {
+                "$ref": "mol44"
+            },
+            {
+                "$ref": "mol45"
+            },
+            {
+                "$ref": "mol46"
+            },
+            {
+                "$ref": "mol47"
+            },
+            {
+                "$ref": "mol48"
+            },
+            {
+                "$ref": "mol49"
+            },
+            {
+                "$ref": "mol50"
+            },
+            {
+                "$ref": "mol51"
+            },
+            {
+                "$ref": "mol52"
+            },
+            {
+                "$ref": "mol53"
+            },
+            {
+                "$ref": "mol54"
+            },
+            {
+                "$ref": "mol55"
+            },
+            {
+                "$ref": "mol56"
+            },
+            {
+                "$ref": "mol57"
+            },
+            {
+                "$ref": "mol58"
+            },
+            {
+                "$ref": "mol59"
+            },
+            {
+                "$ref": "mol60"
+            },
+            {
+                "$ref": "mol61"
+            },
+            {
+                "$ref": "mol62"
+            },
+            {
+                "$ref": "mol63"
+            },
+            {
+                "$ref": "mol64"
+            },
+            {
+                "$ref": "mol65"
+            },
+            {
+                "$ref": "mol66"
+            },
+            {
+                "$ref": "mol67"
+            },
+            {
+                "$ref": "mol68"
+            },
+            {
+                "$ref": "mol69"
+            },
+            {
+                "$ref": "mol70"
+            },
+            {
+                "$ref": "mol71"
+            },
+            {
+                "$ref": "mol72"
+            },
+            {
+                "$ref": "mol73"
+            },
+            {
+                "$ref": "mol74"
+            },
+            {
+                "$ref": "mol75"
+            },
+            {
+                "$ref": "mol76"
+            },
+            {
+                "$ref": "mol77"
+            },
+            {
+                "$ref": "mol78"
+            },
+            {
+                "$ref": "mol79"
+            },
+            {
+                "$ref": "mol80"
+            },
+            {
+                "$ref": "mol81"
+            },
+            {
+                "$ref": "mol82"
+            },
+            {
+                "$ref": "mol83"
+            },
+            {
+                "$ref": "mol84"
+            },
+            {
+                "$ref": "mol85"
+            },
+            {
+                "$ref": "mol86"
+            },
+            {
+                "$ref": "mol87"
+            },
+            {
+                "$ref": "mol88"
+            },
+            {
+                "$ref": "mol89"
+            },
+            {
+                "$ref": "mol90"
+            },
+            {
+                "$ref": "mol91"
+            },
+            {
+                "$ref": "mol92"
+            },
+            {
+                "$ref": "mol93"
+            },
+            {
+                "$ref": "mol94"
+            },
+            {
+                "$ref": "mol95"
+            },
+            {
+                "$ref": "mol96"
+            },
+            {
+                "$ref": "mol97"
+            },
+            {
+                "$ref": "mol98"
+            },
+            {
+                "$ref": "mol99"
+            },
+            {
+                "$ref": "mol100"
+            },
+            {
+                "$ref": "mol101"
+            },
+            {
+                "$ref": "mol102"
+            },
+            {
+                "$ref": "mol103"
+            },
+            {
+                "$ref": "mol104"
+            },
+            {
+                "$ref": "mol105"
+            },
+            {
+                "$ref": "mol106"
+            },
+            {
+                "$ref": "mol107"
+            },
+            {
+                "$ref": "mol108"
+            },
+            {
+                "$ref": "mol109"
+            },
+            {
+                "$ref": "mol110"
+            },
+            {
+                "$ref": "mol111"
+            },
+            {
+                "$ref": "mol112"
+            },
+            {
+                "$ref": "mol113"
+            },
+            {
+                "$ref": "mol114"
+            },
+            {
+                "$ref": "mol115"
+            },
+            {
+                "$ref": "mol116"
+            },
+            {
+                "$ref": "mol117"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    -4.145214748382568,
+                    0.21249999999999947,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -4.145214748382568,
+            "y": -1.2124999999999995,
+            "z": 0
+        }
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Li",
+                "location": [
+                    -4.070214748382567,
+                    -1.7125000000000004,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -4.070214748382567,
+            "y": 0.7125000000000004,
+            "z": 0
+        }
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Na",
+                "location": [
+                    -3.945214748382567,
+                    -3.687500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -3.945214748382567,
+            "y": 2.687500000000001,
+            "z": 0
+        }
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "K",
+                "location": [
+                    -3.845214748382567,
+                    -5.712500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -3.845214748382567,
+            "y": 4.712500000000001,
+            "z": 0
+        }
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Rb",
+                "location": [
+                    -3.795214748382567,
+                    -7.962500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -3.795214748382567,
+            "y": 6.962500000000001,
+            "z": 0
+        }
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Cs",
+                "location": [
+                    -3.845214748382567,
+                    -10.0625,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -3.845214748382567,
+            "y": 9.0625,
+            "z": 0
+        }
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Fr",
+                "location": [
+                    -3.795214748382567,
+                    -12.162500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -3.795214748382567,
+            "y": 11.162500000000001,
+            "z": 0
+        }
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Be",
+                "location": [
+                    -1.1702147483825671,
+                    -1.6875000000000009,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -1.1702147483825671,
+            "y": 0.6875000000000009,
+            "z": 0
+        }
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Mg",
+                "location": [
+                    -1.0452147483825671,
+                    -3.687500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -1.0452147483825671,
+            "y": 2.687500000000001,
+            "z": 0
+        }
+    },
+    "mol9": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ca",
+                "location": [
+                    -0.9952147483825673,
+                    -5.6625000000000005,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -0.9952147483825673,
+            "y": 4.6625000000000005,
+            "z": 0
+        }
+    },
+    "mol10": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Sr",
+                "location": [
+                    -1.0202147483825668,
+                    -7.9125000000000005,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -1.0202147483825668,
+            "y": 6.9125000000000005,
+            "z": 0
+        }
+    },
+    "mol11": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ba",
+                "location": [
+                    -1.0202147483825668,
+                    -10.0625,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -1.0202147483825668,
+            "y": 9.0625,
+            "z": 0
+        }
+    },
+    "mol12": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ra",
+                "location": [
+                    -1.0452147483825671,
+                    -12.162500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -1.0452147483825671,
+            "y": 11.162500000000001,
+            "z": 0
+        }
+    },
+    "mol13": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Sc",
+                "location": [
+                    1.3297852516174338,
+                    -5.687500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 1.3297852516174338,
+            "y": 4.687500000000001,
+            "z": 0
+        }
+    },
+    "mol14": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Y",
+                "location": [
+                    1.3547852516174324,
+                    -7.962500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 1.3547852516174324,
+            "y": 6.962500000000001,
+            "z": 0
+        }
+    },
+    "mol15": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "La",
+                "location": [
+                    1.4297852516174334,
+                    -13.937500000000004,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 1.4297852516174334,
+            "y": 12.937500000000004,
+            "z": 0
+        }
+    },
+    "mol16": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ac",
+                "location": [
+                    1.4797852516174324,
+                    -16.1125,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 1.4797852516174324,
+            "y": 15.1125,
+            "z": 0
+        }
+    },
+    "mol17": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ti",
+                "location": [
+                    3.779785251617433,
+                    -5.712500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 3.779785251617433,
+            "y": 4.712500000000001,
+            "z": 0
+        }
+    },
+    "mol18": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Zr",
+                "location": [
+                    3.8047852516174334,
+                    -7.887500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 3.8047852516174334,
+            "y": 6.887500000000002,
+            "z": 0
+        }
+    },
+    "mol19": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Hf",
+                "location": [
+                    3.8047852516174334,
+                    -10.162500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 3.8047852516174334,
+            "y": 9.162500000000001,
+            "z": 0
+        }
+    },
+    "mol20": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Rf",
+                "location": [
+                    3.979785251617434,
+                    -12.1875,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 3.979785251617434,
+            "y": 11.1875,
+            "z": 0
+        }
+    },
+    "mol21": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ce",
+                "location": [
+                    3.904785251617433,
+                    -13.962500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 3.904785251617433,
+            "y": 12.962500000000002,
+            "z": 0
+        }
+    },
+    "mol22": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Th",
+                "location": [
+                    3.854785251617434,
+                    -16.1125,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 3.854785251617434,
+            "y": 15.1125,
+            "z": 0
+        }
+    },
+    "mol23": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "V",
+                "location": [
+                    5.979785251617434,
+                    -5.712500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 5.979785251617434,
+            "y": 4.712500000000001,
+            "z": 0
+        }
+    },
+    "mol24": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Nb",
+                "location": [
+                    6.054785251617433,
+                    -7.887500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 6.054785251617433,
+            "y": 6.887500000000002,
+            "z": 0
+        }
+    },
+    "mol25": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ta",
+                "location": [
+                    6.029785251617433,
+                    -10.137500000000003,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 6.029785251617433,
+            "y": 9.137500000000003,
+            "z": 0
+        }
+    },
+    "mol26": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Db",
+                "location": [
+                    6.079785251617434,
+                    -12.1875,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 6.079785251617434,
+            "y": 11.1875,
+            "z": 0
+        }
+    },
+    "mol27": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Pr",
+                "location": [
+                    6.054785251617433,
+                    -13.962500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 6.054785251617433,
+            "y": 12.962500000000002,
+            "z": 0
+        }
+    },
+    "mol28": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Pa",
+                "location": [
+                    6.079785251617434,
+                    -16.0375,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 6.079785251617434,
+            "y": 15.037500000000001,
+            "z": 0
+        }
+    },
+    "mol29": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Cr",
+                "location": [
+                    8.129785251617433,
+                    -5.712500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 8.129785251617433,
+            "y": 4.712500000000001,
+            "z": 0
+        }
+    },
+    "mol30": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Mo",
+                "location": [
+                    8.204785251617432,
+                    -7.9125000000000005,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 8.204785251617432,
+            "y": 6.9125000000000005,
+            "z": 0
+        }
+    },
+    "mol31": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "W",
+                "location": [
+                    8.204785251617432,
+                    -10.087500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 8.204785251617432,
+            "y": 9.087500000000002,
+            "z": 0
+        }
+    },
+    "mol32": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Sg",
+                "location": [
+                    8.229785251617434,
+                    -12.1875,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 8.229785251617434,
+            "y": 11.1875,
+            "z": 0
+        }
+    },
+    "mol33": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Nd",
+                "location": [
+                    8.279785251617435,
+                    -13.962500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 8.279785251617435,
+            "y": 12.962500000000002,
+            "z": 0
+        }
+    },
+    "mol34": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "U",
+                "location": [
+                    8.229785251617434,
+                    -16.0375,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 8.229785251617434,
+            "y": 15.037500000000001,
+            "z": 0
+        }
+    },
+    "mol35": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Mn",
+                "location": [
+                    10.254785251617433,
+                    -5.737500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.254785251617433,
+            "y": 4.737500000000002,
+            "z": 0
+        }
+    },
+    "mol36": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Tc",
+                "location": [
+                    10.329785251617432,
+                    -7.937500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.329785251617432,
+            "y": 6.937500000000001,
+            "z": 0
+        }
+    },
+    "mol37": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Re",
+                "location": [
+                    10.279785251617435,
+                    -10.1125,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.279785251617435,
+            "y": 9.1125,
+            "z": 0
+        }
+    },
+    "mol38": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Bh",
+                "location": [
+                    10.279785251617435,
+                    -12.2375,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.279785251617435,
+            "y": 11.2375,
+            "z": 0
+        }
+    },
+    "mol39": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Pm",
+                "location": [
+                    10.254785251617433,
+                    -13.9875,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.254785251617433,
+            "y": 12.9875,
+            "z": 0
+        }
+    },
+    "mol40": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Np",
+                "location": [
+                    10.254785251617433,
+                    -16.062500000000004,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.254785251617433,
+            "y": 15.062500000000004,
+            "z": 0
+        }
+    },
+    "mol41": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Fe",
+                "location": [
+                    12.254785251617433,
+                    -5.712500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 12.254785251617433,
+            "y": 4.712500000000001,
+            "z": 0
+        }
+    },
+    "mol42": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ru",
+                "location": [
+                    12.229785251617434,
+                    -7.937500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 12.229785251617434,
+            "y": 6.937500000000001,
+            "z": 0
+        }
+    },
+    "mol43": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Os",
+                "location": [
+                    12.329785251617436,
+                    -10.162500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 12.329785251617436,
+            "y": 9.162500000000001,
+            "z": 0
+        }
+    },
+    "mol44": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Hs",
+                "location": [
+                    12.329785251617436,
+                    -12.2375,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 12.329785251617436,
+            "y": 11.2375,
+            "z": 0
+        }
+    },
+    "mol45": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Sm",
+                "location": [
+                    12.254785251617433,
+                    -14.012500000000003,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 12.254785251617433,
+            "y": 13.012500000000003,
+            "z": 0
+        }
+    },
+    "mol46": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Pu",
+                "location": [
+                    12.229785251617434,
+                    -16.1625,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 12.229785251617434,
+            "y": 15.162500000000001,
+            "z": 0
+        }
+    },
+    "mol47": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Co",
+                "location": [
+                    14.329785251617436,
+                    -5.712500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 14.329785251617436,
+            "y": 4.712500000000001,
+            "z": 0
+        }
+    },
+    "mol48": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Rh",
+                "location": [
+                    14.404785251617435,
+                    -7.9125000000000005,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 14.404785251617435,
+            "y": 6.9125000000000005,
+            "z": 0
+        }
+    },
+    "mol49": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ir",
+                "location": [
+                    14.429785251617433,
+                    -10.162500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 14.429785251617433,
+            "y": 9.162500000000001,
+            "z": 0
+        }
+    },
+    "mol50": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Mt",
+                "location": [
+                    14.329785251617436,
+                    -12.2375,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 14.329785251617436,
+            "y": 11.2375,
+            "z": 0
+        }
+    },
+    "mol51": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Eu",
+                "location": [
+                    14.304785251617433,
+                    -14.062500000000004,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 14.304785251617433,
+            "y": 13.062500000000004,
+            "z": 0
+        }
+    },
+    "mol52": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Am",
+                "location": [
+                    14.279785251617435,
+                    -16.137500000000003,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 14.279785251617435,
+            "y": 15.137500000000003,
+            "z": 0
+        }
+    },
+    "mol53": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ni",
+                "location": [
+                    16.329785251617437,
+                    -5.737500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 16.329785251617437,
+            "y": 4.737500000000002,
+            "z": 0
+        }
+    },
+    "mol54": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Pd",
+                "location": [
+                    16.379785251617434,
+                    -7.887500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 16.379785251617434,
+            "y": 6.887500000000002,
+            "z": 0
+        }
+    },
+    "mol55": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Pt",
+                "location": [
+                    16.379785251617434,
+                    -10.1125,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 16.379785251617434,
+            "y": 9.1125,
+            "z": 0
+        }
+    },
+    "mol56": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ds",
+                "location": [
+                    16.404785251617433,
+                    -12.262500000000003,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 16.404785251617433,
+            "y": 11.262500000000003,
+            "z": 0
+        }
+    },
+    "mol57": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Gd",
+                "location": [
+                    16.379785251617434,
+                    -14.087500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 16.379785251617434,
+            "y": 13.087500000000002,
+            "z": 0
+        }
+    },
+    "mol58": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Cm",
+                "location": [
+                    16.329785251617437,
+                    -16.137500000000003,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 16.329785251617437,
+            "y": 15.137500000000003,
+            "z": 0
+        }
+    },
+    "mol59": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Cu",
+                "location": [
+                    18.42978525161743,
+                    -5.712500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 18.42978525161743,
+            "y": 4.712500000000001,
+            "z": 0
+        }
+    },
+    "mol60": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ag",
+                "location": [
+                    18.42978525161743,
+                    -7.887500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 18.42978525161743,
+            "y": 6.887500000000002,
+            "z": 0
+        }
+    },
+    "mol61": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Au",
+                "location": [
+                    18.42978525161743,
+                    -10.137500000000003,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 18.42978525161743,
+            "y": 9.137500000000003,
+            "z": 0
+        }
+    },
+    "mol62": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Rg",
+                "location": [
+                    18.454785251617437,
+                    -12.287500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 18.454785251617437,
+            "y": 11.287500000000001,
+            "z": 0
+        }
+    },
+    "mol63": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Tb",
+                "location": [
+                    18.354785251617436,
+                    -14.087500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 18.354785251617436,
+            "y": 13.087500000000002,
+            "z": 0
+        }
+    },
+    "mol64": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Bk",
+                "location": [
+                    18.354785251617436,
+                    -16.137500000000003,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 18.354785251617436,
+            "y": 15.137500000000003,
+            "z": 0
+        }
+    },
+    "mol65": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Zn",
+                "location": [
+                    20.42978525161743,
+                    -5.712500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.42978525161743,
+            "y": 4.712500000000001,
+            "z": 0
+        }
+    },
+    "mol66": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Cd",
+                "location": [
+                    20.404785251617433,
+                    -7.9125000000000005,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.404785251617433,
+            "y": 6.9125000000000005,
+            "z": 0
+        }
+    },
+    "mol67": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Hg",
+                "location": [
+                    20.379785251617434,
+                    -10.087500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.379785251617434,
+            "y": 9.087500000000002,
+            "z": 0
+        }
+    },
+    "mol68": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Cn",
+                "location": [
+                    20.329785251617437,
+                    -12.337500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.329785251617437,
+            "y": 11.337500000000002,
+            "z": 0
+        }
+    },
+    "mol69": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Dy",
+                "location": [
+                    20.354785251617436,
+                    -14.1125,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.354785251617436,
+            "y": 13.1125,
+            "z": 0
+        }
+    },
+    "mol70": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Cf",
+                "location": [
+                    20.379785251617434,
+                    -16.1125,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.379785251617434,
+            "y": 15.1125,
+            "z": 0
+        }
+    },
+    "mol71": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ga",
+                "location": [
+                    22.404785251617433,
+                    -5.6375,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 22.404785251617433,
+            "y": 4.6375,
+            "z": 0
+        }
+    },
+    "mol72": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Al",
+                "location": [
+                    22.479785251617436,
+                    -3.6625000000000005,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 22.479785251617436,
+            "y": 2.6625000000000005,
+            "z": 0
+        }
+    },
+    "mol73": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "B",
+                "location": [
+                    22.30478525161743,
+                    -1.8125000000000009,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 22.30478525161743,
+            "y": 0.8125000000000009,
+            "z": 0
+        }
+    },
+    "mol74": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "In",
+                "location": [
+                    22.604785251617436,
+                    -7.887500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 22.604785251617436,
+            "y": 6.887500000000002,
+            "z": 0
+        }
+    },
+    "mol75": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Tl",
+                "location": [
+                    22.629785251617434,
+                    -10.0625,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 22.629785251617434,
+            "y": 9.0625,
+            "z": 0
+        }
+    },
+    "mol76": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Nh",
+                "location": [
+                    22.604785251617436,
+                    -12.3625,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 22.604785251617436,
+            "y": 11.3625,
+            "z": 0
+        }
+    },
+    "mol77": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ho",
+                "location": [
+                    22.654785251617433,
+                    -14.162500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 22.654785251617433,
+            "y": 13.162500000000001,
+            "z": 0
+        }
+    },
+    "mol78": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Es",
+                "location": [
+                    22.704785251617437,
+                    -16.087500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 22.704785251617437,
+            "y": 15.087500000000002,
+            "z": 0
+        }
+    },
+    "mol79": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    24.504785251617434,
+                    -1.887500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 24.504785251617434,
+            "y": 0.8875000000000011,
+            "z": 0
+        }
+    },
+    "mol80": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Si",
+                "location": [
+                    24.854785251617436,
+                    -3.637500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 24.854785251617436,
+            "y": 2.637500000000001,
+            "z": 0
+        }
+    },
+    "mol81": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    24.67978525161744,
+                    -5.5125,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 24.67978525161744,
+            "y": 4.5125,
+            "z": 0
+        }
+    },
+    "mol82": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "In",
+                "location": [
+                    24.854785251617436,
+                    -7.737500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 24.854785251617436,
+            "y": 6.737500000000002,
+            "z": 0
+        }
+    },
+    "mol83": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Tl",
+                "location": [
+                    24.854785251617436,
+                    -10.087500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 24.854785251617436,
+            "y": 9.087500000000002,
+            "z": 0
+        }
+    },
+    "mol84": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Nh",
+                "location": [
+                    24.854785251617436,
+                    -12.337500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 24.854785251617436,
+            "y": 11.337500000000002,
+            "z": 0
+        }
+    },
+    "mol85": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ho",
+                "location": [
+                    24.92978525161744,
+                    -14.162500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 24.92978525161744,
+            "y": 13.162500000000001,
+            "z": 0
+        }
+    },
+    "mol86": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Es",
+                "location": [
+                    25.004785251617434,
+                    -16.087500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 25.004785251617434,
+            "y": 15.087500000000002,
+            "z": 0
+        }
+    },
+    "mol87": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    27.129785251617434,
+                    -1.887500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 27.129785251617434,
+            "y": 0.8875000000000011,
+            "z": 0
+        }
+    },
+    "mol88": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "P",
+                "location": [
+                    27.154785251617433,
+                    -3.6125000000000007,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 27.154785251617433,
+            "y": 2.6125000000000007,
+            "z": 0
+        }
+    },
+    "mol89": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "As",
+                "location": [
+                    27.104785251617436,
+                    -5.5375000000000005,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 27.104785251617436,
+            "y": 4.5375000000000005,
+            "z": 0
+        }
+    },
+    "mol90": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Sb",
+                "location": [
+                    27.154785251617433,
+                    -7.737500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 27.154785251617433,
+            "y": 6.737500000000002,
+            "z": 0
+        }
+    },
+    "mol91": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Bi",
+                "location": [
+                    27.204785251617437,
+                    -9.962500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 27.204785251617437,
+            "y": 8.962500000000002,
+            "z": 0
+        }
+    },
+    "mol92": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Mc",
+                "location": [
+                    27.329785251617437,
+                    -12.2375,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 27.329785251617437,
+            "y": 11.2375,
+            "z": 0
+        }
+    },
+    "mol93": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Tm",
+                "location": [
+                    27.404785251617433,
+                    -14.187500000000004,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 27.404785251617433,
+            "y": 13.187500000000004,
+            "z": 0
+        }
+    },
+    "mol94": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Md",
+                "location": [
+                    27.354785251617436,
+                    -16.062500000000004,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 27.354785251617436,
+            "y": 15.062500000000004,
+            "z": 0
+        }
+    },
+    "mol95": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "O",
+                "location": [
+                    29.604785251617436,
+                    -1.887500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 29.604785251617436,
+            "y": 0.8875000000000011,
+            "z": 0
+        }
+    },
+    "mol96": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "S",
+                "location": [
+                    29.254785251617434,
+                    -3.6625000000000005,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 29.254785251617434,
+            "y": 2.6625000000000005,
+            "z": 0
+        }
+    },
+    "mol97": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Se",
+                "location": [
+                    29.30478525161744,
+                    -5.487500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 29.30478525161744,
+            "y": 4.487500000000002,
+            "z": 0
+        }
+    },
+    "mol98": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Te",
+                "location": [
+                    29.504785251617434,
+                    -7.712500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 29.504785251617434,
+            "y": 6.712500000000001,
+            "z": 0
+        }
+    },
+    "mol99": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Po",
+                "location": [
+                    29.379785251617434,
+                    -9.912500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 29.379785251617434,
+            "y": 8.912500000000001,
+            "z": 0
+        }
+    },
+    "mol100": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Lv",
+                "location": [
+                    29.454785251617437,
+                    -12.212500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 29.454785251617437,
+            "y": 11.212500000000002,
+            "z": 0
+        }
+    },
+    "mol101": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Yb",
+                "location": [
+                    29.479785251617436,
+                    -14.187500000000004,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 29.479785251617436,
+            "y": 13.187500000000004,
+            "z": 0
+        }
+    },
+    "mol102": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "No",
+                "location": [
+                    29.579785251617437,
+                    -16.062500000000004,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 29.579785251617437,
+            "y": 15.062500000000004,
+            "z": 0
+        }
+    },
+    "mol103": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "F",
+                "location": [
+                    31.55478525161744,
+                    -1.887500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 31.55478525161744,
+            "y": 0.8875000000000011,
+            "z": 0
+        }
+    },
+    "mol104": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Cl",
+                "location": [
+                    31.52978525161744,
+                    -3.637500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 31.52978525161744,
+            "y": 2.637500000000001,
+            "z": 0
+        }
+    },
+    "mol105": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Br",
+                "location": [
+                    31.354785251617436,
+                    -5.387500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 31.354785251617436,
+            "y": 4.387500000000001,
+            "z": 0
+        }
+    },
+    "mol106": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "I",
+                "location": [
+                    31.379785251617434,
+                    -7.637500000000002,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 31.379785251617434,
+            "y": 6.637500000000002,
+            "z": 0
+        }
+    },
+    "mol107": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "At",
+                "location": [
+                    31.329785251617437,
+                    -9.912500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 31.329785251617437,
+            "y": 8.912500000000001,
+            "z": 0
+        }
+    },
+    "mol108": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ts",
+                "location": [
+                    31.254785251617434,
+                    -12.162500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 31.254785251617434,
+            "y": 11.162500000000001,
+            "z": 0
+        }
+    },
+    "mol109": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Lu",
+                "location": [
+                    31.354785251617436,
+                    -14.162500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 31.354785251617436,
+            "y": 13.162500000000001,
+            "z": 0
+        }
+    },
+    "mol110": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Lr",
+                "location": [
+                    31.329785251617437,
+                    -16.062500000000004,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 31.329785251617437,
+            "y": 15.062500000000004,
+            "z": 0
+        }
+    },
+    "mol111": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ne",
+                "location": [
+                    33.45478525161744,
+                    -1.887500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 33.45478525161744,
+            "y": 0.8875000000000011,
+            "z": 0
+        }
+    },
+    "mol112": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    33.42978525161744,
+                    -0.11250000000000071,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 33.42978525161744,
+            "y": -0.8874999999999993,
+            "z": 0
+        }
+    },
+    "mol113": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ar",
+                "location": [
+                    33.479785251617436,
+                    -3.6125000000000007,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 33.479785251617436,
+            "y": 2.6125000000000007,
+            "z": 0
+        }
+    },
+    "mol114": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Kr",
+                "location": [
+                    33.45478525161744,
+                    -5.4125000000000005,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 33.45478525161744,
+            "y": 4.4125000000000005,
+            "z": 0
+        }
+    },
+    "mol115": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Xe",
+                "location": [
+                    33.40478525161744,
+                    -7.587500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 33.40478525161744,
+            "y": 6.587500000000001,
+            "z": 0
+        }
+    },
+    "mol116": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Rn",
+                "location": [
+                    33.42978525161744,
+                    -9.887500000000003,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 33.42978525161744,
+            "y": 8.887500000000003,
+            "z": 0
+        }
+    },
+    "mol117": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Og",
+                "location": [
+                    33.42978525161744,
+                    -12.162500000000001,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 33.42978525161744,
+            "y": 11.162500000000001,
+            "z": 0
+        }
+    }
+}

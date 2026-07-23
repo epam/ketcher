@@ -22,7 +22,18 @@
 
 .isDisabled {
   cursor: auto;
-  
+  box-shadow: @shadow-dropcontainer;
+
+  &:hover {
+    transform: none !important;
+    box-shadow: @shadow-dropcontainer;
+  }
+
+  &:active {
+    transform: none !important;
+    box-shadow: @shadow-dropcontainer;
+  }
+
   svg {
     filter: grayscale(1);
     opacity: 0.6;

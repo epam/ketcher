@@ -1,0 +1,266 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            },
+            {
+                "$ref": "mol9"
+            },
+            {
+                "$ref": "mol10"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Li",
+                "location": [
+                    3.7641535414135507,
+                    -8.262360830824203,
+                    0
+                ],
+                "selected": true,
+                "substitutionCount": 1
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 3.7641535414135507,
+            "y": 7.2623608308242025,
+            "z": 0
+        }
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    13.215876615262149,
+                    -8.211839798015529,
+                    0
+                ],
+                "selected": true,
+                "substitutionCount": 4
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 13.215876615262149,
+            "y": 7.211839798015528,
+            "z": 0
+        }
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "In",
+                "location": [
+                    10.041227374982212,
+                    -8.208236041224009,
+                    0
+                ],
+                "selected": true,
+                "substitutionCount": 3
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.041227374982212,
+            "y": 7.208236041224008,
+            "z": 0
+        }
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Sb",
+                "location": [
+                    16.462288635393456,
+                    -8.231879316784575,
+                    0
+                ],
+                "explicitValence": 5,
+                "selected": true,
+                "substitutionCount": 5
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 16.462288635393456,
+            "y": 7.231879316784576,
+            "z": 0
+        }
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Cr",
+                "location": [
+                    19.93070306381116,
+                    -8.185436823819572,
+                    0
+                ],
+                "explicitValence": 6,
+                "selected": true,
+                "substitutionCount": 6
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 19.93070306381116,
+            "y": 7.185436823819571,
+            "z": 0
+        }
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Mg",
+                "location": [
+                    23.660850511901863,
+                    -8.137571320869256,
+                    0
+                ],
+                "explicitValence": 7,
+                "selected": true,
+                "substitutionCount": 7
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 23.660850511901863,
+            "y": 7.137571320869257,
+            "z": 0
+        }
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    0.4840647488881089,
+                    -8.278442460992217,
+                    0
+                ],
+                "selected": true,
+                "substitutionCount": -1
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 0.4840647488881089,
+            "y": 7.278442460992216,
+            "z": 0
+        }
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ru",
+                "location": [
+                    27.176484157977093,
+                    -8.103215647888785,
+                    0
+                ],
+                "explicitValence": 8,
+                "selected": true,
+                "substitutionCount": 8
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 27.176484157977093,
+            "y": 7.103215647888784,
+            "z": 0
+        }
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "S",
+                "location": [
+                    6.941803838941903,
+                    -8.232018168111011,
+                    0
+                ],
+                "selected": true,
+                "substitutionCount": 2
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 6.941803838941903,
+            "y": 7.2320181681110105,
+            "z": 0
+        }
+    },
+    "mol9": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    -2.7259766087326422,
+                    -8.421784284785254,
+                    0
+                ],
+                "selected": true,
+                "substitutionCount": -2
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -2.7259766087326422,
+            "y": 7.421784284785255,
+            "z": 0
+        }
+    },
+    "mol10": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ru",
+                "location": [
+                    31.333398483732644,
+                    -8.139032124328004,
+                    0
+                ],
+                "explicitValence": 8,
+                "selected": true,
+                "substitutionCount": 9
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 31.333398483732644,
+            "y": 7.139032124328005,
+            "z": 0
+        }
+    }
+}

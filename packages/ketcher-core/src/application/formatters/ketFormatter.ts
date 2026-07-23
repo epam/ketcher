@@ -14,19 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetSerializer } from 'domain/serializers';
-import { Struct } from 'domain/entities';
-import { StructFormatter } from './structFormatter.types';
+import type { KetSerializer } from 'domain/serializers/ket/ketSerializer';
+import type { Struct } from 'domain/entities/struct';
+import type { StructFormatter } from './structFormatter.types';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { EditorSelection } from 'application/editor/editor.types';
 
 export class KetFormatter implements StructFormatter {
-  #ketSerializer: KetSerializer;
+  readonly #ketSerializer: KetSerializer;
 
   constructor(serializer: KetSerializer) {
     this.#ketSerializer = serializer;
   }
 
-  async getStructureFromStructAsync(struct: Struct): Promise<string> {
-    const ket = this.#ketSerializer.serialize(struct);
+  async getStringFromStructureAsync(
+    struct: Struct,
+    drawingEntitiesManager?: DrawingEntitiesManager,
+    selection?: EditorSelection,
+  ): Promise<string> {
+    const ket = this.#ketSerializer.serialize(
+      struct,
+      drawingEntitiesManager,
+      selection,
+    );
     return ket;
   }
 
@@ -35,6 +45,6 @@ export class KetFormatter implements StructFormatter {
   }
 
   parseMacromoleculeString(content: string): void {
-    this.#ketSerializer.deserializeMacromolecule(content);
+    this.#ketSerializer.deserializeMicromolecules(content);
   }
 }

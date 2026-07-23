@@ -18,19 +18,25 @@ import {
   AtomMove,
   BondAttr,
   EnhancedFlagMove,
+  EnhancedFlagClear,
   RxnArrowMove,
   RxnArrowRotate,
   RxnPlusMove,
   SGroupDataMove,
   TextMove,
 } from '../operations';
-import { Bond, Fragment, Struct, Vec2 } from 'domain/entities';
-import { ReStruct } from 'application/render';
+import { Bond } from 'domain/entities/bond';
+import { Fragment } from 'domain/entities/fragment';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import type { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
+import type { ReStruct } from 'application/render';
 import { getRelSGroupsBySelection, structSelection } from './utils';
 import { Action } from './action';
-import { EditorSelection } from '../editor.types';
-
-export type FlipDirection = 'horizontal' | 'vertical';
+import type { EditorSelection } from '../editor.types';
+import { FlipMonomerOperation } from 'application/editor/operations/monomer/FlipMonomerOperation';
+import type { FlipDirection } from '../shared/utils.types';
+import { flipPointByCenter, rotateDelta } from '../shared/utils';
 
 export function fromFlip(
   reStruct: ReStruct,
@@ -39,7 +45,7 @@ export function fromFlip(
   center: Vec2,
 ) {
   const action = new Action();
-  const structToFlip = selection || structSelection(reStruct.molecule);
+  const structToFlip = selection ?? structSelection(reStruct.molecule);
 
   action.mergeWith(
     fromStructureFlip(reStruct, structToFlip, flipDirection, center),
@@ -60,6 +66,17 @@ export function fromFlip(
   if (structToFlip.texts) {
     action.mergeWith(
       fromTextFlip(reStruct, structToFlip.texts, flipDirection, center),
+    );
+  }
+
+  if (structToFlip.enhancedFlags) {
+    action.mergeWith(
+      fromEnhancedFlagsFlip(
+        reStruct,
+        structToFlip.enhancedFlags,
+        flipDirection,
+        center,
+      ),
     );
   }
 
@@ -148,42 +165,34 @@ function fromTextFlip(
   return action.perform(reStruct);
 }
 
-function fromStructureFlip(
+function fromEnhancedFlagsFlip(
   reStruct: ReStruct,
-  selection: EditorSelection | null,
-  flipDirection: FlipDirection,
-  center: Vec2,
+  enhancedFlagIds: number[],
+  _flipDirection: FlipDirection,
+  _center: Vec2,
 ) {
-  const struct = reStruct.molecule;
   const action = new Action();
 
-  selection?.atoms?.forEach((atomId) => {
-    const atom = struct.atoms.get(atomId);
-    if (!atom) {
+  // Clear stored flag positions so they recalculate based on new atom positions
+  enhancedFlagIds.forEach((flagId) => {
+    const frId = flagId;
+    const frag = reStruct.molecule.frags.get(frId);
+    if (!frag) {
       return;
     }
 
-    const difference = flipPointByCenter(atom.pp, center, flipDirection);
-    action.addOp(new AtomMove(atomId, difference));
+    // Clear the position - it will auto-recalculate to top-right of new bounding box
+    action.addOp(new EnhancedFlagClear(flagId));
   });
-
-  const sGroups = getRelSGroupsBySelection(struct, selection?.atoms || []);
-  sGroups.forEach((sGroup) => {
-    if (!sGroup.pp) {
-      return;
-    }
-    const difference = flipPointByCenter(sGroup.pp, center, flipDirection);
-    action.addOp(new SGroupDataMove(sGroup.id, difference));
-  });
-
-  if (selection?.bonds) {
-    flipBonds(selection.bonds, struct, action);
-  }
 
   return action.perform(reStruct);
 }
 
-function flipBonds(bondIds: number[], struct: Struct, action: Action) {
+export const flipBonds = (
+  bondIds: number[],
+  struct: Struct,
+  action: Action,
+) => {
   bondIds.forEach((bondId) => {
     const bond = struct.bonds.get(bondId);
 
@@ -204,30 +213,53 @@ function flipBonds(bondIds: number[], struct: Struct, action: Action) {
       action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.UP));
     }
   });
-}
+};
 
-function flipPointByCenter(
-  pointToFlip: Vec2,
-  center: Vec2,
+function fromStructureFlip(
+  reStruct: ReStruct,
+  selection: EditorSelection | null,
   flipDirection: FlipDirection,
+  center: Vec2,
 ) {
-  const d = new Vec2();
-  if (flipDirection === 'horizontal') {
-    d.x =
-      center.x > pointToFlip.x
-        ? 2 * (center.x - pointToFlip.x)
-        : -2 * (pointToFlip.x - center.x);
-  } else {
-    // 'vertical'
-    d.y =
-      center.y > pointToFlip.y
-        ? 2 * (center.y - pointToFlip.y)
-        : -2 * (pointToFlip.y - center.y);
+  const struct = reStruct.molecule;
+  const action = new Action();
+
+  selection?.atoms?.forEach((atomId) => {
+    const atom = struct.atoms.get(atomId);
+    if (!atom) {
+      return;
+    }
+
+    const difference = flipPointByCenter(atom.pp, center, flipDirection);
+    action.addOp(new AtomMove(atomId, difference));
+  });
+
+  const sGroups = getRelSGroupsBySelection(struct, selection?.atoms ?? []);
+  sGroups.forEach((sGroup) => {
+    if (!sGroup.pp) {
+      return;
+    }
+    const difference = flipPointByCenter(sGroup.pp, center, flipDirection);
+    action.addOp(new SGroupDataMove(sGroup.id, difference));
+
+    if (sGroup instanceof MonomerMicromolecule) {
+      action.addOp(
+        new FlipMonomerOperation({
+          id: sGroup.id,
+          value: flipDirection,
+        }),
+      );
+    }
+  });
+
+  if (selection?.bonds) {
+    flipBonds(selection.bonds, struct, action);
   }
-  return d;
+
+  return action.perform(reStruct);
 }
 
-export function fromRotate(restruct, selection, center, angle) {
+export function fromRotate(restruct, selection, center, angle: number) {
   // eslint-disable-line
   const struct = restruct.molecule;
 
@@ -240,6 +272,8 @@ export function fromRotate(restruct, selection, center, angle) {
   if (selection.atoms) {
     selection.atoms.forEach((aid) => {
       const atom = struct.atoms.get(aid);
+      if (!atom) return;
+
       action.addOp(new AtomMove(aid, rotateDelta(atom.pp, center, angle)));
     });
 
@@ -247,6 +281,10 @@ export function fromRotate(restruct, selection, center, angle) {
       const sgroups = getRelSGroupsBySelection(struct, selection.atoms);
 
       sgroups.forEach((sg) => {
+        if (!sg.pp) {
+          return;
+        }
+
         action.addOp(
           new SGroupDataMove(sg.id, rotateDelta(sg.pp, center, angle)),
         );
@@ -304,11 +342,4 @@ export function fromRotate(restruct, selection, center, angle) {
   }
 
   return action.perform(restruct);
-}
-
-function rotateDelta(v, center, angle) {
-  let v1 = v.sub(center);
-  v1 = v1.rotate(angle);
-  v1.add_(center); // eslint-disable-line no-underscore-dangle
-  return v1.sub(v);
 }

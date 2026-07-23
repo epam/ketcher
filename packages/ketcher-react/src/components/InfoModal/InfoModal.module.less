@@ -29,8 +29,10 @@
   
   .infoModalOverlay .infoModalWindow {
     outline: 0;
-    position: relative;
-    vertical-align: middle;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
     width: 360px;
@@ -40,10 +42,16 @@
     border-radius: 8px;
     background-clip: padding-box;
     opacity: 1;
-    transform: scale(1);
     transition: transform 0.3s, opacity 0.3s;
     font-family: Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
       Arial, sans-serif;
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .infoModalWindow::backdrop {
+    display: none;
   }
   
   .infoModalWindow header {

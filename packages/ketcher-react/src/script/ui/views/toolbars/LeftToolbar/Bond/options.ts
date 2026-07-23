@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { GroupDescriptor } from '../../ToolbarGroupItem/ToolbarMultiToolItem/variants/variants.types';
-import { ToolbarItem } from '../../toolbar.types';
+import type { GroupDescriptor } from '../../ToolbarGroupItem/ToolbarMultiToolItem/variants/variants.types';
+import type { ToolbarItem } from '../../toolbar.types';
 import { makeItems } from '../../ToolbarGroupItem/utils';
 
 const bondCommon: ToolbarItem[] = makeItems([
@@ -41,7 +41,7 @@ const bondSpecial: ToolbarItem[] = makeItems(['bond-dative', 'bond-hydrogen']);
 const groups = [bondCommon, bondStereo, bondQuery, bondSpecial];
 const groupOptions = groups.flat();
 const groupDescriptors = groups.reduce((accum, group, index) => {
-  const start = accum[index - 1]?.end || 0;
+  const start = accum[index - 1]?.end ?? 0;
 
   accum.push({
     start,

@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AnyAction } from 'redux';
-import { appUpdate } from '../options';
+import type { AnyAction } from 'redux';
+import { appUpdate } from '../options/actions';
 import {
+  type SdfItem,
+  type Struct,
   FunctionalGroupsProvider,
-  SdfItem,
   SdfSerializer,
-  Struct,
 } from 'ketcher-core';
 import templatesRawData from '../../../../templates/fg.sdf';
 import { memoizedDebounce } from '../../utils';
@@ -39,10 +39,8 @@ const initialState: FGState = {
   mode: MODES.FG,
 };
 
-const functionalGroupsReducer = (
-  state = initialState,
-  { type, payload }: AnyAction,
-) => {
+const functionalGroupsReducer = (state = initialState, action: AnyAction) => {
+  const { type, payload } = action;
   switch (type) {
     case 'FG_INIT':
       return { ...state, ...payload };
@@ -55,7 +53,10 @@ const functionalGroupsReducer = (
   }
 };
 
-const initFGroups = (lib: SdfItem[]) => ({ type: 'FG_INIT', payload: { lib } });
+export const initFGroups = (lib: SdfItem[]) => ({
+  type: 'FG_INIT',
+  payload: { lib },
+});
 const highlightFGroup = (group: any) => ({
   type: 'FG_HIGHLIGHT',
   payload: group,

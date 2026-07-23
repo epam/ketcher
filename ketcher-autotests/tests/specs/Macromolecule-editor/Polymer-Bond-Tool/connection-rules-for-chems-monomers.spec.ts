@@ -1,0 +1,1248 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable no-magic-numbers */
+import { Locator, Page, test, expect } from '@fixtures';
+import {
+  takeEditorScreenshot,
+  openFileAndAddToCanvasMacro,
+  moveMouseAway,
+  dragMouseTo,
+  MonomerType,
+} from '@utils';
+import {
+  getMonomerLocator,
+  AttachmentPoint,
+} from '@utils/macromolecules/monomer';
+import {
+  bondMonomerPointToMoleculeAtom,
+  bondTwoMonomersPointToPoint,
+} from '@utils/macromolecules/polymerBond';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
+
+test.describe('Connection rules for chems: ', () => {
+  let page: Page;
+  test.describe.configure({ retries: 0 });
+
+  test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
+  });
+
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
+
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+
+  interface IMonomer {
+    monomerType: MonomerType;
+    fileName: string;
+    alias: string;
+    attachmentPoints: { [attachmentPointName: string]: AttachmentPoint };
+  }
+
+  const chemMonomers: { [monomerName: string]: IMonomer } = {
+    '(R1) - Left only': {
+      monomerType: MonomerType.CHEM,
+      fileName: 'KET/CHEM-Templates/01 - (R1) - Left only.ket',
+      alias: '(R1)_-_Left_only',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+      },
+    },
+    '(R2) - Right only': {
+      monomerType: MonomerType.CHEM,
+      fileName: 'KET/CHEM-Templates/02 - (R2) - Right only.ket',
+      alias: '(R2)_-_Right_only',
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
+      },
+    },
+    // '(R3) - Side only': {
+    //   monomerType: MonomerType.CHEM,
+    //   fileName: 'KET/CHEM-Templates/03 - (R3) - Side only.ket',
+    //   alias: '(R3)_-_Side_only',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //   },
+    // },
+    '(R1,R2) - R3 gap': {
+      monomerType: MonomerType.CHEM,
+      fileName: 'KET/CHEM-Templates/04 - (R1,R2) - R3 gap.ket',
+      alias: '(R1,R2)_-_R3_gap',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+      },
+    },
+    // '(R1,R3) - R2 gap': {
+    //   monomerType: MonomerType.CHEM,
+    //   fileName: 'KET/CHEM-Templates/05 - (R1,R3) - R2 gap.ket',
+    //   alias: '(R1,R3)_-_R2_gap',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //   },
+    // },
+    // '(R2,R3) - R1 gap': {
+    //   monomerType: MonomerType.CHEM,
+    //   fileName: 'KET/CHEM-Templates/06 - (R2,R3) - R1 gap.ket',
+    //   alias: '(R2,R3)_-_R1_gap',
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //   },
+    // },
+    // '(R3,R4)': {
+    //   monomerType: MonomerType.CHEM,
+    //   fileName: 'KET/CHEM-Templates/07 - (R3,R4).ket',
+    //   alias: '(R3,R4)',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    '(R1,R2,R3)': {
+      monomerType: MonomerType.CHEM,
+      fileName: 'KET/CHEM-Templates/08 - (R1,R2,R3).ket',
+      alias: '(R1,R2,R3)',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+      },
+    },
+    // '(R1,R3,R4)': {
+    //   monomerType: MonomerType.CHEM,
+    //   fileName: 'KET/CHEM-Templates/09 - (R1,R3,R4).ket',
+    //   alias: '(R1,R3,R4)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R2,R3,R4)': {
+    //   monomerType: MonomerType.CHEM,
+    //   fileName: 'KET/CHEM-Templates/10 - (R2,R3,R4).ket',
+    //   alias: '(R2,R3,R4)',
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R3,R4,R5)': {
+    //   monomerType: MonomerType.CHEM,
+    //   fileName: 'KET/CHEM-Templates/11 - (R3,R4,R5).ket',
+    //   alias: '(R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    '(R1,R2,R3,R4)': {
+      monomerType: MonomerType.CHEM,
+      fileName: 'KET/CHEM-Templates/12 - (R1,R2,R3,R4).ket',
+      alias: '(R1,R2,R3,R4)',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+      },
+    },
+    // '(R1,R3,R4,R5)': {
+    //   monomerType: MonomerType.CHEM,
+    //   fileName: 'KET/CHEM-Templates/13 - (R1,R3,R4,R5).ket',
+    //   alias: '(R1,R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    // '(R2,R3,R4,R5)': {
+    //   monomerType: MonomerType.CHEM,
+    //   fileName: 'KET/CHEM-Templates/14 - (R2,R3,R4,R5).ket',
+    //   alias: '(R2,R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    // '(R1,R2,R3,R4,R5)': {
+    //   monomerType: MonomerType.CHEM,
+    //   fileName: 'KET/CHEM-Templates/15 - (R1,R2,R3,R4,R5).ket',
+    //   alias: '(R1,R2,R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+  };
+
+  const tmpChemMonomers: { [monomerName: string]: IMonomer } = {
+    'Test-6-Ch': {
+      monomerType: MonomerType.CHEM,
+      fileName: 'KET/CHEM-Templates/Test-6-Ch.ket',
+      alias: 'Test-6-Ch',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
+      },
+    },
+    'Test-6-Ch-Main': {
+      monomerType: MonomerType.CHEM,
+      fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
+      alias: 'Test-6-Ch',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
+        R6: AttachmentPoint.R6,
+      },
+    },
+    'Test-6-Ch-1': {
+      monomerType: MonomerType.CHEM,
+      fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
+      alias: 'Test-6-Ch-1',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
+        R6: AttachmentPoint.R6,
+      },
+    },
+    'Test-6-Ch-2': {
+      monomerType: MonomerType.CHEM,
+      fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
+      alias: 'Test-6-Ch-2',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
+        R6: AttachmentPoint.R6,
+      },
+    },
+    'Test-6-Ch-3': {
+      monomerType: MonomerType.CHEM,
+      fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
+      alias: 'Test-6-Ch-3',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
+        R6: AttachmentPoint.R6,
+      },
+    },
+    'Test-6-Ch-4': {
+      monomerType: MonomerType.CHEM,
+      fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
+      alias: 'Test-6-Ch-4',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
+        R6: AttachmentPoint.R6,
+      },
+    },
+    'Test-6-Ch-5': {
+      monomerType: MonomerType.CHEM,
+      fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
+      alias: 'Test-6-Ch-5',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
+        R6: AttachmentPoint.R6,
+      },
+    },
+  };
+
+  async function prepareCanvasOneFreeAPLeft(
+    page: Page,
+    CHEM: IMonomer,
+    freeCHEMAttachmentPoint: string,
+  ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
+    await openFileAndAddToCanvasMacro(
+      page,
+      tmpChemMonomers['Test-6-Ch-Main'].fileName,
+    );
+
+    await openFileAndAddToCanvasMacro(page, CHEM.fileName);
+    const CHEMLocator = getMonomerLocator(page, {
+      monomerAlias: CHEM.alias,
+    }).first();
+    await CHEMLocator.hover();
+    await dragMouseTo(page, 550, 370);
+    await moveMouseAway(page);
+
+    for await (const CHEMAttachmentPoint of Object.values(
+      CHEM.attachmentPoints,
+    )) {
+      const tmpCHEM = tmpChemMonomers[`Test-6-Ch-${CHEMAttachmentPoint[1]}`];
+      if (CHEMAttachmentPoint !== freeCHEMAttachmentPoint) {
+        await bondTwoMonomersByPointToPoint(
+          page,
+          CHEM,
+          tmpCHEM,
+          CHEMAttachmentPoint,
+          CHEMAttachmentPoint,
+        );
+      }
+    }
+
+    const leftMonomerLocator = getMonomerLocator(page, {
+      monomerAlias: tmpChemMonomers['Test-6-Ch-Main'].alias,
+      monomerType: tmpChemMonomers['Test-6-Ch-Main'].monomerType,
+    }).first();
+    const tmpMonomerLocator = getMonomerLocator(page, {
+      monomerAlias: CHEM.alias,
+      monomerType: CHEM.monomerType,
+    });
+    const rightMonomerLocator =
+      (await tmpMonomerLocator.count()) > 1
+        ? tmpMonomerLocator.nth(1)
+        : tmpMonomerLocator.first();
+
+    return {
+      leftMonomer: leftMonomerLocator,
+      rightMonomer: rightMonomerLocator,
+    };
+  }
+
+  async function prepareCanvasNoFreeAPLeft(
+    page: Page,
+    CHEM: IMonomer,
+  ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
+    await openFileAndAddToCanvasMacro(
+      page,
+      tmpChemMonomers['Test-6-Ch-Main'].fileName,
+    );
+
+    await openFileAndAddToCanvasMacro(page, CHEM.fileName);
+    const CHEMLocator = getMonomerLocator(page, {
+      monomerAlias: CHEM.alias,
+    }).first();
+    await CHEMLocator.hover();
+    await dragMouseTo(page, 550, 370);
+    await moveMouseAway(page);
+
+    for await (const CHEMAttachmentPoint of Object.values(
+      CHEM.attachmentPoints,
+    )) {
+      const tmpCHEM = tmpChemMonomers[`Test-6-Ch-${CHEMAttachmentPoint[1]}`];
+      await bondTwoMonomersByPointToPoint(
+        page,
+        CHEM,
+        tmpCHEM,
+        CHEMAttachmentPoint,
+        CHEMAttachmentPoint,
+      );
+    }
+
+    const leftMonomerLocator = getMonomerLocator(page, {
+      monomerAlias: tmpChemMonomers['Test-6-Ch-Main'].alias,
+      monomerType: tmpChemMonomers['Test-6-Ch-Main'].monomerType,
+    }).first();
+    const tmpMonomerLocator = getMonomerLocator(page, {
+      monomerAlias: CHEM.alias,
+      monomerType: CHEM.monomerType,
+    });
+    const rightMonomerLocator =
+      (await tmpMonomerLocator.count()) > 1
+        ? tmpMonomerLocator.nth(1)
+        : tmpMonomerLocator.first();
+
+    return {
+      leftMonomer: leftMonomerLocator,
+      rightMonomer: rightMonomerLocator,
+    };
+  }
+
+  async function loadTwoMonomers(
+    page: Page,
+    leftMonomer: IMonomer,
+    rightMonomer: IMonomer,
+  ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
+    await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
+    const leftMonomerLocator = getMonomerLocator(page, {
+      monomerAlias: leftMonomer.alias,
+      monomerType: leftMonomer.monomerType,
+    }).first();
+
+    await leftMonomerLocator.hover({ force: true });
+
+    await dragMouseTo(page, 500, 370);
+    await moveMouseAway(page);
+
+    await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
+    const tmpMonomerLocator = getMonomerLocator(page, {
+      monomerAlias: rightMonomer.alias,
+      monomerType: rightMonomer.monomerType,
+    });
+    const rightMonomerLocator =
+      (await tmpMonomerLocator.count()) > 1
+        ? tmpMonomerLocator.nth(1)
+        : tmpMonomerLocator.first();
+
+    await rightMonomerLocator.hover({ force: true });
+    // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
+    await dragMouseTo(page, 600, 375);
+    await moveMouseAway(page);
+
+    return {
+      leftMonomer: leftMonomerLocator,
+      rightMonomer: rightMonomerLocator,
+    };
+  }
+
+  async function bondTwoMonomersByPointToPoint(
+    page: Page,
+    leftMonomer: IMonomer,
+    rightMonomer: IMonomer,
+    leftMonomersAttachmentPoint?: AttachmentPoint,
+    rightMonomersAttachmentPoint?: AttachmentPoint,
+  ) {
+    const leftMonomerLocator = getMonomerLocator(page, {
+      monomerAlias: leftMonomer.alias,
+    }).first();
+
+    const rightMonomerLocator = getMonomerLocator(page, {
+      monomerAlias: rightMonomer.alias,
+    }).first();
+
+    await bondTwoMonomersPointToPoint(
+      page,
+      leftMonomerLocator,
+      rightMonomerLocator,
+      leftMonomersAttachmentPoint,
+      rightMonomersAttachmentPoint,
+    );
+  }
+
+  Object.values(chemMonomers).forEach((leftCHEM) => {
+    Object.values(chemMonomers).forEach((rightCHEM) => {
+      Object.values(leftCHEM.attachmentPoints).forEach(
+        (leftCHEMAttachmentPoint) => {
+          Object.values(rightCHEM.attachmentPoints).forEach(
+            (rightCHEMAttachmentPoint) => {
+              if (leftCHEMAttachmentPoint === rightCHEMAttachmentPoint) {
+                /*
+                 *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 1
+                 *  Description: If a user tries to connect 2 monomers that have only identical free attachment
+                 *               points (for example, R1 and R1 or R2 and R2), a bond is created, and a message occurs.
+                 */
+                test(`Case 1: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of ${leftCHEM.alias} and ${rightCHEM.alias}`, async () => {
+                  const {
+                    leftMonomer: leftMonomerLocator,
+                    rightMonomer: rightMonomerLocator,
+                  } = await loadTwoMonomers(page, leftCHEM, rightCHEM);
+
+                  const bondLine = await bondTwoMonomersPointToPoint(
+                    page,
+                    leftMonomerLocator,
+                    rightMonomerLocator,
+                    leftCHEMAttachmentPoint,
+                    rightCHEMAttachmentPoint,
+                  );
+
+                  await expect(bondLine).toBeVisible();
+                  expect(
+                    await NotificationBanner(page).getNotificationText(),
+                  ).toContain(
+                    'You have connected monomers with attachment points of the same group',
+                  );
+                });
+              }
+            },
+          );
+        },
+      );
+    });
+  });
+
+  Object.values(chemMonomers).forEach((rightCHEM) => {
+    Object.values(tmpChemMonomers['Test-6-Ch'].attachmentPoints).forEach(
+      (leftCHEMAttachmentPoint) => {
+        Object.values(rightCHEM.attachmentPoints).forEach(
+          (rightCHEMAttachmentPoint) => {
+            /*
+             *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 2
+             *  Description: If there is only one free attachment point (R1…Rn), a bond is created by default
+             *               using only one existing possibility to connect to another monomer (no modal window appears).
+             *   For each %CHEMSType% from chemMonomers:
+             *     For each %MonomerConnection% (avaliable connections of monomer)
+             *       left it unoccupied and occupy the rest
+             *       For each %Test-6-Ch-AttachmentPoint% of Test-6-P from (R1, R2, R3, R4, R5)
+             *         Establish connection between Test-6-Ch(%AttachmentPoint%) and %CHEMSType%(%MonomerConnection%)
+             *         Validate canvas
+             */
+            test(`Case 2: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
+              test.slow();
+              const {
+                leftMonomer: leftMonomerLocator,
+                rightMonomer: rightMonomerLocator,
+              } = await prepareCanvasOneFreeAPLeft(
+                page,
+                rightCHEM,
+                rightCHEMAttachmentPoint,
+              );
+
+              const bondLine = await bondTwoMonomersPointToPoint(
+                page,
+                leftMonomerLocator,
+                rightMonomerLocator,
+                leftCHEMAttachmentPoint,
+                rightCHEMAttachmentPoint,
+              );
+              await expect(bondLine).toBeVisible();
+            });
+          },
+        );
+      },
+    );
+  });
+
+  Object.values(chemMonomers).forEach((rightCHEM) => {
+    Object.values(rightCHEM.attachmentPoints).forEach(
+      (rightCHEMAttachmentPoint) => {
+        /*
+         *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 3
+         *  Description: User drags a bond from the center of the first monomer to the specific AP of the second monomer.
+         *   For each %CHEMSType% from chemMonomers:
+         *     For each %Test-6-Ch-AttachmentPoint% of Test-6-Ch from (R1, R2, R3, R4, R5)
+         *       Establish connection between Test-6-Ch(center) and %CHENMSType%(%Test-6-Ch-AttachmentPoint%)
+         *       Validate canvas (Dialog should appear)
+         *       Select R1 of Test-6-Ch and establish connection
+         *       Validate canvas (Connection should appear)
+         */
+        test(`Case 3: Connect Center to ${rightCHEMAttachmentPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
+          const {
+            leftMonomer: leftMonomerLocator,
+            rightMonomer: rightMonomerLocator,
+          } = await loadTwoMonomers(
+            page,
+            tmpChemMonomers['Test-6-Ch'],
+            rightCHEM,
+          );
+
+          const bondLine = await bondTwoMonomersPointToPoint(
+            page,
+            leftMonomerLocator,
+            rightMonomerLocator,
+            undefined,
+            rightCHEMAttachmentPoint,
+            undefined,
+            true,
+          );
+          await expect(bondLine).toBeVisible();
+        });
+      },
+    );
+  });
+
+  Object.values(chemMonomers).forEach((rightCHEM) => {
+    Object.values(tmpChemMonomers['Test-6-Ch'].attachmentPoints).forEach(
+      (leftCHEMAttachmentPoint) => {
+        /*
+         *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 4
+         *  Description: If selected attachment point is occupied, no bond is created, and warning message appears.
+         *   For each %CHEMSType% from chemMonomers:
+         *     For each %MonomerConnection% (avaliable connections of monomer)
+         *       occupy all connections
+         *       For each %AttachmentPoint% of Test-6-P from (R1, R2, R3, R4, R5)
+         *         Establish connection between Test-6-P(%AttachmentPoint%) and %CHEMSType%(center)
+         *         Validate canvas (No connection established)
+         */
+        test(`Case 4: Connect ${leftCHEMAttachmentPoint} to Center of Test-6-Ch and ${rightCHEM.alias}`, async () => {
+          test.slow();
+          const {
+            leftMonomer: leftMonomerLocator,
+            rightMonomer: rightMonomerLocator,
+          } = await prepareCanvasNoFreeAPLeft(page, rightCHEM);
+
+          const bondLine = await bondTwoMonomersPointToPoint(
+            page,
+            leftMonomerLocator,
+            rightMonomerLocator,
+            leftCHEMAttachmentPoint,
+          );
+          await expect(bondLine).toBeHidden();
+        });
+      },
+    );
+  });
+
+  Object.values(chemMonomers).forEach((leftCHEM) => {
+    Object.values(chemMonomers).forEach((rightCHEM) => {
+      Object.values(leftCHEM.attachmentPoints).forEach(
+        (leftCHEMAttachmentPoint) => {
+          Object.values(rightCHEM.attachmentPoints).forEach(
+            (rightCHEMAttachmentPoint) => {
+              /*
+               *  Test case: https://github.com/epam/ketcher/issues/4572 - Case 1
+               *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( CHEM )
+               * For each %chemType% from the library (chemMonomers)
+               *   For each %chemType2% from the library (chemMonomers)
+               *      For each %AttachmentPoint% (avaliable connections of %chemType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %chemType2%) do:
+               *  1. Clear canvas
+               *  2. Load %chemType% and %chemType2% and put them on the canvas
+               *  3. Establish connection between %chemType%(%AttachmentPoint%) and %chemType%(%AttachmentPoint2%)
+               *  4. Validate canvas (connection should appear)
+               */
+              test(`Test case5: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of  CHEMS(${leftCHEM.alias}) and  CHEMS(${rightCHEM.alias})`, async () => {
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftCHEM, rightCHEM);
+
+                const bondLine = await bondTwoMonomersPointToPoint(
+                  page,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
+                  leftCHEMAttachmentPoint,
+                  rightCHEMAttachmentPoint,
+                );
+
+                await expect(bondLine).toBeVisible();
+              });
+            },
+          );
+        },
+      );
+    });
+  });
+
+  const peptideMonomers: { [monomerName: string]: IMonomer } = {
+    '(R1) - Left only': {
+      monomerType: MonomerType.Peptide,
+      fileName: 'KET/Peptide-Templates/01 - (R1) - Left only.ket',
+      alias: '(R1)_-_Left_only',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+      },
+    },
+    '(R2) - Right only': {
+      monomerType: MonomerType.Peptide,
+      fileName: 'KET/Peptide-Templates/02 - (R2) - Right only.ket',
+      alias: '(R2)_-_Right_only',
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
+      },
+    },
+    // '(R3) - Side only': {
+    //   monomerType: MonomerType.Peptide,
+    //   fileName: 'KET/Peptide-Templates/03 - (R3) - Side only.ket',
+    //   alias: '(R3)_-_Side_only',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //   },
+    // },
+    '(R1,R2) - R3 gap': {
+      monomerType: MonomerType.Peptide,
+      fileName: 'KET/Peptide-Templates/04 - (R1,R2) - R3 gap.ket',
+      alias: '(R1,R2)_-_R3_gap',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+      },
+    },
+    '(R1,R3) - R2 gap': {
+      monomerType: MonomerType.Peptide,
+      fileName: 'KET/Peptide-Templates/05 - (R1,R3) - R2 gap.ket',
+      alias: '(R1,R3)_-_R2_gap',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R3: AttachmentPoint.R3,
+      },
+    },
+    '(R2,R3) - R1 gap': {
+      monomerType: MonomerType.Peptide,
+      fileName: 'KET/Peptide-Templates/06 - (R2,R3) - R1 gap.ket',
+      alias: '(R2,R3)_-_R1_gap',
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+      },
+    },
+    // '(R3,R4)': {
+    //   monomerType: MonomerType.Peptide,
+    //   fileName: 'KET/Peptide-Templates/07 - (R3,R4).ket',
+    //   alias: '(R3,R4)',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    '(R1,R2,R3)': {
+      monomerType: MonomerType.Peptide,
+      fileName: 'KET/Peptide-Templates/08 - (R1,R2,R3).ket',
+      alias: '(R1,R2,R3)',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+      },
+    },
+    // '(R1,R3,R4)': {
+    //   monomerType: MonomerType.Peptide,
+    //   fileName: 'KET/Peptide-Templates/09 - (R1,R3,R4).ket',
+    //   alias: '(R1,R3,R4)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R2,R3,R4)': {
+    //   monomerType: MonomerType.Peptide,
+    //   fileName: 'KET/Peptide-Templates/10 - (R2,R3,R4).ket',
+    //   alias: '(R2,R3,R4)',
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R3,R4,R5)': {
+    //   monomerType: MonomerType.Peptide,
+    //   fileName: 'KET/Peptide-Templates/11 - (R3,R4,R5).ket',
+    //   alias: '(R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    // '(R1,R2,R3,R4)': {
+    //   monomerType: MonomerType.Peptide,
+    //   fileName: 'KET/Peptide-Templates/12 - (R1,R2,R3,R4).ket',
+    //   alias: '(R1,R2,R3,R4)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R1,R3,R4,R5)': {
+    //   monomerType: MonomerType.Peptide,
+    //   fileName: 'KET/Peptide-Templates/13 - (R1,R3,R4,R5).ket',
+    //   alias: '(R1,R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    // '(R2,R3,R4,R5)': {
+    //   monomerType: MonomerType.Peptide,
+    //   fileName: 'KET/Peptide-Templates/14 - (R2,R3,R4,R5).ket',
+    //   alias: '(R2,R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    // '(R1,R2,R3,R4,R5)': {
+    //   monomerType: MonomerType.Peptide,
+    //   fileName: 'KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket',
+    //   alias: '(R1,R2,R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    J: {
+      monomerType: MonomerType.Peptide,
+      fileName:
+        'KET/Peptide-Templates/16 - J - ambiguous alternatives from library (R1,R2).ket',
+      alias: 'J',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+      },
+    },
+    // '%': {
+    //   monomerType: MonomerType.Peptide,
+    //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
+    //   alias: '%',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //   },
+    // },
+  };
+
+  Object.values(chemMonomers).forEach((leftCHEM) => {
+    Object.values(peptideMonomers).forEach((rightPeptide) => {
+      Object.values(leftCHEM.attachmentPoints).forEach(
+        (leftCHEMAttachmentPoint) => {
+          Object.values(rightPeptide.attachmentPoints).forEach(
+            (rightPeptideAttachmentPoint) => {
+              /*
+               *  Test case: https://github.com/epam/ketcher/issues/4572 - Case 2
+               *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( CHEM - Peptides )
+               * For each %chemType% from the library (chemMonomers)
+               *   For each %peptideType% from the library (peptideMonomers)
+               *      For each %AttachmentPoint% (avaliable connections of %chemType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %peptideType%) do:
+               *  1. Clear canvas
+               *  2. Load %chemType% and %peptideType% and put them on the canvas
+               *  3. Establish connection between %chemType%(%AttachmentPoint%) and %peptideType%(%AttachmentPoint2%)
+               *  4. Validate canvas (connection should appear)
+               */
+              test(`Test case6: Connect ${leftCHEMAttachmentPoint} to ${rightPeptideAttachmentPoint} of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftCHEM, rightPeptide);
+
+                const bondLine = await bondTwoMonomersPointToPoint(
+                  page,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
+                  leftCHEMAttachmentPoint,
+                  rightPeptideAttachmentPoint,
+                );
+
+                await expect(bondLine).toBeVisible();
+              });
+            },
+          );
+        },
+      );
+    });
+  });
+
+  Object.values(chemMonomers).forEach((leftCHEM) => {
+    Object.values(chemMonomers).forEach((rightCHEM) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/4592 - Case 1
+       *  Description: User can connect any CHEM to any CHEM using center-to-center way.
+       *               Select Attachment Points dialog opened.
+       */
+      test(`Case 7: Connect Center to Center of CHEM(${leftCHEM.alias}) and CHEM(${rightCHEM.alias})`, async () => {
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftCHEM, rightCHEM);
+
+        const bondLine = await bondTwoMonomersPointToPoint(
+          page,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
+
+        await expect(bondLine).toBeVisible();
+      });
+    });
+  });
+
+  Object.values(chemMonomers).forEach((leftCHEM) => {
+    Object.values(peptideMonomers).forEach((rightPeptide) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/4592 - Case 2
+       *  Description: User can connect any CHEM to any Peptide using center-to-center way.
+       *               Select Attachment Points dialog opened.
+       */
+      test(`Case 8: Connect Center to Center of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftCHEM, rightPeptide);
+
+        const bondLine = await bondTwoMonomersPointToPoint(
+          page,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
+
+        await expect(bondLine).toBeVisible();
+      });
+    });
+  });
+
+  const ordinaryMoleculeMonomers: { [monomerName: string]: IMonomer } = {
+    '(R1) - Left only': {
+      monomerType: MonomerType.Molecule,
+      fileName: 'KET/Ordinary-Molecule-Templates/01 - (R1) - Left only.ket',
+      alias: 'F1',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+      },
+    },
+    '(R2) - Right only': {
+      monomerType: MonomerType.Molecule,
+      fileName: 'KET/Ordinary-Molecule-Templates/02 - (R2) - Right only.ket',
+      alias: 'F1',
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
+      },
+    },
+    '(R3) - Side only': {
+      monomerType: MonomerType.Molecule,
+      fileName: 'KET/Ordinary-Molecule-Templates/03 - (R3) - Side only.ket',
+      alias: 'F1',
+      attachmentPoints: {
+        R3: AttachmentPoint.R3,
+      },
+    },
+    '(R1,R2) - R3 gap': {
+      monomerType: MonomerType.Molecule,
+      fileName: 'KET/Ordinary-Molecule-Templates/04 - (R1,R2) - R3 gap.ket',
+      alias: 'F1',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+      },
+    },
+    '(R1,R3) - R2 gap': {
+      monomerType: MonomerType.Molecule,
+      fileName: 'KET/Ordinary-Molecule-Templates/05 - (R1,R3) - R2 gap.ket',
+      alias: 'F1',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R3: AttachmentPoint.R3,
+      },
+    },
+    '(R2,R3) - R1 gap': {
+      monomerType: MonomerType.Molecule,
+      fileName: 'KET/Ordinary-Molecule-Templates/06 - (R2,R3) - R1 gap.ket',
+      alias: 'F1',
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+      },
+    },
+    // '(R3,R4)': {
+    //   monomerType: MonomerType.Molecule,
+    //   fileName: 'KET/Ordinary-Molecule-Templates/07 - (R3,R4).ket',
+    //   alias: 'F1',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    '(R1,R2,R3)': {
+      monomerType: MonomerType.Molecule,
+      fileName: 'KET/Ordinary-Molecule-Templates/08 - (R1,R2,R3).ket',
+      alias: 'F1',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+      },
+    },
+    // '(R1,R3,R4)': {
+    //   monomerType: MonomerType.Molecule,
+    //   fileName: 'KET/Ordinary-Molecule-Templates/09 - (R1,R3,R4).ket',
+    //   alias: 'F1',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R2,R3,R4)': {
+    //   monomerType: MonomerType.Molecule,
+    //   fileName: 'KET/Ordinary-Molecule-Templates/10 - (R2,R3,R4).ket',
+    //   alias: 'F1',
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R3,R4,R5)': {
+    //   monomerType: MonomerType.Molecule,
+    //   fileName: 'KET/Ordinary-Molecule-Templates/11 - (R3,R4,R5).ket',
+    //   alias: 'F1',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    '(R1,R2,R3,R4)': {
+      monomerType: MonomerType.Molecule,
+      fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
+      alias: 'F1',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+      },
+    },
+    // '(R1,R3,R4,R5)': {
+    //   monomerType: MonomerType.Molecule,
+    //   fileName: 'KET/Ordinary-Molecule-Templates/13 - (R1,R3,R4,R5).ket',
+    //   alias: 'F1',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    // '(R2,R3,R4,R5)': {
+    //   monomerType: MonomerType.Molecule,
+    //   fileName: 'KET/Ordinary-Molecule-Templates/14 - (R2,R3,R4,R5).ket',
+    //   alias: 'F1',
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    '(R1,R2,R3,R4,R5)': {
+      monomerType: MonomerType.Molecule,
+      fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',
+      alias: 'F1',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
+      },
+    },
+  };
+
+  let ordinaryMoleculeName: string;
+
+  Object.values(chemMonomers).forEach((leftCHEM) => {
+    Object.values(ordinaryMoleculeMonomers).forEach((rightOM) => {
+      Object.values(leftCHEM.attachmentPoints).forEach(
+        (leftCHEMAttachmentPoint) => {
+          Object.values(rightOM.attachmentPoints).forEach(
+            (rightOMAttachmentPoint) => {
+              /*
+               *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 1
+               *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( CHEM - Ordinary Molecule )
+               * For each %chemType% from the library (chemMonomers)
+               *   For each %OMType% from the library (ordinaryMoleculeMonomers)
+               *      For each %AttachmentPoint% (avaliable connections of %chemType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %OMType%) do:
+               *  1. Clear canvas
+               *  2. Load %chemType% and %OMType% and put them on the canvas
+               *  3. Establish connection between %chemType%(%AttachmentPoint%) and %OMType%(%AttachmentPoint2%)
+               *  4. Validate canvas (connection should appear)
+               */
+              ordinaryMoleculeName = rightOM.fileName.substring(
+                rightOM.fileName.indexOf(' - '),
+                rightOM.fileName.lastIndexOf('.ket'),
+              );
+              test(`Test case9: Connect ${leftCHEMAttachmentPoint} to ${rightOMAttachmentPoint} of CHEM(${leftCHEM.alias}) and OM(${ordinaryMoleculeName})`, async () => {
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftCHEM, rightOM);
+
+                const bondLine = await bondTwoMonomersPointToPoint(
+                  page,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
+                  leftCHEMAttachmentPoint,
+                  rightOMAttachmentPoint,
+                );
+
+                await expect(bondLine).toBeVisible();
+              });
+            },
+          );
+        },
+      );
+    });
+  });
+
+  Object.values(chemMonomers).forEach((leftCHEM) => {
+    Object.values(ordinaryMoleculeMonomers).forEach((rightOrdinaryMolecule) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 6
+       *  Description: User can connect any CHEM to any OrdinaryMolecule using center-to-center way.
+       *               Select Attachment Points dialog opened.
+       */
+      ordinaryMoleculeName = rightOrdinaryMolecule.fileName.substring(
+        rightOrdinaryMolecule.fileName.indexOf(' - '),
+        rightOrdinaryMolecule.fileName.lastIndexOf('.ket'),
+      );
+
+      test(`Case 10: Connect Center to Center of CHEM(${leftCHEM.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftCHEM, rightOrdinaryMolecule);
+
+        const bondLine = await bondTwoMonomersPointToPoint(
+          page,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
+
+        await expect(bondLine).toBeVisible();
+      });
+    });
+  });
+
+  interface IMolecule {
+    moleculeType: string;
+    fileName: string;
+    alias: string;
+    atomLocatorSelectors: string[];
+    connectionPointShifts: { x: number; y: number }[];
+  }
+
+  const molecules: { [moleculeName: string]: IMolecule } = {
+    'Benzene ring': {
+      moleculeType: 'Molecule',
+      fileName: 'KET/Molecule-Templates/1 - Benzene ring.ket',
+      alias: 'Benzene ring',
+      atomLocatorSelectors: [
+        'g > circle',
+        'g:nth-child(2) > circle',
+        'g:nth-child(3) > circle',
+        'g:nth-child(4) > circle',
+        'g:nth-child(5) > circle',
+        'g:nth-child(6) > circle',
+      ],
+      connectionPointShifts: [
+        { x: 0, y: 2 },
+        { x: -2, y: 2 },
+        { x: 2, y: 2 },
+        { x: 0, y: -2 },
+        { x: 2, y: -2 },
+        { x: -2, y: -2 },
+      ],
+    },
+  };
+
+  async function loadMonomer(page: Page, leftMonomer: IMonomer) {
+    await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
+    await getMonomerLocator(page, {
+      monomerAlias: leftMonomer.alias,
+    })
+      .first()
+      .hover();
+
+    await dragMouseTo(page, 300, 380);
+    await moveMouseAway(page);
+  }
+
+  async function loadMolecule(page: Page, molecule: IMolecule) {
+    await openFileAndAddToCanvasMacro(page, molecule.fileName);
+    await moveMouseAway(page);
+  }
+
+  async function bondMonomerPointToAtom(
+    page: Page,
+    leftPeptide: IMonomer,
+    rightMolecule: IMolecule,
+    attachmentPoint: AttachmentPoint,
+    atomIndex: number,
+  ) {
+    const leftPeptideLocator = getMonomerLocator(page, {
+      monomerAlias: leftPeptide.alias,
+    }).first();
+
+    const rightMoleculeLocator = page
+      .getByTestId(KETCHER_CANVAS)
+      .locator(rightMolecule.atomLocatorSelectors[atomIndex])
+      .first();
+
+    await bondMonomerPointToMoleculeAtom(
+      page,
+      leftPeptideLocator,
+      rightMoleculeLocator,
+      attachmentPoint,
+      rightMolecule.connectionPointShifts[atomIndex],
+    );
+  }
+
+  Object.values(chemMonomers).forEach((leftMonomer) => {
+    Object.values(molecules).forEach((rightMolecule) => {
+      /*
+       *  Test task: https://github.com/epam/ketcher/issues/5960
+       *  Description: Verify that connection points between monomers and molecules can be created by drawing bonds in macro mode
+       *  Case: Connect monomer all commection points to moleule atoms
+       *  Step: 1. Load monomer (chem) and shift it to the left
+       *        2. Load molecule (system loads it at the center)
+       *        3. Drag every connection point of monomer to any free atom of molecule
+       *        Expected result: Connection should be established
+       */
+      test(`Case 12: Connect evey connection point of of Chem(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
+        await loadMonomer(page, leftMonomer);
+        await loadMolecule(page, rightMolecule);
+
+        const attachmentPointCount = Object.keys(
+          leftMonomer.attachmentPoints,
+        ).length;
+        const atomCount = Object.keys(
+          rightMolecule.atomLocatorSelectors,
+        ).length;
+
+        for (
+          let atomIndex = 0;
+          atomIndex < Math.min(attachmentPointCount, atomCount);
+          atomIndex++
+        ) {
+          await bondMonomerPointToAtom(
+            page,
+            leftMonomer,
+            rightMolecule,
+            Object.values(leftMonomer.attachmentPoints)[atomIndex],
+            atomIndex,
+          );
+        }
+
+        await takeEditorScreenshot(page, {
+          hideMonomerPreview: true,
+        });
+      });
+    });
+  });
+});

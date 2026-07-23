@@ -1,0 +1,4 @@
+Ketcher is an open-source web-based chemical structure editor. Ketcher is designed for chemists, laboratory scientists and technicians who draw structures and reactions.
+
+Ketcher is developed using pure JavaScript and incorporates high performance, good portability and light weight. You will not need any Java or Flash plugins to use it in your browser.
+Ketcher is completely free and open-source, while also available on a commercial basis.

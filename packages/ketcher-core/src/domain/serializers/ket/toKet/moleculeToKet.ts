@@ -14,14 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  SGroup,
-  Struct,
-  SGroupAttachmentPoint,
-  AtomQueryProperties,
-} from 'domain/entities';
+import type { AtomQueryProperties } from 'domain/entities/atom';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
+import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { Vec2 } from 'domain/entities/vec2';
+import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
 
 import { ifDef } from 'utilities';
+import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
+import { isNumber } from 'lodash';
 
 function fromRlabel(rg) {
   const res: Array<any> = [];
@@ -36,11 +39,17 @@ function fromRlabel(rg) {
   return res;
 }
 
-export function moleculeToKet(struct: Struct): any {
+export interface MoleculesSelection {
+  atoms: Set<number>;
+  bonds: Set<number>;
+}
+
+export function moleculeToKet(struct: Struct, monomer?: BaseMonomer): any {
   const body: any = {
     atoms: Array.from(struct.atoms.values()).map((atom) => {
-      if (atom.label === 'R#') return rglabelToKet(atom);
-      return atomToKet(atom);
+      // For the monomers we need to serialize leaving groups as usual atom label like H, O, etc
+      if (atom.label === 'R#' && !monomer) return rglabelToKet(atom);
+      return atomToKet(atom, monomer);
     }),
   };
 
@@ -67,12 +76,20 @@ export function moleculeToKet(struct: Struct): any {
   };
 }
 
-function atomToKet(source) {
+function atomToKet(source, monomer?: BaseMonomer) {
   const result: { queryProperties?: AtomQueryProperties; type?: 'atom-list' } =
     {};
 
   if (source.label !== 'L#') {
-    ifDef(result, 'label', source.label);
+    ifDef(
+      result,
+      'label',
+      source.label === 'R#' && monomer
+        ? monomer.monomerItem.props.MonomerCaps?.[
+            getAttachmentPointLabelWithBinaryShift(source.rglabel)
+          ]
+        : source.label,
+    );
     // reaction
     ifDef(result, 'mapping', parseInt(source.aam), 0);
   } else if (source.atomList) {
@@ -82,13 +99,17 @@ function atomToKet(source) {
   }
 
   ifDef(result, 'alias', source.alias);
-  ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
+  const position: Vec2 = switchIntoChemistryCoordSystem(
+    new Vec2(source.pp.x, source.pp.y, source.pp.z),
+  );
+  ifDef(result, 'location', [position.x, position.y, position.z]);
   ifDef(result, 'charge', source.charge);
   ifDef(result, 'explicitValence', source.explicitValence, -1);
   ifDef(result, 'isotope', source.isotope);
   ifDef(result, 'radical', source.radical, 0);
   ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
   ifDef(result, 'cip', source.cip, '');
+  ifDef(result, 'selected', source.getInitiallySelected());
   // stereo
   ifDef(result, 'stereoLabel', source.stereoLabel, null);
   ifDef(result, 'stereoParity', source.stereoCare, 0);
@@ -117,13 +138,17 @@ function rglabelToKet(source) {
   const result = {
     type: 'rg-label',
   };
-  ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
+  const position: Vec2 = switchIntoChemistryCoordSystem(
+    new Vec2(source.pp.x, source.pp.y, source.pp.z),
+  );
+  ifDef(result, 'location', [position.x, position.y, position.z]);
   ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
 
   const refsToRGroups = fromRlabel(source.rglabel).map(
     (rgnumber) => `rg-${rgnumber}`,
   );
   ifDef(result, '$refs', refsToRGroups);
+  ifDef(result, 'selected', source.getInitiallySelected());
 
   return result;
 }
@@ -141,7 +166,7 @@ function bondToKet(source) {
     ifDef(result, 'center', source.reactingCenterStatus, 0);
     ifDef(result, 'cip', source.cip, '');
   }
-
+  ifDef(result, 'selected', source.getInitiallySelected());
   return result;
 }
 
@@ -152,13 +177,8 @@ function sgroupToKet(struct: Struct, source: SGroup) {
   ifDef(result, 'atoms', source.atoms);
 
   switch (source.type) {
-    case 'GEN':
-      break;
     case 'MUL': {
       ifDef(result, 'mul', source.data.mul || 1);
-      break;
-    }
-    case 'queryComponent': {
       break;
     }
     case 'SRU': {
@@ -166,7 +186,20 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       ifDef(
         result,
         'connectivity',
-        source.data.connectivity.toUpperCase() || 'ht',
+        source.data.connectivity.toUpperCase() || 'HT',
+      );
+      break;
+    }
+    case 'COP': {
+      ifDef(
+        result,
+        'subtype',
+        source.data.subtype ? source.data.subtype.toUpperCase() : null,
+      );
+      ifDef(
+        result,
+        'connectivity',
+        source.data.connectivity.toUpperCase() || 'HT',
       );
       break;
     }
@@ -174,6 +207,7 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       ifDef(result, 'name', source.data.name || '');
       ifDef(result, 'expanded', source.data.expanded);
       ifDef(result, 'id', source.id);
+      ifDef(result, 'class', source.data.class);
       ifDef(
         result,
         'attachmentPoints',
@@ -192,6 +226,8 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       ifDef(result, 'bonds', SGroup.getBonds(struct, source));
       break;
     }
+    case 'GEN':
+    case 'queryComponent':
     default:
       break;
   }
@@ -204,7 +240,13 @@ function sgroupAttachmentPointToKet(source: SGroupAttachmentPoint) {
 
   ifDef(result, 'attachmentAtom', source.atomId);
   ifDef(result, 'leavingAtom', source.leaveAtomId);
-  ifDef(result, 'attachmentId', source.attachmentId);
+  ifDef(
+    result,
+    'attachmentId',
+    isNumber(source.attachmentPointNumber)
+      ? source.attachmentPointNumber.toString()
+      : source.attachmentId,
+  );
 
   return result;
 }

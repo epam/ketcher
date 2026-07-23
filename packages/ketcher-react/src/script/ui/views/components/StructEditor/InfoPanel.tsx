@@ -14,19 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useEffect, FC } from 'react';
-import { Scale, Vec2, Render, Struct, SGroup } from 'ketcher-core';
+import { type FC, useState, useEffect } from 'react';
+import {
+  type Render,
+  type Struct,
+  Scale,
+  Vec2,
+  SGroup,
+  CoordinateTransformation,
+  MonomerMicromolecule,
+  AmbiguousMonomer,
+} from 'ketcher-core';
 
 import SGroupDataRender from './SGroupDataRender';
-import { calculateScrollOffsetX, calculateScrollOffsetY } from './helpers';
 import { functionGroupInfoSelector } from '../../../state/functionalGroups/selectors';
 import { connect } from 'react-redux';
 import clsx from 'clsx';
-import { StructRender } from 'components';
-
+import { AmbiguousMonomerPreview, PreviewType, StructRender } from 'components';
 import classes from './InfoPanel.module.less';
 
 const HOVER_PANEL_PADDING = 20;
+const MAX_INFO_PANEL_SIZE = 200;
 
 function getPanelPosition(
   clientX: number,
@@ -42,15 +50,16 @@ function getPanelPosition(
   if (sGroup) {
     // calculate width and height
     const groupBoundingBox = sGroup.areas[0];
-    const start = Scale.obj2scaled(groupBoundingBox.p0, render.options);
-    const end = Scale.obj2scaled(groupBoundingBox.p1, render.options);
-    width = end.x - start.x;
-    height = end.y - start.y;
+    const start = Scale.modelToCanvas(groupBoundingBox.p0, render.options);
+    const end = Scale.modelToCanvas(groupBoundingBox.p1, render.options);
+    width = Math.min(end.x - start.x, MAX_INFO_PANEL_SIZE);
+    height = Math.min(end.y - start.y, MAX_INFO_PANEL_SIZE);
     // calculate initial position
     const { position } = sGroup.getContractedPosition(render.ctab.molecule);
-    const panelPosition = Scale.obj2scaled(position, {
-      scale: render.options.scale * render.options.zoom,
-    });
+    const panelPosition = CoordinateTransformation.modelToView(
+      position,
+      render,
+    );
     x = panelPosition.x - width / 2 - HOVER_PANEL_PADDING;
     y = panelPosition.y + HOVER_PANEL_PADDING;
     // adjust position to keep inside viewport
@@ -65,9 +74,6 @@ function getPanelPosition(
     if (clientY > viewportBottomLimit) {
       y = panelPosition.y - height - HOVER_PANEL_PADDING * 3;
     }
-    // adjust position to current scroll offset
-    x += calculateScrollOffsetX(render);
-    y += calculateScrollOffsetY(render);
   }
 
   return [new Vec2(x, y), new Vec2(width, height)];
@@ -100,6 +106,33 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   useEffect(() => {
     setMolecule(groupStruct ? groupStruct.clone() : null);
   }, [groupName, groupStruct]);
+
+  // Ambiguous monomer tooltip uses marker coordinates, not mouse position,
+  // so it must be checked before the clientX/clientY guard.
+  // sGroup.pp must exist to avoid assertion error in getContractedPosition.
+  if (sGroup instanceof MonomerMicromolecule && render && sGroup.pp) {
+    const monomer = sGroup.monomer;
+    if (monomer instanceof AmbiguousMonomer) {
+      const { position } = sGroup.getContractedPosition(render.ctab.molecule);
+      const markerPos = CoordinateTransformation.modelToView(position, render);
+      const TOOLTIP_GAP = 10;
+
+      return (
+        <AmbiguousMonomerPreview
+          preview={{
+            type: PreviewType.AmbiguousMonomer,
+            monomer: monomer.variantMonomerItem,
+          }}
+          style={{
+            position: 'absolute',
+            left: `${markerPos.x}px`,
+            top: `${markerPos.y + TOOLTIP_GAP}px`,
+            transform: 'translate(-50%, 0)',
+          }}
+        />
+      );
+    }
+  }
 
   const nonTooltipSGroup =
     !sGroup || SGroup.isMulSGroup(sGroup) || SGroup.isSRUSGroup(sGroup);
@@ -136,9 +169,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
         struct={molecule}
         options={{
           ...render.options,
-          autoScale: true,
-          autoScaleMargin: 0,
-          rescaleAmount: 1,
+          downScale: true,
           cachePrefix: 'infoPanel',
           needCache: false,
           width,
@@ -151,7 +182,6 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
       clientX={clientX}
       clientY={clientY}
       render={render}
-      groupStruct={groupStruct}
       sGroup={sGroup}
       sGroupData={sGroupData}
       className={className}

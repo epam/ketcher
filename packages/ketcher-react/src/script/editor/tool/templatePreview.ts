@@ -23,11 +23,11 @@ import {
   Action,
   fromTemplateOnCanvas,
   fromMultipleMove,
-  getHoverToFuse,
+  CoordinateTransformation,
 } from 'ketcher-core';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { MODES } from 'src/constants';
-import { getAngleFromEvent, getBondFlipSign } from './template';
+import { getAngleFromEvent, getBondFlipSign } from './template.helpers';
 
 const PREVIEW_DELAY = 300;
 type ClosestItemType = { map: string; id: number; dist: number };
@@ -83,7 +83,7 @@ class TemplatePreview {
     this.hideFloatingPreview();
   }
 
-  private getPreviewTarget() {
+  private getPreviewTarget(event: PointerEvent) {
     const ci: ClosestItemType | null = this.editor.findItem(event, [
       'atoms',
       'bonds',
@@ -97,9 +97,13 @@ class TemplatePreview {
   }
 
   movePreview(event: PointerEvent) {
-    this.position = this.editor.render.page2obj(event);
+    this.position = CoordinateTransformation.pageToModel(
+      event,
+      this.editor.render,
+    );
 
-    const previewTarget = this.getPreviewTarget();
+    const struct = this.editor.struct();
+    const previewTarget = this.getPreviewTarget(event);
     const isMouseAwayFromAtomsAndBonds = !previewTarget;
     const isPreviewTargetChanged =
       previewTarget && this.lastPreviewId !== getUniqueCiId(previewTarget);
@@ -109,13 +113,13 @@ class TemplatePreview {
 
     const shouldShowPreview =
       previewTarget &&
+      !struct.isTargetFromMacromolecule(previewTarget) &&
       !this.connectedPreviewAction &&
       !this.connectedPreviewTimeout;
 
     if (shouldHidePreview) {
       this.hideConnectedPreview();
     }
-
     if (shouldShowPreview) {
       this.lastPreviewId = getUniqueCiId(previewTarget);
       this.connectedPreviewTimeout = setTimeout(() => {
@@ -127,34 +131,18 @@ class TemplatePreview {
       if (!this.floatingPreview) {
         this.showFloatingPreview(this.position);
         this.previousPosition = this.position;
-        this.editor.render.update(false, null, { resizeCanvas: false });
+        this.editor.render.update(false, null);
       } else {
-        this.moveFloatingPreview(previewTarget, event);
+        this.moveFloatingPreview();
       }
     }
   }
 
-  private moveFloatingPreview(
-    previewTarget: ClosestItemType | null,
-    event: PointerEvent,
-  ) {
+  private moveFloatingPreview() {
     const dist = this.position.sub(this.previousPosition);
     this.previousPosition = this.position;
     fromMultipleMove(this.restruct, this.floatingPreview, dist);
-    this.editor.render.update(false, null, { resizeCanvas: false });
-    this.hoverFusedItems(previewTarget, event);
-  }
-
-  private hoverFusedItems(
-    closestItem: ClosestItemType | null,
-    event: PointerEvent,
-  ) {
-    if (this.mode === 'fg') {
-      this.editor.hover(closestItem, null, event);
-    } else {
-      const mergeItems = getItemsToFuse(this.editor, this.floatingPreview);
-      this.editor.hover(getHoverToFuse(mergeItems));
-    }
+    this.editor.render.update(false, null);
   }
 
   private showFloatingPreview(position: Vec2) {
@@ -164,7 +152,7 @@ class TemplatePreview {
       position,
     );
 
-    this.editor.render.update(true, null, { resizeCanvas: false });
+    this.editor.render.update(true, null);
   }
 
   private hideFloatingPreview() {
@@ -176,7 +164,7 @@ class TemplatePreview {
     }
   }
 
-  private hideConnectedPreview() {
+  public hideConnectedPreview() {
     if (this.connectedPreviewAction) {
       this.connectedPreviewAction.perform(this.restruct);
       this.connectedPreviewAction = null;

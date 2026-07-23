@@ -16,7 +16,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { ToolbarItem } from '../../toolbar.types';
+import type { ToolbarItem } from '../../toolbar.types';
 
 type HookParams = [string, string | null, ToolbarItem[]];
 
@@ -24,7 +24,7 @@ function usePortalOpening([id, opened, options]: HookParams): [boolean] {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    const currentId = (options.length && options![0].id) || '';
+    const currentId = (options.length && options[0].id) || '';
     const newState = opened === id || opened === currentId;
     setIsOpen(newState);
   }, [opened, options]);

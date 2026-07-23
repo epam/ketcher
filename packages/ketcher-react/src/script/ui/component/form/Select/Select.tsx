@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,10 +15,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import MuiSelect, { SelectChangeEvent } from '@mui/material/Select';
+import MuiSelect, { type SelectChangeEvent } from '@mui/material/Select';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
-import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import clsx from 'clsx';
 import styles from './Select.module.less';
 import { Icon } from 'components';
@@ -25,21 +26,27 @@ import { Icon } from 'components';
 export interface Option {
   value: string;
   label: string;
+  children?: ReactNode;
+  disabled?: boolean;
 }
 
 interface Props {
   options: Array<Option>;
   onChange: (value: string) => void;
   className?: string;
-  value?: string;
+  value?: string | number;
   multiple?: boolean;
   disabled?: boolean;
   formName?: string;
   name?: string;
+  placeholder?: string;
+  'data-testid'?: string;
+  error?: boolean;
+  title?: string;
 }
 
 const ChevronIcon = ({ className }) => (
-  <Icon name="chevron" className={clsx(className, styles.chevronIcon)} />
+  <Icon name="chevron" className={className} />
 );
 
 const Select = ({
@@ -51,16 +58,16 @@ const Select = ({
   options,
   formName,
   name,
+  placeholder,
+  'data-testid': testId,
+  error,
+  title,
 }: Props) => {
-  const [currentValue, setCurrentValue] = useState<Option>();
-
-  useEffect(() => {
-    let option;
-    if (options) {
-      option = options.find((option) => option.value === value);
-    }
-    return setCurrentValue(option);
-  }, [options, value]);
+  const currentValue = options?.find((option) => option.value === value);
+  const isFullscreen = !!document.fullscreenElement;
+  const portalContainer = isFullscreen
+    ? document.querySelector('#root')
+    : undefined;
 
   const handleChange = (event: SelectChangeEvent) => {
     onChange(event.target.value);
@@ -70,35 +77,50 @@ const Select = ({
     <MuiSelect
       className={clsx(styles.selectContainer, className)}
       value={currentValue?.value ?? ''}
+      title={title}
       onChange={handleChange}
+      renderValue={(selected: string) =>
+        (currentValue?.children ??
+          currentValue?.label ??
+          placeholder ??
+          selected ??
+          '') as any
+      }
+      displayEmpty
       multiple={multiple}
       disabled={disabled}
-      MenuProps={{ className: styles.dropdownList }}
+      placeholder={placeholder}
+      MenuProps={{
+        container: portalContainer,
+        className: styles.dropdownList,
+      }}
       IconComponent={ChevronIcon}
+      data-testid={testId}
+      error={error}
     >
-      {options &&
-        options.map((option) => {
-          const isDivider: boolean =
-            typeof option?.value === 'string'
-              ? option.value.includes('Divider')
-              : false;
+      {options?.map((option) => {
+        const isDivider: boolean =
+          typeof option?.value === 'string'
+            ? option.value.includes('Divider')
+            : false;
 
-          return isDivider ? (
-            <Divider className={styles.listDivider} key={option.value} />
-          ) : (
-            <MenuItem
-              value={option.value}
-              key={option.value}
-              disableRipple={true}
-              className={clsx({
-                [`dropdown-${formName}_${name}`]: formName,
-              })}
-              data-testid={`${option.label}-option`}
-            >
-              {option.label}
-            </MenuItem>
-          );
-        })}
+        return isDivider ? (
+          <Divider className={styles.listDivider} key={option.value} />
+        ) : (
+          <MenuItem
+            value={option.value}
+            key={option.value}
+            disableRipple={true}
+            disabled={option.disabled}
+            className={clsx({
+              [`dropdown-${formName}_${name}`]: formName,
+            })}
+            data-testid={`${option.label}-option`}
+          >
+            <>{option.children ?? option.label}</>
+          </MenuItem>
+        );
+      })}
     </MuiSelect>
   );
 };

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CSSProperties, Component, ReactNode } from 'react';
+import { type CSSProperties, type ReactNode, Component } from 'react';
 
 import ReactDOM from 'react-dom';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
@@ -26,6 +26,7 @@ interface PortalProps {
   className?: string;
   style?: CSSProperties;
   children: ReactNode;
+  testId?: string;
 }
 
 type Props = PortalProps;
@@ -38,6 +39,10 @@ class Portal extends Component<Props> {
     super(props);
     this.element = document.createElement('div');
     this.isElementInDom = false;
+
+    if (this.props.testId) {
+      this.element.setAttribute('data-testid', this.props.testId);
+    }
   }
 
   componentDidMount() {

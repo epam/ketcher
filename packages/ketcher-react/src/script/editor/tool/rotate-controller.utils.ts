@@ -1,4 +1,4 @@
-import { Vec2 } from 'ketcher-core';
+import type { Vec2 } from 'ketcher-core';
 
 export const rotatePoint = (
   centerPoint: Vec2,

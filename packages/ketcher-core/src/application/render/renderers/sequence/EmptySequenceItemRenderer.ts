@@ -1,0 +1,22 @@
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import type { D3SvgElementSelection } from 'application/render/types';
+
+export class EmptySequenceItemRenderer extends BaseSequenceItemRenderer {
+  get symbolToDisplay(): string {
+    return '';
+  }
+
+  protected drawModification() {
+    // intentional no-op: this monomer type does not have a modification glyph
+  }
+
+  protected appendRootElement() {
+    this.rootElement = super.appendRootElement();
+    this.rootElement?.attr('data-symbol-type', 'Empty');
+
+    return this.rootElement as never as D3SvgElementSelection<
+      SVGGElement,
+      void
+    >;
+  }
+}

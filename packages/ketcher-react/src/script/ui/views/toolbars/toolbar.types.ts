@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import type { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
 
 type TopGroup = 'document' | 'edit' | 'zoom' | 'process' | 'meta';
 
@@ -68,6 +69,7 @@ type LeftToolbarItemVariant =
   | 'select'
   | 'select-lasso'
   | 'select-rectangle'
+  | 'select-structure'
   | 'select-fragment'
   | 'erase'
   // bond group
@@ -106,6 +108,7 @@ type LeftToolbarItemVariant =
   | 'reaction-arrow-filled-bow'
   | 'reaction-arrow-dashed-open-angle'
   | 'reaction-arrow-failed'
+  | 'reaction-arrow-retrosynthetic'
   | 'reaction-arrow-both-ends-filled-triangle'
   | 'reaction-arrow-equilibrium-filled-half-bow'
   | 'reaction-arrow-equilibrium-filled-triangle'
@@ -118,6 +121,7 @@ type LeftToolbarItemVariant =
   | 'reaction-arrow-elliptical-arc-arrow-filled-triangle'
   | 'reaction-arrow-elliptical-arc-arrow-open-angle'
   | 'reaction-arrow-elliptical-arc-arrow-open-half-angle'
+  | typeof MULTITAIL_ARROW_TOOL_NAME
   // mapping
   | 'reaction-mapping-tools'
   | 'reaction-automap'
@@ -128,13 +132,17 @@ type LeftToolbarItemVariant =
   | 'rgroup-label'
   | 'rgroup-fragment'
   | 'rgroup-attpoints'
+  // create monomer
+  | 'create-monomer'
   // shape group
   | 'shapes'
   | 'shape-ellipse'
   | 'shape-rectangle'
   | 'shape-line'
   // text group
-  | 'text';
+  | 'text'
+  // image group
+  | typeof IMAGE_KEY;
 
 type BottomToolbarItemVariant =
   | 'template-common'

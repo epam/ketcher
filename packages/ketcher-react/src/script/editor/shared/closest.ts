@@ -23,6 +23,9 @@ import {
   IMAGE_KEY,
   MULTITAIL_ARROW_KEY,
   FunctionalGroup,
+  getOrThrow,
+  atomsForBondNotFoundMessage,
+  entityNotFoundMessage,
 } from 'ketcher-core';
 import type { ClosestItem, ClosestItemWithMap } from './closest.types';
 
@@ -189,10 +192,18 @@ function findClosestBond(
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const p1 = restruct.atoms.get(bond.b.begin)!.a.pp;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const p2 = restruct.atoms.get(bond.b.end)!.a.pp;
+    const beginAtom = getOrThrow(
+      restruct.atoms,
+      bond.b.begin,
+      atomsForBondNotFoundMessage(bid, bond.b.begin, bond.b.end),
+    );
+    const endAtom = getOrThrow(
+      restruct.atoms,
+      bond.b.end,
+      atomsForBondNotFoundMessage(bid, bond.b.begin, bond.b.end),
+    );
+    const p1 = beginAtom.a.pp;
+    const p2 = endAtom.a.pp;
 
     const mid = Vec2.lc2(p1, 0.5, p2, 0.5);
     const cdist = Vec2.dist(pos, mid);
@@ -208,8 +219,11 @@ function findClosestBond(
       closestBondCenter = bid;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const hb = restruct.molecule.halfBonds.get(bond.b.hb1 as number)!;
+    const hb = getOrThrow(
+      restruct.molecule.halfBonds,
+      bond.b.hb1 as number,
+      `Half-bond ${bond.b.hb1} for bond ${bid} not found`,
+    );
     const dir = hb.dir;
     const norm = hb.norm;
 
@@ -321,9 +335,13 @@ function findClosestFrag(
   const closestAtom = findClosestAtom(restruct, pos, skip, minDist);
 
   if (closestAtom) {
+    const atom = getOrThrow(
+      struct.atoms,
+      closestAtom.id,
+      entityNotFoundMessage('Atom', closestAtom.id),
+    );
     return {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: struct.atoms.get(closestAtom.id)!.fragment,
+      id: atom.fragment,
       dist: closestAtom.dist,
     };
   }
@@ -331,11 +349,19 @@ function findClosestFrag(
   const closestBond = findClosestBond(restruct, pos, skip, minDist, options);
 
   if (closestBond) {
-    // eslint-disable-next-line
-    const atomId = struct.bonds.get(closestBond.id)!.begin;
+    const bond = getOrThrow(
+      struct.bonds,
+      closestBond.id,
+      entityNotFoundMessage('Bond', closestBond.id),
+    );
+    const atomId = bond.begin;
+    const atom = getOrThrow(
+      struct.atoms,
+      atomId,
+      entityNotFoundMessage('Atom', atomId),
+    );
     return {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: struct.atoms.get(atomId)!.fragment,
+      id: atom.fragment,
       dist: closestBond.dist,
     };
   }
@@ -510,8 +536,12 @@ function findClosestFG(restruct: ReStruct, pos: Vec2, skip) {
       const cursorPosition = new Vec2(x, y);
 
       const dist = Vec2.dist(rectangleCenter, cursorPosition);
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const { id } = reSGroup.item!;
+      const sGroupItem = reSGroup.item;
+      if (!sGroupItem) {
+        // A ReSGroup is always constructed with its underlying SGroup item.
+        throw new Error(`ReSGroup ${reSGroupId} has no item`);
+      }
+      const { id } = sGroupItem;
       return { id, dist };
     }
   }
@@ -587,17 +617,17 @@ function findCloseMerge(
   selected.bonds.forEach((bid) => {
     const bond = struct.bonds.get(bid);
     if (bond) {
-      pos.bonds.set(
-        bid,
-        Vec2.lc2(
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          struct.atoms.get(bond.begin)!.pp,
-          0.5,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          struct.atoms.get(bond.end)!.pp,
-          0.5,
-        ),
+      const beginAtom = getOrThrow(
+        struct.atoms,
+        bond.begin,
+        atomsForBondNotFoundMessage(bid, bond.begin, bond.end),
       );
+      const endAtom = getOrThrow(
+        struct.atoms,
+        bond.end,
+        atomsForBondNotFoundMessage(bid, bond.begin, bond.end),
+      );
+      pos.bonds.set(bid, Vec2.lc2(beginAtom.pp, 0.5, endAtom.pp, 0.5));
     }
   });
 

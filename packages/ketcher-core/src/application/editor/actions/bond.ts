@@ -213,7 +213,11 @@ export function fromBondsAttrs(
 
       const value = key in attrs ? attrs[key] : Bond.attrGetDefault(key);
 
-      action.addOp(new BondAttr(bid, key, value).perform(restruct));
+      action.addOp(
+        new BondAttr(bid, key as keyof typeof Bond.attrlist, value).perform(
+          restruct,
+        ),
+      );
       if (key === 'stereo' && key in attrs) {
         const bond = struct.bonds.get(bid);
         if (bond) {

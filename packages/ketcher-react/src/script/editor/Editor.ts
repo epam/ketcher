@@ -3799,10 +3799,10 @@ function setHover(ci: HoverTarget, visible: boolean, render: Render) {
       let combinedPath: paper.PathItem | null = null;
       const options = render.options;
       const hoverVisel = new Visel('mergedHover');
-      const elements: Element[] = [];
+      const elements: SVGElement[] = [];
 
       hoversToCombine.forEach((item) => {
-        if (item?.node) {
+        if (item?.node instanceof SVGElement) {
           elements.push(item.node);
           item.node.remove();
         }

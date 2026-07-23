@@ -8,10 +8,10 @@ import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 
 export function getRenderedStructuresBbox(drawingEntities?: DrawingEntity[]) {
-  let left;
-  let right;
-  let top;
-  let bottom;
+  let left: number | undefined;
+  let right: number | undefined;
+  let top: number | undefined;
+  let bottom: number | undefined;
   const editor = provideEditorInstance();
 
   (
@@ -40,11 +40,27 @@ export function getRenderedStructuresBbox(drawingEntities?: DrawingEntity[]) {
 
     assert(monomerPosition);
 
-    left = left ? Math.min(left, monomerPosition.x) : monomerPosition.x;
-    right = right ? Math.max(right, monomerPosition.x) : monomerPosition.x;
-    top = top ? Math.min(top, monomerPosition.y) : monomerPosition.y;
-    bottom = bottom ? Math.max(bottom, monomerPosition.y) : monomerPosition.y;
+    left =
+      left !== undefined
+        ? Math.min(left, monomerPosition.x)
+        : monomerPosition.x;
+    right =
+      right !== undefined
+        ? Math.max(right, monomerPosition.x)
+        : monomerPosition.x;
+    top =
+      top !== undefined ? Math.min(top, monomerPosition.y) : monomerPosition.y;
+    bottom =
+      bottom !== undefined
+        ? Math.max(bottom, monomerPosition.y)
+        : monomerPosition.y;
   });
+  assert(
+    left !== undefined &&
+      right !== undefined &&
+      top !== undefined &&
+      bottom !== undefined,
+  );
   return {
     left,
     right,

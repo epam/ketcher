@@ -80,15 +80,14 @@ test.describe('Bugs: ketcher-3.14.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 2: The Copolymer S-Group type should not be displayed unless there are at least two structural repeating units (SRUs) in selection', async () => {
+  test('Case 2: The Copolymer S-Group type should be displayed regardless of the number of SRUs in selection', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/9901
-     * Bug: https://github.com/epam/ketcher/issues/9113
+     * Bug: https://github.com/epam/ketcher/issues/10470
      * Version: 3.14.0
      * Description:
-     * Copolymer S-Group type should only be displayed when there are at least two
-     * structural repeating units (SRUs) in the selection. With only one SRU,
-     * the Copolymer option should be inactive and not selectable.
+     * Copolymer S-Group type should always be displayed in the Type dropdown,
+     * regardless of the number of structural repeating units (SRUs) in the selection.
      *
      * Scenario:
      * 1. Go to Molecules mode (clean canvas)
@@ -99,8 +98,7 @@ test.describe('Bugs: ketcher-3.14.0', () => {
      * 6. Check if Copolymer option is available
      *
      * Expected Result:
-     * - Copolymer option is NOT active and cannot be selected
-     * - Copolymer option is not displayed in the Type dropdown list
+     * - Copolymer option IS displayed in the Type dropdown list
      */
 
     // Add a simple chain molecule (one SRU) and selecte the structure
@@ -113,14 +111,14 @@ test.describe('Bugs: ketcher-3.14.0', () => {
     // Open S-Group Properties dialog
     await LeftToolbar(page).sGroup();
 
-    // Verify that Copolymer option is not available in the Type dropdown
+    // Verify that Copolymer option is available in the Type dropdown
     const dialog = SGroupPropertiesDialog(page);
     await dialog.typeDropdown.click();
 
     const options = page.getByRole('option');
     const optionTexts = await options.allTextContents();
-    // Verify Copolymer is not in the list
-    expect(optionTexts).not.toContain('Copolymer');
+    // Verify Copolymer is in the list
+    expect(optionTexts).toContain('Copolymer');
 
     // Close dropdown and dialog
     await page.keyboard.press('Escape');

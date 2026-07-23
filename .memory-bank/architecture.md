@@ -78,55 +78,60 @@ ketcher-core/src/
 
 When the user interacts with the canvas (click, drag, key press), the editor captures the raw DOM event and forwards it through its event bus to the active mode and the active tool. The tool is responsible for deciding what should happen: it validates and interprets the event data, asks the drawing-entities manager to build a Command (a grouped set of reversible operations), then hands that Command to the history (so the action can be undone) and to the renderers manager (so the canvas updates to reflect the change).
 
+```mermaid
+flowchart TD
+    A["User gesture (click / drag / key)"] --> B[SVG canvas DOM event]
+    B --> C[Editor event bus]
+    C --> D[active Mode]
+    C --> E[active Tool]
+
+    subgraph command-cycle["Command cycle"]
+        F[DrawingEntitiesManager]
+        G[EditorHistory]
+        H[RenderersManager]
+    end
+
+    D -->|"build Command"| F
+    D -->|"push to undo/redo"| G
+    D -->|"update canvas"| H
+    E -->|"build Command"| F
+    E -->|"push to undo/redo"| G
+    E -->|"update canvas"| H
+
+    D:::note
+    E:::note
+    F:::note
+    G:::note
+    H:::note
+
+    classDef note fill:#fafafa
 ```
-User gesture (click / drag / key)
-        │
-        ▼
-   SVG canvas DOM event
-        │
-        ▼
-   Editor event bus
-        │
-        ├──────────────────────────────────┐
-        ▼                                  ▼
-  active Mode                        active Tool
-                                (interprets the event,
-                                validates, calculates)
-                                           │
-                                           │
-                                           ▼
-                               DrawingEntitiesManager
-                               builds  Command
-                               (grouped reversible operations)
-                                           │
-                              ┌────────────┴────────────┐
-                              ▼                         ▼
-                        EditorHistory            RenderersManager
-                        push to                  execute Command →
-                        undo/redo stack          update SVG canvas
-```
+
+- **active Tool** — interprets the event, validates, calculates
+- **DrawingEntitiesManager** — builds a Command (grouped reversible operations)
+- **EditorHistory** — pushes Command to undo/redo stack
+- **RenderersManager** — executes Command, updates SVG canvas
 
 **Format conversion flow** — see [serialization deep-dive](./modules/serialization.md) for full details.
 
 When the user exports or imports a structure, the formatter factory picks the right strategy based on the requested format. KET and MOL V2000 are handled by Ketcher itself. Every other format (SMILES, InChI, HELM, FASTA, and so on) is routed through Indigo — either a remote server or the embedded WASM build. In that case the model is first serialized to KET (the universal interchange format), sent to Indigo for conversion, and the result is returned. Import is the mirror: non-local formats are sent to Indigo, which returns KET, and KET is then deserialized into the internal model.
 
-```
-                    Export                               Import
-                    ──────                               ──────
+```mermaid
+flowchart LR
+    subgraph Export
+        IM[internal model] --> FF1[formatter factory]
+        FF1 -->|KET / MOL V2000| LS[local serializer]
+        FF1 -->|other formats| IND1[Indigo HTTP/WASM]
+        LS --> OS1[output string]
+        IND1 -->|convert to target format| OS1
+    end
 
-  internal model                               input string (any supported format)
-        │                                                │
-        ▼                                                ▼
-  formatter factory                           format detection
-  picks strategy                              picks strategy
-        │                                                │
-        ├── KET / MOL V2000 ──► local serializer         ├── KET / MOL V2000 ──► local deserializer
-        │                            │                   │                            │
-        └── other formats ──► Indigo (HTTP / WASM)       └── other formats ──► Indigo (HTTP / WASM)
-                                     │                                               │
-                              convert to target format                        convert to KET
-                                     │                                               │
-                               output string                               KET deserializer
-                                                                                     │
-                                                                           internal model (Struct / DEM)
+    subgraph Import
+        IS[input string] --> FD[format detection]
+        FD -->|KET / MOL V2000| LD[local deserializer]
+        FD -->|other formats| IND2[Indigo HTTP/WASM]
+        IND2 -->|convert to KET| KD[KET deserializer]
+        LD --> MDL[internal model]
+        KD --> MDL
+    end
 ```

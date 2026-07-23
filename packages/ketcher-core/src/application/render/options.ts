@@ -20,6 +20,8 @@ import { ShowHydrogenLabels } from './restruct/showHydrogenLabels';
 import type { RenderOptions } from './render.types';
 import {
   SELECTION_COLOR,
+  SELECTION_HANDLE_FILL_COLOR,
+  SELECTION_HANDLE_STROKE_COLOR,
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
 
@@ -122,6 +124,25 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
       stroke: SELECTION_COLOR,
       'stroke-width': scaleFactorMicro / 4,
       'stroke-linecap': 'round',
+    },
+    selectionHandleStyle: {
+      fill: SELECTION_HANDLE_FILL_COLOR,
+      stroke: SELECTION_HANDLE_STROKE_COLOR,
+      'stroke-width': scaleFactorMicro / 20,
+    },
+    arrowSelectionStyle: {
+      stroke: SELECTION_COLOR,
+      'stroke-width': scaleFactorMicro / 4,
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      fill: 'none',
+    },
+    arrowHoverStyle: {
+      stroke: '#0097A8',
+      'stroke-width': scaleFactorMicro / 10,
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      fill: 'none',
     },
     movingStyle: {
       cursor: 'all-scroll',

@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`draw arrow paths getArrowPath snapshot for both-ends-filled-triangle 1`] = `"M10 50L110 50 85 62.5 85 37.5 110 50M10 50L35 37.5 35 62.5 10 50"`;
+
+exports[`draw arrow paths getArrowPath snapshot for dashed-open-angle 1`] = `"M10 50L18.75 50M27.5 50L36.25 50M45 50L53.75 50M62.5 50L71.25 50M80 50L88.75 50M97.5 50L106.25 50M110 50L85 62.5M110 50L85 37.5"`;
+
+exports[`draw arrow paths getArrowPath snapshot for elliptical-arc-arrow-filled-bow 1`] = `"M10 50A50 20 0 0 1 110 50L97.5 25l12.5 10 12.5-10-12.5 25"`;
+
+exports[`draw arrow paths getArrowPath snapshot for elliptical-arc-arrow-filled-triangle 1`] = `"M10 50A50 20 0 0 1 110 50L97.5 25l25 0-12.5 25"`;
+
+exports[`draw arrow paths getArrowPath snapshot for elliptical-arc-arrow-open-angle 1`] = `"M10 50A50 20 0 0 1 110 50L97.5 25M110 50L122.5 25"`;
+
+exports[`draw arrow paths getArrowPath snapshot for elliptical-arc-arrow-open-half-angle 1`] = `"M10 50A50 20 0 0 1 110 50L122.5 25"`;
+
+exports[`draw arrow paths getArrowPath snapshot for equilibrium-filled-half-bow 1`] = `"M10 40L110 40 85 27.5 95 40ZM110 60L10 60 35 72.5 25 60Z"`;
+
+exports[`draw arrow paths getArrowPath snapshot for equilibrium-filled-triangle 1`] = `"M10 40L110 40 85 52.5 85 27.5 110 40ZM110 60L10 60 35 72.5 35 47.5 10 60Z"`;
+
+exports[`draw arrow paths getArrowPath snapshot for equilibrium-open-angle 1`] = `"M10 40L110 40 85 27.5M10 60L110 60M10 60L35 72.5"`;
+
+exports[`draw arrow paths getArrowPath snapshot for failed 1`] = `"M10 50L110 50 85 62.5 95 50 85 37.5 110 50ZM80 70L40 30M80 30L40 70"`;
+
+exports[`draw arrow paths getArrowPath snapshot for filled-bow 1`] = `"M10 50L110 50 85 62.5 95 50 85 37.5 110 50Z"`;
+
+exports[`draw arrow paths getArrowPath snapshot for filled-triangle 1`] = `"M10 50L110 50 85 62.5 85 37.5 110 50Z"`;
+
+exports[`draw arrow paths getArrowPath snapshot for open-angle 1`] = `"M10 50L110 50 85 40M110 50L85 60"`;
+
+exports[`draw arrow paths getArrowPath snapshot for retrosynthetic 1`] = `"M10 40L110 40 85 27.5 135 50M10 60L110 60 85 72.5 135 50"`;
+
+exports[`draw arrow paths getArrowPath snapshot for unbalanced-equilibrium-filled-half-bow 1`] = `"M10 40L110 40 85 27.5 95 40ZM90 60L30 60 55 72.5 45 60Z"`;
+
+exports[`draw arrow paths getArrowPath snapshot for unbalanced-equilibrium-filled-half-triangle 1`] = `"M10 40L110 40 85 27.5 85 40ZM30 60L90 60M30 60L55 72.5 55 60Z"`;
+
+exports[`draw arrow paths getArrowPath snapshot for unbalanced-equilibrium-large-filled-half-bow 1`] = `"M10 40L110 40 85 21.25 95 40ZM30 60L90 60M30 60L55 78.75 45 60Z"`;
+
+exports[`draw arrow paths getArrowPath snapshot for unbalanced-equilibrium-open-half-angle 1`] = `"M10 40L110 40 85 27.5M30 60L90 60M30 60L55 72.5"`;

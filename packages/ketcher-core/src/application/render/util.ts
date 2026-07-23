@@ -26,6 +26,7 @@ import type ReStruct from './restruct/restruct';
 import type Visel from './restruct/visel';
 import type { RelativeBox, RenderOptions } from './render.types';
 import { UsageInMacromolecule } from './render.constants';
+import { toFixed } from 'utilities';
 
 function relBox(box: RaphaelAxisAlignedBoundingBox): RelativeBox {
   return {
@@ -128,6 +129,113 @@ function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
     obj.pos2.y += aPoint.y;
   }
   return obj;
+}
+
+function findMiddlePoint(height: number, a: Vec2, b: Vec2) {
+  if (+toFixed(height) === 0) {
+    const minX = Math.min(a.x, b.x);
+    const minY = Math.min(a.y, b.y);
+    const x = minX + Math.abs(a.x - b.x) / 2;
+    const y = minY + Math.abs(a.y - b.y) / 2;
+    return new Vec2(x, y);
+  }
+  const length = Math.hypot(b.x - a.x, b.y - a.y);
+  const lengthHyp = Math.hypot(length / 2, height);
+  const coordinates1 = calcCoordinates(a, b, lengthHyp).pos1;
+  const coordinates2 = calcCoordinates(a, b, lengthHyp).pos2;
+
+  if (height > 0) {
+    if (b.x < a.x) {
+      return new Vec2(coordinates1?.x, coordinates1?.y);
+    }
+    if (b.x > a.x) {
+      return new Vec2(coordinates2?.x, coordinates2?.y);
+    }
+    if (b.x === a.x) {
+      if (b.y > a.y) {
+        return new Vec2(coordinates2?.x, coordinates2?.y);
+      }
+      if (b.y < a.y) {
+        return new Vec2(coordinates1?.x, coordinates1?.y);
+      }
+      if (b.y === a.y) {
+        return new Vec2(a.x, a.y);
+      }
+    }
+  } else {
+    if (b.x > a.x) {
+      return new Vec2(coordinates1?.x, coordinates1?.y);
+    }
+    if (b.x < a.x) {
+      return new Vec2(coordinates2?.x, coordinates2?.y);
+    }
+    if (b.x === a.x) {
+      if (b.y > a.y) {
+        return new Vec2(coordinates1?.x, coordinates1?.y);
+      }
+      if (b.y < a.y) {
+        return new Vec2(coordinates2?.x, coordinates2?.y);
+      }
+      if (b.y === a.y) {
+        return new Vec2(a.x, a.y);
+      }
+    }
+  }
+  return new Vec2(a.x, a.y);
+}
+
+/**
+ * Returns points along an elliptical arc from `a` to `b` with the given apex height.
+ * Parameterization: p(0)=a, p(π)=b, p(π/2)=apex.
+ */
+function getEllipticalArcPoints(
+  a: Vec2,
+  b: Vec2,
+  height: number,
+  segmentCount = 16,
+): Vec2[] {
+  const chordMid = Vec2.centre(a, b);
+  const halfChord = Vec2.diff(b, a).scaled(0.5);
+  const apex = findMiddlePoint(height, a, b);
+  const heightVec = Vec2.diff(apex, chordMid);
+  const points: Vec2[] = [];
+
+  for (let i = 0; i <= segmentCount; i++) {
+    const theta = (Math.PI * i) / segmentCount;
+    const cosTheta = Math.cos(theta);
+    const sinTheta = Math.sin(theta);
+    points.push(
+      Vec2.sum(
+        Vec2.sum(chordMid, halfChord.scaled(-cosTheta)),
+        heightVec.scaled(sinTheta),
+      ),
+    );
+  }
+
+  return points;
+}
+
+/**
+ * Minimum distance from `point` to an elliptical arc defined by endpoints and apex height.
+ */
+function calculateDistanceToEllipticalArc(
+  point: Vec2,
+  a: Vec2,
+  b: Vec2,
+  height: number,
+): number {
+  const arcPoints = getEllipticalArcPoints(a, b, height);
+  let minDist = Infinity;
+
+  for (let i = 0; i < arcPoints.length - 1; i++) {
+    const segmentDist = point.calculateDistanceToLine([
+      arcPoints[i],
+      arcPoints[i + 1],
+    ]);
+    minDist = Math.min(minDist, segmentDist);
+  }
+
+  return minDist;
 }
 
 function getCIPValuePath({
@@ -266,6 +374,9 @@ const util = {
   relBox,
   shiftRayBox,
   calcCoordinates,
+  findMiddlePoint,
+  getEllipticalArcPoints,
+  calculateDistanceToEllipticalArc,
   drawCIPLabel,
   updateHalfBondCoordinates,
   escapeHtml,

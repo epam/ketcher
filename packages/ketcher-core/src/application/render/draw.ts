@@ -61,29 +61,6 @@ function rectangle(paper: RaphaelPaper, points: [Vec2, Vec2]) {
   );
 }
 
-function rectangleArrowHighlightAndSelection(
-  _paper: RaphaelPaper,
-  { pos: [start], height }: ArrowItem,
-  length: number,
-  angle: number,
-) {
-  const endX = start.x + length;
-  const [wOffset, hOffset] = [5, height || 8];
-
-  const path =
-    `M${toFixed(start.x - wOffset)},${toFixed(start.y)}` +
-    `L${toFixed(start.x - wOffset)},${toFixed(start.y - hOffset)}` +
-    `L${toFixed(endX + wOffset)},${toFixed(start.y - hOffset)}` +
-    `L${toFixed(endX + wOffset)},${toFixed(
-      start.y + (!height ? hOffset : 0),
-    )}` +
-    `L${toFixed(start.x - wOffset)},${toFixed(
-      start.y + (!height ? hOffset : 0),
-    )}Z`;
-
-  return svgPath(path).rotate(angle, start.x, start.y).toString();
-}
-
 function ellipse(paper: RaphaelPaper, points: [Vec2, Vec2]) {
   const rad = Vec2.diff(points[1], points[0]);
   const rx = rad.x / 2;
@@ -110,6 +87,128 @@ function line(paper: RaphaelPaper, points: [Vec2, Vec2]) {
   return paper.path(path);
 }
 
+export const FILLED_ARROW_MODES: ReadonlySet<RxnArrowMode> = new Set([
+  RxnArrowMode.FilledTriangle,
+  RxnArrowMode.FilledBow,
+  RxnArrowMode.DashedOpenAngle,
+  RxnArrowMode.Failed,
+  RxnArrowMode.BothEndsFilledTriangle,
+  RxnArrowMode.EquilibriumFilledHalfBow,
+  RxnArrowMode.EquilibriumFilledTriangle,
+  RxnArrowMode.UnbalancedEquilibriumFilledHalfBow,
+  RxnArrowMode.UnbalancedEquilibriumLargeFilledHalfBow,
+  RxnArrowMode.UnbalancedEquilibriumFilledHalfTriangle,
+]);
+
+export function getSelectionHandleRadius(options: RenderOptions): number {
+  return options.microModeScale / 8;
+}
+
+export function selectionHandle(
+  paper: RaphaelPaper,
+  center: Vec2,
+  options: RenderOptions,
+) {
+  const radius = getSelectionHandleRadius(options);
+  const element = paper.circle(center.x, center.y, radius).attr({
+    ...options.selectionHandleStyle,
+    'pointer-events': 'none',
+  });
+  if (element.node?.setAttribute) {
+    element.node.setAttribute('pointer-events', 'none');
+  }
+  return element;
+}
+
+export function selectionHandleHitTarget(
+  paper: RaphaelPaper,
+  center: Vec2,
+  options: RenderOptions,
+) {
+  const radius = getSelectionHandleRadius(options);
+  const element = paper.circle(center.x, center.y, radius).attr({
+    fill: '#000',
+    stroke: '#000',
+    'stroke-width': 0,
+    'fill-opacity': 0,
+    'stroke-opacity': 0,
+    opacity: 1,
+    'pointer-events': 'all',
+  });
+  if (element.node?.setAttribute) {
+    element.node.setAttribute('pointer-events', 'all');
+  }
+  return element;
+}
+
+export function getArrowPath(
+  item: ArrowItem,
+  length: number,
+  angle: number,
+  options: RenderOptions,
+): string {
+  switch (item.mode) {
+    case RxnArrowMode.OpenAngle:
+      return arrowOpenAnglePath(item, length, angle, options);
+    case RxnArrowMode.FilledTriangle:
+      return arrowFilledTrianglePath(item, length, angle, options);
+    case RxnArrowMode.FilledBow:
+      return arrowFilledBowPath(item, length, angle, options);
+    case RxnArrowMode.DashedOpenAngle:
+      return arrowDashedOpenAnglePath(item, length, angle, options);
+    case RxnArrowMode.Failed:
+      return arrowFailedPath(item, length, angle, options);
+    case RxnArrowMode.Retrosynthetic:
+      return arrowRetrosyntheticPath(item, length, angle, options);
+    case RxnArrowMode.BothEndsFilledTriangle:
+      return arrowBothEndsFilledTrianglePath(item, length, angle, options);
+    case RxnArrowMode.EquilibriumFilledHalfBow:
+      return arrowEquilibriumFilledHalfBowPath(item, length, angle, options);
+    case RxnArrowMode.EquilibriumFilledTriangle:
+      return arrowEquilibriumFilledTrianglePath(item, length, angle, options);
+    case RxnArrowMode.EquilibriumOpenAngle:
+      return arrowEquilibriumOpenAnglePath(item, length, angle, options);
+    case RxnArrowMode.UnbalancedEquilibriumFilledHalfBow:
+      return arrowUnbalancedEquilibriumFilledHalfBowPath(
+        item,
+        length,
+        angle,
+        options,
+      );
+    case RxnArrowMode.UnbalancedEquilibriumOpenHalfAngle:
+      return arrowUnbalancedEquilibriumOpenHalfAnglePath(
+        item,
+        length,
+        angle,
+        options,
+      );
+    case RxnArrowMode.UnbalancedEquilibriumLargeFilledHalfBow:
+      return arrowUnbalancedEquilibriumLargeFilledHalfBowPath(
+        item,
+        length,
+        angle,
+        options,
+      );
+    case RxnArrowMode.UnbalancedEquilibriumFilledHalfTriangle:
+      return arrowUnbalancedEquilibriumFilledHalfTrianglePath(
+        item,
+        length,
+        angle,
+        options,
+      );
+    case RxnArrowMode.EllipticalArcFilledBow:
+      return arrowEllipticalArcFilledBowPath(item, length, angle, options);
+    case RxnArrowMode.EllipticalArcFilledTriangle:
+      return arrowEllipticalArcFilledTrianglePath(item, length, angle, options);
+    case RxnArrowMode.EllipticalArcOpenAngle:
+      return arrowEllipticalArcOpenAnglePath(item, length, angle, options);
+    case RxnArrowMode.EllipticalArcOpenHalfAngle:
+      return arrowEllipticalArcOpenHalfAnglePath(item, length, angle, options);
+    default:
+      return '';
+  }
+}
+
 function arrow(
   paper: RaphaelPaper,
   item: ArrowItem,
@@ -121,198 +220,24 @@ function arrow(
   const shouldApplySnappingStyle =
     isResizing &&
     ['0', '-0', '90', '-90', '180', '-180'].includes(angle.toFixed());
+  const isFilled = item.mode != null && FILLED_ARROW_MODES.has(item.mode);
+  const pathStr = getArrowPath(item, length, angle, options);
 
-  switch (item.mode) {
-    case RxnArrowMode.OpenAngle: {
-      return arrowOpenAngle(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.FilledTriangle: {
-      return arrowFilledTriangle(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.FilledBow: {
-      return arrowFilledBow(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.DashedOpenAngle: {
-      return arrowDashedOpenAngle(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.Failed: {
-      return arrowFailed(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.Retrosynthetic: {
-      return arrowRetrosynthetic(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.BothEndsFilledTriangle: {
-      return arrowBothEndsFilledTriangle(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.EquilibriumFilledHalfBow: {
-      return arrowEquilibriumFilledHalfBow(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.EquilibriumFilledTriangle: {
-      return arrowEquilibriumFilledTriangle(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.EquilibriumOpenAngle: {
-      return arrowEquilibriumOpenAngle(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.UnbalancedEquilibriumFilledHalfBow: {
-      return arrowUnbalancedEquilibriumFilledHalfBow(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.UnbalancedEquilibriumOpenHalfAngle: {
-      return arrowUnbalancedEquilibriumOpenHalfAngle(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.UnbalancedEquilibriumLargeFilledHalfBow: {
-      return arrowUnbalancedEquilibriumLargeFilledHalfBow(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.UnbalancedEquilibriumFilledHalfTriangle: {
-      return arrowUnbalancedEquilibriumFilledHalfTriangle(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.EllipticalArcFilledBow: {
-      return arrowEllipticalArcFilledBow(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.EllipticalArcFilledTriangle: {
-      return arrowEllipticalArcFilledTriangle(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.EllipticalArcOpenAngle: {
-      return arrowEllipticalArcOpenAngle(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-    case RxnArrowMode.EllipticalArcOpenHalfAngle: {
-      return arrowEllipticalArcOpenHalfAngle(
-        paper,
-        item,
-        length,
-        angle,
-        options,
-        shouldApplySnappingStyle,
-      );
-    }
-  }
+  return paper.path(pathStr).attr({
+    ...options.lineattr,
+    ...(isFilled && { fill: '#000' }),
+    ...(shouldApplySnappingStyle &&
+      (isFilled
+        ? options.arrowSnappingStyle
+        : { stroke: options.arrowSnappingStyle.stroke })),
+  });
 }
 
-function arrowEllipticalArcFilledBow(
-  paper: RaphaelPaper,
+function arrowEllipticalArcFilledBowPath(
   { pos: [start], height }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const direction = height >= 0 ? 1 : -1;
   const { arrowHeadLength, arrowHeadWidth, arrowHeadAttr } =
@@ -337,21 +262,14 @@ function arrowEllipticalArcFilledBow(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    ...(shouldApplySnappingStyle && {
-      stroke: options.arrowSnappingStyle.stroke,
-    }),
-  });
+  return transformedPath;
 }
 
-function arrowEllipticalArcFilledTriangle(
-  paper: RaphaelPaper,
+function arrowEllipticalArcFilledTrianglePath(
   { pos: [start], height }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const { arrowHeadLength, arrowHeadWidth } = getArrowHeadDimensions(options);
 
@@ -375,21 +293,14 @@ function arrowEllipticalArcFilledTriangle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    ...(shouldApplySnappingStyle && {
-      stroke: options.arrowSnappingStyle.stroke,
-    }),
-  });
+  return transformedPath;
 }
 
-function arrowEllipticalArcOpenAngle(
-  paper: RaphaelPaper,
+function arrowEllipticalArcOpenAnglePath(
   { pos: [start], height }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const direction = height >= 0 ? 1 : -1;
 
@@ -413,21 +324,14 @@ function arrowEllipticalArcOpenAngle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    ...(shouldApplySnappingStyle && {
-      stroke: options.arrowSnappingStyle.stroke,
-    }),
-  });
+  return transformedPath;
 }
 
-function arrowEllipticalArcOpenHalfAngle(
-  paper: RaphaelPaper,
+function arrowEllipticalArcOpenHalfAnglePath(
   { pos: [start], height }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const direction = height >= 0 ? 1 : -1;
 
@@ -448,21 +352,14 @@ function arrowEllipticalArcOpenHalfAngle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    ...(shouldApplySnappingStyle && {
-      stroke: options.arrowSnappingStyle.stroke,
-    }),
-  });
+  return transformedPath;
 }
 
-function arrowOpenAngle(
-  paper: RaphaelPaper,
+function arrowOpenAnglePath(
   { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const { arrowHeadAttr, arrowHeadLength } = getArrowHeadDimensions(options);
   const pathBuilder = new PathBuilder().addOpenArrowPathParts(
@@ -475,21 +372,14 @@ function arrowOpenAngle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    ...(shouldApplySnappingStyle && {
-      stroke: options.arrowSnappingStyle.stroke,
-    }),
-  });
+  return transformedPath;
 }
 
-function arrowFilledTriangle(
-  paper: RaphaelPaper,
+function arrowFilledTrianglePath(
   { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const { arrowHeadLength, arrowHeadWidth } = getArrowHeadDimensions(options);
 
@@ -506,20 +396,14 @@ function arrowFilledTriangle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    fill: '#000',
-    ...(shouldApplySnappingStyle && options.arrowSnappingStyle),
-  });
+  return transformedPath;
 }
 
-function arrowFilledBow(
-  paper: RaphaelPaper,
+function arrowFilledBowPath(
   { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const { arrowHeadLength, arrowHeadWidth, arrowHeadAttr } =
     getArrowHeadDimensions(options);
@@ -538,20 +422,14 @@ function arrowFilledBow(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    fill: '#000',
-    ...(shouldApplySnappingStyle && options.arrowSnappingStyle),
-  });
+  return transformedPath;
 }
 
-function arrowDashedOpenAngle(
-  paper: RaphaelPaper,
+function arrowDashedOpenAnglePath(
   { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const { arrowHeadLength, arrowHeadWidth } = getArrowHeadDimensions(options);
   const { microModeScale } = getOptionsWithConvertedUnits(options);
@@ -587,20 +465,14 @@ function arrowDashedOpenAngle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    fill: '#000',
-    ...(shouldApplySnappingStyle && options.arrowSnappingStyle),
-  });
+  return transformedPath;
 }
 
-function arrowFailed(
-  paper: RaphaelPaper,
+function arrowFailedPath(
   { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const { arrowHeadLength, arrowHeadWidth, arrowHeadAttr } =
     getArrowHeadDimensions(options);
@@ -654,20 +526,14 @@ function arrowFailed(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    fill: '#000',
-    ...(shouldApplySnappingStyle && options.arrowSnappingStyle),
-  });
+  return transformedPath;
 }
 
-function arrowRetrosynthetic(
-  paper: RaphaelPaper,
+function arrowRetrosyntheticPath(
   { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const { arrowHeadLength, arrowHeadWidth, arrowOffset } =
     getArrowHeadDimensions(options);
@@ -700,21 +566,14 @@ function arrowRetrosynthetic(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    ...(shouldApplySnappingStyle && {
-      stroke: options.arrowSnappingStyle.stroke,
-    }),
-  });
+  return transformedPath;
 }
 
-function arrowBothEndsFilledTriangle(
-  paper: RaphaelPaper,
+function arrowBothEndsFilledTrianglePath(
   { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const { arrowHeadLength, arrowHeadWidth } = getArrowHeadDimensions(options);
 
@@ -739,20 +598,14 @@ function arrowBothEndsFilledTriangle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    fill: '#000',
-    ...(shouldApplySnappingStyle && options.arrowSnappingStyle),
-  });
+  return transformedPath;
 }
 
-function arrowEquilibriumFilledHalfBow(
-  paper: RaphaelPaper,
+function arrowEquilibriumFilledHalfBowPath(
   { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const { arrowHeadLength, arrowHeadAttr, arrowOffset, arrowHeadWidth } =
     getArrowHeadDimensions(options);
@@ -789,20 +642,14 @@ function arrowEquilibriumFilledHalfBow(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    fill: '#000',
-    ...(shouldApplySnappingStyle && options.arrowSnappingStyle),
-  });
+  return transformedPath;
 }
 
-function arrowEquilibriumFilledTriangle(
-  paper: RaphaelPaper,
+function arrowEquilibriumFilledTrianglePath(
   { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const { arrowHeadLength, arrowOffset, arrowHeadWidth } =
     getArrowHeadDimensions(options);
@@ -841,20 +688,14 @@ function arrowEquilibriumFilledTriangle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    fill: '#000',
-    ...(shouldApplySnappingStyle && options.arrowSnappingStyle),
-  });
+  return transformedPath;
 }
 
-function arrowEquilibriumOpenAngle(
-  paper: RaphaelPaper,
+function arrowEquilibriumOpenAnglePath(
   { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const { arrowHeadLength, arrowHeadWidth, arrowOffset } =
     getArrowHeadDimensions(options);
@@ -886,21 +727,14 @@ function arrowEquilibriumOpenAngle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    ...(shouldApplySnappingStyle && {
-      stroke: options.arrowSnappingStyle.stroke,
-    }),
-  });
+  return transformedPath;
 }
 
-function arrowUnbalancedEquilibriumFilledHalfBow(
-  paper: RaphaelPaper,
+function arrowUnbalancedEquilibriumFilledHalfBowPath(
   { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const { arrowHeadLength, arrowHeadWidth, arrowOffset, arrowHeadAttr } =
     getArrowHeadDimensions(options);
@@ -938,20 +772,14 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    fill: '#000',
-    ...(shouldApplySnappingStyle && options.arrowSnappingStyle),
-  });
+  return transformedPath;
 }
 
-function arrowUnbalancedEquilibriumOpenHalfAngle(
-  paper: RaphaelPaper,
+function arrowUnbalancedEquilibriumOpenHalfAnglePath(
   { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const { arrowHeadLength, arrowHeadWidth, arrowOffset } =
     getArrowHeadDimensions(options);
@@ -984,21 +812,14 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    ...(shouldApplySnappingStyle && {
-      stroke: options.arrowSnappingStyle.stroke,
-    }),
-  });
+  return transformedPath;
 }
 
-function arrowUnbalancedEquilibriumLargeFilledHalfBow(
-  paper: RaphaelPaper,
+function arrowUnbalancedEquilibriumLargeFilledHalfBowPath(
   { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const {
     arrowHeadLength,
@@ -1044,20 +865,14 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    fill: '#000',
-    ...(shouldApplySnappingStyle && options.arrowSnappingStyle),
-  });
+  return transformedPath;
 }
 
-function arrowUnbalancedEquilibriumFilledHalfTriangle(
-  paper: RaphaelPaper,
+function arrowUnbalancedEquilibriumFilledHalfTrianglePath(
   { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions,
-  shouldApplySnappingStyle: boolean,
 ) {
   const { arrowHeadLength, arrowHeadWidth, arrowOffset } =
     getArrowHeadDimensions(options);
@@ -1094,11 +909,7 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
-  return paper.path(transformedPath).attr({
-    ...options.lineattr,
-    fill: '#000',
-    ...(shouldApplySnappingStyle && options.arrowSnappingStyle),
-  });
+  return transformedPath;
 }
 
 function plus(paper: RaphaelPaper, point: Vec2, options: RenderOptions) {
@@ -1775,6 +1586,10 @@ function rgroupAttachmentPointLabel(
 
 export default {
   recenterText,
+  getArrowPath,
+  getSelectionHandleRadius,
+  selectionHandle,
+  selectionHandleHitTarget,
   arrow,
   plus,
   aromaticBondPaths,
@@ -1801,7 +1616,6 @@ export default {
   selectionLine,
   ellipse,
   rectangle,
-  rectangleArrowHighlightAndSelection,
   polyline,
   line,
   rgroupAttachmentPoint,

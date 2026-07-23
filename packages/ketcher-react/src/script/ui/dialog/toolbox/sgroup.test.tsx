@@ -102,6 +102,18 @@ describe('S-Group DAT type rendering', () => {
   });
 });
 
+describe('SRU S-Group defaults', () => {
+  it('should prefill the Polymer label field with n when SRU is selected', () => {
+    renderWithMockStore(<SGroup type="MUL" />);
+
+    const typeSelect = screen.getByRole('combobox');
+    fireEvent.mouseDown(typeSelect);
+    fireEvent.click(screen.getByRole('option', { name: 'SRU polymer' }));
+
+    expect(screen.getByLabelText('Polymer label')).toHaveValue('n');
+  });
+});
+
 function renderWithMockStore(
   component,
   initialState: Record<string, unknown> = {

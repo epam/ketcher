@@ -69,9 +69,14 @@ export function removeKeydownListener(element) {
   };
 }
 
-function removeNotRenderedStruct(actionTool, group, dispatch) {
+function removeNotRenderedStruct(actionTool, group, newAction, dispatch) {
   const affectedTools = ['paste', 'template'];
-  if (affectedTools.includes(actionTool.tool) && group?.includes('save')) {
+  const isPreviewTool = affectedTools.includes(actionTool.tool);
+  const isSaveAction = group?.includes('save');
+  const shouldResetPreviewTool =
+    Boolean(newAction?.tool) && !affectedTools.includes(newAction.tool);
+
+  if (isPreviewTool && (isSaveAction || shouldResetPreviewTool)) {
     dispatch(removeStructAction());
   }
 }
@@ -221,21 +226,27 @@ function handleHotkeyGroup(
     return;
   }
 
-  removeNotRenderedStruct(actionTool, group, dispatch);
-
   if (clipArea.actions.indexOf(actName) === -1) {
     let newAction = getNextAction(actName);
-    const hoveredItem = getHoveredItem(render.ctab);
+    removeNotRenderedStruct(actionTool, group, newAction, dispatch);
+
+    const hoveredItem =
+      getHoveredItem(render.ctab, editor) ?? getHoveredItemFromCursor(editor);
+    const resolvedHoveredItem = resolveHoveredItemForAction(
+      hoveredItem,
+      newAction,
+      editor,
+    );
     const { atoms, bonds } = editor.selection() ?? {};
     const hasSelection = Boolean(atoms?.length) || Boolean(bonds?.length);
 
     // For erase action, prioritize selected items over hovered item
     if (actName === 'erase' && hasSelection) {
       dispatch(onAction(newAction));
-    } else if (shouldHandleItemDirectly(hoveredItem, newAction)) {
+    } else if (shouldHandleItemDirectly(resolvedHoveredItem, newAction)) {
       newAction = getCurrentAction(group[index]) || newAction;
       handleHotkeyOverItem({
-        hoveredItem,
+        hoveredItem: resolvedHoveredItem,
         newAction,
         editor,
         dispatch,
@@ -266,7 +277,8 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   const actionState = state.actionState;
   const actionTool = actionState.activeTool;
   const key = keyNorm(event);
-  const hoveredItem = getHoveredItem(render.ctab);
+  const hoveredItem =
+    getHoveredItem(render.ctab, editor) ?? getHoveredItemFromCursor(editor);
 
   if (key && key.length === 1 && !hoveredItem) {
     const abbreviationLookupHandled = handleAbbreviationLookup(
@@ -314,28 +326,175 @@ function getCurrentAction(prevActName) {
   return actions[prevActName]?.action;
 }
 
+function resolveHoveredItemForAction(
+  hoveredItem: Record<string, number> | null,
+  newAction,
+  editor: Editor,
+): Record<string, number> | null {
+  if (!hoveredItem || newAction?.tool !== 'atom') {
+    return hoveredItem;
+  }
+
+  const hoveredItemType = Object.keys(hoveredItem)[0];
+  if (['atoms', 'sgroups', 'functionalGroups'].includes(hoveredItemType)) {
+    return hoveredItem;
+  }
+
+  const editorWithCursor = editor as Editor & {
+    lastEvent?: Event | null;
+    findItem?: (
+      event: Event | MouseEvent | { clientX: number; clientY: number },
+      maps: Array<string> | null,
+      skip?: unknown,
+    ) => { id: number; map: string } | null;
+  };
+  const lastEvent = editorWithCursor.lastEvent;
+
+  if (!(lastEvent instanceof MouseEvent) || !editorWithCursor.findItem) {
+    return hoveredItem;
+  }
+
+  const atomLikeItem = editorWithCursor.findItem(lastEvent, [
+    'atoms',
+    'functionalGroups',
+    'sgroups',
+  ]);
+
+  if (!atomLikeItem) {
+    return hoveredItem;
+  }
+
+  const normalizedMap =
+    atomLikeItem.map === 'functionalGroups' ? 'sgroups' : atomLikeItem.map;
+
+  return { [normalizedMap]: atomLikeItem.id };
+}
+
+function getHoveredItemFromCursor(
+  editor: Editor,
+): Record<string, number> | null {
+  const editorWithCursor = editor as Editor & {
+    lastEvent?: Event | null;
+    findItem?: (
+      event: Event | MouseEvent | { clientX: number; clientY: number },
+      maps: Array<string> | null,
+      skip?: unknown,
+    ) => { id: number; map: string } | null;
+  };
+  const lastEvent = editorWithCursor.lastEvent;
+
+  if (!(lastEvent instanceof MouseEvent) || !editorWithCursor.findItem) {
+    return null;
+  }
+
+  const cursorItem =
+    editorWithCursor.findItem(lastEvent, [
+      'atoms',
+      'functionalGroups',
+      'sgroups',
+    ]) ??
+    editorWithCursor.findItem(lastEvent, [
+      'atoms',
+      'bonds',
+      'sgroups',
+      'functionalGroups',
+    ]);
+
+  if (!cursorItem) {
+    return null;
+  }
+
+  const normalizedMap =
+    cursorItem.map === 'functionalGroups' ? 'sgroups' : cursorItem.map;
+
+  return { [normalizedMap]: cursorItem.id };
+}
+
 function getHoveredItem(
   ctab: Record<string, Map<number, Record<string, unknown>>>,
+  editor: Editor,
 ): Record<string, number> | null {
-  const hoveredItem = {};
+  const hoveredItems: Array<{ map: string; id: number }> = [];
 
   for (const ctabItem in ctab) {
-    if (Object.keys(hoveredItem).length) {
-      break;
-    }
-
     if (!(ctab[ctabItem] instanceof Map)) {
       continue;
     }
 
     ctab[ctabItem].forEach((item, id) => {
       if (item.hover) {
-        hoveredItem[ctabItem] = id;
+        hoveredItems.push({ map: ctabItem, id });
       }
     });
   }
 
-  return Object.keys(hoveredItem).length ? hoveredItem : null;
+  if (!hoveredItems.length) {
+    return null;
+  }
+
+  const hoveredItemUnderCursor = getHoveredItemUnderCursor(
+    hoveredItems,
+    editor,
+  );
+  if (hoveredItemUnderCursor) {
+    return hoveredItemUnderCursor;
+  }
+
+  const hoveredAtom = hoveredItems.find((item) => item.map === 'atoms');
+  const target = hoveredAtom ?? hoveredItems[0];
+
+  return { [target.map]: target.id };
+}
+
+function getHoveredItemUnderCursor(
+  hoveredItems: Array<{ map: string; id: number }>,
+  editor: Editor,
+): Record<string, number> | null {
+  const editorWithCursor = editor as Editor & {
+    lastEvent?: Event | null;
+    findItem?: (
+      event: Event | MouseEvent | { clientX: number; clientY: number },
+      maps: Array<string> | null,
+      skip?: unknown,
+    ) => { id: number; map: string } | null;
+  };
+  const lastEvent = editorWithCursor.lastEvent;
+
+  if (!(lastEvent instanceof MouseEvent) || !editorWithCursor.findItem) {
+    return null;
+  }
+
+  const itemUnderCursor =
+    editorWithCursor.findItem(lastEvent, [
+      'atoms',
+      'functionalGroups',
+      'sgroups',
+    ]) ??
+    editorWithCursor.findItem(lastEvent, [
+      'atoms',
+      'bonds',
+      'sgroups',
+      'functionalGroups',
+    ]);
+
+  if (!itemUnderCursor) {
+    return null;
+  }
+
+  const normalizedMap =
+    itemUnderCursor.map === 'functionalGroups'
+      ? 'sgroups'
+      : itemUnderCursor.map;
+
+  const isHoveredItemUnderCursor = hoveredItems.some(
+    (item) => item.map === normalizedMap && item.id === itemUnderCursor.id,
+  );
+
+  if (!isHoveredItemUnderCursor) {
+    return null;
+  }
+
+  return { [normalizedMap]: itemUnderCursor.id };
 }
 
 function checkGroupOnTool(group, actionTool) {

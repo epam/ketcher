@@ -69,6 +69,7 @@ interface EditorState {
   oligonucleotidesValue: number;
   app: AppMeta;
   selectedMenuGroupItems: Record<string, string>;
+  hasAntisenseChains: boolean;
 }
 
 const initialState: EditorState = {
@@ -100,6 +101,7 @@ const initialState: EditorState = {
     version: process.env.VERSION ?? '',
   },
   selectedMenuGroupItems: {},
+  hasAntisenseChains: false,
 };
 
 export const editorSlice: Slice<EditorState> = createSlice({
@@ -230,6 +232,9 @@ export const editorSlice: Slice<EditorState> = createSlice({
     setAppMeta: (state, action: PayloadAction<AppMeta>) => {
       state.app = action.payload;
     },
+    setHasAntisenseChains: (state, action: PayloadAction<boolean>) => {
+      state.hasAntisenseChains = action.payload;
+    },
     setSelectedMenuGroupItem: (
       state,
       action: PayloadAction<{ groupName: string; activeItemName: string }>,
@@ -264,6 +269,7 @@ export const {
   setUnipositiveIonsValue,
   setOligonucleotidesValue,
   setAppMeta,
+  setHasAntisenseChains,
   setSelectedMenuGroupItem,
 } = editorSlice.actions;
 
@@ -307,8 +313,11 @@ export const selectEditorLayoutMode = (state: RootState): LayoutMode => {
 export const selectIsHandToolSelected = (state: RootState) =>
   state.editor.editor?.isHandToolSelected;
 
-export const hasAntisenseChains = (state: RootState): CoreEditor =>
-  state.editor.editor?.drawingEntitiesManager?.hasAntisenseChains;
+export const hasAntisenseChains = (state: RootState): boolean =>
+  state.editor.hasAntisenseChains;
+
+export const selectHasAntisenseChainsLive = (state: RootState): boolean =>
+  Boolean(state.editor.editor?.drawingEntitiesManager?.hasAntisenseChains);
 
 export const selectIsContextMenuActive = (state: RootState): boolean =>
   state.editor.isContextMenuActive;

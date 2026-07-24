@@ -15,12 +15,13 @@
  ***************************************************************************/
 import { useCallback, useEffect } from 'react';
 import {
-  hasAntisenseChains,
   selectEditor,
   selectEditorActiveTool,
+  selectHasAntisenseChainsLive,
   selectIsContextMenuActive,
   selectLastSelectedSelectionMenuItem,
   selectTool,
+  setHasAntisenseChains,
   showPreview,
 } from 'state/common';
 import { openErrorModal, openErrorTooltip, openModal } from 'state/modal';
@@ -62,7 +63,7 @@ export const EditorEvents = () => {
   const isContextMenuActive = useAppSelector(selectIsContextMenuActive);
   const dispatch = useAppDispatch();
   const presets = useAppSelector(selectAllPresets);
-  const hasAtLeastOneAntisense = useAppSelector(hasAntisenseChains);
+  const hasAtLeastOneAntisense = useAppSelector(selectHasAntisenseChainsLive);
   const lastSelectedSelectionMenuItem = useAppSelector(
     selectLastSelectedSelectionMenuItem,
   );
@@ -367,6 +368,24 @@ export const EditorEvents = () => {
       editor?.events.resetSequenceEditMode.dispatch();
     }
   }, [hasAtLeastOneAntisense]);
+
+  useEffect(() => {
+    if (!editor) {
+      return;
+    }
+
+    const updateHasAntisenseChains = () => {
+      dispatch(
+        setHasAntisenseChains(editor.drawingEntitiesManager.hasAntisenseChains),
+      );
+    };
+
+    window.addEventListener('renderComplete', updateHasAntisenseChains);
+
+    return () => {
+      window.removeEventListener('renderComplete', updateHasAntisenseChains);
+    };
+  }, [editor, dispatch]);
 
   return <></>;
 };

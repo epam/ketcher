@@ -168,6 +168,8 @@ export const Library = (page: Page) => {
         await expect(getElement(rnaSection)).toBeInViewport();
         await getElement(rnaSection).click();
       }
+
+      await expect(getElement(rnaSectionArea[rnaSection])).toBeVisible();
     },
 
     async getMonomerLibraryLocation(monomer: Monomer | PresetType) {

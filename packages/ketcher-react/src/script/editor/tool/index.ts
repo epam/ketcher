@@ -52,7 +52,9 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   atom: AtomTool,
   bond: BondTool,
   chain: ChainTool,
-  template: TemplateTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  template: TemplateTool as unknown as ToolConstructorInterface,
   charge: ChargeTool,
   rgroupfragment: RGroupFragmentTool,
   apoint: APointTool,

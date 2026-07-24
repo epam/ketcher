@@ -87,7 +87,7 @@ export function getBondFlipSign(struct: Struct, bond: Bond): 1 | -1 {
 }
 
 export function getAngleFromEvent(
-  event: MouseEvent | PointerEvent,
+  event: MouseEvent | PointerEvent | undefined,
   ci: Pick<ClosestItemWithMap, 'id'>,
   restruct: ReStruct,
 ) {
@@ -108,7 +108,7 @@ export function getAngleFromEvent(
     if (!atom || !nei) {
       angle = 0;
     } else {
-      angle = event.ctrlKey
+      angle = event?.ctrlKey
         ? vectorUtils.calcAngle(nei.pp, atom.pp)
         : vectorUtils.fracAngle(vectorUtils.calcAngle(nei.pp, atom.pp), null);
     }

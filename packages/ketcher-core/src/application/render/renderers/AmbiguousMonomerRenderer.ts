@@ -48,6 +48,10 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       this.monomerRenderer.CHAIN_START_TERMINAL_INDICATOR_TEXT;
   }
 
+  public get textColor() {
+    return 'white';
+  }
+
   protected appendBody(
     rootElement: Selection<SVGGElement, void, HTMLElement, never>,
   ) {

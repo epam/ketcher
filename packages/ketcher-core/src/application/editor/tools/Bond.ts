@@ -360,11 +360,6 @@ class PolymerBond implements BaseTool {
         this.bondRenderer.polymerBond,
       );
       this.bondRenderer = undefined;
-      this.editor.events.selectEntities.dispatch(
-        this.editor.drawingEntitiesManager.selectedEntities.map(
-          (entity) => entity[1],
-        ),
-      );
       event.stopPropagation();
     }
   }
@@ -497,11 +492,6 @@ class PolymerBond implements BaseTool {
       );
       this.bondRenderer = undefined;
       this.history.update(modelChanges);
-      this.editor.events.selectEntities.dispatch(
-        this.editor.drawingEntitiesManager.selectedEntities.map(
-          (entity) => entity[1],
-        ),
-      );
       event.stopPropagation();
     }
   }
@@ -603,11 +593,6 @@ class PolymerBond implements BaseTool {
       this.bondRenderer.polymerBond,
     );
     this.bondRenderer = undefined;
-    this.editor.events.selectEntities.dispatch(
-      this.editor.drawingEntitiesManager.selectedEntities.map(
-        (entity) => entity[1],
-      ),
-    );
   };
 
   public handleBondCreationCancellation = (

@@ -21,5 +21,4 @@ export interface RaphaelPath {
   remove(): void;
   node: Node;
   next?: RaphaelPath;
-  [key: string]: unknown;
 }

@@ -23,3 +23,28 @@ export enum BondCIP {
   M = 'M',
   P = 'P',
 }
+
+export interface SGroupData {
+  mul: number;
+  connectivity: string;
+  name: string;
+  nucleotideComponent: string;
+  subscript: string;
+  expanded?: boolean;
+  attached: boolean;
+  absolute: boolean;
+  showUnits: boolean;
+  nCharsToDisplay: number;
+  tagChar: string;
+  daspPos: number;
+  fieldType: string;
+  fieldName: string;
+  fieldValue: string;
+  units: string;
+  query: string;
+  queryOp: string;
+  [key: string]: unknown;
+}
+
+export type AtomIdMap = Record<number, number | undefined>;
+export type BondIdMap = Record<number, number[]>;

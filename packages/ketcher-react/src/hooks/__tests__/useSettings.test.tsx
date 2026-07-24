@@ -16,7 +16,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { renderHook, act } from '@testing-library/react';
+import { render, renderHook, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { useSettings } from '../useSettings';
@@ -92,7 +92,7 @@ describe('useSettings', () => {
 
   describe('initialization', () => {
     it('should return null settings when service is unavailable', () => {
-      const store = createMockStore(undefined);
+      const store = createMockStore();
       const { result } = renderHook(() => useSettings(), {
         wrapper: createWrapper(store),
       });
@@ -110,6 +110,29 @@ describe('useSettings', () => {
 
       expect(result.current.settings).toBeDefined();
       expect(mockService.getSettings).toHaveBeenCalled();
+    });
+
+    it('should have settings available on the very first render, before any effect runs', () => {
+      const mockService = createMockSettingsService();
+      const store = createMockStore(mockService);
+
+      const renderedSettings: unknown[] = [];
+      function TestComponent() {
+        const { settings } = useSettings();
+        renderedSettings.push(settings);
+        return null;
+      }
+
+      render(
+        <Provider store={store}>
+          <TestComponent />
+        </Provider>,
+      );
+
+      // The first entry is what the component saw during its initial render,
+      // synchronously — i.e. before useEffect had a chance to run and set it.
+      expect(renderedSettings[0]).not.toBeNull();
+      expect(renderedSettings[0]).toEqual(mockService.getSettings());
     });
 
     it('should subscribe to settings changes', () => {
@@ -159,7 +182,7 @@ describe('useSettings', () => {
     });
 
     it('should throw error when service unavailable', async () => {
-      const store = createMockStore(undefined);
+      const store = createMockStore();
 
       const { result } = renderHook(() => useSettings(), {
         wrapper: createWrapper(store),
@@ -255,7 +278,7 @@ describe('useSettings', () => {
     });
 
     it('should return empty array when service unavailable', () => {
-      const store = createMockStore(undefined);
+      const store = createMockStore();
 
       const { result } = renderHook(() => useSettings(), {
         wrapper: createWrapper(store),

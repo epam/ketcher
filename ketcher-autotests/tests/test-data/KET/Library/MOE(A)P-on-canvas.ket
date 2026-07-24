@@ -524,7 +524,7 @@
         "id": "MOE___2'-O-Methoxyethyl ribose",
         "fullName": "2'-O-Methoxyethyl ribose",
         "alias": "MOE",
-        "aliasHELM": "moe",
+        "aliasHELM": "MOE",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,
@@ -645,7 +645,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
-        "aliasHELM": "p",
+        "aliasHELM": "P",
         "aliasAxoLabs": "p",
         "attachmentPoints": [
             {

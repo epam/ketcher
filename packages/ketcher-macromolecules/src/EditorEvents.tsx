@@ -152,43 +152,6 @@ export const EditorEvents = () => {
     [dispatchShowPreview],
   );
 
-  useEffect(() => {
-    const handler = ([toolName]: [string]) => {
-      if (toolName !== activeTool) {
-        dispatch(selectTool(toolName));
-      }
-    };
-
-    if (editor) {
-      editor.events.error.add((errorText) => {
-        dispatch(openErrorTooltip(errorText));
-      });
-      editor.events.openErrorModal.add(
-        (errorData: string | { errorMessage: string; errorTitle: string }) => {
-          dispatch(openErrorModal(errorData));
-        },
-      );
-
-      dispatch(selectTool('select-rectangle'));
-      editor.events.selectTool.dispatch(['select-rectangle']);
-      editor.events.openMonomerConnectionModal.add(
-        (additionalProps: MonomerConnectionOnlyProps) =>
-          dispatch(
-            openModal({
-              name: 'monomerConnection',
-              additionalProps,
-            }),
-          ),
-      );
-      editor.events.selectTool.add(handler);
-    }
-
-    return () => {
-      dispatch(selectTool(null));
-      editor?.events.selectTool.remove(handler);
-    };
-  }, [editor]);
-
   const handleOpenBondPreview = useCallback(
     (polymerBond: PolymerBond, style: PreviewStyle) => {
       const previewData: BondPreviewState = {

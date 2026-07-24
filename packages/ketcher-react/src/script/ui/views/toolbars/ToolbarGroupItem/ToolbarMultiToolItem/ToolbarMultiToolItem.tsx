@@ -104,22 +104,20 @@ const ToolbarMultiToolItem = (props: Props) => {
 
   if (!currentStatus && options.length) {
     const savedSelectionTool = SettingsManager.selectionTool;
-    const savedSelectionToolId =
-      savedSelectionTool &&
-      `${savedSelectionTool.tool}-${savedSelectionTool.opts}`;
-    currentId =
-      savedSelectionTool &&
-      savedSelectionToolId &&
-      options.filter(
-        (option) =>
-          !status[option.id]?.hidden && option.id === savedSelectionToolId,
-      )[0]?.id;
+    const savedSelectionToolId = savedSelectionTool
+      ? `${savedSelectionTool.tool}-${savedSelectionTool.opts}`
+      : undefined;
+    const savedSelectionOption = savedSelectionToolId
+      ? options.find(
+          (option) =>
+            !status[option.id]?.hidden && option.id === savedSelectionToolId,
+        )
+      : undefined;
 
-    if (!currentId) {
-      currentId =
-        options.filter((option) => !status[option.id]?.hidden)[0]?.id ??
-        options[0].id;
-    }
+    currentId =
+      savedSelectionOption?.id ??
+      options.find((option) => !status[option.id]?.hidden)?.id ??
+      options[0].id;
   }
   const onOpenOptions = () => {
     // TODO: same as #type above

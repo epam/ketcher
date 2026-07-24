@@ -479,7 +479,7 @@
         "id": "fR___2'-Fluoro-Ribose",
         "fullName": "2'-Fluoro-Ribose",
         "alias": "fR",
-        "aliasHELM": "fl2r",
+        "aliasHELM": "fR",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,
@@ -600,7 +600,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
-        "aliasHELM": "p",
+        "aliasHELM": "P",
         "aliasAxoLabs": "p",
         "attachmentPoints": [
             {

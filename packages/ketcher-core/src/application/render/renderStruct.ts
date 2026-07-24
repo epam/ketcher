@@ -65,7 +65,7 @@ export class RenderStruct {
     options: any = {},
   ) {
     if (wrapperElement && struct) {
-      const { cachePrefix = '', needCache = true } = options;
+      const { cachePrefix = '', needCache = true, wrapperDimensions } = options;
       const cacheKey = `${cachePrefix}${struct.name}`;
 
       if (!isEqual(previousOptions, options)) {
@@ -90,7 +90,15 @@ export class RenderStruct {
           structureSize.max.y - structureSize.min.y,
         ),
       );
-      const wrapperElementBoundingRect = wrapperElement.getBoundingClientRect();
+
+      // Use pre-calculated wrapper dimensions if provided to avoid forced reflow
+      // This is critical for batch rendering scenarios (e.g., template tables)
+      // where getBoundingClientRect() would be called multiple times per frame
+      const wrapperElementBoundingRect = wrapperDimensions || {
+        width: wrapperElement.getBoundingClientRect().width,
+        height: wrapperElement.getBoundingClientRect().height,
+      };
+
       const isStructureLessThanWrapper =
         structureSizeInPixels.x < wrapperElementBoundingRect.width &&
         structureSizeInPixels.y < wrapperElementBoundingRect.height;

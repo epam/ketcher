@@ -126,7 +126,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{d([Hyp])p.r(A)p.d([Hyp])p.r(A)p.d([Hyp])}$$$$V2.0',
+      'RNA1{[dR]([In])P.R(A)P.[dR]([In])P.R(A)P.[dR]([In])}$$$$V2.0',
     );
     await CommonLeftToolbar(page).erase();
     await selectAllStructuresOnCanvas(page);
@@ -347,7 +347,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     );
     await verifyHELMExport(
       page,
-      'RNA1{[Unknown sugar](A)p.r([Unknown base])p.[Unknown sugar]([Unknown base])p.[Unknown sugar](A)[Unknown phosphate].r([Unknown base])[Unknown phosphate].[Unknown sugar]([Unknown base])[Unknown phosphate].[Unknown sugar](A).r([Unknown base]).[Unknown sugar]([Unknown base])}$$$$V2.0',
+      'RNA1{[Unknown sugar](A)P.R([Unknown base])P.[Unknown sugar]([Unknown base])P.[Unknown sugar](A)[Unknown phosphate].R([Unknown base])[Unknown phosphate].[Unknown sugar]([Unknown base])[Unknown phosphate].[Unknown sugar](A).R([Unknown base]).[Unknown sugar]([Unknown base])}$$$$V2.0',
     );
   });
 
@@ -1151,7 +1151,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{[d12r].p}$$$$V2.0',
+      'RNA1{[12ddR].P}$$$$V2.0',
     );
 
     const d12r = getMonomerLocator(page, Sugar._12ddR);
@@ -1390,11 +1390,11 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]p}$$$$V2.0',
+      'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]P}$$$$V2.0',
     );
     await verifyHELMExport(
       page,
-      'RNA1{[O1[C@H](CO[*:1])[C@@H](O[*:2])[C@@H](O)[C@@H]1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|].p}$$$$V2.0',
+      'RNA1{[O1[C@H](CO[*:1])[C@@H](O[*:2])[C@@H](O)[C@@H]1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|].P}$$$$V2.0',
     );
   });
 

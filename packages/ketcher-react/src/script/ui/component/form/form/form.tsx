@@ -148,7 +148,7 @@ class Form extends Component<FormProps> {
 
     if (init) {
       const { valid, errors } = this.schema.serialize(init);
-      const errs = getErrorsObj(errors as FormValidationError[]);
+      const errs = getErrorsObj(errors);
       const initialState = { ...init, init: true };
       onUpdate(initialState, valid, errs);
     }
@@ -173,7 +173,7 @@ class Form extends Component<FormProps> {
   updateState(newState: Record<string, unknown>) {
     const { onUpdate } = this.props;
     const { instance, valid, errors } = this.schema.serialize(newState);
-    const errs = getErrorsObj(errors as FormValidationError[]);
+    const errs = getErrorsObj(errors);
     onUpdate(instance as Record<string, unknown>, valid, errs);
   }
 
@@ -232,7 +232,6 @@ interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
   labelPos?: string | boolean;
   title?: string;
   tooltip?: string;
-  error?: string;
   children?: React.ReactNode;
 }
 
@@ -297,7 +296,6 @@ function Label({
   labelPos,
   title,
   tooltip,
-  error: _error,
   children,
   ...props
 }: Readonly<LabelProps>) {
@@ -341,7 +339,7 @@ function Field(props: Readonly<FieldProps>) {
   const { schema, stateStore } = useFormContext();
   const desc: SchemaProperty =
     ((!Array.isArray(rest.schema) && rest.schema) ||
-      schema.properties?.[name ?? '']) ??
+      schema?.properties?.[name ?? '']) ??
     {};
   const { dataError, onExtraChange, extraValue, ...fieldOpts } =
     stateStore.field(name ?? '', onChange, extraName);
@@ -356,7 +354,7 @@ function Field(props: Readonly<FieldProps>) {
       onExtraChange={onExtraChange}
       extraValue={extraValue}
       {...(extraName && {
-        extraSchema: rest.extraSchema || schema.properties?.[extraName],
+        extraSchema: rest.extraSchema || schema?.properties?.[extraName],
       })}
       {...fieldOpts}
       {...rest}
@@ -376,7 +374,6 @@ function Field(props: Readonly<FieldProps>) {
   return (
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}
-      error={dataError}
       title={rest.title ?? desc.title}
       labelPos={labelPos}
       tooltip={rest?.tooltip}
@@ -426,14 +423,13 @@ function FieldWithModal(props: Readonly<FieldWithModalProps>) {
   const { schema, stateStore } = useFormContext();
   const desc: SchemaProperty =
     ((!Array.isArray(inputRest.schema) && inputRest.schema) ||
-      schema.properties?.[name ?? '']) ??
+      schema?.properties?.[name ?? '']) ??
     {};
   const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
 
   return (
     <Label
       className={className}
-      error={dataError}
       title={title ?? desc.title}
       labelPos={labelPos}
       tooltip={tooltip}
@@ -495,7 +491,7 @@ function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
   const { schema, stateStore } = useFormContext();
   const desc: SchemaProperty =
     ((!Array.isArray(rest.schema) && rest.schema) ||
-      schema.properties?.[name ?? '']) ??
+      schema?.properties?.[name ?? '']) ??
     {};
   const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
   const handleCheckboxChange = (value: boolean) => {

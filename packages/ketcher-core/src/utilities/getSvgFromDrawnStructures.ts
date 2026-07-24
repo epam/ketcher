@@ -1,32 +1,13 @@
 import { KetcherLogger } from './KetcherLogger';
 
 const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg';
-const ADDITIONAL_TOP_MARGIN = 54;
-const ADDITIONAL_LEFT_MARGIN = 50;
 const DEFAULT_MARGIN = 10;
-
-type Margins = {
-  horizontal: number;
-  vertical: number;
-};
 
 export const getSvgFromDrawnStructures = (
   canvas: SVGSVGElement,
   type: 'preview' | 'file',
-  margins: Margins | number = {
-    horizontal: DEFAULT_MARGIN,
-    vertical: DEFAULT_MARGIN,
-  },
+  margin: number = DEFAULT_MARGIN,
 ) => {
-  // Convert number to Margins object to support backward compatibility
-  const marginValues: Margins =
-    typeof margins === 'number'
-      ? { horizontal: margins, vertical: margins }
-      : {
-          horizontal: DEFAULT_MARGIN + margins.horizontal,
-          vertical: DEFAULT_MARGIN + margins.vertical,
-        };
-
   // Copy and clean up svg structures before previewing or saving
   let svgInnerHTML = canvas?.innerHTML || '';
   const wrapper = document.createElementNS(SVG_NAMESPACE_URI, 'svg');
@@ -53,7 +34,7 @@ export const getSvgFromDrawnStructures = (
 
   const drawStructureClientRect = canvas
     ?.getElementsByClassName('drawn-structures')[0]
-    .getBoundingClientRect();
+    ?.getBoundingClientRect();
 
   if (!drawStructureClientRect || !svgInnerHTML) {
     const errorMessage = 'Cannot get drawn structures!';
@@ -61,16 +42,14 @@ export const getSvgFromDrawnStructures = (
     return;
   }
 
-  const viewBoxX =
-    drawStructureClientRect.x -
-    ADDITIONAL_LEFT_MARGIN -
-    marginValues.horizontal;
-  const viewBoxY =
-    drawStructureClientRect.y - ADDITIONAL_TOP_MARGIN - marginValues.vertical;
-  const viewBoxWidth =
-    drawStructureClientRect.width + marginValues.horizontal * 2;
-  const viewBoxHeight =
-    drawStructureClientRect.height + marginValues.vertical * 2;
+  // Position the viewBox relative to the canvas element itself, so the export
+  // stays centered regardless of where the canvas is placed on screen
+  // (e.g. full-screen vs popup mode).
+  const canvasClientRect = canvas.getBoundingClientRect();
+  const viewBoxX = drawStructureClientRect.x - canvasClientRect.x - margin;
+  const viewBoxY = drawStructureClientRect.y - canvasClientRect.y - margin;
+  const viewBoxWidth = drawStructureClientRect.width + margin * 2;
+  const viewBoxHeight = drawStructureClientRect.height + margin * 2;
   const viewBox = `${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`;
 
   if (type === 'preview')

@@ -34,7 +34,6 @@ const mapStateToProps = (state): StateProps => ({
   errorHandler: state.editor.errorHandler,
   isRecognizeDisabled: state.actionState.recognize?.disabled,
   isAnalyzingFile: state.requestsStatuses.isAnalyzingFile,
-  ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
 });
 
 const mapDispatchToProps = (dispatch): DispatchProps => ({

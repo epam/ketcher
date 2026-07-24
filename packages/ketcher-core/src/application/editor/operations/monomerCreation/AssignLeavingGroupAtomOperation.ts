@@ -17,7 +17,7 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
     private readonly monomerCreationState: MonomerCreationState,
     private readonly attachmentPointName: AttachmentPointName,
     private readonly potentialLeavingAtoms?: Set<number>,
-    private _assignedAttachmentPoints?: Map<
+    private readonly _assignedAttachmentPoints?: Map<
       AttachmentPointName,
       [number, number]
     >,

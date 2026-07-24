@@ -31,28 +31,37 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import type { RenderOptions, RenderOptionStyles } from '../render.types';
+import type {
+  RelativeBox,
+  RenderOptions,
+  RenderOptionStyles,
+} from '../render.types';
 import { isNumber } from 'lodash';
 import Visel from './visel';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import type { Element, RaphaelPaper, RaphaelSet } from 'raphael';
 
 type FragmentSelectionPreviewOptions = {
   disabled?: boolean;
 };
 
+// A bond's rendered path is a single Element for most bond types, or a
+// RaphaelSet (paper.set([...])) for aromatic bonds.
+type BondPath = Element | RaphaelSet;
+
 class ReBond extends ReObject {
   b: Bond;
   doubleBondShift: number;
-  path: any;
+  path: BondPath;
   neihbid1 = -1;
   neihbid2 = -1;
   boldStereo?: boolean;
   rbb?: { x: number; y: number; width: number; height: number };
   cip?: {
     // Raphael paths
-    path: any;
-    text: any;
-    rectangle: any;
+    path: RaphaelSet;
+    text: Element;
+    rectangle: Element;
   };
 
   constructor(bond: Bond) {
@@ -75,7 +84,11 @@ class ReBond extends ReObject {
       : atomId;
   }
 
-  static bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
+  static bondRecalc(
+    bond: ReBond,
+    restruct: ReStruct,
+    options: RenderOptions,
+  ): void {
     const render = restruct.render;
     const sgroup1 = restruct.molecule.getGroupFromAtomId(bond.b.begin);
     const sgroup2 = restruct.molecule.getGroupFromAtomId(bond.b.end);
@@ -98,14 +111,14 @@ class ReBond extends ReObject {
     let p1: Vec2;
     let p2: Vec2;
 
-    if (sgroup1 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
-      p1 = sgroup1.isContracted() ? (sgroup1.pp as Vec2) : beginAtom.a.pp;
+    if (sgroup1?.isContracted() && sgroup1 !== sgroup2) {
+      p1 = sgroup1.getContractedPosition(restruct.molecule).position;
     } else {
       p1 = beginAtom.a.pp;
     }
 
-    if (sgroup2 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
-      p2 = sgroup2.isContracted() ? (sgroup2.pp as Vec2) : endAtom.a.pp;
+    if (sgroup2?.isContracted() && sgroup1 !== sgroup2) {
+      p2 = sgroup2.getContractedPosition(restruct.molecule).position;
     } else {
       p2 = endAtom.a.pp;
     }
@@ -298,7 +311,11 @@ class ReBond extends ReObject {
     );
   }
 
-  makeSelectionPlate(restruct: ReStruct, _: any, options: any) {
+  makeSelectionPlate(
+    restruct: ReStruct,
+    _paper: RaphaelPaper,
+    options: RenderOptions,
+  ) {
     if (this.isPlateShouldBeHidden(restruct, options)) {
       return null;
     }
@@ -338,7 +355,7 @@ class ReBond extends ReObject {
     return rect.attr(highlightStyle);
   }
 
-  show(restruct: ReStruct, bid: number, options: any): void {
+  show(restruct: ReStruct, bid: number, options: RenderOptions): void {
     // eslint-disable-line max-statements
     const render = restruct.render;
     const struct = restruct.molecule;
@@ -389,7 +406,9 @@ class ReBond extends ReObject {
       null,
       true,
     );
-    const reactingCenter: any = {};
+    const reactingCenter: { path: Element | null; rbb?: RelativeBox } = {
+      path: null,
+    };
     reactingCenter.path = getReactingCenterPath(render, this, hb1, hb2);
     if (reactingCenter.path) {
       reactingCenter.rbb = util.relBox(reactingCenter.path.getBBox());
@@ -401,7 +420,9 @@ class ReBond extends ReObject {
         true,
       );
     }
-    const topology: any = {};
+    const topology: { path: Element | null; rbb?: RelativeBox } = {
+      path: null,
+    };
     topology.path = getBondMark(render, this, hb1, hb2);
     if (topology.path) {
       topology.rbb = util.relBox(topology.path.getBBox());
@@ -474,17 +495,21 @@ class ReBond extends ReObject {
     const highlights = restruct.molecule.highlights;
     let isHighlighted = false;
     let highlightColor = '';
+    let highlightOutline = false;
     highlights.forEach((highlight) => {
       const hasCurrentHighlight = highlight.bonds?.includes(bid);
       isHighlighted = isHighlighted || hasCurrentHighlight;
       if (hasCurrentHighlight) {
         highlightColor = highlight.color;
+        highlightOutline = highlight.outline;
       }
     });
 
-    // Drawing highlight
-    if (isHighlighted) {
-      const style = {
+    // Drawing highlight. Outline highlights (#9441) are drawn as a single
+    // merged contour by ReStruct.showHighlightOutlines, so skip them here;
+    // only filled (active-tab) highlights are drawn per-bond.
+    if (isHighlighted && !highlightOutline) {
+      const style: RenderOptionStyles = {
         fill: highlightColor,
         stroke: 'none',
       };
@@ -747,9 +772,10 @@ function findIncomingUpBonds(
       : halfbonds[1];
 }
 
-function checkStereoBold(bid0, bond, restruct) {
+function checkStereoBold(bid0: number, bond: ReBond, restruct: ReStruct): void {
   const halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
     const atom = restruct.molecule.atoms.get(aid);
+    if (!atom) return -1;
     const pos = findIncomingStereoUpBond(atom, bid0, false, restruct);
     return pos < 0 ? -1 : atom.neighbors[pos];
   });
@@ -762,8 +788,8 @@ function getBondPath(
   hb1: HalfBond,
   hb2: HalfBond,
   isSnapping: boolean,
-) {
-  let path: any = null;
+): BondPath | null {
+  let path: BondPath | null = null;
   const render = restruct.render;
   const struct = restruct.molecule;
   const shiftA = !restruct.atoms.get(hb1.begin)?.showLabel;
@@ -1008,7 +1034,7 @@ function getBondSingleUpPath(
 }
 
 function getStereoBondColor(
-  options: any,
+  options: RenderOptions,
   bond: ReBond,
   struct: Struct,
 ): string {
@@ -1148,7 +1174,7 @@ export function getBondLineShift(cos: number, sin: number): number {
 function stereoUpBondGetCoordinates(
   hb: HalfBond,
   neihbid: number,
-  bondSpace: any,
+  bondSpace: number,
   struct: Struct,
 ): [Vec2, Vec2] {
   const neihb = struct.halfBonds.get(neihbid);
@@ -1569,7 +1595,7 @@ function getBondMark(
 
 function getIdsPath(
   bid: number,
-  paper: any,
+  paper: RaphaelPaper,
   hb1: HalfBond,
   hb2: HalfBond,
   bondIdxOff: number,

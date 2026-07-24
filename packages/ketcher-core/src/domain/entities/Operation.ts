@@ -7,6 +7,7 @@ import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import type { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import type { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import type { RxnPlus } from 'domain/entities/CoreRxnPlus';
+import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 
 export interface Operation {
   priority?: number;
@@ -18,6 +19,7 @@ export interface Operation {
   rxnArrow?: RxnArrow;
   multitailArrow?: MultitailArrow;
   rxnPlus?: RxnPlus;
+  sgroupDrawingEntity?: SGroupDrawingEntity;
   execute(renderersManager: RenderersManager): void;
   invert(renderersManager: RenderersManager): void;
   executeAfterAllOperations?(renderersManager: RenderersManager): void;

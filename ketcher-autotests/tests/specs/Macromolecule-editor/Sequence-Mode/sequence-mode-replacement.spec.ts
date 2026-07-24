@@ -2165,6 +2165,7 @@ test(`27. Verify switching from Macro mode to Micro mode and back without data l
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await checkForKnownBugs(

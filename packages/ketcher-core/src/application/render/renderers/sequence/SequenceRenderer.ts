@@ -967,12 +967,6 @@ export class SequenceRenderer {
     return SequenceRenderer.getNodeByPointer(this.caretPosition);
   }
 
-  public static get previousFromCurrentEdittingMonomer() {
-    return SequenceRenderer.getNodeByPointer(
-      SequenceRenderer.previousCaretPosition,
-    );
-  }
-
   public static get currentChain() {
     return SequenceRenderer.chainsCollection.chains[
       SequenceRenderer.currentChainIndex

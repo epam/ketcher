@@ -21,6 +21,8 @@ import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { MonomerType } from '@utils/types';
 import { RNASection } from '@tests/pages/constants/library/Constants';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;
@@ -98,6 +100,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
 
     await dialog.submit();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     // Verify preset is visible in library
     expect(
@@ -152,6 +155,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
      * Version 3.12.0
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     // Check that standard monomers exist
     const existsR = await Library(page).isMonomerExist(Sugar.R);
@@ -197,6 +201,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
 
     await dialog.submit();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     // Verify preset is visible
     expect(
@@ -262,6 +267,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await dialog.submit();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     expect(
       await Library(page).isMonomerExist({
@@ -320,6 +326,8 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await dialog.submit();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+
     expect(
       await Library(page).isMonomerExist({
         alias: preset1Name,
@@ -364,6 +372,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await dialog.submit();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Presets);
     await Library(page).rnaBuilder.expand();
@@ -530,6 +539,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await dialog.submit();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     expect(
       await Library(page).isMonomerExist({
@@ -604,6 +614,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await dialog.submit();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     expect(
       await Library(page).isMonomerExist({
         alias: presetName,
@@ -664,6 +675,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
 
     // Now switch to macro mode to verify preset exists but components are hidden
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     expect(
       await Library(page).isMonomerExist({
         alias: presetName,
@@ -729,6 +741,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
 
     await dialog.submit();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     expect(
       await Library(page).isMonomerExist({

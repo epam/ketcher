@@ -101,7 +101,7 @@ const HeaderContent = ({
         data={JSON.stringify(formState.result)}
         filename="ketcher-settings"
         className={classes.button}
-        data-testid="save-settings-to-file-button"
+        testId="save-settings-to-file-button"
       >
         <Icon name="save-1" />
       </SaveButton>

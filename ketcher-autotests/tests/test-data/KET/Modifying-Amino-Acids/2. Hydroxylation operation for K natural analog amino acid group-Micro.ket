@@ -480,8 +480,8 @@
         "id": "Hyl5xi___5-hydroxylysine",
         "fullName": "5-hydroxylysine",
         "alias": "Hyl5xi",
-        "aliasHELM": "Hyl_5xi",
-        "aliasBILN": "Hyl_5xi",
+        "aliasHELM": "Hyl",
+        "aliasBILN": "Hyl",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

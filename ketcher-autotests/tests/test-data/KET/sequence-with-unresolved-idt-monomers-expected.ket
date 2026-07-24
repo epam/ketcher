@@ -795,7 +795,7 @@
         "id": "MOE___2'-O-Methoxyethyl ribose",
         "fullName": "2'-O-Methoxyethyl ribose",
         "alias": "MOE",
-        "aliasHELM": "moe",
+        "aliasHELM": "MOE",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,
@@ -1125,7 +1125,7 @@
         "id": "sP___Phosporothioate",
         "fullName": "Phosporothioate",
         "alias": "sP",
-        "aliasHELM": "sp",
+        "aliasHELM": "sP",
         "aliasAxoLabs": "s",
         "attachmentPoints": [
             {
@@ -1332,7 +1332,7 @@
         "id": "5meC___5-methylcytosine",
         "fullName": "5-methylcytosine",
         "alias": "5meC",
-        "aliasHELM": "m5C",
+        "aliasHELM": "5meC",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -1979,7 +1979,7 @@
         "id": "dR___Deoxy-Ribose",
         "fullName": "Deoxy-Ribose",
         "alias": "dR",
-        "aliasHELM": "d",
+        "aliasHELM": "dR",
         "attachmentPoints": [
             {
                 "attachmentAtom": 9,

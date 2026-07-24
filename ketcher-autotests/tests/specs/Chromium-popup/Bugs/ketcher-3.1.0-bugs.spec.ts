@@ -178,10 +178,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
         getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       ).open();
       await takeEditorScreenshot(page);
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-        enableFlexMode: true,
-        goToPeptides: false,
-      });
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -332,7 +332,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(`Case 12: For D-OAla named monomer it should be D-Lactic acid name in preview tooltip`, async () => {
+  test(`Case 12: For D-OAla named monomer it should be D-Lactic acid name in preview tooltip`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/5195
@@ -343,10 +345,6 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Hover over D-OAla monomer
      * 4. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await Library(page).switchToPeptidesTab();
     await Library(page).hoverMonomer(Peptide.D_OAla);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -627,39 +625,34 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     });
   });
 
-  test.fail(
-    'Case 21: Changing of ambiguous base via RNA Builder on Sequence mode not causes sequence corruption',
-
-    async () => {
-      // Fails due to bug: https://github.com/epam/ketcher/issues/7512
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/6602
-       * Bug: https://github.com/epam/ketcher/issues/6085
-       * Description: Changing of ambiguous base via RNA Builder on Sequence mode not causes sequence corruption.
-       * Scenario:
-       * 1. Go to Macro - Sequence mode <--- Important
-       * 2. Load from HELM
-       * 3. Select any N nucleotide and select Modify in RNA Builder
-       * 4. Select 4ime6A base from the library and press Update button
-       * 5. Take a screenshot
-       */
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        page,
-        MacroFileType.HELM,
-        'RNA1{R(A)P.R(A,C,G,T)P.R(A)}$$$$V2.0',
-      );
-      const symbolN = getSymbolLocator(page, { symbolAlias: 'N' }).first();
-      await symbolN.click();
-      await modifyInRnaBuilder(page, symbolN);
-      await Library(page).rnaBuilder.selectBaseSlot();
-      await Library(page).selectMonomer(Base._4ime6A);
-      await Library(page).rnaBuilder.save();
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-    },
-  );
+  test('Case 21: Changing of ambiguous base via RNA Builder on Sequence mode not causes sequence corruption', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6602
+     * Bug: https://github.com/epam/ketcher/issues/6085
+     * Description: Changing of ambiguous base via RNA Builder on Sequence mode not causes sequence corruption.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode <--- Important
+     * 2. Load from HELM
+     * 3. Select any N nucleotide and select Modify in RNA Builder
+     * 4. Select 4ime6A base from the library and press Update button
+     * 5. Take a screenshot
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(A,C,G,T)P.R(A)}$$$$V2.0',
+    );
+    const symbolN = getSymbolLocator(page, { symbolAlias: 'N' }).first();
+    await symbolN.click();
+    await modifyInRnaBuilder(page, symbolN);
+    await Library(page).rnaBuilder.selectBaseSlot();
+    await Library(page).selectMonomer(Base._4ime6A);
+    await Library(page).rnaBuilder.save();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
 
   test('Case 22: Undo of deleted bond on sequence mode not causes "ghost" monomer appearence on the canvas', async () => {
     /*

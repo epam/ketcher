@@ -176,7 +176,7 @@ class ReText extends ReObject {
       if (this.item.content) {
         const parsed = JSON.parse(this.item.content);
         // Support Lexical format only (convert at import time).
-        if (parsed && parsed.root) {
+        if (parsed?.root) {
           editorState = parsed as SerializedEditorState;
         } else {
           console.warn(

@@ -26,6 +26,7 @@ import {
   Struct,
   Sugar,
 } from 'domain/entities';
+import { SGroup } from 'domain/entities/sgroup';
 import type { BondCIP } from 'domain/entities/types';
 import {
   AttachmentPointHoverOperation,
@@ -139,6 +140,11 @@ import {
   StereoFlagAddOperation,
   StereoFlagDeleteOperation,
 } from 'application/editor/operations/stereoFlag';
+import { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
+import {
+  SGroupAddOperation,
+  SGroupDeleteOperation,
+} from 'application/editor/operations/coreSGroup/sgroup';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -179,6 +185,7 @@ export class DrawingEntitiesManager {
   public multitailArrows: Map<number, MultitailArrow> = new Map();
   public rxnPluses: Map<number, RxnPlus> = new Map();
   public stereoFlags: Map<number, CoreStereoFlag> = new Map();
+  public sgroups: Map<number, SGroupDrawingEntity> = new Map();
 
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
@@ -346,6 +353,9 @@ export class DrawingEntitiesManager {
     this.allEntities.forEach(([, drawingEntity]) => {
       const command = this.deleteDrawingEntity(drawingEntity, false);
       mergedCommand.merge(command);
+    });
+    this.sgroups.forEach((sgroup) => {
+      mergedCommand.merge(this.deleteSGroup(sgroup));
     });
     this.clearMicromoleculesHiddenEntities();
     this.resetArrowIdCounter();
@@ -2327,6 +2337,7 @@ export class DrawingEntitiesManager {
   }
 
   public setMicromoleculesHiddenEntities(struct: Struct) {
+    this.clearMicromoleculesHiddenEntities();
     struct.mergeInto(this.micromoleculesHiddenEntities);
     this.micromoleculesHiddenEntities.atoms = new Pool();
     this.micromoleculesHiddenEntities.bonds = new Pool();
@@ -2459,6 +2470,28 @@ export class DrawingEntitiesManager {
 
       command.merge(bondAddCommand);
       mergedDrawingEntities.monomerToAtomBonds.set(addedBond.id, addedBond);
+    });
+
+    this.sgroups.forEach((sgroup) => {
+      const monomer = monomerToNewMonomer.get(sgroup.monomer);
+
+      if (!monomer) {
+        return;
+      }
+
+      const sgroupAddCommand = targetDrawingEntitiesManager.addSGroup(
+        sgroup.sgroup,
+        monomer,
+        sgroup.sgroupIdInMicroMode,
+      );
+      const addedSGroup = sgroupAddCommand.operations[0]?.sgroupDrawingEntity;
+
+      if (!addedSGroup) {
+        return;
+      }
+
+      command.merge(sgroupAddCommand);
+      mergedDrawingEntities.sgroups.set(addedSGroup.id, addedSGroup);
     });
 
     this.rxnArrows.forEach((rxnArrow) => {
@@ -2723,6 +2756,10 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteStereoFlag(stereoFlag);
     });
 
+    this.sgroups.forEach((sgroup) => {
+      editor.renderersContainer.deleteSGroup(sgroup);
+    });
+
     SequenceRenderer.clear();
   }
 
@@ -2791,7 +2828,6 @@ export class DrawingEntitiesManager {
     const command = new Command();
     const editor = provideEditorInstance();
     editor.events.selectEntities.dispatch(drawingEntities);
-    drawingEntities.forEach((monomer) => monomer.turnOnSelection());
     const newDrawingEntities = drawingEntities.reduce(
       (
         selectedDrawingEntities: DrawingEntity[],
@@ -2813,11 +2849,66 @@ export class DrawingEntitiesManager {
     return { command, drawingEntities: newDrawingEntities };
   }
 
+  private getAllSelectedEntitiesForSGroup(
+    sgroupDrawingEntity: SGroupDrawingEntity,
+    selectedDrawingEntities?: DrawingEntity[],
+  ) {
+    const command = new Command();
+    const drawingEntities: DrawingEntity[] = [];
+    const struct = sgroupDrawingEntity.monomer.monomerItem.struct;
+    const sgroupAtomIds = new Set(
+      SGroup.getAtoms(struct, sgroupDrawingEntity.sgroup),
+    );
+    const sgroupBondIds = new Set(
+      SGroup.getBonds(struct, sgroupDrawingEntity.sgroup),
+    );
+    const addDrawingEntity = (drawingEntity: DrawingEntity) => {
+      if (
+        drawingEntities.includes(drawingEntity) ||
+        selectedDrawingEntities?.includes(drawingEntity)
+      ) {
+        return;
+      }
+
+      drawingEntity.turnOnSelection();
+      drawingEntities.push(drawingEntity);
+      command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
+    };
+
+    this.atoms.forEach((atom) => {
+      if (
+        atom.monomer === sgroupDrawingEntity.monomer &&
+        sgroupAtomIds.has(atom.atomIdInMicroMode)
+      ) {
+        addDrawingEntity(atom);
+      }
+    });
+
+    this.bonds.forEach((bond) => {
+      if (
+        bond.firstAtom.monomer === sgroupDrawingEntity.monomer &&
+        bond.secondAtom.monomer === sgroupDrawingEntity.monomer &&
+        sgroupBondIds.has(bond.bondIdInMicroMode)
+      ) {
+        addDrawingEntity(bond);
+      }
+    });
+
+    return { command, drawingEntities };
+  }
+
   public getAllSelectedEntitiesForSingleEntity(
     drawingEntity: DrawingEntity,
     needToSelectConnectedBonds = true,
     selectedDrawingEntities?: DrawingEntity[],
   ) {
+    if (drawingEntity instanceof SGroupDrawingEntity) {
+      return this.getAllSelectedEntitiesForSGroup(
+        drawingEntity,
+        selectedDrawingEntities,
+      );
+    }
+
     const command = new Command();
     command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
     drawingEntity.turnOnSelection();
@@ -3225,6 +3316,80 @@ export class DrawingEntitiesManager {
         command.merge(this.deleteAtom(atom, true));
       });
     });
+    return command;
+  }
+
+  private addSGroupChangeModel(
+    sgroup: SGroup,
+    monomer: BaseMonomer,
+    sgroupIdInMicroMode: number,
+    existingSGroupDrawingEntity?: SGroupDrawingEntity,
+  ) {
+    if (existingSGroupDrawingEntity) {
+      this.sgroups.set(
+        existingSGroupDrawingEntity.id,
+        existingSGroupDrawingEntity,
+      );
+
+      return existingSGroupDrawingEntity;
+    }
+
+    const sgroupDrawingEntity = new SGroupDrawingEntity(
+      sgroup,
+      monomer,
+      sgroupIdInMicroMode,
+    );
+
+    this.sgroups.set(sgroupDrawingEntity.id, sgroupDrawingEntity);
+
+    return sgroupDrawingEntity;
+  }
+
+  public addSGroup(
+    sgroup: SGroup,
+    monomer: BaseMonomer,
+    sgroupIdInMicroMode: number,
+  ) {
+    const command = new Command();
+    const sgroupAddOperation = new SGroupAddOperation(
+      (sgroupDrawingEntity?: SGroupDrawingEntity) =>
+        this.addSGroupChangeModel(
+          sgroup,
+          monomer,
+          sgroupIdInMicroMode,
+          sgroupDrawingEntity,
+        ),
+      this.deleteSGroupChangeModel.bind(this),
+    );
+
+    command.addOperation(sgroupAddOperation);
+
+    return command;
+  }
+
+  private deleteSGroupChangeModel(sgroupDrawingEntity: SGroupDrawingEntity) {
+    this.sgroups.delete(sgroupDrawingEntity.id);
+
+    return sgroupDrawingEntity;
+  }
+
+  private deleteSGroup(sgroupDrawingEntity: SGroupDrawingEntity) {
+    const command = new Command();
+
+    command.addOperation(
+      new SGroupDeleteOperation(
+        sgroupDrawingEntity,
+        this.deleteSGroupChangeModel.bind(this, sgroupDrawingEntity),
+        (sgroupToRestore: SGroupDrawingEntity) =>
+          this.addSGroupChangeModel(
+            sgroupToRestore.sgroup,
+            sgroupToRestore.monomer,
+            sgroupToRestore.sgroupIdInMicroMode,
+            sgroupToRestore,
+          ),
+      ),
+    );
+
     return command;
   }
 

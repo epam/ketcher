@@ -1,6 +1,6 @@
 {
   "name": "ketcher-macromolecules",
-  "version": "3.17.0-rc.2",
+  "version": "3.18.0-rc.1",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -99,6 +99,7 @@
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.27.1",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "eslint-plugin-react-you-might-not-need-an-effect": "^1.0.1",
     "eslint-plugin-testing-library": "^5.0.1",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.3.0",

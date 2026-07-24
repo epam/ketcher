@@ -353,6 +353,7 @@ function Field(props: Readonly<FieldProps>) {
       className={className}
       onExtraChange={onExtraChange}
       extraValue={extraValue}
+      {...(labelPos === false && { error: dataError })}
       {...(extraName && {
         extraSchema: rest.extraSchema || schema?.properties?.[extraName],
       })}
@@ -370,7 +371,43 @@ function Field(props: Readonly<FieldProps>) {
     />
   );
 
-  if (labelPos === false) return formField;
+  if (labelPos === false) {
+    if (Component) {
+      return formField;
+    }
+
+    const isSelectableControl =
+      rest.type === 'radio' || rest.type === 'checkbox';
+    const showError = Boolean(dataError) && !isSelectableControl;
+
+    return (
+      <>
+        <span className={clsx({ [classes.dataError]: showError }, className)}>
+          <span
+            className={classes.inputWrapper}
+            onMouseEnter={handlePopoverOpen}
+            onMouseLeave={handlePopoverClose}
+            data-testid={
+              props['data-testid']
+                ? `${props['data-testid']}-input-span`
+                : undefined
+            }
+            role="none"
+          >
+            {formField}
+          </span>
+        </span>
+        {showError && dataError && anchorEl && (
+          <ErrorPopover
+            anchorEl={anchorEl}
+            open={!!anchorEl}
+            error={dataError}
+            onClose={handlePopoverClose}
+          />
+        )}
+      </>
+    );
+  }
   return (
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}

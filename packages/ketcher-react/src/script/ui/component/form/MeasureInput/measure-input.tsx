@@ -14,12 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type HTMLAttributes, useState, useEffect } from 'react';
+import { type HTMLAttributes, useState, useEffect, useCallback } from 'react';
 import clsx from 'clsx';
 
 import Input from '../Input/Input';
 import Select from '../Select';
 import styles from './measure-input.module.less';
+import formClasses from '../form/form.module.less';
+import { ErrorPopover } from '../form/errorPopover';
 import { getSelectOptionsFromSchema } from '../../../utils';
 import { MeasurementUnits } from 'src/script/ui/data/schema/options-schema';
 
@@ -41,6 +43,7 @@ interface MeasureInputProps
   onChange: (value: number) => void;
   onExtraChange: (value: string) => void;
   name?: string;
+  error?: string;
 }
 
 interface GetNewFloatResult {
@@ -96,10 +99,20 @@ const MeasureInput = ({
   onChange,
   onExtraChange,
   name: _name,
+  error,
   className,
   ...rest
 }: MeasureInputProps) => {
   const [internalValue, setInternalValue] = useState(String(value));
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const handlePopoverOpen = useCallback((event: React.MouseEvent) => {
+    setAnchorEl(event.currentTarget as HTMLElement);
+  }, []);
+
+  const handlePopoverClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
 
   // NOTE: onChange handler in the Input comopnent (packages/ketcher-react/src/script/ui/component/form/Input/Input.tsx)
   // is mapped to the internal function via constructor
@@ -153,13 +166,30 @@ const MeasureInput = ({
     <div className={clsx(styles.measureInput, className)} {...rest}>
       <span>{rest.title || desc?.title}</span>
       <div style={{ display: 'flex' }}>
-        <Input
-          schema={schema}
-          value={internalValue}
-          onChange={handleChange}
-          type="text"
-          data-testid={`${desc?.title}-value-input`}
-        />
+        <div className={clsx(error && formClasses.dataError)}>
+          <span
+            className={clsx(formClasses.inputWrapper, styles.errorWrapper)}
+            onMouseEnter={error ? handlePopoverOpen : undefined}
+            onMouseLeave={error ? handlePopoverClose : undefined}
+            role="none"
+          >
+            <Input
+              schema={schema}
+              value={internalValue}
+              onChange={handleChange}
+              type="text"
+              data-testid={`${desc?.title}-value-input`}
+            />
+          </span>
+          {error && anchorEl && (
+            <ErrorPopover
+              anchorEl={anchorEl}
+              open={!!anchorEl}
+              error={error}
+              onClose={handlePopoverClose}
+            />
+          )}
+        </div>
         <Select
           onChange={onExtraChange}
           options={selectOptions}

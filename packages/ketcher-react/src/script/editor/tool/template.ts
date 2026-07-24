@@ -277,6 +277,10 @@ class TemplateTool implements Tool {
     /* moving when attached to bond */
     if (ci && ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       const bond = this.struct.bonds.get(ci.id);
+      if (!bond) {
+        return;
+      }
+
       let sign = getSign(this.struct, bond, eventPosition);
 
       if (dragCtx.sign1 * this.template.sign > 0) {

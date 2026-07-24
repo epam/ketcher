@@ -49,7 +49,10 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   }
 
   public get textColor() {
-    return 'white';
+    if (this.monomer.isModification && this.modificationConfig) {
+      return 'white';
+    }
+    return super.textColor;
   }
 
   protected appendBody(

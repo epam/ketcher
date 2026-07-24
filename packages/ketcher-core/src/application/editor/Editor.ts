@@ -523,8 +523,8 @@ export class CoreEditor {
     };
     const getIdtModificationAliases = (monomer?: MonomerItemType): string[] => {
       const mods = monomer?.props?.idtAliases?.modifications;
-      if (!mods) return [];
-      return [mods.internal, mods.endpoint3, mods.endpoint5].filter(
+      const base = monomer?.props?.idtAliases?.base;
+      return [base, mods?.internal, mods?.endpoint3, mods?.endpoint5].filter(
         (v): v is string => typeof v === 'string' && v.length > 0,
       );
     };
@@ -557,16 +557,13 @@ export class CoreEditor {
       incoming: MonomerItemType,
       conflicting: MonomerItemType,
       aliasDetails: string,
-      bilnUniquenessScope: boolean,
     ): string => {
       const detail = aliasDetails ? ` (${aliasDetails})` : '';
       const isHelmCollision =
         Boolean(incoming.props?.aliasHELM) &&
         conflicting.props?.aliasHELM === incoming.props?.aliasHELM;
       const isBilnCollision =
-        bilnUniquenessScope &&
         Boolean(incoming.props?.aliasBILN) &&
-        hasBilnAliasUniquenessScope(conflicting.props?.MonomerClass) &&
         conflicting.props?.aliasBILN === incoming.props?.aliasBILN;
       if (isHelmCollision || isBilnCollision) {
         return `Alias collision detected${detail}.`;
@@ -642,9 +639,6 @@ export class CoreEditor {
             Boolean(newMonomer.props?.aliasBILN) &&
             hasBilnAliasUniquenessScope(monomer.props?.MonomerClass) &&
             monomer.props?.aliasBILN === newMonomer.props?.aliasBILN) ||
-          (Boolean(newMonomer.props?.idtAliases?.base) &&
-            monomer.props?.idtAliases?.base ===
-              newMonomer.props?.idtAliases?.base) ||
           newMonomerModificationAliases.some((alias) =>
             existingMonomerModificationAliases.includes(alias),
           )
@@ -658,7 +652,6 @@ export class CoreEditor {
             newMonomer,
             conflictingMonomer,
             formatAliasDetails(newMonomer),
-            newMonomerHasBilnAliasUniquenessScope,
           ),
         );
         return;

@@ -2238,6 +2238,61 @@ export class SequenceMode extends BaseMode {
     );
   }
 
+  private getMissingBackboneAttachmentPointForSelections(
+    selections: TwoStrandedNodesSelection,
+    monomerItem: MonomerItemType,
+  ): AttachmentPointName | null {
+    if (!monomerItem.attachmentPoints) {
+      return null;
+    }
+
+    const newMonomerAttachmentPoints =
+      BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
+        monomerItem.attachmentPoints,
+      );
+
+    for (const selectionRange of selections) {
+      for (const nodeSelection of selectionRange) {
+        const senseNode = nodeSelection.node.senseNode;
+        if (!senseNode) {
+          continue;
+        }
+
+        const backboneBonds: [
+          AttachmentPointName,
+          PolymerBond | MonomerToAtomBond | null | undefined,
+        ][] = [
+          [
+            AttachmentPointName.R1,
+            senseNode.firstMonomerInNode.attachmentPointsToBonds.R1,
+          ],
+          [
+            AttachmentPointName.R2,
+            senseNode.lastMonomerInNode.attachmentPointsToBonds.R2,
+          ],
+        ];
+
+        for (const [attachmentPointName, bond] of backboneBonds) {
+          const isBackboneBond =
+            bond &&
+            (bond instanceof MonomerToAtomBond ||
+              bond.isBackBoneChainConnection);
+
+          if (
+            isBackboneBond &&
+            !newMonomerAttachmentPoints.attachmentPointsList.includes(
+              attachmentPointName,
+            )
+          ) {
+            return attachmentPointName;
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
   private presetHasNeededAttachmentPoints(preset) {
     // TODO: This check is not universal, it won't allow to put presets without R1 in sugar, revisit later
     if (!preset.sugar) {
@@ -2359,7 +2414,15 @@ export class SequenceMode extends BaseMode {
           monomerItem,
         )
       ) {
-        this.showMergeWarningModal();
+        const missingAttachmentPoint =
+          this.getMissingBackboneAttachmentPointForSelections(
+            selections,
+            monomerItem,
+          );
+        const message =
+          missingAttachmentPoint &&
+          `The monomer lacks ${missingAttachmentPoint} attachment point and cannot be inserted at current position`;
+        this.showMergeWarningModal(message);
         return;
       }
 

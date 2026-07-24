@@ -17,6 +17,9 @@
 import type { Action, Struct, Vec2 } from 'ketcher-core';
 import type { ClosestItemWithMap } from '../shared/closest.types';
 
+/** Sign value used for bond-orientation calculations: positive (+1), negative (−1), or unset (0). */
+export type Sign = 0 | 1 | -1;
+
 /**
  * The processed internal template object built by TemplateTool from the raw input.
  * Contains pre-computed attachment ids, geometry, and the molecule fragment.
@@ -28,7 +31,7 @@ export interface InternalTemplate {
   xy0?: Vec2;
   angle0?: number;
   /** Sign of the template relative to its attachment bond (+1 or -1). 0 when no bond is present. */
-  sign: 0 | 1 | -1;
+  sign: Sign;
 }
 
 /**
@@ -68,9 +71,9 @@ export interface DragContext {
   xy0: Vec2;
   item?: ClosestItemWithMap | null;
   /** Sign of the bond relative to the molecule (+1 or -1). 0 until set in mousedown. */
-  sign1: 0 | 1 | -1;
+  sign1: Sign;
   /** Sign of the bond relative to the template (+1 or -1). 0 until set in mousedown. */
-  sign2: 0 | 1 | -1;
+  sign2: Sign;
   action?: Action | null;
   mergeItems?: MergeItems;
   angle?: number;

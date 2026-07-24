@@ -48,6 +48,7 @@ import {
 import type {
   DragContext,
   InternalTemplate,
+  Sign,
   TemplateToolInput,
 } from './template.types';
 import type { ClosestItemWithMap } from '../shared/closest.types';
@@ -301,10 +302,10 @@ class TemplateTool implements Tool {
     /* moving when attached to bond */
     if (ci && ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       const bond = this.struct.bonds.get(ci.id);
-      let sign: 0 | 1 | -1 = getSign(this.struct, bond, eventPosition);
+      let sign: Sign = getSign(this.struct, bond, eventPosition);
 
       if (dragCtx.sign1 * this.template.sign > 0) {
-        sign = -sign as 0 | 1 | -1;
+        sign = -sign as Sign;
       }
 
       if (sign !== dragCtx.sign2 || !dragCtx.action) {

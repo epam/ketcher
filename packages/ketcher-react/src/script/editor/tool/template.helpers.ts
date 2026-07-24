@@ -15,8 +15,9 @@
  ***************************************************************************/
 
 import { type Bond, type Struct, Vec2, vectorUtils } from 'ketcher-core';
+import type { Sign } from './template.types';
 
-export function getSign(molecule, bond, v): 0 | 1 | -1 {
+export function getSign(molecule, bond, v): Sign {
   const begin = molecule.atoms.get(bond.begin).pp;
   const end = molecule.atoms.get(bond.end).pp;
 

@@ -340,12 +340,19 @@ class IndigoService implements StructService {
       struct,
     } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
+    const timeout = options?.['request-timeout'] as number | undefined;
+    const defaultTimeout = 30000;
 
     return new Promise((resolve, reject) => {
+      let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
       const action = ({ data }: OutputMessageWrapper) => {
         console.log('convert action', data);
         const msg: OutputMessage<string> = data;
         if (msg.inputData === struct) {
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
           if (!msg.hasError) {
             const result: ConvertResult = {
               struct: msg.payload,
@@ -357,6 +364,18 @@ class IndigoService implements StructService {
           }
         }
       };
+
+      if (timeout !== 0) {
+        timeoutId = setTimeout(() => {
+          this.EE.off(WorkerEvent.Convert, action);
+          reject(
+            new Error(
+              `Convert operation timeout after ${timeout ?? defaultTimeout}ms`,
+            ),
+          );
+        }, timeout ?? defaultTimeout);
+      }
+
       const monomerLibrary = JSON.stringify(
         provideEditorInstance()?.monomersLibraryParsedJson,
       );
@@ -401,8 +420,12 @@ class IndigoService implements StructService {
   ): Promise<LayoutResult> {
     const { struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
+    const timeout = options?.['request-timeout'] as number | undefined;
+    const defaultTimeout = 30000;
 
     return new Promise((resolve, reject) => {
+      let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
       const action = ({
         data,
       }: OutputMessageWrapper<{
@@ -416,6 +439,9 @@ class IndigoService implements StructService {
           format: string;
           original_format: ChemicalMimeType;
         }> = data;
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
         if (!msg.hasError) {
           const { struct } = msg.payload;
           const result: LayoutResult = {
@@ -427,6 +453,17 @@ class IndigoService implements StructService {
           reject(new Error(msg.error));
         }
       };
+
+      if (timeout !== 0) {
+        timeoutId = setTimeout(() => {
+          this.EE.off(WorkerEvent.Layout, action);
+          reject(
+            new Error(
+              `Layout operation timeout after ${timeout ?? defaultTimeout}ms`,
+            ),
+          );
+        }, timeout ?? defaultTimeout);
+      }
 
       const commandOptions: CommandOptions = {
         ...this.getStandardServerOptions(options),

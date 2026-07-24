@@ -179,18 +179,12 @@ export const defaultTheme: EditorTheme = {
       xsmall: '6px',
     },
     family: {
-      // TODO: revert to original font-family in #10400
       montserrat: 'Montserrat, sans-serif',
-      // montserrat: 'sans-serif',
       inter:
-        // TODO: revert to original font-family in #10400
         "Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',\n" +
         'Arial, sans-serif',
-      // 'Arial, sans-serif',
       roboto:
-        // TODO: revert to original font-family in #10400
         'Roboto, FreeSans, Arimo, Droid Sans, Helvetica, Helvetica Neue, Arial, sans-serif',
-      // 'Arial, sans-serif',
       arial: 'Arial, sans-serif',
     },
     weight: {

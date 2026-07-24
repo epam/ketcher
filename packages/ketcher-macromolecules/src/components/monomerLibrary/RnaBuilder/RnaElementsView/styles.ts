@@ -139,7 +139,7 @@ export const NewPresetButton = styled(StyledButton)`
   height: 24px;
   border-radius: 4px;
   font-size: 12px;
-  font-family: Arial, sans-serif;
+  font-family: ${({ theme }) => theme.ketcher.font.family.arial};
 `;
 
 export const FilterIconButton = styled.button<{

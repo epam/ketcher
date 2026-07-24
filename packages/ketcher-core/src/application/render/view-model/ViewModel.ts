@@ -134,7 +134,7 @@ export class ViewModel {
     let continueFlag = true;
 
     while (continueFlag) {
-      const atomToHalfBond = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
+      const atomToHalfBond: Record<number, number> = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
       continueFlag = false;
 
       for (let l = 0; l < halfEdgesInLoop.length; ++l) {
@@ -220,7 +220,7 @@ export class ViewModel {
   }
 
   private findLoops() {
-    const newLoops: Array<number[]> = [];
+    const newLoops: number[] = [];
     const bondsToMark = new Pile<number>();
 
     /*
@@ -253,7 +253,7 @@ export class ViewModel {
         // loop found
         const subloops = this.partitionLoop(halfEdgesInPotentialLoop);
         subloops.forEach((halfEdgesInSubLoop) => {
-          let loopId;
+          let loopId: number;
           if (
             this.loopIsInner(halfEdgesInSubLoop) &&
             !this.loopHasSelfIntersections(halfEdgesInSubLoop)

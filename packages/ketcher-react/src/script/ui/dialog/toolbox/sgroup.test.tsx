@@ -51,13 +51,20 @@ describe('Copolymer S-Group type availability', () => {
     fireEvent.mouseDown(typeSelect);
   };
 
-  it('should hide Copolymer option when fewer than two SRUs are selected', () => {
+  it('should show Copolymer option when fewer than two SRUs are selected', () => {
     renderAndOpenTypeSelect(1);
-    expect(screen.queryByTestId('Copolymer-option')).not.toBeInTheDocument();
+    expect(screen.getByTestId('Copolymer-option')).toBeInTheDocument();
   });
 
   it('should show Copolymer option when at least two SRUs are selected', () => {
     renderAndOpenTypeSelect(2);
+    expect(screen.getByTestId('Copolymer-option')).toBeInTheDocument();
+  });
+
+  it('should show Copolymer option when selected SRU count is not provided', () => {
+    renderWithMockStore(<SGroup type="MUL" />);
+    const typeSelect = screen.getByRole('combobox');
+    fireEvent.mouseDown(typeSelect);
     expect(screen.getByTestId('Copolymer-option')).toBeInTheDocument();
   });
 

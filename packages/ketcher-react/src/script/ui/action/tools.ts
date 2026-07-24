@@ -83,13 +83,12 @@ const toolActions: Record<string, ToolActionEntry> = {
     title: 'Stereochemistry',
     action: { tool: 'enhancedStereo' },
     disabled: (editor) => {
-      if (editor.isMonomerCreationWizardActive) return true;
-      const struct = editor?.struct();
-      const selection = editor?.selection?.();
+      if (editor.isMonomerCreationWizardActive) {
+        return true;
+      }
+      const struct = editor?.struct?.();
       const atomIds =
-        selection && selection.atoms
-          ? selection.atoms
-          : Array.from(struct.atoms.keys());
+        editor?.selection?.()?.atoms ?? Array.from(struct.atoms.keys());
       return findStereoAtoms(struct, atomIds).length === 0;
     },
     hidden: (options) => isHidden(options, 'enhanced-stereo'),

@@ -112,7 +112,7 @@ import type { KetFileNode } from 'domain/serializers/serializers.types';
 type KetMicromoleculeNode = {
   type?: string;
   $ref?: string;
-  [key: string]: unknown;
+  stereoFlagPosition?: unknown;
 };
 
 interface IKetMicromoleculeFile {
@@ -120,12 +120,14 @@ interface IKetMicromoleculeFile {
   root: {
     nodes: Record<string, KetMicromoleculeNode>;
   };
+  // Allows dynamic $ref key lookup: ket[nodes[i].$ref!]
   [key: string]: unknown;
 }
 
 interface IKetMicromoleculeSerializedResult {
   root: { nodes: KetMicromoleculeNode[] };
   header?: unknown;
+  // Allows dynamic property assignment for mol/rg sections: result[`mol${id}`], result[`rg${id}`]
   [key: string]: unknown;
 }
 

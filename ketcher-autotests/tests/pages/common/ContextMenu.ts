@@ -30,15 +30,34 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
     },
 
     async click(optionPath: ContextMenuOption | ContextMenuOption[]) {
-      await this.open();
-
       const options = Array.isArray(optionPath) ? optionPath : [optionPath];
 
-      for (const optionId of options) {
-        const option = getOption(optionId).first();
-        await option.waitFor({ state: 'visible' });
-        await option.click();
+      let clickSucceeded = false;
+      let lastError: unknown;
+
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          await this.open();
+
+          for (const optionId of options) {
+            const option = getOption(optionId).first();
+            await option.waitFor({ state: 'visible', timeout: 2000 });
+            await option.click();
+          }
+
+          clickSucceeded = true;
+          break;
+        } catch (error) {
+          lastError = error;
+          await page.keyboard.press('Escape');
+          await page.waitForTimeout(100);
+        }
       }
+
+      if (!clickSucceeded) {
+        throw lastError;
+      }
+
       try {
         // Wait for the context menu to close after clicking the last option
         await page.waitForTimeout(100);

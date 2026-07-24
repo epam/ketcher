@@ -741,8 +741,8 @@
             {
                 "label": "C",
                 "location": [
-                    20.879380082712963,
-                    -13.143193325955027,
+                    21.24782347625506,
+                    -12.774749932412929,
                     -1.5
                 ],
                 "selected": true
@@ -750,8 +750,8 @@
             {
                 "label": "C",
                 "location": [
-                    21.84651483401724,
-                    -13.402336301539089,
+                    21.506966451839123,
+                    -13.741884683717204,
                     -1.5
                 ],
                 "selected": true
@@ -759,8 +759,8 @@
             {
                 "label": "C",
                 "location": [
-                    21.139132776336822,
-                    -14.108246490286081,
+                    22.212876640586114,
+                    -13.034502626036788,
                     -1.5
                 ],
                 "selected": true
@@ -793,8 +793,8 @@
             }
         ],
         "stereoFlagPosition": {
-            "x": 23.941956153271562,
-            "y": 14.319678534197125,
+            "x": 17.15873459695349,
+            "y": -2.151801861950288,
             "z": 0
         }
     },
@@ -804,8 +804,8 @@
             {
                 "label": "C",
                 "location": [
-                    12.488136598116418,
-                    -6.32289632893769,
+                    14.427526479237722,
+                    -4.383506447816386,
                     -1.5
                 ],
                 "selected": true
@@ -813,8 +813,8 @@
             {
                 "label": "C",
                 "location": [
-                    13.711301580951673,
-                    -7.546747471219172,
+                    15.651377621519204,
+                    -5.606671430651641,
                     -1.5
                 ],
                 "selected": true
@@ -822,8 +822,8 @@
             {
                 "label": "C",
                 "location": [
-                    12.747419098860473,
-                    -7.289437678883024,
+                    15.394067829183056,
+                    -4.642788948560439,
                     -1.5
                 ],
                 "selected": true
@@ -831,8 +831,8 @@
             {
                 "label": "C",
                 "location": [
-                    14.419075049737629,
-                    -6.838974002433217,
+                    14.943604152733249,
+                    -6.314444899437595,
                     -1.5
                 ],
                 "selected": true
@@ -840,8 +840,8 @@
             {
                 "label": "C",
                 "location": [
-                    13.198740474618072,
-                    -5.612292452436037,
+                    13.71692260273607,
+                    -5.094110324318039,
                     -1.5
                 ],
                 "selected": true
@@ -849,8 +849,8 @@
             {
                 "label": "C",
                 "location": [
-                    14.163223346224717,
-                    -5.876721149026816,
+                    13.981351299326848,
+                    -6.058593195924685,
                     -1.5
                 ],
                 "selected": true
@@ -937,8 +937,8 @@
             }
         ],
         "stereoFlagPosition": {
-            "x": 14.570392424421087,
-            "y": 4.96582705794075,
+            "x": 16.987114154341985,
+            "y": 3.765100857421084,
             "z": 0
         }
     },
@@ -946,8 +946,8 @@
         "type": "ambiguousMonomer",
         "id": "0",
         "position": {
-            "x": 9.867699739957057,
-            "y": -11.076539349706486
+            "x": 21.559876711918065,
+            "y": -3.6635956453105565
         },
         "alias": "X",
         "templateId": "alternatives__A___Alanine__C___Cysteine__D___Aspartic acid__E___Glutamic acid__F___Phenylalanine__G___Glycine__H___Histidine__I___Isoleucine__K___Lysine__L___Leucine__M___Methionine__N___Asparagine__O___Pyrrolysine__P___Proline__Q___Glutamine__R___Arginine__S___Serine__T___Threonine__U___Selenocysteine__V___Valine__W___Tryptophan__Y___Tyrosine_"
@@ -5521,13 +5521,12 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 10.644156875264617,
-            "y": -12.421402557958567
+            "x": 22.904739920170144,
+            "y": -4.440052780618119
         },
         "alias": "O",
         "templateId": "O___Pyrrolysine",
         "transformation": {
-            "flip": "vertical",
             "rotate": -0.7853981633974483
         }
     },
@@ -5535,13 +5534,12 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 11.70481704704444,
-            "y": -13.482062729738388
+            "x": 23.965400091949967,
+            "y": -5.50071295239794
         },
         "alias": "N",
         "templateId": "N___Asparagine",
         "transformation": {
-            "flip": "vertical",
             "rotate": -0.7853981633974483
         }
     },
@@ -5549,13 +5547,12 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 13.049680255296526,
-            "y": -14.258519865045955
+            "x": 24.741857227257533,
+            "y": -6.845576160650024
         },
         "alias": "5A6",
         "templateId": "5A6___6-amino-hexanol (5' end)",
         "transformation": {
-            "flip": "vertical",
             "rotate": -0.7853981633974483
         }
     },
@@ -5763,13 +5760,12 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 17.500372004778843,
-            "y": -14.258519865045947
+            "x": 22.36315001534598,
+            "y": -9.395741854478807
         },
         "alias": "5eU",
         "templateId": "5eU___5-ethynyl-uracil",
         "transformation": {
-            "flip": "vertical",
             "rotate": -0.7853981633974483
         }
     },
@@ -5966,13 +5962,12 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 18.845235213030936,
-            "y": -13.482062729738391
+            "x": 23.965400091949974,
+            "y": -8.840079007077366
         },
         "alias": "cl6pur",
         "templateId": "cl6pur___6-Chloropurine",
         "transformation": {
-            "flip": "vertical",
             "rotate": -0.7853981633974483
         }
     },
@@ -6176,13 +6171,12 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 23.516971505547133,
-            "y": -6.3576726771119105
+            "x": 12.0835956155004,
+            "y": -13.511815299593565
         },
         "alias": "eop",
         "templateId": "eop___Ethylphosphate",
         "transformation": {
-            "flip": "vertical",
             "rotate": -0.7853981633974483
         }
     },
@@ -6321,13 +6315,12 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 22.45631133376731,
-            "y": -5.29701250533209
+            "x": 11.022935443720577,
+            "y": -12.451155127813744
         },
         "alias": "5hMedC",
         "templateId": "5hMedC___5-Hydroxymethyl dC",
         "transformation": {
-            "flip": "vertical",
             "rotate": -0.7853981633974483
         }
     },
@@ -6729,13 +6722,12 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 21.03873433783633,
-            "y": -4.662919175650306
+            "x": 10.388842114038795,
+            "y": -11.033578131882761
         },
         "alias": "5NitInd",
         "templateId": "5NitInd___5-Nitroindole",
         "transformation": {
-            "flip": "vertical",
             "rotate": -0.7853981633974483
         }
     },
@@ -7175,8 +7167,8 @@
         "type": "ambiguousMonomer",
         "id": "9",
         "position": {
-            "x": 24.60894342082958,
-            "y": -10.8467027010385
+            "x": 16.572625639426988,
+            "y": -14.603787214876009
         },
         "alias": "B",
         "templateId": "alternatives__C___Cytosine__G___Guanine__T___Thymine_"
@@ -7746,8 +7738,8 @@
         "type": "ambiguousMonomer",
         "id": "10",
         "position": {
-            "x": 22.320188797522267,
-            "y": -9.916884228560555
+            "x": 18.02151437886059,
+            "y": -14.215558647222233
         },
         "alias": "D",
         "templateId": "alternatives__A___Adenine__G___Guanine__U___Uracil_"
@@ -8128,8 +8120,8 @@
         "type": "ambiguousMonomer",
         "id": "11",
         "position": {
-            "x": 23.44425771786824,
-            "y": -8.883040224901086
+            "x": 19.366377587112666,
+            "y": -13.439101511914672
         },
         "alias": "R",
         "templateId": "alternatives__A___Adenine__G___Guanine_"
@@ -8152,14 +8144,13 @@
         "type": "monomer",
         "id": "12",
         "position": {
-            "x": 15.243179380101921,
-            "y": -5.4393763109578614
+            "x": 11.165299249346349,
+            "y": -9.039075285455423
         },
         "alias": "Unknown",
         "templateId": "unknown_monomer_with_idt_alias_Unknown",
         "seqid": 0,
         "transformation": {
-            "flip": "vertical",
             "rotate": -0.7853981633974483
         }
     },
@@ -8269,8 +8260,8 @@
         "type": "ambiguousMonomer",
         "id": "13",
         "position": {
-            "x": 9.479471172303274,
-            "y": -9.627650610272882
+            "x": 20.110987972484462,
+            "y": -3.2753670776567723
         },
         "alias": "%",
         "templateId": "mixture__A___Alanine__C___Cysteine__D___Aspartic acid_"
@@ -8296,8 +8287,8 @@
         "type": "ambiguousMonomer",
         "id": "14",
         "position": {
-            "x": 9.479471172303274,
-            "y": -8.074736339657758
+            "x": 18.558073701869336,
+            "y": -3.2753670776567723
         },
         "alias": "%",
         "templateId": "alternatives__A___Alanine__C___Cysteine__D___Aspartic acid_"
@@ -8323,8 +8314,8 @@
         "type": "ambiguousMonomer",
         "id": "15",
         "position": {
-            "x": 14.498568994730128,
-            "y": -14.646748432699738
+            "x": 25.130085794911317,
+            "y": -8.294464900083627
         },
         "alias": "%",
         "templateId": "alternatives__25moe3___3-O-methoxyethyl ribose (2,5 connectivity)__5A6___6-amino-hexanol (5' end)_"
@@ -8637,8 +8628,8 @@
         "type": "ambiguousMonomer",
         "id": "16",
         "position": {
-            "x": 24.60894342082958,
-            "y": -9.293788430423376
+            "x": 15.019711368811866,
+            "y": -14.603787214876009
         },
         "alias": "%",
         "templateId": "alternatives__bnn___Benzylamino__bP___Boranophosphate_"
@@ -8945,8 +8936,8 @@
         "type": "ambiguousMonomer",
         "id": "17",
         "position": {
-            "x": 16.05148326534524,
-            "y": -14.646748432699727
+            "x": 25.13008579491131,
+            "y": -9.84737917069874
         },
         "alias": "%",
         "templateId": "mixture__25moe3___3-O-methoxyethyl ribose (2,5 connectivity)__5A6___6-amino-hexanol (5' end)_"
@@ -8969,8 +8960,8 @@
         "type": "ambiguousMonomer",
         "id": "18",
         "position": {
-            "x": 24.220714853175796,
-            "y": -7.844899690989774
+            "x": 13.570822629378263,
+            "y": -14.21555864722223
         },
         "alias": "%",
         "templateId": "mixture__bnn___Benzylamino__bP___Boranophosphate_"
@@ -8993,13 +8984,12 @@
         "type": "monomer",
         "id": "19",
         "position": {
-            "x": 18.0369313277876,
-            "y": -4.274690607996524
+            "x": 10.000613546385011,
+            "y": -8.031775121834032
         },
         "alias": "DOTA",
         "templateId": "DOTA___Tetraxetan",
         "transformation": {
-            "flip": "vertical",
             "rotate": -0.7853981633974483
         }
     },
@@ -9477,8 +9467,8 @@
         "type": "ambiguousMonomer",
         "id": "20",
         "position": {
-            "x": 19.589845598402725,
-            "y": -4.274690607996522
+            "x": 10.000613546385011,
+            "y": -9.584689392449157
         },
         "alias": "%",
         "templateId": "mixture__sDBL___Symmetric Doubler__4aPEGMal___4-Arm PEG-Maleimide_"
@@ -11166,8 +11156,8 @@
         "type": "ambiguousMonomer",
         "id": "21",
         "position": {
-            "x": 16.588042588354,
-            "y": -4.662919175650302
+            "x": 12.767549325950336,
+            "y": -8.483412438053968
         },
         "alias": "%",
         "templateId": "alternatives__sDBL___Symmetric Doubler__4aPEGMal___4-Arm PEG-Maleimide_"
@@ -11190,13 +11180,12 @@
         "type": "monomer",
         "id": "22",
         "position": {
-            "x": 11.768225795610586,
-            "y": -9.004554812135702
+            "x": 17.109184962435734,
+            "y": -3.663595645310554
         },
         "alias": "Sta",
         "templateId": "Sta___Statine",
         "transformation": {
-            "flip": "vertical",
             "rotate": -0.7853981633974483
         }
     },
@@ -11430,14 +11419,13 @@
         "type": "monomer",
         "id": "23",
         "position": {
-            "x": 17.044207296566427,
-            "y": -9.460719520348123
+            "x": 17.31603810567666,
+            "y": -8.804461894323346
         },
         "alias": "4FB",
         "templateId": "4FB___4-Formylbenzamide",
         "expanded": false,
         "transformation": {
-            "flip": "vertical",
             "rotate": -0.7853981633974483
         }
     },

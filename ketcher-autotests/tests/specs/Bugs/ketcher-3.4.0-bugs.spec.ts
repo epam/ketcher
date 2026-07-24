@@ -44,7 +44,11 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
+import {
+  collapseMonomer,
+  expandMonomer,
+  expandMonomers,
+} from '@utils/canvas/monomer/helpers';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -74,7 +78,6 @@ import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/Monome
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 async function openPPTXFileAndValidateStructurePreview(
@@ -671,10 +674,10 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
-    await ContextMenu(
+    await collapseMonomer(
       page,
       getAtomLocator(page, { atomLabel: 'O', atomId: 4 }),
-    ).click(MonomerOnMicroOption.CollapseMonomer);
+    );
     await takeEditorScreenshot(page);
   });
 

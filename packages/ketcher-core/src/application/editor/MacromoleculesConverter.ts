@@ -24,7 +24,7 @@ import {
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Command } from 'domain/entities/Command';
-import type { PolymerBond } from 'domain/entities/PolymerBond';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
 import type { AttachmentPointName } from 'domain/types';
 import {
@@ -42,6 +42,133 @@ import { MONOMER_CONST } from 'domain/constants/monomers';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 
 export class MacromoleculesConverter {
+  private static findAttachmentPointByMonomerPair(
+    monomer: BaseMonomer,
+    polymerBond: PolymerBond,
+  ): AttachmentPointName | undefined {
+    const attachmentPointByBondId = Object.entries(
+      monomer.attachmentPointsToBonds,
+    ).find(([, monomerBond]) => {
+      return (
+        monomerBond instanceof PolymerBond && monomerBond.id === polymerBond.id
+      );
+    });
+
+    if (attachmentPointByBondId) {
+      const [attachmentPointName] = attachmentPointByBondId;
+
+      return attachmentPointName as AttachmentPointName;
+    }
+
+    const connectedMonomer = polymerBond.getAnotherMonomer(monomer);
+
+    if (!connectedMonomer) {
+      return undefined;
+    }
+
+    const matchingAttachmentPoints = Object.entries(
+      monomer.attachmentPointsToBonds,
+    ).filter(([, monomerBond]) => {
+      return (
+        monomerBond instanceof PolymerBond &&
+        monomerBond.getAnotherMonomer(monomer)?.id === connectedMonomer.id
+      );
+    });
+
+    if (matchingAttachmentPoints.length !== 1) {
+      return undefined;
+    }
+
+    const [attachmentPointName] = matchingAttachmentPoints[0];
+
+    return attachmentPointName as AttachmentPointName;
+  }
+
+  private static findAttachmentPointByBondId(
+    monomer: BaseMonomer,
+    bondId: number,
+  ): AttachmentPointName | undefined {
+    const matchingAttachmentPoint = Object.entries(
+      monomer.attachmentPointsToBonds,
+    ).find(([, monomerBond]) => monomerBond?.id === bondId);
+
+    if (!matchingAttachmentPoint) {
+      return undefined;
+    }
+
+    const [attachmentPointName] = matchingAttachmentPoint;
+
+    return attachmentPointName as AttachmentPointName;
+  }
+
+  private static syncAttachmentPointMappingForPolymerBonds(
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ) {
+    drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
+      if (polymerBond instanceof HydrogenBond || !polymerBond.secondMonomer) {
+        return;
+      }
+
+      const firstAttachmentPoint =
+        polymerBond.firstMonomer.getAttachmentPointByBond(polymerBond);
+      if (!firstAttachmentPoint) {
+        const guessedFirstAttachmentPoint =
+          MacromoleculesConverter.findAttachmentPointByMonomerPair(
+            polymerBond.firstMonomer,
+            polymerBond,
+          );
+
+        if (guessedFirstAttachmentPoint) {
+          polymerBond.firstMonomer.setBond(
+            guessedFirstAttachmentPoint,
+            polymerBond,
+          );
+        }
+      }
+
+      const secondAttachmentPoint =
+        polymerBond.secondMonomer.getAttachmentPointByBond(polymerBond);
+      if (!secondAttachmentPoint) {
+        const guessedSecondAttachmentPoint =
+          MacromoleculesConverter.findAttachmentPointByMonomerPair(
+            polymerBond.secondMonomer,
+            polymerBond,
+          );
+
+        if (guessedSecondAttachmentPoint) {
+          polymerBond.secondMonomer.setBond(
+            guessedSecondAttachmentPoint,
+            polymerBond,
+          );
+        }
+      }
+    });
+  }
+
+  private static syncAttachmentPointMappingForMonomerToAtomBonds(
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ) {
+    drawingEntitiesManager.monomerToAtomBonds.forEach((monomerToAtomBond) => {
+      const { monomer } = monomerToAtomBond;
+      const attachmentPoint =
+        monomer.getAttachmentPointByBond(monomerToAtomBond);
+
+      if (attachmentPoint) {
+        return;
+      }
+
+      const guessedAttachmentPoint =
+        MacromoleculesConverter.findAttachmentPointByBondId(
+          monomer,
+          monomerToAtomBond.id,
+        );
+
+      if (guessedAttachmentPoint) {
+        monomer.setBond(guessedAttachmentPoint, monomerToAtomBond);
+      }
+    });
+  }
+
   public static convertMonomerToMonomerMicromolecule(
     monomer: BaseMonomer,
     struct: Struct,
@@ -154,6 +281,13 @@ export class MacromoleculesConverter {
     struct: Struct,
     reStruct?: ReStruct,
   ) {
+    MacromoleculesConverter.syncAttachmentPointMappingForPolymerBonds(
+      drawingEntitiesManager,
+    );
+    MacromoleculesConverter.syncAttachmentPointMappingForMonomerToAtomBonds(
+      drawingEntitiesManager,
+    );
+
     const monomerToAtomIdMap = new Map<BaseMonomer, Map<number, number>>();
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);

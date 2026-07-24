@@ -25,6 +25,7 @@ import {
   MultitailArrow as MicromoleculeMultitailArrow,
   RxnPlus as MicromoleculeRxnPlus,
 } from 'domain/entities';
+import type { Point } from 'domain/entities/vec2';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import type { Serializer } from '../serializers.types';
 import { headerToKet } from './toKet/headerToKet';
@@ -112,7 +113,7 @@ import type { KetFileNode } from 'domain/serializers/serializers.types';
 type KetMicromoleculeNode = {
   type?: string;
   $ref?: string;
-  stereoFlagPosition?: unknown;
+  stereoFlagPosition?: Point;
 };
 
 interface IKetMicromoleculeFile {
@@ -147,9 +148,7 @@ function parseNode(node: KetMicromoleculeNode, struct: Struct) {
       const currentStruct = moleculeToStruct(node);
       if (node.stereoFlagPosition) {
         const fragment = currentStruct.frags.get(0)!;
-        fragment.stereoFlagPosition = new Vec2(
-          node.stereoFlagPosition as ConstructorParameters<typeof Vec2>[0],
-        );
+        fragment.stereoFlagPosition = new Vec2(node.stereoFlagPosition);
       }
 
       currentStruct.mergeInto(struct);

@@ -14,6 +14,7 @@ describe('sgroup should calculate S-Group bounding box correctly', () => {
       render.ctab,
       'getRGroupAttachmentPointsVBoxByAtomIds',
     );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     SGroup.bracketPos(sGroup, restruct.molecule as any, undefined, render);
     expect(attachmentsSpy).toHaveBeenCalled();
   });

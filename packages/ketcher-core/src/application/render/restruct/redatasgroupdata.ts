@@ -34,6 +34,7 @@ class ReDataSGroupData extends ReObject {
   }
 
   hoverPath(render: Render) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const box = this.sgroup.dataArea as any;
     const p0 = Scale.modelToCanvas(box.p0, render.options);
     const sz = Scale.modelToCanvas(box.p1, render.options).sub(p0);

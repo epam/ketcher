@@ -502,8 +502,7 @@ export class CoreEditor {
     } = parseMonomersLibrary(monomersDataRaw);
     const skippedItems: SkippedMonomerItem[] = [];
     const reportValidationError = (name: string, reason: string) => {
-      const message = `${name}: ${reason}`;
-      KetcherLogger.error('Editor::updateMonomersLibrary', message);
+      KetcherLogger.error('Editor::updateMonomersLibrary', reason);
       skippedItems.push({ name, reason });
     };
     let didCommitAnyItem = false;
@@ -522,6 +521,14 @@ export class CoreEditor {
         firstMonomer.props.hidden === secondMonomer.props.hidden
       );
     };
+    const getIdtModificationAliases = (monomer?: MonomerItemType): string[] => {
+      const mods = monomer?.props?.idtAliases?.modifications;
+      if (!mods) return [];
+      return [mods.internal, mods.endpoint3, mods.endpoint5].filter(
+        (v): v is string => typeof v === 'string' && v.length > 0,
+      );
+    };
+
     const formatAliasDetails = (monomer: MonomerItemType) =>
       [
         monomer.props?.aliasHELM
@@ -545,6 +552,27 @@ export class CoreEditor {
       ]
         .filter((value): value is string => Boolean(value))
         .join(', ');
+
+    const getCollisionErrorMessage = (
+      incoming: MonomerItemType,
+      conflicting: MonomerItemType,
+      aliasDetails: string,
+      bilnUniquenessScope: boolean,
+    ): string => {
+      const detail = aliasDetails ? ` (${aliasDetails})` : '';
+      const isHelmCollision =
+        Boolean(incoming.props?.aliasHELM) &&
+        conflicting.props?.aliasHELM === incoming.props?.aliasHELM;
+      const isBilnCollision =
+        bilnUniquenessScope &&
+        Boolean(incoming.props?.aliasBILN) &&
+        hasBilnAliasUniquenessScope(conflicting.props?.MonomerClass) &&
+        conflicting.props?.aliasBILN === incoming.props?.aliasBILN;
+      if (isHelmCollision || isBilnCollision) {
+        return `Alias collision detected${detail}.`;
+      }
+      return `Duplicate IDT aliases detected${detail}. IDT aliases for 5', 3', internal and base positions must be unique.`;
+    };
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
@@ -570,7 +598,7 @@ export class CoreEditor {
       ) {
         reportValidationError(
           newMonomer.props.MonomerName,
-          `Invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`,
+          `${HELM_ALIAS_FORMAT_ERROR_MESSAGE}`,
         );
         return;
       }
@@ -578,8 +606,10 @@ export class CoreEditor {
         newMonomer.props?.aliasBILN &&
         !isValidBilnAlias(newMonomer.props.aliasBILN)
       ) {
-        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
-        KetcherLogger.error(errorMessage);
+        reportValidationError(
+          newMonomer.props.MonomerName,
+          `${BILN_ALIAS_FORMAT_ERROR_MESSAGE}`,
+        );
         return;
       }
 
@@ -589,15 +619,21 @@ export class CoreEditor {
       ) {
         reportValidationError(
           newMonomer.props.MonomerName,
-          `Invalid HELM alias value. ${HELM_ALIAS_LENGTH_ERROR_MESSAGE} The monomer was not added to the library.`,
+          `${HELM_ALIAS_LENGTH_ERROR_MESSAGE}`,
         );
         return;
       }
 
-      const aliasCollisionExists = this._monomersLibrary.some((monomer) => {
+      const newMonomerModificationAliases =
+        getIdtModificationAliases(newMonomer);
+
+      const conflictingMonomer = this._monomersLibrary.find((monomer) => {
         if (areSameMonomers(monomer, newMonomer)) {
           return false;
         }
+
+        const existingMonomerModificationAliases =
+          getIdtModificationAliases(monomer);
 
         return (
           (Boolean(newMonomer.props?.aliasHELM) &&
@@ -609,25 +645,21 @@ export class CoreEditor {
           (Boolean(newMonomer.props?.idtAliases?.base) &&
             monomer.props?.idtAliases?.base ===
               newMonomer.props?.idtAliases?.base) ||
-          (Boolean(newMonomer.props?.idtAliases?.modifications?.endpoint3) &&
-            monomer.props?.idtAliases?.modifications?.endpoint3 ===
-              newMonomer.props?.idtAliases?.modifications?.endpoint3) ||
-          (Boolean(newMonomer.props?.idtAliases?.modifications?.endpoint5) &&
-            monomer.props?.idtAliases?.modifications?.endpoint5 ===
-              newMonomer.props?.idtAliases?.modifications?.endpoint5) ||
-          (Boolean(newMonomer.props?.idtAliases?.modifications?.internal) &&
-            monomer.props?.idtAliases?.modifications?.internal ===
-              newMonomer.props?.idtAliases?.modifications?.internal)
+          newMonomerModificationAliases.some((alias) =>
+            existingMonomerModificationAliases.includes(alias),
+          )
         );
       });
 
-      if (aliasCollisionExists) {
-        const aliasDetails = formatAliasDetails(newMonomer);
+      if (conflictingMonomer) {
         reportValidationError(
           newMonomer.props.MonomerName,
-          `Alias collision detected${
-            aliasDetails ? ` (${aliasDetails})` : ''
-          }. The monomer was not added to the library.`,
+          getCollisionErrorMessage(
+            newMonomer,
+            conflictingMonomer,
+            formatAliasDetails(newMonomer),
+            newMonomerHasBilnAliasUniquenessScope,
+          ),
         );
         return;
       }
@@ -636,7 +668,7 @@ export class CoreEditor {
       if (newMonomer.props?.idtAliases && !newMonomer.props.idtAliases.base) {
         reportValidationError(
           newMonomer.props.MonomerName,
-          `Base IDT alias is required when idtAliases is defined. The monomer was not added to the library.`,
+          `Base IDT alias is required when idtAliases is defined.`,
         );
         return;
       }
@@ -671,8 +703,10 @@ export class CoreEditor {
           const offenders = tooLongEntries
             .map(({ alias: field, value }) => `${field}="${value}"`)
             .join(', ');
-          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The monomer was not added to the library.`;
-          KetcherLogger.error(errorMessage);
+          reportValidationError(
+            newMonomer.props.MonomerName,
+            `${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}.`,
+          );
           return;
         }
       }

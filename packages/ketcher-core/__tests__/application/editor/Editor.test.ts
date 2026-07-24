@@ -256,9 +256,7 @@ describe('CoreEditor', () => {
         ),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
-    });
 
-    it('should accept monomer with idtAliases and base alias', () => {
       const monomerWithBase = {
         root: {
           templates: [
@@ -290,7 +288,7 @@ describe('CoreEditor', () => {
         },
       };
 
-      const initialLibrarySize = editor.monomersLibrary.length;
+      const initialLibrarySizeAfter = editor.monomersLibrary.length;
       editor.updateMonomersLibrary(JSON.stringify(monomerWithBase));
 
       expect(errorSpy).not.toHaveBeenCalledWith(
@@ -298,7 +296,7 @@ describe('CoreEditor', () => {
           'Base IDT alias is required when idtAliases is defined',
         ),
       );
-      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySizeAfter + 1);
     });
 
     it('should accept monomer without idtAliases', () => {
@@ -482,6 +480,10 @@ describe('CoreEditor', () => {
           reason: expect.stringContaining('Alias collision detected'),
         },
       ]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Alias collision detected'),
+      );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
     });
 
@@ -544,13 +546,15 @@ describe('CoreEditor', () => {
       expect(thrownError?.skippedItems).toEqual([
         {
           name: 'SUGAR3',
-          reason: expect.stringContaining('Invalid HELM alias value'),
+          reason: expect.stringContaining(
+            'The HELM alias must consist only of',
+          ),
         },
       ]);
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
-        expect.stringContaining('Invalid HELM alias value'),
+        expect.stringContaining('The HELM alias must consist only of'),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
       expect(
@@ -593,12 +597,20 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithInvalidBilnAlias));
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(
+          JSON.stringify(monomerWithInvalidBilnAlias),
+        );
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
 
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
+      expect(thrownError?.partialSuccess).toBe(false);
       expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'Load of "PEPTIDE_BILN_INVALID" monomer has failed, monomer definition contains invalid BILN alias value.',
-        ),
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('The BILN alias must consist only of'),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
     });
@@ -734,7 +746,178 @@ describe('CoreEditor', () => {
       ).toThrow(MonomerLibraryUpdateError);
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
-        expect.stringContaining('Alias collision detected'),
+        expect.stringContaining('Duplicate IDT aliases detected'),
+      );
+    });
+
+    it('should reject monomer with duplicate IDT endpoint5 alias', () => {
+      const monomerA = {
+        root: { templates: [{ $ref: 'monomerTemplate-CHEM6' }] },
+        'monomerTemplate-CHEM6': {
+          type: 'monomerTemplate',
+          id: 'CHEM6',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 6',
+          name: 'CHEM6',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM6',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM6',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBase6',
+            modifications: { endpoint5: '/5Me/' },
+          },
+        },
+      };
+      const monomerB = {
+        root: { templates: [{ $ref: 'monomerTemplate-CHEM7' }] },
+        'monomerTemplate-CHEM7': {
+          type: 'monomerTemplate',
+          id: 'CHEM7',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 7',
+          name: 'CHEM7',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM7',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM7',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBase7',
+            modifications: { endpoint5: '/5Me/' },
+          },
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(monomerA));
+
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerB)),
+      ).toThrow(MonomerLibraryUpdateError);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Duplicate IDT aliases detected'),
+      );
+    });
+
+    it('should reject monomer with duplicate IDT internal alias', () => {
+      const monomerA = {
+        root: { templates: [{ $ref: 'monomerTemplate-CHEM8' }] },
+        'monomerTemplate-CHEM8': {
+          type: 'monomerTemplate',
+          id: 'CHEM8',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 8',
+          name: 'CHEM8',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM8',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM8',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBase8',
+            modifications: { internal: '/iMe/' },
+          },
+        },
+      };
+      const monomerB = {
+        root: { templates: [{ $ref: 'monomerTemplate-CHEM9' }] },
+        'monomerTemplate-CHEM9': {
+          type: 'monomerTemplate',
+          id: 'CHEM9',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 9',
+          name: 'CHEM9',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM9',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM9',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBase9',
+            modifications: { internal: '/iMe/' },
+          },
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(monomerA));
+
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerB)),
+      ).toThrow(MonomerLibraryUpdateError);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Duplicate IDT aliases detected'),
+      );
+    });
+
+    it('should reject monomer with duplicate IDT endpoint3 alias', () => {
+      const monomerA = {
+        root: { templates: [{ $ref: 'monomerTemplate-CHEM10' }] },
+        'monomerTemplate-CHEM10': {
+          type: 'monomerTemplate',
+          id: 'CHEM10',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 10',
+          name: 'CHEM10',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM10',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM10',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBase10',
+            modifications: { endpoint3: '/3Me/' },
+          },
+        },
+      };
+      const monomerB = {
+        root: { templates: [{ $ref: 'monomerTemplate-CHEM11' }] },
+        'monomerTemplate-CHEM11': {
+          type: 'monomerTemplate',
+          id: 'CHEM11',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 11',
+          name: 'CHEM11',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM11',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM11',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBase11',
+            modifications: { endpoint3: '/3Me/' },
+          },
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(monomerA));
+
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerB)),
+      ).toThrow(MonomerLibraryUpdateError);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Duplicate IDT aliases detected'),
       );
     });
 
@@ -764,9 +947,17 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithLongIdtAlias));
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithLongIdtAlias));
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
 
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
+      expect(thrownError?.partialSuccess).toBe(false);
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining(
           'The maximum number of characters of an IDT alias without slashes (/) is 10.',
         ),

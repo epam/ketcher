@@ -103,9 +103,16 @@ export class Ketcher {
   libraryUpdateEvent: Subscription;
 
   get editor(): Editor {
-    // we should assign editor exactly after ketcher creation
-    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-    return this.#editor!;
+    // we should assign editor exactly after ketcher creation, so #editor
+    // being null here would indicate a programming error (accessing the
+    // editor before Ketcher has finished initializing), not a normal
+    // runtime case
+    if (!this.#editor) {
+      throw new Error(
+        'Editor is not initialized yet. It should be assigned right after Ketcher creation.',
+      );
+    }
+    return this.#editor;
   }
 
   get eventBus(): EventEmitter {

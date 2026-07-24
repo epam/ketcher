@@ -4,6 +4,7 @@ import {
   BondWidth,
   StereoBondWidth,
 } from 'application/render/renderers/BondPathRenderer/constants';
+import type { Vec2 } from 'domain/entities/vec2';
 
 class SingleDownBondPathRenderer {
   static preparePaths(bondVectors: BondVectors): SVGPathAttributes[] {
@@ -22,25 +23,24 @@ class SingleDownBondPathRenderer {
     const halfOfBondEndWidth = 0.7 * StereoBondWidth;
 
     let path = '';
-    // TODO define proper names for variables below
-    let p;
-    let q;
-    let r;
 
     for (let i = 0; i < numberOfLines; ++i) {
-      r = startPosition.addScaled(normalizedDirection, step * i);
-      p = r.addScaled(
+      const lineCenter: Vec2 = startPosition.addScaled(
+        normalizedDirection,
+        step * i,
+      );
+      const firstLineEnd: Vec2 = lineCenter.addScaled(
         firstHalfEdge.leftNormal,
         (halfOfBondEndWidth * (i + 0.5)) / (numberOfLines - 0.5),
       );
-      q = r.addScaled(
+      const secondLineEnd: Vec2 = lineCenter.addScaled(
         firstHalfEdge.leftNormal,
         (-halfOfBondEndWidth * (i + 0.5)) / (numberOfLines - 0.5),
       );
 
       path += `
-            M${p.x},${p.y}
-            L${q.x},${q.y}
+            M${firstLineEnd.x},${firstLineEnd.y}
+            L${secondLineEnd.x},${secondLineEnd.y}
           `;
     }
 

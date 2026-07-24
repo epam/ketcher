@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { clickInTheMiddleOfTheCanvas } from '@utils/clicks';
 import { RingButton } from '../constants/ringButton/Constants';
@@ -67,6 +68,8 @@ export const BottomToolbar = (page: Page) => {
 
     async structureLibrary() {
       await locators.structureLibraryButton.click();
+      // Wait for the content of the Structure Library dialog to load
+      await page.waitForTimeout(250);
     },
 
     async clickRing(RingButton: RingButton) {

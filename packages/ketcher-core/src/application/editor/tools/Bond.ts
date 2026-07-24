@@ -396,20 +396,37 @@ class PolymerBond implements BaseTool {
       ? AttachmentPointName.HYDROGEN
       : this.bondRenderer.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
           this.bondRenderer.polymerBond,
-        );
+        ) ??
+        this.bondRenderer.polymerBond.firstMonomer
+          .chosenFirstAttachmentPointForBond ??
+        this.bondRenderer.polymerBond.firstMonomer
+          .availableAttachmentPointForBondEnd;
     const secondMonomerAttachmentPoint = this.isHydrogenBond
       ? AttachmentPointName.HYDROGEN
       : secondMonomer.getPotentialAttachmentPointByBond(
           this.bondRenderer.polymerBond,
-        );
-    assert(firstMonomerAttachmentPoint);
-    assert(secondMonomerAttachmentPoint);
+        ) ??
+        secondMonomer.chosenSecondAttachmentPointForBond ??
+        secondMonomer.availableAttachmentPointForBondEnd;
+
+    if (!firstMonomerAttachmentPoint || !secondMonomerAttachmentPoint) {
+      this.editor.events.error.dispatch(
+        "Monomers don't have any connection point available",
+      );
+      return this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+        this.bondRenderer.polymerBond,
+      );
+    }
+
     if (
       firstMonomerAttachmentPoint === secondMonomerAttachmentPoint &&
       !this.isHydrogenBond
     ) {
       this.editor.events.error.dispatch(
         'You have connected monomers with attachment points of the same group',
+      );
+      return this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+        this.bondRenderer.polymerBond,
       );
     }
 

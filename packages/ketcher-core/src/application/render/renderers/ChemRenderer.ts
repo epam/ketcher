@@ -2,13 +2,17 @@ import type { Selection } from 'd3';
 import type { Chem } from 'domain/entities/Chem';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
-import { KetMonomerClass } from 'application/formatters/types/ket';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 
-const CHEM_HOVERED_ELEMENT_ID = MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM].hover;
-const CHEM_SYMBOL_ELEMENT_ID = MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM].body;
+const CHEM_SYMBOL_ELEMENTS_IDS = MONOMER_SYMBOLS_IDS.CHEM;
+if (!CHEM_SYMBOL_ELEMENTS_IDS) {
+  throw new Error('Missing monomer symbol ids for CHEM');
+}
+
+const CHEM_HOVERED_ELEMENT_ID = CHEM_SYMBOL_ELEMENTS_IDS.hover;
+const CHEM_SYMBOL_ELEMENT_ID = CHEM_SYMBOL_ELEMENTS_IDS.body;
 const CHEM_AUTOCHAIN_PREVIEW_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM].autochainPreview;
+  CHEM_SYMBOL_ELEMENTS_IDS.autochainPreview;
 
 export class ChemRenderer extends BaseMonomerRenderer {
   constructor(public monomer: Chem, scale?: number) {

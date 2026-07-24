@@ -125,6 +125,7 @@ export const Card = styled.div<{
     background: transparent;
     padding: 0;
     cursor: pointer;
+    font-family: ${({ theme }) => theme.ketcher.font.family.arial};
     &.visible {
       visibility: visible;
       opacity: 1;

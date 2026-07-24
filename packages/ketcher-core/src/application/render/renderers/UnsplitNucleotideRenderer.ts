@@ -6,14 +6,16 @@ import {
   MONOMER_SYMBOLS_IDS,
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
-import { KetMonomerClass } from 'application/formatters/types/ket';
 
-const NUCLEOTIDE_HOVERED_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].hover;
-const NUCLEOTIDE_SYMBOL_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].body;
+const NUCLEOTIDE_SYMBOL_ELEMENTS_IDS = MONOMER_SYMBOLS_IDS.RNA;
+if (!NUCLEOTIDE_SYMBOL_ELEMENTS_IDS) {
+  throw new Error('Missing monomer symbol ids for RNA');
+}
+
+const NUCLEOTIDE_HOVERED_ELEMENT_ID = NUCLEOTIDE_SYMBOL_ELEMENTS_IDS.hover;
+const NUCLEOTIDE_SYMBOL_ELEMENT_ID = NUCLEOTIDE_SYMBOL_ELEMENTS_IDS.body;
 const NUCLEOTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].autochainPreview;
+  NUCLEOTIDE_SYMBOL_ELEMENTS_IDS.autochainPreview;
 
 export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = '’5';

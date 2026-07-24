@@ -239,6 +239,14 @@ function Editor({
     };
   }, [dispatch]);
 
+  useEffect(() => {
+    if (!editor) {
+      return;
+    }
+
+    editor.ensureDefaultMonomersLibraryLoaded();
+  }, [editor]);
+
   useSetRnaPresets();
   useMacromoleculesHotkeys();
 

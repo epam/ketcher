@@ -3,7 +3,16 @@ import type { ToolEventHandlerName } from 'application/editor/tools/Tool';
 import type { CoreEditor } from 'application/editor/Editor';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { SequenceType } from 'domain/entities/monomer-chains/types';
-import { ToolName } from 'application/editor/tools/types';
+import type { ToolName } from 'application/editor/tools/types';
+
+const SELECT_RECTANGLE_TOOL_NAME = 'select-rectangle' as ToolName;
+const SELECT_LASSO_TOOL_NAME = 'select-lasso' as ToolName;
+const SELECT_STRUCTURE_TOOL_NAME = 'select-structure' as ToolName;
+const BOND_SINGLE_TOOL_NAME = 'bond-single' as ToolName;
+const BOND_HYDROGEN_TOOL_NAME = 'bond-hydrogen' as ToolName;
+const ERASE_TOOL_NAME = 'erase' as ToolName;
+const CLEAR_TOOL_NAME = 'clear' as ToolName;
+const HAND_TOOL_NAME = 'hand' as ToolName;
 
 export interface IEditorEvents {
   selectMonomer: Subscription;
@@ -197,9 +206,9 @@ export const renderersEvents: ToolEventHandlerName[] = [
 ];
 
 const selectTools = [
-  ToolName.selectRectangle,
-  ToolName.selectLasso,
-  ToolName.selectStructure,
+  SELECT_RECTANGLE_TOOL_NAME,
+  SELECT_LASSO_TOOL_NAME,
+  SELECT_STRUCTURE_TOOL_NAME,
 ];
 let currentSelectToolIdx = 0;
 
@@ -272,9 +281,9 @@ export const hotkeysConfiguration = {
 
       const hasEntitiesToDelete =
         editor.drawingEntitiesManager.selectedEntities.length > 0;
-      editor.events.selectTool.dispatch([ToolName.erase]);
+      editor.events.selectTool.dispatch([ERASE_TOOL_NAME]);
       if (hasEntitiesToDelete) {
-        editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+        editor.events.selectTool.dispatch([SELECT_RECTANGLE_TOOL_NAME]);
       }
     },
   },
@@ -282,21 +291,21 @@ export const hotkeysConfiguration = {
     shortcut: '1',
     handler: (editor: CoreEditor) => {
       if (editor.isSequenceMode) return;
-      selectBondTool(editor, ToolName.bondSingle);
+      selectBondTool(editor, BOND_SINGLE_TOOL_NAME);
     },
   },
   bondHydrogen: {
     shortcut: '2',
     handler: (editor: CoreEditor) => {
       if (editor.isSequenceMode) return;
-      selectBondTool(editor, ToolName.bondHydrogen);
+      selectBondTool(editor, BOND_HYDROGEN_TOOL_NAME);
     },
   },
   clear: {
     shortcut: ['Mod+Delete', 'Mod+Backspace'],
     handler: (editor: CoreEditor) => {
-      editor.events.selectTool.dispatch([ToolName.clear]);
-      editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      editor.events.selectTool.dispatch([CLEAR_TOOL_NAME]);
+      editor.events.selectTool.dispatch([SELECT_RECTANGLE_TOOL_NAME]);
     },
   },
   'zoom-plus': {
@@ -328,7 +337,7 @@ export const hotkeysConfiguration = {
   hand: {
     shortcut: 'Mod+Alt+h',
     handler: (editor: CoreEditor) => {
-      editor.events.selectTool.dispatch([ToolName.hand]);
+      editor.events.selectTool.dispatch([HAND_TOOL_NAME]);
     },
   },
   'hide-scrollbars': {

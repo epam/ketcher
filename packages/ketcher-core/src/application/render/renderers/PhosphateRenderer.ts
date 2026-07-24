@@ -5,15 +5,17 @@ import {
   MONOMER_SYMBOLS_IDS,
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
-import { KetMonomerClass } from 'application/formatters/types/ket';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 
-const PHOSPHATE_HOVERED_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.Phosphate].hover;
-const PHOSPHATE_SYMBOL_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.Phosphate].body;
+const PHOSPHATE_SYMBOL_ELEMENTS_IDS = MONOMER_SYMBOLS_IDS.Phosphate;
+if (!PHOSPHATE_SYMBOL_ELEMENTS_IDS) {
+  throw new Error('Missing monomer symbol ids for Phosphate');
+}
+
+const PHOSPHATE_HOVERED_ELEMENT_ID = PHOSPHATE_SYMBOL_ELEMENTS_IDS.hover;
+const PHOSPHATE_SYMBOL_ELEMENT_ID = PHOSPHATE_SYMBOL_ELEMENTS_IDS.body;
 const PHOSPHATE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.Phosphate].autochainPreview;
+  PHOSPHATE_SYMBOL_ELEMENTS_IDS.autochainPreview;
 
 export class PhosphateRenderer extends BaseMonomerRenderer {
   constructor(public monomer: Phosphate, scale?: number) {

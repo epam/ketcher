@@ -6,15 +6,17 @@ import {
   MONOMER_SYMBOLS_IDS,
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
-import { KetMonomerClass } from 'application/formatters/types/ket';
 import type { DeepPartial } from 'types';
 
-const PEPTIDE_HOVERED_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].hover;
-const PEPTIDE_SYMBOL_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].body;
+const PEPTIDE_SYMBOL_ELEMENTS_IDS = MONOMER_SYMBOLS_IDS.AminoAcid;
+if (!PEPTIDE_SYMBOL_ELEMENTS_IDS) {
+  throw new Error('Missing monomer symbol ids for AminoAcid');
+}
+
+const PEPTIDE_HOVERED_ELEMENT_ID = PEPTIDE_SYMBOL_ELEMENTS_IDS.hover;
+const PEPTIDE_SYMBOL_ELEMENT_ID = PEPTIDE_SYMBOL_ELEMENTS_IDS.body;
 const PEPTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].autochainPreview;
+  PEPTIDE_SYMBOL_ELEMENTS_IDS.autochainPreview;
 
 type RendererTheme = DeepPartial<{ ketcher: EditorTheme }>;
 

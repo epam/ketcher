@@ -17,10 +17,7 @@
 // Single entry point to Raphaël library
 
 import { Vec2 } from 'domain/entities/vec2';
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const raphaelModule: any =
-  typeof window !== 'undefined' ? require('raphael') : undefined;
+import raphaelModule from 'raphael';
 
 // Some environments (vite, webpack etc) might resolve this import differently
 // this is a workaround to make it work in all environments
@@ -32,7 +29,8 @@ function resolveRaphael(): any {
 
   return typeof raphaelModule === 'function'
     ? raphaelModule
-    : raphaelModule.default;
+    : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (raphaelModule as any).default;
 }
 
 const Raphael = resolveRaphael();

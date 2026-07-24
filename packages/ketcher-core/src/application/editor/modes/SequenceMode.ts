@@ -72,12 +72,13 @@ import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import { KetMonomerClass } from 'application/formatters';
 import { registerMode } from './modesRegistry';
 
-const naturalAnalogues = uniq([
-  ...rnaDnaNaturalAnalogues,
-  ...rnaDnaAmbiguousSymbols,
-  ...peptideNaturalAnalogues,
-  ...peptideAmbiguousSymbols,
-]);
+const getNaturalAnalogues = () =>
+  uniq([
+    ...(rnaDnaNaturalAnalogues ?? []),
+    ...(rnaDnaAmbiguousSymbols ?? []),
+    ...(peptideNaturalAnalogues ?? []),
+    ...(peptideAmbiguousSymbols ?? []),
+  ]);
 
 enum Direction {
   Left = 'left',
@@ -1162,6 +1163,8 @@ export class SequenceMode extends BaseMode {
   }
 
   get keyboardEventHandlers() {
+    const naturalAnalogues = getNaturalAnalogues();
+
     const deleteNode = (direction: Direction) => {
       if (this.isEditInRNABuilderMode) return;
       const editor = provideEditorInstance();

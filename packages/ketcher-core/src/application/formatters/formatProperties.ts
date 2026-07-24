@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ChemicalMimeType } from 'domain/services/struct/structService.types';
+import type { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import type { SupportedFormat } from './structFormatter.types';
 import { SupportedFormatProperties } from './supportedFormatProperties';
 
@@ -22,170 +22,196 @@ type FormatPropertiesMap = {
   [key in SupportedFormat]: SupportedFormatProperties;
 };
 
+const asChemicalMimeType = (mimeType: string) => mimeType as ChemicalMimeType;
+
+const CHEMICAL_MIME_TYPE = {
+  Mol: asChemicalMimeType('chemical/x-mdl-molfile'),
+  Rxn: asChemicalMimeType('chemical/x-mdl-rxnfile'),
+  DaylightSmiles: asChemicalMimeType('chemical/x-daylight-smiles'),
+  ExtendedSmiles: asChemicalMimeType('chemical/x-chemaxon-cxsmiles'),
+  DaylightSmarts: asChemicalMimeType('chemical/x-daylight-smarts'),
+  InChI: asChemicalMimeType('chemical/x-inchi'),
+  InChIAuxInfo: asChemicalMimeType('chemical/x-inchi-aux'),
+  InChIKey: asChemicalMimeType('chemical/x-inchi-key'),
+  CDX: asChemicalMimeType('chemical/x-cdx'),
+  CDXML: asChemicalMimeType('chemical/x-cdxml'),
+  CML: asChemicalMimeType('chemical/x-cml'),
+  KET: asChemicalMimeType('chemical/x-indigo-ket'),
+  UNKNOWN: asChemicalMimeType('chemical/x-unknown'),
+  SDF: asChemicalMimeType('chemical/x-sdf'),
+  FASTA: asChemicalMimeType('chemical/x-fasta'),
+  SEQUENCE: asChemicalMimeType('chemical/x-sequence'),
+  IDT: asChemicalMimeType('chemical/x-idt'),
+  AXOLABS: asChemicalMimeType('chemical/x-axo-labs'),
+  HELM: asChemicalMimeType('chemical/x-helm'),
+  BILN: asChemicalMimeType('chemical/x-biln'),
+  RDF: asChemicalMimeType('chemical/x-rdf'),
+} as const;
+
 const formatProperties: FormatPropertiesMap = {
   molAuto: new SupportedFormatProperties(
     // TODO: is it a valid name?
     'MDL Molfile Auto Format detect',
-    ChemicalMimeType.Mol,
+    CHEMICAL_MIME_TYPE.Mol,
     ['.mol'],
     true,
     { 'molfile-saving-mode': 'auto' },
   ),
   mol: new SupportedFormatProperties(
     'MDL Molfile V2000',
-    ChemicalMimeType.Mol,
+    CHEMICAL_MIME_TYPE.Mol,
     ['.mol'],
     true,
   ),
   molV3000: new SupportedFormatProperties(
     'MDL Molfile V3000',
-    ChemicalMimeType.Mol,
+    CHEMICAL_MIME_TYPE.Mol,
     ['.mol'],
     true,
     { 'molfile-saving-mode': '3000' },
   ),
   rxn: new SupportedFormatProperties(
     'MDL Rxnfile V2000',
-    ChemicalMimeType.Rxn,
+    CHEMICAL_MIME_TYPE.Rxn,
     ['.rxn'],
     true,
   ),
   rxnV3000: new SupportedFormatProperties(
     'MDL Rxnfile V3000',
-    ChemicalMimeType.Rxn,
+    CHEMICAL_MIME_TYPE.Rxn,
     ['.rxn'],
     true,
     { 'molfile-saving-mode': '3000' },
   ),
   smiles: new SupportedFormatProperties(
     'Daylight SMILES',
-    ChemicalMimeType.DaylightSmiles,
+    CHEMICAL_MIME_TYPE.DaylightSmiles,
     ['.smi', '.smiles'],
     true,
   ),
   smilesExt: new SupportedFormatProperties(
     'Extended SMILES',
-    ChemicalMimeType.ExtendedSmiles,
+    CHEMICAL_MIME_TYPE.ExtendedSmiles,
     ['.cxsmi', '.cxsmiles'],
   ),
   smarts: new SupportedFormatProperties(
     'Daylight SMARTS',
-    ChemicalMimeType.DaylightSmarts,
+    CHEMICAL_MIME_TYPE.DaylightSmarts,
     ['.smarts'],
   ),
-  inChI: new SupportedFormatProperties('InChI', ChemicalMimeType.InChI, [
+  inChI: new SupportedFormatProperties('InChI', CHEMICAL_MIME_TYPE.InChI, [
     '.inchi',
   ]),
   inChIAuxInfo: new SupportedFormatProperties(
     'InChI AuxInfo',
-    ChemicalMimeType.InChIAuxInfo,
+    CHEMICAL_MIME_TYPE.InChIAuxInfo,
     ['.inchi'],
   ),
   inChIKey: new SupportedFormatProperties(
     'InChIKey',
-    ChemicalMimeType.InChIKey,
+    CHEMICAL_MIME_TYPE.InChIKey,
     ['.inchikey'],
   ),
   cml: new SupportedFormatProperties(
     'CML',
-    ChemicalMimeType.CML,
+    CHEMICAL_MIME_TYPE.CML,
     ['.cml', '.mrv'],
     true,
   ),
-  ket: new SupportedFormatProperties('Ket Format', ChemicalMimeType.KET, [
+  ket: new SupportedFormatProperties('Ket Format', CHEMICAL_MIME_TYPE.KET, [
     '.ket',
   ]),
   cdxml: new SupportedFormatProperties(
     'CDXML',
-    ChemicalMimeType.CDXML,
+    CHEMICAL_MIME_TYPE.CDXML,
     ['.cdxml'],
     true,
   ),
   cdx: new SupportedFormatProperties(
     'Base64 CDX',
-    ChemicalMimeType.CDX,
+    CHEMICAL_MIME_TYPE.CDX,
     ['.b64cdx'],
     true,
   ),
   binaryCdx: new SupportedFormatProperties(
     'CDX',
-    ChemicalMimeType.CDX,
+    CHEMICAL_MIME_TYPE.CDX,
     ['.cdx'],
     true,
   ),
   sdf: new SupportedFormatProperties(
     'SDF V2000',
-    ChemicalMimeType.SDF,
+    CHEMICAL_MIME_TYPE.SDF,
     ['.sdf'],
     true,
     { 'molfile-saving-mode': '2000' },
   ),
   sdfV3000: new SupportedFormatProperties(
     'SDF V3000',
-    ChemicalMimeType.SDF,
+    CHEMICAL_MIME_TYPE.SDF,
     ['.sdf'],
     true,
     { 'molfile-saving-mode': '3000' },
   ),
   fasta: new SupportedFormatProperties(
     'FASTA',
-    ChemicalMimeType.FASTA,
+    CHEMICAL_MIME_TYPE.FASTA,
     ['.fasta'],
     true,
   ),
   idt: new SupportedFormatProperties(
     'IDT',
-    ChemicalMimeType.IDT,
+    CHEMICAL_MIME_TYPE.IDT,
     ['.idt'],
     false,
   ),
   axoLabs: new SupportedFormatProperties(
     'AxoLabs',
-    ChemicalMimeType.AXOLABS,
+    CHEMICAL_MIME_TYPE.AXOLABS,
     ['.axolabs'],
     true,
   ),
   helm: new SupportedFormatProperties(
     'HELM',
-    ChemicalMimeType.HELM,
+    CHEMICAL_MIME_TYPE.HELM,
     ['.helm'],
     true,
   ),
   biln: new SupportedFormatProperties(
     'BILN',
-    ChemicalMimeType.BILN,
+    CHEMICAL_MIME_TYPE.BILN,
     ['.biln'],
     true,
   ),
   sequence: new SupportedFormatProperties(
     'SEQUENCE',
-    ChemicalMimeType.SEQUENCE,
+    CHEMICAL_MIME_TYPE.SEQUENCE,
     ['.seq'],
     false,
     {},
   ),
   'sequence-3-letter': new SupportedFormatProperties(
     'SEQUENCE (3-letter code)',
-    ChemicalMimeType.SEQUENCE,
+    CHEMICAL_MIME_TYPE.SEQUENCE,
     ['.seq'],
     false,
     {},
   ),
   unknown: new SupportedFormatProperties(
     'Unknown',
-    ChemicalMimeType.UNKNOWN,
+    CHEMICAL_MIME_TYPE.UNKNOWN,
     ['.'],
     true,
   ),
   rdf: new SupportedFormatProperties(
     'RDF V2000',
-    ChemicalMimeType.RDF,
+    CHEMICAL_MIME_TYPE.RDF,
     ['.rdf'],
     true,
   ),
   rdfV3000: new SupportedFormatProperties(
     'RDF V3000',
-    ChemicalMimeType.RDF,
+    CHEMICAL_MIME_TYPE.RDF,
     ['.rdf'],
     true,
     { 'molfile-saving-mode': '3000' },

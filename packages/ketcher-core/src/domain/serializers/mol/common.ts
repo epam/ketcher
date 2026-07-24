@@ -85,7 +85,7 @@ function parseRxn(
 /* Prepare For Saving */
 const prepareForSaving: Record<string, (sgroup: SGroup, mol: Struct) => void> =
   {
-    MUL: SGroup.prepareMulForSaving,
+    MUL: (sgroup, mol) => SGroup.prepareMulForSaving(sgroup, mol),
     SRU: prepareSruForSaving,
     SUP: prepareSupForSaving,
     DAT: prepareDatForSaving,

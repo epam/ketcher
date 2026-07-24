@@ -119,6 +119,7 @@ export const StyledButton = styled(Button)`
     theme.ketcher.color.button.transparent.active};
   color: ${({ theme }) => theme.ketcher.color.text.light};
   border-color: ${({ theme }) => theme.ketcher.color.text.light};
+  font-family: ${({ theme }) => theme.ketcher.font.family.arial};
 `;
 
 // Toolbar containing the "New Preset" button and the filter icon button.
@@ -138,6 +139,7 @@ export const NewPresetButton = styled(StyledButton)`
   height: 24px;
   border-radius: 4px;
   font-size: 12px;
+  font-family: ${({ theme }) => theme.ketcher.font.family.arial};
 `;
 
 export const FilterIconButton = styled.button<{

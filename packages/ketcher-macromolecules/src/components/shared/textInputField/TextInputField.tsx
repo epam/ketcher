@@ -27,6 +27,7 @@ interface Props {
   max?: number;
   className?: string;
   inputClassName?: string;
+  disabled?: boolean;
 }
 
 const Label = styled.label(({ theme }) => ({

@@ -56,6 +56,8 @@ import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { TextInputField } from 'components/shared/textInputField';
 
 const OTHER_MONOMER_COUNT_NAME = 'Other';
+const NO_DATA_VALUE = '--';
+const CONCENTRATION_INPUT_PATTERN = /^(\d+([.,]\d*)?|[.,]\d*)?$/;
 
 const hasSpecificProperty = (
   macromoleculesProperties: SingleChainMacromoleculeProperties | undefined,
@@ -352,7 +354,7 @@ interface BasicPropertyProps {
   disabled?: boolean;
   testId?: string;
   onChangeOption?: (option: string) => void;
-  onChangeValue?: (value: number) => void;
+  onChangeValue?: (value: string) => void;
 }
 
 interface MonomersCountPanelProps {
@@ -393,7 +395,7 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
             <StyledMonomersCountPanelItemName>
               {monomerShortName}
             </StyledMonomersCountPanelItemName>
-            <div>{count}</div>
+            <div>{count || NO_DATA_VALUE}</div>
           </StyledMonomersCountPanelItem>
         );
       })}
@@ -402,6 +404,17 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
 };
 
 const BasicProperty = (props: BasicPropertyProps) => {
+  const handleConcentrationChange = useCallback(
+    (value: string) => {
+      if (!CONCENTRATION_INPUT_PATTERN.test(value)) {
+        return;
+      }
+
+      props.onChangeValue?.(value);
+    },
+    [props.onChangeValue],
+  );
+
   return (
     <StyledBasicProperty data-testid={props.testId} disabled={props.disabled}>
       <>
@@ -414,10 +427,10 @@ const BasicProperty = (props: BasicPropertyProps) => {
             value={props.value ?? ''}
             id={`macromolecule-property-${props.name}`}
             data-testid={`${props.testId}-input`}
-            type="number"
-            min={0}
+            type="text"
+            disabled={props.disabled}
             inputClassName={inputClassName}
-            onChange={(value) => props?.onChangeValue?.(Number(value))}
+            onChange={handleConcentrationChange}
           />
         ) : (
           <BasicPropertyValue data-testid={props.testId + '-value'}>
@@ -446,6 +459,7 @@ const BasicProperty = (props: BasicPropertyProps) => {
             testId={props.testId + '-selector'}
             currentSelection={props.selectedOption}
             selectionHandler={props.onChangeOption}
+            disabled={props.disabled}
           />
         )}
       </>
@@ -584,7 +598,7 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
-    if (!data.xs.length || !svgRef.current) return;
+    if (!svgRef.current) return;
 
     const width = svgRef.current.width.baseVal.value;
     const height = svgRef.current.height.baseVal.value;
@@ -592,88 +606,102 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
 
     d3.select(svgRef.current).selectAll('*').remove();
 
-    const xScale = d3
-      .scaleLinear()
-      .domain([0, data.xs.length - 1])
-      .range([margin.left, width - margin.right]);
-
     const yScale = d3
       .scaleLinear()
       .domain([0, 1])
       .range([height - margin.bottom, margin.top]);
 
-    const line = d3
-      .line<number>()
-      .x((_d, i) => xScale(i))
-      .y((d) => yScale(d))
-      .curve(d3.curveLinear);
-
     const svgContainer = d3.select(svgRef.current);
-    const maximumNumberOfTicks = getNumberOfTicks(width);
-    const distanceBetweenTicksForMaximumNumberOfTicks = roundToMinNiceNumber(
-      initialData.length / maximumNumberOfTicks,
-    );
-    let finalDistanceBetweenTicks = distanceBetweenTicksForMaximumNumberOfTicks;
-    let tickValues: number[];
 
-    if (distanceBetweenTicksForMaximumNumberOfTicks >= 1) {
-      let numberOfTicksWithMaximumCoverage = -Infinity;
-      let distanceBetweenTicksWithMaximumCoverage = -Infinity;
-      let maximumCoverage = -Infinity;
+    if (data.xs.length) {
+      const xScale = d3
+        .scaleLinear()
+        .domain([0, data.xs.length - 1])
+        .range([margin.left, width - margin.right]);
 
-      for (let i = 2; i <= maximumNumberOfTicks; i++) {
-        const numberOfTicks = i;
-        const distanceBetweenTicks = roundToMinNiceNumber(
-          initialData.length / numberOfTicks,
-        );
-        const coverage = Number(
-          (distanceBetweenTicks * (numberOfTicks / initialData.length)).toFixed(
-            2,
-          ),
-        );
+      const line = d3
+        .line<number>()
+        .x((_d, i) => xScale(i))
+        .y((d) => yScale(d))
+        .curve(d3.curveLinear);
 
-        if (
-          coverage > maximumCoverage ||
-          (coverage === maximumCoverage &&
-            numberOfTicks > numberOfTicksWithMaximumCoverage)
-        ) {
-          numberOfTicksWithMaximumCoverage = numberOfTicks;
-          maximumCoverage = coverage;
-          distanceBetweenTicksWithMaximumCoverage = distanceBetweenTicks;
+      const maximumNumberOfTicks = getNumberOfTicks(width);
+      const distanceBetweenTicksForMaximumNumberOfTicks = roundToMinNiceNumber(
+        initialData.length / maximumNumberOfTicks,
+      );
+      let finalDistanceBetweenTicks =
+        distanceBetweenTicksForMaximumNumberOfTicks;
+      let tickValues: number[];
+
+      if (distanceBetweenTicksForMaximumNumberOfTicks >= 1) {
+        let numberOfTicksWithMaximumCoverage = -Infinity;
+        let distanceBetweenTicksWithMaximumCoverage = -Infinity;
+        let maximumCoverage = -Infinity;
+
+        for (let i = 2; i <= maximumNumberOfTicks; i++) {
+          const numberOfTicks = i;
+          const distanceBetweenTicks = roundToMinNiceNumber(
+            initialData.length / numberOfTicks,
+          );
+          const coverage = Number(
+            (
+              distanceBetweenTicks *
+              (numberOfTicks / initialData.length)
+            ).toFixed(2),
+          );
+
+          if (
+            coverage > maximumCoverage ||
+            (coverage === maximumCoverage &&
+              numberOfTicks > numberOfTicksWithMaximumCoverage)
+          ) {
+            numberOfTicksWithMaximumCoverage = numberOfTicks;
+            maximumCoverage = coverage;
+            distanceBetweenTicksWithMaximumCoverage = distanceBetweenTicks;
+          }
         }
+
+        tickValues = Array.from(
+          { length: numberOfTicksWithMaximumCoverage },
+          (_, i) =>
+            data.xs.findLastIndex(
+              (xDataItem) =>
+                xDataItem <=
+                  (i + 1) * distanceBetweenTicksWithMaximumCoverage &&
+                xDataItem > i * distanceBetweenTicksWithMaximumCoverage,
+            ),
+        );
+        finalDistanceBetweenTicks = distanceBetweenTicksWithMaximumCoverage;
+      } else {
+        tickValues = [
+          ...Array(Math.min(maximumNumberOfTicks, data.xs.length)).keys(),
+        ];
+        finalDistanceBetweenTicks = 1;
       }
 
-      tickValues = Array.from(
-        { length: numberOfTicksWithMaximumCoverage },
-        (_, i) =>
-          data.xs.findLastIndex(
-            (xDataItem) =>
-              xDataItem <= (i + 1) * distanceBetweenTicksWithMaximumCoverage &&
-              xDataItem > i * distanceBetweenTicksWithMaximumCoverage,
-          ),
-      );
-      finalDistanceBetweenTicks = distanceBetweenTicksWithMaximumCoverage;
-    } else {
-      tickValues = [
-        ...Array(Math.min(maximumNumberOfTicks, data.xs.length)).keys(),
-      ];
-      finalDistanceBetweenTicks = 1;
+      const xAxis = d3
+        .axisBottom(xScale)
+        .tickValues(tickValues)
+        .tickFormat((_, i) => ((i + 1) * finalDistanceBetweenTicks).toString());
+
+      svgContainer
+        .append('g')
+        .attr('transform', `translate(0,${height - margin.bottom})`)
+        .call(xAxis)
+        .call((g) => g.select('.domain').remove()) // remove baseline
+        .call((g) =>
+          g.selectAll('line').attr('stroke', '#CAD3DD').attr('y1', -height),
+        )
+        .call((g) => g.selectAll('text').attr('font-size', '8px'));
+
+      svgContainer
+        .append('path')
+        .datum(data.ys)
+        .attr('fill', 'none')
+        .attr('stroke', '#167782')
+        .attr('stroke-width', 1)
+        .attr('d', line);
     }
-
-    const xAxis = d3
-      .axisBottom(xScale)
-      .tickValues(tickValues)
-      .tickFormat((_, i) => ((i + 1) * finalDistanceBetweenTicks).toString());
-
-    svgContainer
-      .append('g')
-      .attr('transform', `translate(0,${height - margin.bottom})`)
-      .call(xAxis)
-      .call((g) => g.select('.domain').remove()) // remove baseline
-      .call((g) =>
-        g.selectAll('line').attr('stroke', '#CAD3DD').attr('y1', -height),
-      )
-      .call((g) => g.selectAll('text').attr('font-size', '8px'));
 
     const yAxis = d3
       .axisLeft(yScale)
@@ -698,14 +726,6 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
         });
       })
       .call((g) => g.selectAll('text').attr('font-size', '8px'));
-
-    svgContainer
-      .append('path')
-      .datum(data.ys)
-      .attr('fill', 'none')
-      .attr('stroke', '#167782')
-      .attr('stroke-width', 1)
-      .attr('d', line);
   }, [initialData, containerWidth]);
 
   // rerender the chart when the size of container changes
@@ -754,7 +774,7 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
             value={
               isNumber(props.macromoleculesProperties.pKa)
                 ? _round(props.macromoleculesProperties.pKa, 2)
-                : '–'
+                : NO_DATA_VALUE
             }
             hint="The isoelectric point is calculated as the median of all pKa values for the structure."
           />
@@ -764,7 +784,7 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
             value={
               isNumber(props.macromoleculesProperties.extinctionCoefficient)
                 ? _round(props.macromoleculesProperties.extinctionCoefficient)
-                : '–'
+                : NO_DATA_VALUE
             }
             hint={
               <div>
@@ -800,19 +820,13 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
           />
         )}
         <HydrophobicityChartWrapper>
-          {props.macromoleculesProperties.hydrophobicity && (
-            <HydrophobicityChart
-              data={props.macromoleculesProperties.hydrophobicity}
-            />
-          )}
+          <HydrophobicityChart
+            data={props.macromoleculesProperties.hydrophobicity || []}
+          />
         </HydrophobicityChartWrapper>
       </PeptidePropertiesBottomPart>
     </TabContentWrapper>
   );
-};
-
-const containOnlyPartOfNumber = (value: number) => {
-  return !/[^0.,]/.test(String(value));
 };
 
 const RnaProperties = (props: DnaRnaPropertiesProps) => {
@@ -836,12 +850,12 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
     );
   };
 
-  const onChangeUnipositiveIonsValue = (value: number) => {
-    dispatch(setUnipositiveIonsValue(value.toString()));
+  const onChangeUnipositiveIonsValue = (value: string) => {
+    dispatch(setUnipositiveIonsValue(value));
   };
 
-  const onChangeOligonucleotidesValue = (value: number) => {
-    dispatch(setOligonucleotidesValue(value.toString()));
+  const onChangeOligonucleotidesValue = (value: string) => {
+    dispatch(setOligonucleotidesValue(value));
   };
 
   return props.isError ? (
@@ -855,22 +869,22 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
   ) : (
     <TabContentWrapper>
       <RnaBasicPropertiesWrapper>
-        {isNumber(props.macromoleculesProperties.Tm) ? (
-          <BasicProperty
-            name="Melting Temp. (°C)"
-            value={_round(props.macromoleculesProperties.Tm, 1)}
-            testId="Melting-Temperature"
-            hint={
-              <div>
-                The melting temperature is calculated using the method from{' '}
-                <i>Khandelwal G. and Bhyravabhotla J. (2010).</i> Natural
-                analogue is used in place of a modified base.
-              </div>
-            }
-          />
-        ) : (
-          <div></div>
-        )}
+        <BasicProperty
+          name="Melting Temp. (°C)"
+          value={
+            isNumber(props.macromoleculesProperties.Tm)
+              ? _round(props.macromoleculesProperties.Tm, 1)
+              : NO_DATA_VALUE
+          }
+          testId="Melting-Temperature"
+          hint={
+            <div>
+              The melting temperature is calculated using the method from{' '}
+              <i>Khandelwal G. and Bhyravabhotla J. (2010).</i> Natural analogue
+              is used in place of a modified base.
+            </div>
+          }
+        />
         <BasicPropertiesWrapper>
           <BasicProperty
             name="[Unipositive Ions]"
@@ -879,8 +893,8 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             testId="Unipositive Ions"
             selectedOption={unipositiveIonsMeasurementUnit}
             disabled={
-              !isNumber(props.macromoleculesProperties.Tm) &&
-              !containOnlyPartOfNumber(unipositiveIonsValue)
+              !props.macromoleculesProperties
+                .isMeltingTemperatureCalculationAvailable
             }
             onChangeOption={onChangeUnipositiveIonsMeasurementUnit}
             onChangeValue={onChangeUnipositiveIonsValue}
@@ -892,8 +906,8 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             testId="Oligonucleotides"
             selectedOption={oligonucleotidesMeasurementUnit}
             disabled={
-              !isNumber(props.macromoleculesProperties.Tm) &&
-              !containOnlyPartOfNumber(oligonucleotidesValue)
+              !props.macromoleculesProperties
+                .isMeltingTemperatureCalculationAvailable
             }
             onChangeOption={onChangeOligonucleotidesMeasurementUnit}
             onChangeValue={onChangeOligonucleotidesValue}
@@ -1057,7 +1071,9 @@ export const MacromoleculePropertiesWindow = () => {
 
   const grossFormula = useMemo(() => {
     if (!firstMacromoleculesProperties?.grossFormula) {
-      return null;
+      return (
+        <GrossFormula data-testid="Gross-formula">{NO_DATA_VALUE}</GrossFormula>
+      );
     }
 
     return (
@@ -1076,7 +1092,11 @@ export const MacromoleculePropertiesWindow = () => {
 
   const molecularMassValue = useMemo(() => {
     if (!firstMacromoleculesProperties?.mass) {
-      return null;
+      return (
+        <MolecularMassAmount data-testid="Molecular-Mass-Value">
+          {NO_DATA_VALUE}
+        </MolecularMassAmount>
+      );
     }
 
     return (
@@ -1122,24 +1142,22 @@ export const MacromoleculePropertiesWindow = () => {
       </WindowControlsArea>
       <Header>
         {grossFormula}
-        {molecularMassValue && (
-          <MolecularMass>
-            {molecularMassValue}
-            <BasicPropertyDropdown
-              testId="Molecular Mass Unit"
-              options={[
-                MassMeasurementUnit.Da,
-                MassMeasurementUnit.kDa,
-                MassMeasurementUnit.MDa,
-              ].map((unit) => ({
-                id: unit,
-                label: unit,
-              }))}
-              currentSelection={massMeasurementUnit}
-              selectionHandler={onMassMeasurementUnitChange}
-            />
-          </MolecularMass>
-        )}
+        <MolecularMass>
+          {molecularMassValue}
+          <BasicPropertyDropdown
+            testId="Molecular Mass Unit"
+            options={[
+              MassMeasurementUnit.Da,
+              MassMeasurementUnit.kDa,
+              MassMeasurementUnit.MDa,
+            ].map((unit) => ({
+              id: unit,
+              label: unit,
+            }))}
+            currentSelection={massMeasurementUnit}
+            selectionHandler={onMassMeasurementUnitChange}
+          />
+        </MolecularMass>
       </Header>
       <TabsWrapper>
         <Tabs

@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
+  setContextMenuActive,
 } from 'state/common';
 import {
   NodesSelection,
@@ -243,6 +244,7 @@ export const SequenceItemContextMenu = ({
 
     switch (true) {
       case menuItemId === SequenceItemContextMenuNames.modifyInRnaBuilder:
+        dispatch(setContextMenuActive(false));
         editor.events.turnOnSequenceEditInRNABuilderMode.dispatch();
         dispatch(setSelectedTabIndex(LIBRARY_TAB_INDEX.RNA));
         dispatch(setIsEditMode(true));

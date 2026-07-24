@@ -14,7 +14,6 @@ import {
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import type { MonomerItemType } from 'domain/types/monomers';
 import {
-  modifyTransformation,
   setMonomerTemplatePrefix,
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
@@ -72,7 +71,7 @@ export function monomerToDrawingEntity(
         expanded,
       }),
       ...(transformation !== undefined && {
-        transformation: modifyTransformation(transformation),
+        transformation,
       }),
     },
     position,

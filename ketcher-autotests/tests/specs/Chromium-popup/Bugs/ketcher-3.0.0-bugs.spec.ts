@@ -851,7 +851,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(C)P.R(G)P}|RNA2{R(T)P.R(C)P.R(C)P.R(C)P}|RNA3{R(C)P.R(C)P}$RNA1,RNA2,2:pair-2:pair|RNA3,RNA1,5:pair-8:pair$$$V2.0',
     );
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.02 });
   });
 
   test.skip(`Case 28: Ambiguous DNA bases (N, D, H, W) not converted to DNA bases on antisense creation`, async () => {

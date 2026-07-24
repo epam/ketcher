@@ -1070,7 +1070,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
           bondBodyElement.setAttribute(
             'stroke',
-            renderer.polymerBond.isSideChainConnection && !this.isHydrogenBond
+            renderer.polymerBond.isSideChainConnection &&
+              !renderer.isHydrogenBond
               ? '#43B5C0'
               : '#333333',
           );
@@ -1112,9 +1113,37 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   public remove(): void {
+    // Check if this bond's body element has the side chain connection class BEFORE removing
+    const isSideChainConnection = this.bodyElement
+      ?.attr('class')
+      ?.includes(SIDE_CONNECTION_BODY_ELEMENT_CLASS);
+
     super.remove();
     if (this.polymerBond.hovered) {
       this.editorEvents.mouseLeaveMonomer.dispatch();
+    }
+
+    // After a side-chain bond is removed, set all remaining side-chain bonds to the default color (#43B5C0)
+    if (isSideChainConnection) {
+      const editor = provideEditorInstance();
+      const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
+        `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
+      );
+
+      Array.from(allSideConnectionBondsBodyElements).forEach(
+        (bondBodyElement) => {
+          const renderer =
+            bondBodyElement.__data__ as SnakeModePolymerBondRenderer;
+
+          bondBodyElement.setAttribute(
+            'stroke',
+            renderer.polymerBond.isSideChainConnection &&
+              !renderer.isHydrogenBond
+              ? '#43B5C0'
+              : '#333333',
+          );
+        },
+      );
     }
   }
 }

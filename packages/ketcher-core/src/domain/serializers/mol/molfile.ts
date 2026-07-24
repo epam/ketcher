@@ -467,7 +467,12 @@ export class Molfile {
         this.writeWhiteSpace(1);
         this.writePaddedNumber(sGroupIdInCTab, 3);
         this.writeWhiteSpace(1);
-        this.writePadded(sgroup.data.subtype.toUpperCase(), 3);
+        this.writePadded(
+          typeof sgroup.data.subtype === 'string'
+            ? sgroup.data.subtype.toUpperCase()
+            : '',
+          3,
+        );
         this.writeCR();
       }
 

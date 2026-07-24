@@ -109,6 +109,9 @@ class ReSGroup extends ReObject {
     SGroup.bracketPos(sgroup, remol.molecule, remol, this.render);
     const bracketBox = sgroup.bracketBox;
     const direction = sgroup.bracketDirection;
+    if (!bracketBox) {
+      return;
+    }
     sgroup.areas = [bracketBox];
     if (sgroup.isExpanded()) {
       const SGroupdrawBracketsOptions: SGroupdrawBracketsOptions = {
@@ -120,7 +123,7 @@ class ReSGroup extends ReObject {
       };
       switch (sgroup.type) {
         case 'MUL': {
-          SGroupdrawBracketsOptions.lowerIndexText = sgroup.data.mul;
+          SGroupdrawBracketsOptions.lowerIndexText = String(sgroup.data.mul);
           break;
         }
         case 'SRU': {
@@ -135,17 +138,22 @@ class ReSGroup extends ReObject {
           const connectivity: string = sgroup.data.connectivity || 'eu';
           SGroupdrawBracketsOptions.upperIndexText = connectivity;
           const subtype = sgroup.data.subtype;
-          if (sgroup.data.subtype) {
+          if (typeof subtype === 'string' && subtype) {
             SGroupdrawBracketsOptions.lowerIndexText = subtype;
           }
           break;
         }
         case 'SUP': {
+          const sgClass = sgroup.data.class as string | undefined;
           SGroupdrawBracketsOptions.lowerIndexText =
-            sgroup.data.name || SUPERATOM_CLASS_TEXT[sgroup.data.class];
+            sgroup.data.name ||
+            (sgClass && SUPERATOM_CLASS_TEXT[sgClass as SUPERATOM_CLASS]) ||
+            '';
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
-          SGroupdrawBracketsOptions.superatomClass = sgroup.data.class;
+          SGroupdrawBracketsOptions.superatomClass = sgClass as
+            | SUPERATOM_CLASS
+            | undefined;
           break;
         }
         case 'DAT': {
@@ -674,6 +682,9 @@ function getHighlighPathInfo(
   size: number;
 } {
   const options = render.options;
+  if (!sgroup.bracketBox) {
+    throw new Error('bracketBox is not defined');
+  }
   let bracketBox = sgroup.bracketBox.transform(Scale.modelToCanvas, options);
   const lineWidth = options.lineWidth;
   const vext = new Vec2(lineWidth * 4, lineWidth * 6);

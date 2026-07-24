@@ -489,8 +489,11 @@ class ReAtom extends ReObject {
           options.font.indexOf(' ') + 1,
           options.font.length,
         );
+        const sGroupClass = sgroup?.data?.class as string | undefined;
         const sGroupName =
-          sgroup?.data?.name ?? SUPERATOM_CLASS_TEXT[sgroup?.data?.class] ?? '';
+          sgroup?.data?.name ??
+          (sGroupClass && SUPERATOM_CLASS_TEXT[sGroupClass]) ??
+          '';
         const path = render.paper
           .text(position.x, position.y, sGroupName)
           .attr({

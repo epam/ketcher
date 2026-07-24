@@ -283,20 +283,23 @@ function findClosestDataSGroupData(restruct: ReStruct, pos: Vec2) {
     if (item.sgroup.type !== 'DAT') throw new Error('Data group expected');
 
     if (item.sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
-      const box = item.sgroup.dataArea;
-      const inBox =
-        box.p0.y < pos.y &&
-        box.p1.y > pos.y &&
-        box.p0.x < pos.x &&
-        box.p1.x > pos.x;
-      const xDist = Math.min(
-        Math.abs(box.p0.x - pos.x),
-        Math.abs(box.p1.x - pos.x),
-      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const box = item.sgroup.dataArea as any;
+      if (box && typeof box === 'object' && 'p0' in box && 'p1' in box) {
+        const inBox =
+          box.p0.y < pos.y &&
+          box.p1.y > pos.y &&
+          box.p0.x < pos.x &&
+          box.p1.x > pos.x;
+        const xDist = Math.min(
+          Math.abs(box.p0.x - pos.x),
+          Math.abs(box.p1.x - pos.x),
+        );
 
-      if (inBox && (ret === null || xDist < minDist)) {
-        ret = { id, dist: xDist };
-        minDist = xDist;
+        if (inBox && (ret === null || xDist < minDist)) {
+          ret = { id, dist: xDist };
+          minDist = xDist;
+        }
       }
     }
   });

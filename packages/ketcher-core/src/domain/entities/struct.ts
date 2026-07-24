@@ -1547,7 +1547,7 @@ export class Struct {
         });
 
         const sGroupBonds = new Set<number>(
-          sGroup.atoms.flatMap((atomId) => atomToBonds.get(atomId)),
+          sGroup.atoms.flatMap((atomId) => atomToBonds.get(atomId) || []),
         );
 
         sGroupBonds.forEach((bondId) => {

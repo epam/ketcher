@@ -107,7 +107,7 @@ class PasteTool implements Tool {
   mousedown(event) {
     if (
       !this.isSingleContractedGroup ||
-      SGroup.isSaltOrSolvent(this.struct.sgroups.get(0)?.data.name)
+      SGroup.isSaltOrSolvent(this.struct.sgroups.get(0)?.data.name || '')
     ) {
       return;
     }
@@ -123,7 +123,10 @@ class PasteTool implements Tool {
       : undefined;
 
     // not dropping on a group (tmp, should be removed when dealing with other entities)
-    if (!closestGroupItem || SGroup.isSaltOrSolvent(closestGroup?.data.name)) {
+    if (
+      !closestGroupItem ||
+      SGroup.isSaltOrSolvent(closestGroup?.data.name || '')
+    ) {
       // recreate action and continue as usual
       const [action] = fromPaste(
         this.restruct,

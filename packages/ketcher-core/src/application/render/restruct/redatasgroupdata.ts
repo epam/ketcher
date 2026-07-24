@@ -34,7 +34,7 @@ class ReDataSGroupData extends ReObject {
   }
 
   hoverPath(render: Render) {
-    const box = this.sgroup.dataArea;
+    const box = this.sgroup.dataArea as any;
     const p0 = Scale.modelToCanvas(box.p0, render.options);
     const sz = Scale.modelToCanvas(box.p1, render.options).sub(p0);
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y);

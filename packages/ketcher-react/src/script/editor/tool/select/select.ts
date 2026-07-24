@@ -402,7 +402,7 @@ class SelectTool implements Tool {
       selectedSgroups[selectedSgroups.length - 1],
     );
     const isDraggingSaltOrSolventOnStructure = SGroup.isSaltOrSolvent(
-      possibleSaltOrSolvent?.item?.data?.name,
+      possibleSaltOrSolvent?.item?.data?.name || '',
     );
     const isDraggingCustomSgroupOnStructure =
       SGroup.isSuperAtom(possibleSaltOrSolvent?.item) &&

@@ -194,7 +194,9 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       ifDef(
         result,
         'subtype',
-        source.data.subtype ? source.data.subtype.toUpperCase() : null,
+        typeof source.data.subtype === 'string' && source.data.subtype
+          ? source.data.subtype.toUpperCase()
+          : null,
       );
       ifDef(
         result,

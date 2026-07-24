@@ -14,7 +14,7 @@ describe('sgroup should calculate S-Group bounding box correctly', () => {
       render.ctab,
       'getRGroupAttachmentPointsVBoxByAtomIds',
     );
-    SGroup.bracketPos(sGroup, restruct.molecule, undefined, render);
+    SGroup.bracketPos(sGroup, restruct.molecule as any, undefined, render);
     expect(attachmentsSpy).toHaveBeenCalled();
   });
 });

@@ -208,11 +208,13 @@ class EraserTool implements Tool {
       const result: Array<number> = [];
       preResult.forEach((fgId) => {
         const sgAtoms = sgroups.get(fgId)?.item?.atoms;
-        sgAtoms.forEach((atom) => {
-          !atomsResult.includes(atom) &&
-            !result.includes(fgId) &&
-            result.push(fgId);
-        });
+        if (sgAtoms) {
+          sgAtoms.forEach((atom) => {
+            !atomsResult.includes(atom) &&
+              !result.includes(fgId) &&
+              result.push(fgId);
+          });
+        }
       });
 
       if (result.length > 0) {

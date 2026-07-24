@@ -66,7 +66,7 @@ export class FunctionalGroup {
   }
 
   get isExpanded(): boolean {
-    return this.#sgroup.data.expanded;
+    return Boolean(this.#sgroup.data.expanded);
   }
 
   get relatedSGroup(): SGroup {
@@ -238,6 +238,7 @@ export class FunctionalGroup {
       );
       return (
         isContracted &&
+        atomsInSGroup !== undefined &&
         atomsInSGroup.includes(bond.begin) &&
         atomsInSGroup.includes(bond.end)
       );

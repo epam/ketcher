@@ -67,11 +67,14 @@ function readKeyMultiValuePairs(
 function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
   if (!mol || !atomMap) return;
 
-  sgroup.data.mul = sgroup.data.subscript - 0;
+  sgroup.data.mul =
+    typeof sgroup.data.subscript === 'string'
+      ? parseInt(sgroup.data.subscript, 10)
+      : 0;
   const atomReductionMap: Record<number, number> = {};
 
   sgroup.atoms = SGroup.filterAtoms(sgroup.atoms, atomMap);
-  sgroup.patoms = SGroup.filterAtoms(sgroup.patoms, atomMap);
+  sgroup.patoms = SGroup.filterAtoms(sgroup.patoms ?? [], atomMap);
 
   // mark repetitions for removal
   for (let k = 1; k < sgroup.data.mul; ++k) {
@@ -110,14 +113,18 @@ function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
     atomMap[a] = -1;
   }
   sgroup.atoms = sgroup.patoms;
-  sgroup.patoms = null;
+  sgroup.patoms = [];
 }
 
 function postLoadSru(sgroup: SGroup): void {
-  sgroup.data.connectivity = (sgroup.data.connectivity || 'EU')
-    .trim()
-    .toLowerCase();
-  sgroup.data.subtype = (sgroup.data.subtype || '').trim().toLowerCase();
+  sgroup.data.connectivity =
+    typeof sgroup.data.connectivity === 'string'
+      ? sgroup.data.connectivity.trim().toLowerCase()
+      : 'eu';
+  sgroup.data.subtype =
+    typeof sgroup.data.subtype === 'string'
+      ? sgroup.data.subtype.trim().toLowerCase()
+      : '';
 }
 
 function postLoadSup(sgroup: SGroup): void {
@@ -126,10 +133,14 @@ function postLoadSup(sgroup: SGroup): void {
 }
 
 function postLoadGen(sgroup: SGroup, _mol?: Struct, _atomMap?: AtomMap): void {
-  sgroup.data.connectivity = (sgroup.data.connectivity || 'eu')
-    .trim()
-    .toLowerCase();
-  sgroup.data.subtype = (sgroup.data.subtype || '').trim().toLowerCase();
+  sgroup.data.connectivity =
+    typeof sgroup.data.connectivity === 'string'
+      ? sgroup.data.connectivity.trim().toLowerCase()
+      : 'eu';
+  sgroup.data.subtype =
+    typeof sgroup.data.subtype === 'string'
+      ? sgroup.data.subtype.trim().toLowerCase()
+      : '';
 }
 
 function postLoadDat(sgroup: SGroup, mol?: Struct): void {

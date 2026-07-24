@@ -188,7 +188,7 @@ function saveMulToMolfile(
     makeAtomBondLines(
       'SAL',
       idstr,
-      Array.from(sgroup.atomSet.values()),
+      Array.from(sgroup.atomSet?.values() || []),
       atomMap,
     ),
   ); // TODO: check atomSet
@@ -196,7 +196,7 @@ function saveMulToMolfile(
     makeAtomBondLines(
       'SPA',
       idstr,
-      Array.from(sgroup.parentAtomSet.values()),
+      Array.from(sgroup.parentAtomSet?.values() || []),
       atomMap,
     ),
   );
@@ -308,8 +308,8 @@ function saveDatToMolfile(
     (data.absolute ? 'A' : 'R') + // g
     (data.showUnits ? 'U' : ' ') + // h
     '   ' + //  i
-    (data.nCharnCharsToDisplay >= 0
-      ? utils.paddedNum(data.nCharnCharsToDisplay, 3)
+    (typeof data.nCharsToDisplay === 'number' && data.nCharsToDisplay >= 0
+      ? utils.paddedNum(data.nCharsToDisplay, 3)
       : 'ALL') + // jjj
     '  1   ' + // 'kkk ll '
     (data.tagChar || ' ') + // m
@@ -366,6 +366,11 @@ function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
   const bb = sg.bracketBox;
   const d = sg.bracketDirection;
   const n = d.rotateSC(1, 0);
+
+  if (!bb) {
+    return [];
+  }
+
   const brackets = SGroup.getBracketParameters(
     mol,
     crossBonds as unknown as { [key: number]: Array<Bond> },

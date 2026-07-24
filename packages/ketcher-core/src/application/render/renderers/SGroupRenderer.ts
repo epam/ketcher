@@ -131,7 +131,10 @@ export class SGroupRenderer extends BaseRenderer {
       }
       case SGroup.TYPES.COP:
         options.upperIndexText = this.sgroup.data.connectivity || 'eu';
-        if (this.sgroup.data.subtype) {
+        if (
+          typeof this.sgroup.data.subtype === 'string' &&
+          this.sgroup.data.subtype
+        ) {
           options.lowerIndexText = this.sgroup.data.subtype;
         }
         break;

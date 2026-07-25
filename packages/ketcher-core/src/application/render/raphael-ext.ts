@@ -18,9 +18,12 @@
 
 import { Vec2 } from 'domain/entities/vec2';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-require-imports
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const raphaelModule: any =
-  typeof window !== 'undefined' ? require('raphael') : undefined;
+  typeof window !== 'undefined'
+    ? // eslint-disable-next-line @typescript-eslint/no-require-imports
+      require('raphael')
+    : undefined;
 
 // Some environments (vite, webpack etc) might resolve this import differently
 // this is a workaround to make it work in all environments

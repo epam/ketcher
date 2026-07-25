@@ -750,9 +750,11 @@ export class Struct {
         };
       }
 
+      const boundingBox = bb;
+
       points.forEach((vec) => {
-        bb!.min = Vec2.min(bb!.min, vec);
-        bb!.max = Vec2.max(bb!.max, vec);
+        boundingBox.min = Vec2.min(boundingBox.min, vec);
+        boundingBox.max = Vec2.max(boundingBox.max, vec);
       });
     }
 
@@ -1293,8 +1295,8 @@ export class Struct {
 
       while (c.x > barriers[j]) ++j;
 
-      components[j] = components[j] ?? new Pile<number>();
-      components[j] = components[j]!.union(component);
+      const existingComponent = components[j] ?? new Pile<number>();
+      components[j] = existingComponent.union(component);
     });
 
     const reactants: ConnectedComponent[] = [];

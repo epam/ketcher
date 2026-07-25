@@ -53,7 +53,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^16.1.0",
     "npm-run-all": "^4.1.5",
-    "postcss": "^8.5.10",
+    "postcss": "^8.5.23",
     "postcss-less": "^6.0.0",
     "prettier": "2.8.0",
     "prettier-config-standard": "^5.0.0",
@@ -70,8 +70,7 @@
     "yarn": "YARN IS NO LONGER USED, PLEASE USE NPM\nConversion instructions can be found in DEVNOTES.md"
   },
   "overrides": {
-    "nth-check": "^2.1.1",
-    "@isaacs/brace-expansion": "5.0.1"
+    "nth-check": "^2.1.1"
   },
   "dependencies": {
     "@playwright/test": "^1.59.1",

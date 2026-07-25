@@ -641,8 +641,8 @@ function findCloseMerge(
   maps.forEach((map) => {
     if (map === 'atoms') {
       Array.from(pos.atoms.keys()).forEach((atomId) => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const atomPosition = pos.atoms.get(atomId)!;
+        const atomPosition = pos.atoms.get(atomId);
+        if (!atomPosition) return;
         mergeAtomToAtom(atomId, restruct, atomPosition, selected, result) ||
           mergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result);
       });
@@ -652,8 +652,8 @@ function findCloseMerge(
         Map<number, number>
       >((res, srcId) => {
         const skip: SkipItem = { map, id: srcId };
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const srcPos = posMap.get(srcId)!;
+        const srcPos = posMap.get(srcId);
+        if (!srcPos) return res;
         const item = findMaps[map](restruct, srcPos, skip, null, options);
 
         if (item && !selected[map].includes(item.id)) {

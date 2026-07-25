@@ -125,14 +125,27 @@ class EraserTool implements Tool {
           )
         ) {
           const sgroupAtoms =
-            actualSgroupId !== undefined &&
-            SGroup.getAtoms(molecule, struct.sgroups.get(actualSgroupId)?.item);
+            actualSgroupId !== undefined
+              ? SGroup.getAtoms(
+                  molecule,
+                  struct.sgroups.get(actualSgroupId)?.item,
+                )
+              : undefined;
           const sgroupBonds =
-            actualSgroupId !== undefined &&
-            SGroup.getBonds(molecule, struct.sgroups.get(actualSgroupId)?.item);
-          atom === sgroupAtoms[0] &&
-            newSelected.atoms.push(...(sgroupAtoms as Array<any>)) &&
-            newSelected.bonds.push(...(sgroupBonds as Array<any>));
+            actualSgroupId !== undefined
+              ? SGroup.getBonds(
+                  molecule,
+                  struct.sgroups.get(actualSgroupId)?.item,
+                )
+              : undefined;
+          if (atom === sgroupAtoms?.[0]) {
+            if (sgroupAtoms) {
+              newSelected.atoms.push(...(sgroupAtoms as Array<any>));
+            }
+            if (sgroupBonds) {
+              newSelected.bonds.push(...(sgroupBonds as Array<any>));
+            }
+          }
         }
 
         if (
@@ -189,7 +202,9 @@ class EraserTool implements Tool {
           functionalGroups,
           id,
         );
-        fgId !== null && !preResult.includes(fgId) && preResult.push(fgId);
+        if (fgId !== null && !preResult.includes(fgId)) {
+          preResult.push(fgId);
+        }
       }
     }
 
@@ -200,7 +215,9 @@ class EraserTool implements Tool {
           functionalGroups,
           id,
         );
-        fgId !== null && !preResult.includes(fgId) && preResult.push(fgId);
+        if (fgId !== null && !preResult.includes(fgId)) {
+          preResult.push(fgId);
+        }
       }
     }
 
@@ -208,10 +225,10 @@ class EraserTool implements Tool {
       const result: Array<number> = [];
       preResult.forEach((fgId) => {
         const sgAtoms = sgroups.get(fgId)?.item?.atoms;
-        sgAtoms.forEach((atom) => {
-          !atomsResult.includes(atom) &&
-            !result.includes(fgId) &&
+        sgAtoms?.forEach((atom) => {
+          if (!atomsResult.includes(atom) && !result.includes(fgId)) {
             result.push(fgId);
+          }
         });
       });
 

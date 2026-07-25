@@ -610,8 +610,16 @@ function findCloseMerge(
     if (map === 'atoms') {
       Array.from(pos.atoms.keys()).forEach((atomId) => {
         const atomPosition = pos.atoms.get(atomId);
-        mergeAtomToAtom(atomId, restruct, atomPosition, selected, result) ||
+        const merged = mergeAtomToAtom(
+          atomId,
+          restruct,
+          atomPosition,
+          selected,
+          result,
+        );
+        if (!merged) {
           mergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result);
+        }
       });
     } else {
       result[map] = Array.from<number>(pos[map].keys()).reduce<

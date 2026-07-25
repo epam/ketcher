@@ -22,8 +22,9 @@ import {
   vectorUtils,
 } from 'ketcher-core';
 import type { ClosestItemWithMap } from '../shared/closest.types';
+import type { Sign } from './template.types';
 
-export function getSign(molecule: Struct, bond: Bond, v: Vec2): number {
+export function getSign(molecule: Struct, bond: Bond, v: Vec2): Sign {
   const begin = molecule.atoms.get(bond.begin)?.pp;
   const end = molecule.atoms.get(bond.end)?.pp;
 
@@ -31,10 +32,20 @@ export function getSign(molecule: Struct, bond: Bond, v: Vec2): number {
     return 0;
   }
 
-  return Math.sign(Vec2.cross(Vec2.diff(begin, end), Vec2.diff(v, end)));
+  const sign = Vec2.cross(Vec2.diff(begin, end), Vec2.diff(v, end));
+
+  if (sign > 0) {
+    return 1;
+  }
+
+  if (sign < 0) {
+    return -1;
+  }
+
+  return 0;
 }
 
-export function getBondFlipSign(struct: Struct, bond: Bond): number {
+export function getBondFlipSign(struct: Struct, bond: Bond): 1 | -1 {
   const xy0 = new Vec2();
   const frid = struct.atoms.get(bond.begin)?.fragment;
   const frIds = struct.getFragmentIds(frid as number);
@@ -76,7 +87,7 @@ export function getBondFlipSign(struct: Struct, bond: Bond): number {
 }
 
 export function getAngleFromEvent(
-  event: MouseEvent | PointerEvent,
+  event: MouseEvent | PointerEvent | undefined,
   ci: Pick<ClosestItemWithMap, 'id'>,
   restruct: ReStruct,
 ) {
@@ -97,7 +108,7 @@ export function getAngleFromEvent(
     if (!atom || !nei) {
       angle = 0;
     } else {
-      angle = event.ctrlKey
+      angle = event?.ctrlKey
         ? vectorUtils.calcAngle(nei.pp, atom.pp)
         : vectorUtils.fracAngle(vectorUtils.calcAngle(nei.pp, atom.pp), null);
     }

@@ -30,7 +30,6 @@ import {
   KetcherLogger,
   getSvgFromDrawnStructures,
   isClipboardAPIAvailable,
-  legacyCopy,
   isHelmCompatible,
   provideEditorInstance,
 } from 'ketcher-core';
@@ -204,21 +203,15 @@ export const Save = ({
   const handleCopy = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    try {
-      if (isClipboardAPIAvailable()) {
-        navigator.clipboard.writeText(struct);
-      } else {
-        legacyCopy(
-          (event.nativeEvent as unknown as ClipboardEvent).clipboardData,
-          {
-            'text/plain': struct,
-          },
-        );
-      }
-    } catch (e) {
+    if (!isClipboardAPIAvailable()) {
+      dispatch(openErrorModal('This feature is not available in your browser'));
+      return;
+    }
+
+    navigator.clipboard.writeText(struct).catch((e) => {
       KetcherLogger.error('copyAs.js::copyAs', e);
       dispatch(openErrorModal('This feature is not available in your browser'));
-    }
+    });
   };
 
   return (

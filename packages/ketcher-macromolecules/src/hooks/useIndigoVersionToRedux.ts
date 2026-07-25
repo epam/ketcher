@@ -19,7 +19,7 @@ export function useIndigoVersionToRedux() {
               indigoVersion: info.indigoVersion ?? '',
             }),
           );
-        } catch (e) {
+        } catch (_e) {
           // ignore
         }
       }

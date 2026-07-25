@@ -22,7 +22,6 @@
     "strict": true,
     "types": ["node"],
     "forceConsistentCasingInFileNames": true,
-    "ignoreDeprecations": "6.0",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,

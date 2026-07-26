@@ -10,6 +10,7 @@ import {
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   waitForRender,
   resetZoomLevelToDefault,
@@ -1512,14 +1513,18 @@ test.describe('Check that if a monomer is manipulated (rotated, flipped) in smal
         page,
         monomerComposition.KETFile,
       );
+      await resetZoomLevelToDefault(page);
+      await zoomOutByKeyboard(page);
 
       await ContextMenu(
         page,
         getAbbreviationLocator(page, { name: monomerComposition.monomerAlias }),
       ).click(MonomerOnMicroOption.ExpandMonomer);
-      await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
+      await clickInTheMiddleOfTheCanvas(page);
       await selectAllStructuresOnCanvas(page);
+      await zoomOutByKeyboard(page);
       await verticalFlipByKeyboard(page);
+      await selectAllStructuresOnCanvas(page);
       await RotationTool(page).moveRotationHandleTo({ x: 950, y: 150 });
       await selectAllStructuresOnCanvas(page);
       const middleOfTheScreen = await getCachedBodyCenter(page);

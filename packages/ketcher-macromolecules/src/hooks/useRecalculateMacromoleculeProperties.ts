@@ -5,9 +5,13 @@ import {
   getAllConnectedMonomersRecursively,
   KetcherLogger,
   KetSerializer,
+  Nucleoside,
+  Nucleotide,
   notifyRequestCompleted,
+  SingleChainMacromoleculeProperties,
   Struct,
   StructService,
+  SubChainNode,
 } from 'ketcher-core';
 import {
   molarMeasurementUnitToNumber,
@@ -19,6 +23,56 @@ import {
   setMacromoleculesProperties,
 } from 'state/common';
 import { useAppDispatch, useAppSelector } from './stateHooks';
+
+const parseConcentrationValueOrDefault = (value: string) => {
+  const concentration = Number(value.replace(',', '.'));
+
+  return Number.isFinite(concentration) ? concentration : 0;
+};
+
+const isNucleicNode = (node: SubChainNode) =>
+  node instanceof Nucleotide || node instanceof Nucleoside;
+
+const isPureNucleicChain = (chain: Chain) =>
+  chain.nodes.length > 0 && chain.nodes.every(isNucleicNode);
+
+const hasComplementaryBase = (
+  node: SubChainNode,
+  chain: Chain,
+  chainsCollection: ChainsCollection,
+) => {
+  if (!(node instanceof Nucleotide || node instanceof Nucleoside)) {
+    return false;
+  }
+
+  const {
+    complimentaryChain: complementaryChain,
+    complimentaryNode: complementaryNode,
+  } = chainsCollection.getComplimentaryChainIfNucleotide(
+    node,
+    chainsCollection.monomerToChain,
+    chainsCollection.monomerToNode,
+  );
+
+  return (
+    complementaryChain !== undefined &&
+    complementaryChain !== chain &&
+    complementaryNode !== undefined &&
+    isPureNucleicChain(complementaryChain) &&
+    isNucleicNode(complementaryNode)
+  );
+};
+
+const isMeltingTemperatureCalculationAvailable = (
+  chainsCollection: ChainsCollection,
+) =>
+  chainsCollection.chains.some(
+    (chain) =>
+      isPureNucleicChain(chain) &&
+      chain.nodes.every((node) =>
+        hasComplementaryBase(node, chain, chainsCollection),
+      ),
+  );
 
 export const useRecalculateMacromoleculeProperties = () => {
   const dispatch = useAppDispatch();
@@ -87,21 +141,30 @@ export const useRecalculateMacromoleculeProperties = () => {
         },
         {
           upc:
-            unipositiveIonsValue /
+            parseConcentrationValueOrDefault(unipositiveIonsValue) /
             molarMeasurementUnitToNumber[unipositiveIonsMeasurementUnit],
           nac:
-            oligonucleotidesValue /
+            parseConcentrationValueOrDefault(oligonucleotidesValue) /
             molarMeasurementUnitToNumber[oligonucleotidesMeasurementUnit],
         },
       );
 
     try {
-      const macromoleculeProperties =
+      const macromoleculeProperties: SingleChainMacromoleculeProperties[] =
         calculateMacromoleculePropertiesResponse.properties &&
         JSON.parse(calculateMacromoleculePropertiesResponse.properties);
+      const isTmCalculationAvailable =
+        isMeltingTemperatureCalculationAvailable(chainsCollection);
 
       notifyRequestCompleted();
-      dispatch(setMacromoleculesProperties(macromoleculeProperties));
+      dispatch(
+        setMacromoleculesProperties(
+          macromoleculeProperties.map((properties) => ({
+            ...properties,
+            isMeltingTemperatureCalculationAvailable: isTmCalculationAvailable,
+          })),
+        ),
+      );
     } catch (e) {
       KetcherLogger.error('Error during parsing macromolecule properties: ', e);
 

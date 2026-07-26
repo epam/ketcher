@@ -126,3 +126,7 @@ export type ConcreteMonomer = Peptide | Sugar | RNABase | Phosphate | Chem;
 export type AttachmentPointsToBonds = Partial<
   Record<AttachmentPointName, PolymerBond | MonomerToAtomBond | null>
 >;
+
+export type MouseEventWithAttachmentPoint = MouseEvent & {
+  attachmentPointName: AttachmentPointName;
+};

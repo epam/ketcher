@@ -61,6 +61,23 @@ const isUserEditing = (): boolean => {
   );
 };
 
+// The cliparea stays focused even when the user drag-selects text elsewhere
+// on the page (e.g. a toast notification), since that text isn't focusable.
+// If the live selection isn't actually inside the cliparea, the user is
+// copying unrelated page text, so the structure-copy logic must not run.
+const isSelectionOutsideClipArea = (
+  clipAreaEl: HTMLElement | null,
+): boolean => {
+  if (!clipAreaEl) {
+    return false;
+  }
+  const selection = document.getSelection();
+  if (!selection || selection.isCollapsed || !selection.anchorNode) {
+    return false;
+  }
+  return !clipAreaEl.contains(selection.anchorNode);
+};
+
 interface ClipboardData {
   'text/plain': string;
   [key: string]: string;
@@ -122,7 +139,11 @@ class ClipArea extends Component<ClipAreaProps> {
           event.preventDefault();
       },
       copy: (event: ClipboardEvent) => {
-        if (!this.props.focused() || isUserEditing()) {
+        if (
+          !this.props.focused() ||
+          isUserEditing() ||
+          isSelectionOutsideClipArea(el)
+        ) {
           return;
         }
         if (isAsyncClipboardWriteAvailable()) {
@@ -173,7 +194,11 @@ class ClipArea extends Component<ClipAreaProps> {
         }
       },
       cut: (event: ClipboardEvent) => {
-        if (!this.props.focused() || isUserEditing()) {
+        if (
+          !this.props.focused() ||
+          isUserEditing() ||
+          isSelectionOutsideClipArea(el)
+        ) {
           return;
         }
         if (isAsyncClipboardWriteAvailable()) {

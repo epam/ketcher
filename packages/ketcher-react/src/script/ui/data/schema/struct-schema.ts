@@ -18,6 +18,16 @@ import { mapOf } from './schema-helper';
 import { range } from 'lodash/fp';
 import { sdataCustomSchema } from './sdata-schema';
 
+// Must stay in sync with CUSTOM_QUERY_MAX_LENGTH in ketcher-core/domain/constants/customQuery.ts
+export const CUSTOM_QUERY_MAX_LENGTH = 4000;
+
+function customQueryInvalidMessage(value: unknown): string {
+  if (typeof value === 'string' && value.length > CUSTOM_QUERY_MAX_LENGTH) {
+    return `Custom query must not exceed ${CUSTOM_QUERY_MAX_LENGTH} characters`;
+  }
+  return 'Invalid custom query';
+}
+
 interface CommonStructSchema {
   key?: string;
   title: string;
@@ -219,8 +229,9 @@ export const atom: StructSchema<AtomProperties> = {
     customQuery: {
       title: 'Custom Query',
       pattern: '[^ ]',
+      maxLength: CUSTOM_QUERY_MAX_LENGTH,
       type: 'string',
-      invalidMessage: 'Invalid custom query',
+      invalidMessage: customQueryInvalidMessage,
     },
     invRet: {
       title: 'Inversion',
@@ -332,8 +343,9 @@ export const bond: StructSchema = {
     customQuery: {
       title: 'Custom Query',
       pattern: '[^ ]',
+      maxLength: CUSTOM_QUERY_MAX_LENGTH,
       type: 'string',
-      invalidMessage: 'Invalid custom query',
+      invalidMessage: customQueryInvalidMessage,
     },
     center: {
       title: 'Reacting Center',

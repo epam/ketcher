@@ -97,11 +97,20 @@ function request(
     response = responseHandler(response);
   } else {
     response = response.then((response) =>
+      // Error responses (e.g. a 413 from a reverse proxy rejecting an
+      // oversized body) are not guaranteed to have a JSON body, so parsing
+      // must not be the thing that decides whether the request succeeded.
       response
         .json()
-        .then((res) =>
-          response.ok ? res : Promise.reject(new Error(res.error)),
-        ),
+        .catch(() => null)
+        .then((res) => {
+          if (response.ok) return res;
+          const message =
+            res?.error ||
+            response.statusText ||
+            `Request failed with status ${response.status}`;
+          return Promise.reject(new Error(message));
+        }),
     );
   }
 

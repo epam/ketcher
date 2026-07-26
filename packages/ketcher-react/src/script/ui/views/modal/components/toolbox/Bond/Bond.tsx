@@ -23,7 +23,10 @@ import Form, {
 import { Dialog } from '../../../../components';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
-import { bond as bondSchema } from '../../../../../data/schema/struct-schema';
+import {
+  bond as bondSchema,
+  CUSTOM_QUERY_MAX_LENGTH,
+} from '../../../../../data/schema/struct-schema';
 import classes from './Bond.module.less';
 import { useMemo, useRef, useState } from 'react';
 import { Bond as CoreBond, SettingsManager } from 'ketcher-core';
@@ -154,6 +157,7 @@ const Bond = (props: Props) => {
               disabled={!isCustomQuery || isMonomerCreationWizardActive}
               checkboxValue={isCustomQuery}
               onCheckboxChange={handleCustomQueryCheckBoxChange}
+              maxLength={CUSTOM_QUERY_MAX_LENGTH}
               data-testid="bond-custom-query"
             />
           </div>
@@ -166,6 +170,9 @@ const Bond = (props: Props) => {
 function customQueryValid(customQuery: string, isCustomQuery: boolean) {
   if (!isCustomQuery) {
     return true;
+  }
+  if (customQuery.length > CUSTOM_QUERY_MAX_LENGTH) {
+    return false;
   }
   const regex = new RegExp(bondSchema.properties.customQuery.pattern as string);
   const isValid = regex.test(customQuery);

@@ -21,10 +21,19 @@ import type { Struct } from 'domain/entities/struct';
 import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { Vec2 } from 'domain/entities/vec2';
 import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
-
-import { ifDef } from 'utilities';
+import { CUSTOM_QUERY_MAX_LENGTH } from 'domain/constants';
 import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
 import { isNumber } from 'lodash';
+
+import { ifDef } from 'utilities';
+
+function assertCustomQueryLength(customQuery: string, context: string): void {
+  if (customQuery.length > CUSTOM_QUERY_MAX_LENGTH) {
+    throw new Error(
+      `${context} custom query exceeds the maximum allowed length of ${CUSTOM_QUERY_MAX_LENGTH} characters (got ${customQuery.length})`,
+    );
+  }
+}
 
 function fromRlabel(rg) {
   const res: Array<any> = [];
@@ -123,6 +132,9 @@ function atomToKet(source, monomer?: BaseMonomer) {
   if (
     Object.values(source.queryProperties).some((property) => property !== null)
   ) {
+    if (typeof source.queryProperties.customQuery === 'string') {
+      assertCustomQueryLength(source.queryProperties.customQuery, 'Atom');
+    }
     result.queryProperties = {};
     Object.keys(source.queryProperties).forEach((name) => {
       ifDef(result.queryProperties, name, source.queryProperties[name]);
@@ -156,6 +168,7 @@ function rglabelToKet(source) {
 function bondToKet(source) {
   const result = {};
   if (source.customQuery) {
+    assertCustomQueryLength(source.customQuery, 'Bond');
     ifDef(result, 'atoms', [source.begin, source.end]);
     ifDef(result, 'customQuery', source.customQuery);
   } else {

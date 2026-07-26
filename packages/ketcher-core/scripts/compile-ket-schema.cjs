@@ -15,14 +15,27 @@ const outputPath = path.resolve(
 const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
 const ajv = new Ajv({
   allErrors: true,
-  code: { source: true, esm: false },
+  code: { source: true, esm: true },
   strict: false,
 });
 const validate = ajv.compile(schema);
 
-const generatedCode = standaloneCode(ajv, validate).replace(
-  /const (\w+) = require\("ajv\/dist\/runtime\/([^"]+)"\)\.default;/g,
-  'const $1Module = require("ajv/dist/runtime/$2");const $1 = typeof $1Module === "function" ? $1Module : typeof $1Module.default === "function" ? $1Module.default : $1Module.default.default;',
+let generatedCode = standaloneCode(ajv, validate);
+
+// Convert any remaining require() calls to ES imports
+const requireMatches = generatedCode.match(
+  /const (\w+) = require\("([^"]+)"\)\.default;/g,
 );
+if (requireMatches) {
+  const imports = [];
+  requireMatches.forEach((match) => {
+    const [, varName, modulePath] = match.match(
+      /const (\w+) = require\("([^"]+)"\)\.default;/,
+    );
+    imports.push(`import ${varName} from "${modulePath}";`);
+    generatedCode = generatedCode.replace(match, '');
+  });
+  generatedCode = imports.join('\n') + '\n' + generatedCode;
+}
 
 fs.writeFileSync(outputPath, `${generatedCode}\n`, 'utf8');

@@ -1,6 +1,13 @@
+'use client';
+
+import dynamic from 'next/dynamic';
+
 import 'ketcher-react/dist/index.css';
 
-import { EditorComponent } from './editor';
+const EditorComponent = dynamic(
+  () => import('./editor').then((module) => module.EditorComponent),
+  { ssr: false },
+);
 
 export default function Home() {
   return (

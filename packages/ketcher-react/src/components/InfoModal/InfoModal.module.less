@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+ @import '../../style/variables.less';
+
 .infoModalOverlay {
     display: flex;
     align-items: center;
@@ -43,8 +45,7 @@
     background-clip: padding-box;
     opacity: 1;
     transition: transform 0.3s, opacity 0.3s;
-    font-family: Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
-      Arial, sans-serif;
+    font-family: @Inter;
     border: none;
     padding: 0;
     margin: 0;
@@ -114,6 +115,7 @@
     color: #fff;
     background-color: #167782;
     border: 1px solid transparent;
+    font-family: @Arial;
   }
   
   .ok:hover, .ok:active {

@@ -52,6 +52,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { pageReload } from '@utils/common/helpers';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
+import { moveMouseAway } from '@utils/moveMouseAway';
 
 let page: Page;
 
@@ -164,6 +165,7 @@ test('5. Verify that RNA tab redesign include change in the appearance of librar
     hideMacromoleculeEditorScrollBars: true,
   });
   await Library(page).openRNASection(RNASection.Sugars);
+  await moveMouseAway(page);
   await takeMonomerLibraryScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

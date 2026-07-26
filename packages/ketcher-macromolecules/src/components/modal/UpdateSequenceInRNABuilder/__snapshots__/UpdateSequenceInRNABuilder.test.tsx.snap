@@ -88,7 +88,7 @@ exports[`UpdateSequenceInRNABuilder modal component should render correctly 1`] 
             class="MuiDialogActions-root MuiDialogActions-spacing css-k8y9qp-MuiDialogActions-root"
           >
             <button
-              class="MuiButtonBase-root css-fevlc0-MuiButtonBase-root"
+              class="MuiButtonBase-root css-1qdzina-MuiButtonBase-root"
               data-testid="update-sequence-cancel-button"
               tabindex="0"
               title=""
@@ -100,7 +100,7 @@ exports[`UpdateSequenceInRNABuilder modal component should render correctly 1`] 
               />
             </button>
             <button
-              class="MuiButtonBase-root css-1gvl3mi-MuiButtonBase-root"
+              class="MuiButtonBase-root css-1hiibxo-MuiButtonBase-root"
               data-testid="update-sequence-yes-button"
               tabindex="0"
               title=""

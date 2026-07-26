@@ -14,6 +14,7 @@ import {
 import {
   type AttachmentPointConstructorParams,
   AttachmentPointName,
+  type MouseEventWithAttachmentPoint,
 } from './types';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
@@ -57,7 +58,7 @@ export class AttachmentPoint {
 
   protected initialAngle = 0;
   private readonly isUsed: boolean;
-  private readonly isSnake;
+  private readonly isSnake: boolean;
   private get editorEvents() {
     return provideEditorInstance().events;
   }
@@ -223,21 +224,21 @@ export class AttachmentPoint {
       );
 
     hoverableAreaElement
-      .on('mouseover', (event) => {
+      .on('mouseover', (event: MouseEventWithAttachmentPoint) => {
         event.attachmentPointName = this.attachmentPointName;
         this.editorEvents.mouseOverAttachmentPoint.dispatch(event);
       })
-      .on('mouseleave', (event) => {
+      .on('mouseleave', (event: MouseEvent) => {
         this.editorEvents.mouseLeaveAttachmentPoint.dispatch(event);
       })
-      .on('mousemove', (event) => {
+      .on('mousemove', (event: MouseEvent) => {
         this.editorEvents.mouseMoveAttachmentPoint.dispatch(event);
       })
-      .on('mousedown', (event) => {
+      .on('mousedown', (event: MouseEventWithAttachmentPoint) => {
         event.attachmentPointName = this.attachmentPointName;
         this.editorEvents.mouseDownAttachmentPoint.dispatch(event);
       })
-      .on('mouseup', (event) => {
+      .on('mouseup', (event: MouseEventWithAttachmentPoint) => {
         event.attachmentPointName = this.attachmentPointName;
         this.editorEvents.mouseUpAttachmentPoint.dispatch(event);
       });
@@ -357,7 +358,7 @@ export class AttachmentPoint {
     return angleRadians;
   }
 
-  protected getCoordinates(angleDegrees) {
+  protected getCoordinates(angleDegrees: number) {
     const [pointOnBorder, pointOfAttachment, labelPoint] =
       this.catchThePoint(angleDegrees);
 

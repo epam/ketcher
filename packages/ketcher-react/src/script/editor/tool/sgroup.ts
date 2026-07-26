@@ -74,7 +74,7 @@ class SGroupTool implements Tool {
     this.editor.rotateController.rerender();
     this.editor.update(true);
 
-    if (selection.atoms && selection.bonds) {
+    if (selection.atoms) {
       const selectedAtoms = this.editor.selection()?.atoms;
 
       const sgroups: Pool<SGroup> = molecule.sgroups;
@@ -862,6 +862,9 @@ function getContextBySelection(restruct, selection) {
   const struct = restruct.molecule;
 
   if (selection.atoms && !selection.bonds) {
+    if (manyComponentsSelected(restruct, selection.atoms)) {
+      return SgContexts.Multifragment;
+    }
     return SgContexts.Atom;
   }
 

@@ -45,6 +45,20 @@ export class LinkerSequenceNode {
     return monomers;
   }
 
+  /**
+   * Returns true if this linker contains only phosphate monomers.
+   * Used by renderers to determine whether terminal phosphates should be
+   * displayed as P (phosphate) or CHEM.
+   */
+  public get isPhosphateOnly() {
+    return this.monomers.every(
+      (monomer) =>
+        monomer instanceof Phosphate ||
+        (monomer instanceof AmbiguousMonomer &&
+          monomer.monomerClass === KetMonomerClass.Phosphate),
+    );
+  }
+
   public get renderer() {
     return this.monomer.renderer;
   }

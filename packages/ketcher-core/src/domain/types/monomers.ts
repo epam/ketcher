@@ -98,7 +98,7 @@ export const attachmentPointNames = [
   'R8',
 ];
 
-export type LeavingGroup = 'O' | 'OH' | 'H';
+export type LeavingGroup = 'O' | 'OH' | 'H' | (string & NonNullable<unknown>);
 
 export type AttachmentPointConstructorParams = {
   rootElement: D3SvgElementSelection<SVGGElement, void>;

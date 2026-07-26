@@ -472,10 +472,15 @@ export const canModifyAminoAcid = (
   monomer: BaseMonomer,
   modificationMonomerLibraryItem: MonomerItemType,
 ) => {
+  const hasR1OnSource = monomer.hasAttachmentPoint(AttachmentPointName.R1);
+  const hasR2OnSource = monomer.hasAttachmentPoint(AttachmentPointName.R2);
+
   return (
-    (monomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) ||
+    (!hasR1OnSource ||
+      monomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) ||
       modificationMonomerLibraryItem.props.MonomerCaps?.R1) &&
-    (monomer.isAttachmentPointExistAndFree(AttachmentPointName.R2) ||
+    (!hasR2OnSource ||
+      monomer.isAttachmentPointExistAndFree(AttachmentPointName.R2) ||
       modificationMonomerLibraryItem.props.MonomerCaps?.R2)
   );
 };
@@ -511,11 +516,13 @@ export const getAminoAcidsToModify = (
     const modifiedMonomerItem = naturalAnalogueToModifiedMonomerItem.get(
       monomerNaturalAnalogCode,
     );
+    const canModify =
+      modifiedMonomerItem && canModifyAminoAcid(monomer, modifiedMonomerItem);
 
     if (
       modifiedMonomerItem &&
       monomer.label !== modifiedMonomerItem.label &&
-      canModifyAminoAcid(monomer, modifiedMonomerItem)
+      canModify
     ) {
       aminoAcidsToModify.set(monomer, modifiedMonomerItem);
     }

@@ -484,6 +484,18 @@ export class CoreEditor {
    *   the first failure remain in the library.
    */
   public updateMonomersLibrary(monomersDataRaw: string | JSON) {
+    // `_monomersLibraryParsedJson` is always initialized by `setMonomersLibrary`
+    // in the constructor before any consumer can call `updateMonomersLibrary`.
+    // A `null` value here would indicate a programming error (e.g. calling
+    // this method before the editor finished constructing), not a normal
+    // runtime case, so we fail loudly instead of silently no-op-ing.
+    const monomersLibraryParsedJson = this._monomersLibraryParsedJson;
+    if (!monomersLibraryParsedJson) {
+      throw new Error(
+        'Editor::updateMonomersLibrary: monomers library parsed JSON is not initialized',
+      );
+    }
+
     const {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
@@ -677,10 +689,8 @@ export class CoreEditor {
           this._monomersLibrary[existingMonomerIndex],
         );
 
-        // It's safe to use non-null assertion here and below because we already specified monomers library and parsed JSON before
         const existingMonomerRefIndex =
-          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-          this._monomersLibraryParsedJson!.root.templates.findIndex(
+          monomersLibraryParsedJson.root.templates.findIndex(
             (template) => template.$ref === existingMonomerTemplateRef,
           );
         if (existingMonomerRefIndex !== -1) {
@@ -692,8 +702,7 @@ export class CoreEditor {
             existingMonomerId;
           didCommitAnyItem = true;
 
-          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-          this._monomersLibraryParsedJson![existingMonomerTemplateRef] =
+          monomersLibraryParsedJson[existingMonomerTemplateRef] =
             newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
         } else {
           // This case should never happen because if we have a monomer in the library it should have a reference in the parsed JSON
@@ -706,12 +715,10 @@ export class CoreEditor {
         this._monomersLibrary.push(newMonomer);
         didCommitAnyItem = true;
 
-        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-        this._monomersLibraryParsedJson!.root.templates.push(
+        monomersLibraryParsedJson.root.templates.push(
           getKetRef(newMonomerTemplateRef),
         );
-        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-        this._monomersLibraryParsedJson![newMonomerTemplateRef] =
+        monomersLibraryParsedJson[newMonomerTemplateRef] =
           newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
       }
     });
@@ -763,18 +770,15 @@ export class CoreEditor {
         }
       }
 
-      // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-      this._monomersLibraryParsedJson![templateRef.$ref] = templateDefinition;
+      monomersLibraryParsedJson[templateRef.$ref] = templateDefinition;
       didCommitAnyItem = true;
       if (
-        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-        !this._monomersLibraryParsedJson!.root.templates.find(
+        !monomersLibraryParsedJson.root.templates.find(
           (existingTemplateRef) =>
             existingTemplateRef.$ref === templateRef.$ref,
         )
       ) {
-        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-        this._monomersLibraryParsedJson!.root.templates.push(templateRef);
+        monomersLibraryParsedJson.root.templates.push(templateRef);
       }
     });
 
@@ -894,6 +898,9 @@ export class CoreEditor {
 
   private setupKeyboardEvents() {
     this.keydownEventHandler = (event: KeyboardEvent) => {
+      if (this._type === EditorType.Micromolecules) {
+        return;
+      }
       let isPropagationStopped = false;
       const originalStopPropagation = event.stopPropagation.bind(event);
       event.stopPropagation = () => {

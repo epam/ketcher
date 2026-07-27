@@ -74,7 +74,7 @@ class EraserTool implements Tool {
     }
   }
 
-  mousedown(event) {
+  mousedown(event: PointerEvent) {
     const ci = this.editor.findItem(event, this.maps);
 
     if (!ci) {
@@ -83,7 +83,7 @@ class EraserTool implements Tool {
     }
   }
 
-  mousemove(event) {
+  mousemove(event: PointerEvent) {
     if (this.lassoHelper.running()) {
       this.editor.selection(this.lassoHelper.addPoint(event));
     } else {
@@ -97,8 +97,11 @@ class EraserTool implements Tool {
     const molecule = struct.molecule;
     const functionalGroups = molecule.functionalGroups;
     const selected = this.editor.selection();
-    const newSelected: Record<string, any> = { atoms: [], bonds: [] };
-    let actualSgroupId;
+    const newSelected: { atoms: Array<number>; bonds: Array<number> } = {
+      atoms: [],
+      bonds: [],
+    };
+    let actualSgroupId: number | undefined;
     const atomsResult: Array<number> = [];
     const bondsResult: Array<number> = [];
     const preResult: Array<number> = [];
@@ -126,14 +129,24 @@ class EraserTool implements Tool {
           )
         ) {
           const sgroupAtoms =
-            actualSgroupId !== undefined &&
-            SGroup.getAtoms(molecule, struct.sgroups.get(actualSgroupId)?.item);
+            actualSgroupId !== undefined
+              ? SGroup.getAtoms(
+                  molecule,
+                  struct.sgroups.get(actualSgroupId)?.item,
+                )
+              : undefined;
           const sgroupBonds =
-            actualSgroupId !== undefined &&
-            SGroup.getBonds(molecule, struct.sgroups.get(actualSgroupId)?.item);
-          atom === sgroupAtoms[0] &&
-            newSelected.atoms.push(...(sgroupAtoms as Array<any>)) &&
-            newSelected.bonds.push(...(sgroupBonds as Array<any>));
+            actualSgroupId !== undefined
+              ? SGroup.getBonds(
+                  molecule,
+                  struct.sgroups.get(actualSgroupId)?.item,
+                )
+              : undefined;
+
+          if (sgroupAtoms && sgroupBonds && atom === sgroupAtoms[0]) {
+            newSelected.atoms.push(...sgroupAtoms);
+            newSelected.bonds.push(...sgroupBonds);
+          }
         }
 
         if (
@@ -237,7 +250,7 @@ class EraserTool implements Tool {
     }
   }
 
-  click(event) {
+  click(event: PointerEvent) {
     const rnd = this.editor.render;
     const restruct = rnd.ctab;
     const sgroups = restruct.sgroups;

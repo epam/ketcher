@@ -267,6 +267,17 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     attachmentPointName: AttachmentPointName,
     customAngle?: number,
   ): AttachmentPointConstructorParams {
+    // Attachment points are only ever prepared/drawn after the root element
+    // has been appended (see drawAttachmentPoints callers, which bail out
+    // early when `rootElement` is not yet set). Reaching this point without
+    // a root element would indicate a programming error, not a normal
+    // runtime case.
+    if (!this.rootElement) {
+      throw new Error(
+        'Cannot prepare attachment point params before the root element is appended.',
+      );
+    }
+
     let rotation;
 
     if (!this.monomer.isAttachmentPointUsed(attachmentPointName)) {
@@ -274,8 +285,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      rootElement: this.rootElement!,
+      rootElement: this.rootElement,
       monomer: this.monomer,
       bodyWidth: this.monomerSize.width,
       bodyHeight: this.monomerSize.height,

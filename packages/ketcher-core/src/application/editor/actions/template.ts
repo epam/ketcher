@@ -28,7 +28,7 @@ import { fromBondStereoUpdate } from './bondStereo';
 import { Action } from './action';
 import closest from '../shared/closest';
 import { fromAromaticTemplateOnBond } from './aromaticFusing';
-import { fromPaste } from './paste';
+import { fromPaste, type CreatedItems } from './paste';
 import utils from '../shared/utils';
 import { fromSgroupAddition } from './sgroup';
 import type { ReStruct } from 'application/render';
@@ -45,8 +45,8 @@ export function fromTemplateOnCanvas(
   pos: Vec2,
   angle = 0,
   isPreview = true,
-): [Action, { atoms: number[]; bonds: number[] }] {
-  const [action, pasteItems] = fromPaste(
+): [Action, { atoms: number[]; bonds: number[] }, CreatedItems] {
+  const [action, pasteItems, items] = fromPaste(
     restruct,
     template.molecule,
     pos,
@@ -56,7 +56,7 @@ export function fromTemplateOnCanvas(
 
   action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct));
 
-  return [action, pasteItems];
+  return [action, pasteItems, items];
 }
 
 function extraBondAction(

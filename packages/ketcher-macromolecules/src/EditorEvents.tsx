@@ -40,6 +40,8 @@ import {
   BackBoneSequenceNode,
   LinkerSequenceNode,
   ToolName,
+  AtomRenderer,
+  BaseRenderer,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
 import {
@@ -323,7 +325,12 @@ export const EditorEvents = () => {
 
   const handleOpenAtomLabelTooltip = useCallback(
     (e) => {
-      const renderer = e.target.__data__;
+      const renderer: BaseRenderer = e.target.__data__;
+
+      if (!(renderer instanceof AtomRenderer)) {
+        return;
+      }
+
       const tooltipText: string | null | undefined = renderer?.labelTooltipText;
       if (!tooltipText) {
         return;

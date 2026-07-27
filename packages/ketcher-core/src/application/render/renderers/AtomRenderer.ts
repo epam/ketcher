@@ -492,11 +492,6 @@ export class AtomRenderer extends BaseRenderer {
       ?.attr('text-anchor', hydrogenLabelAnchor)
       .attr('x', hydrogenLabelXOffset);
 
-    const tooltip = this.labelTooltipText;
-    if (tooltip) {
-      textElement?.append('title').text(tooltip);
-    }
-
     return textElement;
   }
 

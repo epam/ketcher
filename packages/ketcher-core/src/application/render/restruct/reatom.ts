@@ -2070,7 +2070,13 @@ export function checkIsSmartPropertiesExist(atom) {
     'aromaticity',
     'customQuery',
   ];
-  return smartsSpecificProperties.some((name) => atom.queryProperties?.[name]);
+  return (
+    atom.implicitHCount !== null ||
+    smartsSpecificProperties.some((name) => {
+      const value = atom.queryProperties?.[name];
+      return Boolean(value) || value === 0;
+    })
+  );
 }
 
 export function getAtomCustomQuery(atom, includeOnlyQueryAttributes?: boolean) {

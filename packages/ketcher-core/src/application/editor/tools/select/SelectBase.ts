@@ -168,7 +168,7 @@ abstract class SelectBase implements BaseTool {
       }
 
       const modKey = isMacOs ? event.metaKey : event.ctrlKey;
-      this.mousedownEntity(renderer, event.shiftKey, modKey);
+      this.mousedownEntity(renderer, event.shiftKey, modKey, event.altKey);
     }
   }
 
@@ -278,6 +278,7 @@ abstract class SelectBase implements BaseTool {
     renderer: BaseRenderer,
     shiftKey = false,
     modKey = false,
+    altKey = false,
   ): void {
     const modelChanges = new Command();
     const drawingEntitiesToSelect: DrawingEntity[] = [];
@@ -293,7 +294,7 @@ abstract class SelectBase implements BaseTool {
       drawingEntitiesToSelect.push(renderer.drawingEntity);
     }
 
-    if (!shiftKey && !modKey) {
+    if (!shiftKey && !modKey && !altKey) {
       this.startMoveIfNeeded(renderer);
       const isSequenceItem = renderer instanceof BaseSequenceItemRenderer;
       if (renderer.drawingEntity.selected && !isSequenceItem) {
@@ -341,9 +342,14 @@ abstract class SelectBase implements BaseTool {
           drawingEntities,
         ),
       );
-    } else if (modKey && renderer.drawingEntity instanceof BaseMonomer) {
-      // Ctrl/Cmd + drag on a monomer in Flex/Snake mode selects and moves
-      // the whole chain it belongs to, same as the Sequence mode case above (#4451).
+    } else if (
+      altKey &&
+      !(renderer instanceof BaseSequenceItemRenderer) &&
+      renderer.drawingEntity instanceof BaseMonomer
+    ) {
+      // Alt + drag on a monomer in Flex/Snake mode selects and moves
+      // the whole chain it belongs to (#4451). Sequence mode keeps its own
+      // Ctrl/Cmd-based gesture above, untouched.
       this.startMoveIfNeeded(renderer);
       const connectedMonomers = getAllConnectedMonomersRecursively(
         renderer.drawingEntity,

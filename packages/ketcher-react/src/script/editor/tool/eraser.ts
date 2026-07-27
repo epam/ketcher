@@ -44,7 +44,8 @@ class EraserTool implements Tool {
   private readonly lassoHelper: LassoHelper;
   isNotActiveTool: boolean | undefined;
 
-  constructor(editor: Editor, mode?: number) {
+  constructor(editor: Editor, ...args: unknown[]) {
+    const mode = typeof args[0] === 'number' ? args[0] : 0;
     this.editor = editor;
     this.maps = [
       'atoms',
@@ -60,7 +61,7 @@ class EraserTool implements Tool {
       IMAGE_KEY,
       MULTITAIL_ARROW_KEY,
     ];
-    this.lassoHelper = new LassoHelper(mode || 0, editor, null);
+    this.lassoHelper = new LassoHelper(mode, editor, null);
 
     if (editor.selection()) {
       const action = fromFragmentDeletion(

@@ -50,6 +50,7 @@ import {
   PresetPreviewState,
   PreviewStyle,
   PreviewType,
+  TextPreviewState,
 } from 'state/types';
 import { calculateBondPreviewPosition } from 'ketcher-react';
 import { loadDefaultPresets, loadMonomerLibrary } from 'state/library';
@@ -320,6 +321,23 @@ export const EditorEvents = () => {
     dispatch(showPreview(undefined));
   }, [debouncedShowPreview, dispatch]);
 
+  const handleOpenAtomLabelTooltip = useCallback(
+    (e) => {
+      const renderer = e.target.__data__;
+      const tooltipText: string | null | undefined = renderer?.labelTooltipText;
+      if (!tooltipText) {
+        return;
+      }
+      const textPreviewData: TextPreviewState = {
+        type: PreviewType.Text,
+        text: tooltipText,
+        target: e.target,
+      };
+      debouncedShowPreview(textPreviewData);
+    },
+    [debouncedShowPreview],
+  );
+
   useEffect(() => {
     editor?.events.mouseOverMonomer.add(handleOpenPreview);
     editor?.events.mouseLeaveMonomer.add(handleClosePreview);
@@ -329,6 +347,8 @@ export const EditorEvents = () => {
     editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
     editor?.events.mouseOverPolymerBond.add(handleOpenPreview);
     editor?.events.mouseLeavePolymerBond.add(handleClosePreview);
+    editor?.events.mouseOverDrawingEntity.add(handleOpenAtomLabelTooltip);
+    editor?.events.mouseLeaveDrawingEntity.add(handleClosePreview);
 
     const onMoveHandler = (e) => {
       handleClosePreview();
@@ -352,6 +372,8 @@ export const EditorEvents = () => {
       editor?.events.mouseLeaveSequenceItem.remove(handleClosePreview);
       editor?.events.mouseOverPolymerBond.remove(handleOpenPreview);
       editor?.events.mouseLeavePolymerBond.remove(handleClosePreview);
+      editor?.events.mouseOverDrawingEntity.remove(handleOpenAtomLabelTooltip);
+      editor?.events.mouseLeaveDrawingEntity.remove(handleClosePreview);
 
       editor?.events.mouseOnMoveMonomer.remove(onMoveHandler);
       editor?.events.mouseMoveAttachmentPoint.remove(onMoveHandler);

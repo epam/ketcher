@@ -51,20 +51,29 @@ Each atom SHALL display a label depending on its type. The label type is determi
 - **WHEN** an atom has no list, alias, pseudo, or R-group assignment and is on the macromolecules canvas
 - **THEN** the label SHALL be displayed as the element symbol, e.g. `C`, `N`, `Fe`
 
-### Requirement: Long atom labels are truncated on canvas
+### Requirement: Long atom labels are truncated on canvas with a hover tooltip
 
-When a label text is longer than 8 characters, only the first 8 characters SHALL be shown on the canvas followed by `...`, matching the truncation behaviour of micromolecules mode. The full label SHALL remain accessible via a tooltip on the canvas element.
+When a label text is longer than 8 characters, only the first 8 characters SHALL be shown on the canvas followed by `...`, matching the truncation behaviour of micromolecules mode. Hovering over the truncated label SHALL show the full label text in a tooltip overlay.
 
 #### Scenario: Long atom list label truncated
 
 - **WHEN** an atom list produces a label longer than 8 characters (e.g. `[C,N,O,Cl,Br]` — 13 characters)
 - **THEN** the canvas SHALL display `[C,N,O,C...` (first 8 characters + `...`)
-- **AND** hovering over the label SHALL show the full label `[C,N,O,Cl,Br]` as a tooltip
 
 #### Scenario: Short atom list label not truncated
 
 - **WHEN** an atom list produces a label of 8 characters or fewer (e.g. `[C,N,O]` — 7 characters)
 - **THEN** the canvas SHALL display the full label `[C,N,O]` without truncation
+
+#### Scenario: Hover over truncated label shows full text tooltip
+
+- **WHEN** the user hovers over an atom whose canvas label is truncated (e.g. displays `[C,N,O,C...`)
+- **THEN** a tooltip overlay SHALL appear showing the full label text, e.g. `[C,N,O,Cl,Br]`
+
+#### Scenario: Hover over non-truncated label shows no tooltip
+
+- **WHEN** the user hovers over an atom whose label is 8 characters or fewer
+- **THEN** no tooltip overlay SHALL appear for that atom
 
 ### Requirement: Atom list label preserved when switching between modes
 

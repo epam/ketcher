@@ -313,7 +313,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   /** When the label is truncated, this holds the full text for use as a tooltip. */
-  private get labelTooltipText(): string | null {
+  public get labelTooltipText(): string | null {
     const text = this.labelText;
     return text.length > MAX_LABEL_LENGTH ? text : null;
   }

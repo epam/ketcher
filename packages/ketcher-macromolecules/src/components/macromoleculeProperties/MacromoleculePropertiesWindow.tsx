@@ -80,12 +80,7 @@ const StyledWrapper = styled('div')<{ isActive?: boolean; hasError?: boolean }>(
 
 const WindowControlsArea = styled('div')(() => ({
   display: 'flex',
-}));
-
-const WindowDragControl = styled('div')(() => ({
-  flex: 1,
-  display: 'flex',
-  justifyContent: 'center',
+  justifyContent: 'flex-end',
 }));
 
 const StyledCloseIcon = styled(Icon)(() => ({
@@ -1109,18 +1104,6 @@ export const MacromoleculePropertiesWindow = () => {
       data-testid="macromolecule-properties-window"
     >
       <WindowControlsArea>
-        <WindowDragControl>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M2 6H14" stroke="#333333" />
-            <path d="M2 10H14" stroke="#333333" />
-          </svg>
-        </WindowDragControl>
         <StyledCloseIcon
           name="close"
           onClick={closeWindow}

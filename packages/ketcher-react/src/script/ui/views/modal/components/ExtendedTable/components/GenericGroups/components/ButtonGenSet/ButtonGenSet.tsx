@@ -37,9 +37,19 @@ const ButtonGenSet = ({
     ? `${button.label} is disabled`
     : button.description ?? button.label;
 
+  const handleClick = (event: React.MouseEvent) => {
+    // Prevent Shift+Click from selecting multiple atoms
+    // Extended Table should only allow single atom selection
+    if (event.shiftKey) {
+      event.preventDefault();
+      return;
+    }
+    onAtomSelect(button.label);
+  };
+
   return (
     <button
-      onClick={() => onAtomSelect(button.label)}
+      onClick={handleClick}
       onDoubleClick={() => onAtomActivate(button.label)}
       title={titleText}
       disabled={disabled}

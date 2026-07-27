@@ -900,12 +900,13 @@ export class SequenceMode extends BaseMode {
             strandType,
           )) ??
         undefined;
-      const rawNodeBeforeSelection =
-        potentialNodeBeforeSelection instanceof BackBoneSequenceNode
-          ? strandType === STRAND_TYPE.SENSE
+      let rawNodeBeforeSelection = potentialNodeBeforeSelection;
+      if (potentialNodeBeforeSelection instanceof BackBoneSequenceNode) {
+        rawNodeBeforeSelection =
+          strandType === STRAND_TYPE.SENSE
             ? potentialNodeBeforeSelection.firstConnectedNode
-            : potentialNodeBeforeSelection.secondConnectedNode
-          : potentialNodeBeforeSelection;
+            : potentialNodeBeforeSelection.secondConnectedNode;
+      }
 
       const nodeBeforeSelection =
         rawNodeBeforeSelection &&
@@ -943,12 +944,16 @@ export class SequenceMode extends BaseMode {
             strandType,
           )) ??
         undefined;
-      const nodeInSameChainBeforeSelection =
+      let nodeInSameChainBeforeSelection =
+        potentialNodeInSameChainBeforeSelection;
+      if (
         potentialNodeInSameChainBeforeSelection instanceof BackBoneSequenceNode
-          ? strandType === STRAND_TYPE.SENSE
+      ) {
+        nodeInSameChainBeforeSelection =
+          strandType === STRAND_TYPE.SENSE
             ? potentialNodeInSameChainBeforeSelection.firstConnectedNode
-            : potentialNodeInSameChainBeforeSelection.secondConnectedNode
-          : potentialNodeInSameChainBeforeSelection;
+            : potentialNodeInSameChainBeforeSelection.secondConnectedNode;
+      }
       const potentialNodeInSameChainAfterSelection =
         (twoStrandedNodeInSameChainAfterSelection &&
           getNodeFromTwoStrandedNode(

@@ -893,13 +893,20 @@ export class SequenceMode extends BaseMode {
       const twoStrandedNodeInSameChainAfterSelection =
         SequenceRenderer.getNextNodeInSameChain(selectionEndTwoStrandedNode);
 
-      const rawNodeBeforeSelection =
+      const potentialNodeBeforeSelection =
         (twoStrandedNodeBeforeSelection &&
           getNodeFromTwoStrandedNode(
             twoStrandedNodeBeforeSelection,
             strandType,
           )) ??
         undefined;
+      let rawNodeBeforeSelection = potentialNodeBeforeSelection;
+      if (potentialNodeBeforeSelection instanceof BackBoneSequenceNode) {
+        rawNodeBeforeSelection =
+          strandType === STRAND_TYPE.SENSE
+            ? potentialNodeBeforeSelection.firstConnectedNode
+            : potentialNodeBeforeSelection.secondConnectedNode;
+      }
 
       const nodeBeforeSelection =
         rawNodeBeforeSelection &&
@@ -930,13 +937,23 @@ export class SequenceMode extends BaseMode {
         nodeAfterSelection = undefined;
       }
 
-      const nodeInSameChainBeforeSelection =
+      const potentialNodeInSameChainBeforeSelection =
         (twoStrandedNodeInSameChainBeforeSelection &&
           getNodeFromTwoStrandedNode(
             twoStrandedNodeInSameChainBeforeSelection,
             strandType,
           )) ??
         undefined;
+      let nodeInSameChainBeforeSelection =
+        potentialNodeInSameChainBeforeSelection;
+      if (
+        potentialNodeInSameChainBeforeSelection instanceof BackBoneSequenceNode
+      ) {
+        nodeInSameChainBeforeSelection =
+          strandType === STRAND_TYPE.SENSE
+            ? potentialNodeInSameChainBeforeSelection.firstConnectedNode
+            : potentialNodeInSameChainBeforeSelection.secondConnectedNode;
+      }
       const potentialNodeInSameChainAfterSelection =
         (twoStrandedNodeInSameChainAfterSelection &&
           getNodeFromTwoStrandedNode(

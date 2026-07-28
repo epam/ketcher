@@ -13,13 +13,16 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 import type { SelectBase } from 'application/editor/tools/select';
-import { Vec2 } from 'domain/entities';
+import { Command, Struct, Vec2 } from 'domain/entities';
 import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
 import {
   KetcherLogger,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
 } from 'utilities';
+import { SnakeMode } from 'application/editor/modes/SnakeMode';
+import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import { EditorHistory } from 'application/editor/EditorHistory';
 
 type RescaleStructForModeTransitionContext = {
   micromoleculesEditor: {
@@ -56,6 +59,96 @@ const callRescaleStructForModeTransition = (
 };
 
 describe('CoreEditor', () => {
+  describe('switchToMacromolecules', () => {
+    const originalGetBBox = SVGElement.prototype.getBBox;
+
+    beforeEach(() => {
+      Object.defineProperty(SVGElement.prototype, 'getBBox', {
+        configurable: true,
+        value: jest.fn(() => ({ x: 0, y: 0, width: 10, height: 10 })),
+      });
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+      EditorHistory.getInstance({} as CoreEditor).destroy();
+      ketcherProvider.removeKetcherInstance('test-ketcher');
+
+      if (originalGetBBox) {
+        Object.defineProperty(SVGElement.prototype, 'getBBox', {
+          configurable: true,
+          value: originalGetBBox,
+        });
+      } else {
+        Reflect.deleteProperty(SVGElement.prototype, 'getBBox');
+      }
+    });
+
+    it('should reapply snake auto-layout when switching from micro mode', () => {
+      const struct = new Struct();
+      const microEditor = {
+        struct: jest.fn(() => struct),
+        render: {
+          ctab: {
+            render: {
+              setMolecule: jest.fn(),
+            },
+          },
+          options: {
+            microModeScale: 1,
+          },
+        },
+        clear: jest.fn(),
+        clearHistory: jest.fn(),
+        zoom: jest.fn(),
+        setMacromoleculeConvertionError: jest.fn(),
+      };
+      const ketcher = {
+        id: 'test-ketcher',
+        editor: microEditor,
+        changeEvent: {
+          dispatch: jest.fn(),
+        },
+      };
+
+      ketcherProvider.addKetcherInstance(ketcher as never);
+
+      const editor = new CoreEditor({
+        ketcherId: 'test-ketcher',
+        canvas: createPolymerEditorCanvas(),
+        theme: {},
+        renderersContainer: createRenderersManager(),
+      });
+
+      editor.setMode(new SnakeMode());
+
+      jest
+        .spyOn(MacromoleculesConverter, 'convertStructToDrawingEntities')
+        .mockImplementation((_struct, drawingEntitiesManager) => {
+          drawingEntitiesManager.addMonomer(
+            peptideMonomerItem,
+            new Vec2(200, 200),
+          );
+
+          return {
+            drawingEntitiesManager,
+            modelChanges: new Command(),
+            fragmentIdToMonomer: new Map(),
+            fragmentIdToAtomIdMap: new Map(),
+          } as never;
+        });
+
+      editor.switchToMacromolecules();
+
+      const monomer = Array.from(
+        editor.drawingEntitiesManager.monomers.values(),
+      )[0];
+
+      expect(monomer).toBeDefined();
+      expect(monomer.position).not.toEqual(new Vec2(200, 200));
+    });
+  });
+
   it('should create MonomerLibraryConvertError with a cause', () => {
     const cause = new Error('convert failed');
     const error = new MonomerLibraryConvertError(

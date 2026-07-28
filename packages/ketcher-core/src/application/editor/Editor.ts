@@ -2335,7 +2335,7 @@ export class CoreEditor {
 
     if (this.mode.modeName === 'snake-layout-mode') {
       modelChanges.merge(
-        this.drawingEntitiesManager.applySnakeLayout(true, true, false),
+        this.drawingEntitiesManager.applySnakeLayout(true, true, true),
       );
     }
 

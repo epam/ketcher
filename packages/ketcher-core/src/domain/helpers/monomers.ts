@@ -159,7 +159,65 @@ export function isMonomerConnectedToR2RnaBase(monomer?: BaseMonomer) {
   );
 }
 
+export function isChemMonomer(monomer?: BaseMonomer): boolean {
+  return isMonomerOfClass(monomer, KetMonomerClass.CHEM);
+}
+
+export function isLinearChem(monomer?: BaseMonomer): boolean {
+  return (
+    isChemMonomer(monomer) &&
+    (monomer as BaseMonomer).usedAttachmentPointsNamesList.length <= 2
+  );
+}
+
+function getOrientedChemNeighbors(chem: BaseMonomer): {
+  previous?: BaseMonomer;
+  next?: BaseMonomer;
+} {
+  let previous: BaseMonomer | undefined;
+  let next: BaseMonomer | undefined;
+  const unorientedNeighbors: BaseMonomer[] = [];
+
+  chem.usedAttachmentPointsNamesList.forEach((attachmentPointName) => {
+    const bond = chem.attachmentPointsToBonds[attachmentPointName];
+
+    if (!(bond instanceof PolymerBond)) {
+      return;
+    }
+
+    const neighbor = bond.getAnotherMonomer(chem);
+
+    if (!neighbor) {
+      return;
+    }
+
+    const neighborAttachmentPoint = neighbor.getAttachmentPointByBond(bond);
+
+    if (neighborAttachmentPoint === AttachmentPointName.R2 && !previous) {
+      previous = neighbor;
+    } else if (neighborAttachmentPoint === AttachmentPointName.R1 && !next) {
+      next = neighbor;
+    } else {
+      unorientedNeighbors.push(neighbor);
+    }
+  });
+
+  unorientedNeighbors.forEach((neighbor) => {
+    if (!previous) {
+      previous = neighbor;
+    } else if (!next) {
+      next = neighbor;
+    }
+  });
+
+  return { previous, next };
+}
+
 export function getPreviousMonomerInChain(monomer: BaseMonomer) {
+  if (isLinearChem(monomer)) {
+    return getOrientedChemNeighbors(monomer).previous;
+  }
+
   const r1PolymerBond = monomer.attachmentPointsToBonds.R1;
   const previousMonomer =
     r1PolymerBond instanceof PolymerBond
@@ -168,6 +226,13 @@ export function getPreviousMonomerInChain(monomer: BaseMonomer) {
 
   if (!previousMonomer || !(r1PolymerBond instanceof PolymerBond)) {
     return undefined;
+  }
+
+  if (
+    isLinearChem(previousMonomer) &&
+    getOrientedChemNeighbors(previousMonomer).next === monomer
+  ) {
+    return previousMonomer;
   }
 
   return previousMonomer &&
@@ -183,6 +248,20 @@ export function getNextMonomerInChain(
 ) {
   if (!monomer) return undefined;
 
+  if (isLinearChem(monomer)) {
+    const nextMonomer = getOrientedChemNeighbors(monomer).next;
+
+    if (
+      !nextMonomer ||
+      nextMonomer === firstMonomer ||
+      isMonomerConnectedToR2RnaBase(nextMonomer)
+    ) {
+      return undefined;
+    }
+
+    return nextMonomer;
+  }
+
   const r2PolymerBond = monomer.attachmentPointsToBonds.R2;
   const nextMonomer =
     r2PolymerBond instanceof PolymerBond
@@ -195,6 +274,13 @@ export function getNextMonomerInChain(
     isMonomerConnectedToR2RnaBase(nextMonomer)
   )
     return undefined;
+
+  if (
+    isLinearChem(nextMonomer) &&
+    getOrientedChemNeighbors(nextMonomer).previous === monomer
+  ) {
+    return nextMonomer;
+  }
 
   return r2PolymerBond &&
     nextMonomer?.getAttachmentPointByBond(r2PolymerBond) ===

@@ -43,6 +43,7 @@ import {
   DNA_TEMPLATE_NAME_PART,
   RNA_TEMPLATE_NAME_PART,
   LIBRARY_TAB_INDEX,
+  MONOMER_TYPES,
 } from 'src/constants';
 import { RootState } from 'state';
 import { localStorageWrapper } from 'helpers/localStorage';
@@ -64,6 +65,47 @@ const LIBRARY_GROUP_NAME_TO_MONOMER_CLASS = {
   [MonomerGroups.PEPTIDES]: KetMonomerClass.AminoAcid,
   [MonomerGroups.BASES]: KetMonomerClass.Base,
 };
+
+// Maps amino acid one-letter natural analog codes to their three-letter codes
+// to support library search by either representation.
+const AMINO_ACID_THREE_LETTER_CODES: Record<string, string> = {
+  a: 'ala',
+  b: 'asx',
+  c: 'cys',
+  d: 'asp',
+  e: 'glu',
+  f: 'phe',
+  g: 'gly',
+  h: 'his',
+  i: 'ile',
+  j: 'xle',
+  k: 'lys',
+  l: 'leu',
+  m: 'met',
+  n: 'asn',
+  o: 'pyl',
+  p: 'pro',
+  q: 'gln',
+  r: 'arg',
+  s: 'ser',
+  t: 'thr',
+  u: 'sec',
+  v: 'val',
+  w: 'trp',
+  x: 'xaa',
+  y: 'tyr',
+  z: 'glx',
+};
+
+const AMBIGUOUS_MONOMER_DEFAULT_ALIAS = '';
+const AMBIGUOUS_MONOMER_DEFAULT_MODIFICATION_TYPES: string[] = [];
+
+const isAminoAcidMonomer = (
+  monomerClass: KetMonomerClass | undefined,
+  monomerType: string | undefined,
+) =>
+  monomerClass === KetMonomerClass.AminoAcid ||
+  monomerType === MONOMER_TYPES.PEPTIDE;
 
 const initialState: LibraryState = {
   monomers: [],
@@ -379,9 +421,17 @@ export const selectFilteredMonomers = createSelector(
       bilnAlias: string | undefined = '',
       axoLabsAlias: string | undefined = '',
       modificationTypes: string[] | undefined = [],
+      naturalAnalogCode: string | undefined = '',
+      isAminoAcidMonomer = false,
     ) => {
       const monomerName = name.toLowerCase();
       const monomerNameFull = fullName.toLowerCase();
+      const monomerNaturalAnalogCode = naturalAnalogCode?.toLowerCase();
+      const monomerThreeLetterCode =
+        monomerNaturalAnalogCode &&
+        monomerNaturalAnalogCode in AMINO_ACID_THREE_LETTER_CODES
+          ? AMINO_ACID_THREE_LETTER_CODES[monomerNaturalAnalogCode]
+          : undefined;
 
       const idtBase = idtAliases?.base?.toLowerCase();
 
@@ -514,6 +564,10 @@ export const selectFilteredMonomers = createSelector(
       const matchesModificationTypes = modificationTypesLower
         ? modificationTypesLower.includes(searchFilter)
         : false;
+      const matchesThreeLetterAminoAcidCode =
+        isAminoAcidMonomer && monomerThreeLetterCode
+          ? monomerThreeLetterCode.includes(searchFilter)
+          : false;
 
       const cond =
         monomerName.includes(searchFilter) ||
@@ -523,11 +577,11 @@ export const selectFilteredMonomers = createSelector(
         matchesHelmAlias ||
         matchesBilnAlias ||
         matchesAxoLabsAlias ||
-        matchesModificationTypes;
+        matchesModificationTypes ||
+        matchesThreeLetterAminoAcidCode;
 
       return cond;
     };
-
     return monomers
       .filter((item: MonomerOrAmbiguousType) => {
         // Filter out hidden monomers - they are part of presets and should not be visible in the library
@@ -542,12 +596,23 @@ export const selectFilteredMonomers = createSelector(
             idtAliases,
             monomers: components,
           } = item as AmbiguousMonomerType;
+          const monomerClass = new AmbiguousMonomer(
+            item as AmbiguousMonomerType,
+            undefined,
+            false,
+          ).monomerClass;
 
           const matchesMonomer = checkMonomerMatch(
             idtAliases,
             normalizedSearchFilter,
             label,
             id,
+            AMBIGUOUS_MONOMER_DEFAULT_ALIAS,
+            AMBIGUOUS_MONOMER_DEFAULT_ALIAS,
+            AMBIGUOUS_MONOMER_DEFAULT_ALIAS,
+            AMBIGUOUS_MONOMER_DEFAULT_MODIFICATION_TYPES,
+            label,
+            isAminoAcidMonomer(monomerClass, undefined),
           );
 
           return (
@@ -561,6 +626,9 @@ export const selectFilteredMonomers = createSelector(
                 aliasBILN,
                 aliasAxoLabs,
                 modificationTypes,
+                MonomerNaturalAnalogCode,
+                MonomerClass,
+                MonomerType,
               } = monomer.monomerItem.props;
 
               return checkMonomerMatch(
@@ -572,6 +640,8 @@ export const selectFilteredMonomers = createSelector(
                 aliasBILN,
                 aliasAxoLabs,
                 modificationTypes,
+                MonomerNaturalAnalogCode,
+                isAminoAcidMonomer(MonomerClass, MonomerType),
               );
             })
           );
@@ -584,6 +654,9 @@ export const selectFilteredMonomers = createSelector(
             aliasBILN,
             aliasAxoLabs,
             modificationTypes,
+            MonomerNaturalAnalogCode,
+            MonomerClass,
+            MonomerType,
           } = (item as MonomerItemType).props;
 
           return checkMonomerMatch(
@@ -595,6 +668,8 @@ export const selectFilteredMonomers = createSelector(
             aliasBILN,
             aliasAxoLabs,
             modificationTypes,
+            MonomerNaturalAnalogCode,
+            isAminoAcidMonomer(MonomerClass, MonomerType),
           );
         }
       })

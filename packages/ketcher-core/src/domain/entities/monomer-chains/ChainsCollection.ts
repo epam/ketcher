@@ -274,7 +274,7 @@ export class ChainsCollection {
         (isFirstMonomerWithR2R1connection ||
           isMonomerConnectedToR2RnaBase(monomer)) &&
         !isRnaBaseConnectedToSugar;
-      if (isStart) {
+      if (isStart && !isMonomerConnectedToR2RnaBase(monomer)) {
         const previousMonomer = getPreviousMonomerInChain(monomer);
 
         if (

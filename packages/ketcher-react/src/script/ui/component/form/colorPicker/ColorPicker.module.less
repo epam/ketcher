@@ -15,6 +15,13 @@
  ***************************************************************************/
 
 @import '../../../../../style/variables';
+@import '../../../../../style/mixins';
+
+// ── Trigger button ────────────────────────────────────────────────────────────
+
+.colorPickerWrapper {
+  position: relative;
+}
 
 .colorPickerInput {
   width: 48px;
@@ -22,10 +29,9 @@
   box-shadow: none;
   border-radius: 4px;
   min-height: 24px;
-  border: 1px solid @color-border-input;
+  border: 1px solid @color-grey-4;
   background-color: @color-background-primary;
   color: @color-text-primary;
-  font-family: @Inter;
   font-size: @font-size-input;
   padding-right: 7px;
   padding-left: 3px;
@@ -35,7 +41,7 @@
   align-items: center;
 
   &:hover {
-    border-color: @color-input-hover;
+    border-color: @color-primary-green;
   }
 }
 
@@ -43,137 +49,12 @@
   border-color: @color-primary-green;
 }
 
-.colorPickerWrap {
-  position: absolute;
-  left: 0;
-  top: 24px;
-  z-index: 1;
-  background-color: @color-background-primary;
-  padding: 8px;
-  border-radius: 4px;
-  box-shadow: 0 6px 10px @color-select-box-shadow;
-  width: 70px;
-  height: 35px;
-}
-
-.withPalette {
-  height: 140px;
-}
-
-.colorPicker.colorPicker {
-  right: 0;
-  top: 0;
-  height: 80%;
-
-  input {
-    margin-top: 2px;
-    position: relative;
-    height: 12px !important;
-    width: 60%;
-    border: 1px solid transparent !important;
-    text-align: right;
-    float: right;
-    color: @color-text-primary;
-    font-size: 10px;
-    text-transform: uppercase;
-    padding: 1px 2px !important;
-    outline: transparent;
-
-    &:focus {
-      border: 1px solid @color-border-hover !important;
-    }
-  }
-
-  div {
-    border-radius: 0;
-  }
-
-  :global(.react-colorful) {
-    width: 100%;
-    height: 80%;
-  }
-
-  :global(.react-colorful__hue) {
-    height: 15px;
-  }
-
-  :global(.react-colorful__pointer) {
-    border-radius: 50%;
-    border-width: 1px;
-    width: 10px;
-    height: 10px;
-  }
-}
-
-.colorPickerBtn {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-sizing: border-box;
-}
-
 .colorPickerPreview {
   width: 16px;
   height: 16px;
   border-radius: 2px;
   border: none;
-}
-
-.colorPickerOverlay {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  z-index: -10;
-}
-
-.colorContainer {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 2px;
-  align-items: baseline;
-
-  .hex {
-    color: @color-text-primary;
-    font-size: 10px;
-  }
-}
-
-.presetColors {
-  display: flex;
-  flex-wrap: wrap;
-  width: 78px;
-
-  button {
-    width: 16px;
-    height: 16px;
-    border: none;
-    border-radius: 2px;
-    margin-right: 2px;
-    margin-bottom: 2px;
-
-    &:last-of-type {
-      margin-right: 0;
-    }
-
-    &:nth-of-type(4) {
-      margin-right: 0;
-    }
-  }
-
-  .chooseColor {
-    border: 1px solid @color-button-primary-hover;
-    background-color: @color-background-primary;
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMC41IiB5PSIwLjUiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgcng9IjEuNSIgc3Ryb2tlPSIjMDA1NjYyIi8+CjxyZWN0IHg9IjcuMzQ1NyIgeT0iMy40Mjg0NyIgd2lkdGg9IjEuMzA2MTIiIGhlaWdodD0iOS4xNDI4NiIgZmlsbD0iIzAwNTY2MiIvPgo8cmVjdCB4PSIzLjQyNzczIiB5PSI4LjY1MzA4IiB3aWR0aD0iMS4zMDYxMiIgaGVpZ2h0PSI5LjE0Mjg2IiB0cmFuc2Zvcm09InJvdGF0ZSgtOTAgMy40Mjc3MyA4LjY1MzA4KSIgZmlsbD0iIzAwNTY2MiIvPgo8L3N2Zz4K');
-    background-repeat: no-repeat;
-    background-position: center;
-  }
-
-  .clicked {
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iNC4zNDU3IiB5PSIwLjQyODU4OSIgd2lkdGg9IjEuMzA2MTIiIGhlaWdodD0iOS4xNDI4NiIgZmlsbD0id2hpdGUiLz4KPHJlY3QgeD0iMC40Mjc3MzQiIHk9IjUuNjUzMDgiIHdpZHRoPSIxLjMwNjEyIiBoZWlnaHQ9IjkuMTQyODYiIHRyYW5zZm9ybT0icm90YXRlKC05MCAwLjQyNzczNCA1LjY1MzA4KSIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==');
-    background-color: @color-button-primary-hover;
-  }
+  flex-shrink: 0;
 }
 
 .expandIcon {
@@ -187,6 +68,303 @@
   transform: rotate(0deg);
 }
 
-.colorPickerWrapper {
+// ── Popup ─────────────────────────────────────────────────────────────────────
+
+.colorPickerWrap {
+  background-color: @color-background-primary;
+  border: 1px solid @color-grey-4;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(180, 185, 214, 0.6);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 180px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+// ── Preset color grid (5 cols × 6 rows) ──────────────────────────────────────
+
+.presetGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.presetSwatch,
+.customSwatch {
+  width: 100%;
+  aspect-ratio: 28 / 16;
+  min-height: 16px;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
   position: relative;
+
+  &:hover {
+    outline: 2px solid @color-grey-6;
+    outline-offset: 1px;
+  }
+}
+
+.presetSwatchSelected,
+.swatchSelected {
+  box-shadow:
+    0 0 0 2px @color-background-primary,
+    0 0 0 3px @color-grey-6;
+}
+
+// ── Custom colors section ─────────────────────────────────────────────────────
+
+.customSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.headerGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.customHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.customLabel,
+.hexLabel {
+  font-size: @font-size-regular;
+  font-weight: 400;
+  line-height: @line-height-regular;
+  color: @color-text-primary;
+  white-space: nowrap;
+}
+
+.customToggleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+  border: 1px solid @color-grey-6;
+  border-radius: 2px;
+  background: @color-background-primary;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  color: @color-grey-6;
+
+  &:hover {
+    border-color: @color-primary-green;
+    color: @color-primary-green;
+  }
+}
+
+.customToggleBtnPlus {
+  width: 28px;
+  padding-bottom: 3px;
+}
+
+.customToggleBtnClose {
+  width: 16px;
+  border: none;
+  background: transparent;
+
+  &:hover {
+    border: none;
+  }
+}
+
+.toggleIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.plusIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 0;
+  color: @color-grey-6;
+}
+
+// ── Saved custom swatches ─────────────────────────────────────────────────────
+
+.customSwatchRow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+// ── Custom color editor ───────────────────────────────────────────────────────
+
+.slidersRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.slidersCol {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  gap: 8px;
+}
+
+.sliderContainer {
+  position: relative;
+  width: 100%;
+  padding-top: 15px;
+  box-sizing: border-box;
+}
+
+.sliderThumb {
+  position: absolute;
+  top: 1px;
+  display: block;
+  cursor: pointer;
+}
+
+.sliderInput {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  border: 1px solid @color-grey-6;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+  display: block;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+
+  &::-moz-range-thumb {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    border: none;
+    background: transparent;
+  }
+}
+
+.colorPreviewBox {
+  width: 29px;
+  height: 29px;
+  border-radius: 2px;
+  border: 2px solid #fff;    
+  outline: 1px solid #585858;
+  flex-shrink: 0;
+  margin-bottom: 1px;
+}
+
+// ── HEX input row ─────────────────────────────────────────────────────────────
+
+.hexRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hexInputGroup {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.hexLabel {
+  flex-shrink: 0;
+}
+
+.hexInput {
+  flex: 1;
+  min-width: 0;
+  height: 24px;
+  border: 1px solid @color-grey-4;
+  border-radius: 4px;
+  padding: 4px;
+  font-size: @font-size-input;
+  font-weight: 400;
+  line-height: @line-height-input;
+  color: @color-text-primary;
+  background: @color-background-primary;
+  box-sizing: border-box;
+  outline: none;
+  text-transform: uppercase;
+
+  &:focus {
+    border-color: @color-primary-green;
+  }
+}
+
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 24px;
+  border: 1px solid @color-grey-6;
+  border-radius: 4px;
+  background: @color-background-primary;
+  cursor: pointer;
+  padding: 4px;
+  flex-shrink: 0;
+  opacity: 0.6;
+  box-sizing: border-box;
+
+  &:hover {
+    opacity: 1;
+    border-color: @color-primary-green;
+  }
+}
+
+.deleteIcon {
+  width: 16px;
+  height: 16px;
+}
+
+// ── Action buttons ────────────────────────────────────────────────────────────
+
+.actionRow {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: center;
+}
+
+.cancelBtn {
+  .button-secondary();
+  width: 72px;
+  flex-shrink: 0;
+}
+
+.applyBtn {
+  .button-primary();
+  flex: 1 0 0;
+   gap: 1px;
+}
+
+.checkIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }

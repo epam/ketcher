@@ -14,18 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CoordinateTransformation, Scale } from 'ketcher-core';
+import { CoordinateTransformation, Scale, type Vec2 } from 'ketcher-core';
 import locate from './locate';
 import type Editor from '../../Editor';
 
 class LassoHelper {
-  mode: any;
+  mode: number;
   editor: Editor;
-  fragment: any;
-  points: any;
-  selection: any;
+  fragment: boolean | null;
+  points: Vec2[] | null = null;
+  selection: ReturnType<Editor['render']['selectionPolygon']> | null = null;
 
-  constructor(mode, editor, fragment) {
+  constructor(mode: number, editor: Editor, fragment: boolean | null) {
     this.mode = mode;
     this.fragment = fragment;
     this.editor = editor;
@@ -33,6 +33,10 @@ class LassoHelper {
 
   getSelection() {
     const rnd = this.editor.render;
+
+    if (!this.points) {
+      throw new Error('Lasso points are not initialized');
+    }
 
     if (this.mode === 0) {
       return locate.inPolygon(rnd.ctab, this.points);
@@ -45,7 +49,7 @@ class LassoHelper {
     throw new Error('Selector mode unknown'); // eslint-disable-line no-else-return
   }
 
-  begin(event) {
+  begin(event: MouseEvent) {
     const rnd = this.editor.render;
     this.points = [CoordinateTransformation.pageToModel(event, rnd)];
     if (this.mode === 1) {
@@ -57,7 +61,7 @@ class LassoHelper {
     return !!this.points;
   }
 
-  addPoint(event) {
+  addPoint(event: MouseEvent) {
     if (!this.points) {
       return null;
     }

@@ -1,5 +1,10 @@
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
+type ClipboardTransferData =
+  | Pick<DataTransfer, 'getData' | 'setData'>
+  | null
+  | undefined;
+
 export const PLAIN_TEXT_MIME_TYPE = 'text/plain';
 
 // Prefer exact KET data, then common structure formats, and use plain text last as a fallback.
@@ -30,18 +35,21 @@ export function isClipboardAPIAvailable(): boolean {
 }
 
 export function legacyCopy(
-  clipboardData: DataTransfer | null,
+  clipboardData: ClipboardTransferData,
   data: LegacyClipboardData,
 ): void {
-  // ClipboardEvent.clipboardData can be null in non-standard or synthetic events.
-  if (!clipboardData) return;
-  let curFmt;
-  const plainTextData = data[PLAIN_TEXT_MIME_TYPE] || '';
-  clipboardData.setData(PLAIN_TEXT_MIME_TYPE, plainTextData);
+  if (!clipboardData) {
+    return;
+  }
+
+  let curFmt: string | null = null;
+  clipboardData.setData(PLAIN_TEXT_MIME_TYPE, data[PLAIN_TEXT_MIME_TYPE] || '');
   try {
-    Object.keys(data).forEach((fmt) => {
+    Object.entries(data).forEach(([fmt, value]) => {
       curFmt = fmt;
-      clipboardData.setData(fmt, data[fmt]);
+      if (typeof value === 'string') {
+        clipboardData.setData(fmt, value);
+      }
     });
   } catch (e) {
     console.error('clipboardUtils.ts::legacyCopy', e);
@@ -50,18 +58,21 @@ export function legacyCopy(
 }
 
 export function legacyPaste(
-  cb: DataTransfer | null,
+  cb: ClipboardTransferData,
   formats: ClipboardDataType[],
 ): LegacyClipboardData {
-  let data: LegacyClipboardData = {};
-  if (!cb) return data;
+  const data: LegacyClipboardData = { [PLAIN_TEXT_MIME_TYPE]: '' };
+
+  if (!cb) {
+    return data;
+  }
+
   data[PLAIN_TEXT_MIME_TYPE] = cb.getData(PLAIN_TEXT_MIME_TYPE);
-  data = formats.reduce((res, fmt) => {
+  return formats.reduce<LegacyClipboardData>((res, fmt) => {
     const d = cb.getData(fmt);
     if (d) res[fmt] = d;
     return res;
   }, data);
-  return data;
 }
 
 export function notifyCopyCut() {
@@ -69,8 +80,8 @@ export function notifyCopyCut() {
   window.dispatchEvent(event);
 }
 
-function isClipboardItem(item?: ClipboardItem): item is ClipboardItem {
-  return typeof ClipboardItem !== 'undefined' && item instanceof ClipboardItem;
+function hasClipboardItemAPI(item?: ClipboardItem): item is ClipboardItem {
+  return Boolean(item && typeof item.getType === 'function');
 }
 
 export async function getStructStringFromClipboardData(
@@ -79,7 +90,7 @@ export async function getStructStringFromClipboardData(
   if (Array.isArray(data)) {
     const clipboardItem = data[0];
 
-    if (!isClipboardItem(clipboardItem)) {
+    if (!hasClipboardItemAPI(clipboardItem)) {
       return '';
     }
 

@@ -14,16 +14,41 @@ import { zoomOutByKeyboard } from '@utils/keyboard';
 
 const KET_V2_TEXT_FILE = 'KET/text-formatting-v2.ket';
 
+type KetTextPart = {
+  text?: string;
+  bold?: boolean;
+  italic?: boolean;
+  color?: string;
+  superscript?: boolean;
+  subscript?: boolean;
+  font?: { family?: string; size?: number };
+};
+
+type KetTextParagraph = {
+  parts?: KetTextPart[];
+};
+
+type KetTextNode = {
+  type: string;
+  paragraphs?: KetTextParagraph[];
+  boundingBox?: { x: number; y: number; width: number; height: number };
+};
+
+type KetParsed = {
+  ket_version?: string;
+  root: { nodes: KetTextNode[] };
+};
+
 /**
  * Helper: find a text node in the exported KET whose paragraphs→parts
  * contain a part matching the given predicate.
  */
 function findTextNode(
-  textNodes: any[],
-  partPredicate: (part: any) => boolean,
-): any {
-  return textNodes.find((n: any) =>
-    n.paragraphs?.some((p: any) => p.parts?.some(partPredicate)),
+  textNodes: KetTextNode[],
+  partPredicate: (part: KetTextPart) => boolean,
+): KetTextNode | undefined {
+  return textNodes.find((n) =>
+    n.paragraphs?.some((p) => p.parts?.some(partPredicate)),
   );
 }
 
@@ -148,12 +173,12 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
     await openFileAndAddToCanvas(page, KET_V2_TEXT_FILE);
 
     const ketOutput = await getKet(page);
-    const parsed = JSON.parse(ketOutput);
+    const parsed: KetParsed = JSON.parse(ketOutput);
 
     // ket_version
     expect(parsed.ket_version).toBe('2.0.0');
 
-    const textNodes = parsed.root.nodes.filter((n: any) => n.type === 'text');
+    const textNodes = parsed.root.nodes.filter((n) => n.type === 'text');
     // Fixture has 18 text objects
     expect(textNodes.length).toBe(18);
 
@@ -220,31 +245,31 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
     const mixedNode = findTextNode(textNodes, (p) => p.text === 'Mixed ');
     expect(mixedNode).toBeDefined();
 
-    const mixedPara = mixedNode.paragraphs.find((p: any) =>
-      p.parts?.some((part: any) => part.text === 'Mixed '),
+    const mixedPara = mixedNode!.paragraphs!.find((p) =>
+      p.parts?.some((part) => part.text === 'Mixed '),
     );
-    expect(mixedPara.parts.length).toBeGreaterThanOrEqual(5);
+    expect(mixedPara!.parts!.length).toBeGreaterThanOrEqual(5);
 
-    const boldPart = mixedPara.parts.find((p: any) => p.text === 'Mixed ');
-    expect(boldPart.bold).toBe(true);
-    expect(boldPart.font?.size).toBe(20);
+    const boldPart = mixedPara!.parts!.find((p) => p.text === 'Mixed ');
+    expect(boldPart!.bold).toBe(true);
+    expect(boldPart!.font?.size).toBe(20);
 
-    const italicBluePart = mixedPara.parts.find(
-      (p: any) => p.text === 'formatting ',
+    const italicBluePart = mixedPara!.parts!.find(
+      (p) => p.text === 'formatting ',
     );
-    expect(italicBluePart.italic).toBe(true);
-    expect(italicBluePart.color).toBe('#0000FF');
+    expect(italicBluePart!.italic).toBe(true);
+    expect(italicBluePart!.color).toBe('#0000FF');
 
-    const boldItalicPart = mixedPara.parts.find((p: any) => p.text === 'in ');
-    expect(boldItalicPart.bold).toBe(true);
-    expect(boldItalicPart.italic).toBe(true);
+    const boldItalicPart = mixedPara!.parts!.find((p) => p.text === 'in ');
+    expect(boldItalicPart!.bold).toBe(true);
+    expect(boldItalicPart!.italic).toBe(true);
 
-    const superPart = mixedPara.parts.find((p: any) => p.text === 'one');
-    expect(superPart.superscript).toBe(true);
+    const superPart = mixedPara!.parts!.find((p) => p.text === 'one');
+    expect(superPart!.superscript).toBe(true);
 
-    const subFontPart = mixedPara.parts.find((p: any) => p.text === ' line');
-    expect(subFontPart.subscript).toBe(true);
-    expect(subFontPart.font?.family).toBe('Tahoma');
+    const subFontPart = mixedPara!.parts!.find((p) => p.text === ' line');
+    expect(subFontPart!.subscript).toBe(true);
+    expect(subFontPart!.font?.family).toBe('Tahoma');
 
     // --- Multi-paragraph: 3 paragraphs with per-paragraph formatting ---
     const multiParaNode = findTextNode(
@@ -252,16 +277,16 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
       (p) => p.text === 'First paragraph bold',
     );
     expect(multiParaNode).toBeDefined();
-    expect(multiParaNode.paragraphs.length).toBe(3);
+    expect(multiParaNode!.paragraphs!.length).toBe(3);
 
-    const para1Part = multiParaNode.paragraphs[0].parts[0];
+    const para1Part = multiParaNode!.paragraphs![0].parts![0];
     expect(para1Part.bold).toBe(true);
 
-    const para2Part = multiParaNode.paragraphs[1].parts[0];
+    const para2Part = multiParaNode!.paragraphs![1].parts![0];
     expect(para2Part.italic).toBe(true);
     expect(para2Part.color).toBe('#00AA00');
 
-    const para3Part = multiParaNode.paragraphs[2].parts[0];
+    const para3Part = multiParaNode!.paragraphs![2].parts![0];
     expect(para3Part.font?.size).toBe(25);
 
     await clickInTheMiddleOfTheCanvas(page);

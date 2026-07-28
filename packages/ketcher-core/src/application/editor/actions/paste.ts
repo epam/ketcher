@@ -45,7 +45,7 @@ import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type { Image } from 'domain/entities/image';
 
-type CreatedItems = {
+export type CreatedItems = {
   atoms: number[];
   bonds: number[];
   rxnArrows: number[];
@@ -218,7 +218,7 @@ export function fromPaste(
     const attachmentPoints: ReadonlyArray<SGroupAttachmentPoint> = (() => {
       try {
         return sg.cloneAttachmentPoints(aidMap);
-      } catch (e) {
+      } catch (_e) {
         // For macromolecules, attachment points may reference atoms not in aidMap
         // This is expected behavior, use empty array instead
         return [];

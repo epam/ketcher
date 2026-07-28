@@ -94,8 +94,8 @@ test.describe('Copolymer S-Group type', () => {
      * Version 3.12.0
      */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).sGroup();
 
+    await LeftToolbar(page).sGroup();
     await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
       force: true,
     });
@@ -131,7 +131,6 @@ test.describe('Copolymer S-Group type', () => {
     await expect(
       SGroupPropertiesDialog(page).repeatPatternDropdown,
     ).toBeVisible();
-    await page.keyboard.press('Escape');
     await SGroupPropertiesDialog(page).cancel();
   });
 

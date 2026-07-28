@@ -185,27 +185,29 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
     // --- boundingBox on every node ---
     for (const node of textNodes) {
       expect(node.boundingBox).toBeDefined();
-      expect(typeof node.boundingBox.x).toBe('number');
-      expect(typeof node.boundingBox.y).toBe('number');
-      expect(node.boundingBox.width).toBeGreaterThan(0);
-      expect(node.boundingBox.height).toBeGreaterThan(0);
+      const bb = node.boundingBox;
+      if (!bb) throw new Error('Expected boundingBox to be defined');
+      expect(typeof bb.x).toBe('number');
+      expect(typeof bb.y).toBe('number');
+      expect(bb.width).toBeGreaterThan(0);
+      expect(bb.height).toBeGreaterThan(0);
     }
 
     // --- Part-level: bold ---
     expect(
-      findTextNode(textNodes, (p) => p.text === 'Bold text' && p.bold),
+      findTextNode(textNodes, (p) => !!(p.text === 'Bold text' && p.bold)),
     ).toBeDefined();
 
     // --- Part-level: italic ---
     expect(
-      findTextNode(textNodes, (p) => p.text === 'Italic text' && p.italic),
+      findTextNode(textNodes, (p) => !!(p.text === 'Italic text' && p.italic)),
     ).toBeDefined();
 
     // --- Part-level: subscript ---
     expect(
       findTextNode(
         textNodes,
-        (p) => p.text === 'Subscript text' && p.subscript,
+        (p) => !!(p.text === 'Subscript text' && p.subscript),
       ),
     ).toBeDefined();
 
@@ -213,7 +215,7 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
     expect(
       findTextNode(
         textNodes,
-        (p) => p.text === 'Superscript text' && p.superscript,
+        (p) => !!(p.text === 'Superscript text' && p.superscript),
       ),
     ).toBeDefined();
 
@@ -245,31 +247,38 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
     const mixedNode = findTextNode(textNodes, (p) => p.text === 'Mixed ');
     expect(mixedNode).toBeDefined();
 
-    const mixedPara = mixedNode!.paragraphs!.find((p) =>
+    if (!mixedNode?.paragraphs) throw new Error('Expected mixedNode.paragraphs to be defined');
+    const mixedPara = mixedNode.paragraphs.find((p) =>
       p.parts?.some((part) => part.text === 'Mixed '),
     );
-    expect(mixedPara!.parts!.length).toBeGreaterThanOrEqual(5);
+    if (!mixedPara?.parts) throw new Error('Expected mixedPara.parts to be defined');
+    expect(mixedPara.parts.length).toBeGreaterThanOrEqual(5);
 
-    const boldPart = mixedPara!.parts!.find((p) => p.text === 'Mixed ');
-    expect(boldPart!.bold).toBe(true);
-    expect(boldPart!.font?.size).toBe(20);
+    const boldPart = mixedPara.parts.find((p) => p.text === 'Mixed ');
+    if (!boldPart) throw new Error('Expected boldPart to be defined');
+    expect(boldPart.bold).toBe(true);
+    expect(boldPart.font?.size).toBe(20);
 
-    const italicBluePart = mixedPara!.parts!.find(
+    const italicBluePart = mixedPara.parts.find(
       (p) => p.text === 'formatting ',
     );
-    expect(italicBluePart!.italic).toBe(true);
-    expect(italicBluePart!.color).toBe('#0000FF');
+    if (!italicBluePart) throw new Error('Expected italicBluePart to be defined');
+    expect(italicBluePart.italic).toBe(true);
+    expect(italicBluePart.color).toBe('#0000FF');
 
-    const boldItalicPart = mixedPara!.parts!.find((p) => p.text === 'in ');
-    expect(boldItalicPart!.bold).toBe(true);
-    expect(boldItalicPart!.italic).toBe(true);
+    const boldItalicPart = mixedPara.parts.find((p) => p.text === 'in ');
+    if (!boldItalicPart) throw new Error('Expected boldItalicPart to be defined');
+    expect(boldItalicPart.bold).toBe(true);
+    expect(boldItalicPart.italic).toBe(true);
 
-    const superPart = mixedPara!.parts!.find((p) => p.text === 'one');
-    expect(superPart!.superscript).toBe(true);
+    const superPart = mixedPara.parts.find((p) => p.text === 'one');
+    if (!superPart) throw new Error('Expected superPart to be defined');
+    expect(superPart.superscript).toBe(true);
 
-    const subFontPart = mixedPara!.parts!.find((p) => p.text === ' line');
-    expect(subFontPart!.subscript).toBe(true);
-    expect(subFontPart!.font?.family).toBe('Tahoma');
+    const subFontPart = mixedPara.parts.find((p) => p.text === ' line');
+    if (!subFontPart) throw new Error('Expected subFontPart to be defined');
+    expect(subFontPart.subscript).toBe(true);
+    expect(subFontPart.font?.family).toBe('Tahoma');
 
     // --- Multi-paragraph: 3 paragraphs with per-paragraph formatting ---
     const multiParaNode = findTextNode(
@@ -277,16 +286,20 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
       (p) => p.text === 'First paragraph bold',
     );
     expect(multiParaNode).toBeDefined();
-    expect(multiParaNode!.paragraphs!.length).toBe(3);
+    if (!multiParaNode?.paragraphs) throw new Error('Expected multiParaNode.paragraphs to be defined');
+    expect(multiParaNode.paragraphs.length).toBe(3);
 
-    const para1Part = multiParaNode!.paragraphs![0].parts![0];
+    const para1Part = multiParaNode.paragraphs[0].parts?.[0];
+    if (!para1Part) throw new Error('Expected para1Part to be defined');
     expect(para1Part.bold).toBe(true);
 
-    const para2Part = multiParaNode!.paragraphs![1].parts![0];
+    const para2Part = multiParaNode.paragraphs[1].parts?.[0];
+    if (!para2Part) throw new Error('Expected para2Part to be defined');
     expect(para2Part.italic).toBe(true);
     expect(para2Part.color).toBe('#00AA00');
 
-    const para3Part = multiParaNode!.paragraphs![2].parts![0];
+    const para3Part = multiParaNode.paragraphs[2].parts?.[0];
+    if (!para3Part) throw new Error('Expected para3Part to be defined');
     expect(para3Part.font?.size).toBe(25);
 
     await clickInTheMiddleOfTheCanvas(page);

@@ -601,7 +601,10 @@ export class BondRenderer extends BaseRenderer {
     switch (this.bond.type) {
       case BondType.Single:
         if (this.bond.stereo === BondStereo.Up) {
-          bondSVGPaths = SingleUpBondPathRenderer.preparePaths(bondVectors);
+          bondSVGPaths = SingleUpBondPathRenderer.preparePaths(
+            bondVectors,
+            viewModel,
+          );
         } else if (this.bond.stereo === BondStereo.Down) {
           bondSVGPaths = SingleDownBondPathRenderer.preparePaths(bondVectors);
         } else if (this.bond.stereo === BondStereo.Either) {

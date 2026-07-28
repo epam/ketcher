@@ -130,6 +130,15 @@ export function assertValidMonomerGroupTemplatesInSdf(
       return;
     }
 
+    // A record only represents an actual preset/group definition attempt
+    // when it carries a <groupName>; records that merely happen to have
+    // <type>monomerGroupTemplate</type> with no other group metadata are a
+    // degenerate shape produced elsewhere (see ketcher-3.10.0-bugs.spec.ts
+    // #21 / #7674) and are handled as plain monomer templates downstream.
+    if (!fields.groupName && !fields.groupClass) {
+      return;
+    }
+
     if (fields.groupClass !== KetMonomerGroupTemplateClass.RNA) {
       const groupName = fields.groupName ?? 'unknown';
       throw new MonomerLibraryConvertError(

@@ -4,8 +4,8 @@ import {
   SequenceMode,
 } from 'application/editor';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
-import { BaseMonomer, Vec2 } from 'domain/entities';
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
+import { Vec2, type BaseMonomer } from 'domain/entities';
 import { AttachmentPointName } from 'domain/types';
 import {
   chemMonomerItem,

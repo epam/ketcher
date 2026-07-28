@@ -37,13 +37,9 @@ const ButtonGenSet = ({
     ? `${button.label} is disabled`
     : button.description ?? button.label;
 
-  const handleClick = (event: React.MouseEvent) => {
-    // Prevent Shift+Click from selecting multiple atoms
-    // Extended Table should only allow single atom selection
-    if (event.shiftKey) {
-      event.preventDefault();
-      return;
-    }
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // Blur the button to prevent visual confusion between focus and selection states
+    event.currentTarget.blur();
     onAtomSelect(button.label);
   };
 

@@ -653,42 +653,35 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     });
   });
 
-  test.fail(
-    'Case 21: Antisense complement is skipped when terminal monomer lacks an attachment point (R1/R2), not causing incorrect structure on canvas',
-
-    async () => {
-      // Fails due to the bug: https://github.com/epam/ketcher/issues/7516
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/6937
-       * Bug: https://github.com/epam/ketcher/issues/6705
-       * Description: Antisense complement is skipped when terminal monomer lacks an attachment point (R1/R2), not causing incorrect structure on canvas.
-       * Scenario:
-       * 1. Go to Macro - Flex mode (clean canvas)
-       * 2. Load from HELM
-       * 3. Generate the antisense sequence.
-       * 4. Observe the canvas
-       */
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Flex,
-      );
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        page,
-        MacroFileType.HELM,
-        'RNA1{R(A)P.R(A)P.R(A)}|PEPTIDE1{[Ala-ol]}$RNA1,PEPTIDE1,7:R2-1:R1$$$V2.0',
-      );
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-      await selectAllStructuresOnCanvas(page);
-      const sugarR = getMonomerLocator(page, Sugar.R).nth(0);
-      await createRNAAntisenseChain(page, sugarR);
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-    },
-  );
+  test('Case 21: Antisense complement is skipped when terminal monomer lacks an attachment point (R1/R2), not causing incorrect structure on canvas', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6937
+     * Bug: https://github.com/epam/ketcher/issues/6705
+     * Description: Antisense complement is skipped when terminal monomer lacks an attachment point (R1/R2), not causing incorrect structure on canvas.
+     * Scenario:
+     * 1. Go to Macro - Flex mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Generate the antisense sequence.
+     * 4. Observe the canvas
+     */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(A)P.R(A)}|PEPTIDE1{[Ala-ol]}$RNA1,PEPTIDE1,7:R2-1:R1$$$V2.0',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectAllStructuresOnCanvas(page);
+    const sugarR = getMonomerLocator(page, Sugar.R).nth(0);
+    await createRNAAntisenseChain(page, sugarR);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
 
   test('Case 22: Removing dash should turn aligned nucleotide to nucleoside', async ({
     SequenceCanvas: _,

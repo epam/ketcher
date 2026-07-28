@@ -1,25 +1,57 @@
 declare module 'ketcher-react' {
+  import type * as React from 'react';
+
   export type IconName = string;
   export type PresetPosition = string;
 
-  export const Icon: any;
-  export const IconButton: any;
-  export const Button: any;
-  export const Input: any;
-  export const Accordion: any;
-  export const IndigoProvider: any;
-  export const StructRender: any;
-  export const preview: any;
-  export const AmbiguousMonomerPreview: any;
-  export const ArrowScroll: any;
-  export const EditorClassName: any;
+  export const Icon: React.ComponentType<Record<string, unknown>>;
+  export const IconButton: React.ComponentType<Record<string, unknown>>;
+  export const Button: React.ComponentType<Record<string, unknown>>;
+  export const Input: React.ComponentType<Record<string, unknown>>;
+  export const Accordion: React.ComponentType<Record<string, unknown>>;
+  export const IndigoProvider: {
+    getIndigo: () =>
+      | {
+          info?: () => Promise<{ indigoVersion?: string }>;
+        }
+      | undefined;
+  };
+  export const StructRender: React.ComponentType<Record<string, unknown>>;
+  export const preview: {
+    widthForBond: number;
+    heightForBond: number;
+  };
+  export const AmbiguousMonomerPreview: React.ComponentType<
+    Record<string, unknown>
+  >;
+  export const ArrowScroll: React.ComponentType<Record<string, unknown>>;
+  export const EditorClassName: string;
   export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR: string;
-  export const getFullscreenElement: any;
-  export const calculateBondPreviewPosition: any;
-  export const PresetPosition: any;
+  export const getFullscreenElement: () => HTMLElement | null;
+  export const calculateBondPreviewPosition: (
+    bond: unknown,
+    bondCoordinates: DOMRect,
+  ) => {
+    top?: string;
+    left?: string;
+    right?: string;
+    bottom?: string;
+    transform?: string;
+  };
+  export const PresetPosition: string;
 
-  export function usePortalStyle(...args: any[]): any;
-  export function calculateAmbiguousMonomerPreviewTop(...args: any[]): any;
-  export function calculateMonomerPreviewTop(...args: any[]): any;
-  export function calculateNucleoElementPreviewTop(...args: any[]): any;
+  export function usePortalStyle(...args: unknown[]): [React.CSSProperties];
+  export function calculateAmbiguousMonomerPreviewTop(
+    monomer: unknown,
+  ): (target?: { left: number; top: number; bottom: number }) => string;
+  export function calculateMonomerPreviewTop(target?: {
+    left: number;
+    top: number;
+    bottom: number;
+  }): string;
+  export function calculateNucleoElementPreviewTop(target?: {
+    left: number;
+    top: number;
+    bottom: number;
+  }): string;
 }

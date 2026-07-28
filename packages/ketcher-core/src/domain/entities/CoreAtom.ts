@@ -8,6 +8,7 @@ import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { isNumber } from 'lodash';
 import { MonomerToAtomBond } from './MonomerToAtomBond';
 import type { AtomCIP } from './types';
+import { calculateDativeValence } from 'domain/helpers/dativeValence';
 
 export enum AtomRadical {
   None,
@@ -207,6 +208,73 @@ export class Atom extends DrawingEntity {
   }
 
   calculateValence() {
+    const dativeValence = this.calculateDativeValence();
+    const regularValence = this.calculateRegularValence();
+
+    if (!dativeValence) {
+      return regularValence;
+    }
+
+    return {
+      valence: regularValence.valence,
+      hydrogenAmount: dativeValence.isValid ? dativeValence.hydrogenCount : -1,
+    };
+  }
+
+  private calculateDativeValence() {
+    const element = Elements.get(this.label);
+    if (!element) {
+      return null;
+    }
+
+    let bondOrder = 0;
+    let donorCount = 0;
+    let acceptorCount = 0;
+
+    for (const bond of this.bonds) {
+      if (bond instanceof MonomerToAtomBond) {
+        bondOrder += 1;
+        continue;
+      }
+
+      switch (bond.type) {
+        case BondType.Single:
+          bondOrder += 1;
+          break;
+        case BondType.Double:
+          bondOrder += 2;
+          break;
+        case BondType.Triple:
+          bondOrder += 3;
+          break;
+        case BondType.Aromatic:
+          bondOrder += 1.5;
+          break;
+        case BondType.Dative:
+          if (bond.firstAtom === this) {
+            donorCount++;
+          } else {
+            acceptorCount++;
+          }
+          break;
+      }
+    }
+
+    if (donorCount === 0 && acceptorCount === 0) {
+      return null;
+    }
+
+    return calculateDativeValence({
+      element,
+      charge: this.properties.charge ?? 0,
+      bondOrder,
+      radicalCount: this.radicalAmount,
+      donorCount,
+      acceptorCount,
+    });
+  }
+
+  private calculateRegularValence() {
     if (this.hasExplicitValence) {
       const valence = this.properties.explicitValence as number;
       const hydrogenAmount = valence - this.valenceWithoutHydrogen;

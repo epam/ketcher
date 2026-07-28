@@ -66,6 +66,18 @@ const LIBRARY_GROUP_NAME_TO_MONOMER_CLASS = {
   [MonomerGroups.BASES]: KetMonomerClass.Base,
 };
 
+type MonomerMatchData = {
+  idtAliases?: IKetIdtAliases;
+  name?: string;
+  fullName?: string;
+  helmAlias?: string;
+  bilnAlias?: string;
+  axoLabsAlias?: string;
+  modificationTypes?: string[];
+  oneLetterCode?: string;
+  isAminoAcid: boolean;
+};
+
 const matchesAminoAcidThreeLetterCode = (
   oneLetterCode: string | undefined,
   isAminoAcid: boolean,
@@ -382,14 +394,18 @@ export const selectFilteredMonomers = createSelector(
     const normalizedSearchFilter = searchFilter.toLowerCase();
 
     const checkMonomerMatch = (
-      idtAliases: IKetIdtAliases | undefined,
       searchFilter: string,
-      name = '',
-      fullName = '',
-      helmAlias: string | undefined = '',
-      bilnAlias: string | undefined = '',
-      axoLabsAlias: string | undefined = '',
-      modificationTypes: string[] | undefined = [],
+      {
+        idtAliases,
+        name = '',
+        fullName = '',
+        helmAlias = '',
+        bilnAlias = '',
+        axoLabsAlias = '',
+        modificationTypes = [],
+        oneLetterCode,
+        isAminoAcid,
+      }: MonomerMatchData,
     ) => {
       const monomerName = name.toLowerCase();
       const monomerNameFull = fullName.toLowerCase();
@@ -526,6 +542,12 @@ export const selectFilteredMonomers = createSelector(
         ? modificationTypesLower.includes(searchFilter)
         : false;
 
+      const matchesThreeLetterCode = matchesAminoAcidThreeLetterCode(
+        oneLetterCode,
+        isAminoAcid,
+        searchFilter,
+      );
+
       const cond =
         monomerName.includes(searchFilter) ||
         monomerNameFull.includes(searchFilter) ||
@@ -534,7 +556,8 @@ export const selectFilteredMonomers = createSelector(
         matchesHelmAlias ||
         matchesBilnAlias ||
         matchesAxoLabsAlias ||
-        matchesModificationTypes;
+        matchesModificationTypes ||
+        matchesThreeLetterCode;
 
       return cond;
     };
@@ -554,13 +577,6 @@ export const selectFilteredMonomers = createSelector(
             monomers: components,
           } = item as AmbiguousMonomerType;
 
-          const matchesMonomer = checkMonomerMatch(
-            idtAliases,
-            normalizedSearchFilter,
-            label,
-            id,
-          );
-
           const isAminoAcidAmbiguous =
             components.length > 0 &&
             components.every(
@@ -568,17 +584,21 @@ export const selectFilteredMonomers = createSelector(
                 c.monomerItem.props.MonomerClass === KetMonomerClass.AminoAcid,
             );
 
+          const matchesMonomer = checkMonomerMatch(normalizedSearchFilter, {
+            idtAliases,
+            name: label,
+            fullName: id,
+            oneLetterCode: label,
+            isAminoAcid: isAminoAcidAmbiguous,
+          });
+
           return (
             matchesMonomer ||
-            matchesAminoAcidThreeLetterCode(
-              label,
-              isAminoAcidAmbiguous,
-              normalizedSearchFilter,
-            ) ||
             components.some((monomer) => {
               const {
                 Name,
                 MonomerName,
+                MonomerClass,
                 idtAliases,
                 aliasHELM,
                 aliasBILN,
@@ -586,47 +606,42 @@ export const selectFilteredMonomers = createSelector(
                 modificationTypes,
               } = monomer.monomerItem.props;
 
-              return checkMonomerMatch(
+              return checkMonomerMatch(normalizedSearchFilter, {
                 idtAliases,
-                normalizedSearchFilter,
-                Name,
-                MonomerName,
-                aliasHELM,
-                aliasBILN,
-                aliasAxoLabs,
+                name: Name,
+                fullName: MonomerName,
+                helmAlias: aliasHELM,
+                bilnAlias: aliasBILN,
+                axoLabsAlias: aliasAxoLabs,
                 modificationTypes,
-              );
+                oneLetterCode: MonomerName,
+                isAminoAcid: MonomerClass === KetMonomerClass.AminoAcid,
+              });
             })
           );
         } else {
-          const props = (item as MonomerItemType).props;
           const {
             Name,
             MonomerName,
+            MonomerClass,
             idtAliases,
             aliasHELM,
             aliasBILN,
             aliasAxoLabs,
             modificationTypes,
-          } = props;
+          } = (item as MonomerItemType).props;
 
-          return (
-            checkMonomerMatch(
-              idtAliases,
-              normalizedSearchFilter,
-              Name,
-              MonomerName,
-              aliasHELM,
-              aliasBILN,
-              aliasAxoLabs,
-              modificationTypes,
-            ) ||
-            matchesAminoAcidThreeLetterCode(
-              MonomerName,
-              props.MonomerClass === KetMonomerClass.AminoAcid,
-              normalizedSearchFilter,
-            )
-          );
+          return checkMonomerMatch(normalizedSearchFilter, {
+            idtAliases,
+            name: Name,
+            fullName: MonomerName,
+            helmAlias: aliasHELM,
+            bilnAlias: aliasBILN,
+            axoLabsAlias: aliasAxoLabs,
+            modificationTypes,
+            oneLetterCode: MonomerName,
+            isAminoAcid: MonomerClass === KetMonomerClass.AminoAcid,
+          });
         }
       })
       .map((item: MonomerOrAmbiguousType) => {

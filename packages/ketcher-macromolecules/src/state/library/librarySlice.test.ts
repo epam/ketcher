@@ -21,6 +21,7 @@ import {
   MonomerItemType,
   MonomerOrAmbiguousType,
 } from 'ketcher-core';
+import { AMINO_ACID_ONE_TO_THREE_LETTER_CODE } from 'src/constants';
 import { RootState } from 'state';
 import { selectFilteredMonomers } from './librarySlice';
 
@@ -53,9 +54,19 @@ const createNonAminoAcid = (
   },
 });
 
+const createComponent = (
+  oneLetter: string,
+  name: string,
+  monomerClass: KetMonomerClass = KetMonomerClass.AminoAcid,
+) => ({
+  monomerItem: {
+    props: { MonomerName: oneLetter, Name: name, MonomerClass: monomerClass },
+  },
+});
+
 const createAmbiguous = (
   label: string,
-  componentClasses: KetMonomerClass[],
+  components: ReturnType<typeof createComponent>[],
 ): AmbiguousMonomerType =>
   ({
     label,
@@ -63,11 +74,7 @@ const createAmbiguous = (
     isAmbiguous: true,
     subtype: KetAmbiguousMonomerTemplateSubType.ALTERNATIVES,
     options: [],
-    monomers: componentClasses.map((monomerClass) => ({
-      monomerItem: {
-        props: { MonomerClass: monomerClass },
-      },
-    })),
+    monomers: components,
   } as unknown as AmbiguousMonomerType);
 
 const aminoAcids: MonomerItemType[] = [
@@ -87,24 +94,28 @@ const collisionMonomers: MonomerItemType[] = [
 ];
 
 const ambiguousAminoAcidB = createAmbiguous('B', [
-  KetMonomerClass.AminoAcid,
-  KetMonomerClass.AminoAcid,
+  createComponent('D', 'Aspartic acid'),
+  createComponent('N', 'Asparagine'),
 ]);
 const ambiguousAminoAcidJ = createAmbiguous('J', [
-  KetMonomerClass.AminoAcid,
-  KetMonomerClass.AminoAcid,
+  createComponent('L', 'Leucine'),
+  createComponent('I', 'Isoleucine'),
 ]);
 const ambiguousAminoAcidX = createAmbiguous('X', [
-  KetMonomerClass.AminoAcid,
-  KetMonomerClass.AminoAcid,
+  createComponent('A', 'Alanine'),
+  createComponent('W', 'Tryptophan'),
+  createComponent('I', 'Isoleucine'),
+  createComponent('N', 'Asparagine'),
+  createComponent('Q', 'Glutamine'),
 ]);
 const ambiguousAminoAcidZ = createAmbiguous('Z', [
-  KetMonomerClass.AminoAcid,
-  KetMonomerClass.AminoAcid,
+  createComponent('E', 'Glutamic acid'),
+  createComponent('Q', 'Glutamine'),
 ]);
 const ambiguousNucleotideB = createAmbiguous('B', [
-  KetMonomerClass.Base,
-  KetMonomerClass.Base,
+  createComponent('C', 'C base', KetMonomerClass.Base),
+  createComponent('G', 'G base', KetMonomerClass.Base),
+  createComponent('T', 'T base', KetMonomerClass.Base),
 ]);
 
 const allMonomers: MonomerOrAmbiguousType[] = [
@@ -161,51 +172,64 @@ const getMatchedAminoAcidLabels = (searchFilter: string) =>
 
 describe('selectFilteredMonomers — three-letter amino-acid codes', () => {
   it.each([
-    ['Trp', 'W'],
-    ['Ile', 'I'],
-    ['Asn', 'N'],
-    ['Gln', 'Q'],
-    ['Asx', 'B'],
-    ['Xle', 'J'],
-    ['Xaa', 'X'],
-    ['Glx', 'Z'],
+    ['Trp', ['W', 'X']],
+    ['Ile', ['I', 'J', 'X']],
+    ['Asn', ['B', 'N', 'X']],
+    ['Gln', ['Q', 'X', 'Z']],
+    ['Asx', ['B']],
+    ['Xle', ['J']],
+    ['Xaa', ['X']],
+    ['Glx', ['Z']],
   ])(
-    'returns exactly the natural monomer for failing code %s → %s',
-    (code, expectedLabel) => {
-      expect(getMatchedAminoAcidLabels(code)).toEqual([expectedLabel]);
+    'returns expected amino-acid monomers for code %s → %j',
+    (code, expectedLabels) => {
+      expect(getMatchedAminoAcidLabels(code).sort()).toEqual(
+        [...expectedLabels].sort(),
+      );
     },
   );
 
   it.each(['ala', 'ALA', 'aLa'])(
-    'matches alanine case-insensitively for %s',
+    'matches alanine case-insensitively for %s (including ambiguous X)',
     (query) => {
-      expect(getMatchedAminoAcidLabels(query)).toEqual(['A']);
+      expect(getMatchedAminoAcidLabels(query).sort()).toEqual(['A', 'X']);
     },
   );
 
-  it('matches partial three-letter code Tr → Trp', () => {
-    expect(getMatchedAminoAcidLabels('Tr')).toEqual(['W']);
+  it('matches partial three-letter code Tr → Trp (including ambiguous X)', () => {
+    expect(getMatchedAminoAcidLabels('Tr').sort()).toEqual(['W', 'X']);
   });
 
-  it('Gln returns only Q, not Glx/Z', () => {
-    expect(getMatchedAminoAcidLabels('Gln')).toEqual(['Q']);
+  it('Gln returns Q plus ambiguous monomers that contain glutamine', () => {
+    expect(getMatchedAminoAcidLabels('Gln').sort()).toEqual(['Q', 'X', 'Z']);
   });
 
   it('Glx returns only Z, not Gln/Q', () => {
     expect(getMatchedAminoAcidLabels('Glx')).toEqual(['Z']);
   });
 
-  it('Ala does not return Adenine (class gate)', () => {
-    const labels = getMatchedLabels('Ala');
-    expect(labels).toContain('A');
-    expect(labels).toHaveLength(1);
+  it('Ala does not return Base/Phosphate/Sugar monomers (class gate)', () => {
+    const results = selectFilteredMonomers(buildState('Ala'));
+    expect(results.some((item) => !item.isAmbiguous)).toBe(true);
     expect(
-      selectFilteredMonomers(buildState('Ala')).every(
-        (item) =>
-          !item.isAmbiguous &&
-          (item as MonomerItemType).props.MonomerClass ===
-            KetMonomerClass.AminoAcid,
-      ),
+      results.every((item) => {
+        if (item.isAmbiguous) {
+          const ambiguous = item as AmbiguousMonomerType;
+          return (
+            ambiguous.monomers.length > 0 &&
+            ambiguous.monomers.every(
+              (c) =>
+                c.monomerItem.props.MonomerClass === KetMonomerClass.AminoAcid,
+            )
+          );
+        }
+        const monomerClass = (item as MonomerItemType).props.MonomerClass;
+        return (
+          monomerClass !== KetMonomerClass.Base &&
+          monomerClass !== KetMonomerClass.Phosphate &&
+          monomerClass !== KetMonomerClass.Sugar
+        );
+      }),
     ).toBe(true);
   });
 
@@ -247,7 +271,7 @@ describe('selectFilteredMonomers — three-letter amino-acid codes', () => {
 
   it('still matches single-letter A and full name Tryptophan', () => {
     expect(getMatchedAminoAcidLabels('A')).toContain('A');
-    expect(getMatchedAminoAcidLabels('Tryptophan')).toEqual(['W']);
+    expect(getMatchedAminoAcidLabels('Tryptophan').sort()).toEqual(['W', 'X']);
   });
 
   it.each(['Xyz', 'Al@', 'Al1'])(
@@ -262,5 +286,29 @@ describe('selectFilteredMonomers — three-letter amino-acid codes', () => {
     expect(selectFilteredMonomers(buildState(''))).toHaveLength(
       allMonomers.length,
     );
+  });
+
+  it('nucleotide ambiguous B matches none of the 26 three-letter amino-acid codes', () => {
+    const uniqueCodes = [
+      ...new Set(Object.values(AMINO_ACID_ONE_TO_THREE_LETTER_CODE)),
+    ];
+
+    uniqueCodes.forEach((code) => {
+      const results = selectFilteredMonomers(buildState(code));
+      expect(
+        results.some(
+          (item) =>
+            item.isAmbiguous &&
+            (item as AmbiguousMonomerType).label === 'B' &&
+            (item as AmbiguousMonomerType).monomers.every(
+              (c) => c.monomerItem.props.MonomerClass === KetMonomerClass.Base,
+            ),
+        ),
+      ).toBe(false);
+    });
+  });
+
+  it('ambiguous X matches Trp via its tryptophan component', () => {
+    expect(getMatchedAminoAcidLabels('Trp').sort()).toEqual(['W', 'X']);
   });
 });

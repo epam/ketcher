@@ -85,7 +85,9 @@ const SubMenu = ({
   };
 
   const hideCollapse = () => {
-    open && setOpen(false);
+    if (open) {
+      setOpen(false);
+    }
   };
 
   const subComponents = React.Children.map(

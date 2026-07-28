@@ -101,17 +101,41 @@ const MONOMER_LIBRARY_FORMAT_OPTIONS = {
   outputContentType: ChemicalMimeType.MonomerLibrary,
 } as const;
 
-const SDF_DATA_FIELD_REGEX =
-  />\s*<([^>]+)>[ \t]*\r?\n([\s\S]*?)(?=\r?\n\r?\n|\r?\n?$)/g;
+const SDF_DATA_FIELD_HEADER_REGEX = /^>\s*<([^>]+)>/;
 
 function getSdfRecordDataFields(record: string): Record<string, string> {
   const fields: Record<string, string> = {};
-  let match: RegExpExecArray | null;
+  let currentField: string | null = null;
+  let currentValueLines: string[] = [];
 
-  SDF_DATA_FIELD_REGEX.lastIndex = 0;
-  while ((match = SDF_DATA_FIELD_REGEX.exec(record))) {
-    fields[match[1]] = match[2].trim();
+  const commitCurrentField = () => {
+    if (currentField !== null) {
+      fields[currentField] = currentValueLines.join('\n').trim();
+    }
+    currentField = null;
+    currentValueLines = [];
+  };
+
+  for (const line of record.split(/\r?\n/)) {
+    const headerMatch = SDF_DATA_FIELD_HEADER_REGEX.exec(line);
+
+    if (headerMatch) {
+      commitCurrentField();
+      currentField = headerMatch[1];
+      continue;
+    }
+
+    if (currentField === null) {
+      continue;
+    }
+
+    if (line.trim().length === 0) {
+      commitCurrentField();
+    } else {
+      currentValueLines.push(line);
+    }
   }
+  commitCurrentField();
 
   return fields;
 }
@@ -140,9 +164,8 @@ export function assertValidMonomerGroupTemplatesInSdf(
     }
 
     if (fields.groupClass !== KetMonomerGroupTemplateClass.RNA) {
-      const groupName = fields.groupName ?? 'unknown';
       throw new MonomerLibraryConvertError(
-        `Monomer group template "${groupName}" is missing a valid <groupClass> field. <groupClass> is mandatory and must be equal to "${KetMonomerGroupTemplateClass.RNA}". The template was not added to the library.`,
+        `Monomer group template class must be "${KetMonomerGroupTemplateClass.RNA}". The template was not added to the library.`,
       );
     }
   });

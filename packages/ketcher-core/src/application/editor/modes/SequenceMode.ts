@@ -1708,6 +1708,10 @@ export class SequenceMode extends BaseMode {
 
           if (
             this.needToEditAntisense &&
+            // Peptides cannot be hydrogen-bond partners, so mirroring a
+            // typed peptide onto the antisense strand only creates a
+            // dangling monomer that throws off the caret column count (#6463).
+            editor.sequenceTypeEnterMode !== SequenceType.PEPTIDE &&
             (this.isSyncEditMode
               ? shouldEditAntisenseInSyncMode
               : shouldEditAntisenseInAsyncMode)
@@ -1778,7 +1782,18 @@ export class SequenceMode extends BaseMode {
                   ))
             )
           ) {
-            modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+            if (this.needToEditSense && senseNodeToConnect) {
+              // Move by identity rather than a blind +1: the typed monomer can
+              // replace a placeholder backbone dash (rendered between chains
+              // paired with different antisense strands) instead of adding a
+              // new column, which would leave the naive index-based caret one
+              // step too far forward (#6463).
+              SequenceRenderer.setCaretPositionNextToMonomer(
+                senseNodeToConnect.lastMonomerInNode,
+              );
+            } else {
+              modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+            }
           }
 
           history.update(modelChanges, selectionsBeforeDeletion.length > 0);

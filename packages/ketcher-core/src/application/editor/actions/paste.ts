@@ -44,6 +44,7 @@ import { fromSgroupAddition } from './sgroup';
 import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type { Image } from 'domain/entities/image';
+import { KetcherLogger } from 'utilities';
 
 export type CreatedItems = {
   atoms: number[];
@@ -109,9 +110,10 @@ export function fromPaste(
       const fragment = pstruct.frags.get(fragmentId);
 
       if (fragment === undefined || fragment === null) {
-        throw new Error(
-          `Fragment not found for pasted atom fragment ${fragmentId}`,
-        );
+        const errorMessage = `Fragment not found for pasted atom fragment ${fragmentId}`;
+
+        KetcherLogger.error(`paste.ts::fromPaste: ${errorMessage}`);
+        throw new Error(errorMessage);
       }
 
       const fragmentAdd = action.addOp(
@@ -119,9 +121,11 @@ export function fromPaste(
       ) as FragmentAdd;
 
       if (fragmentAdd.frid === null) {
-        throw new Error(
-          'FragmentAdd did not create a fragment ID during paste',
-        );
+        const errorMessage =
+          'FragmentAdd did not create a fragment ID during paste';
+
+        KetcherLogger.error(`paste.ts::fromPaste: ${errorMessage}`);
+        throw new Error(errorMessage);
       }
 
       fridMap.set(fragmentId, fragmentAdd.frid);

@@ -204,7 +204,7 @@ export interface IKetMonomerGroupTemplate {
   id: string;
   name: string;
   type: KetTemplateType;
-  class?: KetMonomerGroupTemplateClass;
+  class: KetMonomerGroupTemplateClass;
   templates: IKetMonomerTemplateRef[];
   connections?: IKetTemplateConnection[];
   idtAliases?: IKetIdtAliases;

@@ -71,6 +71,7 @@ import { isNumber, uniqueId } from 'lodash';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import type { ISettingsService, Settings } from 'application/settings';
 import { getStructure } from 'application/getStructure';
+import { KetMonomerGroupTemplateClass } from 'application/formatters/types/ket';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
@@ -99,6 +100,44 @@ const MONOMER_LIBRARY_FORMAT_OPTIONS = {
   outputFormat: ChemicalMimeType.MonomerLibrary,
   outputContentType: ChemicalMimeType.MonomerLibrary,
 } as const;
+
+const SDF_DATA_FIELD_REGEX =
+  />\s*<([^>]+)>[ \t]*\r?\n([\s\S]*?)(?=\r?\n\r?\n|\r?\n?$)/g;
+
+function getSdfRecordDataFields(record: string): Record<string, string> {
+  const fields: Record<string, string> = {};
+  let match: RegExpExecArray | null;
+
+  SDF_DATA_FIELD_REGEX.lastIndex = 0;
+  while ((match = SDF_DATA_FIELD_REGEX.exec(record))) {
+    fields[match[1]] = match[2].trim();
+  }
+
+  return fields;
+}
+
+export function assertValidMonomerGroupTemplatesInSdf(
+  rawSdfData: string,
+): void {
+  const records = rawSdfData
+    .split(/\$\$\$\$\r?\n?/)
+    .filter((record) => record.trim().length > 0);
+
+  records.forEach((record) => {
+    const fields = getSdfRecordDataFields(record);
+
+    if (fields.type !== 'monomerGroupTemplate') {
+      return;
+    }
+
+    if (fields.groupClass !== KetMonomerGroupTemplateClass.RNA) {
+      const groupName = fields.groupName ?? 'unknown';
+      throw new MonomerLibraryConvertError(
+        `Monomer group template "${groupName}" is missing a valid <groupClass> field. <groupClass> is mandatory and must be equal to "${KetMonomerGroupTemplateClass.RNA}". The template was not added to the library.`,
+      );
+    }
+  });
+}
 
 export class Ketcher {
   _id: string;
@@ -839,6 +878,13 @@ export class Ketcher {
     if (format === SupportedFormat.ket) {
       dataInKetFormat = rawMonomersDataString;
     } else {
+      if (
+        format === SupportedFormat.sdf ||
+        format === SupportedFormat.sdfV3000
+      ) {
+        assertValidMonomerGroupTemplatesInSdf(rawMonomersDataString);
+      }
+
       try {
         const convertResult = await this.structService.convert(
           {

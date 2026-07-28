@@ -506,7 +506,9 @@ async function clipData(editor: Editor) {
     return res;
   } catch (e: any) {
     KetcherLogger.error('hotkeys.ts::clipData', e);
-    errorHandler && errorHandler(e.message);
+    if (errorHandler) {
+      errorHandler(e.message);
+    }
   }
 
   return null;
@@ -536,7 +538,9 @@ function legacyClipData(editor: Editor) {
     return res;
   } catch (e: any) {
     KetcherLogger.error('hotkeys.ts::legacyClipData', e);
-    errorHandler && errorHandler(e.message);
+    if (errorHandler) {
+      errorHandler(e.message);
+    }
   }
 
   return null;

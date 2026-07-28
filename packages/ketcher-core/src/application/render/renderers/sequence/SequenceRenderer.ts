@@ -393,6 +393,15 @@ export class SequenceRenderer {
                 monomer,
               ) as BaseMonomer;
 
+              // Skip rendering side bonds when both monomers map to the same sequence node
+              // (e.g., CHEM self-loops or bonds within the same LinkerSequenceNode).
+              if (
+                monomer.renderer &&
+                monomer.renderer === anotherMonomer.renderer
+              ) {
+                return;
+              }
+
               // Skip handling side chains for sugar(R3) + base(R1) connections.
               if (
                 (monomer instanceof Sugar &&

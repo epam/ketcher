@@ -44,7 +44,8 @@ class EraserTool implements Tool {
   private readonly lassoHelper: LassoHelper;
   isNotActiveTool: boolean | undefined;
 
-  constructor(editor: Editor, mode?: number) {
+  constructor(editor: Editor, ...args: unknown[]) {
+    const mode = typeof args[0] === 'number' ? args[0] : 0;
     this.editor = editor;
     this.maps = [
       'atoms',
@@ -60,7 +61,7 @@ class EraserTool implements Tool {
       IMAGE_KEY,
       MULTITAIL_ARROW_KEY,
     ];
-    this.lassoHelper = new LassoHelper(mode || 0, editor, null);
+    this.lassoHelper = new LassoHelper(mode, editor, null);
 
     if (editor.selection()) {
       const action = fromFragmentDeletion(
@@ -141,7 +142,6 @@ class EraserTool implements Tool {
                   struct.sgroups.get(actualSgroupId)?.item,
                 )
               : undefined;
-
           if (sgroupAtoms && sgroupBonds && atom === sgroupAtoms[0]) {
             newSelected.atoms.push(...sgroupAtoms);
             newSelected.bonds.push(...sgroupBonds);
@@ -202,7 +202,9 @@ class EraserTool implements Tool {
           functionalGroups,
           id,
         );
-        fgId !== null && !preResult.includes(fgId) && preResult.push(fgId);
+        if (fgId !== null && !preResult.includes(fgId)) {
+          preResult.push(fgId);
+        }
       }
     }
 
@@ -213,7 +215,9 @@ class EraserTool implements Tool {
           functionalGroups,
           id,
         );
-        fgId !== null && !preResult.includes(fgId) && preResult.push(fgId);
+        if (fgId !== null && !preResult.includes(fgId)) {
+          preResult.push(fgId);
+        }
       }
     }
 
@@ -221,10 +225,10 @@ class EraserTool implements Tool {
       const result: Array<number> = [];
       preResult.forEach((fgId) => {
         const sgAtoms = sgroups.get(fgId)?.item?.atoms;
-        sgAtoms.forEach((atom) => {
-          !atomsResult.includes(atom) &&
-            !result.includes(fgId) &&
+        sgAtoms?.forEach((atom) => {
+          if (!atomsResult.includes(atom) && !result.includes(fgId)) {
             result.push(fgId);
+          }
         });
       });
 

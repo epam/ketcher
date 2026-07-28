@@ -1304,7 +1304,9 @@ class ReAtom extends ReObject {
     let angles: Array<number> = [];
     this.a.neighbors.forEach((halfBondId) => {
       const halfBond = struct.halfBonds.get(halfBondId);
-      halfBond && angles.push(halfBond.ang);
+      if (halfBond) {
+        angles.push(halfBond.ang);
+      }
     });
     angles = angles.sort((a, b) => a - b);
     const largeAngles: Array<number> = [];

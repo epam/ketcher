@@ -89,7 +89,11 @@ export const FullscreenButton = (props) => {
 
   const toggleFullscreen = () => {
     const fullscreenElement = getFullscreenElement();
-    isFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement);
+    if (isFullScreen()) {
+      exitFullscreen();
+    } else {
+      requestFullscreen(fullscreenElement);
+    }
   };
   return (
     <ButtonContainer className={props.className}>

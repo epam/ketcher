@@ -614,9 +614,11 @@ export const RnaEditorExpanded = ({
         event.preventDefault();
         event.stopPropagation();
       } else if (event.key === 'Enter') {
-        isSequenceEditInRNABuilderMode
-          ? onUpdateSequence()
-          : editor?.events.startNewSequence.dispatch({});
+        if (isSequenceEditInRNABuilderMode) {
+          onUpdateSequence();
+        } else {
+          editor?.events.startNewSequence.dispatch({});
+        }
         event.preventDefault();
         event.stopPropagation();
       }

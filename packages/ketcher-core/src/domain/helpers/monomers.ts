@@ -176,7 +176,6 @@ function getOrientedChemNeighbors(chem: BaseMonomer): {
 } {
   let previous: BaseMonomer | undefined;
   let next: BaseMonomer | undefined;
-  const unorientedNeighbors: BaseMonomer[] = [];
 
   chem.usedAttachmentPointsNamesList.forEach((attachmentPointName) => {
     const bond = chem.attachmentPointsToBonds[attachmentPointName];
@@ -196,16 +195,6 @@ function getOrientedChemNeighbors(chem: BaseMonomer): {
     if (neighborAttachmentPoint === AttachmentPointName.R2 && !previous) {
       previous = neighbor;
     } else if (neighborAttachmentPoint === AttachmentPointName.R1 && !next) {
-      next = neighbor;
-    } else {
-      unorientedNeighbors.push(neighbor);
-    }
-  });
-
-  unorientedNeighbors.forEach((neighbor) => {
-    if (!previous) {
-      previous = neighbor;
-    } else if (!next) {
       next = neighbor;
     }
   });

@@ -181,6 +181,27 @@ describe('CHEM chain layout (Sequence and Snake modes)', () => {
         chainOf(chainsCollection, peptide1),
       );
     });
+
+    it('remains in line as a 5\u2032 cap connected through its own R2 to the neighbor R1', () => {
+      const chem = addChem(new Vec2(0, 0));
+      const peptide1 = addPeptide(new Vec2(10, 0));
+      const peptide2 = addPeptide(new Vec2(20, 0));
+
+      connect(chem, AttachmentPointName.R2, peptide1, AttachmentPointName.R1);
+      connect(
+        peptide1,
+        AttachmentPointName.R2,
+        peptide2,
+        AttachmentPointName.R1,
+      );
+
+      const chainsCollection = buildChains();
+
+      expect(chainsCollection.chains).toHaveLength(1);
+      expect(chainOf(chainsCollection, chem)).toBe(
+        chainOf(chainsCollection, peptide1),
+      );
+    });
   });
 
   describe('internal CHEM (two used attachment points) stays in line with the preceding chain', () => {
@@ -279,6 +300,32 @@ describe('CHEM chain layout (Sequence and Snake modes)', () => {
       expect(chainsCollection.chains).toHaveLength(2);
       expect(chainOf(chainsCollection, peptide1)).not.toBe(
         chainOf(chainsCollection, peptide2),
+      );
+    });
+  });
+
+  describe('CHEM side-chain cross-links do not merge separate chains', () => {
+    it('keeps two CHEM backbones separate when cross-linked through non-backbone APs (R4-R4)', () => {
+      const chem1 = addChem(new Vec2(0, 0));
+      const chem2 = addChem(new Vec2(10, 0));
+      const chem3 = addChem(new Vec2(0, 10));
+      const chem4 = addChem(new Vec2(10, 10));
+
+      connect(chem1, AttachmentPointName.R2, chem2, AttachmentPointName.R1);
+      connect(chem3, AttachmentPointName.R2, chem4, AttachmentPointName.R1);
+      connect(chem1, AttachmentPointName.R4, chem3, AttachmentPointName.R4);
+
+      const chainsCollection = buildChains();
+
+      expect(chainsCollection.chains).toHaveLength(2);
+      expect(chainOf(chainsCollection, chem1)).toBe(
+        chainOf(chainsCollection, chem2),
+      );
+      expect(chainOf(chainsCollection, chem3)).toBe(
+        chainOf(chainsCollection, chem4),
+      );
+      expect(chainOf(chainsCollection, chem1)).not.toBe(
+        chainOf(chainsCollection, chem3),
       );
     });
   });

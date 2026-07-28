@@ -11,6 +11,7 @@ export enum PreviewType {
   Preset = 'preset',
   Bond = 'bond',
   AmbiguousMonomer = 'ambiguousMonomer',
+  DataSGroup = 'dataSGroup',
   Text = 'text',
 }
 

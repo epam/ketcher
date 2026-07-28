@@ -5,80 +5,81 @@
 
 ## Business Domain Terms
 
-| Term | Definition | Used In |
-|------|------------|---------|
-| Atom | Fundamental chemical particle with properties (element, charge, isotope, radical, stereochemistry) | Domain entities, Molfile serializers, rendering engine |
-| Bond | Chemical connection between two atoms with type (single, double, triple, aromatic) and stereochemistry | Domain entities, bond operations, structure validation |
-| Molecule | Collection of atoms and bonds representing a chemical compound | Struct entity, serializers, editor operations |
-| Fragment | Connected group of atoms within a structure, used for structure decomposition | Domain entities, fragment operations, R-group definitions |
-| Structure (Struct) | Complete chemical structure containing atoms, bonds, fragments, S-groups, and metadata | Core domain entity, all serializers, editor state |
-| R-Group | Generic substituent placeholder in chemical structures (R1, R2, etc.) | R-group entities, Molfile V2000/V3000, template library |
-| S-Group (Special Group) | Logical grouping of atoms with special meaning (superatom, data, multiple, repeating) | SGroup entity, Molfile serializers, abbreviations |
-| Superatom | Collapsed representation of a group of atoms shown as single label | S-Group types, functional groups, abbreviations |
-| Functional Group | Common chemical substructure with known properties (e.g., COOH, NH2) | Abbreviations, functional group helpers, template library |
-| Reaction | Chemical transformation with reactants, products, and reaction arrow | RxnArrow/RxnPlus entities, RXN format, reaction tools |
-| Stereochemistry | 3D spatial arrangement of atoms (chiral centers, E/Z isomers, R/S labels) | Atom/Bond stereo properties, stereo validation, Molfile |
-| Valence | Number of bonds an atom can form based on its element and charge | Valence validation, implicit hydrogen calculation |
-| Aromatization | Detection/assignment of aromatic ring systems in structures | Indigo service, structure cleanup, ring detection |
-| Monomer | Building block unit in polymer/macromolecule structures | BaseMonomer, Peptide, Nucleotide, macromolecules editor |
-| Polymer | Large molecule composed of repeating monomer units (proteins, RNA, DNA) | Macromolecules package, PolymerBond, sequence rendering |
-| Nucleotide | RNA/DNA building block composed of nucleobase, sugar, and phosphate | Nucleotide entity, RNA builder, sequence editor |
-| Peptide | Amino acid monomer in protein chains | Peptide entity, HELM format, protein editor |
-| Attachment Point | Connection site on a monomer where bonds can form | Attachment point entities, monomer connections, HELM |
-| Template | Pre-defined chemical structure or monomer for quick insertion | Template library, monomer library, ketcher-react templates |
-| Layout | Spatial arrangement of atoms in 2D space (auto-layout, cleanup) | Indigo service, structure cleanup, coordinate calculation |
+| Term                    | Definition                                                                                                                        | Used In                                                    |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| Atom                    | Fundamental chemical particle with properties (element, charge, isotope, radical, stereochemistry)                                | Domain entities, Molfile serializers, rendering engine     |
+| Atom List               | A query atom representing a set of allowed elements, displayed as `[C,N,O]`; the complement (not-list) is displayed as `![C,N,O]` | Domain entities, Periodic Table dialog, AtomRenderer       |
+| Bond                    | Chemical connection between two atoms with type (single, double, triple, aromatic) and stereochemistry                            | Domain entities, bond operations, structure validation     |
+| Molecule                | Collection of atoms and bonds representing a chemical compound                                                                    | Struct entity, serializers, editor operations              |
+| Fragment                | Connected group of atoms within a structure, used for structure decomposition                                                     | Domain entities, fragment operations, R-group definitions  |
+| Structure (Struct)      | Complete chemical structure containing atoms, bonds, fragments, S-groups, and metadata                                            | Core domain entity, all serializers, editor state          |
+| R-Group                 | Generic substituent placeholder in chemical structures (R1, R2, etc.)                                                             | R-group entities, Molfile V2000/V3000, template library    |
+| S-Group (Special Group) | Logical grouping of atoms with special meaning (superatom, data, multiple, repeating)                                             | SGroup entity, Molfile serializers, abbreviations          |
+| Superatom               | Collapsed representation of a group of atoms shown as single label                                                                | S-Group types, functional groups, abbreviations            |
+| Functional Group        | Common chemical substructure with known properties (e.g., COOH, NH2)                                                              | Abbreviations, functional group helpers, template library  |
+| Reaction                | Chemical transformation with reactants, products, and reaction arrow                                                              | RxnArrow/RxnPlus entities, RXN format, reaction tools      |
+| Stereochemistry         | 3D spatial arrangement of atoms (chiral centers, E/Z isomers, R/S labels)                                                         | Atom/Bond stereo properties, stereo validation, Molfile    |
+| Valence                 | Number of bonds an atom can form based on its element and charge                                                                  | Valence validation, implicit hydrogen calculation          |
+| Aromatization           | Detection/assignment of aromatic ring systems in structures                                                                       | Indigo service, structure cleanup, ring detection          |
+| Monomer                 | Building block unit in polymer/macromolecule structures                                                                           | BaseMonomer, Peptide, Nucleotide, macromolecules editor    |
+| Polymer                 | Large molecule composed of repeating monomer units (proteins, RNA, DNA)                                                           | Macromolecules package, PolymerBond, sequence rendering    |
+| Nucleotide              | RNA/DNA building block composed of nucleobase, sugar, and phosphate                                                               | Nucleotide entity, RNA builder, sequence editor            |
+| Peptide                 | Amino acid monomer in protein chains                                                                                              | Peptide entity, HELM format, protein editor                |
+| Attachment Point        | Connection site on a monomer where bonds can form                                                                                 | Attachment point entities, monomer connections, HELM       |
+| Template                | Pre-defined chemical structure or monomer for quick insertion                                                                     | Template library, monomer library, ketcher-react templates |
+| Layout                  | Spatial arrangement of atoms in 2D space (auto-layout, cleanup)                                                                   | Indigo service, structure cleanup, coordinate calculation  |
 
 ## Technical Terms
 
-| Term | Definition | Context |
-|------|------------|---------|
-| ReStruct | Rendering structure - augmented Struct with rendering metadata and SVG elements | Rendering engine, view layer, tool interactions |
-| Editor Operation | Command-pattern operation that modifies structure with undo/redo support | Operation classes, editor actions, history management |
-| Tool | User interaction handler for specific editing mode (atom tool, bond tool, etc.) | Tool classes, event handlers, toolbar integration |
-| Serializer | Parser/formatter for converting between Struct and chemical file formats | Domain serializers (KET, MOL, SMILES, etc.) |
-| Formatter | Application-layer service for structure format conversion via Indigo | Formatters package, API integration, format conversion |
-| Render Engine | SVG-based rendering system using Raphael.js (legacy) or Paper.js (modern) | Render package, ReStruct, view components |
-| KetcherBuilder | Builder pattern class for constructing Ketcher editor instances | Ketcher initialization, dependency injection, async setup |
-| Settings Service | Centralized configuration management with validation and persistence | Settings package, storage adapters, preset management |
-| Drawing Entity | Base class for all drawable elements in macromolecules mode | BaseMonomer, PolymerBond, macromolecules rendering |
-| Struct Service | Interface for external chemistry engine operations (layout, validation, conversion) | Service interface, Indigo integration, standalone WASM |
-| Canvas Matrix | Grid-based layout system for arranging monomers in sequence view | Macromolecules layout, RNA builder, sequence rendering |
-| Action (Redux) | State update command in Redux architecture | ketcher-react state management, Redux actions |
-| Reducer | Pure function that applies state changes in Redux | Redux state management, immutable updates |
-| Hook (React) | Custom React hook for accessing Ketcher functionality | useSettings, useKetcher, React integration |
-| MCP Server | Model Context Protocol server for Claude Code integration | Development tools, AI assistance integration |
+| Term             | Definition                                                                          | Context                                                   |
+| ---------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| ReStruct         | Rendering structure - augmented Struct with rendering metadata and SVG elements     | Rendering engine, view layer, tool interactions           |
+| Editor Operation | Command-pattern operation that modifies structure with undo/redo support            | Operation classes, editor actions, history management     |
+| Tool             | User interaction handler for specific editing mode (atom tool, bond tool, etc.)     | Tool classes, event handlers, toolbar integration         |
+| Serializer       | Parser/formatter for converting between Struct and chemical file formats            | Domain serializers (KET, MOL, SMILES, etc.)               |
+| Formatter        | Application-layer service for structure format conversion via Indigo                | Formatters package, API integration, format conversion    |
+| Render Engine    | SVG-based rendering system using Raphael.js (legacy) or Paper.js (modern)           | Render package, ReStruct, view components                 |
+| KetcherBuilder   | Builder pattern class for constructing Ketcher editor instances                     | Ketcher initialization, dependency injection, async setup |
+| Settings Service | Centralized configuration management with validation and persistence                | Settings package, storage adapters, preset management     |
+| Drawing Entity   | Base class for all drawable elements in macromolecules mode                         | BaseMonomer, PolymerBond, macromolecules rendering        |
+| Struct Service   | Interface for external chemistry engine operations (layout, validation, conversion) | Service interface, Indigo integration, standalone WASM    |
+| Canvas Matrix    | Grid-based layout system for arranging monomers in sequence view                    | Macromolecules layout, RNA builder, sequence rendering    |
+| Action (Redux)   | State update command in Redux architecture                                          | ketcher-react state management, Redux actions             |
+| Reducer          | Pure function that applies state changes in Redux                                   | Redux state management, immutable updates                 |
+| Hook (React)     | Custom React hook for accessing Ketcher functionality                               | useSettings, useKetcher, React integration                |
+| MCP Server       | Model Context Protocol server for Claude Code integration                           | Development tools, AI assistance integration              |
 
 ## Acronyms
 
-| Acronym | Expansion | Meaning |
-|---------|-----------|---------|
-| KET | Ketcher JSON Format | Ketcher's native JSON-based chemical structure format |
-| MOL | Molfile | MDL Molfile format (V2000/V3000) - industry standard for chemical structures |
-| SMILES | Simplified Molecular Input Line Entry System | Linear text notation for chemical structures |
-| SMARTS | SMILES Arbitrary Target Specification | Pattern matching extension of SMILES |
-| InChI | International Chemical Identifier | IUPAC standard identifier for chemical substances |
-| CML | Chemical Markup Language | XML-based chemical structure format |
-| CDX | ChemDraw Exchange | ChemDraw binary file format |
-| CDXML | ChemDraw XML | ChemDraw XML file format |
-| RXN | Reaction File | MDL format for chemical reactions |
-| SDF | Structure-Data File | MDL format for multiple structures with data fields |
-| FASTA | Fast-All | Text format for biological sequences |
-| HELM | Hierarchical Editing Language for Macromolecules | Notation for complex biological polymers |
-| IDT | Integrated DNA Technologies | DNA/RNA sequence format |
-| MVC | Model-View-Controller | Architectural pattern separating data, presentation, and logic |
-| DDD | Domain-Driven Design | Software design approach focusing on domain model |
-| SVG | Scalable Vector Graphics | XML-based vector image format used for rendering |
-| WASM | WebAssembly | Binary instruction format for web (used for Indigo) |
-| ESM | ECMAScript Modules | JavaScript module format (import/export) |
-| CJS | CommonJS | JavaScript module format (require/module.exports) |
-| HMR | Hot Module Replacement | Development feature for live code updates |
-| SSR | Server-Side Rendering | Rendering React on server (Next.js example) |
-| DRY | Don't Repeat Yourself | Code reuse principle |
-| RNA | Ribonucleic Acid | Biological polymer (one of main use cases) |
-| DNA | Deoxyribonucleic Acid | Biological polymer (one of main use cases) |
-| API | Application Programming Interface | Programmatic interface to Ketcher functionality |
-| JSON | JavaScript Object Notation | Data interchange format used in KET format |
-| SAP | S-Group Attachment Point | Connection point on an S-Group |
+| Acronym | Expansion                                        | Meaning                                                                      |
+| ------- | ------------------------------------------------ | ---------------------------------------------------------------------------- |
+| KET     | Ketcher JSON Format                              | Ketcher's native JSON-based chemical structure format                        |
+| MOL     | Molfile                                          | MDL Molfile format (V2000/V3000) - industry standard for chemical structures |
+| SMILES  | Simplified Molecular Input Line Entry System     | Linear text notation for chemical structures                                 |
+| SMARTS  | SMILES Arbitrary Target Specification            | Pattern matching extension of SMILES                                         |
+| InChI   | International Chemical Identifier                | IUPAC standard identifier for chemical substances                            |
+| CML     | Chemical Markup Language                         | XML-based chemical structure format                                          |
+| CDX     | ChemDraw Exchange                                | ChemDraw binary file format                                                  |
+| CDXML   | ChemDraw XML                                     | ChemDraw XML file format                                                     |
+| RXN     | Reaction File                                    | MDL format for chemical reactions                                            |
+| SDF     | Structure-Data File                              | MDL format for multiple structures with data fields                          |
+| FASTA   | Fast-All                                         | Text format for biological sequences                                         |
+| HELM    | Hierarchical Editing Language for Macromolecules | Notation for complex biological polymers                                     |
+| IDT     | Integrated DNA Technologies                      | DNA/RNA sequence format                                                      |
+| MVC     | Model-View-Controller                            | Architectural pattern separating data, presentation, and logic               |
+| DDD     | Domain-Driven Design                             | Software design approach focusing on domain model                            |
+| SVG     | Scalable Vector Graphics                         | XML-based vector image format used for rendering                             |
+| WASM    | WebAssembly                                      | Binary instruction format for web (used for Indigo)                          |
+| ESM     | ECMAScript Modules                               | JavaScript module format (import/export)                                     |
+| CJS     | CommonJS                                         | JavaScript module format (require/module.exports)                            |
+| HMR     | Hot Module Replacement                           | Development feature for live code updates                                    |
+| SSR     | Server-Side Rendering                            | Rendering React on server (Next.js example)                                  |
+| DRY     | Don't Repeat Yourself                            | Code reuse principle                                                         |
+| RNA     | Ribonucleic Acid                                 | Biological polymer (one of main use cases)                                   |
+| DNA     | Deoxyribonucleic Acid                            | Biological polymer (one of main use cases)                                   |
+| API     | Application Programming Interface                | Programmatic interface to Ketcher functionality                              |
+| JSON    | JavaScript Object Notation                       | Data interchange format used in KET format                                   |
+| SAP     | S-Group Attachment Point                         | Connection point on an S-Group                                               |
 
 ## Term Relationships
 

@@ -50,15 +50,15 @@ context: |
   | `modules/<name>.md` | Responsibility, Public interfaces, Dependencies, Dependents, Assumptions & constraints |
   | `adr/YYYY-MM-DD-<title>.md` | Decision, Context, Alternatives considered, Rationale, Consequences |
 
-  ### How to update the memory bank (after archiving a change)
+  ### How to update the memory bank (during archiving a change)
 
   Update the memory bank whenever product behavior or architecture changes:
 
   - New or changed feature behavior → `features/<name>.md` (create if new)
   - Architectural changes → `architecture.md` and/or a new `adr/YYYY-MM-DD-<title>.md`
-  - New subsystem → `modules/<name>.md`
-  - New terms → `glossary.md`
-  - New non-negotiable rules → `invariants.md`
+  - New or updated subsystem → `modules/<name>.md`
+  - New or updated terms → `glossary.md`
+  - New or updated non-negotiable rules → `invariants.md`
 
   Do NOT put implementation details (function names, file paths) into `features/` or
   `domain.md`. Those belong in `modules/` or code comments.

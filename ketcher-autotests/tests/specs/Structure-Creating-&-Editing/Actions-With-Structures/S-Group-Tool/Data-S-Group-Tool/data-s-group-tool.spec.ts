@@ -23,6 +23,7 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
@@ -108,6 +109,40 @@ test.describe('Data S-Group tool', () => {
     await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create S-Group for atom-only selection across two structures with Shift', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-3425
+      Description: S-Group action works when one atom in each of two different structures
+      is selected with Shift while Rectangle Selection tool is active.
+    */
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
+
+    await page.keyboard.down('Shift');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 12 }).click({
+      force: true,
+    });
+    await page.keyboard.up('Shift');
+
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Data,
+      Context: ContextOption.Multifragment,
+      FieldName: 'Test',
+      FieldValue: '3425',
+      PropertyLabelType: PropertyLabelType.Absolute,
+    });
     await takeEditorScreenshot(page);
   });
 

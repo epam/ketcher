@@ -1764,7 +1764,7 @@ export class SequenceMode extends BaseMode {
             modelChanges.addOperation(SequenceRenderer.moveCaretForward());
           }
 
-          history.update(modelChanges);
+          history.update(modelChanges, selectionsBeforeDeletion.length > 0);
         },
       },
       'sequence-edit-select': {
@@ -2177,21 +2177,24 @@ export class SequenceMode extends BaseMode {
         monomerItem.attachmentPoints,
       );
     // Side chains
-    const oldMonomerBonds: [string, PolymerBond | MonomerToAtomBond | null][] =
-      sideChainConnections
-        ? Object.entries(selectedNode.monomer.attachmentPointsToBonds)
-        : [
-            [
-              AttachmentPointName.R1 as string,
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              selectedNode.firstMonomerInNode.attachmentPointsToBonds.R1!,
-            ],
-            [
-              AttachmentPointName.R2 as string,
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2!,
-            ],
-          ];
+    const oldMonomerBonds: [
+      AttachmentPointName,
+      PolymerBond | MonomerToAtomBond | null | undefined,
+    ][] = sideChainConnections
+      ? (Object.entries(selectedNode.monomer.attachmentPointsToBonds) as [
+          AttachmentPointName,
+          PolymerBond | MonomerToAtomBond | null | undefined,
+        ][])
+      : [
+          [
+            AttachmentPointName.R1,
+            selectedNode.firstMonomerInNode.attachmentPointsToBonds.R1,
+          ],
+          [
+            AttachmentPointName.R2,
+            selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2,
+          ],
+        ];
     // Backbone
     return oldMonomerBonds.every(([key, bond]) => {
       if (
@@ -2204,9 +2207,7 @@ export class SequenceMode extends BaseMode {
         return true;
       }
 
-      return newMonomerAttachmentPoints.attachmentPointsList.includes(
-        key as AttachmentPointName,
-      );
+      return newMonomerAttachmentPoints.attachmentPointsList.includes(key);
     });
   }
 
@@ -2390,10 +2391,14 @@ export class SequenceMode extends BaseMode {
     } else if (editor.isSequenceEditMode) {
       const newNodePosition = this.getNewNodePosition();
       const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
-
-      if (currentTwoStrandedNode?.antisenseNode) {
-        return;
-      }
+      const previousTwoStrandedNodeInSameChain =
+        SequenceRenderer.previousNodeInSameChain;
+      const nextNodeToConnect = this.isAntisenseEditMode
+        ? currentTwoStrandedNode?.antisenseNode ?? null
+        : currentTwoStrandedNode?.senseNode ?? null;
+      const previousNodeToConnect = this.isAntisenseEditMode
+        ? previousTwoStrandedNodeInSameChain?.antisenseNode
+        : previousTwoStrandedNodeInSameChain?.senseNode;
 
       const newMonomer = editor.drawingEntitiesManager.createMonomer(
         monomerItem,
@@ -2419,7 +2424,11 @@ export class SequenceMode extends BaseMode {
 
       modelChanges.merge(monomerAddCommand);
       modelChanges.merge(
-        this.insertNewSequenceFragment(newMonomerSequenceNode),
+        this.insertNewSequenceFragment(
+          newMonomerSequenceNode,
+          nextNodeToConnect,
+          previousNodeToConnect,
+        ),
       );
 
       modelChanges.addOperation(new ReinitializeModeOperation());
@@ -2690,10 +2699,14 @@ export class SequenceMode extends BaseMode {
     } else if (editor.isSequenceEditMode) {
       const newNodePosition = this.getNewNodePosition();
       const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
-
-      if (currentTwoStrandedNode?.antisenseNode) {
-        return;
-      }
+      const previousTwoStrandedNodeInSameChain =
+        SequenceRenderer.previousNodeInSameChain;
+      const nextNodeToConnect = this.isAntisenseEditMode
+        ? currentTwoStrandedNode?.antisenseNode ?? null
+        : currentTwoStrandedNode?.senseNode ?? null;
+      const previousNodeToConnect = this.isAntisenseEditMode
+        ? previousTwoStrandedNodeInSameChain?.antisenseNode
+        : previousTwoStrandedNodeInSameChain?.senseNode;
 
       const newPresetNode = this.createRnaPresetNode(preset, newNodePosition);
 
@@ -2717,7 +2730,13 @@ export class SequenceMode extends BaseMode {
         );
 
       modelChanges.merge(rnaPresetAddModelChanges);
-      modelChanges.merge(this.insertNewSequenceFragment(newPresetNode));
+      modelChanges.merge(
+        this.insertNewSequenceFragment(
+          newPresetNode,
+          nextNodeToConnect,
+          previousNodeToConnect,
+        ),
+      );
 
       modelChanges.addOperation(new ReinitializeModeOperation());
       editor.renderersContainer.update(modelChanges);

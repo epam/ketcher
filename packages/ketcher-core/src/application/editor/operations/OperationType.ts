@@ -106,6 +106,7 @@ export const OperationType = Object.freeze({
     'Monomer creation :: Mark as RNA component',
 });
 
+/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 export enum OperationPriority {
   ATOM_ATTR = 1,
   BOND_ADD = 1,
@@ -126,3 +127,4 @@ export enum OperationPriority {
   S_GROUP_ADD_TO_HIERACHY = 100,
   FRAGMENT_ADD_STEREO_ATOM = 100,
 }
+/* eslint-enable @typescript-eslint/no-duplicate-enum-values */

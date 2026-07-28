@@ -174,7 +174,7 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
               ),
             }}
             value={version}
-            onChange={onChangeImago}
+            onChange={(val) => onChangeImago(val as string)}
           />
           {/* eslint-enable jsx-a11y/label-has-associated-control */}
         </label>

@@ -106,12 +106,19 @@ const Header = styled('div')(() => ({
 
 const GrossFormula = styled('div')(() => ({
   display: 'flex',
-  alignItems: 'center',
+  alignItems: 'baseline',
   fontSize: '14px',
   fontWeight: '700',
   padding: '0 8px',
   color: '#585858',
 }));
+
+const FormulaSubscript = styled('sub')({
+  verticalAlign: 'baseline',
+  fontSize: '0.75em',
+  position: 'relative',
+  top: '0.3em',
+});
 
 const MolecularMass = styled('div')(() => ({
   display: 'flex',
@@ -454,7 +461,7 @@ const GrossFormulaPart = ({ part }) => {
   return (
     <span>
       {element}
-      <sub>{count}</sub>
+      <FormulaSubscript>{count}</FormulaSubscript>
     </span>
   );
 };
@@ -749,7 +756,14 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
                 ? _round(props.macromoleculesProperties.pKa, 2)
                 : '–'
             }
-            hint="The isoelectric point is calculated as the median of all pKa values for the structure."
+            hint={
+              <div>
+                The isoelectric point is calculated as the median of all pKa
+                values for amino acids (values from{' '}
+                <i>Miclotte et. al. (2020)</i>. Only amino acid natural
+                analogues are used in the calculation.
+              </div>
+            }
           />
           <BasicProperty
             name="Extinction Coef.(1/Mcm)"

@@ -833,12 +833,11 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendStereoLabel() {
-    if (!this.shouldDisplayStereoLabel()) {
+    const stereoLabel = this.atom.properties.stereoLabel;
+
+    if (!stereoLabel || !this.shouldDisplayStereoLabel()) {
       return;
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const stereoLabel = this.atom.properties.stereoLabel!;
 
     this.stereoLabelElement = this.canvas
       ?.append('g')

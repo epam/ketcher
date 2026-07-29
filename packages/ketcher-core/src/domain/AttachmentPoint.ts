@@ -14,6 +14,7 @@ import {
 import {
   type AttachmentPointConstructorParams,
   AttachmentPointName,
+  type MouseEventWithAttachmentPoint,
 } from './types';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
@@ -29,7 +30,9 @@ export class AttachmentPoint {
 
   static readonly labelOffset = 3.5;
   static readonly radius = 3;
+  static readonly dragTargetRadius = 5;
   static readonly labelSize = { x: 3.5, y: 2.5 };
+  static readonly DRAG_TARGET_INDICATOR_FONT_SIZE = '5px';
   static readonly colors = {
     fillUsed: '#0097A8',
     fill: 'white',
@@ -57,7 +60,9 @@ export class AttachmentPoint {
 
   protected initialAngle = 0;
   private readonly isUsed: boolean;
-  private readonly isSnake;
+  private readonly isDragTarget: boolean;
+  private readonly isDragCircleHover: boolean;
+  private readonly isSnake: boolean;
   private get editorEvents() {
     return provideEditorInstance().events;
   }
@@ -80,6 +85,8 @@ export class AttachmentPoint {
       constructorParams.monomer.renderer?.center ?? new Vec2(0, 0, 0);
     this.isSnake = constructorParams.isSnake;
     this.isUsed = constructorParams.isUsed;
+    this.isDragTarget = constructorParams.isDragTarget ?? false;
+    this.isDragCircleHover = constructorParams.isDragCircleHover ?? false;
     this.initialAngle = constructorParams.angle;
     this.applyZoomForPositionCalculation =
       constructorParams.applyZoomForPositionCalculation;
@@ -92,6 +99,7 @@ export class AttachmentPoint {
 
   private get fill() {
     if (
+      this.isDragTarget ||
       this.monomer.isAttachmentPointPotentiallyUsed(this.attachmentPointName)
     ) {
       return AttachmentPoint.colors.fillPotentially;
@@ -141,22 +149,35 @@ export class AttachmentPoint {
       .attr('y1', attachmentOnBorder.y)
       .attr('x2', attachmentPointCoordinates.x)
       .attr('y2', attachmentPointCoordinates.y)
-      .attr('stroke', stroke)
+      .attr('stroke', this.isDragTarget ? '#167782' : stroke)
       .attr('stroke-linecap', 'round')
       .attr('stroke-width', '1px');
 
+    let circleStroke = 'white';
+
+    if (this.isDragTarget) {
+      circleStroke = '#167782';
+    } else if (fill === 'white') {
+      circleStroke = '#0097A8';
+    }
+
     attachmentPointElement
       .append('circle')
-      .attr('r', AttachmentPoint.radius)
+      .attr(
+        'r',
+        this.isDragCircleHover
+          ? AttachmentPoint.dragTargetRadius
+          : AttachmentPoint.radius,
+      )
       .attr('cx', attachmentPointCoordinates.x)
       .attr('cy', attachmentPointCoordinates.y)
-      .attr('stroke', fill === 'white' ? '#0097A8' : 'white')
+      .attr('stroke', circleStroke)
       .attr('stroke-width', '1px')
       .attr('data-testid', 'monomer-attachment-point')
       .attr('data-attachment-point-alias', this.attachmentPointName)
       .attr('data-parent-monomer-id', this.monomer.id)
       .attr('data-monomerid', this.monomer.id)
-      .attr('fill', fill);
+      .attr('fill', this.isDragTarget ? 'white' : fill);
 
     const labelGroup = this.attachmentPoint.append('text');
 
@@ -223,21 +244,21 @@ export class AttachmentPoint {
       );
 
     hoverableAreaElement
-      .on('mouseover', (event) => {
+      .on('mouseover', (event: MouseEventWithAttachmentPoint) => {
         event.attachmentPointName = this.attachmentPointName;
         this.editorEvents.mouseOverAttachmentPoint.dispatch(event);
       })
-      .on('mouseleave', (event) => {
+      .on('mouseleave', (event: MouseEvent) => {
         this.editorEvents.mouseLeaveAttachmentPoint.dispatch(event);
       })
-      .on('mousemove', (event) => {
+      .on('mousemove', (event: MouseEvent) => {
         this.editorEvents.mouseMoveAttachmentPoint.dispatch(event);
       })
-      .on('mousedown', (event) => {
+      .on('mousedown', (event: MouseEventWithAttachmentPoint) => {
         event.attachmentPointName = this.attachmentPointName;
         this.editorEvents.mouseDownAttachmentPoint.dispatch(event);
       })
-      .on('mouseup', (event) => {
+      .on('mouseup', (event: MouseEventWithAttachmentPoint) => {
         event.attachmentPointName = this.attachmentPointName;
         this.editorEvents.mouseUpAttachmentPoint.dispatch(event);
       });
@@ -357,7 +378,7 @@ export class AttachmentPoint {
     return angleRadians;
   }
 
-  protected getCoordinates(angleDegrees) {
+  protected getCoordinates(angleDegrees: number) {
     const [pointOnBorder, pointOfAttachment, labelPoint] =
       this.catchThePoint(angleDegrees);
 

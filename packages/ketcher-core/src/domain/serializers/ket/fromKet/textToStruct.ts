@@ -191,7 +191,7 @@ export function textToStruct(ketItem: any, struct: Struct) {
           const lexical = convertDraftToLexical(parsed as DraftEditorState);
           node.content = JSON.stringify(lexical);
         }
-      } catch (e) {
+      } catch (_e) {
         // Leave content as-is if parsing/conversion fails
         // (content may already be Lexical or plain text)
       }

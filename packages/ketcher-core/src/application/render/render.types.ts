@@ -1,5 +1,6 @@
 import type { RxnArrowMode } from 'domain/entities/rxnArrow';
 import type { Vec2 } from 'domain/entities/vec2';
+import type { Element, RaphaelSet } from 'raphael';
 import type {
   StereoColoringType,
   StereoLabelStyleType,
@@ -10,6 +11,7 @@ import type { UsageInMacromolecule } from './render.constants';
 export { UsageInMacromolecule } from './render.constants';
 
 export type RenderOptionStyles = Record<string, string | number>;
+export type RenderPath = Element | RaphaelSet;
 
 export enum MeasurementUnits {
   Px = 'px',

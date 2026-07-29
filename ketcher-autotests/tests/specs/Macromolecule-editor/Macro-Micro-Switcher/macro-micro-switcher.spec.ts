@@ -145,10 +145,10 @@ test.afterAll(async ({ closePage }) => {
 
 test.describe('Macro-Micro-Switcher', () => {
   test('Check that preview window of macro structure does not change in micro mode ', async () => {
-    /* 
-    Test case: https://github.com/epam/ketcher/issues/3603
-    Description: Preview window of macro structure doesn't change in micro mode
-    */
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/3603
+     * Description: Preview window of macro structure doesn't change in micro mode
+     */
     const scrollValue = -400;
     const monomerLabelsOnMacromoleculesCanvas = [
       'A',

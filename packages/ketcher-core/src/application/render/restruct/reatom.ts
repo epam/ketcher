@@ -16,8 +16,8 @@
 
 import {
   Atom,
-  type AtomQueryProperties,
   StereoLabel,
+  type AtomQueryProperties,
 } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
@@ -44,6 +44,7 @@ import { assert, toFixed } from 'utilities';
 import type {
   RelativeBox,
   RenderPath,
+  RenderPath,
   RenderOptions,
   RenderOptionStyles,
 } from 'application/render/render.types';
@@ -59,11 +60,13 @@ import { ShowHydrogenLabels } from './showHydrogenLabels';
 interface ElemAttr {
   text: string;
   path: RenderPath;
+  path: RenderPath;
   rbb: RelativeBox;
   background?: Element;
 }
 
 const StereoLabelMinOpacity = 0.3;
+const DEFAULT_ATOM_COLOR = '#000';
 const DEFAULT_ATOM_COLOR = '#000';
 const DEFAULT_STEREO_COLOR = '#000';
 const MAX_LABEL_LENGTH = 8;
@@ -384,6 +387,7 @@ class ReAtom extends ReObject {
   ) {
     const invisibleAtomTarget = this.getSelectionContour(render).attr({
       opacity: 0,
+      fill: DEFAULT_ATOM_COLOR,
       fill: DEFAULT_ATOM_COLOR,
       stroke: 'none',
       'stroke-width': 0,
@@ -1091,6 +1095,9 @@ class ReAtom extends ReObject {
           options.atomColoring && elem
             ? ElementColor[this.a.label]
             : DEFAULT_ATOM_COLOR,
+          options.atomColoring && elem
+            ? ElementColor[this.a.label]
+            : DEFAULT_ATOM_COLOR,
       });
       if (stereoLabel) {
         // use dom element to change color of stereo label which is the first element
@@ -1557,6 +1564,7 @@ function getVisibleNeighborHalfBondIds(struct: Struct, atom: ReAtom): number[] {
 function getOnlyQueryAttributesCustomQuery(atom: Atom) {
   const queryText =
     atom.queryProperties.customQuery ?? getAtomCustomQuery(atom, true);
+    atom.queryProperties.customQuery ?? getAtomCustomQuery(atom, true);
   return queryText;
 }
 
@@ -1596,6 +1604,7 @@ function buildLabel(
   if (text === atom.a.label) {
     const element = Elements.get(text);
     if (atomColoring && element) {
+      atom.color = ElementColor[text] ?? DEFAULT_ATOM_COLOR;
       atom.color = ElementColor[text] ?? DEFAULT_ATOM_COLOR;
     }
   }
@@ -2247,16 +2256,124 @@ export function checkIsSmartPropertiesExist(atom: Atom) {
 }
 
 export function getAtomCustomQuery(
-  atom: AtomQueryInput,
+  atom: Atom,
   includeOnlyQueryAttributes?: boolean,
 ) {
   let queryAttrsText = '';
+  type AtomCustomQueryValue = string | number | boolean | null | undefined;
+  type AtomCustomQueryPropertyName =
+    | 'aromaticity'
+    | 'charge'
+    | 'chirality'
+    | 'connectivity'
+    | 'explicitValence'
+    | 'hCount'
+    | 'implicitHCount'
+    | 'isotope'
+    | 'ringBondCount'
+    | 'ringMembership'
+    | 'ringSize'
+    | 'substitutionCount'
+    | 'unsaturatedAtom';
+  type AtomCustomQueryPattern = {
+    propertyName: AtomCustomQueryPropertyName;
+    getValue: (atom: Atom) => AtomCustomQueryValue;
+    format: (value: string) => string;
+  };
+  const nonQueryAttributes: readonly AtomCustomQueryPropertyName[] = [
+    'charge',
+    'explicitValence',
+    'isotope',
+  ];
+  const getQueryProperty =
+    <PropertyName extends keyof AtomQueryProperties>(
+      propertyName: PropertyName,
+    ) =>
+    (currentAtom: Atom): AtomQueryProperties[PropertyName] =>
+      currentAtom.queryProperties[propertyName];
 
   const addSemicolon = () => {
     if (queryAttrsText.length > 0) queryAttrsText += ';';
   };
+  const patterns: AtomCustomQueryPattern[] = [
+    {
+      propertyName: 'isotope',
+      getValue: (currentAtom) => currentAtom.isotope,
+      format: (value) => value,
+    },
+    {
+      propertyName: 'aromaticity',
+      getValue: getQueryProperty('aromaticity'),
+      format: (value) => (value === 'aromatic' ? 'a' : 'A'),
+    },
+    {
+      propertyName: 'charge',
+      getValue: (currentAtom) => currentAtom.charge,
+      format: (value) => {
+        if (value === '') return value;
+        const regExpResult = /^([+-]?)(\d{1,3}|1000)([+-]?)$/.exec(value);
+        const charge = regExpResult
+          ? parseInt(
+              regExpResult[1] + regExpResult[3] + regExpResult[2],
+            ).toString()
+          : value;
+        return !charge.startsWith('-') ? `+${charge}` : charge;
+      },
+    },
+    {
+      propertyName: 'unsaturatedAtom',
+      getValue: (currentAtom) => currentAtom.unsaturatedAtom,
+      format: (value) => (Number(value) === 1 ? 'u' : ''),
+    },
+    {
+      propertyName: 'explicitValence',
+      getValue: (currentAtom) => currentAtom.explicitValence,
+      format: (value) => (Number(value) !== -1 ? `v${value}` : ''),
+    },
+    {
+      propertyName: 'ringBondCount',
+      getValue: (currentAtom) => currentAtom.ringBondCount,
+      format: (value) => getRingConnectivity(Number(value)),
+    },
+    {
+      propertyName: 'substitutionCount',
+      getValue: (currentAtom) => currentAtom.substitutionCount,
+      format: (value) => getDegree(Number(value)),
+    },
+    {
+      propertyName: 'hCount',
+      getValue: (currentAtom) => currentAtom.hCount,
+      format: (value) =>
+        Number(value) > 0 ? 'H' + (Number(value) - 1).toString() : '',
+    },
+    {
+      propertyName: 'implicitHCount',
+      getValue: (currentAtom) => currentAtom.implicitHCount,
+      format: (value) => `h${value}`,
+    },
+    {
+      propertyName: 'ringMembership',
+      getValue: getQueryProperty('ringMembership'),
+      format: (value) => `R${value}`,
+    },
+    {
+      propertyName: 'ringSize',
+      getValue: getQueryProperty('ringSize'),
+      format: (value) => `r${value}`,
+    },
+    {
+      propertyName: 'connectivity',
+      getValue: getQueryProperty('connectivity'),
+      format: (value) => `X${value}`,
+    },
+    {
+      propertyName: 'chirality',
+      getValue: getQueryProperty('chirality'),
+      format: (value) => (value === 'clockwise' ? '@@' : '@'),
+    },
+  ];
 
-  for (const { propertyName, getValue, format } of atomCustomQueryPatterns) {
+  for (const { propertyName, getValue, format } of patterns) {
     if (
       includeOnlyQueryAttributes &&
       EXCLUDED_QUERY_ATTRIBUTES.includes(propertyName)
@@ -2269,7 +2386,8 @@ export function getAtomCustomQuery(
       continue;
     }
 
-    const attrText = format(String(value));
+    const normalizedValue = typeof value === 'boolean' ? Number(value) : value;
+    const attrText = format(String(normalizedValue));
     if (attrText) {
       addSemicolon();
     }
@@ -2308,6 +2426,7 @@ function getQueryAttrsText(atom: ReAtom): string {
 }
 
 function pathAndRBoxTranslate(
+  path: RenderPath,
   path: RenderPath,
   rbb: RelativeBox,
   x: number,

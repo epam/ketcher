@@ -12,6 +12,7 @@ import { AttachmentPointName } from 'domain/types';
 import type { BaseMonomer } from './BaseMonomer';
 import { BaseBond } from 'domain/entities/BaseBond';
 import { HalfMonomerSize } from 'domain/constants';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 
 export type FlexOrSequenceOrSnakeModePolymerBondRenderer =
   | BackBoneBondSequenceRenderer
@@ -122,5 +123,22 @@ export class PolymerBond extends BaseBond {
       Math.abs(this.firstMonomer.position.x - this.secondMonomer.position.x) <
       HalfMonomerSize
     );
+  }
+
+  /**
+   * Determines if this bond is rendered in snake mode.
+   * A bond is in snake mode if:
+   * - The renderer is a SnakeModePolymerBondRenderer and the bond is not horizontal, OR
+   * - The editor mode is 'snake-layout-mode' and this is a side chain connection
+   */
+  public get isRenderedAsSnakeBond(): boolean {
+    const editor = provideEditorInstance();
+    const isSnakeModeRenderer =
+      this.renderer && 'isSnake' in this.renderer && !this.isHorizontal;
+    const isSnakeModeAndSideChain =
+      editor.mode.modeName === 'snake-layout-mode' &&
+      this.isSideChainConnection;
+
+    return isSnakeModeRenderer || isSnakeModeAndSideChain;
   }
 }

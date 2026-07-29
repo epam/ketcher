@@ -248,7 +248,7 @@ export function getNextMonomerInChain(
   monomer?: BaseMonomer,
   firstMonomer?: BaseMonomer | null,
 ) {
-  if (!monomer) return undefined;
+  if (!monomer) return;
 
   if (isLinearChem(monomer)) {
     const nextMonomer = getOrientedChemNeighbors(monomer).next;
@@ -258,7 +258,7 @@ export function getNextMonomerInChain(
       nextMonomer === firstMonomer ||
       isMonomerConnectedToR2RnaBase(nextMonomer)
     ) {
-      return undefined;
+      return;
     }
 
     return nextMonomer;
@@ -275,7 +275,7 @@ export function getNextMonomerInChain(
     (nextMonomer === firstMonomer && r2PolymerBond) ||
     isMonomerConnectedToR2RnaBase(nextMonomer)
   )
-    return undefined;
+    return;
 
   if (
     isLinearChem(nextMonomer) &&
@@ -292,8 +292,7 @@ export function getNextMonomerInChain(
 }
 
 export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
-  if (!monomer || !isMonomerOfClass(monomer, KetMonomerClass.Sugar))
-    return undefined;
+  if (!monomer || !isMonomerOfClass(monomer, KetMonomerClass.Sugar)) return;
   const r3PolymerBond = monomer.attachmentPointsToBonds.R3;
   const r3ConnectedMonomer =
     r3PolymerBond instanceof PolymerBond
@@ -301,7 +300,7 @@ export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
       : undefined;
 
   if (!r3ConnectedMonomer) {
-    return undefined;
+    return;
   }
 
   const r1PolymerBondOfConnectedMonomer =
@@ -318,7 +317,7 @@ export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
 }
 
 export function getSugarFromRnaBase(monomer?: BaseMonomer) {
-  if (!monomer || !isRnaBaseOrAmbiguousRnaBase(monomer)) return undefined;
+  if (!monomer || !isRnaBaseOrAmbiguousRnaBase(monomer)) return;
   const r1PolymerBond = monomer.attachmentPointsToBonds.R1;
   const r1ConnectedMonomer =
     r1PolymerBond instanceof PolymerBond
@@ -326,7 +325,7 @@ export function getSugarFromRnaBase(monomer?: BaseMonomer) {
       : undefined;
 
   if (!r1ConnectedMonomer) {
-    return undefined;
+    return;
   }
 
   const r3PolymerBondOfConnectedMonomer =
@@ -356,7 +355,7 @@ export function isBondBetweenSugarAndBaseOfRna(polymerBond: PolymerBond) {
 }
 
 export function getPhosphateFromSugar(monomer?: BaseMonomer) {
-  if (!monomer) return undefined;
+  if (!monomer) return;
   const nextMonomerInChain = getNextMonomerInChain(monomer);
 
   return isMonomerOfClass(nextMonomerInChain, KetMonomerClass.Phosphate)

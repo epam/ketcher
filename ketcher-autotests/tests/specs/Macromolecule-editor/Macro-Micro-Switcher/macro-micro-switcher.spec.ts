@@ -145,10 +145,10 @@ test.afterAll(async ({ closePage }) => {
 
 test.describe('Macro-Micro-Switcher', () => {
   test('Check that preview window of macro structure does not change in micro mode ', async () => {
-    /* 
-    Test case: https://github.com/epam/ketcher/issues/3603
-    Description: Preview window of macro structure doesn't change in micro mode
-    */
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/3603
+     * Description: Preview window of macro structure doesn't change in micro mode
+     */
     const scrollValue = -400;
     const monomerLabelsOnMacromoleculesCanvas = [
       'A',
@@ -2213,30 +2213,24 @@ test.describe('Macro-Micro-Switcher', () => {
     },
   );
 
-  test(
-    'Validate that it is possible to save micro-macro connection to sdf v2000 file',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
+  test('Validate that it is possible to save micro-macro connection to sdf v2000 file', async () => {
+    /*
     Test case: #4532
     Description: It is possible to save micro-macro connection to sdf v2000 file.
-    Test working not a proper way because we have a bug https://github.com/epam/ketcher/issues/5123
-    After fix we need update expected file micro-macro-structure-v2000-expected.sdf
     */
-      await openFileAndAddToCanvas(page, 'KET/micro-macro-structure.ket');
-      await verifyFileExport(
-        page,
-        'SDF/micro-macro-structure-v2000-expected.sdf',
-        FileType.SDF,
-        SdfFileFormat.v2000,
-      );
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'SDF/micro-macro-structure-v2000-expected.sdf',
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvas(page, 'KET/micro-macro-structure.ket');
+    await verifyFileExport(
+      page,
+      'SDF/micro-macro-structure-v2000-expected.sdf',
+      FileType.SDF,
+      SdfFileFormat.v2000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'SDF/micro-macro-structure-v2000-expected.sdf',
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Validate that it is possible to save micro-macro connection to sdf v3000 file', async () => {
     /*

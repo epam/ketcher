@@ -19,7 +19,7 @@ type CommonPageObjects = {
   CommonTopLeftToolbar: (page: Page) => CommonTopLeftToolbarType;
 };
 
-export const test = base.extend<Record<string, never>, CommonPageObjects>({
+export const test = base.extend<Record<never, never>, CommonPageObjects>({
   CommonTopRightToolbar: [
     async ({}, use) => {
       await use(CommonTopRightToolbar);

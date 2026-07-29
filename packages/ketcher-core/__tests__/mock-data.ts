@@ -774,6 +774,10 @@ export const polymerEditorTheme = {
   peptide: { color: { A: { regular: 'yellow' } } },
 };
 
+export const coreEditorTheme = {
+  ketcher: polymerEditorTheme,
+};
+
 export const getFinishedPolymerBond = (x1, y1, x2, y2) => {
   const peptide = new Peptide(peptideMonomerItem);
   const peptide2 = new Peptide(peptideMonomerItem);

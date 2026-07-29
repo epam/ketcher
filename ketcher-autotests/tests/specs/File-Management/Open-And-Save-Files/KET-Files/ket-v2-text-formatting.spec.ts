@@ -190,35 +190,37 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
     // --- boundingBox on every node ---
     for (const node of textNodes) {
       expect(node.boundingBox).toBeDefined();
-      expect(typeof node.boundingBox.x).toBe('number');
-      expect(typeof node.boundingBox.y).toBe('number');
-      expect(node.boundingBox.width).toBeGreaterThan(0);
-      expect(node.boundingBox.height).toBeGreaterThan(0);
+      const bb = node.boundingBox;
+      if (!bb) throw new Error('Expected boundingBox to be defined');
+      expect(typeof bb.x).toBe('number');
+      expect(typeof bb.y).toBe('number');
+      expect(bb.width).toBeGreaterThan(0);
+      expect(bb.height).toBeGreaterThan(0);
     }
 
     // --- Part-level: bold ---
     expect(
-      findTextNode(textNodes, (p) => p.text === 'Bold text' && p.bold),
+      findTextNode(textNodes, (p) => Boolean(p.text === 'Bold text' && p.bold)),
     ).toBeDefined();
 
     // --- Part-level: italic ---
     expect(
-      findTextNode(textNodes, (p) => p.text === 'Italic text' && p.italic),
+      findTextNode(textNodes, (p) =>
+        Boolean(p.text === 'Italic text' && p.italic),
+      ),
     ).toBeDefined();
 
     // --- Part-level: subscript ---
     expect(
-      findTextNode(
-        textNodes,
-        (p) => p.text === 'Subscript text' && p.subscript,
+      findTextNode(textNodes, (p) =>
+        Boolean(p.text === 'Subscript text' && p.subscript),
       ),
     ).toBeDefined();
 
     // --- Part-level: superscript ---
     expect(
-      findTextNode(
-        textNodes,
-        (p) => p.text === 'Superscript text' && p.superscript,
+      findTextNode(textNodes, (p) =>
+        Boolean(p.text === 'Superscript text' && p.superscript),
       ),
     ).toBeDefined();
 

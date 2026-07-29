@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type HTMLAttributes, useState, useEffect, useCallback } from 'react';
+import { type HTMLAttributes, useState, useEffect } from 'react';
 import clsx from 'clsx';
 
 import Input from '../Input/Input';
@@ -24,6 +24,7 @@ import formClasses from '../form/form.module.less';
 import { ErrorPopover } from '../form/errorPopover';
 import { getSelectOptionsFromSchema } from '../../../utils';
 import { MeasurementUnits } from 'src/script/ui/data/schema/options-schema';
+import { usePopoverAnchor } from '../../../../../hooks';
 
 interface Schema {
   title?: string;
@@ -104,15 +105,11 @@ const MeasureInput = ({
   ...rest
 }: MeasureInputProps) => {
   const [internalValue, setInternalValue] = useState(String(value));
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-
-  const handlePopoverOpen = useCallback((event: React.MouseEvent) => {
-    setAnchorEl(event.currentTarget as HTMLElement);
-  }, []);
-
-  const handlePopoverClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
+  const {
+    anchorEl,
+    handleOpen: handlePopoverOpen,
+    handleClose: handlePopoverClose,
+  } = usePopoverAnchor();
 
   // NOTE: onChange handler in the Input comopnent (packages/ketcher-react/src/script/ui/component/form/Input/Input.tsx)
   // is mapped to the internal function via constructor

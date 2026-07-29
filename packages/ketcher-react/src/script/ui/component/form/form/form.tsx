@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component, useCallback, useState } from 'react';
+import { Component } from 'react';
 
 import { type ValidationError, type Schema, Validator } from 'jsonschema';
 import { ErrorPopover } from './errorPopover';
@@ -31,7 +31,7 @@ import clsx from 'clsx';
 import { connect } from 'react-redux';
 import { getSelectOptionsFromSchema } from '../../../utils';
 import { updateFormState } from '../../../state/modal/form';
-import { useFormContext } from '../../../../../hooks';
+import { useFormContext, usePopoverAnchor } from '../../../../../hooks';
 import { cloneDeep, omit } from 'lodash';
 import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
@@ -307,17 +307,6 @@ function Label({
         renderLabelContentAfter(title ?? '', tooltip ?? null)}
     </label>
   );
-}
-
-function usePopoverAnchor() {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const handleOpen = useCallback((event: React.MouseEvent) => {
-    setAnchorEl(event.currentTarget as HTMLElement);
-  }, []);
-  const handleClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
-  return { anchorEl, handleOpen, handleClose };
 }
 
 function Field(props: Readonly<FieldProps>) {

@@ -23,6 +23,7 @@ import { Bond, type BondAttributes } from 'domain/entities/bond';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
+import { KetcherLogger } from 'utilities';
 
 import closest from '../shared/closest';
 import type { ReStruct } from 'application/render';
@@ -58,10 +59,15 @@ type AtomForNewBondResult = {
 const DEFAULT_BOND_TYPE = Bond.PATTERN.TYPE.SINGLE;
 const findClosestAtom: FindClosestAtom = closest.atom;
 
+function throwLoggedError(message: string): never {
+  KetcherLogger.error(message);
+  throw new Error(message);
+}
+
 function getReAtom(restruct: ReStruct, atomId: number) {
   const atom = restruct.atoms.get(atomId);
   if (!atom) {
-    throw new Error(`Atom ${atomId} not found in restruct`);
+    throwLoggedError(`Atom ${atomId} not found in restruct`);
   }
 
   return atom;
@@ -70,7 +76,7 @@ function getReAtom(restruct: ReStruct, atomId: number) {
 function getAtom(restruct: ReStruct, atomId: number): Atom {
   const atom = restruct.molecule.atoms.get(atomId);
   if (!atom) {
-    throw new Error(`Atom ${atomId} not found in struct`);
+    throwLoggedError(`Atom ${atomId} not found in struct`);
   }
 
   return atom;
@@ -79,7 +85,7 @@ function getAtom(restruct: ReStruct, atomId: number): Atom {
 function getAtomNeighbors(struct: Struct, atomId: number) {
   const neighbors = struct.atomGetNeighbors(atomId);
   if (!neighbors) {
-    throw new Error(`Atom ${atomId} not found in struct`);
+    throwLoggedError(`Atom ${atomId} not found in struct`);
   }
 
   return neighbors;
@@ -87,12 +93,12 @@ function getAtomNeighbors(struct: Struct, atomId: number) {
 
 function getBondAngle(struct: Struct, bondId: number | null) {
   if (bondId === null) {
-    throw new Error('Previous bond is required');
+    throwLoggedError('Previous bond is required');
   }
 
   const bond = struct.bonds.get(bondId);
   if (!bond) {
-    throw new Error(`Bond ${bondId} not found in struct`);
+    throwLoggedError(`Bond ${bondId} not found in struct`);
   }
 
   return bond.angle;
@@ -100,7 +106,7 @@ function getBondAngle(struct: Struct, bondId: number | null) {
 
 function ensureAtomId(atom: number | AtomAttributes): number {
   if (typeof atom !== 'number') {
-    throw new Error('Expected atom id (number), but received atom attributes');
+    throwLoggedError('Expected atom id (number), but received atom attributes');
   }
 
   return atom;

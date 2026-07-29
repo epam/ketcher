@@ -16,8 +16,8 @@
 
 import {
   Atom,
-  StereoLabel,
   type AtomQueryProperties,
+  StereoLabel,
 } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
@@ -2054,6 +2054,33 @@ function getSubstitutionCountAttrText(value: number) {
 }
 
 type AtomCustomQueryValue = string | number | boolean;
+
+/**
+ * Minimum shape required by getAtomCustomQuery.
+ * Satisfied by both a full Atom instance (query-specific fields nested
+ * under queryProperties) and the flat Redux form state produced by the
+ * Atom dialog (those fields hoisted to top level by fromAtom).
+ */
+type AtomQueryInput = Partial<
+  Pick<
+    Atom,
+    | 'isotope'
+    | 'charge'
+    | 'explicitValence'
+    | 'ringBondCount'
+    | 'substitutionCount'
+    | 'hCount'
+    | 'implicitHCount'
+  >
+> & {
+  unsaturatedAtom?: number | boolean; // number on Atom, boolean in form state
+  queryProperties?: Partial<AtomQueryProperties>;
+} & Partial<AtomQueryProperties>; // flat query fields (form state path)
+
+/**
+ * Maps atom properties and SMARTS/query-specific atom fields to the textual
+ * Molfile query attributes rendered by getAtomCustomQuery().
+ */
 type AtomCustomQueryPropertyName =
   | 'aromaticity'
   | 'charge'
@@ -2069,22 +2096,21 @@ type AtomCustomQueryPropertyName =
   | 'substitutionCount'
   | 'unsaturatedAtom';
 type AtomCustomQueryPattern = {
+  /** Atom property name used to determine whether the query attribute applies. */
   propertyName: AtomCustomQueryPropertyName;
-  getValue: (atom: Atom) => AtomCustomQueryValue | null | undefined;
+  /** Reads the raw atom/query-property value before text normalization. */
+  getValue: (atom: AtomQueryInput) => AtomCustomQueryValue | null | undefined;
+  /** Converts a normalized value to its Molfile query attribute representation. */
   format: (value: string) => string;
 };
 
-const NON_QUERY_ATOM_CUSTOM_QUERY_ATTRIBUTES: readonly AtomCustomQueryPropertyName[] =
-  ['charge', 'explicitValence', 'isotope'];
+const EXCLUDED_QUERY_ATTRIBUTES: readonly AtomCustomQueryPropertyName[] = [
+  'charge',
+  'explicitValence',
+  'isotope',
+];
 
-const getAtomCustomQueryProperty =
-  <PropertyName extends keyof AtomQueryProperties>(
-    propertyName: PropertyName,
-  ) =>
-  (atom: Atom): AtomQueryProperties[PropertyName] =>
-    atom.queryProperties[propertyName];
-
-const atomCustomQueryPatterns: AtomCustomQueryPattern[] = [
+const atomCustomQueryPatterns: readonly AtomCustomQueryPattern[] = [
   {
     propertyName: 'isotope',
     getValue: (atom) => atom.isotope,
@@ -2092,7 +2118,8 @@ const atomCustomQueryPatterns: AtomCustomQueryPattern[] = [
   },
   {
     propertyName: 'aromaticity',
-    getValue: getAtomCustomQueryProperty('aromaticity'),
+    getValue: (atom) =>
+      atom.queryProperties?.aromaticity ?? atom.aromaticity ?? null,
     format: (value) => (value === 'aromatic' ? 'a' : 'A'),
   },
   {
@@ -2132,6 +2159,7 @@ const atomCustomQueryPatterns: AtomCustomQueryPattern[] = [
   {
     propertyName: 'hCount',
     getValue: (atom) => atom.hCount,
+    // Molfile query hydrogen counts are encoded as H<count - 1>.
     format: (value) =>
       Number(value) > 0 ? 'H' + (Number(value) - 1).toString() : '',
   },
@@ -2142,22 +2170,25 @@ const atomCustomQueryPatterns: AtomCustomQueryPattern[] = [
   },
   {
     propertyName: 'ringMembership',
-    getValue: getAtomCustomQueryProperty('ringMembership'),
+    getValue: (atom) =>
+      atom.queryProperties?.ringMembership ?? atom.ringMembership ?? null,
     format: (value) => `R${value}`,
   },
   {
     propertyName: 'ringSize',
-    getValue: getAtomCustomQueryProperty('ringSize'),
+    getValue: (atom) => atom.queryProperties?.ringSize ?? atom.ringSize ?? null,
     format: (value) => `r${value}`,
   },
   {
     propertyName: 'connectivity',
-    getValue: getAtomCustomQueryProperty('connectivity'),
+    getValue: (atom) =>
+      atom.queryProperties?.connectivity ?? atom.connectivity ?? null,
     format: (value) => `X${value}`,
   },
   {
     propertyName: 'chirality',
-    getValue: getAtomCustomQueryProperty('chirality'),
+    getValue: (atom) =>
+      atom.queryProperties?.chirality ?? atom.chirality ?? null,
     format: (value) => (value === 'clockwise' ? '@@' : '@'),
   },
 ];
@@ -2187,7 +2218,7 @@ export function checkIsSmartPropertiesExist(atom: Atom) {
 }
 
 export function getAtomCustomQuery(
-  atom: Atom,
+  atom: AtomQueryInput,
   includeOnlyQueryAttributes?: boolean,
 ) {
   let queryAttrsText = '';
@@ -2199,7 +2230,7 @@ export function getAtomCustomQuery(
   for (const { propertyName, getValue, format } of atomCustomQueryPatterns) {
     if (
       includeOnlyQueryAttributes &&
-      NON_QUERY_ATOM_CUSTOM_QUERY_ATTRIBUTES.includes(propertyName)
+      EXCLUDED_QUERY_ATTRIBUTES.includes(propertyName)
     ) {
       continue;
     }

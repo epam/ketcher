@@ -1,10 +1,10 @@
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { isEqual } from 'lodash';
+import { getOrThrow } from '../../utilities';
 import { Render } from './raphaelRender';
 import type ReAtom from './restruct/reatom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { getOrThrow } from '../../utilities/getOrThrow';
 
 /**
  * Is used to improve search and opening tab performance in Template Dialog

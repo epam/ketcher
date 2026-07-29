@@ -204,9 +204,7 @@ const debouncedTurnOffScrollAnimation = debounce(
   SCROLL_SMOOTHNESS_IM_MS,
 );
 
-type CoreEditorTheme =
-  | DeepPartial<EditorTheme>
-  | DeepPartial<{ ketcher: EditorTheme }>;
+type CoreEditorTheme = DeepPartial<{ ketcher: EditorTheme }>;
 
 interface ICoreEditorConstructorParams {
   ketcherId?: string;

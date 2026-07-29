@@ -1,6 +1,10 @@
 import { CoreEditor, FlexMode } from 'application/editor';
 import { ClearTool } from 'application/editor/tools/Clear';
-import { polymerEditorTheme, peptideMonomerItem } from '../../../mock-data';
+import {
+  coreEditorTheme,
+  polymerEditorTheme,
+  peptideMonomerItem,
+} from '../../../mock-data';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
@@ -93,7 +97,7 @@ describe('Clear Tool', () => {
   beforeEach(() => {
     canvas = createPolymerEditorCanvas();
     editor = new CoreEditor({
-      theme: polymerEditorTheme,
+      theme: coreEditorTheme,
       canvas,
       renderersContainer: createRenderersManager(polymerEditorTheme),
       mode: new FlexMode(),

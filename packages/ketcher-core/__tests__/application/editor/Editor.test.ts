@@ -14,7 +14,11 @@ import {
 } from '../../helpers/dom';
 import type { SelectBase } from 'application/editor/tools/select';
 import { Vec2 } from 'domain/entities';
-import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
+import {
+  coreEditorTheme,
+  peptideMonomerItem,
+  polymerEditorTheme,
+} from '../../mock-data';
 import {
   KetcherLogger,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
@@ -165,7 +169,7 @@ describe('CoreEditor', () => {
     const canvas = createPolymerEditorCanvas();
     const editor: CoreEditor = new CoreEditor({
       canvas,
-      theme: polymerEditorTheme,
+      theme: coreEditorTheme,
       renderersContainer: createRenderersManager(polymerEditorTheme),
     });
     const onMousemove = jest.fn();
@@ -186,7 +190,7 @@ describe('CoreEditor', () => {
       canvas = createPolymerEditorCanvas();
       editor = new CoreEditor({
         canvas,
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
       errorSpy = jest.spyOn(KetcherLogger, 'error').mockImplementation();
@@ -1229,7 +1233,7 @@ describe('CoreEditor', () => {
       canvas = createPolymerEditorCanvas();
       editor = new CoreEditor({
         canvas,
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
       editor.selectTool(ToolName.selectRectangle);
@@ -1274,7 +1278,7 @@ describe('CoreEditor', () => {
       rootElement.appendChild(canvas);
       editor = new CoreEditor({
         canvas,
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
     });
@@ -1372,7 +1376,7 @@ describe('CoreEditor', () => {
       canvas = createPolymerEditorCanvas();
       editor = new CoreEditor({
         canvas,
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
     });
@@ -1406,7 +1410,7 @@ describe('CoreEditor', () => {
       canvas = createPolymerEditorCanvas();
       editor = new CoreEditor({
         canvas,
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
     });
@@ -1422,7 +1426,7 @@ describe('CoreEditor', () => {
       const testCanvas = createPolymerEditorCanvas();
       const testEditor = new CoreEditor({
         canvas: testCanvas,
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
 
@@ -1445,7 +1449,7 @@ describe('CoreEditor', () => {
       const testCanvas = createPolymerEditorCanvas();
       const testEditor = new CoreEditor({
         canvas: testCanvas,
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
 

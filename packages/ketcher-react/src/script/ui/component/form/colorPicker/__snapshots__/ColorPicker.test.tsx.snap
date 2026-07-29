@@ -8,7 +8,7 @@ exports[`should be rendered correctly should be rendered without crashing 1`] = 
     role="none"
   >
     <button
-      aria-controls="color-picker-«r0»"
+      aria-controls="color-picker-_r_0_"
       aria-expanded="false"
       aria-haspopup="true"
       class="colorPickerInput"
@@ -16,7 +16,7 @@ exports[`should be rendered correctly should be rendered without crashing 1`] = 
     >
       <div
         class="colorPickerPreview"
-        data-testid="undefined-color-picker-preview"
+        data-testid="testname-color-picker-preview"
         style="background-color: rgb(0, 0, 0);"
       />
       <icon-chevron.svg

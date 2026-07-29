@@ -13,4 +13,6 @@ export { SGroupRenderer } from './SGroupRenderer';
 export { RenderersManager } from './RenderersManager';
 export { getRenderedStructuresBbox } from './utils';
 export { StereoFlagRenderer } from './StereoFlagRenderer';
+export { FlexModePolymerBondRenderer } from './PolymerBondRenderer/FlexModePolymerBondRenderer';
+export { SnakeModePolymerBondRenderer } from './PolymerBondRenderer/SnakeModePolymerBondRenderer';
 export * from './sequence';

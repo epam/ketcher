@@ -2076,7 +2076,7 @@ function getSubstitutionCountAttrText(value: number) {
   return attrText;
 }
 
-type AtomCustomQueryValue = string | number | boolean | null | undefined;
+type AtomCustomQueryValue = string | number | boolean;
 type AtomCustomQueryPropertyName =
   | 'aromaticity'
   | 'charge'
@@ -2093,7 +2093,7 @@ type AtomCustomQueryPropertyName =
   | 'unsaturatedAtom';
 type AtomCustomQueryPattern = {
   propertyName: AtomCustomQueryPropertyName;
-  getValue: (atom: Atom) => AtomCustomQueryValue;
+  getValue: (atom: Atom) => AtomCustomQueryValue | null | undefined;
   format: (value: string) => string;
 };
 
@@ -2155,7 +2155,8 @@ const atomCustomQueryPatterns: AtomCustomQueryPattern[] = [
   {
     propertyName: 'hCount',
     getValue: (atom) => atom.hCount,
-    format: (value) => (Number(value) > 0 ? 'H' + (Number(value) - 1) : ''),
+    format: (value) =>
+      Number(value) > 0 ? 'H' + (Number(value) - 1).toString() : '',
   },
   {
     propertyName: 'implicitHCount',

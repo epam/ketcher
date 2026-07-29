@@ -2793,7 +2793,13 @@ export class SequenceMode extends BaseMode {
       nextNodeToConnect &&
       !(nextNodeToConnect instanceof EmptySequenceNode)
     ) {
-      if (!this.isR1Free(nextNodeToConnect)) {
+      // For antisense chains, when adding at the end (no previous node),
+      // we need to check R2 of the last monomer, not R1
+      const isAttachmentPointFree = this.isAntisenseEditMode
+        ? this.isR2Free(nextNodeToConnect)
+        : this.isR1Free(nextNodeToConnect);
+
+      if (!isAttachmentPointFree) {
         this.showMergeWarningModal();
         return;
       }
@@ -2905,13 +2911,30 @@ export class SequenceMode extends BaseMode {
     }
 
     if (needConnectWithNextNodeInChain) {
-      this.connectNodes(
-        lastNodeOfNewFragment,
-        currentNode,
-        modelChanges,
-        newNodePosition,
-        addPhosphateIfNeeded,
-      );
+      // For antisense chains at the end (no previousNodeInSameChain, but has currentNode),
+      // the parameters are swapped, so we need to reverse the connection order
+      const isAntisenseEndCase =
+        this.isAntisenseEditMode && !previousNodeInSameChain && currentNode;
+
+      if (isAntisenseEndCase) {
+        // Antisense at end: connect lastU.R2 → newC.R1
+        this.connectNodes(
+          currentNode,
+          firstNodeOfNewFragment,
+          modelChanges,
+          newNodePosition,
+          addPhosphateIfNeeded,
+        );
+      } else {
+        // Normal case: connect newMonomer.R2 → nextMonomer.R1
+        this.connectNodes(
+          lastNodeOfNewFragment,
+          currentNode,
+          modelChanges,
+          newNodePosition,
+          addPhosphateIfNeeded,
+        );
+      }
     }
 
     return modelChanges;

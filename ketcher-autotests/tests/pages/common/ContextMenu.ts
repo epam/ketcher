@@ -46,7 +46,7 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
           state: 'hidden',
           timeout: 1000,
         });
-      } catch (error) {
+      } catch (_error) {
         await page.keyboard.press('Escape');
         await locators.contextMenuBody.waitFor({
           state: 'hidden',

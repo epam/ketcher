@@ -159,14 +159,17 @@ export function isMonomerConnectedToR2RnaBase(monomer?: BaseMonomer) {
   );
 }
 
-export function isChemMonomer(monomer?: BaseMonomer): boolean {
+export function isChemMonomer(monomer: BaseMonomer): boolean {
   return isMonomerOfClass(monomer, KetMonomerClass.CHEM);
 }
 
 export function isLinearChem(monomer?: BaseMonomer): boolean {
+  if (!monomer) {
+    return false;
+  }
+
   return (
-    isChemMonomer(monomer) &&
-    (monomer as BaseMonomer).usedAttachmentPointsNamesList.length <= 2
+    isChemMonomer(monomer) && monomer.usedAttachmentPointsNamesList.length <= 2
   );
 }
 
@@ -224,7 +227,7 @@ export function getPreviousMonomerInChain(monomer: BaseMonomer) {
       : undefined;
 
   if (!previousMonomer || !(r1PolymerBond instanceof PolymerBond)) {
-    return undefined;
+    return;
   }
 
   if (

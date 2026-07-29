@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import assert from 'assert';
+
 import {
   type ReStruct,
   type ImageReferencePositionInfo,
@@ -537,10 +539,7 @@ function findClosestFG(restruct: ReStruct, pos: Vec2, skip) {
 
       const dist = Vec2.dist(rectangleCenter, cursorPosition);
       const sGroupItem = reSGroup.item;
-      if (!sGroupItem) {
-        // A ReSGroup is always constructed with its underlying SGroup item.
-        throw new Error(`ReSGroup ${reSGroupId} has no item`);
-      }
+      assert(sGroupItem, `ReSGroup ${reSGroupId} has no item`);
       const { id } = sGroupItem;
       return { id, dist };
     }

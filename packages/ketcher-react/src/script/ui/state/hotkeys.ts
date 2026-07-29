@@ -201,6 +201,25 @@ function handleSelectTool(newAction, key: string, index: number) {
   return newAction;
 }
 
+// While hovering a bond, cycling through a shared shortcut (e.g. '1' for
+// single/up/down/updown) must advance from the bond's own current type/stereo,
+// not from the active toolbar tool (which doesn't change just from hovering,
+// so re-pressing the key would otherwise always land on the same entry) (#3705).
+function getNextBondTypeAction(hoveredItem, group, render) {
+  const hoveredBondId = hoveredItem.bonds;
+  if (hoveredBondId === undefined) return null;
+
+  const bond = render.ctab.bonds.get(hoveredBondId)?.b;
+  if (!bond) return null;
+
+  const currentIndex = group.findIndex((actName) => {
+    const opts = actions[actName]?.action?.opts;
+    return opts?.type === bond.type && opts?.stereo === bond.stereo;
+  });
+
+  return getNextAction(group[(currentIndex + 1) % group.length]);
+}
+
 function handleHotkeyGroup(
   group,
   actionTool,
@@ -233,7 +252,10 @@ function handleHotkeyGroup(
     if (actName === 'erase' && hasSelection) {
       dispatch(onAction(newAction));
     } else if (shouldHandleItemDirectly(hoveredItem, newAction)) {
-      newAction = getCurrentAction(group[index]) || newAction;
+      newAction =
+        getNextBondTypeAction(hoveredItem, group, render) ||
+        getCurrentAction(group[index]) ||
+        newAction;
       handleHotkeyOverItem({
         hoveredItem,
         newAction,

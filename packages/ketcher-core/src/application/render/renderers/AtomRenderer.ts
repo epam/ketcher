@@ -24,6 +24,7 @@ import {
 // Extra clearance in canvas units that keeps labels away from the atom bbox.
 const LABEL_CLEARANCE_OFFSET = 5;
 const STEREO_CIP_GAP = 2;
+const MAX_LABEL_LENGTH = 8;
 
 export type AtomHoverContour =
   | {
@@ -296,7 +297,25 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get labelText() {
+    if (this.atom.properties.atomList) {
+      return this.atom.properties.atomList.label();
+    }
     return this.atom.properties.alias ?? this.atom.label;
+  }
+
+  /** The label text shown on canvas — truncated to MAX_LABEL_LENGTH if necessary. */
+  public get displayLabelText() {
+    const text = this.labelText;
+    if (text.length > MAX_LABEL_LENGTH) {
+      return `${text.substring(0, MAX_LABEL_LENGTH)}...`;
+    }
+    return text;
+  }
+
+  /** When the label is truncated, this holds the full text for use as a tooltip. */
+  public get labelTooltipText(): string | null {
+    const text = this.labelText;
+    return text.length > MAX_LABEL_LENGTH ? text : null;
   }
 
   private get isAtomTerminal() {
@@ -352,8 +371,8 @@ export class AtomRenderer extends BaseRenderer {
   public get labelLength() {
     let { hydrogenAmount } = this.atom.calculateValence();
 
-    if (this.labelText.length > 1) {
-      return this.labelText.length;
+    if (this.displayLabelText.length > 1) {
+      return this.displayLabelText.length;
     }
 
     if (!this.shouldDisplayHydrogen) {
@@ -430,7 +449,7 @@ export class AtomRenderer extends BaseRenderer {
       textElement
         ?.append('tspan')
         .attr('dy', this.atom.hasExplicitIsotope ? 4 : 0)
-        .text(this.labelText);
+        .text(this.displayLabelText);
     }
 
     if (!this.atom.hasAlias && hydrogenAmount > 0) {
@@ -450,7 +469,7 @@ export class AtomRenderer extends BaseRenderer {
     if (shouldHydrogenBeOnLeft) {
       textElement
         ?.append('tspan')
-        .text(this.labelText)
+        .text(this.displayLabelText)
         .attr('dy', hydrogenAmount > 1 ? -3 : 0);
     }
 

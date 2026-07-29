@@ -98,7 +98,9 @@ function handleEraser({
       { editor, hoveredItemId: item[itemType][0], newAction, dispatch },
       itemType,
     ).then((res) => {
-      res && eraseItem({ editor, item });
+      if (res) {
+        eraseItem({ editor, item });
+      }
     });
   } else {
     eraseItem({ editor, item });

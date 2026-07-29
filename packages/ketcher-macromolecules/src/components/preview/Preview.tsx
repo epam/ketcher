@@ -25,6 +25,7 @@ import { selectShowPreview, selectEditor } from 'state/common';
 import MonomerPreview from './components/MonomerPreview/MonomerPreview';
 import PresetPreview from './components/PresetPreview/PresetPreview';
 import BondPreview from './components/BondPreview/BondPreview';
+import TextPreview from './components/TextPreview/TextPreview';
 
 const PreviewContainer = styled.div`
   display: inline-block;
@@ -124,6 +125,7 @@ export const Preview = () => {
       {preview.type === PreviewType.AmbiguousMonomer && (
         <AmbiguousMonomerPreview preview={preview} />
       )}
+      {preview.type === PreviewType.Text && <TextPreview />}
     </PreviewContainer>
   );
 };

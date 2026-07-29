@@ -18,15 +18,9 @@
 // It corresponds to a visualization (i.e. set of paths) of an atom or a bond.
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
+import type { RaphaelPath } from './raphaelTypes';
 
-export interface RaphaelPath {
-  translateAbs(x: number, y: number): void;
-  rotate(degree: number, cx: number, cy: number): void;
-  insertBefore(element: unknown): void;
-  remove(): void;
-  next?: RaphaelPath;
-  [key: string]: unknown;
-}
+export type { RaphaelPath } from './raphaelTypes';
 
 class Visel {
   public type: string;

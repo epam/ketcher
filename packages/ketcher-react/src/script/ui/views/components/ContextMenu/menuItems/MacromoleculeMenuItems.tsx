@@ -103,20 +103,32 @@ const MacromoleculeMenuItems = (
     );
   };
 
-  const handleEditAll = () => {
-    const coreEditor = provideEditorInstance();
+  const handleEditAll = async () => {
+    const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
 
-    coreEditor?.events.openConfirmationDialog.dispatch({
-      title: 'Editing monomers',
-      confirmationText: `You are going to edit ${totalMonomerCount} monomers. Are you sure?`,
-      onConfirm: () => handleEdit(true),
-    });
+    try {
+      await editor?.event.confirm.dispatch({
+        title: 'Editing monomers',
+        text: `You are going to edit ${totalMonomerCount} monomers. Are you sure?`,
+      });
+      // Promise resolves when the user clicks OK; do nothing on Cancel (caught below).
+      handleEdit(true);
+    } catch {
+      // User clicked Cancel — no action needed.
+    }
   };
 
   const handleDelete = () => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const molecule = editor.render.ctab;
-    const itemsToDelete = editor.selection() || {};
+
+    // When nothing is selected, fall back to deleting the right-clicked monomer
+    // SGroups (passed via context menu props) instead of an empty selection.
+    const activeSelection = editor.selection();
+    const itemsToDelete = activeSelection ?? {
+      sgroups: functionalGroups?.map((fg) => fg.relatedSGroupId) ?? [],
+    };
+
     const action = fromFragmentDeletion(molecule, itemsToDelete);
     editor.update(action);
     editor.selection(null);

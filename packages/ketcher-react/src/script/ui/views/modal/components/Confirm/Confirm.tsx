@@ -3,17 +3,18 @@ import classes from '../toolbox/FG/RemoveFG.module.less';
 type ConfirmProps = {
   onOk: () => void;
   onCancel: () => void;
+  text?: string;
+  title?: string;
 };
 
-export const Confirm = ({ onOk, onCancel }: ConfirmProps) => {
+export const Confirm = ({ onOk, onCancel, text, title }: ConfirmProps) => {
   return (
     <div className={classes.window}>
       <header className={classes.header} data-testid="confirm-header">
-        Warning!
+        {title || 'Warning!'}
       </header>
       <div className={classes.question} data-testid="confirm-question">
-        Unsupported S-group type found. Would you like to import structure
-        without it?
+        {text || 'Unsupported S-group type found. Would you like to import structure without it?'}
       </div>
       <footer className={classes.footer}>
         <input

@@ -22,27 +22,22 @@ Before opening the monomer creation wizard via "Edit All [code] (n)", the system
 
 - Title: "Editing monomers"
 - Body: "You are going to edit (n) monomers. Are you sure?"
-- Two actions: "Cancel" (dismisses modal, no wizard opened) and "Yes" (proceeds to wizard)
+- Two actions: "Cancel" (dismisses modal, no wizard opened) and "OK" (proceeds to wizard)
 
 #### Scenario: Confirmation modal is shown on "Edit All" click
 
 - **WHEN** the user clicks "Edit All [code] (n)"
 - **THEN** a confirmation modal SHALL appear with the title "Editing monomers" and the body "You are going to edit (n) monomers. Are you sure?"
 
-#### Scenario: Confirming with "Yes" opens the wizard
+#### Scenario: Confirming with "OK" opens the wizard
 
-- **WHEN** the confirmation modal is displayed and the user clicks "Yes"
+- **WHEN** the confirmation modal is displayed and the user clicks "OK"
 - **THEN** the monomer creation wizard SHALL open pre-loaded with the monomer's current properties for all-instances editing
 
 #### Scenario: "Cancel" dismisses the modal without opening the wizard
 
 - **WHEN** the confirmation modal is displayed and the user clicks "Cancel"
 - **THEN** the modal SHALL close and the monomer creation wizard SHALL NOT open
-
-#### Scenario: "Yes" is the default action in the confirmation modal
-
-- **WHEN** the confirmation modal is displayed
-- **THEN** the "Yes" button SHALL be styled as the default/primary action
 
 ---
 

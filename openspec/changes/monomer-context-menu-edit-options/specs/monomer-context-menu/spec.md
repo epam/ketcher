@@ -11,7 +11,7 @@ The `FOR_MACROMOLECULE` right-click context menu SHALL be restructured to displa
 "Create Monomer"
 —
 "Edit Monomer"
-"Edit All [monomer_code] (number_of_selected_monomers)"
+"Edit All [monomer_code] (number_of_monomers_on_canvas)"
 —
 "Delete"
 ```
@@ -88,7 +88,7 @@ The "Edit Monomer" item SHALL be visible whenever the context menu is shown for 
 
 ### Requirement: "Edit All [code] (n)" item visibility and enabled state
 
-The context menu SHALL include an item labelled **"Edit All [monomer_code] (number_of_selected_monomers)"** where `[monomer_code]` is rendered in bold and `(n)` is the total count of that monomer on the canvas (not just selected instances).
+The context menu SHALL include an item labelled **"Edit All [monomer_code] (number_of_monomers_on_canvas)"** where `[monomer_code]` is rendered in bold and `(n)` is the total count of that monomer on the canvas (not just selected instances).
 
 The item SHALL be visible and enabled when the right-click target (or any item in the selection) contains instances of an identical monomer.
 

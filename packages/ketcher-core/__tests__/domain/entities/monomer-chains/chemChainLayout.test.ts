@@ -9,6 +9,7 @@ import { Vec2, type BaseMonomer } from 'domain/entities';
 import { AttachmentPointName } from 'domain/types';
 import {
   chemMonomerItem,
+  coreEditorTheme,
   peptideMonomerItem,
   polymerEditorTheme,
 } from '../../../mock-data';
@@ -37,7 +38,7 @@ describe('CHEM chain layout (Sequence and Snake modes)', () => {
   beforeEach(() => {
     canvas = createPolymerEditorCanvas();
     editor = new CoreEditor({
-      theme: polymerEditorTheme,
+      theme: coreEditorTheme,
       canvas,
       renderersContainer: createRenderersManager(polymerEditorTheme),
       mode: new SequenceMode(),

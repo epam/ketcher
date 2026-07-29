@@ -281,15 +281,11 @@ class SGroupTool implements Tool {
     }
   }
 
-  mousemove(event: MouseEvent) {
+  mousemove(event: PointerEvent) {
     if (this.lassoHelper.running()) {
       this.editor.selection(this.lassoHelper.addPoint(event));
     } else {
-      this.editor.hover(
-        this.editor.findItem(event, searchMaps),
-        null,
-        event as PointerEvent,
-      );
+      this.editor.hover(this.editor.findItem(event, searchMaps), null, event);
     }
   }
 

@@ -42,7 +42,7 @@ import { fromSgroupAddition } from './sgroup';
 import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type { Image } from 'domain/entities/image';
-import { getOrThrow } from '../../../utilities/getOrThrow';
+import { getOrThrow } from '../../../utilities';
 
 type CreatedItems = {
   atoms: number[];

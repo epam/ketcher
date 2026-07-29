@@ -4,6 +4,7 @@ import { isEqual } from 'lodash';
 import { Render } from './raphaelRender';
 import type ReAtom from './restruct/reatom';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import { getOrThrow } from '../../utilities/getOrThrow';
 
 /**
  * Is used to improve search and opening tab performance in Template Dialog
@@ -165,15 +166,11 @@ function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
     }
 
     sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
-      const attachmentPointAtom = struct.atoms.get(attachmentPoint.atomId);
-      if (!attachmentPointAtom) {
-        // An sgroup attachment point must always reference an existing atom
-        // in the same struct; a missing atom indicates a programming error
-        // (e.g. the atom was removed without updating the attachment point).
-        throw new Error(
-          `Atom with id ${attachmentPoint.atomId} not found in struct while converting sgroup attachment points`,
-        );
-      }
+      const attachmentPointAtom = getOrThrow(
+        struct.atoms,
+        attachmentPoint.atomId,
+        `Atom with id ${attachmentPoint.atomId} not found in struct while converting sgroup attachment points`,
+      );
       attachmentPointAtom.setRGAttachmentPointForDisplayPurpose();
       const rgroupAttachmentPoint =
         attachmentPoint.convertToRGroupAttachmentPointForDisplayPurpose(

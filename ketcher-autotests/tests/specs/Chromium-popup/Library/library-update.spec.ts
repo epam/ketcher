@@ -597,67 +597,59 @@ test('Case 22: Update Library item with compound that contains MOLv3000 file wit
   expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
 });
 
-test.fail(
-  'Case 23: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate without groupClass field',
-  async () => {
-    // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8185
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate without groupClass field
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Execute command in console
-     * 3. Check that the structure doesn't appears in the Library
-     *
-     * Version 3.9
-     */
+test('Case 23: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate without groupClass field', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8345
+   * Description: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate without groupClass field
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute command in console
+   * 3. Check that the structure doesn't appears in the Library
+   *
+   * Version 3.9
+   */
 
-    const sdfFile =
-      _A1Body +
-      _type +
-      'monomerGroupTemplate' +
-      _betweenEntries +
-      _groupName +
-      '_A1' +
-      _betweenEntries +
-      _endToken;
+  const sdfFile =
+    _A1Body +
+    _type +
+    'monomerGroupTemplate' +
+    _betweenEntries +
+    _groupName +
+    '_A1' +
+    _betweenEntries +
+    _endToken;
 
-    const error = await updateMonomersLibrary(page, sdfFile);
-    expect(error).not.toBeNull();
-    expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
-  },
-);
+  const error = await updateMonomersLibrary(page, sdfFile);
+  expect(error).not.toBeNull();
+  expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
+});
 
-test.fail(
-  'Case 24: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate without groupName field',
-  async () => {
-    // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8183
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate without groupName field
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Execute command in console
-     * 3. Check that the structure doesn't appears in the Library
-     *
-     * Version 3.9
-     */
+test('Case 24: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate without groupName field', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8345
+   * Description: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate without groupName field
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute command in console
+   * 3. Check that the structure doesn't appears in the Library
+   *
+   * Version 3.9
+   */
 
-    const sdfFile =
-      _A1Body +
-      _type +
-      'monomerGroupTemplate' +
-      _betweenEntries +
-      _groupClass +
-      'DNA' +
-      _betweenEntries +
-      _endToken;
+  const sdfFile =
+    _A1Body +
+    _type +
+    'monomerGroupTemplate' +
+    _betweenEntries +
+    _groupClass +
+    'DNA' +
+    _betweenEntries +
+    _endToken;
 
-    const error = await updateMonomersLibrary(page, sdfFile);
-    expect(error).not.toBeNull();
-    expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
-  },
-);
+  const error = await updateMonomersLibrary(page, sdfFile);
+  expect(error).not.toBeNull();
+  expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
+});
 
 test('Case 25: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has empty value', async () => {
   /*

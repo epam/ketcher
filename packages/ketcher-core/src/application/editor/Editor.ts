@@ -125,6 +125,7 @@ import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { debounce } from 'lodash';
 import type { D3SvgElementSelection } from 'application/render/types';
+import type { EditorTheme } from 'domain/types/theme';
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import {
   getKetRef,
@@ -132,6 +133,7 @@ import {
   KetSerializer,
 } from 'domain/serializers';
 import type { SequenceMode } from './modes/types/sequenceMode';
+import type { DeepPartial } from 'types';
 import {
   LibraryItemDragDropHandler,
   type IAutochainMonomerAddResult,
@@ -202,9 +204,11 @@ const debouncedTurnOffScrollAnimation = debounce(
   SCROLL_SMOOTHNESS_IM_MS,
 );
 
+type CoreEditorTheme = DeepPartial<{ ketcher: EditorTheme }>;
+
 interface ICoreEditorConstructorParams {
   ketcherId?: string;
-  theme;
+  theme: CoreEditorTheme;
   canvas: SVGSVGElement;
   renderersContainer: RenderersManager;
   mode?: BaseMode;
@@ -231,8 +235,6 @@ const hasBilnAliasUniquenessScope = (
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
   null;
-
-let editor;
 
 export class CoreEditor {
   public events: IEditorEvents;
@@ -263,10 +265,9 @@ export class CoreEditor {
 
   private libraryItemDragCancelled = false;
 
+  public theme: CoreEditorTheme;
   /** Handles all drag-and-drop attachment-point logic for library items. */
   private dragDropHandler!: LibraryItemDragDropHandler;
-
-  public theme;
   public zoomTool: ZoomTool;
   private tool?: Tool | BaseTool;
 
@@ -342,8 +343,6 @@ export class CoreEditor {
     this.renderersContainer.zoomTool = this.zoomTool;
     this.renderersContainer.editor = this;
     this.transientDrawingView = new TransientDrawingView();
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    editor = this;
     setEditorInstance(this);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeGlobalEventListeners();
@@ -1986,7 +1985,7 @@ export class CoreEditor {
     modificationType: string,
   ) {
     const modelChanges = new Command();
-    const editorHistory = EditorHistory.getInstance(editor);
+    const editorHistory = EditorHistory.getInstance(this);
     const aminoAcidsToModify = getAminoAcidsToModify(
       monomers,
       modificationType,
@@ -2027,10 +2026,10 @@ export class CoreEditor {
       });
 
       modelChanges.addOperation(new ReinitializeModeOperation());
-      editor.renderersContainer.update(modelChanges);
+      this.renderersContainer.update(modelChanges);
       editorHistory.update(modelChanges);
-      editor.transientDrawingView.hideModifyAminoAcidsView();
-      editor.transientDrawingView.update();
+      this.transientDrawingView.hideModifyAminoAcidsView();
+      this.transientDrawingView.update();
     };
 
     if (bondsToDelete.size > 0) {
@@ -2435,7 +2434,6 @@ export class CoreEditor {
 
   public destroy() {
     this.unsubscribeEvents();
-    editor = undefined;
     resetEditorInstance(this.ketcherId);
   }
 }

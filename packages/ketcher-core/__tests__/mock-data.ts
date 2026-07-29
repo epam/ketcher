@@ -776,6 +776,10 @@ export const polymerEditorTheme = {
   peptide: { color: { A: { regular: 'yellow' } } },
 };
 
+export const coreEditorTheme = {
+  ketcher: polymerEditorTheme,
+};
+
 export const chemMonomerItem: MonomerItemType = {
   favorite: false,
   label: 'A6OH',

@@ -2738,6 +2738,8 @@ const shortMonomerList: IMonomer[] = [
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Nucleotide._2_damdA,
     unsplitNucleotide: true,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6173',
   },
   {
     monomerDescription: '7.1. Unsplit monomer 5NitInd (from library)',
@@ -2747,6 +2749,8 @@ const shortMonomerList: IMonomer[] = [
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Nucleotide._5NitInd,
     unsplitNucleotide: true,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6173',
   },
   {
     monomerDescription: '8. Unknown monomer',

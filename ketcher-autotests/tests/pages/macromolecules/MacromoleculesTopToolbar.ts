@@ -69,7 +69,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
           state: 'visible',
           timeout: 5000,
         });
-      } catch (error) {
+      } catch (_error) {
         console.warn(
           "Create Antisense Strand Tools Section didn't appeared after click in 5 seconds, trying one more time...",
         );
@@ -135,7 +135,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
           state: 'visible',
           timeout: 5000,
         });
-      } catch (error) {
+      } catch (_error) {
         console.warn(
           "Layout Mode Dropdown Section didn't appeared after click in 5 seconds, trying one more time...",
         );

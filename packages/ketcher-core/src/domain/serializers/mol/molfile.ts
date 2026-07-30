@@ -389,15 +389,9 @@ export class Molfile {
       }
       if (atom.rglabel != null && atom.label === 'R#') {
         // TODO need to force rglabel=null when label is not 'R#'
-        const rglabel =
-          typeof atom.rglabel === 'number'
-            ? atom.rglabel
-            : Number(atom.rglabel);
-        if (Number.isFinite(rglabel)) {
-          for (let rgi = 0; rgi < 32; rgi++) {
-            if (rglabel & (1 << rgi)) {
-              rglabelList.push([id, rgi + 1]);
-            }
+        for (let rgi = 0; rgi < 32; rgi++) {
+          if (atom.rglabel & (1 << rgi)) {
+            rglabelList.push([id, rgi + 1]);
           }
         }
       }

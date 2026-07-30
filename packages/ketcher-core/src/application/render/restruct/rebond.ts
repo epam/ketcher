@@ -1584,11 +1584,12 @@ function getBondMark(
   if (bond.b.type === Bond.PATTERN.TYPE.TRIPLE) fixed += options.bondSpace;
   const p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
   const path = draw.bondMark(render.paper, p, mark, options);
-  tooltip &&
+  if (tooltip) {
     path.node.childNodes[0].setAttribute(
       'data-tooltip',
       util.escapeHtml(tooltip),
     );
+  }
 
   return path;
 }

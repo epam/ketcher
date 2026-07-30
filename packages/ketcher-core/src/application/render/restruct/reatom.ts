@@ -625,7 +625,7 @@ class ReAtom extends ReObject {
         (options.usageInMacromolecule === undefined && !sgroup);
       // can not use Atom.isSuperatomLeavingGroupAtom here, because in preview model there is no sgroups
       const isLeavingGroupAtom =
-        this.a.rglabel !== null && this.a.rglabel !== '0';
+        this.a.rglabel !== null && this.a.rglabel !== 0;
 
       const shouldHideHydrogenInPreview = isPreviewMode && isLeavingGroupAtom;
 
@@ -1304,7 +1304,9 @@ class ReAtom extends ReObject {
     let angles: Array<number> = [];
     this.a.neighbors.forEach((halfBondId) => {
       const halfBond = struct.halfBonds.get(halfBondId);
-      halfBond && angles.push(halfBond.ang);
+      if (halfBond) {
+        angles.push(halfBond.ang);
+      }
     });
     angles = angles.sort((a, b) => a - b);
     const largeAngles: Array<number> = [];

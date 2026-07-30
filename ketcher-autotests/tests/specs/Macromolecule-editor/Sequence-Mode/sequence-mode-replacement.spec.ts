@@ -753,6 +753,10 @@ function addAnnotation(message: string) {
   test.info().annotations.push({ type: 'WARNING', description: message });
 }
 
+function noAttachmentPointErrorMessage(missingAttachmentPoint: 'R1' | 'R2') {
+  return `The monomer lacks ${missingAttachmentPoint} attachment point and cannot be inserted at current position`;
+}
+
 async function checkForKnownBugs(
   replaceMonomer: IReplaceMonomer,
   sequence: ISequence,
@@ -1072,9 +1076,7 @@ for (const noR2AttachmentPointReplaceMonomer of noR2AttachmentPointReplaceMonome
       );
 
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(
-        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
-      );
+      expect(errorMessage).toContain(noAttachmentPointErrorMessage('R2'));
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1133,9 +1135,15 @@ for (const noR1orR2AttachmentPointReplaceMonomer of noR1orR2AttachmentPointRepla
         noR1orR2AttachmentPointReplaceMonomer,
         sequence.ReplacementPositions.Center,
       );
+      const missingAttachmentPoint =
+        noR2AttachmentPointReplaceMonomers.includes(
+          noR1orR2AttachmentPointReplaceMonomer,
+        )
+          ? 'R2'
+          : 'R1';
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
       expect(errorMessage).toContain(
-        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
+        noAttachmentPointErrorMessage(missingAttachmentPoint),
       );
 
       await ErrorMessageDialog(page).close();
@@ -1174,9 +1182,7 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
       );
 
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(
-        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
-      );
+      expect(errorMessage).toContain(noAttachmentPointErrorMessage('R1'));
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1212,9 +1218,7 @@ for (const noR2AttachmentPointReplaceMonomer of noR2AttachmentPointReplaceMonome
       );
 
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(
-        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
-      );
+      expect(errorMessage).toContain(noAttachmentPointErrorMessage('R2'));
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1251,9 +1255,15 @@ for (const noR1orR2AttachmentPointReplaceMonomer of noR1orR2AttachmentPointRepla
         sequence.ReplacementPositions.Center,
       );
 
+      const missingAttachmentPoint =
+        noR2AttachmentPointReplaceMonomers.includes(
+          noR1orR2AttachmentPointReplaceMonomer,
+        )
+          ? 'R2'
+          : 'R1';
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
       expect(errorMessage).toContain(
-        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
+        noAttachmentPointErrorMessage(missingAttachmentPoint),
       );
 
       await ErrorMessageDialog(page).close();
@@ -1292,9 +1302,7 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
       );
 
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(
-        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
-      );
+      expect(errorMessage).toContain(noAttachmentPointErrorMessage('R1'));
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1410,9 +1418,7 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
       );
 
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(
-        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
-      );
+      expect(errorMessage).toContain(noAttachmentPointErrorMessage('R1'));
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1450,9 +1456,7 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
       );
 
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(
-        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
-      );
+      expect(errorMessage).toContain(noAttachmentPointErrorMessage('R1'));
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1464,6 +1468,41 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
     });
   }
 }
+
+test(`Case 5331. Replacing selected monomer with a monomer that lacks the required R1 shows a specific error message`, async () => {
+  /*
+    Test case: https://github.com/epam/ketcher/issues/5331
+    Description:
+      When a monomer is selected in the sequence and the user tries to replace it
+      with a monomer from the library that lacks the R1 connection point needed to
+      preserve the backbone connection, a specific error message must be shown
+      instead of the generic "It is impossible to merge fragments..." one.
+    Scenario:
+      1. Go to Macromolecules - Sequence mode
+      2. Load a sequence of peptides (A)
+      3. Select the last peptide (A)
+      4. Click on a peptide without R1 connection point (D-OAla) in the library
+      5. Validate that the specific error message is shown
+  */
+  await openFileAndAddToCanvasMacro(
+    page,
+    'KET/Sequence-Mode-Replacement/sequence of peptides (A).ket',
+  );
+  await selectAndReplaceSymbolWithError(
+    page,
+    {
+      Id: <number>monomerIDs.peptide_w_o_R1_D_OAla,
+      Monomer: Peptide.D_OAla,
+      MonomerDescription: 'peptide w/o R1 (D-OAla)',
+    },
+    2,
+  );
+
+  const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+  expect(errorMessage).toContain(noAttachmentPointErrorMessage('R1'));
+
+  await ErrorMessageDialog(page).close();
+});
 
 const twoSequences: ISequence[] = [
   {

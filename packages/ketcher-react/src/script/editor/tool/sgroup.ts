@@ -800,7 +800,9 @@ class SGroupTool implements Tool {
             ? createQueryComponentSGroup(id, editor, newSg, selection, sg)
             : fromContextType(id, editor, newSg, selection);
 
-          result && editor.update(result.action);
+          if (result) {
+            editor.update(result.action);
+          }
           editor.selection(null);
         }
       })

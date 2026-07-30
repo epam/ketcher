@@ -1,5 +1,5 @@
 import { AtomRenderer } from '../AtomRenderer';
-import { AtomLabel } from 'domain/constants';
+import { AtomLabel, type GenericAtomLabel } from 'domain/constants';
 import { AtomList } from 'domain/entities/atomList';
 
 /**
@@ -44,7 +44,7 @@ describe('AtomRenderer.labelText', () => {
     const atomList = new AtomList({ notList: false, ids: [6, 7, 8] });
     const atom = {
       properties: { atomList },
-      label: AtomLabel.LHash,
+      label: 'L#' as GenericAtomLabel,
     };
     expect(callGetter('labelText', atom as any)).toBe('[C,N,O]');
   });
@@ -53,7 +53,7 @@ describe('AtomRenderer.labelText', () => {
     const atomList = new AtomList({ notList: true, ids: [6, 7, 8] });
     const atom = {
       properties: { atomList },
-      label: AtomLabel.LHash,
+      label: 'L#' as GenericAtomLabel,
     };
     expect(callGetter('labelText', atom as any)).toBe('![C,N,O]');
   });
@@ -61,7 +61,7 @@ describe('AtomRenderer.labelText', () => {
   it('returns the generic label string for a generic atom', () => {
     const atom = {
       properties: {},
-      label: AtomLabel.Q,
+      label: 'Q' as GenericAtomLabel,
     };
     expect(callGetter('labelText', atom as any)).toBe('Q');
   });
@@ -73,24 +73,25 @@ describe('AtomRenderer.isGenericLabel', () => {
     expect(callGetter('isGenericLabel', atom as any)).toBe(false);
   });
 
-  it('returns true for a generic atom label', () => {
-    for (const label of [
-      AtomLabel.A,
-      AtomLabel.AH,
-      AtomLabel.Q,
-      AtomLabel.QH,
-      AtomLabel.M,
-      AtomLabel.MH,
-      AtomLabel.X,
-      AtomLabel.XH,
-    ]) {
+  it('returns true for all 8 atom generic labels', () => {
+    const genericLabels: GenericAtomLabel[] = [
+      'A',
+      'AH',
+      'Q',
+      'QH',
+      'M',
+      'MH',
+      'X',
+      'XH',
+    ];
+    for (const label of genericLabels) {
       const atom = { label, properties: {} };
       expect(callGetter('isGenericLabel', atom as any)).toBe(true);
     }
   });
 
   it('returns false for atom-list marker label', () => {
-    const atom = { label: AtomLabel.LHash, properties: {} };
+    const atom = { label: 'L#' as GenericAtomLabel, properties: {} };
     expect(callGetter('isGenericLabel', atom as any)).toBe(false);
   });
 });

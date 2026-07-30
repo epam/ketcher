@@ -272,54 +272,76 @@ export enum AtomLabel {
   // Query atoms
   D = 'D',
   T = 'T',
-  // Generic / pseudo query labels (extended table atoms)
-  A = 'A',
-  AH = 'AH',
-  Q = 'Q',
-  QH = 'QH',
-  M = 'M',
-  MH = 'MH',
-  X = 'X',
-  XH = 'XH',
-  HPlus = 'H+',
-  R = 'R',
-  Pol = 'Pol',
-  Star = '*',
-  G = 'G',
-  GH = 'GH',
-  GStar = 'G*',
-  GHStar = 'GH*',
-  ACY = 'ACY',
-  ACH = 'ACH',
-  ABC = 'ABC',
-  ABH = 'ABH',
-  AYL = 'AYL',
-  AYH = 'AYH',
-  ALK = 'ALK',
-  ALH = 'ALH',
-  AEL = 'AEL',
-  AEH = 'AEH',
-  AHC = 'AHC',
-  AHH = 'AHH',
-  AOX = 'AOX',
-  AOH = 'AOH',
-  CYC = 'CYC',
-  CYH = 'CYH',
-  CXX = 'CXX',
-  CXH = 'CXH',
-  CBC = 'CBC',
-  CBH = 'CBH',
-  ARY = 'ARY',
-  ARH = 'ARH',
-  CAL = 'CAL',
-  CAH = 'CAH',
-  CEL = 'CEL',
-  CEH = 'CEH',
-  CHC = 'CHC',
-  CHH = 'CHH',
-  HAR = 'HAR',
-  HAH = 'HAH',
-  // Atom-list marker
-  L = 'L',
-  LHash = 'L#',
 }
+
+/**
+ * String-literal union of all generic / pseudo query atom labels defined in
+ * the Ketcher extended table (atom generics, special nodes, group generics,
+ * and atom-list markers).
+ *
+ * These labels are NOT real periodic-table elements and therefore cannot be
+ * members of the {@link AtomLabel} enum (which mirrors the periodic table).
+ * They are used in query structures and are rendered in italic on the canvas.
+ */
+export type GenericAtomLabel =
+  // Atom generics
+  | 'A'
+  | 'AH'
+  | 'Q'
+  | 'QH'
+  | 'M'
+  | 'MH'
+  | 'X'
+  | 'XH'
+  // Special nodes
+  | 'H+'
+  | 'R'
+  | 'Pol'
+  | '*'
+  // Group generics (top-level)
+  | 'G'
+  | 'GH'
+  | 'G*'
+  | 'GH*'
+  // Acyclic subgroups
+  | 'ACY'
+  | 'ACH'
+  | 'ABC'
+  | 'ABH'
+  | 'AYL'
+  | 'AYH'
+  | 'ALK'
+  | 'ALH'
+  | 'AEL'
+  | 'AEH'
+  | 'AHC'
+  | 'AHH'
+  | 'AOX'
+  | 'AOH'
+  // Cyclic subgroups
+  | 'CYC'
+  | 'CYH'
+  | 'CXX'
+  | 'CXH'
+  | 'CBC'
+  | 'CBH'
+  | 'ARY'
+  | 'ARH'
+  | 'CAL'
+  | 'CAH'
+  | 'CEL'
+  | 'CEH'
+  | 'CHC'
+  | 'CHH'
+  | 'HAR'
+  | 'HAH'
+  // Atom-list markers
+  | 'L'
+  | 'L#';
+
+/**
+ * The full set of valid atom label values that can appear on the macromolecules
+ * canvas — either a real periodic-table element (plus D/T), or a generic /
+ * pseudo query label from the extended table.
+ */
+export type CoreAtomLabel = AtomLabel | GenericAtomLabel;

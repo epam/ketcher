@@ -36,10 +36,7 @@ test.describe('Ketcher bugs in 3.19.0', () => {
      * 4. Save as MDL Molfile V2000
      * 5. Verify preview contains V3000 markers and Warnings tab shows upgrade notice
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/schema-nucleotide-with-different-monomers.ket',

@@ -1024,23 +1024,29 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     }
   }
 
+  private updateAllSideConnectionBondsColor(
+    getColor: (renderer: SnakeModePolymerBondRenderer) => string,
+  ): void {
+    const editor = provideEditorInstance();
+    const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
+      `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
+    );
+
+    Array.from(allSideConnectionBondsBodyElements).forEach(
+      (bondBodyElement) => {
+        const renderer =
+          bondBodyElement.__data__ as SnakeModePolymerBondRenderer;
+        bondBodyElement.setAttribute('stroke', getColor(renderer));
+      },
+    );
+  }
+
   public appendHover(): void {
     assert(this.bodyElement);
 
-    const editor = provideEditorInstance();
-
     if (this.polymerBond.isSideChainConnection) {
-      const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
-        `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
-      );
-
-      Array.from(allSideConnectionBondsBodyElements).forEach(
-        (bondBodyElement) => {
-          bondBodyElement.setAttribute(
-            'stroke',
-            this.isHydrogenBond ? 'lightgrey' : '#C0E2E6',
-          );
-        },
+      this.updateAllSideConnectionBondsColor((renderer) =>
+        renderer.isHydrogenBond ? 'lightgrey' : '#C0E2E6',
       );
     }
 
@@ -1056,26 +1062,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
 
-    const editor = provideEditorInstance();
-
     if (this.polymerBond.isSideChainConnection) {
-      const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
-        `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
-      );
-
-      Array.from(allSideConnectionBondsBodyElements).forEach(
-        (bondBodyElement) => {
-          const renderer =
-            bondBodyElement.__data__ as SnakeModePolymerBondRenderer;
-
-          bondBodyElement.setAttribute(
-            'stroke',
-            renderer.polymerBond.isSideChainConnection &&
-              !renderer.isHydrogenBond
-              ? '#43B5C0'
-              : '#333333',
-          );
-        },
+      this.updateAllSideConnectionBondsColor((renderer) =>
+        renderer.polymerBond.isSideChainConnection && !renderer.isHydrogenBond
+          ? '#43B5C0'
+          : '#333333',
       );
     }
 
@@ -1113,36 +1104,21 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   public remove(): void {
-    // Check if this bond's body element has the side chain connection class BEFORE removing
     const isSideChainConnection = this.bodyElement
       ?.attr('class')
       ?.includes(SIDE_CONNECTION_BODY_ELEMENT_CLASS);
 
-    super.remove();
     if (this.polymerBond.hovered) {
-      this.editorEvents.mouseLeaveMonomer.dispatch();
+      this.removeHover();
     }
+    super.remove();
 
     // After a side-chain bond is removed, set all remaining side-chain bonds to the default color (#43B5C0)
     if (isSideChainConnection) {
-      const editor = provideEditorInstance();
-      const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
-        `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
-      );
-
-      Array.from(allSideConnectionBondsBodyElements).forEach(
-        (bondBodyElement) => {
-          const renderer =
-            bondBodyElement.__data__ as SnakeModePolymerBondRenderer;
-
-          bondBodyElement.setAttribute(
-            'stroke',
-            renderer.polymerBond.isSideChainConnection &&
-              !renderer.isHydrogenBond
-              ? '#43B5C0'
-              : '#333333',
-          );
-        },
+      this.updateAllSideConnectionBondsColor((renderer) =>
+        renderer.polymerBond.isSideChainConnection && !renderer.isHydrogenBond
+          ? '#43B5C0'
+          : '#333333',
       );
     }
   }

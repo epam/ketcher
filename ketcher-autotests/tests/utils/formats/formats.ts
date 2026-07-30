@@ -258,7 +258,7 @@ export async function recognize(
 
 export async function enableDearomatizeOnLoad(page: Page): Promise<void> {
   return await page.evaluate(() =>
-    window.ketcher.setSettings({ 'general.dearomatize-on-load': 'true' }),
+    window.ketcher.setSettings({ 'general.dearomatize-on-load': true }),
   );
 }
 

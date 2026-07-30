@@ -14,7 +14,8 @@ export const Confirm = ({ onOk, onCancel, text, title }: ConfirmProps) => {
         {title || 'Warning!'}
       </header>
       <div className={classes.question} data-testid="confirm-question">
-        {text || 'Unsupported S-group type found. Would you like to import structure without it?'}
+        {text ||
+          'Unsupported S-group type found. Would you like to import structure without it?'}
       </div>
       <footer className={classes.footer}>
         <input

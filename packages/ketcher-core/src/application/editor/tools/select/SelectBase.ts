@@ -352,7 +352,7 @@ abstract class SelectBase implements BaseTool {
       );
     } else if (
       altKey &&
-      !(renderer instanceof BaseSequenceItemRenderer) &&
+      this.editor.mode.modeName !== 'sequence-layout-mode' &&
       renderer.drawingEntity instanceof BaseMonomer
     ) {
       // Alt + drag on a monomer in Flex/Snake mode selects and moves

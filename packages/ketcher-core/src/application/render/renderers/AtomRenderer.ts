@@ -278,7 +278,7 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = provideEditorInstance().viewModel;
     const atomHaldEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
-    if (atomHaldEdges?.length === 0) {
+    if (!atomHaldEdges?.length) {
       if (this.atom.label === AtomLabel.D || this.atom.label === AtomLabel.T) {
         return false;
       } else {
@@ -307,6 +307,15 @@ export class AtomRenderer extends BaseRenderer {
   /** True when the atom's label is a generic / pseudo query atom (e.g. A, Q, M, X, *). */
   public get isGenericLabel(): boolean {
     return isGenericAtom(this.atom.label);
+  }
+
+  // A label that is itself a hydrogen isotope must not get an implicit-hydrogen suffix appended.
+  private get isHydrogenIsotopeLabel() {
+    return (
+      this.atom.label === AtomLabel.H ||
+      this.atom.label === AtomLabel.D ||
+      this.atom.label === AtomLabel.T
+    );
   }
 
   /** The label text shown on canvas — truncated to MAX_LABEL_LENGTH if necessary. */
@@ -381,7 +390,7 @@ export class AtomRenderer extends BaseRenderer {
       return this.displayLabelText.length;
     }
 
-    if (!this.shouldDisplayHydrogen) {
+    if (!this.shouldDisplayHydrogen || this.isHydrogenIsotopeLabel) {
       hydrogenAmount = 0;
     }
 
@@ -436,7 +445,7 @@ export class AtomRenderer extends BaseRenderer {
     let { hydrogenAmount } = this.atom.calculateValence();
     const shouldHydrogenBeOnLeft = this.shouldHydrogenBeOnLeft;
 
-    if (!this.shouldDisplayHydrogen) {
+    if (!this.shouldDisplayHydrogen || this.isHydrogenIsotopeLabel) {
       hydrogenAmount = 0;
     }
 

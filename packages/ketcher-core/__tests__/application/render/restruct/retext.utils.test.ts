@@ -1,41 +1,53 @@
-import {
-  countTextLines,
-  getMultilineTopAnchorOffset,
-} from 'application/render/restruct/retext.utils';
+import { removeFirstLineVerticalShift } from 'application/render/restruct/retext.utils';
 
-describe('countTextLines', () => {
-  it('returns 1 for a single line', () => {
-    expect(countTextLines('a')).toBe(1);
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function createTextNode(tspanShifts: Array<string | null>): SVGElement {
+  const text = document.createElementNS(SVG_NS, 'text');
+
+  tspanShifts.forEach((dy) => {
+    const tspan = document.createElementNS(SVG_NS, 'tspan');
+    if (dy !== null) {
+      tspan.setAttribute('dy', dy);
+    }
+    text.appendChild(tspan);
   });
 
-  it('returns 2 for two lines', () => {
-    expect(countTextLines('a\nb')).toBe(2);
+  return text;
+}
+
+describe('removeFirstLineVerticalShift', () => {
+  it('drops the centering shift of a multi-line element', () => {
+    const node = createTextNode(['-874', '21.6', '21.6']);
+
+    removeFirstLineVerticalShift(node);
+
+    const tspans = node.getElementsByTagName('tspan');
+    expect(tspans[0].hasAttribute('dy')).toBe(false);
   });
 
-  it('returns 3 for three lines', () => {
-    expect(countTextLines('a\nb\nc')).toBe(3);
+  it('keeps the shifts of the following lines untouched', () => {
+    const node = createTextNode(['-874', '21.6', '21.6']);
+
+    removeFirstLineVerticalShift(node);
+
+    const tspans = node.getElementsByTagName('tspan');
+    expect(tspans[1].getAttribute('dy')).toBe('21.6');
+    expect(tspans[2].getAttribute('dy')).toBe('21.6');
   });
 
-  it('returns 2 for a trailing newline', () => {
-    expect(countTextLines('a\n')).toBe(2);
-  });
-});
+  it('keeps the centering shift of a single-line element', () => {
+    const node = createTextNode(['3.5']);
 
-describe('getMultilineTopAnchorOffset', () => {
-  it('returns 0 for a single line', () => {
-    expect(getMultilineTopAnchorOffset(20, 1)).toBe(0);
-  });
+    removeFirstLineVerticalShift(node);
 
-  it('returns half the block minus one line for two lines', () => {
-    expect(getMultilineTopAnchorOffset(40, 2)).toBe(10);
+    const tspans = node.getElementsByTagName('tspan');
+    expect(tspans[0].getAttribute('dy')).toBe('3.5');
   });
 
-  it('returns the expected offset for an 81-line block', () => {
-    expect(getMultilineTopAnchorOffset(1748, 81)).toBeCloseTo(863.2, 1);
-  });
+  it('does nothing when there are no tspans', () => {
+    const node = createTextNode([]);
 
-  it('returns 0 for non-finite height', () => {
-    expect(getMultilineTopAnchorOffset(NaN, 2)).toBe(0);
-    expect(getMultilineTopAnchorOffset(Infinity, 2)).toBe(0);
+    expect(() => removeFirstLineVerticalShift(node)).not.toThrow();
   });
 });

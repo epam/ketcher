@@ -268,10 +268,13 @@ export class RenderersManager {
     return segmentLength;
   }
 
-  private recalculateRnaChainEnumeration(subChain: RnaSubChain) {
+  private recalculateRnaChainEnumeration(
+    subChain: RnaSubChain,
+    isChainCyclic: boolean,
+  ) {
     const startMonomer = subChain.nodes[0]?.firstMonomerInNode;
 
-    if (!isValidRnaEnumerationStartMonomer(startMonomer)) {
+    if (isChainCyclic && !isValidRnaEnumerationStartMonomer(startMonomer)) {
       subChain.nodes.forEach((node) => {
         node.monomers.forEach((monomer) => {
           monomer.renderer?.setEnumeration(null);
@@ -334,7 +337,7 @@ export class RenderersManager {
           subChain instanceof RnaSubChain ||
           subChain instanceof PhosphateSubChain
         ) {
-          this.recalculateRnaChainEnumeration(subChain);
+          this.recalculateRnaChainEnumeration(subChain, chain.isCyclic);
         }
       });
     });

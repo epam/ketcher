@@ -20,7 +20,10 @@ import { AttachmentPointName, type MonomerItemType } from 'domain/types';
 import { peptideMonomerItem } from '../../../mock-data';
 
 type RenderersManagerInternals = {
-  recalculateRnaChainEnumeration(subChain: RnaSubChain): void;
+  recalculateRnaChainEnumeration(
+    subChain: RnaSubChain,
+    isChainCyclic: boolean,
+  ): void;
 };
 
 const attachmentPoint = (label: AttachmentPointName) => ({
@@ -104,12 +107,15 @@ const mockNucleotideRenderers = (nucleotide: Nucleotide) => ({
   sugar: mockRenderer(nucleotide.sugar),
 });
 
-const recalculateRnaChainEnumeration = (subChain: RnaSubChain) => {
+const recalculateRnaChainEnumeration = (
+  subChain: RnaSubChain,
+  isChainCyclic = false,
+) => {
   const renderersManager = new RenderersManager({
     theme: {},
   }) as unknown as RenderersManagerInternals;
 
-  renderersManager.recalculateRnaChainEnumeration(subChain);
+  renderersManager.recalculateRnaChainEnumeration(subChain, isChainCyclic);
 };
 
 const createSugarLabeled = (label: string) =>
@@ -373,13 +379,22 @@ describe('RenderersManager', () => {
     const rnaSubChains = getRnaSubChains(collection);
 
     expect(rnaSubChains.length).toBeGreaterThan(0);
+    // The collection must recognize the head-to-tail connection as a cycle.
+    expect(collection.chains.some((chain) => chain.isCyclic)).toBe(true);
 
     const firstBaseRenderer = mockRenderer(first.base);
     const secondBaseRenderer = mockRenderer(second.base);
 
-    rnaSubChains.forEach((subChain) =>
-      recalculateRnaChainEnumeration(subChain),
-    );
+    collection.chains.forEach((chain) => {
+      chain.subChains
+        .filter(
+          (subChain): subChain is RnaSubChain =>
+            subChain instanceof RnaSubChain,
+        )
+        .forEach((subChain) =>
+          recalculateRnaChainEnumeration(subChain, chain.isCyclic),
+        );
+    });
 
     expect(firstBaseRenderer.enumerations).toEqual([null]);
     expect(secondBaseRenderer.enumerations).toEqual([null]);

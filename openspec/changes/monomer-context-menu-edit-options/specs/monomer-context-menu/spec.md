@@ -63,6 +63,16 @@ The context menu SHALL include a "Remove Grouping" item that removes the monomer
 - **WHEN** the user selects "Remove Grouping" on a collapsed monomer
 - **THEN** the monomer SHALL become expanded (internal atoms/bonds shown) and the grouping SHALL be removed
 
+#### Scenario: "Remove Grouping" is disabled for ambiguous monomers
+
+- **WHEN** the user right-clicks a monomer whose library item is ambiguous
+- **THEN** "Remove Grouping" SHALL be visible but disabled with a tooltip "Cannot edit unknown or ambiguous monomers"
+
+#### Scenario: "Remove Grouping" is disabled for unknown (unresolved) monomers
+
+- **WHEN** the user right-clicks a monomer whose `props.unresolved` flag is `true`
+- **THEN** "Remove Grouping" SHALL be visible but disabled with a tooltip "Cannot edit unknown or ambiguous monomers"
+
 ---
 
 ### Requirement: "Edit Monomer" item visibility and enabled state
@@ -111,6 +121,16 @@ The item SHALL be visible and enabled when the right-click target (or any item i
 
 - **WHEN** the user hovers over "Edit All [code] (n)"
 - **THEN** all instances of that monomer on the canvas SHALL be visually highlighted as though they are hovered
+
+#### Scenario: "Edit All" is disabled for ambiguous monomers
+
+- **WHEN** the user right-clicks a monomer whose library item is ambiguous (mixture of alternatives)
+- **THEN** "Edit All [code] (n)" SHALL be visible but disabled with a tooltip "Cannot edit unknown or ambiguous monomers"
+
+#### Scenario: "Edit All" is disabled for unknown (unresolved) monomers
+
+- **WHEN** the user right-clicks a monomer whose `props.unresolved` flag is `true` (monomer not found in the library)
+- **THEN** "Edit All [code] (n)" SHALL be visible but disabled with a tooltip "Cannot edit unknown or ambiguous monomers"
 
 ---
 

@@ -48,13 +48,15 @@ const MacromoleculeMenuItems = (
     ? 'Collapse monomers'
     : 'Collapse monomer';
 
-  // "Edit Monomer" is disabled when more than one monomer is in context, or the
-  // sgroup is invalid/ambiguous/unresolved.
-  const editMonomerDisabled =
-    multipleMonomersSelected ||
+  const unknownOrAmbiguousMonomer =
     !(sgroup instanceof MonomerMicromolecule) ||
     isAmbiguousMonomerLibraryItem(sgroup.monomer.monomerItem) ||
     sgroup.monomer.monomerItem.props.unresolved;
+
+  // "Edit Monomer" is disabled when more than one monomer is in context, or the
+  // sgroup is invalid/ambiguous/unresolved.
+  const editMonomerDisabled =
+    multipleMonomersSelected || unknownOrAmbiguousMonomer;
 
   // "Create Monomer" is visible only when the selection contains multiple
   // monomers, or exactly one monomer plus a non-monomer chemical structure.
@@ -174,6 +176,12 @@ const MacromoleculeMenuItems = (
         {...props}
         data-testid="Remove Grouping-option"
         onClick={removeGroupingHandler}
+        disabled={unknownOrAmbiguousMonomer}
+        title={
+          unknownOrAmbiguousMonomer
+            ? 'Cannot edit unknown or ambiguous monomers'
+            : undefined
+        }
       >
         Remove Grouping
       </Item>
@@ -212,6 +220,12 @@ const MacromoleculeMenuItems = (
         onClick={handleEditAll}
         onMouseEnter={() => setEditAllHover(true)}
         onMouseLeave={() => setEditAllHover(false)}
+        disabled={unknownOrAmbiguousMonomer}
+        title={
+          unknownOrAmbiguousMonomer
+            ? 'Cannot edit unknown or ambiguous monomers'
+            : undefined
+        }
       >
         Edit All <strong>{monomerCode}</strong> ({totalMonomerCount})
       </Item>

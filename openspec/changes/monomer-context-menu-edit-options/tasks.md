@@ -45,6 +45,12 @@
 - [x] 8.2 Update `ContextMenuTrigger.utils.ts` (`getMenuPropsForClosestItem` / `getMenuPropsForSelection`) to compute and pass the new props when routing to `FOR_MACROMOLECULE`
 - [x] 8.3 Add new `data-testid` constants to `ketcher-autotests/tests/pages/constants/contextMenu/Constants.ts` for all new/renamed menu items: `Edit Monomer`, `Edit All`, `Remove Grouping`, `Create Monomer`, `Delete` (monomer variant)
 
+## 10. "Edit All" and "Remove Grouping" Disabled State for Unknown and Ambiguous Monomers
+
+- [x] 10.1 Add `unknownOrAmbiguousMonomer` flag to `MacromoleculeMenuItems.tsx`: true when the sgroup is not a `MonomerMicromolecule`, or the monomer is ambiguous (`isAmbiguousMonomerLibraryItem`), or the monomer is unresolved (`props.unresolved`)
+- [x] 10.2 Apply `disabled={unknownOrAmbiguousMonomer}` and a tooltip to the "Edit All" `<Item>` component
+- [x] 10.3 Apply `disabled={unknownOrAmbiguousMonomer}` and a tooltip to the "Remove Grouping" `<Item>` component
+
 ## 9. Testing
 
 - [x] 9.1 Write E2E tests (Playwright) for right-clicking a single non-selected monomer — verify full menu structure and item order

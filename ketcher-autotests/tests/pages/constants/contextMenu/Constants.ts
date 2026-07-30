@@ -30,6 +30,8 @@ export enum MonomerOnMicroOption {
   ExpandMonomers = 'Expand monomers-option',
   CollapseMonomer = 'Collapse monomer-option',
   CollapseMonomers = 'Collapse monomers-option',
+  EditInstance = 'Edit Instance-option',
+  EditAllInstances = 'Edit All Instances-option',
 }
 
 export enum SuperatomOption {

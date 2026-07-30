@@ -64,7 +64,7 @@ describe('DrawingEntitiesManager.resizeRxnArrow', () => {
       [new Vec2(0, 0), new Vec2(1, 0)],
     );
     addCommand.execute(editor.renderersContainer);
-    const arrow = drawingEntitiesManager.rxnArrows.values().next().value;
+    const [arrow] = [...drawingEntitiesManager.rxnArrows.values()];
     const almostHorizontalEnd = new Vec2(2, 0.05);
 
     const resizeCommand = drawingEntitiesManager.resizeRxnArrow(
@@ -85,7 +85,7 @@ describe('DrawingEntitiesManager.resizeRxnArrow', () => {
       [new Vec2(0, 0), new Vec2(1, 0)],
     );
     addCommand.execute(editor.renderersContainer);
-    const arrow = drawingEntitiesManager.rxnArrows.values().next().value;
+    const [arrow] = [...drawingEntitiesManager.rxnArrows.values()];
     const unsnappedEnd = new Vec2(2, 0.05);
 
     const resizeCommand = drawingEntitiesManager.resizeRxnArrow(

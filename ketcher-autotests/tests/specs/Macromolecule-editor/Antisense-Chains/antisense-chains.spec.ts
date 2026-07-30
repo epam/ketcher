@@ -2937,36 +2937,33 @@ const chainWithAllTypeOfConnections: IMonomer = {
   unsplitNucleotide: false,
 };
 
-test.fail(
-  `5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored`,
-  async () => {
-    // Failed because of bug: https://github.com/epam/ketcher/issues/6173
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/6134
-     * Description: Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored
-     * Case:
-     *       1. Load chain with all type of monomers connected to R1, R2, R3, R4 attachment points
-     *       2. Select it (using Control+A)
-     *       3. Call context menu for monomer and click "Create Antisense Strand" option
-     *       4. Take screenshot to validate Antisense creation and that all monomers connected via non-R1-R2 are ignored
-     */
-    test.setTimeout(20000);
+test.skip(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored`, async () => {
+  // Failed because of bug: https://github.com/epam/ketcher/issues/6173
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6134
+   * Description: Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored
+   * Case:
+   *       1. Load chain with all type of monomers connected to R1, R2, R3, R4 attachment points
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense Strand" option
+   *       4. Take screenshot to validate Antisense creation and that all monomers connected via non-R1-R2 are ignored
+   */
+  test.setTimeout(20000);
 
-    const chain = chainWithAllTypeOfConnections;
-    await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+  const chain = chainWithAllTypeOfConnections;
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
-    const monomerLocator = getMonomerLocator(
-      page,
-      chain.monomerLocatorOptions,
-    ).first();
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
 
-    await selectAllStructuresOnCanvas(page);
-    await ContextMenu(page, monomerLocator).click(
-      MonomerOption.CreateAntisenseRNAStrand,
-    );
-    await takeEditorScreenshot(page);
-  },
-);
+  await selectAllStructuresOnCanvas(page);
+  await ContextMenu(page, monomerLocator).click(
+    MonomerOption.CreateAntisenseRNAStrand,
+  );
+  await takeEditorScreenshot(page);
+});
 
 const chainOfNucleotidesWithAllTypesOfPhosphateAndSugar: IMonomer = {
   monomerDescription: 'All type of sugars and phosphates in one chain',
@@ -4260,74 +4257,68 @@ for (const monomer1 of shortMonomerList) {
   }
 }
 
-test.fail(
-  `26.5.1 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (RNA)`,
-  async () => {
-    // Failed because of bug: https://github.com/epam/ketcher/issues/6173
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/6684
-     * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
-     *              5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (RNA)
-     * Case:
-     *       1. Load chain with all type of monomers connected to R1, R2, R3, R4 attachment points
-     *       2. Select it (using Control+A)
-     *       3. Call context menu for monomer and click "Create Antisense RNA Strand" option
-     *       4. Take screenshot to validate Antisense creation and that all monomers connected via non-R1-R2 are ignored
-     */
-    test.setTimeout(20000);
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+test.skip(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (RNA)`, async () => {
+  // Failed because of bug: https://github.com/epam/ketcher/issues/6173
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6684
+   * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+   *              5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (RNA)
+   * Case:
+   *       1. Load chain with all type of monomers connected to R1, R2, R3, R4 attachment points
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense RNA Strand" option
+   *       4. Take screenshot to validate Antisense creation and that all monomers connected via non-R1-R2 are ignored
+   */
+  test.setTimeout(20000);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
-    const chain = chainWithAllTypeOfConnections;
-    await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+  const chain = chainWithAllTypeOfConnections;
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
-    await selectAllStructuresOnCanvas(page);
-    await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
-      SequenceSymbolOption.CreateRNAAntisenseStrand,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-  },
-);
+  await selectAllStructuresOnCanvas(page);
+  await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
+    SequenceSymbolOption.CreateRNAAntisenseStrand,
+  );
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
 
-test.fail(
-  `26.5.2 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (DNA)`,
-  async () => {
-    // Failed because of bug: https://github.com/epam/ketcher/issues/6173
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/6684
-     * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
-     *              5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (DNA)
-     * Case:
-     *       1. Load chain with all type of monomers connected to R1, R2, R3, R4 attachment points
-     *       2. Select it (using Control+A)
-     *       3. Call context menu for monomer and click "Create Antisense DNA Strand" option
-     *       4. Take screenshot to validate Antisense creation and that all monomers connected via non-R1-R2 are ignored
-     */
-    test.setTimeout(20000);
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+test.skip(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (DNA)`, async () => {
+  // Failed because of bug: https://github.com/epam/ketcher/issues/6173
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6684
+   * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+   *              5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (DNA)
+   * Case:
+   *       1. Load chain with all type of monomers connected to R1, R2, R3, R4 attachment points
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense DNA Strand" option
+   *       4. Take screenshot to validate Antisense creation and that all monomers connected via non-R1-R2 are ignored
+   */
+  test.setTimeout(20000);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
-    const chain = chainWithAllTypeOfConnections;
-    await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+  const chain = chainWithAllTypeOfConnections;
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
-    await selectAllStructuresOnCanvas(page);
-    await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
-      SequenceSymbolOption.CreateDNAAntisenseStrand,
-    );
+  await selectAllStructuresOnCanvas(page);
+  await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
+    SequenceSymbolOption.CreateDNAAntisenseStrand,
+  );
 
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-  },
-);
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
 
 test(`26.6.1 Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (r), phosphate (p), and the appropriate "antisense RNA base"`, async () => {
   /*

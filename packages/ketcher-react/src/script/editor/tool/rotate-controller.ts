@@ -161,13 +161,20 @@ class RotateController {
 
     const { texts, rxnArrows, rxnPluses } = selection || {};
 
-    const isMoreThanOneItemBeingSelected =
-      visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
-        .length > 1;
+    const totalSelectedItemsCount = visibleAtoms.concat(
+      texts || [],
+      rxnArrows || [],
+      rxnPluses || [],
+    ).length;
+
+    const isMoreThanOneItemBeingSelected = totalSelectedItemsCount > 1;
+
+    const isSingleArrowSelected =
+      totalSelectedItemsCount === 1 && rxnArrows?.length === 1;
 
     const currentTool = this.editor.tool();
     const enable =
-      isMoreThanOneItemBeingSelected &&
+      (isMoreThanOneItemBeingSelected || isSingleArrowSelected) &&
       (currentTool instanceof SelectTool ||
         currentTool instanceof FragmentSelectionTool) &&
       originalCenter;

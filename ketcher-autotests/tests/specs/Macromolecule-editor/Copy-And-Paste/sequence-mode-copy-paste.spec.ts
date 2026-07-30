@@ -117,11 +117,11 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
   test('Copy & paste selection with LClick+drag and undo', async ({ page }) => {
     const fromSymbol = getSymbolLocator(page, {
       symbolAlias: 'G',
-      nodeIndexOverall: 23,
+      nodeIndexOverall: 20,
     });
     const toSymbol = getSymbolLocator(page, {
       symbolAlias: 'G',
-      nodeIndexOverall: 36,
+      nodeIndexOverall: 33,
     });
 
     await selectSequenceRangeInEditMode(page, fromSymbol, toSymbol);
@@ -130,7 +130,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await copyToClipboardByKeyboard(page);
     await getSymbolLocator(page, {
       symbolAlias: 'C',
-      nodeIndexOverall: 26,
+      nodeIndexOverall: 23,
     }).click();
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
@@ -152,7 +152,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
       await copyContentToClipboard(page, fileContent);
       await getSymbolLocator(page, {
         symbolAlias: 'G',
-        nodeIndexOverall: 23,
+        nodeIndexOverall: 20,
       }).dblclick();
       const arrowCount = 8;
       await page.keyboard.down('Shift');

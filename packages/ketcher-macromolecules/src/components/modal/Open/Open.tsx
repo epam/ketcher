@@ -357,8 +357,8 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       windowContext.isKetcherFullscreenBeforeFilePicker = false;
     }
 
-    const onLoad = (fileContent: unknown) => {
-      setStructStr(fileContent as string);
+    const onLoad = (fileContent: string) => {
+      setStructStr(fileContent);
       setCurrentState(MODAL_STATES.textEditor);
     };
     const onError = () => errorHandler('Error processing file');

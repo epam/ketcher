@@ -19,13 +19,18 @@ import {
   selectByAtomAndBondIds,
   clickInTheMiddleOfTheCanvas,
   pasteFromClipboardAndOpenAsNewProject,
+  openFileAndAddToCanvasAsNewProject,
+  shiftCanvas,
 } from '@utils';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
+import {
+  MonomerType,
+  NucleotideNaturalAnalogue,
+} from '@tests/pages/constants/createMonomerDialog/Constants';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
 import {
@@ -41,6 +46,13 @@ import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createM
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { verifySMARTSExport } from '@utils/files/receiveFileComparisonData';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -500,5 +512,293 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
     await expect(syncModeButton).toBeVisible();
     await expect(syncModeButton).toBeEnabled();
+  });
+
+  test('Case 14 — Add Hotkeys in Macro Mode Similar to Micro Mode', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/ketcher/issues/4694
+     * Description: Add Hotkeys in Macro Mode Similar to Micro Mode
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Paste from clipboard (e.g. press Ctrl+v) following helm HELM: RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,5:pair-5:pair|RNA1,RNA2,2:pair-8:pair$$$V2.0
+     * 3. Verify that 1 hotkey selects single bond tool
+     * 4. Verify that Del hotkey erases operation when hovering on monomer
+     * 5. Verify that Backspace hotkey erases operation when hovering on monomer
+     * Version 3.15.0
+     */
+
+    const helmMolecule =
+      'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,5:pair-5:pair|RNA1,RNA2,2:pair-8:pair$$$V2.0';
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      helmMolecule,
+    );
+
+    // Test hotkey "1" to select single bond tool
+    await page.keyboard.press('1');
+    await takeEditorScreenshot(page);
+
+    // Test Del hotkey erases when hovering on monomer
+    const monomerA = getMonomerLocator(page, { monomerAlias: 'A' }).first();
+    await monomerA.hover();
+    await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
+
+    // Paste again for Backspace test
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      helmMolecule,
+    );
+
+    // Test Backspace hotkey erases when hovering on monomer
+    const monomerU = getMonomerLocator(page, { monomerAlias: 'U' }).first();
+    await monomerU.hover();
+    await page.keyboard.press('Backspace');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 15 — System shows molecular mass and molecular formula even if few chains on the canvas', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/ketcher/issues/7141
+     * Description: System shows molecular mass and molecular formula even if few chains on the canvas
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from KET incorrect-mass-and-formula.ket file
+     * 3. Open Calculate properties
+     * 4. Verify that System doesn't show molecular mass and molecular formula
+     * Version 3.15.0
+     */
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Chromium-popup/Bugs/incorrect-mass-and-formula.ket',
+    );
+
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    const calculateVariablesPanel = CalculateVariablesPanel(page);
+
+    await expect(calculateVariablesPanel.panel).toBeVisible();
+    await expect(calculateVariablesPanel.molecularFormula).not.toBeVisible();
+    await expect(calculateVariablesPanel.molecularMassValue).not.toBeVisible();
+    await takeEditorScreenshot(page);
+
+    await calculateVariablesPanel.closeWindow();
+  });
+
+  test('Case 16 — Add/Remove explicit hydrogens operation inside create monomer wizard causes exception: process is not defined', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/ketcher/issues/8818
+     * Description: Add/Remove explicit hydrogens operation inside create monomer wizard causes exception: process is not defined
+     * Scenario:
+     * 1. Open Molecules canvas
+     * 2. Paste followng molecule on the canvas: CCCP%91(N)(O)C.[*:1]%91 |$;;;;;;;_R1$|
+     * 3. Select whole molecule and press Create a monomer button
+     * 4. Press Add/Remove explicit hydrogens button three times
+     * 5. Verify that no exception is being thrown, R1 leaving group removed but H atom remains
+     * Version 3.15.0
+     */
+
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'CCCP%91(N)(O)C.[*:1]%91 |$;;;;;;;_R1$|',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).createMonomer();
+    const indigoFunctionsToolbar = IndigoFunctionsToolbar(page);
+    await indigoFunctionsToolbar.addRemoveExplicitHydrogens();
+    await indigoFunctionsToolbar.addRemoveExplicitHydrogens();
+    await indigoFunctionsToolbar.addRemoveExplicitHydrogens();
+
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+
+    await takeEditorScreenshot(page);
+    await CreateMonomerDialog(page).discard();
+  });
+
+  test('Case 17 — Bond to C10H20 superatom rendered wrong if loaded from CDXML', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/ketcher/issues/6851
+     * Description: Bond to C10H20 superatom rendered wrong if loaded from CDXML
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Load from CDXML: multiple_external_connections.cdr
+     * 3. Verify that the bond to C10H20 superatom is rendered correctly
+     * Version 3.15.0
+     */
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'CDXML/Chromium-popup/Bugs/multiple_external_connections.cdr.cdxml',
+    );
+
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 18 — When pressing the “Enter” key, the “Save Structure” and “Open Structure” windows open in all modes', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/ketcher/issues/4674
+     * Description: When pressing the “Enter” key, the “Save Structure” and “Open Structure” windows open in all modes
+     * Scenario:
+     * 1. Switch to the Macro mode
+     * 2. Click on the “Save as” button and close the “Save Structure” window
+     * 3. Press the “Enter” key
+     * 4. Verify that when pressing the “Enter” key, the “Save Structure” window does not open
+     * 5. Switch to the Snake mode
+     * 6. Click on the “Open” button and close the “Open Structure” window
+     * 7. Press the “Enter” key
+     * 8. Verify that when pressing the “Enter” key, the “Open Structure” window does not open
+     * Version 3.15.0
+     */
+
+    const saveStructureDialog = SaveStructureDialog(page);
+    const openStructureDialog = OpenStructureDialog(page);
+    const topLeftToolbar = CommonTopLeftToolbar(page);
+
+    await topLeftToolbar.saveFile();
+    await saveStructureDialog.closeWindowButton.click();
+    await page.keyboard.press('Enter');
+    await expect(saveStructureDialog.window).toBeHidden();
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await topLeftToolbar.openFile();
+    await openStructureDialog.closeWindow();
+    await page.keyboard.press('Enter');
+    await expect(openStructureDialog.window).toBeHidden();
+  });
+
+  test('Case 19 — Update SDF and KET format to include information about preset phosphate position', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/Indigo/issues/3526
+     * Description: Update SDF and KET format to include information about preset phosphate position
+     *
+     * Scenario:
+     * 1. Go to Molecules canvas (clean canvas)
+     * 2. Paste a simple molecule on the canvas
+     * 3. Open Create Monomer wizard and select Nucleotide Preset type
+     * 4. Set name and configure Base, Sugar, and Phosphate components
+     * 5. Set Phosphate position to 5' (5-prime end)
+     * 6. Submit the preset
+     * 7. Switch to Macromolecules mode
+     * 8. Verify the nucleotide preset with 5' phosphate position appears in the library
+     * 9. Add the preset to canvas and verify it renders with phosphate on the correct (5') end
+     *
+     * Version 3.15.0
+     */
+
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 0);
+
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+
+    await dialog.selectType(MonomerType.NucleotidePreset);
+    await presetSection.setName('preset19');
+
+    await presetSection.setupBase({
+      atomIds: [0, 1],
+      bondIds: [0],
+      code: 'B19',
+      naturalAnalogue: NucleotideNaturalAnalogue.A,
+    });
+
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+
+    await presetSection.setupSugar({
+      atomIds: [2, 3],
+      bondIds: [2],
+      code: 'S19',
+    });
+
+    await presetSection.setupPhosphate({
+      atomIds: [4, 5],
+      bondIds: [4],
+      code: 'Ph19',
+    });
+
+    await presetSection.setPhosphatePosition('5');
+
+    await dialog.submit();
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await Library(page).openRNASection(RNASection.Presets);
+    await Library(page).setSearchValue('preset19');
+
+    const presetCard = page.getByText('preset19').first();
+    await expect(presetCard).toBeVisible();
+
+    await Library(page).dragMonomerOnCanvas(
+      {
+        alias: 'preset19',
+        testId: 'preset19_B19_S19_Ph19',
+      } as any,
+      { x: 0, y: 0, fromCenter: true },
+    );
+
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 20 — Bond length become wrong after Arrange as a Ring option applied', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/Indigo/issues/3449
+     * Description: Bond length become wrong after Arrange as a Ring option applied
+     * Scenario:
+     * 1. Open Macromolecules mode - Flex canvas (clean canvas)
+     * 2. Load following HELM: PEPTIDE1{C.C.C.C.C.C.C.C.C.C.C.C.C}$PEPTIDE1,PEPTIDE1,5:R3-8:R3$$$V2.0
+     * 3. Select ring and right tail of the chain
+     * 4. Call context menu and click Arrange as a Ring option
+     * 5. Verify that system layout monomer in the ring is as expected, distance (e.g. bond length) between monomer has the same standard length
+     * Version 3.15.0
+     */
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{C.C.C.C.C.C.C.C.C.C.C.C.C}$PEPTIDE1,PEPTIDE1,5:R3-8:R3$$$V2.0',
+    );
+
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
+
+    await CommonTopRightToolbar(page).selectZoomOutTool(3);
+    await page.mouse.move(370, 150);
+    await dragMouseTo(page, 800, 500);
+
+    await MacromoleculesTopToolbar(page).arrangeAsARing();
+
+    await takeEditorScreenshot(page);
   });
 });

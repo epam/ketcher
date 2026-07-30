@@ -803,6 +803,15 @@ for (const replaceMonomer of replaceMonomers) {
         8. Add info to log if known bugs exist and skip test
       */
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
+
+      // skip that test if bug(s) exists (checked before screenshots to avoid snapshot
+      // mismatches when the fix changes the rendered output for known-buggy cases)
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
+      );
+
       await selectAndReplaceSymbol(
         page,
         replaceMonomer,
@@ -816,13 +825,6 @@ for (const replaceMonomer of replaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-
-      // skip that test if bug(s) exists
-      await checkForKnownBugs(
-        replaceMonomer,
-        sequence,
-        sequence.ReplacementPositions.LeftEnd,
-      );
     });
   }
 }

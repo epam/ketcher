@@ -21,3 +21,4 @@ export * from './useAppContext';
 export * from './useRequestAnimationFrame';
 export * from './useSubscribtionOnEvents';
 export * from './useSettings';
+export * from './usePopoverAnchor';

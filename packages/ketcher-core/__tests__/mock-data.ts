@@ -770,8 +770,30 @@ export const peptideMonomerItem: MonomerItemType = {
 };
 
 export const polymerEditorTheme = {
-  monomer: { color: { A: { regular: 'yellow' } } },
+  monomer: {
+    color: { A: { regular: 'yellow' }, CHEM: { regular: 'yellow' } },
+  },
   peptide: { color: { A: { regular: 'yellow' } } },
+};
+
+export const coreEditorTheme = {
+  ketcher: polymerEditorTheme,
+};
+
+export const chemMonomerItem: MonomerItemType = {
+  favorite: false,
+  label: 'A6OH',
+  props: {
+    BranchMonomer: '',
+    MonomerCaps: {},
+    MonomerCode: '',
+    MonomerName: '',
+    MonomerType: 'CHEM',
+    MonomerClass: KetMonomerClass.CHEM,
+    Name: '',
+    MonomerNaturalAnalogCode: '',
+  },
+  struct: new Struct(),
 };
 
 export const getFinishedPolymerBond = (x1, y1, x2, y2) => {

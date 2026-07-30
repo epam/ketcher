@@ -1724,6 +1724,15 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       test.setTimeout(20000);
 
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
+
+      // skip that test if bug(s) exists (checked before screenshots to avoid snapshot
+      // mismatches when the fix changes the rendered output for known-buggy cases)
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.Center,
+      );
+
       await selectAndReplaceSymbol(
         page,
         replaceMonomer,
@@ -1738,13 +1747,6 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-
-      // skip that test if bug(s) exists
-      await checkForKnownBugs(
-        replaceMonomer,
-        sequence,
-        sequence.ReplacementPositions.Center,
-      );
     });
   }
 }

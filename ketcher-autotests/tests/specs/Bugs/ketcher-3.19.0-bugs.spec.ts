@@ -24,7 +24,9 @@ test.describe('Ketcher bugs in 3.19.0', () => {
     await closePage();
   });
 
-  test('Case 1: Save oversized macromolecule schema as MDL Molfile V2000 upgrades to V3000', async () => {
+  test('Case 1: Save oversized macromolecule schema as MDL Molfile V2000 upgrades to V3000', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6142
      * Description: Oversized structures saved via the V2000 option are auto-upgraded to V3000
@@ -36,7 +38,6 @@ test.describe('Ketcher bugs in 3.19.0', () => {
      * 4. Save as MDL Molfile V2000
      * 5. Verify preview contains V3000 markers and Warnings tab shows upgrade notice
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/schema-nucleotide-with-different-monomers.ket',

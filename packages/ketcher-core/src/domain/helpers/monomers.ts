@@ -203,6 +203,26 @@ export function getNextMonomerInChain(
     : undefined;
 }
 
+export function isValidRnaEnumerationStartMonomer(
+  monomer?: BaseMonomer,
+): boolean {
+  if (!monomer) {
+    return false;
+  }
+
+  const r1Bond = monomer.attachmentPointsToBonds.R1;
+
+  if (!(r1Bond instanceof PolymerBond)) {
+    return true;
+  }
+
+  const anotherMonomer = r1Bond.getAnotherMonomer(monomer);
+  const anotherMonomerAttachmentPoint =
+    anotherMonomer?.getAttachmentPointByBond(r1Bond);
+
+  return anotherMonomerAttachmentPoint !== AttachmentPointName.R2;
+}
+
 export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
   if (!monomer || !isMonomerOfClass(monomer, KetMonomerClass.Sugar))
     return undefined;

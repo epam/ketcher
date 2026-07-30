@@ -1,5 +1,5 @@
 import { CoreEditor } from 'application/editor';
-import { polymerEditorTheme } from '../../../mock-data';
+import { coreEditorTheme, polymerEditorTheme } from '../../../mock-data';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
@@ -61,7 +61,7 @@ describe('Zoom Tool', () => {
 
     // @ts-expect-error TS6133: Instantiated for side effects (singleton registration)
     const _editor = new CoreEditor({
-      theme: polymerEditorTheme,
+      theme: coreEditorTheme,
       canvas,
       renderersContainer: createRenderersManager(polymerEditorTheme),
     });
@@ -76,7 +76,7 @@ describe('Zoom Tool', () => {
       jest.spyOn(ZoomTool.prototype, 'zoomAction').mockImplementation(zoomed);
       // @ts-expect-error TS6133: Instantiated for side effects (singleton registration)
       const _editor = new CoreEditor({
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         canvas,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });

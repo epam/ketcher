@@ -103,7 +103,7 @@ test.describe('MacromoleculePropertiesWindow events access', () => {
           timeout: 5000,
         },
       );
-    } catch (error) {
+    } catch (_error) {
       console.log(
         'Component not found, but this is expected if there is no selection',
       );

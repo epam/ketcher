@@ -846,6 +846,15 @@ for (const replaceMonomer of replaceMonomers) {
         8. Add info to log if known bugs exist and skip test
       */
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
+
+      // skip that test if bug(s) exists (checked before screenshots to avoid snapshot
+      // mismatches when the fix changes rendered output for known-buggy cases)
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.Center,
+      );
+
       await selectAndReplaceSymbol(
         page,
         replaceMonomer,
@@ -859,13 +868,6 @@ for (const replaceMonomer of replaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-
-      // skip that test if bug(s) exists
-      await checkForKnownBugs(
-        replaceMonomer,
-        sequence,
-        sequence.ReplacementPositions.Center,
-      );
     });
   }
 }
@@ -887,6 +889,15 @@ for (const replaceMonomer of replaceMonomers) {
           8. Add info to log if known bugs exist and skip test
         */
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
+
+      // skip that test if bug(s) exists (checked before screenshots to avoid snapshot
+      // mismatches when the fix changes rendered output for known-buggy cases)
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.RightEnd,
+      );
+
       await selectAndReplaceSymbol(
         page,
         replaceMonomer,
@@ -900,13 +911,6 @@ for (const replaceMonomer of replaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-
-      // skip that test if bug(s) exists
-      await checkForKnownBugs(
-        replaceMonomer,
-        sequence,
-        sequence.ReplacementPositions.RightEnd,
-      );
     });
   }
 }
@@ -928,6 +932,15 @@ for (const replaceMonomer of replaceMonomers) {
           8. Add info to log if known bugs exist and skip test
         */
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
+
+      // skip that test if bug(s) exists (checked before screenshots to avoid snapshot
+      // mismatches when the fix changes rendered output for known-buggy cases)
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
+      );
+
       await selectAndReplaceSymbolInEditMode(
         page,
         replaceMonomer,
@@ -939,13 +952,6 @@ for (const replaceMonomer of replaceMonomers) {
         LayoutMode.Flex,
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-
-      // skip that test if bug(s) exists
-      await checkForKnownBugs(
-        replaceMonomer,
-        sequence,
-        sequence.ReplacementPositions.LeftEnd,
-      );
     });
   }
 }
@@ -967,6 +973,15 @@ for (const replaceMonomer of replaceMonomers) {
           8. Add info to log if known bugs exist and skip test
         */
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
+
+      // skip that test if bug(s) exists (checked before screenshots to avoid snapshot
+      // mismatches when the fix changes rendered output for known-buggy cases)
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.Center,
+      );
+
       await selectAndReplaceSymbolInEditMode(
         page,
         replaceMonomer,
@@ -980,13 +995,6 @@ for (const replaceMonomer of replaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-
-      // skip that test if bug(s) exists
-      await checkForKnownBugs(
-        replaceMonomer,
-        sequence,
-        sequence.ReplacementPositions.Center,
-      );
     });
   }
 }
@@ -1008,6 +1016,15 @@ for (const replaceMonomer of replaceMonomers) {
             8. Add info to log if known bugs exist and skip test
           */
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
+
+      // skip that test if bug(s) exists (checked before screenshots to avoid snapshot
+      // mismatches when the fix changes rendered output for known-buggy cases)
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.RightEnd,
+      );
+
       await selectAndReplaceSymbolInEditMode(
         page,
         replaceMonomer,
@@ -1021,13 +1038,6 @@ for (const replaceMonomer of replaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-
-      // skip that test if bug(s) exists
-      await checkForKnownBugs(
-        replaceMonomer,
-        sequence,
-        sequence.ReplacementPositions.RightEnd,
-      );
     });
   }
 }
@@ -1334,6 +1344,15 @@ for (const replaceMonomer of replaceMonomers) {
         8. Add info to log if known bugs exist and skip test
       */
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
+
+      // skip that test if bug(s) exists (checked before screenshots to avoid snapshot
+      // mismatches when the fix changes rendered output for known-buggy cases)
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
+      );
+
       await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
       await moveMouseAway(page);
@@ -1343,13 +1362,6 @@ for (const replaceMonomer of replaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-
-      // skip that test if bug(s) exists
-      await checkForKnownBugs(
-        replaceMonomer,
-        sequence,
-        sequence.ReplacementPositions.LeftEnd,
-      );
     });
   }
 }
@@ -1371,6 +1383,15 @@ for (const replaceMonomer of replaceMonomers) {
         8. Add info to log if known bugs exist and skip test
       */
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
+
+      // skip that test if bug(s) exists (checked before screenshots to avoid snapshot
+      // mismatches when the fix changes rendered output for known-buggy cases)
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
+      );
+
       await selectAndReplaceAllSymbolsInEditMode(
         page,
         replaceMonomer,
@@ -1384,13 +1405,6 @@ for (const replaceMonomer of replaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-
-      // skip that test if bug(s) exists
-      await checkForKnownBugs(
-        replaceMonomer,
-        sequence,
-        sequence.ReplacementPositions.LeftEnd,
-      );
     });
   }
 }

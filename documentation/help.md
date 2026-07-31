@@ -555,7 +555,7 @@ Macromolecules library has 4 tabs:
 - **RNA tab** - contains RNA builder, a section containing presets, and monomers organized into sugars, bases, phosphates, and nucleotides sections;
 - **CHEM tab** - contains non-RNA and non-amino acid monomers, mostly linkers and tags.
 
-<img src=images/Library-Tabs-3.9..png width = "800"/>
+<img src=images/Library-Tabs-3.18..png width = "800"/>
 
 **Searching the library** is possible using monomer names, monomer symbols, or monomer IDT aliases:
 
@@ -563,20 +563,20 @@ Macromolecules library has 4 tabs:
 
 Depending on the size of the Ketcher window, the library might have a slightly different apperance to fit more information into a smaller space:
 
-<img src=images/Compacted-Library-3.8..png width = "400"/>
+<img src=images/Compacted-Library-3.18..png width = "400"/>
 
 Hovering over a library card will show the preview for that library element. 
 In case of a non-ambiguous monomer the preview will contain the name, the chemical structure, the exact position and composition of attachment points, HELM alias, modification type(s), AxoLabs alias(es), and the IDT alias(es) (if the monomer has HELM alias, modification type(s), AxoLabs and IDT alias(es)):
 
-<img src=images/Monomer-Preview-3.10..png width = "600"/>
+<img src=images/Monomer-Preview-3.18..png width = "400"/>
 
 In case of a preset, the symbol of the preset and the names and symbols of monomers making up that preset will be shown, as well as AxoLabs and IDT alias(es) (if the preset has AxoLabs and IDT alias(es)):
 
-<img src=images/Preset-Preview-3.8..png width = "200"/>
+<img src=images/Preset-Preview-3.18..png width = "200"/>
 
 In case of an ambiguous monomer, names of monomers making up that ambiguous monomer will be shown, as well as a type of ambiguous monomer (alternatives or mixed):
 
-<img src=images/Ambiguous-Preview-3.7..png width = "125"/>
+<img src=images/Ambiguous-Preview-3.7..png width = "95"/>
 
 ### RNA Builder
 
@@ -621,7 +621,7 @@ After choosing needed replacement(s), click on _Update_ and (in case of modifyin
 ##### Creating New Monomers
 
 A chemical structure can be loaded into the monomer creation wizard in molecules mode by clicking on _Create a monomer_ button on the left toolbar
-<img src=images/Create-Monomer-Icon-3.7..png width = "40"/>
+<img src=images/Create-Monomer-Icon-3.18..png width = "40"/>
 , choosing the same option from the context menu, or using the hotkey (_Ctrl+M_):
 
 <img src=images/Monomer-Creation-Wizard-2-3.17..png width = "450"/>
@@ -636,7 +636,7 @@ Using the `Attributes` panel, the user is able to define following monomer prope
 - Monomer name (appears on monomer preview);
 - Monomer natural analogue (can be defined only for amino acids, bases, and nucleotides);
 - Monomer modification type (optional property used for modifying amino acids);
-- Monomer HELM alias (optional property used on HELM export/import; can be defined for sugars, bases, phosphates, and amino acids);
+- Monomer HELM alias (optional property used on HELM export/import; can be defined for sugars, bases, phosphates, amino acids, and CHEMs);
 - Monomer BILN alias (optional property used on BILN export/import; can be defined for amino acids and CHEMs)
 - Phosphate position (5' or 3'; only when defining presets).
 
@@ -664,12 +664,12 @@ After _Submit_ is clicked, the user will see an expanded monomer in molecules mo
 
 <img src=images/Monomer-Creation-Wizard-11-3.11..png width = "500"/>
 
-New monomers can be created using existing monomers by choosing _Edit Instance_ option in the context menu:
+New monomers can be created using existing monomers by choosing _Edit Instance_ or _Edit All Instances_ options in the context menu:
 
-<img src=images/Monomer-Creation-Wizard-16-3.17..png width = "300"/>
+<img src=images/Monomer-Creation-Wizard-16-3.18..png width = "300"/>
 <img src=images/Monomer-Creation-Wizard-17-3.17..png width = "450"/>
 
-In this case a copy of the original monomer is loaded into the Wizard (with some of its properties modified in relation to the original).
+In these cases a copy of the original monomer is loaded into the Wizard (with some of its properties modified in relation to the original). _Edit Instance_ will update only the selected monomer, whereas _Edit All Instances_ will update the selected and all identical monomers on canvas.
 
 ##### Creating New Presets
 
@@ -682,6 +682,7 @@ Nucleotide components are defined by selecting their atoms and marking them as b
 <img src=images/Monomer-Creation-Wizard-13-3.17..png width = "450"/>
 
 Or by choosing _Mark as a..._ from the context menu:
+
 <img src=images/Monomer-Creation-Wizard-14-3.17..png width = "300"/>
 
 **Note**: _Fragment Selection tool_ can help with selecting appropriate nucleotide components. While in the Monomer Creation Wizard, atoms and bonds already marked as a particular component will not be selected using that tool:

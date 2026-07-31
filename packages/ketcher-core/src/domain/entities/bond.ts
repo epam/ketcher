@@ -153,12 +153,33 @@ export class Bond extends BaseMicromoleculeEntity {
 
   static getAttrHash(
     bond: Bond,
-  ): Partial<Pick<Bond, keyof typeof Bond.attrlist>> {
-    const attrs: Partial<Pick<Bond, keyof typeof Bond.attrlist>> = {};
+  ): Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> {
+    const attrs: Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> = {};
     for (const attr in Bond.attrlist) {
       const key = attr as keyof typeof Bond.attrlist;
-      if (bond[key] || attr === 'stereo') {
-        attrs[key] = bond[key];
+      if (bond[key] || key === 'stereo') {
+        switch (key) {
+          case 'type':
+            attrs.type = bond.type;
+            break;
+          case 'stereo':
+            attrs.stereo = bond.stereo;
+            break;
+          case 'topology':
+            attrs.topology = bond.topology;
+            break;
+          case 'reactingCenterStatus':
+            attrs.reactingCenterStatus = bond.reactingCenterStatus;
+            break;
+          case 'cip':
+            attrs.cip = bond.cip;
+            break;
+          case 'customQuery':
+            attrs.customQuery = bond.customQuery;
+            break;
+          default:
+            break;
+        }
       }
     }
     return attrs;

@@ -328,12 +328,9 @@ const mapDispatchToProps = (
   },
 });
 
-// Workaround: @types/react version conflict with connect()
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CheckDialogAny = CheckDialog as any;
-const Check = connect(
+const ConnectedCheckDialog = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CheckDialogAny) as ComponentType<CheckDialogOwnProps>;
+)(CheckDialog);
 
-export default Check;
+export default ConnectedCheckDialog as ComponentType<CheckDialogOwnProps>;

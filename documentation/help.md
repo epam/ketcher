@@ -555,9 +555,9 @@ Macromolecules library has 4 tabs:
 - **RNA tab** - contains RNA builder, a section containing presets, and monomers organized into sugars, bases, phosphates, and nucleotides sections;
 - **CHEM tab** - contains non-RNA and non-amino acid monomers, mostly linkers and tags.
 
-<img src=images/Library-Tabs-3.18..png width = "800"/>
+<img src=images/Library-Tabs-3.18..png width = "600"/>
 
-**Searching the library** is possible using monomer names, monomer symbols, or monomer IDT aliases:
+**Searching the library** is possible using monomer names, monomer symbols, modification types, HELM, BILN, IDT and AxoLabs aliases:
 
 <img src=images/Library-Search-3.8..png width = "600"/>
 
@@ -566,7 +566,7 @@ Depending on the size of the Ketcher window, the library might have a slightly d
 <img src=images/Compacted-Library-3.18..png width = "400"/>
 
 Hovering over a library card will show the preview for that library element. 
-In case of a non-ambiguous monomer the preview will contain the name, the chemical structure, the exact position and composition of attachment points, HELM alias, modification type(s), AxoLabs alias(es), and the IDT alias(es) (if the monomer has HELM alias, modification type(s), AxoLabs and IDT alias(es)):
+In case of a non-ambiguous monomer the preview will contain the name, the chemical structure, the exact position and composition of attachment points, HELM alias, BILN alias, modification type(s), AxoLabs alias(es), and the IDT alias(es) (if the monomer has modification type(s), HELM, BILN, AxoLabs and IDT alias(es)):
 
 <img src=images/Monomer-Preview-3.18..png width = "400"/>
 

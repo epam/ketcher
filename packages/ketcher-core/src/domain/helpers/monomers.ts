@@ -206,21 +206,7 @@ export function getNextMonomerInChain(
 export function isValidRnaEnumerationStartMonomer(
   monomer?: BaseMonomer,
 ): boolean {
-  if (!monomer) {
-    return false;
-  }
-
-  const r1Bond = monomer.attachmentPointsToBonds.R1;
-
-  if (!(r1Bond instanceof PolymerBond)) {
-    return true;
-  }
-
-  const anotherMonomer = r1Bond.getAnotherMonomer(monomer);
-  const anotherMonomerAttachmentPoint =
-    anotherMonomer?.getAttachmentPointByBond(r1Bond);
-
-  return anotherMonomerAttachmentPoint !== AttachmentPointName.R2;
+  return !!monomer && !getPreviousMonomerInChain(monomer);
 }
 
 export function getRnaBaseFromSugar(monomer?: BaseMonomer) {

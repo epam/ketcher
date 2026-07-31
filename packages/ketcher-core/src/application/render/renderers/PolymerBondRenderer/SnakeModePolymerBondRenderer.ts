@@ -1104,14 +1104,18 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   public remove(): void {
+    // Check the SVG element's class directly instead of this.polymerBond.isSideChainConnection
+    // because by the time remove() is called, the attachment points in the model may already be
+    // destroyed, causing isSideChainConnection to return false even though the bond was rendered
+    // as a side-chain connection
     const isSideChainConnection = this.bodyElement
       ?.attr('class')
       ?.includes(SIDE_CONNECTION_BODY_ELEMENT_CLASS);
 
-    if (this.polymerBond.hovered) {
-      this.removeHover();
-    }
     super.remove();
+    if (this.polymerBond.hovered) {
+      this.editorEvents.mouseLeaveMonomer.dispatch();
+    }
 
     // After a side-chain bond is removed, set all remaining side-chain bonds to the default color (#43B5C0)
     if (isSideChainConnection) {

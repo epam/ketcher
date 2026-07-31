@@ -9,13 +9,21 @@ import {
   Sugar,
 } from 'domain/entities';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { PolymerBond } from 'domain/entities/PolymerBond';
+import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
+import { isValidRnaEnumerationStartMonomer } from 'domain/helpers/monomers';
 import { KetMonomerClass } from 'domain/constants/monomers';
+import { KetAmbiguousMonomerTemplateSubType } from 'application/formatters/types/ket';
 import { AttachmentPointName, type MonomerItemType } from 'domain/types';
 import { peptideMonomerItem } from '../../../mock-data';
 
 type RenderersManagerInternals = {
-  recalculateRnaChainEnumeration(subChain: RnaSubChain): void;
+  recalculateRnaChainEnumeration(
+    subChain: RnaSubChain,
+    isChainCyclic: boolean,
+  ): void;
 };
 
 const attachmentPoint = (label: AttachmentPointName) => ({
@@ -37,6 +45,7 @@ const monomerItem = (
   props: {
     ...peptideMonomerItem.props,
     MonomerClass,
+    MonomerType: 'RNA',
     MonomerName: label,
     Name: label,
     MonomerNaturalAnalogCode: label,
@@ -98,13 +107,98 @@ const mockNucleotideRenderers = (nucleotide: Nucleotide) => ({
   sugar: mockRenderer(nucleotide.sugar),
 });
 
-const recalculateRnaChainEnumeration = (subChain: RnaSubChain) => {
+const recalculateRnaChainEnumeration = (
+  subChain: RnaSubChain,
+  isChainCyclic = false,
+) => {
   const renderersManager = new RenderersManager({
     theme: {},
   }) as unknown as RenderersManagerInternals;
 
-  renderersManager.recalculateRnaChainEnumeration(subChain);
+  renderersManager.recalculateRnaChainEnumeration(subChain, isChainCyclic);
 };
+
+const createSugarLabeled = (label: string) =>
+  new Sugar(
+    monomerItem(label, KetMonomerClass.Sugar, [
+      AttachmentPointName.R1,
+      AttachmentPointName.R2,
+      AttachmentPointName.R3,
+    ]),
+  );
+
+const createPhosphateLabeled = (label: string) =>
+  new Phosphate(
+    monomerItem(label, KetMonomerClass.Phosphate, [
+      AttachmentPointName.R1,
+      AttachmentPointName.R2,
+    ]),
+  );
+
+const createBaseLabeled = (label: string) =>
+  new RNABase(
+    monomerItem(label, KetMonomerClass.Base, [AttachmentPointName.R1]),
+  );
+
+const connect = (
+  firstMonomer: BaseMonomer,
+  firstAttachmentPoint: AttachmentPointName,
+  secondMonomer: BaseMonomer,
+  secondAttachmentPoint: AttachmentPointName,
+) => {
+  const bond = new PolymerBond(firstMonomer, secondMonomer);
+  firstMonomer.attachmentPointsToBonds[firstAttachmentPoint] = bond;
+  secondMonomer.attachmentPointsToBonds[secondAttachmentPoint] = bond;
+  return bond;
+};
+
+const createAmbiguousMonomer = (monomers: BaseMonomer[]) =>
+  new AmbiguousMonomer({
+    label: '%',
+    subtype: KetAmbiguousMonomerTemplateSubType.ALTERNATIVES,
+    monomers,
+    options: monomers.map((monomer) => ({ templateId: monomer.label })),
+  } as never);
+
+type RnaUnit = {
+  sugar: Sugar | AmbiguousMonomer;
+  base: RNABase | AmbiguousMonomer;
+  phosphate: Phosphate | AmbiguousMonomer;
+};
+
+const buildRnaUnit = (ambiguous: boolean): RnaUnit => {
+  const sugar = ambiguous
+    ? createAmbiguousMonomer([
+        createSugarLabeled('25mo3r'),
+        createSugarLabeled('25R'),
+      ])
+    : createSugarLabeled('R');
+  const base = ambiguous
+    ? createAmbiguousMonomer([
+        createBaseLabeled('A'),
+        createBaseLabeled('C'),
+        createBaseLabeled('G'),
+      ])
+    : createBaseLabeled('A');
+  const phosphate = ambiguous
+    ? createAmbiguousMonomer([
+        createPhosphateLabeled('gly'),
+        createPhosphateLabeled('hn'),
+      ])
+    : createPhosphateLabeled('P');
+
+  connect(sugar, AttachmentPointName.R3, base, AttachmentPointName.R1);
+  connect(sugar, AttachmentPointName.R2, phosphate, AttachmentPointName.R1);
+
+  return { sugar, base, phosphate };
+};
+
+const getRnaSubChains = (collection: ChainsCollection) =>
+  collection.chains
+    .flatMap((chain) => chain.subChains)
+    .filter(
+      (subChain): subChain is RnaSubChain => subChain instanceof RnaSubChain,
+    );
 
 describe('RenderersManager', () => {
   it.each([
@@ -203,5 +297,137 @@ describe('RenderersManager', () => {
     expect(resetRenderer.terminalMarkers).toEqual([false]);
     expect(thirdRenderer.base.terminalMarkers).toEqual([false]);
     expect(fourthRenderer.base.terminalMarkers).toEqual([true]);
+  });
+
+  it('keeps modified (ambiguous) RNA components in one continuously enumerated chain (#10735)', () => {
+    const units = [true, false, true, false, true].map(buildRnaUnit);
+
+    for (let index = 0; index < units.length - 1; index++) {
+      connect(
+        units[index].phosphate,
+        AttachmentPointName.R2,
+        units[index + 1].sugar,
+        AttachmentPointName.R1,
+      );
+    }
+
+    const allMonomers = units.flatMap((unit) => [
+      unit.sugar,
+      unit.base,
+      unit.phosphate,
+    ]);
+    const collection = ChainsCollection.fromMonomers(allMonomers);
+    const rnaSubChains = getRnaSubChains(collection);
+
+    expect(rnaSubChains).toHaveLength(1);
+
+    const baseRenderers = units.map((unit) => mockRenderer(unit.base));
+    units.forEach((unit) => mockRenderer(unit.sugar));
+
+    recalculateRnaChainEnumeration(rnaSubChains[0]);
+
+    expect(baseRenderers.map((renderer) => renderer.enumerations)).toEqual([
+      [1],
+      [2],
+      [3],
+      [4],
+      [5],
+    ]);
+  });
+
+  it('enumerates a single RNA monomer as base number 1', () => {
+    const sugar = createSugarLabeled('R');
+    const base = createBaseLabeled('A');
+    connect(sugar, AttachmentPointName.R3, base, AttachmentPointName.R1);
+
+    const collection = ChainsCollection.fromMonomers([sugar, base]);
+    const rnaSubChains = getRnaSubChains(collection);
+
+    expect(rnaSubChains).toHaveLength(1);
+
+    const baseRenderer = mockRenderer(base);
+    mockRenderer(sugar);
+
+    recalculateRnaChainEnumeration(rnaSubChains[0]);
+
+    expect(baseRenderer.enumerations).toEqual([1]);
+  });
+
+  it('does not enumerate a cyclic RNA chain (no valid start monomer)', () => {
+    const first = buildRnaUnit(false);
+    const second = buildRnaUnit(false);
+
+    connect(
+      first.phosphate,
+      AttachmentPointName.R2,
+      second.sugar,
+      AttachmentPointName.R1,
+    );
+    connect(
+      second.phosphate,
+      AttachmentPointName.R2,
+      first.sugar,
+      AttachmentPointName.R1,
+    );
+
+    const allMonomers = [first, second].flatMap((unit) => [
+      unit.sugar,
+      unit.base,
+      unit.phosphate,
+    ]);
+    const collection = ChainsCollection.fromMonomers(allMonomers);
+    const rnaSubChains = getRnaSubChains(collection);
+
+    expect(rnaSubChains.length).toBeGreaterThan(0);
+    expect(collection.chains.some((chain) => chain.isCyclic)).toBe(true);
+
+    const firstBaseRenderer = mockRenderer(first.base);
+    const secondBaseRenderer = mockRenderer(second.base);
+
+    collection.chains.forEach((chain) => {
+      chain.subChains
+        .filter(
+          (subChain): subChain is RnaSubChain =>
+            subChain instanceof RnaSubChain,
+        )
+        .forEach((subChain) =>
+          recalculateRnaChainEnumeration(subChain, chain.isCyclic),
+        );
+    });
+
+    expect(firstBaseRenderer.enumerations).toEqual([null]);
+    expect(secondBaseRenderer.enumerations).toEqual([null]);
+  });
+});
+
+describe('isValidRnaEnumerationStartMonomer', () => {
+  it('treats a monomer without an R1 attachment point as a valid start', () => {
+    const phosphate = new Phosphate(
+      monomerItem('P', KetMonomerClass.Phosphate, [AttachmentPointName.R2]),
+    );
+
+    expect(isValidRnaEnumerationStartMonomer(phosphate)).toBe(true);
+  });
+
+  it('treats a monomer with a free R1 attachment point as a valid start', () => {
+    const sugar = createSugarLabeled('R');
+
+    expect(isValidRnaEnumerationStartMonomer(sugar)).toBe(true);
+  });
+
+  it('treats an R1 bond to a non-R2 attachment point (i !== 2) as a valid start', () => {
+    const sugar = createSugarLabeled('R');
+    const other = createSugarLabeled('R');
+    connect(sugar, AttachmentPointName.R1, other, AttachmentPointName.R3);
+
+    expect(isValidRnaEnumerationStartMonomer(sugar)).toBe(true);
+  });
+
+  it('rejects a regular R1→R2 backbone continuation as a start', () => {
+    const sugar = createSugarLabeled('R');
+    const phosphate = createPhosphateLabeled('P');
+    connect(sugar, AttachmentPointName.R1, phosphate, AttachmentPointName.R2);
+
+    expect(isValidRnaEnumerationStartMonomer(sugar)).toBe(false);
   });
 });

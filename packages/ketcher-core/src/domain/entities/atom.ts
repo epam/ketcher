@@ -405,7 +405,9 @@ export class Atom extends BaseMicromoleculeEntity {
         isAnyGroup ||
         this.hCount !== 0 ||
         this.atomList !== null ||
-        Object.values(queryProperties).some((value) => value),
+        Object.values(queryProperties).some(
+          (value) => Boolean(value) || value === 0,
+        ),
     );
   }
 

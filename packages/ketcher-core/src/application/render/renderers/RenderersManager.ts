@@ -46,6 +46,7 @@ import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
 import type { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 import { StereoFlagRenderer } from 'application/render/renderers/StereoFlagRenderer';
 import { Scale } from 'domain/helpers';
+import { isValidRnaEnumerationStartMonomer } from 'domain/helpers/monomers';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import ZoomTool from 'application/editor/tools/Zoom';
 import type { Loop } from '../view-model/Loop';
@@ -267,7 +268,22 @@ export class RenderersManager {
     return segmentLength;
   }
 
-  private recalculateRnaChainEnumeration(subChain: RnaSubChain) {
+  private recalculateRnaChainEnumeration(
+    subChain: RnaSubChain,
+    isChainCyclic: boolean,
+  ) {
+    const startMonomer = subChain.nodes[0]?.firstMonomerInNode;
+
+    if (isChainCyclic && !isValidRnaEnumerationStartMonomer(startMonomer)) {
+      subChain.nodes.forEach((node) => {
+        node.monomers.forEach((monomer) => {
+          monomer.renderer?.setEnumeration(null);
+          monomer.renderer?.redrawEnumeration(false);
+        });
+      });
+      return;
+    }
+
     let currentEnumeration = 1;
     let currentSegmentLength = 0;
 
@@ -321,7 +337,7 @@ export class RenderersManager {
           subChain instanceof RnaSubChain ||
           subChain instanceof PhosphateSubChain
         ) {
-          this.recalculateRnaChainEnumeration(subChain);
+          this.recalculateRnaChainEnumeration(subChain, chain.isCyclic);
         }
       });
     });

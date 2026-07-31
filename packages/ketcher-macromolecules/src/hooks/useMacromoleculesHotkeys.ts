@@ -2,10 +2,7 @@ import { useEffect } from 'react';
 
 export function useMacromoleculesHotkeys() {
   useEffect(() => {
-    const HELP_LINK =
-      typeof process !== 'undefined'
-        ? (process.env.HELP_LINK as string) || 'master'
-        : 'master';
+    const HELP_LINK = (process.env.HELP_LINK as string) || 'master';
     const helpUrl = `https://github.com/epam/ketcher/blob/${HELP_LINK}/documentation/help.md#ketcher-macromolecules-mode`;
 
     const handler = (e: KeyboardEvent) => {

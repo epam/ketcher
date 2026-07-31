@@ -444,6 +444,16 @@ class ReAtom extends ReObject {
       atomSymbolShift = Math.max(atomSymbolShift, shift);
     }
 
+    // A wide/multi-part label (e.g. an atom list, or several combined
+    // properties like isotope+charge+valence) can otherwise compute a shift
+    // larger than the bond itself, pushing the endpoint past the other atom
+    // and making the bond look detached from the structure (#3508). Never
+    // consume more than half the bond, so the two endpoints can't cross.
+    if (bondLen) {
+      const maxShift = Math.max(bondLen / 2 - 3 * renderOptions.lineWidth, 0);
+      atomSymbolShift = Math.min(atomSymbolShift, maxShift);
+    }
+
     if (atomSymbolShift > 0) {
       return atomPosition.addScaled(
         direction,
@@ -615,7 +625,7 @@ class ReAtom extends ReObject {
         (options.usageInMacromolecule === undefined && !sgroup);
       // can not use Atom.isSuperatomLeavingGroupAtom here, because in preview model there is no sgroups
       const isLeavingGroupAtom =
-        this.a.rglabel !== null && this.a.rglabel !== '0';
+        this.a.rglabel !== null && this.a.rglabel !== 0;
 
       const shouldHideHydrogenInPreview = isPreviewMode && isLeavingGroupAtom;
 
@@ -1294,7 +1304,9 @@ class ReAtom extends ReObject {
     let angles: Array<number> = [];
     this.a.neighbors.forEach((halfBondId) => {
       const halfBond = struct.halfBonds.get(halfBondId);
-      halfBond && angles.push(halfBond.ang);
+      if (halfBond) {
+        angles.push(halfBond.ang);
+      }
     });
     angles = angles.sort((a, b) => a - b);
     const largeAngles: Array<number> = [];

@@ -11,8 +11,8 @@
     "ketcher-core": "*",
     "ketcher-react": "*",
     "ketcher-standalone": "*",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "react-scripts": "^5.0.1",
     "typescript": "^6.0.3",
     "web-vitals": "^2.1.4"

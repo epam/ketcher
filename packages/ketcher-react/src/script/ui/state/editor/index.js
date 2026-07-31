@@ -229,7 +229,7 @@ export default function initEditor(dispatch, getState, ketcherId) {
     onMouseDown: () => {
       updateAction();
     },
-    onConfirm: () => openDialog(dispatch, 'confirm'),
+    onConfirm: (payload) => openDialog(dispatch, 'confirm', payload),
     onShowInfo: (payload) => {
       if (payload) {
         const { groupStruct, event, sGroup } = payload;

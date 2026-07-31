@@ -900,13 +900,20 @@ export class SequenceMode extends BaseMode {
       const twoStrandedNodeInSameChainAfterSelection =
         SequenceRenderer.getNextNodeInSameChain(selectionEndTwoStrandedNode);
 
-      const rawNodeBeforeSelection =
+      const potentialNodeBeforeSelection =
         (twoStrandedNodeBeforeSelection &&
           getNodeFromTwoStrandedNode(
             twoStrandedNodeBeforeSelection,
             strandType,
           )) ??
         undefined;
+      let rawNodeBeforeSelection = potentialNodeBeforeSelection;
+      if (potentialNodeBeforeSelection instanceof BackBoneSequenceNode) {
+        rawNodeBeforeSelection =
+          strandType === STRAND_TYPE.SENSE
+            ? potentialNodeBeforeSelection.firstConnectedNode
+            : potentialNodeBeforeSelection.secondConnectedNode;
+      }
 
       const nodeBeforeSelection =
         rawNodeBeforeSelection &&
@@ -937,13 +944,23 @@ export class SequenceMode extends BaseMode {
         nodeAfterSelection = undefined;
       }
 
-      const nodeInSameChainBeforeSelection =
+      const potentialNodeInSameChainBeforeSelection =
         (twoStrandedNodeInSameChainBeforeSelection &&
           getNodeFromTwoStrandedNode(
             twoStrandedNodeInSameChainBeforeSelection,
             strandType,
           )) ??
         undefined;
+      let nodeInSameChainBeforeSelection =
+        potentialNodeInSameChainBeforeSelection;
+      if (
+        potentialNodeInSameChainBeforeSelection instanceof BackBoneSequenceNode
+      ) {
+        nodeInSameChainBeforeSelection =
+          strandType === STRAND_TYPE.SENSE
+            ? potentialNodeInSameChainBeforeSelection.firstConnectedNode
+            : potentialNodeInSameChainBeforeSelection.secondConnectedNode;
+      }
       const potentialNodeInSameChainAfterSelection =
         (twoStrandedNodeInSameChainAfterSelection &&
           getNodeFromTwoStrandedNode(
@@ -2276,22 +2293,69 @@ export class SequenceMode extends BaseMode {
     );
   }
 
-  private selectionsCantPreserveConnectionsWithMonomer(
+  private getFirstMissingAttachmentPoint(
     selections: TwoStrandedNodesSelection,
     monomerItem: MonomerItemType,
     sideChainConnections?: boolean,
-  ) {
-    return selections.some((selectionRange) =>
-      selectionRange.some(
-        (nodeSelection) =>
-          nodeSelection.node.senseNode &&
+  ): AttachmentPointName | null {
+    const newMonomerAttachmentPoints = monomerItem.attachmentPoints
+      ? BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
+          monomerItem.attachmentPoints,
+        )
+      : null;
+
+    for (const selectionRange of selections) {
+      for (const nodeSelection of selectionRange) {
+        const senseNode = nodeSelection.node.senseNode;
+        if (!senseNode) {
+          continue;
+        }
+
+        if (
           !this.checkIfNewMonomerCouldEstablishConnections(
-            nodeSelection.node.senseNode,
+            senseNode,
             monomerItem,
             sideChainConnections,
-          ),
-      ),
-    );
+          )
+        ) {
+          if (sideChainConnections || !newMonomerAttachmentPoints) {
+            return AttachmentPointName.R1;
+          }
+
+          const backboneBonds: [
+            AttachmentPointName,
+            PolymerBond | MonomerToAtomBond | null | undefined,
+          ][] = [
+            [
+              AttachmentPointName.R1,
+              senseNode.firstMonomerInNode.attachmentPointsToBonds.R1,
+            ],
+            [
+              AttachmentPointName.R2,
+              senseNode.lastMonomerInNode.attachmentPointsToBonds.R2,
+            ],
+          ];
+
+          for (const [attachmentPointName, bond] of backboneBonds) {
+            const isBackboneBond =
+              bond &&
+              (bond instanceof MonomerToAtomBond ||
+                bond.isBackBoneChainConnection);
+
+            if (
+              isBackboneBond &&
+              !newMonomerAttachmentPoints.attachmentPointsList.includes(
+                attachmentPointName,
+              )
+            ) {
+              return attachmentPointName;
+            }
+          }
+        }
+      }
+    }
+
+    return null;
   }
 
   private presetHasNeededAttachmentPoints(preset) {
@@ -2409,13 +2473,14 @@ export class SequenceMode extends BaseMode {
         return;
       }
 
-      if (
-        this.selectionsCantPreserveConnectionsWithMonomer(
-          selections,
-          monomerItem,
-        )
-      ) {
-        this.showMergeWarningModal();
+      const missingAttachmentPoint = this.getFirstMissingAttachmentPoint(
+        selections,
+        monomerItem,
+      );
+
+      if (missingAttachmentPoint) {
+        const message = `The monomer lacks ${missingAttachmentPoint} attachment point and cannot be inserted at current position`;
+        this.showMergeWarningModal(message);
         return;
       }
 
@@ -2428,11 +2493,7 @@ export class SequenceMode extends BaseMode {
           },
         });
       } else if (
-        this.selectionsCantPreserveConnectionsWithMonomer(
-          selections,
-          monomerItem,
-          true,
-        )
+        this.getFirstMissingAttachmentPoint(selections, monomerItem, true)
       ) {
         editor.events.openConfirmationDialog.dispatch({
           confirmationText:
@@ -2447,10 +2508,14 @@ export class SequenceMode extends BaseMode {
     } else if (editor.isSequenceEditMode) {
       const newNodePosition = this.getNewNodePosition();
       const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
-
-      if (currentTwoStrandedNode?.antisenseNode) {
-        return;
-      }
+      const previousTwoStrandedNodeInSameChain =
+        SequenceRenderer.previousNodeInSameChain;
+      const nextNodeToConnect = this.isAntisenseEditMode
+        ? currentTwoStrandedNode?.antisenseNode ?? null
+        : currentTwoStrandedNode?.senseNode ?? null;
+      const previousNodeToConnect = this.isAntisenseEditMode
+        ? previousTwoStrandedNodeInSameChain?.antisenseNode
+        : previousTwoStrandedNodeInSameChain?.senseNode;
 
       const newMonomer = editor.drawingEntitiesManager.createMonomer(
         monomerItem,
@@ -2476,7 +2541,11 @@ export class SequenceMode extends BaseMode {
 
       modelChanges.merge(monomerAddCommand);
       modelChanges.merge(
-        this.insertNewSequenceFragment(newMonomerSequenceNode),
+        this.insertNewSequenceFragment(
+          newMonomerSequenceNode,
+          nextNodeToConnect,
+          previousNodeToConnect,
+        ),
       );
 
       modelChanges.addOperation(new ReinitializeModeOperation());
@@ -2756,10 +2825,14 @@ export class SequenceMode extends BaseMode {
     } else if (editor.isSequenceEditMode) {
       const newNodePosition = this.getNewNodePosition();
       const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
-
-      if (currentTwoStrandedNode?.antisenseNode) {
-        return;
-      }
+      const previousTwoStrandedNodeInSameChain =
+        SequenceRenderer.previousNodeInSameChain;
+      const nextNodeToConnect = this.isAntisenseEditMode
+        ? currentTwoStrandedNode?.antisenseNode ?? null
+        : currentTwoStrandedNode?.senseNode ?? null;
+      const previousNodeToConnect = this.isAntisenseEditMode
+        ? previousTwoStrandedNodeInSameChain?.antisenseNode
+        : previousTwoStrandedNodeInSameChain?.senseNode;
 
       const newPresetNode = this.createRnaPresetNode(preset, newNodePosition);
 
@@ -2783,7 +2856,13 @@ export class SequenceMode extends BaseMode {
         );
 
       modelChanges.merge(rnaPresetAddModelChanges);
-      modelChanges.merge(this.insertNewSequenceFragment(newPresetNode));
+      modelChanges.merge(
+        this.insertNewSequenceFragment(
+          newPresetNode,
+          nextNodeToConnect,
+          previousNodeToConnect,
+        ),
+      );
 
       modelChanges.addOperation(new ReinitializeModeOperation());
       editor.renderersContainer.update(modelChanges);
@@ -2823,7 +2902,13 @@ export class SequenceMode extends BaseMode {
       nextNodeToConnect &&
       !(nextNodeToConnect instanceof EmptySequenceNode)
     ) {
-      if (!this.isR1Free(nextNodeToConnect)) {
+      // For antisense chains, when adding at the end (no previous node),
+      // we need to check R2 of the last monomer, not R1
+      const isAttachmentPointFree = this.isAntisenseEditMode
+        ? this.isR2Free(nextNodeToConnect)
+        : this.isR1Free(nextNodeToConnect);
+
+      if (!isAttachmentPointFree) {
         this.showMergeWarningModal();
         return;
       }
@@ -2935,13 +3020,30 @@ export class SequenceMode extends BaseMode {
     }
 
     if (needConnectWithNextNodeInChain) {
-      this.connectNodes(
-        lastNodeOfNewFragment,
-        currentNode,
-        modelChanges,
-        newNodePosition,
-        addPhosphateIfNeeded,
-      );
+      // For antisense chains at the end (no previousNodeInSameChain, but has currentNode),
+      // the parameters are swapped, so we need to reverse the connection order
+      const isAntisenseEndCase =
+        this.isAntisenseEditMode && !previousNodeInSameChain && currentNode;
+
+      if (isAntisenseEndCase) {
+        // Antisense at end: connect lastU.R2 → newC.R1
+        this.connectNodes(
+          currentNode,
+          firstNodeOfNewFragment,
+          modelChanges,
+          newNodePosition,
+          addPhosphateIfNeeded,
+        );
+      } else {
+        // Normal case: connect newMonomer.R2 → nextMonomer.R1
+        this.connectNodes(
+          lastNodeOfNewFragment,
+          currentNode,
+          modelChanges,
+          newNodePosition,
+          addPhosphateIfNeeded,
+        );
+      }
     }
 
     return modelChanges;

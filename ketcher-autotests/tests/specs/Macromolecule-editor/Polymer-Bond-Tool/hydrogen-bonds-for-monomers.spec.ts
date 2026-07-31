@@ -441,9 +441,11 @@ async function chooseAttachmentPointsInConnectionDialog(
   if (await connectionPointDialog.isVisible()) {
     await page.getByTitle(leftMonomerAttachmentPointName).first().click();
 
-    (await page.getByTitle(rightMonomerAttachmentPointName).count()) > 1
-      ? await page.getByTitle(rightMonomerAttachmentPointName).nth(1).click()
-      : await page.getByTitle(rightMonomerAttachmentPointName).first().click();
+    if ((await page.getByTitle(rightMonomerAttachmentPointName).count()) > 1) {
+      await page.getByTitle(rightMonomerAttachmentPointName).nth(1).click();
+    } else {
+      await page.getByTitle(rightMonomerAttachmentPointName).first().click();
+    }
 
     await AttachmentPointsDialog(page).connect();
   }

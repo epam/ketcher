@@ -40,6 +40,7 @@ import ReSimpleObject from './resimpleObject';
 import ReText from './retext';
 import type { Render } from '../raphaelRender';
 import type Visel from './visel';
+import type { RaphaelPath } from './raphaelTypes';
 import util from '../util';
 import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
 import { ReImage } from 'application/render/restruct/reImage';
@@ -87,7 +88,11 @@ class ReStruct {
   public multitailArrows = new Map<number, ReMultitailArrow>();
 
   private initialized = false;
-  private layers: Record<LayerMap, any> = {} as Record<LayerMap, unknown>;
+  private layers: Record<LayerMap, RaphaelPath> = {} as Record<
+    LayerMap,
+    RaphaelPath
+  >;
+
   public connectedComponents: Pool = new Pool();
   private readonly ccFragmentType: Pool = new Pool();
   private structChanged = false;

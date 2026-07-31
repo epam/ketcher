@@ -2083,10 +2083,8 @@ export class DrawingEntitiesManager {
       const editorSettings = provideEditorSettings();
       const canvasWidth =
         editor.canvas.width?.baseVal?.value ||
-        Number(editor.canvas.getAttribute('width')) ||
-        editor.canvas.getBoundingClientRect().width ||
-        editor.canvas.clientWidth ||
-        SnakeLayoutCellWidth * 10;
+        editor.canvas.getBoundingClientRect().width;
+
       const cellWidthInAngstroms =
         SnakeLayoutCellWidth / editorSettings.macroModeScale;
 

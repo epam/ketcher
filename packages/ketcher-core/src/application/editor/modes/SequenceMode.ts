@@ -2000,6 +2000,7 @@ export class SequenceMode extends BaseMode {
     }
 
     const sideConnectionsData: Array<{
+      fromMonomer: BaseMonomer;
       firstMonomerAttachmentPointName: AttachmentPointName;
       secondMonomer: BaseMonomer;
       secondMonomerAttachmentPointName: AttachmentPointName;
@@ -2031,6 +2032,7 @@ export class SequenceMode extends BaseMode {
         const [secondMonomerAttachmentPointName] = secondMonomerBondData;
 
         sideConnectionsData.push({
+          fromMonomer: monomer,
           firstMonomerAttachmentPointName: key as AttachmentPointName,
           secondMonomer,
           secondMonomerAttachmentPointName:
@@ -2607,21 +2609,36 @@ export class SequenceMode extends BaseMode {
       ),
     );
 
-    let monomerForSideConnections = newPresetNode.monomer;
-
-    if (newPresetNode instanceof Nucleotide) {
-      monomerForSideConnections = newPresetNode.phosphate;
-    } else if (newPresetNode instanceof Nucleoside) {
-      monomerForSideConnections = newPresetNode.sugar;
-    }
-
     sideChainConnections?.forEach((sideConnectionData) => {
       const {
+        fromMonomer,
         firstMonomerAttachmentPointName,
         secondMonomer,
         secondMonomerAttachmentPointName,
       } = sideConnectionData;
+
+      let monomerForSideConnections: BaseMonomer | undefined;
+
       if (
+        newPresetNode instanceof Nucleotide ||
+        newPresetNode instanceof Nucleoside
+      ) {
+        if (fromMonomer instanceof RNABase) {
+          monomerForSideConnections = newPresetNode.rnaBase;
+        } else if (fromMonomer instanceof Sugar) {
+          monomerForSideConnections = newPresetNode.sugar;
+        } else if (
+          newPresetNode instanceof Nucleotide &&
+          fromMonomer instanceof Phosphate
+        ) {
+          monomerForSideConnections = newPresetNode.phosphate;
+        }
+      } else {
+        monomerForSideConnections = newPresetNode.monomer;
+      }
+
+      if (
+        !monomerForSideConnections ||
         !this.isConnectionPossible(
           monomerForSideConnections,
           firstMonomerAttachmentPointName,

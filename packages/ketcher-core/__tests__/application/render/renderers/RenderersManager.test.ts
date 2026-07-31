@@ -379,7 +379,6 @@ describe('RenderersManager', () => {
     const rnaSubChains = getRnaSubChains(collection);
 
     expect(rnaSubChains.length).toBeGreaterThan(0);
-    // The collection must recognize the head-to-tail connection as a cycle.
     expect(collection.chains.some((chain) => chain.isCyclic)).toBe(true);
 
     const firstBaseRenderer = mockRenderer(first.base);

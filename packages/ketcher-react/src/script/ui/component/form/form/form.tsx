@@ -80,13 +80,8 @@ function applySchemaDefaults<T extends Record<string, unknown>>(
   Object.entries(schema.properties ?? {}).forEach(([name, property]) => {
     if (property !== null && typeof property === 'object') {
       const defaultValue = (property as SchemaProperty).default;
-      // Apply default if field is missing, undefined, or empty string
-      if (
-        defaultValue !== undefined &&
-        (!(name in defaultsApplied) ||
-          defaultsApplied[name] === undefined ||
-          defaultsApplied[name] === '')
-      ) {
+      // Only set default if key is completely missing from state
+      if (defaultValue !== undefined && !(name in defaultsApplied)) {
         defaultsApplied[name] = defaultValue;
       }
     }
@@ -182,21 +177,21 @@ class Form extends Component<FormProps> {
   }
 
   componentDidUpdate(prevProps: FormProps) {
-    const { schema, result, customValid, serialize, deserialize } = this.props;
-    if (
-      (schema.key && schema.key !== prevProps.schema.key) ||
-      (customValid !== prevProps.customValid &&
-        (schema.title === 'Atom' || schema.title === 'Bond'))
-    ) {
-      this.schema = propSchema(schema, { customValid, serialize, deserialize });
-      this.schema.serialize(result);
-      this.updateState(result);
-    }
+  const { schema, result, customValid, serialize, deserialize } = this.props;
+  if (
+    (schema.key && schema.key !== prevProps.schema.key) ||
+    (customValid !== prevProps.customValid &&
+      (schema.title === 'Atom' || schema.title === 'Bond'))
+  ) {
+    this.schema = propSchema(schema, { customValid, serialize, deserialize });
+    const stateWithDefaults = applySchemaDefaults(result, schema);
+    this.schema.serialize(stateWithDefaults);
+    this.updateState(stateWithDefaults);
   }
+}
 
   updateState(newState: Record<string, unknown>) {
     const { onUpdate, schema } = this.props;
-    const stateWithDefaults = applySchemaDefaults(newState, schema);
     const { instance, valid, errors } =
       this.schema.serialize(stateWithDefaults);
     const errs = getErrorsObj(errors);

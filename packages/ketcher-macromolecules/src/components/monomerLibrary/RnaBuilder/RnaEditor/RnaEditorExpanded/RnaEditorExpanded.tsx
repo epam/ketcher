@@ -89,7 +89,6 @@ import {
 } from 'helpers/rnaValidations';
 import { Icon } from 'ketcher-react';
 import styles from './RnaEditorExpanded.module.less';
-import { truncate } from 'node:fs/promises';
 
 type SequenceSelectionGroupNames = {
   [MonomerGroups.SUGARS]: string;

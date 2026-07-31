@@ -1,15 +1,20 @@
 import { AtomRenderer } from '../AtomRenderer';
-import { AtomLabel, type GenericAtomLabel } from 'domain/constants';
+import {
+  AtomLabel,
+  type CoreAtomLabel,
+  type GenericAtomLabel,
+} from 'domain/constants';
 import { AtomList } from 'domain/entities/atomList';
+import type { Atom } from 'domain/entities/CoreAtom';
 
 /**
  * Helper to call a getter on AtomRenderer without going through the
  * full constructor (which requires a live D3/SVG canvas and editor instance).
- * We set `this.atom` directly on the prototype context.
+ * We set `this.atom` directly on the prototype context using a partial mock.
  */
 function callGetter<K extends keyof AtomRenderer>(
   getterName: K,
-  atom: Partial<AtomRenderer['atom']>,
+  atom: Pick<Atom, 'label' | 'properties'>,
 ): AtomRenderer[K] {
   const descriptor = Object.getOwnPropertyDescriptor(
     AtomRenderer.prototype,
@@ -22,55 +27,49 @@ function callGetter<K extends keyof AtomRenderer>(
   return descriptor.get.call({ atom }) as AtomRenderer[K];
 }
 
+function mockAtom(
+  label: CoreAtomLabel,
+  properties: Atom['properties'] = {},
+): Pick<Atom, 'label' | 'properties'> {
+  return { label, properties };
+}
+
 describe('AtomRenderer.labelText', () => {
   it('returns the element label for a regular atom', () => {
-    const atom = {
-      properties: {},
-      label: AtomLabel.C,
-    };
-    expect(callGetter('labelText', atom as any)).toBe('C');
+    expect(callGetter('labelText', mockAtom(AtomLabel.C))).toBe('C');
   });
 
   it('returns the alias when the atom has an alias', () => {
-    const atom = {
-      properties: { alias: 'MyAlias' },
-      label: AtomLabel.C,
-    };
-    expect(callGetter('labelText', atom as any)).toBe('MyAlias');
+    expect(
+      callGetter('labelText', mockAtom(AtomLabel.C, { alias: 'MyAlias' })),
+    ).toBe('MyAlias');
   });
 
   it('returns bracket notation for an atom-list atom', () => {
     // Elements: C=6, N=7, O=8
     const atomList = new AtomList({ notList: false, ids: [6, 7, 8] });
-    const atom = {
-      properties: { atomList },
-      label: 'L#' as GenericAtomLabel,
-    };
-    expect(callGetter('labelText', atom as any)).toBe('[C,N,O]');
+    expect(
+      callGetter('labelText', mockAtom('L#' as GenericAtomLabel, { atomList })),
+    ).toBe('[C,N,O]');
   });
 
   it('returns negated bracket notation for a not-list atom', () => {
     const atomList = new AtomList({ notList: true, ids: [6, 7, 8] });
-    const atom = {
-      properties: { atomList },
-      label: 'L#' as GenericAtomLabel,
-    };
-    expect(callGetter('labelText', atom as any)).toBe('![C,N,O]');
+    expect(
+      callGetter('labelText', mockAtom('L#' as GenericAtomLabel, { atomList })),
+    ).toBe('![C,N,O]');
   });
 
   it('returns the generic label string for a generic atom', () => {
-    const atom = {
-      properties: {},
-      label: 'Q' as GenericAtomLabel,
-    };
-    expect(callGetter('labelText', atom as any)).toBe('Q');
+    expect(callGetter('labelText', mockAtom('Q' as GenericAtomLabel))).toBe(
+      'Q',
+    );
   });
 });
 
 describe('AtomRenderer.isGenericLabel', () => {
   it('returns false for a regular element atom', () => {
-    const atom = { label: AtomLabel.C, properties: {} };
-    expect(callGetter('isGenericLabel', atom as any)).toBe(false);
+    expect(callGetter('isGenericLabel', mockAtom(AtomLabel.C))).toBe(false);
   });
 
   it('returns true for all 8 atom generic labels', () => {
@@ -85,13 +84,13 @@ describe('AtomRenderer.isGenericLabel', () => {
       'XH',
     ];
     for (const label of genericLabels) {
-      const atom = { label, properties: {} };
-      expect(callGetter('isGenericLabel', atom as any)).toBe(true);
+      expect(callGetter('isGenericLabel', mockAtom(label))).toBe(true);
     }
   });
 
   it('returns false for atom-list marker label', () => {
-    const atom = { label: 'L#' as GenericAtomLabel, properties: {} };
-    expect(callGetter('isGenericLabel', atom as any)).toBe(false);
+    expect(
+      callGetter('isGenericLabel', mockAtom('L#' as GenericAtomLabel)),
+    ).toBe(false);
   });
 });

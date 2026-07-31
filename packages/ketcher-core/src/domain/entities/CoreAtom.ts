@@ -3,7 +3,7 @@ import type { Vec2 } from 'domain/entities/vec2';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { type Bond, BondType } from 'domain/entities/CoreBond';
 import type { BaseRenderer } from 'application/render';
-import { AtomLabel, CoreAtomLabel, Elements } from 'domain/constants';
+import { AtomLabel, type CoreAtomLabel, Elements } from 'domain/constants';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { isNumber } from 'lodash';
 import { MonomerToAtomBond } from './MonomerToAtomBond';

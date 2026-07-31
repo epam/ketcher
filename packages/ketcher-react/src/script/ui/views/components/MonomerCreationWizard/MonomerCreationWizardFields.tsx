@@ -52,12 +52,23 @@ interface IMonomerCreationWizardFieldsProps {
   ) => void;
   showNaturalAnalogue?: boolean;
   attachmentPointsExtra?: ReactNode;
+  initialModificationTypes?: string[];
 }
 
 interface ModificationTypeItem {
   id: number;
   value: string;
 }
+
+const IDT_POSITIONS = [
+  { fieldId: 'idtAlias5', prefix: "5'", testId: 'idt-alias-5-input' },
+  {
+    fieldId: 'idtAliasInternal',
+    prefix: 'i',
+    testId: 'idt-alias-internal-input',
+  },
+  { fieldId: 'idtAlias3', prefix: "3'", testId: 'idt-alias-3-input' },
+] as const;
 
 const MonomerCreationWizardFields = (
   props: IMonomerCreationWizardFieldsProps,
@@ -73,23 +84,19 @@ const MonomerCreationWizardFields = (
     onFieldChange,
     onReadonlyLeavingAtomChange,
     attachmentPointsExtra,
+    initialModificationTypes,
   } = props;
   const { values, errors } = wizardState;
-  const {
-    type,
-    symbol,
-    name,
-    naturalAnalogue,
-    aliasHELM,
-    aliasBILN,
-    idtAlias5,
-    idtAliasInternal,
-    idtAlias3,
-  } = values;
+  const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
   const [modificationTypes, setModificationTypes] = useState<
     ModificationTypeItem[]
-  >([]);
-  const modificationTypeIdRef = useRef(0);
+  >(() =>
+    (initialModificationTypes ?? []).map((value, index) => ({
+      id: index,
+      value,
+    })),
+  );
+  const modificationTypeIdRef = useRef((initialModificationTypes ?? []).length);
 
   useEffect(() => {
     editor?.setMonomerCreationSelectedType?.(values.type);
@@ -407,103 +414,45 @@ const MonomerCreationWizardFields = (
                     />
                   </div>
                 )}
-              </AccordionDetails>
-            </Accordion>
-          </div>
-        </>
-      )}
-
-      {displayIdtAlias && (
-        <>
-          <div className={styles.divider} />
-
-          <div className={styles.accordionContainer}>
-            <Accordion
-              className={clsx(accordionClasses.accordion, styles.accordion)}
-              square
-            >
-              <AccordionSummary
-                className={styles.accordionSummary}
-                expandIcon={
-                  <Icon
-                    className={accordionClasses.expandIcon}
-                    name="chevron"
-                  />
-                }
-                data-testid="idt-alias-accordion"
-              >
-                IDT alias
-              </AccordionSummary>
-              <AccordionDetails>
-                <div className={styles.aliasField}>
-                  <p className={styles.inputLabel}>5&apos;</p>
-                  <Autocomplete
-                    freeSolo
-                    options={[]}
-                    value={idtAlias5}
-                    onInputChange={(_event, newValue) =>
-                      onFieldChange('idtAlias5', newValue)
-                    }
-                    data-testid="idt-alias-5-input"
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        variant="standard"
-                        className={clsx(
-                          styles.inputField,
-                          errors.idtAlias5 && styles.error,
-                        )}
-                        error={Boolean(errors.idtAlias5)}
-                      />
-                    )}
-                  />
-                </div>
-                <div className={styles.aliasField}>
-                  <p className={styles.inputLabel}>Internal</p>
-                  <Autocomplete
-                    freeSolo
-                    options={[]}
-                    value={idtAliasInternal}
-                    onInputChange={(_event, newValue) =>
-                      onFieldChange('idtAliasInternal', newValue)
-                    }
-                    data-testid="idt-alias-internal-input"
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        variant="standard"
-                        className={clsx(
-                          styles.inputField,
-                          errors.idtAliasInternal && styles.error,
-                        )}
-                        error={Boolean(errors.idtAliasInternal)}
-                      />
-                    )}
-                  />
-                </div>
-                <div className={styles.aliasField}>
-                  <p className={styles.inputLabel}>3&apos;</p>
-                  <Autocomplete
-                    freeSolo
-                    options={[]}
-                    value={idtAlias3}
-                    onInputChange={(_event, newValue) =>
-                      onFieldChange('idtAlias3', newValue)
-                    }
-                    data-testid="idt-alias-3-input"
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        variant="standard"
-                        className={clsx(
-                          styles.inputField,
-                          errors.idtAlias3 && styles.error,
-                        )}
-                        error={Boolean(errors.idtAlias3)}
-                      />
-                    )}
-                  />
-                </div>
+                {displayIdtAlias && (
+                  <div className={styles.aliasField}>
+                    <p className={styles.inputLabel}>IDT</p>
+                    <div className={styles.idtAliasRow}>
+                      {IDT_POSITIONS.map(({ fieldId, prefix, testId }) => (
+                        <div key={fieldId} className={styles.idtAliasCell}>
+                          <Autocomplete
+                            freeSolo
+                            options={[]}
+                            value={values[fieldId]}
+                            onInputChange={(_event, newValue) =>
+                              onFieldChange(fieldId, newValue)
+                            }
+                            data-testid={testId}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                variant="standard"
+                                className={clsx(
+                                  styles.inputField,
+                                  errors[fieldId] && styles.error,
+                                )}
+                                error={Boolean(errors[fieldId])}
+                                InputProps={{
+                                  ...params.InputProps,
+                                  startAdornment: (
+                                    <span className={styles.idtPositionPrefix}>
+                                      {prefix}:
+                                    </span>
+                                  ),
+                                }}
+                              />
+                            )}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </AccordionDetails>
             </Accordion>
           </div>

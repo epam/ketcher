@@ -126,11 +126,9 @@ const getInitialWizardStateForEdit = (
       naturalAnalogue: initialValues.naturalAnalogue,
       aliasHELM: initialValues.aliasHELM,
       aliasBILN: initialValues.aliasBILN,
-      // Edit is save-as-copy: IDT must stay blank so the copy does not collide
-      // with the original monomer's library-unique IDT alias.
-      idtAlias5: '',
-      idtAliasInternal: '',
-      idtAlias3: '',
+      idtAlias5: initialValues.idtAlias5,
+      idtAliasInternal: initialValues.idtAliasInternal,
+      idtAlias3: initialValues.idtAlias3,
     },
   };
 };
@@ -943,7 +941,10 @@ const MonomerCreationWizardInternal = ({
     idtAliasInternal,
     idtAlias3,
   } = values;
-  const [modificationTypes, setModificationTypes] = useState<string[]>([]);
+  const [modificationTypes, setModificationTypes] = useState<string[]>(
+    () =>
+      monomerCreationState.editInstanceInitialValues?.modificationTypes ?? [],
+  );
   const [leavingGroupDialogMessage, setLeavingGroupDialogMessage] =
     useState('');
   const [pendingType, setPendingType] = useState<
@@ -2104,6 +2105,10 @@ const MonomerCreationWizardInternal = ({
               <MonomerCreationWizardFields
                 wizardState={wizardState}
                 assignedAttachmentPoints={assignedAttachmentPoints}
+                initialModificationTypes={
+                  monomerCreationState.editInstanceInitialValues
+                    ?.modificationTypes
+                }
                 onFieldChange={(fieldId: WizardFormFieldId, value: string) => {
                   handleFieldChange(fieldId, value);
                 }}

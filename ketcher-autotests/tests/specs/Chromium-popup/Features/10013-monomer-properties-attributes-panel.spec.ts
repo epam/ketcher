@@ -307,13 +307,13 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/10013
      * Description: Nucleotide (monomer) type should show Name, Code, and Natural analogue fields,
-     * no Modification section, only BILN aliases (no HELM), and Attachment points section.
+     * no Modification section, Aliases with IDT inputs only (no HELM/BILN), and Attachment points.
      * Scenario:
      * 1. Open monomer creation wizard
      * 2. Select Nucleotide (monomer) type
      * 3. Verify Name, Code, and Natural analogue fields are present
      * 4. Verify Modification section is NOT shown
-     * 5. Verify Aliases section is NOT present (until IDT alias or/and AxoLabs alias is implemented for nucleotides)
+     * 5. Verify Aliases section shows IDT inputs and hides HELM/BILN
      * 6. Verify Attachment points section is present
      *
      * Version 3.17
@@ -336,8 +336,24 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
     // Verify Modification section is NOT shown
     await expect(createMonomerDialog.modificationSection).not.toBeVisible();
 
-    // Verify Aliases section is NOT present (until IDT alias or/and AxoLabs alias is implemented for nucleotides)
-    await expect(createMonomerDialog.aliasesSection).not.toBeVisible();
+    // Verify Aliases section shows IDT inputs only
+    await expect(createMonomerDialog.aliasesSection).toBeVisible();
+    await createMonomerDialog.expandAliasesSection();
+    await expect(
+      createMonomerDialog.aliasesSection.idtAlias5Editbox,
+    ).toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.idtAliasInternalEditbox,
+    ).toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.idtAlias3Editbox,
+    ).toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.helmAliasEditbox,
+    ).not.toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.bilnAliasEditbox,
+    ).not.toBeVisible();
 
     // Verify Attachment points section is present
     await expect(createMonomerDialog.infoIcon).toBeVisible();

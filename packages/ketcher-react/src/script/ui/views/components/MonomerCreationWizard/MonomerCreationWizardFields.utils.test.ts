@@ -24,7 +24,7 @@ describe('getMonomerPropertyVisibility', () => {
       expect(getMonomerPropertyVisibility(type)).toEqual({
         displayNaturalAnalogue: naturalAnalogue,
         displayModificationTypes: modificationTypes,
-        displayAliases: helmAlias || bilnAlias,
+        displayAliases: helmAlias || bilnAlias || idtAlias,
         displayHelmAlias: helmAlias,
         displayBilnAlias: bilnAlias,
         displayIdtAlias: idtAlias,

@@ -197,6 +197,43 @@ export function buildIdtAliasesFromWizardInputs(
   return { base, modifications };
 }
 
+/**
+ * Expands a stored `IKetIdtAliases` back into the three wizard IDT inputs —
+ * the inverse of `buildIdtAliasesFromWizardInputs`. A collapsed `{ base }` is
+ * re-expanded into its 5′/internal/3′ indicator forms so that re-saving
+ * collapses to the same `{ base }`; otherwise each position shows its stored
+ * modification without the wrapping slashes (the save transform re-adds them).
+ */
+export function expandIdtAliasesToWizardInputs(idtAliases?: IKetIdtAliases): {
+  idtAlias5: string;
+  idtAliasInternal: string;
+  idtAlias3: string;
+} {
+  if (!idtAliases?.base) {
+    return { idtAlias5: '', idtAliasInternal: '', idtAlias3: '' };
+  }
+
+  if (!idtAliases.modifications) {
+    return {
+      idtAlias5: `5${idtAliases.base}`,
+      idtAliasInternal: `i${idtAliases.base}`,
+      idtAlias3: `3${idtAliases.base}`,
+    };
+  }
+
+  return {
+    idtAlias5: idtAliases.modifications.endpoint5
+      ? stripTerminalSlashes(idtAliases.modifications.endpoint5)
+      : '',
+    idtAliasInternal: idtAliases.modifications.internal
+      ? stripTerminalSlashes(idtAliases.modifications.internal)
+      : '',
+    idtAlias3: idtAliases.modifications.endpoint3
+      ? stripTerminalSlashes(idtAliases.modifications.endpoint3)
+      : '',
+  };
+}
+
 export function isValidHelmAlias(alias: string) {
   return HELM_ALIAS_REGEX.test(alias);
 }

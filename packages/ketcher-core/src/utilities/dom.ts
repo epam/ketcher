@@ -30,9 +30,10 @@ export function isEditableInputTarget(target: EventTarget | null): boolean {
  * // cleanup:
  * window.removeEventListener('keydown', handler);
  */
-export function guardForMacromoleculesEditor<
-  T extends (...args: unknown[]) => unknown,
->(handler: T): T {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function guardForMacromoleculesEditor<T extends (...args: any[]) => any>(
+  handler: T,
+): T {
   return ((...args: Parameters<T>) => {
     if (window.isPolymerEditorTurnedOn) {
       return handler(...args);
@@ -55,9 +56,10 @@ export function guardForMacromoleculesEditor<
  * // cleanup:
  * window.removeEventListener('keydown', handler);
  */
-export function guardForMicromoleculesEditor<
-  T extends (...args: unknown[]) => unknown,
->(handler: T): T {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function guardForMicromoleculesEditor<T extends (...args: any[]) => any>(
+  handler: T,
+): T {
   return ((...args: Parameters<T>) => {
     if (!window.isPolymerEditorTurnedOn) {
       return handler(...args);

@@ -20,6 +20,7 @@ import {
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
+import { isGenericAtom } from 'domain/helpers';
 
 // Extra clearance in canvas units that keeps labels away from the atom bbox.
 const LABEL_CLEARANCE_OFFSET = 5;
@@ -303,6 +304,11 @@ export class AtomRenderer extends BaseRenderer {
     return this.atom.properties.alias ?? this.atom.label;
   }
 
+  /** True when the atom's label is a generic / pseudo query atom (e.g. A, Q, M, X, *). */
+  public get isGenericLabel(): boolean {
+    return isGenericAtom(this.atom.label);
+  }
+
   /** The label text shown on canvas — truncated to MAX_LABEL_LENGTH if necessary. */
   public get displayLabelText() {
     const text = this.labelText;
@@ -440,7 +446,9 @@ export class AtomRenderer extends BaseRenderer {
       .attr('fill', this.labelColor)
       .attr(
         'style',
-        'user-select: none; font-family: Arial; letter-spacing: 1.2px;',
+        `user-select: none; font-family: Arial; letter-spacing: 1.2px;${
+          this.isGenericLabel ? ' font-style: italic;' : ''
+        }`,
       )
       .attr('font-size', '13px')
       .attr('pointer-events', 'none');

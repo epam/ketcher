@@ -151,11 +151,14 @@ export class Bond extends BaseMicromoleculeEntity {
     this.center = new Vec2();
   }
 
-  static getAttrHash(bond: Bond) {
-    const attrs = {};
+  static getAttrHash(
+    bond: Bond,
+  ): Partial<Pick<Bond, keyof typeof Bond.attrlist>> {
+    const attrs: Partial<Pick<Bond, keyof typeof Bond.attrlist>> = {};
     for (const attr in Bond.attrlist) {
-      if (bond[attr] || attr === 'stereo') {
-        attrs[attr] = bond[attr];
+      const key = attr as keyof typeof Bond.attrlist;
+      if (bond[key] || attr === 'stereo') {
+        attrs[key] = bond[key];
       }
     }
     return attrs;

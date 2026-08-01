@@ -29,6 +29,8 @@ import {
   DearomatizeCommandData,
   GenerateImageCommandData,
   GenerateInchIKeyCommandData,
+  IndigoModule,
+  IndigoOptions,
   InputMessage,
   LayoutCommandData,
   OutputMessage,
@@ -51,13 +53,8 @@ const normalizeError = (error: unknown): Error => {
   }
 };
 
-interface IndigoOptions {
-  set: (key: string, value: string) => void;
-}
-
 type HandlerType = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  indigo: any,
+  indigo: IndigoModule,
   indigoOptions: IndigoOptions,
 ) => string;
 
@@ -69,8 +66,7 @@ function handle(
   messageType?: Command,
   inputData?: string,
 ) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  module.then((indigo: any) => {
+  module.then((indigo: IndigoModule) => {
     const indigoOptions = new indigo.MapStringString();
     setOptions(indigoOptions, options ?? {});
     let msg: OutputMessage<string>;

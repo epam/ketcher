@@ -16,17 +16,15 @@
 
 import { Select, MenuItem, FormControl, Switch } from '@mui/material';
 import { FieldWrapper } from './Settings.styles';
+import { SettingOptionValue } from './fieldGroups';
 
 interface SettingsFieldProps {
   name: string;
   label: string;
   type: 'checkbox' | 'number' | 'text' | 'select' | 'color';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onChange: (value: any) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  options?: Array<{ value: any; label: string }>;
+  value: SettingOptionValue;
+  onChange: (value: SettingOptionValue) => void;
+  options?: Array<{ value: SettingOptionValue; label: string }>;
   min?: number;
   max?: number;
   step?: number;

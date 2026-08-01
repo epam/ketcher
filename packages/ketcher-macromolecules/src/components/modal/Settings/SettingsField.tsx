@@ -22,7 +22,7 @@ interface SettingsFieldProps {
   name: string;
   label: string;
   type: 'checkbox' | 'number' | 'text' | 'select' | 'color';
-  value: SettingFieldValue;
+  value: SettingFieldValue | undefined;
   onChange: (value: SettingFieldValue) => void;
   options?: Array<{ value: SettingFieldValue; label: string }>;
   min?: number;
@@ -41,6 +41,15 @@ export const SettingsField = ({
   max,
   step,
 }: SettingsFieldProps) => {
+  const stringValue = typeof value === 'string' ? value : undefined;
+  const numberValue = typeof value === 'number' ? value : undefined;
+  let selectValue: string | number = '';
+  if (typeof value === 'boolean') {
+    selectValue = String(value);
+  } else if (value !== undefined) {
+    selectValue = value;
+  }
+
   const renderField = () => {
     switch (type) {
       case 'checkbox':
@@ -62,7 +71,7 @@ export const SettingsField = ({
             <span>{label}</span>
             <input
               type="number"
-              value={value ?? ''}
+              value={numberValue ?? ''}
               onChange={(e) => onChange(Number(e.target.value))}
               min={min}
               max={max}
@@ -85,8 +94,13 @@ export const SettingsField = ({
             <span>{label}</span>
             <FormControl size="small" sx={{ border: 'none' }}>
               <Select
-                value={value ?? ''}
-                onChange={(e) => onChange(e.target.value)}
+                value={selectValue}
+                onChange={(e) => {
+                  const option = options?.find(
+                    (opt) => String(opt.value) === e.target.value,
+                  );
+                  onChange(option?.value ?? e.target.value);
+                }}
                 displayEmpty
                 data-testid={`setting-${name}`}
                 sx={{
@@ -107,7 +121,7 @@ export const SettingsField = ({
                 {options?.map((opt) => (
                   <MenuItem
                     key={String(opt.value)}
-                    value={opt.value}
+                    value={String(opt.value)}
                     sx={{ fontSize: '12px' }}
                   >
                     {opt.label}
@@ -125,7 +139,7 @@ export const SettingsField = ({
             <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
               <input
                 type="color"
-                value={value ?? '#000000'}
+                value={stringValue ?? '#000000'}
                 onChange={(e) => onChange(e.target.value)}
                 data-testid={`setting-${name}`}
                 style={{
@@ -139,7 +153,7 @@ export const SettingsField = ({
               />
               <input
                 type="text"
-                value={value ?? '#000000'}
+                value={stringValue ?? '#000000'}
                 onChange={(e) => onChange(e.target.value)}
                 style={{
                   width: '85px',
@@ -161,7 +175,7 @@ export const SettingsField = ({
             <span>{label}</span>
             <input
               type="text"
-              value={value ?? ''}
+              value={stringValue ?? ''}
               onChange={(e) => onChange(e.target.value)}
               data-testid={`setting-${name}`}
               style={{

@@ -55,17 +55,8 @@ exports[`UpdateSequenceInRNABuilder modal component should render correctly 1`] 
               >
                 <svg
                   class="css-1td8dcm"
-                  fill="none"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M13.462 12.046l6.37 6.37-1.413 1.415-6.371-6.371-6.327 6.326-1.414-1.414 6.327-6.326-6.372-6.372L5.676 4.26l6.372 6.372 6.417-6.418 1.414 1.414-6.417 6.418z"
-                    fill="currentColor"
-                  />
-                </svg>
+                  name="close"
+                />
                 <span
                   class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
                 />

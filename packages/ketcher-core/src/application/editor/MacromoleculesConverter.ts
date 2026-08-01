@@ -35,7 +35,7 @@ import { invert, isNumber } from 'lodash';
 import type { IKetAttachmentPoint } from 'application/formatters/types/ket';
 import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import type { Atom } from 'domain/entities/CoreAtom';
-import type { AtomLabel } from 'domain/constants';
+import type { CoreAtomLabel } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MONOMER_CONST } from 'domain/constants/monomers';
@@ -553,7 +553,7 @@ export class MacromoleculesConverter {
             atom.pp,
             monomer,
             atomId,
-            atom.label as AtomLabel,
+            atom.label as CoreAtomLabel,
             {
               charge: atom.charge,
               explicitValence: atom.explicitValence,
@@ -562,6 +562,7 @@ export class MacromoleculesConverter {
               alias: atom.alias,
               cip: atom.cip,
               stereoLabel: atom.stereoLabel,
+              atomList: atom.atomList,
             },
           );
 

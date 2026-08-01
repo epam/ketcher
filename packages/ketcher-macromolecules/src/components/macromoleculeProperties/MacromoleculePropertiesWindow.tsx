@@ -80,12 +80,7 @@ const StyledWrapper = styled('div')<{ isActive?: boolean; hasError?: boolean }>(
 
 const WindowControlsArea = styled('div')(() => ({
   display: 'flex',
-}));
-
-const WindowDragControl = styled('div')(() => ({
-  flex: 1,
-  display: 'flex',
-  justifyContent: 'center',
+  justifyContent: 'flex-end',
 }));
 
 const StyledCloseIcon = styled(Icon)(() => ({
@@ -1022,10 +1017,25 @@ export const MacromoleculePropertiesWindow = () => {
   useEffect(() => {
     debouncedRecalculateMacromoleculeProperties(skipDataFetch);
   }, [
-    unipositiveIonsMeasurementUnit,
-    oligonucleotidesMeasurementUnit,
     unipositiveIonsValue,
     oligonucleotidesValue,
+    skipDataFetch,
+    debouncedRecalculateMacromoleculeProperties,
+  ]);
+
+  // Unlike the value inputs above (typed character by character, hence
+  // debounced), the measurement unit is a single discrete dropdown
+  // selection, so recalculating immediately here avoids an unnecessary
+  // 500ms delay on top of the actual recalculation time (#7316). Both
+  // effects share `skipDataFetch`, so opening the properties window also
+  // re-runs the effect above and schedules a debounced call; cancel it so
+  // only this immediate calculation actually runs.
+  useEffect(() => {
+    debouncedRecalculateMacromoleculeProperties.cancel();
+    recalculateMacromoleculePropertiesRef.current(skipDataFetch);
+  }, [
+    unipositiveIonsMeasurementUnit,
+    oligonucleotidesMeasurementUnit,
     skipDataFetch,
     debouncedRecalculateMacromoleculeProperties,
   ]);
@@ -1109,18 +1119,6 @@ export const MacromoleculePropertiesWindow = () => {
       data-testid="macromolecule-properties-window"
     >
       <WindowControlsArea>
-        <WindowDragControl>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M2 6H14" stroke="#333333" />
-            <path d="M2 10H14" stroke="#333333" />
-          </svg>
-        </WindowDragControl>
         <StyledCloseIcon
           name="close"
           onClick={closeWindow}

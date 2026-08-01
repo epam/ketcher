@@ -36,6 +36,7 @@ interface MoleculeErrors {
 type CheckOption =
   | 'valence'
   | 'radicals'
+  | 'isotopes'
   | 'pseudoatoms'
   | 'stereo'
   | 'query'
@@ -110,28 +111,30 @@ const checkSchema: CheckSchema = {
         enum: [
           'valence',
           'radicals',
+          'isotopes',
           'pseudoatoms',
           'stereo',
+          'chiral',
+          'chiral_flag',
           'query',
           'overlapping_atoms',
           'overlapping_bonds',
           'rgroups',
-          'chiral',
           '3d',
-          'chiral_flag',
         ],
         enumNames: [
           'Valence',
           'Radical',
+          'Isotopes',
           'Pseudoatom',
           'Stereochemistry',
+          'Chirality',
+          'Chiral flag',
           'Query',
           'Overlapping Atoms',
           'Overlapping Bonds',
           'R-Groups',
-          'Chirality',
           '3D Structure',
-          'Chiral flag',
         ],
       },
     },
@@ -325,12 +328,9 @@ const mapDispatchToProps = (
   },
 });
 
-// Workaround: @types/react version conflict with connect()
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CheckDialogAny = CheckDialog as any;
-const Check = connect(
+const ConnectedCheckDialog = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CheckDialogAny) as ComponentType<CheckDialogOwnProps>;
+)(CheckDialog);
 
-export default Check;
+export default ConnectedCheckDialog as ComponentType<CheckDialogOwnProps>;

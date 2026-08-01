@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  type Action,
   Bond,
   Vec2,
   bondChangingAction,
@@ -33,17 +34,29 @@ import { atomLongtapEvent } from './atom';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
 import { isBondingWithMacroMolecule } from './helper/isMacroMolecule';
+import type { ClosestItemWithMap } from '../shared/closest.types';
+
+type MergeItems = ReturnType<typeof getItemsToFuse>;
+
+interface ChainDragContext {
+  xy0: Vec2;
+  item?: ClosestItemWithMap | null;
+  stopTapping?: () => void;
+  timeout?: ReturnType<typeof setTimeout>;
+  action?: Action;
+  mergeItems?: MergeItems;
+}
 
 class ChainTool implements Tool {
   private readonly editor: Editor;
-  private dragCtx: any;
+  private dragCtx: ChainDragContext | undefined;
 
-  constructor(editor) {
+  constructor(editor: Editor) {
     this.editor = editor;
     this.editor.selection(null);
   }
 
-  mousedown(event) {
+  mousedown(event: MouseEvent) {
     if (this.dragCtx) return;
     if (isBondingWithMacroMolecule(this.editor, event)) {
       return;
@@ -135,10 +148,13 @@ class ChainTool implements Tool {
         const sGroupId = ci.id;
         const sGroup = molecule.sgroups.get(sGroupId);
         const attachmentAtomId = sGroup?.getAttachmentAtomId();
-        this.dragCtx.item = {
-          map: 'atoms',
-          id: attachmentAtomId,
-        };
+        if (attachmentAtomId !== undefined) {
+          this.dragCtx.item = {
+            map: 'atoms',
+            id: attachmentAtomId,
+            dist: 0,
+          };
+        }
       }
     }
 
@@ -148,7 +164,7 @@ class ChainTool implements Tool {
     return true;
   }
 
-  mousemove(event) {
+  mousemove(event: PointerEvent) {
     const editor = this.editor;
     const restruct = editor.render.ctab;
     const dragCtx = this.dragCtx;
@@ -173,7 +189,7 @@ class ChainTool implements Tool {
         const atoms = restruct.molecule.atoms;
 
         const pos0 = dragCtx.item
-          ? atoms.get(dragCtx.item.id)?.pp
+          ? atoms.get(dragCtx.item.id)?.pp ?? dragCtx.xy0
           : dragCtx.xy0;
 
         const pos1 = CoordinateTransformation.pageToModel(event, editor.render);
@@ -189,14 +205,14 @@ class ChainTool implements Tool {
           angle,
           sectCount,
           dragCtx.item ? dragCtx.item.id : null,
-        );
+        ) as [Action, { atoms: number[]; bonds: number[] }];
 
         editor.event.message.dispatch({
           info: sectCount + ' sectors',
         });
 
         dragCtx.action = action;
-        editor.update(dragCtx.action, true);
+        editor.update(action, true);
 
         dragCtx.mergeItems = getItemsToFuse(editor, newItems);
         editor.hover(getHoverToFuse(dragCtx.mergeItems));
@@ -210,7 +226,7 @@ class ChainTool implements Tool {
     const struct = this.editor.render.ctab;
     const molecule = struct.molecule;
     const functionalGroups = molecule.functionalGroups;
-    let atom;
+    let atom: number | undefined;
     const atomResult: Array<number> = [];
     const result: Array<number> = [];
 

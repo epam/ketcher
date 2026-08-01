@@ -249,9 +249,11 @@ export const rnaBuilderSlice = createSlice({
           (presetInList) => presetInList.name === newPreset.nameInList,
         );
         newPreset.nameInList = newPreset.name;
-        presetIndexInList === -1
-          ? state.presetsCustom.push(newPreset)
-          : state.presetsCustom.splice(presetIndexInList, 1, newPreset);
+        if (presetIndexInList === -1) {
+          state.presetsCustom.push(newPreset);
+        } else {
+          state.presetsCustom.splice(presetIndexInList, 1, newPreset);
+        }
       } else {
         state.presetsCustom.push(newPreset);
       }

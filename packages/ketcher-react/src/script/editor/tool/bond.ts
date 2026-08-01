@@ -31,6 +31,8 @@ import {
   vectorUtils,
   Atom,
   CoordinateTransformation,
+  getOrThrow,
+  entityNotFoundMessage,
 } from 'ketcher-core';
 
 import type Editor from '../Editor';
@@ -417,10 +419,11 @@ class BondTool implements Tool {
       if (typeof beginAtom !== 'number') {
         return { endAtom: newEndAtom, endPos };
       }
-      const atom = rnd.ctab.molecule.atoms.get(beginAtom);
-      if (!atom) {
-        return { endAtom: newEndAtom, endPos };
-      }
+      const atom = getOrThrow(
+        rnd.ctab.molecule.atoms,
+        beginAtom,
+        entityNotFoundMessage('Atom', beginAtom),
+      );
       endPos = vectorUtils.calcNewAtomPos(
         atom.pp.get_xy0(),
         xy1,

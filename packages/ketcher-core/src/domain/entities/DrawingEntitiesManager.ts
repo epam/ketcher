@@ -25,6 +25,7 @@ import {
   SGroupForest,
   Struct,
   Sugar,
+  UnsplitNucleotide,
 } from 'domain/entities';
 import { SGroup } from 'domain/entities/sgroup';
 import type { BondCIP } from 'domain/entities/types';
@@ -90,7 +91,7 @@ import {
   MonomerToAtomBondDeleteOperation,
 } from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
 import {
-  type AtomLabel,
+  type CoreAtomLabel,
   HalfMonomerSize,
   SnakeLayoutCellWidth,
 } from 'domain/constants';
@@ -148,6 +149,38 @@ import {
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
+const UNSPLIT_NUCLEOTIDE_MONOMERS_AMOUNT = 3;
+
+const SENSE_NATURAL_ANALOGUES: string[] = [
+  RnaDnaNaturalAnaloguesEnum.ADENINE,
+  RnaDnaNaturalAnaloguesEnum.CYTOSINE,
+  RnaDnaNaturalAnaloguesEnum.GUANINE,
+  RnaDnaNaturalAnaloguesEnum.THYMINE,
+  RnaDnaNaturalAnaloguesEnum.URACIL,
+];
+
+function isUnsplitNucleotideNode(
+  node: SubChainNode,
+): node is MonomerSequenceNode & { monomer: UnsplitNucleotide } {
+  return (
+    node instanceof MonomerSequenceNode &&
+    node.monomer instanceof UnsplitNucleotide
+  );
+}
+
+// Weighs a chain for the sense/antisense flip decision (see issue #5712, req. 2.2):
+// an unsplit nucleotide represents a sugar+base+phosphate triplet, so it counts as
+// three monomers, matching a split nucleotide of the same chain length.
+const getAntisenseSizeWeight = (monomers: BaseMonomer[]) =>
+  monomers.reduce(
+    (amount, monomer) =>
+      amount +
+      (monomer instanceof UnsplitNucleotide
+        ? UNSPLIT_NUCLEOTIDE_MONOMERS_AMOUNT
+        : 1),
+    0,
+  );
+
 export const SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS =
   SnakeLayoutCellWidth * 2 + 30;
 export const MONOMER_START_X_POSITION = 20 + SnakeLayoutCellWidth / 2;
@@ -3116,7 +3149,7 @@ export class DrawingEntitiesManager {
     position: Vec2,
     monomer: BaseMonomer,
     atomIdInMicroMode: number,
-    label: AtomLabel,
+    label: CoreAtomLabel,
     properties?: AtomProperties,
     _atom?: Atom,
   ) {
@@ -3143,7 +3176,7 @@ export class DrawingEntitiesManager {
     position: Vec2,
     monomer: BaseMonomer,
     atomIdInMicroMode: number,
-    label: AtomLabel,
+    label: CoreAtomLabel,
     properties?: AtomProperties,
   ) {
     const command = new Command();
@@ -3593,11 +3626,14 @@ export class DrawingEntitiesManager {
       });
 
       const largestChainsMonomersAmount = Math.max(
-        ...[...chainToMonomers.values()].map((monomers) => monomers.length),
+        ...[...chainToMonomers.values()].map((monomers) =>
+          getAntisenseSizeWeight(monomers),
+        ),
       );
 
       const largestChains = [...chainToMonomers.entries()].filter(
-        ([, monomers]) => monomers.length === largestChainsMonomersAmount,
+        ([, monomers]) =>
+          getAntisenseSizeWeight(monomers) === largestChainsMonomersAmount,
       );
 
       if (largestChains.length === 1) {
@@ -3709,15 +3745,38 @@ export class DrawingEntitiesManager {
     ];
   }
 
-  public static createAntisenseNode(
-    node: Nucleoside | Nucleotide,
+  private static getAntisenseBaseLabelForNode(
+    node: SubChainNode,
     isDnaAntisense: boolean,
-    needAddPhosphate = false,
   ) {
-    const antisenseBaseLabel = DrawingEntitiesManager.getAntisenseBaseLabel(
-      node.rnaBase,
-      isDnaAntisense,
-    );
+    if (node instanceof Nucleotide || node instanceof Nucleoside) {
+      return DrawingEntitiesManager.getAntisenseBaseLabel(
+        node.rnaBase,
+        isDnaAntisense,
+      );
+    }
+
+    if (isUnsplitNucleotideNode(node)) {
+      const naturalAnalogCode =
+        node.monomer.monomerItem.props.MonomerNaturalAnalogCode;
+
+      return SENSE_NATURAL_ANALOGUES.includes(naturalAnalogCode)
+        ? DrawingEntitiesManager.getAntisenseBaseLabel(
+            naturalAnalogCode,
+            isDnaAntisense,
+          )
+        : undefined;
+    }
+
+    return undefined;
+  }
+
+  public static createAntisenseNode(
+    node: Nucleoside | Nucleotide | MonomerSequenceNode,
+    isDnaAntisense: boolean,
+  ) {
+    const antisenseBaseLabel =
+      DrawingEntitiesManager.getAntisenseBaseLabelForNode(node, isDnaAntisense);
 
     if (!antisenseBaseLabel) {
       return;
@@ -3725,7 +3784,7 @@ export class DrawingEntitiesManager {
     const sugarName = isDnaAntisense
       ? RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA
       : RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA;
-    return (needAddPhosphate ? Nucleotide : Nucleoside).createOnCanvas(
+    return Nucleoside.createOnCanvas(
       antisenseBaseLabel,
       node.monomer.position.add(new Vec2(0, 3)),
       sugarName,
@@ -3744,14 +3803,12 @@ export class DrawingEntitiesManager {
         return chain.subChains.some((subChain) =>
           subChain.nodes.some(
             (node) =>
-              (node instanceof Nucleotide || node instanceof Nucleoside) &&
               Boolean(
-                DrawingEntitiesManager.getAntisenseBaseLabel(
-                  node.rnaBase,
+                DrawingEntitiesManager.getAntisenseBaseLabelForNode(
+                  node,
                   isDnaAntisense,
                 ),
-              ) &&
-              node.monomer.selected,
+              ) && node.monomer.selected,
           ),
         );
       },
@@ -3777,7 +3834,11 @@ export class DrawingEntitiesManager {
           selectedPiece.push(node);
         }
 
-        if (node instanceof Nucleoside || node instanceof Nucleotide) {
+        if (
+          node instanceof Nucleoside ||
+          node instanceof Nucleotide ||
+          isUnsplitNucleotideNode(node)
+        ) {
           hasRnaInPiece = true;
         }
       });
@@ -3811,16 +3872,19 @@ export class DrawingEntitiesManager {
 
         if (
           senseNode instanceof Nucleotide ||
-          senseNode instanceof Nucleoside
+          senseNode instanceof Nucleoside ||
+          isUnsplitNucleotideNode(senseNode)
         ) {
           const antisenseNodeCreationResult =
             DrawingEntitiesManager.createAntisenseNode(
               senseNode,
               isDnaAntisense,
-              false,
             );
 
           if (!antisenseNodeCreationResult) {
+            lastAddedNode = undefined;
+            lastAddedMonomer = undefined;
+
             return;
           }
 
@@ -3831,7 +3895,10 @@ export class DrawingEntitiesManager {
 
           let addedPhosphate: BaseMonomer | undefined;
 
-          if (senseNode instanceof Nucleotide && senseNode.phosphate.selected) {
+          if (
+            (senseNode instanceof Nucleotide && senseNode.phosphate.selected) ||
+            isUnsplitNucleotideNode(senseNode)
+          ) {
             const phosphateLibraryItem = getRnaPartLibraryItem(
               editor,
               RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
@@ -3842,12 +3909,20 @@ export class DrawingEntitiesManager {
                 'Phosphate is not found in monomers library. Skipping phosphate addition.',
               );
 
+              lastAddedNode = undefined;
+              lastAddedMonomer = undefined;
+
               return;
             }
 
+            const phosphateSeedPosition =
+              senseNode instanceof Nucleotide
+                ? senseNode.phosphate.position
+                : senseNode.monomer.position;
+
             const monomerAddCommand = this.addMonomer(
               phosphateLibraryItem,
-              senseNode.phosphate.position.add(new Vec2(0, 3)),
+              phosphateSeedPosition.add(new Vec2(0, 3)),
             );
             addedPhosphate = monomerAddCommand.operations[0]
               .monomer as BaseMonomer;
@@ -3874,9 +3949,14 @@ export class DrawingEntitiesManager {
             );
           }
 
+          const senseMonomerForHydrogenBond =
+            senseNode instanceof Nucleotide || senseNode instanceof Nucleoside
+              ? senseNode.rnaBase
+              : senseNode.monomer;
+
           command.merge(
             this.createPolymerBond(
-              senseNode.rnaBase,
+              senseMonomerForHydrogenBond,
               addedNode.rnaBase,
               AttachmentPointName.HYDROGEN,
               AttachmentPointName.HYDROGEN,

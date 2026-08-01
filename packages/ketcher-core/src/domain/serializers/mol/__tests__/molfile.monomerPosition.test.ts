@@ -6,6 +6,19 @@ import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
 
 const PRECISION = 4;
 
+function assertDefined<T>(
+  value: T | null | undefined,
+  message = 'Expected value to be defined',
+): T {
+  expect(value).toBeDefined();
+
+  if (value == null) {
+    throw new Error(message);
+  }
+
+  return value;
+}
+
 function buildMonomerStruct(
   monomerLabel: string,
   monomerPosition: Vec2,
@@ -62,11 +75,8 @@ describe('centerMonomerMicromoleculeAtoms', () => {
       buildMonomerStruct('TestMon', monomerPosition, atomOffsets),
     );
 
-    const sgroup = findSgroupByName(parsed, 'TestMon');
-    expect(sgroup).toBeDefined();
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const positions = getAtomPositions(sgroup!.atoms, parsed.atoms);
+    const sgroup = assertDefined(findSgroupByName(parsed, 'TestMon'));
+    const positions = getAtomPositions(sgroup.atoms, parsed.atoms);
     const center = geometricCenter(positions);
     expect(center.x).toBeCloseTo(monomerPosition.x, PRECISION);
     expect(center.y).toBeCloseTo(monomerPosition.y, PRECISION);
@@ -86,11 +96,8 @@ describe('centerMonomerMicromoleculeAtoms', () => {
       buildMonomerStruct('CenMon', monomerPosition, atomOffsets),
     );
 
-    const sgroup = findSgroupByName(parsed, 'CenMon');
-    expect(sgroup).toBeDefined();
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const positions = getAtomPositions(sgroup!.atoms, parsed.atoms);
+    const sgroup = assertDefined(findSgroupByName(parsed, 'CenMon'));
+    const positions = getAtomPositions(sgroup.atoms, parsed.atoms);
     const center = geometricCenter(positions);
     expect(center.x).toBeCloseTo(monomerPosition.x, PRECISION);
     expect(center.y).toBeCloseTo(monomerPosition.y, PRECISION);
@@ -104,11 +111,8 @@ describe('centerMonomerMicromoleculeAtoms', () => {
       buildMonomerStruct('GeoMon', monomerPosition, atomOffsets),
     );
 
-    const sgroup = findSgroupByName(parsed, 'GeoMon');
-    expect(sgroup).toBeDefined();
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const parsedPositions = getAtomPositions(sgroup!.atoms, parsed.atoms);
+    const sgroup = assertDefined(findSgroupByName(parsed, 'GeoMon'));
+    const parsedPositions = getAtomPositions(sgroup.atoms, parsed.atoms);
 
     // Bond length between first two atoms should be preserved (distance = 2)
     const dx = parsedPositions[0].x - parsedPositions[1].x;

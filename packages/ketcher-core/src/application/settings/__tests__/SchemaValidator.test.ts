@@ -2,10 +2,23 @@
  * Unit tests for SchemaValidator
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { SchemaValidator } from '../SchemaValidator';
 import { getDefaultSettings } from '../schema';
+
+function assertDefined<T>(
+  value: T | null | undefined,
+  message = 'Expected value to be defined',
+): T {
+  expect(value).toBeDefined();
+
+  if (value == null) {
+    throw new Error(message);
+  }
+
+  return value;
+}
 
 describe('SchemaValidator', () => {
   let validator: SchemaValidator;
@@ -41,8 +54,7 @@ describe('SchemaValidator', () => {
       const result = validator.validate(settings);
 
       expect(result.valid).toBe(false);
-      expect(result.errors).toBeDefined();
-      expect(result.errors!.length).toBeGreaterThan(0);
+      expect(assertDefined(result.errors).length).toBeGreaterThan(0);
     });
 
     it('should reject invalid rotation step (too low)', () => {
@@ -170,10 +182,10 @@ describe('SchemaValidator', () => {
       const result = validator.validate(settings);
 
       expect(result.valid).toBe(false);
-      expect(result.errors).toBeDefined();
-      expect(result.errors!.length).toBeGreaterThan(0);
+      const errors = assertDefined(result.errors);
+      expect(errors.length).toBeGreaterThan(0);
 
-      const error = result.errors![0];
+      const error = errors[0];
       expect(error).toHaveProperty('path');
       expect(error).toHaveProperty('message');
     });
@@ -186,7 +198,7 @@ describe('SchemaValidator', () => {
       const result = validator.validate(settings);
 
       expect(result.valid).toBe(false);
-      expect(result.errors!.length).toBeGreaterThan(1);
+      expect(assertDefined(result.errors).length).toBeGreaterThan(1);
     });
   });
 

@@ -2,11 +2,23 @@
  * Unit tests for MemoryStorageAdapter
  */
 
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';
 import { getDefaultSettings } from '../schema';
+
+function assertDefined<T>(
+  value: T | null | undefined,
+  message = 'Expected value to be defined',
+): T {
+  expect(value).toBeDefined();
+
+  if (value == null) {
+    throw new Error(message);
+  }
+
+  return value;
+}
 
 describe('MemoryStorageAdapter', () => {
   let adapter: MemoryStorageAdapter;
@@ -69,10 +81,9 @@ describe('MemoryStorageAdapter', () => {
       await adapter.save('test-key', settings1);
       await adapter.save('test-key', settings2);
 
-      const loaded = await adapter.load('test-key');
-      expect(loaded).toBeDefined();
+      const loaded = assertDefined(await adapter.load('test-key'));
 
-      expect(loaded!.resetToSelect).toBe(true);
+      expect(loaded.resetToSelect).toBe(true);
     });
 
     it('should support multiple keys', async () => {
@@ -85,13 +96,11 @@ describe('MemoryStorageAdapter', () => {
       await adapter.save('key1', settings1);
       await adapter.save('key2', settings2);
 
-      const loaded1 = await adapter.load('key1');
-      const loaded2 = await adapter.load('key2');
-      expect(loaded1).toBeDefined();
-      expect(loaded2).toBeDefined();
+      const loaded1 = assertDefined(await adapter.load('key1'));
+      const loaded2 = assertDefined(await adapter.load('key2'));
 
-      expect(loaded1!.resetToSelect).toBe(false);
-      expect(loaded2!.resetToSelect).toBe(true);
+      expect(loaded1.resetToSelect).toBe(false);
+      expect(loaded2.resetToSelect).toBe(true);
     });
   });
 
@@ -165,9 +174,8 @@ describe('MemoryStorageAdapter', () => {
       testSettings.resetToSelect = true;
 
       // Stored version should not be affected
-      const loaded = await adapter.load('test-key');
-      expect(loaded).toBeDefined();
-      expect(loaded!.resetToSelect).toBe(false);
+      const loaded = assertDefined(await adapter.load('test-key'));
+      expect(loaded.resetToSelect).toBe(false);
     });
   });
 });

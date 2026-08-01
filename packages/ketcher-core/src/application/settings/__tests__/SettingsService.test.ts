@@ -2,12 +2,25 @@
  * Unit tests for SettingsService
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { SettingsService } from '../SettingsService';
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';
 import type { Settings, ISettingsStorage, DeepPartial } from '../types';
 import { getDefaultSettings } from '../schema';
+
+function assertDefined<T>(
+  value: T | null | undefined,
+  message = 'Expected value to be defined',
+): T {
+  expect(value).toBeDefined();
+
+  if (value == null) {
+    throw new Error(message);
+  }
+
+  return value;
+}
 
 describe('SettingsService', () => {
   let service: SettingsService;
@@ -370,8 +383,7 @@ describe('SettingsService', () => {
 
       await service.updateSettings({ resetToSelect: false });
 
-      expect(receivedSettings).not.toBeNull();
-      expect(receivedSettings!.resetToSelect).toBe(false);
+      expect(assertDefined(receivedSettings).resetToSelect).toBe(false);
     });
   });
 

@@ -27,6 +27,7 @@ interface EnhancedStereoResult {
   andNumber: number;
   orNumber: number;
   type: StereoLabel;
+  [key: string]: unknown;
 }
 
 type EnhancedStereoFormState = FormState<EnhancedStereoResult>;

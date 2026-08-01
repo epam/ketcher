@@ -15,7 +15,6 @@ jobs:
   build:
     name: Sonar
     runs-on: self-hosted-sonar
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: Install Unzip
         run: sudo apt-get install -y unzip

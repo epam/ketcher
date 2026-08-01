@@ -40,11 +40,12 @@ class MonomerTool implements BaseTool {
   readonly MONOMER_PREVIEW_OFFSET_X = 30;
   readonly MONOMER_PREVIEW_OFFSET_Y = 30;
   history: EditorHistory;
+  private readonly monomer: MonomerOrAmbiguousType;
   constructor(
     private readonly editor: CoreEditor,
-    private readonly monomer: MonomerOrAmbiguousType,
+    ...args: unknown[]
   ) {
-    this.editor = editor;
+    const [monomer] = args as [MonomerOrAmbiguousType];
     this.monomer = monomer;
     this.history = EditorHistory.getInstance(this.editor);
   }

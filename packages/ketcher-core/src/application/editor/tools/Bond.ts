@@ -53,8 +53,9 @@ class PolymerBond implements BaseTool {
 
   constructor(
     private readonly editor: CoreEditor,
-    options: { toolName: ToolName },
+    ...args: unknown[]
   ) {
+    const [options] = args as [{ toolName: ToolName }];
     this.editor = editor;
     this.history = EditorHistory.getInstance(this.editor);
     this.bondType =

@@ -16,6 +16,8 @@
 
 import { Settings } from 'ketcher-core';
 
+export type SettingFieldValue = boolean | number | string;
+
 export interface FieldGroup {
   id: string;
   title: string;
@@ -25,8 +27,7 @@ export interface FieldGroup {
 export interface FieldDefinition {
   label: string;
   type: 'checkbox' | 'number' | 'text' | 'select' | 'color';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  options?: Array<{ value: any; label: string }>;
+  options?: Array<{ value: SettingFieldValue; label: string }>;
   min?: number;
   max?: number;
   step?: number;

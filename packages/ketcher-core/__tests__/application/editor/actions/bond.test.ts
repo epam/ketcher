@@ -13,10 +13,10 @@ describe.skip('Bond Addition', () => {
   let end: number;
 
   beforeAll(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mockStruct: any = { ...((restruct as any) || {}) };
-    mockStruct.molecule.sgroups = [];
-    mockStruct.visibleAtoms = new Map();
+    const mockStruct = { ...restruct } as unknown as ReStruct;
+    mockStruct.molecule.sgroups =
+      [] as unknown as ReStruct['molecule']['sgroups'];
+    mockStruct.visibleAtoms = new Map() as unknown as ReStruct['visibleAtoms'];
     reStruct = mockStruct;
     const [actionData, beginData, endData] = fromBondAddition(
       reStruct,

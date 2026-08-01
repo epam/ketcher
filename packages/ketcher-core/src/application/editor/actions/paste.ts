@@ -265,13 +265,15 @@ export function fromPaste(
       rxnArrow.mode,
       undefined,
       rxnArrow.height,
-    ).perform(restruct);
+    ).perform(restruct) as RxnArrowAdd;
     action.addOp(operation);
-    items.rxnArrows.push(operation.data.id);
+    items.rxnArrows.push(operation.data.id as number);
   });
 
   pstruct.rxnPluses.forEach((plus) => {
-    const operation = new RxnPlusAdd(plus.pp.add(offset)).perform(restruct);
+    const operation = new RxnPlusAdd(plus.pp.add(offset)).perform(
+      restruct,
+    ) as RxnPlusAdd;
     action.addOp(operation);
     items.rxnPluses.push(operation.data.plid);
   });
@@ -280,9 +282,9 @@ export function fromPaste(
     const operation = new SimpleObjectAdd(
       simpleObject.pos.map((p) => p.add(offset)),
       simpleObject.mode,
-    ).perform(restruct);
+    ).perform(restruct) as SimpleObjectAdd;
     action.addOp(operation);
-    items.simpleObjects.push(operation.data.id);
+    items.simpleObjects.push(operation.data.id as number);
   });
 
   pstruct.texts.forEach((text) => {
@@ -290,17 +292,19 @@ export function fromPaste(
       text.content,
       text.position.add(offset),
       text.pos.map((p) => p.add(offset)),
-    ).perform(restruct);
+    ).perform(restruct) as TextCreate;
     action.addOp(operation);
-    items.texts.push(operation.data.id);
+    items.texts.push(operation.data.id as number);
   });
 
   pstruct.images.forEach((image: Image) => {
     const clonedImage = image.clone();
     clonedImage.addPositionOffset(offset);
-    const operation = new ImageUpsert(clonedImage).perform(restruct);
+    const operation = new ImageUpsert(clonedImage).perform(
+      restruct,
+    ) as ImageUpsert;
     action.addOp(operation);
-    items.images.push(operation.data.id);
+    items.images.push(operation.data.id as number);
   });
 
   pstruct.multitailArrows.forEach((multitailArrow: MultitailArrow) => {
@@ -308,9 +312,9 @@ export function fromPaste(
     clonedMultitailArrow.move(offset);
     const operation = new MultitailArrowUpsert(clonedMultitailArrow).perform(
       restruct,
-    );
+    ) as MultitailArrowUpsert;
     action.addOp(operation);
-    items.multitailArrows.push(operation.data.id);
+    items.multitailArrows.push(operation.data.id as number);
   });
 
   pstruct.rgroups.forEach((rg, rgid) => {

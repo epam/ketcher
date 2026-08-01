@@ -29,9 +29,10 @@ class BaseOperation {
   private _inverted: BaseOperation | undefined;
   type: OperationType;
   priority: number;
-  // eslint-disable-next-line no-use-before-define
-  data: unknown;
-  static InverseConstructor: new (...args: unknown[]) => BaseOperation;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- operation payload shape varies by operation type
+  data: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-use-before-define -- inverse constructor args vary by operation
+  static InverseConstructor: new (...args: any[]) => BaseOperation;
 
   constructor(type: OperationType, priority = 0) {
     this.type = type;
@@ -68,7 +69,7 @@ class BaseOperation {
     return false;
   }
 
-  protected static invalidateAtom(restruct: ReStruct, atomId: number, level?: number) {
+  protected static invalidateAtom(restruct: ReStruct, atomId: number, level?) {
     const atom = restruct.atoms.get(atomId);
     if (!atom) {
       return;
@@ -144,7 +145,8 @@ class BaseOperation {
     restruct: ReStruct,
     mapName: keyof typeof ReStruct.maps,
     id: number,
-    level?: number,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- matches legacy invalidate depth flag
+    level?: any,
   ) {
     if (mapName === 'atoms') {
       BaseOperation.invalidateAtom(restruct, id, level);
@@ -160,7 +162,7 @@ class BaseOperation {
       return;
     }
 
-    restruct.markItem(mapName, id, level ?? 0);
+    restruct.markItem(mapName, id, level);
   }
 
   protected static invalidateEnhancedFlag(

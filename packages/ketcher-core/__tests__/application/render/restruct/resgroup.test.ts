@@ -1,10 +1,10 @@
 import {
   type ReStruct,
+  type ReAtom,
   ReRGroupAttachmentPoint,
   ReSGroup,
   Render,
 } from 'application/render';
-import type { ReAtom } from 'application/render';
 import {
   type Struct,
   Bond,

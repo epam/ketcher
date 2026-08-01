@@ -78,7 +78,7 @@
     "ajv": "^8.18.0",
     "babel-jest": "^30.3.0",
     "cross-env": "^7.0.3",
-    "eslint": "^8.44.0",
+    "eslint": "^8.57.1",
     "eslint-plugin-jest": "^25.3.0",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.4.1",

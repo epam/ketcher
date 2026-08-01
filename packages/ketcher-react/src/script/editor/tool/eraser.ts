@@ -227,9 +227,9 @@ class EraserTool implements Tool {
         const sgAtoms = sgroups.get(fgId)?.item?.atoms;
         if (sgAtoms) {
           sgAtoms.forEach((atom) => {
-            !atomsResult.includes(atom) &&
-              !result.includes(fgId) &&
+            if (!atomsResult.includes(atom) && !result.includes(fgId)) {
               result.push(fgId);
+            }
           });
         }
       });

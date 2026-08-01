@@ -30,6 +30,27 @@ interface SettingsFieldProps {
   step?: number;
 }
 
+const serializeSettingOptionValue = (value: SettingOptionValue): string => {
+  return JSON.stringify(value);
+};
+
+const deserializeSettingOptionValue = (value: string): SettingOptionValue => {
+  try {
+    const parsedValue: unknown = JSON.parse(value);
+    if (
+      typeof parsedValue === 'string' ||
+      typeof parsedValue === 'number' ||
+      typeof parsedValue === 'boolean'
+    ) {
+      return parsedValue;
+    }
+  } catch {
+    // fallback to original value
+  }
+
+  return value;
+};
+
 export const SettingsField = ({
   name,
   label,
@@ -62,7 +83,7 @@ export const SettingsField = ({
             <span>{label}</span>
             <input
               type="number"
-              value={value ?? ''}
+              value={typeof value === 'boolean' ? String(value) : value ?? ''}
               onChange={(e) => onChange(Number(e.target.value))}
               min={min}
               max={max}
@@ -85,8 +106,12 @@ export const SettingsField = ({
             <span>{label}</span>
             <FormControl size="small" sx={{ border: 'none' }}>
               <Select
-                value={value ?? ''}
-                onChange={(e) => onChange(e.target.value)}
+                value={
+                  value === undefined ? '' : serializeSettingOptionValue(value)
+                }
+                onChange={(e) =>
+                  onChange(deserializeSettingOptionValue(e.target.value))
+                }
                 displayEmpty
                 data-testid={`setting-${name}`}
                 sx={{
@@ -107,7 +132,7 @@ export const SettingsField = ({
                 {options?.map((opt) => (
                   <MenuItem
                     key={String(opt.value)}
-                    value={opt.value}
+                    value={serializeSettingOptionValue(opt.value)}
                     sx={{ fontSize: '12px' }}
                   >
                     {opt.label}
@@ -125,7 +150,11 @@ export const SettingsField = ({
             <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
               <input
                 type="color"
-                value={value ?? '#000000'}
+                value={
+                  typeof value === 'string' && value.length > 0
+                    ? value
+                    : '#000000'
+                }
                 onChange={(e) => onChange(e.target.value)}
                 data-testid={`setting-${name}`}
                 style={{
@@ -139,7 +168,11 @@ export const SettingsField = ({
               />
               <input
                 type="text"
-                value={value ?? '#000000'}
+                value={
+                  typeof value === 'boolean'
+                    ? String(value)
+                    : value ?? '#000000'
+                }
                 onChange={(e) => onChange(e.target.value)}
                 style={{
                   width: '85px',
@@ -161,7 +194,7 @@ export const SettingsField = ({
             <span>{label}</span>
             <input
               type="text"
-              value={value ?? ''}
+              value={typeof value === 'boolean' ? String(value) : value ?? ''}
               onChange={(e) => onChange(e.target.value)}
               data-testid={`setting-${name}`}
               style={{

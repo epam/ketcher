@@ -29,14 +29,14 @@ exports[`Modal component should render correctly 1`] = `
         tabindex="-1"
       >
         <div
-          aria-labelledby="«r0»"
+          aria-labelledby="_r_0_"
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm css-1t1j96h-MuiPaper-root-MuiDialog-paper"
           role="dialog"
           style="background: rgb(255, 255, 255); border-radius: 8px; color: rgb(51, 51, 51);"
         >
           <h2
             class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-15hei83-MuiTypography-root-MuiDialogTitle-root"
-            id="«r0»"
+            id="_r_0_"
           >
             <div
               class="css-1uarmuk"

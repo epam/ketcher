@@ -459,8 +459,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     // Base should be active
     expect(baseHighlight).toBeDefined();
     expect(sugarHighlight).toBeDefined();
-    expect(baseHighlight!.color).toBe(ACTIVE_HIGHLIGHT_COLOR);
-    expect(sugarHighlight!.color).toBe(INACTIVE_HIGHLIGHT_COLOR);
+    expect(baseHighlight?.color).toBe(ACTIVE_HIGHLIGHT_COLOR);
+    expect(sugarHighlight?.color).toBe(INACTIVE_HIGHLIGHT_COLOR);
 
     // Clear the mock to start fresh
     mockEditor.highlights.create.mockClear();
@@ -478,8 +478,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     // Now sugar should be active and base should be inactive
     expect(sugarHighlight).toBeDefined();
     expect(baseHighlight).toBeDefined();
-    expect(sugarHighlight!.color).toBe(ACTIVE_HIGHLIGHT_COLOR);
-    expect(baseHighlight!.color).toBe(INACTIVE_HIGHLIGHT_COLOR);
+    expect(sugarHighlight?.color).toBe(ACTIVE_HIGHLIGHT_COLOR);
+    expect(baseHighlight?.color).toBe(INACTIVE_HIGHLIGHT_COLOR);
   });
 
   it('should clear highlights but not create new ones when tab has no structure', () => {

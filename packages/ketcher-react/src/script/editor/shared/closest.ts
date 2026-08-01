@@ -325,6 +325,9 @@ function findClosestDataSGroupData(restruct: ReStruct, pos: Vec2) {
 
     if (item.sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
       const box = item.sgroup.dataArea;
+      if (!box) {
+        return;
+      }
       const inBox =
         box.p0.y < pos.y &&
         box.p1.y > pos.y &&

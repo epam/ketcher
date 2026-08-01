@@ -69,7 +69,7 @@ export class ReactionArrowAddTool implements ArrowAddTool {
       // TODO: need to rework  actions/operations logic
       this.dragCtx = {
         ...this.dragCtx,
-        itemId: action.operations[0].data.id,
+        itemId: (action.operations[0].data as { id: number }).id,
         action,
       };
       this.editor.update(this.dragCtx.action, true);

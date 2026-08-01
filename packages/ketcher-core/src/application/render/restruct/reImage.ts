@@ -212,7 +212,11 @@ export class ReImage extends ReObject {
     );
   }
 
-  show(restruct: ReStruct, renderOptions: RenderOptions, nextPath?: RaphaelPath) {
+  show(
+    restruct: ReStruct,
+    renderOptions: RenderOptions,
+    nextPath?: RaphaelPath,
+  ) {
     const scaledTopLeftWithOffset = this.getScaledPointWithOffset(
       this.image.getTopLeftPosition(),
       renderOptions,

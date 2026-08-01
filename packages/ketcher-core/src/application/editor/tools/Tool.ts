@@ -151,8 +151,7 @@ export type PeptideToolOptions = MonomerItemType;
 
 export type ToolConstructorInterface = new (
   editor: CoreEditor,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ...args: any[]
+  ...args: unknown[]
 ) => Tool | BaseTool;
 
 export type ToolEventHandlerName = keyof ToolEventHandler;

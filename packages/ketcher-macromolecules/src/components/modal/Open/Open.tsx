@@ -43,7 +43,7 @@ import {
 import { LoadingCircles } from './AnalyzingFile/LoadingCircles';
 import { useAppDispatch } from 'hooks';
 import { openErrorModal } from 'state/modal';
-import { AnyAction, Dispatch } from 'redux';
+import { AppDispatch } from 'state';
 import styled from '@emotion/styled';
 import { Option } from 'components/shared/dropDown/dropDown';
 import { MODAL_STATES, MODAL_STATES_VALUES } from './openModalStates';
@@ -255,7 +255,7 @@ const onOk = async ({
   peptideLettersFormatSelection: string;
   onCloseCallback: () => void;
   setIsLoading: (isLoading: boolean) => void;
-  dispatch: Dispatch<AnyAction>;
+  dispatch: AppDispatch;
 }) => {
   const isKet = formatSelection === KET;
   const isSeq = formatSelection === SEQ;

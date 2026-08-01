@@ -8,9 +8,9 @@ import { SchemaValidator } from '../SchemaValidator';
 import { getDefaultSettings } from '../schema';
 
 function assertDefined<T>(
-  value: T | null | undefined,
+  value: T,
   message = 'Expected value to be defined',
-): T {
+): NonNullable<T> {
   expect(value).toBeDefined();
 
   if (value == null) {

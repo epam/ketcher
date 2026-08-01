@@ -9,19 +9,6 @@ import { MemoryStorageAdapter } from '../MemoryStorageAdapter';
 import type { Settings, ISettingsStorage, DeepPartial } from '../types';
 import { getDefaultSettings } from '../schema';
 
-function assertDefined<T>(
-  value: T | null | undefined,
-  message = 'Expected value to be defined',
-): T {
-  expect(value).toBeDefined();
-
-  if (value == null) {
-    throw new Error(message);
-  }
-
-  return value;
-}
-
 describe('SettingsService', () => {
   let service: SettingsService;
   let storage: ISettingsStorage;
@@ -375,15 +362,14 @@ describe('SettingsService', () => {
     });
 
     it('should pass updated settings to listener', async () => {
-      let receivedSettings: Settings | null = null;
-
-      service.subscribe((settings) => {
-        receivedSettings = settings;
-      });
+      const listener = jest.fn();
+      service.subscribe(listener);
 
       await service.updateSettings({ resetToSelect: false });
 
-      expect(assertDefined(receivedSettings).resetToSelect).toBe(false);
+      expect(listener).toHaveBeenCalledWith(
+        expect.objectContaining({ resetToSelect: false }),
+      );
     });
   });
 

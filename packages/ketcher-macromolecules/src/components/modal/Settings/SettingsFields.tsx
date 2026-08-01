@@ -16,7 +16,7 @@
 
 import { KetcherLogger, Settings, SettingsFormValue } from 'ketcher-core';
 import { SettingsField } from './SettingsField';
-import { FIELD_DEFINITIONS } from './fieldGroups';
+import { FIELD_DEFINITIONS, SettingOptionValue } from './fieldGroups';
 import { FieldsContainer } from './Settings.styles';
 
 interface SettingsFieldsProps {
@@ -30,6 +30,17 @@ export const SettingsFields = ({
   settings,
   onChange,
 }: SettingsFieldsProps) => {
+  const isSupportedSettingOptionValue = (
+    value: SettingsFormValue[keyof SettingsFormValue],
+  ): value is SettingOptionValue | undefined => {
+    return (
+      value === undefined ||
+      typeof value === 'string' ||
+      typeof value === 'number' ||
+      typeof value === 'boolean'
+    );
+  };
+
   return (
     <FieldsContainer>
       {fields.map((fieldName) => {
@@ -41,13 +52,21 @@ export const SettingsFields = ({
           return null;
         }
 
+        const value = settings[fieldName];
+        if (!isSupportedSettingOptionValue(value)) {
+          KetcherLogger.warn(
+            `Unsupported settings value for field: ${String(fieldName)}`,
+          );
+          return null;
+        }
+
         return (
           <SettingsField
             key={String(fieldName)}
             name={String(fieldName)}
             label={field.label}
             type={field.type}
-            value={settings[fieldName]}
+            value={value}
             options={field.options}
             min={field.min}
             max={field.max}

@@ -22,7 +22,7 @@ interface SettingsFieldProps {
   name: string;
   label: string;
   type: 'checkbox' | 'number' | 'text' | 'select' | 'color';
-  value: SettingOptionValue;
+  value: SettingOptionValue | undefined;
   onChange: (value: SettingOptionValue) => void;
   options?: Array<{ value: SettingOptionValue; label: string }>;
   min?: number;

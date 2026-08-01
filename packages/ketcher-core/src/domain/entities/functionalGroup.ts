@@ -66,7 +66,7 @@ export class FunctionalGroup {
   }
 
   get isExpanded(): boolean {
-    return this.#sgroup.data.expanded;
+    return Boolean(this.#sgroup.data.expanded);
   }
 
   get relatedSGroup(): SGroup {
@@ -231,7 +231,7 @@ export class FunctionalGroup {
   ) {
     return [...sGroups.values()].some((_sGroup) => {
       const sGroup = 'item' in _sGroup ? _sGroup?.item : _sGroup;
-      const atomsInSGroup = sGroup?.atoms;
+      const atomsInSGroup = sGroup?.atoms ?? [];
       const isContracted = FunctionalGroup.isContractedFunctionalGroup(
         sGroup,
         functionalGroups,

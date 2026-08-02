@@ -29,7 +29,6 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import {
   AttachmentPoint,
   getMonomerLocator,
@@ -39,6 +38,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 
 let page: Page;
 test.setTimeout(40000);
@@ -586,20 +586,9 @@ Object.values(monomers).forEach((leftMonomer) => {
   });
 });
 
-async function expandMonomer(page: Page, locatorText: string) {
-  const canvasLocator = page
-    .getByTestId(KETCHER_CANVAS)
-    .getByText(locatorText, { exact: true });
-  await waitForRender(page, async () => {
-    await ContextMenu(page, canvasLocator).click(
-      MonomerOnMicroOption.ExpandMonomer,
-    );
-  });
-}
-
 async function collapseMonomer(page: Page) {
-  const canvasLocator = page.getByTestId(KETCHER_CANVAS);
-  const attachmentPoint = canvasLocator.getByText('H', { exact: true }).first();
+  const attachmentPoint = getAtomLocator(page, { atomLabel: 'H' }).first();
+  // canvasLocator.getByText('H', { exact: true }).first();
   await waitForRender(page, async () => {
     if (await attachmentPoint.isVisible()) {
       await ContextMenu(page, attachmentPoint).click(
@@ -608,7 +597,7 @@ async function collapseMonomer(page: Page) {
     } else {
       await ContextMenu(
         page,
-        canvasLocator.getByText('O', { exact: true }).first(),
+        getAtomLocator(page, { atomLabel: 'O' }).first(),
       ).click(MonomerOnMicroOption.CollapseMonomer);
     }
   });
@@ -674,7 +663,12 @@ expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
      */
     await openFileAndAddToCanvasAsNewProject(page, monomer.fileName);
     await takeEditorScreenshot(page);
-    await expandMonomer(page, monomer.alias);
+    await waitForRender(page, async () => {
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, { name: monomer.alias }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
+    });
     await takeEditorScreenshot(page);
     await collapseMonomer(page);
     await takeEditorScreenshot(page);

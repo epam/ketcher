@@ -19,6 +19,7 @@ import {
   clickOnCanvas,
   openFile,
   takeElementScreenshot,
+  moveMouseAway,
 } from '@utils';
 import {
   copyAndPaste,
@@ -97,19 +98,6 @@ async function openPPTXFileAndValidateStructurePreview(
 }
 
 let page: Page;
-
-async function moveMouseToCanvasCenter(page: Page) {
-  const canvas = page.getByTestId('ketcher-canvas').filter({
-    has: page.locator(':visible'),
-  });
-  const box = await canvas.first().boundingBox();
-
-  if (!box) {
-    return;
-  }
-
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-}
 
 test.describe('Ketcher bugs in 3.4.0', () => {
   test.beforeAll(async ({ initSequenceCanvas }) => {
@@ -224,8 +212,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Сheck the button sizes on the control panel
      */
     await takeLeftToolbarMacromoleculeScreenshot(page);
-    // Avoid incidental button hover state in top toolbar baseline.
-    await moveMouseToCanvasCenter(page);
+    await moveMouseAway(page);
     await takeTopToolbarScreenshot(page);
   });
 
@@ -607,7 +594,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'title',
       calculatePropertiesButton.title,
     );
-    await moveMouseToCanvasCenter(page);
     await button.hover();
     await expect(button).toHaveAttribute(
       'title',

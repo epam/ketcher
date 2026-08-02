@@ -182,7 +182,6 @@ test('6. Verify that the existing atom can be replaced with star atom on the can
    */
   await CommonTopRightToolbar(page).setZoomInputValue('400');
   await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CN=1');
-  // Change to getAtomLocator later
   const atomToReplace = getAtomLocator(page, { atomLabel: 'N' });
   await waitForRender(page, async () => {
     await atomToReplace.click();

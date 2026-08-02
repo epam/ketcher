@@ -588,7 +588,6 @@ Object.values(monomers).forEach((leftMonomer) => {
 
 async function collapseMonomer(page: Page) {
   const attachmentPoint = getAtomLocator(page, { atomLabel: 'H' }).first();
-  // canvasLocator.getByText('H', { exact: true }).first();
   await waitForRender(page, async () => {
     if (await attachmentPoint.isVisible()) {
       await ContextMenu(page, attachmentPoint).click(

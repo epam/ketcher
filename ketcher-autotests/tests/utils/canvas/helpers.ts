@@ -19,7 +19,6 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 const scrollBarHideCssPath = './tests/utils/hideScroll.css';
@@ -321,9 +320,7 @@ export async function selectCanvasArea(
 }
 
 export async function getVisibleCanvas(page: Page): Promise<Locator> {
-  const canvas = page
-    .locator(`[data-testid="${KETCHER_CANVAS}"]:visible`)
-    .first();
+  const canvas = page.locator(`[data-testid="ketcher-canvas"]:visible`).first();
   await canvas.waitFor({
     state: 'visible',
     timeout: 10000,

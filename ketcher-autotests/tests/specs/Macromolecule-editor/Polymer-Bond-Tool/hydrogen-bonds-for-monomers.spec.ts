@@ -432,25 +432,6 @@ test.describe('', () => {
   });
 });
 
-async function chooseAttachmentPointsInConnectionDialog(
-  page: Page,
-  leftMonomerAttachmentPointName: string,
-  rightMonomerAttachmentPointName: string,
-) {
-  const connectionPointDialog = page.getByRole('dialog');
-  if (await connectionPointDialog.isVisible()) {
-    await page.getByTitle(leftMonomerAttachmentPointName).first().click();
-
-    if ((await page.getByTitle(rightMonomerAttachmentPointName).count()) > 1) {
-      await page.getByTitle(rightMonomerAttachmentPointName).nth(1).click();
-    } else {
-      await page.getByTitle(rightMonomerAttachmentPointName).first().click();
-    }
-
-    await AttachmentPointsDialog(page).connect();
-  }
-}
-
 Object.values(monomers).forEach((leftMonomer) => {
   Object.values(monomers).forEach((rightMonomer) => {
     /*
@@ -487,19 +468,19 @@ Object.values(monomers).forEach((leftMonomer) => {
         MacroBondTool.Single,
       );
 
-      await chooseAttachmentPointsInConnectionDialog(
-        page,
-        AttachmentPoint.R1,
-        AttachmentPoint.R1,
-      );
+      if (await AttachmentPointsDialog(page).window.isVisible()) {
+        await AttachmentPointsDialog(page).selectAttachmentPoints({
+          leftMonomer: AttachmentPoint.R1,
+          rightMonomer: AttachmentPoint.R1,
+        });
+        await AttachmentPointsDialog(page).connect();
+      }
 
       if (await errorTooltip.isVisible()) {
         // closing error message (if appear): You have connected monomers with attachment points of the same group
         await errorTooltip.close();
         await errorTooltip.waitForBecomeHidden();
       }
-
-      const notificationAppeared = errorTooltip.waitForBecomeVisible(10000);
 
       await bondTwoMonomers(
         page,
@@ -515,7 +496,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       );
 
       try {
-        await notificationAppeared;
+        await errorTooltip.waitForBecomeVisible(10000);
         expect(await errorTooltip.message.textContent()).toContain(
           'Unable to establish a hydrogen bond between two monomers connected with a single bond',
         );
@@ -527,12 +508,6 @@ Object.values(monomers).forEach((leftMonomer) => {
       } catch {
         // Notification did not appear for this monomer pair; known issue #5934
       }
-
-      test.fixme(
-        // eslint-disable-next-line no-self-compare
-        true,
-        `That test results are wrong because of https://github.com/epam/ketcher/issues/5934 issue(s).`,
-      );
     });
   });
 });

@@ -98,7 +98,7 @@ export async function takePresetsScreenshot(
   page: Page,
   options?: { mask?: Locator[]; maxDiffPixelRatio?: number },
 ) {
-  await takeElementScreenshot(page, page.getByTestId('rna-accordion'), options);
+  await takeElementScreenshot(page, Library(page).rnaTab.rnaAccordion, options);
 }
 
 export async function takeRNABuilderScreenshot(
@@ -112,7 +112,7 @@ export async function takeRNABuilderScreenshot(
 ) {
   await takeElementScreenshot(
     page,
-    page.getByTestId('rna-editor-expanded'),
+    Library(page).rnaTab.rnaEditor.rnaEditorBody,
     options,
   );
 }
@@ -131,11 +131,7 @@ export async function takeMonomerLibraryScreenshot(
     // That works only for Macromolecule editor
     await page.keyboard.press(`ControlOrMeta+KeyB`);
   }
-  await takeElementScreenshot(
-    page,
-    page.getByTestId('monomer-library'),
-    options,
-  );
+  await takeElementScreenshot(page, Library(page).libraryBody, options);
 }
 
 export async function takeEditorScreenshot(

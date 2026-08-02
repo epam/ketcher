@@ -1024,7 +1024,7 @@ const eligableNames = [
 ];
 
 for (const [index, eligableName] of eligableNames.entries()) {
-  test.fail(`11. Create monomer with ${eligableName.description}`, async () => {
+  test(`11. Create monomer with ${eligableName.description}`, async () => {
     // Bug: https://github.com/epam/ketcher/issues/7745
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657

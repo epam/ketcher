@@ -135,6 +135,15 @@ type FormValidationError = ValidationError & {
   schema: KetcherSchema;
 };
 
+const updateFieldValue = (
+  result: Record<string, unknown>,
+  fieldName: string,
+  val: unknown,
+) =>
+  val === undefined
+    ? omit(result, [fieldName])
+    : { ...result, [fieldName]: val };
+
 class Form extends Component<FormProps> {
   schema: ReturnType<typeof propSchema>;
   private _cachedSchema: FormSchema;
@@ -187,12 +196,17 @@ class Form extends Component<FormProps> {
       value,
       extraValue,
       onChange: (val: unknown) => {
-        const newState = { ...this.props.result, [name]: val };
+        const newState = updateFieldValue(this.props.result, name, val);
         this.updateState(newState);
         if (onChange) onChange(val);
       },
       onExtraChange: (val: unknown) => {
-        const newState = { ...this.props.result, [extraName ?? '']: val };
+        const extraFieldName = extraName ?? '';
+        const newState = updateFieldValue(
+          this.props.result,
+          extraFieldName,
+          val,
+        );
         this.updateState(newState);
       },
     };

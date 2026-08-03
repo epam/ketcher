@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import assert from 'assert';
+import { assert } from 'utilities';
 import { Atom, radicalElectrons } from './atom';
 import type { EditorSelection } from 'application/editor/editor.types';
 import { Bond } from './bond';

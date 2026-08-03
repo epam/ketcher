@@ -29,7 +29,7 @@ import {
   ReinitializeModeOperation,
   RestoreSequenceCaretPositionOperation,
 } from 'application/editor/operations/modes';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   getPeptideLibraryItem,
   getRnaPartLibraryItem,

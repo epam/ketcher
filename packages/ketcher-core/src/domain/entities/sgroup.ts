@@ -26,7 +26,7 @@ import type { Pool } from 'domain/entities/pool';
 import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import type { ReSGroup } from 'application/render';
 import { SgContexts } from 'application/editor/shared/constants';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { isNumber } from 'lodash';
 import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
 

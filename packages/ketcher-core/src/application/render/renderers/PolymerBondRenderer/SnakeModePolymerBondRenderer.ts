@@ -5,7 +5,7 @@ import type { PolymerBondRendererStartAndEndPositions } from 'application/render
 import { SideChainConnectionBondRendererUtility } from 'application/render/renderers/PolymerBondRenderer/SideChainConnectionBondRendererUtility';
 import { SVGPathDAttributeUtility } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtility';
 import type { D3SvgElementSelection } from 'application/render/types';
-import assert from 'assert';
+import { assert } from 'utilities';
 import type { BaseMonomer, Vec2 } from 'domain/entities';
 import type { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {

@@ -129,7 +129,7 @@ const HeaderContent = () => (
   </div>
 );
 
-const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
+const FooterContent = ({ getData, tab, isMonomerCreationWizardActive }) => {
   const clickToAddToCanvas = (
     <span data-testid="add-to-canvas-button">Click to add to canvas</span>
   );
@@ -155,7 +155,7 @@ const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
     >
       <SaveButton
         key="save-to-SDF"
-        data={data}
+        getData={getData}
         className={clsx(
           classes.saveButton,
           isMonomerCreationWizardActive && classes.disabled,
@@ -173,7 +173,7 @@ const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
 
 const EMPTY_TEMPLATES: ReadonlyArray<Template> = [];
 
-const TemplateDialog: FC<Props> = (props) => {
+export const TemplateDialog: FC<Props> = (props) => {
   const {
     filter,
     onFilter,
@@ -242,9 +242,7 @@ const TemplateDialog: FC<Props> = (props) => {
     onTabChange(value);
   };
 
-  // Memoize SDF serialization to prevent recomputation on accordion toggles
-  // Only recompute when tab or library data actually changes
-  const data = useMemo(() => {
+  const getData = useCallback(() => {
     const sdfSerializer = new SdfSerializer();
     const serializerMapper = {
       [TemplateTabs.TemplateLibrary]: templateLib,
@@ -275,7 +273,7 @@ const TemplateDialog: FC<Props> = (props) => {
       footerContent={
         <FooterContent
           tab={tab}
-          data={data}
+          getData={getData}
           isMonomerCreationWizardActive={isMonomerCreationWizardActive}
         />
       }

@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
-import assert from 'assert';
+import { assert } from 'utilities';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class MonomerMicromolecule extends SGroup {

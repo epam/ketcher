@@ -16,7 +16,7 @@
 
 import type { Command } from 'domain/entities/Command';
 import type { CoreEditor } from './Editor';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { ketcherProvider } from 'application/ketcherProvider';
 const HISTORY_SIZE = 32; // put me to options
 

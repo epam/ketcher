@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import type { ReSGroup } from 'application/render';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { FunctionalGroupsProvider, SaltsAndSolventsProvider } from '../helpers';
 import type { Atom } from './atom';
 import type { Bond } from './bond';

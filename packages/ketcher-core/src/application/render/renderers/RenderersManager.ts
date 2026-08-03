@@ -9,7 +9,7 @@ import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonom
 import type { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
 import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import assert from 'assert';
+import { assert } from 'utilities';
 import type { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';

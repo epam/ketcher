@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import assert from 'assert';
-
 import {
   type ReStruct,
   type ImageReferencePositionInfo,
@@ -29,6 +27,7 @@ import {
   getOrThrow,
   atomsForBondNotFoundMessage,
   entityNotFoundMessage,
+  assert,
 } from 'ketcher-core';
 import type {
   ClosestItem,

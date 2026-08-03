@@ -2073,6 +2073,10 @@ export class SequenceMode extends BaseMode {
       selectedNode.firstMonomerInNode.attachmentPointsToBonds.R1;
     const hasNextNodeInChain =
       selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2;
+    const linkerCount =
+      selectedNode instanceof LinkerSequenceNode
+        ? selectedNode.monomers.length
+        : 1;
 
     selectedNode.monomers.forEach((monomer) => {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
@@ -2083,23 +2087,46 @@ export class SequenceMode extends BaseMode {
       });
     });
 
-    const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
-      monomerItem,
-      position,
-    );
-    const newMonomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
-    const newMonomerSequenceNode = new MonomerSequenceNode(newMonomer);
+    const newMonomers: BaseMonomer[] = [];
+    const newNodes: MonomerSequenceNode[] = [];
 
-    modelChanges.merge(monomerAddCommand);
+    for (let i = 0; i < linkerCount; i++) {
+      const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
+        monomerItem,
+        position,
+      );
+      modelChanges.merge(monomerAddCommand);
+      const newMonomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
+      newMonomers.push(newMonomer);
+      newNodes.push(new MonomerSequenceNode(newMonomer));
+    }
+
+    const newNodePosition = this.getNewNodePosition();
+    for (let i = 0; i < newNodes.length - 1; i++) {
+      this.connectNodes(
+        newNodes[i],
+        newNodes[i + 1],
+        modelChanges,
+        newNodePosition,
+        false,
+      );
+    }
+
+    const newChain = new Chain();
+    newNodes.forEach((node) => newChain.addNode(node));
+    const newChainsCollection = new ChainsCollection().add(newChain);
+
     modelChanges.merge(
       this.insertNewSequenceFragment(
-        newMonomerSequenceNode,
+        newChainsCollection,
         nextNode?.senseNode ?? null,
         previousSelectionNode,
         Boolean(hasPreviousNodeInChain),
         Boolean(hasNextNodeInChain),
       ),
     );
+
+    const firstNewMonomer = newMonomers[0];
 
     sideChainConnections?.forEach((sideConnectionData) => {
       const {
@@ -2109,7 +2136,7 @@ export class SequenceMode extends BaseMode {
       } = sideConnectionData;
       if (
         !this.isConnectionPossible(
-          newMonomer,
+          firstNewMonomer,
           firstMonomerAttachmentPointName,
           secondMonomer,
           secondMonomerAttachmentPointName,
@@ -2120,7 +2147,7 @@ export class SequenceMode extends BaseMode {
 
       modelChanges.merge(
         editor.drawingEntitiesManager.createPolymerBond(
-          newMonomer,
+          firstNewMonomer,
           secondMonomer,
           firstMonomerAttachmentPointName,
           secondMonomerAttachmentPointName,
@@ -2131,7 +2158,7 @@ export class SequenceMode extends BaseMode {
     preservedHydrodenBonds.forEach(({ toMonomer }) => {
       modelChanges.merge(
         editor.drawingEntitiesManager.createPolymerBond(
-          newMonomer,
+          firstNewMonomer,
           toMonomer,
           AttachmentPointName.HYDROGEN,
           AttachmentPointName.HYDROGEN,
@@ -2140,7 +2167,7 @@ export class SequenceMode extends BaseMode {
       );
     });
 
-    return newMonomerSequenceNode;
+    return newNodes[newNodes.length - 1];
   }
 
   private replaceSelectionsWithMonomer(

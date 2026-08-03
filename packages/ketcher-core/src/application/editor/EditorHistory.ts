@@ -62,6 +62,12 @@ export class EditorHistory {
       this.historyPointer = this.historyStack.length;
     }
     ketcherProvider.getKetcher(this.editor.ketcherId)?.changeEvent.dispatch();
+    // Fire a dedicated model-change signal only when something actually
+    // changed, so a no-op command doesn't trigger needless macromolecule
+    // properties recalculation.
+    if (command.operations.length > 0) {
+      this.editor.events.modelChange.dispatch();
+    }
   }
 
   undo() {
@@ -77,6 +83,9 @@ export class EditorHistory {
     const turnOffSelectionCommand =
       this.editor?.drawingEntitiesManager.unselectAllDrawingEntities();
     this.editor?.renderersContainer.update(turnOffSelectionCommand);
+    // Dispatch after the model has been reverted so subscribers observe the
+    // up-to-date structure.
+    this.editor.events.modelChange.dispatch();
   }
 
   redo() {
@@ -92,6 +101,9 @@ export class EditorHistory {
     const turnOffSelectionCommand =
       this.editor?.drawingEntitiesManager.unselectAllDrawingEntities();
     this.editor?.renderersContainer.update(turnOffSelectionCommand);
+    // Dispatch after the model has been re-applied so subscribers observe the
+    // up-to-date structure.
+    this.editor.events.modelChange.dispatch();
   }
 
   public get previousCommand() {

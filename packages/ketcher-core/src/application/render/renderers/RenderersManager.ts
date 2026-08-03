@@ -34,6 +34,7 @@ import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerT
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/sequence/MonomerToAtomBondSequenceRenderer';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import type { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
@@ -323,6 +324,15 @@ export class RenderersManager {
     });
   }
 
+  private resetSubChainEnumeration(subChain: BaseSubChain) {
+    subChain.nodes.forEach((node) => {
+      node.monomers.forEach((monomer) => {
+        monomer.renderer?.setEnumeration(null);
+        monomer.renderer?.redrawEnumeration(false);
+      });
+    });
+  }
+
   private recalculateMonomersEnumeration() {
     const editor = provideEditorInstance();
     const chainsCollection = ChainsCollection.fromMonomers([
@@ -338,6 +348,8 @@ export class RenderersManager {
           subChain instanceof PhosphateSubChain
         ) {
           this.recalculateRnaChainEnumeration(subChain, chain.isCyclic);
+        } else {
+          this.resetSubChainEnumeration(subChain);
         }
       });
     });

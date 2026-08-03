@@ -4535,7 +4535,8 @@ test.fail(
       LayoutMode.Sequence,
     );
 
-    const syncButton = page.getByTestId('sync_sequence_edit_mode').first();
+    const syncButton =
+      MacromoleculesTopToolbar(page).syncSequenceEditModeButton;
     // checking that SYNC button is not present
     await expect(syncButton).toHaveCount(0);
 

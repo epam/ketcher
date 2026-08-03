@@ -88,11 +88,11 @@ GenericInput.val = function (ev, schema) {
 
   const value = isNumber ? input.value.replace(/,/g, '.') : input.value;
 
-  if (isInteger) {
-    if (value.trim() === '') {
-      return undefined;
-    }
+  if (isNumber && value.trim() === '') {
+    return;
+  }
 
+  if (isInteger) {
     const parsedValue = Number(value);
     return Number.isNaN(parsedValue) ? value : parsedValue;
   }

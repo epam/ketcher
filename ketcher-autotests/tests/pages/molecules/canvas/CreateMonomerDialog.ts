@@ -60,6 +60,12 @@ type AliasesSectionLocators = {
   helmAliasEditboxClearButton: Locator;
   bilnAliasEditbox: Locator;
   bilnAliasEditboxClearButton: Locator;
+  idtAlias5Editbox: Locator;
+  idtAlias5EditboxClearButton: Locator;
+  idtAliasInternalEditbox: Locator;
+  idtAliasInternalEditboxClearButton: Locator;
+  idtAlias3Editbox: Locator;
+  idtAlias3EditboxClearButton: Locator;
 };
 
 type CreateMonomerDialogLocators = {
@@ -227,6 +233,18 @@ export const CreateMonomerDialog = (page: Page) => {
       bilnAliasEditbox: page.getByTestId('biln-alias-input'),
       bilnAliasEditboxClearButton: page
         .getByTestId('biln-alias-input')
+        .getByTestId('CloseIcon'),
+      idtAlias5Editbox: page.getByTestId('idt-alias-5-input'),
+      idtAlias5EditboxClearButton: page
+        .getByTestId('idt-alias-5-input')
+        .getByTestId('CloseIcon'),
+      idtAliasInternalEditbox: page.getByTestId('idt-alias-internal-input'),
+      idtAliasInternalEditboxClearButton: page
+        .getByTestId('idt-alias-internal-input')
+        .getByTestId('CloseIcon'),
+      idtAlias3Editbox: page.getByTestId('idt-alias-3-input'),
+      idtAlias3EditboxClearButton: page
+        .getByTestId('idt-alias-3-input')
         .getByTestId('CloseIcon'),
     },
   );

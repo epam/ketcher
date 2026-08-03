@@ -52,12 +52,23 @@ interface IMonomerCreationWizardFieldsProps {
   ) => void;
   showNaturalAnalogue?: boolean;
   attachmentPointsExtra?: ReactNode;
+  initialModificationTypes?: string[];
 }
 
 interface ModificationTypeItem {
   id: number;
   value: string;
 }
+
+const IDT_POSITIONS = [
+  { fieldId: 'idtAlias5', prefix: "5'", testId: 'idt-alias-5-input' },
+  {
+    fieldId: 'idtAliasInternal',
+    prefix: 'i',
+    testId: 'idt-alias-internal-input',
+  },
+  { fieldId: 'idtAlias3', prefix: "3'", testId: 'idt-alias-3-input' },
+] as const;
 
 const MonomerCreationWizardFields = (
   props: IMonomerCreationWizardFieldsProps,
@@ -73,13 +84,19 @@ const MonomerCreationWizardFields = (
     onFieldChange,
     onReadonlyLeavingAtomChange,
     attachmentPointsExtra,
+    initialModificationTypes,
   } = props;
   const { values, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
   const [modificationTypes, setModificationTypes] = useState<
     ModificationTypeItem[]
-  >([]);
-  const modificationTypeIdRef = useRef(0);
+  >(() =>
+    (initialModificationTypes ?? []).map((value, index) => ({
+      id: index,
+      value,
+    })),
+  );
+  const modificationTypeIdRef = useRef((initialModificationTypes ?? []).length);
 
   useEffect(() => {
     editor?.setMonomerCreationSelectedType?.(values.type);
@@ -146,6 +163,7 @@ const MonomerCreationWizardFields = (
     displayAliases,
     displayHelmAlias,
     displayBilnAlias,
+    displayIdtAlias,
   } = getMonomerPropertyVisibility(type);
 
   return (
@@ -394,6 +412,45 @@ const MonomerCreationWizardFields = (
                         />
                       )}
                     />
+                  </div>
+                )}
+                {displayIdtAlias && (
+                  <div className={styles.aliasField}>
+                    <p className={styles.inputLabel}>IDT</p>
+                    <div className={styles.idtAliasRow}>
+                      {IDT_POSITIONS.map(({ fieldId, prefix, testId }) => (
+                        <div key={fieldId} className={styles.idtAliasCell}>
+                          <Autocomplete
+                            freeSolo
+                            options={[]}
+                            value={values[fieldId]}
+                            onInputChange={(_event, newValue) =>
+                              onFieldChange(fieldId, newValue)
+                            }
+                            data-testid={testId}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                variant="standard"
+                                className={clsx(
+                                  styles.inputField,
+                                  errors[fieldId] && styles.error,
+                                )}
+                                error={Boolean(errors[fieldId])}
+                                InputProps={{
+                                  ...params.InputProps,
+                                  startAdornment: (
+                                    <span className={styles.idtPositionPrefix}>
+                                      {prefix}:
+                                    </span>
+                                  ),
+                                }}
+                              />
+                            )}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </AccordionDetails>

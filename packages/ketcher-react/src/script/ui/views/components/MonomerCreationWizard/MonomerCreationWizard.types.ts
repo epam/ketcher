@@ -17,7 +17,10 @@ export type WizardFormFieldId =
   | 'name'
   | 'naturalAnalogue'
   | 'aliasHELM'
-  | 'aliasBILN';
+  | 'aliasBILN'
+  | 'idtAlias5'
+  | 'idtAliasInternal'
+  | 'idtAlias3';
 
 export type RnaPresetWizardStateFieldId =
   | 'base'
@@ -60,6 +63,10 @@ export type WizardNotificationId =
   | 'invalidHELMAlias'
   | 'notUniqueBILNAlias'
   | 'invalidBILNAlias'
+  | 'invalidIDTAlias'
+  | 'idtAliasNonTerminalSlash'
+  | 'idtAliasTooLong'
+  | 'notUniqueIDTAlias'
   | 'invalidRnaPresetStructure'
   | 'rnaPresetAtomsOutsideComponents'
   | 'rnaPresetAtomsInMultipleComponents'

@@ -46,6 +46,8 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     this.monomerSymbolElementsIds = monomerSymbolElementsIds;
     this.CHAIN_START_TERMINAL_INDICATOR_TEXT =
       this.monomerRenderer.CHAIN_START_TERMINAL_INDICATOR_TEXT;
+    this.CHAIN_END_TERMINAL_INDICATOR_TEXT =
+      this.monomerRenderer.CHAIN_END_TERMINAL_INDICATOR_TEXT;
   }
 
   protected appendBody(

@@ -24,7 +24,7 @@ import { Pile } from 'domain/entities/pile';
 import { Pool } from 'domain/entities/pool';
 import type { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
 import type { Vec2 } from 'domain/entities/vec2';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { LayerMap } from './generalEnumTypes';
 import ReAtom from './reatom';
 import ReBond from './rebond';

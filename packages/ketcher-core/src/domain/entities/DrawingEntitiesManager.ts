@@ -10,7 +10,6 @@ import { Command } from 'domain/entities/Command';
 import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { getStructureBbox } from 'domain/entities/structureBbox';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import assert from 'assert';
 import {
   type KetFileMultitailArrowNode,
   type LinkerSequenceNode,
@@ -114,7 +113,7 @@ import {
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
-import { KetcherLogger, SettingsManager } from 'utilities';
+import { assert, KetcherLogger, SettingsManager } from 'utilities';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 import {
   RxnArrowAddOperation,

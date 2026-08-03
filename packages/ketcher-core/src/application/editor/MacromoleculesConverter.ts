@@ -25,7 +25,7 @@ import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Command } from 'domain/entities/Command';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
-import assert from 'assert';
+import { assert } from 'utilities';
 import type { AttachmentPointName } from 'domain/types';
 import {
   getAttachmentPointLabel,

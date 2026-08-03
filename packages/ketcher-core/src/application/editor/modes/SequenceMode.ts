@@ -2258,10 +2258,13 @@ export class SequenceMode extends BaseMode {
       AttachmentPointName,
       PolymerBond | MonomerToAtomBond | null | undefined,
     ][] = sideChainConnections
-      ? (Object.entries(selectedNode.monomer.attachmentPointsToBonds) as [
-          AttachmentPointName,
-          PolymerBond | MonomerToAtomBond | null | undefined,
-        ][])
+      ? selectedNode.monomers.flatMap(
+          (monomer) =>
+            Object.entries(monomer.attachmentPointsToBonds) as [
+              AttachmentPointName,
+              PolymerBond | MonomerToAtomBond | null | undefined,
+            ][],
+        )
       : [
           [
             AttachmentPointName.R1,

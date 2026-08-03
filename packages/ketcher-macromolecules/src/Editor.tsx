@@ -36,7 +36,6 @@ import {
   NodesSelection,
   isPasteContentAvailable,
   DeepPartial,
-  guardForMacromoleculesEditor,
 } from 'ketcher-core';
 import { configureAppStore } from 'state';
 import {
@@ -323,15 +322,12 @@ function Editor({
   }, [editor]);
 
   useEffect(() => {
-    const setEditorLineLengthListener = guardForMacromoleculesEditor(
-      (event: Event) => {
-        const lineLengthUpdate = (event as CustomEvent<EditorLineLength>)
-          .detail;
-        if (lineLengthUpdate) {
-          dispatch(setEditorLineLength(lineLengthUpdate));
-        }
-      },
-    );
+    const setEditorLineLengthListener = (event: Event) => {
+      const lineLengthUpdate = (event as CustomEvent<EditorLineLength>).detail;
+      if (lineLengthUpdate) {
+        dispatch(setEditorLineLength(lineLengthUpdate));
+      }
+    };
 
     window.addEventListener(
       SetEditorLineLengthAction,

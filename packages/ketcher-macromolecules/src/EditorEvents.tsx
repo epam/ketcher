@@ -47,6 +47,7 @@ import { selectAllPresets } from 'state/rna-builder';
 import {
   AmbiguousMonomerPreviewState,
   BondPreviewState,
+  DataSGroupPreviewState,
   MonomerPreviewState,
   PresetPosition,
   PresetPreviewState,
@@ -318,6 +319,27 @@ export const EditorEvents = () => {
     [handleOpenBondPreview, debouncedShowPreview, presets, isContextMenuActive],
   );
 
+  const handleOpenDataSGroupPreview = useCallback(
+    ({
+      event,
+      sgroup,
+      targetElement,
+    }: {
+      event: MouseEvent;
+      sgroup: { data: { fieldName: string; fieldValue: string } };
+      targetElement?: Element;
+    }) => {
+      const previewData: DataSGroupPreviewState = {
+        type: PreviewType.DataSGroup,
+        fieldName: sgroup.data.fieldName,
+        fieldValue: sgroup.data.fieldValue,
+        target: targetElement ?? (event.target as Element),
+      };
+      debouncedShowPreview(previewData);
+    },
+    [debouncedShowPreview],
+  );
+
   const handleClosePreview = useCallback(() => {
     debouncedShowPreview.cancel();
     dispatch(showPreview(undefined));
@@ -354,6 +376,8 @@ export const EditorEvents = () => {
     editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
     editor?.events.mouseOverPolymerBond.add(handleOpenPreview);
     editor?.events.mouseLeavePolymerBond.add(handleClosePreview);
+    editor?.events.mouseOverDataSGroup.add(handleOpenDataSGroupPreview);
+    editor?.events.mouseLeaveDataSGroup.add(handleClosePreview);
     editor?.events.mouseOverDrawingEntity.add(handleOpenAtomLabelTooltip);
     editor?.events.mouseLeaveDrawingEntity.add(handleClosePreview);
 
@@ -381,6 +405,8 @@ export const EditorEvents = () => {
       editor?.events.mouseLeavePolymerBond.remove(handleClosePreview);
       editor?.events.mouseOverDrawingEntity.remove(handleOpenAtomLabelTooltip);
       editor?.events.mouseLeaveDrawingEntity.remove(handleClosePreview);
+      editor?.events.mouseOverDataSGroup.remove(handleOpenDataSGroupPreview);
+      editor?.events.mouseLeaveDataSGroup.remove(handleClosePreview);
 
       editor?.events.mouseOnMoveMonomer.remove(onMoveHandler);
       editor?.events.mouseMoveAttachmentPoint.remove(onMoveHandler);
@@ -389,7 +415,13 @@ export const EditorEvents = () => {
 
       window.removeEventListener('hidePreview', handleClosePreview);
     };
-  }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
+  }, [
+    editor,
+    activeTool,
+    handleOpenPreview,
+    handleClosePreview,
+    handleOpenDataSGroupPreview,
+  ]);
 
   useEffect(() => {
     if (!hasAtLeastOneAntisense) {

@@ -22,3 +22,4 @@ export * from './Accordion';
 export * from './InfoModal';
 export * from './Dialog';
 export * from './MonomerPreview';
+export { default as SGroupDataRender } from '../script/ui/views/components/StructEditor/SGroupDataRender';

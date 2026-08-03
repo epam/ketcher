@@ -678,6 +678,11 @@ export class SGroupRenderer extends BaseRenderer {
       return;
     }
 
+    // Capture the editor now (during rendering context) so event handlers
+    // always dispatch on the correct editor, not whatever provideEditorInstance()
+    // returns at mouse-event time (which may be the wrong editor).
+    const capturedEditor = provideEditorInstance();
+
     this.hoverAreaElement = this.rootElement
       .insert('rect', ':first-child')
       .data([this])
@@ -693,11 +698,20 @@ export class SGroupRenderer extends BaseRenderer {
 
     this.hoverAreaElement
       .on('mouseover', (event) => {
-        provideEditorInstance().events.mouseOverDrawingEntity.dispatch(event);
+        capturedEditor.events.mouseOverDrawingEntity.dispatch(event);
+        if (this.sgroup.type === SGroup.TYPES.DAT) {
+          capturedEditor.events.mouseOverDataSGroup.dispatch({
+            event,
+            sgroup: this.sgroup,
+          });
+        }
         this.appendHover();
       })
       .on('mouseleave', (event) => {
-        provideEditorInstance().events.mouseLeaveDrawingEntity.dispatch(event);
+        capturedEditor.events.mouseLeaveDrawingEntity.dispatch(event);
+        if (this.sgroup.type === SGroup.TYPES.DAT) {
+          capturedEditor.events.mouseLeaveDataSGroup.dispatch(event);
+        }
         this.removeHover();
       });
   }

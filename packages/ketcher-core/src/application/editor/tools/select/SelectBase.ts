@@ -42,6 +42,13 @@ import {
 import { getStructureBbox } from 'domain/entities/structureBbox';
 import { RotationView } from 'application/render/renderers/TransientView/RotationView';
 import { Atom } from 'domain/entities/CoreAtom';
+import type { Bond } from 'domain/entities/CoreBond';
+import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
+
+type RendererWithAtomOrBond = BaseRenderer & {
+  atom?: Atom;
+  bond?: Bond;
+};
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -1220,6 +1227,7 @@ abstract class SelectBase implements BaseTool {
         renderer.drawingEntity,
       );
     this.editor.renderersContainer.update(modelChanges);
+    this.dispatchDataSGroupMouseOver(event);
   }
 
   mouseLeaveDrawingEntity(event: MouseEvent): void {
@@ -1233,6 +1241,72 @@ abstract class SelectBase implements BaseTool {
         renderer.drawingEntity,
       );
     this.editor.renderersContainer.update(modelChanges);
+    this.dispatchDataSGroupMouseLeave(event);
+  }
+
+  private findDataSGroupForRenderer(
+    renderer: RendererWithAtomOrBond | undefined,
+  ): SGroupDrawingEntity | undefined {
+    if (!renderer) return undefined;
+
+    const atom = renderer.atom;
+    const bond = renderer.bond;
+
+    for (const [, sgroupEntity] of this.editor.drawingEntitiesManager.sgroups) {
+      if (sgroupEntity.sgroup.type !== 'DAT') continue;
+
+      const sgroupAtomIds = sgroupEntity.sgroup.atoms;
+      const monomer = sgroupEntity.monomer;
+
+      if (
+        atom?.monomer === monomer &&
+        sgroupAtomIds.includes(atom.atomIdInMicroMode)
+      ) {
+        return sgroupEntity;
+      }
+
+      if (bond?.firstAtom?.monomer === monomer) {
+        if (
+          sgroupAtomIds.includes(bond.firstAtom.atomIdInMicroMode) ||
+          sgroupAtomIds.includes(bond.secondAtom.atomIdInMicroMode)
+        ) {
+          return sgroupEntity;
+        }
+      }
+    }
+
+    return undefined;
+  }
+
+  protected dispatchDataSGroupMouseOver(event: MouseEvent): void {
+    const renderer = (
+      event.target as Element & { __data__?: RendererWithAtomOrBond }
+    ).__data__;
+    const sgroup = this.findDataSGroupForRenderer(renderer);
+    if (sgroup) {
+      this.editor.events.mouseOverDataSGroup.dispatch({
+        event,
+        sgroup: sgroup.sgroup,
+        targetElement: sgroup.renderer?.rootNode,
+      });
+    }
+  }
+
+  protected dispatchDataSGroupMouseLeave(event: MouseEvent): void {
+    const renderer = (
+      event.target as Element & { __data__?: RendererWithAtomOrBond }
+    ).__data__;
+    const currentGroup = this.findDataSGroupForRenderer(renderer);
+    if (!currentGroup) return;
+
+    const nextRenderer = (
+      event.relatedTarget as Element & { __data__?: RendererWithAtomOrBond }
+    )?.__data__;
+    const nextGroup = this.findDataSGroupForRenderer(nextRenderer);
+
+    if (currentGroup !== nextGroup) {
+      this.editor.events.mouseLeaveDataSGroup.dispatch(event);
+    }
   }
 
   public mouseOverPolymerBond(event: MouseEvent): void {

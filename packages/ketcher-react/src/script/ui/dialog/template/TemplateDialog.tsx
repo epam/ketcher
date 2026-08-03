@@ -44,13 +44,14 @@ import { SaveButton } from '../../component/view/savebutton';
 import { SdfSerializer } from 'ketcher-core';
 import classes from './template-lib.module.less';
 import accordionClasses from '../../../../components/Accordion/Accordion.module.less';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { createSelector } from 'reselect';
 import { omit } from 'lodash/fp';
 import { onAction } from '../../state';
 import { functionalGroupsSelector } from '../../state/functionalGroups/selectors';
 import { saltsAndSolventsSelector } from '../../state/saltsAndSolvents/selectors';
 import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult';
+import { showSnackbarNotification } from '../../state/notifications';
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -189,6 +190,7 @@ export const TemplateDialog: FC<Props> = (props) => {
     ...rest
   } = props;
 
+  const dispatch = useDispatch();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
@@ -249,8 +251,19 @@ export const TemplateDialog: FC<Props> = (props) => {
       [TemplateTabs.FunctionalGroupLibrary]: functionalGroups,
       [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents,
     };
-    return sdfSerializer.serialize(serializerMapper[tab]);
-  }, [tab, templateLib, functionalGroups, saltsAndSolvents]);
+    const { sdf, skipped } = sdfSerializer.serializeWithSkipInvalid(
+      serializerMapper[tab],
+    );
+    if (skipped.length > 0) {
+      const skippedNames = skipped.map(({ name }) => name).join(', ');
+      dispatch(
+        showSnackbarNotification(
+          `Some items could not be exported and were skipped: ${skippedNames}`,
+        ),
+      );
+    }
+    return sdf;
+  }, [tab, templateLib, functionalGroups, saltsAndSolvents, dispatch]);
 
   // Recreate selection handler only when upstream callbacks change.
   const select = useCallback(

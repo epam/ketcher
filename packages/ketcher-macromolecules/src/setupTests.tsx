@@ -8,6 +8,24 @@ import { merge } from 'lodash';
 import { configureAppStore, RootState } from 'state';
 import { defaultTheme } from 'theming/defaultTheme';
 
+class MockIntersectionObserver {
+  observe = jest.fn();
+  disconnect = jest.fn();
+  unobserve = jest.fn();
+  takeRecords = jest.fn();
+}
+
+Object.defineProperty(window, 'IntersectionObserver', {
+  writable: true,
+  configurable: true,
+  value: MockIntersectionObserver,
+});
+
+Object.defineProperty(global, 'IntersectionObserver', {
+  writable: true,
+  configurable: true,
+  value: MockIntersectionObserver,
+});
 const muiTheme = createTheme();
 const mergedTheme = merge(muiTheme, { ketcher: defaultTheme });
 

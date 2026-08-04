@@ -29,7 +29,7 @@ import {
   ReinitializeModeOperation,
   RestoreSequenceCaretPositionOperation,
 } from 'application/editor/operations/modes';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   getPeptideLibraryItem,
   getRnaPartLibraryItem,
@@ -181,11 +181,15 @@ export class SequenceMode extends BaseMode {
     needScroll = true,
     needRemoveSelection = true,
     needReArrangeChains = true,
+    forceRecalculateAntisense = false,
   ) {
     const command = super.initialize(needRemoveSelection);
     const editor = provideEditorInstance();
 
     editor.drawingEntitiesManager.clearCanvas();
+
+    const needRecalculateOldAntisense =
+      !this.isEditMode || forceRecalculateAntisense;
 
     // Prevent rearranging chains (and recalculating the layout) when switching to sequence mode,
     // only recalculate after changes in the sequence
@@ -194,11 +198,11 @@ export class SequenceMode extends BaseMode {
           true,
           false,
           true,
-          !this.isEditMode,
+          needRecalculateOldAntisense,
           false,
         )
       : editor.drawingEntitiesManager.recalculateAntisenseChains(
-          !this.isEditMode,
+          needRecalculateOldAntisense,
         );
     const zoom = ZoomTool.instance;
 
@@ -862,7 +866,7 @@ export class SequenceMode extends BaseMode {
       }
     }
 
-    modelChanges.addOperation(new ReinitializeModeOperation());
+    modelChanges.addOperation(new ReinitializeModeOperation(true));
     editor.renderersContainer.update(modelChanges);
     editorHistory.update(modelChanges);
   }
@@ -1382,7 +1386,7 @@ export class SequenceMode extends BaseMode {
             );
           }
 
-          modelChanges.addOperation(new ReinitializeModeOperation());
+          modelChanges.addOperation(new ReinitializeModeOperation(true));
           editor.renderersContainer.update(modelChanges);
           history.update(modelChanges);
         },
@@ -1457,7 +1461,7 @@ export class SequenceMode extends BaseMode {
               newNodePosition,
             );
 
-            modelChanges.addOperation(new ReinitializeModeOperation());
+            modelChanges.addOperation(new ReinitializeModeOperation(true));
             editor.renderersContainer.update(modelChanges);
             history.update(modelChanges);
             return;
@@ -1481,7 +1485,7 @@ export class SequenceMode extends BaseMode {
               previousTwoStrandedNodeInSameChain.senseNode,
               modelChanges,
             );
-            modelChanges.addOperation(new ReinitializeModeOperation());
+            modelChanges.addOperation(new ReinitializeModeOperation(true));
             editor.renderersContainer.update(modelChanges);
             history.update(modelChanges);
             return;
@@ -1510,7 +1514,7 @@ export class SequenceMode extends BaseMode {
             );
           }
 
-          modelChanges.addOperation(new ReinitializeModeOperation());
+          modelChanges.addOperation(new ReinitializeModeOperation(true));
           editor.renderersContainer.update(modelChanges);
           history.update(modelChanges);
         },

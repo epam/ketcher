@@ -73,7 +73,7 @@ export type { FormProps };
 export interface FieldProps {
   title?: string;
   name?: string;
-  component?: React.ComponentType<Record<string, unknown>> | string;
+  component?: React.ElementType | string;
   options?: Array<{ value: string; label: string }>;
   disabled?: boolean;
   formName?: string;
@@ -323,8 +323,7 @@ function Field(props: Readonly<FieldProps>) {
   const { dataError, onExtraChange, extraValue, ...fieldOpts } =
     stateStore.field(name ?? '', onChange, extraName);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const Component = component as React.ComponentType<any>;
+  const Component = component;
   const formField = Component ? (
     <Component
       name={name}

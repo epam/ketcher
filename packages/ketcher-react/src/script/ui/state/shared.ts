@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import {
-  type Struct,
+  Struct,
   type Editor,
   FormatterFactory,
   SGroup,
@@ -145,16 +145,16 @@ export function load(struct: string | Struct, options?) {
       // preserveViewport also skips rescale so aromatize/dearomatize keep the
       // current canvas position instead of re-normalizing coordinates.
       // KET is Ketcher's native format — coordinates are already in canvas
-      // scale, so rescaling a KET paste would shrink elements when bond
-      // lengths differ from 1 Å (e.g. corrupted molecules with moved atoms).
+      // scale, so rescaling a KET structure would distort the layout
+      // (whether loading from file or pasting).
       const pastedFormat =
         typeof struct === 'string' ? identifyStructFormat(struct) : null;
       if (
         !preserveViewport &&
         !hasMoleculeToMonomerConnections &&
-        !(isPaste && pastedFormat === SupportedFormat.ket)
+        Struct.needsRescale(pastedFormat)
       ) {
-        parsedStruct.rescale(); // TODO: move out parsing?
+        parsedStruct.rescale();
       }
 
       if (editor.struct().atoms.size) {

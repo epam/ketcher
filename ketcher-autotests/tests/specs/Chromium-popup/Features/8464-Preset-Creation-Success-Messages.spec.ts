@@ -21,7 +21,7 @@ import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/C
 import { NucleotidePresetTab } from '@tests/pages/molecules/canvas/createMonomer/constants/nucleiotidePresetSection/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MicroAtomOption } from '@tests/pages/constants/contextMenu/Constants';
-import { NotificationBannerOnMicro } from '@tests/pages/molecules/canvas/NotificationBanner';
+import { NotificationBannerOnMicro } from '@tests/pages/molecules/canvas/NotificationBannerOnMicro';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';

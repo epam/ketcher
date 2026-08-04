@@ -35,7 +35,7 @@ import { ConfirmationMessageDialog } from '@tests/pages/molecules/canvas/Confirm
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerWizardOption } from '@tests/pages/constants/contextMenu/Constants';
-import { NotificationBannerOnMicro } from '@tests/pages/molecules/canvas/NotificationBanner';
+import { NotificationBannerOnMicro } from '@tests/pages/molecules/canvas/NotificationBannerOnMicro';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;

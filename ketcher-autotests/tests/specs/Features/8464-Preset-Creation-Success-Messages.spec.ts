@@ -10,7 +10,7 @@ import {
   MonomerType as MonomerTypeInDropdown,
 } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
-import { NotificationBannerOnMicro } from '@tests/pages/molecules/canvas/NotificationBanner';
+import { NotificationBannerOnMicro } from '@tests/pages/molecules/canvas/NotificationBannerOnMicro';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;

@@ -17,7 +17,7 @@ import {
   bondTwoMonomersPointToPoint,
 } from '@utils/macromolecules/polymerBond';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
-import { NotificationBannerOnMacro } from '@tests/pages/macromolecules/canvas/NotificationBanner';
+import { NotificationBannerOnMacro } from '@tests/pages/macromolecules/canvas/NotificationBannerOnMacro';
 
 test.describe('Connection rules for peptides: ', () => {
   let page: Page;

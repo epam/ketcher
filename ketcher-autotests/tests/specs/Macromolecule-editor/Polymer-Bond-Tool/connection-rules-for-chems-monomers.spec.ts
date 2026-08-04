@@ -17,7 +17,7 @@ import {
   bondTwoMonomersPointToPoint,
 } from '@utils/macromolecules/polymerBond';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
-import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
+import { NotificationBannerOnMacro } from '@tests/pages/macromolecules/canvas/NotificationBanner';
 
 test.describe('Connection rules for chems: ', () => {
   let page: Page;
@@ -471,7 +471,7 @@ test.describe('Connection rules for chems: ', () => {
 
                   await expect(bondLine).toBeVisible();
                   expect(
-                    await NotificationBanner(page).getNotificationText(),
+                    await NotificationBannerOnMacro(page).getNotificationText(),
                   ).toContain(
                     'You have connected monomers with attachment points of the same group',
                   );

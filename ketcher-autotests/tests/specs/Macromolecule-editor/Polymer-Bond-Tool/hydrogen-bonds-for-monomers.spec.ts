@@ -37,7 +37,7 @@ import {
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
-import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
+import { NotificationBannerOnMacro } from '@tests/pages/macromolecules/canvas/NotificationBanner';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
@@ -401,7 +401,7 @@ test.describe('', () => {
           MacroBondTool.Hydrogen,
         );
 
-        const banner = NotificationBanner(page);
+        const banner = NotificationBannerOnMacro(page);
         const notificationAppeared = banner.waitForBecomeVisible();
 
         await bondTwoMonomers(
@@ -470,7 +470,7 @@ Object.values(monomers).forEach((leftMonomer) => {
     test(`4. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) already connected with single bond`, async () => {
       test.setTimeout(35000);
 
-      const errorTooltip = NotificationBanner(page);
+      const errorTooltip = NotificationBannerOnMacro(page);
 
       await loadTwoMonomers(page, leftMonomer, rightMonomer);
 

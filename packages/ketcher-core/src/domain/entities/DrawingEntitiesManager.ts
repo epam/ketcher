@@ -3635,7 +3635,7 @@ export class DrawingEntitiesManager {
       if (largestChains.length === 1) {
         senseChain = largestChains[0][0];
       } else {
-        const chainsToCenters = new Map<GrouppedChain, Vec2>();
+        const chainsToLowestMonomerId = new Map<GrouppedChain, number>();
         const chainsToComplimentaryChainsAmount = new Map<
           GrouppedChain,
           number
@@ -3652,25 +3652,25 @@ export class DrawingEntitiesManager {
         });
 
         largestChains.forEach(([chainToCheck, monomers]) => {
-          const chainBbox = getStructureBbox(monomers);
-
-          chainsToCenters.set(
+          chainsToLowestMonomerId.set(
             chainToCheck,
-            new Vec2(
-              chainBbox.left + chainBbox.width / 2,
-              chainBbox.top + chainBbox.height / 2,
-            ),
+            Math.min(...monomers.map((monomer) => monomer.id)),
           );
         });
 
-        const chainsToCenterArray = [...chainsToCenters.entries()];
-        const chainWithLowestCenter = chainsToCenterArray.reduce(
-          ([previousChain, previousChainCenter], [chainToCheck, center]) => {
-            return center.y < previousChainCenter.y
-              ? [chainToCheck, center]
-              : [previousChain, previousChainCenter];
+        const chainsToLowestMonomerIdArray = [
+          ...chainsToLowestMonomerId.entries(),
+        ];
+        const chainWithLowestMonomerId = chainsToLowestMonomerIdArray.reduce(
+          (
+            [previousChain, previousLowestId],
+            [chainToCheck, lowestMonomerId],
+          ) => {
+            return lowestMonomerId < previousLowestId
+              ? [chainToCheck, lowestMonomerId]
+              : [previousChain, previousLowestId];
           },
-          chainsToCenterArray[0],
+          chainsToLowestMonomerIdArray[0],
         );
         const chainsToComplimentaryChainsAmountArray = [
           ...chainsToComplimentaryChainsAmount.entries(),
@@ -3692,7 +3692,7 @@ export class DrawingEntitiesManager {
         senseChain =
           chainsToComplimentaryChainsAmount.size === 1
             ? chainWithMoreComplimentaryChains[0]
-            : chainWithLowestCenter[0];
+            : chainWithLowestMonomerId[0];
       }
 
       const { group: senseGroup } = senseChain;
@@ -3710,6 +3710,131 @@ export class DrawingEntitiesManager {
           });
         }
       });
+    });
+
+    return command;
+  }
+
+  // Corrects mirrored paired-RNA-duplex orientation for the initial structure
+  // load ("Open as new" / "Add to canvas") in Flex mode only - see FlexMode
+  // "initialize"/Open.tsx "addToCanvas" callers. Must be called only for
+  // freshly loaded monomers, right after `recalculateAntisenseChains()` has
+  // marked `isSense`/`isAntisense` on them, so that:
+  //  - an unpaired RNA chain or a single RNA/peptide-only structure (no
+  //    sense/antisense monomers among `monomers`) is left untouched;
+  //  - a user's manually rearranged structure is never affected, because this
+  //    is not called from `FlexMode.initialize()` (which runs on every mode
+  //    switch), only from the initial-load code path.
+  // The whole freshly loaded block (RNA duplex + any attached entities, e.g.
+  // a peptide) is reflected together as a rigid body, so relative geometry
+  // (base pairs, attachments) is preserved.
+  public applyCanonicalAntisenseOrientation(monomers: BaseMonomer[]) {
+    const command = new Command();
+
+    if (monomers.length === 0) {
+      return command;
+    }
+
+    const senseMonomers = monomers.filter(
+      (monomer) => monomer.monomerItem.isSense,
+    );
+    const antisenseMonomers = monomers.filter(
+      (monomer) => monomer.monomerItem.isAntisense,
+    );
+
+    if (senseMonomers.length === 0 || antisenseMonomers.length === 0) {
+      return command;
+    }
+
+    const chainsCollection = ChainsCollection.fromMonomers(monomers);
+    const senseChain = chainsCollection.chains.find((chain) =>
+      chain.monomers.some((monomer) => monomer.monomerItem.isSense),
+    );
+    const senseChainFirstMonomer = senseChain?.firstNode?.monomer;
+    const senseChainLastMonomer = senseChain?.lastNonEmptyNode?.monomer;
+
+    if (
+      !senseChainFirstMonomer ||
+      !senseChainLastMonomer ||
+      senseChainFirstMonomer === senseChainLastMonomer
+    ) {
+      return command;
+    }
+
+    const getAverageY = (chainMonomers: BaseMonomer[]) =>
+      chainMonomers.reduce((sum, monomer) => sum + monomer.position.y, 0) /
+      chainMonomers.length;
+
+    // Canonical orientation: sense chain reads 5' -> 3' left-to-right and is
+    // positioned above its antisense partner (5' terminal top-left, 3'
+    // terminal of the antisense chain bottom-left).
+    const needsHorizontalFlip =
+      senseChainFirstMonomer.position.x > senseChainLastMonomer.position.x;
+    const needsVerticalFlip =
+      getAverageY(senseMonomers) > getAverageY(antisenseMonomers);
+
+    if (!needsHorizontalFlip && !needsVerticalFlip) {
+      return command;
+    }
+
+    const bbox = getStructureBbox(monomers);
+    const center = new Vec2(
+      bbox.left + bbox.width / 2,
+      bbox.top + bbox.height / 2,
+    );
+    const monomersToMove = new Set(monomers);
+    const zeroOffset = new Vec2(0, 0);
+
+    monomersToMove.forEach((monomer) => {
+      const newPosition = new Vec2(
+        needsHorizontalFlip
+          ? center.x - (monomer.position.x - center.x)
+          : monomer.position.x,
+        needsVerticalFlip
+          ? center.y - (monomer.position.y - center.y)
+          : monomer.position.y,
+      );
+      const positionDelta = newPosition.sub(monomer.position);
+
+      if (positionDelta.x === 0 && positionDelta.y === 0) {
+        return;
+      }
+
+      command.merge(
+        this.createDrawingEntityMovingCommand(
+          monomer,
+          positionDelta,
+          positionDelta,
+        ),
+      );
+    });
+
+    this.polymerBonds.forEach((polymerBond) => {
+      if (
+        monomersToMove.has(polymerBond.firstMonomer) ||
+        (polymerBond.secondMonomer &&
+          monomersToMove.has(polymerBond.secondMonomer))
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            polymerBond,
+            zeroOffset,
+            zeroOffset,
+          ),
+        );
+      }
+    });
+
+    this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
+      if (monomersToMove.has(monomerToAtomBond.monomer)) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            monomerToAtomBond,
+            zeroOffset,
+            zeroOffset,
+          ),
+        );
+      }
     });
 
     return command;

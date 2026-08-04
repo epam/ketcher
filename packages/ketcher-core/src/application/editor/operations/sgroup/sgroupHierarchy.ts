@@ -19,15 +19,15 @@ import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
 
 type Data = {
-  sgid: any;
-  parent?: any;
-  children?: any;
+  sgid: number;
+  parent?: number;
+  children?: number[];
 };
 
 class SGroupAddToHierarchy extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any, parent?: any, children?: any) {
+  constructor(sgroupId: number, parent?: number, children?: number[]) {
     super(
       OperationType.S_GROUP_ADD_TO_HIERACHY,
       OperationPriority.S_GROUP_ADD_TO_HIERACHY,
@@ -50,12 +50,12 @@ class SGroupAddToHierarchy extends BaseOperation {
 class SGroupRemoveFromHierarchy extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any) {
+  constructor(sgroupId: number) {
     super(OperationType.S_GROUP_REMOVE_FROM_HIERACHY, 110);
     this.data = { sgid: sgroupId };
   }
 
-  execute(restruct: any) {
+  execute(restruct: ReStruct) {
     const { sgid } = this.data;
     const struct = restruct.molecule;
 

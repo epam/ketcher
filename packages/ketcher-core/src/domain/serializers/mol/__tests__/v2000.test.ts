@@ -1,6 +1,7 @@
 import { AtomList, Bond, Vec2 } from 'domain/entities';
 import { basic, reaction, rgroups } from './fixtures';
 
+import { MolSerializer } from '../molSerializer';
 import molParsers from '../v2000';
 import utils from '../utils';
 
@@ -768,5 +769,76 @@ describe('parseRg2000', () => {
     expect(spy.mock.calls[0][0].atoms.size).toBe(14);
     expect(spy.mock.calls[0][0].bonds.size).toBe(14);
     expect(Object.keys(spy.mock.calls[0][1])).toHaveLength(3);
+  });
+});
+
+describe('MolSerializer unsupported version deserialization', () => {
+  const v3000Molfile = [
+    '',
+    '  -INDIGO-06082312232D',
+    '',
+    '  0  0  0  0  0  0  0  0  0  0  0 V3000',
+    'M  V30 BEGIN CTAB',
+    'M  V30 COUNTS 6 6 0 0 0',
+    'M  V30 BEGIN ATOM',
+    'M  V30 1 C 0 0 0 0',
+    'M  V30 2 C 1 0 0 0',
+    'M  V30 3 C 0.5 0.866 0 0',
+    'M  V30 4 C -0.5 0.866 0 0',
+    'M  V30 5 C -1 0 0 0',
+    'M  V30 6 C -0.5 -0.866 0 0',
+    'M  V30 END ATOM',
+    'M  V30 BEGIN BOND',
+    'M  V30 1 1 1 2',
+    'M  V30 2 1 2 3',
+    'M  V30 3 1 3 4',
+    'M  V30 4 1 4 5',
+    'M  V30 5 1 5 6',
+    'M  V30 6 1 6 1',
+    'M  V30 END BOND',
+    'M  V30 END CTAB',
+    'M  END',
+  ].join('\n');
+
+  const v3000Rxnfile = [
+    '$RXN V3000',
+    '',
+    '',
+    '',
+    'M  V30 COUNTS 1 1 0 0',
+    '$MOL',
+    '',
+    '  Ketcher 04131617372D 1   1.00000     0.00000     0',
+    '',
+    'M  V30 BEGIN CTAB',
+    'M  V30 COUNTS 6 6 0 0 0',
+    'M  V30 BEGIN ATOM',
+    'M  V30 1 C 0 0 0 0',
+    'M  V30 END ATOM',
+    'M  V30 END CTAB',
+    'M  END',
+    '$MOL',
+    '',
+    '  Ketcher 04131617372D 1   1.00000     0.00000     0',
+    '',
+    'M  V30 BEGIN CTAB',
+    'M  V30 COUNTS 6 6 0 0 0',
+    'M  V30 BEGIN ATOM',
+    'M  V30 1 C 1 0 0 0',
+    'M  V30 END ATOM',
+    'M  V30 END CTAB',
+    'M  END',
+  ].join('\n');
+
+  it('throws for a V3000 molecule', () => {
+    expect(() => new MolSerializer().deserialize(v3000Molfile)).toThrow(
+      /version unknown/i,
+    );
+  });
+
+  it('throws for a V3000 reaction', () => {
+    expect(() => new MolSerializer().deserialize(v3000Rxnfile)).toThrow(
+      /version unknown/i,
+    );
   });
 });

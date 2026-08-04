@@ -17,6 +17,7 @@ import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
   getRnaBaseFromSugar,
+  isLinearChem,
   isMonomerConnectedToR2RnaBase,
   isRnaBaseApplicableForAntisense,
   isRnaBaseOrAmbiguousRnaBase,
@@ -269,11 +270,22 @@ export class ChainsCollection {
         R1ConnectedMonomer instanceof Sugar &&
         getRnaBaseFromSugar(R1ConnectedMonomer) === monomer;
 
-      return (
+      const isStart =
         (isFirstMonomerWithR2R1connection ||
           isMonomerConnectedToR2RnaBase(monomer)) &&
-        !isRnaBaseConnectedToSugar
-      );
+        !isRnaBaseConnectedToSugar;
+      if (isStart && !isMonomerConnectedToR2RnaBase(monomer)) {
+        const previousMonomer = getPreviousMonomerInChain(monomer);
+
+        if (
+          previousMonomer &&
+          (isLinearChem(monomer) || isLinearChem(previousMonomer))
+        ) {
+          return false;
+        }
+      }
+
+      return isStart;
     });
 
     return firstMonomersInRegularChains;

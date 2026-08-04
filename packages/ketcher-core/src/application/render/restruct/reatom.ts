@@ -305,7 +305,8 @@ class ReAtom extends ReObject {
   getSelectionContour(render: Render, highlightPadding = 0) {
     const hasLabel =
       (this.a.pseudo?.length > 1 && !getQueryAttrsText(this)) ||
-      (this.showLabel && this.a.implicitH !== 0);
+      (this.showLabel && this.a.implicitH !== 0) ||
+      this.a.atomList !== null;
 
     return hasLabel
       ? this.getLabeledSelectionContour(render, highlightPadding)
@@ -443,6 +444,16 @@ class ReAtom extends ReObject {
       atomSymbolShift = Math.max(atomSymbolShift, shift);
     }
 
+    // A wide/multi-part label (e.g. an atom list, or several combined
+    // properties like isotope+charge+valence) can otherwise compute a shift
+    // larger than the bond itself, pushing the endpoint past the other atom
+    // and making the bond look detached from the structure (#3508). Never
+    // consume more than half the bond, so the two endpoints can't cross.
+    if (bondLen) {
+      const maxShift = Math.max(bondLen / 2 - 3 * renderOptions.lineWidth, 0);
+      atomSymbolShift = Math.min(atomSymbolShift, maxShift);
+    }
+
     if (atomSymbolShift > 0) {
       return atomPosition.addScaled(
         direction,
@@ -474,13 +485,14 @@ class ReAtom extends ReObject {
         functionalGroups,
       )
     ) {
-      const isPositionAtom =
-        sgroup?.getContractedPosition(restruct.molecule).atomId === aid;
+      const { atomId: contractedAtomId, position: contractedPosition } =
+        sgroup!.getContractedPosition(restruct.molecule);
+      const isPositionAtom = contractedAtomId === aid;
       if (isPositionAtom) {
+        // contractedPosition is geometric center for regular SGroups;
+        // MonomerMicromolecule.getContractedPosition overrides it to sgroup.pp.
         const position = Scale.modelToCanvas(
-          sgroup instanceof MonomerMicromolecule
-            ? (sgroup.pp as Vec2)
-            : this.a.pp,
+          contractedPosition,
           render.options,
         );
         const fontFamily = options.font.substr(
@@ -488,7 +500,7 @@ class ReAtom extends ReObject {
           options.font.length,
         );
         const sGroupName =
-          sgroup.data.name ?? SUPERATOM_CLASS_TEXT[sgroup.data.class] ?? '';
+          sgroup?.data?.name ?? SUPERATOM_CLASS_TEXT[sgroup?.data?.class] ?? '';
         const path = render.paper
           .text(position.x, position.y, sGroupName)
           .attr({
@@ -499,9 +511,9 @@ class ReAtom extends ReObject {
 
         path.node?.setAttribute('data-testid', 's-group-label');
         path.node?.setAttribute('data-label-text', sGroupName);
-        path.node?.setAttribute('data-sgroup-id', sgroup.id);
+        path.node?.setAttribute('data-sgroup-id', sgroup?.id);
         path.node?.setAttribute('data-sgroup-name', sGroupName);
-        path.node?.setAttribute('data-sgroup-type', sgroup.type);
+        path.node?.setAttribute('data-sgroup-type', sgroup?.type);
 
         restruct.addReObjectPath(
           LayerMap.data,
@@ -613,7 +625,7 @@ class ReAtom extends ReObject {
         (options.usageInMacromolecule === undefined && !sgroup);
       // can not use Atom.isSuperatomLeavingGroupAtom here, because in preview model there is no sgroups
       const isLeavingGroupAtom =
-        this.a.rglabel !== null && this.a.rglabel !== '0';
+        this.a.rglabel !== null && this.a.rglabel !== 0;
 
       const shouldHideHydrogenInPreview = isPreviewMode && isLeavingGroupAtom;
 
@@ -1098,17 +1110,24 @@ class ReAtom extends ReObject {
     const highlights = restruct.molecule.highlights;
     let isHighlighted = false;
     let highlightColor = '';
+    let highlightOutline = false;
     highlights.forEach((highlight) => {
       const hasCurrentHighlight = highlight.atoms?.includes(aid);
       isHighlighted = isHighlighted || hasCurrentHighlight;
       if (hasCurrentHighlight) {
         highlightColor = highlight.color;
+        highlightOutline = highlight.outline;
       }
     });
 
-    // Drawing highlight
-    if (isHighlighted) {
-      const style = { fill: highlightColor, stroke: 'none' };
+    // Drawing highlight. Outline highlights (#9441) are drawn as a single
+    // merged contour by ReStruct.showHighlightOutlines, so skip them here;
+    // only filled (active-tab) highlights are drawn per-atom.
+    if (isHighlighted && !highlightOutline) {
+      const style: RenderOptionStyles = {
+        fill: highlightColor,
+        stroke: 'none',
+      };
 
       const path = this.makeHighlightePlate(restruct, style);
       restruct.addReObjectPath(LayerMap.hovering, this.visel, path);
@@ -1285,7 +1304,9 @@ class ReAtom extends ReObject {
     let angles: Array<number> = [];
     this.a.neighbors.forEach((halfBondId) => {
       const halfBond = struct.halfBonds.get(halfBondId);
-      halfBond && angles.push(halfBond.ang);
+      if (halfBond) {
+        angles.push(halfBond.ang);
+      }
     });
     angles = angles.sort((a, b) => a - b);
     const largeAngles: Array<number> = [];

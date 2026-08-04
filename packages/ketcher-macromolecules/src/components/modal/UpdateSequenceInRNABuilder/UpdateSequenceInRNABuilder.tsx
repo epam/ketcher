@@ -60,7 +60,7 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
       isOpen={isModalOpen}
       title="Update sequence"
       onClose={onCloseCallback}
-      data-testid="update-sequence-modal"
+      testId="update-sequence-modal"
     >
       <Modal.Content data-testid="update-sequence-modal-body">
         <TextWrapper>

@@ -1,6 +1,7 @@
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { isEqual } from 'lodash';
+import { getOrThrow } from '../../utilities';
 import { Render } from './raphaelRender';
 import type ReAtom from './restruct/reatom';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -65,7 +66,7 @@ export class RenderStruct {
     options: any = {},
   ) {
     if (wrapperElement && struct) {
-      const { cachePrefix = '', needCache = true } = options;
+      const { cachePrefix = '', needCache = true, wrapperDimensions } = options;
       const cacheKey = `${cachePrefix}${struct.name}`;
 
       if (!isEqual(previousOptions, options)) {
@@ -90,7 +91,15 @@ export class RenderStruct {
           structureSize.max.y - structureSize.min.y,
         ),
       );
-      const wrapperElementBoundingRect = wrapperElement.getBoundingClientRect();
+
+      // Use pre-calculated wrapper dimensions if provided to avoid forced reflow
+      // This is critical for batch rendering scenarios (e.g., template tables)
+      // where getBoundingClientRect() would be called multiple times per frame
+      const wrapperElementBoundingRect = wrapperDimensions || {
+        width: wrapperElement.getBoundingClientRect().width,
+        height: wrapperElement.getBoundingClientRect().height,
+      };
+
       const isStructureLessThanWrapper =
         structureSizeInPixels.x < wrapperElementBoundingRect.width &&
         structureSizeInPixels.y < wrapperElementBoundingRect.height;
@@ -157,8 +166,11 @@ function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
     }
 
     sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const attachmentPointAtom = struct.atoms.get(attachmentPoint.atomId)!;
+      const attachmentPointAtom = getOrThrow(
+        struct.atoms,
+        attachmentPoint.atomId,
+        `Atom with id ${attachmentPoint.atomId} not found in struct while converting sgroup attachment points`,
+      );
       attachmentPointAtom.setRGAttachmentPointForDisplayPurpose();
       const rgroupAttachmentPoint =
         attachmentPoint.convertToRGroupAttachmentPointForDisplayPurpose(

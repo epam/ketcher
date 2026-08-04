@@ -21,6 +21,7 @@ type PresetsSectionLocators = {
 };
 
 type RNATabLocators = {
+  rnaAccordion: Locator;
   presetsSection: Locator & PresetsSectionLocators;
   sugarsSection: Locator;
   basesSection: Locator;
@@ -52,6 +53,7 @@ export const Library = (page: Page) => {
   const rnaTab: Locator & RNATabLocators = Object.assign(
     page.getByTestId(LibraryTab.RNA),
     {
+      rnaAccordion: page.getByTestId('rna-accordion'),
       presetsSection,
       sugarsSection: page.getByTestId(RNASection.Sugars),
       basesSection: page.getByTestId(RNASection.Bases),

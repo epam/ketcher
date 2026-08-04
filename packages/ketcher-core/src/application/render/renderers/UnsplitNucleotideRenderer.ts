@@ -63,25 +63,10 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
     const fontSize = 6;
     const Y_OFFSET_FROM_MIDDLE = -2;
 
-    rootElement
+    const foreignObject = rootElement
       .append('foreignObject')
       .attr('width', this.width)
       .attr('height', this.height - this.height / 3)
-      .html(
-        `
-        <div style="
-            padding: 0 4px;
-            text-align: center;
-            color: ${this.textColor};
-            display: flex;
-            height: 100%;
-            align-items: center;
-            justify-content: center;
-        ">
-          ${this.monomer.label}
-        </div>
-      `,
-      )
       .attr('font-size', `${fontSize}px`)
       .attr('line-height', `${fontSize}px`)
       .attr('font-weight', '700')
@@ -90,6 +75,17 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
       .attr('pointer-events', 'none')
       .attr('x', '4px')
       .attr('y', this.height / 2 + Y_OFFSET_FROM_MIDDLE);
+
+    foreignObject
+      .append('xhtml:div')
+      .style('padding', '0 4px')
+      .style('text-align', 'center')
+      .style('color', this.textColor)
+      .style('display', 'flex')
+      .style('height', '100%')
+      .style('align-items', 'center')
+      .style('justify-content', 'center')
+      .text(this.monomer.label);
   }
 
   public get enumerationElementPosition() {

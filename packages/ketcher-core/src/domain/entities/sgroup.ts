@@ -28,6 +28,7 @@ import type { ReSGroup } from 'application/render';
 import { SgContexts } from 'application/editor/shared/constants';
 import assert from 'assert';
 import { isNumber } from 'lodash';
+import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
 
 export enum SUPERATOM_CLASS {
   SUGAR = 'SUGAR',
@@ -334,37 +335,31 @@ export class SGroup {
   }
 
   /**
-   * WHY? When group is contracted we need to understand the represent atom to calculate position.
-   * It is not always the attachmentPoint!! if no attachment point - use the first atom
+   * WHY? atomId drives which atom renders the sgroup label; position is the visual
+   * center used for movement, hit-testing and rendering. Keeping them separate lets
+   * the label always float at the geometric center of all atoms regardless of which
+   * atom happens to be the attachment point.
    */
   getContractedPosition(struct: Struct): {
     atomId: number;
     position: Vec2;
   } {
+    // atomId: prefer the first attachment point; fall back to the first atom.
     let atomId = this.attachmentPoints[0]?.atomId;
-    let representAtom = struct.atoms.get(atomId);
-    // if there is no attachment points in sgroup - use first externally connected atom if exist or just first atom
-    if (!representAtom) {
-      let externalConnectionAtom;
-      struct.bonds.forEach((bond) => {
-        const isBeginAtomInCurrentSgroup =
-          this.atoms.indexOf(bond.begin) !== -1;
-        const isEndAtomInCurrentSgroup = this.atoms.indexOf(bond.end) !== -1;
-
-        if (isBeginAtomInCurrentSgroup && !isEndAtomInCurrentSgroup) {
-          externalConnectionAtom = bond.begin;
-        } else if (isEndAtomInCurrentSgroup && !isBeginAtomInCurrentSgroup) {
-          externalConnectionAtom = bond.end;
-        }
-      });
-
-      atomId = isNumber(externalConnectionAtom)
-        ? externalConnectionAtom
-        : this.atoms[0];
-      representAtom = struct.atoms.get(atomId);
+    if (!struct.atoms.has(atomId)) {
+      atomId = this.atoms[0];
     }
-    assert(representAtom != null);
-    return { atomId, position: representAtom.pp };
+
+    // position: always the geometric center of all atoms in the group.
+    const positions = getAtomPositions(this.atoms, struct.atoms);
+
+    if (positions.length > 0) {
+      return { atomId, position: geometricCenter(positions) };
+    }
+
+    const atom = struct.atoms.get(atomId);
+    assert(atom);
+    return { atomId, position: atom.pp };
   }
 
   cloneAttachmentPoints(

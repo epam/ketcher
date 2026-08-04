@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import {
   type ReSGroup,
   type ReStruct,
@@ -41,7 +39,7 @@ import LassoHelper from '../helper/lasso';
 import { isMergingToMacroMolecule } from '../helper/isMacroMolecule';
 import { atomLongtapEvent } from '../atom';
 import SGroupTool from '../sgroup';
-import type { Editor } from '../../Editor';
+import type { Editor, Selection } from '../../Editor';
 import { dropAndMerge } from '../helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
 import { updateSelectedAtoms } from '../../../ui/state/modal/atoms';
@@ -455,7 +453,7 @@ class SelectTool implements Tool {
     this.editor.rotateController.rerender();
   }
 
-  dblclick(event) {
+  dblclick(event: PointerEvent) {
     const editor = this.editor;
     const struct = editor.render.ctab;
     const { molecule, sgroups } = struct;
@@ -609,10 +607,10 @@ class SelectTool implements Tool {
         .map(({ item }) => item)
         .filter((sgroup): sgroup is SGroup => !!sgroup);
       isDraggingOnSaltOrSolventAtom = mergeAtoms.some((atomId) =>
-        SGroup.isAtomInSaltOrSolvent(atomId as number, sgroupsOnCanvas),
+        SGroup.isAtomInSaltOrSolvent(atomId, sgroupsOnCanvas),
       );
       isDraggingOnSaltOrSolventBond = mergeBonds.some((bondId) =>
-        SGroup.isBondInSaltOrSolvent(bondId as number, sgroupsOnCanvas),
+        SGroup.isBondInSaltOrSolvent(bondId, sgroupsOnCanvas),
       );
     }
     return isDraggingOnSaltOrSolventAtom || isDraggingOnSaltOrSolventBond;
@@ -698,17 +696,25 @@ class SelectTool implements Tool {
   }
 }
 
-function closestToSel(ci) {
-  const res = {};
-  res[ci.map] = [ci.id];
-  return res;
+type ClosestSelectableItem = Pick<ClosestItemWithMap, 'id' | 'map'>;
+
+function closestToSel(ci: ClosestSelectableItem): Record<string, number[]> {
+  return {
+    [ci.map]: [ci.id],
+  };
 }
 
-function isSelected(selection, item) {
+function isSelected(
+  selection: Selection | null | undefined,
+  item: ClosestSelectableItem,
+): boolean {
   return selection?.[item.map]?.includes(item.id) ?? false;
 }
 
-function getHoverTarget(item: ClosestItemWithMap | null, editor: Editor) {
+function getHoverTarget(
+  item: ClosestItemWithMap | null,
+  editor: Editor,
+): HoverTarget | null {
   if (item?.map !== 'frags') {
     return item;
   }

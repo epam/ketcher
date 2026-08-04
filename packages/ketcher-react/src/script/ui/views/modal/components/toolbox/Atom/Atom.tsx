@@ -54,7 +54,6 @@ interface AtomProps extends BaseCallProps, BaseProps {
   label: string;
   radical: number;
   ringBondCount: number;
-  stereoParity: number;
   substitutionCount: number;
   unsaturatedAtom: boolean;
   customQuery: string;
@@ -88,9 +87,6 @@ const querySpecificFields: Array<{
 const Atom: FC<Props> = (props: Props) => {
   const {
     formState,
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    stereoParity,
-    /* eslint-enable @typescript-eslint/no-unused-vars */
     isMultipleAtoms = false,
     isRestoredModal,
     isMonomerCreationWizardActive = false,
@@ -156,7 +152,7 @@ const Atom: FC<Props> = (props: Props) => {
       groupName: 'General',
       component: (
         <div>
-          <AtomElement formState={formState} className=""></AtomElement>
+          <AtomElement formState={formState}></AtomElement>
           <Field name="alias" data-testid="alias" />
           <Field
             name="charge"

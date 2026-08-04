@@ -256,7 +256,7 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 
   it('should apply inactive highlight color to inactive tab components', () => {
     const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
-    const INACTIVE_HIGHLIGHT_COLOR = '#EFF2F5';
+    const INACTIVE_HIGHLIGHT_COLOR = '#00EAFF';
 
     wizardState.base.structure = {
       atoms: [1, 2, 3],
@@ -299,18 +299,20 @@ describe('RnaPresetTabs - applyHighlights function', () => {
       atoms: [1, 2, 3],
       bonds: [1, 2],
       color: ACTIVE_HIGHLIGHT_COLOR,
+      outline: false,
     });
 
     expect(sugarHighlight).toMatchObject({
       atoms: [4, 5, 6],
       bonds: [3, 4],
       color: INACTIVE_HIGHLIGHT_COLOR,
+      outline: true,
     });
   });
 
   it('should handle multiple components with correct colors', () => {
     const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
-    const INACTIVE_HIGHLIGHT_COLOR = '#EFF2F5';
+    const INACTIVE_HIGHLIGHT_COLOR = '#00EAFF';
 
     wizardState.base.structure = {
       atoms: [1, 2, 3],
@@ -351,22 +353,25 @@ describe('RnaPresetTabs - applyHighlights function', () => {
       h.atoms?.includes(7),
     );
 
-    // Base should have inactive color
+    // Base should have inactive color + outline
     expect(baseHighlight).toMatchObject({
       atoms: [1, 2, 3],
       color: INACTIVE_HIGHLIGHT_COLOR,
+      outline: true,
     });
 
-    // Sugar should have active color
+    // Sugar should have active color + filled shading
     expect(sugarHighlight).toMatchObject({
       atoms: [4, 5, 6],
       color: ACTIVE_HIGHLIGHT_COLOR,
+      outline: false,
     });
 
-    // Phosphate should have inactive color
+    // Phosphate should have inactive color + outline
     expect(phosphateHighlight).toMatchObject({
       atoms: [7, 8, 9],
       color: INACTIVE_HIGHLIGHT_COLOR,
+      outline: true,
     });
   });
 
@@ -407,7 +412,7 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 
   it('should update highlights when switching between tabs', () => {
     const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
-    const INACTIVE_HIGHLIGHT_COLOR = '#EFF2F5';
+    const INACTIVE_HIGHLIGHT_COLOR = '#00EAFF';
 
     wizardState.base.structure = {
       atoms: [1, 2, 3],
@@ -874,5 +879,105 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 
     expect(screen.queryByText('R1')).not.toBeInTheDocument();
     expect(screen.queryByText('R3')).not.toBeInTheDocument();
+  });
+});
+
+describe('RnaPresetTabs - missing-component tab highlighting (#10247)', () => {
+  let mockEditor: ReturnType<typeof createMockEditor>;
+  let mockStore: ReturnType<typeof createMockStore>;
+  let mockDispatch: jest.Mock;
+  let mockOnPhosphatePositionChange: jest.Mock;
+  let wizardState: RnaPresetWizardState;
+
+  beforeEach(() => {
+    mockEditor = createMockEditor();
+    mockStore = createMockStore();
+    mockDispatch = jest.fn();
+    mockOnPhosphatePositionChange = jest.fn();
+    wizardState = createInitialWizardState();
+    jest.clearAllMocks();
+  });
+
+  const renderTabs = () =>
+    render(
+      <Provider store={mockStore}>
+        <RnaPresetTabs
+          wizardState={wizardState}
+          editor={mockEditor}
+          wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
+        />
+      </Provider>,
+    );
+
+  const definedStructure = () => ({ atoms: [1, 2, 3], bonds: [1, 2] });
+
+  const tabErrors = () => ({
+    preset: screen
+      .getByTestId('nucleotide-preset-tab')
+      .classList.contains('errorTab'),
+    base: screen
+      .getByTestId('nucleotide-base-tab')
+      .classList.contains('errorTab'),
+    sugar: screen
+      .getByTestId('nucleotide-sugar-tab')
+      .classList.contains('errorTab'),
+    phosphate: screen
+      .getByTestId('nucleotide-phosphate-tab')
+      .classList.contains('errorTab'),
+  });
+
+  it('highlights only the missing components when only a base is defined', () => {
+    wizardState.base.structure = definedStructure();
+    wizardState.preset.errors.components = true;
+
+    renderTabs();
+
+    expect(tabErrors()).toEqual({
+      preset: false,
+      base: false,
+      sugar: true,
+      phosphate: true,
+    });
+  });
+
+  it('highlights no tabs once the preset is valid (sugar + base)', () => {
+    wizardState.sugar.structure = definedStructure();
+    wizardState.base.structure = definedStructure();
+    // Even with a stale "components" flag, a valid preset must not highlight.
+    wizardState.preset.errors.components = true;
+
+    renderTabs();
+
+    expect(tabErrors()).toEqual({
+      preset: false,
+      base: false,
+      sugar: false,
+      phosphate: false,
+    });
+  });
+
+  it('highlights only the mandatory sugar when base and phosphate are defined', () => {
+    wizardState.base.structure = definedStructure();
+    wizardState.phosphate.structure = definedStructure();
+    wizardState.preset.errors.components = true;
+
+    renderTabs();
+
+    expect(tabErrors()).toEqual({
+      preset: false,
+      base: false,
+      sugar: true,
+      phosphate: false,
+    });
+  });
+
+  it('still highlights the Preset tab for its own (Code) error', () => {
+    wizardState.preset.errors.name = true;
+
+    renderTabs();
+
+    expect(screen.getByTestId('nucleotide-preset-tab')).toHaveClass('errorTab');
   });
 });

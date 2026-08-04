@@ -37,9 +37,15 @@ const ButtonGenSet = ({
     ? `${button.label} is disabled`
     : button.description ?? button.label;
 
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // Blur the button to prevent visual confusion between focus and selection states
+    event.currentTarget.blur();
+    onAtomSelect(button.label);
+  };
+
   return (
     <button
-      onClick={() => onAtomSelect(button.label)}
+      onClick={handleClick}
       onDoubleClick={() => onAtomActivate(button.label)}
       title={titleText}
       disabled={disabled}

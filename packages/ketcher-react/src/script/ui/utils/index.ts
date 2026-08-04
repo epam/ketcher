@@ -98,7 +98,10 @@ export const getSelectOptionsFromSchema = (
   return values.reduce<Array<Option>>((options, value, index) => {
     const label = names?.[index];
     options.push({
-      value: String(value),
+      // Preserve the schema's native enum value (number/string/null) rather than
+      // stringifying it, so numeric query fields (e.g. substitution/H counts)
+      // stay valid against their numeric schema enums.
+      value: value as Option['value'],
       label: typeof label === 'string' ? label : String(value),
     });
 

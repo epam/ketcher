@@ -26,7 +26,9 @@
 import { CoreEditor } from 'application/editor';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import { Vec2 } from 'domain/entities';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Nucleotide } from 'domain/entities/Nucleotide';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 import { AttachmentPointName } from 'domain/types';
 import { peptideMonomerItem } from '../../mock-data';
 import {
@@ -58,8 +60,12 @@ const stubCanvasDimensions = (canvas: SVGSVGElement) => {
   });
 };
 
-const createNucleotide = (editor: CoreEditor, base: string, position: Vec2) =>
+const createNucleotide = (base: string, position: Vec2) =>
   Nucleotide.createOnCanvas(base, position).node;
+
+const addPeptide = (editor: CoreEditor, position: Vec2) =>
+  editor.drawingEntitiesManager.addMonomer(peptideMonomerItem, position)
+    .operations[0].monomer as BaseMonomer;
 
 // Connects two nucleotides into a single 5' -> 3' backbone (phosphate.R2 ->
 // next sugar.R1), matching the convention used elsewhere in this codebase.
@@ -104,16 +110,16 @@ const buildMirroredDuplex = (editor: CoreEditor) => {
   // Sense chain (created first -> lowest monomer ids): 5' on the right (x=6),
   // 3' on the left (x=3) - mirrored horizontally. Placed below the
   // antisense chain (y=5) - mirrored vertically too.
-  const senseFivePrime = createNucleotide(editor, 'A', new Vec2(6, 5));
-  const senseThreePrime = createNucleotide(editor, 'U', new Vec2(3, 5));
+  const senseFivePrime = createNucleotide('A', new Vec2(6, 5));
+  const senseThreePrime = createNucleotide('U', new Vec2(3, 5));
   connectFivePrimeToThreePrime(editor, senseFivePrime, senseThreePrime);
 
   // Antisense chain (created second -> higher monomer ids), also built
   // 5' -> 3', antiparallel-paired to sense. Column-aligned with the sense
   // chain: antisense 3' (x=6) pairs with sense 5' (x=6); antisense 5' (x=3)
   // pairs with sense 3' (x=3).
-  const antisenseFivePrime = createNucleotide(editor, 'G', new Vec2(3, 0));
-  const antisenseThreePrime = createNucleotide(editor, 'C', new Vec2(6, 0));
+  const antisenseFivePrime = createNucleotide('G', new Vec2(3, 0));
+  const antisenseThreePrime = createNucleotide('C', new Vec2(6, 0));
   connectFivePrimeToThreePrime(editor, antisenseFivePrime, antisenseThreePrime);
 
   pairBases(editor, senseFivePrime, antisenseThreePrime);
@@ -143,7 +149,9 @@ const executeCommand = (
     typeof CoreEditor.prototype.drawingEntitiesManager.applyCanonicalAntisenseOrientation
   >,
 ) => {
-  command.operations.forEach((operation) => operation.execute());
+  command.operations.forEach((operation) =>
+    operation.execute(undefined as never),
+  );
   return command;
 };
 
@@ -268,10 +276,7 @@ describe('Flex mode: canonical paired-RNA orientation', () => {
 
   it('keeps a peptide attached to the RNA duplex after normalization', () => {
     const { senseThreePrime } = buildMirroredDuplex(editor);
-    const peptide = editor.drawingEntitiesManager.addMonomer(
-      peptideMonomerItem,
-      new Vec2(8, 5),
-    ).operations[0].monomer;
+    const peptide = addPeptide(editor, new Vec2(8, 5));
 
     editor.drawingEntitiesManager.createPolymerBond(
       senseThreePrime.phosphate,
@@ -289,10 +294,10 @@ describe('Flex mode: canonical paired-RNA orientation', () => {
 
     // Still connected to the same anchor monomer via the same attachment
     // points.
+    const r2Bond = senseThreePrime.phosphate.attachmentPointsToBonds.R2;
     expect(
-      senseThreePrime.phosphate.attachmentPointsToBonds.R2?.getAnotherMonomer(
-        senseThreePrime.phosphate,
-      ),
+      r2Bond instanceof PolymerBond &&
+        r2Bond.getAnotherMonomer(senseThreePrime.phosphate),
     ).toBe(peptide);
 
     // The relative distance to its anchor monomer is preserved by the rigid
@@ -306,8 +311,8 @@ describe('Flex mode: canonical paired-RNA orientation', () => {
   });
 
   it('does not rearrange an unpaired single RNA chain', () => {
-    const senseFivePrime = createNucleotide(editor, 'A', new Vec2(6, 5));
-    const senseThreePrime = createNucleotide(editor, 'U', new Vec2(3, 5));
+    const senseFivePrime = createNucleotide('A', new Vec2(6, 5));
+    const senseThreePrime = createNucleotide('U', new Vec2(3, 5));
     connectFivePrimeToThreePrime(editor, senseFivePrime, senseThreePrime);
 
     const positionsBefore = allMonomersOf(editor).map((monomer) => ({
@@ -325,14 +330,8 @@ describe('Flex mode: canonical paired-RNA orientation', () => {
   });
 
   it('does not rearrange a peptide-only structure', () => {
-    const firstPeptide = editor.drawingEntitiesManager.addMonomer(
-      peptideMonomerItem,
-      new Vec2(0, 0),
-    ).operations[0].monomer;
-    const secondPeptide = editor.drawingEntitiesManager.addMonomer(
-      peptideMonomerItem,
-      new Vec2(3, 0),
-    ).operations[0].monomer;
+    const firstPeptide = addPeptide(editor, new Vec2(0, 0));
+    const secondPeptide = addPeptide(editor, new Vec2(3, 0));
     editor.drawingEntitiesManager.createPolymerBond(
       firstPeptide,
       secondPeptide,
@@ -391,12 +390,12 @@ describe('recalculateAntisenseChains: deterministic sense/antisense tie-break', 
     // Chain A is created first (lowest monomer ids) but is deliberately
     // positioned *below* chain B, mirroring the "raw imported coordinates"
     // scenario that used to flip the sense/antisense choice.
-    const chainAFivePrime = createNucleotide(editor, 'A', new Vec2(0, 10));
-    const chainAThreePrime = createNucleotide(editor, 'U', new Vec2(3, 10));
+    const chainAFivePrime = createNucleotide('A', new Vec2(0, 10));
+    const chainAThreePrime = createNucleotide('U', new Vec2(3, 10));
     connectFivePrimeToThreePrime(editor, chainAFivePrime, chainAThreePrime);
 
-    const chainBFivePrime = createNucleotide(editor, 'G', new Vec2(3, 0));
-    const chainBThreePrime = createNucleotide(editor, 'C', new Vec2(0, 0));
+    const chainBFivePrime = createNucleotide('G', new Vec2(3, 0));
+    const chainBThreePrime = createNucleotide('C', new Vec2(0, 0));
     connectFivePrimeToThreePrime(editor, chainBFivePrime, chainBThreePrime);
 
     pairBases(editor, chainAFivePrime, chainBThreePrime);
@@ -409,12 +408,12 @@ describe('recalculateAntisenseChains: deterministic sense/antisense tie-break', 
   });
 
   it('is deterministic across repeated recalculation of the same duplex', () => {
-    const chainAFivePrime = createNucleotide(editor, 'A', new Vec2(0, 10));
-    const chainAThreePrime = createNucleotide(editor, 'U', new Vec2(3, 10));
+    const chainAFivePrime = createNucleotide('A', new Vec2(0, 10));
+    const chainAThreePrime = createNucleotide('U', new Vec2(3, 10));
     connectFivePrimeToThreePrime(editor, chainAFivePrime, chainAThreePrime);
 
-    const chainBFivePrime = createNucleotide(editor, 'G', new Vec2(3, 0));
-    const chainBThreePrime = createNucleotide(editor, 'C', new Vec2(0, 0));
+    const chainBFivePrime = createNucleotide('G', new Vec2(3, 0));
+    const chainBThreePrime = createNucleotide('C', new Vec2(0, 0));
     connectFivePrimeToThreePrime(editor, chainBFivePrime, chainBThreePrime);
 
     pairBases(editor, chainAFivePrime, chainBThreePrime);

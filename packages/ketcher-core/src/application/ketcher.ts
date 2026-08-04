@@ -695,6 +695,8 @@ export class Ketcher {
         this.editor.struct(),
         this.editor.serverSettings,
       );
+      // Indigo layout returns chemistry-scale coords — normalize before serializing to KET.
+      struct.rescale();
       const ketSerializer = new KetSerializer();
       await this.setMolecule(ketSerializer.serialize(struct));
     }, this.eventBus);

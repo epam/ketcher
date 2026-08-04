@@ -564,8 +564,9 @@ export class Ketcher {
         );
 
         const preserveCanvasPosition = options?.preserveCanvasPosition === true;
+        const structFormat = identifyStructFormat(structStr);
 
-        if (!preserveCanvasPosition) {
+        if (!preserveCanvasPosition && Struct.needsRescale(structFormat)) {
           struct.rescale();
         }
 
@@ -632,7 +633,10 @@ export class Ketcher {
           this,
         );
 
-        struct.rescale();
+        const fragmentFormat = identifyStructFormat(structStr);
+        if (Struct.needsRescale(fragmentFormat)) {
+          struct.rescale();
+        }
         const { x, y } = options?.position ?? {};
 
         // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.

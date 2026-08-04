@@ -83,78 +83,74 @@
 
 ## Term Relationships
 
-```
-Struct (Root Entity)
-├── Atom
-│   ├── AtomList (query atoms)
-│   ├── AttachmentPoints
-│   └── StereoLabel
-├── Bond
-│   ├── BondType (single, double, triple, aromatic)
-│   └── BondStereo (up, down, either)
-├── Fragment
-│   └── StereoFlag
-├── SGroup (Special Group)
-│   ├── Superatom (SUP)
-│   ├── Multiple Group (MUL)
-│   ├── Data Group (DAT)
-│   └── SGroupAttachmentPoint
-├── RGroup (Generic Substituent)
-│   └── RGroupAttachmentPoint
-├── FunctionalGroup
-├── Reaction Elements
-│   ├── RxnArrow
-│   └── RxnPlus
-└── SimpleObject (Annotations)
-    ├── Text
-    ├── Image
-    └── MultitailArrow
+**Struct** (root micromolecule entity)
 
-BaseMonomer (Macromolecules)
-├── Peptide (Amino Acid)
-├── Chem (Chemical Modifier)
-├── Nucleotide Components
-│   ├── RNABase
-│   ├── Sugar
-│   └── Phosphate
-├── Nucleoside (Base + Sugar)
-├── Nucleotide (Base + Sugar + Phosphate)
-├── AmbiguousMonomer
-├── UnresolvedMonomer
-└── EmptyMonomer
+| Entity              | Children / Notes                                                                       |
+| ------------------- | -------------------------------------------------------------------------------------- |
+| `Atom`              | `AtomList` (query atoms), `AttachmentPoints`, `StereoLabel`                            |
+| `Bond`              | `BondType` (single, double, triple, aromatic), `BondStereo` (up, down, either)         |
+| `Fragment`          | `StereoFlag`                                                                           |
+| `SGroup`            | `Superatom` (SUP), `Multiple Group` (MUL), `Data Group` (DAT), `SGroupAttachmentPoint` |
+| `RGroup`            | `RGroupAttachmentPoint`                                                                |
+| `FunctionalGroup`   | —                                                                                      |
+| `Reaction Elements` | `RxnArrow`, `RxnPlus`                                                                  |
+| `SimpleObject`      | `Text`, `Image`, `MultitailArrow`                                                      |
 
-PolymerBond (Connections)
-├── HydrogenBond
-└── MonomerToAtomBond
+**BaseMonomer** subtypes (macromolecules)
 
-Editor Architecture
-├── Tool (User Interaction)
-├── Operation (Command Pattern)
-├── Action (State Change)
-└── Formatter (Format Conversion)
+| Subtype             | Notes                                  |
+| ------------------- | -------------------------------------- |
+| `Peptide`           | Amino acid                             |
+| `Chem`              | Chemical modifier                      |
+| `RNABase`           | Nucleotide component                   |
+| `Sugar`             | Nucleotide component                   |
+| `Phosphate`         | Nucleotide component                   |
+| `Nucleoside`        | Base + Sugar (no phosphate)            |
+| `Nucleotide`        | Base + Sugar + Phosphate               |
+| `AmbiguousMonomer`  | Represents any of several alternatives |
+| `UnresolvedMonomer` | Unknown / not-yet-resolved             |
+| `EmptyMonomer`      | Structural placeholder                 |
 
-Rendering Pipeline
-├── Struct (Domain Model)
-├── ReStruct (Rendering Model)
-├── Renderer (Raphael.js/Paper.js)
-└── SVG (Output)
+**Bond types**
 
-Serialization
-├── KET (JSON)
-├── Molfile (V2000/V3000)
-├── SMILES/SMARTS
-├── InChI/InChIKey
-├── CDX/CDXML
-├── CML
-├── RXN
-├── SDF
-├── FASTA/HELM/IDT (Macromolecules)
-└── Sequence (Macromolecules)
+| Type                | Notes                                                        |
+| ------------------- | ------------------------------------------------------------ |
+| `PolymerBond`       | Covalent inter-monomer bond                                  |
+| `HydrogenBond`      | Non-covalent base-pairing bond                               |
+| `MonomerToAtomBond` | Connects a monomer attachment point to a small-molecule atom |
 
-Clean Architecture Layers
-├── Domain (Entities, Serializers)
-├── Application (Editor, Render, Formatters, Settings)
-└── Infrastructure (Services, Indigo Integration)
-```
+**Editor architecture terms**
+
+| Term        | Role                                                       |
+| ----------- | ---------------------------------------------------------- |
+| `Tool`      | Handles user interaction for a specific editing mode       |
+| `Operation` | Command-pattern unit with `execute()` / `invert()`         |
+| `Action`    | State change dispatched to Redux                           |
+| `Formatter` | Application-layer service for format conversion via Indigo |
+
+**Rendering pipeline**
+
+| Stage      | Description                                          |
+| ---------- | ---------------------------------------------------- |
+| `Struct`   | Domain model                                         |
+| `ReStruct` | Rendering model (augmented Struct with SVG metadata) |
+| `Renderer` | Raphael.js (micro) or D3/SVG (macro)                 |
+| `SVG`      | Final output                                         |
+
+**Serialization formats**
+
+| Category          | Formats                                                  |
+| ----------------- | -------------------------------------------------------- |
+| Local (no Indigo) | KET (JSON), Molfile V2000/V3000                          |
+| Via Indigo        | SMILES, SMARTS, InChI/InChIKey, CDX/CDXML, CML, RXN, SDF |
+| Macromolecules    | FASTA, HELM, IDT, Sequence                               |
+
+**Clean Architecture layers**
+
+| Layer          | Contents                             |
+| -------------- | ------------------------------------ |
+| Domain         | Entities, Serializers                |
+| Application    | Editor, Render, Formatters, Settings |
+| Infrastructure | Services, Indigo Integration         |
 
 ---

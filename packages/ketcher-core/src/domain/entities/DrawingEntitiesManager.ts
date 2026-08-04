@@ -56,6 +56,8 @@ import { Coordinates } from 'application/editor/shared/coordinates';
 import {
   isAmbiguousMonomerLibraryItem,
   isRnaBaseOrAmbiguousRnaBase,
+  isPhosphateOrAmbiguousPhosphate,
+  isSugarOrAmbiguousSugar,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
@@ -145,6 +147,14 @@ import {
   SGroupAddOperation,
   SGroupDeleteOperation,
 } from 'application/editor/operations/coreSGroup/sgroup';
+import {
+  collectMonomerBonds,
+  computeReestablishableBonds,
+  mapPresetBonds,
+  getPresetComponentsFromSugar,
+} from 'application/editor/libraryItemDragDrop/replacementHelpers';
+import type { IRnaPreset } from 'application/editor/tools/Tool';
+import { getMonomerSize } from 'application/render/renderers/monomerSizeState';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -4572,6 +4582,247 @@ export class DrawingEntitiesManager {
       if (stereoFlag.relatedMonomer === monomer) {
         return stereoFlag;
       }
+    }
+    return undefined;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Monomer / Preset replacement (monomer-replacement-drag-drop feature)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Replaces `oldMonomer` with a new monomer created from `newTemplate` at
+   * the same canvas position, re-establishing all compatible polymer bonds.
+   *
+   * The entire operation (delete + add + reconnect) is wrapped in a single
+   * `Command` so undo/redo treats it as one atomic step.
+   *
+   * Returns the command AND the newly added monomer so the caller can
+   * continue to work with it (e.g. for layout adjustments).
+   */
+  public replaceMonomer(
+    oldMonomer: BaseMonomer,
+    newTemplate: MonomerOrAmbiguousType,
+  ): { command: Command; newMonomer: BaseMonomer } {
+    const command = new Command();
+    const position = oldMonomer.position.clone();
+
+    // 1. Collect all bonds before deleting
+    const originalBonds = collectMonomerBonds(oldMonomer);
+
+    // 2. Add new monomer at same position (before deletion so we can pass the
+    //    instance to re-establishment below)
+    const addCommand = this.addMonomer(newTemplate, position);
+    command.merge(addCommand);
+
+    // Retrieve the newly created monomer from the operation
+    const monomerAddOp = addCommand.operations[0] as MonomerAddOperation;
+    const newMonomer = monomerAddOp.monomer;
+
+    // 3. Compute re-establishment plan
+    const plan = computeReestablishableBonds(originalBonds, newMonomer);
+
+    // 4. Delete the old monomer WITHOUT deleting its connected bonds so we can
+    //    re-establish them on the new monomer.
+    command.merge(
+      this.deleteMonomer(oldMonomer, false /* needToDeleteConnectedBonds */),
+    );
+
+    // 5. Delete bonds that cannot be re-established on the new monomer
+    for (const record of plan.lost) {
+      if (
+        record.bond instanceof PolymerBond ||
+        record.bond instanceof HydrogenBond
+      ) {
+        command.merge(this.deletePolymerBond(record.bond));
+      }
+    }
+
+    // 6. Re-establish compatible bonds on the new monomer
+    for (const record of plan.reestablishable) {
+      if (record.attachmentPointName === ('hydrogen' as AttachmentPointName)) {
+        // Hydrogen bonds don't go through named APs; skip AP-based re-establishment
+        continue;
+      }
+      if (record.otherAttachmentPointName === null) continue;
+
+      command.merge(
+        this.createPolymerBond(
+          newMonomer,
+          record.otherEntity,
+          record.attachmentPointName,
+          record.otherAttachmentPointName,
+        ),
+      );
+    }
+
+    return { command, newMonomer };
+  }
+
+  /**
+   * Replaces all components of the RNA preset that contains `oldSugar` with
+   * components from `newPresetTemplate`, placing the sugar at `sugarPosition`.
+   *
+   * All external inter-preset bonds are re-established where compatible.
+   * Internal intra-preset bonds are re-created by `addRnaPreset`.
+   *
+   * The entire operation is a single `Command` for atomic undo/redo.
+   *
+   * Returns the command AND the new sugar monomer.
+   */
+  public replacePreset(
+    oldSugar: BaseMonomer,
+    newPresetTemplate: IRnaPreset,
+    sugarPosition: Vec2,
+  ): { command: Command; newSugar: BaseMonomer } {
+    const command = new Command();
+
+    // Gather the components of the original preset
+    const originalComponents = getPresetComponentsFromSugar(oldSugar);
+
+    // Collect all external bonds across all original preset components
+    const bondPlan = mapPresetBonds(originalComponents, []);
+    // We pass empty new components here to classify all bonds as external;
+    // re-establishment is done below after creating the new preset.
+
+    // Delete old components (without deleting bonds so we can re-establish them)
+    for (const component of originalComponents) {
+      command.merge(this.deleteMonomer(component, false));
+    }
+
+    // Delete all bonds that were attached to the old preset components
+    const allOriginalBonds: ReturnType<typeof collectMonomerBonds> = [];
+    for (const component of originalComponents) {
+      allOriginalBonds.push(...collectMonomerBonds(component));
+    }
+    // Unique bonds (a bond can appear on both its endpoint monomers)
+    const uniqueBonds = new Set(allOriginalBonds.map((r) => r.bond));
+    for (const bond of uniqueBonds) {
+      if (bond instanceof PolymerBond || bond instanceof HydrogenBond) {
+        command.merge(this.deletePolymerBond(bond));
+      }
+    }
+
+    // Compute preset component relative positions
+    const {
+      sugarPosition: _s,
+      rnaBasePosition,
+      phosphatePosition,
+    } = this.computePresetPositions(newPresetTemplate, sugarPosition);
+
+    // Add new preset
+    const { command: addPresetCommand, monomers: newComponents } =
+      this.addRnaPreset({
+        sugar: newPresetTemplate.sugar!,
+        sugarPosition,
+        rnaBase: newPresetTemplate.base,
+        rnaBasePosition,
+        phosphate: newPresetTemplate.phosphate,
+        phosphatePosition,
+        connections: newPresetTemplate.connections,
+      });
+    command.merge(addPresetCommand);
+
+    const newSugar = newComponents.find(
+      (m) => m instanceof Sugar,
+    ) as BaseMonomer;
+
+    // Compute a re-establishment plan using the real new components
+    const externalBonds = allOriginalBonds.filter(
+      (record) => !originalComponents.includes(record.otherEntity),
+    );
+    const reestablishmentPlan = mapPresetBonds(
+      originalComponents,
+      newComponents,
+    );
+
+    // Re-establish compatible bonds
+    for (const record of reestablishmentPlan.reestablishable) {
+      if (record.attachmentPointName === ('hydrogen' as AttachmentPointName)) {
+        continue;
+      }
+      if (record.otherAttachmentPointName === null) continue;
+
+      // Determine which new component to connect to
+      const newComponent = this.findNewPresetComponentForBond(
+        record,
+        originalComponents,
+        newComponents,
+      );
+      if (!newComponent) continue;
+
+      command.merge(
+        this.createPolymerBond(
+          newComponent,
+          record.otherEntity,
+          record.attachmentPointName,
+          record.otherAttachmentPointName,
+        ),
+      );
+    }
+
+    void externalBonds; // used via reestablishmentPlan above
+
+    return { command, newSugar: newSugar ?? newComponents[0] };
+  }
+
+  /**
+   * Computes the canvas positions for the base and phosphate components of a
+   * preset, given the sugar position.
+   * Uses the same offsets as Nucleotide.createOnCanvas.
+   */
+  private computePresetPositions(
+    preset: IRnaPreset,
+    sugarPosition: Vec2,
+  ): {
+    sugarPosition: Vec2;
+    rnaBasePosition: Vec2 | undefined;
+    phosphatePosition: Vec2 | undefined;
+  } {
+    const monomerSize = getMonomerSize();
+
+    const baseOffset = Coordinates.canvasToModel(
+      new Vec2(0, SnakeLayoutCellWidth + monomerSize.height),
+    );
+    const phosphateOffset = Coordinates.canvasToModel(
+      new Vec2(SnakeLayoutCellWidth, 0),
+    );
+
+    return {
+      sugarPosition,
+      rnaBasePosition: preset.base ? sugarPosition.add(baseOffset) : undefined,
+      phosphatePosition: preset.phosphate
+        ? sugarPosition.add(phosphateOffset)
+        : undefined,
+    };
+  }
+
+  /**
+   * Given a bond record from the original preset and the arrays of original /
+   * new components, finds the new preset component that should carry the
+   * re-established bond.
+   */
+  private findNewPresetComponentForBond(
+    record: ReturnType<typeof collectMonomerBonds>[0],
+    originalComponents: BaseMonomer[],
+    newComponents: BaseMonomer[],
+  ): BaseMonomer | undefined {
+    // Find which original component this bond came from
+    const originalComponent = originalComponents.find((c) => {
+      const bonds = collectMonomerBonds(c);
+      return bonds.some((b) => b.bond === record.bond);
+    });
+
+    if (!originalComponent) return undefined;
+
+    if (isSugarOrAmbiguousSugar(originalComponent)) {
+      return newComponents.find(isSugarOrAmbiguousSugar);
+    }
+    if (isRnaBaseOrAmbiguousRnaBase(originalComponent)) {
+      return newComponents.find(isRnaBaseOrAmbiguousRnaBase);
+    }
+    if (isPhosphateOrAmbiguousPhosphate(originalComponent)) {
+      return newComponents.find(isPhosphateOrAmbiguousPhosphate);
     }
     return undefined;
   }

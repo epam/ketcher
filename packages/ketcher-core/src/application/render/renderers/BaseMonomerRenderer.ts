@@ -29,6 +29,9 @@ import {
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
 export const MONOMER_CSS_CLASS = 'monomer';
+/** CSS class applied to the SVG body element when a monomer is a replacement target. */
+export const MONOMER_REPLACEMENT_TARGET_CSS_CLASS =
+  'monomer--replacement-target';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private readonly editor: CoreEditor;
@@ -45,6 +48,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private hoveredAttachmentPoint: AttachmentPointName | null = null;
   private _dragTargetAttachmentPoint: AttachmentPointName | null = null;
   private _dragCircleHoverAttachmentPoint: AttachmentPointName | null = null;
+  /** True when this monomer is highlighted as a replacement target during drag. */
+  private _isReplacementTarget = false;
 
   private readonly monomerSymbolElement?: SVGUseElement | SVGRectElement;
   public readonly monomerSize: { width: number; height: number };
@@ -345,6 +350,37 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     attachmentPointName: AttachmentPointName | null,
   ): void {
     this._dragCircleHoverAttachmentPoint = attachmentPointName;
+  }
+
+  /**
+   * Marks or unmarks this monomer as a replacement target during drag.
+   *
+   * When true, the `monomer--replacement-target` CSS class is added to the
+   * body element so the monomer gets the "about to be replaced" visual
+   * treatment. The AP `+` indicator states are mutually exclusive — the caller
+   * (LibraryItemDragDropHandler) runs the replacement check first and skips
+   * the AP proximity check when a replacement target is set.
+   */
+  public setReplacementTarget(isTarget: boolean): void {
+    this._isReplacementTarget = isTarget;
+    if (this.bodyElement) {
+      if (isTarget) {
+        this.bodyElement
+          .classed(MONOMER_REPLACEMENT_TARGET_CSS_CLASS, true)
+          .attr('filter', 'drop-shadow(0px 0px 3px #0097A8)')
+          .style('outline', '2px solid #0097A8');
+      } else {
+        this.bodyElement
+          .classed(MONOMER_REPLACEMENT_TARGET_CSS_CLASS, false)
+          .attr('filter', null)
+          .style('outline', null);
+      }
+    }
+  }
+
+  /** Whether this monomer is currently highlighted as a replacement target. */
+  public get isReplacementTarget(): boolean {
+    return this._isReplacementTarget;
   }
 
   protected raiseAttachmentPoints() {

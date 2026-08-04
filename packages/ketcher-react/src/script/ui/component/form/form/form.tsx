@@ -73,9 +73,7 @@ export type { FormProps };
 export interface FieldProps {
   title?: string;
   name?: string;
-  // Select props is not assignable to Record<string, unknown> causes error in components
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  component?: React.ComponentType<any> | string;
+  component?: React.ComponentType<Record<string, unknown>> | string;
   options?: Array<{ value: string; label: string }>;
   disabled?: boolean;
   formName?: string;

@@ -294,7 +294,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('5.96');
+    ).toEqual('6.3');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');

@@ -2609,36 +2609,42 @@ export class SequenceMode extends BaseMode {
       ),
     );
 
+    let monomerForSideConnections = newPresetNode.monomer;
+
+    if (newPresetNode instanceof Nucleotide) {
+      monomerForSideConnections = newPresetNode.phosphate;
+    } else if (newPresetNode instanceof Nucleoside) {
+      monomerForSideConnections = newPresetNode.sugar;
+    }
+
+    // When replacing one preset with another, preserve the side connection on the same
+    // element type in the new preset if the same Rn is available there.
+    const sourceMonomer = sideChainConnections?.[0]?.fromMonomer;
+    if (
+      sourceMonomer &&
+      (newPresetNode instanceof Nucleotide ||
+        newPresetNode instanceof Nucleoside)
+    ) {
+      if (sourceMonomer instanceof RNABase) {
+        monomerForSideConnections = newPresetNode.rnaBase;
+      } else if (sourceMonomer instanceof Sugar) {
+        monomerForSideConnections = newPresetNode.sugar;
+      } else if (
+        newPresetNode instanceof Nucleotide &&
+        sourceMonomer instanceof Phosphate
+      ) {
+        monomerForSideConnections = newPresetNode.phosphate;
+      }
+    }
+
     sideChainConnections?.forEach((sideConnectionData) => {
       const {
-        fromMonomer,
         firstMonomerAttachmentPointName,
         secondMonomer,
         secondMonomerAttachmentPointName,
       } = sideConnectionData;
 
-      let monomerForSideConnections: BaseMonomer | undefined;
-
       if (
-        newPresetNode instanceof Nucleotide ||
-        newPresetNode instanceof Nucleoside
-      ) {
-        if (fromMonomer instanceof RNABase) {
-          monomerForSideConnections = newPresetNode.rnaBase;
-        } else if (fromMonomer instanceof Sugar) {
-          monomerForSideConnections = newPresetNode.sugar;
-        } else if (
-          newPresetNode instanceof Nucleotide &&
-          fromMonomer instanceof Phosphate
-        ) {
-          monomerForSideConnections = newPresetNode.phosphate;
-        }
-      } else {
-        monomerForSideConnections = newPresetNode.monomer;
-      }
-
-      if (
-        !monomerForSideConnections ||
         !this.isConnectionPossible(
           monomerForSideConnections,
           firstMonomerAttachmentPointName,

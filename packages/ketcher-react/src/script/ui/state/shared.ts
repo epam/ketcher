@@ -110,6 +110,7 @@ export function load(struct: string | Struct, options?) {
       method,
       preserveViewport = false,
       skipCenter = false,
+      rescale: rescaleOption,
       ...otherOptions
     } = options;
     otherOptions = {
@@ -149,10 +150,13 @@ export function load(struct: string | Struct, options?) {
       // (whether loading from file or pasting).
       const pastedFormat =
         typeof struct === 'string' ? identifyStructFormat(struct) : null;
+      // Explicit `rescale` option overrides format-based detection.
+      // Callers that know the coordinate system (e.g. server transforms) can
+      // pass rescale:false to suppress rescaling even for non-KET input.
       if (
         !preserveViewport &&
         !hasMoleculeToMonomerConnections &&
-        Struct.needsRescale(pastedFormat)
+        (rescaleOption ?? Struct.needsRescale(pastedFormat))
       ) {
         parsedStruct.rescale();
       }

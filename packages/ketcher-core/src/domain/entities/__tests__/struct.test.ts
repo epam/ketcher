@@ -35,11 +35,18 @@ describe('Struct.rescale() scale-sanity guard', () => {
     expect(s.atoms.get(1)!.pp.x).toBe(before);
   });
 
-  it('DOES rescale at the boundary (bond length 100, scale = 0.01)', () => {
+  it('DOES rescale at the MIN_RESCALE boundary (bond length 100, scale = 0.01)', () => {
     const s = makeStructWithBondLength(100);
     s.rescale();
     const finalLength = Vec2.dist(s.atoms.get(0)!.pp, s.atoms.get(1)!.pp);
     expect(finalLength).toBeCloseTo(1, 2); // scale=0.01 is allowed; 100×0.01=1
+  });
+
+  it('DOES rescale at the MAX_RESCALE boundary (bond length 0.01, scale = 100)', () => {
+    const s = makeStructWithBondLength(0.01);
+    s.rescale();
+    const finalLength = Vec2.dist(s.atoms.get(0)!.pp, s.atoms.get(1)!.pp);
+    expect(finalLength).toBeCloseTo(1, 2); // scale=100 is allowed; 0.01×100=1
   });
 
   it('does not throw when the struct has no bonds', () => {

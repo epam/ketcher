@@ -755,7 +755,7 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
               <div>
                 The isoelectric point is calculated as the median of all pKa
                 values for amino acids (values from{' '}
-                <i>Miclotte et. al. (2020)</i>. Only amino acid natural
+                <i>Miclotte et. al. (2020))</i>. Only amino acid natural
                 analogues are used in the calculation.
               </div>
             }
@@ -945,7 +945,7 @@ const calculateMassMeasurementUnit = (mass?: number) => {
   return MassMeasurementUnit.MDa;
 };
 
-let selectEntitiesHandler: () => void;
+let recalculatePropertiesHandler: () => void;
 
 export const MacromoleculePropertiesWindow = () => {
   const dispatch = useAppDispatch();
@@ -996,21 +996,30 @@ export const MacromoleculePropertiesWindow = () => {
   }, [recalculateMacromoleculeProperties]);
 
   useEffect(() => {
-    if (
-      selectEntitiesHandler &&
-      editor?.events.selectEntities.hasHandler(selectEntitiesHandler)
-    ) {
-      editor?.events.selectEntities.remove(selectEntitiesHandler);
+    if (recalculatePropertiesHandler) {
+      if (
+        editor?.events.selectEntities.hasHandler(recalculatePropertiesHandler)
+      ) {
+        editor?.events.selectEntities.remove(recalculatePropertiesHandler);
+      }
+      if (editor?.events.modelChange.hasHandler(recalculatePropertiesHandler)) {
+        editor?.events.modelChange.remove(recalculatePropertiesHandler);
+      }
     }
 
-    selectEntitiesHandler = () => {
+    recalculatePropertiesHandler = () => {
       debouncedRecalculateMacromoleculeProperties(skipDataFetch);
     };
 
-    editor?.events.selectEntities.add(selectEntitiesHandler);
+    // selectEntities covers recalculation when the selection changes;
+    // modelChange covers recalculation when the structure itself changes
+    // (e.g. merging chains on the canvas) without necessarily changing selection.
+    editor?.events.selectEntities.add(recalculatePropertiesHandler);
+    editor?.events.modelChange.add(recalculatePropertiesHandler);
 
     return () => {
-      editor?.events.selectEntities.remove(selectEntitiesHandler);
+      editor?.events.selectEntities.remove(recalculatePropertiesHandler);
+      editor?.events.modelChange.remove(recalculatePropertiesHandler);
     };
   }, [debouncedRecalculateMacromoleculeProperties, editor, skipDataFetch]);
 

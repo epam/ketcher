@@ -19,7 +19,7 @@ import type { BaseTool } from 'application/editor/tools/Tool';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import type { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';

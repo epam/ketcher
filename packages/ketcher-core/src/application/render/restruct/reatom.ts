@@ -2240,8 +2240,7 @@ export function getAtomCustomQuery(
       continue;
     }
 
-    const normalizedValue = typeof value === 'boolean' ? Number(value) : value;
-    const attrText = format(String(normalizedValue));
+    const attrText = format(String(value));
     if (attrText) {
       addSemicolon();
     }

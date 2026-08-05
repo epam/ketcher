@@ -268,7 +268,7 @@ export const TemplateDialog: FC<Props> = (props) => {
       );
       dispatch(
         showSnackbarNotification(
-          'Some templates could not be exported because they contain invalid structures.',
+          'Some templates could not be exported.',
         ),
       );
     },

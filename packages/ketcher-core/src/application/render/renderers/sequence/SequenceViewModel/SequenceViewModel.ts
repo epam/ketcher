@@ -8,6 +8,7 @@ import {
   type SubChainNode,
   EmptySequenceNode,
   BackBoneSequenceNode,
+  LinkerSequenceNode,
   RNABase,
 } from 'domain/entities';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
@@ -20,7 +21,11 @@ import {
   getNextConnectedNode,
   getPreviousConnectedNode,
 } from 'domain/helpers/chains';
-import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
+import {
+  getAntisenseTerminalPhosphateCount,
+  isAntisenseTerminalPhosphateRun,
+  isRnaBaseApplicableForAntisense,
+} from 'domain/helpers/monomers';
 import { SettingsManager } from 'utilities';
 
 interface IForEachNodeParams {
@@ -40,6 +45,11 @@ export class SequenceViewModel {
   > = new Map();
 
   private readonly chainToHasAntisense: Map<Chain, boolean> = new Map();
+
+  private antisensePhosphateSymbols?: Map<
+    ITwoStrandedChainItem,
+    { symbol: string; xOffset: number }
+  >;
 
   constructor(public chainsCollection: ChainsCollection) {
     this.fillNodes(chainsCollection);
@@ -554,5 +564,167 @@ export class SequenceViewModel {
     });
 
     return nodeIndex;
+  }
+
+  /**
+   * Sequence-mode display symbol ("p" / "pp") for an antisense cell that shows a
+   * terminal phosphate. A terminal antisense phosphate run is spread across its
+   * own linker cell plus the neighbouring "gap" cells (BackBone/Empty) that
+   * already exist in the layout, so that each phosphate appears in its own
+   * column ("p p") instead of being crammed into a single cell ("pp").
+   *
+   * When there is no neighbouring gap to spread into, the overflowing phosphates
+   * are instead shifted outward into the free margin beyond the strand (see
+   * getAntisensePhosphateSymbolXOffset), so they never overlap the neighbouring
+   * symbol.
+   *
+   * This only reassigns the displayed symbol / x-offset of cells that already
+   * exist - it never adds/removes cells - so caret navigation, editing and flex
+   * mode stay exactly as they were.
+   *
+   * Returns undefined when the cell must keep its default symbol.
+   */
+  public getAntisensePhosphateSymbol(
+    twoStrandedNode: ITwoStrandedChainItem,
+  ): string | undefined {
+    return this.getAntisensePhosphateSymbols().get(twoStrandedNode)?.symbol;
+  }
+
+  /**
+   * Horizontal offset (in px) applied to a crammed terminal-phosphate symbol so
+   * the extra phosphates stick out into the free margin instead of overlapping
+   * the neighbouring symbol. Display-only.
+   */
+  public getAntisensePhosphateSymbolXOffset(
+    twoStrandedNode: ITwoStrandedChainItem,
+  ): number {
+    return (
+      this.getAntisensePhosphateSymbols().get(twoStrandedNode)?.xOffset ?? 0
+    );
+  }
+
+  private getAntisensePhosphateSymbols(): Map<
+    ITwoStrandedChainItem,
+    { symbol: string; xOffset: number }
+  > {
+    if (!this.antisensePhosphateSymbols) {
+      this.antisensePhosphateSymbols = this.buildAntisensePhosphateSymbols();
+    }
+
+    return this.antisensePhosphateSymbols;
+  }
+
+  private buildAntisensePhosphateSymbols(): Map<
+    ITwoStrandedChainItem,
+    { symbol: string; xOffset: number }
+  > {
+    // One sequence-mode column is 20px wide (see scaledMonomerPositionForSequence).
+    const COLUMN_WIDTH = 20;
+    const symbols = new Map<
+      ITwoStrandedChainItem,
+      { symbol: string; xOffset: number }
+    >();
+    const items: ITwoStrandedChainItem[] = [];
+    this.forEachNode(({ twoStrandedNode }) => items.push(twoStrandedNode));
+
+    const isAntisenseGap = (item?: ITwoStrandedChainItem) =>
+      Boolean(
+        item &&
+          (item.antisenseNode instanceof BackBoneSequenceNode ||
+            item.antisenseNode instanceof EmptySequenceNode),
+      );
+
+    const isRealAntisenseNode = (item?: ITwoStrandedChainItem) =>
+      Boolean(
+        item &&
+          item.antisenseNode &&
+          !(item.antisenseNode instanceof BackBoneSequenceNode) &&
+          !(item.antisenseNode instanceof EmptySequenceNode),
+      );
+
+    // Collect consecutive antisense gap cells starting next to `index` in the
+    // given direction, together with whether the run of gaps is terminated by a
+    // real antisense node (i.e. the chain continues on that side = interior).
+    const collectGaps = (index: number, direction: -1 | 1) => {
+      const chain = items[index].chain;
+      const gaps: ITwoStrandedChainItem[] = [];
+      let cursor = index + direction;
+      while (isAntisenseGap(items[cursor]) && items[cursor].chain === chain) {
+        gaps.push(items[cursor]);
+        cursor += direction;
+      }
+      const continuesToRealNode =
+        Boolean(items[cursor]) &&
+        items[cursor].chain === chain &&
+        isRealAntisenseNode(items[cursor]);
+
+      return { gaps, continuesToRealNode };
+    };
+
+    // Whether the antisense chain continues (leads to a real antisense node) on
+    // the given side of `index` - used to find the interior / exterior side.
+    const continuesOnSide = (index: number, direction: -1 | 1) => {
+      const neighbour = items[index + direction];
+      return (
+        Boolean(neighbour) &&
+        neighbour.chain === items[index].chain &&
+        (isRealAntisenseNode(neighbour) ||
+          (isAntisenseGap(neighbour) &&
+            collectGaps(index, direction).continuesToRealNode))
+      );
+    };
+
+    items.forEach((item, index) => {
+      const antisenseNode = item.antisenseNode;
+      if (
+        !(antisenseNode instanceof LinkerSequenceNode) ||
+        !isAntisenseTerminalPhosphateRun(antisenseNode.monomers)
+      ) {
+        return;
+      }
+
+      const count = getAntisenseTerminalPhosphateCount(antisenseNode.monomers);
+      if (count <= 1) {
+        symbols.set(item, { symbol: 'p', xOffset: 0 });
+        return;
+      }
+
+      // Spread the extra phosphates into the neighbouring gap cells on the
+      // interior side (the side where the antisense chain continues).
+      const left = collectGaps(index, -1);
+      const right = collectGaps(index, 1);
+      let interiorGaps: ITwoStrandedChainItem[] = [];
+      if (left.continuesToRealNode && left.gaps.length) {
+        interiorGaps = left.gaps;
+      } else if (right.continuesToRealNode && right.gaps.length) {
+        interiorGaps = right.gaps;
+      } else {
+        interiorGaps = left.gaps.length ? left.gaps : right.gaps;
+      }
+
+      const delegated = Math.min(count - 1, interiorGaps.length);
+      const anchorPhosphates = count - delegated;
+
+      // Overflow that could not be delegated to a gap cell is shifted outward
+      // into the free margin (the exterior side, opposite the chain interior).
+      // When the interior is on the right, the exterior/free margin is on the
+      // left, so shift the symbol left so the extra phosphates do not overlap
+      // the neighbouring symbol.
+      let xOffset = 0;
+      if (anchorPhosphates > 1) {
+        const interiorIsRight = continuesOnSide(index, 1);
+        const interiorIsLeft = continuesOnSide(index, -1);
+        if (interiorIsRight && !interiorIsLeft) {
+          xOffset = -COLUMN_WIDTH * (anchorPhosphates - 1);
+        }
+      }
+
+      symbols.set(item, { symbol: 'p'.repeat(anchorPhosphates), xOffset });
+      for (let k = 0; k < delegated; k++) {
+        symbols.set(interiorGaps[k], { symbol: 'p', xOffset: 0 });
+      }
+    });
+
+    return symbols;
   }
 }

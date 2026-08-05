@@ -116,7 +116,7 @@ describe('TemplateDialog', () => {
     expect(mockDispatch).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'SHOW_SNACKBAR_NOTIFICATION',
-        data: 'Some templates could not be exported because they contain invalid structures.',
+        data: 'Some templates could not be exported.',
       }),
     );
   });

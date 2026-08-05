@@ -7,6 +7,7 @@ export const Icon = ({
   testId,
   testid,
   isActive: _isActive,
+  expanded: _expanded,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
   iconName?: string;
@@ -14,6 +15,7 @@ export const Icon = ({
   testId?: string;
   testid?: string;
   isActive?: boolean;
+  expanded?: boolean;
 }) => {
   const svgProps = {
     ...props,

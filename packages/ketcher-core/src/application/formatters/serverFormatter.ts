@@ -135,7 +135,7 @@ export class ServerFormatter implements StructFormatter {
 
     try {
       const result = await method(data, this.#options);
-      // Rescaling is the caller's responsibility (load(), setMolecule()) via Struct.needsRescale().
+      // Caller rescales based on format; see Struct.needsRescale().
       return this.#ketSerializer.deserialize(result.struct);
     } catch (e: unknown) {
       if (!(e instanceof Error) || e.message !== 'Server is not compatible') {

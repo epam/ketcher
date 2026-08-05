@@ -1025,17 +1025,9 @@ export class Struct {
   }
 
   /**
-   * Returns true when the given format requires coordinate rescaling before
-   * rendering on the canvas.
-   *
-   * KET coordinates are already in canvas scale — rescaling would distort the
-   * layout. All other formats use chemistry-scale coordinates and need
-   * normalisation.
-   *
-   * @param format - A value from {@link SupportedFormat}, or `null` when the
-   *   format is unknown. Accepts `string` rather than the enum to avoid a
-   *   circular import with `structFormatter.types.ts`. The literal `'ket'` must
-   *   remain in sync with `SupportedFormat.ket` in that file.
+   * Returns true unless format is 'ket'. KET coordinates are already in canvas scale;
+   * rescaling would distort the layout. Accepts string (not SupportedFormat) to avoid
+   * a circular import with structFormatter.types.ts.
    */
   static needsRescale(format: string | null): boolean {
     return format !== 'ket';
@@ -1048,9 +1040,7 @@ export class Struct {
     }
 
     const scale = 1 / median;
-    // Reject absurd scale factors — they indicate corrupted/degenerate geometry.
-    // Valid chemistry coordinates have bond lengths in ~[0.01, 100] units,
-    // so 1/median stays in [MIN_RESCALE, MAX_RESCALE]. Outside that range, skip.
+    // Skip absurd scale factors — bond lengths outside [0.01, 100] indicate degenerate geometry.
     if (scale < Struct.MIN_RESCALE || scale > Struct.MAX_RESCALE) {
       return;
     }

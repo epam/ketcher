@@ -267,9 +267,7 @@ export const TemplateDialog: FC<Props> = (props) => {
         err,
       );
       dispatch(
-        showSnackbarNotification(
-          'Some templates could not be exported.',
-        ),
+        showSnackbarNotification('Some templates could not be exported.'),
       );
     },
     [dispatch],

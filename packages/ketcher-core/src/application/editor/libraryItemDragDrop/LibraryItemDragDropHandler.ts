@@ -36,9 +36,7 @@ import {
   presetsHaveSameGeometry,
   getPresetSugarForMonomer,
   getPresetComponentsFromSugar,
-  computeReestablishableBonds,
   collectMonomerBonds,
-  mapPresetBonds,
 } from './replacementHelpers';
 
 const DRAG_BOND_PROXIMITY_THRESHOLD_PX = 25;
@@ -743,11 +741,7 @@ export class LibraryItemDragDropHandler {
     this.clearReplacementTarget();
 
     // Determine what bonds would be lost
-    const lostBonds = this.computeLostBondsForReplacement(
-      item,
-      replaceTarget,
-      drawingEntitiesManager,
-    );
+    const lostBonds = this.computeLostBondsForReplacement(item, replaceTarget);
 
     const doReplace = () => {
       const command = this.buildReplacementCommand(
@@ -784,29 +778,16 @@ export class LibraryItemDragDropHandler {
   private computeLostBondsForReplacement(
     item: IRnaPreset | MonomerOrAmbiguousType,
     replaceTarget: ReplacementTarget,
-    drawingEntitiesManager: DrawingEntitiesManager,
   ): number {
     if (
       replaceTarget.kind === 'same-geometry-preset' &&
       replaceTarget.presetSugar &&
       isLibraryItemRnaPreset(item)
     ) {
-      const originalComponents = getPresetComponentsFromSugar(
-        replaceTarget.presetSugar,
-      );
-      // For same-geometry preset: new components same structure, just compare APs
-      const plan = mapPresetBonds(originalComponents, []);
-      // All external bonds go through plan.lost when new components is [] but
-      // that's just to collect them; we need the actual re-establishment check
-      // against the new preset components. Since we don't have them yet, we
-      // conservatively return 0 and let the actual replacePreset method handle
-      // bond resolution. The confirmation dialog is shown only if any bond is
-      // actually lost after real mapping.
-      //
-      // For the dialog, we do a pre-check: collect all external bonds and
-      // simulate whether a same-geometry preset would have them re-established.
-      // Same geometry = same AP names exist on corresponding components.
-      return plan.lost.length; // simplified: no bonds lost for same-geometry presets
+      // Same-geometry preset replacement preserves all external bonds by
+      // re-establishing them on the structurally identical new preset
+      // components. No bonds are lost, so no confirmation dialog is needed.
+      return 0;
     }
 
     if (replaceTarget.kind === 'monomer' && !isLibraryItemRnaPreset(item)) {

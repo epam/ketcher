@@ -150,7 +150,6 @@ import {
 import {
   collectMonomerBonds,
   computeReestablishableBonds,
-  mapPresetBonds,
   getPresetComponentsFromSugar,
 } from 'application/editor/libraryItemDragDrop/replacementHelpers';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
@@ -4605,7 +4604,7 @@ export class DrawingEntitiesManager {
     newTemplate: MonomerOrAmbiguousType,
   ): { command: Command; newMonomer: BaseMonomer } {
     const command = new Command();
-    const position = oldMonomer.position.clone();
+    const position = new Vec2(oldMonomer.position.x, oldMonomer.position.y);
 
     // 1. Collect all bonds before deleting
     const originalBonds = collectMonomerBonds(oldMonomer);
@@ -4680,22 +4679,29 @@ export class DrawingEntitiesManager {
     // Gather the components of the original preset
     const originalComponents = getPresetComponentsFromSugar(oldSugar);
 
-    // Collect all external bonds across all original preset components
-    const bondPlan = mapPresetBonds(originalComponents, []);
-    // We pass empty new components here to classify all bonds as external;
-    // re-establishment is done below after creating the new preset.
-
-    // Delete old components (without deleting bonds so we can re-establish them)
-    for (const component of originalComponents) {
-      command.merge(this.deleteMonomer(component, false));
-    }
-
-    // Delete all bonds that were attached to the old preset components
+    // Collect all bonds BEFORE any deletions.
+    // NOTE: PolymerBondDeleteOperation immediately mutates the model in its
+    // constructor, so we must snapshot bond state here while the model is
+    // still intact.
     const allOriginalBonds: ReturnType<typeof collectMonomerBonds> = [];
     for (const component of originalComponents) {
       allOriginalBonds.push(...collectMonomerBonds(component));
     }
-    // Unique bonds (a bond can appear on both its endpoint monomers)
+
+    // Separate external bonds (to monomers outside this preset) from
+    // internal intra-preset bonds — we need external bonds for re-establishment.
+    const externalBonds = allOriginalBonds.filter(
+      (record) => !originalComponents.includes(record.otherEntity),
+    );
+
+    // Delete old components (without cascade-deleting their bonds here; we
+    // handle bonds explicitly below)
+    for (const component of originalComponents) {
+      command.merge(this.deleteMonomer(component, false));
+    }
+
+    // Delete all bonds that were attached to the old preset components.
+    // This includes both intra-preset bonds and external chain bonds.
     const uniqueBonds = new Set(allOriginalBonds.map((r) => r.bond));
     for (const bond of uniqueBonds) {
       if (bond instanceof PolymerBond || bond instanceof HydrogenBond) {
@@ -4727,29 +4733,31 @@ export class DrawingEntitiesManager {
       (m) => m instanceof Sugar,
     ) as BaseMonomer;
 
-    // Compute a re-establishment plan using the real new components
-    const externalBonds = allOriginalBonds.filter(
-      (record) => !originalComponents.includes(record.otherEntity),
-    );
-    const reestablishmentPlan = mapPresetBonds(
-      originalComponents,
-      newComponents,
-    );
-
-    // Re-establish compatible bonds
-    for (const record of reestablishmentPlan.reestablishable) {
+    // Re-establish external bonds using the pre-collected snapshot.
+    // We cannot call mapPresetBonds here because PolymerBondDeleteOperation
+    // constructors have already mutated attachmentPointsToBonds on the original
+    // monomers, making re-collection return empty results.
+    for (const record of externalBonds) {
       if (record.attachmentPointName === ('hydrogen' as AttachmentPointName)) {
         continue;
       }
       if (record.otherAttachmentPointName === null) continue;
 
-      // Determine which new component to connect to
+      // Find the new component that plays the same structural role as the
+      // original component that owned this bond.
       const newComponent = this.findNewPresetComponentForBond(
         record,
         originalComponents,
         newComponents,
       );
       if (!newComponent) continue;
+
+      // Only re-establish if the AP is free on the new component.
+      if (
+        !newComponent.isAttachmentPointExistAndFree(record.attachmentPointName)
+      ) {
+        continue;
+      }
 
       command.merge(
         this.createPolymerBond(
@@ -4760,8 +4768,6 @@ export class DrawingEntitiesManager {
         ),
       );
     }
-
-    void externalBonds; // used via reestablishmentPlan above
 
     return { command, newSugar: newSugar ?? newComponents[0] };
   }

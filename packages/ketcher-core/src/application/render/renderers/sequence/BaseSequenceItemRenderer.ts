@@ -663,12 +663,19 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private appendChainStartArrow() {
-    this.rootElement
+    const arrow = this.rootElement
       ?.append('use')
-      .attr('x', -17)
-      .attr('y', -27)
       .attr('data-testid', 'sequence-start-arrow')
       .attr('href', `#${CHAIN_START_ARROW_SYMBOL_ID}`);
+
+    if (this.isAntisenseNode) {
+      // Use transform-only (no x/y attrs) to avoid browser ambiguity on how x/y
+      // interacts with a transform on <use>. translate(-5,-27) scale(-1,1) mirrors
+      // the arrow into the same x range as the sense arrow (-17..-5) but pointing left.
+      arrow?.attr('transform', 'translate(-5, -27) scale(-1, 1)');
+    } else {
+      arrow?.attr('x', -17).attr('y', -27);
+    }
   }
 
   private drawGreyOverlay() {

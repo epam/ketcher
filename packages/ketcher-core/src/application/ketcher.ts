@@ -695,13 +695,8 @@ export class Ketcher {
         this.editor.struct(),
         this.editor.serverSettings,
       );
-      // ORDERING CONTRACT: rescale() MUST run before serialize().
-      // Indigo layout returns chemistry-scale (Ångström) coordinates.
-      // After rescale(), the struct is in canvas scale; KetSerializer embeds
-      // those coordinates verbatim. setMolecule() then detects 'ket' format
-      // and correctly skips a second rescale via Struct.needsRescale().
-      // Removing this call without changing the serialization format will
-      // silently re-introduce the original shrink-on-layout bug.
+      // rescale() must precede serialize(): Indigo returns Ångström coordinates; setMolecule()
+      // skips re-rescaling for KET, so omitting this silently re-introduces the shrink bug.
       struct.rescale();
       const ketSerializer = new KetSerializer();
       await this.setMolecule(ketSerializer.serialize(struct));

@@ -145,14 +145,9 @@ export function load(struct: string | Struct, options?) {
       // scaling works bad with molecule-to-monomer connections.
       // preserveViewport also skips rescale so aromatize/dearomatize keep the
       // current canvas position instead of re-normalizing coordinates.
-      // KET is Ketcher's native format — coordinates are already in canvas
-      // scale, so rescaling a KET structure would distort the layout
-      // (whether loading from file or pasting).
       const pastedFormat =
         typeof struct === 'string' ? identifyStructFormat(struct) : null;
-      // Explicit `rescale` option overrides format-based detection.
-      // Callers that know the coordinate system (e.g. server transforms) can
-      // pass rescale:false to suppress rescaling even for non-KET input.
+      // rescale option overrides format-based detection (e.g. rescale:false for server-formatted input).
       if (
         !preserveViewport &&
         !hasMoleculeToMonomerConnections &&

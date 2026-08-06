@@ -3815,7 +3815,13 @@ export class DrawingEntitiesManager {
       bbox.left + bbox.width / 2,
       bbox.top + bbox.height / 2,
     );
-    const monomersToMove = new Set(monomers);
+    const monomersToMove = new Set(
+      monomers.filter(
+        (monomer) =>
+          !monomer.monomerItem.props.isMicromoleculeFragment ||
+          isMonomerSgroupWithAttachmentPoints(monomer),
+      ),
+    );
     const zeroOffset = new Vec2(0, 0);
 
     monomersToMove.forEach((monomer) => {

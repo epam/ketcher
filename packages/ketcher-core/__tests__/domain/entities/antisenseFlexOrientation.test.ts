@@ -33,7 +33,7 @@ import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { AttachmentPointName } from 'domain/types';
-import { peptideMonomerItem } from '../../mock-data';
+import { chemMonomerItem, peptideMonomerItem } from '../../mock-data';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
@@ -315,6 +315,26 @@ describe('Flex mode: canonical paired-RNA orientation', () => {
     );
     expect(Math.abs(distanceAfter.x)).toBeCloseTo(Math.abs(distanceBefore.x));
     expect(Math.abs(distanceAfter.y)).toBeCloseTo(Math.abs(distanceBefore.y));
+  });
+
+  it('does not move a micromolecule-fragment monomer alongside the duplex (regression: ketcher-3.10.0-bugs "Arrange as a Ring")', () => {
+    buildMirroredDuplex(editor);
+    const fragment = editor.drawingEntitiesManager.addMonomer(
+      {
+        ...chemMonomerItem,
+        props: { ...chemMonomerItem.props, isMicromoleculeFragment: true },
+      },
+      new Vec2(20, 20),
+    ).operations[0].monomer as BaseMonomer;
+    const fragmentPositionBefore = new Vec2(
+      fragment.position.x,
+      fragment.position.y,
+    );
+
+    expect(() => normalizeFlexOrientation(editor)).not.toThrow();
+
+    expect(fragment.position.x).toBeCloseTo(fragmentPositionBefore.x);
+    expect(fragment.position.y).toBeCloseTo(fragmentPositionBefore.y);
   });
 
   it('does not rearrange an unpaired single RNA chain', () => {

@@ -3748,19 +3748,6 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  // Corrects mirrored paired-RNA-duplex orientation for the initial structure
-  // load ("Open as new" / "Add to canvas") in Flex mode only - see FlexMode
-  // "initialize"/Open.tsx "addToCanvas" callers. Must be called only for
-  // freshly loaded monomers, right after `recalculateAntisenseChains()` has
-  // marked `isSense`/`isAntisense` on them, so that:
-  //  - an unpaired RNA chain or a single RNA/peptide-only structure (no
-  //    sense/antisense monomers among `monomers`) is left untouched;
-  //  - a user's manually rearranged structure is never affected, because this
-  //    is not called from `FlexMode.initialize()` (which runs on every mode
-  //    switch), only from the initial-load code path.
-  // The whole freshly loaded block (RNA duplex + any attached entities, e.g.
-  // a peptide) is reflected together as a rigid body, so relative geometry
-  // (base pairs, attachments) is preserved.
   public applyCanonicalAntisenseOrientation(monomers: BaseMonomer[]) {
     const command = new Command();
 
@@ -3798,9 +3785,6 @@ export class DrawingEntitiesManager {
       chainMonomers.reduce((sum, monomer) => sum + monomer.position.y, 0) /
       chainMonomers.length;
 
-    // Canonical orientation: sense chain reads 5' -> 3' left-to-right and is
-    // positioned above its antisense partner (5' terminal top-left, 3'
-    // terminal of the antisense chain bottom-left).
     const needsHorizontalFlip =
       senseChainFirstMonomer.position.x > senseChainLastMonomer.position.x;
     const needsVerticalFlip =

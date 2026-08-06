@@ -10,6 +10,7 @@ import {
   clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   dragMouseTo,
+  getCoordinatesOfTheMiddleOfTheCanvas,
   MacroFileType,
   shiftCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -43,6 +44,7 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 let page: Page;
 
@@ -173,8 +175,19 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 5: Drag the molecule slightly (grab → move → release)
     await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(660, 377);
-    await dragMouseTo(page, 540, 257);
+    const canvas = page
+      .getByTestId(KETCHER_CANVAS)
+      .filter({ has: page.locator(':visible') });
+    const box = await canvas.boundingBox();
+    if (!box) throw new Error('Canvas bounding box is undefined');
+    const { x: centerX, y: centerY } =
+      await getCoordinatesOfTheMiddleOfTheCanvas(page);
+    const startX = box.x + centerX + 20;
+    const startY = box.y + centerY + 20;
+    const endX = box.x + centerX - 100;
+    const endY = box.y + centerY - 100;
+    await page.mouse.move(startX, startY);
+    await dragMouseTo(page, endX, endY);
 
     // Step 6: Move cursor back to center and click to clear selection
     await CommonLeftToolbar(page).areaSelectionTool();
@@ -566,14 +579,28 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 3: Start area selection from the bottom of the screen
     await CommonLeftToolbar(page).areaSelectionTool();
-    await page.mouse.move(742, 427);
+    const canvas = page.getByTestId(KETCHER_CANVAS).first();
+    await expect(canvas).toBeVisible();
+    const box = await canvas.boundingBox();
+    if (!box) throw new Error('Canvas bounding box is undefined');
+    const inset = 20;
+    // eslint-disable-next-line prefer-const
+    let startX = Math.floor(box.x + box.width - inset);
+    let startY = Math.floor(box.y + box.height / 2 + 40);
+    const bottomLimit = Math.floor(box.y + box.height - inset);
+    if (startY > bottomLimit - 8) startY = bottomLimit - 8;
+    const firstTargetX = Math.floor(box.x + inset);
+    const firstTargetY = bottomLimit;
+    await page.mouse.move(startX, startY);
     await page.mouse.down();
-    await page.mouse.move(310, 680, { steps: 20 });
+    await page.mouse.move(firstTargetX, firstTargetY, { steps: 20 });
     for (let i = 0; i < 10; i++) {
       await page.mouse.wheel(0, 320);
       await page.waitForTimeout(40);
     }
-    await page.mouse.move(298, 710, { steps: 8 });
+    const extraX = Math.max(firstTargetX - 30, box.x + 8);
+    const extraY = firstTargetY + 30;
+    await page.mouse.move(extraX, extraY, { steps: 8 });
     await page.mouse.up();
 
     // Visual result validation: screenshot of the entire canvas

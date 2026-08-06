@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Vec2 } from './vec2';
-import { assert } from 'utilities';
+import assert from 'assert';
 
 /** @internal */
 export class HalfBond {

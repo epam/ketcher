@@ -6,39 +6,11 @@ export type RaphaelRectAttr = {
   r: number;
 };
 
-export type RaphaelDragOnMove = (
-  dx: number,
-  dy: number,
-  x: number,
-  y: number,
-  event: MouseEvent,
-) => void;
-
-export type RaphaelDragOnStart = (
-  x: number,
-  y: number,
-  event: MouseEvent,
-) => void;
-
-export type RaphaelDragOnEnd = (event: MouseEvent) => void;
-
-export interface RaphaelElement extends Record<string, unknown> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface RaphaelElement extends Record<string, any> {
   readonly raphaelid: string;
 
   attr(attr: RaphaelRectAttr): this;
 
   attr(): RaphaelRectAttr;
-
-  drag(
-    onMove: RaphaelDragOnMove,
-    onStart: RaphaelDragOnStart,
-    onEnd: RaphaelDragOnEnd,
-    onMoveContext?: object,
-    onStartContext?: object,
-    onEndContext?: object,
-  ): this;
-
-  undrag(): this;
-
-  remove(): this;
 }

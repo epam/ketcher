@@ -4,7 +4,7 @@ import type { PolymerBond } from 'domain/entities/PolymerBond';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { type Selection, line } from 'd3';
 import type { BaseMonomer } from './entities/BaseMonomer';
-import { assert } from 'utilities';
+import assert from 'assert';
 import {
   type Coordinates,
   canvasToMonomerCoordinates,

@@ -8,7 +8,7 @@ import { Command } from 'domain/entities/Command';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
 import type { Atom } from 'domain/entities/CoreAtom';
 import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { assert } from 'utilities';
+import assert from 'assert';
 
 import type { DrawingEntitiesManager } from './DrawingEntitiesManager';
 

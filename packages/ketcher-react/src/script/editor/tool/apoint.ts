@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, FunctionalGroup, assert } from 'ketcher-core';
+import assert from 'assert';
+import { Atom, FunctionalGroup } from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
 import { editRGroupAttachmentPoint } from './apoint.utils';

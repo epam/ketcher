@@ -177,7 +177,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
 
-    await clickOnCanvas(page, 150, 145, { from: 'pageTopLeft' });
+    await page.getByTestId('canvas').click({ position: { x: 100, y: 100 } });
     await TextEditorDialog(page).setText('Ketcher is a coool tool');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);

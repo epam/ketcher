@@ -25,7 +25,6 @@ import {
   isBaseTool,
 } from 'application/editor/tools/Tool';
 import {
-  type IKetIdtAliases,
   type IKetMacromoleculesContent,
   type IKetMonomerGroupTemplate,
   KetMonomerGroupTemplateClass,
@@ -529,29 +528,13 @@ export class CoreEditor {
         firstMonomer.props.hidden === secondMonomer.props.hidden
       );
     };
-    const getIdtAliasesList = (idtAliases?: IKetIdtAliases): string[] => {
-      const base = idtAliases?.base;
-      const mods = idtAliases?.modifications;
+    const getIdtModificationAliases = (monomer?: MonomerItemType): string[] => {
+      const mods = monomer?.props?.idtAliases?.modifications;
+      const base = monomer?.props?.idtAliases?.base;
       return [base, mods?.internal, mods?.endpoint3, mods?.endpoint5].filter(
         (v): v is string => typeof v === 'string' && v.length > 0,
       );
     };
-    const getIdtModificationAliases = (monomer?: MonomerItemType): string[] =>
-      getIdtAliasesList(monomer?.props?.idtAliases);
-
-    const formatIdtAliasDetails = (idtAliases?: IKetIdtAliases): string[] =>
-      [
-        idtAliases?.base ? `IDT base alias "${idtAliases.base}"` : null,
-        idtAliases?.modifications?.endpoint3
-          ? `IDT 3' alias "${idtAliases.modifications.endpoint3}"`
-          : null,
-        idtAliases?.modifications?.endpoint5
-          ? `IDT 5' alias "${idtAliases.modifications.endpoint5}"`
-          : null,
-        idtAliases?.modifications?.internal
-          ? `IDT internal alias "${idtAliases.modifications.internal}"`
-          : null,
-      ].filter((value): value is string => Boolean(value));
 
     const formatAliasDetails = (monomer: MonomerItemType) =>
       [
@@ -561,7 +544,18 @@ export class CoreEditor {
         monomer.props?.aliasBILN
           ? `BILN alias "${monomer.props.aliasBILN}"`
           : null,
-        ...formatIdtAliasDetails(monomer.props?.idtAliases),
+        monomer.props?.idtAliases?.base
+          ? `IDT base alias "${monomer.props.idtAliases.base}"`
+          : null,
+        monomer.props?.idtAliases?.modifications?.endpoint3
+          ? `IDT 3' alias "${monomer.props.idtAliases.modifications.endpoint3}"`
+          : null,
+        monomer.props?.idtAliases?.modifications?.endpoint5
+          ? `IDT 5' alias "${monomer.props.idtAliases.modifications.endpoint5}"`
+          : null,
+        monomer.props?.idtAliases?.modifications?.internal
+          ? `IDT internal alias "${monomer.props.idtAliases.modifications.internal}"`
+          : null,
       ]
         .filter((value): value is string => Boolean(value))
         .join(', ');
@@ -807,54 +801,6 @@ export class CoreEditor {
               `Editor::updateMonomersLibrary: Load of monomer group template "${templateDefinition.name}" (template: ${templateRef.$ref}) has failed. Monomer group template name must consist only of letters, numbers, hyphens, underscores and asterisks. The template was not added to the library.`,
             );
             return;
-        }
-      }
-
-      const newTemplateIdtAliases = getIdtAliasesList(
-        templateDefinition.idtAliases,
-      );
-
-      if (newTemplateIdtAliases.length > 0) {
-        const conflictingMonomer = this._monomersLibrary.find((monomer) =>
-          getIdtModificationAliases(monomer).some((alias) =>
-            newTemplateIdtAliases.includes(alias),
-          ),
-        );
-
-        const conflictingTemplateRef =
-          monomersLibraryParsedJson.root.templates.find(
-            (existingTemplateRef) => {
-              if (existingTemplateRef.$ref === templateRef.$ref) {
-                return false;
-              }
-
-              const existingTemplate =
-                monomersLibraryParsedJson[existingTemplateRef.$ref];
-
-              if (
-                (existingTemplate as IKetMonomerGroupTemplate)?.type !==
-                KetTemplateType.MONOMER_GROUP_TEMPLATE
-              ) {
-                return false;
-              }
-
-              return getIdtAliasesList(
-                (existingTemplate as IKetMonomerGroupTemplate).idtAliases,
-              ).some((alias) => newTemplateIdtAliases.includes(alias));
-            },
-          );
-
-        if (conflictingMonomer || conflictingTemplateRef) {
-          const detail = formatIdtAliasDetails(
-            templateDefinition.idtAliases,
-          ).join(', ');
-          reportValidationError(
-            templateDefinition.name,
-            `Duplicate IDT aliases detected${
-              detail ? ` (${detail})` : ''
-            }. IDT aliases for 5', 3', internal and base positions must be unique.`,
-          );
-          return;
         }
       }
 

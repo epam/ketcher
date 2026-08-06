@@ -1,9 +1,8 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { moveMouseAway } from '@utils/moveMouseAway';
 
-export type RNABuilderLocators = {
+type RNABuilderLocators = {
   rnaBuilderSection: Locator;
-  rnaEditorBody: Locator;
   nameYourStructureEditbox: Locator;
   sugarSlot: Locator;
   baseSlot: Locator;
@@ -18,7 +17,6 @@ export type RNABuilderLocators = {
 export const RNABuilder = (page: Page) => {
   const locators: RNABuilderLocators = {
     rnaBuilderSection: page.getByTestId('rna-builder-expand-button'),
-    rnaEditorBody: page.getByTestId('rna-editor-expanded'),
     nameYourStructureEditbox: page.getByTestId('name-your-structure-editbox'),
     sugarSlot: page.getByTestId('rna-builder-slot--sugar'),
     baseSlot: page.getByTestId('rna-builder-slot--base'),

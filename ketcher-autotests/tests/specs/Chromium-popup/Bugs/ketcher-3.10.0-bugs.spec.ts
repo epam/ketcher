@@ -673,9 +673,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     const macroOption = page.getByTestId(Mode.Macromolecules);
     const modeSelectionDropdown =
       CommonTopRightToolbar(page).ketcherModeSwitcherCombobox;
-    const macromoleculesCanvas = page.locator(
-      '[data-testid="ketcher-canvas"][data-canvasmode="macromolecules-mode"]',
-    );
+    const macromoleculesCanvas = page.locator('#polymer-editor-canvas');
     await expect(modeSelectionDropdown).toBeVisible();
     await CommonTopRightToolbar(page).fullScreenButton.click();
     await modeSelectionDropdown.click();

@@ -23,11 +23,9 @@ import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import type { MolSerializerOptions } from 'domain/serializers/mol/mol.types';
 import { MolSerializer } from 'domain/serializers/mol/molSerializer';
 import type { StructService, StructServiceOptions } from 'domain/services';
-import type { Struct } from 'domain/entities/struct';
 import { KetFormatter } from './ketFormatter';
 import { ServerFormatter } from './serverFormatter';
 import { MolfileV2000Formatter } from './molfileV2000Formatter';
-import { exceedsMolfileV2000Limit } from './constants';
 
 export class FormatterFactory {
   readonly #structService: StructService;
@@ -71,7 +69,6 @@ export class FormatterFactory {
     format: SupportedFormat,
     options?: FormatterFactoryOptions,
     queryPropertiesAreUsed?: boolean,
-    struct?: Struct,
   ): StructFormatter {
     const [molSerializerOptions, structServiceOptions] =
       this.separateOptions(options);
@@ -88,15 +85,6 @@ export class FormatterFactory {
             this.#structService,
             new KetSerializer(),
             format,
-            structServiceOptions,
-          );
-        } else if (struct && exceedsMolfileV2000Limit(struct)) {
-          // V2000 cannot address more than 999 atoms/bonds, so oversized
-          // structures are delegated to Indigo, which upgrades them to V3000.
-          formatter = new ServerFormatter(
-            this.#structService,
-            new KetSerializer(),
-            SupportedFormat.molAuto,
             structServiceOptions,
           );
         } else {

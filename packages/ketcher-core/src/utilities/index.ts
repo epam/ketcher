@@ -31,4 +31,3 @@ export * from './monomers';
 export * from './dom';
 export * from './getOrThrow';
 export * from './errorMessages';
-export * from './assert';

@@ -1,13 +1,13 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 
-type NotificationBannerOnMicroLocators = {
+type NotificationBannerLocators = {
   message: Locator;
   closeButton: Locator;
 };
 
-export const NotificationBannerOnMicro = (page: Page) => {
-  const locators: NotificationBannerOnMicroLocators = {
+export const NotificationBanner = (page: Page) => {
+  const locators: NotificationBannerLocators = {
     message: page.getByTestId('notification-banner'),
     closeButton: page.getByTestId('notification-banner-close-button'),
   };
@@ -41,6 +41,6 @@ export const NotificationBannerOnMicro = (page: Page) => {
   };
 };
 
-export type NotificationBannerOnMicroLocatorsType = ReturnType<
-  typeof NotificationBannerOnMicro
+export type NotificationBannerLocatorsType = ReturnType<
+  typeof NotificationBanner
 >;

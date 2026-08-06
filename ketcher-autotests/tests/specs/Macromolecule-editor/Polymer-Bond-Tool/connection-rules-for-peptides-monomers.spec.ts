@@ -16,8 +16,8 @@ import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
 } from '@utils/macromolecules/polymerBond';
-import { NotificationBannerOnMacro } from '@tests/pages/macromolecules/canvas/NotificationBannerOnMacro';
-import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
 
 test.describe('Connection rules for peptides: ', () => {
   let page: Page;
@@ -38,7 +38,7 @@ test.describe('Connection rules for peptides: ', () => {
     moleculeType: string;
     fileName: string;
     alias: string;
-    atomIds: number[];
+    atomLocatorSelectors: string[];
     attachmentPointShifts: { x: number; y: number }[];
   }
 
@@ -47,7 +47,14 @@ test.describe('Connection rules for peptides: ', () => {
       moleculeType: 'Molecule',
       fileName: 'KET/Molecule-Templates/1 - Benzene ring.ket',
       alias: 'Benzene ring',
-      atomIds: [5, 4, 3, 2, 1, 0],
+      atomLocatorSelectors: [
+        'g > circle',
+        'g:nth-child(2) > circle',
+        'g:nth-child(3) > circle',
+        'g:nth-child(4) > circle',
+        'g:nth-child(5) > circle',
+        'g:nth-child(6) > circle',
+      ],
       attachmentPointShifts: [
         { x: 0, y: 2 },
         { x: -2, y: 2 },
@@ -559,7 +566,7 @@ test.describe('Connection rules for peptides: ', () => {
 
                   await expect(bondLine).toBeVisible();
                   expect(
-                    await NotificationBannerOnMacro(page).getNotificationText(),
+                    await NotificationBanner(page).getNotificationText(),
                   ).toContain(
                     'You have connected monomers with attachment points of the same group',
                   );
@@ -1116,9 +1123,10 @@ test.describe('Connection rules for peptides: ', () => {
       monomerAlias: leftPeptide.alias,
     }).first();
 
-    const rightMoleculeLocator = getAtomLocator(page, {
-      atomId: rightMolecule.atomIds[atomIndex],
-    }).first();
+    const rightMoleculeLocator = page
+      .getByTestId(KETCHER_CANVAS)
+      .locator(rightMolecule.atomLocatorSelectors[atomIndex])
+      .first();
 
     await bondMonomerPointToMoleculeAtom(
       page,
@@ -1148,7 +1156,9 @@ test.describe('Connection rules for peptides: ', () => {
         const attachmentPointCount = Object.keys(
           leftPeptide.attachmentPoints,
         ).length;
-        const atomCount = Object.keys(rightMolecule.atomIds).length;
+        const atomCount = Object.keys(
+          rightMolecule.atomLocatorSelectors,
+        ).length;
 
         for (
           let atomIndex = 0;

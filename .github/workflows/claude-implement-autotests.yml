@@ -82,24 +82,19 @@ jobs:
 
       - name: Create pull request
         id: create_pr
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          ISSUE_TITLE: ${{ github.event.issue.title }}
-          BRANCH_NAME: ${{ steps.vars.outputs.branch_name }}
         run: |
           PR_URL=$(gh pr create \
-            --title "#${ISSUE_NUMBER} - ${ISSUE_TITLE}" \
-            --body "Closes #${ISSUE_NUMBER}" \
-            --head "${BRANCH_NAME}" \
+            --title "#${{ github.event.issue.number }} - ${{ github.event.issue.title }}" \
+            --body "Closes #${{ github.event.issue.number }}" \
+            --head "${{ steps.vars.outputs.branch_name }}" \
             --base master)
           echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
-
-      - name: Comment on issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          PR_URL: ${{ steps.create_pr.outputs.pr_url }}
+
+      - name: Comment on issue
         run: |
-          gh issue comment "${ISSUE_NUMBER}" \
-            --body "Generated Playwright test: ${PR_URL}"
+          gh issue comment ${{ github.event.issue.number }} \
+            --body "Generated Playwright test: ${{ steps.create_pr.outputs.pr_url }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

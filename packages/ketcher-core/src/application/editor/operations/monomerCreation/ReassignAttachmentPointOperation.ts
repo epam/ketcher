@@ -17,7 +17,7 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import type { MonomerCreationState } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
-import { assert } from 'utilities';
+import assert from 'assert';
 import type { AttachmentPointName } from 'domain/types';
 import type Restruct from 'application/render/restruct/restruct';
 

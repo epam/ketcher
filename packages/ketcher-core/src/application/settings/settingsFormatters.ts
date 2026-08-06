@@ -28,11 +28,7 @@ const CORE_ONLY_SETTING_FIELDS = [
   'editorLineLength',
   'disableCustomQuery',
   'monomerLibraryUpdates',
-] as const satisfies ReadonlyArray<keyof Settings>;
-
-type Mutable<T> = {
-  -readonly [K in keyof T]: T[K];
-};
+] as const;
 
 function ensureFontSizePrefix(font?: string): string | undefined {
   return font && !font.match(/^\d+px\s/) ? `30px ${font}` : font;
@@ -94,7 +90,7 @@ function normalizeStereoLabelStyleForForm(
 export function normalizeSettingsForCore(
   settings: SettingsFormValue,
 ): Partial<Settings> {
-  const transformed: Mutable<SettingsFormValue> = { ...settings };
+  const transformed = { ...settings } as Record<string, unknown>;
 
   delete transformed.init;
 
@@ -129,9 +125,7 @@ export function normalizeSettingsForForm(
   settings: Partial<Settings>,
   options: NormalizeSettingsFromCoreOptions = {},
 ): SettingsFormValue {
-  const transformed: Mutable<SettingsFormValue> = {
-    ...(settings as SettingsFormValue),
-  };
+  const transformed = { ...settings } as Record<string, unknown>;
 
   const normalizedStereoLabelStyle = normalizeStereoLabelStyleForForm(
     settings.stereoLabelStyle,

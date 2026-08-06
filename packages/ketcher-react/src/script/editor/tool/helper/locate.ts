@@ -21,8 +21,8 @@ import {
   IMAGE_KEY,
   Vec2,
   MULTITAIL_ARROW_KEY,
-  assert,
 } from 'ketcher-core';
+import assert from 'assert';
 
 function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   const bondList: Array<number> = [];

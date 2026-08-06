@@ -1,4 +1,4 @@
-import { assert } from 'utilities';
+import assert from 'assert';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';

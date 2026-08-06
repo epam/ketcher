@@ -57,7 +57,19 @@ interface Document {
 interface Window {
   isPolymerEditorTurnedOn: boolean;
   ketcher?: {
-    settingsService?: import('ketcher-core').ISettingsService;
+    settingsService?: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      getSettings: () => any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      updateSettings: (settings: any) => Promise<any>;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      resetToDefaults: () => Promise<any>;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      importSettings: (json: string) => Promise<any>;
+      exportSettings: () => string;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      subscribe: (listener: (settings: any) => void) => () => void;
+    };
   };
 }
 

@@ -291,12 +291,6 @@ export function getNextMonomerInChain(
     : undefined;
 }
 
-export function isValidRnaEnumerationStartMonomer(
-  monomer?: BaseMonomer,
-): boolean {
-  return !!monomer && !getPreviousMonomerInChain(monomer);
-}
-
 export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
   if (!monomer || !isMonomerOfClass(monomer, KetMonomerClass.Sugar)) return;
   const r3PolymerBond = monomer.attachmentPointsToBonds.R3;

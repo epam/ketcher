@@ -1,13 +1,13 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 
-type NotificationBannerOnMacroLocators = {
+type NotificationBannerLocators = {
   message: Locator;
   closeButton: Locator;
 };
 
-export const NotificationBannerOnMacro = (page: Page) => {
-  const locators: NotificationBannerOnMacroLocators = {
+export const NotificationBanner = (page: Page) => {
+  const locators: NotificationBannerLocators = {
     message: page.getByTestId('error-tooltip-0'),
     closeButton: page
       .locator('#error-tooltip-list')
@@ -50,6 +50,6 @@ export const NotificationBannerOnMacro = (page: Page) => {
   };
 };
 
-export type NotificationBannerOnMacroLocatorsType = ReturnType<
-  typeof NotificationBannerOnMacro
+export type NotificationBannerLocatorsType = ReturnType<
+  typeof NotificationBanner
 >;

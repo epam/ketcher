@@ -10,7 +10,7 @@ import type { StructService } from 'domain/services';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
-import { assert } from 'utilities';
+import assert from 'assert';
 
 export async function prepareStructToRender(
   structStr: string,

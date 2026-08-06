@@ -10,6 +10,7 @@ import { Command } from 'domain/entities/Command';
 import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { getStructureBbox } from 'domain/entities/structureBbox';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import assert from 'assert';
 import {
   type KetFileMultitailArrowNode,
   type LinkerSequenceNode,
@@ -90,7 +91,7 @@ import {
   MonomerToAtomBondDeleteOperation,
 } from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
 import {
-  type CoreAtomLabel,
+  type AtomLabel,
   HalfMonomerSize,
   SnakeLayoutCellWidth,
 } from 'domain/constants';
@@ -113,7 +114,7 @@ import {
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
-import { assert, KetcherLogger, SettingsManager } from 'utilities';
+import { KetcherLogger, SettingsManager } from 'utilities';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 import {
   RxnArrowAddOperation,
@@ -3145,7 +3146,7 @@ export class DrawingEntitiesManager {
     position: Vec2,
     monomer: BaseMonomer,
     atomIdInMicroMode: number,
-    label: CoreAtomLabel,
+    label: AtomLabel,
     properties?: AtomProperties,
     _atom?: Atom,
   ) {
@@ -3172,7 +3173,7 @@ export class DrawingEntitiesManager {
     position: Vec2,
     monomer: BaseMonomer,
     atomIdInMicroMode: number,
-    label: CoreAtomLabel,
+    label: AtomLabel,
     properties?: AtomProperties,
   ) {
     const command = new Command();

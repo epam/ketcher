@@ -35,7 +35,7 @@ import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { assert, toFixed } from 'utilities';
+import { toFixed } from 'utilities';
 import type {
   RenderOptions,
   RenderOptionStyles,
@@ -46,6 +46,7 @@ import { type AttachmentPointName, attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
+import assert from 'assert';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
 import { ShowHydrogenLabels } from './showHydrogenLabels';
 
@@ -498,13 +499,8 @@ class ReAtom extends ReObject {
           options.font.indexOf(' ') + 1,
           options.font.length,
         );
-        const superatomClass = sgroup?.data?.class as
-          | keyof typeof SUPERATOM_CLASS_TEXT
-          | undefined;
         const sGroupName =
-          sgroup?.data?.name ??
-          (superatomClass ? SUPERATOM_CLASS_TEXT[superatomClass] : '') ??
-          '';
+          sgroup?.data?.name ?? SUPERATOM_CLASS_TEXT[sgroup?.data?.class] ?? '';
         const path = render.paper
           .text(position.x, position.y, sGroupName)
           .attr({
@@ -2076,13 +2072,7 @@ export function checkIsSmartPropertiesExist(atom) {
     'aromaticity',
     'customQuery',
   ];
-  return (
-    atom.implicitHCount !== null ||
-    smartsSpecificProperties.some((name) => {
-      const value = atom.queryProperties?.[name];
-      return Boolean(value) || value === 0;
-    })
-  );
+  return smartsSpecificProperties.some((name) => atom.queryProperties?.[name]);
 }
 
 export function getAtomCustomQuery(atom, includeOnlyQueryAttributes?: boolean) {

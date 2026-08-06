@@ -15,7 +15,7 @@ import styles from './Modal.module.less';
 
 interface ModalProps {
   children: JSX.Element | Array<JSX.Element>;
-  title: React.ReactNode;
+  title: string;
   isOpen: boolean;
   showCloseButton?: boolean;
   showExpandButton?: boolean;

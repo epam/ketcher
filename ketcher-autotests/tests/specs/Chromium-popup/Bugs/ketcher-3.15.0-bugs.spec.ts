@@ -425,7 +425,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      */
 
     await Library(page).openRNASection(RNASection.Presets);
-    const presetA = Library(page).getMonomerLibraryCardLocator(Preset.A);
+    const presetA = page.getByTestId('A_A_R_P');
     expect(await Library(page).isMonomerExist(Preset.A)).toBeTruthy();
 
     await presetA.hover();

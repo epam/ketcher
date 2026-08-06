@@ -128,10 +128,9 @@ interface SGroupFormData {
 
 export function fromElement(selem: Atom) {
   if (selem.label === 'R#') {
-    const rglabel = typeof selem.rglabel === 'number' ? selem.rglabel : 0;
     return {
       type: 'rlabel',
-      values: fromRlabel(rglabel),
+      values: fromRlabel(selem.rglabel as unknown as number),
       ...selem,
     };
   }
@@ -147,22 +146,17 @@ export function fromElement(selem: Atom) {
 
 export function toElement(elem: ElementFormData) {
   if (elem.type === 'rlabel') {
-    const values = Array.isArray(elem.values)
-      ? elem.values.filter(
-          (value): value is number => typeof value === 'number',
-        )
-      : [];
-
     return {
-      label: values.length ? 'R#' : 'C',
-      rglabel: values.length === 0 ? null : toRlabel(values),
+      label: elem.values!.length ? 'R#' : 'C',
+      rglabel:
+        elem.values!.length === 0 ? null : toRlabel(elem.values as number[]),
     };
   }
   if (elem.type === 'list' || elem.type === 'not-list')
     return toAtomList(elem as { type: 'list' | 'not-list'; values: string[] });
 
-  if (!elem.label && elem.ap) {
-    return { attachmentPoints: toApoint(elem.ap) };
+  if (!elem.label && 'ap' in elem) {
+    return { attachmentPoints: toApoint(elem.ap!) };
   }
   if (elem.atomType === 'list') {
     elem.label = 'L#';
@@ -172,8 +166,7 @@ export function toElement(elem: ElementFormData) {
       ids:
         (elem.atomList as string | null)
           ?.split(',')
-          .map((el: string) => Elements.get(el)?.number)
-          .filter((id): id is number => id !== undefined) || [],
+          .map((el: string) => Elements.get(el)!.number) || [],
     });
     delete elem.notList;
     delete elem.atomType;
@@ -222,10 +215,7 @@ export function fromAtom(satom?: Atom) {
     alias,
     atomType,
     atomList:
-      satom.atomList?.ids
-        .map((i) => Elements.get(i)?.label)
-        .filter((label) => label !== undefined)
-        .join(',') ?? '',
+      satom.atomList?.ids.map((i) => Elements.get(i)!.label).join(',') ?? '',
     notList: satom.atomList?.notList || false,
     pseudo: satom.pseudo,
     label: satom.label,
@@ -320,13 +310,9 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
 }
 
 function fromAtomList(satom: Atom) {
-  const atomList = satom.atomList;
   return {
-    type: atomList?.notList ? 'not-list' : 'list',
-    values:
-      atomList?.ids
-        .map((i) => Elements.get(i)?.label)
-        .filter((label) => label !== undefined) ?? [],
+    type: satom.atomList!.notList ? 'not-list' : 'list',
+    values: satom.atomList!.ids.map((i) => Elements.get(i)!.label),
   };
 }
 
@@ -336,21 +322,14 @@ function toAtomList(atom: { type: 'list' | 'not-list'; values: string[] }) {
     label: 'L#',
     atomList: new AtomList({
       notList: atom.type === 'not-list',
-      ids: atom.values
-        .map((el: string) => Elements.get(el)?.number)
-        .filter((id): id is number => id !== undefined),
+      ids: atom.values.map((el: string) => Elements.get(el)!.number),
     }),
   };
 }
 
 export function fromStereoLabel(stereoLabel: string | null) {
   if (stereoLabel === null) return { type: null };
-  const typeMatch = stereoLabel.match(/\D+/g);
-  if (!typeMatch?.length) {
-    return { type: stereoLabel, orNumber: 0, andNumber: 0 };
-  }
-
-  const type = typeMatch[0];
+  const type = stereoLabel.match(/\D+/g)![0];
   const number = +stereoLabel.replace(type, '');
 
   if (type === StereoLabel.Abs) {
@@ -436,7 +415,7 @@ export function fromBond(sbond?: Bond) {
     type: isCustomQuery ? '' : fromBondType(type, stereo),
     topology: sbond.topology,
     center: sbond.reactingCenterStatus,
-    customQuery: !isCustomQuery ? '' : sbond.customQuery?.toString() ?? '',
+    customQuery: !isCustomQuery ? '' : sbond.customQuery!.toString(),
   };
 }
 

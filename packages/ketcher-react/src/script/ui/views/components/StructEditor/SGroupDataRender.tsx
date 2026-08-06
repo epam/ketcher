@@ -30,13 +30,10 @@ function getPanelPositionRelativeToRect(
     return null;
   }
 
-  const hoveringWithAttrs = sGroup.hovering as {
-    attrs?: { path?: Array<Array<number>> };
-  };
-
   // [['M', 23, 43], ['L', 23, 24]] we should remove first elements => [[23,43], [23,24]]
-  const rectCoords: Array<Array<number>> =
-    hoveringWithAttrs.attrs?.path?.map((line) => line.slice(1)) ?? [];
+  const rectCoords: Array<Array<number>> = sGroup.hovering.attrs?.path?.map(
+    (line) => line.slice(1),
+  );
 
   const [middleLeftSide, middleBottomSide, middleRightSide, middleTopSide] =
     calculateMiddleCoordsForRect(rectCoords);

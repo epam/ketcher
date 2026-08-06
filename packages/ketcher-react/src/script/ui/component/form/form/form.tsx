@@ -39,8 +39,10 @@ import { Tooltip } from '@mui/material';
 export interface FormOwnProps {
   children: React.ReactNode;
   schema: FormSchema;
-  init?: Record<string, unknown> | null;
-  customValid?: Record<string, (value: string) => boolean | string>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  init?: Record<string, any> | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  customValid?: Record<string, (value: any) => boolean | string>;
   serialize?: Record<string, string>;
   deserialize?: Record<string, string>;
 }
@@ -54,12 +56,14 @@ interface FormDispatchProps {
 }
 
 interface FormStateProps {
-  result: Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  result: Record<string, any>;
   errors?: Record<string, string>;
 }
 
 // Generic shareable FormState interface for use in dialogs
-export interface FormState<TResult = Record<string, unknown>> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface FormState<TResult = Record<string, any>> {
   result: TResult;
   valid: boolean;
   errors?: Record<string, string>;
@@ -73,7 +77,8 @@ export type { FormProps };
 export interface FieldProps {
   title?: string;
   name?: string;
-  component?: React.ElementType | string;
+  // Select props is not assignable to Record<string, unknown> causes error in components
+  component?: React.ComponentType<any> | string; // eslint-disable-line @typescript-eslint/no-explicit-any
   options?: Array<{ value: string; label: string }>;
   disabled?: boolean;
   formName?: string;
@@ -84,11 +89,13 @@ export interface FieldProps {
   extraName?: string;
   tooltip?: string;
   extraLabel?: string;
-  schema?: SchemaProperty | unknown[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  schema?: SchemaProperty | any[];
   extraSchema?: SchemaProperty;
   type?: string;
   value?: string | number | boolean;
-  onChange?: (value: unknown) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onChange?: (value: any) => void;
   placeholder?: string;
   checked?: boolean;
   multiple?: boolean;
@@ -98,7 +105,8 @@ export interface FieldProps {
 }
 
 export interface FieldWithModalProps extends FieldProps {
-  onEdit?: (onChange: (value: unknown) => void) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onEdit?: (onChange: (value: any) => void) => void;
   autoFocus?: boolean;
 }
 
@@ -110,9 +118,12 @@ export interface CustomQueryFieldProps extends FieldProps {
   checkboxValue?: boolean;
   onCheckboxChange?: (
     value: boolean,
-    formState: Record<string, unknown>,
-    onChange: (value: unknown) => void,
-    updateFormState: (settings: Record<string, unknown>) => void,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    formState: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onChange: (value: any) => void,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    updateFormState: (settings: any) => void,
   ) => void;
 }
 
@@ -214,9 +225,8 @@ export default connect(null, (dispatch) => ({
     dispatch(updateFormState({ result, valid, errors }));
   },
   // Workaround: @types/react version conflict — react-redux's types reference a different @types/react than what Ketcher uses.
-}))(Form as unknown as React.ComponentClass<FormProps>) as React.ComponentType<
-  FormOwnProps & FormStateProps
->;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}))(Form as any) as React.ComponentType<FormOwnProps & FormStateProps>;
 
 interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
   labelPos?: string | boolean;
@@ -323,7 +333,8 @@ function Field(props: Readonly<FieldProps>) {
   const { dataError, onExtraChange, extraValue, ...fieldOpts } =
     stateStore.field(name ?? '', onChange, extraName);
 
-  const Component = component;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Component = component as React.ComponentType<any>;
   const formField = Component ? (
     <Component
       name={name}
@@ -600,7 +611,7 @@ function propSchema(
     serialize = {},
     deserialize = {},
   }: {
-    customValid?: Record<string, (value: string) => boolean | string>;
+    customValid?: Record<string, (value: unknown) => boolean | string>;
     serialize?: Record<string, string>;
     deserialize?: Record<string, string>;
   },

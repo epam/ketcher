@@ -171,7 +171,9 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
     setIsLoading(true);
     try {
-      await settingsService.loadPreset('acs');
+      // Type assertion needed as loadPreset may not be in the type definition yet
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (settingsService as any).loadPreset('acs');
       const coreAcsSettings = settingsService.getSettings();
       const formAcsSettings = normalizeSettingsForForm(coreAcsSettings);
       setCurrentSettings(formAcsSettings);
@@ -214,7 +216,8 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
   return (
     <Modal
-      title={headerTitle}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      title={headerTitle as any}
       isOpen={isModalOpen}
       onClose={handleCancel}
       showExpandButton={true}

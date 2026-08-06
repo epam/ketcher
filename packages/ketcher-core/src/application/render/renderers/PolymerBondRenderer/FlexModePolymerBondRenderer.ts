@@ -6,7 +6,7 @@ import {
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
 import type { D3SvgElementSelection } from 'application/render/types';
-import { assert } from 'utilities';
+import assert from 'assert';
 import { MonomerSize } from 'domain/constants';
 import { Vec2 } from 'domain/entities/vec2';
 import { getStructureBbox } from 'domain/entities/structureBbox';

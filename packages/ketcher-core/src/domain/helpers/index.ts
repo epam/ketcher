@@ -18,7 +18,6 @@ export * from './scale';
 export * from './stereoValidator';
 export * from './functionalGroupsProvider';
 export * from './saltsAndSolventsProvider';
-export * from './isGenericAtom';
 export {
   getAttachmentPointLabel,
   getAttachmentPointNumberFromLabel,

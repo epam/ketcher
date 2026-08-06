@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
-import { assert } from 'utilities';
+import assert from 'assert';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class MonomerMicromolecule extends SGroup {
@@ -47,11 +47,7 @@ export class MonomerMicromolecule extends SGroup {
     );
     monomerMicromoleculeClone.pp = monomerMicromolecule.pp;
     monomerMicromoleculeClone.atoms = atomIdMap
-      ? monomerMicromolecule.atoms.map((elem) => {
-          const mappedAtomId = atomIdMap.get(elem);
-          assert(mappedAtomId !== undefined);
-          return mappedAtomId;
-        })
+      ? monomerMicromolecule.atoms.map((elem) => atomIdMap.get(elem))
       : monomerMicromolecule.atoms;
     monomerMicromoleculeClone.data.expanded = monomerMicromolecule.isExpanded();
     monomerMicromoleculeClone.data.name = monomerMicromolecule.data.name;

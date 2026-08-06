@@ -5,7 +5,7 @@ import type { PolymerBondRendererStartAndEndPositions } from 'application/render
 import { SideChainConnectionBondRendererUtility } from 'application/render/renderers/PolymerBondRenderer/SideChainConnectionBondRendererUtility';
 import { SVGPathDAttributeUtility } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtility';
 import type { D3SvgElementSelection } from 'application/render/types';
-import { assert } from 'utilities';
+import assert from 'assert';
 import type { BaseMonomer, Vec2 } from 'domain/entities';
 import type { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
@@ -1024,29 +1024,23 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     }
   }
 
-  private updateAllSideConnectionBondsColor(
-    getColor: (renderer: SnakeModePolymerBondRenderer) => string,
-  ): void {
-    const editor = provideEditorInstance();
-    const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
-      `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
-    );
-
-    Array.from(allSideConnectionBondsBodyElements).forEach(
-      (bondBodyElement) => {
-        const renderer =
-          bondBodyElement.__data__ as SnakeModePolymerBondRenderer;
-        bondBodyElement.setAttribute('stroke', getColor(renderer));
-      },
-    );
-  }
-
   public appendHover(): void {
     assert(this.bodyElement);
 
+    const editor = provideEditorInstance();
+
     if (this.polymerBond.isSideChainConnection) {
-      this.updateAllSideConnectionBondsColor((renderer) =>
-        renderer.isHydrogenBond ? 'lightgrey' : '#C0E2E6',
+      const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
+        `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
+      );
+
+      Array.from(allSideConnectionBondsBodyElements).forEach(
+        (bondBodyElement) => {
+          bondBodyElement.setAttribute(
+            'stroke',
+            this.isHydrogenBond ? 'lightgrey' : '#C0E2E6',
+          );
+        },
       );
     }
 
@@ -1062,11 +1056,25 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
 
+    const editor = provideEditorInstance();
+
     if (this.polymerBond.isSideChainConnection) {
-      this.updateAllSideConnectionBondsColor((renderer) =>
-        renderer.polymerBond.isSideChainConnection && !renderer.isHydrogenBond
-          ? '#43B5C0'
-          : '#333333',
+      const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
+        `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
+      );
+
+      Array.from(allSideConnectionBondsBodyElements).forEach(
+        (bondBodyElement) => {
+          const renderer =
+            bondBodyElement.__data__ as SnakeModePolymerBondRenderer;
+
+          bondBodyElement.setAttribute(
+            'stroke',
+            renderer.polymerBond.isSideChainConnection && !this.isHydrogenBond
+              ? '#43B5C0'
+              : '#333333',
+          );
+        },
       );
     }
 
@@ -1104,26 +1112,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   public remove(): void {
-    // Check the SVG element's class directly instead of this.polymerBond.isSideChainConnection
-    // because by the time remove() is called, the attachment points in the model may already be
-    // destroyed, causing isSideChainConnection to return false even though the bond was rendered
-    // as a side-chain connection
-    const isSideChainConnection = this.bodyElement
-      ?.attr('class')
-      ?.includes(SIDE_CONNECTION_BODY_ELEMENT_CLASS);
-
     super.remove();
     if (this.polymerBond.hovered) {
       this.editorEvents.mouseLeaveMonomer.dispatch();
-    }
-
-    // After a side-chain bond is removed, set all remaining side-chain bonds to the default color (#43B5C0)
-    if (isSideChainConnection) {
-      this.updateAllSideConnectionBondsColor((renderer) =>
-        renderer.polymerBond.isSideChainConnection && !renderer.isHydrogenBond
-          ? '#43B5C0'
-          : '#333333',
-      );
     }
   }
 }

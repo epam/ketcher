@@ -2,7 +2,7 @@ import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import type { MonomerCreationState, ReStruct } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
 import { RemoveAttachmentPointOperation } from './RemoveAttachmentPointOperation';
-import { assert } from 'utilities';
+import assert from 'assert';
 import type { AttachmentPointName } from 'domain/types';
 import { getNextFreeAttachmentPoint } from 'domain/helpers';
 

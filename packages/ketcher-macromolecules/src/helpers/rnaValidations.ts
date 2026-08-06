@@ -35,10 +35,7 @@ export const getValidations = (
 
   if (
     !isEditMode ||
-    (!selectedPhosphatePosition &&
-      !newPreset?.sugar &&
-      !newPreset?.phosphate &&
-      !newPreset?.base)
+    (!newPreset?.sugar && !newPreset?.phosphate && !newPreset?.base)
   ) {
     return {
       sugarValidations,

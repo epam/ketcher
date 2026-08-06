@@ -1,4 +1,4 @@
-import { assert } from 'utilities';
+import assert from 'assert';
 import type { ReStruct } from 'application/render';
 import { AttachmentPoints } from 'domain/entities/atom';
 import type { Struct } from 'domain/entities/struct';

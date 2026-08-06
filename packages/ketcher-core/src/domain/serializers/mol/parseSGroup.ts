@@ -22,7 +22,7 @@ import type { Struct } from 'domain/entities/struct';
 
 import type { SGroupMap, AtomMap, PostLoadHandler } from './mol.types';
 import utils from './utils';
-import { assert } from 'utilities';
+import assert from 'assert';
 
 function readKeyValuePairs(
   str: string,
@@ -67,7 +67,7 @@ function readKeyMultiValuePairs(
 function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
   if (!mol || !atomMap) return;
 
-  sgroup.data.mul = Number(sgroup.data.subscript);
+  sgroup.data.mul = sgroup.data.subscript - 0;
   const atomReductionMap: Record<number, number> = {};
 
   sgroup.atoms = SGroup.filterAtoms(sgroup.atoms, atomMap);

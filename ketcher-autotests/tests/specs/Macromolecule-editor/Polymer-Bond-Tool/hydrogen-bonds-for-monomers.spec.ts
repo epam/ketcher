@@ -29,6 +29,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import {
   AttachmentPoint,
   getMonomerLocator,
@@ -36,9 +37,8 @@ import {
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
-import { NotificationBannerOnMacro } from '@tests/pages/macromolecules/canvas/NotificationBannerOnMacro';
+import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 
 let page: Page;
 test.setTimeout(40000);
@@ -401,7 +401,7 @@ test.describe('', () => {
           MacroBondTool.Hydrogen,
         );
 
-        const banner = NotificationBannerOnMacro(page);
+        const banner = NotificationBanner(page);
         const notificationAppeared = banner.waitForBecomeVisible();
 
         await bondTwoMonomers(
@@ -432,6 +432,25 @@ test.describe('', () => {
   });
 });
 
+async function chooseAttachmentPointsInConnectionDialog(
+  page: Page,
+  leftMonomerAttachmentPointName: string,
+  rightMonomerAttachmentPointName: string,
+) {
+  const connectionPointDialog = page.getByRole('dialog');
+  if (await connectionPointDialog.isVisible()) {
+    await page.getByTitle(leftMonomerAttachmentPointName).first().click();
+
+    if ((await page.getByTitle(rightMonomerAttachmentPointName).count()) > 1) {
+      await page.getByTitle(rightMonomerAttachmentPointName).nth(1).click();
+    } else {
+      await page.getByTitle(rightMonomerAttachmentPointName).first().click();
+    }
+
+    await AttachmentPointsDialog(page).connect();
+  }
+}
+
 Object.values(monomers).forEach((leftMonomer) => {
   Object.values(monomers).forEach((rightMonomer) => {
     /*
@@ -451,7 +470,7 @@ Object.values(monomers).forEach((leftMonomer) => {
     test(`4. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) already connected with single bond`, async () => {
       test.setTimeout(35000);
 
-      const errorTooltip = NotificationBannerOnMacro(page);
+      const errorTooltip = NotificationBanner(page);
 
       await loadTwoMonomers(page, leftMonomer, rightMonomer);
 
@@ -468,19 +487,19 @@ Object.values(monomers).forEach((leftMonomer) => {
         MacroBondTool.Single,
       );
 
-      if (await AttachmentPointsDialog(page).window.isVisible()) {
-        await AttachmentPointsDialog(page).selectAttachmentPoints({
-          leftMonomer: AttachmentPoint.R1,
-          rightMonomer: AttachmentPoint.R1,
-        });
-        await AttachmentPointsDialog(page).connect();
-      }
+      await chooseAttachmentPointsInConnectionDialog(
+        page,
+        AttachmentPoint.R1,
+        AttachmentPoint.R1,
+      );
 
       if (await errorTooltip.isVisible()) {
         // closing error message (if appear): You have connected monomers with attachment points of the same group
         await errorTooltip.close();
         await errorTooltip.waitForBecomeHidden();
       }
+
+      const notificationAppeared = errorTooltip.waitForBecomeVisible(10000);
 
       await bondTwoMonomers(
         page,
@@ -496,7 +515,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       );
 
       try {
-        await errorTooltip.waitForBecomeVisible(10000);
+        await notificationAppeared;
         expect(await errorTooltip.message.textContent()).toContain(
           'Unable to establish a hydrogen bond between two monomers connected with a single bond',
         );
@@ -508,6 +527,12 @@ Object.values(monomers).forEach((leftMonomer) => {
       } catch {
         // Notification did not appear for this monomer pair; known issue #5934
       }
+
+      test.fixme(
+        // eslint-disable-next-line no-self-compare
+        true,
+        `That test results are wrong because of https://github.com/epam/ketcher/issues/5934 issue(s).`,
+      );
     });
   });
 });
@@ -561,8 +586,20 @@ Object.values(monomers).forEach((leftMonomer) => {
   });
 });
 
+async function expandMonomer(page: Page, locatorText: string) {
+  const canvasLocator = page
+    .getByTestId(KETCHER_CANVAS)
+    .getByText(locatorText, { exact: true });
+  await waitForRender(page, async () => {
+    await ContextMenu(page, canvasLocator).click(
+      MonomerOnMicroOption.ExpandMonomer,
+    );
+  });
+}
+
 async function collapseMonomer(page: Page) {
-  const attachmentPoint = getAtomLocator(page, { atomLabel: 'H' }).first();
+  const canvasLocator = page.getByTestId(KETCHER_CANVAS);
+  const attachmentPoint = canvasLocator.getByText('H', { exact: true }).first();
   await waitForRender(page, async () => {
     if (await attachmentPoint.isVisible()) {
       await ContextMenu(page, attachmentPoint).click(
@@ -571,7 +608,7 @@ async function collapseMonomer(page: Page) {
     } else {
       await ContextMenu(
         page,
-        getAtomLocator(page, { atomLabel: 'O' }).first(),
+        canvasLocator.getByText('O', { exact: true }).first(),
       ).click(MonomerOnMicroOption.CollapseMonomer);
     }
   });
@@ -637,12 +674,7 @@ expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
      */
     await openFileAndAddToCanvasAsNewProject(page, monomer.fileName);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await ContextMenu(
-        page,
-        getAbbreviationLocator(page, { name: monomer.alias }),
-      ).click(MonomerOnMicroOption.ExpandMonomer);
-    });
+    await expandMonomer(page, monomer.alias);
     await takeEditorScreenshot(page);
     await collapseMonomer(page);
     await takeEditorScreenshot(page);

@@ -378,7 +378,6 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         type,
         { ...options, ignoreChiralFlag },
         queryPropertiesAreUsed,
-        struct,
       );
       const getStructFromStringByType = () => {
         if (type === SupportedFormat.ket) {

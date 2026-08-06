@@ -27,9 +27,8 @@ export class SelectFragment extends SelectBase {
     renderer: BaseRenderer,
     shiftKey = false,
     modKey = false,
-    altKey = false,
   ): void {
-    super.mousedownEntity(renderer, shiftKey, modKey, altKey);
+    super.mousedownEntity(renderer, shiftKey, modKey);
     const command =
       this.editor.drawingEntitiesManager.selectAllConnectedEntities(
         renderer.drawingEntity,

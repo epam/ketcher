@@ -63,6 +63,7 @@ import {
   templateToMonomerProps,
   variantMonomerToDrawingEntity,
 } from 'domain/serializers/ket/fromKet/monomerToDrawingEntity';
+import assert from 'assert';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';
 import {
@@ -70,7 +71,7 @@ import {
   fillStructRgLabelsByMonomerTemplate,
   getTemplateAttachmentPoints,
 } from 'domain/serializers/ket/fromKet/monomerTemplateUtils';
-import { assert, KetcherLogger } from 'utilities';
+import { KetcherLogger } from 'utilities';
 import { Chem } from 'domain/entities/Chem';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {

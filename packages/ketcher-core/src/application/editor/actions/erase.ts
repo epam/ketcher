@@ -31,7 +31,7 @@ import { RGroup } from 'domain/entities/rgroup';
 import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 
 import { Action } from './action';
-import { assert } from 'utilities';
+import assert from 'assert';
 import { atomGetDegree, formatSelection } from './utils';
 import { removeAttachmentPointFromSuperatom } from '../actions/bond';
 import { fromBondStereoUpdate } from './bondStereo';

@@ -11,7 +11,6 @@ import {
 import type { IVariantMonomer } from 'domain/entities/types';
 import type { AmbiguousMonomerType, AttachmentPointName } from 'domain/types';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
-import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { Chem } from 'domain/entities/Chem';
 import { Peptide } from 'domain/entities/Peptide';
@@ -184,9 +183,6 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
       [KetMonomerClass.AminoAcid]: PeptideSubChain,
       [KetMonomerClass.RNA]: RnaSubChain,
       [KetMonomerClass.DNA]: RnaSubChain,
-      [KetMonomerClass.Sugar]: RnaSubChain,
-      [KetMonomerClass.Phosphate]: PhosphateSubChain,
-      [KetMonomerClass.Base]: ChemSubChain,
     };
 
     return monomerClassToSubchainConstructor[this.monomerClass] || ChemSubChain;

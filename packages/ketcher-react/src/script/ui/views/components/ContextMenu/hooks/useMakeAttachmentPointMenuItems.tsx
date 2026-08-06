@@ -3,11 +3,11 @@ import type {
   MenuItemsProps,
 } from '../contextMenu.types';
 import type { Editor } from 'src/script/editor';
+import assert from 'assert';
 import { Item } from 'react-contexify';
 import { Icon } from '../../../../../../components';
 import styles from '../ContextMenu.module.less';
 import type { ReactNode } from 'react';
-import { assert } from 'ketcher-core';
 
 type Props = {
   props: MenuItemsProps<AtomContextMenuProps>;

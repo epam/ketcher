@@ -19,6 +19,7 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 const scrollBarHideCssPath = './tests/utils/hideScroll.css';
@@ -98,7 +99,7 @@ export async function takePresetsScreenshot(
   page: Page,
   options?: { mask?: Locator[]; maxDiffPixelRatio?: number },
 ) {
-  await takeElementScreenshot(page, Library(page).rnaTab.rnaAccordion, options);
+  await takeElementScreenshot(page, page.getByTestId('rna-accordion'), options);
 }
 
 export async function takeRNABuilderScreenshot(
@@ -112,7 +113,7 @@ export async function takeRNABuilderScreenshot(
 ) {
   await takeElementScreenshot(
     page,
-    Library(page).rnaTab.rnaEditor.rnaEditorBody,
+    page.getByTestId('rna-editor-expanded'),
     options,
   );
 }
@@ -131,7 +132,11 @@ export async function takeMonomerLibraryScreenshot(
     // That works only for Macromolecule editor
     await page.keyboard.press(`ControlOrMeta+KeyB`);
   }
-  await takeElementScreenshot(page, Library(page).libraryBody, options);
+  await takeElementScreenshot(
+    page,
+    page.getByTestId('monomer-library'),
+    options,
+  );
 }
 
 export async function takeEditorScreenshot(
@@ -316,7 +321,9 @@ export async function selectCanvasArea(
 }
 
 export async function getVisibleCanvas(page: Page): Promise<Locator> {
-  const canvas = page.locator(`[data-testid="ketcher-canvas"]:visible`).first();
+  const canvas = page
+    .locator(`[data-testid="${KETCHER_CANVAS}"]:visible`)
+    .first();
   await canvas.waitFor({
     state: 'visible',
     timeout: 10000,

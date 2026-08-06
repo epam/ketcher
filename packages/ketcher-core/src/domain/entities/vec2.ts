@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { assert, toFixed } from 'utilities';
+import assert from 'assert';
+import { toFixed } from 'utilities';
 
 export interface Point {
   x?: number;

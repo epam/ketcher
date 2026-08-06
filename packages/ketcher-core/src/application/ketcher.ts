@@ -40,6 +40,7 @@ import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import type { MolfileFormat } from 'domain/serializers/mol/mol.types';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
+import assert from 'assert';
 import { EventEmitter } from 'events';
 import {
   type LogSettings,
@@ -49,7 +50,6 @@ import {
   getSvgFromDrawnStructures,
   KetcherLogger,
   ensureString,
-  assert,
 } from 'utilities';
 import { ketcherProvider } from './ketcherProvider';
 import {

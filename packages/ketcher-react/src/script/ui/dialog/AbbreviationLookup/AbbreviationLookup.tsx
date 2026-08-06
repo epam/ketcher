@@ -26,7 +26,7 @@ import {
   useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { assert } from 'ketcher-core';
+import assert from 'assert';
 import { Icon } from 'components';
 import MuiAutocomplete, {
   type AutocompleteChangeReason,

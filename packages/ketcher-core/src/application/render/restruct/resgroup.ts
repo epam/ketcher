@@ -114,9 +114,6 @@ class ReSGroup extends ReObject {
     let set = this.render.paper.set();
     SGroup.bracketPos(sgroup, remol.molecule, remol, this.render);
     const bracketBox = sgroup.bracketBox;
-    if (!bracketBox) {
-      return set;
-    }
     const direction = sgroup.bracketDirection;
     sgroup.areas = [bracketBox];
     if (sgroup.isExpanded()) {
@@ -129,7 +126,7 @@ class ReSGroup extends ReObject {
       };
       switch (sgroup.type) {
         case 'MUL': {
-          SGroupdrawBracketsOptions.lowerIndexText = String(sgroup.data.mul);
+          SGroupdrawBracketsOptions.lowerIndexText = sgroup.data.mul;
           break;
         }
         case 'SRU': {
@@ -150,15 +147,11 @@ class ReSGroup extends ReObject {
           break;
         }
         case 'SUP': {
-          const superatomClass = sgroup.data.class as
-            | SUPERATOM_CLASS
-            | undefined;
           SGroupdrawBracketsOptions.lowerIndexText =
-            sgroup.data.name ||
-            (superatomClass ? SUPERATOM_CLASS_TEXT[superatomClass] : '');
+            sgroup.data.name || SUPERATOM_CLASS_TEXT[sgroup.data.class];
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
-          SGroupdrawBracketsOptions.superatomClass = superatomClass;
+          SGroupdrawBracketsOptions.superatomClass = sgroup.data.class;
           break;
         }
         case 'DAT': {
@@ -687,11 +680,7 @@ function getHighlighPathInfo(
   size: number;
 } {
   const options = render.options;
-  const sGroupBracketBox = sgroup.bracketBox;
-  if (!sGroupBracketBox) {
-    throw new Error('SGroup bracket box is not defined');
-  }
-  let bracketBox = sGroupBracketBox.transform(Scale.modelToCanvas, options);
+  let bracketBox = sgroup.bracketBox.transform(Scale.modelToCanvas, options);
   const lineWidth = options.lineWidth;
   const vext = new Vec2(lineWidth * 4, lineWidth * 6);
   bracketBox = bracketBox.extend(vext, vext);

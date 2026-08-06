@@ -24,7 +24,6 @@ import { rgroupSchema } from '../../../data/schema/struct-schema';
 
 interface RGroupResult {
   values: number[];
-  [key: string]: unknown;
 }
 
 interface RGroupFormState {

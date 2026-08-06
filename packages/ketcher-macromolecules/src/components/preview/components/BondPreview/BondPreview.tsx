@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability, react-hooks/refs, react-hooks/set-state-in-effect, react-hooks/static-components, react-hooks/use-memo, react-hooks/preserve-manual-memoization */
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useAppSelector } from 'hooks';

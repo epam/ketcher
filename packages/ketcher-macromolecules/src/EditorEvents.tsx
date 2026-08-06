@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+/* eslint-disable react-hooks/use-memo */
+
 import { useCallback, useEffect } from 'react';
 import {
   hasAntisenseChains,

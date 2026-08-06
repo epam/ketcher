@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability, react-hooks/refs, react-hooks/set-state-in-effect, react-hooks/static-components, react-hooks/use-memo, react-hooks/preserve-manual-memoization */
 import type { AttachmentPointName, AtomLabel } from 'ketcher-core';
 import { useEffect, useRef, useState } from 'react';
 import AttachmentPointControls from '../AttachmentPointControls/AttachmentPointControls';

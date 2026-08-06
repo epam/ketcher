@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability, react-hooks/refs, react-hooks/set-state-in-effect, react-hooks/static-components, react-hooks/use-memo, react-hooks/preserve-manual-memoization */
 import { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { D3DragEvent } from 'd3';
 import { useSelector } from 'react-redux';

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability, react-hooks/refs, react-hooks/set-state-in-effect, react-hooks/static-components, react-hooks/use-memo, react-hooks/preserve-manual-memoization */
 import { type FC, useEffect, useState } from 'react';
 import { Item, Submenu } from 'react-contexify';
 import type Editor from 'src/script/editor';

@@ -2107,7 +2107,9 @@ export class DrawingEntitiesManager {
     const command = new Command();
     let chainsCollection: ChainsCollection;
 
-    command.merge(this.recalculateAntisenseChains(needRecalculateOldAntisense));
+    command.merge(
+      this.recalculateAntisenseChains({ needRecalculateOldAntisense }),
+    );
 
     // not only snake mode???
     if (isSnakeMode) {
@@ -3561,10 +3563,24 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public recalculateAntisenseChains(
+  private pickChainWithLowestValue(
+    entries: Array<[GrouppedChain, number]>,
+  ): GrouppedChain {
+    return entries.reduce((previousBest, current) => {
+      const [, previousValue] = previousBest;
+      const [, currentValue] = current;
+
+      return currentValue < previousValue ? current : previousBest;
+    }, entries[0])[0];
+  }
+
+  public recalculateAntisenseChains({
     needRecalculateOldAntisense = true,
     useStableSenseTieBreak = false,
-  ) {
+  }: {
+    needRecalculateOldAntisense?: boolean;
+    useStableSenseTieBreak?: boolean;
+  } = {}) {
     const command = new Command();
     const chainsCollection = ChainsCollection.fromMonomers([
       ...this.monomers.values(),
@@ -3653,57 +3669,20 @@ export class DrawingEntitiesManager {
           );
         });
 
-        let fallbackChain: GrouppedChain;
+        const tieBreakChain = useStableSenseTieBreak
+          ? this.pickChainWithLowestValue(
+              largestChains.map(([chainToCheck, monomers]) => [
+                chainToCheck,
+                Math.min(...monomers.map((monomer) => monomer.id)),
+              ]),
+            )
+          : this.pickChainWithLowestValue(
+              largestChains.map(([chainToCheck, monomers]) => {
+                const chainBbox = getStructureBbox(monomers);
 
-        if (useStableSenseTieBreak) {
-          const chainsToLowestMonomerId = new Map<GrouppedChain, number>();
-
-          largestChains.forEach(([chainToCheck, monomers]) => {
-            chainsToLowestMonomerId.set(
-              chainToCheck,
-              Math.min(...monomers.map((monomer) => monomer.id)),
+                return [chainToCheck, chainBbox.top + chainBbox.height / 2];
+              }),
             );
-          });
-
-          const chainsToLowestMonomerIdArray = [
-            ...chainsToLowestMonomerId.entries(),
-          ];
-          fallbackChain = chainsToLowestMonomerIdArray.reduce(
-            (
-              [previousChain, previousLowestId],
-              [chainToCheck, lowestMonomerId],
-            ) => {
-              return lowestMonomerId < previousLowestId
-                ? [chainToCheck, lowestMonomerId]
-                : [previousChain, previousLowestId];
-            },
-            chainsToLowestMonomerIdArray[0],
-          )[0];
-        } else {
-          const chainsToCenters = new Map<GrouppedChain, Vec2>();
-
-          largestChains.forEach(([chainToCheck, monomers]) => {
-            const chainBbox = getStructureBbox(monomers);
-
-            chainsToCenters.set(
-              chainToCheck,
-              new Vec2(
-                chainBbox.left + chainBbox.width / 2,
-                chainBbox.top + chainBbox.height / 2,
-              ),
-            );
-          });
-
-          const chainsToCenterArray = [...chainsToCenters.entries()];
-          fallbackChain = chainsToCenterArray.reduce(
-            ([previousChain, previousChainCenter], [chainToCheck, center]) => {
-              return center.y < previousChainCenter.y
-                ? [chainToCheck, center]
-                : [previousChain, previousChainCenter];
-            },
-            chainsToCenterArray[0],
-          )[0];
-        }
 
         const chainsToComplimentaryChainsAmountArray = [
           ...chainsToComplimentaryChainsAmount.entries(),
@@ -3725,7 +3704,7 @@ export class DrawingEntitiesManager {
         senseChain =
           chainsToComplimentaryChainsAmount.size === 1
             ? chainWithMoreComplimentaryChains[0]
-            : fallbackChain;
+            : tieBreakChain;
       }
 
       const { group: senseGroup } = senseChain;
@@ -3748,37 +3727,20 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public applyCanonicalAntisenseOrientation(monomers: BaseMonomer[]) {
-    const command = new Command();
-
-    if (monomers.length === 0) {
-      return command;
-    }
-
-    const senseMonomers = monomers.filter(
-      (monomer) => monomer.monomerItem.isSense,
-    );
-    const antisenseMonomers = monomers.filter(
-      (monomer) => monomer.monomerItem.isAntisense,
-    );
-
-    if (senseMonomers.length === 0 || antisenseMonomers.length === 0) {
-      return command;
-    }
-
-    const chainsCollection = ChainsCollection.fromMonomers(monomers);
-    const senseChain = chainsCollection.chains.find((chain) =>
-      chain.monomers.some((monomer) => monomer.monomerItem.isSense),
-    );
-    const senseChainFirstMonomer = senseChain?.firstNode?.monomer;
-    const senseChainLastMonomer = senseChain?.lastNonEmptyNode?.monomer;
+  private getCanonicalOrientationFlip(
+    senseChain: Chain,
+    senseMonomers: BaseMonomer[],
+    antisenseMonomers: BaseMonomer[],
+  ): { needsHorizontalFlip: boolean; needsVerticalFlip: boolean } | null {
+    const senseChainFirstMonomer = senseChain.firstNode?.monomer;
+    const senseChainLastMonomer = senseChain.lastNonEmptyNode?.monomer;
 
     if (
       !senseChainFirstMonomer ||
       !senseChainLastMonomer ||
       senseChainFirstMonomer === senseChainLastMonomer
     ) {
-      return command;
+      return null;
     }
 
     const getAverageY = (chainMonomers: BaseMonomer[]) =>
@@ -3790,17 +3752,24 @@ export class DrawingEntitiesManager {
     const needsVerticalFlip =
       getAverageY(senseMonomers) > getAverageY(antisenseMonomers);
 
-    if (!needsHorizontalFlip && !needsVerticalFlip) {
-      return command;
-    }
+    return needsHorizontalFlip || needsVerticalFlip
+      ? { needsHorizontalFlip, needsVerticalFlip }
+      : null;
+  }
 
-    const bbox = getStructureBbox(monomers);
+  private flipMonomersAroundTheirCenter(
+    monomersInBlock: BaseMonomer[],
+    needsHorizontalFlip: boolean,
+    needsVerticalFlip: boolean,
+  ) {
+    const command = new Command();
+    const bbox = getStructureBbox(monomersInBlock);
     const center = new Vec2(
       bbox.left + bbox.width / 2,
       bbox.top + bbox.height / 2,
     );
     const monomersToMove = new Set(
-      monomers.filter(
+      monomersInBlock.filter(
         (monomer) =>
           !monomer.monomerItem.props.isMicromoleculeFragment ||
           isMonomerSgroupWithAttachmentPoints(monomer),
@@ -3861,6 +3830,50 @@ export class DrawingEntitiesManager {
     });
 
     return command;
+  }
+
+  public applyCanonicalAntisenseOrientation(monomers: BaseMonomer[]) {
+    const command = new Command();
+
+    if (monomers.length === 0) {
+      return command;
+    }
+
+    const senseMonomers = monomers.filter(
+      (monomer) => monomer.monomerItem.isSense,
+    );
+    const antisenseMonomers = monomers.filter(
+      (monomer) => monomer.monomerItem.isAntisense,
+    );
+
+    if (senseMonomers.length === 0 || antisenseMonomers.length === 0) {
+      return command;
+    }
+
+    const chainsCollection = ChainsCollection.fromMonomers(monomers);
+    const senseChain = chainsCollection.chains.find((chain) =>
+      chain.monomers.some((monomer) => monomer.monomerItem.isSense),
+    );
+
+    if (!senseChain) {
+      return command;
+    }
+
+    const flip = this.getCanonicalOrientationFlip(
+      senseChain,
+      senseMonomers,
+      antisenseMonomers,
+    );
+
+    if (!flip) {
+      return command;
+    }
+
+    return this.flipMonomersAroundTheirCenter(
+      monomers,
+      flip.needsHorizontalFlip,
+      flip.needsVerticalFlip,
+    );
   }
 
   public get hasAntisenseChains() {

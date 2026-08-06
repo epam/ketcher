@@ -108,7 +108,10 @@ const normalizeFlexOrientation = (
   editor: CoreEditor,
   monomers = allMonomersOf(editor),
 ) => {
-  editor.drawingEntitiesManager.recalculateAntisenseChains(true, true);
+  editor.drawingEntitiesManager.recalculateAntisenseChains({
+    needRecalculateOldAntisense: true,
+    useStableSenseTieBreak: true,
+  });
   return executeCommand(
     editor.drawingEntitiesManager.applyCanonicalAntisenseOrientation(monomers),
   );
@@ -350,7 +353,10 @@ describe('recalculateAntisenseChains: deterministic sense/antisense tie-break', 
     pairBases(editor, chainAFivePrime, chainBThreePrime);
     pairBases(editor, chainAThreePrime, chainBFivePrime);
 
-    editor.drawingEntitiesManager.recalculateAntisenseChains(true, true);
+    editor.drawingEntitiesManager.recalculateAntisenseChains({
+      needRecalculateOldAntisense: true,
+      useStableSenseTieBreak: true,
+    });
 
     expect(chainAFivePrime.sugar.monomerItem.isSense).toBe(true);
     expect(chainBFivePrime.sugar.monomerItem.isAntisense).toBe(true);
@@ -368,10 +374,16 @@ describe('recalculateAntisenseChains: deterministic sense/antisense tie-break', 
     pairBases(editor, chainAFivePrime, chainBThreePrime);
     pairBases(editor, chainAThreePrime, chainBFivePrime);
 
-    editor.drawingEntitiesManager.recalculateAntisenseChains(true, true);
+    editor.drawingEntitiesManager.recalculateAntisenseChains({
+      needRecalculateOldAntisense: true,
+      useStableSenseTieBreak: true,
+    });
     const firstResult = chainAFivePrime.sugar.monomerItem.isSense;
 
-    editor.drawingEntitiesManager.recalculateAntisenseChains(true, true);
+    editor.drawingEntitiesManager.recalculateAntisenseChains({
+      needRecalculateOldAntisense: true,
+      useStableSenseTieBreak: true,
+    });
     const secondResult = chainAFivePrime.sugar.monomerItem.isSense;
 
     expect(firstResult).toBe(true);

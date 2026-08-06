@@ -1015,6 +1015,7 @@ export class Struct {
 
     const scale = 1 / avg;
     this.scale(scale);
+    this.scaleMonomerMicromoleculeSgroups(scale);
   }
 
   loopHasSelfIntersections(hbs: Array<number>) {

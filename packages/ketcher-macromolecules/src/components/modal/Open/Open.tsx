@@ -197,7 +197,7 @@ const addToCanvas = ({
     deserialisedKet.drawingEntitiesManager.centerMacroStructure();
   }
 
-  const { command: modelChanges, mergedDrawingEntities } =
+  const { command: modelChanges } =
     deserialisedKet.drawingEntitiesManager.mergeInto(
       editor.drawingEntitiesManager,
     );
@@ -210,11 +210,12 @@ const addToCanvas = ({
         useStableSenseTieBreak: true,
       }),
     );
-    modelChanges.merge(
-      editor.drawingEntitiesManager.applyCanonicalAntisenseOrientation([
-        ...mergedDrawingEntities.monomers.values(),
-      ]),
-    );
+
+    if (editor.drawingEntitiesManager.hasAntisenseChains) {
+      modelChanges.merge(
+        editor.drawingEntitiesManager.applySnakeLayout(true, true, true, false),
+      );
+    }
   }
 
   editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();

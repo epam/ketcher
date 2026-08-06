@@ -98,92 +98,6 @@ const buildMirroredDuplex = (editor: CoreEditor) => {
   };
 };
 
-describe('recalculateAntisenseChains: deterministic sense/antisense tie-break', () => {
-  let canvas: SVGSVGElement;
-  let editor: CoreEditor;
-
-  beforeEach(() => {
-    canvas = createPolymerEditorCanvas();
-    stubCanvasDimensions(canvas);
-    editor = new CoreEditor({
-      canvas,
-      theme: {},
-      renderersContainer: createRenderersManager(),
-    });
-  });
-
-  afterEach(() => {
-    canvas.remove();
-  });
-
-  it('picks the chain created first as sense, even when raw coordinates would suggest the opposite', () => {
-    const chainAFivePrime = createNucleotide('A', new Vec2(0, 10));
-    const chainAThreePrime = createNucleotide('U', new Vec2(3, 10));
-    connectFivePrimeToThreePrime(editor, chainAFivePrime, chainAThreePrime);
-
-    const chainBFivePrime = createNucleotide('G', new Vec2(3, 0));
-    const chainBThreePrime = createNucleotide('C', new Vec2(0, 0));
-    connectFivePrimeToThreePrime(editor, chainBFivePrime, chainBThreePrime);
-
-    pairBases(editor, chainAFivePrime, chainBThreePrime);
-    pairBases(editor, chainAThreePrime, chainBFivePrime);
-
-    editor.drawingEntitiesManager.recalculateAntisenseChains({
-      needRecalculateOldAntisense: true,
-      useStableSenseTieBreak: true,
-    });
-
-    expect(chainAFivePrime.sugar.monomerItem.isSense).toBe(true);
-    expect(chainBFivePrime.sugar.monomerItem.isAntisense).toBe(true);
-  });
-
-  it('is deterministic across repeated recalculation of the same duplex', () => {
-    const chainAFivePrime = createNucleotide('A', new Vec2(0, 10));
-    const chainAThreePrime = createNucleotide('U', new Vec2(3, 10));
-    connectFivePrimeToThreePrime(editor, chainAFivePrime, chainAThreePrime);
-
-    const chainBFivePrime = createNucleotide('G', new Vec2(3, 0));
-    const chainBThreePrime = createNucleotide('C', new Vec2(0, 0));
-    connectFivePrimeToThreePrime(editor, chainBFivePrime, chainBThreePrime);
-
-    pairBases(editor, chainAFivePrime, chainBThreePrime);
-    pairBases(editor, chainAThreePrime, chainBFivePrime);
-
-    editor.drawingEntitiesManager.recalculateAntisenseChains({
-      needRecalculateOldAntisense: true,
-      useStableSenseTieBreak: true,
-    });
-    const firstResult = chainAFivePrime.sugar.monomerItem.isSense;
-
-    editor.drawingEntitiesManager.recalculateAntisenseChains({
-      needRecalculateOldAntisense: true,
-      useStableSenseTieBreak: true,
-    });
-    const secondResult = chainAFivePrime.sugar.monomerItem.isSense;
-
-    expect(firstResult).toBe(true);
-    expect(secondResult).toBe(true);
-  });
-
-  it('keeps the legacy bbox-based tie-break by default, for backward compatibility with non-Flex-initial-load callers (e.g. Sequence mode)', () => {
-    const chainAFivePrime = createNucleotide('A', new Vec2(0, 10));
-    const chainAThreePrime = createNucleotide('U', new Vec2(3, 10));
-    connectFivePrimeToThreePrime(editor, chainAFivePrime, chainAThreePrime);
-
-    const chainBFivePrime = createNucleotide('G', new Vec2(3, 0));
-    const chainBThreePrime = createNucleotide('C', new Vec2(0, 0));
-    connectFivePrimeToThreePrime(editor, chainBFivePrime, chainBThreePrime);
-
-    pairBases(editor, chainAFivePrime, chainBThreePrime);
-    pairBases(editor, chainAThreePrime, chainBFivePrime);
-
-    editor.drawingEntitiesManager.recalculateAntisenseChains();
-
-    expect(chainBFivePrime.sugar.monomerItem.isSense).toBe(true);
-    expect(chainAFivePrime.sugar.monomerItem.isAntisense).toBe(true);
-  });
-});
-
 describe('Open-style Flex mode import: attachments bonded to the duplex stay in line', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
@@ -203,10 +117,7 @@ describe('Open-style Flex mode import: attachments bonded to the duplex stay in 
   });
 
   const applyOpenStyleFlexModeImportFlow = () => {
-    editor.drawingEntitiesManager.recalculateAntisenseChains({
-      needRecalculateOldAntisense: true,
-      useStableSenseTieBreak: true,
-    });
+    editor.drawingEntitiesManager.recalculateAntisenseChains();
 
     if (!editor.drawingEntitiesManager.hasAntisenseChains) {
       return;

@@ -205,10 +205,7 @@ const addToCanvas = ({
 
   if (isFlexMode) {
     modelChanges.merge(
-      editor.drawingEntitiesManager.recalculateAntisenseChains({
-        needRecalculateOldAntisense: true,
-        useStableSenseTieBreak: true,
-      }),
+      editor.drawingEntitiesManager.recalculateAntisenseChains(),
     );
 
     if (editor.drawingEntitiesManager.hasAntisenseChains) {

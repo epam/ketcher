@@ -2107,9 +2107,7 @@ export class DrawingEntitiesManager {
     const command = new Command();
     let chainsCollection: ChainsCollection;
 
-    command.merge(
-      this.recalculateAntisenseChains({ needRecalculateOldAntisense }),
-    );
+    command.merge(this.recalculateAntisenseChains(needRecalculateOldAntisense));
 
     // not only snake mode???
     if (isSnakeMode) {
@@ -3563,24 +3561,7 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  private pickChainWithLowestValue(
-    entries: Array<[GrouppedChain, number]>,
-  ): GrouppedChain {
-    return entries.reduce((previousBest, current) => {
-      const [, previousValue] = previousBest;
-      const [, currentValue] = current;
-
-      return currentValue < previousValue ? current : previousBest;
-    }, entries[0])[0];
-  }
-
-  public recalculateAntisenseChains({
-    needRecalculateOldAntisense = true,
-    useStableSenseTieBreak = false,
-  }: {
-    needRecalculateOldAntisense?: boolean;
-    useStableSenseTieBreak?: boolean;
-  } = {}) {
+  public recalculateAntisenseChains(needRecalculateOldAntisense = true) {
     const command = new Command();
     const chainsCollection = ChainsCollection.fromMonomers([
       ...this.monomers.values(),
@@ -3654,6 +3635,7 @@ export class DrawingEntitiesManager {
       if (largestChains.length === 1) {
         senseChain = largestChains[0][0];
       } else {
+        const chainsToCenters = new Map<GrouppedChain, Vec2>();
         const chainsToComplimentaryChainsAmount = new Map<
           GrouppedChain,
           number
@@ -3669,21 +3651,27 @@ export class DrawingEntitiesManager {
           );
         });
 
-        const tieBreakChain = useStableSenseTieBreak
-          ? this.pickChainWithLowestValue(
-              largestChains.map(([chainToCheck, monomers]) => [
-                chainToCheck,
-                Math.min(...monomers.map((monomer) => monomer.id)),
-              ]),
-            )
-          : this.pickChainWithLowestValue(
-              largestChains.map(([chainToCheck, monomers]) => {
-                const chainBbox = getStructureBbox(monomers);
+        largestChains.forEach(([chainToCheck, monomers]) => {
+          const chainBbox = getStructureBbox(monomers);
 
-                return [chainToCheck, chainBbox.top + chainBbox.height / 2];
-              }),
-            );
+          chainsToCenters.set(
+            chainToCheck,
+            new Vec2(
+              chainBbox.left + chainBbox.width / 2,
+              chainBbox.top + chainBbox.height / 2,
+            ),
+          );
+        });
 
+        const chainsToCenterArray = [...chainsToCenters.entries()];
+        const chainWithLowestCenter = chainsToCenterArray.reduce(
+          ([previousChain, previousChainCenter], [chainToCheck, center]) => {
+            return center.y < previousChainCenter.y
+              ? [chainToCheck, center]
+              : [previousChain, previousChainCenter];
+          },
+          chainsToCenterArray[0],
+        );
         const chainsToComplimentaryChainsAmountArray = [
           ...chainsToComplimentaryChainsAmount.entries(),
         ];
@@ -3704,7 +3692,7 @@ export class DrawingEntitiesManager {
         senseChain =
           chainsToComplimentaryChainsAmount.size === 1
             ? chainWithMoreComplimentaryChains[0]
-            : tieBreakChain;
+            : chainWithLowestCenter[0];
       }
 
       const { group: senseGroup } = senseChain;

@@ -16,7 +16,7 @@ import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
 } from '@utils/macromolecules/polymerBond';
-import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
+import { NotificationBannerOnMacro } from '@tests/pages/macromolecules/canvas/NotificationBannerOnMacro';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Connection rules for peptides: ', () => {
@@ -559,7 +559,7 @@ test.describe('Connection rules for peptides: ', () => {
 
                   await expect(bondLine).toBeVisible();
                   expect(
-                    await NotificationBanner(page).getNotificationText(),
+                    await NotificationBannerOnMacro(page).getNotificationText(),
                   ).toContain(
                     'You have connected monomers with attachment points of the same group',
                   );

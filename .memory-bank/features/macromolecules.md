@@ -64,6 +64,17 @@ Monomers connect through defined attachment points, sequences render as single-l
 - **WHEN** the user enters snake mode
 - **THEN** monomers and small molecules on the canvas are automatically laid out; entering flex mode applies no layout
 
+#### Scenario: Chain enumeration
+
+- **WHEN** a peptide chain forms, or an RNA/DNA sugar-phosphate chain starts from a sugar/phosphate that has no R1 attachment point, a free R1 attachment point, or an R1 occupied by a bond to another attachment point than R2
+- **THEN** Ketcher numbers each eligible monomer sequentially along the chain, including a lone sugar-base-phosphate unit
+- **AND** if no monomer in the chain satisfies that starting condition, no enumeration is shown
+
+#### Scenario: Enumeration removed when a monomer leaves its preset chain
+
+- **WHEN** the sugar and/or phosphate that made a base part of a numbered preset chain are deleted, leaving the base without a valid enumerable chain
+- **THEN** the base's enumeration number is cleared rather than left showing a stale value
+
 ## Guarantees
 
 - Monomer shape and color encode type (hexagons = amino acids, rounded squares = sugars, rhombuses = bases, circles = phosphates, pentagons = nucleotides, etc.).

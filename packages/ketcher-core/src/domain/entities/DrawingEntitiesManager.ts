@@ -3561,7 +3561,10 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public recalculateAntisenseChains(needRecalculateOldAntisense = true) {
+  public recalculateAntisenseChains(
+    needRecalculateOldAntisense = true,
+    useStableSenseTieBreak = false,
+  ) {
     const command = new Command();
     const chainsCollection = ChainsCollection.fromMonomers([
       ...this.monomers.values(),
@@ -3635,7 +3638,6 @@ export class DrawingEntitiesManager {
       if (largestChains.length === 1) {
         senseChain = largestChains[0][0];
       } else {
-        const chainsToLowestMonomerId = new Map<GrouppedChain, number>();
         const chainsToComplimentaryChainsAmount = new Map<
           GrouppedChain,
           number
@@ -3651,27 +3653,58 @@ export class DrawingEntitiesManager {
           );
         });
 
-        largestChains.forEach(([chainToCheck, monomers]) => {
-          chainsToLowestMonomerId.set(
-            chainToCheck,
-            Math.min(...monomers.map((monomer) => monomer.id)),
-          );
-        });
+        let fallbackChain: GrouppedChain;
 
-        const chainsToLowestMonomerIdArray = [
-          ...chainsToLowestMonomerId.entries(),
-        ];
-        const chainWithLowestMonomerId = chainsToLowestMonomerIdArray.reduce(
-          (
-            [previousChain, previousLowestId],
-            [chainToCheck, lowestMonomerId],
-          ) => {
-            return lowestMonomerId < previousLowestId
-              ? [chainToCheck, lowestMonomerId]
-              : [previousChain, previousLowestId];
-          },
-          chainsToLowestMonomerIdArray[0],
-        );
+        if (useStableSenseTieBreak) {
+          const chainsToLowestMonomerId = new Map<GrouppedChain, number>();
+
+          largestChains.forEach(([chainToCheck, monomers]) => {
+            chainsToLowestMonomerId.set(
+              chainToCheck,
+              Math.min(...monomers.map((monomer) => monomer.id)),
+            );
+          });
+
+          const chainsToLowestMonomerIdArray = [
+            ...chainsToLowestMonomerId.entries(),
+          ];
+          fallbackChain = chainsToLowestMonomerIdArray.reduce(
+            (
+              [previousChain, previousLowestId],
+              [chainToCheck, lowestMonomerId],
+            ) => {
+              return lowestMonomerId < previousLowestId
+                ? [chainToCheck, lowestMonomerId]
+                : [previousChain, previousLowestId];
+            },
+            chainsToLowestMonomerIdArray[0],
+          )[0];
+        } else {
+          const chainsToCenters = new Map<GrouppedChain, Vec2>();
+
+          largestChains.forEach(([chainToCheck, monomers]) => {
+            const chainBbox = getStructureBbox(monomers);
+
+            chainsToCenters.set(
+              chainToCheck,
+              new Vec2(
+                chainBbox.left + chainBbox.width / 2,
+                chainBbox.top + chainBbox.height / 2,
+              ),
+            );
+          });
+
+          const chainsToCenterArray = [...chainsToCenters.entries()];
+          fallbackChain = chainsToCenterArray.reduce(
+            ([previousChain, previousChainCenter], [chainToCheck, center]) => {
+              return center.y < previousChainCenter.y
+                ? [chainToCheck, center]
+                : [previousChain, previousChainCenter];
+            },
+            chainsToCenterArray[0],
+          )[0];
+        }
+
         const chainsToComplimentaryChainsAmountArray = [
           ...chainsToComplimentaryChainsAmount.entries(),
         ];
@@ -3692,7 +3725,7 @@ export class DrawingEntitiesManager {
         senseChain =
           chainsToComplimentaryChainsAmount.size === 1
             ? chainWithMoreComplimentaryChains[0]
-            : chainWithLowestMonomerId[0];
+            : fallbackChain;
       }
 
       const { group: senseGroup } = senseChain;

@@ -16,9 +16,12 @@
 
 // Focused unit/integration tests for the "mirrored paired RNA-chain rendering
 // in Flex mode" fix:
-//  - `DrawingEntitiesManager.recalculateAntisenseChains` now breaks a
-//    sense/antisense tie using a stable, model-based property (lowest
-//    monomer id) instead of transient/raw imported coordinates.
+//  - `DrawingEntitiesManager.recalculateAntisenseChains` gained an opt-in
+//    `useStableSenseTieBreak` parameter that breaks a sense/antisense tie
+//    using a stable, model-based property (lowest monomer id) instead of
+//    transient/raw imported coordinates. It defaults to `false` (legacy
+//    bbox-based tie-break), so Sequence mode and every other existing
+//    caller is unaffected; only the Flex-mode initial-load path opts in.
 //  - `DrawingEntitiesManager.applyCanonicalAntisenseOrientation` normalizes a
 //    freshly loaded, possibly mirrored, paired RNA duplex into the canonical
 //    Flex orientation (sense 5' top-left, antisense 3' bottom-left), without
@@ -159,7 +162,11 @@ const normalizeFlexOrientation = (
   editor: CoreEditor,
   monomers = allMonomersOf(editor),
 ) => {
-  editor.drawingEntitiesManager.recalculateAntisenseChains();
+  // Mirrors the production wiring in `Open.tsx`'s Flex-mode initial-load
+  // path: `useStableSenseTieBreak: true` is only passed here, so this does
+  // not affect the default (legacy) tie-break used by every other caller of
+  // `recalculateAntisenseChains()` (Sequence mode, Erase, paste, etc.).
+  editor.drawingEntitiesManager.recalculateAntisenseChains(true, true);
   return executeCommand(
     editor.drawingEntitiesManager.applyCanonicalAntisenseOrientation(monomers),
   );
@@ -401,7 +408,9 @@ describe('recalculateAntisenseChains: deterministic sense/antisense tie-break', 
     pairBases(editor, chainAFivePrime, chainBThreePrime);
     pairBases(editor, chainAThreePrime, chainBFivePrime);
 
-    editor.drawingEntitiesManager.recalculateAntisenseChains();
+    // `useStableSenseTieBreak: true` mirrors the Flex-mode initial-load
+    // wiring in `Open.tsx`; every other caller keeps the legacy tie-break.
+    editor.drawingEntitiesManager.recalculateAntisenseChains(true, true);
 
     expect(chainAFivePrime.sugar.monomerItem.isSense).toBe(true);
     expect(chainBFivePrime.sugar.monomerItem.isAntisense).toBe(true);
@@ -419,13 +428,36 @@ describe('recalculateAntisenseChains: deterministic sense/antisense tie-break', 
     pairBases(editor, chainAFivePrime, chainBThreePrime);
     pairBases(editor, chainAThreePrime, chainBFivePrime);
 
-    editor.drawingEntitiesManager.recalculateAntisenseChains();
+    editor.drawingEntitiesManager.recalculateAntisenseChains(true, true);
     const firstResult = chainAFivePrime.sugar.monomerItem.isSense;
 
-    editor.drawingEntitiesManager.recalculateAntisenseChains();
+    editor.drawingEntitiesManager.recalculateAntisenseChains(true, true);
     const secondResult = chainAFivePrime.sugar.monomerItem.isSense;
 
     expect(firstResult).toBe(true);
     expect(secondResult).toBe(true);
+  });
+
+  it('keeps the legacy bbox-based tie-break by default, for backward compatibility with non-Flex-initial-load callers (e.g. Sequence mode)', () => {
+    // Same duplex as above, but recalculated with the default parameters
+    // (as every caller other than the Flex-mode initial load does). Chain B
+    // sits above chain A (smaller y), so the legacy tie-break picks chain B
+    // as sense - this must stay unchanged so Sequence mode and other flows
+    // are not affected by the new opt-in stable tie-break.
+    const chainAFivePrime = createNucleotide('A', new Vec2(0, 10));
+    const chainAThreePrime = createNucleotide('U', new Vec2(3, 10));
+    connectFivePrimeToThreePrime(editor, chainAFivePrime, chainAThreePrime);
+
+    const chainBFivePrime = createNucleotide('G', new Vec2(3, 0));
+    const chainBThreePrime = createNucleotide('C', new Vec2(0, 0));
+    connectFivePrimeToThreePrime(editor, chainBFivePrime, chainBThreePrime);
+
+    pairBases(editor, chainAFivePrime, chainBThreePrime);
+    pairBases(editor, chainAThreePrime, chainBFivePrime);
+
+    editor.drawingEntitiesManager.recalculateAntisenseChains();
+
+    expect(chainBFivePrime.sugar.monomerItem.isSense).toBe(true);
+    expect(chainAFivePrime.sugar.monomerItem.isAntisense).toBe(true);
   });
 });

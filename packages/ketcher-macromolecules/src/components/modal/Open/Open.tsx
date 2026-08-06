@@ -204,8 +204,16 @@ const addToCanvas = ({
   const editorHistory = EditorHistory.getInstance(editor);
 
   if (isFlexMode) {
+    // `useStableSenseTieBreak: true` - only for this initial-load path -
+    // makes the sense/antisense tie-break deterministic (based on a stable
+    // monomer id rather than raw imported coordinates), which
+    // `applyCanonicalAntisenseOrientation` below relies on to normalize a
+    // freshly loaded, possibly mirrored, paired RNA duplex into the
+    // canonical Flex orientation. Every other caller of
+    // `recalculateAntisenseChains()` keeps the legacy tie-break, so
+    // Sequence mode and other flows are unaffected.
     modelChanges.merge(
-      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+      editor.drawingEntitiesManager.recalculateAntisenseChains(true, true),
     );
     modelChanges.merge(
       editor.drawingEntitiesManager.applyCanonicalAntisenseOrientation([

@@ -26,8 +26,8 @@
         "type": "ambiguousMonomer",
         "id": "0",
         "position": {
-            "x": 18.15556217440399,
-            "y": -10.659507237805563
+            "x": 14.309950000000002,
+            "y": -7.900050000000001
         },
         "alias": "%",
         "templateId": "alternatives__bnn___Benzylamino__cmp___Phosphonoacetate__nen___Ethylenediamine_"

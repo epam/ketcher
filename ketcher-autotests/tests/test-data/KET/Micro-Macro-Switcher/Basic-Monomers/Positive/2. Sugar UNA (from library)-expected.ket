@@ -17,8 +17,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 17.973073142327905,
-            "y": -10.465779598064515
+            "x": 14.0949,
+            "y": -7.37445
         },
         "alias": "UNA",
         "templateId": "UNA___2'-3'-Unlocked-ribose"

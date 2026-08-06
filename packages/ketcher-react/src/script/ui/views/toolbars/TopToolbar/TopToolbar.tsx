@@ -75,6 +75,37 @@ export interface PanelProps {
 const collapseLimit = 650;
 const CUSTOM_BUTTON_ADDITIONAL_WIDTH = 40;
 
+// Standard top toolbar buttons accounted for in `collapseLimit`. Each one hidden
+// via the `buttons` config frees up space, so it must reduce the threshold —
+// otherwise the toolbar keeps collapsing as if all of them were still rendered.
+const STANDARD_TOP_TOOLBAR_BUTTON_NAMES = [
+  'clear',
+  'open',
+  'save',
+  'copy',
+  'copy-mol',
+  'copy-ket',
+  'copy-image',
+  'paste',
+  'cut',
+  'undo',
+  'redo',
+  'arom',
+  'dearom',
+  'layout',
+  'clean',
+  'cip',
+  'check',
+  'analyse',
+  'explicit-hydrogens',
+  'miew',
+  'settings',
+  'help',
+  'about',
+  'fullscreen',
+  'zoom-list',
+];
+
 const ControlsPanel = styled('div')`
   display: flex;
   flex-direction: row;
@@ -172,10 +203,17 @@ export const TopToolbar = ({
   );
 
   const collapseLimitWithCustomButtons = useMemo(() => {
-    return (
-      collapseLimit + customButtons.length * CUSTOM_BUTTON_ADDITIONAL_WIDTH
+    const hiddenStandardButtonsCount = hiddenButtons.filter((button) =>
+      STANDARD_TOP_TOOLBAR_BUTTON_NAMES.includes(button),
+    ).length;
+
+    return Math.max(
+      0,
+      collapseLimit +
+        (customButtons.length - hiddenStandardButtonsCount) *
+          CUSTOM_BUTTON_ADDITIONAL_WIDTH,
     );
-  }, [customButtons.length]);
+  }, [customButtons.length, hiddenButtons]);
 
   const isCollapsed = width < collapseLimitWithCustomButtons;
   const renderedTogglerComponent = togglerComponent

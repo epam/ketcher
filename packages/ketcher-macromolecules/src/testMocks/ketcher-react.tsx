@@ -7,6 +7,7 @@ export const Icon = ({
   testId,
   testid,
   isActive: _isActive,
+  expanded: _expanded,
   ...props
 }: React.SVGProps<SVGSVGElement> & {
   iconName?: string;
@@ -14,6 +15,7 @@ export const Icon = ({
   testId?: string;
   testid?: string;
   isActive?: boolean;
+  expanded?: boolean;
 }) => {
   const svgProps = {
     ...props,
@@ -32,12 +34,16 @@ export const IconButton = ({
   testid,
   dataTestId,
   iconName: _iconName,
+  isActive: _isActive,
+  primary: _primary,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
   testId?: string;
   testid?: string;
   dataTestId?: string;
   iconName?: string;
+  isActive?: boolean;
+  primary?: boolean;
 }) => (
   <button
     type="button"
@@ -56,12 +62,16 @@ export const Button = ({
   testid,
   dataTestId,
   iconName: _iconName,
+  isActive: _isActive,
+  primary: _primary,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
   testId?: string;
   testid?: string;
   dataTestId?: string;
   iconName?: string;
+  isActive?: boolean;
+  primary?: boolean;
 }) => (
   <button
     type="button"
@@ -89,8 +99,32 @@ export const IndigoProvider = {
 
 export const StructRender = ({
   children,
+  struct: _struct,
+  options: _options,
+  update: _update,
+  isExpanded: _isExpanded,
+  testId,
+  testid,
+  dataTestId,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => <div {...props}>{children}</div>;
+}: React.HTMLAttributes<HTMLDivElement> & {
+  struct?: unknown;
+  options?: unknown;
+  update?: unknown;
+  isExpanded?: boolean;
+  testId?: string;
+  testid?: string;
+  dataTestId?: string;
+}) => (
+  <div
+    {...props}
+    {...(testId ? { 'data-testid': testId } : {})}
+    {...(testid ? { 'data-testid': testid } : {})}
+    {...(dataTestId ? { 'data-testid': dataTestId } : {})}
+  >
+    {children}
+  </div>
+);
 
 export const preview = {
   widthForBond: 358,
@@ -104,8 +138,19 @@ export const AmbiguousMonomerPreview = ({
 
 export const ArrowScroll = ({
   children,
+  startInView: _startInView,
+  endInView: _endInView,
+  scrollForward: _scrollForward,
+  scrollBack: _scrollBack,
+  isLeftRight: _isLeftRight,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => <div {...props}>{children}</div>;
+}: React.HTMLAttributes<HTMLDivElement> & {
+  startInView?: boolean;
+  endInView?: boolean;
+  scrollForward?: (dtMs: number) => void;
+  scrollBack?: (dtMs: number) => void;
+  isLeftRight?: boolean;
+}) => <div {...props}>{children}</div>;
 
 export const EditorClassName = 'Ketcher-editor';
 export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR =

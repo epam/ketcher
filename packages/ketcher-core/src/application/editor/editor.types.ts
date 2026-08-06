@@ -27,9 +27,9 @@ import type { IRnaPreset } from './tools/Tool';
 import type { MonomerOrAmbiguousType, AttachmentPointName } from 'domain/types';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
-export type EditorSelection = {
-  [key in typeof selectionKeys[number]]?: number[];
-} & {
+export type EditorSelection = Partial<
+  Record<typeof selectionKeys[number], number[]>
+> & {
   enhancedFlags?: number[];
 };
 export type FloatingToolsParams = {

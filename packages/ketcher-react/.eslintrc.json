@@ -23,6 +23,17 @@
         "prefer": "type-imports",
         "fixStyle": "separate-type-imports"
       }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "assert",
+            "message": "Node's 'assert' module breaks browser bundlers (see issue #3733). Use `import { assert } from 'ketcher-core'` instead."
+          }
+        ]
+      }
     ]
   },
   "overrides": [

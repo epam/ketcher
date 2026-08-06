@@ -24,6 +24,7 @@ import {
   useMemo,
   memo,
 } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import TemplateTable, { type Template } from './TemplateTable';
 import {
   changeFilter,
@@ -41,16 +42,16 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import { Dialog } from '../../views/components';
 import Input from '../../component/form/Input/Input';
 import { SaveButton } from '../../component/view/savebutton';
-import { SdfSerializer } from 'ketcher-core';
+import { SdfSerializer, KetcherLogger } from 'ketcher-core';
 import classes from './template-lib.module.less';
 import accordionClasses from '../../../../components/Accordion/Accordion.module.less';
-import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { omit } from 'lodash/fp';
 import { onAction } from '../../state';
 import { functionalGroupsSelector } from '../../state/functionalGroups/selectors';
 import { saltsAndSolventsSelector } from '../../state/saltsAndSolvents/selectors';
 import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult';
+import { showSnackbarNotification } from '../../state/notifications';
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -129,7 +130,12 @@ const HeaderContent = () => (
   </div>
 );
 
-const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
+const FooterContent = ({
+  getData,
+  tab,
+  isMonomerCreationWizardActive,
+  onError,
+}) => {
   const clickToAddToCanvas = (
     <span data-testid="add-to-canvas-button">Click to add to canvas</span>
   );
@@ -155,7 +161,7 @@ const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
     >
       <SaveButton
         key="save-to-SDF"
-        data={data}
+        getData={getData}
         className={clsx(
           classes.saveButton,
           isMonomerCreationWizardActive && classes.disabled,
@@ -163,6 +169,7 @@ const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
         testId="save-to-sdf-button"
         filename={filename}
         disabled={isMonomerCreationWizardActive}
+        onError={onError}
       >
         Save to SDF
       </SaveButton>
@@ -173,7 +180,7 @@ const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
 
 const EMPTY_TEMPLATES: ReadonlyArray<Template> = [];
 
-const TemplateDialog: FC<Props> = (props) => {
+export const TemplateDialog: FC<Props> = (props) => {
   const {
     filter,
     onFilter,
@@ -189,6 +196,7 @@ const TemplateDialog: FC<Props> = (props) => {
     ...rest
   } = props;
 
+  const dispatch = useDispatch();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
@@ -242,9 +250,7 @@ const TemplateDialog: FC<Props> = (props) => {
     onTabChange(value);
   };
 
-  // Memoize SDF serialization to prevent recomputation on accordion toggles
-  // Only recompute when tab or library data actually changes
-  const data = useMemo(() => {
+  const getData = useCallback(() => {
     const sdfSerializer = new SdfSerializer();
     const serializerMapper = {
       [TemplateTabs.TemplateLibrary]: templateLib,
@@ -253,6 +259,19 @@ const TemplateDialog: FC<Props> = (props) => {
     };
     return sdfSerializer.serialize(serializerMapper[tab]);
   }, [tab, templateLib, functionalGroups, saltsAndSolvents]);
+
+  const onSaveError = useCallback(
+    (err: unknown) => {
+      KetcherLogger.error(
+        'TemplateDialog.tsx::TemplateDialog::onSaveError',
+        err,
+      );
+      dispatch(
+        showSnackbarNotification('Some templates could not be exported.'),
+      );
+    },
+    [dispatch],
+  );
 
   // Recreate selection handler only when upstream callbacks change.
   const select = useCallback(
@@ -275,8 +294,9 @@ const TemplateDialog: FC<Props> = (props) => {
       footerContent={
         <FooterContent
           tab={tab}
-          data={data}
+          getData={getData}
           isMonomerCreationWizardActive={isMonomerCreationWizardActive}
+          onError={onSaveError}
         />
       }
       className={`${classes.dialog_body}`}

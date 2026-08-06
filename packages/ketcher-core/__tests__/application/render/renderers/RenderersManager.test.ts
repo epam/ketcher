@@ -1,5 +1,8 @@
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import { AmbiguousMonomerRenderer } from 'application/render/renderers/AmbiguousMonomerRenderer';
+import { SugarRenderer } from 'application/render/renderers/SugarRenderer';
+import { CoreEditor } from 'application/editor';
 import {
   LinkerSequenceNode,
   MonomerSequenceNode,
@@ -18,6 +21,10 @@ import { KetMonomerClass } from 'domain/constants/monomers';
 import { KetAmbiguousMonomerTemplateSubType } from 'application/formatters/types/ket';
 import { AttachmentPointName, type MonomerItemType } from 'domain/types';
 import { peptideMonomerItem } from '../../../mock-data';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../../helpers/dom';
 
 type RenderersManagerInternals = {
   recalculateRnaChainEnumeration(
@@ -158,6 +165,7 @@ const createAmbiguousMonomer = (monomers: BaseMonomer[]) =>
     subtype: KetAmbiguousMonomerTemplateSubType.ALTERNATIVES,
     monomers,
     options: monomers.map((monomer) => ({ templateId: monomer.label })),
+    isAmbiguous: true,
   } as never);
 
 type RnaUnit = {
@@ -333,6 +341,195 @@ describe('RenderersManager', () => {
       [4],
       [5],
     ]);
+  });
+
+  describe('antisense terminal label rendering for ambiguous RNA sugars (#10737)', () => {
+    let canvas: SVGSVGElement;
+
+    beforeAll(() => {
+      global.ResizeObserver = jest.fn().mockImplementation(() => ({
+        observe: jest.fn(),
+        unobserve: jest.fn(),
+        disconnect: jest.fn(),
+      }));
+      SVGElement.prototype.getBBox = jest.fn().mockReturnValue({
+        x: 0,
+        y: 0,
+        width: 12,
+        height: 12,
+      });
+    });
+
+    beforeEach(() => {
+      canvas = createPolymerEditorCanvas();
+      Object.defineProperty(canvas, 'width', {
+        configurable: true,
+        value: { baseVal: { value: 500 } },
+      });
+      Object.defineProperty(canvas, 'height', {
+        configurable: true,
+        value: { baseVal: { value: 500 } },
+      });
+      // eslint-disable-next-line no-new
+      new CoreEditor({
+        canvas,
+        theme: {},
+        renderersContainer: createRenderersManager(),
+      });
+    });
+
+    afterEach(() => {
+      canvas.remove();
+    });
+
+    // Reproduces the RNA1/RNA2 ambiguous-sugar duplex from #10737:
+    // ([25mo3r],[25R])(A,C,G)([gly],[hn]) repeated 3 times per strand.
+    const buildAmbiguousChain = (isAntisense: boolean) => {
+      const units = [true, true, true].map(() => buildRnaUnit(true));
+
+      if (isAntisense) {
+        units.forEach((unit) => {
+          unit.sugar.monomerItem.isAntisense = true;
+          unit.base.monomerItem.isAntisense = true;
+          unit.phosphate.monomerItem.isAntisense = true;
+        });
+      }
+
+      for (let index = 0; index < units.length - 1; index++) {
+        connect(
+          units[index].phosphate,
+          AttachmentPointName.R2,
+          units[index + 1].sugar,
+          AttachmentPointName.R1,
+        );
+      }
+
+      return units;
+    };
+
+    const readTerminalLabel = (sugar: Sugar | AmbiguousMonomer) =>
+      canvas.querySelector(
+        `g.monomer[data-monomerid="${sugar.id}"] text[fill="#0097A8"]`,
+      )?.textContent ?? null;
+
+    it('renders 5′ on the sense terminal and 3′ on the highest-enumerated antisense terminal', () => {
+      // Ground truth for the expected label text, independent of
+      // AmbiguousMonomerRenderer, so the assertions fail if inheritance breaks.
+      const plainSugarRenderer = new SugarRenderer(createSugarLabeled('R'));
+      const expectedStartLabel =
+        plainSugarRenderer.CHAIN_START_TERMINAL_INDICATOR_TEXT;
+      const expectedEndLabel =
+        plainSugarRenderer.CHAIN_END_TERMINAL_INDICATOR_TEXT;
+
+      expect(expectedStartLabel).toBeTruthy();
+      expect(expectedEndLabel).toBeTruthy();
+
+      const senseUnits = buildAmbiguousChain(false);
+      const antisenseUnits = buildAmbiguousChain(true);
+
+      const renderersManager = createRenderersManager();
+
+      [...senseUnits, ...antisenseUnits].forEach((unit) => {
+        renderersManager.addMonomer(unit.sugar);
+        renderersManager.addMonomer(unit.base);
+        renderersManager.addMonomer(unit.phosphate);
+      });
+
+      const senseSubChain = getRnaSubChains(
+        ChainsCollection.fromMonomers(
+          senseUnits.flatMap((unit) => [unit.sugar, unit.base, unit.phosphate]),
+        ),
+      )[0];
+      const antisenseSubChain = getRnaSubChains(
+        ChainsCollection.fromMonomers(
+          antisenseUnits.flatMap((unit) => [
+            unit.sugar,
+            unit.base,
+            unit.phosphate,
+          ]),
+        ),
+      )[0];
+
+      recalculateRnaChainEnumeration(senseSubChain, false);
+      recalculateRnaChainEnumeration(antisenseSubChain, false);
+
+      const senseLabels = senseUnits.map((unit) =>
+        readTerminalLabel(unit.sugar),
+      );
+      const antisenseLabels = antisenseUnits.map((unit) =>
+        readTerminalLabel(unit.sugar),
+      );
+
+      // Exactly one antisense sugar renders a terminal indicator.
+      const antisenseTerminalIndices = antisenseLabels
+        .map((label, index) => (label !== null ? index : -1))
+        .filter((index) => index !== -1);
+
+      expect(antisenseTerminalIndices).toHaveLength(1);
+
+      const [terminalIndex] = antisenseTerminalIndices;
+      const terminalUnit = antisenseUnits[terminalIndex];
+      const antisenseEnumerations = antisenseUnits.map(
+        (unit) => unit.sugar.renderer?.enumeration as number,
+      );
+
+      // That sugar has the maximum enumeration for its chain...
+      expect(terminalUnit.sugar.renderer?.enumeration).toBe(
+        Math.max(...antisenseEnumerations),
+      );
+      // ...which equals the chain length.
+      expect(terminalUnit.sugar.renderer?.enumeration).toBe(
+        antisenseUnits.length,
+      );
+
+      // The rendered label text is exactly the 3′ terminal-label constant.
+      expect(antisenseLabels[terminalIndex]).toBe(expectedEndLabel);
+
+      // The sense terminal still renders exactly the 5′ terminal-label constant.
+      expect(senseLabels[0]).toBe(expectedStartLabel);
+      expect(senseLabels.slice(1).every((label) => label === null)).toBe(true);
+    });
+  });
+
+  describe('AmbiguousMonomerRenderer terminal label inheritance (#10737)', () => {
+    let canvas: SVGSVGElement;
+
+    beforeEach(() => {
+      canvas = createPolymerEditorCanvas();
+      // eslint-disable-next-line no-new
+      new CoreEditor({
+        canvas,
+        theme: {},
+        renderersContainer: createRenderersManager(),
+      });
+    });
+
+    afterEach(() => {
+      canvas.remove();
+    });
+
+    it('exposes both the 5′ start label and the 3′ end label from the wrapped sugar renderer', () => {
+      // Ground truth, independent of AmbiguousMonomerRenderer.
+      const plainSugarRenderer = new SugarRenderer(createSugarLabeled('R'));
+      const expectedStartLabel =
+        plainSugarRenderer.CHAIN_START_TERMINAL_INDICATOR_TEXT;
+      const expectedEndLabel =
+        plainSugarRenderer.CHAIN_END_TERMINAL_INDICATOR_TEXT;
+
+      const ambiguousSugar = createAmbiguousMonomer([
+        createSugarLabeled('25mo3r'),
+        createSugarLabeled('25R'),
+      ]);
+
+      const renderer = new AmbiguousMonomerRenderer(ambiguousSugar);
+
+      // Sense/normal orientation renders the 5′ start label.
+      expect(renderer.CHAIN_START_TERMINAL_INDICATOR_TEXT).toBe(
+        expectedStartLabel,
+      );
+      // Antisense orientation renders the 3′ end label.
+      expect(renderer.CHAIN_END_TERMINAL_INDICATOR_TEXT).toBe(expectedEndLabel);
+    });
   });
 
   it('enumerates a single RNA monomer as base number 1', () => {

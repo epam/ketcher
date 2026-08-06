@@ -11,9 +11,9 @@ import {
   Coordinates,
   ketcherProvider,
   MonomerCreationAttachmentPointClickEvent,
+  assert,
 } from 'ketcher-core';
 import type Editor from '../../../../../editor';
-import assert from 'assert';
 
 const AttachmentPointLabelMenuItems = ({
   propsFromTrigger,

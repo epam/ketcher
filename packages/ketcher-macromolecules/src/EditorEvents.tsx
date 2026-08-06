@@ -42,6 +42,7 @@ import {
   ToolName,
   AtomRenderer,
   BaseRenderer,
+  SettingsManager,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
 import {
@@ -116,8 +117,12 @@ export const EditorEvents = () => {
         },
       );
 
-      dispatch(selectTool('select-rectangle'));
-      editor.events.selectTool.dispatch(['select-rectangle']);
+      const savedSelectionTool = SettingsManager.selectionTool;
+      const toolName = savedSelectionTool?.opts
+        ? `select-${savedSelectionTool.opts}`
+        : 'select-rectangle';
+
+      dispatch(selectTool(toolName));
       editor.events.openMonomerConnectionModal.add(
         (additionalProps: MonomerConnectionOnlyProps) =>
           dispatch(

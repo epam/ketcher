@@ -36,6 +36,8 @@ import {
   setSelectedMenuGroupItem,
 } from 'state/common';
 import { useAppDispatch, useAppSelector } from 'hooks';
+import { SettingsManager } from 'ketcher-core';
+import { SELECT_SUBMENU_ID } from '../constants';
 
 type SubMenuProps = {
   vertical?: boolean;
@@ -111,6 +113,14 @@ const SubMenu = ({
           activeItemName: activeOption,
         }),
       );
+
+      if (subMenuId === SELECT_SUBMENU_ID) {
+        const toolType = activeOption.replace('select-', '');
+        SettingsManager.selectionTool = {
+          tool: 'select',
+          opts: toolType,
+        };
+      }
     }
   }, [dispatch, subMenuId, activeOption, lastActiveOption]);
 

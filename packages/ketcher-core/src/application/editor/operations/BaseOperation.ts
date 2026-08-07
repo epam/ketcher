@@ -24,12 +24,12 @@ import { KetcherLogger } from 'utilities';
 type ValueOf<TObject extends object> = Readonly<TObject[keyof TObject]>;
 type OperationType = ValueOf<typeof OperationType>;
 
-class BaseOperation {
+class BaseOperation<D = unknown> {
   // eslint-disable-next-line no-use-before-define
   private _inverted: BaseOperation | undefined;
   type: OperationType;
   priority: number;
-  data: unknown;
+  data!: D;
   // eslint-disable-next-line no-use-before-define -- inverse constructor args vary by operation
   static InverseConstructor: new (...args: never[]) => BaseOperation;
 
@@ -43,13 +43,13 @@ class BaseOperation {
   }
 
   /** Returns inverted of this */
-  perform(restruct: ReStruct): BaseOperation {
+  perform(restruct: ReStruct): ReturnType<this['invert']> {
     this.execute(restruct);
     if (!this._inverted) {
       this._inverted = this.invert();
       this._inverted._inverted = this;
     }
-    return this._inverted;
+    return this._inverted as ReturnType<this['invert']>;
   }
 
   invert(): BaseOperation {

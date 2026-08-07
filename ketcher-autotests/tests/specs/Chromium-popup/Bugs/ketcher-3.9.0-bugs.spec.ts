@@ -465,7 +465,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/8351
-     * Bug: https://github.com/epam/ketcher/issues/7359
+     * Bug: https://github.com/epam/ketcher/issues/7572
      * Description:  "Create a monomer" option is missing in right-click menu when selection meets conditions
      *
      * Scenario:
@@ -487,8 +487,8 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     if (atomBoundingBox) {
       await selectCanvasArea(
         page,
-        { x: atomBoundingBox.x - 40, y: atomBoundingBox.y - 40 },
-        { x: atomBoundingBox.x + 40, y: atomBoundingBox.y + 40 },
+        { x: atomBoundingBox.x - 50, y: atomBoundingBox.y - 50 },
+        { x: atomBoundingBox.x + 50, y: atomBoundingBox.y + 50 },
       );
     }
     expect(

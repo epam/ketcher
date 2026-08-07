@@ -7,6 +7,8 @@ export const BAD_VALENCE_LINE_OFFSET = 2;
 
 export const SELECTION_COLOR = '#57FF8F';
 export const SELECTION_HOVERED_COLOR = '#CCFFDD';
+export const SELECTION_HANDLE_FILL_COLOR = '#FFFFFF';
+export const SELECTION_HANDLE_STROKE_COLOR = '#333333';
 
 export const MONOMER_SYMBOLS_IDS = {
   [KetMonomerClass.AminoAcid]: {

@@ -197,7 +197,7 @@ const addToCanvas = ({
     deserialisedKet.drawingEntitiesManager.centerMacroStructure();
   }
 
-  const { command: modelChanges } =
+  const { command: modelChanges, mergedDrawingEntities } =
     deserialisedKet.drawingEntitiesManager.mergeInto(
       editor.drawingEntitiesManager,
     );
@@ -205,7 +205,15 @@ const addToCanvas = ({
 
   if (isFlexMode) {
     modelChanges.merge(
-      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+      editor.drawingEntitiesManager.recalculateAntisenseChains({
+        needRecalculateOldAntisense: true,
+        useStableSenseTieBreak: true,
+      }),
+    );
+    modelChanges.merge(
+      editor.drawingEntitiesManager.applyCanonicalAntisenseOrientation([
+        ...mergedDrawingEntities.monomers.values(),
+      ]),
     );
   }
 

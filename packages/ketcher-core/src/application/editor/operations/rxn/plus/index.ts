@@ -29,7 +29,7 @@ type Data = {
   pos: any;
 };
 
-class RxnPlusAdd extends BaseOperation {
+class RxnPlusAdd extends BaseOperation<Data> {
   data: Data;
 
   constructor(pos?: any) {
@@ -59,7 +59,7 @@ class RxnPlusAdd extends BaseOperation {
     BaseOperation.invalidateItem(restruct, 'rxnPluses', plid, 1);
   }
 
-  invert() {
+  invert(): RxnPlusDelete {
     const inverted = new RxnPlusDelete();
     inverted.data = this.data;
     return inverted;

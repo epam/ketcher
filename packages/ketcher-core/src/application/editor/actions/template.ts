@@ -93,7 +93,7 @@ function extraBondAction(
     const operation = new AtomAdd(
       { label: 'C', fragment: frid },
       new Vec2(1, 0).rotate(angle).add(pivotAtom.pp).get_xy0(),
-    ).perform(restruct);
+    ).perform(restruct) as AtomAdd;
 
     action.addOp(operation);
     const newAtomId = operation.data.aid;

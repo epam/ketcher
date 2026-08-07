@@ -41,6 +41,12 @@ export interface BondAttributes {
   endSuperatomAttachmentPointNumber?: number;
   beginSgroup?: SGroup;
   endSgroup?: SGroup;
+  len?: number;
+  sb?: number;
+  sa?: number;
+  angle?: number;
+  hb1?: number;
+  hb2?: number;
 }
 
 export class Bond extends BaseMicromoleculeEntity {
@@ -158,28 +164,7 @@ export class Bond extends BaseMicromoleculeEntity {
     for (const attr in Bond.attrlist) {
       const key = attr as keyof typeof Bond.attrlist;
       if (bond[key] || key === 'stereo') {
-        switch (key) {
-          case 'type':
-            attrs.type = bond.type;
-            break;
-          case 'stereo':
-            attrs.stereo = bond.stereo;
-            break;
-          case 'topology':
-            attrs.topology = bond.topology;
-            break;
-          case 'reactingCenterStatus':
-            attrs.reactingCenterStatus = bond.reactingCenterStatus;
-            break;
-          case 'cip':
-            attrs.cip = bond.cip;
-            break;
-          case 'customQuery':
-            attrs.customQuery = bond.customQuery;
-            break;
-          default:
-            break;
-        }
+        attrs[key] = bond[key] as never;
       }
     }
     return attrs;

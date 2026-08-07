@@ -19,14 +19,7 @@ import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
 import type { BondAttributes } from 'domain/entities';
 
-type BondAttributeName =
-  | keyof BondAttributes
-  | 'len'
-  | 'sb'
-  | 'sa'
-  | 'angle'
-  | 'hb1'
-  | 'hb2';
+type BondAttributeName = keyof BondAttributes;
 
 type Data = {
   bid: number;

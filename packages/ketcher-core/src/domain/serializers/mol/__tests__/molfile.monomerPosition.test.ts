@@ -3,21 +3,9 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Molfile } from '../molfile';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
+import { assertDefined } from '../../../../../__tests__/utilities/assertDefined';
 
 const PRECISION = 4;
-
-function assertDefined<T>(
-  value: T,
-  message = 'Expected value to be defined',
-): NonNullable<T> {
-  expect(value).toBeDefined();
-
-  if (value == null) {
-    throw new Error(message);
-  }
-
-  return value;
-}
 
 function buildMonomerStruct(
   monomerLabel: string,

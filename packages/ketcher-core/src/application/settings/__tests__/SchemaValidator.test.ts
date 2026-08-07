@@ -5,19 +5,7 @@
 import { SchemaValidator } from '../SchemaValidator';
 import { getDefaultSettings } from '../schema';
 import type { Settings } from '../types';
-
-function assertDefined<T>(
-  value: T,
-  message = 'Expected value to be defined',
-): NonNullable<T> {
-  expect(value).toBeDefined();
-
-  if (value == null) {
-    throw new Error(message);
-  }
-
-  return value;
-}
+import { assertDefined } from '../../../../__tests__/utilities/assertDefined';
 
 describe('SchemaValidator', () => {
   let validator: SchemaValidator;

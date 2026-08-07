@@ -93,6 +93,9 @@ class SelectTool implements Tool {
   private readonly editor: Editor;
   private dragCtx: DragContext = null;
   private previousMouseMoveEvent?: PointerEvent;
+  // Selection to collapse to on mouseup when a click lands on an item that's
+  // already part of a larger selection but the user doesn't actually drag it.
+  private pendingSingleItemSelection: Selection | null = null;
   isMouseDown = false;
   isReadyForCopy = false;
   isCopied = false;
@@ -207,11 +210,14 @@ class SelectTool implements Tool {
 
     if (event.shiftKey) {
       this.editor.selection(selMerge(sel, selection, true));
+      this.pendingSingleItemSelection = null;
     } else {
+      const clickedItemAlreadySelected = isItemSelected(selection, ci, ctab);
       this.editor.selection(null);
-      this.editor.selection(
-        isItemSelected(selection, ci, ctab) ? selection : sel,
-      );
+      this.editor.selection(clickedItemAlreadySelected ? selection : sel);
+      // Keep the whole selection while a drag might follow, but remember to
+      // narrow down to just the clicked item if it turns out to be a plain click.
+      this.pendingSingleItemSelection = clickedItemAlreadySelected ? sel : null;
     }
 
     this.handleMoveCloseToEdgeOfCanvas();
@@ -442,9 +448,16 @@ class SelectTool implements Tool {
           dragCtx.copyAction,
         );
       }
+      // A plain click (no drag) on an item within a larger selection should
+      // narrow the selection down to just that item instead of keeping the
+      // whole group highlighted.
+      if (!dragCtx.action && this.pendingSingleItemSelection) {
+        editor.selection(this.pendingSingleItemSelection);
+      }
     } else {
       onSelectionEnd(event, this.editor, this.#lassoHelper);
     }
+    this.pendingSingleItemSelection = null;
     this.dragCtx = null;
     editor.event.message.dispatch({
       info: false,

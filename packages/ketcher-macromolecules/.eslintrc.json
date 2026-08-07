@@ -17,7 +17,6 @@
     "jsx-a11y/no-noninteractive-element-interactions": "warn",
     "jsx-a11y/alt-text": "warn",
     "jsx-a11y/click-events-have-key-events": "warn",
-    "react-hooks/preserve-manual-memoization": "off",
     "react-hooks/refs": "off",
     "react-hooks/set-state-in-effect": "off",
     "react-hooks/static-components": "off",

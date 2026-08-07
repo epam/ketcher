@@ -32,7 +32,7 @@
     "build": "cross-env NODE_ENV=production rollup -c rollup.config.mjs -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64Cjs rollup -c rollup.config.mjs -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasm rollup -c rollup.config.mjs -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64WithoutRender SEPARATE_INDIGO_RENDER=true rollup -c rollup.config.mjs -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64WithoutRenderCjs SEPARATE_INDIGO_RENDER=true rollup -c rollup.config.mjs -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasmWithoutRender SEPARATE_INDIGO_RENDER=true rollup -c rollup.config.mjs -m true",
     "start": "cross-env NODE_ENV=development rollup -c rollup.config.mjs -m true -w",
     "test": "run-s test:prettier test:eslint:quiet test:types test:unit",
-    "test:eslint": "cross-env ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts,.js",
+    "test:eslint": "eslint \"**/*.{ts,js}\"",
     "test:eslint:quiet": "npm run test:eslint -- --quiet",
     "test:eslint:fix": "npm run test:eslint -- --fix",
     "test:types": "tsc --noEmit",

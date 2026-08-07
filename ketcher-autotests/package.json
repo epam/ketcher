@@ -12,8 +12,8 @@
     "check:code": "npm run check:types && npm run check:lint",
     "check:types": "tsc --noEmit",
     "test:types": "tsc --noEmit",
-    "check:lint": "cross-env ESLINT_USE_FLAT_CONFIG=false eslint .",
-    "lint:fix": "cross-env ESLINT_USE_FLAT_CONFIG=false eslint . --fix",
+    "check:lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "prettier:write": "prettier --write \"./**/*.{js,ts}\" ",
     "docker:build": "docker-compose build autotests && docker-compose run --rm autotests bash /app/test_prepare.sh",
     "docker:test": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium",
@@ -45,7 +45,7 @@
     ],
     "*.{js,ts}": [
       "prettier --write",
-      "cross-env ESLINT_USE_FLAT_CONFIG=false eslint ."
+      "eslint ."
     ]
   },
   "types": "./tests/typings.d.ts"

@@ -197,7 +197,7 @@ const addToCanvas = ({
     deserialisedKet.drawingEntitiesManager.centerMacroStructure();
   }
 
-  const { command: modelChanges } =
+  const { command: modelChanges, mergedDrawingEntities } =
     deserialisedKet.drawingEntitiesManager.mergeInto(
       editor.drawingEntitiesManager,
     );
@@ -205,14 +205,21 @@ const addToCanvas = ({
 
   if (isFlexMode) {
     modelChanges.merge(
-      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+      editor.drawingEntitiesManager.recalculateAntisenseChains({
+        needRecalculateOldAntisense: true,
+        useStableSenseTieBreak: true,
+      }),
     );
-
-    if (editor.drawingEntitiesManager.hasAntisenseChains) {
-      modelChanges.merge(
-        editor.drawingEntitiesManager.applySnakeLayout(true, true, true, false),
-      );
-    }
+    modelChanges.merge(
+      editor.drawingEntitiesManager.applyCanonicalAntisenseOrientation([
+        ...mergedDrawingEntities.monomers.values(),
+      ]),
+    );
+    modelChanges.merge(
+      editor.drawingEntitiesManager.realignChainsAttachedOutsideDuplex([
+        ...mergedDrawingEntities.monomers.values(),
+      ]),
+    );
   }
 
   editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();

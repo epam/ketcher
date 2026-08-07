@@ -53,7 +53,6 @@ import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import {
   MicroBondType,
   MicroBondTool,
@@ -2021,15 +2020,14 @@ test(`41. Verify that in create monomer wizard: user can use Copy, Paste, Cut bu
    *      4. Press Create Monomer button
    *      5. Select all structure and press Cut button
    *      6. Verify that molecule got removed from canvas
-   *      7. Press Paste button and verify that Error message dialog appears
-   *      8. Close Error message dialog and paste molecule using keyboard shortcut
-   *      9. Verify that molecule got pasted on canvas
-   *      10. Select all structure and press Copy button
-   *      11. Select all structure and erase it from canvas
-   *      12. Verify that molecule got removed from canvas
-   *      13. Paste molecule using keyboard shortcut
-   *      14. Verify that molecule got pasted on canvas
-   *      15. Discard created monomer
+   *      7. Paste molecule using keyboard shortcut
+   *      8. Verify that molecule got pasted on canvas
+   *      9. Select all structure and press Copy button
+   *      10. Select all structure and erase it from canvas
+   *      11. Verify that molecule got removed from canvas
+   *      12. Paste molecule using keyboard shortcut
+   *      13. Verify that molecule got pasted on canvas
+   *      14. Discard created monomer
    *
    * Version 3.9
    */
@@ -2054,10 +2052,6 @@ test(`41. Verify that in create monomer wizard: user can use Copy, Paste, Cut bu
   await expect(targetBond).not.toBeVisible();
 
   await MoleculesTopToolbar(page).paste();
-  await expect(ErrorMessageDialog(page).window).toBeVisible();
-  await ErrorMessageDialog(page).close();
-
-  await pasteFromClipboardByKeyboard(page);
   await clickOnCanvas(page, 0, 0, { from: 'canvasCenter' });
 
   await expect(targetAtom).toBeVisible();

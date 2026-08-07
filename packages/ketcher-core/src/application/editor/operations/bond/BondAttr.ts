@@ -17,11 +17,14 @@
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
+import type { BondAttributes } from 'domain/entities';
+
+type BondAttributeName = keyof BondAttributes;
 
 type Data = {
-  bid: any;
-  attribute: any;
-  value: any;
+  bid: number;
+  attribute: BondAttributeName;
+  value: unknown;
   needInvalidateBond?: boolean;
 };
 
@@ -30,13 +33,16 @@ export class BondAttr extends BaseOperation {
   data2: Data | null;
 
   constructor(
-    bondId?: any,
-    attribute?: any,
-    value?: any,
+    bondId?: number,
+    attribute?: BondAttributeName,
+    value?: unknown,
     needInvalidateBond = true,
   ) {
     super(OperationType.BOND_ATTR, OperationPriority.BOND_ATTR);
-    this.data = { bid: bondId, attribute, value, needInvalidateBond };
+    this.data =
+      bondId !== undefined && attribute !== undefined
+        ? { bid: bondId, attribute, value, needInvalidateBond }
+        : null;
     this.data2 = null;
   }
 
@@ -54,7 +60,8 @@ export class BondAttr extends BaseOperation {
         };
       }
 
-      bond[attribute] = value;
+      (bond as unknown as Record<BondAttributeName, unknown>)[attribute] =
+        value;
 
       if (this.data.needInvalidateBond) {
         BaseOperation.invalidateBond(restruct, bid);

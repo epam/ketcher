@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable react-hooks/set-state-in-effect */
-
 import { type HTMLAttributes, useState, useEffect } from 'react';
 import clsx from 'clsx';
 

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/immutability, react-hooks/refs, react-hooks/set-state-in-effect, react-hooks/static-components, react-hooks/use-memo, react-hooks/preserve-manual-memoization */
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Dialog, Icon } from 'components';

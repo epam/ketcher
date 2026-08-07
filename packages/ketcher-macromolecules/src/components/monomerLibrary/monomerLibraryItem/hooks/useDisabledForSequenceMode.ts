@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/immutability, react-hooks/refs, react-hooks/set-state-in-effect, react-hooks/static-components, react-hooks/use-memo, react-hooks/preserve-manual-memoization */
 import { MonomerGroups, MonomerItemType } from 'ketcher-core';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';

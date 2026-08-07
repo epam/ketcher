@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable testing-library/await-async-events */
-
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IconName } from 'ketcher-react';

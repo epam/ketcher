@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable react-hooks/set-state-in-effect */
-
 import { type ComponentType, type FC, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import type { AnyAction } from 'redux';

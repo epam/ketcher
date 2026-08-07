@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/immutability, react-hooks/refs, react-hooks/set-state-in-effect, react-hooks/static-components, react-hooks/use-memo, react-hooks/preserve-manual-memoization */
 import { ZoomTransform } from 'd3';
 import { memo, useMemo, useRef } from 'react';
 import { LayoutMode } from 'ketcher-core';

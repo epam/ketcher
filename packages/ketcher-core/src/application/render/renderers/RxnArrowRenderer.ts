@@ -29,11 +29,16 @@ import { UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer } from 'applicatio
 import svgPath from 'svgpath';
 
 const ARROW_STROKE_WIDTH = 2;
+const END_HANDLE_HIT_RADIUS_MULTIPLIER = 2;
 
 export class RxnArrowRenderer extends BaseRenderer {
   private selectionElement:
     | D3SvgElementSelection<SVGPathElement, void>
     | undefined;
+
+  private endHandleGroups: D3SvgElementSelection<SVGGElement, void>[] = [];
+
+  private arrowPathElements: D3SvgElementSelection<SVGPathElement, void>[] = [];
 
   constructor(public arrow: RxnArrow) {
     super(arrow);
@@ -244,6 +249,8 @@ export class RxnArrowRenderer extends BaseRenderer {
   }
 
   public show() {
+    this.arrowPathElements = [];
+
     this.rootElement = this.canvas
       .insert('g', `.monomer`)
       .data([this])
@@ -273,10 +280,15 @@ export class RxnArrowRenderer extends BaseRenderer {
       Object.entries(attrs).forEach(([key, value]) => {
         path?.attr(key, value);
       });
+
+      if (path) {
+        this.arrowPathElements.push(path);
+      }
     });
 
     this.appendHoverAreaElement();
     this.drawSelection();
+    this.drawEndHandles();
   }
 
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
@@ -289,6 +301,8 @@ export class RxnArrowRenderer extends BaseRenderer {
       .attr('stroke', '#0097A8')
       .attr('stroke-width', 1.2)
       .attr('class', 'dynamic-element');
+
+    this.drawEndHandles();
   }
 
   protected appendHoverAreaElement(): void {
@@ -320,6 +334,98 @@ export class RxnArrowRenderer extends BaseRenderer {
     } else {
       this.removeSelection();
     }
+    this.drawEndHandles();
+  }
+
+  private getEndHandleLocalPositions(): [Vec2, Vec2] {
+    const endOffset = Vec2.diff(
+      this.scaledPosition.endPosition,
+      this.scaledPosition.startPosition,
+    );
+
+    return [new Vec2(0, 0), endOffset];
+  }
+
+  private getEndHandleRadius() {
+    return provideEditorSettings().macroModeScale / 8;
+  }
+
+  private updateEndHandles() {
+    if (!this.rootElement) {
+      return;
+    }
+
+    const shouldShowHandles = Boolean(this.arrow.selected || this.hoverElement);
+    if (!shouldShowHandles) {
+      this.removeEndHandles();
+      return;
+    }
+
+    const positions = this.getEndHandleLocalPositions();
+
+    if (this.endHandleGroups.length === 2) {
+      this.endHandleGroups.forEach((group, endIndex) => {
+        const position = positions[endIndex];
+        group.selectAll('circle').attr('cx', position.x).attr('cy', position.y);
+      });
+      return;
+    }
+
+    this.drawEndHandles();
+  }
+
+  public drawEndHandles() {
+    this.removeEndHandles();
+
+    if (!this.rootElement || (!this.arrow.selected && !this.hoverElement)) {
+      return;
+    }
+
+    const handleRadius = this.getEndHandleRadius();
+    const hitRadius = handleRadius * END_HANDLE_HIT_RADIUS_MULTIPLIER;
+    const [startPosition, endPosition] = this.getEndHandleLocalPositions();
+
+    [startPosition, endPosition].forEach((position, endIndex) => {
+      const handleData = {
+        rxnArrowRenderer: this,
+        endIndex: endIndex as 0 | 1,
+      };
+
+      const handleGroup = this.rootElement
+        ?.append('g')
+        .attr('class', 'dynamic-element');
+
+      handleGroup
+        ?.append('circle')
+        .data([handleData])
+        .attr('cx', position.x)
+        .attr('cy', position.y)
+        .attr('r', hitRadius)
+        .attr('fill', 'transparent')
+        .attr('stroke', 'none')
+        .attr('pointer-events', 'all');
+
+      handleGroup
+        ?.append('circle')
+        .data([handleData])
+        .attr('cx', position.x)
+        .attr('cy', position.y)
+        .attr('r', handleRadius)
+        .attr('fill', SELECTION_COLOR)
+        .attr('stroke', SELECTION_COLOR)
+        .attr('pointer-events', 'all');
+
+      if (handleGroup) {
+        this.endHandleGroups.push(handleGroup);
+      }
+    });
+  }
+
+  public removeEndHandles() {
+    this.endHandleGroups.forEach((element) => {
+      element.remove();
+    });
+    this.endHandleGroups = [];
   }
 
   public appendSelection(): void {
@@ -345,22 +451,73 @@ export class RxnArrowRenderer extends BaseRenderer {
       return;
     }
 
-    this.remove();
-    this.show();
+    const paths = this.generateArrowPath();
+    if (paths.length !== this.arrowPathElements.length) {
+      this.remove();
+      this.show();
+      return;
+    }
+
+    this.rootElement.attr(
+      'transform',
+      `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
+    );
+
+    paths.forEach(({ d, attrs }, index) => {
+      const pathElement = this.arrowPathElements[index];
+      pathElement.attr('d', d);
+      Object.entries(attrs).forEach(([key, value]) => {
+        pathElement.attr(key, value);
+      });
+    });
+
+    const contourD = this.getSelectionContour();
+    this.hoverAreaElement?.attr('d', contourD);
+    this.hoverElement?.attr('d', contourD);
+
+    if (this.selectionElement) {
+      this.selectionElement.attr(
+        'd',
+        this.getSelectionContour(this.scaledPosition.startPosition),
+      );
+    }
+
+    this.updateEndHandles();
   }
 
   protected removeHover(): void {
     this.hoverElement?.remove();
     this.hoverElement = undefined;
+    // Keep end handles visible while the arrow stays selected;
+    // drawEndHandles() removes them when neither selected nor hovered.
+    this.drawEndHandles();
   }
 
   public remove() {
     super.remove();
+    this.arrowPathElements = [];
     this.removeHover();
     this.removeSelection();
+    this.removeEndHandles();
   }
 
   public moveSelection(): void {
     // intentional no-op: this renderer type does not support selection movement
   }
+}
+
+export type RxnArrowEndHandleData = {
+  rxnArrowRenderer: RxnArrowRenderer;
+  endIndex: 0 | 1;
+};
+
+export function isRxnArrowEndHandle(
+  data: unknown,
+): data is RxnArrowEndHandleData {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'rxnArrowRenderer' in data &&
+    'endIndex' in data
+  );
 }

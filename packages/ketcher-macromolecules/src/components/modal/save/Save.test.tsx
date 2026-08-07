@@ -85,7 +85,7 @@ describe('Save modal', () => {
     expect(option2).toBeVisible();
   });
 
-  it.skip('renders buttons correctly', () => {
+  it.skip('renders buttons correctly', async () => {
     render(withThemeProvider(<Save {...mockProps} />));
 
     const saveButton = screen.getByRole('button', { name: 'Save as file' });
@@ -94,8 +94,8 @@ describe('Save modal', () => {
     });
 
     // eslint-disable-next-line testing-library/no-unnecessary-act
-    act(() => {
-      userEvent.clear(filenameInput);
+    await act(async () => {
+      await userEvent.clear(filenameInput);
     });
 
     expect(saveButton).toBeDisabled();

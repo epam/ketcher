@@ -790,6 +790,7 @@
                     17
                 ],
                 "name": "perfluorocyclohexane",
+                "expanded": false,
                 "id": 0
             }
         ],
@@ -884,6 +885,7 @@
                     4
                 ],
                 "name": "methane sulphonic acid",
+                "expanded": false,
                 "id": 0
             }
         ],
@@ -1065,6 +1067,7 @@
                     9
                 ],
                 "name": "2,3,4-trifluorotoluene",
+                "expanded": false,
                 "id": 0
             }
         ],

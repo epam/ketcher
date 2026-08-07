@@ -1,3 +1,5 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-chain-state-updates */
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -111,7 +113,7 @@ export const Preview = () => {
       setIsPreviewVisible(false);
       previewRef.current.setAttribute('style', '');
     }
-  }, [preview]);
+  }, [editor?.ketcherRootElementBoundingClientRect, isPreviewVisible, preview]);
 
   if (!preview) {
     return null;

@@ -3,22 +3,13 @@ import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import { Vec2 } from 'domain/entities';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Nucleotide } from 'domain/entities/Nucleotide';
-import { Nucleoside } from 'domain/entities/Nucleoside';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { AttachmentPointName, type MonomerItemType } from 'domain/types';
+import { AttachmentPointName } from 'domain/types';
 import { chemMonomerItem, peptideMonomerItem } from '../../mock-data';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
 } from '../../helpers/dom';
-
-const peptideWithAttachmentPointsMonomerItem: MonomerItemType = {
-  ...peptideMonomerItem,
-  attachmentPoints: [
-    { attachmentAtom: 0, leavingGroup: { atoms: [] }, type: 'left' },
-    { attachmentAtom: 0, leavingGroup: { atoms: [] }, type: 'right' },
-  ],
-};
 
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
@@ -47,22 +38,14 @@ const stubCanvasDimensions = (canvas: SVGSVGElement) => {
 const createNucleotide = (base: string, position: Vec2) =>
   Nucleotide.createOnCanvas(base, position).node;
 
-type NucleotideOrNucleoside = Nucleotide | Nucleoside;
-
 const addPeptide = (editor: CoreEditor, position: Vec2) =>
   editor.drawingEntitiesManager.addMonomer(peptideMonomerItem, position)
     .operations[0].monomer as BaseMonomer;
 
-const addPeptideWithAttachmentPoints = (editor: CoreEditor, position: Vec2) =>
-  editor.drawingEntitiesManager.addMonomer(
-    peptideWithAttachmentPointsMonomerItem,
-    position,
-  ).operations[0].monomer as BaseMonomer;
-
 const connectFivePrimeToThreePrime = (
   editor: CoreEditor,
-  fivePrimeNucleotide: Nucleotide,
-  threePrimeNucleotide: NucleotideOrNucleoside,
+  fivePrimeNucleotide: ReturnType<typeof createNucleotide>,
+  threePrimeNucleotide: ReturnType<typeof createNucleotide>,
 ) => {
   editor.drawingEntitiesManager.createPolymerBond(
     fivePrimeNucleotide.phosphate,
@@ -74,8 +57,8 @@ const connectFivePrimeToThreePrime = (
 
 const pairBases = (
   editor: CoreEditor,
-  senseNucleotide: NucleotideOrNucleoside,
-  antisenseNucleotide: NucleotideOrNucleoside,
+  senseNucleotide: ReturnType<typeof createNucleotide>,
+  antisenseNucleotide: ReturnType<typeof createNucleotide>,
 ) => {
   editor.drawingEntitiesManager.createPolymerBond(
     senseNucleotide.rnaBase,
@@ -423,164 +406,5 @@ describe('recalculateAntisenseChains: deterministic sense/antisense tie-break', 
 
     expect(chainBFivePrime.sugar.monomerItem.isSense).toBe(true);
     expect(chainAFivePrime.sugar.monomerItem.isAntisense).toBe(true);
-  });
-});
-
-describe('Open-style Flex mode import: attachments bonded to the duplex stay in line', () => {
-  let canvas: SVGSVGElement;
-  let editor: CoreEditor;
-
-  beforeEach(() => {
-    canvas = createPolymerEditorCanvas();
-    stubCanvasDimensions(canvas);
-    editor = new CoreEditor({
-      canvas,
-      theme: {},
-      renderersContainer: createRenderersManager(),
-    });
-  });
-
-  afterEach(() => {
-    canvas.remove();
-  });
-
-  const applyOpenStyleFlexModeImportFlow = (
-    monomers = allMonomersOf(editor),
-  ) => {
-    editor.drawingEntitiesManager.recalculateAntisenseChains({
-      needRecalculateOldAntisense: true,
-      useStableSenseTieBreak: true,
-    });
-    executeCommand(
-      editor.drawingEntitiesManager.applyCanonicalAntisenseOrientation(
-        monomers,
-      ),
-    );
-    return executeCommand(
-      editor.drawingEntitiesManager.realignChainsAttachedOutsideDuplex(
-        monomers,
-      ),
-    );
-  };
-
-  it('keeps a peptide appended via R2->R1 to the sense chain in line with it', () => {
-    const { senseThreePrime } = buildMirroredDuplex(editor);
-    const peptide = addPeptideWithAttachmentPoints(editor, new Vec2(50, 50));
-
-    editor.drawingEntitiesManager.createPolymerBond(
-      senseThreePrime.phosphate,
-      peptide,
-      AttachmentPointName.R2,
-      AttachmentPointName.R1,
-    );
-
-    applyOpenStyleFlexModeImportFlow();
-
-    expect(peptide.position.y).toBeCloseTo(
-      senseThreePrime.phosphate.position.y,
-    );
-    expect(peptide.position.x).toBeGreaterThan(
-      senseThreePrime.phosphate.position.x,
-    );
-  });
-
-  it('keeps a peptide appended via R2->R1 to a sugar with no trailing phosphate (Nucleoside) in line', () => {
-    const senseFivePrime = createNucleotide('A', new Vec2(6, 5));
-    const senseThreePrime = Nucleoside.createOnCanvas('U', new Vec2(3, 5)).node;
-    connectFivePrimeToThreePrime(editor, senseFivePrime, senseThreePrime);
-
-    const antisenseFivePrime = createNucleotide('G', new Vec2(3, 0));
-    const antisenseThreePrime = createNucleotide('C', new Vec2(6, 0));
-    connectFivePrimeToThreePrime(
-      editor,
-      antisenseFivePrime,
-      antisenseThreePrime,
-    );
-
-    pairBases(editor, senseFivePrime, antisenseThreePrime);
-    pairBases(editor, senseThreePrime, antisenseFivePrime);
-
-    const peptide = addPeptideWithAttachmentPoints(editor, new Vec2(50, 50));
-
-    editor.drawingEntitiesManager.createPolymerBond(
-      senseThreePrime.sugar,
-      peptide,
-      AttachmentPointName.R2,
-      AttachmentPointName.R1,
-    );
-
-    applyOpenStyleFlexModeImportFlow();
-
-    expect(peptide.position.y).toBeCloseTo(senseThreePrime.sugar.position.y);
-    expect(peptide.position.x).toBeGreaterThan(
-      senseThreePrime.sugar.position.x,
-    );
-  });
-
-  it('lines up a chain appended via R2->R1 (attached before the anchor) on the opposite side', () => {
-    const { senseFivePrime } = buildMirroredDuplex(editor);
-    const peptide = addPeptideWithAttachmentPoints(editor, new Vec2(-50, -50));
-
-    editor.drawingEntitiesManager.createPolymerBond(
-      peptide,
-      senseFivePrime.sugar,
-      AttachmentPointName.R2,
-      AttachmentPointName.R1,
-    );
-
-    applyOpenStyleFlexModeImportFlow();
-
-    expect(peptide.position.y).toBeCloseTo(senseFivePrime.sugar.position.y);
-    expect(peptide.position.x).toBeLessThan(senseFivePrime.sugar.position.x);
-  });
-
-  it('does not move a chain that is not bonded to the duplex', () => {
-    const duplex = buildMirroredDuplex(editor);
-    const duplexMonomers = [
-      duplex.senseFivePrime.sugar,
-      duplex.senseFivePrime.phosphate,
-      duplex.senseFivePrime.rnaBase,
-      duplex.senseThreePrime.sugar,
-      duplex.senseThreePrime.phosphate,
-      duplex.senseThreePrime.rnaBase,
-      duplex.antisenseFivePrime.sugar,
-      duplex.antisenseFivePrime.phosphate,
-      duplex.antisenseFivePrime.rnaBase,
-      duplex.antisenseThreePrime.sugar,
-      duplex.antisenseThreePrime.phosphate,
-      duplex.antisenseThreePrime.rnaBase,
-    ];
-    const unrelatedPeptide = addPeptideWithAttachmentPoints(
-      editor,
-      new Vec2(50, 50),
-    );
-    const positionBefore = new Vec2(
-      unrelatedPeptide.position.x,
-      unrelatedPeptide.position.y,
-    );
-
-    applyOpenStyleFlexModeImportFlow(duplexMonomers);
-
-    expect(unrelatedPeptide.position.x).toBeCloseTo(positionBefore.x);
-    expect(unrelatedPeptide.position.y).toBeCloseTo(positionBefore.y);
-  });
-
-  it('is a no-op when there is no paired duplex at all', () => {
-    const firstPeptide = addPeptideWithAttachmentPoints(editor, new Vec2(0, 0));
-    const secondPeptide = addPeptideWithAttachmentPoints(
-      editor,
-      new Vec2(3, 0),
-    );
-
-    editor.drawingEntitiesManager.createPolymerBond(
-      firstPeptide,
-      secondPeptide,
-      AttachmentPointName.R2,
-      AttachmentPointName.R1,
-    );
-
-    const command = applyOpenStyleFlexModeImportFlow();
-
-    expect(command.operations.length).toBe(0);
   });
 });

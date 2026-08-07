@@ -215,11 +215,6 @@ const addToCanvas = ({
         ...mergedDrawingEntities.monomers.values(),
       ]),
     );
-    modelChanges.merge(
-      editor.drawingEntitiesManager.realignChainsAttachedOutsideDuplex([
-        ...mergedDrawingEntities.monomers.values(),
-      ]),
-    );
   }
 
   editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();

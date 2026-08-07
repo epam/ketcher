@@ -246,7 +246,7 @@ class IndigoService implements StructService {
     this.worker = getIndigoWorker();
     this.messageHandler = (e: MessageEvent<OutputMessage<string>>) => {
       if (e.data.type === Command.Info) {
-        const callbackMethod = process.env.SEPARATE_INDIGO_RENDER
+        const callbackMethod = import.meta.env.SEPARATE_INDIGO_RENDER
           ? this.callIndigoNoRenderLoadedCallback
           : this.callIndigoLoadedCallback;
 

@@ -29,8 +29,8 @@
         "type": "ambiguousMonomer",
         "id": "0",
         "position": {
-            "x": 18.60811792465124,
-            "y": -10.369464324091886
+            "x": 15.40515,
+            "y": -7.7068
         },
         "alias": "N",
         "templateId": "alternatives__A___Adenine__C___Cytosine__G___Guanine__U___Uracil_"

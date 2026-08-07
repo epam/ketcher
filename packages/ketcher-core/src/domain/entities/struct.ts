@@ -98,6 +98,9 @@ export class Struct {
   highlights: Pool<Highlight>;
   images = new Pool<Image>();
   multitailArrows = new Pool<MultitailArrow>();
+  private static readonly MIN_RESCALE = 0.01;
+  private static readonly MAX_RESCALE = 100;
+
   private nextArrowId = 0;
 
   constructor() {
@@ -835,6 +838,21 @@ export class Struct {
     return bld.cnt > 0 ? bld.totalLength / bld.cnt : -1;
   }
 
+  getMedianBondLength(): number {
+    const lengths: number[] = [];
+    this.bonds.forEach((bond) => {
+      lengths.push(
+        Vec2.dist(this.atoms.get(bond.begin)!.pp, this.atoms.get(bond.end)!.pp),
+      );
+    });
+    if (lengths.length === 0) return -1;
+    lengths.sort((a, b) => a - b);
+    const mid = Math.floor(lengths.length / 2);
+    return lengths.length % 2 === 0
+      ? (lengths[mid - 1] + lengths[mid]) / 2
+      : lengths[mid];
+  }
+
   getAvgClosestAtomDistance(): number {
     let totalDist = 0;
     let minDist;
@@ -1006,14 +1024,27 @@ export class Struct {
     });
   }
 
+  /**
+   * Returns true unless format is 'ket'. KET coordinates are already in canvas scale;
+   * rescaling would distort the layout. Accepts string (not SupportedFormat) to avoid
+   * a circular import with structFormatter.types.ts.
+   */
+  static needsRescale(format: string | null): boolean {
+    return format !== 'ket';
+  }
+
   rescale() {
-    let avg = this.getAvgBondLength();
-    if (avg <= 0) {
+    const median = this.getMedianBondLength();
+    if (median <= 0) {
       return;
     }
-    if (avg < 1e-3) avg = 1;
 
-    const scale = 1 / avg;
+    const scale = 1 / median;
+    // Skip absurd scale factors — bond lengths outside [0.01, 100] indicate degenerate geometry.
+    if (scale < Struct.MIN_RESCALE || scale > Struct.MAX_RESCALE) {
+      return;
+    }
+
     this.scale(scale);
   }
 

@@ -135,11 +135,8 @@ export class ServerFormatter implements StructFormatter {
 
     try {
       const result = await method(data, this.#options);
-      const parsedStruct = this.#ketSerializer.deserialize(result.struct);
-      if (method === this.#structService.layout) {
-        parsedStruct.rescale();
-      }
-      return parsedStruct;
+      // Caller rescales based on format; see Struct.needsRescale().
+      return this.#ketSerializer.deserialize(result.struct);
     } catch (e: unknown) {
       if (!(e instanceof Error) || e.message !== 'Server is not compatible') {
         KetcherLogger.error(

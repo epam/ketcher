@@ -403,13 +403,14 @@ describe('Drawing Entities Manager', () => {
     expect(expandedSGroup.data.expanded).toBe(true);
   });
 
-  it('should render macro data S-group field values', () => {
+  it('should render, select and move macro data S-group field values', () => {
     const editor = new CoreEditor({
       canvas: createPolymerEditorCanvas(),
       theme: {},
       renderersContainer: createRenderersManager(),
     });
-    const { struct } = createStructWithSGroup(SGroup.TYPES.DAT);
+    const { struct, sgroup } = createStructWithSGroup(SGroup.TYPES.DAT);
+    sgroup.pp = new Vec2(2, 2);
     const { modelChanges } =
       MacromoleculesConverter.convertStructToDrawingEntities(
         struct,
@@ -418,7 +419,74 @@ describe('Drawing Entities Manager', () => {
 
     editor.renderersContainer.update(modelChanges);
 
-    expect(document.querySelector('[data-label-text="Value"]')).toBeTruthy();
+    const valueElement = document.querySelector('[data-label-text="Value"]');
+    expect(valueElement).toBeTruthy();
+
+    const sgroupDrawingEntity = [
+      ...editor.drawingEntitiesManager.sgroups.values(),
+    ][0];
+    expect(sgroupDrawingEntity.isSelectableDataSGroup).toBe(true);
+    sgroup.data.absolute = false;
+    expect(sgroupDrawingEntity.isSelectableDataSGroup).toBe(true);
+    expect((valueElement as SVGElement & { __data__?: unknown }).__data__).toBe(
+      sgroupDrawingEntity.renderer,
+    );
+    expect(
+      (valueElement?.previousSibling as SVGElement & { __data__?: unknown })
+        .__data__,
+    ).toBe(sgroupDrawingEntity.renderer);
+    const { command } =
+      editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities([
+        sgroupDrawingEntity,
+      ]);
+    editor.renderersContainer.update(command);
+
+    expect(sgroupDrawingEntity.selected).toBe(true);
+    expect(editor.drawingEntitiesManager.selectedEntitiesArr).toEqual([
+      sgroupDrawingEntity,
+    ]);
+    expect(
+      (valueElement?.previousSibling as SVGElement).getAttribute('fill'),
+    ).toBe('#57FF8F');
+
+    const moveCommand =
+      editor.drawingEntitiesManager.moveSelectedDrawingEntities(new Vec2(1, 1));
+    editor.renderersContainer.update(moveCommand);
+
+    expect(sgroup.pp).toEqual(new Vec2(3, 3));
+    expect(struct.atoms.get(0)?.pp).toEqual(new Vec2(0, 0));
+  });
+
+  it('should keep attached macro data S-group field values non-selectable', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const { struct, sgroup } = createStructWithSGroup(SGroup.TYPES.DAT);
+    sgroup.data.attached = true;
+    const { modelChanges } =
+      MacromoleculesConverter.convertStructToDrawingEntities(
+        struct,
+        editor.drawingEntitiesManager,
+      );
+
+    editor.renderersContainer.update(modelChanges);
+
+    const sgroupDrawingEntity = [
+      ...editor.drawingEntitiesManager.sgroups.values(),
+    ][0];
+    expect(sgroupDrawingEntity.isSelectableDataSGroup).toBe(false);
+    const attachedValueElements = Array.from(
+      document.querySelectorAll('[data-label-text="Value"]'),
+    ).slice(-2) as (SVGElement & { __data__?: unknown })[];
+    expect(attachedValueElements).toHaveLength(2);
+    expect(
+      attachedValueElements.every((element) => element.__data__ === undefined),
+    ).toBe(true);
+    expect(editor.drawingEntitiesManager.allEntitiesArray).not.toContain(
+      sgroupDrawingEntity,
+    );
   });
 
   describe('getAntisenseBaseLabel', () => {

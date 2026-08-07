@@ -45,14 +45,16 @@ jobs:
 
   part:
     timeout-minutes: 120
-    runs-on: self-hosted-a
+    # Fork PRs run untrusted code, so use GitHub-hosted runners there.
+    # Internal PRs, pushes, and manual runs keep using the dedicated self-hosted runner.
+    runs-on: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository && 'ubuntu-latest' || 'self-hosted-a' }}
     needs: build_ketcher
-    container: mcr.microsoft.com/playwright:v1.59.1-jammy
+    container: mcr.microsoft.com/playwright:v1.62.1-jammy
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4, 5, 6]
-        shardTotal: [6]
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        shardTotal: [10]
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -22,19 +22,19 @@ import type { OperationType } from './OperationType';
 import { KetcherLogger } from 'utilities';
 
 type ValueOf<TObject extends object> = Readonly<TObject[keyof TObject]>;
-type OperationType = ValueOf<typeof OperationType>;
+type OperationTypeValue = ValueOf<typeof OperationType>;
 
 class BaseOperation {
   // eslint-disable-next-line no-use-before-define
   private _inverted: BaseOperation | undefined;
-  type: OperationType;
+  type: OperationTypeValue;
   priority: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- operation payload shape varies by operation type
   data: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-use-before-define -- inverse constructor args vary by operation
   static InverseConstructor: new (...args: any[]) => BaseOperation;
 
-  constructor(type: OperationType, priority = 0) {
+  constructor(type: OperationTypeValue, priority = 0) {
     this.type = type;
     this.priority = priority;
   }

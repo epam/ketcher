@@ -2,10 +2,9 @@
  * Unit tests for MemoryStorageAdapter
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';
 import { getDefaultSettings } from '../schema';
+import type { Settings } from '../types';
 
 function assertDefined<T>(
   value: T,
@@ -41,8 +40,7 @@ describe('MemoryStorageAdapter', () => {
     });
 
     it('should load settings that were previously saved', async () => {
-      const testSettings: any = getDefaultSettings();
-      testSettings.resetToSelect = false;
+      const testSettings = { ...getDefaultSettings(), resetToSelect: false };
 
       await adapter.save('test-key', testSettings);
       const loaded = await adapter.load('test-key');
@@ -72,11 +70,9 @@ describe('MemoryStorageAdapter', () => {
     });
 
     it('should overwrite existing settings', async () => {
-      const settings1: any = getDefaultSettings();
-      settings1.resetToSelect = false;
+      const settings1 = { ...getDefaultSettings(), resetToSelect: false };
 
-      const settings2: any = getDefaultSettings();
-      settings2.resetToSelect = true;
+      const settings2 = { ...getDefaultSettings(), resetToSelect: true };
 
       await adapter.save('test-key', settings1);
       await adapter.save('test-key', settings2);
@@ -87,11 +83,9 @@ describe('MemoryStorageAdapter', () => {
     });
 
     it('should support multiple keys', async () => {
-      const settings1: any = getDefaultSettings();
-      settings1.resetToSelect = false;
+      const settings1 = { ...getDefaultSettings(), resetToSelect: false };
 
-      const settings2: any = getDefaultSettings();
-      settings2.resetToSelect = true;
+      const settings2 = { ...getDefaultSettings(), resetToSelect: true };
 
       await adapter.save('key1', settings1);
       await adapter.save('key2', settings2);
@@ -165,8 +159,10 @@ describe('MemoryStorageAdapter', () => {
 
   describe('data isolation', () => {
     it('should store independent copies of settings', async () => {
-      const testSettings: any = getDefaultSettings();
-      testSettings.resetToSelect = false;
+      const testSettings = {
+        ...getDefaultSettings(),
+        resetToSelect: false as Settings['resetToSelect'],
+      };
 
       await adapter.save('test-key', testSettings);
 

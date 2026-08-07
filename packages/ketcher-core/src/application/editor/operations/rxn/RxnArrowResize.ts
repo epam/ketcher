@@ -15,11 +15,10 @@
  ***************************************************************************/
 
 import type { ReStruct } from 'application/render';
-import assert from 'assert';
 import { RxnArrow } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';
 import { Scale } from 'domain/helpers';
-import { toFixed } from 'utilities';
+import { assert, toFixed } from 'utilities';
 import { OperationType } from '../OperationType';
 import Base from '../BaseOperation';
 

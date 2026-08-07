@@ -34,7 +34,6 @@ import type {
 } from 'domain/entities/monomer-chains/types';
 import type { CoreEditor } from 'application/editor/Editor';
 import { RestoreSequenceCaretPositionOperation } from 'application/editor/operations/modes';
-import assert from 'assert';
 import { Command } from 'domain/entities/Command';
 import { NewSequenceButton } from 'application/render/renderers/sequence/ui-controls/NewSequenceButton';
 import { isNumber } from 'lodash';
@@ -43,7 +42,7 @@ import { SequenceViewModel } from 'application/render/renderers/sequence/Sequenc
 import { sequenceRendererStore } from 'application/render/renderers/sequence/SequenceRendererStore';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import type { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
-import { SettingsManager } from 'utilities';
+import { assert, SettingsManager } from 'utilities';
 import { SequenceEventDelegationManager } from './SequenceEventDelegationManager';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { select } from 'd3';

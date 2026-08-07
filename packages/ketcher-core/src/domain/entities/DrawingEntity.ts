@@ -1,6 +1,6 @@
 import { Vec2 } from 'domain/entities/vec2';
 import type { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { Coordinates } from 'application/editor/shared/coordinates';
 let id = 0;
 

@@ -28,11 +28,10 @@ const scopeLegacyConfig = (scope) => {
     }
 
     if (entry.ignores) {
-      scopedEntry.ignores = entry.ignores.map(
-        (ignoreGlob) =>
-          typeof ignoreGlob === 'string'
-            ? `${scopedPrefix}${ignoreGlob}`
-            : ignoreGlob,
+      scopedEntry.ignores = entry.ignores.map((ignoreGlob) =>
+        typeof ignoreGlob === 'string'
+          ? `${scopedPrefix}${ignoreGlob}`
+          : ignoreGlob,
       );
     }
 

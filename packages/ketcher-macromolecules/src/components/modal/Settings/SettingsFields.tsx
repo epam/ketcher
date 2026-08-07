@@ -47,7 +47,14 @@ export const SettingsFields = ({
             name={String(fieldName)}
             label={field.label}
             type={field.type}
-            value={settings[fieldName] as string | number | boolean | null | undefined}
+            value={
+              settings[fieldName] as
+                | string
+                | number
+                | boolean
+                | null
+                | undefined
+            }
             options={field.options}
             min={field.min}
             max={field.max}

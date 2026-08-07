@@ -42,6 +42,7 @@ import {
   ToolName,
   AtomRenderer,
   BaseRenderer,
+  SettingsManager,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
 import {
@@ -76,6 +77,16 @@ export const EditorEvents = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
 
+  // Restore saved selection tool on component mount
+  useEffect(() => {
+    const savedSelectionTool = SettingsManager.selectionTool;
+    if (savedSelectionTool?.opts) {
+      const toolName = `select-${savedSelectionTool.opts}`;
+      dispatch(selectTool(toolName));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty deps = run only once on mount
+
   useEffect(() => {
     editor?.events.updateMonomersLibrary.add(handleMonomersLibraryUpdate);
 
@@ -106,41 +117,53 @@ export const EditorEvents = () => {
       }
     };
 
-    if (editor) {
-      editor.events.error.add((errorText) => {
-        dispatch(openErrorTooltip(errorText));
-      });
-      editor.events.openErrorModal.add(
-        (errorData: string | { errorMessage: string; errorTitle: string }) => {
-          dispatch(openErrorModal(errorData));
-        },
+    const errorHandler = (errorText) => {
+      dispatch(openErrorTooltip(errorText));
+    };
+
+    const errorModalHandler = (
+      errorData: string | { errorMessage: string; errorTitle: string },
+    ) => {
+      dispatch(openErrorModal(errorData));
+    };
+
+    const monomerConnectionModalHandler = (
+      additionalProps: MonomerConnectionOnlyProps,
+    ) =>
+      dispatch(
+        openModal({
+          name: 'monomerConnection',
+          additionalProps,
+        }),
       );
 
-      dispatch(selectTool('select-rectangle'));
-      editor.events.selectTool.dispatch(['select-rectangle']);
+    const confirmationDialogHandler = (
+      additionalProps: ConfirmationDialogOnlyProps,
+    ) =>
+      dispatch(
+        openModal({
+          name: 'confirmationDialog',
+          additionalProps,
+        }),
+      );
+
+    if (editor) {
+      editor.events.error.add(errorHandler);
+      editor.events.openErrorModal.add(errorModalHandler);
       editor.events.openMonomerConnectionModal.add(
-        (additionalProps: MonomerConnectionOnlyProps) =>
-          dispatch(
-            openModal({
-              name: 'monomerConnection',
-              additionalProps,
-            }),
-          ),
+        monomerConnectionModalHandler,
       );
-      editor.events.openConfirmationDialog.add(
-        (additionalProps: ConfirmationDialogOnlyProps) =>
-          dispatch(
-            openModal({
-              name: 'confirmationDialog',
-              additionalProps,
-            }),
-          ),
-      );
+      editor.events.openConfirmationDialog.add(confirmationDialogHandler);
       editor.events.selectTool.add(handler);
     }
 
     return () => {
-      dispatch(selectTool(null));
+      editor?.events.error.remove(errorHandler);
+      editor?.events.openErrorModal.remove(errorModalHandler);
+      editor?.events.openMonomerConnectionModal.remove(
+        monomerConnectionModalHandler,
+      );
+      editor?.events.openConfirmationDialog.remove(confirmationDialogHandler);
       editor?.events.selectTool.remove(handler);
     };
   }, [editor]);

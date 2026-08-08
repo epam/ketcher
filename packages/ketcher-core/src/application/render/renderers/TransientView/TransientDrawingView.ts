@@ -62,9 +62,7 @@ export class TransientDrawingView {
       this.removeView(viewName);
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.views.set(viewName, viewData);
+    this.views.set(viewName, viewData as ViewData<unknown>);
   }
 
   private removeView(viewName: string) {

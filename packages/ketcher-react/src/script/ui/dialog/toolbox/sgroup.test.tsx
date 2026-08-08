@@ -73,6 +73,7 @@ describe('Copolymer S-Group type availability', () => {
     renderWithMockStore(<SGroup type="COP" selectedSruCount={2} />, {
       modal: {
         form: {
+          errors: {},
           result: {
             type: 'COP',
           },
@@ -90,6 +91,7 @@ describe('S-Group DAT type rendering', () => {
     renderWithMockStore(<SGroup type="DAT" />, {
       modal: {
         form: {
+          errors: {},
           result: {
             type: 'DAT',
             context: 'Fragment',
@@ -112,6 +114,7 @@ function renderWithMockStore(
   initialState: Partial<ReturnType<typeof reducer>> = {
     modal: {
       form: {
+        errors: {},
         result: {
           type: 'MUL',
         },

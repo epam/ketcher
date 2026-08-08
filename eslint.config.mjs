@@ -4,6 +4,7 @@ import tsParser from '@typescript-eslint/parser';
 import prettierConfig from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
 import jestPlugin from 'eslint-plugin-jest';
+import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import nPlugin from 'eslint-plugin-n';
 import promisePlugin from 'eslint-plugin-promise';
 import prettierPlugin from 'eslint-plugin-prettier';
@@ -49,7 +50,7 @@ export default [
   },
   js.configs.recommended,
   {
-    files: ['**/*.{js,cjs,mjs,ts,tsx}'],
+    files: ['**/*.{js,cjs,mjs,jsx,ts,tsx}'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -58,6 +59,7 @@ export default [
         ecmaFeatures: {
           jsx: true,
         },
+        requireConfigFile: false,
       },
       globals: {
         ...sanitizeGlobals(globals.browser),
@@ -81,6 +83,7 @@ export default [
       '@typescript-eslint': tseslint,
       import: importPlugin,
       jest: jestPlugin,
+      'jsx-a11y': jsxA11yPlugin,
       n: nPlugin,
       promise: promisePlugin,
       prettier: prettierPlugin,
@@ -129,6 +132,57 @@ export default [
       'testing-library/no-unnecessary-act': 'off',
       'react-you-might-not-need-an-effect/no-chain-state-updates': 'off',
       'react-you-might-not-need-an-effect/no-event-handler': 'off',
+    },
+  },
+  {
+    files: ['packages/ketcher-react/src/script/**/*.{ts,tsx,js,jsx}'],
+    plugins: {
+      '@typescript-eslint': tseslint,
+      'jsx-a11y': jsxA11yPlugin,
+    },
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        paper: 'readonly',
+        ClipboardItem: 'readonly',
+        EventListener: 'readonly',
+      },
+    },
+    rules: {
+      'no-undef': 'off',
+      'no-redeclare': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+      'jsx-a11y/label-has-associated-control': 'warn',
+      'jsx-a11y/no-static-element-interactions': 'warn',
+      'jsx-a11y/no-autofocus': 'warn',
+      'jsx-a11y/no-noninteractive-element-interactions': 'warn',
+      'jsx-a11y/alt-text': 'warn',
+      'jsx-a11y/click-events-have-key-events': 'warn',
+    },
+  },
+  {
+    files: ['packages/ketcher-core/src/**/*.{ts,js}'],
+    plugins: {
+      '@typescript-eslint': tseslint,
+    },
+    languageOptions: {
+      globals: {
+        paper: 'readonly',
+        ClipboardItem: 'readonly',
+        BlobPart: 'readonly',
+      },
+    },
+    rules: {
+      'no-undef': 'off',
+      'no-redeclare': 'off',
+      'object-shorthand': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
     },
   },
   prettierConfig,

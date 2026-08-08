@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": "../..",
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "moduleResolution": "bundler",
@@ -39,8 +41,13 @@
       "src/*": ["./src/*"],
       "ketcher-react": ["./src/types/ketcher-react"],
       "ketcher-react/*": ["./src/types/ketcher-react/*"],
-      "ketcher-core": ["../ketcher-core/src"],
-      "ketcher-core/*": ["../ketcher-core/src/*"]
+      "ketcher-core": ["../ketcher-core/src/index.ts"],
+      "ketcher-core/*": ["../ketcher-core/src/*"],
+      "application/*": ["../ketcher-core/src/application/*"],
+      "domain/*": ["../ketcher-core/src/domain/*"],
+      "infrastructure/*": ["../ketcher-core/src/infrastructure/*"],
+      "utilities": ["../ketcher-core/src/utilities"],
+      "types": ["../ketcher-core/src/types"]
     },
     "plugins": [
       {
@@ -49,5 +56,5 @@
       }
     ]
   },
-  "include": ["src"]
+  "include": ["src", "../ketcher-core/src"]
 }

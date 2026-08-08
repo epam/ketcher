@@ -56,9 +56,6 @@ interface Document {
 
 interface Window {
   isPolymerEditorTurnedOn: boolean;
-  ketcher?: {
-    settingsService?: import('ketcher-core').ISettingsService;
-  };
 }
 
 interface HTMLElement {

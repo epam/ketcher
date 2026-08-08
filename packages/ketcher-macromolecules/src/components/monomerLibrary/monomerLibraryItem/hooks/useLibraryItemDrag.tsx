@@ -18,7 +18,7 @@ export const useLibraryItemDrag = <T extends HTMLElement>(
 
     const itemElement = select(itemRef.current);
 
-    const dragBehavior = drag<HTMLElement, unknown>()
+    const dragBehavior = drag<T, unknown>()
       .on('start', () => {
         // In sequence layout we do not allow DnD; cancel visual drag early
         editor.isLibraryItemDragCancelled =
@@ -27,7 +27,7 @@ export const useLibraryItemDrag = <T extends HTMLElement>(
           document.body.style.cursor = 'grabbing';
         }
       })
-      .on('drag', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
+      .on('drag', (event: D3DragEvent<T, unknown, unknown>) => {
         if (editor.isLibraryItemDragCancelled) {
           return;
         }
@@ -43,7 +43,7 @@ export const useLibraryItemDrag = <T extends HTMLElement>(
           },
         });
       })
-      .on('end', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
+      .on('end', (event: D3DragEvent<T, unknown, unknown>) => {
         if (!editor.isLibraryItemDragCancelled) {
           const { clientX: x, clientY: y } = event.sourceEvent;
           const canvasWrapperBoundingClientRect =

@@ -70,7 +70,7 @@ describe('FileDrop component', () => {
       'input[type=file]',
     ) as HTMLInputElement;
 
-    userEvent.upload(input, mockFile);
+    await userEvent.upload(input, mockFile);
 
     await waitFor(() => {
       expect(input.files?.[0]).toBe(mockFile);
@@ -91,7 +91,7 @@ describe('FileDrop component', () => {
     const input = container.querySelector(
       'input[type=file]',
     ) as HTMLInputElement;
-    userEvent.upload(input, mockFile);
+    await userEvent.upload(input, mockFile);
 
     await waitFor(() => {
       expect(mockProps.onDropAccepted).toHaveBeenCalled();

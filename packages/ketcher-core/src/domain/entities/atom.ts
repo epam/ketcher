@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, object-shorthand */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *

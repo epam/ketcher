@@ -72,6 +72,9 @@ describe('Copolymer S-Group type availability', () => {
   it('should show Copolymer option when editing existing Copolymer S-Group', () => {
     renderWithMockStore(<SGroup type="COP" selectedSruCount={2} />, {
       modal: {
+        name: '',
+        prop: null,
+        parentModal: null,
         form: {
           errors: {},
           result: {
@@ -90,6 +93,9 @@ describe('S-Group DAT type rendering', () => {
   it('should render SDataFieldset when type is DAT', () => {
     renderWithMockStore(<SGroup type="DAT" />, {
       modal: {
+        name: '',
+        prop: null,
+        parentModal: null,
         form: {
           errors: {},
           result: {
@@ -113,6 +119,9 @@ function renderWithMockStore(
   component: ReactElement,
   initialState: Partial<ReturnType<typeof reducer>> = {
     modal: {
+      name: '',
+      prop: null,
+      parentModal: null,
       form: {
         errors: {},
         result: {

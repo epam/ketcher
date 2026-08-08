@@ -160,7 +160,6 @@ export const editorSlice: Slice<EditorState> = createSlice({
         action.payload.onLibraryError,
       );
 
-      // TODO: Figure out proper typing here and below
       state.editor = castDraft(editor);
       action.payload.onInit?.(editor);
     },

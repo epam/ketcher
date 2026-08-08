@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const useLibraryItemDrag = <T extends HTMLElement>(
   item: IRnaPreset | MonomerOrAmbiguousType,
-  itemRef: RefObject<T>,
+  itemRef: RefObject<T | null>,
 ) => {
   const editor = useSelector(selectEditor);
   const dispatch = useDispatch();

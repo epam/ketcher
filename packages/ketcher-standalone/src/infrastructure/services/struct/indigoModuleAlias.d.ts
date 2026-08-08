@@ -22,6 +22,6 @@ import { IndigoModule } from './indigoWorker.types';
  * replaced with the actual Indigo WASM module path during the build.
  */
 declare module '_indigo-ketcher-import-alias_' {
-  const indigoModuleFn: () => Promise<IndigoModule>;
+  const indigoModuleFn: (options?: object) => Promise<IndigoModule>;
   export default indigoModuleFn;
 }

@@ -43,7 +43,9 @@ export type AtomHoverContour =
     };
 
 export class AtomRenderer extends BaseRenderer {
-  private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
+  private selectionElement?:
+    | D3SvgElementSelection<SVGCircleElement, void>
+    | D3SvgElementSelection<SVGRectElement, void>;
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
   private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
   private cipLabelElement?: D3SvgElementSelection<SVGGElement, void>;
@@ -225,8 +227,10 @@ export class AtomRenderer extends BaseRenderer {
       return this.hoverElement;
     }
 
+    // appendSelectionContour returns SVGCircleElement|SVGRectElement union; cast to a
+    // concrete type to avoid D3 overload resolution issues with union selections.
     const selectionContourElement = this.appendSelectionContour() as
-      | D3SvgElementSelection<SVGElement, void>
+      | D3SvgElementSelection<SVGRectElement, void>
       | undefined;
 
     return selectionContourElement
@@ -528,8 +532,10 @@ export class AtomRenderer extends BaseRenderer {
 
   public appendSelection() {
     if (!this.selectionElement) {
+      // appendSelectionContour returns SVGCircleElement|SVGRectElement union; cast to a
+      // concrete type to avoid D3 overload resolution issues with union selections.
       const selectionContourElement = this.appendSelectionContour() as
-        | D3SvgElementSelection<SVGElement, void>
+        | D3SvgElementSelection<SVGRectElement, void>
         | undefined;
 
       this.selectionElement = selectionContourElement

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/preserve-manual-memoization */
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useAppSelector } from 'hooks';

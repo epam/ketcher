@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/refs */
-/* eslint-disable react-hooks/preserve-manual-memoization */
 import { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { D3DragEvent } from 'd3';
 import { useSelector } from 'react-redux';

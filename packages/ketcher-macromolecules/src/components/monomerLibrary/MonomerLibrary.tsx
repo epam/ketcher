@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/refs */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *

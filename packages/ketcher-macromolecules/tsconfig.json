@@ -38,7 +38,9 @@
       "helpers/*": ["./src/helpers/*"],
       "src/*": ["./src/*"],
       "ketcher-react": ["./src/types/ketcher-react"],
-      "ketcher-react/*": ["./src/types/ketcher-react/*"]
+      "ketcher-react/*": ["./src/types/ketcher-react/*"],
+      "ketcher-core": ["../ketcher-core/src"],
+      "ketcher-core/*": ["../ketcher-core/src/*"]
     },
     "plugins": [
       {

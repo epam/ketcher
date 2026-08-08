@@ -1,5 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-/* eslint-disable react-hooks/refs */
 import {
   isLibraryItemRnaPreset,
   LibraryItemDragState,

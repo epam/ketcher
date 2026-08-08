@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/refs */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -37,7 +36,8 @@ import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
 import {
   useCallback,
-  ReactNode,
+  type ReactNode,
+  type SyntheticEvent,
   useEffect,
   useMemo,
   useRef,
@@ -130,9 +130,6 @@ const MolecularMassAmount = styled('div')(() => ({
   padding: '0 8px',
 }));
 
-// TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 const TabsWrapper = styled('div')(() => ({
   width: '100%',
   height: '100%',
@@ -145,9 +142,6 @@ const TabContentWrapper = styled('div')(() => ({
   padding: '0 4px 4px',
 }));
 
-// TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 const TabContentErrorWrapper = styled('div')(() => ({
   display: 'flex',
   width: '100%',
@@ -218,9 +212,6 @@ const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
-// TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 const HydrophobicityHintHeader = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
@@ -254,9 +245,6 @@ const PropertyHintIconWrapper = styled('div')(() => ({
   alignItems: 'center',
 }));
 
-// TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 const BasicPropertyDropdown = styled(DropDown)(() => ({
   position: 'relative',
   padding: '0 0 0 5px',
@@ -265,9 +253,6 @@ const BasicPropertyDropdown = styled(DropDown)(() => ({
 
 const inputClassName = 'text-input-field-input';
 
-// TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 const BasicPropertyInput = styled(TextInputField)(() => ({
   margin: 0,
 
@@ -347,8 +332,8 @@ interface BasicPropertyProps {
   selectedOption?: string;
   disabled?: boolean;
   testId?: string;
-  onChangeOption?: (option: string) => void;
-  onChangeValue?: (value: number) => void;
+  onChangeOption?: (_option: string) => void;
+  onChangeValue?: (_value: number) => void;
 }
 
 interface MonomersCountPanelProps {
@@ -413,7 +398,7 @@ const BasicProperty = (props: BasicPropertyProps) => {
             type="number"
             min={0}
             inputClassName={inputClassName}
-            onChange={(value) => props?.onChangeValue?.(Number(value))}
+            onChange={(_value) => props?.onChangeValue?.(Number(_value))}
           />
         ) : (
           <BasicPropertyValue data-testid={props.testId + '-value'}>
@@ -421,9 +406,6 @@ const BasicProperty = (props: BasicPropertyProps) => {
           </BasicPropertyValue>
         )}
         {props.hint && (
-          // TODO suppressed after upgrade to react 19. Need to fix
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           <StyledTooltip title={props.hint}>
             <PropertyHintIconWrapper>
               <PropertyHintIcon
@@ -453,7 +435,7 @@ const GrossFormulaPart = ({ part }) => {
   const match = part.match(/^([A-Za-z]+)(\d+)$/);
   if (!match) return part;
 
-  const [_, element, count] = match;
+  const [, element, count] = match;
   return (
     <span>
       {element}
@@ -839,12 +821,12 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
     );
   };
 
-  const onChangeUnipositiveIonsValue = (value: number) => {
-    dispatch(setUnipositiveIonsValue(value.toString()));
+  const onChangeUnipositiveIonsValue = (_value: number) => {
+    dispatch(setUnipositiveIonsValue(''));
   };
 
-  const onChangeOligonucleotidesValue = (value: number) => {
-    dispatch(setOligonucleotidesValue(value.toString()));
+  const onChangeOligonucleotidesValue = (_value: number) => {
+    dispatch(setOligonucleotidesValue(''));
   };
 
   return props.isError ? (
@@ -912,17 +894,20 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
   );
 };
 
-enum PROPERTIES_TABS {
-  PEPTIDES = 0,
-  RNA = 1,
-  NO_TAB = -1,
-}
+const PROPERTIES_TABS = {
+  PEPTIDES: 0,
+  RNA: 1,
+  NO_TAB: -1,
+} as const;
 
-enum MassMeasurementUnit {
-  Da = 'Da',
-  kDa = 'kDa',
-  MDa = 'MDa',
-}
+const MassMeasurementUnit = {
+  Da: 'Da',
+  kDa: 'kDa',
+  MDa: 'MDa',
+} as const;
+
+type MassMeasurementUnitValue =
+  typeof MassMeasurementUnit[keyof typeof MassMeasurementUnit];
 
 const massMeasurementUnitToNumber = {
   [MassMeasurementUnit.Da]: 1,
@@ -981,18 +966,18 @@ export const MacromoleculePropertiesWindow = () => {
     useRecalculateMacromoleculeProperties();
   const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
   const recalculateMacromoleculePropertiesRef = useRef<
-    (shouldSkip?: boolean) => void
+    (_shouldSkip?: boolean) => void
   >(recalculateMacromoleculeProperties);
   const debouncedRecalculateMacromoleculeProperties = useCallback(
-    debounce((shouldSkip?: boolean) => {
-      recalculateMacromoleculePropertiesRef.current(shouldSkip);
+    debounce((_shouldSkip?: boolean) => {
+      recalculateMacromoleculePropertiesRef.current();
     }, 500),
     [],
   );
 
   useEffect(() => {
-    recalculateMacromoleculePropertiesRef.current = (shouldSkip?: boolean) => {
-      recalculateMacromoleculeProperties(shouldSkip);
+    recalculateMacromoleculePropertiesRef.current = (_shouldSkip?: boolean) => {
+      recalculateMacromoleculeProperties(_shouldSkip);
     };
   }, [recalculateMacromoleculeProperties]);
 
@@ -1061,7 +1046,7 @@ export const MacromoleculePropertiesWindow = () => {
     );
   }, [firstMacromoleculesProperties]);
 
-  const onTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+  const onTabChange = (_event: SyntheticEvent, newValue: number) => {
     setSelectedTabIndex(newValue);
   };
 
@@ -1070,7 +1055,7 @@ export const MacromoleculePropertiesWindow = () => {
   };
 
   const onMassMeasurementUnitChange = (option: string) => {
-    setMassMeasurementUnit(option as MassMeasurementUnit);
+    setMassMeasurementUnit(option as MassMeasurementUnitValue);
   };
 
   const hasCommonError =

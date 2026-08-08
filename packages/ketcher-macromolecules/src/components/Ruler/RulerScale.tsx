@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/refs */
 import { ZoomTransform } from 'd3';
 import { memo, useMemo, useRef } from 'react';
 import { LayoutMode } from 'ketcher-core';

@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/refs */
-/* eslint-disable react-hooks/exhaustive-deps */
 import {
   createContext,
   ReactNode,

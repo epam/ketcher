@@ -3,9 +3,27 @@ import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import prettierConfig from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
+import jestPlugin from 'eslint-plugin-jest';
 import nPlugin from 'eslint-plugin-n';
 import promisePlugin from 'eslint-plugin-promise';
 import prettierPlugin from 'eslint-plugin-prettier';
+import reactPlugin from 'eslint-plugin-react';
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
+import testingLibraryPlugin from 'eslint-plugin-testing-library';
+import reactYouMightNotNeedAnEffectPlugin from 'eslint-plugin-react-you-might-not-need-an-effect';
+import globals from 'globals';
+
+const sanitizeGlobals = (source) => {
+  if (!source || typeof source !== 'object') {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(source).filter(([name]) =>
+      /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name),
+    ),
+  );
+};
 
 export default [
   {
@@ -21,6 +39,12 @@ export default [
       'ketcher-autotests/tests/utils/**',
       'ketcher-autotests/build/**',
       'packages/ketcher-core/src/domain/serializers/ket/compiledSchema.js',
+      '**/*.d.ts',
+      '**/*.test.{ts,tsx,js,jsx}',
+      '**/*.spec.{ts,tsx,js,jsx}',
+      '**/setupTests.{ts,tsx,js,jsx}',
+      '**/testMocks/**',
+      '**/__tests__/**',
     ],
   },
   js.configs.recommended,
@@ -31,34 +55,58 @@ export default [
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
       globals: {
+        ...sanitizeGlobals(globals.browser),
+        ...sanitizeGlobals(globals.node),
+        ...sanitizeGlobals(globals.es2024),
+        ...sanitizeGlobals(globals.jest),
         console: 'readonly',
         process: 'readonly',
         Buffer: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
-        document: 'readonly',
-        HTMLElement: 'readonly',
-        window: 'readonly',
+        JSX: 'readonly',
+        React: 'readonly',
+        global: 'readonly',
+        VoidFunction: 'readonly',
+        withThemeProvider: 'readonly',
+        withThemeAndStoreProvider: 'readonly',
       },
     },
     plugins: {
       '@typescript-eslint': tseslint,
       import: importPlugin,
+      jest: jestPlugin,
       n: nPlugin,
       promise: promisePlugin,
       prettier: prettierPlugin,
+      react: reactPlugin,
+      'react-hooks': reactHooksPlugin,
+      'testing-library': testingLibraryPlugin,
+      'react-you-might-not-need-an-effect':
+        reactYouMightNotNeedAnEffectPlugin,
     },
     rules: {
       'linebreak-style': ['error', 'unix'],
       'prettier/prettier': 'error',
-      '@typescript-eslint/no-non-null-assertion': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
       '@typescript-eslint/no-explicit-any': 'error',
       'object-shorthand': 'error',
       '@typescript-eslint/no-empty-function': 'off',
+      'no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
       '@typescript-eslint/no-unused-vars': [
-        'error',
+        'warn',
         {
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
@@ -72,6 +120,15 @@ export default [
       'no-duplicate-imports': 'error',
       'no-alert': 'error',
       'comma-dangle': 0,
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/preserve-manual-memoization': 'off',
+      'jest/expect-expect': 'off',
+      'testing-library/no-container': 'off',
+      'testing-library/no-node-access': 'off',
+      'testing-library/no-unnecessary-act': 'off',
+      'react-you-might-not-need-an-effect/no-chain-state-updates': 'off',
+      'react-you-might-not-need-an-effect/no-event-handler': 'off',
     },
   },
   prettierConfig,

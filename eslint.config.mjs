@@ -134,56 +134,5 @@ export default [
       'react-you-might-not-need-an-effect/no-event-handler': 'off',
     },
   },
-  {
-    files: ['packages/ketcher-react/src/script/**/*.{ts,tsx,js,jsx}'],
-    plugins: {
-      '@typescript-eslint': tseslint,
-      'jsx-a11y': jsxA11yPlugin,
-    },
-    languageOptions: {
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
-      globals: {
-        paper: 'readonly',
-        ClipboardItem: 'readonly',
-        EventListener: 'readonly',
-      },
-    },
-    rules: {
-      'no-undef': 'off',
-      'no-redeclare': 'off',
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-non-null-assertion': 'warn',
-      'jsx-a11y/label-has-associated-control': 'warn',
-      'jsx-a11y/no-static-element-interactions': 'warn',
-      'jsx-a11y/no-autofocus': 'warn',
-      'jsx-a11y/no-noninteractive-element-interactions': 'warn',
-      'jsx-a11y/alt-text': 'warn',
-      'jsx-a11y/click-events-have-key-events': 'warn',
-    },
-  },
-  {
-    files: ['packages/ketcher-core/src/**/*.{ts,js}'],
-    plugins: {
-      '@typescript-eslint': tseslint,
-    },
-    languageOptions: {
-      globals: {
-        paper: 'readonly',
-        ClipboardItem: 'readonly',
-        BlobPart: 'readonly',
-      },
-    },
-    rules: {
-      'no-undef': 'off',
-      'no-redeclare': 'off',
-      'object-shorthand': 'warn',
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-non-null-assertion': 'warn',
-    },
-  },
   prettierConfig,
 ];

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, no-undef */
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
 type ClipboardTransferData =

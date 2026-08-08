@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, no-undef */
 export function b64toBlob(
   b64Data: string,
   contentType = '',

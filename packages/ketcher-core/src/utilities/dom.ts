@@ -1,7 +1,8 @@
 export function blurActiveElement(): void {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  document.activeElement?.blur();
+  const activeElement = document.activeElement;
+  if (activeElement instanceof HTMLElement || activeElement instanceof SVGElement) {
+    activeElement.blur();
+  }
 }
 
 export function isEditableInputTarget(target: EventTarget | null): boolean {

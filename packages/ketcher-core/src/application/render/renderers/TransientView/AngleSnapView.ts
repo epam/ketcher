@@ -25,8 +25,6 @@ const minimalAngleDifference = (a: number, b: number) => {
   return diff;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 export class AngleSnapView extends TransientView {
   public static readonly viewName = 'AngleSnapView';
 

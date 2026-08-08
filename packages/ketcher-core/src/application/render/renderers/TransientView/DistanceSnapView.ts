@@ -10,8 +10,6 @@ export type DistanceSnapViewParams = {
   alignedMonomers: BaseMonomer[] | undefined;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 export class DistanceSnapView extends TransientView {
   public static readonly viewName = 'DistanceSnapView';
 

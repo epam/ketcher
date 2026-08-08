@@ -11,8 +11,6 @@ export type GroupCenterSnapViewParams = {
   monomerPair: [BaseMonomer, BaseMonomer];
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 export class GroupCentersnapView extends TransientView {
   public static readonly viewName = 'GroupCentersnapView';
 

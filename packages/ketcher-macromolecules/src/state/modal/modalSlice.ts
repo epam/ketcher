@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { castDraft, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { castDraft } from 'immer';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AdditionalModalProps } from 'components/modal/modalContainer/types';
 import { RootState } from 'state';
 

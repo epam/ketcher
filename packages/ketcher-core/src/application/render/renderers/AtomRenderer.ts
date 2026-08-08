@@ -225,20 +225,16 @@ export class AtomRenderer extends BaseRenderer {
       return this.hoverElement;
     }
 
-    const selectionContourElement = this.appendSelectionContour();
+    const selectionContourElement = this.appendSelectionContour() as
+      | D3SvgElementSelection<SVGElement, void>
+      | undefined;
 
-    return (
-      selectionContourElement
-        ?.attr('stroke', '#0097a8')
-        // selectionContourElement is union type here. For some reason for union selection types
-        // ts shows error that first call of attr can return string.
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        .attr('stroke-width', '1.2')
-        .attr('fill', 'none')
-        .attr('opacity', '0')
-        .attr('class', 'dynamic-element')
-    );
+    return selectionContourElement
+      ?.attr('stroke', '#0097a8')
+      .attr('stroke-width', '1.2')
+      .attr('fill', 'none')
+      .attr('opacity', '0')
+      .attr('class', 'dynamic-element');
   }
 
   /**
@@ -532,14 +528,12 @@ export class AtomRenderer extends BaseRenderer {
 
   public appendSelection() {
     if (!this.selectionElement) {
-      const selectionContourElement = this.appendSelectionContour();
+      const selectionContourElement = this.appendSelectionContour() as
+        | D3SvgElementSelection<SVGElement, void>
+        | undefined;
 
       this.selectionElement = selectionContourElement
         ?.attr('fill', SELECTION_COLOR)
-        // selectionContourElement is union type here. For some reason for union selection types
-        // ts shows error that first call of attr can return string.
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         .attr('class', 'dynamic-element');
     }
 

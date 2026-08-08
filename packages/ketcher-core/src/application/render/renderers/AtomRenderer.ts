@@ -43,7 +43,10 @@ export type AtomHoverContour =
     };
 
 export class AtomRenderer extends BaseRenderer {
-  private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
+  private selectionElement?:
+    | D3SvgElementSelection<SVGCircleElement, void>
+    | D3SvgElementSelection<SVGRectElement, void>;
+
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
   private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
   private cipLabelElement?: D3SvgElementSelection<SVGGElement, void>;
@@ -225,20 +228,22 @@ export class AtomRenderer extends BaseRenderer {
       return this.hoverElement;
     }
 
-    const selectionContourElement = this.appendSelectionContour();
+    // appendSelectionContour() returns a SVGCircleElement|SVGRectElement union.
+    // TypeScript cannot resolve D3 overloaded attr() on union selection types,
+    // so cast to a concrete type before chaining, then restore the union type.
+    const selectionContourElement = this.appendSelectionContour() as
+      | D3SvgElementSelection<SVGRectElement, void>
+      | undefined;
 
-    return (
-      selectionContourElement
-        ?.attr('stroke', '#0097a8')
-        // selectionContourElement is union type here. For some reason for union selection types
-        // ts shows error that first call of attr can return string.
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        .attr('stroke-width', '1.2')
-        .attr('fill', 'none')
-        .attr('opacity', '0')
-        .attr('class', 'dynamic-element')
-    );
+    return selectionContourElement
+      ?.attr('stroke', '#0097a8')
+      .attr('stroke-width', '1.2')
+      .attr('fill', 'none')
+      .attr('opacity', '0')
+      .attr('class', 'dynamic-element') as
+      | D3SvgElementSelection<SVGCircleElement, void>
+      | D3SvgElementSelection<SVGRectElement, void>
+      | undefined;
   }
 
   /**
@@ -532,15 +537,19 @@ export class AtomRenderer extends BaseRenderer {
 
   public appendSelection() {
     if (!this.selectionElement) {
-      const selectionContourElement = this.appendSelectionContour();
+      // appendSelectionContour() returns a SVGCircleElement|SVGRectElement union.
+      // TypeScript cannot resolve D3 overloaded attr() on union selection types,
+      // so cast to a concrete type before chaining, then restore the union type.
+      const selectionContourElement = this.appendSelectionContour() as
+        | D3SvgElementSelection<SVGRectElement, void>
+        | undefined;
 
       this.selectionElement = selectionContourElement
         ?.attr('fill', SELECTION_COLOR)
-        // selectionContourElement is union type here. For some reason for union selection types
-        // ts shows error that first call of attr can return string.
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        .attr('class', 'dynamic-element');
+        .attr('class', 'dynamic-element') as
+        | D3SvgElementSelection<SVGCircleElement, void>
+        | D3SvgElementSelection<SVGRectElement, void>
+        | undefined;
     }
 
     this.cipLabelElement?.select('rect')?.attr('fill', SELECTION_COLOR);

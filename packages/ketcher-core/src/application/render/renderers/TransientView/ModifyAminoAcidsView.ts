@@ -11,8 +11,7 @@ export type ModifyAminoAcidsViewParams = {
   monomersToModify: BaseMonomer[];
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+
 export class ModifyAminoAcidsView extends TransientView {
   public static readonly viewName = 'ModifyAminoAcidsView';
 

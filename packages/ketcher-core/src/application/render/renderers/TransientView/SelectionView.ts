@@ -18,8 +18,7 @@ export type SelectionViewParams =
   | SelectionRectangleViewParams
   | SelectionLassoViewParams;
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+
 export class SelectionView extends TransientView {
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,

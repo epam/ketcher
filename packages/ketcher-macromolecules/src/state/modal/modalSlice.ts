@@ -58,8 +58,6 @@ export const modalSlice = createSlice({
         state.name = action.payload;
       } else {
         state.name = action.payload.name;
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         state.additionalProps = action.payload.additionalProps;
       }
 

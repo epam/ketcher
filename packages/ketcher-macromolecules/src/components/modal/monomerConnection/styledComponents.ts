@@ -6,7 +6,7 @@ interface IStyledAttachmentPointNameProps {
 
 export const AttachmentPoint = styled.div(() => ({
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: 'column' as const,
   rowGap: '2px',
   alignItems: 'center',
   marginBottom: '5px',

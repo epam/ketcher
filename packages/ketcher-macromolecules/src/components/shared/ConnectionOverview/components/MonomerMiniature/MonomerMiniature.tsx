@@ -33,7 +33,7 @@ const MonomerMiniature = ({
   useLayoutEffect(() => {
     const svg = svgRef.current;
     if (svg) {
-      const svgElement = select(svg) as Selection<
+      const svgElement = select(svg) as unknown as Selection<
         SVGSVGElement,
         void,
         HTMLElement,

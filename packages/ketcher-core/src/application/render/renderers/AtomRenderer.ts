@@ -227,8 +227,9 @@ export class AtomRenderer extends BaseRenderer {
       return this.hoverElement;
     }
 
-    // appendSelectionContour returns SVGCircleElement|SVGRectElement union; cast to a
-    // concrete type to avoid D3 overload resolution issues with union selections.
+    // appendSelectionContour() returns a SVGCircleElement|SVGRectElement union.
+    // TypeScript cannot resolve D3 overloaded attr() on union selection types,
+    // so cast to a concrete type before chaining, then restore the union type.
     const selectionContourElement = this.appendSelectionContour() as
       | D3SvgElementSelection<SVGRectElement, void>
       | undefined;
@@ -238,7 +239,10 @@ export class AtomRenderer extends BaseRenderer {
       .attr('stroke-width', '1.2')
       .attr('fill', 'none')
       .attr('opacity', '0')
-      .attr('class', 'dynamic-element');
+      .attr('class', 'dynamic-element') as
+      | D3SvgElementSelection<SVGCircleElement, void>
+      | D3SvgElementSelection<SVGRectElement, void>
+      | undefined;
   }
 
   /**
@@ -532,15 +536,19 @@ export class AtomRenderer extends BaseRenderer {
 
   public appendSelection() {
     if (!this.selectionElement) {
-      // appendSelectionContour returns SVGCircleElement|SVGRectElement union; cast to a
-      // concrete type to avoid D3 overload resolution issues with union selections.
+      // appendSelectionContour() returns a SVGCircleElement|SVGRectElement union.
+      // TypeScript cannot resolve D3 overloaded attr() on union selection types,
+      // so cast to a concrete type before chaining, then restore the union type.
       const selectionContourElement = this.appendSelectionContour() as
         | D3SvgElementSelection<SVGRectElement, void>
         | undefined;
 
       this.selectionElement = selectionContourElement
         ?.attr('fill', SELECTION_COLOR)
-        .attr('class', 'dynamic-element');
+        .attr('class', 'dynamic-element') as
+        | D3SvgElementSelection<SVGCircleElement, void>
+        | D3SvgElementSelection<SVGRectElement, void>
+        | undefined;
     }
 
     this.cipLabelElement?.select('rect')?.attr('fill', SELECTION_COLOR);

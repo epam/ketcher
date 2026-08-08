@@ -42,7 +42,7 @@ describe('DropDown component', () => {
     render(withThemeProvider(<DropDown {...mockProps} />));
 
     const dropDownButton = screen.getByRole('combobox');
-    fireEvent.click(dropDownButton);
+    fireEvent.mouseDown(dropDownButton);
 
     expect(await screen.findByText(MOCK_OPTIONS[1].label)).toBeInTheDocument();
     expect(await screen.findByText(MOCK_OPTIONS[2].label)).toBeInTheDocument();
@@ -52,7 +52,7 @@ describe('DropDown component', () => {
     render(withThemeProvider(<DropDown {...mockProps} />));
 
     const dropDownButton = screen.getByRole('combobox');
-    fireEvent.click(dropDownButton);
+    fireEvent.mouseDown(dropDownButton);
 
     const secondOption = await screen.findByText(MOCK_OPTIONS[1].label);
     fireEvent.click(secondOption);

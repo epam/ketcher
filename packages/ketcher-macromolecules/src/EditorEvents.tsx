@@ -77,16 +77,6 @@ export const EditorEvents = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
 
-  // Restore saved selection tool on component mount
-  useEffect(() => {
-    const savedSelectionTool = SettingsManager.selectionTool;
-    if (savedSelectionTool?.opts) {
-      const toolName = `select-${savedSelectionTool.opts}`;
-      dispatch(selectTool(toolName));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty deps = run only once on mount
-
   useEffect(() => {
     editor?.events.updateMonomersLibrary.add(handleMonomersLibraryUpdate);
 
@@ -155,9 +145,19 @@ export const EditorEvents = () => {
       );
       editor.events.openConfirmationDialog.add(confirmationDialogHandler);
       editor.events.selectTool.add(handler);
+
+      // Initialize with saved selection tool or default to rectangle
+      const savedSelectionTool = SettingsManager.selectionTool;
+      const initialTool = savedSelectionTool?.opts
+        ? `select-${savedSelectionTool.opts}`
+        : 'select-rectangle';
+
+      dispatch(selectTool(initialTool));
+      editor.events.selectTool.dispatch([initialTool]);
     }
 
     return () => {
+      dispatch(selectTool(null));
       editor?.events.error.remove(errorHandler);
       editor?.events.openErrorModal.remove(errorModalHandler);
       editor?.events.openMonomerConnectionModal.remove(

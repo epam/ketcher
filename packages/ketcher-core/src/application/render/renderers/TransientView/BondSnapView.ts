@@ -4,6 +4,8 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
 import { TransientView } from './TransientView';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export class BondSnapView extends TransientView {
   public static readonly viewName = 'BondSnapView';
 

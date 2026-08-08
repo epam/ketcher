@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { castDraft } from 'immer';
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
   CoreEditor,
@@ -160,9 +161,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
       );
 
       // TODO: Figure out proper typing here and below
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      state.editor = editor;
+      state.editor = castDraft(editor);
       action.payload.onInit?.(editor);
     },
     destroyEditor: (state) => {
@@ -174,9 +173,13 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state,
       action: PayloadAction<EditorStatePreview | undefined>,
     ) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      state.preview = action.payload || { monomer: undefined, style: '' };
+      state.preview = castDraft(
+        action.payload ?? {
+          type: PreviewType.Monomer,
+          monomer: undefined,
+          style: {},
+        },
+      );
     },
     setContextMenuActive: (state, action: PayloadAction<boolean>) => {
       state.isContextMenuActive = action.payload;

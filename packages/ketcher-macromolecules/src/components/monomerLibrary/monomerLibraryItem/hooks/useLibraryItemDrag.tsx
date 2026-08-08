@@ -4,9 +4,9 @@ import { selectEditor, setIsDragging } from 'state/common';
 import { IRnaPreset, MonomerOrAmbiguousType, ZoomTool } from 'ketcher-core';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const useLibraryItemDrag = (
+export const useLibraryItemDrag = <GElement extends HTMLElement>(
   item: IRnaPreset | MonomerOrAmbiguousType,
-  itemRef: RefObject<HTMLElement>,
+  itemRef: RefObject<GElement | null>,
 ) => {
   const editor = useSelector(selectEditor);
   const dispatch = useDispatch();
@@ -18,7 +18,7 @@ export const useLibraryItemDrag = (
 
     const itemElement = select(itemRef.current);
 
-    const dragBehavior = drag<HTMLElement, unknown>()
+    const dragBehavior = drag<GElement, unknown>()
       .on('start', () => {
         // In sequence layout we do not allow DnD; cancel visual drag early
         editor.isLibraryItemDragCancelled =
@@ -27,7 +27,7 @@ export const useLibraryItemDrag = (
           document.body.style.cursor = 'grabbing';
         }
       })
-      .on('drag', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
+      .on('drag', (event: D3DragEvent<GElement, unknown, unknown>) => {
         if (editor.isLibraryItemDragCancelled) {
           return;
         }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { castDraft, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AdditionalModalProps } from 'components/modal/modalContainer/types';
 import { RootState } from 'state';
 
@@ -58,7 +58,7 @@ export const modalSlice = createSlice({
         state.name = action.payload;
       } else {
         state.name = action.payload.name;
-        state.additionalProps = action.payload.additionalProps;
+        state.additionalProps = castDraft(action.payload.additionalProps);
       }
 
       state.isOpen = true;

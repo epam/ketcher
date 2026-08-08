@@ -46,6 +46,7 @@ export class AtomRenderer extends BaseRenderer {
   private selectionElement?:
     | D3SvgElementSelection<SVGCircleElement, void>
     | D3SvgElementSelection<SVGRectElement, void>;
+
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
   private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
   private cipLabelElement?: D3SvgElementSelection<SVGGElement, void>;

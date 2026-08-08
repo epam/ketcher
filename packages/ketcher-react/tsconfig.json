@@ -14,5 +14,9 @@
     "moduleResolution": "bundler",
     "rootDir": "../.."
   },
-  "include": ["src", "rollup-plugin-shims.d.ts", "../ketcher-core/src/typing.d.ts"]
+  "include": [
+    "src",
+    "rollup-plugin-shims.d.ts",
+    "../ketcher-core/src/typing.d.ts"
+  ]
 }

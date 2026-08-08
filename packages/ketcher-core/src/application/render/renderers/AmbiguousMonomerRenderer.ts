@@ -6,6 +6,7 @@ import { monomerRendererFactory } from './monomerRendererFactory';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 import type { AttachmentPointName } from 'domain/types';
 import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
+import type { AttachmentPoint } from 'domain/AttachmentPoint';
 import type { UsageInMacromolecule } from 'application/render';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { KetMonomerClass } from 'domain/constants/monomers';
@@ -154,16 +155,17 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
 
   public showExternal(params: PreviewAttachmentPointParams) {
     this.rootElement = this.appendRootElement(params.canvas);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     this.bodyElement = this.appendBody(this.rootElement);
     this.bodyElement?.attr('data-testid', 'shape');
     this.appendLabel(this.rootElement);
     this.appendNumberOfMonomers();
     this.drawAttachmentPoints(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      this.appendPreviewAttachmentPoint.bind(this, params),
+      (attachmentPointName: AttachmentPointName, customAngle?: number) =>
+        this.appendPreviewAttachmentPoint(
+          params,
+          attachmentPointName,
+          customAngle,
+        ) as unknown as AttachmentPoint,
     );
   }
 

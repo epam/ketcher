@@ -18,7 +18,7 @@ export const useLibraryItemDrag = <GElement extends HTMLElement>(
 
     const itemElement = select(itemRef.current);
 
-    const dragBehavior = drag<HTMLElement, unknown>()
+    const dragBehavior = drag<GElement, unknown>()
       .on('start', () => {
         // In sequence layout we do not allow DnD; cancel visual drag early
         editor.isLibraryItemDragCancelled =
@@ -27,7 +27,7 @@ export const useLibraryItemDrag = <GElement extends HTMLElement>(
           document.body.style.cursor = 'grabbing';
         }
       })
-      .on('drag', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
+      .on('drag', (event: D3DragEvent<GElement, unknown, unknown>) => {
         if (editor.isLibraryItemDragCancelled) {
           return;
         }

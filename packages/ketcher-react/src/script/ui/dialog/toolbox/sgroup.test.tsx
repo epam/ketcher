@@ -1,5 +1,5 @@
 import { screen, fireEvent, render as rtlRender } from '@testing-library/react';
-import { combineReducers, createStore, type PreloadedState } from 'redux';
+import { combineReducers, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { type ReactElement } from 'react';
 import modalReducer from '../../state/modal';
@@ -109,7 +109,7 @@ const reducer = combineReducers({
 
 function renderWithMockStore(
   component: ReactElement,
-  initialState: PreloadedState<ReturnType<typeof reducer>> = {
+  initialState: Partial<ReturnType<typeof reducer>> = {
     modal: {
       form: {
         result: {

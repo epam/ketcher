@@ -34,7 +34,7 @@ jobs:
       - name: Git safe
         run: git config --global --add safe.directory '*'
       - name: Install NPM dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
       - name: Build all packages
         run: npm run build:packages && npm run build:example:standalone
       - name: Upload artifacts

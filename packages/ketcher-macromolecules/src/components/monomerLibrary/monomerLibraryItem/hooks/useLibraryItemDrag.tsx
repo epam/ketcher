@@ -4,9 +4,9 @@ import { selectEditor, setIsDragging } from 'state/common';
 import { IRnaPreset, MonomerOrAmbiguousType, ZoomTool } from 'ketcher-core';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const useLibraryItemDrag = (
+export const useLibraryItemDrag = <GElement extends HTMLElement>(
   item: IRnaPreset | MonomerOrAmbiguousType,
-  itemRef: RefObject<HTMLElement>,
+  itemRef: RefObject<GElement>,
 ) => {
   const editor = useSelector(selectEditor);
   const dispatch = useDispatch();

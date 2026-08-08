@@ -76,8 +76,6 @@ import {
   STRUCT_SERVICE_INITIALIZED_EVENT,
   STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT,
 } from './constants';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { getIndigoWorker } from '_indigo-worker-import-alias_';
 
 interface KeyValuePair {

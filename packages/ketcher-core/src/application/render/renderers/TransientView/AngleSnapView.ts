@@ -25,7 +25,6 @@ const minimalAngleDifference = (a: number, b: number) => {
   return diff;
 };
 
-
 export class AngleSnapView extends TransientView {
   public static readonly viewName = 'AngleSnapView';
 

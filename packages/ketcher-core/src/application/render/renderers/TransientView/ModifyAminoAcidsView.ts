@@ -11,7 +11,6 @@ export type ModifyAminoAcidsViewParams = {
   monomersToModify: BaseMonomer[];
 };
 
-
 export class ModifyAminoAcidsView extends TransientView {
   public static readonly viewName = 'ModifyAminoAcidsView';
 

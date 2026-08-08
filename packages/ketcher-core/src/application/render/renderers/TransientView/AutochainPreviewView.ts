@@ -17,7 +17,6 @@ export type AutochainPreviewViewParams = {
   selectedMonomerToConnect?: BaseMonomer;
 };
 
-
 export class AutochainPreviewView extends TransientView {
   public static readonly viewName = 'AutochainPreviewView';
 

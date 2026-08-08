@@ -5,7 +5,6 @@ export type LineLengthHighlightViewParams = {
   currentPosition: number;
 };
 
-
 export class LineLengthHighlightView extends TransientView {
   public static readonly viewName = 'LineLengthHighlightView';
 

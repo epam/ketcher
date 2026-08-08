@@ -10,7 +10,6 @@ export type DistanceSnapViewParams = {
   alignedMonomers: BaseMonomer[] | undefined;
 };
 
-
 export class DistanceSnapView extends TransientView {
   public static readonly viewName = 'DistanceSnapView';
 

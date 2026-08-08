@@ -11,7 +11,6 @@ export type GroupCenterSnapViewParams = {
   monomerPair: [BaseMonomer, BaseMonomer];
 };
 
-
 export class GroupCentersnapView extends TransientView {
   public static readonly viewName = 'GroupCentersnapView';
 

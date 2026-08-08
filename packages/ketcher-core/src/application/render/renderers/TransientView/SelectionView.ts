@@ -18,7 +18,6 @@ export type SelectionViewParams =
   | SelectionRectangleViewParams
   | SelectionLassoViewParams;
 
-
 export class SelectionView extends TransientView {
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,

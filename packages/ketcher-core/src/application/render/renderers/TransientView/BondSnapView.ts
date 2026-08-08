@@ -4,7 +4,6 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
 import { TransientView } from './TransientView';
 
-
 export class BondSnapView extends TransientView {
   public static readonly viewName = 'BondSnapView';
 

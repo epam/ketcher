@@ -39,7 +39,7 @@ interface MacromoleculesEditorProps {
  *  and the resulting cross-package cycle (ketcher-macromolecules -> ketcher-react) must be resolved first.
  */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error ketcher-macromolecules is not available during ketcher-react build (dynamic import)
+// @ts-ignore ketcher-macromolecules is not available during ketcher-react build (dynamic import)
 const MacromoleculesEditorComponent = lazy(
   () => import('ketcher-macromolecules'),
 ) as unknown as React.LazyExoticComponent<

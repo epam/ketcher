@@ -1,6 +1,7 @@
 import { screen, fireEvent, render as rtlRender } from '@testing-library/react';
-import { combineReducers, createStore } from 'redux';
+import { combineReducers, createStore, type PreloadedState } from 'redux';
 import { Provider } from 'react-redux';
+import { type ReactElement } from 'react';
 import modalReducer from '../../state/modal';
 import SGroup from './sgroup';
 
@@ -102,9 +103,13 @@ describe('S-Group DAT type rendering', () => {
   });
 });
 
+const reducer = combineReducers({
+  modal: modalReducer,
+});
+
 function renderWithMockStore(
-  component,
-  initialState: Record<string, unknown> = {
+  component: ReactElement,
+  initialState: PreloadedState<ReturnType<typeof reducer>> = {
     modal: {
       form: {
         result: {
@@ -114,13 +119,6 @@ function renderWithMockStore(
     },
   },
 ) {
-  const reducer = combineReducers({
-    modal: modalReducer,
-  });
-
-  // TODO suppressed after upgrade to react 19. Need to fix
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const store = createStore(reducer, initialState);
   return {
     ...rtlRender(<Provider store={store}>{component}</Provider>),

@@ -38,6 +38,7 @@ import { fromBondStereoUpdate } from './bondStereo';
 import { fromFragmentSplit } from './fragment';
 import { fromRGroupAttachmentPointDeletion } from './rgroupAttachmentPoint';
 import type { ReStruct } from 'application/render';
+import type { Bond } from 'domain/entities/bond';
 import { isNumber } from 'lodash';
 import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
 
@@ -48,7 +49,7 @@ export function fromOneAtomDeletion(restruct, atomId: number) {
 function fromBondDeletion(
   restruct: ReStruct,
   bid: number,
-  skipAtoms: Array<any> = [],
+  skipAtoms: number[] = [],
 ) {
   let action = new Action();
 
@@ -69,8 +70,8 @@ function fromBondDeletion(
     });
   }
 
-  const bond: any = restruct.molecule.bonds.get(bid);
-  const atomsToRemove: Array<any> = [];
+  const bond = restruct.molecule.bonds.get(bid) as Bond;
+  const atomsToRemove: number[] = [];
 
   action.addOp(new BondDelete(bid));
 

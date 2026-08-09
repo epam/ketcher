@@ -17,6 +17,13 @@
 import { Vec2 } from './vec2';
 import { assert } from 'utilities';
 
+export interface RelativeBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export class Box2Abs {
   readonly p0: Vec2;
   readonly p1: Vec2;
@@ -25,7 +32,7 @@ export class Box2Abs {
   constructor(p: Vec2);
   constructor(p0: Vec2, p1: Vec2);
   constructor(x0: number, y0: number, x1: number, y1: number);
-  constructor(...args: Array<any>) {
+  constructor(...args: [] | [Vec2] | [Vec2, Vec2] | [number, number, number, number] | [{ min: Vec2; max: Vec2 }]) {
     if (args.length === 1 && 'min' in args[0] && 'max' in args[0]) {
       this.p0 = args[0].min;
       this.p1 = args[0].max;
@@ -81,7 +88,7 @@ export class Box2Abs {
     return new Box2Abs(this.p0.add(d), this.p1.add(d));
   }
 
-  transform(f: (p: Vec2, options: any) => Vec2, options: any): Box2Abs {
+  transform<T>(f: (p: Vec2, options: T) => Vec2, options: T): Box2Abs {
     assert(typeof f === 'function');
 
     return new Box2Abs(f(this.p0, options), f(this.p1, options));
@@ -104,7 +111,7 @@ export class Box2Abs {
     return size.x === 0 && size.y === 0;
   }
 
-  static fromRelBox(relBox: any): Box2Abs {
+  static fromRelBox(relBox: RelativeBox): Box2Abs {
     return new Box2Abs(
       relBox.x,
       relBox.y,

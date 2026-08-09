@@ -922,8 +922,8 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
     {
       action: new Action(),
       selection: {
-        atoms: [],
-        bonds: [],
+        atoms: [] as number[],
+        bonds: [] as number[],
       },
     },
   );

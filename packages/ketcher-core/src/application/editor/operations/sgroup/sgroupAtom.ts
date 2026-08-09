@@ -35,6 +35,10 @@ class SGroupAtomAdd extends BaseOperation {
   execute(restruct: ReStruct) {
     const { aid, sgid } = this.data;
 
+    if (aid === undefined || sgid === undefined) {
+      return;
+    }
+
     const struct = restruct.molecule;
     const atom = struct.atoms.get(aid)!;
     const sgroup = struct.sgroups.get(sgid)!;
@@ -56,12 +60,19 @@ class SGroupAtomRemove extends BaseOperation {
   data: Data;
 
   constructor(sgroupId?: number, aid?: number) {
-    super(OperationType.S_GROUP_ATOM_REMOVE, OperationPriority.S_GROUP_ATOM_REMOVE);
+    super(
+      OperationType.S_GROUP_ATOM_REMOVE,
+      OperationPriority.S_GROUP_ATOM_REMOVE,
+    );
     this.data = { sgid: sgroupId, aid };
   }
 
   execute(restruct: ReStruct) {
     const { aid, sgid } = this.data;
+
+    if (aid === undefined || sgid === undefined) {
+      return;
+    }
 
     const struct = restruct.molecule;
     const atom = struct.atoms.get(aid)!;

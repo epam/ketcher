@@ -226,10 +226,10 @@ class ReStruct {
 
   getConnectedComponent(
     aid: Array<number> | number,
-    adjacentComponents: Pile,
-  ): Pile {
+    adjacentComponents: Pile<number>,
+  ): Pile<number> {
     const list = Array.isArray(aid) ? Array.from(aid) : [aid];
-    const ids = new Pile();
+    const ids = new Pile<number>();
 
     while (list.length > 0) {
       const aid = list.pop()!;
@@ -251,7 +251,7 @@ class ReStruct {
 
   addConnectedComponent(idSet: Pile<number>): number {
     const compId = this.connectedComponents.add(idSet);
-    const adjacentComponents = new Pile();
+    const adjacentComponents = new Pile<number>();
     const aidSet = this.getConnectedComponent(
       Array.from(idSet),
       adjacentComponents,
@@ -284,7 +284,7 @@ class ReStruct {
     this.atoms.forEach((atom, aid) => {
       if (atom.component >= 0) return;
 
-      const adjacentComponents = new Pile();
+      const adjacentComponents = new Pile<number>();
       const idSet = this.getConnectedComponent(aid, adjacentComponents);
       adjacentComponents.forEach((ccid) => {
         this.removeConnectedComponent(ccid);

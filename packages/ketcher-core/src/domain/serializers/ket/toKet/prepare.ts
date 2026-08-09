@@ -30,7 +30,7 @@ export function prepareStructForKet(struct: Struct) {
 
     const fragsAtoms = Array.from(rgroup.frags.values()).reduce(
       (res, frid) => res.union(struct.getFragmentIds(frid)),
-      new Pile(),
+      new Pile<number>(),
     );
 
     ketNodes.push({

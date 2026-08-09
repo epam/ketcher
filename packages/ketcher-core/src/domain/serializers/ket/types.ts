@@ -21,6 +21,7 @@ import type {
 import type { AtomCIP, BondCIP } from 'domain/entities/types';
 import type { StructProperty } from 'domain/entities/struct';
 import type { Vec2 } from 'domain/entities/vec2';
+import type { RxnArrowMode } from 'domain/entities/rxnArrow';
 
 export interface KetAtomNode {
   type?: 'atom-list';
@@ -106,6 +107,23 @@ export interface KetMoleculeNode {
 export interface KetFragment {
   atoms?: KetAtomNode[];
   bonds?: KetBondNode[];
+}
+
+export interface KetArrowNode {
+  type: 'arrow';
+  data: {
+    mode: RxnArrowMode;
+    pos?: Array<{ x: number; y: number; z: number }>;
+    height?: number;
+    arrowId?: number;
+  };
+  selected?: boolean;
+}
+
+export interface KetPlusNode {
+  type: 'plus';
+  location: [number, number, number];
+  selected?: boolean;
 }
 
 export interface KetItem {

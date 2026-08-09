@@ -19,22 +19,23 @@ import type { Struct } from 'domain/entities/struct';
 
 import { ifDef } from 'utilities';
 import { moleculeToStruct } from './moleculeToStruct';
+import type { KetItem, KetRLogic } from '../types';
 
-export function rgroupToStruct(ketItem): Struct {
+export function rgroupToStruct(ketItem: KetItem): Struct {
   const struct = moleculeToStruct(ketItem);
   const rgroup = rgroupLogicToStruct(ketItem.rlogic);
-  struct.frags.forEach((_value: any, key) => {
+  struct.frags.forEach((_value, key) => {
     rgroup.frags.add(key);
   });
   if (ketItem.rlogic) struct.rgroups.set(ketItem.rlogic.number, rgroup);
   return struct;
 }
 
-export function rgroupLogicToStruct(rglogic) {
+export function rgroupLogicToStruct(rglogic: KetRLogic | undefined) {
   const params = {};
-  ifDef(params, 'range', rglogic.range);
-  ifDef(params, 'resth', rglogic.resth);
-  ifDef(params, 'ifthen', rglogic.ifthen);
+  ifDef(params, 'range', rglogic?.range);
+  ifDef(params, 'resth', rglogic?.resth);
+  ifDef(params, 'ifthen', rglogic?.ifthen);
 
   return new RGroup(params);
 }

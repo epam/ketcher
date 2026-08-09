@@ -108,9 +108,14 @@ export interface KetFragment {
   bonds?: KetBondNode[];
 }
 
+export interface KetRLogic {
+  number: number;
+  range?: string;
+  resth?: boolean;
+  ifthen?: number;
+}
+
 export interface KetItem {
   fragments?: KetFragment[];
-  rlogic?: {
-    number: number;
-  };
+  rlogic?: KetRLogic;
 }

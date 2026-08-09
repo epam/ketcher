@@ -14,25 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
+import type { ReStruct } from 'application/render';
+import { Vec2 } from 'domain/entities/vec2';
+import { Scale } from 'domain/helpers';
 import Base from '../BaseOperation';
 import { OperationType } from '../OperationType';
-import { Scale } from 'domain/helpers';
 
 interface RxnArrowMoveData {
-  id: number;
-  d: any;
-  noinvalidate: boolean;
+  id?: number;
+  d?: Vec2;
+  noinvalidate?: boolean;
 }
 
 export class RxnArrowMove extends Base {
   data: RxnArrowMoveData;
 
-  constructor(id?: any, d?: any, noinvalidate?: any) {
+  constructor(id?: number, d?: Vec2, noinvalidate?: boolean) {
     super(OperationType.RXN_ARROW_MOVE);
     this.data = { id, d, noinvalidate };
   }
 
-  execute(restruct: any): void {
+  execute(restruct: ReStruct): void {
     const struct = restruct.molecule;
     const id = this.data.id;
     const d = this.data.d;

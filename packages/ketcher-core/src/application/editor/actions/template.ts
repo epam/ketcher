@@ -360,7 +360,9 @@ function placeTemplateAtoms(
     const attrs = Atom.getAttrHash(atom) as Record<string, unknown>;
     attrs.fragment = frid;
     if (id === tmplBond.begin || id === tmplBond.end) {
-      action.mergeWith(fromAtomsAttrs(restruct, atomsMap.get(id)!, attrs, true));
+      action.mergeWith(
+        fromAtomsAttrs(restruct, atomsMap.get(id)!, attrs, true),
+      );
       return;
     }
 
@@ -378,7 +380,9 @@ function placeTemplateAtoms(
     } else {
       atomsMap.set(id, mergeA.id);
 
-      action.mergeWith(fromAtomsAttrs(restruct, atomsMap.get(id)!, attrs, true));
+      action.mergeWith(
+        fromAtomsAttrs(restruct, atomsMap.get(id)!, attrs, true),
+      );
       // TODO [RB] need to merge fragments?
     }
   });

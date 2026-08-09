@@ -194,7 +194,10 @@ function isKetV2Format(ketItem: unknown): ketItem is KETTextV2 {
   );
 }
 
-export function textToStruct(ketItem: KETTextV2 | KETTextOldFormat, struct: Struct) {
+export function textToStruct(
+  ketItem: KETTextV2 | KETTextOldFormat,
+  struct: Struct,
+) {
   let node: TextAttributes;
 
   if (isKetV2Format(ketItem)) {

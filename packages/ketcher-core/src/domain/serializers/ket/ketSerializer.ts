@@ -158,7 +158,10 @@ function parseNode(node: KetMicromoleculeNode, struct: Struct) {
       break;
     }
     case 'text': {
-      textToStruct(node, struct);
+      textToStruct(
+        node as unknown as Parameters<typeof textToStruct>[0],
+        struct,
+      );
       break;
     }
     case MULTITAIL_ARROW_SERIALIZE_KEY: {

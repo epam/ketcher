@@ -931,12 +931,12 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
 
 function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
   const struct = restruct.molecule;
-  let bonds = getAtomsBondIds(struct, sourceAtoms);
+  let bonds = getAtomsBondIds(struct, sourceAtoms) as number[];
 
   if (currSelection.bonds)
     bonds = uniq(bonds.concat(currSelection.bonds)) as number[];
 
-  return (bonds as number[]).reduce<{
+  return bonds.reduce<{
     action: Action;
     selection: {
       atoms: number[];

@@ -55,7 +55,7 @@ class RxnPlusAdd extends BaseOperation {
     // notifyRxnPlusAdded
     restruct.rxnPluses.set(plid, new ReRxnPlus(structRxn));
 
-    struct.rxnPlusSetPos(plid, new Vec2(pos ?? undefined));
+    struct.rxnPlusSetPos(plid, pos ? new Vec2(pos) : new Vec2());
 
     BaseOperation.invalidateItem(restruct, 'rxnPluses', plid, 1);
   }

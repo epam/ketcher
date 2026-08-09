@@ -3389,10 +3389,8 @@ class Editor implements KetcherEditor {
     eventName: string,
     handler: ((data?: unknown) => void) | ((data: ChangeEventData[]) => void),
   ): EditorSubscriber {
-    const subscriber: {
-      handler: ((data?: unknown) => void) | ((data: ChangeEventData[]) => void);
-    } = {
-      handler,
+    const subscriber: EditorSubscriber = {
+      handler: handler as (data?: unknown) => void,
     };
 
     switch (eventName) {
@@ -3421,7 +3419,7 @@ class Editor implements KetcherEditor {
         this.event[eventName].add(handler);
     }
 
-    return subscriber as EditorSubscriber;
+    return subscriber;
   }
 
   unsubscribe(

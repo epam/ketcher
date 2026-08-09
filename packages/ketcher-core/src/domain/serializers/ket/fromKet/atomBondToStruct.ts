@@ -76,7 +76,7 @@ export function atomToStruct(source) {
     params.queryProperties = {};
     queryAttribute.forEach((attributeName) => {
       ifDef(
-        params.queryProperties,
+        params.queryProperties!,
         attributeName,
         source.queryProperties[attributeName],
       );

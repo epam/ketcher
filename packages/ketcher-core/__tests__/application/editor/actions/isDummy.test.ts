@@ -70,8 +70,8 @@ describe('move operations isDummy()', () => {
     expect(new BondMove(1, { x: 0, y: 0 }).isDummy()).toBe(true);
     expect(new BondMove(1, { x: 0, y: 2 }).isDummy()).toBe(false);
 
-    expect(new TextMove(1, { x: 0, y: 0 }).isDummy()).toBe(true);
-    expect(new TextMove(1, { x: 3, y: 4 }).isDummy()).toBe(false);
+    expect(new TextMove(1, new Vec2(0, 0)).isDummy()).toBe(true);
+    expect(new TextMove(1, new Vec2(3, 4)).isDummy()).toBe(false);
   });
 });
 

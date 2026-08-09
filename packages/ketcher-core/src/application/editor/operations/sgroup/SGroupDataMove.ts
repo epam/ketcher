@@ -17,14 +17,15 @@
 import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
+import type { Vec2 } from 'domain/entities/vec2';
 
 export class SGroupDataMove extends BaseOperation {
   data: {
-    id: any;
-    d: any;
+    id: number | undefined;
+    d: Vec2 | undefined;
   };
 
-  constructor(id?: any, d?: any) {
+  constructor(id?: number, d?: Vec2) {
     super(OperationType.S_GROUP_DATA_MOVE);
     this.data = { id, d };
   }

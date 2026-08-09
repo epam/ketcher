@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-export function ifDef<TValue = any>(
-  target: any,
+export function ifDef<TValue = unknown>(
+  target: Record<string, unknown>,
   key: string,
   value: TValue,
   defaultValue?: TValue,

@@ -24,6 +24,11 @@ interface RelativeBox {
   height: number;
 }
 
+interface AbsoluteBox {
+  min: Vec2;
+  max: Vec2;
+}
+
 export class Box2Abs {
   readonly p0: Vec2;
   readonly p1: Vec2;
@@ -32,19 +37,22 @@ export class Box2Abs {
   constructor(p: Vec2);
   constructor(p0: Vec2, p1: Vec2);
   constructor(x0: number, y0: number, x1: number, y1: number);
-  constructor(...args: [] | [Vec2] | [Vec2, Vec2] | [number, number, number, number] | [{ min: Vec2; max: Vec2 }]) {
-    if (
-      args.length === 1 &&
-      !(args[0] instanceof Vec2) &&
-      'min' in args[0] &&
-      'max' in args[0]
-    ) {
-      const boxArg = args[0] as { min: Vec2; max: Vec2 };
+  constructor(
+    ...args:
+      | []
+      | [Vec2]
+      | [Vec2, Vec2]
+      | [number, number, number, number]
+      | [AbsoluteBox]
+  ) {
+    if (args.length === 1 && args[0] instanceof Vec2) {
+      this.p0 = args[0];
+      this.p1 = args[0];
+    } else if (args.length === 1 && 'min' in args[0] && 'max' in args[0]) {
+      const boxArg = args[0] as AbsoluteBox;
       this.p0 = boxArg.min;
       this.p1 = boxArg.max;
-    }
-
-    if (args.length === 2) {
+    } else if (args.length === 2) {
       this.p0 = args[0];
       this.p1 = args[1];
     } else if (args.length === 4) {
@@ -55,7 +63,7 @@ export class Box2Abs {
       this.p1 = new Vec2();
     } else {
       throw new Error(
-        'Box2Abs constructor only accepts 4 numbers or 2 vectors or no args!',
+        'Box2Abs constructor only accepts a point, box bounds, 2 vectors, 4 numbers, or no args!',
       );
     }
   }

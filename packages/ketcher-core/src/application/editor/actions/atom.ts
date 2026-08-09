@@ -127,12 +127,12 @@ export { fromStereoAtomAttrs } from './bondStereo';
 
 export function fromAtomsFragmentAttr(
   restruct: ReStruct,
-  aids: number[],
+  aids: Iterable<number>,
   newfrid: number,
 ) {
   const action = new Action();
 
-  aids.forEach((aid) => {
+  Array.from(aids).forEach((aid) => {
     const atom = restruct.molecule.atoms.get(aid);
     assert(atom != null);
     const sgroup = restruct.molecule.getGroupFromAtomId(aid);
@@ -213,7 +213,7 @@ export function mergeSgroups(
     ) {
       return;
     }
-    const atomsToSgroup = without(sgroup.atoms, srcAtomIds) as number[];
+    const atomsToSgroup = without(sgroup.atoms, srcAtomIds);
     atomsToSgroup.forEach((aid) =>
       action.addOp(new SGroupAtomAdd(sid, aid).perform(restruct)),
     );

@@ -16,6 +16,7 @@
 
 import {
   type Struct,
+  type EditorTemplate,
   expandSGroupWithMultipleAttachmentPoint,
   fromItemsFuse,
   fromPaste,
@@ -176,7 +177,7 @@ class PasteTool implements Tool {
         pos0 = atom?.pp;
       }
 
-      if (!pos0) {
+      if (!pos0 || atomId === undefined) {
         // Invariant: dragCtx.item always refers to a functional group with a
         // resolvable attachment atom (validated in mousedown). Reaching here
         // with no position indicates a programming error, not a runtime case.
@@ -309,16 +310,8 @@ class PasteTool implements Tool {
   }
 }
 
-type Template = {
-  aid?: number;
-  molecule?: Struct;
-  xy0?: Vec2;
-  angle0?: number;
-};
-
 /** Adds position and angle info to the molecule, similar to Template tool native behavior */
-function prepareTemplateFromSingleGroup(molecule: Struct): Template | null {
-  const template: Template = {};
+function prepareTemplateFromSingleGroup(molecule: Struct): EditorTemplate {
   const sgroup = molecule.sgroups.get(0);
   const xy0 = new Vec2();
 
@@ -326,16 +319,16 @@ function prepareTemplateFromSingleGroup(molecule: Struct): Template | null {
     xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
   });
 
-  template.aid = sgroup?.getAttachmentAtomId() ?? 0;
-  template.molecule = molecule;
-  template.xy0 = xy0.scaled(1 / (molecule.atoms.size || 1)); // template center
+  const xy0Center = xy0.scaled(1 / (molecule.atoms.size || 1)); // template center
+  const aid = sgroup?.getAttachmentAtomId() ?? 0;
+  const atom = molecule.atoms.get(aid);
 
-  const atom = molecule.atoms.get(template.aid);
-  if (atom) {
-    template.angle0 = vectorUtils.calcAngle(atom.pp, template.xy0); // center tilt
-  }
-
-  return template;
+  return {
+    aid,
+    bid: 0,
+    molecule,
+    angle0: atom ? vectorUtils.calcAngle(atom.pp, xy0Center) : 0, // center tilt
+  };
 }
 
 export default PasteTool;

@@ -27,9 +27,9 @@ export type Sign = 0 | 1 | -1;
 export interface InternalTemplate {
   aid: number;
   bid: number;
-  molecule?: Struct;
+  molecule: Struct;
   xy0?: Vec2;
-  angle0?: number;
+  angle0: number;
   /** Sign of the template relative to its attachment bond (+1 or -1). 0 when no bond is present. */
   sign: Sign;
 }

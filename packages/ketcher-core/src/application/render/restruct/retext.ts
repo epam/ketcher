@@ -167,7 +167,11 @@ class ReText extends ReObject {
     return ret;
   }
 
-  makeSelectionPlate(restruct: ReStruct, _paper: unknown, options: RenderOptions): RaphaelBaseElement | null {
+  makeSelectionPlate(
+    restruct: ReStruct,
+    _paper: unknown,
+    options: RenderOptions,
+  ): RaphaelBaseElement | null {
     if (!this.paths.length || !_paper) return null;
     return this.hoverPath(restruct.render).attr(options.selectionStyle);
   }

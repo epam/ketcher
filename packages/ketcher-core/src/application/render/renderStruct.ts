@@ -81,12 +81,10 @@ export class RenderStruct {
         previousOptions = options;
       }
 
-      if (renderCache.has(cacheKey) && needCache) {
-        wrapperElement.innerHTML = getOrThrow(
-          renderCache,
-          cacheKey,
-          `Render cache item for key "${cacheKey}" not found`,
-        );
+      const cachedSvg = renderCache.get(cacheKey);
+
+      if (needCache && cachedSvg !== undefined) {
+        wrapperElement.innerHTML = cachedSvg;
         return;
       }
 

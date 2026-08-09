@@ -31,7 +31,7 @@ export function rgroupToStruct(ketItem: KetItem): Struct {
   return struct;
 }
 
-export function rgroupLogicToStruct(rglogic: KetRLogic | undefined) {
+export function rgroupLogicToStruct(rglogic: KetRLogic | undefined): RGroup {
   const params = {};
   ifDef(params, 'range', rglogic?.range);
   ifDef(params, 'resth', rglogic?.resth);

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import type { ReStruct } from 'application/render';
-import { Vec2 } from 'domain/entities/vec2';
+import type { Vec2 } from 'domain/entities/vec2';
 import { Scale } from 'domain/helpers';
 import Base from '../BaseOperation';
 import { OperationType } from '../OperationType';
@@ -38,11 +38,13 @@ export class RxnArrowMove extends Base {
     const struct = restruct.molecule;
     const id = this.data.id;
     const d = this.data.d;
+    if (id === undefined || d === undefined) return;
     const item = struct.rxnArrows.get(id);
+    if (!item) return;
     item.pos.forEach((p) => p.add_(d));
-    restruct.rxnArrows
-      .get(id)
-      .visel.translate(Scale.modelToCanvas(d, restruct.render.options));
+    const reItem = restruct.rxnArrows.get(id);
+    if (!reItem) return;
+    reItem.visel.translate(Scale.modelToCanvas(d, restruct.render.options));
     this.data.d = d.negated();
     if (!this.data.noinvalidate) {
       Base.invalidateItem(restruct, 'rxnArrows', id, 1);

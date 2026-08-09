@@ -3,6 +3,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { isEqual } from 'lodash';
 import { getOrThrow } from '../../utilities';
 import { Render } from './raphaelRender';
+import type { RenderOptions } from './render.types';
 import type ReAtom from './restruct/reatom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 
@@ -10,8 +11,14 @@ import { Coordinates } from 'application/editor/shared/coordinates';
  * Is used to improve search and opening tab performance in Template Dialog
  * Rendering a lot of structures causes great delay
  */
-const renderCache = new Map();
-let previousOptions: any;
+type RenderStructOptions = Partial<RenderOptions> & {
+  cachePrefix?: string;
+  needCache?: boolean;
+  wrapperDimensions?: Pick<DOMRectReadOnly, 'width' | 'height'>;
+};
+
+const renderCache = new Map<string, string>();
+let previousOptions: RenderStructOptions | undefined;
 const MIN_ATTACHMENT_POINT_SIZE = 8;
 const attachmentPointRegExp = /^R[1-8]$/;
 
@@ -34,7 +41,7 @@ export class RenderStruct {
 
   static removeSmallAttachmentPointLabelsInModal(
     render: Render,
-    options: any = {},
+    options: RenderStructOptions = {},
   ) {
     if (!options.labelInMonomerConnectionsModal) {
       return;
@@ -63,7 +70,7 @@ export class RenderStruct {
   static render(
     wrapperElement: HTMLElement | null,
     struct: Struct | null,
-    options: any = {},
+    options: RenderStructOptions = {},
   ) {
     if (wrapperElement && struct) {
       const { cachePrefix = '', needCache = true, wrapperDimensions } = options;
@@ -75,7 +82,11 @@ export class RenderStruct {
       }
 
       if (renderCache.has(cacheKey) && needCache) {
-        wrapperElement.innerHTML = renderCache.get(cacheKey);
+        wrapperElement.innerHTML = getOrThrow(
+          renderCache,
+          cacheKey,
+          `Render cache item for key "${cacheKey}" not found`,
+        );
         return;
       }
 
@@ -126,7 +137,7 @@ export class RenderStruct {
         extendedOptions.height = svgSize;
       }
 
-      const rnd = new Render(wrapperElement, extendedOptions);
+      const rnd = new Render(wrapperElement, extendedOptions as RenderOptions);
 
       if (!window.isPolymerEditorTurnedOn) {
         preparedStruct.rescale();

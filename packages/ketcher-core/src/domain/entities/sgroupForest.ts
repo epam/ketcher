@@ -74,18 +74,24 @@ export class SGroupForest {
     });
 
     const parents = Array.from(this.atomSets.keys()).filter((sgid) => {
-      if (!isSubset.get(sgid)) {
+      if (isSubset.get(sgid) !== true) {
         return false;
       }
       const childs = this.children.get(sgid);
-      return childs && childs.findIndex((childId) => isSubset.get(childId)) < 0;
+      return (
+        !!childs &&
+        childs.findIndex((childId) => isSubset.get(childId) === true) < 0
+      );
     });
 
     const children = Array.from(this.atomSets.keys()).filter((id) => {
       const parentId = this.parent.get(id);
       return (
-        isStrictSuperset.get(id) &&
-        !(typeof parentId === 'number' && isStrictSuperset.get(parentId))
+        isStrictSuperset.get(id) === true &&
+        !(
+          typeof parentId === 'number' &&
+          isStrictSuperset.get(parentId) === true
+        )
       );
     });
 

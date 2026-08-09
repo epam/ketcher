@@ -3422,10 +3422,7 @@ class Editor implements KetcherEditor {
     return subscriber;
   }
 
-  unsubscribe(
-    eventName: string,
-    subscriber: EditorSubscriber,
-  ): void {
+  unsubscribe(eventName: string, subscriber: EditorSubscriber): void {
     switch (eventName) {
       case 'change': {
         ketcherProvider

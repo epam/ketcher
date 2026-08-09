@@ -48,13 +48,14 @@ class RxnPlusAdd extends BaseOperation {
     }
 
     const { pos, plid } = this.data;
+    if (plid === null) return;
 
     const structRxn = struct.rxnPluses.get(plid);
     if (!structRxn) return;
     // notifyRxnPlusAdded
     restruct.rxnPluses.set(plid, new ReRxnPlus(structRxn));
 
-    struct.rxnPlusSetPos(plid, new Vec2(pos));
+    struct.rxnPlusSetPos(plid, new Vec2(pos ?? undefined));
 
     BaseOperation.invalidateItem(restruct, 'rxnPluses', plid, 1);
   }
@@ -71,11 +72,12 @@ class RxnPlusDelete extends BaseOperation {
 
   constructor(plid?: number) {
     super(OperationType.RXN_PLUS_DELETE);
-    this.data = { plid, pos: null };
+    this.data = { plid: plid ?? null, pos: null };
   }
 
   execute(restruct: ReStruct) {
     const { plid } = this.data;
+    if (plid === null) return;
 
     const struct = restruct.molecule;
     if (!this.data.pos) {

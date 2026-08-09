@@ -35,6 +35,7 @@ export class Box2Abs {
 
   constructor();
   constructor(p: Vec2);
+  constructor(box: AbsoluteBox);
   constructor(p0: Vec2, p1: Vec2);
   constructor(x0: number, y0: number, x1: number, y1: number);
   constructor(

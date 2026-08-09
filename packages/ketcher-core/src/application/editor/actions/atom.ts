@@ -16,6 +16,7 @@
 
 import { Atom, type AtomAttributes } from 'domain/entities/atom';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import type { Pile } from 'domain/entities/pile';
 import { RGroup } from 'domain/entities/rgroup';
 import type { Point } from 'domain/entities/vec2';
 import {
@@ -39,7 +40,7 @@ import { assert } from 'utilities';
 
 export function fromAtomAddition(
   restruct: ReStruct,
-  pos: Point,
+  pos: Point | null,
   atom?: Partial<AtomAttributes>,
 ) {
   atom = { ...(atom || {}) };
@@ -49,7 +50,7 @@ export function fromAtomAddition(
   ).frid as number;
 
   const aid = (
-    action.addOp(new AtomAdd(atom, pos).perform(restruct)) as AtomAdd
+    action.addOp(new AtomAdd(atom, pos as Point).perform(restruct)) as AtomAdd
   ).data.aid;
   action.addOp(new CalcImplicitH([aid as number]).perform(restruct));
 
@@ -127,12 +128,12 @@ export { fromStereoAtomAttrs } from './bondStereo';
 
 export function fromAtomsFragmentAttr(
   restruct: ReStruct,
-  aids: Iterable<number>,
+  aids: number[] | Pile<number>,
   newfrid: number,
 ) {
   const action = new Action();
 
-  Array.from(aids).forEach((aid) => {
+  aids.forEach((aid) => {
     const atom = restruct.molecule.atoms.get(aid);
     assert(atom != null);
     const sgroup = restruct.molecule.getGroupFromAtomId(aid);
@@ -195,11 +196,10 @@ export function mergeFragmentsIfNeeded(
 export function mergeSgroups(
   action: Action,
   restruct: ReStruct,
-  srcAtoms: Iterable<number>,
+  srcAtoms: number[] | Pile<number>,
   dstAtom: number,
 ) {
   const sgroups = atomGetSGroups(restruct, dstAtom);
-  const srcAtomIds = Array.from(srcAtoms);
 
   sgroups.forEach((sid) => {
     const sgroup = restruct.molecule.sgroups.get(sid);
@@ -213,7 +213,10 @@ export function mergeSgroups(
     ) {
       return;
     }
-    const atomsToSgroup = without(sgroup.atoms, srcAtomIds);
+    const atomsToSgroup = without(
+      sgroup.atoms,
+      srcAtoms as unknown as number[],
+    );
     atomsToSgroup.forEach((aid) =>
       action.addOp(new SGroupAtomAdd(sid, aid).perform(restruct)),
     );

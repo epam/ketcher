@@ -21,6 +21,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import Base from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReSimpleObject } from '../../render';
+import type { ReStruct } from '../../render';
 import { Scale } from 'domain/helpers';
 import { toFixed } from 'utilities';
 
@@ -43,7 +44,7 @@ export class SimpleObjectAdd extends Base {
     this.data = { pos, mode, toCircle, id };
   }
 
-  execute(restruct: any): void {
+  execute(restruct: ReStruct): void {
     const struct = restruct.molecule;
     const item = new SimpleObject({ mode: this.data.mode });
 
@@ -92,7 +93,7 @@ export class SimpleObjectDelete extends Base {
     this.performed = false;
   }
 
-  execute(restruct: any): void {
+  execute(restruct: ReStruct): void {
     const struct = restruct.molecule;
     const item = struct.simpleObjects.get(this.data.id);
     // save to data current values. In future they could be used in invert for restoring simple object
@@ -120,19 +121,19 @@ export class SimpleObjectDelete extends Base {
 
 interface SimpleObjectMoveData {
   id: number;
-  d: any;
+  d: Vec2;
   noinvalidate: boolean;
 }
 
 export class SimpleObjectMove extends Base {
   data: SimpleObjectMoveData;
 
-  constructor(id: number, d: any, noinvalidate: boolean) {
+  constructor(id: number, d: Vec2, noinvalidate: boolean) {
     super(OperationType.SIMPLE_OBJECT_MOVE);
     this.data = { id, d, noinvalidate };
   }
 
-  execute(restruct: any): void {
+  execute(restruct: ReStruct): void {
     const struct = restruct.molecule;
     const id = this.data.id;
     const d = this.data.d;
@@ -166,14 +167,18 @@ export class SimpleObjectMove extends Base {
 
 interface SimpleObjectResizeData {
   id: number;
-  d: any;
+  d: Vec2;
   current: Vec2;
   anchor: Vec2;
   noinvalidate: boolean;
   toCircle: boolean;
 }
 
-function handleRectangleChangeWithAnchor(item, anchor, current) {
+function handleRectangleChangeWithAnchor(
+  item: SimpleObject,
+  anchor: Vec2,
+  current: Vec2,
+) {
   const previousPos0 = item.pos[0].get_xy0();
   const previousPos1 = item.pos[1].get_xy0();
 
@@ -200,9 +205,9 @@ export class SimpleObjectResize extends Base {
 
   constructor(
     id: number,
-    d: any,
+    d: Vec2,
     current: Vec2,
-    anchor: any,
+    anchor: Vec2,
     noinvalidate: boolean,
     toCircle: boolean,
   ) {
@@ -210,7 +215,7 @@ export class SimpleObjectResize extends Base {
     this.data = { id, d, current, anchor, noinvalidate, toCircle };
   }
 
-  execute(restruct: any): void {
+  execute(restruct: ReStruct): void {
     const struct = restruct.molecule;
     const id = this.data.id;
     const d = this.data.d;

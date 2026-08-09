@@ -32,7 +32,7 @@ const mockProps: DropDownProps = {
   selectionHandler: mockSelectionHandler,
 };
 
-describe.skip('DropDown component', () => {
+describe('DropDown component', () => {
   it('should render an element with current selection displayed', () => {
     render(withThemeProvider(<DropDown {...mockProps} />));
     expect(screen.getByText(INITIAL_SELECTION.label)).toBeInTheDocument();

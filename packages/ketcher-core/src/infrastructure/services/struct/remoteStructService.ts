@@ -37,6 +37,8 @@ import {
   type ExplicitHydrogensData,
   type ExplicitHydrogensResult,
   type GenerateImageOptions,
+  type ImagoStatusResponse,
+  type ImagoUploadResponse,
   type InfoResult,
   type LayoutData,
   type LayoutResult,
@@ -50,8 +52,13 @@ import { KetcherLogger, normalizeError } from 'utilities';
 import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
 import { ketcherProvider } from 'application/ketcherProvider';
 
-function pollDeferred(process, complete, timeGap, startTimeGap) {
-  return new Promise((resolve, reject) => {
+function pollDeferred<T>(
+  process: () => Promise<T>,
+  complete: (val: T) => boolean,
+  timeGap: number,
+  startTimeGap?: number,
+) {
+  return new Promise<T>((resolve, reject) => {
     function iterate() {
       process().then(
         (val) => {
@@ -70,37 +77,39 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
   });
 }
 
-function parametrizeUrl(url, params) {
+function parametrizeUrl(url: string, params: Record<string, string>) {
   return url.replace(/:(\w+)/g, (_, val) => params[val]);
 }
 
 function request(
   method: string,
   url: string,
-  data?: any,
-  headers?: any,
-  responseHandler?: (promise: Promise<any>) => Promise<any>,
+  data?: string | Blob | Record<string, string>,
+  headers?: Record<string, string>,
+  responseHandler?: (promise: Promise<Response>) => Promise<unknown>,
 ) {
   let requestUrl = url;
-  if (data && method === 'GET') requestUrl = parametrizeUrl(url, data);
-  let response: any = fetch(requestUrl, {
+  if (data && method === 'GET')
+    requestUrl = parametrizeUrl(url, data as Record<string, string>);
+  const fetchResponse: Promise<Response> = fetch(requestUrl, {
     method,
     headers: {
       Accept: 'application/json',
       ...(headers ?? {}),
     },
-    body: method !== 'GET' ? data : undefined,
+    body: method !== 'GET' ? (data as string | Blob) : undefined,
     credentials: 'same-origin',
   });
 
+  let response: Promise<unknown>;
   if (responseHandler) {
-    response = responseHandler(response);
+    response = responseHandler(fetchResponse);
   } else {
-    response = response.then((response) =>
-      response
+    response = fetchResponse.then((res) =>
+      res
         .json()
-        .then((res) =>
-          response.ok ? res : Promise.reject(new Error(res.error)),
+        .then((json) =>
+          res.ok ? json : Promise.reject(new Error(json.error)),
         ),
     );
   }
@@ -112,13 +121,13 @@ function indigoCall(
   method: string,
   url: string,
   baseUrl: string,
-  defaultOptions: any,
+  defaultOptions: StructServiceOptions,
   customHeaders?: Record<string, string>,
 ) {
   return function (
-    data,
-    options,
-    responseHandler?: (promise: Promise<any>) => Promise<any>,
+    data: Record<string, unknown>,
+    options: Record<string, unknown>,
+    responseHandler?: (promise: Promise<Response>) => Promise<unknown>,
   ) {
     const body = { ...(data ?? {}) };
     body.options = {
@@ -405,12 +414,12 @@ export class RemoteStructService implements StructService {
     const statusUrl = this.apiPath + 'imago/uploads/:id';
     const { customHeaders } = this;
     const status = (data: { id: string }) =>
-      request('GET', statusUrl, data, customHeaders);
+      request('GET', statusUrl, data, customHeaders) as Promise<ImagoStatusResponse>;
     return req
       .then((data) =>
         pollDeferred(
-          status.bind(null, { id: data.upload_id }),
-          (response: any) => {
+          status.bind(null, { id: (data as ImagoUploadResponse).upload_id }),
+          (response: ImagoStatusResponse) => {
             if (response.state === 'FAILURE')
               throw new Error(JSON.stringify(response));
             return response.state === 'SUCCESS';
@@ -419,7 +428,7 @@ export class RemoteStructService implements StructService {
           300,
         ),
       )
-      .then((response: any) => ({ struct: response.metadata.mol_str }));
+      .then((response) => ({ struct: (response as ImagoStatusResponse).metadata?.mol_str ?? '' }));
   }
 
   generateImageAsBase64(

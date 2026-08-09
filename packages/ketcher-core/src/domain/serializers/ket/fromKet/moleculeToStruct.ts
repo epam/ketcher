@@ -14,8 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, AttachmentPoints } from 'domain/entities/atom';
-import type { AtomAttributes } from 'domain/entities/atom';
+import {
+  Atom,
+  AttachmentPoints,
+  type AtomAttributes,
+} from 'domain/entities/atom';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';

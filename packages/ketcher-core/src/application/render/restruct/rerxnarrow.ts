@@ -94,15 +94,8 @@ class ReRxnArrow extends ReObject {
       dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
     });
 
-    const minDist: MinDistanceWithReferencePoint = dist.reduce(
-      (acc, current) => {
-        if (!acc) {
-          return current;
-        }
-
-        return acc.minDist < current.minDist ? acc : current;
-      },
-      null as unknown as MinDistanceWithReferencePoint,
+    const minDist: MinDistanceWithReferencePoint = dist.reduce((acc, current) =>
+      acc.minDist < current.minDist ? acc : current,
     );
 
     return minDist;

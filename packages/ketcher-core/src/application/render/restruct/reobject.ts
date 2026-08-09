@@ -87,7 +87,10 @@ class ReObject {
     this.hover = hover;
   }
 
-  drawHover(_render: Render, _drawOutline?: boolean): RaphaelSet | Element | void {
+  drawHover(
+    _render: Render,
+    _drawOutline?: boolean,
+  ): RaphaelSet | Element | void {
     throw new Error('ReObject.drawHover is not overridden.');
   }
 

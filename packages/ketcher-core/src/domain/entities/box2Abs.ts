@@ -33,7 +33,12 @@ export class Box2Abs {
   constructor(p0: Vec2, p1: Vec2);
   constructor(x0: number, y0: number, x1: number, y1: number);
   constructor(...args: [] | [Vec2] | [Vec2, Vec2] | [number, number, number, number] | [{ min: Vec2; max: Vec2 }]) {
-    if (args.length === 1 && !(args[0] instanceof Vec2)) {
+    if (
+      args.length === 1 &&
+      !(args[0] instanceof Vec2) &&
+      'min' in args[0] &&
+      'max' in args[0]
+    ) {
       const boxArg = args[0] as { min: Vec2; max: Vec2 };
       this.p0 = boxArg.min;
       this.p1 = boxArg.max;

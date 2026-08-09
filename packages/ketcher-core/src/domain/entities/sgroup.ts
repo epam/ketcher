@@ -83,7 +83,7 @@ interface SGroupData {
 
 type AtomIdRemap = Record<number, number> | number[];
 type StructAtomsAccess = Pick<Struct, 'atoms'>;
-type StructBondsAccess = Pick<Struct, 'bonds'>;
+type StructBondsAccess = Pick<Struct, 'atoms' | 'bonds'>;
 type StructAtomsAndBondsAccess = Pick<Struct, 'atoms' | 'bonds'>;
 type RenderableSGroupAtom =
   | Atom

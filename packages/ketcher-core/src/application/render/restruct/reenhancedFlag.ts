@@ -25,14 +25,6 @@ import type { Render } from '../raphaelRender';
 import type { RenderOptions } from '../render.types';
 import { Scale } from 'domain/helpers';
 
-type ReEnhancedFlagRenderOptions = RenderOptions & {
-  showStereoFlags?: boolean;
-  absFlagLabel?: string;
-  andFlagLabel?: string;
-  mixedFlagLabel?: string;
-  orFlagLabel?: string;
-};
-
 class ReEnhancedFlag extends ReObject {
   #path: Element | null = null;
 
@@ -69,11 +61,7 @@ class ReEnhancedFlag extends ReObject {
     return this.hoverPath(restruct.render).attr(options.selectionStyle);
   }
 
-  show(
-    restruct: ReStruct,
-    fragmentId: number,
-    options: ReEnhancedFlagRenderOptions,
-  ): void {
+  show(restruct: ReStruct, fragmentId: number, options: RenderOptions): void {
     const render = restruct.render;
     const fragment = restruct.molecule.frags.get(fragmentId);
 

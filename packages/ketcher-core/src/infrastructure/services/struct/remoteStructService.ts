@@ -431,10 +431,15 @@ export class RemoteStructService implements StructService {
           300,
         ),
       )
-      .then((response) => ({
-        struct: response.metadata?.mol_str ?? '',
-        output_format: ChemicalMimeType.Mol,
-      }));
+      .then((response) => {
+        if (!response.metadata?.mol_str) {
+          throw new Error('Image recognition succeeded but mol_str is missing');
+        }
+        return {
+          struct: response.metadata.mol_str,
+          output_format: ChemicalMimeType.Mol,
+        };
+      });
   }
 
   generateImageAsBase64(

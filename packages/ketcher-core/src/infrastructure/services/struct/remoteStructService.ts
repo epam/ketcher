@@ -117,7 +117,7 @@ function request<T = unknown>(
   return response;
 }
 
-function indigoCall<TData extends Record<string, unknown>, TResult>(
+function indigoCall<TData extends object, TResult>(
   method: string,
   url: string,
   baseUrl: string,
@@ -129,7 +129,9 @@ function indigoCall<TData extends Record<string, unknown>, TResult>(
     options: Record<string, unknown>,
     responseHandler?: (promise: Promise<Response>) => Promise<TResult>,
   ): Promise<TResult> {
-    const body: Record<string, unknown> = { ...(data ?? {}) };
+    const body: Record<string, unknown> = {
+      ...(data as unknown as Record<string, unknown>),
+    };
     body.options = {
       ...((body.options as Record<string, unknown>) ?? {}),
       ...(defaultOptions ?? {}),
@@ -191,7 +193,10 @@ export class RemoteStructService implements StructService {
   }
 
   getInChIKey(struct: string): Promise<string> {
-    return indigoCall<{ struct: string; output_format: ChemicalMimeType }, string>(
+    return indigoCall<
+      { struct: string; output_format: ChemicalMimeType },
+      string
+    >(
       'POST',
       'indigo/convert',
       this.apiPath,
@@ -226,12 +231,7 @@ export class RemoteStructService implements StructService {
       const response = await request<{
         indigo_version: string;
         imago_versions: Array<string>;
-      }>(
-        'GET',
-        this.apiPath + 'info',
-        undefined,
-        this.customHeaders,
-      );
+      }>('GET', this.apiPath + 'info', undefined, this.customHeaders);
       indigoVersion = response.indigo_version;
       imagoVersions = response.imago_versions;
       isAvailable = true;
@@ -498,7 +498,10 @@ export class RemoteStructService implements StructService {
     data: CalculateMacromoleculePropertiesData,
     options?: StructServiceOptions,
   ): Promise<CalculateMacromoleculePropertiesResult> {
-    return indigoCall<CalculateMacromoleculePropertiesData, CalculateMacromoleculePropertiesResult>(
+    return indigoCall<
+      CalculateMacromoleculePropertiesData,
+      CalculateMacromoleculePropertiesResult
+    >(
       'POST',
       'indigo/calculateMacroProperties',
       this.apiPath,

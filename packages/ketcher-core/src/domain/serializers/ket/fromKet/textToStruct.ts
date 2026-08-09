@@ -15,12 +15,39 @@
  ***************************************************************************/
 
 import type { Struct } from 'domain/entities/struct';
-import { Text } from 'domain/entities/text';
+import { Text, type TextAttributes } from 'domain/entities/text';
 import { getNodeWithInvertedYCoord } from '../helpers';
 import {
   type DraftEditorState,
   convertDraftToLexical,
 } from 'application/render/restruct/draftToLexical';
+
+interface LexicalTextNode {
+  detail: number;
+  format: number;
+  mode: string;
+  style: string;
+  text: string;
+  type: 'text';
+  version: number;
+  font?: string;
+}
+
+interface LexicalParagraphNode {
+  children: LexicalTextNode[];
+  direction: string;
+  format: string;
+  indent: number;
+  type: 'paragraph';
+  version: number;
+  textFormat: number;
+  textStyle: string;
+}
+
+interface KETTextOldFormat {
+  data: TextAttributes;
+  selected?: boolean;
+}
 
 const IS_BOLD = 1;
 const IS_ITALIC = 2;
@@ -89,7 +116,7 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
   const lexicalRoot = {
     root: {
       children: paragraphs.map((para) => {
-        const paragraphNode: any = {
+        const paragraphNode: LexicalParagraphNode = {
           children: (para.parts || []).map((part) => {
             let format = 0;
             if (part.bold) format |= IS_BOLD;
@@ -97,7 +124,7 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
             if (part.subscript) format |= IS_SUBSCRIPT;
             if (part.superscript) format |= IS_SUPERSCRIPT;
 
-            const textNode: any = {
+            const textNode: LexicalTextNode = {
               detail: 0,
               format,
               mode: 'normal',
@@ -158,7 +185,7 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
 /**
  * Check if the ketItem is in KET v2.0 format (has boundingBox and paragraphs directly).
  */
-function isKetV2Format(ketItem: any): ketItem is KETTextV2 {
+function isKetV2Format(ketItem: unknown): ketItem is KETTextV2 {
   return (
     ketItem &&
     ketItem.boundingBox !== undefined &&
@@ -166,8 +193,8 @@ function isKetV2Format(ketItem: any): ketItem is KETTextV2 {
   );
 }
 
-export function textToStruct(ketItem: any, struct: Struct) {
-  let node: any;
+export function textToStruct(ketItem: KETTextV2 | KETTextOldFormat, struct: Struct) {
+  let node: TextAttributes;
 
   if (isKetV2Format(ketItem)) {
     // KET v2.0 format: convert to internal format

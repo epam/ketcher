@@ -908,7 +908,7 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
         return res;
       }, []);
 
-      const bonds = getAtomsBondIds(restruct.molecule, atoms);
+      const bonds = getAtomsBondIds(restruct.molecule, atoms) as number[];
 
       acc.action = acc.action.mergeWith(
         fromSeveralSgroupAddition(restruct, newSg.type, atoms, newSg.attrs),

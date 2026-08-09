@@ -74,9 +74,10 @@ export function atomToStruct(source) {
     Object.values(source.queryProperties).some((property) => property !== null)
   ) {
     params.queryProperties = {};
+    const queryProperties = params.queryProperties;
     queryAttribute.forEach((attributeName) => {
       ifDef(
-        params.queryProperties!,
+        queryProperties,
         attributeName,
         source.queryProperties[attributeName],
       );

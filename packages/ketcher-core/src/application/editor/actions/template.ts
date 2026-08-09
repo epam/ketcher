@@ -34,6 +34,9 @@ import { fromSgroupAddition } from './sgroup';
 import type { ReStruct } from 'application/render';
 import { KetcherLogger } from 'utilities';
 import { isNumber } from 'lodash';
+import type { EditorTemplate, PasteItems } from './template.types';
+
+export type { EditorTemplate, PasteItems } from './template.types';
 
 const benzeneMoleculeName = 'Benzene';
 const cyclopentadieneMoleculeName = 'Cyclopentadiene';
@@ -41,7 +44,7 @@ const benzeneDoubleBondIndexes = [2, 4];
 
 export function fromTemplateOnCanvas(
   restruct: ReStruct,
-  template,
+  template: EditorTemplate,
   pos: Vec2,
   angle = 0,
   isPreview = true,
@@ -113,11 +116,11 @@ function extraBondAction(
 }
 
 export function fromTemplateOnAtom(
-  restruct,
-  template,
-  aid,
-  angle,
-  extraBond,
+  restruct: ReStruct,
+  template: EditorTemplate,
+  aid: number,
+  angle: number | null,
+  extraBond: boolean,
   isPreview = false,
 ): [Action, { atoms: number[]; bonds: number[] }] {
   let action = new Action();
@@ -236,30 +239,30 @@ export function fromTemplateOnAtom(
 type FromTemplateOnBondResult = [Action, { atoms: number[]; bonds: number[] }];
 
 export function fromTemplateOnBondAction(
-  restruct,
-  template,
-  bid,
-  events,
-  flip,
+  restruct: ReStruct,
+  template: EditorTemplate,
+  bid: number,
+  events: unknown,
+  flip: boolean,
   force: false,
   isPreview?: boolean,
 ): FromTemplateOnBondResult;
 export function fromTemplateOnBondAction(
-  restruct,
-  template,
-  bid,
-  events,
-  flip,
+  restruct: ReStruct,
+  template: EditorTemplate,
+  bid: number,
+  events: unknown,
+  flip: boolean,
   force: true,
   isPreview?: boolean,
 ): Promise<FromTemplateOnBondResult>;
 export function fromTemplateOnBondAction(
-  restruct,
-  template,
-  bid,
-  events,
-  flip,
-  force,
+  restruct: ReStruct,
+  template: EditorTemplate,
+  bid: number,
+  events: unknown,
+  flip: boolean,
+  force: boolean,
   isPreview = false,
 ) {
   if (!force) return fromTemplateOnBond(restruct, template, bid, flip);
@@ -315,18 +318,18 @@ function getConnectingBond(
 }
 
 function placeTemplateAtoms(
-  restruct,
-  tmpl,
-  struct,
-  tmplBond,
-  tmplBegin,
-  bond,
-  atomsMap,
-  frid,
-  angle,
-  scale,
-  action,
-  pasteItems,
+  restruct: ReStruct,
+  tmpl: Struct,
+  struct: Struct,
+  tmplBond: Bond,
+  tmplBegin: Atom,
+  bond: Bond,
+  atomsMap: Map<number, number>,
+  frid: number,
+  angle: number,
+  scale: number,
+  action: Action,
+  pasteItems: PasteItems,
 ) {
   tmpl.atoms.forEach((atom, id) => {
     const attrs = Atom.getAttrHash(atom) as Record<string, unknown>;
@@ -358,17 +361,17 @@ function placeTemplateAtoms(
 }
 
 function placeTemplateBonds(
-  restruct,
-  tmpl,
-  struct,
-  tmplBond,
-  bond,
-  bid,
-  atomsMap,
-  fusingBondType,
-  isPreview,
-  action,
-  pasteItems,
+  restruct: ReStruct,
+  tmpl: Struct,
+  struct: Struct,
+  tmplBond: Bond,
+  bond: Bond,
+  bid: number,
+  atomsMap: Map<number, number>,
+  fusingBondType: number | null,
+  isPreview: boolean,
+  action: Action,
+  pasteItems: PasteItems,
 ) {
   const isFusingBenzeneBySpecialRules = fusingBondType !== null;
 
@@ -440,7 +443,12 @@ function placeTemplateBonds(
   });
 }
 
-function applyTemplatePostProcessing(restruct, bond, pasteItems, action) {
+function applyTemplatePostProcessing(
+  restruct: ReStruct,
+  bond: Bond,
+  pasteItems: PasteItems,
+  action: Action,
+) {
   if (pasteItems.atoms.length) {
     action.addOp(
       new CalcImplicitH([bond.begin, bond.end, ...pasteItems.atoms]).perform(
@@ -459,7 +467,13 @@ function applyTemplatePostProcessing(restruct, bond, pasteItems, action) {
   }
 }
 
-function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
+function fromTemplateOnBond(
+  restruct: ReStruct,
+  template: EditorTemplate,
+  bid: number,
+  flip: boolean,
+  isPreview = false,
+) {
   const action = new Action();
 
   const tmpl = template.molecule;

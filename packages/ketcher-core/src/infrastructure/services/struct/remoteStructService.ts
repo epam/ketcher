@@ -81,13 +81,13 @@ function parametrizeUrl(url: string, params: Record<string, string>) {
   return url.replace(/:(\w+)/g, (_, val) => params[val]);
 }
 
-function request(
+function request<T = unknown>(
   method: string,
   url: string,
   data?: string | Blob | Record<string, string>,
   headers?: Record<string, string>,
-  responseHandler?: (promise: Promise<Response>) => Promise<unknown>,
-) {
+  responseHandler?: (promise: Promise<Response>) => Promise<T>,
+): Promise<T> {
   let requestUrl = url;
   if (data && method === 'GET')
     requestUrl = parametrizeUrl(url, data as Record<string, string>);
@@ -101,7 +101,7 @@ function request(
     credentials: 'same-origin',
   });
 
-  let response: Promise<unknown>;
+  let response: Promise<T>;
   if (responseHandler) {
     response = responseHandler(fetchResponse);
   } else {
@@ -111,13 +111,13 @@ function request(
         .then((json) =>
           res.ok ? json : Promise.reject(new Error(json.error)),
         ),
-    );
+    ) as Promise<T>;
   }
 
   return response;
 }
 
-function indigoCall(
+function indigoCall<TData extends object, TResult>(
   method: string,
   url: string,
   baseUrl: string,
@@ -125,17 +125,17 @@ function indigoCall(
   customHeaders?: Record<string, string>,
 ) {
   return function (
-    data: Record<string, unknown>,
+    data: TData,
     options: Record<string, unknown>,
-    responseHandler?: (promise: Promise<Response>) => Promise<unknown>,
-  ) {
-    const body = { ...(data ?? {}) };
+    responseHandler?: (promise: Promise<Response>) => Promise<TResult>,
+  ): Promise<TResult> {
+    const body: Record<string, unknown> = { ...(data ?? {}) };
     body.options = {
-      ...(body.options ?? {}),
+      ...(body.options as Record<string, unknown> ?? {}),
       ...(defaultOptions ?? {}),
       ...(options ?? {}),
     };
-    return request(
+    return request<TResult>(
       method,
       baseUrl + url,
       JSON.stringify(body),
@@ -191,7 +191,7 @@ export class RemoteStructService implements StructService {
   }
 
   getInChIKey(struct: string): Promise<string> {
-    return indigoCall(
+    return indigoCall<{ struct: string; output_format: ChemicalMimeType }, string>(
       'POST',
       'indigo/convert',
       this.apiPath,
@@ -223,7 +223,10 @@ export class RemoteStructService implements StructService {
     let isAvailable = false;
 
     try {
-      const response = await request(
+      const response = await request<{
+        indigo_version: string;
+        imago_versions: Array<string>;
+      }>(
         'GET',
         this.apiPath + 'info',
         undefined,
@@ -273,7 +276,7 @@ export class RemoteStructService implements StructService {
       'sequence-type': options?.['sequence-type'],
     };
 
-    return indigoCall(
+    return indigoCall<ConvertData, ConvertResult>(
       'POST',
       'indigo/convert',
       this.apiPath,
@@ -306,7 +309,7 @@ export class RemoteStructService implements StructService {
       'image-resolution': options?.['image-resolution'],
     };
 
-    return indigoCall(
+    return indigoCall<LayoutData, LayoutResult>(
       'POST',
       'indigo/layout',
       this.apiPath,
@@ -316,7 +319,7 @@ export class RemoteStructService implements StructService {
   }
 
   clean(data: CleanData, options?: StructServiceOptions): Promise<CleanResult> {
-    return indigoCall(
+    return indigoCall<CleanData, CleanResult>(
       'POST',
       'indigo/clean',
       this.apiPath,
@@ -329,7 +332,7 @@ export class RemoteStructService implements StructService {
     data: AromatizeData,
     options?: StructServiceOptions,
   ): Promise<AromatizeResult> {
-    return indigoCall(
+    return indigoCall<AromatizeData, AromatizeResult>(
       'POST',
       'indigo/aromatize',
       this.apiPath,
@@ -342,7 +345,7 @@ export class RemoteStructService implements StructService {
     data: DearomatizeData,
     options?: StructServiceOptions,
   ): Promise<DearomatizeResult> {
-    return indigoCall(
+    return indigoCall<DearomatizeData, DearomatizeResult>(
       'POST',
       'indigo/dearomatize',
       this.apiPath,
@@ -355,7 +358,7 @@ export class RemoteStructService implements StructService {
     data: CalculateCipData,
     options?: StructServiceOptions,
   ): Promise<CalculateCipResult> {
-    return indigoCall(
+    return indigoCall<CalculateCipData, CalculateCipResult>(
       'POST',
       'indigo/calculate_cip',
       this.apiPath,
@@ -368,7 +371,7 @@ export class RemoteStructService implements StructService {
     data: AutomapData,
     options?: StructServiceOptions,
   ): Promise<AutomapResult> {
-    return indigoCall(
+    return indigoCall<AutomapData, AutomapResult>(
       'POST',
       'indigo/automap',
       this.apiPath,
@@ -378,7 +381,7 @@ export class RemoteStructService implements StructService {
   }
 
   check(data: CheckData, options?: StructServiceOptions): Promise<CheckResult> {
-    return indigoCall(
+    return indigoCall<CheckData, CheckResult>(
       'POST',
       'indigo/check',
       this.apiPath,
@@ -391,7 +394,7 @@ export class RemoteStructService implements StructService {
     data: CalculateData,
     options?: StructServiceOptions,
   ): Promise<CalculateResult> {
-    return indigoCall(
+    return indigoCall<CalculateData, CalculateResult>(
       'POST',
       'indigo/calculate',
       this.apiPath,
@@ -402,7 +405,7 @@ export class RemoteStructService implements StructService {
 
   recognize(blob: Blob, version: string): Promise<RecognizeResult> {
     const parVersion = version ? `?version=${version}` : '';
-    const req = request(
+    const req = request<ImagoUploadResponse>(
       'POST',
       this.apiPath + `imago/uploads${parVersion}`,
       blob,
@@ -414,11 +417,11 @@ export class RemoteStructService implements StructService {
     const statusUrl = this.apiPath + 'imago/uploads/:id';
     const { customHeaders } = this;
     const status = (data: { id: string }) =>
-      request('GET', statusUrl, data, customHeaders) as Promise<ImagoStatusResponse>;
+      request<ImagoStatusResponse>('GET', statusUrl, data, customHeaders);
     return req
       .then((data) =>
         pollDeferred(
-          status.bind(null, { id: (data as ImagoUploadResponse).upload_id }),
+          status.bind(null, { id: data.upload_id }),
           (response: ImagoStatusResponse) => {
             if (response.state === 'FAILURE')
               throw new Error(JSON.stringify(response));
@@ -428,7 +431,10 @@ export class RemoteStructService implements StructService {
           300,
         ),
       )
-      .then((response) => ({ struct: (response as ImagoStatusResponse).metadata?.mol_str ?? '' }));
+      .then((response) => ({
+        struct: response.metadata?.mol_str ?? '',
+        output_format: ChemicalMimeType.Mol,
+      }));
   }
 
   generateImageAsBase64(
@@ -437,7 +443,7 @@ export class RemoteStructService implements StructService {
   ): Promise<string> {
     const outputFormat: OutputFormatType = options?.outputFormat ?? 'png';
 
-    return indigoCall(
+    return indigoCall<{ struct: string }, string>(
       'POST',
       'indigo/render',
       this.apiPath,
@@ -471,7 +477,7 @@ export class RemoteStructService implements StructService {
           ? getLabelRenderModeForIndigo(this.ketcherId)
           : undefined,
       },
-      (response) => response.then((resp) => resp.text()),
+      (response) => response.then((resp) => resp.text()) as Promise<string>,
     );
   }
 
@@ -479,7 +485,7 @@ export class RemoteStructService implements StructService {
     data: ExplicitHydrogensData,
     options?: StructServiceOptions,
   ): Promise<ExplicitHydrogensResult> {
-    return indigoCall(
+    return indigoCall<ExplicitHydrogensData, ExplicitHydrogensResult>(
       'POST',
       'indigo/convert_explicit_hydrogens',
       this.apiPath,
@@ -492,7 +498,7 @@ export class RemoteStructService implements StructService {
     data: CalculateMacromoleculePropertiesData,
     options?: StructServiceOptions,
   ): Promise<CalculateMacromoleculePropertiesResult> {
-    return indigoCall(
+    return indigoCall<CalculateMacromoleculePropertiesData, CalculateMacromoleculePropertiesResult>(
       'POST',
       'indigo/calculateMacroProperties',
       this.apiPath,

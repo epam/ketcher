@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-export class Pool<TValue = unknown> extends Map<number, TValue> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class Pool<TValue = any> extends Map<number, TValue> {
   private nextId = 0;
 
   add(item: TValue): number {

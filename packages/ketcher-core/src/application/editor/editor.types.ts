@@ -48,6 +48,23 @@ export enum EditorType {
   Macromolecules = 1,
 }
 
+export type EditorSubscriber = {
+  handler: (data?: unknown) => void;
+};
+
+/**
+ * Minimal interface for the rotate controller.
+ * The concrete implementation lives in 'ketcher-react' (RotateController),
+ * but ketcher-core only needs the public surface used across packages.
+ */
+export interface IRotateController {
+  isRotating: boolean;
+  rerender: () => void;
+  revert: () => void;
+  clean: () => void;
+  updateFloatingToolsPosition: () => void;
+}
+
 export interface Editor {
   isDitrty: () => boolean;
   setOrigin: () => void;
@@ -58,8 +75,11 @@ export interface Editor {
     y?: number,
   ) => Struct;
   structToAddFragment: (struct: Struct, x?: number, y?: number) => Struct;
-  subscribe: (eventName: string, handler: (data?: any) => any) => any;
-  unsubscribe: (eventName: string, subscriber: any) => void;
+  subscribe: (
+    eventName: string,
+    handler: (data?: unknown) => void,
+  ) => EditorSubscriber;
+  unsubscribe: (eventName: string, subscriber: EditorSubscriber) => void;
   selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null;
   undo: () => void;
   redo: () => void;
@@ -68,7 +88,7 @@ export interface Editor {
   options(): RenderOptions;
   options(value: EditorOptions): void;
   setOptions: (opts: string) => void;
-  zoom: (value?: any) => any;
+  zoom: (value?: number) => number | undefined;
   structSelected: () => Struct;
   explicitSelected: () => EditorSelection;
   centerStruct: () => void;
@@ -104,8 +124,7 @@ export interface Editor {
     options?: { resizeCanvas: boolean },
   ) => void;
   render: Render;
-  // supposed to be RotateController from 'ketcher-react' package
-  rotateController: any;
+  rotateController: IRotateController;
   macromoleculeConvertionError: string | null | undefined;
   setMacromoleculeConvertionError: (errorMessage: string) => void;
   clearMacromoleculeConvertionError: () => void;

@@ -20,14 +20,14 @@ import type { ReStruct } from '../../../render';
 import { SGroup } from 'domain/entities/sgroup';
 
 type Data = {
-  sgid: any;
-  aid: any;
+  sgid?: number;
+  aid?: number;
 };
 
 class SGroupAtomAdd extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any, aid?: any) {
+  constructor(sgroupId?: number, aid?: number) {
     super(OperationType.S_GROUP_ATOM_ADD, OperationPriority.S_GROUP_ATOM_ADD);
     this.data = { sgid: sgroupId, aid };
   }
@@ -55,7 +55,7 @@ class SGroupAtomAdd extends BaseOperation {
 class SGroupAtomRemove extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any, aid?: any) {
+  constructor(sgroupId?: number, aid?: number) {
     super(OperationType.S_GROUP_ATOM_REMOVE, 4);
     this.data = { sgid: sgroupId, aid };
   }

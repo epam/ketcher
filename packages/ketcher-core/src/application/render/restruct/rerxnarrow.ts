@@ -102,7 +102,7 @@ class ReRxnArrow extends ReObject {
 
         return acc.minDist < current.minDist ? acc : current;
       },
-      null,
+      null as unknown as MinDistanceWithReferencePoint,
     );
 
     return minDist;
@@ -152,7 +152,11 @@ class ReRxnArrow extends ReObject {
     return selectionSet;
   }
 
-  makeSelectionPlate(restruct: ReStruct, _paper: RaphaelPaper, styles: RenderOptions): RaphaelSet {
+  makeSelectionPlate(
+    restruct: ReStruct,
+    _paper: RaphaelPaper,
+    styles: RenderOptions,
+  ): RaphaelSet {
     const render = restruct.render;
     const options = restruct.render.options;
     const selectionSet = restruct.render.paper.set();

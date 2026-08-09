@@ -117,7 +117,7 @@ function request<T = unknown>(
   return response;
 }
 
-function indigoCall<TData extends object, TResult>(
+function indigoCall<TData extends Record<string, unknown>, TResult>(
   method: string,
   url: string,
   baseUrl: string,
@@ -131,7 +131,7 @@ function indigoCall<TData extends object, TResult>(
   ): Promise<TResult> {
     const body: Record<string, unknown> = { ...(data ?? {}) };
     body.options = {
-      ...(body.options as Record<string, unknown> ?? {}),
+      ...((body.options as Record<string, unknown>) ?? {}),
       ...(defaultOptions ?? {}),
       ...(options ?? {}),
     };

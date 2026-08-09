@@ -20,8 +20,7 @@ import { Vec2 } from 'domain/entities/vec2';
 
 import Base from './BaseOperation';
 import { OperationType } from './OperationType';
-import { ReSimpleObject } from '../../render';
-import type { ReStruct } from '../../render';
+import { ReSimpleObject, type ReStruct } from '../../render';
 import { Scale } from 'domain/helpers';
 import { toFixed } from 'utilities';
 
@@ -97,13 +96,14 @@ export class SimpleObjectDelete extends Base {
     const struct = restruct.molecule;
     const item = struct.simpleObjects.get(this.data.id);
     // save to data current values. In future they could be used in invert for restoring simple object
-    this.data.pos = item.pos;
-    this.data.mode = item.mode;
-    this.data.toCircle = item.toCircle;
+    if (item) {
+      this.data.pos = item.pos;
+      this.data.mode = item.mode;
+    }
     this.performed = true;
 
     restruct.markItemRemoved();
-    restruct.clearVisel(restruct.simpleObjects.get(this.data.id).visel);
+    restruct.clearVisel(restruct.simpleObjects.get(this.data.id)!.visel);
     restruct.simpleObjects.delete(this.data.id);
 
     struct.simpleObjects.delete(this.data.id);
@@ -137,10 +137,10 @@ export class SimpleObjectMove extends Base {
     const struct = restruct.molecule;
     const id = this.data.id;
     const d = this.data.d;
-    const item = struct.simpleObjects.get(id);
+    const item = struct.simpleObjects.get(id)!;
     item.pos.forEach((p) => p.add_(d));
     restruct.simpleObjects
-      .get(id)
+      .get(id)!
       .visel.translate(Scale.modelToCanvas(d, restruct.render.options));
     this.data.d = d.negated();
     if (!this.data.noinvalidate) {
@@ -220,7 +220,7 @@ export class SimpleObjectResize extends Base {
     const id = this.data.id;
     const d = this.data.d;
     const current = this.data.current;
-    const item = struct.simpleObjects.get(id);
+    const item = struct.simpleObjects.get(id)!;
     const anchor = this.data.anchor;
     if (item.mode === SimpleObjectMode.ellipse) {
       if (anchor) {
@@ -265,7 +265,7 @@ export class SimpleObjectResize extends Base {
     } else item.pos[1].add_(d);
 
     restruct.simpleObjects
-      .get(id)
+      .get(id)!
       .visel.translate(Scale.modelToCanvas(d, restruct.render.options));
     this.data.d = d.negated();
     if (!this.data.noinvalidate) {

@@ -24,7 +24,7 @@ export class SGroupForest {
   parent: Map<number, number>;
   /** node id -> list of child ids */
   children: Map<number, number[]>;
-  atomSets: Map<number, any>;
+  atomSets: Map<number, Pile<number>>;
 
   constructor() {
     this.parent = new Map();
@@ -58,10 +58,10 @@ export class SGroupForest {
     return order;
   }
 
-  getAtomSetRelations(newId: any, atoms: any) {
+  getAtomSetRelations(newId: number, atoms: Pile<number>) {
     // find the lowest superset in the hierarchy
-    const isStrictSuperset = new Map();
-    const isSubset = new Map();
+    const isStrictSuperset = new Map<number, boolean>();
+    const isSubset = new Map<number, boolean>();
 
     this.atomSets.delete(newId);
 
@@ -81,10 +81,13 @@ export class SGroupForest {
       return childs && childs.findIndex((childId) => isSubset.get(childId)) < 0;
     });
 
-    const children = Array.from(this.atomSets.keys()).filter(
-      (id) =>
-        isStrictSuperset.get(id) && !isStrictSuperset.get(this.parent.get(id)),
-    );
+    const children = Array.from(this.atomSets.keys()).filter((id) => {
+      const parentId = this.parent.get(id);
+      return (
+        isStrictSuperset.get(id) &&
+        !(typeof parentId === 'number' && isStrictSuperset.get(parentId))
+      );
+    });
 
     return {
       children,
@@ -92,15 +95,23 @@ export class SGroupForest {
     };
   }
 
-  getPathToRoot(sgid): number[] {
+  getPathToRoot(sgid: number): number[] {
     const path: number[] = [];
-    for (let id = sgid; id >= 0; id = this.parent.get(id)) {
+    for (
+      let id: number | undefined = sgid;
+      typeof id === 'number' && id >= 0;
+      id = this.parent.get(id)
+    ) {
       path.push(id);
     }
     return path;
   }
 
-  insert({ id, atoms }, parent?: number, children?: number[]) {
+  insert(
+    { id, atoms }: Pick<SGroup, 'id' | 'atoms'>,
+    parent?: number,
+    children?: number[],
+  ) {
     assert(!this.parent.has(id), 'sgid already present in the forest');
     assert(!this.children.has(id), 'sgid already present in the forest');
 
@@ -126,7 +137,7 @@ export class SGroupForest {
     return { parent, children };
   }
 
-  private resetParentLink(childId, id) {
+  private resetParentLink(childId: number, id: number) {
     const parentId = this.parent.get(childId);
     if (typeof parentId === 'undefined') {
       return;

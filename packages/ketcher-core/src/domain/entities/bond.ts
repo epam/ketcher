@@ -294,13 +294,13 @@ export class Bond extends BaseMicromoleculeEntity {
     return !!this.reactingCenterStatus;
   }
 
-  getCenter(struct: any): Vec2 {
+  getCenter(struct: Struct): Vec2 {
     const p1 = struct.atoms.get(this.begin).pp;
     const p2 = struct.atoms.get(this.end).pp;
     return Vec2.lc2(p1, 0.5, p2, 0.5);
   }
 
-  getDir(struct: any): Vec2 {
+  getDir(struct: Struct): Vec2 {
     const p1 = struct.atoms.get(this.begin)!.pp;
     const p2 = struct.atoms.get(this.end)!.pp;
     return p2.sub(p1).normalized();

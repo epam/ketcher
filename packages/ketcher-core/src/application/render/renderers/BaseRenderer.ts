@@ -69,6 +69,10 @@ export abstract class BaseRenderer implements IBaseRenderer {
     return rootNode.getBoundingClientRect();
   }
 
+  public get rootNode(): SVGGElement | undefined {
+    return this.rootElement?.node() ?? undefined;
+  }
+
   public get width() {
     return this.rootBBox?.width ?? 0;
   }

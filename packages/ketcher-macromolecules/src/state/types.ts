@@ -13,6 +13,7 @@ export enum PreviewType {
   Bond = 'bond',
   AmbiguousMonomer = 'ambiguousMonomer',
   Text = 'text',
+  DataSGroup = 'dataSGroup',
 }
 
 export interface PreviewStyle {
@@ -62,6 +63,12 @@ export interface AmbiguousMonomerPreviewState extends BasePreviewState {
   readonly presetMonomers?: ReadonlyArray<MonomerItemType | undefined>;
 }
 
+export interface DataSGroupPreviewState extends BasePreviewState {
+  readonly type: PreviewType.DataSGroup;
+  readonly fieldName: string;
+  readonly fieldValue: string;
+}
+
 export interface TextPreviewState extends BasePreviewState {
   readonly type: PreviewType.Text;
   readonly text: string;
@@ -71,5 +78,6 @@ export type EditorStatePreview =
   | MonomerPreviewState
   | PresetPreviewState
   | BondPreviewState
+  | DataSGroupPreviewState
   | AmbiguousMonomerPreviewState
   | TextPreviewState;

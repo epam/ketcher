@@ -26,6 +26,7 @@ import MonomerPreview from './components/MonomerPreview/MonomerPreview';
 import PresetPreview from './components/PresetPreview/PresetPreview';
 import BondPreview from './components/BondPreview/BondPreview';
 import TextPreview from './components/TextPreview/TextPreview';
+import DataSGroupPreview from './components/SGroupPreview/DataSGroupPreview';
 
 const PreviewContainer = styled.div`
   display: inline-block;
@@ -115,6 +116,10 @@ export const Preview = () => {
 
   if (!preview) {
     return null;
+  }
+
+  if (preview.type === PreviewType.DataSGroup) {
+    return <DataSGroupPreview />;
   }
 
   return (

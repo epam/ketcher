@@ -78,17 +78,71 @@ function getPanelPositionRelativeToRect(
   return panelPositionInViewBox;
 }
 
-interface SGroupDataRenderProps {
+function getDomBasedPosition(
+  hoverRect: DOMRect,
+  canvasRect: DOMRect,
+  width: number,
+  height: number,
+): { x: number; y: number } {
+  const viewportLeftLimit = BAR_PANEL_SIZE * LEFT_PADDING_MULTIPLIER + width;
+  const viewportBottomLimit = canvasRect.height - BAR_PANEL_SIZE - height;
+  const viewportRightLimit = canvasRect.width - BAR_PANEL_SIZE - width;
+
+  const hoverCenterX = hoverRect.left + hoverRect.width / 2;
+  const relativeClientX = hoverCenterX - canvasRect.left;
+  const relativeClientY = hoverRect.bottom - canvasRect.top;
+
+  // Default: center below the hover rect
+  let x = hoverCenterX - width / 2 - canvasRect.left;
+  let y = hoverRect.bottom - canvasRect.top;
+
+  if (relativeClientY > viewportBottomLimit) {
+    y = hoverRect.top - height - canvasRect.top;
+  }
+
+  if (relativeClientX > viewportRightLimit) {
+    x = hoverRect.left - width - canvasRect.left;
+    y = hoverRect.top + hoverRect.height / 2 - height / 2 - canvasRect.top;
+  }
+
+  if (relativeClientX < viewportLeftLimit) {
+    x = hoverRect.right - canvasRect.left;
+    y = hoverRect.top + hoverRect.height / 2 - height / 2 - canvasRect.top;
+  }
+
+  return { x, y };
+}
+
+interface SGroupDataRenderBaseProps {
+  sGroupData: string | null;
+  className?: string;
+  'data-testid'?: string;
+}
+
+interface SGroupDataRenderRaphaelProps extends SGroupDataRenderBaseProps {
   clientX: number;
   clientY: number;
   render: Render;
   sGroup: SGroup;
-  sGroupData: string | null;
-  className?: string;
+  hoverRect?: undefined;
+  canvasRect?: undefined;
 }
 
+interface SGroupDataRenderDomProps extends SGroupDataRenderBaseProps {
+  hoverRect: DOMRect;
+  canvasRect: DOMRect;
+  clientX?: undefined;
+  clientY?: undefined;
+  render?: undefined;
+  sGroup?: undefined;
+}
+
+type SGroupDataRenderProps =
+  | SGroupDataRenderRaphaelProps
+  | SGroupDataRenderDomProps;
+
 const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
-  const { clientX, clientY, render, className, sGroup, sGroupData } = props;
+  const { sGroupData, className } = props;
   const [wrapperHeight, setWrapperHeight] = useState(0);
   const [wrapperWidth, setWrapperWidth] = useState(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -100,24 +154,34 @@ const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
     }
   });
 
-  const panelCoordinate = getPanelPositionRelativeToRect(
-    clientX,
-    clientY,
-    sGroup,
-    render,
-    wrapperWidth,
-    wrapperHeight,
-  );
+  const panelCoordinate =
+    'hoverRect' in props && props.hoverRect && props.canvasRect
+      ? getDomBasedPosition(
+          props.hoverRect,
+          props.canvasRect,
+          wrapperWidth,
+          wrapperHeight,
+        )
+      : getPanelPositionRelativeToRect(
+          props.clientX as number,
+          props.clientY as number,
+          props.sGroup as SGroup,
+          props.render as Render,
+          wrapperWidth,
+          wrapperHeight,
+        );
+  if (!panelCoordinate) return null;
 
-  return panelCoordinate ? (
+  return (
     <div
       ref={wrapperRef}
+      data-testid={props['data-testid']}
       style={{ left: panelCoordinate.x + 'px', top: panelCoordinate.y + 'px' }}
       className={clsx(classes.infoPanel, className)}
     >
       {sGroupData}
     </div>
-  ) : null;
+  );
 };
 
 export default SGroupDataRender;

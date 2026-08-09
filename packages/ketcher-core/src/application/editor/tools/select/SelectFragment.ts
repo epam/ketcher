@@ -44,6 +44,7 @@ export class SelectFragment extends SelectBase {
         renderer.drawingEntity,
       );
     this.editor.renderersContainer.update(modelChanges);
+    this.dispatchDataSGroupMouseOver(event);
   }
 
   mouseLeaveDrawingEntity(event) {
@@ -53,5 +54,6 @@ export class SelectFragment extends SelectBase {
         renderer.drawingEntity,
       );
     this.editor.renderersContainer.update(modelChanges);
+    this.dispatchDataSGroupMouseLeave(event);
   }
 }

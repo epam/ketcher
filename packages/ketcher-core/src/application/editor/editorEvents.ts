@@ -31,6 +31,8 @@ export interface IEditorEvents {
   mouseDownAttachmentPoint: Subscription;
   mouseOverDrawingEntity: Subscription;
   mouseLeaveDrawingEntity: Subscription;
+  mouseOverDataSGroup: Subscription;
+  mouseLeaveDataSGroup: Subscription;
   mouseUpMonomer: Subscription;
   rightClickSequence: Subscription;
   rightClickCanvas: Subscription;
@@ -109,6 +111,8 @@ export function createEditorEvents(): IEditorEvents {
     mouseDownAttachmentPoint: new Subscription(),
     mouseOverDrawingEntity: new Subscription(),
     mouseLeaveDrawingEntity: new Subscription(),
+    mouseOverDataSGroup: new Subscription(),
+    mouseLeaveDataSGroup: new Subscription(),
     mouseUpMonomer: new Subscription(),
     rightClickSequence: new Subscription(),
     rightClickCanvas: new Subscription(),

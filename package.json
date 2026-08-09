@@ -36,6 +36,7 @@
     "up": "node ./scripts/build-run.mjs"
   },
   "devDependencies": {
+    "@types/node": "^26.2.0",
     "@typescript-eslint/eslint-plugin": "^8.65.0",
     "@typescript-eslint/parser": "^8.65.0",
     "color-alpha": "^1.1.3",

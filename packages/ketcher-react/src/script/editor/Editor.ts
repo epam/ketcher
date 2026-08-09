@@ -16,6 +16,7 @@
 
 import {
   type Editor as KetcherEditor,
+  type EditorSubscriber,
   type FloatingToolsParams,
   type IKetAttachmentPoint,
   type IKetTemplateConnection,
@@ -1042,9 +1043,7 @@ class Editor implements KetcherEditor {
   private originalHistoryPointer = 0;
   private readonly selectedToOriginalAtomsIdMap = new Map<number, number>();
 
-  private changeEventSubscriber: {
-    handler: ((action?: unknown) => void) | ((data: ChangeEventData[]) => void);
-  } | null = null;
+  private changeEventSubscriber: EditorSubscriber | null = null;
 
   openMonomerCreationWizard(
     selectionOverride?: Selection,
@@ -3389,7 +3388,7 @@ class Editor implements KetcherEditor {
   subscribe(
     eventName: string,
     handler: ((data?: unknown) => void) | ((data: ChangeEventData[]) => void),
-  ) {
+  ): EditorSubscriber {
     const subscriber: {
       handler: ((data?: unknown) => void) | ((data: ChangeEventData[]) => void);
     } = {
@@ -3422,14 +3421,12 @@ class Editor implements KetcherEditor {
         this.event[eventName].add(handler);
     }
 
-    return subscriber;
+    return subscriber as EditorSubscriber;
   }
 
   unsubscribe(
     eventName: string,
-    subscriber: {
-      handler: ((data?: unknown) => void) | ((data: ChangeEventData[]) => void);
-    },
+    subscriber: EditorSubscriber,
   ): void {
     switch (eventName) {
       case 'change': {

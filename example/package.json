@@ -15,7 +15,7 @@
     "postbuild": "cross-env-shell npm run copy:build",
     "build:remote": "cross-env-shell MODE=remote run-s prebuild build:react postbuild",
     "build:standalone": "cross-env-shell MODE=standalone run-s prebuild build:react postbuild",
-    "build:react": "cross-env DISABLE_ESLINT_PLUGIN=true node ../node_modules/react-app-rewired/bin/index.js build",
+    "build:react": "node ../node_modules/react-app-rewired/bin/index.js build",
     "build:react:analyze": "node ../node_modules/react-app-rewired/bin/index.js build --analyze",
     "build": "npm run build:standalone && npm run build:remote",
     "build:standalone:analyze": "cross-env MODE=standalone run-s prebuild build:react:analyze postbuild",

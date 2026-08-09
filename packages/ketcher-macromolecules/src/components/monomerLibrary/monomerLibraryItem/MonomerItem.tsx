@@ -64,20 +64,19 @@ const MonomerItem = ({
 
   const isDisabled =
     useDisabledForSequenceMode(item as MonomerItemType, groupName) || disabled;
-  const isAmbiguousItem = isAmbiguousMonomerLibraryItem(item);
   let colorCode = '';
 
-  if (!isAmbiguousItem) {
-    const monomerItemData = item as MonomerItemType;
+  if (!isAmbiguousMonomerLibraryItem(item)) {
     colorCode =
-      monomerItemData.props.MonomerType === MONOMER_TYPES.CHEM
-        ? monomerItemData.props.MonomerType
-        : monomerItemData.props.MonomerNaturalAnalogCode;
+      item.props.MonomerType === MONOMER_TYPES.CHEM
+        ? item.props.MonomerType
+        : item.props.MonomerNaturalAnalogCode;
   }
 
   const monomerKey: string = getMonomerUniqueKey(item);
-  const monomerItem = isAmbiguousItem ? undefined : (item as MonomerItemType);
-  const ambiguousItem = isAmbiguousItem ? item : undefined;
+  const monomerItem = isAmbiguousMonomerLibraryItem(item)
+    ? undefined
+    : (item as MonomerItemType);
 
   const addFavorite = useCallback(
     (event: MouseEvent) => {
@@ -201,12 +200,12 @@ const MonomerItem = ({
           </button>
         </>
       )}
-      {ambiguousItem && (
+      {isAmbiguousMonomerLibraryItem(item) && (
         <NumberCircle
           selected={isSelected}
-          monomersAmount={ambiguousItem.monomers.length}
+          monomersAmount={item.monomers.length}
         >
-          {ambiguousItem.monomers.length}
+          {item.monomers.length}
         </NumberCircle>
       )}
     </Card>

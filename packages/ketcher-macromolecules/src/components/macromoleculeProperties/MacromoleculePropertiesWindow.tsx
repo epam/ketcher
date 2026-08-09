@@ -36,8 +36,7 @@ import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
 import {
   useCallback,
-  type ReactNode,
-  type SyntheticEvent,
+  ReactNode,
   useEffect,
   useMemo,
   useRef,
@@ -79,10 +78,10 @@ const StyledWrapper = styled('div')<{ isActive?: boolean; hasError?: boolean }>(
   }),
 );
 
-const WindowControlsArea = styled('div')({
+const WindowControlsArea = styled('div')(() => ({
   display: 'flex',
   justifyContent: 'flex-end',
-});
+}));
 
 const StyledCloseIcon = styled(Icon)(() => ({
   display: 'flex',
@@ -93,21 +92,21 @@ const StyledCloseIcon = styled(Icon)(() => ({
   cursor: 'pointer',
 }));
 
-const Header = styled('div')({
+const Header = styled('div')(() => ({
   display: 'flex',
   height: '25px',
   alignItems: 'center',
   padding: '0 8px',
-});
+}));
 
-const GrossFormula = styled('div')({
+const GrossFormula = styled('div')(() => ({
   display: 'flex',
   alignItems: 'baseline',
   fontSize: '14px',
   fontWeight: '700',
   padding: '0 8px',
   color: '#585858',
-});
+}));
 
 const FormulaSubscript = styled('sub')({
   verticalAlign: 'baseline',
@@ -116,78 +115,84 @@ const FormulaSubscript = styled('sub')({
   top: '0.3em',
 });
 
-const MolecularMass = styled('div')({
+const MolecularMass = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
   height: '24px',
   borderLeft: '1px solid #CAD3DD',
   color: '#585858',
-});
+}));
 
-const MolecularMassAmount = styled('div')({
+const MolecularMassAmount = styled('div')(() => ({
   fontSize: '14px',
   fontWeight: '700',
   padding: '0 8px',
-});
+}));
 
-const TabsWrapper = styled('div')({
+// TODO suppressed after upgrade to react 19. Need to fix
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const TabsWrapper = styled('div')(() => ({
   width: '100%',
   height: '100%',
   top: '-25px',
   position: 'relative',
-});
+}));
 
-const TabContentWrapper = styled('div')({
+const TabContentWrapper = styled('div')(() => ({
   width: '100%',
   padding: '0 4px 4px',
-});
+}));
 
-const TabContentErrorWrapper = styled('div')({
+// TODO suppressed after upgrade to react 19. Need to fix
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const TabContentErrorWrapper = styled('div')(() => ({
   display: 'flex',
   width: '100%',
   height: '74px',
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-});
+}));
 
-const TabContentErrorTitle = styled('div')({
+const TabContentErrorTitle = styled('div')(() => ({
   fontSize: '14px',
-});
+}));
 
-const TabContentErrorDescription = styled('div')({
+const TabContentErrorDescription = styled('div')(() => ({
   fontSize: '12px',
-});
+}));
 
-const BasicPropertiesWrapper = styled('div')({
+const BasicPropertiesWrapper = styled('div')(() => ({
   display: 'flex',
   padding: '4px 0px',
   height: '32px',
   gap: '12px',
-});
+}));
 
-const PeptidePropertiesBottomPart = styled('div')({
+const PeptidePropertiesBottomPart = styled('div')(() => ({
   display: 'grid',
   gridTemplateColumns: '2fr 1fr',
   gap: '0 2px',
-});
+}));
 
-const HydrophobicityChartWrapper = styled('div')({
+const HydrophobicityChartWrapper = styled('div')(() => ({
   height: '90px',
   backgroundColor: 'white',
   borderRadius: '8px',
   padding: '5px',
-});
+}));
 
-const RnaBasicPropertiesWrapper = styled('div')({
+const RnaBasicPropertiesWrapper = styled('div')(() => ({
   display: 'flex',
   justifyContent: 'space-between',
-});
+}));
 
-const PeptideBasicPropertiesWrapper = styled('div')({
+const PeptideBasicPropertiesWrapper = styled('div')(() => ({
   display: 'grid',
   gridTemplateColumns: '2fr 1fr',
-});
+}));
 
 const StyledBasicProperty = styled('div')<{ disabled?: boolean }>(
   ({ disabled }) => ({
@@ -212,7 +217,10 @@ const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
-const HydrophobicityHintHeader = styled('div')({
+// TODO suppressed after upgrade to react 19. Need to fix
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const HydrophobicityHintHeader = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
   gap: '4px',
@@ -222,38 +230,44 @@ const HydrophobicityHintHeader = styled('div')({
   borderBottom: '1px solid #585858',
   paddingBottom: '8px',
   marginBottom: '8px',
-});
+}));
 
-const BasicPropertyName = styled('div')({
+const BasicPropertyName = styled('div')(() => ({
   fontSize: '10px',
   paddingRight: '5px',
   whiteSpace: 'nowrap',
-});
+}));
 
-const BasicPropertyValue = styled('div')({
+const BasicPropertyValue = styled('div')(() => ({
   fontSize: '14px',
   fontWeight: '700',
-});
+}));
 
 const PropertyHintIcon = styled(Icon)(() => ({
   width: '20px',
   height: '20px',
 }));
 
-const PropertyHintIconWrapper = styled('div')({
+const PropertyHintIconWrapper = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
-});
+}));
 
-const BasicPropertyDropdown = styled(DropDown)({
+// TODO suppressed after upgrade to react 19. Need to fix
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const BasicPropertyDropdown = styled(DropDown)(() => ({
   position: 'relative',
   padding: '0 0 0 5px',
   zIndex: 1, // needed because tabs below are shifted up and overlaps the dropdown element to match the design
-});
+}));
 
 const inputClassName = 'text-input-field-input';
 
-const BasicPropertyInput = styled(TextInputField)({
+// TODO suppressed after upgrade to react 19. Need to fix
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const BasicPropertyInput = styled(TextInputField)(() => ({
   margin: 0,
 
   [`.${inputClassName}`]: {
@@ -268,9 +282,9 @@ const BasicPropertyInput = styled(TextInputField)({
     },
     MozAppearance: 'textfield',
   },
-});
+}));
 
-const StyledMonomersCountPanel = styled('div')({
+const StyledMonomersCountPanel = styled('div')(() => ({
   display: 'grid',
   gridTemplateColumns: 'repeat(8, 1fr)',
   gap: '4px 6px',
@@ -280,7 +294,7 @@ const StyledMonomersCountPanel = styled('div')({
   padding: '6px',
   height: '90px',
   alignContent: 'flex-start',
-});
+}));
 
 const StyledMonomersCountPanelItem = styled('div')<{
   monomerShortName: string;
@@ -332,8 +346,8 @@ interface BasicPropertyProps {
   selectedOption?: string;
   disabled?: boolean;
   testId?: string;
-  onChangeOption?: (_option: string) => void;
-  onChangeValue?: (_value: number) => void;
+  onChangeOption?: (option: string) => void;
+  onChangeValue?: (value: number) => void;
 }
 
 interface MonomersCountPanelProps {
@@ -398,7 +412,7 @@ const BasicProperty = (props: BasicPropertyProps) => {
             type="number"
             min={0}
             inputClassName={inputClassName}
-            onChange={(_value) => props?.onChangeValue?.(Number(_value))}
+            onChange={(value) => props?.onChangeValue?.(Number(value))}
           />
         ) : (
           <BasicPropertyValue data-testid={props.testId + '-value'}>
@@ -406,6 +420,9 @@ const BasicProperty = (props: BasicPropertyProps) => {
           </BasicPropertyValue>
         )}
         {props.hint && (
+          // TODO suppressed after upgrade to react 19. Need to fix
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           <StyledTooltip title={props.hint}>
             <PropertyHintIconWrapper>
               <PropertyHintIcon
@@ -435,7 +452,7 @@ const GrossFormulaPart = ({ part }) => {
   const match = part.match(/^([A-Za-z]+)(\d+)$/);
   if (!match) return part;
 
-  const [, element, count] = match;
+  const [_, element, count] = match;
   return (
     <span>
       {element}
@@ -821,12 +838,12 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
     );
   };
 
-  const onChangeUnipositiveIonsValue = (_value: number) => {
-    dispatch(setUnipositiveIonsValue(''));
+  const onChangeUnipositiveIonsValue = (value: number) => {
+    dispatch(setUnipositiveIonsValue(value.toString()));
   };
 
-  const onChangeOligonucleotidesValue = (_value: number) => {
-    dispatch(setOligonucleotidesValue(''));
+  const onChangeOligonucleotidesValue = (value: number) => {
+    dispatch(setOligonucleotidesValue(value.toString()));
   };
 
   return props.isError ? (
@@ -894,20 +911,17 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
   );
 };
 
-const PROPERTIES_TABS = {
-  PEPTIDES: 0,
-  RNA: 1,
-  NO_TAB: -1,
-} as const;
+enum PROPERTIES_TABS {
+  PEPTIDES = 0,
+  RNA = 1,
+  NO_TAB = -1,
+}
 
-const MassMeasurementUnit = {
-  Da: 'Da',
-  kDa: 'kDa',
-  MDa: 'MDa',
-} as const;
-
-type MassMeasurementUnitValue =
-  typeof MassMeasurementUnit[keyof typeof MassMeasurementUnit];
+enum MassMeasurementUnit {
+  Da = 'Da',
+  kDa = 'kDa',
+  MDa = 'MDa',
+}
 
 const massMeasurementUnitToNumber = {
   [MassMeasurementUnit.Da]: 1,
@@ -952,7 +966,7 @@ export const MacromoleculePropertiesWindow = () => {
     | SingleChainMacromoleculeProperties
     | undefined = macromoleculesProperties?.[0];
 
-  const [selectedTabIndex, setSelectedTabIndex] = useState<number>(
+  const [selectedTabIndex, setSelectedTabIndex] = useState(
     PROPERTIES_TABS.PEPTIDES,
   );
   const [massMeasurementUnit, setMassMeasurementUnit] = useState(
@@ -966,18 +980,18 @@ export const MacromoleculePropertiesWindow = () => {
     useRecalculateMacromoleculeProperties();
   const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
   const recalculateMacromoleculePropertiesRef = useRef<
-    (_shouldSkip?: boolean) => void
+    (shouldSkip?: boolean) => void
   >(recalculateMacromoleculeProperties);
   const debouncedRecalculateMacromoleculeProperties = useCallback(
-    debounce((_shouldSkip?: boolean) => {
-      recalculateMacromoleculePropertiesRef.current();
+    debounce((shouldSkip?: boolean) => {
+      recalculateMacromoleculePropertiesRef.current(shouldSkip);
     }, 500),
     [],
   );
 
   useEffect(() => {
-    recalculateMacromoleculePropertiesRef.current = (_shouldSkip?: boolean) => {
-      recalculateMacromoleculeProperties(_shouldSkip);
+    recalculateMacromoleculePropertiesRef.current = (shouldSkip?: boolean) => {
+      recalculateMacromoleculeProperties(shouldSkip);
     };
   }, [recalculateMacromoleculeProperties]);
 
@@ -1046,7 +1060,7 @@ export const MacromoleculePropertiesWindow = () => {
     );
   }, [firstMacromoleculesProperties]);
 
-  const onTabChange = (_event: SyntheticEvent, newValue: number) => {
+  const onTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setSelectedTabIndex(newValue);
   };
 
@@ -1055,7 +1069,7 @@ export const MacromoleculePropertiesWindow = () => {
   };
 
   const onMassMeasurementUnitChange = (option: string) => {
-    setMassMeasurementUnit(option as MassMeasurementUnitValue);
+    setMassMeasurementUnit(option as MassMeasurementUnit);
   };
 
   const hasCommonError =

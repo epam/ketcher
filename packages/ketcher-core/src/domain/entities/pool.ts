@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export class Pool<TValue = any> extends Map<number, TValue> {
+export class Pool<TValue = unknown> extends Map<number, TValue> {
   private nextId = 0;
 
   add(item: TValue): number {

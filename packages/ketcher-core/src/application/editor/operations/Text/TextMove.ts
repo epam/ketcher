@@ -18,7 +18,7 @@ import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
 import { Scale } from 'domain/helpers';
-import { Vec2 } from 'domain/entities';
+import type { Vec2 } from 'domain/entities';
 
 interface TextMoveData {
   id: number;

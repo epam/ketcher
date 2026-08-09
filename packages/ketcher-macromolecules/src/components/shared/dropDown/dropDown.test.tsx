@@ -41,8 +41,8 @@ describe('DropDown component', () => {
   it('should render dropdown with all options when clicked', async () => {
     render(withThemeProvider(<DropDown {...mockProps} />));
 
-    const dropDownButton = screen.getByTestId('dropdown-select');
-    fireEvent.click(dropDownButton);
+    const dropDownButton = screen.getByRole('combobox');
+    fireEvent.mouseDown(dropDownButton);
 
     expect(await screen.findByText(MOCK_OPTIONS[1].label)).toBeInTheDocument();
     expect(await screen.findByText(MOCK_OPTIONS[2].label)).toBeInTheDocument();
@@ -51,8 +51,8 @@ describe('DropDown component', () => {
   it('should call selection handler with id when label is clicked', async () => {
     render(withThemeProvider(<DropDown {...mockProps} />));
 
-    const dropDownButton = screen.getByTestId('dropdown-select');
-    fireEvent.click(dropDownButton);
+    const dropDownButton = screen.getByRole('combobox');
+    fireEvent.mouseDown(dropDownButton);
 
     const secondOption = await screen.findByText(MOCK_OPTIONS[1].label);
     fireEvent.click(secondOption);

@@ -16,9 +16,12 @@ import {
   getPresetPhosphateFromSugar,
   getPresetSugarForMonomer,
   getMatchingPresetComponents,
+  getPresetComponentRole,
+  computeLostBondsForMonomerReplacement,
+  computeLostBondsForPresetReplacement,
 } from 'application/editor/libraryItemDragDrop/replacementHelpers';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
-import { AttachmentPointName } from 'domain/types';
+import { AttachmentPointName, type MonomerItemType } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { Sugar } from 'domain/entities/Sugar';
@@ -26,7 +29,6 @@ import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { Struct } from 'domain/entities/struct';
 import { KetMonomerClass } from 'domain/constants/monomers';
-import { MonomerItemType } from 'domain/types';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -648,5 +650,148 @@ describe('getMatchingPresetComponents', () => {
     expect(components).toEqual(expect.arrayContaining([sugar, phosphate]));
     expect(components).not.toContain(base);
     expect(components).toHaveLength(2);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getPresetComponentRole
+// ---------------------------------------------------------------------------
+
+describe('getPresetComponentRole', () => {
+  it('classifies sugar / base / phosphate', () => {
+    expect(getPresetComponentRole(makeSugar())).toBe('sugar');
+    expect(getPresetComponentRole(makeRNABase())).toBe('base');
+    expect(getPresetComponentRole(makePhosphate())).toBe('phosphate');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// computeLostBondsForMonomerReplacement
+// ---------------------------------------------------------------------------
+
+describe('computeLostBondsForMonomerReplacement', () => {
+  it('reports no lost bonds when the new monomer provides every used AP', () => {
+    const sugar = makeSugar();
+    const phosphate = makePhosphate();
+    const bond = new PolymerBond(sugar, phosphate);
+    sugar.attachmentPointsToBonds.R2 = bond;
+    phosphate.attachmentPointsToBonds.R1 = bond;
+
+    const lost = computeLostBondsForMonomerReplacement(
+      sugar,
+      new Set<AttachmentPointName>([
+        'R1' as AttachmentPointName,
+        'R2' as AttachmentPointName,
+        'R3' as AttachmentPointName,
+      ]),
+    );
+    expect(lost).toHaveLength(0);
+  });
+
+  it('reports a lost bond when the new monomer lacks the used AP', () => {
+    const sugar = makeSugar();
+    const other = makePhosphate();
+    // Bond on R3
+    const bond = new PolymerBond(sugar, other);
+    sugar.attachmentPointsToBonds.R3 = bond;
+    other.attachmentPointsToBonds.R1 = bond;
+
+    // New monomer only has R1, R2 (no R3)
+    const lost = computeLostBondsForMonomerReplacement(
+      sugar,
+      new Set<AttachmentPointName>([
+        'R1' as AttachmentPointName,
+        'R2' as AttachmentPointName,
+      ]),
+    );
+    expect(lost).toHaveLength(1);
+    expect(lost[0].attachmentPointName).toBe('R3');
+  });
+
+  it('never counts hydrogen bonds as lost', () => {
+    const sugar = makeSugar();
+    const other = makeSugar();
+    const hBond = new HydrogenBond(sugar, other);
+    sugar.hydrogenBonds = [hBond];
+    other.hydrogenBonds = [hBond];
+
+    const lost = computeLostBondsForMonomerReplacement(
+      sugar,
+      new Set<AttachmentPointName>(),
+    );
+    expect(lost).toHaveLength(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// computeLostBondsForPresetReplacement
+// ---------------------------------------------------------------------------
+
+describe('computeLostBondsForPresetReplacement', () => {
+  const freeByRole = (
+    sugar: AttachmentPointName[],
+    base: AttachmentPointName[],
+    phosphate: AttachmentPointName[],
+  ) => ({
+    sugar: new Set<AttachmentPointName>(sugar),
+    base: new Set<AttachmentPointName>(base),
+    phosphate: new Set<AttachmentPointName>(phosphate),
+  });
+
+  it('preserves the base bond when dropping a sugar+phosphate preset', () => {
+    // Canvas nucleotide: sugar+base+phosphate; dragged preset: sugar+phosphate.
+    // presetComponents = [sugar, phosphate] (base excluded, stays on canvas).
+    const sugar = makeSugar();
+    const base = makeRNABase();
+    const phosphate = makePhosphate();
+    connectBase(sugar, base); // sugar.R3 ↔ base.R1 (external to [sugar,phosphate])
+    connectPhosphate(sugar, phosphate, 'right'); // internal
+
+    const lost = computeLostBondsForPresetReplacement(
+      [sugar, phosphate],
+      freeByRole(
+        ['R1' as AttachmentPointName, 'R3' as AttachmentPointName], // R2 used by phosphate
+        [],
+        ['R2' as AttachmentPointName], // R1 used by sugar
+      ),
+      { sugar: true, base: false, phosphate: true },
+    );
+    // The sugar→base (R3) bond is preservable → nothing lost.
+    expect(lost).toHaveLength(0);
+  });
+
+  it('reports a lost bond when the new component lacks the required AP', () => {
+    const sugar = makeSugar();
+    const base = makeRNABase();
+    connectBase(sugar, base); // sugar.R3 ↔ base (external)
+
+    const lost = computeLostBondsForPresetReplacement(
+      [sugar],
+      freeByRole(
+        ['R1' as AttachmentPointName, 'R2' as AttachmentPointName], // no R3 free
+        [],
+        [],
+      ),
+      { sugar: true, base: false, phosphate: false },
+    );
+    expect(lost).toHaveLength(1);
+    expect(lost[0].attachmentPointName).toBe('R3');
+  });
+
+  it('reports all external bonds as lost when the new preset lacks the role', () => {
+    const phosphate = makePhosphate();
+    const nextSugar = makeSugar();
+    const bond = new PolymerBond(phosphate, nextSugar);
+    phosphate.attachmentPointsToBonds.R2 = bond;
+    nextSugar.attachmentPointsToBonds.R1 = bond;
+
+    // New preset has no phosphate role.
+    const lost = computeLostBondsForPresetReplacement(
+      [phosphate],
+      freeByRole([], [], []),
+      { sugar: true, base: false, phosphate: false },
+    );
+    expect(lost).toHaveLength(1);
+    expect(lost[0].attachmentPointName).toBe('R2');
   });
 });

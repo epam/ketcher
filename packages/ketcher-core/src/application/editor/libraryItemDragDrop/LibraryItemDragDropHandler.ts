@@ -4,6 +4,7 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import {
   type AttachmentPointName,
   type MonomerOrAmbiguousType,
+  type MonomerItemType,
 } from 'domain/types';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
@@ -30,7 +31,9 @@ import {
 import {
   getPresetSugarForMonomer,
   getMatchingPresetComponents,
-  collectMonomerBonds,
+  computeLostBondsForMonomerReplacement,
+  computeLostBondsForPresetReplacement,
+  type PresetComponentRole,
 } from './replacementHelpers';
 
 const DRAG_BOND_PROXIMITY_THRESHOLD_PX = 25;
@@ -745,42 +748,158 @@ export class LibraryItemDragDropHandler {
 
   /**
    * Returns the number of bonds that would be lost if `item` were dropped
-   * onto `replaceTarget`.
+   * onto `replaceTarget`. A bond is "lost" when the replacement monomer/preset
+   * does not expose the attachment point the original bond used.
    */
   private computeLostBondsForReplacement(
     item: IRnaPreset | MonomerOrAmbiguousType,
     replaceTarget: ReplacementTarget,
   ): number {
+    // Preset → preset (same geometry): re-establish external bonds on the
+    // structurally corresponding new components. A bond is lost when the new
+    // component of that role lacks a free attachment point for it (e.g. the
+    // dropped preset has no phosphate to carry an inter-nucleotide bond).
     if (
       replaceTarget.kind === 'same-geometry-preset' &&
-      replaceTarget.presetSugar &&
+      replaceTarget.presetComponents &&
       isLibraryItemRnaPreset(item)
     ) {
-      // Same-geometry preset replacement preserves all external bonds by
-      // re-establishing them on the structurally identical new preset
-      // components. No bonds are lost, so no confirmation dialog is needed.
-      return 0;
+      const { freeAPsByRole, rolePresent } = this.computeNewPresetFreeAPs(item);
+      return computeLostBondsForPresetReplacement(
+        replaceTarget.presetComponents,
+        freeAPsByRole,
+        rolePresent,
+      ).length;
     }
 
-    if (replaceTarget.kind === 'monomer' && !isLibraryItemRnaPreset(item)) {
-      const originalBonds = collectMonomerBonds(replaceTarget.monomer);
-      // For a monomer-to-monomer replacement, we can check precisely which
-      // APs the new template provides. However, since we don't have the
-      // actual new monomer instance yet (it hasn't been created), we check
-      // the template's attachment points.
-      // Approximate check: if new item has fewer APs, some bonds will be lost.
-      const newItemAPs =
-        (item as { attachmentPoints?: unknown[] }).attachmentPoints?.length ??
-        0;
-      const originalUsedAPs = originalBonds.filter(
-        (r) => r.attachmentPointName !== ('hydrogen' as AttachmentPointName),
+    // Monomer → monomer (or preset component → monomer).
+    if (!isLibraryItemRnaPreset(item)) {
+      const newFreeAPs = this.getTemplateAttachmentPointNames(
+        item as MonomerItemType,
+      );
+      // If the new template's APs can't be determined, do not raise a false
+      // "deletion of bonds" warning.
+      if (!newFreeAPs) return 0;
+      return computeLostBondsForMonomerReplacement(
+        replaceTarget.monomer,
+        newFreeAPs,
       ).length;
-      // If the new monomer has fewer APs, bonds will definitely be lost
-      if (newItemAPs < originalUsedAPs) return originalUsedAPs - newItemAPs;
-      return 0;
+    }
+
+    // Preset → single monomer: the monomer's bonds are re-routed to whichever
+    // new preset component exposes a free attachment point, so a bond is lost
+    // only when none of the new components provides it.
+    if (isLibraryItemRnaPreset(item) && replaceTarget.kind === 'monomer') {
+      const { freeAPsByRole, rolePresent } = this.computeNewPresetFreeAPs(item);
+      const allFreeAPs = new Set<AttachmentPointName>();
+      (['sugar', 'phosphate', 'base'] as PresetComponentRole[]).forEach(
+        (role) => {
+          if (rolePresent[role]) {
+            freeAPsByRole[role].forEach((ap) => allFreeAPs.add(ap));
+          }
+        },
+      );
+      return computeLostBondsForMonomerReplacement(
+        replaceTarget.monomer,
+        allFreeAPs,
+      ).length;
     }
 
     return 0;
+  }
+
+  /**
+   * Extracts the attachment-point names declared by a monomer template, or
+   * null when they cannot be determined from the template.
+   */
+  private getTemplateAttachmentPointNames(
+    item?: MonomerItemType,
+  ): Set<AttachmentPointName> | null {
+    if (!item?.attachmentPoints || item.attachmentPoints.length === 0) {
+      return null;
+    }
+    const { attachmentPointsList } =
+      BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
+        item.attachmentPoints,
+      );
+    return new Set(attachmentPointsList);
+  }
+
+  /**
+   * Computes, for a dragged RNA preset, the free (available) attachment points
+   * of each new component after the internal intra-preset bonds are formed,
+   * plus which roles the preset provides.
+   *
+   * Internal usage:
+   *  - sugar: R3 (base) and R2/R1 (phosphate on right/left)
+   *  - base: R1
+   *  - phosphate: R1/R2 (right/left)
+   */
+  private computeNewPresetFreeAPs(preset: IRnaPreset): {
+    freeAPsByRole: Record<PresetComponentRole, Set<AttachmentPointName>>;
+    rolePresent: Record<PresetComponentRole, boolean>;
+  } {
+    const position = preset.phosphatePosition ?? 'right';
+    const hasBase = Boolean(preset.base);
+    const hasPhosphate = Boolean(preset.phosphate);
+
+    const apNamesFor = (
+      item: MonomerItemType | undefined,
+      fallback: AttachmentPointName[],
+    ): Set<AttachmentPointName> =>
+      this.getTemplateAttachmentPointNames(item) ??
+      new Set<AttachmentPointName>(fallback);
+
+    const sugarAPs = apNamesFor(preset.sugar, [
+      'R1',
+      'R2',
+      'R3',
+    ] as AttachmentPointName[]);
+    const baseAPs = apNamesFor(preset.base, ['R1'] as AttachmentPointName[]);
+    const phosphateAPs = apNamesFor(preset.phosphate, [
+      'R1',
+      'R2',
+    ] as AttachmentPointName[]);
+
+    const sugarInternal = new Set<AttachmentPointName>();
+    if (hasBase) sugarInternal.add('R3' as AttachmentPointName);
+    if (hasPhosphate) {
+      sugarInternal.add(
+        (position === 'left' ? 'R1' : 'R2') as AttachmentPointName,
+      );
+    }
+
+    const subtract = (
+      all: Set<AttachmentPointName>,
+      used: Set<AttachmentPointName>,
+    ): Set<AttachmentPointName> => {
+      const result = new Set<AttachmentPointName>();
+      all.forEach((ap) => {
+        if (!used.has(ap)) result.add(ap);
+      });
+      return result;
+    };
+
+    return {
+      freeAPsByRole: {
+        sugar: subtract(sugarAPs, sugarInternal),
+        base: subtract(
+          baseAPs,
+          new Set<AttachmentPointName>(['R1' as AttachmentPointName]),
+        ),
+        phosphate: subtract(
+          phosphateAPs,
+          new Set<AttachmentPointName>([
+            (position === 'left' ? 'R2' : 'R1') as AttachmentPointName,
+          ]),
+        ),
+      },
+      rolePresent: {
+        sugar: Boolean(preset.sugar),
+        base: hasBase,
+        phosphate: hasPhosphate,
+      },
+    };
   }
 
   /**
@@ -817,13 +936,12 @@ export class LibraryItemDragDropHandler {
 
     if (!isLibraryItemRnaPreset(item)) {
       // Monomer → monomer OR preset component → monomer
-      const { command, newMonomer } = drawingEntitiesManager.replaceMonomer(
+      const { command } = drawingEntitiesManager.replaceMonomer(
         replaceTarget.monomer,
         item,
       );
 
       // No re-layout for monomer→monomer (task 7.1)
-      void newMonomer;
       return command;
     }
 
@@ -833,7 +951,7 @@ export class LibraryItemDragDropHandler {
         replaceTarget.monomer.position.x,
         replaceTarget.monomer.position.y,
       );
-      const { command, newSugar } = drawingEntitiesManager.replacePreset(
+      const { command } = drawingEntitiesManager.replacePreset(
         replaceTarget.monomer,
         item,
         sugarPosition,
@@ -852,7 +970,6 @@ export class LibraryItemDragDropHandler {
       }
       // Flex mode: chain shift is deferred to after commit — handled by
       // MoveMonomerOperation within the replace command (future enhancement).
-      void newSugar;
 
       return finalCommand;
     }

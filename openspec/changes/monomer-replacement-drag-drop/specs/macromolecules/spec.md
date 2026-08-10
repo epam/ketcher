@@ -43,6 +43,19 @@ The macromolecules editor SHALL support two drag-and-drop outcomes when a librar
 - **THEN** both matching canvas components are highlighted during drag-over and replaced on drop, and their external bonds are re-established
 - **AND** a canvas component the dragged preset does not provide (e.g. a phosphate neighbouring a sugar+base preset) is neither highlighted nor replaced
 
+#### Scenario: Bonds to retained components are preserved after replacement
+
+- **WHEN** the user drops a two-component preset onto a matching canvas preset and a component the dragged preset does not provide remains on the canvas (e.g. dropping a sugar+phosphate preset onto a canvas nucleotide that still has a base)
+- **THEN** the retained component's bond to the replaced preset (e.g. the sugar↔base bond) is re-established on the corresponding new component whenever it exposes the required attachment point
+- **AND** all preservable connections (chain bonds, bonds to small molecules, hydrogen bonds) are re-established
+
+#### Scenario: Deletion-of-bonds warning when an attachment point is missing
+
+- **WHEN** the replacement would drop a bond because the dragged monomer or preset component lacks the Rn attachment point the original bond used
+- **THEN** a confirmation modal titled "Deletion of bonds" opens with the text "Some bonds will get deleted during replacement. Do you wish to proceed." and the options Cancel (default) and Yes — the same confirmation dialog used elsewhere in macro mode
+- **AND** choosing Cancel aborts the replacement leaving the canvas unchanged
+- **AND** choosing Yes performs the replacement, re-establishing every preservable bond and dropping only the bonds whose attachment point is unavailable
+
 #### Scenario: Preset replaces standalone monomer (center proximity drop)
 
 - **WHEN** the user drags a preset from the library and releases it within [TBD] px of a canvas monomer's center that is not part of a same-geometry preset

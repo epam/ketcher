@@ -12,7 +12,7 @@ import type { IRnaPreset } from 'application/editor/tools/Tool';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { AttachmentPointName } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import type { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import {
   isSugarOrAmbiguousSugar,
@@ -407,4 +407,89 @@ export function getMatchingPresetComponents(
   }
 
   return components;
+}
+
+// ---------------------------------------------------------------------------
+// Lost-bond computation (drives the "Deletion of bonds" confirmation modal)
+// ---------------------------------------------------------------------------
+
+export type PresetComponentRole = 'sugar' | 'base' | 'phosphate';
+
+/**
+ * Returns the structural role of a monomer within an RNA preset, or null when
+ * it is not a recognised RNA component type.
+ */
+export function getPresetComponentRole(
+  monomer: BaseMonomer,
+): PresetComponentRole | null {
+  if (isSugarOrAmbiguousSugar(monomer)) return 'sugar';
+  if (isRnaBaseOrAmbiguousRnaBase(monomer)) return 'base';
+  if (isPhosphateOrAmbiguousPhosphate(monomer)) return 'phosphate';
+  return null;
+}
+
+const HYDROGEN = 'hydrogen' as AttachmentPointName;
+
+/**
+ * Computes which of `oldMonomer`'s existing bonds would be LOST if it were
+ * replaced by a monomer whose free attachment points are `newFreeAPs`.
+ *
+ * A bond is lost when its attachment point does not exist (or is not free) on
+ * the replacement monomer. Hydrogen bonds are never lost (they don't route
+ * through named Rn attachment points).
+ */
+export function computeLostBondsForMonomerReplacement(
+  oldMonomer: BaseMonomer,
+  newFreeAPs: Set<AttachmentPointName>,
+): BondRecord[] {
+  return collectMonomerBonds(oldMonomer).filter(
+    (record) =>
+      record.attachmentPointName !== HYDROGEN &&
+      !newFreeAPs.has(record.attachmentPointName),
+  );
+}
+
+/**
+ * Computes which EXTERNAL bonds would be LOST when replacing the given preset
+ * components with a new preset whose per-role free attachment points are
+ * `newFreeAPsByRole`. `rolePresent` indicates which roles the new preset
+ * provides.
+ *
+ * Internal intra-preset bonds are ignored (they are recreated by the new
+ * preset). Bonds to monomers that remain on the canvas (e.g. a base kept when
+ * dropping a sugar+phosphate preset) are external and preserved when the
+ * corresponding new component still exposes the attachment point.
+ */
+export function computeLostBondsForPresetReplacement(
+  originalComponents: BaseMonomer[],
+  newFreeAPsByRole: Record<PresetComponentRole, Set<AttachmentPointName>>,
+  rolePresent: Record<PresetComponentRole, boolean>,
+): BondRecord[] {
+  const lost: BondRecord[] = [];
+
+  for (const component of originalComponents) {
+    const externalBonds = collectMonomerBonds(component).filter(
+      (record) =>
+        !originalComponents.includes(record.otherEntity) &&
+        record.attachmentPointName !== HYDROGEN,
+    );
+
+    const role = getPresetComponentRole(component);
+
+    if (!role || !rolePresent[role]) {
+      // The new preset has no component of this role → every external bond on
+      // the old component is lost.
+      lost.push(...externalBonds);
+      continue;
+    }
+
+    const freeAPs = newFreeAPsByRole[role];
+    for (const record of externalBonds) {
+      if (!freeAPs.has(record.attachmentPointName)) {
+        lost.push(record);
+      }
+    }
+  }
+
+  return lost;
 }

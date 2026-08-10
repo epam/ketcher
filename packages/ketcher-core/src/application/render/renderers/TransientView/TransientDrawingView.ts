@@ -40,7 +40,7 @@ type ViewData<P> = {
 };
 
 export class TransientDrawingView {
-  private readonly views: Map<string, ViewData<unknown>> = new Map();
+  private readonly views: Map<string, ViewData<any>> = new Map();
 
   private readonly topLayer: D3SvgElementSelection<SVGGElement, void>;
   private readonly defaultLayer: D3SvgElementSelection<SVGGElement, void>;
@@ -62,8 +62,6 @@ export class TransientDrawingView {
       this.removeView(viewName);
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     this.views.set(viewName, viewData);
   }
 

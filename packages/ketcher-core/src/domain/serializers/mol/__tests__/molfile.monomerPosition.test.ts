@@ -3,9 +3,21 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Molfile } from '../molfile';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
-import { assertDefined } from '../../../../../__tests__/utilities/assertDefined';
 
 const PRECISION = 4;
+
+type AssertDefined = <Value>(
+  value: Value,
+  message?: string,
+) => NonNullable<Value>;
+
+// Keep this as require(): a static import from __tests__ pulls the helper into
+// the ketcher-core production build graph and breaks the package build.
+const {
+  assertDefined,
+}: {
+  assertDefined: AssertDefined;
+} = require('../../../../../__tests__/utilities/assertDefined'); // eslint-disable-line @typescript-eslint/no-require-imports
 
 function buildMonomerStruct(
   monomerLabel: string,

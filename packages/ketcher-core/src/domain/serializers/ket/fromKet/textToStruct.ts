@@ -21,31 +21,18 @@ import {
   type DraftEditorState,
   convertDraftToLexical,
 } from 'application/render/restruct/draftToLexical';
+import type {
+  SerializedTextNode,
+  SerializedParagraphNode,
+} from 'application/render/restruct/retext';
 
-interface LexicalTextNode {
-  detail: number;
-  format: number;
-  mode: string;
-  style: string;
-  text: string;
-  type: 'text';
-  version: number;
-  font?: string;
-}
-
-interface LexicalParagraphNode {
-  children: LexicalTextNode[];
-  direction: string;
-  format: string;
-  indent: number;
-  type: 'paragraph';
-  version: number;
-  textFormat: number;
-  textStyle: string;
-}
-
-interface KETTextOldFormat {
-  data: TextAttributes;
+interface KETTextV1 {
+  type?: 'text';
+  data: {
+    content: string;
+    position?: { x: number; y: number; z?: number };
+    pos?: Array<{ x: number; y: number; z?: number }>;
+  };
   selected?: boolean;
 }
 
@@ -116,7 +103,7 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
   const lexicalRoot = {
     root: {
       children: paragraphs.map((para) => {
-        const paragraphNode: LexicalParagraphNode = {
+        const paragraphNode: SerializedParagraphNode = {
           children: (para.parts || []).map((part) => {
             let format = 0;
             if (part.bold) format |= IS_BOLD;
@@ -124,7 +111,7 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
             if (part.subscript) format |= IS_SUBSCRIPT;
             if (part.superscript) format |= IS_SUPERSCRIPT;
 
-            const textNode: LexicalTextNode = {
+            const textNode: SerializedTextNode & { font?: string } = {
               detail: 0,
               format,
               mode: 'normal',
@@ -156,8 +143,6 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
           indent: 0,
           type: 'paragraph',
           version: 1,
-          textFormat: 0,
-          textStyle: '',
         };
 
         // Apply paragraph-level alignment
@@ -195,7 +180,7 @@ function isKetV2Format(ketItem: unknown): ketItem is KETTextV2 {
 }
 
 export function textToStruct(
-  ketItem: KETTextV2 | KETTextOldFormat,
+  ketItem: KETTextV2 | KETTextV1,
   struct: Struct,
 ) {
   let node: TextAttributes;

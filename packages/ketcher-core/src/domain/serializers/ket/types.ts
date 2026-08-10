@@ -24,8 +24,6 @@ import type { Vec2 } from 'domain/entities/vec2';
 
 export interface KetHeader {
   moleculeName?: string;
-  creatorProgram?: string;
-  comment?: string;
 }
 
 export interface KetAtomNode {

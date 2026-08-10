@@ -130,7 +130,7 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
   leftMonomerAttachmentPoint: AttachmentPoint | undefined;
   rightMonomerAttachmentPoint: AttachmentPoint | undefined;
 }> {
-  if (await page.getByRole('dialog').isVisible()) {
+  if (await AttachmentPointsDialog(page).window.isVisible()) {
     if (!firstMonomerAttachmentPoint) {
       firstMonomerAttachmentPoint = await getMinFreeAttachmentPoint(
         firstMonomer,
@@ -145,9 +145,11 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
     if (firstMonomerAttachmentPoint && secondMonomerAttachmentPoint) {
       await page.getByTitle(firstMonomerAttachmentPoint).first().click();
 
-      (await page.getByTitle(secondMonomerAttachmentPoint).count()) > 1
-        ? await page.getByTitle(secondMonomerAttachmentPoint).nth(1).click()
-        : await page.getByTitle(secondMonomerAttachmentPoint).first().click();
+      if ((await page.getByTitle(secondMonomerAttachmentPoint).count()) > 1) {
+        await page.getByTitle(secondMonomerAttachmentPoint).nth(1).click();
+      } else {
+        await page.getByTitle(secondMonomerAttachmentPoint).first().click();
+      }
     }
 
     await AttachmentPointsDialog(page).connect();
@@ -158,7 +160,9 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
     };
   }
   const firstMonomerType = await firstMonomer.getAttribute('data-monomertype');
-  const secondMonomerType = await firstMonomer.getAttribute('data-monomertype');
+  const secondMonomerType = await secondMonomer.getAttribute(
+    'data-monomertype',
+  );
 
   const firstMonomerAvailableAttachmentPoints =
     await getAvailableAttachmentPoints(firstMonomer);

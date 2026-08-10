@@ -90,7 +90,7 @@ export interface AtomAttributes {
    * Note: value `-1` has been converted to `3` by indigo.
    */
   attachmentPoints?: AttachmentPoints | null;
-  rglabel?: string | null;
+  rglabel?: number | null;
   charge?: number | null;
   radical?: number;
   cip?: AtomCIP | null;
@@ -201,7 +201,7 @@ export class Atom extends BaseMicromoleculeEntity {
   sgs: Pile<number>;
   badConn: boolean;
   alias: string | null;
-  rglabel: string | null;
+  rglabel: number | null;
   aam: number;
   invRet: number;
   exactChangeFlag: number;
@@ -405,7 +405,9 @@ export class Atom extends BaseMicromoleculeEntity {
         isAnyGroup ||
         this.hCount !== 0 ||
         this.atomList !== null ||
-        Object.values(queryProperties).some((value) => value),
+        Object.values(queryProperties).some(
+          (value) => Boolean(value) || value === 0,
+        ),
     );
   }
 

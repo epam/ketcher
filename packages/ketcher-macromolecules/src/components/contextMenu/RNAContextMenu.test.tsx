@@ -86,9 +86,10 @@ describe('RNA ContextMenu', () => {
   };
 
   it('should render contextMenu correctly', () => {
-    render(
+    const { container } = render(
       withThemeAndStoreProvider(
         <div className={EditorClassName}>
+          <div className="Ketcher-macromolecules-root" />
           <RnaBuilder
             libraryName={MONOMER_TYPES.RNA}
             duplicatePreset={duplicatePreset}
@@ -98,15 +99,18 @@ describe('RNA ContextMenu', () => {
         initialState,
       ),
     );
+    const portalRoot = container.querySelector('.Ketcher-macromolecules-root');
+    expect(portalRoot).not.toBeNull();
     const presetCard = screen.getByTestId('A_A_R_P');
     fireEvent.contextMenu(presetCard);
     expect(screen.getByTestId('deletepreset')).toBeInTheDocument();
   });
 
   it("should disable 'Delete Preset' menu when trying to delete default preset", () => {
-    render(
+    const { container } = render(
       withThemeAndStoreProvider(
         <div className={EditorClassName}>
+          <div className="Ketcher-macromolecules-root" />
           <RnaBuilder
             libraryName={MONOMER_TYPES.RNA}
             duplicatePreset={duplicatePreset}
@@ -116,6 +120,8 @@ describe('RNA ContextMenu', () => {
         initialState,
       ),
     );
+    const portalRoot = container.querySelector('.Ketcher-macromolecules-root');
+    expect(portalRoot).not.toBeNull();
     const preset = screen.getByTestId('A_A_R_P');
     fireEvent.contextMenu(preset);
     const deleteMenu = screen.getByTestId('deletepreset');
@@ -123,9 +129,10 @@ describe('RNA ContextMenu', () => {
   });
 
   it("should enable 'Delete Preset' when trying to delete non-default preset", () => {
-    render(
+    const { container } = render(
       withThemeAndStoreProvider(
         <div className={EditorClassName}>
+          <div className="Ketcher-macromolecules-root" />
           <RnaBuilder
             libraryName={MONOMER_TYPES.RNA}
             duplicatePreset={duplicatePreset}
@@ -136,6 +143,8 @@ describe('RNA ContextMenu', () => {
         initialState,
       ),
     );
+    const portalRoot = container.querySelector('.Ketcher-macromolecules-root');
+    expect(portalRoot).not.toBeNull();
     const preset = screen.getByTestId('A_A_R_P');
     fireEvent.contextMenu(preset);
     const deleteMenu = screen.getByTestId('deletepreset');

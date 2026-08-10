@@ -35,7 +35,7 @@ import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { toFixed } from 'utilities';
+import { assert, toFixed } from 'utilities';
 import type {
   RenderOptions,
   RenderOptionStyles,
@@ -46,7 +46,6 @@ import { type AttachmentPointName, attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
-import assert from 'assert';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
 import { ShowHydrogenLabels } from './showHydrogenLabels';
 
@@ -444,6 +443,16 @@ class ReAtom extends ReObject {
       atomSymbolShift = Math.max(atomSymbolShift, shift);
     }
 
+    // A wide/multi-part label (e.g. an atom list, or several combined
+    // properties like isotope+charge+valence) can otherwise compute a shift
+    // larger than the bond itself, pushing the endpoint past the other atom
+    // and making the bond look detached from the structure (#3508). Never
+    // consume more than half the bond, so the two endpoints can't cross.
+    if (bondLen) {
+      const maxShift = Math.max(bondLen / 2 - 3 * renderOptions.lineWidth, 0);
+      atomSymbolShift = Math.min(atomSymbolShift, maxShift);
+    }
+
     if (atomSymbolShift > 0) {
       return atomPosition.addScaled(
         direction,
@@ -489,8 +498,13 @@ class ReAtom extends ReObject {
           options.font.indexOf(' ') + 1,
           options.font.length,
         );
+        const superatomClass = sgroup?.data?.class as
+          | keyof typeof SUPERATOM_CLASS_TEXT
+          | undefined;
         const sGroupName =
-          sgroup?.data?.name ?? SUPERATOM_CLASS_TEXT[sgroup?.data?.class] ?? '';
+          sgroup?.data?.name ??
+          (superatomClass ? SUPERATOM_CLASS_TEXT[superatomClass] : '') ??
+          '';
         const path = render.paper
           .text(position.x, position.y, sGroupName)
           .attr({
@@ -615,7 +629,7 @@ class ReAtom extends ReObject {
         (options.usageInMacromolecule === undefined && !sgroup);
       // can not use Atom.isSuperatomLeavingGroupAtom here, because in preview model there is no sgroups
       const isLeavingGroupAtom =
-        this.a.rglabel !== null && this.a.rglabel !== '0';
+        this.a.rglabel !== null && this.a.rglabel !== 0;
 
       const shouldHideHydrogenInPreview = isPreviewMode && isLeavingGroupAtom;
 
@@ -1100,17 +1114,24 @@ class ReAtom extends ReObject {
     const highlights = restruct.molecule.highlights;
     let isHighlighted = false;
     let highlightColor = '';
+    let highlightOutline = false;
     highlights.forEach((highlight) => {
       const hasCurrentHighlight = highlight.atoms?.includes(aid);
       isHighlighted = isHighlighted || hasCurrentHighlight;
       if (hasCurrentHighlight) {
         highlightColor = highlight.color;
+        highlightOutline = highlight.outline;
       }
     });
 
-    // Drawing highlight
-    if (isHighlighted) {
-      const style = { fill: highlightColor, stroke: 'none' };
+    // Drawing highlight. Outline highlights (#9441) are drawn as a single
+    // merged contour by ReStruct.showHighlightOutlines, so skip them here;
+    // only filled (active-tab) highlights are drawn per-atom.
+    if (isHighlighted && !highlightOutline) {
+      const style: RenderOptionStyles = {
+        fill: highlightColor,
+        stroke: 'none',
+      };
 
       const path = this.makeHighlightePlate(restruct, style);
       restruct.addReObjectPath(LayerMap.hovering, this.visel, path);
@@ -1287,7 +1308,9 @@ class ReAtom extends ReObject {
     let angles: Array<number> = [];
     this.a.neighbors.forEach((halfBondId) => {
       const halfBond = struct.halfBonds.get(halfBondId);
-      halfBond && angles.push(halfBond.ang);
+      if (halfBond) {
+        angles.push(halfBond.ang);
+      }
     });
     angles = angles.sort((a, b) => a - b);
     const largeAngles: Array<number> = [];
@@ -2053,7 +2076,13 @@ export function checkIsSmartPropertiesExist(atom) {
     'aromaticity',
     'customQuery',
   ];
-  return smartsSpecificProperties.some((name) => atom.queryProperties?.[name]);
+  return (
+    atom.implicitHCount !== null ||
+    smartsSpecificProperties.some((name) => {
+      const value = atom.queryProperties?.[name];
+      return Boolean(value) || value === 0;
+    })
+  );
 }
 
 export function getAtomCustomQuery(atom, includeOnlyQueryAttributes?: boolean) {

@@ -72,7 +72,9 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
           !sGroup.isSuperatomWithoutLabel && sGroup.atoms.includes(atomId),
       );
 
-      sGroupId !== null && selectedSGroupsIds.add(sGroupId);
+      if (sGroupId !== null) {
+        selectedSGroupsIds.add(sGroupId);
+      }
     });
 
     return {
@@ -184,17 +186,19 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
             selection,
             selectedFunctionalGroups,
             ketcherId,
+            editor,
           );
           break;
         }
       }
 
-      showProps &&
+      if (showProps) {
         show({
           id: showProps.id,
           event,
           props: { ...showProps, ketcherId },
         });
+      }
     },
     [getSelectedGroupsInfo, show, ketcherId],
   );

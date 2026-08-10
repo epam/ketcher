@@ -15,7 +15,50 @@
  ***************************************************************************/
 import { IKetMacromoleculesContent } from 'ketcher-core';
 
-// TODO add typings for Indigo standalone object
+export interface IndigoVectorInt {
+  push_back(value: number): void;
+}
+
+export interface IndigoOptions {
+  set(key: string, value: string): void;
+}
+
+export interface IndigoModule {
+  MapStringString: new () => IndigoOptions;
+  VectorInt: new () => IndigoVectorInt;
+  render(struct: string, options: IndigoOptions): string;
+  layout(struct: string, format: string, options: IndigoOptions): string;
+  dearomatize(struct: string, format: string, options: IndigoOptions): string;
+  check(struct: string, types: string, options: IndigoOptions): string;
+  calculateCip(struct: string, format: string, options: IndigoOptions): string;
+  calculate(
+    struct: string,
+    options: IndigoOptions,
+    selectedAtoms: IndigoVectorInt,
+  ): string;
+  automap(
+    struct: string,
+    mode: string,
+    format: string,
+    options: IndigoOptions,
+  ): string;
+  aromatize(struct: string, format: string, options: IndigoOptions): string;
+  clean2d(
+    struct: string,
+    format: string,
+    options: IndigoOptions,
+    selectedAtoms: IndigoVectorInt,
+  ): string;
+  convert(struct: string, format: string, options: IndigoOptions): string;
+  version(): string;
+  convert_explicit_hydrogens(
+    struct: string,
+    mode: string,
+    format: string,
+    options: IndigoOptions,
+  ): string;
+  calculateMacroProperties(struct: string, options: IndigoOptions): string;
+}
 
 export const enum Command {
   Info,

@@ -3,7 +3,7 @@
  * Tests migration from namespaced format back to flat format
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, dot-notation */
+/* eslint-disable dot-notation */
 
 import { SettingsMigration } from '../SettingsMigration';
 
@@ -57,7 +57,7 @@ describe('SettingsMigration', () => {
     });
 
     it('should handle non-object input', () => {
-      const migrated = SettingsMigration.migrate('not an object' as any);
+      const migrated = SettingsMigration.migrate('not an object');
 
       expect(migrated).toEqual({});
     });

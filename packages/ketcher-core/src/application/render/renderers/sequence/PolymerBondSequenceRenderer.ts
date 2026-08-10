@@ -1,5 +1,5 @@
 import type { PolymerBond } from 'domain/entities/PolymerBond';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { SubChainNode } from 'domain/entities/monomer-chains/types';

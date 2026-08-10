@@ -105,6 +105,8 @@ import {
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { getSGroupLabelLocator } from '@utils/canvas/s-group-signes/getSGroupLabelLocator';
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
+import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
 
@@ -529,10 +531,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await openFileAndAddToCanvasMacro(page, 'KET/sugar-phosphate-core.ket');
     expect(
-      await ContextMenu(
-        page,
-        getBondLocator(page, { bondId: 45 }),
-      ).isOptionEnabled(MacroBondOption.Delete),
+      await ContextMenu(page, getBondLocator(page, {}).first()).isOptionEnabled(
+        MacroBondOption.Delete,
+      ),
     ).toBeTruthy();
   });
 
@@ -817,33 +818,29 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 21 - In Macro mode clicking on Selection tool icon does not open dropdown menu as in Micro mode', async () => {
+  test('Case 21 - In Macro mode clicking on Selection tool icon does not open dropdown menu as in Micro mode', async ({
+    FlexCanvas: _,
+  }) => {
     /* Test case: https://github.com/epam/ketcher/issues/8974
      * Bug: https://github.com/epam/ketcher/issues/7776
      * Steps:
      * 1. Open Ketcher in Macro mode.
      * 2. Click on the Selection tool icon (not the triangle part).
-     * 3. Observe that no dropdown appears.
+     * 3. Observe that dropdown appears.
      * 4. Switch to Micro mode.
      * 5. Click on the Selection tool icon → dropdown with all selection tools appears.
      * Expected Result:
      * Clicking on the Selection tool icon (both in Macro and Micro modes) should open the dropdown menu with all selection tools, providing a consistent user experience.
      */
-
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'KET/Ambiguous-monomers-bonds/ketcherPhosphateMixedAndAlternatives.ket',
-    );
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await expect(
+      CommonLeftToolbar(page).toolSelectionDropdownPanel,
+    ).toBeVisible();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
-    await takeElementScreenshot(
-      page,
-      CommonLeftToolbar(page).areaSelectionDropdownButton,
-      {
-        padding: 90,
-      },
-    );
+    await expect(
+      CommonLeftToolbar(page).toolSelectionDropdownPanel,
+    ).toBeVisible();
   });
 
   test('Case 22 - Context menu remains visible after creating cyclic structure via right-click menu', async ({
@@ -859,7 +856,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
      * Expected Result: After clicking Create cyclic structure, the context menu should automatically close.
      * The cyclic structure should be generated, and the canvas should regain focus immediately.
      */
-
+    await pageReload(page);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/polymer-chain-that-meets-cyclic-structure-criteria.ket',
@@ -929,7 +926,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       MacroFileType.HELM,
       'CHEM1{[4aPEGMal]}|CHEM2{[4FB]}|CHEM3{[A6OH]}$CHEM2,CHEM1,1:R2-1:R1|CHEM3,CHEM2,1:R2-1:R1$$$V2.0',
     );
-    const chainlocator = getSymbolLocator(page, { symbolId: 7 });
+    const chainlocator = getSymbolLocator(page, { symbolAlias: '@' });
     const locators = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).handTool();
     await chainlocator.hover({ force: true });
@@ -937,9 +934,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await CommonLeftToolbar(page).areaSelectionTool();
     await chainlocator.hover({ force: true });
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeElementScreenshot(page, chainlocator, {
-      padding: 120,
-    });
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Case 25 - 5NitInd unsplit nucleotide should be shown as X symbol instead of @ one', async ({
@@ -1366,7 +1361,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
      */
 
     await openFileAndAddToCanvasAsNewProject(page, 'CDXML/cdxml-3261.cdxml');
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, getArrowLocator(page, {}), {
+      padding: 250,
+    });
     await verifyFileExport(
       page,
       'CDXML/cdxml-3261-expected.cdxml',

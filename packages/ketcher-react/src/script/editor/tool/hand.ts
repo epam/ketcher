@@ -25,7 +25,7 @@ class HandTool implements Tool {
 
   constructor(editor) {
     this.editor = editor;
-    const { clientX, clientY } = this.editor.lastEvent || {
+    const { clientX, clientY } = (this.editor.lastEvent as MouseEvent) || {
       clientX: 0,
       clientY: 0,
     };

@@ -4655,6 +4655,13 @@ export class DrawingEntitiesManager {
       );
     }
 
+    // Undo must run in reverse order so that new bonds are deleted first
+    // (while the new monomer still exists), then the new monomer is removed,
+    // then lost bonds are restored, and finally the original monomer is
+    // restored. Without this flag, invert() runs forward and AP slots on
+    // neighbouring monomers end up in a stale / double-bonded state.
+    command.setUndoOperationReverse();
+
     return { command, newMonomer };
   }
 
@@ -4676,16 +4683,34 @@ export class DrawingEntitiesManager {
   ): { command: Command; newSugar: BaseMonomer } {
     const command = new Command();
 
-    // Gather the components of the original preset
-    const originalComponents = getPresetComponentsFromSugar(oldSugar);
+    // Gather the components of the original preset.
+    // If oldSugar is a standalone monomer (not part of an RNA preset, or not a
+    // sugar at all), getPresetComponentsFromSugar returns []. In that case we
+    // treat it as a single-element "preset" so the monomer gets deleted and its
+    // bonds are re-routed to the matching new preset component.
+    const presetComponents = getPresetComponentsFromSugar(oldSugar);
+    const originalComponents: BaseMonomer[] =
+      presetComponents.length > 0 ? presetComponents : [oldSugar];
 
     // Collect all bonds BEFORE any deletions.
     // NOTE: PolymerBondDeleteOperation immediately mutates the model in its
     // constructor, so we must snapshot bond state here while the model is
     // still intact.
+    //
+    // We also build a bond→originalComponent map at snapshot time so that
+    // findNewPresetComponentForBond can look up which component owned a bond
+    // without re-collecting bonds from already-deleted monomers.
     const allOriginalBonds: ReturnType<typeof collectMonomerBonds> = [];
+    const bondToOriginalComponent = new Map<
+      ReturnType<typeof collectMonomerBonds>[0]['bond'],
+      BaseMonomer
+    >();
     for (const component of originalComponents) {
-      allOriginalBonds.push(...collectMonomerBonds(component));
+      const componentBonds = collectMonomerBonds(component);
+      for (const record of componentBonds) {
+        bondToOriginalComponent.set(record.bond, component);
+      }
+      allOriginalBonds.push(...componentBonds);
     }
 
     // Separate external bonds (to monomers outside this preset) from
@@ -4749,6 +4774,7 @@ export class DrawingEntitiesManager {
         record,
         originalComponents,
         newComponents,
+        bondToOriginalComponent,
       );
       if (!newComponent) continue;
 
@@ -4768,6 +4794,15 @@ export class DrawingEntitiesManager {
         ),
       );
     }
+
+    // Undo must execute in reverse order so that:
+    //   1. New external bonds are removed first (while new components still exist)
+    //   2. New preset components are deleted
+    //   3. Original bonds are restored
+    //   4. Original components are restored last
+    // Without this flag, invert() runs in forward order, causing external-bond
+    // AP slots on neighbouring monomers to be left in a stale / double-bonded state.
+    command.setUndoOperationReverse();
 
     return { command, newSugar: newSugar ?? newComponents[0] };
   }
@@ -4807,17 +4842,29 @@ export class DrawingEntitiesManager {
    * Given a bond record from the original preset and the arrays of original /
    * new components, finds the new preset component that should carry the
    * re-established bond.
+   *
+   * `bondToOriginalComponent` is a snapshot map built BEFORE any deletions
+   * so we don't have to re-collect bonds from already-mutated monomers.
    */
   private findNewPresetComponentForBond(
     record: ReturnType<typeof collectMonomerBonds>[0],
     originalComponents: BaseMonomer[],
     newComponents: BaseMonomer[],
+    bondToOriginalComponent: Map<
+      ReturnType<typeof collectMonomerBonds>[0]['bond'],
+      BaseMonomer
+    >,
   ): BaseMonomer | undefined {
-    // Find which original component this bond came from
-    const originalComponent = originalComponents.find((c) => {
-      const bonds = collectMonomerBonds(c);
-      return bonds.some((b) => b.bond === record.bond);
-    });
+    // Use the pre-built snapshot map to find which original component owned
+    // this bond. Falling back to a linear search of originalComponents avoids
+    // stale results that arise when collectMonomerBonds is called on already-
+    // deleted monomers (their attachmentPointsToBonds has been mutated).
+    const originalComponent =
+      bondToOriginalComponent.get(record.bond) ??
+      originalComponents.find((c) => {
+        const bonds = collectMonomerBonds(c);
+        return bonds.some((b) => b.bond === record.bond);
+      });
 
     if (!originalComponent) return undefined;
 
@@ -4829,6 +4876,24 @@ export class DrawingEntitiesManager {
     }
     if (isPhosphateOrAmbiguousPhosphate(originalComponent)) {
       return newComponents.find(isPhosphateOrAmbiguousPhosphate);
+    }
+
+    // Standalone monomer (not a recognised RNA component type) — route its
+    // bonds to the new preset component whose AP is free, using the priority
+    // order defined in the spec: sugar > phosphate > base.
+    const newSugar = newComponents.find(isSugarOrAmbiguousSugar);
+    if (newSugar?.isAttachmentPointExistAndFree(record.attachmentPointName)) {
+      return newSugar;
+    }
+    const newPhosphate = newComponents.find(isPhosphateOrAmbiguousPhosphate);
+    if (
+      newPhosphate?.isAttachmentPointExistAndFree(record.attachmentPointName)
+    ) {
+      return newPhosphate;
+    }
+    const newBase = newComponents.find(isRnaBaseOrAmbiguousRnaBase);
+    if (newBase?.isAttachmentPointExistAndFree(record.attachmentPointName)) {
+      return newBase;
     }
     return undefined;
   }

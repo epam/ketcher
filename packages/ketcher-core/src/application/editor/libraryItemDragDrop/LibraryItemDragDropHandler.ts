@@ -1,6 +1,7 @@
 import { Vec2 } from 'domain/entities';
 import { Command } from 'domain/entities/Command';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 import {
   type AttachmentPointName,
   type MonomerOrAmbiguousType,
@@ -489,19 +490,32 @@ export class LibraryItemDragDropHandler {
     const hasSugar = components.some(isSugarOrAmbiguousSugar);
     const hasBase = components.some(isRnaBaseOrAmbiguousRnaBase);
     const phosphate = components.find(isPhosphateOrAmbiguousPhosphate);
+    const sugar = components.find(isSugarOrAmbiguousSugar);
 
-    // Determine phosphate position: if the phosphate connects to the sugar
-    // via R1 on the phosphate, it is a 5′ phosphate (left/default).
+    // Determine phosphate position from the sugar's perspective, not the
+    // phosphate's. In a chain the phosphate has BOTH R1 and R2 occupied
+    // (R1 = intra-preset bond to its own sugar, R2 = inter-nucleotide bond
+    // to the next sugar), so checking phosphate.R2 is always truthy and
+    // gives the wrong answer. The reliable anchor is the sugar:
+    //
+    //  - Sugar.R2 → Phosphate  →  3′ phosphate  (right / default in RNA builder)
+    //  - Sugar.R1 → Phosphate  →  5′ phosphate  (left)
     let phosphatePosition: 'left' | 'right' | undefined;
-    if (phosphate) {
-      const r1Bond = phosphate.attachmentPointsToBonds['R1'];
-      const r2Bond = phosphate.attachmentPointsToBonds['R2'];
-      if (r2Bond) {
-        // R2 of phosphate connects to sugar (R1 of sugar) — 5′ phosphate
-        phosphatePosition = 'left';
-      } else if (r1Bond) {
-        // R1 of phosphate connects to sugar (R2 of sugar) — 3′ phosphate
+    if (phosphate && sugar) {
+      const sugarR2Bond = sugar.attachmentPointsToBonds['R2'];
+      const sugarR1Bond = sugar.attachmentPointsToBonds['R1'];
+      if (
+        sugarR2Bond instanceof PolymerBond &&
+        sugarR2Bond.getAnotherMonomer(sugar) === phosphate
+      ) {
+        // Phosphate is on the 3′ end of the sugar (standard RNA builder layout)
         phosphatePosition = 'right';
+      } else if (
+        sugarR1Bond instanceof PolymerBond &&
+        sugarR1Bond.getAnotherMonomer(sugar) === phosphate
+      ) {
+        // Phosphate is on the 5′ end of the sugar
+        phosphatePosition = 'left';
       }
     }
 
@@ -865,6 +879,10 @@ export class LibraryItemDragDropHandler {
 
       const finalCommand = new Command();
       finalCommand.merge(command);
+      // Preserve the reverse-undo flag: replacePreset sets it on `command`, but
+      // Command.merge() does not propagate undoOperationReverse, so we must set
+      // it explicitly on finalCommand as well.
+      finalCommand.setUndoOperationReverse();
 
       // Layout adjustments for preset→monomer (tasks 7.5, 7.6)
       if (getModeName() === 'snake-layout-mode') {

@@ -5,7 +5,7 @@ import { LayerMap } from './generalEnumTypes';
 import type { Render } from '../raphaelRender';
 import type ReStruct from './restruct';
 import type { RenderOptions } from 'application/render/render.types';
-import { getArrowHeadDimensions } from 'application/render/draw';
+import draw, { getArrowHeadDimensions } from 'application/render/draw';
 import { PathBuilder } from 'application/render/pathBuilder';
 import { Scale } from 'domain/helpers';
 import { Pool } from 'domain/entities/pool';
@@ -42,11 +42,10 @@ export class ReMultitailArrow extends ReObject {
   static readonly SELECTION_POINT_OFFSET_FROM_SPINE = 0.1;
   static readonly SPINE_MOVE_POINT_X_OFFSET = -1;
   static readonly HEAD_LINE_START_OFFSET = 1;
-  static readonly SELECTION_POINT_RADIUS = 1;
   static readonly HIDDEN_SELECTION_POINT_OPACITY = 0;
   static readonly VISIBLE_SELECTION_POINT_OPACITY = 1;
 
-  private testSelectionPoints: TestSelectionPoint[] = [];
+  private selectionHandles: TestSelectionPoint[] = [];
 
   static isSelectable(): boolean {
     return true;
@@ -256,9 +255,10 @@ export class ReMultitailArrow extends ReObject {
       headLineStartX + (head.x - headLineStartX) / 2,
       head.y,
     );
-    const selectionPointSet = paper.set();
-    const selectionPoints: TestSelectionPoint[] = [];
-    let spineMoveSelectionPoint: TestSelectionPoint | null = null;
+    const hitTargetSet = paper.set();
+    const handleSet = paper.set();
+    const selectionHandles: TestSelectionPoint[] = [];
+    let spineMoveHitTarget: TestSelectionPoint | null = null;
     const points: Record<string, Vec2> = {
       'spine-move': spineMovePoint,
       ...this.getSelectionPointsFromReferencePoint(
@@ -294,39 +294,41 @@ export class ReMultitailArrow extends ReObject {
     };
     points['head-move'] = headMovePoint;
     Object.entries(points).forEach(([key, point]) => {
-      const isSpineMovePoint = key === 'spine-move';
-      const selectionPointRadius = ReMultitailArrow.SELECTION_POINT_RADIUS;
-      const element = paper
-        .circle(point.x, point.y, selectionPointRadius)
-        .attr({
-          fill: '#000',
-          stroke: '#000',
-          'stroke-width': 0,
-          'fill-opacity': isSpineMovePoint ? 0 : 1,
-          'stroke-opacity': isSpineMovePoint ? 0 : 1,
-          opacity: ReMultitailArrow.HIDDEN_SELECTION_POINT_OPACITY,
-          'pointer-events': 'all',
-        });
-      if (isSpineMovePoint) {
-        spineMoveSelectionPoint = element;
+      const isResizePoint = key.endsWith('-resize');
+      const hitTarget = draw.selectionHandleHitTarget(
+        paper,
+        point,
+        renderOptions,
+      );
+      if (key === 'spine-move') {
+        spineMoveHitTarget = hitTarget;
       }
-      if (element.node?.setAttribute) {
-        element.node.setAttribute('data-testid', key);
-        element.node.setAttribute('pointer-events', 'all');
+      if (hitTarget.node?.setAttribute) {
+        hitTarget.node.setAttribute('data-testid', key);
+        hitTarget.node.setAttribute('pointer-events', 'all');
         if (typeof this.multitailArrow.arrowId === 'number') {
-          element.node.setAttribute(
+          hitTarget.node.setAttribute(
             'data-arrow-id',
             String(this.multitailArrow.arrowId),
           );
         }
       }
-      selectionPoints.push(element);
-      selectionPointSet.push(element);
+      hitTargetSet.push(hitTarget);
+
+      if (isResizePoint) {
+        const handle = draw.selectionHandle(paper, point, renderOptions);
+        handle.attr({
+          opacity: ReMultitailArrow.HIDDEN_SELECTION_POINT_OPACITY,
+        });
+        selectionHandles.push(handle);
+        handleSet.push(handle);
+      }
     });
-    this.testSelectionPoints = selectionPoints;
-    reStruct.addReObjectPath(LayerMap.indices, this.visel, selectionPointSet);
-    if (spineMoveSelectionPoint) {
-      reStruct.movePathOnTopOfLayer(spineMoveSelectionPoint, LayerMap.indices);
+    this.selectionHandles = selectionHandles;
+    reStruct.addReObjectPath(LayerMap.indices, this.visel, hitTargetSet);
+    reStruct.addReObjectPath(LayerMap.indices, this.visel, handleSet);
+    if (spineMoveHitTarget) {
+      reStruct.movePathOnTopOfLayer(spineMoveHitTarget, LayerMap.indices);
     }
   }
 
@@ -354,7 +356,7 @@ export class ReMultitailArrow extends ReObject {
 
   show(reStruct: ReStruct, renderOptions: RenderOptions) {
     reStruct.clearVisel(this.visel);
-    this.testSelectionPoints = [];
+    this.selectionHandles = [];
     const pathBuilder = new PathBuilder();
     const headPathBuilder = new PathBuilder();
     const { topTail, topSpine, bottomSpine, head, tails } =
@@ -416,7 +418,7 @@ export class ReMultitailArrow extends ReObject {
   }
 
   showPoints() {
-    this.testSelectionPoints.forEach((point) => {
+    this.selectionHandles.forEach((point) => {
       point.attr({
         opacity: ReMultitailArrow.VISIBLE_SELECTION_POINT_OPACITY,
       });
@@ -424,7 +426,7 @@ export class ReMultitailArrow extends ReObject {
   }
 
   hidePoints() {
-    this.testSelectionPoints.forEach((point) => {
+    this.selectionHandles.forEach((point) => {
       point.attr({
         opacity: ReMultitailArrow.HIDDEN_SELECTION_POINT_OPACITY,
       });

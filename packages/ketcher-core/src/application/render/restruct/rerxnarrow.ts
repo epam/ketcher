@@ -26,7 +26,6 @@ import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { toFixed } from 'utilities';
 
 type Arrow = {
   pos: Array<Vec2>;
@@ -64,19 +63,14 @@ class ReRxnArrow extends ReObject {
     const item = this.item;
     const pos = item.pos;
 
-    let dist: number = point.calculateDistanceToLine([pos[0], pos[1]]);
-
-    if (RxnArrow.isElliptical(item)) {
-      // currently an elliptical arrow is highlighted if a pointer is close to one of the 3 virtual lines
-      // that form a triangle from the arrow's 3 reference points
-      // TODO: make a better detection (maybe rectangular, so it's similar to visual highlight/selection)
-      const [startPoint, endPoint, middlePoint] = this.getReferencePoints();
-      dist = Math.min(
-        dist,
-        point.calculateDistanceToLine([startPoint, middlePoint]),
-        point.calculateDistanceToLine([middlePoint, endPoint]),
-      );
-    }
+    let dist: number = RxnArrow.isElliptical(item)
+      ? util.calculateDistanceToEllipticalArc(
+          point,
+          pos[0],
+          pos[1],
+          item.height ?? 0,
+        )
+      : point.calculateDistanceToLine([pos[0], pos[1]]);
 
     const refPoint: Vec2 | null =
       distRef.minDist <= 8 / s ? distRef.refPoint : null;
@@ -113,7 +107,7 @@ class ReRxnArrow extends ReObject {
   }
 
   drawHover(render: Render) {
-    const ret = this.hoverPath(render).attr(render.options.hoverStyle);
+    const ret = this.hoverPath(render).attr(render.options.arrowHoverStyle);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     return ret;
   }
@@ -127,23 +121,21 @@ class ReRxnArrow extends ReObject {
     refPoints.push(new Vec2(b.x, b.y));
 
     if (RxnArrow.isElliptical(item)) {
-      const middlePoint = findMiddlePoint(height!, a, b);
+      const middlePoint = util.findMiddlePoint(height!, a, b);
       refPoints.push(middlePoint);
     }
     return refPoints;
   }
 
   makeAdditionalInfo(restruct: ReStruct) {
-    const scaleFactor = restruct.render.options.microModeScale;
     const refPoints = this.getReferencePoints();
     const selectionSet = restruct.render.paper.set();
+    const options = restruct.render.options;
 
     refPoints.forEach((rp) => {
-      const scaledRP = Scale.modelToCanvas(rp, restruct.render.options);
+      const scaledRP = Scale.modelToCanvas(rp, options);
       selectionSet.push(
-        restruct.render.paper
-          .circle(scaledRP.x, scaledRP.y, scaleFactor / 8)
-          .attr({ fill: 'black' }),
+        draw.selectionHandle(restruct.render.paper, scaledRP, options),
       );
     });
 
@@ -158,7 +150,7 @@ class ReRxnArrow extends ReObject {
     selectionSet.push(
       render.paper
         .path(this.generatePath(render, options, 'selection'))
-        .attr(styles.selectionStyle),
+        .attr(styles.arrowSelectionStyle),
     );
     return selectionSet;
   }
@@ -182,11 +174,11 @@ class ReRxnArrow extends ReObject {
 
     switch (type) {
       case 'selection':
-        path = draw.rectangleArrowHighlightAndSelection(
-          render.paper,
-          { pos, height },
+        path = draw.getArrowPath(
+          { ...item, pos, height },
           length,
           angle,
+          options,
         );
         break;
       case 'arrow':
@@ -224,59 +216,6 @@ class ReRxnArrow extends ReObject {
 
     this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
   }
-}
-
-function findMiddlePoint(height: number, a: Vec2, b: Vec2) {
-  if (+toFixed(height) === 0) {
-    const minX = Math.min(a.x, b.x);
-    const minY = Math.min(a.y, b.y);
-    const x = minX + Math.abs(a.x - b.x) / 2;
-    const y = minY + Math.abs(a.y - b.y) / 2;
-    return new Vec2(x, y);
-  }
-  const length = Math.hypot(b.x - a.x, b.y - a.y);
-  const lengthHyp = Math.hypot(length / 2, height);
-  const coordinates1 = util.calcCoordinates(a, b, lengthHyp).pos1;
-  const coordinates2 = util.calcCoordinates(a, b, lengthHyp).pos2;
-
-  if (height > 0) {
-    if (b.x < a.x) {
-      return new Vec2(coordinates1?.x, coordinates1?.y);
-    }
-    if (b.x > a.x) {
-      return new Vec2(coordinates2?.x, coordinates2?.y);
-    }
-    if (b.x === a.x) {
-      if (b.y > a.y) {
-        return new Vec2(coordinates2?.x, coordinates2?.y);
-      }
-      if (b.y < a.y) {
-        return new Vec2(coordinates1?.x, coordinates1?.y);
-      }
-      if (b.y === a.y) {
-        return new Vec2(a.x, a.y);
-      }
-    }
-  } else {
-    if (b.x > a.x) {
-      return new Vec2(coordinates1?.x, coordinates1?.y);
-    }
-    if (b.x < a.x) {
-      return new Vec2(coordinates2?.x, coordinates2?.y);
-    }
-    if (b.x === a.x) {
-      if (b.y > a.y) {
-        return new Vec2(coordinates1?.x, coordinates1?.y);
-      }
-      if (b.y < a.y) {
-        return new Vec2(coordinates2?.x, coordinates2?.y);
-      }
-      if (b.y === a.y) {
-        return new Vec2(a.x, a.y);
-      }
-    }
-  }
-  return new Vec2(a.x, a.y);
 }
 
 export default ReRxnArrow;

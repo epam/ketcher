@@ -19,6 +19,23 @@ it('should change selection style correctly for simple objects when selected', (
   reObject.changeSelectionStyle(options);
 });
 
+it('should change selection style correctly for rxn arrows when selected', () => {
+  const reObject = new ReObject('rxnArrow');
+  reObject.selected = true;
+  const options = {
+    hoverStyle: {
+      stroke: '#0097A8',
+      fill: '#CCFFDD',
+      'stroke-width': 20,
+    },
+  };
+  reObject.hovering = {
+    attr: jest.fn((style) => expect(style['fill-opacity']).toBe(1)),
+  };
+
+  reObject.changeSelectionStyle(options);
+});
+
 it('should change selection style correctly for other objects when selected', () => {
   const reObject = new ReObject('frag');
   reObject.selected = true;

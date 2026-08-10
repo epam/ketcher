@@ -5,17 +5,7 @@
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';
 import { getDefaultSettings } from '../schema';
 import type { Settings } from '../types';
-
-type AssertDefined = <Value>(
-  value: Value,
-  message?: string,
-) => NonNullable<Value>;
-
-const {
-  assertDefined,
-}: {
-  assertDefined: AssertDefined;
-} = require('../../../../__tests__/utilities/assertDefined'); // eslint-disable-line @typescript-eslint/no-require-imports
+import { assertDefined } from '../../../../__tests__/utilities/assertDefined';
 
 describe('MemoryStorageAdapter', () => {
   let adapter: MemoryStorageAdapter;

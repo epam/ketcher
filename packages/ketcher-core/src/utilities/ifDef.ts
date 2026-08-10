@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 export function ifDef<TValue = unknown>(
-  target: object,
+  target: Record<string, unknown>,
   key: string,
   value: TValue,
   defaultValue?: TValue,
@@ -26,6 +26,6 @@ export function ifDef<TValue = unknown>(
     value !== defaultValue &&
     !(Array.isArray(value) && value.length === 0)
   ) {
-    (target as Record<string, unknown>)[key] = value;
+    target[key] = value;
   }
 }

@@ -2139,7 +2139,7 @@ const atomCustomQueryPatterns: readonly AtomCustomQueryPattern[] = [
   {
     propertyName: 'unsaturatedAtom',
     getValue: (atom) => atom.unsaturatedAtom,
-    format: (value) => (Number(value) === 1 ? 'u' : ''),
+    format: (value) => (value === 'true' || Number(value) === 1 ? 'u' : ''),
   },
   {
     propertyName: 'explicitValence',

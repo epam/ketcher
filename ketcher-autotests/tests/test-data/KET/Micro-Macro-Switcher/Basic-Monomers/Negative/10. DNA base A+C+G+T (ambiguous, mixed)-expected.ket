@@ -29,8 +29,8 @@
         "type": "ambiguousMonomer",
         "id": "0",
         "position": {
-            "x": 18.787992697500282,
-            "y": -10.609461150606261
+            "x": 18.87766471743576,
+            "y": -12.738685136264118
         },
         "alias": "%",
         "templateId": "mixture__A___Adenine__C___Cytosine__G___Guanine__T___Thymine_"

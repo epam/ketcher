@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react';
+import { useState, type MouseEvent } from 'react';
 
 import { Modal } from 'components/shared/modal';
 import { Option } from 'components/shared/dropDown/dropDown';
@@ -30,7 +30,6 @@ import {
   KetcherLogger,
   getSvgFromDrawnStructures,
   isClipboardAPIAvailable,
-  legacyCopy,
   isHelmCompatible,
   provideEditorInstance,
 } from 'ketcher-core';
@@ -49,8 +48,7 @@ import {
 import styled from '@emotion/styled';
 import { useAppDispatch } from 'hooks';
 import { openErrorModal } from 'state/modal';
-// TODO: Make it type safe by using `SupportedFormats` as id
-const options: Array<Option> = [
+const options: Array<Option & { id: SupportedFormats }> = [
   { id: 'ket', label: 'Ket Format' },
   { id: 'mol', label: 'MDL Molfile V3000' },
   { id: 'sequence', label: 'Sequence (1-letter code)' },
@@ -92,16 +90,22 @@ export const Save = ({
   isModalOpen,
 }: RequiredModalProps): JSX.Element => {
   const dispatch = useAppDispatch();
+  const indigo = IndigoProvider.getIndigo() as StructService;
+  const editor = provideEditorInstance();
   const [currentFileFormat, setCurrentFileFormat] =
     useState<SupportedFormats>('ket');
   const [currentFileName, setCurrentFileName] = useState('ketcher');
-  const [struct, setStruct] = useState('');
+  const [struct, setStruct] = useState(() => {
+    const ketSerializer = new KetSerializer();
+    return ketSerializer.serialize(
+      editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
+      editor.drawingEntitiesManager,
+    );
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [svgData, setSvgData] = useState<string | undefined>();
-  const indigo = IndigoProvider.getIndigo() as StructService;
-  const editor = provideEditorInstance();
 
-  const handleSelectChange = async (fileFormat) => {
+  const handleSelectChange = async (fileFormat: SupportedFormats) => {
     setCurrentFileFormat(fileFormat);
     const ketSerializer = new KetSerializer();
     const serializedKet = ketSerializer.serialize(
@@ -172,7 +176,7 @@ export const Save = ({
     }
   };
 
-  const handleInputChange = (value) => {
+  const handleInputChange = (value: string) => {
     setCurrentFileName(value);
   };
 
@@ -196,33 +200,19 @@ export const Save = ({
     onClose();
   };
 
-  const handleCopy = (event) => {
+  const handleCopy = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    try {
-      if (isClipboardAPIAvailable()) {
-        navigator.clipboard.writeText(struct);
-      } else {
-        legacyCopy(event.clipboardData, {
-          'text/plain': struct,
-        });
-      }
-    } catch (e) {
+    if (!isClipboardAPIAvailable()) {
+      dispatch(openErrorModal('This feature is not available in your browser'));
+      return;
+    }
+
+    navigator.clipboard.writeText(struct).catch((e) => {
       KetcherLogger.error('copyAs.js::copyAs', e);
       dispatch(openErrorModal('This feature is not available in your browser'));
-    }
+    });
   };
-
-  useEffect(() => {
-    if (currentFileFormat === 'ket') {
-      const ketSerializer = new KetSerializer();
-      const serializedKet = ketSerializer.serialize(
-        editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
-        editor.drawingEntitiesManager,
-      );
-      setStruct(serializedKet);
-    }
-  }, [currentFileFormat]);
 
   return (
     <StyledModal
@@ -247,7 +237,9 @@ export const Save = ({
               label="File format:"
               options={options}
               currentSelection={currentFileFormat}
-              selectionHandler={handleSelectChange}
+              selectionHandler={(value) =>
+                handleSelectChange(value as SupportedFormats)
+              }
               customStylesForExpanded={stylesForExpanded}
               testId="file-format-list"
             />

@@ -10,7 +10,7 @@ export function isNodeRestrictedForHydrogenBondCreation(
 ) {
   return (
     !node ||
-    node instanceof LinkerSequenceNode ||
+    (node instanceof LinkerSequenceNode && node.monomers.length > 1) ||
     node instanceof BackBoneSequenceNode ||
     node instanceof EmptySequenceNode
   );

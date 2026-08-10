@@ -18,22 +18,23 @@ import React from 'react';
 
 export interface SchemaProperty {
   title?: string;
-  type?: string;
+  type?: string | string[];
+  description?: string;
   enum?: unknown[];
   enumNames?: string[];
   default?: unknown;
   format?: string;
-  pattern?: string;
+  pattern?: string | RegExp;
   maxLength?: number;
   invalidMessage?: string | ((data: unknown) => string);
+  items?: SchemaProperty | SchemaProperty[];
 }
 
 export interface FormSchema {
   key?: string;
   title?: string;
   default?: unknown;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  properties?: Record<string, SchemaProperty | Record<string, any>>;
+  properties?: Record<string, SchemaProperty>;
 }
 
 export interface FieldState {

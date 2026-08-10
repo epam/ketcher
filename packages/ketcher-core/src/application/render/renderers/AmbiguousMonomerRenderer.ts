@@ -46,6 +46,8 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     this.monomerSymbolElementsIds = monomerSymbolElementsIds;
     this.CHAIN_START_TERMINAL_INDICATOR_TEXT =
       this.monomerRenderer.CHAIN_START_TERMINAL_INDICATOR_TEXT;
+    this.CHAIN_END_TERMINAL_INDICATOR_TEXT =
+      this.monomerRenderer.CHAIN_END_TERMINAL_INDICATOR_TEXT;
   }
 
   protected appendBody(
@@ -166,6 +168,23 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   }
 
   protected get modificationConfig() {
-    return undefined;
+    switch (this.monomer.monomerClass) {
+      case KetMonomerClass.AminoAcid:
+        return { backgroundId: '#modified-background', requiresFill: true };
+      case KetMonomerClass.Base:
+        return { backgroundId: '#rna-base-modified-background' };
+      case KetMonomerClass.Sugar:
+        // Ambiguous monomers render on a white body, so the default white sugar
+        // band would be invisible — requiresFill drives the <use> fill to a dark
+        // color here (the text color isn't #333333) to keep the band visible.
+        return {
+          backgroundId: '#sugar-modified-background',
+          requiresFill: true,
+        };
+      case KetMonomerClass.Phosphate:
+        return { backgroundId: '#phosphate-modified-background' };
+      default:
+        return undefined;
+    }
   }
 }

@@ -1,12 +1,11 @@
 import { SnakeMode } from 'application/editor/modes/SnakeMode';
-import { editorEvents } from 'application/editor/editorEvents';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
 import { SideChainConnectionBondRendererUtility } from 'application/render/renderers/PolymerBondRenderer/SideChainConnectionBondRendererUtility';
 import { SVGPathDAttributeUtility } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtility';
 import type { D3SvgElementSelection } from 'application/render/types';
-import assert from 'assert';
+import { assert } from 'utilities';
 import type { BaseMonomer, Vec2 } from 'domain/entities';
 import type { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
@@ -54,7 +53,10 @@ const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
 //  - `SnakeModeSideChainBondRenderer` (blue “snake” line)
 //  - `SnakeModeRNABaseAndSugarBondRenderer` (black straight line)
 export class SnakeModePolymerBondRenderer extends BaseRenderer {
-  private readonly editorEvents: typeof editorEvents;
+  private get editorEvents() {
+    return provideEditorInstance().events;
+  }
+
   private isSnakeBond = false; // `SnakeModeBackboneBondRenderer` or `SnakeModeRNABaseAndSugarBondRenderer`.
   // TODO: Specify the types.
   private selectionElement;
@@ -66,7 +68,6 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   constructor(public readonly polymerBond: PolymerBond) {
     super(polymerBond);
     this.polymerBond.setRenderer(this);
-    this.editorEvents = editorEvents;
     this.calculateIsSnakeBond();
   }
 
@@ -1023,23 +1024,29 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     }
   }
 
+  private updateAllSideConnectionBondsColor(
+    getColor: (renderer: SnakeModePolymerBondRenderer) => string,
+  ): void {
+    const editor = provideEditorInstance();
+    const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
+      `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
+    );
+
+    Array.from(allSideConnectionBondsBodyElements).forEach(
+      (bondBodyElement) => {
+        const renderer =
+          bondBodyElement.__data__ as SnakeModePolymerBondRenderer;
+        bondBodyElement.setAttribute('stroke', getColor(renderer));
+      },
+    );
+  }
+
   public appendHover(): void {
     assert(this.bodyElement);
 
-    const editor = provideEditorInstance();
-
     if (this.polymerBond.isSideChainConnection) {
-      const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
-        `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
-      );
-
-      Array.from(allSideConnectionBondsBodyElements).forEach(
-        (bondBodyElement) => {
-          bondBodyElement.setAttribute(
-            'stroke',
-            this.isHydrogenBond ? 'lightgrey' : '#C0E2E6',
-          );
-        },
+      this.updateAllSideConnectionBondsColor((renderer) =>
+        renderer.isHydrogenBond ? 'lightgrey' : '#C0E2E6',
       );
     }
 
@@ -1055,25 +1062,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
 
-    const editor = provideEditorInstance();
-
     if (this.polymerBond.isSideChainConnection) {
-      const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
-        `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
-      );
-
-      Array.from(allSideConnectionBondsBodyElements).forEach(
-        (bondBodyElement) => {
-          const renderer =
-            bondBodyElement.__data__ as SnakeModePolymerBondRenderer;
-
-          bondBodyElement.setAttribute(
-            'stroke',
-            renderer.polymerBond.isSideChainConnection && !this.isHydrogenBond
-              ? '#43B5C0'
-              : '#333333',
-          );
-        },
+      this.updateAllSideConnectionBondsColor((renderer) =>
+        renderer.polymerBond.isSideChainConnection && !renderer.isHydrogenBond
+          ? '#43B5C0'
+          : '#333333',
       );
     }
 
@@ -1111,9 +1104,26 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   public remove(): void {
+    // Check the SVG element's class directly instead of this.polymerBond.isSideChainConnection
+    // because by the time remove() is called, the attachment points in the model may already be
+    // destroyed, causing isSideChainConnection to return false even though the bond was rendered
+    // as a side-chain connection
+    const isSideChainConnection = this.bodyElement
+      ?.attr('class')
+      ?.includes(SIDE_CONNECTION_BODY_ELEMENT_CLASS);
+
     super.remove();
     if (this.polymerBond.hovered) {
       this.editorEvents.mouseLeaveMonomer.dispatch();
+    }
+
+    // After a side-chain bond is removed, set all remaining side-chain bonds to the default color (#43B5C0)
+    if (isSideChainConnection) {
+      this.updateAllSideConnectionBondsColor((renderer) =>
+        renderer.polymerBond.isSideChainConnection && !renderer.isHydrogenBond
+          ? '#43B5C0'
+          : '#333333',
+      );
     }
   }
 }

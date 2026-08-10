@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { expect, test } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
@@ -34,8 +35,8 @@ test.describe('Select tools tests', () => {
     const box = await bondLocator.boundingBox();
     if (!box) throw new Error('Bond bounding box not found');
 
-    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
-    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
     await page.mouse.move(centerX, centerY);
 
     const cursor = await page.getByTestId('canvas').getAttribute('cursor');

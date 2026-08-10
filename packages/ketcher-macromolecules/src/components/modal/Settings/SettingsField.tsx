@@ -21,12 +21,9 @@ interface SettingsFieldProps {
   name: string;
   label: string;
   type: 'checkbox' | 'number' | 'text' | 'select' | 'color';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onChange: (value: any) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  options?: Array<{ value: any; label: string }>;
+  value: string | boolean | number | null | undefined;
+  onChange: (value: string | boolean | number) => void;
+  options?: Array<{ value: string | boolean; label: string }>;
   min?: number;
   max?: number;
   step?: number;
@@ -43,6 +40,7 @@ export const SettingsField = ({
   max,
   step,
 }: SettingsFieldProps) => {
+  const nonBooleanValue = typeof value === 'boolean' ? String(value) : value;
   const renderField = () => {
     switch (type) {
       case 'checkbox':
@@ -64,7 +62,7 @@ export const SettingsField = ({
             <span>{label}</span>
             <input
               type="number"
-              value={value ?? ''}
+              value={nonBooleanValue ?? ''}
               onChange={(e) => onChange(Number(e.target.value))}
               min={min}
               max={max}
@@ -87,7 +85,7 @@ export const SettingsField = ({
             <span>{label}</span>
             <FormControl size="small" sx={{ border: 'none' }}>
               <Select
-                value={value ?? ''}
+                value={nonBooleanValue ?? ''}
                 onChange={(e) => onChange(e.target.value)}
                 displayEmpty
                 data-testid={`setting-${name}`}
@@ -109,7 +107,7 @@ export const SettingsField = ({
                 {options?.map((opt) => (
                   <MenuItem
                     key={String(opt.value)}
-                    value={opt.value}
+                    value={String(opt.value)}
                     sx={{ fontSize: '12px' }}
                   >
                     {opt.label}
@@ -127,7 +125,7 @@ export const SettingsField = ({
             <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
               <input
                 type="color"
-                value={value ?? '#000000'}
+                value={nonBooleanValue ?? '#000000'}
                 onChange={(e) => onChange(e.target.value)}
                 data-testid={`setting-${name}`}
                 style={{
@@ -141,7 +139,7 @@ export const SettingsField = ({
               />
               <input
                 type="text"
-                value={value ?? '#000000'}
+                value={nonBooleanValue ?? '#000000'}
                 onChange={(e) => onChange(e.target.value)}
                 style={{
                   width: '85px',
@@ -163,7 +161,7 @@ export const SettingsField = ({
             <span>{label}</span>
             <input
               type="text"
-              value={value ?? ''}
+              value={nonBooleanValue ?? ''}
               onChange={(e) => onChange(e.target.value)}
               data-testid={`setting-${name}`}
               style={{

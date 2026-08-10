@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import assert from 'assert';
+import { assert } from 'utilities';
 import { Atom, radicalElectrons } from './atom';
 import { resolveAromaticAtomValence } from './atomValence';
 import type { EditorSelection } from 'application/editor/editor.types';
@@ -62,7 +62,15 @@ type ArrowWithId = {
   arrowId?: number;
 };
 
-function arrayAddIfMissing(array, item) {
+type CoordBoundingBox = {
+  min: Vec2;
+  max: Vec2;
+};
+
+type LoopHalfBondIds = number[];
+type ConnectedComponent = Pile<number>;
+
+function arrayAddIfMissing<T>(array: T[], item: T) {
   for (const arrayItem of array) {
     if (arrayItem === item) return false;
   }
@@ -260,14 +268,21 @@ export class Struct {
     fid: number | number[],
     aidMap?: Map<number, number>,
   ): Struct {
+    const atomSet = this.getFragmentIds(fid);
+    const rgroupAttachmentPointSet = new Pile<number>();
+    this.rgroupAttachmentPoints.forEach((point, id) => {
+      if (atomSet.has(point.atomId)) {
+        rgroupAttachmentPointSet.add(id);
+      }
+    });
     return this.clone(
-      this.getFragmentIds(fid),
+      atomSet,
       null,
       true,
       aidMap,
       new Pile(),
       new Pile(),
-      new Pile(),
+      rgroupAttachmentPointSet,
       new Pile(),
       new Pile(),
     );
@@ -728,23 +743,27 @@ export class Struct {
     }
   }
 
-  getCoordBoundingBox(atomSet?: Pile<number>) {
-    let bb: any = null;
-    function extend(pp) {
+  getCoordBoundingBox(atomSet?: Pile<number>): CoordBoundingBox {
+    let bb: CoordBoundingBox | null = null;
+    function extend(pp: Vec2 | Vec2[]) {
+      const points = Array.isArray(pp) ? pp : [pp];
+      if (points.length === 0) {
+        return;
+      }
+
       if (!bb) {
         bb = {
-          min: pp,
-          max: pp,
+          min: new Vec2(points[0]),
+          max: new Vec2(points[0]),
         };
-      } else if (pp instanceof Array) {
-        pp.forEach((vec) => {
-          bb.min = Vec2.min(bb.min, vec);
-          bb.max = Vec2.max(bb.max, vec);
-        });
-      } else {
-        bb.min = Vec2.min(bb.min, pp);
-        bb.max = Vec2.max(bb.max, pp);
       }
+
+      const boundingBox = bb;
+
+      points.forEach((vec) => {
+        boundingBox.min = Vec2.min(boundingBox.min, vec);
+        boundingBox.max = Vec2.max(boundingBox.max, vec);
+      });
     }
 
     const global = !atomSet || atomSet.size === 0;
@@ -766,18 +785,17 @@ export class Struct {
         extend(item.position);
       });
     }
-    if (!bb && global) {
-      bb = {
+    return (
+      bb ?? {
         min: new Vec2(0, 0),
         max: new Vec2(1, 1),
-      };
-    }
-    return bb;
+      }
+    );
   }
 
-  getCoordBoundingBoxObj() {
-    let bb: any = null;
-    function extend(pp) {
+  getCoordBoundingBoxObj(): CoordBoundingBox {
+    let bb: CoordBoundingBox | null = null;
+    function extend(pp: Vec2) {
       if (!bb) {
         bb = {
           min: new Vec2(pp),
@@ -792,7 +810,12 @@ export class Struct {
     this.atoms.forEach((atom) => {
       extend(atom.pp);
     });
-    return bb;
+    return (
+      bb ?? {
+        min: new Vec2(0, 0),
+        max: new Vec2(1, 1),
+      }
+    );
   }
 
   getBondLengthData() {
@@ -880,7 +903,7 @@ export class Struct {
 
     let addedAtoms = new Pile<number>();
 
-    const components: Array<any> = [];
+    const components: ConnectedComponent[] = [];
     this.atoms.forEach((atom, aid) => {
       if (
         (discardExistingFragments || atom.fragment < 0) &&
@@ -1018,12 +1041,12 @@ export class Struct {
 
   // partition a cycle into simple cycles
   // TODO: [MK] rewrite the detection algorithm to only find simple ones right away?
-  partitionLoop(loop: any) {
+  partitionLoop(loop: LoopHalfBondIds) {
     // eslint-disable-line max-statements
-    const subloops: Array<any> = [];
+    const subloops: LoopHalfBondIds[] = [];
     let continueFlag = true;
     while (continueFlag) {
-      const atomToHalfBond = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
+      const atomToHalfBond: Record<number, number> = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
       continueFlag = false;
 
       for (const [index, hbid] of loop.entries()) {
@@ -1054,7 +1077,7 @@ export class Struct {
     return Math.atan2(Vec2.cross(hba.dir, hbb.dir), Vec2.dot(hba.dir, hbb.dir));
   }
 
-  loopIsConvex(loop: Array<any>): boolean {
+  loopIsConvex(loop: LoopHalfBondIds): boolean {
     return loop.every((item, k, loopArr) => {
       const angle = this.halfBondAngle(item, loopArr[(k + 1) % loopArr.length]);
       return angle <= 0;
@@ -1063,7 +1086,7 @@ export class Struct {
 
   // check whether a loop is on the inner or outer side of the polygon
   //  by measuring the total angle between bonds
-  loopIsInner(loop: Array<any>): boolean {
+  loopIsInner(loop: LoopHalfBondIds): boolean {
     let totalAngle = 2 * Math.PI;
     loop.forEach((hbida, k, loopArr) => {
       const hbidb = loopArr[(k + 1) % loopArr.length];
@@ -1075,7 +1098,7 @@ export class Struct {
   }
 
   findLoops() {
-    const newLoops: Array<any> = [];
+    const newLoops: number[] = [];
     const bondsToMark = new Pile<number>();
 
     /*
@@ -1088,7 +1111,9 @@ export class Struct {
       of bonds for planar graphs.
    */
 
-    let hbIdNext, c, loop;
+    let hbIdNext: number;
+    let c: number;
+    let loop: LoopHalfBondIds;
     this.halfBonds.forEach((hb, hbId) => {
       if (hb.loop !== -1) return;
 
@@ -1254,7 +1279,7 @@ export class Struct {
     // eslint-disable-line max-statements
     /* saver */
     const connectedComponents = this.findConnectedComponents(true);
-    const barriers: Array<any> = [];
+    const barriers: number[] = [];
     let arrowPos: number | null = null;
 
     this.rxnArrows.forEach((item) => {
@@ -1270,7 +1295,7 @@ export class Struct {
 
     barriers.sort((a, b) => a - b);
 
-    const components: Array<any> = [];
+    const components: Array<ConnectedComponent | undefined> = [];
 
     connectedComponents.forEach((component) => {
       const bb = this.getCoordBoundingBox(component);
@@ -1279,12 +1304,12 @@ export class Struct {
 
       while (c.x > barriers[j]) ++j;
 
-      components[j] = components[j] ?? new Pile();
-      components[j] = components[j].union(component);
+      const existingComponent = components[j] ?? new Pile<number>();
+      components[j] = existingComponent.union(component);
     });
 
-    const reactants: Array<any> = [];
-    const products: Array<any> = [];
+    const reactants: ConnectedComponent[] = [];
+    const products: ConnectedComponent[] = [];
 
     components.forEach((component) => {
       if (!component) {
@@ -1549,7 +1574,7 @@ export class Struct {
         });
 
         const sGroupBonds = new Set<number>(
-          sGroup.atoms.flatMap((atomId) => atomToBonds.get(atomId)),
+          sGroup.atoms.flatMap((atomId) => atomToBonds.get(atomId) ?? []),
         );
 
         sGroupBonds.forEach((bondId) => {

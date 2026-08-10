@@ -36,7 +36,6 @@ interface TabsProps {
   changeTab: (index: number) => void;
   className?: string;
   contentClassName?: string;
-  captions?: TabPanel[];
 }
 
 interface TabsState {

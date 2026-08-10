@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import action from './index';
 jest.mock('./atoms', () => ({}));
 jest.mock('./copyAs', () => jest.fn());
@@ -29,18 +28,19 @@ jest.mock('../state/shared', () => ({
   removeStructAction: jest.fn(),
 }));
 
-const createEditor = (isMonomerCreationWizardActive: boolean) =>
-  ({
-    isMonomerCreationWizardActive,
-    render: {
-      options: {
-        viewOnlyMode: false,
-      },
+const createEditor = (isMonomerCreationWizardActive: boolean) => ({
+  isMonomerCreationWizardActive,
+  render: {
+    options: {
+      viewOnlyMode: false,
     },
-  } as any);
+  },
+});
 
 const getDisabledState = (actionName: 'settings' | 'help' | 'about') =>
-  action[actionName].disabled as (editor: any) => boolean;
+  action[actionName].disabled as unknown as (
+    editor: ReturnType<typeof createEditor>,
+  ) => boolean;
 
 describe('toolbar action state for monomer creation wizard', () => {
   it('disables settings while the wizard is active', () => {

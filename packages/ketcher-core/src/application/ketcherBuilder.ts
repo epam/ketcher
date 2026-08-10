@@ -22,7 +22,7 @@ import type {
 
 import { FormatterFactory } from 'application/formatters';
 import { Ketcher } from './ketcher';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { ketcherProvider } from './ketcherProvider';
 import {
   SettingsService,

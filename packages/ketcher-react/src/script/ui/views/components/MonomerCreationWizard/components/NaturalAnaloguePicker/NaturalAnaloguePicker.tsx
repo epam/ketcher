@@ -89,7 +89,7 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
           label={selectedOption.label}
           color={selectedOption.color}
           className={styles.selectedChip}
-          data-testid={`natural-analogue-picker-selected-${selectedOption.value}`}
+          testId={`natural-analogue-picker-selected-${selectedOption.value}`}
         />
       );
     },

@@ -526,6 +526,8 @@ export class AtomRenderer extends BaseRenderer {
     this.badValenceElement?.remove();
     this.badValenceElement = undefined;
     this.updateSelectionContour();
+    // Hover contour is the only hit-testable element; recreate it after removal.
+    this.hoverElement = this.appendHover();
     this.appendAtomProperties();
     this.appendBadValenceWarning();
   }
@@ -983,6 +985,8 @@ export class AtomRenderer extends BaseRenderer {
     this.removeSelection();
     this.cipLabelElement?.remove();
     this.stereoLabelElement?.remove();
+    // Clear stale ref so show() recreates the hover contour in the new root (#10856).
+    this.hoverElement = undefined;
     super.remove();
   }
 

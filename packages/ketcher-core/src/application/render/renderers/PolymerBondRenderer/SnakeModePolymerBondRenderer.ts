@@ -944,11 +944,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('x2', this.scaledPosition.endPosition.x)
       .attr('y2', this.scaledPosition.endPosition.y);
 
-    this.hoverAreaElement
+    (this.hoverAreaElement as D3SvgElementSelection<SVGLineElement, void>)
       .attr('x2', this.scaledPosition.endPosition.x)
-      // TODO fix type error appeared without ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       .attr('y2', this.scaledPosition.endPosition.y);
 
     this.hoverCircleAreaElement
@@ -979,11 +976,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('x1', this.scaledPosition.startPosition.x)
       .attr('y1', this.scaledPosition.startPosition.y);
 
-    this.hoverAreaElement
+    (this.hoverAreaElement as D3SvgElementSelection<SVGLineElement, void>)
       .attr('x1', this.scaledPosition.startPosition.x)
-      // TODO fix type error appeared without ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       .attr('y1', this.scaledPosition.startPosition.y);
 
     this.selectionElement

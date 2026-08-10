@@ -46,6 +46,7 @@ export const RnaEditor = ({ duplicatePreset }) => {
 
   useEffect(() => {
     if (activePreset) {
+      if (activePreset.name || isEditMode) setExpanded(true);
       return;
     }
 
@@ -58,6 +59,10 @@ export const RnaEditor = ({ duplicatePreset }) => {
       recalculateRnaBuilderValidations({ rnaPreset: activePreset, isEditMode }),
     );
   }, [isEditMode]);
+
+  useEffect(() => {
+    dispatch(setIsEditMode(expanded));
+  }, [expanded]);
 
   const expandEditor = () => {
     setExpanded(!expanded);

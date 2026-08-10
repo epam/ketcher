@@ -27,8 +27,21 @@ The macromolecules editor SHALL support two drag-and-drop outcomes when a librar
 
 #### Scenario: Preset replaces compatible preset (center proximity drop)
 
-- **WHEN** the user drags a preset from the library and releases it within [TBD] px of any monomer center belonging to a same-geometry canvas preset
+- **WHEN** the user drags a preset from the library and releases it within [TBD] px of any monomer center belonging to a canvas preset that contains every component the dragged preset provides (a sugar, a base if the dragged preset has one, and a phosphate on the same side — 5′/left or 3′/right — if the dragged preset has one)
 - **THEN** the canvas preset is replaced by the library preset per the monomer-replacement-drag-drop spec
+- **AND** during drag-over every canvas component that corresponds to a dragged-preset component is highlighted as the replacement target
+
+#### Scenario: Preset with a 5′ (left) phosphate replaces a matching preset
+
+- **WHEN** the user drags a preset whose phosphate is on the 5′ (left) side and releases it within [TBD] px of any monomer center of a canvas preset that also has its phosphate on the 5′ (left) side
+- **THEN** the sugar, base, and left-side phosphate are all highlighted during drag-over and replaced on drop
+- **AND** all external inter-preset bonds (including the bond on the left-side phosphate) are re-established on the corresponding new components
+
+#### Scenario: Two-component preset (sugar+base or sugar+phosphate) replaces a matching preset
+
+- **WHEN** the user drags a two-component preset (sugar+base with no phosphate, or sugar+phosphate with no base) and releases it within [TBD] px of any monomer center of a canvas preset that contains those same two components
+- **THEN** both matching canvas components are highlighted during drag-over and replaced on drop, and their external bonds are re-established
+- **AND** a canvas component the dragged preset does not provide (e.g. a phosphate neighbouring a sugar+base preset) is neither highlighted nor replaced
 
 #### Scenario: Preset replaces standalone monomer (center proximity drop)
 

@@ -150,7 +150,6 @@ import {
 import {
   collectMonomerBonds,
   computeReestablishableBonds,
-  getPresetComponentsFromSugar,
 } from 'application/editor/libraryItemDragDrop/replacementHelpers';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import { getMonomerSize } from 'application/render/renderers/monomerSizeState';
@@ -4680,17 +4679,25 @@ export class DrawingEntitiesManager {
     oldSugar: BaseMonomer,
     newPresetTemplate: IRnaPreset,
     sugarPosition: Vec2,
+    originalComponentsOverride?: BaseMonomer[],
   ): { command: Command; newSugar: BaseMonomer } {
     const command = new Command();
 
     // Gather the components of the original preset.
-    // If oldSugar is a standalone monomer (not part of an RNA preset, or not a
-    // sugar at all), getPresetComponentsFromSugar returns []. In that case we
-    // treat it as a single-element "preset" so the monomer gets deleted and its
-    // bonds are re-routed to the matching new preset component.
-    const presetComponents = getPresetComponentsFromSugar(oldSugar);
+    //
+    // When the caller already resolved which canvas monomers correspond to the
+    // dragged preset (same-geometry preset replacement), it passes them via
+    // `originalComponentsOverride` — this is the reliable source because it was
+    // computed from the dragged preset's structure (handling left-side
+    // phosphates and two-component presets correctly).
+    //
+    // Otherwise (e.g. preset→single-monomer replacement) `oldSugar` is treated
+    // as a single-element "preset" so the monomer gets deleted and its bonds
+    // are re-routed to the matching new preset component.
     const originalComponents: BaseMonomer[] =
-      presetComponents.length > 0 ? presetComponents : [oldSugar];
+      originalComponentsOverride && originalComponentsOverride.length > 0
+        ? originalComponentsOverride
+        : [oldSugar];
 
     // Collect all bonds BEFORE any deletions.
     // NOTE: PolymerBondDeleteOperation immediately mutates the model in its

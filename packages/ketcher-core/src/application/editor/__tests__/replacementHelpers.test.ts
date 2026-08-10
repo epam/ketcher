@@ -13,6 +13,9 @@ import {
   collectMonomerBonds,
   computeReestablishableBonds,
   mapPresetBonds,
+  getPresetPhosphateFromSugar,
+  getPresetSugarForMonomer,
+  getMatchingPresetComponents,
 } from 'application/editor/libraryItemDragDrop/replacementHelpers';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import { AttachmentPointName } from 'domain/types';
@@ -21,24 +24,33 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { Sugar } from 'domain/entities/Sugar';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
+import { Struct } from 'domain/entities/struct';
+import { KetMonomerClass } from 'domain/constants/monomers';
 import { MonomerItemType } from 'domain/types';
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-function makeMonomerItem(label = 'X'): MonomerItemType {
+function makeMonomerItem(
+  label = 'X',
+  monomerClass: KetMonomerClass = KetMonomerClass.AminoAcid,
+): MonomerItemType {
   return {
     label,
     props: {
       MonomerNaturalAnalogCode: label,
-      MonomerClass: 'AminoAcid',
+      MonomerClass: monomerClass,
     },
+    // An empty Struct is enough for the BaseMonomer constructor's
+    // attachment-point recalculation (no superatom → empty AP dict). Tests set
+    // `attachmentPointsToBonds` manually afterwards.
+    struct: new Struct(),
   } as unknown as MonomerItemType;
 }
 
 function makeSugar(): Sugar {
-  const m = new Sugar(makeMonomerItem('R'), undefined);
+  const m = new Sugar(makeMonomerItem('R', KetMonomerClass.Sugar), undefined);
   // Ensure it has R1, R2, R3 APs
   m.attachmentPointsToBonds = {
     R1: null,
@@ -49,7 +61,7 @@ function makeSugar(): Sugar {
 }
 
 function makeRNABase(): RNABase {
-  const m = new RNABase(makeMonomerItem('A'), undefined);
+  const m = new RNABase(makeMonomerItem('A', KetMonomerClass.Base), undefined);
   m.attachmentPointsToBonds = {
     R1: null,
   };
@@ -57,12 +69,44 @@ function makeRNABase(): RNABase {
 }
 
 function makePhosphate(): Phosphate {
-  const m = new Phosphate(makeMonomerItem('P'), undefined);
+  const m = new Phosphate(
+    makeMonomerItem('P', KetMonomerClass.Phosphate),
+    undefined,
+  );
   m.attachmentPointsToBonds = {
     R1: null,
     R2: null,
   };
   return m;
+}
+
+/**
+ * Wires an intra-preset sugar↔base bond (sugar.R3 ↔ base.R1).
+ */
+function connectBase(sugar: Sugar, base: RNABase): void {
+  const bond = new PolymerBond(sugar, base);
+  sugar.attachmentPointsToBonds.R3 = bond;
+  base.attachmentPointsToBonds.R1 = bond;
+}
+
+/**
+ * Wires an intra-preset sugar↔phosphate bond on the requested side:
+ *  - 'right' (3′): sugar.R2 ↔ phosphate.R1
+ *  - 'left'  (5′): sugar.R1 ↔ phosphate.R2
+ */
+function connectPhosphate(
+  sugar: Sugar,
+  phosphate: Phosphate,
+  position: 'left' | 'right',
+): void {
+  const bond = new PolymerBond(sugar, phosphate);
+  if (position === 'right') {
+    sugar.attachmentPointsToBonds.R2 = bond;
+    phosphate.attachmentPointsToBonds.R1 = bond;
+  } else {
+    sugar.attachmentPointsToBonds.R1 = bond;
+    phosphate.attachmentPointsToBonds.R2 = bond;
+  }
 }
 
 function makePreset(
@@ -384,5 +428,225 @@ describe('mapPresetBonds', () => {
     // The internal bond is excluded — no bonds to re-establish or lose
     expect(plan.reestablishable).toHaveLength(0);
     expect(plan.lost).toHaveLength(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getPresetPhosphateFromSugar
+// ---------------------------------------------------------------------------
+
+describe('getPresetPhosphateFromSugar', () => {
+  it('finds a right-side (3′) phosphate via sugar.R2 ↔ phosphate.R1', () => {
+    const sugar = makeSugar();
+    const phosphate = makePhosphate();
+    connectPhosphate(sugar, phosphate, 'right');
+
+    expect(getPresetPhosphateFromSugar(sugar, 'right')).toBe(phosphate);
+    // Not present on the left side
+    expect(getPresetPhosphateFromSugar(sugar, 'left')).toBeNull();
+  });
+
+  it('finds a left-side (5′) phosphate via sugar.R1 ↔ phosphate.R2', () => {
+    const sugar = makeSugar();
+    const phosphate = makePhosphate();
+    connectPhosphate(sugar, phosphate, 'left');
+
+    expect(getPresetPhosphateFromSugar(sugar, 'left')).toBe(phosphate);
+    expect(getPresetPhosphateFromSugar(sugar, 'right')).toBeNull();
+  });
+
+  it('does not mistake a neighbouring nucleotide phosphate on the wrong AP', () => {
+    // A previous nucleotide's 3′ phosphate connects to THIS sugar's R1 via the
+    // phosphate's R2 (prevPhosphate.R2 ↔ sugar.R1). When asked for a LEFT
+    // phosphate we require phosphate.R2, so this neighbour IS returned for
+    // 'left'; but if the neighbour connected on its R1 it must be rejected.
+    const sugar = makeSugar();
+    const neighbourPhosphate = makePhosphate();
+    // Wire sugar.R1 ↔ neighbourPhosphate.R1 (wrong AP for a left phosphate)
+    const bond = new PolymerBond(sugar, neighbourPhosphate);
+    sugar.attachmentPointsToBonds.R1 = bond;
+    neighbourPhosphate.attachmentPointsToBonds.R1 = bond;
+
+    expect(getPresetPhosphateFromSugar(sugar, 'left')).toBeNull();
+  });
+
+  it('returns null when the neighbour on that side is not a phosphate', () => {
+    const sugar = makeSugar();
+    const otherSugar = makeSugar();
+    const bond = new PolymerBond(sugar, otherSugar);
+    sugar.attachmentPointsToBonds.R2 = bond;
+    otherSugar.attachmentPointsToBonds.R1 = bond;
+
+    expect(getPresetPhosphateFromSugar(sugar, 'right')).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getPresetSugarForMonomer
+// ---------------------------------------------------------------------------
+
+describe('getPresetSugarForMonomer', () => {
+  const preset = (
+    opts: Partial<IRnaPreset> = {},
+  ): Pick<IRnaPreset, 'base' | 'phosphate' | 'phosphatePosition'> => ({
+    base: makeMonomerItem('A') as unknown as IRnaPreset['base'],
+    phosphate: makeMonomerItem('P') as unknown as IRnaPreset['phosphate'],
+    phosphatePosition: 'right',
+    ...opts,
+  });
+
+  it('returns the sugar itself when hovering a sugar (no base required)', () => {
+    const sugar = makeSugar();
+    expect(getPresetSugarForMonomer(sugar, preset())).toBe(sugar);
+  });
+
+  it('resolves the sugar from a hovered base', () => {
+    const sugar = makeSugar();
+    const base = makeRNABase();
+    connectBase(sugar, base);
+
+    expect(getPresetSugarForMonomer(base, preset())).toBe(sugar);
+  });
+
+  it('resolves the sugar from a hovered right-side phosphate', () => {
+    const sugar = makeSugar();
+    const phosphate = makePhosphate();
+    connectPhosphate(sugar, phosphate, 'right');
+
+    expect(getPresetSugarForMonomer(phosphate, preset())).toBe(sugar);
+  });
+
+  it('resolves the sugar from a hovered left-side phosphate', () => {
+    const sugar = makeSugar();
+    const phosphate = makePhosphate();
+    connectPhosphate(sugar, phosphate, 'left');
+
+    expect(
+      getPresetSugarForMonomer(
+        phosphate,
+        preset({ phosphatePosition: 'left' }),
+      ),
+    ).toBe(sugar);
+  });
+
+  it('returns null for a phosphate with no adjacent sugar', () => {
+    const phosphate = makePhosphate();
+    expect(getPresetSugarForMonomer(phosphate, preset())).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getMatchingPresetComponents
+// ---------------------------------------------------------------------------
+
+describe('getMatchingPresetComponents', () => {
+  const libPreset = (
+    opts: Partial<
+      Pick<IRnaPreset, 'base' | 'phosphate' | 'phosphatePosition'>
+    > = {},
+  ): Pick<IRnaPreset, 'base' | 'phosphate' | 'phosphatePosition'> => ({
+    base: makeMonomerItem('A') as unknown as IRnaPreset['base'],
+    phosphate: makeMonomerItem('P') as unknown as IRnaPreset['phosphate'],
+    phosphatePosition: 'right',
+    ...opts,
+  });
+
+  it('matches a full standard preset (sugar+base+phosphate on the right)', () => {
+    const sugar = makeSugar();
+    const base = makeRNABase();
+    const phosphate = makePhosphate();
+    connectBase(sugar, base);
+    connectPhosphate(sugar, phosphate, 'right');
+
+    const components = getMatchingPresetComponents(sugar, libPreset());
+    expect(components).not.toBeNull();
+    expect(components).toHaveLength(3);
+    expect(components).toEqual(
+      expect.arrayContaining([sugar, base, phosphate]),
+    );
+  });
+
+  it('matches a left-phosphate preset and includes the 5′ phosphate', () => {
+    const sugar = makeSugar();
+    const base = makeRNABase();
+    const phosphate = makePhosphate();
+    connectBase(sugar, base);
+    connectPhosphate(sugar, phosphate, 'left');
+
+    const components = getMatchingPresetComponents(
+      sugar,
+      libPreset({ phosphatePosition: 'left' }),
+    );
+    expect(components).toEqual(
+      expect.arrayContaining([sugar, base, phosphate]),
+    );
+    expect(components).toHaveLength(3);
+  });
+
+  it('matches a two-component sugar+base preset (no phosphate)', () => {
+    const sugar = makeSugar();
+    const base = makeRNABase();
+    connectBase(sugar, base);
+
+    const components = getMatchingPresetComponents(
+      sugar,
+      libPreset({ phosphate: undefined, phosphatePosition: undefined }),
+    );
+    expect(components).toEqual(expect.arrayContaining([sugar, base]));
+    expect(components).toHaveLength(2);
+  });
+
+  it('matches a two-component sugar+phosphate preset (no base)', () => {
+    const sugar = makeSugar();
+    const phosphate = makePhosphate();
+    connectPhosphate(sugar, phosphate, 'right');
+
+    const components = getMatchingPresetComponents(
+      sugar,
+      libPreset({ base: undefined }),
+    );
+    expect(components).toEqual(expect.arrayContaining([sugar, phosphate]));
+    expect(components).toHaveLength(2);
+  });
+
+  it('returns null when the dragged preset has a base but the canvas has none', () => {
+    const sugar = makeSugar();
+    const phosphate = makePhosphate();
+    connectPhosphate(sugar, phosphate, 'right');
+
+    expect(getMatchingPresetComponents(sugar, libPreset())).toBeNull();
+  });
+
+  it('returns null when the dragged preset has a phosphate but the canvas lacks one on that side', () => {
+    const sugar = makeSugar();
+    const base = makeRNABase();
+    const phosphate = makePhosphate();
+    connectBase(sugar, base);
+    // Canvas phosphate is on the LEFT, dragged preset expects it on the RIGHT
+    connectPhosphate(sugar, phosphate, 'left');
+
+    expect(
+      getMatchingPresetComponents(
+        sugar,
+        libPreset({ phosphatePosition: 'right' }),
+      ),
+    ).toBeNull();
+  });
+
+  it('excludes a canvas base that the dragged sugar+phosphate preset does not provide', () => {
+    const sugar = makeSugar();
+    const base = makeRNABase();
+    const phosphate = makePhosphate();
+    connectBase(sugar, base);
+    connectPhosphate(sugar, phosphate, 'right');
+
+    const components = getMatchingPresetComponents(
+      sugar,
+      libPreset({ base: undefined }),
+    );
+    // Only the parts that exist in the dragged preset are returned.
+    expect(components).toEqual(expect.arrayContaining([sugar, phosphate]));
+    expect(components).not.toContain(base);
+    expect(components).toHaveLength(2);
   });
 });

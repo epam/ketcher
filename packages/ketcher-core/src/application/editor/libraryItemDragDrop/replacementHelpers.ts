@@ -19,9 +19,18 @@ import {
   isRnaBaseOrAmbiguousRnaBase,
   isPhosphateOrAmbiguousPhosphate,
   getRnaBaseFromSugar,
-  getPhosphateFromSugar,
+  getSugarFromRnaBase,
 } from 'domain/helpers/monomers';
-import { Sugar } from 'domain/entities/Sugar';
+
+/**
+ * The subset of an RNA preset that describes its geometry (which structural
+ * slots are filled and where the phosphate sits). Used to drive canvas preset
+ * detection from the dragged library item.
+ */
+export type PresetGeometry = Pick<
+  IRnaPreset,
+  'base' | 'phosphate' | 'phosphatePosition'
+>;
 
 // ---------------------------------------------------------------------------
 // Types
@@ -281,70 +290,121 @@ function filterExternalBonds(
 }
 
 // ---------------------------------------------------------------------------
-// Preset component extraction helper
+// Library-aware preset detection
 // ---------------------------------------------------------------------------
 
 /**
- * Given a sugar monomer, returns all canvas monomers that are part of its
- * RNA preset (sugar, base, phosphate).
+ * Finds the phosphate that belongs to `sugar`'s RNA preset on the requested
+ * side, matching the RNA backbone convention:
  *
- * Returns an empty array if the sugar is not part of an RNA preset
- * (i.e., no R3-connected base).
+ *  - 'right' (3′): sugar.R2 ↔ phosphate.R1
+ *  - 'left'  (5′): sugar.R1 ↔ phosphate.R2
+ *
+ * Returns null when no phosphate is attached on that side. The AP on the
+ * phosphate is verified so that a *neighbouring* nucleotide's phosphate (which
+ * connects to the opposite AP) is not mistaken for this preset's phosphate.
  */
-export function getPresetComponentsFromSugar(
+export function getPresetPhosphateFromSugar(
   sugar: BaseMonomer,
-): BaseMonomer[] {
-  if (!isSugarOrAmbiguousSugar(sugar)) return [];
+  position: 'left' | 'right',
+): BaseMonomer | null {
+  const sugarAP = position === 'left' ? 'R1' : 'R2';
+  const phosphateAP = position === 'left' ? 'R2' : 'R1';
 
-  const components: BaseMonomer[] = [sugar];
+  const bond = sugar.attachmentPointsToBonds[sugarAP];
+  if (bond instanceof PolymerBond) {
+    const other = bond.getAnotherMonomer(sugar);
+    if (
+      other &&
+      isPhosphateOrAmbiguousPhosphate(other) &&
+      other.getAttachmentPointByBond(bond) === phosphateAP
+    ) {
+      return other;
+    }
+  }
 
-  const rnaBase = getRnaBaseFromSugar(sugar);
-  if (rnaBase) components.push(rnaBase);
-
-  const phosphate = getPhosphateFromSugar(sugar);
-  if (phosphate) components.push(phosphate);
-
-  return components;
+  return null;
 }
 
 /**
- * Given any monomer, returns the sugar of the RNA preset it belongs to,
- * or null if it is not part of an RNA preset.
+ * Resolves the sugar anchor of the RNA preset that `monomer` belongs to,
+ * using the dragged `libraryPreset` to disambiguate which side a phosphate
+ * belongs to. Returns null if no sugar anchor can be resolved.
+ *
+ * Unlike a plain "is this a preset?" check, this does NOT require the sugar to
+ * carry a base — a preset may legitimately be sugar+phosphate (no base) or
+ * sugar+base (no phosphate). Whether the canvas preset actually matches the
+ * dragged preset is decided later by getMatchingPresetComponents.
  */
-export function getPresetSugarForMonomer(monomer: BaseMonomer): Sugar | null {
+export function getPresetSugarForMonomer(
+  monomer: BaseMonomer,
+  libraryPreset: PresetGeometry,
+): BaseMonomer | null {
   if (isSugarOrAmbiguousSugar(monomer)) {
-    // A sugar is in an RNA preset only if it has an attached base (R3)
-    if (getRnaBaseFromSugar(monomer)) {
-      return monomer as Sugar;
-    }
-    return null;
+    return monomer;
   }
 
-  // For a base: look up via R3 bond back to sugar
   if (isRnaBaseOrAmbiguousRnaBase(monomer)) {
-    const r1Bond = monomer.attachmentPointsToBonds['R1'];
-    if (r1Bond instanceof PolymerBond) {
-      const other = r1Bond.getAnotherMonomer(monomer);
-      if (other instanceof Sugar) {
-        return other;
-      }
-    }
-    return null;
+    return getSugarFromRnaBase(monomer) ?? null;
   }
 
-  // For a phosphate: look up via R1 or R2 bond to sugar
   if (isPhosphateOrAmbiguousPhosphate(monomer)) {
-    for (const apName of ['R1', 'R2']) {
+    // Prefer the sugar on the side implied by the dragged preset, but fall
+    // back to the other side so hovering any phosphate still resolves an
+    // anchor (the final geometry match is validated separately).
+    const preferredAP =
+      (libraryPreset.phosphatePosition ?? 'right') === 'left' ? 'R2' : 'R1';
+    const apOrder = preferredAP === 'R1' ? ['R1', 'R2'] : ['R2', 'R1'];
+
+    for (const apName of apOrder) {
       const bond = monomer.attachmentPointsToBonds[apName];
       if (bond instanceof PolymerBond) {
         const other = bond.getAnotherMonomer(monomer);
-        if (other instanceof Sugar) {
+        if (other && isSugarOrAmbiguousSugar(other)) {
           return other;
         }
       }
     }
-    return null;
   }
 
   return null;
+}
+
+/**
+ * Given a sugar anchor and the dragged `libraryPreset`, returns the canvas
+ * monomers that structurally correspond to the library preset's components
+ * (sugar, base if the library preset has one, phosphate on the library
+ * preset's side if it has one).
+ *
+ * Returns null when the canvas preset does not contain every component the
+ * library preset provides — i.e. the geometries differ — so the caller can
+ * fall back to single-monomer replacement.
+ *
+ * Note: components the library preset does NOT provide (e.g. a base when the
+ * dragged preset is sugar+phosphate) are intentionally excluded even if the
+ * sugar carries them, so only the parts that exist in the dragged preset are
+ * highlighted and replaced.
+ */
+export function getMatchingPresetComponents(
+  sugar: BaseMonomer,
+  libraryPreset: PresetGeometry,
+): BaseMonomer[] | null {
+  if (!isSugarOrAmbiguousSugar(sugar)) return null;
+
+  const components: BaseMonomer[] = [sugar];
+
+  if (libraryPreset.base) {
+    const base = getRnaBaseFromSugar(sugar);
+    if (!base) return null;
+    components.push(base);
+  }
+
+  if (libraryPreset.phosphate) {
+    const position = libraryPreset.phosphatePosition ?? 'right';
+    const phosphate = getPresetPhosphateFromSugar(sugar, position);
+    if (!phosphate) return null;
+    components.push(phosphate);
+  }
+
+  return components;
 }

@@ -1,7 +1,6 @@
 import { Vec2 } from 'domain/entities';
 import { Command } from 'domain/entities/Command';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { PolymerBond } from 'domain/entities/PolymerBond';
 import {
   type AttachmentPointName,
   type MonomerOrAmbiguousType,
@@ -20,12 +19,7 @@ import { AttachmentPoint } from 'domain/AttachmentPoint';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import type { CoreEditor } from 'application/editor/Editor';
-import {
-  isLibraryItemRnaPreset,
-  isSugarOrAmbiguousSugar,
-  isRnaBaseOrAmbiguousRnaBase,
-  isPhosphateOrAmbiguousPhosphate,
-} from 'domain/helpers/monomers';
+import { isLibraryItemRnaPreset } from 'domain/helpers/monomers';
 import { findPresetMonomerForBonding as findPresetMonomerForBondingHelper } from 'application/editor/tools/bondConnectionHelpers';
 import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import type { DragDropModalContext } from './libraryItemDragDrop.types';
@@ -34,9 +28,8 @@ import {
   computeAndApplyFlexDropRepositioning,
 } from './repositioning';
 import {
-  presetsHaveSameGeometry,
   getPresetSugarForMonomer,
-  getPresetComponentsFromSugar,
+  getMatchingPresetComponents,
   collectMonomerBonds,
 } from './replacementHelpers';
 
@@ -106,6 +99,14 @@ export type ReplacementTarget = {
    * preset (the anchor for the preset replacement).
    */
   presetSugar?: BaseMonomer;
+  /**
+   * If kind is 'same-geometry-preset', the exact canvas monomers that
+   * structurally correspond to the dragged preset (sugar + optional base +
+   * optional phosphate). These are the monomers highlighted during drag and
+   * replaced on drop. Resolved once at classification time so highlighting and
+   * replacement stay consistent.
+   */
+  presetComponents?: BaseMonomer[];
 };
 
 /**
@@ -453,7 +454,9 @@ export class LibraryItemDragDropHandler {
    *
    * Outcomes:
    * - 'same-geometry-preset': dragged item is a preset AND the hit monomer
-   *   belongs to a canvas preset of the same geometry → whole preset replaces.
+   *   belongs to a canvas preset that contains every component the dragged
+   *   preset provides (sugar, base if present, phosphate on the same side) →
+   *   those parts of the canvas preset replace.
    * - 'monomer': everything else → only the hit monomer is replaced.
    */
   private classifyReplaceTarget(
@@ -461,17 +464,25 @@ export class LibraryItemDragDropHandler {
     draggedItem: IRnaPreset | MonomerOrAmbiguousType | undefined,
   ): ReplacementTarget {
     if (draggedItem && isLibraryItemRnaPreset(draggedItem)) {
-      // Check if the hit monomer belongs to a preset of the same geometry
-      const presetSugar = getPresetSugarForMonomer(nearestMonomer);
+      // Resolve the sugar anchor of the preset the hit monomer belongs to,
+      // using the dragged preset to disambiguate the phosphate side.
+      const presetSugar = getPresetSugarForMonomer(nearestMonomer, draggedItem);
       if (presetSugar) {
-        // Build a rough IRnaPreset description from the canvas preset
-        const presetComponents = getPresetComponentsFromSugar(presetSugar);
-        const canvasPreset = this.buildCanvasPresetDescriptor(presetComponents);
-        if (presetsHaveSameGeometry(draggedItem, canvasPreset)) {
+        // Resolve exactly the canvas components that correspond to the dragged
+        // preset's structure. Null means the geometries differ.
+        const presetComponents = getMatchingPresetComponents(
+          presetSugar,
+          draggedItem,
+        );
+        // The hit monomer must itself be one of the matched components,
+        // otherwise the user is hovering a part that the dragged preset does
+        // not provide (e.g. a phosphate while dragging a sugar+base preset).
+        if (presetComponents && presetComponents.includes(nearestMonomer)) {
           return {
             monomer: nearestMonomer,
             kind: 'same-geometry-preset',
             presetSugar,
+            presetComponents,
           };
         }
       }
@@ -481,66 +492,13 @@ export class LibraryItemDragDropHandler {
   }
 
   /**
-   * Builds a minimal IRnaPreset descriptor from a set of canvas monomer
-   * components, used for geometry comparison only.
-   */
-  private buildCanvasPresetDescriptor(
-    components: BaseMonomer[],
-  ): Pick<IRnaPreset, 'sugar' | 'base' | 'phosphate' | 'phosphatePosition'> {
-    const hasSugar = components.some(isSugarOrAmbiguousSugar);
-    const hasBase = components.some(isRnaBaseOrAmbiguousRnaBase);
-    const phosphate = components.find(isPhosphateOrAmbiguousPhosphate);
-    const sugar = components.find(isSugarOrAmbiguousSugar);
-
-    // Determine phosphate position from the sugar's perspective, not the
-    // phosphate's. In a chain the phosphate has BOTH R1 and R2 occupied
-    // (R1 = intra-preset bond to its own sugar, R2 = inter-nucleotide bond
-    // to the next sugar), so checking phosphate.R2 is always truthy and
-    // gives the wrong answer. The reliable anchor is the sugar:
-    //
-    //  - Sugar.R2 → Phosphate  →  3′ phosphate  (right / default in RNA builder)
-    //  - Sugar.R1 → Phosphate  →  5′ phosphate  (left)
-    let phosphatePosition: 'left' | 'right' | undefined;
-    if (phosphate && sugar) {
-      const sugarR2Bond = sugar.attachmentPointsToBonds['R2'];
-      const sugarR1Bond = sugar.attachmentPointsToBonds['R1'];
-      if (
-        sugarR2Bond instanceof PolymerBond &&
-        sugarR2Bond.getAnotherMonomer(sugar) === phosphate
-      ) {
-        // Phosphate is on the 3′ end of the sugar (standard RNA builder layout)
-        phosphatePosition = 'right';
-      } else if (
-        sugarR1Bond instanceof PolymerBond &&
-        sugarR1Bond.getAnotherMonomer(sugar) === phosphate
-      ) {
-        // Phosphate is on the 5′ end of the sugar
-        phosphatePosition = 'left';
-      }
-    }
-
-    return {
-      sugar: hasSugar
-        ? ({ label: '' } as unknown as IRnaPreset['sugar'])
-        : undefined,
-      base: hasBase
-        ? ({ label: '' } as unknown as IRnaPreset['base'])
-        : undefined,
-      phosphate: phosphate
-        ? ({ label: '' } as unknown as IRnaPreset['phosphate'])
-        : undefined,
-      phosphatePosition,
-    };
-  }
-
-  /**
    * Applies the replacement-target visual state to all monomers identified
    * by `target`.
    */
   private applyReplacementVisualState(target: ReplacementTarget): void {
     const monomersToHighlight =
-      target.kind === 'same-geometry-preset' && target.presetSugar
-        ? getPresetComponentsFromSugar(target.presetSugar)
+      target.kind === 'same-geometry-preset' && target.presetComponents
+        ? target.presetComponents
         : [target.monomer];
 
     for (const monomer of monomersToHighlight) {
@@ -557,8 +515,8 @@ export class LibraryItemDragDropHandler {
    */
   private clearReplacementVisualState(target: ReplacementTarget): void {
     const monomersToUnhighlight =
-      target.kind === 'same-geometry-preset' && target.presetSugar
-        ? getPresetComponentsFromSugar(target.presetSugar)
+      target.kind === 'same-geometry-preset' && target.presetComponents
+        ? target.presetComponents
         : [target.monomer];
 
     for (const monomer of monomersToUnhighlight) {
@@ -839,7 +797,10 @@ export class LibraryItemDragDropHandler {
       replaceTarget.presetSugar &&
       isLibraryItemRnaPreset(item)
     ) {
-      // Preset → preset (same geometry)
+      // Preset → preset (same geometry). Pass the exact canvas components that
+      // were matched (and highlighted) so the whole preset — including
+      // left-side phosphates and two-component presets — is replaced and all
+      // external bonds are re-established.
       const { command } = drawingEntitiesManager.replacePreset(
         replaceTarget.presetSugar,
         item,
@@ -847,6 +808,7 @@ export class LibraryItemDragDropHandler {
           replaceTarget.presetSugar.position.x,
           replaceTarget.presetSugar.position.y,
         ),
+        replaceTarget.presetComponents,
       );
 
       // No re-layout for same-geometry preset replacement (task 7.2, 7.3)

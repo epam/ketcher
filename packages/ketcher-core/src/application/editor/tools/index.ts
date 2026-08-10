@@ -24,6 +24,7 @@ import { HandTool } from 'application/editor/tools/Hand';
 import { ToolName } from 'application/editor/tools/types';
 import { SelectLasso } from 'application/editor/tools/select/SelectLasso';
 import { SelectFragment } from 'application/editor/tools/select/SelectFragment';
+import { ReactionArrow } from 'application/editor/tools/ReactionArrow';
 
 export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
   [ToolName.monomer]: MonomerTool,
@@ -36,9 +37,15 @@ export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
   [ToolName.erase]: EraserTool,
   [ToolName.clear]: ClearTool,
   [ToolName.hand]: HandTool,
+  [ToolName.reactionArrow]: ReactionArrow,
 };
+
+export function isToolName(value: string): value is ToolName {
+  return value in toolsMap;
+}
 
 export * from './Tool';
 export * from './Zoom';
 export * from './select';
 export * from './rnaPresetConnections';
+export * from './reactionArrowConstants';

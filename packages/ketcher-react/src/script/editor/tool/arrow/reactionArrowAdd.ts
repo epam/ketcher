@@ -6,6 +6,7 @@ import {
   fromArrowAddition,
   fromArrowDeletion,
   fromArrowResizing,
+  RxnArrowDelete,
   assert,
 } from 'ketcher-core';
 import type { Editor } from '../../Editor';
@@ -67,9 +68,15 @@ export class ReactionArrowAddTool implements ArrowAddTool {
         this.mode,
       );
       // TODO: need to rework  actions/operations logic
+      const firstOp = action.operations[0];
+      if (!(firstOp instanceof RxnArrowDelete)) {
+        throw new Error(
+          'Expected RxnArrowDelete as the first operation of fromArrowAddition',
+        );
+      }
       this.dragCtx = {
         ...this.dragCtx,
-        itemId: action.operations[0].data.id,
+        itemId: firstOp.data.id,
         action,
       };
       this.editor.update(this.dragCtx.action, true);

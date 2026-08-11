@@ -115,11 +115,8 @@ const getRotationArcPath = (
   );
 };
 
-// TypeScript doesn't support abstract static methods, but the TransientView pattern
-// requires static show() methods. This ts-ignore is necessary to follow the
-// established pattern used by other TransientView subclasses (SelectionView, etc.)
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// RotationView extends TransientView and overrides the static show() method
+// with specific parameter types following the established TransientView pattern.
 export class RotationView extends TransientView {
   private static lastSnappingRadius?: number;
   private static wasRotating = false;

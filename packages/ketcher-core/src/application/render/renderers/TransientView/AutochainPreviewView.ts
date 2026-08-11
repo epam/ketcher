@@ -17,8 +17,6 @@ export type AutochainPreviewViewParams = {
   selectedMonomerToConnect?: BaseMonomer;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 export class AutochainPreviewView extends TransientView {
   public static readonly viewName = 'AutochainPreviewView';
 

@@ -4,9 +4,45 @@ import RotateTool from './rotate';
 import SelectTool from './select/select';
 import RotateController, { getDifference } from './rotate-controller';
 
+type MockRenderOptions = {
+  microModeScale: number;
+  offset: Vec2;
+};
+
+type MockPaper = {
+  path: jest.Mock;
+  circle: jest.Mock;
+  set: jest.Mock;
+};
+
+type MockRender = {
+  options: MockRenderOptions;
+  paper?: MockPaper;
+};
+
+type PrivateRotateController = {
+  rotateTool: {
+    getCenter: () => Vec2 | undefined;
+    dragCtx: {
+      action: { operations: unknown[]; perform: () => void };
+    };
+  };
+  originalCenter: Vec2;
+  editor: { render: MockRender };
+  center: Vec2;
+  cross: { attr: () => void };
+  show: () => void;
+  dragStart: (event: { buttons: number; stopPropagation: () => void }) => void;
+  drawCross: () => void;
+};
+
+function asPrivate(controller: RotateController): PrivateRotateController {
+  return controller as unknown as PrivateRotateController;
+}
+
 describe('Rotate controller', () => {
   beforeAll(() => {
-    global.window.PointerEvent = MouseEvent as any;
+    global.window.PointerEvent = MouseEvent as unknown as typeof PointerEvent;
   });
 
   /**
@@ -14,7 +50,8 @@ describe('Rotate controller', () => {
    * Select one atom / functional group using Select Tool
    */
   it(`hides for only one visible atom`, () => {
-    const tool = () => new SelectTool(undefined as any, 'rectangle');
+    const tool = () =>
+      new SelectTool(undefined as unknown as Editor, 'rectangle');
     const paper = jest.fn();
     const selection = () => null;
     const visibleAtoms = [1];
@@ -30,18 +67,18 @@ describe('Rotate controller', () => {
         },
       },
     };
-    const controller = new RotateController(editor as any);
-    (controller as any).rotateTool.getCenter = () => new Vec2();
+    const controller = new RotateController(editor as unknown as Editor);
+    asPrivate(controller).rotateTool.getCenter = () => new Vec2();
     expect(tool()).toBeInstanceOf(SelectTool);
     expect(selection()).toBe(null);
 
-    (controller as any).show();
+    asPrivate(controller).show();
     expect(paper).toHaveBeenCalledTimes(0);
 
     visibleAtoms.push(2);
-    (controller as any).rotateTool.getCenter = () => new Vec2();
+    asPrivate(controller).rotateTool.getCenter = () => new Vec2();
     expect(() => {
-      (controller as any).show();
+      asPrivate(controller).show();
     }).toThrow();
   });
 
@@ -72,11 +109,11 @@ describe('Rotate controller', () => {
           },
         },
       },
-    } as any);
-    (controller as any).rotateTool.getCenter = () => new Vec2();
+    } as unknown as Editor);
+    asPrivate(controller).rotateTool.getCenter = () => new Vec2();
     expect(visibleAtoms.length).toBeGreaterThan(1);
 
-    (controller as any).show();
+    asPrivate(controller).show();
 
     expect(paper).toHaveBeenCalledTimes(0);
   });
@@ -105,13 +142,15 @@ describe('Rotate controller', () => {
    * Drag handle by right mouse button
    */
   it('can be only dragged by left mouse button', () => {
-    const controller = new RotateController({ selection: () => null } as any);
+    const controller = new RotateController(
+      { selection: () => null } as unknown as Editor,
+    );
     const changeCrossColor = jest.fn();
-    (controller as any).cross = {
+    asPrivate(controller).cross = {
       attr: changeCrossColor,
     };
 
-    (controller as any).dragStart({
+    asPrivate(controller).dragStart({
       buttons: 2, // Right button
       stopPropagation: () => null,
     });
@@ -125,17 +164,19 @@ describe('Rotate controller', () => {
    * then rotate it by the handle, see if center position is correct
    */
   test('center changes with `scale` and `offset`', () => {
-    const controller = new RotateController({ selection: () => null } as any);
-    (controller as any).originalCenter = new Vec2(1, 1);
-    (controller as any).editor.render = {
+    const controller = new RotateController(
+      { selection: () => null } as unknown as Editor,
+    );
+    asPrivate(controller).originalCenter = new Vec2(1, 1);
+    asPrivate(controller).editor.render = {
       options: {
         microModeScale: 2,
         offset: new Vec2(1, 1),
       },
-    } as any;
+    };
 
-    expect((controller as any).center.x).toBe(3);
-    expect((controller as any).center.y).toBe(3);
+    expect(asPrivate(controller).center.x).toBe(3);
+    expect(asPrivate(controller).center.y).toBe(3);
   });
 
   it('adds test id to rotation center handle hitbox', () => {
@@ -152,9 +193,11 @@ describe('Rotate controller', () => {
       translate: jest.fn(),
     };
 
-    const controller = new RotateController({ selection: () => null } as any);
-    (controller as any).originalCenter = new Vec2(1, 1);
-    (controller as any).editor.render = {
+    const controller = new RotateController(
+      { selection: () => null } as unknown as Editor,
+    );
+    asPrivate(controller).originalCenter = new Vec2(1, 1);
+    asPrivate(controller).editor.render = {
       paper: {
         path: jest.fn().mockReturnValue(cross),
         circle: jest.fn().mockReturnValue(circle),
@@ -163,10 +206,10 @@ describe('Rotate controller', () => {
       options: {
         microModeScale: 1,
         offset: new Vec2(),
-      } as any,
+      },
     };
 
-    (controller as any).drawCross();
+    asPrivate(controller).drawCross();
 
     expect(setAttribute).toHaveBeenCalledWith(
       'data-testid',
@@ -245,7 +288,7 @@ describe('Rotate controller', () => {
       {},
     );
     editor.render.ctab.molecule.getSelectedVisibleAtoms = () => [];
-    (editor.rotateController as any).rotateTool.dragCtx = {
+    (editor.rotateController as unknown as PrivateRotateController).rotateTool.dragCtx = {
       action: { operations: [], perform: () => undefined },
     };
     editor.rotateController.isRotating = true;

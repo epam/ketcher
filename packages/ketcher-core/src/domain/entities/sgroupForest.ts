@@ -78,21 +78,16 @@ export class SGroupForest {
         return false;
       }
       const childs = this.children.get(sgid);
-      return (
-        !!childs &&
-        childs.findIndex((childId) => isSubset.get(childId) === true) < 0
-      );
+      return childs?.findIndex((childId) => isSubset.get(childId) === true) === -1;
     });
 
     const children = Array.from(this.atomSets.keys()).filter((id) => {
       const parentId = this.parent.get(id);
-      return (
-        isStrictSuperset.get(id) === true &&
-        !(
-          typeof parentId === 'number' &&
-          isStrictSuperset.get(parentId) === true
-        )
-      );
+      if (parentId !== undefined && isStrictSuperset.get(parentId) === true) {
+        return false;
+      }
+
+      return isStrictSuperset.get(id) === true;
     });
 
     return {
@@ -103,12 +98,10 @@ export class SGroupForest {
 
   getPathToRoot(sgid: number): number[] {
     const path: number[] = [];
-    for (
-      let id: number | undefined = sgid;
-      typeof id === 'number' && id >= 0;
-      id = this.parent.get(id)
-    ) {
+    let id: number | undefined = sgid;
+    while (id !== undefined && id >= 0) {
       path.push(id);
+      id = this.parent.get(id);
     }
     return path;
   }

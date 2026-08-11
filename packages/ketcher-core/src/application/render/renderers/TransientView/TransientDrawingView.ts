@@ -39,8 +39,18 @@ type ViewData<P> = {
   topLayer?: boolean;
 };
 
+type StoredViewData = {
+  // Method shorthand syntax allows ViewData<P> to be assigned here without
+  // a type cast, since TypeScript checks method parameters bivariantly.
+  show(layer: D3SvgElementSelection<SVGGElement, void>, params: unknown): void;
+  params: unknown;
+  onShow?: VoidFunction;
+  onHide?: VoidFunction;
+  topLayer?: boolean;
+};
+
 export class TransientDrawingView {
-  private readonly views: Map<string, ViewData<unknown>> = new Map();
+  private readonly views: Map<string, StoredViewData> = new Map();
 
   private readonly topLayer: D3SvgElementSelection<SVGGElement, void>;
   private readonly defaultLayer: D3SvgElementSelection<SVGGElement, void>;
@@ -62,7 +72,7 @@ export class TransientDrawingView {
       this.removeView(viewName);
     }
 
-    this.views.set(viewName, viewData as ViewData<unknown>);
+    this.views.set(viewName, viewData);
   }
 
   private removeView(viewName: string) {

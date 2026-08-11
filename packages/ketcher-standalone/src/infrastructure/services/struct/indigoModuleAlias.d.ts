@@ -14,27 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type EventEmitter from 'events';
-import { KetcherLogger } from './KetcherLogger';
-
-export enum KetcherAsyncEvents {
-  LOADING = 'LOADING',
-  SUCCESS = 'SUCCESS',
-  FAILURE = 'FAILURE',
+/**
+ * This module alias is resolved by Rollup at build time via the `@rollup/plugin-alias`
+ * configuration in `rollup.config.mjs`. The alias `_indigo-ketcher-import-alias_` is
+ * replaced with the actual Indigo WASM module path during the build.
+ */
+declare module '_indigo-ketcher-import-alias_' {
+  import { IndigoModule } from './indigoWorker.types';
+  const indigoModuleFn: (options?: object) => Promise<IndigoModule>;
+  export default indigoModuleFn;
 }
-
-export const runAsyncAction = async <T = unknown>(
-  action: () => Promise<T>,
-  eventEmitter: EventEmitter,
-): Promise<T | undefined> => {
-  eventEmitter.emit(KetcherAsyncEvents.LOADING);
-  try {
-    const res = await action();
-    eventEmitter.emit(KetcherAsyncEvents.SUCCESS);
-    return res;
-  } catch (e) {
-    KetcherLogger.error('runAsyncAction.ts::runAsyncAction', e);
-    eventEmitter.emit(KetcherAsyncEvents.FAILURE);
-    return undefined;
-  }
-};

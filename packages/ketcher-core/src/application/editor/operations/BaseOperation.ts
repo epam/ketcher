@@ -24,15 +24,14 @@ import { KetcherLogger } from 'utilities';
 type ValueOf<TObject extends object> = Readonly<TObject[keyof TObject]>;
 type OperationTypeValue = ValueOf<typeof OperationType>;
 
-class BaseOperation {
+class BaseOperation<D = unknown> {
   // eslint-disable-next-line no-use-before-define
   private _inverted: BaseOperation | undefined;
   type: OperationTypeValue;
   priority: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- operation payload shape varies by operation type
-  data: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-use-before-define -- inverse constructor args vary by operation
-  static InverseConstructor: new (...args: any[]) => BaseOperation;
+  data!: D;
+  // eslint-disable-next-line no-use-before-define -- inverse constructor args vary by operation
+  static InverseConstructor: new (...args: never[]) => BaseOperation;
 
   constructor(type: OperationTypeValue, priority = 0) {
     this.type = type;
@@ -44,13 +43,13 @@ class BaseOperation {
   }
 
   /** Returns inverted of this */
-  perform(restruct: ReStruct): BaseOperation {
+  perform(restruct: ReStruct): ReturnType<this['invert']> {
     this.execute(restruct);
     if (!this._inverted) {
       this._inverted = this.invert();
       this._inverted._inverted = this;
     }
-    return this._inverted;
+    return this._inverted as ReturnType<this['invert']>;
   }
 
   invert(): BaseOperation {
@@ -69,7 +68,11 @@ class BaseOperation {
     return false;
   }
 
-  protected static invalidateAtom(restruct: ReStruct, atomId: number, level?) {
+  protected static invalidateAtom(
+    restruct: ReStruct,
+    atomId: number,
+    level = 0,
+  ) {
     const atom = restruct.atoms.get(atomId);
     if (!atom) {
       return;
@@ -145,8 +148,7 @@ class BaseOperation {
     restruct: ReStruct,
     mapName: keyof typeof ReStruct.maps,
     id: number,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- matches legacy invalidate depth flag
-    level?: any,
+    level = 0,
   ) {
     if (mapName === 'atoms') {
       BaseOperation.invalidateAtom(restruct, id, level);

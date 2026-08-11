@@ -34,7 +34,7 @@ type RxnArrowAddData = {
   arrowId?: number;
 };
 
-class RxnArrowAdd extends Base {
+class RxnArrowAdd extends Base<RxnArrowAddData> {
   data: RxnArrowAddData;
 
   constructor(
@@ -48,7 +48,7 @@ class RxnArrowAdd extends Base {
     this.data = { pos, mode, id, height, arrowId };
   }
 
-  execute(restruct: any): void {
+  execute(restruct: Restruct): void {
     const struct = restruct.molecule;
     const item = new RxnArrow({
       mode: this.data.mode,
@@ -78,7 +78,7 @@ class RxnArrowAdd extends Base {
     Base.invalidateItem(restruct, 'rxnArrows', itemId, 1);
   }
 
-  invert(): Base {
+  invert(): RxnArrowDelete {
     return new RxnArrowDelete(this.data.id!);
   }
 }
@@ -91,7 +91,7 @@ interface RxnArrowDeleteData {
   arrowId?: number;
 }
 
-class RxnArrowDelete extends Base {
+class RxnArrowDelete extends Base<RxnArrowDeleteData> {
   data: RxnArrowDeleteData;
   performed: boolean;
 

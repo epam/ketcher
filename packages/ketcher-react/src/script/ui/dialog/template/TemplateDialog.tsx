@@ -24,6 +24,7 @@ import {
   useMemo,
   memo,
 } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import TemplateTable, { type Template } from './TemplateTable';
 import {
   changeFilter,
@@ -41,10 +42,9 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import { Dialog } from '../../views/components';
 import Input from '../../component/form/Input/Input';
 import { SaveButton } from '../../component/view/savebutton';
-import { SdfSerializer } from 'ketcher-core';
+import { SdfSerializer, KetcherLogger } from 'ketcher-core';
 import classes from './template-lib.module.less';
 import accordionClasses from '../../../../components/Accordion/Accordion.module.less';
-import { connect, useDispatch } from 'react-redux';
 import { createSelector } from 'reselect';
 import { omit } from 'lodash/fp';
 import { onAction } from '../../state';
@@ -130,7 +130,12 @@ const HeaderContent = () => (
   </div>
 );
 
-const FooterContent = ({ getData, tab, isMonomerCreationWizardActive }) => {
+const FooterContent = ({
+  getData,
+  tab,
+  isMonomerCreationWizardActive,
+  onError,
+}) => {
   const clickToAddToCanvas = (
     <span data-testid="add-to-canvas-button">Click to add to canvas</span>
   );
@@ -164,6 +169,7 @@ const FooterContent = ({ getData, tab, isMonomerCreationWizardActive }) => {
         testId="save-to-sdf-button"
         filename={filename}
         disabled={isMonomerCreationWizardActive}
+        onError={onError}
       >
         Save to SDF
       </SaveButton>
@@ -265,6 +271,19 @@ export const TemplateDialog: FC<Props> = (props) => {
     return sdf;
   }, [tab, templateLib, functionalGroups, saltsAndSolvents, dispatch]);
 
+  const onSaveError = useCallback(
+    (err: unknown) => {
+      KetcherLogger.error(
+        'TemplateDialog.tsx::TemplateDialog::onSaveError',
+        err,
+      );
+      dispatch(
+        showSnackbarNotification('Some templates could not be exported.'),
+      );
+    },
+    [dispatch],
+  );
+
   // Recreate selection handler only when upstream callbacks change.
   const select = useCallback(
     (tmpl: Template): void => {
@@ -288,6 +307,7 @@ export const TemplateDialog: FC<Props> = (props) => {
           tab={tab}
           getData={getData}
           isMonomerCreationWizardActive={isMonomerCreationWizardActive}
+          onError={onSaveError}
         />
       }
       className={`${classes.dialog_body}`}

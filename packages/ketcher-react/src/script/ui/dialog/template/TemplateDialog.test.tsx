@@ -15,6 +15,9 @@ jest.mock('ketcher-core', () => ({
   SdfSerializer: jest.fn().mockImplementation(() => ({
     serializeWithSkipInvalid: mockSerializeWithSkipInvalid,
   })),
+  KetcherLogger: {
+    error: jest.fn(),
+  },
 }));
 
 jest.mock('../../views/components', () => ({
@@ -27,8 +30,17 @@ jest.mock('../../views/components', () => ({
 }));
 
 jest.mock('../../component/view/savebutton', () => ({
-  SaveButton: ({ children, getData }) => (
-    <button type="button" onClick={getData}>
+  SaveButton: ({ children, getData, onError }) => (
+    <button
+      type="button"
+      onClick={() => {
+        try {
+          getData();
+        } catch (e) {
+          onError(e);
+        }
+      }}
+    >
       {children}
     </button>
   ),
@@ -37,6 +49,25 @@ jest.mock('../../component/view/savebutton', () => ({
 jest.mock('./TemplateTable', () => () => null);
 jest.mock('components', () => ({ Icon: () => null }));
 jest.mock('./useSaltsAndSolvets', () => () => []);
+
+const defaultProps = {
+  filter: '',
+  group: 'User Templates',
+  lib: [],
+  selected: null,
+  tab: 0,
+  initialTab: 0,
+  saltsAndSolvents: [],
+  functionalGroups: [],
+  onAttach: jest.fn(),
+  onCancel: jest.fn(),
+  onChangeGroup: jest.fn(),
+  onDelete: jest.fn(),
+  onFilter: jest.fn(),
+  onOk: jest.fn(),
+  onSelect: jest.fn(),
+  onTabChange: jest.fn(),
+};
 
 describe('TemplateDialog', () => {
   beforeEach(() => {
@@ -58,26 +89,7 @@ describe('TemplateDialog', () => {
     };
 
     expect(() =>
-      render(
-        <TemplateDialog
-          filter=""
-          group="User Templates"
-          lib={[template]}
-          selected={null}
-          tab={0}
-          initialTab={0}
-          saltsAndSolvents={[]}
-          functionalGroups={[]}
-          onAttach={jest.fn()}
-          onCancel={jest.fn()}
-          onChangeGroup={jest.fn()}
-          onDelete={jest.fn()}
-          onFilter={jest.fn()}
-          onOk={jest.fn()}
-          onSelect={jest.fn()}
-          onTabChange={jest.fn()}
-        />,
-      ),
+      render(<TemplateDialog {...defaultProps} lib={[template]} />),
     ).not.toThrow();
     expect(mockSerializeWithSkipInvalid).not.toHaveBeenCalled();
   });
@@ -173,6 +185,24 @@ describe('TemplateDialog', () => {
       expect.objectContaining({
         type: 'SHOW_SNACKBAR_NOTIFICATION',
         data: expect.stringContaining('Invalid template'),
+      }),
+    );
+  });
+
+  it('dispatches a snackbar notification when serialization fails on Save to SDF', () => {
+    const serializationError = new Error('Serialization failed');
+    mockSerialize.mockImplementation(() => {
+      throw serializationError;
+    });
+
+    render(<TemplateDialog {...defaultProps} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save to SDF' }));
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'SHOW_SNACKBAR_NOTIFICATION',
+        data: 'Some templates could not be exported.',
       }),
     );
   });

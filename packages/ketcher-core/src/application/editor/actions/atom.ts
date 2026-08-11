@@ -210,8 +210,13 @@ export function mergeSgroups(
     const sgroup = restruct.molecule.sgroups.get(sid);
     assert(sgroup != null);
     const notExpandedContexts = ['Atom', 'Bond', 'Group'];
-    const context = sgroup.data.context ?? 'Fragment';
-    if (sgroup.type === 'DAT' && notExpandedContexts.includes(context)) {
+    const context = sgroup.data.context;
+    if (
+      context !== null &&
+      context !== undefined &&
+      sgroup.type === 'DAT' &&
+      notExpandedContexts.includes(context)
+    ) {
       return;
     }
     const atomsToSgroup = without(

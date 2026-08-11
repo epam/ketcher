@@ -32,8 +32,6 @@ function throughFileReader(file: File): Promise<string> {
 
     rd.onload = () => {
       const content = rd.result;
-      const msFile = file as File & { msClose?: () => void };
-      if (msFile.msClose) msFile.msClose();
       // readAsText below always yields a string result, but FileReader.result
       // is typed as string | ArrayBuffer | null, so narrow it explicitly
       // rather than trusting a cast.

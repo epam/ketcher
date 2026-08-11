@@ -505,13 +505,6 @@ export class LibraryItemDragDropHandler {
   private applyReplacementVisualState(target: ReplacementTarget): void {
     const monomersToHighlight = this.getHighlightMonomers(target);
 
-    for (const monomer of monomersToHighlight) {
-      const renderer = monomer.renderer;
-      if (renderer instanceof BaseMonomerRenderer) {
-        renderer.setReplacementTarget(true);
-      }
-    }
-
     const transientDrawingView = this.deps.getTransientDrawingView();
     transientDrawingView.showReplacementHighlight({
       monomers: monomersToHighlight,
@@ -525,13 +518,6 @@ export class LibraryItemDragDropHandler {
    */
   private clearReplacementVisualState(target: ReplacementTarget): void {
     const monomersToUnhighlight = this.getHighlightMonomers(target);
-
-    for (const monomer of monomersToUnhighlight) {
-      const renderer = monomer.renderer;
-      if (renderer instanceof BaseMonomerRenderer) {
-        renderer.setReplacementTarget(false);
-      }
-    }
 
     const transientDrawingView = this.deps.getTransientDrawingView();
     transientDrawingView.hideReplacementHighlight();

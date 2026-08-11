@@ -4827,10 +4827,8 @@ export class DrawingEntitiesManager {
     rnaBasePosition: Vec2 | undefined;
     phosphatePosition: Vec2 | undefined;
   } {
-    const monomerSize = getMonomerSize();
-
     const baseOffset = Coordinates.canvasToModel(
-      new Vec2(0, SnakeLayoutCellWidth + monomerSize.height),
+      new Vec2(0, SnakeLayoutCellWidth),
     );
     const phosphateOffset = Coordinates.canvasToModel(
       new Vec2(SnakeLayoutCellWidth, 0),

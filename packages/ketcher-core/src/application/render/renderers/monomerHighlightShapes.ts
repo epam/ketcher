@@ -19,6 +19,8 @@ export type HighlightPathData = string;
 // shape below so tiny monomers cannot produce self-intersecting paths.
 const HIGHLIGHT_CORNER_RADIUS = 13;
 const DIAMOND_HIGHLIGHT_CORNER_RADIUS = 6;
+const HEXAGON_HIGHLIGHT_CORNER_RADIUS = 6;
+const PENTAGON_HIGHLIGHT_CORNER_RADIUS = 6;
 
 const formatCoordinate = (value: number): string => {
   const roundedValue = Number(value.toFixed(2));
@@ -219,7 +221,10 @@ export const createHexagonHighlightPath = (
 
   const verts = offset === 0 ? baseVerts : expandPolygon(baseVerts, offset);
 
-  return createRoundedPolygonHighlightPath(verts, HIGHLIGHT_CORNER_RADIUS);
+  return createRoundedPolygonHighlightPath(
+    verts,
+    HEXAGON_HIGHLIGHT_CORNER_RADIUS,
+  );
 };
 
 /**
@@ -268,7 +273,10 @@ export const createNucleotideHighlightPath = (
 
   const verts = offset === 0 ? baseVerts : expandPolygon(baseVerts, offset);
 
-  return createRoundedPolygonHighlightPath(verts, HIGHLIGHT_CORNER_RADIUS);
+  return createRoundedPolygonHighlightPath(
+    verts,
+    PENTAGON_HIGHLIGHT_CORNER_RADIUS,
+  );
 };
 
 export const createDiamondHighlightPath = (

@@ -10,6 +10,7 @@ import {
   type HighlightPathData,
   createDiamondHighlightPath,
 } from 'application/render/renderers/monomerHighlightShapes';
+import { Vec2 } from 'domain/entities';
 
 const RNABASE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Base].hover;
@@ -38,7 +39,10 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
 
   public getHighlightPath(offset = 0): HighlightPathData {
     const { width, height } = this.monomerSize;
-    return createDiamondHighlightPath(this.center, width, height, offset);
+    // TODO :  investigate why RNABase symbol is not centered correctly and remove this offset
+    const ADDITIONAL_Y_OFFSET = 1;
+    const center = new Vec2(this.center.x, this.center.y - ADDITIONAL_Y_OFFSET);
+    return createDiamondHighlightPath(center, width, height, offset);
   }
 
   protected get modificationConfig() {

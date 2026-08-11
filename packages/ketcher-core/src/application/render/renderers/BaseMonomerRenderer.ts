@@ -33,15 +33,6 @@ import {
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
 export const MONOMER_CSS_CLASS = 'monomer';
-/** CSS class applied to the SVG body element when a monomer is a replacement target. */
-export const MONOMER_REPLACEMENT_TARGET_CSS_CLASS =
-  'monomer--replacement-target';
-/**
- * Body opacity applied to a monomer while it is highlighted as a drag
- * replacement target, so the existing monomer reads as a light "will be
- * replaced" preview beneath its shape-following highlight ring.
- */
-const MONOMER_REPLACEMENT_TARGET_BODY_OPACITY = 0.5;
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private readonly editor: CoreEditor;
@@ -58,8 +49,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private hoveredAttachmentPoint: AttachmentPointName | null = null;
   private _dragTargetAttachmentPoint: AttachmentPointName | null = null;
   private _dragCircleHoverAttachmentPoint: AttachmentPointName | null = null;
-  /** True when this monomer is highlighted as a replacement target during drag. */
-  private _isReplacementTarget = false;
 
   private readonly monomerSymbolElement?: SVGUseElement | SVGRectElement;
   public readonly monomerSize: { width: number; height: number };
@@ -371,42 +360,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     attachmentPointName: AttachmentPointName | null,
   ): void {
     this._dragTargetAttachmentPoint = attachmentPointName;
-  }
-
-  public setDragCircleHoverAttachmentPoint(
-    attachmentPointName: AttachmentPointName | null,
-  ): void {
-    this._dragCircleHoverAttachmentPoint = attachmentPointName;
-  }
-
-  /**
-   * Marks or unmarks this monomer as a replacement target during drag.
-   *
-   * Dims the body so it reads as a light "about to be replaced" preview. The
-   * surrounding outline that groups all replaced monomers is drawn separately
-   * by `ReplacementHighlightView` (a transient view), so this method only
-   * changes the monomer body. The AP `+` indicator states are mutually
-   * exclusive — the caller (LibraryItemDragDropHandler) runs the replacement
-   * check first and skips the AP proximity check when a replacement target is
-   * set.
-   */
-  public setReplacementTarget(isTarget: boolean): void {
-    this._isReplacementTarget = isTarget;
-
-    if (isTarget) {
-      this.bodyElement
-        ?.classed(MONOMER_REPLACEMENT_TARGET_CSS_CLASS, true)
-        .attr('opacity', MONOMER_REPLACEMENT_TARGET_BODY_OPACITY);
-    } else {
-      this.bodyElement
-        ?.classed(MONOMER_REPLACEMENT_TARGET_CSS_CLASS, false)
-        .attr('opacity', null);
-    }
-  }
-
-  /** Whether this monomer is currently highlighted as a replacement target. */
-  public get isReplacementTarget(): boolean {
-    return this._isReplacementTarget;
   }
 
   protected raiseAttachmentPoints() {

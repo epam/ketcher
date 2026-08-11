@@ -87,7 +87,7 @@ This change adds a **replacement interaction layer** on top of the existing drag
 
 **Problem**: The replacement-target appearance (different from AP `+` highlighting) needs CSS/SVG representation.
 
-**Decision**: Add a `isReplacementTarget` boolean flag to `BaseMonomerRenderer`. When true, the SVG body element receives a CSS class (e.g., `monomer--replacement-target`) that applies a distinct visual treatment (e.g., highlighted border or fill change). The existing `setDragTargetAttachmentPoint` mechanism is untouched; the two visual states are mutually exclusive by design (replacement check runs first).
+**Decision**: Use dedicated TransientView
 
 ## Risks / Trade-offs
 

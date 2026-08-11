@@ -48,7 +48,7 @@ class RxnArrowAdd extends Base {
     this.data = { pos, mode, id, height, arrowId };
   }
 
-  execute(restruct: any): void {
+  execute(restruct: Restruct): void {
     const struct = restruct.molecule;
     const item = new RxnArrow({
       mode: this.data.mode,

@@ -52,19 +52,6 @@ export type EditorSubscriber = {
   handler: (data?: unknown) => void;
 };
 
-/**
- * Minimal interface for the rotate controller.
- * The concrete implementation lives in 'ketcher-react' (RotateController),
- * but ketcher-core only needs the public surface used across packages.
- */
-export interface IRotateController {
-  isRotating: boolean;
-  rerender: () => void;
-  revert: () => void;
-  clean: () => void;
-  updateFloatingToolsPosition: () => void;
-}
-
 export interface Editor {
   isDitrty: () => boolean;
   setOrigin: () => void;
@@ -124,7 +111,13 @@ export interface Editor {
     options?: { resizeCanvas: boolean },
   ) => void;
   render: Render;
-  rotateController: IRotateController;
+  rotateController: {
+    isRotating: boolean;
+    rerender: () => void;
+    revert: () => void;
+    clean: () => void;
+    updateFloatingToolsPosition: () => void;
+  };
   macromoleculeConvertionError: string | null | undefined;
   setMacromoleculeConvertionError: (errorMessage: string) => void;
   clearMacromoleculeConvertionError: () => void;

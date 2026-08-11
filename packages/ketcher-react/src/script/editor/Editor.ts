@@ -2833,8 +2833,15 @@ class Editor implements KetcherEditor {
       return;
     }
 
-    const handleChangeEvent = (data: ChangeEventData[]) => {
-      if (!this.isMonomerCreationWizardActive || data.length === 0) {
+    const handleChangeEvent = (data?: unknown) => {
+      if (
+        !this.isMonomerCreationWizardActive ||
+        !this.isChangeEventDataArray(data)
+      ) {
+        return;
+      }
+
+      if (data.length === 0) {
         return;
       }
 
@@ -2882,6 +2889,16 @@ class Editor implements KetcherEditor {
     });
 
     this.invalidateMonomerCreationWizardState(changesMap);
+  }
+
+  private isChangeEventDataArray(data: unknown): data is ChangeEventData[] {
+    return (
+      Array.isArray(data) &&
+      data.every(
+        (entry) =>
+          entry !== null && typeof entry === 'object' && 'operation' in entry,
+      )
+    );
   }
 
   private invalidateMonomerCreationWizardState(
@@ -3387,19 +3404,16 @@ class Editor implements KetcherEditor {
 
   subscribe(
     eventName: string,
-    handler: ((data?: unknown) => void) | ((data: ChangeEventData[]) => void),
+    handler: (data?: unknown) => void,
   ): EditorSubscriber {
     const subscriber: EditorSubscriber = {
-      handler: handler as (data?: unknown) => void,
+      handler,
     };
 
     switch (eventName) {
       case 'change': {
         const subscribeFuncWrapper = (action: unknown) => {
-          customOnChangeHandler(
-            action as unknown,
-            handler as (data?: unknown) => void,
-          );
+          customOnChangeHandler(action as unknown, handler);
         };
         subscriber.handler = subscribeFuncWrapper;
         ketcherProvider

@@ -877,7 +877,7 @@ function fromQueryComponentSGroupAction(
       return res;
     }, []);
 
-    const bonds = getAtomsBondIds(restruct.molecule, atoms) as number[];
+    const bonds = getAtomsBondIds(restruct.molecule, atoms);
 
     selection.atoms = selection.atoms.concat(atoms);
     selection.bonds = selection.bonds.concat(bonds);
@@ -908,7 +908,7 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
         return res;
       }, []);
 
-      const bonds = getAtomsBondIds(restruct.molecule, atoms) as number[];
+      const bonds = getAtomsBondIds(restruct.molecule, atoms);
 
       acc.action = acc.action.mergeWith(
         fromSeveralSgroupAddition(restruct, newSg.type, atoms, newSg.attrs),
@@ -1025,7 +1025,7 @@ export function removeSgroupIfNeeded(action, restruct: Restruct, atoms) {
   });
 }
 
-function getAtomsBondIds(struct, atoms) {
+function getAtomsBondIds(struct: Struct, atoms: number[]): number[] {
   const atomSet = new Pile(atoms);
 
   return Array.from(struct.bonds.keys()).filter((bid) => {

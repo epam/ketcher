@@ -93,7 +93,7 @@ class ReStruct {
     RaphaelPath
   >;
 
-  public connectedComponents: Pool = new Pool();
+  public connectedComponents: Pool<Pile<number>> = new Pool();
   private readonly ccFragmentType: Pool = new Pool();
   private structChanged = false;
   public needRecalculateVisibleAtomsAndBonds = false;

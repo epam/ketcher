@@ -10,6 +10,7 @@ import type { IRnaPreset } from 'application/editor/tools/Tool';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { BaseMonomerRenderer } from 'application/render';
+import type { TransientDrawingView } from 'application/render/renderers/TransientView';
 import type { IEditorEvents } from 'application/editor/editorEvents';
 import type {
   AttachmentPointTarget,
@@ -77,6 +78,7 @@ export interface LibraryItemDragDropHandlerDeps {
   getKetcherRootRect(): DOMRect | undefined;
   getModeName(): string;
   getEditor(): CoreEditor;
+  getTransientDrawingView(): TransientDrawingView;
   placeItemOnCanvas(
     item: IRnaPreset | MonomerOrAmbiguousType,
     position: Vec2,
@@ -496,13 +498,12 @@ export class LibraryItemDragDropHandler {
 
   /**
    * Applies the replacement-target visual state to all monomers identified
-   * by `target`.
+   * by `target`: dims the monomer bodies to read as a "will be replaced"
+   * preview and draws a single smooth outline around the whole group via a
+   * transient view.
    */
   private applyReplacementVisualState(target: ReplacementTarget): void {
-    const monomersToHighlight =
-      target.kind === 'same-geometry-preset' && target.presetComponents
-        ? target.presetComponents
-        : [target.monomer];
+    const monomersToHighlight = this.getHighlightMonomers(target);
 
     for (const monomer of monomersToHighlight) {
       const renderer = monomer.renderer;
@@ -510,17 +511,20 @@ export class LibraryItemDragDropHandler {
         renderer.setReplacementTarget(true);
       }
     }
+
+    const transientDrawingView = this.deps.getTransientDrawingView();
+    transientDrawingView.showReplacementHighlight({
+      monomers: monomersToHighlight,
+    });
+    transientDrawingView.update();
   }
 
   /**
    * Removes the replacement-target visual state from all monomers identified
-   * by `target`.
+   * by `target` and hides the outline.
    */
   private clearReplacementVisualState(target: ReplacementTarget): void {
-    const monomersToUnhighlight =
-      target.kind === 'same-geometry-preset' && target.presetComponents
-        ? target.presetComponents
-        : [target.monomer];
+    const monomersToUnhighlight = this.getHighlightMonomers(target);
 
     for (const monomer of monomersToUnhighlight) {
       const renderer = monomer.renderer;
@@ -528,6 +532,21 @@ export class LibraryItemDragDropHandler {
         renderer.setReplacementTarget(false);
       }
     }
+
+    const transientDrawingView = this.deps.getTransientDrawingView();
+    transientDrawingView.hideReplacementHighlight();
+    transientDrawingView.update();
+  }
+
+  /**
+   * Returns the monomers that make up the replacement highlight: the matched
+   * preset components for a same-geometry preset, otherwise the single hit
+   * monomer.
+   */
+  private getHighlightMonomers(target: ReplacementTarget): BaseMonomer[] {
+    return target.kind === 'same-geometry-preset' && target.presetComponents
+      ? target.presetComponents
+      : [target.monomer];
   }
 
   /**

@@ -29,7 +29,7 @@ The macromolecules editor SHALL support two drag-and-drop outcomes when a librar
 
 - **WHEN** the user drags a preset from the library and releases it within [TBD] px of any monomer center belonging to a canvas preset that contains every component the dragged preset provides (a sugar, a base if the dragged preset has one, and a phosphate on the same side — 5′/left or 3′/right — if the dragged preset has one)
 - **THEN** the canvas preset is replaced by the library preset per the monomer-replacement-drag-drop spec
-- **AND** during drag-over every canvas component that corresponds to a dragged-preset component is highlighted as the replacement target
+- **AND** during drag-over the components that will be replaced are rendered as a single smooth outline that wraps around the whole group (hugging each monomer's shape and flowing across the bonds between them), with the monomer bodies dimmed to read as a "will be replaced" preview
 
 #### Scenario: Preset with a 5′ (left) phosphate replaces a matching preset
 

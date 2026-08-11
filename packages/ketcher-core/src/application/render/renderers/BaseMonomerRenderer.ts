@@ -47,8 +47,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
-  /** Shape-following ring shown while this monomer is a drag replacement target. */
-  private replacementTargetRing?: D3SvgElementSelection<SVGUseElement, void>;
   public declare bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
   private freeSectorsList: number[] = sectorsList;
 
@@ -363,33 +361,22 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   /**
    * Marks or unmarks this monomer as a replacement target during drag.
    *
-   * The highlight follows the monomer's own shape (rounded square for sugars,
-   * diamond for bases, circle for phosphates) by reusing the monomer's
-   * selection-ring symbol, and dims the body so it reads as "about to be
-   * replaced". The AP `+` indicator states are mutually exclusive — the caller
-   * (LibraryItemDragDropHandler) runs the replacement check first and skips the
-   * AP proximity check when a replacement target is set.
+   * Dims the body so it reads as a light "about to be replaced" preview. The
+   * surrounding outline that groups all replaced monomers is drawn separately
+   * by `ReplacementHighlightView` (a transient view), so this method only
+   * changes the monomer body. The AP `+` indicator states are mutually
+   * exclusive — the caller (LibraryItemDragDropHandler) runs the replacement
+   * check first and skips the AP proximity check when a replacement target is
+   * set.
    */
   public setReplacementTarget(isTarget: boolean): void {
     this._isReplacementTarget = isTarget;
 
     if (isTarget) {
-      if (this.rootElement && !this.replacementTargetRing) {
-        this.replacementTargetRing = this.rootElement
-          .append('use')
-          .attr('href', this.monomerHoveredElementId)
-          .attr('pointer-events', 'none')
-          .attr(
-            'class',
-            `dynamic-element ${MONOMER_REPLACEMENT_TARGET_CSS_CLASS}`,
-          );
-      }
       this.bodyElement
         ?.classed(MONOMER_REPLACEMENT_TARGET_CSS_CLASS, true)
         .attr('opacity', MONOMER_REPLACEMENT_TARGET_BODY_OPACITY);
     } else {
-      this.replacementTargetRing?.remove();
-      this.replacementTargetRing = undefined;
       this.bodyElement
         ?.classed(MONOMER_REPLACEMENT_TARGET_CSS_CLASS, false)
         .attr('opacity', null);

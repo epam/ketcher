@@ -83,7 +83,7 @@ interface SGroupData {
 
 type AtomIdRemap = Record<number, number> | number[];
 type StructAtomsAccess = Pick<Struct, 'atoms'>;
-type StructBondsAccess = Pick<Struct, 'atoms' | 'bonds'>;
+type StructBondsAccess = Pick<Struct, 'bonds'>;
 type StructAtomsAndBondsAccess = Pick<Struct, 'atoms' | 'bonds'>;
 type RenderableSGroupAtom =
   | Atom
@@ -606,7 +606,7 @@ export class SGroup {
   }
 
   static getBracketParameters(
-    mol: StructBondsAccess,
+    mol: StructAtomsAndBondsAccess,
     crossBondsPerAtom: { [key: number]: Array<number> },
     atomSet: Pile<number>,
     bb: Box2Abs,

@@ -23,6 +23,7 @@ import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import type { RenderOptions } from '../render.types';
+import { assert } from 'utilities';
 import { Scale } from 'domain/helpers';
 
 class ReEnhancedFlag extends ReObject {
@@ -37,7 +38,12 @@ class ReEnhancedFlag extends ReObject {
   }
 
   hoverPath(render: Render): Element {
-    const box = Box2Abs.fromRelBox(this.#path!.getBBox());
+    assert(
+      this.#path,
+      'ReEnhancedFlag.hoverPath: enhanced flag path should be initialized',
+    );
+
+    const box = Box2Abs.fromRelBox(this.#path.getBBox());
     const sz = box.p1.sub(box.p0);
     const p0 = box.p0.sub(render.options.offset);
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y);

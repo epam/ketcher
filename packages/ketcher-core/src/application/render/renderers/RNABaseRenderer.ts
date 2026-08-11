@@ -6,6 +6,10 @@ import {
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters/types/ket';
+import {
+  type MonomerHighlightShape,
+  createDiamondHighlightShape,
+} from 'application/render/renderers/monomerHighlightShapes';
 
 const RNABASE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Base].hover;
@@ -30,6 +34,11 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
       return '#fff';
     }
     return this.monomer.isModification ? '#fff' : '#333333';
+  }
+
+  public getHighlightShape(): MonomerHighlightShape {
+    const { width, height } = this.monomerSize;
+    return createDiamondHighlightShape(this.center, Math.min(width, height));
   }
 
   protected get modificationConfig() {

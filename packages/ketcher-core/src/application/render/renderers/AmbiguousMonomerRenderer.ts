@@ -9,6 +9,11 @@ import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
 import type { UsageInMacromolecule } from 'application/render';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { KetMonomerClass } from 'domain/constants/monomers';
+import {
+  type MonomerHighlightShape,
+  CircleHighlightShape,
+  createDiamondHighlightShape,
+} from 'application/render/renderers/monomerHighlightShapes';
 
 type PreviewAttachmentPointParams = {
   canvas: D3SvgElementSelection<SVGSVGElement, void>;
@@ -73,6 +78,20 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
 
   public get beginningElementPosition() {
     return this.monomerRenderer.beginningElementPosition;
+  }
+
+  public getHighlightShape(): MonomerHighlightShape {
+    const monomerClass = AmbiguousMonomer.getMonomerClass(
+      this.monomer.monomers,
+    );
+    const { width, height } = this.monomerSize;
+    if (monomerClass === KetMonomerClass.Phosphate) {
+      return new CircleHighlightShape(this.center, Math.min(width, height) / 2);
+    }
+    if (monomerClass === KetMonomerClass.Base) {
+      return createDiamondHighlightShape(this.center, Math.min(width, height));
+    }
+    return super.getHighlightShape();
   }
 
   private appendNumberOfMonomers() {

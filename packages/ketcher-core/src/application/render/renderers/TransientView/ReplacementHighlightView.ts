@@ -4,18 +4,16 @@ import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import {
-  isPhosphateOrAmbiguousPhosphate,
-  isRnaBaseOrAmbiguousRnaBase,
-} from 'domain/helpers/monomers';
+  type Bounds,
+  type MonomerHighlightShape,
+  type Point,
+  SegmentHighlightShape,
+} from 'application/render/renderers/monomerHighlightShapes';
 
 export type ReplacementHighlightViewParams = {
   /** The canvas monomers that will be replaced on drop. */
   monomers: BaseMonomer[];
 };
-
-type Point = { x: number; y: number };
-/** Signed-distance function: negative inside the shape, zero on its boundary. */
-type SignedDistance = (point: Point) => number;
 
 /**
  * Colour of the replacement outline. Matches the macromolecules selection
@@ -32,66 +30,15 @@ const NECK_HALF_WIDTH = 4;
 /** Sampling resolution (px, canvas space) of the contour extraction grid. */
 const GRID_CELL = 2;
 
-// ---------------------------------------------------------------------------
-// Signed-distance primitives
-// ---------------------------------------------------------------------------
-
-const distanceToCircle = (
-  point: Point,
-  center: Point,
-  radius: number,
-): number => Math.hypot(point.x - center.x, point.y - center.y) - radius;
-
-const distanceToBox = (
-  point: Point,
-  center: Point,
-  halfWidth: number,
-  halfHeight: number,
-  angle = 0,
-): number => {
-  let dx = point.x - center.x;
-  let dy = point.y - center.y;
-  if (angle !== 0) {
-    const cos = Math.cos(-angle);
-    const sin = Math.sin(-angle);
-    const rotatedX = dx * cos - dy * sin;
-    const rotatedY = dx * sin + dy * cos;
-    dx = rotatedX;
-    dy = rotatedY;
-  }
-  const qx = Math.abs(dx) - halfWidth;
-  const qy = Math.abs(dy) - halfHeight;
-  const outside = Math.hypot(Math.max(qx, 0), Math.max(qy, 0));
-  const inside = Math.min(Math.max(qx, qy), 0);
-  return outside + inside;
-};
-
-const distanceToSegment = (
-  point: Point,
-  a: Point,
-  b: Point,
-  radius: number,
-): number => {
-  const pax = point.x - a.x;
-  const pay = point.y - a.y;
-  const bax = b.x - a.x;
-  const bay = b.y - a.y;
-  const lengthSquared = bax * bax + bay * bay || 1;
-  const t = Math.min(1, Math.max(0, (pax * bax + pay * bay) / lengthSquared));
-  const dx = pax - bax * t;
-  const dy = pay - bay * t;
-  return Math.hypot(dx, dy) - radius;
-};
-
 /**
  * Draws a single smooth path that outlines the whole group of monomers that
  * will be replaced by a drag-drop (a full preset, a subset of it, or one
  * monomer).
  *
- * The outline is the boundary of the union of each monomer's shape (a rounded
- * square for sugars, a diamond for bases, a circle for phosphates), inflated by
- * a small gap, joined by thin necks along the bonds internal to the highlighted
- * set. That union is described as a signed-distance field and its zero-level
+ * Each monomer renderer owns the shape that outlines its body (via
+ * `getHighlightShape`). This view collects those shapes, adds a neck shape
+ * along every bond internal to the highlighted set, and unions them: the
+ * combined silhouette is described as a signed-distance field whose zero-level
  * contour is extracted with marching squares, producing one continuous path
  * that hugs each shape and flows smoothly across the necks — without SVG
  * filters.
@@ -101,39 +48,18 @@ const distanceToSegment = (
 export class ReplacementHighlightView extends TransientView {
   public static readonly viewName = 'ReplacementHighlightView';
 
-  private static buildDistanceField(monomers: BaseMonomer[]): SignedDistance {
-    const primitives: SignedDistance[] = [];
+  /**
+   * Collects each monomer's own highlight shape plus a neck shape along every
+   * bond internal to the highlighted set (bonds to unaffected neighbours are
+   * left open, so the outline reflects exactly what will be replaced).
+   */
+  private static collectShapes(
+    monomers: BaseMonomer[],
+  ): MonomerHighlightShape[] {
+    const shapes: MonomerHighlightShape[] = monomers.map((monomer) =>
+      (monomer.renderer as BaseMonomerRenderer).getHighlightShape(),
+    );
 
-    for (const monomer of monomers) {
-      const renderer = monomer.renderer as BaseMonomerRenderer;
-      const center = renderer.center;
-      const { width, height } = renderer.monomerSize;
-
-      if (isPhosphateOrAmbiguousPhosphate(monomer)) {
-        const radius = Math.min(width, height) / 2;
-        primitives.push(
-          (point) => distanceToCircle(point, center, radius) - OUTLINE_GAP,
-        );
-      } else if (isRnaBaseOrAmbiguousRnaBase(monomer)) {
-        // A base is a square rotated 45° (a diamond); its bounding box is the
-        // monomer size, so the rotated half-side is size / (2 * √2).
-        const halfSide = Math.min(width, height) / 2 / Math.SQRT2;
-        primitives.push(
-          (point) =>
-            distanceToBox(point, center, halfSide, halfSide, Math.PI / 4) -
-            OUTLINE_GAP,
-        );
-      } else {
-        primitives.push(
-          (point) =>
-            distanceToBox(point, center, width / 2, height / 2) - OUTLINE_GAP,
-        );
-      }
-    }
-
-    // Bridge components with thin necks along the bonds internal to the set so
-    // the individual shapes merge into one continuous silhouette. Bonds to
-    // unaffected neighbours are left open.
     const monomerSet = new Set(monomers);
     const processedBonds = new Set<PolymerBond>();
 
@@ -150,39 +76,25 @@ export class ReplacementHighlightView extends TransientView {
         }
         processedBonds.add(bond);
         const to = (otherMonomer.renderer as BaseMonomerRenderer).center;
-        primitives.push(
-          (point) =>
-            distanceToSegment(point, from, to, NECK_HALF_WIDTH) - OUTLINE_GAP,
-        );
+        shapes.push(new SegmentHighlightShape(from, to, NECK_HALF_WIDTH));
       }
     }
 
-    return (point) => {
-      let minDistance = Infinity;
-      for (const primitive of primitives) {
-        const distance = primitive(point);
-        if (distance < minDistance) {
-          minDistance = distance;
-        }
-      }
-      return minDistance;
-    };
+    return shapes;
   }
 
-  private static computeBounds(monomers: BaseMonomer[]) {
+  private static computeBounds(shapes: MonomerHighlightShape[]): Bounds {
     let minX = Infinity;
     let minY = Infinity;
     let maxX = -Infinity;
     let maxY = -Infinity;
 
-    for (const monomer of monomers) {
-      const renderer = monomer.renderer as BaseMonomerRenderer;
-      const { x, y } = renderer.center;
-      const { width, height } = renderer.monomerSize;
-      minX = Math.min(minX, x - width / 2);
-      minY = Math.min(minY, y - height / 2);
-      maxX = Math.max(maxX, x + width / 2);
-      maxY = Math.max(maxY, y + height / 2);
+    for (const shape of shapes) {
+      const bounds = shape.bounds();
+      minX = Math.min(minX, bounds.minX);
+      minY = Math.min(minY, bounds.minY);
+      maxX = Math.max(maxX, bounds.maxX);
+      maxY = Math.max(maxY, bounds.maxY);
     }
 
     const padding = OUTLINE_GAP + OUTLINE_THICKNESS + GRID_CELL * 2;
@@ -199,8 +111,8 @@ export class ReplacementHighlightView extends TransientView {
    * marching squares, returning closed loops of points.
    */
   private static extractContour(
-    field: SignedDistance,
-    bounds: { minX: number; minY: number; maxX: number; maxY: number },
+    field: (point: Point) => number,
+    bounds: Bounds,
   ): Point[][] {
     const { minX, minY, maxX, maxY } = bounds;
     const cols = Math.ceil((maxX - minX) / GRID_CELL);
@@ -381,8 +293,21 @@ export class ReplacementHighlightView extends TransientView {
       return;
     }
 
-    const field = ReplacementHighlightView.buildDistanceField(monomers);
-    const bounds = ReplacementHighlightView.computeBounds(monomers);
+    // Each renderer contributes its own shape; necks along internal bonds join
+    // them into one silhouette. The union is `min` of the shapes' signed
+    // distances, inflated by the gap so the outline sits just outside the body.
+    const shapes = ReplacementHighlightView.collectShapes(monomers);
+    const field = (point: Point): number => {
+      let minDistance = Infinity;
+      for (const shape of shapes) {
+        const distance = shape.signedDistance(point);
+        if (distance < minDistance) {
+          minDistance = distance;
+        }
+      }
+      return minDistance - OUTLINE_GAP;
+    };
+    const bounds = ReplacementHighlightView.computeBounds(shapes);
     const loops = ReplacementHighlightView.extractContour(field, bounds);
     const pathData = ReplacementHighlightView.toPathData(loops);
 

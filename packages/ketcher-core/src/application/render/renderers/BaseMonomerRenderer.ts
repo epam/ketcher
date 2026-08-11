@@ -25,6 +25,10 @@ import {
   getMonomerSize,
   setMonomerSize,
 } from 'application/render/renderers/monomerSizeState';
+import {
+  type MonomerHighlightShape,
+  RoundedRectHighlightShape,
+} from 'application/render/renderers/monomerHighlightShapes';
 
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
@@ -127,6 +131,21 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     return new Vec2(
       this.scaledMonomerPosition.x + this.monomerSize.width / 2,
       this.scaledMonomerPosition.y + this.monomerSize.height / 2,
+    );
+  }
+
+  /**
+   * The shape that outlines this monomer's body, used by
+   * `ReplacementHighlightView` to draw the drag-drop replacement highlight.
+   *
+   * The default is a rounded rectangle matching the monomer body; renderers
+   * with a different body shape (e.g. phosphates, RNA bases) override this.
+   */
+  public getHighlightShape(): MonomerHighlightShape {
+    return new RoundedRectHighlightShape(
+      this.center,
+      this.monomerSize.width / 2,
+      this.monomerSize.height / 2,
     );
   }
 

@@ -63,7 +63,6 @@ import {
   templateToMonomerProps,
   variantMonomerToDrawingEntity,
 } from 'domain/serializers/ket/fromKet/monomerToDrawingEntity';
-import assert from 'assert';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';
 import {
@@ -71,7 +70,7 @@ import {
   fillStructRgLabelsByMonomerTemplate,
   getTemplateAttachmentPoints,
 } from 'domain/serializers/ket/fromKet/monomerTemplateUtils';
-import { KetcherLogger } from 'utilities';
+import { assert, KetcherLogger } from 'utilities';
 import { Chem } from 'domain/entities/Chem';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
@@ -396,7 +395,12 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   private static enrichTemplateWithLibraryData(template: IKetMonomerTemplate) {
-    if (template.idtAliases && template.aliasAxoLabs && template.aliasBILN) {
+    if (
+      template.idtAliases &&
+      template.aliasAxoLabs &&
+      template.aliasBILN &&
+      template.modificationTypes
+    ) {
       return;
     }
     const library = provideEditorInstance()?.monomersLibraryParsedJson;
@@ -416,6 +420,9 @@ export class KetSerializer implements Serializer<Struct> {
     }
     if (!template.aliasBILN && libraryTemplate.aliasBILN) {
       template.aliasBILN = libraryTemplate.aliasBILN;
+    }
+    if (!template.modificationTypes && libraryTemplate.modificationTypes) {
+      template.modificationTypes = libraryTemplate.modificationTypes;
     }
   }
 

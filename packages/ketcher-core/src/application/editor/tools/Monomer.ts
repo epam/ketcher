@@ -24,7 +24,7 @@ import {
 import type { MonomerOrAmbiguousType } from 'domain/types';
 import type { Command } from 'domain/entities/Command';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { Coordinates } from '../shared/coordinates';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 
@@ -40,11 +40,9 @@ class MonomerTool implements BaseTool {
   readonly MONOMER_PREVIEW_OFFSET_X = 30;
   readonly MONOMER_PREVIEW_OFFSET_Y = 30;
   history: EditorHistory;
-  constructor(
-    private readonly editor: CoreEditor,
-    private readonly monomer: MonomerOrAmbiguousType,
-  ) {
-    this.editor = editor;
+  private readonly monomer: MonomerOrAmbiguousType;
+  constructor(private readonly editor: CoreEditor, ...args: unknown[]) {
+    const [monomer] = args as [MonomerOrAmbiguousType];
     this.monomer = monomer;
     this.history = EditorHistory.getInstance(this.editor);
   }

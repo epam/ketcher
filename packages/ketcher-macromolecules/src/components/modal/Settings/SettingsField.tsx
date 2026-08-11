@@ -49,7 +49,6 @@ export const SettingsField = ({
   } else if (value !== undefined) {
     selectValue = value;
   }
-
   const renderField = () => {
     switch (type) {
       case 'checkbox':

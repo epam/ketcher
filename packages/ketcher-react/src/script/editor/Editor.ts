@@ -85,6 +85,7 @@ import {
   Visel,
   paperPathFromSVGElement,
   fromFragmentDeletion,
+  assert,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -109,7 +110,6 @@ import type {
   ToolEventHandlerName,
 } from './tool/Tool';
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
-import assert from 'assert';
 import { isNumber } from 'lodash';
 import paperjs from 'paper';
 

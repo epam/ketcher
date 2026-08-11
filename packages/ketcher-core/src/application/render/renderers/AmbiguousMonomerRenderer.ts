@@ -10,9 +10,9 @@ import type { UsageInMacromolecule } from 'application/render';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { KetMonomerClass } from 'domain/constants/monomers';
 import {
-  type MonomerHighlightShape,
-  CircleHighlightShape,
-  createDiamondHighlightShape,
+  type HighlightPathData,
+  createCircleHighlightPath,
+  createDiamondHighlightPath,
 } from 'application/render/renderers/monomerHighlightShapes';
 
 type PreviewAttachmentPointParams = {
@@ -80,18 +80,26 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     return this.monomerRenderer.beginningElementPosition;
   }
 
-  public getHighlightShape(): MonomerHighlightShape {
+  public getHighlightPath(offset = 0): HighlightPathData {
     const monomerClass = AmbiguousMonomer.getMonomerClass(
       this.monomer.monomers,
     );
     const { width, height } = this.monomerSize;
     if (monomerClass === KetMonomerClass.Phosphate) {
-      return new CircleHighlightShape(this.center, Math.min(width, height) / 2);
+      return createCircleHighlightPath(
+        this.center,
+        Math.min(width, height) / 2,
+        offset,
+      );
     }
     if (monomerClass === KetMonomerClass.Base) {
-      return createDiamondHighlightShape(this.center, Math.min(width, height));
+      return createDiamondHighlightPath(
+        this.center,
+        Math.min(width, height),
+        offset,
+      );
     }
-    return super.getHighlightShape();
+    return super.getHighlightPath(offset);
   }
 
   private appendNumberOfMonomers() {

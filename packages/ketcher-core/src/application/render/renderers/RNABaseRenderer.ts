@@ -7,8 +7,8 @@ import {
 } from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters/types/ket';
 import {
-  type MonomerHighlightShape,
-  createDiamondHighlightShape,
+  type HighlightPathData,
+  createDiamondHighlightPath,
 } from 'application/render/renderers/monomerHighlightShapes';
 
 const RNABASE_HOVERED_ELEMENT_ID =
@@ -36,9 +36,13 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
     return this.monomer.isModification ? '#fff' : '#333333';
   }
 
-  public getHighlightShape(): MonomerHighlightShape {
+  public getHighlightPath(offset = 0): HighlightPathData {
     const { width, height } = this.monomerSize;
-    return createDiamondHighlightShape(this.center, Math.min(width, height));
+    return createDiamondHighlightPath(
+      this.center,
+      Math.min(width, height),
+      offset,
+    );
   }
 
   protected get modificationConfig() {

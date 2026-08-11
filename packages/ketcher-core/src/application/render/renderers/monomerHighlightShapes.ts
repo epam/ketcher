@@ -1,128 +1,180 @@
 /**
- * Geometry primitives used to describe a monomer's highlight silhouette.
+ * SVG path primitives used to describe a monomer's replacement-highlight
+ * silhouette.
  *
- * Each monomer renderer owns the shape that best matches its body (a rounded
- * square for sugars/peptides/CHEM, a diamond for RNA bases, a circle for
- * phosphates). `ReplacementHighlightView` collects these shapes — plus neck
- * shapes along the bonds — and combines them into a single outline.
- *
- * A shape is expressed as a signed-distance function (negative inside, zero on
- * the boundary) so that an arbitrary set of shapes can be unioned with `min`
- * and traced as one continuous contour, without SVG filters or a polygon-union
- * library.
+ * Each monomer renderer owns the path that best matches its body (a rectangle
+ * for sugars/peptides/CHEM, a diamond for RNA bases, a circle for phosphates).
+ * `ReplacementHighlightView` collects those paths, adds capsule paths for
+ * internal bonds, and combines everything with Paper.js boolean union.
  */
 
 export type Point = { x: number; y: number };
-export type Bounds = { minX: number; minY: number; maxX: number; maxY: number };
+export type HighlightPathData = string;
 
-export interface MonomerHighlightShape {
-  /** Signed distance from `point` to the shape boundary (negative inside). */
-  signedDistance(point: Point): number;
-  /** Axis-aligned bounding box of the shape. */
-  bounds(): Bounds;
-}
+// Radius used only to soften replacement-highlight corners; it is clamped per
+// shape below so tiny monomers cannot produce self-intersecting paths.
+const HIGHLIGHT_CORNER_RADIUS = 6;
 
-/** A rounded rectangle, optionally rotated (a diamond is a 45°-rotated square). */
-export class RoundedRectHighlightShape implements MonomerHighlightShape {
-  constructor(
-    private readonly center: Point,
-    private readonly halfWidth: number,
-    private readonly halfHeight: number,
-    private readonly angle = 0,
-  ) {}
+const formatCoordinate = (value: number): string => {
+  const roundedValue = Number(value.toFixed(2));
 
-  signedDistance(point: Point): number {
-    let dx = point.x - this.center.x;
-    let dy = point.y - this.center.y;
-    if (this.angle !== 0) {
-      const cos = Math.cos(-this.angle);
-      const sin = Math.sin(-this.angle);
-      const rotatedX = dx * cos - dy * sin;
-      const rotatedY = dx * sin + dy * cos;
-      dx = rotatedX;
-      dy = rotatedY;
-    }
-    const qx = Math.abs(dx) - this.halfWidth;
-    const qy = Math.abs(dy) - this.halfHeight;
-    const outside = Math.hypot(Math.max(qx, 0), Math.max(qy, 0));
-    const inside = Math.min(Math.max(qx, qy), 0);
-    return outside + inside;
+  return Object.is(roundedValue, -0) ? '0' : String(roundedValue);
+};
+
+const pointToPath = (point: Point): string =>
+  `${formatCoordinate(point.x)} ${formatCoordinate(point.y)}`;
+
+const getDistance = (from: Point, to: Point): number =>
+  Math.hypot(to.x - from.x, to.y - from.y);
+
+const getPointTowards = (from: Point, to: Point, distance: number): Point => {
+  const fullDistance = getDistance(from, to);
+
+  if (fullDistance === 0) {
+    return from;
   }
 
-  bounds(): Bounds {
-    const cos = Math.abs(Math.cos(this.angle));
-    const sin = Math.abs(Math.sin(this.angle));
-    const extentX = this.halfWidth * cos + this.halfHeight * sin;
-    const extentY = this.halfWidth * sin + this.halfHeight * cos;
-    return {
-      minX: this.center.x - extentX,
-      maxX: this.center.x + extentX,
-      minY: this.center.y - extentY,
-      maxY: this.center.y + extentY,
-    };
+  const ratio = distance / fullDistance;
+
+  return {
+    x: from.x + (to.x - from.x) * ratio,
+    y: from.y + (to.y - from.y) * ratio,
+  };
+};
+
+const createPolygonHighlightPath = (points: Point[]): HighlightPathData =>
+  `${points
+    .map((point, index) => `${index === 0 ? 'M' : 'L'} ${pointToPath(point)}`)
+    .join(' ')} Z`;
+
+const createRoundedPolygonHighlightPath = (
+  points: Point[],
+  cornerRadius: number,
+): HighlightPathData => {
+  if (points.length < 3 || cornerRadius <= 0) {
+    return createPolygonHighlightPath(points);
   }
-}
 
-export class CircleHighlightShape implements MonomerHighlightShape {
-  constructor(
-    private readonly center: Point,
-    private readonly radius: number,
-  ) {}
-
-  signedDistance(point: Point): number {
-    return (
-      Math.hypot(point.x - this.center.x, point.y - this.center.y) - this.radius
+  const roundedCorners = points.map((point, index) => {
+    const previous = points[(index - 1 + points.length) % points.length];
+    const next = points[(index + 1) % points.length];
+    const maxDistance = Math.min(
+      cornerRadius,
+      getDistance(point, previous) / 2,
+      getDistance(point, next) / 2,
     );
-  }
 
-  bounds(): Bounds {
     return {
-      minX: this.center.x - this.radius,
-      maxX: this.center.x + this.radius,
-      minY: this.center.y - this.radius,
-      maxY: this.center.y + this.radius,
+      point,
+      incoming: getPointTowards(point, previous, maxDistance),
+      outgoing: getPointTowards(point, next, maxDistance),
     };
-  }
-}
+  });
+  const [firstCorner, ...restCorners] = roundedCorners;
 
-/** A thick segment (capsule) used to bridge two monomers along a bond. */
-export class SegmentHighlightShape implements MonomerHighlightShape {
-  constructor(
-    private readonly a: Point,
-    private readonly b: Point,
-    private readonly halfWidth: number,
-  ) {}
+  return `M ${pointToPath(firstCorner.outgoing)} ${restCorners
+    .map(
+      ({ point, incoming, outgoing }) =>
+        `L ${pointToPath(incoming)} Q ${pointToPath(point)} ${pointToPath(
+          outgoing,
+        )}`,
+    )
+    .join(' ')} L ${pointToPath(firstCorner.incoming)} Q ${pointToPath(
+    firstCorner.point,
+  )} ${pointToPath(firstCorner.outgoing)} Z`;
+};
 
-  signedDistance(point: Point): number {
-    const pax = point.x - this.a.x;
-    const pay = point.y - this.a.y;
-    const bax = this.b.x - this.a.x;
-    const bay = this.b.y - this.a.y;
-    const lengthSquared = bax * bax + bay * bay || 1;
-    const t = Math.min(1, Math.max(0, (pax * bax + pay * bay) / lengthSquared));
-    const dx = pax - bax * t;
-    const dy = pay - bay * t;
-    return Math.hypot(dx, dy) - this.halfWidth;
-  }
+export const createRectHighlightPath = (
+  center: Point,
+  width: number,
+  height: number,
+  offset = 0,
+): HighlightPathData => {
+  const halfWidth = width / 2 + offset;
+  const halfHeight = height / 2 + offset;
+  const left = center.x - halfWidth;
+  const right = center.x + halfWidth;
+  const top = center.y - halfHeight;
+  const bottom = center.y + halfHeight;
 
-  bounds(): Bounds {
-    return {
-      minX: Math.min(this.a.x, this.b.x) - this.halfWidth,
-      maxX: Math.max(this.a.x, this.b.x) + this.halfWidth,
-      minY: Math.min(this.a.y, this.b.y) - this.halfWidth,
-      maxY: Math.max(this.a.y, this.b.y) + this.halfWidth,
-    };
-  }
-}
+  return createRoundedPolygonHighlightPath(
+    [
+      { x: left, y: top },
+      { x: right, y: top },
+      { x: right, y: bottom },
+      { x: left, y: bottom },
+    ],
+    HIGHLIGHT_CORNER_RADIUS,
+  );
+};
 
-/**
- * Convenience factory for a diamond (RNA base) shape whose bounding box equals
- * `size` × `size`: a square rotated 45° has a half-side of `size / (2 · √2)`.
- */
-export const createDiamondHighlightShape = (
+export const createCircleHighlightPath = (
+  center: Point,
+  radius: number,
+  offset = 0,
+): HighlightPathData => {
+  const inflatedRadius = radius + offset;
+  const left = center.x - inflatedRadius;
+  const right = center.x + inflatedRadius;
+  const radiusPath = formatCoordinate(inflatedRadius);
+
+  return `M ${formatCoordinate(right)} ${formatCoordinate(
+    center.y,
+  )} A ${radiusPath} ${radiusPath} 0 1 0 ${formatCoordinate(
+    left,
+  )} ${formatCoordinate(
+    center.y,
+  )} A ${radiusPath} ${radiusPath} 0 1 0 ${formatCoordinate(
+    right,
+  )} ${formatCoordinate(center.y)} Z`;
+};
+
+export const createDiamondHighlightPath = (
   center: Point,
   size: number,
-): RoundedRectHighlightShape => {
-  const halfSide = size / 2 / Math.SQRT2;
-  return new RoundedRectHighlightShape(center, halfSide, halfSide, Math.PI / 4);
+  offset = 0,
+): HighlightPathData => {
+  // Diamond edges are at 45°, so moving each edge outward by `offset` expands
+  // the axis-aligned half-size by offset · √2.
+  const halfSize = size / 2 + offset * Math.SQRT2;
+  const top = { x: center.x, y: center.y - halfSize };
+  const right = { x: center.x + halfSize, y: center.y };
+  const bottom = { x: center.x, y: center.y + halfSize };
+  const left = { x: center.x - halfSize, y: center.y };
+
+  return createRoundedPolygonHighlightPath(
+    [top, right, bottom, left],
+    HIGHLIGHT_CORNER_RADIUS,
+  );
+};
+
+/** A capsule path used to bridge two monomers along an internal polymer bond. */
+export const createSegmentHighlightPath = (
+  start: Point,
+  end: Point,
+  halfWidth: number,
+): HighlightPathData => {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const length = Math.hypot(dx, dy);
+
+  if (length === 0) {
+    return createCircleHighlightPath(start, halfWidth);
+  }
+
+  const normalX = (-dy / length) * halfWidth;
+  const normalY = (dx / length) * halfWidth;
+  const startTop = { x: start.x + normalX, y: start.y + normalY };
+  const endTop = { x: end.x + normalX, y: end.y + normalY };
+  const endBottom = { x: end.x - normalX, y: end.y - normalY };
+  const startBottom = { x: start.x - normalX, y: start.y - normalY };
+  const radiusPath = formatCoordinate(halfWidth);
+
+  return `M ${pointToPath(startTop)} L ${pointToPath(
+    endTop,
+  )} A ${radiusPath} ${radiusPath} 0 0 1 ${pointToPath(
+    endBottom,
+  )} L ${pointToPath(
+    startBottom,
+  )} A ${radiusPath} ${radiusPath} 0 0 1 ${pointToPath(startTop)} Z`;
 };

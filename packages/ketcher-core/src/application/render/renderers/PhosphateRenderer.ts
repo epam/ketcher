@@ -8,8 +8,8 @@ import {
 import { KetMonomerClass } from 'application/formatters/types/ket';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 import {
-  type MonomerHighlightShape,
-  CircleHighlightShape,
+  type HighlightPathData,
+  createCircleHighlightPath,
 } from 'application/render/renderers/monomerHighlightShapes';
 
 const PHOSPHATE_HOVERED_ELEMENT_ID =
@@ -34,9 +34,13 @@ export class PhosphateRenderer extends BaseMonomerRenderer {
     return theme.monomer.color[RNA_DNA_NON_MODIFIED_PART.PHOSPHATE].regular;
   }
 
-  public getHighlightShape(): MonomerHighlightShape {
+  public getHighlightPath(offset = 0): HighlightPathData {
     const { width, height } = this.monomerSize;
-    return new CircleHighlightShape(this.center, Math.min(width, height) / 2);
+    return createCircleHighlightPath(
+      this.center,
+      Math.min(width, height) / 2,
+      offset,
+    );
   }
 
   public get textColor() {

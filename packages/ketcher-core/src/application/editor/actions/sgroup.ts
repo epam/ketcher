@@ -933,8 +933,7 @@ function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
   const struct = restruct.molecule;
   let bonds = getAtomsBondIds(struct, sourceAtoms);
 
-  if (currSelection.bonds)
-    bonds = uniq(bonds.concat(currSelection.bonds)) as number[];
+  if (currSelection.bonds) bonds = uniq(bonds.concat(currSelection.bonds));
 
   return bonds.reduce<{
     action: Action;

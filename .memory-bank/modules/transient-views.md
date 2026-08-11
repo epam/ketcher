@@ -37,8 +37,8 @@ Because `update()` fully redraws, views hold no state between frames — they re
 
 Drawn on the **top layer** while a library item is dragged over a canvas monomer/preset that would be replaced on drop (see [monomer-drag-and-drop](./monomer-drag-and-drop.md)):
 
-- It renders every monomer that will be replaced as its **real body silhouette** (the shared `<symbol>` body def) plus thick **connectors along the bonds internal to that set** (bonds to unaffected neighbours are left open, so the outline reflects exactly what will be replaced).
-- The combined silhouette is run through an SVG **morphology filter** (dilate-outer minus dilate-inner → a ring, flooded with the accent colour) to produce **one smooth, continuous outline** that hugs each shape and flows across the necks between connected components.
+- It renders every monomer that will be replaced as its **real shape** (rounded square for sugars, diamond for bases, circle for phosphates), inflated by a small gap, joined by thin **necks along the bonds internal to that set** (bonds to unaffected neighbours are left open, so the outline reflects exactly what will be replaced).
+- That union is described as a **signed-distance field** and its zero-level contour is extracted with **marching squares**, producing **one continuous `<path>`** that hugs each shape and flows smoothly across the necks — **no SVG filters**.
 - The drag-drop handler shows/hides it — and dims the affected monomer bodies — as the hover target changes, and clears it on drop, on drag end, and before the "deletion of bonds" confirmation modal.
 
 ## Dependencies

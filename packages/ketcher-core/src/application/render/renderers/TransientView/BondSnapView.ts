@@ -7,9 +7,9 @@ import { TransientView } from './TransientView';
 export class BondSnapView extends TransientView {
   public static readonly viewName = 'BondSnapView';
 
-  public static show<P extends PolymerBond>(
+  public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
-    bond: P,
+    bond: PolymerBond,
   ) {
     const startPositionInPixels = Coordinates.modelToCanvas(bond.startPosition);
     const endPositionInPixels = Coordinates.modelToCanvas(bond.endPosition);

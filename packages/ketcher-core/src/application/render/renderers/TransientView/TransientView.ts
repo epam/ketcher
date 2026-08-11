@@ -5,7 +5,7 @@ export abstract class TransientView {
 
   public static show(
     _transientLayer: D3SvgElementSelection<SVGGElement, void>,
-    _params: never,
+    _params: unknown,
   ) {
     throw new Error('Method is not implemented for an abstract class');
   }

@@ -22,7 +22,7 @@ import Base from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReSimpleObject, type ReStruct } from '../../render';
 import { Scale } from 'domain/helpers';
-import { toFixed } from 'utilities';
+import { getOrThrow, toFixed } from 'utilities';
 
 interface SimpleObjectAddData {
   id?: number;
@@ -94,16 +94,24 @@ export class SimpleObjectDelete extends Base {
 
   execute(restruct: ReStruct): void {
     const struct = restruct.molecule;
-    const item = struct.simpleObjects.get(this.data.id);
+    const item = getOrThrow(
+      struct.simpleObjects,
+      this.data.id,
+      `Simple object with id ${this.data.id} not found`,
+    );
     // save to data current values. In future they could be used in invert for restoring simple object
-    if (item) {
-      this.data.pos = item.pos;
-      this.data.mode = item.mode;
-    }
+    this.data.pos = item.pos;
+    this.data.mode = item.mode;
     this.performed = true;
 
     restruct.markItemRemoved();
-    restruct.clearVisel(restruct.simpleObjects.get(this.data.id)!.visel);
+    restruct.clearVisel(
+      getOrThrow(
+        restruct.simpleObjects,
+        this.data.id,
+        `ReSimpleObject with id ${this.data.id} not found`,
+      ).visel,
+    );
     restruct.simpleObjects.delete(this.data.id);
 
     struct.simpleObjects.delete(this.data.id);
@@ -137,11 +145,17 @@ export class SimpleObjectMove extends Base {
     const struct = restruct.molecule;
     const id = this.data.id;
     const d = this.data.d;
-    const item = struct.simpleObjects.get(id)!;
+    const item = getOrThrow(
+      struct.simpleObjects,
+      id,
+      `Simple object with id ${id} not found`,
+    );
     item.pos.forEach((p) => p.add_(d));
-    restruct.simpleObjects
-      .get(id)!
-      .visel.translate(Scale.modelToCanvas(d, restruct.render.options));
+    getOrThrow(
+      restruct.simpleObjects,
+      id,
+      `ReSimpleObject with id ${id} not found`,
+    ).visel.translate(Scale.modelToCanvas(d, restruct.render.options));
     this.data.d = d.negated();
     if (!this.data.noinvalidate) {
       Base.invalidateItem(restruct, 'simpleObjects', id, 1);
@@ -220,7 +234,11 @@ export class SimpleObjectResize extends Base {
     const id = this.data.id;
     const d = this.data.d;
     const current = this.data.current;
-    const item = struct.simpleObjects.get(id)!;
+    const item = getOrThrow(
+      struct.simpleObjects,
+      id,
+      `Simple object with id ${id} not found`,
+    );
     const anchor = this.data.anchor;
     if (item.mode === SimpleObjectMode.ellipse) {
       if (anchor) {
@@ -264,9 +282,11 @@ export class SimpleObjectResize extends Base {
       handleRectangleChangeWithAnchor(item, anchor, current);
     } else item.pos[1].add_(d);
 
-    restruct.simpleObjects
-      .get(id)!
-      .visel.translate(Scale.modelToCanvas(d, restruct.render.options));
+    getOrThrow(
+      restruct.simpleObjects,
+      id,
+      `ReSimpleObject with id ${id} not found`,
+    ).visel.translate(Scale.modelToCanvas(d, restruct.render.options));
     this.data.d = d.negated();
     if (!this.data.noinvalidate) {
       Base.invalidateItem(restruct, 'simpleObjects', id, 1);

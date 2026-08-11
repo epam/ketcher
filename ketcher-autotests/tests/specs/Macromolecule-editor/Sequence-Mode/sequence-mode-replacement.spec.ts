@@ -851,12 +851,12 @@ for (const replaceMonomer of replaceMonomers) {
         sequence.ReplacementPositions.Center,
       );
       await moveMouseAway(page);
-      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+      // await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Flex,
       );
 
-      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+      // await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(

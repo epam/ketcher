@@ -38,11 +38,7 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
 
   public getHighlightPath(offset = 0): HighlightPathData {
     const { width, height } = this.monomerSize;
-    return createDiamondHighlightPath(
-      this.center,
-      Math.min(width, height),
-      offset,
-    );
+    return createDiamondHighlightPath(this.center, width, height, offset);
   }
 
   protected get modificationConfig() {

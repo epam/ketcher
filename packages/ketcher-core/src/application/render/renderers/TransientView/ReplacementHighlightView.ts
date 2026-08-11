@@ -19,13 +19,13 @@ export type ReplacementHighlightViewParams = {
  * accent so the "will be replaced" highlight reads as part of the same design
  * system.
  */
-const OUTLINE_COLOR = '#0097A8';
+const OUTLINE_COLOR = '#167782';
 /** Thickness (px, canvas space) of the outline stroke. */
-const OUTLINE_THICKNESS = 2;
+const OUTLINE_THICKNESS = 1;
 /** Distance (px, canvas space) the outline sits outside the monomer shapes. */
-const OUTLINE_GAP = 4;
+const OUTLINE_GAP = 6;
 /** Half-width (px, canvas space) of the neck drawn along intra-preset bonds. */
-const NECK_HALF_WIDTH = 4;
+const NECK_HALF_WIDTH = 0.6;
 /**
  * Draws a single smooth path that outlines the whole group of monomers that
  * will be replaced by a drag-drop (a full preset, a subset of it, or one
@@ -128,7 +128,8 @@ export class ReplacementHighlightView extends TransientView {
     transientLayer
       .append('path')
       .attr('d', pathData)
-      .attr('fill', 'none')
+      .attr('fill', '#fff')
+      .attr('opacity', '0.65')
       .attr('stroke', OUTLINE_COLOR)
       .attr('stroke-width', OUTLINE_THICKNESS)
       .attr('stroke-linejoin', 'round')

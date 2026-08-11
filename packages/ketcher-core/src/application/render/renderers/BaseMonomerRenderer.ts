@@ -32,6 +32,12 @@ export const MONOMER_CSS_CLASS = 'monomer';
 /** CSS class applied to the SVG body element when a monomer is a replacement target. */
 export const MONOMER_REPLACEMENT_TARGET_CSS_CLASS =
   'monomer--replacement-target';
+/**
+ * Body opacity applied to a monomer while it is highlighted as a drag
+ * replacement target, so the existing monomer reads as a light "will be
+ * replaced" preview beneath its shape-following highlight ring.
+ */
+const MONOMER_REPLACEMENT_TARGET_BODY_OPACITY = 0.5;
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private readonly editor: CoreEditor;
@@ -41,6 +47,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
+  /** Shape-following ring shown while this monomer is a drag replacement target. */
+  private replacementTargetRing?: D3SvgElementSelection<SVGUseElement, void>;
   public declare bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
   private freeSectorsList: number[] = sectorsList;
 
@@ -355,26 +363,36 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   /**
    * Marks or unmarks this monomer as a replacement target during drag.
    *
-   * When true, the `monomer--replacement-target` CSS class is added to the
-   * body element so the monomer gets the "about to be replaced" visual
-   * treatment. The AP `+` indicator states are mutually exclusive — the caller
-   * (LibraryItemDragDropHandler) runs the replacement check first and skips
-   * the AP proximity check when a replacement target is set.
+   * The highlight follows the monomer's own shape (rounded square for sugars,
+   * diamond for bases, circle for phosphates) by reusing the monomer's
+   * selection-ring symbol, and dims the body so it reads as "about to be
+   * replaced". The AP `+` indicator states are mutually exclusive — the caller
+   * (LibraryItemDragDropHandler) runs the replacement check first and skips the
+   * AP proximity check when a replacement target is set.
    */
   public setReplacementTarget(isTarget: boolean): void {
     this._isReplacementTarget = isTarget;
-    if (this.bodyElement) {
-      if (isTarget) {
-        this.bodyElement
-          .classed(MONOMER_REPLACEMENT_TARGET_CSS_CLASS, true)
-          .attr('filter', 'drop-shadow(0px 0px 3px #0097A8)')
-          .style('outline', '2px solid #0097A8');
-      } else {
-        this.bodyElement
-          .classed(MONOMER_REPLACEMENT_TARGET_CSS_CLASS, false)
-          .attr('filter', null)
-          .style('outline', null);
+
+    if (isTarget) {
+      if (this.rootElement && !this.replacementTargetRing) {
+        this.replacementTargetRing = this.rootElement
+          .append('use')
+          .attr('href', this.monomerHoveredElementId)
+          .attr('pointer-events', 'none')
+          .attr(
+            'class',
+            `dynamic-element ${MONOMER_REPLACEMENT_TARGET_CSS_CLASS}`,
+          );
       }
+      this.bodyElement
+        ?.classed(MONOMER_REPLACEMENT_TARGET_CSS_CLASS, true)
+        .attr('opacity', MONOMER_REPLACEMENT_TARGET_BODY_OPACITY);
+    } else {
+      this.replacementTargetRing?.remove();
+      this.replacementTargetRing = undefined;
+      this.bodyElement
+        ?.classed(MONOMER_REPLACEMENT_TARGET_CSS_CLASS, false)
+        .attr('opacity', null);
     }
   }
 

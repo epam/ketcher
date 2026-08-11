@@ -18,6 +18,7 @@ import { attachmentPointNumberToAngle } from 'domain/helpers/attachmentPointCalc
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { EditorHistory } from 'application/editor/EditorHistory';
+import type { CoreEditor } from 'application/editor/Editor';
 import { isLibraryItemRnaPreset } from 'domain/helpers/monomers';
 import { findPresetMonomerForBonding as findPresetMonomerForBondingHelper } from 'application/editor/tools/bondConnectionHelpers';
 import type { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -55,7 +56,7 @@ export interface LibraryItemDragDropHandlerDeps {
   getCanvasOffset(): DOMRect;
   getKetcherRootRect(): DOMRect | undefined;
   getModeName(): string;
-  getEditor(): object; // CoreEditor — typed as object to avoid circular dep; used only for EditorHistory
+  getEditor(): CoreEditor;
   placeItemOnCanvas(
     item: IRnaPreset | MonomerOrAmbiguousType,
     position: Vec2,
@@ -163,8 +164,7 @@ export class LibraryItemDragDropHandler {
       );
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const history = EditorHistory.getInstance(getEditor() as any);
+    const history = EditorHistory.getInstance(getEditor());
     history.update(command);
     renderersContainer.update(command);
 
@@ -418,8 +418,7 @@ export class LibraryItemDragDropHandler {
       ),
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const history = EditorHistory.getInstance(getEditor() as any);
+    const history = EditorHistory.getInstance(getEditor());
     history.update(modelChanges);
     renderersContainer.update(modelChanges);
     calculateAndStoreNextAutochainPosition(monomersAddResult.lastMonomer);

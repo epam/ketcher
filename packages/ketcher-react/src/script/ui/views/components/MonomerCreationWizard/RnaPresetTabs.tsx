@@ -75,12 +75,16 @@ interface IRnaPresetTabsProps {
 const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
 // Inactive component (its tab is not open): fluorescent-cyan outline (#8851 §2.2.1).
 const INACTIVE_HIGHLIGHT_COLOR = '#00EAFF';
-const RNA_COMPONENT_KEYS = ['base', 'sugar', 'phosphate'] as const;
-const RNA_COMPONENT_HINTS: Record<RnaPresetComponentKey, string> = {
+const RNA_COMPONENT_KEYS = [
+  'base',
+  'sugar',
+  'phosphate',
+] as const satisfies readonly RnaPresetComponentKey[];
+const RNA_COMPONENT_HINTS = {
   base: 'Select all atoms that form the base.',
   sugar: 'Select all atoms that form the sugar.',
   phosphate: 'Select all atoms that form the phosphate.',
-};
+} satisfies Record<RnaPresetComponentKey, string>;
 
 export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const [selectedTab, setSelectedTab] = useState(0);

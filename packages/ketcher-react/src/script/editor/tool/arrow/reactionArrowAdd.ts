@@ -7,9 +7,9 @@ import {
   fromArrowDeletion,
   fromArrowResizing,
   RxnArrowDelete,
+  assert,
 } from 'ketcher-core';
 import type { Editor } from '../../Editor';
-import assert from 'assert';
 import type { ArrowAddTool } from './arrow.types';
 
 interface BaseDragContext {

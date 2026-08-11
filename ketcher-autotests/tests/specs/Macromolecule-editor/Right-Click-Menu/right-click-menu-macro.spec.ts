@@ -23,7 +23,6 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -236,63 +235,55 @@ test(`3. Verify context menu in Snake and Flex modes when right-clicking a bond 
   ).toBe(true);
 });
 
-test.fail(
-  `4. Verify context menu in Snake and Flex modes when right-clicking the canvas (Paste (Copy and Delete disabled))`,
-  async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7391
-     * Test case: Verify context menu in Snake and Flex modes when right-clicking the canvas (Paste (Copy and Delete disabled))
-     *
-     * Case:
-     *      0. Go to Flex mode
-     *      1. Select any bond
-     *      2. Right-click on empty canvas to open context menu
-     *      3. Take menu screenshot to validate options: Delete, Copy and Paste are disabled
-     *      4. Go to Snake mode
-     *      5. Select any bond
-     *      6. Right-click on empty canvas to open context menu
-     *      7. Take menu screenshot to validate options: Delete, Copy and Paste are disabled
-     *
-     * Version 3.6
-     * IMPORTANT: Test fails because of the bug: https://github.com/epam/ketcher/issues/7392
-     */
-    const canvas = page.getByTestId(KETCHER_CANVAS).first();
+test(`4. Verify context menu in Snake and Flex modes when right-clicking the canvas (Paste (Copy and Delete disabled))`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7391
+   * Test case: Verify context menu in Snake and Flex modes when right-clicking the canvas (Paste (Copy and Delete disabled))
+   *
+   * Case:
+   *      0. Go to Flex mode
+   *      1. Select any bond
+   *      2. Right-click on empty canvas to open context menu
+   *      3. Take menu screenshot to validate options: Delete, Copy and Paste are disabled
+   *      4. Go to Snake mode
+   *      5. Select any bond
+   *      6. Right-click on empty canvas to open context menu
+   *      7. Take menu screenshot to validate options: Delete, Copy and Paste are disabled
+   *
+   * Version 3.6
+   */
+  const canvas = page.locator(
+    '[data-testid="ketcher-canvas"][data-canvasmode="macromolecules-mode"]',
+  );
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
-    await ContextMenu(page, canvas).open();
-    await takeElementScreenshot(
-      page,
-      ContextMenu(page, canvas).contextMenuBody,
-    );
-    expect(
-      await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Copy),
-    ).toBe(false);
-    expect(
-      await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Paste),
-    ).toBe(false);
-    expect(
-      await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Delete),
-    ).toBe(false);
+  await ContextMenu(page, canvas).open();
+  await takeElementScreenshot(page, ContextMenu(page, canvas).contextMenuBody);
+  expect(
+    await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Copy),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Paste),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Delete),
+  ).toBe(false);
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
-    await ContextMenu(page, canvas).open();
-    await takeElementScreenshot(
-      page,
-      ContextMenu(page, canvas).contextMenuBody,
-    );
-    expect(
-      await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Copy),
-    ).toBe(false);
-    expect(
-      await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Paste),
-    ).toBe(false);
-    expect(
-      await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Delete),
-    ).toBe(false);
-  },
-);
+  await ContextMenu(page, canvas).open();
+  await takeElementScreenshot(page, ContextMenu(page, canvas).contextMenuBody);
+  expect(
+    await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Copy),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Paste),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Delete),
+  ).toBe(false);
+});
 
 test(`5. Verify context menu in Snake and Flex modes when right-clicking a bond (Delete (Copy and Paste disabled))`, async () => {
   /*
@@ -417,7 +408,9 @@ test(`7. Verify Undo/Redo after using Copy, Paste from right-click menu`, async 
    * Version 3.6
    */
   const peptideA = getMonomerLocator(page, Peptide.A);
-  const canvas = page.getByTestId(KETCHER_CANVAS).first();
+  const canvas = page.locator(
+    '[data-testid="ketcher-canvas"][data-canvasmode="macromolecules-mode"]',
+  );
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(

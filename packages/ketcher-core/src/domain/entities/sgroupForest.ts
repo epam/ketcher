@@ -78,7 +78,9 @@ export class SGroupForest {
         return false;
       }
       const childs = this.children.get(sgid);
-      return childs?.findIndex((childId) => isSubset.get(childId) === true) === -1;
+      return (
+        childs?.findIndex((childId) => isSubset.get(childId) === true) === -1
+      );
     });
 
     const children = Array.from(this.atomSets.keys()).filter((id) => {

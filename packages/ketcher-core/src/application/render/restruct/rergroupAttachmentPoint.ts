@@ -22,6 +22,13 @@ type AttachmentPointShape = {
   node?: SVGElement | null;
 };
 
+type AttachmentPointGeometry = {
+  atomPositionVector: Vec2;
+  shiftedStemStart: Vec2;
+  attachmentPointEnd: Vec2;
+  labelPosition: Vec2;
+};
+
 class ReRGroupAttachmentPoint extends ReObject {
   item: RGroupAttachmentPoint;
   reAtom: ReAtom;
@@ -178,11 +185,16 @@ class ReRGroupAttachmentPoint extends ReObject {
     if (!directionVector) {
       return;
     }
+    const geometry = getAttachmentPointGeometry(
+      this.reAtom,
+      restruct.render.options,
+      directionVector,
+    );
     this.lineDirectionVector = directionVector;
 
     const attachmentPointShape = showAttachmentPointShape(
-      this.reAtom,
       restruct.render,
+      geometry,
       directionVector,
       restruct.addReObjectPath.bind(restruct),
       this.visel,
@@ -194,11 +206,11 @@ class ReRGroupAttachmentPoint extends ReObject {
       // in case of isTrisectionRequired (trisection case) we should show labels '1' and '2' for those separated vectors
       const labelText = this.item.type === 'primary' ? '1' : '2';
       showAttachmentPointLabel(
-        this.reAtom,
         restruct.render,
-        directionVector,
+        geometry,
         restruct.addReObjectPath.bind(restruct),
         labelText,
+        this.reAtom.color,
         this.visel,
       );
     }
@@ -320,26 +332,16 @@ class ReRGroupAttachmentPoint extends ReObject {
 }
 
 function showAttachmentPointShape(
-  atom: ReAtom,
   { options, paper }: Render,
+  geometry: AttachmentPointGeometry,
   directionVector: Vec2,
   addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath'],
   visel: Visel,
 ): AttachmentPointShape {
-  const atomPositionVector = Scale.modelToCanvas(atom.a.pp, options);
-  const shiftedAtomPositionVector = atom.getShiftedSegmentPosition(
-    options,
-    directionVector,
-  );
-  const attachmentPointEnd = atomPositionVector.addScaled(
-    directionVector,
-    options.microModeScale * 0.85,
-  );
-
   const resultShape = draw.rgroupAttachmentPoint(
     paper,
-    shiftedAtomPositionVector,
-    attachmentPointEnd,
+    geometry.shiftedStemStart,
+    geometry.attachmentPointEnd,
     directionVector,
     options,
   );
@@ -348,7 +350,7 @@ function showAttachmentPointShape(
     LayerMap.indices,
     visel,
     resultShape,
-    atomPositionVector,
+    geometry.atomPositionVector,
     true,
   );
 
@@ -408,38 +410,66 @@ function getAttachmentDirectionForOnlyOneBond(
 }
 
 function showAttachmentPointLabel(
-  atom: ReAtom,
   { options, paper }: Render,
-  directionVector: Vec2,
+  geometry: AttachmentPointGeometry,
   addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath'],
   labelText: string,
+  atomColor: string,
   visel: Visel,
 ): void {
-  const atomPositionVector = Scale.modelToCanvas(atom.a.pp, options);
-  const labelPosition = getLabelPositionForAttachmentPoint(
-    atomPositionVector,
-    directionVector,
-    options.microModeScale,
-  );
   const labelPath = draw.rgroupAttachmentPointLabel(
     paper,
-    labelPosition,
+    geometry.labelPosition,
     labelText,
     options,
-    atom.color,
+    atomColor,
   );
-  addReObjectPath(LayerMap.indices, visel, labelPath, atomPositionVector, true);
+  addReObjectPath(
+    LayerMap.indices,
+    visel,
+    labelPath,
+    geometry.atomPositionVector,
+    true,
+  );
 }
 
 function getLabelPositionForAttachmentPoint(
-  atomPositionVector: Vec2,
+  shiftedStemStart: Vec2,
   directionVector: Vec2,
   shapeHeight: number,
 ): Vec2 {
   const normal = directionVector.rotateSC(1, 0);
-  return atomPositionVector
+  return shiftedStemStart
     .addScaled(normal, 0.17 * shapeHeight)
     .addScaled(directionVector, shapeHeight * 0.7);
+}
+
+function getAttachmentPointGeometry(
+  atom: ReAtom,
+  options: RenderOptions,
+  directionVector: Vec2,
+): AttachmentPointGeometry {
+  const atomPositionVector = Scale.modelToCanvas(atom.a.pp, options);
+  const shiftedStemStart = atom.getShiftedSegmentPosition(
+    options,
+    directionVector,
+  );
+  const attachmentPointEnd = shiftedStemStart.addScaled(
+    directionVector,
+    options.microModeScale * 0.85,
+  );
+  const labelPosition = getLabelPositionForAttachmentPoint(
+    shiftedStemStart,
+    directionVector,
+    options.microModeScale,
+  );
+
+  return {
+    atomPositionVector,
+    shiftedStemStart,
+    attachmentPointEnd,
+    labelPosition,
+  };
 }
 
 export { ReRGroupAttachmentPoint };

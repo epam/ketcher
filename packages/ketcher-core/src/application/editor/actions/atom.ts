@@ -43,16 +43,19 @@ export function fromAtomAddition(
   pos: Point | null,
   atom?: Partial<AtomAttributes>,
 ) {
+  assert(pos !== null, 'Atom position is required to add an atom');
   atom = { ...(atom || {}) };
   const action = new Action();
-  atom.fragment = (
-    action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd
-  ).frid as number;
+  const fragmentAddOperation = new FragmentAdd();
+  action.addOp(fragmentAddOperation.perform(restruct));
+  assert(fragmentAddOperation.frid !== null, 'Fragment id is required');
+  atom.fragment = fragmentAddOperation.frid;
 
-  const aid = (
-    action.addOp(new AtomAdd(atom, pos as Point).perform(restruct)) as AtomAdd
-  ).data.aid;
-  action.addOp(new CalcImplicitH([aid as number]).perform(restruct));
+  const atomAddOperation = new AtomAdd(atom, pos);
+  action.addOp(atomAddOperation.perform(restruct));
+  const { aid } = atomAddOperation.data;
+  assert(typeof aid === 'number', 'Added atom id is required');
+  action.addOp(new CalcImplicitH([aid]).perform(restruct));
 
   return action;
 }
@@ -66,16 +69,17 @@ export function fromAtomsAttrs(
   const action = new Action();
   const aids = Array.isArray(ids) ? ids : [ids];
   const atomAttrs = attrs ?? {};
+  const atomAttrKeys = Object.keys(Atom.attrlist) as Array<
+    keyof typeof Atom.attrlist
+  >;
 
   aids.forEach((atomId) => {
-    Object.keys(Atom.attrlist).forEach((key) => {
+    atomAttrKeys.forEach((key) => {
       if (key === 'attachmentPoints' && !(key in atomAttrs)) return;
       if (!(key in atomAttrs) && !reset) return;
 
       const value =
-        key in atomAttrs
-          ? atomAttrs[key as keyof AtomAttributes]
-          : Atom.attrGetDefault(key);
+        key in atomAttrs ? atomAttrs[key] : Atom.attrGetDefault(key);
 
       switch (key) {
         case 'stereoLabel':
@@ -135,7 +139,7 @@ export function fromAtomsFragmentAttr(
 
   aids.forEach((aid) => {
     const atom = restruct.molecule.atoms.get(aid);
-    assert(atom != null);
+    assert(atom !== null && atom !== undefined, `Atom ${aid} was not found`);
     const sgroup = restruct.molecule.getGroupFromAtomId(aid);
     const oldfrid = atom.fragment;
 
@@ -160,10 +164,11 @@ export function mergeFragmentsIfNeeded(
   srcId: number,
   dstId: number,
 ) {
-  const frid = atomGetAttr(restruct, srcId, 'fragment') as number;
+  const frid = atomGetAttr(restruct, srcId, 'fragment');
   const frid2 = atomGetAttr(restruct, dstId, 'fragment');
+  assert(typeof frid === 'number', `Fragment for atom ${srcId} was not found`);
 
-  if (frid2 !== frid && typeof frid === 'number' && typeof frid2 === 'number') {
+  if (frid2 !== frid && typeof frid2 === 'number') {
     const struct = restruct.molecule;
 
     const rgid = RGroup.findRGroupByFragment(struct.rgroups, frid2);
@@ -205,12 +210,8 @@ export function mergeSgroups(
     const sgroup = restruct.molecule.sgroups.get(sid);
     assert(sgroup != null);
     const notExpandedContexts = ['Atom', 'Bond', 'Group'];
-    const context = sgroup.data.context;
-    if (
-      sgroup.type === 'DAT' &&
-      typeof context === 'string' &&
-      notExpandedContexts.includes(context)
-    ) {
+    const context = sgroup.data.context ?? 'Fragment';
+    if (sgroup.type === 'DAT' && notExpandedContexts.includes(context)) {
       return;
     }
     const atomsToSgroup = without(

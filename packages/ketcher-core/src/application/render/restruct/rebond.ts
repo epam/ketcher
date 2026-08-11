@@ -33,6 +33,7 @@ import util from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type {
   RelativeBox,
+  RenderPath,
   RenderOptions,
   RenderOptionStyles,
 } from '../render.types';
@@ -45,18 +46,16 @@ type FragmentSelectionPreviewOptions = {
   disabled?: boolean;
 };
 
-// A bond's rendered path is a single Element for most bond types, or a
-// RaphaelSet (paper.set([...])) for aromatic bonds.
-type BondPath = Element | RaphaelSet;
-
 class ReBond extends ReObject {
   b: Bond;
   doubleBondShift: number;
-  path: BondPath;
+  // A bond's rendered path is a single Element for most bond types, or a
+  // RaphaelSet (paper.set([...])) for aromatic bonds.
+  path: RenderPath;
   neihbid1 = -1;
   neihbid2 = -1;
   boldStereo?: boolean;
-  rbb?: { x: number; y: number; width: number; height: number };
+  rbb?: RelativeBox;
   cip?: {
     // Raphael paths
     path: RaphaelSet;
@@ -788,8 +787,8 @@ function getBondPath(
   hb1: HalfBond,
   hb2: HalfBond,
   isSnapping: boolean,
-): BondPath | null {
-  let path: BondPath | null = null;
+): RenderPath | null {
+  let path: RenderPath | null = null;
   const render = restruct.render;
   const struct = restruct.molecule;
   const shiftA = !restruct.atoms.get(hb1.begin)?.showLabel;
@@ -1061,7 +1060,7 @@ function getStereoBondColor(
     return defaultColor;
   }
 
-  return getColorFromStereoLabel(options, stereoLabel);
+  return getColorFromStereoLabel(options, stereoLabel) ?? defaultColor;
 }
 
 function getBondSingleStereoBoldPath(

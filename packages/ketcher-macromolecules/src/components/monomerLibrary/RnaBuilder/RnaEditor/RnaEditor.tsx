@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { RnaEditorCollapsed } from './RnaEditorCollapsed';
 import { RnaEditorExpanded } from './RnaEditorExpanded';
 import { ExpandIcon, RnaEditorContainer, StyledHeader } from './styles';

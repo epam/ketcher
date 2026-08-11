@@ -26,16 +26,16 @@ import { OperationType } from '../../OperationType';
 // todo: separate classes: now here is circular dependency in `invert` method
 
 type Data = {
-  plid: any;
-  pos: any;
+  plid: number | null;
+  pos: Vec2 | null;
 };
 
-class RxnPlusAdd extends BaseOperation {
+class RxnPlusAdd extends BaseOperation<Data> {
   data: Data;
 
-  constructor(pos?: any) {
+  constructor(pos?: Vec2) {
     super(OperationType.RXN_PLUS_ADD);
-    this.data = { plid: null, pos };
+    this.data = { plid: null, pos: pos ?? null };
   }
 
   execute(restruct: ReStruct) {
@@ -48,19 +48,20 @@ class RxnPlusAdd extends BaseOperation {
       this.data.plid = struct.rxnPluses.add(newRxn);
     }
 
-    const { pos, plid } = this.data;
+    const { pos } = this.data;
+    const plid = this.data.plid as number;
 
     const structRxn = struct.rxnPluses.get(plid);
     if (!structRxn) return;
     // notifyRxnPlusAdded
     restruct.rxnPluses.set(plid, new ReRxnPlus(structRxn));
 
-    struct.rxnPlusSetPos(plid, new Vec2(pos));
+    struct.rxnPlusSetPos(plid, pos ? new Vec2(pos) : new Vec2());
 
     BaseOperation.invalidateItem(restruct, 'rxnPluses', plid, 1);
   }
 
-  invert() {
+  invert(): RxnPlusDelete {
     const inverted = new RxnPlusDelete();
     inverted.data = this.data;
     return inverted;
@@ -70,13 +71,14 @@ class RxnPlusAdd extends BaseOperation {
 class RxnPlusDelete extends BaseOperation {
   data: Data;
 
-  constructor(plid?: any) {
+  constructor(plid?: number) {
     super(OperationType.RXN_PLUS_DELETE);
-    this.data = { plid, pos: null };
+    this.data = { plid: plid ?? null, pos: null };
   }
 
   execute(restruct: ReStruct) {
     const { plid } = this.data;
+    if (plid === null) return;
 
     const struct = restruct.molecule;
     if (!this.data.pos) {

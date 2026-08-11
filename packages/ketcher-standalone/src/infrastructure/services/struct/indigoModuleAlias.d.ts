@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,27 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { ChemicalMimeType } from 'domain/services';
-import type { StructServiceOptions } from 'domain/services/struct/structService.types';
-
-export class SupportedFormatProperties {
-  name: string;
-  mime: ChemicalMimeType;
-  extensions: string[];
-  supportsCoords?: boolean;
-  options?: StructServiceOptions;
-
-  constructor(
-    name: string,
-    mime: ChemicalMimeType,
-    extensions: string[],
-    supportsCoords?: boolean,
-    options?: StructServiceOptions,
-  ) {
-    this.name = name;
-    this.mime = mime;
-    this.extensions = extensions;
-    this.supportsCoords = supportsCoords || false;
-    this.options = options || {};
-  }
+/**
+ * This module alias is resolved by Rollup at build time via the `@rollup/plugin-alias`
+ * configuration in `rollup.config.mjs`. The alias `_indigo-ketcher-import-alias_` is
+ * replaced with the actual Indigo WASM module path during the build.
+ */
+declare module '_indigo-ketcher-import-alias_' {
+  import { IndigoModule } from './indigoWorker.types';
+  const indigoModuleFn: (options?: object) => Promise<IndigoModule>;
+  export default indigoModuleFn;
 }

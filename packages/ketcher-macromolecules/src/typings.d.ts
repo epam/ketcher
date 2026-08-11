@@ -56,6 +56,10 @@ interface Document {
 
 interface Window {
   isPolymerEditorTurnedOn: boolean;
+  ketcher?: {
+    settingsService?: import('ketcher-core').ISettingsService;
+  };
+  _ketcher_isChainLengthRulerDisabled?: boolean;
 }
 
 interface HTMLElement {

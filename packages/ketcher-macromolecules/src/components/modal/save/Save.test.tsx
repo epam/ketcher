@@ -17,7 +17,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Save } from 'components/modal/save';
 import userEvent from '@testing-library/user-event';
-import { Struct } from 'ketcher-core';
+import { type CoreEditor, Struct } from 'ketcher-core';
 import * as ketcherCore from 'ketcher-core';
 
 const mockOnClose = jest.fn();
@@ -52,8 +52,7 @@ describe('Save modal', () => {
         viewModel: {
           initialize: jest.fn(),
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any;
+      } as unknown as CoreEditor;
     });
     const view = render(withThemeAndStoreProvider(<Save {...mockProps} />));
 

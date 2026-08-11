@@ -46,7 +46,7 @@ interface SGroupdrawBracketsOptions {
   direction: Vec2;
   lowerIndexText?: string | null;
   upperIndexText?: string | null;
-  indexAttribute?: object;
+  indexAttribute?: Record<string, string>;
   superatomClass?: SUPERATOM_CLASS;
 }
 

@@ -22,6 +22,7 @@ import {
   fromSimpleObjectDeletion,
   fromSimpleObjectResizing,
   CoordinateTransformation,
+  SimpleObjectDelete,
 } from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
@@ -94,6 +95,11 @@ class SimpleObjectTool implements Tool {
           );
           // TODO: need to rework  actions/operations logic
           const addOperation = action.operations[0];
+          if (!(addOperation instanceof SimpleObjectDelete)) {
+            throw new Error(
+              'Expected SimpleObjectDelete as the first operation of fromSimpleObjectAddition',
+            );
+          }
           this.dragCtx.itemId = addOperation.data.id;
           this.dragCtx.action = action;
           this.editor.update(this.dragCtx.action, true);

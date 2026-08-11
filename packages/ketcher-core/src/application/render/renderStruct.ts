@@ -73,7 +73,12 @@ export class RenderStruct {
     options: RenderStructOptions = {},
   ) {
     if (wrapperElement && struct) {
-      const { cachePrefix = '', needCache = true, wrapperDimensions } = options;
+      const {
+        cachePrefix = '',
+        needCache = true,
+        wrapperDimensions,
+        ...renderOptions
+      } = options;
       const cacheKey = `${cachePrefix}${struct.name}`;
 
       if (!isEqual(previousOptions, options)) {
@@ -123,9 +128,9 @@ export class RenderStruct {
             wrapperElementBoundingRect.height,
           )
         : undefined;
-      const extendedOptions = {
+      const extendedOptions: Partial<RenderOptions> = {
         autoScale: true,
-        ...options,
+        ...renderOptions,
       };
 
       if (window.isPolymerEditorTurnedOn) {
@@ -135,7 +140,7 @@ export class RenderStruct {
         extendedOptions.height = svgSize;
       }
 
-      const rnd = new Render(wrapperElement, extendedOptions as RenderOptions);
+      const rnd = new Render(wrapperElement, extendedOptions);
 
       if (!window.isPolymerEditorTurnedOn) {
         preparedStruct.rescale();

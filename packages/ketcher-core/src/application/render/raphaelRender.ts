@@ -91,7 +91,7 @@ export class Render {
   public options: RenderOptions;
   public combinedHover: Visel | null = null;
   public viewBox!: ViewBox;
-  private readonly userOpts: RenderOptions;
+  private readonly userOpts: Partial<RenderOptions>;
   private oldCb: Box2Abs | null = null;
   private scrollbar: ScrollbarContainer;
   private resizeObserver: ResizeObserver | null = null;
@@ -99,7 +99,7 @@ export class Render {
 
   constructor(
     clientArea: HTMLElement,
-    options: RenderOptions,
+    options: Partial<RenderOptions>,
     currentRender?: Render,
     reuseRestructIfExist?: boolean,
   ) {

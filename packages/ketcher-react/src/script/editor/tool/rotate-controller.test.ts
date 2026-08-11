@@ -142,9 +142,9 @@ describe('Rotate controller', () => {
    * Drag handle by right mouse button
    */
   it('can be only dragged by left mouse button', () => {
-    const controller = new RotateController(
-      { selection: () => null } as unknown as Editor,
-    );
+    const controller = new RotateController({
+      selection: () => null,
+    } as unknown as Editor);
     const changeCrossColor = jest.fn();
     asPrivate(controller).cross = {
       attr: changeCrossColor,
@@ -164,9 +164,9 @@ describe('Rotate controller', () => {
    * then rotate it by the handle, see if center position is correct
    */
   test('center changes with `scale` and `offset`', () => {
-    const controller = new RotateController(
-      { selection: () => null } as unknown as Editor,
-    );
+    const controller = new RotateController({
+      selection: () => null,
+    } as unknown as Editor);
     asPrivate(controller).originalCenter = new Vec2(1, 1);
     asPrivate(controller).editor.render = {
       options: {
@@ -193,9 +193,9 @@ describe('Rotate controller', () => {
       translate: jest.fn(),
     };
 
-    const controller = new RotateController(
-      { selection: () => null } as unknown as Editor,
-    );
+    const controller = new RotateController({
+      selection: () => null,
+    } as unknown as Editor);
     asPrivate(controller).originalCenter = new Vec2(1, 1);
     asPrivate(controller).editor.render = {
       paper: {
@@ -288,7 +288,9 @@ describe('Rotate controller', () => {
       {},
     );
     editor.render.ctab.molecule.getSelectedVisibleAtoms = () => [];
-    (editor.rotateController as unknown as PrivateRotateController).rotateTool.dragCtx = {
+    (
+      editor.rotateController as unknown as PrivateRotateController
+    ).rotateTool.dragCtx = {
       action: { operations: [], perform: () => undefined },
     };
     editor.rotateController.isRotating = true;

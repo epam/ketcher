@@ -44,7 +44,6 @@ import { assert, toFixed } from 'utilities';
 import type {
   RelativeBox,
   RenderPath,
-  RenderPath,
   RenderOptions,
   RenderOptionStyles,
 } from 'application/render/render.types';
@@ -60,13 +59,11 @@ import { ShowHydrogenLabels } from './showHydrogenLabels';
 interface ElemAttr {
   text: string;
   path: RenderPath;
-  path: RenderPath;
   rbb: RelativeBox;
   background?: Element;
 }
 
 const StereoLabelMinOpacity = 0.3;
-const DEFAULT_ATOM_COLOR = '#000';
 const DEFAULT_ATOM_COLOR = '#000';
 const DEFAULT_STEREO_COLOR = '#000';
 const MAX_LABEL_LENGTH = 8;
@@ -387,7 +384,6 @@ class ReAtom extends ReObject {
   ) {
     const invisibleAtomTarget = this.getSelectionContour(render).attr({
       opacity: 0,
-      fill: DEFAULT_ATOM_COLOR,
       fill: DEFAULT_ATOM_COLOR,
       stroke: 'none',
       'stroke-width': 0,
@@ -721,6 +717,7 @@ class ReAtom extends ReObject {
         pathAndRBoxTranslate(
           index.path,
           index.rbb,
+
           -0.5 * label.rbb.width - 0.5 * index.rbb.width - delta,
           0.3 * label.rbb.height,
         );
@@ -1092,9 +1089,6 @@ class ReAtom extends ReObject {
         font: options.font,
         'font-size': options.fontszsubInPx,
         fill:
-          options.atomColoring && elem
-            ? ElementColor[this.a.label]
-            : DEFAULT_ATOM_COLOR,
           options.atomColoring && elem
             ? ElementColor[this.a.label]
             : DEFAULT_ATOM_COLOR,
@@ -1564,7 +1558,7 @@ function getVisibleNeighborHalfBondIds(struct: Struct, atom: ReAtom): number[] {
 function getOnlyQueryAttributesCustomQuery(atom: Atom) {
   const queryText =
     atom.queryProperties.customQuery ?? getAtomCustomQuery(atom, true);
-    atom.queryProperties.customQuery ?? getAtomCustomQuery(atom, true);
+  atom.queryProperties.customQuery ?? getAtomCustomQuery(atom, true);
   return queryText;
 }
 
@@ -2426,7 +2420,6 @@ function getQueryAttrsText(atom: ReAtom): string {
 }
 
 function pathAndRBoxTranslate(
-  path: RenderPath,
   path: RenderPath,
   rbb: RelativeBox,
   x: number,

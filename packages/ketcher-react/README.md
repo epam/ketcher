@@ -60,7 +60,7 @@ http://localhost:3000/?api_path={link to Indigo service}
 ```
 
 You can find the instruction for service installation
-[here](http://lifescience.opensource.epam.com/indigo/service/index.html).
+[here](https://lifescience.opensource.epam.com/indigo/service/index.html).
 
 ### 3D Viewer
 

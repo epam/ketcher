@@ -308,8 +308,8 @@ class Editor implements KetcherEditor {
     );
 
     this.ketcherId = ketcherId;
-    this._selection = null; // eslint-disable-line
-    this._tool = null; // eslint-disable-line
+    this._selection = null;
+    this._tool = null;
     this.historyStack = [];
     this.historyPtr = 0;
     this.errorHandler = null;

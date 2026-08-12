@@ -134,9 +134,17 @@ export default [
     },
   },
   {
-    files: ['ketcher-autotests/**/*.{ts,tsx}'],
+    files: ['ketcher-autotests/**/*.{ts,tsx,js,jsx}'],
     rules: {
       'no-unused-vars': 'off',
+      'react-hooks/rules-of-hooks': 'off',
+      'react-hooks/exhaustive-deps': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/static-components': 'off',
+      'react-hooks/use-memo': 'off',
+      'react-hooks/immutability': 'off',
+      'react-hooks/preserve-manual-memoization': 'off',
+      'react-hooks/refs': 'off',
     },
   },
   {
@@ -169,6 +177,8 @@ export default [
       'react-hooks/immutability': 'error',
       'react-hooks/preserve-manual-memoization': 'error',
       'react-hooks/refs': 'error',
+      'react-you-might-not-need-an-effect/no-chain-state-updates': 'error',
+      'react-you-might-not-need-an-effect/no-event-handler': 'error',
     },
   },
   {

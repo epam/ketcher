@@ -1,5 +1,4 @@
 /* eslint-disable no-empty-pattern */
-/* eslint-disable react-hooks/rules-of-hooks */
 import { Page } from '@playwright/test';
 import { test as base } from './coreFixtures';
 import { clearLocalStorage } from '@utils/common/helpers';

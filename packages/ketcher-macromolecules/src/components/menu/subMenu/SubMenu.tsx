@@ -103,10 +103,10 @@ const SubMenu = ({
 
       if (subMenuId === SELECT_SUBMENU_ID) {
         const toolType = itemId.replace('select-', '');
-        SettingsManager.selectionTool = {
+        SettingsManager.setSelectionTool('macro', {
           tool: 'select',
           opts: toolType,
-        };
+        });
       }
     }
   };

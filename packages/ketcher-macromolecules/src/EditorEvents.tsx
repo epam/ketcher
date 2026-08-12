@@ -147,7 +147,7 @@ export const EditorEvents = () => {
       editor.events.selectTool.add(selectToolHandler);
 
       // Initialize with saved selection tool or default to rectangle
-      const savedSelectionTool = SettingsManager.selectionTool;
+      const savedSelectionTool = SettingsManager.getSelectionTool('macro');
       const initialTool = savedSelectionTool?.opts
         ? `select-${savedSelectionTool.opts}`
         : 'select-rectangle';

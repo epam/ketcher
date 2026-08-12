@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Vec2 } from './vec2';
-import assert from 'assert';
+import { assert } from 'utilities';
 
 export class Box2Abs {
   readonly p0: Vec2;

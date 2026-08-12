@@ -13,6 +13,66 @@ import {
 import type { Selection } from '../../../../editor/Editor';
 import { onlyHasProperty } from './utils';
 
+/**
+ * Count how many MonomerMicromolecule SGroups on the canvas share the same
+ * monomer label as the given primary functional group.
+ */
+function computeTotalMonomerCount(
+  editor: Editor,
+  primaryFunctionalGroup: FunctionalGroup | undefined,
+): number {
+  if (!primaryFunctionalGroup) return 0;
+  const primarySGroup = primaryFunctionalGroup.relatedSGroup;
+  if (!(primarySGroup instanceof MonomerMicromolecule)) return 0;
+
+  const targetLabel = primarySGroup.monomer.monomerItem.label;
+  let count = 0;
+  editor.struct().sgroups.forEach((sg) => {
+    if (
+      sg instanceof MonomerMicromolecule &&
+      sg.monomer.monomerItem.label === targetLabel
+    ) {
+      count++;
+    }
+  });
+  return count;
+}
+
+/**
+ * Returns true when the selection contains atoms or bonds that do NOT belong
+ * to any monomer functional group (i.e. plain chemical structure elements).
+ */
+function computeHasNonMonomerStructure(
+  editor: Editor,
+  selectedFunctionalGroups: Map<number, FunctionalGroup>,
+): boolean {
+  const struct = editor.struct();
+  // Collect all atom IDs that belong to monomer SGroups in the selection
+  const monomerAtomIds = new Set<number>();
+  selectedFunctionalGroups.forEach((fg) => {
+    if (fg.relatedSGroup instanceof MonomerMicromolecule) {
+      fg.relatedSGroup.atoms.forEach((atomId) => monomerAtomIds.add(atomId));
+    }
+  });
+
+  // Check if the current selection has any atoms not covered by monomer SGroups
+  const selection = editor.selection();
+  if (selection?.atoms?.some((atomId) => !monomerAtomIds.has(atomId))) {
+    return true;
+  }
+
+  // Check if the current selection has any bonds whose endpoints are not all in monomer atoms
+  if (selection?.bonds?.length) {
+    return selection.bonds.some((bondId) => {
+      const bond = struct.bonds.get(bondId);
+      if (!bond) return false;
+      return !monomerAtomIds.has(bond.begin) || !monomerAtomIds.has(bond.end);
+    });
+  }
+
+  return false;
+}
+
 export const getIsItemInSelection = ({
   item,
   selection,
@@ -70,6 +130,8 @@ export function getMenuPropsForClosestItem(
         return {
           id: CONTEXT_MENU_ID.FOR_MACROMOLECULE + ketcherId,
           functionalGroups: [functionalGroup],
+          totalMonomerCount: computeTotalMonomerCount(editor, functionalGroup),
+          hasNonMonomerStructure: false,
         };
       } else {
         return {
@@ -101,6 +163,8 @@ export function getMenuPropsForClosestItem(
         return {
           id: CONTEXT_MENU_ID.FOR_MACROMOLECULE + ketcherId,
           functionalGroups: [functionalGroup],
+          totalMonomerCount: computeTotalMonomerCount(editor, functionalGroup),
+          hasNonMonomerStructure: false,
         };
       } else {
         return {
@@ -126,6 +190,15 @@ export function getMenuPropsForClosestItem(
                 ? CONTEXT_MENU_ID.FOR_MACROMOLECULE + ketcherId
                 : CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS + ketcherId,
             functionalGroups: [functionalGroup],
+            ...(sGroup instanceof MonomerMicromolecule
+              ? {
+                  totalMonomerCount: computeTotalMonomerCount(
+                    editor,
+                    functionalGroup,
+                  ),
+                  hasNonMonomerStructure: false,
+                }
+              : {}),
           }
         : null;
     }
@@ -163,6 +236,7 @@ export function getMenuPropsForSelection(
   selection: Selection | null,
   selectedFunctionalGroups: Map<number, FunctionalGroup>,
   ketcherId: string,
+  editor?: Editor,
 ): ContextMenuProps | null {
   if (!selection) {
     return null;
@@ -177,9 +251,18 @@ export function getMenuPropsForSelection(
         (fg) => fg.relatedSGroup instanceof MonomerMicromolecule,
       )
     ) {
+      const primaryMonomerFG = functionalGroups.find(
+        (fg) => fg.relatedSGroup instanceof MonomerMicromolecule,
+      );
       return {
         id: CONTEXT_MENU_ID.FOR_MACROMOLECULE + ketcherId,
         functionalGroups,
+        totalMonomerCount: editor
+          ? computeTotalMonomerCount(editor, primaryMonomerFG)
+          : undefined,
+        hasNonMonomerStructure: editor
+          ? computeHasNonMonomerStructure(editor, selectedFunctionalGroups)
+          : undefined,
       };
     }
 

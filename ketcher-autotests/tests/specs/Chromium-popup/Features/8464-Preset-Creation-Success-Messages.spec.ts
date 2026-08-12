@@ -21,7 +21,7 @@ import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/C
 import { NucleotidePresetTab } from '@tests/pages/molecules/canvas/createMonomer/constants/nucleiotidePresetSection/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MicroAtomOption } from '@tests/pages/constants/contextMenu/Constants';
-import { NotificationBanner } from '@tests/pages/molecules/canvas/NotificationBanner';
+import { NotificationBannerOnMicro } from '@tests/pages/molecules/canvas/NotificationBannerOnMicro';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -89,7 +89,7 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
 
     await dialog.submit();
 
-    const notificationText = await NotificationBanner(
+    const notificationText = await NotificationBannerOnMicro(
       page,
     ).getNotificationText();
     expect(notificationText).toContain(
@@ -152,7 +152,7 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
 
     await dialog.submit();
 
-    const notificationText = await NotificationBanner(
+    const notificationText = await NotificationBannerOnMicro(
       page,
     ).getNotificationText();
     expect(notificationText).toContain(
@@ -209,7 +209,7 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await dialog.discard();
 
     // Verify no notification banner appears
-    await expect(NotificationBanner(page).message).not.toBeVisible();
+    await expect(NotificationBannerOnMicro(page).message).not.toBeVisible();
 
     // Verify the preset was not created by switching to macro mode and checking library
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -296,7 +296,7 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await expect(dialog.window).toBeVisible();
 
     // No success message should appear
-    await expect(NotificationBanner(page).message).not.toBeVisible();
+    await expect(NotificationBannerOnMicro(page).message).not.toBeVisible();
 
     // Fix the validation error
     await presetSection.openTab(NucleotidePresetTab.Preset);
@@ -306,7 +306,7 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await dialog.submit();
 
     // Verify success message appears
-    const notificationText = await NotificationBanner(
+    const notificationText = await NotificationBannerOnMicro(
       page,
     ).getNotificationText();
     expect(notificationText).toContain(
@@ -347,7 +347,7 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
 
     await dialog.submit();
 
-    const notificationText = await NotificationBanner(
+    const notificationText = await NotificationBannerOnMicro(
       page,
     ).getNotificationText();
     expect(notificationText).toContain(
@@ -400,7 +400,7 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
 
     await dialog.submit();
 
-    const notificationBanner = NotificationBanner(page);
+    const notificationBanner = NotificationBannerOnMicro(page);
 
     // Wait for notification to appear and verify the expected success message
     await notificationBanner.waitForBecomeVisible();

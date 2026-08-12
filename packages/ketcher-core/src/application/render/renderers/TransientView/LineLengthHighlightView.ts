@@ -5,8 +5,6 @@ export type LineLengthHighlightViewParams = {
   currentPosition: number;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 export class LineLengthHighlightView extends TransientView {
   public static readonly viewName = 'LineLengthHighlightView';
 

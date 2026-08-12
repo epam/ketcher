@@ -49,7 +49,7 @@ import {
   SGroupAttachmentPointRemove,
 } from 'application/editor/operations/sgroup/sgroupAttachmentPoints';
 import type Restruct from 'application/render/restruct/restruct';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';

@@ -63,7 +63,7 @@ test.describe('Sequence mode selection for view mode', () => {
       .click();
     await getSymbolLocator(page, {
       symbolAlias: 'G',
-      nodeIndexOverall: 21,
+      nodeIndexOverall: 18,
     }).click();
     await page.keyboard.up('Shift');
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -107,11 +107,11 @@ test.describe('Sequence mode selection for edit mode', () => {
   test('Select letters with LClick+drag', async ({ page }) => {
     const fromSymbol = getSymbolLocator(page, {
       symbolAlias: 'G',
-      nodeIndexOverall: 20,
+      nodeIndexOverall: 17,
     });
     const toSymbol = getSymbolLocator(page, {
       symbolAlias: 'G',
-      nodeIndexOverall: 39,
+      nodeIndexOverall: 36,
     });
 
     await selectSequenceRangeInEditMode(page, fromSymbol, toSymbol);

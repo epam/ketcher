@@ -48,6 +48,8 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     this.monomerSymbolElementsIds = monomerSymbolElementsIds;
     this.CHAIN_START_TERMINAL_INDICATOR_TEXT =
       this.monomerRenderer.CHAIN_START_TERMINAL_INDICATOR_TEXT;
+    this.CHAIN_END_TERMINAL_INDICATOR_TEXT =
+      this.monomerRenderer.CHAIN_END_TERMINAL_INDICATOR_TEXT;
   }
 
   public get textColor() {
@@ -163,16 +165,17 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   public showExternal(params: PreviewAttachmentPointParams) {
     this.isExternalRender = true;
     this.rootElement = this.appendRootElement(params.canvas);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     this.bodyElement = this.appendBody(this.rootElement);
     this.bodyElement?.attr('data-testid', 'shape');
     this.appendLabel(this.rootElement);
     this.appendNumberOfMonomers();
     this.drawAttachmentPoints(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      this.appendPreviewAttachmentPoint.bind(this, params),
+      (attachmentPointName: AttachmentPointName, customAngle?: number) =>
+        this.appendPreviewAttachmentPoint(
+          params,
+          attachmentPointName,
+          customAngle,
+        ),
     );
   }
 

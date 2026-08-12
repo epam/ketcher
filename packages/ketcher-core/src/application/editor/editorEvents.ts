@@ -65,6 +65,7 @@ export interface IEditorEvents {
   pasteFromClipboard: Subscription;
   deleteSelectedStructure: Subscription;
   selectEntities: Subscription;
+  modelChange: Subscription;
   toggleMacromoleculesPropertiesVisibility: Subscription;
   modifyAminoAcids: Subscription;
   setEditorLineLength: Subscription;
@@ -142,6 +143,7 @@ export function createEditorEvents(): IEditorEvents {
     pasteFromClipboard: new Subscription(),
     deleteSelectedStructure: new Subscription(),
     selectEntities: new Subscription(),
+    modelChange: new Subscription(),
     toggleMacromoleculesPropertiesVisibility: new Subscription(),
     modifyAminoAcids: new Subscription(),
     setEditorLineLength: new Subscription(),

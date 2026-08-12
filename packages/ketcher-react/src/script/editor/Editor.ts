@@ -85,6 +85,7 @@ import {
   Visel,
   paperPathFromSVGElement,
   fromFragmentDeletion,
+  assert,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -93,6 +94,7 @@ import {
 } from 'subscription';
 
 import closest from './shared/closest';
+import type { SelectedItems, SkipItem } from './shared/closest.types';
 import { type ChangeEventData, customOnChangeHandler } from './utils';
 import { isEqual } from 'lodash/fp';
 import { toolsMap } from './tool';
@@ -108,7 +110,6 @@ import type {
   ToolEventHandlerName,
 } from './tool/Tool';
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
-import assert from 'assert';
 import { isNumber } from 'lodash';
 import paperjs from 'paper';
 
@@ -3457,7 +3458,7 @@ class Editor implements KetcherEditor {
   findItem(
     event: Event | MouseEvent | { clientX: number; clientY: number },
     maps: Array<string> | null,
-    skip: unknown = null,
+    skip: SkipItem | null = null,
   ) {
     const pos = CoordinateTransformation.pageToModel(
       event as MouseEvent | { clientX: number; clientY: number },
@@ -3467,7 +3468,7 @@ class Editor implements KetcherEditor {
     return closest.item(this.render.ctab, pos, maps, skip, this.render.options);
   }
 
-  findMerge(srcItems: unknown, maps: string[] | undefined) {
+  findMerge(srcItems: SelectedItems, maps: string[] | undefined) {
     return closest.merge(this.render.ctab, srcItems, this.render.options, maps);
   }
 
@@ -3799,10 +3800,10 @@ function setHover(ci: HoverTarget, visible: boolean, render: Render) {
       let combinedPath: paper.PathItem | null = null;
       const options = render.options;
       const hoverVisel = new Visel('mergedHover');
-      const elements: Element[] = [];
+      const elements: SVGElement[] = [];
 
       hoversToCombine.forEach((item) => {
-        if (item?.node) {
+        if (item?.node instanceof SVGElement) {
           elements.push(item.node);
           item.node.remove();
         }

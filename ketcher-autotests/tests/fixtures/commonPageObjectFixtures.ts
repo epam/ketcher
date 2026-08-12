@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import {
   CommonTopLeftToolbar,
   CommonTopLeftToolbarType,
@@ -20,7 +19,7 @@ type CommonPageObjects = {
   CommonTopLeftToolbar: (page: Page) => CommonTopLeftToolbarType;
 };
 
-export const test = base.extend<{}, CommonPageObjects>({
+export const test = base.extend<Record<never, never>, CommonPageObjects>({
   CommonTopRightToolbar: [
     async ({}, use) => {
       await use(CommonTopRightToolbar);

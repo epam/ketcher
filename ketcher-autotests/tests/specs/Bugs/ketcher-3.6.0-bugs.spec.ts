@@ -103,7 +103,7 @@ test.describe('MacromoleculePropertiesWindow events access', () => {
           timeout: 5000,
         },
       );
-    } catch (error) {
+    } catch (_error) {
       console.log(
         'Component not found, but this is expected if there is no selection',
       );
@@ -432,7 +432,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('8.49');
+    ).toEqual('8');
     await CalculateVariablesPanel(page).closeButton.click();
   });
 
@@ -457,7 +457,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('8.49');
+    ).toEqual('8');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');

@@ -73,9 +73,6 @@ const SubMenu = ({
   ]);
 
   const selectedMenuGroupItem = useAppSelector(
-    // Need to fix typing for selectors with parameters
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     selectSelectedMenuGroupItem(subMenuId),
   );
   const lastActiveOption = subMenuId ? selectedMenuGroupItem : null;
@@ -85,7 +82,9 @@ const SubMenu = ({
   };
 
   const hideCollapse = () => {
-    open && setOpen(false);
+    if (open) {
+      setOpen(false);
+    }
   };
 
   const subComponents = React.Children.map(

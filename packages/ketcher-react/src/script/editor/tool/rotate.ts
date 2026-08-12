@@ -32,8 +32,8 @@ import {
   MonomerMicromolecule,
   RotateMonomerOperation,
   CoordinateTransformation,
+  assert,
 } from 'ketcher-core';
-import assert from 'assert';
 import { intersection, throttle } from 'lodash';
 import type { Editor, Selection } from '../Editor';
 import type { Tool } from './Tool';
@@ -295,8 +295,14 @@ class RotateTool implements Tool {
             );
           }
         });
-        monomerRotateAction.perform(this.reStruct);
-        action = action.mergeWith(monomerRotateAction);
+        // `perform` executes the rotation and returns the inverted action
+        // (the one that must go into the undo history). Merging the
+        // un-inverted `monomerRotateAction` here instead would make `undo`
+        // re-apply the rotation instead of reverting it.
+        const invertedMonomerRotateAction = monomerRotateAction.perform(
+          this.reStruct,
+        );
+        action = action.mergeWith(invertedMonomerRotateAction);
       }
 
       delete this.dragCtx;

@@ -80,12 +80,7 @@ const StyledWrapper = styled('div')<{ isActive?: boolean; hasError?: boolean }>(
 
 const WindowControlsArea = styled('div')(() => ({
   display: 'flex',
-}));
-
-const WindowDragControl = styled('div')(() => ({
-  flex: 1,
-  display: 'flex',
-  justifyContent: 'center',
+  justifyContent: 'flex-end',
 }));
 
 const StyledCloseIcon = styled(Icon)(() => ({
@@ -756,7 +751,14 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
                 ? _round(props.macromoleculesProperties.pKa, 2)
                 : '–'
             }
-            hint="The isoelectric point is calculated as the median of all pKa values for the structure."
+            hint={
+              <div>
+                The isoelectric point is calculated as the median of all pKa
+                values for amino acids (values from{' '}
+                <i>Miclotte et. al. (2020))</i>. Only amino acid natural
+                analogues are used in the calculation.
+              </div>
+            }
           />
           <BasicProperty
             name="Extinction Coef.(1/Mcm)"
@@ -943,7 +945,7 @@ const calculateMassMeasurementUnit = (mass?: number) => {
   return MassMeasurementUnit.MDa;
 };
 
-let selectEntitiesHandler: () => void;
+let recalculatePropertiesHandler: () => void;
 
 export const MacromoleculePropertiesWindow = () => {
   const dispatch = useAppDispatch();
@@ -994,31 +996,55 @@ export const MacromoleculePropertiesWindow = () => {
   }, [recalculateMacromoleculeProperties]);
 
   useEffect(() => {
-    if (
-      selectEntitiesHandler &&
-      editor?.events.selectEntities.hasHandler(selectEntitiesHandler)
-    ) {
-      editor?.events.selectEntities.remove(selectEntitiesHandler);
+    if (recalculatePropertiesHandler) {
+      if (
+        editor?.events.selectEntities.hasHandler(recalculatePropertiesHandler)
+      ) {
+        editor?.events.selectEntities.remove(recalculatePropertiesHandler);
+      }
+      if (editor?.events.modelChange.hasHandler(recalculatePropertiesHandler)) {
+        editor?.events.modelChange.remove(recalculatePropertiesHandler);
+      }
     }
 
-    selectEntitiesHandler = () => {
+    recalculatePropertiesHandler = () => {
       debouncedRecalculateMacromoleculeProperties(skipDataFetch);
     };
 
-    editor?.events.selectEntities.add(selectEntitiesHandler);
+    // selectEntities covers recalculation when the selection changes;
+    // modelChange covers recalculation when the structure itself changes
+    // (e.g. merging chains on the canvas) without necessarily changing selection.
+    editor?.events.selectEntities.add(recalculatePropertiesHandler);
+    editor?.events.modelChange.add(recalculatePropertiesHandler);
 
     return () => {
-      editor?.events.selectEntities.remove(selectEntitiesHandler);
+      editor?.events.selectEntities.remove(recalculatePropertiesHandler);
+      editor?.events.modelChange.remove(recalculatePropertiesHandler);
     };
   }, [debouncedRecalculateMacromoleculeProperties, editor, skipDataFetch]);
 
   useEffect(() => {
     debouncedRecalculateMacromoleculeProperties(skipDataFetch);
   }, [
-    unipositiveIonsMeasurementUnit,
-    oligonucleotidesMeasurementUnit,
     unipositiveIonsValue,
     oligonucleotidesValue,
+    skipDataFetch,
+    debouncedRecalculateMacromoleculeProperties,
+  ]);
+
+  // Unlike the value inputs above (typed character by character, hence
+  // debounced), the measurement unit is a single discrete dropdown
+  // selection, so recalculating immediately here avoids an unnecessary
+  // 500ms delay on top of the actual recalculation time (#7316). Both
+  // effects share `skipDataFetch`, so opening the properties window also
+  // re-runs the effect above and schedules a debounced call; cancel it so
+  // only this immediate calculation actually runs.
+  useEffect(() => {
+    debouncedRecalculateMacromoleculeProperties.cancel();
+    recalculateMacromoleculePropertiesRef.current(skipDataFetch);
+  }, [
+    unipositiveIonsMeasurementUnit,
+    oligonucleotidesMeasurementUnit,
     skipDataFetch,
     debouncedRecalculateMacromoleculeProperties,
   ]);
@@ -1102,18 +1128,6 @@ export const MacromoleculePropertiesWindow = () => {
       data-testid="macromolecule-properties-window"
     >
       <WindowControlsArea>
-        <WindowDragControl>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M2 6H14" stroke="#333333" />
-            <path d="M2 10H14" stroke="#333333" />
-          </svg>
-        </WindowDragControl>
         <StyledCloseIcon
           name="close"
           onClick={closeWindow}

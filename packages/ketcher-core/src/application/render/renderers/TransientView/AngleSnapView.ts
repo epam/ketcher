@@ -1,4 +1,3 @@
-import { TransientView } from './TransientView';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
@@ -25,9 +24,7 @@ const minimalAngleDifference = (a: number, b: number) => {
   return diff;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-export class AngleSnapView extends TransientView {
+export class AngleSnapView {
   public static readonly viewName = 'AngleSnapView';
 
   public static show(

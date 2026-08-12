@@ -1670,6 +1670,11 @@ Ketcher supports modern browsers:
 
 See [Contributing Guide](./DEVNOTES.md).
 
+## Community Projects & Integrations
+- https://github.com/Marco-Matlock/Excel-Addin - Excel plugin to run Ketcher on a task pane as an Office Addin
+- https://github.com/katalystnord/ketcher-desktop - Desktop application for Ketcher made on electron
+- https://github.com/yulei-chen/obsidian-ketcher - An Obsidian plugin to view or draw chemical structures and reactions using Ketcher
+
 ## License
 
 [Apache 2.0](LICENSE)

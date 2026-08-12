@@ -1,6 +1,7 @@
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { Mode } from '../constants/commonTopRightToolbar/Constants';
+import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
 import { hideRuler } from '@utils/canvas/ruler/helpers';
 
@@ -17,6 +18,12 @@ type ZoomDropdownLocators = {
   zoomOutButton: Locator;
   zoomInButton: Locator;
   zoomDefaultButton: Locator;
+};
+
+type TurnOnMacromoleculesEditorOptions = {
+  disableChainLengthRuler?: boolean;
+  disableAutozoom?: boolean;
+  enableFlexMode?: boolean;
 };
 
 export const CommonTopRightToolbar = (page: Page) => {
@@ -103,11 +110,7 @@ export const CommonTopRightToolbar = (page: Page) => {
     },
 
     async turnOnMacromoleculesEditor(
-      options: {
-        disableChainLengthRuler?: boolean;
-        disableAutozoom?: boolean;
-        enableFlexMode?: boolean;
-      } = {
+      options: TurnOnMacromoleculesEditorOptions = {
         disableChainLengthRuler: true,
         disableAutozoom: true,
       },
@@ -117,25 +120,37 @@ export const CommonTopRightToolbar = (page: Page) => {
       }
       const switcher = locators.ketcherModeSwitcherCombobox;
       const macroOption = page.getByTestId(Mode.Macromolecules);
-      const macromoleculesCanvas = page.locator('#polymer-editor-canvas');
+      const macromoleculesCanvas = page.locator(
+        '[data-testid="ketcher-canvas"][data-canvasmode="macromolecules-mode"]',
+      );
 
       if (!(await macromoleculesCanvas.isVisible())) {
-        await switcher.waitFor({ state: 'visible' });
-        await switcher.click();
-        await macroOption.waitFor({ state: 'visible' });
-        await macroOption.click();
+        await waitForRender(page, async () => {
+          await switcher.waitFor({ state: 'visible' });
+          await switcher.click();
+          await macroOption.waitFor({ state: 'visible' });
+          await macroOption.click();
+        });
       }
 
       await MacromoleculesTopToolbar(
         page,
       ).switchLayoutModeDropdownButton.waitFor({ state: 'visible' });
 
+      if (options.enableFlexMode) {
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Flex,
+        );
+      }
+
       if (options.disableAutozoom !== false) {
         await page.evaluate(() => {
           // Temporary solution to disable autozoom for the macro editor in e2e tests
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          window._ketcher_isAutozoomDisabled = true;
+          (
+            window as Window & {
+              _ketcher_isAutozoomDisabled?: boolean;
+            }
+          )._ketcher_isAutozoomDisabled = true;
         });
       }
     },
@@ -143,14 +158,17 @@ export const CommonTopRightToolbar = (page: Page) => {
     async turnOnMicromoleculesEditor() {
       const switcher = locators.ketcherModeSwitcherCombobox;
       const microOption = page.getByTestId(Mode.Molecules);
-      const moleculesCanvas = page.getByTestId('canvas');
+      const moleculesCanvas = page.locator(
+        '[data-testid="ketcher-canvas"][data-canvasmode="molecules-mode"]',
+      );
 
       if (!(await moleculesCanvas.isVisible())) {
-        await switcher.waitFor({ state: 'visible' });
-        await switcher.click();
-
-        await microOption.waitFor({ state: 'visible' });
-        await microOption.click();
+        await waitForRender(page, async () => {
+          await switcher.waitFor({ state: 'visible' });
+          await switcher.click();
+          await microOption.waitFor({ state: 'visible' });
+          await microOption.click();
+        });
       }
     },
   };

@@ -25,6 +25,7 @@ import {
   MultitailArrow as MicromoleculeMultitailArrow,
   RxnPlus as MicromoleculeRxnPlus,
 } from 'domain/entities';
+import type { Point } from 'domain/entities/vec2';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import type { Serializer } from '../serializers.types';
 import { headerToKet } from './toKet/headerToKet';
@@ -62,7 +63,6 @@ import {
   templateToMonomerProps,
   variantMonomerToDrawingEntity,
 } from 'domain/serializers/ket/fromKet/monomerToDrawingEntity';
-import assert from 'assert';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';
 import {
@@ -70,7 +70,7 @@ import {
   fillStructRgLabelsByMonomerTemplate,
   getTemplateAttachmentPoints,
 } from 'domain/serializers/ket/fromKet/monomerTemplateUtils';
-import { KetcherLogger } from 'utilities';
+import { assert, KetcherLogger } from 'utilities';
 import { Chem } from 'domain/entities/Chem';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
@@ -105,8 +105,33 @@ import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
+import type { KetFileImageNode } from 'domain/entities/image';
+import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
+import type { KetFileNode } from 'domain/serializers/serializers.types';
 
-function parseNode(node: any, struct: any) {
+type KetMicromoleculeNode = {
+  type?: string;
+  $ref?: string;
+  stereoFlagPosition?: Point;
+};
+
+interface IKetMicromoleculeFile {
+  header?: { moleculeName?: string };
+  root: {
+    nodes: Record<string, KetMicromoleculeNode>;
+  };
+  // Allows dynamic $ref key lookup: ket[nodes[i].$ref!]
+  [key: string]: unknown;
+}
+
+interface IKetMicromoleculeSerializedResult {
+  root: { nodes: KetMicromoleculeNode[] };
+  header?: unknown;
+  // Allows dynamic property assignment for mol/rg sections: result[`mol${id}`], result[`rg${id}`]
+  [key: string]: unknown;
+}
+
+function parseNode(node: KetMicromoleculeNode, struct: Struct) {
   const type = node.type;
   switch (type) {
     case 'arrow':
@@ -137,11 +162,14 @@ function parseNode(node: any, struct: any) {
       break;
     }
     case MULTITAIL_ARROW_SERIALIZE_KEY: {
-      multitailArrowToStruct(node, struct);
+      multitailArrowToStruct(
+        node as unknown as KetFileNode<KetFileMultitailArrowNode>,
+        struct,
+      );
       break;
     }
     case IMAGE_SERIALIZE_KEY: {
-      imageToStruct(node, struct);
+      imageToStruct(node as unknown as KetFileImageNode, struct);
       break;
     }
     default:
@@ -173,13 +201,15 @@ export class KetSerializer implements Serializer<Struct> {
     return KetSerializer.fillStruct(ket);
   }
 
-  private static fillStruct(ket) {
+  private static fillStruct(ket: IKetMicromoleculeFile) {
     const resultingStruct = new Struct();
     const nodes = ket.root.nodes;
 
     Object.keys(nodes).forEach((i) => {
       if (nodes[i].type) parseNode(nodes[i], resultingStruct);
-      else if (nodes[i].$ref) parseNode(ket[nodes[i].$ref], resultingStruct);
+      else if (nodes[i].$ref) {
+        parseNode(ket[nodes[i].$ref!] as KetMicromoleculeNode, resultingStruct);
+      }
     });
     resultingStruct.name = ket.header?.moleculeName ?? '';
 
@@ -187,7 +217,7 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   serializeMicromolecules(struct: Struct, monomer?: BaseMonomer): string {
-    const result: any = {
+    const result: IKetMicromoleculeSerializedResult = {
       root: {
         nodes: [],
       },
@@ -365,7 +395,12 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   private static enrichTemplateWithLibraryData(template: IKetMonomerTemplate) {
-    if (template.idtAliases && template.aliasAxoLabs && template.aliasBILN) {
+    if (
+      template.idtAliases &&
+      template.aliasAxoLabs &&
+      template.aliasBILN &&
+      template.modificationTypes
+    ) {
       return;
     }
     const library = provideEditorInstance()?.monomersLibraryParsedJson;
@@ -385,6 +420,9 @@ export class KetSerializer implements Serializer<Struct> {
     }
     if (!template.aliasBILN && libraryTemplate.aliasBILN) {
       template.aliasBILN = libraryTemplate.aliasBILN;
+    }
+    if (!template.modificationTypes && libraryTemplate.modificationTypes) {
+      template.modificationTypes = libraryTemplate.modificationTypes;
     }
   }
 

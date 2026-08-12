@@ -497,8 +497,6 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Nucleotide._2_damdA,
-    // shouldFail: true,
-    // issueNumber: 'https://github.com/epam/ketcher/issues/6840',
   },
 ];
 

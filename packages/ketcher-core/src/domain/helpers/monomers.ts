@@ -32,10 +32,12 @@ type AmbiguousMonomerLike = {
 
 const KET_MONOMER_CLASS = {
   AminoAcid: 'AminoAcid' as KetMonomerClass,
+  CHEM: 'CHEM' as KetMonomerClass,
   Sugar: 'Sugar' as KetMonomerClass,
   Phosphate: 'Phosphate' as KetMonomerClass,
   Base: 'Base' as KetMonomerClass,
   RNA: 'RNA' as KetMonomerClass,
+  DNA: 'DNA' as KetMonomerClass,
 };
 
 /**
@@ -168,7 +170,67 @@ export function isMonomerConnectedToR2RnaBase(monomer?: BaseMonomer) {
   );
 }
 
+export function isChemMonomer(monomer: BaseMonomer): boolean {
+  return isMonomerOfClass(monomer, KET_MONOMER_CLASS.CHEM);
+}
+
+export function isLinearChem(monomer?: BaseMonomer): boolean {
+  if (!monomer) {
+    return false;
+  }
+
+  return (
+    isChemMonomer(monomer) && monomer.usedAttachmentPointsNamesList.length <= 2
+  );
+}
+
+function getOrientedChemNeighbors(chem: BaseMonomer): {
+  previous?: BaseMonomer;
+  next?: BaseMonomer;
+} {
+  let previous: BaseMonomer | undefined;
+  let next: BaseMonomer | undefined;
+  let nextViaChemBackbone = false;
+  let previousViaChemBackbone = false;
+
+  chem.usedAttachmentPointsNamesList.forEach((attachmentPointName) => {
+    const bond = chem.attachmentPointsToBonds[attachmentPointName];
+
+    if (!(bond instanceof PolymerBond)) {
+      return;
+    }
+
+    const neighbor = bond.getAnotherMonomer(chem);
+
+    if (!neighbor) {
+      return;
+    }
+
+    const neighborAttachmentPoint = neighbor.getAttachmentPointByBond(bond);
+    const isChemBackboneR1 = attachmentPointName === AttachmentPointName.R1;
+    const isChemBackboneR2 = attachmentPointName === AttachmentPointName.R2;
+
+    if (neighborAttachmentPoint === AttachmentPointName.R1) {
+      if (!next || (isChemBackboneR2 && !nextViaChemBackbone)) {
+        next = neighbor;
+        nextViaChemBackbone = isChemBackboneR2;
+      }
+    } else if (neighborAttachmentPoint === AttachmentPointName.R2) {
+      if (!previous || (isChemBackboneR1 && !previousViaChemBackbone)) {
+        previous = neighbor;
+        previousViaChemBackbone = isChemBackboneR1;
+      }
+    }
+  });
+
+  return { previous, next };
+}
+
 export function getPreviousMonomerInChain(monomer: BaseMonomer) {
+  if (isLinearChem(monomer)) {
+    return getOrientedChemNeighbors(monomer).previous;
+  }
+
   const r1PolymerBond = monomer.attachmentPointsToBonds.R1;
   const previousMonomer =
     r1PolymerBond instanceof PolymerBond
@@ -176,7 +238,14 @@ export function getPreviousMonomerInChain(monomer: BaseMonomer) {
       : undefined;
 
   if (!previousMonomer || !(r1PolymerBond instanceof PolymerBond)) {
-    return undefined;
+    return;
+  }
+
+  if (
+    isLinearChem(previousMonomer) &&
+    getOrientedChemNeighbors(previousMonomer).next === monomer
+  ) {
+    return previousMonomer;
   }
 
   return previousMonomer &&
@@ -190,7 +259,21 @@ export function getNextMonomerInChain(
   monomer?: BaseMonomer,
   firstMonomer?: BaseMonomer | null,
 ) {
-  if (!monomer) return undefined;
+  if (!monomer) return;
+
+  if (isLinearChem(monomer)) {
+    const nextMonomer = getOrientedChemNeighbors(monomer).next;
+
+    if (
+      !nextMonomer ||
+      nextMonomer === firstMonomer ||
+      isMonomerConnectedToR2RnaBase(nextMonomer)
+    ) {
+      return;
+    }
+
+    return nextMonomer;
+  }
 
   const r2PolymerBond = monomer.attachmentPointsToBonds.R2;
   const nextMonomer =
@@ -203,13 +286,26 @@ export function getNextMonomerInChain(
     (nextMonomer === firstMonomer && r2PolymerBond) ||
     isMonomerConnectedToR2RnaBase(nextMonomer)
   )
-    return undefined;
+    return;
+
+  if (
+    isLinearChem(nextMonomer) &&
+    getOrientedChemNeighbors(nextMonomer).previous === monomer
+  ) {
+    return nextMonomer;
+  }
 
   return r2PolymerBond &&
     nextMonomer?.getAttachmentPointByBond(r2PolymerBond) ===
       AttachmentPointName.R1
     ? nextMonomer
     : undefined;
+}
+
+export function isValidRnaEnumerationStartMonomer(
+  monomer?: BaseMonomer,
+): boolean {
+  return !!monomer && !getPreviousMonomerInChain(monomer);
 }
 
 export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
@@ -222,7 +318,7 @@ export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
       : undefined;
 
   if (!r3ConnectedMonomer) {
-    return undefined;
+    return;
   }
 
   const r1PolymerBondOfConnectedMonomer =
@@ -239,7 +335,7 @@ export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
 }
 
 export function getSugarFromRnaBase(monomer?: BaseMonomer) {
-  if (!monomer || !isRnaBaseOrAmbiguousRnaBase(monomer)) return undefined;
+  if (!monomer || !isRnaBaseOrAmbiguousRnaBase(monomer)) return;
   const r1PolymerBond = monomer.attachmentPointsToBonds.R1;
   const r1ConnectedMonomer =
     r1PolymerBond instanceof PolymerBond
@@ -247,7 +343,7 @@ export function getSugarFromRnaBase(monomer?: BaseMonomer) {
       : undefined;
 
   if (!r1ConnectedMonomer) {
-    return undefined;
+    return;
   }
 
   const r3PolymerBondOfConnectedMonomer =
@@ -277,7 +373,7 @@ export function isBondBetweenSugarAndBaseOfRna(polymerBond: PolymerBond) {
 }
 
 export function getPhosphateFromSugar(monomer?: BaseMonomer) {
-  if (!monomer) return undefined;
+  if (!monomer) return;
   const nextMonomerInChain = getNextMonomerInChain(monomer);
 
   return isMonomerOfClass(nextMonomerInChain, KET_MONOMER_CLASS.Phosphate)
@@ -442,6 +538,7 @@ export {
 export function isRnaBaseApplicableForAntisense(monomer?: BaseMonomer) {
   return (
     isMonomerOfClass(monomer, KET_MONOMER_CLASS.RNA) ||
+    isMonomerOfClass(monomer, KET_MONOMER_CLASS.DNA) ||
     (isRnaBaseOrAmbiguousRnaBase(monomer) &&
       Boolean(getSugarFromRnaBase(monomer)))
   );

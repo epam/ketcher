@@ -23,14 +23,13 @@ import {
   pasteFromClipboardByKeyboard,
   cutToClipboardByKeyboard,
   moveMouseAway,
-  getCachedBodyCenter,
   RxnFileFormat,
   SdfFileFormat,
   RdfFileFormat,
   MolFileFormat,
+  ArrowType,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import { waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
@@ -98,16 +97,8 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-
-async function removeTail(page: Page, tailName: string, index?: number) {
-  const tailElement = page.getByTestId(tailName);
-  const n = index ?? 0;
-  await waitForRender(page, async () => {
-    await ContextMenu(page, tailElement.nth(n)).click(
-      MultiTailedArrowOption.RemoveTail,
-    );
-  });
-}
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
+import { MultiTailedArrow } from '@tests/pages/common/canvas/MultiTailedArrow';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -715,20 +706,25 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
-    const middleOfTheScreen = await getCachedBodyCenter(page);
-    await waitForRender(page, async () => {
-      await ContextMenu(page, middleOfTheScreen).click(
-        MultiTailedArrowOption.AddNewTail,
-      );
-    });
+    const multiTailedArrow = await MultiTailedArrow(
+      page,
+      getArrowLocator(page, {
+        arrowType: ArrowType.MultiTailedArrow,
+        arrowId: 0,
+      }),
+    );
+    await ContextMenu(page, multiTailedArrow).click(
+      MultiTailedArrowOption.AddNewTail,
+    );
+
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await multiTailedArrow.bottomTailMoveHandler.hover({ force: true });
     await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
-    await removeTail(page, 'tails-0-move');
+    await multiTailedArrow.removeTail({ tailIndex: 0 });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);

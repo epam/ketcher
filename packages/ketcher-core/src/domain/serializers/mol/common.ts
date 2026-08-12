@@ -18,7 +18,6 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Pile } from 'domain/entities/pile';
 import { SGroup } from 'domain/entities/sgroup';
 import type { Atom } from 'domain/entities/atom';
-import type { Bond } from 'domain/entities/bond';
 import type { Struct } from 'domain/entities/struct';
 
 import type { Mapping } from './mol.types';
@@ -364,11 +363,14 @@ function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
   const crossBonds = SGroup.getCrossBonds(mol, atomSet);
   SGroup.bracketPos(sg, mol);
   const bb = sg.bracketBox;
+  if (!bb) {
+    return [];
+  }
   const d = sg.bracketDirection;
   const n = d.rotateSC(1, 0);
   const brackets = SGroup.getBracketParameters(
     mol,
-    crossBonds as unknown as { [key: number]: Array<Bond> },
+    crossBonds,
     atomSet,
     bb,
     d,

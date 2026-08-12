@@ -6,7 +6,6 @@ import { monomerRendererFactory } from './monomerRendererFactory';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 import type { AttachmentPointName } from 'domain/types';
 import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
-import type { AttachmentPoint } from 'domain/AttachmentPoint';
 import type { UsageInMacromolecule } from 'application/render';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { KetMonomerClass } from 'domain/constants/monomers';
@@ -165,7 +164,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
           params,
           attachmentPointName,
           customAngle,
-        ) as unknown as AttachmentPoint,
+        ),
     );
   }
 

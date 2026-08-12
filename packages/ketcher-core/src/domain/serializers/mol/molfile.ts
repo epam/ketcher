@@ -145,7 +145,19 @@ export class Molfile {
 
   getCTab(molecule: Struct, rgroups?: Struct['rgroups']) {
     /* saver */
-    this.molecule = molecule.clone();
+    this.molecule = molecule.clone(
+      null,
+      null,
+      undefined,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      true,
+    );
     this.centerMonomerMicromoleculeAtoms();
     this.prepareSGroups(false, false);
     this.molfile = '';
@@ -219,7 +231,19 @@ export class Molfile {
       }
     }
 
-    this.molecule = molecule.clone();
+    this.molecule = molecule.clone(
+      null,
+      null,
+      undefined,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      true,
+    );
     this.centerMonomerMicromoleculeAtoms();
 
     this.prepareSGroups(skipSGroupErrors, preserveIndigoDesc);

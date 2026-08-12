@@ -502,7 +502,6 @@ export default defineConfig({
         },
       },
     },
-    exclude: ['@mui/material', '@mui/material/Autocomplete'],
     include: [
       '@emotion/react',
       '@emotion/react/jsx-runtime',
@@ -514,20 +513,6 @@ export default defineConfig({
       '@emotion/utils',
       '@emotion/weak-memoize',
       '@mui/material',
-      '@mui/system',
-      '@mui/system/Box',
-      '@mui/system/colorManipulator',
-      '@mui/system/createTheme',
-      '@mui/system/createStyled',
-      '@mui/system/RtlProvider',
-      '@mui/system/styled',
-      '@mui/system/styleFunctionSx',
-      '@mui/system/useTheme',
-      '@mui/system/useThemeProps',
-      '@mui/system/useThemeWithoutDefault',
-      '@mui/utils',
-      'prop-types',
-      'react-is',
     ],
   },
   css: {
@@ -610,11 +595,6 @@ export default defineConfig({
           '../packages/ketcher-macromolecules/src/index.tsx',
         ),
       },
-      {
-        find: 'miew-react',
-        replacement: resolve(__dirname, 'src/vite/MiewReactRuntime.jsx'),
-      },
-
       /** Web worker in ketcher-standalone */
       {
         find: 'web-worker:./../indigoWorker',

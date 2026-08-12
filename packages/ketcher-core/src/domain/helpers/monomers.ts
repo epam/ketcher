@@ -11,8 +11,8 @@ import {
 } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import type { IVariantMonomer } from 'domain/entities/types';
-import type {
-  KetMonomerTemplateAtom,
+import {
+  type KetMonomerTemplateAtom,
   KetMonomerClass,
 } from 'application/formatters/types/ket';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
@@ -28,16 +28,6 @@ type AmbiguousMonomerEntity = BaseMonomer & IVariantMonomer;
 type AmbiguousMonomerLike = {
   monomerItem?: { isAmbiguous?: boolean };
   monomerClass?: KetMonomerClass;
-};
-
-const KET_MONOMER_CLASS = {
-  AminoAcid: 'AminoAcid' as KetMonomerClass,
-  CHEM: 'CHEM' as KetMonomerClass,
-  Sugar: 'Sugar' as KetMonomerClass,
-  Phosphate: 'Phosphate' as KetMonomerClass,
-  Base: 'Base' as KetMonomerClass,
-  RNA: 'RNA' as KetMonomerClass,
-  DNA: 'DNA' as KetMonomerClass,
 };
 
 /**
@@ -79,9 +69,8 @@ const isMonomerOfClass = (
   if (getMonomerClass(monomer) === monomerClass) return true;
   // Fallback for monomers without an explicit MonomerClass, identified only
   // by naturalAnalogShort (e.g. classHELM: RNA + naturalAnalogShort: P/R).
-  if (monomerClass === KET_MONOMER_CLASS.Sugar)
-    return Boolean(monomer?.isSugar);
-  if (monomerClass === KET_MONOMER_CLASS.Phosphate)
+  if (monomerClass === KetMonomerClass.Sugar) return Boolean(monomer?.isSugar);
+  if (monomerClass === KetMonomerClass.Phosphate)
     return Boolean(monomer?.isPhosphate);
   return false;
 };
@@ -92,10 +81,10 @@ const isMonomerOfClass = (
  */
 type ChainMonomerType = 'Peptide' | 'Phosphate' | 'Sugar' | 'UnsplitNucleotide';
 const CHAIN_MONOMER_TYPE_TO_CLASS: Record<ChainMonomerType, KetMonomerClass> = {
-  Peptide: KET_MONOMER_CLASS.AminoAcid,
-  Phosphate: KET_MONOMER_CLASS.Phosphate,
-  Sugar: KET_MONOMER_CLASS.Sugar,
-  UnsplitNucleotide: KET_MONOMER_CLASS.RNA,
+  Peptide: KetMonomerClass.AminoAcid,
+  Phosphate: KetMonomerClass.Phosphate,
+  Sugar: KetMonomerClass.Sugar,
+  UnsplitNucleotide: KetMonomerClass.RNA,
 };
 
 const isMonomerClassCompatible = (
@@ -104,13 +93,13 @@ const isMonomerClassCompatible = (
 ): boolean => {
   switch (monomerType) {
     case 'Peptide':
-      return monomer.monomerClass === KET_MONOMER_CLASS.AminoAcid;
+      return monomer.monomerClass === KetMonomerClass.AminoAcid;
     case 'Phosphate':
-      return monomer.monomerClass === KET_MONOMER_CLASS.Phosphate;
+      return monomer.monomerClass === KetMonomerClass.Phosphate;
     case 'Sugar':
-      return monomer.monomerClass === KET_MONOMER_CLASS.Sugar;
+      return monomer.monomerClass === KetMonomerClass.Sugar;
     case 'UnsplitNucleotide':
-      return monomer.monomerClass === KET_MONOMER_CLASS.RNA;
+      return monomer.monomerClass === KetMonomerClass.RNA;
     default:
       return false;
   }
@@ -171,7 +160,7 @@ export function isMonomerConnectedToR2RnaBase(monomer?: BaseMonomer) {
 }
 
 export function isChemMonomer(monomer: BaseMonomer): boolean {
-  return isMonomerOfClass(monomer, KET_MONOMER_CLASS.CHEM);
+  return isMonomerOfClass(monomer, KetMonomerClass.CHEM);
 }
 
 export function isLinearChem(monomer?: BaseMonomer): boolean {
@@ -309,8 +298,7 @@ export function isValidRnaEnumerationStartMonomer(
 }
 
 export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
-  if (!monomer || !isMonomerOfClass(monomer, KET_MONOMER_CLASS.Sugar))
-    return undefined;
+  if (!monomer || !isMonomerOfClass(monomer, KetMonomerClass.Sugar)) return;
   const r3PolymerBond = monomer.attachmentPointsToBonds.R3;
   const r3ConnectedMonomer =
     r3PolymerBond instanceof PolymerBond
@@ -353,7 +341,7 @@ export function getSugarFromRnaBase(monomer?: BaseMonomer) {
       ? r3PolymerBondOfConnectedMonomer?.getAnotherMonomer(r1ConnectedMonomer)
       : undefined;
 
-  return isMonomerOfClass(r1ConnectedMonomer, KET_MONOMER_CLASS.Sugar) &&
+  return isMonomerOfClass(r1ConnectedMonomer, KetMonomerClass.Sugar) &&
     r3ConnectedMonomer === monomer
     ? r1ConnectedMonomer
     : undefined;
@@ -364,9 +352,9 @@ export function isBondBetweenSugarAndBaseOfRna(polymerBond: PolymerBond) {
     (polymerBond.firstMonomerAttachmentPoint === AttachmentPointName.R1 &&
       isRnaBaseOrAmbiguousRnaBase(polymerBond.firstMonomer) &&
       polymerBond.secondMonomerAttachmentPoint === AttachmentPointName.R3 &&
-      isMonomerOfClass(polymerBond.secondMonomer, KET_MONOMER_CLASS.Sugar)) ||
+      isMonomerOfClass(polymerBond.secondMonomer, KetMonomerClass.Sugar)) ||
     (polymerBond.firstMonomerAttachmentPoint === AttachmentPointName.R3 &&
-      isMonomerOfClass(polymerBond.firstMonomer, KET_MONOMER_CLASS.Sugar) &&
+      isMonomerOfClass(polymerBond.firstMonomer, KetMonomerClass.Sugar) &&
       polymerBond.secondMonomerAttachmentPoint === AttachmentPointName.R1 &&
       isRnaBaseOrAmbiguousRnaBase(polymerBond.secondMonomer))
   );
@@ -376,7 +364,7 @@ export function getPhosphateFromSugar(monomer?: BaseMonomer) {
   if (!monomer) return;
   const nextMonomerInChain = getNextMonomerInChain(monomer);
 
-  return isMonomerOfClass(nextMonomerInChain, KET_MONOMER_CLASS.Phosphate)
+  return isMonomerOfClass(nextMonomerInChain, KetMonomerClass.Phosphate)
     ? nextMonomerInChain
     : undefined;
 }
@@ -412,7 +400,7 @@ export function isMonomerBeginningOfChain(
   return (
     ((monomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) ||
       !monomer.hasAttachmentPoint(AttachmentPointName.R1)) &&
-      (monomer.hasBonds || isMonomerOfClass(monomer, KET_MONOMER_CLASS.RNA))) ||
+      (monomer.hasBonds || isMonomerOfClass(monomer, KetMonomerClass.RNA))) ||
     previousConnectionNotR2 ||
     isPreviousMonomerPartOfChain
   );
@@ -455,7 +443,7 @@ export function isValidNucleoside(
 
 export const isRnaBaseVariantMonomer = (
   monomer: BaseMonomer & IVariantMonomer,
-) => monomer.monomerClass === KET_MONOMER_CLASS.Base;
+) => monomer.monomerClass === KetMonomerClass.Base;
 
 export function isAmbiguousMonomerLibraryItem(
   monomer?: MonomerOrAmbiguousType,
@@ -494,9 +482,9 @@ export function isPeptideOrAmbiguousPeptide(
   monomer?: BaseMonomer,
 ): monomer is Peptide | AmbiguousMonomerEntity {
   return (
-    isMonomerOfClass(monomer, KET_MONOMER_CLASS.AminoAcid) ||
+    isMonomerOfClass(monomer, KetMonomerClass.AminoAcid) ||
     (isAmbiguousMonomerEntity(monomer) &&
-      monomer.monomerClass === KET_MONOMER_CLASS.AminoAcid)
+      monomer.monomerClass === KetMonomerClass.AminoAcid)
   );
 }
 
@@ -504,9 +492,9 @@ export function isRnaBaseOrAmbiguousRnaBase(
   monomer?: BaseMonomer,
 ): monomer is RNABase | AmbiguousMonomerEntity {
   return (
-    isMonomerOfClass(monomer, KET_MONOMER_CLASS.Base) ||
+    isMonomerOfClass(monomer, KetMonomerClass.Base) ||
     (isAmbiguousMonomerEntity(monomer) &&
-      monomer.monomerClass === KET_MONOMER_CLASS.Base)
+      monomer.monomerClass === KetMonomerClass.Base)
   );
 }
 
@@ -514,9 +502,9 @@ export function isPhosphateOrAmbiguousPhosphate(
   monomer?: BaseMonomer,
 ): monomer is Phosphate | AmbiguousMonomerEntity {
   return (
-    isMonomerOfClass(monomer, KET_MONOMER_CLASS.Phosphate) ||
+    isMonomerOfClass(monomer, KetMonomerClass.Phosphate) ||
     (isAmbiguousMonomerEntity(monomer) &&
-      monomer.monomerClass === KET_MONOMER_CLASS.Phosphate)
+      monomer.monomerClass === KetMonomerClass.Phosphate)
   );
 }
 
@@ -524,9 +512,9 @@ export function isSugarOrAmbiguousSugar(
   monomer?: BaseMonomer,
 ): monomer is Sugar | AmbiguousMonomerEntity {
   return (
-    isMonomerOfClass(monomer, KET_MONOMER_CLASS.Sugar) ||
+    isMonomerOfClass(monomer, KetMonomerClass.Sugar) ||
     (isAmbiguousMonomerEntity(monomer) &&
-      monomer.monomerClass === KET_MONOMER_CLASS.Sugar)
+      monomer.monomerClass === KetMonomerClass.Sugar)
   );
 }
 
@@ -537,8 +525,8 @@ export {
 
 export function isRnaBaseApplicableForAntisense(monomer?: BaseMonomer) {
   return (
-    isMonomerOfClass(monomer, KET_MONOMER_CLASS.RNA) ||
-    isMonomerOfClass(monomer, KET_MONOMER_CLASS.DNA) ||
+    isMonomerOfClass(monomer, KetMonomerClass.RNA) ||
+    isMonomerOfClass(monomer, KetMonomerClass.DNA) ||
     (isRnaBaseOrAmbiguousRnaBase(monomer) &&
       Boolean(getSugarFromRnaBase(monomer)))
   );

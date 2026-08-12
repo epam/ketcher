@@ -94,13 +94,10 @@ type KetcherSetOptionsPayload = Partial<
   Record<AllowedClientSetting, KetcherApiSettings[AllowedApiSetting]>
 >;
 
-const MONOMER_LIBRARY_MIME_TYPE =
-  'chemical/x-monomer-library' as ChemicalMimeType.MonomerLibrary;
-
 const MONOMER_LIBRARY_FORMAT_OPTIONS = {
-  inputFormat: MONOMER_LIBRARY_MIME_TYPE,
-  outputFormat: MONOMER_LIBRARY_MIME_TYPE,
-  outputContentType: MONOMER_LIBRARY_MIME_TYPE,
+  inputFormat: ChemicalMimeType.MonomerLibrary,
+  outputFormat: ChemicalMimeType.MonomerLibrary,
+  outputContentType: ChemicalMimeType.MonomerLibrary,
 } as const;
 
 export class Ketcher {
@@ -904,8 +901,6 @@ export class Ketcher {
       );
     }
 
-    await editor.ensureDefaultMonomersLibraryLoaded();
-
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,
       params,
@@ -939,8 +934,6 @@ export class Ketcher {
         'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
       );
     }
-
-    await editor.ensureDefaultMonomersLibraryLoaded();
 
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,

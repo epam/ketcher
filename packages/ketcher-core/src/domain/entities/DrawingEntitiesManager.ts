@@ -152,7 +152,7 @@ import {
   computeReestablishableBonds,
 } from 'application/editor/libraryItemDragDrop/replacementHelpers';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
-import { getMonomerSize } from 'application/render/renderers/monomerSizeState';
+import { getRnaPresetPhosphatePosition } from 'application/editor/tools/rnaPresetConnections';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -4678,7 +4678,7 @@ export class DrawingEntitiesManager {
   public replacePreset(
     oldSugar: BaseMonomer,
     newPresetTemplate: IRnaPreset,
-    sugarPosition: Vec2,
+    initialSugarPosition: Vec2,
     originalComponentsOverride?: BaseMonomer[],
   ): { command: Command; newSugar: BaseMonomer } {
     const command = new Command();
@@ -4742,16 +4742,12 @@ export class DrawingEntitiesManager {
     }
 
     // Compute preset component relative positions
-    const {
-      sugarPosition: _s,
-      rnaBasePosition,
-      phosphatePosition,
-    } = this.computePresetPositions(newPresetTemplate, sugarPosition);
-
+    const { sugarPosition, rnaBasePosition, phosphatePosition } =
+      this.computePresetPositions(newPresetTemplate, initialSugarPosition);
     // Add new preset
     const { command: addPresetCommand, monomers: newComponents } =
       this.addRnaPreset({
-        sugar: newPresetTemplate.sugar!,
+        sugar: newPresetTemplate.sugar,
         sugarPosition,
         rnaBase: newPresetTemplate.base,
         rnaBasePosition,
@@ -4817,11 +4813,23 @@ export class DrawingEntitiesManager {
   /**
    * Computes the canvas positions for the base and phosphate components of a
    * preset, given the sugar position.
-   * Uses the same offsets as Nucleotide.createOnCanvas.
+   *
+   * When the new preset has a left-side (5′) phosphate, `addRnaPreset` will
+   * internally swap the sugar and phosphate Vec2 arguments so that:
+   *   - the value passed as `_phosphatePosition` becomes the actual sugar position
+   *   - the value passed as `_sugarPosition` becomes the actual phosphate position
+   *
+   * To keep the sugar anchored at `sugarPosition` after the swap we must pass
+   * the phosphate offset in the **negative X** direction (to the left).  After
+   * the swap the sugar lands at `sugarPosition` and the phosphate lands at
+   * `sugarPosition − SnakeLayoutCellWidth` — matching the left-phosphate layout.
+   *
+   * For a right-side (3′) phosphate no swap occurs, so the phosphate is placed
+   * at `sugarPosition + SnakeLayoutCellWidth` as before.
    */
   private computePresetPositions(
     preset: IRnaPreset,
-    sugarPosition: Vec2,
+    initialSugarPosition: Vec2,
   ): {
     sugarPosition: Vec2;
     rnaBasePosition: Vec2 | undefined;
@@ -4830,9 +4838,15 @@ export class DrawingEntitiesManager {
     const baseOffset = Coordinates.canvasToModel(
       new Vec2(0, SnakeLayoutCellWidth),
     );
+
+    const isLeftPhosphate =
+      preset.phosphate && getRnaPresetPhosphatePosition(preset) === 'left';
     const phosphateOffset = Coordinates.canvasToModel(
       new Vec2(SnakeLayoutCellWidth, 0),
     );
+    const sugarPosition = isLeftPhosphate
+      ? initialSugarPosition.sub(phosphateOffset)
+      : initialSugarPosition;
 
     return {
       sugarPosition,

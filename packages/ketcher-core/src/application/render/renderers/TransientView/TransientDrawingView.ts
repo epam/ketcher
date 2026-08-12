@@ -67,7 +67,7 @@ export class TransientDrawingView {
     this.topLayer.raise();
   }
 
-  private addView<P>(viewName, viewData: ViewData<P>) {
+  private addView<P>(viewName: string, viewData: ViewData<P>) {
     if (this.views.has(viewName)) {
       this.removeView(viewName);
     }

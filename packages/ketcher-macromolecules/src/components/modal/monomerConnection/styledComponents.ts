@@ -4,13 +4,13 @@ interface IStyledAttachmentPointNameProps {
   disabled?: boolean;
 }
 
-export const AttachmentPoint = styled.div(() => ({
+export const AttachmentPoint = styled.div({
   display: 'flex',
-  flexDirection: 'column' as const,
+  flexDirection: 'column',
   rowGap: '2px',
   alignItems: 'center',
   marginBottom: '5px',
-}));
+});
 
 export const AttachmentPointName = styled.span<IStyledAttachmentPointNameProps>(
   (props) => ({

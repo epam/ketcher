@@ -828,12 +828,22 @@ test('Case 29: Update Library item with HELM alias longer than 23 symbols logs a
   type ConsoleCaptureWindow = typeof window & {
     capturedConsoleErrors: string[];
     originalConsoleError: typeof console.error;
+    logging?: {
+      enabled?: boolean;
+      level?: number;
+      showTrace?: boolean;
+    };
   };
 
   await page.evaluate(() => {
     const testWindow = window as ConsoleCaptureWindow;
 
-    window.ketcher.logging.enabled = true;
+    testWindow.logging = {
+      ...(testWindow.logging ?? {}),
+      enabled: true,
+      level: 0,
+      showTrace: false,
+    };
     testWindow.capturedConsoleErrors = [];
     testWindow.originalConsoleError = console.error;
     console.error = (...args) => {

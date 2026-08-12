@@ -101,7 +101,7 @@ export const EditorEvents = () => {
   }, [dispatch, editor, lastSelectedSelectionMenuItem]);
 
   useEffect(() => {
-    const handler = ([toolName]: [string]) => {
+    const selectToolHandler = ([toolName]: [string]) => {
       if (toolName !== activeTool) {
         dispatch(selectTool(toolName));
       }
@@ -144,7 +144,7 @@ export const EditorEvents = () => {
         monomerConnectionModalHandler,
       );
       editor.events.openConfirmationDialog.add(confirmationDialogHandler);
-      editor.events.selectTool.add(handler);
+      editor.events.selectTool.add(selectToolHandler);
 
       // Initialize with saved selection tool or default to rectangle
       const savedSelectionTool = SettingsManager.selectionTool;
@@ -152,7 +152,6 @@ export const EditorEvents = () => {
         ? `select-${savedSelectionTool.opts}`
         : 'select-rectangle';
 
-      dispatch(selectTool(initialTool));
       editor.events.selectTool.dispatch([initialTool]);
     }
 
@@ -164,7 +163,7 @@ export const EditorEvents = () => {
         monomerConnectionModalHandler,
       );
       editor?.events.openConfirmationDialog.remove(confirmationDialogHandler);
-      editor?.events.selectTool.remove(handler);
+      editor?.events.selectTool.remove(selectToolHandler);
     };
   }, [editor]);
 

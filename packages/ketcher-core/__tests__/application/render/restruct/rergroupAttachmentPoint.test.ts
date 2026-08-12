@@ -254,71 +254,53 @@ describe('ReRGroupAttachmentPoint', () => {
     ).toBe(atomElement?.getAttribute('data-atom-id'));
   });
 
-  it('keeps ordinary geometry unchanged and moves the rendered glyph outward when a wide atom-property label shifts the stem start', () => {
-    const wideLabelOptions = {
+  it('preserves nominal geometry when the stem start does not reach the endpoint, and restores it when it does', () => {
+    const fixture = createTwoNeighborAttachmentPointFixture({
       ...options,
       microModeScale: 40,
-    } as RenderOptions;
-    const fixture = createTwoNeighborAttachmentPointFixture(wideLabelOptions);
+    } as RenderOptions);
     const { render, reAtom, reAttachmentPoint } = fixture;
-    const ordinaryRender = captureAttachmentPointRender(fixture);
-    reAtom.visel.exts = [new Box2Abs(new Vec2(-60, -7), new Vec2(18, 7))];
-    const shiftedRender = captureAttachmentPointRender(fixture);
 
+    // Case 1 – no label extent: shiftedStemStart at the atom position; all
+    // geometry is at the nominal position derived from the atom centre.
+    reAtom.visel.exts = [];
+    const noShiftRender = captureAttachmentPointRender(fixture);
     expectVec2CloseTo(reAttachmentPoint.lineDirectionVector, new Vec2(-1, 0));
-    expectVec2CloseTo(ordinaryRender.shape.directionVector, new Vec2(-1, 0));
-    expectVec2CloseTo(ordinaryRender.shape.shiftedStemStart, new Vec2(0, 0));
+    expectVec2CloseTo(noShiftRender.shape.shiftedStemStart, new Vec2(0, 0));
+    expectVec2CloseTo(noShiftRender.shape.attachmentPointEnd, new Vec2(-34, 0));
+    expectVec2CloseTo(noShiftRender.label.labelPosition, new Vec2(-28, -6.8));
+    expect(noShiftRender.label.labelText).toBe('1');
+
+    // Case 2 – moderate label extent: stem start shifts to (-16, 0) but has
+    // not yet reached the nominal endpoint at (-34, 0); nominal geometry is
+    // preserved exactly.
+    // Box2Abs((-10,-5),(8,5)) → shiftRayBox = 10; with lineWidth=2 → shift=16.
+    reAtom.visel.exts = [new Box2Abs(new Vec2(-10, -5), new Vec2(8, 5))];
+    const moderateRender = captureAttachmentPointRender(fixture);
+    expectVec2CloseTo(moderateRender.shape.shiftedStemStart, new Vec2(-16, 0));
     expectVec2CloseTo(
-      ordinaryRender.shape.attachmentPointEnd,
+      moderateRender.shape.attachmentPointEnd,
       new Vec2(-34, 0),
     );
-    expectVec2CloseTo(ordinaryRender.label.labelPosition, new Vec2(-28, -6.8));
-    expect(ordinaryRender.label.labelText).toBe('1');
-    expectVec2CloseTo(shiftedRender.shape.directionVector, new Vec2(-1, 0));
-    expectVec2CloseTo(shiftedRender.shape.shiftedStemStart, new Vec2(-66, 0));
-    expectVec2CloseTo(
-      shiftedRender.shape.attachmentPointEnd,
-      new Vec2(-100, 0),
-    );
-    expectVec2CloseTo(shiftedRender.label.labelPosition, new Vec2(-94, -6.8));
-    expect(shiftedRender.label.labelText).toBe('1');
-    expectVec2CloseTo(
-      shiftedRender.label.labelPosition.sub(ordinaryRender.label.labelPosition),
-      shiftedRender.shape.shiftedStemStart.sub(
-        ordinaryRender.shape.shiftedStemStart,
-      ),
-    );
+    expectVec2CloseTo(moderateRender.label.labelPosition, new Vec2(-28, -6.8));
+
+    // Case 3 – wide label extent: stem start shifts to (-66, 0), past the
+    // nominal endpoint; endpoint and number move outward to keep a valid stem.
+    // Box2Abs((-60,-7),(18,7)) → shiftRayBox = 60; with lineWidth=2 → shift=66.
+    reAtom.visel.exts = [new Box2Abs(new Vec2(-60, -7), new Vec2(18, 7))];
+    const wideRender = captureAttachmentPointRender(fixture);
+    expectVec2CloseTo(wideRender.shape.shiftedStemStart, new Vec2(-66, 0));
+    expectVec2CloseTo(wideRender.shape.attachmentPointEnd, new Vec2(-100, 0));
+    expectVec2CloseTo(wideRender.label.labelPosition, new Vec2(-94, -6.8));
+    expect(wideRender.label.labelText).toBe('1');
+    // The stem must remain outward with the full nominal length.
     expect(
       Vec2.dot(
-        shiftedRender.shape.attachmentPointEnd.sub(
-          shiftedRender.shape.shiftedStemStart,
+        wideRender.shape.attachmentPointEnd.sub(
+          wideRender.shape.shiftedStemStart,
         ),
         reAttachmentPoint.lineDirectionVector,
       ),
     ).toBeCloseTo(render.options.microModeScale * 0.85, 6);
-    expect(
-      Vec2.dot(
-        shiftedRender.label.labelPosition.sub(
-          shiftedRender.shape.shiftedStemStart,
-        ),
-        reAttachmentPoint.lineDirectionVector,
-      ),
-    ).toBeGreaterThan(0);
-    expect(
-      Vec2.dot(
-        shiftedRender.shape.attachmentPointEnd.sub(
-          shiftedRender.label.labelPosition,
-        ),
-        reAttachmentPoint.lineDirectionVector,
-      ),
-    ).toBeGreaterThan(0);
-    expect(
-      Vec2.dot(
-        shiftedRender.shape.shiftedStemStart.sub(
-          ordinaryRender.shape.attachmentPointEnd,
-        ),
-        reAttachmentPoint.lineDirectionVector,
-      ),
-    ).toBeGreaterThan(0);
   });
 });

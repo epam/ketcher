@@ -591,9 +591,22 @@ export class SGroup {
     contentBoxes.forEach((bba) => {
       braketBox = !braketBox ? bba : Box2Abs.union(braketBox, bba);
     });
-    const currentRender = render ?? window.ketcher!.editor.render;
+    type RenderWithAttachmentPoints = {
+      ctab: {
+        getRGroupAttachmentPointsVBoxByAtomIds: (
+          atomIds: number[],
+        ) => Box2Abs | null;
+      };
+    };
+    const currentRender =
+      (render as unknown as RenderWithAttachmentPoints | undefined) ??
+      (
+        window.ketcher as unknown as {
+          editor?: { render?: RenderWithAttachmentPoints };
+        }
+      )?.editor?.render;
     let attachmentPointsVBox =
-      currentRender.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms);
+      currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms) ?? null;
     attachmentPointsVBox = attachmentPointsVBox
       ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
       : attachmentPointsVBox;

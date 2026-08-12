@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator, expect } from '@playwright/test';
 import {
   AminoAcidNaturalAnalogue,

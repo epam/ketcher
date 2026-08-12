@@ -17,9 +17,9 @@
     "jsx-a11y/no-noninteractive-element-interactions": "warn",
     "jsx-a11y/alt-text": "warn",
     "jsx-a11y/click-events-have-key-events": "warn",
-    "react-hooks/set-state-in-effect": "off",
-    "react-hooks/static-components": "off",
-    "react-hooks/use-memo": "off",
+    "react-hooks/set-state-in-effect": "error",
+    "react-hooks/static-components": "error",
+    "react-hooks/use-memo": "error",
     "@typescript-eslint/no-non-null-assertion": "warn",
     "no-restricted-imports": [
       "error",

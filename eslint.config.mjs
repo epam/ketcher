@@ -134,5 +134,11 @@ export default [
       'react-you-might-not-need-an-effect/no-event-handler': 'off',
     },
   },
+  {
+    files: ['ketcher-autotests/**/*.{ts,tsx}'],
+    rules: {
+      'no-unused-vars': 'off',
+    },
+  },
   prettierConfig,
 ];

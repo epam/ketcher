@@ -1,4 +1,4 @@
-/* eslint-disable no-empty-pattern */
+/* eslint-disable react-hooks/rules-of-hooks */
 import { test as utils } from '../utilsFixtures';
 import { test as pageObjects } from '../commonPageObjectFixtures';
 import { waitForIndigoToLoad, waitForKetcherInit } from '@utils';

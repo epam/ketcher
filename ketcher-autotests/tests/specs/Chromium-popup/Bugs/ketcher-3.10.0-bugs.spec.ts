@@ -69,7 +69,7 @@ import {
   setSettingsOption,
 } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { StereochemistrySetting } from '@tests/pages/constants/settingsDialog/Constants';
-import { DragoGhostElement } from '@tests/pages/macromolecules/canvas/DragonGhostElement';
+import { DragoGhostElementLocators } from '@tests/pages/macromolecules/canvas/DragonGhostElement';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { AmbiguousMonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/AmbiguousMonomerPreviewTooltip';
@@ -705,7 +705,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await Library(page).hoverMonomer(Chem.A6OH);
     await page.mouse.down();
     await page.mouse.move(x, y);
-    const ghostImage = DragoGhostElement(page).dragonGhostElement;
+    const ghostImage = DragoGhostElementLocators(page).dragonGhostElement;
     await takeElementScreenshot(page, ghostImage, { padding: 5 });
     await page.mouse.up();
   });

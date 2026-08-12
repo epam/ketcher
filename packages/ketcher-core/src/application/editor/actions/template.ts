@@ -93,9 +93,8 @@ function extraBondAction(
     const operation = new AtomAdd(
       { label: 'C', fragment: frid },
       new Vec2(1, 0).rotate(angle).add(pivotAtom.pp).get_xy0(),
-    ).perform(restruct);
-
-    action.addOp(operation);
+    );
+    action.addOp(operation.perform(restruct));
     const newAtomId = operation.data.aid;
     if (!isNumber(newAtomId)) {
       KetcherLogger.error(

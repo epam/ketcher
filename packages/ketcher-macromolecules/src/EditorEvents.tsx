@@ -43,6 +43,7 @@ import {
   AtomRenderer,
   BaseRenderer,
   SettingsManager,
+  guardForMacromoleculesEditor,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
 import {
@@ -391,7 +392,9 @@ export const EditorEvents = () => {
     editor?.events.mouseOnMoveSequenceItem.add(onMoveHandler);
     editor?.events.mouseOnMovePolymerBond.add(onMoveHandler);
 
-    window.addEventListener('hidePreview', handleClosePreview);
+    const guardedHandleClosePreview =
+      guardForMacromoleculesEditor(handleClosePreview);
+    window.addEventListener('hidePreview', guardedHandleClosePreview);
 
     return () => {
       editor?.events.mouseOverMonomer.remove(handleOpenPreview);
@@ -409,7 +412,7 @@ export const EditorEvents = () => {
       editor?.events.mouseOnMoveSequenceItem.remove(onMoveHandler);
       editor?.events.mouseOnMovePolymerBond.remove(onMoveHandler);
 
-      window.removeEventListener('hidePreview', handleClosePreview);
+      window.removeEventListener('hidePreview', guardedHandleClosePreview);
     };
   }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
 

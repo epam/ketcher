@@ -362,6 +362,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this._dragTargetAttachmentPoint = attachmentPointName;
   }
 
+  public setDragCircleHoverAttachmentPoint(
+    attachmentPointName: AttachmentPointName | null,
+  ): void {
+    this._dragCircleHoverAttachmentPoint = attachmentPointName;
+  }
+
   protected raiseAttachmentPoints() {
     this.attachmentPoints.forEach((attachmentPoint) => {
       attachmentPoint.raise();

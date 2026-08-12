@@ -4623,7 +4623,7 @@ export class DrawingEntitiesManager {
     // 4. Delete the old monomer WITHOUT deleting its connected bonds so we can
     //    re-establish them on the new monomer.
     command.merge(
-      this.deleteMonomer(oldMonomer, false /* needToDeleteConnectedBonds */),
+      this.deleteMonomer(oldMonomer, true /* needToDeleteConnectedBonds */),
     );
 
     // 5. Delete bonds that cannot be re-established on the new monomer

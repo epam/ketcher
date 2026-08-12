@@ -37,19 +37,12 @@ import {
   type PresetComponentRole,
 } from './replacementHelpers';
 
+/** AP bond-target ring threshold in canvas pixels. */
 const DRAG_BOND_PROXIMITY_THRESHOLD_PX = 25;
+/** AP snap-circle hover threshold in canvas pixels. */
 const DRAG_CIRCLE_HOVER_THRESHOLD_PX = 20;
-/**
- * Center-to-center distance (pixels) at which a dragged library item triggers
- * the replacement visual state on a canvas monomer.
- *
- * Value chosen to be slightly larger than a monomer body radius (~20 px) so
- * the cursor only needs to overlap the monomer body to trigger replacement —
- * not merely approach an attachment point.
- *
- * UX confirmation is required before finalising (see design.md open question 1).
- */
-const DRAG_REPLACE_PROXIMITY_THRESHOLD_PX = 35;
+/** AP replace proximity threshold in canvas pixels. */
+const DRAG_REPLACE_PROXIMITY_THRESHOLD_PX = 20;
 
 export interface IAutochainMonomerAddResult {
   modelChanges: Command;
@@ -290,7 +283,7 @@ export class LibraryItemDragDropHandler {
 
       if (hasTargetChanged) {
         // Clear previous replacement visual state
-        if (prevTarget) this.clearReplacementVisualState(prevTarget);
+        if (prevTarget) this.clearReplacementVisualState();
 
         // Activate new replacement visual state
         this.applyReplacementVisualState(classified);
@@ -414,7 +407,10 @@ export class LibraryItemDragDropHandler {
    * Finds the nearest canvas monomer whose center is within
    * DRAG_REPLACE_PROXIMITY_THRESHOLD_PX of the cursor, or null.
    *
-   * Uses canvas-to-view coordinate conversion (same as AP proximity search).
+   * Converts the cursor position to canvas space so that the threshold is
+   * compared in canvas pixels, making it zoom-independent. At 100% zoom
+   * canvas pixels equal screen pixels; at other zoom levels the canvas-space
+   * distance is invariant to zoom changes.
    */
   private findReplacementTarget(position: {
     x: number;
@@ -424,8 +420,13 @@ export class LibraryItemDragDropHandler {
     if (!rootOffset) return null;
 
     const canvasOffset = this.deps.getCanvasOffset();
-    const canvasRelLeft = canvasOffset.left - rootOffset.left;
-    const canvasRelTop = canvasOffset.top - rootOffset.top;
+    // Convert the cursor from ketcherRoot-relative screen coords to SVG
+    // viewport coords, then invert the zoom transform to get canvas coords.
+    const cursorSVGX = position.x - (canvasOffset.left - rootOffset.left);
+    const cursorSVGY = position.y - (canvasOffset.top - rootOffset.top);
+    const cursorCanvas = Coordinates.viewToCanvas(
+      new Vec2(cursorSVGX, cursorSVGY),
+    );
 
     let nearest: BaseMonomer | null = null;
     let minDist = DRAG_REPLACE_PROXIMITY_THRESHOLD_PX;
@@ -434,15 +435,11 @@ export class LibraryItemDragDropHandler {
       const renderer = monomer.renderer;
       if (!renderer || !(renderer instanceof BaseMonomerRenderer)) continue;
 
-      // Use the renderer's center (already in canvas-space pixels)
+      // renderer.center is already in canvas-space pixels — compare directly.
       const center = renderer.center;
-      const centerView = Coordinates.canvasToView(center);
-
-      const screenX = canvasRelLeft + centerView.x;
-      const screenY = canvasRelTop + centerView.y;
 
       const dist = Math.sqrt(
-        (position.x - screenX) ** 2 + (position.y - screenY) ** 2,
+        (cursorCanvas.x - center.x) ** 2 + (cursorCanvas.y - center.y) ** 2,
       );
 
       if (dist < minDist) {
@@ -516,9 +513,7 @@ export class LibraryItemDragDropHandler {
    * Removes the replacement-target visual state from all monomers identified
    * by `target` and hides the outline.
    */
-  private clearReplacementVisualState(target: ReplacementTarget): void {
-    const monomersToUnhighlight = this.getHighlightMonomers(target);
-
+  private clearReplacementVisualState(): void {
     const transientDrawingView = this.deps.getTransientDrawingView();
     transientDrawingView.hideReplacementHighlight();
     transientDrawingView.update();
@@ -540,7 +535,7 @@ export class LibraryItemDragDropHandler {
    */
   private clearReplacementTarget(): void {
     if (this.dragReplaceTarget) {
-      this.clearReplacementVisualState(this.dragReplaceTarget);
+      this.clearReplacementVisualState();
       this.dragReplaceTarget = null;
     }
   }
@@ -1051,7 +1046,12 @@ export class LibraryItemDragDropHandler {
 
   /**
    * Finds the nearest free attachment point of any on-canvas monomer
-   * within the given threshold (pixels, ketcherRoot-relative) of `position`.
+   * within the given threshold (canvas pixels) of `position`.
+   *
+   * Converts the cursor to canvas space so that the threshold is compared in
+   * canvas pixels, making it zoom-independent. At 100% zoom canvas pixels equal
+   * screen pixels; at other zoom levels the canvas-space distance is invariant
+   * to zoom changes.
    */
   private findNearestFreeAttachmentPointForDrag(
     position: { x: number; y: number },
@@ -1061,9 +1061,13 @@ export class LibraryItemDragDropHandler {
     if (!rootOffset) return null;
 
     const canvasOffset = this.deps.getCanvasOffset();
-    // Offset of canvas top-left relative to ketcherRoot
-    const canvasRelLeft = canvasOffset.left - rootOffset.left;
-    const canvasRelTop = canvasOffset.top - rootOffset.top;
+    // Convert the cursor from ketcherRoot-relative screen coords to SVG
+    // viewport coords, then invert the zoom transform to get canvas coords.
+    const cursorSVGX = position.x - (canvasOffset.left - rootOffset.left);
+    const cursorSVGY = position.y - (canvasOffset.top - rootOffset.top);
+    const cursorCanvas = Coordinates.viewToCanvas(
+      new Vec2(cursorSVGX, cursorSVGY),
+    );
 
     let nearest: AttachmentPointTarget | null = null;
     let minDist = threshold;
@@ -1080,18 +1084,16 @@ export class LibraryItemDragDropHandler {
           continue;
         }
 
+        // getAttachmentPointApproxCanvasPosition returns canvas-space coords —
+        // compare directly against the canvas-space cursor.
         const apCanvasPos = this.getAttachmentPointApproxCanvasPosition(
           renderer,
           apName,
         );
-        const apViewPos = Coordinates.canvasToView(apCanvasPos);
-
-        // Convert view position to ketcherRoot-relative
-        const apScreenX = canvasRelLeft + apViewPos.x;
-        const apScreenY = canvasRelTop + apViewPos.y;
 
         const dist = Math.sqrt(
-          (position.x - apScreenX) ** 2 + (position.y - apScreenY) ** 2,
+          (cursorCanvas.x - apCanvasPos.x) ** 2 +
+            (cursorCanvas.y - apCanvasPos.y) ** 2,
         );
 
         if (dist < minDist) {

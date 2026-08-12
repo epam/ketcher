@@ -3,6 +3,7 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { Peptide } from 'domain/entities/Peptide';
 import type { RNABase } from 'domain/entities/RNABase';
 import type { Sugar } from 'domain/entities/Sugar';
+import type { Atom } from 'domain/entities/CoreAtom';
 import {
   type MonomerItemType,
   type MonomerOrAmbiguousType,
@@ -18,6 +19,7 @@ import {
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import type { Phosphate } from 'domain/entities/Phosphate';
+import { type Bond } from 'domain/entities/CoreBond';
 
 /**
  * Structural equivalent of AmbiguousMonomer used locally to avoid importing the class
@@ -142,20 +144,20 @@ export function isMonomerConnectedToR2RnaBase(monomer?: BaseMonomer) {
     return false;
   }
 
-  const R1PolymerBond = monomer.attachmentPointsToBonds.R1;
+  const r1PolymerBond = monomer.attachmentPointsToBonds.R1;
 
-  if (R1PolymerBond instanceof MonomerToAtomBond) {
+  if (r1PolymerBond instanceof MonomerToAtomBond) {
     return false;
   }
 
-  const R1ConnectedMonomer = R1PolymerBond?.getAnotherMonomer(monomer);
-  const r2PolymerBond = R1ConnectedMonomer?.attachmentPointsToBonds.R2;
+  const r1ConnectedMonomer = r1PolymerBond?.getAnotherMonomer(monomer);
+  const r2PolymerBond = r1ConnectedMonomer?.attachmentPointsToBonds.R2;
 
   return (
-    isRnaBaseOrAmbiguousRnaBase(R1ConnectedMonomer) &&
-    getSugarFromRnaBase(R1ConnectedMonomer) &&
+    isRnaBaseOrAmbiguousRnaBase(r1ConnectedMonomer) &&
+    getSugarFromRnaBase(r1ConnectedMonomer) &&
     r2PolymerBond instanceof PolymerBond &&
-    r2PolymerBond?.getAnotherMonomer(R1ConnectedMonomer) === monomer
+    r2PolymerBond?.getAnotherMonomer(r1ConnectedMonomer) === monomer
   );
 }
 
@@ -237,9 +239,8 @@ export function getPreviousMonomerInChain(monomer: BaseMonomer) {
     return previousMonomer;
   }
 
-  return previousMonomer &&
-    previousMonomer.getAttachmentPointByBond(r1PolymerBond) ===
-      AttachmentPointName.R2
+  return previousMonomer?.getAttachmentPointByBond(r1PolymerBond) ===
+    AttachmentPointName.R2
     ? previousMonomer
     : undefined;
 }
@@ -393,7 +394,8 @@ export function isMonomerBeginningOfChain(
     );
   const previousConnectionNotR2 =
     r1PolymerBond &&
-    previousMonomer?.getAttachmentPointByBond(r1PolymerBond) !== 'R2';
+    previousMonomer?.getAttachmentPointByBond(r1PolymerBond) !==
+      AttachmentPointName.R2;
 
   // For single monomers we check that monomer has bonds, but for UnsplitNucleotide we don't
   // to be consistent with rna triplets (we show enumeration for single triplet)
@@ -448,7 +450,7 @@ export const isRnaBaseVariantMonomer = (
 export function isAmbiguousMonomerLibraryItem(
   monomer?: MonomerOrAmbiguousType,
 ): monomer is AmbiguousMonomerType {
-  return Boolean(monomer && monomer.isAmbiguous);
+  return Boolean(monomer?.isAmbiguous);
 }
 
 export const isLibraryItemRnaPreset = (
@@ -532,11 +534,114 @@ export function isRnaBaseApplicableForAntisense(monomer?: BaseMonomer) {
   );
 }
 
+function getOtherAtomFromBond(bond: Bond, currentAtom: Atom): Atom | undefined {
+  if (bond.firstAtom === currentAtom) {
+    return bond.secondAtom;
+  } else if (bond.secondAtom === currentAtom) {
+    return bond.firstAtom;
+  }
+  return undefined;
+}
+
+function processAtomBonds(
+  currentAtom: Atom,
+  currentMonomer: BaseMonomer,
+  visited: Set<BaseMonomer>,
+  localVisitedAtoms: Set<number>,
+  monomerStack: BaseMonomer[],
+  atomStack: Atom[],
+) {
+  currentAtom.bonds.forEach((atomBond) => {
+    if (atomBond instanceof MonomerToAtomBond) {
+      const connectedMonomer = atomBond.monomer;
+      const shouldAddMonomer =
+        connectedMonomer &&
+        connectedMonomer !== currentMonomer &&
+        !visited.has(connectedMonomer);
+
+      if (shouldAddMonomer) {
+        monomerStack.push(connectedMonomer);
+      }
+      return;
+    }
+
+    const bond = atomBond as Bond;
+    const otherAtom = getOtherAtomFromBond(bond, currentAtom);
+
+    if (otherAtom && !localVisitedAtoms.has(otherAtom.id)) {
+      atomStack.push(otherAtom);
+    }
+  });
+}
+
+function traverseMicrostructureAtoms(
+  startAtom: Atom,
+  currentMonomer: BaseMonomer,
+  visitedAtoms: Set<number>,
+  visited: Set<BaseMonomer>,
+  monomerStack: BaseMonomer[],
+) {
+  const atomsToCheck: Atom[] = [startAtom];
+  const localVisitedAtoms = new Set<number>();
+
+  while (atomsToCheck.length > 0) {
+    const currentAtom = atomsToCheck.pop();
+
+    if (!currentAtom || localVisitedAtoms.has(currentAtom.id)) {
+      continue;
+    }
+
+    localVisitedAtoms.add(currentAtom.id);
+    visitedAtoms.add(currentAtom.id);
+
+    processAtomBonds(
+      currentAtom,
+      currentMonomer,
+      visited,
+      localVisitedAtoms,
+      monomerStack,
+      atomsToCheck,
+    );
+  }
+}
+
+function handleMonomerToAtomBond(
+  bond: MonomerToAtomBond,
+  currentMonomer: BaseMonomer,
+  visitedAtoms: Set<number>,
+  visited: Set<BaseMonomer>,
+  stack: BaseMonomer[],
+) {
+  const connectedAtom = bond.atom;
+  if (!connectedAtom) {
+    return;
+  }
+
+  const atomMonomer = connectedAtom.monomer;
+  const shouldAddMonomer =
+    atomMonomer && atomMonomer !== currentMonomer && !visited.has(atomMonomer);
+
+  if (shouldAddMonomer) {
+    stack.push(atomMonomer);
+  }
+
+  if (!visitedAtoms.has(connectedAtom.id)) {
+    traverseMicrostructureAtoms(
+      connectedAtom,
+      currentMonomer,
+      visitedAtoms,
+      visited,
+      stack,
+    );
+  }
+}
+
 export function getAllConnectedMonomersRecursively(
   monomer: BaseMonomer,
 ): BaseMonomer[] {
   const stack = [monomer];
   const visited = new Set<BaseMonomer>();
+  const visitedAtoms = new Set<number>();
   const connectedMonomers: BaseMonomer[] = [];
 
   while (stack.length > 0) {
@@ -555,6 +660,14 @@ export function getAllConnectedMonomersRecursively(
         if (anotherMonomer && !visited.has(anotherMonomer)) {
           stack.push(anotherMonomer);
         }
+      } else if (bond instanceof MonomerToAtomBond) {
+        handleMonomerToAtomBond(
+          bond,
+          currentMonomer,
+          visitedAtoms,
+          visited,
+          stack,
+        );
       }
     });
   }

@@ -30,7 +30,7 @@ describe('atom query properties rendering', () => {
       getAtomCustomQuery({
         ...atom,
         ...atom.queryProperties,
-      }),
+      } as unknown as Atom),
     ).toBe(attributes.expected);
   });
 });

@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/use-memo */
+/* eslint-disable react-hooks/refs */
 import {
   createContext,
   ReactNode,

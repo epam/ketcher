@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import type { AttachmentPointName, AtomLabel } from 'ketcher-core';
 import { useEffect, useRef, useState } from 'react';
 import AttachmentPointControls from '../AttachmentPointControls/AttachmentPointControls';

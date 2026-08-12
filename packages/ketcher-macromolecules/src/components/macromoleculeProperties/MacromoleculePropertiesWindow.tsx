@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/use-memo, react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -13,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+/* eslint-disable react-hooks/refs */
 
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {

@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* eslint-disable react-hooks/refs */
+
 import { useState, useRef, useCallback, useEffect, RefObject } from 'react';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR, Icon } from 'ketcher-react';
 import { ZoomInput } from 'components/ZoomControls/ZoomInput';

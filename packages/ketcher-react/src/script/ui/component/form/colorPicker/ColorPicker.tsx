@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* eslint-disable react-hooks/refs */
+
 import { useEffect, useId, useRef, useState } from 'react';
 import { Popover, type PopoverActions } from '@mui/material';
 

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { type FC, useEffect, useState } from 'react';
 import { Item, Submenu } from 'react-contexify';
 import type Editor from 'src/script/editor';

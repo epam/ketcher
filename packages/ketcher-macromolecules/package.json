@@ -32,7 +32,7 @@
     "build": "cross-env NODE_ENV=production rollup -c rollup.config.mjs -m true",
     "start": "cross-env NODE_ENV=development rollup -c rollup.config.mjs -m true -w",
     "test": "run-s test:prettier test:stylelint test:eslint:quiet test:types test:unit",
-    "test:eslint": "eslint \"**/*.{ts,tsx,js,jsx}\"",
+    "test:eslint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "test:eslint:quiet": "npm run test:eslint -- --quiet",
     "test:eslint:fix": "npm run test:eslint -- --fix",
     "test:types": "tsc --noEmit",

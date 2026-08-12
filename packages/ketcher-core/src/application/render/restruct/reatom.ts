@@ -1558,7 +1558,6 @@ function getVisibleNeighborHalfBondIds(struct: Struct, atom: ReAtom): number[] {
 function getOnlyQueryAttributesCustomQuery(atom: Atom) {
   const queryText =
     atom.queryProperties.customQuery ?? getAtomCustomQuery(atom, true);
-  atom.queryProperties.customQuery ?? getAtomCustomQuery(atom, true);
   return queryText;
 }
 

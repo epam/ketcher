@@ -67,11 +67,11 @@ describe('move operations isDummy()', () => {
     expect(new AtomMove(1, new Vec2(0, 0)).isDummy()).toBe(true);
     expect(new AtomMove(1, new Vec2(1, 0)).isDummy()).toBe(false);
 
-    expect(new BondMove(1, { x: 0, y: 0 }).isDummy()).toBe(true);
-    expect(new BondMove(1, { x: 0, y: 2 }).isDummy()).toBe(false);
+    expect(new BondMove(1, new Vec2(0, 0)).isDummy()).toBe(true);
+    expect(new BondMove(1, new Vec2(0, 2)).isDummy()).toBe(false);
 
-    expect(new TextMove(1, { x: 0, y: 0 }).isDummy()).toBe(true);
-    expect(new TextMove(1, { x: 3, y: 4 }).isDummy()).toBe(false);
+    expect(new TextMove(1, new Vec2(0, 0)).isDummy()).toBe(true);
+    expect(new TextMove(1, new Vec2(3, 4)).isDummy()).toBe(false);
   });
 });
 
@@ -86,7 +86,7 @@ describe('Action.isDummy()', () => {
   it('with a restruct, is dummy only when every operation is a no-op', () => {
     const allDummy = new Action([
       new AtomMove(1, new Vec2(0, 0)),
-      new BondMove(2, { x: 0, y: 0 }),
+      new BondMove(2, new Vec2(0, 0)),
     ]);
     expect(allDummy.isDummy(restruct)).toBe(true);
 

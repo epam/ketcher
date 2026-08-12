@@ -69,7 +69,6 @@ interface EditorState {
   oligonucleotidesValue: number;
   app: AppMeta;
   selectedMenuGroupItems: Record<string, string>;
-  modelChangeCounter: number;
 }
 
 const initialState: EditorState = {
@@ -94,7 +93,6 @@ const initialState: EditorState = {
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit.microMol,
   unipositiveIonsValue: 140,
   oligonucleotidesValue: 200,
-  modelChangeCounter: 0,
   app: {
     buildDate: process.env.BUILD_DATE ?? '',
     indigoVersion: process.env.INDIGO_VERSION ?? '',
@@ -241,9 +239,6 @@ export const editorSlice: Slice<EditorState> = createSlice({
         [action.payload.groupName]: action.payload.activeItemName,
       };
     },
-    notifyModelChange: (state) => {
-      state.modelChangeCounter += 1;
-    },
   },
 });
 
@@ -270,7 +265,6 @@ export const {
   setOligonucleotidesValue,
   setAppMeta,
   setSelectedMenuGroupItem,
-  notifyModelChange,
 } = editorSlice.actions;
 
 export const selectShowPreview = (state: RootState): EditorStatePreview =>

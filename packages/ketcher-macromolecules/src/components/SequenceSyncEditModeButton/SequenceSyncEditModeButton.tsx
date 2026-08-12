@@ -16,7 +16,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAppSelector, useLayoutMode } from 'hooks';
-import { hasAntisenseChains, selectEditor } from 'state/common';
+import { selectEditor } from 'state/common';
 import styled from '@emotion/styled';
 import { Button } from 'ketcher-react';
 import { blurActiveElement } from 'helpers/canvas';
@@ -51,7 +51,9 @@ export const SequenceSyncEditModeButton = () => {
   const editor = useAppSelector(selectEditor);
   const [isSequenceSyncEditMode, setIsSequenceSyncEditMode] = useState(true);
   const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
-  const hasAtLeastOneAntisense = useAppSelector(hasAntisenseChains);
+  const [hasAtLeastOneAntisense, setHasAtLeastOneAntisense] = useState(
+    Boolean(editor?.drawingEntitiesManager?.hasAntisenseChains),
+  );
 
   const handleClick = () => {
     const isSequenceSyncEditModeNewState = !isSequenceSyncEditMode;
@@ -62,6 +64,21 @@ export const SequenceSyncEditModeButton = () => {
     );
     blurActiveElement();
   };
+
+  useEffect(() => {
+    const updateHasAntisenseChains = () => {
+      setHasAtLeastOneAntisense(
+        Boolean(editor?.drawingEntitiesManager?.hasAntisenseChains),
+      );
+    };
+
+    updateHasAntisenseChains();
+    editor?.events.modelChange.add(updateHasAntisenseChains);
+
+    return () => {
+      editor?.events.modelChange.remove(updateHasAntisenseChains);
+    };
+  }, [editor]);
 
   useEffect(() => {
     if (isSequenceMode && hasAtLeastOneAntisense) {

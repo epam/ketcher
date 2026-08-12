@@ -16,7 +16,6 @@
 import { useCallback, useEffect } from 'react';
 import {
   hasAntisenseChains,
-  notifyModelChange,
   selectEditor,
   selectEditorActiveTool,
   selectIsContextMenuActive,
@@ -84,16 +83,6 @@ export const EditorEvents = () => {
       editor?.events.updateMonomersLibrary.remove(handleMonomersLibraryUpdate);
     };
   }, [editor]);
-
-  useEffect(() => {
-    const handleModelChange = () => dispatch(notifyModelChange({}));
-
-    editor?.events.modelChange.add(handleModelChange);
-
-    return () => {
-      editor?.events.modelChange.remove(handleModelChange);
-    };
-  }, [editor, dispatch]);
 
   useEffect(() => {
     const onSelectSelectionTool = () => {

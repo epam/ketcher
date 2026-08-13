@@ -191,7 +191,8 @@ export const rnaBuilderSlice = createSlice({
       );
     },
     setActivePresetName: (state, action: PayloadAction<string>) => {
-      state.activePreset!.name = action.payload;
+      if (!state.activePreset) return;
+      state.activePreset.name = action.payload;
     },
     setActiveRnaBuilderItem: (
       state,

@@ -99,10 +99,14 @@ export class TextDelete extends BaseOperation<TextDeleteData> {
 
   invert(): BaseOperation {
     if (this.data.content == null) {
-      throw new Error('TextDelete: cannot invert before execute captures content');
+      throw new Error(
+        'TextDelete: cannot invert before execute captures content',
+      );
     }
     if (this.data.position == null) {
-      throw new Error('TextDelete: cannot invert before execute captures position');
+      throw new Error(
+        'TextDelete: cannot invert before execute captures position',
+      );
     }
     if (this.data.pos == null) {
       throw new Error('TextDelete: cannot invert before execute captures pos');

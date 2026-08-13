@@ -318,7 +318,8 @@ export class Struct {
     const bidMap = bidMapEntity ?? new Map();
 
     bonds = bonds.filter((bid) => {
-      const bond = this.bonds.get(bid)!;
+      const bond = this.bonds.get(bid);
+      assert(bond != null);
       return atoms.has(bond.begin) && atoms.has(bond.end);
     });
 
@@ -372,7 +373,7 @@ export class Struct {
 
       // TODO: delete type check
       if (fragment && fragment instanceof Fragment) {
-        cp.frags.set(newfid, this.frags.get(oldfid)!.clone(aids)); // clone Fragments
+        cp.frags.set(newfid, fragment.clone(aids)); // clone Fragments
       }
     });
 
@@ -420,19 +421,27 @@ export class Struct {
     });
 
     simpleObjects.forEach((soid) => {
-      cp.simpleObjects.add(this.simpleObjects.get(soid)!.clone());
+      const simpleObject = this.simpleObjects.get(soid);
+      assert(simpleObject != null);
+      cp.simpleObjects.add(simpleObject.clone());
     });
 
     texts.forEach((id) => {
-      cp.texts.add(this.texts.get(id)!.clone());
+      const text = this.texts.get(id);
+      assert(text != null);
+      cp.texts.add(text.clone());
     });
 
     images.forEach((id) => {
-      cp.images.add(this.images.get(id)!.clone());
+      const image = this.images.get(id);
+      assert(image != null);
+      cp.images.add(image.clone());
     });
 
     multitailArrows.forEach((id) => {
-      cp.addMultitailArrow(this.multitailArrows.get(id)!.clone());
+      const multitailArrow = this.multitailArrows.get(id);
+      assert(multitailArrow != null);
+      cp.addMultitailArrow(multitailArrow.clone());
     });
 
     rgroupAttachmentPoints.forEach((id) => {
@@ -468,15 +477,21 @@ export class Struct {
 
   atomAddToSGroup(sgid, aid) {
     // TODO: [MK] make sure the addition does not break the hierarchy?
-    SGroup.addAtom(this.sgroups.get(sgid)!, aid, this);
-    this.atoms.get(aid)!.sgs.add(sgid);
+    const sgroup = this.sgroups.get(sgid);
+    assert(sgroup != null);
+    SGroup.addAtom(sgroup, aid, this);
+    const atom = this.atoms.get(aid);
+    assert(atom != null);
+    atom.sgs.add(sgid);
   }
 
   calcConn(atom, includeAtomsInCollapsedSgroups = false) {
     let conn = 0;
     for (const neighborId of atom.neighbors) {
-      const hb = this.halfBonds.get(neighborId)!;
-      const bond = this.bonds.get(hb.bid)!;
+      const hb = this.halfBonds.get(neighborId);
+      assert(hb != null);
+      const bond = this.bonds.get(hb.bid);
+      assert(bond != null);
 
       if (
         Bond.isBondToHiddenLeavingGroup(
@@ -525,29 +540,37 @@ export class Struct {
     });
 
     this.bonds.forEach((bond) => {
-      const a1 = this.atoms.get(bond.begin)!;
-      const a2 = this.atoms.get(bond.end)!;
-      a1.neighbors.push(bond.hb1!);
-      a2.neighbors.push(bond.hb2!);
+      const a1 = this.atoms.get(bond.begin);
+      const a2 = this.atoms.get(bond.end);
+      assert(a1 != null && a2 != null);
+      assert(bond.hb1 != null && bond.hb2 != null);
+      a1.neighbors.push(bond.hb1);
+      a2.neighbors.push(bond.hb2);
     });
   }
 
   bondInitHalfBonds(bid, bond?: Bond) {
-    bond = bond ?? this.bonds.get(bid)!;
+    bond = bond ?? this.bonds.get(bid);
+    assert(bond != null);
     bond.hb1 = 2 * bid;
     bond.hb2 = 2 * bid + 1; // eslint-disable-line no-mixed-operators
     this.halfBonds.set(bond.hb1, new HalfBond(bond.begin, bond.end, bid));
     this.halfBonds.set(bond.hb2, new HalfBond(bond.end, bond.begin, bid));
-    const hb1 = this.halfBonds.get(bond.hb1)!;
-    const hb2 = this.halfBonds.get(bond.hb2)!;
+    const hb1 = this.halfBonds.get(bond.hb1);
+    const hb2 = this.halfBonds.get(bond.hb2);
+    assert(hb1 != null && hb2 != null);
     hb1.contra = bond.hb2;
     hb2.contra = bond.hb1;
   }
 
   halfBondUpdate(halfBondId: number) {
-    const halfBond = this.halfBonds.get(halfBondId)!;
+    const halfBond = this.halfBonds.get(halfBondId);
+    assert(halfBond != null);
     const sgroup1 = this.getGroupFromAtomId(halfBond.begin);
     const sgroup2 = this.getGroupFromAtomId(halfBond.end);
+    const atomBegin = this.atoms.get(halfBond.begin);
+    const atomEnd = this.atoms.get(halfBond.end);
+    assert(atomBegin != null && atomEnd != null);
 
     let startCoords: Vec2;
     let endCoords: Vec2;
@@ -555,25 +578,20 @@ export class Struct {
     if (sgroup1 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
       startCoords = sgroup1.isContracted()
         ? (sgroup1.pp as Vec2)
-        : this.atoms.get(halfBond.begin)!.pp;
+        : atomBegin.pp;
     } else if (sgroup1 && sgroup1 !== sgroup2 && sgroup1.isContracted()) {
       startCoords =
-        sgroup1.getContractedPosition(this).position ??
-        this.atoms.get(halfBond.begin)!.pp;
+        sgroup1.getContractedPosition(this).position ?? atomBegin.pp;
     } else {
-      startCoords = this.atoms.get(halfBond.begin)!.pp;
+      startCoords = atomBegin.pp;
     }
 
     if (sgroup2 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
-      endCoords = sgroup2.isContracted()
-        ? (sgroup2.pp as Vec2)
-        : this.atoms.get(halfBond.end)!.pp;
+      endCoords = sgroup2.isContracted() ? (sgroup2.pp as Vec2) : atomEnd.pp;
     } else if (sgroup2 && sgroup2 !== sgroup1 && sgroup2.isContracted()) {
-      endCoords =
-        sgroup2.getContractedPosition(this).position ??
-        this.atoms.get(halfBond.end)!.pp;
+      endCoords = sgroup2.getContractedPosition(this).position ?? atomEnd.pp;
     } else {
-      endCoords = this.atoms.get(halfBond.end)!.pp;
+      endCoords = atomEnd.pp;
     }
 
     const coordsDifference = Vec2.diff(endCoords, startCoords).normalized();
@@ -595,12 +613,17 @@ export class Struct {
   }
 
   setHbNext(hbid, next) {
-    this.halfBonds.get(this.halfBonds.get(hbid)!.contra)!.next = next;
+    const hb = this.halfBonds.get(hbid);
+    assert(hb != null);
+    const contra = this.halfBonds.get(hb.contra);
+    assert(contra != null);
+    contra.next = next;
   }
 
   halfBondSetAngle(hbid, left) {
-    const hb = this.halfBonds.get(hbid)!;
-    const hbl = this.halfBonds.get(left)!;
+    const hb = this.halfBonds.get(hbid);
+    const hbl = this.halfBonds.get(left);
+    assert(hb != null && hbl != null);
 
     hbl.rightCos = Vec2.dot(hbl.dir, hb.dir);
     hb.leftCos = Vec2.dot(hbl.dir, hb.dir);
@@ -613,12 +636,16 @@ export class Struct {
   }
 
   atomAddNeighbor(hbid) {
-    const hb = this.halfBonds.get(hbid)!;
-    const atom = this.atoms.get(hb.begin)!;
+    const hb = this.halfBonds.get(hbid);
+    assert(hb != null);
+    const atom = this.atoms.get(hb.begin);
+    assert(atom != null);
 
     let i;
     for (i = 0; i < atom.neighbors.length; ++i) {
-      if (this.halfBonds.get(atom.neighbors[i])!.ang > hb.ang) break;
+      const neighborHb = this.halfBonds.get(atom.neighbors[i]);
+      assert(neighborHb != null);
+      if (neighborHb.ang > hb.ang) break;
     }
     atom.neighbors.splice(i, 0, hbid);
     const ir = atom.neighbors[(i + 1) % atom.neighbors.length];
@@ -631,15 +658,23 @@ export class Struct {
   }
 
   atomSortNeighbors(aid) {
-    const atom = this.atoms.get(aid)!;
+    const atom = this.atoms.get(aid);
+    assert(atom != null);
     const halfBonds = this.halfBonds;
 
-    atom.neighbors.sort(
-      (nei, nei2) => halfBonds.get(nei)!.ang - halfBonds.get(nei2)!.ang,
-    );
+    atom.neighbors.sort((nei, nei2) => {
+      const hb1 = halfBonds.get(nei);
+      const hb2 = halfBonds.get(nei2);
+      assert(hb1 != null && hb2 != null);
+      return hb1.ang - hb2.ang;
+    });
     atom.neighbors.forEach((nei, i) => {
       const nextNei = atom.neighbors[(i + 1) % atom.neighbors.length];
-      this.halfBonds.get(this.halfBonds.get(nei)!.contra)!.next = nextNei;
+      const hb = this.halfBonds.get(nei);
+      assert(hb != null);
+      const contraHb = this.halfBonds.get(hb.contra);
+      assert(contraHb != null);
+      contraHb.next = nextNei;
       this.halfBondSetAngle(nextNei, nei);
     });
   }
@@ -657,9 +692,13 @@ export class Struct {
   }
 
   atomUpdateHalfBonds(atomId: number) {
-    this.atoms.get(atomId)!.neighbors.forEach((hbid) => {
+    const atom = this.atoms.get(atomId);
+    assert(atom != null);
+    atom.neighbors.forEach((hbid) => {
       this.halfBondUpdate(hbid);
-      this.halfBondUpdate(this.halfBonds.get(hbid)!.contra);
+      const hb = this.halfBonds.get(hbid);
+      assert(hb != null);
+      this.halfBondUpdate(hb.contra);
     });
   }
 
@@ -682,12 +721,14 @@ export class Struct {
     });
 
     this.bonds.forEach((bond, bid) => {
-      const a1 = this.atoms.get(bond.begin)!;
-      const a2 = this.atoms.get(bond.end)!;
+      const a1 = this.atoms.get(bond.begin);
+      const a2 = this.atoms.get(bond.end);
+      assert(a1 != null && a2 != null);
 
       a1.sgs.forEach((sgid) => {
         if (!a2.sgs.has(sgid)) {
-          const sg = this.sgroups.get(sgid)!;
+          const sg = this.sgroups.get(sgid);
+          assert(sg != null);
           sg.xBonds.push(bid);
           arrayAddIfMissing(sg.neiAtoms, bond.end);
         }
@@ -695,7 +736,8 @@ export class Struct {
 
       a2.sgs.forEach((sgid) => {
         if (!a1.sgs.has(sgid)) {
-          const sg = this.sgroups.get(sgid)!;
+          const sg = this.sgroups.get(sgid);
+          assert(sg != null);
           sg.xBonds.push(bid);
           arrayAddIfMissing(sg.neiAtoms, bond.begin);
         }
@@ -704,8 +746,12 @@ export class Struct {
   }
 
   sGroupDelete(sgid: number) {
-    this.sgroups.get(sgid)!.atoms.forEach((atom) => {
-      this.atoms.get(atom)!.sgs.delete(sgid);
+    const sgroup = this.sgroups.get(sgid);
+    assert(sgroup != null);
+    sgroup.atoms.forEach((atomId) => {
+      const atom = this.atoms.get(atomId);
+      assert(atom != null);
+      atom.sgs.delete(sgid);
     });
 
     this.sGroupForest.remove(sgid);
@@ -713,12 +759,14 @@ export class Struct {
   }
 
   atomSetPos(id: number, pp: Vec2): void {
-    const item = this.atoms.get(id)!;
+    const item = this.atoms.get(id);
+    assert(item != null);
     item.pp = pp;
   }
 
   rxnPlusSetPos(id: number, pp: Vec2): void {
-    const item = this.rxnPluses.get(id)!;
+    const item = this.rxnPluses.get(id);
+    assert(item != null);
     item.pp = pp;
   }
 
@@ -730,7 +778,8 @@ export class Struct {
   }
 
   simpleObjectSetPos(id: number, pos: Array<Vec2>) {
-    const item = this.simpleObjects.get(id)!;
+    const item = this.simpleObjects.get(id);
+    assert(item != null);
     item.pos = pos;
   }
 
@@ -821,10 +870,10 @@ export class Struct {
     let totalLength = 0;
     let cnt = 0;
     this.bonds.forEach((bond) => {
-      totalLength += Vec2.dist(
-        this.atoms.get(bond.begin)!.pp,
-        this.atoms.get(bond.end)!.pp,
-      );
+      const a1 = this.atoms.get(bond.begin);
+      const a2 = this.atoms.get(bond.end);
+      assert(a1 != null && a2 != null);
+      totalLength += Vec2.dist(a1.pp, a2.pp);
       cnt++;
     });
     return { cnt, totalLength };
@@ -846,10 +895,10 @@ export class Struct {
       minDist = -1;
       for (j = 0; j < keys.length; ++j) {
         if (j === k) continue; // eslint-disable-line no-continue
-        dist = Vec2.dist(
-          this.atoms.get(keys[j])!.pp,
-          this.atoms.get(keys[k])!.pp,
-        );
+        const atomJ = this.atoms.get(keys[j]);
+        const atomK = this.atoms.get(keys[k]);
+        assert(atomJ != null && atomK != null);
+        dist = Vec2.dist(atomJ.pp, atomK.pp);
         if (minDist < 0 || minDist > dist) minDist = dist;
       }
       totalDist += minDist;
@@ -872,8 +921,10 @@ export class Struct {
     const list = [firstaid];
     const ids = new Pile<number>();
     while (list.length > 0) {
-      const aid = list.pop()!;
-      const atom = this.atoms.get(aid)!;
+      const aid = list.pop();
+      assert(aid !== undefined);
+      const atom = this.atoms.get(aid);
+      assert(atom != null);
 
       if (this.isAtomFromMacromolecule(aid)) {
         continue;
@@ -882,7 +933,9 @@ export class Struct {
       ids.add(aid);
 
       atom.neighbors.forEach((nei) => {
-        const neiId = this.halfBonds.get(nei)!.end;
+        const hb = this.halfBonds.get(nei);
+        assert(hb != null);
+        const neiId = hb.end;
         if (!ids.has(neiId)) list.push(neiId);
       });
     }
@@ -923,7 +976,8 @@ export class Struct {
     const fid = this.frags.add(frag);
 
     idSet.forEach((aid) => {
-      const atom = this.atoms.get(aid)!;
+      const atom = this.atoms.get(aid);
+      assert(atom != null);
       if (atom.stereoLabel) frag.updateStereoAtom(this, aid, fid, true);
       atom.fragment = fid;
     });
@@ -1019,17 +1073,25 @@ export class Struct {
 
   loopHasSelfIntersections(hbs: Array<number>) {
     for (const [i, halfBondId] of hbs.entries()) {
-      const hbi = this.halfBonds.get(halfBondId)!;
-      const ai = this.atoms.get(hbi.begin)!.pp;
-      const bi = this.atoms.get(hbi.end)!.pp;
+      const hbi = this.halfBonds.get(halfBondId);
+      assert(hbi != null);
+      const atomI1 = this.atoms.get(hbi.begin);
+      const atomI2 = this.atoms.get(hbi.end);
+      assert(atomI1 != null && atomI2 != null);
+      const ai = atomI1.pp;
+      const bi = atomI2.pp;
       const set = new Pile([hbi.begin, hbi.end]);
 
       for (const hbjId of hbs.slice(i + 2)) {
-        const hbj = this.halfBonds.get(hbjId)!;
+        const hbj = this.halfBonds.get(hbjId);
+        assert(hbj != null);
         if (set.has(hbj.begin) || set.has(hbj.end)) continue; // skip edges sharing an atom
 
-        const aj = this.atoms.get(hbj.begin)!.pp;
-        const bj = this.atoms.get(hbj.end)!.pp;
+        const atomJ1 = this.atoms.get(hbj.begin);
+        const atomJ2 = this.atoms.get(hbj.end);
+        assert(atomJ1 != null && atomJ2 != null);
+        const aj = atomJ1.pp;
+        const bj = atomJ2.pp;
 
         if (Box2Abs.segmentIntersection(ai, bi, aj, bj)) return true;
       }
@@ -1049,8 +1111,10 @@ export class Struct {
       continueFlag = false;
 
       for (const [index, hbid] of loop.entries()) {
-        const aid1 = this.halfBonds.get(hbid)!.begin;
-        const aid2 = this.halfBonds.get(hbid)!.end;
+        const hb = this.halfBonds.get(hbid);
+        assert(hb != null);
+        const aid1 = hb.begin;
+        const aid2 = hb.end;
         if (aid2 in atomToHalfBond) {
           // subloop found
           const s = atomToHalfBond[aid2]; // where the subloop begins
@@ -1071,8 +1135,9 @@ export class Struct {
   }
 
   halfBondAngle(hbid1: number, hbid2: number): number {
-    const hba = this.halfBonds.get(hbid1)!;
-    const hbb = this.halfBonds.get(hbid2)!;
+    const hba = this.halfBonds.get(hbid1);
+    const hbb = this.halfBonds.get(hbid2);
+    assert(hba != null && hbb != null);
     return Math.atan2(Vec2.cross(hba.dir, hbb.dir), Vec2.dot(hba.dir, hbb.dir));
   }
 
@@ -1089,7 +1154,8 @@ export class Struct {
     let totalAngle = 2 * Math.PI;
     loop.forEach((hbida, k, loopArr) => {
       const hbidb = loopArr[(k + 1) % loopArr.length];
-      const hbb = this.halfBonds.get(hbidb)!;
+      const hbb = this.halfBonds.get(hbidb);
+      assert(hbb != null);
       const angle = this.halfBondAngle(hbida, hbidb);
       totalAngle += hbb.contra === hbida ? Math.PI : angle; // back and forth along the same edge
     });
@@ -1116,44 +1182,47 @@ export class Struct {
     this.halfBonds.forEach((hb, hbId) => {
       if (hb.loop !== -1) return;
 
-      for (
-        hbIdNext = hbId, c = 0, loop = [];
-        c <= this.halfBonds.size;
-        hbIdNext = this.halfBonds.get(hbIdNext)!.next, ++c
-      ) {
-        if (!(c > 0 && hbIdNext === hbId)) {
-          loop.push(hbIdNext);
-          continue; // eslint-disable-line no-continue
+      for (hbIdNext = hbId, c = 0, loop = []; c <= this.halfBonds.size; ++c) {
+        if (c > 0 && hbIdNext === hbId) {
+          // loop found
+          const subloops = this.partitionLoop(loop);
+          subloops.forEach((subloop) => {
+            let loopId;
+            if (
+              this.loopIsInner(subloop) &&
+              !this.loopHasSelfIntersections(subloop)
+            ) {
+              /*
+                          loop is internal
+                          use lowest half-bond id in the loop as the loop id
+                          this ensures that the loop gets the same id if it is discarded and then recreated,
+                          which in turn is required to enable redrawing while dragging, as actions store item id's
+                       */
+              loopId = Math.min(...subloop);
+              this.loops.set(
+                loopId,
+                new Loop(subloop, this, this.loopIsConvex(subloop)),
+              );
+            } else {
+              loopId = -2;
+            }
+
+            subloop.forEach((hbid) => {
+              const hb = this.halfBonds.get(hbid);
+              assert(hb != null);
+              hb.loop = loopId;
+              bondsToMark.add(hb.bid);
+            });
+
+            if (loopId >= 0) newLoops.push(loopId);
+          });
+          break;
         }
 
-        // loop found
-        const subloops = this.partitionLoop(loop);
-        subloops.forEach((loop) => {
-          let loopId;
-          if (this.loopIsInner(loop) && !this.loopHasSelfIntersections(loop)) {
-            /*
-                        loop is internal
-                        use lowest half-bond id in the loop as the loop id
-                        this ensures that the loop gets the same id if it is discarded and then recreated,
-                        which in turn is required to enable redrawing while dragging, as actions store item id's
-                     */
-            loopId = Math.min(...loop);
-            this.loops.set(
-              loopId,
-              new Loop(loop, this, this.loopIsConvex(loop)),
-            );
-          } else {
-            loopId = -2;
-          }
-
-          loop.forEach((hbid) => {
-            this.halfBonds.get(hbid)!.loop = loopId;
-            bondsToMark.add(this.halfBonds.get(hbid)!.bid);
-          });
-
-          if (loopId >= 0) newLoops.push(loopId);
-        });
-        break;
+        loop.push(hbIdNext);
+        const nextHb = this.halfBonds.get(hbIdNext);
+        assert(nextHb != null);
+        hbIdNext = nextHb.next;
       }
     });
 
@@ -1168,7 +1237,8 @@ export class Struct {
       return;
     }
 
-    const atom = this.atoms.get(aid)!;
+    const atom = this.atoms.get(aid);
+    assert(atom != null);
     const charge = atom.charge ?? 0;
     const [conn, isAromatic] = this.calcConn(
       atom,
@@ -1226,7 +1296,9 @@ export class Struct {
   ) {
     this.sgroups.forEach((item) => {
       if (item.data.fieldName === 'MRV_IMPLICIT_H') {
-        this.atoms.get(item.atoms[0])!.hasImplicitH = true;
+        const atom = this.atoms.get(item.atoms[0]);
+        assert(atom != null);
+        atom.hasImplicitH = true;
       }
     });
 
@@ -1265,7 +1337,8 @@ export class Struct {
 
   atomGetNeighbors(aid: number): Array<Neighbor> | undefined {
     return this.atoms.get(aid)?.neighbors.map((nei) => {
-      const hb = this.halfBonds.get(nei)!;
+      const hb = this.halfBonds.get(nei);
+      assert(hb != null);
       return {
         aid: hb.end,
         bid: hb.bid,

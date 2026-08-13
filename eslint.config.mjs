@@ -95,7 +95,7 @@ export default [
     rules: {
       'linebreak-style': ['error', 'unix'],
       'prettier/prettier': 'error',
-      '@typescript-eslint/no-non-null-assertion': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
       'object-shorthand': 'error',
       '@typescript-eslint/no-empty-function': 'off',

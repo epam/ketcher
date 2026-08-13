@@ -1,4 +1,6 @@
-﻿/****************************************************************************
+﻿/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

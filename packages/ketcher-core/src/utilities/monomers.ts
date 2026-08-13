@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { IKetIdtAliases } from 'application/formatters/types/ket';
 

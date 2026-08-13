@@ -33,10 +33,14 @@ describe('SGroup atom operations guards', () => {
     const atomId = struct.atoms.add(
       new Atom({ label: 'C', pp: new Vec2(0, 0) }),
     );
+    const sgroupId = struct.sgroups.add(new SGroup(SGroup.TYPES.SUP));
     const restruct = { molecule: struct } as ReStruct;
 
     expect(() =>
       new SGroupAtomRemove(1, atomId).execute(restruct),
+    ).not.toThrow();
+    expect(() =>
+      new SGroupAtomRemove(sgroupId, 999).execute(restruct),
     ).not.toThrow();
   });
 });

@@ -14,4 +14,23 @@ describe('SGroupDataMove', () => {
     expect(() => operation.execute(restruct)).not.toThrow();
     expect(operation.data.d).toEqual(new Vec2(1, 2));
   });
+
+  it('moves sgroup point and stores inverse vector when sgroup exists', () => {
+    const operation = new SGroupDataMove(1, new Vec2(1, 2));
+    const sgroup = { pp: new Vec2(3, 4) };
+    const markItem = jest.fn();
+    const restruct = {
+      molecule: {
+        sgroups: new Map([[1, sgroup]]),
+      },
+      markItem,
+    } as unknown as ReStruct;
+
+    operation.execute(restruct);
+
+    expect(sgroup.pp).toEqual(new Vec2(4, 6));
+    expect(operation.data.d?.x).toBe(-1);
+    expect(operation.data.d?.y).toBe(-2);
+    expect(markItem).toHaveBeenCalledWith('sgroupData', 1, 1);
+  });
 });

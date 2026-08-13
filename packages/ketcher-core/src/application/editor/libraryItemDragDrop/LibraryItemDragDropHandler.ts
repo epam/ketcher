@@ -38,6 +38,7 @@ import {
   getPresetPhosphateFromSugar,
   type PresetComponentRole,
 } from './replacementHelpers';
+import { KetcherLogger } from 'utilities';
 
 /** AP bond-target ring threshold in canvas pixels. */
 const DRAG_BOND_PROXIMITY_THRESHOLD_PX = 25;
@@ -969,6 +970,11 @@ export class LibraryItemDragDropHandler {
         // occupy a backbone cell, so the delta is always 1 cell
         // (sugar + phosphate = 2 backbone cells replacing 1 monomer).
         // The anchor is the new phosphate so the phosphate itself is not moved.
+        if (!newSugar) {
+          KetcherLogger.error('Failed to create new sugar monomer');
+
+          return finalCommand;
+        }
         if (item.sugar && item.phosphate) {
           const phosphatePosition = item.phosphatePosition ?? 'right';
           const newPhosphate = getPresetPhosphateFromSugar(

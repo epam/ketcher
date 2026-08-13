@@ -4675,8 +4675,14 @@ export class DrawingEntitiesManager {
     newPresetTemplate: IRnaPreset,
     initialSugarPosition: Vec2,
     originalComponentsOverride?: BaseMonomer[],
-  ): { command: Command; newSugar: BaseMonomer } {
+  ): { command: Command; newSugar?: BaseMonomer } {
     const command = new Command();
+
+    if (!newPresetTemplate.sugar) {
+      KetcherLogger.error('New preset template must have a sugar component');
+
+      return { command };
+    }
 
     // Gather the components of the original preset.
     //

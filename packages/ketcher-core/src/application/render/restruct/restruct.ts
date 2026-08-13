@@ -210,6 +210,7 @@ class ReStruct {
     const atom = reAtom || this.atoms.get(aid);
     if (!atom || atom.component < 0) return;
     const cc = this.connectedComponents.get(atom.component);
+    if (!cc) return;
 
     cc.delete(aid);
     if (cc.size < 1) this.connectedComponents.delete(atom.component);
@@ -272,7 +273,12 @@ class ReStruct {
   }
 
   removeConnectedComponent(ccid: number): boolean {
-    this.connectedComponents.get(ccid).forEach((aid) => {
+    const connectedComponent = this.connectedComponents.get(ccid);
+    if (!connectedComponent) {
+      return false;
+    }
+
+    connectedComponent.forEach((aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.component = -1;
     });

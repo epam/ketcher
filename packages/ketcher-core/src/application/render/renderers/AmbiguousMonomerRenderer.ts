@@ -29,10 +29,17 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
 
   constructor(public monomer: AmbiguousMonomer, scale?: number) {
     const monomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
+    const monomerSymbolElementsIdsByClass = MONOMER_SYMBOLS_IDS[monomerClass];
+    const fallbackMonomerSymbolElementsIds = MONOMER_SYMBOLS_IDS[
+      KetMonomerClass.CHEM
+    ] ?? {
+      hover: '#chem-selection',
+      body: '#chem',
+      autochainPreview: '#chem-autochain-preview',
+    };
     const monomerSymbolElementsIds =
-      MONOMER_SYMBOLS_IDS[monomerClass] ||
-      MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM];
-    if (!MONOMER_SYMBOLS_IDS[monomerClass]) {
+      monomerSymbolElementsIdsByClass ?? fallbackMonomerSymbolElementsIds;
+    if (!monomerSymbolElementsIdsByClass) {
       KetcherLogger.error(`Missing monomer symbol ids for ${monomerClass}`);
     }
 

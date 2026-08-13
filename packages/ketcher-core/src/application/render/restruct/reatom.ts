@@ -500,53 +500,52 @@ class ReAtom extends ReObject {
         functionalGroups,
       )
     ) {
-      if (!sgroup) {
+      if (sgroup) {
+        const { atomId: contractedAtomId, position: contractedPosition } =
+          sgroup.getContractedPosition(restruct.molecule);
+        const isPositionAtom = contractedAtomId === aid;
+        if (isPositionAtom) {
+          // contractedPosition is geometric center for regular SGroups;
+          // MonomerMicromolecule.getContractedPosition overrides it to sgroup.pp.
+          const position = Scale.modelToCanvas(
+            contractedPosition,
+            render.options,
+          );
+          const fontFamily = options.font.substr(
+            options.font.indexOf(' ') + 1,
+            options.font.length,
+          );
+          const superatomClass = sgroup.data?.class as
+            | keyof typeof SUPERATOM_CLASS_TEXT
+            | undefined;
+          const sGroupName =
+            sgroup.data?.name ??
+            (superatomClass ? SUPERATOM_CLASS_TEXT[superatomClass] : '') ??
+            '';
+          const path = render.paper
+            .text(position.x, position.y, sGroupName)
+            .attr({
+              'font-weight': 700,
+              'font-size': options.fontszInPx,
+              'font-family': fontFamily,
+            });
+
+          path.node?.setAttribute('data-testid', 's-group-label');
+          path.node?.setAttribute('data-label-text', sGroupName);
+          path.node?.setAttribute('data-sgroup-id', sgroup.id);
+          path.node?.setAttribute('data-sgroup-name', sGroupName);
+          path.node?.setAttribute('data-sgroup-type', sgroup.type);
+
+          restruct.addReObjectPath(
+            LayerMap.data,
+            this.visel,
+            path,
+            position,
+            true,
+          );
+        }
         return;
       }
-      const { atomId: contractedAtomId, position: contractedPosition } =
-        sgroup.getContractedPosition(restruct.molecule);
-      const isPositionAtom = contractedAtomId === aid;
-      if (isPositionAtom) {
-        // contractedPosition is geometric center for regular SGroups;
-        // MonomerMicromolecule.getContractedPosition overrides it to sgroup.pp.
-        const position = Scale.modelToCanvas(
-          contractedPosition,
-          render.options,
-        );
-        const fontFamily = options.font.substr(
-          options.font.indexOf(' ') + 1,
-          options.font.length,
-        );
-        const superatomClass = sgroup?.data?.class as
-          | keyof typeof SUPERATOM_CLASS_TEXT
-          | undefined;
-        const sGroupName =
-          sgroup?.data?.name ??
-          (superatomClass ? SUPERATOM_CLASS_TEXT[superatomClass] : '') ??
-          '';
-        const path = render.paper
-          .text(position.x, position.y, sGroupName)
-          .attr({
-            'font-weight': 700,
-            'font-size': options.fontszInPx,
-            'font-family': fontFamily,
-          });
-
-        path.node?.setAttribute('data-testid', 's-group-label');
-        path.node?.setAttribute('data-label-text', sGroupName);
-        path.node?.setAttribute('data-sgroup-id', sgroup?.id);
-        path.node?.setAttribute('data-sgroup-name', sGroupName);
-        path.node?.setAttribute('data-sgroup-type', sgroup?.type);
-
-        restruct.addReObjectPath(
-          LayerMap.data,
-          this.visel,
-          path,
-          position,
-          true,
-        );
-      }
-      return;
     }
 
     if (Atom.isHiddenLeavingGroupAtom(struct, aid)) {

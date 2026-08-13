@@ -44,7 +44,7 @@ function calcStereoFlag(
   const stereoLabel = atom.stereoLabel; // {string} "<abs|and|or>-<group>"
 
   const hasAnotherLabel = filteredStereoAtoms.some(
-    (atom) => atom?.stereoLabel !== stereoLabel,
+    (atom) => atom.stereoLabel !== stereoLabel,
   );
 
   let stereoFlag: StereoFlag;

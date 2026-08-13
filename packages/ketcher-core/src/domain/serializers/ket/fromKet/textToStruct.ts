@@ -179,10 +179,7 @@ function isKetV2Format(ketItem: unknown): ketItem is KETTextV2 {
   );
 }
 
-export function textToStruct(
-  ketItem: KETTextV2 | KETTextV1,
-  struct: Struct,
-) {
+export function textToStruct(ketItem: KETTextV2 | KETTextV1, struct: Struct) {
   let node: TextAttributes;
 
   if (isKetV2Format(ketItem)) {
@@ -191,7 +188,7 @@ export function textToStruct(
     node = getNodeWithInvertedYCoord(internal);
   } else {
     // Old format with data wrapper
-    node = getNodeWithInvertedYCoord(ketItem.data);
+    node = getNodeWithInvertedYCoord(ketItem.data) as TextAttributes;
 
     // If the incoming node.content is Draft.js shape (stringified or object),
     // convert it to Lexical format at parse time so we store only Lexical JSON.

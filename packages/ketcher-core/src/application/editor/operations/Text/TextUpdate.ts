@@ -37,7 +37,7 @@ export class TextUpdate extends BaseOperation {
     const text = restruct.molecule.texts.get(id);
 
     if (text) {
-      this.data.previousContent = text.content!;
+      this.data.previousContent = text.content;
       text.content = content;
     }
 
@@ -45,7 +45,13 @@ export class TextUpdate extends BaseOperation {
   }
 
   invert() {
-    const inverted = new TextUpdate(this.data.id, this.data.previousContent!);
+    if (this.data.previousContent === undefined) {
+      throw new Error(
+        'TextUpdate.invert() requires previousContent. Execute the operation first.',
+      );
+    }
+
+    const inverted = new TextUpdate(this.data.id, this.data.previousContent);
 
     inverted.data.previousContent = this.data.content;
     return inverted;

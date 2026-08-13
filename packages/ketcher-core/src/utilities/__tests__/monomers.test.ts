@@ -35,7 +35,11 @@ describe('getDisallowedModificationTypes', () => {
 
   it('returns all matching disallowed types', () => {
     expect(
-      getDisallowedModificationTypes(['Unknown base', 'Molecule', 'Micromolecule']),
+      getDisallowedModificationTypes([
+        'Unknown base',
+        'Molecule',
+        'Micromolecule',
+      ]),
     ).toEqual(['Unknown base', 'Molecule', 'Micromolecule']);
   });
 

@@ -30,7 +30,16 @@ export class Loop {
     this.convex = isConvex || false;
 
     hbs.forEach((hb) => {
-      const bond: Bond = struct.bonds.get(struct.halfBonds.get(hb)!.bid)!;
+      const halfBond = struct.halfBonds.get(hb);
+      if (!halfBond) {
+        throw new Error(`Loop half-bond ${hb} was not found`);
+      }
+
+      const bond = struct.bonds.get(halfBond.bid);
+      if (!bond) {
+        throw new Error(`Loop bond ${halfBond.bid} was not found`);
+      }
+
       if (bond.type !== Bond.PATTERN.TYPE.AROMATIC) this.aromatic = false;
       if (bond.type === Bond.PATTERN.TYPE.DOUBLE) this.dblBonds++;
     });

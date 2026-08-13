@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { TransientView } from 'application/render/renderers/TransientView/TransientView';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { Vec2 } from 'domain/entities';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -115,9 +114,7 @@ const getRotationArcPath = (
   );
 };
 
-// RotationView extends TransientView and overrides the static show() method
-// with specific parameter types following the established TransientView pattern.
-export class RotationView extends TransientView {
+export class RotationView {
   private static lastSnappingRadius?: number;
   private static wasRotating = false;
   private static readonly rotationHandleSubscribers = new Set<

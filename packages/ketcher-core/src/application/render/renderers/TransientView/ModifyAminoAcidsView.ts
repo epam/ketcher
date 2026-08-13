@@ -1,5 +1,4 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-import { TransientView } from './TransientView';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { BaseMonomer } from 'domain/entities';
 import {
@@ -11,7 +10,7 @@ export type ModifyAminoAcidsViewParams = {
   monomersToModify: BaseMonomer[];
 };
 
-export class ModifyAminoAcidsView extends TransientView {
+export class ModifyAminoAcidsView {
   public static readonly viewName = 'ModifyAminoAcidsView';
 
   public static show(

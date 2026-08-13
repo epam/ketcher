@@ -9,6 +9,7 @@ import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
 import type { UsageInMacromolecule } from 'application/render';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { KetMonomerClass } from 'domain/constants/monomers';
+import { KetcherLogger } from 'utilities';
 
 type PreviewAttachmentPointParams = {
   canvas: D3SvgElementSelection<SVGSVGElement, void>;
@@ -28,9 +29,11 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
 
   constructor(public monomer: AmbiguousMonomer, scale?: number) {
     const monomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
-    const monomerSymbolElementsIds = MONOMER_SYMBOLS_IDS[monomerClass];
-    if (!monomerSymbolElementsIds) {
-      throw new Error(`Missing monomer symbol ids for ${monomerClass}`);
+    const monomerSymbolElementsIds =
+      MONOMER_SYMBOLS_IDS[monomerClass] ||
+      MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM];
+    if (!MONOMER_SYMBOLS_IDS[monomerClass]) {
+      KetcherLogger.error(`Missing monomer symbol ids for ${monomerClass}`);
     }
 
     super(

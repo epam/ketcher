@@ -4,6 +4,28 @@ import { Loop } from 'domain/entities/loop';
 import { Struct } from 'domain/entities/struct';
 
 describe('Loop', () => {
+  it('keeps aromatic flag true when all bonds are aromatic', () => {
+    const struct = new Struct();
+
+    struct.bonds.set(
+      1,
+      new Bond({ begin: 1, end: 2, type: Bond.PATTERN.TYPE.AROMATIC }),
+    );
+    struct.bonds.set(
+      2,
+      new Bond({ begin: 2, end: 3, type: Bond.PATTERN.TYPE.AROMATIC }),
+    );
+
+    struct.halfBonds.set(10, new HalfBond(1, 2, 1));
+    struct.halfBonds.set(11, new HalfBond(2, 3, 2));
+
+    const loop = new Loop([10, 11], struct, true);
+
+    expect(loop.aromatic).toBe(true);
+    expect(loop.dblBonds).toBe(0);
+    expect(loop.convex).toBe(true);
+  });
+
   it('counts double bonds and detects non-aromatic loops', () => {
     const struct = new Struct();
 

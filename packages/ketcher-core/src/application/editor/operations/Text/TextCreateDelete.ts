@@ -56,7 +56,10 @@ export class TextCreate extends BaseOperation<TextCreateData> {
   }
 
   invert(): TextDelete {
-    return new TextDelete(this.data.id!);
+    if (this.data.id == null) {
+      throw new Error('TextCreate: cannot invert before execute assigns an id');
+    }
+    return new TextDelete(this.data.id);
   }
 }
 
@@ -80,7 +83,7 @@ export class TextDelete extends BaseOperation<TextDeleteData> {
     const item = struct.texts.get(this.data.id);
     if (!item) return;
 
-    this.data.content = item.content!;
+    this.data.content = item.content;
     this.data.position = item.position;
 
     restruct.markItemRemoved();
@@ -95,10 +98,19 @@ export class TextDelete extends BaseOperation<TextDeleteData> {
   }
 
   invert(): BaseOperation {
+    if (this.data.content == null) {
+      throw new Error('TextDelete: cannot invert before execute captures content');
+    }
+    if (this.data.position == null) {
+      throw new Error('TextDelete: cannot invert before execute captures position');
+    }
+    if (this.data.pos == null) {
+      throw new Error('TextDelete: cannot invert before execute captures pos');
+    }
     return new TextCreate(
-      this.data.content!,
-      this.data.position!,
-      this.data.pos!,
+      this.data.content,
+      this.data.position,
+      this.data.pos,
       this.data.id,
     );
   }

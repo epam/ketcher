@@ -4654,12 +4654,7 @@ export class DrawingEntitiesManager {
       );
     }
 
-    // Undo must run in reverse order so that new bonds are deleted first
-    // (while the new monomer still exists), then the new monomer is removed,
-    // then lost bonds are restored, and finally the original monomer is
-    // restored. Without this flag, invert() runs forward and AP slots on
-    // neighbouring monomers end up in a stale / double-bonded state.
-    command.setUndoOperationReverse();
+    command.setUndoOperationsByPriority();
 
     return { command, newMonomer };
   }
@@ -4798,14 +4793,7 @@ export class DrawingEntitiesManager {
       );
     }
 
-    // Undo must execute in reverse order so that:
-    //   1. New external bonds are removed first (while new components still exist)
-    //   2. New preset components are deleted
-    //   3. Original bonds are restored
-    //   4. Original components are restored last
-    // Without this flag, invert() runs in forward order, causing external-bond
-    // AP slots on neighbouring monomers to be left in a stale / double-bonded state.
-    command.setUndoOperationReverse();
+    command.setUndoOperationsByPriority();
 
     return { command, newSugar: newSugar ?? newComponents[0] };
   }

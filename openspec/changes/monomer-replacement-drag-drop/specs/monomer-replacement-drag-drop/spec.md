@@ -132,10 +132,34 @@ When a dragged library preset is released while a single canvas monomer (not par
 
 The system SHALL apply specific layout rules depending on the replacement type and the active editor mode.
 
-#### Scenario: No re-layout after monomer-on-monomer replacement
+#### Scenario: No re-layout after monomer-on-monomer replacement in Snake mode
 
-- **WHEN** a monomer is replaced by a monomer
-- **THEN** no re-layout is triggered in either Flex or Snake mode
+- **WHEN** a monomer is replaced by a monomer in Snake mode
+- **THEN** no re-layout is triggered
+
+#### Scenario: No shift in Flex after monomer-on-monomer replacement
+
+- **WHEN** a monomer is replaced by a monomer in Flex mode
+- **THEN** no downstream shift is applied
+
+#### Scenario: Right part of chain shifts in Flex when preset with sugar and phosphate replaces a single monomer
+
+- **WHEN** a preset is dropped onto a single canvas monomer in Flex mode
+- **AND** the preset contains both a sugar and a phosphate
+- **THEN** all monomers downstream of the replaced position in the same chain shift right by `(droppedComponentCount - 1) × SnakeLayoutCellWidth`
+- **AND** monomers in other chains are not moved
+- **AND** the shift is part of the same atomic undo step as the replacement itself
+
+Examples:
+
+- Sugar + phosphate (no base): `(2 - 1) × 60 = 60px` right-shift
+- Sugar + base + phosphate: `(3 - 1) × 60 = 120px` right-shift
+
+#### Scenario: No shift in Flex when preset without phosphate replaces a single monomer
+
+- **WHEN** a preset is dropped onto a single canvas monomer in Flex mode
+- **AND** the preset does not contain both a sugar and a phosphate
+- **THEN** no downstream shift is applied
 
 #### Scenario: No re-layout after preset-on-preset replacement when bond lengths are standard
 

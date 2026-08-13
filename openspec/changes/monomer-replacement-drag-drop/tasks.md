@@ -44,13 +44,14 @@
 
 ## 7. Layout adjustments after replacement
 
-- [x] 7.1 Monomer→monomer: confirm no re-layout is triggered in either mode (this should be automatic if positions are preserved)
-- [x] 7.2 Preset→preset (standard angles): confirm no re-layout is triggered; positions of new preset components mirror the old positions
-- [x] 7.3 Preset→preset (non-standard angles, Snake mode): confirm no re-layout is triggered in Snake mode
-- [x] 7.4 Preset→preset (non-standard angles, Flex mode): place the new preset with its sugar at the original sugar's position; other components at their standard relative offsets from the sugar
-- [x] 7.5 Preset→monomer (Snake mode): after replacement, call `runSnakeLayout` on the affected chain
-- [x] 7.6 Preset→monomer (Flex mode): compute the offset between the original monomer center and the new preset's sugar center; shift all downstream monomers in the chain by that offset using `MoveMonomerOperation`
-- [x] 7.7 Implement smooth auto-scroll for Flex mode: after chain shift, check if any moved monomer is outside the viewport; if so, apply the autochain smooth-scroll utility to bring it into view
+- [x] 7.1 Monomer→monomer (Snake mode): confirm no re-layout is triggered
+- [x] 7.2 Monomer→monomer (Flex mode): no shift (`cellDelta = 1 - 1 = 0`)
+- [x] 7.3 Preset→preset (standard angles): confirm no re-layout is triggered; positions of new preset components mirror the old positions
+- [x] 7.4 Preset→preset (non-standard angles, Snake mode): confirm no re-layout is triggered in Snake mode
+- [x] 7.5 Preset→preset (non-standard angles, Flex mode): place the new preset with its sugar at the original sugar's position; other components at their standard relative offsets from the sugar
+- [x] 7.6 Preset→monomer (Snake mode): after replacement, call `runSnakeLayout` on the affected chain
+- [x] 7.7 Preset→monomer (Flex mode): shift downstream chain by `(droppedComponentCount - 1) × SnakeLayoutCellWidth` only when the dropped preset contains both a sugar and a phosphate; anchor is the new preset's sugar
+- [ ] 7.8 Implement smooth auto-scroll for Flex mode: after chain shift, check if any moved monomer is outside the viewport; if so, apply the autochain smooth-scroll utility to bring it into view
 
 ## 8. Undo/redo atomicity
 

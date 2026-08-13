@@ -28,12 +28,14 @@ import type { DragDropModalContext } from './libraryItemDragDrop.types';
 import {
   applyPresetMirroringIfNeeded,
   computeAndApplyFlexDropRepositioning,
+  shiftDownstreamChainMonomers,
 } from './repositioning';
 import {
   getPresetSugarForMonomer,
   getMatchingPresetComponents,
   computeLostBondsForMonomerReplacement,
   computeLostBondsForPresetReplacement,
+  getPresetPhosphateFromSugar,
   type PresetComponentRole,
 } from './replacementHelpers';
 
@@ -935,13 +937,10 @@ export class LibraryItemDragDropHandler {
     }
 
     if (!isLibraryItemRnaPreset(item)) {
-      // Monomer → monomer OR preset component → monomer
       const { command } = drawingEntitiesManager.replaceMonomer(
         replaceTarget.monomer,
         item,
       );
-
-      // No re-layout for monomer→monomer (task 7.1)
       return command;
     }
 
@@ -951,7 +950,7 @@ export class LibraryItemDragDropHandler {
         replaceTarget.monomer.position.x,
         replaceTarget.monomer.position.y,
       );
-      const { command } = drawingEntitiesManager.replacePreset(
+      const { command, newSugar } = drawingEntitiesManager.replacePreset(
         replaceTarget.monomer,
         item,
         sugarPosition,
@@ -959,17 +958,30 @@ export class LibraryItemDragDropHandler {
 
       const finalCommand = new Command();
       finalCommand.merge(command);
-      // Preserve the reverse-undo flag: replacePreset sets it on `command`, but
-      // Command.merge() does not propagate undoOperationReverse, so we must set
-      // it explicitly on finalCommand as well.
-      finalCommand.setUndoOperationReverse();
+      finalCommand.setUndoOperationsByPriority();
 
-      // Layout adjustments for preset→monomer (tasks 7.5, 7.6)
+      // Layout adjustments for preset→monomer
       if (getModeName() === 'snake-layout-mode') {
         finalCommand.merge(drawingEntitiesManager.applySnakeLayout(true));
+      } else if (getModeName() === 'flex-layout-mode') {
+        // Shift the downstream chain only when the dropped preset contains
+        // both a sugar and a phosphate. The base is a side-branch and does not
+        // occupy a backbone cell, so the delta is always 1 cell
+        // (sugar + phosphate = 2 backbone cells replacing 1 monomer).
+        // The anchor is the new phosphate so the phosphate itself is not moved.
+        if (item.sugar && item.phosphate) {
+          const phosphatePosition = item.phosphatePosition ?? 'right';
+          const newPhosphate = getPresetPhosphateFromSugar(
+            newSugar,
+            phosphatePosition,
+          );
+          const anchor = newPhosphate ?? newSugar;
+          finalCommand.merge(
+            shiftDownstreamChainMonomers(drawingEntitiesManager, anchor, 1),
+          );
+          finalCommand.setUndoOperationsByPriority();
+        }
       }
-      // Flex mode: chain shift is deferred to after commit — handled by
-      // MoveMonomerOperation within the replace command (future enhancement).
 
       return finalCommand;
     }

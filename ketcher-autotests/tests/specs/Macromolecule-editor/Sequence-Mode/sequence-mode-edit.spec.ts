@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
@@ -60,7 +58,7 @@ test.beforeAll(async ({ initSequenceCanvas }) => {
 test.afterAll(async ({ closePage }) => {
   await closePage();
 });
-// eslint-disable-next-line @typescript-eslint/no-empty-function
+
 test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 test.describe('Sequence edit mode', () => {
   test('Text-editing mode activates when users start a new sequence or edit an existing one', async () => {

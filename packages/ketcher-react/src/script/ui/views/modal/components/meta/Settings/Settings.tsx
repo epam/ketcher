@@ -337,7 +337,6 @@ const SettingsDialog = (props: Props) => {
     key: '3dviewer',
     label: '3D Viewer',
     content: (
-      // eslint-disable-next-line dot-notation
       <fieldset className={classes.viewer}>
         <Field
           name="miewMode"

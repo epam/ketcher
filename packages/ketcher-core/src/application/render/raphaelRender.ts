@@ -265,7 +265,6 @@ export class Render {
   }
 
   update(force = false, viewSz: Vec2 | null = null) {
-    // eslint-disable-line max-statements
     viewSz =
       viewSz ??
       new Vec2(

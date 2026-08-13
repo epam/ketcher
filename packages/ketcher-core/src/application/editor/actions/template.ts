@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, no-redeclare */
+/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -265,7 +265,7 @@ export function fromTemplateOnBondAction(
   if (!force) return fromTemplateOnBond(restruct, template, bid, flip);
 
   const simpleFusing = (restruct, template, bid) =>
-    fromTemplateOnBond(restruct, template, bid, flip, isPreview); // eslint-disable-line
+    fromTemplateOnBond(restruct, template, bid, flip, isPreview);
   /* aromatic merge (Promise) */
   return fromAromaticTemplateOnBond(
     restruct,

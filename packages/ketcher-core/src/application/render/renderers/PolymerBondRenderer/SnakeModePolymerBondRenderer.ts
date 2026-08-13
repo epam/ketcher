@@ -947,7 +947,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.hoverAreaElement
       .attr('x2', this.scaledPosition.endPosition.x)
       // TODO fix type error appeared without ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
       // @ts-ignore
       .attr('y2', this.scaledPosition.endPosition.y);
 
@@ -982,7 +982,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.hoverAreaElement
       .attr('x1', this.scaledPosition.startPosition.x)
       // TODO fix type error appeared without ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
       // @ts-ignore
       .attr('y1', this.scaledPosition.startPosition.y);
 

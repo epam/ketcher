@@ -5,7 +5,6 @@ import type { AttachmentPointName } from 'domain/types';
 
 export type Coordinates = { x: number; y: number };
 
-// eslint-disable-next-line camelcase
 export function canvasToMonomerCoordinates(
   coordinatesOnCanvas: Coordinates,
   centerOFMonomer: Coordinates,

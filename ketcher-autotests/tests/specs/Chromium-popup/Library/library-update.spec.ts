@@ -1,9 +1,3 @@
-/* eslint-disable prefer-template */
-/* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
 import { Base } from '@tests/pages/constants/monomers/Bases';

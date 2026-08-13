@@ -133,7 +133,7 @@ const MolecularMassAmount = styled('div')(() => ({
 }));
 
 // TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const TabsWrapper = styled('div')(() => ({
   width: '100%',
@@ -148,7 +148,7 @@ const TabContentWrapper = styled('div')(() => ({
 }));
 
 // TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const TabContentErrorWrapper = styled('div')(() => ({
   display: 'flex',
@@ -221,7 +221,7 @@ const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
 }));
 
 // TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const HydrophobicityHintHeader = styled('div')(() => ({
   display: 'flex',
@@ -257,7 +257,7 @@ const PropertyHintIconWrapper = styled('div')(() => ({
 }));
 
 // TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const BasicPropertyDropdown = styled(DropDown)(() => ({
   position: 'relative',
@@ -268,7 +268,7 @@ const BasicPropertyDropdown = styled(DropDown)(() => ({
 const inputClassName = 'text-input-field-input';
 
 // TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const BasicPropertyInput = styled(TextInputField)(() => ({
   margin: 0,
@@ -424,7 +424,7 @@ const BasicProperty = (props: BasicPropertyProps) => {
         )}
         {props.hint && (
           // TODO suppressed after upgrade to react 19. Need to fix
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
           // @ts-ignore
           <StyledTooltip title={props.hint}>
             <PropertyHintIconWrapper>

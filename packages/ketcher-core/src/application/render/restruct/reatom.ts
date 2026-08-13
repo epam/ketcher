@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 /****************************************************************************
@@ -481,7 +480,6 @@ class ReAtom extends ReObject {
   }
 
   show(restruct: ReStruct, aid: number, options: RenderOptions): void {
-    // eslint-disable-line max-statements
     const struct = restruct.molecule;
     const atom = struct.atoms.get(aid)!;
     const sgroups = struct.sgroups;
@@ -716,14 +714,12 @@ class ReAtom extends ReObject {
         );
       }
       if (index) {
-        /* eslint-disable no-mixed-operators */
         pathAndRBoxTranslate(
           index.path,
           index.rbb,
           -0.5 * label.rbb.width - 0.5 * index.rbb.width - delta,
           0.3 * label.rbb.height,
         );
-        /* eslint-enable no-mixed-operators */
       }
     }
 
@@ -1591,7 +1587,7 @@ function buildLabel(
     connectedMonomerAttachmentPoints,
     usageInMacromolecule,
   } = options;
-  // eslint-disable-line max-statements
+
   let text = getLabelText(atom.a, atomId, sgroup, options) || 'R#';
 
   let tooltip: string | null = null;
@@ -1753,14 +1749,14 @@ function showHydroIndex(
   const rbb = util.relBox(path.getBBox());
   draw.recenterText(path, rbb);
   const labelHeight = atom.label?.rbb.height ?? 0;
-  /* eslint-disable no-mixed-operators */
+
   pathAndRBoxTranslate(
     path,
     rbb,
     rightMargin + 0.5 * rbb.width + delta,
     0.2 * labelHeight,
   );
-  /* eslint-enable no-mixed-operators */
+
   return { text, path, rbb };
 }
 
@@ -1821,14 +1817,14 @@ function showIsotope(
   });
   const rbb = util.relBox(path.getBBox());
   draw.recenterText(path, rbb);
-  /* eslint-disable no-mixed-operators */
+
   pathAndRBoxTranslate(
     path,
     rbb,
     leftMargin - 0.5 * rbb.width - delta,
     -0.3 * (atom.label?.rbb.height ?? 0),
   );
-  /* eslint-enable no-mixed-operators */
+
   return { text, path, rbb };
 }
 
@@ -1854,14 +1850,14 @@ function showCharge(
   });
   const rbb = util.relBox(path.getBBox());
   draw.recenterText(path, rbb);
-  /* eslint-disable no-mixed-operators */
+
   pathAndRBoxTranslate(
     path,
     rbb,
     rightMargin + 0.5 * rbb.width + delta,
     -0.3 * (atom.label?.rbb.height ?? 0),
   );
-  /* eslint-enable no-mixed-operators */
+
   return { text, path, rbb };
 }
 
@@ -1885,14 +1881,14 @@ function showExplicitValence(
   });
   const rbb = util.relBox(path.getBBox());
   draw.recenterText(path, rbb);
-  /* eslint-disable no-mixed-operators */
+
   pathAndRBoxTranslate(
     path,
     rbb,
     rightMargin + 0.5 * rbb.width + delta,
     -0.3 * (atom.label?.rbb.height ?? 0),
   );
-  /* eslint-enable no-mixed-operators */
+
   return { text, path, rbb };
 }
 
@@ -1911,7 +1907,6 @@ function showHydrogen(
   rightMargin: number;
   leftMargin: number;
 } {
-  // eslint-disable-line max-statements
   let hydroIndex: ElemAttr | null = data.hydroIndex;
   const hydrogenLeft = atom.hydrogenOnTheLeft;
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);

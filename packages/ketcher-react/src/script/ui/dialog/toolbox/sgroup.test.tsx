@@ -119,7 +119,7 @@ function renderWithMockStore(
   });
 
   // TODO suppressed after upgrade to react 19. Need to fix
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
   // @ts-ignore
   const store = createStore(reducer, initialState);
   return {

@@ -239,7 +239,6 @@ class EraserTool implements Tool {
       }
     }
 
-    // eslint-disable-line max-statements
     const rnd = this.editor.render;
 
     if (this.lassoHelper.running()) {

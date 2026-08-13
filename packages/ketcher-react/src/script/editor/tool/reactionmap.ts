@@ -108,7 +108,6 @@ class ReactionMapTool implements Tool {
 
         if (!aam1 || aam1 !== aam2) {
           if ((aam1 && aam1 !== aam2) || (!aam1 && aam2)) {
-            // eslint-disable-line no-mixed-operators
             atoms.forEach((atom, aid) => {
               if (
                 aid !== this.dragCtx.item.id &&

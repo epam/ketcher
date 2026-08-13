@@ -5,7 +5,6 @@ import type { ReStruct } from 'application/render';
 
 import { restruct, singleBond } from '../../../mock-data';
 
-// eslint-disable-next-line jest/no-disabled-tests
 describe.skip('Bond Addition', () => {
   let reStruct: ReStruct;
   let action: Action;

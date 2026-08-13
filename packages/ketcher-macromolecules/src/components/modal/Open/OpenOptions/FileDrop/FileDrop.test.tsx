@@ -65,7 +65,7 @@ describe('FileDrop component', () => {
     const { container } = render(
       withThemeProvider(<FileDrop {...mockProps} />),
     );
-    // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
+
     const input = container.querySelector(
       'input[type=file]',
     ) as HTMLInputElement;
@@ -87,7 +87,7 @@ describe('FileDrop component', () => {
     const { container } = render(
       withThemeProvider(<FileDrop {...mockProps} />),
     );
-    // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
+
     const input = container.querySelector(
       'input[type=file]',
     ) as HTMLInputElement;

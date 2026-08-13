@@ -154,14 +154,13 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
 
   public showExternal(params: PreviewAttachmentPointParams) {
     this.rootElement = this.appendRootElement(params.canvas);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
     // @ts-ignore
     this.bodyElement = this.appendBody(this.rootElement);
     this.bodyElement?.attr('data-testid', 'shape');
     this.appendLabel(this.rootElement);
     this.appendNumberOfMonomers();
     this.drawAttachmentPoints(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       this.appendPreviewAttachmentPoint.bind(this, params),
     );

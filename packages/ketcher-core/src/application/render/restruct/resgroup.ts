@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, no-undef */
+/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -249,7 +249,6 @@ class ReSGroup extends ReObject {
   }
 
   drawHover(render: Render): void {
-    // eslint-disable-line max-statements
     const options = render.options;
     const paper = render.paper;
     const sGroupItem = this.item;

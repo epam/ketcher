@@ -92,7 +92,6 @@ describe('Save modal', () => {
       name: 'File name:',
     });
 
-    // eslint-disable-next-line testing-library/no-unnecessary-act
     await act(async () => {
       await userEvent.clear(filenameInput);
     });

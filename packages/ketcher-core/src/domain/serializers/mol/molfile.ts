@@ -121,7 +121,7 @@ export class Molfile {
           }
           errorIgnore = true;
         }
-        /* eslint-disable no-mixed-operators */
+
         if (
           errorIgnore ||
           (!preserveIndigoDesc &&
@@ -161,7 +161,6 @@ export class Molfile {
     norgroups?: boolean,
     preserveIndigoDesc?: boolean,
   ) {
-    // eslint-disable-line max-statements
     /* saver */
     this.reaction = molecule.hasRxnArrow();
     this.molfile = '' + molecule.name;
@@ -316,7 +315,6 @@ export class Molfile {
   }
 
   writeCTab2000(rgroups?: Struct['rgroups']) {
-    // eslint-disable-line max-statements
     /* saver */
     const molecule = this.molecule;
     if (!molecule) return;

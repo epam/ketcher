@@ -67,7 +67,6 @@ describe('centerMonomerMicromoleculeAtoms', () => {
     const sgroup = findSgroupByName(parsed, 'TestMon');
     expect(sgroup).toBeDefined();
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const positions = getAtomPositions(sgroup!.atoms, parsed.atoms);
     const center = geometricCenter(positions);
     expect(center.x).toBeCloseTo(monomerPosition.x, PRECISION);
@@ -91,7 +90,6 @@ describe('centerMonomerMicromoleculeAtoms', () => {
     const sgroup = findSgroupByName(parsed, 'CenMon');
     expect(sgroup).toBeDefined();
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const positions = getAtomPositions(sgroup!.atoms, parsed.atoms);
     const center = geometricCenter(positions);
     expect(center.x).toBeCloseTo(monomerPosition.x, PRECISION);
@@ -109,7 +107,6 @@ describe('centerMonomerMicromoleculeAtoms', () => {
     const sgroup = findSgroupByName(parsed, 'GeoMon');
     expect(sgroup).toBeDefined();
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const parsedPositions = getAtomPositions(sgroup!.atoms, parsed.atoms);
 
     // Bond length between first two atoms should be preserved (distance = 2)

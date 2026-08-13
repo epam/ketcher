@@ -51,7 +51,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const appRootRef = useRef<Root | null>(null);
   const cleanupRef = useRef<(() => unknown) | null>(null);
   const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+
   const setServerRef = useRef<(structService: StructService) => void>(() => {});
   const structServiceProvider = props.structServiceProvider;
 

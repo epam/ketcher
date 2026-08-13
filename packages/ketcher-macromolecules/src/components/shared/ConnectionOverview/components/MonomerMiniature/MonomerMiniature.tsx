@@ -45,7 +45,6 @@ const MonomerMiniature = ({
         );
         const renderer = new AmbiguousMonomerRenderer(variantMonomer);
         renderer.showExternal({
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           canvas: svgElement,
           usage,

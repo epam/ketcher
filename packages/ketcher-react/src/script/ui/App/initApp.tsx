@@ -46,7 +46,7 @@ function initApp(
 ) {
   // hack to return server setter to Editor.tsx
   // because it does not have access to store
-  // eslint-disable-next-line prefer-const
+
   let getServerSetter: () => (structService: StructService) => void;
 
   const setEditor = (editor) => {

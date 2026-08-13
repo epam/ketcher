@@ -370,7 +370,7 @@ describe('RenderersManager', () => {
         configurable: true,
         value: { baseVal: { value: 500 } },
       });
-      // eslint-disable-next-line no-new
+
       new CoreEditor({
         canvas,
         theme: {},
@@ -496,7 +496,7 @@ describe('RenderersManager', () => {
 
     beforeEach(() => {
       canvas = createPolymerEditorCanvas();
-      // eslint-disable-next-line no-new
+
       new CoreEditor({
         canvas,
         theme: {},

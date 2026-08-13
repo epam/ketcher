@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, no-redeclare */
+/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *

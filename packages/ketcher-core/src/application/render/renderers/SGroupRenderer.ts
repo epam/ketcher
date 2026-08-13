@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, no-undef */
+/* eslint-disable no-undef */
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';

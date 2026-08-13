@@ -34,11 +34,13 @@ function calcStereoFlag(
   if (!stereoAids || stereoAids.length === 0) return undefined;
   const filteredStereoAtoms = stereoAids
     .map((aid) => struct.atoms.get(aid))
-    .filter((atom) => atom?.stereoLabel);
+    .filter((atom): atom is NonNullable<typeof atom> & { stereoLabel: string } =>
+      Boolean(atom?.stereoLabel),
+    );
   if (!filteredStereoAtoms.length) return undefined;
 
-  const atom = filteredStereoAtoms[0]!;
-  const stereoLabel = atom.stereoLabel!; // {string | null} "<abs|and|or>-<group>"
+  const atom = filteredStereoAtoms[0];
+  const stereoLabel = atom.stereoLabel; // {string} "<abs|and|or>-<group>"
 
   const hasAnotherLabel = filteredStereoAtoms.some(
     (atom) => atom?.stereoLabel !== stereoLabel,
@@ -109,7 +111,15 @@ export class Fragment {
   }
 
   clone(aidMap: Map<number, number>) {
-    const stereoAtoms = this.#stereoAtoms.map((aid) => aidMap.get(aid)!);
+    const stereoAtoms = this.#stereoAtoms.map((aid) => {
+      const mappedId = aidMap.get(aid);
+      if (mappedId === undefined) {
+        throw new Error(
+          `Fragment.clone: atom id ${aid} is missing from the provided aidMap`,
+        );
+      }
+      return mappedId;
+    });
     const fr = new Fragment(
       stereoAtoms,
       this.stereoFlagPosition,

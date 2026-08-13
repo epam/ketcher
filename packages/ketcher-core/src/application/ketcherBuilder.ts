@@ -84,7 +84,7 @@ export class KetcherBuilder {
   }
 
   async build(serviceOptions?: StructServiceOptions): Promise<Ketcher> {
-    assert(this.#structServiceProvider != null);
+    assert(this.#structServiceProvider !== undefined);
     const structServiceProvider = this.#structServiceProvider;
 
     const mergedServiceOptions: StructServiceOptions = {

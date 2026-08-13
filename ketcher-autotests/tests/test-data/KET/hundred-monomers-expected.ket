@@ -1823,6 +1823,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "N-methylation"
+        ],
         "naturalAnalogShort": "C"
     },
     "monomer2": {
@@ -2343,6 +2346,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "Inversion"
+        ],
         "naturalAnalogShort": "D"
     },
     "monomer4": {
@@ -2795,6 +2801,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "F"
     },
@@ -3744,6 +3753,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "I"
     },
@@ -5057,6 +5069,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "Inversion"
+        ],
         "naturalAnalogShort": "Q"
     },
     "monomer23": {
@@ -5461,6 +5476,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "N-methylation"
         ],
         "naturalAnalogShort": "S"
     },
@@ -7413,6 +7431,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "N-methylation"
+        ],
         "naturalAnalogShort": "R"
     },
     "monomer43": {
@@ -8021,6 +8042,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "N-methylation"
+        ],
         "naturalAnalogShort": "L"
     },
     "monomer46": {
@@ -8491,6 +8515,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "N-methylation"
         ],
         "naturalAnalogShort": "H"
     },
@@ -9567,6 +9594,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "Inversion"
+        ],
         "naturalAnalogShort": "E"
     },
     "monomer66": {
@@ -10357,6 +10387,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "N-methylation"
         ],
         "naturalAnalogShort": "I"
     },
@@ -11195,6 +11228,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "Natural amino acid"
+        ],
         "naturalAnalogShort": "R"
     },
     "monomer95": {
@@ -11398,6 +11434,9 @@
                 },
                 "type": "side"
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "S"
     },
@@ -11766,6 +11805,9 @@
                 },
                 "type": "side"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "W"
     },

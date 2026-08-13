@@ -208,7 +208,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     appendFn?: (
       apName: AttachmentPointName,
       customAngle?: number,
-    ) => AttachmentPoint,
+    ) => Pick<AttachmentPoint, 'getAngle'>,
   ) {
     if (this.attachmentPoints.length) {
       return;

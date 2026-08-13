@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -19,7 +21,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { inRange } from 'lodash';
 import type { BondAtoms, FlipDirection } from './utils.types';
 
-let FRAC = Math.PI / 12; // '15º'
+let FRAC = Math.PI / 12; // '15Вє'
 
 function setFracAngle(angle: number): void {
   FRAC = (Math.PI / 180) * angle;
@@ -50,7 +52,7 @@ function degrees(angle: number): number {
   return degree;
 }
 
-const BONDS_MERGE_ANGLE = 10; // 'º'
+const BONDS_MERGE_ANGLE = 10; // 'Вє'
 const BONDS_MERGE_SCALE = 0.2;
 
 function mergeBondsParams(

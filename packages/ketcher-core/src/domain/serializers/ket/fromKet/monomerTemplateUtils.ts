@@ -172,21 +172,15 @@ export function convertMonomerTemplateToStruct(
  * bonds it has within the monomer template structure (e.g. an "N" atom
  * with a single bond becomes "NH2", an "O" atom with a single bond
  * becomes "OH").
+ * @internal Exported for testing purposes
  */
-function getLeavingGroupLabelWithHydrogens(
+export function getLeavingGroupLabelWithHydrogens(
   struct: Struct,
   atomId: number,
   atom: Atom,
 ): string {
-  let bondsCount = 0;
-  struct.bonds.forEach((bond) => {
-    if (bond.begin === atomId || bond.end === atomId) {
-      bondsCount++;
-    }
-  });
-
-  const hasValidValence = atom.calcValence(bondsCount);
-  const implicitHydrogenCount = hasValidValence ? atom.implicitH : 0;
+  struct.calcImplicitHydrogen(atomId);
+  const implicitHydrogenCount = atom.implicitH ?? 0;
 
   if (implicitHydrogenCount <= 0) {
     return atom.label;
@@ -210,6 +204,10 @@ export function fillStructRgLabelsByMonomerTemplate(
 
   const { attachmentPointsList } =
     BaseMonomer.getAttachmentPointDictFromMonomerDefinition(attachmentPoints);
+
+  // Initialize halfBonds and neighbors for calcImplicitHydrogen to work properly
+  monomerItem.struct.initHalfBonds();
+  monomerItem.struct.initNeighbors();
 
   attachmentPoints?.forEach((attachmentPoint, attachmentPointIndex) => {
     const firstAtomInLeavingGroup = attachmentPoint.leavingGroup?.atoms[0];

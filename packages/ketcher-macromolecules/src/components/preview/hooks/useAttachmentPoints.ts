@@ -1,8 +1,4 @@
-import {
-  AttachmentPointName,
-  AttachmentPointsToBonds,
-  LeavingGroup,
-} from 'ketcher-core';
+import { AttachmentPointName, AttachmentPointsToBonds } from 'ketcher-core';
 import { useMemo } from 'react';
 import hydrateLeavingGroup from 'helpers/hydrateLeavingGroup';
 
@@ -61,7 +57,7 @@ export const useAttachmentPoints = ({
 
       const preparedData: PreparedAttachmentPointData = {
         id,
-        label: hydrateLeavingGroup(label as LeavingGroup),
+        label: hydrateLeavingGroup(label),
         connected,
       };
 

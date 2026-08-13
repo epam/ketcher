@@ -239,9 +239,15 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     .mergeWith(actionRemoveBonds)
     .mergeWith(actionToDeleteRGroupAttachmentPoints);
 
-  const rgForRemove: Array<number> = frids.map(
-    (frid) => RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid)!,
-  );
+  const rgForRemove = frids.reduce<Array<number>>((acc, frid) => {
+    const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
+
+    if (typeof rgid === 'number') {
+      acc.push(rgid);
+    }
+
+    return acc;
+  }, []);
 
   while (frids.length > 0) {
     action = fromFragmentSplit(restruct, frids.pop(), rgForRemove).mergeWith(

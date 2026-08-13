@@ -14,7 +14,9 @@ describe('SGroupDataMove', () => {
     } as unknown as ReStruct;
 
     expect(() => operation.execute(restruct)).not.toThrow();
-    expect(operation.data.d).toEqual(new Vec2(1, 2));
+    expect(operation.data.d?.x).toBe(1);
+    expect(operation.data.d?.y).toBe(2);
+    expect(operation.data.d).not.toEqual(new Vec2(-1, -2));
     expect(markItem).not.toHaveBeenCalled();
   });
 

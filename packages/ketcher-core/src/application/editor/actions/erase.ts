@@ -242,7 +242,7 @@ export function fromFragmentDeletion(restruct, rawSelection) {
   const rgForRemove = frids.reduce<Array<number>>((acc, frid) => {
     const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
 
-    if (typeof rgid === 'number') {
+    if (isNumber(rgid)) {
       acc.push(rgid);
     }
 

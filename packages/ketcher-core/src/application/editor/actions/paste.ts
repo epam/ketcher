@@ -273,7 +273,7 @@ export function fromPaste(
   pstruct.rxnPluses.forEach((plus) => {
     const operation = new RxnPlusAdd(plus.pp.add(offset)).perform(restruct);
     action.addOp(operation);
-    items.rxnPluses.push(operation.data.plid);
+    items.rxnPluses.push(operation.data.plid as number);
   });
 
   pstruct.simpleObjects.forEach((simpleObject) => {

@@ -26,6 +26,19 @@ describe('sgroup should calculate S-Group bounding box correctly', () => {
 });
 
 describe('sgroup non-null assertion replacements', () => {
+  it('should clone with remapped atom ids when remap is complete', () => {
+    const sGroup = new SGroup('MUL');
+    sGroup.atoms = [1, 2];
+    const remapped = new Map([
+      [1, 10],
+      [2, 20],
+    ]);
+
+    const clone = SGroup.clone(sGroup, remapped);
+
+    expect(clone.atoms).toEqual([10, 20]);
+  });
+
   it('should throw when cloning with missing atom remap', () => {
     const sGroup = new SGroup('MUL');
     sGroup.atoms = [1];
@@ -51,6 +64,22 @@ describe('sgroup non-null assertion replacements', () => {
       SGroup.getBracketParameters(
         { bonds },
         { 0: [existingBondId], 1: [existingBondId + 1] },
+        atomSet,
+        bb,
+      ),
+    ).toThrow('Assertion failed');
+  });
+
+  it('should throw when first cross bond is not found in bonds pool', () => {
+    const atomSet = new Pile<number>();
+    const bb = new Box2Abs(new Vec2(0, 0), new Vec2(1, 1));
+    const bonds = new Pool<Bond>();
+    const existingBondId = bonds.add(mock<Bond>());
+
+    expect(() =>
+      SGroup.getBracketParameters(
+        { bonds },
+        { 0: [existingBondId + 1], 1: [existingBondId] },
         atomSet,
         bb,
       ),

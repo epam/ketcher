@@ -59,6 +59,7 @@ interface Window {
   ketcher?: {
     settingsService?: import('ketcher-core').ISettingsService;
   };
+  _ketcher_isChainLengthRulerDisabled?: boolean;
 }
 
 interface HTMLElement {

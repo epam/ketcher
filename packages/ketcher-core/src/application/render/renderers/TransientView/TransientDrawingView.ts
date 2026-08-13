@@ -39,8 +39,15 @@ type ViewData<P> = {
   topLayer?: boolean;
 };
 
+type StoredViewData = {
+  render: (layer: D3SvgElementSelection<SVGGElement, void>) => void;
+  onShow?: VoidFunction;
+  onHide?: VoidFunction;
+  topLayer?: boolean;
+};
+
 export class TransientDrawingView {
-  private readonly views: Map<string, ViewData<unknown>> = new Map();
+  private readonly views: Map<string, StoredViewData> = new Map();
 
   private readonly topLayer: D3SvgElementSelection<SVGGElement, void>;
   private readonly defaultLayer: D3SvgElementSelection<SVGGElement, void>;
@@ -57,14 +64,17 @@ export class TransientDrawingView {
     this.topLayer.raise();
   }
 
-  private addView<P>(viewName, viewData: ViewData<P>) {
+  private addView<P>(viewName: string, viewData: ViewData<P>) {
     if (this.views.has(viewName)) {
       this.removeView(viewName);
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.views.set(viewName, viewData);
+    this.views.set(viewName, {
+      render: (layer) => viewData.show(layer, viewData.params),
+      onShow: viewData.onShow,
+      onHide: viewData.onHide,
+      topLayer: viewData.topLayer,
+    });
   }
 
   private removeView(viewName: string) {
@@ -228,10 +238,7 @@ export class TransientDrawingView {
     this.defaultLayer.selectAll('*').remove();
 
     this.views.forEach((viewData) => {
-      viewData.show(
-        viewData.topLayer ? this.topLayer : this.defaultLayer,
-        viewData.params,
-      );
+      viewData.render(viewData.topLayer ? this.topLayer : this.defaultLayer);
       viewData?.onShow?.();
     });
 

@@ -14,18 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-export function ifDef<TValue = unknown>(
-  target: object,
-  key: string,
-  value: TValue,
-  defaultValue?: TValue,
-) {
-  if (
-    value !== undefined &&
-    value !== null &&
-    value !== defaultValue &&
-    !(Array.isArray(value) && value.length === 0)
-  ) {
-    (target as Record<string, unknown>)[key] = value;
-  }
+/**
+ * This module alias is resolved by Rollup at build time via the `@rollup/plugin-alias`
+ * configuration in `rollup.config.mjs`. The alias `_indigo-ketcher-import-alias_` is
+ * replaced with the actual Indigo WASM module path during the build.
+ */
+declare module '_indigo-ketcher-import-alias_' {
+  import { IndigoModule } from './indigoWorker.types';
+  const indigoModuleFn: (options?: object) => Promise<IndigoModule>;
+  export default indigoModuleFn;
 }

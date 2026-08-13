@@ -38,8 +38,6 @@ import {
   CalculateMacromoleculePropertiesCommandData,
 } from './indigoWorker.types';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import indigoModuleFn from '_indigo-ketcher-import-alias_';
 
 const normalizeError = (error: unknown): Error => {

@@ -935,8 +935,14 @@ function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
 
   if (currSelection.bonds) bonds = uniq(bonds.concat(currSelection.bonds));
 
-  return bonds.reduce(
-    (acc: any, bondid) => {
+  return bonds.reduce<{
+    action: Action;
+    selection: {
+      atoms: number[];
+      bonds: number[];
+    };
+  }>(
+    (acc, bondid: number) => {
       const bond = struct.bonds.get(bondid);
 
       acc.action = acc.action.mergeWith(
@@ -1030,6 +1036,9 @@ function getAtomsBondIds(struct: Struct, atoms: number[]): number[] {
 
   return Array.from(struct.bonds.keys()).filter((bid) => {
     const bond = struct.bonds.get(bid);
+    if (!bond) {
+      return false;
+    }
     return atomSet.has(bond.begin) && atomSet.has(bond.end);
   });
 }

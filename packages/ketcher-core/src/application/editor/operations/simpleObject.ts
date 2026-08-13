@@ -71,7 +71,7 @@ export class SimpleObjectAdd extends Base<SimpleObjectAddData> {
   }
 
   invert(): SimpleObjectDelete {
-    if (this.data.id == null) {
+    if (this.data.id === undefined) {
       throw new Error('SimpleObjectAdd: cannot invert before execute');
     }
     return new SimpleObjectDelete(this.data.id);

@@ -33,4 +33,13 @@ describe('atom query properties rendering', () => {
       } as unknown as Atom),
     ).toBe(attributes.expected);
   });
+
+  it('renders query properties from flat atom-like input', () => {
+    expect(
+      getAtomCustomQuery({
+        label: 'C',
+        ringMembership: 0,
+      } as unknown as Atom),
+    ).toBe('R0');
+  });
 });

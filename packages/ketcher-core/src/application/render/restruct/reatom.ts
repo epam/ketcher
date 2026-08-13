@@ -2170,7 +2170,8 @@ export function getAtomCustomQuery(
       propertyName: PropertyName,
     ) =>
     (currentAtom: Atom): AtomQueryProperties[PropertyName] =>
-      currentAtom.queryProperties[propertyName];
+      currentAtom.queryProperties?.[propertyName] ??
+      (currentAtom as unknown as AtomQueryProperties)[propertyName];
 
   const addSemicolon = () => {
     if (queryAttrsText.length > 0) queryAttrsText += ';';

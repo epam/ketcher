@@ -134,8 +134,9 @@ function atomToKet(source: Atom, monomer?: BaseMonomer): KetAtomNode {
     Object.values(source.queryProperties).some((property) => property !== null)
   ) {
     result.queryProperties = {};
+    const queryProperties = result.queryProperties;
     Object.keys(source.queryProperties).forEach((name) => {
-      ifDef(result.queryProperties, name, source.queryProperties[name]);
+      ifDef(queryProperties, name, source.queryProperties[name]);
     });
   }
   ifDef(result, 'invRet', source.invRet, 0);

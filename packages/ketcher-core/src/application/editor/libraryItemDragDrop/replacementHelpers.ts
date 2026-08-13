@@ -10,7 +10,7 @@
 
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import type { AttachmentPointName } from 'domain/types';
+import { AttachmentPointName } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import type { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
@@ -32,10 +32,6 @@ export type PresetGeometry = Pick<
   'base' | 'phosphate' | 'phosphatePosition'
 >;
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
 export type BondRecord = {
   /** The attachment point name on the original monomer */
   attachmentPointName: AttachmentPointName;
@@ -55,10 +51,6 @@ export type BondReestablishmentPlan = {
   /** Bonds that cannot be re-established (AP absent on new monomer) */
   lost: BondRecord[];
 };
-
-// ---------------------------------------------------------------------------
-// 3.1 presetsHaveSameGeometry
-// ---------------------------------------------------------------------------
 
 /**
  * Returns true when two RNA presets have the same component types (sugar,
@@ -99,10 +91,6 @@ export function presetsHaveSameGeometry(
   return true;
 }
 
-// ---------------------------------------------------------------------------
-// 4.1 collectMonomerBonds
-// ---------------------------------------------------------------------------
-
 /**
  * Returns all bonds attached to `monomer`, keyed by attachment-point name.
  *
@@ -120,14 +108,14 @@ export function collectMonomerBonds(monomer: BaseMonomer): BondRecord[] {
     if (!bond) continue;
 
     let otherEntity: BaseMonomer | null = null;
-    let otherAP: AttachmentPointName | null = null;
+    let otherAttachmentPoint: AttachmentPointName | null = null;
 
     if (bond instanceof PolymerBond) {
       otherEntity =
         bond.firstMonomer === monomer
           ? bond.secondMonomer ?? null
           : bond.firstMonomer;
-      otherAP =
+      otherAttachmentPoint =
         bond.firstMonomer === monomer
           ? bond.secondMonomerAttachmentPoint ?? null
           : bond.firstMonomerAttachmentPoint ?? null;
@@ -144,7 +132,7 @@ export function collectMonomerBonds(monomer: BaseMonomer): BondRecord[] {
         attachmentPointName: apName as AttachmentPointName,
         bond,
         otherEntity,
-        otherAttachmentPointName: otherAP,
+        otherAttachmentPointName: otherAttachmentPoint,
       });
     }
   }
@@ -167,10 +155,6 @@ export function collectMonomerBonds(monomer: BaseMonomer): BondRecord[] {
 
   return records;
 }
-
-// ---------------------------------------------------------------------------
-// 4.2 computeReestablishableBonds
-// ---------------------------------------------------------------------------
 
 /**
  * Given the bonds collected from an original monomer and a new replacement
@@ -204,10 +188,6 @@ export function computeReestablishableBonds(
 
   return { reestablishable, lost };
 }
-
-// ---------------------------------------------------------------------------
-// 4.3 mapPresetBonds
-// ---------------------------------------------------------------------------
 
 /**
  * For a whole-preset replacement, maps each original preset component's
@@ -252,10 +232,6 @@ export function mapPresetBonds(
   return { reestablishable, lost };
 }
 
-// ---------------------------------------------------------------------------
-// Private helpers
-// ---------------------------------------------------------------------------
-
 /**
  * Returns the monomer in `newComponents` that plays the same structural role
  * as `originalMonomer` (sugar ↔ sugar, base ↔ base, phosphate ↔ phosphate).
@@ -288,10 +264,6 @@ function filterExternalBonds(
     (record) => !presetComponents.includes(record.otherEntity),
   );
 }
-
-// ---------------------------------------------------------------------------
-// Library-aware preset detection
-// ---------------------------------------------------------------------------
 
 /**
  * Finds the phosphate that belongs to `sugar`'s RNA preset on the requested
@@ -353,8 +325,13 @@ export function getPresetSugarForMonomer(
     // back to the other side so hovering any phosphate still resolves an
     // anchor (the final geometry match is validated separately).
     const preferredAP =
-      (libraryPreset.phosphatePosition ?? 'right') === 'left' ? 'R2' : 'R1';
-    const apOrder = preferredAP === 'R1' ? ['R1', 'R2'] : ['R2', 'R1'];
+      (libraryPreset.phosphatePosition ?? 'right') === 'left'
+        ? AttachmentPointName.R2
+        : AttachmentPointName.R1;
+    const apOrder =
+      preferredAP === AttachmentPointName.R1
+        ? [AttachmentPointName.R1, AttachmentPointName.R2]
+        : [AttachmentPointName.R2, AttachmentPointName.R1];
 
     for (const apName of apOrder) {
       const bond = monomer.attachmentPointsToBonds[apName];
@@ -408,10 +385,6 @@ export function getMatchingPresetComponents(
 
   return components;
 }
-
-// ---------------------------------------------------------------------------
-// Lost-bond computation (drives the "Deletion of bonds" confirmation modal)
-// ---------------------------------------------------------------------------
 
 export type PresetComponentRole = 'sugar' | 'base' | 'phosphate';
 

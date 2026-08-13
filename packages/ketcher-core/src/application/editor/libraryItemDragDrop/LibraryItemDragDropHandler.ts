@@ -2,9 +2,9 @@ import { Vec2 } from 'domain/entities';
 import { Command } from 'domain/entities/Command';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import {
-  type AttachmentPointName,
-  type MonomerOrAmbiguousType,
+  AttachmentPointName,
   type MonomerItemType,
+  type MonomerOrAmbiguousType,
 } from 'domain/types';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
@@ -31,11 +31,11 @@ import {
   shiftDownstreamChainMonomers,
 } from './repositioning';
 import {
-  getPresetSugarForMonomer,
-  getMatchingPresetComponents,
   computeLostBondsForMonomerReplacement,
   computeLostBondsForPresetReplacement,
+  getMatchingPresetComponents,
   getPresetPhosphateFromSugar,
+  getPresetSugarForMonomer,
   type PresetComponentRole,
 } from './replacementHelpers';
 import { KetcherLogger } from 'utilities';
@@ -713,8 +713,7 @@ export class LibraryItemDragDropHandler {
     events: LibraryItemDragDropHandlerDeps['events'],
     drawingEntitiesManager: DrawingEntitiesManager,
     renderersContainer: RenderersManager,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    getEditor: () => any,
+    getEditor: () => CoreEditor,
   ): void {
     this.clearReplacementTarget();
 
@@ -730,8 +729,7 @@ export class LibraryItemDragDropHandler {
       );
 
       if (command) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const history = EditorHistory.getInstance(getEditor() as any);
+        const history = EditorHistory.getInstance(getEditor());
         history.update(command);
         renderersContainer.update(command);
       }
@@ -767,10 +765,11 @@ export class LibraryItemDragDropHandler {
       replaceTarget.presetComponents &&
       isLibraryItemRnaPreset(item)
     ) {
-      const { freeAPsByRole, rolePresent } = this.computeNewPresetFreeAPs(item);
+      const { freeAttachmentPointsByMonomer, rolePresent } =
+        this.computeNewPresetFreeAPs(item);
       return computeLostBondsForPresetReplacement(
         replaceTarget.presetComponents,
-        freeAPsByRole,
+        freeAttachmentPointsByMonomer,
         rolePresent,
       ).length;
     }
@@ -793,12 +792,15 @@ export class LibraryItemDragDropHandler {
     // new preset component exposes a free attachment point, so a bond is lost
     // only when none of the new components provides it.
     if (isLibraryItemRnaPreset(item) && replaceTarget.kind === 'monomer') {
-      const { freeAPsByRole, rolePresent } = this.computeNewPresetFreeAPs(item);
+      const { freeAttachmentPointsByMonomer, rolePresent } =
+        this.computeNewPresetFreeAPs(item);
       const allFreeAPs = new Set<AttachmentPointName>();
       (['sugar', 'phosphate', 'base'] as PresetComponentRole[]).forEach(
         (role) => {
           if (rolePresent[role]) {
-            freeAPsByRole[role].forEach((ap) => allFreeAPs.add(ap));
+            freeAttachmentPointsByMonomer[role].forEach((ap) =>
+              allFreeAPs.add(ap),
+            );
           }
         },
       );
@@ -839,40 +841,45 @@ export class LibraryItemDragDropHandler {
    *  - phosphate: R1/R2 (right/left)
    */
   private computeNewPresetFreeAPs(preset: IRnaPreset): {
-    freeAPsByRole: Record<PresetComponentRole, Set<AttachmentPointName>>;
+    freeAttachmentPointsByMonomer: Record<
+      PresetComponentRole,
+      Set<AttachmentPointName>
+    >;
     rolePresent: Record<PresetComponentRole, boolean>;
   } {
     const position = preset.phosphatePosition ?? 'right';
     const hasBase = Boolean(preset.base);
     const hasPhosphate = Boolean(preset.phosphate);
 
-    const apNamesFor = (
+    const getAttachmentPointNamesForMonomer = (
       item: MonomerItemType | undefined,
       fallback: AttachmentPointName[],
     ): Set<AttachmentPointName> =>
       this.getTemplateAttachmentPointNames(item) ??
       new Set<AttachmentPointName>(fallback);
 
-    const sugarAPs = apNamesFor(preset.sugar, [
-      'R1',
-      'R2',
-      'R3',
-    ] as AttachmentPointName[]);
-    const baseAPs = apNamesFor(preset.base, ['R1'] as AttachmentPointName[]);
-    const phosphateAPs = apNamesFor(preset.phosphate, [
-      'R1',
-      'R2',
-    ] as AttachmentPointName[]);
+    const sugarAPs = getAttachmentPointNamesForMonomer(preset.sugar, [
+      AttachmentPointName.R1,
+      AttachmentPointName.R2,
+      AttachmentPointName.R3,
+    ]);
+    const baseAPs = getAttachmentPointNamesForMonomer(preset.base, [
+      AttachmentPointName.R1,
+    ]);
+    const phosphateAPs = getAttachmentPointNamesForMonomer(preset.phosphate, [
+      AttachmentPointName.R1,
+      AttachmentPointName.R2,
+    ]);
 
     const sugarInternal = new Set<AttachmentPointName>();
-    if (hasBase) sugarInternal.add('R3' as AttachmentPointName);
+    if (hasBase) sugarInternal.add(AttachmentPointName.R3);
     if (hasPhosphate) {
       sugarInternal.add(
-        (position === 'left' ? 'R1' : 'R2') as AttachmentPointName,
+        position === 'left' ? AttachmentPointName.R1 : AttachmentPointName.R2,
       );
     }
 
-    const subtract = (
+    const subtractAttachmentPointsFromSet = (
       all: Set<AttachmentPointName>,
       used: Set<AttachmentPointName>,
     ): Set<AttachmentPointName> => {
@@ -884,16 +891,18 @@ export class LibraryItemDragDropHandler {
     };
 
     return {
-      freeAPsByRole: {
-        sugar: subtract(sugarAPs, sugarInternal),
-        base: subtract(
+      freeAttachmentPointsByMonomer: {
+        sugar: subtractAttachmentPointsFromSet(sugarAPs, sugarInternal),
+        base: subtractAttachmentPointsFromSet(
           baseAPs,
-          new Set<AttachmentPointName>(['R1' as AttachmentPointName]),
+          new Set<AttachmentPointName>([AttachmentPointName.R1]),
         ),
-        phosphate: subtract(
+        phosphate: subtractAttachmentPointsFromSet(
           phosphateAPs,
           new Set<AttachmentPointName>([
-            (position === 'left' ? 'R2' : 'R1') as AttachmentPointName,
+            position === 'left'
+              ? AttachmentPointName.R2
+              : AttachmentPointName.R1,
           ]),
         ),
       },

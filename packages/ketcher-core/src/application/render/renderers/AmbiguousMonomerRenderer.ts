@@ -18,6 +18,12 @@ type PreviewAttachmentPointParams = {
   connectedAttachmentPoints: string[] | undefined;
 };
 
+const EMPTY_MONOMER_SYMBOL_ELEMENTS_IDS = {
+  hover: '',
+  body: '',
+  autochainPreview: '',
+};
+
 export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   private readonly monomerRenderer: BaseMonomerRenderer;
   private readonly monomerSymbolElementsIds: {
@@ -30,17 +36,19 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   constructor(public monomer: AmbiguousMonomer, scale?: number) {
     const monomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
     const monomerSymbolElementsIdsByClass = MONOMER_SYMBOLS_IDS[monomerClass];
-    const fallbackMonomerSymbolElementsIds = MONOMER_SYMBOLS_IDS[
-      KetMonomerClass.CHEM
-    ] ?? {
-      hover: '#chem-selection',
-      body: '#chem',
-      autochainPreview: '#chem-autochain-preview',
-    };
+    const fallbackMonomerSymbolElementsIds =
+      MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM];
     const monomerSymbolElementsIds =
-      monomerSymbolElementsIdsByClass ?? fallbackMonomerSymbolElementsIds;
+      monomerSymbolElementsIdsByClass ??
+      fallbackMonomerSymbolElementsIds ??
+      EMPTY_MONOMER_SYMBOL_ELEMENTS_IDS;
     if (!monomerSymbolElementsIdsByClass) {
       KetcherLogger.error(`Missing monomer symbol ids for ${monomerClass}`);
+    }
+    if (!fallbackMonomerSymbolElementsIds) {
+      KetcherLogger.error(
+        `Missing monomer symbol ids for ${KetMonomerClass.CHEM}`,
+      );
     }
 
     super(

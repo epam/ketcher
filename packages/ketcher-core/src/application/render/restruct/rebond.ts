@@ -1656,13 +1656,19 @@ function setDoubleBondShift(bond: ReBond, struct: Struct): void {
 
   const halfBond1 = struct.halfBonds.get(hb1);
   const halfBond2 = struct.halfBonds.get(hb2);
-  if (!halfBond1 || !halfBond2) return;
+  if (!halfBond1 || !halfBond2) {
+    bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond);
+    return;
+  }
   const loop1 = halfBond1.loop;
   const loop2 = halfBond2.loop;
   if (loop1 >= 0 && loop2 >= 0) {
     const loopData1 = struct.loops.get(loop1);
     const loopData2 = struct.loops.get(loop2);
-    if (!loopData1 || !loopData2) return;
+    if (!loopData1 || !loopData2) {
+      bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond);
+      return;
+    }
     const d1 = loopData1.dblBonds;
     const d2 = loopData2.dblBonds;
     const n1 = loopData1.hbs.length;

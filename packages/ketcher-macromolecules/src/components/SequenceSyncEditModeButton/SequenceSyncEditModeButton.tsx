@@ -72,7 +72,6 @@ export const SequenceSyncEditModeButton = () => {
       );
     };
 
-    updateHasAntisenseChains();
     editor?.events.modelChange.add(updateHasAntisenseChains);
 
     return () => {

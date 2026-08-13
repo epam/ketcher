@@ -34,8 +34,9 @@ function calcStereoFlag(
   if (!stereoAids || stereoAids.length === 0) return undefined;
   const filteredStereoAtoms = stereoAids
     .map((aid) => struct.atoms.get(aid))
-    .filter((atom): atom is NonNullable<typeof atom> & { stereoLabel: string } =>
-      Boolean(atom?.stereoLabel),
+    .filter(
+      (atom): atom is NonNullable<typeof atom> & { stereoLabel: string } =>
+        Boolean(atom?.stereoLabel),
     );
   if (!filteredStereoAtoms.length) return undefined;
 

@@ -36,15 +36,19 @@ class SGroupAtomAdd extends BaseOperation {
     const { aid, sgid } = this.data;
 
     const struct = restruct.molecule;
-    const atom = struct.atoms.get(aid)!;
-    const sgroup = struct.sgroups.get(sgid)!;
-
-    if (sgroup.atoms.indexOf(aid) >= 0) {
-      return;
-    }
+    const atom = struct.atoms.get(aid);
+    const sgroup = struct.sgroups.get(sgid);
 
     if (!atom) {
       throw new Error('OpSGroupAtomAdd: Atom ' + aid + ' not found');
+    }
+
+    if (!sgroup) {
+      throw new Error('OpSGroupAtomAdd: S-Group ' + sgid + ' not found');
+    }
+
+    if (sgroup.atoms.indexOf(aid) >= 0) {
+      return;
     }
 
     struct.atomAddToSGroup(sgid, aid);
@@ -64,8 +68,8 @@ class SGroupAtomRemove extends BaseOperation {
     const { aid, sgid } = this.data;
 
     const struct = restruct.molecule;
-    const atom = struct.atoms.get(aid)!;
-    const sgroup = struct.sgroups.get(sgid)!;
+    const atom = struct.atoms.get(aid);
+    const sgroup = struct.sgroups.get(sgid);
 
     if (!atom || !sgroup) {
       return;

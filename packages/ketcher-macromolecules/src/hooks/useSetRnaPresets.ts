@@ -58,7 +58,7 @@ function useSetRnaPresets() {
         }
       }
 
-      customLabeledPresets = getCachedCustomRnaPresets()!;
+      customLabeledPresets = getCachedCustomRnaPresets() ?? customLabeledPresets;
       customPresets = getPresets(monomersLibrary, customLabeledPresets);
     }
 

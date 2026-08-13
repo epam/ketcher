@@ -146,8 +146,10 @@ function parseNode(node: KetMicromoleculeNode, struct: Struct) {
     case 'molecule': {
       const currentStruct = moleculeToStruct(node);
       if (node.stereoFlagPosition) {
-        const fragment = currentStruct.frags.get(0)!;
-        fragment.stereoFlagPosition = new Vec2(node.stereoFlagPosition);
+        const fragment = currentStruct.frags.get(0);
+        if (fragment) {
+          fragment.stereoFlagPosition = new Vec2(node.stereoFlagPosition);
+        }
       }
 
       currentStruct.mergeInto(struct);
@@ -208,7 +210,7 @@ export class KetSerializer implements Serializer<Struct> {
     Object.keys(nodes).forEach((i) => {
       if (nodes[i].type) parseNode(nodes[i], resultingStruct);
       else if (nodes[i].$ref) {
-        parseNode(ket[nodes[i].$ref!] as KetMicromoleculeNode, resultingStruct);
+        parseNode(ket[nodes[i].$ref] as KetMicromoleculeNode, resultingStruct);
       }
     });
     resultingStruct.name = ket.header?.moleculeName ?? '';
@@ -231,14 +233,16 @@ export class KetSerializer implements Serializer<Struct> {
     ketNodes.forEach((item) => {
       switch (item.type) {
         case 'molecule': {
+          if (!item.fragment) break;
           result.root.nodes.push({ $ref: `mol${moleculeId}` });
-          result[`mol${moleculeId++}`] = moleculeToKet(item.fragment!, monomer);
+          result[`mol${moleculeId++}`] = moleculeToKet(item.fragment, monomer);
           break;
         }
         case 'rgroup': {
+          if (!item.fragment) break;
           const { rgnumber } = item.data as { rgnumber: number };
           result.root.nodes.push({ $ref: `rg${rgnumber}` });
-          result[`rg${rgnumber}`] = rgroupToKet(item.fragment!, item.data);
+          result[`rg${rgnumber}`] = rgroupToKet(item.fragment, item.data);
           break;
         }
         case 'plus': {

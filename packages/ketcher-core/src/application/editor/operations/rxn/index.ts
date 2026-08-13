@@ -64,7 +64,10 @@ class RxnArrowAdd extends Base<RxnArrowAddData> {
       struct.setRxnArrow(this.data.id, item);
     }
 
-    const itemId = this.data.id!;
+    const itemId = this.data.id;
+    if (itemId == null) {
+      throw new Error('rxnArrow id was not assigned');
+    }
 
     restruct.rxnArrows.set(itemId, new ReRxnArrow(item));
 
@@ -79,7 +82,12 @@ class RxnArrowAdd extends Base<RxnArrowAddData> {
   }
 
   invert(): RxnArrowDelete {
-    return new RxnArrowDelete(this.data.id!);
+    const itemId = this.data.id;
+    if (itemId == null) {
+      throw new Error('rxnArrow id was not assigned');
+    }
+
+    return new RxnArrowDelete(itemId);
   }
 }
 

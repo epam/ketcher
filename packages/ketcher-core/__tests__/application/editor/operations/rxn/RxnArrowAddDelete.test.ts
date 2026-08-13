@@ -128,4 +128,10 @@ describe('RxnArrowAdd and RxnArrowDelete operations', () => {
       expect(restoredArrow?.mode).toBe(mode);
     });
   });
+
+  it('should throw on invert when add operation has no assigned arrow id', () => {
+    const addOp = new RxnArrowAdd([new Vec2(0, 0), new Vec2(5, 0)]);
+
+    expect(() => addOp.invert()).toThrow('rxnArrow id was not assigned');
+  });
 });

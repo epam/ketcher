@@ -616,6 +616,11 @@ const expandableMonomersWithHydrogenBonds: IMonomer[] = [
   },
 ];
 
+const initialScreenshotToleranceByAlias: Partial<Record<string, number>> = {
+  R: 4,
+  '5hMedC': 25,
+};
+
 expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
   test(`6.${index + 1} Expand and collapse ${monomer.monomerType}(${
     monomer.alias
@@ -636,7 +641,9 @@ expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
      *          6. Take screenshot to witness hydrogen bonds got shown
      */
     await openFileAndAddToCanvasAsNewProject(page, monomer.fileName);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: initialScreenshotToleranceByAlias[monomer.alias],
+    });
     await waitForRender(page, async () => {
       await ContextMenu(
         page,

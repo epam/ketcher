@@ -22,6 +22,42 @@ const DIAMOND_HIGHLIGHT_CORNER_RADIUS = 6;
 const HEXAGON_HIGHLIGHT_CORNER_RADIUS = 6;
 const PENTAGON_HIGHLIGHT_CORNER_RADIUS = 6;
 
+// ---------------------------------------------------------------------------
+// Hexagon (Peptide) shape ratios
+// ---------------------------------------------------------------------------
+// The peptide SVG symbol (viewBox 0 0 70 61) has its flat-corner vertices at
+// x = 18.6583 and x = 70 − 18.6583. Dividing by the viewBox width gives the
+// fraction of the total width that falls *between* the center and the flat
+// corner. Subtracting from 0.5 gives the fraction between center and corner
+// measured inward from the edge, i.e. how far the top/bottom flat edge
+// indents from the left/right extremes.
+//   innerX fraction = 0.5 − 18.6583/70 ≈ 0.2334
+const HEXAGON_INNER_X_RATIO = 0.5 - 18.6583 / 70;
+
+// ---------------------------------------------------------------------------
+// Pentagon (UnsplitNucleotide) shape ratios
+// ---------------------------------------------------------------------------
+// All values are fractions of the rendered canvas size (42 × 42 px).
+// The source SVG (viewBox 0 0 84 84) is rendered at half size, and the path
+// carries a rotate(180, 42, 42) transform, so the pentagon points upward
+// (single top tip, flat bottom edge). Asymmetric left/right side vertices in
+// the original path are averaged to produce a symmetric shape.
+//
+//   raw SVG pixel / 42 = ratio used below
+//
+// TODO analyze how to get rid of constants below (PENTAGON_RATIO) and use a more generic approach to generate pentagon shape
+//  f.e. calculate directly from width and height of the bounding box of the pentagon shape
+// Top tip: −14.701 / 42 ≈ −0.3500 (y above center)
+const PENTAGON_TIP_DY_RATIO = -14.701 / 42;
+// Upper side vertices |x| from center: avg(16.840, 16.372) / 42 ≈ 0.3954
+const PENTAGON_SIDE_DX_RATIO = 16.606 / 42;
+// Upper side vertices y from center: −4.815 / 42 ≈ −0.1146
+const PENTAGON_SIDE_DY_RATIO = -4.815 / 42;
+// Flat-bottom corner |x| from center: 11.706 / 42 ≈ 0.2787
+const PENTAGON_FLAT_DX_RATIO = 11.706 / 42;
+// Flat-bottom corner y from center: 15.0 / 42 ≈ 0.3571
+const PENTAGON_FLAT_DY_RATIO = 15.0 / 42;
+
 const formatCoordinate = (value: number): string => {
   const roundedValue = Number(value.toFixed(2));
 
@@ -194,8 +230,10 @@ const expandPolygon = (points: Point[], offset: number): Point[] => {
 /**
  * Flat-top hexagon path matching the Peptide monomer body shape.
  *
- * The ratio 18.6583/70 is taken directly from the peptide SVG symbol: the
- * flat-corner x-coordinate (18.6583) divided by the full viewBox width (70).
+ * Six vertices: two horizontal tips (left/right) and four flat-edge corners
+ * (top-left, top-right, bottom-right, bottom-left). `HEXAGON_INNER_X_RATIO`
+ * encodes how far the flat corners indent from the left/right extremes, taken
+ * directly from the peptide SVG symbol (see constant definition above).
  */
 export const createHexagonHighlightPath = (
   center: Point,
@@ -203,12 +241,10 @@ export const createHexagonHighlightPath = (
   height: number,
   offset = 0,
 ): HighlightPathData => {
-  // Ratio of flat-corner x-distance from the left edge to the total width,
-  // derived from the peptide SVG path vertex at x=18.6583 in a 70-wide viewBox.
-  const FLAT_X_RATIO = 18.6583 / 70;
   const halfW = width / 2;
   const halfH = height / 2;
-  const innerX = halfW - FLAT_X_RATIO * width;
+  // x-distance from center to each flat-corner vertex (top-left/right, bottom-left/right)
+  const innerX = HEXAGON_INNER_X_RATIO * width;
 
   const baseVerts: Point[] = [
     { x: center.x - innerX, y: center.y - halfH }, // top-left
@@ -231,10 +267,8 @@ export const createHexagonHighlightPath = (
  * Pentagon path matching the UnsplitNucleotide monomer body shape: a flat
  * bottom edge with two upper angled sides converging at a single top tip.
  *
- * All ratios are derived from the nucleotide SVG path vertices after applying
- * the `rotate(180, 42, 42)` transform and the implicit 2× viewBox scaling
- * (viewBox 84×84 rendered at 42×42). The two asymmetric side vertices in the
- * original path are averaged to produce a symmetric shape.
+ * All shape ratios are module-level constants derived from the nucleotide SVG
+ * symbol (see PENTAGON_* constant definitions above).
  */
 export const createNucleotideHighlightPath = (
   center: Point,
@@ -242,32 +276,23 @@ export const createNucleotideHighlightPath = (
   height: number,
   offset = 0,
 ): HighlightPathData => {
-  // Ratios derived from nucleotide SVG vertex coordinates (post-transform,
-  // rendered size 42×42). Side vertex dx is the average of the original left
-  // (16.840) and right (16.372) values to produce a symmetric shape.
-  const TIP_DY_RATIO = -14.701 / 42; // top-tip y offset from center (≈ −0.350)
-  const SIDE_DX_RATIO = 16.606 / 42; // |x| of upper side vertices (≈ +0.395)
-  const SIDE_DY_RATIO = -4.815 / 42; // y of upper side vertices (≈ −0.115)
-  const FLAT_DX_RATIO = 11.706 / 42; // |x| of flat-bottom corners (≈ +0.279)
-  const FLAT_DY_RATIO = 15.0 / 42; // y of flat-bottom corners (≈ +0.357)
-
   const baseVerts: Point[] = [
-    { x: center.x, y: center.y + TIP_DY_RATIO * height }, // top tip
+    { x: center.x, y: center.y + PENTAGON_TIP_DY_RATIO * height }, // top tip
     {
-      x: center.x + SIDE_DX_RATIO * width,
-      y: center.y + SIDE_DY_RATIO * height,
+      x: center.x + PENTAGON_SIDE_DX_RATIO * width,
+      y: center.y + PENTAGON_SIDE_DY_RATIO * height,
     }, // right-upper
     {
-      x: center.x + FLAT_DX_RATIO * width,
-      y: center.y + FLAT_DY_RATIO * height,
+      x: center.x + PENTAGON_FLAT_DX_RATIO * width,
+      y: center.y + PENTAGON_FLAT_DY_RATIO * height,
     }, // bottom-right
     {
-      x: center.x - FLAT_DX_RATIO * width,
-      y: center.y + FLAT_DY_RATIO * height,
+      x: center.x - PENTAGON_FLAT_DX_RATIO * width,
+      y: center.y + PENTAGON_FLAT_DY_RATIO * height,
     }, // bottom-left
     {
-      x: center.x - SIDE_DX_RATIO * width,
-      y: center.y + SIDE_DY_RATIO * height,
+      x: center.x - PENTAGON_SIDE_DX_RATIO * width,
+      y: center.y + PENTAGON_SIDE_DY_RATIO * height,
     }, // left-upper
   ];
 

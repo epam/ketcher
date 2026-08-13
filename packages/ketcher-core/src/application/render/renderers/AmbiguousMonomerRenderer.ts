@@ -44,11 +44,11 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       EMPTY_MONOMER_SYMBOL_ELEMENTS_IDS;
     if (!monomerSymbolElementsIdsByClass) {
       KetcherLogger.error(`Missing monomer symbol ids for ${monomerClass}`);
-    }
-    if (!fallbackMonomerSymbolElementsIds) {
-      KetcherLogger.error(
-        `Missing monomer symbol ids for ${KetMonomerClass.CHEM}`,
-      );
+      if (!fallbackMonomerSymbolElementsIds) {
+        KetcherLogger.error(
+          `Missing monomer symbol ids for ${KetMonomerClass.CHEM}`,
+        );
+      }
     }
 
     super(

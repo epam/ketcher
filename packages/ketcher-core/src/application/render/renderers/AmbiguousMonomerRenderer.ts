@@ -18,10 +18,10 @@ type PreviewAttachmentPointParams = {
   connectedAttachmentPoints: string[] | undefined;
 };
 
-const EMPTY_MONOMER_SYMBOL_ELEMENTS_IDS = {
-  hover: '',
-  body: '',
-  autochainPreview: '',
+const DEFAULT_CHEM_MONOMER_SYMBOL_ELEMENTS_IDS = {
+  hover: '#chem-selection',
+  body: '#chem',
+  autochainPreview: '#chem-autochain-preview',
 };
 
 export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
@@ -41,7 +41,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     const monomerSymbolElementsIds =
       monomerSymbolElementsIdsByClass ??
       fallbackMonomerSymbolElementsIds ??
-      EMPTY_MONOMER_SYMBOL_ELEMENTS_IDS;
+      DEFAULT_CHEM_MONOMER_SYMBOL_ELEMENTS_IDS;
     if (!monomerSymbolElementsIdsByClass) {
       KetcherLogger.error(`Missing monomer symbol ids for ${monomerClass}`);
       if (!fallbackMonomerSymbolElementsIds) {

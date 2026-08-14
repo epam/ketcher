@@ -219,7 +219,7 @@ export class SGroup {
   }
 
   updateOffset(offset: Vec2): void {
-    assert(this.bracketBox);
+    assert(this.bracketBox, 'SGroup.updateOffset: bracketBox is required');
     this.pp = Vec2.sum(this.bracketBox.p1, offset);
   }
 
@@ -246,7 +246,7 @@ export class SGroup {
 
       this.atoms.forEach((aid) => {
         const atom = struct.atoms.get(aid);
-        assert(atom);
+        assert(atom, `SGroup.calculatePP: atom ${aid} is not found`);
         const pos = new Vec2(atom.pp);
 
         const ext = new Vec2(0.05 * 3, 0.05 * 3);
@@ -263,16 +263,16 @@ export class SGroup {
               bbb = !bbb ? new Box2Abs(v, v) : bbb.include(v);
             });
           });
-          assert(bbb);
+          assert(bbb, 'SGroup.calculatePP: failed to build atom bounding box');
           return !contentBounds ? bbb : Box2Abs.union(contentBounds, bbb);
         },
         null,
       );
 
-      assert(contentBB);
+      assert(contentBB, 'SGroup.calculatePP: content bounding box is required');
       topLeftPoint = isBondContent ? contentBB.centre() : contentBB.p0;
     } else {
-      assert(this.bracketBox);
+      assert(this.bracketBox, 'SGroup.calculatePP: bracketBox is required');
       topLeftPoint = this.bracketBox.p1.add(new Vec2(0.5, 0.5));
     }
 
@@ -410,7 +410,7 @@ export class SGroup {
     }
 
     const atom = struct.atoms.get(atomId);
-    assert(atom);
+    assert(atom, `SGroup.getContractedPosition: atom ${atomId} is not found`);
     return { atomId, position: atom.pp };
   }
 
@@ -507,7 +507,10 @@ export class SGroup {
 
     cp.atoms = sgroup.atoms.map((elem) => {
       const remappedAtomId = aidMap.get(elem);
-      assert(remappedAtomId !== undefined);
+      assert(
+        remappedAtomId !== undefined,
+        `SGroup.clone: missing remapped atom id for ${elem}`,
+      );
       return remappedAtomId;
     });
     cp.pp = sgroup.pp;
@@ -603,7 +606,7 @@ export class SGroup {
       braketBox = !braketBox ? bba : Box2Abs.union(braketBox, bba);
     });
     const currentRender = render ?? window.ketcher?.editor?.render;
-    assert(currentRender);
+    assert(currentRender, 'SGroup.bracketPos: render instance is required');
     let attachmentPointsVBox =
       currentRender.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms);
     attachmentPointsVBox = attachmentPointsVBox
@@ -649,8 +652,14 @@ export class SGroup {
       (function () {
         const b1 = mol.bonds.get(crossBonds[0]);
         const b2 = mol.bonds.get(crossBonds[1]);
-        assert(b1);
-        assert(b2);
+        assert(
+          b1,
+          `SGroup.getBracketParameters: first cross-bond ${crossBonds[0]} is not found`,
+        );
+        assert(
+          b2,
+          `SGroup.getBracketParameters: second cross-bond ${crossBonds[1]} is not found`,
+        );
         const cl0 = b1.getCenter(mol);
         const cr0 = b2.getCenter(mol);
         const dr = Vec2.diff(cr0, cl0).normalized();
@@ -677,7 +686,10 @@ export class SGroup {
       (function () {
         for (const crossBondId of crossBonds) {
           const b = mol.bonds.get(crossBondId);
-          assert(b);
+          assert(
+            b,
+            `SGroup.getBracketParameters: cross-bond ${crossBondId} is not found`,
+          );
           const c = b.getCenter(mol);
           const d = atomSet.has(b.begin)
             ? b.getDir(mol)
@@ -695,11 +707,11 @@ export class SGroup {
     useCollapsedSgroupsPosition = false,
   ): Box2Abs {
     const a0 = mol.atoms.get(atoms[0])?.pp;
-    assert(a0);
+    assert(a0, `SGroup.getObjBBox: atom ${atoms[0]} position is not found`);
     let bb = new Box2Abs(a0, a0);
     for (const aid of atoms.slice(1)) {
       const atom = mol.atoms.get(aid);
-      assert(atom);
+      assert(atom, `SGroup.getObjBBox: atom ${aid} is not found`);
       const sgroupId = atom.sgs.values().next().value;
       const sgroup = isNumber(sgroupId) ? mol.sgroups.get(sgroupId) : undefined;
       const p =
@@ -765,11 +777,17 @@ export class SGroup {
     let crossBond: Bond | null = null;
     if (xBonds.length === 2) {
       const bond1 = mol.bonds.get(xBonds[0]);
-      assert(bond1);
+      assert(
+        bond1,
+        `SGroup.prepareMulForSaving: first cross-bond ${xBonds[0]} is not found`,
+      );
       xAtom1 = sgroup.parentAtomSet.has(bond1.begin) ? bond1.begin : bond1.end;
 
       const bond2 = mol.bonds.get(xBonds[1]);
-      assert(bond2);
+      assert(
+        bond2,
+        `SGroup.prepareMulForSaving: second cross-bond ${xBonds[1]} is not found`,
+      );
       xAtom2 = sgroup.parentAtomSet.has(bond2.begin) ? bond2.begin : bond2.end;
       crossBond = bond2;
     }
@@ -781,7 +799,7 @@ export class SGroup {
       const amap: Record<number, number> = {};
       sgroup.atoms.forEach((aid) => {
         const atom = mol.atoms.get(aid);
-        assert(atom);
+        assert(atom, `SGroup.prepareMulForSaving: atom ${aid} is not found`);
         const aid2 = mol.atoms.add(atom.clone());
         newAtoms.push(aid2);
         sgroup.atomSet.add(aid2);
@@ -789,7 +807,7 @@ export class SGroup {
       });
       inBonds.forEach((bid) => {
         const bond = mol.bonds.get(bid);
-        assert(bond);
+        assert(bond, `SGroup.prepareMulForSaving: bond ${bid} is not found`);
         const newBond = bond.clone();
         newBond.begin = amap[newBond.begin];
         newBond.end = amap[newBond.end];
@@ -805,7 +823,10 @@ export class SGroup {
     }
     if (tailAtom >= 0) {
       const xBond2 = mol.bonds.get(xBonds[1]);
-      assert(xBond2);
+      assert(
+        xBond2,
+        `SGroup.prepareMulForSaving: cross-bond ${xBonds[1]} is not found`,
+      );
       if (xBond2.begin === xAtom2) xBond2.begin = tailAtom;
       else xBond2.end = tailAtom;
     }
@@ -825,7 +846,7 @@ export class SGroup {
     let c = new Vec2(); // mass centre
     for (const atomId of atoms) {
       const atom = mol.atoms.get(atomId);
-      assert(atom);
+      assert(atom, `SGroup.getMassCentre: atom ${atomId} is not found`);
       c = c.addScaled(atom.pp, 1.0 / atoms.length);
     }
     return c;

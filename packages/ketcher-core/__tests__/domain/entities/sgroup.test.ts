@@ -43,14 +43,16 @@ describe('sgroup non-null assertion replacements', () => {
     const sGroup = new SGroup('MUL');
     sGroup.atoms = [1];
 
-    expect(() => SGroup.clone(sGroup, new Map())).toThrow('Assertion failed');
+    expect(() => SGroup.clone(sGroup, new Map())).toThrow(
+      'SGroup.clone: missing remapped atom id for 1',
+    );
   });
 
   it('should throw when updateOffset is called without bracket box', () => {
     const sGroup = new SGroup('MUL');
 
     expect(() => sGroup.updateOffset(new Vec2(1, 1))).toThrow(
-      'Assertion failed',
+      'SGroup.updateOffset: bracketBox is required',
     );
   });
 
@@ -67,7 +69,11 @@ describe('sgroup non-null assertion replacements', () => {
         atomSet,
         bb,
       ),
-    ).toThrow('Assertion failed');
+    ).toThrow(
+      `SGroup.getBracketParameters: second cross-bond ${
+        existingBondId + 1
+      } is not found`,
+    );
   });
 
   it('should throw when first cross bond is not found in bonds pool', () => {
@@ -83,7 +89,11 @@ describe('sgroup non-null assertion replacements', () => {
         atomSet,
         bb,
       ),
-    ).toThrow('Assertion failed');
+    ).toThrow(
+      `SGroup.getBracketParameters: first cross-bond ${
+        existingBondId + 1
+      } is not found`,
+    );
   });
 
   it('should throw when else-branch cross bond id has no matching bond', () => {
@@ -93,13 +103,13 @@ describe('sgroup non-null assertion replacements', () => {
 
     expect(() =>
       SGroup.getBracketParameters({ bonds }, { 0: [1, 2] }, atomSet, bb),
-    ).toThrow('Assertion failed');
+    ).toThrow('SGroup.getBracketParameters: cross-bond 1 is not found');
   });
 
   it('should throw when mass centre uses missing atom id', () => {
     const atoms = new Pool<Atom>();
     expect(() => SGroup.getMassCentre({ atoms }, [1])).toThrow(
-      'Assertion failed',
+      'SGroup.getMassCentre: atom 1 is not found',
     );
   });
 });

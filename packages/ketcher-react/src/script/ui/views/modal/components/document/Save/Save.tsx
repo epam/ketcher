@@ -537,7 +537,6 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   handleCopy = (): void => {
     const { structStr } = this.state;
 
-<<<<<<< HEAD
     if (!isClipboardAPIAvailable()) {
       this.props.editor.errorHandler(
         'This feature is not available in your browser',
@@ -546,18 +545,6 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     }
 
     navigator.clipboard.writeText(structStr || '').catch((e) => {
-=======
-    try {
-      if (isClipboardAPIAvailable()) {
-        navigator.clipboard.writeText(structStr || '');
-      } else if ('clipboardData' in event) {
-        legacyCopy(event.clipboardData, {
-          'text/plain': structStr || '',
-        });
-        event.preventDefault();
-      }
-    } catch (e) {
->>>>>>> 883511dff7 (Fix clipboard utility typing fallout)
       KetcherLogger.error('copyAs.js::copyAs', e);
       this.props.editor.errorHandler(
         'This feature is not available in your browser',

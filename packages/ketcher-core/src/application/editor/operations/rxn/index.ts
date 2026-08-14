@@ -34,6 +34,8 @@ type RxnArrowAddData = {
   arrowId?: number;
 };
 
+const INVALID_RXN_ARROW_ID = -1;
+
 class RxnArrowAdd extends Base<RxnArrowAddData> {
   data: RxnArrowAddData;
 
@@ -88,7 +90,7 @@ class RxnArrowAdd extends Base<RxnArrowAddData> {
     const itemId = this.data.id;
     if (itemId == null) {
       KetcherLogger.error('RxnArrowAdd.invert(): rxnArrow id was not assigned');
-      return new RxnArrowDelete(-1);
+      return new RxnArrowDelete(INVALID_RXN_ARROW_ID);
     }
 
     return new RxnArrowDelete(itemId);

@@ -36,8 +36,6 @@ export function isClipboardAPIAvailable(): boolean {
 
 export function legacyCopy(
   clipboardData: ClipboardTransferData,
-  data: ClipboardData,
-  clipboardData: ClipboardTransferData,
   data: LegacyClipboardData,
 ): void {
   if (!clipboardData) {
@@ -45,14 +43,6 @@ export function legacyCopy(
   }
 
   let curFmt: string | null = null;
-  clipboardData: DataTransfer | null,
-  data: LegacyClipboardData,
-): void {
-  // ClipboardEvent.clipboardData can be null in non-standard or synthetic events.
-  if (!clipboardData) return;
-  let curFmt;
-  const plainTextData = data[PLAIN_TEXT_MIME_TYPE] || '';
-  clipboardData.setData(PLAIN_TEXT_MIME_TYPE, plainTextData);
   clipboardData.setData(PLAIN_TEXT_MIME_TYPE, data[PLAIN_TEXT_MIME_TYPE] || '');
   try {
     Object.entries(data).forEach(([fmt, value]) => {
@@ -68,13 +58,6 @@ export function legacyCopy(
 }
 
 export function legacyPaste(
-  cb: DataTransfer | null,
-  formats: ClipboardDataType[],
-): LegacyClipboardData {
-  let data: LegacyClipboardData = {};
-  if (!cb) return data;
-  data[PLAIN_TEXT_MIME_TYPE] = cb.getData(PLAIN_TEXT_MIME_TYPE);
-  data = formats.reduce((res, fmt) => {
   cb: ClipboardTransferData,
   formats: ClipboardDataType[],
 ): LegacyClipboardData {
@@ -97,25 +80,6 @@ export function notifyCopyCut() {
   window.dispatchEvent(event);
 }
 
-function isClipboardItem(item?: ClipboardItem): item is ClipboardItem {
-  return typeof ClipboardItem !== 'undefined' && item instanceof ClipboardItem;
-}
-
-export async function getStructStringFromClipboardData(
-  data: ClipboardItem[] | ClipboardData,
-): Promise<string> {
-  if (Array.isArray(data)) {
-    const clipboardItem = data[0];
-    if (!clipboardItem) {
-      return '';
-    }
-
-  data: ClipboardData,
-): Promise<string> {
-  if (Array.isArray(data)) {
-    const clipboardItem = data[0];
-
-    if (!isClipboardItem(clipboardItem)) {
 function hasClipboardItemAPI(item?: ClipboardItem): item is ClipboardItem {
   return Boolean(item && typeof item.getType === 'function');
 }
@@ -142,15 +106,6 @@ export async function getStructStringFromClipboardData(
     }
 
     return '';
-  }
-
-  for (const clipboardDataType of clipboardDataTypes) {
-    const structStr = data[clipboardDataType];
-    if (structStr) {
-      return structStr;
-    }
-  }
-
   }
 
   for (const clipboardDataType of clipboardDataTypes) {

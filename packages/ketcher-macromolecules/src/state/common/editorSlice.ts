@@ -65,8 +65,8 @@ interface EditorState {
   macromoleculesProperties: SingleChainMacromoleculeProperties[] | undefined;
   unipositiveIonsMeasurementUnit: MolarMeasurementUnit;
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit;
-  unipositiveIonsValue: number;
-  oligonucleotidesValue: number;
+  unipositiveIonsValue: string;
+  oligonucleotidesValue: string;
   app: AppMeta;
   selectedMenuGroupItems: Record<string, string>;
 }
@@ -91,8 +91,8 @@ const initialState: EditorState = {
   macromoleculesProperties: undefined,
   unipositiveIonsMeasurementUnit: MolarMeasurementUnit.milliMol,
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit.microMol,
-  unipositiveIonsValue: 140,
-  oligonucleotidesValue: 200,
+  unipositiveIonsValue: '140',
+  oligonucleotidesValue: '200',
   app: {
     buildDate: process.env.BUILD_DATE ?? '',
     indigoVersion: process.env.INDIGO_VERSION ?? '',
@@ -221,10 +221,10 @@ export const editorSlice: Slice<EditorState> = createSlice({
         ...action.payload,
       } as EditorLineLength;
     },
-    setUnipositiveIonsValue: (state, action: PayloadAction<number>) => {
+    setUnipositiveIonsValue: (state, action: PayloadAction<string>) => {
       state.unipositiveIonsValue = action.payload;
     },
-    setOligonucleotidesValue: (state, action: PayloadAction<number>) => {
+    setOligonucleotidesValue: (state, action: PayloadAction<string>) => {
       state.oligonucleotidesValue = action.payload;
     },
     setAppMeta: (state, action: PayloadAction<AppMeta>) => {

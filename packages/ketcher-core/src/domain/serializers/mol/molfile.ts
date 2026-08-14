@@ -24,10 +24,11 @@ import { Elements } from 'domain/constants';
 import common from './common';
 import type { Mapping } from './mol.types';
 import utils from './utils';
-import { KetcherLogger } from 'utilities';
+import { assert, KetcherLogger } from 'utilities';
 import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
 
 const END_V2000 = '2D 1   1.00000     0.00000     0';
+const NO_PARENT_SGROUP_ID = -1;
 type NumberTuple = [number, number];
 
 interface ParseCTFileProps {
@@ -296,7 +297,7 @@ export class Molfile {
   writeCTab2000Header() {
     /* saver */
     const molecule = this.molecule;
-    if (!molecule) throw new Error('molecule is not defined');
+    assert(molecule != null, 'molecule is not defined');
     this.writePaddedNumber(molecule.atoms.size, 3);
     this.writePaddedNumber(molecule.bonds.size, 3);
 
@@ -509,7 +510,7 @@ export class Molfile {
       this.writePaddedNumber(sGroupIdInCTab, 3);
       this.writeCR();
 
-      const parentId = molecule.sGroupForest.parent.get(id) ?? -1;
+      const parentId = molecule.sGroupForest.parent.get(id) ?? NO_PARENT_SGROUP_ID;
       if (parentId >= 0) {
         this.write('M  SPL');
         this.writePaddedNumber(1, 3);

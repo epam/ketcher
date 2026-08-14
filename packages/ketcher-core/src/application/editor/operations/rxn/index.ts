@@ -105,20 +105,18 @@ interface RxnArrowDeleteData {
 
 class RxnArrowDelete extends Base<RxnArrowDeleteData> {
   data: RxnArrowDeleteData;
-  hasAssignedId: boolean;
   performed: boolean;
 
   constructor(id?: number) {
     super(OperationType.RXN_ARROW_DELETE);
     this.data = { id, pos: [], mode: RxnArrowMode.OpenAngle };
-    this.hasAssignedId = id != null;
     this.performed = false;
   }
 
   execute(restruct: Restruct): void {
     KetcherLogger.log('RxnArrowDelete.execute(), start', this.data);
     const itemId = this.data.id;
-    if (!this.hasAssignedId || itemId == null) {
+    if (itemId == null) {
       KetcherLogger.error(
         'RxnArrowDelete.execute(): rxnArrow id is not assigned',
       );

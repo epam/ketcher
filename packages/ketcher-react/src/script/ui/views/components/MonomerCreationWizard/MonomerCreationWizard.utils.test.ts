@@ -1,5 +1,10 @@
-import { type BaseMonomer, KetMonomerClass } from 'ketcher-core';
 import {
+  type BaseMonomer,
+  AttachmentPointName,
+  KetMonomerClass,
+} from 'ketcher-core';
+import {
+  computeApDiff,
   getEditAllInstancesInitialValues,
   getEditInstanceInitialValues,
 } from './MonomerCreationWizard.utils';
@@ -265,5 +270,108 @@ describe('getEditAllInstancesInitialValues', () => {
     );
 
     expect(values.name).toBe('Cysteine_Copy');
+  });
+});
+
+describe('computeApDiff', () => {
+  const R1 = AttachmentPointName.R1;
+  const R2 = AttachmentPointName.R2;
+  const R3 = AttachmentPointName.R3;
+
+  it('returns empty result when no in-use APs exist', () => {
+    const result = computeApDiff(new Map(), new Map());
+    expect(result.deleted).toEqual([]);
+    expect(result.moved.size).toBe(0);
+  });
+
+  it('marks an AP as deleted when it is absent from the new map', () => {
+    const old = new Map([[R1, 10]]);
+    const newMap = new Map<AttachmentPointName, number>();
+
+    const result = computeApDiff(old, newMap);
+
+    expect(result.deleted).toContain(R1);
+    expect(result.moved.size).toBe(0);
+  });
+
+  it('marks an AP as moved when it exists in both maps but with a different atom ID', () => {
+    const old = new Map([[R1, 10]]);
+    const newMap = new Map([[R1, 20]]);
+
+    const result = computeApDiff(old, newMap);
+
+    expect(result.deleted).toHaveLength(0);
+    expect(result.moved.get(R1)).toBe(20);
+  });
+
+  it('leaves unchanged APs out of both deleted and moved', () => {
+    const old = new Map([[R1, 10]]);
+    const newMap = new Map([[R1, 10]]);
+
+    const result = computeApDiff(old, newMap);
+
+    expect(result.deleted).toHaveLength(0);
+    expect(result.moved.size).toBe(0);
+  });
+
+  it('handles all APs being deleted', () => {
+    const old = new Map([
+      [R1, 10],
+      [R2, 20],
+    ]);
+
+    const result = computeApDiff(old, new Map());
+
+    expect(result.deleted).toContain(R1);
+    expect(result.deleted).toContain(R2);
+    expect(result.moved.size).toBe(0);
+  });
+
+  it('handles all APs being moved to different atoms', () => {
+    const old = new Map([
+      [R1, 10],
+      [R2, 20],
+    ]);
+    const newMap = new Map([
+      [R1, 11],
+      [R2, 21],
+    ]);
+
+    const result = computeApDiff(old, newMap);
+
+    expect(result.deleted).toHaveLength(0);
+    expect(result.moved.get(R1)).toBe(11);
+    expect(result.moved.get(R2)).toBe(21);
+  });
+
+  it('handles a mix: one deleted, one moved, one unchanged', () => {
+    const old = new Map([
+      [R1, 10],
+      [R2, 20],
+      [R3, 30],
+    ]);
+    const newMap = new Map([
+      [R2, 99],
+      [R3, 30],
+    ]);
+
+    const result = computeApDiff(old, newMap);
+
+    expect(result.deleted).toEqual([R1]);
+    expect(result.moved.get(R2)).toBe(99);
+    expect(result.moved.has(R3)).toBe(false);
+  });
+
+  it('ignores APs present only in newMap (not in-use originally)', () => {
+    const old = new Map([[R1, 10]]);
+    const newMap = new Map([
+      [R1, 10],
+      [R2, 20],
+    ]);
+
+    const result = computeApDiff(old, newMap);
+
+    expect(result.deleted).toHaveLength(0);
+    expect(result.moved.size).toBe(0);
   });
 });

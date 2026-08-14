@@ -1155,6 +1155,39 @@ const MonomerCreationWizardInternal = ({
     }
   }, [monomerCreationState?.hasDefaultAttachmentPoints]);
 
+  // Show a dismissible info notification when the wizard is opened for an
+  // existing monomer whose attachment points are currently in use by canvas bonds.
+  useEffect(() => {
+    const attachmentAtomIdsWithExternalBonds =
+      monomerCreationState?.attachmentAtomIdsWithExternalBonds;
+    if (
+      !attachmentAtomIdsWithExternalBonds ||
+      attachmentAtomIdsWithExternalBonds.size === 0
+    ) {
+      return;
+    }
+
+    const attachmentPointsList = Array.from(
+      attachmentAtomIdsWithExternalBonds.keys(),
+    ).join(' and ');
+    const message = `Deleting attachment point ${attachmentPointsList} will result in deleting of bonds that use those attachment points after saving.`;
+
+    wizardStateDispatch({
+      type: 'SetNotifications',
+      notifications: new Map([
+        [
+          'usedAttachmentPointsWarning',
+          {
+            type: 'info',
+            message,
+          },
+        ],
+      ]),
+    });
+    // Only run once on mount — the used APs snapshot is fixed at wizard-open time.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (!monomerCreationState || !isRnaPresetType) {
       return;

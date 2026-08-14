@@ -18,6 +18,7 @@
 import { type ReStruct, ReText } from '../../../render';
 import { Text } from 'domain/entities/text';
 import { Vec2 } from 'domain/entities/vec2';
+import { assert } from 'utilities';
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
@@ -40,7 +41,7 @@ export class TextCreate extends BaseOperation<TextCreateData> {
   execute(restruct: ReStruct): void {
     const item = new Text(this.data);
 
-    if (this.data.id == null) {
+    if (this.data.id === null || this.data.id === undefined) {
       const index = restruct.molecule.texts.add(item);
       this.data.id = index;
     } else {
@@ -56,9 +57,10 @@ export class TextCreate extends BaseOperation<TextCreateData> {
   }
 
   invert(): TextDelete {
-    if (this.data.id == null) {
-      throw new Error('TextCreate: cannot invert before execute assigns an id');
-    }
+    assert(
+      this.data.id !== null && this.data.id !== undefined,
+      'TextCreate: cannot invert before execute assigns an id',
+    );
     return new TextDelete(this.data.id);
   }
 }
@@ -98,19 +100,18 @@ export class TextDelete extends BaseOperation<TextDeleteData> {
   }
 
   invert(): BaseOperation {
-    if (this.data.content == null) {
-      throw new Error(
-        'TextDelete: cannot invert before execute captures content',
-      );
-    }
-    if (this.data.position == null) {
-      throw new Error(
-        'TextDelete: cannot invert before execute captures position',
-      );
-    }
-    if (this.data.pos == null) {
-      throw new Error('TextDelete: cannot invert before execute captures pos');
-    }
+    assert(
+      this.data.content !== null && this.data.content !== undefined,
+      'TextDelete: cannot invert before execute captures content',
+    );
+    assert(
+      this.data.position !== null && this.data.position !== undefined,
+      'TextDelete: cannot invert before execute captures position',
+    );
+    assert(
+      this.data.pos !== null && this.data.pos !== undefined,
+      'TextDelete: cannot invert before execute captures pos',
+    );
     return new TextCreate(
       this.data.content,
       this.data.position,

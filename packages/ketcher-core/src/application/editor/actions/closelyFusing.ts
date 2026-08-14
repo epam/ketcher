@@ -113,6 +113,10 @@ function closestToMerge(struct, closestMap) {
   closestMap.bonds.forEach((dstId, srcId) => {
     const bond = struct.bonds.get(srcId);
     const bondCI = struct.bonds.get(dstId);
+    if (!bond || !bondCI) {
+      mergeMap.bonds.delete(srcId);
+      return;
+    }
 
     const mergeParams = utils.mergeBondsParams(struct, bond, struct, bondCI);
     if (mergeParams?.merged) {

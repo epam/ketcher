@@ -3359,11 +3359,11 @@ class Editor implements KetcherEditor {
     this.selection(null);
 
     const stack = this.historyStack[this.historyPtr];
-    let action!: Action;
+    let action: Action | undefined;
     try {
       action = stack.perform(this.render.ctab);
-    } finally {
       this.historyStack[this.historyPtr] = action;
+    } finally {
       this.historyPtr++;
     }
 

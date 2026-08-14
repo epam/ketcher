@@ -309,8 +309,14 @@ export class Bond extends BaseMicromoleculeEntity {
   clone(aidMap?: Map<number, number> | null): Bond {
     const cp = new Bond(this);
     if (aidMap) {
-      cp.begin = aidMap.get(cp.begin)!;
-      cp.end = aidMap.get(cp.end)!;
+      const newBegin = aidMap.get(cp.begin);
+      if (newBegin !== undefined) {
+        cp.begin = newBegin;
+      }
+      const newEnd = aidMap.get(cp.end);
+      if (newEnd !== undefined) {
+        cp.end = newEnd;
+      }
     }
     return cp;
   }

@@ -3,10 +3,10 @@
   "version": "3.19.0-rc.1",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
-  "homepage": "http://lifescience.opensource.epam.com/ketcher",
+  "homepage": "https://lifescience.opensource.epam.com/ketcher/",
   "author": {
     "name": "EPAM Life Sciences",
-    "url": "http://lifescience.opensource.epam.com"
+    "url": "https://lifescience.opensource.epam.com"
   },
   "repository": {
     "type": "git",

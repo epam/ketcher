@@ -35,11 +35,16 @@ describe('TextUpdate', () => {
   });
 
   it('keeps operation safe when invert is called before previousContent is captured', () => {
-    const update = new TextUpdate(1, 'new content');
+    const textId = restruct.molecule.texts.add(
+      new Text({ content: 'old content', position: new Vec2(0, 0), pos: [] }),
+    );
+    const update = new TextUpdate(textId, 'new content');
 
     const inverted = update.invert();
+    inverted.execute(restruct);
 
     expect(inverted.data.content).toBe('new content');
     expect(inverted.data.previousContent).toBe('new content');
+    expect(restruct.molecule.texts.get(textId)?.content).toBe('old content');
   });
 });

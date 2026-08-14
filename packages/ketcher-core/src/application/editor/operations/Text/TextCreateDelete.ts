@@ -41,7 +41,7 @@ export class TextCreate extends BaseOperation<TextCreateData> {
   execute(restruct: ReStruct): void {
     const item = new Text(this.data);
 
-    if (this.data.id === null || this.data.id === undefined) {
+    if (this.data.id === undefined) {
       const index = restruct.molecule.texts.add(item);
       this.data.id = index;
     } else {
@@ -58,7 +58,7 @@ export class TextCreate extends BaseOperation<TextCreateData> {
 
   invert(): TextDelete {
     assert(
-      this.data.id !== null && this.data.id !== undefined,
+      this.data.id !== undefined,
       'TextCreate: cannot invert before execute assigns an id',
     );
     return new TextDelete(this.data.id);
@@ -87,6 +87,7 @@ export class TextDelete extends BaseOperation<TextDeleteData> {
 
     this.data.content = item.content;
     this.data.position = item.position;
+    this.data.pos = item.pos;
 
     restruct.markItemRemoved();
 
@@ -101,15 +102,15 @@ export class TextDelete extends BaseOperation<TextDeleteData> {
 
   invert(): BaseOperation {
     assert(
-      this.data.content !== null && this.data.content !== undefined,
+      this.data.content !== undefined,
       'TextDelete: cannot invert before execute captures content',
     );
     assert(
-      this.data.position !== null && this.data.position !== undefined,
+      this.data.position,
       'TextDelete: cannot invert before execute captures position',
     );
     assert(
-      this.data.pos !== null && this.data.pos !== undefined,
+      this.data.pos,
       'TextDelete: cannot invert before execute captures pos',
     );
     return new TextCreate(

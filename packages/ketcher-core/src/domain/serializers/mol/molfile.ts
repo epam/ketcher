@@ -510,7 +510,8 @@ export class Molfile {
       this.writePaddedNumber(sGroupIdInCTab, 3);
       this.writeCR();
 
-      const parentId = molecule.sGroupForest.parent.get(id) ?? NO_PARENT_SGROUP_ID;
+      const parentId =
+        molecule.sGroupForest.parent.get(id) ?? NO_PARENT_SGROUP_ID;
       if (parentId >= 0) {
         this.write('M  SPL');
         this.writePaddedNumber(1, 3);

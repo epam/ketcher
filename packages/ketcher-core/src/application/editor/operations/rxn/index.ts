@@ -66,7 +66,10 @@ class RxnArrowAdd extends Base<RxnArrowAddData> {
 
     const itemId = this.data.id;
     if (itemId == null) {
-      throw new Error('rxnArrow id was not assigned');
+      KetcherLogger.error(
+        'RxnArrowAdd.execute(): rxnArrow id was not assigned',
+      );
+      return;
     }
 
     restruct.rxnArrows.set(itemId, new ReRxnArrow(item));
@@ -84,7 +87,8 @@ class RxnArrowAdd extends Base<RxnArrowAddData> {
   invert(): RxnArrowDelete {
     const itemId = this.data.id;
     if (itemId == null) {
-      throw new Error('rxnArrow id was not assigned');
+      KetcherLogger.error('RxnArrowAdd.invert(): rxnArrow id was not assigned');
+      return new RxnArrowDelete(-1);
     }
 
     return new RxnArrowDelete(itemId);

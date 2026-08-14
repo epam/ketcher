@@ -48,7 +48,7 @@ export function fromOneAtomDeletion(restruct, atomId: number) {
 function fromBondDeletion(
   restruct: ReStruct,
   bid: number,
-  skipAtoms: Array<any> = [],
+  skipAtoms: number[] = [],
 ) {
   let action = new Action();
 
@@ -69,8 +69,9 @@ function fromBondDeletion(
     });
   }
 
-  const bond: any = restruct.molecule.bonds.get(bid);
-  const atomsToRemove: Array<any> = [];
+  const bond = restruct.molecule.bonds.get(bid);
+  assert(bond != null);
+  const atomsToRemove: number[] = [];
 
   action.addOp(new BondDelete(bid));
 

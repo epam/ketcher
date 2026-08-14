@@ -126,11 +126,7 @@ import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { debounce } from 'lodash';
 import type { D3SvgElementSelection } from 'application/render/types';
-<<<<<<< HEAD
-=======
-import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import type { EditorTheme } from 'domain/types/theme';
->>>>>>> b92b54ed3b (Type CoreEditor theme and remove editor alias)
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import {
   getKetRef,
@@ -138,14 +134,11 @@ import {
   KetSerializer,
 } from 'domain/serializers';
 import type { SequenceMode } from './modes/types/sequenceMode';
-<<<<<<< HEAD
+import type { DeepPartial } from 'types';
 import {
   LibraryItemDragDropHandler,
   type IAutochainMonomerAddResult,
 } from 'application/editor/libraryItemDragDrop';
-=======
-import type { DeepPartial } from 'types';
->>>>>>> b92b54ed3b (Type CoreEditor theme and remove editor alias)
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 
@@ -273,14 +266,9 @@ export class CoreEditor {
 
   private libraryItemDragCancelled = false;
 
-<<<<<<< HEAD
+  public theme: CoreEditorTheme;
   /** Handles all drag-and-drop attachment-point logic for library items. */
   private dragDropHandler!: LibraryItemDragDropHandler;
-
-  public theme;
-=======
-  public theme: CoreEditorTheme;
->>>>>>> b92b54ed3b (Type CoreEditor theme and remove editor alias)
   public zoomTool: ZoomTool;
   private tool?: Tool | BaseTool;
 

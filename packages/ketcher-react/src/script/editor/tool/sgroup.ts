@@ -1003,8 +1003,7 @@ function countOfSelectedComponents(
   const atomSet = new Pile<number>(atoms);
 
   return Array.from(restruct.connectedComponents.values()).reduce(
-    (acc: number, component) =>
-      acc + (atomSet.isSuperset(component) ? 1 : 0),
+    (acc: number, component) => acc + (atomSet.isSuperset(component) ? 1 : 0),
     0,
   );
 }

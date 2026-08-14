@@ -16,8 +16,8 @@
 
 import {
   Atom,
-  type AtomQueryProperties,
   StereoLabel,
+  type AtomQueryProperties,
 } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
@@ -717,6 +717,7 @@ class ReAtom extends ReObject {
         pathAndRBoxTranslate(
           index.path,
           index.rbb,
+
           -0.5 * label.rbb.width - 0.5 * index.rbb.width - delta,
           0.3 * label.rbb.height,
         );
@@ -1597,6 +1598,7 @@ function buildLabel(
     const element = Elements.get(text);
     if (atomColoring && element) {
       atom.color = ElementColor[text] ?? DEFAULT_ATOM_COLOR;
+      atom.color = ElementColor[text] ?? DEFAULT_ATOM_COLOR;
     }
   }
 
@@ -2076,29 +2078,12 @@ function getSubstitutionCountAttrText(value: number) {
   return attrText;
 }
 
-type AtomCustomQueryValue = string | number | boolean;
-
 /**
  * Minimum shape required by getAtomCustomQuery.
  * Satisfied by both a full Atom instance (query-specific fields nested
  * under queryProperties) and the flat Redux form state produced by the
  * Atom dialog (those fields hoisted to top level by fromAtom).
  */
-type AtomQueryInput = Partial<
-  Pick<
-    Atom,
-    | 'isotope'
-    | 'charge'
-    | 'explicitValence'
-    | 'ringBondCount'
-    | 'substitutionCount'
-    | 'hCount'
-    | 'implicitHCount'
-  >
-> & {
-  unsaturatedAtom?: number | boolean; // number on Atom, boolean in form state
-  queryProperties?: Partial<AtomQueryProperties>;
-} & Partial<AtomQueryProperties>; // flat query fields (form state path)
 
 /**
  * Maps atom properties and SMARTS/query-specific atom fields to the textual
@@ -2118,102 +2103,11 @@ type AtomCustomQueryPropertyName =
   | 'ringSize'
   | 'substitutionCount'
   | 'unsaturatedAtom';
-type AtomCustomQueryPattern = {
-  /** Atom property name used to determine whether the query attribute applies. */
-  propertyName: AtomCustomQueryPropertyName;
-  /** Reads the raw atom/query-property value before text normalization. */
-  getValue: (atom: AtomQueryInput) => AtomCustomQueryValue | null | undefined;
-  /** Converts a normalized value to its Molfile query attribute representation. */
-  format: (value: string) => string;
-};
 
 const EXCLUDED_QUERY_ATTRIBUTES: readonly AtomCustomQueryPropertyName[] = [
   'charge',
   'explicitValence',
   'isotope',
-];
-
-const atomCustomQueryPatterns: readonly AtomCustomQueryPattern[] = [
-  {
-    propertyName: 'isotope',
-    getValue: (atom) => atom.isotope,
-    format: (value) => value,
-  },
-  {
-    propertyName: 'aromaticity',
-    getValue: (atom) =>
-      atom.queryProperties?.aromaticity ?? atom.aromaticity ?? null,
-    format: (value) => (value === 'aromatic' ? 'a' : 'A'),
-  },
-  {
-    propertyName: 'charge',
-    getValue: (atom) => atom.charge,
-    format: (value) => {
-      if (value === '') return value;
-      const regExpResult = /^([+-]?)(\d{1,3}|1000)([+-]?)$/.exec(value);
-      const charge = regExpResult
-        ? parseInt(
-            regExpResult[1] + regExpResult[3] + regExpResult[2],
-          ).toString()
-        : value;
-      return !charge.startsWith('-') ? `+${charge}` : charge;
-    },
-  },
-  {
-    propertyName: 'unsaturatedAtom',
-    getValue: (atom) => atom.unsaturatedAtom,
-    format: (value) => (value === 'true' || Number(value) === 1 ? 'u' : ''),
-  },
-  {
-    propertyName: 'explicitValence',
-    getValue: (atom) => atom.explicitValence,
-    format: (value) => (Number(value) !== -1 ? `v${value}` : ''),
-  },
-  {
-    propertyName: 'ringBondCount',
-    getValue: (atom) => atom.ringBondCount,
-    format: (value) => getRingConnectivity(Number(value)),
-  },
-  {
-    propertyName: 'substitutionCount',
-    getValue: (atom) => atom.substitutionCount,
-    format: (value) => getDegree(Number(value)),
-  },
-  {
-    propertyName: 'hCount',
-    getValue: (atom) => atom.hCount,
-    // Molfile query hydrogen counts are encoded as H<count - 1>.
-    format: (value) =>
-      Number(value) > 0 ? 'H' + (Number(value) - 1).toString() : '',
-  },
-  {
-    propertyName: 'implicitHCount',
-    getValue: (atom) => atom.implicitHCount,
-    format: (value) => `h${value}`,
-  },
-  {
-    propertyName: 'ringMembership',
-    getValue: (atom) =>
-      atom.queryProperties?.ringMembership ?? atom.ringMembership ?? null,
-    format: (value) => `R${value}`,
-  },
-  {
-    propertyName: 'ringSize',
-    getValue: (atom) => atom.queryProperties?.ringSize ?? atom.ringSize ?? null,
-    format: (value) => `r${value}`,
-  },
-  {
-    propertyName: 'connectivity',
-    getValue: (atom) =>
-      atom.queryProperties?.connectivity ?? atom.connectivity ?? null,
-    format: (value) => `X${value}`,
-  },
-  {
-    propertyName: 'chirality',
-    getValue: (atom) =>
-      atom.queryProperties?.chirality ?? atom.chirality ?? null,
-    format: (value) => (value === 'clockwise' ? '@@' : '@'),
-  },
 ];
 
 export function getAtomType(atom: Atom) {
@@ -2247,16 +2141,120 @@ export function checkIsSmartPropertiesExist(atom: Atom) {
 }
 
 export function getAtomCustomQuery(
-  atom: AtomQueryInput,
+  atom: Atom,
   includeOnlyQueryAttributes?: boolean,
 ) {
   let queryAttrsText = '';
+  type AtomCustomQueryValue = string | number | boolean | null | undefined;
+  type AtomCustomQueryPropertyName =
+    | 'aromaticity'
+    | 'charge'
+    | 'chirality'
+    | 'connectivity'
+    | 'explicitValence'
+    | 'hCount'
+    | 'implicitHCount'
+    | 'isotope'
+    | 'ringBondCount'
+    | 'ringMembership'
+    | 'ringSize'
+    | 'substitutionCount'
+    | 'unsaturatedAtom';
+  type AtomCustomQueryPattern = {
+    propertyName: AtomCustomQueryPropertyName;
+    getValue: (atom: Atom) => AtomCustomQueryValue;
+    format: (value: string) => string;
+  };
+  const getQueryProperty =
+    <PropertyName extends keyof AtomQueryProperties>(
+      propertyName: PropertyName,
+    ) =>
+    (currentAtom: Atom): AtomQueryProperties[PropertyName] =>
+      currentAtom.queryProperties?.[propertyName] ??
+      (currentAtom as unknown as AtomQueryProperties)[propertyName];
 
   const addSemicolon = () => {
     if (queryAttrsText.length > 0) queryAttrsText += ';';
   };
+  const patterns: AtomCustomQueryPattern[] = [
+    {
+      propertyName: 'isotope',
+      getValue: (currentAtom) => currentAtom.isotope,
+      format: (value) => value,
+    },
+    {
+      propertyName: 'aromaticity',
+      getValue: getQueryProperty('aromaticity'),
+      format: (value) => (value === 'aromatic' ? 'a' : 'A'),
+    },
+    {
+      propertyName: 'charge',
+      getValue: (currentAtom) => currentAtom.charge,
+      format: (value) => {
+        if (value === '') return value;
+        const regExpResult = /^([+-]?)(\d{1,3}|1000)([+-]?)$/.exec(value);
+        const charge = regExpResult
+          ? parseInt(
+              regExpResult[1] + regExpResult[3] + regExpResult[2],
+            ).toString()
+          : value;
+        return !charge.startsWith('-') ? `+${charge}` : charge;
+      },
+    },
+    {
+      propertyName: 'unsaturatedAtom',
+      getValue: (currentAtom) => currentAtom.unsaturatedAtom,
+      format: (value) => (Number(value) === 1 ? 'u' : ''),
+    },
+    {
+      propertyName: 'explicitValence',
+      getValue: (currentAtom) => currentAtom.explicitValence,
+      format: (value) => (Number(value) !== -1 ? `v${value}` : ''),
+    },
+    {
+      propertyName: 'ringBondCount',
+      getValue: (currentAtom) => currentAtom.ringBondCount,
+      format: (value) => getRingConnectivity(Number(value)),
+    },
+    {
+      propertyName: 'substitutionCount',
+      getValue: (currentAtom) => currentAtom.substitutionCount,
+      format: (value) => getDegree(Number(value)),
+    },
+    {
+      propertyName: 'hCount',
+      getValue: (currentAtom) => currentAtom.hCount,
+      format: (value) =>
+        Number(value) > 0 ? 'H' + (Number(value) - 1).toString() : '',
+    },
+    {
+      propertyName: 'implicitHCount',
+      getValue: (currentAtom) => currentAtom.implicitHCount,
+      format: (value) => `h${value}`,
+    },
+    {
+      propertyName: 'ringMembership',
+      getValue: getQueryProperty('ringMembership'),
+      format: (value) => `R${value}`,
+    },
+    {
+      propertyName: 'ringSize',
+      getValue: getQueryProperty('ringSize'),
+      format: (value) => `r${value}`,
+    },
+    {
+      propertyName: 'connectivity',
+      getValue: getQueryProperty('connectivity'),
+      format: (value) => `X${value}`,
+    },
+    {
+      propertyName: 'chirality',
+      getValue: getQueryProperty('chirality'),
+      format: (value) => (value === 'clockwise' ? '@@' : '@'),
+    },
+  ];
 
-  for (const { propertyName, getValue, format } of atomCustomQueryPatterns) {
+  for (const { propertyName, getValue, format } of patterns) {
     if (
       includeOnlyQueryAttributes &&
       EXCLUDED_QUERY_ATTRIBUTES.includes(propertyName)
@@ -2269,7 +2267,8 @@ export function getAtomCustomQuery(
       continue;
     }
 
-    const attrText = format(String(value));
+    const normalizedValue = typeof value === 'boolean' ? Number(value) : value;
+    const attrText = format(String(normalizedValue));
     if (attrText) {
       addSemicolon();
     }

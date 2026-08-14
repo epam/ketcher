@@ -49,6 +49,9 @@ const useMonomerExpansionHandlers = () => {
 
       editor.update(action);
       editor.rotateController.rerender();
+      if (toExpand) {
+        editor.centerViewportAccordingToStruct();
+      }
     },
     [ketcherId],
   );

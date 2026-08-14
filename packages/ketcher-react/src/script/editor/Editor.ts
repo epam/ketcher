@@ -1989,7 +1989,7 @@ class Editor implements KetcherEditor {
     let ket = {
       root: {
         templates: libraryItems.map((libraryItem) => {
-          return libraryItem.root.templates![0];
+          return libraryItem.root.templates?.[0];
         }),
       },
     };

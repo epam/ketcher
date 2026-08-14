@@ -39,8 +39,8 @@ function calcStereoFlag(
   if (!filteredStereoAtoms.length) return undefined;
 
   const atom = filteredStereoAtoms[0];
-  if (!atom?.stereoLabel) return undefined;
-  const stereoLabel = atom.stereoLabel; // {string} "<abs|and|or>-<group>"
+  const stereoLabel = atom?.stereoLabel; // {string} "<abs|and|or>-<group>"
+  if (!stereoLabel) return undefined;
 
   const hasAnotherLabel = filteredStereoAtoms.some(
     (atom) => atom?.stereoLabel !== stereoLabel,

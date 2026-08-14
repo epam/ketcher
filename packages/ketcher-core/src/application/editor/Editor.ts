@@ -1260,8 +1260,6 @@ export class CoreEditor {
     this.events.setEditorLineLength.add(
       (lineLengthUpdate: Partial<EditorLineLength>) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         if (window._ketcher_isChainLengthRulerDisabled) {
           return;
         }
@@ -1281,8 +1279,6 @@ export class CoreEditor {
     this.events.toggleLineLengthHighlighting.add(
       (value: boolean, currentPosition = 0) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         if (window._ketcher_isChainLengthRulerDisabled) {
           return;
         }
@@ -2461,8 +2457,6 @@ export class CoreEditor {
   public zoomToStructuresIfNeeded() {
     if (
       // Temporary solution to disable autozoom for the polymer editor in e2e tests
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       window._ketcher_isAutozoomDisabled ||
       !this.isCurrentModeWithAutozoom() ||
       !this.drawingEntitiesManager.hasMonomers

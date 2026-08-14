@@ -2,7 +2,7 @@
  * Unit tests for SettingsService
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import { SettingsService } from '../SettingsService';
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';
@@ -70,7 +70,10 @@ describe('SettingsService', () => {
 
     it('should use defaults on invalid stored settings', async () => {
       const invalidSettings = { invalid: 'data' };
-      await storage.save('ketcher-opts', invalidSettings as any);
+      await storage.save(
+        'ketcher-opts',
+        invalidSettings as unknown as Settings,
+      );
 
       SettingsService.resetInstance();
       const newService = await SettingsService.getInstance({ storage });
@@ -187,7 +190,7 @@ describe('SettingsService', () => {
     it('should validate settings before applying', async () => {
       await expect(
         service.updateSettings({
-          rotationStep: 200 as any, // Invalid: max is 90
+          rotationStep: 200, // Invalid: max is 90
         }),
       ).rejects.toThrow();
     });
@@ -197,7 +200,7 @@ describe('SettingsService', () => {
 
       try {
         await service.updateSettings({
-          rotationStep: 200 as any,
+          rotationStep: 200,
         });
       } catch {
         // Expected to fail
@@ -387,7 +390,7 @@ describe('SettingsService', () => {
 
     it('should return errors for invalid settings', () => {
       const result = service.validateSettings({
-        rotationStep: 200 as any, // Invalid
+        rotationStep: 200, // Invalid
       });
 
       expect(result.valid).toBe(false);

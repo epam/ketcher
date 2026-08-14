@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { TransientView } from 'application/render/renderers/TransientView/TransientView';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { Vec2 } from 'domain/entities';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import { TransientView } from './TransientView';
 
 export type RotationViewParams = {
   center: Vec2;
@@ -115,11 +115,6 @@ const getRotationArcPath = (
   );
 };
 
-// TypeScript doesn't support abstract static methods, but the TransientView pattern
-// requires static show() methods. This ts-ignore is necessary to follow the
-// established pattern used by other TransientView subclasses (SelectionView, etc.)
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 export class RotationView extends TransientView {
   private static lastSnappingRadius?: number;
   private static wasRotating = false;

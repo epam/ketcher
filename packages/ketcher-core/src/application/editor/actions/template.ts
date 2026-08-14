@@ -93,9 +93,8 @@ function extraBondAction(
     const operation = new AtomAdd(
       { label: 'C', fragment: frid },
       new Vec2(1, 0).rotate(angle).add(pivotAtom.pp).get_xy0(),
-    ).perform(restruct);
-
-    action.addOp(operation);
+    );
+    action.addOp(operation.perform(restruct));
     const newAtomId = operation.data.aid;
     if (!isNumber(newAtomId)) {
       KetcherLogger.error(
@@ -479,12 +478,9 @@ function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
     begin: flip ? tmplBond.end : tmplBond.begin,
     end: flip ? tmplBond.begin : tmplBond.end,
   };
-  const { angle, scale } = utils.mergeBondsParams(
-    struct,
-    bond,
-    tmpl,
-    bondAtoms,
-  );
+  const mergeParams = utils.mergeBondsParams(struct, bond, tmpl, bondAtoms);
+  if (!mergeParams) return action;
+  const { angle, scale } = mergeParams;
 
   const frid = struct.getBondFragment(bid);
 

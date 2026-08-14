@@ -330,7 +330,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
     await RightToolbar(page).clickAtom(Atom.Oxygen);
-    await clickOnCanvas(page, 100, 50);
+    await clickOnCanvas(page, 120, 50);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToCHEMTab();

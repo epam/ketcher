@@ -45,13 +45,10 @@ export class TextUpdate extends BaseOperation {
   }
 
   invert() {
-    if (this.data.previousContent === undefined) {
-      throw new Error(
-        'TextUpdate.invert() requires previousContent. Execute the operation first.',
-      );
-    }
-
-    const inverted = new TextUpdate(this.data.id, this.data.previousContent);
+    const inverted = new TextUpdate(
+      this.data.id,
+      this.data.previousContent ?? this.data.content,
+    );
 
     inverted.data.previousContent = this.data.content;
     return inverted;

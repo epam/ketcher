@@ -34,11 +34,12 @@ describe('TextUpdate', () => {
     expect(restruct.molecule.texts.get(textId)?.content).toBe('old content');
   });
 
-  it('throws when invert is called before previousContent is captured', () => {
+  it('keeps operation safe when invert is called before previousContent is captured', () => {
     const update = new TextUpdate(1, 'new content');
 
-    expect(() => update.invert()).toThrow(
-      'TextUpdate.invert() requires previousContent. Execute the operation first.',
-    );
+    const inverted = update.invert();
+
+    expect(inverted.data.content).toBe('new content');
+    expect(inverted.data.previousContent).toBe('new content');
   });
 });

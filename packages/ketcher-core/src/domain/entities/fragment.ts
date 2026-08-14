@@ -19,6 +19,7 @@ import { type Point, Vec2 } from './vec2';
 import { Bond } from './bond';
 import { StereoLabel } from './atom';
 import type { Struct, StructProperty } from './struct';
+import { assert } from 'utilities';
 
 export enum StereoFlag {
   Mixed = 'MIXED',
@@ -34,17 +35,15 @@ function calcStereoFlag(
   if (!stereoAids || stereoAids.length === 0) return undefined;
   const filteredStereoAtoms = stereoAids
     .map((aid) => struct.atoms.get(aid))
-    .filter(
-      (atom): atom is NonNullable<typeof atom> & { stereoLabel: string } =>
-        Boolean(atom?.stereoLabel),
-    );
+    .filter((atom) => Boolean(atom?.stereoLabel));
   if (!filteredStereoAtoms.length) return undefined;
 
   const atom = filteredStereoAtoms[0];
+  if (!atom?.stereoLabel) return undefined;
   const stereoLabel = atom.stereoLabel; // {string} "<abs|and|or>-<group>"
 
   const hasAnotherLabel = filteredStereoAtoms.some(
-    (atom) => atom.stereoLabel !== stereoLabel,
+    (atom) => atom?.stereoLabel !== stereoLabel,
   );
 
   let stereoFlag: StereoFlag;
@@ -114,11 +113,10 @@ export class Fragment {
   clone(aidMap: Map<number, number>) {
     const stereoAtoms = this.#stereoAtoms.map((aid) => {
       const mappedId = aidMap.get(aid);
-      if (mappedId === undefined) {
-        throw new Error(
-          `Fragment.clone: atom id ${aid} is missing from the provided aidMap`,
-        );
-      }
+      assert(
+        mappedId !== undefined,
+        `Fragment.clone: atom id ${aid} is missing from the provided aidMap`,
+      );
       return mappedId;
     });
     const fr = new Fragment(

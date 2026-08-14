@@ -297,7 +297,7 @@ export class Molfile {
   writeCTab2000Header() {
     /* saver */
     const molecule = this.molecule;
-    assert(molecule != null, 'molecule is not defined');
+    assert(molecule !== null, 'molecule is not defined');
     this.writePaddedNumber(molecule.atoms.size, 3);
     this.writePaddedNumber(molecule.bonds.size, 3);
 

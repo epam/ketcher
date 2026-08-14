@@ -332,6 +332,26 @@ class ReBond extends ReObject {
     const bond = this.b;
     const sgroups = restruct.render.ctab.sgroups;
     const functionalGroups = restruct.render.ctab.molecule.functionalGroups;
+
+    // Hide hydrogen bonds if either connected monomer is expanded
+    if (bond.type === Bond.PATTERN.TYPE.HYDROGEN) {
+      const beginSgroup = restruct.molecule.getGroupFromAtomId(bond.begin);
+      const endSgroup = restruct.molecule.getGroupFromAtomId(bond.end);
+
+      if (
+        beginSgroup instanceof MonomerMicromolecule &&
+        beginSgroup.monomer.monomerItem.expanded
+      ) {
+        return true;
+      }
+      if (
+        endSgroup instanceof MonomerMicromolecule &&
+        endSgroup.monomer.monomerItem.expanded
+      ) {
+        return true;
+      }
+    }
+
     return (
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond,

@@ -4,6 +4,7 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { arc } from 'd3';
+import { TransientView } from './TransientView';
 
 export type AngleSnapViewParams = {
   connectedMonomer: BaseMonomer;

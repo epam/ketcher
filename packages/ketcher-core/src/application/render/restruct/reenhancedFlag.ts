@@ -63,9 +63,13 @@ class ReEnhancedFlag extends ReObject {
       return;
     }
 
-    const position = fragment.stereoFlagPosition
-      ? fragment.stereoFlagPosition
-      : Fragment.getDefaultStereoFlagPosition(restruct.molecule, fragmentId)!;
+    const position =
+      fragment.stereoFlagPosition ||
+      Fragment.getDefaultStereoFlagPosition(restruct.molecule, fragmentId);
+
+    if (!position) {
+      return;
+    }
 
     const paper = render.paper;
     const ps = Scale.modelToCanvas(position, options);

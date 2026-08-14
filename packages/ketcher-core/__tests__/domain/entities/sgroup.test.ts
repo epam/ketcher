@@ -59,12 +59,13 @@ describe('sgroup non-null assertion replacements', () => {
   it('should throw when second cross bond is not found in bonds pool', () => {
     const atomSet = new Pile<number>();
     const bb = new Box2Abs(new Vec2(0, 0), new Vec2(1, 1));
+    const atoms = new Pool<Atom>();
     const bonds = new Pool<Bond>();
     const existingBondId = bonds.add(mock<Bond>());
 
     expect(() =>
       SGroup.getBracketParameters(
-        { bonds },
+        { atoms, bonds },
         { 0: [existingBondId], 1: [existingBondId + 1] },
         atomSet,
         bb,
@@ -79,12 +80,13 @@ describe('sgroup non-null assertion replacements', () => {
   it('should throw when first cross bond is not found in bonds pool', () => {
     const atomSet = new Pile<number>();
     const bb = new Box2Abs(new Vec2(0, 0), new Vec2(1, 1));
+    const atoms = new Pool<Atom>();
     const bonds = new Pool<Bond>();
     const existingBondId = bonds.add(mock<Bond>());
 
     expect(() =>
       SGroup.getBracketParameters(
-        { bonds },
+        { atoms, bonds },
         { 0: [existingBondId + 1], 1: [existingBondId] },
         atomSet,
         bb,
@@ -99,10 +101,16 @@ describe('sgroup non-null assertion replacements', () => {
   it('should throw when else-branch cross bond id has no matching bond', () => {
     const atomSet = new Pile<number>();
     const bb = new Box2Abs(new Vec2(0, 0), new Vec2(1, 1));
+    const atoms = new Pool<Atom>();
     const bonds = new Pool<Bond>();
 
     expect(() =>
-      SGroup.getBracketParameters({ bonds }, { 0: [1, 2] }, atomSet, bb),
+      SGroup.getBracketParameters(
+        { atoms, bonds },
+        { 0: [1, 2] },
+        atomSet,
+        bb,
+      ),
     ).toThrow('SGroup.getBracketParameters: cross-bond 1 is not found');
   });
 

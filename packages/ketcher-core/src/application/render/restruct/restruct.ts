@@ -414,7 +414,9 @@ class ReStruct {
     let boundingBox: Box2Abs | null = null;
 
     for (const atomId of selection.atoms ?? []) {
-      const atomPositionPoint = this.atoms.get(atomId)!.a.pp;
+      const reAtom = this.atoms.get(atomId);
+      if (!reAtom) continue;
+      const atomPositionPoint = reAtom.a.pp;
       const atomBox = new Box2Abs(atomPositionPoint, atomPositionPoint);
       boundingBox =
         boundingBox == null ? atomBox : Box2Abs.union(boundingBox, atomBox);

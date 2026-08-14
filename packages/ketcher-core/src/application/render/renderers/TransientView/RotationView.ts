@@ -17,6 +17,7 @@
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { Vec2 } from 'domain/entities';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import { TransientView } from './TransientView';
 
 export type RotationViewParams = {
   center: Vec2;
@@ -114,7 +115,7 @@ const getRotationArcPath = (
   );
 };
 
-export class RotationView {
+export class RotationView extends TransientView {
   private static lastSnappingRadius?: number;
   private static wasRotating = false;
   private static readonly rotationHandleSubscribers = new Set<

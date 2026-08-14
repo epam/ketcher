@@ -184,7 +184,6 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
     expect(parsed.ket_version).toBe('2.0.0');
 
     const textNodes = parsed.root.nodes.filter((n) => n.type === 'text');
-    const textNodes = parsed.root.nodes.filter((n) => n.type === 'text');
     // Fixture has 18 text objects
     expect(textNodes.length).toBe(18);
 

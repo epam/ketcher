@@ -134,11 +134,15 @@ export class MacromoleculesConverter {
         const attachmentPoint = monomer.monomerItem.attachmentPoints?.[
           attachmentPointIndex
         ] as IKetAttachmentPoint;
+        const attachmentAtomId =
+          monomer instanceof AmbiguousMonomer
+            ? 0
+            : attachmentPoint.attachmentAtom;
 
         return new SGroupAttachmentPoint(
           atomIdsMap
-            ? (atomIdsMap.get(attachmentPoint.attachmentAtom) as number)
-            : attachmentPoint.attachmentAtom,
+            ? (atomIdsMap.get(attachmentAtomId) as number)
+            : attachmentAtomId,
           atomIdsMap
             ? atomIdsMap.get(attachmentPoint.leavingGroup?.atoms[0])
             : attachmentPoint.leavingGroup?.atoms[0],

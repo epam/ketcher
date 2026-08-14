@@ -105,12 +105,7 @@ describe('sgroup non-null assertion replacements', () => {
     const bonds = new Pool<Bond>();
 
     expect(() =>
-      SGroup.getBracketParameters(
-        { atoms, bonds },
-        { 0: [1, 2] },
-        atomSet,
-        bb,
-      ),
+      SGroup.getBracketParameters({ atoms, bonds }, { 0: [1, 2] }, atomSet, bb),
     ).toThrow('SGroup.getBracketParameters: cross-bond 1 is not found');
   });
 

@@ -96,7 +96,7 @@ class RxnArrowAdd extends Base<RxnArrowAddData> {
 }
 
 interface RxnArrowDeleteData {
-  id: number;
+  id?: number;
   pos?: Array<Vec2>;
   mode?: RxnArrowMode;
   height?: number;
@@ -110,20 +110,20 @@ class RxnArrowDelete extends Base<RxnArrowDeleteData> {
 
   constructor(id?: number) {
     super(OperationType.RXN_ARROW_DELETE);
-    this.data = { id: id ?? 0, pos: [], mode: RxnArrowMode.OpenAngle };
+    this.data = { id, pos: [], mode: RxnArrowMode.OpenAngle };
     this.hasAssignedId = id != null;
     this.performed = false;
   }
 
   execute(restruct: Restruct): void {
     KetcherLogger.log('RxnArrowDelete.execute(), start', this.data);
-    if (!this.hasAssignedId) {
+    const itemId = this.data.id;
+    if (!this.hasAssignedId || itemId == null) {
       KetcherLogger.error(
         'RxnArrowDelete.execute(): rxnArrow id is not assigned',
       );
       return;
     }
-    const itemId = this.data.id;
 
     const struct = restruct.molecule;
     const item = struct.rxnArrows.get(itemId);

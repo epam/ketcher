@@ -220,14 +220,6 @@ export function fromPaste(
   pstruct.sgroups.forEach((sg: SGroup) => {
     const newsgid = restruct.molecule.sgroups.newId();
     const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid));
-    let attachmentPoints: ReadonlyArray<SGroupAttachmentPoint>;
-    try {
-      attachmentPoints = sg.cloneAttachmentPoints(aidMap);
-    } catch (e) {
-      // For macromolecules, attachment points may reference atoms not in aidMap
-      // This is expected behavior, use empty array instead
-      attachmentPoints = [];
-    }
     const attachmentPoints: ReadonlyArray<SGroupAttachmentPoint> = (() => {
       try {
         return sg.cloneAttachmentPoints(aidMap);

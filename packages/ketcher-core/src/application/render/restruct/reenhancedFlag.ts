@@ -66,7 +66,6 @@ class ReEnhancedFlag extends ReObject {
     const position =
       fragment.stereoFlagPosition ||
       Fragment.getDefaultStereoFlagPosition(restruct.molecule, fragmentId);
-
     if (!position) {
       return;
     }

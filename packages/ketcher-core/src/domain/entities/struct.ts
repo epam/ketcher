@@ -422,7 +422,10 @@ export class Struct {
 
     simpleObjects.forEach((soid) => {
       const simpleObject = this.simpleObjects.get(soid);
-      assert(simpleObject !== null && simpleObject !== undefined, `SimpleObject ${soid} not found`);
+      assert(
+        simpleObject !== null && simpleObject !== undefined,
+        `SimpleObject ${soid} not found`,
+      );
       cp.simpleObjects.add(simpleObject.clone());
     });
 
@@ -440,13 +443,19 @@ export class Struct {
 
     multitailArrows.forEach((id) => {
       const multitailArrow = this.multitailArrows.get(id);
-      assert(multitailArrow !== null && multitailArrow !== undefined, `MultitailArrow ${id} not found`);
+      assert(
+        multitailArrow !== null && multitailArrow !== undefined,
+        `MultitailArrow ${id} not found`,
+      );
       cp.addMultitailArrow(multitailArrow.clone());
     });
 
     rgroupAttachmentPoints.forEach((id) => {
       const rgroupAttachmentPoint = this.rgroupAttachmentPoints.get(id);
-      assert(rgroupAttachmentPoint !== null && rgroupAttachmentPoint !== undefined, `RgroupAttachmentPoint ${id} not found`);
+      assert(
+        rgroupAttachmentPoint !== null && rgroupAttachmentPoint !== undefined,
+        `RgroupAttachmentPoint ${id} not found`,
+      );
       cp.rgroupAttachmentPoints.add(rgroupAttachmentPoint.clone(aids));
     });
 
@@ -489,7 +498,10 @@ export class Struct {
     let conn = 0;
     for (const neighborId of atom.neighbors) {
       const hb = this.halfBonds.get(neighborId);
-      assert(hb !== null && hb !== undefined, `HalfBond ${neighborId} not found`);
+      assert(
+        hb !== null && hb !== undefined,
+        `HalfBond ${neighborId} not found`,
+      );
       const bond = this.bonds.get(hb.bid);
       assert(bond !== null && bond !== undefined, `Bond ${hb.bid} not found`);
 
@@ -544,8 +556,14 @@ export class Struct {
       const a2 = this.atoms.get(bond.end);
       assert(a1 !== null && a1 !== undefined, `Atom ${bond.begin} not found`);
       assert(a2 !== null && a2 !== undefined, `Atom ${bond.end} not found`);
-      assert(bond.hb1 !== null && bond.hb1 !== undefined, 'bond.hb1 not initialized');
-      assert(bond.hb2 !== null && bond.hb2 !== undefined, 'bond.hb2 not initialized');
+      assert(
+        bond.hb1 !== null && bond.hb1 !== undefined,
+        'bond.hb1 not initialized',
+      );
+      assert(
+        bond.hb2 !== null && bond.hb2 !== undefined,
+        'bond.hb2 not initialized',
+      );
       a1.neighbors.push(bond.hb1);
       a2.neighbors.push(bond.hb2);
     });
@@ -560,21 +578,36 @@ export class Struct {
     this.halfBonds.set(bond.hb2, new HalfBond(bond.end, bond.begin, bid));
     const hb1 = this.halfBonds.get(bond.hb1);
     const hb2 = this.halfBonds.get(bond.hb2);
-    assert(hb1 !== null && hb1 !== undefined, `HalfBond ${bond.hb1} not found after initialization`);
-    assert(hb2 !== null && hb2 !== undefined, `HalfBond ${bond.hb2} not found after initialization`);
+    assert(
+      hb1 !== null && hb1 !== undefined,
+      `HalfBond ${bond.hb1} not found after initialization`,
+    );
+    assert(
+      hb2 !== null && hb2 !== undefined,
+      `HalfBond ${bond.hb2} not found after initialization`,
+    );
     hb1.contra = bond.hb2;
     hb2.contra = bond.hb1;
   }
 
   halfBondUpdate(halfBondId: number) {
     const halfBond = this.halfBonds.get(halfBondId);
-    assert(halfBond !== null && halfBond !== undefined, `HalfBond ${halfBondId} not found`);
+    assert(
+      halfBond !== null && halfBond !== undefined,
+      `HalfBond ${halfBondId} not found`,
+    );
     const sgroup1 = this.getGroupFromAtomId(halfBond.begin);
     const sgroup2 = this.getGroupFromAtomId(halfBond.end);
     const atomBegin = this.atoms.get(halfBond.begin);
     const atomEnd = this.atoms.get(halfBond.end);
-    assert(atomBegin !== null && atomBegin !== undefined, `Atom ${halfBond.begin} not found`);
-    assert(atomEnd !== null && atomEnd !== undefined, `Atom ${halfBond.end} not found`);
+    assert(
+      atomBegin !== null && atomBegin !== undefined,
+      `Atom ${halfBond.begin} not found`,
+    );
+    assert(
+      atomEnd !== null && atomEnd !== undefined,
+      `Atom ${halfBond.end} not found`,
+    );
 
     let startCoords: Vec2;
     let endCoords: Vec2;
@@ -620,7 +653,10 @@ export class Struct {
     const hb = this.halfBonds.get(hbid);
     assert(hb !== null && hb !== undefined, `HalfBond ${hbid} not found`);
     const contra = this.halfBonds.get(hb.contra);
-    assert(contra !== null && contra !== undefined, `Contra half-bond ${hb.contra} not found`);
+    assert(
+      contra !== null && contra !== undefined,
+      `Contra half-bond ${hb.contra} not found`,
+    );
     contra.next = next;
   }
 
@@ -649,7 +685,10 @@ export class Struct {
     let i;
     for (i = 0; i < atom.neighbors.length; ++i) {
       const neighborHb = this.halfBonds.get(atom.neighbors[i]);
-      assert(neighborHb !== null && neighborHb !== undefined, `Neighbor half-bond ${atom.neighbors[i]} not found`);
+      assert(
+        neighborHb !== null && neighborHb !== undefined,
+        `Neighbor half-bond ${atom.neighbors[i]} not found`,
+      );
       if (neighborHb.ang > hb.ang) break;
     }
     atom.neighbors.splice(i, 0, hbid);
@@ -679,7 +718,10 @@ export class Struct {
       const hb = this.halfBonds.get(nei);
       assert(hb !== null && hb !== undefined, `HalfBond ${nei} not found`);
       const contraHb = this.halfBonds.get(hb.contra);
-      assert(contraHb !== null && contraHb !== undefined, `Contra half-bond ${hb.contra} not found`);
+      assert(
+        contraHb !== null && contraHb !== undefined,
+        `Contra half-bond ${hb.contra} not found`,
+      );
       contraHb.next = nextNei;
       this.halfBondSetAngle(nextNei, nei);
     });
@@ -905,8 +947,14 @@ export class Struct {
         if (j === k) continue; // eslint-disable-line no-continue
         const atomJ = this.atoms.get(keys[j]);
         const atomK = this.atoms.get(keys[k]);
-        assert(atomJ !== null && atomJ !== undefined, `Atom ${keys[j]} not found`);
-        assert(atomK !== null && atomK !== undefined, `Atom ${keys[k]} not found`);
+        assert(
+          atomJ !== null && atomJ !== undefined,
+          `Atom ${keys[j]} not found`,
+        );
+        assert(
+          atomK !== null && atomK !== undefined,
+          `Atom ${keys[k]} not found`,
+        );
         dist = Vec2.dist(atomJ.pp, atomK.pp);
         if (minDist < 0 || minDist > dist) minDist = dist;
       }
@@ -1083,24 +1131,42 @@ export class Struct {
   loopHasSelfIntersections(hbs: Array<number>) {
     for (const [i, halfBondId] of hbs.entries()) {
       const hbi = this.halfBonds.get(halfBondId);
-      assert(hbi !== null && hbi !== undefined, `HalfBond ${halfBondId} not found`);
+      assert(
+        hbi !== null && hbi !== undefined,
+        `HalfBond ${halfBondId} not found`,
+      );
       const atomI1 = this.atoms.get(hbi.begin);
       const atomI2 = this.atoms.get(hbi.end);
-      assert(atomI1 !== null && atomI1 !== undefined, `Atom ${hbi.begin} not found`);
-      assert(atomI2 !== null && atomI2 !== undefined, `Atom ${hbi.end} not found`);
+      assert(
+        atomI1 !== null && atomI1 !== undefined,
+        `Atom ${hbi.begin} not found`,
+      );
+      assert(
+        atomI2 !== null && atomI2 !== undefined,
+        `Atom ${hbi.end} not found`,
+      );
       const ai = atomI1.pp;
       const bi = atomI2.pp;
       const set = new Pile([hbi.begin, hbi.end]);
 
       for (const hbjId of hbs.slice(i + 2)) {
         const hbj = this.halfBonds.get(hbjId);
-        assert(hbj !== null && hbj !== undefined, `HalfBond ${hbjId} not found`);
+        assert(
+          hbj !== null && hbj !== undefined,
+          `HalfBond ${hbjId} not found`,
+        );
         if (set.has(hbj.begin) || set.has(hbj.end)) continue; // skip edges sharing an atom
 
         const atomJ1 = this.atoms.get(hbj.begin);
         const atomJ2 = this.atoms.get(hbj.end);
-        assert(atomJ1 !== null && atomJ1 !== undefined, `Atom ${hbj.begin} not found`);
-        assert(atomJ2 !== null && atomJ2 !== undefined, `Atom ${hbj.end} not found`);
+        assert(
+          atomJ1 !== null && atomJ1 !== undefined,
+          `Atom ${hbj.begin} not found`,
+        );
+        assert(
+          atomJ2 !== null && atomJ2 !== undefined,
+          `Atom ${hbj.end} not found`,
+        );
         const aj = atomJ1.pp;
         const bj = atomJ2.pp;
 
@@ -1221,7 +1287,10 @@ export class Struct {
 
             subloop.forEach((hbid) => {
               const hb = this.halfBonds.get(hbid);
-              assert(hb !== null && hb !== undefined, `HalfBond ${hbid} not found`);
+              assert(
+                hb !== null && hb !== undefined,
+                `HalfBond ${hbid} not found`,
+              );
               hb.loop = loopId;
               bondsToMark.add(hb.bid);
             });
@@ -1233,7 +1302,10 @@ export class Struct {
 
         loop.push(hbIdNext);
         const nextHb = this.halfBonds.get(hbIdNext);
-        assert(nextHb !== null && nextHb !== undefined, `HalfBond ${hbIdNext} not found`);
+        assert(
+          nextHb !== null && nextHb !== undefined,
+          `HalfBond ${hbIdNext} not found`,
+        );
         hbIdNext = nextHb.next;
       }
     });
@@ -1309,7 +1381,10 @@ export class Struct {
     this.sgroups.forEach((item) => {
       if (item.data.fieldName === 'MRV_IMPLICIT_H') {
         const atom = this.atoms.get(item.atoms[0]);
-        assert(atom !== null && atom !== undefined, `Atom ${item.atoms[0]} not found`);
+        assert(
+          atom !== null && atom !== undefined,
+          `Atom ${item.atoms[0]} not found`,
+        );
         atom.hasImplicitH = true;
       }
     });

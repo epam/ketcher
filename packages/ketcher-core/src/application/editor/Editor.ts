@@ -324,6 +324,7 @@ export class CoreEditor {
       getKetcherRootRect: () => this.ketcherRootElementBoundingClientRect,
       getModeName: () => this.mode.modeName,
       getEditor: () => this,
+      getTransientDrawingView: () => this.transientDrawingView,
       placeItemOnCanvas: (item, position) =>
         this.placeItemOnCanvasForHandler(item, position),
       calculateAndStoreNextAutochainPosition: (lastMonomer) =>

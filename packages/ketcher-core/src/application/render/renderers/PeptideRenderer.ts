@@ -8,6 +8,10 @@ import {
 } from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters/types/ket';
 import type { DeepPartial } from 'types';
+import {
+  type HighlightPathData,
+  createHexagonHighlightPath,
+} from 'application/render/renderers/monomerHighlightShapes';
 
 const PEPTIDE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].hover;
@@ -30,6 +34,11 @@ export class PeptideRenderer extends BaseMonomerRenderer {
       PEPTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID,
       scale,
     );
+  }
+
+  public getHighlightPath(offset = 0): HighlightPathData {
+    const { width, height } = this.monomerSize;
+    return createHexagonHighlightPath(this.center, width, height, offset);
   }
 
   protected get modificationConfig() {

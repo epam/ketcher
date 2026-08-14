@@ -34,8 +34,6 @@ type RxnArrowAddData = {
   arrowId?: number;
 };
 
-const INVALID_RXN_ARROW_ID = -1;
-
 class RxnArrowAdd extends Base<RxnArrowAddData> {
   data: RxnArrowAddData;
 
@@ -90,7 +88,7 @@ class RxnArrowAdd extends Base<RxnArrowAddData> {
     const itemId = this.data.id;
     if (itemId == null) {
       KetcherLogger.error('RxnArrowAdd.invert(): rxnArrow id was not assigned');
-      return new RxnArrowDelete(INVALID_RXN_ARROW_ID);
+      return new RxnArrowDelete();
     }
 
     return new RxnArrowDelete(itemId);
@@ -107,19 +105,29 @@ interface RxnArrowDeleteData {
 
 class RxnArrowDelete extends Base<RxnArrowDeleteData> {
   data: RxnArrowDeleteData;
+  hasAssignedId: boolean;
   performed: boolean;
 
-  constructor(id: number) {
+  constructor(id?: number) {
     super(OperationType.RXN_ARROW_DELETE);
-    this.data = { id, pos: [], mode: RxnArrowMode.OpenAngle };
+    this.data = { id: id ?? 0, pos: [], mode: RxnArrowMode.OpenAngle };
+    this.hasAssignedId = id != null;
     this.performed = false;
   }
 
   execute(restruct: Restruct): void {
     KetcherLogger.log('RxnArrowDelete.execute(), start', this.data);
+    if (!this.hasAssignedId) {
+      KetcherLogger.error(
+        'RxnArrowDelete.execute(): rxnArrow id is not assigned',
+      );
+      return;
+    }
+    const itemId = this.data.id;
+
     const struct = restruct.molecule;
-    const item = struct.rxnArrows.get(this.data.id);
-    if (!item) throw new Error(`rxnArrow not found with id: ${this.data.id}`);
+    const item = struct.rxnArrows.get(itemId);
+    if (!item) throw new Error(`rxnArrow not found with id: ${itemId}`);
 
     this.data.pos = item.pos;
     this.data.mode = item.mode;
@@ -128,13 +136,12 @@ class RxnArrowDelete extends Base<RxnArrowDeleteData> {
     this.performed = true;
 
     restruct.markItemRemoved();
-    const reItem = restruct.rxnArrows.get(this.data.id);
-    if (!reItem)
-      throw new Error(`reRxnArrow not found with id: ${this.data.id}`);
+    const reItem = restruct.rxnArrows.get(itemId);
+    if (!reItem) throw new Error(`reRxnArrow not found with id: ${itemId}`);
     restruct.clearVisel(reItem.visel);
-    restruct.rxnArrows.delete(this.data.id);
+    restruct.rxnArrows.delete(itemId);
 
-    struct.rxnArrows.delete(this.data.id);
+    struct.rxnArrows.delete(itemId);
 
     KetcherLogger.log('RxnArrowDelete.execute(), end');
   }

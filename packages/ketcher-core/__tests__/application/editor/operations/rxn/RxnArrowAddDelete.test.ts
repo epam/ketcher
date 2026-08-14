@@ -130,7 +130,7 @@ describe('RxnArrowAdd and RxnArrowDelete operations', () => {
     });
   });
 
-  it('should return invalid delete operation on invert when add operation has no assigned arrow id', () => {
+  it('should return empty delete operation on invert when add operation has no assigned arrow id', () => {
     const loggerSpy = jest
       .spyOn(KetcherLogger, 'error')
       .mockImplementation(() => {});
@@ -139,9 +139,12 @@ describe('RxnArrowAdd and RxnArrowDelete operations', () => {
     const invertOp = addOp.invert();
 
     expect(invertOp).toBeInstanceOf(RxnArrowDelete);
-    expect(invertOp.data.id).toBe(-1);
     expect(loggerSpy).toHaveBeenCalledWith(
       'RxnArrowAdd.invert(): rxnArrow id was not assigned',
+    );
+    expect(() => invertOp.execute(restruct)).not.toThrow();
+    expect(loggerSpy).toHaveBeenCalledWith(
+      'RxnArrowDelete.execute(): rxnArrow id is not assigned',
     );
     loggerSpy.mockRestore();
   });

@@ -166,8 +166,15 @@ class ReBond extends ReObject {
     // bond is connected to an atom with a label as opposed
     // to when it is connected to a Carbon atom w/o a label
     // please refer to: ketcher-core/docs/data/hover_selection_2.png
-    const halfBondStart = restruct.molecule.halfBonds.get(bond.hb1!)!.p;
-    const halfBondEnd = restruct.molecule.halfBonds.get(bond.hb2!)!.p;
+    const halfBondStart =
+      bond.hb1 !== undefined
+        ? restruct.molecule.halfBonds.get(bond.hb1)?.p
+        : undefined;
+    const halfBondEnd =
+      bond.hb2 !== undefined
+        ? restruct.molecule.halfBonds.get(bond.hb2)?.p
+        : undefined;
+    if (!halfBondStart || !halfBondEnd) return [];
 
     const isStereoBond =
       bond.stereo !== Bond.PATTERN.STEREO.NONE &&
@@ -270,6 +277,8 @@ class ReBond extends ReObject {
 
   getSelectionContour(render: Render, isHighlight: boolean) {
     const { paper } = render;
+    const selectionPoints = this.getSelectionPoints(render, isHighlight);
+    if (!selectionPoints.length) return null;
     const [
       startPadTop,
       startTop,
@@ -279,7 +288,7 @@ class ReBond extends ReObject {
       endBottom,
       startPadBottom,
       startBottom,
-    ] = this.getSelectionPoints(render, isHighlight);
+    ] = selectionPoints;
 
     // for a visual representation of the points
     // please refer to: ketcher-core/docs/data/hover_selection_exp.png
@@ -302,6 +311,7 @@ class ReBond extends ReObject {
     }
 
     const rect = this.getSelectionContour(render, false);
+    if (!rect) return null;
 
     return rect.attr(
       drawOutline
@@ -320,6 +330,7 @@ class ReBond extends ReObject {
     }
 
     const rect = this.getSelectionContour(restruct.render, false);
+    if (!rect) return null;
 
     return rect.attr(options.selectionStyle);
   }
@@ -371,6 +382,7 @@ class ReBond extends ReObject {
     }
 
     const rect = this.getSelectionContour(restruct.render, true);
+    if (!rect) return null;
     return rect.attr(highlightStyle);
   }
 
@@ -378,7 +390,8 @@ class ReBond extends ReObject {
     // eslint-disable-line max-statements
     const render = restruct.render;
     const struct = restruct.molecule;
-    const bond = restruct.molecule.bonds.get(bid)!;
+    const bond = restruct.molecule.bonds.get(bid);
+    if (!bond) return;
     const sgroups = restruct.molecule.sgroups;
     const functionalGroups = restruct.molecule.functionalGroups;
 
@@ -387,7 +400,6 @@ class ReBond extends ReObject {
     }
 
     if (
-      bond &&
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond,
         sgroups,
@@ -405,15 +417,15 @@ class ReBond extends ReObject {
     }
 
     const paper = render.paper;
-    const hb1 =
-      this.b.hb1 !== undefined ? struct.halfBonds.get(this.b.hb1) : null;
-    const hb2 =
-      this.b.hb2 !== undefined ? struct.halfBonds.get(this.b.hb2) : null;
+    const hb1Id = this.b.hb1;
+    const hb2Id = this.b.hb2;
+    const hb1 = hb1Id !== undefined ? struct.halfBonds.get(hb1Id) : null;
+    const hb2 = hb2Id !== undefined ? struct.halfBonds.get(hb2Id) : null;
 
     checkStereoBold(bid, this, restruct);
     ReBond.bondRecalc(this, restruct, options);
     setDoubleBondShift(this, struct);
-    if (!hb1 || !hb2) return;
+    if (hb1Id === undefined || hb2Id === undefined || !hb1 || !hb2) return;
     const isSnapping = restruct.isSnappingBond(bid);
     this.path = getBondPath(restruct, this, hb1, hb2, isSnapping);
     this.rbb = util.relBox(this.path.getBBox());
@@ -463,7 +475,7 @@ class ReBond extends ReObject {
     }
     if (options.showHalfBondIds) {
       ipath = getIdsPath(
-        this.b.hb1!,
+        hb1Id,
         paper,
         hb1,
         hb2,
@@ -474,7 +486,7 @@ class ReBond extends ReObject {
       );
       restruct.addReObjectPath(LayerMap.indices, this.visel, ipath);
       ipath = getIdsPath(
-        this.b.hb2!,
+        hb2Id,
         paper,
         hb1,
         hb2,
@@ -1197,10 +1209,11 @@ function stereoUpBondGetCoordinates(
   struct: Struct,
 ): [Vec2, Vec2] {
   const neihb = struct.halfBonds.get(neihbid);
-  const cos = Vec2.dot(hb.dir, neihb!.dir);
-  const sin = Vec2.cross(hb.dir, neihb!.dir);
+  if (!neihb) return [hb.p, hb.p];
+  const cos = Vec2.dot(hb.dir, neihb.dir);
+  const sin = Vec2.cross(hb.dir, neihb.dir);
   const cosHalf = Math.sqrt(0.5 * (1 - cos));
-  const biss = neihb!.dir.rotateSC(
+  const biss = neihb.dir.rotateSC(
     (sin >= 0 ? -1 : 1) * cosHalf,
     Math.sqrt(0.5 * (1 + cos)),
   );
@@ -1636,18 +1649,30 @@ function setDoubleBondShift(bond: ReBond, struct: Struct): void {
   const hb1 = bond.b.hb1;
   const hb2 = bond.b.hb2;
 
-  if ((!hb1 && hb1 !== 0) || (!hb2 && hb2 !== 0)) {
+  if (hb1 === undefined || hb2 === undefined) {
     bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond);
     return;
   }
 
-  const loop1 = struct.halfBonds.get(hb1)!.loop;
-  const loop2 = struct.halfBonds.get(hb2)!.loop;
+  const halfBond1 = struct.halfBonds.get(hb1);
+  const halfBond2 = struct.halfBonds.get(hb2);
+  if (!halfBond1 || !halfBond2) {
+    bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond);
+    return;
+  }
+  const loop1 = halfBond1.loop;
+  const loop2 = halfBond2.loop;
   if (loop1 >= 0 && loop2 >= 0) {
-    const d1 = struct.loops.get(loop1)!.dblBonds;
-    const d2 = struct.loops.get(loop2)!.dblBonds;
-    const n1 = struct.loops.get(loop1)!.hbs.length;
-    const n2 = struct.loops.get(loop2)!.hbs.length;
+    const loopData1 = struct.loops.get(loop1);
+    const loopData2 = struct.loops.get(loop2);
+    if (!loopData1 || !loopData2) {
+      bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond);
+      return;
+    }
+    const d1 = loopData1.dblBonds;
+    const d2 = loopData2.dblBonds;
+    const n1 = loopData1.hbs.length;
+    const n2 = loopData2.hbs.length;
     bond.doubleBondShift = selectDoubleBondShift(n1, n2, d1, d2);
   } else if (loop1 >= 0) {
     bond.doubleBondShift = -1;

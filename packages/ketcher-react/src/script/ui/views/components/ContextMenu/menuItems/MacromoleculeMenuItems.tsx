@@ -10,7 +10,6 @@ import useMonomerExpansionHandlers, {
 import useRemoveGrouping from '../hooks/useRemoveGrouping';
 import {
   type Bond,
-  AttachmentPointName,
   fromFragmentDeletion,
   isAmbiguousMonomerLibraryItem,
   ketcherProvider,
@@ -101,16 +100,6 @@ const MacromoleculeMenuItems = (
       editAllInitialValues = { ...editAllInitialValues, selectedSGroupIds };
     }
 
-    // Collect AP names that are currently occupied by bonds on the canvas.
-    const usedApNames = new Set<AttachmentPointName>();
-    Object.entries(sg.monomer.attachmentPointsToBonds).forEach(
-      ([apName, bond]) => {
-        if (bond != null) {
-          usedApNames.add(apName as AttachmentPointName);
-        }
-      },
-    );
-
     editor.openMonomerCreationWizard(
       {
         atoms,
@@ -124,7 +113,6 @@ const MacromoleculeMenuItems = (
         ? editAllInitialValues
         : getEditInstanceInitialValues(sg.monomer),
       sg.getAttachmentPoints(),
-      usedApNames,
       sg.monomer,
     );
   };

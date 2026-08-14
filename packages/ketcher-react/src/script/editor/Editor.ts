@@ -1057,7 +1057,6 @@ class Editor implements KetcherEditor {
     selectionOverride?: Selection,
     editInstanceInitialValues?: MonomerCreationInitialValues,
     editInstanceAttachmentPoints?: ReadonlyArray<SGroupAttachmentPoint>,
-    editInstanceUsedApNames?: ReadonlySet<AttachmentPointName>,
     editingMonomer?: BaseMonomer,
   ) {
     const currentStruct = this.render.ctab.molecule;
@@ -2305,14 +2304,47 @@ class Editor implements KetcherEditor {
       }
 
       // Re-add external bonds (crossing the selection boundary).
+      //
+      // For each boundary bond we need to find the NEW canvas atom ID for
+      // the in-selection end.  The naive path is:
+      //   original atom ID
+      //     → wizard atom ID  (via originalToSelectedAtomsIdMap, frozen at open time)
+      //     → new canvas ID   (via atomIdMap, built by mergeInto)
+      //
+      // However, if the user moved the attachment point to a different atom
+      // inside the wizard, the wizard atom recorded in originalToSelectedAtomsIdMap
+      // no longer carries the AP.  We must instead use the CURRENT attachment
+      // atom for that AP (from finalAssignedAttachmentPoints).
+      //
+      // Build a reverse lookup: open-time wizard attach atom ID → AP name,
+      // so we can detect when an external-bond AP was moved.
+      const openTimeWizardAttachAtomToAp = new Map<
+        number,
+        AttachmentPointName
+      >();
+      attachmentAtomIdsWithExternalBonds?.forEach(
+        ([openTimeAttachAtomId], apName) => {
+          openTimeWizardAttachAtomToAp.set(openTimeAttachAtomId, apName);
+        },
+      );
+
       externalBonds.forEach((bond) => {
         const isBeginSelected = selectedOriginalAtoms.has(bond.begin);
         const isEndSelected = selectedOriginalAtoms.has(bond.end);
 
         if (isBeginSelected && !isEndSelected) {
-          const wizardId = originalToSelectedAtomsIdMap.get(bond.begin);
-          const newBegin = isNumber(wizardId)
-            ? atomIdMap.get(wizardId)
+          const openTimeWizardId = originalToSelectedAtomsIdMap.get(bond.begin);
+          // If this atom carried an AP at open time, use the AP's CURRENT
+          // attachment atom (which may have been moved by the user).
+          const apName = isNumber(openTimeWizardId)
+            ? openTimeWizardAttachAtomToAp.get(openTimeWizardId)
+            : undefined;
+          const currentWizardId =
+            apName !== undefined
+              ? finalAssignedAttachmentPoints.get(apName) ?? openTimeWizardId
+              : openTimeWizardId;
+          const newBegin = isNumber(currentWizardId)
+            ? atomIdMap.get(currentWizardId)
             : undefined;
           if (isNumber(newBegin)) {
             const newBond = bond.clone();
@@ -2321,9 +2353,16 @@ class Editor implements KetcherEditor {
           }
         }
         if (isEndSelected && !isBeginSelected) {
-          const wizardId = originalToSelectedAtomsIdMap.get(bond.end);
-          const newEnd = isNumber(wizardId)
-            ? atomIdMap.get(wizardId)
+          const openTimeWizardId = originalToSelectedAtomsIdMap.get(bond.end);
+          const apName = isNumber(openTimeWizardId)
+            ? openTimeWizardAttachAtomToAp.get(openTimeWizardId)
+            : undefined;
+          const currentWizardId =
+            apName !== undefined
+              ? finalAssignedAttachmentPoints.get(apName) ?? openTimeWizardId
+              : openTimeWizardId;
+          const newEnd = isNumber(currentWizardId)
+            ? atomIdMap.get(currentWizardId)
             : undefined;
           if (isNumber(newEnd)) {
             const newBond = bond.clone();
@@ -2462,8 +2501,13 @@ class Editor implements KetcherEditor {
     finalAssignedAttachmentPoints: Map<AttachmentPointName, number>,
     editingMonomer: BaseMonomer,
   ) {
+    // computeApDiff expects Map<AP, number>; extract just the attach atom IDs.
+    const oldApToAttachAtomId = new Map<AttachmentPointName, number>();
+    attachmentAtomIdsWithExternalBonds.forEach(([attachAtomId], apName) =>
+      oldApToAttachAtomId.set(apName, attachAtomId),
+    );
     const { deleted } = computeApDiff(
-      attachmentAtomIdsWithExternalBonds,
+      oldApToAttachAtomId,
       finalAssignedAttachmentPoints,
     );
 

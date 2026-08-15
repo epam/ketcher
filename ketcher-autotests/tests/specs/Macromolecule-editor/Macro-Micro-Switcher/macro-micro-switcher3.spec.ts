@@ -15,6 +15,7 @@ import {
   resetZoomLevelToDefault,
   getCachedBodyCenter,
   zoomOutByKeyboard,
+  moveMouseAway,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -349,7 +350,7 @@ test.describe('Move in expanded state on Micro canvas: ', () => {
       await takeEditorScreenshot(page);
 
       await moveExpandedMonomerOnMicro(page, 300, 200);
-      await moveMouseToTheMiddleOfTheScreen(page);
+      await moveMouseAway(page);
 
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,

@@ -83,8 +83,8 @@
         "type": "ambiguousMonomer",
         "id": "0",
         "position": {
-            "x": 17.78651190445772,
-            "y": -9.786374941310573
+            "x": 20.60616455078125,
+            "y": -11.211415863037109
         },
         "alias": "%",
         "templateId": "mixture__A___Alanine__C___Cysteine__D___Aspartic acid__E___Glutamic acid__F___Phenylalanine__G___Glycine__H___Histidine__I___Isoleucine__K___Lysine__L___Leucine__M___Methionine__N___Asparagine__O___Pyrrolysine__P___Proline__Q___Glutamine__R___Arginine__S___Serine__T___Threonine__U___Selenocysteine__V___Valine__W___Tryptophan__Y___Tyrosine_"

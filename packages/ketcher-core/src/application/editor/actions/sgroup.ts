@@ -53,6 +53,7 @@ import { assert } from 'utilities';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
+import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
 
 const fromMonomerBondFlipWithNewStereo = (
   struct: Struct,
@@ -292,6 +293,22 @@ export function setExpandMonomerSGroup(
       }
     }
   });
+
+  if (attrs.expanded && sGroup instanceof MonomerMicromolecule && sGroup.pp) {
+    const atomPositions = getAtomPositions(
+      Array.from(sGroupAtoms),
+      struct.atoms,
+    );
+    if (atomPositions.length > 0) {
+      const center = geometricCenter(atomPositions);
+      const offset = sGroup.pp.sub(center);
+      if (Math.abs(offset.x) > 0.01 || Math.abs(offset.y) > 0.01) {
+        sGroupAtoms.forEach((aid) => {
+          action.addOp(new AtomMove(aid, offset));
+        });
+      }
+    }
+  }
 
   const sGroupBBox = SGroup.getObjBBox(
     Array.from(sGroupAtoms.values()),

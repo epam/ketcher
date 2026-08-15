@@ -123,7 +123,7 @@ export default [
       'no-alert': 'error',
       'comma-dangle': 0,
       'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/exhaustive-deps': 'error',
       'react-hooks/preserve-manual-memoization': 'off',
       'jest/expect-expect': 'off',
       'testing-library/no-container': 'off',

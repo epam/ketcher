@@ -4,16 +4,13 @@ interface IStyledAttachmentPointNameProps {
   disabled?: boolean;
 }
 
-// TODO suppressed after upgrade to react 19. Need to fix
-
-// @ts-ignore
-export const AttachmentPoint = styled('div')(() => ({
+export const AttachmentPoint = styled.div({
   display: 'flex',
   flexDirection: 'column',
   rowGap: '2px',
   alignItems: 'center',
   marginBottom: '5px',
-}));
+});
 
 export const AttachmentPointName = styled.span<IStyledAttachmentPointNameProps>(
   (props) => ({

@@ -126,7 +126,7 @@ test.describe('Snake Bond Tool', () => {
     */
     await Library(page).switchToPeptidesTab();
 
-    await addBondedMonomersToCanvas(page, Peptide.Tza, 100, 100, 25, 25, 18);
+    await addBondedMonomersToCanvas(page, Peptide.Tza, 100, 100, 50, 25, 18);
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
@@ -197,70 +197,70 @@ test.describe('Snake Bond Tool', () => {
 
   test('Check snake mode arrange for RNA chain', async ({ FlexCanvas: _ }) => {
     await Library(page).dragMonomerOnCanvas(Preset.A, {
-      x: 300,
-      y: 300,
+      x: 100,
+      y: 100,
     });
     const phosphate = getMonomerLocator(page, Preset.A.phosphate ?? {}).nth(0);
 
     await Library(page).dragMonomerOnCanvas(Preset.C, {
-      x: 400,
-      y: 600,
+      x: 300,
+      y: 100,
     });
     const phosphate1 = getMonomerLocator(page, Preset.C.phosphate ?? {}).nth(1);
     const sugar1 = getMonomerLocator(page, Preset.C.sugar).nth(1);
 
     await Library(page).dragMonomerOnCanvas(Preset.G, {
-      x: 600,
-      y: 400,
+      x: 500,
+      y: 100,
     });
     const phosphate2 = getMonomerLocator(page, Preset.G.phosphate ?? {}).nth(2);
     const sugar2 = getMonomerLocator(page, Preset.G.sugar).nth(2);
 
     await Library(page).dragMonomerOnCanvas(Preset.T, {
-      x: 800,
-      y: 200,
+      x: 700,
+      y: 100,
     });
     const phosphate3 = getMonomerLocator(page, Preset.T.phosphate ?? {}).nth(3);
     const sugar3 = getMonomerLocator(page, Preset.T.sugar).nth(3);
 
     await Library(page).dragMonomerOnCanvas(Preset.T, {
       x: 100,
-      y: 100,
+      y: 300,
     });
     const phosphate4 = getMonomerLocator(page, Preset.T.phosphate ?? {}).nth(4);
     const sugar4 = getMonomerLocator(page, Preset.T.sugar).nth(4);
 
     await Library(page).dragMonomerOnCanvas(Preset.T, {
-      x: 200,
-      y: 200,
+      x: 300,
+      y: 300,
     });
     const phosphate5 = getMonomerLocator(page, Preset.T.phosphate ?? {}).nth(5);
     const sugar5 = getMonomerLocator(page, Preset.T.sugar).nth(5);
 
     await Library(page).dragMonomerOnCanvas(Preset.T, {
-      x: 300,
-      y: 200,
+      x: 500,
+      y: 300,
     });
     const phosphate6 = getMonomerLocator(page, Preset.T.phosphate ?? {}).nth(6);
     const sugar6 = getMonomerLocator(page, Preset.T.sugar).nth(6);
 
     await Library(page).dragMonomerOnCanvas(Preset.T, {
-      x: 400,
-      y: 200,
+      x: 700,
+      y: 300,
     });
     const phosphate7 = getMonomerLocator(page, Preset.T.phosphate ?? {}).nth(7);
     const sugar7 = getMonomerLocator(page, Preset.T.sugar).nth(7);
 
     await Library(page).dragMonomerOnCanvas(Preset.T, {
-      x: 500,
-      y: 200,
+      x: 100,
+      y: 500,
     });
     const phosphate8 = getMonomerLocator(page, Preset.T.phosphate ?? {}).nth(8);
     const sugar8 = getMonomerLocator(page, Preset.T.sugar).nth(8);
 
     await Library(page).dragMonomerOnCanvas(Preset.T, {
-      x: 600,
-      y: 200,
+      x: 300,
+      y: 500,
     });
     const sugar9 = getMonomerLocator(page, Preset.T.sugar).nth(9);
     await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
@@ -387,56 +387,56 @@ test.describe('Snake Bond Tool', () => {
     FlexCanvas: _,
   }) => {
     await Library(page).dragMonomerOnCanvas(Preset.C, {
-      x: 50,
-      y: 50,
+      x: 100,
+      y: 100,
     });
     const phosphate = getMonomerLocator(page, Preset.C.phosphate ?? {}).nth(0);
 
     await Library(page).dragMonomerOnCanvas(Preset.G, {
-      x: 350,
-      y: 150,
+      x: 300,
+      y: 100,
     });
     const phosphate1 = getMonomerLocator(page, Preset.G.phosphate ?? {}).nth(1);
     const sugar1 = getMonomerLocator(page, Preset.G.sugar).nth(1);
 
     await Library(page).dragMonomerOnCanvas(Preset.T, {
-      x: 550,
-      y: 150,
+      x: 500,
+      y: 100,
     });
     const phosphate2 = getMonomerLocator(page, Preset.T.phosphate ?? {}).nth(2);
     const sugar2 = getMonomerLocator(page, Preset.T.sugar).nth(2);
 
     await Library(page).dragMonomerOnCanvas(Preset.U, {
-      x: 900,
-      y: 300,
+      x: 700,
+      y: 100,
     });
 
     await Library(page).dragMonomerOnCanvas(Sugar.R, {
-      x: 200,
-      y: 200,
+      x: 100,
+      y: 300,
     });
     const sugarOfNucleoside = getMonomerLocator(page, Sugar.R).nth(4);
 
     await Library(page).dragMonomerOnCanvas(Base.nC6n8A, {
-      x: 200,
-      y: 350,
+      x: 300,
+      y: 300,
     });
     const baseOfNucleoside = getMonomerLocator(page, Base.nC6n8A).nth(0);
     const [peptide] = await addBondedMonomersToCanvas(
       page,
       Peptide.A,
-      350,
-      350,
-      50,
-      50,
+      100,
+      500,
+      60,
+      0,
       3,
     );
 
     const [hcyPeptide, hcyPeptide1] = await addBondedMonomersToCanvas(
       page,
       Peptide.Hcy,
-      350,
-      250,
+      500,
+      500,
       50,
       0,
       2,
@@ -445,7 +445,7 @@ test.describe('Snake Bond Tool', () => {
     const [balPeptide] = await addBondedMonomersToCanvas(
       page,
       Peptide.bAla,
-      500,
+      800,
       500,
       50,
       0,
@@ -453,8 +453,8 @@ test.describe('Snake Bond Tool', () => {
     );
 
     await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
-      x: 520,
-      y: 500,
+      x: 100,
+      y: 550,
     });
     const balPeptide1 = getMonomerLocator(page, Peptide.bAla).nth(2);
     await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);

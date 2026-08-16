@@ -12,7 +12,7 @@ export const ConfirmationDialog = ({
   onClose,
 }: ConfirmationDialogProps) => {
   const handleConfirm = () => {
-    onConfirm!();
+    onConfirm?.();
     onClose();
   };
 

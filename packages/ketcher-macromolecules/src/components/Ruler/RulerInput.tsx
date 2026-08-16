@@ -23,9 +23,6 @@ const RulerInput = ({
 }: Props) => {
   const ref = useRef<HTMLInputElement>(null);
 
-  // TODO suppressed after upgrade to react 19. Need to fix
-
-  // @ts-ignore
   useTranslateAlongXAxis(ref, offsetX);
 
   const stringifiedLineLengthValue = lineLengthValue.toString();

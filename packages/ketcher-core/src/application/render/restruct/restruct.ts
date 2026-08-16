@@ -233,7 +233,8 @@ class ReStruct {
     const ids = new Pile();
 
     while (list.length > 0) {
-      const aid = list.pop()!;
+      const aid = list.pop();
+      if (aid === undefined) break;
       ids.add(aid);
       const atom = this.atoms.get(aid);
       if (!atom) continue;
@@ -414,7 +415,9 @@ class ReStruct {
     let boundingBox: Box2Abs | null = null;
 
     for (const atomId of selection.atoms ?? []) {
-      const atomPositionPoint = this.atoms.get(atomId)!.a.pp;
+      const reAtom = this.atoms.get(atomId);
+      if (!reAtom) continue;
+      const atomPositionPoint = reAtom.a.pp;
       const atomBox = new Box2Abs(atomPositionPoint, atomPositionPoint);
       boundingBox =
         boundingBox == null ? atomBox : Box2Abs.union(boundingBox, atomBox);

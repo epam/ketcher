@@ -43,7 +43,8 @@ export class EnhancedFlagMove extends BaseOperation {
 
     const currentPosition = fragment.stereoFlagPosition
       ? new Vec2(fragment.stereoFlagPosition.x, fragment.stereoFlagPosition.y)
-      : Fragment.getDefaultStereoFlagPosition(restruct.molecule, frid)!;
+      : Fragment.getDefaultStereoFlagPosition(restruct.molecule, frid);
+    if (!currentPosition) return;
 
     const newPosition = Vec2.sum(currentPosition, p);
     fragment.stereoFlagPosition = newPosition;

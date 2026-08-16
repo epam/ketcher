@@ -1281,7 +1281,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     });
 
     await Library(page).dragMonomerOnCanvas(Base._Base2, {
-      x: 30,
+      x: 50,
       y: 10,
       fromCenter: true,
     });

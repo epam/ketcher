@@ -1989,7 +1989,7 @@ class Editor implements KetcherEditor {
     let ket = {
       root: {
         templates: libraryItems.map((libraryItem) => {
-          return libraryItem.root.templates![0];
+          return libraryItem.root.templates?.[0];
         }),
       },
     };
@@ -3359,11 +3359,11 @@ class Editor implements KetcherEditor {
     this.selection(null);
 
     const stack = this.historyStack[this.historyPtr];
-    let action!: Action;
+    let action: Action | undefined;
     try {
       action = stack.perform(this.render.ctab);
-    } finally {
       this.historyStack[this.historyPtr] = action;
+    } finally {
       this.historyPtr++;
     }
 

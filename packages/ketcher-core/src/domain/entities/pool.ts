@@ -15,6 +15,22 @@
  * limitations under the License.
  ***************************************************************************/
 
+interface WithResetInitiallySelected {
+  resetInitiallySelected(invalidate?: boolean): void;
+}
+
+function hasResetInitiallySelected(
+  value: unknown,
+): value is WithResetInitiallySelected {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    'resetInitiallySelected' in value &&
+    typeof (value as WithResetInitiallySelected).resetInitiallySelected ===
+      'function'
+  );
+}
+
 export class Pool<TValue = any> extends Map<number, TValue> {
   private nextId = 0;
 
@@ -62,9 +78,7 @@ export class Pool<TValue = any> extends Map<number, TValue> {
 
   changeInitiallySelectedPropertiesForPool(invalidate?: boolean): void {
     this.forEach((value, key) => {
-      // @ts-ignore
-      if (typeof value.resetInitiallySelected === 'function') {
-        // @ts-ignore
+      if (hasResetInitiallySelected(value)) {
         value.resetInitiallySelected(invalidate);
         this.set(key, value);
       }

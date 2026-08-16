@@ -19,6 +19,7 @@
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
+import { KetcherLogger } from 'utilities';
 
 type Data = {
   sgid: number;
@@ -41,7 +42,11 @@ class SGroupAddToHierarchy extends BaseOperation {
     const { sgid, parent, children } = this.data;
 
     const struct = restruct.molecule;
-    const sgroup = struct.sgroups.get(sgid)!;
+    const sgroup = struct.sgroups.get(sgid);
+    if (!sgroup) {
+      KetcherLogger.error(`SGroupAddToHierarchy: S-Group ${sgid} not found`);
+      return;
+    }
     const relations = struct.sGroupForest.insert(sgroup, parent, children);
 
     this.data.parent = relations.parent;

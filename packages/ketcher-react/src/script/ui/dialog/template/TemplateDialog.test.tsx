@@ -3,12 +3,21 @@ import { Struct } from 'ketcher-core';
 import { TemplateDialog } from './TemplateDialog';
 
 const mockSerialize = jest.fn();
+const mockDispatch = jest.fn();
 
 jest.mock('ketcher-core', () => ({
   ...jest.requireActual('ketcher-core'),
   SdfSerializer: jest.fn().mockImplementation(() => ({
     serialize: mockSerialize,
   })),
+  KetcherLogger: {
+    error: jest.fn(),
+  },
+}));
+
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useDispatch: () => mockDispatch,
 }));
 
 jest.mock('../../views/components', () => ({
@@ -21,8 +30,17 @@ jest.mock('../../views/components', () => ({
 }));
 
 jest.mock('../../component/view/savebutton', () => ({
-  SaveButton: ({ children, getData }) => (
-    <button type="button" onClick={getData}>
+  SaveButton: ({ children, getData, onError }) => (
+    <button
+      type="button"
+      onClick={() => {
+        try {
+          getData();
+        } catch (e) {
+          onError(e);
+        }
+      }}
+    >
       {children}
     </button>
   ),
@@ -32,7 +50,30 @@ jest.mock('./TemplateTable', () => () => null);
 jest.mock('components', () => ({ Icon: () => null }));
 jest.mock('./useSaltsAndSolvets', () => () => []);
 
+const defaultProps = {
+  filter: '',
+  group: 'User Templates',
+  lib: [],
+  selected: null,
+  tab: 0,
+  initialTab: 0,
+  saltsAndSolvents: [],
+  functionalGroups: [],
+  onAttach: jest.fn(),
+  onCancel: jest.fn(),
+  onChangeGroup: jest.fn(),
+  onDelete: jest.fn(),
+  onFilter: jest.fn(),
+  onOk: jest.fn(),
+  onSelect: jest.fn(),
+  onTabChange: jest.fn(),
+};
+
 describe('TemplateDialog', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('does not serialize a reaction with an R-Group fragment when opened', () => {
     const struct = new Struct();
     struct.name = 'Reaction with R-Group fragment';
@@ -52,26 +93,7 @@ describe('TemplateDialog', () => {
     });
 
     expect(() =>
-      render(
-        <TemplateDialog
-          filter=""
-          group="User Templates"
-          lib={[template]}
-          selected={null}
-          tab={0}
-          initialTab={0}
-          saltsAndSolvents={[]}
-          functionalGroups={[]}
-          onAttach={jest.fn()}
-          onCancel={jest.fn()}
-          onChangeGroup={jest.fn()}
-          onDelete={jest.fn()}
-          onFilter={jest.fn()}
-          onOk={jest.fn()}
-          onSelect={jest.fn()}
-          onTabChange={jest.fn()}
-        />,
-      ),
+      render(<TemplateDialog {...defaultProps} lib={[template]} />),
     ).not.toThrow();
     expect(mockSerialize).not.toHaveBeenCalled();
 
@@ -79,5 +101,23 @@ describe('TemplateDialog', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Save to SDF' }));
 
     expect(mockSerialize).toHaveBeenCalledWith([template]);
+  });
+
+  it('dispatches a snackbar notification when serialization fails on Save to SDF', () => {
+    const serializationError = new Error('Serialization failed');
+    mockSerialize.mockImplementation(() => {
+      throw serializationError;
+    });
+
+    render(<TemplateDialog {...defaultProps} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save to SDF' }));
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'SHOW_SNACKBAR_NOTIFICATION',
+        data: 'Some templates could not be exported.',
+      }),
+    );
   });
 });

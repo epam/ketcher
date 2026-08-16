@@ -24,6 +24,7 @@ import {
   useMemo,
   memo,
 } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import TemplateTable, { type Template } from './TemplateTable';
 import {
   changeFilter,
@@ -41,16 +42,16 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import { Dialog } from '../../views/components';
 import Input from '../../component/form/Input/Input';
 import { SaveButton } from '../../component/view/savebutton';
-import { SdfSerializer } from 'ketcher-core';
+import { SdfSerializer, KetcherLogger } from 'ketcher-core';
 import classes from './template-lib.module.less';
 import accordionClasses from '../../../../components/Accordion/Accordion.module.less';
-import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { omit } from 'lodash/fp';
 import { onAction } from '../../state';
 import { functionalGroupsSelector } from '../../state/functionalGroups/selectors';
 import { saltsAndSolventsSelector } from '../../state/saltsAndSolvents/selectors';
 import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult';
+import { showSnackbarNotification } from '../../state/notifications';
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -129,7 +130,12 @@ const HeaderContent = () => (
   </div>
 );
 
-const FooterContent = ({ getData, tab, isMonomerCreationWizardActive }) => {
+const FooterContent = ({
+  getData,
+  tab,
+  isMonomerCreationWizardActive,
+  onError,
+}) => {
   const clickToAddToCanvas = (
     <span data-testid="add-to-canvas-button">Click to add to canvas</span>
   );
@@ -163,6 +169,7 @@ const FooterContent = ({ getData, tab, isMonomerCreationWizardActive }) => {
         testId="save-to-sdf-button"
         filename={filename}
         disabled={isMonomerCreationWizardActive}
+        onError={onError}
       >
         Save to SDF
       </SaveButton>
@@ -189,6 +196,7 @@ export const TemplateDialog: FC<Props> = (props) => {
     ...rest
   } = props;
 
+  const dispatch = useDispatch();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
@@ -252,6 +260,19 @@ export const TemplateDialog: FC<Props> = (props) => {
     return sdfSerializer.serialize(serializerMapper[tab]);
   }, [tab, templateLib, functionalGroups, saltsAndSolvents]);
 
+  const onSaveError = useCallback(
+    (err: unknown) => {
+      KetcherLogger.error(
+        'TemplateDialog.tsx::TemplateDialog::onSaveError',
+        err,
+      );
+      dispatch(
+        showSnackbarNotification('Some templates could not be exported.'),
+      );
+    },
+    [dispatch],
+  );
+
   // Recreate selection handler only when upstream callbacks change.
   const select = useCallback(
     (tmpl: Template): void => {
@@ -275,6 +296,7 @@ export const TemplateDialog: FC<Props> = (props) => {
           tab={tab}
           getData={getData}
           isMonomerCreationWizardActive={isMonomerCreationWizardActive}
+          onError={onSaveError}
         />
       }
       className={`${classes.dialog_body}`}

@@ -15,7 +15,9 @@
  ***************************************************************************/
 
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
-import classes from './EditMonomer.module.less';
+import { Dialog } from '../../../../components';
+import dialogClasses from 'src/components/Dialog/Dialog.module.less';
+import styles from './EditMonomer.module.less';
 import { useAppContext } from '../../../../../../../hooks';
 import {
   Action,
@@ -30,7 +32,6 @@ import {
   getEditAllInstancesInitialValues,
   getEditInstanceInitialValues,
 } from '../../../../components/MonomerCreationWizard/MonomerCreationWizard.utils';
-import clsx from 'clsx';
 
 interface EditMonomerDialogProps extends BaseProps {
   fgIds: number[];
@@ -45,16 +46,16 @@ const BODY_TEXT: Record<EditMonomerVariant, string> = {
   identical:
     '"Edit All Monomers" will open the Monomer Creation Wizard and allow editing of all selected instances of the monomer. "Remove Grouping" will turn the monomers into a purely chemical structure. How do you wish to proceed?',
   'non-identical':
-    '"Remove Grouping" will turn the monomers into a purely chemical structures. Do you want to proceed?',
+    '"Remove Grouping" will turn the monomers into purely chemical structures. How do you wish to proceed?',
 };
 
 const EditMonomer = (props: Props) => {
   const { ketcherId } = useAppContext();
   const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-  const { fgIds, variant } = props;
+  const { fgIds, variant, onOk } = props;
 
   const handleCancel = () => {
-    props.onOk(false);
+    onOk(false);
   };
 
   const handleRemoveGrouping = () => {
@@ -64,7 +65,7 @@ const EditMonomer = (props: Props) => {
       action.mergeWith(fromSgroupDeletion(ctab, id));
     }
     editor.update(action);
-    props.onOk(true);
+    onOk(true);
   };
 
   const handleEditMonomer = (editAllInstances = false) => {
@@ -72,11 +73,10 @@ const EditMonomer = (props: Props) => {
     const sg = struct.sgroups.get(fgIds[0]);
 
     if (!(sg instanceof MonomerMicromolecule)) {
-      props.onOk(false);
+      onOk(false);
       return;
     }
 
-    // Collect all atoms/bonds that belong to the selected monomers
     const atomSet = new Set<number>();
     for (const id of fgIds) {
       const s = struct.sgroups.get(id);
@@ -110,56 +110,61 @@ const EditMonomer = (props: Props) => {
       sg.getAttachmentPoints(),
     );
 
-    props.onOk(true);
+    onOk(true);
   };
 
-  return (
-    <div
-      onSubmit={(event) => event.preventDefault()}
-      tabIndex={-1}
-      className={clsx(
-        classes.window,
-        variant === 'non-identical' && classes.windowSmall,
+  const footerContent = (
+    <>
+      {variant === 'single' && (
+        <input
+          type="button"
+          value="Edit Monomer"
+          className={dialogClasses.cancel}
+          onClick={() => handleEditMonomer(false)}
+          data-testid="Edit Monomer-button"
+        />
       )}
+      {variant === 'identical' && (
+        <input
+          type="button"
+          value="Edit All Monomers"
+          className={dialogClasses.cancel}
+          onClick={() => handleEditMonomer(true)}
+          data-testid="Edit All Monomers-button"
+        />
+      )}
+      <input
+        type="button"
+        value="Remove Grouping"
+        className={dialogClasses.cancel}
+        onClick={handleRemoveGrouping}
+        data-testid="Remove Grouping-button"
+      />
+      <input
+        type="button"
+        value="Cancel"
+        className={dialogClasses.ok}
+        onClick={handleCancel}
+        data-testid="Cancel"
+      />
+    </>
+  );
+
+  return (
+    <Dialog
+      title="Edit Monomer"
+      className={
+        variant === 'non-identical' ? styles.windowSmall : styles.window
+      }
+      buttons={[]}
+      params={{
+        onCancel: handleCancel,
+      }}
+      footerContent={footerContent}
       data-testid="edit-monomer-window"
     >
-      <header className={classes.header}>Edit Monomer</header>
-      <div className={classes.question}>{BODY_TEXT[variant]}</div>
-      <footer className={classes.footer}>
-        <input
-          type="button"
-          value="Cancel"
-          className={classes.buttonCancel}
-          onClick={handleCancel}
-          data-testid="Cancel"
-        />
-        <input
-          type="button"
-          value="Remove Grouping"
-          className={classes.buttonSecondary}
-          onClick={handleRemoveGrouping}
-          data-testid="Remove Grouping-button"
-        />
-        {variant === 'single' && (
-          <input
-            type="button"
-            value="Edit Monomer"
-            className={classes.buttonOk}
-            onClick={() => handleEditMonomer(false)}
-            data-testid="Edit Monomer-button"
-          />
-        )}
-        {variant === 'identical' && (
-          <input
-            type="button"
-            value="Edit All Monomers"
-            className={classes.buttonOk}
-            onClick={() => handleEditMonomer(true)}
-            data-testid="Edit All Monomers-button"
-          />
-        )}
-      </footer>
-    </div>
+      {BODY_TEXT[variant]}
+    </Dialog>
   );
 };
 

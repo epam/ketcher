@@ -17,77 +17,9 @@
 @import '../../../../../../../style/variables';
 
 .window {
-  display: flex;
   width: @width-medium;
-  flex-direction: column;
-  background: @gray-background-color;
-  border-radius: 10px;
-  font-family: @Inter;
-
-  &.windowSmall {
-    width: @width-small;
-  }
-
-  & > * {
-    margin: 10px 15px;
-  }
 }
 
-.question {
-  text-align: left;
-  color: @color-text-secondary;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  margin-top: 15px;
-  text-transform: uppercase;
-}
-
-.footer {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 15px;
-}
-
-.buttonOk,
-.buttonCancel,
-.buttonSecondary {
-  border-radius: 2px;
-  border: none;
-  height: 1.8em;
-  width: content-box;
-  margin-left: 8px;
-}
-
-.buttonOk {
-  background: @color-button-primary;
-  color: @color-text-light;
-
-  &:hover {
-    background: @color-button-primary-hover;
-  }
-}
-
-.buttonSecondary {
-  background: transparent;
-  border: 1px solid @color-button-secondary;
-  color: @color-button-secondary;
-
-  &:hover {
-    border-color: @color-button-secondary-hover;
-    color: @color-button-secondary-hover;
-  }
-}
-
-.buttonCancel {
-  background: transparent;
-  border: 1px solid @color-button-secondary;
-  color: @color-button-secondary;
-
-  &:hover {
-    border-color: @color-button-secondary-hover;
-    color: @color-button-secondary-hover;
-  }
+.windowSmall {
+  width: @width-small;
 }

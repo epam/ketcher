@@ -393,7 +393,16 @@ class ReSGroup extends ReObject {
     if (sgroup && sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
       const remol = render.ctab;
       const path = this.draw(remol, sgroup);
-      restruct.addReObjectPath(LayerMap.data, this.visel, path, null, true);
+      const includeInBoundingBox = !(
+        sgroup instanceof MonomerMicromolecule && sgroup.isExpanded()
+      );
+      restruct.addReObjectPath(
+        LayerMap.data,
+        this.visel,
+        path,
+        null,
+        includeInBoundingBox,
+      );
       this.setHover(this.hover, render); // TODO: fix this
     }
   }

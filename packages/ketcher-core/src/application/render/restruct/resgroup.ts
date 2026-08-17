@@ -393,16 +393,7 @@ class ReSGroup extends ReObject {
     if (sgroup && sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
       const remol = render.ctab;
       const path = this.draw(remol, sgroup);
-      const includeInBoundingBox = !(
-        sgroup instanceof MonomerMicromolecule && sgroup.isExpanded()
-      );
-      restruct.addReObjectPath(
-        LayerMap.data,
-        this.visel,
-        path,
-        null,
-        includeInBoundingBox,
-      );
+      restruct.addReObjectPath(LayerMap.data, this.visel, path, null, true);
       this.setHover(this.hover, render); // TODO: fix this
     }
   }
@@ -598,7 +589,7 @@ function drawExpandedMonomerLabel(
 ): RaphaelSet {
   const { render } = restruct;
   const labelPosition = monomerBBox.p1
-    .add(new Vec2(-0.3, 0.3))
+    .add(new Vec2(0, 0.3))
     .scaled(render.options.microModeScale);
   const label = showValue(
     render.paper,

@@ -85,6 +85,30 @@ export class MacromoleculesConverter {
     return Number(attachmentPointName?.replace('R', ''));
   }
 
+  // AmbiguousMonomer has no real substructure of its own - its Micro-mode atoms
+  // are borrowed from monomers[0] (see convertDrawingEntitiesToStruct below), so
+  // attachment point atom ids/leaving groups must be resolved from monomers[0]'s
+  // own attachment points too. Using the same index for every R-label (e.g. always
+  // atom 0) would collapse every attachment point onto the same atom, producing
+  // duplicate SGroupAttachmentPoints for monomers with more than one attachment point.
+  private static getMonomerAttachmentPoint(
+    monomer: BaseMonomer,
+    attachmentPointName: AttachmentPointName,
+  ): IKetAttachmentPoint | undefined {
+    const attachmentPointOwner =
+      monomer instanceof AmbiguousMonomer ? monomer.monomers[0] : monomer;
+    const attachmentPointIndex =
+      attachmentPointName === 'hydrogen'
+        ? 0
+        : attachmentPointOwner.listOfAttachmentPoints.indexOf(
+            attachmentPointName,
+          );
+
+    return attachmentPointOwner.monomerItem.attachmentPoints?.[
+      attachmentPointIndex
+    ] as IKetAttachmentPoint | undefined;
+  }
+
   public static findAttachmentPointAtom(
     polymerBond: PolymerBond | MonomerToAtomBond,
     monomer: BaseMonomer,
@@ -103,15 +127,12 @@ export class MacromoleculesConverter {
       MacromoleculesConverter.convertAttachmentPointNameToNumber(
         attachmentPointName,
       );
-    const attachmentPointIndex =
-      attachmentPointName === 'hydrogen'
-        ? 0
-        : monomer.listOfAttachmentPoints.indexOf(attachmentPointName);
-    const attachmentPoint =
-      monomer.monomerItem.attachmentPoints?.[attachmentPointIndex];
+    const attachmentPoint = MacromoleculesConverter.getMonomerAttachmentPoint(
+      monomer,
+      attachmentPointName,
+    );
     const atomIdMap = monomerToAtomIdMap.get(monomer);
-    const attachmentPointAtomId =
-      monomer instanceof AmbiguousMonomer ? 0 : attachmentPoint?.attachmentAtom;
+    const attachmentPointAtomId = attachmentPoint?.attachmentAtom;
 
     return {
       globalAttachmentAtomId:
@@ -127,30 +148,26 @@ export class MacromoleculesConverter {
     monomer: BaseMonomer,
     atomIdsMap?: Map<number, number>,
   ) {
-    return monomer.listOfAttachmentPoints.map(
-      (attachmentPointName, attachmentPointIndex) => {
-        const attachmentPointNumber =
-          getAttachmentPointNumberFromLabel(attachmentPointName);
-        const attachmentPoint = monomer.monomerItem.attachmentPoints?.[
-          attachmentPointIndex
-        ] as IKetAttachmentPoint;
-        const attachmentAtomId =
-          monomer instanceof AmbiguousMonomer
-            ? 0
-            : attachmentPoint.attachmentAtom;
+    return monomer.listOfAttachmentPoints.map((attachmentPointName) => {
+      const attachmentPointNumber =
+        getAttachmentPointNumberFromLabel(attachmentPointName);
+      const attachmentPoint = MacromoleculesConverter.getMonomerAttachmentPoint(
+        monomer,
+        attachmentPointName,
+      ) as IKetAttachmentPoint;
+      const attachmentAtomId = attachmentPoint.attachmentAtom;
 
-        return new SGroupAttachmentPoint(
-          atomIdsMap
-            ? (atomIdsMap.get(attachmentAtomId) as number)
-            : attachmentAtomId,
-          atomIdsMap
-            ? atomIdsMap.get(attachmentPoint.leavingGroup?.atoms[0])
-            : attachmentPoint.leavingGroup?.atoms[0],
-          undefined,
-          attachmentPointNumber,
-        );
-      },
-    );
+      return new SGroupAttachmentPoint(
+        atomIdsMap
+          ? (atomIdsMap.get(attachmentAtomId) as number)
+          : attachmentAtomId,
+        atomIdsMap
+          ? atomIdsMap.get(attachmentPoint.leavingGroup?.atoms[0])
+          : attachmentPoint.leavingGroup?.atoms[0],
+        undefined,
+        attachmentPointNumber,
+      );
+    });
   }
 
   public static convertDrawingEntitiesToStruct(

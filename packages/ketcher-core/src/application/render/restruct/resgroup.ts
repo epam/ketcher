@@ -55,17 +55,6 @@ export const SUPERATOM_CLASS_TEXT = {
   [SUPERATOM_CLASS.PHOSPHATE]: 'Phosphate',
 };
 
-/**
- * Resolves the display label for a SUP superatom S-group.
- *
- * `sgroup.data.name` always defaults to `''` (never `null`/`undefined`, see
- * SGroup's data defaults), so a plain nullish-coalescing (`??`) fallback
- * would never reach the nucleotide component class label below - it has to
- * be a truthiness check (`||`) on the *trimmed* name instead, otherwise an
- * empty or whitespace-only name incorrectly "wins" over a known
- * SUGAR/BASE/PHOSPHATE class and the S-group renders with no label at all
- * (only its brackets/contracted-atom position, with bonds still visible).
- */
 export function getSuperatomLabel(sgroup: {
   data: { name?: string | null; class?: string | null };
 }): string {

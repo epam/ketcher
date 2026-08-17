@@ -35,45 +35,10 @@ export function needsMetaPreservation(struct: Struct): boolean {
   );
 }
 
-/**
- * Some Ketcher-specific data (SUP superatom S-groups, nucleotide component
- * `class` (SUGAR/BASE/PHOSPHATE), superatom names, attachment points,
- * brackets, R-groups, query data, ...) cannot be represented in the CML
- * round-trip that Miew performs on Apply. Miew is a pure 3D molecule viewer:
- * its `exportCML()` output (and even Ketcher's own CML writer) only carries
- * atoms/bonds/coordinates and, at best, a superatom `title` - never the
- * nucleotide `class`. Re-importing that CML and using it as the new canvas
- * structure silently drops this metadata, which is what produces the
- * "atoms/labels disappear, only bonds remain" bug for nucleotide-component
- * S-groups (SUGAR/BASE/PHOSPHATE).
- *
- * For structures that contain such metadata we must NOT replace the Ketcher
- * structure with the Miew round-trip result. Instead we keep the original
- * structure untouched and only copy the updated 3D coordinates back onto it
- * (a coordinate-only merge, see `mergeCoordinatesFromResult`).
- */
 export function needsStructurePreservation(struct: Struct): boolean {
   return struct.sgroups.size > 0 || struct.rgroups.size > 0;
 }
 
-/**
- * Copies updated atom coordinates from the Miew round-trip result into the
- * original Ketcher structure. Ketcher exports atoms to Miew in a fixed
- * order, and both Miew's CML export and Ketcher's CML parser preserve that
- * same relative order (a0, a1, ... aN), so atoms are matched positionally by
- * their index in the atom pool - no atom-id matching is required or
- * reliable here.
- *
- * Only atom coordinates are copied; every other property of the original
- * structure (S-groups, superatom class/name, expanded state, attachment
- * points, brackets, R-groups, queries) is left completely untouched, so
- * contracted/abbreviated nucleotide component S-groups keep rendering their
- * `Sugar` / `Base` / `Phosphate` labels exactly as they did before Apply.
- *
- * If the atom counts do not match (e.g. Miew added/removed explicit
- * hydrogens) the merge is aborted and `false` is returned so the caller can
- * fall back to another strategy instead of silently mis-mapping coordinates.
- */
 export function mergeCoordinatesFromResult(
   original: Struct,
   result: Struct,

@@ -75,7 +75,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
-  test.afterEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async ({ MoleculesCanvas: _ }) => { });
 
   test.afterAll(async ({ closePage }) => {
     await closePage();
@@ -531,7 +531,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
   test(
     'Case 14 - Monomer layout inside r-group box become corrupted if ' +
-      'user grabs and moves bond between monomers',
+    'user grabs and moves bond between monomers',
     async ({ FlexCanvas: _ }) => {
       /*
        * Test task: https://github.com/epam/ketcher/issues/9964
@@ -558,14 +558,14 @@ test.describe('Bugs: ketcher-3.15.0', () => {
         'PEPTIDE1{A.C}$$$$V2.0',
       );
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await waitForRender(page, async () => {});
+      await waitForRender(page, async () => { });
 
       await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
 
       await page.keyboard.press('Control+A');
-      await waitForRender(page, async () => {});
+      await waitForRender(page, async () => { });
       const firstMonomer = getAbbreviationLocator(page, { id: 0 });
       const secondMonomer = getAbbreviationLocator(page, { id: 1 });
 
@@ -590,23 +590,23 @@ test.describe('Bugs: ketcher-3.15.0', () => {
         await page.mouse.down();
         await page.mouse.move(bondX + 100, bondY);
         await page.mouse.up();
-        await waitForRender(page, async () => {});
+        await waitForRender(page, async () => { });
       }
       await moveMouseAway(page);
       await clickInTheMiddleOfTheCanvas(page);
-      await waitForRender(page, async () => {});
+      await waitForRender(page, async () => { });
 
       const firstMonomerAfterMove = getAbbreviationLocator(page, { id: 0 });
       await ContextMenu(page, firstMonomerAfterMove).click(
         MonomerOnMicroOption.ExpandMonomer,
       );
-      await waitForRender(page, async () => {});
+      await waitForRender(page, async () => { });
 
       const secondMonomerAfterMove = getAbbreviationLocator(page, { id: 1 });
       await ContextMenu(page, secondMonomerAfterMove).click(
         MonomerOnMicroOption.ExpandMonomer,
       );
-      await waitForRender(page, async () => {});
+      await waitForRender(page, async () => { });
 
       await takeEditorScreenshot(page, {
         maxDiffPixelRatio: 0.02,
@@ -616,7 +616,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
   test(
     'Case 15 — Unable to paste using Ctrl+V chain from clipboard after clear ' +
-      'canvas action',
+    'canvas action',
     async ({ SequenceCanvas: _ }) => {
       /*
         Test task: https://github.com/epam/ketcher/issues/9964
@@ -706,7 +706,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
     // A structure must be present for defining nucleotide-preset components.
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    await waitForRender(page, async () => {});
+    await waitForRender(page, async () => { });
 
     await LeftToolbar(page).createMonomer();
 
@@ -717,7 +717,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     });
 
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    await waitForRender(page, async () => {});
+    await waitForRender(page, async () => { });
 
     const presetSection = NucleotidePresetSection(page);
 
@@ -761,7 +761,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
   test(
     'Case 17 - Scrollbar appears unnecessarily in Create Monomer ' +
-      'attributes panel after selecting Type',
+    'attributes panel after selecting Type',
     async ({ MoleculesCanvas: _ }) => {
       /*
        * Test task: https://github.com/epam/ketcher/issues/9964
@@ -840,7 +840,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
   );
   test(
     'Case 18 - The “File format” drop-down does not open in the “Save Structure” window' +
-      ' in the full-screen mode',
+    ' in the full-screen mode',
     async ({ SequenceCanvas: _ }) => {
       /*
        * Test task: [epam/ketcher#9964](https://github.com/epam/ketcher/issues/9964)
@@ -861,7 +861,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
        * Version 3.15
        */
 
-      await waitForRender(page, async () => {});
+      await waitForRender(page, async () => { });
 
       const topRight = CommonTopRightToolbar(page);
       await topRight.fullScreen();
@@ -929,7 +929,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
         MacroFileType.HELM,
         helmDuplicateAlias,
       );
-      await waitForRender(page, async () => {});
+      await waitForRender(page, async () => { });
       await page.waitForTimeout(500);
 
       if (consoleErrors.length > 0) {
@@ -967,7 +967,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
         ) {
           await pasteDialog.closeWindowButton
             .click({ timeout: 3000 })
-            .catch(() => {});
+            .catch(() => { });
         } else if (
           await pasteDialog.cancelButton
             .isVisible({ timeout: 1000 })
@@ -975,20 +975,20 @@ test.describe('Bugs: ketcher-3.15.0', () => {
         ) {
           await pasteDialog.cancelButton
             .click({ timeout: 3000 })
-            .catch(() => {});
+            .catch(() => { });
         }
 
         const anyDialog = page.locator('[role="dialog"]').first();
         if (await anyDialog.isVisible({ timeout: 1000 }).catch(() => false)) {
           const closeBtn = anyDialog.getByRole('button', { name: /Close|OK/i });
           if (await closeBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
-            await closeBtn.click().catch(() => {});
+            await closeBtn.click().catch(() => { });
           } else {
-            await page.keyboard.press('Escape').catch(() => {});
+            await page.keyboard.press('Escape').catch(() => { });
           }
         }
       } catch {
-        await page.keyboard.press('Escape').catch(() => {});
+        await page.keyboard.press('Escape').catch(() => { });
       }
 
       if (
@@ -1125,7 +1125,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
       // Ensure console listener is removed and page is closed in all cases
       try {
         page.off('console', onConsole);
-      } catch {}
+      } catch { }
     }
   });
   test('Case 21 - Aromatic bond should not be mirrored on Macro canvas (#6239)', async ({
@@ -1186,7 +1186,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await pasteFromClipboardAndOpenAsNewProject(page, extendedSmiles);
-    await waitForRender(page, async () => {});
+    await waitForRender(page, async () => { });
 
     const moleculesCanvas = page.locator(
       '[data-testid="ketcher-canvas"][data-canvasmode="molecules-mode"]',
@@ -1226,7 +1226,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await waitForRender(page, async () => {});
+    await waitForRender(page, async () => { });
 
     const flexCanvas = page.locator(
       '[data-testid="ketcher-canvas"][data-canvasmode="macromolecules-mode"]',
@@ -1355,7 +1355,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
     // Load deterministic fixture
     await openFileAndAddToCanvasMacro(page, 'KET/five-monomers.ket');
-    await waitForRender(page, async () => {});
+    await waitForRender(page, async () => { });
 
     const monomerLocator = page.locator('[data-testid="monomer"]').first();
     await monomerLocator.waitFor({ state: 'visible', timeout: 15000 });
@@ -1365,14 +1365,14 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
     await monomerLocator.click();
     await keyboardPressOnCanvas(page, 'ControlOrMeta+X');
-    await waitForRender(page, async () => {});
+    await waitForRender(page, async () => { });
 
     const afterCutCount = await page.locator('[data-testid="monomer"]').count();
     expect(afterCutCount).toBeLessThan(beforeCount);
 
     await clickInTheMiddleOfTheCanvas(page);
     await keyboardPressOnCanvas(page, 'ControlOrMeta+V');
-    await waitForRender(page, async () => {});
+    await waitForRender(page, async () => { });
 
     const afterPasteCount = await page
       .locator('[data-testid="monomer"]')
@@ -1460,75 +1460,59 @@ test.describe('Bugs: ketcher-3.15.0', () => {
       }
     }
   });
-
   test('Case 25 - System allow to load monomers with invalid HELM aliases', async ({
     FlexCanvas: _,
   }) => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/9964
-     * Bug: https://github.com/epam/ketcher/issues/8142
-     * Description: System allow to load monomers with invalid HELM aliases
-     *
-     * Scenario:
-     * 1. Go to Macro - Flex mode
-     * 2. Open monomer library (RNA tab)
-     * 3. Click "Add new" to open Create Monomer dialog
-     * 4. Fill in monomer details with invalid HELM alias
-     * 5. Attempt to save the monomer
-     * 6. Verify system shows validation error
-     * 7. Correct the HELM alias to valid format
-     * 8. Save the monomer successfully
-     *
-     * Expected result:
-     * System should validate HELM aliases and prevent saving with
-     * invalid aliases
-     *
-     * Version 3.15
-     */
+    const dialog = CreateMonomerDialog(page);
 
-    await waitForRender(page, async () => {});
+    try {
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+      await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
-    const rnaTab = page.getByRole('tab', { name: /^RNA$/i });
-    await rnaTab.click();
-    await waitForRender(page, async () => {});
+      // Select only part of the chain (atoms 0-3, bonds 0-2) so bond 3,
+      // crossing the selection boundary, becomes an R-group attachment
+      // point. Without this, the wizard rejects the whole structure with
+      // "The monomer must have at least one attachment point," regardless
+      // of the HELM alias - that error is what was blocking submit, not
+      // the alias logic itself.
+      await selectByAtomAndBondIds(page, {
+        atoms: [0, 1, 2, 3],
+        bonds: [0, 1, 2],
+      });
 
-    const addNewButton = page.getByRole('button', {
-      name: /Add new/i,
-    });
-    if (await addNewButton.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await addNewButton.click();
-      await waitForRender(page, async () => {});
+      await LeftToolbar(page).createMonomer();
+      await dialog.window.waitFor({ state: 'visible', timeout: 10000 });
 
-      await takeEditorScreenshot(page);
+      await dialog.setCode('TestChem1');
 
-      // Fill form with invalid HELM alias
-      const helmAliasInput = page
-        .locator('input[name*="helm"], input[name*="alias"]')
-        .first();
-      if (
-        await helmAliasInput.isVisible({ timeout: 2000 }).catch(() => false)
-      ) {
-        await helmAliasInput.fill('Invalid@HELM#123');
-        await waitForRender(page, async () => {});
+      // Step 3: invalid alias, attempt to save.
+      await dialog.setHELMAlias('Invalid@HELM#123');
+      await dialog.submit();
 
-        // Try to save
-        const saveButton = page.getByRole('button', {
-          name: /Add|Save/i,
-        });
-        if (await saveButton.isVisible({ timeout: 2000 }).catch(() => false)) {
-          await saveButton.click();
-          await waitForRender(page, async () => {});
-        }
+      // Step 4: exact real validation message.
+      const invalidAliasBanner = NotificationMessageBanner(
+        page,
+        ErrorMessage.invalidHELMAlias,
+      );
+      await expect(invalidAliasBanner.notificationMessageBanner).toBeVisible({
+        timeout: 5000,
+      });
 
-        await takeEditorScreenshot(page);
+      const message = await invalidAliasBanner.getNotificationMessage();
+      expect(message).toContain(
+        'The HELM alias must consist only of uppercase and lowercase letters',
+      );
 
-        // Correct the alias
-        await helmAliasInput.clear();
-        await helmAliasInput.fill('ValidHELM123');
-        await waitForRender(page, async () => {});
+      // Step 5: correct the alias - Code and attachment point are already
+      // in place, so this submit should succeed and close the dialog.
+      await dialog.setHELMAlias('ValidHELM123');
+      await dialog.submit({ ignoreWarning: true });
 
-        await takeEditorScreenshot(page);
+      await expect(dialog.window).toBeHidden({ timeout: 10000 });
+    } finally {
+      if (await dialog.window.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await dialog.discard().catch(() => { });
       }
     }
   });
-});
+})

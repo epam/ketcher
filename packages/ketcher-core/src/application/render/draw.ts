@@ -1467,7 +1467,6 @@ function bondHaptic(
   isSnapping: boolean,
   color = '#000',
 ) {
-  // @yulei TODO: make it longer
   const a = halfBond1.p;
   const b = halfBond2.p;
   return paper

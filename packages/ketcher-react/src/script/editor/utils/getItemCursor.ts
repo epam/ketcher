@@ -5,6 +5,7 @@ import {
   type Render,
   IMAGE_KEY,
   imageReferencePositionToCursor,
+  isSuperAttachmentPointAtom,
   MULTITAIL_ARROW_KEY,
   multitailArrowReferenceLinesToCursor,
   multitailReferencePositionToCursor,
@@ -17,6 +18,12 @@ export function getItemCursor(
   const defaultCursor = render.options.movingStyle.cursor as string;
   if (!item) {
     return defaultCursor;
+  }
+  if (
+    item.map === 'atoms' &&
+    isSuperAttachmentPointAtom(render.ctab.molecule.atoms.get(item.id))
+  ) {
+    return 'default';
   }
   switch (item.map) {
     case MULTITAIL_ARROW_KEY: {

@@ -393,9 +393,9 @@ class SelectTool implements Tool {
 
         editor.hover(hoverTarget, null, event);
         handleMovingPosibilityCursor(
-          item,
+          hoverTarget,
           this.editor.render.paper.canvas,
-          getItemCursor(this.editor.render, item),
+          getItemCursor(this.editor.render, hoverTarget),
         );
       }
     }

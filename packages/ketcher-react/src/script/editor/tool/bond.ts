@@ -33,6 +33,7 @@ import {
   CoordinateTransformation,
   getOrThrow,
   entityNotFoundMessage,
+  isSuperAttachmentPointAtom,
 } from 'ketcher-core';
 
 import type Editor from '../Editor';
@@ -71,6 +72,19 @@ class BondTool implements Tool {
       const molecule = struct.molecule;
       const functionalGroups = molecule.functionalGroups;
       const selectedBonds = selection.bonds;
+
+      const hasAttachmentGroupHapticBond = selectedBonds.some((bondId) => {
+        const bond = molecule.bonds.get(bondId);
+        return (
+          bond?.type === Bond.PATTERN.TYPE.HAPTIC &&
+          (isSuperAttachmentPointAtom(molecule.atoms.get(bond.begin)) ||
+            isSuperAttachmentPointAtom(molecule.atoms.get(bond.end)))
+        );
+      });
+      if (hasAttachmentGroupHapticBond) {
+        this.isNotActiveTool = true;
+        return;
+      }
 
       if (functionalGroups.size) {
         const fgIds = new Set<number>();

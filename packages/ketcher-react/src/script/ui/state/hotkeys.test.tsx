@@ -4,6 +4,9 @@ import { Provider } from 'react-redux';
 import createStore from '../state';
 import { initKeydownListener } from './hotkeys';
 import { act } from 'react';
+import { Atom, Bond, Struct, Vec2 } from 'ketcher-core';
+import BondTool from '../../editor/tool/bond';
+import type Editor from '../../editor/Editor';
 
 jest.mock('react-intersection-observer', () => {
   return {
@@ -54,6 +57,45 @@ describe('Hot keys', () => {
       fireEvent.keyDown(document, { code: 'Digit0', key: '0' });
     });
     expect(store.getState().abbreviationLookup.isOpen).toBe(false);
+  });
+
+  it('does not apply a numeric bond shortcut to a haptic bond with an attachment group', () => {
+    const struct = new Struct();
+    const endpointId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+    );
+    const attachmentGroupId = struct.atoms.add(
+      new Atom({
+        label: '*',
+        pp: new Vec2(0, 0),
+        endpoints: [endpointId],
+      }),
+    );
+    const centralAtomId = struct.atoms.add(
+      new Atom({ label: 'Fe', pp: new Vec2(1, 0) }),
+    );
+    const hapticBondId = struct.bonds.add(
+      new Bond({
+        type: Bond.PATTERN.TYPE.HAPTIC,
+        begin: attachmentGroupId,
+        end: centralAtomId,
+      }),
+    );
+    const update = jest.fn();
+    const editor = {
+      selection: () => ({ bonds: [hapticBondId] }),
+      render: { ctab: { molecule: struct } },
+      update,
+    } as unknown as Editor;
+
+    const tool = new BondTool(editor, {
+      type: Bond.PATTERN.TYPE.SINGLE,
+      stereo: Bond.PATTERN.STEREO.NONE,
+    });
+
+    expect(tool.isNotActiveTool).toBe(true);
+    expect(update).not.toHaveBeenCalled();
+    expect(struct.bonds.get(hapticBondId)?.type).toBe(Bond.PATTERN.TYPE.HAPTIC);
   });
 });
 

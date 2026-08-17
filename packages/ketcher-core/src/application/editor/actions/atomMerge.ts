@@ -31,6 +31,47 @@ import { fromBondStereoUpdate } from './bondStereo';
 import { Action } from './action';
 import type ReStruct from 'application/render/restruct/restruct';
 
+function replaceEndpointAtomId(
+  endpoints: number[],
+  srcId: number,
+  dstId: number,
+) {
+  return Array.from(
+    new Set(endpoints.map((atomId) => (atomId === srcId ? dstId : atomId))),
+  );
+}
+
+function updateHapticEndpointsAfterAtomMerge(
+  action: Action,
+  restruct: ReStruct,
+  srcId: number,
+  dstId: number,
+) {
+  restruct.molecule.atoms.forEach((atom, atomId) => {
+    if (!atom.endpoints.includes(srcId)) return;
+
+    action.addOp(
+      new AtomAttr(
+        atomId,
+        'endpoints',
+        replaceEndpointAtomId(atom.endpoints, srcId, dstId),
+      ),
+    );
+  });
+
+  restruct.molecule.bonds.forEach((bond, bondId) => {
+    if (!bond.endpoints?.includes(srcId)) return;
+
+    action.addOp(
+      new BondAttr(
+        bondId,
+        'endpoints',
+        replaceEndpointAtomId(bond.endpoints, srcId, dstId),
+      ),
+    );
+  });
+}
+
 export function fromAtomMerge(
   restruct: ReStruct,
   srcId: number,
@@ -88,6 +129,8 @@ export function fromAtomMerge(
       action.addOp(new AtomAttr(dstId, key, attrs[key]));
     }
   });
+
+  updateHapticEndpointsAfterAtomMerge(action, restruct, srcId, dstId);
 
   const sgChanged = removeAtomFromSgroupIfNeeded(action, restruct, srcId);
 

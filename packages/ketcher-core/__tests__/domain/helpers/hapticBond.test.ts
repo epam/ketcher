@@ -1,3 +1,6 @@
+import { fromAtomMerge } from 'application/editor/actions/atomMerge';
+import { Render, ReStruct } from 'application/render';
+import type { RenderOptions } from 'application/render/render.types';
 import { Atom } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import { Struct } from 'domain/entities/struct';
@@ -12,6 +15,7 @@ import {
   isHapticBondPairAllowed,
   isSuperAttachmentPointAtom,
   isSuperAttachmentPointWithHapticBond,
+  recalculateSuperAttachmentPointPosition,
   remapEndpointAtomIds,
   prepareHapticBondAttributes,
 } from 'domain/helpers/hapticBond';
@@ -231,6 +235,68 @@ describe('hapticBond helpers', () => {
     ]);
 
     expect(remapEndpointAtomIds([1, 2, 99], idMap)).toEqual([10, 20]);
+  });
+
+  it('keeps the attachment group position when an endpoint atom is merged', () => {
+    const struct = new Struct();
+    const mergedAtomPosition = new Vec2(5, -9.2);
+    const endpointIds = [
+      mergedAtomPosition,
+      new Vec2(4.065, -8.7),
+      new Vec2(3.202, -8.2),
+      new Vec2(4.065, -9.701),
+      new Vec2(2.335, -9.705),
+      new Vec2(3.204, -10.2),
+    ].map((pp) => struct.atoms.add(new Atom({ label: 'C', pp })));
+    const centralAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: mergedAtomPosition }),
+    );
+    const attachmentGroupId = struct.atoms.add(
+      new Atom({
+        label: '*',
+        pp: Vec2.ZERO,
+        endpoints: endpointIds,
+      }),
+    );
+    const hapticBondId = struct.bonds.add(
+      new Bond({
+        type: Bond.PATTERN.TYPE.HAPTIC,
+        begin: centralAtomId,
+        end: attachmentGroupId,
+        endpoints: endpointIds,
+        attach: 'ALL',
+      }),
+    );
+    struct.bondInitHalfBonds(hapticBondId);
+    struct.initNeighbors();
+
+    const attachmentGroup = struct.atoms.get(attachmentGroupId);
+    if (!attachmentGroup) {
+      throw new Error('Attachment group atom was not created');
+    }
+    recalculateSuperAttachmentPointPosition(attachmentGroup, struct);
+    const initialAttachmentGroupPosition = new Vec2(attachmentGroup.pp);
+    const render = new Render(
+      document as unknown as HTMLElement,
+      {
+        microModeScale: 20,
+        width: 100,
+        height: 100,
+      } as RenderOptions,
+    );
+    const restruct = new ReStruct(struct, render);
+    restruct.assignConnectedComponents();
+
+    fromAtomMerge(restruct, endpointIds[0], centralAtomId);
+
+    const expectedEndpointIds = [centralAtomId, ...endpointIds.slice(1)];
+    expect(attachmentGroup.endpoints).toEqual(expectedEndpointIds);
+    expect(struct.bonds.get(hapticBondId)?.endpoints).toEqual(
+      expectedEndpointIds,
+    );
+
+    recalculateSuperAttachmentPointPosition(attachmentGroup, struct);
+    expect(attachmentGroup.pp).toEqual(initialAttachmentGroupPosition);
   });
 
   it('prepares haptic bond attributes from a super-attachment point atom', () => {

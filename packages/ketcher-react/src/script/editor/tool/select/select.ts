@@ -63,6 +63,7 @@ import type { ClosestItemWithMap } from '../../shared/closest.types';
 import {
   getFragSelection,
   getNewSelectedItems,
+  getMovableAtomIdsForBond,
   getSelectedAtoms,
   getSelectedBonds,
   isItemSelected,
@@ -332,6 +333,13 @@ class SelectTool implements Tool {
       }
 
       const expSel = editor.explicitSelected();
+      if (selectionDragCtx.item.map === 'bonds') {
+        expSel.atoms = getMovableAtomIdsForBond(
+          restruct.molecule,
+          selectionDragCtx.item.id,
+          expSel.atoms,
+        );
+      }
       selectionDragCtx.action = fromMultipleMove(
         restruct,
         expSel,

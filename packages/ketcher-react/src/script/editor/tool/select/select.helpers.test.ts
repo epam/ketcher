@@ -1,17 +1,8 @@
-import { getNewSelectedItems } from './select.helpers';
-
-jest.mock(
-  'ketcher-core',
-  () => ({
-    SGroup: {
-      getAtoms: jest.fn((_, sgroup) => sgroup.atoms),
-      getBonds: jest.fn((_, sgroup) => sgroup.bonds),
-    },
-  }),
-  { virtual: true },
-);
-
-const getSGroupMock = () => jest.requireMock('ketcher-core').SGroup;
+import { Bond } from 'ketcher-core';
+import {
+  getMovableAtomIdsForBond,
+  getNewSelectedItems,
+} from './select.helpers';
 
 describe('select helpers', () => {
   beforeEach(() => {
@@ -109,8 +100,52 @@ describe('select helpers', () => {
         atoms: [],
         bonds: [],
       });
-      expect(getSGroupMock().getAtoms).not.toHaveBeenCalled();
-      expect(getSGroupMock().getBonds).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getMovableAtomIdsForBond', () => {
+    it('keeps the super attachment point fixed when it is the bond begin', () => {
+      const struct = {
+        atoms: new Map([
+          [0, { label: '*', endpoints: [2, 3] }],
+          [1, { label: 'Fe', endpoints: [] }],
+        ]),
+        bonds: new Map([
+          [0, { type: Bond.PATTERN.TYPE.HAPTIC, begin: 0, end: 1 }],
+        ]),
+      };
+
+      expect(getMovableAtomIdsForBond(struct as never, 0, [0, 1])).toEqual([1]);
+    });
+
+    it('keeps the super attachment point fixed when it is the bond end', () => {
+      const struct = {
+        atoms: new Map([
+          [0, { label: 'Fe', endpoints: [] }],
+          [1, { label: '*', endpoints: [2, 3] }],
+        ]),
+        bonds: new Map([
+          [0, { type: Bond.PATTERN.TYPE.HAPTIC, begin: 0, end: 1 }],
+        ]),
+      };
+
+      expect(getMovableAtomIdsForBond(struct as never, 0, [0, 1])).toEqual([0]);
+    });
+
+    it('keeps all movable atoms for a bond without a super attachment point', () => {
+      const struct = {
+        atoms: new Map([
+          [0, { label: 'C', endpoints: [] }],
+          [1, { label: 'Fe', endpoints: [] }],
+        ]),
+        bonds: new Map([
+          [0, { type: Bond.PATTERN.TYPE.HAPTIC, begin: 0, end: 1 }],
+        ]),
+      };
+
+      expect(getMovableAtomIdsForBond(struct as never, 0, [0, 1])).toEqual([
+        0, 1,
+      ]);
     });
   });
 });

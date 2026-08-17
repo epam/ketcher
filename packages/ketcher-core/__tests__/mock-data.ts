@@ -8,8 +8,8 @@ import { PolymerBondRendererFactory } from 'application/render/renderers/Polymer
 import {
   type Loop,
   type RGroupAttachmentPoint,
-  Atom,
-  Bond,
+  type Atom,
+  type Bond,
   Box2Abs,
   Pool,
   Struct,

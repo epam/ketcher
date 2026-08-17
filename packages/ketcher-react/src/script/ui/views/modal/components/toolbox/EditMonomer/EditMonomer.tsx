@@ -16,7 +16,7 @@
 
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import { Dialog } from '../../../../components';
-import dialogClasses from 'src/components/Dialog/Dialog.module.less';
+import dialogClasses from '../../../../../../../components/Dialog/Dialog.module.less';
 import styles from './EditMonomer.module.less';
 import { useAppContext } from '../../../../../../../hooks';
 import {

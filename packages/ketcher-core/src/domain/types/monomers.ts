@@ -98,8 +98,6 @@ export const attachmentPointNames = [
   'R8',
 ];
 
-export type LeavingGroup = string;
-
 export type AttachmentPointConstructorParams = {
   rootElement: D3SvgElementSelection<SVGGElement, void>;
   monomer: BaseMonomer;

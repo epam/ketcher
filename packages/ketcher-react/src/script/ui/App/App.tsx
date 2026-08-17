@@ -44,6 +44,7 @@ import { useAppDispatch } from '../state/hooks';
 import { selectSnackbarNotificationText } from '../state/notifications';
 import { useSelector } from 'react-redux';
 import { IconButton } from 'components';
+import { SelectedSmiles } from '../views/components/SelectedSmiles';
 
 interface AppCallProps {
   checkServer: () => void;
@@ -120,6 +121,7 @@ const App = (props: Props) => {
         <LeftToolbarContainer className={classes.left} />
         <BottomToolbarContainer className={classes.bottom} />
         <RightToolbarContainer className={classes.right} />
+        <SelectedSmiles />
 
         <AppClipArea />
         <AppModalContainer ketcherId={ketcherId} />

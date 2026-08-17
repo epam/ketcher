@@ -96,7 +96,7 @@ test.describe('Lasso Selection tool', () => {
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     const point = await selectObjects(page, selectCoords.x, selectCoords.y);
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 19 }).click({
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 19 }).hover({
       force: true,
     });
     await dragMouseTo(page, point.x + xDelta, point.y - yDelta);
@@ -149,7 +149,7 @@ test.describe('Lasso Selection tool', () => {
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     const point = await selectObjects(page, xAxis, yAxis);
     const xShift = 100;
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 37 }).click({
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 37 }).hover({
       force: true,
     });
     await dragMouseTo(page, point.x - xShift, point.y - yAxis);

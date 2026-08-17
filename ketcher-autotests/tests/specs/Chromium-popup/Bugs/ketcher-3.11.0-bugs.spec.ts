@@ -119,6 +119,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });
+
   test('Case 1 — Rotation tool: selection box for expanded s-groups includes label and padding', async () => {
     /* Test case: https://github.com/epam/ketcher/issues/8974
      * Bug: https://github.com/epam/ketcher/issues/2597

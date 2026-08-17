@@ -292,7 +292,7 @@ test.describe('R-Group Label Tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/chain-r1.mol');
     await selectAllStructuresOnCanvas(page);
-    await getAtomLocator(page, { atomLabel: 'R#' }).click({
+    await getAtomLocator(page, { atomLabel: 'R#' }).hover({
       force: true,
     });
     await dragMouseTo(page, 500, 200);
@@ -338,7 +338,7 @@ test.describe('R-Group Label Tool', () => {
     });
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
     await selectAllStructuresOnCanvas(page);
-    await getAtomLocator(page, { atomLabel: 'R#' }).click({
+    await getAtomLocator(page, { atomLabel: 'R#' }).hover({
       force: true,
     });
     await dragMouseTo(page, 500, 200);

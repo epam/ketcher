@@ -31,6 +31,7 @@ import type Editor from 'src/script/editor';
 import {
   getEditAllInstancesInitialValues,
   getEditInstanceInitialValues,
+  isSameMonomerType,
 } from '../../../../components/MonomerCreationWizard/MonomerCreationWizard.utils';
 
 interface EditMonomerDialogProps extends BaseProps {
@@ -91,23 +92,16 @@ const EditMonomer = (props: Props) => {
     );
 
     if (editAllInstances && fgIds.length > 1) {
-      // Multiple monomers of the same type/symbol were selected — collect
-      // their sgroup IDs so that only those specific instances are replaced.
-      const primaryType = firstSgroup.monomer.monomerItem.props.MonomerClass;
-      const primarySymbol =
-        firstSgroup.monomer.monomerItem.props.MonomerCode ??
-        firstSgroup.monomer.monomerItem.label;
       const selectedSGroupIds = fgIds.filter((id) => {
         const sg = struct.sgroups.get(id);
-        if (!(sg instanceof MonomerMicromolecule)) {
-          return false;
-        }
-        const { props, label } = sg.monomer.monomerItem;
-        const fgSymbol = props.MonomerCode ?? label;
-        return props.MonomerClass === primaryType && fgSymbol === primarySymbol;
+        return (
+          sg instanceof MonomerMicromolecule &&
+          isSameMonomerType(sg, firstSgroup.monomer)
+        );
       });
-
-      editAllInitialValues = { ...editAllInitialValues, selectedSGroupIds };
+      if (selectedSGroupIds.length > 1) {
+        editAllInitialValues = { ...editAllInitialValues, selectedSGroupIds };
+      }
     }
 
     editor.openMonomerCreationWizard(

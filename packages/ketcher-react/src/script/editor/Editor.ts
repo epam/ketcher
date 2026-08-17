@@ -2339,9 +2339,16 @@ class Editor implements KetcherEditor {
           const apName = isNumber(openTimeWizardId)
             ? openTimeWizardAttachAtomToAp.get(openTimeWizardId)
             : undefined;
+          // AP was deleted → do not reconnect this external bond.
+          if (
+            apName !== undefined &&
+            !finalAssignedAttachmentPoints.has(apName)
+          ) {
+            return;
+          }
           const currentWizardId =
             apName !== undefined
-              ? finalAssignedAttachmentPoints.get(apName) ?? openTimeWizardId
+              ? finalAssignedAttachmentPoints.get(apName)
               : openTimeWizardId;
           const newBegin = isNumber(currentWizardId)
             ? atomIdMap.get(currentWizardId)
@@ -2357,9 +2364,16 @@ class Editor implements KetcherEditor {
           const apName = isNumber(openTimeWizardId)
             ? openTimeWizardAttachAtomToAp.get(openTimeWizardId)
             : undefined;
+          // AP was deleted → do not reconnect this external bond.
+          if (
+            apName !== undefined &&
+            !finalAssignedAttachmentPoints.has(apName)
+          ) {
+            return;
+          }
           const currentWizardId =
             apName !== undefined
-              ? finalAssignedAttachmentPoints.get(apName) ?? openTimeWizardId
+              ? finalAssignedAttachmentPoints.get(apName)
               : openTimeWizardId;
           const newEnd = isNumber(currentWizardId)
             ? atomIdMap.get(currentWizardId)

@@ -69,25 +69,18 @@ const EditMonomer = (props: Props) => {
   };
 
   const handleEditMonomer = (editAllInstances = false) => {
+    const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const struct = editor.struct();
-    const sg = struct.sgroups.get(fgIds[0]);
+    const firstSgroup = struct.sgroups.get(fgIds[0]);
 
-    if (!(sg instanceof MonomerMicromolecule)) {
-      onOk(false);
+    if (!(firstSgroup instanceof MonomerMicromolecule)) {
       return;
     }
 
-    const atomSet = new Set<number>();
-    for (const id of fgIds) {
-      const s = struct.sgroups.get(id);
-      if (s instanceof MonomerMicromolecule) {
-        s.atoms.forEach((a) => atomSet.add(a));
-      }
-    }
-    const atoms = [...atomSet];
+    const atoms = [...firstSgroup.atoms];
     const bonds: number[] = [];
     struct.bonds.forEach((bond: Bond, bondId: number) => {
-      if (atomSet.has(bond.begin) && atomSet.has(bond.end)) {
+      if (atoms.includes(bond.begin) && atoms.includes(bond.end)) {
         bonds.push(bondId);
       }
     });
@@ -103,11 +96,11 @@ const EditMonomer = (props: Props) => {
       },
       editAllInstances
         ? getEditAllInstancesInitialValues(
-            sg.monomer,
+            firstSgroup.monomer,
             provideEditorInstance()?.monomersLibraryParsedJson,
           )
-        : getEditInstanceInitialValues(sg.monomer),
-      sg.getAttachmentPoints(),
+        : getEditInstanceInitialValues(firstSgroup.monomer),
+      firstSgroup.getAttachmentPoints(),
     );
 
     onOk(true);

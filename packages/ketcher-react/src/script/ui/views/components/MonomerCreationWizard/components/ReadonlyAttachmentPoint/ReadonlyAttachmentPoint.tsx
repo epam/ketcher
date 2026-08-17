@@ -36,11 +36,15 @@ const ReadonlyAttachmentPoint = ({
   // Track the currently selected leaving atom so the select reflects user changes.
   const [currentLeavingAtomLabel, setCurrentLeavingAtomLabel] =
     useState<AtomLabel>(leavingAtomLabel);
+  // Mirrors the prop so we can detect a change (e.g. component re-assigned)
+  // during render and reset local state without an Effect + extra render.
+  const [prevLeavingAtomLabel, setPrevLeavingAtomLabel] =
+    useState<AtomLabel>(leavingAtomLabel);
 
-  // Reset when the default label changes (e.g. component re-assigned).
-  useEffect(() => {
+  if (leavingAtomLabel !== prevLeavingAtomLabel) {
+    setPrevLeavingAtomLabel(leavingAtomLabel);
     setCurrentLeavingAtomLabel(leavingAtomLabel);
-  }, [leavingAtomLabel]);
+  }
 
   // Panel hover → canvas highlight
   useEffect(() => {

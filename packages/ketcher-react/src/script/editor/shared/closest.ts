@@ -29,6 +29,7 @@ import {
   entityNotFoundMessage,
   assert,
   KetcherLogger,
+  isSuperAttachmentPointAtom,
 } from 'ketcher-core';
 import type {
   ClosestItem,
@@ -669,6 +670,10 @@ function findCloseMerge(
   maps.forEach((map) => {
     if (map === 'atoms') {
       Array.from(pos.atoms.keys()).forEach((atomId) => {
+        if (isSuperAttachmentPointAtom(struct.atoms.get(atomId))) {
+          return;
+        }
+
         const atomPosition = pos.atoms.get(atomId);
         if (!atomPosition) return;
         const merged = mergeAtomToAtom(
@@ -713,6 +718,14 @@ function mergeAtomToAtom(
 ) {
   const skip = { map: 'atoms', id: atomId };
   const closestAtom = findClosestAtom(restruct, atomPosition, skip, null);
+  const closestAtomEntity = closestAtom
+    ? restruct.molecule.atoms.get(closestAtom.id)
+    : undefined;
+
+  if (isSuperAttachmentPointAtom(closestAtomEntity)) {
+    // Prevent the caller from falling back to functional-group merging.
+    return true;
+  }
 
   if (closestAtom && !selected.atoms.includes(closestAtom.id)) {
     result.atoms.set(atomId, closestAtom.id);

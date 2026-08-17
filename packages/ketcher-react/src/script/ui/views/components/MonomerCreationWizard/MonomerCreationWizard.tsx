@@ -100,26 +100,43 @@ const initialWizardState: WizardState = getInitialWizardState();
 
 /**
  * Builds initial wizard state seeded with values from an existing monomer
- * being edited. When `initialValues` is undefined returns the default empty
- * wizard state.
+ * being edited, and with the "default attachment points" notification when
+ * the editor auto-assigned them. Both inputs are fixed for the lifetime of
+ * a wizard session (set once when `monomerCreationState` is created), so
+ * they are seeded synchronously via the lazy initializer instead of an
+ * Effect that would race with user input / fire an extra render.
  */
 const getInitialWizardStateForEdit = (
   initialValues?: MonomerCreationInitialValues,
+  hasDefaultAttachmentPoints?: boolean,
 ): WizardState => {
-  if (!initialValues) {
-    return initialWizardState;
+  const baseState = initialValues
+    ? {
+        ...initialWizardState,
+        values: {
+          type: initialValues.type,
+          symbol: initialValues.symbol,
+          name: initialValues.name,
+          naturalAnalogue: initialValues.naturalAnalogue,
+          aliasHELM: initialValues.aliasHELM,
+          aliasBILN: initialValues.aliasBILN,
+        },
+      }
+    : initialWizardState;
+
+  if (!hasDefaultAttachmentPoints) {
+    return baseState;
   }
 
   return {
-    ...initialWizardState,
-    values: {
-      type: initialValues.type,
-      symbol: initialValues.symbol,
-      name: initialValues.name,
-      naturalAnalogue: initialValues.naturalAnalogue,
-      aliasHELM: initialValues.aliasHELM,
-      aliasBILN: initialValues.aliasBILN,
-    },
+    ...baseState,
+    notifications: new Map(baseState.notifications).set(
+      'defaultAttachmentPoints',
+      {
+        type: NotificationTypes.defaultAttachmentPoints,
+        message: NotificationMessages.defaultAttachmentPoints,
+      },
+    ),
   };
 };
 
@@ -801,13 +818,17 @@ const MonomerCreationWizardInternal = ({
 
   // Initial wizard values are derived once on mount. The wizard is mounted
   // only while `monomerCreationState` is set (see the wrapper below), so
-  // edit-mode initial values from `editInstanceInitialValues` are seeded via
-  // the lazy initializer instead of a useEffect that would race with user
-  // input.
+  // edit-mode initial values from `editInstanceInitialValues`, along with the
+  // "default attachment points" notification, are seeded via the lazy
+  // initializer instead of a useEffect that would race with user input.
   const [wizardState, wizardStateDispatch] = useReducer(
     wizardReducer,
-    monomerCreationState.editInstanceInitialValues,
-    getInitialWizardStateForEdit,
+    monomerCreationState,
+    ({ editInstanceInitialValues, hasDefaultAttachmentPoints }) =>
+      getInitialWizardStateForEdit(
+        editInstanceInitialValues,
+        hasDefaultAttachmentPoints,
+      ),
   );
   const [rnaPresetWizardState, rnaPresetWizardStateDispatch] = useReducer(
     rnaPresetWizardReducer,
@@ -1141,15 +1162,6 @@ const MonomerCreationWizardInternal = ({
     isRnaPresetType,
     rnaPresetComponentStructures,
   ]);
-
-  useEffect(() => {
-    if (monomerCreationState?.hasDefaultAttachmentPoints) {
-      wizardStateDispatch({
-        type: 'AddNotification',
-        id: 'defaultAttachmentPoints',
-      });
-    }
-  }, [monomerCreationState?.hasDefaultAttachmentPoints]);
 
   useEffect(() => {
     if (!monomerCreationState || !isRnaPresetType) {

@@ -44,8 +44,10 @@ import { createSelector } from 'reselect';
 import { useAppContext } from 'src/hooks';
 import {
   alignToCentroid,
+  mergeCoordinatesFromResult,
   mergeMetaObjects,
   needsMetaPreservation,
+  needsStructurePreservation,
 } from './miewStructMerge';
 
 const Viewer = lazy(() =>
@@ -183,6 +185,36 @@ const MiewDialog = ({
     const cmlStruct = miewRef.current?.exportCML();
     if (!cmlStruct) {
       return;
+    }
+
+    // SUP S-groups (including nucleotide component SUGAR/BASE/PHOSPHATE
+    // groups), R-groups and other Ketcher-specific metadata cannot survive
+    // the Miew/CML round-trip: Miew is a pure 3D viewer, and even Ketcher's
+    // own CML writer never serializes the nucleotide `class`. Replacing the
+    // canvas structure with the round-trip result would silently drop that
+    // metadata, which breaks contracted/abbreviated S-group rendering
+    // (atoms/labels disappear, only bonds remain). To avoid that we keep the
+    // original Ketcher structure untouched and only copy over the updated 3D
+    // atom coordinates that Miew produced.
+    if (needsStructurePreservation(struct)) {
+      try {
+        const result = await parseStruct(cmlStruct, server, serverSettings);
+        alignToCentroid(result, struct);
+
+        const preserved = struct.clone();
+        if (mergeCoordinatesFromResult(preserved, result)) {
+          dispatch(
+            load(preserved, { preserveViewport: true, skipCenter: true }),
+          );
+          return;
+        }
+        // Atom count mismatch (e.g. Miew added/removed explicit hydrogens) -
+        // fall through to the generic paths below instead of mis-mapping
+        // coordinates.
+      } catch (e) {
+        KetcherLogger.error('Miew.tsx::MiewDialog::exportCML', e);
+        return;
+      }
     }
 
     if (!needsMetaPreservation(struct)) {

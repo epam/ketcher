@@ -55,6 +55,30 @@ export const SUPERATOM_CLASS_TEXT = {
   [SUPERATOM_CLASS.PHOSPHATE]: 'Phosphate',
 };
 
+/**
+ * Resolves the display label for a SUP superatom S-group.
+ *
+ * `sgroup.data.name` always defaults to `''` (never `null`/`undefined`, see
+ * SGroup's data defaults), so a plain nullish-coalescing (`??`) fallback
+ * would never reach the nucleotide component class label below - it has to
+ * be a truthiness check (`||`) on the *trimmed* name instead, otherwise an
+ * empty or whitespace-only name incorrectly "wins" over a known
+ * SUGAR/BASE/PHOSPHATE class and the S-group renders with no label at all
+ * (only its brackets/contracted-atom position, with bonds still visible).
+ */
+export function getSuperatomLabel(sgroup: {
+  data: { name?: string | null; class?: string | null };
+}): string {
+  const superatomClass = sgroup.data?.class as
+    | keyof typeof SUPERATOM_CLASS_TEXT
+    | undefined;
+
+  return (
+    sgroup.data?.name?.trim() ||
+    (superatomClass ? SUPERATOM_CLASS_TEXT[superatomClass] : '') ||
+    ''
+  );
+}
 // Helper function to convert SVG elements into Paper.js paths
 export function paperPathFromSVGElement(
   element: SVGElement,
@@ -153,9 +177,7 @@ class ReSGroup extends ReObject {
           const superatomClass = sgroup.data.class as
             | SUPERATOM_CLASS
             | undefined;
-          SGroupdrawBracketsOptions.lowerIndexText =
-            sgroup.data.name ||
-            (superatomClass ? SUPERATOM_CLASS_TEXT[superatomClass] : '');
+          SGroupdrawBracketsOptions.lowerIndexText = getSuperatomLabel(sgroup);
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
           SGroupdrawBracketsOptions.superatomClass = superatomClass;

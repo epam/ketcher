@@ -85,6 +85,31 @@ const EditMonomer = (props: Props) => {
       }
     });
 
+    let editAllInitialValues = getEditAllInstancesInitialValues(
+      firstSgroup.monomer,
+      provideEditorInstance()?.monomersLibraryParsedJson,
+    );
+
+    if (editAllInstances && fgIds.length > 1) {
+      // Multiple monomers of the same type/symbol were selected — collect
+      // their sgroup IDs so that only those specific instances are replaced.
+      const primaryType = firstSgroup.monomer.monomerItem.props.MonomerClass;
+      const primarySymbol =
+        firstSgroup.monomer.monomerItem.props.MonomerCode ??
+        firstSgroup.monomer.monomerItem.label;
+      const selectedSGroupIds = fgIds.filter((id) => {
+        const sg = struct.sgroups.get(id);
+        if (!(sg instanceof MonomerMicromolecule)) {
+          return false;
+        }
+        const { props, label } = sg.monomer.monomerItem;
+        const fgSymbol = props.MonomerCode ?? label;
+        return props.MonomerClass === primaryType && fgSymbol === primarySymbol;
+      });
+
+      editAllInitialValues = { ...editAllInitialValues, selectedSGroupIds };
+    }
+
     editor.openMonomerCreationWizard(
       {
         atoms,
@@ -95,10 +120,7 @@ const EditMonomer = (props: Props) => {
         rgroupAttachmentPoints: [],
       },
       editAllInstances
-        ? getEditAllInstancesInitialValues(
-            firstSgroup.monomer,
-            provideEditorInstance()?.monomersLibraryParsedJson,
-          )
+        ? editAllInitialValues
         : getEditInstanceInitialValues(firstSgroup.monomer),
       firstSgroup.getAttachmentPoints(),
     );

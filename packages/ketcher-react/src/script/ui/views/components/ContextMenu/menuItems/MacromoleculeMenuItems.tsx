@@ -86,6 +86,34 @@ const MacromoleculeMenuItems = (
       }
     });
 
+    let editAllInitialValues = getEditAllInstancesInitialValues(
+      sg.monomer,
+      provideEditorInstance()?.monomersLibraryParsedJson,
+    );
+
+    if (editAllInstances && (functionalGroups?.length ?? 0) > 1) {
+      // Multiple monomers of the same type/symbol were selected — collect
+      // their sgroup IDs so that only those specific instances are replaced.
+      const primaryType = sg.monomer.monomerItem.props.MonomerClass;
+      const primarySymbol =
+        sg.monomer.monomerItem.props.MonomerCode ??
+        sg.monomer.monomerItem.label;
+      const selectedSGroupIds = (functionalGroups ?? [])
+        .filter((fg) => {
+          if (!(fg.relatedSGroup instanceof MonomerMicromolecule)) {
+            return false;
+          }
+          const { props, label } = fg.relatedSGroup.monomer.monomerItem;
+          const fgSymbol = props.MonomerCode ?? label;
+          return (
+            props.MonomerClass === primaryType && fgSymbol === primarySymbol
+          );
+        })
+        .map((fg) => fg.relatedSGroupId);
+
+      editAllInitialValues = { ...editAllInitialValues, selectedSGroupIds };
+    }
+
     editor.openMonomerCreationWizard(
       {
         atoms,
@@ -96,10 +124,7 @@ const MacromoleculeMenuItems = (
         rgroupAttachmentPoints: [],
       },
       editAllInstances
-        ? getEditAllInstancesInitialValues(
-            sg.monomer,
-            provideEditorInstance()?.monomersLibraryParsedJson,
-          )
+        ? editAllInitialValues
         : getEditInstanceInitialValues(sg.monomer),
       sg.getAttachmentPoints(),
     );

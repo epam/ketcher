@@ -1859,6 +1859,7 @@ class Editor implements KetcherEditor {
     originalType: KetMonomerClass,
     originalSymbol: string,
     sourceExpanded: boolean,
+    selectedSGroupIds?: number[],
   ) {
     let sourceSGroup: SGroup | undefined;
 
@@ -1875,7 +1876,12 @@ class Editor implements KetcherEditor {
     const replacementSourceSGroup = sourceSGroup;
     this.setMonomerExpandedState(replacementSourceSGroup, sourceExpanded);
 
-    Array.from(struct.sgroups.values()).forEach((sgroup) => {
+    const restrictToIds =
+      selectedSGroupIds && selectedSGroupIds.length > 1
+        ? new Set(selectedSGroupIds)
+        : null;
+
+    Array.from(struct.sgroups.entries()).forEach(([sgId, sgroup]) => {
       const sgroupWithMonomer = sgroup as SGroup & EditableSGroupMonomer;
       const sgroupMonomer = sgroupWithMonomer.monomer;
       const { props, label } = sgroupMonomer?.monomerItem ?? {};
@@ -1887,6 +1893,12 @@ class Editor implements KetcherEditor {
         props?.MonomerClass !== originalType ||
         symbol !== originalSymbol
       ) {
+        return;
+      }
+
+      // When the user had a specific subset of monomers selected, only replace
+      // those — not all canvas instances.
+      if (restrictToIds && !restrictToIds.has(sgId)) {
         return;
       }
 
@@ -2254,6 +2266,7 @@ class Editor implements KetcherEditor {
           editAllInitialValues.originalType,
           editAllInitialValues.originalSymbol,
           sourceMonomerExpanded,
+          editAllInitialValues.selectedSGroupIds,
         );
         struct.sGroupsRecalcCrossBonds();
       }

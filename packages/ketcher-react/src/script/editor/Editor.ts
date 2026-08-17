@@ -272,6 +272,7 @@ class Editor implements KetcherEditor {
     quickEdit: PipelineSubscription;
     attachEdit: PipelineSubscription;
     removeFG: PipelineSubscription;
+    editMonomer: PipelineSubscription;
     change: Subscription;
     selectionChange: PipelineSubscription;
     aromatizeStruct: PipelineSubscription;
@@ -341,6 +342,7 @@ class Editor implements KetcherEditor {
       quickEdit: new PipelineSubscription(),
       attachEdit: new PipelineSubscription(),
       removeFG: new PipelineSubscription(),
+      editMonomer: new PipelineSubscription(),
       change: new Subscription(),
       selectionChange: new PipelineSubscription(),
       aromatizeStruct: new PipelineSubscription(),

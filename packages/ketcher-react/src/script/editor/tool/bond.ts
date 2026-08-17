@@ -43,6 +43,7 @@ import type {
   BondItemRef,
   BondToolDragContext,
 } from './bond.types';
+import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 class BondTool implements Tool {
   private static readonly DRAG_START_THRESHOLD_PX = 10;
@@ -77,7 +78,7 @@ class BondTool implements Tool {
           }
         }
         if (fgIds.size) {
-          this.editor.event.removeFG.dispatch({ fgIds: [...fgIds] });
+          dispatchMonomerOrGroupDialog(this.editor, [...fgIds]);
           this.isNotActiveTool = true;
           return;
         }
@@ -132,7 +133,7 @@ class BondTool implements Tool {
         }
       }
       if (result.length) {
-        this.editor.event.removeFG.dispatch({ fgIds: result });
+        dispatchMonomerOrGroupDialog(this.editor, result);
         return;
       }
     } else if (bondResult.length > 0) {
@@ -147,7 +148,7 @@ class BondTool implements Tool {
         }
       }
       if (result.length) {
-        this.editor.event.removeFG.dispatch({ fgIds: result });
+        dispatchMonomerOrGroupDialog(this.editor, result);
         return;
       }
     }
@@ -330,7 +331,7 @@ class BondTool implements Tool {
     }
 
     if (endAtom && endAtom.id !== closestAttachmentAtomId) {
-      this.editor.event.removeFG.dispatch({ fgIds: [sgroup.id] });
+      dispatchMonomerOrGroupDialog(this.editor, [sgroup.id]);
       endAtom = null;
     }
 
@@ -356,7 +357,7 @@ class BondTool implements Tool {
         endAtom.id,
       );
       if (fgIds.length > 0) {
-        this.editor.event.removeFG.dispatch({ fgIds });
+        dispatchMonomerOrGroupDialog(this.editor, fgIds);
         delete this.dragCtx;
         return { beginAtom, endAtom, beginPos, shouldReturn: true };
       }

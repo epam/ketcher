@@ -66,7 +66,7 @@ test.describe('Rectangle selection tool', () => {
       SelectionToolType.Rectangle,
     );
     const point = await selectObjects(page, objectSelection, objectSelection);
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 19 }).click({
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 19 }).hover({
       force: true,
     });
     await dragMouseTo(page, point.x + xDelta, point.y - yDelta);
@@ -114,7 +114,7 @@ test.describe('Rectangle selection tool', () => {
       selectionCoords.x,
       selectionCoords.y,
     );
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 37 }).click({
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 37 }).hover({
       force: true,
     });
     await dragMouseTo(

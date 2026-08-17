@@ -576,9 +576,10 @@ test.describe('Atom Properties', () => {
     });
     await page.keyboard.up('Shift');
 
-    await getAtomLocator(page, { atomLabel: 'S' }).first().dblclick({
-      force: true,
-    });
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'S' }).first(),
+    ).click(MicroAtomOption.Edit);
 
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Charge: '3' },
@@ -724,9 +725,10 @@ test.describe('Atom Properties', () => {
     });
     await page.keyboard.up('Shift');
 
-    await getAtomLocator(page, { atomLabel: 'O' }).first().dblclick({
-      force: true,
-    });
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'O' }).first(),
+    ).click(MicroAtomOption.Edit);
 
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Isotope: '18' },
@@ -853,9 +855,10 @@ test.describe('Atom Properties', () => {
     });
     await page.keyboard.up('Shift');
 
-    await getAtomLocator(page, { atomLabel: 'O' }).first().dblclick({
-      force: true,
-    });
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'O' }).first(),
+    ).click(MicroAtomOption.Edit);
 
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Valence: Valence.Five },
@@ -990,9 +993,10 @@ test.describe('Atom Properties', () => {
     });
     await page.keyboard.up('Shift');
 
-    await getAtomLocator(page, { atomLabel: 'O' }).first().dblclick({
-      force: true,
-    });
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'O' }).first(),
+    ).click(MicroAtomOption.Edit);
 
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Radical: Radical.Diradical_Triplet },

@@ -1153,10 +1153,15 @@ export class CoreEditor {
         ]);
       } else if (isClickOnCanvas) {
         if (this.mode.modeName === 'sequence-layout-mode') {
-          this.events.rightClickCanvasSequence.dispatch([
-            event,
-            sequenceSelections,
-          ]);
+          const modelChanges =
+            this.drawingEntitiesManager.unselectAllDrawingEntities();
+
+          modelChanges.merge(
+            SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(),
+          );
+
+          this.renderersContainer.update(modelChanges);
+          this.events.rightClickCanvasSequence.dispatch([event, []]);
         } else {
           this.events.rightClickCanvas.dispatch([event, selectedMonomers]);
         }

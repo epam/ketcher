@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
   hasAntisenseChains,
   selectEditor,
@@ -84,7 +84,7 @@ export const EditorEvents = () => {
     return () => {
       editor?.events.updateMonomersLibrary.remove(handleMonomersLibraryUpdate);
     };
-  }, [editor]);
+  }, [editor, handleMonomersLibraryUpdate]);
 
   useEffect(() => {
     const onSelectSelectionTool = () => {
@@ -145,15 +145,15 @@ export const EditorEvents = () => {
       dispatch(selectTool(null));
       editor?.events.selectTool.remove(handler);
     };
-  }, [editor]);
+  }, [editor, activeTool, dispatch]);
 
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),
     [dispatch],
   );
 
-  const debouncedShowPreview = useCallback(
-    debounce((p) => dispatchShowPreview(p), 500),
+  const debouncedShowPreview = useMemo(
+    () => debounce((p) => dispatchShowPreview(p), 500),
     [dispatchShowPreview],
   );
 
@@ -393,13 +393,19 @@ export const EditorEvents = () => {
 
       window.removeEventListener('hidePreview', guardedHandleClosePreview);
     };
-  }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
+  }, [
+    editor,
+    activeTool,
+    handleOpenPreview,
+    handleClosePreview,
+    handleOpenAtomLabelTooltip,
+  ]);
 
   useEffect(() => {
     if (!hasAtLeastOneAntisense) {
       editor?.events.resetSequenceEditMode.dispatch();
     }
-  }, [hasAtLeastOneAntisense]);
+  }, [hasAtLeastOneAntisense, editor?.events.resetSequenceEditMode]);
 
   return <></>;
 };

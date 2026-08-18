@@ -1,7 +1,7 @@
 import {
   type IKetTemplateConnection,
   KetConnectionType,
-} from 'application/formatters';
+} from 'application/formatters/types/ket';
 import type {
   IRnaPreset,
   RnaPhosphatePosition,
@@ -10,7 +10,7 @@ import { AttachmentPointName } from 'domain/types';
 import {
   setAmbiguousMonomerTemplatePrefix,
   setMonomerTemplatePrefix,
-} from 'domain/serializers';
+} from 'domain/serializers/ket/helpers';
 
 const getMonomerTemplateId = (monomer: IRnaPreset['base']) => {
   const templateId =

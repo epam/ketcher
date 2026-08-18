@@ -25,8 +25,9 @@ import {
   ketcherProvider,
   MonomerMicromolecule,
   provideEditorInstance,
+  type EditMonomerVariant,
+  type Bond,
 } from 'ketcher-core';
-import type { EditMonomerVariant, Bond } from 'ketcher-core';
 import type Editor from 'src/script/editor';
 import {
   getEditAllInstancesInitialValues,
@@ -130,7 +131,7 @@ const EditMonomer = (props: Props) => {
           value="Edit Monomer"
           className={dialogClasses.cancel}
           onClick={() => handleEditMonomer(false)}
-          data-testid="Edit Monomer-button"
+          data-testid="edit-monomer-button"
         />
       )}
       {variant === 'identical' && (
@@ -139,7 +140,7 @@ const EditMonomer = (props: Props) => {
           value="Edit All Monomers"
           className={dialogClasses.cancel}
           onClick={() => handleEditMonomer(true)}
-          data-testid="Edit All Monomers-button"
+          data-testid="edit-all-monomers-button"
         />
       )}
       <input
@@ -147,7 +148,7 @@ const EditMonomer = (props: Props) => {
         value="Remove Grouping"
         className={dialogClasses.cancel}
         onClick={handleRemoveGrouping}
-        data-testid="Remove Grouping-button"
+        data-testid="remove-abbreviation-button"
       />
       <input
         type="button"
@@ -170,7 +171,7 @@ const EditMonomer = (props: Props) => {
         onCancel: handleCancel,
       }}
       footerContent={footerContent}
-      data-testid="edit-monomer-window"
+      data-testid="edit-abbreviation-window"
     >
       {BODY_TEXT[variant]}
     </Dialog>

@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MonomerMicromolecule } from 'ketcher-core';
-import type { EditMonomerVariant } from 'ketcher-core';
+import { type EditMonomerVariant, MonomerMicromolecule } from 'ketcher-core';
 import type { Editor } from '../Editor';
 
 /**

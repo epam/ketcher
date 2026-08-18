@@ -23,8 +23,8 @@
         "type": "ambiguousMonomer",
         "id": "0",
         "position": {
-            "x": 15.40515,
-            "y": -7.7068
+            "x": 18.58653586091583,
+            "y": -10.380576184632844
         },
         "alias": "M",
         "templateId": "alternatives__A___Adenine__C___Cytosine_"

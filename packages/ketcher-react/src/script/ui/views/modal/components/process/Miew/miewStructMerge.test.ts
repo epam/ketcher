@@ -218,7 +218,8 @@ describe('miewStructMerge', () => {
 
       const firstResult = new Struct();
       sugarAtoms.forEach((id) => {
-        const origAtom = struct.atoms.get(id)!;
+        const origAtom = struct.atoms.get(id);
+        if (!origAtom) return;
         firstResult.atoms.add(
           new Atom({
             label: origAtom.label,
@@ -231,7 +232,8 @@ describe('miewStructMerge', () => {
         );
       });
       baseAtoms.forEach((id) => {
-        const origAtom = struct.atoms.get(id)!;
+        const origAtom = struct.atoms.get(id);
+        if (!origAtom) return;
         firstResult.atoms.add(
           new Atom({
             label: origAtom.label,
@@ -244,7 +246,8 @@ describe('miewStructMerge', () => {
         );
       });
       phosphateAtoms.forEach((id) => {
-        const origAtom = struct.atoms.get(id)!;
+        const origAtom = struct.atoms.get(id);
+        if (!origAtom) return;
         firstResult.atoms.add(
           new Atom({
             label: origAtom.label,
@@ -283,7 +286,9 @@ describe('miewStructMerge', () => {
       expect(firstPhosphate.data.class).toBe('PHOSPHATE');
       expect(firstPhosphate.data.name).toBe('PO4');
 
-      const firstAtom = firstPreserved.atoms.get(sugarAtoms[0])!;
+      const firstAtom = firstPreserved.atoms.get(sugarAtoms[0]);
+      expect(firstAtom).toBeDefined();
+      if (!firstAtom) return;
       expect(firstAtom.pp.x).toBeCloseTo(0.1);
       expect(firstAtom.pp.z).toBeCloseTo(0.05);
 
@@ -329,7 +334,9 @@ describe('miewStructMerge', () => {
       expect(secondPhosphate.data.class).toBe('PHOSPHATE');
       expect(secondPhosphate.data.name).toBe('PO4');
 
-      const secondAtom = secondPreserved.atoms.get(sugarAtoms[0])!;
+      const secondAtom = secondPreserved.atoms.get(sugarAtoms[0]);
+      expect(secondAtom).toBeDefined();
+      if (!secondAtom) return;
       expect(secondAtom.pp.x).toBeCloseTo(0.15);
       expect(secondAtom.pp.z).toBeCloseTo(0.07);
     });
@@ -356,7 +363,9 @@ describe('miewStructMerge', () => {
 
       expect(merged).toBe(false);
 
-      const origAtom = preserved.atoms.get(0)!;
+      const origAtom = preserved.atoms.get(0);
+      expect(origAtom).toBeDefined();
+      if (!origAtom) return;
       expect(origAtom.pp.x).toBeCloseTo(0);
       expect(origAtom.pp.y).toBeCloseTo(0);
 

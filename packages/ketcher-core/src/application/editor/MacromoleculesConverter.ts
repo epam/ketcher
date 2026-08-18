@@ -87,10 +87,13 @@ export class MacromoleculesConverter {
 
   // AmbiguousMonomer has no real substructure of its own - its Micro-mode atoms
   // are borrowed from monomers[0] (see convertDrawingEntitiesToStruct below), so
-  // attachment point atom ids/leaving groups must be resolved from monomers[0]'s
-  // own attachment points too. Using the same index for every R-label (e.g. always
+  // real (R-labeled) attachment points must be resolved from monomers[0]'s own
+  // attachment points too. Using the same index for every R-label (e.g. always
   // atom 0) would collapse every attachment point onto the same atom, producing
-  // duplicate SGroupAttachmentPoints for monomers with more than one attachment point.
+  // duplicate SGroupAttachmentPoints for monomers with more than one attachment
+  // point. This does not apply to the synthetic "hydrogen" pseudo-attachment-point
+  // (used to anchor rendered hydrogen bonds), which intentionally always resolves
+  // to a fixed placeholder atom - see findAttachmentPointAtom.
   private static getMonomerAttachmentPoint(
     monomer: BaseMonomer,
     attachmentPointName: AttachmentPointName,
@@ -98,11 +101,7 @@ export class MacromoleculesConverter {
     const attachmentPointOwner =
       monomer instanceof AmbiguousMonomer ? monomer.monomers[0] : monomer;
     const attachmentPointIndex =
-      attachmentPointName === 'hydrogen'
-        ? 0
-        : attachmentPointOwner.listOfAttachmentPoints.indexOf(
-            attachmentPointName,
-          );
+      attachmentPointOwner.listOfAttachmentPoints.indexOf(attachmentPointName);
 
     return attachmentPointOwner.monomerItem.attachmentPoints?.[
       attachmentPointIndex
@@ -127,12 +126,16 @@ export class MacromoleculesConverter {
       MacromoleculesConverter.convertAttachmentPointNameToNumber(
         attachmentPointName,
       );
-    const attachmentPoint = MacromoleculesConverter.getMonomerAttachmentPoint(
-      monomer,
-      attachmentPointName,
-    );
     const atomIdMap = monomerToAtomIdMap.get(monomer);
-    const attachmentPointAtomId = attachmentPoint?.attachmentAtom;
+    const attachmentPointAtomId =
+      attachmentPointName === 'hydrogen'
+        ? monomer instanceof AmbiguousMonomer
+          ? 0
+          : monomer.monomerItem.attachmentPoints?.[0]?.attachmentAtom
+        : MacromoleculesConverter.getMonomerAttachmentPoint(
+            monomer,
+            attachmentPointName,
+          )?.attachmentAtom;
 
     return {
       globalAttachmentAtomId:

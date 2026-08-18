@@ -1,4 +1,9 @@
-import { screen, fireEvent, render as rtlRender } from '@testing-library/react';
+import {
+  screen,
+  fireEvent,
+  within,
+  render as rtlRender,
+} from '@testing-library/react';
 import { combineReducers, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import modalReducer from '../../state/modal';
@@ -81,6 +86,43 @@ describe('Copolymer S-Group type availability', () => {
     const typeSelect = screen.getAllByRole('combobox')[0];
     fireEvent.mouseDown(typeSelect);
     expect(screen.getByTestId('Copolymer-option')).toBeInTheDocument();
+  });
+});
+
+describe('Copolymer S-Group Subtype dropdown', () => {
+  const openSubtypeSelect = () => {
+    const { store } = renderWithMockStore(
+      <SGroup type="COP" selectedSruCount={2} />,
+      {
+        modal: {
+          form: {
+            result: {
+              type: 'COP',
+              subtype: 'ran',
+            },
+          },
+        },
+      },
+    );
+    const subtypeSelect = within(
+      screen.getByTestId('subtype-input-span'),
+    ).getByRole('combobox');
+    fireEvent.mouseDown(subtypeSelect);
+    return { store };
+  };
+
+  it('should include a blank option alongside Random, Block and Alternating', () => {
+    openSubtypeSelect();
+    expect(screen.getByTestId('-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Random-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Block-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Alternating-option')).toBeInTheDocument();
+  });
+
+  it('should clear a previously selected subtype when the blank option is chosen', () => {
+    const { store } = openSubtypeSelect();
+    fireEvent.click(screen.getByTestId('-option'));
+    expect(store.getState().modal?.form?.result?.subtype).toBeNull();
   });
 });
 

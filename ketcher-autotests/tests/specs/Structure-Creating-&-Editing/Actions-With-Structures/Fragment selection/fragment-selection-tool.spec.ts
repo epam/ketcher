@@ -32,7 +32,7 @@ test.describe('Fragment selection tool', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
       force: true,
     });
-    await takeEditorScreenshot(page, { maxDiffPixels: 50 });
+    await takeEditorScreenshot(page);
   });
 
   test('Reaction component selection', async ({ page }) => {
@@ -56,7 +56,7 @@ test.describe('Fragment selection tool', () => {
       force: true,
     });
     await dragMouseTo(page, 300, 200);
-    await takeEditorScreenshot(page, { maxDiffPixels: 50 });
+    await takeEditorScreenshot(page);
   });
 
   test('Fuse atoms together', async ({ page }) => {
@@ -72,7 +72,7 @@ test.describe('Fragment selection tool', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),
       getAtomLocator(page, { atomLabel: 'C', atomId: 12 }),
     );
-    await takeEditorScreenshot(page, { maxDiffPixels: 50 });
+    await takeEditorScreenshot(page);
   });
 
   test('Deleting molecule', async ({ page }) => {
@@ -83,7 +83,7 @@ test.describe('Fragment selection tool', () => {
       force: true,
     });
     await deleteByKeyboard(page);
-    await takeEditorScreenshot(page, { maxDiffPixels: 50 });
+    await takeEditorScreenshot(page);
   });
 
   test('Undo - Redo moving of structures', async ({ page }) => {
@@ -117,6 +117,6 @@ test.describe('Fragment selection tool', () => {
     const atom = await getAtomLocator(page, { atomLabel: 'N' }).first();
     await atom.click({ force: true });
     await atom.hover({ force: true });
-    await takeEditorScreenshot(page, { maxDiffPixels: 50 });
+    await takeEditorScreenshot(page);
   });
 });

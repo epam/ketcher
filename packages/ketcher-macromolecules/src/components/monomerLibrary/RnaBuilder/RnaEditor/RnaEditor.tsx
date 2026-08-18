@@ -52,13 +52,13 @@ export const RnaEditor = ({ duplicatePreset }) => {
 
     dispatch(createNewPreset());
     dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
-  }, [activePreset]);
+  }, [activePreset, isEditMode, dispatch]);
 
   useEffect(() => {
     dispatch(
       recalculateRnaBuilderValidations({ rnaPreset: activePreset, isEditMode }),
     );
-  }, [isEditMode]);
+  }, [isEditMode, dispatch, activePreset]);
 
   const expandEditor = () => {
     setExpanded(!expanded);

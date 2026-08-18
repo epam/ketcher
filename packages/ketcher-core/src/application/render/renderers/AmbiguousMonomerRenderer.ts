@@ -59,7 +59,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
 
   public get textColor() {
     if (this.monomer.isModification && this.modificationConfig) {
-      return this.isExternalRender ? 'black' : 'white';
+      return 'white';
     }
     return super.textColor;
   }

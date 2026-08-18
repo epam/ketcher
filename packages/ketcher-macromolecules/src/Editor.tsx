@@ -213,15 +213,31 @@ function Editor({
     id: CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS,
   });
 
+  const editorInitParamsRef = useRef({
+    ketcherId,
+    theme,
+    monomersLibraryUpdate,
+    monomersLibraryReplace,
+    onInit,
+  });
+
   useEffect(() => {
+    const {
+      ketcherId: initKetcherId,
+      theme: initTheme,
+      monomersLibraryUpdate: initMonomersLibraryUpdate,
+      monomersLibraryReplace: initMonomersLibraryReplace,
+      onInit: initOnInit,
+    } = editorInitParamsRef.current;
+
     dispatch(
       createEditor({
-        ketcherId,
-        theme,
+        ketcherId: initKetcherId,
+        theme: initTheme,
         canvas: canvasRef.current,
-        monomersLibraryUpdate,
-        monomersLibraryReplace,
-        onInit,
+        monomersLibraryUpdate: initMonomersLibraryUpdate,
+        monomersLibraryReplace: initMonomersLibraryReplace,
+        onInit: initOnInit,
         onLibraryError: (err) => {
           dispatch(
             setMonomerLibraryLoadError(
@@ -237,14 +253,7 @@ function Editor({
     return () => {
       dispatch(destroyEditor(null));
     };
-  }, [
-    dispatch,
-    ketcherId,
-    theme,
-    monomersLibraryUpdate,
-    monomersLibraryReplace,
-    onInit,
-  ]);
+  }, [dispatch]);
 
   useSetRnaPresets();
   useMacromoleculesHotkeys();

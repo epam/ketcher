@@ -237,7 +237,14 @@ function Editor({
     return () => {
       dispatch(destroyEditor(null));
     };
-  }, [dispatch]);
+  }, [
+    dispatch,
+    ketcherId,
+    theme,
+    monomersLibraryUpdate,
+    monomersLibraryReplace,
+    onInit,
+  ]);
 
   useSetRnaPresets();
   useMacromoleculesHotkeys();
@@ -312,7 +319,13 @@ function Editor({
     editor?.events.toggleMacromoleculesPropertiesVisibility.add(() => {
       dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
     });
-  }, [editor]);
+  }, [
+    editor,
+    dispatch,
+    showSequenceContextMenu,
+    showSelectedMonomersContextMenu,
+    updatePasteAvailability,
+  ]);
 
   useEffect(() => {
     editor?.zoomTool.observeCanvasResize();

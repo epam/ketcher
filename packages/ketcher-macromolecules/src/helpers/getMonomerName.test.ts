@@ -1,4 +1,4 @@
-import { BaseMonomer, KetMonomerClass } from 'ketcher-core';
+import { AmbiguousMonomer, BaseMonomer, KetMonomerClass } from 'ketcher-core';
 import getMonomerName from './getMonomerName';
 
 interface MockVariantMonomerItem {
@@ -33,16 +33,14 @@ jest.mock('ketcher-core', () => {
   };
 });
 
-// Import after mocking to get the mocked version
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { AmbiguousMonomer } = require('ketcher-core');
-
 const createMockAmbiguousMonomer = (
   variantMonomerItem: MockVariantMonomerItem,
   monomerClass: string,
 ) => {
-  const monomer = new AmbiguousMonomer(variantMonomerItem);
-  monomer.monomerClass = monomerClass;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const monomer = new AmbiguousMonomer(variantMonomerItem as any);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (monomer as any).monomerClass = monomerClass;
   return monomer as unknown as BaseMonomer;
 };
 

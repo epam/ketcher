@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { syncSettingsFromCore } from '../index';
+import optionsReducer, { syncSettingsFromCore } from '../index';
 import { getDefaultOptions } from '../../../data/schema/options-schema';
 import { getDefaultSettings } from 'ketcher-core';
 
@@ -147,10 +147,6 @@ describe('syncSettingsFromCore', () => {
 });
 
 describe('Redux reducer - SYNC_SETTINGS_FROM_CORE', () => {
-  // Import the reducer
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const optionsReducer = require('../index').default;
-
   it('should handle SYNC_SETTINGS_FROM_CORE action', () => {
     const initialState = {
       settings: {

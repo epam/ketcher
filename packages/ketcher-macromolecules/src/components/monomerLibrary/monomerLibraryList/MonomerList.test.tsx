@@ -143,4 +143,62 @@ describe('Monomer List', () => {
 
     expect(view).toMatchSnapshot();
   });
+
+  it('should group favorite monomers with the same natural analog code by section instead of mixing them', () => {
+    render(
+      withThemeAndStoreProvider(
+        <MonomerList
+          libraryName={MONOMER_LIBRARY_FAVORITES}
+          onItemClick={onItemClick}
+          duplicatePreset={duplicatePreset}
+          editPreset={editPreset}
+        />,
+        {
+          ...initialState,
+          library: {
+            ...initialState.library,
+            favorites: {
+              Ala___Alanine: true,
+              A___Adenine: true,
+            },
+            monomers: [
+              {
+                props: {
+                  BranchMonomer: 'false',
+                  MonomerCaps: { R1: 'H' },
+                  MonomerCode: '',
+                  MonomerName: 'Ala',
+                  MonomerNaturalAnalogCode: 'A',
+                  MonomerType: 'PEPTIDE',
+                  MonomerClass: 'AminoAcid',
+                  Name: 'Alanine',
+                },
+                struct: {},
+              },
+              {
+                props: {
+                  BranchMonomer: 'false',
+                  MonomerCaps: { R1: 'H' },
+                  MonomerCode: '',
+                  MonomerName: 'A',
+                  MonomerNaturalAnalogCode: 'A',
+                  MonomerType: 'RNA',
+                  MonomerClass: 'Base',
+                  Name: 'Adenine',
+                },
+                struct: {},
+              },
+            ],
+          },
+        },
+      ),
+    );
+
+    expect(screen.getByText('Peptides')).toBeInTheDocument();
+    expect(screen.getByText('RNA')).toBeInTheDocument();
+    expect(screen.queryByText('Sugars')).not.toBeInTheDocument();
+    expect(screen.getByText('Bases')).toBeInTheDocument();
+    expect(screen.getByText('Ala')).toBeInTheDocument();
+    expect(screen.getByTestId('A___Adenine')).toBeInTheDocument();
+  });
 });

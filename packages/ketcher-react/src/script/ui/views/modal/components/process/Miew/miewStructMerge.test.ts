@@ -10,11 +10,26 @@ import {
 } from 'ketcher-core';
 import {
   alignToCentroid,
+  collapseExpandedSuperatoms,
   mergeCoordinatesFromResult,
   mergeMetaObjects,
   needsMetaPreservation,
   needsStructurePreservation,
 } from './miewStructMerge';
+
+const SUPERATOM_CLASS_TEXT: Record<string, string> = {
+  SUGAR: 'Sugar',
+  BASE: 'Base',
+  PHOSPHATE: 'Phosphate',
+};
+function resolveSuperatomLabel(sgroup: {
+  data: { name?: string | null; class?: string | null };
+}): string {
+  const cls = sgroup.data?.class ?? undefined;
+  return (
+    sgroup.data?.name?.trim() || (cls ? SUPERATOM_CLASS_TEXT[cls] : '') || ''
+  );
+}
 
 describe('miewStructMerge', () => {
   describe('needsMetaPreservation', () => {
@@ -372,6 +387,131 @@ describe('miewStructMerge', () => {
       expect(preserved.sgroups.size).toBe(1);
       const preservedGroup = Array.from(preserved.sgroups.values())[0];
       expect(preservedGroup.data.name).toBe('MyGroup');
+    });
+  });
+
+  describe('collapseExpandedSuperatoms', () => {
+    it('normalizes an initially expanded nucleotide SUP group to the contracted state produced by the old Miew/CML Apply flow, preserving metadata and atom membership', () => {
+      // Start from the exact shape of the bug report: expanded SUP groups with
+      // class SUGAR/BASE/PHOSPHATE and empty names.
+      const struct = new Struct();
+
+      const sugarAtoms = [
+        struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) })),
+        struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(1, 0) })),
+        struct.atoms.add(new Atom({ label: 'O', pp: new Vec2(0.5, 1) })),
+      ];
+      const baseAtoms = [
+        struct.atoms.add(new Atom({ label: 'N', pp: new Vec2(2, 0) })),
+        struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(3, 0) })),
+      ];
+      const phosphateAtoms = [
+        struct.atoms.add(new Atom({ label: 'P', pp: new Vec2(4, 0) })),
+        struct.atoms.add(new Atom({ label: 'O', pp: new Vec2(5, 0) })),
+      ];
+
+      const sugarGroup = new SGroup('SUP');
+      sugarGroup.data.class = 'SUGAR';
+      sugarGroup.data.name = '';
+      sugarGroup.data.expanded = true;
+      sugarGroup.atoms = sugarAtoms;
+      struct.sgroups.add(sugarGroup);
+
+      const baseGroup = new SGroup('SUP');
+      baseGroup.data.class = 'BASE';
+      baseGroup.data.name = '';
+      baseGroup.data.expanded = true;
+      baseGroup.atoms = baseAtoms;
+      struct.sgroups.add(baseGroup);
+
+      const phosphateGroup = new SGroup('SUP');
+      phosphateGroup.data.class = 'PHOSPHATE';
+      phosphateGroup.data.name = '';
+      phosphateGroup.data.expanded = true;
+      phosphateGroup.atoms = phosphateAtoms;
+      struct.sgroups.add(phosphateGroup);
+
+      const originalAtomCount = struct.atoms.size;
+      const originalBondCount = struct.bonds.size;
+      const preserved = struct.clone();
+      preserved.enableInitiallySelected();
+
+      const result = new Struct();
+      preserved.atoms.forEach((atom) => {
+        result.atoms.add(
+          new Atom({
+            label: atom.label,
+            pp: new Vec2(atom.pp.x + 0.1, atom.pp.y + 0.1, atom.pp.z + 0.05),
+          }),
+        );
+      });
+
+      expect(mergeCoordinatesFromResult(preserved, result)).toBe(true);
+
+      collapseExpandedSuperatoms(preserved);
+
+      expect(preserved.atoms.size).toBe(originalAtomCount);
+      expect(preserved.bonds.size).toBe(originalBondCount);
+
+      const groups = Array.from(preserved.sgroups.values());
+      expect(groups).toHaveLength(3);
+
+      groups.forEach((group) => {
+        expect(group.type).toBe(SGroup.TYPES.SUP);
+        expect(group.data.expanded).toBe(false);
+      });
+
+      expect(groups[0].data.class).toBe('SUGAR');
+      expect(groups[0].atoms).toEqual(sugarAtoms);
+      expect(groups[1].data.class).toBe('BASE');
+      expect(groups[1].atoms).toEqual(baseAtoms);
+      expect(groups[2].data.class).toBe('PHOSPHATE');
+      expect(groups[2].atoms).toEqual(phosphateAtoms);
+
+      expect(resolveSuperatomLabel(groups[0])).toBe('Sugar');
+      expect(resolveSuperatomLabel(groups[1])).toBe('Base');
+      expect(resolveSuperatomLabel(groups[2])).toBe('Phosphate');
+    });
+
+    it('collapses a regular named SUP group too, matching the old unconditional CML import contraction', () => {
+      const struct = new Struct();
+      const atoms = [
+        struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) })),
+        struct.atoms.add(new Atom({ label: 'O', pp: new Vec2(1, 0) })),
+      ];
+
+      const group = new SGroup('SUP');
+      group.data.name = 'Boc';
+      group.data.expanded = true;
+      group.atoms = atoms;
+      struct.sgroups.add(group);
+
+      const preserved = struct.clone();
+      preserved.enableInitiallySelected();
+
+      collapseExpandedSuperatoms(preserved);
+
+      const collapsed = Array.from(preserved.sgroups.values())[0];
+      expect(collapsed.type).toBe(SGroup.TYPES.SUP);
+      expect(collapsed.data.expanded).toBe(false);
+      expect(collapsed.data.name).toBe('Boc');
+      expect(collapsed.atoms).toEqual(atoms);
+    });
+
+    it('leaves non-SUP S-groups untouched', () => {
+      const struct = new Struct();
+      struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) }));
+
+      const dataGroup = new SGroup('DAT');
+      dataGroup.data.expanded = true;
+      dataGroup.atoms = [0];
+      struct.sgroups.add(dataGroup);
+
+      collapseExpandedSuperatoms(struct);
+
+      const group = Array.from(struct.sgroups.values())[0];
+      expect(group.type).toBe('DAT');
+      expect(group.data.expanded).toBe(true);
     });
   });
 });

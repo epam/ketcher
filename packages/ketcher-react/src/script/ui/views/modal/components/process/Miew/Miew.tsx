@@ -44,6 +44,7 @@ import { createSelector } from 'reselect';
 import { useAppContext } from 'src/hooks';
 import {
   alignToCentroid,
+  collapseExpandedSuperatoms,
   mergeCoordinatesFromResult,
   mergeMetaObjects,
   needsMetaPreservation,
@@ -195,6 +196,7 @@ const MiewDialog = ({
         const preserved = struct.clone();
         preserved.enableInitiallySelected();
         if (mergeCoordinatesFromResult(preserved, result)) {
+          collapseExpandedSuperatoms(preserved);
           dispatch(
             load(preserved, { preserveViewport: true, skipCenter: true }),
           );

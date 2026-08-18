@@ -46,7 +46,9 @@ export const RnaEditor = ({ duplicatePreset }) => {
 
   useEffect(() => {
     if (activePreset) {
-      if (activePreset.name || isEditMode) setExpanded(true);
+      if (isEditMode) {
+        setExpanded(true);
+      }
       return;
     }
 
@@ -61,8 +63,12 @@ export const RnaEditor = ({ duplicatePreset }) => {
   }, [isEditMode]);
 
   const expandEditor = () => {
-    setExpanded(!expanded);
-    if (!activePreset?.nameInList) {
+    const nextExpanded = !expanded;
+    setExpanded(nextExpanded);
+
+    if (!nextExpanded) {
+      dispatch(setIsEditMode(false));
+    } else if (!activePreset?.nameInList) {
       dispatch(setIsEditMode(true));
     }
   };

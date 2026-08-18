@@ -105,28 +105,25 @@ const MeasureInput = ({
   ...rest
 }: MeasureInputProps) => {
   const [internalValue, setInternalValue] = useState(String(value));
+  const [prevPropValue, setPrevPropValue] = useState(value);
   const {
     anchorEl,
     handleOpen: handlePopoverOpen,
     handleClose: handlePopoverClose,
   } = usePopoverAnchor();
 
-  // NOTE: onChange handler in the Input comopnent (packages/ketcher-react/src/script/ui/component/form/Input/Input.tsx)
-  // is mapped to the internal function via constructor
-  // therefore the referencies to the MeasureInput's state are not updated
-  // so we need to sync the props and the internal value through useEffects and use callbacks with
-  // previous state to have the latest value
+  // Sync external value changes during render instead of in a useEffect to avoid
+  // the extra render cycle. React re-renders immediately when setState is called
+  // during render, skipping the intermediate paint.
+  if (prevPropValue !== value) {
+    setPrevPropValue(value);
+    setInternalValue(String(value));
+  }
 
-  useEffect(() => {
-    setInternalValue((prevValue) => {
-      if (prevValue !== String(value)) {
-        return String(value);
-      }
-
-      return prevValue;
-    });
-  }, [value]);
-
+  // NOTE: onChange handler in the Input component (packages/ketcher-react/src/script/ui/component/form/Input/Input.tsx)
+  // is mapped to the internal function via constructor, so its closure does not
+  // capture updated MeasureInput state. Propagate internal changes via effect
+  // with a functional-update callback to always read the latest value.
   useEffect(() => {
     if (internalValue !== String(value)) {
       const isNewInternalValueValid = !isNaN(parseFloat(internalValue));

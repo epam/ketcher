@@ -21,6 +21,7 @@ import { MONOMER_CONST } from 'domain/constants';
 import { SettingsManager } from 'utilities';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
+const CHAIN_START_ARROW_ANTISENSE_SYMBOL_ID = 'sequence-start-arrow-antisense';
 const CARET_X_OFFSET_BEFORE_NODE = -17;
 const CARET_X_OFFSET_AFTER_NODE = 3;
 
@@ -663,12 +664,16 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private appendChainStartArrow() {
+    const symbolId = this.isAntisenseNode
+      ? CHAIN_START_ARROW_ANTISENSE_SYMBOL_ID
+      : CHAIN_START_ARROW_SYMBOL_ID;
+
     this.rootElement
       ?.append('use')
       .attr('x', -17)
       .attr('y', -27)
       .attr('data-testid', 'sequence-start-arrow')
-      .attr('href', `#${CHAIN_START_ARROW_SYMBOL_ID}`);
+      .attr('href', `#${symbolId}`);
   }
 
   private drawGreyOverlay() {

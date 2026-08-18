@@ -15,18 +15,44 @@
  ***************************************************************************/
 
 export const SequenceStartArrow = () => (
-  <symbol id="sequence-start-arrow" viewBox="0 0 65 65" width="65" height="95">
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 12 12"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+  <>
+    <symbol
+      id="sequence-start-arrow"
+      viewBox="0 0 65 65"
+      width="65"
+      height="95"
     >
-      <path
-        d="M10.2802 5.09664C10.9756 5.49813 10.9756 6.50187 10.2802 6.90336L2.56467 11.3579C1.86926 11.7594 1 11.2576 1 10.4546V1.54541C1 0.742426 1.86926 0.240558 2.56467 0.642053L10.2802 5.09664Z"
-        stroke="#7C7C7F"
-      />
-    </svg>
-  </symbol>
+      <svg
+        width="12"
+        height="12"
+        viewBox="0 0 12 12"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M10.2802 5.09664C10.9756 5.49813 10.9756 6.50187 10.2802 6.90336L2.56467 11.3579C1.86926 11.7594 1 11.2576 1 10.4546V1.54541C1 0.742426 1.86926 0.240558 2.56467 0.642053L10.2802 5.09664Z"
+          stroke="#7C7C7F"
+        />
+      </svg>
+    </symbol>
+    <symbol
+      id="sequence-start-arrow-antisense"
+      viewBox="0 0 65 65"
+      width="65"
+      height="95"
+    >
+      <svg
+        width="12"
+        height="12"
+        viewBox="0 0 12 12"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M1.7198 5.09664C1.0244 5.49813 1.0244 6.50187 1.7198 6.90336L9.43533 11.3579C10.13074 11.7594 11 11.2576 11 10.4546V1.54541C11 0.742426 10.13074 0.240558 9.43533 0.642053L1.7198 5.09664Z"
+          stroke="#7C7C7F"
+        />
+      </svg>
+    </symbol>
+  </>
 );

@@ -173,4 +173,196 @@ describe('miewStructMerge', () => {
       expect(() => cloned.getInitiallySelected()).not.toThrow();
     });
   });
+
+  describe('repeated Miew Apply operations', () => {
+    it('preserves structure metadata across multiple Apply operations without throwing', () => {
+      const struct = new Struct();
+
+      const sugarAtoms = [
+        struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) })),
+        struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(1, 0) })),
+        struct.atoms.add(new Atom({ label: 'O', pp: new Vec2(0.5, 1) })),
+      ];
+
+      const baseAtoms = [
+        struct.atoms.add(new Atom({ label: 'N', pp: new Vec2(2, 0) })),
+        struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(3, 0) })),
+        struct.atoms.add(new Atom({ label: 'N', pp: new Vec2(2.5, 1) })),
+      ];
+
+      const phosphateAtoms = [
+        struct.atoms.add(new Atom({ label: 'P', pp: new Vec2(4, 0) })),
+        struct.atoms.add(new Atom({ label: 'O', pp: new Vec2(5, 0) })),
+      ];
+
+      const sugarGroup = new SGroup('SUP');
+      sugarGroup.data.class = 'SUGAR';
+      sugarGroup.data.name = 'Ribose';
+      sugarGroup.data.expanded = false;
+      sugarGroup.atoms = sugarAtoms;
+      struct.sgroups.add(sugarGroup);
+
+      const baseGroup = new SGroup('SUP');
+      baseGroup.data.class = 'BASE';
+      baseGroup.data.name = 'Adenine';
+      baseGroup.data.expanded = false;
+      baseGroup.atoms = baseAtoms;
+      struct.sgroups.add(baseGroup);
+
+      const phosphateGroup = new SGroup('SUP');
+      phosphateGroup.data.class = 'PHOSPHATE';
+      phosphateGroup.data.name = 'PO4';
+      phosphateGroup.data.expanded = false;
+      phosphateGroup.atoms = phosphateAtoms;
+      struct.sgroups.add(phosphateGroup);
+
+      const firstResult = new Struct();
+      sugarAtoms.forEach((id) => {
+        const origAtom = struct.atoms.get(id)!;
+        firstResult.atoms.add(
+          new Atom({
+            label: origAtom.label,
+            pp: new Vec2(
+              origAtom.pp.x + 0.1,
+              origAtom.pp.y + 0.1,
+              origAtom.pp.z + 0.05,
+            ),
+          }),
+        );
+      });
+      baseAtoms.forEach((id) => {
+        const origAtom = struct.atoms.get(id)!;
+        firstResult.atoms.add(
+          new Atom({
+            label: origAtom.label,
+            pp: new Vec2(
+              origAtom.pp.x + 0.1,
+              origAtom.pp.y + 0.1,
+              origAtom.pp.z + 0.05,
+            ),
+          }),
+        );
+      });
+      phosphateAtoms.forEach((id) => {
+        const origAtom = struct.atoms.get(id)!;
+        firstResult.atoms.add(
+          new Atom({
+            label: origAtom.label,
+            pp: new Vec2(
+              origAtom.pp.x + 0.1,
+              origAtom.pp.y + 0.1,
+              origAtom.pp.z + 0.05,
+            ),
+          }),
+        );
+      });
+
+      const firstPreserved = struct.clone();
+      firstPreserved.enableInitiallySelected();
+      const firstMerged = mergeCoordinatesFromResult(
+        firstPreserved,
+        firstResult,
+      );
+      expect(firstMerged).toBe(true);
+
+      firstPreserved.disableInitiallySelected();
+
+      expect(firstPreserved.atoms.size).toBe(8);
+      expect(firstPreserved.sgroups.size).toBe(3);
+
+      const firstSugar = Array.from(firstPreserved.sgroups.values())[0];
+      expect(firstSugar.data.class).toBe('SUGAR');
+      expect(firstSugar.data.name).toBe('Ribose');
+      expect(firstSugar.atoms).toEqual(sugarAtoms);
+
+      const firstBase = Array.from(firstPreserved.sgroups.values())[1];
+      expect(firstBase.data.class).toBe('BASE');
+      expect(firstBase.data.name).toBe('Adenine');
+
+      const firstPhosphate = Array.from(firstPreserved.sgroups.values())[2];
+      expect(firstPhosphate.data.class).toBe('PHOSPHATE');
+      expect(firstPhosphate.data.name).toBe('PO4');
+
+      const firstAtom = firstPreserved.atoms.get(sugarAtoms[0])!;
+      expect(firstAtom.pp.x).toBeCloseTo(0.1);
+      expect(firstAtom.pp.z).toBeCloseTo(0.05);
+
+      const secondResult = new Struct();
+      firstPreserved.atoms.forEach((atom) => {
+        secondResult.atoms.add(
+          new Atom({
+            label: atom.label,
+            pp: new Vec2(atom.pp.x + 0.05, atom.pp.y + 0.05, atom.pp.z + 0.02),
+          }),
+        );
+      });
+
+      const secondPreserved = firstPreserved.clone();
+
+      secondPreserved.enableInitiallySelected();
+
+      expect(() => {
+        secondPreserved.atoms.forEach((atom) => {
+          atom.getInitiallySelected();
+        });
+      }).not.toThrow();
+
+      const secondMerged = mergeCoordinatesFromResult(
+        secondPreserved,
+        secondResult,
+      );
+      expect(secondMerged).toBe(true);
+
+      expect(secondPreserved.atoms.size).toBe(8);
+      expect(secondPreserved.sgroups.size).toBe(3);
+
+      const secondSugar = Array.from(secondPreserved.sgroups.values())[0];
+      expect(secondSugar.data.class).toBe('SUGAR');
+      expect(secondSugar.data.name).toBe('Ribose');
+      expect(secondSugar.atoms).toEqual(sugarAtoms);
+
+      const secondBase = Array.from(secondPreserved.sgroups.values())[1];
+      expect(secondBase.data.class).toBe('BASE');
+      expect(secondBase.data.name).toBe('Adenine');
+
+      const secondPhosphate = Array.from(secondPreserved.sgroups.values())[2];
+      expect(secondPhosphate.data.class).toBe('PHOSPHATE');
+      expect(secondPhosphate.data.name).toBe('PO4');
+
+      const secondAtom = secondPreserved.atoms.get(sugarAtoms[0])!;
+      expect(secondAtom.pp.x).toBeCloseTo(0.15);
+      expect(secondAtom.pp.z).toBeCloseTo(0.07);
+    });
+
+    it('returns early without loading when coordinate mapping fails (atom count mismatch)', () => {
+      const struct = new Struct();
+      struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) }));
+      struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(1, 0) }));
+
+      const sgroup = new SGroup('SUP');
+      sgroup.data.name = 'MyGroup';
+      sgroup.atoms = [0, 1];
+      struct.sgroups.add(sgroup);
+
+      struct.disableInitiallySelected();
+
+      const result = new Struct();
+      result.atoms.add(new Atom({ label: 'C', pp: new Vec2(5, 5) }));
+
+      const preserved = struct.clone();
+      preserved.enableInitiallySelected();
+
+      const merged = mergeCoordinatesFromResult(preserved, result);
+
+      expect(merged).toBe(false);
+
+      const origAtom = preserved.atoms.get(0)!;
+      expect(origAtom.pp.x).toBeCloseTo(0);
+      expect(origAtom.pp.y).toBeCloseTo(0);
+
+      expect(preserved.sgroups.size).toBe(1);
+      const preservedGroup = Array.from(preserved.sgroups.values())[0];
+      expect(preservedGroup.data.name).toBe('MyGroup');
+    });
+  });
 });

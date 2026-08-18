@@ -193,6 +193,7 @@ const MiewDialog = ({
         alignToCentroid(result, struct);
 
         const preserved = struct.clone();
+        preserved.enableInitiallySelected();
         if (mergeCoordinatesFromResult(preserved, result)) {
           dispatch(
             load(preserved, { preserveViewport: true, skipCenter: true }),

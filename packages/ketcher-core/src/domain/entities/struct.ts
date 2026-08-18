@@ -838,19 +838,30 @@ export class Struct {
     return bld.cnt > 0 ? bld.totalLength / bld.cnt : -1;
   }
 
-  getMedianBondLength(): number {
+  getBondLengths(): number[] {
     const lengths: number[] = [];
     this.bonds.forEach((bond) => {
       lengths.push(
         Vec2.dist(this.atoms.get(bond.begin)!.pp, this.atoms.get(bond.end)!.pp),
       );
     });
-    if (lengths.length === 0) return -1;
-    lengths.sort((a, b) => a - b);
-    const mid = Math.floor(lengths.length / 2);
-    return lengths.length % 2 === 0
-      ? (lengths[mid - 1] + lengths[mid]) / 2
-      : lengths[mid];
+    return lengths;
+  }
+
+  /** Median of `values`, or -1 when there is nothing to measure. */
+  static median(values: number[]): number {
+    if (values.length === 0) {
+      return -1;
+    }
+    const sorted = [...values].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 0
+      ? (sorted[mid - 1] + sorted[mid]) / 2
+      : sorted[mid];
+  }
+
+  getMedianBondLength(): number {
+    return Struct.median(this.getBondLengths());
   }
 
   getAvgClosestAtomDistance(): number {
@@ -1025,14 +1036,14 @@ export class Struct {
   }
 
   /**
-   * Returns true unless format is 'ket'. KET coordinates are already in canvas scale;
-   * rescaling would distort the layout. Accepts string (not SupportedFormat) to avoid
-   * a circular import with structFormatter.types.ts.
+   * Normalizes coordinates so the median bond length becomes 1 (Ketcher's canvas
+   * unit). Applied identically to every input format; rescaleMolecules() in
+   * serializers/mol/utils.js follows the same rule for the reaction-merge path.
+   *
+   * The median rather than the mean: a handful of distorted bonds used to drag the
+   * average far from 1, shrinking the whole drawing — shapes, texts and images
+   * included — on load. See issue #5275.
    */
-  static needsRescale(format: string | null): boolean {
-    return format !== 'ket';
-  }
-
   rescale() {
     const median = this.getMedianBondLength();
     if (median <= 0) {
@@ -1040,7 +1051,8 @@ export class Struct {
     }
 
     const scale = 1 / median;
-    // Skip absurd scale factors — bond lengths outside [0.01, 100] indicate degenerate geometry.
+    // Refuse absurd factors: a median outside [0.01, 100] means degenerate geometry,
+    // and normalizing it would distort the drawing more than leaving it alone.
     if (scale < Struct.MIN_RESCALE || scale > Struct.MAX_RESCALE) {
       return;
     }

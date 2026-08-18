@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import {
-  Struct,
+  type Struct,
   type Editor,
   FormatterFactory,
   SGroup,
@@ -110,7 +110,6 @@ export function load(struct: string | Struct, options?) {
       method,
       preserveViewport = false,
       skipCenter = false,
-      rescale: rescaleOption,
       ...otherOptions
     } = options;
     otherOptions = {
@@ -145,15 +144,8 @@ export function load(struct: string | Struct, options?) {
       // scaling works bad with molecule-to-monomer connections.
       // preserveViewport also skips rescale so aromatize/dearomatize keep the
       // current canvas position instead of re-normalizing coordinates.
-      const pastedFormat =
-        typeof struct === 'string' ? identifyStructFormat(struct) : null;
-      // rescale option overrides format-based detection (e.g. rescale:false for server-formatted input).
-      if (
-        !preserveViewport &&
-        !hasMoleculeToMonomerConnections &&
-        (rescaleOption ?? Struct.needsRescale(pastedFormat))
-      ) {
-        parsedStruct.rescale();
+      if (!preserveViewport && !hasMoleculeToMonomerConnections) {
+        parsedStruct.rescale(); // TODO: move out parsing?
       }
 
       if (editor.struct().atoms.size) {

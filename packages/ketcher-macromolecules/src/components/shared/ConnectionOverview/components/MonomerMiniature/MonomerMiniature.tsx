@@ -9,7 +9,7 @@ import {
 } from 'ketcher-core';
 import { useLayoutEffect, useRef } from 'react';
 
-import { Container } from './MonomerMiniature.styles';
+import { Container, DEFAULT_MINIATURE_SIZE } from './MonomerMiniature.styles';
 
 interface Props {
   monomer: BaseMonomer;
@@ -28,20 +28,32 @@ const MonomerMiniature = ({
   usage,
   testId,
 }: Props) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
   useLayoutEffect(() => {
     const svg = svgRef.current;
-    if (svg) {
+    const container = containerRef.current;
+    if (svg && container) {
       const svgElement = select(svg) as unknown as Selection<
         SVGSVGElement,
         void,
         HTMLElement,
         never
       >;
+      // Redrawn from scratch on every relevant change (including `expanded`),
+      // since the renderer only appends elements and never clears them itself.
+      svgElement.selectAll('*').remove();
       if (monomer instanceof AmbiguousMonomer) {
-        const centerX = (svg.width.baseVal.value - svg.x.baseVal.value) / 2;
-        const centerY = (svg.height.baseVal.value - svg.y.baseVal.value) / 2;
+        // Always draw into a fixed-size reference box, exactly as in the
+        // collapsed state. Passing a `scale` into AmbiguousMonomerRenderer
+        // instead would distort the layout: its root `<g>` transform scales
+        // around local (0,0) before translating into place, and attachment
+        // points sit much further from that origin than the body does, so
+        // they'd drift far more than the body — which is what made R1/R2
+        // render detached from the monomer body previously.
+        const centerX = DEFAULT_MINIATURE_SIZE / 2;
+        const centerY = DEFAULT_MINIATURE_SIZE / 2;
         const position = new Vec2(centerX, centerY);
         const positionInAngstrom = Coordinates.canvasToModel(position);
         const variantMonomer = new AmbiguousMonomer(
@@ -57,12 +69,25 @@ const MonomerMiniature = ({
         });
       }
       // TODO: Use factory here for any other monomer if it will be required (e.g. unresolved monomers)?
+
+      // Scale the whole finished picture uniformly around its own center to
+      // fill the container (which already resizes correctly between the
+      // collapsed and expanded dialog states) — this keeps the body and its
+      // attachment points in the same relative positions at any size.
+      const { width, height } = container.getBoundingClientRect();
+      const scale = Math.min(width, height) / DEFAULT_MINIATURE_SIZE;
+      svgElement.style('transform', `scale(${scale})`);
+      svgElement.style('transform-origin', 'center');
     }
-  }, [selectedAttachmentPoint, connectedAttachmentPoints]);
+  }, [selectedAttachmentPoint, connectedAttachmentPoints, expanded, monomer]);
 
   return (
-    <Container expanded={expanded} data-testid={testId}>
-      <svg ref={svgRef} />
+    <Container ref={containerRef} expanded={expanded} data-testid={testId}>
+      <svg
+        ref={svgRef}
+        width={DEFAULT_MINIATURE_SIZE}
+        height={DEFAULT_MINIATURE_SIZE}
+      />
     </Container>
   );
 };

@@ -13,7 +13,6 @@ import { MonomerConnectionProps } from '../modalContainer/types';
 import {
   AmbiguousMonomer,
   BaseMonomer,
-  LeavingGroup,
   UsageInMacromolecule,
   AttachmentPointName,
 } from 'ketcher-core';
@@ -231,16 +230,14 @@ function AttachmentPointSelectionPanel({
     () => getConnectedAttachmentPoints(monomer.attachmentPointsToBonds),
   );
 
-  const getLeavingGroup = (attachmentPoint): LeavingGroup | null => {
+  const getLeavingGroup = (attachmentPoint): string | null => {
     const MonomerCaps = monomer.monomerCaps;
     const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
     if (!MonomerCaps) {
       return isAmbiguousMonomer ? null : 'H';
     }
     const leavingGroup = MonomerCaps[attachmentPoint];
-    return leavingGroup
-      ? hydrateLeavingGroup(leavingGroup as LeavingGroup)
-      : null;
+    return leavingGroup ? hydrateLeavingGroup(leavingGroup) : null;
   };
 
   const handleSelectAttachmentPoint = (attachmentPoint: string) => {

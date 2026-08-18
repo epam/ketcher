@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
   hasAntisenseChains,
   selectEditor,
@@ -73,9 +73,6 @@ export const EditorEvents = () => {
     selectLastSelectedSelectionMenuItem,
   );
 
-  const activeToolRef = useRef(activeTool);
-  activeToolRef.current = activeTool;
-
   const handleMonomersLibraryUpdate = useCallback(() => {
     dispatch(loadMonomerLibrary(editor?.monomersLibrary));
     dispatch(loadDefaultPresets(editor?.defaultRnaPresetsLibraryItems));
@@ -106,9 +103,7 @@ export const EditorEvents = () => {
 
   useEffect(() => {
     const handler = ([toolName]: [string]) => {
-      if (toolName !== activeToolRef.current) {
-        dispatch(selectTool(toolName));
-      }
+      dispatch(selectTool(toolName));
     };
 
     if (editor) {

@@ -40,6 +40,27 @@ describe('Multiple repeating S-groups limitations should be in [1, 200]', () => 
       screen.queryByText('must be greater than or equal to 1'),
     ).not.toBeInTheDocument();
   });
+
+  it('should keep Repeat count empty and disable Apply when input is cleared', () => {
+    const { input, store } = setup();
+
+    fireEvent.change(input, { target: { value: '0' } });
+    fireEvent.change(input, { target: { value: '' } });
+
+    expect((input as HTMLInputElement).value).toBe('');
+    expect(screen.getByTestId('OK')).toBeDisabled();
+    const modalState = store?.getState?.().modal;
+    expect(modalState).not.toBeNull();
+    if (!modalState) {
+      throw new Error('Modal state is null');
+    }
+    const formState = modalState.form;
+    expect(formState).not.toBeNull();
+    if (!formState) {
+      throw new Error('Modal form state is null');
+    }
+    expect(formState.errors?.mul).toBeUndefined();
+  });
 });
 
 describe('Copolymer S-Group type availability', () => {

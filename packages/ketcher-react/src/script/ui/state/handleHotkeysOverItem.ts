@@ -27,6 +27,7 @@ import {
 import SGroupTool from '../../editor/tool/sgroup';
 import { deleteFunctionalGroups } from '../../editor/tool/helper/deleteFunctionalGroups';
 import TemplateTool from '../../editor/tool/template';
+import { dispatchMonomerOrGroupDialog } from '../../editor/tool/monomerDialog.helpers';
 
 type TNewAction = {
   tool?: string;
@@ -423,7 +424,7 @@ async function isChangingFunctionalGroup(
   const fgId = getFunctionalGroupIdByItem(editor, hoveredItemId, type);
 
   if (fgId !== null) {
-    await editor.event.removeFG.dispatch({ fgIds: [fgId] });
+    await dispatchMonomerOrGroupDialog(editor, [fgId]);
 
     return false;
   }

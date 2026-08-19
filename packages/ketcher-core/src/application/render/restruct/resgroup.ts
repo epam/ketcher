@@ -151,6 +151,9 @@ class ReSGroup extends ReObject {
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
           SGroupdrawBracketsOptions.superatomClass = superatomClass;
+          if (sgroup instanceof MonomerMicromolecule) {
+            set.push(drawExpandedMonomerLabel(remol, sgroup, bracketBox));
+          }
           break;
         }
         case 'DAT': {
@@ -382,7 +385,16 @@ class ReSGroup extends ReObject {
     if (sgroup && sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
       const remol = render.ctab;
       const path = this.draw(remol, sgroup);
-      restruct.addReObjectPath(LayerMap.data, this.visel, path, null, true);
+      const includeInBoundingBox = !(
+        sgroup instanceof MonomerMicromolecule && sgroup.isExpanded()
+      );
+      restruct.addReObjectPath(
+        LayerMap.data,
+        this.visel,
+        path,
+        null,
+        includeInBoundingBox,
+      );
       this.setHover(this.hover, render); // TODO: fix this
     }
   }
@@ -546,13 +558,14 @@ function showValue(
   pos: Vec2 | undefined,
   sgroup: SGroup,
   options: RenderOptions,
+  value = sgroup.data.fieldValue,
 ): RaphaelSet {
-  const text = paper.text(pos?.x, pos?.y, sgroup.data.fieldValue).attr({
+  const text = paper.text(pos?.x, pos?.y, value).attr({
     font: options.font,
     'font-size': options.fontszsubInPx,
   });
   text.node?.setAttribute('data-testid', 's-group-label');
-  text.node?.setAttribute('data-label-text', sgroup.data.fieldValue);
+  text.node?.setAttribute('data-label-text', value);
   const box = text.getBBox();
   let rect = paper.rect(
     box.x - 1,
@@ -568,6 +581,28 @@ function showValue(
   const set = paper.set();
   set.push(rect, text.toFront());
   return set;
+}
+
+function drawExpandedMonomerLabel(
+  restruct: ReStruct,
+  sgroup: MonomerMicromolecule,
+  monomerBBox: Box2Abs,
+): RaphaelSet {
+  const { render } = restruct;
+  const labelPosition = monomerBBox.p1
+    .add(new Vec2(0, 0.3))
+    .scaled(render.options.microModeScale);
+  const label = showValue(
+    render.paper,
+    labelPosition,
+    sgroup,
+    render.options,
+    sgroup.data.name || '?',
+  );
+  const labelBBox = util.relBox(label.getBBox());
+  label.translateAbs(0.5 * labelBBox.width, -0.5 * labelBBox.height);
+
+  return label;
 }
 
 function drawGroupDat(restruct: ReStruct, sgroup: SGroup) {

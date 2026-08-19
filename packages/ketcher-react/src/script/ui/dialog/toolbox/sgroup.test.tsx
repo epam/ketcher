@@ -77,6 +77,7 @@ describe('Copolymer S-Group type availability', () => {
     renderWithMockStore(<SGroup type="COP" selectedSruCount={2} />, {
       modal: {
         form: {
+          errors: {},
           result: {
             type: 'COP',
           },
@@ -96,6 +97,7 @@ describe('Copolymer S-Group Subtype dropdown', () => {
       {
         modal: {
           form: {
+            errors: {},
             result: {
               type: 'COP',
               subtype: 'ran',
@@ -131,6 +133,7 @@ describe('S-Group DAT type rendering', () => {
     renderWithMockStore(<SGroup type="DAT" />, {
       modal: {
         form: {
+          errors: {},
           result: {
             type: 'DAT',
             context: 'Fragment',
@@ -149,6 +152,7 @@ function renderWithMockStore(
   initialState: Record<string, unknown> = {
     modal: {
       form: {
+        errors: {},
         result: {
           type: 'MUL',
         },

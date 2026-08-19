@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { render, fireEvent, cleanup } from '@testing-library/react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
+import { render, fireEvent, cleanup, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { useClickOutside } from '../useClickOutside';
 
@@ -22,15 +22,15 @@ describe('useClickOutside', () => {
 
   test('fires callback on outside click', () => {
     const spy = jest.fn();
-    const { getByTestId } = render(<HookHarness onOutside={spy} />);
-    fireEvent.click(getByTestId('outside'));
+    render(<HookHarness onOutside={spy} />);
+    fireEvent.click(screen.getByTestId('outside'));
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
   test('does not fire callback on inside click', () => {
     const spy = jest.fn();
-    const { getByTestId } = render(<HookHarness onOutside={spy} />);
-    fireEvent.click(getByTestId('inside'));
+    render(<HookHarness onOutside={spy} />);
+    fireEvent.click(screen.getByTestId('inside'));
     expect(spy).not.toHaveBeenCalled();
   });
 
@@ -46,8 +46,8 @@ describe('useClickOutside', () => {
       return <HookHarness onOutside={cb} />;
     }
 
-    const { getByTestId } = render(<Wrapper />);
-    fireEvent.click(getByTestId('outside'));
+    render(<Wrapper />);
+    fireEvent.click(screen.getByTestId('outside'));
     // First click after effect should call B (latest)
     expect(B).toHaveBeenCalledTimes(1);
     expect(A).not.toHaveBeenCalled();
@@ -59,7 +59,12 @@ describe('useClickOutside', () => {
 
     function Wrapper() {
       const [n, setN] = useState(0);
-      const cb = () => void n; // new identity every render
+      // new identity every render; reference `n` without using `void` or empty body
+      const cb = () => {
+        if (n > -1) {
+          /* no-op using n to keep function typed as () => void */
+        }
+      };
       useEffect(() => {
         setN(1); // trigger one more render to change callback
       }, []);
@@ -77,7 +82,7 @@ describe('useClickOutside', () => {
   test('removes listener on unmount', () => {
     const addSpy = jest.spyOn(document, 'addEventListener');
     const removeSpy = jest.spyOn(document, 'removeEventListener');
-    const { unmount } = render(<HookHarness onOutside={() => {}} />);
+    const { unmount } = render(<HookHarness onOutside={jest.fn()} />);
     unmount();
     const addCalls = addSpy.mock.calls.filter((c) => c[0] === 'click');
     const removeCalls = removeSpy.mock.calls.filter((c) => c[0] === 'click');
@@ -87,14 +92,14 @@ describe('useClickOutside', () => {
 
   test('handles null ref without throwing', () => {
     function NullRefHarness({ onOutside }: { onOutside: () => void }) {
-      const ref = { current: null } as React.RefObject<HTMLDivElement | null>;
+      const ref = { current: null } as RefObject<HTMLDivElement | null>;
       useClickOutside(ref, onOutside);
       return <div data-testid="outside" />;
     }
 
     const spy = jest.fn();
-    const { getByTestId } = render(<NullRefHarness onOutside={spy} />);
-    expect(() => fireEvent.click(getByTestId('outside'))).not.toThrow();
+    render(<NullRefHarness onOutside={spy} />);
+    expect(() => fireEvent.click(screen.getByTestId('outside'))).not.toThrow();
   });
 
   test('SSR guard: does not throw without document', () => {

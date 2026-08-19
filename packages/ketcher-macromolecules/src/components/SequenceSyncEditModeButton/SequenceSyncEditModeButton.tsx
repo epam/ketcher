@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAppSelector, useLayoutMode } from 'hooks';
 import { selectEditor } from 'state/common';
 import styled from '@emotion/styled';
@@ -55,6 +55,9 @@ export const SequenceSyncEditModeButton = () => {
     Boolean(editor?.drawingEntitiesManager?.hasAntisenseChains),
   );
 
+  const isSequenceSyncEditModeRef = useRef(isSequenceSyncEditMode);
+  isSequenceSyncEditModeRef.current = isSequenceSyncEditMode;
+
   const handleClick = () => {
     const isSequenceSyncEditModeNewState = !isSequenceSyncEditMode;
 
@@ -82,10 +85,10 @@ export const SequenceSyncEditModeButton = () => {
   useEffect(() => {
     if (isSequenceMode && hasAtLeastOneAntisense) {
       editor?.events.toggleIsSequenceSyncEditMode.dispatch(
-        isSequenceSyncEditMode,
+        isSequenceSyncEditModeRef.current,
       );
     }
-  }, [isSequenceMode, hasAtLeastOneAntisense]);
+  }, [isSequenceMode, hasAtLeastOneAntisense, editor]);
 
   return isSequenceMode && hasAtLeastOneAntisense ? (
     <StyledButton

@@ -104,33 +104,27 @@ const MeasureInput = ({
   className,
   ...rest
 }: MeasureInputProps) => {
-  const [internalValue, setInternalValue] = useState(String(value));
-  const [prevPropValue, setPrevPropValue] = useState(value);
+  const stringifiedValue = String(value);
+  const [internalValue, setInternalValue] = useState(stringifiedValue);
+  const [prevPropValue, setPrevPropValue] = useState(stringifiedValue);
   const {
     anchorEl,
     handleOpen: handlePopoverOpen,
     handleClose: handlePopoverClose,
   } = usePopoverAnchor();
 
-  // Sync external value changes during render instead of in a useEffect to avoid
-  // the extra render cycle. React re-renders immediately when setState is called
-  // during render, skipping the intermediate paint.
-  if (prevPropValue !== value) {
-    setPrevPropValue(value);
-    setInternalValue(String(value));
+  if (prevPropValue !== stringifiedValue) {
+    setPrevPropValue(stringifiedValue);
+    setInternalValue(stringifiedValue);
   }
 
-  // NOTE: onChange handler in the Input component (packages/ketcher-react/src/script/ui/component/form/Input/Input.tsx)
-  // is mapped to the internal function via constructor, so its closure does not
-  // capture updated MeasureInput state. Propagate internal changes via effect
-  // with a functional-update callback to always read the latest value.
+  // Input binds onChange once in its constructor, so handleChange is stuck with
+  // the first render's closure and cannot call the current onChange. This effect
+  // is re-created every render, so it always holds the latest onChange/value —
+  // hence the deliberate single-dep list.
   useEffect(() => {
-    if (internalValue !== String(value)) {
-      const isNewInternalValueValid = !isNaN(parseFloat(internalValue));
-
-      if (isNewInternalValueValid) {
-        onChange(parseFloat(internalValue));
-      }
+    if (internalValue !== stringifiedValue) {
+      onChange(parseFloat(internalValue));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [internalValue]);

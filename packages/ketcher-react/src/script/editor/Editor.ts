@@ -2405,14 +2405,11 @@ class Editor implements KetcherEditor {
       // bond that was using it on the macro-canvas.
       if (
         attachmentAtomIdsWithExternalBonds &&
-        attachmentAtomIdsWithExternalBonds.size > 0 &&
-        editingMonomerForReconciliation &&
-        editAllInitialValues?.editMode === 'instance'
+        attachmentAtomIdsWithExternalBonds.size > 0
       ) {
-        this.reconcileMacroCanvasBondsForDeletedAps(
+        this.reconcileExternalBonds(
           attachmentAtomIdsWithExternalBonds,
           finalAssignedAttachmentPoints,
-          editingMonomerForReconciliation,
         );
       }
 
@@ -2507,61 +2504,29 @@ class Editor implements KetcherEditor {
    * The micromolecule struct bond endpoint is already corrected by
    * updateBondEndpointByAttachmentPoint.
    */
-  private reconcileMacroCanvasBondsForDeletedAps(
+  private reconcileExternalBonds(
     attachmentAtomIdsWithExternalBonds: Map<
       AttachmentPointName,
       [number, number]
     >,
     finalAssignedAttachmentPoints: Map<AttachmentPointName, number>,
-    editingMonomer: BaseMonomer,
   ) {
-    // computeApDiff expects Map<AP, number>; extract just the attach atom IDs.
-    const oldApToAttachAtomId = new Map<AttachmentPointName, number>();
-    attachmentAtomIdsWithExternalBonds.forEach(([attachAtomId], apName) =>
-      oldApToAttachAtomId.set(apName, attachAtomId),
-    );
-    const { deleted } = computeApDiff(
-      oldApToAttachAtomId,
-      finalAssignedAttachmentPoints,
-    );
+    attachmentAtomIdsWithExternalBonds.forEach(
+      ([oldAttachmentAtomId, oldLeavingGroupId], attachmentPointName) => {
+        const newAttachmentAtomId =
+          finalAssignedAttachmentPoints.get(attachmentPointName);
 
-    if (deleted.length === 0) {
-      return;
-    }
-
-    const coreEditor = provideEditorInstance();
-    if (!coreEditor) {
-      return;
-    }
-
-    const { drawingEntitiesManager } = coreEditor;
-
-    deleted.forEach((apName) => {
-      const bond = editingMonomer.attachmentPointsToBonds[apName];
-      if (!bond) {
-        return;
-      }
-
-      let command;
-      if (bond instanceof PolymerBond) {
-        command = drawingEntitiesManager.deletePolymerBond(bond);
-      } else if (bond instanceof MonomerToAtomBond) {
-        command = drawingEntitiesManager.deleteMonomerToAtomBond(bond);
-      }
-
-      if (command) {
-        try {
-          const history = EditorHistory.getInstance(coreEditor);
-          history.update(command);
-          coreEditor.renderersContainer.update(command);
-        } catch (e) {
-          KetcherLogger.error(
-            'Editor.ts::reconcileMacroCanvasBondsForDeletedAps',
-            e,
-          );
+        if (!isNumber(newAttachmentAtomId)) {
+          //delete bond
         }
-      }
-    });
+
+        if (newAttachmentAtomId === oldAttachmentAtomId) {
+          return;
+        }
+
+        // delete old bond and establish new one
+      },
+    );
   }
 
   reassignAttachmentPointLeavingAtom(

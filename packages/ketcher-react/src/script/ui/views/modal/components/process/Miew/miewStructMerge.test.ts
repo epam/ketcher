@@ -8,6 +8,7 @@ import {
   Text,
   Vec2,
 } from 'ketcher-core';
+import { getSuperatomLabel } from 'ketcher-core/dist/application/render/restruct/resgroup';
 import {
   alignToCentroid,
   collapseExpandedSuperatoms,
@@ -16,20 +17,6 @@ import {
   needsMetaPreservation,
   needsStructurePreservation,
 } from './miewStructMerge';
-
-const SUPERATOM_CLASS_TEXT: Record<string, string> = {
-  SUGAR: 'Sugar',
-  BASE: 'Base',
-  PHOSPHATE: 'Phosphate',
-};
-function resolveSuperatomLabel(sgroup: {
-  data: { name?: string | null; class?: string | null };
-}): string {
-  const cls = sgroup.data?.class ?? undefined;
-  return (
-    sgroup.data?.name?.trim() || (cls ? SUPERATOM_CLASS_TEXT[cls] : '') || ''
-  );
-}
 
 describe('miewStructMerge', () => {
   describe('needsMetaPreservation', () => {
@@ -468,9 +455,9 @@ describe('miewStructMerge', () => {
       expect(groups[2].data.class).toBe('PHOSPHATE');
       expect(groups[2].atoms).toEqual(phosphateAtoms);
 
-      expect(resolveSuperatomLabel(groups[0])).toBe('Sugar');
-      expect(resolveSuperatomLabel(groups[1])).toBe('Base');
-      expect(resolveSuperatomLabel(groups[2])).toBe('Phosphate');
+      expect(getSuperatomLabel(groups[0])).toBe('Sugar');
+      expect(getSuperatomLabel(groups[1])).toBe('Base');
+      expect(getSuperatomLabel(groups[2])).toBe('Phosphate');
     });
 
     it('collapses a regular named SUP group too, matching the old unconditional CML import contraction', () => {

@@ -23,6 +23,8 @@ import {
   useRef,
   useState,
 } from 'react';
+import type { AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
 import { Dialog, LoadingCircles } from '../../../../components';
 import {
   type Struct,
@@ -35,11 +37,16 @@ import {
 import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema';
 import classes from './Miew.module.less';
 import { connect } from 'react-redux';
-import { load } from '../../../../../state';
+import { load, parseStruct } from '../../../../../state/shared';
 import { pick } from 'lodash/fp';
 import type { Miew as MiewAsType } from 'miew';
 import { createSelector } from 'reselect';
 import { useAppContext } from 'src/hooks';
+import {
+  alignToCentroid,
+  mergeMetaObjects,
+  needsMetaPreservation,
+} from './miewStructMerge';
 
 const Viewer = lazy(() =>
   import('miew-react').then((module) => ({
@@ -56,7 +63,8 @@ type MiewDialogProps = {
   miewTheme: 'dark' | 'light';
 };
 type MiewDialogCallProps = {
-  onExportCML: (cmlStruct: string) => void;
+  dispatch: ThunkDispatch<unknown, undefined, AnyAction>;
+  serverSettings: Record<string, unknown>;
 };
 type Props = MiewDialogProps & MiewDialogCallProps;
 
@@ -129,7 +137,8 @@ const MiewDialog = ({
   miewOpts,
   server,
   struct,
-  onExportCML,
+  dispatch,
+  serverSettings,
   miewTheme = 'light',
   ...prop
 }: Props) => {
@@ -152,9 +161,10 @@ const MiewDialog = ({
       miewRef.current = miew;
       const factory = new FormatterFactory(server);
       const service = factory.create(SupportedFormat.cml);
+      const moleculeOnlyStruct = struct.clone(null, null, true);
 
       service
-        .getStringFromStructureAsync(struct)
+        .getStringFromStructureAsync(moleculeOnlyStruct)
         .then((res) =>
           miew.load(res, { sourceType: 'immediate', fileType: 'cml' }),
         )
@@ -169,13 +179,27 @@ const MiewDialog = ({
     [miewOpts, server, struct],
   );
 
-  const exportCML = useCallback(() => {
+  const exportCML = useCallback(async () => {
     const cmlStruct = miewRef.current?.exportCML();
     if (!cmlStruct) {
       return;
     }
-    onExportCML(cmlStruct);
-  }, [onExportCML, miewRef]);
+
+    if (!needsMetaPreservation(struct)) {
+      dispatch(load(cmlStruct));
+      return;
+    }
+
+    try {
+      const result = await parseStruct(cmlStruct, server, serverSettings);
+      result.rescale();
+      alignToCentroid(result, struct);
+      mergeMetaObjects(result, struct);
+      dispatch(load(result, { preserveViewport: true, skipCenter: true }));
+    } catch (e) {
+      KetcherLogger.error('Miew.tsx::MiewDialog::exportCML', e);
+    }
+  }, [dispatch, server, serverSettings, struct]);
 
   return (
     <Dialog
@@ -228,14 +252,11 @@ const mapStateToProps = (state) => ({
   server: state.options.app.server ? state.server : null,
   struct: state.editor.struct(),
   miewTheme: state.options.settings.miewTheme,
+  serverSettings: state.options.getServerSettings(),
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onExportCML: (cmlStruct) => {
-    dispatch(load(cmlStruct));
-    // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
-    // See PR #731 (https://github.com/epam/ketcher/pull/731)
-  },
+  dispatch,
 });
 
 const Miew = connect(mapStateToProps, mapDispatchToProps)(MiewDialog);

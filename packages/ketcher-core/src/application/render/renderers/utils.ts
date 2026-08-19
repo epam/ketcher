@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from 'utilities';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
@@ -53,9 +53,8 @@ export function getRenderedStructuresBbox(drawingEntities?: DrawingEntity[]) {
     ) {
       return;
     }
-
     const monomerPosition = monomer.baseRenderer?.scaledPosition;
-
+    assert(monomerPosition);
     assert(monomerPosition);
 
     expandBbox(bbox, monomerPosition);
@@ -86,10 +85,17 @@ export function getRenderedStructuresBbox(drawingEntities?: DrawingEntity[]) {
     });
   }
 
-  const left = bbox.left ?? 0;
-  const right = bbox.right ?? 0;
-  const top = bbox.top ?? 0;
-  const bottom = bbox.bottom ?? 0;
+  assert(
+    bbox.left !== undefined &&
+      bbox.right !== undefined &&
+      bbox.top !== undefined &&
+      bbox.bottom !== undefined,
+  );
+
+  const left = bbox.left;
+  const right = bbox.right;
+  const top = bbox.top;
+  const bottom = bbox.bottom;
   return {
     left,
     right,

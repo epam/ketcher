@@ -67,18 +67,41 @@ export class ZoomTool implements BaseTool {
 
   // eslint-disable-next-line no-use-before-define
   private static _instance: ZoomTool;
+  // Per-rendering-operation context so each RenderersManager renders to its own canvas
+  // eslint-disable-next-line no-use-before-define
+  private static _renderingContext: ZoomTool | undefined;
+
   public static get instance() {
+    return ZoomTool._renderingContext ?? ZoomTool._instance;
+  }
+
+  static setRenderingContext(zoomTool: ZoomTool | undefined) {
+    ZoomTool._renderingContext = zoomTool;
+  }
+
+  static initInstance(
+    drawingEntitiesManager: DrawingEntitiesManager,
+    canvas?: SVGSVGElement,
+  ) {
+    ZoomTool._instance = new ZoomTool(drawingEntitiesManager, canvas);
     return ZoomTool._instance;
   }
 
-  static initInstance(drawingEntitiesManager: DrawingEntitiesManager) {
-    ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
-    return ZoomTool._instance;
-  }
-
-  private constructor(drawingEntitiesManager: DrawingEntitiesManager) {
-    this.canvasWrapper = select(canvasSelector);
-    this.canvas = select(drawnStructuresSelector);
+  private constructor(
+    drawingEntitiesManager: DrawingEntitiesManager,
+    canvas?: SVGSVGElement,
+  ) {
+    if (canvas) {
+      this.canvasWrapper = select<SVGSVGElement, void>(
+        canvas,
+      ) as unknown as D3SvgElementSelection<SVGSVGElement, void>;
+      this.canvas = select(canvas).select<SVGGElement>(
+        drawnStructuresSelector,
+      ) as unknown as D3SvgElementSelection<SVGGElement, void>;
+    } else {
+      this.canvasWrapper = select(canvasSelector);
+      this.canvas = select(drawnStructuresSelector);
+    }
 
     this.zoomLevel = 1;
     this._zoomTransform = new ZoomTransform(1, 0, 0);

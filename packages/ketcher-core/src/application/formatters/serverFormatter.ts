@@ -124,16 +124,14 @@ export class ServerFormatter implements StructFormatter {
   async getStructureFromStringAsync(
     stringifiedStruct: string,
   ): Promise<Struct> {
-    const data: ConvertData | LayoutData = {
-      struct: undefined as any,
-      output_format: getPropertiesByFormat(SupportedFormat.ket).mime,
-    };
-
     const { method, struct } = this.getCallingMethod(
       stringifiedStruct,
       this.#format,
     );
-    data.struct = struct;
+    const data: ConvertData | LayoutData = {
+      struct,
+      output_format: getPropertiesByFormat(SupportedFormat.ket).mime,
+    };
 
     try {
       const result = await method(data, this.#options);

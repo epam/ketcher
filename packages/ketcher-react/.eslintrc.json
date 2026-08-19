@@ -7,6 +7,7 @@
     "plugin:react/jsx-runtime",
     "plugin:jsx-a11y/recommended",
     "plugin:react-hooks/recommended",
+    "plugin:react-you-might-not-need-an-effect/legacy-recommended",
     "plugin:jest/recommended"
   ],
   "rules": {
@@ -21,6 +22,17 @@
       {
         "prefer": "type-imports",
         "fixStyle": "separate-type-imports"
+      }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "assert",
+            "message": "Node's 'assert' module breaks browser bundlers (see issue #3733). Use `import { assert } from 'ketcher-core'` instead."
+          }
+        ]
       }
     ]
   },

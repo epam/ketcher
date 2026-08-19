@@ -75,9 +75,8 @@ import EventEmitter from 'events';
 import {
   STRUCT_SERVICE_INITIALIZED_EVENT,
   STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT,
+  DEFAULT_WORKER_TIMEOUT,
 } from './constants';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { getIndigoWorker } from '_indigo-worker-import-alias_';
 
 interface KeyValuePair {
@@ -195,6 +194,45 @@ function mapWarningGroup(property: string) {
   return property.toLowerCase();
 }
 
+/**
+ * Creates a wrapper that adds timeout functionality to worker communication
+ * @param eventEmitter - The event emitter instance
+ * @param workerEvent - The worker event type to listen to
+ * @param action - The callback function to execute on success
+ * @param timeout - Timeout in milliseconds (0 means no timeout)
+ * @returns An object with setup method to initialize the timeout wrapper
+ */
+function createTimeoutWrapper<T>(
+  eventEmitter: EventEmitter,
+  workerEvent: WorkerEvent,
+  action: (data: OutputMessageWrapper<T>) => void,
+  timeout: number = DEFAULT_WORKER_TIMEOUT,
+): {
+  setup: () => void;
+} {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  const wrappedAction = (data: OutputMessageWrapper<T>) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    action(data);
+  };
+
+  const setup = () => {
+    eventEmitter.once(workerEvent, wrappedAction);
+
+    if (timeout !== 0) {
+      timeoutId = setTimeout(() => {
+        eventEmitter.off(workerEvent, wrappedAction);
+        throw new Error(`${workerEvent} operation timeout after ${timeout}ms`);
+      }, timeout);
+    }
+  };
+
+  return { setup };
+}
+
 const messageTypeToEventMapping: {
   [key in Command]: WorkerEvent;
 } = {
@@ -237,11 +275,14 @@ class IndigoService implements StructService {
   private readonly worker: Worker;
   private readonly EE: EventEmitter = new EventEmitter();
   private ketcherId: string | null = null;
+  private readonly messageHandler: (
+    e: MessageEvent<OutputMessage<string>>,
+  ) => void;
 
   constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions;
     this.worker = getIndigoWorker();
-    this.worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
+    this.messageHandler = (e: MessageEvent<OutputMessage<string>>) => {
       if (e.data.type === Command.Info) {
         const callbackMethod = process.env.SEPARATE_INDIGO_RENDER
           ? this.callIndigoNoRenderLoadedCallback
@@ -256,6 +297,7 @@ class IndigoService implements StructService {
         this.EE.emit(event, { data: message });
       }
     };
+    this.worker.addEventListener('message', this.messageHandler);
   }
 
   public addKetcherId(ketcherId: string) {
@@ -292,12 +334,18 @@ class IndigoService implements StructService {
         }
       };
 
+      const wrapper = createTimeoutWrapper(
+        this.EE,
+        WorkerEvent.GetInChIKey,
+        action,
+      );
+
       const inputMessage: InputMessage<GenerateInchIKeyCommandData> = {
         type: Command.GetInChIKey,
         data: { struct },
       };
 
-      this.EE.once(WorkerEvent.GetInChIKey, action);
+      wrapper.setup();
 
       this.worker.postMessage(inputMessage);
     });
@@ -320,7 +368,14 @@ class IndigoService implements StructService {
         }
       };
 
-      this.EE.once(WorkerEvent.Info, action);
+      const wrapper = createTimeoutWrapper(
+        this.EE,
+        WorkerEvent.Info,
+        action,
+        DEFAULT_WORKER_TIMEOUT,
+      );
+
+      wrapper.setup();
 
       this.worker.postMessage({ type: Command.Info });
     });
@@ -336,6 +391,7 @@ class IndigoService implements StructService {
       struct,
     } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
+    const timeout = options?.['request-timeout'] as number | undefined;
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
@@ -353,6 +409,14 @@ class IndigoService implements StructService {
           }
         }
       };
+
+      const wrapper = createTimeoutWrapper(
+        this.EE,
+        WorkerEvent.Convert,
+        action,
+        timeout,
+      );
+
       const monomerLibrary = JSON.stringify(
         provideEditorInstance()?.monomersLibraryParsedJson,
       );
@@ -385,7 +449,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.once(WorkerEvent.Convert, action);
+      wrapper.setup();
 
       this.worker.postMessage(inputMessage);
     });
@@ -397,6 +461,7 @@ class IndigoService implements StructService {
   ): Promise<LayoutResult> {
     const { struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
+    const timeout = options?.['request-timeout'] as number | undefined;
 
     return new Promise((resolve, reject) => {
       const action = ({
@@ -423,6 +488,13 @@ class IndigoService implements StructService {
           reject(new Error(msg.error));
         }
       };
+
+      const wrapper = createTimeoutWrapper(
+        this.EE,
+        WorkerEvent.Layout,
+        action,
+        timeout,
+      );
 
       const commandOptions: CommandOptions = {
         ...this.getStandardServerOptions(options),
@@ -455,7 +527,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.once(WorkerEvent.Layout, action);
+      wrapper.setup();
 
       this.worker.postMessage(inputMessage);
     });
@@ -464,6 +536,7 @@ class IndigoService implements StructService {
   clean(data: CleanData, options?: StructServiceOptions): Promise<CleanResult> {
     const { struct, selected, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
+    const timeout = options?.['request-timeout'] as number | undefined;
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
@@ -479,6 +552,13 @@ class IndigoService implements StructService {
         }
       };
 
+      const wrapper = createTimeoutWrapper(
+        this.EE,
+        WorkerEvent.Clean,
+        action,
+        timeout,
+      );
+
       const commandData: CleanCommandData = {
         struct,
         format,
@@ -491,7 +571,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.once(WorkerEvent.Clean, action);
+      wrapper.setup();
 
       this.worker.postMessage(inputMessage);
     });
@@ -503,9 +583,17 @@ class IndigoService implements StructService {
   ): Promise<AromatizeResult> {
     const { struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
+    const timeout = options?.['request-timeout'] as number | undefined;
 
     return new Promise<AromatizeResult>((resolve, reject) => {
       const action = makeMolResultAction(resolve, reject);
+
+      const wrapper = createTimeoutWrapper(
+        this.EE,
+        WorkerEvent.Aromatize,
+        action,
+        timeout,
+      );
 
       const commandData: AromatizeCommandData = {
         struct,
@@ -518,7 +606,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.once(WorkerEvent.Aromatize, action);
+      wrapper.setup();
 
       this.worker.postMessage(inputMessage);
     });
@@ -530,9 +618,17 @@ class IndigoService implements StructService {
   ): Promise<DearomatizeResult> {
     const { struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
+    const timeout = options?.['request-timeout'] as number | undefined;
 
     return new Promise<DearomatizeResult>((resolve, reject) => {
       const action = makeMolResultAction(resolve, reject);
+
+      const wrapper = createTimeoutWrapper(
+        this.EE,
+        WorkerEvent.Dearomatize,
+        action,
+        timeout,
+      );
 
       const commandData: DearomatizeCommandData = {
         struct,
@@ -545,7 +641,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.once(WorkerEvent.Dearomatize, action);
+      wrapper.setup();
 
       this.worker.postMessage(inputMessage);
     });
@@ -557,6 +653,7 @@ class IndigoService implements StructService {
   ): Promise<CalculateCipResult> {
     const { struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
+    const timeout = options?.['request-timeout'] as number | undefined;
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
@@ -572,6 +669,13 @@ class IndigoService implements StructService {
         }
       };
 
+      const wrapper = createTimeoutWrapper(
+        this.EE,
+        WorkerEvent.CalculateCip,
+        action,
+        timeout,
+      );
+
       const commandData: CalculateCipCommandData = {
         struct,
         format,
@@ -583,7 +687,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.once(WorkerEvent.CalculateCip, action);
+      wrapper.setup();
 
       this.worker.postMessage(inputMessage);
     });
@@ -595,6 +699,7 @@ class IndigoService implements StructService {
   ): Promise<AutomapResult> {
     const { mode, struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
+    const timeout = options?.['request-timeout'] as number | undefined;
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
@@ -610,6 +715,13 @@ class IndigoService implements StructService {
         }
       };
 
+      const wrapper = createTimeoutWrapper(
+        this.EE,
+        WorkerEvent.Automap,
+        action,
+        timeout,
+      );
+
       const commandData: AutomapCommandData = {
         struct,
         format,
@@ -622,7 +734,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.once(WorkerEvent.Automap, action);
+      wrapper.setup();
 
       this.worker.postMessage(inputMessage);
     });
@@ -630,6 +742,7 @@ class IndigoService implements StructService {
 
   check(data: CheckData, options?: StructServiceOptions): Promise<CheckResult> {
     const { types, struct } = data;
+    const timeout = options?.['request-timeout'] as number | undefined;
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
@@ -653,6 +766,13 @@ class IndigoService implements StructService {
         }
       };
 
+      const wrapper = createTimeoutWrapper(
+        this.EE,
+        WorkerEvent.Check,
+        action,
+        timeout,
+      );
+
       const commandData: CheckCommandData = {
         struct,
         types,
@@ -664,7 +784,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.once(WorkerEvent.Check, action);
+      wrapper.setup();
 
       this.worker.postMessage(inputMessage);
     });
@@ -675,6 +795,8 @@ class IndigoService implements StructService {
     options?: StructServiceOptions,
   ): Promise<CalculateResult> {
     const { properties, struct, selected } = data;
+    const timeout = options?.['request-timeout'] as number | undefined;
+
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data;
@@ -699,6 +821,13 @@ class IndigoService implements StructService {
         }
       };
 
+      const wrapper = createTimeoutWrapper(
+        this.EE,
+        WorkerEvent.Calculate,
+        action,
+        timeout,
+      );
+
       const commandData: CalculateCommandData = {
         struct,
         properties,
@@ -711,7 +840,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.once(WorkerEvent.Calculate, action);
+      wrapper.setup();
 
       this.worker.postMessage(inputMessage);
     });
@@ -729,6 +858,7 @@ class IndigoService implements StructService {
     },
   ): Promise<string> {
     const { outputFormat, backgroundColor, ...restOptions } = options;
+    const timeout = restOptions['request-timeout'] as number | undefined;
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
@@ -741,6 +871,13 @@ class IndigoService implements StructService {
           }
         }
       };
+
+      const wrapper = createTimeoutWrapper(
+        this.EE,
+        WorkerEvent.GenerateImageAsBase64,
+        action,
+        timeout,
+      );
 
       const commandOptions: CommandOptions = {
         ...this.getStandardServerOptions(restOptions),
@@ -780,7 +917,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.once(WorkerEvent.GenerateImageAsBase64, action);
+      wrapper.setup();
 
       this.worker.postMessage(inputMessage);
     });
@@ -793,9 +930,17 @@ class IndigoService implements StructService {
     const { struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
     const mode = 'auto';
+    const timeout = options?.['request-timeout'] as number | undefined;
 
     return new Promise<ExplicitHydrogensResult>((resolve, reject) => {
       const action = makeMolResultAction(resolve, reject);
+
+      const wrapper = createTimeoutWrapper(
+        this.EE,
+        WorkerEvent.ExplicitHydrogens,
+        action,
+        timeout,
+      );
 
       const commandData: ExplicitHydrogensCommandData = {
         struct,
@@ -809,7 +954,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.once(WorkerEvent.ExplicitHydrogens, action);
+      wrapper.setup();
 
       this.worker.postMessage(inputMessage);
     });
@@ -820,6 +965,7 @@ class IndigoService implements StructService {
     options?: StructServiceOptions,
   ): Promise<CalculateMacromoleculePropertiesResult> {
     const { struct } = data;
+    const timeout = options?.['request-timeout'] as number | undefined;
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
@@ -831,6 +977,13 @@ class IndigoService implements StructService {
           reject(new Error(msg.error));
         }
       };
+
+      const wrapper = createTimeoutWrapper(
+        this.EE,
+        WorkerEvent.CalculateMacromoleculeProperties,
+        action,
+        timeout,
+      );
 
       const commandData: CalculateMacromoleculePropertiesCommandData = {
         struct,
@@ -845,14 +998,14 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.once(WorkerEvent.CalculateMacromoleculeProperties, action);
+      wrapper.setup();
       this.worker.postMessage(inputMessage);
     });
   }
 
   public destroy() {
+    this.worker.removeEventListener('message', this.messageHandler);
     this.worker.terminate();
-    this.worker.onmessage = null;
   }
 }
 

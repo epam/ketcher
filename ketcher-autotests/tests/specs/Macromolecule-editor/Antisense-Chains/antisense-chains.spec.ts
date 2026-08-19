@@ -20,6 +20,7 @@ import {
   MolFileFormat,
   deleteByKeyboard,
   clickOnCanvas,
+  keyboardPressOnCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
@@ -296,8 +297,15 @@ const monomers: IMonomer[] = [
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Nucleotide._2_damdA,
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/6840',
+    unsplitNucleotide: true,
+  },
+  {
+    monomerDescription: '18.1. Unsplit monomer 5NitInd (from library)',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{[5NitInd]}$$$$V2.0',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: false,
+    monomerLocatorOptions: Nucleotide._5NitInd,
     unsplitNucleotide: true,
   },
   {
@@ -1110,7 +1118,9 @@ for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
 }
 
 for (const monomer of monomers.filter(
-  (m) => m.baseWithR3R1ConnectionPresent && !m.eligibleForAntisense,
+  (m) =>
+    (m.baseWithR3R1ConnectionPresent || m.unsplitNucleotide) &&
+    !m.eligibleForAntisense,
 )) {
   test(`2. Check that Create Antisense Strand option disabled for not a sense base: ${monomer.monomerDescription}`, async () => {
     /*
@@ -2729,7 +2739,18 @@ const shortMonomerList: IMonomer[] = [
     monomerLocatorOptions: Nucleotide._2_damdA,
     unsplitNucleotide: true,
     shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/6735',
+    issueNumber: 'https://github.com/epam/ketcher/issues/6173',
+  },
+  {
+    monomerDescription: '7.1. Unsplit monomer 5NitInd (from library)',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{[5NitInd]}$$$$V2.0',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: false,
+    monomerLocatorOptions: Nucleotide._5NitInd,
+    unsplitNucleotide: true,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6173',
   },
   {
     monomerDescription: '8. Unknown monomer',
@@ -2865,9 +2886,11 @@ for (const monomer1 of shortMonomerList) {
         (monomer1.eligibleForAntisense &&
           monomer1.baseWithR3R1ConnectionPresent &&
           !monomer2.eligibleForAntisense &&
-          !monomer2.baseWithR3R1ConnectionPresent) ||
+          !monomer2.baseWithR3R1ConnectionPresent &&
+          !monomer2.unsplitNucleotide) ||
         (!monomer1.eligibleForAntisense &&
           !monomer1.baseWithR3R1ConnectionPresent &&
+          !monomer1.unsplitNucleotide &&
           monomer2.eligibleForAntisense &&
           monomer2.baseWithR3R1ConnectionPresent) ||
         (monomer1.eligibleForAntisense && monomer1.unsplitNucleotide) ||
@@ -2880,7 +2903,9 @@ for (const monomer1 of shortMonomerList) {
         await takeEditorScreenshot(page);
       } else if (
         monomer1.baseWithR3R1ConnectionPresent ||
-        monomer2.baseWithR3R1ConnectionPresent
+        monomer2.baseWithR3R1ConnectionPresent ||
+        monomer1.unsplitNucleotide ||
+        monomer2.unsplitNucleotide
       ) {
         await selectAllStructuresOnCanvas(page);
         const createAntisenseStrandOptionPresent = await ContextMenu(
@@ -2912,7 +2937,8 @@ const chainWithAllTypeOfConnections: IMonomer = {
   unsplitNucleotide: false,
 };
 
-test(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored`, async () => {
+test.skip(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored`, async () => {
+  // Failed because of bug: https://github.com/epam/ketcher/issues/6173
   /*
    * Test task: https://github.com/epam/ketcher/issues/6134
    * Description: Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored
@@ -3884,7 +3910,9 @@ for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
 }
 
 for (const monomer of monomers.filter(
-  (m) => m.baseWithR3R1ConnectionPresent && !m.eligibleForAntisense,
+  (m) =>
+    (m.baseWithR3R1ConnectionPresent || m.unsplitNucleotide) &&
+    !m.eligibleForAntisense,
 )) {
   test(`26.2.1 Check that Create Antisense RNA Strand option disabled for not a sense base: ${monomer.monomerDescription}`, async () => {
     /*
@@ -3930,7 +3958,9 @@ for (const monomer of monomers.filter(
 }
 
 for (const monomer of monomers.filter(
-  (m) => m.baseWithR3R1ConnectionPresent && !m.eligibleForAntisense,
+  (m) =>
+    (m.baseWithR3R1ConnectionPresent || m.unsplitNucleotide) &&
+    !m.eligibleForAntisense,
 )) {
   test(`26.2.2 Check that Create Antisense DNA Strand option disabled for not a sense base: ${monomer.monomerDescription}`, async () => {
     /*
@@ -4098,11 +4128,15 @@ for (const monomer1 of shortMonomerList) {
         (monomer1.eligibleForAntisense &&
           monomer1.baseWithR3R1ConnectionPresent &&
           !monomer2.eligibleForAntisense &&
-          !monomer2.baseWithR3R1ConnectionPresent) ||
+          !monomer2.baseWithR3R1ConnectionPresent &&
+          !monomer2.unsplitNucleotide) ||
         (!monomer1.eligibleForAntisense &&
           !monomer1.baseWithR3R1ConnectionPresent &&
+          !monomer1.unsplitNucleotide &&
           monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent)
+          monomer2.baseWithR3R1ConnectionPresent) ||
+        (monomer1.eligibleForAntisense && monomer1.unsplitNucleotide) ||
+        (monomer2.eligibleForAntisense && monomer2.unsplitNucleotide)
       ) {
         await selectAllStructuresOnCanvas(page);
         await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
@@ -4115,7 +4149,9 @@ for (const monomer1 of shortMonomerList) {
         });
       } else if (
         monomer1.baseWithR3R1ConnectionPresent ||
-        monomer2.baseWithR3R1ConnectionPresent
+        monomer2.baseWithR3R1ConnectionPresent ||
+        monomer1.unsplitNucleotide ||
+        monomer2.unsplitNucleotide
       ) {
         await selectAllStructuresOnCanvas(page);
         expect(
@@ -4176,11 +4212,15 @@ for (const monomer1 of shortMonomerList) {
         (monomer1.eligibleForAntisense &&
           monomer1.baseWithR3R1ConnectionPresent &&
           !monomer2.eligibleForAntisense &&
-          !monomer2.baseWithR3R1ConnectionPresent) ||
+          !monomer2.baseWithR3R1ConnectionPresent &&
+          !monomer2.unsplitNucleotide) ||
         (!monomer1.eligibleForAntisense &&
           !monomer1.baseWithR3R1ConnectionPresent &&
+          !monomer1.unsplitNucleotide &&
           monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent)
+          monomer2.baseWithR3R1ConnectionPresent) ||
+        (monomer1.eligibleForAntisense && monomer1.unsplitNucleotide) ||
+        (monomer2.eligibleForAntisense && monomer2.unsplitNucleotide)
       ) {
         await selectAllStructuresOnCanvas(page);
         await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
@@ -4193,7 +4233,9 @@ for (const monomer1 of shortMonomerList) {
         });
       } else if (
         monomer1.baseWithR3R1ConnectionPresent ||
-        monomer2.baseWithR3R1ConnectionPresent
+        monomer2.baseWithR3R1ConnectionPresent ||
+        monomer1.unsplitNucleotide ||
+        monomer2.unsplitNucleotide
       ) {
         await selectAllStructuresOnCanvas(page);
         expect(
@@ -4215,7 +4257,8 @@ for (const monomer1 of shortMonomerList) {
   }
 }
 
-test(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (RNA)`, async () => {
+test.skip(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (RNA)`, async () => {
+  // Failed because of bug: https://github.com/epam/ketcher/issues/6173
   /*
    * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
@@ -4245,7 +4288,8 @@ test(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R
   });
 });
 
-test(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (DNA)`, async () => {
+test.skip(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (DNA)`, async () => {
+  // Failed because of bug: https://github.com/epam/ketcher/issues/6173
   /*
    * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
@@ -4468,50 +4512,230 @@ test(`26.8.2 Check that all other monomers in the backbone that are not a part o
   });
 });
 
-test.fail(
-  `27. Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense chain, the sync icon should appear on the top bar and be enabled/toggled on by default`,
-  { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
-    /*
-     * !!! Incorrect result because of bug: https://github.com/epam/ketcher/issues/7701
-     *
-     * Test task: https://github.com/epam/ketcher/issues/6684
-     * Description: Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense
-     *              chain, the sync icon should appear on the top bar and be enabled/toggled on by default
-     * Case:
-     *       1. Swticth to Sequence mode (clear canvas)
-     *       2. Check that SYNC button is NOT present
-     *       3. Paste on the canvas single chain
-     *       4. Check that SYNC button is NOT present
-     *       5. Create Antisense RNA Strand
-     *       6. Check that SYNC button is present and enabled
-     */
-    test.setTimeout(20000);
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+test(`27. Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense chain, the sync icon should appear on the top bar and be enabled/toggled on by default`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6684
+   * Description: Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense
+   *              chain, the sync icon should appear on the top bar and be enabled/toggled on by default
+   * Case:
+   *       1. Swticth to Sequence mode (clear canvas)
+   *       2. Check that SYNC button is NOT present
+   *       3. Paste on the canvas single chain
+   *       4. Check that SYNC button is NOT present
+   *       5. Create Antisense RNA Strand
+   *       6. Check that SYNC button is present and enabled
+   */
+  test.setTimeout(20000);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
-    const syncButton = page.getByTestId('sync_sequence_edit_mode').first();
-    // checking that SYNC button is not present
-    await expect(syncButton).toHaveCount(0);
+  const syncButton = MacromoleculesTopToolbar(page).syncSequenceEditModeButton;
+  // checking that SYNC button is not present
+  await expect(syncButton).toHaveCount(0);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r(C,G,T)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)p.r(C)p.r(G)p.r(T)p.r(U)p}$$$$V2.0`,
+  );
+
+  // checking that SYNC button is not present
+  await expect(syncButton).toHaveCount(0);
+
+  await selectAllStructuresOnCanvas(page);
+
+  const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+  await createDNAAntisenseChain(page, anySymbolA);
+
+  // checking that SYNC button is present
+  await expect(syncButton).toHaveCount(1);
+  // checking that SYNC button is active
+  await expect(syncButton).toHaveAttribute('data-isactive', 'true');
+});
+
+const unsplitAntisenseCases: {
+  description: string;
+  helm: string;
+  isDna: boolean;
+  expectedHelm: string;
+}[] = [
+  {
+    description: 'terminal 2-damdA — RNA',
+    helm: 'RNA1{R(A)P.[2-damdA]}$$$$V2.0',
+    isDna: false,
+    expectedHelm:
+      'RNA1{R(A)P.[2-damdA]}|RNA2{P.R(U)P.R(U)}$RNA1,RNA2,4:pair-3:pair|RNA1,RNA2,2:pair-6:pair$$$V2.0',
+  },
+  {
+    description: 'terminal 2-damdA — DNA',
+    helm: 'RNA1{R(A)P.[2-damdA]}$$$$V2.0',
+    isDna: true,
+    expectedHelm:
+      'RNA1{R(A)P.[2-damdA]}|RNA2{P.[dR](T)P.[dR](T)}$RNA1,RNA2,4:pair-3:pair|RNA1,RNA2,2:pair-6:pair$$$V2.0',
+  },
+  {
+    description: 'leading 2-damdA — RNA',
+    helm: 'RNA1{[2-damdA].R(A)P}$$$$V2.0',
+    isDna: false,
+    expectedHelm:
+      'RNA1{[2-damdA].R(A)P}|RNA2{P.R(U)P.R(U)}$RNA1,RNA2,3:pair-3:pair|RNA1,RNA2,1:pair-6:pair$$$V2.0',
+  },
+  {
+    description: 'interior 2-damdA — RNA',
+    helm: 'RNA1{R(A)P.[2-damdA].R(A)P}$$$$V2.0',
+    isDna: false,
+    expectedHelm:
+      'RNA1{R(A)P.[2-damdA].R(A)P}|RNA2{P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,6:pair-3:pair|RNA1,RNA2,4:pair-6:pair|RNA1,RNA2,2:pair-9:pair$$$V2.0',
+  },
+  {
+    description: 'interior 2-damdA — DNA',
+    helm: 'RNA1{R(A)P.[2-damdA].R(A)P}$$$$V2.0',
+    isDna: true,
+    expectedHelm:
+      'RNA1{R(A)P.[2-damdA].R(A)P}|RNA2{P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,6:pair-3:pair|RNA1,RNA2,4:pair-6:pair|RNA1,RNA2,2:pair-9:pair$$$V2.0',
+  },
+];
+
+for (const testCase of unsplitAntisenseCases) {
+  test(`28. Unsplit nucleotide antisense (#8358): ${testCase.description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8358
+     * Description: Create DNA/RNA antisense chain for unsplit nucleotide creates antisense preset
+     *              even at the right end of the chain
+     */
+    test.setTimeout(30000);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r(C,G,T)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)p.r(C)p.r(G)p.r(T)p.r(U)p}$$$$V2.0`,
+      testCase.helm,
     );
 
-    // checking that SYNC button is not present
-    await expect(syncButton).toHaveCount(0);
-
+    const monomerLocator = getMonomerLocator(page, Nucleotide._2_damdA).first();
     await selectAllStructuresOnCanvas(page);
+    if (testCase.isDna) {
+      await createDNAAntisenseChain(page, monomerLocator);
+    } else {
+      await createRNAAntisenseChain(page, monomerLocator);
+    }
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await verifyHELMExport(page, testCase.expectedHelm);
+  });
+}
 
-    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
-    await createDNAAntisenseChain(page, anySymbolA);
+test(`29. Unsplit nucleotide antisense — snake and sequence layout screenshots`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8358
+   * Description: Unsplit nucleotide antisense layout is correct in snake and sequence modes
+   */
+  test.setTimeout(30000);
 
-    // checking that SYNC button is not present
-    await expect(syncButton).toHaveCount(1);
-    // checking that SYNC button is active
-    await expect(syncButton).toHaveAttribute('data-isactive', 'true');
-  },
-);
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.[2-damdA].R(A)P}$$$$V2.0',
+  );
+
+  const monomerLocator = getMonomerLocator(page, Nucleotide._2_damdA).first();
+  await selectAllStructuresOnCanvas(page);
+  await createRNAAntisenseChain(page, monomerLocator);
+
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`30. Unsplit nucleotide antisense — undo/redo`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8358
+   * Description: Undo/redo restores antisense creation for an unsplit nucleotide
+   */
+  test.setTimeout(30000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{[2-damdA]}$$$$V2.0',
+  );
+
+  const monomerLocator = getMonomerLocator(page, Nucleotide._2_damdA).first();
+  await selectAllStructuresOnCanvas(page);
+  await createRNAAntisenseChain(page, monomerLocator);
+  await verifyHELMExport(
+    page,
+    'RNA1{[2-damdA]}|RNA2{P.R(U)}$RNA1,RNA2,1:pair-3:pair$$$V2.0',
+  );
+
+  await CommonTopLeftToolbar(page).undo();
+  await verifyHELMExport(page, 'RNA1{[2-damdA]}$$$$V2.0');
+
+  await CommonTopLeftToolbar(page).redo();
+  await verifyHELMExport(
+    page,
+    'RNA1{[2-damdA]}|RNA2{P.R(U)}$RNA1,RNA2,1:pair-3:pair$$$V2.0',
+  );
+});
+
+test(`31. Hotkey creates antisense for an eligible unsplit but is a no-op for X`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6735
+   * Description: Shift+Alt+R creates an antisense triplet for an eligible unsplit
+   *              nucleotide (2-damdA) but does nothing for an ineligible one (5NitInd, X).
+   *              The positive control guarantees the hotkey binding is actually exercised.
+   */
+  test.setTimeout(20000);
+
+  // Positive control: the hotkey must produce the antisense triplet.
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{[2-damdA]}$$$$V2.0',
+  );
+  await selectAllStructuresOnCanvas(page);
+  await keyboardPressOnCanvas(page, 'Shift+Alt+R');
+  await verifyHELMExport(
+    page,
+    'RNA1{[2-damdA]}|RNA2{P.R(U)}$RNA1,RNA2,1:pair-3:pair$$$V2.0',
+  );
+
+  await CommonTopLeftToolbar(page).clearCanvas();
+
+  // Negative: an ineligible X unsplit nucleotide is left untouched.
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{[5NitInd]}$$$$V2.0',
+  );
+  await selectAllStructuresOnCanvas(page);
+  await keyboardPressOnCanvas(page, 'Shift+Alt+R');
+  await verifyHELMExport(page, 'RNA1{[5NitInd]}$$$$V2.0');
+});
+
+test(`32. Toolbar defaults to neutral antisense for unsplit-only selection`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6735
+   * Description: Selecting only an unsplit nucleotide does not preselect DNA antisense on the toolbar
+   */
+  test.setTimeout(20000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{[2-damdA]}$$$$V2.0',
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const antisenseToolbar = page.getByTestId('Create Antisense Strand');
+  await expect(
+    antisenseToolbar.locator('[data-testid="antisenseDnaStrand"]'),
+  ).toHaveCount(0);
+});

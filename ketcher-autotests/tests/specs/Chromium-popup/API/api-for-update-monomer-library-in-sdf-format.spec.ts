@@ -282,6 +282,7 @@ test.describe('API for update Library', () => {
      */
     const SDF_EMPTY = await readFileContent('SDF/SDF_EMPTY.sdf');
     await replaceMonomersLibrary(page, SDF_EMPTY, { format: 'sdf' });
+    await Library(page).switchToRNATab();
     await takeMonomerLibraryScreenshot(page);
     await Library(page).switchToPeptidesTab();
     await takeMonomerLibraryScreenshot(page);

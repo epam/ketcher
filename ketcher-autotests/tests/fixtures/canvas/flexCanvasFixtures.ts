@@ -17,6 +17,7 @@ export const test = mergeTests(utils, pageObjects).extend<
       MacromoleculesTopToolbar,
       resetZoomLevelToDefault,
       clearLocalStorage,
+      resetClipboard,
     },
     use,
   ) => {
@@ -32,6 +33,7 @@ export const test = mergeTests(utils, pageObjects).extend<
     }
     await resetZoomLevelToDefault(page);
     await clearLocalStorage(page);
+    await resetClipboard(page);
   },
   initFlexCanvas: [
     async (

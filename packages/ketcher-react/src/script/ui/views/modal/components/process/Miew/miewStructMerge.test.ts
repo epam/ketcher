@@ -9,7 +9,7 @@ import {
   Vec2,
   MonomerMicromolecule,
   Peptide,
-  MonomerItemType,
+  type MonomerItemType,
 } from 'ketcher-core';
 import {
   alignToCentroid,

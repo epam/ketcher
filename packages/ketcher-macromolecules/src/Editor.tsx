@@ -213,15 +213,31 @@ function Editor({
     id: CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS,
   });
 
+  const editorInitParamsRef = useRef({
+    ketcherId,
+    theme,
+    monomersLibraryUpdate,
+    monomersLibraryReplace,
+    onInit,
+  });
+
   useEffect(() => {
+    const {
+      ketcherId: initKetcherId,
+      theme: initTheme,
+      monomersLibraryUpdate: initMonomersLibraryUpdate,
+      monomersLibraryReplace: initMonomersLibraryReplace,
+      onInit: initOnInit,
+    } = editorInitParamsRef.current;
+
     dispatch(
       createEditor({
-        ketcherId,
-        theme,
+        ketcherId: initKetcherId,
+        theme: initTheme,
         canvas: canvasRef.current,
-        monomersLibraryUpdate,
-        monomersLibraryReplace,
-        onInit,
+        monomersLibraryUpdate: initMonomersLibraryUpdate,
+        monomersLibraryReplace: initMonomersLibraryReplace,
+        onInit: initOnInit,
         onLibraryError: (err) => {
           dispatch(
             setMonomerLibraryLoadError(
@@ -243,7 +259,10 @@ function Editor({
   useMacromoleculesHotkeys();
 
   useEffect(() => {
-    editor?.events.rightClickSequence.add(([event, selections]) => {
+    const onRightClickSequence = ([event, selections]: [
+      PointerEvent,
+      NodeSelection[][],
+    ]) => {
       setSelections(selections);
       setContextMenuEvent(event);
       updatePasteAvailability();
@@ -255,64 +274,94 @@ function Editor({
           sequenceItemRenderer: event.target.__data__,
         },
       });
-    });
-    editor?.events.rightClickPolymerBond.add(
-      ([event, polymerBondRenderer]: [
-        PointerEvent,
-        DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
-      ]): void => {
-        setContextMenuEvent(event);
-        setSelectedMonomers([]);
-        showSelectedMonomersContextMenu({
-          event,
-          props: {
-            polymerBondRenderer,
-          },
-        });
-      },
+    };
+    const onRightClickPolymerBond = ([event, polymerBondRenderer]: [
+      PointerEvent,
+      DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+    ]): void => {
+      setContextMenuEvent(event);
+      setSelectedMonomers([]);
+      showSelectedMonomersContextMenu({
+        event,
+        props: {
+          polymerBondRenderer,
+        },
+      });
+    };
+    const onRightClickSelectedMonomers = ([event, selectedMonomers]: [
+      PointerEvent,
+      BaseMonomer[],
+    ]) => {
+      setSelectedMonomers(selectedMonomers);
+      setContextMenuEvent(event);
+      updatePasteAvailability();
+      showSelectedMonomersContextMenu({
+        event,
+        props: { selectedMonomers },
+      });
+    };
+    const onRightClickCanvas = ([event, selections]: [
+      PointerEvent,
+      BaseMonomer[],
+    ]) => {
+      setContextMenuEvent(event);
+      updatePasteAvailability();
+      window.dispatchEvent(new Event('hidePreview'));
+      dispatch(setContextMenuActive(true));
+      setSelectedMonomers(selections);
+      showSelectedMonomersContextMenu({
+        event,
+        props: { selectedMonomers: selections },
+      });
+    };
+    const onRightClickCanvasSequence = ([event, selections]: [
+      PointerEvent,
+      NodesSelection,
+    ]) => {
+      setContextMenuEvent(event);
+      updatePasteAvailability();
+      window.dispatchEvent(new Event('hidePreview'));
+      dispatch(setContextMenuActive(true));
+      setSelections(selections);
+      showSequenceContextMenu({
+        event,
+        props: {},
+      });
+    };
+    const onToggleMacromoleculesPropertiesVisibility = () => {
+      dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
+    };
+
+    editor?.events.rightClickSequence.add(onRightClickSequence);
+    editor?.events.rightClickPolymerBond.add(onRightClickPolymerBond);
+    editor?.events.rightClickSelectedMonomers.add(onRightClickSelectedMonomers);
+    editor?.events.rightClickCanvas.add(onRightClickCanvas);
+    editor?.events.rightClickCanvasSequence.add(onRightClickCanvasSequence);
+    editor?.events.toggleMacromoleculesPropertiesVisibility.add(
+      onToggleMacromoleculesPropertiesVisibility,
     );
 
-    editor?.events.rightClickSelectedMonomers.add(
-      ([event, selectedMonomers]: [PointerEvent, BaseMonomer[]]) => {
-        setSelectedMonomers(selectedMonomers);
-        setContextMenuEvent(event);
-        updatePasteAvailability();
-        showSelectedMonomersContextMenu({
-          event,
-          props: { selectedMonomers },
-        });
-      },
-    );
-    editor?.events.rightClickCanvas.add(
-      ([event, selections]: [PointerEvent, BaseMonomer[]]) => {
-        setContextMenuEvent(event);
-        updatePasteAvailability();
-        window.dispatchEvent(new Event('hidePreview'));
-        dispatch(setContextMenuActive(true));
-        setSelectedMonomers(selections);
-        showSelectedMonomersContextMenu({
-          event,
-          props: { selectedMonomers: selections },
-        });
-      },
-    );
-    editor?.events.rightClickCanvasSequence.add(
-      ([event, selections]: [PointerEvent, NodesSelection]) => {
-        setContextMenuEvent(event);
-        updatePasteAvailability();
-        window.dispatchEvent(new Event('hidePreview'));
-        dispatch(setContextMenuActive(true));
-        setSelections(selections);
-        showSequenceContextMenu({
-          event,
-          props: {},
-        });
-      },
-    );
-    editor?.events.toggleMacromoleculesPropertiesVisibility.add(() => {
-      dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
-    });
-  }, [editor]);
+    return () => {
+      editor?.events.rightClickSequence.remove(onRightClickSequence);
+      editor?.events.rightClickPolymerBond.remove(onRightClickPolymerBond);
+      editor?.events.rightClickSelectedMonomers.remove(
+        onRightClickSelectedMonomers,
+      );
+      editor?.events.rightClickCanvas.remove(onRightClickCanvas);
+      editor?.events.rightClickCanvasSequence.remove(
+        onRightClickCanvasSequence,
+      );
+      editor?.events.toggleMacromoleculesPropertiesVisibility.remove(
+        onToggleMacromoleculesPropertiesVisibility,
+      );
+    };
+  }, [
+    editor,
+    dispatch,
+    showSequenceContextMenu,
+    showSelectedMonomersContextMenu,
+    updatePasteAvailability,
+  ]);
 
   useEffect(() => {
     editor?.zoomTool.observeCanvasResize();

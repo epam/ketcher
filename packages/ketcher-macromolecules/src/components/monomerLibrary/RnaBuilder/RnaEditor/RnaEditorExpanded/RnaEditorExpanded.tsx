@@ -133,6 +133,18 @@ export const RnaEditorExpanded = ({
       ? getRnaPresetPhosphatePosition(activePreset)
       : undefined,
   );
+  const [prevActivePresetForSync, setPrevActivePresetForSync] =
+    useState(activePreset);
+
+  if (activePreset !== prevActivePresetForSync) {
+    setPrevActivePresetForSync(activePreset);
+    setNewPreset(activePreset);
+    setSelectedPhosphatePosition(
+      activePreset?.connections?.length
+        ? getRnaPresetPhosphatePosition(activePreset)
+        : undefined,
+    );
+  }
 
   const resolvePhosphatePosition = (
     preset: typeof newPreset,
@@ -221,80 +233,116 @@ export const RnaEditorExpanded = ({
     return newPreset;
   };
 
-  useEffect(() => {
-    setNewPreset(activePreset);
-    setSelectedPhosphatePosition(
-      activePreset?.connections?.length
-        ? getRnaPresetPhosphatePosition(activePreset)
-        : undefined,
-    );
-  }, [activePreset]);
+  const [
+    prevSequenceSelectionForGroupNames,
+    setPrevSequenceSelectionForGroupNames,
+  ] = useState(sequenceSelection);
+
+  if (sequenceSelection !== prevSequenceSelectionForGroupNames) {
+    setPrevSequenceSelectionForGroupNames(sequenceSelection);
+    if (sequenceSelection) {
+      setSequenceSelectionGroupNames(
+        generateSequenceSelectionGroupNames(sequenceSelection),
+      );
+    }
+  }
 
   useEffect(() => {
-    if (!sequenceSelection) return;
     // If modifying 1 Nucleotide or 1 Nucleoside or Nucleoside with Phosphate in sequence
-    if (getCountOfNucleoelements(sequenceSelection) === 1) {
+    if (
+      sequenceSelection &&
+      getCountOfNucleoelements(sequenceSelection) === 1
+    ) {
       dispatch(
         setSequenceSelectionName(
           generateSequenceSelectionName(sequenceSelection),
         ),
       );
     }
-    setSequenceSelectionGroupNames(
-      generateSequenceSelectionGroupNames(sequenceSelection),
-    );
   }, [dispatch, sequenceSelection]);
 
-  useEffect(() => {
-    if (activeMonomerGroup !== RnaBuilderPresetsItem.Presets && isEditMode) {
-      if (isSequenceEditInRNABuilderMode && activePresetMonomerGroup) {
-        const monomerType =
-          monomerGroupToPresetGroup[activePresetMonomerGroup.groupName];
-        const field = `${monomerType}Label`;
+  const [prevGroupItemForPresetSync, setPrevGroupItemForPresetSync] = useState(
+    activePresetMonomerGroup?.groupItem,
+  );
+  const [prevIsSequenceEditForPresetSync, setPrevIsSequenceEditForPresetSync] =
+    useState(isSequenceEditInRNABuilderMode);
+  const [
+    prevSelectedPhosphatePositionForPresetSync,
+    setPrevSelectedPhosphatePositionForPresetSync,
+  ] = useState(selectedPhosphatePosition);
 
-        const updatedSequenceSelection = sequenceSelection.map((node) => {
-          // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
-          // Do not set 'sugarLabel', 'baseLabel' for Phosphate
-          if (
-            (node.isNucleosideConnectedAndSelectedWithPhosphate &&
-              field === 'phosphateLabel') ||
-            (node.type === Entities.Phosphate &&
-              (field === 'sugarLabel' || field === 'baseLabel'))
-          ) {
-            return node;
-          }
+  if (
+    activePresetMonomerGroup?.groupItem !== prevGroupItemForPresetSync ||
+    isSequenceEditInRNABuilderMode !== prevIsSequenceEditForPresetSync ||
+    selectedPhosphatePosition !== prevSelectedPhosphatePositionForPresetSync
+  ) {
+    setPrevGroupItemForPresetSync(activePresetMonomerGroup?.groupItem);
+    setPrevIsSequenceEditForPresetSync(isSequenceEditInRNABuilderMode);
+    setPrevSelectedPhosphatePositionForPresetSync(selectedPhosphatePosition);
 
-          return {
-            ...node,
-            [field]: activePresetMonomerGroup.groupItem.label,
-            rnaBaseMonomerItem:
-              activePresetMonomerGroup.groupName === 'Bases'
-                ? activePresetMonomerGroup.groupItem
-                : node.rnaBaseMonomerItem,
-          };
+    if (
+      activeMonomerGroup !== RnaBuilderPresetsItem.Presets &&
+      isEditMode &&
+      !(isSequenceEditInRNABuilderMode && activePresetMonomerGroup)
+    ) {
+      const currentPreset = updatePresetMonomerGroup();
+      const resolvedPhosphatePosition = resolvePhosphatePosition(currentPreset);
+      let presetFullName = newPreset?.name;
+
+      if (!currentPreset.editedName) {
+        presetFullName = selectPresetFullName({
+          ...currentPreset,
+          connections: buildRnaPresetConnections(
+            currentPreset,
+            resolvedPhosphatePosition,
+          ),
         });
-
-        setIsSequenceSelectionUpdated(true);
-        dispatch(setSequenceSelection(updatedSequenceSelection));
-      } else {
-        const currentPreset = updatePresetMonomerGroup();
-        const resolvedPhosphatePosition =
-          resolvePhosphatePosition(currentPreset);
-        let presetFullName = newPreset?.name;
-
-        if (!currentPreset.editedName) {
-          presetFullName = selectPresetFullName({
-            ...currentPreset,
-            connections: buildRnaPresetConnections(
-              currentPreset,
-              resolvedPhosphatePosition,
-            ),
-          });
-        }
-
-        setNewPreset({ ...currentPreset, name: presetFullName });
       }
+
+      setNewPreset({ ...currentPreset, name: presetFullName });
     }
+  }
+
+  // Dispatch-only: applying a library selection onto the active sequence nodes
+  // is a real side effect and must stay in an effect; deps intentionally
+  // narrow to preserve the original trigger cadence.
+  useEffect(() => {
+    if (activeMonomerGroup === RnaBuilderPresetsItem.Presets || !isEditMode) {
+      return;
+    }
+    if (!isSequenceEditInRNABuilderMode || !activePresetMonomerGroup) {
+      return;
+    }
+
+    const monomerType =
+      monomerGroupToPresetGroup[activePresetMonomerGroup.groupName];
+    const field = `${monomerType}Label`;
+
+    const updatedSequenceSelection = sequenceSelection.map((node) => {
+      // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
+      // Do not set 'sugarLabel', 'baseLabel' for Phosphate
+      if (
+        (node.isNucleosideConnectedAndSelectedWithPhosphate &&
+          field === 'phosphateLabel') ||
+        (node.type === Entities.Phosphate &&
+          (field === 'sugarLabel' || field === 'baseLabel'))
+      ) {
+        return node;
+      }
+
+      return {
+        ...node,
+        [field]: activePresetMonomerGroup.groupItem.label,
+        rnaBaseMonomerItem:
+          activePresetMonomerGroup.groupName === 'Bases'
+            ? activePresetMonomerGroup.groupItem
+            : node.rnaBaseMonomerItem,
+      };
+    });
+
+    setIsSequenceSelectionUpdated(true);
+    dispatch(setSequenceSelection(updatedSequenceSelection));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     activePresetMonomerGroup?.groupItem,
     isSequenceEditInRNABuilderMode,

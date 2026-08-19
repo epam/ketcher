@@ -22,10 +22,7 @@ import {
   RefObject,
 } from 'react';
 import { StyledInput } from 'components/ZoomControls/styles';
-import {
-  hotkeysShortcuts,
-  updateInputString,
-} from 'components/ZoomControls/helpers';
+import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 
 interface ZoomInputProps {
   onZoomSubmit: () => void;
@@ -64,14 +61,6 @@ export const ZoomInput = ({
     el.select();
   };
 
-  useEffect(() => {
-    const inputEl = inputRef.current;
-    updateInputString(currentZoom, inputEl);
-    if (document.activeElement === inputEl) {
-      inputEl?.select();
-    }
-  }, [currentZoom, inputRef]);
-
   // Focus on input field upon mounting
   useEffect(() => {
     const inputEl = inputRef.current;
@@ -83,6 +72,7 @@ export const ZoomInput = ({
     <StyledInput
       ref={inputRef}
       data-testid="zoom-value"
+      defaultValue={`${Math.round(currentZoom)}%`}
       onFocus={onFocusHandler}
       onKeyDown={onKeyDown}
     />

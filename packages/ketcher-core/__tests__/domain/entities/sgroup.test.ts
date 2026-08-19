@@ -18,3 +18,45 @@ describe('sgroup should calculate S-Group bounding box correctly', () => {
     expect(attachmentsSpy).toHaveBeenCalled();
   });
 });
+
+const createSuperatomSGroup = (
+  name: SGroup['data']['name'],
+  sgroupClass: SGroup['data']['class'],
+): SGroup => {
+  const sgroup = new SGroup(SGroup.TYPES.SUP);
+
+  sgroup.data.name = name;
+  sgroup.data.class = sgroupClass;
+
+  return sgroup;
+};
+
+describe('SGroup.superatomLabel getter', () => {
+  it('returns the trimmed name when present', () => {
+    const sgroup = createSuperatomSGroup('  Boc  ', undefined);
+    expect(sgroup.superatomLabel).toBe('Boc');
+  });
+
+  it('resolves SUGAR/BASE/PHOSPHATE nucleotide component classes to their labels when name is empty', () => {
+    expect(createSuperatomSGroup('', 'SUGAR').superatomLabel).toBe('Sugar');
+    expect(createSuperatomSGroup('', 'BASE').superatomLabel).toBe('Base');
+    expect(createSuperatomSGroup('', 'PHOSPHATE').superatomLabel).toBe(
+      'Phosphate',
+    );
+  });
+
+  it('resolves nucleotide component classes when name is whitespace-only', () => {
+    const sgroup = createSuperatomSGroup('   ', 'SUGAR');
+    expect(sgroup.superatomLabel).toBe('Sugar');
+  });
+
+  it('prefers an explicit non-empty name over the class label', () => {
+    const sgroup = createSuperatomSGroup('CustomSugar', 'SUGAR');
+    expect(sgroup.superatomLabel).toBe('CustomSugar');
+  });
+
+  it('returns an empty string when there is neither a name nor a known class', () => {
+    expect(createSuperatomSGroup('', undefined).superatomLabel).toBe('');
+    expect(createSuperatomSGroup('', 'UNKNOWN_CLASS').superatomLabel).toBe('');
+  });
+});

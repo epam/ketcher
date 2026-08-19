@@ -8,7 +8,6 @@ import {
   Text,
   Vec2,
 } from 'ketcher-core';
-import { getSuperatomLabel } from 'ketcher-core/dist/application/render/restruct/resgroup';
 import {
   alignToCentroid,
   collapseExpandedSuperatoms,
@@ -455,9 +454,9 @@ describe('miewStructMerge', () => {
       expect(groups[2].data.class).toBe('PHOSPHATE');
       expect(groups[2].atoms).toEqual(phosphateAtoms);
 
-      expect(getSuperatomLabel(groups[0])).toBe('Sugar');
-      expect(getSuperatomLabel(groups[1])).toBe('Base');
-      expect(getSuperatomLabel(groups[2])).toBe('Phosphate');
+      expect(groups[0].superatomLabel).toBe('Sugar');
+      expect(groups[1].superatomLabel).toBe('Base');
+      expect(groups[2].superatomLabel).toBe('Phosphate');
     });
 
     it('collapses a regular named SUP group too, matching the old unconditional CML import contraction', () => {

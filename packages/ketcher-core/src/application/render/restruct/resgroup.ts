@@ -49,27 +49,6 @@ interface SGroupdrawBracketsOptions {
   superatomClass?: SUPERATOM_CLASS;
 }
 
-export const SUPERATOM_CLASS_TEXT = {
-  [SUPERATOM_CLASS.BASE]: 'Base',
-  [SUPERATOM_CLASS.SUGAR]: 'Sugar',
-  [SUPERATOM_CLASS.PHOSPHATE]: 'Phosphate',
-};
-
-const isSuperatomClass = (value?: string | null): value is SUPERATOM_CLASS =>
-  typeof value === 'string' && value in SUPERATOM_CLASS_TEXT;
-
-export function getSuperatomLabel(sgroup: SGroup): string {
-  const name = sgroup.data.name?.trim();
-  if (name) {
-    return name;
-  }
-  const superatomClass = sgroup.data?.class;
-  if (isSuperatomClass(superatomClass)) {
-    return SUPERATOM_CLASS_TEXT[superatomClass];
-  }
-  return '';
-}
-
 // Helper function to convert SVG elements into Paper.js paths
 export function paperPathFromSVGElement(
   element: SVGElement,
@@ -168,7 +147,7 @@ class ReSGroup extends ReObject {
           const superatomClass = sgroup.data.class as
             | SUPERATOM_CLASS
             | undefined;
-          SGroupdrawBracketsOptions.lowerIndexText = getSuperatomLabel(sgroup);
+          SGroupdrawBracketsOptions.lowerIndexText = sgroup.superatomLabel;
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
           SGroupdrawBracketsOptions.superatomClass = superatomClass;

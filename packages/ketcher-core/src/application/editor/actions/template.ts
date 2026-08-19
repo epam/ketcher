@@ -286,7 +286,7 @@ export function fromTemplateOnBondAction(
   flip: boolean,
   force: boolean,
   isPreview = false,
-) {
+): FromTemplateOnBondResult | Promise<FromTemplateOnBondResult> {
   if (!force) return fromTemplateOnBond(restruct, template, bid, flip);
 
   const simpleFusing = (

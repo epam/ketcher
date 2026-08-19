@@ -36,7 +36,7 @@ import {
 } from 'ketcher-core';
 import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema';
 import classes from './Miew.module.less';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import { load, parseStruct } from '../../../../../state/shared';
 import { showSnackbarNotification } from '../../../../../state/notifications';
 import { pick } from 'lodash/fp';
@@ -153,7 +153,6 @@ const MiewDialog = ({
     () => ketcherProvider.getKetcher(ketcherId),
     [ketcherId],
   );
-  const reduxDispatch = useDispatch();
 
   const isDisabled = useMemo(() => {
     return (
@@ -192,7 +191,7 @@ const MiewDialog = ({
         'Miew.tsx::MiewDialog::exportCML',
         'Failed to export structure from 3D viewer',
       );
-      reduxDispatch(
+      dispatch(
         showSnackbarNotification(
           'Failed to export structure from 3D viewer. Please try again.',
         ),
@@ -219,7 +218,7 @@ const MiewDialog = ({
         'Miew.tsx::MiewDialog::exportCML::parseAndPrepareResult',
         e,
       );
-      reduxDispatch(
+      dispatch(
         showSnackbarNotification(
           'Failed to process 3D structure. The structure may be corrupted.',
         ),
@@ -237,7 +236,7 @@ const MiewDialog = ({
             'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
             'Coordinate merge validation failed',
           );
-          reduxDispatch(
+          dispatch(
             showSnackbarNotification(
               'Failed to merge 3D coordinates with the original structure.',
             ),
@@ -263,7 +262,7 @@ const MiewDialog = ({
           'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
           e,
         );
-        reduxDispatch(
+        dispatch(
           showSnackbarNotification(
             'Failed to merge 3D coordinates with the original structure.',
           ),
@@ -280,13 +279,13 @@ const MiewDialog = ({
         'Miew.tsx::MiewDialog::exportCML::mergeMetaObjects',
         e,
       );
-      reduxDispatch(
+      dispatch(
         showSnackbarNotification(
           'Failed to preserve metadata while applying 3D structure.',
         ),
       );
     }
-  }, [dispatch, reduxDispatch, server, serverSettings, struct]);
+  }, [dispatch, server, serverSettings, struct]);
 
   return (
     <Dialog

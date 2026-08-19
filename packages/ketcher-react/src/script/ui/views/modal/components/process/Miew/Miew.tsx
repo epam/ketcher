@@ -36,8 +36,9 @@ import {
 } from 'ketcher-core';
 import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema';
 import classes from './Miew.module.less';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { load, parseStruct } from '../../../../../state/shared';
+import { showSnackbarNotification } from '../../../../../state/notifications';
 import { pick } from 'lodash/fp';
 import type { Miew as MiewAsType } from 'miew';
 import { createSelector } from 'reselect';
@@ -152,6 +153,7 @@ const MiewDialog = ({
     () => ketcherProvider.getKetcher(ketcherId),
     [ketcherId],
   );
+  const reduxDispatch = useDispatch();
 
   const isDisabled = useMemo(() => {
     return (
@@ -184,45 +186,107 @@ const MiewDialog = ({
 
   const exportCML = useCallback(async () => {
     const cmlStruct = miewRef.current?.exportCML();
+
     if (!cmlStruct) {
+      KetcherLogger.error(
+        'Miew.tsx::MiewDialog::exportCML',
+        'Failed to export structure from 3D viewer',
+      );
+      reduxDispatch(
+        showSnackbarNotification(
+          'Failed to export structure from 3D viewer. Please try again.',
+        ),
+      );
       return;
     }
 
-    if (needsStructurePreservation(struct)) {
-      try {
-        const result = await parseStruct(cmlStruct, server, serverSettings);
-        alignToCentroid(result, struct);
+    const shouldPreserveStructure = needsStructurePreservation(struct);
+    const shouldPreserveMeta = needsMetaPreservation(struct);
 
-        const preserved = struct.clone();
-        preserved.enableInitiallySelected();
-        if (mergeCoordinatesFromResult(result, preserved)) {
-          collapseExpandedSuperatoms(preserved);
-          dispatch(
-            load(preserved, { preserveViewport: true, skipCenter: true }),
-          );
-          return;
-        }
-      } catch (e) {
-        KetcherLogger.error('Miew.tsx::MiewDialog::exportCML', e);
-        return;
-      }
-    }
-
-    if (!needsMetaPreservation(struct)) {
+    if (!shouldPreserveStructure && !shouldPreserveMeta) {
       dispatch(load(cmlStruct));
       return;
     }
 
+    let result: Struct;
+
     try {
-      const result = await parseStruct(cmlStruct, server, serverSettings);
+      result = await parseStruct(cmlStruct, server, serverSettings);
       result.rescale();
       alignToCentroid(result, struct);
+    } catch (e) {
+      KetcherLogger.error(
+        'Miew.tsx::MiewDialog::exportCML::parseAndPrepareResult',
+        e,
+      );
+      reduxDispatch(
+        showSnackbarNotification(
+          'Failed to process 3D structure. The structure may be corrupted.',
+        ),
+      );
+      return;
+    }
+
+    if (shouldPreserveStructure) {
+      try {
+        const preserved = struct.clone();
+        preserved.enableInitiallySelected();
+
+        if (!mergeCoordinatesFromResult(result, preserved)) {
+          KetcherLogger.error(
+            'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
+            'Coordinate merge validation failed',
+          );
+          reduxDispatch(
+            showSnackbarNotification(
+              'Failed to merge 3D coordinates with the original structure.',
+            ),
+          );
+          return;
+        }
+
+        collapseExpandedSuperatoms(preserved);
+        preserved.findConnectedComponents();
+        preserved.setImplicitHydrogen();
+        preserved.setStereoLabelsToAtoms();
+        preserved.markFragments();
+
+        dispatch(
+          load(preserved, {
+            preserveViewport: true,
+            skipCenter: true,
+          }),
+        );
+        return;
+      } catch (e) {
+        KetcherLogger.error(
+          'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
+          e,
+        );
+        reduxDispatch(
+          showSnackbarNotification(
+            'Failed to merge 3D coordinates with the original structure.',
+          ),
+        );
+        return;
+      }
+    }
+
+    try {
       mergeMetaObjects(result, struct);
       dispatch(load(result, { preserveViewport: true, skipCenter: true }));
     } catch (e) {
-      KetcherLogger.error('Miew.tsx::MiewDialog::exportCML', e);
+      KetcherLogger.error(
+        'Miew.tsx::MiewDialog::exportCML::mergeMetaObjects',
+        e,
+      );
+      reduxDispatch(
+        showSnackbarNotification(
+          'Failed to preserve metadata while applying 3D structure.',
+        ),
+      );
     }
-  }, [dispatch, server, serverSettings, struct]);
+  }, [dispatch, reduxDispatch, server, serverSettings, struct]);
 
   return (
     <Dialog

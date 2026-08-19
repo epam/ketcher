@@ -40,25 +40,49 @@ export function needsStructurePreservation(struct: Struct): boolean {
 }
 
 export function mergeCoordinatesFromResult(
-  original: Struct,
   result: Struct,
+  original: Struct,
 ): boolean {
   if (original.atoms.size !== result.atoms.size) {
+    console.warn(
+      `[Miew] Cannot merge coordinates: atom counts differ ` +
+        `(original: ${original.atoms.size}, result: ${result.atoms.size}).`,
+    );
+
     return false;
   }
 
-  const resultPositions = Array.from(result.atoms.values()).map(
-    (atom) => atom.pp,
-  );
+  for (const [atomId, originalAtom] of original.atoms) {
+    const resultAtom = result.atoms.get(atomId);
 
-  let index = 0;
-  original.atoms.forEach((atom) => {
-    const newPosition = resultPositions[index];
-    if (newPosition) {
-      atom.pp = new Vec2(newPosition.x, newPosition.y, newPosition.z);
+    if (!resultAtom) {
+      console.warn(
+        `[Miew] Cannot merge coordinates: atom "${atomId}" is missing in result.`,
+      );
+
+      return false;
     }
-    index += 1;
-  });
+
+    if (originalAtom.label !== resultAtom.label) {
+      console.warn(
+        `[Miew] Cannot merge coordinates: atom labels differ for atom "${atomId}" ` +
+          `(original: "${originalAtom.label}", result: "${resultAtom.label}").`,
+      );
+
+      return false;
+    }
+  }
+
+  for (const [atomId, originalAtom] of original.atoms) {
+    const resultAtom = result.atoms.get(atomId);
+
+    if (!resultAtom) {
+      return false;
+    }
+
+    const { x, y, z } = resultAtom.pp;
+    originalAtom.pp = new Vec2(x, y, z);
+  }
 
   return true;
 }

@@ -75,7 +75,7 @@ describe('miewStructMerge', () => {
       result.atoms.add(new Atom({ label: 'C', pp: new Vec2(5, 5, 1) }));
       result.atoms.add(new Atom({ label: 'C', pp: new Vec2(6, 5, 1) }));
 
-      const merged = mergeCoordinatesFromResult(original, result);
+      const merged = mergeCoordinatesFromResult(result, original);
 
       expect(merged).toBe(true);
 
@@ -103,7 +103,7 @@ describe('miewStructMerge', () => {
       const result = new Struct();
       result.atoms.add(new Atom({ label: 'C', pp: new Vec2(9, 9) }));
 
-      const merged = mergeCoordinatesFromResult(original, result);
+      const merged = mergeCoordinatesFromResult(result, original);
 
       expect(merged).toBe(false);
       const atoms = Array.from(original.atoms.values());
@@ -265,8 +265,8 @@ describe('miewStructMerge', () => {
       const firstPreserved = struct.clone();
       firstPreserved.enableInitiallySelected();
       const firstMerged = mergeCoordinatesFromResult(
-        firstPreserved,
         firstResult,
+        firstPreserved,
       );
       expect(firstMerged).toBe(true);
 
@@ -315,8 +315,8 @@ describe('miewStructMerge', () => {
       }).not.toThrow();
 
       const secondMerged = mergeCoordinatesFromResult(
-        secondPreserved,
         secondResult,
+        secondPreserved,
       );
       expect(secondMerged).toBe(true);
 
@@ -361,7 +361,7 @@ describe('miewStructMerge', () => {
       const preserved = struct.clone();
       preserved.enableInitiallySelected();
 
-      const merged = mergeCoordinatesFromResult(preserved, result);
+      const merged = mergeCoordinatesFromResult(result, preserved);
 
       expect(merged).toBe(false);
 
@@ -433,7 +433,7 @@ describe('miewStructMerge', () => {
         );
       });
 
-      expect(mergeCoordinatesFromResult(preserved, result)).toBe(true);
+      expect(mergeCoordinatesFromResult(result, preserved)).toBe(true);
 
       collapseExpandedSuperatoms(preserved);
 

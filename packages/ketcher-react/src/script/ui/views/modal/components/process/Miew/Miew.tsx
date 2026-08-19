@@ -195,7 +195,7 @@ const MiewDialog = ({
 
         const preserved = struct.clone();
         preserved.enableInitiallySelected();
-        if (mergeCoordinatesFromResult(preserved, result)) {
+        if (mergeCoordinatesFromResult(result, preserved)) {
           collapseExpandedSuperatoms(preserved);
           dispatch(
             load(preserved, { preserveViewport: true, skipCenter: true }),

@@ -6,6 +6,7 @@ import {
 } from '@testing-library/react';
 import { combineReducers, createStore } from 'redux';
 import { Provider } from 'react-redux';
+import { type ReactElement } from 'react';
 import modalReducer from '../../state/modal';
 import SGroup from './sgroup';
 
@@ -76,15 +77,15 @@ describe('Copolymer S-Group type availability', () => {
   it('should show Copolymer option when editing existing Copolymer S-Group', () => {
     renderWithMockStore(<SGroup type="COP" selectedSruCount={2} />, {
       modal: {
-        name: 'SGroup',
+        name: '',
+        prop: null,
+        parentModal: null,
         form: {
           errors: {},
           result: {
             type: 'COP',
           },
         },
-        prop: null,
-        parentModal: null,
       },
     });
     const typeSelect = screen.getAllByRole('combobox')[0];
@@ -138,7 +139,9 @@ describe('S-Group DAT type rendering', () => {
   it('should render SDataFieldset when type is DAT', () => {
     renderWithMockStore(<SGroup type="DAT" />, {
       modal: {
-        name: 'SGroup',
+        name: '',
+        prop: null,
+        parentModal: null,
         form: {
           errors: {},
           result: {
@@ -148,37 +151,32 @@ describe('S-Group DAT type rendering', () => {
             fieldValue: 'Field value',
           },
         },
-        prop: null,
-        parentModal: null,
       },
     });
     expect(screen.getByText('S-Group Properties')).toBeInTheDocument();
   });
 });
 
+const reducer = combineReducers({
+  modal: modalReducer,
+});
+
 function renderWithMockStore(
-  component,
-  initialState: Record<string, unknown> = {
+  component: ReactElement,
+  initialState: Partial<ReturnType<typeof reducer>> = {
     modal: {
-      name: 'SGroup',
+      name: '',
+      prop: null,
+      parentModal: null,
       form: {
         errors: {},
         result: {
           type: 'MUL',
         },
       },
-      prop: null,
-      parentModal: null,
     },
   },
 ) {
-  const reducer = combineReducers({
-    modal: modalReducer,
-  });
-
-  // TODO suppressed after upgrade to react 19. Need to fix
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const store = createStore(reducer, initialState);
   return {
     ...rtlRender(<Provider store={store}>{component}</Provider>),

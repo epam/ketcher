@@ -35,6 +35,7 @@ import type Editor from '../Editor';
 import type { Tool } from './Tool';
 import { deleteFunctionalGroups } from './helper/deleteFunctionalGroups';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
+import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 class AtomTool implements Tool {
   private readonly editor: Editor;
@@ -67,7 +68,7 @@ class AtomTool implements Tool {
             return FunctionalGroup.atomsInFunctionalGroup(sgroups, atom);
           });
         if (atomsInFunctionalGroup.some((atom) => atom !== null)) {
-          editor.event.removeFG.dispatch({ fgIds: [...selectedSGroupsId] });
+          dispatchMonomerOrGroupDialog(editor, [...selectedSGroupsId]);
           this.editor.hoverIcon.hide();
           this.isNotActiveTool = true;
           return;
@@ -134,7 +135,7 @@ class AtomTool implements Tool {
       );
 
       if (fgId !== null) {
-        editor.event.removeFG.dispatch({ fgIds: [fgId] });
+        dispatchMonomerOrGroupDialog(editor, [fgId]);
         return;
       }
     }
@@ -355,7 +356,7 @@ export function atomLongtapEvent(tool, render) {
   dragCtx.timeout = setTimeout(() => {
     delete tool.dragCtx;
     if (fgId != null) {
-      editor.event.removeFG.dispatch({ fgIds: [fgId] });
+      dispatchMonomerOrGroupDialog(editor, [fgId]);
       return;
     }
     editor.selection(null);

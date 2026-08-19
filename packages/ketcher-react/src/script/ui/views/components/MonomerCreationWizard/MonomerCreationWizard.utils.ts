@@ -1,10 +1,12 @@
 import {
   AttachmentPointName,
   type BaseMonomer,
+  type FunctionalGroup,
   getMonomerTemplateRefFromMonomerItem,
   type MonomerCreationInitialValues,
   KetMonomerClass,
   KetTemplateType,
+  MonomerMicromolecule,
   Vec2,
 } from 'ketcher-core';
 
@@ -214,4 +216,57 @@ export const getEditAllInstancesInitialValues = (
         }
       : {}),
   };
+};
+
+/**
+ * Extracts the sgroup IDs from a list of functional groups that match the
+ * primary monomer's type and symbol. Returns `undefined` when fewer than two
+ * matching groups are found (no restriction needed in that case).
+ *
+ * Use this when the user has multiple monomers of the same type selected and
+ * "Edit All Instances" should be scoped to only those selections.
+ */
+export const getSelectedSGroupIdsForEditAll = (
+  functionalGroups: FunctionalGroup[],
+  primaryMonomer: BaseMonomer,
+): number[] | undefined => {
+  const primaryType = primaryMonomer.monomerItem.props.MonomerClass;
+  const primarySymbol =
+    primaryMonomer.monomerItem.props.MonomerCode ??
+    primaryMonomer.monomerItem.label;
+
+  const matchingIds = functionalGroups
+    .filter((fg) => {
+      if (!(fg.relatedSGroup instanceof MonomerMicromolecule)) {
+        return false;
+      }
+      const { props, label } = fg.relatedSGroup.monomer.monomerItem;
+      const symbol = props.MonomerCode ?? label;
+      return props.MonomerClass === primaryType && symbol === primarySymbol;
+    })
+    .map((fg) => fg.relatedSGroupId);
+
+  return matchingIds.length > 1 ? matchingIds : undefined;
+};
+
+/**
+ * Returns true when the given `MonomerMicromolecule` sgroup represents the
+ * same monomer type and symbol as `primaryMonomer`.
+ *
+ * Use this to filter a plain list of sgroup IDs (e.g. from a dialog that
+ * receives raw IDs rather than `FunctionalGroup` objects).
+ */
+export const isSameMonomerType = (
+  sgroup: MonomerMicromolecule,
+  primaryMonomer: BaseMonomer,
+): boolean => {
+  const { props, label } = sgroup.monomer.monomerItem;
+  const symbol = props.MonomerCode ?? label;
+  const primarySymbol =
+    primaryMonomer.monomerItem.props.MonomerCode ??
+    primaryMonomer.monomerItem.label;
+  return (
+    props.MonomerClass === primaryMonomer.monomerItem.props.MonomerClass &&
+    symbol === primarySymbol
+  );
 };

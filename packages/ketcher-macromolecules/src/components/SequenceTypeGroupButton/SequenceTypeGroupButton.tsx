@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
@@ -85,10 +85,10 @@ export const SequenceTypeGroupButton = () => {
 
   const dispatch = useAppDispatch();
 
-  const onToggleSequenceMode = (data) => {
+  const onToggleSequenceMode = useCallback((data) => {
     const mode = typeof data === 'object' ? data.mode : data;
     setIsSequenceMode(mode === 'sequence-layout-mode');
-  };
+  }, []);
 
   useEffect(() => {
     const onChangeSequenceType = (mode: SequenceType) => {
@@ -112,11 +112,11 @@ export const SequenceTypeGroupButton = () => {
       editor?.events.selectMode.remove(onToggleSequenceMode);
       editor?.events.changeSequenceTypeEnterMode.remove(onChangeSequenceType);
     };
-  }, [editor]);
+  }, [editor, dispatch, onToggleSequenceMode]);
 
   useEffect(() => {
     onToggleSequenceMode(layoutMode);
-  }, [layoutMode]);
+  }, [layoutMode, onToggleSequenceMode]);
 
   const handleSelectSequenceType = (sequenceType: string) => {
     editor?.events.changeSequenceTypeEnterMode.dispatch(sequenceType);

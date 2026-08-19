@@ -14,7 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type Struct, SGroup, Vec2, MonomerMicromolecule } from 'ketcher-core';
+import {
+  type Struct,
+  SGroup,
+  Vec2,
+  MonomerMicromolecule,
+  KetcherLogger,
+} from 'ketcher-core';
 
 function cloneMeta<T extends { clone(): T; resetInitiallySelected(): void }>(
   item: T,
@@ -44,7 +50,7 @@ export function mergeCoordinatesFromResult(
   original: Struct,
 ): boolean {
   if (original.atoms.size !== result.atoms.size) {
-    console.warn(
+    KetcherLogger.warn(
       `[Miew] Cannot merge coordinates: atom counts differ ` +
         `(original: ${original.atoms.size}, result: ${result.atoms.size}).`,
     );
@@ -56,7 +62,7 @@ export function mergeCoordinatesFromResult(
     const resultAtom = result.atoms.get(atomId);
 
     if (!resultAtom) {
-      console.warn(
+      KetcherLogger.warn(
         `[Miew] Cannot merge coordinates: atom "${atomId}" is missing in result.`,
       );
 
@@ -64,7 +70,7 @@ export function mergeCoordinatesFromResult(
     }
 
     if (originalAtom.label !== resultAtom.label) {
-      console.warn(
+      KetcherLogger.warn(
         `[Miew] Cannot merge coordinates: atom labels differ for atom "${atomId}" ` +
           `(original: "${originalAtom.label}", result: "${resultAtom.label}").`,
       );

@@ -9,6 +9,7 @@ import {
   Vec2,
   MonomerMicromolecule,
   Peptide,
+  MonomerItemType,
 } from 'ketcher-core';
 import {
   alignToCentroid,
@@ -509,12 +510,13 @@ describe('miewStructMerge', () => {
         struct.atoms.add(new Atom({ label: 'N', pp: new Vec2(1, 0) })),
       ];
 
-      const mockMonomerItem: any = {
+      const mockMonomerItem: MonomerItemType = {
         label: 'A',
         props: {
           MonomerName: 'Alanine',
           MonomerNaturalAnalogCode: 'A',
           MonomerType: 'PEPTIDE',
+          Name: 'Alanine',
         },
         struct: new Struct(),
         expanded: true,

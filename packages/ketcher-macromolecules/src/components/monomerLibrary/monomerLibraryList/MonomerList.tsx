@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { MonomerGroup } from '../monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
 import { MonomerListContainer } from './styles';
@@ -78,12 +78,14 @@ const MonomerList = ({
     ? selectAmbiguousMonomersInFavorites(monomers)
     : selectAmbiguousMonomersInCategory(monomers, MonomerGroups.PEPTIDES);
   const [selectedMonomers, setSelectedMonomers] = useState('');
+  const [prevActiveTool, setPrevActiveTool] = useState(activeTool);
 
-  useEffect(() => {
+  if (activeTool !== prevActiveTool) {
+    setPrevActiveTool(activeTool);
     if (activeTool !== 'monomer') {
       setSelectedMonomers('');
     }
-  }, [activeTool]);
+  }
 
   return (
     <MonomerListContainer>

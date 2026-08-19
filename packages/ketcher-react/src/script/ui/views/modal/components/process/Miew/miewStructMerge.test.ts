@@ -7,6 +7,8 @@ import {
   Struct,
   Text,
   Vec2,
+  MonomerMicromolecule,
+  Peptide,
 } from 'ketcher-core';
 import {
   alignToCentroid,
@@ -498,6 +500,48 @@ describe('miewStructMerge', () => {
       const group = Array.from(struct.sgroups.values())[0];
       expect(group.type).toBe('DAT');
       expect(group.data.expanded).toBe(true);
+    });
+
+    it('collapses MonomerMicromolecule instances and updates both sgroup.data.expanded and monomer.monomerItem.expanded', () => {
+      const struct = new Struct();
+      const atoms = [
+        struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) })),
+        struct.atoms.add(new Atom({ label: 'N', pp: new Vec2(1, 0) })),
+      ];
+
+      const mockMonomerItem: any = {
+        label: 'A',
+        props: {
+          MonomerName: 'Alanine',
+          MonomerNaturalAnalogCode: 'A',
+          MonomerType: 'PEPTIDE',
+        },
+        struct: new Struct(),
+        expanded: true,
+      };
+
+      const monomer = new Peptide(mockMonomerItem);
+      monomer.monomerItem.expanded = true;
+
+      const monomerMicromolecule = new MonomerMicromolecule(
+        SGroup.TYPES.SUP,
+        monomer,
+      );
+      monomerMicromolecule.atoms = atoms;
+      monomerMicromolecule.pp = new Vec2(0.5, 0);
+      struct.sgroups.add(monomerMicromolecule);
+
+      expect(monomerMicromolecule.data.expanded).toBe(true);
+      expect(monomer.monomerItem.expanded).toBe(true);
+
+      collapseExpandedSuperatoms(struct);
+
+      const collapsedGroup = Array.from(
+        struct.sgroups.values(),
+      )[0] as MonomerMicromolecule;
+      expect(collapsedGroup).toBeInstanceOf(MonomerMicromolecule);
+      expect(collapsedGroup.data.expanded).toBe(false);
+      expect(collapsedGroup.monomer?.monomerItem.expanded).toBe(false);
     });
   });
 });

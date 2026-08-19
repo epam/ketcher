@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type Struct, SGroup, Vec2 } from 'ketcher-core';
+import { type Struct, SGroup, Vec2, MonomerMicromolecule } from 'ketcher-core';
 
 function cloneMeta<T extends { clone(): T; resetInitiallySelected(): void }>(
   item: T,
@@ -119,6 +119,9 @@ export function alignToCentroid(result: Struct, original: Struct): void {
 export function collapseExpandedSuperatoms(struct: Struct): void {
   struct.sgroups.forEach((sgroup) => {
     if (sgroup.type === SGroup.TYPES.SUP) {
+      if (sgroup instanceof MonomerMicromolecule && sgroup.monomer) {
+        sgroup.monomer.monomerItem.expanded = false;
+      }
       sgroup.data.expanded = false;
     }
   });

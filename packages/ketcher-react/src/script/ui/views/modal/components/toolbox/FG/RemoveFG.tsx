@@ -14,10 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useLayoutEffect } from 'react';
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import classes from './RemoveFG.module.less';
 import { useAppContext } from '../../../../../../../hooks';
 import { fromSgroupDeletion, ketcherProvider } from 'ketcher-core';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
+import { CLIP_AREA_BASE_CLASS } from '../../../../../component/cliparea/cliparea';
 
 interface RemoveFGProps extends BaseProps {
   fgIds: any;
@@ -41,6 +44,16 @@ const RemoveFG = (props: Props) => {
   const exit = (key, res) => {
     props[key](res);
   };
+
+  useLayoutEffect(() => {
+    return () => {
+      (
+        document
+          .querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR)
+          ?.getElementsByClassName(CLIP_AREA_BASE_CLASS)[0] as HTMLElement
+      )?.focus();
+    };
+  }, []);
 
   return (
     <div

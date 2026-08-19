@@ -51,7 +51,7 @@ class ReactionMapTool implements Tool {
     const editor = this.editor;
     const rnd = editor.render;
 
-    if ('dragCtx' in this) {
+    if (this.dragCtx) {
       const closestItem = this.editor.findItem(
         event,
         ['atoms'],
@@ -93,7 +93,7 @@ class ReactionMapTool implements Tool {
   }
 
   mouseup(event) {
-    if ('dragCtx' in this) {
+    if (this.dragCtx) {
       const rnd = this.editor.render;
       const closestItem = this.editor.findItem(event, ['atoms']);
 
@@ -144,7 +144,7 @@ class ReactionMapTool implements Tool {
         }
       }
       this.updateLine(null, null);
-      delete this.dragCtx;
+      this.dragCtx = undefined;
     }
     this.editor.hover(this.editor.findItem(event, ['atoms']), null, event);
   }

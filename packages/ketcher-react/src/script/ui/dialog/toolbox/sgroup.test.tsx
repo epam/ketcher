@@ -113,7 +113,7 @@ describe('Copolymer S-Group Subtype dropdown', () => {
 
   it('should include a blank option alongside Random, Block and Alternating', () => {
     openSubtypeSelect();
-    expect(screen.getByTestId('-option')).toBeInTheDocument();
+    expect(screen.getByTestId('<Blank>-option')).toBeInTheDocument();
     expect(screen.getByTestId('Random-option')).toBeInTheDocument();
     expect(screen.getByTestId('Block-option')).toBeInTheDocument();
     expect(screen.getByTestId('Alternating-option')).toBeInTheDocument();
@@ -121,7 +121,7 @@ describe('Copolymer S-Group Subtype dropdown', () => {
 
   it('should clear a previously selected subtype when the blank option is chosen', () => {
     const { store } = openSubtypeSelect();
-    fireEvent.click(screen.getByTestId('-option'));
+    fireEvent.click(screen.getByTestId('<Blank>-option'));
     expect(store.getState().modal?.form?.result?.subtype).toBeNull();
   });
 });

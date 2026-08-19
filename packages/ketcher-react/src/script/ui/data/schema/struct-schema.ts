@@ -417,7 +417,7 @@ const sgroup: Omit<StructSchema, 'properties'> & {
         subtype: {
           title: 'Subtype',
           enum: [null, 'ran', 'blo', 'alt'],
-          enumNames: ['', 'Random', 'Block', 'Alternating'],
+          enumNames: ['<Blank>', 'Random', 'Block', 'Alternating'],
         },
         connectivity: {
           title: 'Repeat Pattern',

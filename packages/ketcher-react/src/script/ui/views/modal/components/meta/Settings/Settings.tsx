@@ -20,7 +20,7 @@ import {
   setDefaultSettings,
   updateFormState,
 } from '../../../../../state/modal/form';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker';
 import { Dialog } from '../../../../components';
@@ -134,18 +134,14 @@ const SettingsDialog = (props: Props) => {
     ...prop
   } = props;
 
-  const [changedGroups, setChangedGroups] = useState(new Set());
-
-  useEffect(() => {
+  const changedGroups = useMemo(() => {
     const changed = new Set<string>();
-
     for (const key in initState) {
       if (initState[key] !== formState.result[key]) {
-        const group = fieldGroups[key];
-        changed.add(group);
+        changed.add(fieldGroups[key]);
       }
     }
-    setChangedGroups(changed);
+    return changed;
   }, [initState, formState.result]);
 
   const generalTab = {

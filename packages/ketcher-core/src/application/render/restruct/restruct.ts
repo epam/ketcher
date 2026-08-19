@@ -75,8 +75,8 @@ class ReStruct {
   public reloops: Map<number, ReLoop> = new Map();
   public rxnPluses: Map<number, ReRxnPlus> = new Map();
   public rxnArrows: Map<number, ReRxnArrow> = new Map();
-  public frags: Pool = new Pool();
-  public rgroups: Pool = new Pool();
+  public frags: Pool<ReFrag> = new Pool();
+  public rgroups: Pool<ReRGroup> = new Pool();
   public rgroupAttachmentPoints: Pool<ReRGroupAttachmentPoint> = new Pool();
 
   public sgroups: Map<number, ReSGroup> = new Map();
@@ -93,8 +93,8 @@ class ReStruct {
     RaphaelPath
   >;
 
-  public connectedComponents: Pool = new Pool();
-  private readonly ccFragmentType: Pool = new Pool();
+  public connectedComponents: Pool<Pile> = new Pool();
+  private readonly ccFragmentType: Pool<number> = new Pool();
   private structChanged = false;
   public needRecalculateVisibleAtomsAndBonds = false;
 
@@ -210,6 +210,7 @@ class ReStruct {
     const atom = reAtom || this.atoms.get(aid);
     if (!atom || atom.component < 0) return;
     const cc = this.connectedComponents.get(atom.component);
+    if (!cc) return;
 
     cc.delete(aid);
     if (cc.size < 1) this.connectedComponents.delete(atom.component);
@@ -273,7 +274,7 @@ class ReStruct {
   }
 
   removeConnectedComponent(ccid: number): boolean {
-    this.connectedComponents.get(ccid).forEach((aid) => {
+    this.connectedComponents.get(ccid)?.forEach((aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.component = -1;
     });
@@ -815,8 +816,8 @@ class ReStruct {
   }
 
   showFragments(): void {
-    this.frags.forEach((frag, id) => {
-      const path = frag.draw(this.render, id);
+    this.frags.forEach((frag) => {
+      const path = frag.draw(this.render);
       if (path) {
         this.addReObjectPath(LayerMap.data, frag.visel, path, null, true);
       }

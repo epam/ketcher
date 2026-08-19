@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAppSelector } from 'hooks';
 import {
   createNewPreset,
@@ -45,8 +45,6 @@ export const RnaElements = ({
   const dispatch = useDispatch();
 
   const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);
-  const activeRnaBuilderItemRef = useRef(activeRnaBuilderItem);
-  activeRnaBuilderItemRef.current = activeRnaBuilderItem;
   const activePreset = useAppSelector(selectActivePreset);
   const isEditMode = useAppSelector(selectIsEditMode);
   const editor = useAppSelector(selectEditor);
@@ -58,17 +56,10 @@ export const RnaElements = ({
   const [newPreset, setNewPreset] = useState(activePreset);
 
   useEffect(() => {
-    dispatch(
-      setActiveRnaBuilderItem(
-        // activeRnaBuilderItemRef avoids adding activeRnaBuilderItem to deps:
-        // if it were a dep, user navigating between monomer groups while not
-        // in edit mode would re-trigger this effect and reset the selection.
-        isEditMode && activePreset
-          ? activeRnaBuilderItemRef.current
-          : RnaBuilderPresetsItem.Presets,
-      ),
-    );
-  }, [dispatch, isEditMode, activePreset]);
+    if (!isEditMode) {
+      dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
+    }
+  }, [isEditMode, dispatch]);
 
   const groupsData = useGroupsData(libraryName);
 

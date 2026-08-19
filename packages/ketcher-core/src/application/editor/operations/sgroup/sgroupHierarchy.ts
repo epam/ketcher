@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
-
-// todo: separate classes: now here is circular dependency in `invert` method
+import { KetcherLogger } from 'utilities';
 
 type Data = {
-  sgid: any;
-  parent?: any;
-  children?: any;
+  sgid: number;
+  parent?: number;
+  children?: number[];
 };
 
 class SGroupAddToHierarchy extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any, parent?: any, children?: any) {
+  constructor(sgroupId: number, parent?: number, children?: number[]) {
     super(
       OperationType.S_GROUP_ADD_TO_HIERACHY,
       OperationPriority.S_GROUP_ADD_TO_HIERACHY,
@@ -42,29 +40,27 @@ class SGroupAddToHierarchy extends BaseOperation {
     const { sgid, parent, children } = this.data;
 
     const struct = restruct.molecule;
-    const sgroup = struct.sgroups.get(sgid)!;
+    const sgroup = struct.sgroups.get(sgid);
+    if (!sgroup) {
+      KetcherLogger.error(`SGroupAddToHierarchy: S-Group ${sgid} not found`);
+      return;
+    }
     const relations = struct.sGroupForest.insert(sgroup, parent, children);
 
     this.data.parent = relations.parent;
     this.data.children = relations.children;
-  }
-
-  invert() {
-    const inverted = new SGroupRemoveFromHierarchy();
-    inverted.data = this.data;
-    return inverted;
   }
 }
 
 class SGroupRemoveFromHierarchy extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any) {
+  constructor(sgroupId: number) {
     super(OperationType.S_GROUP_REMOVE_FROM_HIERACHY, 110);
     this.data = { sgid: sgroupId };
   }
 
-  execute(restruct: any) {
+  execute(restruct: ReStruct) {
     const { sgid } = this.data;
     const struct = restruct.molecule;
 
@@ -72,12 +68,9 @@ class SGroupRemoveFromHierarchy extends BaseOperation {
     this.data.children = struct.sGroupForest.children.get(sgid);
     struct.sGroupForest.remove(sgid);
   }
-
-  invert() {
-    const inverted = new SGroupAddToHierarchy();
-    inverted.data = this.data;
-    return inverted;
-  }
 }
+
+SGroupAddToHierarchy.InverseConstructor = SGroupRemoveFromHierarchy;
+SGroupRemoveFromHierarchy.InverseConstructor = SGroupAddToHierarchy;
 
 export { SGroupAddToHierarchy, SGroupRemoveFromHierarchy };

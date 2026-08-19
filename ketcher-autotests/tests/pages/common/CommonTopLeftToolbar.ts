@@ -42,7 +42,7 @@ export const CommonTopLeftToolbar = (page: Page) => {
         try {
           await locators.clearCanvasButton.click({
             force: false,
-            timeout: 1000,
+            timeout: 2000,
           });
           return;
         } catch {
@@ -52,7 +52,7 @@ export const CommonTopLeftToolbar = (page: Page) => {
           if (await closeWindowXButton.isVisible()) {
             await closeWindowXButton.click();
           }
-          await page.waitForTimeout(100);
+          await page.waitForTimeout(200);
         }
       }
 

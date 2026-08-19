@@ -24,7 +24,7 @@ import { Pile } from 'domain/entities/pile';
 import { Pool } from 'domain/entities/pool';
 import type { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
 import type { Vec2 } from 'domain/entities/vec2';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { LayerMap } from './generalEnumTypes';
 import ReAtom from './reatom';
 import ReBond from './rebond';
@@ -40,6 +40,7 @@ import ReSimpleObject from './resimpleObject';
 import ReText from './retext';
 import type { Render } from '../raphaelRender';
 import type Visel from './visel';
+import type { RaphaelPath } from './raphaelTypes';
 import util from '../util';
 import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
 import { ReImage } from 'application/render/restruct/reImage';
@@ -74,8 +75,8 @@ class ReStruct {
   public reloops: Map<number, ReLoop> = new Map();
   public rxnPluses: Map<number, ReRxnPlus> = new Map();
   public rxnArrows: Map<number, ReRxnArrow> = new Map();
-  public frags: Pool = new Pool();
-  public rgroups: Pool = new Pool();
+  public frags: Pool<ReFrag> = new Pool();
+  public rgroups: Pool<ReRGroup> = new Pool();
   public rgroupAttachmentPoints: Pool<ReRGroupAttachmentPoint> = new Pool();
 
   public sgroups: Map<number, ReSGroup> = new Map();
@@ -87,9 +88,13 @@ class ReStruct {
   public multitailArrows = new Map<number, ReMultitailArrow>();
 
   private initialized = false;
-  private layers: Record<LayerMap, any> = {} as Record<LayerMap, unknown>;
-  public connectedComponents: Pool = new Pool();
-  private readonly ccFragmentType: Pool = new Pool();
+  private layers: Record<LayerMap, RaphaelPath> = {} as Record<
+    LayerMap,
+    RaphaelPath
+  >;
+
+  public connectedComponents: Pool<Pile> = new Pool();
+  private readonly ccFragmentType: Pool<number> = new Pool();
   private structChanged = false;
   public needRecalculateVisibleAtomsAndBonds = false;
 
@@ -108,6 +113,10 @@ class ReStruct {
   private readonly imagesChanged = new Map<number, ReImage>();
   private readonly multitailArrowsChanged = new Map<number, ReMultitailArrow>();
   private snappingBonds: number[] = [];
+
+  // RNA preset component outlines (#9441). These span many atoms/bonds, so they
+  // are not visel-bound; we track them here to clear and rebuild each render.
+  private highlightOutlinePaths: Array<{ remove: () => void }> = [];
 
   constructor(
     molecule,
@@ -201,6 +210,7 @@ class ReStruct {
     const atom = reAtom || this.atoms.get(aid);
     if (!atom || atom.component < 0) return;
     const cc = this.connectedComponents.get(atom.component);
+    if (!cc) return;
 
     cc.delete(aid);
     if (cc.size < 1) this.connectedComponents.delete(atom.component);
@@ -223,7 +233,8 @@ class ReStruct {
     const ids = new Pile();
 
     while (list.length > 0) {
-      const aid = list.pop()!;
+      const aid = list.pop();
+      if (aid === undefined) break;
       ids.add(aid);
       const atom = this.atoms.get(aid);
       if (!atom) continue;
@@ -263,7 +274,7 @@ class ReStruct {
   }
 
   removeConnectedComponent(ccid: number): boolean {
-    this.connectedComponents.get(ccid).forEach((aid) => {
+    this.connectedComponents.get(ccid)?.forEach((aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.component = -1;
     });
@@ -405,7 +416,9 @@ class ReStruct {
     let boundingBox: Box2Abs | null = null;
 
     for (const atomId of selection.atoms ?? []) {
-      const atomPositionPoint = this.atoms.get(atomId)!.a.pp;
+      const reAtom = this.atoms.get(atomId);
+      if (!reAtom) continue;
+      const atomPositionPoint = reAtom.a.pp;
       const atomBox = new Box2Abs(atomPositionPoint, atomPositionPoint);
       boundingBox =
         boundingBox == null ? atomBox : Box2Abs.union(boundingBox, atomBox);
@@ -610,9 +623,131 @@ class ReStruct {
     this.showTexts();
     this.showImages();
     this.showMultitailArrows();
+    this.showHighlightOutlines();
     this.clearMarks();
 
     return true;
+  }
+
+  /**
+   * Draws RNA preset components whose tab is not active (#9441) as a single
+   * clean outline. Each "outline" highlight's per-atom/bond selection contours
+   * are merged into one path, and an SVG feMorphology filter turns the filled
+   * union into a single perimeter stroke (so the structure stays visible
+   * inside). Rebuilt every render since it spans many atoms/bonds.
+   */
+  showHighlightOutlines(): void {
+    this.highlightOutlinePaths.forEach((entry) => entry.remove());
+    this.highlightOutlinePaths = [];
+
+    const namespace = 'http://www.w3.org/2000/svg';
+
+    this.molecule.highlights.forEach((highlight) => {
+      if (!highlight.outline) {
+        return;
+      }
+
+      // Use the default selection-plate sizes (small <circle> for bare carbons,
+      // label-sized <rect> for labeled atoms) so the outline matches the
+      // standard selection contour: tight carbon corners, larger labeled loops.
+      const plates: Array<{ node: Element; remove: () => void }> = [];
+      const add = (contour) => {
+        if (contour) {
+          plates.push(contour);
+        }
+      };
+      highlight.atoms.forEach((atomId) => {
+        add(this.atoms.get(atomId)?.getSelectionContour(this.render));
+      });
+      highlight.bonds.forEach((bondId) => {
+        add(this.bonds.get(bondId)?.getSelectionContour(this.render, true));
+      });
+
+      if (plates.length === 0) {
+        return;
+      }
+
+      const parent = plates[0].node.parentNode as Element | null;
+      if (!parent) {
+        plates.forEach((plate) => plate.remove());
+        return;
+      }
+
+      // Render every plate as a solid shape inside one filtered group. The
+      // filter sees their rendered union (overlaps merge regardless of each
+      // path's winding) and turns it into a single perimeter ring, so the
+      // atom plates and bond capsules read as one continuous outline.
+      const filterId = this.ensureHighlightOutlineFilter();
+      const group = document.createElementNS(namespace, 'g');
+      group.setAttribute('filter', `url(#${filterId})`);
+      group.setAttribute('pointer-events', 'none');
+      plates.forEach((plate) => {
+        plate.node.setAttribute('fill', highlight.color);
+        plate.node.setAttribute('stroke', 'none');
+        group.appendChild(plate.node);
+      });
+      parent.appendChild(group);
+
+      this.highlightOutlinePaths.push({
+        remove: () => {
+          plates.forEach((plate) => plate.remove());
+          group.remove();
+        },
+      });
+    });
+  }
+
+  private ensureHighlightOutlineFilter(): string {
+    const filterId = 'ketcher-highlight-outline';
+    const scale = this.render.options.microModeScale ?? 100;
+    // Ring thickness matches the bond line width (scale / 20) so it tracks the
+    // render scale and stays a constant thickness on screen.
+    const ringRadius = String(scale / 20);
+    const svg = this.render.paper.canvas as SVGSVGElement | undefined;
+    if (!svg) {
+      return filterId;
+    }
+
+    // Keep the thickness in sync even if the filter survived a hot reload.
+    const existingDilate = svg.querySelector(`#${filterId} feMorphology`);
+    if (existingDilate) {
+      existingDilate.setAttribute('radius', ringRadius);
+      return filterId;
+    }
+
+    const namespace = 'http://www.w3.org/2000/svg';
+    let defs = svg.querySelector('defs');
+    if (!defs) {
+      defs = document.createElementNS(namespace, 'defs');
+      svg.insertBefore(defs, svg.firstChild);
+    }
+
+    const filter = document.createElementNS(namespace, 'filter');
+    filter.setAttribute('id', filterId);
+    filter.setAttribute('x', '-50%');
+    filter.setAttribute('y', '-50%');
+    filter.setAttribute('width', '200%');
+    filter.setAttribute('height', '200%');
+
+    // Grow the coloured silhouette outward, then subtract the original shape so
+    // only a clean perimeter ring of highlight.color remains — the outer
+    // boundary plus the inner ring-hole boundaries, as in the reference.
+    const dilate = document.createElementNS(namespace, 'feMorphology');
+    dilate.setAttribute('in', 'SourceGraphic');
+    dilate.setAttribute('operator', 'dilate');
+    dilate.setAttribute('radius', ringRadius);
+    dilate.setAttribute('result', 'dilated');
+
+    const ring = document.createElementNS(namespace, 'feComposite');
+    ring.setAttribute('in', 'dilated');
+    ring.setAttribute('in2', 'SourceAlpha');
+    ring.setAttribute('operator', 'out');
+
+    filter.appendChild(dilate);
+    filter.appendChild(ring);
+    defs.appendChild(filter);
+
+    return filterId;
   }
 
   updateLoops(): void {
@@ -624,7 +759,9 @@ class ReStruct {
       this.markBond(bid, 1);
     });
     ret.newLoops.forEach((loopId) => {
-      this.reloops.set(loopId, new ReLoop(this.molecule.loops.get(loopId)));
+      const loop = this.molecule.loops.get(loopId);
+      if (loop === undefined) return;
+      this.reloops.set(loopId, new ReLoop(loop));
     });
   }
 
@@ -679,8 +816,8 @@ class ReStruct {
   }
 
   showFragments(): void {
-    this.frags.forEach((frag, id) => {
-      const path = frag.draw(this.render, id);
+    this.frags.forEach((frag) => {
+      const path = frag.draw(this.render);
       if (path) {
         this.addReObjectPath(LayerMap.data, frag.visel, path, null, true);
       }

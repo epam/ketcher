@@ -30,12 +30,6 @@ type Data = {
 
 class BondDelete extends BaseOperation {
   data: Data;
-  static InverseConstructor: new (
-    begin?: number,
-    end?: number,
-    bond?: Partial<BondAttributes>,
-    needInvalidateAtoms?: boolean,
-  ) => BaseOperation;
 
   constructor(bondId?: number) {
     super(OperationType.BOND_DELETE, OperationPriority.BOND_DELETE);
@@ -99,12 +93,6 @@ class BondDelete extends BaseOperation {
     if (structBond.hb2 !== undefined) struct.halfBonds.delete(structBond.hb2);
 
     struct.bonds.delete(bid);
-  }
-
-  invert() {
-    const inverted = new BondDelete.InverseConstructor();
-    inverted.data = this.data;
-    return inverted;
   }
 }
 

@@ -1,8 +1,8 @@
-jest.mock('utilities', () => ({
+jest.mock('../../../../src/utilities/KetcherLogger', () => ({
   KetcherLogger: { error: jest.fn() },
 }));
 
-import { KetcherLogger } from 'utilities';
+import { KetcherLogger } from '../../../../src/utilities/KetcherLogger';
 import { getSvgFromDrawnStructures } from '../../../../src/utilities/getSvgFromDrawnStructures';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -59,18 +59,20 @@ describe('getSvgFromDrawnStructures', () => {
       'drawn-structures',
     )[0] as Element & { getBoundingClientRect?: () => any };
     drawn.getBoundingClientRect = () => makeRect(100, 200, 300, 400);
+    // mock the canvas offset - the viewBox origin is relative to the canvas
+    canvas.getBoundingClientRect = () => makeRect(10, 20, 800, 600);
 
     const result = getSvgFromDrawnStructures(canvas, 'preview', 5);
     expect(typeof result).toBe('string');
 
-    // Expected viewBox calculations using constants from implementation
-    // viewBoxX = 100 - 50 - 5 = 45
-    // viewBoxY = 200 - 54 - 5 = 141
+    // Expected viewBox calculations relative to the canvas offset (10, 20)
+    // viewBoxX = 100 - 10 - 5 = 85
+    // viewBoxY = 200 - 20 - 5 = 175
     // width = 300 + 5*2 = 310
     // height = 400 + 5*2 = 410
     expect(result).toContain("width='100%'");
     expect(result).toContain("height='100%'");
-    expect(result).toContain("viewBox='45 141 310 410'");
+    expect(result).toContain("viewBox='85 175 310 410'");
 
     // rectangle-selection-area and dynamic-element should be removed
     expect(result).not.toContain('rectangle-selection-area');
@@ -86,7 +88,7 @@ describe('getSvgFromDrawnStructures', () => {
     expect(result).not.toContain('cursor: pointer;');
   });
 
-  test('returns file SVG with margins object and includes xmlns', () => {
+  test('returns file SVG with numeric margin and includes xmlns', () => {
     const canvas = document.createElementNS(
       SVG_NS,
       'svg',
@@ -102,24 +104,21 @@ describe('getSvgFromDrawnStructures', () => {
       'drawn-structures',
     )[0] as Element & { getBoundingClientRect?: () => any };
     drawn.getBoundingClientRect = () => makeRect(100, 200, 300, 400);
+    canvas.getBoundingClientRect = () => makeRect(10, 20, 800, 600);
 
-    // Pass margins object - implementation adds DEFAULT_MARGIN to each component
-    const result = getSvgFromDrawnStructures(canvas, 'file', {
-      horizontal: 2,
-      vertical: 3,
-    });
+    const result = getSvgFromDrawnStructures(canvas, 'file', 2);
     expect(typeof result).toBe('string');
 
-    // For margins {2,3} implementation uses DEFAULT_MARGIN (10) + provided => horizontal=12 vertical=13
-    // viewBoxX = 100 - 50 - 12 = 38
-    // viewBoxY = 200 - 54 - 13 = 133
-    // width = 300 + 12*2 = 324
-    // height = 400 + 13*2 = 426
-    expect(result).toContain("viewBox='38 133 324 426'");
+    // viewBox is relative to the canvas offset (10, 20) with margin 2
+    // viewBoxX = 100 - 10 - 2 = 88
+    // viewBoxY = 200 - 20 - 2 = 178
+    // width = 300 + 2*2 = 304
+    // height = 400 + 2*2 = 404
+    expect(result).toContain("viewBox='88 178 304 404'");
 
     // width/height attributes in file output should be numeric
-    expect(result).toContain("width='324'");
-    expect(result).toContain("height='426'");
+    expect(result).toContain("width='304'");
+    expect(result).toContain("height='404'");
 
     // xmlns must be present for file export
     expect(result).toContain("xmlns='http://www.w3.org/2000/svg'");

@@ -205,6 +205,7 @@ export const TopToolbar = ({
           onSave={onSave}
           shortcuts={shortcuts}
           hiddenButtons={hiddenButtons}
+          disabledButtons={disabledButtons}
         />
         <ClipboardControls
           onCopy={onCopy}

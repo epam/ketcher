@@ -4,9 +4,7 @@ import { Dialog, Icon } from 'components';
 import {
   type AtomLabel,
   type AttachmentPointClickData,
-  type BaseMonomer,
   type ComponentStructureUpdateData,
-  type IKetMonomerTemplate,
   type MonomerCreationInitialValues,
   type MonomerCreationState,
   type RnaPresetComponentKey,
@@ -74,7 +72,10 @@ import {
   getLeavingAtomForAttachmentPoint,
   hasPhosphatePositionAttachmentPointConflict,
 } from './RnaPresetAttachmentPointValidation';
-import type { Selection } from '../../../../editor/Editor';
+import type {
+  FinishNewMonomersCreationData,
+  Selection,
+} from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
 
@@ -1620,13 +1621,7 @@ const MonomerCreationWizardInternal = ({
           (componentKey) => rnaPresetWizardState[componentKey],
         )
       : [wizardState];
-    const monomersData: Array<{
-      atomIdMap: Map<number, number>;
-      monomerStructureInWizard: Selection | null | undefined;
-      monomer: BaseMonomer;
-      monomerTemplate: IKetMonomerTemplate;
-      monomerRef: string;
-    }> = [];
+    const monomersData: FinishNewMonomersCreationData[] = [];
     const assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType =
       new Map();
 
@@ -1871,7 +1866,7 @@ const MonomerCreationWizardInternal = ({
         }
 
         const result = editor.saveNewMonomer({
-          type: valuesToSave.type,
+          type: valuesToSave.type as KetMonomerClass,
           symbol: valuesToSave.symbol,
           name: valuesToSave.name || valuesToSave.symbol,
           naturalAnalogue: valuesToSave.naturalAnalogue,
@@ -1879,14 +1874,17 @@ const MonomerCreationWizardInternal = ({
           aliasHELM: valuesToSave.aliasHELM,
           aliasBILN: valuesToSave.aliasBILN,
           structure,
-          attachmentPoints: monomerAssignedAttachmentPoints,
+          attachmentPoints: monomerAssignedAttachmentPoints as Map<
+            AttachmentPointName,
+            [number, number]
+          >,
           // Mark monomers as hidden when they are part of a preset and don't have all properties filled
           hidden: shouldBeHidden,
         });
 
         monomersData.push({
           ...result,
-          monomerStructureInWizard: monomerToSave.structure,
+          monomerStructureInWizard: monomerToSave.structure as Selection,
           atomIdMap,
         });
       });
@@ -2083,7 +2081,7 @@ const MonomerCreationWizardInternal = ({
                     bondIdMap,
                   );
                   const monomerData = editor.saveNewMonomer({
-                    type,
+                    type: type as KetMonomerClass,
                     symbol,
                     name: name || symbol,
                     naturalAnalogue,

@@ -18,12 +18,14 @@ import { StereoFlag } from 'domain/entities/fragment';
 import type { Struct } from 'domain/entities/struct';
 import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { SGroup } from 'domain/entities/sgroup';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 import { Elements } from 'domain/constants';
 import common from './common';
 import type { Mapping } from './mol.types';
 import utils from './utils';
 import { KetcherLogger } from 'utilities';
+import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
 
 const END_V2000 = '2D 1   1.00000     0.00000     0';
 type NumberTuple = [number, number];
@@ -32,6 +34,26 @@ interface ParseCTFileProps {
   molfileLines: string[];
   shouldReactionRelayout?: boolean;
   ignoreChiralFlag?: boolean;
+}
+
+function isErrorWithNumericId(error: unknown): error is { id: number } {
+  if (typeof error !== 'object' || error === null) {
+    return false;
+  }
+
+  const { id } = error as { id?: unknown };
+
+  return typeof id === 'number';
+}
+
+function isErrorWithMessage(error: unknown): error is { message: string } {
+  if (typeof error !== 'object' || error === null) {
+    return false;
+  }
+
+  const { message } = error as { message?: unknown };
+
+  return typeof message === 'string';
 }
 
 export class Molfile {
@@ -50,9 +72,9 @@ export class Molfile {
     this.bondMapping = {};
   }
 
-  parseCTFile(props: ParseCTFileProps) {
+  parseCTFile(props: ParseCTFileProps): Struct {
     const { molfileLines, shouldReactionRelayout, ignoreChiralFlag } = props;
-    let ret;
+    let ret: Struct;
     if (molfileLines[0].search('\\$RXN') === 0) {
       ret = common.parseRxn(
         molfileLines,
@@ -74,7 +96,7 @@ export class Molfile {
     const mol = this.molecule;
     if (!mol) return;
 
-    const toRemove: any[] = [];
+    const toRemove: number[] = [];
     let errors = 0;
 
     mol.sGroupForest
@@ -86,10 +108,14 @@ export class Molfile {
 
         try {
           common.prepareForSaving[sgroup.type](sgroup, mol);
-        } catch (e: any) {
-          KetcherLogger.error('molfile.ts::Molfile::prepareSGroups', e);
-          if (!skipErrors || typeof e.id !== 'number') {
-            throw new Error(`Error: ${e.message}`);
+        } catch (error: unknown) {
+          KetcherLogger.error('molfile.ts::Molfile::prepareSGroups', error);
+          if (!skipErrors || !isErrorWithNumericId(error)) {
+            throw new Error(
+              `Error: ${
+                isErrorWithMessage(error) ? error.message : String(error)
+              }`,
+            );
           }
           errorIgnore = true;
         }
@@ -117,9 +143,10 @@ export class Molfile {
     }
   }
 
-  getCTab(molecule: Struct, rgroups?: Map<any, any>) {
+  getCTab(molecule: Struct, rgroups?: Struct['rgroups']) {
     /* saver */
     this.molecule = molecule.clone();
+    this.centerMonomerMicromoleculeAtoms();
     this.prepareSGroups(false, false);
     this.molfile = '';
     this.writeCTab2000(rgroups);
@@ -193,6 +220,7 @@ export class Molfile {
     }
 
     this.molecule = molecule.clone();
+    this.centerMonomerMicromoleculeAtoms();
 
     this.prepareSGroups(skipSGroupErrors, preserveIndigoDesc);
 
@@ -285,7 +313,7 @@ export class Molfile {
     this.writeCR(' V2000');
   }
 
-  writeCTab2000(rgroups?: Map<any, any>) {
+  writeCTab2000(rgroups?: Struct['rgroups']) {
     // eslint-disable-line max-statements
     /* saver */
     const molecule = this.molecule;
@@ -362,7 +390,7 @@ export class Molfile {
       if (atom.rglabel != null && atom.label === 'R#') {
         // TODO need to force rglabel=null when label is not 'R#'
         for (let rgi = 0; rgi < 32; rgi++) {
-          if ((atom.rglabel as any) & (1 << rgi)) {
+          if (atom.rglabel & (1 << rgi)) {
             rglabelList.push([id, rgi + 1]);
           }
         }
@@ -430,9 +458,9 @@ export class Molfile {
       }
     }
 
-    const sgmap = {};
+    const sgmap: Record<number, number> = {};
     let cnt = 1;
-    const sgmapback = {};
+    const sgmapback: Record<number, number> = {};
     const sgorder = molecule.sGroupForest.getSGroupsBFS();
     sgorder.forEach((id) => {
       sgmapback[cnt] = id;
@@ -539,6 +567,33 @@ export class Molfile {
     }
 
     this.writeCR('M  END');
+  }
+
+  private centerMonomerMicromoleculeAtoms() {
+    if (!this.molecule) {
+      return;
+    }
+    const mol = this.molecule;
+    mol.sgroups.forEach((sgroup) => {
+      if (!(sgroup instanceof MonomerMicromolecule) || !sgroup.pp) {
+        return;
+      }
+
+      const positions = getAtomPositions(sgroup.atoms, mol.atoms);
+      if (!positions.length) {
+        return;
+      }
+
+      const offset = sgroup.pp.sub(geometricCenter(positions));
+      if (offset.x === 0 && offset.y === 0) {
+        return;
+      }
+
+      sgroup.atoms.forEach((atomId: number) => {
+        const atom = mol.atoms.get(atomId);
+        if (atom) atom.pp = atom.pp.add(offset);
+      });
+    });
   }
 
   private writeAtom(atom, atomLabel: string) {

@@ -15,7 +15,7 @@ import { KetMonomerClass } from 'domain/constants/monomers';
 export class LinkerSequenceNode {
   constructor(
     public monomer: BaseMonomer,
-    private firstMonomerInChain?: BaseMonomer,
+    private readonly firstMonomerInChain?: BaseMonomer,
   ) {}
 
   public get SubChainConstructor() {

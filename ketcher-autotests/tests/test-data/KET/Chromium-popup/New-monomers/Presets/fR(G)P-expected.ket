@@ -290,7 +290,8 @@
                     -1.026,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -299,7 +300,8 @@
                     -0.438,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -308,7 +310,8 @@
                     0.513,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -317,7 +320,8 @@
                     0.513,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "O",
@@ -479,7 +483,7 @@
         "id": "fR___2'-Fluoro-Ribose",
         "fullName": "2'-Fluoro-Ribose",
         "alias": "fR",
-        "aliasHELM": "fl2r",
+        "aliasHELM": "fR",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,
@@ -600,7 +604,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
-        "aliasHELM": "p",
+        "aliasHELM": "P",
         "aliasAxoLabs": "p",
         "attachmentPoints": [
             {

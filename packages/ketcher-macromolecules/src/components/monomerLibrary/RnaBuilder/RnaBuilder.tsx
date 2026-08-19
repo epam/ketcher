@@ -22,6 +22,8 @@ import {
   setUniqueNameError,
   selectInvalidPresetError,
   setInvalidPresetError,
+  selectInvalidPresetNameError,
+  setInvalidPresetNameError,
 } from 'state/rna-builder';
 import { Modal } from 'components/shared/modal';
 import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/styles';
@@ -31,6 +33,7 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
   const dispatch = useAppDispatch();
   const uniqueNameError = useAppSelector(selectUniqueNameError);
   const invalidPresetError = useAppSelector(selectInvalidPresetError);
+  const invalidPresetNameError = useAppSelector(selectInvalidPresetNameError);
 
   const isCompactView = useIsCompactView();
 
@@ -40,6 +43,9 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
     }
     if (invalidPresetError.length > 0) {
       dispatch(setInvalidPresetError(''));
+    }
+    if (invalidPresetNameError.length > 0) {
+      dispatch(setInvalidPresetNameError(''));
     }
   };
 
@@ -53,7 +59,11 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
         view={isCompactView ? 'tabs' : 'accordion'}
       />
       <Modal
-        isOpen={!!uniqueNameError || !!invalidPresetError}
+        isOpen={
+          Boolean(uniqueNameError) ||
+          Boolean(invalidPresetError) ||
+          Boolean(invalidPresetNameError)
+        }
         title="Error Message"
         onClose={closeErrorModal}
       >
@@ -63,6 +73,8 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
               `Preset with name "${uniqueNameError}" already exists. Please choose another name.`}
             {invalidPresetError &&
               `Preset with name "${invalidPresetError}" can't be used. Because it is impossible to establish bonds between monomers. Edit it's structure or choose another one.`}
+            {invalidPresetNameError &&
+              'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).'}
           </div>
         </Modal.Content>
         <Modal.Footer>

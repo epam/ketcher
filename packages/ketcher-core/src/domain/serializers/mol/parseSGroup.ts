@@ -22,7 +22,7 @@ import type { Struct } from 'domain/entities/struct';
 
 import type { SGroupMap, AtomMap, PostLoadHandler } from './mol.types';
 import utils from './utils';
-import assert from 'assert';
+import { assert } from 'utilities';
 
 function readKeyValuePairs(
   str: string,
@@ -67,7 +67,7 @@ function readKeyMultiValuePairs(
 function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
   if (!mol || !atomMap) return;
 
-  sgroup.data.mul = sgroup.data.subscript - 0;
+  sgroup.data.mul = Number(sgroup.data.subscript);
   const atomReductionMap: Record<number, number> = {};
 
   sgroup.atoms = SGroup.filterAtoms(sgroup.atoms, atomMap);
@@ -325,9 +325,9 @@ function applyDataSGroupInfo(sg: SGroup, propData: string): void {
 }
 
 function applyDataSGroupInfoLine(sGroups: SGroupMap, propData: string): void {
-  const id = utils.parseDecimalInt(propData.substr(0, 4)) - 1;
+  const id = utils.parseDecimalInt(propData.substring(0, 4)) - 1;
   const sg = sGroups[id];
-  applyDataSGroupInfo(sg, propData.substr(5));
+  applyDataSGroupInfo(sg, propData.substring(5));
 }
 
 function applyDataSGroupData(
@@ -342,9 +342,9 @@ function applyDataSGroupData(
       sg.data.fieldValue.startsWith('"') &&
       sg.data.fieldValue.endsWith('"')
     ) {
-      sg.data.fieldValue = sg.data.fieldValue.substr(
+      sg.data.fieldValue = sg.data.fieldValue.substring(
         1,
-        sg.data.fieldValue.length - 2,
+        sg.data.fieldValue.length - 1,
       );
     }
   }
@@ -355,8 +355,8 @@ function applyDataSGroupDataLine(
   propData: string,
   finalize: boolean,
 ): void {
-  const id = utils.parseDecimalInt(propData.substr(0, 5)) - 1;
-  const data = propData.substr(5);
+  const id = utils.parseDecimalInt(propData.substring(0, 5)) - 1;
+  const data = propData.substring(5);
   const sg = sGroups[id];
   applyDataSGroupData(sg, data, finalize);
 }

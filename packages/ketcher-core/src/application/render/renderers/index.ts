@@ -1,5 +1,6 @@
 export { BaseRenderer } from './BaseRenderer';
 export { BaseMonomerRenderer } from './BaseMonomerRenderer';
+export { AtomRenderer } from './AtomRenderer';
 export { ChemRenderer } from './ChemRenderer';
 export { PeptideRenderer } from './PeptideRenderer';
 export { PhosphateRenderer } from './PhosphateRenderer';
@@ -9,6 +10,7 @@ export { RNABaseRenderer } from './RNABaseRenderer';
 export { UnresolvedMonomerRenderer } from './UnresolvedMonomerRenderer';
 export { UnsplitNucleotideRenderer } from './UnsplitNucleotideRenderer';
 export { AmbiguousMonomerRenderer } from './AmbiguousMonomerRenderer';
+export { SGroupRenderer } from './SGroupRenderer';
 export { RenderersManager } from './RenderersManager';
 export { getRenderedStructuresBbox } from './utils';
 export { StereoFlagRenderer } from './StereoFlagRenderer';

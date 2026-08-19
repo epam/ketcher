@@ -335,12 +335,11 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
     }
 
     // Verify the leaving atom type has changed.
-    const currentValue = (await r1AtomDropdown.textContent())
-      ?.replace(/\u200b/g, '')
-      .trim();
-    expect(currentValue).toBe(
-      getAttachmentPointAtomLabel(AttachmentPointAtom.OH),
-    );
+    await expect
+      .poll(async () =>
+        (await r1AtomDropdown.textContent())?.replace(/\u200b/g, '').trim(),
+      )
+      .toBe(getAttachmentPointAtomLabel(AttachmentPointAtom.OH));
   });
 
   test('Case 5 - Verify currently selected LGA is visually indicated in dropdown', async () => {

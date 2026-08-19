@@ -117,7 +117,7 @@
                 "label": "N",
                 "location": [
                     -0.866,
-                    -1.75,
+                    -1.25,
                     0
                 ]
             },
@@ -125,16 +125,17 @@
                 "label": "C",
                 "location": [
                     0,
-                    -1.25,
+                    -0.75,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
                 "location": [
                     -1.732,
-                    -1.25,
+                    -0.75,
                     0
                 ]
             },
@@ -142,7 +143,7 @@
                 "label": "C",
                 "location": [
                     0.866,
-                    -1.75,
+                    -1.25,
                     0
                 ]
             },
@@ -150,7 +151,7 @@
                 "label": "O",
                 "location": [
                     1.732,
-                    -1.25,
+                    -0.75,
                     0
                 ]
             },
@@ -158,7 +159,7 @@
                 "label": "O",
                 "location": [
                     0.866,
-                    -2.75,
+                    -2.25,
                     0
                 ]
             },
@@ -166,14 +167,6 @@
                 "label": "C",
                 "location": [
                     0,
-                    -0.25,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    -0.866,
                     0.25,
                     0
                 ]
@@ -182,7 +175,15 @@
                 "label": "C",
                 "location": [
                     -0.866,
-                    1.25,
+                    0.75,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.866,
+                    1.75,
                     0
                 ]
             },
@@ -190,7 +191,7 @@
                 "label": "O",
                 "location": [
                     0,
-                    1.75,
+                    2.25,
                     0
                 ]
             },
@@ -198,15 +199,7 @@
                 "label": "O",
                 "location": [
                     -1.732,
-                    1.75,
-                    0
-                ]
-            },
-            {
-                "label": "H",
-                "location": [
-                    0,
-                    2.75,
+                    2.25,
                     0
                 ]
             }
@@ -282,13 +275,6 @@
                     8,
                     10
                 ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    9,
-                    11
-                ]
             }
         ],
         "class": "AminoAcid",
@@ -318,10 +304,10 @@
                 "type": "right"
             },
             {
-                "attachmentAtom": 9,
+                "attachmentAtom": 8,
                 "leavingGroup": {
                     "atoms": [
-                        11
+                        9
                     ]
                 },
                 "type": "side"

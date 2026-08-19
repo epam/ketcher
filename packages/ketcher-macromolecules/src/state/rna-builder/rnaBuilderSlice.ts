@@ -105,6 +105,7 @@ interface IRnaBuilderState {
   isEditMode: boolean;
   uniqueNameError: string;
   invalidPresetError: string;
+  invalidPresetNameError: string;
   activePresetForContextMenu: IRnaPreset | null;
   presetPhosphateFilter: PresetPhosphateFilter;
 }
@@ -127,6 +128,7 @@ const initialState: IRnaBuilderState = {
   isEditMode: false,
   uniqueNameError: '',
   invalidPresetError: '',
+  invalidPresetNameError: '',
   activePresetForContextMenu: null,
   presetPhosphateFilter: readPersistedPresetPhosphateFilter(),
 };
@@ -189,7 +191,8 @@ export const rnaBuilderSlice = createSlice({
       );
     },
     setActivePresetName: (state, action: PayloadAction<string>) => {
-      state.activePreset!.name = action.payload;
+      if (!state.activePreset) return;
+      state.activePreset.name = action.payload;
     },
     setActiveRnaBuilderItem: (
       state,
@@ -247,9 +250,11 @@ export const rnaBuilderSlice = createSlice({
           (presetInList) => presetInList.name === newPreset.nameInList,
         );
         newPreset.nameInList = newPreset.name;
-        presetIndexInList === -1
-          ? state.presetsCustom.push(newPreset)
-          : state.presetsCustom.splice(presetIndexInList, 1, newPreset);
+        if (presetIndexInList === -1) {
+          state.presetsCustom.push(newPreset);
+        } else {
+          state.presetsCustom.splice(presetIndexInList, 1, newPreset);
+        }
       } else {
         state.presetsCustom.push(newPreset);
       }
@@ -280,6 +285,9 @@ export const rnaBuilderSlice = createSlice({
     },
     setInvalidPresetError: (state, action: PayloadAction<string>) => {
       state.invalidPresetError = action.payload;
+    },
+    setInvalidPresetNameError: (state, action: PayloadAction<string>) => {
+      state.invalidPresetNameError = action.payload;
     },
     setDefaultPresets: (
       state: RootState,
@@ -472,6 +480,10 @@ export const selectInvalidPresetError = (state: RootState) => {
   return state.rnaBuilder.invalidPresetError;
 };
 
+export const selectInvalidPresetNameError = (state: RootState) => {
+  return state.rnaBuilder.invalidPresetNameError;
+};
+
 export const selectIsActivePresetNewAndEmpty = (state: RootState): boolean => {
   const activePreset = state.rnaBuilder.activePreset;
   return (
@@ -636,6 +648,7 @@ export const {
   setIsEditMode,
   setUniqueNameError,
   setInvalidPresetError,
+  setInvalidPresetNameError,
   setDefaultPresets,
   setCustomPresets,
   setActivePresetForContextMenu,

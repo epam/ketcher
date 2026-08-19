@@ -74,13 +74,19 @@ export function atomToStruct(source) {
     Object.values(source.queryProperties).some((property) => property !== null)
   ) {
     params.queryProperties = {};
+    const queryProperties = params.queryProperties;
     queryAttribute.forEach((attributeName) => {
       ifDef(
-        params.queryProperties,
+        queryProperties,
         attributeName,
         source.queryProperties[attributeName],
       );
     });
+  }
+
+  // An atom with a custom query is always rendered as an "Any atom" (label "A").
+  if (params.queryProperties?.customQuery) {
+    params.label = 'A';
   }
 
   // reaction

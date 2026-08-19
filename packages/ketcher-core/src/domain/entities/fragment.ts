@@ -102,9 +102,9 @@ export class Fragment {
     struct: Struct,
     fragmentId: number,
   ): Vec2 | undefined {
-    const fragment = struct.getFragment(fragmentId);
-    if (!fragment) return undefined;
-    const bb = fragment.getCoordBoundingBox();
+    const fragmentAtomIds = struct.getFragmentIds(fragmentId);
+    if (fragmentAtomIds.size === 0) return undefined;
+    const bb = struct.getCoordBoundingBox(fragmentAtomIds);
     return new Vec2(bb.max.x, bb.min.y - 1);
   }
 

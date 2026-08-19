@@ -145,6 +145,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state.monomerLibraryLoadError = null;
 
       const editor = new CoreEditor({
+        ketcherId: action.payload.ketcherId,
         theme: action.payload.theme,
         canvas: action.payload.canvas,
         renderersContainer: new RenderersManager({
@@ -346,7 +347,8 @@ export const selectSelectedMenuGroupItemsState = (state: RootState) =>
   state.editor.selectedMenuGroupItems;
 
 export const selectSelectedMenuGroupItem =
-  (groupItemName: string) => (state: RootState) => {
+  (groupItemName: string | undefined) => (state: RootState) => {
+    if (!groupItemName) return undefined;
     return state.editor.selectedMenuGroupItems[groupItemName];
   };
 

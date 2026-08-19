@@ -242,23 +242,35 @@ export async function layout(page: Page): Promise<void> {
   return await page.evaluate(() => window.ketcher.layout());
 }
 
+interface RecognizeImagePayload {
+  buffer: ArrayBuffer;
+  type: string;
+  version?: string;
+}
+
 export async function recognize(
   page: Page,
   image: Blob,
   version?: string,
 ): Promise<Struct> {
+  const imagePayload: RecognizeImagePayload = {
+    buffer: await image.arrayBuffer(),
+    type: image.type,
+    version,
+  };
+
   return await page.evaluate(
-    (params: { img: Blob; ver?: string }) => {
-      const { img, ver } = params;
-      return window.ketcher.recognize(img, ver);
+    async ({ buffer, type, version }: RecognizeImagePayload) => {
+      const image = new Blob([buffer], { type });
+      return window.ketcher.recognize(image, version);
     },
-    { img: image, ver: version },
+    imagePayload,
   );
 }
 
 export async function enableDearomatizeOnLoad(page: Page): Promise<void> {
   return await page.evaluate(() =>
-    window.ketcher.setSettings({ 'general.dearomatize-on-load': 'true' }),
+    window.ketcher.setSettings({ 'general.dearomatize-on-load': true }),
   );
 }
 
@@ -318,9 +330,6 @@ export async function waitForViewOnlyModeState(
 export async function disableQueryElements(page: Page): Promise<void> {
   return await page.evaluate(() => {
     return window.ketcher.setSettings({
-      // TODO fix types for setSettings in Ketcher-core
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       disableQueryElements: ['Pol', 'CYH', 'CXH'],
     });
   });

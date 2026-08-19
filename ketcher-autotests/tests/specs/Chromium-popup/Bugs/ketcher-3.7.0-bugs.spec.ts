@@ -200,19 +200,19 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     const cases = [
       {
         helm: 'PEPTIDE1{C}|PEPTIDE2{C}$PEPTIDE2,PEPTIDE1,1:R3-1:R3$$$V2.0',
-        expected: '5.96',
+        expected: '6.15',
       },
       {
         helm: 'PEPTIDE1{C}|PEPTIDE2{C}$PEPTIDE2,PEPTIDE1,1:R2-1:R2$$$V2.0',
-        expected: '9.01',
+        expected: '5.03',
       },
       {
         helm: 'PEPTIDE1{C.C}$$$$V2.0',
-        expected: '8.49',
+        expected: '8',
       },
       {
         helm: 'PEPTIDE1{C}|PEPTIDE2{C}$PEPTIDE1,PEPTIDE2,1:pair-1:pair$$$V2.0',
-        expected: '8.49',
+        expected: '8',
       },
     ];
     for (const { helm, expected } of cases) {

@@ -3,8 +3,6 @@
  * Handles migration from namespaced format back to flat format
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, dot-notation */
-
 import type { Settings, DeepPartial } from './types';
 import { KetcherLogger } from 'utilities';
 
@@ -13,29 +11,27 @@ export class SettingsMigration {
    * Migrate settings from namespaced format back to flat format
    * Handles legacy namespaced storage and ensures flat structure
    */
-  static migrate(stored: any): DeepPartial<Settings> {
+  static migrate(stored: unknown): DeepPartial<Settings> {
     if (!stored || typeof stored !== 'object') {
       return {};
     }
 
+    const storedRecord = stored as Record<string, unknown>;
+
     // Check if already in flat format
-    if (this.isFlatFormat(stored)) {
-      return stored as DeepPartial<Settings>;
+    if (this.isFlatFormat(storedRecord)) {
+      return storedRecord as DeepPartial<Settings>;
     }
 
     // Migrate from namespaced format to flat format
-    return this.migrateFromNamespacedFormat(stored);
+    return this.migrateFromNamespacedFormat(storedRecord);
   }
 
   /**
    * Check if settings are in flat format
    * Flat format has top-level setting keys and no category keys
    */
-  private static isFlatFormat(stored: any): boolean {
-    if (!stored || typeof stored !== 'object') {
-      return false;
-    }
-
+  private static isFlatFormat(stored: Record<string, unknown>): boolean {
     // Sample keys from flat format
     const flatKeys = [
       'resetToSelect',
@@ -62,8 +58,10 @@ export class SettingsMigration {
   /**
    * Flatten namespaced structure by spreading all categories
    */
-  private static migrateFromNamespacedFormat(old: any): DeepPartial<Settings> {
-    const flat: any = {};
+  private static migrateFromNamespacedFormat(
+    old: Record<string, unknown>,
+  ): DeepPartial<Settings> {
+    const flat: DeepPartial<Settings> = {};
 
     // Spread all category objects into flat structure
     if (old.editor && typeof old.editor === 'object') {
@@ -85,7 +83,7 @@ export class SettingsMigration {
       Object.assign(flat, old.macromolecules);
     }
 
-    return flat as DeepPartial<Settings>;
+    return flat;
   }
 
   /**

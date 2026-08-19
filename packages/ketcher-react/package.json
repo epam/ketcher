@@ -1,12 +1,12 @@
 {
   "name": "ketcher-react",
-  "version": "3.17.0-rc.2",
+  "version": "3.19.0-rc.1",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
-  "homepage": "http://lifescience.opensource.epam.com/ketcher",
+  "homepage": "https://lifescience.opensource.epam.com/ketcher/",
   "author": {
     "name": "EPAM Life Sciences",
-    "url": "http://lifescience.opensource.epam.com"
+    "url": "https://lifescience.opensource.epam.com"
   },
   "repository": {
     "type": "git",
@@ -66,9 +66,8 @@
     "ketcher-core": "*",
     "lexical": "^0.40.0",
     "lodash": "^4.18.1",
-    "miew-react": "0.12.0",
+    "miew-react": "0.11.0",
     "paper": "^0.12.18",
-    "react-colorful": "^5.4.0",
     "react-contexify": "^6.0.0",
     "react-device-detect": "^2.2.2",
     "react-dropzone": "^11.7.1",
@@ -88,7 +87,7 @@
     "whatwg-fetch": "^3.4.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.6",
+    "@babel/core": "^7.29.7",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
@@ -108,16 +107,17 @@
     "@types/node": "^20.19.43",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "@typescript-eslint/eslint-plugin": "^5.6.0",
-    "@typescript-eslint/parser": "^5.6.0",
+    "@typescript-eslint/eslint-plugin": "^8.65.0",
+    "@typescript-eslint/parser": "^8.65.0",
     "autoprefixer": "^10.2.5",
     "babel-jest": "^30.3.0",
     "cross-env": "^7.0.3",
-    "eslint": "^8.49.0",
+    "eslint": "^8.57.0",
     "eslint-plugin-jest": "^25.3.0",
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.27.1",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "eslint-plugin-react-you-might-not-need-an-effect": "^1.0.1",
     "eslint-plugin-testing-library": "^5.0.1",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.4.1",

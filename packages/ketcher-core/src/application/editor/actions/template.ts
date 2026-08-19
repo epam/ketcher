@@ -28,10 +28,12 @@ import { fromBondStereoUpdate } from './bondStereo';
 import { Action } from './action';
 import closest from '../shared/closest';
 import { fromAromaticTemplateOnBond } from './aromaticFusing';
-import { fromPaste } from './paste';
+import { fromPaste, type CreatedItems } from './paste';
 import utils from '../shared/utils';
 import { fromSgroupAddition } from './sgroup';
 import type { ReStruct } from 'application/render';
+import { KetcherLogger } from 'utilities';
+import { isNumber } from 'lodash';
 
 const benzeneMoleculeName = 'Benzene';
 const cyclopentadieneMoleculeName = 'Cyclopentadiene';
@@ -43,8 +45,8 @@ export function fromTemplateOnCanvas(
   pos: Vec2,
   angle = 0,
   isPreview = true,
-): [Action, { atoms: number[]; bonds: number[] }] {
-  const [action, pasteItems] = fromPaste(
+): [Action, { atoms: number[]; bonds: number[] }, CreatedItems] {
+  const [action, pasteItems, items] = fromPaste(
     restruct,
     template.molecule,
     pos,
@@ -54,7 +56,7 @@ export function fromTemplateOnCanvas(
 
   action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct));
 
-  return [action, pasteItems];
+  return [action, pasteItems, items];
 }
 
 function extraBondAction(
@@ -78,27 +80,35 @@ function extraBondAction(
     );
     action = actionRes[0];
     action.operations.reverse();
-    additionalAtom = actionRes[2] as number;
+    additionalAtom = actionRes[2];
   } else {
+    const pivotAtom = restruct.molecule.atoms.get(aid);
+    if (!pivotAtom) {
+      KetcherLogger.error(
+        `template.ts::extraBondAction: atom ${aid} not found`,
+      );
+      return { action, aid1: aid };
+    }
+
     const operation = new AtomAdd(
       { label: 'C', fragment: frid },
-      new Vec2(1, 0)
-        .rotate(angle)
-        .add((restruct.molecule.atoms.get(aid) as Atom).pp)
-        .get_xy0(),
-    ).perform(restruct) as AtomAdd;
-
-    action.addOp(operation);
-    action.addOp(
-      new BondAdd(aid, operation.data.aid as number, { type: 1 }).perform(
-        restruct,
-      ),
+      new Vec2(1, 0).rotate(angle).add(pivotAtom.pp).get_xy0(),
     );
+    action.addOp(operation.perform(restruct));
+    const newAtomId = operation.data.aid;
+    if (!isNumber(newAtomId)) {
+      KetcherLogger.error(
+        'template.ts::extraBondAction: atom id was not assigned after AtomAdd',
+      );
+      return { action, aid1: aid };
+    }
 
-    additionalAtom = operation.data.aid as number;
+    action.addOp(new BondAdd(aid, newAtomId, { type: 1 }).perform(restruct));
+
+    additionalAtom = newAtomId;
   }
 
-  return { action, aid1: additionalAtom as number };
+  return { action, aid1: additionalAtom };
 }
 
 export function fromTemplateOnAtom(
@@ -468,12 +478,9 @@ function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
     begin: flip ? tmplBond.end : tmplBond.begin,
     end: flip ? tmplBond.begin : tmplBond.end,
   };
-  const { angle, scale } = utils.mergeBondsParams(
-    struct,
-    bond,
-    tmpl,
-    bondAtoms,
-  );
+  const mergeParams = utils.mergeBondsParams(struct, bond, tmpl, bondAtoms);
+  if (!mergeParams) return action;
+  const { angle, scale } = mergeParams;
 
   const frid = struct.getBondFragment(bid);
 

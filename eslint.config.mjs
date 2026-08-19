@@ -99,6 +99,9 @@ export default [
       '@typescript-eslint/no-explicit-any': 'error',
       'object-shorthand': 'error',
       '@typescript-eslint/no-empty-function': 'off',
+      'no-constant-condition': ['error', { checkLoops: false }],
+      'no-dupe-class-members': 'off',
+      '@typescript-eslint/no-dupe-class-members': 'error',
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
@@ -152,6 +155,8 @@ export default [
           caughtErrorsIgnorePattern: '^_',
         },
       ],
+      '@typescript-eslint/no-dupe-class-members': 'off',
+      'no-dupe-class-members': 'error',
     },
   },
   {

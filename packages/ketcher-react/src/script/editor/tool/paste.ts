@@ -34,6 +34,7 @@ import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
 import type { Tool } from './Tool';
 import { debounce } from 'lodash';
+import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 let isMovePreviewCalculationInProgress = false;
 
@@ -73,7 +74,10 @@ class PasteTool implements Tool {
     const { clientHeight, clientWidth } = rnd.clientArea;
     const clientAreaRect = rnd.clientArea.getBoundingClientRect();
     const point = this.editor.lastEvent
-      ? CoordinateTransformation.pageToModel(this.editor.lastEvent, rnd)
+      ? CoordinateTransformation.pageToModel(
+          this.editor.lastEvent as MouseEvent,
+          rnd,
+        )
       : CoordinateTransformation.pageToModel(
           {
             clientX: clientAreaRect.left + clientWidth / 2,
@@ -104,7 +108,7 @@ class PasteTool implements Tool {
   mousedown(event) {
     if (
       !this.isSingleContractedGroup ||
-      SGroup.isSaltOrSolvent(this.struct.sgroups.get(0)?.data.name)
+      SGroup.isSaltOrSolvent(this.struct.sgroups.get(0)?.data.name ?? '')
     ) {
       return;
     }
@@ -114,12 +118,16 @@ class PasteTool implements Tool {
       this.action?.perform(this.restruct);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const closestGroupItem = this.editor.findItem(event, ['functionalGroups'])!;
-    const closestGroup = this.editor.struct().sgroups.get(closestGroupItem?.id);
+    const closestGroupItem = this.editor.findItem(event, ['functionalGroups']);
+    const closestGroup = closestGroupItem
+      ? this.editor.struct().sgroups.get(closestGroupItem.id)
+      : undefined;
 
     // not dropping on a group (tmp, should be removed when dealing with other entities)
-    if (!closestGroupItem || SGroup.isSaltOrSolvent(closestGroup?.data.name)) {
+    if (
+      !closestGroupItem ||
+      SGroup.isSaltOrSolvent(closestGroup?.data.name ?? '')
+    ) {
       // recreate action and continue as usual
       const [action] = fromPaste(
         this.restruct,
@@ -169,9 +177,17 @@ class PasteTool implements Tool {
         pos0 = atom?.pp;
       }
 
+      if (!pos0) {
+        // Invariant: dragCtx.item always refers to a functional group with a
+        // resolvable attachment atom (validated in mousedown). Reaching here
+        // with no position indicates a programming error, not a runtime case.
+        throw new Error(
+          'PasteTool: attachment atom position is missing for the dragged group',
+        );
+      }
+
       // calc angle
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      let angle = vectorUtils.calcAngle(pos0!, pos1);
+      let angle = vectorUtils.calcAngle(pos0, pos1);
 
       if (!event.ctrlKey) {
         angle = vectorUtils.fracAngle(angle, null);
@@ -246,7 +262,7 @@ class PasteTool implements Tool {
     );
 
     if (groupsIdsInvolvedInMerge.length) {
-      this.editor.event.removeFG.dispatch({ fgIds: groupsIdsInvolvedInMerge });
+      dispatchMonomerOrGroupDialog(this.editor, groupsIdsInvolvedInMerge);
       return;
     }
 

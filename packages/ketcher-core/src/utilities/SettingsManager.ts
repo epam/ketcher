@@ -32,9 +32,19 @@ const DefaultEditorLineLength: EditorLineLength = {
 
 export const SetEditorLineLengthAction = 'SetEditorLineLength';
 
+/**
+ * Shape of the selection tool persisted in local storage.
+ * Mirrors the `ActionObj` used by the UI reducer that assigns it,
+ * but is kept minimal here to avoid coupling `ketcher-core` to
+ * UI-layer action types.
+ */
+export interface PersistedSelectionTool {
+  tool: 'select';
+  opts?: unknown;
+}
+
 interface SavedSettings {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  selectionTool?: any;
+  selectionTool?: PersistedSelectionTool;
   disableCustomQuery?: boolean;
   editorLineLength?: EditorLineLength;
   monomerLibraryUpdates?: string[];

@@ -27,6 +27,7 @@ interface EnhancedStereoResult {
   andNumber: number;
   orNumber: number;
   type: StereoLabel;
+  [key: string]: unknown;
 }
 
 type EnhancedStereoFormState = FormState<EnhancedStereoResult>;
@@ -200,10 +201,9 @@ interface State {
   editor: { struct: () => Struct };
 }
 
-// Workaround: @types/react version conflict with connect()
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const EnhancedStereoAny = EnhancedStereo as any;
-export default connect((state: State) => ({
+const ConnectedEnhancedStereo = connect((state: State) => ({
   formState: state.modal.form || { result: {}, valid: false },
   struct: state.editor.struct(),
-}))(EnhancedStereoAny) as ComponentType<EnhancedStereoCallProps>;
+}))(EnhancedStereo);
+
+export default ConnectedEnhancedStereo as unknown as ComponentType<EnhancedStereoCallProps>;

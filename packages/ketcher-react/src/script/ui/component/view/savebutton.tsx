@@ -28,7 +28,8 @@ import type { SaverType } from './saveButton.types';
 type Props = {
   server?: any;
   filename: string;
-  data: any;
+  data?: Blob | string;
+  getData?: () => Blob | string;
   type?: string;
   mode?: string;
   options?: GenerateImageOptions;
@@ -48,6 +49,7 @@ const SaveButton = (props: SaveButtonProps) => {
     server,
     filename = 'unnamed',
     data,
+    getData,
     type,
     mode = 'saveFile',
     options,
@@ -61,21 +63,22 @@ const SaveButton = (props: SaveButtonProps) => {
   const { ketcherId } = useAppContext();
 
   const saveFile = async () => {
-    if (data) {
-      try {
+    try {
+      const dataToSave = getData ? getData() : data;
+      if (dataToSave) {
         const saver: SaverType = await fileSaver(server);
-        saver(data, filename, type);
+        saver(dataToSave, filename, type);
         onSave();
-      } catch (e) {
-        KetcherLogger.error('savebutton.tsx::SaveButton::saveFile', e);
-        onError(e);
       }
+    } catch (e) {
+      KetcherLogger.error('savebutton.tsx::SaveButton::saveFile', e);
+      onError(e);
     }
   };
 
   const saveImage = () => {
     const ketcherInstance = ketcherProvider.getKetcher(ketcherId);
-    if (options?.outputFormat) {
+    if (options?.outputFormat && typeof data === 'string') {
       ketcherInstance
         .generateImage(data, options)
         .then((blob) => {

@@ -30,10 +30,6 @@ interface SelectListProps
   value: string;
   onSelect: (opt: string, index: number) => void;
   splitIndexes?: number[];
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  selected?: string;
-  component?: React.ComponentType<unknown>;
-  /* eslint-enable @typescript-eslint/no-unused-vars */
   classes: {
     selected?: string;
     split?: string;
@@ -46,10 +42,6 @@ function SelectList({
   value,
   onSelect,
   splitIndexes,
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  selected,
-  component,
-  /* eslint-enable @typescript-eslint/no-unused-vars */
   classes,
   ...props
 }: Readonly<SelectListProps>) {

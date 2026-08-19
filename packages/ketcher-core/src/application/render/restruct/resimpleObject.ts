@@ -22,25 +22,31 @@ import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
+import type { RenderOptions } from '../render.types';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
+import type { Element, RaphaelPaper, RaphaelSet } from 'raphael';
 
 interface MinDistanceWithReferencePoint {
   minDist: number;
   refPoint: Vec2 | null;
 }
 interface StyledPath {
-  path: any;
+  path: Element;
   stylesApplied: boolean;
 }
+interface SimpleObjectItem {
+  mode: SimpleObjectMode;
+  pos: Array<Vec2>;
+}
 class ReSimpleObject extends ReObject {
-  private readonly item: any;
-  private selectionSet: any;
-  private selectionPointsSet: any;
+  private readonly item: SimpleObjectItem;
+  private selectionSet: RaphaelSet;
+  private selectionPointsSet: RaphaelSet;
 
-  constructor(simpleObject: any) {
+  constructor(simpleObject: SimpleObjectItem) {
     super('simpleObject');
     this.item = simpleObject;
   }
@@ -49,7 +55,7 @@ class ReSimpleObject extends ReObject {
     return true;
   }
 
-  calcDistance(p: Vec2, s: any): MinDistanceWithReferencePoint {
+  calcDistance(p: Vec2, s: number): MinDistanceWithReferencePoint {
     const point: Vec2 = new Vec2(p.x, p.y);
 
     const distRef: MinDistanceWithReferencePoint =
@@ -138,21 +144,14 @@ class ReSimpleObject extends ReObject {
   }
 
   getReferencePointDistance(p: Vec2): MinDistanceWithReferencePoint {
-    const dist: any = [];
+    const dist: Array<MinDistanceWithReferencePoint> = [];
     const refPoints = this.getReferencePoints();
     refPoints.forEach((rp) => {
       dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
     });
 
-    const minDist: MinDistanceWithReferencePoint = dist.reduce(
-      (acc, current) => {
-        if (!acc) {
-          return current;
-        }
-
-        return acc.minDist < current.minDist ? acc : current;
-      },
-      null,
+    const minDist: MinDistanceWithReferencePoint = dist.reduce((acc, current) =>
+      acc.minDist < current.minDist ? acc : current,
     );
 
     return minDist;
@@ -236,11 +235,11 @@ class ReSimpleObject extends ReObject {
     return refPoints;
   }
 
-  getBorderHoverPath(path: any, render: Render) {
+  getBorderHoverPath(path: Element, render: Render) {
     return path.attr({ ...render.options.hoverStyle, fill: 'none' });
   }
 
-  getFillHoverPath(path: any, render: Render) {
+  getFillHoverPath(path: Element, render: Render) {
     return path.attr(render.options.innerHoverStyle);
   }
 
@@ -400,8 +399,8 @@ class ReSimpleObject extends ReObject {
     return paths;
   }
 
-  drawHover(render: Render): Array<any> {
-    const paths: Array<any> = this.hoverPath(render).map((enhPath) => {
+  drawHover(render: Render): Array<Element> {
+    const paths: Array<Element> = this.hoverPath(render).map((enhPath) => {
       if (!enhPath.stylesApplied) {
         return enhPath.path.attr(render.options.hoverStyle);
       }
@@ -412,7 +411,11 @@ class ReSimpleObject extends ReObject {
     return paths;
   }
 
-  makeSelectionPlate(restruct: ReStruct, paper: any, styles: any): any {
+  makeSelectionPlate(
+    restruct: ReStruct,
+    paper: RaphaelPaper,
+    styles: RenderOptions,
+  ): RaphaelSet {
     const pos = this.item.pos.map((p) => {
       return Scale.modelToCanvas(p, restruct.render.options) || new Vec2();
     });
@@ -422,7 +425,7 @@ class ReSimpleObject extends ReObject {
     this.selectionSet = restruct.render.paper.set();
     this.selectionPointsSet = restruct.render.paper.set();
     this.selectionSet.push(
-      generatePath(this.item.mode, paper, pos).attr(
+      generatePath(this.item.mode, paper, [pos[0], pos[1]]).attr(
         styles.selectionStyleSimpleObject,
       ),
     );
@@ -450,13 +453,13 @@ class ReSimpleObject extends ReObject {
     this.selectionPointsSet?.hide();
   }
 
-  show(restruct: ReStruct, options: any): void {
+  show(restruct: ReStruct, options: RenderOptions): void {
     const render = restruct.render;
     const pos = this.item.pos.map((p) => {
       return Scale.modelToCanvas(p, options) || new Vec2();
     });
 
-    const path = generatePath(this.item.mode, render.paper, pos);
+    const path = generatePath(this.item.mode, render.paper, [pos[0], pos[1]]);
 
     const offset = options.offset;
     if (offset != null) path.translateAbs(offset.x, offset.y);
@@ -465,8 +468,12 @@ class ReSimpleObject extends ReObject {
   }
 }
 
-function generatePath(mode: SimpleObjectMode, paper, pos: [Vec2, Vec2]): any {
-  let path: any;
+function generatePath(
+  mode: SimpleObjectMode,
+  paper: RaphaelPaper,
+  pos: [Vec2, Vec2],
+): Element {
+  let path: Element;
   switch (mode) {
     case SimpleObjectMode.ellipse: {
       path = draw.ellipse(paper, pos);

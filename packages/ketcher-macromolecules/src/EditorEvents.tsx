@@ -40,6 +40,9 @@ import {
   BackBoneSequenceNode,
   LinkerSequenceNode,
   ToolName,
+  AtomRenderer,
+  BaseRenderer,
+  guardForMacromoleculesEditor,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
 import {
@@ -50,6 +53,7 @@ import {
   PresetPreviewState,
   PreviewStyle,
   PreviewType,
+  TextPreviewState,
 } from 'state/types';
 import { calculateBondPreviewPosition } from 'ketcher-react';
 import { loadDefaultPresets, loadMonomerLibrary } from 'state/library';
@@ -320,6 +324,28 @@ export const EditorEvents = () => {
     dispatch(showPreview(undefined));
   }, [debouncedShowPreview, dispatch]);
 
+  const handleOpenAtomLabelTooltip = useCallback(
+    (e) => {
+      const renderer: BaseRenderer = e.target.__data__;
+
+      if (!(renderer instanceof AtomRenderer)) {
+        return;
+      }
+
+      const tooltipText: string | null | undefined = renderer?.labelTooltipText;
+      if (!tooltipText) {
+        return;
+      }
+      const textPreviewData: TextPreviewState = {
+        type: PreviewType.Text,
+        text: tooltipText,
+        target: e.target,
+      };
+      debouncedShowPreview(textPreviewData);
+    },
+    [debouncedShowPreview],
+  );
+
   useEffect(() => {
     editor?.events.mouseOverMonomer.add(handleOpenPreview);
     editor?.events.mouseLeaveMonomer.add(handleClosePreview);
@@ -329,6 +355,8 @@ export const EditorEvents = () => {
     editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
     editor?.events.mouseOverPolymerBond.add(handleOpenPreview);
     editor?.events.mouseLeavePolymerBond.add(handleClosePreview);
+    editor?.events.mouseOverDrawingEntity.add(handleOpenAtomLabelTooltip);
+    editor?.events.mouseLeaveDrawingEntity.add(handleClosePreview);
 
     const onMoveHandler = (e) => {
       handleClosePreview();
@@ -342,7 +370,9 @@ export const EditorEvents = () => {
     editor?.events.mouseOnMoveSequenceItem.add(onMoveHandler);
     editor?.events.mouseOnMovePolymerBond.add(onMoveHandler);
 
-    window.addEventListener('hidePreview', handleClosePreview);
+    const guardedHandleClosePreview =
+      guardForMacromoleculesEditor(handleClosePreview);
+    window.addEventListener('hidePreview', guardedHandleClosePreview);
 
     return () => {
       editor?.events.mouseOverMonomer.remove(handleOpenPreview);
@@ -352,13 +382,15 @@ export const EditorEvents = () => {
       editor?.events.mouseLeaveSequenceItem.remove(handleClosePreview);
       editor?.events.mouseOverPolymerBond.remove(handleOpenPreview);
       editor?.events.mouseLeavePolymerBond.remove(handleClosePreview);
+      editor?.events.mouseOverDrawingEntity.remove(handleOpenAtomLabelTooltip);
+      editor?.events.mouseLeaveDrawingEntity.remove(handleClosePreview);
 
       editor?.events.mouseOnMoveMonomer.remove(onMoveHandler);
       editor?.events.mouseMoveAttachmentPoint.remove(onMoveHandler);
       editor?.events.mouseOnMoveSequenceItem.remove(onMoveHandler);
       editor?.events.mouseOnMovePolymerBond.remove(onMoveHandler);
 
-      window.removeEventListener('hidePreview', handleClosePreview);
+      window.removeEventListener('hidePreview', guardedHandleClosePreview);
     };
   }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
 

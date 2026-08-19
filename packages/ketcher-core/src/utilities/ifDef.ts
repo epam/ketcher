@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-export function ifDef<TValue = any>(
-  target: any,
+export function ifDef<TValue = unknown>(
+  target: object,
   key: string,
   value: TValue,
   defaultValue?: TValue,
@@ -26,6 +26,6 @@ export function ifDef<TValue = any>(
     value !== defaultValue &&
     !(Array.isArray(value) && value.length === 0)
   ) {
-    target[key] = value;
+    (target as Record<string, unknown>)[key] = value;
   }
 }

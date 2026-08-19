@@ -16,14 +16,7 @@
 
 import * as structFormat from '../../../../../data/convert/structConverter';
 
-import {
-  type ClipboardEvent,
-  type ContextType,
-  type MouseEvent,
-  type RefObject,
-  Component,
-  createRef,
-} from 'react';
+import { type ContextType, type RefObject, Component, createRef } from 'react';
 import { createSelector } from 'reselect';
 import Form, { Field } from '../../../../../component/form/form/form';
 import {
@@ -42,7 +35,6 @@ import {
   KetcherLogger,
   Atom,
   isClipboardAPIAvailable,
-  legacyCopy,
   SupportedFormat,
 } from 'ketcher-core';
 
@@ -108,7 +100,7 @@ interface PreviewContentProps {
   classes: typeof classes;
   structStr: string;
   textAreaRef: RefObject<HTMLTextAreaElement | null>;
-  handleCopy: (event: MouseEvent | ClipboardEvent) => void;
+  handleCopy: () => void;
 }
 
 interface FormState {
@@ -142,7 +134,6 @@ interface SaveDialogProps {
   formState: FormState;
   moleculeErrors?: Record<string, string>;
   checkState: CheckState;
-  bondThickness?: number;
   ignoreChiralFlag: boolean;
   editor: Editor;
   onCheck: (checkOptions: unknown) => void;
@@ -168,9 +159,6 @@ interface AppState {
     };
     getServerSettings: () => StructServiceOptions;
     check: CheckState;
-    settings: {
-      bondThickness?: number;
-    };
   };
   server: StructService;
   editor: Editor;
@@ -390,6 +378,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         type,
         { ...options, ignoreChiralFlag },
         queryPropertiesAreUsed,
+        struct,
       );
       const getStructFromStringByType = () => {
         if (type === SupportedFormat.ket) {
@@ -537,7 +526,6 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         </Form>
         <Tabs
           className={classes.tabs}
-          captions={tabs}
           tabIndex={this.state.tabIndex}
           changeTab={this.changeTab}
           tabs={tabs}
@@ -546,24 +534,22 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     );
   };
 
-  handleCopy = (event: MouseEvent | ClipboardEvent): void => {
+  handleCopy = (): void => {
     const { structStr } = this.state;
 
-    try {
-      if (isClipboardAPIAvailable()) {
-        navigator.clipboard.writeText(structStr || '');
-      } else if ('clipboardData' in event) {
-        legacyCopy(event.clipboardData, {
-          'text/plain': structStr,
-        });
-        event.preventDefault();
-      }
-    } catch (e) {
+    if (!isClipboardAPIAvailable()) {
+      this.props.editor.errorHandler(
+        'This feature is not available in your browser',
+      );
+      return;
+    }
+
+    navigator.clipboard.writeText(structStr || '').catch((e) => {
       KetcherLogger.error('copyAs.js::copyAs', e);
       this.props.editor.errorHandler(
         'This feature is not available in your browser',
       );
-    }
+    });
   };
 
   renderSaveFile = (): JSX.Element | null => {
@@ -712,7 +698,6 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     const DialogComponent = Dialog;
     return (
       <DialogComponent
-        testId="save-structure-dialog"
         className={classes.dialog}
         title="Save Structure"
         params={this.props}
@@ -742,7 +727,6 @@ const mapStateToProps = (state: AppState) => ({
   formState: state.modal.form,
   moleculeErrors: state.modal.form.moleculeErrors,
   checkState: state.options.check,
-  bondThickness: state.options.settings.bondThickness,
   ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
   editor: state.editor,
 });

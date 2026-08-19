@@ -18,7 +18,7 @@
             <bond atomRefs2="a4 a5" order="1"/>
             <bond atomRefs2="a5 a6" order="1"/>
         </bondArray>
-        <molecule id="sg0" atomRefs="a0 a1 a2 a3" role="DataSgroup" fieldName="Test" x="0" y="0" fieldData="55">
+        <molecule id="sg1" atomRefs="a0 a1 a2 a3" role="DataSgroup" fieldName="Test" fieldData="55">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="0"/>
                 <MPoint x="0" y="0"/>

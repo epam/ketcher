@@ -6,10 +6,11 @@ import {
 import { ModeControl } from './script/ui/views/toolbars/ModeControl';
 import { LoadingCircles } from './script/ui/views/components';
 import styles from './Editor.module.less';
-import type {
-  Ketcher,
-  Editor as MoleculesEditor,
-  CoreEditor,
+import {
+  type Ketcher,
+  type Editor as MoleculesEditor,
+  type CoreEditor,
+  ketcherProvider,
 } from 'ketcher-core';
 
 type Props = Omit<EditorProps, 'ketcherId'> & {
@@ -38,7 +39,7 @@ interface MacromoleculesEditorProps {
  *  and the resulting cross-package cycle (ketcher-macromolecules -> ketcher-react) must be resolved first.
  */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-ignore ketcher-macromolecules is not available during ketcher-react build (dynamic import)
 const MacromoleculesEditorComponent = lazy(
   () => import('ketcher-macromolecules'),
 ) as unknown as React.LazyExoticComponent<
@@ -118,7 +119,9 @@ export const Editor = (props: Props) => {
       moleculesEditor &&
       (macromoleculesEditor || props.disableMacromoleculesEditor)
     ) {
-      props.onInit?.(ketcher);
+      if (ketcherProvider.getIndexById(ketcher.id) !== -1) {
+        props.onInit?.(ketcher);
+      }
     }
   }, [moleculesEditor, macromoleculesEditor]);
 

@@ -1,7 +1,7 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import type { MonomerCreationState, ReStruct } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { getNextFreeAttachmentPoint } from 'domain/helpers';
 import type { AttachmentPointName } from 'domain/types';
 import type Restruct from 'application/render/restruct/restruct';
@@ -17,7 +17,7 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
     private readonly monomerCreationState: MonomerCreationState,
     private readonly attachmentPointName: AttachmentPointName,
     private readonly potentialLeavingAtoms?: Set<number>,
-    private _assignedAttachmentPoints?: Map<
+    private readonly _assignedAttachmentPoints?: Map<
       AttachmentPointName,
       [number, number]
     >,

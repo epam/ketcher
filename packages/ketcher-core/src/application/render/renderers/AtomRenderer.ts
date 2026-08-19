@@ -2,7 +2,6 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { type Atom, AtomRadical } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { editorEvents } from 'application/editor/editorEvents';
 import { ketcherProvider } from 'application/ketcherProvider';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import type { D3SvgElementSelection } from 'application/render/types';
@@ -14,17 +13,34 @@ import { StereoLabelStyleType } from 'application/render/restruct/generalEnumTyp
 import { StereoFlag } from 'domain/entities/fragment';
 import type { Settings } from 'application/settings';
 import util from '../util';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   BAD_VALENCE_WARNING_COLOR,
   BAD_VALENCE_LINE_OFFSET,
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
+import { isGenericAtom } from 'domain/helpers';
 
 // Extra clearance in canvas units that keeps labels away from the atom bbox.
 const LABEL_CLEARANCE_OFFSET = 5;
 const STEREO_CIP_GAP = 2;
+const MAX_LABEL_LENGTH = 8;
+
+export type AtomHoverContour =
+  | {
+      type: 'circle';
+      center: Vec2;
+      radius: number;
+    }
+  | {
+      type: 'rect';
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      radius: number;
+    };
 
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
@@ -91,11 +107,11 @@ export class AtomRenderer extends BaseRenderer {
 
     rootElement
       ?.on('mouseover', (event) => {
-        editorEvents.mouseOverDrawingEntity.dispatch(event);
+        provideEditorInstance().events.mouseOverDrawingEntity.dispatch(event);
         this.showHover();
       })
       .on('mouseleave', (event) => {
-        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
+        provideEditorInstance().events.mouseLeaveDrawingEntity.dispatch(event);
         this.hideHover();
       })
       .on('mouseup', (event) => {
@@ -147,6 +163,37 @@ export class AtomRenderer extends BaseRenderer {
         .attr('rx', HOVER_RECTANGLE_RADIUS)
         .attr('ry', HOVER_RECTANGLE_RADIUS);
     }
+  }
+
+  public getHoverContour(): AtomHoverContour {
+    if (
+      (this.labelLength < 2 || !this.isLabelVisible) &&
+      !this.atom.hasCharge
+    ) {
+      const macroModeScale = this.editorSettings.macroModeScale;
+
+      return {
+        type: 'circle',
+        center: this.center,
+        radius: Math.ceil(1.9 * (macroModeScale / 6)),
+      };
+    }
+
+    const labelBbox = this.textElement?.node()?.getBBox();
+    const labelX = labelBbox?.x ?? 0;
+    const labelWidth = labelBbox?.width ?? 8;
+    const labelHeight = labelBbox?.height ?? 8;
+    const HOVER_PADDING = 4;
+    const HOVER_RECTANGLE_RADIUS = 10;
+
+    return {
+      type: 'rect',
+      x: this.center.x + labelX - HOVER_PADDING,
+      y: this.center.y - (labelHeight / 2 + HOVER_PADDING),
+      width: labelWidth + HOVER_PADDING * 2,
+      height: labelHeight + HOVER_PADDING * 2,
+      radius: HOVER_RECTANGLE_RADIUS,
+    };
   }
 
   /**
@@ -231,7 +278,7 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = provideEditorInstance().viewModel;
     const atomHaldEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
-    if (atomHaldEdges?.length === 0) {
+    if (!atomHaldEdges?.length) {
       if (this.atom.label === AtomLabel.D || this.atom.label === AtomLabel.T) {
         return false;
       } else {
@@ -251,7 +298,37 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get labelText() {
+    if (this.atom.properties.atomList) {
+      return this.atom.properties.atomList.label();
+    }
     return this.atom.properties.alias ?? this.atom.label;
+  }
+
+  /** True when the atom's label is a generic / pseudo query atom (e.g. A, Q, M, X, *). */
+  public get isGenericLabel(): boolean {
+    return isGenericAtom(this.atom.label);
+  }
+
+  // A bondless D/T isotope still needs its implicit hydrogen suffix (DH, TH); only a
+  // bare "H" label must merge the implicit hydrogen into its own count instead of
+  // repeating the letter (H2, not HH).
+  private get isHydrogenLabel() {
+    return this.atom.label === AtomLabel.H;
+  }
+
+  /** The label text shown on canvas — truncated to MAX_LABEL_LENGTH if necessary. */
+  public get displayLabelText() {
+    const text = this.labelText;
+    if (text.length > MAX_LABEL_LENGTH) {
+      return `${text.substring(0, MAX_LABEL_LENGTH)}...`;
+    }
+    return text;
+  }
+
+  /** When the label is truncated, this holds the full text for use as a tooltip. */
+  public get labelTooltipText(): string | null {
+    const text = this.labelText;
+    return text.length > MAX_LABEL_LENGTH ? text : null;
   }
 
   private get isAtomTerminal() {
@@ -307,8 +384,8 @@ export class AtomRenderer extends BaseRenderer {
   public get labelLength() {
     let { hydrogenAmount } = this.atom.calculateValence();
 
-    if (this.labelText.length > 1) {
-      return this.labelText.length;
+    if (this.displayLabelText.length > 1) {
+      return this.displayLabelText.length;
     }
 
     if (!this.shouldDisplayHydrogen) {
@@ -370,13 +447,21 @@ export class AtomRenderer extends BaseRenderer {
       hydrogenAmount = 0;
     }
 
+    const isHydrogenLabel = this.isHydrogenLabel;
+    if (isHydrogenLabel && hydrogenAmount > 0) {
+      // The label itself already shows one hydrogen, so fold the implicit amount into it.
+      hydrogenAmount += 1;
+    }
+
     const textElement = this.rootElement
       ?.append('text')
       .attr('y', 5)
       .attr('fill', this.labelColor)
       .attr(
         'style',
-        'user-select: none; font-family: Arial; letter-spacing: 1.2px;',
+        `user-select: none; font-family: Arial; letter-spacing: 1.2px;${
+          this.isGenericLabel ? ' font-style: italic;' : ''
+        }`,
       )
       .attr('font-size', '13px')
       .attr('pointer-events', 'none');
@@ -385,10 +470,10 @@ export class AtomRenderer extends BaseRenderer {
       textElement
         ?.append('tspan')
         .attr('dy', this.atom.hasExplicitIsotope ? 4 : 0)
-        .text(this.labelText);
+        .text(this.displayLabelText);
     }
 
-    if (!this.atom.hasAlias && hydrogenAmount > 0) {
+    if (!this.atom.hasAlias && hydrogenAmount > 0 && !isHydrogenLabel) {
       textElement
         ?.append('tspan')
         .attr(
@@ -400,12 +485,14 @@ export class AtomRenderer extends BaseRenderer {
       if (hydrogenAmount > 1) {
         textElement?.append('tspan').text(hydrogenAmount).attr('dy', 3);
       }
+    } else if (isHydrogenLabel && hydrogenAmount > 0) {
+      textElement?.append('tspan').text(hydrogenAmount).attr('dy', 3);
     }
 
     if (shouldHydrogenBeOnLeft) {
       textElement
         ?.append('tspan')
-        .text(this.labelText)
+        .text(this.displayLabelText)
         .attr('dy', hydrogenAmount > 1 ? -3 : 0);
     }
 
@@ -454,6 +541,8 @@ export class AtomRenderer extends BaseRenderer {
     this.badValenceElement?.remove();
     this.badValenceElement = undefined;
     this.updateSelectionContour();
+    // Hover contour is the only hit-testable element; recreate it after removal.
+    this.hoverElement = this.appendHover();
     this.appendAtomProperties();
     this.appendBadValenceWarning();
   }
@@ -788,12 +877,11 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendStereoLabel() {
-    if (!this.shouldDisplayStereoLabel()) {
+    const stereoLabel = this.atom.properties.stereoLabel;
+
+    if (!stereoLabel || !this.shouldDisplayStereoLabel()) {
       return;
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const stereoLabel = this.atom.properties.stereoLabel!;
 
     this.stereoLabelElement = this.canvas
       ?.append('g')
@@ -855,7 +943,24 @@ export class AtomRenderer extends BaseRenderer {
     direction: Vec2,
   ): number {
     const baseDistance = 3;
-    const labelBox = {
+
+    // Forward shift: clearance past the atom label in the placement direction.
+    // Mirrors visel.exts iteration in molecules mode (reatom.ts lines 1085-1087).
+    let forwardShift = 0;
+    this.labelBBoxes.forEach((labelSymbolBBox) => {
+      const absoluteBox = new Box2Abs(
+        labelSymbolBBox.x,
+        labelSymbolBBox.y,
+        labelSymbolBBox.x + labelSymbolBBox.width,
+        labelSymbolBBox.y + labelSymbolBBox.height,
+      ).translate(this.scaledPosition);
+      forwardShift = Math.max(
+        forwardShift,
+        util.shiftRayBox(this.scaledPosition, direction, absoluteBox),
+      );
+    });
+
+    const stereoLabelBox = {
       x: this.scaledPosition.x - width / 2,
       y: this.scaledPosition.y - height / 2,
       width,
@@ -865,10 +970,10 @@ export class AtomRenderer extends BaseRenderer {
     const backwardShift = util.shiftRayBox(
       this.scaledPosition,
       direction.negated(),
-      Box2Abs.fromRelBox(labelBox),
+      Box2Abs.fromRelBox(stereoLabelBox),
     );
 
-    return LABEL_CLEARANCE_OFFSET + baseDistance + backwardShift;
+    return LABEL_CLEARANCE_OFFSET + baseDistance + forwardShift + backwardShift;
   }
 
   private getLabelProjectionRadius(
@@ -895,7 +1000,19 @@ export class AtomRenderer extends BaseRenderer {
     this.removeSelection();
     this.cipLabelElement?.remove();
     this.stereoLabelElement?.remove();
+    // Clear stale ref so show() recreates the hover contour in the new root (#10856).
+    this.hoverElement = undefined;
     super.remove();
+  }
+
+  public setVisibility(isVisible: boolean): void {
+    super.setVisibility(isVisible);
+
+    const display = isVisible ? '' : 'none';
+    this.rootElement?.style('display', display);
+    this.selectionElement?.style('display', display);
+    this.cipLabelElement?.style('display', display);
+    this.stereoLabelElement?.style('display', display);
   }
 
   protected appendHoverAreaElement(): void {

@@ -30,8 +30,8 @@ import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 import { CLIP_AREA_BASE_CLASS } from '../../script/ui/component/cliparea/cliparea';
 
 interface DialogParamsCallProps {
-  onCancel: () => void;
-  onOk: (result: unknown) => void;
+  onCancel?: () => void;
+  onOk?: (result: unknown) => void;
 }
 
 export interface DialogParams extends DialogParamsCallProps {
@@ -44,7 +44,6 @@ interface DialogProps {
   params?: DialogParams;
   buttons?: Array<string | ReactElement>;
   className?: string;
-  testId?: string;
   needMargin?: boolean;
   withDivider?: boolean;
   headerContent?: ReactElement;
@@ -74,7 +73,6 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     headerContent,
     footerContent,
     className,
-    testId: _testId,
     buttonsNameMap,
     needMargin = true,
     withDivider = false,
@@ -136,7 +134,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   const exit = (mode) => {
     const key = isButtonOk(mode) ? 'onOk' : 'onCancel';
     if (params && key in params && (key !== 'onOk' || valid())) {
-      params[key](result());
+      params[key]?.(result());
     }
   };
 

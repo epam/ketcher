@@ -18,13 +18,11 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Pile } from 'domain/entities/pile';
 import { SGroup } from 'domain/entities/sgroup';
 import type { Atom } from 'domain/entities/atom';
-import type { Bond } from 'domain/entities/bond';
 import type { Struct } from 'domain/entities/struct';
 
 import type { Mapping } from './mol.types';
 import utils from './utils';
 import v2000 from './v2000';
-import v3000 from './v3000';
 
 interface SGroupSavingError extends Error {
   id: number;
@@ -38,8 +36,6 @@ function getAtom(mol: Struct, id: number): Atom {
   }
   return atom;
 }
-
-const loadRGroupFragments = true; // TODO: set to load the fragments
 
 /* Parse Mol */
 function parseMol(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
@@ -63,11 +59,7 @@ function parseCTab(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   if (version === 'V2000') {
     return v2000.parseCTabV2000(ctabLines, countsSplit, ignoreChiralFlag);
   }
-  if (version === 'V3000') {
-    return v3000.parseCTabV3000(ctabLines, !loadRGroupFragments);
-  } else {
-    throw new Error('Molfile version unknown: ' + version);
-  }
+  throw new Error('Molfile version unknown: ' + version);
 }
 
 /* Parse Rxn */
@@ -76,11 +68,10 @@ function parseRxn(
   shouldReactionRelayout?: boolean,
   ignoreChiralFlag?: boolean,
 ): Struct {
-  const split = ctabLines[0].trim().split(' ');
-  if (split.length > 1 && split[1] === 'V3000') {
-    return v3000.parseRxn3000(ctabLines, shouldReactionRelayout);
+  const version = ctabLines[0].trim().split(/\s+/)[1];
+  if (version && version !== 'V2000') {
+    throw new Error('Rxnfile version unknown: ' + version);
   }
-
   const struct = v2000.parseRxn2000(
     ctabLines,
     shouldReactionRelayout,
@@ -372,11 +363,14 @@ function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
   const crossBonds = SGroup.getCrossBonds(mol, atomSet);
   SGroup.bracketPos(sg, mol);
   const bb = sg.bracketBox;
+  if (!bb) {
+    return [];
+  }
   const d = sg.bracketDirection;
   const n = d.rotateSC(1, 0);
   const brackets = SGroup.getBracketParameters(
     mol,
-    crossBonds as unknown as { [key: number]: Array<Bond> },
+    crossBonds,
     atomSet,
     bb,
     d,

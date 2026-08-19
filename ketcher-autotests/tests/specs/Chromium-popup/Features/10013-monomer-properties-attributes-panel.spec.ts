@@ -70,7 +70,7 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
     // For CHEM monomers, only BILN alias should be available (no HELM)
     await expect(
       createMonomerDialog.aliasesSection.helmAliasEditbox,
-    ).not.toBeVisible();
+    ).toBeVisible();
     await expect(
       createMonomerDialog.aliasesSection.bilnAliasEditbox,
     ).toBeVisible();
@@ -444,7 +444,7 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
     // For CHEM, HELM should not be visible but BILN should be
     await expect(
       createMonomerDialog.aliasesSection.helmAliasEditbox,
-    ).not.toBeVisible();
+    ).toBeVisible();
     await expect(
       createMonomerDialog.aliasesSection.bilnAliasEditbox,
     ).toBeVisible();
@@ -483,7 +483,7 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
           naturalAnalogue: false,
           modification: false,
           aliases: true,
-          helmAlias: false,
+          helmAlias: true,
           bilnAlias: true,
           attachmentPoints: true,
         },

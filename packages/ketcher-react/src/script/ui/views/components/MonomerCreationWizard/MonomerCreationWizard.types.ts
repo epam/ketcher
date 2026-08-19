@@ -72,6 +72,8 @@ export type WizardNotificationId =
   | 'invalidPresetCode'
   | 'invalidPhosphatePositionAttachmentPoints'
   | 'phosphatePositionNotSelected'
+  | 'editAllPresetWarning'
+  | 'editAllPresetError'
   | 'invalidName';
 
 export type WizardNotificationTypeMap = Record<

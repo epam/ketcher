@@ -7,6 +7,10 @@ import {
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters/types/ket';
+import {
+  type HighlightPathData,
+  createNucleotideHighlightPath,
+} from 'application/render/renderers/monomerHighlightShapes';
 
 const NUCLEOTIDE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].hover;
@@ -27,6 +31,11 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
       NUCLEOTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID,
       scale,
     );
+  }
+
+  public getHighlightPath(offset = 0): HighlightPathData {
+    const { width, height } = this.monomerSize;
+    return createNucleotideHighlightPath(this.center, width, height, offset);
   }
 
   public get textColor() {

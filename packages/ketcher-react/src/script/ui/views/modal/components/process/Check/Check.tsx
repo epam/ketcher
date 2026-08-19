@@ -36,6 +36,7 @@ interface MoleculeErrors {
 type CheckOption =
   | 'valence'
   | 'radicals'
+  | 'isotopes'
   | 'pseudoatoms'
   | 'stereo'
   | 'query'
@@ -64,6 +65,7 @@ interface CheckSchema {
 
 interface CheckState {
   checkOptions: CheckOption[];
+  [key: string]: unknown;
 }
 
 interface CheckFormState extends FormState<CheckState> {
@@ -110,28 +112,30 @@ const checkSchema: CheckSchema = {
         enum: [
           'valence',
           'radicals',
+          'isotopes',
           'pseudoatoms',
           'stereo',
+          'chiral',
+          'chiral_flag',
           'query',
           'overlapping_atoms',
           'overlapping_bonds',
           'rgroups',
-          'chiral',
           '3d',
-          'chiral_flag',
         ],
         enumNames: [
           'Valence',
           'Radical',
+          'Isotopes',
           'Pseudoatom',
           'Stereochemistry',
+          'Chirality',
+          'Chiral flag',
           'Query',
           'Overlapping Atoms',
           'Overlapping Bonds',
           'R-Groups',
-          'Chirality',
           '3D Structure',
-          'Chiral flag',
         ],
       },
     },
@@ -249,8 +253,6 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
         schema={checkSchema}
         init={checkState}
         {...formState}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore - result prop is not in FormProps type definition but is accepted by the component
         result={result}
       >
         <div className={style.wrapper}>
@@ -262,8 +264,6 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
               <Field
                 name="checkOptions"
                 labelPos={false}
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore - multiple and onChange props are not in FieldProps type definition but are accepted by the component
                 multiple
                 type="checkbox"
                 disabled={!isStructureChecking}
@@ -325,12 +325,9 @@ const mapDispatchToProps = (
   },
 });
 
-// Workaround: @types/react version conflict with connect()
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CheckDialogAny = CheckDialog as any;
-const Check = connect(
+const ConnectedCheckDialog = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CheckDialogAny) as ComponentType<CheckDialogOwnProps>;
+)(CheckDialog);
 
-export default Check;
+export default ConnectedCheckDialog as ComponentType<CheckDialogOwnProps>;

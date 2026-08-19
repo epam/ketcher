@@ -79,7 +79,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
                     data-testid="file-format-list"
                   >
                     <div
-                      aria-controls="«r0»"
+                      aria-controls="_r_0_"
                       aria-expanded="true"
                       aria-haspopup="listbox"
                       class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
@@ -205,7 +205,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
       >
         <ul
           class="MuiList-root MuiList-padding MuiMenu-list css-6hp17o-MuiList-root-MuiMenu-list"
-          id="«r0»"
+          id="_r_0_"
           role="listbox"
           tabindex="-1"
         >
@@ -490,7 +490,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
                   data-testid="file-format-list"
                 >
                   <div
-                    aria-controls="«r0»"
+                    aria-controls="_r_0_"
                     aria-expanded="true"
                     aria-haspopup="listbox"
                     class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"

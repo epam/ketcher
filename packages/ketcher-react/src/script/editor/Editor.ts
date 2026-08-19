@@ -85,6 +85,7 @@ import {
   Visel,
   paperPathFromSVGElement,
   fromFragmentDeletion,
+  assert,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -93,6 +94,7 @@ import {
 } from 'subscription';
 
 import closest from './shared/closest';
+import type { SelectedItems, SkipItem } from './shared/closest.types';
 import { type ChangeEventData, customOnChangeHandler } from './utils';
 import { isEqual } from 'lodash/fp';
 import { toolsMap } from './tool';
@@ -108,7 +110,6 @@ import type {
   ToolEventHandlerName,
 } from './tool/Tool';
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
-import assert from 'assert';
 import { isNumber } from 'lodash';
 import paperjs from 'paper';
 
@@ -271,6 +272,7 @@ class Editor implements KetcherEditor {
     quickEdit: PipelineSubscription;
     attachEdit: PipelineSubscription;
     removeFG: PipelineSubscription;
+    editMonomer: PipelineSubscription;
     change: Subscription;
     selectionChange: PipelineSubscription;
     aromatizeStruct: PipelineSubscription;
@@ -340,6 +342,7 @@ class Editor implements KetcherEditor {
       quickEdit: new PipelineSubscription(),
       attachEdit: new PipelineSubscription(),
       removeFG: new PipelineSubscription(),
+      editMonomer: new PipelineSubscription(),
       change: new Subscription(),
       selectionChange: new PipelineSubscription(),
       aromatizeStruct: new PipelineSubscription(),
@@ -1856,6 +1859,7 @@ class Editor implements KetcherEditor {
     originalType: KetMonomerClass,
     originalSymbol: string,
     sourceExpanded: boolean,
+    selectedSGroupIds?: number[],
   ) {
     let sourceSGroup: SGroup | undefined;
 
@@ -1872,7 +1876,12 @@ class Editor implements KetcherEditor {
     const replacementSourceSGroup = sourceSGroup;
     this.setMonomerExpandedState(replacementSourceSGroup, sourceExpanded);
 
-    Array.from(struct.sgroups.values()).forEach((sgroup) => {
+    const restrictToIds =
+      selectedSGroupIds && selectedSGroupIds.length > 1
+        ? new Set(selectedSGroupIds)
+        : null;
+
+    Array.from(struct.sgroups.entries()).forEach(([sgId, sgroup]) => {
       const sgroupWithMonomer = sgroup as SGroup & EditableSGroupMonomer;
       const sgroupMonomer = sgroupWithMonomer.monomer;
       const { props, label } = sgroupMonomer?.monomerItem ?? {};
@@ -1884,6 +1893,12 @@ class Editor implements KetcherEditor {
         props?.MonomerClass !== originalType ||
         symbol !== originalSymbol
       ) {
+        return;
+      }
+
+      // When the user had a specific subset of monomers selected, only replace
+      // those — not all canvas instances.
+      if (restrictToIds && !restrictToIds.has(sgId)) {
         return;
       }
 
@@ -1988,7 +2003,7 @@ class Editor implements KetcherEditor {
     let ket = {
       root: {
         templates: libraryItems.map((libraryItem) => {
-          return libraryItem.root.templates![0];
+          return libraryItem.root.templates?.[0];
         }),
       },
     };
@@ -2251,6 +2266,7 @@ class Editor implements KetcherEditor {
           editAllInitialValues.originalType,
           editAllInitialValues.originalSymbol,
           sourceMonomerExpanded,
+          editAllInitialValues.selectedSGroupIds,
         );
         struct.sGroupsRecalcCrossBonds();
       }
@@ -3358,11 +3374,11 @@ class Editor implements KetcherEditor {
     this.selection(null);
 
     const stack = this.historyStack[this.historyPtr];
-    let action!: Action;
+    let action: Action | undefined;
     try {
       action = stack.perform(this.render.ctab);
-    } finally {
       this.historyStack[this.historyPtr] = action;
+    } finally {
       this.historyPtr++;
     }
 
@@ -3457,7 +3473,7 @@ class Editor implements KetcherEditor {
   findItem(
     event: Event | MouseEvent | { clientX: number; clientY: number },
     maps: Array<string> | null,
-    skip: unknown = null,
+    skip: SkipItem | null = null,
   ) {
     const pos = CoordinateTransformation.pageToModel(
       event as MouseEvent | { clientX: number; clientY: number },
@@ -3467,7 +3483,7 @@ class Editor implements KetcherEditor {
     return closest.item(this.render.ctab, pos, maps, skip, this.render.options);
   }
 
-  findMerge(srcItems: unknown, maps: string[] | undefined) {
+  findMerge(srcItems: SelectedItems, maps: string[] | undefined) {
     return closest.merge(this.render.ctab, srcItems, this.render.options, maps);
   }
 
@@ -3799,10 +3815,10 @@ function setHover(ci: HoverTarget, visible: boolean, render: Render) {
       let combinedPath: paper.PathItem | null = null;
       const options = render.options;
       const hoverVisel = new Visel('mergedHover');
-      const elements: Element[] = [];
+      const elements: SVGElement[] = [];
 
       hoversToCombine.forEach((item) => {
-        if (item?.node) {
+        if (item?.node instanceof SVGElement) {
           elements.push(item.node);
           item.node.remove();
         }

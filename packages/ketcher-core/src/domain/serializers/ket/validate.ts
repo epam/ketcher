@@ -16,8 +16,9 @@
 
 import compiledSchema from './compiledSchema';
 import { validateMultitailArrows } from './multitailArrowsValidator';
+import type { KetFileRootContent } from 'domain/serializers/serializers.types';
 
-export function validate(ket: any): boolean {
+export function validate(ket: KetFileRootContent): boolean {
   const result = compiledSchema(ket);
   return result ? validateMultitailArrows(ket) : result;
 }

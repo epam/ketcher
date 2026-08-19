@@ -24,7 +24,7 @@ import { Pile } from 'domain/entities/pile';
 import { Pool } from 'domain/entities/pool';
 import type { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
 import type { Vec2 } from 'domain/entities/vec2';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { LayerMap } from './generalEnumTypes';
 import ReAtom from './reatom';
 import ReBond from './rebond';
@@ -40,6 +40,7 @@ import ReSimpleObject from './resimpleObject';
 import ReText from './retext';
 import type { Render } from '../raphaelRender';
 import type Visel from './visel';
+import type { RaphaelPath } from './raphaelTypes';
 import util from '../util';
 import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
 import { ReImage } from 'application/render/restruct/reImage';
@@ -74,8 +75,8 @@ class ReStruct {
   public reloops: Map<number, ReLoop> = new Map();
   public rxnPluses: Map<number, ReRxnPlus> = new Map();
   public rxnArrows: Map<number, ReRxnArrow> = new Map();
-  public frags: Pool = new Pool();
-  public rgroups: Pool = new Pool();
+  public frags: Pool<ReFrag> = new Pool();
+  public rgroups: Pool<ReRGroup> = new Pool();
   public rgroupAttachmentPoints: Pool<ReRGroupAttachmentPoint> = new Pool();
 
   public sgroups: Map<number, ReSGroup> = new Map();
@@ -87,9 +88,13 @@ class ReStruct {
   public multitailArrows = new Map<number, ReMultitailArrow>();
 
   private initialized = false;
-  private layers: Record<LayerMap, any> = {} as Record<LayerMap, unknown>;
-  public connectedComponents: Pool = new Pool();
-  private readonly ccFragmentType: Pool = new Pool();
+  private layers: Record<LayerMap, RaphaelPath> = {} as Record<
+    LayerMap,
+    RaphaelPath
+  >;
+
+  public connectedComponents: Pool<Pile> = new Pool();
+  private readonly ccFragmentType: Pool<number> = new Pool();
   private structChanged = false;
   public needRecalculateVisibleAtomsAndBonds = false;
 
@@ -205,6 +210,7 @@ class ReStruct {
     const atom = reAtom || this.atoms.get(aid);
     if (!atom || atom.component < 0) return;
     const cc = this.connectedComponents.get(atom.component);
+    if (!cc) return;
 
     cc.delete(aid);
     if (cc.size < 1) this.connectedComponents.delete(atom.component);
@@ -227,7 +233,8 @@ class ReStruct {
     const ids = new Pile();
 
     while (list.length > 0) {
-      const aid = list.pop()!;
+      const aid = list.pop();
+      if (aid === undefined) break;
       ids.add(aid);
       const atom = this.atoms.get(aid);
       if (!atom) continue;
@@ -267,7 +274,7 @@ class ReStruct {
   }
 
   removeConnectedComponent(ccid: number): boolean {
-    this.connectedComponents.get(ccid).forEach((aid) => {
+    this.connectedComponents.get(ccid)?.forEach((aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.component = -1;
     });
@@ -409,7 +416,9 @@ class ReStruct {
     let boundingBox: Box2Abs | null = null;
 
     for (const atomId of selection.atoms ?? []) {
-      const atomPositionPoint = this.atoms.get(atomId)!.a.pp;
+      const reAtom = this.atoms.get(atomId);
+      if (!reAtom) continue;
+      const atomPositionPoint = reAtom.a.pp;
       const atomBox = new Box2Abs(atomPositionPoint, atomPositionPoint);
       boundingBox =
         boundingBox == null ? atomBox : Box2Abs.union(boundingBox, atomBox);
@@ -807,8 +816,8 @@ class ReStruct {
   }
 
   showFragments(): void {
-    this.frags.forEach((frag, id) => {
-      const path = frag.draw(this.render, id);
+    this.frags.forEach((frag) => {
+      const path = frag.draw(this.render);
       if (path) {
         this.addReObjectPath(LayerMap.data, frag.visel, path, null, true);
       }

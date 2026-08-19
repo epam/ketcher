@@ -357,7 +357,7 @@ class BondTool implements Tool {
       );
       if (fgIds.length > 0) {
         this.editor.event.removeFG.dispatch({ fgIds });
-        delete this.dragCtx;
+        this.dragCtx = undefined;
         return { beginAtom, endAtom, beginPos, shouldReturn: true };
       }
     } else if (endAtom?.map === 'functionalGroups') {
@@ -523,7 +523,7 @@ class BondTool implements Tool {
           bondChangingAction(render.ctab, dragCtx.item.id, bond, bondProps),
         );
       }
-      delete this.dragCtx;
+      this.dragCtx = undefined;
     }
     this.editor.event.message.dispatch({
       info: false,

@@ -55,19 +55,21 @@ export const SUPERATOM_CLASS_TEXT = {
   [SUPERATOM_CLASS.PHOSPHATE]: 'Phosphate',
 };
 
-export function getSuperatomLabel(sgroup: {
-  data: { name?: string | null; class?: string | null };
-}): string {
-  const superatomClass = sgroup.data?.class as
-    | keyof typeof SUPERATOM_CLASS_TEXT
-    | undefined;
+const isSuperatomClass = (value?: string | null): value is SUPERATOM_CLASS =>
+  typeof value === 'string' && value in SUPERATOM_CLASS_TEXT;
 
-  return (
-    sgroup.data?.name?.trim() ||
-    (superatomClass ? SUPERATOM_CLASS_TEXT[superatomClass] : '') ||
-    ''
-  );
+export function getSuperatomLabel(sgroup: SGroup): string {
+  const name = sgroup.data.name?.trim();
+  if (name) {
+    return name;
+  }
+  const superatomClass = sgroup.data?.class;
+  if (isSuperatomClass(superatomClass)) {
+    return SUPERATOM_CLASS_TEXT[superatomClass];
+  }
+  return '';
 }
+
 // Helper function to convert SVG elements into Paper.js paths
 export function paperPathFromSVGElement(
   element: SVGElement,

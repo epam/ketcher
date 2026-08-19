@@ -76,12 +76,15 @@ describe('Copolymer S-Group type availability', () => {
   it('should show Copolymer option when editing existing Copolymer S-Group', () => {
     renderWithMockStore(<SGroup type="COP" selectedSruCount={2} />, {
       modal: {
+        name: 'SGroup',
         form: {
           errors: {},
           result: {
             type: 'COP',
           },
         },
+        prop: null,
+        parentModal: null,
       },
     });
     const typeSelect = screen.getAllByRole('combobox')[0];
@@ -96,6 +99,7 @@ describe('Copolymer S-Group Subtype dropdown', () => {
       <SGroup type="COP" selectedSruCount={2} />,
       {
         modal: {
+          name: 'SGroup',
           form: {
             errors: {},
             result: {
@@ -103,6 +107,8 @@ describe('Copolymer S-Group Subtype dropdown', () => {
               subtype: 'ran',
             },
           },
+          prop: null,
+          parentModal: null,
         },
       },
     );
@@ -132,6 +138,7 @@ describe('S-Group DAT type rendering', () => {
   it('should render SDataFieldset when type is DAT', () => {
     renderWithMockStore(<SGroup type="DAT" />, {
       modal: {
+        name: 'SGroup',
         form: {
           errors: {},
           result: {
@@ -141,6 +148,8 @@ describe('S-Group DAT type rendering', () => {
             fieldValue: 'Field value',
           },
         },
+        prop: null,
+        parentModal: null,
       },
     });
     expect(screen.getByText('S-Group Properties')).toBeInTheDocument();
@@ -151,12 +160,15 @@ function renderWithMockStore(
   component,
   initialState: Record<string, unknown> = {
     modal: {
+      name: 'SGroup',
       form: {
         errors: {},
         result: {
           type: 'MUL',
         },
       },
+      prop: null,
+      parentModal: null,
     },
   },
 ) {

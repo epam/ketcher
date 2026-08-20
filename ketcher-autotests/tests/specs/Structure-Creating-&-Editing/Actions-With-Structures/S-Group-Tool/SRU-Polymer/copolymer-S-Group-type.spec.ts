@@ -191,7 +191,7 @@ test.describe('Copolymer S-Group type', () => {
     await expect(page.getByTestId(SubtypeOption.Random)).toBeVisible();
     await expect(page.getByTestId(SubtypeOption.Block)).toBeVisible();
     await expect(page.getByTestId(SubtypeOption.Alternating)).toBeVisible();
-    expect(options).toHaveLength(3);
+    expect(options).toHaveLength(4);
     await page.keyboard.press('Escape');
     await SGroupPropertiesDialog(page).cancel();
   });

@@ -223,9 +223,6 @@ export const Editor = (props: Props) => {
           onSetKetcherId={setKetcherId}
           togglerComponent={togglerComponent}
           onInit={onInitMoleculesEditor}
-          disableMacromoleculesEditor={disableMacromoleculesEditor}
-          monomersLibraryUpdate={monomersLibraryUpdate}
-          monomersLibraryReplace={monomersLibraryReplace}
         />
       </div>
     </>

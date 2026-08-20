@@ -1812,6 +1812,63 @@ describe('CoreEditor', () => {
       unselectSequenceSpy.mockRestore();
       canvasElement.remove();
     });
+
+    it('should not clear selection when right-clicking a canvas-level element with __data__ set to a selected monomer renderer', () => {
+      editor.setMode(new FlexMode());
+
+      const svgElementWithBBox = SVGElement.prototype as SVGElement & {
+        getBBox?: () => DOMRect;
+      };
+      const initialGetBBox = svgElementWithBBox.getBBox;
+      svgElementWithBBox.getBBox = () =>
+        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+
+      const addChanges = editor.drawingEntitiesManager.addMonomer(
+        peptideMonomerItem,
+        new Vec2(0, 0),
+      );
+      editor.renderersContainer.update(addChanges);
+      const monomer = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
+      const selectChanges =
+        editor.drawingEntitiesManager.selectDrawingEntity(monomer);
+      editor.renderersContainer.update(selectChanges);
+
+      const unselectSpy = jest.spyOn(
+        editor.drawingEntitiesManager,
+        'unselectAllDrawingEntities',
+      );
+      const rightClickSelectedMonomersHandler = jest.fn();
+      const rightClickCanvasHandler = jest.fn();
+      editor.events.rightClickSelectedMonomers.add(
+        rightClickSelectedMonomersHandler,
+      );
+      editor.events.rightClickCanvas.add(rightClickCanvasHandler);
+
+      // Simulate the selection circle: a canvas-level element with __data__ = renderer
+      const selectionIndicator = document.createElement('circle');
+      (selectionIndicator as unknown as { __data__: unknown }).__data__ =
+        monomer.renderer;
+      rootElement.appendChild(selectionIndicator);
+
+      selectionIndicator.dispatchEvent(
+        new MouseEvent('contextmenu', {
+          bubbles: true,
+          clientX: 0,
+          clientY: 0,
+        }),
+      );
+
+      expect(unselectSpy).not.toHaveBeenCalled();
+      expect(rightClickCanvasHandler).not.toHaveBeenCalled();
+      expect(rightClickSelectedMonomersHandler).toHaveBeenCalled();
+
+      selectionIndicator.remove();
+      if (initialGetBBox) {
+        svgElementWithBBox.getBBox = initialGetBBox;
+      } else {
+        Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
+      }
+    });
   });
 
   describe('remove autochain preview handling', () => {

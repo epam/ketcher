@@ -530,6 +530,17 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         .attr('cy', this.center.y)
         .attr('fill', SELECTION_COLOR)
         .attr('class', 'dynamic-element');
+
+      // The circle is appended to the canvas root, not to the monomer <g>, so
+      // D3 datum propagation does not reach it. Bind the renderer manually so
+      // that right-click events on the circle are routed like monomer clicks.
+      const circleNode = this.selectionCircle?.node();
+      if (circleNode) {
+        type SelectionCircleNode = Omit<SVGCircleElement, '__data__'> & {
+          __data__?: unknown;
+        };
+        (circleNode as unknown as SelectionCircleNode).__data__ = this;
+      }
     }
   }
 

@@ -1074,7 +1074,20 @@ export class CoreEditor {
         return;
       }
 
-      const eventData = event.target?.__data__;
+      // Walk up from event.target: target may be a child SVG shape or a
+      // canvas-level selection indicator that doesn't carry __data__ directly.
+      let eventData = event.target?.__data__;
+      if (eventData === undefined) {
+        let el: Element | null =
+          event.target instanceof Element ? event.target.parentElement : null;
+        while (el && el !== this.canvas) {
+          if (el.__data__ !== undefined) {
+            eventData = el.__data__;
+            break;
+          }
+          el = el.parentElement;
+        }
+      }
       const canvasBoundingClientRect = this.canvas.getBoundingClientRect();
       const isClickOnCanvas =
         event.clientX >= canvasBoundingClientRect.left &&

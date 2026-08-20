@@ -57,14 +57,10 @@ export const RnaElements = ({
   const [newPreset, setNewPreset] = useState(activePreset);
 
   useEffect(() => {
-    dispatch(
-      setActiveRnaBuilderItem(
-        isEditMode && activePreset
-          ? activeRnaBuilderItem
-          : RnaBuilderPresetsItem.Presets,
-      ),
-    );
-  }, [isEditMode]);
+    if (!isEditMode) {
+      dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
+    }
+  }, [isEditMode, dispatch]);
 
   const groupsData = useGroupsData(libraryName);
 

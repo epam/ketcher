@@ -37,6 +37,7 @@ import LassoHelper from './helper/lasso';
 import { selMerge } from './select';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
+import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 class EraserTool implements Tool {
   private readonly editor: Editor;
@@ -234,7 +235,7 @@ class EraserTool implements Tool {
 
       if (result.length > 0) {
         this.editor.selection(null);
-        this.editor.event.removeFG.dispatch({ fgIds: result });
+        dispatchMonomerOrGroupDialog(this.editor, result);
         this.lassoHelper.cancel();
       }
     }
@@ -346,7 +347,7 @@ class EraserTool implements Tool {
     }
 
     if (result.length) {
-      this.editor.event.removeFG.dispatch({ fgIds: result });
+      dispatchMonomerOrGroupDialog(this.editor, result);
       return;
     }
 
@@ -377,7 +378,7 @@ class EraserTool implements Tool {
         FunctionalGroup.isFunctionalGroup(sGroup?.item) ||
         sGroup?.item instanceof MonomerMicromolecule
       ) {
-        this.editor.event.removeFG.dispatch({ fgIds: [ci.id] });
+        dispatchMonomerOrGroupDialog(this.editor, [ci.id]);
       } else {
         this.editor.update(fromSgroupDeletion(restruct, ci.id));
       }

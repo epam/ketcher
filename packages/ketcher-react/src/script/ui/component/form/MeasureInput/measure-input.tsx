@@ -106,36 +106,27 @@ const MeasureInput = ({
   className,
   ...rest
 }: MeasureInputProps) => {
-  const [internalValue, setInternalValue] = useState(String(value));
+  const stringifiedValue = String(value);
+  const [internalValue, setInternalValue] = useState(stringifiedValue);
+  const [prevPropValue, setPrevPropValue] = useState(stringifiedValue);
   const {
     anchorEl,
     handleOpen: handlePopoverOpen,
     handleClose: handlePopoverClose,
   } = usePopoverAnchor();
 
-  // NOTE: onChange handler in the Input comopnent (packages/ketcher-react/src/script/ui/component/form/Input/Input.tsx)
-  // is mapped to the internal function via constructor
-  // therefore the referencies to the MeasureInput's state are not updated
-  // so we need to sync the props and the internal value through useEffects and use callbacks with
-  // previous state to have the latest value
+  if (prevPropValue !== stringifiedValue) {
+    setPrevPropValue(stringifiedValue);
+    setInternalValue(stringifiedValue);
+  }
 
+  // Input binds onChange once in its constructor, so handleChange is stuck with
+  // the first render's closure and cannot call the current onChange. This effect
+  // is re-created every render, so it always holds the latest onChange/value —
+  // hence the deliberate single-dep list.
   useEffect(() => {
-    setInternalValue((prevValue) => {
-      if (prevValue !== String(value)) {
-        return String(value);
-      }
-
-      return prevValue;
-    });
-  }, [value]);
-
-  useEffect(() => {
-    if (internalValue !== String(value)) {
-      const isNewInternalValueValid = !isNaN(parseFloat(internalValue));
-
-      if (isNewInternalValueValid) {
-        onChange(parseFloat(internalValue));
-      }
+    if (internalValue !== stringifiedValue) {
+      onChange(parseFloat(internalValue));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [internalValue]);

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -16,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type FC, useState, useEffect } from 'react';
+import { type FC, useMemo } from 'react';
 import {
   type Render,
   type Struct,
@@ -91,23 +90,20 @@ interface InfoPanelProps {
 
 const InfoPanel: FC<InfoPanelProps> = (props) => {
   const { clientX, clientY, render, className, groupStruct, sGroup } = props;
-  const [molecule, setMolecule] = useState<Struct | null>(null);
-  const [sGroupData, setSGroupData] = useState<string | null>(null);
-  const groupName = sGroup?.data?.name;
 
-  useEffect(() => {
+  const sGroupData = useMemo<string | null>(() => {
     if (sGroup && SGroup.isDataSGroup(sGroup)) {
-      setSGroupData(`${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`);
+      return `${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`;
     } else if (sGroup && SGroup.isQuerySGroup(sGroup)) {
-      setSGroupData('Query component');
-    } else {
-      setSGroupData(null);
+      return 'Query component';
     }
-  }, [groupStruct, sGroup]);
+    return null;
+  }, [sGroup]);
 
-  useEffect(() => {
-    setMolecule(groupStruct ? groupStruct.clone() : null);
-  }, [groupName, groupStruct]);
+  const molecule = useMemo<Struct | null>(
+    () => (groupStruct ? groupStruct.clone() : null),
+    [groupStruct],
+  );
 
   // Ambiguous monomer tooltip uses marker coordinates, not mouse position,
   // so it must be checked before the clientX/clientY guard.

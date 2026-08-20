@@ -37,6 +37,7 @@ import LabelEdit from './toolbox/labeledit';
 import PeriodTable from '../views/modal/components/PeriodTable';
 import ExtendedTable from '../views/modal/components/ExtendedTable';
 import { RemoveFG } from '../views/modal/components/toolbox/FG/RemoveFG';
+import { EditMonomer } from '../views/modal/components/toolbox/EditMonomer/EditMonomer';
 import Rgroup from './toolbox/rgroup/rgroup';
 import SGroup from './toolbox/sgroup';
 import TemplateAttach from './template/template-attach';
@@ -65,6 +66,7 @@ export default {
   labelEdit: LabelEdit,
   rgroupLogic: RgroupLogic,
   removeFG: RemoveFG,
+  editMonomer: EditMonomer,
   save: Save,
   settings: Settings,
   sgroup: SGroup,

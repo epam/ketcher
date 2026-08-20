@@ -35,6 +35,7 @@ import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
 import type { Tool } from './Tool';
 import { debounce } from 'lodash';
+import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 let isMovePreviewCalculationInProgress = false;
 
@@ -262,7 +263,7 @@ class PasteTool implements Tool {
     );
 
     if (groupsIdsInvolvedInMerge.length) {
-      this.editor.event.removeFG.dispatch({ fgIds: groupsIdsInvolvedInMerge });
+      dispatchMonomerOrGroupDialog(this.editor, groupsIdsInvolvedInMerge);
       return;
     }
 

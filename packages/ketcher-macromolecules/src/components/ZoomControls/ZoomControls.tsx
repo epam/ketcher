@@ -42,7 +42,14 @@ export const ZoomControls = () => {
 
   useEffect(() => {
     ZoomTool?.instance?.subscribeOnZoomEvent(() => {
-      setCurrentZoom(Math.round(ZoomTool?.instance?.getZoomLevel() * 100));
+      const newZoom = Math.round(ZoomTool?.instance?.getZoomLevel() * 100);
+      setCurrentZoom(newZoom);
+
+      const inputEl = inputRef.current;
+      updateInputString(newZoom, inputEl);
+      if (document.activeElement === inputEl) {
+        inputEl?.select();
+      }
     });
   }, [ZoomTool?.instance]);
 

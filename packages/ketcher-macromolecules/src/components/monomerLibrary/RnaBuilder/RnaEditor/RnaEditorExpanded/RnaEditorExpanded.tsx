@@ -188,10 +188,34 @@ export const RnaEditorExpanded = ({
   );
   const [isSequenceSelectionUpdated, setIsSequenceSelectionUpdated] =
     useState<boolean>(false);
+  // Tracks the previously applied monomer group item so that
+  // `isSequenceSelectionUpdated` can be derived during render (see below)
+  // instead of via a `useEffect` chained state update.
+  const [
+    lastAppliedPresetMonomerGroupItem,
+    setLastAppliedPresetMonomerGroupItem,
+  ] = useState(activePresetMonomerGroup?.groupItem);
   const [sequenceSelectionGroupNames, setSequenceSelectionGroupNames] =
     useState<SequenceSelectionGroupNames | undefined>(
       generateSequenceSelectionGroupNames(sequenceSelection),
     );
+  // Adjust state during render (instead of chaining a setState call inside
+  // the useEffect below): once the user picks a new monomer group item while
+  // editing a sequence selection, mark the selection as updated so the
+  // "Update" button becomes enabled.
+  if (
+    activeMonomerGroup !== RnaBuilderPresetsItem.Presets &&
+    isEditMode &&
+    isSequenceEditInRNABuilderMode &&
+    activePresetMonomerGroup?.groupItem &&
+    activePresetMonomerGroup.groupItem !== lastAppliedPresetMonomerGroupItem
+  ) {
+    setLastAppliedPresetMonomerGroupItem(activePresetMonomerGroup.groupItem);
+    if (!isSequenceSelectionUpdated) {
+      setIsSequenceSelectionUpdated(true);
+    }
+  }
+
   const phosphatePosition = resolvePhosphatePosition(newPreset);
   const { is3PrimeAvailable, is5PrimeAvailable } =
     getPhosphatePositionAvailability(newPreset || {});
@@ -274,7 +298,6 @@ export const RnaEditorExpanded = ({
           };
         });
 
-        setIsSequenceSelectionUpdated(true);
         dispatch(setSequenceSelection(updatedSequenceSelection));
       } else {
         const currentPreset = updatePresetMonomerGroup();

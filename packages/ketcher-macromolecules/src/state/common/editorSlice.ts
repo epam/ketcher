@@ -230,6 +230,9 @@ export const editorSlice: Slice<EditorState> = createSlice({
     setAppMeta: (state, action: PayloadAction<AppMeta>) => {
       state.app = action.payload;
     },
+    setIndigoVersion: (state, action: PayloadAction<string>) => {
+      state.app.indigoVersion = action.payload;
+    },
     setSelectedMenuGroupItem: (
       state,
       action: PayloadAction<{ groupName: string; activeItemName: string }>,
@@ -264,6 +267,7 @@ export const {
   setUnipositiveIonsValue,
   setOligonucleotidesValue,
   setAppMeta,
+  setIndigoVersion,
   setSelectedMenuGroupItem,
 } = editorSlice.actions;
 

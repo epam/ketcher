@@ -49,6 +49,51 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} #OPTIONAL
 
+      - name: Show SonarQube Quality Gate failure details
+        if: always()
+        shell: bash
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          REPORT_FILE=".scannerwork/report-task.txt"
+
+          if [[ ! -f "$REPORT_FILE" ]]; then
+            echo "Sonar report task file not found: $REPORT_FILE"
+            exit 0
+          fi
+
+          ce_task_url=$(grep '^ceTaskUrl=' "$REPORT_FILE" | cut -d'=' -f2-)
+          dashboard_url=$(grep '^dashboardUrl=' "$REPORT_FILE" | cut -d'=' -f2-)
+
+          if [[ -z "$ce_task_url" ]]; then
+            echo "ceTaskUrl was not found in $REPORT_FILE"
+            exit 0
+          fi
+
+          ce_task_json=$(curl -sf -u "$SONAR_TOKEN:" "$ce_task_url")
+          analysis_id=$(echo "$ce_task_json" | jq -r '.task.analysisId // empty')
+
+          if [[ -z "$analysis_id" ]]; then
+            echo "Could not resolve analysisId from CE task response"
+            echo "CE task URL: $ce_task_url"
+            [[ -n "$dashboard_url" ]] && echo "Dashboard: $dashboard_url"
+            exit 0
+          fi
+
+          qg_json=$(curl -sf -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?analysisId=$analysis_id")
+          qg_status=$(echo "$qg_json" | jq -r '.projectStatus.status')
+
+          echo "Quality Gate status: $qg_status"
+
+          if [[ "$qg_status" == "ERROR" ]]; then
+            echo "Failed Quality Gate conditions:"
+            echo "$qg_json" | jq -r '.projectStatus.conditions[]
+              | select(.status == "ERROR")
+              | "- \(.metricKey): actual=\(.actualValue // \"n/a\"), threshold=\(.errorThreshold // \"n/a\"), comparator=\(.comparator // \"n/a\")"'
+            [[ -n "$dashboard_url" ]] && echo "Dashboard: $dashboard_url"
+          fi
+
       # Optionally you can use the output from the Quality Gate in another step.
       # The possible outputs of the `quality-gate-status` variable are `PASSED`, `WARN` or `FAILED`.
       - name: "Example show SonarQube Quality Gate Status value"

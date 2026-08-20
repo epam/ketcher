@@ -118,7 +118,6 @@ import type {
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
 import { isNumber } from 'lodash';
 import paperjs from 'paper';
-import { computeApDiff } from '../ui/views/components/MonomerCreationWizard/MonomerCreationWizard.utils';
 
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
@@ -2242,7 +2241,8 @@ class Editor implements KetcherEditor {
     }
 
     const attachmentAtomIdsWithExternalBonds =
-      this.monomerCreationState?.attachmentAtomIdsWithExternalBonds;
+      this.monomerCreationState?.attachmentAtomIdsWithExternalBonds ??
+      new Map<AttachmentPointName, [number, number]>();
     // Build new AP → attach atom ID map from the final assignedAttachmentPoints state.
     const finalAssignedAttachmentPoints = new Map<
       AttachmentPointName,

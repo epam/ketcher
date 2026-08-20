@@ -29,7 +29,7 @@ import {
 import { useAppDispatch, useAppSelector, useDebouncedShowPreview } from 'hooks';
 import { selectEditor, showPreview } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
-import { PreviewStyle, PreviewType } from 'state';
+import { PreviewType } from 'state';
 import {
   calculateAmbiguousMonomerPreviewTop,
   calculateMonomerPreviewTop,

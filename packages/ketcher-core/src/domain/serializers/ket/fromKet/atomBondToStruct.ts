@@ -21,14 +21,12 @@ import {
 } from 'domain/entities/atom';
 import { Bond, type BondAttributes } from 'domain/entities/bond';
 import { Elements, CUSTOM_QUERY_MAX_LENGTH } from 'domain/constants';
-import { ifDef, KetcherLogger } from 'utilities';
+import { ifDef } from 'utilities';
 
 function assertCustomQueryLength(customQuery: string, context: string): void {
   if (customQuery.length > CUSTOM_QUERY_MAX_LENGTH) {
-    const message = `${context} custom query exceeds the maximum allowed length of ${CUSTOM_QUERY_MAX_LENGTH} characters (got ${customQuery.length})`;
-    KetcherLogger.error(
-      'atomBondToStruct.ts::assertCustomQueryLength',
-      message,
+    throw new Error(
+      `${context} custom query exceeds the maximum allowed length of ${CUSTOM_QUERY_MAX_LENGTH} characters (got ${customQuery.length})`,
     );
   }
 }

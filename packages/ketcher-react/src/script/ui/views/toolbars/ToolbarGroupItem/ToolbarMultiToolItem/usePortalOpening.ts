@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,21 +16,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react';
-
 import type { ToolbarItem } from '../../toolbar.types';
 
 type HookParams = [string, string | null, ToolbarItem[]];
 
 function usePortalOpening([id, opened, options]: HookParams): [boolean] {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  useEffect(() => {
-    const currentId = (options.length && options[0].id) || '';
-    const newState = opened === id || opened === currentId;
-    setIsOpen(newState);
-  }, [opened, options]);
-
+  const currentId = (options.length && options[0].id) || '';
+  const isOpen = opened === id || opened === currentId;
   return [isOpen];
 }
 

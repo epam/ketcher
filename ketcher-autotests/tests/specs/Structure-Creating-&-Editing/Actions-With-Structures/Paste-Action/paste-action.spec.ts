@@ -1,5 +1,4 @@
-/* eslint-disable no-magic-numbers */
-import { test } from '@fixtures';
+import { test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,

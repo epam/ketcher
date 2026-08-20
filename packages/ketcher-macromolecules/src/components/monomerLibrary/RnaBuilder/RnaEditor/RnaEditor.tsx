@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -42,23 +44,29 @@ export const RnaEditor = ({ duplicatePreset }) => {
 
   const dispatch = useAppDispatch();
 
-  const [expanded, setExpanded] = useState(false);
+  const shouldExpand = Boolean(activePreset?.name) || isEditMode;
+  const [expanded, setExpanded] = useState(shouldExpand);
+  const [prevShouldExpand, setPrevShouldExpand] = useState(shouldExpand);
+
+  if (shouldExpand !== prevShouldExpand) {
+    setPrevShouldExpand(shouldExpand);
+    if (shouldExpand) {
+      setExpanded(true);
+    }
+  }
 
   useEffect(() => {
-    if (activePreset) {
-      if (activePreset.name || isEditMode) setExpanded(true);
-      return;
+    if (!activePreset) {
+      dispatch(createNewPreset());
+      dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
     }
-
-    dispatch(createNewPreset());
-    dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
-  }, [activePreset]);
+  }, [activePreset, dispatch]);
 
   useEffect(() => {
     dispatch(
       recalculateRnaBuilderValidations({ rnaPreset: activePreset, isEditMode }),
     );
-  }, [isEditMode]);
+  }, [isEditMode, dispatch, activePreset]);
 
   const expandEditor = () => {
     setExpanded(!expanded);

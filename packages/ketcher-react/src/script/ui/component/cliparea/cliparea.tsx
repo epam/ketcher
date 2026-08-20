@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -22,6 +23,7 @@ import {
   notifyRequestCompleted,
   isControlKey,
   isClipboardAPIAvailable,
+  isSelectionOutsideElement,
   notifyCopyCut,
 } from 'ketcher-core';
 
@@ -131,13 +133,21 @@ class ClipArea extends Component<ClipAreaProps> {
           event.preventDefault();
       },
       copy: (event: ClipboardEvent) => {
-        if (!this.props.focused() || isUserEditing()) {
+        if (
+          !this.props.focused() ||
+          isUserEditing() ||
+          isSelectionOutsideElement(el)
+        ) {
           return;
         }
         handleCopyEvent(event, this.props.onCopy, this.props.onLegacyCopy);
       },
       cut: (event: ClipboardEvent) => {
-        if (!this.props.focused() || isUserEditing()) {
+        if (
+          !this.props.focused() ||
+          isUserEditing() ||
+          isSelectionOutsideElement(el)
+        ) {
           return;
         }
         if (isAsyncClipboardWriteAvailable()) {

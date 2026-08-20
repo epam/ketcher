@@ -31,6 +31,7 @@ export const RulerArea = () => {
   const dragStartX = useRef(0);
   const [dragDelta, setDragDelta] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [dragPosition, setDragPosition] = useState<number | null>(null);
 
   const transform = useZoomTransform();
 
@@ -121,20 +122,15 @@ export const RulerArea = () => {
   );
 
   const previewValue = useMemo(() => {
-    if (!isDragging) {
+    if (!isDragging || dragPosition === null) {
       return lineLengthValue;
     }
 
-    const [, dragPosition] = calculateDragPosition(
-      dragStartX.current + dragDelta,
-    );
     return calculateLineLength(dragPosition);
   }, [
     isDragging,
+    dragPosition,
     lineLengthValue,
-    calculateDragPosition,
-    dragStartX,
-    dragDelta,
     calculateLineLength,
   ]);
 
@@ -156,6 +152,7 @@ export const RulerArea = () => {
         event.sourceEvent.clientX,
       );
       setDragDelta(dragDelta);
+      setDragPosition(dragPosition);
       editor?.events.toggleLineLengthHighlighting.dispatch(true, dragPosition);
     },
     [editor?.events?.toggleLineLengthHighlighting, calculateDragPosition],
@@ -173,6 +170,7 @@ export const RulerArea = () => {
       }
 
       setDragDelta(0);
+      setDragPosition(null);
       dragStartX.current = 0;
       editor?.events.toggleLineLengthHighlighting.dispatch(false);
     },

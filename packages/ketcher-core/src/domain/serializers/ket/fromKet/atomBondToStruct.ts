@@ -30,7 +30,6 @@ function assertCustomQueryLength(customQuery: string, context: string): void {
       'atomBondToStruct.ts::assertCustomQueryLength',
       message,
     );
-    return;
   }
 }
 

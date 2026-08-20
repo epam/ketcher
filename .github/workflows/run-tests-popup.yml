@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: apt-get update -y && apt-get install -y git
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
       - name: Git safe
@@ -55,7 +55,7 @@ jobs:
         shardTotal: [1]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
       - name: Install dependencies
@@ -96,7 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     container: node:24.14.1-bullseye-slim
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
       - name: Install dependencies
         run: npm ci

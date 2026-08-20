@@ -2241,11 +2241,8 @@ class Editor implements KetcherEditor {
       );
     }
 
-    // Capture bond-reconciliation data before closing the wizard (which clears monomerCreationState).
     const attachmentAtomIdsWithExternalBonds =
       this.monomerCreationState?.attachmentAtomIdsWithExternalBonds;
-    const editingMonomerForReconciliation =
-      this.monomerCreationState?.editingMonomer;
     // Build new AP → attach atom ID map from the final assignedAttachmentPoints state.
     const finalAssignedAttachmentPoints = new Map<
       AttachmentPointName,
@@ -2303,86 +2300,33 @@ class Editor implements KetcherEditor {
         });
       }
 
-      // Re-add external bonds (crossing the selection boundary).
-      //
-      // For each boundary bond we need to find the NEW canvas atom ID for
-      // the in-selection end.  The naive path is:
-      //   original atom ID
-      //     → wizard atom ID  (via originalToSelectedAtomsIdMap, frozen at open time)
-      //     → new canvas ID   (via atomIdMap, built by mergeInto)
-      //
-      // However, if the user moved the attachment point to a different atom
-      // inside the wizard, the wizard atom recorded in originalToSelectedAtomsIdMap
-      // no longer carries the AP.  We must instead use the CURRENT attachment
-      // atom for that AP (from finalAssignedAttachmentPoints).
-      //
-      // Build a reverse lookup: open-time wizard attach atom ID → AP name,
-      // so we can detect when an external-bond AP was moved.
-      const openTimeWizardAttachAtomToAp = new Map<
-        number,
-        AttachmentPointName
-      >();
-      attachmentAtomIdsWithExternalBonds?.forEach(
-        ([openTimeAttachAtomId], apName) => {
-          openTimeWizardAttachAtomToAp.set(openTimeAttachAtomId, apName);
-        },
-      );
-
       externalBonds.forEach((bond) => {
         const isBeginSelected = selectedOriginalAtoms.has(bond.begin);
         const isEndSelected = selectedOriginalAtoms.has(bond.end);
 
         if (isBeginSelected && !isEndSelected) {
-          const openTimeWizardId = originalToSelectedAtomsIdMap.get(bond.begin);
-          // If this atom carried an AP at open time, use the AP's CURRENT
-          // attachment atom (which may have been moved by the user).
-          const apName = isNumber(openTimeWizardId)
-            ? openTimeWizardAttachAtomToAp.get(openTimeWizardId)
-            : undefined;
-          // AP was deleted → do not reconnect this external bond.
-          if (
-            apName !== undefined &&
-            !finalAssignedAttachmentPoints.has(apName)
-          ) {
-            return;
-          }
-          const currentWizardId =
-            apName !== undefined
-              ? finalAssignedAttachmentPoints.get(apName)
-              : openTimeWizardId;
-          const newBegin = isNumber(currentWizardId)
-            ? atomIdMap.get(currentWizardId)
-            : undefined;
-          if (isNumber(newBegin)) {
-            const newBond = bond.clone();
-            newBond.begin = newBegin;
-            struct.bonds.add(newBond);
-          }
+          this.reconcileExternalBonds(
+            attachmentAtomIdsWithExternalBonds,
+            finalAssignedAttachmentPoints,
+            struct,
+            bond,
+            atomIdMap,
+            originalToSelectedAtomsIdMap,
+            isBeginSelected,
+            isEndSelected,
+          );
         }
         if (isEndSelected && !isBeginSelected) {
-          const openTimeWizardId = originalToSelectedAtomsIdMap.get(bond.end);
-          const apName = isNumber(openTimeWizardId)
-            ? openTimeWizardAttachAtomToAp.get(openTimeWizardId)
-            : undefined;
-          // AP was deleted → do not reconnect this external bond.
-          if (
-            apName !== undefined &&
-            !finalAssignedAttachmentPoints.has(apName)
-          ) {
-            return;
-          }
-          const currentWizardId =
-            apName !== undefined
-              ? finalAssignedAttachmentPoints.get(apName)
-              : openTimeWizardId;
-          const newEnd = isNumber(currentWizardId)
-            ? atomIdMap.get(currentWizardId)
-            : undefined;
-          if (isNumber(newEnd)) {
-            const newBond = bond.clone();
-            newBond.end = newEnd;
-            struct.bonds.add(newBond);
-          }
+          this.reconcileExternalBonds(
+            attachmentAtomIdsWithExternalBonds,
+            finalAssignedAttachmentPoints,
+            struct,
+            bond,
+            atomIdMap,
+            originalToSelectedAtomsIdMap,
+            isBeginSelected,
+            isEndSelected,
+          );
         }
       });
 
@@ -2399,19 +2343,6 @@ class Editor implements KetcherEditor {
           this.updateBondEndpointByAttachmentPoint(bond, 'end', toSgroup);
         }
       });
-
-      // Reconcile macro-canvas bonds for the single-instance edit case.
-      // If an AP was deleted in the wizard, delete the polymer/monomer-to-atom
-      // bond that was using it on the macro-canvas.
-      if (
-        attachmentAtomIdsWithExternalBonds &&
-        attachmentAtomIdsWithExternalBonds.size > 0
-      ) {
-        this.reconcileExternalBonds(
-          attachmentAtomIdsWithExternalBonds,
-          finalAssignedAttachmentPoints,
-        );
-      }
 
       if (editAllInitialValues?.editMode && monomersData.length === 1) {
         struct.sgroups.forEach((sgroup) => {
@@ -2504,29 +2435,113 @@ class Editor implements KetcherEditor {
    * The micromolecule struct bond endpoint is already corrected by
    * updateBondEndpointByAttachmentPoint.
    */
+
   private reconcileExternalBonds(
     attachmentAtomIdsWithExternalBonds: Map<
       AttachmentPointName,
       [number, number]
     >,
     finalAssignedAttachmentPoints: Map<AttachmentPointName, number>,
+    struct: Struct,
+    bond: Bond,
+    newAtomIdMap: Map<number, number>,
+    originalToSelectedAtomsIdMap: Map<number, number>,
+    isBeginSelected: boolean,
+    isEndSelected: boolean,
   ) {
+    let oldAttachmentPointName: AttachmentPointName | undefined;
+    let oldAttachmentAtomId: number | undefined;
+
     attachmentAtomIdsWithExternalBonds.forEach(
-      ([oldAttachmentAtomId, oldLeavingGroupId], attachmentPointName) => {
-        const newAttachmentAtomId =
-          finalAssignedAttachmentPoints.get(attachmentPointName);
-
-        if (!isNumber(newAttachmentAtomId)) {
-          //delete bond
+      ([attachmentAtomId], attachmentPointName) => {
+        if (isBeginSelected && !isEndSelected) {
+          if (
+            originalToSelectedAtomsIdMap.get(bond.begin) === attachmentAtomId
+          ) {
+            oldAttachmentAtomId = attachmentAtomId;
+            oldAttachmentPointName = attachmentPointName;
+          }
         }
 
-        if (newAttachmentAtomId === oldAttachmentAtomId) {
-          return;
+        if (!isBeginSelected && isEndSelected) {
+          if (originalToSelectedAtomsIdMap.get(bond.end) === attachmentAtomId) {
+            oldAttachmentAtomId = attachmentAtomId;
+            oldAttachmentPointName = attachmentPointName;
+          }
         }
-
-        // delete old bond and establish new one
       },
     );
+
+    const newAttachmentAtomId = oldAttachmentPointName
+      ? finalAssignedAttachmentPoints.get(oldAttachmentPointName)
+      : undefined;
+
+    if (!isNumber(newAttachmentAtomId)) {
+      // delete bond
+      const bondId = struct.bonds.keyOf(bond);
+
+      if (bondId === null) {
+        return;
+      }
+
+      struct.bonds.delete(bondId);
+
+      return;
+    }
+
+    if (
+      isNumber(newAttachmentAtomId) &&
+      oldAttachmentAtomId !== newAttachmentAtomId
+    ) {
+      // change bond atom id
+      const newAtomIdOfNewAttachmentAtom =
+        newAtomIdMap.get(newAttachmentAtomId);
+
+      if (newAtomIdOfNewAttachmentAtom === undefined) {
+        return;
+      }
+
+      if (isBeginSelected) {
+        const newBond = bond.clone();
+        newBond.begin = newAtomIdOfNewAttachmentAtom;
+        struct.bonds.add(newBond);
+      }
+
+      if (isEndSelected) {
+        const newBond = bond.clone();
+        newBond.end = newAtomIdOfNewAttachmentAtom;
+        struct.bonds.add(newBond);
+      }
+
+      return;
+    }
+
+    // establish original bond
+    if (isBeginSelected && !isEndSelected) {
+      const wizardId = originalToSelectedAtomsIdMap.get(bond.begin);
+      const newBegin = isNumber(wizardId)
+        ? newAtomIdMap.get(wizardId)
+        : undefined;
+
+      if (isNumber(newBegin)) {
+        const newBond = bond.clone();
+        newBond.begin = newBegin;
+        struct.bonds.add(newBond);
+      }
+    }
+
+    if (!isBeginSelected && isEndSelected) {
+      const wizardId = originalToSelectedAtomsIdMap.get(bond.end);
+      const newEnd = isNumber(wizardId)
+        ? newAtomIdMap.get(wizardId)
+        : undefined;
+
+      if (isNumber(newEnd)) {
+        const newBond = bond.clone();
+        newBond.end = newEnd;
+        struct.bonds.add(newBond);
+      }
+    }
   }
 
   reassignAttachmentPointLeavingAtom(

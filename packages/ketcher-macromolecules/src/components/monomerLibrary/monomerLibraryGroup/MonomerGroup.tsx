@@ -15,9 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback } from 'react';
 import { EmptyFunction } from 'helpers';
-import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
 import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
@@ -27,7 +26,7 @@ import {
   MonomerOrAmbiguousType,
   isAmbiguousMonomerLibraryItem,
 } from 'ketcher-core';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useDebouncedShowPreview } from 'hooks';
 import { selectEditor, showPreview } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
 import { PreviewStyle, PreviewType } from 'state';
@@ -73,17 +72,7 @@ const MonomerGroup = ({
     return false;
   };
 
-  const dispatchShowPreview = useCallback(
-    (payload) => dispatch(showPreview(payload)),
-    [dispatch],
-  );
-
-  const debouncedShowPreview = useMemo(
-    () => debounce((p) => dispatchShowPreview(p), 500),
-    [dispatchShowPreview],
-  );
-
-  useEffect(() => () => debouncedShowPreview.cancel(), [debouncedShowPreview]);
+  const debouncedShowPreview = useDebouncedShowPreview();
 
   const closeLibraryPreview = useCallback(() => {
     debouncedShowPreview.cancel();

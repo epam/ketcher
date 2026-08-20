@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
@@ -76,8 +76,8 @@ const MonomerGroup = ({
     [dispatch],
   );
 
-  const debouncedShowPreview = useCallback(
-    debounce((p) => dispatchShowPreview(p), 500),
+  const debouncedShowPreview = useMemo(
+    () => debounce((p) => dispatchShowPreview(p), 500),
     [dispatchShowPreview],
   );
 

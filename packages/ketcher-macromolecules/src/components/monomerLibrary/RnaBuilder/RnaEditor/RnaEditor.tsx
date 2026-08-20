@@ -42,13 +42,16 @@ export const RnaEditor = ({ duplicatePreset }) => {
 
   const dispatch = useAppDispatch();
 
-  const [expanded, setExpanded] = useState(false);
+  const shouldExpand = Boolean(activePreset?.name) || isEditMode;
+  const [expanded, setExpanded] = useState(shouldExpand);
+  const [prevShouldExpand, setPrevShouldExpand] = useState(shouldExpand);
 
-  useEffect(() => {
-    if (activePreset?.name || isEditMode) {
+  if (shouldExpand !== prevShouldExpand) {
+    setPrevShouldExpand(shouldExpand);
+    if (shouldExpand) {
       setExpanded(true);
     }
-  }, [activePreset, isEditMode]);
+  }
 
   useEffect(() => {
     if (!activePreset) {

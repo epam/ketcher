@@ -15,7 +15,6 @@
  ***************************************************************************/
 import { useCallback } from 'react';
 import { EmptyFunction } from 'helpers';
-import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
 import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
@@ -25,7 +24,7 @@ import {
   MonomerOrAmbiguousType,
   isAmbiguousMonomerLibraryItem,
 } from 'ketcher-core';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useDebouncedCallback } from 'hooks';
 import { selectEditor, showPreview } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
 import { PreviewStyle, PreviewType } from 'state';
@@ -76,10 +75,7 @@ const MonomerGroup = ({
     [dispatch],
   );
 
-  const debouncedShowPreview = useCallback(
-    debounce((p) => dispatchShowPreview(p), 500),
-    [dispatchShowPreview],
-  );
+  const debouncedShowPreview = useDebouncedCallback(dispatchShowPreview, 500);
 
   const closeLibraryPreview = useCallback(() => {
     debouncedShowPreview.cancel();

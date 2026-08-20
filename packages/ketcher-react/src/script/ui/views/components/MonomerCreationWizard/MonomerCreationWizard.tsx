@@ -267,6 +267,13 @@ const wizardReducer = (
       };
     }
 
+    case 'SetStructure': {
+      return {
+        ...state,
+        structure: action.structure,
+      };
+    }
+
     default:
       return state;
   }
@@ -1630,10 +1637,14 @@ const MonomerCreationWizardInternal = ({
       new Map();
 
     if (!isRnaPresetType) {
-      wizardState.structure = {
+      const selection: Selection = {
         atoms: [...editor.render.ctab.molecule.atoms.keys()],
         bonds: [...editor.render.ctab.molecule.bonds.keys()],
       };
+      wizardStateDispatch({
+        type: 'SetStructure',
+        structure: selection,
+      });
     }
 
     // separate attachment points by preset components
@@ -1662,7 +1673,7 @@ const MonomerCreationWizardInternal = ({
     } else {
       assignedAttachmentPointsByMonomer.set(
         wizardState,
-        assignedAttachmentPoints,
+        new Map(assignedAttachmentPoints),
       );
     }
 
@@ -1838,7 +1849,12 @@ const MonomerCreationWizardInternal = ({
         const monomerAssignedAttachmentPoints =
           assignedAttachmentPointsByMonomer.get(monomerToSave);
 
-        monomerAssignedAttachmentPoints?.forEach(
+        const nextMonomerAssignedAttachmentPoints =
+          monomerAssignedAttachmentPoints
+            ? new Map(monomerAssignedAttachmentPoints)
+            : new Map<AttachmentPointName, [number, number]>();
+
+        nextMonomerAssignedAttachmentPoints.forEach(
           ([attachmentAtomId, leavingGroupAtomId], attachmentPointKey) => {
             const mappedAttachmentAtomId = atomIdMap.get(attachmentAtomId);
             const mappedLeavingGroupAtomId = atomIdMap.get(leavingGroupAtomId);
@@ -1850,7 +1866,7 @@ const MonomerCreationWizardInternal = ({
               return;
             }
 
-            monomerAssignedAttachmentPoints.set(attachmentPointKey, [
+            nextMonomerAssignedAttachmentPoints.set(attachmentPointKey, [
               mappedAttachmentAtomId,
               mappedLeavingGroupAtomId,
             ]);
@@ -1878,7 +1894,7 @@ const MonomerCreationWizardInternal = ({
           aliasHELM: valuesToSave.aliasHELM,
           aliasBILN: valuesToSave.aliasBILN,
           structure,
-          attachmentPoints: monomerAssignedAttachmentPoints as Map<
+          attachmentPoints: nextMonomerAssignedAttachmentPoints as Map<
             AttachmentPointName,
             [number, number]
           >,
@@ -2072,15 +2088,19 @@ const MonomerCreationWizardInternal = ({
                 onOk: () => {
                   setLeavingGroupDialogMessage('');
 
-                  wizardState.structure = {
+                  const selection: Selection = {
                     atoms: [...editor.render.ctab.molecule.atoms.keys()],
                     bonds: [...editor.render.ctab.molecule.bonds.keys()],
                   };
+                  wizardStateDispatch({
+                    type: 'SetStructure',
+                    structure: selection,
+                  });
 
                   const atomIdMap = new Map<number, number>();
                   const bondIdMap = new Map<number, number>();
                   const structure = editor.structSelected(
-                    wizardState.structure,
+                    selection,
                     atomIdMap,
                     bondIdMap,
                   );

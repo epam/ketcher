@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
@@ -76,19 +76,14 @@ export const SequenceTypeGroupButton = () => {
   const [activeSequenceType, setActiveSequenceType] = useState<SequenceType>(
     editor?.events.changeSequenceTypeEnterMode,
   );
-  const [isSequenceMode, setIsSequenceMode] = useState(false);
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
   const layoutMode = useLayoutMode();
+  const isSequenceMode = layoutMode === 'sequence-layout-mode';
   const isDisabled = !!isSequenceEditInRNABuilderMode;
 
   const dispatch = useAppDispatch();
-
-  const onToggleSequenceMode = useCallback((data) => {
-    const mode = typeof data === 'object' ? data.mode : data;
-    setIsSequenceMode(mode === 'sequence-layout-mode');
-  }, []);
 
   useEffect(() => {
     const onChangeSequenceType = (mode: SequenceType) => {
@@ -102,21 +97,15 @@ export const SequenceTypeGroupButton = () => {
       setActiveSequenceType(mode);
       persistSequenceType(mode);
     };
-    editor?.events.selectMode.add(onToggleSequenceMode);
     editor?.events.changeSequenceTypeEnterMode.add(onChangeSequenceType);
     editor?.events.changeSequenceTypeEnterMode.dispatch(
       getPersistedSequenceType(),
     );
 
     return () => {
-      editor?.events.selectMode.remove(onToggleSequenceMode);
       editor?.events.changeSequenceTypeEnterMode.remove(onChangeSequenceType);
     };
-  }, [editor, dispatch, onToggleSequenceMode]);
-
-  useEffect(() => {
-    onToggleSequenceMode(layoutMode);
-  }, [layoutMode, onToggleSequenceMode]);
+  }, [editor, dispatch]);
 
   const handleSelectSequenceType = (sequenceType: string) => {
     editor?.events.changeSequenceTypeEnterMode.dispatch(sequenceType);

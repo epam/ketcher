@@ -1,4 +1,4 @@
-import { select } from 'd3';
+import { select, type Selection } from 'd3';
 import {
   AmbiguousMonomer,
   AmbiguousMonomerRenderer,
@@ -33,7 +33,12 @@ const MonomerMiniature = ({
   useLayoutEffect(() => {
     const svg = svgRef.current;
     if (svg) {
-      const svgElement = select(svg);
+      const svgElement = select(svg) as unknown as Selection<
+        SVGSVGElement,
+        void,
+        HTMLElement,
+        never
+      >;
       if (monomer instanceof AmbiguousMonomer) {
         const centerX = (svg.width.baseVal.value - svg.x.baseVal.value) / 2;
         const centerY = (svg.height.baseVal.value - svg.y.baseVal.value) / 2;
@@ -45,8 +50,6 @@ const MonomerMiniature = ({
         );
         const renderer = new AmbiguousMonomerRenderer(variantMonomer);
         renderer.showExternal({
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           canvas: svgElement,
           usage,
           selectedAttachmentPoint,

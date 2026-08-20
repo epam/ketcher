@@ -151,10 +151,12 @@ function propsDialog(
         editor.update(
           fromTextCreation(editor.render.ctab, content, position, pos),
         );
-      } else if (!content) {
-        editor.update(fromTextDeletion(editor.render.ctab, id!));
-      } else if (content !== origilContent) {
-        editor.update(fromTextUpdating(editor.render.ctab, id!, content));
+      } else if (id !== null && id !== undefined) {
+        if (!content) {
+          editor.update(fromTextDeletion(editor.render.ctab, id));
+        } else if (content !== origilContent) {
+          editor.update(fromTextUpdating(editor.render.ctab, id, content));
+        }
       }
     })
     .catch((e) => {

@@ -30,18 +30,22 @@ import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
 import BracketParams from '../bracket-params';
-import type { RaphaelPaper } from 'raphael';
+import type {
+  Element as RaphaelElement,
+  RaphaelPaper,
+  RaphaelSet,
+} from 'raphael';
 import type { RenderOptions } from '../render.types';
 import paperjs from 'paper';
 interface SGroupdrawBracketsOptions {
-  set: any;
+  set: RaphaelSet;
   render: Render;
   sgroup: SGroup;
   bracketBox: Box2Abs;
   direction: Vec2;
   lowerIndexText?: string | null;
   upperIndexText?: string | null;
-  indexAttribute?: object;
+  indexAttribute?: Record<string, string>;
   superatomClass?: SUPERATOM_CLASS;
 }
 
@@ -52,22 +56,24 @@ export const SUPERATOM_CLASS_TEXT = {
 };
 
 // Helper function to convert SVG elements into Paper.js paths
-export function paperPathFromSVGElement(element) {
+export function paperPathFromSVGElement(
+  element: SVGElement,
+): paper.Path | paper.CompoundPath | undefined {
   const tagName = element.tagName;
-  let path;
+  let path: paper.Path | paper.CompoundPath | undefined;
 
   if (tagName === 'circle') {
     // Convert circle to Paper.js Path.Circle
-    const cx = parseFloat(element.getAttribute('cx'));
-    const cy = parseFloat(element.getAttribute('cy'));
-    const r = parseFloat(element.getAttribute('r'));
+    const cx = parseFloat(element.getAttribute('cx') ?? '0');
+    const cy = parseFloat(element.getAttribute('cy') ?? '0');
+    const r = parseFloat(element.getAttribute('r') ?? '0');
     path = new paperjs.Path.Circle(new paperjs.Point(cx, cy), r);
   } else if (tagName === 'rect') {
     // Convert rectangle to Paper.js Path.Rectangle
-    const x = parseFloat(element.getAttribute('x'));
-    const y = parseFloat(element.getAttribute('y'));
-    const width = parseFloat(element.getAttribute('width'));
-    const height = parseFloat(element.getAttribute('height'));
+    const x = parseFloat(element.getAttribute('x') ?? '0');
+    const y = parseFloat(element.getAttribute('y') ?? '0');
+    const width = parseFloat(element.getAttribute('width') ?? '0');
+    const height = parseFloat(element.getAttribute('height') ?? '0');
     path = new paperjs.Path.Rectangle(
       new paperjs.Rectangle(x, y, width, height),
       new paperjs.Size(
@@ -78,7 +84,7 @@ export function paperPathFromSVGElement(element) {
   } else if (tagName === 'path') {
     // Use the `d` attribute directly for Path data
     const d = element.getAttribute('d');
-    path = new paperjs.CompoundPath(d);
+    path = d ? new paperjs.CompoundPath(d) : undefined;
   }
   return path;
 }
@@ -86,7 +92,7 @@ export function paperPathFromSVGElement(element) {
 class ReSGroup extends ReObject {
   public item: SGroup | undefined;
   public render!: Render;
-  private expandedMonomerAttachmentPoints?: any; // Raphael paths
+  private expandedMonomerAttachmentPoints?: RaphaelSet; // Raphael paths
 
   constructor(sgroup: SGroup) {
     super('sgroup');
@@ -103,11 +109,14 @@ class ReSGroup extends ReObject {
    * @param sgroup {SGroup}
    * @returns {*}
    */
-  draw(remol: ReStruct, sgroup: SGroup): any {
+  draw(remol: ReStruct, sgroup: SGroup): RaphaelSet {
     this.render = remol.render;
     let set = this.render.paper.set();
     SGroup.bracketPos(sgroup, remol.molecule, remol, this.render);
     const bracketBox = sgroup.bracketBox;
+    if (!bracketBox) {
+      return set;
+    }
     const direction = sgroup.bracketDirection;
     sgroup.areas = [bracketBox];
     if (sgroup.isExpanded()) {
@@ -120,7 +129,7 @@ class ReSGroup extends ReObject {
       };
       switch (sgroup.type) {
         case 'MUL': {
-          SGroupdrawBracketsOptions.lowerIndexText = sgroup.data.mul;
+          SGroupdrawBracketsOptions.lowerIndexText = String(sgroup.data.mul);
           break;
         }
         case 'SRU': {
@@ -141,11 +150,15 @@ class ReSGroup extends ReObject {
           break;
         }
         case 'SUP': {
+          const superatomClass = sgroup.data.class as
+            | SUPERATOM_CLASS
+            | undefined;
           SGroupdrawBracketsOptions.lowerIndexText =
-            sgroup.data.name || SUPERATOM_CLASS_TEXT[sgroup.data.class];
+            sgroup.data.name ||
+            (superatomClass ? SUPERATOM_CLASS_TEXT[superatomClass] : '');
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
-          SGroupdrawBracketsOptions.superatomClass = sgroup.data.class;
+          SGroupdrawBracketsOptions.superatomClass = superatomClass;
           break;
         }
         case 'DAT': {
@@ -206,7 +219,7 @@ class ReSGroup extends ReObject {
     return { startX, startY, width, height };
   }
 
-  getContractedSelectionContour(render: Render): any {
+  getContractedSelectionContour(render: Render): RaphaelElement {
     const { paper, options } = render;
     const { fontszInPx, radiusScaleFactor } = options;
     const radius = fontszInPx * radiusScaleFactor * 2;
@@ -220,8 +233,8 @@ class ReSGroup extends ReObject {
   makeSelectionPlate(
     restruct: ReStruct,
     _paper: RaphaelPaper,
-    options: any,
-  ): any {
+    options: RenderOptions,
+  ): RaphaelElement | undefined {
     const sgroup = this.item;
     const functionalGroups = restruct.molecule.functionalGroups;
     const render = restruct.render;
@@ -242,7 +255,7 @@ class ReSGroup extends ReObject {
     if (sGroupItem) {
       const { a0, a1, b0, b1 } = getHighlighPathInfo(sGroupItem, render);
       const functionalGroups = render.ctab.molecule.functionalGroups;
-      const hoversToCombine: Array<any> = [];
+      const hoversToCombine: Array<RaphaelElement | null | undefined> = [];
       const otherHovers = paper.set();
 
       if (
@@ -283,7 +296,7 @@ class ReSGroup extends ReObject {
         );
       }, this);
 
-      const elements: Element[] = [];
+      const elements: SVGElement[] = [];
 
       hoversToCombine.forEach((item) => {
         if (item?.node) {
@@ -295,7 +308,7 @@ class ReSGroup extends ReObject {
       paperjs.setup(document.createElement('canvas')); // Paper.js works on an offscreen canvas
 
       // Generate Paper.js paths from all SVG elements
-      let combinedPath: any = null;
+      let combinedPath: paper.PathItem | undefined;
 
       elements.forEach((el) => {
         const paperPath = paperPathFromSVGElement(el);
@@ -541,7 +554,7 @@ function showValue(
   pos: Vec2 | undefined,
   sgroup: SGroup,
   options: RenderOptions,
-): any {
+): RaphaelSet {
   const text = paper.text(pos?.x, pos?.y, sgroup.data.fieldValue).attr({
     font: options.font,
     'font-size': options.fontszsubInPx,
@@ -573,7 +586,7 @@ function drawGroupDat(restruct: ReStruct, sgroup: SGroup) {
     : drawAbsoluteDat(restruct, sgroup);
 }
 
-function drawAbsoluteDat(restruct: ReStruct, sgroup: SGroup): any {
+function drawAbsoluteDat(restruct: ReStruct, sgroup: SGroup): RaphaelSet {
   const render = restruct.render;
   const options = render.options;
   const paper = render.paper;
@@ -599,7 +612,7 @@ function drawAbsoluteDat(restruct: ReStruct, sgroup: SGroup): any {
   return set;
 }
 
-function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): any {
+function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): RaphaelSet {
   const render = restruct.render;
   const options = render.options;
   const paper = render.paper;
@@ -674,7 +687,11 @@ function getHighlighPathInfo(
   size: number;
 } {
   const options = render.options;
-  let bracketBox = sgroup.bracketBox.transform(Scale.modelToCanvas, options);
+  const sGroupBracketBox = sgroup.bracketBox;
+  if (!sGroupBracketBox) {
+    throw new Error('SGroup bracket box is not defined');
+  }
+  let bracketBox = sGroupBracketBox.transform(Scale.modelToCanvas, options);
   const lineWidth = options.lineWidth;
   const vext = new Vec2(lineWidth * 4, lineWidth * 6);
   bracketBox = bracketBox.extend(vext, vext);

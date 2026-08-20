@@ -13,17 +13,19 @@ import { StereoLabelStyleType } from 'application/render/restruct/generalEnumTyp
 import { StereoFlag } from 'domain/entities/fragment';
 import type { Settings } from 'application/settings';
 import util from '../util';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   BAD_VALENCE_WARNING_COLOR,
   BAD_VALENCE_LINE_OFFSET,
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
+import { isGenericAtom } from 'domain/helpers';
 
 // Extra clearance in canvas units that keeps labels away from the atom bbox.
 const LABEL_CLEARANCE_OFFSET = 5;
 const STEREO_CIP_GAP = 2;
+const MAX_LABEL_LENGTH = 8;
 
 export type AtomHoverContour =
   | {
@@ -276,7 +278,7 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = provideEditorInstance().viewModel;
     const atomHaldEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
-    if (atomHaldEdges?.length === 0) {
+    if (!atomHaldEdges?.length) {
       if (this.atom.label === AtomLabel.D || this.atom.label === AtomLabel.T) {
         return false;
       } else {
@@ -296,7 +298,37 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get labelText() {
+    if (this.atom.properties.atomList) {
+      return this.atom.properties.atomList.label();
+    }
     return this.atom.properties.alias ?? this.atom.label;
+  }
+
+  /** True when the atom's label is a generic / pseudo query atom (e.g. A, Q, M, X, *). */
+  public get isGenericLabel(): boolean {
+    return isGenericAtom(this.atom.label);
+  }
+
+  // A bondless D/T isotope still needs its implicit hydrogen suffix (DH, TH); only a
+  // bare "H" label must merge the implicit hydrogen into its own count instead of
+  // repeating the letter (H2, not HH).
+  private get isHydrogenLabel() {
+    return this.atom.label === AtomLabel.H;
+  }
+
+  /** The label text shown on canvas — truncated to MAX_LABEL_LENGTH if necessary. */
+  public get displayLabelText() {
+    const text = this.labelText;
+    if (text.length > MAX_LABEL_LENGTH) {
+      return `${text.substring(0, MAX_LABEL_LENGTH)}...`;
+    }
+    return text;
+  }
+
+  /** When the label is truncated, this holds the full text for use as a tooltip. */
+  public get labelTooltipText(): string | null {
+    const text = this.labelText;
+    return text.length > MAX_LABEL_LENGTH ? text : null;
   }
 
   private get isAtomTerminal() {
@@ -352,8 +384,8 @@ export class AtomRenderer extends BaseRenderer {
   public get labelLength() {
     let { hydrogenAmount } = this.atom.calculateValence();
 
-    if (this.labelText.length > 1) {
-      return this.labelText.length;
+    if (this.displayLabelText.length > 1) {
+      return this.displayLabelText.length;
     }
 
     if (!this.shouldDisplayHydrogen) {
@@ -415,13 +447,21 @@ export class AtomRenderer extends BaseRenderer {
       hydrogenAmount = 0;
     }
 
+    const isHydrogenLabel = this.isHydrogenLabel;
+    if (isHydrogenLabel && hydrogenAmount > 0) {
+      // The label itself already shows one hydrogen, so fold the implicit amount into it.
+      hydrogenAmount += 1;
+    }
+
     const textElement = this.rootElement
       ?.append('text')
       .attr('y', 5)
       .attr('fill', this.labelColor)
       .attr(
         'style',
-        'user-select: none; font-family: Arial; letter-spacing: 1.2px;',
+        `user-select: none; font-family: Arial; letter-spacing: 1.2px;${
+          this.isGenericLabel ? ' font-style: italic;' : ''
+        }`,
       )
       .attr('font-size', '13px')
       .attr('pointer-events', 'none');
@@ -430,10 +470,10 @@ export class AtomRenderer extends BaseRenderer {
       textElement
         ?.append('tspan')
         .attr('dy', this.atom.hasExplicitIsotope ? 4 : 0)
-        .text(this.labelText);
+        .text(this.displayLabelText);
     }
 
-    if (!this.atom.hasAlias && hydrogenAmount > 0) {
+    if (!this.atom.hasAlias && hydrogenAmount > 0 && !isHydrogenLabel) {
       textElement
         ?.append('tspan')
         .attr(
@@ -445,12 +485,14 @@ export class AtomRenderer extends BaseRenderer {
       if (hydrogenAmount > 1) {
         textElement?.append('tspan').text(hydrogenAmount).attr('dy', 3);
       }
+    } else if (isHydrogenLabel && hydrogenAmount > 0) {
+      textElement?.append('tspan').text(hydrogenAmount).attr('dy', 3);
     }
 
     if (shouldHydrogenBeOnLeft) {
       textElement
         ?.append('tspan')
-        .text(this.labelText)
+        .text(this.displayLabelText)
         .attr('dy', hydrogenAmount > 1 ? -3 : 0);
     }
 

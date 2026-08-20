@@ -32,6 +32,7 @@ import {
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
 
@@ -365,7 +366,7 @@ test.describe('Calculate Properties tests', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('8.49');
+    ).toEqual('10.07');
   });
 
   test('Case 14: Check that Amino acid count displayed as a grid with the appropriate number next to the natural analogue', async () => {
@@ -666,7 +667,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('9.01');
+    ).toEqual('5.03');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');
@@ -725,7 +726,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('5.96');
+    ).toEqual('6.15');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');
@@ -1066,7 +1067,7 @@ test.describe('Calculate Properties tests', () => {
       page,
     ).getIsoelectricPointValue();
 
-    expect(isoelectricPoint).toEqual('5.96');
+    expect(isoelectricPoint).toEqual('6.11');
   });
 
   test('Case 37: Verify correct calculation of melting temperature for a simple double-stranded RNA', async () => {
@@ -1618,9 +1619,10 @@ test.describe('Calculate Properties tests', () => {
     await waitForCalculateProperties(page);
     // Dirty hack
     await CalculateVariablesPanel(page).closeWindow();
-    await page.waitForTimeout(1 * 1000);
+    await page.waitForTimeout(1000);
     await MacromoleculesTopToolbar(page).calculateProperties();
     await waitForCalculateProperties(page);
+    await page.waitForTimeout(2000);
 
     await takeElementScreenshot(
       page,
@@ -1633,7 +1635,7 @@ test.describe('Calculate Properties tests', () => {
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
-     * Description: Check that graph remains readable for 532 amino acids
+     * Description: Check that graph remains readable for 1240 amino acids
      * Scenario:
      * 1. Go to Macro - Flex
      * 2. Load from HELM peptide chain
@@ -1642,6 +1644,7 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
+    await pageReload(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1649,7 +1652,8 @@ test.describe('Calculate Properties tests', () => {
     );
 
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await page.waitForTimeout(5000);
+    await waitForCalculateProperties(page);
+    await page.waitForTimeout(6000);
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,

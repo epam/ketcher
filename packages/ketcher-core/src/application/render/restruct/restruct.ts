@@ -24,7 +24,7 @@ import { Pile } from 'domain/entities/pile';
 import { Pool } from 'domain/entities/pool';
 import type { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
 import type { Vec2 } from 'domain/entities/vec2';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { LayerMap } from './generalEnumTypes';
 import ReAtom from './reatom';
 import ReBond from './rebond';
@@ -40,6 +40,7 @@ import ReSimpleObject from './resimpleObject';
 import ReText from './retext';
 import type { Render } from '../raphaelRender';
 import type Visel from './visel';
+import type { RaphaelPath } from './raphaelTypes';
 import util from '../util';
 import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
 import { ReImage } from 'application/render/restruct/reImage';
@@ -87,7 +88,11 @@ class ReStruct {
   public multitailArrows = new Map<number, ReMultitailArrow>();
 
   private initialized = false;
-  private layers: Record<LayerMap, any> = {} as Record<LayerMap, unknown>;
+  private layers: Record<LayerMap, RaphaelPath> = {} as Record<
+    LayerMap,
+    RaphaelPath
+  >;
+
   public connectedComponents: Pool = new Pool();
   private readonly ccFragmentType: Pool = new Pool();
   private structChanged = false;
@@ -227,7 +232,8 @@ class ReStruct {
     const ids = new Pile();
 
     while (list.length > 0) {
-      const aid = list.pop()!;
+      const aid = list.pop();
+      if (aid === undefined) break;
       ids.add(aid);
       const atom = this.atoms.get(aid);
       if (!atom) continue;
@@ -409,7 +415,9 @@ class ReStruct {
     let boundingBox: Box2Abs | null = null;
 
     for (const atomId of selection.atoms ?? []) {
-      const atomPositionPoint = this.atoms.get(atomId)!.a.pp;
+      const reAtom = this.atoms.get(atomId);
+      if (!reAtom) continue;
+      const atomPositionPoint = reAtom.a.pp;
       const atomBox = new Box2Abs(atomPositionPoint, atomPositionPoint);
       boundingBox =
         boundingBox == null ? atomBox : Box2Abs.union(boundingBox, atomBox);

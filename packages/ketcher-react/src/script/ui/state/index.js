@@ -132,8 +132,8 @@ export default function (options, server, setEditor) {
 
   const middleware = [thunk];
   if (
-    process.env.NODE_ENV !== 'production' &&
-    process.env.KETCHER_ENABLE_REDUX_LOGGER === 'true'
+    import.meta.env.NODE_ENV !== 'production' &&
+    import.meta.env.KETCHER_ENABLE_REDUX_LOGGER === 'true'
   ) {
     middleware.push(logger);
   }

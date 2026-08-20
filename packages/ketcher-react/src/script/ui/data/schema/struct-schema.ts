@@ -17,9 +17,9 @@
 import { mapOf } from './schema-helper';
 import { range } from 'lodash/fp';
 import { sdataCustomSchema } from './sdata-schema';
+import { CUSTOM_QUERY_MAX_LENGTH } from 'ketcher-core';
 
-// Must stay in sync with CUSTOM_QUERY_MAX_LENGTH in ketcher-core/domain/constants/customQuery.ts
-export const CUSTOM_QUERY_MAX_LENGTH = 4000;
+export { CUSTOM_QUERY_MAX_LENGTH };
 
 function customQueryInvalidMessage(value: unknown): string {
   if (typeof value === 'string' && value.length > CUSTOM_QUERY_MAX_LENGTH) {

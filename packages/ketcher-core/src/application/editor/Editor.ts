@@ -1531,7 +1531,9 @@ export class CoreEditor {
       const isAddedMonomerOutAboveCanvas =
         lastAddedMonomerPositionInViewCoordinates.y <= 0;
       const isAddedMonomerOutBelowCanvas =
-        lastAddedMonomerPositionInViewCoordinates.y >= canvasWrapperSize.height;
+        lastAddedMonomerPositionInViewCoordinates.y >=
+        canvasWrapperSize.height -
+          (this.zoomTool.HORIZONTAL_DIST_TO_EDGE + this.zoomTool.WIDTH);
       const isAddedMonomerVerticallyOutOfCanvas =
         isAddedMonomerOutAboveCanvas || isAddedMonomerOutBelowCanvas;
 

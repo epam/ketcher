@@ -32,7 +32,7 @@ jobs:
       - name: Get npm cache directory path
         id: npm-cache-dir-path
         run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v4
+      - uses: actions/cache@v7
         id: npm-cache # use this to check for `cache-hit` (`steps.npm-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.npm-cache-dir-path.outputs.dir }}

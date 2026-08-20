@@ -10,7 +10,6 @@ import {
   type BaseMonomer,
   type BaseMonomerConfig,
   Vec2,
-  Fragment,
 } from 'domain/entities';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import type { MonomerItemType } from 'domain/types/monomers';
@@ -24,7 +23,6 @@ import {
   fillStructRgLabelsByMonomerTemplate,
   getTemplateAttachmentPoints,
 } from './monomerTemplateUtils';
-import { Command } from 'domain/entities/Command';
 
 export function templateToMonomerProps(template: IKetMonomerTemplate) {
   return {
@@ -61,8 +59,7 @@ export function monomerToDrawingEntity(
   const { alias, id } = template;
   const { seqid, expanded, transformation } = node;
 
-  const command = new Command();
-  const monomerAddCommand = drawingEntitiesManager.addMonomer(
+  return drawingEntitiesManager.addMonomer(
     {
       struct,
       label: alias ?? id,
@@ -80,34 +77,6 @@ export function monomerToDrawingEntity(
     },
     position,
   );
-  command.merge(monomerAddCommand);
-
-  const monomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
-
-  // Add stereo flag if the monomer has an enhanced stereo flag
-  struct.frags.forEach((fragment) => {
-    if (fragment?.enhancedStereoFlag) {
-      const localStereoFlagPosition =
-        fragment.stereoFlagPosition ||
-        Fragment.getDefaultStereoFlagPosition(struct, 0);
-
-      if (localStereoFlagPosition) {
-        // The stereo flag position is stored relative to the monomer's struct coordinate system,
-        // so we need to add the monomer's position to get the global canvas position
-        const globalStereoFlagPosition = localStereoFlagPosition.add(position);
-
-        command.merge(
-          drawingEntitiesManager.addStereoFlag(
-            globalStereoFlagPosition,
-            fragment.enhancedStereoFlag,
-            monomer,
-          ),
-        );
-      }
-    }
-  });
-
-  return command;
 }
 
 export type MonomerFactoryFn = (
@@ -165,8 +134,7 @@ export function variantMonomerToDrawingEntity(
     monomerFactory,
   );
 
-  const command = new Command();
-  const monomerAddCommand = drawingEntitiesManager.addAmbiguousMonomer(
+  return drawingEntitiesManager.addAmbiguousMonomer(
     {
       monomers,
       id: template.id,
@@ -179,37 +147,4 @@ export function variantMonomerToDrawingEntity(
     },
     position,
   );
-  command.merge(monomerAddCommand);
-
-  const monomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
-
-  // Add stereo flag if any of the variant monomers has an enhanced stereo flag
-  // Check the first monomer's struct as a representative
-  if (monomers.length > 0) {
-    const firstMonomerStruct = monomers[0].monomerItem.struct;
-    firstMonomerStruct.frags.forEach((fragment) => {
-      if (fragment?.enhancedStereoFlag) {
-        const localStereoFlagPosition =
-          fragment.stereoFlagPosition ||
-          Fragment.getDefaultStereoFlagPosition(firstMonomerStruct, 0);
-
-        if (localStereoFlagPosition) {
-          // The stereo flag position is stored relative to the monomer's struct coordinate system,
-          // so we need to add the monomer's position to get the global canvas position
-          const globalStereoFlagPosition =
-            localStereoFlagPosition.add(position);
-
-          command.merge(
-            drawingEntitiesManager.addStereoFlag(
-              globalStereoFlagPosition,
-              fragment.enhancedStereoFlag,
-              monomer,
-            ),
-          );
-        }
-      }
-    });
-  }
-
-  return command;
 }

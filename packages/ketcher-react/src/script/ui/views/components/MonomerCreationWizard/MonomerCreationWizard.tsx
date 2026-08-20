@@ -1219,17 +1219,18 @@ const MonomerCreationWizardInternal = ({
 
   const validateMonomerWizard = (
     assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
+    currentWizardState: WizardState = wizardState,
   ) => {
     let needSaveMonomers = true;
 
-    if (!wizardState.structure) {
+    if (!currentWizardState.structure) {
       KetcherLogger.error('Monomer structure is undefined');
 
       return;
     }
 
     const monomerAssignedAttachmentPoints =
-      assignedAttachmentPointsByMonomer.get(wizardState);
+      assignedAttachmentPointsByMonomer.get(currentWizardState);
 
     if (!monomerAssignedAttachmentPoints) {
       KetcherLogger.error('Monomer attachment points map is undefined');
@@ -1237,8 +1238,8 @@ const MonomerCreationWizardInternal = ({
       return;
     }
 
-    const structure = editor.structSelected(wizardState.structure);
-    const { values: valuesToSave } = wizardState;
+    const structure = editor.structSelected(currentWizardState.structure);
+    const { values: valuesToSave } = currentWizardState;
     const { errors: inputsErrors, notifications: inputsNotifications } =
       validateInputs(valuesToSave);
     if (Object.keys(inputsErrors).length > 0) {
@@ -1614,7 +1615,12 @@ const MonomerCreationWizardInternal = ({
     if (isRnaPresetType) {
       return validateRnaPresetWizard(assignedAttachmentPointsByMonomer);
     } else {
-      return validateMonomerWizard(assignedAttachmentPointsByMonomer);
+      // For non-RNA preset, we need to use the local wizardState that has the structure
+      const localWizardState = monomersToSave[0];
+      return validateMonomerWizard(
+        assignedAttachmentPointsByMonomer,
+        localWizardState,
+      );
     }
   };
 
@@ -1627,7 +1633,7 @@ const MonomerCreationWizardInternal = ({
     editor.setProblematicAtoms(new Set());
     setHasActiveRnaPresetAtomValidationErrors(false);
 
-    const monomersToSave = isRnaPresetType
+    let monomersToSave = isRnaPresetType
       ? getRnaPresetComponentKeysToSave(rnaPresetWizardState).map(
           (componentKey) => rnaPresetWizardState[componentKey],
         )
@@ -1641,10 +1647,25 @@ const MonomerCreationWizardInternal = ({
         atoms: [...editor.render.ctab.molecule.atoms.keys()],
         bonds: [...editor.render.ctab.molecule.bonds.keys()],
       };
+      const currentWizardState = {
+        ...wizardState,
+        structure: selection,
+      };
       wizardStateDispatch({
         type: 'SetStructure',
         structure: selection,
       });
+      // Update monomersToSave with the adjusted wizard state
+      monomersToSave = [currentWizardState];
+
+      // Set up attachment points for the current wizard state
+      // This case is now handled above, but keeping it for safety
+      if (!assignedAttachmentPointsByMonomer.has(wizardState)) {
+        assignedAttachmentPointsByMonomer.set(
+          wizardState,
+          new Map(assignedAttachmentPoints),
+        );
+      }
     }
 
     // separate attachment points by preset components
@@ -1670,11 +1691,6 @@ const MonomerCreationWizardInternal = ({
           assignedAttachmentPointsForComponent,
         );
       });
-    } else {
-      assignedAttachmentPointsByMonomer.set(
-        wizardState,
-        new Map(assignedAttachmentPoints),
-      );
     }
 
     // validation
@@ -2119,7 +2135,7 @@ const MonomerCreationWizardInternal = ({
                   editor.finishNewMonomersCreation([
                     {
                       ...monomerData,
-                      monomerStructureInWizard: wizardState.structure,
+                      monomerStructureInWizard: selection,
                       atomIdMap,
                     },
                   ]);

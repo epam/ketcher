@@ -55,8 +55,11 @@ const MonomerMiniature = ({
           selectedAttachmentPoint,
           connectedAttachmentPoints,
         });
+        // TODO: Use factory here for any other monomer if it will be required (e.g. unresolved monomers)?
+        return () => {
+          renderer.remove();
+        };
       }
-      // TODO: Use factory here for any other monomer if it will be required (e.g. unresolved monomers)?
     }
   }, [monomer, usage, selectedAttachmentPoint, connectedAttachmentPoints]);
 

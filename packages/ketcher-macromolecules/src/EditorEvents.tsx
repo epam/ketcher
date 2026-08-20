@@ -23,6 +23,7 @@ import {
   selectIsContextMenuActive,
   selectLastSelectedSelectionMenuItem,
   selectTool,
+  showPreview,
 } from 'state/common';
 import { openErrorModal, openErrorTooltip, openModal } from 'state/modal';
 import {

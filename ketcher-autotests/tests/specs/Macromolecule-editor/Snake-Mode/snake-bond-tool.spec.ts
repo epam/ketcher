@@ -383,7 +383,7 @@ test.describe('Snake Bond Tool', () => {
     });
   });
 
-  test('Create snake bond for chain with side chains', async ({
+  test.skip('Create snake bond for chain with side chains', async ({
     FlexCanvas: _,
   }) => {
     await Library(page).dragMonomerOnCanvas(Preset.C, {

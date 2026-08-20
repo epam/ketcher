@@ -75,11 +75,20 @@ export const ZoomInput = ({
   inputRef,
   shortcuts,
 }: ZoomInputProps) => {
+  // This effect synchronizes the displayed value with `currentZoom`, which
+  // can change from sources outside this component (zoom in/out buttons,
+  // mouse wheel, zoom presets, etc. in the parent ZoomControls), not just
+  // from this input's own event handlers. It also re-selects the text if the
+  // input was already focused so typing over it keeps working after any of
+  // those external changes. Because it reacts to an external prop rather
+  // than to a same-component event, it is a legitimate use of an effect.
   useEffect(() => {
     const inputEl = inputRef.current;
     updateInputString(currentZoom, inputEl);
     if (document.activeElement === inputEl) {
       inputEl?.select();
+    } else {
+      // Input is not focused; nothing to reselect.
     }
   }, [currentZoom, inputRef]);
 

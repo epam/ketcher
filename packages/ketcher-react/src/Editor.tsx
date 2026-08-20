@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import {
   type EditorProps,
   MicromoleculesEditor as MicromoleculesEditorComponent,
@@ -54,6 +54,8 @@ export const Editor = (props: Props) => {
     useState<CoreEditor>();
 
   const [ketcherId, setKetcherId] = useState<string>('');
+  const calledForIdRef = useRef<string | null>(null);
+
   const togglePolymerEditor = (toggleValue: boolean) => {
     setShowPolymerEditor(toggleValue);
     window.isPolymerEditorTurnedOn = toggleValue;
@@ -111,19 +113,47 @@ export const Editor = (props: Props) => {
         moleculesEditor?.focusCliparea();
       }
     }
-  }, [showPolymerEditor]);
+  }, [showPolymerEditor, moleculesEditor, macromoleculesEditor]); // eslint-disable-line react-hooks/exhaustive-deps -- see planning.md for rationale
 
   useEffect(() => {
+    const {
+      ketcher,
+      moleculesEditor,
+      macromoleculesEditor,
+      onInit,
+      disableMacromoleculesEditor,
+    } = {
+      ketcher,
+      moleculesEditor,
+      macromoleculesEditor,
+      onInit: props.onInit,
+      disableMacromoleculesEditor: props.disableMacromoleculesEditor,
+    };
+
     if (
       ketcher &&
       moleculesEditor &&
-      (macromoleculesEditor || props.disableMacromoleculesEditor)
+      (macromoleculesEditor || disableMacromoleculesEditor)
     ) {
-      if (ketcherProvider.getIndexById(ketcher.id) !== -1) {
-        props.onInit?.(ketcher);
+      if (
+        ketcherProvider.getIndexById(ketcher.id) !== -1 &&
+        calledForIdRef.current !== ketcher.id
+      ) {
+        calledForIdRef.current = ketcher.id;
+        onInit?.(ketcher);
       }
     }
-  }, [moleculesEditor, macromoleculesEditor]);
+
+    return () => {
+      calledForIdRef.current = null;
+    };
+  }, [
+    ketcher,
+    moleculesEditor,
+    macromoleculesEditor,
+    props.onInit,
+    props.disableMacromoleculesEditor,
+  ]); // eslint-disable-line react-hooks/exhaustive-deps -- see planning.md for rationale
 
   const onInitMoleculesEditor = (ketcher: Ketcher) => {
     setKetcher(ketcher);

@@ -1152,18 +1152,21 @@ export class CoreEditor {
           selectedMonomers,
         ]);
       } else if (isClickOnCanvas) {
-        if (this.mode.modeName === 'sequence-layout-mode') {
-          const modelChanges =
-            this.drawingEntitiesManager.unselectAllDrawingEntities();
+        const modelChanges =
+          this.drawingEntitiesManager.unselectAllDrawingEntities();
 
+        if (this.mode.modeName === 'sequence-layout-mode') {
           modelChanges.merge(
             SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(),
           );
+        }
 
-          this.renderersContainer.update(modelChanges);
+        this.renderersContainer.update(modelChanges);
+
+        if (this.mode.modeName === 'sequence-layout-mode') {
           this.events.rightClickCanvasSequence.dispatch([event, []]);
         } else {
-          this.events.rightClickCanvas.dispatch([event, selectedMonomers]);
+          this.events.rightClickCanvas.dispatch([event, []]);
         }
       }
 

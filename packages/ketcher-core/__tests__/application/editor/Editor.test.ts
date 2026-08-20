@@ -24,6 +24,8 @@ import {
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
 } from 'utilities';
+import { FlexMode, SnakeMode } from 'application/editor/modes';
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 
 type RescaleStructForModeTransitionContext = {
   micromoleculesEditor: {
@@ -1717,6 +1719,98 @@ describe('CoreEditor', () => {
       } else {
         Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
       }
+    });
+
+    it('should clear selection and dispatch rightClickCanvas in flex mode on right-click on empty canvas', () => {
+      editor.setMode(new FlexMode());
+      const unselectSpy = jest.spyOn(
+        editor.drawingEntitiesManager,
+        'unselectAllDrawingEntities',
+      );
+      const rightClickCanvasHandler = jest.fn();
+      editor.events.rightClickCanvas.add(rightClickCanvasHandler);
+
+      const canvasElement = document.createElement('div');
+      rootElement.appendChild(canvasElement);
+      canvasElement.dispatchEvent(
+        new MouseEvent('contextmenu', {
+          bubbles: true,
+          clientX: 0,
+          clientY: 0,
+        }),
+      );
+
+      expect(unselectSpy).toHaveBeenCalledTimes(1);
+      expect(rightClickCanvasHandler).toHaveBeenCalledWith([
+        expect.anything(),
+        [],
+      ]);
+
+      canvasElement.remove();
+    });
+
+    it('should clear selection and dispatch rightClickCanvas in snake mode on right-click on empty canvas', () => {
+      editor.setMode(new SnakeMode());
+      const unselectSpy = jest.spyOn(
+        editor.drawingEntitiesManager,
+        'unselectAllDrawingEntities',
+      );
+      const rightClickCanvasHandler = jest.fn();
+      editor.events.rightClickCanvas.add(rightClickCanvasHandler);
+
+      const canvasElement = document.createElement('div');
+      rootElement.appendChild(canvasElement);
+      canvasElement.dispatchEvent(
+        new MouseEvent('contextmenu', {
+          bubbles: true,
+          clientX: 0,
+          clientY: 0,
+        }),
+      );
+
+      expect(unselectSpy).toHaveBeenCalledTimes(1);
+      expect(rightClickCanvasHandler).toHaveBeenCalledWith([
+        expect.anything(),
+        [],
+      ]);
+
+      canvasElement.remove();
+    });
+
+    it('should clear selection and dispatch rightClickCanvasSequence in sequence mode on right-click on empty canvas', () => {
+      // editor defaults to sequence-layout-mode (DEFAULT_LAYOUT_MODE)
+      const unselectSpy = jest.spyOn(
+        editor.drawingEntitiesManager,
+        'unselectAllDrawingEntities',
+      );
+      const unselectSequenceSpy = jest.spyOn(
+        SequenceRenderer,
+        'unselectEmptyAndBackboneSequenceNodes',
+      );
+      const rightClickCanvasSequenceHandler = jest.fn();
+      editor.events.rightClickCanvasSequence.add(
+        rightClickCanvasSequenceHandler,
+      );
+
+      const canvasElement = document.createElement('div');
+      rootElement.appendChild(canvasElement);
+      canvasElement.dispatchEvent(
+        new MouseEvent('contextmenu', {
+          bubbles: true,
+          clientX: 0,
+          clientY: 0,
+        }),
+      );
+
+      expect(unselectSpy).toHaveBeenCalledTimes(1);
+      expect(unselectSequenceSpy).toHaveBeenCalledTimes(1);
+      expect(rightClickCanvasSequenceHandler).toHaveBeenCalledWith([
+        expect.anything(),
+        [],
+      ]);
+
+      unselectSequenceSpy.mockRestore();
+      canvasElement.remove();
     });
   });
 

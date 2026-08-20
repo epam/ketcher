@@ -40,11 +40,13 @@ export const ZoomControls = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const zoomTool = ZoomTool?.instance;
+
   useEffect(() => {
-    ZoomTool?.instance?.subscribeOnZoomEvent(() => {
-      setCurrentZoom(Math.round(ZoomTool?.instance?.getZoomLevel() * 100));
+    zoomTool?.subscribeOnZoomEvent(() => {
+      setCurrentZoom(Math.round(zoomTool?.getZoomLevel() * 100));
     });
-  }, []);
+  }, [zoomTool]);
 
   const onZoomSubmit = useCallback(() => {
     const inputEl = inputRef.current;
@@ -53,11 +55,11 @@ export const ZoomControls = () => {
     if (userInput && userInput !== currentZoom) {
       const zoomToSet = getValidZoom(userInput, currentZoom);
       updateInputString(zoomToSet, inputEl);
-      ZoomTool.instance.zoomTo(zoomToSet / 100);
+      zoomTool.zoomTo(zoomToSet / 100);
     } else {
       updateInputString(currentZoom, inputEl);
     }
-  }, [currentZoom]);
+  }, [currentZoom, zoomTool]);
 
   const onClose = () => {
     setIsExpanded(false);
@@ -68,15 +70,15 @@ export const ZoomControls = () => {
   };
 
   const onZoomIn = () => {
-    ZoomTool.instance.zoomIn();
+    zoomTool.zoomIn();
   };
 
   const onZoomOut = () => {
-    ZoomTool.instance.zoomOut();
+    zoomTool.zoomOut();
   };
 
   const onZoomReset = () => {
-    ZoomTool.instance.resetZoom();
+    zoomTool?.resetZoom();
   };
 
   return (

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { type FC, useEffect, useRef, useState } from 'react';
 import {
   type Render,
@@ -94,12 +93,16 @@ const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
   const [wrapperWidth, setWrapperWidth] = useState(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  // The panel is positioned from its own measured size, so it has to be
+  // measured once it is in the DOM and again whenever its content changes.
+  // Without a dependency array this would re-run after every render, including
+  // the re-render its own setState triggers.
   useEffect(() => {
     if (wrapperRef.current) {
       setWrapperHeight(wrapperRef.current.clientHeight);
       setWrapperWidth(wrapperRef.current.clientWidth);
     }
-  });
+  }, [sGroupData]);
 
   const panelCoordinate = getPanelPositionRelativeToRect(
     clientX,

@@ -228,7 +228,11 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
   const handleSettingsChange = () => setIsCheckedWithNewSettings(false);
 
   useEffect(() => {
-    handleCheck();
+    onCheck(result.checkOptions).then(() => {
+      setIsStructureChecking(true);
+      setLastCheckDate(new Date());
+      setIsCheckedWithNewSettings(true);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

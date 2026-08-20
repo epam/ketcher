@@ -104,43 +104,44 @@ export const EditorEvents = () => {
     const handler = ([toolName]: [string]) => {
       dispatch(selectTool(toolName));
     };
+    const handleError = (errorText: string) => {
+      dispatch(openErrorTooltip(errorText));
+    };
+    const handleOpenErrorModal = (
+      errorData: string | { errorMessage: string; errorTitle: string },
+    ) => {
+      dispatch(openErrorModal(errorData));
+    };
+    const handleOpenMonomerConnectionModal = (
+      additionalProps: MonomerConnectionOnlyProps,
+    ) => dispatch(openModal({ name: 'monomerConnection', additionalProps }));
+    const handleOpenConfirmationDialog = (
+      additionalProps: ConfirmationDialogOnlyProps,
+    ) => dispatch(openModal({ name: 'confirmationDialog', additionalProps }));
 
     if (editor) {
-      editor.events.error.add((errorText) => {
-        dispatch(openErrorTooltip(errorText));
-      });
-      editor.events.openErrorModal.add(
-        (errorData: string | { errorMessage: string; errorTitle: string }) => {
-          dispatch(openErrorModal(errorData));
-        },
-      );
-
+      editor.events.error.add(handleError);
+      editor.events.openErrorModal.add(handleOpenErrorModal);
       dispatch(selectTool('select-rectangle'));
       editor.events.selectTool.dispatch(['select-rectangle']);
       editor.events.openMonomerConnectionModal.add(
-        (additionalProps: MonomerConnectionOnlyProps) =>
-          dispatch(
-            openModal({
-              name: 'monomerConnection',
-              additionalProps,
-            }),
-          ),
+        handleOpenMonomerConnectionModal,
       );
-      editor.events.openConfirmationDialog.add(
-        (additionalProps: ConfirmationDialogOnlyProps) =>
-          dispatch(
-            openModal({
-              name: 'confirmationDialog',
-              additionalProps,
-            }),
-          ),
-      );
+      editor.events.openConfirmationDialog.add(handleOpenConfirmationDialog);
       editor.events.selectTool.add(handler);
     }
 
     return () => {
       dispatch(selectTool(null));
       editor?.events.selectTool.remove(handler);
+      editor?.events.error.remove(handleError);
+      editor?.events.openErrorModal.remove(handleOpenErrorModal);
+      editor?.events.openMonomerConnectionModal.remove(
+        handleOpenMonomerConnectionModal,
+      );
+      editor?.events.openConfirmationDialog.remove(
+        handleOpenConfirmationDialog,
+      );
     };
   }, [editor, dispatch]);
 
@@ -368,6 +369,7 @@ export const EditorEvents = () => {
       editor?.events.mouseOverMonomer.remove(handleOpenPreview);
       editor?.events.mouseLeaveMonomer.remove(handleClosePreview);
       editor?.events.mouseLeaveAttachmentPoint.remove(handleClosePreview);
+      editor?.events.mouseDownAttachmentPoint.remove(handleClosePreview);
       editor?.events.mouseOverSequenceItem.remove(handleOpenPreview);
       editor?.events.mouseLeaveSequenceItem.remove(handleClosePreview);
       editor?.events.mouseOverPolymerBond.remove(handleOpenPreview);
@@ -394,7 +396,7 @@ export const EditorEvents = () => {
     if (!hasAtLeastOneAntisense) {
       editor?.events.resetSequenceEditMode.dispatch();
     }
-  }, [hasAtLeastOneAntisense, editor?.events.resetSequenceEditMode]);
+  }, [hasAtLeastOneAntisense, editor]);
 
   return <></>;
 };

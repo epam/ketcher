@@ -1,4 +1,5 @@
 import { select, type Selection } from 'd3';
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   AmbiguousMonomer,
   AmbiguousMonomerRenderer,

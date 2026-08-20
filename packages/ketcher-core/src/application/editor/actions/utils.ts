@@ -209,7 +209,6 @@ export function atomForNewBond(
   atom: number | AtomAttributes,
   bond?: Partial<BondAttributes>,
 ): AtomForNewBondResult {
-  // eslint-disable-line max-statements
   const id = ensureAtomId(atom);
   const neighbours: Array<{ id: number; v: Vec2 }> = [];
   const pos = atomGetPos(restruct, id);
@@ -325,7 +324,7 @@ export function atomForNewBond(
     v = v.rotate(angle);
   }
 
-  v.add_(pos); // eslint-disable-line no-underscore-dangle
+  v.add_(pos);
 
   const closestAtom = findClosestAtom(restruct, v, null, 0.1);
   const a = closestAtom === null ? { label: 'C' } : closestAtom.id;

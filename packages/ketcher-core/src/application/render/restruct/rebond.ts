@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -142,9 +144,9 @@ class ReBond extends ReObject {
     hb2.p = endAtom.getShiftedSegmentPosition(options, hb2.dir, p2, bond.b.len);
 
     bond.b.sb = options.lineWidth * 5;
-    /* eslint-disable no-mixed-operators */
+
     bond.b.sa = Math.max(bond.b.sb, bond.b.len / 2 - options.lineWidth * 2);
-    /* eslint-enable no-mixed-operators */
+
     bond.b.angle = (Math.atan2(hb1.dir.y, hb1.dir.x) * 180) / Math.PI;
   }
 
@@ -387,7 +389,6 @@ class ReBond extends ReObject {
   }
 
   show(restruct: ReStruct, bid: number, options: RenderOptions): void {
-    // eslint-disable-line max-statements
     const render = restruct.render;
     const struct = restruct.molecule;
     const bond = restruct.molecule.bonds.get(bid);
@@ -1019,7 +1020,6 @@ function getBondSingleUpPath(
   struct: Struct,
   isSnapping: boolean,
 ) {
-  // eslint-disable-line max-params
   const a = hb1.p;
   const b = hb2.p;
   const options = render.options;
@@ -1103,7 +1103,6 @@ function getBondSingleStereoBoldPath(
   struct: Struct,
   isSnapping: boolean,
 ) {
-  // eslint-disable-line max-params
   const options = render.options;
   const coords1 = stereoUpBondGetCoordinates(
     hb1,
@@ -1143,7 +1142,6 @@ function getBondDoubleStereoBoldPath(
   shiftB: boolean,
   isSnapping: boolean,
 ) {
-  // eslint-disable-line max-params
   const a = hb1.p;
   const b = hb2.p;
   const n = hb1.norm;
@@ -1324,7 +1322,6 @@ function getBondDoublePath(
   shiftB: boolean,
   isSnapping: boolean,
 ) {
-  // eslint-disable-line max-params, max-statements
   const cisTrans = bond.b.stereo === Bond.PATTERN.STEREO.CIS_TRANS;
 
   const a = hb1.p;
@@ -1414,7 +1411,6 @@ function getBondAromaticPath(
   shiftB: boolean,
   isSnapping: boolean,
 ) {
-  // eslint-disable-line max-params
   const dashdotPattern = [0.125, 0.125, 0.005, 0.125];
   let mask = 0;
   let dash: number[] | null = null;
@@ -1452,7 +1448,6 @@ function getAromaticBondPaths(
   mask: number,
   dash: number[] | null,
 ) {
-  // eslint-disable-line max-params, max-statements
   const a = hb1.p;
   const b = hb2.p;
   const n = hb1.norm;
@@ -1499,7 +1494,6 @@ function getReactingCenterPath(
   hb1: HalfBond,
   hb2: HalfBond,
 ) {
-  // eslint-disable-line max-statements
   const a = hb1.p;
   const b = hb2.p;
   const c = b.add(a).scaled(0.5);
@@ -1585,7 +1579,6 @@ function getBondMark(
   hb1: HalfBond,
   hb2: HalfBond,
 ) {
-  // eslint-disable-line max-statements
   const options = render.options;
   let mark: string | null = null;
   let tooltip: string | null = null;
@@ -1636,7 +1629,6 @@ function getIdsPath(
   param2: number,
   norm: Vec2,
 ) {
-  // eslint-disable-line max-params
   const pb = Vec2.lc(hb1.p, param1, hb2.p, param2, norm, bondIdxOff);
   const ipath = paper.text(pb.x, pb.y, bid.toString());
   const irbb = util.relBox(ipath.getBBox());

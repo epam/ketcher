@@ -34,7 +34,7 @@ jest.mock('ketcher-core', () => {
 });
 
 // Import after mocking to get the mocked version
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+
 const { AmbiguousMonomer } = require('ketcher-core');
 
 const createMockAmbiguousMonomer = (

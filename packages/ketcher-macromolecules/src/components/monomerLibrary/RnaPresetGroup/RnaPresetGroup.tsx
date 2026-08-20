@@ -14,14 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useAppSelector } from 'hooks';
+import { useAppSelector, useDebouncedCallback } from 'hooks';
 import {
   getRnaPresetPhosphatePosition,
   isAmbiguousMonomerLibraryItem,
   MonomerItemType,
   RnaPresetWithOptionalFields,
 } from 'ketcher-core';
-import { debounce } from 'lodash';
 import React, { ReactElement, useCallback } from 'react';
 import {
   selectActivePreset,
@@ -126,10 +125,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     [dispatch],
   );
 
-  const debouncedShowPreview = useCallback(
-    debounce((p) => dispatchShowPreview(p), 500),
-    [dispatchShowPreview],
-  );
+  const debouncedShowPreview = useDebouncedCallback(dispatchShowPreview, 500);
 
   const closeLibraryPreview = useCallback((): void => {
     debouncedShowPreview.cancel();

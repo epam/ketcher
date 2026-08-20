@@ -395,33 +395,10 @@ export class MacromoleculesConverter {
             monomerMicromolecule.pp as Vec2,
           );
     command.merge(monomerAdditionCommand);
-    const monomer = monomerAdditionCommand.operations[0].monomer as BaseMonomer;
-    sgroupToMonomer.set(monomerMicromolecule, monomer);
-
-    // Add stereo flag if the monomer has an enhanced stereo flag
-    monomer.monomerItem.struct.frags.forEach((fragment) => {
-      if (fragment?.enhancedStereoFlag) {
-        const localStereoFlagPosition =
-          fragment.stereoFlagPosition ||
-          Fragment.getDefaultStereoFlagPosition(monomer.monomerItem.struct, 0);
-
-        if (localStereoFlagPosition) {
-          // The stereo flag position is stored relative to the monomer's struct coordinate system,
-          // so we need to add the monomer's position to get the global canvas position
-          const globalStereoFlagPosition = monomerMicromolecule.pp
-            ? localStereoFlagPosition.add(monomerMicromolecule.pp)
-            : localStereoFlagPosition;
-
-          command.merge(
-            drawingEntitiesManager.addStereoFlag(
-              globalStereoFlagPosition,
-              fragment.enhancedStereoFlag,
-              monomer,
-            ),
-          );
-        }
-      }
-    });
+    sgroupToMonomer.set(
+      monomerMicromolecule,
+      monomerAdditionCommand.operations[0].monomer as BaseMonomer,
+    );
 
     return command;
   }

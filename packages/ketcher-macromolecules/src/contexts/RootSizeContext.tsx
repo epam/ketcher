@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useState,
+  useMemo
 } from 'react';
 import { debounce } from 'lodash';
 
@@ -32,9 +33,16 @@ export const RootSizeProvider = ({
     setSize({ width, height });
   }, [rootRef]);
 
-  const debouncedHandleResize = useCallback(debounce(handleResize, 100), [
-    handleResize,
-  ]);
+  const debouncedHandleResize = useMemo(
+    () => debounce(handleResize, 100),
+    [handleResize],
+  );
+
+  useEffect(() => {
+  return () => {
+    debouncedHandleResize.cancel();
+  };
+}, [debouncedHandleResize]);
 
   useEffect(() => {
     handleResize();

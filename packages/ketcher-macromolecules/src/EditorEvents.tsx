@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   hasAntisenseChains,
   selectEditor,
@@ -23,15 +23,14 @@ import {
   selectIsContextMenuActive,
   selectLastSelectedSelectionMenuItem,
   selectTool,
-  showPreview,
 } from 'state/common';
 import { openErrorModal, openErrorTooltip, openModal } from 'state/modal';
 import {
   ConfirmationDialogOnlyProps,
   MonomerConnectionOnlyProps,
 } from 'components/modal/modalContainer';
-import { useAppDispatch, useAppSelector } from 'hooks';
-import { debounce } from 'lodash';
+import { useAppDispatch, useAppSelector, useDebouncedShowPreview } from 'hooks';
+
 import {
   AmbiguousMonomer,
   BaseMonomer,
@@ -145,15 +144,7 @@ export const EditorEvents = () => {
     };
   }, [editor, dispatch]);
 
-  const dispatchShowPreview = useCallback(
-    (payload) => dispatch(showPreview(payload)),
-    [dispatch],
-  );
-
-  const debouncedShowPreview = useMemo(
-    () => debounce((p) => dispatchShowPreview(p), 500),
-    [dispatchShowPreview],
-  );
+  const debouncedShowPreview = useDebouncedShowPreview();
 
   const handleOpenBondPreview = useCallback(
     (polymerBond: PolymerBond, style: PreviewStyle) => {

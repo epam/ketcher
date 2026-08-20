@@ -90,28 +90,23 @@ const MonomerGroup = ({
     }
 
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
-    let style: PreviewStyle;
-    let previewType: PreviewType;
-    let top: string;
 
     if (isAmbiguousMonomerLibraryItem(monomer)) {
-      top = calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates);
+      const top = calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates);
       const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
-      previewType = PreviewType.AmbiguousMonomer;
-      style = { left, top, transform: 'translate(-50%, 0)' };
+      debouncedShowPreview({
+        type: PreviewType.AmbiguousMonomer,
+        monomer,
+        style: { left, top, transform: 'translate(-50%, 0)' },
+      });
     } else {
-      top = calculateMonomerPreviewTop(cardCoordinates);
-      style = { right: '-88px', top, transform: 'translate(-50%, 0)' };
-      previewType = PreviewType.Monomer;
+      const top = calculateMonomerPreviewTop(cardCoordinates);
+      debouncedShowPreview({
+        type: PreviewType.Monomer,
+        monomer,
+        style: { right: '-88px', top, transform: 'translate(-50%, 0)' },
+      });
     }
-
-    const previewData = {
-      type: previewType,
-      monomer,
-      style,
-    };
-
-    debouncedShowPreview(previewData);
   };
 
   const selectMonomer = (monomer: MonomerOrAmbiguousType) => {

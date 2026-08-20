@@ -32,23 +32,19 @@ export const RootSizeProvider = ({
     setSize({ width, height });
   }, [rootRef]);
 
-  const debouncedHandleResize = useCallback(debounce(handleResize, 100), [
-    handleResize,
-  ]);
-
   useEffect(() => {
     handleResize();
-  }, [isMacromoleculesEditorTurnedOn]);
+  }, [handleResize, isMacromoleculesEditorTurnedOn]);
 
   useEffect(() => {
-    debouncedHandleResize();
-
+    const debouncedHandleResize = debounce(handleResize, 100);
     window.addEventListener('resize', debouncedHandleResize);
 
     return () => {
       window.removeEventListener('resize', debouncedHandleResize);
+      debouncedHandleResize.cancel();
     };
-  }, [debouncedHandleResize]);
+  }, [handleResize]);
 
   return (
     <RootSizeContext.Provider value={size}>{children}</RootSizeContext.Provider>

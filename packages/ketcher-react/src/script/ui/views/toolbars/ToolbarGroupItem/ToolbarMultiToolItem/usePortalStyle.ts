@@ -33,29 +33,29 @@ function usePortalStyle([
   const [portalStyle, setPortalStyle] = useState<CSSProperties>({});
 
   useEffect(() => {
-    if (!ref.current) {
-      return;
+    if (ref.current) {
+      const editorRect = document
+        .querySelector(rootElementSelector ?? KETCHER_ROOT_NODE_CSS_SELECTOR)
+        ?.getBoundingClientRect() ?? { top: 0, left: 0 };
+      const menuItemRect = ref.current.getBoundingClientRect();
+
+      const spaceBetween = 4;
+      const alignmentOffset = 2;
+      const top =
+        menuItemRect.top -
+        editorRect.top +
+        (isTop ? spaceBetween + menuItemRect.height : 0) -
+        (isTop ? 0 : alignmentOffset);
+      const left =
+        menuItemRect.left -
+        editorRect.left +
+        (isTop ? 0 : spaceBetween + menuItemRect.width) -
+        (isTop ? alignmentOffset : 0);
+
+      setPortalStyle({ top: `${top}px`, left: `${left}px` });
+    } else {
+      // ref not attached to the DOM yet; keep the previously computed style
     }
-
-    const editorRect = document
-      .querySelector(rootElementSelector ?? KETCHER_ROOT_NODE_CSS_SELECTOR)
-      ?.getBoundingClientRect() ?? { top: 0, left: 0 };
-    const menuItemRect = ref.current.getBoundingClientRect();
-
-    const spaceBetween = 4;
-    const alignmentOffset = 2;
-    const top =
-      menuItemRect.top -
-      editorRect.top +
-      (isTop ? spaceBetween + menuItemRect.height : 0) -
-      (isTop ? 0 : alignmentOffset);
-    const left =
-      menuItemRect.left -
-      editorRect.left +
-      (isTop ? 0 : spaceBetween + menuItemRect.width) -
-      (isTop ? alignmentOffset : 0);
-
-    setPortalStyle({ top: `${top}px`, left: `${left}px` });
   }, [ref, isOpen, isTop, rootElementSelector]);
 
   return [portalStyle];

@@ -38,7 +38,7 @@ jobs:
       - name: Build all packages
         run: npm run build:packages && npm run build:example:standalone
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ketcher-dist-micro
           path: example/dist
@@ -83,7 +83,7 @@ jobs:
           cd ketcher-autotests/
           npx playwright install chromium
           npx playwright test --project=chromium-popup --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         # run even if previous steps fails
         if: always()
         with:
@@ -97,7 +97,7 @@ jobs:
     container: node:24.14.1-bullseye-slim
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
       - name: Install dependencies
         run: npm ci
       - name: Download Playwright blob reports
@@ -109,7 +109,7 @@ jobs:
       - name: Merge into HTML Report
         run: npx playwright merge-reports --reporter html ./ketcher-autotests/playwright-report/blob
       - name: Upload HTML report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: html-report
           path: playwright-report/

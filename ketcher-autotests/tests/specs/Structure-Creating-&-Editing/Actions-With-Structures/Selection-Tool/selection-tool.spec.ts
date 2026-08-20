@@ -246,9 +246,13 @@ test.describe('Selection tools', () => {
       page,
       'Molfiles-V3000/flipping-horizontally-one-monomer-expected.mol',
     );
-    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 11 }), {
-      padding: 210,
-    });
+    await takeElementScreenshot(
+      page,
+      getAtomLocator(page, { atomLabel: 'N' }).nth(1),
+      {
+        padding: 250,
+      },
+    );
   });
 
   test('Verify flipping horizontally of one expanded monomer in a structure and save/paste in SVG and PNG format', async () => {
@@ -346,9 +350,13 @@ test.describe('Selection tools', () => {
       page,
       'Molfiles-V3000/flipping-vertically-one-monomer-expected.mol',
     );
-    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
-      padding: 250,
-    });
+    await takeElementScreenshot(
+      page,
+      getAtomLocator(page, { atomLabel: 'N' }).nth(1),
+      {
+        padding: 250,
+      },
+    );
   });
 
   test('Verify flipping vertically of one expanded monomer in a structure and save in SVG and PNG format', async () => {
@@ -484,9 +492,13 @@ test.describe('Selection tools', () => {
       page,
       'Molfiles-V3000/flipping-horizontally-monomers-expected.mol',
     );
-    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 11 }), {
-      padding: 190,
-    });
+    await takeElementScreenshot(
+      page,
+      getAtomLocator(page, { atomLabel: 'O' }).nth(1),
+      {
+        padding: 190,
+      },
+    );
   });
 
   test('Verify flipping horizontally of more than one expanded monomers in a structure and save in SVG and PNG format', async () => {
@@ -637,9 +649,13 @@ test.describe('Selection tools', () => {
       page,
       'Molfiles-V3000/flipping-vertically-monomers-expected.mol',
     );
-    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
-      padding: 250,
-    });
+    await takeElementScreenshot(
+      page,
+      getAtomLocator(page, { atomLabel: 'N' }).nth(1),
+      {
+        padding: 250,
+      },
+    );
   });
 
   test('Verify flipping vertically of more than one expanded monomers in a structure and save in SVG and PNG format', async () => {

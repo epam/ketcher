@@ -32,6 +32,7 @@ const StyledInput = styled('input')`
   line-height: 16px;
   caret-color: #43b5c0;
   margin-bottom: 8px;
+  font-family: Arial, sans-serif;
 
   &:hover {
     border-color: #43b5c0;

@@ -2,7 +2,7 @@
 
 exports[`Monomer Group should apply correct style if selected 1`] = `
 <div
-  class="css-w61mbe"
+  class="css-141bpj3"
   data-monomer-item-id="RRMonomerName___RRName"
   data-testid="RRMonomerName___RRName"
 >
@@ -48,7 +48,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           class="css-1a3tnc1"
         >
           <div
-            class="css-mfw0go"
+            class="css-18zowlu"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
@@ -76,7 +76,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1mkwiyz"
+            class="css-zd0kkw"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
@@ -104,7 +104,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-rt02do"
+            class="css-1tkqf4s"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
@@ -132,7 +132,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-mfw0go"
+            class="css-18zowlu"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
@@ -160,7 +160,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1mkwiyz"
+            class="css-zd0kkw"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
@@ -204,7 +204,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
         class="css-1a3tnc1"
       >
         <div
-          class="css-mfw0go"
+          class="css-18zowlu"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
@@ -232,7 +232,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1mkwiyz"
+          class="css-zd0kkw"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
@@ -260,7 +260,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-rt02do"
+          class="css-1tkqf4s"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
@@ -288,7 +288,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-mfw0go"
+          class="css-18zowlu"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
@@ -316,7 +316,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1mkwiyz"
+          class="css-zd0kkw"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
@@ -412,7 +412,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           class="css-1a3tnc1"
         >
           <div
-            class="css-mfw0go"
+            class="css-18zowlu"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
@@ -440,7 +440,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1mkwiyz"
+            class="css-zd0kkw"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
@@ -468,7 +468,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-rt02do"
+            class="css-1tkqf4s"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
@@ -496,7 +496,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-mfw0go"
+            class="css-18zowlu"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
@@ -524,7 +524,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1mkwiyz"
+            class="css-zd0kkw"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
@@ -563,7 +563,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
         class="css-1a3tnc1"
       >
         <div
-          class="css-mfw0go"
+          class="css-18zowlu"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
@@ -591,7 +591,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1mkwiyz"
+          class="css-zd0kkw"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
@@ -619,7 +619,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-rt02do"
+          class="css-1tkqf4s"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
@@ -647,7 +647,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-mfw0go"
+          class="css-18zowlu"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
@@ -675,7 +675,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1mkwiyz"
+          class="css-zd0kkw"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >

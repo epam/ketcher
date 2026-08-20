@@ -30,6 +30,7 @@ export const StyledHeader = styled.button`
   background-color: ${(props) => props.theme.ketcher.color.background.primary};
   font-weight: ${(props) => props.theme.ketcher.font.weight.regular};
   font-size: ${(props) => props.theme.ketcher.font.size.regular};
+  font-family: ${(props) => props.theme.ketcher.font.family.arial};
   border: none;
   border-radius: 4px;
   text-transform: none;

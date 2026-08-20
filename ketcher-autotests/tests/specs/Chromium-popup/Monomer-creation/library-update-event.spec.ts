@@ -74,7 +74,7 @@ test(`1. Check that system sends update on peptide monomer creation`, async () =
     page,
     'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
   );
-  await clickOnCanvas(page, 0, 0);
+  // await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
 
   const waiter = waitForLibraryUpdate(page).then(async (sdf) => {

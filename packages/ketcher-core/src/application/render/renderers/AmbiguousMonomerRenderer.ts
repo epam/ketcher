@@ -9,6 +9,7 @@ import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
 import type { UsageInMacromolecule } from 'application/render';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { KetMonomerClass } from 'domain/constants/monomers';
+import { KetcherLogger } from 'utilities';
 import {
   type HighlightPathData,
   createCircleHighlightPath,
@@ -22,18 +23,38 @@ type PreviewAttachmentPointParams = {
   connectedAttachmentPoints: string[] | undefined;
 };
 
+const DEFAULT_CHEM_MONOMER_SYMBOL_ELEMENTS_IDS = {
+  hover: '#chem-selection',
+  body: '#chem',
+  autochainPreview: '#chem-autochain-preview',
+};
+
 export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   private readonly monomerRenderer: BaseMonomerRenderer;
   private readonly monomerSymbolElementsIds: {
-    selected: string;
     hover: string;
     body: string;
     variant?: string;
+    autochainPreview: string;
   };
 
   constructor(public monomer: AmbiguousMonomer, scale?: number) {
     const monomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
-    const monomerSymbolElementsIds = MONOMER_SYMBOLS_IDS[monomerClass];
+    const monomerSymbolElementsIdsByClass = MONOMER_SYMBOLS_IDS[monomerClass];
+    const fallbackMonomerSymbolElementsIds =
+      MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM];
+    const monomerSymbolElementsIds =
+      monomerSymbolElementsIdsByClass ??
+      fallbackMonomerSymbolElementsIds ??
+      DEFAULT_CHEM_MONOMER_SYMBOL_ELEMENTS_IDS;
+    if (!monomerSymbolElementsIdsByClass) {
+      KetcherLogger.error(`Missing monomer symbol ids for ${monomerClass}`);
+      if (!fallbackMonomerSymbolElementsIds) {
+        KetcherLogger.error(
+          `Missing monomer symbol ids for ${KetMonomerClass.CHEM}`,
+        );
+      }
+    }
 
     super(
       monomer,

@@ -10,6 +10,7 @@ import {
   getStructStringFromClipboardData,
   initHotKeys,
   isClipboardAPIAvailable,
+  isSelectionOutsideElement,
   KetcherLogger,
   keyNorm,
   legacyCopy,
@@ -345,17 +346,8 @@ export abstract class BaseMode {
     );
   }
 
-  // The copy/cut listener is registered on `document`, so it also fires when
-  // the user selects unrelated page text (e.g. an error toast) and presses
-  // Ctrl+C. Only treat it as a structure copy if the live selection is
-  // actually inside the editor canvas.
   private isSelectionOutsideCanvas(): boolean {
-    const selection = document.getSelection();
-    if (!selection || selection.isCollapsed || !selection.anchorNode) {
-      return false;
-    }
-    const canvas = document.querySelector('[data-testid="ketcher-canvas"]');
-    return !canvas || !canvas.contains(selection.anchorNode);
+    return isSelectionOutsideElement(provideEditorInstance().canvas);
   }
 
   public destroy(): void {

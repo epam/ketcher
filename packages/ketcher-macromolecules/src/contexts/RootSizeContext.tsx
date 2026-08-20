@@ -32,25 +32,26 @@ export const RootSizeProvider = ({
     setSize({ width, height });
   }, [rootRef]);
 
-  const debouncedHandleResize = useCallback(debounce(handleResize, 100), [
-    handleResize,
-  ]);
-
   useEffect(() => {
     handleResize();
-  }, [isMacromoleculesEditorTurnedOn]);
+  }, [handleResize, isMacromoleculesEditorTurnedOn]);
 
   useEffect(() => {
+    const debouncedHandleResize = debounce(handleResize, 100);
+
     debouncedHandleResize();
 
     window.addEventListener('resize', debouncedHandleResize);
 
     return () => {
       window.removeEventListener('resize', debouncedHandleResize);
+      debouncedHandleResize.cancel();
     };
-  }, [debouncedHandleResize]);
+  }, [handleResize]);
 
   return (
-    <RootSizeContext.Provider value={size}>{children}</RootSizeContext.Provider>
+    <RootSizeContext.Provider value={size}>
+      {children}
+    </RootSizeContext.Provider>
   );
 };

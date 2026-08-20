@@ -1116,31 +1116,49 @@ const MonomerCreationWizardInternal = ({
   };
 
   // Recompute atom ownership highlights only after component structures change
-  // while ownership validation errors are active.
-  useEffect(() => {
+  // while ownership validation errors are active. `problematicAtomIds` is
+  // derived purely from other state/props, so it is computed inline (memoized)
+  // instead of being synchronized one render late via an effect.
+  const problematicAtomIds = useMemo(() => {
     if (
       !editor?.render?.monomerCreationState ||
       !isRnaPresetType ||
       !hasActiveRnaPresetAtomValidationErrors
     ) {
-      return;
+      return null;
     }
 
-    const { problematicAtomIds } = getRnaPresetStructureValidationResult(
+    return getRnaPresetStructureValidationResult(
       editor.struct(),
       rnaPresetComponentStructures,
-    );
-
-    editor.setProblematicAtoms(problematicAtomIds);
-    if (problematicAtomIds.size === 0) {
-      setHasActiveRnaPresetAtomValidationErrors(false);
-    }
+    ).problematicAtomIds;
   }, [
     editor,
     hasActiveRnaPresetAtomValidationErrors,
     isRnaPresetType,
     rnaPresetComponentStructures,
   ]);
+
+  // Once the recomputed problematic-atom set becomes empty, clear the
+  // active-errors flag immediately during render instead of chaining the
+  // update through a follow-up effect (see "Adjusting state when a prop
+  // changes" in the React docs).
+  const [lastProblematicAtomIds, setLastProblematicAtomIds] =
+    useState(problematicAtomIds);
+  if (problematicAtomIds !== lastProblematicAtomIds) {
+    setLastProblematicAtomIds(problematicAtomIds);
+    if (problematicAtomIds && problematicAtomIds.size === 0) {
+      setHasActiveRnaPresetAtomValidationErrors(false);
+    }
+  }
+
+  // Syncing the derived problematic-atom set to the (non-React) editor render
+  // state is a legitimate effect: it just informs an external system.
+  useEffect(() => {
+    if (problematicAtomIds) {
+      editor.setProblematicAtoms(problematicAtomIds);
+    }
+  }, [editor, problematicAtomIds]);
 
   useEffect(() => {
     if (monomerCreationState?.hasDefaultAttachmentPoints) {

@@ -124,12 +124,19 @@ export function alignToCentroid(result: Struct, original: Struct): void {
 
 export function collapseExpandedSuperatoms(struct: Struct): void {
   struct.sgroups.forEach((sgroup) => {
-    if (sgroup.type === SGroup.TYPES.SUP) {
-      if (sgroup instanceof MonomerMicromolecule && sgroup.monomer) {
-        sgroup.monomer.monomerItem.expanded = false;
-      }
-      sgroup.data.expanded = false;
+    if (sgroup.type !== SGroup.TYPES.SUP) {
+      return;
     }
+
+    if (sgroup instanceof MonomerMicromolecule) {
+      const { monomerItem } = sgroup.monomer;
+
+      if (!Object.isFrozen(monomerItem)) {
+        monomerItem.expanded = false;
+      }
+    }
+
+    sgroup.data.expanded = false;
   });
 }
 

@@ -2462,17 +2462,17 @@ export class CoreEditor {
     if (window._ketcher_isAutozoomDisabled) return;
 
     const { drawingEntitiesManager } = this;
-    const hasArrows =
+
+    // Monomers are only auto-zoomed in flex/snake modes to preserve sequence
+    // layout behaviour. Arrows have no mode-specific layout and can otherwise
+    // end up outside the visible canvas, so they always participate.
+    const hasEntitiesToAutozoom =
+      (this.isCurrentModeWithAutozoom() &&
+        drawingEntitiesManager.hasMonomers) ||
       drawingEntitiesManager.rxnArrows.size > 0 ||
       drawingEntitiesManager.multitailArrows.size > 0;
 
-    // Monomers are only auto-zoomed in flex/snake modes to preserve sequence
-    // layout behaviour. Arrows are always zoomed into view since they have no
-    // mode-specific layout and can otherwise end up outside the visible canvas.
-    const shouldZoomMonomers =
-      this.isCurrentModeWithAutozoom() && drawingEntitiesManager.hasMonomers;
-
-    if (!shouldZoomMonomers && !hasArrows) return;
+    if (!hasEntitiesToAutozoom) return;
     const structureBbox = getRenderedStructuresBbox();
 
     ZoomTool.instance.zoomStructureToFitHalfOfCanvas(structureBbox);

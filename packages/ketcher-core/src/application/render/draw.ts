@@ -1735,6 +1735,12 @@ function rgroupAttachmentPoint(
   return resultShape;
 }
 
+// Wave glyph dimensions in path-local units (derived from attachmentPointSvgPathString).
+// x spans +13 to −13.1 → perpendicular half-extent 13.1; y max = 5.2 → far-along extent.
+export const AP_PATH_SCALE = 39.8;
+export const AP_WAVE_HALF_PERP = 13.1;
+export const AP_WAVE_FAR_ALONG = 5.2;
+
 function getSvgCurveShapeAttachmentPoint(
   centerPosition: Vec2,
   directionVector: Vec2,
@@ -1743,9 +1749,8 @@ function getSvgCurveShapeAttachmentPoint(
   // declared here https://github.com/epam/ketcher/issues/2165
   // this path has (0,0) in the position of attachment point atom
   const attachmentPointSvgPathString = `M13 1.5l-1.5 3.7c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.8 0l-1.8-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.6 4.2c-0.3 0.9-1.6 0.8-1.9 0l-1.2-3.5`;
-  const attachmentPointSvgPathSize = 39.8;
 
-  const shapeScale = basicSize / attachmentPointSvgPathSize;
+  const shapeScale = basicSize / AP_PATH_SCALE;
   const angleDegrees =
     (Math.atan2(directionVector.y, directionVector.x) * 180) / Math.PI - 90;
 

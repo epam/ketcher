@@ -450,49 +450,37 @@ function getAttachmentPointGeometry(
   directionVector: Vec2,
 ): AttachmentPointGeometry {
   const atomPositionVector = Scale.modelToCanvas(atom.a.pp, options);
-  const nominalEnd = atomPositionVector.addScaled(
+  const nominalLength = options.microModeScale * 0.85;
+
+  // Endpoint and number are always at their nominal distance from the atom
+  // centre. A wide atom symbol shifts only the stem start, never the endpoint
+  // (#3268).
+  const attachmentPointEnd = atomPositionVector.addScaled(
     directionVector,
-    options.microModeScale * 0.85,
+    nominalLength,
   );
-  const nominalLabelPosition = getLabelPositionForAttachmentPoint(
+  const labelPosition = getLabelPositionForAttachmentPoint(
     atomPositionVector,
     directionVector,
     options.microModeScale,
   );
-  const shiftedStemStart = atom.getShiftedSegmentPosition(
-    options,
+
+  const rawStemStart = atom.getShiftedSegmentPosition(options, directionVector);
+
+  // Safety cap: preserve at least OUTLINE_PADDING × microModeScale of visible
+  // stem so the wave cannot collapse onto or past the endpoint.
+  // Ordinary geometry is unchanged whenever rawProjection ≤ maxStartProjection.
+  const minStemLength =
+    ReRGroupAttachmentPoint.OUTLINE_PADDING * options.microModeScale;
+  const maxStartProjection = Math.max(nominalLength - minStemLength, 0);
+  const rawProjection = Vec2.dot(
+    rawStemStart.sub(atomPositionVector),
     directionVector,
   );
-
-  // Project the shift along the direction to determine whether the shifted stem
-  // start has reached or passed the nominal endpoint.  The nominal projection
-  // simplifies to `microModeScale * 0.85` because the direction vector is unit.
-  const shiftProjection = Vec2.dot(
-    shiftedStemStart.sub(atomPositionVector),
-    directionVector,
-  );
-  const nominalEndProjection = options.microModeScale * 0.85;
-
-  if (shiftProjection < nominalEndProjection) {
-    // Ordinary case: stem start is within the nominal glyph – preserve the
-    // original endpoint and number position exactly.
-    return {
-      atomPositionVector,
-      shiftedStemStart,
-      attachmentPointEnd: nominalEnd,
-      labelPosition: nominalLabelPosition,
-    };
-  }
-
-  // Overrun case: shifted start reaches or passes the nominal endpoint.
-  // Push the endpoint and number outward from the final start so the stem
-  // retains its full length and the number follows the displaced glyph.
-  const displacement = shiftedStemStart.sub(atomPositionVector);
-  const attachmentPointEnd = shiftedStemStart.addScaled(
-    directionVector,
-    options.microModeScale * 0.85,
-  );
-  const labelPosition = nominalLabelPosition.add(displacement);
+  const shiftedStemStart =
+    rawProjection > maxStartProjection
+      ? atomPositionVector.addScaled(directionVector, maxStartProjection)
+      : rawStemStart;
 
   return {
     atomPositionVector,

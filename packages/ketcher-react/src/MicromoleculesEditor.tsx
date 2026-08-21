@@ -71,9 +71,11 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       structServiceProvider,
       setServerRef.current,
     );
-    // ketcherId is intentionally omitted: this effect triggers only when structServiceProvider
-    // changes. Making ketcherId reactive would cause an extra reinitializeApi call when the
-    // parent sets it via the onSetKetcherId callback after initialization.
+    // ketcherId is intentionally omitted: after mount, this effect only re-runs when
+    // structServiceProvider changes. The mount run is intentionally skipped via the
+    // ketcherId guard above, since the parent sets ketcherId via the onSetKetcherId
+    // callback after initKetcher completes. Making ketcherId reactive would cause an
+    // extra reinitializeApi call at that point, before the builder is ready for it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [structServiceProvider]);
 

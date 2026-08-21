@@ -56,6 +56,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
+          set +e
           REPORT_FILE=".scannerwork/report-task.txt"
 
           if [[ ! -f "$REPORT_FILE" ]]; then
@@ -71,7 +72,16 @@ jobs:
             exit 0
           fi
 
-          ce_task_json=$(curl -sf -u "$SONAR_TOKEN:" "$ce_task_url")
+          ce_task_json=$(curl -sS -u "$SONAR_TOKEN:" "$ce_task_url")
+          if ! echo "$ce_task_json" | jq -e . >/dev/null 2>&1; then
+            echo "Could not parse CE task response as JSON"
+            echo "CE task URL: $ce_task_url"
+            echo "Raw response:"
+            echo "$ce_task_json"
+            [[ -n "$dashboard_url" ]] && echo "Dashboard: $dashboard_url"
+            exit 0
+          fi
+
           analysis_id=$(echo "$ce_task_json" | jq -r '.task.analysisId // empty')
 
           if [[ -z "$analysis_id" ]]; then
@@ -81,16 +91,24 @@ jobs:
             exit 0
           fi
 
-          qg_json=$(curl -sf -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?analysisId=$analysis_id")
-          qg_status=$(echo "$qg_json" | jq -r '.projectStatus.status')
+          qg_json=$(curl -sS -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?analysisId=$analysis_id")
+          if ! echo "$qg_json" | jq -e . >/dev/null 2>&1; then
+            echo "Could not parse Quality Gate response as JSON"
+            echo "Raw response:"
+            echo "$qg_json"
+            [[ -n "$dashboard_url" ]] && echo "Dashboard: $dashboard_url"
+            exit 0
+          fi
+
+          qg_status=$(echo "$qg_json" | jq -r '.projectStatus.status // "UNKNOWN"')
 
           echo "Quality Gate status: $qg_status"
 
           if [[ "$qg_status" == "ERROR" ]]; then
             echo "Failed Quality Gate conditions:"
-            echo "$qg_json" | jq -r '.projectStatus.conditions[]
+            echo "$qg_json" | jq -r '(.projectStatus.conditions // [])[]
               | select(.status == "ERROR")
-              | "- \(.metricKey): actual=\(.actualValue // \"n/a\"), threshold=\(.errorThreshold // \"n/a\"), comparator=\(.comparator // \"n/a\")"'
+              | "- \(.metricKey): actual=\(.actualValue // "n/a"), threshold=\(.errorThreshold // "n/a"), comparator=\(.comparator // "n/a")"'
             [[ -n "$dashboard_url" ]] && echo "Dashboard: $dashboard_url"
           fi
 

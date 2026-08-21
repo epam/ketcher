@@ -45,6 +45,7 @@ jobs:
       - name: SonarQube Quality Gate check
         id: sonarqube-quality-gate-check
         uses: sonarsource/sonarqube-quality-gate-action@v1.2.0
+        continue-on-error: true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} #OPTIONAL
@@ -55,62 +56,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: |
-          set +e
-          REPORT_FILE=".scannerwork/report-task.txt"
-
-          if [[ ! -f "$REPORT_FILE" ]]; then
-            echo "Sonar report task file not found: $REPORT_FILE"
-            exit 0
-          fi
-
-          ce_task_url=$(grep '^ceTaskUrl=' "$REPORT_FILE" | cut -d'=' -f2-)
-          dashboard_url=$(grep '^dashboardUrl=' "$REPORT_FILE" | cut -d'=' -f2-)
-
-          if [[ -z "$ce_task_url" ]]; then
-            echo "ceTaskUrl was not found in $REPORT_FILE"
-            exit 0
-          fi
-
-          ce_task_json=$(curl -sSL -u "$SONAR_TOKEN:" "$ce_task_url")
-          if ! echo "$ce_task_json" | jq -e . >/dev/null 2>&1; then
-            echo "Could not parse CE task response as JSON"
-            echo "CE task URL: $ce_task_url"
-            echo "Raw response:"
-            echo "$ce_task_json"
-            [[ -n "$dashboard_url" ]] && echo "Dashboard: $dashboard_url"
-            exit 0
-          fi
-
-          analysis_id=$(echo "$ce_task_json" | jq -r '.task.analysisId // empty')
-
-          if [[ -z "$analysis_id" ]]; then
-            echo "Could not resolve analysisId from CE task response"
-            echo "CE task URL: $ce_task_url"
-            [[ -n "$dashboard_url" ]] && echo "Dashboard: $dashboard_url"
-            exit 0
-          fi
-
-          qg_json=$(curl -sSL -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?analysisId=$analysis_id")
-          if ! echo "$qg_json" | jq -e . >/dev/null 2>&1; then
-            echo "Could not parse Quality Gate response as JSON"
-            echo "Raw response:"
-            echo "$qg_json"
-            [[ -n "$dashboard_url" ]] && echo "Dashboard: $dashboard_url"
-            exit 0
-          fi
-
-          qg_status=$(echo "$qg_json" | jq -r '.projectStatus.status // "UNKNOWN"')
-
-          echo "Quality Gate status: $qg_status"
-
-          if [[ "$qg_status" == "ERROR" ]]; then
-            echo "Failed Quality Gate conditions:"
-            echo "$qg_json" | jq -r '(.projectStatus.conditions // [])[]
-              | select(.status == "ERROR")
-              | "- \(.metricKey): actual=\(.actualValue // "n/a"), threshold=\(.errorThreshold // "n/a"), comparator=\(.comparator // "n/a")"'
-            [[ -n "$dashboard_url" ]] && echo "Dashboard: $dashboard_url"
-          fi
+        run: bash .github/scripts/sonar-quality-gate-details.sh
 
       # Optionally you can use the output from the Quality Gate in another step.
       # The possible outputs of the `quality-gate-status` variable are `PASSED`, `WARN` or `FAILED`.

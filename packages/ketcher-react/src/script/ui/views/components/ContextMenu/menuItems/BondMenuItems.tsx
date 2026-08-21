@@ -1,4 +1,4 @@
-import { type FC, useEffect, useState } from 'react';
+import { type FC } from 'react';
 import { Item, Submenu } from 'react-contexify';
 import type Editor from 'src/script/editor';
 import tools from '../../../../action/tools';
@@ -27,11 +27,6 @@ const nonQueryBondNames = getNonQueryBondNames(tools);
 
 const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
   const { ketcherId } = useAppContext();
-  const [bondData, setBondData] = useState<{
-    type: number;
-    stereo: number;
-  } | null>(null);
-  const [isBondBetweenMonomers, setIsBondBetweenMonomers] = useState(false);
   const [handleEdit] = useBondEdit();
   const [handleTypeChange, disabled] = useBondTypeChange();
   const [handleSGroupAttach, sGroupAttachHidden] = useBondSGroupAttach();
@@ -45,33 +40,27 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
   const { changeDirection } = useChangeBondDirection(props as ItemEventParams);
   const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
 
-  useEffect(() => {
-    const editor = ketcherProvider.getKetcher(ketcherId)?.editor;
-    const bondIds = props.propsFromTrigger?.bondIds || [];
-
-    if (bondIds.length > 0 && editor) {
-      const bond = editor.render.ctab.molecule.bonds.get(bondIds[0]);
-      if (bond) {
-        setBondData({ type: bond.type, stereo: bond.stereo });
-
-        // Check if bond is between two monomers
-        const struct = editor.render.ctab.molecule;
-        const beginAtomSgroup = struct.getGroupFromAtomId(bond.begin);
-        const endAtomSgroup = struct.getGroupFromAtomId(bond.end);
-        const isBetweenMonomers =
-          beginAtomSgroup instanceof MonomerMicromolecule &&
-          endAtomSgroup instanceof MonomerMicromolecule &&
-          beginAtomSgroup !== endAtomSgroup;
-        setIsBondBetweenMonomers(isBetweenMonomers);
-      } else {
-        setBondData(null);
-        setIsBondBetweenMonomers(false);
-      }
-    } else {
-      setBondData(null);
-      setIsBondBetweenMonomers(false);
+  const bondIds = props.propsFromTrigger?.bondIds || [];
+  const bond =
+    bondIds.length > 0
+      ? editor.render.ctab.molecule.bonds.get(bondIds[0])
+      : undefined;
+  const bondData = bond ? { type: bond.type, stereo: bond.stereo } : null;
+  const isBondBetweenMonomers = (() => {
+    if (!bond) {
+      return false;
     }
-  }, [props.propsFromTrigger, ketcherId]);
+
+    const struct = editor.render.ctab.molecule;
+    const beginAtomSgroup = struct.getGroupFromAtomId(bond.begin);
+    const endAtomSgroup = struct.getGroupFromAtomId(bond.end);
+
+    return (
+      beginAtomSgroup instanceof MonomerMicromolecule &&
+      endAtomSgroup instanceof MonomerMicromolecule &&
+      beginAtomSgroup !== endAtomSgroup
+    );
+  })();
 
   const highlightBondWithColor = (color: string) => {
     const bondIds = props.propsFromTrigger?.bondIds || [];

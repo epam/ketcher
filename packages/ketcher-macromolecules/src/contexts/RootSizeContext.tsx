@@ -13,39 +13,41 @@ export const RootSizeContext = createContext({ width: 0, height: 0 });
 type Props = {
   children: ReactNode;
   rootRef: RefObject<HTMLElement> | null;
-  isMacromoleculesEditorTurnedOn?: boolean;
 };
 
-export const RootSizeProvider = ({
-  children,
-  rootRef,
-  isMacromoleculesEditorTurnedOn,
-}: Props) => {
+export const RootSizeProvider = ({ children, rootRef }: Props) => {
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   const handleResize = useCallback(() => {
-    if (!rootRef?.current) {
+    const rootElement = rootRef?.current;
+
+    if (!rootElement) {
       return;
     }
 
-    const { width, height } = rootRef.current.getBoundingClientRect();
+    const { width, height } = rootElement.getBoundingClientRect();
     setSize({ width, height });
   }, [rootRef]);
 
   const debouncedHandleResize = useDebouncedCallback(handleResize, 100);
 
   useEffect(() => {
-    handleResize();
-  }, [handleResize, isMacromoleculesEditorTurnedOn]);
+    const rootElement = rootRef?.current;
 
-  useEffect(() => {
-    window.addEventListener('resize', debouncedHandleResize);
+    if (!rootElement) {
+      return;
+    }
+
+    const resizeObserver = new ResizeObserver(debouncedHandleResize);
+
+    handleResize();
+    resizeObserver.observe(rootElement);
 
     return () => {
-      window.removeEventListener('resize', debouncedHandleResize);
+      resizeObserver.disconnect();
       debouncedHandleResize.cancel();
     };
-  }, [debouncedHandleResize]);
+  }, [debouncedHandleResize, handleResize, rootRef]);
 
   return (
     <RootSizeContext.Provider value={size}>{children}</RootSizeContext.Provider>

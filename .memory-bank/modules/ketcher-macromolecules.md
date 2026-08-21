@@ -11,7 +11,6 @@ Provides the React + Redux + MUI component tree that hosts the D3/SVG-based macr
 - Default export from `src/index.tsx` — `Editor` component. Props:
   - `ketcherId: string` — ID linking to the `Ketcher` instance in `ketcherProvider`
   - `togglerComponent?: JSX.Element` — the mode-toggle button injected by `ketcher-react`
-  - `isMacromoleculesEditorTurnedOn?: boolean`
   - `monomersLibraryUpdate / monomersLibraryReplace` — library customization
   - `onInit(editor: CoreEditor): void` — callback after editor is ready
 

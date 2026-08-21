@@ -2237,30 +2237,21 @@ class Editor implements KetcherEditor {
         const isBeginSelected = selectedOriginalAtoms.has(bond.begin);
         const isEndSelected = selectedOriginalAtoms.has(bond.end);
 
-        if (isBeginSelected && !isEndSelected) {
-          this.reconcileExternalBonds(
-            attachmentAtomIdsWithExternalBonds,
-            finalAssignedAttachmentPoints,
-            struct,
-            bond,
-            atomIdMap,
-            originalToSelectedAtomsIdMap,
-            isBeginSelected,
-            isEndSelected,
-          );
+        // Only bonds with exactly one endpoint inside the selection are
+        // external bonds that must be reconciled.
+        if (isBeginSelected === isEndSelected) {
+          return;
         }
-        if (isEndSelected && !isBeginSelected) {
-          this.reconcileExternalBonds(
-            attachmentAtomIdsWithExternalBonds,
-            finalAssignedAttachmentPoints,
-            struct,
-            bond,
-            atomIdMap,
-            originalToSelectedAtomsIdMap,
-            isBeginSelected,
-            isEndSelected,
-          );
-        }
+
+        this.reconcileExternalBonds(
+          attachmentAtomIdsWithExternalBonds,
+          finalAssignedAttachmentPoints,
+          struct,
+          bond,
+          atomIdMap,
+          originalToSelectedAtomsIdMap,
+          isBeginSelected ? 'begin' : 'end',
+        );
       });
 
       // Fix attachment point numbers on inter-monomer bonds.
@@ -2378,102 +2369,108 @@ class Editor implements KetcherEditor {
     bond: Bond,
     newAtomIdMap: Map<number, number>,
     originalToSelectedAtomsIdMap: Map<number, number>,
-    isBeginSelected: boolean,
-    isEndSelected: boolean,
+    selectedEndpoint: 'begin' | 'end',
   ) {
-    let oldAttachmentPointName: AttachmentPointName | undefined;
-    let oldAttachmentAtomId: number | undefined;
+    // The selected atom is the one inside the wizard selection; the external
+    // bond keeps its opposite endpoint and gets its selected endpoint remapped
+    // to the correct atom in the merged struct.
+    const selectedOriginalAtomId = bond[selectedEndpoint];
+    const selectedWizardAtomId = originalToSelectedAtomsIdMap.get(
+      selectedOriginalAtomId,
+    );
 
-    attachmentAtomIdsWithExternalBonds.forEach(
-      ([attachmentAtomId], attachmentPointName) => {
-        if (isBeginSelected && !isEndSelected) {
-          if (
-            originalToSelectedAtomsIdMap.get(bond.begin) === attachmentAtomId
-          ) {
-            oldAttachmentAtomId = attachmentAtomId;
-            oldAttachmentPointName = attachmentPointName;
-          }
-        }
-
-        if (!isBeginSelected && isEndSelected) {
-          if (originalToSelectedAtomsIdMap.get(bond.end) === attachmentAtomId) {
-            oldAttachmentAtomId = attachmentAtomId;
-            oldAttachmentPointName = attachmentPointName;
-          }
-        }
-      },
+    const oldAttachmentPointName = this.findAttachmentPointForAtom(
+      attachmentAtomIdsWithExternalBonds,
+      selectedWizardAtomId,
     );
 
     const newAttachmentAtomId = oldAttachmentPointName
       ? finalAssignedAttachmentPoints.get(oldAttachmentPointName)
       : undefined;
 
+    // The attachment point that carried this bond no longer exists: drop it.
     if (!isNumber(newAttachmentAtomId)) {
-      // delete bond
-      const bondId = struct.bonds.keyOf(bond);
-
-      if (bondId === null) {
-        return;
-      }
-
-      struct.bonds.delete(bondId);
-
+      this.deleteBond(struct, bond);
       return;
     }
 
-    if (
-      isNumber(newAttachmentAtomId) &&
-      oldAttachmentAtomId !== newAttachmentAtomId
-    ) {
-      // change bond atom id
-      const newAtomIdOfNewAttachmentAtom =
-        newAtomIdMap.get(newAttachmentAtomId);
-
-      if (newAtomIdOfNewAttachmentAtom === undefined) {
-        return;
-      }
-
-      if (isBeginSelected) {
-        const newBond = bond.clone();
-        newBond.begin = newAtomIdOfNewAttachmentAtom;
-        struct.bonds.add(newBond);
-      }
-
-      if (isEndSelected) {
-        const newBond = bond.clone();
-        newBond.end = newAtomIdOfNewAttachmentAtom;
-        struct.bonds.add(newBond);
-      }
-
+    // The attachment point moved to a different atom: re-point the bond there.
+    if (newAttachmentAtomId !== selectedWizardAtomId) {
+      this.rebindExternalBondEndpoint(
+        struct,
+        bond,
+        selectedEndpoint,
+        newAtomIdMap.get(newAttachmentAtomId),
+      );
       return;
     }
 
-    // establish original bond
-    if (isBeginSelected && !isEndSelected) {
-      const wizardId = originalToSelectedAtomsIdMap.get(bond.begin);
-      const newBegin = isNumber(wizardId)
-        ? newAtomIdMap.get(wizardId)
-        : undefined;
+    // The attachment point stayed on the same atom: re-establish the original
+    // bond, remapping the selected endpoint to its atom in the merged struct.
+    this.rebindExternalBondEndpoint(
+      struct,
+      bond,
+      selectedEndpoint,
+      isNumber(selectedWizardAtomId)
+        ? newAtomIdMap.get(selectedWizardAtomId)
+        : undefined,
+    );
+  }
 
-      if (isNumber(newBegin)) {
-        const newBond = bond.clone();
-        newBond.begin = newBegin;
-        struct.bonds.add(newBond);
+  /**
+   * Finds the attachment point name whose attachment atom matches the given
+   * wizard atom id, or undefined when none matches.
+   */
+  private findAttachmentPointForAtom(
+    attachmentAtomIdsWithExternalBonds: Map<
+      AttachmentPointName,
+      [number, number]
+    >,
+    wizardAtomId: number | undefined,
+  ): AttachmentPointName | undefined {
+    if (!isNumber(wizardAtomId)) {
+      return undefined;
+    }
+
+    for (const [
+      attachmentPointName,
+      [attachmentAtomId],
+    ] of attachmentAtomIdsWithExternalBonds) {
+      if (attachmentAtomId === wizardAtomId) {
+        return attachmentPointName;
       }
     }
 
-    if (!isBeginSelected && isEndSelected) {
-      const wizardId = originalToSelectedAtomsIdMap.get(bond.end);
-      const newEnd = isNumber(wizardId)
-        ? newAtomIdMap.get(wizardId)
-        : undefined;
+    return undefined;
+  }
 
-      if (isNumber(newEnd)) {
-        const newBond = bond.clone();
-        newBond.end = newEnd;
-        struct.bonds.add(newBond);
-      }
+  /**
+   * Adds a clone of the bond with the given endpoint re-pointed to the provided
+   * merged-struct atom. No-op when the target atom id is unknown.
+   */
+  private rebindExternalBondEndpoint(
+    struct: Struct,
+    bond: Bond,
+    endpoint: 'begin' | 'end',
+    newAtomId: number | undefined,
+  ) {
+    if (!isNumber(newAtomId)) {
+      return;
     }
+
+    const newBond = bond.clone();
+    newBond[endpoint] = newAtomId;
+    struct.bonds.add(newBond);
+  }
+
+  /** Removes the bond from the struct if it is still present. */
+  private deleteBond(struct: Struct, bond: Bond) {
+    const bondId = struct.bonds.keyOf(bond);
+    if (bondId === null) {
+      return;
+    }
+
+    struct.bonds.delete(bondId);
   }
 
   reassignAttachmentPointLeavingAtom(

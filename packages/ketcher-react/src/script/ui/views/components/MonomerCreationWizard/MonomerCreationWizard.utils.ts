@@ -21,40 +21,6 @@ export type ApDiffResult = {
   moved: Map<AttachmentPointName, number>;
 };
 
-/**
- * Compares the AP → attachment atom ID map captured at wizard-open time
- * (`oldApToAtomMap`) against the equivalent map from the saved template
- * (`newApToAtomMap`) and returns which APs were deleted vs. moved to a
- * different atom.
- *
- * Only APs present in `oldApToAtomMap` are considered — these are the APs
- * that were in use by bonds when the wizard was opened.
- *
- * @param oldApToAtomMap AP name → attachment atom ID, captured when the wizard opened.
- * @param newApToAtomMap AP name → attachment atom ID, derived from the saved monomer template.
- */
-export const computeApDiff = (
-  oldApToAtomMap: Map<AttachmentPointName, number>,
-  newApToAtomMap: Map<AttachmentPointName, number>,
-): ApDiffResult => {
-  const deleted: AttachmentPointName[] = [];
-  const moved = new Map<AttachmentPointName, number>();
-
-  oldApToAtomMap.forEach((oldAtomId, apName) => {
-    if (!newApToAtomMap.has(apName)) {
-      deleted.push(apName);
-    } else {
-      const newAtomId = newApToAtomMap.get(apName)!;
-      if (newAtomId !== oldAtomId) {
-        moved.set(apName, newAtomId);
-      }
-      // If newAtomId === oldAtomId the AP is unchanged — nothing to do.
-    }
-  });
-
-  return { deleted, moved };
-};
-
 const COPY_SUFFIX = '_Copy';
 
 const getCopiedValue = (value?: string) =>

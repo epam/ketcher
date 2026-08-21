@@ -1871,11 +1871,6 @@ const MonomerCreationWizardInternal = ({
         const monomerAssignedAttachmentPoints =
           assignedAttachmentPointsByMonomer.get(monomerToSave);
 
-        // Build a remapped copy for serialization (KET template uses 0-based
-        // indices from structSelected, not live wizard struct atom IDs).
-        // Do NOT mutate the original map — finishNewMonomersCreation reads
-        // monomerCreationState.assignedAttachmentPoints later and needs the
-        // original wizard struct atom IDs to look up in newAtomIdMap.
         const remappedAttachmentPoints = new Map<
           AttachmentPointName,
           [number, number]

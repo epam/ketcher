@@ -72,7 +72,7 @@ jobs:
             exit 0
           fi
 
-          ce_task_json=$(curl -sS -u "$SONAR_TOKEN:" "$ce_task_url")
+          ce_task_json=$(curl -sSL -u "$SONAR_TOKEN:" "$ce_task_url")
           if ! echo "$ce_task_json" | jq -e . >/dev/null 2>&1; then
             echo "Could not parse CE task response as JSON"
             echo "CE task URL: $ce_task_url"
@@ -91,7 +91,7 @@ jobs:
             exit 0
           fi
 
-          qg_json=$(curl -sS -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?analysisId=$analysis_id")
+          qg_json=$(curl -sSL -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?analysisId=$analysis_id")
           if ! echo "$qg_json" | jq -e . >/dev/null 2>&1; then
             echo "Could not parse Quality Gate response as JSON"
             echo "Raw response:"

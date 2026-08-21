@@ -1,4 +1,6 @@
-﻿/****************************************************************************
+﻿/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -119,7 +121,7 @@ export class Molfile {
           }
           errorIgnore = true;
         }
-        /* eslint-disable no-mixed-operators */
+
         if (
           errorIgnore ||
           (!preserveIndigoDesc &&
@@ -159,7 +161,6 @@ export class Molfile {
     norgroups?: boolean,
     preserveIndigoDesc?: boolean,
   ) {
-    // eslint-disable-line max-statements
     /* saver */
     this.reaction = molecule.hasRxnArrow();
     this.molfile = '' + molecule.name;
@@ -314,7 +315,6 @@ export class Molfile {
   }
 
   writeCTab2000(rgroups?: Struct['rgroups']) {
-    // eslint-disable-line max-statements
     /* saver */
     const molecule = this.molecule;
     if (!molecule) return;

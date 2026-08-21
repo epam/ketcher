@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *

@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -105,7 +107,7 @@ export const SequenceTypeGroupButton = () => {
     return () => {
       editor?.events.changeSequenceTypeEnterMode.remove(onChangeSequenceType);
     };
-  }, [editor]);
+  }, [editor, dispatch]);
 
   const handleSelectSequenceType = (sequenceType: string) => {
     editor?.events.changeSequenceTypeEnterMode.dispatch(sequenceType);

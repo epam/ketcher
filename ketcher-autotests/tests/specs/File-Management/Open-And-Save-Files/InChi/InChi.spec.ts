@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { test, expect, Page } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,

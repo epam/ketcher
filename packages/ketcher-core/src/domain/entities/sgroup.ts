@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -608,7 +610,7 @@ export class SGroup {
     const currentRender = render ?? window.ketcher?.editor?.render;
     assert(currentRender, 'SGroup.bracketPos: render instance is required');
     let attachmentPointsVBox =
-      currentRender.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms);
+      currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms) ?? null;
     attachmentPointsVBox = attachmentPointsVBox
       ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
       : attachmentPointsVBox;

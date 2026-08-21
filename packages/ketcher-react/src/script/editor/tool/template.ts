@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -99,7 +100,7 @@ class TemplateTool implements Tool {
 
     const xy0 = new Vec2();
     frag.atoms.forEach((atom) => {
-      xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
+      xy0.add_(atom.pp);
     });
 
     this.template.molecule = frag; // preloaded struct

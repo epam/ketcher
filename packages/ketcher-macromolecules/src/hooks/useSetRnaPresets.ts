@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './stateHooks';
 import { selectEditor } from 'state/common';

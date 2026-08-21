@@ -1074,20 +1074,7 @@ export class CoreEditor {
         return;
       }
 
-      // Walk up from event.target: target may be a child SVG shape or a
-      // canvas-level selection indicator that doesn't carry __data__ directly.
-      let eventData = event.target?.__data__;
-      if (eventData === undefined) {
-        let el: Element | null =
-          event.target instanceof Element ? event.target.parentElement : null;
-        while (el && el !== this.canvas) {
-          if (el.__data__ !== undefined) {
-            eventData = el.__data__;
-            break;
-          }
-          el = el.parentElement;
-        }
-      }
+      const eventData = event.target?.__data__;
       const canvasBoundingClientRect = this.canvas.getBoundingClientRect();
       const isClickOnCanvas =
         event.clientX >= canvasBoundingClientRect.left &&
@@ -1165,6 +1152,19 @@ export class CoreEditor {
           selectedMonomers,
         ]);
       } else if (isClickOnCanvas) {
+        if (
+          typeof document.elementsFromPoint === 'function' &&
+          document
+            .elementsFromPoint(event.clientX, event.clientY)
+            .some((el) => el.__data__?.drawingEntity?.selected)
+        ) {
+          this.events.rightClickSelectedMonomers.dispatch([
+            event,
+            selectedMonomers,
+          ]);
+          return false;
+        }
+
         const modelChanges =
           this.drawingEntitiesManager.unselectAllDrawingEntities();
 

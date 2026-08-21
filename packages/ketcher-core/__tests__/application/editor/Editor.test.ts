@@ -1869,6 +1869,88 @@ describe('CoreEditor', () => {
         Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
       }
     });
+
+    it('should dispatch rightClickSelectedMonomers via elementsFromPoint fallback when event.target has no __data__', () => {
+      editor.setMode(new FlexMode());
+
+      const svgElementWithBBox = SVGElement.prototype as SVGElement & {
+        getBBox?: () => DOMRect;
+      };
+      const initialGetBBox = svgElementWithBBox.getBBox;
+      svgElementWithBBox.getBBox = () =>
+        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+
+      const addChanges = editor.drawingEntitiesManager.addMonomer(
+        peptideMonomerItem,
+        new Vec2(0, 0),
+      );
+      editor.renderersContainer.update(addChanges);
+      const monomer = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
+      const selectChanges =
+        editor.drawingEntitiesManager.selectDrawingEntity(monomer);
+      editor.renderersContainer.update(selectChanges);
+
+      const unselectSpy = jest.spyOn(
+        editor.drawingEntitiesManager,
+        'unselectAllDrawingEntities',
+      );
+      const rightClickSelectedMonomersHandler = jest.fn();
+      const rightClickCanvasHandler = jest.fn();
+      const rightClickCanvasSequenceHandler = jest.fn();
+      editor.events.rightClickSelectedMonomers.add(
+        rightClickSelectedMonomersHandler,
+      );
+      editor.events.rightClickCanvas.add(rightClickCanvasHandler);
+      editor.events.rightClickCanvasSequence.add(
+        rightClickCanvasSequenceHandler,
+      );
+
+      const rendererEl = document.createElement('div');
+      (rendererEl as unknown as { __data__: unknown }).__data__ =
+        monomer.renderer;
+
+      const hasEFP = 'elementsFromPoint' in document;
+      const savedEFP = hasEFP ? document.elementsFromPoint : undefined;
+      (document as unknown as Record<string, unknown>).elementsFromPoint = jest
+        .fn()
+        .mockReturnValue([rendererEl]);
+
+      const noDataTarget = document.createElement('div');
+      rootElement.appendChild(noDataTarget);
+
+      try {
+        noDataTarget.dispatchEvent(
+          new MouseEvent('contextmenu', {
+            bubbles: true,
+            clientX: 0,
+            clientY: 0,
+          }),
+        );
+
+        expect(rightClickSelectedMonomersHandler).toHaveBeenCalledTimes(1);
+        expect(rightClickSelectedMonomersHandler.mock.calls[0][0][1]).toEqual([
+          monomer,
+        ]);
+        expect(unselectSpy).not.toHaveBeenCalled();
+        expect(rightClickCanvasHandler).not.toHaveBeenCalled();
+        expect(rightClickCanvasSequenceHandler).not.toHaveBeenCalled();
+      } finally {
+        noDataTarget.remove();
+        if (savedEFP !== undefined) {
+          (document as unknown as Record<string, unknown>).elementsFromPoint =
+            savedEFP;
+        } else {
+          delete (document as unknown as Record<string, unknown>)
+            .elementsFromPoint;
+        }
+        unselectSpy.mockRestore();
+        if (initialGetBBox) {
+          svgElementWithBBox.getBBox = initialGetBBox;
+        } else {
+          Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
+        }
+      }
+    });
   });
 
   describe('remove autochain preview handling', () => {

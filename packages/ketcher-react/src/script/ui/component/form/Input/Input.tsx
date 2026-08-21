@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -18,7 +17,7 @@
 import React, {
   type ComponentType,
   PureComponent,
-  useRef,
+  useCallback,
   forwardRef,
 } from 'react';
 
@@ -79,7 +78,7 @@ export const GenericInput = forwardRef<HTMLInputElement, Props>(
       onChange,
       innerRef,
       type = 'text',
-      isFocused, // We keep this prop for backward compatibility but don't use it
+      _isFocused,
       autoFocus,
       checked,
       ...otherProps
@@ -89,37 +88,33 @@ export const GenericInput = forwardRef<HTMLInputElement, Props>(
       onChange?: React.ChangeEventHandler<HTMLInputElement>;
       innerRef?: React.Ref<HTMLInputElement>;
       type?: React.HTMLInputTypeAttribute;
-      isFocused?: boolean;
+      _isFocused?: boolean;
       autoFocus?: boolean;
       checked?: boolean;
       [key: string]: unknown;
     };
 
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    // Merge the local ref with the forwarded ref
-    const mergedRef = (node: HTMLInputElement | null) => {
-      // Set the local ref
-      inputRef.current = node;
-
-      // Set the forwarded ref (handle both RefObject and callback ref cases)
-      if (typeof ref === 'function') {
-        ref(node);
-      } else if (ref) {
-        (ref as React.MutableRefObject<HTMLInputElement | null>).current = node;
-      }
-
-      // Set the innerRef (handle both RefObject and callback ref cases)
-      if (innerRef) {
-        if (typeof innerRef === 'function') {
-          innerRef(node);
-        } else {
-          (
-            innerRef as React.MutableRefObject<HTMLInputElement | null>
-          ).current = node;
+    const mergedRef = useCallback(
+      (node: HTMLInputElement | null) => {
+        if (typeof ref === 'function') {
+          ref(node);
+        } else if (ref) {
+          (ref as React.MutableRefObject<HTMLInputElement | null>).current =
+            node;
         }
-      }
-    };
+
+        if (innerRef) {
+          if (typeof innerRef === 'function') {
+            innerRef(node);
+          } else {
+            (
+              innerRef as React.MutableRefObject<HTMLInputElement | null>
+            ).current = node;
+          }
+        }
+      },
+      [ref, innerRef],
+    );
 
     return (
       <>
@@ -154,8 +149,6 @@ export const GenericInput = forwardRef<HTMLInputElement, Props>(
     return Number(value) || 0;
   }
 
-  // When the value can be a float the validation is passed to the parent component
-  // because it's more complicated
   return value;
 };
 
@@ -283,9 +276,6 @@ FieldSet.val = function (ev, schema) {
     return undefined;
   }
 
-  // Hm.. looks like premature optimization
-  //      should we inline this?
-
   const fieldset = input?.parentNode?.parentNode?.parentNode;
   const inputCollection = fieldset?.querySelectorAll('input');
   let result;
@@ -347,7 +337,6 @@ function enumSchema(schema, cbOrIndex) {
 function inputCtrl(component, schema, onChange) {
   let props = {};
   if (schema) {
-    // TODO: infer maxLength, min, max, step, etc
     if (schema.type === 'number' || schema.type === 'integer')
       props = { type: 'text' };
   }
@@ -396,7 +385,6 @@ function ctrlMap(component, props: Props) {
   }
 
   if (!Array.isArray(schema)) {
-    // schema is SchemaProperty here
     if ((!schema.enum && !schema.items) || schema.type === 'string') {
       return inputCtrl(component, schema, onChange);
     }
@@ -406,7 +394,6 @@ function ctrlMap(component, props: Props) {
     return singleSelectCtrl(component, schema, onChange);
   }
 
-  // schema is an array
   if (multiple) {
     return multipleSelectCtrl(component, schema, onChange);
   }
@@ -417,7 +404,6 @@ function componentMap(props: Props) {
   const { schema, type, multiple } = props;
 
   if (!Array.isArray(schema)) {
-    // schema is SchemaProperty | undefined here
     if (schema?.type === 'boolean' && schema?.description === 'slider') {
       return Slider;
     }
@@ -429,14 +415,12 @@ function componentMap(props: Props) {
       return type === 'textarea' ? TextArea : GenericInput;
     }
 
-    // schema has enum or items (SchemaProperty with options)
     if (multiple || schema.type === 'array') {
       return type === 'checkbox' ? FieldSet : Select;
     }
     return type === 'radio' ? FieldSet : Select;
   }
 
-  // schema is an array
   if (multiple) {
     return type === 'checkbox' ? FieldSet : Select;
   }

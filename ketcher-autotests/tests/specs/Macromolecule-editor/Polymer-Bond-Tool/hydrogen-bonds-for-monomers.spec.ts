@@ -827,6 +827,7 @@ test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen b
   await takeEditorScreenshot(page);
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(

@@ -30,6 +30,18 @@ export class MonomerMicromolecule extends SGroup {
     return true;
   }
 
+  private ensureMonomerItemMutable(): void {
+    if (Object.isFrozen(this.monomer.monomerItem)) {
+      this.monomer.monomerItem = { ...this.monomer.monomerItem };
+    }
+  }
+
+  public setExpanded(expanded: boolean): void {
+    this.ensureMonomerItemMutable();
+    this.monomer.monomerItem.expanded = expanded;
+    this.data.expanded = expanded;
+  }
+
   public override getContractedPosition(struct: Struct) {
     assert(this.pp);
     const sgroupContractedPosition = super.getContractedPosition(struct);

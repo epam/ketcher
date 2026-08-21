@@ -4,7 +4,6 @@ import type { Peptide } from 'domain/entities/Peptide';
 import type { RNABase } from 'domain/entities/RNABase';
 import type { Sugar } from 'domain/entities/Sugar';
 import type { Atom } from 'domain/entities/CoreAtom';
-import { Bond } from 'domain/entities/CoreBond';
 import {
   type MonomerItemType,
   type MonomerOrAmbiguousType,
@@ -535,12 +534,16 @@ export function isRnaBaseApplicableForAntisense(monomer?: BaseMonomer) {
 
 export function getAllConnectedMonomersRecursively(
   monomer: BaseMonomer,
-  allowedMonomers?: Set<BaseMonomer>,
+  traversableMonomers?: Set<BaseMonomer>,
 ): BaseMonomer[] {
   const monomerStack = [monomer];
   const visitedMonomers = new Set<BaseMonomer>();
   const connectedMonomers: BaseMonomer[] = [];
   const visitedAtoms = new Set<Atom>();
+
+  const isMonomerTraversable = (candidateMonomer: BaseMonomer): boolean => {
+    return !traversableMonomers || traversableMonomers.has(candidateMonomer);
+  };
 
   while (monomerStack.length > 0) {
     const currentMonomer = monomerStack.pop();
@@ -565,8 +568,7 @@ export function getAllConnectedMonomersRecursively(
         const atomOwnerMonomer = bond.atom.monomer;
         if (
           atomOwnerMonomer.monomerItem.props.isMicromoleculeFragment &&
-          atomOwnerMonomer !== currentMonomer &&
-          (!allowedMonomers || allowedMonomers.has(atomOwnerMonomer))
+          isMonomerTraversable(atomOwnerMonomer)
         ) {
           // Use BFS to traverse all connected atoms in the microstructure
           const atomQueue: Atom[] = [bond.atom];
@@ -585,18 +587,16 @@ export function getAllConnectedMonomersRecursively(
               if (atomBond instanceof MonomerToAtomBond) {
                 // Found a monomer connection
                 const connectedMonomer = atomBond.monomer;
-                // Only add if it's not the current monomer we're exploring from,
-                // not the microstructure owner, not already visited,
+                // Only add if it's not the microstructure owner, not already visited,
                 // and is in the allowed set (if provided)
                 if (
-                  connectedMonomer !== currentMonomer &&
                   connectedMonomer !== atomOwnerMonomer &&
                   !visitedMonomers.has(connectedMonomer) &&
-                  (!allowedMonomers || allowedMonomers.has(connectedMonomer))
+                  isMonomerTraversable(connectedMonomer)
                 ) {
                   monomerStack.push(connectedMonomer);
                 }
-              } else if (atomBond instanceof Bond) {
+              } else {
                 // Found a bond to another atom - only traverse if it also belongs to a microstructure
                 const otherAtom =
                   atomBond.firstAtom === currentAtom
@@ -605,7 +605,8 @@ export function getAllConnectedMonomersRecursively(
                 if (
                   otherAtom &&
                   !visitedAtoms.has(otherAtom) &&
-                  otherAtom.monomer.monomerItem.props.isMicromoleculeFragment
+                  otherAtom.monomer.monomerItem.props.isMicromoleculeFragment &&
+                  isMonomerTraversable(otherAtom.monomer)
                 ) {
                   atomQueue.push(otherAtom);
                 }

@@ -44,27 +44,14 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
     useState<SettingsFormValue | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<string[]>(['general']);
   const [isLoading, setIsLoading] = useState(false);
-  const [prevSettingsService, setPrevSettingsService] =
-    useState(settingsService);
-  const [prevIsModalOpen, setPrevIsModalOpen] = useState(isModalOpen);
-
-  if (
-    settingsService !== prevSettingsService ||
-    isModalOpen !== prevIsModalOpen
-  ) {
-    setPrevSettingsService(settingsService);
-    setPrevIsModalOpen(isModalOpen);
-
-    if (settingsService && isModalOpen) {
-      const coreSettings = settingsService.getSettings();
-      const formSettings = normalizeSettingsForForm(coreSettings);
-      setCurrentSettings(formSettings);
-      setInitialSettings(formSettings);
-    }
-  }
 
   useEffect(() => {
     if (!settingsService || !isModalOpen) return;
+
+    const coreSettings = settingsService.getSettings();
+    const formSettings = normalizeSettingsForForm(coreSettings);
+    setCurrentSettings(formSettings);
+    setInitialSettings(formSettings);
 
     return settingsService.subscribe((newCoreSettings) => {
       const newFormSettings = normalizeSettingsForForm(newCoreSettings);

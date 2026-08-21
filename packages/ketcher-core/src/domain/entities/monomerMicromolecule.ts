@@ -39,7 +39,6 @@ export class MonomerMicromolecule extends SGroup {
   public setExpanded(expanded: boolean): void {
     this.ensureMonomerItemMutable();
     this.monomer.monomerItem.expanded = expanded;
-    this.data.expanded = expanded;
   }
 
   public override getContractedPosition(struct: Struct) {

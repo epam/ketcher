@@ -101,10 +101,4 @@ describe('useClickOutside', () => {
     render(<NullRefHarness onOutside={spy} />);
     expect(() => fireEvent.click(screen.getByTestId('outside'))).not.toThrow();
   });
-
-  test('SSR guard: does not throw without document', () => {
-    // jsdom provides document; fully simulating SSR is out of scope.
-    // This test exists to document intent; skip if environment lacks control.
-    expect(typeof document).toBe('object');
-  });
 });

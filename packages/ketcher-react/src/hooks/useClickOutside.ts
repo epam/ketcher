@@ -8,7 +8,6 @@ import { type RefObject, useEffect, useRef } from 'react';
  * @remarks
  * - The latest callback is read from a ref and synchronized via a `[callback]` sync effect to avoid re-subscribing the listener when the callback identity changes.
  * - The listener effect depends on `[targetRef]` only. `targetRef` is expected to be stable (created via `useRef`).
- * - An SSR guard prevents attaching a DOM listener when `document` is not available.
  */
 export const useClickOutside = (
   targetRef: RefObject<Node | null>,
@@ -22,9 +21,6 @@ export const useClickOutside = (
   }, [callback]);
 
   useEffect(() => {
-    // SSR guard: skip attaching listeners when document is not available
-    if (typeof document === 'undefined') return;
-
     const onClickOutside = (e: Event) => {
       if (targetRef.current?.contains(e.target as Node)) return;
       callbackRef.current();

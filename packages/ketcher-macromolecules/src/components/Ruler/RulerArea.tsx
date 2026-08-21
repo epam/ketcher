@@ -1,5 +1,5 @@
-/* eslint-disable react-hooks/preserve-manual-memoization, react-hooks/refs */
-import { useCallback, useContext, useMemo, useRef, useState } from 'react';
+/* eslint-disable react-hooks/preserve-manual-memoization */
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { D3DragEvent } from 'd3';
 import { useSelector } from 'react-redux';
 import { selectEditor, selectEditorLineLength } from 'state/common';
@@ -29,7 +29,7 @@ export const RulerArea = () => {
 
   const editor = useSelector(selectEditor);
 
-  const dragStartX = useRef(0);
+  const [dragStartX, setDragStartX] = useState(0);
   const [dragDelta, setDragDelta] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -114,11 +114,11 @@ export const RulerArea = () => {
 
   const calculateDragPosition = useCallback(
     (initialScreenX: number) => {
-      const dragDelta = initialScreenX - dragStartX.current;
+      const dragDelta = initialScreenX - dragStartX;
       const screenX = transform.applyX(translateValue) + dragDelta;
       return [dragDelta, transform.invertX(screenX)];
     },
-    [transform, translateValue],
+     [transform, translateValue, dragStartX], 
   );
 
   const previewValue = useMemo(() => {
@@ -127,7 +127,7 @@ export const RulerArea = () => {
     }
 
     const [, dragPosition] = calculateDragPosition(
-      dragStartX.current + dragDelta,
+      dragStartX + dragDelta,
     );
     return calculateLineLength(dragPosition);
   }, [
@@ -142,7 +142,7 @@ export const RulerArea = () => {
   const handleDragStart = useCallback(
     (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
       setIsDragging(true);
-      dragStartX.current = event.sourceEvent.clientX;
+      setDragStartX(event.sourceEvent.clientX);
       editor?.events.toggleLineLengthHighlighting.dispatch(
         true,
         translateValue,
@@ -174,7 +174,7 @@ export const RulerArea = () => {
       }
 
       setDragDelta(0);
-      dragStartX.current = 0;
+      setDragStartX(0);
       editor?.events.toggleLineLengthHighlighting.dispatch(false);
     },
     [

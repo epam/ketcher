@@ -63,7 +63,7 @@ export const RnaEditor = ({ duplicatePreset }) => {
     dispatch(
       recalculateRnaBuilderValidations({ rnaPreset: activePreset, isEditMode }),
     );
-  }, [isEditMode]);
+  }, [isEditMode, dispatch, activePreset]);
 
   const expandEditor = () => {
     setExpanded(!expanded);

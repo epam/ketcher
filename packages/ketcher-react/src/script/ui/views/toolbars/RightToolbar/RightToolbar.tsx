@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/refs */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,7 +15,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type FC, type PropsWithChildren, type RefObject, useRef } from 'react';
+import {
+  type FC,
+  type PropsWithChildren,
+  type RefObject,
+  useRef,
+  useState,
+} from 'react';
 import {
   type ToolbarGroupItemCallProps,
   type ToolbarGroupItemProps,
@@ -57,23 +62,25 @@ const RightToolbar = (props: Props) => {
   const { ref, height } = useResizeObserver<HTMLDivElement>();
   const [startRef, startInView] = useInView({ threshold: 1 });
   const [endRef, endInView] = useInView({ threshold: 1 });
+  const [scrollElement, setScrollElement] = useState<HTMLDivElement | null>(
+    null,
+  );
   const sizeRef = useRef(null) as RefObject<HTMLDivElement | null>;
-  const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
 
   const scrollUp = () => {
-    if (!scrollRef.current || !sizeRef.current) {
+    if (!scrollElement || !sizeRef.current) {
       return;
     }
 
-    scrollRef.current.scrollTop -= sizeRef.current.offsetHeight;
+    scrollElement.scrollTop -= sizeRef.current.offsetHeight;
   };
 
   const scrollDown = () => {
-    if (!scrollRef.current || !sizeRef.current) {
+    if (!scrollElement || !sizeRef.current) {
       return;
     }
 
-    scrollRef.current.scrollTop += sizeRef.current.offsetHeight;
+    scrollElement.scrollTop += sizeRef.current.offsetHeight;
   };
 
   return (
@@ -82,7 +89,7 @@ const RightToolbar = (props: Props) => {
       className={clsx(classes.root, className)}
       ref={ref}
     >
-      <div ref={scrollRef} className={classes.buttons}>
+      <div ref={setScrollElement} className={classes.buttons}>
         <div ref={startRef}>
           <Group
             className={clsx(
@@ -131,7 +138,7 @@ const RightToolbar = (props: Props) => {
           </Group>
         </div>
       </div>
-      {height && (scrollRef?.current?.scrollHeight || 0) > height && (
+      {height && (scrollElement?.scrollHeight || 0) > height && (
         <ArrowScroll
           startInView={startInView}
           endInView={endInView}

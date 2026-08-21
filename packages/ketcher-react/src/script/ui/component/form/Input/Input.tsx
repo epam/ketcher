@@ -19,7 +19,7 @@ import React, {
   type ComponentType,
   PureComponent,
   useRef,
-  useEffect,
+  forwardRef,
 } from 'react';
 
 import classes from './Input.module.less';
@@ -39,6 +39,11 @@ type InputComponentProps = {
   name?: string;
   className?: string;
   type?: string;
+  /**
+   * If true, the input will automatically receive focus when mounted
+   */
+  autoFocus?: boolean;
+  checked?: boolean;
   [key: string]: unknown;
 };
 
@@ -47,56 +52,95 @@ type Props = {
   component?: ComponentType<InputComponentProps>;
   children?: React.ReactNode;
   className?: string;
-  type?: string;
+  type?: React.HTMLInputTypeAttribute;
   value?: unknown;
-  onChange: (val: unknown) => void;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
   placeholder?: string;
+  /**
+   * @deprecated Use autoFocus instead. This prop no longer triggers focus and will be removed in a future version.
+   */
   isFocused?: boolean;
   innerRef?: React.Ref<HTMLInputElement>;
   schema?: InputSchema;
   multiple?: boolean;
+  /**
+   * If true, the input will automatically receive focus when mounted
+   */
+  autoFocus?: boolean;
+  checked?: boolean;
+  [key: string]: unknown;
 };
 
-export function GenericInput({
-  schema: _schema,
-  value,
-  onChange,
-  innerRef,
-  type = 'text',
-  isFocused = false,
-  ...props
-}) {
-  const inputRef = useRef<HTMLInputElement>(innerRef);
+export const GenericInput = forwardRef<HTMLInputElement, Props>(
+  function GenericInput(props, ref) {
+    const {
+      schema: _schema,
+      value,
+      onChange,
+      innerRef,
+      type = 'text',
+      isFocused, // We keep this prop for backward compatibility but don't use it
+      autoFocus,
+      checked,
+      ...otherProps
+    } = props as {
+      schema?: InputSchema;
+      value?: unknown;
+      onChange?: React.ChangeEventHandler<HTMLInputElement>;
+      innerRef?: React.Ref<HTMLInputElement>;
+      type?: React.HTMLInputTypeAttribute;
+      isFocused?: boolean;
+      autoFocus?: boolean;
+      checked?: boolean;
+      [key: string]: unknown;
+    };
 
-  useEffect(() => {
-    if (innerRef && inputRef.current) {
-      innerRef.current = inputRef.current;
-    }
-  }, [innerRef]);
+    const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (inputRef.current && isFocused) {
-      inputRef.current.focus();
-    }
-  }, [inputRef, isFocused]);
+    // Merge the local ref with the forwarded ref
+    const mergedRef = (node: HTMLInputElement | null) => {
+      // Set the local ref
+      inputRef.current = node;
 
-  return (
-    <>
-      <input
-        type={type}
-        value={value ?? ''}
-        onChange={onChange}
-        className={clsx(classes.input, classes.genericInput)}
-        ref={inputRef}
-        {...props}
-      />
-      {type === 'checkbox' && <span className={classes.checkbox} />}
-      {type === 'radio' && <span className={classes.radioButton} />}
-    </>
-  );
-}
+      // Set the forwarded ref (handle both RefObject and callback ref cases)
+      if (typeof ref === 'function') {
+        ref(node);
+      } else if (ref) {
+        (ref as React.MutableRefObject<HTMLInputElement | null>).current = node;
+      }
 
-GenericInput.val = function (ev, schema) {
+      // Set the innerRef (handle both RefObject and callback ref cases)
+      if (innerRef) {
+        if (typeof innerRef === 'function') {
+          innerRef(node);
+        } else {
+          (
+            innerRef as React.MutableRefObject<HTMLInputElement | null>
+          ).current = node;
+        }
+      }
+    };
+
+    return (
+      <>
+        {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
+        <input
+          {...otherProps}
+          type={type}
+          value={value != null ? String(value) : ''}
+          onChange={onChange}
+          className={clsx(classes.input, classes.genericInput)}
+          ref={mergedRef}
+          autoFocus={autoFocus}
+          {...(checked !== undefined ? { checked } : {})}
+        />
+        {type === 'checkbox' && <span className={classes.checkbox} />}
+        {type === 'radio' && <span className={classes.radioButton} />}
+      </>
+    );
+  },
+);
+(GenericInput as any).val = function (ev: any, schema: any) {
   const input = ev.target;
   const isInteger = schema?.type === 'integer';
   const isFloat = schema?.type === 'number';
@@ -412,7 +456,14 @@ type AnyComponentWithRefProps = {
   className?: string;
   type?: string;
   placeholder?: string;
+  /**
+   * @deprecated Use autoFocus instead. This prop no longer triggers focus and will be removed in a future version.
+   */
   isFocused?: boolean;
+  /**
+   * If true, the input will automatically receive focus when mounted
+   */
+  autoFocus?: boolean;
   checked?: boolean;
   'data-testid'?: string;
 };
@@ -461,8 +512,8 @@ class Input extends PureComponent<
   }
 }
 
-export default React.forwardRef(
-  (props: Props, ref: React.Ref<HTMLInputElement>) => {
+export default React.forwardRef<HTMLInputElement, Omit<Props, 'innerRef'>>(
+  (props, ref) => {
     return <Input innerRef={ref} {...props} />;
   },
 );

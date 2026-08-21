@@ -210,13 +210,13 @@ export const RnaEditorExpanded = ({
     right: 'Sugar must have R2, and phosphate must have R1.',
   };
 
-  const updatePresetMonomerGroup = () => {
-    if (activePresetMonomerGroup) {
+  const updatePresetMonomerGroup = (selectedPresetMonomerGroup: typeof activePresetMonomerGroup) => {
+    if (selectedPresetMonomerGroup) {
       const groupName =
-        monomerGroupToPresetGroup[activePresetMonomerGroup.groupName];
+        monomerGroupToPresetGroup[selectedPresetMonomerGroup.groupName];
       const currentPreset = {
         ...newPreset,
-        [groupName]: activePresetMonomerGroup.groupItem,
+        [groupName]: selectedPresetMonomerGroup.groupItem,
       };
       setNewPreset(currentPreset);
       return currentPreset;
@@ -248,16 +248,17 @@ export const RnaEditorExpanded = ({
     );
   }, [dispatch, sequenceSelection]);
 
-  useEffect(() => {
-    if (activeMonomerGroup !== RnaBuilderPresetsItem.Presets && isEditMode) {
-      if (isSequenceEditInRNABuilderMode && activePresetMonomerGroup) {
+    const applyMonomerGroupSelection = (
+      selectedGroup: (typeof groupsData)[number]['groupName'],
+      selectedPresetMonomerGroup: typeof activePresetMonomerGroup,
+    ) => {
+      if (selectedGroup !== RnaBuilderPresetsItem.Presets && isEditMode) {
+        if (isSequenceEditInRNABuilderMode && selectedPresetMonomerGroup) {
         const monomerType =
-          monomerGroupToPresetGroup[activePresetMonomerGroup.groupName];
+          monomerGroupToPresetGroup[selectedPresetMonomerGroup.groupName];
         const field = `${monomerType}Label`;
 
         const updatedSequenceSelection = sequenceSelection.map((node) => {
-          // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
-          // Do not set 'sugarLabel', 'baseLabel' for Phosphate
           if (
             (node.isNucleosideConnectedAndSelectedWithPhosphate &&
               field === 'phosphateLabel') ||
@@ -269,10 +270,10 @@ export const RnaEditorExpanded = ({
 
           return {
             ...node,
-            [field]: activePresetMonomerGroup.groupItem.label,
+            [field]: selectedPresetMonomerGroup.groupItem.label,
             rnaBaseMonomerItem:
-              activePresetMonomerGroup.groupName === 'Bases'
-                ? activePresetMonomerGroup.groupItem
+              selectedPresetMonomerGroup.groupName === 'Bases'
+                ? selectedPresetMonomerGroup.groupItem
                 : node.rnaBaseMonomerItem,
           };
         });
@@ -280,7 +281,7 @@ export const RnaEditorExpanded = ({
         setIsSequenceSelectionUpdated(true);
         dispatch(setSequenceSelection(updatedSequenceSelection));
       } else {
-        const currentPreset = updatePresetMonomerGroup();
+        const currentPreset = updatePresetMonomerGroup(selectedPresetMonomerGroup);
         const resolvedPhosphatePosition =
           resolvePhosphatePosition(currentPreset);
         let presetFullName = newPreset?.name;
@@ -298,11 +299,7 @@ export const RnaEditorExpanded = ({
         setNewPreset({ ...currentPreset, name: presetFullName });
       }
     }
-  }, [
-    activePresetMonomerGroup?.groupItem,
-    isSequenceEditInRNABuilderMode,
-    selectedPhosphatePosition,
-  ]);
+  };
 
   const scrollToActiveItemInLibrary = (selectedGroup, selectedMonomer) => {
     if (selectedGroup === RnaBuilderPresetsItem.Presets) {
@@ -353,6 +350,8 @@ export const RnaEditorExpanded = ({
         selectedPhosphatePosition,
       }),
     );
+
+    applyMonomerGroupSelection(selectedGroup, activePresetMonomerGroup);
 
     // If all the selected nodes in sequence have the same base, set the monomer as active in the library
     let selectedMonomer = '';

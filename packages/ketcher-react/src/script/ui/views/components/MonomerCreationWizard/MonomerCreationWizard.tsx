@@ -1178,13 +1178,12 @@ const MonomerCreationWizardInternal = ({
         [
           'usedAttachmentPointsWarning',
           {
-            type: 'info',
+            type: 'warning',
             message,
           },
         ],
       ]),
     });
-    // Only run once on mount — the used APs snapshot is fixed at wizard-open time.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

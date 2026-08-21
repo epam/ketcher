@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback } from 'react';
 import { EmptyFunction } from 'helpers';
 import { MonomerItem } from '../monomerLibraryItem';
 import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
@@ -26,8 +25,8 @@ import {
   MonomerOrAmbiguousType,
   isAmbiguousMonomerLibraryItem,
 } from 'ketcher-core';
-import { useAppDispatch, useAppSelector, useDebouncedShowPreview } from 'hooks';
-import { selectEditor, showPreview } from 'state/common';
+import { useAppSelector, useDebouncedShowPreview } from 'hooks';
+import { selectEditor } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
 import { PreviewType } from 'state';
 import {
@@ -45,7 +44,6 @@ const MonomerGroup = ({
   disabled,
   onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
-  const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
   const isMonomerDisabled = (monomer: MonomerOrAmbiguousType) => {
@@ -72,12 +70,10 @@ const MonomerGroup = ({
     return false;
   };
 
-  const debouncedShowPreview = useDebouncedShowPreview();
-
-  const closeLibraryPreview = useCallback(() => {
-    debouncedShowPreview.cancel();
-    dispatch(showPreview(undefined));
-  }, [debouncedShowPreview, dispatch]);
+  const {
+    showPreview: debouncedShowPreview,
+    closePreview: closeLibraryPreview,
+  } = useDebouncedShowPreview();
 
   const handleItemMouseMove = (
     monomer: MonomerOrAmbiguousType,

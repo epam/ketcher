@@ -129,11 +129,10 @@ export function collapseExpandedSuperatoms(struct: Struct): void {
     }
 
     if (sgroup instanceof MonomerMicromolecule) {
-      const { monomerItem } = sgroup.monomer;
-
-      if (!Object.isFrozen(monomerItem)) {
-        monomerItem.expanded = false;
+      if (Object.isFrozen(sgroup.monomer.monomerItem)) {
+        sgroup.monomer.monomerItem = { ...sgroup.monomer.monomerItem };
       }
+      sgroup.monomer.monomerItem.expanded = false;
     }
 
     sgroup.data.expanded = false;

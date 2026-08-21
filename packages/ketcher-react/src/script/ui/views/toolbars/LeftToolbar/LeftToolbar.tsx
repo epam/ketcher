@@ -14,9 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable react-hooks/refs */
-
-import { type RefObject, useRef } from 'react';
+import { type RefObject, useRef, useState } from 'react';
 import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
 import {
   type ToolbarGroupItemCallProps,
@@ -119,25 +117,27 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
 const LeftToolbar = (props: Props) => {
   const { className, ...rest } = props;
   const { ref, height } = useResizeObserver<HTMLDivElement>();
-  const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
+  const [scrollElement, setScrollElement] = useState<HTMLDivElement | null>(
+    null,
+  );
   const [startRef, startInView] = useInView({ threshold: 1 });
   const [endRef, endInView] = useInView({ threshold: 1 });
   const sizeRef = useRef(null) as RefObject<HTMLDivElement | null>;
 
   const scrollUp = () => {
-    if (!scrollRef.current || !sizeRef.current) {
+    if (!scrollElement || !sizeRef.current) {
       return;
     }
 
-    scrollRef.current.scrollTop -= sizeRef.current.offsetHeight;
+    scrollElement.scrollTop -= sizeRef.current.offsetHeight;
   };
 
   const scrollDown = () => {
-    if (!scrollRef.current || !sizeRef.current) {
+    if (!scrollElement || !sizeRef.current) {
       return;
     }
 
-    scrollRef.current.scrollTop += sizeRef.current.offsetHeight;
+    scrollElement.scrollTop += sizeRef.current.offsetHeight;
   };
 
   return (
@@ -148,7 +148,7 @@ const LeftToolbar = (props: Props) => {
     >
       <div
         className={classes.buttons}
-        ref={scrollRef}
+        ref={setScrollElement}
         data-testid="left-toolbar-buttons"
       >
         <div className={classes.listener} ref={startRef}>
@@ -224,7 +224,7 @@ const LeftToolbar = (props: Props) => {
           />
         </div>
       </div>
-      {height && (scrollRef?.current?.scrollHeight || 0) > height && (
+      {height && (scrollElement?.scrollHeight || 0) > height && (
         <ArrowScroll
           startInView={startInView}
           endInView={endInView}

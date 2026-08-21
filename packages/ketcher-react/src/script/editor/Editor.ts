@@ -65,10 +65,6 @@ import {
   normalizeMonomerAtomsPositions,
   Pile,
   provideEditorSettings,
-  EditorHistory,
-  provideEditorInstance,
-  PolymerBond,
-  MonomerToAtomBond,
   Render,
   Scale,
   setMonomerTemplatePrefix,
@@ -1883,7 +1879,6 @@ class Editor implements KetcherEditor {
     originalSymbol: string,
     sourceExpanded: boolean,
     selectedSGroupIds?: number[],
-    finalAssignedAttachmentPoints?: Map<AttachmentPointName, number>,
   ) {
     let sourceSGroup: SGroup | undefined;
 
@@ -1936,16 +1931,6 @@ class Editor implements KetcherEditor {
       const targetPosition = sgroup.pp ? new Vec2(sgroup.pp) : null;
       const targetExpanded = sgroup.isExpanded();
 
-      // Reconcile macro-canvas bonds for this matching instance before its
-      // struct-level atoms are deleted.  Any AP that was in use but is absent
-      // from the new template must have its macro-canvas bond removed.
-      if (finalAssignedAttachmentPoints && sgroupMonomer) {
-        this.reconcileEditAllInstanceMacroBonds(
-          sgroupMonomer as unknown as BaseMonomer,
-          finalAssignedAttachmentPoints,
-        );
-      }
-
       this.deleteMonomerStructure(struct, sgroup);
 
       const replacementSGroup = this.cloneMonomerStructureToPosition(
@@ -1972,58 +1957,6 @@ class Editor implements KetcherEditor {
       replacementSGroup.data.name = newMonomer.monomerItem.props.MonomerName;
       this.setMonomerExpandedState(replacementSGroup, targetExpanded);
     });
-  }
-
-  /**
-   * For a single monomer instance in "Edit All Monomers" mode, deletes any
-   * macro-canvas bonds (PolymerBond / MonomerToAtomBond) that use an AP which
-   * is no longer present in the new template (i.e., absent from
-   * `finalAssignedAttachmentPoints`).
-   *
-   * Called once per matching instance inside replaceMatchingMonomerStructures.
-   */
-  private reconcileEditAllInstanceMacroBonds(
-    instanceMonomer: BaseMonomer,
-    finalAssignedAttachmentPoints: Map<AttachmentPointName, number>,
-  ) {
-    const coreEditor = provideEditorInstance();
-    if (!coreEditor) {
-      return;
-    }
-
-    const { drawingEntitiesManager } = coreEditor;
-
-    Object.entries(instanceMonomer.attachmentPointsToBonds).forEach(
-      ([apName, bond]) => {
-        if (!bond) {
-          return;
-        }
-        // If the AP still exists in the new template, the bond is preserved.
-        if (finalAssignedAttachmentPoints.has(apName as AttachmentPointName)) {
-          return;
-        }
-
-        let command;
-        if (bond instanceof PolymerBond) {
-          command = drawingEntitiesManager.deletePolymerBond(bond);
-        } else if (bond instanceof MonomerToAtomBond) {
-          command = drawingEntitiesManager.deleteMonomerToAtomBond(bond);
-        }
-
-        if (command) {
-          try {
-            const history = EditorHistory.getInstance(coreEditor);
-            history.update(command);
-            coreEditor.renderersContainer.update(command);
-          } catch (e) {
-            KetcherLogger.error(
-              'Editor.ts::reconcileEditAllInstanceMacroBonds',
-              e,
-            );
-          }
-        }
-      },
-    );
   }
 
   finishNewMonomersCreation(
@@ -2368,7 +2301,6 @@ class Editor implements KetcherEditor {
           editAllInitialValues.originalSymbol,
           sourceMonomerExpanded,
           editAllInitialValues.selectedSGroupIds,
-          finalAssignedAttachmentPoints,
         );
         struct.sGroupsRecalcCrossBonds();
       }

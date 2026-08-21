@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { Popover, type PopoverActions } from '@mui/material';
 
 import classes from './ColorPicker.module.less';
@@ -35,18 +35,6 @@ const ColorPicker = (props: Props) => {
     useState<HTMLButtonElement | null>(null);
   const popoverActionRef = useRef<PopoverActions>(null);
   const paletteId = 'color-picker-' + useId();
-  const clickThrottleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-
-  useEffect(
-    () => () => {
-      if (clickThrottleTimeoutRef.current) {
-        clearTimeout(clickThrottleTimeoutRef.current);
-      }
-    },
-    [],
-  );
 
   const handleContentResize = () => {
     popoverActionRef.current?.updatePosition();

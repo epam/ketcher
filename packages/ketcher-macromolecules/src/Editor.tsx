@@ -133,6 +133,10 @@ interface EditorProps {
   onInit?: (editor: CoreEditor) => void;
 }
 
+interface EditorContainerProps extends EditorProps {
+  isMacromoleculesEditorTurnedOn?: boolean;
+}
+
 function EditorContainer({
   onInit,
   ketcherId,
@@ -140,7 +144,8 @@ function EditorContainer({
   togglerComponent,
   monomersLibraryUpdate,
   monomersLibraryReplace,
-}: Readonly<EditorProps>) {
+  isMacromoleculesEditorTurnedOn,
+}: Readonly<EditorContainerProps>) {
   const [store] = useState(() => configureAppStore());
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
@@ -159,7 +164,10 @@ function EditorContainer({
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
-        <RootSizeProvider rootRef={rootElRef as RefObject<HTMLDivElement>}>
+        <RootSizeProvider
+          rootRef={rootElRef as RefObject<HTMLDivElement>}
+          isMacromoleculesEditorTurnedOn={isMacromoleculesEditorTurnedOn}
+        >
           <EditorWrapper ref={rootElRef} className={EditorClassName}>
             <Editor
               ketcherId={ketcherId}

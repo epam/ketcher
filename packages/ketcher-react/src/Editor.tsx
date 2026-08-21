@@ -24,6 +24,7 @@ type Props = Omit<EditorProps, 'ketcherId'> & {
 interface MacromoleculesEditorProps {
   ketcherId: string;
   togglerComponent?: JSX.Element;
+  isMacromoleculesEditorTurnedOn?: boolean;
   monomersLibraryUpdate?: string | JSON;
   monomersLibraryReplace?: string | JSON;
   onInit(macromoleculesEditor: CoreEditor): void;
@@ -155,6 +156,7 @@ export const Editor = (props: Props) => {
             <MacromoleculesEditorComponent
               togglerComponent={togglerComponent}
               ketcherId={ketcherId}
+              isMacromoleculesEditorTurnedOn={showPolymerEditor}
               monomersLibraryUpdate={props.monomersLibraryUpdate}
               monomersLibraryReplace={props.monomersLibraryReplace}
               onInit={onInitMacromoleculesEditor}

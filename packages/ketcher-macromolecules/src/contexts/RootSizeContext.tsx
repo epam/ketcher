@@ -13,9 +13,14 @@ export const RootSizeContext = createContext({ width: 0, height: 0 });
 type Props = {
   children: ReactNode;
   rootRef: RefObject<HTMLElement> | null;
+  isMacromoleculesEditorTurnedOn?: boolean;
 };
 
-export const RootSizeProvider = ({ children, rootRef }: Props) => {
+export const RootSizeProvider = ({
+  children,
+  rootRef,
+  isMacromoleculesEditorTurnedOn,
+}: Props) => {
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   const handleResize = useCallback(() => {
@@ -30,6 +35,10 @@ export const RootSizeProvider = ({ children, rootRef }: Props) => {
   }, [rootRef]);
 
   const debouncedHandleResize = useDebouncedCallback(handleResize, 100);
+
+  useEffect(() => {
+    handleResize();
+  }, [handleResize, isMacromoleculesEditorTurnedOn]);
 
   useEffect(() => {
     const rootElement = rootRef?.current;

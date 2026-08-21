@@ -38,7 +38,7 @@ function parseDecimalInt(str) {
   /* reader */
   const val = parseInt(str, 10);
 
-  return isNaN(val) ? 0 : val; // eslint-disable-line
+  return isNaN(val) ? 0 : val;
 }
 
 function partitionLine(
@@ -180,7 +180,7 @@ function categorizeMolecules(mols, nReactants, nProducts) {
   for (let j = 0; j < mols.length; ++j) {
     const mol = mols[j];
     const bb = mol.getCoordBoundingBoxObj();
-    if (!bb) continue; // eslint-disable-line no-continue
+    if (!bb) continue;
 
     const fragmentType = getFragmentType(j, nReactants, nProducts);
 
@@ -204,20 +204,19 @@ function categorizeMolecules(mols, nReactants, nProducts) {
 }
 
 function shiftMol(ret, mol, bb, xorig, over) {
-  // eslint-disable-line max-params
   const d = new Vec2(
     xorig - bb.min.x,
     over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2,
   );
   mol.atoms.forEach((atom) => {
-    atom.pp.add_(d); // eslint-disable-line no-underscore-dangle
+    atom.pp.add_(d);
   });
 
   mol.sgroups.forEach((item) => {
-    if (item.pp) item.pp.add_(d); // eslint-disable-line no-underscore-dangle
+    if (item.pp) item.pp.add_(d);
   });
-  bb.min.add_(d); // eslint-disable-line no-underscore-dangle
-  bb.max.add_(d); // eslint-disable-line no-underscore-dangle
+  bb.min.add_(d);
+  bb.max.add_(d);
   mol.mergeInto(ret);
   return bb.max.x - bb.min.x;
 }
@@ -322,7 +321,6 @@ function rxnMerge(
   nAgents,
   shouldReactionRelayout,
 ) /* Struct */ {
-  // eslint-disable-line max-statements
   /* reader */
   const ret = new Struct();
 

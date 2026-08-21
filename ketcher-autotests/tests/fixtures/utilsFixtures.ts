@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 import { Page } from '@playwright/test';
 import { test as base } from './coreFixtures';
 import { clearLocalStorage, resetClipboard } from '@utils/common/helpers';

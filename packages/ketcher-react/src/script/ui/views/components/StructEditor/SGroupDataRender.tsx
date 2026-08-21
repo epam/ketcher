@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { type FC, useEffect, useRef, useState } from 'react';
 import {
   type Render,

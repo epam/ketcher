@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -272,6 +274,7 @@ class Editor implements KetcherEditor {
     quickEdit: PipelineSubscription;
     attachEdit: PipelineSubscription;
     removeFG: PipelineSubscription;
+    editMonomer: PipelineSubscription;
     change: Subscription;
     selectionChange: PipelineSubscription;
     aromatizeStruct: PipelineSubscription;
@@ -307,8 +310,8 @@ class Editor implements KetcherEditor {
     );
 
     this.ketcherId = ketcherId;
-    this._selection = null; // eslint-disable-line
-    this._tool = null; // eslint-disable-line
+    this._selection = null;
+    this._tool = null;
     this.historyStack = [];
     this.historyPtr = 0;
     this.errorHandler = null;
@@ -341,6 +344,7 @@ class Editor implements KetcherEditor {
       quickEdit: new PipelineSubscription(),
       attachEdit: new PipelineSubscription(),
       removeFG: new PipelineSubscription(),
+      editMonomer: new PipelineSubscription(),
       change: new Subscription(),
       selectionChange: new PipelineSubscription(),
       aromatizeStruct: new PipelineSubscription(),
@@ -373,7 +377,6 @@ class Editor implements KetcherEditor {
   }
 
   tool(name?: string, opts?: unknown): Tool | null {
-    /* eslint-disable no-underscore-dangle */
     if (arguments.length === 0) {
       return this._tool;
     }
@@ -403,7 +406,6 @@ class Editor implements KetcherEditor {
 
     this._tool = tool;
     return this._tool;
-    /* eslint-enable no-underscore-dangle */
   }
 
   clear() {
@@ -1857,6 +1859,7 @@ class Editor implements KetcherEditor {
     originalType: KetMonomerClass,
     originalSymbol: string,
     sourceExpanded: boolean,
+    selectedSGroupIds?: number[],
   ) {
     let sourceSGroup: SGroup | undefined;
 
@@ -1873,7 +1876,12 @@ class Editor implements KetcherEditor {
     const replacementSourceSGroup = sourceSGroup;
     this.setMonomerExpandedState(replacementSourceSGroup, sourceExpanded);
 
-    Array.from(struct.sgroups.values()).forEach((sgroup) => {
+    const restrictToIds =
+      selectedSGroupIds && selectedSGroupIds.length > 1
+        ? new Set(selectedSGroupIds)
+        : null;
+
+    Array.from(struct.sgroups.entries()).forEach(([sgId, sgroup]) => {
       const sgroupWithMonomer = sgroup as SGroup & EditableSGroupMonomer;
       const sgroupMonomer = sgroupWithMonomer.monomer;
       const { props, label } = sgroupMonomer?.monomerItem ?? {};
@@ -1885,6 +1893,12 @@ class Editor implements KetcherEditor {
         props?.MonomerClass !== originalType ||
         symbol !== originalSymbol
       ) {
+        return;
+      }
+
+      // When the user had a specific subset of monomers selected, only replace
+      // those — not all canvas instances.
+      if (restrictToIds && !restrictToIds.has(sgId)) {
         return;
       }
 
@@ -2252,6 +2266,7 @@ class Editor implements KetcherEditor {
           editAllInitialValues.originalType,
           editAllInitialValues.originalSymbol,
           sourceMonomerExpanded,
+          editAllInitialValues.selectedSGroupIds,
         );
         struct.sGroupsRecalcCrossBonds();
       }
@@ -3157,12 +3172,12 @@ class Editor implements KetcherEditor {
 
   selection(ci?: Selection | 'all' | 'descriptors' | null) {
     if (arguments.length === 0) {
-      return this._selection; // eslint-disable-line
+      return this._selection;
     }
 
     let ReStruct = this.render.ctab;
     let selectAll = false;
-    this._selection = null; // eslint-disable-line
+    this._selection = null;
     let resolvedCi: Record<string, number[]> | null;
     if (typeof ci === 'object' && ci !== null) {
       resolvedCi = ci as Record<string, number[]>;
@@ -3194,7 +3209,7 @@ class Editor implements KetcherEditor {
       });
 
       if (Object.keys(res).length !== 0) {
-        this._selection = res; // eslint-disable-line
+        this._selection = res;
       }
       const stereoFlags = selectStereoFlagsIfNecessary(
         this.struct().atoms,
@@ -3211,8 +3226,8 @@ class Editor implements KetcherEditor {
       }
     }
 
-    this.render.ctab.setSelection(this._selection); // eslint-disable-line
-    this.event.selectionChange.dispatch(this._selection); // eslint-disable-line
+    this.render.ctab.setSelection(this._selection);
+    this.event.selectionChange.dispatch(this._selection);
 
     if (selectAll) {
       this.rotateController.rerender();
@@ -3221,11 +3236,11 @@ class Editor implements KetcherEditor {
     }
 
     this.render.update(false, null);
-    return this._selection; // eslint-disable-line
+    return this._selection;
   }
 
   hover(ci: HoverTarget | null, newTool?: Tool | null, event?: PointerEvent) {
-    const tool = newTool ?? this._tool; // eslint-disable-line
+    const tool = newTool ?? this._tool;
 
     const hoverState = (tool as unknown as { ci?: HoverTarget })?.ci;
     let isSameHoverTarget = false;

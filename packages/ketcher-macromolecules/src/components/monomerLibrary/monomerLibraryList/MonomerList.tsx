@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState } from 'react';
 import { MonomerGroup } from '../monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
 import { MonomerListContainer } from './styles';
@@ -33,7 +32,6 @@ import {
   MonomerGroups,
 } from '../../../constants';
 import { MonomerItemType } from 'ketcher-core';
-import { selectEditorActiveTool } from 'state/common';
 import {
   selectFilteredPresets,
   selectPresetsInFavorites,
@@ -59,7 +57,6 @@ const MonomerList = ({
 }: IMonomerListProps) => {
   const monomers = useAppSelector(selectFilteredMonomers);
   const presets = useAppSelector(selectFilteredPresets);
-  const activeTool = useAppSelector(selectEditorActiveTool);
   const isFavoriteTab = libraryName === MONOMER_LIBRARY_FAVORITES;
 
   const items = !isFavoriteTab
@@ -77,16 +74,6 @@ const MonomerList = ({
   const ambiguousMonomers = isFavoriteTab
     ? selectAmbiguousMonomersInFavorites(monomers)
     : selectAmbiguousMonomersInCategory(monomers, MonomerGroups.PEPTIDES);
-  const [selectedMonomers, setSelectedMonomers] = useState('');
-  const [prevActiveTool, setPrevActiveTool] = useState(activeTool);
-
-  if (activeTool !== prevActiveTool) {
-    setPrevActiveTool(activeTool);
-    if (activeTool !== 'monomer') {
-      setSelectedMonomers('');
-    }
-  }
-
   return (
     <MonomerListContainer>
       {isFavoriteTab && monomerGroups.length > 0 && <div>Monomers</div>}
@@ -98,7 +85,6 @@ const MonomerList = ({
             items={groupItems}
             libraryName={libraryName}
             onItemClick={onItemClick}
-            selectedMonomerUniqueKey={selectedMonomers}
           />
         );
       })}
@@ -122,7 +108,6 @@ const MonomerList = ({
                 items={group.groupItems}
                 libraryName={libraryName}
                 onItemClick={onItemClick}
-                selectedMonomerUniqueKey={selectedMonomers}
               />
             );
           })}

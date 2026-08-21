@@ -1,6 +1,5 @@
-/* eslint-disable react-hooks/refs */
 import { ZoomTransform } from 'd3';
-import { memo, useMemo, useRef } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { LayoutMode } from 'ketcher-core';
 
 import styles from './RulerArea.module.less';
@@ -18,7 +17,7 @@ type Props = {
 };
 
 const RulerScale = ({ transform, layoutMode }: Props) => {
-  const ref = useRef<SVGSVGElement>(null);
+  const [svgElement, setSvgElement] = useState<SVGSVGElement | null>(null);
   const isZoomedOut = transform.k - 0.5 < Number.EPSILON;
 
   const getDynamicPositions = (
@@ -38,7 +37,7 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
 
   const positions = useMemo(() => {
     const canvasWidth =
-      ref.current?.ownerSVGElement?.width.baseVal.value || 1000;
+      svgElement?.ownerSVGElement?.width.baseVal.value || 1000;
     const visibleStart = transform.invertX(0);
     const visibleEnd = transform.invertX(canvasWidth);
 
@@ -62,7 +61,7 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
     }
 
     return [];
-  }, [layoutMode, transform]);
+  }, [layoutMode, svgElement, transform]);
 
   const svgChildren = useMemo(() => {
     const children: JSX.Element[] = [];
@@ -157,7 +156,11 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
   }, [positions, layoutMode, transform, isZoomedOut]);
 
   return (
-    <svg className={styles.rulerScale} ref={ref} data-testid="ruler-scale">
+    <svg
+      className={styles.rulerScale}
+      ref={setSvgElement}
+      data-testid="ruler-scale"
+    >
       {svgChildren}
     </svg>
   );

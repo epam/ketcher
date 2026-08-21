@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/use-memo */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
   hasAntisenseChains,
   selectEditor,
@@ -152,8 +151,8 @@ export const EditorEvents = () => {
     [dispatch],
   );
 
-  const debouncedShowPreview = useCallback(
-    debounce((p) => dispatchShowPreview(p), 500),
+  const debouncedShowPreview = useMemo(
+    () => debounce((p) => dispatchShowPreview(p), 500),
     [dispatchShowPreview],
   );
 

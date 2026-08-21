@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -71,6 +69,9 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       props.structServiceProvider,
       setServerRef.current,
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally
+    // resync only when structServiceProvider (prop) changes; ketcherId comes
+    // from props but should not retrigger this effect on its own.
   }, [structServiceProvider]);
 
   const initKetcher = async () => {
@@ -111,6 +112,10 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       });
     };
     // TODO: provide the list of dependencies after implementing unsubscribe function
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once on
+    // mount to initialize the external ketcher instance; not reacting to
+    // local state set by a handler, so react-hooks/exhaustive-deps and
+    // react-you-might-not-need-an-effect/no-event-handler don't apply here.
   }, []);
 
   return (

@@ -10,17 +10,6 @@ import {
   Vec2,
 } from 'ketcher-core';
 
-/**
- * Result of comparing old (at wizard-open time) and new (after editing)
- * AP → attachment atom ID assignments for APs that were in use by bonds.
- */
-export type ApDiffResult = {
-  /** AP names whose AP was removed from the new template → bond must be deleted. */
-  deleted: AttachmentPointName[];
-  /** AP names that still exist but were reassigned to a different atom → bond endpoint must be updated. */
-  moved: Map<AttachmentPointName, number>;
-};
-
 const COPY_SUFFIX = '_Copy';
 
 const getCopiedValue = (value?: string) =>

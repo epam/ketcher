@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -725,7 +726,6 @@ export function fromSgroupAddition(
   oldSgroup?,
   monomer?: BaseMonomer,
 ) {
-  // eslint-disable-line
   let action = new Action();
 
   sgid = isNumber(sgid) ? sgid : restruct.molecule.sgroups.newId();

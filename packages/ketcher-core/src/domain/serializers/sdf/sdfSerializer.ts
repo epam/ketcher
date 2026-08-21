@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -55,7 +56,7 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
                 value = pc.split('\n')[1].trim();
               }
 
-              acc[field] = Number.isFinite(value) ? +value : value.toString(); // eslint-disable-line
+              acc[field] = Number.isFinite(value) ? +value : value.toString();
             }
             return acc;
           },

@@ -1,4 +1,3 @@
-/* eslint-disable no-inline-comments */
 import { Page, Locator, expect } from '@playwright/test';
 import { MacroFileType } from '@utils/canvas/types';
 import {

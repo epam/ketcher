@@ -98,12 +98,10 @@ function prepareSruForSaving(sgroup: SGroup, mol: Struct): void {
   mol.bonds.forEach((bond, bid) => {
     const a1 = getAtom(mol, bond.begin);
     const a2 = getAtom(mol, bond.end);
-    /* eslint-disable no-mixed-operators */
     if (
       (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
       (a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
     ) {
-      /* eslint-enable no-mixed-operators */
       xBonds.push(bid);
     }
   });
@@ -130,7 +128,7 @@ function prepareSupForSaving(sgroup: SGroup, mol: Struct): void {
   mol.bonds.forEach((bond, bid) => {
     const a1 = getAtom(mol, bond.begin);
     const a2 = getAtom(mol, bond.end);
-    /* eslint-disable no-mixed-operators */
+
     if (
       (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
       (a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
@@ -348,11 +346,11 @@ function makeAtomBondLines(
   if (!ids) return [];
   const lines: string[] = [];
   for (let i = 0; i < Math.floor((ids.length + 14) / 15); ++i) {
-    const rem = Math.min(ids.length - 15 * i, 15); // eslint-disable-line no-mixed-operators
+    const rem = Math.min(ids.length - 15 * i, 15);
     let salLine = 'M  ' + prefix + ' ' + idstr + ' ' + utils.paddedNum(rem, 2);
     for (let j = 0; j < rem; ++j) {
       salLine += ' ' + utils.paddedNum(map[ids[i * 15 + j]], 3);
-    } // eslint-disable-line no-mixed-operators
+    }
     lines.push(salLine);
   }
   return lines;

@@ -1,4 +1,3 @@
-/* eslint-disable no-inline-comments */
 import * as path from 'path';
 import { Page, expect } from '@playwright/test';
 import { Ketcher } from 'ketcher-core';

@@ -260,7 +260,6 @@ function fromStructureFlip(
 }
 
 export function fromRotate(restruct, selection, center, angle: number) {
-  // eslint-disable-line
   const struct = restruct.molecule;
 
   const action = new Action();

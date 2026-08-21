@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { type RefObject, useEffect } from 'react';
 
 export const useClickOutside = (

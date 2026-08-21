@@ -27,11 +27,9 @@ import {
   notifyCopyCut,
 } from 'ketcher-core';
 
-const ieCb: DataTransfer | undefined =
-  typeof globalThis.window !== 'undefined'
-    ? (globalThis.window as Window & { clipboardData?: DataTransfer })
-        .clipboardData
-    : undefined;
+const ieCb: DataTransfer | undefined = (
+  globalThis.window as (Window & { clipboardData?: DataTransfer }) | undefined
+)?.clipboardData;
 
 const isSafariBrowser = (): boolean =>
   typeof navigator !== 'undefined' &&
@@ -41,8 +39,7 @@ const isAsyncClipboardWriteAvailable = (): boolean =>
   isClipboardAPIAvailable() && !isSafariBrowser();
 
 const isSecureClipboardContext = (): boolean =>
-  typeof globalThis.window !== 'undefined' &&
-  Boolean(globalThis.window.isSecureContext);
+  Boolean(globalThis.window?.isSecureContext);
 
 const isAsyncClipboardReadAvailable = (): boolean =>
   isClipboardAPIAvailable() &&

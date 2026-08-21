@@ -69,6 +69,9 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         setBondData(null);
         setIsBondBetweenMonomers(false);
       }
+    } else {
+      setBondData(null);
+      setIsBondBetweenMonomers(false);
     }
   }, [props.propsFromTrigger, ketcherId]);
 

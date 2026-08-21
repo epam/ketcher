@@ -31,8 +31,6 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     variant?: string;
   };
 
-  private isExternalRender = false;
-
   constructor(public monomer: AmbiguousMonomer, scale?: number) {
     const monomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
     const monomerSymbolElementsIds = MONOMER_SYMBOLS_IDS[monomerClass];
@@ -158,7 +156,6 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   }
 
   public show(theme) {
-    this.isExternalRender = false;
     super.show(theme);
     this.appendNumberOfMonomers();
     if (this.enumerationElementPosition) {
@@ -190,7 +187,6 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   }
 
   public showExternal(params: PreviewAttachmentPointParams) {
-    this.isExternalRender = true;
     this.rootElement = this.appendRootElement(params.canvas);
     this.bodyElement = this.appendBody(this.rootElement);
     this.bodyElement?.attr('data-testid', 'shape');

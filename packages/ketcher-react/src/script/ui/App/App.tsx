@@ -94,8 +94,7 @@ const App = (props: Props) => {
       // Ideally is to remove ketcher instance in cleanup function of the most parent component (MicromoleculesEditor, or Editor, depends on usage)
       ketcherProvider.removeKetcherInstance(ketcherId);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [checkServer, dispatch, ketcherId]);
 
   // Temporary workaround: add proper types for Editor
   const Editor = ConnectedEditor as React.ComponentType<{

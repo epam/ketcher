@@ -23,7 +23,6 @@ import {
   selectIsContextMenuActive,
   selectLastSelectedSelectionMenuItem,
   selectTool,
-  showPreview,
 } from 'state/common';
 import { openErrorModal, openErrorTooltip, openModal } from 'state/modal';
 import {
@@ -146,7 +145,10 @@ export const EditorEvents = () => {
     };
   }, [editor, dispatch]);
 
-  const debouncedShowPreview = useDebouncedShowPreview();
+  const {
+    showPreview: debouncedShowPreview,
+    closePreview: handleClosePreview,
+  } = useDebouncedShowPreview();
 
   const handleOpenBondPreview = useCallback(
     (polymerBond: PolymerBond, style: PreviewStyle) => {
@@ -310,11 +312,6 @@ export const EditorEvents = () => {
     },
     [handleOpenBondPreview, debouncedShowPreview, presets, isContextMenuActive],
   );
-
-  const handleClosePreview = useCallback(() => {
-    debouncedShowPreview.cancel();
-    dispatch(showPreview(undefined));
-  }, [debouncedShowPreview, dispatch]);
 
   const handleOpenAtomLabelTooltip = useCallback(
     (e) => {

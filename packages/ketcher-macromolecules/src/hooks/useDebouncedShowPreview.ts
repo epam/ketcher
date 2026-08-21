@@ -14,26 +14,31 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { debounce } from 'lodash';
 import { useAppDispatch } from './stateHooks';
-import { showPreview } from 'state/common';
+import { showPreview as showPreviewAction } from 'state/common';
 import type { EditorStatePreview } from 'state';
 
 export const useDebouncedShowPreview = () => {
   const dispatch = useAppDispatch();
 
-  const debouncedShowPreview = useMemo(
+  const showPreview = useMemo(
     () =>
       debounce(
         (payload: EditorStatePreview | undefined) =>
-          dispatch(showPreview(payload)),
+          dispatch(showPreviewAction(payload)),
         500,
       ),
     [dispatch],
   );
 
-  useEffect(() => () => debouncedShowPreview.cancel(), [debouncedShowPreview]);
+  const closePreview = useCallback(() => {
+    showPreview.cancel();
+    dispatch(showPreviewAction(undefined));
+  }, [showPreview, dispatch]);
 
-  return debouncedShowPreview;
+  useEffect(() => () => showPreview.cancel(), [showPreview]);
+
+  return { showPreview, closePreview };
 };

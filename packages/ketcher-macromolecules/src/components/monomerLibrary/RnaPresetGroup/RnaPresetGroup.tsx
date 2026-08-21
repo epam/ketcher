@@ -23,7 +23,7 @@ import {
   MonomerItemType,
   RnaPresetWithOptionalFields,
 } from 'ketcher-core';
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactElement } from 'react';
 import {
   selectActivePreset,
   setActivePreset,
@@ -37,7 +37,7 @@ import {
   GroupContainerColumn,
   ItemsContainer,
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
-import { selectEditor, selectShowPreview, showPreview } from 'state/common';
+import { selectEditor, selectShowPreview } from 'state/common';
 import { RNAContextMenu } from 'components/contextMenu/RNAContextMenu';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { useContextMenu } from 'react-contexify';
@@ -122,12 +122,10 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   // region # Preview
   const preview = useAppSelector(selectShowPreview);
 
-  const debouncedShowPreview = useDebouncedShowPreview();
-
-  const closeLibraryPreview = useCallback((): void => {
-    debouncedShowPreview.cancel();
-    dispatch(showPreview(undefined));
-  }, [debouncedShowPreview, dispatch]);
+  const {
+    showPreview: debouncedShowPreview,
+    closePreview: closeLibraryPreview,
+  } = useDebouncedShowPreview();
 
   const handleItemMouseMove = (
     preset: IRnaPreset,

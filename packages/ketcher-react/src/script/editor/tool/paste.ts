@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -324,7 +325,7 @@ function prepareTemplateFromSingleGroup(molecule: Struct): Template | null {
   const xy0 = new Vec2();
 
   molecule.atoms.forEach((atom) => {
-    xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
+    xy0.add_(atom.pp);
   });
 
   template.aid = sgroup?.getAttachmentAtomId() ?? 0;

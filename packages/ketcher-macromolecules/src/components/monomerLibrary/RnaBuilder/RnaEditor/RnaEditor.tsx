@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -42,12 +44,13 @@ export const RnaEditor = ({ duplicatePreset }) => {
 
   const dispatch = useAppDispatch();
 
-  const [expanded, setExpanded] = useState(false);
-  const [prevActivePreset, setPrevActivePreset] = useState(activePreset);
+  const shouldExpand = Boolean(activePreset?.name) || isEditMode;
+  const [expanded, setExpanded] = useState(shouldExpand);
+  const [prevShouldExpand, setPrevShouldExpand] = useState(shouldExpand);
 
-  if (activePreset !== prevActivePreset) {
-    setPrevActivePreset(activePreset);
-    if (activePreset && (activePreset.name || isEditMode)) {
+  if (shouldExpand !== prevShouldExpand) {
+    setPrevShouldExpand(shouldExpand);
+    if (shouldExpand) {
       setExpanded(true);
     }
   }

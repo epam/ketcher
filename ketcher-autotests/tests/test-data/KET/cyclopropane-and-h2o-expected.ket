@@ -4,9 +4,6 @@
         "nodes": [
             {
                 "$ref": "mol0"
-            },
-            {
-                "$ref": "mol1"
             }
         ],
         "connections": [],
@@ -36,6 +33,14 @@
                 "location": [
                     13.349032102191604,
                     -8.40773033260346,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    16.0509678978084,
+                    -8.075060100546242,
                     0
                 ]
             }
@@ -69,9 +74,10 @@
                 "atoms": [
                     0,
                     1,
-                    2
+                    2,
+                    3
                 ],
-                "context": "Group",
+                "context": "Multifragment",
                 "fieldName": "T@#qwer123",
                 "fieldData": "8",
                 "bonds": [
@@ -79,30 +85,6 @@
                     1,
                     2
                 ]
-            }
-        ]
-    },
-    "mol1": {
-        "type": "molecule",
-        "atoms": [
-            {
-                "label": "O",
-                "location": [
-                    16.0509678978084,
-                    -8.075060100546242,
-                    0
-                ]
-            }
-        ],
-        "sgroups": [
-            {
-                "type": "DAT",
-                "atoms": [
-                    0
-                ],
-                "context": "Group",
-                "fieldName": "T@#qwer123",
-                "fieldData": "8"
             }
         ]
     }

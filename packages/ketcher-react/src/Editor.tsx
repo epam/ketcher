@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 import { lazy, Suspense, useEffect, useState } from 'react';
 import {
   type EditorProps,
@@ -59,6 +58,16 @@ export const Editor = (props: Props) => {
   const togglePolymerEditor = (toggleValue: boolean) => {
     setShowPolymerEditor(toggleValue);
     window.isPolymerEditorTurnedOn = toggleValue;
+
+    if (moleculesEditor && macromoleculesEditor) {
+      if (toggleValue) {
+        moleculesEditor?.closeMonomerCreationWizard?.();
+        macromoleculesEditor?.switchToMacromolecules();
+      } else {
+        macromoleculesEditor?.switchToMicromolecules();
+        moleculesEditor?.focusCliparea();
+        }
+    }
   };
 
   const togglerComponent = !props.disableMacromoleculesEditor ? (
@@ -102,18 +111,6 @@ export const Editor = (props: Props) => {
       window.isPolymerEditorTurnedOn = false;
     };
   }, []);
-
-  useEffect(() => {
-    if (moleculesEditor && macromoleculesEditor) {
-      if (showPolymerEditor) {
-        moleculesEditor?.closeMonomerCreationWizard?.();
-        macromoleculesEditor?.switchToMacromolecules();
-      } else {
-        macromoleculesEditor?.switchToMicromolecules();
-        moleculesEditor?.focusCliparea();
-      }
-    }
-  }, [showPolymerEditor]);
 
   useEffect(() => {
     if (

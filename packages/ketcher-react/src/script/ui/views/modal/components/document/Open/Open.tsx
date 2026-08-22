@@ -124,6 +124,11 @@ const Open: FC<Props> = (props) => {
     setIsLoading(true);
     const onLoad = (fileContent) => {
       if (fileContent.isPPTX) {
+        if (!fileContent.structures.length && files[0].size > 0) {
+          errorHandler(
+            "Report that we can't open it - may be it is password protected",
+          );
+        }
         setStructStr('');
         setStructList(fileContent.structures);
         setCurrentState(MODAL_STATES.presentationViewer);

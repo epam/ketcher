@@ -16,12 +16,26 @@
  ***************************************************************************/
 
 import type { Struct } from 'domain/entities/struct';
-import { Text } from 'domain/entities/text';
+import { Text, type TextAttributes } from 'domain/entities/text';
 import { getNodeWithInvertedYCoord } from '../helpers';
 import {
   type DraftEditorState,
   convertDraftToLexical,
 } from 'application/render/restruct/draftToLexical';
+import type {
+  SerializedTextNode,
+  SerializedParagraphNode,
+} from 'application/render/restruct/retext';
+
+interface KETTextV1 {
+  type?: 'text';
+  data: {
+    content: string;
+    position?: { x: number; y: number; z?: number };
+    pos?: Array<{ x: number; y: number; z?: number }>;
+  };
+  selected?: boolean;
+}
 
 const IS_BOLD = 1;
 const IS_ITALIC = 2;
@@ -90,7 +104,7 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
   const lexicalRoot = {
     root: {
       children: paragraphs.map((para) => {
-        const paragraphNode: any = {
+        const paragraphNode: SerializedParagraphNode = {
           children: (para.parts || []).map((part) => {
             let format = 0;
             if (part.bold) format |= IS_BOLD;
@@ -98,7 +112,7 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
             if (part.subscript) format |= IS_SUBSCRIPT;
             if (part.superscript) format |= IS_SUPERSCRIPT;
 
-            const textNode: any = {
+            const textNode: SerializedTextNode & { font?: string } = {
               detail: 0,
               format,
               mode: 'normal',
@@ -130,8 +144,6 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
           indent: 0,
           type: 'paragraph',
           version: 1,
-          textFormat: 0,
-          textStyle: '',
         };
 
         // Apply paragraph-level alignment
@@ -159,16 +171,17 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
 /**
  * Check if the ketItem is in KET v2.0 format (has boundingBox and paragraphs directly).
  */
-function isKetV2Format(ketItem: any): ketItem is KETTextV2 {
+function isKetV2Format(ketItem: unknown): ketItem is KETTextV2 {
   return (
-    ketItem &&
-    ketItem.boundingBox !== undefined &&
-    ketItem.paragraphs !== undefined
+    typeof ketItem === 'object' &&
+    ketItem !== null &&
+    'boundingBox' in ketItem &&
+    'paragraphs' in ketItem
   );
 }
 
-export function textToStruct(ketItem: any, struct: Struct) {
-  let node: any;
+export function textToStruct(ketItem: KETTextV2 | KETTextV1, struct: Struct) {
+  let node: TextAttributes;
 
   if (isKetV2Format(ketItem)) {
     // KET v2.0 format: convert to internal format
@@ -176,7 +189,7 @@ export function textToStruct(ketItem: any, struct: Struct) {
     node = getNodeWithInvertedYCoord(internal);
   } else {
     // Old format with data wrapper
-    node = getNodeWithInvertedYCoord(ketItem.data);
+    node = getNodeWithInvertedYCoord(ketItem.data) as TextAttributes;
 
     // If the incoming node.content is Draft.js shape (stringified or object),
     // convert it to Lexical format at parse time so we store only Lexical JSON.

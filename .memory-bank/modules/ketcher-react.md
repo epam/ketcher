@@ -20,25 +20,20 @@ Provides the React component tree that hosts the Raphael-based 2D small molecule
 
 ## Internal Structure
 
-```
-src/
-├── Editor.tsx              # Top-level: toggles micro ↔ macro, lazy-loads macro package
-├── MicromoleculesEditor.tsx # Redux Provider + Raphael canvas mount
-├── script/
-│   ├── api.ts             # ketcherBuilder entry point (creates Ketcher + Editor instances)
-│   ├── editor/
-│   │   ├── Editor.ts      # Micromolecules editor controller (wraps Raphael, tools, selection)
-│   │   └── tool/          # 30+ tool implementations (atom, bond, sgroup, template, erase, etc.)
-│   ├── ui/
-│   │   ├── views/
-│   │   │   ├── toolbars/  # LeftToolbar, TopToolbar, BottomToolbar, RightToolbar, FloatingTools
-│   │   │   ├── modal/     # All dialog windows (settings, templates, sgroup, etc.)
-│   │   │   └── Editor.jsx # Legacy JSX editor view
-│   │   ├── state/         # Redux slices (editor, options, modal, server, templates, hotkeys, …)
-│   │   └── dialog/        # Dialog-specific logic
-│   └── providers/         # React context providers
-└── components/            # Shared React components (toolbar items, icons, etc.)
-```
+| Path                             | Purpose                                                              |
+| -------------------------------- | -------------------------------------------------------------------- |
+| `src/Editor.tsx`                 | Top-level: toggles micro ↔ macro, lazy-loads macro package           |
+| `src/MicromoleculesEditor.tsx`   | Redux Provider + Raphael canvas mount                                |
+| `src/script/api.ts`              | `ketcherBuilder` entry point (creates Ketcher + Editor instances)    |
+| `src/script/editor/Editor.ts`    | Micromolecules editor controller (wraps Raphael, tools, selection)   |
+| `src/script/editor/tool/`        | 30+ tool implementations (atom, bond, sgroup, template, erase, etc.) |
+| `src/script/ui/views/toolbars/`  | LeftToolbar, TopToolbar, BottomToolbar, RightToolbar, FloatingTools  |
+| `src/script/ui/views/modal/`     | All dialog windows (settings, templates, sgroup, etc.)               |
+| `src/script/ui/views/Editor.jsx` | Legacy JSX editor view                                               |
+| `src/script/ui/state/`           | Redux slices: editor, options, modal, server, templates, hotkeys, …  |
+| `src/script/ui/dialog/`          | Dialog-specific logic                                                |
+| `src/script/providers/`          | React context providers                                              |
+| `src/components/`                | Shared React components (toolbar items, icons, etc.)                 |
 
 ## State Management
 

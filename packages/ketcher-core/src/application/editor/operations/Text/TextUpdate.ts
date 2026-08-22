@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -22,6 +24,7 @@ interface TextUpdateData {
   id: number;
   content: string;
   previousContent?: string;
+  shouldSkip?: boolean;
 }
 
 export class TextUpdate extends BaseOperation {
@@ -33,11 +36,15 @@ export class TextUpdate extends BaseOperation {
   }
 
   execute(restruct: ReStruct) {
+    if (this.data.shouldSkip) {
+      return;
+    }
+
     const { id, content } = this.data;
     const text = restruct.molecule.texts.get(id);
 
     if (text) {
-      this.data.previousContent = text.content!;
+      this.data.previousContent = text.content;
       text.content = content;
     }
 
@@ -45,7 +52,22 @@ export class TextUpdate extends BaseOperation {
   }
 
   invert() {
-    const inverted = new TextUpdate(this.data.id, this.data.previousContent!);
+    if (this.data.shouldSkip) {
+      const inverted = new TextUpdate(this.data.id, this.data.content);
+      inverted.data.previousContent =
+        this.data.previousContent ?? this.data.content;
+      inverted.data.shouldSkip = true;
+      return inverted;
+    }
+
+    if (this.data.previousContent === undefined) {
+      const inverted = new TextUpdate(this.data.id, this.data.content);
+      inverted.data.previousContent = this.data.content;
+      inverted.data.shouldSkip = true;
+      return inverted;
+    }
+
+    const inverted = new TextUpdate(this.data.id, this.data.previousContent);
 
     inverted.data.previousContent = this.data.content;
     return inverted;

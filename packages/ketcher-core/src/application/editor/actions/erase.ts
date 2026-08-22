@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -48,7 +51,7 @@ export function fromOneAtomDeletion(restruct, atomId: number) {
 function fromBondDeletion(
   restruct: ReStruct,
   bid: number,
-  skipAtoms: Array<any> = [],
+  skipAtoms: number[] = [],
 ) {
   let action = new Action();
 
@@ -69,8 +72,9 @@ function fromBondDeletion(
     });
   }
 
-  const bond: any = restruct.molecule.bonds.get(bid);
-  const atomsToRemove: Array<any> = [];
+  const bond = restruct.molecule.bonds.get(bid);
+  assert(bond != null);
+  const atomsToRemove: number[] = [];
 
   action.addOp(new BondDelete(bid));
 
@@ -239,9 +243,15 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     .mergeWith(actionRemoveBonds)
     .mergeWith(actionToDeleteRGroupAttachmentPoints);
 
-  const rgForRemove: Array<number> = frids.map(
-    (frid) => RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid)!,
-  );
+  const rgForRemove = frids.reduce<Array<number>>((acc, frid) => {
+    const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
+
+    if (isNumber(rgid)) {
+      acc.push(rgid);
+    }
+
+    return acc;
+  }, []);
 
   while (frids.length > 0) {
     action = fromFragmentSplit(restruct, frids.pop(), rgForRemove).mergeWith(

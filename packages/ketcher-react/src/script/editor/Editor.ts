@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems

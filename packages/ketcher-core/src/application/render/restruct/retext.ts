@@ -26,6 +26,8 @@ import type ReStruct from './restruct';
 import { removeFirstLineVerticalShift } from './retext.utils';
 import { Scale } from 'domain/helpers';
 import type { RaphaelBaseElement } from 'raphael';
+import type { Render } from '../raphaelRender';
+import type { RenderOptions } from '../render.types';
 
 export interface SerializedTextNode {
   detail?: number;
@@ -57,6 +59,13 @@ export interface SerializedRootNode {
 
 export interface SerializedEditorState {
   root: SerializedRootNode;
+}
+
+export interface TextNodeStyles {
+  'font-size'?: string;
+  'font-weight'?: string;
+  'font-style'?: string;
+  shiftY?: number;
 }
 
 const IS_BOLD = 1;
@@ -105,7 +114,7 @@ class ReText extends ReObject {
     return new Box2Abs(leftTopPoint, rightBottomPoint);
   }
 
-  hoverPath(render: any): any {
+  hoverPath(render: Render): RaphaelBaseElement {
     const { p0, p1 } = this.getRelBox(this.paths);
     const topLeft = p0.sub(render.options.offset);
     const { x: width, y: height } = p1.sub(p0);
@@ -152,19 +161,23 @@ class ReText extends ReObject {
     }, 0);
   }
 
-  drawHover(render: any): any {
+  drawHover(render: Render): RaphaelBaseElement | null {
     if (!this.paths.length) return null;
     const ret = this.hoverPath(render).attr(render.options.hoverStyle);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     return ret;
   }
 
-  makeSelectionPlate(restruct: ReStruct, paper: any, options: any): any {
-    if (!this.paths.length || !paper) return null;
+  makeSelectionPlate(
+    restruct: ReStruct,
+    _paper: unknown,
+    options: RenderOptions,
+  ): RaphaelBaseElement | null {
+    if (!this.paths.length || !_paper) return null;
     return this.hoverPath(restruct.render).attr(options.selectionStyle);
   }
 
-  show(restruct: ReStruct, _id: number, options: any): void {
+  show(restruct: ReStruct, _id: number, options: RenderOptions): void {
     const render = restruct.render;
     const paper = render.paper;
     const paperScale = Scale.modelToCanvas(this.item.position, options);
@@ -265,9 +278,9 @@ class ReText extends ReObject {
 
   getStylesFromTextNode(
     textNode: SerializedTextNode,
-    options: any,
-  ): Record<string, any> {
-    const styles: Record<string, any> = {};
+    options: RenderOptions,
+  ): TextNodeStyles {
+    const styles: TextNodeStyles = {};
     const format = textNode.format || 0;
 
     // Parse font-size from style string

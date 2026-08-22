@@ -104,7 +104,11 @@ export class ServerFormatter implements StructFormatter {
         method: SmilesFormatter.isContainsCoordinates(stringifiedStruct)
           ? this.#structService.convert
           : this.#structService.layout,
-        struct: stringifiedStruct,
+        // SMILES is a single-line format, so surrounding whitespace is never
+        // meaningful. Indigo re-detects the format from the content and treats
+        // trailing newlines (e.g. left over by a copy-paste) as a multi-line
+        // molfile/rxnfile, so it must be trimmed as the layout branch below does.
+        struct: stringifiedStruct.trim(),
       };
     }
     const withCoords = getPropertiesByFormat(format).supportsCoords;

@@ -120,8 +120,7 @@ export interface KetItem {
   rlogic?: KetRLogic;
 }
 
-export interface KetRgroupNode
-  extends Omit<KetMoleculeNode, 'type' | 'atoms'> {
+export interface KetRgroupNode extends Omit<KetMoleculeNode, 'type' | 'atoms'> {
   type: 'rgroup';
   atoms?: (KetAtomNode | KetRgLabelNode)[];
   fragments?: KetFragment[];

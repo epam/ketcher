@@ -1145,7 +1145,6 @@ function bondSingleUp(
   isSnapping: boolean,
   color = '#000',
 ) {
-  // eslint-disable-line max-params
   return paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}Z',
@@ -1174,7 +1173,6 @@ function bondSingleStereoBold(
   isSnapping: boolean,
   color = '#000',
 ) {
-  // eslint-disable-line max-params
   const bond = paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}L{6},{7}Z',
@@ -1205,7 +1203,6 @@ function bondDoubleStereoBold(
   isSnapping: boolean,
   color = '#000',
 ) {
-  // eslint-disable-line max-params
   return paper.set([
     sgBondPath,
     paper
@@ -1235,7 +1232,6 @@ function bondSingleDown(
   isSnapping: boolean,
   color = '#000',
 ) {
-  // eslint-disable-line max-params
   const a = halfBond1.p;
   const n = halfBond1.norm;
   const bsp = 0.7 * options.stereoBond;
@@ -1270,7 +1266,6 @@ function bondSingleEither(
   isSnapping: boolean,
   color = '#000',
 ) {
-  // eslint-disable-line max-params
   const a = halfBond1.p;
   const n = halfBond1.norm;
   const bsp = 0.7 * options.stereoBond;
@@ -1302,7 +1297,6 @@ function bondDouble(
   options: RenderOptions,
   isSnapping: boolean,
 ) {
-  // eslint-disable-line max-params
   return paper
     .path(
       cisTrans
@@ -1329,7 +1323,6 @@ function bondSingleOrDouble(
   options: RenderOptions,
   isSnapping: boolean,
 ) {
-  // eslint-disable-line max-statements, max-params
   const a = halfBond1.p;
   const b = halfBond2.p;
   const n = halfBond1.norm;
@@ -1567,7 +1560,6 @@ function bracket(
   bracketHeight: number,
   options: RenderOptions,
 ) {
-  // eslint-disable-line max-params
   bracketWidth = bracketWidth || 0.25;
   bracketHeight = bracketHeight || 1.0;
   const halfBracketHeight = 0.5;
@@ -1688,7 +1680,6 @@ function aromaticBondPaths(
   mask: number,
   dash: number[] | null,
 ) {
-  // eslint-disable-line max-params
   const l1 = dash && mask & 1 ? dashedPath(a2, b2, dash) : makeStroke(a2, b2);
   const l2 = dash && mask & 2 ? dashedPath(a3, b3, dash) : makeStroke(a3, b3);
 

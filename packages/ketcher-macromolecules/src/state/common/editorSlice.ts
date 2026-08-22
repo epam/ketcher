@@ -160,7 +160,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
       );
 
       // TODO: Figure out proper typing here and below
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
       // @ts-ignore
       state.editor = editor;
       action.payload.onInit?.(editor);
@@ -174,7 +174,6 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state,
       action: PayloadAction<EditorStatePreview | undefined>,
     ) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       state.preview = action.payload || { monomer: undefined, style: '' };
     },

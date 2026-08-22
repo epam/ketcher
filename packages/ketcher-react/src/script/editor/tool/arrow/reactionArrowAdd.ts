@@ -35,7 +35,6 @@ export class ReactionArrowAddTool implements ArrowAddTool {
 
   private dragCtx: ReactionArrowDragContext | null = null;
 
-  // eslint-disable-next-line no-useless-constructor
   constructor(
     private readonly editor: Editor,
     private readonly mode: RxnArrowMode,
@@ -74,27 +73,32 @@ export class ReactionArrowAddTool implements ArrowAddTool {
           'Expected RxnArrowDelete as the first operation of fromArrowAddition',
         );
       }
-      this.dragCtx = {
+      const arrowId = firstOp.data.id;
+      assert(arrowId != null);
+      const dragCtx: DragContextInProgress = {
         ...this.dragCtx,
-        itemId: firstOp.data.id,
+        itemId: arrowId,
         action,
       };
-      this.editor.update(this.dragCtx.action, true);
+      this.dragCtx = dragCtx;
+      this.editor.update(dragCtx.action, true);
     } else {
       this.dragCtx.action.perform(this.reStruct);
     }
 
-    this.updateResizingState(this.dragCtx.itemId, true);
+    const dragCtx = this.dragCtx;
+    assert(dragCtx != null && dragCtx.action != null);
+    this.updateResizingState(dragCtx.itemId, true);
     const isSnappingEnabled = !event.ctrlKey;
-    this.dragCtx.action = fromArrowResizing(
+    dragCtx.action = fromArrowResizing(
       this.reStruct,
-      this.dragCtx.itemId,
+      dragCtx.itemId,
       diff,
       current,
       null,
       isSnappingEnabled,
     );
-    this.editor.update(this.dragCtx.action, true);
+    this.editor.update(dragCtx.action, true);
   }
 
   mouseup(event: MouseEvent) {

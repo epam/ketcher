@@ -24,6 +24,7 @@ import {
 } from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
+import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 class RGroupFragmentTool implements Tool {
   private readonly editor: Editor;
@@ -88,7 +89,7 @@ class RGroupFragmentTool implements Tool {
         }
       }
       if (result.length > 0) {
-        this.editor.event.removeFG.dispatch({ fgIds: result });
+        dispatchMonomerOrGroupDialog(this.editor, result);
         return;
       }
     } else if (bondResult.length > 0) {
@@ -103,7 +104,7 @@ class RGroupFragmentTool implements Tool {
           result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result });
+      dispatchMonomerOrGroupDialog(this.editor, result);
       return;
     }
 

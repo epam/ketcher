@@ -10,6 +10,7 @@ import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
 } from 'domain/helpers/monomers';
+import { PolymerBondSnapToMonomersOperation } from 'application/editor/operations/polymerBond';
 
 /**
  * In Flex mode, after a drag-drop bond is established, reposition the
@@ -110,6 +111,55 @@ export function applyPresetMirroringIfNeeded(
     const offsetX = monomer.position.x - pivotX;
     const newPos = new Vec2(pivotX - offsetX, monomer.position.y);
     command.merge(drawingEntitiesManager.moveMonomer(monomer, newPos));
+  }
+
+  return command;
+}
+
+/**
+ * In Flex mode, after a replacement, shifts all monomers downstream of
+ * `anchorMonomer` (connected via the R2→R1 backbone chain) by
+ * `cellDelta * SnakeLayoutCellWidth` pixels converted to model-space Angstroms.
+ *
+ * `cellDelta` is `droppedMonomerCount - replacedMonomerCount`:
+ *   - monomer → monomer:  (1 - 1) = 0  → no shift
+ *   - preset  → monomer:  (3 - 1) = 2  → shift right by 2 × SnakeLayoutCellWidth
+ *
+ * Only the direct backbone chain (R2→R1 traversal) is shifted.
+ * Monomers in other chains and non-backbone branches are not touched.
+ *
+ * The shift operations are merged into the returned `Command` so they form
+ * part of the same atomic undo step as the replacement itself.
+ *
+ * @param drawingEntitiesManager  The active DEM instance.
+ * @param anchorMonomer           The first newly placed monomer/sugar.
+ *                                Traversal starts from its R2 successor.
+ * @param cellDelta               droppedMonomerCount − replacedMonomerCount.
+ */
+export function shiftDownstreamChainMonomers(
+  drawingEntitiesManager: DrawingEntitiesManager,
+  anchorMonomer: BaseMonomer,
+  cellDelta: number,
+): Command {
+  const command = new Command();
+
+  if (cellDelta === 0) return command;
+
+  const editorSettings = provideEditorSettings();
+  const deltaX =
+    (cellDelta * SnakeLayoutCellWidth) / editorSettings.macroModeScale;
+
+  let current: BaseMonomer | undefined = getNextMonomerInChain(anchorMonomer);
+  while (current) {
+    const newPosition = new Vec2(
+      current.position.x + deltaX,
+      current.position.y,
+    );
+    command.merge(drawingEntitiesManager.moveMonomer(current, newPosition));
+    current.polymerBonds.forEach((bond) => {
+      command.addOperation(new PolymerBondSnapToMonomersOperation(bond));
+    });
+    current = getNextMonomerInChain(current);
   }
 
   return command;

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -121,8 +123,8 @@ class ReRxnArrow extends ReObject {
     refPoints.push(new Vec2(a.x, a.y));
     refPoints.push(new Vec2(b.x, b.y));
 
-    if (RxnArrow.isElliptical(item)) {
-      const middlePoint = findMiddlePoint(height!, a, b);
+    if (RxnArrow.isElliptical(item) && height !== undefined) {
+      const middlePoint = findMiddlePoint(height, a, b);
       refPoints.push(middlePoint);
     }
     return refPoints;

@@ -2,8 +2,6 @@
  * Unit tests for SettingsService
  */
 
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import { SettingsService } from '../SettingsService';
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';
 import type { Settings, ISettingsStorage, DeepPartial } from '../types';
@@ -365,16 +363,14 @@ describe('SettingsService', () => {
     });
 
     it('should pass updated settings to listener', async () => {
-      let receivedSettings: Settings | null = null;
-
-      service.subscribe((settings) => {
-        receivedSettings = settings;
-      });
+      const listener = jest.fn();
+      service.subscribe(listener);
 
       await service.updateSettings({ resetToSelect: false });
 
-      expect(receivedSettings).not.toBeNull();
-      expect(receivedSettings!.resetToSelect).toBe(false);
+      expect(listener).toHaveBeenCalledWith(
+        expect.objectContaining({ resetToSelect: false }),
+      );
     });
   });
 

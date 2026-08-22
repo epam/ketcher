@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -81,7 +82,9 @@ class RxnPlusDelete extends BaseOperation {
 
     const struct = restruct.molecule;
     if (!this.data.pos) {
-      this.data.pos = struct.rxnPluses.get(plid)!.pp;
+      const rxnPlus = struct.rxnPluses.get(plid);
+      if (!rxnPlus) return;
+      this.data.pos = rxnPlus.pp;
     }
 
     // notifyRxnPlusRemoved

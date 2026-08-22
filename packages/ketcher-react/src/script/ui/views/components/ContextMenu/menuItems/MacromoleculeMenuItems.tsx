@@ -21,6 +21,7 @@ import type Editor from 'src/script/editor';
 import {
   getEditAllInstancesInitialValues,
   getEditInstanceInitialValues,
+  getSelectedSGroupIdsForEditAll,
 } from '../../MonomerCreationWizard/MonomerCreationWizard.utils';
 
 const MacromoleculeMenuItems = (
@@ -86,6 +87,19 @@ const MacromoleculeMenuItems = (
       }
     });
 
+    let editAllInitialValues = getEditAllInstancesInitialValues(
+      sg.monomer,
+      provideEditorInstance()?.monomersLibraryParsedJson,
+    );
+
+    if (editAllInstances && (functionalGroups?.length ?? 0) > 1) {
+      const selectedSGroupIds = getSelectedSGroupIdsForEditAll(
+        functionalGroups ?? [],
+        sg.monomer,
+      );
+      editAllInitialValues = { ...editAllInitialValues, selectedSGroupIds };
+    }
+
     editor.openMonomerCreationWizard(
       {
         atoms,
@@ -96,10 +110,7 @@ const MacromoleculeMenuItems = (
         rgroupAttachmentPoints: [],
       },
       editAllInstances
-        ? getEditAllInstancesInitialValues(
-            sg.monomer,
-            provideEditorInstance()?.monomersLibraryParsedJson,
-          )
+        ? editAllInitialValues
         : getEditInstanceInitialValues(sg.monomer),
       sg.getAttachmentPoints(),
     );

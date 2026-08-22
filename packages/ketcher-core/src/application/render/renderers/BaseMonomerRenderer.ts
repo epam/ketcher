@@ -25,6 +25,10 @@ import {
   getMonomerSize,
   setMonomerSize,
 } from 'application/render/renderers/monomerSizeState';
+import {
+  type HighlightPathData,
+  createRectHighlightPath,
+} from 'application/render/renderers/monomerHighlightShapes';
 
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
@@ -116,6 +120,23 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     return new Vec2(
       this.scaledMonomerPosition.x + this.monomerSize.width / 2,
       this.scaledMonomerPosition.y + this.monomerSize.height / 2,
+    );
+  }
+
+  /**
+   * The path that outlines this monomer's replacement-highlight area.
+   *
+   * The default is a rectangle matching the monomer body; renderers with a
+   * different body shape (e.g. phosphates, RNA bases) override this. The
+   * optional offset lets transient views request an inflated path while keeping
+   * the body-shape knowledge inside the renderer.
+   */
+  public getHighlightPath(offset = 0): HighlightPathData {
+    return createRectHighlightPath(
+      this.center,
+      this.monomerSize.width,
+      this.monomerSize.height,
+      offset,
     );
   }
 

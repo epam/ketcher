@@ -37,6 +37,7 @@ const PreviewContainer = styled.div`
 export const Preview = () => {
   const preview = useAppSelector(selectShowPreview);
   const previewRef = useRef<HTMLDivElement>(null);
+  const isPreviewVisible = Boolean(preview?.type);
   const editor = useSelector(selectEditor);
 
   useLayoutEffect(() => {
@@ -108,7 +109,7 @@ export const Preview = () => {
     } else {
       previewRef.current.setAttribute('style', '');
     }
-  }, [preview]);
+  }, [editor?.ketcherRootElementBoundingClientRect, isPreviewVisible, preview]);
 
   if (!preview) {
     return null;

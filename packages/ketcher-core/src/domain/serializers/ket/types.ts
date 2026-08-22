@@ -21,6 +21,7 @@ import type {
 import type { AtomCIP, BondCIP } from 'domain/entities/types';
 import type { StructProperty } from 'domain/entities/struct';
 import type { Vec2 } from 'domain/entities/vec2';
+import type { SimpleObjectAttributes } from 'domain/entities/simpleObject';
 
 export interface KetAtomNode {
   type?: 'atom-list';
@@ -113,4 +114,10 @@ export interface KetItem {
   rlogic?: {
     number: number;
   };
+}
+
+export interface KetSimpleObjectNode {
+  type: 'simpleObject';
+  data: SimpleObjectAttributes;
+  selected?: boolean;
 }

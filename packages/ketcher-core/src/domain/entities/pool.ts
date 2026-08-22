@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +15,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-export class Pool<TValue = any> extends Map<number, TValue> {
+interface WithResetInitiallySelected {
+  resetInitiallySelected(invalidate?: boolean): void;
+}
+
+function hasResetInitiallySelected(
+  value: unknown,
+): value is WithResetInitiallySelected {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    'resetInitiallySelected' in value &&
+    typeof (value as WithResetInitiallySelected).resetInitiallySelected ===
+      'function'
+  );
+}
+
+export class Pool<TValue = unknown> extends Map<number, TValue> {
   private nextId = 0;
 
   add(item: TValue): number {
@@ -61,11 +78,7 @@ export class Pool<TValue = any> extends Map<number, TValue> {
 
   changeInitiallySelectedPropertiesForPool(invalidate?: boolean): void {
     this.forEach((value, key) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (typeof value.resetInitiallySelected === 'function') {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+      if (hasResetInitiallySelected(value)) {
         value.resetInitiallySelected(invalidate);
         this.set(key, value);
       }

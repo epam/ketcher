@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -13,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+/* eslint-disable react-hooks/refs */
 
 import { useState, useRef, useCallback, useEffect, RefObject } from 'react';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR, Icon } from 'ketcher-react';

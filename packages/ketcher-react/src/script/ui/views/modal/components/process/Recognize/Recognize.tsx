@@ -163,7 +163,6 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
     >
       <div className={classes.topBody}>
         <label className={classes.imagoVersion}>
-          {/* eslint-disable jsx-a11y/label-has-associated-control */}
           Imago version
           <Input
             type="text"

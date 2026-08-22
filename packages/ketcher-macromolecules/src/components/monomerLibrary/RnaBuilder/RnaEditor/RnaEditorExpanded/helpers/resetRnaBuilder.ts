@@ -18,10 +18,15 @@ export const resetRnaBuilder = (dispatch: Dispatch<AnyAction>) => {
 export const resetRnaBuilderAfterSequenceUpdate = (
   dispatch: Dispatch<AnyAction>,
   editor: CoreEditor | undefined,
+  keepSelection = false,
 ) => {
   resetRnaBuilderCommon(dispatch);
   dispatch(setSequenceSelection([]));
-  editor?.events.turnOffSequenceEditInRNABuilderMode.dispatch();
+  editor?.events.turnOffSequenceEditInRNABuilderMode.dispatch(!keepSelection);
   if (editor?.mode?.modeName === 'sequence-layout-mode')
-    (editor.mode as unknown as { turnOffEditMode(): void }).turnOffEditMode();
+    (
+      editor.mode as unknown as {
+        turnOffEditMode(needToRemoveSelection?: boolean): void;
+      }
+    ).turnOffEditMode(!keepSelection);
 };

@@ -8,7 +8,7 @@ export interface SequenceMode {
   deleteSelection(): void;
   turnOnEditMode(sequenceItemRenderer?: BaseSequenceItemRenderer): void;
   turnOnSequenceEditInRNABuilderMode(): void;
-  turnOffSequenceEditInRNABuilderMode(): void;
+  turnOffSequenceEditInRNABuilderMode(needToRemoveSelection?: boolean): void;
   turnOnSyncEditMode(): void;
   turnOffSyncEditMode(): void;
   resetEditMode(): void;

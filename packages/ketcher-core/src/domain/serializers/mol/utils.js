@@ -135,21 +135,25 @@ const FRAGMENT = {
 
 const SHOULD_RESCALE_MOLECULES = true;
 
-function calculateAverageBondLength(mols) {
-  const bondLengthData = { cnt: 0, totalLength: 0 };
+// Pooled across every fragment of the reaction so reactants, agents and products
+// keep their sizes relative to one another.
+function calculateMedianBondLength(mols) {
+  const lengths = [];
   for (const mol of mols) {
-    const bondLengthDataMol = mol.getBondLengthData();
-    bondLengthData.cnt += bondLengthDataMol.cnt;
-    bondLengthData.totalLength += bondLengthDataMol.totalLength;
+    // Appended one by one on purpose: push(...arr) overflows the stack once a
+    // reaction carries more than ~100k bonds across all its fragments.
+    for (const length of mol.getBondLengths()) {
+      lengths.push(length);
+    }
   }
-  return bondLengthData.cnt === 0
-    ? 1
-    : bondLengthData.totalLength / bondLengthData.cnt;
+  const median = Struct.median(lengths);
+  return median > 0 ? median : 1;
 }
 
+// Same normalization rule as Struct.rescale(): median bond length, not mean.
 function rescaleMolecules(mols) {
-  const avgBondLength = calculateAverageBondLength(mols);
-  const scaleFactor = 1 / avgBondLength;
+  const medianBondLength = calculateMedianBondLength(mols);
+  const scaleFactor = 1 / medianBondLength;
   for (const mol of mols) {
     mol.scale(scaleFactor);
   }

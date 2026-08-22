@@ -107,33 +107,27 @@ import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
-import type { KetFileImageNode } from 'domain/entities/image';
-import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
-import type { KetFileNode } from 'domain/serializers/serializers.types';
+import type { KetNode } from './types';
 
-type KetMicromoleculeNode = {
-  type?: string;
-  $ref?: string;
-  stereoFlagPosition?: Point;
-};
+type KetNodeRef = { $ref: string };
 
 interface IKetMicromoleculeFile {
   header?: { moleculeName?: string };
   root: {
-    nodes: Record<string, KetMicromoleculeNode>;
+    nodes: Record<string, KetNode | KetNodeRef>;
   };
   // Allows dynamic $ref key lookup: ket[nodes[i].$ref!]
   [key: string]: unknown;
 }
 
 interface IKetMicromoleculeSerializedResult {
-  root: { nodes: KetMicromoleculeNode[] };
+  root: { nodes: (KetNode | KetNodeRef)[] };
   header?: unknown;
   // Allows dynamic property assignment for mol/rg sections: result[`mol${id}`], result[`rg${id}`]
   [key: string]: unknown;
 }
 
-function parseNode(node: KetMicromoleculeNode, struct: Struct) {
+function parseNode(node: KetNode, struct: Struct) {
   const type = node.type;
   switch (type) {
     case 'arrow':
@@ -166,14 +160,11 @@ function parseNode(node: KetMicromoleculeNode, struct: Struct) {
       break;
     }
     case MULTITAIL_ARROW_SERIALIZE_KEY: {
-      multitailArrowToStruct(
-        node as unknown as KetFileNode<KetFileMultitailArrowNode>,
-        struct,
-      );
+      multitailArrowToStruct(node, struct);
       break;
     }
     case IMAGE_SERIALIZE_KEY: {
-      imageToStruct(node as unknown as KetFileImageNode, struct);
+      imageToStruct(node, struct);
       break;
     }
     default:
@@ -210,9 +201,11 @@ export class KetSerializer implements Serializer<Struct> {
     const nodes = ket.root.nodes;
 
     Object.keys(nodes).forEach((i) => {
-      if (nodes[i].type) parseNode(nodes[i], resultingStruct);
-      else if (nodes[i].$ref) {
-        parseNode(ket[nodes[i].$ref] as KetMicromoleculeNode, resultingStruct);
+      const entry = nodes[i];
+      if ('type' in entry) {
+        parseNode(entry, resultingStruct);
+      } else if ('$ref' in entry) {
+        parseNode(ket[entry.$ref] as KetNode, resultingStruct);
       }
     });
     resultingStruct.name = ket.header?.moleculeName ?? '';

@@ -18,6 +18,7 @@
 
 import {
   type Editor as KetcherEditor,
+  type EditorSubscriber,
   type FloatingToolsParams,
   type IKetAttachmentPoint,
   type IKetTemplateConnection,
@@ -1044,9 +1045,7 @@ class Editor implements KetcherEditor {
   private originalHistoryPointer = 0;
   private readonly selectedToOriginalAtomsIdMap = new Map<number, number>();
 
-  private changeEventSubscriber: {
-    handler: ((action?: unknown) => void) | ((data: ChangeEventData[]) => void);
-  } | null = null;
+  private changeEventSubscriber: EditorSubscriber | null = null;
 
   openMonomerCreationWizard(
     selectionOverride?: Selection,
@@ -2849,8 +2848,15 @@ class Editor implements KetcherEditor {
       return;
     }
 
-    const handleChangeEvent = (data: ChangeEventData[]) => {
-      if (!this.isMonomerCreationWizardActive || data.length === 0) {
+    const handleChangeEvent = (data?: unknown) => {
+      if (
+        !this.isMonomerCreationWizardActive ||
+        !this.isChangeEventDataArray(data)
+      ) {
+        return;
+      }
+
+      if (data.length === 0) {
         return;
       }
 
@@ -2898,6 +2904,16 @@ class Editor implements KetcherEditor {
     });
 
     this.invalidateMonomerCreationWizardState(changesMap);
+  }
+
+  private isChangeEventDataArray(data: unknown): data is ChangeEventData[] {
+    return (
+      Array.isArray(data) &&
+      data.every(
+        (entry) =>
+          entry !== null && typeof entry === 'object' && 'operation' in entry,
+      )
+    );
   }
 
   private invalidateMonomerCreationWizardState(
@@ -3403,21 +3419,16 @@ class Editor implements KetcherEditor {
 
   subscribe(
     eventName: string,
-    handler: ((data?: unknown) => void) | ((data: ChangeEventData[]) => void),
-  ) {
-    const subscriber: {
-      handler: ((data?: unknown) => void) | ((data: ChangeEventData[]) => void);
-    } = {
+    handler: (data?: unknown) => void,
+  ): EditorSubscriber {
+    const subscriber: EditorSubscriber = {
       handler,
     };
 
     switch (eventName) {
       case 'change': {
         const subscribeFuncWrapper = (action: unknown) => {
-          customOnChangeHandler(
-            action as unknown,
-            handler as (data?: unknown) => void,
-          );
+          customOnChangeHandler(action as unknown, handler);
         };
         subscriber.handler = subscribeFuncWrapper;
         ketcherProvider
@@ -3440,12 +3451,7 @@ class Editor implements KetcherEditor {
     return subscriber;
   }
 
-  unsubscribe(
-    eventName: string,
-    subscriber: {
-      handler: ((data?: unknown) => void) | ((data: ChangeEventData[]) => void);
-    },
-  ): void {
+  unsubscribe(eventName: string, subscriber: EditorSubscriber): void {
     switch (eventName) {
       case 'change': {
         ketcherProvider

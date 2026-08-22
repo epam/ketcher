@@ -33,10 +33,15 @@ test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 const waitForLibraryUpdate = async (page: Page, timeout = 20_000) => {
   return await page.evaluate(
     async ({ timeout }: { timeout: number }) => {
-      return new Promise<string>((resolve) => {
+      return new Promise<string>((resolve, reject) => {
         let resolved = false;
 
-        const handler = (sdf: string) => {
+        const handler = (sdf?: unknown) => {
+          if (typeof sdf !== 'string') {
+            reject(new Error('libraryUpdate payload must be a string'));
+            return;
+          }
+
           resolved = true;
           resolve(sdf);
         };

@@ -29,7 +29,6 @@ const ElementNumber = (props: Props) => {
 
   return (
     <label>
-      {/* eslint-disable jsx-a11y/label-has-associated-control */}
       <span>Number</span>
       <input
         type="text"

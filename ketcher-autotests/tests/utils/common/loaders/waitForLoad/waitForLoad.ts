@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { waitForRender } from '../waitForRender';

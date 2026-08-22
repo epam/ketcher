@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { expect, test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,

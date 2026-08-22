@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
+/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -48,7 +51,7 @@ export const CDXStructuresViewer = ({
   const editorOptions = useSelector(editorOptionsSelector);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [itemsMap, setItemsMap] = useState<itemsMapInterface>({});
-  const [loading, setLoading] = useState(false);
+  const loading = !!structList[selectedIndex] && !itemsMap[selectedIndex];
 
   useEffect(() => {
     if (!itemsMap[selectedIndex] || itemsMap[selectedIndex].error) {
@@ -59,24 +62,18 @@ export const CDXStructuresViewer = ({
   }, [inputHandler, itemsMap, selectedIndex]);
 
   const getImage = (str, index) => {
-    setLoading(true);
     parseStruct(str, server)
       .then((struct) => {
-        const object = {
-          base64struct: str,
-          struct,
-        };
-        setItemsMap((state) => ({ ...state, [index]: object }));
+        setItemsMap((state) => ({
+          ...state,
+          [index]: { base64struct: str, struct },
+        }));
       })
       .catch((error) => {
-        const object = {
-          base64struct: str,
-          error: error.message || error,
-        };
-        setItemsMap((state) => ({ ...state, [index]: object }));
-      })
-      .finally(() => {
-        setLoading(false);
+        setItemsMap((state) => ({
+          ...state,
+          [index]: { base64struct: str, error: error.message || error },
+        }));
       });
   };
 

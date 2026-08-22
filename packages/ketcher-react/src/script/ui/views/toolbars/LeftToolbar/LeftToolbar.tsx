@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* eslint-disable react-hooks/refs */
+
 import { type RefObject, useRef } from 'react';
 import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
 import {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -34,6 +35,7 @@ import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
 import type { Tool } from './Tool';
 import { debounce } from 'lodash';
+import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 let isMovePreviewCalculationInProgress = false;
 
@@ -261,7 +263,7 @@ class PasteTool implements Tool {
     );
 
     if (groupsIdsInvolvedInMerge.length) {
-      this.editor.event.removeFG.dispatch({ fgIds: groupsIdsInvolvedInMerge });
+      dispatchMonomerOrGroupDialog(this.editor, groupsIdsInvolvedInMerge);
       return;
     }
 
@@ -323,7 +325,7 @@ function prepareTemplateFromSingleGroup(molecule: Struct): Template | null {
   const xy0 = new Vec2();
 
   molecule.atoms.forEach((atom) => {
-    xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
+    xy0.add_(atom.pp);
   });
 
   template.aid = sgroup?.getAttachmentAtomId() ?? 0;

@@ -197,10 +197,12 @@ class SelectTool implements Tool {
       };
     } else if (ci.map === 'rgroups') {
       const rgroup = ctab.rgroups.get(ci.id);
-      sel = {
-        atoms: rgroup.getAtoms(rnd),
-        bonds: rgroup.getBonds(rnd),
-      };
+      if (rgroup) {
+        sel = {
+          atoms: rgroup.getAtoms(rnd),
+          bonds: rgroup.getBonds(rnd),
+        };
+      }
     } else if (ci.map === 'sgroupData') {
       if (isSelected(selection, ci)) return;
     }

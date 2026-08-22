@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import { type ReStruct, ketcherProvider, Pile } from 'ketcher-core';
 import { useCallback, useRef } from 'react';
 import { useAppContext } from 'src/hooks';
@@ -23,15 +25,23 @@ const useBondSGroupEdit = () => {
   // In react-contexify, `disabled` is executed before `hidden`
   const disabled = useCallback(
     ({ props }: Params) => {
+      const bondIds = props?.bondIds;
+      if (!bondIds) {
+        return true;
+      }
+
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const struct: ReStruct = editor.render.ctab;
-      const bondIds = props!.bondIds!;
 
       if (bondIds.length > 1) {
         return true;
       }
 
-      const bond = struct.bonds.get(bondIds[0])!;
+      const bond = struct.bonds.get(bondIds[0]);
+      if (!bond) {
+        return true;
+      }
+
       sGroupsRef.current = bond.b.getAttachedSGroups(struct.molecule);
 
       return sGroupsRef.current.size > 1;

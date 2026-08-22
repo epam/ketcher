@@ -117,6 +117,7 @@ export class Molfile {
               `Error: ${
                 isErrorWithMessage(error) ? error.message : String(error)
               }`,
+              { cause: error },
             );
           }
           errorIgnore = true;

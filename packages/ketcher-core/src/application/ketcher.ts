@@ -381,6 +381,7 @@ export class Ketcher {
           error instanceof Error ? error.message : 'Unknown error occurred';
         throw new Error(
           `Failed to convert structure to ${format} format: ${errorMessage}`,
+          { cause: error },
         );
       }
     }
@@ -782,7 +783,7 @@ export class Ketcher {
       outputFormat: 'png',
     },
   ): Promise<Blob> {
-    let meta = '';
+    let meta: string;
 
     switch (options.outputFormat) {
       case 'svg':

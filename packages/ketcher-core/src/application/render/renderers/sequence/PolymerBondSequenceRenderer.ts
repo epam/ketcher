@@ -120,7 +120,7 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
   }
 
   private getBondPath() {
-    let path = '';
+    let path: string;
     if (this.areMonomersOnSameRow) {
       path = `M ${this.scaledPosition.startPosition.x + 6},
       ${this.mainLineY.mainLineY1 + 5} 

@@ -360,7 +360,7 @@ export class AttachmentPoint {
     polymerBond: PolymerBond | MonomerToAtomBond,
     flip = false,
   ) {
-    let angleRadians = 0;
+    let angleRadians: number;
     if (flip) {
       angleRadians = Vec2.oxAngleForVector(
         polymerBond.endPosition,

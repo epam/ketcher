@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -80,7 +81,7 @@ class TemplateTool implements Tool {
 
     const xy0 = new Vec2();
     frag.atoms.forEach((atom) => {
-      xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
+      xy0.add_(atom.pp);
     });
 
     const xy0Center = xy0.scaled(1 / (frag.atoms.size || 1));
@@ -265,7 +266,10 @@ class TemplateTool implements Tool {
 
     if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       // calculate fragment center
-      const bond = this.struct.bonds.get(ci.id)!;
+      const bond = this.struct.bonds.get(ci.id);
+      if (!bond) {
+        return;
+      }
 
       // calculate default template flip
       dragCtx.sign1 = getBondFlipSign(this.struct, bond);
@@ -484,7 +488,10 @@ class TemplateTool implements Tool {
       this.targetGroupsIds.length
     ) {
       const restruct = this.editor.render.ctab;
-      const functionalGroupToReplace = this.struct.sgroups.get(ci.id)!;
+      const functionalGroupToReplace = this.struct.sgroups.get(ci.id);
+      if (!functionalGroupToReplace) {
+        return;
+      }
 
       if (
         this.isSaltOrSolvent &&

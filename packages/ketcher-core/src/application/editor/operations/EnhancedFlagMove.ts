@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -23,11 +25,11 @@ import type { ReStruct } from '../../render';
 
 export class EnhancedFlagMove extends BaseOperation {
   data: {
-    frid: any;
-    p: any;
+    frid: number | undefined;
+    p: Vec2 | undefined;
   };
 
-  constructor(fragmentId?: any, p?: any) {
+  constructor(fragmentId?: number, p?: Vec2) {
     super(OperationType.ENHANCED_FLAG_MOVE);
     this.data = { frid: fragmentId, p };
   }
@@ -35,12 +37,14 @@ export class EnhancedFlagMove extends BaseOperation {
   execute(restruct: ReStruct) {
     const { frid } = this.data;
     const { p } = this.data;
+    if (frid === undefined || p === undefined) return;
     const fragment = restruct.molecule.frags.get(frid);
     if (!fragment) return;
 
     const currentPosition = fragment.stereoFlagPosition
       ? new Vec2(fragment.stereoFlagPosition.x, fragment.stereoFlagPosition.y)
-      : Fragment.getDefaultStereoFlagPosition(restruct.molecule, frid)!;
+      : Fragment.getDefaultStereoFlagPosition(restruct.molecule, frid);
+    if (!currentPosition) return;
 
     const newPosition = Vec2.sum(currentPosition, p);
     fragment.stereoFlagPosition = newPosition;

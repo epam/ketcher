@@ -63,6 +63,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private path = '';
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
   private sideConnectionBondTurnPoint?: number;
+  private hoverLineAreaElement?: D3SvgElementSelection<SVGLineElement, void>;
   public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
@@ -939,16 +940,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   private moveGraphBondEnd(): void {
     assert(this.bodyElement);
-    assert(this.hoverAreaElement);
+    assert(this.hoverLineAreaElement);
     this.bodyElement
       .attr('x2', this.scaledPosition.endPosition.x)
       .attr('y2', this.scaledPosition.endPosition.y);
 
-    this.hoverAreaElement
+    this.hoverLineAreaElement
       .attr('x2', this.scaledPosition.endPosition.x)
-      // TODO fix type error appeared without ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       .attr('y2', this.scaledPosition.endPosition.y);
 
     this.hoverCircleAreaElement
@@ -974,16 +972,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   private moveGraphBondStart(): void {
     assert(this.bodyElement);
-    assert(this.hoverAreaElement);
+    assert(this.hoverLineAreaElement);
     this.bodyElement
       .attr('x1', this.scaledPosition.startPosition.x)
       .attr('y1', this.scaledPosition.startPosition.y);
 
-    this.hoverAreaElement
+    this.hoverLineAreaElement
       .attr('x1', this.scaledPosition.startPosition.x)
-      // TODO fix type error appeared without ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       .attr('y1', this.scaledPosition.startPosition.y);
 
     this.selectionElement
@@ -1003,7 +998,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         .attr('fill-opacity', 0)
         .attr('stroke-width', '5');
     } else {
-      this.hoverAreaElement = this.rootElement
+      this.hoverLineAreaElement = this.rootElement
         ?.append('line')
         .attr('stroke', 'transparent')
         .attr('x1', this.scaledPosition.startPosition.x)
@@ -1011,6 +1006,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         .attr('x2', this.scaledPosition.endPosition.x)
         .attr('y2', this.scaledPosition.endPosition.y)
         .attr('stroke-width', '10');
+      this.hoverAreaElement = this.hoverLineAreaElement;
 
       this.hoverCircleAreaElement = this.rootElement
         ?.append('circle')

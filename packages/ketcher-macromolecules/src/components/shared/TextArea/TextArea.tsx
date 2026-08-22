@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -63,7 +62,7 @@ export const TextArea = ({
     if (selectOnInit) {
       textArea.current?.select();
     }
-  }, [textArea, value, selectOnInit]);
+  }, [selectOnInit]);
 
   return (
     <StyledTextarea

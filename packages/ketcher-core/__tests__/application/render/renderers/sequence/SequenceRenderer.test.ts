@@ -131,7 +131,7 @@ describe('SequenceRenderer', () => {
     // ClearTool performs all of its work in the constructor as a side effect.
     // Instantiating it is how the tool is "run",
     // so the constructed instance is intentionally discarded.
-    // eslint-disable-next-line no-new
+
     // @ts-expect-error TS6133.
     const _ = new ClearTool(editor);
 

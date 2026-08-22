@@ -22,7 +22,6 @@ import { IndigoProvider } from 'ketcher-react';
 import { type CoreEditor, Struct } from 'ketcher-core';
 import * as ketcherCore from 'ketcher-core';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 jest.spyOn(React, 'useEffect').mockImplementation(() => {});
 global.ketcher = {
   logging: jest.fn(),

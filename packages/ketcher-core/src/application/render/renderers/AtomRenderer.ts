@@ -281,7 +281,7 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = provideEditorInstance().viewModel;
     const atomHaldEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
-    if (atomHaldEdges?.length === 0) {
+    if (!atomHaldEdges?.length) {
       if (this.atom.label === AtomLabel.D || this.atom.label === AtomLabel.T) {
         return false;
       } else {
@@ -310,6 +310,13 @@ export class AtomRenderer extends BaseRenderer {
   /** True when the atom's label is a generic / pseudo query atom (e.g. A, Q, M, X, *). */
   public get isGenericLabel(): boolean {
     return isGenericAtom(this.atom.label);
+  }
+
+  // A bondless D/T isotope still needs its implicit hydrogen suffix (DH, TH); only a
+  // bare "H" label must merge the implicit hydrogen into its own count instead of
+  // repeating the letter (H2, not HH).
+  private get isHydrogenLabel() {
+    return this.atom.label === AtomLabel.H;
   }
 
   /** The label text shown on canvas — truncated to MAX_LABEL_LENGTH if necessary. */
@@ -443,6 +450,12 @@ export class AtomRenderer extends BaseRenderer {
       hydrogenAmount = 0;
     }
 
+    const isHydrogenLabel = this.isHydrogenLabel;
+    if (isHydrogenLabel && hydrogenAmount > 0) {
+      // The label itself already shows one hydrogen, so fold the implicit amount into it.
+      hydrogenAmount += 1;
+    }
+
     const textElement = this.rootElement
       ?.append('text')
       .attr('y', 5)
@@ -463,7 +476,7 @@ export class AtomRenderer extends BaseRenderer {
         .text(this.displayLabelText);
     }
 
-    if (!this.atom.hasAlias && hydrogenAmount > 0) {
+    if (!this.atom.hasAlias && hydrogenAmount > 0 && !isHydrogenLabel) {
       textElement
         ?.append('tspan')
         .attr(
@@ -475,6 +488,8 @@ export class AtomRenderer extends BaseRenderer {
       if (hydrogenAmount > 1) {
         textElement?.append('tspan').text(hydrogenAmount).attr('dy', 3);
       }
+    } else if (isHydrogenLabel && hydrogenAmount > 0) {
+      textElement?.append('tspan').text(hydrogenAmount).attr('dy', 3);
     }
 
     if (shouldHydrogenBeOnLeft) {
@@ -529,6 +544,8 @@ export class AtomRenderer extends BaseRenderer {
     this.badValenceElement?.remove();
     this.badValenceElement = undefined;
     this.updateSelectionContour();
+    // Hover contour is the only hit-testable element; recreate it after removal.
+    this.hoverElement = this.appendHover();
     this.appendAtomProperties();
     this.appendBadValenceWarning();
   }
@@ -980,6 +997,8 @@ export class AtomRenderer extends BaseRenderer {
     this.removeSelection();
     this.cipLabelElement?.remove();
     this.stereoLabelElement?.remove();
+    // Clear stale ref so show() recreates the hover contour in the new root (#10856).
+    this.hoverElement = undefined;
     super.remove();
   }
 

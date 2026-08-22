@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -29,7 +31,7 @@ interface TextCreateData {
   position: Vec2;
 }
 
-export class TextCreate extends BaseOperation {
+export class TextCreate extends BaseOperation<TextCreateData> {
   readonly data: TextCreateData;
 
   constructor(content: string, position: Vec2, pos: Array<Vec2>, id?: number) {
@@ -55,7 +57,7 @@ export class TextCreate extends BaseOperation {
     BaseOperation.invalidateItem(restruct, 'texts', itemId, 1);
   }
 
-  invert(): BaseOperation {
+  invert(): TextDelete {
     return new TextDelete(this.data.id!);
   }
 }
@@ -67,7 +69,7 @@ interface TextDeleteData {
   pos?: Array<Vec2> | [];
 }
 
-export class TextDelete extends BaseOperation {
+export class TextDelete extends BaseOperation<TextDeleteData> {
   readonly data: TextDeleteData;
 
   constructor(id: number) {

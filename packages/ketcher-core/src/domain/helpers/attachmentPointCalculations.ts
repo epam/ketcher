@@ -5,7 +5,6 @@ import type { AttachmentPointName } from 'domain/types';
 
 export type Coordinates = { x: number; y: number };
 
-// eslint-disable-next-line camelcase
 export function canvasToMonomerCoordinates(
   coordinatesOnCanvas: Coordinates,
   centerOFMonomer: Coordinates,
@@ -209,8 +208,8 @@ export const anglesToSector = {
 export enum attachmentPointNumberToAngle {
   'R1' = 0,
   'R2' = 180,
-  'R3' = 90,
-  'R4' = 270,
+  'R3' = 270,
+  'R4' = 90,
   'R5' = 45,
   'R6' = 135,
   'R7' = 315,

@@ -2,7 +2,7 @@ import type { BaseRenderer } from 'application/render';
 import type { SGroupRenderer } from 'application/render/renderers/SGroupRenderer';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import type { SGroup } from 'domain/entities/sgroup';
+import { SGroup } from 'domain/entities/sgroup';
 import { Vec2 } from 'domain/entities/vec2';
 
 export class SGroupDrawingEntity extends DrawingEntity {
@@ -17,7 +17,23 @@ export class SGroupDrawingEntity extends DrawingEntity {
   }
 
   public get center(): Vec2 {
+    if (this.isSelectableDataSGroup && this.sgroup.pp) {
+      return this.sgroup.pp;
+    }
+
     return SGroupDrawingEntity.getCenter(this.sgroup, this.monomer);
+  }
+
+  public get isSelectableDataSGroup(): boolean {
+    return this.sgroup.type === SGroup.TYPES.DAT && !this.sgroup.data.attached;
+  }
+
+  public moveRelative(position: Vec2): void {
+    super.moveRelative(position);
+
+    if (this.isSelectableDataSGroup) {
+      this.sgroup.pp?.add_(position);
+    }
   }
 
   public setRenderer(renderer: SGroupRenderer): void {

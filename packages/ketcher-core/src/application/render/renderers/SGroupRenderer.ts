@@ -46,6 +46,9 @@ interface DrawBracketsOptions {
 
 export class SGroupRenderer extends BaseRenderer {
   private labelElements: D3SvgElementSelection<SVGElement, void>[] = [];
+  private dataSGroupValueElements: D3SvgElementSelection<SVGGElement, void>[] =
+    [];
+
   private atomRenderers = new Map<number, AtomRenderer>();
   private bondRenderers = new Map<number, BondRenderer>();
 
@@ -413,24 +416,32 @@ export class SGroupRenderer extends BaseRenderer {
     scaledPosition: Vec2,
     getLabelShift: (bbox: SVGRect) => Vec2,
   ): void {
-    const valueGroup = this.addLabelElement(this.canvas.append('g'));
+    const valueGroup = this.canvas.append('g');
+    if (this.sgroupDrawingEntity.isSelectableDataSGroup) {
+      valueGroup.datum(this);
+    }
+    this.addLabelElement(valueGroup);
+    this.dataSGroupValueElements.push(valueGroup);
     const textElement = this.appendText(
       scaledPosition,
       this.sgroup.data.fieldValue,
       undefined,
       valueGroup,
     );
+    if (this.sgroupDrawingEntity.isSelectableDataSGroup) {
+      textElement?.datum(this);
+    }
     const bbox = textElement?.node()?.getBBox();
 
     if (!bbox) {
       return;
     }
 
-    const valueBackgroundColor = this.sgroup.selected
+    const valueBackgroundColor = this.sgroupDrawingEntity.selected
       ? SELECTION_COLOR
       : DATA_SGROUP_BACKGROUND;
 
-    valueGroup
+    const valueBackground = valueGroup
       .insert('rect', 'text')
       .attr('x', bbox.x - 1)
       .attr('y', bbox.y - 1)
@@ -440,6 +451,10 @@ export class SGroupRenderer extends BaseRenderer {
       .attr('ry', 3)
       .attr('fill', valueBackgroundColor)
       .attr('stroke', valueBackgroundColor);
+
+    if (this.sgroupDrawingEntity.isSelectableDataSGroup) {
+      valueBackground.datum(this);
+    }
 
     const valueBBox = valueGroup.node()?.getBBox();
 
@@ -499,6 +514,7 @@ export class SGroupRenderer extends BaseRenderer {
       labelElement.remove();
     });
     this.labelElements = [];
+    this.dataSGroupValueElements = [];
   }
 
   public setVisibility(isVisible: boolean): void {
@@ -509,11 +525,21 @@ export class SGroupRenderer extends BaseRenderer {
   }
 
   public drawSelection(): void {
-    // S-groups are rendered as non-selectable macro overlays.
+    const valueBackgroundColor = this.sgroupDrawingEntity.selected
+      ? SELECTION_COLOR
+      : DATA_SGROUP_BACKGROUND;
+
+    this.dataSGroupValueElements.forEach((valueElement) => {
+      valueElement
+        .select('rect')
+        .attr('fill', valueBackgroundColor)
+        .attr('stroke', valueBackgroundColor);
+    });
   }
 
   public moveSelection(): void {
-    // S-groups are rendered as non-selectable macro overlays.
+    this.remove();
+    this.show();
   }
 
   private getScaledBracketBox(): Box2Abs | undefined {
@@ -666,7 +692,11 @@ export class SGroupRenderer extends BaseRenderer {
   }
 
   protected appendHoverAreaElement(): void {
-    if (!this.rootElement || !this.sgroup.bracketBox) {
+    if (
+      !this.rootElement ||
+      !this.sgroup.bracketBox ||
+      this.sgroupDrawingEntity.isSelectableDataSGroup
+    ) {
       return;
     }
 

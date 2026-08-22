@@ -351,6 +351,9 @@ export class DrawingEntitiesManager {
       ...(this.multitailArrows as Map<number, DrawingEntity>),
       ...(this.rxnPluses as Map<number, DrawingEntity>),
       ...(this.stereoFlags as Map<number, DrawingEntity>),
+      ...([...this.sgroups].filter(
+        ([, sgroup]) => sgroup.isSelectableDataSGroup,
+      ) as [number, DrawingEntity][]),
     ];
   }
 
@@ -665,6 +668,7 @@ export class DrawingEntitiesManager {
       ...this.multitailArrows.values(),
       ...this.rxnPluses.values(),
       ...this.stereoFlags.values(),
+      ...this.sgroups.values(),
     ].forEach((drawingEntity) => {
       if (
         drawingEntity instanceof BaseMonomer &&
@@ -2935,6 +2939,12 @@ export class DrawingEntitiesManager {
       drawingEntities.push(drawingEntity);
       command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
     };
+
+    if (sgroupDrawingEntity.isSelectableDataSGroup) {
+      addDrawingEntity(sgroupDrawingEntity);
+
+      return { command, drawingEntities };
+    }
 
     this.atoms.forEach((atom) => {
       if (

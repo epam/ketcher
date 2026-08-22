@@ -56,7 +56,10 @@ export const SequenceSyncEditModeButton = () => {
   );
 
   const isSequenceSyncEditModeRef = useRef(isSequenceSyncEditMode);
-  isSequenceSyncEditModeRef.current = isSequenceSyncEditMode;
+
+  useEffect(() => {
+    isSequenceSyncEditModeRef.current = isSequenceSyncEditMode;
+  }, [isSequenceSyncEditMode]);
 
   const handleClick = () => {
     const isSequenceSyncEditModeNewState = !isSequenceSyncEditMode;
@@ -70,25 +73,26 @@ export const SequenceSyncEditModeButton = () => {
 
   useEffect(() => {
     const updateHasAntisenseChains = () => {
-      setHasAtLeastOneAntisense(
-        Boolean(editor?.drawingEntitiesManager?.hasAntisenseChains),
+      const hasAntisenseChains = Boolean(
+        editor?.drawingEntitiesManager?.hasAntisenseChains,
       );
+
+      setHasAtLeastOneAntisense(hasAntisenseChains);
+
+      if (isSequenceMode && hasAntisenseChains) {
+        editor?.events.toggleIsSequenceSyncEditMode.dispatch(
+          isSequenceSyncEditModeRef.current,
+        );
+      }
     };
 
+    updateHasAntisenseChains();
     editor?.events.modelChange.add(updateHasAntisenseChains);
 
     return () => {
       editor?.events.modelChange.remove(updateHasAntisenseChains);
     };
-  }, [editor]);
-
-  useEffect(() => {
-    if (isSequenceMode && hasAtLeastOneAntisense) {
-      editor?.events.toggleIsSequenceSyncEditMode.dispatch(
-        isSequenceSyncEditModeRef.current,
-      );
-    }
-  }, [isSequenceMode, hasAtLeastOneAntisense, editor]);
+  }, [editor, isSequenceMode]);
 
   return isSequenceMode && hasAtLeastOneAntisense ? (
     <StyledButton

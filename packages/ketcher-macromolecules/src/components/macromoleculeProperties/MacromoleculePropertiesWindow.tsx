@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/use-memo */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -13,6 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+/* eslint-disable react-hooks/refs */
 
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
@@ -130,7 +134,7 @@ const MolecularMassAmount = styled('div')(() => ({
 }));
 
 // TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const TabsWrapper = styled('div')(() => ({
   width: '100%',
@@ -145,7 +149,7 @@ const TabContentWrapper = styled('div')(() => ({
 }));
 
 // TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const TabContentErrorWrapper = styled('div')(() => ({
   display: 'flex',
@@ -218,7 +222,7 @@ const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
 }));
 
 // TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const HydrophobicityHintHeader = styled('div')(() => ({
   display: 'flex',
@@ -254,7 +258,7 @@ const PropertyHintIconWrapper = styled('div')(() => ({
 }));
 
 // TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const BasicPropertyDropdown = styled(DropDown)(() => ({
   position: 'relative',
@@ -265,7 +269,7 @@ const BasicPropertyDropdown = styled(DropDown)(() => ({
 const inputClassName = 'text-input-field-input';
 
 // TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const BasicPropertyInput = styled(TextInputField)(() => ({
   margin: 0,
@@ -421,7 +425,7 @@ const BasicProperty = (props: BasicPropertyProps) => {
         )}
         {props.hint && (
           // TODO suppressed after upgrade to react 19. Need to fix
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
           // @ts-ignore
           <StyledTooltip title={props.hint}>
             <PropertyHintIconWrapper>

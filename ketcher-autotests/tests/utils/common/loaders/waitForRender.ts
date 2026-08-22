@@ -3,7 +3,7 @@ import { logTestWarning } from '@utils/testLogging';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyFunction = (...args: any) => Promise<any>;
-// eslint-disable-next-line @typescript-eslint/no-empty-function
+
 const emptyFunction: AnyFunction = async () => {};
 
 export const waitForRender = async (

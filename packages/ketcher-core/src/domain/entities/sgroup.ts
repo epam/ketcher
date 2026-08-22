@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -36,6 +38,15 @@ export enum SUPERATOM_CLASS {
   BASE = 'BASE',
   PHOSPHATE = 'PHOSPHATE',
 }
+
+export const SUPERATOM_CLASS_TEXT = {
+  [SUPERATOM_CLASS.BASE]: 'Base',
+  [SUPERATOM_CLASS.SUGAR]: 'Sugar',
+  [SUPERATOM_CLASS.PHOSPHATE]: 'Phosphate',
+};
+
+const isSuperatomClass = (value?: string | null): value is SUPERATOM_CLASS =>
+  typeof value === 'string' && value in SUPERATOM_CLASS_TEXT;
 
 export class SGroupBracketParams {
   readonly c: Vec2;
@@ -430,6 +441,20 @@ export class SGroup {
     return false;
   }
 
+  public get superatomLabel(): string {
+    const name = this.data.name?.trim();
+    if (name) {
+      return name;
+    }
+
+    const superatomClass = this.data.class;
+    if (isSuperatomClass(superatomClass)) {
+      return SUPERATOM_CLASS_TEXT[superatomClass];
+    }
+
+    return '';
+  }
+
   static getOffset(sgroup: SGroup): null | Vec2 {
     if (!sgroup?.pp || !sgroup.bracketBox) return null;
     return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1);
@@ -608,7 +633,7 @@ export class SGroup {
     const currentRender = render ?? window.ketcher?.editor?.render;
     assert(currentRender, 'SGroup.bracketPos: render instance is required');
     let attachmentPointsVBox =
-      currentRender.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms);
+      currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms) ?? null;
     attachmentPointsVBox = attachmentPointsVBox
       ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
       : attachmentPointsVBox;

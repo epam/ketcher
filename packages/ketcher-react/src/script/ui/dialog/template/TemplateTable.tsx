@@ -107,38 +107,48 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     return () => resizeObserver.disconnect();
   }, []);
 
+  // Progressive preview hydration reacts to the idle/frame scheduler (an
+  // external system), so each scheduled batch schedules the next one
+  // directly instead of relying on an effect that watches the count state.
   useEffect(() => {
-    if (previewRenderedCount >= templates.length) {
-      return;
-    }
+    let cancelled = false;
+    let idleCallbackId: number | undefined;
+    let frameId: number | undefined;
 
-    // Use idle/frame scheduling for progressive preview hydration.
-    const requestIdle = window.requestIdleCallback;
-    if (typeof requestIdle === 'function') {
-      const callback = requestIdle(
-        () => {
-          startTransition(() => {
-            setPreviewRenderedCount((prev) =>
-              Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
-            );
-          });
-        },
-        { timeout: 500 },
-      );
-      return () => {
-        if (callback) window.cancelIdleCallback?.(callback);
+    const scheduleNext = (currentCount: number) => {
+      if (currentCount >= templates.length) {
+        return;
+      }
+
+      const requestIdle = window.requestIdleCallback;
+      const runBatch = () => {
+        if (cancelled) {
+          return;
+        }
+        const nextCount = Math.min(
+          currentCount + PREVIEW_BATCH_SIZE,
+          templates.length,
+        );
+        startTransition(() => setPreviewRenderedCount(nextCount));
+        scheduleNext(nextCount);
       };
-    } else {
-      const frameId = window.requestAnimationFrame(() => {
-        startTransition(() => {
-          setPreviewRenderedCount((prev) =>
-            Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
-          );
-        });
-      });
-      return () => window.cancelAnimationFrame(frameId);
-    }
-  }, [previewRenderedCount, templates.length, startTransition]);
+
+      if (typeof requestIdle === 'function') {
+        idleCallbackId = requestIdle(runBatch, { timeout: 500 });
+      } else {
+        frameId = window.requestAnimationFrame(runBatch);
+      }
+    };
+
+    scheduleNext(Math.min(INITIAL_PREVIEW_COUNT, templates.length));
+
+    return () => {
+      cancelled = true;
+      if (idleCallbackId !== undefined)
+        window.cancelIdleCallback?.(idleCallbackId);
+      if (frameId !== undefined) window.cancelAnimationFrame(frameId);
+    };
+  }, [templates, startTransition]);
 
   // Pass container size to StructRender to avoid getBoundingClientRect() calls
   // This eliminates forced reflows during rendering batches

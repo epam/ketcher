@@ -646,7 +646,7 @@ export class SGroup {
   }
 
   static getBracketParameters(
-    mol: StructBondsAccess,
+    mol: StructAtomsAndBondsAccess,
     crossBondsPerAtom: { [key: number]: Array<number> },
     atomSet: Pile<number>,
     bb: Box2Abs,

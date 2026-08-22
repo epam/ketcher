@@ -85,8 +85,8 @@ const allowedApiSettings = [
   ['bondThickness', 'bondThickness'],
 ] as const;
 
-type AllowedApiSetting = typeof allowedApiSettings[number][0];
-type AllowedClientSetting = typeof allowedApiSettings[number][1];
+type AllowedApiSetting = (typeof allowedApiSettings)[number][0];
+type AllowedClientSetting = (typeof allowedApiSettings)[number][1];
 type KetcherGetSettingsResult = Partial<
   Record<AllowedApiSetting, KetcherApiSettings[AllowedApiSetting]>
 >;
@@ -381,6 +381,7 @@ export class Ketcher {
           error instanceof Error ? error.message : 'Unknown error occurred';
         throw new Error(
           `Failed to convert structure to ${format} format: ${errorMessage}`,
+          { cause: error },
         );
       }
     }
@@ -782,7 +783,7 @@ export class Ketcher {
       outputFormat: 'png',
     },
   ): Promise<Blob> {
-    let meta = '';
+    let meta: string;
 
     switch (options.outputFormat) {
       case 'svg':

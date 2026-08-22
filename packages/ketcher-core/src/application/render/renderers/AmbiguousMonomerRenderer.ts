@@ -31,7 +31,10 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     variant?: string;
   };
 
-  constructor(public monomer: AmbiguousMonomer, scale?: number) {
+  constructor(
+    public monomer: AmbiguousMonomer,
+    scale?: number,
+  ) {
     const monomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
     const monomerSymbolElementsIds = MONOMER_SYMBOLS_IDS[monomerClass];
 

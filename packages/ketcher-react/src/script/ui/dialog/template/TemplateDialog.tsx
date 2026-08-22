@@ -260,8 +260,19 @@ export const TemplateDialog: FC<Props> = (props) => {
       [TemplateTabs.FunctionalGroupLibrary]: functionalGroups,
       [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents,
     };
-    return sdfSerializer.serialize(serializerMapper[tab]);
-  }, [tab, templateLib, functionalGroups, saltsAndSolvents]);
+    const { sdf, skipped } = sdfSerializer.serializeWithSkipInvalid(
+      serializerMapper[tab],
+    );
+    if (skipped.length > 0) {
+      const skippedNames = skipped.map(({ name }) => name).join(', ');
+      dispatch(
+        showSnackbarNotification(
+          `Some items could not be exported and were skipped: ${skippedNames}`,
+        ),
+      );
+    }
+    return sdf;
+  }, [tab, templateLib, functionalGroups, saltsAndSolvents, dispatch]);
 
   const onSaveError = useCallback(
     (err: unknown) => {

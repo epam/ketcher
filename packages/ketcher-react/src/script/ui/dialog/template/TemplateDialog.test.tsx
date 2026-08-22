@@ -2,22 +2,22 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { Struct } from 'ketcher-core';
 import { TemplateDialog } from './TemplateDialog';
 
-const mockSerialize = jest.fn();
+const mockSerializeWithSkipInvalid = jest.fn();
 const mockDispatch = jest.fn();
-
-jest.mock('ketcher-core', () => ({
-  ...jest.requireActual('ketcher-core'),
-  SdfSerializer: jest.fn().mockImplementation(() => ({
-    serialize: mockSerialize,
-  })),
-  KetcherLogger: {
-    error: jest.fn(),
-  },
-}));
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useDispatch: () => mockDispatch,
+}));
+
+jest.mock('ketcher-core', () => ({
+  ...jest.requireActual('ketcher-core'),
+  SdfSerializer: jest.fn().mockImplementation(() => ({
+    serializeWithSkipInvalid: mockSerializeWithSkipInvalid,
+  })),
+  KetcherLogger: {
+    error: jest.fn(),
+  },
 }));
 
 jest.mock('../../views/components', () => ({
@@ -71,10 +71,11 @@ const defaultProps = {
 
 describe('TemplateDialog', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    mockDispatch.mockClear();
+    mockSerializeWithSkipInvalid.mockClear();
   });
 
-  it('does not serialize a reaction with an R-Group fragment when opened', () => {
+  it('does not serialize templates when the dialog is opened', () => {
     const struct = new Struct();
     struct.name = 'Reaction with R-Group fragment';
     const template = {
@@ -86,21 +87,106 @@ describe('TemplateDialog', () => {
         name: 'Reaction with R-Group fragment',
       },
     };
-    mockSerialize.mockImplementation(() => {
-      throw new Error(
-        'Reactions with r-groups are not supported at the moment',
-      );
-    });
 
     expect(() =>
       render(<TemplateDialog {...defaultProps} lib={[template]} />),
     ).not.toThrow();
-    expect(mockSerialize).not.toHaveBeenCalled();
+    expect(mockSerializeWithSkipInvalid).not.toHaveBeenCalled();
+  });
 
-    mockSerialize.mockReturnValue('serialized template');
+  it('serializes templates individually on save and returns SDF string', () => {
+    const struct = new Struct();
+    struct.name = 'Valid template';
+    const template = {
+      struct,
+      props: {
+        atomid: 0,
+        bondid: 0,
+        group: 'User Templates',
+        name: 'Valid template',
+      },
+    };
+    mockSerializeWithSkipInvalid.mockReturnValue({
+      sdf: 'serialized template',
+      skipped: [],
+    });
+
+    render(
+      <TemplateDialog
+        filter=""
+        group="User Templates"
+        lib={[template]}
+        selected={null}
+        tab={0}
+        initialTab={0}
+        saltsAndSolvents={[]}
+        functionalGroups={[]}
+        onAttach={jest.fn()}
+        onCancel={jest.fn()}
+        onChangeGroup={jest.fn()}
+        onDelete={jest.fn()}
+        onFilter={jest.fn()}
+        onOk={jest.fn()}
+        onSelect={jest.fn()}
+        onTabChange={jest.fn()}
+      />,
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Save to SDF' }));
 
-    expect(mockSerialize).toHaveBeenCalledWith([template]);
+    expect(mockSerializeWithSkipInvalid).toHaveBeenCalledWith([template]);
+    expect(mockDispatch).not.toHaveBeenCalled();
+  });
+
+  it('dispatches a snackbar notification when some items are skipped', () => {
+    const struct = new Struct();
+    struct.name = 'Invalid template';
+    const template = {
+      struct,
+      props: {
+        atomid: 0,
+        bondid: 0,
+        group: 'User Templates',
+        name: 'Invalid template',
+      },
+    };
+    mockSerializeWithSkipInvalid.mockReturnValue({
+      sdf: '',
+      skipped: [
+        {
+          name: 'Invalid template',
+          reason: 'Reactions with r-groups are not supported at the moment',
+        },
+      ],
+    });
+
+    render(
+      <TemplateDialog
+        filter=""
+        group="User Templates"
+        lib={[template]}
+        selected={null}
+        tab={0}
+        initialTab={0}
+        saltsAndSolvents={[]}
+        functionalGroups={[]}
+        onAttach={jest.fn()}
+        onCancel={jest.fn()}
+        onChangeGroup={jest.fn()}
+        onDelete={jest.fn()}
+        onFilter={jest.fn()}
+        onOk={jest.fn()}
+        onSelect={jest.fn()}
+        onTabChange={jest.fn()}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Save to SDF' }));
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'SHOW_SNACKBAR_NOTIFICATION',
+        data: expect.stringContaining('Invalid template'),
+      }),
+    );
   });
 
   it('dispatches a snackbar notification when serialization fails on Save to SDF', () => {

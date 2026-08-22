@@ -43,9 +43,7 @@ export type AtomHoverContour =
     };
 
 export class AtomRenderer extends BaseRenderer {
-  private selectionElement?:
-    | D3SvgElementSelection<SVGCircleElement, void>
-    | D3SvgElementSelection<SVGRectElement, void>;
+  private selectionElement?: D3SvgElementSelection<SVGRectElement, void>;
 
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
   private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
@@ -133,7 +131,17 @@ export class AtomRenderer extends BaseRenderer {
       .attr('cy', 0);
   }
 
-  private appendSelectionContour() {
+  /**
+   * WARNING: this method always reports its return type as
+   * `D3SvgElementSelection<SVGRectElement, void> | undefined` even though the
+   * circle branch actually produces a `SVGCircleElement` selection.  The
+   * deliberate misreport is required because TypeScript cannot resolve D3's
+   * overloaded `attr()` signature on a `SVGCircleElement | SVGRectElement`
+   * union selection, which would force every call site to add its own cast.
+   * Callers must therefore restrict themselves to element-agnostic D3 methods
+   * (`attr`, `style`, `remove`) and must not rely on the element type itself.
+   */
+  private appendSelectionContour(): D3SvgElementSelection<SVGRectElement, void> | undefined {
     if (
       (this.labelLength < 2 || !this.isLabelVisible) &&
       !this.atom.hasCharge
@@ -148,7 +156,7 @@ export class AtomRenderer extends BaseRenderer {
         ?.insert('circle', ':first-child')
         .attr('r', selectionRadius)
         .attr('cx', 0)
-        .attr('cy', 0);
+        .attr('cy', 0) as unknown as D3SvgElementSelection<SVGRectElement, void>;
     } else {
       const labelBbox = this.textElement?.node()?.getBBox();
       const labelX = labelBbox?.x ?? 0;
@@ -228,22 +236,12 @@ export class AtomRenderer extends BaseRenderer {
       return this.hoverElement;
     }
 
-    // appendSelectionContour() returns a SVGCircleElement|SVGRectElement union.
-    // TypeScript cannot resolve D3 overloaded attr() on union selection types,
-    // so cast to a concrete type before chaining, then restore the union type.
-    const selectionContourElement = this.appendSelectionContour() as
-      | D3SvgElementSelection<SVGRectElement, void>
-      | undefined;
-
-    return selectionContourElement
+    return this.appendSelectionContour()
       ?.attr('stroke', '#0097a8')
       .attr('stroke-width', '1.2')
       .attr('fill', 'none')
       .attr('opacity', '0')
-      .attr('class', 'dynamic-element') as
-      | D3SvgElementSelection<SVGCircleElement, void>
-      | D3SvgElementSelection<SVGRectElement, void>
-      | undefined;
+      .attr('class', 'dynamic-element');
   }
 
   /**
@@ -537,19 +535,9 @@ export class AtomRenderer extends BaseRenderer {
 
   public appendSelection() {
     if (!this.selectionElement) {
-      // appendSelectionContour() returns a SVGCircleElement|SVGRectElement union.
-      // TypeScript cannot resolve D3 overloaded attr() on union selection types,
-      // so cast to a concrete type before chaining, then restore the union type.
-      const selectionContourElement = this.appendSelectionContour() as
-        | D3SvgElementSelection<SVGRectElement, void>
-        | undefined;
-
-      this.selectionElement = selectionContourElement
+      this.selectionElement = this.appendSelectionContour()
         ?.attr('fill', SELECTION_COLOR)
-        .attr('class', 'dynamic-element') as
-        | D3SvgElementSelection<SVGCircleElement, void>
-        | D3SvgElementSelection<SVGRectElement, void>
-        | undefined;
+        .attr('class', 'dynamic-element');
     }
 
     this.cipLabelElement?.select('rect')?.attr('fill', SELECTION_COLOR);

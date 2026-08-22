@@ -25,6 +25,7 @@ export class FlexMode extends BaseMode {
 
     modelChanges.merge(antisenseChanges);
     editor.renderersContainer.update(modelChanges);
+    editor.drawingEntitiesManager.restoreSGroupRenderers();
 
     return command;
   }

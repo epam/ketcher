@@ -18,8 +18,9 @@ import {
   IMAGE_SERIALIZE_KEY,
   MULTITAIL_ARROW_SERIALIZE_KEY,
 } from 'domain/constants';
+import type { KetNode } from '../types';
 
-function parseNode(node, struct) {
+function parseNode(node: KetNode, struct: Struct) {
   const type = node.type;
   switch (type) {
     case 'arrow':

@@ -22,6 +22,9 @@ import type { AtomCIP, BondCIP } from 'domain/entities/types';
 import type { StructProperty } from 'domain/entities/struct';
 import type { Vec2 } from 'domain/entities/vec2';
 import type { RxnArrowMode } from 'domain/entities/rxnArrow';
+import type { KetFileImageNode } from 'domain/entities/image';
+import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
+import type { KetFileNode } from 'domain/serializers/serializers.types';
 
 export interface KetAtomNode {
   type?: 'atom-list';
@@ -113,7 +116,7 @@ export interface KetArrowNode {
   type: 'arrow';
   data: {
     mode: RxnArrowMode;
-    pos?: Array<{ x: number; y: number; z: number }>;
+    pos?: Array<{ x: number; y: number; z?: number }>;
     height?: number;
     arrowId?: number;
   };
@@ -122,13 +125,43 @@ export interface KetArrowNode {
 
 export interface KetPlusNode {
   type: 'plus';
-  location: [number, number, number];
+  location: [number, number, number?];
   selected?: boolean;
 }
 
+export interface KetRLogic {
+  number: number;
+}
+
+export interface KetRgroupNode {
+  type: 'rgroup';
+}
+
+export interface KetSimpleObjectNode {
+  type: 'simpleObject';
+}
+
+export interface KetTextNode {
+  type: 'text';
+}
+
+export type KetImageNode = KetFileImageNode & { type: 'image' };
+
+export type KetMultitailArrowNode = KetFileNode<KetFileMultitailArrowNode> & {
+  type: 'multi-tailed-arrow';
+};
+
+export type KetNode =
+  | KetArrowNode
+  | KetPlusNode
+  | KetMoleculeNode
+  | KetRgroupNode
+  | KetSimpleObjectNode
+  | KetTextNode
+  | KetImageNode
+  | KetMultitailArrowNode;
+
 export interface KetItem {
   fragments?: KetFragment[];
-  rlogic?: {
-    number: number;
-  };
+  rlogic?: KetRLogic;
 }

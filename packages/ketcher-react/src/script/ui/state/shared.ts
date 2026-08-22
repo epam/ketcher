@@ -93,7 +93,7 @@ export function removeStructAction(): {
   type: string;
   action?: Record<string, unknown>;
 } {
-  const savedSelectedTool = SettingsManager.selectionTool;
+  const savedSelectedTool = SettingsManager.getSelectionTool('micro');
 
   return onAction(savedSelectedTool || tools['select-rectangle'].action);
 }

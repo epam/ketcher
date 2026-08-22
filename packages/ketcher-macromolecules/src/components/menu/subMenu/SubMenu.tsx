@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { ClickAwayListener } from '@mui/material';
 import { MenuItem } from '../menuItem';
 import { useMenuContext } from '../../../hooks/useMenuContext';
@@ -37,6 +37,8 @@ import {
   setSelectedMenuGroupItem,
 } from 'state/common';
 import { useAppDispatch, useAppSelector } from 'hooks';
+import { SettingsManager } from 'ketcher-core';
+import { SELECT_SUBMENU_ID } from '../constants';
 
 type SubMenuProps = {
   vertical?: boolean;
@@ -88,6 +90,25 @@ const SubMenu = ({
     }
   };
 
+  const handleMenuItemClick = (itemId: string) => {
+    if (subMenuId && itemId !== lastActiveOption) {
+      dispatch(
+        setSelectedMenuGroupItem({
+          groupName: subMenuId,
+          activeItemName: itemId,
+        }),
+      );
+
+      if (subMenuId === SELECT_SUBMENU_ID) {
+        const toolType = itemId.replace('select-', '');
+        SettingsManager.setSelectionTool('macro', {
+          tool: 'select',
+          opts: toolType,
+        });
+      }
+    }
+  };
+
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
@@ -100,17 +121,6 @@ const SubMenu = ({
     .filter((item) => item);
   const activeOptions = options.filter((itemKey) => isActive(itemKey));
   const activeOption = activeOptions[0];
-
-  useEffect(() => {
-    if (subMenuId && activeOption && activeOption !== lastActiveOption) {
-      dispatch(
-        setSelectedMenuGroupItem({
-          groupName: subMenuId,
-          activeItemName: activeOption,
-        }),
-      );
-    }
-  }, [dispatch, subMenuId, activeOption, lastActiveOption]);
 
   const visibleItemId =
     activeItem ?? (activeOption || lastActiveOption || options[0]);
@@ -168,6 +178,10 @@ const SubMenu = ({
                   {subComponents.map((component) =>
                     React.cloneElement(component, {
                       key: component.props.itemId,
+                      onClick: () => {
+                        handleMenuItemClick(component.props.itemId);
+                        component.props.onClick?.();
+                      },
                     }),
                   )}
                 </OptionsContainer>

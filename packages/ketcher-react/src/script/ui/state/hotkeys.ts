@@ -197,7 +197,7 @@ function shouldHandleItemDirectly(
 
 function handleSelectTool(newAction, key: string, index: number) {
   if (key === 'Escape') {
-    return SettingsManager.getSettings().selectionTool;
+    return SettingsManager.getSelectionTool('micro');
   }
   if (index === -1) {
     return {};

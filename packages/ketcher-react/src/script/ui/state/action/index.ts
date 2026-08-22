@@ -160,7 +160,7 @@ export default function (
   let activeTool: UiActionAction | null | undefined;
   switch (type) {
     case 'INIT': {
-      const savedSelectedTool = SettingsManager.selectionTool;
+      const savedSelectedTool = SettingsManager.getSelectionTool('micro');
       const resolvedAction =
         savedSelectedTool || actions['select-rectangle'].action;
       activeTool = execute(state?.activeTool, {
@@ -168,7 +168,7 @@ export default function (
         action: resolvedAction,
       });
       if (isPersistedSelectionTool(activeTool)) {
-        SettingsManager.selectionTool = activeTool;
+        SettingsManager.setSelectionTool('micro', activeTool);
       }
       return buildStateWithStatuses(
         activeTool || state?.activeTool,
@@ -182,7 +182,7 @@ export default function (
         action: action as UiActionAction,
       });
       if (isPersistedSelectionTool(activeTool)) {
-        SettingsManager.selectionTool = activeTool;
+        SettingsManager.setSelectionTool('micro', activeTool);
       }
       return buildStateWithStatuses(
         activeTool || state?.activeTool,

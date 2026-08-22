@@ -43,8 +43,17 @@ export interface PersistedSelectionTool {
   opts?: unknown;
 }
 
+/**
+ * Editor mode for selection tool persistence.
+ * - 'macro': Macromolecules mode (ketcher-macromolecules package)
+ * - 'micro': Micromolecules mode (ketcher-react package)
+ */
+export type EditorMode = 'macro' | 'micro';
+
 interface SavedSettings {
   selectionTool?: PersistedSelectionTool;
+  selectionToolMacro?: PersistedSelectionTool;
+  selectionToolMicro?: PersistedSelectionTool;
   disableCustomQuery?: boolean;
   editorLineLength?: EditorLineLength;
   monomerLibraryUpdates?: string[];
@@ -111,11 +120,46 @@ export class SettingsManager {
     localStorage.setItem(KETCHER_SAVED_OPTIONS_KEY, JSON.stringify(options));
   }
 
+  /**
+   * Get the persisted selection tool for the specified editor mode.
+   * Falls back to legacy `selectionTool` key if mode-specific key is not found.
+   * @param mode - 'macro' for macromolecules editor, 'micro' for micro editor
+   */
+  static getSelectionTool(mode: EditorMode) {
+    const settings = this.getSettings();
+    const key = mode === 'macro' ? 'selectionToolMacro' : 'selectionToolMicro';
+    return settings[key] ?? settings.selectionTool;
+  }
+
+  /**
+   * Save the selection tool for the specified editor mode.
+   * @param mode - 'macro' for macromolecules editor, 'micro' for micro editor
+   * @param selectionTool - The selection tool to persist
+   */
+  static setSelectionTool(
+    mode: EditorMode,
+    selectionTool: PersistedSelectionTool | undefined,
+  ) {
+    const settings = this.getSettings();
+    const key = mode === 'macro' ? 'selectionToolMacro' : 'selectionToolMicro';
+
+    this.saveSettings({
+      ...settings,
+      [key]: selectionTool,
+    });
+  }
+
+  /**
+   * @deprecated Use getSelectionTool(mode) instead
+   */
   static get selectionTool() {
     const { selectionTool } = this.getSettings();
     return selectionTool;
   }
 
+  /**
+   * @deprecated Use setSelectionTool(mode, value) instead
+   */
   static set selectionTool(selectionTool) {
     const settings = this.getSettings();
 

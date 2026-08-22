@@ -221,7 +221,7 @@ export class RemoteStructService implements StructService {
   async info(): Promise<InfoResult> {
     let indigoVersion: string;
     let imagoVersions: Array<string>;
-    let isAvailable = false;
+    let isAvailable: boolean;
 
     try {
       const response = await request(

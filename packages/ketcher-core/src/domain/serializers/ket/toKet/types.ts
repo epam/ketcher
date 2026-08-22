@@ -17,6 +17,7 @@
 export type {
   KetAtomNode,
   KetBondNode,
+  KetHeader,
   KetMoleculeNode,
   KetRgLabelNode,
   KetSGroupAttachmentPointNode,

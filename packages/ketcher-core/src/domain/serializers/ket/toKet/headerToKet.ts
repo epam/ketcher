@@ -17,13 +17,12 @@
 
 import type { Struct } from 'domain/entities/struct';
 import { ifDef } from 'utilities';
+import type { KetHeader } from './types';
 
-export function headerToKet(struct: Struct): any {
-  const header = {};
+export function headerToKet(struct: Struct): KetHeader | null {
+  const header: KetHeader = {};
 
   ifDef(header, 'moleculeName', struct.name, '');
-  ifDef(header, 'creatorProgram', null, '');
-  ifDef(header, 'comment', null, '');
 
   return Object.keys(header).length !== 0 ? header : null;
 }

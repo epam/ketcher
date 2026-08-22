@@ -31,6 +31,7 @@ import type { Point } from 'domain/entities/vec2';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import type { Serializer } from '../serializers.types';
 import { headerToKet } from './toKet/headerToKet';
+import type { KetHeader } from './toKet/types';
 import { moleculeToKet } from './toKet/moleculeToKet';
 import { moleculeToStruct } from './fromKet/moleculeToStruct';
 import { prepareStructForKet } from './toKet/prepare';
@@ -118,7 +119,7 @@ type KetMicromoleculeNode = {
 };
 
 interface IKetMicromoleculeFile {
-  header?: { moleculeName?: string };
+  header?: KetHeader;
   root: {
     nodes: Record<string, KetMicromoleculeNode>;
   };
@@ -128,7 +129,7 @@ interface IKetMicromoleculeFile {
 
 interface IKetMicromoleculeSerializedResult {
   root: { nodes: KetMicromoleculeNode[] };
-  header?: unknown;
+  header?: KetHeader;
   // Allows dynamic property assignment for mol/rg sections: result[`mol${id}`], result[`rg${id}`]
   [key: string]: unknown;
 }

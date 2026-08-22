@@ -3187,10 +3187,13 @@ class Editor implements KetcherEditor {
     if (ci === 'all') {
       selectAll = true;
       // TODO: better way will be this.struct()
-      resolvedCi = structObjects.reduce((res, key) => {
-        res[key] = Array.from(ReStruct[key].keys());
-        return res;
-      }, {} as Record<string, number[]>);
+      resolvedCi = structObjects.reduce(
+        (res, key) => {
+          res[key] = Array.from(ReStruct[key].keys());
+          return res;
+        },
+        {} as Record<string, number[]>,
+      );
     }
 
     if (ci === 'descriptors') {
@@ -3825,9 +3828,7 @@ function setHover(ci: HoverTarget, visible: boolean, render: Render) {
 
       for (const element of elements) {
         const paperPath = paperPathFromSVGElement(element) as
-          | paper.Path
-          | paper.CompoundPath
-          | undefined;
+          paper.Path | paper.CompoundPath | undefined;
 
         if (!paperPath) {
           continue;

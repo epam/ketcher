@@ -116,7 +116,8 @@ export interface IRnaPreset {
 }
 
 export interface IRnaLabeledPreset
-  extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate' | 'connections'>,
+  extends
+    Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate' | 'connections'>,
     Pick<IKetMonomerGroupTemplate, 'templates' | 'connections'> {
   connections?: IKetTemplateConnection[];
 }

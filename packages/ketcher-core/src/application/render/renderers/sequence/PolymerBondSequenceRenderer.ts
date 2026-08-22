@@ -10,8 +10,7 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGPathElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGPathElement, void> | undefined;
 
   constructor(
     public polymerBond: PolymerBond,

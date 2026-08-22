@@ -39,6 +39,15 @@ export enum SUPERATOM_CLASS {
   PHOSPHATE = 'PHOSPHATE',
 }
 
+export const SUPERATOM_CLASS_TEXT = {
+  [SUPERATOM_CLASS.BASE]: 'Base',
+  [SUPERATOM_CLASS.SUGAR]: 'Sugar',
+  [SUPERATOM_CLASS.PHOSPHATE]: 'Phosphate',
+};
+
+const isSuperatomClass = (value?: string | null): value is SUPERATOM_CLASS =>
+  typeof value === 'string' && value in SUPERATOM_CLASS_TEXT;
+
 export class SGroupBracketParams {
   readonly c: Vec2;
   readonly d: Vec2;
@@ -430,6 +439,20 @@ export class SGroup {
 
   public get isMonomer() {
     return false;
+  }
+
+  public get superatomLabel(): string {
+    const name = this.data.name?.trim();
+    if (name) {
+      return name;
+    }
+
+    const superatomClass = this.data.class;
+    if (isSuperatomClass(superatomClass)) {
+      return SUPERATOM_CLASS_TEXT[superatomClass];
+    }
+
+    return '';
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {

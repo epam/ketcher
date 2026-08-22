@@ -15,9 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback } from 'react';
 import { EmptyFunction } from 'helpers';
-import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
 import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
@@ -27,10 +25,10 @@ import {
   MonomerOrAmbiguousType,
   isAmbiguousMonomerLibraryItem,
 } from 'ketcher-core';
-import { useAppDispatch, useAppSelector } from 'hooks';
-import { selectEditor, showPreview } from 'state/common';
+import { useAppSelector, useDebouncedShowPreview } from 'hooks';
+import { selectEditor } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
-import { PreviewStyle, PreviewType } from 'state';
+import { PreviewType } from 'state';
 import {
   calculateAmbiguousMonomerPreviewTop,
   calculateMonomerPreviewTop,
@@ -46,7 +44,6 @@ const MonomerGroup = ({
   disabled,
   onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
-  const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
   const isMonomerDisabled = (monomer: MonomerOrAmbiguousType) => {
@@ -73,20 +70,10 @@ const MonomerGroup = ({
     return false;
   };
 
-  const dispatchShowPreview = useCallback(
-    (payload) => dispatch(showPreview(payload)),
-    [dispatch],
-  );
-
-  const debouncedShowPreview = useCallback(
-    debounce((p) => dispatchShowPreview(p), 500),
-    [dispatchShowPreview],
-  );
-
-  const closeLibraryPreview = useCallback(() => {
-    debouncedShowPreview.cancel();
-    dispatch(showPreview(undefined));
-  }, [debouncedShowPreview, dispatch]);
+  const {
+    showPreview: debouncedShowPreview,
+    closePreview: closeLibraryPreview,
+  } = useDebouncedShowPreview();
 
   const handleItemMouseMove = (
     monomer: MonomerOrAmbiguousType,
@@ -99,28 +86,23 @@ const MonomerGroup = ({
     }
 
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
-    let style: PreviewStyle;
-    let previewType: PreviewType;
-    let top: string;
 
     if (isAmbiguousMonomerLibraryItem(monomer)) {
-      top = calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates);
+      const top = calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates);
       const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
-      previewType = PreviewType.AmbiguousMonomer;
-      style = { left, top, transform: 'translate(-50%, 0)' };
+      debouncedShowPreview({
+        type: PreviewType.AmbiguousMonomer,
+        monomer,
+        style: { left, top, transform: 'translate(-50%, 0)' },
+      });
     } else {
-      top = calculateMonomerPreviewTop(cardCoordinates);
-      style = { right: '-88px', top, transform: 'translate(-50%, 0)' };
-      previewType = PreviewType.Monomer;
+      const top = calculateMonomerPreviewTop(cardCoordinates);
+      debouncedShowPreview({
+        type: PreviewType.Monomer,
+        monomer,
+        style: { right: '-88px', top, transform: 'translate(-50%, 0)' },
+      });
     }
-
-    const previewData = {
-      type: previewType,
-      monomer,
-      style,
-    };
-
-    debouncedShowPreview(previewData);
   };
 
   const selectMonomer = (monomer: MonomerOrAmbiguousType) => {

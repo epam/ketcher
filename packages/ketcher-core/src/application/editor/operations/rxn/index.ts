@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -64,7 +66,13 @@ class RxnArrowAdd extends Base<RxnArrowAddData> {
       struct.setRxnArrow(this.data.id, item);
     }
 
-    const itemId = this.data.id!;
+    const itemId = this.data.id;
+    if (itemId == null) {
+      KetcherLogger.error(
+        'RxnArrowAdd.execute(): rxnArrow id was not assigned',
+      );
+      return;
+    }
 
     restruct.rxnArrows.set(itemId, new ReRxnArrow(item));
 
@@ -79,12 +87,18 @@ class RxnArrowAdd extends Base<RxnArrowAddData> {
   }
 
   invert(): RxnArrowDelete {
-    return new RxnArrowDelete(this.data.id!);
+    const itemId = this.data.id;
+    if (itemId == null) {
+      KetcherLogger.error('RxnArrowAdd.invert(): rxnArrow id was not assigned');
+      return new RxnArrowDelete();
+    }
+
+    return new RxnArrowDelete(itemId);
   }
 }
 
 interface RxnArrowDeleteData {
-  id: number;
+  id?: number;
   pos?: Array<Vec2>;
   mode?: RxnArrowMode;
   height?: number;
@@ -95,7 +109,7 @@ class RxnArrowDelete extends Base<RxnArrowDeleteData> {
   data: RxnArrowDeleteData;
   performed: boolean;
 
-  constructor(id: number) {
+  constructor(id?: number) {
     super(OperationType.RXN_ARROW_DELETE);
     this.data = { id, pos: [], mode: RxnArrowMode.OpenAngle };
     this.performed = false;
@@ -103,9 +117,17 @@ class RxnArrowDelete extends Base<RxnArrowDeleteData> {
 
   execute(restruct: Restruct): void {
     KetcherLogger.log('RxnArrowDelete.execute(), start', this.data);
+    const itemId = this.data.id;
+    if (itemId == null) {
+      KetcherLogger.error(
+        'RxnArrowDelete.execute(): rxnArrow id is not assigned',
+      );
+      return;
+    }
+
     const struct = restruct.molecule;
-    const item = struct.rxnArrows.get(this.data.id);
-    if (!item) throw new Error(`rxnArrow not found with id: ${this.data.id}`);
+    const item = struct.rxnArrows.get(itemId);
+    if (!item) throw new Error(`rxnArrow not found with id: ${itemId}`);
 
     this.data.pos = item.pos;
     this.data.mode = item.mode;
@@ -114,13 +136,12 @@ class RxnArrowDelete extends Base<RxnArrowDeleteData> {
     this.performed = true;
 
     restruct.markItemRemoved();
-    const reItem = restruct.rxnArrows.get(this.data.id);
-    if (!reItem)
-      throw new Error(`reRxnArrow not found with id: ${this.data.id}`);
+    const reItem = restruct.rxnArrows.get(itemId);
+    if (!reItem) throw new Error(`reRxnArrow not found with id: ${itemId}`);
     restruct.clearVisel(reItem.visel);
-    restruct.rxnArrows.delete(this.data.id);
+    restruct.rxnArrows.delete(itemId);
 
-    struct.rxnArrows.delete(this.data.id);
+    struct.rxnArrows.delete(itemId);
 
     KetcherLogger.log('RxnArrowDelete.execute(), end');
   }

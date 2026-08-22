@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -34,8 +35,10 @@ export class SGroupDataMove extends BaseOperation {
     const { d, id } = this.data;
     if (id === undefined || d === undefined) return;
     const { sgroups } = restruct.molecule;
+    const sgroup = sgroups.get(id);
+    if (!sgroup) return;
 
-    sgroups.get(id)!.pp?.add_(d); // eslint-disable-line no-underscore-dangle
+    sgroup.pp?.add_(d); // eslint-disable-line no-underscore-dangle
     this.data.d = d.negated();
 
     // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway

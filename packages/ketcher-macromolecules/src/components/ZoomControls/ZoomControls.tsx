@@ -36,6 +36,8 @@ import {
   hotkeysShortcuts,
   updateInputString,
 } from 'components/ZoomControls/helpers';
+import { useAppSelector } from 'hooks';
+import { selectEditor } from 'state/common';
 
 export const ZoomControls = () => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -43,11 +45,20 @@ export const ZoomControls = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const editor = useAppSelector(selectEditor);
+  const zoomTool = editor?.zoomTool;
+
   useEffect(() => {
-    ZoomTool?.instance?.subscribeOnZoomEvent(() => {
-      setCurrentZoom(Math.round(ZoomTool?.instance?.getZoomLevel() * 100));
+    if (!zoomTool) {
+      return;
+    }
+
+    const unsubscribe = zoomTool.subscribeOnZoomEvent(() => {
+      setCurrentZoom(Math.round(zoomTool.getZoomLevel() * 100));
     });
-  }, [ZoomTool?.instance]);
+
+    return unsubscribe;
+  }, [zoomTool]);
 
   const onZoomSubmit = useCallback(() => {
     const inputEl = inputRef.current;

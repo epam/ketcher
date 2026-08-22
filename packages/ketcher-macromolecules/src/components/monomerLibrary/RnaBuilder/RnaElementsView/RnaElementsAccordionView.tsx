@@ -61,8 +61,8 @@ const RnaElementsAccordionView = ({
   // state differs from the default ("all options off"), per spec.
   const isFilterActive = Boolean(
     presetPhosphateFilter?.fivePrime ||
-      presetPhosphateFilter?.threePrime ||
-      presetPhosphateFilter?.noPhosphate,
+    presetPhosphateFilter?.threePrime ||
+    presetPhosphateFilter?.noPhosphate,
   );
 
   const [expandedAccordion, setExpandedAccordion] =

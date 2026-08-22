@@ -143,4 +143,4 @@ export const ElementColor: ElementColorType = {
 } as const;
 
 type Keys = keyof typeof ElementColor;
-export type AtomColor = typeof ElementColor[Keys];
+export type AtomColor = (typeof ElementColor)[Keys];

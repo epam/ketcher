@@ -1,6 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
-/* eslint-disable react-you-might-not-need-an-effect/no-chain-state-updates */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -43,6 +40,12 @@ export const Preview = () => {
   const isPreviewVisible = Boolean(preview?.type);
   const editor = useSelector(selectEditor);
 
+// eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler --
+// intentional: positions the preview via direct DOM measurement
+// (getBoundingClientRect) after the preview content has rendered, which
+// cannot be computed synchronously in whatever component's hover/click
+// handler triggers `preview` — no setState/dispatch happens in this effect,
+// so it isn't an event-relay chain.
   useLayoutEffect(() => {
     if (!previewRef.current || preview.style) {
       return;

@@ -19,15 +19,18 @@
 
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Fragment, StereoFlag } from 'domain/entities/fragment';
+import type { Element, RaphaelPaper } from 'raphael';
 
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
+import type { RenderOptions } from '../render.types';
+import { assert } from 'utilities';
 import { Scale } from 'domain/helpers';
 
 class ReEnhancedFlag extends ReObject {
-  #path: any;
+  #path: Element | null = null;
 
   constructor() {
     super('enhancedFlag');
@@ -37,14 +40,19 @@ class ReEnhancedFlag extends ReObject {
     return true;
   }
 
-  hoverPath(render: Render): any {
+  hoverPath(render: Render): Element {
+    assert(
+      this.#path,
+      'ReEnhancedFlag.hoverPath: enhanced flag path should be initialized',
+    );
+
     const box = Box2Abs.fromRelBox(this.#path.getBBox());
     const sz = box.p1.sub(box.p0);
     const p0 = box.p0.sub(render.options.offset);
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y);
   }
 
-  drawHover(render: Render): any {
+  drawHover(render: Render): Element | null {
     // TODO: after the enhanced flag stops being displayed, need to remove the reEnhancedflag object from ctab
     if (!this.#path?.attrs) return null;
     const ret = this.hoverPath(render).attr(render.options.hoverStyle);
@@ -52,13 +60,17 @@ class ReEnhancedFlag extends ReObject {
     return ret;
   }
 
-  makeSelectionPlate(restruct: ReStruct, _paper: any, options: any): any {
+  makeSelectionPlate(
+    restruct: ReStruct,
+    _paper: RaphaelPaper,
+    options: RenderOptions,
+  ): Element | null {
     // TODO: after the enhanced flag stops being displayed, need to remove the reEnhancedflag object from ctab
     if (!this.#path?.attrs) return null;
     return this.hoverPath(restruct.render).attr(options.selectionStyle);
   }
 
-  show(restruct: ReStruct, fragmentId: number, options: any): void {
+  show(restruct: ReStruct, fragmentId: number, options: RenderOptions): void {
     const render = restruct.render;
     const fragment = restruct.molecule.frags.get(fragmentId);
 
@@ -89,7 +101,7 @@ class ReEnhancedFlag extends ReObject {
           ps.x,
           ps.y,
           fragment.enhancedStereoFlag
-            ? stereoFlagMap[fragment.enhancedStereoFlag]
+            ? stereoFlagMap[fragment.enhancedStereoFlag] ?? ''
             : '',
         )
         .attr({

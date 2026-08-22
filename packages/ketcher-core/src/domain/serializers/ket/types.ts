@@ -119,3 +119,51 @@ export interface KetItem {
   fragments?: KetFragment[];
   rlogic?: KetRLogic;
 }
+
+export interface KetRgroupNode
+  extends Omit<KetMoleculeNode, 'type' | 'atoms'> {
+  type: 'rgroup';
+  atoms?: (KetAtomNode | KetRgLabelNode)[];
+  fragments?: KetFragment[];
+  rlogic?: KetRLogic;
+}
+
+export interface KetArrowNode {
+  type: 'arrow';
+  [key: string]: unknown;
+}
+
+export interface KetPlusNode {
+  type: 'plus';
+  [key: string]: unknown;
+}
+
+export interface KetSimpleObjectNode {
+  type: 'simpleObject';
+  [key: string]: unknown;
+}
+
+export interface KetTextNode {
+  type: 'text';
+  [key: string]: unknown;
+}
+
+export interface KetImageNode {
+  type: 'image';
+  [key: string]: unknown;
+}
+
+export interface KetMultitailArrowNode {
+  type: 'multi-tailed-arrow';
+  [key: string]: unknown;
+}
+
+export type KetNode =
+  | KetArrowNode
+  | KetPlusNode
+  | KetMoleculeNode
+  | KetRgroupNode
+  | KetSimpleObjectNode
+  | KetTextNode
+  | KetImageNode
+  | KetMultitailArrowNode;

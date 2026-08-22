@@ -19,9 +19,9 @@ import type { Struct } from 'domain/entities/struct';
 
 import { ifDef } from 'utilities';
 import { moleculeToStruct } from './moleculeToStruct';
-import type { KetItem, KetRLogic } from '../types';
+import type { KetRgroupNode, KetRLogic } from './types';
 
-export function rgroupToStruct(ketItem: KetItem): Struct {
+export function rgroupToStruct(ketItem: KetRgroupNode): Struct {
   const struct = moleculeToStruct(ketItem);
   const rgroup = rgroupLogicToStruct(ketItem.rlogic);
   struct.frags.forEach((_value, key) => {
@@ -31,7 +31,7 @@ export function rgroupToStruct(ketItem: KetItem): Struct {
   return struct;
 }
 
-export function rgroupLogicToStruct(rglogic: KetRLogic | undefined): RGroup {
+export function rgroupLogicToStruct(rglogic?: KetRLogic): RGroup {
   const params = {};
   ifDef(params, 'range', rglogic?.range);
   ifDef(params, 'resth', rglogic?.resth);

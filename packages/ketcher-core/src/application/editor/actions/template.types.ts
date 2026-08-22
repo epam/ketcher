@@ -14,23 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { ReStruct } from 'application/render';
-import type { Action } from './action';
-import type { EditorTemplate, PasteItems } from './template.types';
+import type { Struct } from 'domain/entities/struct';
 
-type SimpleFusing = (
-  restruct: ReStruct,
-  template: EditorTemplate,
-  bid: number,
-) => [Action, PasteItems];
-
-export function fromAromaticTemplateOnBond(
-  restruct: ReStruct,
-  template: EditorTemplate,
-  bid: number,
-  _events: unknown,
-  simpleFusing: SimpleFusing,
-): Promise<[Action, PasteItems]> {
-  const pasteResult = simpleFusing(restruct, template, bid);
-  return Promise.resolve(pasteResult);
+/**
+ * Internal template object used when placing a template on the canvas, atom, or bond.
+ * Contains the molecule fragment together with pre-computed attachment geometry.
+ */
+export interface EditorTemplate {
+  molecule: Struct;
+  /** Id of the template attachment atom. */
+  aid: number;
+  /** Id of the template attachment bond. */
+  bid: number;
+  /** Reference angle used for rotation when placing on an atom. */
+  angle0: number;
 }
+
+/** Atom and bond ids that were created/pasted as part of a template operation. */
+export type PasteItems = { atoms: number[]; bonds: number[] };

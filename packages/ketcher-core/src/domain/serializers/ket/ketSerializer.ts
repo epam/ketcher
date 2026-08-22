@@ -110,6 +110,7 @@ import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import type { KetFileImageNode } from 'domain/entities/image';
 import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
+import type { KetNode } from 'domain/serializers/ket/types';
 
 type KetMicromoleculeNode = {
   type?: string;
@@ -133,7 +134,7 @@ interface IKetMicromoleculeSerializedResult {
   [key: string]: unknown;
 }
 
-function parseNode(node: KetMicromoleculeNode, struct: Struct) {
+function parseNode(node: KetNode, struct: Struct) {
   const type = node.type;
   switch (type) {
     case 'arrow':
@@ -210,9 +211,9 @@ export class KetSerializer implements Serializer<Struct> {
     const nodes = ket.root.nodes;
 
     Object.keys(nodes).forEach((i) => {
-      if (nodes[i].type) parseNode(nodes[i], resultingStruct);
+      if (nodes[i].type) parseNode(nodes[i] as KetNode, resultingStruct);
       else if (nodes[i].$ref) {
-        parseNode(ket[nodes[i].$ref] as KetMicromoleculeNode, resultingStruct);
+        parseNode(ket[nodes[i].$ref!] as KetNode, resultingStruct);
       }
     });
     resultingStruct.name = ket.header?.moleculeName ?? '';

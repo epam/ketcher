@@ -275,8 +275,9 @@ export async function verifyAxoLabsExport(
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.AxoLabs,
   );
-  const AxoLabsExportResult =
-    await SaveStructureDialog(page).getTextAreaValue();
+  const AxoLabsExportResult = await SaveStructureDialog(
+    page,
+  ).getTextAreaValue();
 
   expect(AxoLabsExportResult).toEqual(AxoLabsExportExpected);
 
@@ -327,8 +328,9 @@ export async function verifySequence1LetterCodeExport(
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence1LetterCode,
   );
-  const Sequence1LetterCodeExportResult =
-    await SaveStructureDialog(page).getTextAreaValue();
+  const Sequence1LetterCodeExportResult = await SaveStructureDialog(
+    page,
+  ).getTextAreaValue();
 
   expect(Sequence1LetterCodeExportResult).toEqual(
     Sequence1LetterCodeExportExpected,
@@ -403,8 +405,9 @@ export async function verifyInChIKeyExport(
   await SaveStructureDialog(page).chooseFileFormat(
     MoleculesFileFormatType.InChIKey,
   );
-  const InChIKeyExportResult =
-    await SaveStructureDialog(page).getTextAreaValue();
+  const InChIKeyExportResult = await SaveStructureDialog(
+    page,
+  ).getTextAreaValue();
 
   expect(InChIKeyExportResult).toEqual(InChIKeyExportExpected);
 

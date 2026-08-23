@@ -190,8 +190,8 @@ function shouldHandleItemDirectly(
 ): hoveredItem is Record<string, number> {
   return Boolean(
     hoveredItem &&
-    newAction.tool !== 'select' &&
-    newAction.dialog !== 'templates',
+      newAction.tool !== 'select' &&
+      newAction.dialog !== 'templates',
   );
 }
 

@@ -69,8 +69,9 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
 
     // Verify notification appears in standalone environment
     await NotificationBannerOnMicro(page).waitForBecomeVisible();
-    const notificationText =
-      await NotificationBannerOnMicro(page).getNotificationText();
+    const notificationText = await NotificationBannerOnMicro(
+      page,
+    ).getNotificationText();
     expect(notificationText).toContain(
       'The preset was successfully added to the library',
     );

@@ -56,6 +56,6 @@ export const hasPhosphatePositionAttachmentPointConflict = (
 
   return Boolean(
     sugarAttachmentPoints?.has(requiredAttachmentPoints.sugar) ||
-    phosphateAttachmentPoints?.has(requiredAttachmentPoints.phosphate),
+      phosphateAttachmentPoints?.has(requiredAttachmentPoints.phosphate),
   );
 };

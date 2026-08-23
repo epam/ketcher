@@ -157,7 +157,7 @@ export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR =
   '.Ketcher-polymer-editor-root, .Ketcher-macromolecules-root';
 
 export const getFullscreenElement = () => null;
-export const calculateBondPreviewPosition = () => ({}) as const;
+export const calculateBondPreviewPosition = () => ({} as const);
 export const PresetPosition = 'Library';
 
 export const usePortalStyle = () => [{}] as const;

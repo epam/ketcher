@@ -51,10 +51,12 @@ export class AttachmentPoint {
   protected canvasOffset: Coordinates;
   protected centerOfMonomer: Coordinates;
   protected element:
-    Selection<SVGGElement, this, HTMLElement, never> | undefined;
+    | Selection<SVGGElement, this, HTMLElement, never>
+    | undefined;
 
   private hoverableArea:
-    Selection<SVGGElement, this, HTMLElement, never> | undefined;
+    | Selection<SVGGElement, this, HTMLElement, never>
+    | undefined;
 
   protected initialAngle = 0;
   private readonly isUsed: boolean;

@@ -44,7 +44,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
     const bondIds = props.propsFromTrigger?.bondIds || [];
 
     return bondIds.length > 0
-      ? (editor.render.ctab.molecule.bonds.get(bondIds[0]) ?? null)
+      ? editor.render.ctab.molecule.bonds.get(bondIds[0]) ?? null
       : null;
   }, [props.propsFromTrigger, editor]);
 

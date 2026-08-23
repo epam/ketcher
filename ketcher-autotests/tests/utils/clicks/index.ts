@@ -84,7 +84,10 @@ export async function clickOnCanvas(
         page: Page,
         canvas: Locator,
         fromCenter:
-          'pageTopLeft' | 'pageCenter' | 'canvasTopLeft' | 'canvasCenter',
+          | 'pageTopLeft'
+          | 'pageCenter'
+          | 'canvasTopLeft'
+          | 'canvasCenter',
       ) => {
         switch (fromCenter) {
           case 'pageTopLeft':

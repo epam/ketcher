@@ -16,8 +16,10 @@ import {
 import { getMonomerUniqueKey } from 'state/library';
 
 interface RnaPresetsTemplatesType
-  extends
-    Pick<IKetMonomerGroupTemplate, 'templates' | 'idtAliases' | 'aliasAxoLabs'>,
+  extends Pick<
+      IKetMonomerGroupTemplate,
+      'templates' | 'idtAliases' | 'aliasAxoLabs'
+    >,
     Partial<Pick<IKetMonomerGroupTemplate, 'connections'>>,
     Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {
   connections?: IKetTemplateConnection[];

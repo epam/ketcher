@@ -25,7 +25,8 @@ import { Vec2 } from 'domain/entities';
 
 export class StereoFlagRenderer extends BaseRenderer {
   private selectionElement:
-    D3SvgElementSelection<SVGRectElement, void> | undefined;
+    | D3SvgElementSelection<SVGRectElement, void>
+    | undefined;
 
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
 

@@ -35,7 +35,7 @@ const ButtonGenSet = ({
 }: ButtonGenSetProps) => {
   const titleText = disabled
     ? `${button.label} is disabled`
-    : (button.description ?? button.label);
+    : button.description ?? button.label;
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     // Blur the button to prevent visual confusion between focus and selection states

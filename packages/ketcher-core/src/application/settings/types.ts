@@ -44,7 +44,11 @@ export interface Settings {
   readonly showCharge: boolean;
   readonly showValence: boolean;
   readonly showHydrogenLabels:
-    'off' | 'Hetero' | 'Terminal' | 'Terminal and Hetero' | 'On';
+    | 'off'
+    | 'Hetero'
+    | 'Terminal'
+    | 'Terminal and Hetero'
+    | 'On';
 
   // Bonds
   readonly aromaticCircle: boolean;

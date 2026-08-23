@@ -26,11 +26,11 @@ export function isTwoStrandedNodeRestrictedForHydrogenBondCreation(
 
   return Boolean(
     isNodeRestrictedForHydrogenBondCreation(twoStrandedNode?.senseNode) ||
-    isNodeRestrictedForHydrogenBondCreation(twoStrandedNode?.antisenseNode) ||
-    twoStrandedNode?.antisenseNode?.monomers.some((monomer) =>
-      monomer.hydrogenBonds.some((hydrogenBond) => {
-        return senseNodeHydrogenBonds.includes(hydrogenBond);
-      }),
-    ),
+      isNodeRestrictedForHydrogenBondCreation(twoStrandedNode?.antisenseNode) ||
+      twoStrandedNode?.antisenseNode?.monomers.some((monomer) =>
+        monomer.hydrogenBonds.some((hydrogenBond) => {
+          return senseNodeHydrogenBonds.includes(hydrogenBond);
+        }),
+      ),
   );
 }

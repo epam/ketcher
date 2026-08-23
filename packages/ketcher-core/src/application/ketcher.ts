@@ -85,8 +85,8 @@ const allowedApiSettings = [
   ['bondThickness', 'bondThickness'],
 ] as const;
 
-type AllowedApiSetting = (typeof allowedApiSettings)[number][0];
-type AllowedClientSetting = (typeof allowedApiSettings)[number][1];
+type AllowedApiSetting = typeof allowedApiSettings[number][0];
+type AllowedClientSetting = typeof allowedApiSettings[number][1];
 type KetcherGetSettingsResult = Partial<
   Record<AllowedApiSetting, KetcherApiSettings[AllowedApiSetting]>
 >;

@@ -9,8 +9,9 @@ export async function emptyFunction() {
 }
 
 export async function pageReload(page: Page) {
-  const { CommonTopRightToolbar } =
-    await import('./../../pages/common/CommonTopRightToolbar');
+  const { CommonTopRightToolbar } = await import(
+    './../../pages/common/CommonTopRightToolbar'
+  );
   await page.reload();
   await page.goto('', { waitUntil: 'domcontentloaded' });
   await waitForKetcherInit(page);

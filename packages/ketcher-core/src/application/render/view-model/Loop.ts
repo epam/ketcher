@@ -20,10 +20,7 @@ export class Loop {
   public doubleBondsAmount = 0;
   public aromatic = true;
 
-  constructor(
-    public halfEdges: Array<HalfEdge>,
-    public isConvex = false,
-  ) {
+  constructor(public halfEdges: Array<HalfEdge>, public isConvex = false) {
     this.calculateDoubleBondsAmount();
   }
 

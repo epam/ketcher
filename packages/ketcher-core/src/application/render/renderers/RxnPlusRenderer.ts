@@ -8,7 +8,8 @@ import { SELECTION_COLOR } from 'application/render/renderers/constants';
 
 export class RxnPlusRenderer extends BaseRenderer {
   private selectionElement:
-    D3SvgElementSelection<SVGRectElement, void> | undefined;
+    | D3SvgElementSelection<SVGRectElement, void>
+    | undefined;
 
   constructor(public rxnPlus: RxnPlus) {
     super(rxnPlus);

@@ -145,13 +145,22 @@ type LeftToolbarItemVariant =
   | typeof IMAGE_KEY;
 
 type BottomToolbarItemVariant =
-  'template-common' | 'template-lib' | 'enhanced-stereo' | 'fullscreen';
+  | 'template-common'
+  | 'template-lib'
+  | 'enhanced-stereo'
+  | 'fullscreen';
 
 type RightToolbarItemVariant =
-  'atom' | 'freq-atoms' | 'period-table' | 'extended-table' | 'any-atom';
+  | 'atom'
+  | 'freq-atoms'
+  | 'period-table'
+  | 'extended-table'
+  | 'any-atom';
 
 type FloatingToolItemVariant =
-  'transform-flip-h' | 'transform-flip-v' | 'erase';
+  | 'transform-flip-h'
+  | 'transform-flip-v'
+  | 'erase';
 
 type ToolbarItemVariant =
   | TopToolbarItemVariant

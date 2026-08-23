@@ -166,7 +166,7 @@ class BondTool implements Tool {
     const item: BondItemRef | undefined =
       attachmentAtomId !== undefined
         ? { map: 'atoms', id: attachmentAtomId }
-        : (ci ?? undefined);
+        : ci ?? undefined;
 
     this.dragCtx = {
       xy0: CoordinateTransformation.pageToModel(event, rnd),

@@ -425,8 +425,9 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       ).toBeFalsy();
 
       // 5. Check that if the symbol represents a nucleotide/nucleoside, a hydrogen bond established from the base (no need for a "sense base" check) ( Requirement: 1.1 )
-      const senseSymbolType =
-        await senseSymbol.getAttribute('data-symbol-type');
+      const senseSymbolType = await senseSymbol.getAttribute(
+        'data-symbol-type',
+      );
       if (
         senseSymbolType === SymbolType.RNA ||
         senseSymbolType === SymbolType.DNA

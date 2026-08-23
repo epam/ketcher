@@ -23,7 +23,8 @@ export const MONOMER_TYPES = {
   RNA: 'RNA',
 } as const;
 export type LibraryNameType =
-  typeof MONOMER_LIBRARY_FAVORITES | keyof typeof MONOMER_TYPES;
+  | typeof MONOMER_LIBRARY_FAVORITES
+  | keyof typeof MONOMER_TYPES;
 
 export enum MonomerGroups {
   SUGARS = 'Sugars',

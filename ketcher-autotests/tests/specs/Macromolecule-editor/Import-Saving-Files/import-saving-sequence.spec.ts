@@ -164,8 +164,9 @@ test.describe('Import-Saving .seq Files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
-    const convertErrorMessage =
-      await ErrorMessageDialog(page).getErrorMessage();
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
     const expectedErrorMessage =
       'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
@@ -178,8 +179,9 @@ test.describe('Import-Saving .seq Files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
-    const convertErrorMessage =
-      await ErrorMessageDialog(page).getErrorMessage();
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
     const expectedErrorMessage =
       'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
@@ -867,8 +869,9 @@ for (const sequenceToExport of sequencesToExport) {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );
-    const sequenceExportResult =
-      await SaveStructureDialog(page).getTextAreaValue();
+    const sequenceExportResult = await SaveStructureDialog(
+      page,
+    ).getTextAreaValue();
 
     if (sequenceToExport.differentSequenceExport) {
       expect(sequenceExportResult).toEqual(
@@ -1370,8 +1373,9 @@ for (const sequenceToExport of nonNaturalPeptideSequences) {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );
-    const sequenceExportResult =
-      await SaveStructureDialog(page).getTextAreaValue();
+    const sequenceExportResult = await SaveStructureDialog(
+      page,
+    ).getTextAreaValue();
 
     if (sequenceToExport.differentSequenceExport) {
       expect(sequenceExportResult).toEqual(

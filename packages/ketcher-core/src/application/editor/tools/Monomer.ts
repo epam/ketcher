@@ -32,17 +32,16 @@ class MonomerTool implements BaseTool {
   private monomerPreview: BaseMonomer | AmbiguousMonomer | undefined;
 
   private monomerPreviewRenderer:
-    BaseMonomerRenderer | AmbiguousMonomerRenderer | undefined;
+    | BaseMonomerRenderer
+    | AmbiguousMonomerRenderer
+    | undefined;
 
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.8;
   readonly MONOMER_PREVIEW_OFFSET_X = 30;
   readonly MONOMER_PREVIEW_OFFSET_Y = 30;
   history: EditorHistory;
   private readonly monomer: MonomerOrAmbiguousType;
-  constructor(
-    private readonly editor: CoreEditor,
-    ...args: unknown[]
-  ) {
+  constructor(private readonly editor: CoreEditor, ...args: unknown[]) {
     const [monomer] = args as [MonomerOrAmbiguousType];
     this.monomer = monomer;
     this.history = EditorHistory.getInstance(this.editor);

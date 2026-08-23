@@ -8,10 +8,7 @@ const UNRESOLVED_MONOMER_AUTOCHAIN_PREVIEW_ELEMENT_ID =
   '#unresolved-monomer-autochain-preview';
 
 export class UnresolvedMonomerRenderer extends BaseMonomerRenderer {
-  constructor(
-    public monomer: UnresolvedMonomer,
-    scale?: number,
-  ) {
+  constructor(public monomer: UnresolvedMonomer, scale?: number) {
     super(
       monomer,
       UNRESOLVED_MONOMER_HOVERED_ELEMENT_ID,

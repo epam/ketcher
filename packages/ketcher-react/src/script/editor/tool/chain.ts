@@ -189,7 +189,7 @@ class ChainTool implements Tool {
         const atoms = restruct.molecule.atoms;
 
         const pos0 = dragCtx.item
-          ? (atoms.get(dragCtx.item.id)?.pp ?? dragCtx.xy0)
+          ? atoms.get(dragCtx.item.id)?.pp ?? dragCtx.xy0
           : dragCtx.xy0;
 
         const pos1 = CoordinateTransformation.pageToModel(event, editor.render);

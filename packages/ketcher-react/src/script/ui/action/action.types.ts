@@ -162,7 +162,9 @@ type GetDisabledState = (
 type GetHiddenState = (options: ActionStateOptions) => boolean;
 
 export type GetActionState =
-  GetSelectedState | GetDisabledState | GetHiddenState;
+  | GetSelectedState
+  | GetDisabledState
+  | GetHiddenState;
 
 type IsSelectedState = boolean | GetSelectedState;
 type IsDisabledState = boolean | GetDisabledState;

@@ -14,7 +14,8 @@ export type SelectionLassoViewParams = {
 };
 
 export type SelectionViewParams =
-  SelectionRectangleViewParams | SelectionLassoViewParams;
+  | SelectionRectangleViewParams
+  | SelectionLassoViewParams;
 
 export class SelectionView {
   public static show(

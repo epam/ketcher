@@ -23,7 +23,7 @@ export const Item = ({
   <div
     {...props}
     data-disabled={disabled ? 'true' : undefined}
-    className={disabled ? 'disabled' : (props.className ?? '')}
+    className={disabled ? 'disabled' : props.className ?? ''}
   >
     {children}
   </div>

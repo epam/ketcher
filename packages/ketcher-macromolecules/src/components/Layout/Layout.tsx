@@ -128,7 +128,12 @@ const DummyDiv = styled.div({
 });
 
 type LayoutSection =
-  'Left' | 'Right' | 'Main' | 'Top' | 'Bottom' | 'InsideRoot';
+  | 'Left'
+  | 'Right'
+  | 'Main'
+  | 'Top'
+  | 'Bottom'
+  | 'InsideRoot';
 
 const Top = (
   props: React.HTMLAttributes<HTMLDivElement> & { shortened?: boolean },

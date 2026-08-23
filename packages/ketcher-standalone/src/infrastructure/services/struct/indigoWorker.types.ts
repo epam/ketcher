@@ -132,7 +132,11 @@ export interface WithSelection {
 
 export interface CommandOptions {
   [key: string]:
-    IKetMacromoleculesContent | string | number | boolean | undefined;
+    | IKetMacromoleculesContent
+    | string
+    | number
+    | boolean
+    | undefined;
 }
 
 export interface CommandData {
@@ -144,7 +148,9 @@ export interface CheckCommandData extends CommandData, WithStruct {
 }
 
 export interface ConvertCommandData
-  extends CommandData, WithStruct, WithFormat {}
+  extends CommandData,
+    WithStruct,
+    WithFormat {}
 
 export interface GenerateInchIKeyCommandData extends CommandData, WithStruct {}
 
@@ -155,19 +161,30 @@ export interface GenerateImageCommandData extends CommandData, WithStruct {
 }
 
 export interface LayoutCommandData
-  extends CommandData, WithStruct, WithFormat {}
+  extends CommandData,
+    WithStruct,
+    WithFormat {}
 
 export interface CleanCommandData
-  extends CommandData, WithStruct, WithSelection, WithFormat {}
+  extends CommandData,
+    WithStruct,
+    WithSelection,
+    WithFormat {}
 
 export interface AromatizeCommandData
-  extends CommandData, WithStruct, WithFormat {}
+  extends CommandData,
+    WithStruct,
+    WithFormat {}
 
 export interface DearomatizeCommandData
-  extends CommandData, WithStruct, WithFormat {}
+  extends CommandData,
+    WithStruct,
+    WithFormat {}
 
 export interface CalculateCipCommandData
-  extends CommandData, WithStruct, WithFormat {}
+  extends CommandData,
+    WithStruct,
+    WithFormat {}
 
 export type CalculateProps =
   | 'molecular-weight'
@@ -178,22 +195,29 @@ export type CalculateProps =
   | 'mass-composition';
 
 export interface CalculateCommandData
-  extends CommandData, WithStruct, WithSelection {
+  extends CommandData,
+    WithStruct,
+    WithSelection {
   properties: Array<string>;
 }
 
 export interface AutomapCommandData
-  extends CommandData, WithStruct, WithFormat {
+  extends CommandData,
+    WithStruct,
+    WithFormat {
   mode: string;
 }
 
 export interface ExplicitHydrogensCommandData
-  extends CommandData, WithStruct, WithFormat {
+  extends CommandData,
+    WithStruct,
+    WithFormat {
   mode: 'auto' | 'fold' | 'unfold';
 }
 
 export interface CalculateMacromoleculePropertiesCommandData
-  extends CommandData, WithStruct {}
+  extends CommandData,
+    WithStruct {}
 
 interface OutputMessageBase {
   type?: Command;
@@ -213,7 +237,8 @@ interface OutputMessageWithoutError<T> extends OutputMessageBase {
 }
 
 export type OutputMessage<T> =
-  OutputMessageWithError | OutputMessageWithoutError<T>;
+  | OutputMessageWithError
+  | OutputMessageWithoutError<T>;
 
 export interface InputMessage<T> {
   type: Command;

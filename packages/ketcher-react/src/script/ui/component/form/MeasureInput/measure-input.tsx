@@ -36,10 +36,8 @@ interface Schema {
   properties?: Record<string, Schema>;
 }
 
-interface MeasureInputProps extends Omit<
-  HTMLAttributes<HTMLDivElement>,
-  'onChange'
-> {
+interface MeasureInputProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   schema: Schema;
   extraSchema?: Schema;
   value: number | string;

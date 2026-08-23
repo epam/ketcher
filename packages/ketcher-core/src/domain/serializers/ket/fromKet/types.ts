@@ -1,1 +1,1 @@
-export type { KetAtomNode, KetBondNode, KetFragment, KetItem } from '../types';
+export type { KetAtomNode, KetBondNode, KetFragment, KetItem, KetSimpleObjectNode } from '../types';

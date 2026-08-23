@@ -110,11 +110,20 @@ import type { KetFileImageNode } from 'domain/entities/image';
 import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
 
-type KetMicromoleculeNode = {
-  type?: string;
-  $ref?: string;
-  stereoFlagPosition?: Point;
-};
+type KetMicromoleculeNode =
+  | KetSimpleObjectNode
+  | {
+      type?:
+        | 'arrow'
+        | 'plus'
+        | 'molecule'
+        | 'rgroup'
+        | 'text'
+        | typeof MULTITAIL_ARROW_SERIALIZE_KEY
+        | typeof IMAGE_SERIALIZE_KEY;
+      $ref?: string;
+      stereoFlagPosition?: Point;
+    };
 
 interface IKetMicromoleculeFile {
   header?: { moleculeName?: string };
@@ -141,7 +150,7 @@ function parseNode(node: KetMicromoleculeNode, struct: Struct) {
       break;
     }
     case 'simpleObject': {
-      simpleObjectToStruct(node as unknown as KetSimpleObjectNode, struct);
+      simpleObjectToStruct(node, struct);
       break;
     }
     case 'molecule': {

@@ -17,7 +17,7 @@
 import { SimpleObject } from 'domain/entities/simpleObject';
 import type { Struct } from 'domain/entities/struct';
 import { getNodeWithInvertedYCoord } from '../helpers';
-import type { KetSimpleObjectNode } from '../types';
+import type { KetSimpleObjectNode } from './types';
 
 export function simpleObjectToStruct(
   ketItem: KetSimpleObjectNode,

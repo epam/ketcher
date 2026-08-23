@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -37,7 +38,6 @@ export class RGroupFragment extends BaseOperation {
   }
 
   execute(restruct: ReStruct) {
-    // eslint-disable-line max-statements
     const struct = restruct.molecule;
     this.rgid_old =
       this.rgid_old || RGroup.findRGroupByFragment(struct.rgroups, this.frid);

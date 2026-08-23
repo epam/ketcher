@@ -349,7 +349,8 @@ export const selectSelectedMenuGroupItemsState = (state: RootState) =>
   state.editor.selectedMenuGroupItems;
 
 export const selectSelectedMenuGroupItem =
-  (groupItemName: string) => (state: RootState) => {
+  (groupItemName: string | undefined) => (state: RootState) => {
+    if (!groupItemName) return undefined;
     return state.editor.selectedMenuGroupItems[groupItemName];
   };
 

@@ -43,6 +43,7 @@ import type {
   BondItemRef,
   BondToolDragContext,
 } from './bond.types';
+import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 class BondTool implements Tool {
   private static readonly DRAG_START_THRESHOLD_PX = 10;
@@ -77,7 +78,7 @@ class BondTool implements Tool {
           }
         }
         if (fgIds.size) {
-          this.editor.event.removeFG.dispatch({ fgIds: [...fgIds] });
+          dispatchMonomerOrGroupDialog(this.editor, [...fgIds]);
           this.isNotActiveTool = true;
           return;
         }
@@ -132,7 +133,7 @@ class BondTool implements Tool {
         }
       }
       if (result.length) {
-        this.editor.event.removeFG.dispatch({ fgIds: result });
+        dispatchMonomerOrGroupDialog(this.editor, result);
         return;
       }
     } else if (bondResult.length > 0) {
@@ -147,7 +148,7 @@ class BondTool implements Tool {
         }
       }
       if (result.length) {
-        this.editor.event.removeFG.dispatch({ fgIds: result });
+        dispatchMonomerOrGroupDialog(this.editor, result);
         return;
       }
     }
@@ -330,7 +331,7 @@ class BondTool implements Tool {
     }
 
     if (endAtom && endAtom.id !== closestAttachmentAtomId) {
-      this.editor.event.removeFG.dispatch({ fgIds: [sgroup.id] });
+      dispatchMonomerOrGroupDialog(this.editor, [sgroup.id]);
       endAtom = null;
     }
 
@@ -356,8 +357,8 @@ class BondTool implements Tool {
         endAtom.id,
       );
       if (fgIds.length > 0) {
-        this.editor.event.removeFG.dispatch({ fgIds });
-        delete this.dragCtx;
+        dispatchMonomerOrGroupDialog(this.editor, fgIds);
+        this.dragCtx = undefined;
         return { beginAtom, endAtom, beginPos, shouldReturn: true };
       }
     } else if (endAtom?.map === 'functionalGroups') {
@@ -523,7 +524,7 @@ class BondTool implements Tool {
           bondChangingAction(render.ctab, dragCtx.item.id, bond, bondProps),
         );
       }
-      delete this.dragCtx;
+      this.dragCtx = undefined;
     }
     this.editor.event.message.dispatch({
       info: false,

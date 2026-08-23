@@ -41,7 +41,6 @@ function TypeChoice({ value, onChange, disabled }: Readonly<TypeChoiceProps>) {
     <fieldset className={classes.fieldset} disabled={disabled}>
       {typeSchema.map((type) => (
         <label key={type.title}>
-          {/* eslint-disable jsx-a11y/label-has-associated-control */}
           <GenericInput
             type="radio"
             value={type.value}

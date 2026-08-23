@@ -51,6 +51,13 @@ export type MonomerCreationInitialValues = {
   originalType?: KetMonomerClass;
   originalSymbol?: string;
   presetRequirements?: EditAllInstancesPresetRequirements;
+  /**
+   * When editMode is 'all' and the user had multiple monomers of the same
+   * type/symbol selected, this contains the SGroup IDs of those specific
+   * monomers. If provided, only these monomers will be replaced instead of
+   * all canvas instances.
+   */
+  selectedSGroupIds?: number[];
 };
 
 export type RnaComponentAtoms = Map<
@@ -265,7 +272,6 @@ export class Render {
   }
 
   update(force = false, viewSz: Vec2 | null = null) {
-    // eslint-disable-line max-statements
     viewSz =
       viewSz ??
       new Vec2(

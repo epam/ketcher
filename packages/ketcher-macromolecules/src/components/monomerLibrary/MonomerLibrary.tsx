@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* eslint-disable react-hooks/refs */
+
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Tabs } from 'components/shared/Tabs';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';

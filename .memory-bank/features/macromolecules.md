@@ -28,9 +28,34 @@ Monomers connect through defined attachment points, sequences render as single-l
 - **WHEN** the user connects two monomers for which no default bond applies
 - **THEN** the _Select Attachment Points_ dialog opens so the user picks the exact points
 
-#### Scenario: Monomer placed without bonding (open canvas drop)
+#### Scenario: Monomer replaced by dragged monomer (center proximity drop)
 
-- **WHEN** the user drags a monomer from the library and releases it on an area of the canvas with no monomer within 25 px of any free AP
+- **WHEN** the user drags a monomer from the library and the cursor comes within the replacement
+  proximity threshold of a canvas monomer's center
+- **THEN** the canvas monomer shows the replacement-target visual state; no AP indicators appear
+- **AND** releasing the drag replaces the canvas monomer at the same position with bonds re-established
+
+#### Scenario: Preset replaces compatible canvas preset (center proximity drop)
+
+- **WHEN** the user drags a preset from the library and releases it near any component monomer of a
+  canvas preset with the same geometry (same components + same phosphate position)
+- **THEN** the canvas preset is replaced in place with all compatible external bonds re-established
+- **AND** during drag-over the entire preset is rendered with a replacement-target visual state
+
+#### Scenario: Preset replaces standalone monomer (center proximity drop)
+
+- **WHEN** the user drags a preset from the library and releases it near a canvas monomer that is
+  not part of a same-geometry preset
+- **THEN** the canvas monomer is replaced by the preset with the sugar at the original monomer's position
+
+#### Scenario: Bond-deletion warning during replacement
+
+- **WHEN** any bond of the original monomer or preset cannot be re-established on the replacement
+- **THEN** a "Deletion of bonds" modal is shown before proceeding; Cancel aborts, Yes proceeds
+
+#### Scenario: Preset placed without bonding (open canvas drop) — unchanged
+
+- **WHEN** the user drags a monomer from the library and releases it on an area of the canvas with no canvas monomer within the replacement proximity threshold and no monomer within 25 px of any free AP
 - **THEN** the monomer is placed at the drop position without any bond being created
 
 #### Scenario: Monomer placed with bonding (proximity drop)
@@ -82,4 +107,4 @@ Monomers connect through defined attachment points, sequences render as single-l
 ## Related
 
 - Library: [monomer-library](../modules/monomer-library.md) · UI: [ketcher-macromolecules](../modules/ketcher-macromolecules.md) · Bridge: [editor-engine](../modules/editor-engine.md)
-- See also: [import-export](./import-export.md), [clipboard](./clipboard.md)
+- See also: [import-export](./import-export.md), [clipboard](./clipboard.md), [monomer-replacement-drag-drop](./monomer-replacement-drag-drop.md)

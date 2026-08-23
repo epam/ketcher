@@ -23,7 +23,7 @@ export class KetcherLogger {
       );
     }
 
-    return window.ketcher?.logging ?? {};
+    return window.logging ?? {};
   }
 
   static set settings(newSettings: LogSettings) {

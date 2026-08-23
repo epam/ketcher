@@ -135,7 +135,10 @@ interface IKetMicromoleculeFile {
 }
 
 interface IKetMicromoleculeSerializedResult {
-  root: { nodes: KetMicromoleculeNode[] };
+  // nodes is intentionally wider than KetMicromoleculeNode so that serializer
+  // functions (arrowToKet, plusToKet, etc.) whose type property is inferred as
+  // `string` can be pushed without casts.
+  root: { nodes: Array<{ type?: string; [key: string]: unknown }> };
   header?: unknown;
   // Allows dynamic property assignment for mol/rg sections: result[`mol${id}`], result[`rg${id}`]
   [key: string]: unknown;

@@ -141,7 +141,9 @@ export class AtomRenderer extends BaseRenderer {
    * Callers must therefore restrict themselves to element-agnostic D3 methods
    * (`attr`, `style`, `remove`) and must not rely on the element type itself.
    */
-  private appendSelectionContour(): D3SvgElementSelection<SVGRectElement, void> | undefined {
+  private appendSelectionContour():
+    | D3SvgElementSelection<SVGRectElement, void>
+    | undefined {
     if (
       (this.labelLength < 2 || !this.isLabelVisible) &&
       !this.atom.hasCharge
@@ -156,7 +158,10 @@ export class AtomRenderer extends BaseRenderer {
         ?.insert('circle', ':first-child')
         .attr('r', selectionRadius)
         .attr('cx', 0)
-        .attr('cy', 0) as unknown as D3SvgElementSelection<SVGRectElement, void>;
+        .attr('cy', 0) as unknown as D3SvgElementSelection<
+        SVGRectElement,
+        void
+      >;
     } else {
       const labelBbox = this.textElement?.node()?.getBBox();
       const labelX = labelBbox?.x ?? 0;

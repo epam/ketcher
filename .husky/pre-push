@@ -1,2 +1,4 @@
 #!/usr/bin/env sh
-exit 0
+. "$(dirname -- "$0")/_/husky.sh"
+
+npm run prepush

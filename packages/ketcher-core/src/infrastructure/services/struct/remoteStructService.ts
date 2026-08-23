@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -107,12 +108,21 @@ function request<T = unknown>(
     response = responseHandler(fetchResponse);
   } else {
     response = fetchResponse.then((res) =>
+      // Error responses (e.g. a 413 from a reverse proxy rejecting an
+      // oversized body) are not guaranteed to have a JSON body, so parsing
+      // must not be the thing that decides whether the request succeeded.
       res
         .json()
-        .then((json) =>
-          res.ok ? json : Promise.reject(new Error(json.error)),
-        ),
-    ) as Promise<T>;
+        .catch(() => null)
+        .then((json) => {
+          if (res.ok) return json as T;
+          const message =
+            json?.error ||
+            res.statusText ||
+            `Request failed with status ${res.status}`;
+          return Promise.reject(new Error(message));
+        }),
+    );
   }
 
   return response;

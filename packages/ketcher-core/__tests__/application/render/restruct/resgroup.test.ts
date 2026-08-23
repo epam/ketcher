@@ -116,13 +116,13 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
       render.ctab,
       'getRGroupAttachmentPointsVBoxByAtomIds',
     );
-    const bonds = new Pool();
+    const bonds = new Pool<Bond>();
     mockBonds.forEach((bond, i) => bonds.set(i, new Bond(bond)));
     restruct.molecule.bonds = bonds;
   });
 
   it('should draw brackets with attachment points with more than 2 cross bonds per atom with 1 attachment point', () => {
-    const bonds = new Pool();
+    const bonds = new Pool<Bond>();
     mockBonds.forEach((bond, i) => bonds.set(i, new Bond(bond)));
     restruct.molecule.bonds = bonds;
     reSgroup.draw(restruct as unknown as ReStruct, sGroup);

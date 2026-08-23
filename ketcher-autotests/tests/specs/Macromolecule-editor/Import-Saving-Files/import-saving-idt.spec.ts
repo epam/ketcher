@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';

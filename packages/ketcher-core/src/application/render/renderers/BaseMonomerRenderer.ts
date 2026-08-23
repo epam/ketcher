@@ -25,6 +25,10 @@ import {
   getMonomerSize,
   setMonomerSize,
 } from 'application/render/renderers/monomerSizeState';
+import {
+  type HighlightPathData,
+  createRectHighlightPath,
+} from 'application/render/renderers/monomerHighlightShapes';
 
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
@@ -119,6 +123,23 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     );
   }
 
+  /**
+   * The path that outlines this monomer's replacement-highlight area.
+   *
+   * The default is a rectangle matching the monomer body; renderers with a
+   * different body shape (e.g. phosphates, RNA bases) override this. The
+   * optional offset lets transient views request an inflated path while keeping
+   * the body-shape knowledge inside the renderer.
+   */
+  public getHighlightPath(offset = 0): HighlightPathData {
+    return createRectHighlightPath(
+      this.center,
+      this.monomerSize.width,
+      this.monomerSize.height,
+      offset,
+    );
+  }
+
   public get textColor() {
     const WHITE = 'white';
     const colorsMap = {
@@ -208,7 +229,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     appendFn?: (
       apName: AttachmentPointName,
       customAngle?: number,
-    ) => AttachmentPoint,
+    ) => Pick<AttachmentPoint, 'getAngle'>,
   ) {
     if (this.attachmentPoints.length) {
       return;

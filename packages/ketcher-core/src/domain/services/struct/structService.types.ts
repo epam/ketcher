@@ -169,6 +169,11 @@ export interface InfoResult {
 
 export interface RecognizeResult extends WithStruct, WithOutputFormat {}
 
+export interface IndigoInfoResponse {
+  indigo_version: string;
+  imago_versions: Array<string>;
+}
+
 export interface ImagoUploadResponse {
   upload_id: string;
 }

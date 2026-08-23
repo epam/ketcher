@@ -39,6 +39,7 @@ import {
   type GenerateImageOptions,
   type ImagoStatusResponse,
   type ImagoUploadResponse,
+  type IndigoInfoResponse,
   type InfoResult,
   type LayoutData,
   type LayoutResult,
@@ -228,10 +229,12 @@ export class RemoteStructService implements StructService {
     let isAvailable = false;
 
     try {
-      const response = await request<{
-        indigo_version: string;
-        imago_versions: Array<string>;
-      }>('GET', this.apiPath + 'info', undefined, this.customHeaders);
+      const response = await request<IndigoInfoResponse>(
+        'GET',
+        this.apiPath + 'info',
+        undefined,
+        this.customHeaders,
+      );
       indigoVersion = response.indigo_version;
       imagoVersions = response.imago_versions;
       isAvailable = true;
@@ -482,7 +485,7 @@ export class RemoteStructService implements StructService {
           ? getLabelRenderModeForIndigo(this.ketcherId)
           : undefined,
       },
-      (response) => response.then((resp) => resp.text()) as Promise<string>,
+      (response) => response.then((resp) => resp.text()),
     );
   }
 

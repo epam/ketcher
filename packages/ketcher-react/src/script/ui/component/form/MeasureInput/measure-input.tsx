@@ -120,16 +120,11 @@ const MeasureInput = ({
     setInternalValue(stringifiedValue);
   }
 
-  // Input binds onChange once in its constructor, so handleChange is stuck with
-  // the first render's closure and cannot call the current onChange. This effect
-  // is re-created every render, so it always holds the latest onChange/value —
-  // hence the deliberate single-dep list.
   useEffect(() => {
     if (internalValue !== stringifiedValue) {
       onChange(parseFloat(internalValue));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [internalValue]);
+  }, [internalValue, stringifiedValue, onChange]);
 
   const handleChange = (value: unknown) => {
     const stringifiedValue = String(value);

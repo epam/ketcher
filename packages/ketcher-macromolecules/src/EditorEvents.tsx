@@ -57,6 +57,7 @@ import {
 } from 'state/types';
 import { calculateBondPreviewPosition } from 'ketcher-react';
 import { loadDefaultPresets, loadMonomerLibrary } from 'state/library';
+import { useIndigoVersionToRedux } from './hooks/useIndigoVersionToRedux';
 
 const noPreviewTools = [ToolName.bondSingle, ToolName.selectRectangle];
 
@@ -76,6 +77,8 @@ export const EditorEvents = () => {
     dispatch(loadDefaultPresets(editor?.defaultRnaPresetsLibraryItems));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
+
+  useIndigoVersionToRedux();
 
   useEffect(() => {
     editor?.events.updateMonomersLibrary.add(handleMonomersLibraryUpdate);

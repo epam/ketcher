@@ -9,7 +9,7 @@ import {
   MonomerMicromolecule,
   Vec2,
 } from 'ketcher-core';
-import {
+import type {
   AssignedAttachmentPointsByMonomerType,
   WizardState,
 } from './MonomerCreationWizard.types';

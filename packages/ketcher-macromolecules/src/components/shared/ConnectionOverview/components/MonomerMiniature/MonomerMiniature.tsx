@@ -1,4 +1,5 @@
 import { select, type Selection } from 'd3';
+
 import {
   AmbiguousMonomer,
   AmbiguousMonomerRenderer,

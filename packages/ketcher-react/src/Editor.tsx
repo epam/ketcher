@@ -45,7 +45,7 @@ interface MacromoleculesEditorProps {
  *  traverse this dynamic import. If this import is ever changed to a static one, the flag must be removed
  *  and the resulting cross-package cycle (ketcher-macromolecules -> ketcher-react) must be resolved first.
  */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore ketcher-macromolecules is not available during ketcher-react build (dynamic import)
 const MacromoleculesEditorComponent = lazy(
   () => import('ketcher-macromolecules'),
@@ -113,12 +113,15 @@ export const Editor = (props: Props) => {
     };
   }, [macromoleculesEditor, togglePolymerEditor]);
 
+  /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
   useEffect(() => {
     return () => {
       window.isPolymerEditorTurnedOn = false;
     };
   }, []);
+  /* eslint-enable react-you-might-not-need-an-effect/no-event-handler */
 
+  /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
   useEffect(() => {
     // Guard to prevent running on initial lazy-load mount when editors become ready
     // and showPolymerEditor is false, to avoid unexpected focus shifts
@@ -147,7 +150,9 @@ export const Editor = (props: Props) => {
       }
     }
   }, [showPolymerEditor, moleculesEditor, macromoleculesEditor]);
+  /* eslint-enable react-you-might-not-need-an-effect/no-event-handler */
 
+  /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
   useEffect(() => {
     if (
       ketcher &&
@@ -172,6 +177,7 @@ export const Editor = (props: Props) => {
     onInit,
     disableMacromoleculesEditor,
   ]);
+  /* eslint-enable react-you-might-not-need-an-effect/no-event-handler */
 
   const onInitMoleculesEditor = (ketcher: Ketcher) => {
     setKetcher(ketcher);

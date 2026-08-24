@@ -73,8 +73,7 @@ class TemplateTool implements Tool {
     this.editor.selection(null);
     this.isSaltOrSolvent = SGroup.isSaltOrSolvent(tmpl.struct.name);
     const sGroup = tmpl.struct.sgroups.values().next().value as
-      | SGroup
-      | undefined;
+      SGroup | undefined;
 
     const frag = tmpl.struct;
     frag.rescale();

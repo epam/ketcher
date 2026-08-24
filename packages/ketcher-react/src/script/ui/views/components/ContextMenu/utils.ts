@@ -1,8 +1,9 @@
 import { difference } from 'lodash';
 import {
+  Bond,
   isAtomPartOfSuperAttachmentPoint,
+  isSuperAttachmentPointAtom,
   MonomerMicromolecule,
-  type Bond,
   type Struct,
 } from 'ketcher-core';
 import type { Selection } from 'src/script/editor/Editor';
@@ -82,6 +83,25 @@ export const isBondBetweenMonomers = (
 };
 
 export const noOperation = () => null;
+
+export function getEditableAtomIds(struct: Struct, atomIds: number[]) {
+  return atomIds.filter(
+    (atomId) => !isSuperAttachmentPointAtom(struct.atoms.get(atomId)),
+  );
+}
+
+export function getEditableBondIds(struct: Struct, bondIds: number[]) {
+  return bondIds.filter((bondId) => {
+    const bond = struct.bonds.get(bondId);
+    if (!bond || bond.type !== Bond.PATTERN.TYPE.HAPTIC) {
+      return true;
+    }
+
+    return ![bond.begin, bond.end].some((atomId) =>
+      isSuperAttachmentPointAtom(struct.atoms.get(atomId)),
+    );
+  });
+}
 
 export function onlyHasProperty<T extends object>(
   checkedObject: T,

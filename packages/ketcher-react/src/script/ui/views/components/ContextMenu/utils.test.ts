@@ -1,5 +1,7 @@
 import { Atom, Bond, Struct, Vec2 } from 'ketcher-core';
 import {
+  getEditableAtomIds,
+  getEditableBondIds,
   isSuperAttachmentPointCreationSelectionValid,
   isSuperAttachmentPointCreationSelectionVisible,
   onlyHasProperty,
@@ -21,6 +23,75 @@ function createTwoConnectedAtoms() {
 }
 
 describe('Utils', () => {
+  describe('context menu editable selection', () => {
+    it('excludes super attachment points from editable atoms', () => {
+      const struct = new Struct();
+      const regularAtomId = struct.atoms.add(
+        new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+      );
+      const attachmentGroupId = struct.atoms.add(
+        new Atom({
+          label: '*',
+          pp: new Vec2(1, 0),
+          endpoints: [regularAtomId],
+        }),
+      );
+
+      expect(
+        getEditableAtomIds(struct, [regularAtomId, attachmentGroupId]),
+      ).toEqual([regularAtomId]);
+    });
+
+    it('excludes Attachment Group haptic bonds from editable bonds', () => {
+      const struct = new Struct();
+      const endpointId = struct.atoms.add(
+        new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+      );
+      const attachmentGroupId = struct.atoms.add(
+        new Atom({
+          label: '*',
+          pp: new Vec2(0.5, 0),
+          endpoints: [endpointId],
+        }),
+      );
+      const metalId = struct.atoms.add(
+        new Atom({ label: 'Fe', pp: new Vec2(1, 0) }),
+      );
+      const regularAtomId = struct.atoms.add(
+        new Atom({ label: 'C', pp: new Vec2(2, 0) }),
+      );
+      const hapticBondId = struct.bonds.add(
+        new Bond({
+          begin: attachmentGroupId,
+          end: metalId,
+          type: Bond.PATTERN.TYPE.HAPTIC,
+        }),
+      );
+      const regularBondId = struct.bonds.add(
+        new Bond({
+          begin: metalId,
+          end: regularAtomId,
+          type: Bond.PATTERN.TYPE.SINGLE,
+        }),
+      );
+      const nonSapHapticBondId = struct.bonds.add(
+        new Bond({
+          begin: endpointId,
+          end: metalId,
+          type: Bond.PATTERN.TYPE.HAPTIC,
+        }),
+      );
+
+      expect(
+        getEditableBondIds(struct, [
+          regularBondId,
+          hapticBondId,
+          nonSapHapticBondId,
+        ]),
+      ).toEqual([regularBondId, nonSapHapticBondId]);
+    });
+  });
+
   describe('onlyHasProperty', () => {
     type OptionalObject = Record<string, unknown>;
     const REQUIRED_PROP_NAME = 'atoms';

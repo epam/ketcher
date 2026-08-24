@@ -51,8 +51,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
   const hasAttachmentGroupHapticBond = selectedBondIds.some((bondId) =>
     isHapticBondWithAttachmentGroup(struct, struct.bonds.get(bondId)),
   );
-  const isDisabledForAttachmentGroup =
-    isDisabled || hasAttachmentGroupHapticBond;
+  const isDisabledForAttachmentGroup = isDisabled;
   const { changeDirection } = useChangeBondDirection(props as ItemEventParams);
 
   const bond = useMemo(() => {
@@ -135,7 +134,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         data-testid="Query bonds-option"
         label="Query bonds"
         className={styles.subMenu}
-        disabled={disabledForMonomerCreation || hasAttachmentGroupHapticBond}
+        disabled={disabledForMonomerCreation || isDisabledForAttachmentGroup}
       >
         {queryBondNames.map((name) => {
           const iconName = getIconName(name);

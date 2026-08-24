@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -676,7 +675,13 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
           },
         );
 
-        if (isOccupied) {
+        if (isOccupied || isExpanded) {
+          // For occupied attachment points OR expanded monomers,
+          // delete the leaving group atom and its bonds.
+          // Note: This is a semantic change from previous behavior where
+          // expanded monomers only cleared rglabel. Now we fully delete
+          // leaving group atoms for expanded monomers to fix issue #9866
+          // (additional elements appearing when inserting mol files).
           struct.bonds.forEach(
             (
               { begin: bondBegin, end: bondEnd }: BondAttributes,
@@ -688,9 +693,9 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
             },
           );
           action.addOp(new AtomDelete(leaveAtomId));
-        } else if (isExpanded) {
-          action.addOp(new AtomAttr(leaveAtomId, 'rglabel', null));
         } else {
+          // For collapsed monomers with unoccupied attachment points,
+          // convert the leaving group atom to its cap representation (e.g., H)
           const apLabel = `R${attachmentPoint.attachmentPointNumber ?? 0}`;
           const newLabel = monomerCaps?.[apLabel] || 'H';
           action.addOp(new AtomAttr(leaveAtomId, 'label', newLabel));

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -1016,14 +1014,74 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   public static removeLeavingGroupsFromConnectedAtoms(_struct: Struct) {
-    const struct = _struct.clone();
+    // NOTE: clone() API requires positional parameters.
+    // We only need needCloneAttachmentPoints=true (11th parameter)
+    // to preserve attachment points which are needed to identify
+    // leaving group atoms in expanded monomers
+    const struct = _struct.clone(
+      null, // atomSet
+      null, // bondSet
+      false, // dropRxnSymbols
+      null, // aidMap
+      null, // simpleObjectsSet
+      null, // textsSet
+      null, // rgroupAttachmentPointSet
+      null, // imagesSet
+      null, // multitailArrowsSet
+      null, // bidMap
+      true, // needCloneAttachmentPoints
+    );
 
-    struct.atoms.forEach((_atom, atomId) => {
-      if (Atom.isHiddenLeavingGroupAtom(struct, atomId, false, true)) {
-        struct.atoms.delete(atomId);
+    const atomsToDelete: number[] = [];
+
+    // For expanded monomers, remove atoms with rglabel (leaving group atoms)
+    struct.sgroups.forEach((sgroup) => {
+      if (sgroup.isExpanded()) {
+        sgroup.atoms.forEach((atomId) => {
+          const atom = struct.atoms.get(atomId);
+          if (atom && atom.rglabel !== null) {
+            atomsToDelete.push(atomId);
+          }
+        });
       }
     });
 
+    // For collapsed monomers, use the old logic with attachment points
+    // Use Set for O(1) lookup instead of O(n) with array.includes()
+    const atomsToDeleteSet = new Set(atomsToDelete);
+    struct.atoms.forEach((_atom, atomId) => {
+      if (
+        !atomsToDeleteSet.has(atomId) &&
+        Atom.isHiddenLeavingGroupAtom(struct, atomId, false, true)
+      ) {
+        atomsToDelete.push(atomId);
+        atomsToDeleteSet.add(atomId);
+      }
+    });
+
+    // Remove bonds to leaving group atoms
+    struct.bonds.forEach((bond, bondId) => {
+      if (atomsToDeleteSet.has(bond.begin) || atomsToDeleteSet.has(bond.end)) {
+        struct.bonds.delete(bondId);
+      }
+    });
+
+    // Remove leaving group atoms from sgroup atoms lists
+    // Use filter instead of nested forEach with splice for better performance
+    struct.sgroups.forEach((sgroup) => {
+      sgroup.atoms = sgroup.atoms.filter(
+        (atomId) => !atomsToDeleteSet.has(atomId),
+      );
+    });
+
+    // Remove leaving group atoms
+    atomsToDelete.forEach((atomId) => {
+      struct.atoms.delete(atomId);
+    });
+
+    // Second pass: remove any remaining bonds to hidden leaving groups
+    // This catches edge cases where isBondToHiddenLeavingGroup has different
+    // logic than our atomsToDelete collection (e.g., functional groups)
     struct.bonds.forEach((bond, bondId) => {
       if (Bond.isBondToHiddenLeavingGroup(struct, bond)) {
         struct.bonds.delete(bondId);

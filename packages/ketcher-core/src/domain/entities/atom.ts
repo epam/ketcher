@@ -1069,6 +1069,38 @@ export class Atom extends BaseMicromoleculeEntity {
       return false;
     }
 
+    // First check if this atom is a leaving group atom
+    // This also finds the S-group through the attachment point
+    const attachmentPoint = Atom.getSuperAtomAttachmentPointByLeavingGroup(
+      struct,
+      atomId,
+      searchBySgroups,
+    );
+
+    if (!attachmentPoint) {
+      return false;
+    }
+
+    // Get the S-group from the attachment atom (not the leaving group atom)
+    // because leaving group atoms are not in the S-group atoms list
+    const sGroup = searchBySgroups
+      ? struct.getGroupFromAtomIdBySgroups(attachmentPoint.atomId)
+      : struct.getGroupFromAtomId(attachmentPoint.atomId);
+
+    const isMonomer = sGroup?.isMonomer;
+
+    if (!sGroup || (!isMonomer && !sGroup?.isSuperatomWithoutLabel)) {
+      return false;
+    }
+
+    // For expanded monomers, all leaving group atoms should be hidden
+    // regardless of whether the attachment point has external connections
+    if (sGroup.isExpanded()) {
+      return true;
+    }
+
+    // For collapsed monomers, leaving group atoms are only hidden
+    // if the attachment point has an external connection
     const attachmentAtomExternalConnections =
       Atom.getAttachmentAtomExternalConnections(
         struct,
@@ -1076,28 +1108,15 @@ export class Atom extends BaseMicromoleculeEntity {
         atomId,
         searchBySgroups,
       );
-    const attachmentPoint = Atom.getSuperAtomAttachmentPointByLeavingGroup(
-      struct,
-      atomId,
-    );
-    const sGroup = searchBySgroups
-      ? struct.getGroupFromAtomIdBySgroups(atomId)
-      : struct.getGroupFromAtomId(atomId);
-    const isMonomer = sGroup?.isMonomer;
-
-    if (!sGroup || (!isMonomer && !sGroup?.isSuperatomWithoutLabel)) {
-      return false;
-    }
 
     return Boolean(
-      Atom.isSuperatomLeavingGroupAtom(struct, atomId, searchBySgroups) &&
-        attachmentAtomExternalConnections?.find((_, bond) =>
-          bond.begin === attachmentPoint?.atomId
-            ? bond.beginSuperatomAttachmentPointNumber ===
-              attachmentPoint?.attachmentPointNumber
-            : bond.endSuperatomAttachmentPointNumber ===
-              attachmentPoint?.attachmentPointNumber,
-        ) !== null,
+      attachmentAtomExternalConnections?.find((_, bond) =>
+        bond.begin === attachmentPoint.atomId
+          ? bond.beginSuperatomAttachmentPointNumber ===
+            attachmentPoint.attachmentPointNumber
+          : bond.endSuperatomAttachmentPointNumber ===
+            attachmentPoint.attachmentPointNumber,
+      ),
     );
   }
 

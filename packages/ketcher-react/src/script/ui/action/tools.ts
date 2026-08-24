@@ -64,7 +64,7 @@ const toolActions: Record<string, ToolActionEntry> = {
   'select-fragment': {
     title: 'Fragment Selection',
     shortcut: ['Shift+Tab', 'Escape'],
-    action: { tool: 'select', opts: 'fragment' },
+    action: { tool: 'fragmentSelection' },
     hidden: (options) => isHidden(options, 'select-fragment'),
   },
   erase: {

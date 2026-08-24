@@ -15,23 +15,13 @@
  ***************************************************************************/
 
 import { isEmpty, isEqual, pickBy } from 'lodash/fp';
-import {
-  type Struct,
-  type PersistedSelectionTool,
-  SettingsManager,
-} from 'ketcher-core';
+import { type Struct, SettingsManager } from 'ketcher-core';
 import actions, { type UiAction, type UiActionAction } from '../../action';
 import type Editor from '../../../editor/Editor';
-
-function isPersistedSelectionTool(
-  tool: UiActionAction | null | undefined,
-): tool is PersistedSelectionTool {
-  return (
-    typeof tool === 'object' &&
-    tool !== null &&
-    (tool as { tool?: string }).tool === 'select'
-  );
-}
+import {
+  normalizeSelectionToolForPersistence,
+  restorePersistedSelectionTool,
+} from '../selectionToolPersistence';
 
 type ActionParams = {
   editor: Editor & {
@@ -162,13 +152,16 @@ export default function (
     case 'INIT': {
       const savedSelectedTool = SettingsManager.getSelectionTool('micro');
       const resolvedAction =
-        savedSelectedTool || actions['select-rectangle'].action;
+        restorePersistedSelectionTool(savedSelectedTool) ||
+        actions['select-rectangle'].action;
       activeTool = execute(state?.activeTool, {
         ...(params as ActionParams),
         action: resolvedAction,
       });
-      if (isPersistedSelectionTool(activeTool)) {
-        SettingsManager.setSelectionTool('micro', activeTool);
+      const persistedSelectionTool =
+        normalizeSelectionToolForPersistence(activeTool);
+      if (persistedSelectionTool) {
+        SettingsManager.setSelectionTool('micro', persistedSelectionTool);
       }
       return buildStateWithStatuses(
         activeTool || state?.activeTool,
@@ -181,8 +174,10 @@ export default function (
         ...(params as ActionParams),
         action: action as UiActionAction,
       });
-      if (isPersistedSelectionTool(activeTool)) {
-        SettingsManager.setSelectionTool('micro', activeTool);
+      const persistedSelectionTool =
+        normalizeSelectionToolForPersistence(activeTool);
+      if (persistedSelectionTool) {
+        SettingsManager.setSelectionTool('micro', persistedSelectionTool);
       }
       return buildStateWithStatuses(
         activeTool || state?.activeTool,

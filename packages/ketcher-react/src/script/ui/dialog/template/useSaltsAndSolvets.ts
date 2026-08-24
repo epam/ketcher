@@ -18,7 +18,9 @@ export default function useSaltsAndSolvents(
     saltsAndSolvents[SALTS_AND_SOLVENTS],
   );
 
-  const addToSaSWithBatches = useCallback((fullFilteredArray: Template[]) => {
+  const addToSaSWithBatches = useCallback(function addToSaSWithBatches(
+    fullFilteredArray: Template[],
+  ) {
     const batchSize = 16;
     const currentBatch = fullFilteredArray.slice(0, batchSize);
     const remainingItems = fullFilteredArray.slice(batchSize);
@@ -33,7 +35,8 @@ export default function useSaltsAndSolvents(
         batchDelay,
       );
     }
-  }, []);
+  },
+  []);
 
   useEffect(() => {
     const filteredSaS =

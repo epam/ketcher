@@ -45,6 +45,10 @@ export function getSelectedBonds(selection, molecule) {
   return [];
 }
 
+export function canOpenAtomProperties(molecule: Struct, atomId: number) {
+  return !isSuperAttachmentPointAtom(molecule.atoms.get(atomId));
+}
+
 export function getMovableAtomIdsForBond(
   molecule: Struct,
   bondId: number,

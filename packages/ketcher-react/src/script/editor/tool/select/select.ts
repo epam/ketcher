@@ -62,6 +62,7 @@ import { ReactionArrowMoveTool } from '../arrow/reactionArrowMoveTool';
 import type { ClosestItemWithMap } from '../../shared/closest.types';
 import {
   getFragSelection,
+  canOpenAtomProperties,
   getNewSelectedItems,
   getMovableAtomIdsForBond,
   getSelectedAtoms,
@@ -567,6 +568,10 @@ class SelectTool implements Tool {
     const selection = this.editor.selection();
 
     if (ci.map === 'atoms') {
+      if (!canOpenAtomProperties(molecule, ci.id)) {
+        return true;
+      }
+
       const atoms = getSelectedAtoms(selection, molecule);
       const changeAtomPromise = editor.event.elementEdit.dispatch(atoms);
       updateSelectedAtoms({

@@ -1,5 +1,6 @@
 import { Bond } from 'ketcher-core';
 import {
+  canOpenAtomProperties,
   getMovableAtomIdsForBond,
   getNewSelectedItems,
 } from './select.helpers';
@@ -146,6 +147,24 @@ describe('select helpers', () => {
       expect(getMovableAtomIdsForBond(struct as never, 0, [0, 1])).toEqual([
         0, 1,
       ]);
+    });
+  });
+
+  describe('canOpenAtomProperties', () => {
+    it('does not allow atom properties for a super attachment point', () => {
+      const struct = {
+        atoms: new Map([[0, { label: '*', endpoints: [1, 2] }]]),
+      };
+
+      expect(canOpenAtomProperties(struct as never, 0)).toBe(false);
+    });
+
+    it('allows atom properties for a regular atom', () => {
+      const struct = {
+        atoms: new Map([[0, { label: 'C', endpoints: [] }]]),
+      };
+
+      expect(canOpenAtomProperties(struct as never, 0)).toBe(true);
     });
   });
 });

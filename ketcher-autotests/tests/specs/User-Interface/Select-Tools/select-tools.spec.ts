@@ -52,9 +52,7 @@ test.describe('Select tools tests', () => {
       Place two 'Benzene' on the canvas and drag one onto the other
     */
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).areaSelectionTool(
-      SelectionToolType.Structure,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
       force: true,
     });

@@ -1,8 +1,9 @@
-import { Atom, type AtomAttributes } from 'domain/entities/atom';
-import { Bond, type BondAttributes } from 'domain/entities/bond';
+import type { Atom, AtomAttributes } from 'domain/entities/atom';
+import type { Bond, BondAttributes } from 'domain/entities/bond';
 import { Pile } from 'domain/entities/pile';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
+import { HAPTIC_BOND_TYPE } from 'domain/constants/bonds';
 
 type HapticBondAtomLike = Pick<AtomAttributes, 'label' | 'endpoints'> &
   Partial<Pick<Atom, 'label' | 'endpoints'>>;
@@ -100,7 +101,7 @@ export function isHapticBondWithAttachmentGroup(
   struct: Struct,
   bond?: Pick<Bond, 'type' | 'begin' | 'end'> | null,
 ) {
-  if (!bond || bond.type !== Bond.PATTERN.TYPE.HAPTIC) {
+  if (!bond || bond.type !== HAPTIC_BOND_TYPE) {
     return false;
   }
 
@@ -146,11 +147,11 @@ export function isSuperAttachmentPointWithHapticBond(
     return false;
   }
 
-  return Atom.getConnectedBondIds(struct, atomId).some((bondId) => {
-    const bond = struct.bonds.get(bondId);
-
-    return bond?.type === Bond.PATTERN.TYPE.HAPTIC;
-  });
+  return struct.bonds.some(
+    (bond) =>
+      bond.type === HAPTIC_BOND_TYPE &&
+      (bond.begin === atomId || bond.end === atomId),
+  );
 }
 
 export function isSuperAttachmentPointExcludedFromSelection(
@@ -222,7 +223,7 @@ export function prepareHapticBondAttributes<T extends Partial<BondAttributes>>(
   beginAtom?: Pick<Atom, 'endpoints'> | null,
   endAtom?: Pick<Atom, 'endpoints'> | null,
 ): T {
-  if (bond.type !== Bond.PATTERN.TYPE.HAPTIC) {
+  if (bond.type !== HAPTIC_BOND_TYPE) {
     return bond;
   }
 
@@ -265,7 +266,7 @@ export function recalculateSuperAttachmentPointPosition(
 
 export function mergeHapticBondFragments(struct: Struct) {
   struct.bonds.forEach((bond) => {
-    if (bond.type !== Bond.PATTERN.TYPE.HAPTIC || !bond.endpoints?.length) {
+    if (bond.type !== HAPTIC_BOND_TYPE || !bond.endpoints?.length) {
       return;
     }
 

@@ -7,7 +7,7 @@ import {
   type Struct,
 } from 'ketcher-core';
 import type { Selection } from 'src/script/editor/Editor';
-import Editor from 'src/script/editor';
+import { isStructureContinuous } from 'src/script/editor/utils/structureContinuity';
 
 const SUPER_ATTACHMENT_POINT_SELECTION_IGNORED_KEYS = ['enhancedFlags'];
 
@@ -119,12 +119,7 @@ export function onlyHasProperty<T extends object>(
 export function getBondIdsConnectingSelectedAtoms(
   struct: Struct,
   atomIds: number[],
-  selectedBondIds: number[] = [],
 ): number[] {
-  if (selectedBondIds.length > 0) {
-    return selectedBondIds;
-  }
-
   const atomIdSet = new Set(atomIds);
   const bondIds: number[] = [];
 
@@ -146,7 +141,7 @@ export function isContinuousAtomSelection(
     return false;
   }
 
-  return Editor.isStructureContinuous(struct, {
+  return isStructureContinuous(struct, {
     atoms: atomIds,
     bonds: bondIds,
   });
@@ -196,11 +191,7 @@ export function isSuperAttachmentPointCreationSelectionVisible(
     return false;
   }
 
-  const bondIds = getBondIdsConnectingSelectedAtoms(
-    struct,
-    selection.atoms,
-    selection.bonds,
-  );
+  const bondIds = getBondIdsConnectingSelectedAtoms(struct, selection.atoms);
 
   return isContinuousAtomSelection(struct, selection.atoms, bondIds);
 }

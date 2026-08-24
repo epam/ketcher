@@ -162,7 +162,10 @@ export function fromPaste(
 
   pstruct.atoms.forEach((atom, aid) => {
     if (!atom.endpoints?.length) return;
-    const pastedAtom = restruct.molecule.atoms.get(aidMap.get(aid));
+    const pastedAtomId = aidMap.get(aid);
+    if (pastedAtomId === undefined) return;
+
+    const pastedAtom = restruct.molecule.atoms.get(pastedAtomId);
     if (pastedAtom) {
       pastedAtom.endpoints = remapEndpointAtomIds(atom.endpoints, aidMap);
     }

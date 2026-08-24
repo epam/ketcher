@@ -338,7 +338,7 @@ class SelectTool implements Tool {
         expSel.atoms = getMovableAtomIdsForBond(
           restruct.molecule,
           selectionDragCtx.item.id,
-          expSel.atoms,
+          expSel.atoms ?? [],
         );
       }
       selectionDragCtx.action = fromMultipleMove(
@@ -372,6 +372,7 @@ class SelectTool implements Tool {
         );
         const item = editor.findItem(event, maps, null);
         let hoverTarget: HoverTarget | null = item;
+        let cursorTarget: ClosestItemWithMap | null = item;
 
         if (item?.map === 'frags') {
           if (this.lastHoveredFragmentId !== item.id) {
@@ -392,10 +393,12 @@ class SelectTool implements Tool {
             );
 
             if (attachmentGroupId !== null) {
-              hoverTarget = {
+              cursorTarget = {
                 map: 'atoms',
                 id: attachmentGroupId,
+                dist: item.dist,
               };
+              hoverTarget = cursorTarget;
             }
           }
         }
@@ -404,7 +407,7 @@ class SelectTool implements Tool {
         handleMovingPosibilityCursor(
           hoverTarget,
           this.editor.render.paper.canvas,
-          getItemCursor(this.editor.render, hoverTarget),
+          getItemCursor(this.editor.render, cursorTarget),
         );
       }
     }

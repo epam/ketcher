@@ -62,7 +62,7 @@ export function drawSuperAttachmentPointHover(
     }
   });
 
-  const elements: Element[] = [];
+  const elements: SVGElement[] = [];
 
   hoversToCombine.forEach((item) => {
     if (item?.node) {

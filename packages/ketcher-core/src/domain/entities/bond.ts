@@ -27,6 +27,7 @@ import {
 import type { SGroup } from 'domain/entities/sgroup';
 import type { BondCIP } from 'domain/entities/types';
 import { remapEndpointAtomIds } from 'domain/helpers/hapticBond';
+import { HAPTIC_BOND_TYPE } from 'domain/constants/bonds';
 
 export interface BondAttributes {
   reactingCenterStatus?: number | null;
@@ -61,7 +62,7 @@ export class Bond extends BaseMicromoleculeEntity {
       ANY: 8,
       DATIVE: 9,
       HYDROGEN: 10,
-      HAPTIC: 11,
+      HAPTIC: HAPTIC_BOND_TYPE,
     },
 
     STEREO: {

@@ -73,7 +73,12 @@ function ColorPickerContent({
 
     const newColors = addCustomColor(customColors, pendingColor);
     updateSettings({ colorPickerCustomColors: newColors });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
+    // Intentional mount-only effect: seeds the selected color into the custom-color list once
+    // when the picker opens. ColorPickerContent mounts fresh on every open, so this runs
+    // exactly once per session. pendingColor is omitted to avoid re-seeding on every color
+    // selection; customColors/settings are omitted because the effect itself updates them via
+    // updateSettings, which would create a feedback loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const applyHexColor = (hex: string) => {

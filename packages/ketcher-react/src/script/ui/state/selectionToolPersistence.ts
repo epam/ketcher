@@ -17,6 +17,8 @@ export function normalizeSelectionToolForPersistence(
 
   const toolName = tool.tool;
 
+  // Fragment selection has a dedicated runtime tool, but the public setting
+  // keeps the same `select` shape as the other selection modes.
   if (toolName === FRAGMENT_SELECTION_TOOL) {
     return { tool: 'select', opts: FRAGMENT_SELECTION_OPTION };
   }
@@ -27,6 +29,8 @@ export function normalizeSelectionToolForPersistence(
 export function restorePersistedSelectionTool(
   tool: PersistedSelectionTool | undefined,
 ): SelectionToolAction | undefined {
+  // Convert the persisted selection option back to the runtime tool expected
+  // by the editor action handler.
   if (tool?.tool === 'select' && tool.opts === FRAGMENT_SELECTION_OPTION) {
     return { tool: FRAGMENT_SELECTION_TOOL };
   }

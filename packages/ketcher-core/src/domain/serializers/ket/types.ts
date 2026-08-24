@@ -21,6 +21,13 @@ import type {
 import type { AtomCIP, BondCIP } from 'domain/entities/types';
 import type { StructProperty } from 'domain/entities/struct';
 import type { Vec2 } from 'domain/entities/vec2';
+import type { KetFileImageNode } from 'domain/entities/image';
+import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
+import type { KetFileNode } from 'domain/serializers/serializers.types';
+import {
+  IMAGE_SERIALIZE_KEY,
+  MULTITAIL_ARROW_SERIALIZE_KEY,
+} from 'domain/constants';
 
 export interface KetAtomNode {
   type?: 'atom-list';
@@ -147,14 +154,13 @@ export interface KetTextNode {
   [key: string]: unknown;
 }
 
-export interface KetImageNode {
-  type: 'image';
-  [key: string]: unknown;
+export interface KetImageNode extends KetFileImageNode {
+  type: typeof IMAGE_SERIALIZE_KEY;
 }
 
-export interface KetMultitailArrowNode {
-  type: 'multi-tailed-arrow';
-  [key: string]: unknown;
+export interface KetMultitailArrowNode
+  extends KetFileNode<KetFileMultitailArrowNode> {
+  type: typeof MULTITAIL_ARROW_SERIALIZE_KEY;
 }
 
 export type KetNode =
@@ -166,3 +172,5 @@ export type KetNode =
   | KetTextNode
   | KetImageNode
   | KetMultitailArrowNode;
+
+export type KetRootNode = KetNode | { $ref: string; type?: undefined };

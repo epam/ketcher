@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -107,10 +105,7 @@ import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
-import type { KetFileImageNode } from 'domain/entities/image';
-import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
-import type { KetFileNode } from 'domain/serializers/serializers.types';
-import type { KetNode } from 'domain/serializers/ket/types';
+import type { KetNode, KetRootNode } from 'domain/serializers/ket/types';
 
 type KetMicromoleculeNode = {
   type?: string;
@@ -121,9 +116,9 @@ type KetMicromoleculeNode = {
 interface IKetMicromoleculeFile {
   header?: { moleculeName?: string };
   root: {
-    nodes: Record<string, KetMicromoleculeNode>;
+    nodes: Record<string, KetRootNode>;
   };
-  // Allows dynamic $ref key lookup: ket[nodes[i].$ref!]
+  // Allows dynamic $ref key lookup: ket[nodes[i].$ref]
   [key: string]: unknown;
 }
 
@@ -167,14 +162,11 @@ function parseNode(node: KetNode, struct: Struct) {
       break;
     }
     case MULTITAIL_ARROW_SERIALIZE_KEY: {
-      multitailArrowToStruct(
-        node as unknown as KetFileNode<KetFileMultitailArrowNode>,
-        struct,
-      );
+      multitailArrowToStruct(node, struct);
       break;
     }
     case IMAGE_SERIALIZE_KEY: {
-      imageToStruct(node as unknown as KetFileImageNode, struct);
+      imageToStruct(node, struct);
       break;
     }
     default:
@@ -211,9 +203,9 @@ export class KetSerializer implements Serializer<Struct> {
     const nodes = ket.root.nodes;
 
     Object.keys(nodes).forEach((i) => {
-      if (nodes[i].type) parseNode(nodes[i] as KetNode, resultingStruct);
+      if (nodes[i].type) parseNode(nodes[i], resultingStruct);
       else if (nodes[i].$ref) {
-        parseNode(ket[nodes[i].$ref!] as KetNode, resultingStruct);
+        parseNode(ket[nodes[i].$ref] as KetNode, resultingStruct);
       }
     });
     resultingStruct.name = ket.header?.moleculeName ?? '';

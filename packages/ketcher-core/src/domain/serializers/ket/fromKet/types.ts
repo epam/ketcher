@@ -6,4 +6,5 @@ export type {
   KetRLogic,
   KetRgroupNode,
   KetNode,
+  KetRootNode,
 } from '../types';

@@ -3,9 +3,6 @@ import type {
   IKetMonomerTemplate,
 } from 'application/formatters/types/ket';
 import { Struct, Vec2, BaseMonomer } from 'domain/entities';
-import type { KetFileImageNode } from 'domain/entities/image';
-import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
-import type { KetFileNode } from 'domain/serializers/serializers.types';
 import { type MonomerItemType, AttachmentPointName } from 'domain/types';
 import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
 import { isNumber } from 'lodash';
@@ -55,14 +52,11 @@ function parseNode(node: KetNode, struct: Struct) {
       break;
     }
     case MULTITAIL_ARROW_SERIALIZE_KEY: {
-      multitailArrowToStruct(
-        node as unknown as KetFileNode<KetFileMultitailArrowNode>,
-        struct,
-      );
+      multitailArrowToStruct(node, struct);
       break;
     }
     case IMAGE_SERIALIZE_KEY: {
-      imageToStruct(node as unknown as KetFileImageNode, struct);
+      imageToStruct(node, struct);
       break;
     }
     default:

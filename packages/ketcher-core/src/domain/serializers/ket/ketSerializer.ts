@@ -18,6 +18,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
   Atom,
   Bond,
+  MonomerMicromolecule,
   SGroupAttachmentPoint,
   Struct,
   Vec2,
@@ -1035,8 +1036,10 @@ export class KetSerializer implements Serializer<Struct> {
     const atomsToDelete: number[] = [];
 
     // For expanded monomers, remove atoms with rglabel (leaving group atoms)
+    // IMPORTANT: Only process MonomerMicromolecule S-groups, not regular S-groups (SRU, MUL, etc.)
+    // which may have legitimate R-group labels that should be preserved
     struct.sgroups.forEach((sgroup) => {
-      if (sgroup.isExpanded()) {
+      if (sgroup instanceof MonomerMicromolecule && sgroup.isExpanded()) {
         sgroup.atoms.forEach((atomId) => {
           const atom = struct.atoms.get(atomId);
           if (atom && atom.rglabel !== null) {

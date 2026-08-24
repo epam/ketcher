@@ -113,6 +113,7 @@ const MacromoleculeMenuItems = (
         ? editAllInitialValues
         : getEditInstanceInitialValues(sg.monomer),
       sg.getAttachmentPoints(),
+      sg.monomer,
     );
   };
 

@@ -46,7 +46,6 @@ import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constan
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);

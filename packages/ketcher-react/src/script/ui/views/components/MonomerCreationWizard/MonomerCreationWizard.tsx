@@ -1692,18 +1692,22 @@ const MonomerCreationWizardInternal = ({
    * @param assignedAttachmentPoints - Attachment points for single monomers
    * @param rnaPresetWizardState - Wizard state for RNA presets
    * @param assignedAttachmentPointsByMonomer - Attachment points by monomer for RNA presets
+   * @param singleMonomerStructure - Structure snapshot for single monomers
    */
   const saveMonomersHelper = (
     isRnaPreset: boolean,
     assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>,
     rnaPresetWizardState?: RnaPresetWizardState,
     assignedAttachmentPointsByMonomer?: AssignedAttachmentPointsByMonomerType,
+    singleMonomerStructure?: Selection,
   ) => {
     const monomersToSave =
       isRnaPreset && rnaPresetWizardState
         ? getRnaPresetComponentKeysToSave(rnaPresetWizardState).map(
             (componentKey) => rnaPresetWizardState[componentKey],
           )
+        : singleMonomerStructure
+        ? [{ ...wizardState, structure: singleMonomerStructure }]
         : [wizardState];
     const monomersData: FinishNewMonomersCreationData[] = [];
 
@@ -1797,20 +1801,11 @@ const MonomerCreationWizardInternal = ({
       bonds: [...editor.render.ctab.molecule.bonds.keys()],
     };
 
-    // For single monomers, we'll pass the structure to the helper function directly
-    // since we can't reassign the const wizardState variable
-    const wizardStateWithStructure = isRnaPresetType
-      ? wizardState
-      : {
-          ...wizardState,
-          structure: monomerStructureLocal,
-        };
-
     const monomersToSave = isRnaPresetType
       ? getRnaPresetComponentKeysToSave(rnaPresetWizardState).map(
           (componentKey) => rnaPresetWizardState[componentKey],
         )
-      : [wizardStateWithStructure];
+      : [wizardState];
     const assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType =
       new Map();
 
@@ -1839,7 +1834,7 @@ const MonomerCreationWizardInternal = ({
       });
     } else {
       assignedAttachmentPointsByMonomer.set(
-        wizardStateWithStructure,
+        wizardState,
         assignedAttachmentPoints,
       );
     }
@@ -2041,6 +2036,7 @@ const MonomerCreationWizardInternal = ({
         assignedAttachmentPoints,
         isRnaPresetType ? rnaPresetWizardState : undefined,
         isRnaPresetType ? assignedAttachmentPointsByMonomer : undefined,
+        isRnaPresetType ? undefined : monomerStructureLocal,
       );
 
       editor.finishNewMonomersCreation(monomersData, {
@@ -2237,6 +2233,7 @@ const MonomerCreationWizardInternal = ({
                     atomIdMap,
                     bondIdMap,
                   );
+
                   const monomerData = editor.saveNewMonomer({
                     type: type as KetMonomerClass,
                     symbol,

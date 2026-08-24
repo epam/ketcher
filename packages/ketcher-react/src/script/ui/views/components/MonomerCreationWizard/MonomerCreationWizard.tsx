@@ -82,6 +82,7 @@ import type {
 } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
+import { buildAssignedAttachmentPointsMap } from './MonomerCreationWizard.utils';
 
 const getInitialWizardState = (
   type = KetMonomerClass.CHEM,
@@ -1644,15 +1645,20 @@ const MonomerCreationWizardInternal = ({
   const validateOnSubmit = (
     assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
     monomersToSave: WizardState[],
+    localWizardState?: WizardState,
   ) => {
     if (isRnaPresetType) {
       return validateRnaPresetWizard(assignedAttachmentPointsByMonomer);
     } else {
-      // For non-RNA preset, we need to use the local wizardState that has the structure
-      const localWizardState = monomersToSave[0];
+      /**
+       * For non-RNA preset, we need to use the local wizardState that has the
+       * structure. We prefer the explicitly passed localWizardState to avoid
+       * fragile array indexing.
+       */
+      const stateToValidate = localWizardState || monomersToSave[0];
       return validateMonomerWizard(
         assignedAttachmentPointsByMonomer,
-        localWizardState,
+        stateToValidate,
       );
     }
   };
@@ -1672,8 +1678,6 @@ const MonomerCreationWizardInternal = ({
         )
       : [wizardState];
     const monomersData: FinishNewMonomersCreationData[] = [];
-    const assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType =
-      new Map();
 
     if (!isRnaPresetType) {
       const selection: Selection = {
@@ -1688,48 +1692,20 @@ const MonomerCreationWizardInternal = ({
         type: 'SetStructure',
         structure: selection,
       });
-      // Update monomersToSave with the adjusted wizard state
       monomersToSave = [currentWizardState];
-
-      // Set up attachment points for the current wizard state
-      // This case is now handled above, but keeping it for safety
-      if (!assignedAttachmentPointsByMonomer.has(wizardState)) {
-        assignedAttachmentPointsByMonomer.set(
-          wizardState,
-          new Map(assignedAttachmentPoints),
-        );
-      }
     }
 
-    // separate attachment points by preset components
-    if (isRnaPresetType) {
-      monomersToSave.forEach((componentWizardState) => {
-        const assignedAttachmentPointsForComponent = new Map();
-
-        assignedAttachmentPoints.forEach(
-          ([attachmentAtomId, leavingGroupAtomId], attachmentPointName) => {
-            if (
-              componentWizardState.structure?.atoms?.includes(attachmentAtomId)
-            ) {
-              assignedAttachmentPointsForComponent.set(attachmentPointName, [
-                attachmentAtomId,
-                leavingGroupAtomId,
-              ]);
-            }
-          },
-        );
-
-        assignedAttachmentPointsByMonomer.set(
-          componentWizardState,
-          assignedAttachmentPointsForComponent,
-        );
-      });
-    }
+    const assignedAttachmentPointsByMonomer = buildAssignedAttachmentPointsMap(
+      monomersToSave,
+      assignedAttachmentPoints,
+      isRnaPresetType,
+    );
 
     // validation
     const needSaveMonomers = validateOnSubmit(
       assignedAttachmentPointsByMonomer,
       monomersToSave,
+      !isRnaPresetType ? monomersToSave[0] : undefined,
     );
 
     // save

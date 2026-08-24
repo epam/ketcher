@@ -9,6 +9,10 @@ import {
   MonomerMicromolecule,
   Vec2,
 } from 'ketcher-core';
+import {
+  AssignedAttachmentPointsByMonomerType,
+  WizardState,
+} from './MonomerCreationWizard.types';
 
 const COPY_SUFFIX = '_Copy';
 
@@ -269,4 +273,52 @@ export const isSameMonomerType = (
     props.MonomerClass === primaryMonomer.monomerItem.props.MonomerClass &&
     symbol === primarySymbol
   );
+};
+
+/**
+ * Maps assigned attachment points to the corresponding monomer wizard states.
+ * For RNA presets, it splits the points among the components based on structure.
+ * For regular monomers, it assigns all points to the single wizard state.
+ */
+export const buildAssignedAttachmentPointsMap = (
+  monomersToSave: WizardState[],
+  assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>,
+  isRnaPresetType: boolean,
+): AssignedAttachmentPointsByMonomerType => {
+  const assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType =
+    new Map();
+
+  if (isRnaPresetType) {
+    monomersToSave.forEach((componentWizardState) => {
+      const assignedAttachmentPointsForComponent = new Map<
+        AttachmentPointName,
+        [number, number]
+      >();
+
+      assignedAttachmentPoints.forEach(
+        ([attachmentAtomId, leavingGroupAtomId], attachmentPointName) => {
+          if (
+            componentWizardState.structure?.atoms?.includes(attachmentAtomId)
+          ) {
+            assignedAttachmentPointsForComponent.set(attachmentPointName, [
+              attachmentAtomId,
+              leavingGroupAtomId,
+            ]);
+          }
+        },
+      );
+
+      assignedAttachmentPointsByMonomer.set(
+        componentWizardState,
+        assignedAttachmentPointsForComponent,
+      );
+    });
+  } else if (monomersToSave.length > 0) {
+    assignedAttachmentPointsByMonomer.set(
+      monomersToSave[0],
+      new Map(assignedAttachmentPoints),
+    );
+  }
+
+  return assignedAttachmentPointsByMonomer;
 };

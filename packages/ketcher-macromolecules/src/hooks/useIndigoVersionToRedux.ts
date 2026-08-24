@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { IndigoProvider } from 'ketcher-react';
+import { KetcherLogger } from 'ketcher-core';
 import { useAppDispatch } from './stateHooks';
 import { setIndigoVersion } from 'state/common/editorSlice';
 
@@ -18,8 +19,11 @@ export function useIndigoVersionToRedux() {
         const info = await indigo.info();
 
         dispatch(setIndigoVersion(info.indigoVersion ?? ''));
-      } catch (_e) {
-        // ignore
+      } catch (error) {
+        KetcherLogger.error(
+          'useIndigoVersionToRedux::fetchIndigoInfo - Failed to fetch Indigo version',
+          error,
+        );
       }
     }
 

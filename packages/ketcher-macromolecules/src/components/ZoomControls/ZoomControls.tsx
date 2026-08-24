@@ -50,11 +50,15 @@ export const ZoomControls = () => {
       return;
     }
 
-    const unsubscribe = zoomTool.subscribeOnZoomEvent(() => {
+    const handler = () => {
       setCurrentZoom(Math.round(zoomTool.getZoomLevel() * 100));
-    });
+    };
 
-    return unsubscribe;
+    zoomTool.subscribeOnZoomEvent(handler);
+
+    return () => {
+      zoomTool.unsubscribeOnZoomEvent(handler);
+    };
   }, [zoomTool]);
 
   const onZoomSubmit = useCallback(() => {

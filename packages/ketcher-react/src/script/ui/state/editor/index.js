@@ -193,6 +193,8 @@ export default function initEditor(dispatch, getState, ketcherId) {
         .then(toSgroup),
     onRemoveFG: (result) =>
       sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),
+    onEditMonomer: (payload) =>
+      sleep(0).then(() => openDialog(dispatch, 'editMonomer', payload)),
     onMessage: (msg) => {
       if (msg.error) {
         // TODO: add error handler call

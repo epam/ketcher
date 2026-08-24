@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -74,18 +75,36 @@ class TemplateTool implements Tool {
     const sGroup = tmpl.struct.sgroups.values().next().value as
       | SGroup
       | undefined;
+
+    const frag = tmpl.struct;
+    frag.rescale();
+
+    const xy0 = new Vec2();
+    frag.atoms.forEach((atom) => {
+      xy0.add_(atom.pp);
+    });
+
+    const xy0Center = xy0.scaled(1 / (frag.atoms.size || 1));
+    // Number() is used instead of parseInt() because tmpl.aid/bid are typed
+    // as string | number | undefined, and TypeScript's parseInt() only accepts
+    // string. Number() coerces all three variants: Number(undefined) → NaN,
+    // Number(n: number) → n, Number(s: string) → parsed value or NaN.
+    // NaN is falsy so the || operator falls through to the fallback, giving
+    // identical runtime behaviour to the original parseInt() call.
+    // Note: Number("") returns 0, but aid/bid values come from numeric SDF
+    // fields and will never be an empty string in practice.
+    const aid = (Number(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0;
+    const templateAtom = frag.atoms.get(aid);
+
     this.template = {
-      // Number() is used instead of parseInt() because tmpl.aid/bid are typed
-      // as string | number | undefined, and TypeScript's parseInt() only accepts
-      // string. Number() coerces all three variants: Number(undefined) → NaN,
-      // Number(n: number) → n, Number(s: string) → parsed value or NaN.
-      // NaN is falsy so the || operator falls through to the fallback, giving
-      // identical runtime behaviour to the original parseInt() call.
-      // Note: Number("") returns 0, but aid/bid values come from numeric SDF
-      // fields and will never be an empty string in practice.
-      aid: (Number(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0,
+      aid,
       bid: Number(tmpl.bid) || 0,
       sign: 0,
+      molecule: frag,
+      xy0: xy0Center,
+      angle0: templateAtom
+        ? vectorUtils.calcAngle(templateAtom.pp, xy0Center)
+        : 0,
     };
 
     this.templatePreview = new TemplatePreview(
@@ -94,28 +113,16 @@ class TemplateTool implements Tool {
       this.mode,
     );
 
-    const frag = tmpl.struct;
-    frag.rescale();
-
-    const xy0 = new Vec2();
-    frag.atoms.forEach((atom) => {
-      xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
-    });
-
-    this.template.molecule = frag; // preloaded struct
     this.findItems = [];
-    this.template.xy0 = xy0.scaled(1 / (frag.atoms.size || 1)); // template center
 
-    const atom = frag.atoms.get(this.template.aid);
-    if (atom) {
-      this.template.angle0 = vectorUtils.calcAngle(atom.pp, this.template.xy0); // center tilt
+    if (templateAtom) {
       this.findItems.push('atoms');
     }
 
     const bond = frag.bonds.get(this.template.bid);
     if (bond && !this.isModeFunctionalGroup) {
       // template location sign against attachment bond
-      this.template.sign = getSign(frag, bond, this.template.xy0);
+      this.template.sign = getSign(frag, bond, xy0Center);
       this.findItems.push('bonds');
     }
 
@@ -340,7 +347,7 @@ class TemplateTool implements Tool {
     }
     /* end */
 
-    let extraBond: boolean | null = null;
+    let extraBond = false;
     // calc initial pos and is extra bond needed
     if (!ci) {
       //  ci.type == 'Canvas'
@@ -409,6 +416,7 @@ class TemplateTool implements Tool {
       );
     } else if (ci?.map === 'atoms' || ci?.map === 'functionalGroups') {
       const atomId = getTargetAtomId(this.struct, ci);
+      if (atomId === undefined) return;
       [action] = fromTemplateOnAtom(
         this.editor.render.ctab,
         this.template,

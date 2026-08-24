@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -535,7 +537,7 @@ export class Struct {
   bondInitHalfBonds(bid, bond?: Bond) {
     bond = bond ?? this.bonds.get(bid)!;
     bond.hb1 = 2 * bid;
-    bond.hb2 = 2 * bid + 1; // eslint-disable-line no-mixed-operators
+    bond.hb2 = 2 * bid + 1;
     this.halfBonds.set(bond.hb1, new HalfBond(bond.begin, bond.end, bid));
     this.halfBonds.set(bond.hb2, new HalfBond(bond.end, bond.begin, bid));
     const hb1 = this.halfBonds.get(bond.hb1)!;
@@ -845,7 +847,7 @@ export class Struct {
     for (k = 0; k < keys.length; ++k) {
       minDist = -1;
       for (j = 0; j < keys.length; ++j) {
-        if (j === k) continue; // eslint-disable-line no-continue
+        if (j === k) continue;
         dist = Vec2.dist(
           this.atoms.get(keys[j])!.pp,
           this.atoms.get(keys[k])!.pp,
@@ -1041,7 +1043,6 @@ export class Struct {
   // partition a cycle into simple cycles
   // TODO: [MK] rewrite the detection algorithm to only find simple ones right away?
   partitionLoop(loop: LoopHalfBondIds) {
-    // eslint-disable-line max-statements
     const subloops: LoopHalfBondIds[] = [];
     let continueFlag = true;
     while (continueFlag) {
@@ -1123,7 +1124,7 @@ export class Struct {
       ) {
         if (!(c > 0 && hbIdNext === hbId)) {
           loop.push(hbIdNext);
-          continue; // eslint-disable-line no-continue
+          continue;
         }
 
         // loop found
@@ -1274,7 +1275,6 @@ export class Struct {
   }
 
   getComponents() {
-    // eslint-disable-line max-statements
     /* saver */
     const connectedComponents = this.findConnectedComponents(true);
     const barriers: number[] = [];

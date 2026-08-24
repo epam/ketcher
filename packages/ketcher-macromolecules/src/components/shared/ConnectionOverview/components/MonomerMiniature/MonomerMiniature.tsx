@@ -1,4 +1,5 @@
 import { select, type Selection } from 'd3';
+
 import {
   AmbiguousMonomer,
   AmbiguousMonomerRenderer,
@@ -104,6 +105,7 @@ const MonomerMiniature = ({
     connectedAttachmentPoints,
     expanded,
     monomer,
+    usage,
     applyScale,
   ]);
 

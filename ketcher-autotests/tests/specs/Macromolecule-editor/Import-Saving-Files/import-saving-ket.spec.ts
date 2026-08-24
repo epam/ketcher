@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { test, expect, Page } from '@fixtures';

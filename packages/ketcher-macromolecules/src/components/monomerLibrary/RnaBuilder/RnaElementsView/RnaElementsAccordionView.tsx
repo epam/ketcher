@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import {
   selectAmbiguousMonomersInCategory,
   selectFilteredMonomers,
@@ -28,7 +29,7 @@ import {
 import { PresetPhosphateFilterPopup } from './PresetPhosphateFilterPopup';
 import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPresetGroup';
 import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
-import { memo, useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'hooks';
 import { RnaElementsViewProps } from './types';
@@ -67,7 +68,14 @@ const RnaElementsAccordionView = ({
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);
+  const [prevActiveRnaBuilderItem, setPrevActiveRnaBuilderItem] =
+    useState(activeRnaBuilderItem);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  if (activeRnaBuilderItem !== prevActiveRnaBuilderItem) {
+    setPrevActiveRnaBuilderItem(activeRnaBuilderItem);
+    setExpandedAccordion(activeRnaBuilderItem);
+  }
 
   const handleAccordionSummaryClick = (rnaBuilderItem: RnaBuilderItem) => {
     if (expandedAccordion === rnaBuilderItem) {
@@ -79,10 +87,6 @@ const RnaElementsAccordionView = ({
       );
     }
   };
-
-  useEffect(() => {
-    setExpandedAccordion(activeRnaBuilderItem);
-  }, [activeRnaBuilderItem]);
 
   return (
     <>

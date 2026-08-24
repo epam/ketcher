@@ -1,4 +1,6 @@
 import { fromAtomMerge } from 'application/editor/actions/atomMerge';
+import { fromBondsMerge } from 'application/editor/actions/bond';
+import { getItemsToFuse } from 'application/editor/actions/closelyFusing';
 import { Render, ReStruct } from 'application/render';
 import type { RenderOptions } from 'application/render/render.types';
 import { Atom } from 'domain/entities/atom';
@@ -156,6 +158,137 @@ describe('hapticBond helpers', () => {
         }),
       ),
     ).toBe(false);
+  });
+
+  it.each([
+    ['target', false],
+    ['source', true],
+  ])(
+    'does not produce fusion items when an Attachment Group haptic bond is the %s bond',
+    (_, hapticBondIsSource) => {
+      const struct = new Struct();
+      const endpointId = struct.atoms.add(
+        new Atom({ label: 'C', pp: new Vec2(0, 1) }),
+      );
+      const attachmentGroupId = struct.atoms.add(
+        new Atom({
+          label: '*',
+          pp: new Vec2(0, 0),
+          endpoints: [endpointId],
+        }),
+      );
+      const metalId = struct.atoms.add(
+        new Atom({ label: 'Fe', pp: new Vec2(2, 0) }),
+      );
+      const regularBeginId = struct.atoms.add(
+        new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+      );
+      const regularEndId = struct.atoms.add(
+        new Atom({ label: 'C', pp: new Vec2(2, 0) }),
+      );
+      const hapticBondId = struct.bonds.add(
+        new Bond({
+          type: Bond.PATTERN.TYPE.HAPTIC,
+          begin: attachmentGroupId,
+          end: metalId,
+          endpoints: [endpointId],
+          attach: 'ALL',
+        }),
+      );
+      const regularBondId = struct.bonds.add(
+        new Bond({
+          type: Bond.PATTERN.TYPE.SINGLE,
+          begin: regularBeginId,
+          end: regularEndId,
+        }),
+      );
+      const sourceBondId = hapticBondIsSource ? hapticBondId : regularBondId;
+      const targetBondId = hapticBondIsSource ? regularBondId : hapticBondId;
+      const sourceBond = struct.bonds.get(sourceBondId);
+      const targetBond = struct.bonds.get(targetBondId);
+
+      if (!sourceBond || !targetBond) {
+        throw new Error('Test bonds were not created');
+      }
+
+      const editor = {
+        render: { ctab: { molecule: struct } },
+        findMerge: () => ({
+          atoms: new Map([
+            [sourceBond.begin, targetBond.begin],
+            [sourceBond.end, targetBond.end],
+          ]),
+          bonds: new Map([[sourceBondId, targetBondId]]),
+          atomToFunctionalGroup: new Map(),
+        }),
+      };
+
+      expect(
+        getItemsToFuse(editor, {
+          atoms: [sourceBond.begin, sourceBond.end],
+          bonds: [sourceBondId],
+        }),
+      ).toBeNull();
+    },
+  );
+
+  it('does not merge an Attachment Group haptic bond when called directly', () => {
+    const struct = new Struct();
+    const endpointId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 1) }),
+    );
+    const attachmentGroupId = struct.atoms.add(
+      new Atom({
+        label: '*',
+        pp: new Vec2(0, 0),
+        endpoints: [endpointId],
+      }),
+    );
+    const metalId = struct.atoms.add(
+      new Atom({ label: 'Fe', pp: new Vec2(2, 0) }),
+    );
+    const regularBeginId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+    );
+    const regularEndId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(2, 0) }),
+    );
+    const hapticBondId = struct.bonds.add(
+      new Bond({
+        type: Bond.PATTERN.TYPE.HAPTIC,
+        begin: attachmentGroupId,
+        end: metalId,
+        endpoints: [endpointId],
+        attach: 'ALL',
+      }),
+    );
+    const regularBondId = struct.bonds.add(
+      new Bond({
+        type: Bond.PATTERN.TYPE.SINGLE,
+        begin: regularBeginId,
+        end: regularEndId,
+      }),
+    );
+    const render = new Render(
+      document as unknown as HTMLElement,
+      {
+        microModeScale: 20,
+        width: 100,
+        height: 100,
+      } as RenderOptions,
+    );
+    const restruct = new ReStruct(struct, render);
+    const initialAtomCount = struct.atoms.size;
+    const initialBondCount = struct.bonds.size;
+
+    const action = fromBondsMerge(
+      restruct,
+      new Map([[regularBondId, hapticBondId]]),
+    );
+
+    expect(action.operations).toHaveLength(0);
+    expect(struct.atoms.size).toBe(initialAtomCount);
+    expect(struct.bonds.size).toBe(initialBondCount);
   });
 
   it('resolves only the Attachment Group side of a haptic bond', () => {

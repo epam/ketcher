@@ -18,7 +18,10 @@ import type { AtomAttributes } from 'domain/entities/atom';
 import { type BondAttributes, Bond } from 'domain/entities/bond';
 import type { Vec2 } from 'domain/entities/vec2';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
-import { prepareHapticBondAttributes } from 'domain/helpers/hapticBond';
+import {
+  isHapticBondWithAttachmentGroup,
+  prepareHapticBondAttributes,
+} from 'domain/helpers/hapticBond';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import type { SGroup } from 'domain/entities/sgroup';
 import {
@@ -249,6 +252,12 @@ export function fromBondsMerge(
     const bond = struct.bonds.get(srcId);
     const bondCI = struct.bonds.get(dstId);
     if (!bond || !bondCI) return;
+    if (
+      isHapticBondWithAttachmentGroup(struct, bond) ||
+      isHapticBondWithAttachmentGroup(struct, bondCI)
+    ) {
+      return;
+    }
     const params = utils.mergeBondsParams(struct, bond, struct, bondCI);
     if (!params?.merged) return;
     atomPairs.set(bond.begin, !params.cross ? bondCI.begin : bondCI.end);

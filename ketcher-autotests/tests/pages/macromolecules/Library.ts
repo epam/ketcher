@@ -205,9 +205,7 @@ export const Library = (page: Page) => {
       const monomerCardBbox = await monomerCard.boundingBox();
       await monomerCard.click({
         position: {
-          // eslint-disable-next-line no-magic-numbers
           x: monomerCardBbox?.width ? monomerCardBbox.width / 2 : 0,
-          // eslint-disable-next-line no-magic-numbers
           y: monomerCardBbox?.height ? monomerCardBbox.height - 10 : 0,
         },
       });
@@ -347,9 +345,7 @@ export const Library = (page: Page) => {
 
       await presetCard.click({
         position: {
-          // eslint-disable-next-line no-magic-numbers
           x: presetCardBbox?.width ? presetCardBbox.width / 2 : 0,
-          // eslint-disable-next-line no-magic-numbers
           y: presetCardBbox?.height ? presetCardBbox.height - 10 : 0,
         },
       });

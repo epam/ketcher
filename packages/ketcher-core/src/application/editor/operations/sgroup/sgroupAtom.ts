@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -21,20 +24,24 @@ import { SGroup } from 'domain/entities/sgroup';
 import { assert } from 'utilities';
 
 type Data = {
-  sgid: any;
-  aid: any;
+  sgid?: number;
+  aid?: number;
 };
 
 class SGroupAtomAdd extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any, aid?: any) {
+  constructor(sgroupId?: number, aid?: number) {
     super(OperationType.S_GROUP_ATOM_ADD, OperationPriority.S_GROUP_ATOM_ADD);
     this.data = { sgid: sgroupId, aid };
   }
 
   execute(restruct: ReStruct) {
     const { aid, sgid } = this.data;
+
+    if (aid === undefined || sgid === undefined) {
+      return;
+    }
 
     const struct = restruct.molecule;
     const atom = struct.atoms.get(aid);
@@ -55,13 +62,20 @@ class SGroupAtomAdd extends BaseOperation {
 class SGroupAtomRemove extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any, aid?: any) {
-    super(OperationType.S_GROUP_ATOM_REMOVE, 4);
+  constructor(sgroupId?: number, aid?: number) {
+    super(
+      OperationType.S_GROUP_ATOM_REMOVE,
+      OperationPriority.S_GROUP_ATOM_REMOVE,
+    );
     this.data = { sgid: sgroupId, aid };
   }
 
   execute(restruct: ReStruct) {
     const { aid, sgid } = this.data;
+
+    if (aid === undefined || sgid === undefined) {
+      return;
+    }
 
     const struct = restruct.molecule;
     const atom = struct.atoms.get(aid);

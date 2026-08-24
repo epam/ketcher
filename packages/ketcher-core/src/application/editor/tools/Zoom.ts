@@ -72,10 +72,9 @@ export class ZoomTool implements BaseTool {
   MINZOOMSCALE = 0.2;
   MAXZOOMSCALE = 4;
 
-  // eslint-disable-next-line no-use-before-define
   private static _instance: ZoomTool;
   // Per-rendering-operation context so each RenderersManager renders to its own canvas
-  // eslint-disable-next-line no-use-before-define
+
   private static _renderingContext: ZoomTool | undefined;
 
   public static get instance() {

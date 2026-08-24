@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -213,7 +214,6 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
 }
 
 function getElementsInPolygon(restruct: ReStruct, rr) {
-  // eslint-disable-line max-statements
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
   const r: any = [];
@@ -382,7 +382,6 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
 // TODO: test me see testPolygon from
 // 'Remove unused methods from render' commit
 function isPointInPolygon(r, p) {
-  // eslint-disable-line max-statements
   const d = new Vec2(0, 1);
   const n = d.rotate(Math.PI / 2);
   let v0 = Vec2.diff(r[r.length - 1], p);
@@ -403,12 +402,10 @@ function isPointInPolygon(r, p) {
     if (n1 * n0 < 0) {
       if (d1 * d0 > -eps) {
         if (d0 > -eps) flag1 = true;
-        /* eslint-disable no-mixed-operators */
       } else if (
         (Math.abs(n0) * Math.abs(d1) - Math.abs(n1) * Math.abs(d0)) * d1 >
         0
       ) {
-        /* eslint-enable no-mixed-operators */
         flag1 = true;
       }
     }

@@ -1,3 +1,6 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -330,7 +333,6 @@ const SettingsDialog = (props: Props) => {
     key: '3dviewer',
     label: '3D Viewer',
     content: (
-      // eslint-disable-next-line dot-notation
       <fieldset className={classes.viewer}>
         <Field
           name="miewMode"

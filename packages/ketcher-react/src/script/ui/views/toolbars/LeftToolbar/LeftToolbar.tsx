@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type RefObject, useRef, useState } from 'react';
+import { useState } from 'react';
 import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
 import {
   type ToolbarGroupItemCallProps,
@@ -120,22 +120,23 @@ const LeftToolbar = (props: Props) => {
   );
   const [startRef, startInView] = useInView({ threshold: 1 });
   const [endRef, endInView] = useInView({ threshold: 1 });
-  const sizeRef = useRef(null) as RefObject<HTMLDivElement | null>;
+  const { ref: sizeRef, height: scrollStep } =
+    useResizeObserver<HTMLDivElement>();
 
   const scrollUp = () => {
-    if (!scrollElement || !sizeRef.current) {
+    if (!scrollElement || !scrollStep) {
       return;
     }
 
-    scrollElement.scrollTop -= sizeRef.current.offsetHeight;
+    scrollElement.scrollBy({ top: -scrollStep });
   };
 
   const scrollDown = () => {
-    if (!scrollElement || !sizeRef.current) {
+    if (!scrollElement || !scrollStep) {
       return;
     }
 
-    scrollElement.scrollTop += sizeRef.current.offsetHeight;
+    scrollElement.scrollBy({ top: scrollStep });
   };
 
   return (
@@ -222,7 +223,7 @@ const LeftToolbar = (props: Props) => {
           />
         </div>
       </div>
-      {height && (scrollElement?.scrollHeight || 0) > height && (
+      {height && (!startInView || !endInView) && (
         <ArrowScroll
           startInView={startInView}
           endInView={endInView}

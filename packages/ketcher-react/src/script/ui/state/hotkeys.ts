@@ -123,7 +123,7 @@ function handleAbbreviationLookup(key: string, state, dispatch, event) {
     clearTimeout(abbreviationLookupTimeoutId);
     abbreviationLookupTimeoutId = undefined;
 
-    const resetAction = SettingsManager.getSettings().selectionTool;
+    const resetAction = SettingsManager.getSelectionTool('micro');
     dispatch(onAction(resetAction));
 
     event.preventDefault();

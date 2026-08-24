@@ -51,7 +51,6 @@ export interface PersistedSelectionTool {
 export type EditorMode = 'macro' | 'micro';
 
 interface SavedSettings {
-  selectionTool?: PersistedSelectionTool;
   selectionToolMacro?: PersistedSelectionTool;
   selectionToolMicro?: PersistedSelectionTool;
   disableCustomQuery?: boolean;
@@ -70,9 +69,11 @@ export class SettingsManager {
 
   static getSettings(): SavedSettings {
     try {
-      return JSON.parse(
+      const settings = JSON.parse(
         localStorage.getItem(KETCHER_SAVED_SETTINGS_KEY) ?? '{}',
       );
+      delete settings.selectionTool;
+      return settings;
     } catch (e) {
       KetcherLogger.error(
         'settingsManager.ts::SettingsManager::getSettings',
@@ -122,13 +123,12 @@ export class SettingsManager {
 
   /**
    * Get the persisted selection tool for the specified editor mode.
-   * Falls back to legacy `selectionTool` key if mode-specific key is not found.
    * @param mode - 'macro' for macromolecules editor, 'micro' for micro editor
    */
   static getSelectionTool(mode: EditorMode) {
     const settings = this.getSettings();
     const key = mode === 'macro' ? 'selectionToolMacro' : 'selectionToolMicro';
-    return settings[key] ?? settings.selectionTool;
+    return settings[key];
   }
 
   /**
@@ -146,26 +146,6 @@ export class SettingsManager {
     this.saveSettings({
       ...settings,
       [key]: selectionTool,
-    });
-  }
-
-  /**
-   * @deprecated Use getSelectionTool(mode) instead
-   */
-  static get selectionTool() {
-    const { selectionTool } = this.getSettings();
-    return selectionTool;
-  }
-
-  /**
-   * @deprecated Use setSelectionTool(mode, value) instead
-   */
-  static set selectionTool(selectionTool) {
-    const settings = this.getSettings();
-
-    this.saveSettings({
-      ...settings,
-      selectionTool,
     });
   }
 

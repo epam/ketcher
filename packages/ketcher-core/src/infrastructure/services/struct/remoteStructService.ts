@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -53,6 +51,7 @@ import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { KetcherLogger, normalizeError } from 'utilities';
 import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
 import { ketcherProvider } from 'application/ketcherProvider';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 
 function pollDeferred<T>(
   process: () => Promise<T>,

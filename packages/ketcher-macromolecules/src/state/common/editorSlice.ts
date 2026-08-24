@@ -227,9 +227,6 @@ export const editorSlice: Slice<EditorState> = createSlice({
     setOligonucleotidesValue: (state, action: PayloadAction<number>) => {
       state.oligonucleotidesValue = action.payload;
     },
-    setAppMeta: (state, action: PayloadAction<AppMeta>) => {
-      state.app = action.payload;
-    },
     setIndigoVersion: (state, action: PayloadAction<string>) => {
       state.app.indigoVersion = action.payload;
     },
@@ -266,7 +263,6 @@ export const {
   setEditorLineLength,
   setUnipositiveIonsValue,
   setOligonucleotidesValue,
-  setAppMeta,
   setIndigoVersion,
   setSelectedMenuGroupItem,
 } = editorSlice.actions;

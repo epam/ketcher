@@ -197,7 +197,7 @@ test.describe('Template Manupulations', () => {
       await RightToolbar(page).clickAtom(Atom.Fluorine);
       await clickInTheMiddleOfTheCanvas(page);
       await CommonLeftToolbar(page).areaSelectionTool(
-        SelectionToolType.Fragment,
+        SelectionToolType.Structure,
       );
       await getAtomLocator(page, { atomLabel: 'F' }).click();
       await takeEditorScreenshot(page);

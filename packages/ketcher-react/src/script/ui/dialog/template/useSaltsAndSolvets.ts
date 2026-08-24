@@ -1,8 +1,13 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/immutability */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { filterFGLib } from '../../utils';
 import type { Template } from './TemplateTable';
 
@@ -13,11 +18,16 @@ export default function useSaltsAndSolvents(
   saltsAndSolvents: Template[],
   filter: string,
 ) {
-  const [isFirstRender, setIsFirstRender] = useState(true);
+  const isFirstRenderRef = useRef(true);
+  const filterRef = useRef(filter);
   const timerId = useRef<null | ReturnType<typeof setTimeout>>(null);
   const [filteredSaltsAndSolvents, setFilteredSaltsAndSolvents] = useState(
     saltsAndSolvents[SALTS_AND_SOLVENTS],
   );
+
+  useLayoutEffect(() => {
+    filterRef.current = filter;
+  }, [filter]);
 
   const addToSaSWithBatches = useCallback((fullFilteredArray) => {
     const batchSize = 16;
@@ -35,13 +45,14 @@ export default function useSaltsAndSolvents(
 
   useEffect(() => {
     const filteredSaS =
-      filterFGLib(saltsAndSolvents, filter)[SALTS_AND_SOLVENTS] ?? [];
+      filterFGLib(saltsAndSolvents, filterRef.current)[SALTS_AND_SOLVENTS] ??
+      [];
     addToSaSWithBatches(filteredSaS);
   }, [saltsAndSolvents, addToSaSWithBatches]);
 
   useEffect(() => {
-    if (isFirstRender) {
-      setIsFirstRender(false);
+    if (isFirstRenderRef.current) {
+      isFirstRenderRef.current = false;
       return;
     }
     clearTimeout(timerId.current as unknown as number);

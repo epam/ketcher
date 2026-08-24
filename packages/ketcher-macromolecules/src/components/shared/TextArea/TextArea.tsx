@@ -14,64 +14,57 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled';
-import { scrollbarThin } from 'theming/mixins';
-import { useEffect, useRef } from 'react';
+import styled from '@emotion/styled'
+import {scrollbarThin} from 'theming/mixins'
+import {forwardRef} from 'react'
 
-export type TextEditorProps = {
+export
+type
+TextEditorProps = {
   value: string;
-  inputHandler?: (str: string) => void;
-  readonly?: boolean;
-  selectOnInit?: boolean;
-  className?: string;
-  testId?: string;
-};
+  inputHandler? : (str: string) => void;
+  readonly? : boolean;
+  className? : string;
+  testId? : string;
+}
 
 const StyledTextarea = styled.textarea`
-  min-width: 430px;
-  padding: 12px;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  white-space: pre-wrap;
-  resize: none;
-  box-sizing: border-box;
-  outline: transparent;
-  border: none;
-  color: ${({ theme }) => theme.ketcher.color.input.text.active};
-  font-size: ${({ theme }) => theme.ketcher.font.size.regular};
-  background-color: ${({ theme, readOnly }) =>
-    readOnly
-      ? theme.ketcher.color.input.background.disabled
-      : theme.ketcher.color.input.background.primary};
+    min-width: 430px;
+    padding: 12px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    white-space: pre-wrap;
+    resize: none;
+    box-sizing: border-box;
+    outline: transparent;
+    border: none;
+    color: ${({theme}) => theme.ketcher.color.input.text.active};
+    font-size: ${({theme}) => theme.ketcher.font.size.regular};
+    background-color: ${({theme, readOnly}) =>
+            readOnly
+                    ? theme.ketcher.color.input.background.disabled
+                    : theme.ketcher.color.input.background.primary};
 
-  ${({ theme }) => scrollbarThin(theme)};
-`;
+    ${({theme}) => scrollbarThin(theme)};
+`
 
-export const TextArea = ({
-  value,
-  inputHandler,
-  readonly = false,
-  selectOnInit = false,
-  className,
-  testId,
-}: TextEditorProps) => {
-  const textArea = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    if (selectOnInit) {
-      textArea.current?.select();
-    }
-  }, [selectOnInit]);
-
-  return (
-    <StyledTextarea
-      value={value}
-      readOnly={readonly}
-      onChange={inputHandler && ((event) => inputHandler(event.target.value))}
-      ref={textArea}
-      className={className}
-      data-testid={testId}
-    />
-  );
-};
+export const TextArea = forwardRef < HTMLTextAreaElement, TextEditorProps
+>
+(
+  ({value, inputHandler, readonly = false, className, testId}, ref) => {
+    return (
+      <StyledTextarea
+        value={value}
+        readOnly={readonly}
+        onChange={
+          inputHandler && ((event) => inputHandler(event.target.value))
+        }
+        ref={ref}
+        className={className}
+        data-testid={testId}
+      />
+    )
+  },
+)
+TextArea.displayName = 'TextArea'

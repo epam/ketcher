@@ -250,10 +250,15 @@ export class RemoteStructService implements StructService {
     };
   }
 
-  convert(
+  async convert(
     data: ConvertData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
+    // The default monomers library is a lazily fetched asset, so make sure it
+    // has resolved before reading it - otherwise the server receives no monomer
+    // library when this runs before macromolecules mode is ever opened.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     const monomerLibrary = JSON.stringify(
       provideEditorInstance()?.monomersLibraryParsedJson,
     );

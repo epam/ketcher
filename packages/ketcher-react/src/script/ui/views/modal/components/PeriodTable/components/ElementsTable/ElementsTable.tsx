@@ -97,7 +97,7 @@ class ElementsTable extends Component<ElementsTableProps> {
 
     const type = metalPrefix.includes(item.type ?? '')
       ? `${item.type} ${atomClassNames.metal}`
-      : item.type ?? atomClassNames.unknownProps;
+      : (item.type ?? atomClassNames.unknownProps);
 
     const classes = [
       ...type.split(' '),

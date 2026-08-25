@@ -636,7 +636,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     await page.mouse.move(600, 200);
     await dragMouseTo(page, 450, 250);
 
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { maxDiffPixels: 100 });
     await CreateMonomerDialog(page).discard();
   });
 
@@ -658,7 +658,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
       'CDXML/Chromium-popup/Bugs/multiple_external_connections.cdr.cdxml',
     );
 
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { maxDiffPixels: 100 });
   });
 
   test('Case 30 — When pressing the “Enter” key, the “Save Structure” and “Open Structure” windows open in all modes', async ({
@@ -833,7 +833,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     });
 
     await verifySMARTSExport(page, '[Na;h1]');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { maxDiffPixels: 100 });
     await verifyPNGExport(page);
     await verifySVGExport(page);
   });

@@ -2518,8 +2518,8 @@ export class SequenceMode extends BaseMode {
       const previousTwoStrandedNodeInSameChain =
         SequenceRenderer.previousNodeInSameChain;
       const nextNodeToConnect = this.isAntisenseEditMode
-        ? currentTwoStrandedNode?.antisenseNode ?? null
-        : currentTwoStrandedNode?.senseNode ?? null;
+        ? (currentTwoStrandedNode?.antisenseNode ?? null)
+        : (currentTwoStrandedNode?.senseNode ?? null);
       const previousNodeToConnect = this.isAntisenseEditMode
         ? previousTwoStrandedNodeInSameChain?.antisenseNode
         : previousTwoStrandedNodeInSameChain?.senseNode;
@@ -2591,8 +2591,7 @@ export class SequenceMode extends BaseMode {
       ) as Phosphate;
     }
 
-    let newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode | null =
-      null;
+    let newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode;
 
     if (rnaBaseMonomer && sugarMonomer && phosphateMonomer) {
       newPresetNode = new Nucleotide(
@@ -2835,8 +2834,8 @@ export class SequenceMode extends BaseMode {
       const previousTwoStrandedNodeInSameChain =
         SequenceRenderer.previousNodeInSameChain;
       const nextNodeToConnect = this.isAntisenseEditMode
-        ? currentTwoStrandedNode?.antisenseNode ?? null
-        : currentTwoStrandedNode?.senseNode ?? null;
+        ? (currentTwoStrandedNode?.antisenseNode ?? null)
+        : (currentTwoStrandedNode?.senseNode ?? null);
       const previousNodeToConnect = this.isAntisenseEditMode
         ? previousTwoStrandedNodeInSameChain?.antisenseNode
         : previousTwoStrandedNodeInSameChain?.senseNode;
@@ -3006,7 +3005,8 @@ export class SequenceMode extends BaseMode {
     const currentNode =
       nextNodeToConnect === null
         ? undefined
-        : nextNodeToConnect ?? SequenceRenderer.currentEdittingNode?.senseNode;
+        : (nextNodeToConnect ??
+          SequenceRenderer.currentEdittingNode?.senseNode);
     const previousNodeInSameChain =
       previousNodeToConnect ??
       SequenceRenderer.previousNodeInSameChain?.senseNode;

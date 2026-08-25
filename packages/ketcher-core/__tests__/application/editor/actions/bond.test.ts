@@ -9,7 +9,6 @@ import { Bond, Struct, Vec2 } from 'domain/entities';
 
 import { restruct, singleBond } from '../../../mock-data';
 
-// eslint-disable-next-line jest/no-disabled-tests
 describe.skip('Bond Addition', () => {
   let reStruct: ReStruct;
   let action: Action;

@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable no-useless-escape */
 import { Page, expect, Locator } from '@playwright/test';
 import { dragMouseTo } from '@utils/clicks';
 import { emptyFunction } from '../common/helpers';

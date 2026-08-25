@@ -141,9 +141,8 @@ export const Library = (page: Page) => {
     },
 
     async isTabOpened(libraryTab: LibraryTab): Promise<boolean> {
-      const ariaSelected = await getElement(libraryTab).getAttribute(
-        'aria-selected',
-      );
+      const ariaSelected =
+        await getElement(libraryTab).getAttribute('aria-selected');
       return ariaSelected === 'true';
     },
 
@@ -189,9 +188,8 @@ export const Library = (page: Page) => {
      * Navigates to the tab and section (if applicable) where the monomer is located.
      */
     async goToMonomerLibraryLocation(monomer: Monomer | PresetType) {
-      const { libraryTab, rnaSection } = await this.getMonomerLibraryLocation(
-        monomer,
-      );
+      const { libraryTab, rnaSection } =
+        await this.getMonomerLibraryLocation(monomer);
 
       await this.openTab(libraryTab);
 
@@ -218,9 +216,7 @@ export const Library = (page: Page) => {
       const monomerCardBbox = await monomerCard.boundingBox();
       await monomerCard.click({
         position: {
-          // eslint-disable-next-line no-magic-numbers
           x: monomerCardBbox?.width ? monomerCardBbox.width / 2 : 0,
-          // eslint-disable-next-line no-magic-numbers
           y: monomerCardBbox?.height ? monomerCardBbox.height - 10 : 0,
         },
       });
@@ -360,9 +356,7 @@ export const Library = (page: Page) => {
 
       await presetCard.click({
         position: {
-          // eslint-disable-next-line no-magic-numbers
           x: presetCardBbox?.width ? presetCardBbox.width / 2 : 0,
-          // eslint-disable-next-line no-magic-numbers
           y: presetCardBbox?.height ? presetCardBbox.height - 10 : 0,
         },
       });

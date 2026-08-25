@@ -37,6 +37,7 @@ import { rgroupToStruct } from './fromKet/rgroupToStruct';
 import { rxnToStruct } from './fromKet/rxnToStruct';
 import { simpleObjectToKet } from './toKet/simpleObjectToKet';
 import { simpleObjectToStruct } from './fromKet/simpleObjectToStruct';
+import type { KetSimpleObjectNode } from './types';
 import { textToKet } from './toKet/textToKet';
 import { textToStruct } from './fromKet/textToStruct';
 import {
@@ -109,11 +110,20 @@ import type { KetFileImageNode } from 'domain/entities/image';
 import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
 
-type KetMicromoleculeNode = {
-  type?: string;
-  $ref?: string;
-  stereoFlagPosition?: Point;
-};
+type KetMicromoleculeNode =
+  | KetSimpleObjectNode
+  | {
+      type?:
+        | 'arrow'
+        | 'plus'
+        | 'molecule'
+        | 'rgroup'
+        | 'text'
+        | typeof MULTITAIL_ARROW_SERIALIZE_KEY
+        | typeof IMAGE_SERIALIZE_KEY;
+      $ref?: string;
+      stereoFlagPosition?: Point;
+    };
 
 interface IKetMicromoleculeFile {
   header?: { moleculeName?: string };
@@ -125,7 +135,10 @@ interface IKetMicromoleculeFile {
 }
 
 interface IKetMicromoleculeSerializedResult {
-  root: { nodes: KetMicromoleculeNode[] };
+  // nodes is intentionally wider than KetMicromoleculeNode so that serializer
+  // functions (arrowToKet, plusToKet, etc.) whose type property is inferred as
+  // `string` can be pushed without casts.
+  root: { nodes: Array<{ type?: string; [key: string]: unknown }> };
   header?: unknown;
   // Allows dynamic property assignment for mol/rg sections: result[`mol${id}`], result[`rg${id}`]
   [key: string]: unknown;
@@ -146,10 +159,8 @@ function parseNode(node: KetMicromoleculeNode, struct: Struct) {
     case 'molecule': {
       const currentStruct = moleculeToStruct(node);
       if (node.stereoFlagPosition) {
-        const fragment = currentStruct.frags.get(0);
-        if (fragment) {
-          fragment.stereoFlagPosition = new Vec2(node.stereoFlagPosition);
-        }
+        const fragment = currentStruct.frags.get(0)!;
+        fragment.stereoFlagPosition = new Vec2(node.stereoFlagPosition);
       }
 
       currentStruct.mergeInto(struct);
@@ -210,7 +221,7 @@ export class KetSerializer implements Serializer<Struct> {
     Object.keys(nodes).forEach((i) => {
       if (nodes[i].type) parseNode(nodes[i], resultingStruct);
       else if (nodes[i].$ref) {
-        parseNode(ket[nodes[i].$ref] as KetMicromoleculeNode, resultingStruct);
+        parseNode(ket[nodes[i].$ref!] as KetMicromoleculeNode, resultingStruct);
       }
     });
     resultingStruct.name = ket.header?.moleculeName ?? '';
@@ -233,16 +244,14 @@ export class KetSerializer implements Serializer<Struct> {
     ketNodes.forEach((item) => {
       switch (item.type) {
         case 'molecule': {
-          if (!item.fragment) break;
           result.root.nodes.push({ $ref: `mol${moleculeId}` });
-          result[`mol${moleculeId++}`] = moleculeToKet(item.fragment, monomer);
+          result[`mol${moleculeId++}`] = moleculeToKet(item.fragment!, monomer);
           break;
         }
         case 'rgroup': {
-          if (!item.fragment) break;
           const { rgnumber } = item.data as { rgnumber: number };
           result.root.nodes.push({ $ref: `rg${rgnumber}` });
-          result[`rg${rgnumber}`] = rgroupToKet(item.fragment, item.data);
+          result[`rg${rgnumber}`] = rgroupToKet(item.fragment!, item.data);
           break;
         }
         case 'plus': {
@@ -399,12 +408,7 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   private static enrichTemplateWithLibraryData(template: IKetMonomerTemplate) {
-    if (
-      template.idtAliases &&
-      template.aliasAxoLabs &&
-      template.aliasBILN &&
-      template.modificationTypes
-    ) {
+    if (template.idtAliases && template.aliasAxoLabs && template.aliasBILN) {
       return;
     }
     const library = provideEditorInstance()?.monomersLibraryParsedJson;
@@ -423,9 +427,6 @@ export class KetSerializer implements Serializer<Struct> {
     }
     if (!template.aliasBILN && libraryTemplate.aliasBILN) {
       template.aliasBILN = libraryTemplate.aliasBILN;
-    }
-    if (!template.modificationTypes && libraryTemplate.modificationTypes) {
-      template.modificationTypes = libraryTemplate.modificationTypes;
     }
   }
 

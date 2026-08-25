@@ -20,7 +20,8 @@ import type {
 } from 'domain/entities/atom';
 import type { AtomCIP, BondCIP } from 'domain/entities/types';
 import type { StructProperty } from 'domain/entities/struct';
-import type { Vec2 } from 'domain/entities/vec2';
+import type { Vec2, Point } from 'domain/entities/vec2';
+import type { SimpleObjectMode } from 'domain/entities/simpleObject';
 
 export interface KetAtomNode {
   type?: 'atom-list';
@@ -113,4 +114,13 @@ export interface KetItem {
   rlogic?: {
     number: number;
   };
+}
+
+export interface KetSimpleObjectNode {
+  type: 'simpleObject';
+  data: {
+    mode: SimpleObjectMode;
+    pos: [Point, Point];
+  };
+  selected?: boolean;
 }

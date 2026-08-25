@@ -46,11 +46,12 @@ function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
   });
 
   useLayoutEffect(() => {
-    if (modal.prop?.isNestedModal) {
-      return;
-    }
-
     return () => {
+      if (modal.prop?.isNestedModal) {
+        return;
+      }
+
+      // Defer focus restoration until modal unmount is fully processed.
       setTimeout(() => {
         try {
           ketcherProvider.getKetcher(ketcherId).editor.focusCliparea();

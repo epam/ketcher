@@ -60,10 +60,7 @@ const RemoveFG = (props: Props) => {
           type="button"
           value={'Cancel'}
           className={classes.buttonCancel}
-          onClick={() => {
-            exit('onOk', false);
-            editor.focusCliparea();
-          }}
+          onClick={() => exit('onOk', false)}
           data-testid="Cancel"
         />
         <input
@@ -71,10 +68,7 @@ const RemoveFG = (props: Props) => {
           value={'Remove Abbreviation'}
           data-testid="remove-abbreviation-button"
           className={classes.buttonOk}
-          onClick={() => {
-            exit('onOk', remove());
-            editor.focusCliparea();
-          }}
+          onClick={() => exit('onOk', remove())}
         />
       </footer>
     </div>

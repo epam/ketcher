@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -27,8 +28,15 @@ import type { IRnaPreset } from './tools/Tool';
 import type { MonomerOrAmbiguousType, AttachmentPointName } from 'domain/types';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
+export type EditMonomerVariant = 'single' | 'identical' | 'non-identical';
+
+export interface EditMonomerPayload {
+  fgIds: number[];
+  variant: EditMonomerVariant;
+}
+
 export type EditorSelection = Partial<
-  Record<typeof selectionKeys[number], number[]>
+  Record<(typeof selectionKeys)[number], number[]>
 > & {
   enhancedFlags?: number[];
 };
@@ -94,6 +102,7 @@ export interface Editor {
     quickEdit: PipelineSubscription;
     attachEdit: PipelineSubscription;
     removeFG: PipelineSubscription;
+    editMonomer: PipelineSubscription;
     change: Subscription;
     selectionChange: PipelineSubscription;
     aromatizeStruct: PipelineSubscription;

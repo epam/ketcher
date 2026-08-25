@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -20,7 +21,7 @@ import {
   setDefaultSettings,
   updateFormState,
 } from '../../../../../state/modal/form';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker';
 import { Dialog } from '../../../../components';
@@ -134,18 +135,14 @@ const SettingsDialog = (props: Props) => {
     ...prop
   } = props;
 
-  const [changedGroups, setChangedGroups] = useState(new Set());
-
-  useEffect(() => {
+  const changedGroups = useMemo(() => {
     const changed = new Set<string>();
-
     for (const key in initState) {
       if (initState[key] !== formState.result[key]) {
-        const group = fieldGroups[key];
-        changed.add(group);
+        changed.add(fieldGroups[key]);
       }
     }
-    setChangedGroups(changed);
+    return changed;
   }, [initState, formState.result]);
 
   const generalTab = {
@@ -334,7 +331,6 @@ const SettingsDialog = (props: Props) => {
     key: '3dviewer',
     label: '3D Viewer',
     content: (
-      // eslint-disable-next-line dot-notation
       <fieldset className={classes.viewer}>
         <Field
           name="miewMode"

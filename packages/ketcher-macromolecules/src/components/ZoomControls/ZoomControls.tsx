@@ -40,7 +40,8 @@ import {
 export const ZoomControls = () => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [currentZoom, setCurrentZoom] = useState<number>(100);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerElement, setContainerElement] =
+    useState<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -83,7 +84,7 @@ export const ZoomControls = () => {
   };
 
   return (
-    <ElementAndDropdown ref={containerRef}>
+    <ElementAndDropdown ref={setContainerElement}>
       <DropDownButton onClick={onExpand} data-testid="zoom-selector">
         <ZoomLabel data-testid="zoom-input">{currentZoom}%</ZoomLabel>
         <Icon name="chevron" />
@@ -92,7 +93,7 @@ export const ZoomControls = () => {
       <Dropdown
         open={isExpanded}
         onClose={onClose}
-        anchorEl={containerRef.current}
+        anchorEl={containerElement}
         container={document.querySelector(
           KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
         )}

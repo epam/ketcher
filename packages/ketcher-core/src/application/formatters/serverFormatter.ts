@@ -88,7 +88,7 @@ export class ServerFormatter implements StructFormatter {
         message = `Convert error!\n${details}`;
       }
       KetcherLogger.error('serverFormatter.ts::getStringFromStructureAsync', e);
-      throw new Error(message);
+      throw new Error(message, { cause: e });
     }
   }
 
@@ -147,7 +147,7 @@ export class ServerFormatter implements StructFormatter {
           e,
         );
         const details = e instanceof Error ? e.message : String(e);
-        throw Error(`Convert error!\n${details}`);
+        throw Error(`Convert error!\n${details}`, { cause: e });
       }
 
       const formatError =
@@ -159,7 +159,9 @@ export class ServerFormatter implements StructFormatter {
             }`
           : getPropertiesByFormat(this.#format).name;
 
-      throw Error(`${formatError} is not supported in standalone mode.`);
+      throw Error(`${formatError} is not supported in standalone mode.`, {
+        cause: e,
+      });
     }
   }
 }

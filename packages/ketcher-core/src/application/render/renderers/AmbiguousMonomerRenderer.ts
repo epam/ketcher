@@ -23,12 +23,6 @@ type PreviewAttachmentPointParams = {
   connectedAttachmentPoints: string[] | undefined;
 };
 
-const DEFAULT_CHEM_MONOMER_SYMBOL_ELEMENTS_IDS = {
-  hover: '#chem-selection',
-  body: '#chem',
-  autochainPreview: '#chem-autochain-preview',
-};
-
 export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   private readonly monomerRenderer: BaseMonomerRenderer;
   private readonly monomerSymbolElementsIds: {
@@ -43,20 +37,14 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     scale?: number,
   ) {
     const monomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
+    // MONOMER_SYMBOLS_IDS covers 6 of the 10 KetMonomerClass members, so this
+    // lookup can miss; fall back to the CHEM symbols, which are always present.
     const monomerSymbolElementsIdsByClass = MONOMER_SYMBOLS_IDS[monomerClass];
-    const fallbackMonomerSymbolElementsIds =
-      MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM];
     const monomerSymbolElementsIds =
       monomerSymbolElementsIdsByClass ??
-      fallbackMonomerSymbolElementsIds ??
-      DEFAULT_CHEM_MONOMER_SYMBOL_ELEMENTS_IDS;
+      MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM];
     if (!monomerSymbolElementsIdsByClass) {
       KetcherLogger.error(`Missing monomer symbol ids for ${monomerClass}`);
-      if (!fallbackMonomerSymbolElementsIds) {
-        KetcherLogger.error(
-          `Missing monomer symbol ids for ${KetMonomerClass.CHEM}`,
-        );
-      }
     }
 
     super(

@@ -38,4 +38,17 @@ if (requireMatches) {
   generatedCode = imports.join('\n') + '\n' + generatedCode;
 }
 
+// The rewrite above only recognises `const X = require("m").default;`. Any other
+// require() form would survive into this ESM output and throw at runtime, so fail
+// the build loudly instead of shipping a module that cannot load.
+const leftoverRequire = /\brequire\s*\(/.exec(generatedCode);
+if (leftoverRequire) {
+  const line = generatedCode.slice(0, leftoverRequire.index).split('\n').length;
+  throw new Error(
+    `compile-ket-schema: unconverted require() at generated line ${line}. ` +
+      'The rewriter only handles `const X = require("m").default;` - extend it ' +
+      'to cover this form.',
+  );
+}
+
 fs.writeFileSync(outputPath, `${generatedCode}\n`, 'utf8');

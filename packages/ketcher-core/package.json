@@ -80,6 +80,7 @@
     "cross-env": "^7.0.3",
     "eslint": "10.9.0",
     "eslint-plugin-jest": "^29.16.0",
+    "http-proxy-agent": "^9.1.0",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.4.1",
     "jest-mock-extended": "^2.0.4",

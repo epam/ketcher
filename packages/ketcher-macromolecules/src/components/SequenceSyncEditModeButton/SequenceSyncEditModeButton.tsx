@@ -61,6 +61,7 @@ export const SequenceSyncEditModeButton = () => {
   const handleClick = () => {
     const isSequenceSyncEditModeNewState = !isSequenceSyncEditMode;
 
+    isSequenceSyncEditModeRef.current = isSequenceSyncEditModeNewState;
     setIsSequenceSyncEditMode(isSequenceSyncEditModeNewState);
     editor?.events.toggleIsSequenceSyncEditMode.dispatch(
       isSequenceSyncEditModeNewState,

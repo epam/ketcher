@@ -35,7 +35,8 @@ export default function useSaltsAndSolvents(
         batchDelay,
       );
     }
-  }, []);
+  },
+  []);
 
   useEffect(() => {
     const filteredSaS =

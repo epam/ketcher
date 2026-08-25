@@ -848,7 +848,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * Scenario:
      * 1. Open Macromolecules - Flex mode (clean canvas)
      * 2. Load from HELM: RNA1{r(A).r(A).r(A).r(A).r(A).r(A).r(A).r(A).r(A).r(A).r(A).r(A)}$RNA1,RNA1,1:R1-23:R2$$$V2.0
-     * 3. Open context menu and click Create cyclic structure option
+     * 3. Open context menu and click Create cyclic structure option.
      * 4. Verify that system locates bases inside of the circular structure and the bond length between the base and the sugar should be 75% of the standard bond length
      * Version 3.15.0
      */

@@ -40,7 +40,6 @@ const PrimaryButton = styled(MuiButton)(
     fontWeight: theme.ketcher.font.weight.regular,
     width: '62px',
     height: '24px',
-    fontFamily: theme.ketcher.font.family.arial,
 
     '&:hover': {
       backgroundColor: theme.ketcher.color.button.primary.hover,
@@ -63,7 +62,6 @@ const SecondaryButton = styled(MuiButton)(
     fontWeight: theme.ketcher.font.weight.regular,
     width: '72px',
     height: '24px',
-    fontFamily: theme.ketcher.font.family.arial,
 
     '&:hover': {
       border: `1px solid ${theme.ketcher.color.button.secondary.hover}`,

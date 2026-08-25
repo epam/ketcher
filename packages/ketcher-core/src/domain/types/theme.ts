@@ -120,7 +120,6 @@ export type EditorTheme = {
       montserrat: string;
       inter: string;
       roboto: string;
-      arial: string;
     };
     weight: {
       light: number;

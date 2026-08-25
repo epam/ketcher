@@ -185,7 +185,6 @@ export const defaultTheme: EditorTheme = {
         'Arial, sans-serif',
       roboto:
         'Roboto, FreeSans, Arimo, Droid Sans, Helvetica, Helvetica Neue, Arial, sans-serif',
-      arial: 'Arial, sans-serif',
     },
     weight: {
       light: 300,

@@ -70,6 +70,7 @@
     "prettier": "^3.9.6",
     "react-app-rewired": "^2.2.1",
     "react-scripts": "^5.0.1",
+    "resolve-url-loader": "^5.0.0",
     "serve": "^14.2.6",
     "shx": "^0.3.3",
     "source-map-loader": "^3.0.1",

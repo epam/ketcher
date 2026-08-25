@@ -25,6 +25,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import {
+  MacroBondOption,
   ModifyAminoAcidsOption,
   MonomerOption,
 } from '@tests/pages/constants/contextMenu/Constants';
@@ -37,6 +38,9 @@ import {
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { showRuler } from '@utils/canvas/ruler/helpers';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
 
@@ -725,5 +729,35 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       'RNA1{Raaa(Aaaa)Paaa}$$$$V2.0',
     );
     await verifyHELMExport(page, 'RNA1{[Raaa]([Aaaa])[Paaa]}$$$$V2.0');
+  });
+
+  test('Case 22: Ambiguous monomers display grey belts in bond preview and Edit Attachment Points dialog', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Bug: https://github.com/epam/ketcher/issues/11419
+     * Scenario:
+     * 1. Go to Macro - Flex mode.
+     * 2. Load a HELM structure containing ambiguous monomers.
+     * 3. Hover the bond and verify the preview.
+     * 4. Open Edit Attachment Points and verify the dialog.
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{(A,C,D,E)}|RNA1{([25mo3r],[25R])(A,C,G,T,U)([gly],[hn])}$PEPTIDE1,RNA1,1:R1-3:R2$$$V2.0',
+    );
+
+    const bond = getBondLocator(page, {}).first();
+
+    await bond.hover({ force: true });
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await takeEditorScreenshot(page);
+    await MonomerPreviewTooltip(page).hide();
+
+    await ContextMenu(page, bond).click(MacroBondOption.EditAttachmentPoints);
+    await AttachmentPointsDialog(page).window.waitFor({ state: 'visible' });
+    await takeEditorScreenshot(page);
+    await AttachmentPointsDialog(page).reconnect();
   });
 });

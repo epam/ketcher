@@ -53,6 +53,15 @@ interface TemplateTableProps {
 // then progressively mount heavy SVG previews with low-priority updates.
 const INITIAL_PREVIEW_COUNT = 4;
 const PREVIEW_BATCH_SIZE = 4;
+// How long a batch may wait for idle time before the browser is asked to run
+// it regardless. Capped at 100ms because a longer deadline (500ms) leaves a
+// pause that is perceptible before the previews appear.
+const PREVIEW_IDLE_TIMEOUT_MS = 100;
+
+// Single source of truth for where preview hydration starts, so the initial
+// render, the reset on templates change, and the batch scheduler cannot drift.
+const getInitialPreviewCount = (templateCount: number) =>
+  Math.min(INITIAL_PREVIEW_COUNT, templateCount);
 
 const TemplateTable: FC<TemplateTableProps> = (props) => {
   const {
@@ -67,7 +76,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
 
   const [prevTemplates, setPrevTemplates] = useState(templates);
   const [previewRenderedCount, setPreviewRenderedCount] = useState(() =>
-    Math.min(INITIAL_PREVIEW_COUNT, templates.length),
+    getInitialPreviewCount(templates.length),
   );
   const [, startTransition] = useTransition();
   const [containerSize, setContainerSize] = useState<{
@@ -78,7 +87,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
 
   if (templates !== prevTemplates) {
     setPrevTemplates(templates);
-    setPreviewRenderedCount(Math.min(INITIAL_PREVIEW_COUNT, templates.length));
+    setPreviewRenderedCount(getInitialPreviewCount(templates.length));
   }
 
   // Calculate container size once to avoid getBoundingClientRect() calls during rendering
@@ -132,13 +141,15 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
       };
 
       if (typeof requestIdle === 'function') {
-        idleCallbackId = requestIdle(runBatch, { timeout: 500 });
+        idleCallbackId = requestIdle(runBatch, {
+          timeout: PREVIEW_IDLE_TIMEOUT_MS,
+        });
       } else {
         frameId = window.requestAnimationFrame(runBatch);
       }
     };
 
-    scheduleNext(Math.min(INITIAL_PREVIEW_COUNT, templates.length));
+    scheduleNext(getInitialPreviewCount(templates.length));
 
     return () => {
       cancelled = true;

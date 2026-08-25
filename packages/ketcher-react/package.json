@@ -47,7 +47,7 @@
     "react-dom": "^18.2.0 || ^19.0.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.26.10",
+    "@babel/runtime": "^8.0.0",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.14.1",
     "@lexical/react": "^0.40.0",
@@ -87,11 +87,12 @@
     "whatwg-fetch": "^3.4.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@babel/preset-env": "^7.16.11",
-    "@babel/preset-react": "^7.16.7",
-    "@babel/preset-typescript": "^7.16.7",
-    "@rollup/plugin-babel": "^5.2.1",
+    "@babel/core": "^8.0.1",
+    "@babel/plugin-transform-runtime": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
+    "@babel/preset-react": "^8.0.1",
+    "@babel/preset-typescript": "^8.0.1",
+    "@rollup/plugin-babel": "^6.1.0",
     "@rollup/plugin-commonjs": "^16.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^10.0.0",

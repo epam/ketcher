@@ -655,7 +655,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      */
     await openFileAndAddToCanvasAsNewProject(
       page,
-      'CDXML/Chromium-popup/Bugs/multiple_external_connections.cdr.cdxml',
+      'CDXML/Chromium-popup/Bugs/multiple_external_connections.cdr.CDXML',
     );
 
     await takeEditorScreenshot(page, { maxDiffPixels: 100 });

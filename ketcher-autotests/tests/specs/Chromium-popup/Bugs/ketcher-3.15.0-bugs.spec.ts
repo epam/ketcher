@@ -636,7 +636,11 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     await page.mouse.move(600, 200);
     await dragMouseTo(page, 450, 250);
 
-    await takeEditorScreenshot(page, { maxDiffPixels: 100 });
+    const targetAtom = getAtomLocator(page, { atomLabel: 'P' }).first();
+    await takeElementScreenshot(page, targetAtom, {
+      padding: 60,
+      maxDiffPixels: 100,
+    });
     await CreateMonomerDialog(page).discard();
   });
 
@@ -868,7 +872,9 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     await sugar.click();
     await ContextMenu(page, sugar).click(MonomerOption.ArrangeAsARing);
 
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, sugar, {
+      padding: 180,
+    });
   });
 
   test('Case 35 — If the selected group is forming an n-agon with 6 or more than 6 points, then the bases should be located inside of the circular structure', async ({
@@ -899,9 +905,12 @@ test.describe('Bugs: ketcher-3.15.0', () => {
       monomerAlias: 'R',
     }).nth(5);
     await sugar.click();
+
     await ContextMenu(page, sugar).click(MonomerOption.ArrangeAsARing);
 
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, sugar, {
+      padding: 180,
+    });
   });
 
   test('Case 36 — The "center" of the n-agon should be positioned to the right of the fixed monomer', async ({

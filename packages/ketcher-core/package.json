@@ -61,11 +61,11 @@
     "svgpath": "^2.3.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@babel/plugin-transform-runtime": "^7.17.0",
-    "@babel/preset-env": "^7.16.11",
-    "@babel/preset-typescript": "^7.16.7",
-    "@rollup/plugin-babel": "^5.2.1",
+    "@babel/core": "8.0.1",
+    "@babel/plugin-transform-runtime": "8.0.1",
+    "@babel/preset-env": "8.0.2",
+    "@babel/preset-typescript": "8.0.1",
+    "@rollup/plugin-babel": "^6.1.0",
     "@rollup/plugin-commonjs": "^16.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^10.0.0",

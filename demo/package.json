@@ -46,6 +46,7 @@
   "devDependencies": {
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "css-minimizer-webpack-plugin": "^8.0.0",
     "serve": "^14.2.6"
   }
 }

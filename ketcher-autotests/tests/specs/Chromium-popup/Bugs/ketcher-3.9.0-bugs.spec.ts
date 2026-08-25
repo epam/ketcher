@@ -1073,9 +1073,8 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.MDLMolfileV3000,
     );
-    const MolfileV3000ExportResult = await SaveStructureDialog(
-      page,
-    ).getTextAreaValue();
+    const MolfileV3000ExportResult =
+      await SaveStructureDialog(page).getTextAreaValue();
     await SaveStructureDialog(page).cancel();
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(

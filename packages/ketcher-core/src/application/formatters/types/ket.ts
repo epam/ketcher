@@ -94,12 +94,7 @@ export interface IKetConnection {
 }
 
 export type monomerClass =
-  | 'RNA'
-  | 'PEPTIDE'
-  | 'CHEM'
-  | 'UNKNOWN'
-  | 'DNA'
-  | 'MODDNA';
+  'RNA' | 'PEPTIDE' | 'CHEM' | 'UNKNOWN' | 'DNA' | 'MODDNA';
 
 export type IKetAttachmentPointType = 'left' | 'right' | 'side';
 

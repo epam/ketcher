@@ -146,6 +146,27 @@ const normalizePathForRollup = (id) => id.replaceAll('\\', '/');
 
 const MAX_JS_CHUNK_SIZE_BYTES = 450 * 1024;
 
+// Miew ships a single pre-bundled ESM file (dist/Miew.module.js, ~1.3 MB) with
+// Three.js inlined, so there is no module boundary for MAX_JS_CHUNK_SIZE_BYTES
+// to split on usefully. It is also already lazy-loaded behind React.lazy in
+// ketcher-react (Miew.tsx), so it never reaches the initial page load: splitting
+// it only adds a sequential request when the 3D viewer opens, and risks
+// Three.js module-init-order problems, for no startup gain. Issue #10326
+// explicitly requires leaving this chunk alone.
+const MIEW_CHUNK_MAX_SIZE_BYTES = Number.MAX_SAFE_INTEGER;
+
+// Sized for the single exempt vendor-miew chunk above (~1.3 MB). Every other
+// chunk is structurally capped at MAX_JS_CHUNK_SIZE_BYTES by codeSplitting, so
+// this limit cannot mask an unnoticed regression - only an explicitly exempted
+// group can exceed it. If this warning starts firing again, vendor-miew itself
+// has grown and the exemption is worth re-examining.
+const CHUNK_SIZE_WARNING_LIMIT_KB = 1400;
+
+// Mirrors the `/node_modules/miew` test in getChunkName, which intentionally
+// has no trailing slash so it covers both `miew` and `miew-react`.
+const isMiewVendorModule = (normalizedId) =>
+  normalizedId.includes('/node_modules/miew');
+
 const isReactVendorModule = (normalizedId) => {
   if (normalizedId.includes('/packages/ketcher-react/')) {
     return false;
@@ -339,6 +360,12 @@ const codeSplitting = {
       minShareCount: 1,
       entriesAware: false,
       entriesAwareMergeThreshold: MAX_JS_CHUNK_SIZE_BYTES,
+    },
+    {
+      name: 'vendor-miew',
+      test: (id) => isMiewVendorModule(normalizePathForRollup(id)),
+      priority: 90,
+      maxSize: MIEW_CHUNK_MAX_SIZE_BYTES,
     },
     {
       name: getChunkName,
@@ -613,6 +640,7 @@ export default defineConfig({
   build: {
     outDir: 'build',
     sourcemap: true,
+    chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT_KB,
     rolldownOptions: {
       output: {
         entryFileNames: 'static/js/[name]-[hash].js',

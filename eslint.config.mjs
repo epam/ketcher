@@ -1,3 +1,4 @@
+import css from '@eslint/css';
 import js from '@eslint/js';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
@@ -31,6 +32,7 @@ export default [
     ignores: [
       '**/node_modules/**',
       '**/dist/**',
+      '**/build/**',
       'packages/ketcher-core/docs/**',
       'example/public/**',
       'example/build/**',
@@ -48,7 +50,10 @@ export default [
       '**/__tests__/**',
     ],
   },
-  js.configs.recommended,
+  {
+    ...js.configs.recommended,
+    files: ['**/*.{js,cjs,mjs,jsx,ts,tsx}'],
+  },
   {
     files: ['**/*.{js,cjs,mjs,jsx,ts,tsx}'],
     languageOptions: {
@@ -331,6 +336,17 @@ export default [
           ],
         },
       ],
+    },
+  },
+  {
+    files: ['**/*.css'],
+    ignores: ['**/build/**', '**/dist/**', '**/node_modules/**'],
+    language: 'css/css',
+    plugins: {
+      css,
+    },
+    rules: {
+      ...css.configs.recommended.rules,
     },
   },
   prettierConfig,

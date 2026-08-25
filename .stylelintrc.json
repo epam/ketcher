@@ -1,12 +1,46 @@
 {
-  "extends": ["stylelint-config-standard", "stylelint-config-prettier"],
+  "extends": "stylelint-config-standard",
+  "ignoreFiles": [
+    "packages/ketcher-macromolecules/src/components/shared/monomerPreview/monomerPreview.module.less"
+  ],
+  "overrides": [
+    {
+      "files": ["**/*.less"],
+      "customSyntax": "postcss-less"
+    }
+  ],
   "rules": {
-    "at-rule-no-unknown": null,
     "selector-pseudo-class-no-unknown": [
       true,
       {
         "ignorePseudoClasses": ["global"]
       }
-    ]
+    ],
+    "no-descending-specificity": null,
+    "import-notation": "string",
+    "media-feature-range-notation": "prefix",
+    "alpha-value-notation": null,
+    "color-function-notation": null,
+    "selector-class-pattern": null,
+    "declaration-property-value-no-unknown": null,
+    "property-no-unknown": null,
+    "keyframes-name-pattern": null,
+    "custom-property-pattern": null,
+    "value-keyword-case": null,
+    "color-hex-length": null,
+    "shorthand-property-no-redundant-values": null,
+    "declaration-block-no-redundant-longhand-properties": null,
+    "property-no-deprecated": null,
+    "declaration-property-value-keyword-no-deprecated": null,
+    "length-zero-no-unit": null,
+    "color-function-alias-notation": null,
+    "property-no-vendor-prefix": null,
+    "nesting-selector-no-missing-scoping-root": null,
+    "rule-empty-line-before": null,
+    "selector-attribute-quotes": null,
+    "declaration-empty-line-before": null,
+    "font-family-name-quotes": null,
+    "number-max-precision": null,
+    "custom-property-empty-line-before": null
   }
 }

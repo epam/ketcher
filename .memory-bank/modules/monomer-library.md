@@ -10,14 +10,14 @@ Load, cache, validate, merge, and serve monomer templates and RNA presets so use
 
 ## Loading, caching & merging
 
-- **Bundled default data:** A large KET-format JSON ships with the core package and contains all default monomer templates, ambiguous templates, and RNA preset (monomer-group) templates. It is loaded when the macromolecules editor is instantiated.
+- **Default data as a lazily fetched asset:** A large KET-format JSON contains all default monomer templates, ambiguous templates, and RNA preset (monomer-group) templates. It is emitted as a separate media asset rather than inlined into the JavaScript bundle, and is fetched on first need rather than when the editor is instantiated: entering macromolecules mode, or any path that reads the library while still in molecules mode (KET serialization through the public API, a remote struct-service conversion, or the monomer-edit dialogs). A session that never touches monomers never downloads it. The fetch is idempotent and shared, so it happens at most once per page.
 - **Parse pipeline:** The raw KET library is parsed by the KET serializer, which iterates the template list and converts each entry into its runtime form — plain monomer templates become monomer items, and ambiguous templates become ambiguous monomer definitions.
 - **Persistent cache (survives editor re-instantiation):** The parsed library and its source JSON are cached at module scope so the (large) default library is parsed only once per page rather than once per editor instance. When the cache is present it is reused directly ("load once" behavior); otherwise the library is parsed, any stored user updates are replayed on top, and the cache is populated.
 - **Custom libraries:**
   - **Merge/upsert path** — validates disallowed modification types and HELM/BILN/IDT alias rules, detects alias collisions, then upserts (matching monomers are replaced in place preserving their id, new ones are appended) and merges RNA preset group templates. An update event is dispatched, and an error is raised if any items had to be skipped.
   - **Initialize from Ketcher** — an optional `replace` mode clears the existing library first, then converts the incoming data to KET and merges it.
   - Updates can be persisted to localStorage (replayed on next load) when the corresponding setting is enabled.
-- **Into the UI:** On startup the UI is seeded with the current library and default presets, and it subscribes to library-update events to stay in sync.
+- **Into the UI:** Because the default library now arrives asynchronously, the UI can render before it is present. It subscribes to library-update events and is seeded with the current library and default presets once the load resolves.
 
 ## Data model
 

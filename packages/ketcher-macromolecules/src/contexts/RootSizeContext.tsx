@@ -41,22 +41,13 @@ export const RootSizeProvider = ({
   }, [handleResize, isMacromoleculesEditorTurnedOn]);
 
   useEffect(() => {
-    const rootElement = rootRef?.current;
-
-    if (!rootElement) {
-      return;
-    }
-
-    const resizeObserver = new ResizeObserver(debouncedHandleResize);
-
-    handleResize();
-    resizeObserver.observe(rootElement);
+    window.addEventListener('resize', debouncedHandleResize);
 
     return () => {
-      resizeObserver.disconnect();
+      window.removeEventListener('resize', debouncedHandleResize);
       debouncedHandleResize.cancel();
     };
-  }, [debouncedHandleResize, handleResize, rootRef]);
+  }, [debouncedHandleResize]);
 
   return (
     <RootSizeContext.Provider value={size}>{children}</RootSizeContext.Provider>

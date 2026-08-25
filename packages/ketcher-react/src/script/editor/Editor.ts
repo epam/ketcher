@@ -3583,8 +3583,7 @@ class Editor implements KetcherEditor {
   }
 
   focusCliparea() {
-    const cliparea: HTMLElement | null = document.querySelector('.cliparea');
-    cliparea?.focus();
+    this.render.clientArea.focus();
   }
 }
 

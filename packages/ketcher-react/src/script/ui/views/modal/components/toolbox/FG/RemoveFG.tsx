@@ -14,13 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useLayoutEffect } from 'react';
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import classes from './RemoveFG.module.less';
 import { useAppContext } from '../../../../../../../hooks';
 import { fromSgroupDeletion, ketcherProvider } from 'ketcher-core';
-import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
-import { CLIP_AREA_BASE_CLASS } from '../../../../../component/cliparea/cliparea';
 
 interface RemoveFGProps extends BaseProps {
   fgIds: any;
@@ -45,16 +42,6 @@ const RemoveFG = (props: Props) => {
     props[key](res);
   };
 
-  useLayoutEffect(() => {
-    return () => {
-      (
-        document
-          .querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR)
-          ?.getElementsByClassName(CLIP_AREA_BASE_CLASS)[0] as HTMLElement
-      )?.focus();
-    };
-  }, []);
-
   return (
     <div
       onSubmit={(event) => event.preventDefault()}
@@ -73,7 +60,10 @@ const RemoveFG = (props: Props) => {
           type="button"
           value={'Cancel'}
           className={classes.buttonCancel}
-          onClick={() => exit('onOk', false)}
+          onClick={() => {
+            exit('onOk', false);
+            editor.focusCliparea();
+          }}
           data-testid="Cancel"
         />
         <input
@@ -81,7 +71,10 @@ const RemoveFG = (props: Props) => {
           value={'Remove Abbreviation'}
           data-testid="remove-abbreviation-button"
           className={classes.buttonOk}
-          onClick={() => exit('onOk', remove())}
+          onClick={() => {
+            exit('onOk', remove());
+            editor.focusCliparea();
+          }}
         />
       </footer>
     </div>

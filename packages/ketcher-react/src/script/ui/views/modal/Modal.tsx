@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 
 import type { BaseCallProps, ModalContainerProps } from './modal.types';
 import classes from './Modal.module.less';
@@ -23,6 +23,7 @@ import clsx from 'clsx';
 import mediaSizes from './mediaSizes';
 import modals from '../../dialog';
 import useResizeObserver from 'use-resize-observer/polyfilled';
+import { ketcherProvider } from 'ketcher-core';
 
 interface ModalProps extends BaseCallProps {
   modal: {
@@ -38,11 +39,27 @@ type ModalContentProps = Omit<Props, 'modal'> & {
   modal: NonNullable<Props['modal']>;
 };
 
-function ModalContent({ modal, ...rest }: ModalContentProps) {
+function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { height, width } = useResizeObserver<HTMLDivElement>({
     ref: containerRef as React.RefObject<HTMLDivElement>,
   });
+
+  useLayoutEffect(() => {
+    if (modal.prop?.isNestedModal) {
+      return;
+    }
+
+    return () => {
+      setTimeout(() => {
+        try {
+          ketcherProvider.getKetcher(ketcherId).editor.focusCliparea();
+        } catch {
+          // Do nothing if ketcher instance is already removed
+        }
+      }, 0);
+    };
+  }, [ketcherId, modal.prop?.isNestedModal]);
 
   const Component = modals[modal.name];
 
@@ -61,6 +78,7 @@ function ModalContent({ modal, ...rest }: ModalContentProps) {
             (height && height <= mediaSizes.smallHeight) ||
             (width && width <= mediaSizes.smallWidth),
         })}
+        ketcherId={ketcherId}
         {...rest}
       />
     </div>

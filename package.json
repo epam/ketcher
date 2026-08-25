@@ -75,6 +75,7 @@
   },
   "dependencies": {
     "@playwright/test": "^1.62.1",
+    "@rollup/plugin-terser": "^1.0.0",
     "minimatch": "^10.2.6",
     "playwright": "^1.62.1",
     "playwright-core": "^1.62.1",

@@ -25,6 +25,10 @@ import type { RxnArrowMode } from 'domain/entities/rxnArrow';
 import type { KetFileImageNode } from 'domain/entities/image';
 import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
+import {
+  IMAGE_SERIALIZE_KEY,
+  MULTITAIL_ARROW_SERIALIZE_KEY,
+} from 'domain/constants';
 
 export interface KetAtomNode {
   type?: 'atom-list';
@@ -131,10 +135,16 @@ export interface KetPlusNode {
 
 export interface KetRLogic {
   number: number;
+  range?: string;
+  resth?: boolean;
+  ifthen?: number;
 }
 
-export interface KetRgroupNode {
+export interface KetRgroupNode extends Omit<KetMoleculeNode, 'type' | 'atoms'> {
   type: 'rgroup';
+  atoms?: (KetAtomNode | KetRgLabelNode)[];
+  fragments?: KetFragment[];
+  rlogic?: KetRLogic;
 }
 
 export interface KetSimpleObjectNode {
@@ -145,10 +155,12 @@ export interface KetTextNode {
   type: 'text';
 }
 
-export type KetImageNode = KetFileImageNode & { type: 'image' };
+export type KetImageNode = KetFileImageNode & {
+  type: typeof IMAGE_SERIALIZE_KEY;
+};
 
 export type KetMultitailArrowNode = KetFileNode<KetFileMultitailArrowNode> & {
-  type: 'multi-tailed-arrow';
+  type: typeof MULTITAIL_ARROW_SERIALIZE_KEY;
 };
 
 export type KetNode =

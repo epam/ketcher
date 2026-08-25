@@ -43,7 +43,6 @@ const NECK_HALF_WIDTH = 0.6;
  * union to produce one continuous path that hugs each shape and flows smoothly
  * across the necks — without SVG filters or sampled SDF contouring.
  */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class ReplacementHighlightView extends TransientView {
   public static readonly viewName = 'ReplacementHighlightView';

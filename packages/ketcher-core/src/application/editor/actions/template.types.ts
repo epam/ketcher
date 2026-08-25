@@ -14,18 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-export function ifDef<TValue = unknown>(
-  target: object,
-  key: string,
-  value: TValue,
-  defaultValue?: TValue,
-) {
-  if (
-    value !== undefined &&
-    value !== null &&
-    value !== defaultValue &&
-    !(Array.isArray(value) && value.length === 0)
-  ) {
-    (target as Record<string, unknown>)[key] = value;
-  }
+import type { Struct } from 'domain/entities/struct';
+
+/**
+ * Internal template object used when placing a template on the canvas, atom, or bond.
+ * Contains the molecule fragment together with pre-computed attachment geometry.
+ */
+export interface EditorTemplate {
+  molecule: Struct;
+  /** Id of the template attachment atom. */
+  aid: number;
+  /** Id of the template attachment bond. */
+  bid: number;
+  /** Reference angle used for rotation when placing on an atom. */
+  angle0: number;
 }
+
+/** Atom and bond ids that were created/pasted as part of a template operation. */
+export type PasteItems = { atoms: number[]; bonds: number[] };

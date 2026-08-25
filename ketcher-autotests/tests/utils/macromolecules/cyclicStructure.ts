@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { expect, Page } from '@playwright/test';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { getVisibleCanvas, selectCanvasArea } from '../canvas/helpers';

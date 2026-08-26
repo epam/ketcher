@@ -85,8 +85,8 @@ const allowedApiSettings = [
   ['bondThickness', 'bondThickness'],
 ] as const;
 
-type AllowedApiSetting = (typeof allowedApiSettings)[number][0];
-type AllowedClientSetting = (typeof allowedApiSettings)[number][1];
+type AllowedApiSetting = typeof allowedApiSettings[number][0];
+type AllowedClientSetting = typeof allowedApiSettings[number][1];
 type KetcherGetSettingsResult = Partial<
   Record<AllowedApiSetting, KetcherApiSettings[AllowedApiSetting]>
 >;
@@ -821,6 +821,52 @@ export class Ketcher {
   }
 
   /**
+   * Extracts monomer name from SDF format for error messages.
+   * Tries multiple fallback strategies in order of reliability.
+   */
+  private extractMonomerNameFromSdf(sdf: string): string {
+    const DEFAULT_MONOMER_NAME = 'Unknown';
+    const SDF_TEMPLATE_NAME_REGEX = /TEMPLATE\s+\d+\s+[^/]+\/([^/\s]+)/;
+    const SDF_ALIAS_HELM_REGEX = />  <aliasHELM>\s*\n([^\n]+)/;
+    const SDF_IDT_ALIASES_REGEX = />  <idtAliases>\s*\n\w+=([^\n]+)/;
+
+    // Try TEMPLATE line first (most reliable)
+    const templateMatch = sdf.match(SDF_TEMPLATE_NAME_REGEX);
+    if (templateMatch) {
+      return templateMatch[1];
+    }
+
+    // Try metadata fields
+    const idtAliasesMatch = sdf.match(SDF_IDT_ALIASES_REGEX);
+    if (idtAliasesMatch && idtAliasesMatch[1].trim()) {
+      return idtAliasesMatch[1].trim();
+    }
+
+    const aliasHelmMatch = sdf.match(SDF_ALIAS_HELM_REGEX);
+    if (aliasHelmMatch && aliasHelmMatch[1].trim()) {
+      return aliasHelmMatch[1].trim();
+    }
+
+    return DEFAULT_MONOMER_NAME;
+  }
+
+  /**
+   * Validates that SDF monomer data has non-empty <type> field.
+   * @throws {Error} When <type> is empty
+   */
+  private validateSdfMonomerType(sdf: string): void {
+    const SDF_TYPE_FIELD_REGEX = />  <type>\s*\n([^\n>]*)/;
+
+    const typeMatch = sdf.match(SDF_TYPE_FIELD_REGEX);
+    if (typeMatch && typeMatch[1].trim() === '') {
+      const monomerName = this.extractMonomerNameFromSdf(sdf);
+      throw new Error(
+        `Empty value for "type" is provided. "${monomerName}" monomer hasn't been added to the library.`,
+      );
+    }
+  }
+
+  /**
    * Converts raw monomer data to KET format before it is sent to the editor.
    *
    * @throws {Error} When conversion fails or the server rejects the payload.
@@ -841,6 +887,14 @@ export class Ketcher {
       dataInKetFormat = rawMonomersDataString;
     } else {
       try {
+        // Validate SDF BEFORE expensive conversion
+        if (
+          format === SupportedFormat.sdf ||
+          format === SupportedFormat.sdfV3000
+        ) {
+          this.validateSdfMonomerType(rawMonomersDataString);
+        }
+
         const convertResult = await this.structService.convert(
           {
             struct: rawMonomersDataString,

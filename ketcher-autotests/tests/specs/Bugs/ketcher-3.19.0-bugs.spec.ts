@@ -1,11 +1,17 @@
 import { Page, test, expect } from '@fixtures';
-import { openFileAndAddToCanvasAsNewProjectMacro } from '@utils';
+import {
+  clickInTheMiddleOfTheCanvas,
+  openFileAndAddToCanvasAsNewProjectMacro,
+  pasteFromClipboardAndAddToCanvas,
+  pasteFromClipboardAndOpenAsNewProject,
+} from '@utils';
 
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
 
@@ -53,5 +59,39 @@ test.describe('Ketcher bugs in 3.19.0', () => {
     expect(warnings).toContain('V3000');
 
     await SaveStructureDialog(page).cancel();
+  });
+
+  test('Case 2: Molecule pasted from clipboard loads when it ends with carriage returns', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/3884
+     * Description: SMILES is a single-line format, but trailing carriage returns left over
+     * by a copy-paste made Indigo read the input as a multi-line molfile/rxnfile, so it
+     * failed with "Convert error! ... 'RXN loader: bad header P'" instead of loading it.
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Open... - Paste from clipboard - paste 'P' followed by several carriage returns
+     * 3. Press Open as New Project
+     * 4. Verify that the phosphorus atom is loaded and no error message is shown
+     * 5. Repeat for the Add to Canvas button
+     */
+    // a textarea normalizes pasted carriage returns to line feeds
+    const smilesWithTrailingCarriageReturns = 'P\n\n\n';
+
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      smilesWithTrailingCarriageReturns,
+    );
+    expect(await ErrorMessageDialog(page).isVisible()).toBe(false);
+    await expect(getAtomLocator(page, { atomLabel: 'P' })).toHaveCount(1);
+
+    await CommonTopLeftToolbar(page).clearCanvas();
+
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      smilesWithTrailingCarriageReturns,
+    );
+    await clickInTheMiddleOfTheCanvas(page);
+    expect(await ErrorMessageDialog(page).isVisible()).toBe(false);
+    await expect(getAtomLocator(page, { atomLabel: 'P' })).toHaveCount(1);
   });
 });

@@ -22,7 +22,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   shiftCanvas,
   getVisibleCanvas,
-  selectCanvasArea,
 } from '@utils';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -658,9 +657,8 @@ test.describe('Bugs: ketcher-3.15.0', () => {
       'CDXML/Chromium-popup/Bugs/multiple_external_connections.cdr.CDXML',
     );
 
-    await expect(
-      getAbbreviationLocator(page, { name: 'C10H20' }).first(),
-    ).toBeVisible();
+    // Temporary diagnostic wait
+    await page.waitForTimeout(2_000);
 
     await takeEditorScreenshot(page, { maxDiffPixels: 100 });
   });

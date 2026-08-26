@@ -270,7 +270,7 @@ function AttachmentPointSelectionPanel({
         (attachmentPoint) => {
           const disabled = Boolean(
             connectedAttachmentPoints.includes(attachmentPoint) &&
-              attachmentPoint !== selectedAttachmentPoint,
+            attachmentPoint !== selectedAttachmentPoint,
           );
           return (
             <AttachmentPoint key={attachmentPoint}>

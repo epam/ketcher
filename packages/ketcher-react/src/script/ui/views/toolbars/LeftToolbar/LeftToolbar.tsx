@@ -42,8 +42,10 @@ import clsx from 'clsx';
 import { useResizeObserver } from '../../../../../hooks';
 import { useVerticalToolbarScroll } from '../useVerticalToolbarScroll';
 
-interface LeftToolbarProps
-  extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
+interface LeftToolbarProps extends Omit<
+  ToolbarGroupItemProps,
+  'id' | 'options'
+> {
   className?: string;
 }
 

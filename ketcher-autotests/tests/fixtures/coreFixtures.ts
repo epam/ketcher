@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 import { test as base, Page, TestInfoError } from '@playwright/test';
 import { waitForPageInit } from '@utils';
 

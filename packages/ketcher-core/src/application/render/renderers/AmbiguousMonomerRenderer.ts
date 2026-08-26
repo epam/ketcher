@@ -31,7 +31,10 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     variant?: string;
   };
 
-  constructor(public monomer: AmbiguousMonomer, scale?: number) {
+  constructor(
+    public monomer: AmbiguousMonomer,
+    scale?: number,
+  ) {
     const monomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
     const monomerSymbolElementsIds = MONOMER_SYMBOLS_IDS[monomerClass];
 
@@ -53,6 +56,13 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       this.monomerRenderer.CHAIN_START_TERMINAL_INDICATOR_TEXT;
     this.CHAIN_END_TERMINAL_INDICATOR_TEXT =
       this.monomerRenderer.CHAIN_END_TERMINAL_INDICATOR_TEXT;
+  }
+
+  public get textColor() {
+    if (this.monomer.isModification && this.modificationConfig) {
+      return 'white';
+    }
+    return super.textColor;
   }
 
   protected appendBody(

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -52,7 +53,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
 
   const setServerRef = useRef<(structService: StructService) => void>(() => {});
-  const structServiceProvider = props.structServiceProvider;
+  const { ketcherId, structServiceProvider } = props;
 
   const rootElRef = useRef<HTMLDivElement>(null);
 
@@ -61,17 +62,17 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   });
 
   useEffect(() => {
-    if (!props.ketcherId) {
+    // This effect synchronizes the editor with an external service provider;
+    // it is not triggered by a user event.
+    // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
+    if (!ketcherId) {
       return;
     }
     ketcherBuilderRef.current?.reinitializeApi(
-      props.ketcherId,
-      props.structServiceProvider,
+      ketcherId,
+      structServiceProvider,
       setServerRef.current,
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally
-    // resync only when structServiceProvider (prop) changes; ketcherId comes
-    // from props but should not retrigger this effect on its own.
   }, [structServiceProvider]);
 
   const initKetcher = async () => {
@@ -112,10 +113,6 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       });
     };
     // TODO: provide the list of dependencies after implementing unsubscribe function
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once on
-    // mount to initialize the external ketcher instance; not reacting to
-    // local state set by a handler, so react-hooks/exhaustive-deps and
-    // react-you-might-not-need-an-effect/no-event-handler don't apply here.
   }, []);
 
   return (

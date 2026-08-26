@@ -108,9 +108,24 @@ export interface KetFragment {
   bonds?: KetBondNode[];
 }
 
+export interface KetRGroupLogic {
+  number: number;
+  range?: string;
+  resth?: boolean;
+  ifthen?: number;
+}
+
+export interface KetRGroupNode {
+  type: 'rgroup';
+  atoms?: (KetAtomNode | KetRgLabelNode)[];
+  bonds?: KetBondNode[];
+  sgroups?: KetSGroupNode[];
+  stereoFlagPosition?: Vec2;
+  properties?: Array<StructProperty>;
+  rlogic?: KetRGroupLogic;
+}
+
 export interface KetItem {
   fragments?: KetFragment[];
-  rlogic?: {
-    number: number;
-  };
+  rlogic?: KetRGroupLogic;
 }

@@ -1,5 +1,4 @@
 /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -37,8 +36,10 @@ interface Schema {
   properties?: Record<string, Schema>;
 }
 
-interface MeasureInputProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
+interface MeasureInputProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'onChange'
+> {
   schema: Schema;
   extraSchema?: Schema;
   value: number | string;

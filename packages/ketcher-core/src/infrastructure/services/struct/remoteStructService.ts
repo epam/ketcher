@@ -92,15 +92,28 @@ function request<T = unknown>(
   let requestUrl = url;
   if (data && method === 'GET')
     requestUrl = parametrizeUrl(url, data as Record<string, string>);
-  const fetchResponse: Promise<Response> = fetch(requestUrl, {
-    method,
-    headers: {
-      Accept: 'application/json',
-      ...(headers ?? {}),
-    },
-    body: method !== 'GET' ? (data as string | Blob) : undefined,
-    credentials: 'same-origin',
-  });
+
+  const mergedHeaders = {
+    Accept: 'application/json',
+    ...(headers ?? {}),
+  };
+
+  let fetchResponse: Promise<Response>;
+  try {
+    fetchResponse = fetch(requestUrl, {
+      method,
+      headers: mergedHeaders,
+      body: method !== 'GET' ? (data as string | Blob) : undefined,
+      credentials: 'same-origin',
+    });
+  } catch (error) {
+    const details = error instanceof Error ? error.message : String(error);
+    return Promise.reject(
+      new Error(
+        `Invalid custom headers passed to RemoteStructServiceProvider: ${details}`,
+      ),
+    );
+  }
 
   let response: Promise<T>;
   if (responseHandler) {
@@ -235,7 +248,7 @@ export class RemoteStructService implements StructService {
   async info(): Promise<InfoResult> {
     let indigoVersion: string;
     let imagoVersions: Array<string>;
-    let isAvailable = false;
+    let isAvailable: boolean;
 
     try {
       const response = await request<IndigoInfoResponse>(

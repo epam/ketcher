@@ -473,7 +473,7 @@ export const RnaEditorExpanded = ({
       isPhosphatePositionReadOnly || (!is5PrimeAvailable && !is3PrimeAvailable);
     const triggerPosition = isPhosphatePositionReadOnly
       ? 'right'
-      : position ?? selectedPhosphatePosition ?? 'right';
+      : (position ?? selectedPhosphatePosition ?? 'right');
     const isPhosphateGroupActive =
       !isPhosphatePositionReadOnly &&
       activeMonomerGroup === MonomerGroups.PHOSPHATES;

@@ -183,7 +183,7 @@ export class RotationView extends TransientView {
       isRotating && cursor ? Coordinates.viewToCanvas(cursor) : undefined;
 
     const handleCenterX = isRotating
-      ? (cursorInCanvas?.x ?? center.x)
+      ? cursorInCanvas?.x ?? center.x
       : boundingBox.left + boundingBox.width / 2;
     const handleCenterY =
       cursorInCanvas?.y ??

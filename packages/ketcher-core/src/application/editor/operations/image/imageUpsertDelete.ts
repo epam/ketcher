@@ -31,10 +31,7 @@ interface ImageDeleteData {
 
 export class ImageUpsert extends BaseOperation<ImageUpsertData> {
   readonly data: ImageUpsertData;
-  constructor(
-    private readonly image: Image,
-    id?: number,
-  ) {
+  constructor(private readonly image: Image, id?: number) {
     super(OperationType.IMAGE_UPSERT);
     this.data = { id };
   }

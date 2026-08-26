@@ -55,7 +55,8 @@ type BaseNodeSelection = {
 };
 
 type SequenceBondRenderer =
-  PolymerBondSequenceRenderer | MonomerToAtomBondSequenceRenderer;
+  | PolymerBondSequenceRenderer
+  | MonomerToAtomBondSequenceRenderer;
 
 export type NodeSelection = BaseNodeSelection & {
   node: SubChainNode;

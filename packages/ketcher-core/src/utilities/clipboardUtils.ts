@@ -2,7 +2,9 @@
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
 type ClipboardTransferData =
-  Pick<DataTransfer, 'getData' | 'setData'> | null | undefined;
+  | Pick<DataTransfer, 'getData' | 'setData'>
+  | null
+  | undefined;
 
 export const PLAIN_TEXT_MIME_TYPE = 'text/plain';
 
@@ -14,7 +16,7 @@ const clipboardDataTypes = [
   PLAIN_TEXT_MIME_TYPE,
 ] as const;
 
-type ClipboardDataType = (typeof clipboardDataTypes)[number];
+type ClipboardDataType = typeof clipboardDataTypes[number];
 
 export type ModernClipboardData = ClipboardItem[];
 export type LegacyClipboardData = Partial<Record<ClipboardDataType, string>>;

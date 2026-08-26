@@ -42,7 +42,7 @@ const isAmbiguousMonomerEntity = (
 
   return Boolean(
     ambiguousMonomer?.monomerItem?.isAmbiguous &&
-    ambiguousMonomer?.monomerClass,
+      ambiguousMonomer?.monomerClass,
   );
 };
 

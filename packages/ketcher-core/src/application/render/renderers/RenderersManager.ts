@@ -56,7 +56,8 @@ import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SGroupRenderer } from 'application/render/renderers/SGroupRenderer';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
-  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
+  | FlexModePolymerBondRenderer
+  | SnakeModePolymerBondRenderer;
 
 type ThemeType = DeepPartial<{ ketcher: EditorTheme }>;
 

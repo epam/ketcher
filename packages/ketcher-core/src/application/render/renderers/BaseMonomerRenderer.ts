@@ -42,7 +42,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
-  declare public bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
+  public declare bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];

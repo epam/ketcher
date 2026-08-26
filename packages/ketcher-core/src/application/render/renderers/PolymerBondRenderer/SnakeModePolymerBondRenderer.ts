@@ -64,7 +64,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
   private sideConnectionBondTurnPoint?: number;
   private hoverLineAreaElement?: D3SvgElementSelection<SVGLineElement, void>;
-  declare public bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
+  public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
     super(polymerBond);

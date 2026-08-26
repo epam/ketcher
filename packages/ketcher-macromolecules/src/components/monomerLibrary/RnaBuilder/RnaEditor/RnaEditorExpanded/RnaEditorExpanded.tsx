@@ -575,7 +575,8 @@ export const RnaEditorExpanded = ({
 
   const onCancel = () => {
     if (isSequenceEditInRNABuilderMode) {
-      resetRnaBuilderAfterSequenceUpdate(dispatch, editor, true);
+      // Keep the canvas selection in place when cancelling modification.
+      resetRnaBuilderAfterSequenceUpdate(dispatch, editor, false);
     } else if (isActivePresetEmpty && presets.length > 0) {
       resetRnaBuilder(dispatch);
       dispatch(setActivePreset(presets[0]));

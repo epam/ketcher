@@ -7,6 +7,7 @@ export interface SequenceMode {
   readonly isEditInRNABuilderMode: boolean;
   deleteSelection(): void;
   turnOnEditMode(sequenceItemRenderer?: BaseSequenceItemRenderer): void;
+  turnOffEditMode(needToRemoveSelection?: boolean): void;
   turnOnSequenceEditInRNABuilderMode(): void;
   turnOffSequenceEditInRNABuilderMode(needToRemoveSelection?: boolean): void;
   turnOnSyncEditMode(): void;

@@ -826,7 +826,7 @@ export class Ketcher {
    */
   private extractMonomerNameFromSdf(sdf: string): string {
     const DEFAULT_MONOMER_NAME = 'Unknown';
-    const SDF_TEMPLATE_NAME_REGEX = /TEMPLATE\s+\d+\s+[^/]+\/([^/\s]+)/;
+    const SDF_TEMPLATE_NAME_REGEX = /TEMPLATE\s+\d+\s+[^/\s]+\/([^/\s]+)/;
     const SDF_ALIAS_HELM_REGEX = /> {2}<aliasHELM>\s*\n([^\n]+)/;
     const SDF_IDT_ALIASES_REGEX = /> {2}<idtAliases>\s*\n\w+=([^\n]+)/;
 

@@ -827,8 +827,8 @@ export class Ketcher {
   private extractMonomerNameFromSdf(sdf: string): string {
     const DEFAULT_MONOMER_NAME = 'Unknown';
     const SDF_TEMPLATE_NAME_REGEX = /TEMPLATE\s+\d+\s+[^/]+\/([^/\s]+)/;
-    const SDF_ALIAS_HELM_REGEX = />  <aliasHELM>\s*\n([^\n]+)/;
-    const SDF_IDT_ALIASES_REGEX = />  <idtAliases>\s*\n\w+=([^\n]+)/;
+    const SDF_ALIAS_HELM_REGEX = /> {2}<aliasHELM>\s*\n([^\n]+)/;
+    const SDF_IDT_ALIASES_REGEX = /> {2}<idtAliases>\s*\n\w+=([^\n]+)/;
 
     // Try TEMPLATE line first (most reliable)
     const templateMatch = sdf.match(SDF_TEMPLATE_NAME_REGEX);
@@ -855,7 +855,7 @@ export class Ketcher {
    * @throws {Error} When <type> is empty
    */
   private validateSdfMonomerType(sdf: string): void {
-    const SDF_TYPE_FIELD_REGEX = />  <type>\s*\n([^\n>]*)/;
+    const SDF_TYPE_FIELD_REGEX = /> {2}<type>\s*\n([^\n>]*)/;
 
     const typeMatch = sdf.match(SDF_TYPE_FIELD_REGEX);
     if (typeMatch && typeMatch[1].trim() === '') {

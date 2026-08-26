@@ -34,6 +34,7 @@ import { moleculeToStruct } from './fromKet/moleculeToStruct';
 import { prepareStructForKet } from './toKet/prepare';
 import { rgroupToKet } from './toKet/rgroupToKet';
 import { rgroupToStruct } from './fromKet/rgroupToStruct';
+import type { KetRGroupNode } from './types';
 import { rxnToStruct } from './fromKet/rxnToStruct';
 import { simpleObjectToKet } from './toKet/simpleObjectToKet';
 import { simpleObjectToStruct } from './fromKet/simpleObjectToStruct';
@@ -156,7 +157,7 @@ function parseNode(node: KetMicromoleculeNode, struct: Struct) {
       break;
     }
     case 'rgroup': {
-      rgroupToStruct(node).mergeInto(struct);
+      rgroupToStruct(node as KetRGroupNode).mergeInto(struct);
       break;
     }
     case 'text': {

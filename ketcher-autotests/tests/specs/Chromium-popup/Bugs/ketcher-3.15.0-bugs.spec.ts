@@ -658,6 +658,10 @@ test.describe('Bugs: ketcher-3.15.0', () => {
       'CDXML/Chromium-popup/Bugs/multiple_external_connections.cdr.CDXML',
     );
 
+    await expect(
+      getAbbreviationLocator(page, { name: 'C10H20' }).first(),
+    ).toBeVisible();
+
     await takeEditorScreenshot(page, { maxDiffPixels: 100 });
   });
 

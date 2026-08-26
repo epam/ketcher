@@ -145,8 +145,9 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
      * Version 3.12
      */
 
-    const createMonomerDialog =
-      await openCreateMonomerDialogWithChemType('CCCCC');
+    const createMonomerDialog = await openCreateMonomerDialogWithChemType(
+      'CCCCC',
+    );
 
     // Set up an attachment point with H as the leaving atom (should be default)
     await markAtomAsConnectionPoint('C');
@@ -188,8 +189,9 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
      * Version 3.12
      */
 
-    const createMonomerDialog =
-      await openCreateMonomerDialogWithChemType('CCCCC');
+    const createMonomerDialog = await openCreateMonomerDialogWithChemType(
+      'CCCCC',
+    );
 
     // Set up attachment point
     await markAtomAsConnectionPoint('C');
@@ -232,8 +234,9 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
      * Version 3.12
      */
 
-    const createMonomerDialog =
-      await openCreateMonomerDialogWithChemType('CBr(C)C');
+    const createMonomerDialog = await openCreateMonomerDialogWithChemType(
+      'CBr(C)C',
+    );
 
     // Create attachment point where current LGA is non-H/OH.
     await markAtomAsLeavingGroup('C');
@@ -279,8 +282,9 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
      * Version 3.12
      */
 
-    const createMonomerDialog =
-      await openCreateMonomerDialogWithChemType('CCCCC');
+    const createMonomerDialog = await openCreateMonomerDialogWithChemType(
+      'CCCCC',
+    );
 
     // Set up attachment point with initial H leaving atom
     await markAtomAsConnectionPoint('C');
@@ -350,8 +354,9 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
      * Version 3.12
      */
 
-    const createMonomerDialog =
-      await openCreateMonomerDialogWithChemType('CCCCC');
+    const createMonomerDialog = await openCreateMonomerDialogWithChemType(
+      'CCCCC',
+    );
 
     await markAtomAsConnectionPoint('C');
 
@@ -391,8 +396,9 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
      * Version 3.12
      */
 
-    const createMonomerDialog =
-      await openCreateMonomerDialogWithChemType('CCCCCC');
+    const createMonomerDialog = await openCreateMonomerDialogWithChemType(
+      'CCCCCC',
+    );
 
     // Create first and second attachment points
     await markAtomAsConnectionPoint('C', 0);
@@ -450,8 +456,9 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
      * Version 3.12
      */
 
-    const createMonomerDialog =
-      await openCreateMonomerDialogWithChemType('CBr(C)C');
+    const createMonomerDialog = await openCreateMonomerDialogWithChemType(
+      'CBr(C)C',
+    );
 
     // Create attachment point with non-H/OH initial atom type.
     await markAtomAsLeavingGroup('C');

@@ -96,7 +96,8 @@ const getTemplateClass = (
   monomersLibraryParsedJson: MonomersLibraryParsedJson,
 ) => {
   const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
-    MonomerTemplate | undefined;
+    | MonomerTemplate
+    | undefined;
 
   return templateRef.class ?? template?.class;
 };
@@ -152,7 +153,8 @@ export const getEditAllInstancesInitialValues = (
     monomersLibraryParsedJson?.root?.templates?.forEach(
       (templateRef: { $ref?: string }) => {
         const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
-          RnaPresetTemplate | undefined;
+          | RnaPresetTemplate
+          | undefined;
         const isRnaPreset =
           template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
           template?.class === KetMonomerClass.RNA;

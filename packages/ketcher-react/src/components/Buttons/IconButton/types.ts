@@ -39,7 +39,8 @@ export interface IIconButtonProps extends IIconButtonBasePropsWithoutChildren {
   testid?: string;
 }
 
-export interface IIconButtonCustomIconProps extends IIconButtonBasePropsWithoutChildren {
+export interface IIconButtonCustomIconProps
+  extends IIconButtonBasePropsWithoutChildren {
   link: string;
 }
 

@@ -31,10 +31,8 @@ const Group: FC<{ className?: string } & PropsWithChildren> = ({
   className,
 }) => <div className={clsx(classes.group, className)}>{children}</div>;
 
-interface BottomToolbarProps extends Omit<
-  ToolbarGroupItemProps,
-  'id' | 'options'
-> {
+interface BottomToolbarProps
+  extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   className?: string;
   active?: {
     opts: any;

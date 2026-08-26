@@ -53,7 +53,8 @@ const debouncedSetAndHoverMergeItems = debounce(function (
   );
   pasteToolInstance.setMergeItems(mergeItems);
   notifyItemsToMergeInitializationComplete();
-}, 50);
+},
+50);
 
 class PasteTool implements Tool {
   private readonly editor: Editor;

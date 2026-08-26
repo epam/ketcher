@@ -12,10 +12,18 @@ export type MonomerTypeSelectItem = {
 };
 
 export type WizardFormFieldId =
-  'type' | 'symbol' | 'name' | 'naturalAnalogue' | 'aliasHELM' | 'aliasBILN';
+  | 'type'
+  | 'symbol'
+  | 'name'
+  | 'naturalAnalogue'
+  | 'aliasHELM'
+  | 'aliasBILN';
 
 export type RnaPresetWizardStateFieldId =
-  'base' | 'sugar' | 'phosphate' | 'preset';
+  | 'base'
+  | 'sugar'
+  | 'phosphate'
+  | 'preset';
 
 export type RnaPresetWizardComponentStateFieldId = Exclude<
   RnaPresetWizardStateFieldId,
@@ -195,7 +203,8 @@ export type AssignedAttachmentPointsByMonomerType = Map<
 
 export function isDispatchActionForRnaPreset(
   action:
-    ActionDispatch<[WizardAction]> | ActionDispatch<[RnaPresetWizardAction]>,
+    | ActionDispatch<[WizardAction]>
+    | ActionDispatch<[RnaPresetWizardAction]>,
 ): action is ActionDispatch<[RnaPresetWizardAction]> {
   return 'rnaComponentKey' in action;
 }

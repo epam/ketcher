@@ -83,7 +83,7 @@ export function deserialize(value: string): AtomLabelData | null {
   const isotope: number | null = match[1]
     ? Number.parseInt(match[1], 10)
     : null;
-  const radical = match[3] ? ({ ':': 1, '.': 2, '^^': 3 }[match[3]] ?? 0) : 0;
+  const radical = match[3] ? { ':': 1, '.': 2, '^^': 3 }[match[3]] ?? 0 : 0;
   const charge: number | null = match[4] ? parseCharge(match[4]) : null;
 
   if (VALID_GENERIC_LABELS.has(label) || Elements.get(label)) {

@@ -1752,9 +1752,7 @@ for (const monomer of monomersToAdd) {
         await pasteFromClipboardAndAddToMacromoleculesCanvas(
           page,
           MacroFileType.HELM,
-          !sequence.Rotation
-            ? sequence.HELM
-            : (sequence.RightAnchoredHELM ?? ''),
+          !sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM ?? '',
         );
       }
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(

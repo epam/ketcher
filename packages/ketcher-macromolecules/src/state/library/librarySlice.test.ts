@@ -75,7 +75,7 @@ const createAmbiguous = (
     subtype: KetAmbiguousMonomerTemplateSubType.ALTERNATIVES,
     options: [],
     monomers: components,
-  }) as unknown as AmbiguousMonomerType;
+  } as unknown as AmbiguousMonomerType);
 
 const aminoAcids: MonomerItemType[] = [
   createAminoAcid('A', 'Alanine'),
@@ -137,7 +137,7 @@ const buildState = (searchFilter: string): RootState =>
       defaultRnaPresets: [],
       selectedTabIndex: 0,
     },
-  }) as RootState;
+  } as RootState);
 
 const getMatchedLabels = (searchFilter: string) =>
   selectFilteredMonomers(buildState(searchFilter)).map((item) =>

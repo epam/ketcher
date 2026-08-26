@@ -20,7 +20,7 @@ import {
   OperationType,
 } from 'ketcher-core';
 
-type OperationTypeValue = (typeof OperationType)[keyof typeof OperationType];
+type OperationTypeValue = typeof OperationType[keyof typeof OperationType];
 
 type Position = {
   x: number;

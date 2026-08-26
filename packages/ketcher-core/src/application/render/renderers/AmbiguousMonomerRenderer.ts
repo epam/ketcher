@@ -193,6 +193,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     this.rootElement = this.appendRootElement(params.canvas);
     this.bodyElement = this.appendBody(this.rootElement);
     this.bodyElement?.attr('data-testid', 'shape');
+    this.drawModification();
     this.appendLabel(this.rootElement);
     this.appendNumberOfMonomers();
     this.drawAttachmentPoints(

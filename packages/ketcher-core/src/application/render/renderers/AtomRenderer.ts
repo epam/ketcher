@@ -142,8 +142,7 @@ export class AtomRenderer extends BaseRenderer {
    * (`attr`, `style`, `remove`) and must not rely on the element type itself.
    */
   private appendSelectionContour():
-    | D3SvgElementSelection<SVGRectElement, void>
-    | undefined {
+    D3SvgElementSelection<SVGRectElement, void> | undefined {
     if (
       (this.labelLength < 2 || !this.isLabelVisible) &&
       !this.atom.hasCharge

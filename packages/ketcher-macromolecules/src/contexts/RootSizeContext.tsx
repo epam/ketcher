@@ -5,7 +5,6 @@ import {
   useCallback,
   useEffect,
   useState,
-  useMemo
 } from 'react';
 import { useDebouncedCallback } from '../hooks/useDebouncedCallback';
 
@@ -35,16 +34,7 @@ export const RootSizeProvider = ({
     setSize({ width, height });
   }, [rootRef]);
 
-  const debouncedHandleResize = useMemo(
-    () => debounce(handleResize, 100),
-    [handleResize],
-  );
-
-  useEffect(() => {
-  return () => {
-    debouncedHandleResize.cancel();
-  };
-}, [debouncedHandleResize]);
+  const debouncedHandleResize = useDebouncedCallback(handleResize, 100);
 
   useEffect(() => {
     handleResize();
@@ -60,6 +50,8 @@ export const RootSizeProvider = ({
   }, [debouncedHandleResize]);
 
   return (
-    <RootSizeContext.Provider value={size}>{children}</RootSizeContext.Provider>
+    <RootSizeContext.Provider value={size}>
+      {children}
+    </RootSizeContext.Provider>
   );
 };

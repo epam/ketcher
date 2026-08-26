@@ -60,8 +60,8 @@ interface IRnaPresetTabsProps {
   wizardState: RnaPresetWizardState;
   editor: Editor;
   wizardStateDispatch: (action: RnaPresetWizardAction) => void;
-  phosphatePosition: '3' | '5' | undefined;
-  onPhosphatePositionChange: (position: '3' | '5') => void;
+  phosphatePosition: PhosphatePosition | undefined;
+  onPhosphatePositionChange: (position: PhosphatePosition) => void;
   /** User-overridden leaving atom labels for connection APs, keyed by
    * "<componentKey>:<apName>". Persists across tab switches. */
   connectionLeavingAtoms?: Map<string, AtomLabel>;
@@ -141,19 +141,19 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       wizardState,
       struct,
       'base',
-      phosphatePosition as PhosphatePosition | undefined,
+      phosphatePosition,
     ),
     sugar: getConnectionAttachmentPointsForRnaPresetComponent(
       wizardState,
       struct,
       'sugar',
-      phosphatePosition as PhosphatePosition | undefined,
+      phosphatePosition,
     ),
     phosphate: getConnectionAttachmentPointsForRnaPresetComponent(
       wizardState,
       struct,
       'phosphate',
-      phosphatePosition as PhosphatePosition | undefined,
+      phosphatePosition,
     ),
   };
   const readonlyComponentAttachmentPoints = {
@@ -225,7 +225,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         wizardState,
         struct,
         activeComponentKey,
-        phosphatePosition as PhosphatePosition | undefined,
+        phosphatePosition,
       );
       editor.setConnectionAttachmentPoints(connectionAtomIds);
     },
@@ -272,7 +272,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     [editor],
   );
 
-  const handlePhosphatePositionChange = (position: '3' | '5') => {
+  const handlePhosphatePositionChange = (position: PhosphatePosition) => {
     onPhosphatePositionChange(position);
   };
 

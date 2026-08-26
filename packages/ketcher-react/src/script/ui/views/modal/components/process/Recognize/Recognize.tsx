@@ -163,7 +163,6 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
     >
       <div className={classes.topBody}>
         <label className={classes.imagoVersion}>
-          {/* eslint-disable jsx-a11y/label-has-associated-control */}
           Imago version
           <Input
             type="text"
@@ -176,7 +175,6 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
             value={version}
             onChange={(val) => onChangeImago(val as string)}
           />
-          {/* eslint-enable jsx-a11y/label-has-associated-control */}
         </label>
         <span>Original image</span>
         <span>Recognized structure preview</span>

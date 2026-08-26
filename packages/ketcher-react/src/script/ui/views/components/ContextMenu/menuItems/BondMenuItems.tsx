@@ -1,4 +1,4 @@
-import { type FC, useEffect, useState } from 'react';
+import { type FC, useMemo } from 'react';
 import { Item, Submenu } from 'react-contexify';
 import type Editor from 'src/script/editor';
 import tools from '../../../../action/tools';
@@ -9,7 +9,12 @@ import useBondSGroupAttach from '../hooks/useBondSGroupAttach';
 import useBondSGroupEdit from '../hooks/useBondSGroupEdit';
 import useBondTypeChange from '../hooks/useBondTypeChange';
 import useDelete from '../hooks/useDelete';
-import { formatTitle, getNonQueryBondNames, queryBondNames } from '../utils';
+import {
+  formatTitle,
+  getNonQueryBondNames,
+  isBondBetweenMonomers,
+  queryBondNames,
+} from '../utils';
 import type {
   BondsContextMenuProps,
   ItemEventParams,
@@ -19,7 +24,7 @@ import { getIconName, Icon } from 'components';
 import { useChangeBondDirection } from '../hooks/useChangeBondDirection';
 import { useAppContext } from 'src/hooks/useAppContext';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
-import { ketcherProvider, MonomerMicromolecule } from 'ketcher-core';
+import { ketcherProvider } from 'ketcher-core';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
@@ -27,11 +32,6 @@ const nonQueryBondNames = getNonQueryBondNames(tools);
 
 const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
   const { ketcherId } = useAppContext();
-  const [bondData, setBondData] = useState<{
-    type: number;
-    stereo: number;
-  } | null>(null);
-  const [isBondBetweenMonomers, setIsBondBetweenMonomers] = useState(false);
   const [handleEdit] = useBondEdit();
   const [handleTypeChange, disabled] = useBondTypeChange();
   const [handleSGroupAttach, sGroupAttachHidden] = useBondSGroupAttach();
@@ -45,30 +45,20 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
   const { changeDirection } = useChangeBondDirection(props as ItemEventParams);
   const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
 
-  useEffect(() => {
-    const editor = ketcherProvider.getKetcher(ketcherId)?.editor;
+  const bond = useMemo(() => {
     const bondIds = props.propsFromTrigger?.bondIds || [];
 
-    if (bondIds.length > 0 && editor) {
-      const bond = editor.render.ctab.molecule.bonds.get(bondIds[0]);
-      if (bond) {
-        setBondData({ type: bond.type, stereo: bond.stereo });
+    return bondIds.length > 0
+      ? (editor.render.ctab.molecule.bonds.get(bondIds[0]) ?? null)
+      : null;
+  }, [props.propsFromTrigger, editor]);
 
-        // Check if bond is between two monomers
-        const struct = editor.render.ctab.molecule;
-        const beginAtomSgroup = struct.getGroupFromAtomId(bond.begin);
-        const endAtomSgroup = struct.getGroupFromAtomId(bond.end);
-        const isBetweenMonomers =
-          beginAtomSgroup instanceof MonomerMicromolecule &&
-          endAtomSgroup instanceof MonomerMicromolecule &&
-          beginAtomSgroup !== endAtomSgroup;
-        setIsBondBetweenMonomers(isBetweenMonomers);
-      } else {
-        setBondData(null);
-        setIsBondBetweenMonomers(false);
-      }
-    }
-  }, [props.propsFromTrigger, ketcherId]);
+  const bondData = bond ? { type: bond.type, stereo: bond.stereo } : null;
+
+  const bondBetweenMonomers = useMemo(
+    () => isBondBetweenMonomers(bond, editor.render.ctab.molecule),
+    [bond, editor],
+  );
 
   const highlightBondWithColor = (color: string) => {
     const bondIds = props.propsFromTrigger?.bondIds || [];
@@ -160,7 +150,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
           {...props}
           data-testid="Change direction-option"
           onClick={changeDirection}
-          disabled={isBondBetweenMonomers}
+          disabled={bondBetweenMonomers}
         >
           Change direction
         </Item>
@@ -170,7 +160,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         data-testid="Attach S-Group...-option"
         hidden={sGroupAttachHidden}
         onClick={handleSGroupAttach}
-        disabled={disabledForMonomerCreation || isBondBetweenMonomers}
+        disabled={disabledForMonomerCreation || bondBetweenMonomers}
       >
         Attach S-Group...
       </Item>

@@ -199,11 +199,22 @@ export const RnaEditorExpanded = ({
     useState<SequenceSelectionGroupNames | undefined>(
       generateSequenceSelectionGroupNames(sequenceSelection),
     );
+  // Tracks whether the component was in edit mode on the previous render, so
+  // that re-entering edit mode (e.g. after Cancel) can be detected during
+  // render and used to discard stale tracking from a previous edit session.
+  const [wasEditMode, setWasEditMode] = useState(isEditMode);
   // Adjust state during render (instead of chaining a setState call inside
-  // the useEffect below): once the user picks a new monomer group item while
-  // editing a sequence selection, mark the selection as updated so the
-  // "Update" button becomes enabled.
-  if (
+  // the useEffect below). Re-entering edit mode starts a fresh session: reset
+  // the tracked monomer group item and the "updated" flag so state left over
+  // from a previous, cancelled edit session can't leak in and prematurely
+  // enable the "Update" button.
+  if (isEditMode !== wasEditMode) {
+    setWasEditMode(isEditMode);
+    if (isEditMode) {
+      setLastAppliedPresetMonomerGroupItem(activePresetMonomerGroup?.groupItem);
+      setIsSequenceSelectionUpdated(false);
+    }
+  } else if (
     activeMonomerGroup !== RnaBuilderPresetsItem.Presets &&
     isEditMode &&
     isSequenceEditInRNABuilderMode &&
@@ -211,9 +222,7 @@ export const RnaEditorExpanded = ({
     activePresetMonomerGroup.groupItem !== lastAppliedPresetMonomerGroupItem
   ) {
     setLastAppliedPresetMonomerGroupItem(activePresetMonomerGroup.groupItem);
-    if (!isSequenceSelectionUpdated) {
-      setIsSequenceSelectionUpdated(true);
-    }
+    setIsSequenceSelectionUpdated(true);
   }
 
   const phosphatePosition = resolvePhosphatePosition(newPreset);
@@ -493,7 +502,7 @@ export const RnaEditorExpanded = ({
       isPhosphatePositionReadOnly || (!is5PrimeAvailable && !is3PrimeAvailable);
     const triggerPosition = isPhosphatePositionReadOnly
       ? 'right'
-      : position ?? selectedPhosphatePosition ?? 'right';
+      : (position ?? selectedPhosphatePosition ?? 'right');
     const isPhosphateGroupActive =
       !isPhosphatePositionReadOnly &&
       activeMonomerGroup === MonomerGroups.PHOSPHATES;

@@ -21,6 +21,7 @@ import type {
 import type { AtomCIP, BondCIP } from 'domain/entities/types';
 import type { StructProperty } from 'domain/entities/struct';
 import type { Vec2 } from 'domain/entities/vec2';
+import type { RxnArrowAttributes } from 'domain/entities/rxnArrow';
 
 export interface KetAtomNode {
   type?: 'atom-list';
@@ -114,3 +115,18 @@ export interface KetItem {
     number: number;
   };
 }
+
+export interface KetArrowNode {
+  type: 'arrow';
+  data: RxnArrowAttributes;
+  selected?: boolean;
+}
+
+export interface KetPlusNode {
+  type: 'plus';
+  // KET stores the position of a plus as [x, y, z]
+  location: [number, number, number];
+  selected?: boolean;
+}
+
+export type KetRxnNode = KetArrowNode | KetPlusNode;

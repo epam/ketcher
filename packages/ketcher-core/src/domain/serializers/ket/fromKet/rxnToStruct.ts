@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -19,8 +18,9 @@ import { RxnArrow } from 'domain/entities/rxnArrow';
 import { RxnPlus } from 'domain/entities/rxnPlus';
 import type { Struct } from 'domain/entities/struct';
 import { getNodeWithInvertedYCoord } from '../helpers';
+import type { KetRxnNode } from '../types';
 
-export function rxnToStruct(ketItem: any, struct: Struct): Struct {
+export function rxnToStruct(ketItem: KetRxnNode, struct: Struct): Struct {
   if (ketItem.type === 'arrow') {
     const arrow = new RxnArrow(getNodeWithInvertedYCoord(ketItem.data));
     arrow.setInitiallySelected(ketItem.selected);

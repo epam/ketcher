@@ -17,25 +17,26 @@
 
 import { RGroup } from 'domain/entities/rgroup';
 import type { Struct } from 'domain/entities/struct';
-
+import { Fragment } from 'src/domain/entities';
+import { KetItem } from '../types';
 import { ifDef } from 'utilities';
 import { moleculeToStruct } from './moleculeToStruct';
 
-export function rgroupToStruct(ketItem): Struct {
+export function rgroupToStruct(ketItem: KetItem): Struct {
   const struct = moleculeToStruct(ketItem);
   const rgroup = rgroupLogicToStruct(ketItem.rlogic);
-  struct.frags.forEach((_value: any, key) => {
+  struct.frags.forEach((_value: Fragment | null, key: number) => {
     rgroup.frags.add(key);
   });
-  if (ketItem.rlogic) struct.rgroups.set(ketItem.rlogic.number, rgroup);
+  if (ketItem?.rlogic) struct.rgroups.set(ketItem.rlogic.number, rgroup);
   return struct;
 }
 
-export function rgroupLogicToStruct(rglogic) {
+export function rgroupLogicToStruct(rglogic: KetItem['rlogic']) {
   const params = {};
-  ifDef(params, 'range', rglogic.range);
-  ifDef(params, 'resth', rglogic.resth);
-  ifDef(params, 'ifthen', rglogic.ifthen);
+  ifDef(params, 'range', rglogic?.range);
+  ifDef(params, 'resth', rglogic?.resth);
+  ifDef(params, 'ifthen', rglogic?.ifthen);
 
   return new RGroup(params);
 }

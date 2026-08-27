@@ -110,7 +110,14 @@ export interface KetFragment {
 
 export interface KetItem {
   fragments?: KetFragment[];
+  atoms?: (KetAtomNode | KetRgLabelNode)[];
+  bonds?: KetBondNode[];
+  sgroups?: KetSGroupNode[];
+  properties?: StructProperty[];
   rlogic?: {
     number: number;
+    range?: string;
+    resth?: boolean;
+    ifthen?: number;
   };
 }

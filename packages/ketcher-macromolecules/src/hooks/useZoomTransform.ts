@@ -1,22 +1,21 @@
 import { useEffect, useState } from 'react';
 import { ZoomTransform } from 'd3';
-import { ZoomTool } from 'ketcher-core';
 import { selectEditor } from 'state/common';
 import { useAppSelector } from './stateHooks';
 
 export const useZoomTransform = () => {
-  // ZoomTool.instance is created by the editor, which is set up in an effect of
-  // a parent component, so it is still empty when this hook first runs. The
-  // editor from the store is what tells us the instance now exists, and it is
-  // also what replaces it, so the subscription is (re)established from it.
+  // The editor creates its zoom tool while being constructed in an effect of a
+  // parent component, so it is still absent when this hook first runs.
+  // Depending on the tool itself subscribes as soon as it exists and
+  // resubscribes whenever the editor replaces it.
   const editor = useAppSelector(selectEditor);
+  const zoomTool = editor?.zoomTool;
   const [transform, setTransform] = useState<ZoomTransform>(
     new ZoomTransform(1, 0, 0),
   );
 
   useEffect(() => {
-    const zoom = ZoomTool.instance;
-    if (!zoom) {
+    if (!zoomTool) {
       return;
     }
 
@@ -30,12 +29,12 @@ export const useZoomTransform = () => {
       });
     };
 
-    zoom.subscribeOnZoomEvent(zoomEventHandler);
+    zoomTool.subscribeOnZoomEvent(zoomEventHandler);
 
     return () => {
-      zoom.unsubscribeOnZoomEvent(zoomEventHandler);
+      zoomTool.unsubscribeOnZoomEvent(zoomEventHandler);
     };
-  }, [editor]);
+  }, [zoomTool]);
 
   return transform;
 };

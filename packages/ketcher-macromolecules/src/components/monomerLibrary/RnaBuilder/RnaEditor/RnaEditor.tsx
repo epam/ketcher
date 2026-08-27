@@ -42,7 +42,20 @@ export const RnaEditor = ({ duplicatePreset }) => {
 
   const dispatch = useAppDispatch();
 
-  const [expanded, setExpanded] = useState(false);
+  const shouldExpand = Boolean(activePreset?.name) || isEditMode;
+  const [expanded, setExpanded] = useState(shouldExpand);
+  const [prevActivePreset, setPrevActivePreset] = useState(activePreset);
+
+  // Activating a preset opens the editor. isEditMode is read to decide whether
+  // it should open, but it is deliberately not a trigger: expandEditor turns
+  // edit mode on while collapsing an unsaved preset, so reacting to that would
+  // immediately re-expand the panel the user just closed.
+  if (activePreset !== prevActivePreset) {
+    setPrevActivePreset(activePreset);
+    if (activePreset && shouldExpand) {
+      setExpanded(true);
+    }
+  }
 
   useEffect(() => {
     if (activePreset) {
@@ -51,16 +64,15 @@ export const RnaEditor = ({ duplicatePreset }) => {
       }
       return;
     }
-
     dispatch(createNewPreset());
     dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
-  }, [activePreset]);
+  }, [activePreset, dispatch, isEditMode]);
 
   useEffect(() => {
     dispatch(
       recalculateRnaBuilderValidations({ rnaPreset: activePreset, isEditMode }),
     );
-  }, [isEditMode]);
+  }, [isEditMode, dispatch, activePreset]);
 
   const expandEditor = () => {
     const nextExpanded = !expanded;

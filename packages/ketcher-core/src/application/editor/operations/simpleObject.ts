@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -30,7 +31,7 @@ interface SimpleObjectAddData {
   mode: SimpleObjectMode;
   toCircle: boolean;
 }
-export class SimpleObjectAdd extends Base {
+export class SimpleObjectAdd extends Base<SimpleObjectAddData> {
   readonly data: SimpleObjectAddData;
 
   constructor(
@@ -47,14 +48,14 @@ export class SimpleObjectAdd extends Base {
     const struct = restruct.molecule;
     const item = new SimpleObject({ mode: this.data.mode });
 
+    let itemId: number;
     if (this.data.id == null) {
-      const index = struct.simpleObjects.add(item);
-      this.data.id = index;
+      itemId = struct.simpleObjects.add(item);
+      this.data.id = itemId;
     } else {
-      struct.simpleObjects.set(this.data.id, item);
+      itemId = this.data.id;
+      struct.simpleObjects.set(itemId, item);
     }
-
-    const itemId = this.data.id!;
 
     restruct.simpleObjects.set(itemId, new ReSimpleObject(item));
 
@@ -70,8 +71,11 @@ export class SimpleObjectAdd extends Base {
     Base.invalidateItem(restruct, 'simpleObjects', itemId, 1);
   }
 
-  invert(): Base {
-    return new SimpleObjectDelete(this.data.id!);
+  invert(): SimpleObjectDelete {
+    if (this.data.id === undefined) {
+      throw new Error('SimpleObjectAdd: cannot invert before execute');
+    }
+    return new SimpleObjectDelete(this.data.id);
   }
 }
 

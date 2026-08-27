@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import * as moleculeToKet from 'domain/serializers/ket/toKet/moleculeToKet';
 import * as moleculeToStruct from 'domain/serializers/ket/fromKet/moleculeToStruct';
 import * as prepareStructForKet from 'domain/serializers/ket/toKet/prepare';

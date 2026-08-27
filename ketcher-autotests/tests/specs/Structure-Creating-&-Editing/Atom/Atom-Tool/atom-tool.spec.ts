@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { MAX_BOND_LENGTH } from '@constants/index';
 import { test, Page, expect } from '@fixtures';
 import {

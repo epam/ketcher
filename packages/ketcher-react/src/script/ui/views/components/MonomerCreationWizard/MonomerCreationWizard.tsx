@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler, react-you-might-not-need-an-effect/no-chain-state-updates */
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/immutability */
 import styles from './MonomerCreationWizard.module.less';
@@ -1164,6 +1164,7 @@ const MonomerCreationWizardInternal = ({
 
     editor.setProblematicAtoms(problematicAtomIds);
     if (problematicAtomIds.size === 0) {
+      // eslint-disable-next-line react-you-might-not-need-an-effect/no-chain-state-updates -- false positive: this effect itself is synchronizing with an external system (canvas structure edits), not chaining off another effect's state update, so there's no other single handler to fold this into
       setHasActiveRnaPresetAtomValidationErrors(false);
     }
   }, [

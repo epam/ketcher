@@ -2,7 +2,7 @@
 
 > Reading and writing chemical structures in ~25 text formats.
 
-Cross-cutting deep-dive. Complements the format table in [../domain.md](../domain.md#supported-chemical-formats).
+Cross-cutting deep-dive. Complements the format table in [../domain.md](../domain.md#supported-chemical-formats). For the authoritative KET JSON schema (field-by-field), see [../formats/](../formats/README.md) — **v2.0 is current and is what to target for new work; v1.0 is kept for backwards-compatible reads and historical context only.**
 
 ## Responsibility
 
@@ -20,7 +20,7 @@ All serializers share a common interface: a `deserialize(content)` that returns 
 
 ### KET
 
-The **central** serializer — the only one that handles **both** micro `Struct` and macro monomers (the drawing-entities manager) in one document.
+The **central** serializer — the only one that handles **both** micro `Struct` and macro monomers (the drawing-entities manager) in one document. See [../formats/ket-1.0-specification.md](../formats/ket-1.0-specification.md) / [../formats/ket-2.0-specification.md](../formats/ket-2.0-specification.md) for the full field-level schema.
 
 - **Micro:** deserialization parses the JSON, validates it against a schema, and dispatches each node to the matching "from KET" converter; serialization prepares the structure and emits each node via its "to KET" converter, tagging the document with a KET version.
 - **Macro:** parse-and-validate, then deserialize macromolecules entities converting into drawing entities (there is also a path to deserialize straight into a `Struct`); serialization emits nodes, connections, and templates.

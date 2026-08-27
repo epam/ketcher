@@ -62,18 +62,16 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   });
 
   useEffect(() => {
-    // This effect synchronizes the editor with an external service provider;
-    // it is not triggered by a user event.
-    // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
     if (!ketcherId) {
       return;
     }
+
     ketcherBuilderRef.current?.reinitializeApi(
       ketcherId,
       structServiceProvider,
       setServerRef.current,
     );
-  }, [structServiceProvider]);
+  }, [ketcherId, structServiceProvider]);
 
   const initKetcher = async () => {
     appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
@@ -97,6 +95,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       }
     });
   };
+
   useEffect(() => {
     if (initPromiseRef.current === null) {
       initKetcher();
@@ -112,6 +111,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
         appRootRef.current?.unmount();
       });
     };
+
     // TODO: provide the list of dependencies after implementing unsubscribe function
   }, []);
 

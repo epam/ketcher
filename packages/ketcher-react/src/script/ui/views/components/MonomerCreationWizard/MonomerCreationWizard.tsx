@@ -1119,6 +1119,15 @@ const MonomerCreationWizardInternal = ({
   // while ownership validation errors are active. `problematicAtomIds` is
   // derived purely from other state/props, so it is computed inline (memoized)
   // instead of being synchronized one render late via an effect.
+  //
+  // `hasActiveRnaPresetAtomValidationErrors` is intentionally NOT cleared here
+  // when the recomputed set becomes empty: doing so during render caused
+  // React to re-render before committing, so `problematicAtomIds` (guarded by
+  // the now-false flag) became `null` and the sync effect below skipped
+  // pushing the empty set to the editor, leaving stale highlights on screen.
+  // The flag now stays active until the next submit/discard (see
+  // `handleSubmit`/`handleDiscard`), so every recompute — including one that
+  // resolves to an empty set — is always synced to the editor.
   const problematicAtomIds = useMemo(() => {
     if (
       !editor?.render?.monomerCreationState ||
@@ -1138,19 +1147,6 @@ const MonomerCreationWizardInternal = ({
     isRnaPresetType,
     rnaPresetComponentStructures,
   ]);
-
-  // Once the recomputed problematic-atom set becomes empty, clear the
-  // active-errors flag immediately during render instead of chaining the
-  // update through a follow-up effect (see "Adjusting state when a prop
-  // changes" in the React docs).
-  const [lastProblematicAtomIds, setLastProblematicAtomIds] =
-    useState(problematicAtomIds);
-  if (problematicAtomIds !== lastProblematicAtomIds) {
-    setLastProblematicAtomIds(problematicAtomIds);
-    if (problematicAtomIds && problematicAtomIds.size === 0) {
-      setHasActiveRnaPresetAtomValidationErrors(false);
-    }
-  }
 
   // Syncing the derived problematic-atom set to the (non-React) editor render
   // state is a legitimate effect: it just informs an external system.

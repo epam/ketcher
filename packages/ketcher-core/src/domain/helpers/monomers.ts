@@ -3,6 +3,7 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { Peptide } from 'domain/entities/Peptide';
 import type { RNABase } from 'domain/entities/RNABase';
 import type { Sugar } from 'domain/entities/Sugar';
+import type { Atom } from 'domain/entities/CoreAtom';
 import {
   type MonomerItemType,
   type MonomerOrAmbiguousType,
@@ -41,7 +42,7 @@ const isAmbiguousMonomerEntity = (
 
   return Boolean(
     ambiguousMonomer?.monomerItem?.isAmbiguous &&
-      ambiguousMonomer?.monomerClass,
+    ambiguousMonomer?.monomerClass,
   );
 };
 
@@ -237,9 +238,8 @@ export function getPreviousMonomerInChain(monomer: BaseMonomer) {
     return previousMonomer;
   }
 
-  return previousMonomer &&
-    previousMonomer.getAttachmentPointByBond(r1PolymerBond) ===
-      AttachmentPointName.R2
+  return previousMonomer?.getAttachmentPointByBond(r1PolymerBond) ===
+    AttachmentPointName.R2
     ? previousMonomer
     : undefined;
 }
@@ -448,7 +448,7 @@ export const isRnaBaseVariantMonomer = (
 export function isAmbiguousMonomerLibraryItem(
   monomer?: MonomerOrAmbiguousType,
 ): monomer is AmbiguousMonomerType {
-  return Boolean(monomer && monomer.isAmbiguous);
+  return Boolean(monomer?.isAmbiguous);
 }
 
 export const isLibraryItemRnaPreset = (
@@ -534,26 +534,85 @@ export function isRnaBaseApplicableForAntisense(monomer?: BaseMonomer) {
 
 export function getAllConnectedMonomersRecursively(
   monomer: BaseMonomer,
+  traversableMonomers?: Set<BaseMonomer>,
 ): BaseMonomer[] {
-  const stack = [monomer];
-  const visited = new Set<BaseMonomer>();
+  const monomerStack = [monomer];
+  const visitedMonomers = new Set<BaseMonomer>();
   const connectedMonomers: BaseMonomer[] = [];
+  const visitedAtoms = new Set<Atom>();
 
-  while (stack.length > 0) {
-    const currentMonomer = stack.pop();
+  const isMonomerTraversable = (candidateMonomer: BaseMonomer): boolean => {
+    return !traversableMonomers || traversableMonomers.has(candidateMonomer);
+  };
 
-    if (!currentMonomer || visited.has(currentMonomer)) {
+  while (monomerStack.length > 0) {
+    const currentMonomer = monomerStack.pop();
+
+    if (!currentMonomer || visitedMonomers.has(currentMonomer)) {
       continue;
     }
 
-    visited.add(currentMonomer);
+    visitedMonomers.add(currentMonomer);
     connectedMonomers.push(currentMonomer);
 
     currentMonomer.forEachBond((bond) => {
       if (bond instanceof PolymerBond || bond instanceof HydrogenBond) {
         const anotherMonomer = bond.getAnotherMonomer(currentMonomer);
-        if (anotherMonomer && !visited.has(anotherMonomer)) {
-          stack.push(anotherMonomer);
+        if (anotherMonomer && !visitedMonomers.has(anotherMonomer)) {
+          monomerStack.push(anotherMonomer);
+        }
+      } else if (bond instanceof MonomerToAtomBond) {
+        // Handle connections through microstructure atoms
+        // Only traverse atoms that belong to a microstructure (isMicromoleculeFragment)
+        // to avoid connecting unrelated monomers
+        const atomOwnerMonomer = bond.atom.monomer;
+        if (
+          atomOwnerMonomer.monomerItem.props.isMicromoleculeFragment &&
+          isMonomerTraversable(atomOwnerMonomer)
+        ) {
+          // Use BFS to traverse all connected atoms in the microstructure
+          const atomQueue: Atom[] = [bond.atom];
+
+          while (atomQueue.length > 0) {
+            const currentAtom = atomQueue.shift();
+
+            if (!currentAtom || visitedAtoms.has(currentAtom)) {
+              continue;
+            }
+
+            visitedAtoms.add(currentAtom);
+
+            // Check all bonds on this atom
+            currentAtom.bonds.forEach((atomBond) => {
+              if (atomBond instanceof MonomerToAtomBond) {
+                // Found a monomer connection
+                const connectedMonomer = atomBond.monomer;
+                // Only add if it's not the microstructure owner, not already visited,
+                // and is in the allowed set (if provided)
+                if (
+                  connectedMonomer !== atomOwnerMonomer &&
+                  !visitedMonomers.has(connectedMonomer) &&
+                  isMonomerTraversable(connectedMonomer)
+                ) {
+                  monomerStack.push(connectedMonomer);
+                }
+              } else {
+                // Found a bond to another atom - only traverse if it also belongs to a microstructure
+                const otherAtom =
+                  atomBond.firstAtom === currentAtom
+                    ? atomBond.secondAtom
+                    : atomBond.firstAtom;
+                if (
+                  otherAtom &&
+                  !visitedAtoms.has(otherAtom) &&
+                  otherAtom.monomer.monomerItem.props.isMicromoleculeFragment &&
+                  isMonomerTraversable(otherAtom.monomer)
+                ) {
+                  atomQueue.push(otherAtom);
+                }
+              }
+            });
+          }
         }
       }
     });

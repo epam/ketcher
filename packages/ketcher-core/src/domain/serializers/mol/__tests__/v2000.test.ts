@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import { AtomList, Bond, Vec2 } from 'domain/entities';
 import { basic, reaction, rgroups } from './fixtures';
 

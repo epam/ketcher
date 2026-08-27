@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -189,8 +190,8 @@ function shouldHandleItemDirectly(
 ): hoveredItem is Record<string, number> {
   return Boolean(
     hoveredItem &&
-      newAction.tool !== 'select' &&
-      newAction.dialog !== 'templates',
+    newAction.tool !== 'select' &&
+    newAction.dialog !== 'templates',
   );
 }
 

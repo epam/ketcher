@@ -33,6 +33,7 @@ import { notifyRenderComplete } from './notifyRenderComplete';
 import type { AttachmentPointName } from 'domain/types';
 import type { KetMonomerClass } from 'application/formatters/types/ket';
 import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export type EditAllInstancesPresetRequirements = {
   type: KetMonomerClass;
@@ -85,6 +86,13 @@ export type MonomerCreationState = {
   // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
   connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
   editInstanceInitialValues?: MonomerCreationInitialValues;
+  attachmentAtomIdsWithExternalBonds?: Map<
+    AttachmentPointName,
+    [number, number]
+  >;
+  // Reference to the BaseMonomer entity on the macromolecules canvas being
+  // edited. Populated only when editing an existing monomer.
+  editingMonomer?: BaseMonomer;
 } | null;
 
 export class Render {
@@ -272,7 +280,6 @@ export class Render {
   }
 
   update(force = false, viewSz: Vec2 | null = null) {
-    // eslint-disable-line max-statements
     viewSz =
       viewSz ??
       new Vec2(

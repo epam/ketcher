@@ -725,7 +725,6 @@ export function fromSgroupAddition(
   oldSgroup?,
   monomer?: BaseMonomer,
 ) {
-  // eslint-disable-line
   let action = new Action();
 
   sgid = isNumber(sgid) ? sgid : restruct.molecule.sgroups.newId();

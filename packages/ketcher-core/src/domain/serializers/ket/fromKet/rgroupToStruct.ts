@@ -17,7 +17,7 @@
 
 import { RGroup } from 'domain/entities/rgroup';
 import type { Struct } from 'domain/entities/struct';
-import { Fragment } from 'src/domain/entities/fragment';
+import { Fragment } from 'domain/entities/fragment';
 import { KetItem } from '../types';
 import { ifDef } from 'utilities';
 import { moleculeToStruct } from './moleculeToStruct';

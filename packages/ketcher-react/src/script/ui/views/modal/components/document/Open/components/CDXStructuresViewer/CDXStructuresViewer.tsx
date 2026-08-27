@@ -50,15 +50,19 @@ export const CDXStructuresViewer = ({
   const [itemsMap, setItemsMap] = useState<itemsMapInterface>({});
   const loading = !!structList[selectedIndex] && !itemsMap[selectedIndex];
   const selectedIndexRef = useRef(selectedIndex);
-  selectedIndexRef.current = selectedIndex;
+  useEffect(() => {
+    selectedIndexRef.current = selectedIndex;
+  }, [selectedIndex]);
   const itemsMapRef = useRef(itemsMap);
-  itemsMapRef.current = itemsMap;
+  useEffect(() => {
+    itemsMapRef.current = itemsMap;
+  }, [itemsMap]);
 
-  const notifyInputHandler = (item?: item) => {
-    if (!item || item.error) {
+  const notifyInputHandler = (structItem?: item) => {
+    if (!structItem || structItem.error) {
       inputHandler('');
     } else {
-      inputHandler(item.base64struct);
+      inputHandler(structItem.base64struct);
     }
   };
 

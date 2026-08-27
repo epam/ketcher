@@ -31,7 +31,7 @@ A mol serializer on ketcher side handles **only V2000**. **V3000** is handled by
 
 ### SDF
 
-Splits records on the record separator, parses each MOL block via the MOL serializer, and parses the property blocks into associated structure data.
+Splits records on the record separator, parses each MOL block via the MOL serializer, and parses the property blocks into associated structure data. `FormatterFactory` never selects this serializer, though — it's used only to load Ketcher's bundled static template libraries (functional groups, salts/solvents, RNA presets) at startup. See [invariants.md#a7](../invariants.md).
 
 ## 2. Formatters
 
@@ -60,3 +60,4 @@ A provider abstraction exposes a mode (`standalone` or `remote`) and a factory t
 
 - KET is the interchange format between the model and Indigo for all non-KET/non-MOL-V2000 formats.
 - Coordinate systems differ between browser and chemistry conventions; the KET serializer flips the Y-axis.
+- **`FormatterFactory` routes only KET and plain MOL V2000 to a local formatter** ([invariants.md#a7](../invariants.md)); every other format case — SDF, RXN, SMILES/SMARTS, InChI, CML, CDX/CDXML, FASTA, HELM, IDT, BILN, AxoLabs, MOL V3000 — resolves to the server formatter (Indigo). The local `SdfSerializer` is never selected by `FormatterFactory`; it exists only for internal template-library loading. A user-facing import bug in a non-local format belongs in Indigo or in how Ketcher consumes Indigo's KET/error result — not in a new client-side parser, and not in `SdfSerializer`.

@@ -37,6 +37,7 @@ import { rgroupToStruct } from './fromKet/rgroupToStruct';
 import { rxnToStruct } from './fromKet/rxnToStruct';
 import { simpleObjectToKet } from './toKet/simpleObjectToKet';
 import { simpleObjectToStruct } from './fromKet/simpleObjectToStruct';
+import type { KetSimpleObjectNode } from './types';
 import { textToKet } from './toKet/textToKet';
 import { textToStruct } from './fromKet/textToStruct';
 import {
@@ -109,11 +110,20 @@ import type { KetFileImageNode } from 'domain/entities/image';
 import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
 
-type KetMicromoleculeNode = {
-  type?: string;
-  $ref?: string;
-  stereoFlagPosition?: Point;
-};
+type KetMicromoleculeNode =
+  | KetSimpleObjectNode
+  | {
+      type?:
+        | 'arrow'
+        | 'plus'
+        | 'molecule'
+        | 'rgroup'
+        | 'text'
+        | typeof MULTITAIL_ARROW_SERIALIZE_KEY
+        | typeof IMAGE_SERIALIZE_KEY;
+      $ref?: string;
+      stereoFlagPosition?: Point;
+    };
 
 interface IKetMicromoleculeFile {
   header?: { moleculeName?: string };
@@ -125,7 +135,10 @@ interface IKetMicromoleculeFile {
 }
 
 interface IKetMicromoleculeSerializedResult {
-  root: { nodes: KetMicromoleculeNode[] };
+  // nodes is intentionally wider than KetMicromoleculeNode so that serializer
+  // functions (arrowToKet, plusToKet, etc.) whose type property is inferred as
+  // `string` can be pushed without casts.
+  root: { nodes: Array<{ type?: string; [key: string]: unknown }> };
   header?: unknown;
   // Allows dynamic property assignment for mol/rg sections: result[`mol${id}`], result[`rg${id}`]
   [key: string]: unknown;

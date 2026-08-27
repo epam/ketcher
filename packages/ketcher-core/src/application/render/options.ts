@@ -95,7 +95,6 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
       stroke: '#365CFF',
       'stroke-width': options.bondThicknessInPx * 1.5,
     },
-    /* eslint-enable quote-props */
     selectionStyle: {
       fill: SELECTION_COLOR,
       stroke: SELECTION_COLOR,

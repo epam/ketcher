@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {

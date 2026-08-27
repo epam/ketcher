@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/refs */
 import styled from '@emotion/styled';
 import { ActionButton } from 'components/shared/actionButton';
 import { Modal } from 'components/shared/modal';
@@ -269,7 +270,7 @@ function AttachmentPointSelectionPanel({
         (attachmentPoint) => {
           const disabled = Boolean(
             connectedAttachmentPoints.includes(attachmentPoint) &&
-              attachmentPoint !== selectedAttachmentPoint,
+            attachmentPoint !== selectedAttachmentPoint,
           );
           return (
             <AttachmentPoint key={attachmentPoint}>

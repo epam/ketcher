@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -18,6 +20,7 @@
 import { type ReStruct, ReText } from '../../../render';
 import { Text } from 'domain/entities/text';
 import { Vec2 } from 'domain/entities/vec2';
+import { assert } from 'utilities';
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
@@ -40,7 +43,7 @@ export class TextCreate extends BaseOperation<TextCreateData> {
   execute(restruct: ReStruct): void {
     const item = new Text(this.data);
 
-    if (this.data.id == null) {
+    if (this.data.id === undefined) {
       const index = restruct.molecule.texts.add(item);
       this.data.id = index;
     } else {
@@ -56,7 +59,11 @@ export class TextCreate extends BaseOperation<TextCreateData> {
   }
 
   invert(): TextDelete {
-    return new TextDelete(this.data.id!);
+    assert(
+      this.data.id !== undefined,
+      'TextCreate: cannot invert before execute assigns an id',
+    );
+    return new TextDelete(this.data.id);
   }
 }
 
@@ -80,8 +87,9 @@ export class TextDelete extends BaseOperation<TextDeleteData> {
     const item = struct.texts.get(this.data.id);
     if (!item) return;
 
-    this.data.content = item.content!;
+    this.data.content = item.content;
     this.data.position = item.position;
+    this.data.pos = item.pos;
 
     restruct.markItemRemoved();
 
@@ -95,10 +103,22 @@ export class TextDelete extends BaseOperation<TextDeleteData> {
   }
 
   invert(): BaseOperation {
+    assert(
+      this.data.content !== undefined,
+      'TextDelete: cannot invert before execute captures content',
+    );
+    assert(
+      this.data.position,
+      'TextDelete: cannot invert before execute captures position',
+    );
+    assert(
+      this.data.pos,
+      'TextDelete: cannot invert before execute captures pos',
+    );
     return new TextCreate(
-      this.data.content!,
-      this.data.position!,
-      this.data.pos!,
+      this.data.content,
+      this.data.position,
+      this.data.pos,
       this.data.id,
     );
   }

@@ -6,7 +6,7 @@ import { Struct, Vec2, BaseMonomer } from 'domain/entities';
 import { type MonomerItemType, AttachmentPointName } from 'domain/types';
 import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
 import { isNumber } from 'lodash';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { moleculeToStruct } from './moleculeToStruct';
 import { rxnToStruct } from './rxnToStruct';
 import { simpleObjectToStruct } from './simpleObjectToStruct';
@@ -186,8 +186,12 @@ export function fillStructRgLabelsByMonomerTemplate(
         ? firstAtomInLeavingGroup
         : attachmentPoint.attachmentAtom,
     );
-    assert(leavingGroupAtom);
-    leavingGroupAtom.rglabel = (
+
+    if (!leavingGroupAtom) {
+      return;
+    }
+
+    leavingGroupAtom.rglabel =
       0 |
       (1 <<
         (Number(
@@ -196,11 +200,10 @@ export function fillStructRgLabelsByMonomerTemplate(
             : attachmentPointsList[attachmentPointIndex]
           ).replace('R', ''),
         ) -
-          1))
-    ).toString();
+          1));
     assert(monomerItem.props.MonomerCaps);
     monomerItem.props.MonomerCaps[
-      getAttachmentPointLabelWithBinaryShift(Number(leavingGroupAtom.rglabel))
+      getAttachmentPointLabelWithBinaryShift(leavingGroupAtom.rglabel)
     ] = leavingGroupAtom.label;
   });
 }

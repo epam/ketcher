@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './stateHooks';
 import { selectEditor } from 'state/common';
@@ -58,7 +60,8 @@ function useSetRnaPresets() {
         }
       }
 
-      customLabeledPresets = getCachedCustomRnaPresets()!;
+      customLabeledPresets =
+        getCachedCustomRnaPresets() ?? customLabeledPresets;
       customPresets = getPresets(monomersLibrary, customLabeledPresets);
     }
 
@@ -66,7 +69,9 @@ function useSetRnaPresets() {
     dispatch(setFavoriteMonomersFromLocalStorage(null));
 
     dispatch(setDefaultPresets(defaultPresets));
-    customLabeledPresets && dispatch(setCustomPresets(customPresets));
+    if (customLabeledPresets) {
+      dispatch(setCustomPresets(customPresets));
+    }
     dispatch(setFavoritePresetsFromLocalStorage());
 
     return () => {

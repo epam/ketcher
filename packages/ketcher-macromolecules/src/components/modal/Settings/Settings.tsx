@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -171,9 +172,7 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
     setIsLoading(true);
     try {
-      // Type assertion needed as loadPreset may not be in the type definition yet
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (settingsService as any).loadPreset('acs');
+      await settingsService.loadPreset('acs');
       const coreAcsSettings = settingsService.getSettings();
       const formAcsSettings = normalizeSettingsForForm(coreAcsSettings);
       setCurrentSettings(formAcsSettings);
@@ -216,8 +215,7 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
   return (
     <Modal
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      title={headerTitle as any}
+      title={headerTitle}
       isOpen={isModalOpen}
       onClose={handleCancel}
       showExpandButton={true}

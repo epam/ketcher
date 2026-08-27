@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { isEqual } from 'lodash';
+import { getOrThrow } from '../../utilities';
 import { Render } from './raphaelRender';
 import type ReAtom from './restruct/reatom';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -165,8 +167,11 @@ function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
     }
 
     sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const attachmentPointAtom = struct.atoms.get(attachmentPoint.atomId)!;
+      const attachmentPointAtom = getOrThrow(
+        struct.atoms,
+        attachmentPoint.atomId,
+        `Atom with id ${attachmentPoint.atomId} not found in struct while converting sgroup attachment points`,
+      );
       attachmentPointAtom.setRGAttachmentPointForDisplayPurpose();
       const rgroupAttachmentPoint =
         attachmentPoint.convertToRGroupAttachmentPointForDisplayPurpose(

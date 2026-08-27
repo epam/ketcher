@@ -55,7 +55,8 @@ type BaseNodeSelection = {
 };
 
 type SequenceBondRenderer =
-  PolymerBondSequenceRenderer | MonomerToAtomBondSequenceRenderer;
+  | PolymerBondSequenceRenderer
+  | MonomerToAtomBondSequenceRenderer;
 
 export type NodeSelection = BaseNodeSelection & {
   node: SubChainNode;
@@ -284,14 +285,29 @@ export class SequenceRenderer {
       );
 
       if (!isEditInRnaBuilderMode) {
-        this.showNewSequenceButton(
-          chainIndex,
-          Math.max(
-            chain.lastRow.sequenceViewModelItems.length,
-            sequenceViewModel.chains[chainIndex + 1]?.firstRow
-              ?.sequenceViewModelItems.length ?? 0,
-          ),
-        );
+        const nextChain = sequenceViewModel.chains[chainIndex + 1];
+
+        // Extract actual Chain objects with type safety
+        const currentChain = chain.firstNode?.chain;
+        const nextChainObj = nextChain?.firstNode?.chain;
+
+        // Check if chains are connected via side-chain bonds
+        // If two sequences have at least one sidechain connection, the "plus" button between them should be absent
+        const hasSideChainConnection =
+          currentChain &&
+          nextChainObj &&
+          this.hasSideChainConnectionBetweenChains(currentChain, nextChainObj);
+
+        // Show PLUS button only if there are no side-chain connections between chains
+        if (!hasSideChainConnection) {
+          this.showNewSequenceButton(
+            chainIndex,
+            Math.max(
+              chain.lastRow.sequenceViewModelItems.length,
+              nextChain?.firstRow?.sequenceViewModelItems.length ?? 0,
+            ),
+          );
+        }
       }
     });
 
@@ -1421,6 +1437,49 @@ export class SequenceRenderer {
     });
 
     return rendererToReturn;
+  }
+
+  /**
+   * Checks if two chains have at least one side-chain connection between them.
+   *
+   * @param chain1 - First chain to check
+   * @param chain2 - Second chain to check
+   * @returns true if any monomer in chain1 has a side-chain bond to any monomer in chain2
+   *
+   * @example
+   * // Two chains connected by R3-R3 bond
+   * const hasConnection = hasSideChainConnectionBetweenChains(chainA, chainB);
+   * // Returns: true
+   *
+   * @remarks
+   * - Returns false if either chain is empty or undefined
+   * - Uses Set for O(1) lookup performance
+   * - Only checks connections from chain1 to chain2 (assumes bidirectional bonds)
+   */
+  private static hasSideChainConnectionBetweenChains(
+    chain1: Chain,
+    chain2: Chain,
+  ): boolean {
+    // Defensive programming - handle null/undefined/empty chains
+    if (!chain1?.monomers?.length || !chain2?.monomers?.length) {
+      return false;
+    }
+
+    const chain2Monomers = new Set(chain2.monomers);
+
+    for (const monomer of chain1.monomers) {
+      const sideConnections = monomer.sideConnections;
+      if (!sideConnections?.length) continue; // Skip if no connections
+
+      for (const sideConnection of sideConnections) {
+        const anotherMonomer = sideConnection.getAnotherMonomer(monomer);
+        if (anotherMonomer && chain2Monomers.has(anotherMonomer)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   public static showNewSequenceButton(indexOfRowBefore: number, width = 0) {

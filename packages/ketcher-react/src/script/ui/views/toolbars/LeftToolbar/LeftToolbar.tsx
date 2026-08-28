@@ -45,8 +45,10 @@ import clsx from 'clsx';
 import { useInView } from 'react-intersection-observer';
 import { useResizeObserver } from '../../../../../hooks';
 
-interface LeftToolbarProps
-  extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
+interface LeftToolbarProps extends Omit<
+  ToolbarGroupItemProps,
+  'id' | 'options'
+> {
   className?: string;
 }
 

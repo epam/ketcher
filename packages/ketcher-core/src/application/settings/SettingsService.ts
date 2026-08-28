@@ -269,7 +269,12 @@ export class SettingsService implements ISettingsService {
       const parsed = JSON.parse(json);
       return this.updateSettings(parsed);
     } catch (error) {
-      throw new Error(`Failed to import settings: ${(error as Error).message}`);
+      throw new Error(
+        `Failed to import settings: ${(error as Error).message}`,
+        {
+          cause: error,
+        },
+      );
     }
   }
 

@@ -92,8 +92,7 @@ export class SequenceViewModel {
       }
       let nodesBeforeHydrogenConnectionToBase: SubChainNode[] = [];
       let lastTwoStrandedNodeWithHydrogenBond:
-        | ITwoStrandedChainItem
-        | undefined;
+        ITwoStrandedChainItem | undefined;
       let lastSenseChain: Chain = this.nodes[this.nodes.length - 1].chain;
       let lastSenseNodeIndex: number = this.nodes.length - 1;
 
@@ -239,8 +238,8 @@ export class SequenceViewModel {
           const currentTwoStrandedSnakeLayoutNodeIndex =
             lastTwoStrandedNodeWithHydrogenBondIndex + 1 + i;
           const currentTwoStrandedSnakeLayoutNode:
-            | ITwoStrandedChainItem
-            | undefined = this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
+            ITwoStrandedChainItem | undefined =
+            this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
           const currentAntisenseSnakeLayoutNode =
             nodesBeforeHydrogenConnectionToBase[i];
           const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =

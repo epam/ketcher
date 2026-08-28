@@ -50,12 +50,6 @@ interface SGroupdrawBracketsOptions {
   superatomClass?: SUPERATOM_CLASS;
 }
 
-export const SUPERATOM_CLASS_TEXT = {
-  [SUPERATOM_CLASS.BASE]: 'Base',
-  [SUPERATOM_CLASS.SUGAR]: 'Sugar',
-  [SUPERATOM_CLASS.PHOSPHATE]: 'Phosphate',
-};
-
 // Helper function to convert SVG elements into Paper.js paths
 export function paperPathFromSVGElement(
   element: SVGElement,
@@ -152,11 +146,8 @@ class ReSGroup extends ReObject {
         }
         case 'SUP': {
           const superatomClass = sgroup.data.class as
-            | SUPERATOM_CLASS
-            | undefined;
-          SGroupdrawBracketsOptions.lowerIndexText =
-            sgroup.data.name ||
-            (superatomClass ? SUPERATOM_CLASS_TEXT[superatomClass] : '');
+            SUPERATOM_CLASS | undefined;
+          SGroupdrawBracketsOptions.lowerIndexText = sgroup.superatomLabel;
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
           SGroupdrawBracketsOptions.superatomClass = superatomClass;
@@ -505,14 +496,14 @@ function SGroupdrawBrackets({
         indexPos.x + iconSize / 2 + iconOffsetFromBracket
       },${indexPos.y - iconSize / 2}
                          L${indexPos.x + iconSize + iconOffsetFromBracket},${
-        indexPos.y
-      }
+                           indexPos.y
+                         }
                          L${
                            indexPos.x + iconSize / 2 + iconOffsetFromBracket
                          },${indexPos.y + iconSize / 2}
                          L${indexPos.x + iconOffsetFromBracket},${
-        indexPos.y
-      } Z`;
+                           indexPos.y
+                         } Z`;
       icon = render.paper.path(rhombusPath);
     }
 

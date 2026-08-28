@@ -966,8 +966,8 @@ export const MacromoleculePropertiesWindow = () => {
   const oligonucleotidesValue = useAppSelector(selectOligonucleotidesValue);
 
   const firstMacromoleculesProperties:
-    | SingleChainMacromoleculeProperties
-    | undefined = macromoleculesProperties?.[0];
+    SingleChainMacromoleculeProperties | undefined =
+    macromoleculesProperties?.[0];
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(() =>
     calculateDefaultTabIndex(firstMacromoleculesProperties),

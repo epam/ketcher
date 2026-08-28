@@ -14,9 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable react-hooks/refs */
-
-import { useEffect, useId, useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { Popover, type PopoverActions } from '@mui/material';
 
 import classes from './ColorPicker.module.less';
@@ -33,21 +31,10 @@ interface Props {
 const ColorPicker = (props: Props) => {
   const { onChange, value } = props;
   const [isOpen, setIsOpen] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [triggerElement, setTriggerElement] =
+    useState<HTMLButtonElement | null>(null);
   const popoverActionRef = useRef<PopoverActions>(null);
   const paletteId = 'color-picker-' + useId();
-  const clickThrottleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-
-  useEffect(
-    () => () => {
-      if (clickThrottleTimeoutRef.current) {
-        clearTimeout(clickThrottleTimeoutRef.current);
-      }
-    },
-    [],
-  );
 
   const handleContentResize = () => {
     popoverActionRef.current?.updatePosition();
@@ -74,7 +61,7 @@ const ColorPicker = (props: Props) => {
       role="none"
     >
       <button
-        ref={triggerRef}
+        ref={setTriggerElement}
         type="button"
         className={clsx(
           classes.colorPickerInput,
@@ -100,7 +87,7 @@ const ColorPicker = (props: Props) => {
         id={paletteId}
         action={popoverActionRef}
         open={isOpen}
-        anchorEl={triggerRef.current}
+        anchorEl={triggerElement}
         onClose={handleCancel}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: 'left' }}

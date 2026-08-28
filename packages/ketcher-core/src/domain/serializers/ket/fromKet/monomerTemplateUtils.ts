@@ -215,7 +215,10 @@ export function fillStructRgLabelsByMonomerTemplate(
       ? firstAtomInLeavingGroup
       : attachmentPoint.attachmentAtom;
     const leavingGroupAtom = monomerItem.struct.atoms.get(leavingGroupAtomId);
-    assert(leavingGroupAtom);
+
+    if (!leavingGroupAtom) {
+      return;
+    }
     leavingGroupAtom.rglabel =
       0 |
       (1 <<

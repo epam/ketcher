@@ -25,7 +25,7 @@ export function rgroupToStruct(ketItem: KetItem): Struct {
   const struct = moleculeToStruct(ketItem);
   const rlogic = ketItem.rlogic;
   if (!rlogic) {
-    throw new Error('R-group logic is required');
+    throw new Error('R-group logic (rlogic) is missing on a KET R-group item');
   }
   const rgroup = rgroupLogicToStruct(rlogic);
   struct.frags.forEach((_value, key) => {

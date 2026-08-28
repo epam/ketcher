@@ -10,11 +10,7 @@ export type SettingsFormValue = Partial<
 > & {
   readonly imageResolution?: Settings['imageResolution'] | string;
   readonly stereoLabelStyle?:
-    | Settings['stereoLabelStyle']
-    | 'Iupac'
-    | 'Classic'
-    | 'On'
-    | 'Off';
+    Settings['stereoLabelStyle'] | 'Iupac' | 'Classic' | 'On' | 'Off';
   readonly showHydrogenLabels?: Settings['showHydrogenLabels'] | 'all';
   readonly init?: unknown;
 };

@@ -88,7 +88,7 @@ export class ServerFormatter implements StructFormatter {
         message = `Convert error!\n${details}`;
       }
       KetcherLogger.error('serverFormatter.ts::getStringFromStructureAsync', e);
-      throw new Error(message);
+      throw new Error(message, { cause: e });
     }
   }
 
@@ -104,11 +104,16 @@ export class ServerFormatter implements StructFormatter {
         method: SmilesFormatter.isContainsCoordinates(stringifiedStruct)
           ? this.#structService.convert
           : this.#structService.layout,
-        struct: stringifiedStruct,
+        // SMILES is a single-line format, so surrounding whitespace is never
+        // meaningful. Indigo re-detects the format from the content and treats
+        // trailing newlines (e.g. left over by a copy-paste) as a multi-line
+        // molfile/rxnfile, so it must be trimmed as the layout branch below does.
+        struct: stringifiedStruct.trim(),
       };
     }
     const withCoords = getPropertiesByFormat(format).supportsCoords;
-    if (withCoords) {
+    const shouldConvert = format === SupportedFormat.idt || withCoords;
+    if (shouldConvert) {
       return {
         method: this.#structService.convert,
         struct: stringifiedStruct,
@@ -123,16 +128,14 @@ export class ServerFormatter implements StructFormatter {
   async getStructureFromStringAsync(
     stringifiedStruct: string,
   ): Promise<Struct> {
-    const data: ConvertData | LayoutData = {
-      struct: undefined as any,
-      output_format: getPropertiesByFormat(SupportedFormat.ket).mime,
-    };
-
     const { method, struct } = this.getCallingMethod(
       stringifiedStruct,
       this.#format,
     );
-    data.struct = struct;
+    const data: ConvertData | LayoutData = {
+      struct,
+      output_format: getPropertiesByFormat(SupportedFormat.ket).mime,
+    };
 
     try {
       const result = await method(data, this.#options);
@@ -148,7 +151,7 @@ export class ServerFormatter implements StructFormatter {
           e,
         );
         const details = e instanceof Error ? e.message : String(e);
-        throw Error(`Convert error!\n${details}`);
+        throw Error(`Convert error!\n${details}`, { cause: e });
       }
 
       const formatError =
@@ -160,7 +163,9 @@ export class ServerFormatter implements StructFormatter {
             }`
           : getPropertiesByFormat(this.#format).name;
 
-      throw Error(`${formatError} is not supported in standalone mode.`);
+      throw Error(`${formatError} is not supported in standalone mode.`, {
+        cause: e,
+      });
     }
   }
 }

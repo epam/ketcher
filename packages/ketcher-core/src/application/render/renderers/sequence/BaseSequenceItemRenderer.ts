@@ -6,6 +6,7 @@ import type {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
+import type { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { sequenceRendererStore } from 'application/render/renderers/sequence/SequenceRendererStore';
@@ -309,7 +310,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
     const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
     let numberToDisplay;
-    const caclulateNumberToDisplay = (subChain) => {
+    const calculateNumberToDisplay = (subChain: BaseSubChain) => {
       if (!this.isSubChainNode(this.node)) return false;
 
       const nodeIndex = subChain.nodes.indexOf(this.node);
@@ -353,7 +354,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       return numberToDisplay !== undefined;
     };
 
-    this.chain.subChains.some(caclulateNumberToDisplay);
+    this.chain.subChains.some(calculateNumberToDisplay);
 
     if (isNumber(numberToDisplay)) {
       return numberToDisplay;
@@ -420,7 +421,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   // in snake/flex layout mode is represented as % in hexagon
-  private checkIfNodeIsAmbiguousMonomerPeptide(node) {
+  private checkIfNodeIsAmbiguousMonomerPeptide(node: SequenceNode) {
     return (
       node instanceof AmbiguousMonomerSequenceNode &&
       node.monomer.monomerClass === MONOMER_CONST.AMINO_ACID
@@ -429,7 +430,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   // in snake/flex layout mode is represented as % in:
   // rectangle, circle, diamond, rounded rectangle, etc. (not hexagon)
-  private checkIfNodeIsAmbiguousMonomerNotPeptide(node) {
+  private checkIfNodeIsAmbiguousMonomerNotPeptide(node: SequenceNode) {
     return (
       node instanceof AmbiguousMonomerSequenceNode &&
       node.monomer.monomerClass !== MONOMER_CONST.AMINO_ACID

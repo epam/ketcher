@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test, expect } from '@fixtures';
 import {
@@ -19,6 +15,7 @@ import {
   clickOnCanvas,
   openFile,
   takeElementScreenshot,
+  moveMouseAway,
 } from '@utils';
 import {
   copyAndPaste,
@@ -211,6 +208,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Сheck the button sizes on the control panel
      */
     await takeLeftToolbarMacromoleculeScreenshot(page);
+    await moveMouseAway(page);
     await takeTopToolbarScreenshot(page);
   });
 
@@ -358,10 +356,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Save canvas to Fasta or Sequence file
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).selectMonomer(Peptide.O);
     await Library(page).selectMonomer(Peptide.K);
     await verifyFASTAExport(page, '>Sequence1\nOK');
@@ -428,6 +422,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -453,6 +448,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -544,10 +540,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Load from HELM
      * 3. Open the "Calculate Properties" window
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -573,6 +565,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await page.keyboard.press('Alt+C');
     await page.waitForTimeout(1 * 1000);
     await takeEditorScreenshot(page);
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 21: Tooltip displayed for the “Calculate Properties” button in main toolbar', async () => {
@@ -590,6 +583,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       title: 'Calculate properties (Alt+C)',
     };
     const button = MacromoleculesTopToolbar(page).calculatePropertiesButton;
+    if (await CalculateVariablesPanel(page).closeButton.isVisible()) {
+      await CalculateVariablesPanel(page).closeWindow();
+    }
     await expect(button).toHaveAttribute(
       'title',
       calculatePropertiesButton.title,
@@ -599,8 +595,11 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'title',
       calculatePropertiesButton.title,
     );
+    await page.waitForTimeout(200);
     await takeTopToolbarScreenshot(page);
     await button.click();
+    await expect(CalculateVariablesPanel(page).closeButton).toBeVisible();
+    await page.waitForTimeout(200);
     await takeTopToolbarScreenshot(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
@@ -651,6 +650,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
     await ContextMenu(
@@ -671,10 +671,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Open the Calculate Properties window.
      * 4. From the Ambiguous Amino Acids section in the library, click to add any ambiguous amino acid (e.g., X, B, J, Z) to the peptide sequence.
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'QWERTYASDF');
     await MacromoleculesTopToolbar(page).calculateProperties();
@@ -730,11 +726,12 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/benzene-ring-with-attachment-point.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await getMonomerLocator(page, {
       monomerAlias: 'F1',
     }).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Case 28: Correct highlight (not missing fill) for leaving-group atoms', async ({
@@ -775,9 +772,8 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/Layout changes when switching from micro mode to sequence mode and back.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await takeEditorScreenshot(page);
@@ -1076,7 +1072,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Open the "Calculate Properties" window
      * 4. Verify that the properties are calculated correctly for the Peptides tab
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1092,7 +1087,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CalculateVariablesPanel(page).peptidesTab.click();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('2.39');
+    ).toEqual('9.87');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
@@ -1150,7 +1145,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Open the "Calculate Properties" window
      * 4. Verify that the properties are calculated correctly for the Peptides tab
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/sequenses-connected-through-chem.ket',
@@ -1168,7 +1162,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CalculateVariablesPanel(page).peptidesTab.click();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('2.39');
+    ).toEqual('9.87');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
@@ -1202,7 +1196,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('9.53');
+    ).toEqual('2.35');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');

@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -8,6 +6,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -33,14 +32,16 @@ let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();
 });
-test.afterEach(async () => {
+test.afterEach(async ({ MoleculesCanvas: _ }) => {
   await CommonTopLeftToolbar(page).clearCanvas();
 });
 test.afterAll(async ({ closePage }) => {
   await closePage();
 });
 
-test('Case 1: Check that the tools default shape is a "Rectangle", when no tool is selected', async () => {
+test('Case 1: Check that the tools default shape is a "Rectangle", when no tool is selected', async ({
+  FlexCanvas: _,
+}) => {
   /*
    * Version 3.8
    * Test case: https://github.com/epam/ketcher/issues/6358
@@ -49,11 +50,12 @@ test('Case 1: Check that the tools default shape is a "Rectangle", when no tool 
    * 1. Go to Micro mode
    * 2. Switch to Macromolecules mode
    */
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await takeLeftToolbarMacromoleculeScreenshot(page);
 });
 
-test('Case 2: Check that last selection saves and the icon display the last selected tool', async () => {
+test('Case 2: Check that last selection saves and the icon display the last selected tool', async ({
+  FlexCanvas: _,
+}) => {
   /*
    * Version 3.8
    * Test case: https://github.com/epam/ketcher/issues/6358
@@ -71,16 +73,17 @@ test('Case 2: Check that last selection saves and the icon display the last sele
    * 9. Switch to Macromolecules mode
    * 10. Check that Fragment Selection tool is selected
    */
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
   await takeLeftToolbarMacromoleculeScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await takeLeftToolbarMacromoleculeScreenshot(page);
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
   await takeLeftToolbarMacromoleculeScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await takeLeftToolbarMacromoleculeScreenshot(page);
 });
 
@@ -112,7 +115,9 @@ test('Case 3: Check that be able to draw an irregular selection area on the canv
   });
 });
 
-test('Case 4: Verify that the shortcut as in molecules mode Lasso Selection and Fragment Selection (Shift+Tab), are visible on hover in the sidebar', async () => {
+test('Case 4: Verify that the shortcut as in molecules mode Lasso Selection and Fragment Selection (Shift+Tab), are visible on hover in the sidebar', async ({
+  FlexCanvas: _,
+}) => {
   /*
    * Version 3.8
    * Test case: https://github.com/epam/ketcher/issues/6358
@@ -122,7 +127,6 @@ test('Case 4: Verify that the shortcut as in molecules mode Lasso Selection and 
    * 2. Switch to Macromolecules mode
    * 3. Hover over the Selection tool icon and check the tooltip for the shortcut
    */
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   const selectionToolButtons = [
     {
       tool: SelectionToolType.Lasso,
@@ -145,7 +149,9 @@ test('Case 4: Verify that the shortcut as in molecules mode Lasso Selection and 
   }
 });
 
-test('Case 5: Check that by repeatedly pressing the Shift+Tab shortcut will cycle through the rectangle, lasso and fragment selection tool', async () => {
+test('Case 5: Check that by repeatedly pressing the Shift+Tab shortcut will cycle through the rectangle, lasso and fragment selection tool', async ({
+  FlexCanvas: _,
+}) => {
   /*
    * Version 3.8
    * Test case: https://github.com/epam/ketcher/issues/6358
@@ -155,7 +161,6 @@ test('Case 5: Check that by repeatedly pressing the Shift+Tab shortcut will cycl
    * 2. Switch to Macromolecules mode
    * 3. Press Shift+Tab to select Selection tool
    */
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   for (let i = 0; i < 3; i++) {
     await page.keyboard.press('Shift+Tab');
     await takeLeftToolbarMacromoleculeScreenshot(page);

@@ -32,9 +32,7 @@ import MonomerPreviewProperties from '../MonomerPreviewProperties/MonomerPreview
 import { useAppSelector } from 'hooks';
 import { PresetPreviewState } from 'state';
 
-const getIconNameForMonomer = (
-  monomer: MonomerItemType,
-): Extract<IconName, 'sugar' | 'base' | 'phosphate' | 'chem'> => {
+const getIconNameForMonomer = (monomer: MonomerItemType): IconName => {
   switch (monomer.props.MonomerClass) {
     case KetMonomerClass.Sugar:
       return 'sugar';

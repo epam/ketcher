@@ -28,7 +28,10 @@ import {
   SettingsManager,
   getAtomCustomQuery,
 } from 'ketcher-core';
-import { atom as atomSchema } from '../../../../../data/schema/struct-schema';
+import {
+  atom as atomSchema,
+  CUSTOM_QUERY_MAX_LENGTH,
+} from '../../../../../data/schema/struct-schema';
 import classes from './Atom.module.less';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
@@ -54,7 +57,6 @@ interface AtomProps extends BaseCallProps, BaseProps {
   label: string;
   radical: number;
   ringBondCount: number;
-  stereoParity: number;
   substitutionCount: number;
   unsaturatedAtom: boolean;
   customQuery: string;
@@ -88,9 +90,6 @@ const querySpecificFields: Array<{
 const Atom: FC<Props> = (props: Props) => {
   const {
     formState,
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    stereoParity,
-    /* eslint-enable @typescript-eslint/no-unused-vars */
     isMultipleAtoms = false,
     isRestoredModal,
     isMonomerCreationWizardActive = false,
@@ -129,9 +128,9 @@ const Atom: FC<Props> = (props: Props) => {
     }
 
     const query = value ? getAtomCustomQuery(formState) : '';
-    setCustomQuery(query);
     setIsCustomQuery(value);
     setExpandedAccordions([]);
+    setCustomQuery(query);
   };
 
   const customValid = useMemo(() => {
@@ -156,7 +155,7 @@ const Atom: FC<Props> = (props: Props) => {
       groupName: 'General',
       component: (
         <div>
-          <AtomElement formState={formState} className=""></AtomElement>
+          <AtomElement formState={formState}></AtomElement>
           <Field name="alias" data-testid="alias" />
           <Field
             name="charge"
@@ -293,6 +292,7 @@ const Atom: FC<Props> = (props: Props) => {
                 disabled={!isCustomQuery}
                 checkboxValue={isCustomQuery}
                 onCheckboxChange={handleCustomQueryCheckBoxChange}
+                maxLength={CUSTOM_QUERY_MAX_LENGTH}
                 data-testid="atom-custom-query"
               />
             </div>

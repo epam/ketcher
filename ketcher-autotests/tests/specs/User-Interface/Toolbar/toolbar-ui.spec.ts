@@ -121,10 +121,7 @@ test.describe('Open Ketcher', () => {
     await browser.newContext({ deviceScaleFactor: 1.25 });
     await waitForPageInit(page);
     await page.setViewportSize({ width: 500, height: 500 });
-    await page
-      .getByTestId('right-toolbar')
-      .getByRole('button', { name: '▼' })
-      .click();
+    await RightToolbar(page).arrowScrollDownButton.click();
     await takeRightToolbarScreenshot(page);
   });
 

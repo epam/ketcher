@@ -265,7 +265,7 @@ const onOk = async ({
   let inputFormat;
   let fileData = struct;
 
-  const showParsingError = (stringError) => {
+  const showParsingError = (stringError: string) => {
     const errorMessage = 'Convert error! ' + stringError;
     dispatch(
       openErrorModal({
@@ -279,7 +279,7 @@ const onOk = async ({
     try {
       addToCanvas({ struct, ketSerializer, editor });
       onCloseCallback();
-    } catch (e) {
+    } catch (_e) {
       showParsingError('Error during file parsing.');
     }
     return;
@@ -315,7 +315,7 @@ const onOk = async ({
   }
 };
 const isAnalyzingFile = false;
-const errorHandler = (error) => console.log(error);
+const errorHandler = (error: string) => console.log(error);
 
 const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const dispatch = useAppDispatch();
@@ -332,18 +332,6 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const [additionalSelection, setAdditionalSelection] = useState(RNA);
   const [peptideLettersFormatSelection, setPeptideLettersFormatSelection] =
     useState(ONE_LETTER);
-
-  useEffect(() => {
-    const splittedFilenameByDot = fileName?.split('.');
-    const fileExtension =
-      splittedFilenameByDot[splittedFilenameByDot.length - 1];
-
-    if (fileExtension) {
-      const option = options.find((el) => el.id === fileExtension);
-      const id = option?.id ? option.id : SEQ;
-      setFormatSelection(id);
-    }
-  }, [fileName]);
 
   useEffect(() => {
     fileOpener().then((chosenOpener) => {
@@ -369,13 +357,24 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       windowContext.isKetcherFullscreenBeforeFilePicker = false;
     }
 
-    const onLoad = (fileContent) => {
+    const onLoad = (fileContent: string) => {
       setStructStr(fileContent);
       setCurrentState(MODAL_STATES.textEditor);
     };
     const onError = () => errorHandler('Error processing file');
 
-    setFileName(files[0].name);
+    const fileName = files[0].name;
+    const splittedFilenameByDot = fileName?.split('.');
+    const fileExtension =
+      splittedFilenameByDot[splittedFilenameByDot.length - 1];
+
+    setFileName(fileName);
+    if (fileExtension) {
+      const option = options.find((el) => el.id === fileExtension);
+      const id = option?.id ? option.id : SEQ;
+      setFormatSelection(id);
+    }
+
     opener?.chosenOpener(files[0]).then(onLoad, onError);
   };
 

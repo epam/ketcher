@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
@@ -673,6 +670,7 @@ test(`10. Check that monomer can be created with empty name using symbol as fall
 
   // Verify monomer was created successfully by switching to macromolecules mode
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   const monomerOnMacro = getMonomerLocator(page, {
     monomerAlias: testSymbol,
   });
@@ -1023,7 +1021,7 @@ const eligableNames = [
 ];
 
 for (const [index, eligableName] of eligableNames.entries()) {
-  test.fail(`11. Create monomer with ${eligableName.description}`, async () => {
+  test(`11. Create monomer with ${eligableName.description}`, async () => {
     // Bug: https://github.com/epam/ketcher/issues/7745
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -1049,16 +1047,14 @@ for (const [index, eligableName] of eligableNames.entries()) {
       name: eligableName.value,
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const monomer = getMonomerLocator(page, {
       monomerAlias: `Test11-${index}`,
     });
     await monomer.hover({ force: true });
     await dragTo(page, monomer, { x: 100, y: 100 });
     await monomer.hover({ force: true });
-    // dirty hack, delay should be removed after fix of https://github.com/epam/ketcher/issues/7745
-    await page.waitForTimeout(1 * 1000);
-    // await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await expect(page.getByTestId('preview-tooltip')).toBeVisible();
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
       eligableName.value,
     );
@@ -1107,6 +1103,7 @@ for (const eligableCode of eligableCodes) {
       name: 'Temp',
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const monomer = getMonomerLocator(page, {
       monomerAlias: eligableCode.value,
     });
@@ -1557,6 +1554,7 @@ for (const monomerToCreate of monomersToCreate) {
     });
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const monomer = getMonomerLocator(page, {
       monomerAlias: monomerToCreate.code,
     });

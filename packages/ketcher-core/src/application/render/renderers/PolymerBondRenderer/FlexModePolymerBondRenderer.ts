@@ -1,4 +1,4 @@
-import { editorEvents } from 'application/editor/editorEvents';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
@@ -6,7 +6,7 @@ import {
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
 import type { D3SvgElementSelection } from 'application/render/types';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { MonomerSize } from 'domain/constants';
 import { Vec2 } from 'domain/entities/vec2';
 import { getStructureBbox } from 'domain/entities/structureBbox';
@@ -25,17 +25,19 @@ import {
 } from './helpers';
 
 export class FlexModePolymerBondRenderer extends BaseRenderer {
-  private readonly editorEvents: typeof editorEvents;
+  private get editorEvents() {
+    return provideEditorInstance().events;
+  }
+
   // TODO: Specify the types.
   private selectionElement;
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
   private path = '';
-  public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
+  declare public bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
     super(polymerBond);
     this.polymerBond.setRenderer(this);
-    this.editorEvents = editorEvents;
   }
 
   public get rootBBox(): DOMRect | undefined {

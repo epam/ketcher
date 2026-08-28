@@ -21,6 +21,7 @@ import type { RaphaelPaper } from 'raphael';
 
 import Raphael from './raphael-ext';
 import ReStruct from './restruct/restruct';
+import type Visel from './restruct/visel';
 import { Scale } from 'domain/helpers';
 import defaultOptions from './options';
 import draw from './draw';
@@ -32,6 +33,7 @@ import { notifyRenderComplete } from './notifyRenderComplete';
 import type { AttachmentPointName } from 'domain/types';
 import type { KetMonomerClass } from 'application/formatters/types/ket';
 import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export type EditAllInstancesPresetRequirements = {
   type: KetMonomerClass;
@@ -50,6 +52,13 @@ export type MonomerCreationInitialValues = {
   originalType?: KetMonomerClass;
   originalSymbol?: string;
   presetRequirements?: EditAllInstancesPresetRequirements;
+  /**
+   * When editMode is 'all' and the user had multiple monomers of the same
+   * type/symbol selected, this contains the SGroup IDs of those specific
+   * monomers. If provided, only these monomers will be replaced instead of
+   * all canvas instances.
+   */
+  selectedSGroupIds?: number[];
 };
 
 export type RnaComponentAtoms = Map<
@@ -77,6 +86,13 @@ export type MonomerCreationState = {
   // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
   connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
   editInstanceInitialValues?: MonomerCreationInitialValues;
+  attachmentAtomIdsWithExternalBonds?: Map<
+    AttachmentPointName,
+    [number, number]
+  >;
+  // Reference to the BaseMonomer entity on the macromolecules canvas being
+  // edited. Populated only when editing an existing monomer.
+  editingMonomer?: BaseMonomer;
 } | null;
 
 export class Render {
@@ -88,8 +104,9 @@ export class Render {
   // TODO https://github.com/epam/ketcher/issues/2630
   public ctab: ReStruct;
   public options: RenderOptions;
+  public combinedHover: Visel | null = null;
   public viewBox!: ViewBox;
-  private readonly userOpts: RenderOptions;
+  private readonly userOpts: Partial<RenderOptions>;
   private oldCb: Box2Abs | null = null;
   private scrollbar: ScrollbarContainer;
   private resizeObserver: ResizeObserver | null = null;
@@ -97,7 +114,7 @@ export class Render {
 
   constructor(
     clientArea: HTMLElement,
-    options: RenderOptions,
+    options: Partial<RenderOptions>,
     currentRender?: Render,
     reuseRestructIfExist?: boolean,
   ) {
@@ -263,7 +280,6 @@ export class Render {
   }
 
   update(force = false, viewSz: Vec2 | null = null) {
-    // eslint-disable-line max-statements
     viewSz =
       viewSz ??
       new Vec2(

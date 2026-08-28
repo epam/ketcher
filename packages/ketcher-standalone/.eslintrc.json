@@ -1,5 +1,17 @@
 {
   "root": false,
   "extends": "plugin:jest/recommended",
-  "rules": {}
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "assert",
+            "message": "Node's 'assert' module breaks browser bundlers (see issue #3733). Use `import { assert } from 'ketcher-core'` instead."
+          }
+        ]
+      }
+    ]
+  }
 }

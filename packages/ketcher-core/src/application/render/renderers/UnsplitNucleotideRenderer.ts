@@ -7,6 +7,10 @@ import {
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters/types/ket';
+import {
+  type HighlightPathData,
+  createNucleotideHighlightPath,
+} from 'application/render/renderers/monomerHighlightShapes';
 
 const NUCLEOTIDE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].hover;
@@ -19,7 +23,10 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = '’5';
   public CHAIN_END_TERMINAL_INDICATOR_TEXT = '’3';
 
-  constructor(public monomer: UnsplitNucleotide, scale?: number) {
+  constructor(
+    public monomer: UnsplitNucleotide,
+    scale?: number,
+  ) {
     super(
       monomer,
       NUCLEOTIDE_HOVERED_ELEMENT_ID,
@@ -27,6 +34,11 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
       NUCLEOTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID,
       scale,
     );
+  }
+
+  public getHighlightPath(offset = 0): HighlightPathData {
+    const { width, height } = this.monomerSize;
+    return createNucleotideHighlightPath(this.center, width, height, offset);
   }
 
   public get textColor() {
@@ -63,25 +75,10 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
     const fontSize = 6;
     const Y_OFFSET_FROM_MIDDLE = -2;
 
-    rootElement
+    const foreignObject = rootElement
       .append('foreignObject')
       .attr('width', this.width)
       .attr('height', this.height - this.height / 3)
-      .html(
-        `
-        <div style="
-            padding: 0 4px;
-            text-align: center;
-            color: ${this.textColor};
-            display: flex;
-            height: 100%;
-            align-items: center;
-            justify-content: center;
-        ">
-          ${this.monomer.label}
-        </div>
-      `,
-      )
       .attr('font-size', `${fontSize}px`)
       .attr('line-height', `${fontSize}px`)
       .attr('font-weight', '700')
@@ -90,6 +87,17 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
       .attr('pointer-events', 'none')
       .attr('x', '4px')
       .attr('y', this.height / 2 + Y_OFFSET_FROM_MIDDLE);
+
+    foreignObject
+      .append('xhtml:div')
+      .style('padding', '0 4px')
+      .style('text-align', 'center')
+      .style('color', this.textColor)
+      .style('display', 'flex')
+      .style('height', '100%')
+      .style('align-items', 'center')
+      .style('justify-content', 'center')
+      .text(this.monomer.label);
   }
 
   public get enumerationElementPosition() {

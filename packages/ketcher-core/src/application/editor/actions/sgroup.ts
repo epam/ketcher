@@ -894,7 +894,7 @@ function fromQueryComponentSGroupAction(
 }
 
 function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
-  const allFragments = new Pile(
+  const allFragments = new Pile<number>(
     sourceAtoms.map((aid) => restruct.atoms.get(aid).a.fragment),
   );
 
@@ -921,8 +921,8 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
     {
       action: new Action(),
       selection: {
-        atoms: [],
-        bonds: [],
+        atoms: [] as number[],
+        bonds: [] as number[],
       },
     },
   );

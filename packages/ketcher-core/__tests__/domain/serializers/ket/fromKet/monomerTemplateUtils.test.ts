@@ -43,50 +43,50 @@ describe('getLeavingGroupLabelWithHydrogens', () => {
 
   describe('Nitrogen (N) leaving groups', () => {
     it('should return "NH2" for nitrogen with 1 single bond (valence 3)', () => {
-      const { struct, atomId, atom } = createTestStruct('N', 1);
+      const { struct, atomId } = createTestStruct('N', 1);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('NH2');
     });
 
     it('should return "NH" for nitrogen with 2 single bonds', () => {
-      const { struct, atomId, atom } = createTestStruct('N', 2);
+      const { struct, atomId } = createTestStruct('N', 2);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('NH');
     });
 
     it('should return "N" for nitrogen with 3 single bonds (fully saturated)', () => {
-      const { struct, atomId, atom } = createTestStruct('N', 3);
+      const { struct, atomId } = createTestStruct('N', 3);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('N');
     });
 
     it('should return "NH" for nitrogen with 1 double bond (connection count = 2)', () => {
-      const { struct, atomId, atom } = createTestStruct(
+      const { struct, atomId } = createTestStruct(
         'N',
         1,
         Bond.PATTERN.TYPE.DOUBLE,
       );
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       // Double bond contributes 2 to connection count, leaving 1 implicit H
       expect(result).toBe('NH');
     });
 
     it('should return "N" for nitrogen with 1 triple bond (fully saturated)', () => {
-      const { struct, atomId, atom } = createTestStruct(
+      const { struct, atomId } = createTestStruct(
         'N',
         1,
         Bond.PATTERN.TYPE.TRIPLE,
       );
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('N');
     });
@@ -94,29 +94,29 @@ describe('getLeavingGroupLabelWithHydrogens', () => {
 
   describe('Oxygen (O) leaving groups', () => {
     it('should return "OH" for oxygen with 1 single bond (valence 2)', () => {
-      const { struct, atomId, atom } = createTestStruct('O', 1);
+      const { struct, atomId } = createTestStruct('O', 1);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('OH');
     });
 
     it('should return "O" for oxygen with 2 single bonds (fully saturated)', () => {
-      const { struct, atomId, atom } = createTestStruct('O', 2);
+      const { struct, atomId } = createTestStruct('O', 2);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('O');
     });
 
     it('should return "O" for oxygen with 1 double bond (fully saturated)', () => {
-      const { struct, atomId, atom } = createTestStruct(
+      const { struct, atomId } = createTestStruct(
         'O',
         1,
         Bond.PATTERN.TYPE.DOUBLE,
       );
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('O');
     });
@@ -124,17 +124,17 @@ describe('getLeavingGroupLabelWithHydrogens', () => {
 
   describe('Sulfur (S) leaving groups', () => {
     it('should return "SH" for sulfur with 1 single bond', () => {
-      const { struct, atomId, atom } = createTestStruct('S', 1);
+      const { struct, atomId } = createTestStruct('S', 1);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('SH');
     });
 
     it('should return "S" for sulfur with 2 single bonds', () => {
-      const { struct, atomId, atom } = createTestStruct('S', 2);
+      const { struct, atomId } = createTestStruct('S', 2);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('S');
     });
@@ -142,33 +142,33 @@ describe('getLeavingGroupLabelWithHydrogens', () => {
 
   describe('Carbon (C) leaving groups', () => {
     it('should return "CH3" for carbon with 1 single bond (valence 4)', () => {
-      const { struct, atomId, atom } = createTestStruct('C', 1);
+      const { struct, atomId } = createTestStruct('C', 1);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('CH3');
     });
 
     it('should return "CH2" for carbon with 2 single bonds', () => {
-      const { struct, atomId, atom } = createTestStruct('C', 2);
+      const { struct, atomId } = createTestStruct('C', 2);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('CH2');
     });
 
     it('should return "CH" for carbon with 3 single bonds', () => {
-      const { struct, atomId, atom } = createTestStruct('C', 3);
+      const { struct, atomId } = createTestStruct('C', 3);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('CH');
     });
 
     it('should return "C" for carbon with 4 single bonds (fully saturated)', () => {
-      const { struct, atomId, atom } = createTestStruct('C', 4);
+      const { struct, atomId } = createTestStruct('C', 4);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('C');
     });
@@ -176,17 +176,17 @@ describe('getLeavingGroupLabelWithHydrogens', () => {
 
   describe('Phosphorus (P) leaving groups', () => {
     it('should return "PH2" for phosphorus with 1 single bond', () => {
-      const { struct, atomId, atom } = createTestStruct('P', 1);
+      const { struct, atomId } = createTestStruct('P', 1);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('PH2');
     });
 
     it('should return "PH" for phosphorus with 2 single bonds', () => {
-      const { struct, atomId, atom } = createTestStruct('P', 2);
+      const { struct, atomId } = createTestStruct('P', 2);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('PH');
     });
@@ -201,23 +201,23 @@ describe('getLeavingGroupLabelWithHydrogens', () => {
       struct.initHalfBonds();
       struct.initNeighbors();
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('NH3');
     });
 
     it('should return just the label for atoms with no implicit hydrogens', () => {
-      const { struct, atomId, atom } = createTestStruct('Cl', 1);
+      const { struct, atomId } = createTestStruct('Cl', 1);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('Cl');
     });
 
     it('should handle atoms with over-saturated bonds gracefully', () => {
-      const { struct, atomId, atom } = createTestStruct('N', 4);
+      const { struct, atomId } = createTestStruct('N', 4);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       // Nitrogen with 4 bonds has badConn set, but still calculates implicit H
       // The actual behavior shows NH (implicitH = 1)
@@ -256,16 +256,7 @@ describe('getLeavingGroupLabelWithHydrogens', () => {
       struct.initHalfBonds();
       struct.initNeighbors();
 
-      const nitrogenAtom = struct.atoms.get(nAtomId);
-      if (!nitrogenAtom) {
-        throw new Error('Nitrogen atom not found');
-      }
-
-      const result = getLeavingGroupLabelWithHydrogens(
-        struct,
-        nAtomId,
-        nitrogenAtom,
-      );
+      const result = getLeavingGroupLabelWithHydrogens(struct, nAtomId);
 
       // N with 1 single + 1 double = 3 connections, fully saturated
       expect(result).toBe('N');
@@ -274,37 +265,21 @@ describe('getLeavingGroupLabelWithHydrogens', () => {
 
   describe('Hydrogen suffix formatting', () => {
     it('should not add a number suffix for a single hydrogen (NH, not NH1)', () => {
-      const { struct, atomId, atom } = createTestStruct('N', 2);
+      const { struct, atomId } = createTestStruct('N', 2);
 
-      const result = getLeavingGroupLabelWithHydrogens(struct, atomId, atom);
+      const result = getLeavingGroupLabelWithHydrogens(struct, atomId);
 
       expect(result).toBe('NH');
       expect(result).not.toBe('NH1');
     });
 
     it('should add a number suffix for multiple hydrogens (NH2, NH3)', () => {
-      const {
-        struct: struct1,
-        atomId: atomId1,
-        atom: atom1,
-      } = createTestStruct('N', 1);
-      const result1 = getLeavingGroupLabelWithHydrogens(
-        struct1,
-        atomId1,
-        atom1,
-      );
+      const { struct: struct1, atomId: atomId1 } = createTestStruct('N', 1);
+      const result1 = getLeavingGroupLabelWithHydrogens(struct1, atomId1);
       expect(result1).toBe('NH2');
 
-      const {
-        struct: struct2,
-        atomId: atomId2,
-        atom: atom2,
-      } = createTestStruct('N', 0);
-      const result2 = getLeavingGroupLabelWithHydrogens(
-        struct2,
-        atomId2,
-        atom2,
-      );
+      const { struct: struct2, atomId: atomId2 } = createTestStruct('N', 0);
+      const result2 = getLeavingGroupLabelWithHydrogens(struct2, atomId2);
       expect(result2).toBe('NH3');
     });
   });

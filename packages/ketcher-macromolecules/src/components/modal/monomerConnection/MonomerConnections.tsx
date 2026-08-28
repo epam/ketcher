@@ -17,7 +17,6 @@ import {
   UsageInMacromolecule,
   AttachmentPointName,
 } from 'ketcher-core';
-import hydrateLeavingGroup from 'helpers/hydrateLeavingGroup';
 import { getConnectedAttachmentPoints } from 'helpers';
 import MonomerOverview from 'components/shared/ConnectionOverview/components/MonomerOverview/MonomerOverview';
 import ConnectionOverview from 'components/shared/ConnectionOverview/ConnectionOverview';
@@ -238,7 +237,7 @@ function AttachmentPointSelectionPanel({
       return isAmbiguousMonomer ? null : 'H';
     }
     const leavingGroup = MonomerCaps[attachmentPoint];
-    return leavingGroup ? hydrateLeavingGroup(leavingGroup) : null;
+    return leavingGroup ?? null;
   };
 
   const handleSelectAttachmentPoint = (attachmentPoint: string) => {

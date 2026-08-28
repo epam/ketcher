@@ -1,6 +1,5 @@
 import { AttachmentPointName, AttachmentPointsToBonds } from 'ketcher-core';
 import { useMemo } from 'react';
-import hydrateLeavingGroup from 'helpers/hydrateLeavingGroup';
 
 type Props = {
   monomerCaps: Partial<Record<AttachmentPointName, string>> | undefined;
@@ -57,7 +56,7 @@ export const useAttachmentPoints = ({
 
       const preparedData: PreparedAttachmentPointData = {
         id,
-        label: hydrateLeavingGroup(label),
+        label,
         connected,
       };
 

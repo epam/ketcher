@@ -108,7 +108,7 @@ import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import type { KetFileImageNode } from 'domain/entities/image';
 import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
-import type { KetSimpleObjectNode } from './fromKet/types';
+import type { KetSimpleObjectNode } from './types';
 
 type KetMicromoleculeNode =
   | KetSimpleObjectNode
@@ -125,6 +125,15 @@ type KetMicromoleculeNode =
       stereoFlagPosition?: Point;
     };
 
+type KetMicromoleculeSerializedNode =
+  | { $ref: string }
+  | ReturnType<typeof plusToKet>
+  | ReturnType<typeof arrowToKet>
+  | ReturnType<typeof simpleObjectToKet>
+  | ReturnType<typeof textToKet>
+  | ReturnType<typeof imageToKet>
+  | ReturnType<typeof multitailArrowToKet>;
+
 interface IKetMicromoleculeFile {
   header?: { moleculeName?: string };
   root: {
@@ -135,7 +144,7 @@ interface IKetMicromoleculeFile {
 }
 
 interface IKetMicromoleculeSerializedResult {
-  root: { nodes: unknown[] };
+  root: { nodes: KetMicromoleculeSerializedNode[] };
   header?: unknown;
   // Allows dynamic property assignment for mol/rg sections: result[`mol${id}`], result[`rg${id}`]
   [key: string]: unknown;

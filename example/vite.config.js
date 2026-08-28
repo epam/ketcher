@@ -7,13 +7,34 @@ import { createHtmlPlugin } from 'vite-plugin-html';
 import vitePluginRaw from 'vite-plugin-raw';
 import svgr from 'vite-plugin-svgr';
 import ketcherCoreTSConfig from '../packages/ketcher-core/tsconfig.json';
-import { valuesToReplace as polymerEditorValues } from '../packages/ketcher-macromolecules/rollup.config.mjs';
+import polymerEditorPkg from '../packages/ketcher-macromolecules/package.json';
 import polymerEditorTSConfig from '../packages/ketcher-macromolecules/tsconfig.json';
-import { valuesToReplace as ketcherReactValues } from '../packages/ketcher-react/rollup.config.mjs';
+import ketcherReactPkg from '../packages/ketcher-react/package.json';
 import ketcherReactTSConfig from '../packages/ketcher-react/tsconfig.json';
 import ketcherStandaloneTSConfig from '../packages/ketcher-standalone/tsconfig.json';
 import { envVariables as exampleEnv } from './config/webpack.config';
-import { INDIGO_WORKER_IMPORTS } from '../packages/ketcher-standalone/rollup.config.mjs';
+import {
+  createReplaceValues,
+  getTagName,
+  mode,
+} from '../build-config/replace-values.mjs';
+import { INDIGO_WORKER_IMPORTS } from '../build-config/indigo-worker-imports.mjs';
+
+// Computed before the process.env assignment below, to match the point at which
+// the packages' own builds resolve these values.
+const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
+
+const ketcherReactValues = createReplaceValues({
+  version: ketcherReactPkg.version,
+  isProduction,
+  helpLink: getTagName(),
+});
+
+const polymerEditorValues = createReplaceValues({
+  version: polymerEditorPkg.version,
+  isProduction,
+  helpLink: process.env.HELP_LINK || 'master',
+});
 
 const dotEnv = loadEnv(process.env.NODE_ENV || 'development', __dirname, '');
 Object.assign(process.env, dotEnv, exampleEnv, {

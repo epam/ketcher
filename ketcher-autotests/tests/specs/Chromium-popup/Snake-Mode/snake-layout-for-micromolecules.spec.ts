@@ -1,6 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -338,9 +335,7 @@ test.describe('Snake Layout for Microstructures', () => {
     await CommonTopRightToolbar(page).resetZoom();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).setZoomInputValue('20');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

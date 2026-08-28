@@ -1,12 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler, react-you-might-not-need-an-effect/no-chain-state-updates */
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react-hooks/immutability */
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Dialog, Icon } from 'components';
 import {
   type AtomLabel,
   type AttachmentPointClickData,
-  type BaseMonomer,
   type ComponentStructureUpdateData,
-  type IKetMonomerTemplate,
   type MonomerCreationInitialValues,
   type MonomerCreationState,
   type RnaPresetComponentKey,
@@ -74,7 +76,10 @@ import {
   getLeavingAtomForAttachmentPoint,
   hasPhosphatePositionAttachmentPointConflict,
 } from './RnaPresetAttachmentPointValidation';
-import type { Selection } from '../../../../editor/Editor';
+import type {
+  FinishNewMonomersCreationData,
+  Selection,
+} from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
 
@@ -1150,6 +1155,38 @@ const MonomerCreationWizardInternal = ({
     }
   }, [monomerCreationState?.hasDefaultAttachmentPoints]);
 
+  // Show a dismissible info notification when the wizard is opened for an
+  // existing monomer whose attachment points are currently in use by canvas bonds.
+  useEffect(() => {
+    const attachmentAtomIdsWithExternalBonds =
+      monomerCreationState?.attachmentAtomIdsWithExternalBonds;
+    if (
+      !attachmentAtomIdsWithExternalBonds ||
+      attachmentAtomIdsWithExternalBonds.size === 0
+    ) {
+      return;
+    }
+
+    const attachmentPointsList = Array.from(
+      attachmentAtomIdsWithExternalBonds.keys(),
+    ).join(' and ');
+    const message = `Deleting attachment point ${attachmentPointsList} will result in deleting of bonds that use those attachment points after saving.`;
+
+    wizardStateDispatch({
+      type: 'SetNotifications',
+      notifications: new Map([
+        [
+          'usedAttachmentPointsWarning',
+          {
+            type: 'warning',
+            message,
+          },
+        ],
+      ]),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (!monomerCreationState || !isRnaPresetType) {
       return;
@@ -1620,13 +1657,7 @@ const MonomerCreationWizardInternal = ({
           (componentKey) => rnaPresetWizardState[componentKey],
         )
       : [wizardState];
-    const monomersData: Array<{
-      atomIdMap: Map<number, number>;
-      monomerStructureInWizard: Selection | null | undefined;
-      monomer: BaseMonomer;
-      monomerTemplate: IKetMonomerTemplate;
-      monomerRef: string;
-    }> = [];
+    const monomersData: FinishNewMonomersCreationData[] = [];
     const assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType =
       new Map();
 
@@ -1839,6 +1870,10 @@ const MonomerCreationWizardInternal = ({
         const monomerAssignedAttachmentPoints =
           assignedAttachmentPointsByMonomer.get(monomerToSave);
 
+        const remappedAttachmentPoints = new Map<
+          AttachmentPointName,
+          [number, number]
+        >();
         monomerAssignedAttachmentPoints?.forEach(
           ([attachmentAtomId, leavingGroupAtomId], attachmentPointKey) => {
             const mappedAttachmentAtomId = atomIdMap.get(attachmentAtomId);
@@ -1851,7 +1886,7 @@ const MonomerCreationWizardInternal = ({
               return;
             }
 
-            monomerAssignedAttachmentPoints.set(attachmentPointKey, [
+            remappedAttachmentPoints.set(attachmentPointKey, [
               mappedAttachmentAtomId,
               mappedLeavingGroupAtomId,
             ]);
@@ -1871,7 +1906,7 @@ const MonomerCreationWizardInternal = ({
         }
 
         const result = editor.saveNewMonomer({
-          type: valuesToSave.type,
+          type: valuesToSave.type as KetMonomerClass,
           symbol: valuesToSave.symbol,
           name: valuesToSave.name || valuesToSave.symbol,
           naturalAnalogue: valuesToSave.naturalAnalogue,
@@ -1879,14 +1914,17 @@ const MonomerCreationWizardInternal = ({
           aliasHELM: valuesToSave.aliasHELM,
           aliasBILN: valuesToSave.aliasBILN,
           structure,
-          attachmentPoints: monomerAssignedAttachmentPoints,
+          attachmentPoints: remappedAttachmentPoints as Map<
+            AttachmentPointName,
+            [number, number]
+          >,
           // Mark monomers as hidden when they are part of a preset and don't have all properties filled
           hidden: shouldBeHidden,
         });
 
         monomersData.push({
           ...result,
-          monomerStructureInWizard: monomerToSave.structure,
+          monomerStructureInWizard: monomerToSave.structure as Selection,
           atomIdMap,
         });
       });
@@ -2083,7 +2121,7 @@ const MonomerCreationWizardInternal = ({
                     bondIdMap,
                   );
                   const monomerData = editor.saveNewMonomer({
-                    type,
+                    type: type as KetMonomerClass,
                     symbol,
                     name: name || symbol,
                     naturalAnalogue,

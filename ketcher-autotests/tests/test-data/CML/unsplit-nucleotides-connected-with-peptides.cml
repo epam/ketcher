@@ -1049,37 +1049,37 @@
             <bond atomRefs2="a403 a405" order="1"/>
             <bond atomRefs2="a405 a406" order="1"/>
         </bondArray>
-        <molecule id="sg0" atomRefs="a106" role="SuperatomSgroup" title="H">
+        <molecule id="sg1" atomRefs="a106" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.489946" y="-0.0776002"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a41" role="SuperatomSgroup" title="H">
+        <molecule id="sg2" atomRefs="a41" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.547639" y="0.0203414"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a39" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg3" atomRefs="a39" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="-0.128388" y="0.479152"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a38" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg4" atomRefs="a38" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="-0.350763" y="-0.350763"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a37" role="SuperatomSgroup" title="OH">
+        <molecule id="sg5" atomRefs="a37" role="SuperatomSgroup" title="OH">
             <MBracket type="SQUARE">
                 <MPoint x="0.346558" y="0.422804"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a18 a19 a20 a21 a22 a23 a24 a25 a26 a27 a28 a29 a30 a31 a32 a33 a34 a35 a36" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg6" atomRefs="a18 a19 a20 a21 a22 a23 a24 a25 a26 a27 a28 a29 a30 a31 a32 a33 a34 a35 a36" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.350763" y="0.350763"/>
                 <MPoint x="0.128388" y="-0.479152"/>
@@ -1089,31 +1089,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a63" role="SuperatomSgroup" title="H">
+        <molecule id="sg7" atomRefs="a63" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.547639" y="0.0203414"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a61" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg8" atomRefs="a61" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="-0.128388" y="0.479152"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a60" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg9" atomRefs="a60" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="-0.350763" y="-0.350763"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a59" role="SuperatomSgroup" title="OH">
+        <molecule id="sg10" atomRefs="a59" role="SuperatomSgroup" title="OH">
             <MBracket type="SQUARE">
                 <MPoint x="0.346558" y="0.422804"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a0 a40 a42 a43 a44 a45 a46 a47 a48 a49 a50 a51 a52 a53 a54 a55 a56 a57 a58" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg11" atomRefs="a0 a40 a42 a43 a44 a45 a46 a47 a48 a49 a50 a51 a52 a53 a54 a55 a56 a57 a58" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.350763" y="0.350763"/>
                 <MPoint x="0.128388" y="-0.479152"/>
@@ -1123,31 +1123,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a85" role="SuperatomSgroup" title="H">
+        <molecule id="sg12" atomRefs="a85" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.547639" y="0.0203414"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a83" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg13" atomRefs="a83" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="-0.128388" y="0.479152"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a82" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg14" atomRefs="a82" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="-0.350763" y="-0.350763"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a81" role="SuperatomSgroup" title="OH">
+        <molecule id="sg15" atomRefs="a81" role="SuperatomSgroup" title="OH">
             <MBracket type="SQUARE">
                 <MPoint x="0.346558" y="0.422804"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a1 a62 a64 a65 a66 a67 a68 a69 a70 a71 a72 a73 a74 a75 a76 a77 a78 a79 a80" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg16" atomRefs="a1 a62 a64 a65 a66 a67 a68 a69 a70 a71 a72 a73 a74 a75 a76 a77 a78 a79 a80" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.350763" y="0.350763"/>
                 <MPoint x="0.128388" y="-0.479152"/>
@@ -1157,31 +1157,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a128" role="SuperatomSgroup" title="H">
+        <molecule id="sg17" atomRefs="a128" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.489946" y="-0.0776002"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a105" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg18" atomRefs="a105" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="-0.128388" y="0.479152"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a104" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg19" atomRefs="a104" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="-0.350763" y="-0.350763"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a103" role="SuperatomSgroup" title="OH">
+        <molecule id="sg20" atomRefs="a103" role="SuperatomSgroup" title="OH">
             <MBracket type="SQUARE">
                 <MPoint x="0.346558" y="0.422804"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a2 a84 a86 a87 a88 a89 a90 a91 a92 a93 a94 a95 a96 a97 a98 a99 a100 a101 a102" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg21" atomRefs="a2 a84 a86 a87 a88 a89 a90 a91 a92 a93 a94 a95 a96 a97 a98 a99 a100 a101 a102" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.350763" y="0.350763"/>
                 <MPoint x="0.128388" y="-0.479152"/>
@@ -1191,31 +1191,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a150" role="SuperatomSgroup" title="H">
+        <molecule id="sg22" atomRefs="a150" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.489946" y="-0.0776002"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a127" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg23" atomRefs="a127" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="-0.128388" y="0.479152"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a126" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg24" atomRefs="a126" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="-0.350763" y="-0.350763"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a125" role="SuperatomSgroup" title="OH">
+        <molecule id="sg25" atomRefs="a125" role="SuperatomSgroup" title="OH">
             <MBracket type="SQUARE">
                 <MPoint x="0.346558" y="0.422804"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a3 a107 a108 a109 a110 a111 a112 a113 a114 a115 a116 a117 a118 a119 a120 a121 a122 a123 a124" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg26" atomRefs="a3 a107 a108 a109 a110 a111 a112 a113 a114 a115 a116 a117 a118 a119 a120 a121 a122 a123 a124" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.350763" y="0.350763"/>
                 <MPoint x="0.128388" y="-0.479152"/>
@@ -1225,31 +1225,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a172" role="SuperatomSgroup" title="H">
+        <molecule id="sg27" atomRefs="a172" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.489946" y="-0.0776002"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a149" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg28" atomRefs="a149" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="-0.128388" y="0.479152"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a148" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg29" atomRefs="a148" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="-0.350763" y="-0.350763"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a147" role="SuperatomSgroup" title="OH">
+        <molecule id="sg30" atomRefs="a147" role="SuperatomSgroup" title="OH">
             <MBracket type="SQUARE">
                 <MPoint x="0.346558" y="0.422804"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a4 a129 a130 a131 a132 a133 a134 a135 a136 a137 a138 a139 a140 a141 a142 a143 a144 a145 a146" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg31" atomRefs="a4 a129 a130 a131 a132 a133 a134 a135 a136 a137 a138 a139 a140 a141 a142 a143 a144 a145 a146" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.350763" y="0.350763"/>
                 <MPoint x="0.128388" y="-0.479152"/>
@@ -1259,31 +1259,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a173" role="SuperatomSgroup" title="H">
+        <molecule id="sg32" atomRefs="a173" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.547639" y="0.0203414"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a194" role="SuperatomSgroup" title="H">
+        <molecule id="sg33" atomRefs="a194" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.489946" y="-0.0776002"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a170" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg34" atomRefs="a170" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="-0.350763" y="-0.350763"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a169" role="SuperatomSgroup" title="OH">
+        <molecule id="sg35" atomRefs="a169" role="SuperatomSgroup" title="OH">
             <MBracket type="SQUARE">
                 <MPoint x="0.346558" y="0.422804"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a5 a151 a152 a153 a154 a155 a156 a157 a158 a159 a160 a161 a162 a163 a164 a165 a166 a167 a168" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg36" atomRefs="a5 a151 a152 a153 a154 a155 a156 a157 a158 a159 a160 a161 a162 a163 a164 a165 a166 a167 a168" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.350763" y="0.350763"/>
                 <MPoint x="0.128388" y="-0.479152"/>
@@ -1293,31 +1293,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a195" role="SuperatomSgroup" title="H">
+        <molecule id="sg37" atomRefs="a195" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.547639" y="0.0203414"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a216" role="SuperatomSgroup" title="H">
+        <molecule id="sg38" atomRefs="a216" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.489946" y="-0.0776002"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a192" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg39" atomRefs="a192" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="-0.350763" y="-0.350763"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a191" role="SuperatomSgroup" title="OH">
+        <molecule id="sg40" atomRefs="a191" role="SuperatomSgroup" title="OH">
             <MBracket type="SQUARE">
                 <MPoint x="0.346558" y="0.422804"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a6 a171 a174 a175 a176 a177 a178 a179 a180 a181 a182 a183 a184 a185 a186 a187 a188 a189 a190" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg41" atomRefs="a6 a171 a174 a175 a176 a177 a178 a179 a180 a181 a182 a183 a184 a185 a186 a187 a188 a189 a190" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.350763" y="0.350763"/>
                 <MPoint x="0.128388" y="-0.479152"/>
@@ -1327,31 +1327,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a217" role="SuperatomSgroup" title="H">
+        <molecule id="sg42" atomRefs="a217" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.547639" y="0.0203414"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a248" role="SuperatomSgroup" title="H">
+        <molecule id="sg43" atomRefs="a248" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.38135" y="-0.2192"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a214" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg44" atomRefs="a214" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="-0.350763" y="-0.350763"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a213" role="SuperatomSgroup" title="OH">
+        <molecule id="sg45" atomRefs="a213" role="SuperatomSgroup" title="OH">
             <MBracket type="SQUARE">
                 <MPoint x="0.346558" y="0.422804"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a7 a193 a196 a197 a198 a199 a200 a201 a202 a203 a204 a205 a206 a207 a208 a209 a210 a211 a212" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg46" atomRefs="a7 a193 a196 a197 a198 a199 a200 a201 a202 a203 a204 a205 a206 a207 a208 a209 a210 a211 a212" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.350763" y="0.350763"/>
                 <MPoint x="0.128388" y="-0.479152"/>
@@ -1361,31 +1361,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a220" role="SuperatomSgroup" title="OH">
+        <molecule id="sg47" atomRefs="a220" role="SuperatomSgroup" title="OH">
             <MBracket type="SQUARE">
                 <MPoint x="-0.38115" y="-0.2196"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a225" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg48" atomRefs="a225" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="0.38115" y="0.2196"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a232" role="SuperatomSgroup" title="Cl">
+        <molecule id="sg49" atomRefs="a232" role="SuperatomSgroup" title="Cl">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="-0.5"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a231" role="SuperatomSgroup" title="F">
+        <molecule id="sg50" atomRefs="a231" role="SuperatomSgroup" title="F">
             <MBracket type="SQUARE">
                 <MPoint x="-0.25" y="-0.433"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a8 a215 a218 a219 a221 a222 a223 a224 a226 a228 a229 a230 a233 a234 a235 a236 a237 a238" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg51" atomRefs="a8 a215 a218 a219 a221 a222 a223 a224 a226 a228 a229 a230 a233 a234 a235 a236 a237 a238" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.38115" y="0.2196"/>
                 <MPoint x="-0.38135" y="0.2192"/>
@@ -1395,31 +1395,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a269" role="SuperatomSgroup" title="H">
+        <molecule id="sg52" atomRefs="a269" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.38135" y="-0.2192"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a246" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg53" atomRefs="a246" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="0.38115" y="0.2196"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a253" role="SuperatomSgroup" title="Cl">
+        <molecule id="sg54" atomRefs="a253" role="SuperatomSgroup" title="Cl">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="-0.5"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a252" role="SuperatomSgroup" title="F">
+        <molecule id="sg55" atomRefs="a252" role="SuperatomSgroup" title="F">
             <MBracket type="SQUARE">
                 <MPoint x="-0.25" y="-0.433"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a9 a227 a239 a240 a242 a243 a244 a245 a247 a249 a250 a251 a254 a255 a256 a257 a258 a259" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg56" atomRefs="a9 a227 a239 a240 a242 a243 a244 a245 a247 a249 a250 a251 a254 a255 a256 a257 a258 a259" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.38115" y="0.2196"/>
                 <MPoint x="-0.38135" y="0.2192"/>
@@ -1429,31 +1429,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a262" role="SuperatomSgroup" title="OH">
+        <molecule id="sg57" atomRefs="a262" role="SuperatomSgroup" title="OH">
             <MBracket type="SQUARE">
                 <MPoint x="-0.38115" y="-0.2196"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a311" role="SuperatomSgroup" title="H">
+        <molecule id="sg58" atomRefs="a311" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.38135" y="-0.2192"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a274" role="SuperatomSgroup" title="Cl">
+        <molecule id="sg59" atomRefs="a274" role="SuperatomSgroup" title="Cl">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="-0.5"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a273" role="SuperatomSgroup" title="F">
+        <molecule id="sg60" atomRefs="a273" role="SuperatomSgroup" title="F">
             <MBracket type="SQUARE">
                 <MPoint x="-0.25" y="-0.433"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a10 a241 a260 a261 a263 a264 a265 a266 a268 a270 a271 a272 a275 a276 a277 a278 a279 a280" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg61" atomRefs="a10 a241 a260 a261 a263 a264 a265 a266 a268 a270 a271 a272 a275 a276 a277 a278 a279 a280" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.38115" y="0.2196"/>
                 <MPoint x="-0.38135" y="0.2192"/>
@@ -1463,31 +1463,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a283" role="SuperatomSgroup" title="OH">
+        <molecule id="sg62" atomRefs="a283" role="SuperatomSgroup" title="OH">
             <MBracket type="SQUARE">
                 <MPoint x="-0.38115" y="-0.2196"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a288" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg63" atomRefs="a288" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="0.38115" y="0.2196"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a295" role="SuperatomSgroup" title="Cl">
+        <molecule id="sg64" atomRefs="a295" role="SuperatomSgroup" title="Cl">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="-0.5"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a294" role="SuperatomSgroup" title="F">
+        <molecule id="sg65" atomRefs="a294" role="SuperatomSgroup" title="F">
             <MBracket type="SQUARE">
                 <MPoint x="-0.25" y="-0.433"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a11 a267 a281 a282 a284 a285 a286 a287 a289 a291 a292 a293 a296 a297 a298 a299 a300 a301" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg66" atomRefs="a11 a267 a281 a282 a284 a285 a286 a287 a289 a291 a292 a293 a296 a297 a298 a299 a300 a301" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.38115" y="0.2196"/>
                 <MPoint x="-0.38135" y="0.2192"/>
@@ -1497,31 +1497,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a332" role="SuperatomSgroup" title="H">
+        <molecule id="sg67" atomRefs="a332" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.38135" y="-0.2192"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a309" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg68" atomRefs="a309" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="0.38115" y="0.2196"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a316" role="SuperatomSgroup" title="Cl">
+        <molecule id="sg69" atomRefs="a316" role="SuperatomSgroup" title="Cl">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="-0.5"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a315" role="SuperatomSgroup" title="F">
+        <molecule id="sg70" atomRefs="a315" role="SuperatomSgroup" title="F">
             <MBracket type="SQUARE">
                 <MPoint x="-0.25" y="-0.433"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a12 a290 a302 a303 a305 a306 a307 a308 a310 a312 a313 a314 a317 a318 a319 a320 a321 a322" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg71" atomRefs="a12 a290 a302 a303 a305 a306 a307 a308 a310 a312 a313 a314 a317 a318 a319 a320 a321 a322" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.38115" y="0.2196"/>
                 <MPoint x="-0.38135" y="0.2192"/>
@@ -1531,31 +1531,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a325" role="SuperatomSgroup" title="OH">
+        <molecule id="sg72" atomRefs="a325" role="SuperatomSgroup" title="OH">
             <MBracket type="SQUARE">
                 <MPoint x="-0.38115" y="-0.2196"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a374" role="SuperatomSgroup" title="H">
+        <molecule id="sg73" atomRefs="a374" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.38135" y="-0.2192"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a337" role="SuperatomSgroup" title="Cl">
+        <molecule id="sg74" atomRefs="a337" role="SuperatomSgroup" title="Cl">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="-0.5"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a336" role="SuperatomSgroup" title="F">
+        <molecule id="sg75" atomRefs="a336" role="SuperatomSgroup" title="F">
             <MBracket type="SQUARE">
                 <MPoint x="-0.25" y="-0.433"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a13 a304 a323 a324 a326 a327 a328 a329 a331 a333 a334 a335 a338 a339 a340 a341 a342 a343" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg76" atomRefs="a13 a304 a323 a324 a326 a327 a328 a329 a331 a333 a334 a335 a338 a339 a340 a341 a342 a343" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.38115" y="0.2196"/>
                 <MPoint x="-0.38135" y="0.2192"/>
@@ -1565,31 +1565,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a346" role="SuperatomSgroup" title="OH">
+        <molecule id="sg77" atomRefs="a346" role="SuperatomSgroup" title="OH">
             <MBracket type="SQUARE">
                 <MPoint x="-0.38115" y="-0.2196"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a351" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg78" atomRefs="a351" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="0.38115" y="0.2196"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a358" role="SuperatomSgroup" title="Cl">
+        <molecule id="sg79" atomRefs="a358" role="SuperatomSgroup" title="Cl">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="-0.5"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a357" role="SuperatomSgroup" title="F">
+        <molecule id="sg80" atomRefs="a357" role="SuperatomSgroup" title="F">
             <MBracket type="SQUARE">
                 <MPoint x="-0.25" y="-0.433"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a14 a330 a344 a345 a347 a348 a349 a350 a352 a354 a355 a356 a359 a360 a361 a362 a363 a364" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg81" atomRefs="a14 a330 a344 a345 a347 a348 a349 a350 a352 a354 a355 a356 a359 a360 a361 a362 a363 a364" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.38115" y="0.2196"/>
                 <MPoint x="-0.38135" y="0.2192"/>
@@ -1599,31 +1599,31 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a395" role="SuperatomSgroup" title="H">
+        <molecule id="sg82" atomRefs="a395" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">
                 <MPoint x="0.38135" y="-0.2192"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a372" role="SuperatomSgroup" title="NH2">
+        <molecule id="sg83" atomRefs="a372" role="SuperatomSgroup" title="NH2">
             <MBracket type="SQUARE">
                 <MPoint x="0.38115" y="0.2196"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a379" role="SuperatomSgroup" title="Cl">
+        <molecule id="sg84" atomRefs="a379" role="SuperatomSgroup" title="Cl">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="-0.5"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a378" role="SuperatomSgroup" title="F">
+        <molecule id="sg85" atomRefs="a378" role="SuperatomSgroup" title="F">
             <MBracket type="SQUARE">
                 <MPoint x="-0.25" y="-0.433"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a15 a353 a365 a366 a368 a369 a370 a371 a373 a375 a376 a377 a380 a381 a382 a383 a384 a385" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg86" atomRefs="a15 a353 a365 a366 a368 a369 a370 a371 a373 a375 a376 a377 a380 a381 a382 a383 a384 a385" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.38115" y="0.2196"/>
                 <MPoint x="-0.38135" y="0.2192"/>
@@ -1633,25 +1633,25 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a388" role="SuperatomSgroup" title="OH">
+        <molecule id="sg87" atomRefs="a388" role="SuperatomSgroup" title="OH">
             <MBracket type="SQUARE">
                 <MPoint x="-0.38115" y="-0.2196"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a400" role="SuperatomSgroup" title="Cl">
+        <molecule id="sg88" atomRefs="a400" role="SuperatomSgroup" title="Cl">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="-0.5"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a399" role="SuperatomSgroup" title="F">
+        <molecule id="sg89" atomRefs="a399" role="SuperatomSgroup" title="F">
             <MBracket type="SQUARE">
                 <MPoint x="-0.25" y="-0.433"/>
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a16 a367 a386 a387 a389 a390 a391 a392 a394 a396 a397 a398 a401 a402 a403 a404 a405 a406" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+        <molecule id="sg90" atomRefs="a16 a367 a386 a387 a389 a390 a391 a392 a394 a396 a397 a398 a401 a402 a403 a404 a405 a406" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
             <MBracket type="SQUARE">
                 <MPoint x="0.38115" y="0.2196"/>
                 <MPoint x="-0.38135" y="0.2192"/>

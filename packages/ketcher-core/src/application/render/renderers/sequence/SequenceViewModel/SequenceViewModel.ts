@@ -92,8 +92,7 @@ export class SequenceViewModel {
       }
       let nodesBeforeHydrogenConnectionToBase: SubChainNode[] = [];
       let lastTwoStrandedNodeWithHydrogenBond:
-        | ITwoStrandedChainItem
-        | undefined;
+        ITwoStrandedChainItem | undefined;
       let lastSenseChain: Chain = this.nodes[this.nodes.length - 1].chain;
       let lastSenseNodeIndex: number = this.nodes.length - 1;
 
@@ -239,8 +238,8 @@ export class SequenceViewModel {
           const currentTwoStrandedSnakeLayoutNodeIndex =
             lastTwoStrandedNodeWithHydrogenBondIndex + 1 + i;
           const currentTwoStrandedSnakeLayoutNode:
-            | ITwoStrandedChainItem
-            | undefined = this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
+            ITwoStrandedChainItem | undefined =
+            this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
           const currentAntisenseSnakeLayoutNode =
             nodesBeforeHydrogenConnectionToBase[i];
           const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =
@@ -373,6 +372,15 @@ export class SequenceViewModel {
     let previousTwoStrandedNode: ITwoStrandedChainItem | undefined;
     let previousHandledSenseNode: SubChainNode | undefined;
 
+    // Collect the nodes to insert during a read-only pass, then splice them in
+    // afterwards. Mutating `this.nodes` while iterating it with `forEach` is
+    // unsafe: `forEach` caches the length once, so inserting a node for one
+    // chain pair shifts the later nodes past that cached length and they are
+    // never visited — which dropped the dash for every chain pair after the
+    // first (#6719).
+    const nodesToInsert: Array<{ index: number; node: ITwoStrandedChainItem }> =
+      [];
+
     this.nodes.forEach((node, nodeIndex) => {
       if (
         previousTwoStrandedNode?.antisenseNode &&
@@ -386,14 +394,17 @@ export class SequenceViewModel {
         );
 
         if (nextConnectedSenseNode) {
-          this.nodes.splice(nodeIndex, 0, {
-            senseNode: new BackBoneSequenceNode(
-              previousHandledSenseNode as SubChainNode,
-              nextConnectedSenseNode,
-            ),
-            senseNodeIndex: previousTwoStrandedNode.senseNodeIndex,
-            antisenseNode: new EmptySequenceNode(),
-            chain: node.chain,
+          nodesToInsert.push({
+            index: nodeIndex,
+            node: {
+              senseNode: new BackBoneSequenceNode(
+                previousHandledSenseNode as SubChainNode,
+                nextConnectedSenseNode,
+              ),
+              senseNodeIndex: previousTwoStrandedNode.senseNodeIndex,
+              antisenseNode: new EmptySequenceNode(),
+              chain: node.chain,
+            },
           });
         }
       }
@@ -402,6 +413,11 @@ export class SequenceViewModel {
       previousHandledSenseNode =
         (node.senseNode as SubChainNode) || previousHandledSenseNode;
     });
+
+    // Insert from the highest index down so the remaining indices stay valid.
+    for (let i = nodesToInsert.length - 1; i >= 0; i--) {
+      this.nodes.splice(nodesToInsert[i].index, 0, nodesToInsert[i].node);
+    }
   }
 
   private fillNodes(chainsCollection: ChainsCollection) {

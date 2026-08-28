@@ -25,7 +25,7 @@ import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Command } from 'domain/entities/Command';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import assert from 'assert';
+import { assert } from 'utilities';
 import type { AttachmentPointName } from 'domain/types';
 import {
   getAttachmentPointLabel,
@@ -35,7 +35,7 @@ import { invert, isNumber } from 'lodash';
 import type { IKetAttachmentPoint } from 'application/formatters/types/ket';
 import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import type { Atom } from 'domain/entities/CoreAtom';
-import type { AtomLabel } from 'domain/constants';
+import type { CoreAtomLabel } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MONOMER_CONST } from 'domain/constants/monomers';
@@ -593,7 +593,10 @@ export class MacromoleculesConverter {
       struct.atoms.forEach((atom, atomId) => {
         if (atom.fragment !== fragmentId) return;
         const sgroup = struct.getGroupFromAtomId(atomId);
-        if (sgroup) {
+        if (
+          sgroup &&
+          !this.shouldSplitSgroupIntoSeparateFragments(sgroup, struct)
+        ) {
           fragmentSgroups.add(sgroup);
         }
       });
@@ -604,7 +607,7 @@ export class MacromoleculesConverter {
         sgroup.atoms.forEach((aid) => {
           const atomFragmentId = struct.atoms.get(aid)?.fragment;
           if (
-            atomFragmentId &&
+            isNumber(atomFragmentId) &&
             !groupedFragments[lastFragmentGroupIndex].includes(atomFragmentId)
           ) {
             groupedFragments[lastFragmentGroupIndex].push(atomFragmentId);
@@ -614,6 +617,89 @@ export class MacromoleculesConverter {
     });
 
     return groupedFragments;
+  }
+
+  private static shouldSplitSgroupIntoSeparateFragments(
+    sgroup: SGroup,
+    struct: Struct,
+  ) {
+    const attachmentPointFragmentIds = new Set<number>();
+
+    sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
+      const fragmentId = struct.atoms.get(attachmentPoint.atomId)?.fragment;
+
+      if (isNumber(fragmentId)) {
+        attachmentPointFragmentIds.add(fragmentId);
+      }
+    });
+
+    return attachmentPointFragmentIds.size > 1;
+  }
+
+  private static clonePartialSgroupsWithAttachmentPoints(
+    struct: Struct,
+    fragmentStruct: Struct,
+    atomIdMap: Map<number, number>,
+  ) {
+    struct.sgroups.forEach((sgroup) => {
+      if (
+        !this.shouldSplitSgroupIntoSeparateFragments(sgroup, struct) ||
+        sgroup.atoms.every((atomId) => atomIdMap.has(atomId))
+      ) {
+        return;
+      }
+
+      const mappedAtomIds = sgroup.atoms
+        .map((atomId) => atomIdMap.get(atomId))
+        .filter(isNumber);
+
+      if (mappedAtomIds.length === 0) {
+        return;
+      }
+
+      const attachmentPoints = sgroup
+        .getAttachmentPoints()
+        .map((attachmentPoint) => {
+          const atomId = atomIdMap.get(attachmentPoint.atomId);
+
+          if (!isNumber(atomId)) {
+            return undefined;
+          }
+
+          const leaveAtomId = isNumber(attachmentPoint.leaveAtomId)
+            ? atomIdMap.get(attachmentPoint.leaveAtomId)
+            : attachmentPoint.leaveAtomId;
+
+          return new SGroupAttachmentPoint(
+            atomId,
+            leaveAtomId,
+            attachmentPoint.attachmentId,
+            attachmentPoint.attachmentPointNumber,
+          );
+        })
+        .filter(
+          (attachmentPoint): attachmentPoint is SGroupAttachmentPoint =>
+            attachmentPoint !== undefined,
+        );
+
+      if (attachmentPoints.length === 0) {
+        return;
+      }
+
+      const partialSgroup = new SGroup(sgroup.type);
+      Object.keys(sgroup.data).forEach((field) => {
+        partialSgroup.data[field] = sgroup.data[field];
+      });
+      partialSgroup.pp = sgroup.pp ? new Vec2(sgroup.pp) : null;
+
+      const partialSgroupId = fragmentStruct.sgroups.add(partialSgroup);
+      partialSgroup.id = partialSgroupId;
+      mappedAtomIds.forEach((atomId) => {
+        fragmentStruct.atomAddToSGroup(partialSgroupId, atomId);
+      });
+      partialSgroup.addAttachmentPoints(attachmentPoints);
+      fragmentStruct.sGroupForest.insert(partialSgroup);
+    });
   }
 
   public static findAtomByMicromoleculeAtomId(
@@ -655,6 +741,11 @@ export class MacromoleculesConverter {
     fragments.forEach((_fragment) => {
       const atomIdMap = new Map<number, number>();
       const fragmentStruct = struct.getFragmentOnly(_fragment, atomIdMap);
+      this.clonePartialSgroupsWithAttachmentPoints(
+        struct,
+        fragmentStruct,
+        atomIdMap,
+      );
       const monomerAddCommand = this.convertFragmentToChem(
         fragmentNumber,
         fragmentStruct,
@@ -687,7 +778,7 @@ export class MacromoleculesConverter {
             atom.pp,
             monomer,
             atomId,
-            atom.label as AtomLabel,
+            atom.label as CoreAtomLabel,
             {
               charge: atom.charge,
               explicitValence: atom.explicitValence,
@@ -696,6 +787,7 @@ export class MacromoleculesConverter {
               alias: atom.alias,
               cip: atom.cip,
               stereoLabel: atom.stereoLabel,
+              atomList: atom.atomList,
             },
           );
 

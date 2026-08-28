@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test, expect } from '@fixtures';
 import {
@@ -251,12 +247,10 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     );
     await selectPartOfMolecules(page, 10);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
     expect(molecularFormula).toEqual('C3H3');
     expect(molecularMass).toEqual('39.057');
     await CalculateVariablesPanel(page).closeWindow();
@@ -294,7 +288,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('5.96');
+    ).toEqual('6.3');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');
@@ -486,46 +480,41 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
-  test.fail(
-    'Case 14: System calculate melting temperature for mix of nucleotides/nucleosides and unsplit nucleotides/unsplit nucleosides',
-    async () => {
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/7285
-       * Bug: https://github.com/epam/Indigo/issues/2936
-       * Description: System calculate melting temperature for mix of nucleotides/nucleosides and unsplit nucleotides/unsplit nucleosides.
-       * Scenario:
-       * 1. Go to Macromolecules mode - Flex canvas (empty)
-       * 2. Load from HELM
-       * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
-       */
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Flex,
-      );
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        page,
-        MacroFileType.HELM,
-        'RNA1{[2-damdA]}|RNA2{R(G)P}|RNA3{[5Br-dU].R(C)}$RNA2,RNA1,3:R2-1:R1|RNA1,RNA3,1:pair-1:pair|RNA2,RNA3,2:pair-3:pair$$$V2.0',
-      );
-      await takeEditorScreenshot(page, {
-        hideMacromoleculeEditorScrollBars: true,
-        hideMonomerPreview: true,
-      });
-      await MacromoleculesTopToolbar(page).calculateProperties();
-      await CalculateVariablesPanel(page).setMolecularMassUnits(
-        MolecularMassUnit.Da,
-      );
-      expect(
-        await CalculateVariablesPanel(page).getMolecularMassValue(),
-      ).toEqual('1303.731');
-      expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
-        'C38H50BrN16O25P3',
-      );
-      expect(
-        await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
-      ).toEqual('-1.3');
-      await MacromoleculesTopToolbar(page).calculateProperties();
-    },
-  );
+  test('Case 14: System calculate melting temperature for mix of nucleotides/nucleosides and unsplit nucleotides/unsplit nucleosides', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7285
+     * Bug: https://github.com/epam/Indigo/issues/2936
+     * Description: System calculate melting temperature for mix of nucleotides/nucleosides and unsplit nucleotides/unsplit nucleosides.
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex canvas (empty)
+     * 2. Load from HELM
+     * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
+     */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[2-damdA]}|RNA2{R(G)P}|RNA3{[5Br-dU].R(C)}$RNA2,RNA1,3:R2-1:R1|RNA1,RNA3,1:pair-1:pair|RNA2,RNA3,2:pair-3:pair$$$V2.0',
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    await CalculateVariablesPanel(page).setMolecularMassUnits(
+      MolecularMassUnit.Da,
+    );
+    expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
+      '1303.731',
+    );
+    expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
+      'C38H50BrN16O25P3',
+    );
+    expect(
+      await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
+    ).toEqual('-1.3');
+    await MacromoleculesTopToolbar(page).calculateProperties();
+  });
 
   test('Case 15: Melting temperature calculation works correct for three antistrand DNA', async ({
     FlexCanvas: _,

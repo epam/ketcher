@@ -30,6 +30,7 @@ import { BaseMonomer } from 'ketcher-core';
 import {
   hasOnlyDeoxyriboseSugars,
   hasOnlyRiboseSugars,
+  hasUnsplitNucleotide,
   isAntisenseCreationDisabled,
   isAntisenseOptionVisible,
   isCycleExistsForSelectedMonomers,
@@ -75,9 +76,15 @@ export function TopMenuComponent() {
         !isAntisenseCreationDisabled(selectedEntities)
       ) {
         setNeedOpenByMenuItemClick(false);
-        if (hasOnlyDeoxyriboseSugars(selectedEntities)) {
+        if (
+          !hasUnsplitNucleotide(selectedEntities) &&
+          hasOnlyDeoxyriboseSugars(selectedEntities)
+        ) {
           setAntisenseActiveOption('antisenseDnaStrand');
-        } else if (hasOnlyRiboseSugars(selectedEntities)) {
+        } else if (
+          !hasUnsplitNucleotide(selectedEntities) &&
+          hasOnlyRiboseSugars(selectedEntities)
+        ) {
           setAntisenseActiveOption('antisenseRnaStrand');
         } else {
           setAntisenseActiveOption('antisenseStrand');

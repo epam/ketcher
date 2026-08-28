@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import path from 'path';
 import { Page, test, expect } from '@fixtures';
 import {
@@ -577,7 +575,6 @@ test(`Verify that the system supports copy/paste functionality for expanded mono
   await takeEditorScreenshot(page);
 
   test.fixme(
-    // eslint-disable-next-line no-self-compare
     true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5831 issue(s).`,
   );
@@ -612,7 +609,6 @@ test(`Verify that the system supports cut/paste functionality for expanded monom
   await takeEditorScreenshot(page);
 
   test.fixme(
-    // eslint-disable-next-line no-self-compare
     true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5831 issue(s).`,
   );
@@ -661,7 +657,6 @@ test(`Verify that "Expand monomer" does not break cyclic structures when the rin
   await takeEditorScreenshot(page);
 
   test.fixme(
-    // eslint-disable-next-line no-self-compare
     true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
   );
@@ -710,7 +705,6 @@ test(`Verify that expanding multiple monomers works in a left-to-right order wit
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 
   test.fixme(
-    // eslint-disable-next-line no-self-compare
     true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
   );
@@ -759,7 +753,6 @@ test(`Verify that expanding multiple monomers works in a top-to-bottom order wit
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 
   test.fixme(
-    // eslint-disable-next-line no-self-compare
     true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
   );
@@ -807,7 +800,6 @@ test(`Verify that expanding monomers with big mircomolecule ring structures in t
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 
   test.fixme(
-    // eslint-disable-next-line no-self-compare
     true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
   );

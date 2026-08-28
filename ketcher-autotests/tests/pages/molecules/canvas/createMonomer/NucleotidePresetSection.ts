@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { NucleotidePresetTab } from './constants/nucleiotidePresetSection/Constants';
 import { NucleotideNaturalAnalogue } from '@tests/pages/constants/createMonomerDialog/Constants';
@@ -40,7 +39,6 @@ type NucleotidePresetSectionLocators = {
   baseTab: Locator & BaseTabLocators;
   sugarTab: Locator & SugarTabLocators;
   phosphateTab: Locator & PhosphateTabLocators;
-  highlightCheckbox: Locator;
 };
 
 export const NucleotidePresetSection = (page: Page) => {
@@ -88,8 +86,6 @@ export const NucleotidePresetSection = (page: Page) => {
         }),
       },
     ),
-
-    highlightCheckbox: page.getByTestId('highlight-toggle'),
   };
 
   return {
@@ -267,14 +263,6 @@ export const NucleotidePresetSection = (page: Page) => {
         await this.openAliasesSection(NucleotidePresetTab.Phosphate);
         await locators.phosphateTab.aliasesSection.helmAliasEditbox.click();
         await page.keyboard.type(options.HELMAlias);
-      }
-    },
-
-    async setHighlight(checked: boolean) {
-      if (checked) {
-        await locators.highlightCheckbox.check();
-      } else {
-        await locators.highlightCheckbox.uncheck();
       }
     },
   };

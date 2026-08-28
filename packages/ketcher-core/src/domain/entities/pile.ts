@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export class Pile<TValue = any> extends Set<TValue> {
+export class Pile<TValue = unknown> extends Set<TValue> {
   // TODO: it's used only in dfs.js in one place in some strange way.
   // Should be removed after dfs.js refactoring
   find(predicate: (item: TValue) => boolean) {
@@ -25,11 +26,11 @@ export class Pile<TValue = any> extends Set<TValue> {
     return null;
   }
 
-  equals(setB: Pile): boolean {
+  equals(setB: Pile<TValue>): boolean {
     return this.isSuperset(setB) && setB.isSuperset(this);
   }
 
-  isSuperset(subset: Pile): boolean {
+  isSuperset(subset: Pile<TValue>): boolean {
     for (const item of subset) {
       if (!this.has(item)) return false;
     }

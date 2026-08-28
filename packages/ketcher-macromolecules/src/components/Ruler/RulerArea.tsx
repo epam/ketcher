@@ -1,9 +1,11 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+/* eslint-disable react-hooks/preserve-manual-memoization, react-hooks/refs */
+import { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { D3DragEvent } from 'd3';
 import { useSelector } from 'react-redux';
 import { selectEditor, selectEditorLineLength } from 'state/common';
 import { useLayoutMode } from 'hooks';
 import clsx from 'clsx';
+import { RootSizeContext } from '../../contexts';
 
 import RulerInput from './RulerInput';
 import RulerScale from './RulerScale';
@@ -21,6 +23,7 @@ import { useZoomTransform } from '../../hooks/useZoomTransform';
 
 export const RulerArea = () => {
   const layoutMode = useLayoutMode();
+  const { width: rootWidth } = useContext(RootSizeContext);
   const editorLineLength = useSelector(selectEditorLineLength);
   const lineLengthValue = editorLineLength[layoutMode];
 
@@ -54,16 +57,15 @@ export const RulerArea = () => {
     const handlePosition = translateValueWithZoomAndDrag - 8;
     let inputPosition = translateValueWithZoomAndDrag + 10;
 
-    const canvasWidth = editor?.canvas.width.baseVal.value;
-    if (!canvasWidth) {
+    const canvasContainer = editor?.canvas.parentElement;
+    const visibleWidth = canvasContainer?.clientWidth || rootWidth;
+    if (!visibleWidth) {
       return [inputPosition, handlePosition];
     }
 
-    const canvasContainer = editor?.canvas.parentElement;
     const scrollLeft = canvasContainer?.scrollLeft || 0;
     const visibleLeftEdge = scrollLeft;
-    const visibleRightEdge =
-      scrollLeft + (canvasContainer?.clientWidth || canvasWidth);
+    const visibleRightEdge = scrollLeft + visibleWidth;
 
     // If input would go beyond right visible edge, cap it, take into account input width (35px)
     if (inputPosition + 35 > visibleRightEdge) {
@@ -77,8 +79,8 @@ export const RulerArea = () => {
 
     return [inputPosition, handlePosition];
   }, [
-    editor?.canvas.width.baseVal.value,
     editor?.canvas.parentElement,
+    rootWidth,
     transform,
     translateValue,
     dragDelta,
@@ -189,8 +191,6 @@ export const RulerArea = () => {
   }
 
   // Temporary solution to disable autozoom for the macro editor in e2e tests
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const isRulerVisible = !window._ketcher_isChainLengthRulerDisabled;
 
   return isRulerVisible ? (
@@ -211,11 +211,7 @@ export const RulerArea = () => {
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
       />
-      <RulerScale
-        transform={transform}
-        layoutMode={layoutMode}
-        lineLengthValue={lineLengthValue}
-      />
+      <RulerScale transform={transform} layoutMode={layoutMode} />
     </div>
   ) : null;
 };

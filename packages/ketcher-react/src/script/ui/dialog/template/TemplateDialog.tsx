@@ -1,3 +1,6 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +17,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type Dispatch, type FC, useState, useEffect, useRef } from 'react';
+import {
+  type Dispatch,
+  type FC,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+  memo,
+} from 'react';
+import { connect, useDispatch } from 'react-redux';
 import TemplateTable, { type Template } from './TemplateTable';
 import {
   changeFilter,
@@ -32,22 +45,24 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import { Dialog } from '../../views/components';
 import Input from '../../component/form/Input/Input';
 import { SaveButton } from '../../component/view/savebutton';
-import { SdfSerializer } from 'ketcher-core';
+import { SdfSerializer, KetcherLogger } from 'ketcher-core';
 import classes from './template-lib.module.less';
 import accordionClasses from '../../../../components/Accordion/Accordion.module.less';
-import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { omit } from 'lodash/fp';
 import { onAction } from '../../state';
 import { functionalGroupsSelector } from '../../state/functionalGroups/selectors';
 import { saltsAndSolventsSelector } from '../../state/saltsAndSolvents/selectors';
 import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult';
+import { showSnackbarNotification } from '../../state/notifications';
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import useSaltsAndSolvents from './useSaltsAndSolvets';
 import { Icon } from 'components';
 import clsx from 'clsx';
+
+const MemoizedTemplateTable = memo(TemplateTable);
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -76,7 +91,6 @@ interface TemplateLibProps {
   group: string;
   lib: Array<Template>;
   selected: Template | null;
-  mode: string;
   tab: number;
   initialTab: number;
   saltsAndSolvents: Template[];
@@ -119,7 +133,12 @@ const HeaderContent = () => (
   </div>
 );
 
-const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
+const FooterContent = ({
+  getData,
+  tab,
+  isMonomerCreationWizardActive,
+  onError,
+}) => {
   const clickToAddToCanvas = (
     <span data-testid="add-to-canvas-button">Click to add to canvas</span>
   );
@@ -145,7 +164,7 @@ const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
     >
       <SaveButton
         key="save-to-SDF"
-        data={data}
+        getData={getData}
         className={clsx(
           classes.saveButton,
           isMonomerCreationWizardActive && classes.disabled,
@@ -153,6 +172,7 @@ const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
         testId="save-to-sdf-button"
         filename={filename}
         disabled={isMonomerCreationWizardActive}
+        onError={onError}
       >
         Save to SDF
       </SaveButton>
@@ -161,15 +181,14 @@ const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
   );
 };
 
-const TemplateDialog: FC<Props> = (props) => {
+const EMPTY_TEMPLATES: ReadonlyArray<Template> = [];
+
+export const TemplateDialog: FC<Props> = (props) => {
   const {
     filter,
     onFilter,
     onTabChange,
     onChangeGroup,
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    mode,
-    /* eslint-enable @typescript-eslint/no-unused-vars */
     tab,
     initialTab = null,
     functionalGroups,
@@ -180,6 +199,7 @@ const TemplateDialog: FC<Props> = (props) => {
     ...rest
   } = props;
 
+  const dispatch = useDispatch();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
@@ -220,10 +240,10 @@ const TemplateDialog: FC<Props> = (props) => {
   }, [isMonomerCreationWizardActive, tab, onTabChange]);
 
   const handleAccordionChange = (accordion) => (_, isExpanded) => {
-    setExpandedAccordions(
+    setExpandedAccordions((prevAccordions) =>
       isExpanded
-        ? [...expandedAccordions, accordion]
-        : [...expandedAccordions].filter(
+        ? [...prevAccordions, accordion]
+        : prevAccordions.filter(
             (expandedAccordion) => expandedAccordion !== accordion,
           ),
     );
@@ -233,18 +253,43 @@ const TemplateDialog: FC<Props> = (props) => {
     onTabChange(value);
   };
 
-  const sdfSerializer = new SdfSerializer();
-  const serializerMapper = {
-    [TemplateTabs.TemplateLibrary]: templateLib,
-    [TemplateTabs.FunctionalGroupLibrary]: functionalGroups,
-    [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents,
-  };
-  const data = sdfSerializer.serialize(serializerMapper[tab]);
+  const getData = useCallback(() => {
+    const sdfSerializer = new SdfSerializer();
+    const serializerMapper = {
+      [TemplateTabs.TemplateLibrary]: templateLib,
+      [TemplateTabs.FunctionalGroupLibrary]: functionalGroups,
+      [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents,
+    };
+    return sdfSerializer.serialize(serializerMapper[tab]);
+  }, [tab, templateLib, functionalGroups, saltsAndSolvents]);
 
-  const select = (tmpl: Template): void => {
-    onChangeGroup(tmpl.props.group);
-    props.onSelect(tmpl);
-  };
+  const onSaveError = useCallback(
+    (err: unknown) => {
+      KetcherLogger.error(
+        'TemplateDialog.tsx::TemplateDialog::onSaveError',
+        err,
+      );
+      dispatch(
+        showSnackbarNotification('Some templates could not be exported.'),
+      );
+    },
+    [dispatch],
+  );
+
+  // Recreate selection handler only when upstream callbacks change.
+  const select = useCallback(
+    (tmpl: Template): void => {
+      onChangeGroup(tmpl.props.group);
+      onSelect(tmpl);
+    },
+    [onChangeGroup, onSelect],
+  );
+
+  // Memoize group names to avoid Object.keys call on every render
+  const groupNames = useMemo(
+    () => Object.keys(filteredTemplateLib),
+    [filteredTemplateLib],
+  );
 
   return (
     <Dialog
@@ -252,8 +297,9 @@ const TemplateDialog: FC<Props> = (props) => {
       footerContent={
         <FooterContent
           tab={tab}
-          data={data}
+          getData={getData}
           isMonomerCreationWizardActive={isMonomerCreationWizardActive}
+          onError={onSaveError}
         />
       }
       className={`${classes.dialog_body}`}
@@ -267,7 +313,7 @@ const TemplateDialog: FC<Props> = (props) => {
           className={classes.input}
           type="search"
           value={filter}
-          onChange={(value) => onFilter(value)}
+          onChange={(value) => onFilter(value as string)}
           placeholder="Search by elements..."
           isFocused={true}
           data-testid="template-search-input"
@@ -300,8 +346,8 @@ const TemplateDialog: FC<Props> = (props) => {
       <div className={classes.tabsContent}>
         <TabPanel value={tab} index={TemplateTabs.TemplateLibrary}>
           <div>
-            {Object.keys(filteredTemplateLib).length ? (
-              Object.keys(filteredTemplateLib).map((groupName) => {
+            {groupNames.length ? (
+              groupNames.map((groupName) => {
                 const shouldGroupBeRended =
                   expandedAccordions.includes(groupName);
                 return (
@@ -331,13 +377,13 @@ const TemplateDialog: FC<Props> = (props) => {
                       })`}
                     </AccordionSummary>
                     <AccordionDetails>
-                      <TemplateTable
+                      <MemoizedTemplateTable
                         templates={
                           shouldGroupBeRended
                             ? filteredTemplateLib[groupName]
-                            : []
+                            : EMPTY_TEMPLATES
                         }
-                        onSelect={(templ) => select(templ)}
+                        onSelect={select}
                         selected={props.selected}
                         onDelete={props.onDelete}
                         onAttach={props.onAttach}
@@ -357,10 +403,10 @@ const TemplateDialog: FC<Props> = (props) => {
         <TabPanel value={tab} index={TemplateTabs.FunctionalGroupLibrary}>
           {filteredFG?.length ? (
             <div className={classes.resultsContainer}>
-              <TemplateTable
+              <MemoizedTemplateTable
                 titleRows={1}
                 templates={filteredFG}
-                onSelect={(templ) => select(templ)}
+                onSelect={select}
                 selected={props.selected}
                 renderOptions={props.renderOptions}
               />
@@ -374,10 +420,10 @@ const TemplateDialog: FC<Props> = (props) => {
         <TabPanel value={tab} index={TemplateTabs.SaltsAndSolvents}>
           {filteredSaltsAndSolvents?.length ? (
             <div className={classes.resultsContainer}>
-              <TemplateTable
+              <MemoizedTemplateTable
                 titleRows={1}
                 templates={filteredSaltsAndSolvents}
-                onSelect={(templ) => select(templ)}
+                onSelect={select}
                 selected={props.selected}
                 renderOptions={props.renderOptions}
               />
@@ -395,7 +441,9 @@ const TemplateDialog: FC<Props> = (props) => {
 
 const selectTemplate = (template, props, dispatch) => {
   dispatch(selectTmpl(null));
-  if (!template) return;
+  if (!template) {
+    return;
+  }
   dispatch(changeFilter(''));
   dispatch(selectTmpl(template));
   dispatch(onAction({ tool: 'template', opts: template }));

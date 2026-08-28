@@ -1,11 +1,9 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
-import { chromium, expect, Page, test } from '@fixtures';
+import { expect, Page, test } from '@fixtures';
 import {
   copyToClipboardByKeyboard,
   MacroFileType,
@@ -16,10 +14,8 @@ import {
   openFileAndAddToCanvasMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
-  resetZoomLevelToDefault,
   takeEditorScreenshot,
   takeElementScreenshot,
-  waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
@@ -37,10 +33,7 @@ import {
   bondTwoMonomersPointToPoint,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
-import {
-  markResetToDefaultState,
-  processResetToDefaultState,
-} from '@utils/testAnnotations/resetToDefaultState';
+import { markResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,
@@ -67,38 +60,14 @@ import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/Monome
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  let sharedContext;
-  try {
-    sharedContext = await browser.newContext();
-  } catch (error) {
-    console.error('Error on creation browser context:', error);
-    console.log('Restarting browser...');
-    await browser.close();
-    browser = await chromium.launch();
-    sharedContext = await browser.newContext();
-  }
-
-  // Reminder: do not pass page as async paramenter to test
-  page = await sharedContext.newPage();
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await Library(page).switchToPeptidesTab();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
 });
 
-test.afterEach(async ({ context: _ }, testInfo) => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
-  await processResetToDefaultState(testInfo, page);
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-test.afterAll(async ({ browser }) => {
-  const cntxt = page.context();
-  await page.close();
-  await cntxt.close();
-  await browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe('Import-Saving .idt Files', () => {
@@ -171,9 +140,8 @@ test.describe('Import-Saving .idt Files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    const convertErrorMessage = await ErrorMessageDialog(
-      page,
-    ).getErrorMessage();
+    const convertErrorMessage =
+      await ErrorMessageDialog(page).getErrorMessage();
     const expectedErrorMessage =
       'Convert error! Sequence saver: Cannot save molecule in IDT format - expected sugar but found AminoAcid monomer 1Nal.';
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
@@ -616,9 +584,8 @@ test.describe('Import-Saving .idt Files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    const convertErrorMessage = await ErrorMessageDialog(
-      page,
-    ).getErrorMessage();
+    const convertErrorMessage =
+      await ErrorMessageDialog(page).getErrorMessage();
     const expectedErrorMessage =
       'Convert error! Sequence saver: IDT alias for group sugar:5formD base:form5C phosphate:cm not found.';
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
@@ -1064,9 +1031,8 @@ test.describe('Import-Saving .idt Files', () => {
       );
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(format.testId);
-      const convertErrorMessage = await ErrorMessageDialog(
-        page,
-      ).getErrorMessage();
+      const convertErrorMessage =
+        await ErrorMessageDialog(page).getErrorMessage();
       const expectedErrorMessage =
         'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
       expect(convertErrorMessage).toEqual(expectedErrorMessage);

@@ -49,7 +49,7 @@ import {
   SGroupAttachmentPointRemove,
 } from 'application/editor/operations/sgroup/sgroupAttachmentPoints';
 import type Restruct from 'application/render/restruct/restruct';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
@@ -788,7 +788,6 @@ export function fromSgroupAddition(
   oldSgroup?,
   monomer?: BaseMonomer,
 ) {
-  // eslint-disable-line
   let action = new Action();
 
   sgid = isNumber(sgid) ? sgid : restruct.molecule.sgroups.newId();
@@ -940,7 +939,7 @@ function fromQueryComponentSGroupAction(
       return res;
     }, []);
 
-    const bonds = getAtomsBondIds(restruct.molecule, atoms) as number[];
+    const bonds = getAtomsBondIds(restruct.molecule, atoms);
 
     selection.atoms = selection.atoms.concat(atoms);
     selection.bonds = selection.bonds.concat(bonds);
@@ -958,7 +957,7 @@ function fromQueryComponentSGroupAction(
 }
 
 function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
-  const allFragments = new Pile(
+  const allFragments = new Pile<number>(
     sourceAtoms.map((aid) => restruct.atoms.get(aid).a.fragment),
   );
 
@@ -985,8 +984,8 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
     {
       action: new Action(),
       selection: {
-        atoms: [],
-        bonds: [],
+        atoms: [] as number[],
+        bonds: [] as number[],
       },
     },
   );
@@ -1000,11 +999,14 @@ function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
     bonds = uniq(bonds.concat(currSelection.bonds)) as number[];
   }
 
-  return bonds.reduce(
-    (
-      acc: { action: Action; selection: { atoms: number[]; bonds: number[] } },
-      bondid,
-    ) => {
+  return bonds.reduce<{
+    action: Action;
+    selection: {
+      atoms: number[];
+      bonds: number[];
+    };
+  }>(
+    (acc, bondid: number) => {
       const bond = struct.bonds.get(bondid);
 
       acc.action = acc.action.mergeWith(
@@ -1093,11 +1095,14 @@ export function removeSgroupIfNeeded(action, restruct: Restruct, atoms) {
   });
 }
 
-function getAtomsBondIds(struct, atoms) {
+function getAtomsBondIds(struct: Struct, atoms: number[]): number[] {
   const atomSet = new Pile(atoms);
 
   return Array.from(struct.bonds.keys()).filter((bid) => {
     const bond = struct.bonds.get(bid);
+    if (!bond) {
+      return false;
+    }
     return atomSet.has(bond.begin) && atomSet.has(bond.end);
   });
 }

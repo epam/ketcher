@@ -17,6 +17,7 @@ import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
   getRnaBaseFromSugar,
+  isLinearChem,
   isMonomerConnectedToR2RnaBase,
   isRnaBaseApplicableForAntisense,
   isRnaBaseOrAmbiguousRnaBase,
@@ -81,16 +82,22 @@ export class ChainsCollection {
       // The factor is used to reduce the influence of the X coordinate on the sorting
       // to make the sorting more oriented to Y coordinate
       const X_COORDINATE_REDUCTION_FACTOR = 0.01;
-      if (
-        chain2.firstNode?.monomer.position.x * X_COORDINATE_REDUCTION_FACTOR +
-          chain2.firstNode?.monomer.position.y >
-        chain1.firstNode?.monomer.position.x * X_COORDINATE_REDUCTION_FACTOR +
-          chain1.firstNode?.monomer.position.y
-      ) {
-        return -1;
-      } else {
-        return 1;
+      const chain1Weight =
+        (chain1.firstNode?.monomer.position.x ?? 0) *
+          X_COORDINATE_REDUCTION_FACTOR +
+        (chain1.firstNode?.monomer.position.y ?? 0);
+      const chain2Weight =
+        (chain2.firstNode?.monomer.position.x ?? 0) *
+          X_COORDINATE_REDUCTION_FACTOR +
+        (chain2.firstNode?.monomer.position.y ?? 0);
+
+      if (chain1Weight !== chain2Weight) {
+        return chain1Weight - chain2Weight;
       }
+      return (
+        (chain1.firstNode?.monomer.id ?? 0) -
+        (chain2.firstNode?.monomer.id ?? 0)
+      );
     });
 
     const reorderedChains = new Set<Chain>();
@@ -263,11 +270,22 @@ export class ChainsCollection {
         R1ConnectedMonomer instanceof Sugar &&
         getRnaBaseFromSugar(R1ConnectedMonomer) === monomer;
 
-      return (
+      const isStart =
         (isFirstMonomerWithR2R1connection ||
           isMonomerConnectedToR2RnaBase(monomer)) &&
-        !isRnaBaseConnectedToSugar
-      );
+        !isRnaBaseConnectedToSugar;
+      if (isStart && !isMonomerConnectedToR2RnaBase(monomer)) {
+        const previousMonomer = getPreviousMonomerInChain(monomer);
+
+        if (
+          previousMonomer &&
+          (isLinearChem(monomer) || isLinearChem(previousMonomer))
+        ) {
+          return false;
+        }
+      }
+
+      return isStart;
     });
 
     return firstMonomersInRegularChains;
@@ -437,9 +455,6 @@ export class ChainsCollection {
     monomerToChain: Map<BaseMonomer, Chain>,
     monomerToNode: Map<BaseMonomer, SubChainNode>,
   ) {
-    let complimentaryChain: Chain | undefined;
-    let complimentaryNode: SubChainNode | undefined;
-
     for (const monomerToCheck of node.monomers) {
       const { monomer, complimentaryMonomer } =
         this.getFirstComplimentaryMonomer(monomerToCheck) || {};
@@ -467,7 +482,7 @@ export class ChainsCollection {
       };
     }
 
-    return { complimentaryChain, complimentaryNode };
+    return { complimentaryChain: undefined, complimentaryNode: undefined };
   }
 
   private reorderChainsPutSenseChainOrderInAccordanceAntisenseConnection() {

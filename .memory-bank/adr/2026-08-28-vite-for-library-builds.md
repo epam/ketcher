@@ -14,11 +14,11 @@ Two targets are explicitly excluded:
   to Vite would mean abandoning SSR or rewriting the app.
 - **`ketcher-autotests`** has no bundler to migrate.
 
-`ketcher-standalone` is migrated last and may remain on Rollup 2 — see *Consequences*.
+`ketcher-standalone` is migrated last and may remain on Rollup 2 — see _Consequences_.
 
 The **published contract is frozen**: every package keeps its current file names, output
 formats, and `main`/`module`/`types`/`exports` entries, including entries that are currently
-wrong (see *Consequences*).
+wrong (see _Consequences_).
 
 ## Context
 
@@ -30,7 +30,7 @@ The cost was not abstract. Build configuration had leaked across package boundar
 `example/vite.config.js` imported constants directly from `packages/*/rollup.config.mjs` and
 reconstructed every package's tsconfig path aliases by hand, so an app's build depended on the
 libraries' build configs. `ketcher-react`'s Rollup config read
-`../ketcher-macromolecules/dist/index.css` — a sibling's *build output* — while the root
+`../ketcher-macromolecules/dist/index.css` — a sibling's _build output_ — while the root
 `build:packages` script built `ketcher-react` before `ketcher-macromolecules`, meaning clean
 builds relied on stale output being present. And `ketcher-macromolecules` imported
 `ketcher-core/dist/domain/entities/PolymerBond`, reaching through another package's emitted file
@@ -80,11 +80,11 @@ against the Rollup baseline:
 The spike also surfaced three behavioural differences from Rollup, each of which the migration
 must configure against explicitly rather than inherit:
 
-| Difference | Resolution |
-| --- | --- |
-| Rolldown minifies library output by default | `build.minify: false` — publishing minified library code destroys downstream stack traces, and makes output diffing impossible |
-| `events` (a Node builtin) is resolved to a local polyfill and bundled, where Rollup left it external | Explicit Node-builtin `external` list |
-| `rollup-plugin-string` has no equivalent, so `.ket` imports fail to parse | A small inline raw-text transform in the shared build config |
+| Difference                                                                                           | Resolution                                                                                                                     |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Rolldown minifies library output by default                                                          | `build.minify: false` — publishing minified library code destroys downstream stack traces, and makes output diffing impossible |
+| `events` (a Node builtin) is resolved to a local polyfill and bundled, where Rollup left it external | Explicit Node-builtin `external` list                                                                                          |
+| `rollup-plugin-string` has no equivalent, so `.ket` imports fail to parse                            | A small inline raw-text transform in the shared build config                                                                   |
 
 Babel is dropped along with the `@babel/runtime` runtime dependency, since Vite transpiles
 natively. The one exception is `ketcher-macromolecules`, which keeps Emotion's Babel plugin:
@@ -115,6 +115,26 @@ Its `exports` map is correct, so modern resolvers are unaffected and only toolin
 `exports` sees the broken paths. Correcting them could change resolution for consumers who are
 currently working by accident, so they are left as-is and should be fixed in a deliberate
 version bump instead.
+
+**Published packages ship modern syntax, and that is a breaking change.** The Rollup builds ran
+`@babel/preset-env` with no explicit target, which downleveled output toward ES5. Dropping Babel
+drops that too: `ketcher-core`'s `Editor.modern.js` went from 18 downlevel helpers and 1 raw
+`class` to 0 and 6, and `ketcher-macromolecules`' `dist/index.js` fell from 3.56 MB to 602 KB.
+
+This is the failure mode the frozen contract exists to catch: the build stays green, tests pass,
+`example-ssr` renders, and only a consumer on an older browser breaks — at runtime, silently.
+The reduction in supported browsers is therefore handled as a **major version bump** rather than
+hidden behind build configuration. Consumers who need the old floor should transpile these
+packages in their own build, which is now the ordinary expectation for a library shipping ESM.
+
+The bump lands as a single commit after the migration completes, so that four interdependent
+`package.json` files are not churning while the builds are still changing. It needs the release
+owner's agreement before it ships.
+
+**CSS source maps are lost for `ketcher-macromolecules`.** Producing a single `dist/index.css`
+requires `build.cssCodeSplit: false`, and in that path Vite 8.0.16 emits the extracted CSS via a
+plain `emitFile` call with no sourcemap generation — no configuration produces `index.css.map`.
+This affects CSS debugging in devtools only; it is not part of the published contract.
 
 **Type emission becomes an explicit build step.** Each package runs
 `tsc --emitDeclarationOnly` (plus `tsc-alias` where path aliases are used) alongside its Vite

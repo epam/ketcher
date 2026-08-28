@@ -629,16 +629,16 @@ export class SequenceViewModel {
     const isAntisenseGap = (item?: ITwoStrandedChainItem) =>
       Boolean(
         item &&
-          (item.antisenseNode instanceof BackBoneSequenceNode ||
-            item.antisenseNode instanceof EmptySequenceNode),
+        (item.antisenseNode instanceof BackBoneSequenceNode ||
+          item.antisenseNode instanceof EmptySequenceNode),
       );
 
     const isRealAntisenseNode = (item?: ITwoStrandedChainItem) =>
       Boolean(
         item &&
-          item.antisenseNode &&
-          !(item.antisenseNode instanceof BackBoneSequenceNode) &&
-          !(item.antisenseNode instanceof EmptySequenceNode),
+        item.antisenseNode &&
+        !(item.antisenseNode instanceof BackBoneSequenceNode) &&
+        !(item.antisenseNode instanceof EmptySequenceNode),
       );
 
     // Collect consecutive antisense gap cells starting next to `index` in the

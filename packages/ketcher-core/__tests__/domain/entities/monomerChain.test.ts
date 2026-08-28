@@ -30,7 +30,7 @@ const makeItem = (
     },
     struct: new Struct(),
     isAntisense,
-  } as unknown as MonomerItemType);
+  }) as unknown as MonomerItemType;
 
 const bond = (
   first: BaseMonomer,

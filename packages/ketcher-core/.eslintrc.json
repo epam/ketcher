@@ -137,7 +137,6 @@
         "src/domain/serializers/ket/fromKet/moleculeToStruct.ts",
         "src/domain/serializers/ket/fromKet/rgroupToStruct.ts",
         "src/domain/serializers/ket/fromKet/rxnToStruct.ts",
-        "src/domain/serializers/ket/fromKet/simpleObjectToStruct.ts",
         "src/domain/serializers/ket/fromKet/textToStruct.ts",
         "src/domain/serializers/ket/helpers.ts",
         "src/domain/serializers/ket/ketSerializer.ts",

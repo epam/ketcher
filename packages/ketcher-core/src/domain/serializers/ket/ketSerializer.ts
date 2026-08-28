@@ -108,6 +108,7 @@ import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import type { KetFileImageNode } from 'domain/entities/image';
 import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
+import type { KetSimpleObjectNode } from './fromKet/types';
 
 type KetMicromoleculeNode = {
   type?: string;
@@ -140,7 +141,7 @@ function parseNode(node: KetMicromoleculeNode, struct: Struct) {
       break;
     }
     case 'simpleObject': {
-      simpleObjectToStruct(node, struct);
+      simpleObjectToStruct(node as KetSimpleObjectNode, struct);
       break;
     }
     case 'molecule': {

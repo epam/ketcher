@@ -147,42 +147,6 @@ const peptideLettersFormatOptions: Array<Option> = [
 
 const inputFormats = macromoleculesFilesInputFormats;
 
-const moveDrawingEntitiesWithHiddenMicromolecules = (
-  drawingEntitiesManager: NonNullable<
-    ReturnType<KetSerializer['deserializeToDrawingEntities']>
-  >['drawingEntitiesManager'],
-  offset: Vec2,
-) => {
-  drawingEntitiesManager.allEntities.forEach(([, drawingEntity]) => {
-    drawingEntitiesManager.moveDrawingEntityModelChange(drawingEntity, offset);
-  });
-
-  drawingEntitiesManager.micromoleculesHiddenEntities.simpleObjects.forEach(
-    (simpleObject) => {
-      simpleObject.pos = simpleObject.pos.map((position) =>
-        position.add(offset),
-      );
-    },
-  );
-
-  drawingEntitiesManager.micromoleculesHiddenEntities.texts.forEach((text) => {
-    text.position = text.position.add(offset);
-    text.pos = text.pos.map((position) => position.add(offset));
-  });
-
-  drawingEntitiesManager.micromoleculesHiddenEntities.images.forEach(
-    (image) => {
-      image.addPositionOffset(offset);
-    },
-  );
-
-  drawingEntitiesManager.micromoleculesHiddenEntities.multitailArrows.forEach(
-    (multitailArrow) => {
-      multitailArrow.move(offset);
-    },
-  );
-};
-
 const positionStructureOnNextSequenceLine = (
   drawingEntitiesManager: NonNullable<
     ReturnType<KetSerializer['deserializeToDrawingEntities']>
@@ -201,7 +165,7 @@ const positionStructureOnNextSequenceLine = (
 
   const offset = Vec2.diff(nextChainPosition, new Vec2(firstEntityPosition));
 
-  moveDrawingEntitiesWithHiddenMicromolecules(drawingEntitiesManager, offset);
+  drawingEntitiesManager.moveAllEntitiesWithHiddenMicromolecules(offset);
 };
 
 const addToCanvas = ({

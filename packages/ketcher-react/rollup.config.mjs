@@ -83,7 +83,7 @@ const config = {
       plugins: [autoprefixer({ grid: 'autoplace' })],
       extract: 'index.css',
       minimize: isProduction,
-      sourceMap: true,
+      sourceMap: !isProduction,
       include: [includePattern, '../ketcher-macromolecules/dist/index.css'],
     }),
     svgrPlugin({ include: includePattern }),

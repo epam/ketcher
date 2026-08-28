@@ -5,16 +5,15 @@
 
 ## Decision
 
-Build every package in this repository with **Vite 8** (Rolldown), replacing Rollup 2 in the
-four publishable packages and `react-scripts` (webpack) in `demo`.
+Build every package in this repository with **Vite 8** (Rolldown), replacing Rollup 2 in three of the
+four publishable packages and `react-scripts` (webpack) in `demo`. `ketcher-standalone` remains on
+Rollup 2 — see _Consequences_.
 
 Two targets are explicitly excluded:
 
 - **`example-ssr`** stays on Next.js. It is an SSR application with its own bundler; moving it
   to Vite would mean abandoning SSR or rewriting the app.
 - **`ketcher-autotests`** has no bundler to migrate.
-
-`ketcher-standalone` is migrated last and may remain on Rollup 2 — see _Consequences_.
 
 The **published contract is frozen**: every package keeps its current file names, output
 formats, and `main`/`module`/`types`/`exports` entries, including entries that are currently
@@ -98,13 +97,27 @@ Playwright suite runs. `example-ssr` is the only target that resolves the packag
 through their `exports` maps — `example` aliases them to source — so it is the sole check that
 the frozen contract, the CJS `require` conditions, and SSR-safety actually hold.
 
-**`ketcher-standalone` may stay on Rollup 2 indefinitely, and that is an accepted outcome.** It
-runs six sequential builds over `INDIGO_MODULE_NAME` to emit six output directories behind four
-`exports` subpaths, and depends on `rollup-plugin-web-worker-loader` and
-`@surma/rollup-plugin-off-main-thread`, neither of which has a guaranteed Rolldown equivalent.
-The agreed abort criterion is web-worker output specifically: if it cannot be reproduced, the
-package stays on Rollup. Two toolchains is a worse outcome than one, but far better than
-degrading a package whose WASM and worker loading the entire standalone mode depends on.
+**`ketcher-standalone` stays on Rollup 2. This was attempted, and the abort criterion fired.**
+The package runs six sequential builds over `INDIGO_MODULE_NAME` to emit six output directories
+behind four `exports` subpaths, and four of those six inline their Indigo worker via
+`rollup-plugin-web-worker-loader`. Under Vite 8 that plugin fails with
+`Error: Missing field 'moduleType'` from Rolldown's native binding layer.
+
+The cause is structural, not a configuration oversight. The plugin bundles the worker by running
+a **nested Rollup build** inside its own `load` hook, and it seeds that nested build with the
+outer build's entire plugin list. Under Rollup-only that was safe, because both builds spoke the
+same plugin contract. Under Vite 8 the outer list holds Rolldown-oriented plugins whose hooks
+return Rolldown-shaped results, and re-invoking them through real Rollup 2 collides the two
+module-resolution contracts.
+
+Only two routes exist past it: fork the third-party plugin's internals, or drop the custom
+`web-worker:` import protocol for Vite's native `?worker&inline` — which requires editing
+`useWasmLoader.ts`, i.e. changing source to suit the bundler. Both cross from reproducing the
+existing behavior into rewriting it, so neither was taken.
+
+Two toolchains is a worse outcome than one, but far better than degrading the package that the
+entire standalone mode's WASM and worker loading depends on. Revisit if the plugin gains Rolldown
+support, or if changing the worker import protocol becomes acceptable on its own merits.
 
 A future reader finding Rollup configs still present in this repository should treat them as a
 deliberate exception, not as unfinished work.

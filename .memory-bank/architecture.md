@@ -142,7 +142,7 @@ flowchart LR
 The repository is an npm-workspaces monorepo with no additional monorepo tool (no Lerna, Nx, or
 Turbo). Cross-package orchestration is plain npm scripts sequenced with `npm-run-all2`.
 
-**Target toolchain: Vite 8 (Rolldown) everywhere.** Two targets are excluded by design —
+**Toolchain: Vite 8 (Rolldown), except where noted below.** Two targets are excluded by design —
 `example-ssr` builds with Next.js, and `ketcher-autotests` has no bundler. `ketcher-standalone`
 may remain on Rollup 2 permanently if its web-worker output cannot be reproduced; if you find a
 Rollup config in this repo, check the ADR before assuming it is unfinished work.
@@ -152,7 +152,7 @@ Rollup config in this repo, check the ADR before assuming it is unfinished work.
 | `packages/ketcher-core`           | library | Vite 8, per-file output (`preserveModules`)         |
 | `packages/ketcher-react`          | library | Vite 8, dual ESM/CJS, extracted CSS                 |
 | `packages/ketcher-macromolecules` | library | Vite 8, single-file dual output, extracted CSS      |
-| `packages/ketcher-standalone`     | library | six build variants — Rollup 2 unless proven on Vite |
+| `packages/ketcher-standalone`     | library | six build variants — **stays on Rollup 2**, see ADR |
 | `example`                         | app     | Vite 8                                              |
 | `demo`                            | app     | Vite 8                                              |
 | `example-ssr`                     | app     | Next.js — not a Vite target                         |

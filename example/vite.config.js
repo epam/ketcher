@@ -12,7 +12,6 @@ import polymerEditorTSConfig from '../packages/ketcher-macromolecules/tsconfig.j
 import ketcherReactPkg from '../packages/ketcher-react/package.json';
 import ketcherReactTSConfig from '../packages/ketcher-react/tsconfig.json';
 import ketcherStandaloneTSConfig from '../packages/ketcher-standalone/tsconfig.json';
-import { envVariables as exampleEnv } from './config/webpack.config';
 import {
   createReplaceValues,
   getTagName,
@@ -23,6 +22,16 @@ import { INDIGO_WORKER_IMPORTS } from '../build-config/indigo-worker-imports.mjs
 // Computed before the process.env assignment below, to match the point at which
 // the packages' own builds resolve these values.
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
+
+// Formerly computed in the now-removed example/config/webpack.config.js
+// (a CRA/webpack config kept alive only to expose these three values).
+// Reproduced verbatim here: MODE and API_PATH come from the shell env at
+// process start, KETCHER_ENABLE_REDUX_LOGGER is always the string "false".
+const exampleEnv = {
+  MODE: process.env.MODE || 'standalone',
+  API_PATH: process.env.REACT_APP_API_PATH,
+  KETCHER_ENABLE_REDUX_LOGGER: JSON.stringify(false),
+};
 
 const ketcherReactValues = createReplaceValues({
   version: ketcherReactPkg.version,

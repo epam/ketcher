@@ -9,6 +9,9 @@ import {
   createReplaceValues,
   getTagName,
 } from '../../build-config/replace-values.mjs';
+import { createExternalPredicate } from '../../build-config/external-predicate.mjs';
+import { createPathAliases } from '../../build-config/path-aliases.mjs';
+import { createRawTextPlugin } from '../../build-config/raw-text-plugin.mjs';
 
 const pkg = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
@@ -17,73 +20,37 @@ const pkg = JSON.parse(
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const rootDir = new URL('.', import.meta.url).pathname;
 
-// Rollup's peerDepsExternal({ includeDependencies: true }) externalized every
-// entry in `dependencies` and `peerDependencies`. No plugin equivalent exists
-// for Rolldown, so it is reproduced by hand from package.json. Note
-// `ketcher-macromolecules` is intentionally NOT a `dependencies` entry here -
-// it is only reached through the dynamic `import('ketcher-macromolecules')`
-// in `src/Editor.tsx`, and was never externalized by peerDepsExternal
-// either, so it stays bundled here exactly as it was under Rollup.
-const packageExternals = [
-  ...Object.keys(pkg.dependencies || {}),
-  ...Object.keys(pkg.peerDependencies || {}),
-  // ketcher-macromolecules' compiled ESM entry (dist/index.modern.js, bundled
-  // here via the dynamic import in src/Editor.tsx) itself imports the real
-  // `ketcher-react` package - a documented circular-dependency workaround
-  // (see src/Editor.tsx's comment on why it types that import as `unknown`).
-  // Rollup only ever warned about this as an "unresolved dependency" and left
-  // it external; Rolldown hard-fails unless it is listed explicitly.
-  pkg.name,
-];
-
-// Grep of src/ found no Node builtin imports in this package (unlike
-// ketcher-core, which needed `events`), so no Node-builtin externals list is
-// needed here. Left as an explicit empty array so the omission is visible
-// rather than silent, mirroring ketcher-macromolecules/vite.config.mjs.
-const nodeBuiltinExternals = [];
-
-const allExternals = [...packageExternals, ...nodeBuiltinExternals];
-
-// peerDepsExternal externalizes a package's deep imports too (e.g.
-// `lodash/fp`), not just the bare package name. Rolldown's `external` array
-// only does exact-string matching, so this is reproduced as a predicate
-// function, mirroring ketcher-core/vite.config.mjs and
-// ketcher-macromolecules/vite.config.mjs.
-const external = (id) =>
-  allExternals.some((dep) => id === dep || id.startsWith(`${dep}/`));
+// Note `ketcher-macromolecules` is intentionally NOT a `dependencies` entry
+// here - it is only reached through the dynamic
+// `import('ketcher-macromolecules')` in `src/Editor.tsx`, and was never
+// externalized by peerDepsExternal either, so it stays bundled here exactly
+// as it was under Rollup.
+//
+// `extraExternals: [pkg.name]` is needed because ketcher-macromolecules'
+// compiled ESM entry (dist/index.modern.js, bundled here via the dynamic
+// import in src/Editor.tsx) itself imports the real `ketcher-react` package
+// - a documented circular-dependency workaround (see src/Editor.tsx's
+// comment on why it types that import as `unknown`). Rollup only ever
+// warned about this as an "unresolved dependency" and left it external;
+// Rolldown hard-fails unless it is listed explicitly.
+const { external } = createExternalPredicate({
+  pkg,
+  extraExternals: [pkg.name],
+});
 
 // rollup-plugin-typescript2 resolved this package's tsconfig.build.json
 // `paths` (`components`, `src/*`) at bundle time via a TS-aware resolveId.
-// Rolldown's native TS transform does not do this, so it is reproduced
-// explicitly here from the same tsconfig.build.json paths, mirroring the
-// other two packages. `tsconfig.json`'s additional `ketcher-core`-internal
-// aliases are IDE/typecheck-only (see tsconfig.json comments / notes) and
-// must NOT be used for the actual build.
-const srcDir = resolve(rootDir, 'src');
+// Rolldown's native TS transform does not do this, so these aliases are
+// derived from that same tsconfig.build.json (see
+// build-config/path-aliases.mjs). `tsconfig.json`'s additional
+// `ketcher-core`-internal aliases are IDE/typecheck-only (see tsconfig.json
+// comments / notes) and must NOT be used for the actual build -
+// tsconfig.build.json overrides `paths` entirely, so they are never read.
+const pathAliases = createPathAliases(rootDir);
 
-const pathAliases = [
-  { find: /^components$/, replacement: `${srcDir}/components` },
-  { find: /^src(\/.*)?$/, replacement: `${srcDir}$1` },
-];
-
-// rollup-plugin-string has no Rolldown equivalent (per SPEC.md): a small
-// inline transform imports `.sdf` files (chemical structure template data,
-// this package's raw-text extension - `.ket` in ketcher-core/macromolecules)
-// as raw-text default exports, matching rollup-plugin-string's output shape.
-const sdfRawTextPlugin = () => ({
+const sdfRawTextPlugin = createRawTextPlugin({
   name: 'ketcher-react-sdf-raw-text',
-  transform(_code, id) {
-    if (!id.endsWith('.sdf')) {
-      return null;
-    }
-
-    const content = readFileSync(id, 'utf8');
-
-    return {
-      code: `export default ${JSON.stringify(content)};`,
-      map: null,
-    };
-  },
+  extension: '.sdf',
 });
 
 // rollup-plugin-copy copied `src/style/*.svg` into `dist` as real files
@@ -138,22 +105,21 @@ export default defineConfig({
   define: valuesToReplace,
   plugins: [
     svgr({ include: '**/*.svg' }),
-    sdfRawTextPlugin(),
+    sdfRawTextPlugin,
     copySvgAssetsPlugin(),
   ],
   build: {
     // Rolldown minifies library output by default; Rollup did not. Publishing
     // minified library code breaks downstream stack traces and makes output
-    // diffing impossible. Per SPEC.md.
+    // diffing impossible. See
+    // .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
     minify: false,
-    // The Rollup baseline always ran with NODE_ENV=production (the `build`
-    // script hardcodes it) and minified only its extracted CSS
-    // (`rollup-plugin-postcss`'s `minimize: isProduction`), independent of
-    // JS minification. `build.cssMinify` defaults to `build.minify` in Vite,
-    // which would turn CSS minification off too if left alone - set
-    // explicitly, mirroring ketcher-macromolecules/vite.config.mjs.
+    // `build.cssMinify` tracks `isProduction`, mirroring
+    // ketcher-macromolecules/vite.config.mjs - see that file's comment and
+    // .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
     cssMinify: isProduction,
-    // Current builds run `rollup -c -m true`. Per SPEC.md.
+    // Current builds run `rollup -c -m true`. See
+    // .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
     sourcemap: true,
     emptyOutDir: false,
     // Vite only skips wrapping dynamic import() in its browser-only preload
@@ -174,10 +140,10 @@ export default defineConfig({
     rolldownOptions: {
       input: resolve(rootDir, pkg.source),
       external,
-      // Tree-shaking is left at Rolldown's default per SPEC.md - it was
-      // measured and rejected for ketcher-core, and this package is not
-      // preserveModules so the concern that motivated even trying it there
-      // does not apply here.
+      // Tree-shaking is left at Rolldown's default - it was measured and
+      // rejected for ketcher-core, and this package is not preserveModules
+      // so the concern that motivated even trying it there does not apply
+      // here.
       output: [output('cjs', 'index.js'), output('es', 'index.js')],
     },
   },

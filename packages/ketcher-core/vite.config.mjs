@@ -3,70 +3,33 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import { license } from '../../license-banner.mjs';
 import { mode } from '../../build-config/replace-values.mjs';
+import { createExternalPredicate } from '../../build-config/external-predicate.mjs';
+import { createPathAliases } from '../../build-config/path-aliases.mjs';
+import { createRawTextPlugin } from '../../build-config/raw-text-plugin.mjs';
 
 const pkg = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
 );
 
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
-
-// Rollup's peerDepsExternal({ includeDependencies: true }) externalized every
-// entry in `dependencies` and `peerDependencies`. No plugin equivalent exists
-// for Rolldown, so it is reproduced by hand from package.json.
-const packageExternals = [
-  ...Object.keys(pkg.dependencies || {}),
-  ...Object.keys(pkg.peerDependencies || {}),
-];
+const rootDir = new URL('.', import.meta.url).pathname;
 
 // Rolldown resolves bare 'events' to a bundled polyfill where Rollup left it
 // external (nothing else under src/ imports a Node builtin - confirmed by
-// grep). Explicit per SPEC.md.
-const nodeBuiltinExternals = ['events'];
-
-const allExternals = [...packageExternals, ...nodeBuiltinExternals];
-
-// peerDepsExternal externalizes a package's deep imports too (e.g.
-// `ajv/dist/runtime/ucs2length`, `lodash/fp`), not just the bare package
-// name. Rolldown's `external` array only does exact-string matching, so this
-// is reproduced as a predicate function.
-const external = (id) =>
-  allExternals.some((dep) => id === dep || id.startsWith(`${dep}/`));
+// grep). Explicit per .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
+const { external } = createExternalPredicate({ pkg, nodeBuiltins: ['events'] });
 
 // The Rollup build resolved bare `domain/*`, `application/*`,
 // `infrastructure/*`, `utilities` and `types` imports via
 // @rollup/plugin-typescript's TS-aware resolveId (which honors tsconfig
-// `paths`). Rolldown's native TS transform does not do this, so it is
-// reproduced explicitly here from the same tsconfig.json paths.
-const srcDir = resolve(new URL('.', import.meta.url).pathname, 'src');
+// `paths`). Rolldown's native TS transform does not do this, so these
+// aliases are derived from the same tsconfig `paths` (see
+// build-config/path-aliases.mjs).
+const pathAliases = createPathAliases(rootDir);
 
-const pathAliases = [
-  { find: /^domain(\/.*)?$/, replacement: `${srcDir}/domain$1` },
-  { find: /^application(\/.*)?$/, replacement: `${srcDir}/application$1` },
-  {
-    find: /^infrastructure(\/.*)?$/,
-    replacement: `${srcDir}/infrastructure$1`,
-  },
-  { find: /^utilities$/, replacement: `${srcDir}/utilities` },
-  { find: /^types$/, replacement: `${srcDir}/types` },
-];
-
-// rollup-plugin-string has no Rolldown equivalent (per SPEC.md): a small
-// inline transform imports `.ket` files as raw-text default exports, matching
-// rollup-plugin-string's output shape.
-const ketRawTextPlugin = () => ({
+const ketRawTextPlugin = createRawTextPlugin({
   name: 'ketcher-core-ket-raw-text',
-  transform(_code, id) {
-    if (!id.endsWith('.ket')) {
-      return null;
-    }
-
-    const content = readFileSync(id, 'utf8');
-
-    return {
-      code: `export default ${JSON.stringify(content)};`,
-      map: null,
-    };
-  },
+  extension: '.ket',
 });
 
 const output = (format, entryFileNames) => ({
@@ -89,13 +52,15 @@ export default defineConfig({
       isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
     ),
   },
-  plugins: [ketRawTextPlugin()],
+  plugins: [ketRawTextPlugin],
   build: {
     // Rolldown minifies library output by default; Rollup did not. Publishing
     // minified library code breaks downstream stack traces and makes output
-    // diffing impossible. Per SPEC.md.
+    // diffing impossible. See
+    // .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
     minify: false,
-    // Current builds run `rollup -c -m true`. Per SPEC.md.
+    // Current builds run `rollup -c -m true`. See
+    // .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
     sourcemap: true,
     emptyOutDir: false,
     // Vite only skips wrapping dynamic import() in its browser-only preload
@@ -108,12 +73,12 @@ export default defineConfig({
     // rolldownOptions.output, which takes precedence over anything build.lib
     // would otherwise derive.
     lib: {
-      entry: resolve(new URL('.', import.meta.url).pathname, pkg.source),
+      entry: resolve(rootDir, pkg.source),
       formats: ['cjs', 'es'],
     },
     modulePreload: false,
     rolldownOptions: {
-      input: resolve(new URL('.', import.meta.url).pathname, pkg.source),
+      input: resolve(rootDir, pkg.source),
       external,
       // Tree-shaking is left at Rolldown's default. It was briefly disabled
       // here on the theory that preserveModules needs every preserved module

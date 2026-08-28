@@ -3,6 +3,9 @@ declare module '*.less' {
   export default classes;
 }
 
+// Needed for `import 'react-contexify/ReactContexify.css'`
+// (see script/ui/views/components/ContextMenu/ContextMenu.tsx). Previously
+// declared in the now-deleted rollup-plugin-shims.d.ts.
 declare module '*.css' {
   const content: string;
   export default content;

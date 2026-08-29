@@ -671,10 +671,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('href', `#${CHAIN_START_ARROW_SYMBOL_ID}`);
 
     if (this.isAntisenseNode) {
-      arrowElement
-        ?.style('transform-box', 'fill-box')
-        .style('transform-origin', 'center')
-        .style('transform', 'rotate(180deg)');
+      // Rotate around the arrow glyph's own center (not the whole use/symbol box,
+      // whose fill-box is computed unreliably for use+symbol), keeping it in place.
+      arrowElement?.attr('transform', 'rotate(180, -11, -6)');
     }
   }
 

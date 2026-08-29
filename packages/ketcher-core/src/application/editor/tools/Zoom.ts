@@ -28,6 +28,13 @@ export enum SCROLL_POSITION {
   BOTTOM = 'BOTTOM',
 }
 
+// Height reserved below the canvas for the horizontal scrollbar. Consuming
+// apps shrink the canvas SVG by this amount (see CanvasWrapper), so
+// structures can never be positioned underneath the scrollbar and the
+// scrollbar can be drawn inside the SVG the same simple way as the vertical
+// one.
+export const HORIZONTAL_SCROLLBAR_TRACK_HEIGHT = 20;
+
 interface ScrollBar {
   name: string;
   offsetStart: number;
@@ -122,6 +129,7 @@ export class ZoomTool implements BaseTool {
       })
       .on('zoom', this.zoomAction.bind(this))
       .on('end', () => {
+        this.keepContentAboveHorizontalScrollbar();
         notifyRenderComplete();
       });
     this.canvasWrapper.call(this.zoom);
@@ -342,6 +350,32 @@ export class ZoomTool implements BaseTool {
         this.scrollBars.vertical.offsetEnd / this.zoomLevel,
       );
     }
+  }
+
+  // Reserving HORIZONTAL_SCROLLBAR_TRACK_HEIGHT px of empty space below the
+  // canvas SVG only keeps *newly added* structures out from behind the
+  // horizontal scrollbar (see isAddedMonomerOutBelowCanvas in Editor.ts) —
+  // nothing stops the user from panning existing structures into that strip
+  // by hand (Hand tool drag, wheel, or dragging the scrollbar thumb itself).
+  // Called after every pan/zoom gesture ends, this snaps content back above
+  // the scrollbar the same way scrollToVerticalBottom already does for its
+  // one caller, so manual panning can't leave monomers hidden behind it.
+  private isSnappingAboveHorizontalScrollbar = false;
+
+  private keepContentAboveHorizontalScrollbar() {
+    if (this.isSnappingAboveHorizontalScrollbar) return;
+
+    const safeZone = this.HORIZONTAL_DIST_TO_EDGE + this.WIDTH;
+    const offsetEnd = this.scrollBars?.vertical?.offsetEnd;
+    if (offsetEnd === undefined || offsetEnd >= safeZone) return;
+
+    this.isSnappingAboveHorizontalScrollbar = true;
+    this.zoom?.translateBy(
+      this.canvasWrapper,
+      0,
+      (offsetEnd - safeZone) / this.zoomLevel,
+    );
+    this.isSnappingAboveHorizontalScrollbar = false;
   }
 
   mouseWheeled(event) {

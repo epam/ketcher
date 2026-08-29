@@ -133,7 +133,6 @@ function prepareSupForSaving(sgroup: SGroup, mol: Struct): void {
       (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
       (a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
     ) {
-      /* eslint-enable no-mixed-operators */
       xBonds.push(bid);
     }
   });

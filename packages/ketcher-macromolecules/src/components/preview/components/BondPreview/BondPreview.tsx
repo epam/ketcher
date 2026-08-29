@@ -50,11 +50,7 @@ const BondPreview = ({ className }: Props) => {
     <Container
       className={className}
       data-testid="polymer-library-preview"
-      style={{
-        top: style?.top,
-        left: style?.left,
-        right: style?.right,
-      }}
+      style={{ top: style?.top, left: style?.left, right: style?.right }}
     >
       <ConnectionOverview
         firstMonomer={firstMonomer}

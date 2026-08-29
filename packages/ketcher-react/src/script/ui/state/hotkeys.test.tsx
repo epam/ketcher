@@ -17,7 +17,7 @@ describe('Hot keys', () => {
   it('should select last chosen selected tool when user press ESC', async () => {
     renderWithMockStore(<LeftToolbarContainer />);
     const text = screen.getByTestId('text');
-    // eslint-disable-next-line testing-library/no-unnecessary-act
+
     act(() => {
       fireEvent.click(text);
       fireEvent.keyDown(text, {
@@ -30,7 +30,7 @@ describe('Hot keys', () => {
 
   it('Shift+Tab to switch selection tool', async () => {
     renderWithMockStore(<LeftToolbarContainer />);
-    // eslint-disable-next-line testing-library/no-unnecessary-act
+
     act(() => {
       fireEvent.keyDown(document, {
         code: 'Tab',

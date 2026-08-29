@@ -93,8 +93,9 @@ class ReStruct {
     RaphaelPath
   >;
 
-  public connectedComponents: Pool<Pile> = new Pool();
+  public connectedComponents: Pool<Pile<number>> = new Pool();
   private readonly ccFragmentType: Pool<number> = new Pool();
+
   private structChanged = false;
   public needRecalculateVisibleAtomsAndBonds = false;
 
@@ -122,7 +123,6 @@ class ReStruct {
     molecule,
     render: Render | { skipRaphaelInitialization: boolean; theme },
   ) {
-    // eslint-disable-line max-statements
     this.render = render as Render;
     this.molecule = molecule || new Struct();
     this.initLayers();
@@ -227,10 +227,10 @@ class ReStruct {
 
   getConnectedComponent(
     aid: Array<number> | number,
-    adjacentComponents: Pile,
-  ): Pile {
+    adjacentComponents: Pile<number>,
+  ): Pile<number> {
     const list = Array.isArray(aid) ? Array.from(aid) : [aid];
-    const ids = new Pile();
+    const ids = new Pile<number>();
 
     while (list.length > 0) {
       const aid = list.pop();
@@ -253,7 +253,7 @@ class ReStruct {
 
   addConnectedComponent(idSet: Pile<number>): number {
     const compId = this.connectedComponents.add(idSet);
-    const adjacentComponents = new Pile();
+    const adjacentComponents = new Pile<number>();
     const aidSet = this.getConnectedComponent(
       Array.from(idSet),
       adjacentComponents,
@@ -274,7 +274,12 @@ class ReStruct {
   }
 
   removeConnectedComponent(ccid: number): boolean {
-    this.connectedComponents.get(ccid)?.forEach((aid) => {
+    const connectedComponent = this.connectedComponents.get(ccid);
+    if (!connectedComponent) {
+      return false;
+    }
+
+    connectedComponent.forEach((aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.component = -1;
     });
@@ -286,7 +291,7 @@ class ReStruct {
     this.atoms.forEach((atom, aid) => {
       if (atom.component >= 0) return;
 
-      const adjacentComponents = new Pile();
+      const adjacentComponents = new Pile<number>();
       const idSet = this.getConnectedComponent(aid, adjacentComponents);
       adjacentComponents.forEach((ccid) => {
         this.removeConnectedComponent(ccid);
@@ -316,7 +321,6 @@ class ReStruct {
     pos: Vec2 | null = null,
     visible = false,
   ): void {
-    // eslint-disable-line max-params
     if (!path || !this.layers[group].node.parentNode) return;
     const paths = Array.isArray(path) ? path : [path];
 
@@ -411,7 +415,7 @@ class ReStruct {
    * because of atom's vBox contain text label with is not constant after flip/rotate
    * and this lead to unstable flip tool work
    */
-  // eslint-disable-next-line no-use-before-define
+
   getSelectionBoxCenter(selection: SelectionMap): Vec2 | undefined {
     let boundingBox: Box2Abs | null = null;
 
@@ -437,7 +441,6 @@ class ReStruct {
     return boundingBox?.centre();
   }
 
-  // eslint-disable-next-line no-use-before-define
   getVBoxObj(selection?: SelectionMap): Box2Abs {
     if (isSelectionEmpty(selection)) {
       selection = this.getAllElementsAsSelectionMap();
@@ -449,9 +452,7 @@ class ReStruct {
     return boundingBox;
   }
 
-  // eslint-disable-next-line no-use-before-define
   private getAllElementsAsSelectionMap(): SelectionMap {
-    // eslint-disable-next-line no-use-before-define
     const selection: SelectionMap = {};
     Object.keys(ReStruct.maps).forEach((map) => {
       selection[map] = Array.from(this[map].keys());
@@ -459,7 +460,6 @@ class ReStruct {
     return selection;
   }
 
-  // eslint-disable-next-line no-use-before-define
   private getBoundingBoxForSelection(selection: SelectionMap): Box2Abs | null {
     let boundingBox: Box2Abs | null = null;
     Object.keys(ReStruct.maps).forEach((elementKey) => {
@@ -528,7 +528,6 @@ class ReStruct {
   }
 
   update(force: boolean): boolean {
-    // eslint-disable-line max-statements
     force = force || !this.initialized;
 
     if (force || this.needRecalculateVisibleAtomsAndBonds) {
@@ -913,7 +912,6 @@ class ReStruct {
   }
 
   private showAtoms(): void {
-    // eslint-disable-line max-statements
     const options = this.render.options;
     this.atomsChanged.forEach((_value, aid) => {
       const atom = this.atoms.get(aid);
@@ -931,7 +929,6 @@ class ReStruct {
   }
 
   showBonds(): void {
-    // eslint-disable-line max-statements
     const options = this.render.options;
 
     this.bondsChanged.forEach((_value, bid) => {
@@ -1067,7 +1064,6 @@ class ReStruct {
   }
 }
 
-// eslint-disable-next-line no-use-before-define
 function isSelectionEmpty(selection?: SelectionMap): selection is undefined {
   if (!selection) return true;
 

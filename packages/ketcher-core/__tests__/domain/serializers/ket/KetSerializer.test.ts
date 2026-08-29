@@ -46,6 +46,7 @@ import {
   createRenderersManager,
 } from '../../../helpers/dom';
 import { CoreEditor } from 'application/editor';
+import { KetcherLogger } from 'utilities';
 
 const ket = new KetSerializer();
 
@@ -188,6 +189,18 @@ describe('deserialize (ToStruct)', () => {
     expect(
       spy.mock.results[0].value.rgroups.get(14) instanceof RGroup,
     ).toBeTruthy();
+  });
+  it('logs an error when R-group logic is missing', () => {
+    const errorSpy = jest
+      .spyOn(KetcherLogger, 'error')
+      .mockImplementation(() => undefined);
+
+    const struct = rgroupToStruct.rgroupToStruct({});
+
+    expect(errorSpy).toHaveBeenCalledWith(
+      'R-group logic (rlogic) is missing on a KET R-group item',
+    );
+    expect(struct.rgroups.size).toBe(0);
   });
   it('validation function', () => {
     const spy = jest.spyOn(validate, 'validate');

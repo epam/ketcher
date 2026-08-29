@@ -17,7 +17,7 @@
 import { RGroup, type RGroupAttributes } from 'domain/entities/rgroup';
 import type { Struct } from 'domain/entities/struct';
 
-import { ifDef } from 'utilities';
+import { ifDef, KetcherLogger } from 'utilities';
 import { moleculeToStruct } from './moleculeToStruct';
 import type { KetItem, KetRGroupLogic } from './types';
 
@@ -25,7 +25,10 @@ export function rgroupToStruct(ketItem: KetItem): Struct {
   const struct = moleculeToStruct(ketItem);
   const rlogic = ketItem.rlogic;
   if (!rlogic) {
-    throw new Error('R-group logic (rlogic) is missing on a KET R-group item');
+    KetcherLogger.error(
+      'R-group logic (rlogic) is missing on a KET R-group item',
+    );
+    return struct;
   }
   const rgroup = rgroupLogicToStruct(rlogic);
   struct.frags.forEach((_value, key) => {

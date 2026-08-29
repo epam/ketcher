@@ -51,9 +51,10 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const appRootRef = useRef<Root | null>(null);
   const cleanupRef = useRef<(() => unknown) | null>(null);
   const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
+  const ketcherRef = useRef<Ketcher | null>(null);
 
   const setServerRef = useRef<(structService: StructService) => void>(() => {});
-  const { ketcherId, structServiceProvider } = props;
+  const structServiceProvider = props.structServiceProvider;
 
   const rootElRef = useRef<HTMLDivElement>(null);
 
@@ -62,6 +63,8 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   });
 
   useEffect(() => {
+    const ketcherId = ketcherRef.current?.id;
+
     if (!ketcherId) {
       return;
     }
@@ -71,7 +74,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       structServiceProvider,
       setServerRef.current,
     );
-  }, [ketcherId, structServiceProvider]);
+  }, [structServiceProvider]);
 
   const initKetcher = async () => {
     appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
@@ -85,6 +88,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
     initPromiseRef.current?.then(({ ketcher, cleanup, builder, setServer }) => {
       cleanupRef.current = cleanup;
       ketcherBuilderRef.current = builder;
+      ketcherRef.current = ketcher;
       setServerRef.current = setServer;
       props.onSetKetcherId?.(ketcher.id);
 

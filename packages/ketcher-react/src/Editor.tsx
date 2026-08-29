@@ -112,25 +112,31 @@ export const Editor = (props: Props) => {
     };
   }, []);
 
-  useEffect(() => {
+  const tryInitEditor = (
+    initializedKetcher?: Ketcher,
+    initializedMoleculesEditor?: MoleculesEditor,
+    initializedMacromoleculesEditor?: CoreEditor,
+  ) => {
     if (
-      ketcher &&
-      moleculesEditor &&
-      (macromoleculesEditor || props.disableMacromoleculesEditor)
+      initializedKetcher &&
+      initializedMoleculesEditor &&
+      (initializedMacromoleculesEditor || props.disableMacromoleculesEditor)
     ) {
-      if (ketcherProvider.getIndexById(ketcher.id) !== -1) {
-        props.onInit?.(ketcher);
+      if (ketcherProvider.getIndexById(initializedKetcher.id) !== -1) {
+        props.onInit?.(initializedKetcher);
       }
     }
-  }, [moleculesEditor, macromoleculesEditor]);
+  };
 
   const onInitMoleculesEditor = (ketcher: Ketcher) => {
     setKetcher(ketcher);
     setMoleculesEditor(ketcher.editor);
+    tryInitEditor(ketcher, ketcher.editor, macromoleculesEditor);
   };
 
   const onInitMacromoleculesEditor = (macromoleculesEditor: CoreEditor) => {
     setMacromoleculesEditor(macromoleculesEditor);
+    tryInitEditor(ketcher, moleculesEditor, macromoleculesEditor);
   };
 
   return (

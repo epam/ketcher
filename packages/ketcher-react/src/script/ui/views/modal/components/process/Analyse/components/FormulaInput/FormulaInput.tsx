@@ -66,7 +66,11 @@ function FormulaInput({ value, contentEditable }: FormulaInputProps) {
     }
     content.push(value.substring(pos, cnd.index) + cnd[2]);
     if (cnd[3].length > 0) {
-      content.push(<sub key={content.length}>{cnd[3]}</sub>);
+      content.push(
+        <sub key={content.length} className={styles.subscript}>
+          {cnd[3]}
+        </sub>,
+      );
     }
     pos = cnd.index + cnd[0].length;
     cnd = formulaRegexp.exec(value);

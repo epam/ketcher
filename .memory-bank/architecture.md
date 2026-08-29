@@ -132,3 +132,49 @@ flowchart LR
         KD --> MDL
     end
 ```
+
+---
+
+## Build & Toolchain
+
+> Migration in progress. See [ADR 2026-08-28 — Vite for library builds](./adr/2026-08-28-vite-for-library-builds.md) for the decision and its rationale.
+
+The repository is an npm-workspaces monorepo with no additional monorepo tool (no Lerna, Nx, or
+Turbo). Cross-package orchestration is plain npm scripts sequenced with `npm-run-all2`.
+
+**Toolchain: Vite 8 (Rolldown), except where noted below.** Two targets are excluded by design —
+`example-ssr` builds with Next.js, and `ketcher-autotests` has no bundler. `ketcher-standalone`
+may remain on Rollup 2 permanently if its web-worker output cannot be reproduced; if you find a
+Rollup config in this repo, check the ADR before assuming it is unfinished work.
+
+| Target                            | Kind    | Builder                                             |
+| --------------------------------- | ------- | --------------------------------------------------- |
+| `packages/ketcher-core`           | library | Vite 8, per-file output (`preserveModules`)         |
+| `packages/ketcher-react`          | library | Vite 8, dual ESM/CJS, extracted CSS                 |
+| `packages/ketcher-macromolecules` | library | Vite 8, single-file dual output, extracted CSS      |
+| `packages/ketcher-standalone`     | library | six build variants — **stays on Rollup 2**, see ADR |
+| `example`                         | app     | Vite 8                                              |
+| `demo`                            | app     | Vite 8                                              |
+| `example-ssr`                     | app     | Next.js — not a Vite target                         |
+
+### Invariants
+
+**The published contract is frozen.** Package file names, output formats, and
+`main`/`module`/`types`/`exports` entries do not change as a result of build tooling work.
+Some of that metadata is known to be wrong (see the ADR) and is preserved deliberately.
+
+**Type declarations are emitted by TypeScript, not the bundler.** Each package runs
+`tsc --emitDeclarationOnly`, plus `tsc-alias` where path aliases are used.
+
+**Build configuration is shared from the root, never reached for across packages.** Constants
+common to several builds live in the root `build-config/` directory (not `build/` — `.gitignore`
+has a bare `build` pattern that would silently ignore it). A package's build config must not be
+imported by another package, and no build may read another package's `dist/` output.
+
+### Verification
+
+`example` aliases the four packages to their **source**, so it never exercises the published
+`dist/` output. `example-ssr` resolves them through their `exports` maps as a real consumer, and
+is therefore the only check that the published contract, the CJS `require` conditions, and
+SSR-safety hold. A build tooling change is verified by: build → diff `dist/` against the previous
+baseline → `example-ssr` builds and renders → Playwright suite green.

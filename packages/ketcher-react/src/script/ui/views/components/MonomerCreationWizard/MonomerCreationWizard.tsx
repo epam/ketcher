@@ -904,6 +904,14 @@ const MonomerCreationWizardInternal = ({
   );
 
   useEffect(() => {
+    // The wizard validates against the monomer library (HELM/BILN alias
+    // uniqueness, amino-acid modification types), which is a lazily fetched
+    // asset. Start the fetch as the wizard opens so those checks are not
+    // silently skipped against an empty library.
+    void provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+  }, []);
+
+  useEffect(() => {
     const externalNotificationEventListener = (event: Event) => {
       const notificationId = (event as CustomEvent<WizardNotificationId>)
         .detail;

@@ -105,7 +105,7 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
     class="css-1iug9fi"
   >
     <button
-      class="css-jgpnj2"
+      class="css-b45bi"
       data-testid="cancel-btn"
       type="button"
     >
@@ -113,7 +113,7 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
     </button>
     <button
       aria-label=""
-      class="css-1hj6p0s"
+      class="css-12fixbx"
       data-mui-internal-clone-element="true"
       data-testid="add-to-presets-btn"
       disabled=""
@@ -232,7 +232,7 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
     class="css-1iug9fi"
   >
     <button
-      class="css-jgpnj2"
+      class="css-b45bi"
       data-testid="cancel-btn"
       type="button"
     >
@@ -240,7 +240,7 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
     </button>
     <button
       aria-label=""
-      class="css-1hj6p0s"
+      class="css-12fixbx"
       data-mui-internal-clone-element="true"
       data-testid="save-btn"
       disabled=""
@@ -358,14 +358,14 @@ exports[`Test Rna Editor Expanded component should render correctly in view mode
     class="css-1iug9fi"
   >
     <button
-      class="css-jgpnj2"
+      class="css-b45bi"
       data-testid="duplicate-btn"
       type="button"
     >
       Duplicate and Edit
     </button>
     <button
-      class="css-jgpnj2"
+      class="css-b45bi"
       data-testid="edit-btn"
       type="button"
     >

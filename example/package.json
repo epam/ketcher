@@ -5,8 +5,8 @@
   "scripts": {
     "dev:standalone": "cross-env MODE=standalone vite",
     "dev:remote": "cross-env MODE=remote vite",
-    "start:standalone": "cross-env MODE=standalone react-app-rewired start",
-    "start:remote": "cross-env MODE=remote react-app-rewired start",
+    "start:standalone": "npm run dev:standalone",
+    "start:remote": "npm run dev:remote",
     "init:build": "shx mkdir -p build",
     "init:dist": "cross-env-shell shx mkdir -p dist/$MODE",
     "delete:dist": "cross-env-shell shx rm -rf dist/$MODE",
@@ -15,24 +15,22 @@
     "postbuild": "cross-env-shell npm run copy:build",
     "build:remote": "cross-env-shell MODE=remote run-s prebuild build:react postbuild",
     "build:standalone": "cross-env-shell MODE=standalone run-s prebuild build:react postbuild",
-    "build:react": "cross-env-shell MODE=$MODE react-app-rewired build && echo $MODE",
-    "build:react:analyze": "react-app-rewired build --analyze",
+    "build:react": "vite build",
+    "build:react:analyze": "vite build --mode analyze",
     "build": "npm run build:standalone && npm run build:remote",
     "build:standalone:analyze": "cross-env MODE=standalone run-s prebuild build:react:analyze postbuild",
     "build:remote:analyze": "cross-env MODE=remote run-s prebuild build:react:analyze postbuild",
-    "test": "run-s test:prettier test:stylelint test:eslint:quiet test:types test:unit",
+    "test": "run-s test:prettier test:stylelint test:eslint:quiet test:types",
     "test:eslint": "eslint .",
     "test:eslint:quiet": "npm run test:eslint -- --quiet",
     "test:eslint:fix": "npm run test:eslint -- --fix",
     "test:types": "tsc --noEmit",
-    "test:unit": "react-app-rewired test --passWithNoTests --watchAll=false",
     "test:stylelint": "stylelint \"./**/*.{css,less}\" --formatter",
     "test:prettier": "prettier --check \"./**/*.{js,ts,jsx,tsx,json}\"",
     "prettier:write": "prettier --write \"./**/*.{js,jsx,json,ts,tsx}\"",
     "stylelint:fix": "stylelint \"./**/*.{css,less}\" --formatter verbose --fix",
     "serve:remote": "serve dist/remote -c serve.json -l tcp://127.0.0.1:4001",
-    "serve:standalone": "serve dist/standalone -c serve.json -l tcp://127.0.0.1:4002",
-    "eject": "react-scripts eject"
+    "serve:standalone": "serve dist/standalone -c serve.json -l tcp://127.0.0.1:4002"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -59,27 +57,19 @@
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^6.0.1",
     "@welldone-software/why-did-you-render": "^4.3.1",
-    "copy-webpack-plugin": "^14.0.0",
     "cross-env": "^7.0.3",
-    "customize-cra": "^1.0.0",
     "eslint": "10.9.0",
-    "git-revision-webpack-plugin": "^3.0.6",
-    "html-replace-webpack-plugin": "^2.5.6",
     "less": "^4.2.0",
     "npm-run-all2": "^9.0.3",
     "prettier": "^3.9.6",
-    "react-app-rewired": "^2.2.1",
-    "react-scripts": "^5.0.1",
     "serve": "^14.2.6",
     "shx": "^0.3.3",
-    "source-map-loader": "^3.0.1",
     "typescript": "^6.0.3",
     "vite": "8.0.16",
     "vite-plugin-commonjs": "^0.10.4",
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-raw": "^1.0.3",
-    "vite-plugin-svgr": "^4.5.0",
-    "webpack-bundle-analyzer": "^4.8.0"
+    "vite-plugin-svgr": "^4.5.0"
   },
   "browserslist": {
     "production": [
@@ -93,6 +83,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "config-overrides-path": "config/webpack.config.js"
+  }
 }

@@ -1,22 +1,58 @@
 import replace from '@rollup/plugin-replace';
 import react from '@vitejs/plugin-react';
+import { copyFileSync, mkdirSync } from 'node:fs';
 import { resolve } from 'path';
 import { createLogger, defineConfig, loadEnv } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import vitePluginRaw from 'vite-plugin-raw';
 import svgr from 'vite-plugin-svgr';
 import ketcherCoreTSConfig from '../packages/ketcher-core/tsconfig.json';
-import { valuesToReplace as polymerEditorValues } from '../packages/ketcher-macromolecules/rollup.config.mjs';
+import polymerEditorPkg from '../packages/ketcher-macromolecules/package.json';
 import polymerEditorTSConfig from '../packages/ketcher-macromolecules/tsconfig.json';
-import { valuesToReplace as ketcherReactValues } from '../packages/ketcher-react/rollup.config.mjs';
+import ketcherReactPkg from '../packages/ketcher-react/package.json';
 import ketcherReactTSConfig from '../packages/ketcher-react/tsconfig.json';
 import ketcherStandaloneTSConfig from '../packages/ketcher-standalone/tsconfig.json';
-import { envVariables as exampleEnv } from './config/webpack.config';
-import { INDIGO_WORKER_IMPORTS } from '../packages/ketcher-standalone/rollup.config.mjs';
-import commonjs from 'vite-plugin-commonjs';
+import {
+  createReplaceValues,
+  getTagName,
+  mode,
+} from '../build-config/replace-values.mjs';
+import { INDIGO_WORKER_IMPORTS } from '../build-config/indigo-worker-imports.mjs';
 
-const dotEnv = loadEnv('development', '.', '');
-Object.assign(process.env, dotEnv, exampleEnv);
+// Computed before the process.env assignment below, to match the point at which
+// the packages' own builds resolve these values.
+const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
+
+// Formerly computed in the now-removed example/config/webpack.config.js
+// (a CRA/webpack config kept alive only to expose these three values).
+// Reproduced verbatim here: MODE and API_PATH come from the shell env at
+// process start, KETCHER_ENABLE_REDUX_LOGGER is always the string "false".
+const exampleEnv = {
+  MODE: process.env.MODE || 'standalone',
+  API_PATH: process.env.REACT_APP_API_PATH,
+  KETCHER_ENABLE_REDUX_LOGGER: JSON.stringify(false),
+};
+
+const ketcherReactValues = createReplaceValues({
+  version: ketcherReactPkg.version,
+  isProduction,
+  helpLink: getTagName(),
+});
+
+const polymerEditorValues = createReplaceValues({
+  version: polymerEditorPkg.version,
+  isProduction,
+  helpLink: process.env.HELP_LINK || 'master',
+});
+
+const dotEnv = loadEnv(process.env.NODE_ENV || 'development', __dirname, '');
+Object.assign(process.env, dotEnv, exampleEnv, {
+  MODE: process.env.MODE || exampleEnv.MODE || 'standalone',
+  NODE_ENV: process.env.NODE_ENV || 'development',
+  PUBLIC_URL: process.env.PUBLIC_URL || '',
+  REACT_APP_API_PATH:
+    process.env.REACT_APP_API_PATH || exampleEnv.API_PATH || '',
+});
 
 const PACKAGE_DIRECTORIES = {
   'ketcher-core': resolve(__dirname, '../packages/ketcher-core'),
@@ -136,6 +172,237 @@ const PROCESS_ENV_DEFINE_KEYS = [
   'SEPARATE_INDIGO_RENDER',
 ];
 
+const normalizePathForRollup = (id) => id.replaceAll('\\', '/');
+
+const MAX_JS_CHUNK_SIZE_BYTES = 450 * 1024;
+
+// Miew ships a single pre-bundled ESM file (dist/Miew.module.js, ~1.3 MB) with
+// Three.js inlined, so there is no module boundary for MAX_JS_CHUNK_SIZE_BYTES
+// to split on usefully. It is also already lazy-loaded behind React.lazy in
+// ketcher-react (Miew.tsx), so it never reaches the initial page load: splitting
+// it only adds a sequential request when the 3D viewer opens, and risks
+// Three.js module-init-order problems, for no startup gain. Issue #10326
+// explicitly requires leaving this chunk alone.
+const MIEW_CHUNK_MAX_SIZE_BYTES = Number.MAX_SAFE_INTEGER;
+
+// Sized for the single exempt vendor-miew chunk above (~1.3 MB). Every other
+// chunk is structurally capped at MAX_JS_CHUNK_SIZE_BYTES by codeSplitting, so
+// this limit cannot mask an unnoticed regression - only an explicitly exempted
+// group can exceed it. If this warning starts firing again, vendor-miew itself
+// has grown and the exemption is worth re-examining.
+const CHUNK_SIZE_WARNING_LIMIT_KB = 1400;
+
+// Mirrors the `/node_modules/miew` test in getChunkName, which intentionally
+// has no trailing slash so it covers both `miew` and `miew-react`.
+const isMiewVendorModule = (normalizedId) =>
+  normalizedId.includes('/node_modules/miew');
+
+const isReactVendorModule = (normalizedId) => {
+  if (normalizedId.includes('/packages/ketcher-react/')) {
+    return false;
+  }
+
+  return [
+    '/node_modules/react/',
+    '/node_modules/react-dom/',
+    '/node_modules/react-router/',
+    '/node_modules/react-router-dom/',
+    '/node_modules/scheduler/',
+    '/node_modules/react-contexify/',
+    '/node_modules/react-dropzone/',
+    'react-dom/',
+    'react-dom/client',
+    'react/jsx-runtime',
+    'react/jsx-dev-runtime',
+    'scheduler/',
+  ].some((reactModuleIdPart) => normalizedId.includes(reactModuleIdPart));
+};
+
+const getChunkName = (id) => {
+  const normalizedId = normalizePathForRollup(id);
+
+  if (normalizedId.endsWith('/application/editor/data/monomers.ket')) {
+    return 'data-monomers';
+  }
+
+  if (isReactVendorModule(normalizedId)) {
+    return 'vendor-react';
+  }
+
+  if (!normalizedId.includes('/node_modules/')) {
+    if (normalizedId.includes('/packages/ketcher-core/')) {
+      if (
+        normalizedId.includes('/application/formatters/') ||
+        normalizedId.includes('/domain/services/struct/structService.types')
+      ) {
+        return 'ketcher-core-formatters';
+      }
+
+      if (normalizedId.includes('/domain/serializers/')) {
+        return 'ketcher-core-serializers';
+      }
+
+      if (normalizedId.includes('/application/render/')) {
+        return 'ketcher-core-render';
+      }
+
+      if (normalizedId.includes('/application/editor/')) {
+        return 'ketcher-core-editor';
+      }
+
+      if (normalizedId.includes('/domain/entities/')) {
+        return 'ketcher-core-entities';
+      }
+
+      if (normalizedId.includes('/domain/')) {
+        return 'ketcher-core-domain';
+      }
+
+      if (normalizedId.includes('/utilities/')) {
+        return 'ketcher-core-utilities';
+      }
+
+      return 'ketcher-core';
+    }
+
+    if (normalizedId.includes('/packages/ketcher-react/')) {
+      if (normalizedId.endsWith('/src/templates/library.sdf')) {
+        return 'ketcher-react-templates';
+      }
+
+      if (normalizedId.includes('/src/assets/icons/')) {
+        return 'ketcher-react-icons';
+      }
+
+      if (normalizedId.includes('/src/script/ui/views/modal/')) {
+        return 'ketcher-react-modals';
+      }
+
+      if (normalizedId.includes('/src/script/ui/views/toolbars/')) {
+        return 'ketcher-react-toolbars';
+      }
+
+      if (normalizedId.includes('/src/script/editor/tool/')) {
+        return 'ketcher-react-tools';
+      }
+
+      if (normalizedId.includes('/src/script/ui/state/')) {
+        return 'ketcher-react-state';
+      }
+
+      return 'ketcher-react';
+    }
+
+    if (normalizedId.includes('/packages/ketcher-macromolecules/')) {
+      if (normalizedId.includes('/src/components/preview/')) {
+        return 'ketcher-macromolecules-preview';
+      }
+
+      if (normalizedId.includes('/src/components/')) {
+        return 'ketcher-macromolecules-components';
+      }
+
+      if (normalizedId.includes('/src/utils/')) {
+        return 'ketcher-macromolecules-utils';
+      }
+
+      return 'ketcher-macromolecules';
+    }
+
+    if (normalizedId.includes('/packages/ketcher-standalone/')) {
+      return 'ketcher-standalone';
+    }
+
+    return undefined;
+  }
+
+  if (normalizedId.includes('/node_modules/three/')) {
+    return 'vendor-three';
+  }
+
+  if (normalizedId.includes('/node_modules/miew')) {
+    return 'vendor-miew';
+  }
+
+  if (
+    normalizedId.includes('/node_modules/core-js/') ||
+    normalizedId.includes('/node_modules/react-app-polyfill/') ||
+    normalizedId.includes('/node_modules/regenerator-runtime/')
+  ) {
+    return 'vendor-polyfills';
+  }
+
+  if (normalizedId.includes('/node_modules/lodash/')) {
+    return 'vendor-lodash';
+  }
+
+  if (
+    normalizedId.includes('/node_modules/@mui/') ||
+    normalizedId.includes('/node_modules/@emotion/')
+  ) {
+    return 'vendor-mui';
+  }
+
+  if (normalizedId.includes('/node_modules/indigo-ketcher/')) {
+    return 'vendor-indigo';
+  }
+
+  if (normalizedId.includes('/node_modules/paper/')) {
+    return 'vendor-paper';
+  }
+
+  if (
+    normalizedId.includes('/node_modules/raphael/') ||
+    normalizedId.includes('/node_modules/svgpath/')
+  ) {
+    return 'vendor-svg-rendering';
+  }
+
+  if (
+    normalizedId.includes('/node_modules/acorn/') ||
+    normalizedId.includes('/node_modules/ajv/') ||
+    normalizedId.includes('/node_modules/jsonschema/')
+  ) {
+    return 'vendor-parsers';
+  }
+
+  if (normalizedId.includes('/node_modules/cfb/')) {
+    return 'vendor-file-formats';
+  }
+
+  if (normalizedId.includes('/node_modules/d3')) {
+    return 'vendor-d3';
+  }
+
+  return 'vendor';
+};
+
+const codeSplitting = {
+  minSize: 16 * 1024,
+  maxSize: MAX_JS_CHUNK_SIZE_BYTES,
+  groups: [
+    {
+      name: 'vendor-react',
+      test: (id) => isReactVendorModule(normalizePathForRollup(id)),
+      priority: 100,
+      minSize: MAX_JS_CHUNK_SIZE_BYTES,
+      maxSize: MAX_JS_CHUNK_SIZE_BYTES,
+      minShareCount: 1,
+      entriesAware: false,
+      entriesAwareMergeThreshold: MAX_JS_CHUNK_SIZE_BYTES,
+    },
+    {
+      name: 'vendor-miew',
+      test: (id) => isMiewVendorModule(normalizePathForRollup(id)),
+      priority: 90,
+      maxSize: MIEW_CHUNK_MAX_SIZE_BYTES,
+    },
+    {
+      name: getChunkName,
+    },
+  ],
+};
+
 const processEnvDefines = Object.fromEntries(
   PROCESS_ENV_DEFINE_KEYS.map((key) => [
     `process.env.${key}`,
@@ -147,8 +414,14 @@ const HtmlReplaceVitePlugin = () => {
   return {
     name: 'ketcher-html-transform',
     transformIndexHtml(html) {
+      const publicUrl = process.env.PUBLIC_URL || '';
+      const publicUrlWithTrailingSlash = publicUrl
+        ? `${publicUrl.replace(/\/$/, '')}/`
+        : '';
+
       return html
-        .replaceAll('%PUBLIC_URL%/', process.env.PUBLIC_URL)
+        .replaceAll('%PUBLIC_URL%/', publicUrlWithTrailingSlash)
+        .replaceAll('%PUBLIC_URL%', publicUrl)
         .replaceAll(
           '@@version',
           JSON.parse(ketcherReactValues['process.env.HELP_LINK']).split(
@@ -194,6 +467,64 @@ const normalizeHtmlTransformHook = (plugin) => {
   return plugin;
 };
 
+const globalHtmlTags = [
+  {
+    /**
+     * HACK: https://github.com/bevacqua/dragula/issues/602#issuecomment-1109840139
+     * Fix: global is not defined
+     */
+    injectTo: 'body',
+    tag: 'script',
+    children: 'var global = global || window',
+  },
+];
+
+const htmlPages = [
+  {
+    filename: 'index.html',
+    template: 'public/index.html',
+    entry: '/src/index.tsx',
+  },
+  {
+    filename: 'popup.html',
+    template: 'public/popup.html',
+    entry: '/src/popupIndex.tsx',
+  },
+  {
+    filename: 'duo.html',
+    template: 'public/duo.html',
+    entry: '/src/duoIndex.tsx',
+  },
+  {
+    filename: 'closable.html',
+    template: 'public/closable.html',
+    entry: '/src/closableIndex.tsx',
+  },
+].map((page) => ({
+  ...page,
+  injectOptions: {
+    tags: globalHtmlTags,
+  },
+}));
+
+const CopyServeConfigPlugin = () => {
+  let outDir;
+
+  return {
+    name: 'ketcher-copy-serve-config',
+    configResolved(config) {
+      outDir = resolve(config.root, config.build.outDir);
+    },
+    closeBundle() {
+      mkdirSync(outDir, { recursive: true });
+      copyFileSync(
+        resolve(__dirname, 'serve.json'),
+        resolve(outDir, 'serve.json'),
+      );
+    },
+  };
+};
+
 const logger = createLogger();
 const loggerWarn = logger.warn;
 logger.warn = (msg, options) => {
@@ -213,6 +544,7 @@ export default defineConfig({
     host: '127.0.0.1',
     open: true,
   },
+  assetsInclude: ['**/*.ket'],
   optimizeDeps: {
     // Vite 8 pre-bundler (rolldown) creates shared chunks between deps which causes
     // cross-chunk free-variable references for init_xxx() functions (rolldown bug).
@@ -258,7 +590,7 @@ export default defineConfig({
       },
     }),
     vitePluginRaw({
-      match: /\.sdf|\.ket/,
+      match: /\.sdf/,
     }),
     replace({
       include: '**/ketcher-react/src/**',
@@ -270,46 +602,19 @@ export default defineConfig({
       preventAssignment: true,
       values: polymerEditorValues,
     }),
-    replace({
-      include: '**/example/src/**',
-      preventAssignment: true,
-      values: {
-        require: 'await import',
-      },
-    }),
-    replace({
-      include: '**/ketcher-core/src/**',
-      preventAssignment: true,
-      values: {
-        require: 'await import',
-      },
-    }),
     normalizeHtmlTransformHook(
       createHtmlPlugin({
-        entry: '/src/index.tsx',
-        template: 'public/index.html',
-        inject: {
-          tags: [
-            {
-              /**
-               * HACK: https://github.com/bevacqua/dragula/issues/602#issuecomment-1109840139
-               * Fix: global is not defined
-               */
-              injectTo: 'body',
-              tag: 'script',
-              children: 'var global = global || window',
-            },
-          ],
-        },
+        pages: htmlPages,
       }),
     ),
     HtmlReplaceVitePlugin(),
-    commonjs(),
+    CopyServeConfigPlugin(),
   ],
   define: {
     ...processEnvDefines,
   },
   resolve: {
+    dedupe: ['react', 'react-dom', 'react-is'],
     alias: [
       {
         // HACK: to ignore dist/index.css, you can set any file as replacement
@@ -347,7 +652,6 @@ export default defineConfig({
           '../packages/ketcher-macromolecules/src/index.tsx',
         ),
       },
-
       /** Web worker in ketcher-standalone */
       {
         find: 'web-worker:./../indigoWorker',
@@ -362,6 +666,26 @@ export default defineConfig({
         replacement: INDIGO_WORKER_IMPORTS.WASM_LOADER,
       },
     ],
+  },
+  build: {
+    outDir: 'build',
+    sourcemap: true,
+    chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT_KB,
+    rolldownOptions: {
+      output: {
+        entryFileNames: 'static/js/[name]-[hash].js',
+        chunkFileNames: 'static/js/[name]-[hash].js',
+        strictExecutionOrder: true,
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name?.endsWith('.css')) {
+            return 'static/css/[name]-[hash][extname]';
+          }
+
+          return 'static/media/[name]-[hash][extname]';
+        },
+        codeSplitting,
+      },
+    },
   },
   customLogger: logger,
   tsconfig: './tsconfig.json',

@@ -21,3 +21,5 @@ Example: `2026-07-10-adopt-spec-driven-development.md`
 ## Records
 
 <!-- ADRs are added here as architectural decisions are made or retroactively documented. -->
+
+- [2026-08-28 — Vite for library builds](./2026-08-28-vite-for-library-builds.md) — Vite 8 (Rolldown) replaces Rollup 2 and `react-scripts` across the repo, with a frozen published contract.

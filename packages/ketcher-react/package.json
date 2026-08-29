@@ -1,6 +1,6 @@
 {
   "name": "ketcher-react",
-  "version": "3.19.0-rc.1",
+  "version": "4.0.0-rc.1",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "https://lifescience.opensource.epam.com/ketcher/",
@@ -27,8 +27,9 @@
     "node": ">=24.14.1"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c rollup.config.mjs -m true",
-    "start": "cross-env NODE_ENV=development rollup -c rollup.config.mjs -m true -w",
+    "prebuild": "shx rm -rf dist",
+    "build": "cross-env NODE_ENV=production vite build && tsc --noCheck -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "start": "cross-env NODE_ENV=development vite build --watch",
     "test": "run-s test:prettier test:stylelint test:eslint:quiet test:types test:circ test:unit",
     "test:circ": "dpdm --no-warning --no-tree -T --exit-code circular:1 --skip-dynamic-imports tree ./src/index.tsx",
     "test:eslint": "eslint \"**/*.{ts,tsx,js,jsx}\"",
@@ -47,7 +48,6 @@
     "react-dom": "^18.2.0 || ^19.0.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.26.10",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.14.1",
     "@lexical/react": "^0.40.0",
@@ -91,13 +91,6 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
-    "@rollup/plugin-babel": "^5.2.1",
-    "@rollup/plugin-commonjs": "^16.0.0",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^10.0.0",
-    "@rollup/plugin-replace": "^2.3.4",
-    "@rollup/plugin-strip": "^2.0.0",
-    "@svgr/rollup": "^8.1.0",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "14.4.3",
@@ -124,17 +117,11 @@
     "less": "^3.12.2",
     "npm-run-all2": "^9.0.3",
     "prettier": "^3.9.6",
-    "rollup": "^2.80.0",
-    "rollup-plugin-cleanup": "^3.2.1",
-    "rollup-plugin-copy": "^3.4.0",
-    "rollup-plugin-delete": "^2.0.0",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-postcss": "^4.0.2",
-    "rollup-plugin-string": "^3.0.0",
-    "rollup-plugin-typescript2": "^0.31.1",
-    "rollup-plugin-visualizer": "^5.5.2",
     "ts-jest": "^29.4.11",
-    "typescript": "^6.0.3"
+    "tsc-alias": "^1.8.17",
+    "typescript": "^6.0.3",
+    "vite": "8.0.16",
+    "vite-plugin-svgr": "^4.5.0"
   },
   "files": [
     "dist"

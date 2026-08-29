@@ -4,7 +4,6 @@ import {
   clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
-  getEditorScreenshot,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
@@ -121,29 +120,34 @@ test.describe('Templates - Template Library', () => {
   });
 
   test('Edit templates', async ({ page }) => {
-    // Test case: EPMLSOPKET-1699
-    // Verify correct display of Template Edit window
+    /* Test case: EPMLSOPKET-1699
+     * Verify correct display of Template Edit window
+     */
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.BetaDSugars,
       BetaDSugarsTemplate.BetaDAllopyranose,
     );
-    await getEditorScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Edit templates - name field with no character', async ({ page }) => {
-    // Test case: EPMLSOPKET-1699
-    // Verify validation if name field not contain any characters
+    /* Test case: EPMLSOPKET-1699
+     * Verify validation if name field not contain any characters
+     */
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.BetaDSugars,
       BetaDSugarsTemplate.BetaDAllopyranose,
     );
-    await getEditorScreenshot(page);
+    await TemplateEditDialog(page).setMoleculeName('');
+    await TemplateEditDialog(page).moleculeNameEditbox.hover();
+    await takeEditorScreenshot(page);
   });
 
   test('Text field 128 characters limit test', async ({ page }) => {
-    // Verify maximum character validation on the name field
+    /* Verify maximum character validation on the name field
+     */
     const number = 129;
     const inputText = 'A'.repeat(number);
     await BottomToolbar(page).structureLibrary();
@@ -151,9 +155,8 @@ test.describe('Templates - Template Library', () => {
       TemplateLibraryTab.BetaDSugars,
       BetaDSugarsTemplate.BetaDAllopyranose,
     );
-    await waitForRender(page, async () => {
-      await TemplateEditDialog(page).setMoleculeName(inputText);
-    });
-    await getEditorScreenshot(page);
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).moleculeNameEditbox.hover();
+    await takeEditorScreenshot(page);
   });
 });

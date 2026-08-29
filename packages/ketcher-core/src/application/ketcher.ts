@@ -326,7 +326,14 @@ export class Ketcher {
     return rxnfile;
   }
 
-  getKet(): Promise<string> {
+  async getKet(): Promise<string> {
+    // The default monomers library is a lazily fetched asset. The KET
+    // serializer reads it synchronously to enrich monomer templates (idtAliases,
+    // aliasAxoLabs, aliasBILN, modificationTypes) and silently skips enrichment
+    // when it is absent, so await it here at the async public boundary rather
+    // than making the serializer async.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     return getStructure(
       this.id,
       this.#formatterFactory,
@@ -546,6 +553,13 @@ export class Ketcher {
     const macromoleculesEditor = provideEditorInstance();
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
+    // The default monomers library is a lazily fetched asset. The KET
+    // serializer reads it synchronously to enrich monomer templates (idtAliases,
+    // aliasAxoLabs, aliasBILN, modificationTypes) and silently skips enrichment
+    // when it is absent, so await it here at the async public boundary rather
+    // than making the serializer async.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
@@ -613,6 +627,13 @@ export class Ketcher {
     const macromoleculesEditor = provideEditorInstance();
 
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
+
+    // The default monomers library is a lazily fetched asset. The KET
+    // serializer reads it synchronously to enrich monomer templates (idtAliases,
+    // aliasAxoLabs, aliasBILN, modificationTypes) and silently skips enrichment
+    // when it is absent, so await it here at the async public boundary rather
+    // than making the serializer async.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');

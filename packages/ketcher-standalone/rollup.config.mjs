@@ -12,21 +12,14 @@ import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 import copy from 'rollup-plugin-copy';
 import alias from '@rollup/plugin-alias';
 import { license } from '../../license-banner.mjs';
+import { mode } from '../../build-config/replace-values.mjs';
+import { INDIGO_WORKER_IMPORTS } from '../../build-config/indigo-worker-imports.mjs';
 import replace from '@rollup/plugin-replace';
 import OMT from '@surma/rollup-plugin-off-main-thread';
-
-const mode = {
-  PRODUCTION: 'production',
-  DEVELOPMENT: 'development',
-};
 
 const extensions = ['.js', '.ts'];
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const includePattern = 'src/**/*';
-export const INDIGO_WORKER_IMPORTS = {
-  WASM_LOADER: './indigoWorkerImports/useWasmLoader',
-  OFF_MAIN_THREAD_PLUGIN: './indigoWorkerImports/useOffMainThreadPlugin',
-};
 const configureWebWorkerLoader = () => {
   return webWorkerLoader({
     extensions,

@@ -47,7 +47,7 @@ export const RootSizeProvider = ({
       window.removeEventListener('resize', debouncedHandleResize);
       debouncedHandleResize.cancel();
     };
-  }, [handleResize]);
+  }, [debouncedHandleResize]);
 
   return (
     <RootSizeContext.Provider value={size}>{children}</RootSizeContext.Provider>

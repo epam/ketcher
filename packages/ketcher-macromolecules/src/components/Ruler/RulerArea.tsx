@@ -127,12 +127,7 @@ export const RulerArea = () => {
     }
 
     return calculateLineLength(dragPosition);
-  }, [
-    isDragging,
-    dragPosition,
-    lineLengthValue,
-    calculateLineLength,
-  ]);
+  }, [isDragging, dragPosition, lineLengthValue, calculateLineLength]);
 
   const handleDragStart = useCallback(
     (event: D3DragEvent<SVGGElement, unknown, unknown>) => {

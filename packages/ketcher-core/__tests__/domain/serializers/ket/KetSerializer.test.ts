@@ -201,6 +201,7 @@ describe('deserialize (ToStruct)', () => {
       'R-group logic (rlogic) is missing on a KET R-group item',
     );
     expect(struct.rgroups.size).toBe(0);
+    errorSpy.mockRestore();
   });
   it('validation function', () => {
     const spy = jest.spyOn(validate, 'validate');

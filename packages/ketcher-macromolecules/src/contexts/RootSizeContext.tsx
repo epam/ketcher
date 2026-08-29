@@ -50,8 +50,6 @@ export const RootSizeProvider = ({
   }, [handleResize]);
 
   return (
-    <RootSizeContext.Provider value={size}>
-      {children}
-    </RootSizeContext.Provider>
+    <RootSizeContext.Provider value={size}>{children}</RootSizeContext.Provider>
   );
 };

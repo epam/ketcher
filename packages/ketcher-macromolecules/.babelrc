@@ -7,5 +7,5 @@
     ],
     "@babel/typescript"
   ],
-  "plugins": ["@emotion", "@babel/plugin-transform-runtime"]
+  "plugins": ["@babel/plugin-transform-runtime"]
 }

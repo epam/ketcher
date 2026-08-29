@@ -176,7 +176,7 @@ export const ModeControl = ({
   const onClose = () => setIsExpanded(false);
   const onExpand = () => {
     setAnchorEl(btnRef.current);
-    setIsExpanded(true)
+    setIsExpanded(true);
   };
 
   const modeLabel = isPolymerEditor ? 'Macromolecules' : 'Molecules';

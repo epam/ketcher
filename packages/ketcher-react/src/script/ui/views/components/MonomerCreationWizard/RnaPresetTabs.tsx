@@ -93,7 +93,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   // selectedTab itself a reactive trigger for them (the tab-click handler
   // already applies its own effects directly - see handleChange below).
   const selectedTabRef = useRef(selectedTab);
-  selectedTabRef.current = selectedTab;
+  useEffect(() => {
+    selectedTabRef.current = selectedTab;
+  });
   const structureSelection = useSelector(selectionSelector);
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);

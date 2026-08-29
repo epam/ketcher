@@ -126,6 +126,7 @@ export interface SingleChainMacromoleculeProperties {
   extinctionCoefficient?: number;
   hydrophobicity?: number[];
   Tm?: number;
+  isMeltingTemperatureCalculationAvailable?: boolean;
 }
 
 export interface CalculateMacromoleculePropertiesResult {

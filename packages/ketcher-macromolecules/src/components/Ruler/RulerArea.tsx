@@ -84,13 +84,7 @@ export const RulerArea = () => {
     }
 
     return [inputPosition, handlePosition];
-  }, [
-    canvasContainer,
-    rootWidth,
-    transform,
-    translateValue,
-    dragDelta,
-  ]);
+  }, [canvasContainer, rootWidth, transform, translateValue, dragDelta]);
 
   const updateSettings = useCallback(
     (value: number) => {

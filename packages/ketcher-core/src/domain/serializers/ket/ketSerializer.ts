@@ -6,7 +6,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -108,6 +108,7 @@ import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import type { KetFileImageNode } from 'domain/entities/image';
 import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
+import { KetItem } from './types';
 
 type KetMicromoleculeNode = {
   type?: string;
@@ -156,7 +157,7 @@ function parseNode(node: KetMicromoleculeNode, struct: Struct) {
       break;
     }
     case 'rgroup': {
-      rgroupToStruct(node).mergeInto(struct);
+      rgroupToStruct(node as unknown as KetItem).mergeInto(struct);
       break;
     }
     case 'text': {

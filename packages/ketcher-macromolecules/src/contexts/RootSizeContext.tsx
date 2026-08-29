@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { debounce } from 'lodash';
+import { useDebouncedCallback } from '../hooks/useDebouncedCallback';
 
 export const RootSizeContext = createContext({ width: 0, height: 0 });
 
@@ -24,23 +24,23 @@ export const RootSizeProvider = ({
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   const handleResize = useCallback(() => {
-    if (!rootRef?.current) {
+    const rootElement = rootRef?.current;
+
+    if (!rootElement) {
       return;
     }
 
-    const { width, height } = rootRef.current.getBoundingClientRect();
+    const { width, height } = rootElement.getBoundingClientRect();
     setSize({ width, height });
   }, [rootRef]);
+
+  const debouncedHandleResize = useDebouncedCallback(handleResize, 100);
 
   useEffect(() => {
     handleResize();
   }, [handleResize, isMacromoleculesEditorTurnedOn]);
 
   useEffect(() => {
-    const debouncedHandleResize = debounce(handleResize, 100);
-
-    debouncedHandleResize();
-
     window.addEventListener('resize', debouncedHandleResize);
 
     return () => {

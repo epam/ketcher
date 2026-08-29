@@ -22,28 +22,26 @@ interface WithExtraItems {
 }
 
 export interface BondsContextMenuProps
-  extends BaseContextMenuProps,
-    WithExtraItems {
+  extends BaseContextMenuProps, WithExtraItems {
   id: string;
   bondIds: Array<number>;
 }
 
 export interface AtomContextMenuProps
-  extends BaseContextMenuProps,
-    WithExtraItems {
+  extends BaseContextMenuProps, WithExtraItems {
   id: string;
   atomIds: Array<number>;
 }
 
 export interface RGroupAttachmentPointContextMenuProps
-  extends BaseContextMenuProps,
-    WithExtraItems {
+  extends BaseContextMenuProps, WithExtraItems {
   id: string;
   rgroupAttachmentPoints: Array<number>;
   atomIds?: AtomContextMenuProps['atomIds'];
 }
 export interface SelectionContextMenuProps
-  extends BaseContextMenuProps,
+  extends
+    BaseContextMenuProps,
     Partial<Pick<BondsContextMenuProps, 'bondIds'>>,
     Partial<Pick<AtomContextMenuProps, 'atomIds'>>,
     Partial<
@@ -72,8 +70,7 @@ export interface MultitailArrowContextMenuProps {
   tailId: number | null;
 }
 
-export interface AttachmentPointLabelContextMenuProps
-  extends BaseContextMenuProps {
+export interface AttachmentPointLabelContextMenuProps extends BaseContextMenuProps {
   id: string;
   attachmentPointName: AttachmentPointName;
 }

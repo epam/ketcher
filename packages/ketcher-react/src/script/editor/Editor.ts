@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -308,8 +309,8 @@ class Editor implements KetcherEditor {
     );
 
     this.ketcherId = ketcherId;
-    this._selection = null; // eslint-disable-line
-    this._tool = null; // eslint-disable-line
+    this._selection = null;
+    this._tool = null;
     this.historyStack = [];
     this.historyPtr = 0;
     this.errorHandler = null;
@@ -375,7 +376,6 @@ class Editor implements KetcherEditor {
   }
 
   tool(name?: string, opts?: unknown): Tool | null {
-    /* eslint-disable no-underscore-dangle */
     if (arguments.length === 0) {
       return this._tool;
     }
@@ -405,7 +405,6 @@ class Editor implements KetcherEditor {
 
     this._tool = tool;
     return this._tool;
-    /* eslint-enable no-underscore-dangle */
   }
 
   clear() {
@@ -1052,6 +1051,7 @@ class Editor implements KetcherEditor {
     selectionOverride?: Selection,
     editInstanceInitialValues?: MonomerCreationInitialValues,
     editInstanceAttachmentPoints?: ReadonlyArray<SGroupAttachmentPoint>,
+    editingMonomer?: BaseMonomer,
   ) {
     const currentStruct = this.render.ctab.molecule;
     const rawSelection = selectionOverride ??
@@ -1098,6 +1098,10 @@ class Editor implements KetcherEditor {
       AttachmentPointName,
       [number, number]
     >();
+    const attachmentAtomIdsWithExternalBonds = new Map<
+      AttachmentPointName,
+      [number, number]
+    >();
 
     editInstanceAttachmentPoints?.forEach((attachmentPoint) => {
       if (!attachmentPoint.attachmentPointNumber) {
@@ -1116,6 +1120,10 @@ class Editor implements KetcherEditor {
       }
 
       assignedAttachmentPoints.set(
+        getAttachmentPointLabel(attachmentPoint.attachmentPointNumber),
+        [attachmentAtomId, leavingAtomId],
+      );
+      attachmentAtomIdsWithExternalBonds.set(
         getAttachmentPointLabel(attachmentPoint.attachmentPointNumber),
         [attachmentAtomId, leavingAtomId],
       );
@@ -1286,6 +1294,10 @@ class Editor implements KetcherEditor {
         selectedStructAttachmentAtomId,
         selectedStructLeavingAtomId,
       ]);
+      attachmentAtomIdsWithExternalBonds.set(attachmentPointName, [
+        selectedStructAttachmentAtomId,
+        selectedStructLeavingAtomId,
+      ]);
     });
 
     const potentialAttachmentPoints = new Map<number, Set<number>>();
@@ -1346,6 +1358,12 @@ class Editor implements KetcherEditor {
       problematicAttachmentPoints: new Set(),
       hasDefaultAttachmentPoints,
       ...(editInstanceInitialValues ? { editInstanceInitialValues } : {}),
+      ...(attachmentAtomIdsWithExternalBonds.size > 0
+        ? {
+            attachmentAtomIdsWithExternalBonds,
+          }
+        : {}),
+      ...(editingMonomer ? { editingMonomer } : {}),
     };
 
     this.originalHistoryStack = this.historyStack;
@@ -2154,6 +2172,20 @@ class Editor implements KetcherEditor {
       );
     }
 
+    const attachmentAtomIdsWithExternalBonds =
+      this.monomerCreationState?.attachmentAtomIdsWithExternalBonds ??
+      new Map<AttachmentPointName, [number, number]>();
+    // Build new AP → attach atom ID map from the final assignedAttachmentPoints state.
+    const finalAssignedAttachmentPoints = new Map<
+      AttachmentPointName,
+      number
+    >();
+    this.monomerCreationState?.assignedAttachmentPoints.forEach(
+      ([attachAtomId], apName) => {
+        finalAssignedAttachmentPoints.set(apName, attachAtomId);
+      },
+    );
+
     this.closeMonomerCreationWizard();
     const loadOriginalAction = fromNewCanvas(
       this.render.ctab,
@@ -2200,33 +2232,25 @@ class Editor implements KetcherEditor {
         });
       }
 
-      // Re-add external bonds (crossing the selection boundary).
       externalBonds.forEach((bond) => {
         const isBeginSelected = selectedOriginalAtoms.has(bond.begin);
         const isEndSelected = selectedOriginalAtoms.has(bond.end);
 
-        if (isBeginSelected && !isEndSelected) {
-          const wizardId = originalToSelectedAtomsIdMap.get(bond.begin);
-          const newBegin = isNumber(wizardId)
-            ? atomIdMap.get(wizardId)
-            : undefined;
-          if (isNumber(newBegin)) {
-            const newBond = bond.clone();
-            newBond.begin = newBegin;
-            struct.bonds.add(newBond);
-          }
+        // Only bonds with exactly one endpoint inside the selection are
+        // external bonds that must be reconciled.
+        if (isBeginSelected === isEndSelected) {
+          return;
         }
-        if (isEndSelected && !isBeginSelected) {
-          const wizardId = originalToSelectedAtomsIdMap.get(bond.end);
-          const newEnd = isNumber(wizardId)
-            ? atomIdMap.get(wizardId)
-            : undefined;
-          if (isNumber(newEnd)) {
-            const newBond = bond.clone();
-            newBond.end = newEnd;
-            struct.bonds.add(newBond);
-          }
-        }
+
+        this.reconcileExternalBonds(
+          attachmentAtomIdsWithExternalBonds,
+          finalAssignedAttachmentPoints,
+          struct,
+          bond,
+          atomIdMap,
+          originalToSelectedAtomsIdMap,
+          isBeginSelected ? 'begin' : 'end',
+        );
       });
 
       // Fix attachment point numbers on inter-monomer bonds.
@@ -2321,6 +2345,131 @@ class Editor implements KetcherEditor {
         });
       }
     }, 0);
+  }
+
+  /**
+   * Deletes macro-canvas bonds (PolymerBond / MonomerToAtomBond) for attachment
+   * points that were in use at wizard-open time but are no longer present in the
+   * new monomer template saved by the wizard.
+   *
+   * "Moved" APs (same name, different atom) do not require macro-canvas bond
+   * changes — the PolymerBond continues to reference the monomer by AP name.
+   * The micromolecule struct bond endpoint is already corrected by
+   * updateBondEndpointByAttachmentPoint.
+   */
+
+  private reconcileExternalBonds(
+    attachmentAtomIdsWithExternalBonds: Map<
+      AttachmentPointName,
+      [number, number]
+    >,
+    finalAssignedAttachmentPoints: Map<AttachmentPointName, number>,
+    struct: Struct,
+    bond: Bond,
+    newAtomIdMap: Map<number, number>,
+    originalToSelectedAtomsIdMap: Map<number, number>,
+    selectedEndpoint: 'begin' | 'end',
+  ) {
+    // The selected atom is the one inside the wizard selection; the external
+    // bond keeps its opposite endpoint and gets its selected endpoint remapped
+    // to the correct atom in the merged struct.
+    const selectedOriginalAtomId = bond[selectedEndpoint];
+    const selectedWizardAtomId = originalToSelectedAtomsIdMap.get(
+      selectedOriginalAtomId,
+    );
+
+    const oldAttachmentPointName = this.findAttachmentPointForAtom(
+      attachmentAtomIdsWithExternalBonds,
+      selectedWizardAtomId,
+    );
+
+    const newAttachmentAtomId = oldAttachmentPointName
+      ? finalAssignedAttachmentPoints.get(oldAttachmentPointName)
+      : undefined;
+
+    // The attachment point that carried this bond no longer exists: drop it.
+    if (!isNumber(newAttachmentAtomId)) {
+      this.deleteBond(struct, bond);
+      return;
+    }
+
+    // The attachment point moved to a different atom: re-point the bond there.
+    if (newAttachmentAtomId !== selectedWizardAtomId) {
+      this.rebindExternalBondEndpoint(
+        struct,
+        bond,
+        selectedEndpoint,
+        newAtomIdMap.get(newAttachmentAtomId),
+      );
+      return;
+    }
+
+    // The attachment point stayed on the same atom: re-establish the original
+    // bond, remapping the selected endpoint to its atom in the merged struct.
+    this.rebindExternalBondEndpoint(
+      struct,
+      bond,
+      selectedEndpoint,
+      isNumber(selectedWizardAtomId)
+        ? newAtomIdMap.get(selectedWizardAtomId)
+        : undefined,
+    );
+  }
+
+  /**
+   * Finds the attachment point name whose attachment atom matches the given
+   * wizard atom id, or undefined when none matches.
+   */
+  private findAttachmentPointForAtom(
+    attachmentAtomIdsWithExternalBonds: Map<
+      AttachmentPointName,
+      [number, number]
+    >,
+    wizardAtomId: number | undefined,
+  ): AttachmentPointName | undefined {
+    if (!isNumber(wizardAtomId)) {
+      return undefined;
+    }
+
+    for (const [
+      attachmentPointName,
+      [attachmentAtomId],
+    ] of attachmentAtomIdsWithExternalBonds) {
+      if (attachmentAtomId === wizardAtomId) {
+        return attachmentPointName;
+      }
+    }
+
+    return undefined;
+  }
+
+  /**
+   * Adds a clone of the bond with the given endpoint re-pointed to the provided
+   * merged-struct atom. No-op when the target atom id is unknown.
+   */
+  private rebindExternalBondEndpoint(
+    struct: Struct,
+    bond: Bond,
+    endpoint: 'begin' | 'end',
+    newAtomId: number | undefined,
+  ) {
+    if (!isNumber(newAtomId)) {
+      return;
+    }
+
+    const newBond = bond.clone();
+    newBond[endpoint] = newAtomId;
+    struct.bonds.add(newBond);
+  }
+
+  /** Removes the bond from the struct if it is still present. */
+  private deleteBond(struct: Struct, bond: Bond) {
+    const bondId = struct.bonds.keyOf(bond);
+    if (bondId === null) {
+      return;
+    }
+
+    struct.bonds.delete(bondId);
   }
 
   reassignAttachmentPointLeavingAtom(
@@ -3172,12 +3321,12 @@ class Editor implements KetcherEditor {
 
   selection(ci?: Selection | 'all' | 'descriptors' | null) {
     if (arguments.length === 0) {
-      return this._selection; // eslint-disable-line
+      return this._selection;
     }
 
     let ReStruct = this.render.ctab;
     let selectAll = false;
-    this._selection = null; // eslint-disable-line
+    this._selection = null;
     let resolvedCi: Record<string, number[]> | null;
     if (typeof ci === 'object' && ci !== null) {
       resolvedCi = ci as Record<string, number[]>;
@@ -3188,10 +3337,13 @@ class Editor implements KetcherEditor {
     if (ci === 'all') {
       selectAll = true;
       // TODO: better way will be this.struct()
-      resolvedCi = structObjects.reduce((res, key) => {
-        res[key] = Array.from(ReStruct[key].keys());
-        return res;
-      }, {} as Record<string, number[]>);
+      resolvedCi = structObjects.reduce(
+        (res, key) => {
+          res[key] = Array.from(ReStruct[key].keys());
+          return res;
+        },
+        {} as Record<string, number[]>,
+      );
     }
 
     if (ci === 'descriptors') {
@@ -3209,7 +3361,7 @@ class Editor implements KetcherEditor {
       });
 
       if (Object.keys(res).length !== 0) {
-        this._selection = res; // eslint-disable-line
+        this._selection = res;
       }
       const stereoFlags = selectStereoFlagsIfNecessary(
         this.struct().atoms,
@@ -3226,8 +3378,8 @@ class Editor implements KetcherEditor {
       }
     }
 
-    this.render.ctab.setSelection(this._selection); // eslint-disable-line
-    this.event.selectionChange.dispatch(this._selection); // eslint-disable-line
+    this.render.ctab.setSelection(this._selection);
+    this.event.selectionChange.dispatch(this._selection);
 
     if (selectAll) {
       this.rotateController.rerender();
@@ -3236,11 +3388,11 @@ class Editor implements KetcherEditor {
     }
 
     this.render.update(false, null);
-    return this._selection; // eslint-disable-line
+    return this._selection;
   }
 
   hover(ci: HoverTarget | null, newTool?: Tool | null, event?: PointerEvent) {
-    const tool = newTool ?? this._tool; // eslint-disable-line
+    const tool = newTool ?? this._tool;
 
     const hoverState = (tool as unknown as { ci?: HoverTarget })?.ci;
     let isSameHoverTarget = false;
@@ -3826,9 +3978,7 @@ function setHover(ci: HoverTarget, visible: boolean, render: Render) {
 
       for (const element of elements) {
         const paperPath = paperPathFromSVGElement(element) as
-          | paper.Path
-          | paper.CompoundPath
-          | undefined;
+          paper.Path | paper.CompoundPath | undefined;
 
         if (!paperPath) {
           continue;

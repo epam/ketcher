@@ -105,7 +105,7 @@ export const SequenceTypeGroupButton = () => {
     return () => {
       editor?.events.changeSequenceTypeEnterMode.remove(onChangeSequenceType);
     };
-  }, [editor]);
+  }, [editor, dispatch]);
 
   const handleSelectSequenceType = (sequenceType: string) => {
     editor?.events.changeSequenceTypeEnterMode.dispatch(sequenceType);

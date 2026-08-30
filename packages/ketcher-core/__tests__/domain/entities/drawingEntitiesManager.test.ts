@@ -345,11 +345,7 @@ describe('Drawing Entities Manager', () => {
   });
 
   it('should merge stereo flags into the target drawing entities manager', () => {
-    const editor = new CoreEditor({
-      canvas: createPolymerEditorCanvas(),
-      theme: {},
-      renderersContainer: createRenderersManager(),
-    });
+    const targetDrawingEntitiesManager = new DrawingEntitiesManager();
     const ketSerializer = new KetSerializer();
     const deserializedKet = ketSerializer.deserializeToDrawingEntities(
       JSON.stringify({
@@ -379,9 +375,9 @@ describe('Drawing Entities Manager', () => {
     expect(sourceDrawingEntitiesManager.stereoFlags.size).toBe(1);
 
     const { command, mergedDrawingEntities } =
-      sourceDrawingEntitiesManager.mergeInto(editor.drawingEntitiesManager);
+      sourceDrawingEntitiesManager.mergeInto(targetDrawingEntitiesManager);
 
-    expect(editor.drawingEntitiesManager.stereoFlags.size).toBe(1);
+    expect(targetDrawingEntitiesManager.stereoFlags.size).toBe(1);
     expect(mergedDrawingEntities.stereoFlags.size).toBe(1);
     expect(command.operations).toEqual(
       expect.arrayContaining([expect.any(StereoFlagAddOperation)]),

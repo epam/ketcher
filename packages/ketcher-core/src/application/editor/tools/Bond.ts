@@ -42,8 +42,7 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { shouldInvokeConnectionModal } from 'application/editor/tools/bondConnectionHelpers';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
-  | FlexModePolymerBondRenderer
-  | SnakeModePolymerBondRenderer;
+  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
@@ -51,7 +50,10 @@ class PolymerBond implements BaseTool {
   private readonly history: EditorHistory;
   private readonly bondType: MACROMOLECULES_BOND_TYPES;
 
-  constructor(private readonly editor: CoreEditor, ...args: unknown[]) {
+  constructor(
+    private readonly editor: CoreEditor,
+    ...args: unknown[]
+  ) {
     const [options] = args as [{ toolName: ToolName }];
     this.editor = editor;
     this.history = EditorHistory.getInstance(this.editor);
@@ -136,8 +138,7 @@ class PolymerBond implements BaseTool {
 
   public mouseLeavePolymerBond(event: MouseEvent): void {
     const renderer = event.target?.__data__ as
-      | FlexModeOrSnakeModePolymerBondRenderer
-      | undefined;
+      FlexModeOrSnakeModePolymerBondRenderer | undefined;
     if (this.bondRenderer || !renderer?.polymerBond) return;
 
     const modelChanges =
@@ -151,8 +152,7 @@ class PolymerBond implements BaseTool {
     if (this.bondRenderer) return;
 
     const renderer = event.target?.__data__ as
-      | FlexModeOrSnakeModePolymerBondRenderer
-      | undefined;
+      FlexModeOrSnakeModePolymerBondRenderer | undefined;
     if (!renderer) return;
     const modelChanges =
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
@@ -235,8 +235,7 @@ class PolymerBond implements BaseTool {
   public mouseLeaveMonomer(event: MouseEvent) {
     const eventToElementData = event.relatedTarget?.__data__;
     const eventFromElementData = event.target?.__data__ as
-      | BaseMonomerRenderer
-      | undefined;
+      BaseMonomerRenderer | undefined;
     if (
       eventToElementData instanceof AttachmentPoint &&
       eventToElementData.monomer === eventFromElementData?.monomer

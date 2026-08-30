@@ -44,6 +44,7 @@ export interface IEditorEvents {
   deleteHydrogenBond: Subscription;
   turnOnSequenceEditInRNABuilderMode: Subscription;
   turnOffSequenceEditInRNABuilderMode: Subscription;
+  cancelSequenceEditInRNABuilderMode: Subscription;
   modifySequenceInRnaBuilder: Subscription;
   mouseOverSequenceItem: Subscription;
   mouseOnMoveSequenceItem: Subscription;
@@ -65,6 +66,7 @@ export interface IEditorEvents {
   pasteFromClipboard: Subscription;
   deleteSelectedStructure: Subscription;
   selectEntities: Subscription;
+  modelChange: Subscription;
   toggleMacromoleculesPropertiesVisibility: Subscription;
   modifyAminoAcids: Subscription;
   setEditorLineLength: Subscription;
@@ -121,6 +123,7 @@ export function createEditorEvents(): IEditorEvents {
     deleteHydrogenBond: new Subscription(),
     turnOnSequenceEditInRNABuilderMode: new Subscription(),
     turnOffSequenceEditInRNABuilderMode: new Subscription(),
+    cancelSequenceEditInRNABuilderMode: new Subscription(),
     modifySequenceInRnaBuilder: new Subscription(),
     mouseOverSequenceItem: new Subscription(),
     mouseOnMoveSequenceItem: new Subscription(),
@@ -142,6 +145,7 @@ export function createEditorEvents(): IEditorEvents {
     pasteFromClipboard: new Subscription(),
     deleteSelectedStructure: new Subscription(),
     selectEntities: new Subscription(),
+    modelChange: new Subscription(),
     toggleMacromoleculesPropertiesVisibility: new Subscription(),
     modifyAminoAcids: new Subscription(),
     setEditorLineLength: new Subscription(),

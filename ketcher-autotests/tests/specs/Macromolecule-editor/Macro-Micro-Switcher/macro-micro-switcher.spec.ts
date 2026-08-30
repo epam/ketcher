@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
@@ -145,10 +143,10 @@ test.afterAll(async ({ closePage }) => {
 
 test.describe('Macro-Micro-Switcher', () => {
   test('Check that preview window of macro structure does not change in micro mode ', async () => {
-    /* 
-    Test case: https://github.com/epam/ketcher/issues/3603
-    Description: Preview window of macro structure doesn't change in micro mode
-    */
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/3603
+     * Description: Preview window of macro structure doesn't change in micro mode
+     */
     const scrollValue = -400;
     const monomerLabelsOnMacromoleculesCanvas = [
       'A',
@@ -1864,7 +1862,6 @@ test.describe('Macro-Micro-Switcher', () => {
   const testData5 = [{ type: 'RNA' }, { type: 'DNA' }, { type: 'Peptide' }];
 
   for (const data of testData5) {
-    // eslint-disable-next-line max-len
     test.skip(
       `Add to micro structure with free attachment point ${data.type} in sequence mode and ensure that a connection was formed when switching to flex or snake mode`,
       { tag: ['@NeedToBeUpdated'] },
@@ -1915,7 +1912,6 @@ test.describe('Macro-Micro-Switcher', () => {
   const testData6 = [{ type: 'RNA' }, { type: 'DNA' }, { type: 'Peptide' }];
 
   for (const data of testData6) {
-    // eslint-disable-next-line max-len
     test.skip(
       `Add to micro structure with NO free attachment point ${data.type} in sequence mode and ensure that a connection was NOt formed when switching to snake mode`,
       { tag: ['@NeedToBeUpdated'] },

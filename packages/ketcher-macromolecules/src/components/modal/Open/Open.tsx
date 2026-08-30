@@ -265,7 +265,7 @@ const onOk = async ({
   let inputFormat;
   let fileData = struct;
 
-  const showParsingError = (stringError) => {
+  const showParsingError = (stringError: string) => {
     const errorMessage = 'Convert error! ' + stringError;
     dispatch(
       openErrorModal({
@@ -279,7 +279,7 @@ const onOk = async ({
     try {
       addToCanvas({ struct, ketSerializer, editor });
       onCloseCallback();
-    } catch (e) {
+    } catch (_e) {
       showParsingError('Error during file parsing.');
     }
     return;
@@ -315,7 +315,7 @@ const onOk = async ({
   }
 };
 const isAnalyzingFile = false;
-const errorHandler = (error) => console.log(error);
+const errorHandler = (error: string) => console.log(error);
 
 const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const dispatch = useAppDispatch();
@@ -357,7 +357,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       windowContext.isKetcherFullscreenBeforeFilePicker = false;
     }
 
-    const onLoad = (fileContent) => {
+    const onLoad = (fileContent: string) => {
       setStructStr(fileContent);
       setCurrentState(MODAL_STATES.textEditor);
     };

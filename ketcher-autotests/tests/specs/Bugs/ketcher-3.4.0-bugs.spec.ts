@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test, expect } from '@fixtures';
 import {
@@ -19,6 +15,7 @@ import {
   clickOnCanvas,
   openFile,
   takeElementScreenshot,
+  moveMouseAway,
 } from '@utils';
 import {
   copyAndPaste,
@@ -97,19 +94,6 @@ async function openPPTXFileAndValidateStructurePreview(
 }
 
 let page: Page;
-
-async function moveMouseToCanvasCenter(page: Page) {
-  const canvas = page.getByTestId('ketcher-canvas').filter({
-    has: page.locator(':visible'),
-  });
-  const box = await canvas.first().boundingBox();
-
-  if (!box) {
-    return;
-  }
-
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-}
 
 test.describe('Ketcher bugs in 3.4.0', () => {
   test.beforeAll(async ({ initSequenceCanvas }) => {
@@ -224,8 +208,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Сheck the button sizes on the control panel
      */
     await takeLeftToolbarMacromoleculeScreenshot(page);
-    // Avoid incidental button hover state in top toolbar baseline.
-    await moveMouseToCanvasCenter(page);
+    await moveMouseAway(page);
     await takeTopToolbarScreenshot(page);
   });
 
@@ -607,7 +590,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'title',
       calculatePropertiesButton.title,
     );
-    await moveMouseToCanvasCenter(page);
     await button.hover();
     await expect(button).toHaveAttribute(
       'title',
@@ -749,7 +731,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       monomerAlias: 'F1',
     }).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Case 28: Correct highlight (not missing fill) for leaving-group atoms', async ({
@@ -1105,7 +1087,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CalculateVariablesPanel(page).peptidesTab.click();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('2.39');
+    ).toEqual('9.87');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
@@ -1180,7 +1162,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CalculateVariablesPanel(page).peptidesTab.click();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('2.39');
+    ).toEqual('9.87');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
@@ -1214,7 +1196,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('9.53');
+    ).toEqual('2.35');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');

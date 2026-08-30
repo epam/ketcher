@@ -3,7 +3,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -25,6 +25,10 @@ import {
   getMonomerSize,
   setMonomerSize,
 } from 'application/render/renderers/monomerSizeState';
+import {
+  type HighlightPathData,
+  createRectHighlightPath,
+} from 'application/render/renderers/monomerHighlightShapes';
 
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
@@ -38,11 +42,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
-  public declare bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
+  declare public bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
   private hoveredAttachmentPoint: AttachmentPointName | null = null;
+  private _dragTargetAttachmentPoint: AttachmentPointName | null = null;
+  private _dragCircleHoverAttachmentPoint: AttachmentPointName | null = null;
 
   private readonly monomerSymbolElement?: SVGUseElement | SVGRectElement;
   public readonly monomerSize: { width: number; height: number };
@@ -114,6 +120,23 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     return new Vec2(
       this.scaledMonomerPosition.x + this.monomerSize.width / 2,
       this.scaledMonomerPosition.y + this.monomerSize.height / 2,
+    );
+  }
+
+  /**
+   * The path that outlines this monomer's replacement-highlight area.
+   *
+   * The default is a rectangle matching the monomer body; renderers with a
+   * different body shape (e.g. phosphates, RNA bases) override this. The
+   * optional offset lets transient views request an inflated path while keeping
+   * the body-shape knowledge inside the renderer.
+   */
+  public getHighlightPath(offset = 0): HighlightPathData {
+    return createRectHighlightPath(
+      this.center,
+      this.monomerSize.width,
+      this.monomerSize.height,
+      offset,
     );
   }
 
@@ -206,29 +229,33 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     appendFn?: (
       apName: AttachmentPointName,
       customAngle?: number,
-    ) => AttachmentPoint,
+    ) => Pick<AttachmentPoint, 'getAngle'>,
   ) {
     if (this.attachmentPoints.length) {
       return;
     }
 
     const appendFnToUse = appendFn ?? this.appendAttachmentPoint.bind(this);
+    const hasDragTarget = this._dragTargetAttachmentPoint !== null;
 
-    // draw used attachment points
-    this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
-      const attachmentPoint = appendFnToUse(item);
-      const angle: number = attachmentPoint.getAngle();
+    // draw used attachment points (hidden when a drag target is active)
+    if (!hasDragTarget) {
+      this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
+        const attachmentPoint = appendFnToUse(item);
+        const angle: number = attachmentPoint.getAngle();
 
-      this.attachmentPoints.push(attachmentPoint as never);
+        this.attachmentPoints.push(attachmentPoint as never);
 
-      // remove this sector from list of free sectors
-      const newList = this.freeSectorsList.filter((item) => {
-        return (
-          anglesToSector[item].min > angle || anglesToSector[item].max <= angle
-        );
+        // remove this sector from list of free sectors
+        const newList = this.freeSectorsList.filter((item) => {
+          return (
+            anglesToSector[item].min > angle ||
+            anglesToSector[item].max <= angle
+          );
+        });
+        this.freeSectorsList = checkFor0and360(newList);
       });
-      this.freeSectorsList = checkFor0and360(newList);
-    });
+    }
 
     const unrenderedAtPoints: AttachmentPointName[] = [];
 
@@ -299,6 +326,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       applyZoomForPositionCalculation: true,
       // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
       isSnake: this.isSnakeBondForAttachmentPoint(attachmentPointName),
+      isDragTarget: this._dragTargetAttachmentPoint === attachmentPointName,
+      isDragCircleHover:
+        this._dragCircleHoverAttachmentPoint === attachmentPointName,
     };
   }
 
@@ -324,6 +354,18 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   public hoverAttachmentPoint(attachmentPointName: AttachmentPointName): void {
     this.hoveredAttachmentPoint = attachmentPointName;
+  }
+
+  public setDragTargetAttachmentPoint(
+    attachmentPointName: AttachmentPointName | null,
+  ): void {
+    this._dragTargetAttachmentPoint = attachmentPointName;
+  }
+
+  public setDragCircleHoverAttachmentPoint(
+    attachmentPointName: AttachmentPointName | null,
+  ): void {
+    this._dragCircleHoverAttachmentPoint = attachmentPointName;
   }
 
   protected raiseAttachmentPoints() {

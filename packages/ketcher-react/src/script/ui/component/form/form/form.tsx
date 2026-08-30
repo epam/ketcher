@@ -191,9 +191,8 @@ class Form extends Component<FormProps> {
 }
 
   updateState(newState: Record<string, unknown>) {
-    const { onUpdate, schema } = this.props;
-    const { instance, valid, errors } =
-      this.schema.serialize(stateWithDefaults);
+    const { onUpdate } = this.props;
+    const { instance, valid, errors } = this.schema.serialize(newState);
     const errs = getErrorsObj(errors);
     onUpdate(instance as Record<string, unknown>, valid, errs);
   }

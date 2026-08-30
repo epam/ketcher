@@ -2573,6 +2573,16 @@ export class DrawingEntitiesManager {
         return;
       }
 
+      const existingStereoFlag =
+        targetDrawingEntitiesManager.getStereoFlagForMonomer(relatedMonomer);
+      if (existingStereoFlag) {
+        mergedDrawingEntities.stereoFlags.set(
+          existingStereoFlag.id,
+          existingStereoFlag,
+        );
+        return;
+      }
+
       const stereoFlagAddCommand = targetDrawingEntitiesManager.addStereoFlag(
         stereoFlag.position,
         stereoFlag.flagType,

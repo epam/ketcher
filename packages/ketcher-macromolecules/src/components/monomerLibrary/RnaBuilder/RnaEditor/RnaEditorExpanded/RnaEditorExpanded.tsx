@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler, react-you-might-not-need-an-effect/no-chain-state-updates */
+/* eslint-disable react-you-might-not-need-an-effect/no-chain-state-updates */
 /* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -139,6 +139,7 @@ export const RnaEditorExpanded = ({
 
   const resolvePhosphatePosition = (
     preset: typeof newPreset,
+    phosphatePositionOverride = selectedPhosphatePosition,
   ): RnaPhosphatePosition | undefined => {
     if (!preset?.phosphate) {
       return undefined;
@@ -149,11 +150,11 @@ export const RnaEditorExpanded = ({
       is5PrimeAvailable: isLeftPositionAvailable,
     } = getPhosphatePositionAvailability(preset);
 
-    if (selectedPhosphatePosition === 'left' && isLeftPositionAvailable) {
+    if (phosphatePositionOverride === 'left' && isLeftPositionAvailable) {
       return 'left';
     }
 
-    if (selectedPhosphatePosition === 'right' && isRightPositionAvailable) {
+    if (phosphatePositionOverride === 'right' && isRightPositionAvailable) {
       return 'right';
     }
 
@@ -210,17 +211,23 @@ export const RnaEditorExpanded = ({
     right: 'Sugar must have R2, and phosphate must have R1.',
   };
 
-  const updatePresetMonomerGroup = (selectedPresetMonomerGroup: typeof activePresetMonomerGroup) => {
+  const updatePresetMonomerGroup = (
+    selectedPresetMonomerGroup: typeof activePresetMonomerGroup,
+  ) => {
     if (selectedPresetMonomerGroup) {
       const groupName =
         monomerGroupToPresetGroup[selectedPresetMonomerGroup.groupName];
+
       const currentPreset = {
         ...newPreset,
         [groupName]: selectedPresetMonomerGroup.groupItem,
       };
+
       setNewPreset(currentPreset);
+
       return currentPreset;
     }
+
     return newPreset;
   };
 
@@ -248,17 +255,20 @@ export const RnaEditorExpanded = ({
     );
   }, [dispatch, sequenceSelection]);
 
-    const applyMonomerGroupSelection = (
-      selectedGroup: (typeof groupsData)[number]['groupName'],
-      selectedPresetMonomerGroup: typeof activePresetMonomerGroup,
-    ) => {
-      if (selectedGroup !== RnaBuilderPresetsItem.Presets && isEditMode) {
-        if (isSequenceEditInRNABuilderMode && selectedPresetMonomerGroup) {
+  const applyMonomerGroupSelection = (
+    selectedGroup: typeof activeMonomerGroup,
+    selectedPresetMonomerGroup: typeof activePresetMonomerGroup,
+    phosphatePositionOverride = selectedPhosphatePosition,
+  ) => {
+    if (selectedGroup !== RnaBuilderPresetsItem.Presets && isEditMode) {
+      if (isSequenceEditInRNABuilderMode && selectedPresetMonomerGroup) {
         const monomerType =
           monomerGroupToPresetGroup[selectedPresetMonomerGroup.groupName];
         const field = `${monomerType}Label`;
 
         const updatedSequenceSelection = sequenceSelection.map((node) => {
+          // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
+          // Do not set 'sugarLabel', 'baseLabel' for Phosphate
           if (
             (node.isNucleosideConnectedAndSelectedWithPhosphate &&
               field === 'phosphateLabel') ||
@@ -281,9 +291,13 @@ export const RnaEditorExpanded = ({
         setIsSequenceSelectionUpdated(true);
         dispatch(setSequenceSelection(updatedSequenceSelection));
       } else {
-        const currentPreset = updatePresetMonomerGroup(selectedPresetMonomerGroup);
-        const resolvedPhosphatePosition =
-          resolvePhosphatePosition(currentPreset);
+        const currentPreset = updatePresetMonomerGroup(
+          selectedPresetMonomerGroup,
+        );
+        const resolvedPhosphatePosition = resolvePhosphatePosition(
+          currentPreset,
+          phosphatePositionOverride,
+        );
         let presetFullName = newPreset?.name;
 
         if (!currentPreset.editedName) {
@@ -394,6 +408,11 @@ export const RnaEditorExpanded = ({
 
   const setPhosphatePosition = (position?: RnaPhosphatePosition) => {
     setSelectedPhosphatePosition(position);
+    applyMonomerGroupSelection(
+      activeMonomerGroup,
+      activePresetMonomerGroup,
+      position,
+    );
     dispatch(
       recalculateRnaBuilderValidations({
         rnaPreset: newPreset,

@@ -166,18 +166,19 @@ class Form extends Component<FormProps> {
   }
 
   componentDidUpdate(prevProps: FormProps) {
-  const { schema, result, customValid, serialize, deserialize } = this.props;
-  if (
-    (schema.key && schema.key !== prevProps.schema.key) ||
-    (customValid !== prevProps.customValid &&
-      (schema.title === 'Atom' || schema.title === 'Bond'))
-  ) {
-    this.schema = propSchema(schema, { customValid, serialize, deserialize });
-    const stateWithDefaults = applySchemaDefaults(result, schema);
-    this.schema.serialize(stateWithDefaults);
-    this.updateState(stateWithDefaults);
+    const { schema, result, customValid, serialize, deserialize } = this.props;
+
+    if (
+      (schema.key && schema.key !== prevProps.schema.key) ||
+      (customValid !== prevProps.customValid &&
+        (schema.title === 'Atom' || schema.title === 'Bond'))
+    ) {
+      this.schema = propSchema(schema, { customValid, serialize, deserialize });
+      const stateWithDefaults = applySchemaDefaults(result, schema);
+      this.schema.serialize(stateWithDefaults);
+      this.updateState(stateWithDefaults);
+    }
   }
-}
 
   updateState(newState: Record<string, unknown>) {
     const { onUpdate } = this.props;

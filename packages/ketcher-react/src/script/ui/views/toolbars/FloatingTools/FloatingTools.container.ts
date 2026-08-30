@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 import {

@@ -13,17 +13,19 @@ import { StereoLabelStyleType } from 'application/render/restruct/generalEnumTyp
 import { StereoFlag } from 'domain/entities/fragment';
 import type { Settings } from 'application/settings';
 import util from '../util';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   BAD_VALENCE_WARNING_COLOR,
   BAD_VALENCE_LINE_OFFSET,
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
+import { isGenericAtom } from 'domain/helpers';
 
 // Extra clearance in canvas units that keeps labels away from the atom bbox.
 const LABEL_CLEARANCE_OFFSET = 5;
 const STEREO_CIP_GAP = 2;
+const MAX_LABEL_LENGTH = 8;
 
 export type AtomHoverContour =
   | {
@@ -41,7 +43,8 @@ export type AtomHoverContour =
     };
 
 export class AtomRenderer extends BaseRenderer {
-  private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
+  private selectionElement?: D3SvgElementSelection<SVGRectElement, void>;
+
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
   private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
   private cipLabelElement?: D3SvgElementSelection<SVGGElement, void>;
@@ -128,7 +131,18 @@ export class AtomRenderer extends BaseRenderer {
       .attr('cy', 0);
   }
 
-  private appendSelectionContour() {
+  /**
+   * WARNING: this method always reports its return type as
+   * `D3SvgElementSelection<SVGRectElement, void> | undefined` even though the
+   * circle branch actually produces a `SVGCircleElement` selection.  The
+   * deliberate misreport is required because TypeScript cannot resolve D3's
+   * overloaded `attr()` signature on a `SVGCircleElement | SVGRectElement`
+   * union selection, which would force every call site to add its own cast.
+   * Callers must therefore restrict themselves to element-agnostic D3 methods
+   * (`attr`, `style`, `remove`) and must not rely on the element type itself.
+   */
+  private appendSelectionContour():
+    D3SvgElementSelection<SVGRectElement, void> | undefined {
     if (
       (this.labelLength < 2 || !this.isLabelVisible) &&
       !this.atom.hasCharge
@@ -143,7 +157,10 @@ export class AtomRenderer extends BaseRenderer {
         ?.insert('circle', ':first-child')
         .attr('r', selectionRadius)
         .attr('cx', 0)
-        .attr('cy', 0);
+        .attr('cy', 0) as unknown as D3SvgElementSelection<
+        SVGRectElement,
+        void
+      >;
     } else {
       const labelBbox = this.textElement?.node()?.getBBox();
       const labelX = labelBbox?.x ?? 0;
@@ -223,20 +240,12 @@ export class AtomRenderer extends BaseRenderer {
       return this.hoverElement;
     }
 
-    const selectionContourElement = this.appendSelectionContour();
-
-    return (
-      selectionContourElement
-        ?.attr('stroke', '#0097a8')
-        // selectionContourElement is union type here. For some reason for union selection types
-        // ts shows error that first call of attr can return string.
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        .attr('stroke-width', '1.2')
-        .attr('fill', 'none')
-        .attr('opacity', '0')
-        .attr('class', 'dynamic-element')
-    );
+    return this.appendSelectionContour()
+      ?.attr('stroke', '#0097a8')
+      .attr('stroke-width', '1.2')
+      .attr('fill', 'none')
+      .attr('opacity', '0')
+      .attr('class', 'dynamic-element');
   }
 
   /**
@@ -276,7 +285,7 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = provideEditorInstance().viewModel;
     const atomHaldEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
-    if (atomHaldEdges?.length === 0) {
+    if (!atomHaldEdges?.length) {
       if (this.atom.label === AtomLabel.D || this.atom.label === AtomLabel.T) {
         return false;
       } else {
@@ -296,7 +305,37 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get labelText() {
+    if (this.atom.properties.atomList) {
+      return this.atom.properties.atomList.label();
+    }
     return this.atom.properties.alias ?? this.atom.label;
+  }
+
+  /** True when the atom's label is a generic / pseudo query atom (e.g. A, Q, M, X, *). */
+  public get isGenericLabel(): boolean {
+    return isGenericAtom(this.atom.label);
+  }
+
+  // A bondless D/T isotope still needs its implicit hydrogen suffix (DH, TH); only a
+  // bare "H" label must merge the implicit hydrogen into its own count instead of
+  // repeating the letter (H2, not HH).
+  private get isHydrogenLabel() {
+    return this.atom.label === AtomLabel.H;
+  }
+
+  /** The label text shown on canvas — truncated to MAX_LABEL_LENGTH if necessary. */
+  public get displayLabelText() {
+    const text = this.labelText;
+    if (text.length > MAX_LABEL_LENGTH) {
+      return `${text.substring(0, MAX_LABEL_LENGTH)}...`;
+    }
+    return text;
+  }
+
+  /** When the label is truncated, this holds the full text for use as a tooltip. */
+  public get labelTooltipText(): string | null {
+    const text = this.labelText;
+    return text.length > MAX_LABEL_LENGTH ? text : null;
   }
 
   private get isAtomTerminal() {
@@ -352,8 +391,8 @@ export class AtomRenderer extends BaseRenderer {
   public get labelLength() {
     let { hydrogenAmount } = this.atom.calculateValence();
 
-    if (this.labelText.length > 1) {
-      return this.labelText.length;
+    if (this.displayLabelText.length > 1) {
+      return this.displayLabelText.length;
     }
 
     if (!this.shouldDisplayHydrogen) {
@@ -415,13 +454,21 @@ export class AtomRenderer extends BaseRenderer {
       hydrogenAmount = 0;
     }
 
+    const isHydrogenLabel = this.isHydrogenLabel;
+    if (isHydrogenLabel && hydrogenAmount > 0) {
+      // The label itself already shows one hydrogen, so fold the implicit amount into it.
+      hydrogenAmount += 1;
+    }
+
     const textElement = this.rootElement
       ?.append('text')
       .attr('y', 5)
       .attr('fill', this.labelColor)
       .attr(
         'style',
-        'user-select: none; font-family: Arial; letter-spacing: 1.2px;',
+        `user-select: none; font-family: Arial; letter-spacing: 1.2px;${
+          this.isGenericLabel ? ' font-style: italic;' : ''
+        }`,
       )
       .attr('font-size', '13px')
       .attr('pointer-events', 'none');
@@ -430,10 +477,10 @@ export class AtomRenderer extends BaseRenderer {
       textElement
         ?.append('tspan')
         .attr('dy', this.atom.hasExplicitIsotope ? 4 : 0)
-        .text(this.labelText);
+        .text(this.displayLabelText);
     }
 
-    if (!this.atom.hasAlias && hydrogenAmount > 0) {
+    if (!this.atom.hasAlias && hydrogenAmount > 0 && !isHydrogenLabel) {
       textElement
         ?.append('tspan')
         .attr(
@@ -445,12 +492,14 @@ export class AtomRenderer extends BaseRenderer {
       if (hydrogenAmount > 1) {
         textElement?.append('tspan').text(hydrogenAmount).attr('dy', 3);
       }
+    } else if (isHydrogenLabel && hydrogenAmount > 0) {
+      textElement?.append('tspan').text(hydrogenAmount).attr('dy', 3);
     }
 
     if (shouldHydrogenBeOnLeft) {
       textElement
         ?.append('tspan')
-        .text(this.labelText)
+        .text(this.displayLabelText)
         .attr('dy', hydrogenAmount > 1 ? -3 : 0);
     }
 
@@ -499,20 +548,16 @@ export class AtomRenderer extends BaseRenderer {
     this.badValenceElement?.remove();
     this.badValenceElement = undefined;
     this.updateSelectionContour();
+    // Hover contour is the only hit-testable element; recreate it after removal.
+    this.hoverElement = this.appendHover();
     this.appendAtomProperties();
     this.appendBadValenceWarning();
   }
 
   public appendSelection() {
     if (!this.selectionElement) {
-      const selectionContourElement = this.appendSelectionContour();
-
-      this.selectionElement = selectionContourElement
+      this.selectionElement = this.appendSelectionContour()
         ?.attr('fill', SELECTION_COLOR)
-        // selectionContourElement is union type here. For some reason for union selection types
-        // ts shows error that first call of attr can return string.
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         .attr('class', 'dynamic-element');
     }
 
@@ -833,12 +878,11 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendStereoLabel() {
-    if (!this.shouldDisplayStereoLabel()) {
+    const stereoLabel = this.atom.properties.stereoLabel;
+
+    if (!stereoLabel || !this.shouldDisplayStereoLabel()) {
       return;
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const stereoLabel = this.atom.properties.stereoLabel!;
 
     this.stereoLabelElement = this.canvas
       ?.append('g')
@@ -957,6 +1001,8 @@ export class AtomRenderer extends BaseRenderer {
     this.removeSelection();
     this.cipLabelElement?.remove();
     this.stereoLabelElement?.remove();
+    // Clear stale ref so show() recreates the hover contour in the new root (#10856).
+    this.hoverElement = undefined;
     super.remove();
   }
 

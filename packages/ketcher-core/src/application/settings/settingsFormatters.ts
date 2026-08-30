@@ -10,11 +10,7 @@ export type SettingsFormValue = Partial<
 > & {
   readonly imageResolution?: Settings['imageResolution'] | string;
   readonly stereoLabelStyle?:
-    | Settings['stereoLabelStyle']
-    | 'Iupac'
-    | 'Classic'
-    | 'On'
-    | 'Off';
+    Settings['stereoLabelStyle'] | 'Iupac' | 'Classic' | 'On' | 'Off';
   readonly showHydrogenLabels?: Settings['showHydrogenLabels'] | 'all';
   readonly init?: unknown;
 };
@@ -28,7 +24,11 @@ const CORE_ONLY_SETTING_FIELDS = [
   'editorLineLength',
   'disableCustomQuery',
   'monomerLibraryUpdates',
-] as const;
+] as const satisfies ReadonlyArray<keyof Settings>;
+
+type Mutable<T> = {
+  -readonly [K in keyof T]: T[K];
+};
 
 function ensureFontSizePrefix(font?: string): string | undefined {
   return font && !font.match(/^\d+px\s/) ? `30px ${font}` : font;
@@ -90,7 +90,7 @@ function normalizeStereoLabelStyleForForm(
 export function normalizeSettingsForCore(
   settings: SettingsFormValue,
 ): Partial<Settings> {
-  const transformed = { ...settings } as Record<string, unknown>;
+  const transformed: Mutable<SettingsFormValue> = { ...settings };
 
   delete transformed.init;
 
@@ -125,7 +125,9 @@ export function normalizeSettingsForForm(
   settings: Partial<Settings>,
   options: NormalizeSettingsFromCoreOptions = {},
 ): SettingsFormValue {
-  const transformed = { ...settings } as Record<string, unknown>;
+  const transformed: Mutable<SettingsFormValue> = {
+    ...(settings as SettingsFormValue),
+  };
 
   const normalizedStereoLabelStyle = normalizeStereoLabelStyleForForm(
     settings.stereoLabelStyle,

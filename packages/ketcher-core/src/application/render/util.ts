@@ -20,7 +20,7 @@ import type { Bond } from 'domain/entities/bond';
 import type { Box2Abs } from 'domain/entities/box2Abs';
 import type { HalfBond } from 'domain/entities/halfBond';
 import { Vec2 } from 'domain/entities/vec2';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { LayerMap } from './restruct/generalEnumTypes';
 import type ReStruct from './restruct/restruct';
 import type Visel from './restruct/visel';
@@ -82,7 +82,7 @@ function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
   const id1 = rd[pid] > rd[nid] ? pid : nid;
 
   // simple proportion to calculate the shift
-  /* eslint-disable no-mixed-operators */
+
   return (
     rd[id0] +
     (Math.abs(rc[id0]) * (rd[id1] - rd[id0])) /

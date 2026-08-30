@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -34,7 +35,7 @@ import { fromBondStereoUpdate } from './bondStereo';
 import { Action } from './action';
 import { without } from 'lodash/fp';
 import type ReStruct from 'application/render/restruct/restruct';
-import assert from 'assert';
+import { assert } from 'utilities';
 
 export function fromAtomAddition(restruct, pos, atom) {
   atom = { ...(atom || {}) };

@@ -46,8 +46,7 @@ const TOPOLOGY_OFFSET_Y_MULTIPLIER = 1;
 
 export class BondRenderer extends BaseRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGPathElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGPathElement, void> | undefined;
 
   constructor(public bond: Bond) {
     super(bond);
@@ -601,7 +600,10 @@ export class BondRenderer extends BaseRenderer {
     switch (this.bond.type) {
       case BondType.Single:
         if (this.bond.stereo === BondStereo.Up) {
-          bondSVGPaths = SingleUpBondPathRenderer.preparePaths(bondVectors);
+          bondSVGPaths = SingleUpBondPathRenderer.preparePaths(
+            bondVectors,
+            viewModel,
+          );
         } else if (this.bond.stereo === BondStereo.Down) {
           bondSVGPaths = SingleDownBondPathRenderer.preparePaths(bondVectors);
         } else if (this.bond.stereo === BondStereo.Either) {

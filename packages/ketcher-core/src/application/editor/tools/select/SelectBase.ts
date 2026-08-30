@@ -15,12 +15,8 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  type HydrogenBond,
-  type PolymerBond,
-  BaseMonomer,
-  Vec2,
-} from 'domain/entities';
+import { HydrogenBond, PolymerBond, BaseMonomer, Vec2 } from 'domain/entities';
+import { getAllConnectedMonomersRecursively } from 'domain/helpers/monomers';
 import type { CoreEditor } from 'application/editor/Editor';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
@@ -89,11 +85,8 @@ abstract class SelectBase implements BaseTool {
   private readonly canvasResizeObserver?: ResizeObserver;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
   public mode:
-    | 'moving'
-    | 'selecting'
-    | 'standby'
-    | 'rotating'
-    | 'rotating-center' = 'standby';
+    'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
+    'standby';
 
   protected rotationStartAngle = 0;
   protected rotationCenter: Vec2 | null = null;
@@ -107,6 +100,14 @@ abstract class SelectBase implements BaseTool {
   private readonly selectEntitiesHandler = () => {
     this.updateRotationView();
   };
+
+  /**
+   * Reads renderer data from d3-bound event targets (`target.__data__`).
+   * Returns undefined when an event target has no renderer payload.
+   */
+  private static getRendererFromEvent<T>(event: MouseEvent): T | undefined {
+    return (event.target as { __data__?: T } | null)?.__data__;
+  }
 
   constructor(protected readonly editor: CoreEditor) {
     this.destroy();
@@ -172,7 +173,7 @@ abstract class SelectBase implements BaseTool {
       }
 
       const modKey = isMacOs ? event.metaKey : event.ctrlKey;
-      this.mousedownEntity(renderer, event.shiftKey, modKey);
+      this.mousedownEntity(renderer, event.shiftKey, modKey, event.altKey);
     }
   }
 
@@ -282,6 +283,7 @@ abstract class SelectBase implements BaseTool {
     renderer: BaseRenderer,
     shiftKey = false,
     modKey = false,
+    altKey = false,
   ): void {
     const modelChanges = new Command();
     const drawingEntitiesToSelect: DrawingEntity[] = [];
@@ -297,7 +299,7 @@ abstract class SelectBase implements BaseTool {
       drawingEntitiesToSelect.push(renderer.drawingEntity);
     }
 
-    if (!shiftKey && !modKey) {
+    if (!shiftKey && !modKey && !altKey) {
       this.startMoveIfNeeded(renderer);
       const isSequenceItem = renderer instanceof BaseSequenceItemRenderer;
       if (renderer.drawingEntity.selected && !isSequenceItem) {
@@ -345,6 +347,38 @@ abstract class SelectBase implements BaseTool {
           drawingEntities,
         ),
       );
+    } else if (
+      altKey &&
+      this.editor.mode.modeName !== 'sequence-layout-mode' &&
+      renderer.drawingEntity instanceof BaseMonomer
+    ) {
+      // Alt + drag on a monomer in Flex/Snake mode selects and moves
+      // the whole chain it belongs to (#4451). Sequence mode keeps its own
+      // Ctrl/Cmd-based gesture above, untouched.
+      this.startMoveIfNeeded(renderer);
+      const connectedMonomers = getAllConnectedMonomersRecursively(
+        renderer.drawingEntity,
+      );
+      connectedMonomers.forEach((connectedMonomer) =>
+        connectedMonomer.turnOnSelection(),
+      );
+      // A bond's `firstMonomer` is fixed at construction, so checking it here
+      // (rather than just `.selected` on both ends) naturally visits each
+      // intra-chain bond exactly once instead of twice.
+      const bondsInsideChain = connectedMonomers.flatMap((connectedMonomer) =>
+        connectedMonomer.bonds.filter(
+          (bond): bond is PolymerBond | HydrogenBond =>
+            (bond instanceof PolymerBond || bond instanceof HydrogenBond) &&
+            bond.firstMonomer === connectedMonomer &&
+            Boolean(bond.secondMonomer?.selected),
+        ),
+      );
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.selectDrawingEntities([
+          ...connectedMonomers,
+          ...bondsInsideChain,
+        ]),
+      );
     }
 
     modelChanges.merge(
@@ -367,7 +401,7 @@ abstract class SelectBase implements BaseTool {
 
   protected abstract updateSelectionViewParams(): void;
 
-  protected abstract onSelectionMove(isShiftPressed: boolean);
+  protected abstract onSelectionMove(isShiftPressed: boolean): void;
 
   static calculateAngleSnap(
     monomerPositionPlusCursorDelta: Vec2,
@@ -461,8 +495,8 @@ abstract class SelectBase implements BaseTool {
     threshold: number,
     pointToCheckOnAnotherAxis: number,
     snappingPointOnAnotherAxis: number,
-    thresholdOnAnotherAxis,
-  ) {
+    thresholdOnAnotherAxis: number,
+  ): boolean {
     return (
       pointToCheck < snappingPoint + threshold &&
       pointToCheck > snappingPoint - threshold &&
@@ -1173,8 +1207,11 @@ abstract class SelectBase implements BaseTool {
     }
   }
 
-  mouseOverDrawingEntity(event) {
-    const renderer = event.target.__data__;
+  mouseOverDrawingEntity(event: MouseEvent): void {
+    const renderer = SelectBase.getRendererFromEvent<BaseRenderer>(event);
+    if (!renderer) {
+      return;
+    }
     const modelChanges =
       this.editor.drawingEntitiesManager.intendToSelectDrawingEntity(
         renderer.drawingEntity,
@@ -1182,8 +1219,11 @@ abstract class SelectBase implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  mouseLeaveDrawingEntity(event) {
-    const renderer: BaseRenderer = event.target.__data__;
+  mouseLeaveDrawingEntity(event: MouseEvent): void {
+    const renderer = SelectBase.getRendererFromEvent<BaseRenderer>(event);
+    if (!renderer) {
+      return;
+    }
 
     const modelChanges =
       this.editor.drawingEntitiesManager.cancelIntentionToSelectDrawingEntity(
@@ -1192,13 +1232,18 @@ abstract class SelectBase implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  public mouseOverPolymerBond(event) {
+  public mouseOverPolymerBond(event: MouseEvent): void {
     if (event.buttons === 1) {
       return;
     }
 
-    const renderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer =
-      event.target.__data__;
+    const renderer =
+      SelectBase.getRendererFromEvent<DeprecatedFlexModeOrSnakeModePolymerBondRenderer>(
+        event,
+      );
+    if (!renderer) {
+      return;
+    }
 
     const modelChanges =
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
@@ -1207,10 +1252,12 @@ abstract class SelectBase implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  public mouseLeavePolymerBond(event) {
-    const renderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer =
-      event.target.__data__;
-    if (!renderer.polymerBond) {
+  public mouseLeavePolymerBond(event: MouseEvent): void {
+    const renderer =
+      SelectBase.getRendererFromEvent<DeprecatedFlexModeOrSnakeModePolymerBondRenderer>(
+        event,
+      );
+    if (!renderer?.polymerBond) {
       return;
     }
 

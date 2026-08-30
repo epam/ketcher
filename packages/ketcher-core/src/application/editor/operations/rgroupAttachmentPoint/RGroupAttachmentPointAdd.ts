@@ -1,5 +1,5 @@
 import { type ReStruct, ReRGroupAttachmentPoint } from 'application/render';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   type RGroupAttachmentPointType,
   RGroupAttachmentPoint,
@@ -39,7 +39,7 @@ class RGroupAttachmentPointAdd extends BaseOperation {
 
     const struct = restruct.molecule;
     const revertedId = this.data.attachmentPointId;
-    let attachmentPointId = 0;
+    let attachmentPointId: number;
     if (revertedId === undefined) {
       const newId = struct.rgroupAttachmentPoints.add(newAttachmentPoint);
       attachmentPointId = newId;

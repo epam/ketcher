@@ -14,7 +14,11 @@ import {
 } from '../../helpers/dom';
 import type { SelectBase } from 'application/editor/tools/select';
 import { Vec2 } from 'domain/entities';
-import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
+import {
+  coreEditorTheme,
+  peptideMonomerItem,
+  polymerEditorTheme,
+} from '../../mock-data';
 import {
   KetcherLogger,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
@@ -165,7 +169,7 @@ describe('CoreEditor', () => {
     const canvas = createPolymerEditorCanvas();
     const editor: CoreEditor = new CoreEditor({
       canvas,
-      theme: polymerEditorTheme,
+      theme: coreEditorTheme,
       renderersContainer: createRenderersManager(polymerEditorTheme),
     });
     const onMousemove = jest.fn();
@@ -186,7 +190,7 @@ describe('CoreEditor', () => {
       canvas = createPolymerEditorCanvas();
       editor = new CoreEditor({
         canvas,
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
       errorSpy = jest.spyOn(KetcherLogger, 'error').mockImplementation();
@@ -256,9 +260,7 @@ describe('CoreEditor', () => {
         ),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
-    });
 
-    it('should accept monomer with idtAliases and base alias', () => {
       const monomerWithBase = {
         root: {
           templates: [
@@ -290,7 +292,7 @@ describe('CoreEditor', () => {
         },
       };
 
-      const initialLibrarySize = editor.monomersLibrary.length;
+      const initialLibrarySizeAfter = editor.monomersLibrary.length;
       editor.updateMonomersLibrary(JSON.stringify(monomerWithBase));
 
       expect(errorSpy).not.toHaveBeenCalledWith(
@@ -298,7 +300,7 @@ describe('CoreEditor', () => {
           'Base IDT alias is required when idtAliases is defined',
         ),
       );
-      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySizeAfter + 1);
     });
 
     it('should accept monomer without idtAliases', () => {
@@ -482,6 +484,10 @@ describe('CoreEditor', () => {
           reason: expect.stringContaining('Alias collision detected'),
         },
       ]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Alias collision detected'),
+      );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
     });
 
@@ -544,13 +550,15 @@ describe('CoreEditor', () => {
       expect(thrownError?.skippedItems).toEqual([
         {
           name: 'SUGAR3',
-          reason: expect.stringContaining('Invalid HELM alias value'),
+          reason: expect.stringContaining(
+            'The HELM alias must consist only of',
+          ),
         },
       ]);
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
-        expect.stringContaining('Invalid HELM alias value'),
+        expect.stringContaining('The HELM alias must consist only of'),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
       expect(
@@ -593,12 +601,20 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithInvalidBilnAlias));
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(
+          JSON.stringify(monomerWithInvalidBilnAlias),
+        );
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
 
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
+      expect(thrownError?.partialSuccess).toBe(false);
       expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'Load of "PEPTIDE_BILN_INVALID" monomer has failed, monomer definition contains invalid BILN alias value.',
-        ),
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('The BILN alias must consist only of'),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
     });
@@ -734,7 +750,178 @@ describe('CoreEditor', () => {
       ).toThrow(MonomerLibraryUpdateError);
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
-        expect.stringContaining('Alias collision detected'),
+        expect.stringContaining('Duplicate IDT aliases detected'),
+      );
+    });
+
+    it('should reject monomer with duplicate IDT endpoint5 alias', () => {
+      const monomerA = {
+        root: { templates: [{ $ref: 'monomerTemplate-CHEM6' }] },
+        'monomerTemplate-CHEM6': {
+          type: 'monomerTemplate',
+          id: 'CHEM6',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 6',
+          name: 'CHEM6',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM6',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM6',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBase6',
+            modifications: { endpoint5: '/5Me/' },
+          },
+        },
+      };
+      const monomerB = {
+        root: { templates: [{ $ref: 'monomerTemplate-CHEM7' }] },
+        'monomerTemplate-CHEM7': {
+          type: 'monomerTemplate',
+          id: 'CHEM7',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 7',
+          name: 'CHEM7',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM7',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM7',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBase7',
+            modifications: { endpoint5: '/5Me/' },
+          },
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(monomerA));
+
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerB)),
+      ).toThrow(MonomerLibraryUpdateError);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Duplicate IDT aliases detected'),
+      );
+    });
+
+    it('should reject monomer with duplicate IDT internal alias', () => {
+      const monomerA = {
+        root: { templates: [{ $ref: 'monomerTemplate-CHEM8' }] },
+        'monomerTemplate-CHEM8': {
+          type: 'monomerTemplate',
+          id: 'CHEM8',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 8',
+          name: 'CHEM8',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM8',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM8',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBase8',
+            modifications: { internal: '/iMe/' },
+          },
+        },
+      };
+      const monomerB = {
+        root: { templates: [{ $ref: 'monomerTemplate-CHEM9' }] },
+        'monomerTemplate-CHEM9': {
+          type: 'monomerTemplate',
+          id: 'CHEM9',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 9',
+          name: 'CHEM9',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM9',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM9',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBase9',
+            modifications: { internal: '/iMe/' },
+          },
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(monomerA));
+
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerB)),
+      ).toThrow(MonomerLibraryUpdateError);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Duplicate IDT aliases detected'),
+      );
+    });
+
+    it('should reject monomer with duplicate IDT endpoint3 alias', () => {
+      const monomerA = {
+        root: { templates: [{ $ref: 'monomerTemplate-CHEM10' }] },
+        'monomerTemplate-CHEM10': {
+          type: 'monomerTemplate',
+          id: 'CHEM10',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 10',
+          name: 'CHEM10',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM10',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM10',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBase10',
+            modifications: { endpoint3: '/3Me/' },
+          },
+        },
+      };
+      const monomerB = {
+        root: { templates: [{ $ref: 'monomerTemplate-CHEM11' }] },
+        'monomerTemplate-CHEM11': {
+          type: 'monomerTemplate',
+          id: 'CHEM11',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 11',
+          name: 'CHEM11',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM11',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM11',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBase11',
+            modifications: { endpoint3: '/3Me/' },
+          },
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(monomerA));
+
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerB)),
+      ).toThrow(MonomerLibraryUpdateError);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Duplicate IDT aliases detected'),
       );
     });
 
@@ -764,9 +951,17 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithLongIdtAlias));
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithLongIdtAlias));
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
 
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
+      expect(thrownError?.partialSuccess).toBe(false);
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining(
           'The maximum number of characters of an IDT alias without slashes (/) is 10.',
         ),
@@ -981,6 +1176,167 @@ describe('CoreEditor', () => {
 
       expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
         initialTemplatesCount + 1,
+      );
+    });
+
+    it('should reject monomer group template (unsplit nucleotide) with an IDT alias that collides with another monomer group template', () => {
+      const nucleotide1 = {
+        root: {
+          templates: [{ $ref: 'monomerGroupTemplate-_Nucleotide1' }],
+        },
+        'monomerGroupTemplate-_Nucleotide1': {
+          type: 'monomerGroupTemplate',
+          id: '_Nucleotide1',
+          name: '_Nucleotide1',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+          idtAliases: {
+            base: 'IdtNucleotideBase1',
+          },
+        },
+      };
+      const nucleotide2 = {
+        root: {
+          templates: [{ $ref: 'monomerGroupTemplate-_Nucleotide2' }],
+        },
+        'monomerGroupTemplate-_Nucleotide2': {
+          type: 'monomerGroupTemplate',
+          id: '_Nucleotide2',
+          name: '_Nucleotide2',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+          idtAliases: {
+            base: 'IdtNucleotideBase1',
+          },
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(nucleotide1));
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(nucleotide2)),
+      ).toThrow(MonomerLibraryUpdateError);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Duplicate IDT aliases detected'),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
+      expect(
+        editor.monomersLibraryParsedJson?.['monomerGroupTemplate-_Nucleotide1'],
+      ).toBeDefined();
+    });
+
+    it('should reject the second of two colliding monomer group templates loaded in a single update payload', () => {
+      const nucleotidesInOneBatch = {
+        root: {
+          templates: [
+            { $ref: 'monomerGroupTemplate-_Nucleotide4' },
+            { $ref: 'monomerGroupTemplate-_Nucleotide5' },
+          ],
+        },
+        'monomerGroupTemplate-_Nucleotide4': {
+          type: 'monomerGroupTemplate',
+          id: '_Nucleotide4',
+          name: '_Nucleotide4',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+          idtAliases: {
+            base: 'IdtBatchBase1',
+          },
+        },
+        'monomerGroupTemplate-_Nucleotide5': {
+          type: 'monomerGroupTemplate',
+          id: '_Nucleotide5',
+          name: '_Nucleotide5',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+          idtAliases: {
+            base: 'IdtBatchBase1',
+          },
+        },
+      };
+
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(nucleotidesInOneBatch)),
+      ).toThrow(MonomerLibraryUpdateError);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Duplicate IDT aliases detected'),
+      );
+      expect(
+        editor.monomersLibraryParsedJson?.['monomerGroupTemplate-_Nucleotide4'],
+      ).toBeDefined();
+      expect(
+        editor.monomersLibraryParsedJson?.['monomerGroupTemplate-_Nucleotide5'],
+      ).toBeUndefined();
+    });
+
+    it('should reject monomer group template (unsplit nucleotide) with an IDT alias that collides with a regular monomer', () => {
+      const monomerWithIdtAlias = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-CHEM7' }],
+        },
+        'monomerTemplate-CHEM7': {
+          type: 'monomerTemplate',
+          id: 'CHEM7',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 7',
+          name: 'CHEM7',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM7',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM7',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtShared1',
+          },
+        },
+      };
+      const nucleotideWithCollidingAlias = {
+        root: {
+          templates: [{ $ref: 'monomerGroupTemplate-_Nucleotide3' }],
+        },
+        'monomerGroupTemplate-_Nucleotide3': {
+          type: 'monomerGroupTemplate',
+          id: '_Nucleotide3',
+          name: '_Nucleotide3',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+          idtAliases: {
+            base: 'IdtShared1',
+          },
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtAlias));
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+
+      expect(() =>
+        editor.updateMonomersLibrary(
+          JSON.stringify(nucleotideWithCollidingAlias),
+        ),
+      ).toThrow(MonomerLibraryUpdateError);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Duplicate IDT aliases detected'),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
       );
     });
 
@@ -1229,7 +1585,7 @@ describe('CoreEditor', () => {
       canvas = createPolymerEditorCanvas();
       editor = new CoreEditor({
         canvas,
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
       editor.selectTool(ToolName.selectRectangle);
@@ -1274,7 +1630,7 @@ describe('CoreEditor', () => {
       rootElement.appendChild(canvas);
       editor = new CoreEditor({
         canvas,
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
     });
@@ -1322,7 +1678,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
         peptideMonomerItem,
@@ -1372,7 +1728,7 @@ describe('CoreEditor', () => {
       canvas = createPolymerEditorCanvas();
       editor = new CoreEditor({
         canvas,
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
     });
@@ -1406,7 +1762,7 @@ describe('CoreEditor', () => {
       canvas = createPolymerEditorCanvas();
       editor = new CoreEditor({
         canvas,
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
     });
@@ -1422,7 +1778,7 @@ describe('CoreEditor', () => {
       const testCanvas = createPolymerEditorCanvas();
       const testEditor = new CoreEditor({
         canvas: testCanvas,
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
 
@@ -1445,7 +1801,7 @@ describe('CoreEditor', () => {
       const testCanvas = createPolymerEditorCanvas();
       const testEditor = new CoreEditor({
         canvas: testCanvas,
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
 
@@ -1466,7 +1822,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       // Add a monomer
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
@@ -1552,7 +1908,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
         peptideMonomerItem,
@@ -1584,7 +1940,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       // Add a monomer
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
@@ -1637,7 +1993,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       // Add multiple monomers
       const modelChanges1 = editor.drawingEntitiesManager.addMonomer(

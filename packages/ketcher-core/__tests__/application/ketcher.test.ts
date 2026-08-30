@@ -5,7 +5,6 @@
 // import { StructService } from 'domain/services';
 // import { mock } from 'jest-mock-extended';
 
-// eslint-disable-next-line jest/no-export
 export {};
 
 // skipped until cyclic reference is resolved

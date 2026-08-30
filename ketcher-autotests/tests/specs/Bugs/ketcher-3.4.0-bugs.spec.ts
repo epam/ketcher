@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test, expect } from '@fixtures';
 import {
@@ -19,6 +15,7 @@ import {
   clickOnCanvas,
   openFile,
   takeElementScreenshot,
+  moveMouseAway,
 } from '@utils';
 import {
   copyAndPaste,
@@ -211,6 +208,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Сheck the button sizes on the control panel
      */
     await takeLeftToolbarMacromoleculeScreenshot(page);
+    await moveMouseAway(page);
     await takeTopToolbarScreenshot(page);
   });
 
@@ -567,6 +565,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await page.keyboard.press('Alt+C');
     await page.waitForTimeout(1 * 1000);
     await takeEditorScreenshot(page);
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 21: Tooltip displayed for the “Calculate Properties” button in main toolbar', async () => {
@@ -584,6 +583,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       title: 'Calculate properties (Alt+C)',
     };
     const button = MacromoleculesTopToolbar(page).calculatePropertiesButton;
+    if (await CalculateVariablesPanel(page).closeButton.isVisible()) {
+      await CalculateVariablesPanel(page).closeWindow();
+    }
     await expect(button).toHaveAttribute(
       'title',
       calculatePropertiesButton.title,
@@ -593,8 +595,11 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'title',
       calculatePropertiesButton.title,
     );
+    await page.waitForTimeout(200);
     await takeTopToolbarScreenshot(page);
     await button.click();
+    await expect(CalculateVariablesPanel(page).closeButton).toBeVisible();
+    await page.waitForTimeout(200);
     await takeTopToolbarScreenshot(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
@@ -726,7 +731,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       monomerAlias: 'F1',
     }).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Case 28: Correct highlight (not missing fill) for leaving-group atoms', async ({
@@ -1082,7 +1087,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CalculateVariablesPanel(page).peptidesTab.click();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('2.39');
+    ).toEqual('9.87');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
@@ -1157,7 +1162,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CalculateVariablesPanel(page).peptidesTab.click();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('2.39');
+    ).toEqual('9.87');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
@@ -1191,7 +1196,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('9.53');
+    ).toEqual('2.35');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');

@@ -64,13 +64,13 @@ export const SaveStructureDialog = (page: Page) => {
       return locators.saveStructureTextarea.inputValue();
     },
 
-    async getWarningTextAreaValue(): Promise<string> {
+    async getWarningTextAreaValue(): Promise<string | null> {
       const loadingSpinner = page.getByTestId('loading-spinner');
       if (await loadingSpinner.isVisible()) {
         await loadingSpinner.waitFor({ state: 'hidden' });
       }
       await locators.warningTextarea.waitFor({ state: 'visible' });
-      return locators.warningTextarea.inputValue();
+      return locators.warningTextarea.textContent();
     },
 
     async switchToWarningsTab() {

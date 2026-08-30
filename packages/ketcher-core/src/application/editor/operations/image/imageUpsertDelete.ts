@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import { OperationType } from 'application/editor/operations/OperationType';
@@ -30,9 +29,12 @@ interface ImageDeleteData {
   id: number;
 }
 
-export class ImageUpsert extends BaseOperation {
+export class ImageUpsert extends BaseOperation<ImageUpsertData> {
   readonly data: ImageUpsertData;
-  constructor(private readonly image: Image, id?: number) {
+  constructor(
+    private readonly image: Image,
+    id?: number,
+  ) {
     super(OperationType.IMAGE_UPSERT);
     this.data = { id };
   }
@@ -51,12 +53,18 @@ export class ImageUpsert extends BaseOperation {
     BaseOperation.invalidateItem(reStruct, IMAGE_KEY, id, 1);
   }
 
-  invert(): BaseOperation {
-    return new ImageDelete(this.data.id!);
+  invert(): ImageDelete {
+    // `data.id` is always assigned by `execute` before `invert` can be
+    // meaningfully called; a missing id here indicates a programming error.
+    if (this.data.id === undefined) {
+      throw new Error('ImageUpsert.invert: operation has not been executed');
+    }
+
+    return new ImageDelete(this.data.id);
   }
 }
 
-export class ImageDelete extends BaseOperation {
+export class ImageDelete extends BaseOperation<ImageDeleteData> {
   private image?: Image;
   readonly data: ImageDeleteData;
   constructor(id: number) {
@@ -79,6 +87,12 @@ export class ImageDelete extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    return new ImageUpsert(this.image!, this.data.id);
+    // `image` is always captured by `execute` before `invert` can be
+    // meaningfully called; a missing image here indicates a programming error.
+    if (!this.image) {
+      throw new Error('ImageDelete.invert: operation has not been executed');
+    }
+
+    return new ImageUpsert(this.image, this.data.id);
   }
 }

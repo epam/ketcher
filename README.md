@@ -76,7 +76,7 @@ Look at the following [link](packages/ketcher-react/README.md) for details.
 ### Configure indigo service
 
 You can find the instruction for service installation
-[here](http://lifescience.opensource.epam.com/indigo/service/index.html).
+[here](https://lifescience.opensource.epam.com/indigo/service/index.html).
 
 ## Packages
 
@@ -1669,6 +1669,11 @@ Ketcher supports modern browsers:
 ## Contribution
 
 See [Contributing Guide](./DEVNOTES.md).
+
+## Community Projects & Integrations
+- https://github.com/Marco-Matlock/Excel-Addin - Excel plugin to run Ketcher on a task pane as an Office Addin
+- https://github.com/katalystnord/ketcher-desktop - Desktop application for Ketcher made on electron
+- https://github.com/yulei-chen/obsidian-ketcher - An Obsidian plugin to view or draw chemical structures and reactions using Ketcher
 
 ## License
 

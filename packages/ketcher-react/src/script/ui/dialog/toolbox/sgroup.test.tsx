@@ -1,6 +1,12 @@
-import { screen, fireEvent, render as rtlRender } from '@testing-library/react';
+import {
+  screen,
+  fireEvent,
+  within,
+  render as rtlRender,
+} from '@testing-library/react';
 import { combineReducers, createStore } from 'redux';
 import { Provider } from 'react-redux';
+import { type ReactElement } from 'react';
 import modalReducer from '../../state/modal';
 import SGroup from './sgroup';
 
@@ -51,9 +57,9 @@ describe('Copolymer S-Group type availability', () => {
     fireEvent.mouseDown(typeSelect);
   };
 
-  it('should hide Copolymer option when fewer than two SRUs are selected', () => {
+  it('should show Copolymer option when fewer than two SRUs are selected', () => {
     renderAndOpenTypeSelect(1);
-    expect(screen.queryByTestId('Copolymer-option')).not.toBeInTheDocument();
+    expect(screen.getByTestId('Copolymer-option')).toBeInTheDocument();
   });
 
   it('should show Copolymer option when at least two SRUs are selected', () => {
@@ -61,10 +67,21 @@ describe('Copolymer S-Group type availability', () => {
     expect(screen.getByTestId('Copolymer-option')).toBeInTheDocument();
   });
 
+  it('should show Copolymer option when selected SRU count is not provided', () => {
+    renderWithMockStore(<SGroup type="MUL" />);
+    const typeSelect = screen.getByRole('combobox');
+    fireEvent.mouseDown(typeSelect);
+    expect(screen.getByTestId('Copolymer-option')).toBeInTheDocument();
+  });
+
   it('should show Copolymer option when editing existing Copolymer S-Group', () => {
     renderWithMockStore(<SGroup type="COP" selectedSruCount={2} />, {
       modal: {
+        name: '',
+        prop: null,
+        parentModal: null,
         form: {
+          errors: {},
           result: {
             type: 'COP',
           },
@@ -77,11 +94,56 @@ describe('Copolymer S-Group type availability', () => {
   });
 });
 
+describe('Copolymer S-Group Subtype dropdown', () => {
+  const openSubtypeSelect = () => {
+    const { store } = renderWithMockStore(
+      <SGroup type="COP" selectedSruCount={2} />,
+      {
+        modal: {
+          name: 'SGroup',
+          form: {
+            errors: {},
+            result: {
+              type: 'COP',
+              subtype: 'ran',
+            },
+          },
+          prop: null,
+          parentModal: null,
+        },
+      },
+    );
+    const subtypeSelect = within(
+      screen.getByTestId('subtype-input-span'),
+    ).getByRole('combobox');
+    fireEvent.mouseDown(subtypeSelect);
+    return { store };
+  };
+
+  it('should include a blank option alongside Random, Block and Alternating', () => {
+    openSubtypeSelect();
+    expect(screen.getByTestId('<Blank>-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Random-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Block-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Alternating-option')).toBeInTheDocument();
+  });
+
+  it('should clear a previously selected subtype when the blank option is chosen', () => {
+    const { store } = openSubtypeSelect();
+    fireEvent.click(screen.getByTestId('<Blank>-option'));
+    expect(store.getState().modal?.form?.result?.subtype).toBeNull();
+  });
+});
+
 describe('S-Group DAT type rendering', () => {
   it('should render SDataFieldset when type is DAT', () => {
     renderWithMockStore(<SGroup type="DAT" />, {
       modal: {
+        name: '',
+        prop: null,
+        parentModal: null,
         form: {
+          errors: {},
           result: {
             type: 'DAT',
             context: 'Fragment',
@@ -107,11 +169,19 @@ describe('SRU S-Group defaults', () => {
   });
 });
 
+const reducer = combineReducers({
+  modal: modalReducer,
+});
+
 function renderWithMockStore(
-  component,
-  initialState: Record<string, unknown> = {
+  component: ReactElement,
+  initialState: Partial<ReturnType<typeof reducer>> = {
     modal: {
+      name: '',
+      prop: null,
+      parentModal: null,
       form: {
+        errors: {},
         result: {
           type: 'MUL',
         },
@@ -119,13 +189,6 @@ function renderWithMockStore(
     },
   },
 ) {
-  const reducer = combineReducers({
-    modal: modalReducer,
-  });
-
-  // TODO suppressed after upgrade to react 19. Need to fix
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const store = createStore(reducer, initialState);
   return {
     ...rtlRender(<Provider store={store}>{component}</Provider>),

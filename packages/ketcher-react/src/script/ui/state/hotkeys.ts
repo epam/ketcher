@@ -255,11 +255,6 @@ function handleHotkeyGroup(
 
     const hoveredItem =
       getHoveredItem(render.ctab, editor) ?? getHoveredItemFromCursor(editor);
-    const resolvedHoveredItem = resolveHoveredItemForAction(
-      hoveredItem,
-      newAction,
-      editor,
-    );
     const { atoms, bonds } = editor.selection() ?? {};
     const hasSelection = Boolean(atoms?.length) || Boolean(bonds?.length);
 
@@ -271,8 +266,13 @@ function handleHotkeyGroup(
         getNextBondTypeAction(hoveredItem, group, render) ||
         getCurrentAction(group[index]) ||
         newAction;
+      const resolvedHoveredItem = resolveHoveredItemForAction(
+        hoveredItem,
+        newAction,
+        editor,
+      );
       handleHotkeyOverItem({
-        hoveredItem: resolvedHoveredItem ?? hoveredItem,
+        hoveredItem: resolvedHoveredItem,
         newAction,
         editor,
         dispatch,
@@ -352,12 +352,12 @@ function getCurrentAction(prevActName) {
   return actions[prevActName]?.action;
 }
 
-function resolveHoveredItemForAction<T extends Record<string, number> | null>(
-  hoveredItem: T,
-  newAction,
+function resolveHoveredItemForAction(
+  hoveredItem: Record<string, number>,
+  newAction: { tool?: string },
   editor: Editor,
-): T {
-  if (!hoveredItem || newAction?.tool !== 'atom') {
+): Record<string, number> {
+  if (newAction?.tool !== 'atom') {
     return hoveredItem;
   }
 
@@ -393,7 +393,7 @@ function resolveHoveredItemForAction<T extends Record<string, number> | null>(
   const normalizedMap =
     atomLikeItem.map === 'functionalGroups' ? 'sgroups' : atomLikeItem.map;
 
-  return { [normalizedMap]: atomLikeItem.id } as T;
+  return { [normalizedMap]: atomLikeItem.id };
 }
 
 function getHoveredItemFromCursor(

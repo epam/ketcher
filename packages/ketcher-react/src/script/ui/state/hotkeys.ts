@@ -272,7 +272,7 @@ function handleHotkeyGroup(
         getCurrentAction(group[index]) ||
         newAction;
       handleHotkeyOverItem({
-        hoveredItem: resolvedHoveredItem,
+        hoveredItem: resolvedHoveredItem ?? hoveredItem,
         newAction,
         editor,
         dispatch,
@@ -352,11 +352,11 @@ function getCurrentAction(prevActName) {
   return actions[prevActName]?.action;
 }
 
-function resolveHoveredItemForAction(
-  hoveredItem: Record<string, number> | null,
+function resolveHoveredItemForAction<T extends Record<string, number> | null>(
+  hoveredItem: T,
   newAction,
   editor: Editor,
-): Record<string, number> | null {
+): T {
   if (!hoveredItem || newAction?.tool !== 'atom') {
     return hoveredItem;
   }
@@ -393,7 +393,7 @@ function resolveHoveredItemForAction(
   const normalizedMap =
     atomLikeItem.map === 'functionalGroups' ? 'sgroups' : atomLikeItem.map;
 
-  return { [normalizedMap]: atomLikeItem.id };
+  return { [normalizedMap]: atomLikeItem.id } as T;
 }
 
 function getHoveredItemFromCursor(

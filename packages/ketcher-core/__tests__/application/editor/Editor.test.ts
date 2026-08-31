@@ -1179,6 +1179,167 @@ describe('CoreEditor', () => {
       );
     });
 
+    it('should reject monomer group template (unsplit nucleotide) with an IDT alias that collides with another monomer group template', () => {
+      const nucleotide1 = {
+        root: {
+          templates: [{ $ref: 'monomerGroupTemplate-_Nucleotide1' }],
+        },
+        'monomerGroupTemplate-_Nucleotide1': {
+          type: 'monomerGroupTemplate',
+          id: '_Nucleotide1',
+          name: '_Nucleotide1',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+          idtAliases: {
+            base: 'IdtNucleotideBase1',
+          },
+        },
+      };
+      const nucleotide2 = {
+        root: {
+          templates: [{ $ref: 'monomerGroupTemplate-_Nucleotide2' }],
+        },
+        'monomerGroupTemplate-_Nucleotide2': {
+          type: 'monomerGroupTemplate',
+          id: '_Nucleotide2',
+          name: '_Nucleotide2',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+          idtAliases: {
+            base: 'IdtNucleotideBase1',
+          },
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(nucleotide1));
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(nucleotide2)),
+      ).toThrow(MonomerLibraryUpdateError);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Duplicate IDT aliases detected'),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
+      expect(
+        editor.monomersLibraryParsedJson?.['monomerGroupTemplate-_Nucleotide1'],
+      ).toBeDefined();
+    });
+
+    it('should reject the second of two colliding monomer group templates loaded in a single update payload', () => {
+      const nucleotidesInOneBatch = {
+        root: {
+          templates: [
+            { $ref: 'monomerGroupTemplate-_Nucleotide4' },
+            { $ref: 'monomerGroupTemplate-_Nucleotide5' },
+          ],
+        },
+        'monomerGroupTemplate-_Nucleotide4': {
+          type: 'monomerGroupTemplate',
+          id: '_Nucleotide4',
+          name: '_Nucleotide4',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+          idtAliases: {
+            base: 'IdtBatchBase1',
+          },
+        },
+        'monomerGroupTemplate-_Nucleotide5': {
+          type: 'monomerGroupTemplate',
+          id: '_Nucleotide5',
+          name: '_Nucleotide5',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+          idtAliases: {
+            base: 'IdtBatchBase1',
+          },
+        },
+      };
+
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(nucleotidesInOneBatch)),
+      ).toThrow(MonomerLibraryUpdateError);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Duplicate IDT aliases detected'),
+      );
+      expect(
+        editor.monomersLibraryParsedJson?.['monomerGroupTemplate-_Nucleotide4'],
+      ).toBeDefined();
+      expect(
+        editor.monomersLibraryParsedJson?.['monomerGroupTemplate-_Nucleotide5'],
+      ).toBeUndefined();
+    });
+
+    it('should reject monomer group template (unsplit nucleotide) with an IDT alias that collides with a regular monomer', () => {
+      const monomerWithIdtAlias = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-CHEM7' }],
+        },
+        'monomerTemplate-CHEM7': {
+          type: 'monomerTemplate',
+          id: 'CHEM7',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 7',
+          name: 'CHEM7',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM7',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM7',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtShared1',
+          },
+        },
+      };
+      const nucleotideWithCollidingAlias = {
+        root: {
+          templates: [{ $ref: 'monomerGroupTemplate-_Nucleotide3' }],
+        },
+        'monomerGroupTemplate-_Nucleotide3': {
+          type: 'monomerGroupTemplate',
+          id: '_Nucleotide3',
+          name: '_Nucleotide3',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+          idtAliases: {
+            base: 'IdtShared1',
+          },
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtAlias));
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+
+      expect(() =>
+        editor.updateMonomersLibrary(
+          JSON.stringify(nucleotideWithCollidingAlias),
+        ),
+      ).toThrow(MonomerLibraryUpdateError);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Duplicate IDT aliases detected'),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
+    });
+
     // In the KET format, modificationTypes is defined at the template level.
     // During parsing (via templateToMonomerProps) it gets moved to
     // props.modificationTypes, which the validation checks (#8133).
@@ -1517,7 +1678,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
         peptideMonomerItem,
@@ -1661,7 +1822,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       // Add a monomer
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
@@ -1747,7 +1908,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
         peptideMonomerItem,
@@ -1779,7 +1940,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       // Add a monomer
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
@@ -1832,7 +1993,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       // Add multiple monomers
       const modelChanges1 = editor.drawingEntitiesManager.addMonomer(

@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
@@ -242,17 +241,29 @@ export async function layout(page: Page): Promise<void> {
   return await page.evaluate(() => window.ketcher.layout());
 }
 
+interface RecognizeImagePayload {
+  buffer: ArrayBuffer;
+  type: string;
+  version?: string;
+}
+
 export async function recognize(
   page: Page,
   image: Blob,
   version?: string,
 ): Promise<Struct> {
+  const imagePayload: RecognizeImagePayload = {
+    buffer: await image.arrayBuffer(),
+    type: image.type,
+    version,
+  };
+
   return await page.evaluate(
-    (params: { img: Blob; ver?: string }) => {
-      const { img, ver } = params;
-      return window.ketcher.recognize(img, ver);
+    async ({ buffer, type, version }: RecognizeImagePayload) => {
+      const image = new Blob([buffer], { type });
+      return window.ketcher.recognize(image, version);
     },
-    { img: image, ver: version },
+    imagePayload,
   );
 }
 

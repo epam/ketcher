@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* eslint-disable react-hooks/refs */
+
 import { type RefObject, useRef } from 'react';
 import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
 import {
@@ -43,8 +45,10 @@ import clsx from 'clsx';
 import { useInView } from 'react-intersection-observer';
 import { useResizeObserver } from '../../../../../hooks';
 
-interface LeftToolbarProps
-  extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
+interface LeftToolbarProps extends Omit<
+  ToolbarGroupItemProps,
+  'id' | 'options'
+> {
   className?: string;
 }
 

@@ -21,7 +21,7 @@
     "build:standalone:analyze": "cross-env MODE=standalone run-s prebuild build:react:analyze postbuild",
     "build:remote:analyze": "cross-env MODE=remote run-s prebuild build:react:analyze postbuild",
     "test": "run-s test:prettier test:stylelint test:eslint:quiet test:types test:unit",
-    "test:eslint": "eslint . --ext .ts,.js,.jsx,.tsx",
+    "test:eslint": "eslint .",
     "test:eslint:quiet": "npm run test:eslint -- --quiet",
     "test:eslint:fix": "npm run test:eslint -- --fix",
     "test:types": "tsc --noEmit",
@@ -46,7 +46,7 @@
     "react": "^19.2.7",
     "react-app-polyfill": "^2.0.0",
     "react-dom": "^19.2.7",
-    "react-router-dom": "^7.13.0"
+    "react-router-dom": "^7.18.2"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^5.0.2",
@@ -62,12 +62,12 @@
     "copy-webpack-plugin": "^14.0.0",
     "cross-env": "^7.0.3",
     "customize-cra": "^1.0.0",
-    "eslint": "^8.44.0",
+    "eslint": "10.9.0",
     "git-revision-webpack-plugin": "^3.0.6",
     "html-replace-webpack-plugin": "^2.5.6",
     "less": "^4.2.0",
-    "npm-run-all": "^4.1.5",
-    "prettier": "^2.5.1",
+    "npm-run-all2": "^9.0.3",
+    "prettier": "^3.9.6",
     "react-app-rewired": "^2.2.1",
     "react-scripts": "^5.0.1",
     "serve": "^14.2.6",

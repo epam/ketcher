@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import assert from 'assert';
-
 import {
   type ReStruct,
   type ImageReferencePositionInfo,
@@ -29,6 +27,7 @@ import {
   getOrThrow,
   atomsForBondNotFoundMessage,
   entityNotFoundMessage,
+  assert,
 } from 'ketcher-core';
 import type {
   ClosestItem,
@@ -203,7 +202,6 @@ function findClosestBond(
   minDist: number | null,
   options: ClosestFunctionOptions,
 ) {
-  // eslint-disable-line max-params
   let closestBond: number | null = null;
   let closestBondCenter: number | null = null;
   const maxMinDist = 0.8 * SELECTION_DISTANCE_COEFFICIENT;
@@ -326,6 +324,9 @@ function findClosestDataSGroupData(restruct: ReStruct, pos: Vec2) {
 
     if (item.sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
       const box = item.sgroup.dataArea;
+      if (!box) {
+        return;
+      }
       const inBox =
         box.p0.y < pos.y &&
         box.p1.y > pos.y &&
@@ -586,7 +587,6 @@ function findClosestItem(
   skip: SkipItem | null,
   options: ClosestFunctionOptions,
 ): ClosestItemWithMap | null {
-  // eslint-disable-line max-params
   maps = maps ?? Object.keys(findMaps);
 
   let priorityItem: ClosestItemWithMap | null = null;

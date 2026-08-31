@@ -648,16 +648,15 @@ function findCloseMerge(
   selected.bonds.forEach((bid) => {
     const bond = struct.bonds.get(bid);
     if (bond) {
-      const beginAtom = getOrThrow(
-        struct.atoms,
-        bond.begin,
-        atomsForBondNotFoundMessage(bid, bond.begin, bond.end),
-      );
-      const endAtom = getOrThrow(
-        struct.atoms,
-        bond.end,
-        atomsForBondNotFoundMessage(bid, bond.begin, bond.end),
-      );
+      const beginAtom = struct.atoms.get(bond.begin);
+      const endAtom = struct.atoms.get(bond.end);
+      if (!beginAtom || !endAtom) {
+        // Same stale-cache scenario as findClosestBond: skip instead of crashing.
+        KetcherLogger.warn(
+          atomsForBondNotFoundMessage(bid, bond.begin, bond.end),
+        );
+        return;
+      }
       pos.bonds.set(bid, Vec2.lc2(beginAtom.pp, 0.5, endAtom.pp, 0.5));
     }
   });

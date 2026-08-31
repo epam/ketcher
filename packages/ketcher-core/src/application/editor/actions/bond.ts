@@ -249,7 +249,9 @@ export function fromBondsMerge(
   });
 
   // Shared vertex atoms fused earlier in this batch may already be deleted;
-  // resolve through prior merges to the atom that actually survived.
+  // resolve through prior merges to the atom that actually survived. Can't
+  // cycle: fromAtomMerge always deletes src and keeps dst, so a resolved id
+  // is never re-inserted as a key once it has appeared as a value below.
   const survivingAtomId = new Map<number, number>();
   const resolveAtomId = (atomId: number): number => {
     let resolved = atomId;

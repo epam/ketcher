@@ -40,9 +40,10 @@ We have decided to proceed with the version bump of Stylelint to `^17.14.1` whil
 We will:
 1. Bump `stylelint` version in root `package.json`.
 2. Keep the minimal configuration in `package.json` to maintain the current (silent) state of the linter.
-3. Not modify workspace scripts (keeping the bare `--formatter` flags) per explicit instruction, acknowledging that this results in a CLI crash when running linting directly.
+3. Remove the bare `--formatter` flag from workspace scripts (`packages/ketcher-react`, `packages/ketcher-macromolecules`, `example`) to prevent CLI crashes in `stylelint@17`.
 
 ## Consequences
 
-* The linter remains "blind" and does not catch CSS/Less errors.
+* The linter remains "blind" and does not catch CSS/Less errors because of the shadowing.
+* The CLI scripts now run successfully (returning exit code 0) but they are effectively no-ops.
 * Fixing Stylelint compatibility and enabling full linting is considered out of scope for this task and should be addressed in separate tasks.

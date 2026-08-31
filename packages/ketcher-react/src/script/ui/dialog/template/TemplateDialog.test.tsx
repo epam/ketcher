@@ -191,7 +191,7 @@ describe('TemplateDialog', () => {
 
   it('dispatches a snackbar notification when serialization fails on Save to SDF', () => {
     const serializationError = new Error('Serialization failed');
-    mockSerialize.mockImplementation(() => {
+    mockSerializeWithSkipInvalid.mockImplementation(() => {
       throw serializationError;
     });
 

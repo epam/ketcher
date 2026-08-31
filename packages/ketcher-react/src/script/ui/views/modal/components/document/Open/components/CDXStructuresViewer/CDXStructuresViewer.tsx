@@ -79,11 +79,13 @@ export const CDXStructuresViewer = ({
     [server],
   );
 
+  const currentStructItem = structList[selectedIndex];
+
   useEffect(() => {
-    if (structList[selectedIndex] && !itemsMap[selectedIndex]) {
-      getImage(structList[selectedIndex], selectedIndex);
+    if (currentStructItem && !itemsMap[selectedIndex]) {
+      getImage(currentStructItem, selectedIndex);
     }
-  }, [getImage, itemsMap, selectedIndex, structList]);
+  }, [getImage, itemsMap, selectedIndex, currentStructItem]);
 
   const renderStructure = (structure: item) => {
     if (loading) {

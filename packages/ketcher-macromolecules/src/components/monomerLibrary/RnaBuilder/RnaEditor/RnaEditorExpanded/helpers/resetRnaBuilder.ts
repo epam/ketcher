@@ -29,7 +29,5 @@ export const resetRnaBuilderAfterSequenceUpdate = (
     needToRemoveSelection,
   );
   if (editor?.mode?.modeName === 'sequence-layout-mode')
-    (editor.mode as unknown as SequenceMode).turnOffEditMode(
-      needToRemoveSelection,
-    );
+    (editor.mode as SequenceMode).turnOffEditMode(needToRemoveSelection);
 };

@@ -9,7 +9,12 @@ import useBondSGroupAttach from '../hooks/useBondSGroupAttach';
 import useBondSGroupEdit from '../hooks/useBondSGroupEdit';
 import useBondTypeChange from '../hooks/useBondTypeChange';
 import useDelete from '../hooks/useDelete';
-import { formatTitle, getNonQueryBondNames, queryBondNames } from '../utils';
+import {
+  formatTitle,
+  getNonQueryBondNames,
+  isBondBetweenMonomers,
+  queryBondNames,
+} from '../utils';
 import type {
   BondsContextMenuProps,
   ItemEventParams,
@@ -19,7 +24,7 @@ import { getIconName, Icon } from 'components';
 import { useChangeBondDirection } from '../hooks/useChangeBondDirection';
 import { useAppContext } from 'src/hooks/useAppContext';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
-import { ketcherProvider, MonomerMicromolecule } from 'ketcher-core';
+import { ketcherProvider } from 'ketcher-core';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
@@ -44,27 +49,16 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
     const bondIds = props.propsFromTrigger?.bondIds || [];
 
     return bondIds.length > 0
-      ? editor.render.ctab.molecule.bonds.get(bondIds[0]) ?? null
+      ? (editor.render.ctab.molecule.bonds.get(bondIds[0]) ?? null)
       : null;
   }, [props.propsFromTrigger, editor]);
 
   const bondData = bond ? { type: bond.type, stereo: bond.stereo } : null;
 
-  const isBondBetweenMonomers = useMemo(() => {
-    if (!bond) {
-      return false;
-    }
-
-    const struct = editor.render.ctab.molecule;
-    const beginAtomSgroup = struct.getGroupFromAtomId(bond.begin);
-    const endAtomSgroup = struct.getGroupFromAtomId(bond.end);
-
-    return (
-      beginAtomSgroup instanceof MonomerMicromolecule &&
-      endAtomSgroup instanceof MonomerMicromolecule &&
-      beginAtomSgroup !== endAtomSgroup
-    );
-  }, [bond, editor]);
+  const bondBetweenMonomers = useMemo(
+    () => isBondBetweenMonomers(bond, editor.render.ctab.molecule),
+    [bond, editor],
+  );
 
   const highlightBondWithColor = (color: string) => {
     const bondIds = props.propsFromTrigger?.bondIds || [];
@@ -156,7 +150,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
           {...props}
           data-testid="Change direction-option"
           onClick={changeDirection}
-          disabled={isBondBetweenMonomers}
+          disabled={bondBetweenMonomers}
         >
           Change direction
         </Item>
@@ -166,7 +160,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         data-testid="Attach S-Group...-option"
         hidden={sGroupAttachHidden}
         onClick={handleSGroupAttach}
-        disabled={disabledForMonomerCreation || isBondBetweenMonomers}
+        disabled={disabledForMonomerCreation || bondBetweenMonomers}
       >
         Attach S-Group...
       </Item>

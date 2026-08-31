@@ -31,7 +31,10 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     variant?: string;
   };
 
-  constructor(public monomer: AmbiguousMonomer, scale?: number) {
+  constructor(
+    public monomer: AmbiguousMonomer,
+    scale?: number,
+  ) {
     const monomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
     const monomerSymbolElementsIds = MONOMER_SYMBOLS_IDS[monomerClass];
 
@@ -190,6 +193,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     this.rootElement = this.appendRootElement(params.canvas);
     this.bodyElement = this.appendBody(this.rootElement);
     this.bodyElement?.attr('data-testid', 'shape');
+    this.drawModification();
     this.appendLabel(this.rootElement);
     this.appendNumberOfMonomers();
     this.drawAttachmentPoints(

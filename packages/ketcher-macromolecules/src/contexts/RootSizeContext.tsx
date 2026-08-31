@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import {
   createContext,
   ReactNode,
@@ -26,11 +24,13 @@ export const RootSizeProvider = ({
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   const handleResize = useCallback(() => {
-    if (!rootRef?.current) {
+    const rootElement = rootRef?.current;
+
+    if (!rootElement) {
       return;
     }
 
-    const { width, height } = rootRef.current.getBoundingClientRect();
+    const { width, height } = rootElement.getBoundingClientRect();
     setSize({ width, height });
   }, [rootRef]);
 
@@ -38,15 +38,14 @@ export const RootSizeProvider = ({
 
   useEffect(() => {
     handleResize();
-  }, [isMacromoleculesEditorTurnedOn]);
+  }, [handleResize, isMacromoleculesEditorTurnedOn]);
 
   useEffect(() => {
-    debouncedHandleResize();
-
     window.addEventListener('resize', debouncedHandleResize);
 
     return () => {
       window.removeEventListener('resize', debouncedHandleResize);
+      debouncedHandleResize.cancel();
     };
   }, [debouncedHandleResize]);
 

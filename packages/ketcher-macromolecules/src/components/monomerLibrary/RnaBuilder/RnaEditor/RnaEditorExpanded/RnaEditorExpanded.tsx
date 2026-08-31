@@ -473,7 +473,7 @@ export const RnaEditorExpanded = ({
       isPhosphatePositionReadOnly || (!is5PrimeAvailable && !is3PrimeAvailable);
     const triggerPosition = isPhosphatePositionReadOnly
       ? 'right'
-      : position ?? selectedPhosphatePosition ?? 'right';
+      : (position ?? selectedPhosphatePosition ?? 'right');
     const isPhosphateGroupActive =
       !isPhosphatePositionReadOnly &&
       activeMonomerGroup === MonomerGroups.PHOSPHATES;
@@ -638,6 +638,16 @@ export const RnaEditorExpanded = ({
       editor?.events.keyDown.remove(handleKeyDown);
     };
   }, [editor, sequenceSelection, isSequenceEditInRNABuilderMode]);
+
+  useEffect(() => {
+    if (!isSequenceEditInRNABuilderMode) return;
+
+    const handleCancel = () => onCancel();
+    editor?.events.cancelSequenceEditInRNABuilderMode.add(handleCancel);
+    return () => {
+      editor?.events.cancelSequenceEditInRNABuilderMode.remove(handleCancel);
+    };
+  }, [editor, isSequenceEditInRNABuilderMode]);
 
   let mainButton: JSX.Element;
   const isSaveButtonDisabled =

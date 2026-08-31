@@ -13,8 +13,7 @@ import { createPolymerEditorCanvas } from '../../../helpers/dom';
 import { getFinishedPolymerBond } from '../../../mock-data';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
-  | FlexModePolymerBondRenderer
-  | SnakeModePolymerBondRenderer;
+  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
 
 const renderSnakeSideConnectionPath = (
   x1: number,
@@ -23,7 +22,7 @@ const renderSnakeSideConnectionPath = (
   y2: number,
   firstAttachmentPoint: 'R1' | 'R2' | 'R3',
   secondAttachmentPoint: 'R1' | 'R2' | 'R3',
-  includeHorizontalRow = false,
+  chainsHaveBackbones = true,
 ): string => {
   createPolymerEditorCanvas();
   setEditorInstance({
@@ -45,9 +44,11 @@ const renderSnakeSideConnectionPath = (
     polymerBond;
   secondMonomer.attachmentPointsToBonds[secondAttachmentPoint] = polymerBond;
   polymerBond.moveToLinkedEntities();
-  const additionalRowMonomer = includeHorizontalRow
+  const additionalRowMonomer = chainsHaveBackbones
     ? getFinishedPolymerBond(90, y1, 90, y2).firstMonomer
     : undefined;
+  const firstChain = { length: chainsHaveBackbones ? 2 : 1 };
+  const secondChain = { length: chainsHaveBackbones ? 2 : 1 };
 
   const firstNode = {
     monomers: [polymerBond.firstMonomer],
@@ -66,6 +67,12 @@ const renderSnakeSideConnectionPath = (
     drawingEntitiesManager: {
       canvasMatrix: {
         polymerBondToCells: new Map([[polymerBond, cells]]),
+        chainsCollection: {
+          monomerToChain: new Map([
+            [polymerBond.firstMonomer, firstChain],
+            [secondMonomer, secondChain],
+          ]),
+        },
       },
       monomers: new Map([
         [polymerBond.firstMonomer.id, polymerBond.firstMonomer],
@@ -80,7 +87,7 @@ const renderSnakeSideConnectionPath = (
   global.SVGElement.prototype.getBBox = jest.fn();
   jest
     .spyOn(global.SVGElement.prototype, 'getBBox')
-    .mockImplementation(() => ({ width: 30, height: 20 } as DOMRect));
+    .mockImplementation(() => ({ width: 30, height: 20 }) as DOMRect);
 
   const polymerBondRenderer =
     polymerBond.renderer as SnakeModePolymerBondRenderer;
@@ -157,5 +164,18 @@ describe('Polymer Bond Renderer', () => {
     expect(r3ToR2Path).not.toBe(r2ToR2Path);
     expect(r2ToR2Path).not.toContain('q');
     expect(r3ToR2Path).toContain('q');
+  });
+
+  it('keeps R2-R2 connections between standalone monomers on the existing route', () => {
+    const path = renderSnakeSideConnectionPath(
+      10,
+      10,
+      10,
+      100,
+      'R2',
+      'R2',
+      false,
+    );
+    expect(path).toContain('q');
   });
 });

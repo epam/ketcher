@@ -652,18 +652,13 @@ export default defineConfig({
           '../packages/ketcher-macromolecules/src/index.tsx',
         ),
       },
-      /** Web worker in ketcher-standalone */
-      {
-        find: 'web-worker:./../indigoWorker',
-        replacement: './../indigoWorker?worker',
-      },
       {
         find: '_indigo-ketcher-import-alias_',
         replacement: 'indigo-ketcher',
       },
       {
         find: '_indigo-worker-import-alias_',
-        replacement: INDIGO_WORKER_IMPORTS.WASM_LOADER,
+        replacement: INDIGO_WORKER_IMPORTS.INLINE,
       },
     ],
   },

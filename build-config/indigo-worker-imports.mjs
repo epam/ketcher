@@ -20,9 +20,14 @@
  * worker is loaded, and therefore which of the standalone build variants is
  * being produced.
  *
+ * Paths are relative to `src/infrastructure/services/struct/`, the directory
+ * that holds the module doing the placeholder import.
+ *
  * Shared with `example`, whose dev/build path aliases the same placeholder.
  */
 export const INDIGO_WORKER_IMPORTS = {
-  WASM_LOADER: './indigoWorkerImports/useWasmLoader',
-  OFF_MAIN_THREAD_PLUGIN: './indigoWorkerImports/useOffMainThreadPlugin',
+  /** Worker inlined into the bundle as a Blob - the base64 variants. */
+  INLINE: './indigoWorkerImports/useViteInlineWorker',
+  /** Worker emitted as its own chunk and fetched - the binaryWasm variants. */
+  WORKER_URL: './indigoWorkerImports/useNativeWorkerUrl',
 };

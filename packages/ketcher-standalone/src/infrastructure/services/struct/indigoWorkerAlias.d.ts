@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 /**
- * This module alias is resolved by Rollup at build time via the
- * `@rollup/plugin-alias` configuration in `rollup.config.mjs`, which points it
- * at a different worker shim per build variant (`useWasmLoader` for the
- * base64 variants, `useOffMainThreadPlugin` for the binaryWasm ones).
+ * This module alias is resolved at build time via the `resolve.alias`
+ * configuration in `vite.config.mjs`, which points it at a different worker
+ * shim per build variant (`useViteInlineWorker` for the base64 variants,
+ * `useNativeWorkerUrl` for the binaryWasm ones).
  *
  * It must stay an ambient declaration. Mapping it to a concrete file through
  * tsconfig `paths` also makes TypeScript resolve it, which silently overrides

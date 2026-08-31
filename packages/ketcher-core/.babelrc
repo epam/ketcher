@@ -1,7 +1,11 @@
 {
   "presets": [
     "@babel/env",
-    ["@babel/typescript", { "allowDeclareFields": true }]
-  ],
-  "plugins": ["@babel/plugin-transform-runtime"]
+    [
+      "@babel/typescript",
+      {
+        "allowDeclareFields": true
+      }
+    ]
+  ]
 }

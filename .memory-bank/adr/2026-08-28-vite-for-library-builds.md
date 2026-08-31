@@ -5,9 +5,8 @@
 
 ## Decision
 
-Build every package in this repository with **Vite 8** (Rolldown), replacing Rollup 2 in three of the
-four publishable packages and `react-scripts` (webpack) in `demo`. `ketcher-standalone` remains on
-Rollup 2 — see _Consequences_.
+Build every package in this repository with **Vite 8** (Rolldown), replacing Rollup 2 in all four
+publishable packages and `react-scripts` (webpack) in `demo`.
 
 Two targets are explicitly excluded:
 
@@ -97,30 +96,53 @@ Playwright suite runs. `example-ssr` is the only target that resolves the packag
 through their `exports` maps — `example` aliases them to source — so it is the sole check that
 the frozen contract, the CJS `require` conditions, and SSR-safety actually hold.
 
-**`ketcher-standalone` stays on Rollup 2. This was attempted, and the abort criterion fired.**
-The package runs six sequential builds over `INDIGO_MODULE_NAME` to emit six output directories
-behind four `exports` subpaths, and four of those six inline their Indigo worker via
-`rollup-plugin-web-worker-loader`. Under Vite 8 that plugin fails with
-`Error: Missing field 'moduleType'` from Rolldown's native binding layer.
-
-The cause is structural, not a configuration oversight. The plugin bundles the worker by running
-a **nested Rollup build** inside its own `load` hook, and it seeds that nested build with the
-outer build's entire plugin list. Under Rollup-only that was safe, because both builds spoke the
-same plugin contract. Under Vite 8 the outer list holds Rolldown-oriented plugins whose hooks
-return Rolldown-shaped results, and re-invoking them through real Rollup 2 collides the two
+**`ketcher-standalone` moved to Vite too, on a second attempt.** The first attempt aborted:
+four of its six variants inline the Indigo worker via `rollup-plugin-web-worker-loader`, which
+fails under Vite 8 with `Error: Missing field 'moduleType'`. The cause is structural — the plugin
+bundles the worker by running a **nested Rollup build** inside its own `load` hook, seeded with
+the outer build's entire plugin list. Under Rollup-only that was safe; under Vite 8 the outer
+list holds Rolldown-oriented plugins, and re-invoking them through real Rollup 2 collides two
 module-resolution contracts.
 
-Only two routes exist past it: fork the third-party plugin's internals, or drop the custom
-`web-worker:` import protocol for Vite's native `?worker&inline` — which requires editing
-`useWasmLoader.ts`, i.e. changing source to suit the bundler. Both cross from reproducing the
-existing behavior into rewriting it, so neither was taken.
+The abort was reconsidered because the only route past it — dropping the custom `web-worker:`
+protocol for Vite's native `?worker&inline` — had been rejected as "changing source to suit the
+bundler", and that framing was wrong. `useWasmLoader.ts` existed *only* to name a bundler plugin;
+its replacement, `useViteInlineWorker.ts`, names the mechanism that replaced it. The same applies
+to `useOffMainThreadPlugin.ts`, renamed to `useNativeWorkerUrl.ts`: it already used the plain
+`new Worker(new URL(...), { type: 'module' })` form that Vite understands natively, so nothing
+about it changed but the misleading name. Both shims are one file each, behind the
+`_indigo-worker-import-alias_` placeholder that already existed to swap them per variant.
 
-Two toolchains is a worse outcome than one, but far better than degrading the package that the
-entire standalone mode's WASM and worker loading depends on. Revisit if the plugin gains Rolldown
-support, or if changing the worker import protocol becomes acceptable on its own merits.
+Keeping a second toolchain alive to avoid renaming two files was the worse trade.
 
-A future reader finding Rollup configs still present in this repository should treat them as a
-deliberate exception, not as unfinished work.
+**The `.wasm` for the two fetch variants is now emitted, not copied.** Indigo's emscripten glue
+locates it with `new URL('<name>.wasm', import.meta.url)`. Vite's asset pipeline rewrites that,
+and in library mode it inlines every asset it rewrites regardless of `assetsInlineLimit` — which
+would have collapsed the two fetch variants into the base64 ones and added ~16 MB to each worker
+chunk. `?no-inline` is the one escape hatch checked ahead of that lib-mode branch, so a small
+pre-transform tags the reference and Vite emits the `.wasm` as a real file.
+
+This replaces `rollup-plugin-copy` and is strictly safer than it was. The emitted path and the
+URL that fetches it now come from the same rewrite, instead of a hand-written copy glob that had
+to agree with a filename baked into a third-party dependency. That glob pointed at the workspace
+root while the dependency installs into the package, so it silently matched nothing and shipped
+two unusable variants for three weeks — fixed separately in commit `964c0f36`. Each variant now
+also ships only the one binary it actually uses, rather than both.
+
+The worker plugin must be registered under `worker.plugins`, not `plugins`: Vite bundles workers
+through a separate pipeline, and the indigo import lives entirely inside the worker's graph.
+
+**`base: './'` is required for this package.** These bundles are consumed from
+`node_modules/ketcher-standalone/dist/...`, not served from a site root, so Vite's default
+`base: '/'` would emit the worker and `.wasm` URLs as `/assets/...` — resolving only if the
+consumer happened to copy them to their web root.
+
+**Internal chunk layout changed; the published contract did not.** The worker and `.wasm` now
+live in an `assets/` subdirectory with hashed names, and `indigoWorker.types.js` is folded into
+the worker chunk. Nothing in the `exports` map or in any consumer references those paths. Two
+minor artifacts also changed: the six `index.js.map` files are no longer emitted (the Rollup ones
+had empty `sources` and `mappings`, and the new `index.js` carries no `sourceMappingURL`), and
+the four inline variants emit an unused sourcemap alongside the Blob-inlined worker.
 
 **Known-wrong metadata is preserved deliberately.** `ketcher-standalone`'s `main` and `module`
 fields point at `dist/index.js` and `dist/index.modern.js`, but the build emits `dist/main.js`.

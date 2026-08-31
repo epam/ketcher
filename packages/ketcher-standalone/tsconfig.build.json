@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "rootDir": "src",
+    "outDir": ".types"
+  },
+  "exclude": ["node_modules", "dist", "__tests__/**/*", "src/emptyIndex.js"]
+}

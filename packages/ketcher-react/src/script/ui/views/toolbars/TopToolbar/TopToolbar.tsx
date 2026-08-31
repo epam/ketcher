@@ -216,177 +216,105 @@ export const TopToolbar = ({
       })
     : undefined;
 
+  const renderLeftToolbarSection = (collapsed: boolean) => (
+    <BtnsWpapper>
+      <TopToolbarIconButton
+        title="Clear Canvas"
+        onClick={onClear}
+        iconName="clear"
+        shortcut={shortcuts.clear}
+        isHidden={hiddenButtons.includes('clear')}
+        disabled={disabledButtons.includes('clear')}
+        testId="clear-canvas"
+      />
+      <FileControls
+        onFileOpen={onFileOpen}
+        onSave={onSave}
+        shortcuts={shortcuts}
+        hiddenButtons={hiddenButtons}
+        disabledButtons={disabledButtons}
+      />
+      <ClipboardControls
+        onCopy={onCopy}
+        onCopyMol={onCopyMol}
+        onCopyKet={onCopyKet}
+        onCopyImage={onCopyImage}
+        onPaste={onPaste}
+        onCut={onCut}
+        shortcuts={shortcuts}
+        disabledButtons={disabledButtons}
+        hiddenButtons={hiddenButtons}
+      />
+      <UndoRedo
+        onUndo={onUndo}
+        onRedo={onRedo}
+        disabledButtons={disabledButtons}
+        hiddenButtons={hiddenButtons}
+        shortcuts={shortcuts}
+      />
+      <ExternalFuncControls
+        onLayout={onLayout}
+        onClean={onClean}
+        onAromatize={onAromatize}
+        onDearomatize={onDearomatize}
+        onCalculate={onCalculate}
+        onCheck={onCheck}
+        onAnalyse={onAnalyse}
+        onMiew={onMiew}
+        onToggleExplicitHydrogens={onToggleExplicitHydrogens}
+        disabledButtons={disabledButtons}
+        hiddenButtons={hiddenButtons}
+        shortcuts={shortcuts}
+        indigoVerification={indigoVerification}
+        isCollapsed={collapsed}
+      />
+      <CustomButtons
+        isCollapsed={collapsed}
+        customButtons={customButtons}
+        onCustomAction={onCustomAction}
+      />
+    </BtnsWpapper>
+  );
+
+  const renderRightToolbarSection = (toggler?: JSX.Element) => (
+    <BtnsWpapper>
+      {toggler}
+      {toggler && <Divider />}
+
+      <SystemControls
+        onSettingsOpen={onSettingsOpen}
+        onFullscreen={onFullscreen}
+        onHelp={onHelp}
+        onAboutOpen={onAbout}
+        disabledButtons={disabledButtons}
+        hiddenButtons={hiddenButtons}
+      />
+      <Divider />
+      {!hiddenButtons.includes('zoom-list') && (
+        <ZoomControls
+          currentZoom={currentZoom ?? 1}
+          onZoomIn={onZoomIn}
+          onZoomOut={onZoomOut}
+          onZoom={onZoom}
+          shortcuts={shortcuts}
+          disabledButtons={disabledButtons}
+          hiddenButtons={hiddenButtons}
+        />
+      )}
+    </BtnsWpapper>
+  );
+
   return (
     <ControlsPanel
       className={className}
       ref={resizeRef}
       data-testid="top-toolbar"
     >
-      <BtnsWpapper>
-        <TopToolbarIconButton
-          title="Clear Canvas"
-          onClick={onClear}
-          iconName="clear"
-          shortcut={shortcuts.clear}
-          isHidden={hiddenButtons.includes('clear')}
-          disabled={disabledButtons.includes('clear')}
-          testId="clear-canvas"
-        />
-        <FileControls
-          onFileOpen={onFileOpen}
-          onSave={onSave}
-          shortcuts={shortcuts}
-          hiddenButtons={hiddenButtons}
-          disabledButtons={disabledButtons}
-        />
-        <ClipboardControls
-          onCopy={onCopy}
-          onCopyMol={onCopyMol}
-          onCopyKet={onCopyKet}
-          onCopyImage={onCopyImage}
-          onPaste={onPaste}
-          onCut={onCut}
-          shortcuts={shortcuts}
-          disabledButtons={disabledButtons}
-          hiddenButtons={hiddenButtons}
-        />
-        <UndoRedo
-          onUndo={onUndo}
-          onRedo={onRedo}
-          disabledButtons={disabledButtons}
-          hiddenButtons={hiddenButtons}
-          shortcuts={shortcuts}
-        />
-        <ExternalFuncControls
-          onLayout={onLayout}
-          onClean={onClean}
-          onAromatize={onAromatize}
-          onDearomatize={onDearomatize}
-          onCalculate={onCalculate}
-          onCheck={onCheck}
-          onAnalyse={onAnalyse}
-          onMiew={onMiew}
-          onToggleExplicitHydrogens={onToggleExplicitHydrogens}
-          disabledButtons={disabledButtons}
-          hiddenButtons={hiddenButtons}
-          shortcuts={shortcuts}
-          indigoVerification={indigoVerification}
-          isCollapsed={isCollapsed}
-        />
-        <CustomButtons
-          isCollapsed={isCollapsed}
-          customButtons={customButtons}
-          onCustomAction={onCustomAction}
-        />
-      </BtnsWpapper>
-      <BtnsWpapper>
-        {renderedTogglerComponent}
-        {renderedTogglerComponent && <Divider />}
-
-        <SystemControls
-          onSettingsOpen={onSettingsOpen}
-          onFullscreen={onFullscreen}
-          onHelp={onHelp}
-          onAboutOpen={onAbout}
-          disabledButtons={disabledButtons}
-          hiddenButtons={hiddenButtons}
-        />
-        <Divider />
-        {!hiddenButtons.includes('zoom-list') && (
-          <ZoomControls
-            currentZoom={currentZoom ?? 1}
-            onZoomIn={onZoomIn}
-            onZoomOut={onZoomOut}
-            onZoom={onZoom}
-            shortcuts={shortcuts}
-            disabledButtons={disabledButtons}
-            hiddenButtons={hiddenButtons}
-          />
-        )}
-      </BtnsWpapper>
+      {renderLeftToolbarSection(isCollapsed)}
+      {renderRightToolbarSection(renderedTogglerComponent)}
       <TopToolbarNaturalWidthMirror ref={mirrorRef} aria-hidden>
-        <BtnsWpapper>
-          <TopToolbarIconButton
-            title="Clear Canvas"
-            onClick={onClear}
-            iconName="clear"
-            shortcut={shortcuts.clear}
-            isHidden={hiddenButtons.includes('clear')}
-            disabled={disabledButtons.includes('clear')}
-            testId="clear-canvas"
-          />
-          <FileControls
-            onFileOpen={onFileOpen}
-            onSave={onSave}
-            shortcuts={shortcuts}
-            hiddenButtons={hiddenButtons}
-            disabledButtons={disabledButtons}
-          />
-          <ClipboardControls
-            onCopy={onCopy}
-            onCopyMol={onCopyMol}
-            onCopyKet={onCopyKet}
-            onCopyImage={onCopyImage}
-            onPaste={onPaste}
-            onCut={onCut}
-            shortcuts={shortcuts}
-            disabledButtons={disabledButtons}
-            hiddenButtons={hiddenButtons}
-          />
-          <UndoRedo
-            onUndo={onUndo}
-            onRedo={onRedo}
-            disabledButtons={disabledButtons}
-            hiddenButtons={hiddenButtons}
-            shortcuts={shortcuts}
-          />
-          <ExternalFuncControls
-            onLayout={onLayout}
-            onClean={onClean}
-            onAromatize={onAromatize}
-            onDearomatize={onDearomatize}
-            onCalculate={onCalculate}
-            onCheck={onCheck}
-            onAnalyse={onAnalyse}
-            onMiew={onMiew}
-            onToggleExplicitHydrogens={onToggleExplicitHydrogens}
-            disabledButtons={disabledButtons}
-            hiddenButtons={hiddenButtons}
-            shortcuts={shortcuts}
-            indigoVerification={indigoVerification}
-            isCollapsed={false}
-          />
-          <CustomButtons
-            isCollapsed={false}
-            customButtons={customButtons}
-            onCustomAction={onCustomAction}
-          />
-        </BtnsWpapper>
-        <BtnsWpapper>
-          {renderedMirrorTogglerComponent}
-          {renderedMirrorTogglerComponent && <Divider />}
-
-          <SystemControls
-            onSettingsOpen={onSettingsOpen}
-            onFullscreen={onFullscreen}
-            onHelp={onHelp}
-            onAboutOpen={onAbout}
-            disabledButtons={disabledButtons}
-            hiddenButtons={hiddenButtons}
-          />
-          <Divider />
-          {!hiddenButtons.includes('zoom-list') && (
-            <ZoomControls
-              currentZoom={currentZoom ?? 1}
-              onZoomIn={onZoomIn}
-              onZoomOut={onZoomOut}
-              onZoom={onZoom}
-              shortcuts={shortcuts}
-              disabledButtons={disabledButtons}
-              hiddenButtons={hiddenButtons}
-            />
-          )}
-        </BtnsWpapper>
+        {renderLeftToolbarSection(false)}
+        {renderRightToolbarSection(renderedMirrorTogglerComponent)}
       </TopToolbarNaturalWidthMirror>
     </ControlsPanel>
   );

@@ -96,6 +96,25 @@ const noInlineWasmPlugin = () => ({
   },
 });
 
+// An inlined worker is embedded as a Blob, so its sourcemap can never be
+// fetched: the `//# sourceMappingURL` comment travels inside the Blob and
+// resolves against a `blob:` origin, where nothing is served. Vite emits the
+// map regardless - it hardwires the worker bundle's `sourcemap` to
+// `build.sourcemap` with no opt-out - leaving ~50 MB across the four inline
+// variants, for maps whose corresponding `.js` is not even written to disk.
+// The Rollup baseline shipped none of them. The fetch variants load a real
+// chunk, so their maps are kept.
+const dropInlineWorkerMapsPlugin = () => ({
+  name: 'ketcher-standalone-drop-inline-worker-maps',
+  generateBundle(_options, bundle) {
+    for (const fileName of Object.keys(bundle)) {
+      if (/assets\/indigoWorker-[^/]+\.js\.map$/.test(fileName)) {
+        delete bundle[fileName];
+      }
+    }
+  },
+});
+
 export default defineConfig({
   // These bundles are consumed from `node_modules/ketcher-standalone/dist/...`,
   // not served from a site root. Vite's default `base: '/'` would emit the
@@ -123,6 +142,7 @@ export default defineConfig({
     format: 'es',
     plugins: () => (variant.copyWasm ? [noInlineWasmPlugin()] : []),
   },
+  plugins: variant.copyWasm ? [] : [dropInlineWorkerMapsPlugin()],
   build: {
     minify: false,
     sourcemap: true,

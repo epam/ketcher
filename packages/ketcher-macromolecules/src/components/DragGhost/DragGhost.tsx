@@ -1,5 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-/* eslint-disable react-hooks/refs */
 import {
   isLibraryItemRnaPreset,
   LibraryItemDragState,
@@ -17,12 +15,13 @@ import { selectEditor } from 'state/common';
 export const DragGhost = () => {
   const editor = useSelector(selectEditor);
 
-  const [libraryItemDragData, setLibraryItemDragData] =
-    useState<LibraryItemDragState>(null);
+  const [{ libraryItemDragData, canvasBBox }, setDragState] = useState<{
+    libraryItemDragData: LibraryItemDragState;
+    canvasBBox: DOMRect | null;
+  }>({ libraryItemDragData: null, canvasBBox: null });
 
   const ghostWrapperRef = useRef<HTMLDivElement>(null);
   const animateRef = useRef<number | null>(null);
-  const canvasBBoxRef = useRef<DOMRect | null>(null);
 
   const transform = useZoomTransform();
 
@@ -32,7 +31,13 @@ export const DragGhost = () => {
     }
 
     const handleLibraryItemDrag = (state: LibraryItemDragState) => {
-      setLibraryItemDragData(state);
+      const canvasWrapper = ZoomTool.instance?.canvasWrapper.node();
+
+      setDragState({
+        libraryItemDragData: state,
+        canvasBBox:
+          state && canvasWrapper ? canvasWrapper.getBoundingClientRect() : null,
+      });
     };
 
     editor.events.setLibraryItemDragState.add(handleLibraryItemDrag);
@@ -42,28 +47,15 @@ export const DragGhost = () => {
     };
   }, [editor]);
 
-  useEffect(() => {
-    if (!ZoomTool.instance || !libraryItemDragData) {
-      return;
-    }
-
-    const canvasWrapper = ZoomTool.instance.canvasWrapper.node();
-    if (!canvasWrapper) {
-      return;
-    }
-
-    canvasBBoxRef.current = canvasWrapper.getBoundingClientRect();
-  }, [libraryItemDragData]);
   const leftOffset = editor?.ketcherRootElementBoundingClientRect?.left || 0;
   const topOffset = editor?.ketcherRootElementBoundingClientRect?.top || 0;
   const dragOverCanvas =
-    canvasBBoxRef.current &&
+    canvasBBox &&
     libraryItemDragData &&
-    libraryItemDragData.position.x + leftOffset >= canvasBBoxRef.current.left &&
-    libraryItemDragData.position.x + leftOffset <=
-      canvasBBoxRef.current.right &&
-    libraryItemDragData.position.y + topOffset >= canvasBBoxRef.current.top &&
-    libraryItemDragData.position.y + topOffset <= canvasBBoxRef.current.bottom;
+    libraryItemDragData.position.x + leftOffset >= canvasBBox.left &&
+    libraryItemDragData.position.x + leftOffset <= canvasBBox.right &&
+    libraryItemDragData.position.y + topOffset >= canvasBBox.top &&
+    libraryItemDragData.position.y + topOffset <= canvasBBox.bottom;
 
   useLayoutEffect(() => {
     const element = ghostWrapperRef.current;
@@ -74,7 +66,7 @@ export const DragGhost = () => {
     animateRef.current = requestAnimationFrame(() => {
       const { x, y } = libraryItemDragData.position;
 
-      if (dragOverCanvas && canvasBBoxRef.current) {
+      if (dragOverCanvas) {
         const scale = transform.k;
 
         element.style.transformOrigin = '0 0';

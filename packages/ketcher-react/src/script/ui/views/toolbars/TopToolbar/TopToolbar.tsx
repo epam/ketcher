@@ -72,33 +72,6 @@ export interface PanelProps {
   customButtons: Array<CustomButton>;
 }
 
-const collapseLimit = 650;
-const CUSTOM_BUTTON_ADDITIONAL_WIDTH = 40;
-const DEFAULT_COLLAPSE_BUTTON_WIDTH = 24;
-
-const COLLAPSE_WIDTH_BY_BUTTON: Record<string, number> = {
-  clear: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  open: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  save: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  copies: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  paste: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  cut: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  undo: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  redo: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  arom: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  dearom: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  layout: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  clean: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  cip: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  check: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  analyse: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  miew: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  settings: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  help: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  about: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-  fullscreen: DEFAULT_COLLAPSE_BUTTON_WIDTH,
-};
-
 const ControlsPanel = styled('div')`
   display: flex;
   flex-direction: row;
@@ -145,6 +118,36 @@ const BtnsWpapper = styled.div`
   height: 100%;
 `;
 
+/**
+ * Hidden mirror node for measuring the natural width of the toolbar when
+ * collapsible controls are fully expanded.
+ */
+const TopToolbarNaturalWidthMirror = styled.div`
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: max-content;
+  height: 100%;
+  padding: 0px 22px;
+  gap: 0px;
+
+  @media only screen {
+    @container (min-width: 1024px) {
+      gap: 4px;
+    }
+  }
+
+  @media only screen {
+    @container (min-width: 1920px) {
+      gap: 12px;
+    }
+  }
+`;
+
 export const TopToolbar = ({
   className,
   disabledButtons,
@@ -184,6 +187,8 @@ export const TopToolbar = ({
   customButtons,
 }: PanelProps) => {
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>();
+  const { ref: mirrorRef, width: mirrorWidth = 0 } =
+    useResizeObserver<HTMLDivElement>();
   const { ketcherId } = useAppContext();
   const ketcher = useMemo(
     () => ketcherProvider.getKetcher(ketcherId),
@@ -195,23 +200,17 @@ export const TopToolbar = ({
     [ketcher],
   );
 
-  const collapseLimitWithCustomButtons = useMemo(() => {
-    const hiddenControlsWidth = [...new Set(hiddenButtons)].reduce(
-      (totalWidth, hiddenButton) =>
-        totalWidth + (COLLAPSE_WIDTH_BY_BUTTON[hiddenButton] ?? 0),
-      0,
-    );
-
-    return Math.max(
-      0,
-      collapseLimit +
-        customButtons.length * CUSTOM_BUTTON_ADDITIONAL_WIDTH -
-        hiddenControlsWidth,
-    );
-  }, [customButtons.length, hiddenButtons]);
-
-  const isCollapsed = width < collapseLimitWithCustomButtons;
+  /**
+   * Determine if content should be collapsed by comparing available width
+   * with the natural width of the fully expanded toolbar.
+   */
+  const isCollapsed = width < mirrorWidth;
   const renderedTogglerComponent = togglerComponent
+    ? cloneElement(togglerComponent, {
+        disabled: isModeSwitcherDisabled,
+      })
+    : undefined;
+  const renderedMirrorTogglerComponent = togglerComponent
     ? cloneElement(togglerComponent, {
         disabled: isModeSwitcherDisabled,
       })
@@ -305,6 +304,90 @@ export const TopToolbar = ({
           />
         )}
       </BtnsWpapper>
+      <TopToolbarNaturalWidthMirror ref={mirrorRef} aria-hidden>
+        <BtnsWpapper>
+          <TopToolbarIconButton
+            title="Clear Canvas"
+            onClick={onClear}
+            iconName="clear"
+            shortcut={shortcuts.clear}
+            isHidden={hiddenButtons.includes('clear')}
+            disabled={disabledButtons.includes('clear')}
+            testId="clear-canvas"
+          />
+          <FileControls
+            onFileOpen={onFileOpen}
+            onSave={onSave}
+            shortcuts={shortcuts}
+            hiddenButtons={hiddenButtons}
+            disabledButtons={disabledButtons}
+          />
+          <ClipboardControls
+            onCopy={onCopy}
+            onCopyMol={onCopyMol}
+            onCopyKet={onCopyKet}
+            onCopyImage={onCopyImage}
+            onPaste={onPaste}
+            onCut={onCut}
+            shortcuts={shortcuts}
+            disabledButtons={disabledButtons}
+            hiddenButtons={hiddenButtons}
+          />
+          <UndoRedo
+            onUndo={onUndo}
+            onRedo={onRedo}
+            disabledButtons={disabledButtons}
+            hiddenButtons={hiddenButtons}
+            shortcuts={shortcuts}
+          />
+          <ExternalFuncControls
+            onLayout={onLayout}
+            onClean={onClean}
+            onAromatize={onAromatize}
+            onDearomatize={onDearomatize}
+            onCalculate={onCalculate}
+            onCheck={onCheck}
+            onAnalyse={onAnalyse}
+            onMiew={onMiew}
+            onToggleExplicitHydrogens={onToggleExplicitHydrogens}
+            disabledButtons={disabledButtons}
+            hiddenButtons={hiddenButtons}
+            shortcuts={shortcuts}
+            indigoVerification={indigoVerification}
+            isCollapsed={false}
+          />
+          <CustomButtons
+            isCollapsed={false}
+            customButtons={customButtons}
+            onCustomAction={onCustomAction}
+          />
+        </BtnsWpapper>
+        <BtnsWpapper>
+          {renderedMirrorTogglerComponent}
+          {renderedMirrorTogglerComponent && <Divider />}
+
+          <SystemControls
+            onSettingsOpen={onSettingsOpen}
+            onFullscreen={onFullscreen}
+            onHelp={onHelp}
+            onAboutOpen={onAbout}
+            disabledButtons={disabledButtons}
+            hiddenButtons={hiddenButtons}
+          />
+          <Divider />
+          {!hiddenButtons.includes('zoom-list') && (
+            <ZoomControls
+              currentZoom={currentZoom ?? 1}
+              onZoomIn={onZoomIn}
+              onZoomOut={onZoomOut}
+              onZoom={onZoom}
+              shortcuts={shortcuts}
+              disabledButtons={disabledButtons}
+              hiddenButtons={hiddenButtons}
+            />
+          )}
+        </BtnsWpapper>
+      </TopToolbarNaturalWidthMirror>
     </ControlsPanel>
   );
 };

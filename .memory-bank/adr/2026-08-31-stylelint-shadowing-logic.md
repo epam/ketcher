@@ -38,9 +38,9 @@ Error: You must use a valid formatter option: "compact", "json", "string", "tap"
 We have decided to proceed with the version bump of Stylelint to `^17.14.1` while maintaining the shadowing block in `package.json` to avoid a massive immediate refactor. 
 
 We will:
-1. Bump `stylelint` and `stylelint-config-standard` versions.
-2. Remove the bare `--formatter` flag from workspace scripts to prevent CLI crashes.
-3. Keep the minimal configuration in `package.json` to maintain the current (silent) state of the linter.
+1. Bump `stylelint` version in root `package.json`.
+2. Keep the minimal configuration in `package.json` to maintain the current (silent) state of the linter.
+3. Not modify workspace scripts (keeping the bare `--formatter` flags) per explicit instruction, acknowledging that this results in a CLI crash when running linting directly.
 
 ## Consequences
 

@@ -83,7 +83,7 @@
     "serve-handler": "^6.1.7"
   },
   "stylelint": {
-    "//": "This block shadows .stylelintrc.json, which is incompatible with stylelint@17. See ADR 2026-08-31 for details.",
+    "//": "This block shadows .stylelintrc.json. See ADR 2026-08-31 for details.",
     "overrides": [
       {
         "files": [

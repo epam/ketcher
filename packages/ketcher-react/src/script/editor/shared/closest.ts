@@ -28,6 +28,7 @@ import {
   atomsForBondNotFoundMessage,
   entityNotFoundMessage,
   assert,
+  KetcherLogger,
 } from 'ketcher-core';
 import type {
   ClosestItem,
@@ -218,16 +219,15 @@ function findClosestBond(
       return;
     }
 
-    const beginAtom = getOrThrow(
-      restruct.atoms,
-      bond.b.begin,
-      atomsForBondNotFoundMessage(bid, bond.b.begin, bond.b.end),
-    );
-    const endAtom = getOrThrow(
-      restruct.atoms,
-      bond.b.end,
-      atomsForBondNotFoundMessage(bid, bond.b.begin, bond.b.end),
-    );
+    const beginAtom = restruct.atoms.get(bond.b.begin);
+    const endAtom = restruct.atoms.get(bond.b.end);
+    if (!beginAtom || !endAtom) {
+      // visibleBonds is a stale cache mid-batch-edit; skip instead of crashing.
+      KetcherLogger.warn(
+        atomsForBondNotFoundMessage(bid, bond.b.begin, bond.b.end),
+      );
+      return;
+    }
     const p1 = beginAtom.a.pp;
     const p2 = endAtom.a.pp;
 
@@ -245,11 +245,11 @@ function findClosestBond(
       closestBondCenter = bid;
     }
 
-    const hb = getOrThrow(
-      restruct.molecule.halfBonds,
-      bond.b.hb1 as number,
-      `Half-bond ${bond.b.hb1} for bond ${bid} not found`,
-    );
+    const hb = restruct.molecule.halfBonds.get(bond.b.hb1 as number);
+    if (!hb) {
+      KetcherLogger.warn(`Half-bond ${bond.b.hb1} for bond ${bid} not found`);
+      return;
+    }
     const dir = hb.dir;
     const norm = hb.norm;
 

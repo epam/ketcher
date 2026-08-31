@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppSelector, useLayoutMode } from 'hooks';
 import { selectEditor } from 'state/common';
 import styled from '@emotion/styled';
@@ -55,13 +55,9 @@ export const SequenceSyncEditModeButton = () => {
     Boolean(editor?.drawingEntitiesManager?.hasAntisenseChains),
   );
 
-  const isSequenceSyncEditModeRef = useRef(isSequenceSyncEditMode);
-  isSequenceSyncEditModeRef.current = isSequenceSyncEditMode;
-
   const handleClick = () => {
     const isSequenceSyncEditModeNewState = !isSequenceSyncEditMode;
 
-    isSequenceSyncEditModeRef.current = isSequenceSyncEditModeNewState;
     setIsSequenceSyncEditMode(isSequenceSyncEditModeNewState);
     editor?.events.toggleIsSequenceSyncEditMode.dispatch(
       isSequenceSyncEditModeNewState,
@@ -79,7 +75,7 @@ export const SequenceSyncEditModeButton = () => {
 
       if (isSequenceMode && hasAntisenseChains) {
         editor?.events.toggleIsSequenceSyncEditMode.dispatch(
-          isSequenceSyncEditModeRef.current,
+          isSequenceSyncEditMode,
         );
       }
     };
@@ -90,15 +86,7 @@ export const SequenceSyncEditModeButton = () => {
     return () => {
       editor?.events.modelChange.remove(updateHasAntisenseChains);
     };
-  }, [editor]);
-
-  useEffect(() => {
-    if (isSequenceMode && hasAtLeastOneAntisense) {
-      editor?.events.toggleIsSequenceSyncEditMode.dispatch(
-        isSequenceSyncEditModeRef.current,
-      );
-    }
-  }, [isSequenceMode, hasAtLeastOneAntisense, editor]);
+  }, [editor, isSequenceMode, isSequenceSyncEditMode]);
 
   return isSequenceMode && hasAtLeastOneAntisense ? (
     <StyledButton

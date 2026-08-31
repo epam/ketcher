@@ -129,8 +129,7 @@ const MeasureInput = ({
     if (internalValue !== stringifiedValue) {
       onChange(parseFloat(internalValue));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [internalValue]);
+  }, [internalValue, stringifiedValue, onChange]);
 
   const handleChange = (value: unknown) => {
     const stringifiedValue = String(value);

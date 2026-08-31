@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/use-memo, react-hooks/set-state-in-effect */
+/* eslint-disable react-hooks/use-memo */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -974,8 +974,8 @@ export const MacromoleculePropertiesWindow = () => {
   const oligonucleotidesValue = useAppSelector(selectOligonucleotidesValue);
 
   const firstMacromoleculesProperties:
-    | SingleChainMacromoleculeProperties
-    | undefined = macromoleculesProperties?.[0];
+    SingleChainMacromoleculeProperties | undefined =
+    macromoleculesProperties?.[0];
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(() =>
     calculateDefaultTabIndex(firstMacromoleculesProperties),

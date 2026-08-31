@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -53,9 +51,7 @@ export enum RnaBuilderPresetsItem {
 export type RnaBuilderNucleotidesItem = 'Nucleotides';
 
 export type RnaBuilderItem =
-  | RnaBuilderPresetsItem
-  | MonomerGroups
-  | RnaBuilderNucleotidesItem;
+  RnaBuilderPresetsItem | MonomerGroups | RnaBuilderNucleotidesItem;
 
 // Filter applied to RNA presets in the library based on the position of the
 // phosphate group in the preset. Each flag enables one of three buckets:

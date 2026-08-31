@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,7 +15,7 @@
  ***************************************************************************/
 
 import type { Struct } from 'domain/entities/struct';
-import { Text } from 'domain/entities/text';
+import { Text, type TextAttributes } from 'domain/entities/text';
 import { getNodeWithInvertedYCoord } from '../helpers';
 import {
   type DraftEditorState,
@@ -67,6 +66,11 @@ interface KETTextV2 extends KETFontStyleOverrides {
   selected?: boolean;
 }
 
+interface KETTextV1 {
+  data: TextAttributes;
+  selected?: boolean;
+}
+
 /**
  * Convert KET v2.0 format to internal format (pos array + Lexical content).
  */
@@ -90,7 +94,7 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
   const lexicalRoot = {
     root: {
       children: paragraphs.map((para) => {
-        const paragraphNode: any = {
+        const paragraphNode = {
           children: (para.parts || []).map((part) => {
             let format = 0;
             if (part.bold) format |= IS_BOLD;
@@ -98,17 +102,6 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
             if (part.subscript) format |= IS_SUBSCRIPT;
             if (part.superscript) format |= IS_SUPERSCRIPT;
 
-            const textNode: any = {
-              detail: 0,
-              format,
-              mode: 'normal',
-              style: '',
-              text: part.text,
-              type: 'text',
-              version: 1,
-            };
-
-            // Build style string
             const styles: string[] = [];
             if (part.font?.size) {
               styles.push(`font-size: ${part.font.size}px`);
@@ -116,28 +109,26 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
             if (part.color) {
               styles.push(`color: ${part.color}`);
             }
-            if (styles.length > 0) {
-              textNode.style = styles.join('; ');
-            }
-            if (part.font?.family) {
-              textNode.font = part.font.family;
-            }
 
-            return textNode;
+            return {
+              detail: 0,
+              format,
+              mode: 'normal',
+              style: styles.join('; '),
+              text: part.text,
+              type: 'text',
+              version: 1,
+              ...(part.font?.family ? { font: part.font.family } : {}),
+            };
           }),
           direction: 'ltr',
-          format: '',
+          format: para.alignment ?? '',
           indent: 0,
           type: 'paragraph',
           version: 1,
           textFormat: 0,
           textStyle: '',
         };
-
-        // Apply paragraph-level alignment
-        if (para.alignment) {
-          paragraphNode.format = para.alignment;
-        }
 
         return paragraphNode;
       }),
@@ -159,31 +150,38 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
 /**
  * Check if the ketItem is in KET v2.0 format (has boundingBox and paragraphs directly).
  */
-function isKetV2Format(ketItem: any): ketItem is KETTextV2 {
+function isKetV2Format(ketItem: unknown): ketItem is KETTextV2 {
   return (
-    ketItem &&
+    typeof ketItem === 'object' &&
+    ketItem !== null &&
+    'boundingBox' in ketItem &&
     ketItem.boundingBox !== undefined &&
+    'paragraphs' in ketItem &&
     ketItem.paragraphs !== undefined
   );
 }
 
-export function textToStruct(ketItem: any, struct: Struct) {
-  let node: any;
+export function textToStruct(ketItem: unknown, struct: Struct) {
+  let node: TextAttributes;
+  let selected: boolean | undefined;
 
   if (isKetV2Format(ketItem)) {
     // KET v2.0 format: convert to internal format
     const internal = convertKetV2ToInternal(ketItem);
     node = getNodeWithInvertedYCoord(internal);
+    selected = ketItem.selected;
   } else {
     // Old format with data wrapper
-    node = getNodeWithInvertedYCoord(ketItem.data);
+    const legacyKetItem = ketItem as KETTextV1;
+    node = getNodeWithInvertedYCoord(legacyKetItem.data);
+    selected = legacyKetItem.selected;
 
     // If the incoming node.content is Draft.js shape (stringified or object),
     // convert it to Lexical format at parse time so we store only Lexical JSON.
     if (node?.content) {
       try {
         // If content is a JSON string, try to parse it
-        const parsed =
+        const parsed: unknown =
           typeof node.content === 'string'
             ? JSON.parse(node.content)
             : node.content;
@@ -200,7 +198,7 @@ export function textToStruct(ketItem: any, struct: Struct) {
   }
 
   const text = new Text(node);
-  text.setInitiallySelected(ketItem.selected);
+  text.setInitiallySelected(selected);
   struct.texts.add(text);
   return struct;
 }

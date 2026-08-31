@@ -82,7 +82,7 @@
     "@rollup/plugin-strip": "^2.0.0",
     "@svgr/rollup": "^8.1.0",
     "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/d3": "^7.4.3",

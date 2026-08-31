@@ -420,6 +420,8 @@ describe('Drawing Entities Manager', () => {
     editor.renderersContainer.update(modelChanges);
 
     const valueElement = document.querySelector('[data-label-text="Value"]');
+    const valueGroup = valueElement?.parentElement;
+    const initialTransform = valueGroup?.getAttribute('transform');
     expect(valueElement).toBeTruthy();
 
     const sgroupDrawingEntity = [
@@ -455,6 +457,10 @@ describe('Drawing Entities Manager', () => {
 
     expect(sgroup.pp).toEqual(new Vec2(3, 3));
     expect(struct.atoms.get(0)?.pp).toEqual(new Vec2(0, 0));
+    expect(document.querySelector('[data-label-text="Value"]')).toBe(
+      valueElement,
+    );
+    expect(valueGroup?.getAttribute('transform')).not.toBe(initialTransform);
   });
 
   it('should keep attached macro data S-group field values non-selectable', () => {

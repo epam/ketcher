@@ -44,10 +44,15 @@ interface DrawBracketsOptions {
   indexAttribute?: Record<string, string>;
 }
 
+interface DataSGroupValueElement {
+  element: D3SvgElementSelection<SVGGElement, void>;
+  initialPosition: Vec2;
+  labelShift: Vec2;
+}
+
 export class SGroupRenderer extends BaseRenderer {
   private labelElements: D3SvgElementSelection<SVGElement, void>[] = [];
-  private dataSGroupValueElements: D3SvgElementSelection<SVGGElement, void>[] =
-    [];
+  private dataSGroupValueElements: DataSGroupValueElement[] = [];
 
   private atomRenderers = new Map<number, AtomRenderer>();
   private bondRenderers = new Map<number, BondRenderer>();
@@ -421,7 +426,6 @@ export class SGroupRenderer extends BaseRenderer {
       valueGroup.datum(this);
     }
     this.addLabelElement(valueGroup);
-    this.dataSGroupValueElements.push(valueGroup);
     const textElement = this.appendText(
       scaledPosition,
       this.sgroup.data.fieldValue,
@@ -465,6 +469,11 @@ export class SGroupRenderer extends BaseRenderer {
     const labelShift = getLabelShift(valueBBox);
 
     valueGroup.attr('transform', `translate(${labelShift.x},${labelShift.y})`);
+    this.dataSGroupValueElements.push({
+      element: valueGroup,
+      initialPosition: new Vec2(scaledPosition),
+      labelShift,
+    });
   }
 
   private appendText(
@@ -529,8 +538,8 @@ export class SGroupRenderer extends BaseRenderer {
       ? SELECTION_COLOR
       : DATA_SGROUP_BACKGROUND;
 
-    this.dataSGroupValueElements.forEach((valueElement) => {
-      valueElement
+    this.dataSGroupValueElements.forEach(({ element }) => {
+      element
         .select('rect')
         .attr('fill', valueBackgroundColor)
         .attr('stroke', valueBackgroundColor);
@@ -538,8 +547,26 @@ export class SGroupRenderer extends BaseRenderer {
   }
 
   public moveSelection(): void {
-    this.remove();
-    this.show();
+    if (!this.sgroupDrawingEntity.isSelectableDataSGroup) {
+      return;
+    }
+
+    const currentPosition = Scale.modelToCanvas(
+      this.sgroupDrawingEntity.center,
+      this.editorSettings,
+    );
+
+    this.dataSGroupValueElements.forEach(
+      ({ element, initialPosition, labelShift }) => {
+        const movement = currentPosition.sub(initialPosition);
+        element.attr(
+          'transform',
+          `translate(${labelShift.x + movement.x},${
+            labelShift.y + movement.y
+          })`,
+        );
+      },
+    );
   }
 
   private getScaledBracketBox(): Box2Abs | undefined {

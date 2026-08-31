@@ -29,11 +29,13 @@ export class SGroupDrawingEntity extends DrawingEntity {
   }
 
   public moveRelative(position: Vec2): void {
-    super.moveRelative(position);
-
     if (this.isSelectableDataSGroup) {
       this.sgroup.pp?.add_(position);
+
+      return;
     }
+
+    super.moveRelative(position);
   }
 
   public setRenderer(renderer: SGroupRenderer): void {

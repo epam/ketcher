@@ -222,7 +222,9 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
     useState(false);
 
   const onCheckRef = useRef(onCheck);
-  onCheckRef.current = onCheck;
+  useEffect(() => {
+    onCheckRef.current = onCheck;
+  }, [onCheck]);
 
   const handleApply = () => onApply(result);
 

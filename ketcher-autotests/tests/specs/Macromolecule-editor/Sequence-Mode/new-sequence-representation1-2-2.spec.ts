@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Page, test, expect } from '@fixtures';
 import {
@@ -1938,7 +1935,9 @@ for (const monomer of monomersToAdd) {
         await pasteFromClipboardAndAddToMacromoleculesCanvas(
           page,
           MacroFileType.HELM,
-          !sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM ?? '',
+          !sequence.Rotation
+            ? sequence.HELM
+            : (sequence.RightAnchoredHELM ?? ''),
         );
       }
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(

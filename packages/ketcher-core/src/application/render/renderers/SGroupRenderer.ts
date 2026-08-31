@@ -1,13 +1,12 @@
+/* eslint-disable no-undef */
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { Scale } from 'domain/helpers';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { SGroup, Vec2 } from 'domain/entities';
-import type { SUPERATOM_CLASS } from 'domain/entities/sgroup';
 import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SgContexts } from 'application/editor/shared/constants';
-import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import type { BondRenderer } from 'application/render/renderers/BondRenderer';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
@@ -139,7 +138,7 @@ export class SGroupRenderer extends BaseRenderer {
         }
         break;
       case SGroup.TYPES.SUP:
-        options.lowerIndexText = this.getSuperatomLabel();
+        options.lowerIndexText = this.sgroup.superatomLabel;
         options.indexAttribute = { 'font-style': 'italic' };
         break;
       default:
@@ -149,15 +148,8 @@ export class SGroupRenderer extends BaseRenderer {
     this.drawBrackets(bracketBox, options);
   }
 
-  private getSuperatomLabel(): string | undefined {
-    return (
-      this.sgroup.data.name ||
-      SUPERATOM_CLASS_TEXT[this.sgroup.data.class as SUPERATOM_CLASS]
-    );
-  }
-
   private drawContractedSGroupLabel(): void {
-    const label = this.getSuperatomLabel();
+    const label = this.sgroup.superatomLabel;
 
     if (!label) {
       return;

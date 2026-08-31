@@ -1,4 +1,3 @@
-import { TransientView } from 'application/render/renderers/TransientView/TransientView';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { line as d3Line } from 'd3';
 
@@ -15,10 +14,9 @@ export type SelectionLassoViewParams = {
 };
 
 export type SelectionViewParams =
-  | SelectionRectangleViewParams
-  | SelectionLassoViewParams;
+  SelectionRectangleViewParams | SelectionLassoViewParams;
 
-export class SelectionView extends TransientView {
+export class SelectionView {
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
     params: SelectionViewParams,

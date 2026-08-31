@@ -534,31 +534,28 @@ test.fail(
   },
 );
 
-test.fail(
-  'Case 21: Update Library item with compound that contains MOLv3000 file with modificationType field that contain improper characters (quotation marks and so on)',
-  async () => {
-    // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8357
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with modificationType field that contain improper characters (quotation marks and so on)
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Execute command in console
-     * 3. Check that the structure doesn't appears in the Library
-     *
-     * Version 3.9
-     */
+test('Case 21: Update Library item with compound that contains MOLv3000 file with modificationType field that contain improper characters (quotation marks and so on)', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8345
+   * Description: Update Library item with compound that contains MOLv3000 file with modificationType field that contain improper characters (quotation marks and so on)
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute command in console
+   * 3. Check that the structure doesn't appears in the Library
+   *
+   * Version 3.9
+   * Fixed by: #8357
+   */
 
-    const sdfFile =
-      _Peptide1Body + _modificationTypes + ' \t ' + _betweenEntries + _endToken;
+  const sdfFile =
+    _Peptide1Body + _modificationTypes + ' \t ' + _betweenEntries + _endToken;
 
-    const error = await updateMonomersLibrary(page, sdfFile);
-    expect(error).not.toBeNull();
-    expect(
-      await Library(page).isMonomerExist(Peptide._Peptide1),
-    ).not.toBeTruthy();
-  },
-);
+  const error = await updateMonomersLibrary(page, sdfFile);
+  expect(error).not.toBeNull();
+  expect(
+    await Library(page).isMonomerExist(Peptide._Peptide1),
+  ).not.toBeTruthy();
+});
 
 test('Case 22: Update Library item with compound that contains MOLv3000 file with groupClass field that has non-RNA value (try DNA)', async () => {
   /*

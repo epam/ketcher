@@ -135,7 +135,7 @@ const configWithWasmFetch = {
     copy({
       targets: [
         {
-          src: '../../node_modules/indigo-ketcher/*.wasm',
+          src: 'node_modules/indigo-ketcher/*.wasm',
           dest: 'dist/binaryWasm',
         },
       ],
@@ -197,7 +197,7 @@ const configWithWasmWithoutRender = {
     copy({
       targets: [
         {
-          src: '../../node_modules/indigo-ketcher/*.wasm',
+          src: 'node_modules/indigo-ketcher/*.wasm',
           dest: 'dist/binaryWasmNoRender',
         },
       ],

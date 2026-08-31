@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable max-len */
 import { Page, expect, test } from '@fixtures';
 import {
   MacroFileType,
@@ -1912,7 +1910,7 @@ for (const monomer of monomerToDrag) {
     await CommonTopRightToolbar(page).setZoomInputValue('400');
 
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
-    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 500, y: 200 }, true);
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
@@ -1947,7 +1945,7 @@ for (const monomer of monomerToDrag) {
     await CommonTopRightToolbar(page).setZoomInputValue('400');
 
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
-    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 500, y: 200 }, true);
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(

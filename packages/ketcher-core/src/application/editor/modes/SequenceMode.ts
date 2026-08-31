@@ -29,7 +29,7 @@ import {
   ReinitializeModeOperation,
   RestoreSequenceCaretPositionOperation,
 } from 'application/editor/operations/modes';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   getPeptideLibraryItem,
   getRnaPartLibraryItem,
@@ -91,6 +91,13 @@ export interface StartNewSequenceEventData {
 interface PreservedHydrogenBonds {
   toMonomer: BaseMonomer;
   fromMonomer: BaseMonomer;
+}
+
+interface PreservedSideChainConnection {
+  sourceMonomer: BaseMonomer;
+  firstMonomerAttachmentPointName: AttachmentPointName;
+  secondMonomer: BaseMonomer;
+  secondMonomerAttachmentPointName: AttachmentPointName;
 }
 
 export class SequenceMode extends BaseMode {
@@ -174,11 +181,15 @@ export class SequenceMode extends BaseMode {
     needScroll = true,
     needRemoveSelection = true,
     needReArrangeChains = true,
+    forceRecalculateAntisense = false,
   ) {
     const command = super.initialize(needRemoveSelection);
     const editor = provideEditorInstance();
 
     editor.drawingEntitiesManager.clearCanvas();
+
+    const needRecalculateOldAntisense =
+      !this.isEditMode || forceRecalculateAntisense;
 
     // Prevent rearranging chains (and recalculating the layout) when switching to sequence mode,
     // only recalculate after changes in the sequence
@@ -187,11 +198,11 @@ export class SequenceMode extends BaseMode {
           true,
           false,
           true,
-          !this.isEditMode,
+          needRecalculateOldAntisense,
           false,
         )
       : editor.drawingEntitiesManager.recalculateAntisenseChains(
-          !this.isEditMode,
+          needRecalculateOldAntisense,
         );
     const zoom = ZoomTool.instance;
 
@@ -461,7 +472,10 @@ export class SequenceMode extends BaseMode {
   }
 
   public mousedown(event: MouseEvent) {
-    if (this.isEditInRNABuilderMode) return;
+    if (this.isEditInRNABuilderMode) {
+      provideEditorInstance().events.cancelSequenceEditInRNABuilderMode.dispatch();
+      return;
+    }
     const eventData: BaseRenderer | NewSequenceButton | undefined =
       event.target?.__data__;
     const isClickedOnEmptyPlace = !(
@@ -855,7 +869,7 @@ export class SequenceMode extends BaseMode {
       }
     }
 
-    modelChanges.addOperation(new ReinitializeModeOperation());
+    modelChanges.addOperation(new ReinitializeModeOperation(true));
     editor.renderersContainer.update(modelChanges);
     editorHistory.update(modelChanges);
   }
@@ -1375,7 +1389,7 @@ export class SequenceMode extends BaseMode {
             );
           }
 
-          modelChanges.addOperation(new ReinitializeModeOperation());
+          modelChanges.addOperation(new ReinitializeModeOperation(true));
           editor.renderersContainer.update(modelChanges);
           history.update(modelChanges);
         },
@@ -1450,7 +1464,7 @@ export class SequenceMode extends BaseMode {
               newNodePosition,
             );
 
-            modelChanges.addOperation(new ReinitializeModeOperation());
+            modelChanges.addOperation(new ReinitializeModeOperation(true));
             editor.renderersContainer.update(modelChanges);
             history.update(modelChanges);
             return;
@@ -1474,7 +1488,7 @@ export class SequenceMode extends BaseMode {
               previousTwoStrandedNodeInSameChain.senseNode,
               modelChanges,
             );
-            modelChanges.addOperation(new ReinitializeModeOperation());
+            modelChanges.addOperation(new ReinitializeModeOperation(true));
             editor.renderersContainer.update(modelChanges);
             history.update(modelChanges);
             return;
@@ -1503,7 +1517,7 @@ export class SequenceMode extends BaseMode {
             );
           }
 
-          modelChanges.addOperation(new ReinitializeModeOperation());
+          modelChanges.addOperation(new ReinitializeModeOperation(true));
           editor.renderersContainer.update(modelChanges);
           history.update(modelChanges);
         },
@@ -1999,11 +2013,7 @@ export class SequenceMode extends BaseMode {
       return null;
     }
 
-    const sideConnectionsData: Array<{
-      firstMonomerAttachmentPointName: AttachmentPointName;
-      secondMonomer: BaseMonomer;
-      secondMonomerAttachmentPointName: AttachmentPointName;
-    }> = [];
+    const sideConnectionsData: PreservedSideChainConnection[] = [];
 
     allMonomers.forEach((monomer) => {
       Object.entries(monomer.attachmentPointsToBonds).forEach(([key, bond]) => {
@@ -2031,6 +2041,7 @@ export class SequenceMode extends BaseMode {
         const [secondMonomerAttachmentPointName] = secondMonomerBondData;
 
         sideConnectionsData.push({
+          sourceMonomer: monomer,
           firstMonomerAttachmentPointName: key as AttachmentPointName,
           secondMonomer,
           secondMonomerAttachmentPointName:
@@ -2141,6 +2152,58 @@ export class SequenceMode extends BaseMode {
     });
 
     return newMonomerSequenceNode;
+  }
+
+  private getPresetMonomerForPreservedSideChainConnection(
+    newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode,
+    sourceMonomer: BaseMonomer,
+  ): BaseMonomer | undefined {
+    const sourceMonomerClass =
+      sourceMonomer.monomerItem.props.MonomerClass ||
+      (sourceMonomer instanceof AmbiguousMonomer
+        ? sourceMonomer.monomerClass
+        : undefined);
+
+    if (newPresetNode instanceof Nucleotide) {
+      if (
+        sourceMonomer instanceof RNABase ||
+        sourceMonomerClass === KetMonomerClass.Base
+      ) {
+        return newPresetNode.rnaBase;
+      }
+      if (
+        sourceMonomer instanceof Sugar ||
+        sourceMonomerClass === KetMonomerClass.Sugar
+      ) {
+        return newPresetNode.sugar;
+      }
+      if (
+        sourceMonomer instanceof Phosphate ||
+        sourceMonomerClass === KetMonomerClass.Phosphate
+      ) {
+        return newPresetNode.phosphate;
+      }
+    }
+
+    if (newPresetNode instanceof Nucleoside) {
+      if (
+        sourceMonomer instanceof RNABase ||
+        sourceMonomerClass === KetMonomerClass.Base
+      ) {
+        return newPresetNode.rnaBase;
+      }
+      if (
+        sourceMonomer instanceof Sugar ||
+        sourceMonomerClass === KetMonomerClass.Sugar
+      ) {
+        return newPresetNode.sugar;
+      }
+    }
+
+    return sourceMonomer instanceof Sugar ||
+      sourceMonomerClass === KetMonomerClass.Sugar
+      ? newPresetNode.monomer
+      : undefined;
   }
 
   private replaceSelectionsWithMonomer(
@@ -2455,8 +2518,8 @@ export class SequenceMode extends BaseMode {
       const previousTwoStrandedNodeInSameChain =
         SequenceRenderer.previousNodeInSameChain;
       const nextNodeToConnect = this.isAntisenseEditMode
-        ? currentTwoStrandedNode?.antisenseNode ?? null
-        : currentTwoStrandedNode?.senseNode ?? null;
+        ? (currentTwoStrandedNode?.antisenseNode ?? null)
+        : (currentTwoStrandedNode?.senseNode ?? null);
       const previousNodeToConnect = this.isAntisenseEditMode
         ? previousTwoStrandedNodeInSameChain?.antisenseNode
         : previousTwoStrandedNodeInSameChain?.senseNode;
@@ -2528,8 +2591,7 @@ export class SequenceMode extends BaseMode {
       ) as Phosphate;
     }
 
-    let newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode | null =
-      null;
+    let newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode;
 
     if (rnaBaseMonomer && sugarMonomer && phosphateMonomer) {
       newPresetNode = new Nucleotide(
@@ -2588,7 +2650,16 @@ export class SequenceMode extends BaseMode {
       });
     });
 
-    const newPresetNode = this.createRnaPresetNode(preset, position);
+    const nextSenseNode = nextNode?.senseNode;
+    const presetToInsert =
+      selectedNode instanceof Nucleoside &&
+      nextSenseNode instanceof MonomerSequenceNode &&
+      nextSenseNode.monomer instanceof Phosphate &&
+      preset.phosphate
+        ? { ...preset, phosphate: undefined }
+        : preset;
+
+    const newPresetNode = this.createRnaPresetNode(presetToInsert, position);
 
     assert(newPresetNode);
 
@@ -2607,21 +2678,21 @@ export class SequenceMode extends BaseMode {
       ),
     );
 
-    let monomerForSideConnections = newPresetNode.monomer;
-
-    if (newPresetNode instanceof Nucleotide) {
-      monomerForSideConnections = newPresetNode.phosphate;
-    } else if (newPresetNode instanceof Nucleoside) {
-      monomerForSideConnections = newPresetNode.sugar;
-    }
-
     sideChainConnections?.forEach((sideConnectionData) => {
       const {
+        sourceMonomer,
         firstMonomerAttachmentPointName,
         secondMonomer,
         secondMonomerAttachmentPointName,
       } = sideConnectionData;
+      const monomerForSideConnections =
+        this.getPresetMonomerForPreservedSideChainConnection(
+          newPresetNode,
+          sourceMonomer,
+        );
+
       if (
+        !monomerForSideConnections ||
         !this.isConnectionPossible(
           monomerForSideConnections,
           firstMonomerAttachmentPointName,
@@ -2763,8 +2834,8 @@ export class SequenceMode extends BaseMode {
       const previousTwoStrandedNodeInSameChain =
         SequenceRenderer.previousNodeInSameChain;
       const nextNodeToConnect = this.isAntisenseEditMode
-        ? currentTwoStrandedNode?.antisenseNode ?? null
-        : currentTwoStrandedNode?.senseNode ?? null;
+        ? (currentTwoStrandedNode?.antisenseNode ?? null)
+        : (currentTwoStrandedNode?.senseNode ?? null);
       const previousNodeToConnect = this.isAntisenseEditMode
         ? previousTwoStrandedNodeInSameChain?.antisenseNode
         : previousTwoStrandedNodeInSameChain?.senseNode;
@@ -2837,7 +2908,13 @@ export class SequenceMode extends BaseMode {
       nextNodeToConnect &&
       !(nextNodeToConnect instanceof EmptySequenceNode)
     ) {
-      if (!this.isR1Free(nextNodeToConnect)) {
+      // For antisense chains, when adding at the end (no previous node),
+      // we need to check R2 of the last monomer, not R1
+      const isAttachmentPointFree = this.isAntisenseEditMode
+        ? this.isR2Free(nextNodeToConnect)
+        : this.isR1Free(nextNodeToConnect);
+
+      if (!isAttachmentPointFree) {
         this.showMergeWarningModal();
         return;
       }
@@ -2928,7 +3005,8 @@ export class SequenceMode extends BaseMode {
     const currentNode =
       nextNodeToConnect === null
         ? undefined
-        : nextNodeToConnect ?? SequenceRenderer.currentEdittingNode?.senseNode;
+        : (nextNodeToConnect ??
+          SequenceRenderer.currentEdittingNode?.senseNode);
     const previousNodeInSameChain =
       previousNodeToConnect ??
       SequenceRenderer.previousNodeInSameChain?.senseNode;
@@ -2949,13 +3027,30 @@ export class SequenceMode extends BaseMode {
     }
 
     if (needConnectWithNextNodeInChain) {
-      this.connectNodes(
-        lastNodeOfNewFragment,
-        currentNode,
-        modelChanges,
-        newNodePosition,
-        addPhosphateIfNeeded,
-      );
+      // For antisense chains at the end (no previousNodeInSameChain, but has currentNode),
+      // the parameters are swapped, so we need to reverse the connection order
+      const isAntisenseEndCase =
+        this.isAntisenseEditMode && !previousNodeInSameChain && currentNode;
+
+      if (isAntisenseEndCase) {
+        // Antisense at end: connect lastU.R2 → newC.R1
+        this.connectNodes(
+          currentNode,
+          firstNodeOfNewFragment,
+          modelChanges,
+          newNodePosition,
+          addPhosphateIfNeeded,
+        );
+      } else {
+        // Normal case: connect newMonomer.R2 → nextMonomer.R1
+        this.connectNodes(
+          lastNodeOfNewFragment,
+          currentNode,
+          modelChanges,
+          newNodePosition,
+          addPhosphateIfNeeded,
+        );
+      }
     }
 
     return modelChanges;

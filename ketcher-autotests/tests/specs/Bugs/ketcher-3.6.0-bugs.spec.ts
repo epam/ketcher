@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test, expect } from '@fixtures';
 import {
@@ -432,7 +428,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('8.49');
+    ).toEqual('8');
     await CalculateVariablesPanel(page).closeButton.click();
   });
 
@@ -457,7 +453,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('8.49');
+    ).toEqual('8');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');

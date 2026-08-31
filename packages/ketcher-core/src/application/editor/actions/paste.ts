@@ -44,6 +44,7 @@ import { fromSgroupAddition } from './sgroup';
 import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type { Image } from 'domain/entities/image';
+import { getOrThrow } from '../../../utilities';
 import { KetcherLogger } from 'utilities';
 
 export type CreatedItems = {
@@ -266,13 +267,18 @@ export function fromPaste(
       rxnArrow.height,
     ).perform(restruct);
     action.addOp(operation);
-    items.rxnArrows.push(operation.data.id);
+    const rxnArrowId = operation.data.id;
+    if (rxnArrowId != null) {
+      items.rxnArrows.push(rxnArrowId);
+    }
   });
 
   pstruct.rxnPluses.forEach((plus) => {
     const operation = new RxnPlusAdd(plus.pp.add(offset)).perform(restruct);
     action.addOp(operation);
-    items.rxnPluses.push(operation.data.plid);
+    if (operation.data.plid !== null) {
+      items.rxnPluses.push(operation.data.plid);
+    }
   });
 
   pstruct.simpleObjects.forEach((simpleObject) => {
@@ -361,20 +367,54 @@ function getStructCenter(struct: Struct): Vec2 {
     });
     return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2);
   }
-  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-  if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0)!.center();
-  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-  if (struct.rxnPluses.size > 0) return struct.rxnPluses.get(0)!.pp;
-  if (struct.simpleObjects.size > 0)
-    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-    return struct.simpleObjects.get(0)!.center();
-  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-  if (struct.texts.size > 0) return struct.texts.get(0)!.position;
-  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-  if (struct.images.size > 0) return struct.images.get(0)!.center();
-  if (struct.multitailArrows.size > 0)
-    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-    return struct.multitailArrows.get(0)!.center();
+  if (struct.rxnArrows.size > 0) {
+    const rxnArrow = getOrThrow(
+      struct.rxnArrows,
+      0,
+      'getStructCenter: rxnArrows pool is missing id 0',
+    );
+    return rxnArrow.center();
+  }
+  if (struct.rxnPluses.size > 0) {
+    const rxnPlus = getOrThrow(
+      struct.rxnPluses,
+      0,
+      'getStructCenter: rxnPluses pool is missing id 0',
+    );
+    return rxnPlus.pp;
+  }
+  if (struct.simpleObjects.size > 0) {
+    const simpleObject = getOrThrow(
+      struct.simpleObjects,
+      0,
+      'getStructCenter: simpleObjects pool is missing id 0',
+    );
+    return simpleObject.center();
+  }
+  if (struct.texts.size > 0) {
+    const text = getOrThrow(
+      struct.texts,
+      0,
+      'getStructCenter: texts pool is missing id 0',
+    );
+    return text.position;
+  }
+  if (struct.images.size > 0) {
+    const image = getOrThrow(
+      struct.images,
+      0,
+      'getStructCenter: images pool is missing id 0',
+    );
+    return image.center();
+  }
+  if (struct.multitailArrows.size > 0) {
+    const multitailArrow = getOrThrow(
+      struct.multitailArrows,
+      0,
+      'getStructCenter: multitailArrows pool is missing id 0',
+    );
+    return multitailArrow.center();
+  }
 
   return new Vec2(0, 0);
 }

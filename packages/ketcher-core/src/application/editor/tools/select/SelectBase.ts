@@ -15,12 +15,8 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  type HydrogenBond,
-  type PolymerBond,
-  BaseMonomer,
-  Vec2,
-} from 'domain/entities';
+import { HydrogenBond, PolymerBond, BaseMonomer, Vec2 } from 'domain/entities';
+import { getAllConnectedMonomersRecursively } from 'domain/helpers/monomers';
 import type { CoreEditor } from 'application/editor/Editor';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
@@ -88,11 +84,8 @@ abstract class SelectBase implements BaseTool {
   private readonly canvasResizeObserver?: ResizeObserver;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
   public mode:
-    | 'moving'
-    | 'selecting'
-    | 'standby'
-    | 'rotating'
-    | 'rotating-center' = 'standby';
+    'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
+    'standby';
 
   protected rotationStartAngle = 0;
   protected rotationCenter: Vec2 | null = null;
@@ -179,7 +172,7 @@ abstract class SelectBase implements BaseTool {
       }
 
       const modKey = isMacOs ? event.metaKey : event.ctrlKey;
-      this.mousedownEntity(renderer, event.shiftKey, modKey);
+      this.mousedownEntity(renderer, event.shiftKey, modKey, event.altKey);
     }
   }
 
@@ -289,6 +282,7 @@ abstract class SelectBase implements BaseTool {
     renderer: BaseRenderer,
     shiftKey = false,
     modKey = false,
+    altKey = false,
   ): void {
     const modelChanges = new Command();
     const drawingEntitiesToSelect: DrawingEntity[] = [];
@@ -304,7 +298,7 @@ abstract class SelectBase implements BaseTool {
       drawingEntitiesToSelect.push(renderer.drawingEntity);
     }
 
-    if (!shiftKey && !modKey) {
+    if (!shiftKey && !modKey && !altKey) {
       this.startMoveIfNeeded(renderer);
       const isSequenceItem = renderer instanceof BaseSequenceItemRenderer;
       if (renderer.drawingEntity.selected && !isSequenceItem) {
@@ -351,6 +345,38 @@ abstract class SelectBase implements BaseTool {
         this.editor.drawingEntitiesManager.selectDrawingEntities(
           drawingEntities,
         ),
+      );
+    } else if (
+      altKey &&
+      this.editor.mode.modeName !== 'sequence-layout-mode' &&
+      renderer.drawingEntity instanceof BaseMonomer
+    ) {
+      // Alt + drag on a monomer in Flex/Snake mode selects and moves
+      // the whole chain it belongs to (#4451). Sequence mode keeps its own
+      // Ctrl/Cmd-based gesture above, untouched.
+      this.startMoveIfNeeded(renderer);
+      const connectedMonomers = getAllConnectedMonomersRecursively(
+        renderer.drawingEntity,
+      );
+      connectedMonomers.forEach((connectedMonomer) =>
+        connectedMonomer.turnOnSelection(),
+      );
+      // A bond's `firstMonomer` is fixed at construction, so checking it here
+      // (rather than just `.selected` on both ends) naturally visits each
+      // intra-chain bond exactly once instead of twice.
+      const bondsInsideChain = connectedMonomers.flatMap((connectedMonomer) =>
+        connectedMonomer.bonds.filter(
+          (bond): bond is PolymerBond | HydrogenBond =>
+            (bond instanceof PolymerBond || bond instanceof HydrogenBond) &&
+            bond.firstMonomer === connectedMonomer &&
+            Boolean(bond.secondMonomer?.selected),
+        ),
+      );
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.selectDrawingEntities([
+          ...connectedMonomers,
+          ...bondsInsideChain,
+        ]),
       );
     }
 

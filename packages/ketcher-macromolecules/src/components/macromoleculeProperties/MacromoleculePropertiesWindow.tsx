@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/use-memo */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -13,6 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+/* eslint-disable react-hooks/refs */
 
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
@@ -130,7 +134,7 @@ const MolecularMassAmount = styled('div')(() => ({
 }));
 
 // TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const TabsWrapper = styled('div')(() => ({
   width: '100%',
@@ -145,7 +149,7 @@ const TabContentWrapper = styled('div')(() => ({
 }));
 
 // TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const TabContentErrorWrapper = styled('div')(() => ({
   display: 'flex',
@@ -218,7 +222,7 @@ const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
 }));
 
 // TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const HydrophobicityHintHeader = styled('div')(() => ({
   display: 'flex',
@@ -254,7 +258,7 @@ const PropertyHintIconWrapper = styled('div')(() => ({
 }));
 
 // TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const BasicPropertyDropdown = styled(DropDown)(() => ({
   position: 'relative',
@@ -265,7 +269,7 @@ const BasicPropertyDropdown = styled(DropDown)(() => ({
 const inputClassName = 'text-input-field-input';
 
 // TODO suppressed after upgrade to react 19. Need to fix
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const BasicPropertyInput = styled(TextInputField)(() => ({
   margin: 0,
@@ -421,7 +425,7 @@ const BasicProperty = (props: BasicPropertyProps) => {
         )}
         {props.hint && (
           // TODO suppressed after upgrade to react 19. Need to fix
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
           // @ts-ignore
           <StyledTooltip title={props.hint}>
             <PropertyHintIconWrapper>
@@ -755,7 +759,7 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
               <div>
                 The isoelectric point is calculated as the median of all pKa
                 values for amino acids (values from{' '}
-                <i>Miclotte et. al. (2020)</i>. Only amino acid natural
+                <i>Miclotte et. al. (2020))</i>. Only amino acid natural
                 analogues are used in the calculation.
               </div>
             }
@@ -945,7 +949,14 @@ const calculateMassMeasurementUnit = (mass?: number) => {
   return MassMeasurementUnit.MDa;
 };
 
-let selectEntitiesHandler: () => void;
+const calculateDefaultTabIndex = (
+  macromoleculesProperties: SingleChainMacromoleculeProperties | undefined,
+) =>
+  hasSpecificProperty(macromoleculesProperties, 'nucleotides')
+    ? PROPERTIES_TABS.RNA
+    : PROPERTIES_TABS.PEPTIDES;
+
+let recalculatePropertiesHandler: () => void;
 
 export const MacromoleculePropertiesWindow = () => {
   const dispatch = useAppDispatch();
@@ -963,13 +974,13 @@ export const MacromoleculePropertiesWindow = () => {
   const oligonucleotidesValue = useAppSelector(selectOligonucleotidesValue);
 
   const firstMacromoleculesProperties:
-    | SingleChainMacromoleculeProperties
-    | undefined = macromoleculesProperties?.[0];
+    SingleChainMacromoleculeProperties | undefined =
+    macromoleculesProperties?.[0];
 
-  const [selectedTabIndex, setSelectedTabIndex] = useState(
-    PROPERTIES_TABS.PEPTIDES,
+  const [selectedTabIndex, setSelectedTabIndex] = useState(() =>
+    calculateDefaultTabIndex(firstMacromoleculesProperties),
   );
-  const [massMeasurementUnit, setMassMeasurementUnit] = useState(
+  const [massMeasurementUnit, setMassMeasurementUnit] = useState(() =>
     calculateMassMeasurementUnit(firstMacromoleculesProperties?.mass),
   );
 
@@ -996,21 +1007,30 @@ export const MacromoleculePropertiesWindow = () => {
   }, [recalculateMacromoleculeProperties]);
 
   useEffect(() => {
-    if (
-      selectEntitiesHandler &&
-      editor?.events.selectEntities.hasHandler(selectEntitiesHandler)
-    ) {
-      editor?.events.selectEntities.remove(selectEntitiesHandler);
+    if (recalculatePropertiesHandler) {
+      if (
+        editor?.events.selectEntities.hasHandler(recalculatePropertiesHandler)
+      ) {
+        editor?.events.selectEntities.remove(recalculatePropertiesHandler);
+      }
+      if (editor?.events.modelChange.hasHandler(recalculatePropertiesHandler)) {
+        editor?.events.modelChange.remove(recalculatePropertiesHandler);
+      }
     }
 
-    selectEntitiesHandler = () => {
+    recalculatePropertiesHandler = () => {
       debouncedRecalculateMacromoleculeProperties(skipDataFetch);
     };
 
-    editor?.events.selectEntities.add(selectEntitiesHandler);
+    // selectEntities covers recalculation when the selection changes;
+    // modelChange covers recalculation when the structure itself changes
+    // (e.g. merging chains on the canvas) without necessarily changing selection.
+    editor?.events.selectEntities.add(recalculatePropertiesHandler);
+    editor?.events.modelChange.add(recalculatePropertiesHandler);
 
     return () => {
-      editor?.events.selectEntities.remove(selectEntitiesHandler);
+      editor?.events.selectEntities.remove(recalculatePropertiesHandler);
+      editor?.events.modelChange.remove(recalculatePropertiesHandler);
     };
   }, [debouncedRecalculateMacromoleculeProperties, editor, skipDataFetch]);
 
@@ -1040,16 +1060,24 @@ export const MacromoleculePropertiesWindow = () => {
     debouncedRecalculateMacromoleculeProperties,
   ]);
 
-  useEffect(() => {
+  // The properties object is re-parsed from the Indigo response on every
+  // recalculation, so a new identity means "new results arrived" and both
+  // selections fall back to their defaults. Adjusting during render (rather
+  // than in an effect) means React re-renders before committing, so the
+  // panel never paints with a stale tab.
+  const [previousProperties, setPreviousProperties] = useState(
+    firstMacromoleculesProperties,
+  );
+
+  if (previousProperties !== firstMacromoleculesProperties) {
+    setPreviousProperties(firstMacromoleculesProperties);
     setSelectedTabIndex(
-      hasSpecificProperty(firstMacromoleculesProperties, 'nucleotides')
-        ? PROPERTIES_TABS.RNA
-        : PROPERTIES_TABS.PEPTIDES,
+      calculateDefaultTabIndex(firstMacromoleculesProperties),
     );
     setMassMeasurementUnit(
       calculateMassMeasurementUnit(firstMacromoleculesProperties?.mass),
     );
-  }, [firstMacromoleculesProperties]);
+  }
 
   const onTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setSelectedTabIndex(newValue);

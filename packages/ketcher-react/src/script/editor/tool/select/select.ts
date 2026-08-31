@@ -197,10 +197,12 @@ class SelectTool implements Tool {
       };
     } else if (ci.map === 'rgroups') {
       const rgroup = ctab.rgroups.get(ci.id);
-      sel = {
-        atoms: rgroup.getAtoms(rnd),
-        bonds: rgroup.getBonds(rnd),
-      };
+      if (rgroup) {
+        sel = {
+          atoms: rgroup.getAtoms(rnd),
+          bonds: rgroup.getBonds(rnd),
+        };
+      }
     } else if (ci.map === 'sgroupData') {
       if (isSelected(selection, ci)) return;
     }
@@ -402,7 +404,7 @@ class SelectTool implements Tool {
       selectedSgroups[selectedSgroups.length - 1],
     );
     const isDraggingSaltOrSolventOnStructure = SGroup.isSaltOrSolvent(
-      possibleSaltOrSolvent?.item?.data?.name,
+      possibleSaltOrSolvent?.item?.data?.name ?? '',
     );
     const isDraggingCustomSgroupOnStructure =
       SGroup.isSuperAtom(possibleSaltOrSolvent?.item) &&

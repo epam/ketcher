@@ -14,7 +14,7 @@
     "ketcher-macromolecules": "*",
     "ketcher-react": "*",
     "ketcher-standalone": "*",
-    "next": "16.2.11",
+    "next": "16.3.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
@@ -23,8 +23,8 @@
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3",
     "cross-env": "^7.0.3",
-    "eslint": "^9.17.0",
-    "eslint-config-next": "16.1.4",
+    "eslint": "10.9.0",
+    "eslint-config-next": "16.3.0",
     "typescript": "^6.0.3"
   }
 }

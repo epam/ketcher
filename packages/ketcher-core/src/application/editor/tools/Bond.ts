@@ -19,7 +19,7 @@ import type { BaseTool } from 'application/editor/tools/Tool';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import type { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
@@ -38,8 +38,7 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { shouldInvokeConnectionModal } from 'application/editor/tools/bondConnectionHelpers';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
-  | FlexModePolymerBondRenderer
-  | SnakeModePolymerBondRenderer;
+  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
@@ -49,8 +48,9 @@ class PolymerBond implements BaseTool {
 
   constructor(
     private readonly editor: CoreEditor,
-    options: { toolName: ToolName },
+    ...args: unknown[]
   ) {
+    const [options] = args as [{ toolName: ToolName }];
     this.editor = editor;
     this.history = EditorHistory.getInstance(this.editor);
     this.bondType =
@@ -134,8 +134,7 @@ class PolymerBond implements BaseTool {
 
   public mouseLeavePolymerBond(event: MouseEvent): void {
     const renderer = event.target?.__data__ as
-      | FlexModeOrSnakeModePolymerBondRenderer
-      | undefined;
+      FlexModeOrSnakeModePolymerBondRenderer | undefined;
     if (this.bondRenderer || !renderer?.polymerBond) return;
 
     const modelChanges =
@@ -149,8 +148,7 @@ class PolymerBond implements BaseTool {
     if (this.bondRenderer) return;
 
     const renderer = event.target?.__data__ as
-      | FlexModeOrSnakeModePolymerBondRenderer
-      | undefined;
+      FlexModeOrSnakeModePolymerBondRenderer | undefined;
     if (!renderer) return;
     const modelChanges =
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
@@ -233,8 +231,7 @@ class PolymerBond implements BaseTool {
   public mouseLeaveMonomer(event: MouseEvent) {
     const eventToElementData = event.relatedTarget?.__data__;
     const eventFromElementData = event.target?.__data__ as
-      | BaseMonomerRenderer
-      | undefined;
+      BaseMonomerRenderer | undefined;
     if (
       eventToElementData instanceof AttachmentPoint &&
       eventToElementData.monomer === eventFromElementData?.monomer

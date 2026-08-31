@@ -15,20 +15,21 @@
  ***************************************************************************/
 
 import type { ChemicalMimeType } from 'domain/services';
+import type { StructServiceOptions } from 'domain/services/struct/structService.types';
 
 export class SupportedFormatProperties {
   name: string;
   mime: ChemicalMimeType;
   extensions: string[];
   supportsCoords?: boolean;
-  options?: any;
+  options?: StructServiceOptions;
 
   constructor(
     name: string,
     mime: ChemicalMimeType,
     extensions: string[],
     supportsCoords?: boolean,
-    options?: any,
+    options?: StructServiceOptions,
   ) {
     this.name = name;
     this.mime = mime;

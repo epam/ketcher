@@ -3,6 +3,7 @@ import { Render } from 'application/render';
 import { ReStruct } from 'application/render/restruct';
 import { Struct, RxnArrowMode, Vec2 } from 'domain/entities';
 import type { RenderOptions } from 'application/render/render.types';
+import { KetcherLogger } from 'utilities';
 
 describe('RxnArrowAdd and RxnArrowDelete operations', () => {
   let restruct: ReStruct;
@@ -127,5 +128,24 @@ describe('RxnArrowAdd and RxnArrowDelete operations', () => {
       expect(restoredArrow?.height).toBe(height);
       expect(restoredArrow?.mode).toBe(mode);
     });
+  });
+
+  it('should return empty delete operation on invert when add operation has no assigned arrow id', () => {
+    const loggerSpy = jest
+      .spyOn(KetcherLogger, 'error')
+      .mockImplementation(() => {});
+    const addOp = new RxnArrowAdd([new Vec2(0, 0), new Vec2(5, 0)]);
+
+    const invertOp = addOp.invert();
+
+    expect(invertOp).toBeInstanceOf(RxnArrowDelete);
+    expect(loggerSpy).toHaveBeenCalledWith(
+      'RxnArrowAdd.invert(): rxnArrow id was not assigned',
+    );
+    expect(() => invertOp.execute(restruct)).not.toThrow();
+    expect(loggerSpy).toHaveBeenCalledWith(
+      'RxnArrowDelete.execute(): rxnArrow id is not assigned',
+    );
+    loggerSpy.mockRestore();
   });
 });

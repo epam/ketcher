@@ -28,7 +28,10 @@ export class PolymerBond extends BaseBond {
   // Move to renderer
   public nextRowPositionX?: number;
 
-  constructor(public firstMonomer: BaseMonomer, secondMonomer?: BaseMonomer) {
+  constructor(
+    public firstMonomer: BaseMonomer,
+    secondMonomer?: BaseMonomer,
+  ) {
     super();
     this.firstMonomer = firstMonomer;
     this.secondMonomer = secondMonomer;

@@ -213,6 +213,19 @@ function Editor({
     id: CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS,
   });
 
+  const showSequenceContextMenuRef = useRef(showSequenceContextMenu);
+  useEffect(() => {
+    showSequenceContextMenuRef.current = showSequenceContextMenu;
+  }, [showSequenceContextMenu]);
+
+  const showSelectedMonomersContextMenuRef = useRef(
+    showSelectedMonomersContextMenu,
+  );
+  useEffect(() => {
+    showSelectedMonomersContextMenuRef.current =
+      showSelectedMonomersContextMenu;
+  }, [showSelectedMonomersContextMenu]);
+
   const editorInitParamsRef = useRef({
     ketcherId,
     theme,
@@ -262,13 +275,13 @@ function Editor({
     const onRightClickSequence = ([event, selections]: [
       PointerEvent,
       NodeSelection[][],
-    ]) => {
+    ]): void => {
       setSelections(selections);
       setContextMenuEvent(event);
       updatePasteAvailability();
       window.dispatchEvent(new Event('hidePreview'));
       dispatch(setContextMenuActive(true));
-      showSequenceContextMenu({
+      showSequenceContextMenuRef.current({
         event,
         props: {
           sequenceItemRenderer: event.target.__data__,
@@ -281,7 +294,7 @@ function Editor({
     ]): void => {
       setContextMenuEvent(event);
       setSelectedMonomers([]);
-      showSelectedMonomersContextMenu({
+      showSelectedMonomersContextMenuRef.current({
         event,
         props: {
           polymerBondRenderer,
@@ -291,11 +304,11 @@ function Editor({
     const onRightClickSelectedMonomers = ([event, selectedMonomers]: [
       PointerEvent,
       BaseMonomer[],
-    ]) => {
+    ]): void => {
       setSelectedMonomers(selectedMonomers);
       setContextMenuEvent(event);
       updatePasteAvailability();
-      showSelectedMonomersContextMenu({
+      showSelectedMonomersContextMenuRef.current({
         event,
         props: { selectedMonomers },
       });
@@ -303,13 +316,13 @@ function Editor({
     const onRightClickCanvas = ([event, selections]: [
       PointerEvent,
       BaseMonomer[],
-    ]) => {
+    ]): void => {
       setContextMenuEvent(event);
       updatePasteAvailability();
       window.dispatchEvent(new Event('hidePreview'));
       dispatch(setContextMenuActive(true));
       setSelectedMonomers(selections);
-      showSelectedMonomersContextMenu({
+      showSelectedMonomersContextMenuRef.current({
         event,
         props: { selectedMonomers: selections },
       });
@@ -317,13 +330,13 @@ function Editor({
     const onRightClickCanvasSequence = ([event, selections]: [
       PointerEvent,
       NodesSelection,
-    ]) => {
+    ]): void => {
       setContextMenuEvent(event);
       updatePasteAvailability();
       window.dispatchEvent(new Event('hidePreview'));
       dispatch(setContextMenuActive(true));
       setSelections(selections);
-      showSequenceContextMenu({
+      showSequenceContextMenuRef.current({
         event,
         props: {},
       });
@@ -355,13 +368,7 @@ function Editor({
         onToggleMacromoleculesPropertiesVisibility,
       );
     };
-  }, [
-    editor,
-    dispatch,
-    showSequenceContextMenu,
-    showSelectedMonomersContextMenu,
-    updatePasteAvailability,
-  ]);
+  }, [editor, dispatch, updatePasteAvailability]);
 
   useEffect(() => {
     editor?.zoomTool.observeCanvasResize();

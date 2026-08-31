@@ -40,6 +40,14 @@ const output = (format, entryFileNames) => ({
   preserveModules: true,
   preserveModulesRoot: 'src',
   entryFileNames,
+  // Rollup 2 emitted the `__esModule` marker on CJS output; Rolldown does not
+  // by default. Without it, TypeScript's and Babel's interop treat this as a
+  // non-ES module and build a namespace of NON-CONFIGURABLE getters, so
+  // `import * as ketcherCore` yields an object that cannot be spied on or
+  // otherwise redefined. That silently changes behaviour for every CJS
+  // consumer using interop, so the marker is restored explicitly.
+  // (Ignored for the `es` output, where it has no meaning.)
+  esModule: true,
 });
 
 export default defineConfig({

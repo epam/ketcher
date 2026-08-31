@@ -84,6 +84,12 @@ const output = (format, entryFileNames) => ({
   exports: 'named',
   banner: license,
   entryFileNames,
+  // Rollup 2 emitted the `__esModule` marker on CJS output; Rolldown does not
+  // by default. Without it, TypeScript's and Babel's interop treat this as a
+  // non-ES module and build a namespace of non-configurable getters, changing
+  // behaviour for every CJS consumer using interop. Restored explicitly.
+  // (Ignored for the `es` output, where it has no meaning.)
+  esModule: true,
   // Rolldown defaults chunk file extensions to `.mjs` for the `es` format's
   // code-split chunks (the dynamically-imported `ketcher-macromolecules`
   // bundle reached via `src/Editor.tsx`), unlike the Rollup baseline, which

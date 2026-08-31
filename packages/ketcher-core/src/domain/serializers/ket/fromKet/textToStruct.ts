@@ -161,6 +161,16 @@ function isKetV2Format(ketItem: unknown): ketItem is KETTextV2 {
   );
 }
 
+function isKetV1Format(ketItem: unknown): ketItem is KETTextV1 {
+  return (
+    typeof ketItem === 'object' &&
+    ketItem !== null &&
+    'data' in ketItem &&
+    typeof ketItem.data === 'object' &&
+    ketItem.data !== null
+  );
+}
+
 export function textToStruct(ketItem: unknown, struct: Struct) {
   let node: TextAttributes;
   let selected: boolean | undefined;
@@ -170,11 +180,10 @@ export function textToStruct(ketItem: unknown, struct: Struct) {
     const internal = convertKetV2ToInternal(ketItem);
     node = getNodeWithInvertedYCoord(internal);
     selected = ketItem.selected;
-  } else {
+  } else if (isKetV1Format(ketItem)) {
     // Old format with data wrapper
-    const legacyKetItem = ketItem as KETTextV1;
-    node = getNodeWithInvertedYCoord(legacyKetItem.data);
-    selected = legacyKetItem.selected;
+    node = getNodeWithInvertedYCoord(ketItem.data);
+    selected = ketItem.selected;
 
     // If the incoming node.content is Draft.js shape (stringified or object),
     // convert it to Lexical format at parse time so we store only Lexical JSON.
@@ -195,6 +204,8 @@ export function textToStruct(ketItem: unknown, struct: Struct) {
         // (content may already be Lexical or plain text)
       }
     }
+  } else {
+    throw new TypeError('Invalid KET text item');
   }
 
   const text = new Text(node);

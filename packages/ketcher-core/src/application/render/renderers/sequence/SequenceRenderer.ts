@@ -1286,6 +1286,70 @@ export class SequenceRenderer {
     return modelChanges;
   }
 
+  private static isPlaceholderSequenceNode(
+    node?: SequenceNode,
+  ): node is BackBoneSequenceNode | EmptySequenceNode {
+    return (
+      node instanceof BackBoneSequenceNode || node instanceof EmptySequenceNode
+    );
+  }
+
+  /**
+   * Redraws the selection of placeholder nodes: the backbone "-" node and the
+   * empty gap nodes used to align antisense strands. These nodes have no real
+   * monomer of their own, so per-entity selection operations never reach them
+   * and they would stay unselected, leaving visual holes in an otherwise
+   * contiguous selection.
+   *
+   * A placeholder is shown selected when the real nodes surrounding it within
+   * the same strand row are selected — i.e. it sits inside a selected range.
+   * This makes the dash and the antisense gaps highlight together with their
+   * neighbors (#6794).
+   */
+  public static redrawPlaceholderNodesSelection() {
+    const senseRow: Array<SequenceNode | undefined> = [];
+    const antisenseRow: Array<SequenceNode | undefined> = [];
+
+    SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
+      senseRow.push(twoStrandedNode.senseNode);
+      antisenseRow.push(twoStrandedNode.antisenseNode);
+    });
+
+    this.redrawPlaceholderNodesInRow(senseRow);
+    this.redrawPlaceholderNodesInRow(antisenseRow);
+  }
+
+  private static redrawPlaceholderNodesInRow(
+    row: Array<SequenceNode | undefined>,
+  ) {
+    let previousRealSelected = false;
+    let pendingPlaceholders: Array<BackBoneSequenceNode | EmptySequenceNode> =
+      [];
+
+    const flushPlaceholders = (selected: boolean) => {
+      pendingPlaceholders.forEach((placeholder) =>
+        placeholder.renderer?.applySelectionState(selected),
+      );
+      pendingPlaceholders = [];
+    };
+
+    row.forEach((node) => {
+      if (this.isPlaceholderSequenceNode(node)) {
+        pendingPlaceholders.push(node);
+        return;
+      }
+
+      // A pending placeholder is selected only when the real nodes on both
+      // sides are selected. Any gap (missing node) counts as unselected.
+      const currentRealSelected = Boolean(node?.monomer?.selected);
+      flushPlaceholders(previousRealSelected && currentRealSelected);
+      previousRealSelected = currentRealSelected;
+    });
+
+    // Trailing placeholders have no real node after them, so never selected.
+    flushPlaceholders(false);
+  }
+
   public static unselectEmptyAndBackboneSequenceNodes() {
     const command = new Command();
     const editor = provideEditorInstance();

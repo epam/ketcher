@@ -724,16 +724,29 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     }
   }
 
-  drawSelection(): void {
+  /**
+   * Applies (or clears) the visual selection for this item. Kept separate from
+   * {@link drawSelection} so callers that compute selection externally — e.g.
+   * the placeholder ("-"/empty) nodes whose selection is derived from their
+   * neighbors (#6794) — can drive the same rendering path.
+   */
+  public applySelectionState(selected: boolean): void {
     if (!this.rootElement) {
       return;
     }
-    if (this.node.monomer.selected && !this.isSingleEmptyNode) {
+    if (selected && !this.isSingleEmptyNode) {
       this.appendSelection();
       this.raiseElement();
     } else {
       this.removeSelection();
     }
+  }
+
+  drawSelection(): void {
+    if (!this.rootElement) {
+      return;
+    }
+    this.applySelectionState(this.node.monomer.selected);
 
     if (this.node.modified) {
       this.drawModification();

@@ -65,7 +65,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
   private sideConnectionBondTurnPoint?: number;
   private hoverLineAreaElement?: D3SvgElementSelection<SVGLineElement, void>;
-  public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
+  declare public bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
     super(polymerBond);
@@ -276,11 +276,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       endMonomer &&
       isVerticalConnection &&
       this.isR2ToR2Connection &&
-      this.shouldRouteR2ToR2ConnectionOnOuterRight(
-        startPosition,
-        endPosition,
-        isTwoNeighborRowsConnection,
-      )
+      this.shouldRouteR2ToR2ConnectionOnOuterRight(startMonomer, endMonomer)
     ) {
       const pathDAttributeValue = this.buildOuterRightConnectionPath(
         startMonomer,
@@ -506,39 +502,18 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   private shouldRouteR2ToR2ConnectionOnOuterRight(
-    startPosition: Vec2,
-    endPosition: Vec2,
-    isTwoNeighborRowsConnection: boolean,
+    startMonomer: BaseMonomer,
+    endMonomer: BaseMonomer,
   ): boolean {
-    const renderedMonomerPositions = Array.from(
-      provideEditorInstance().drawingEntitiesManager.monomers.values(),
-    )
-      .map((monomer) => monomer.renderer?.scaledMonomerPosition)
-      .filter((position): position is Vec2 => position !== undefined);
-    const isGloballyVerticalLayout =
-      renderedMonomerPositions.length > 1 &&
-      renderedMonomerPositions.every(
-        (position) =>
-          Math.round(position.x) === Math.round(renderedMonomerPositions[0].x),
-      );
-    const monomersPerRow = renderedMonomerPositions.reduce((rows, position) => {
-      const row = Math.round(position.y);
+    const monomerToChain =
+      provideEditorInstance().drawingEntitiesManager.canvasMatrix
+        ?.chainsCollection.monomerToChain;
+    const startChain = monomerToChain?.get(startMonomer);
+    const endChain = monomerToChain?.get(endMonomer);
 
-      rows.set(row, (rows.get(row) ?? 0) + 1);
-
-      return rows;
-    }, new Map<number, number>());
-    const isSingleMonomerPerRow = Array.from(monomersPerRow.values()).every(
-      (monomerCount) => monomerCount === 1,
+    return Boolean(
+      startChain && endChain && startChain.length > 1 && endChain.length > 1,
     );
-    const areEndpointsVerticallyAligned =
-      Math.abs(startPosition.x - endPosition.x) < 0.001;
-    const isStraightVerticalConnection =
-      areEndpointsVerticallyAligned &&
-      isTwoNeighborRowsConnection &&
-      isSingleMonomerPerRow;
-
-    return !isGloballyVerticalLayout && !isStraightVerticalConnection;
   }
 
   private buildOuterRightConnectionPath(
@@ -551,18 +526,21 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const endAnchor = this.getRightSideAnchor(endMonomer, endPosition);
     const rightmostMonomerEdge = Array.from(
       provideEditorInstance().drawingEntitiesManager.monomers.values(),
-    ).reduce((rightmostEdge, monomer) => {
-      const renderer = monomer.renderer;
+    ).reduce(
+      (rightmostEdge, monomer) => {
+        const renderer = monomer.renderer;
 
-      if (!renderer) {
-        return rightmostEdge;
-      }
+        if (!renderer) {
+          return rightmostEdge;
+        }
 
-      return Math.max(
-        rightmostEdge,
-        renderer.scaledMonomerPosition.x + renderer.monomerSize.width,
-      );
-    }, Math.max(startAnchor.x, endAnchor.x));
+        return Math.max(
+          rightmostEdge,
+          renderer.scaledMonomerPosition.x + renderer.monomerSize.width,
+        );
+      },
+      Math.max(startAnchor.x, endAnchor.x),
+    );
     const outerRightX =
       rightmostMonomerEdge +
       LINE_FROM_MONOMER_LENGTH +

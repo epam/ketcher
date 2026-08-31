@@ -1,10 +1,9 @@
-/* eslint-disable react-hooks/refs */
 import styled from '@emotion/styled';
 import { ActionButton } from 'components/shared/actionButton';
 import { Modal } from 'components/shared/modal';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   AttachmentPoint,
   AttachmentPointName as AttachmentPointNameComponent,
@@ -70,14 +69,15 @@ const MonomerConnection = ({
   isReconnectionDialog,
 }: Readonly<MonomerConnectionProps>): React.ReactElement => {
   const editor = useAppSelector(selectEditor);
-  const initialFirstMonomerAttachmentPointRef = useRef(
-    polymerBond?.firstMonomerAttachmentPoint,
+  const [initialFirstMonomerAttachmentPoint] = useState(
+    () => polymerBond?.firstMonomerAttachmentPoint,
   );
-  const initialSecondMonomerAttachmentPointRef = useRef(
-    polymerBond?.secondMonomerAttachmentPoint,
+  const [initialSecondMonomerAttachmentPoint] = useState(
+    () => polymerBond?.secondMonomerAttachmentPoint,
   );
-  const hasFreeAttachmentPointsRef = useRef(
-    firstMonomer?.hasFreeAttachmentPoint ||
+  const [hasFreeAttachmentPoints] = useState(
+    () =>
+      firstMonomer?.hasFreeAttachmentPoint ||
       secondMonomer?.hasFreeAttachmentPoint,
   );
 
@@ -87,12 +87,12 @@ const MonomerConnection = ({
 
   const [firstSelectedAttachmentPoint, setFirstSelectedAttachmentPoint] =
     useState<string | null>(
-      initialFirstMonomerAttachmentPointRef.current ||
+      initialFirstMonomerAttachmentPoint ||
         getDefaultAttachmentPoint(firstMonomer),
     );
   const [secondSelectedAttachmentPoint, setSecondSelectedAttachmentPoint] =
     useState<string | null>(
-      initialSecondMonomerAttachmentPointRef.current ||
+      initialSecondMonomerAttachmentPoint ||
         getDefaultAttachmentPoint(secondMonomer),
     );
   const [modalExpanded, setModalExpanded] = useState(false);
@@ -100,11 +100,11 @@ const MonomerConnection = ({
   const cancelBondCreationAndClose = () => {
     if (isReconnectionDialog) {
       polymerBond?.firstMonomer.setBond(
-        initialFirstMonomerAttachmentPointRef.current as AttachmentPointName,
+        initialFirstMonomerAttachmentPoint as AttachmentPointName,
         polymerBond,
       );
       polymerBond?.secondMonomer?.setBond(
-        initialSecondMonomerAttachmentPointRef.current as AttachmentPointName,
+        initialSecondMonomerAttachmentPoint as AttachmentPointName,
         polymerBond,
       );
       onClose();
@@ -120,10 +120,8 @@ const MonomerConnection = ({
     }
 
     if (
-      firstSelectedAttachmentPoint ===
-        initialFirstMonomerAttachmentPointRef.current &&
-      secondSelectedAttachmentPoint ===
-        initialSecondMonomerAttachmentPointRef.current
+      firstSelectedAttachmentPoint === initialFirstMonomerAttachmentPoint &&
+      secondSelectedAttachmentPoint === initialSecondMonomerAttachmentPoint
     ) {
       cancelBondCreationAndClose();
 
@@ -137,10 +135,8 @@ const MonomerConnection = ({
       secondSelectedAttachmentPoint,
       polymerBond,
       isReconnection: isReconnectionDialog,
-      initialFirstMonomerAttachmentPoint:
-        initialFirstMonomerAttachmentPointRef.current,
-      initialSecondMonomerAttachmentPoint:
-        initialSecondMonomerAttachmentPointRef.current,
+      initialFirstMonomerAttachmentPoint,
+      initialSecondMonomerAttachmentPoint,
     });
 
     onClose();
@@ -204,7 +200,7 @@ const MonomerConnection = ({
           disabled={
             !firstSelectedAttachmentPoint ||
             !secondSelectedAttachmentPoint ||
-            !hasFreeAttachmentPointsRef.current
+            !hasFreeAttachmentPoints
           }
           clickHandler={connectMonomers}
         />

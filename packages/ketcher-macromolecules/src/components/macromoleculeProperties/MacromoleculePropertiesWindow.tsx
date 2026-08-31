@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/use-memo */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,8 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-/* eslint-disable react-hooks/refs */
 
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
@@ -993,12 +990,28 @@ export const MacromoleculePropertiesWindow = () => {
   const recalculateMacromoleculePropertiesRef = useRef<
     (shouldSkip?: boolean) => void
   >(recalculateMacromoleculeProperties);
+  const debouncedRecalculateMacromoleculePropertiesRef = useRef<
+    ReturnType<typeof debounce> | undefined
+  >(undefined);
   const debouncedRecalculateMacromoleculeProperties = useCallback(
-    debounce((shouldSkip?: boolean) => {
-      recalculateMacromoleculePropertiesRef.current(shouldSkip);
-    }, 500),
+    (shouldSkip?: boolean) => {
+      debouncedRecalculateMacromoleculePropertiesRef.current?.(shouldSkip);
+    },
     [],
   );
+
+  useEffect(() => {
+    debouncedRecalculateMacromoleculePropertiesRef.current = debounce(
+      (shouldSkip?: boolean) => {
+        recalculateMacromoleculePropertiesRef.current(shouldSkip);
+      },
+      500,
+    );
+
+    return () => {
+      debouncedRecalculateMacromoleculePropertiesRef.current?.cancel();
+    };
+  }, []);
 
   useEffect(() => {
     recalculateMacromoleculePropertiesRef.current = (shouldSkip?: boolean) => {
@@ -1051,7 +1064,7 @@ export const MacromoleculePropertiesWindow = () => {
   // re-runs the effect above and schedules a debounced call; cancel it so
   // only this immediate calculation actually runs.
   useEffect(() => {
-    debouncedRecalculateMacromoleculeProperties.cancel();
+    debouncedRecalculateMacromoleculePropertiesRef.current?.cancel();
     recalculateMacromoleculePropertiesRef.current(skipDataFetch);
   }, [
     unipositiveIonsMeasurementUnit,

@@ -59,6 +59,7 @@ export abstract class BaseMode {
     editor.mode.destroy();
     editor.setMode(new ModeConstructor());
     editor.mode.initialize(true, isUndo, false);
+    editor.drawingEntitiesManager.restorePersistentRenderersForMode(modeName);
   }
 
   public initialize(

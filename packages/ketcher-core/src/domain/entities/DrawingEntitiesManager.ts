@@ -153,6 +153,7 @@ import {
 } from 'application/editor/libraryItemDragDrop/replacementHelpers';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import { getRnaPresetPhosphatePosition } from 'application/editor/tools/rnaPresetConnections';
+import type { LayoutMode } from 'application/editor/modes/types';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -2855,6 +2856,18 @@ export class DrawingEntitiesManager {
     this.sgroups.forEach((sgroup) => {
       editor.renderersContainer.addSGroup(sgroup);
     });
+  }
+
+  /**
+   * Restores renderers that are stored in the model but can be detached from
+   * the render container during mode-specific canvas resets.
+   */
+  public restorePersistentRenderersForMode(modeName: LayoutMode) {
+    if (modeName === 'sequence-layout-mode') {
+      return;
+    }
+
+    this.restoreSGroupRenderers();
   }
 
   public applyFlexLayoutMode(needRedrawBonds = false) {

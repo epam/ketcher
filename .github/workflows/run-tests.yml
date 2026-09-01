@@ -84,20 +84,13 @@ jobs:
           cd example/ && nohup npm run serve:standalone > /dev/null 2>&1 &
           cd ketcher-autotests/
           npx playwright install chromium
-          npx playwright test --project=chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --update-snapshots=missing
+          npx playwright test --project=chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - uses: actions/upload-artifact@v7
         # run even if previous steps fails
         if: always()
         with:
           name: pw-report-${{ matrix.shardIndex }}
           path: ketcher-autotests/playwright-report/
-          retention-days: 5
-      - uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: new-snapshots-${{ matrix.shardIndex }}
-          path: ketcher-autotests/tests/specs/**/*-snapshots/*-linux.png
-          if-no-files-found: ignore
           retention-days: 5
   merge_reports:
     if: ${{ !cancelled() }}

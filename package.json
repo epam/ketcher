@@ -36,6 +36,7 @@
     "up": "node ./scripts/build-run.mjs"
   },
   "devDependencies": {
+    "@eslint/css": "^1.4.0",
     "@eslint/js": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^8.66.0",
     "@typescript-eslint/parser": "^8.66.0",
@@ -71,7 +72,11 @@
     "yarn": "YARN IS NO LONGER USED, PLEASE USE NPM\nConversion instructions can be found in DEVNOTES.md"
   },
   "overrides": {
-    "nth-check": "^2.1.1"
+    "nth-check": "^2.1.1",
+    "eslint": "10.9.0",
+    "react-scripts": {
+      "eslint": "10.9.0"
+    }
   },
   "dependencies": {
     "@playwright/test": "^1.62.1",

@@ -1,3 +1,4 @@
+import css from '@eslint/css';
 import js from '@eslint/js';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
@@ -31,6 +32,7 @@ export default [
     ignores: [
       '**/node_modules/**',
       '**/dist/**',
+      '**/build/**',
       'packages/ketcher-core/docs/**',
       'example/public/**',
       'example/build/**',
@@ -48,7 +50,10 @@ export default [
       '**/__tests__/**',
     ],
   },
-  js.configs.recommended,
+  {
+    ...js.configs.recommended,
+    files: ['**/*.{js,cjs,mjs,jsx,ts,tsx}'],
+  },
   {
     files: ['**/*.{js,cjs,mjs,jsx,ts,tsx}'],
     languageOptions: {
@@ -212,6 +217,136 @@ export default [
           fixStyle: 'separate-type-imports',
         },
       ],
+    },
+  },
+  {
+    files: ['example/**/*.{ts,tsx,js,jsx}'],
+    rules: {
+      '@typescript-eslint/ban-ts-comment': 'warn',
+      'jsx-a11y/label-has-associated-control': 'warn',
+      'jsx-a11y/no-static-element-interactions': 'warn',
+      'jsx-a11y/no-autofocus': 'warn',
+      'jsx-a11y/no-noninteractive-element-interactions': 'warn',
+      'jsx-a11y/alt-text': 'warn',
+      'jsx-a11y/click-events-have-key-events': 'warn',
+    },
+  },
+  {
+    files: [
+      'example/**/__tests__/**/*.[jt]s?(x)',
+      'example/**/*.{spec,test}.[jt]s?(x)',
+    ],
+    rules: {
+      'testing-library/no-container': 'warn',
+      'testing-library/no-node-access': 'warn',
+    },
+  },
+  {
+    files: ['ketcher-autotests/**/*.{ts,tsx,js,jsx}'],
+    rules: {
+      semi: ['error', 'always'],
+      'max-depth': ['error', 3],
+      'no-else-return': [
+        'error',
+        {
+          allowElseIf: true,
+        },
+      ],
+      'no-magic-numbers': [
+        'warn',
+        {
+          ignore: [0, 1],
+          ignoreArrayIndexes: true,
+          ignoreDefaultValues: true,
+          ignoreClassFieldInitialValues: true,
+        },
+      ],
+      'no-nested-ternary': 'error',
+      'prefer-template': 'error',
+      'max-len': ['error', 180],
+      'no-multiple-empty-lines': ['error', { max: 1 }],
+      'no-implicit-coercion': 'error',
+      'no-inline-comments': 'error',
+      'no-lonely-if': 'error',
+      'no-multi-assign': 'error',
+      'no-restricted-exports': [
+        'error',
+        {
+          restrictDefaultExports: { direct: true },
+        },
+      ],
+      curly: 'error',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+      'no-duplicate-imports': 'error',
+      'react-hooks/rules-of-hooks': 'off',
+      'react-hooks/exhaustive-deps': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/static-components': 'off',
+      'react-hooks/use-memo': 'off',
+      'react-hooks/immutability': 'off',
+      'react-hooks/preserve-manual-memoization': 'off',
+      'react-hooks/refs': 'off',
+    },
+  },
+  {
+    files: ['packages/ketcher-core/**/*.{ts,tsx,js,jsx}'],
+    rules: {
+      '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        {
+          prefer: 'type-imports',
+          fixStyle: 'separate-type-imports',
+        },
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'assert',
+              message:
+                "Node's 'assert' module breaks browser bundlers (see issue #3733). Use `import { assert } from 'utilities'` instead.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['packages/ketcher-standalone/**/*.{ts,tsx,js,jsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'assert',
+              message:
+                "Node's 'assert' module breaks browser bundlers (see issue #3733). Use `import { assert } from 'ketcher-core'` instead.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['**/*.css'],
+    ignores: ['**/build/**', '**/dist/**', '**/node_modules/**'],
+    language: 'css/css',
+    plugins: {
+      css,
+    },
+    rules: {
+      ...css.configs.recommended.rules,
     },
   },
   prettierConfig,

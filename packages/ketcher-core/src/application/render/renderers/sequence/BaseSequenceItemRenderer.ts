@@ -663,12 +663,18 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private appendChainStartArrow() {
-    this.rootElement
+    const arrowElement = this.rootElement
       ?.append('use')
       .attr('x', -17)
       .attr('y', -27)
       .attr('data-testid', 'sequence-start-arrow')
       .attr('href', `#${CHAIN_START_ARROW_SYMBOL_ID}`);
+
+    if (this.isAntisenseNode) {
+      // Rotate around the arrow glyph's own center (not the whole use/symbol box,
+      // whose fill-box is computed unreliably for use+symbol), keeping it in place.
+      arrowElement?.attr('transform', 'rotate(180, -11, -6)');
+    }
   }
 
   private drawGreyOverlay() {

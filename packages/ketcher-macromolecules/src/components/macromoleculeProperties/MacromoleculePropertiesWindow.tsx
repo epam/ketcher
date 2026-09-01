@@ -15,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useDebouncedCallback } from 'hooks';
 import {
   MolarMeasurementUnit,
   selectEditor,
@@ -35,14 +35,7 @@ import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
-import {
-  useCallback,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import {
   peptideNaturalAnalogues,
   rnaDnaNaturalAnalogues,
@@ -987,37 +980,10 @@ export const MacromoleculePropertiesWindow = () => {
   const recalculateMacromoleculeProperties =
     useRecalculateMacromoleculeProperties();
   const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
-  const recalculateMacromoleculePropertiesRef = useRef<
-    (shouldSkip?: boolean) => void
-  >(recalculateMacromoleculeProperties);
-  const debouncedRecalculateMacromoleculePropertiesRef = useRef<
-    ReturnType<typeof debounce> | undefined
-  >(undefined);
-  const debouncedRecalculateMacromoleculeProperties = useCallback(
-    (shouldSkip?: boolean) => {
-      debouncedRecalculateMacromoleculePropertiesRef.current?.(shouldSkip);
-    },
-    [],
+  const debouncedRecalculateMacromoleculeProperties = useDebouncedCallback(
+    recalculateMacromoleculeProperties,
+    500,
   );
-
-  useEffect(() => {
-    debouncedRecalculateMacromoleculePropertiesRef.current = debounce(
-      (shouldSkip?: boolean) => {
-        recalculateMacromoleculePropertiesRef.current(shouldSkip);
-      },
-      500,
-    );
-
-    return () => {
-      debouncedRecalculateMacromoleculePropertiesRef.current?.cancel();
-    };
-  }, []);
-
-  useEffect(() => {
-    recalculateMacromoleculePropertiesRef.current = (shouldSkip?: boolean) => {
-      recalculateMacromoleculeProperties(shouldSkip);
-    };
-  }, [recalculateMacromoleculeProperties]);
 
   useEffect(() => {
     if (recalculatePropertiesHandler) {
@@ -1064,13 +1030,14 @@ export const MacromoleculePropertiesWindow = () => {
   // re-runs the effect above and schedules a debounced call; cancel it so
   // only this immediate calculation actually runs.
   useEffect(() => {
-    debouncedRecalculateMacromoleculePropertiesRef.current?.cancel();
-    recalculateMacromoleculePropertiesRef.current(skipDataFetch);
+    debouncedRecalculateMacromoleculeProperties.cancel();
+    recalculateMacromoleculeProperties(skipDataFetch);
   }, [
     unipositiveIonsMeasurementUnit,
     oligonucleotidesMeasurementUnit,
     skipDataFetch,
     debouncedRecalculateMacromoleculeProperties,
+    recalculateMacromoleculeProperties,
   ]);
 
   // The properties object is re-parsed from the Indigo response on every

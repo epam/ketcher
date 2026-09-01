@@ -430,7 +430,12 @@ export class ZoomTool implements BaseTool {
       return;
     }
 
-    this.zoom?.transform(this.canvasWrapper, new ZoomTransform(1, 0, 0));
+    try {
+      this.zoom?.transform(this.canvasWrapper, new ZoomTransform(1, 0, 0));
+    } catch {
+      // SVG canvas may have relative dimensions (e.g. width="100%") that
+      // d3 cannot resolve to an absolute pixel value — skip the reset.
+    }
   }
 
   observeCanvasResize = () => {

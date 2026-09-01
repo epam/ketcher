@@ -1199,8 +1199,10 @@ const MonomerCreationWizardInternal = ({
     });
   }, []);
 
+  const { assignedAttachmentPoints } = monomerCreationState;
+
   useEffect(() => {
-    if (!monomerCreationState || !isRnaPresetType) {
+    if (!isRnaPresetType) {
       return;
     }
 
@@ -1213,7 +1215,7 @@ const MonomerCreationWizardInternal = ({
       [number, number]
     >();
 
-    monomerCreationState.assignedAttachmentPoints.forEach(
+    assignedAttachmentPoints.forEach(
       ([attachmentAtomId, leavingGroupAtomId], attachmentPointName) => {
         if (
           rnaPresetWizardState.sugar.structure?.atoms?.includes(
@@ -1246,13 +1248,11 @@ const MonomerCreationWizardInternal = ({
     handlePhosphatePositionChange(autoPhosphatePosition);
   }, [
     isRnaPresetType,
-    monomerCreationState,
+    assignedAttachmentPoints,
     rnaPresetWizardState.phosphate.structure,
     rnaPresetWizardState.sugar.structure,
     handlePhosphatePositionChange,
   ]);
-
-  const { assignedAttachmentPoints } = monomerCreationState;
 
   const validateMonomerWizard = (
     assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,

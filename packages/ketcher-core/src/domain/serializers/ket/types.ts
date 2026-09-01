@@ -115,9 +115,15 @@ export interface KetFragment {
   bonds?: KetBondNode[];
 }
 
+export interface KetRGroupLogic {
+  number: number;
+  range?: string;
+  resth?: boolean;
+  ifthen?: number;
+}
+
 export interface KetItem {
+  type?: string;
   fragments?: KetFragment[];
-  rlogic?: {
-    number: number;
-  };
+  rlogic?: KetRGroupLogic;
 }

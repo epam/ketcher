@@ -3,5 +3,6 @@ export type {
   KetBondNode,
   KetFragment,
   KetItem,
+  KetRGroupLogic,
   KetSimpleObjectNode,
 } from '../types';

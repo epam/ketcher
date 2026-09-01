@@ -2358,6 +2358,13 @@ export class CoreEditor {
       const ketcher = ketcherProvider.getKetcher(this.ketcherId);
       const isBlank = ketcher?.editor?.struct().isBlank();
       const oldModeName = this.mode?.modeName;
+
+      // Preserve explicitly selected snake mode when there is no mode history
+      // yet (e.g., freshly initialized editor switched from micro mode).
+      if (oldModeName === 'snake-layout-mode') {
+        return;
+      }
+
       const newModeName = isBlank
         ? DEFAULT_LAYOUT_MODE
         : HAS_CONTENT_LAYOUT_MODE;
@@ -2394,7 +2401,7 @@ export class CoreEditor {
 
     if (this.mode.modeName === 'snake-layout-mode') {
       modelChanges.merge(
-        this.drawingEntitiesManager.applySnakeLayout(true, true, false),
+        this.drawingEntitiesManager.applySnakeLayout(true, true, true),
       );
     }
 

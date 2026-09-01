@@ -82,6 +82,7 @@ import type {
 } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
+import { buildAssignedAttachmentPointsMap } from './MonomerCreationWizard.utils';
 
 const getInitialWizardState = (
   type = KetMonomerClass.CHEM,
@@ -264,6 +265,13 @@ const wizardReducer = (
       return {
         ...state,
         notifications,
+      };
+    }
+
+    case 'SetStructure': {
+      return {
+        ...state,
+        structure: action.structure,
       };
     }
 
@@ -1244,17 +1252,18 @@ const MonomerCreationWizardInternal = ({
 
   const validateMonomerWizard = (
     assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
+    currentWizardState: WizardState = wizardState,
   ) => {
     let needSaveMonomers = true;
 
-    if (!wizardState.structure) {
+    if (!currentWizardState.structure) {
       KetcherLogger.error('Monomer structure is undefined');
 
       return;
     }
 
     const monomerAssignedAttachmentPoints =
-      assignedAttachmentPointsByMonomer.get(wizardState);
+      assignedAttachmentPointsByMonomer.get(currentWizardState);
 
     if (!monomerAssignedAttachmentPoints) {
       KetcherLogger.error('Monomer attachment points map is undefined');
@@ -1262,8 +1271,8 @@ const MonomerCreationWizardInternal = ({
       return;
     }
 
-    const structure = editor.structSelected(wizardState.structure);
-    const { values: valuesToSave } = wizardState;
+    const structure = editor.structSelected(currentWizardState.structure);
+    const { values: valuesToSave } = currentWizardState;
     const { errors: inputsErrors, notifications: inputsNotifications } =
       validateInputs(valuesToSave);
     if (Object.keys(inputsErrors).length > 0) {
@@ -1635,11 +1644,22 @@ const MonomerCreationWizardInternal = ({
 
   const validateOnSubmit = (
     assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
+    monomersToSave: WizardState[],
+    localWizardState?: WizardState,
   ) => {
     if (isRnaPresetType) {
       return validateRnaPresetWizard(assignedAttachmentPointsByMonomer);
     } else {
-      return validateMonomerWizard(assignedAttachmentPointsByMonomer);
+      /**
+       * For non-RNA preset, we need to use the local wizardState that has the
+       * structure. We prefer the explicitly passed localWizardState to avoid
+       * fragile array indexing.
+       */
+      const stateToValidate = localWizardState || monomersToSave[0];
+      return validateMonomerWizard(
+        assignedAttachmentPointsByMonomer,
+        stateToValidate,
+      );
     }
   };
 
@@ -1652,55 +1672,40 @@ const MonomerCreationWizardInternal = ({
     editor.setProblematicAtoms(new Set());
     setHasActiveRnaPresetAtomValidationErrors(false);
 
-    const monomersToSave = isRnaPresetType
+    let monomersToSave = isRnaPresetType
       ? getRnaPresetComponentKeysToSave(rnaPresetWizardState).map(
           (componentKey) => rnaPresetWizardState[componentKey],
         )
       : [wizardState];
     const monomersData: FinishNewMonomersCreationData[] = [];
-    const assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType =
-      new Map();
 
     if (!isRnaPresetType) {
-      wizardState.structure = {
+      const selection: Selection = {
         atoms: [...editor.render.ctab.molecule.atoms.keys()],
         bonds: [...editor.render.ctab.molecule.bonds.keys()],
       };
-    }
-
-    // separate attachment points by preset components
-    if (isRnaPresetType) {
-      monomersToSave.forEach((componentWizardState) => {
-        const assignedAttachmentPointsForComponent = new Map();
-
-        assignedAttachmentPoints.forEach(
-          ([attachmentAtomId, leavingGroupAtomId], attachmentPointName) => {
-            if (
-              componentWizardState.structure?.atoms?.includes(attachmentAtomId)
-            ) {
-              assignedAttachmentPointsForComponent.set(attachmentPointName, [
-                attachmentAtomId,
-                leavingGroupAtomId,
-              ]);
-            }
-          },
-        );
-
-        assignedAttachmentPointsByMonomer.set(
-          componentWizardState,
-          assignedAttachmentPointsForComponent,
-        );
+      const currentWizardState = {
+        ...wizardState,
+        structure: selection,
+      };
+      wizardStateDispatch({
+        type: 'SetStructure',
+        structure: selection,
       });
-    } else {
-      assignedAttachmentPointsByMonomer.set(
-        wizardState,
-        assignedAttachmentPoints,
-      );
+      monomersToSave = [currentWizardState];
     }
+
+    const assignedAttachmentPointsByMonomer = buildAssignedAttachmentPointsMap(
+      monomersToSave,
+      assignedAttachmentPoints,
+      isRnaPresetType,
+    );
 
     // validation
     const needSaveMonomers = validateOnSubmit(
       assignedAttachmentPointsByMonomer,
+      monomersToSave,
+      !isRnaPresetType ? monomersToSave[0] : undefined,
     );
 
     // save
@@ -2108,15 +2113,19 @@ const MonomerCreationWizardInternal = ({
                 onOk: () => {
                   setLeavingGroupDialogMessage('');
 
-                  wizardState.structure = {
+                  const selection: Selection = {
                     atoms: [...editor.render.ctab.molecule.atoms.keys()],
                     bonds: [...editor.render.ctab.molecule.bonds.keys()],
                   };
+                  wizardStateDispatch({
+                    type: 'SetStructure',
+                    structure: selection,
+                  });
 
                   const atomIdMap = new Map<number, number>();
                   const bondIdMap = new Map<number, number>();
                   const structure = editor.structSelected(
-                    wizardState.structure,
+                    selection,
                     atomIdMap,
                     bondIdMap,
                   );
@@ -2135,7 +2144,7 @@ const MonomerCreationWizardInternal = ({
                   editor.finishNewMonomersCreation([
                     {
                       ...monomerData,
-                      monomerStructureInWizard: wizardState.structure,
+                      monomerStructureInWizard: selection,
                       atomIdMap,
                     },
                   ]);

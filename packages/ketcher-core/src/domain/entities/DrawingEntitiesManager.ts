@@ -2850,7 +2850,7 @@ export class DrawingEntitiesManager {
     SequenceRenderer.clear();
   }
 
-  public restoreSGroupRenderers() {
+  private restoreSGroupRenderers() {
     const editor = provideEditorInstance();
 
     this.sgroups.forEach((sgroup) => {

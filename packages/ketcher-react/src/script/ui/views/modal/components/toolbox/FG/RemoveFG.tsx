@@ -41,9 +41,6 @@ const RemoveFG = (props: Props) => {
 
   const exit = (key, res) => {
     props[key](res);
-    // Restore keyboard handling after the modal has been removed. Without
-    // this, focus remains on the modal button and atom hotkeys do not work
-    // until the user clicks the canvas.
     setTimeout(() => editor.focusCliparea(), 0);
   };
 

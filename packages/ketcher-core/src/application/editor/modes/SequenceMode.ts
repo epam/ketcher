@@ -829,24 +829,32 @@ export class SequenceMode extends BaseMode {
     const modelChanges = new Command();
     const editor = provideEditorInstance();
     const editorHistory = EditorHistory.getInstance(editor);
-    const previousTwoStrandedNodeInSameChain =
+    const previousTwoStrandedNodeInSameChainInSameChain =
       SequenceRenderer.previousNodeInSameChain;
     const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
-    if (this.needToEditSense && previousTwoStrandedNodeInSameChain?.senseNode) {
+    if (
+      this.needToEditSense &&
+      previousTwoStrandedNodeInSameChainInSameChain?.senseNode
+    ) {
       this.deleteBondToNextNodeInChain(
-        previousTwoStrandedNodeInSameChain.senseNode instanceof
+        previousTwoStrandedNodeInSameChainInSameChain.senseNode instanceof
           BackBoneSequenceNode
-          ? previousTwoStrandedNodeInSameChain?.senseNode.firstConnectedNode
-          : previousTwoStrandedNodeInSameChain?.senseNode,
+          ? previousTwoStrandedNodeInSameChainInSameChain?.senseNode
+              .firstConnectedNode
+          : previousTwoStrandedNodeInSameChainInSameChain?.senseNode,
         modelChanges,
       );
 
-      if (previousTwoStrandedNodeInSameChain?.senseNode instanceof Nucleotide) {
+      if (
+        previousTwoStrandedNodeInSameChainInSameChain?.senseNode instanceof
+        Nucleotide
+      ) {
         modelChanges.addOperation(SequenceRenderer.moveCaretForward());
         modelChanges.merge(
           editor.drawingEntitiesManager.deleteMonomer(
-            previousTwoStrandedNodeInSameChain.senseNode.lastMonomerInNode,
+            previousTwoStrandedNodeInSameChainInSameChain.senseNode
+              .lastMonomerInNode,
           ),
         );
       }
@@ -1374,7 +1382,7 @@ export class SequenceMode extends BaseMode {
           const editor = provideEditorInstance();
           const history = EditorHistory.getInstance(editor);
           const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
-          const previousTwoStrandedNodeInSameChain =
+          const previousTwoStrandedNodeInSameChainInSameChain =
             SequenceRenderer.previousNodeInSameChain;
 
           if (this.isAntisenseEditMode) {
@@ -1384,7 +1392,7 @@ export class SequenceMode extends BaseMode {
             );
           } else {
             this.deleteBondToNextNodeInChain(
-              previousTwoStrandedNodeInSameChain?.senseNode,
+              previousTwoStrandedNodeInSameChainInSameChain?.senseNode,
               modelChanges,
             );
           }
@@ -1402,7 +1410,7 @@ export class SequenceMode extends BaseMode {
           const editor = provideEditorInstance();
           const history = EditorHistory.getInstance(editor);
           const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
-          const previousTwoStrandedNodeInSameChain =
+          const previousTwoStrandedNodeInSameChainInSameChain =
             SequenceRenderer.previousNodeInSameChain;
 
           const hasValidAntisense = (node: ITwoStrandedChainItem | undefined) =>
@@ -1436,7 +1444,7 @@ export class SequenceMode extends BaseMode {
             currentTwoStrandedNode,
           );
           if (
-            hasValidAntisense(previousTwoStrandedNodeInSameChain) &&
+            hasValidAntisense(previousTwoStrandedNodeInSameChainInSameChain) &&
             !hasValidAntisense(currentTwoStrandedNode) &&
             nextNucleotideFromCurrent !== undefined &&
             !hasValidAntisense(nextNucleotideFromCurrent)
@@ -1459,7 +1467,7 @@ export class SequenceMode extends BaseMode {
             const newNodePosition = this.getNewNodePosition();
             this.connectNodes(
               nextNodeWithAntisense.antisenseNode,
-              previousTwoStrandedNodeInSameChain?.antisenseNode,
+              previousTwoStrandedNodeInSameChainInSameChain?.antisenseNode,
               modelChanges,
               newNodePosition,
             );
@@ -1476,16 +1484,16 @@ export class SequenceMode extends BaseMode {
           // of the antisense region and there is nothing to break.
           if (
             this.isAntisenseEditMode &&
-            previousTwoStrandedNodeInSameChain?.senseNode &&
+            previousTwoStrandedNodeInSameChainInSameChain?.senseNode &&
             !(
-              previousTwoStrandedNodeInSameChain.senseNode instanceof
+              previousTwoStrandedNodeInSameChainInSameChain.senseNode instanceof
               EmptySequenceNode
             ) &&
-            hasValidAntisense(previousTwoStrandedNodeInSameChain) &&
+            hasValidAntisense(previousTwoStrandedNodeInSameChainInSameChain) &&
             !(currentTwoStrandedNode?.senseNode instanceof BackBoneSequenceNode)
           ) {
             this.deleteBondToNextNodeInChain(
-              previousTwoStrandedNodeInSameChain.senseNode,
+              previousTwoStrandedNodeInSameChainInSameChain.senseNode,
               modelChanges,
             );
             modelChanges.addOperation(new ReinitializeModeOperation(true));
@@ -1497,14 +1505,14 @@ export class SequenceMode extends BaseMode {
           if (
             !currentTwoStrandedNode?.senseNode ||
             !currentTwoStrandedNode?.antisenseNode ||
-            !previousTwoStrandedNodeInSameChain?.senseNode ||
-            !previousTwoStrandedNodeInSameChain?.antisenseNode ||
+            !previousTwoStrandedNodeInSameChainInSameChain?.senseNode ||
+            !previousTwoStrandedNodeInSameChainInSameChain?.antisenseNode ||
             currentTwoStrandedNode?.senseNode instanceof EmptySequenceNode ||
             currentTwoStrandedNode?.antisenseNode instanceof
               EmptySequenceNode ||
-            previousTwoStrandedNodeInSameChain?.senseNode instanceof
+            previousTwoStrandedNodeInSameChainInSameChain?.senseNode instanceof
               EmptySequenceNode ||
-            previousTwoStrandedNodeInSameChain?.antisenseNode instanceof
+            previousTwoStrandedNodeInSameChainInSameChain?.antisenseNode instanceof
               EmptySequenceNode
           ) {
             return;
@@ -1628,23 +1636,12 @@ export class SequenceMode extends BaseMode {
           }
 
           const selectionsBeforeDeletion = SequenceRenderer.selections;
-          const isWholeChainSelected =
-            selectionsBeforeDeletion.length > 0 &&
-            selectionsBeforeDeletion.every((selectionRange) => {
-              const firstNode = selectionRange[0]?.node;
-              const lastNode = selectionRange[selectionRange.length - 1]?.node;
-              const prevInSameChain = firstNode
-                ? SequenceRenderer.getPreviousNodeInSameChain(firstNode)
-                : null;
-              const nextInSameChain = lastNode
-                ? SequenceRenderer.getNextNodeInSameChain(lastNode)
-                : null;
-              return (
-                !prevInSameChain &&
-                (!nextInSameChain ||
-                  nextInSameChain.senseNode instanceof EmptySequenceNode)
-              );
-            });
+          const deletedMonomerCount = this.countDeletedMonomersInSelections(
+            selectionsBeforeDeletion,
+          );
+          const wholeChainSelected = this.isWholeChainSelected(
+            selectionsBeforeDeletion,
+          );
 
           if (!this.deleteSelection()) {
             return;
@@ -1661,135 +1658,62 @@ export class SequenceMode extends BaseMode {
                 currentTwoStrandedNode,
               )) ??
             undefined;
-          // If a whole chain was selected and deleted, the caret may have landed on
-          // the start of the NEXT chain. Do not connect the new monomer to that chain;
-          // instead insert it as a new standalone chain.
           const insertAsStandaloneChain =
-            isWholeChainSelected && !previousTwoStrandedNodeInSameChain;
-          let senseNodeToConnect = insertAsStandaloneChain
-            ? null
-            : currentTwoStrandedNode?.senseNode;
+            wholeChainSelected && !previousTwoStrandedNodeInSameChain;
           const isDnaEnteringMode =
             editor.sequenceTypeEnterMode === SequenceType.DNA;
           const isRnaEnteringMode =
             editor.sequenceTypeEnterMode === SequenceType.RNA;
           const isEnteringSymbolP = enteredSymbol.toUpperCase() === 'P';
 
+          let createdSenseNodes: SequenceNode[] = [];
           if (this.needToEditSense) {
-            const insertNewSequenceItemResult = this.insertNewSequenceItem(
+            createdSenseNodes = this.insertSenseNodes(
               editor,
-              this.isAntisenseEditMode && !isEnteringSymbolP
-                ? DrawingEntitiesManager.getAntisenseBaseLabel(
-                    enteredSymbol,
-                    isDnaEnteringMode,
-                  )
-                : enteredSymbol,
-              senseNodeToConnect,
-              previousTwoStrandedNodeInSameChain?.senseNode,
+              enteredSymbol,
+              deletedMonomerCount,
+              isDnaEnteringMode,
+              isEnteringSymbolP,
+              currentTwoStrandedNode,
+              previousTwoStrandedNodeInSameChain,
+              insertAsStandaloneChain,
+              modelChanges,
             );
 
-            // Case when user type symbol that does not exist in current sequence type mode
-            if (!insertNewSequenceItemResult) {
+            if (createdSenseNodes.length === 0) {
               return;
             }
-
-            modelChanges.merge(insertNewSequenceItemResult.modelChanges);
-            senseNodeToConnect = insertNewSequenceItemResult.node;
           }
 
-          const prevSense = previousTwoStrandedNodeInSameChain?.senseNode;
-          const prevAntisense =
-            previousTwoStrandedNodeInSameChain?.antisenseNode;
-          const currSense = currentTwoStrandedNode?.senseNode;
-          const currAntisense = currentTwoStrandedNode?.antisenseNode;
-
-          const prevHasRealSenseAndAntisense =
-            !!prevSense &&
-            !(prevSense instanceof EmptySequenceNode) &&
-            !!prevAntisense;
-
-          const currHasAntisenseWithNonEmptyContent =
-            !!currAntisense &&
-            (!(currSense instanceof EmptySequenceNode) ||
-              !(currAntisense instanceof EmptySequenceNode));
-
-          const shouldEditAntisenseInSyncMode =
-            prevHasRealSenseAndAntisense || currHasAntisenseWithNonEmptyContent;
-
-          const shouldEditAntisenseInAsyncMode =
-            !(prevAntisense instanceof EmptySequenceNode) ||
-            !(currAntisense instanceof EmptySequenceNode);
-
           if (
-            this.needToEditAntisense &&
-            (this.isSyncEditMode
-              ? shouldEditAntisenseInSyncMode
-              : shouldEditAntisenseInAsyncMode)
+            this.shouldEditAntisense(
+              previousTwoStrandedNodeInSameChain,
+              currentTwoStrandedNode,
+            )
           ) {
-            const antisenseNodeCreationResult = this.insertNewSequenceItem(
+            this.insertAntisenseNodes(
               editor,
-              this.isAntisenseEditMode ||
-                (editor.sequenceTypeEnterMode !== SequenceType.DNA &&
-                  editor.sequenceTypeEnterMode !== SequenceType.RNA) ||
-                isEnteringSymbolP
-                ? enteredSymbol
-                : DrawingEntitiesManager.getAntisenseBaseLabel(
-                    enteredSymbol,
-                    isDnaEnteringMode,
-                  ),
-              previousTwoStrandedNodeInSameChain?.antisenseNode ?? null,
-              insertAsStandaloneChain
-                ? undefined
-                : currentTwoStrandedNode?.antisenseNode,
+              enteredSymbol,
+              createdSenseNodes,
+              isDnaEnteringMode,
+              isEnteringSymbolP,
+              currentTwoStrandedNode,
+              previousTwoStrandedNodeInSameChain,
+              insertAsStandaloneChain,
+              modelChanges,
             );
-
-            if (antisenseNodeCreationResult) {
-              modelChanges.merge(antisenseNodeCreationResult.modelChanges);
-            }
-
-            if (
-              this.isSyncEditMode &&
-              antisenseNodeCreationResult &&
-              senseNodeToConnect &&
-              (senseNodeToConnect instanceof Nucleotide ||
-                senseNodeToConnect instanceof Nucleoside)
-            ) {
-              modelChanges.merge(
-                editor.drawingEntitiesManager.createPolymerBond(
-                  senseNodeToConnect?.rnaBase,
-                  antisenseNodeCreationResult.node instanceof Nucleotide ||
-                    antisenseNodeCreationResult.node instanceof Nucleoside
-                    ? antisenseNodeCreationResult.node?.rnaBase
-                    : antisenseNodeCreationResult.node.monomer,
-                  AttachmentPointName.HYDROGEN,
-                  AttachmentPointName.HYDROGEN,
-                  MACROMOLECULES_BOND_TYPES.HYDROGEN,
-                ),
-              );
-            }
           }
 
           modelChanges.addOperation(new ReinitializeModeOperation());
           editor.renderersContainer.update(modelChanges);
 
           if (
-            // If user type symbol that becomes part of a linker then caret does not move
-            !(isDnaEnteringMode || isRnaEnteringMode) ||
-            !(
-              isEnteringSymbolP &&
-              (this.needToEditSense
-                ? LinkerSequenceNode.isPartOfLinker(
-                    previousTwoStrandedNodeInSameChain?.senseNode?.monomer,
-                  ) ||
-                  LinkerSequenceNode.isPartOfLinker(
-                    currentTwoStrandedNode?.senseNode?.monomer,
-                  )
-                : LinkerSequenceNode.isPartOfLinker(
-                    previousTwoStrandedNodeInSameChain?.antisenseNode?.monomer,
-                  ) ||
-                  LinkerSequenceNode.isPartOfLinker(
-                    currentTwoStrandedNode?.antisenseNode?.monomer,
-                  ))
+            this.shouldMoveCaretAfterInsertion(
+              isDnaEnteringMode,
+              isRnaEnteringMode,
+              isEnteringSymbolP,
+              currentTwoStrandedNode,
+              previousTwoStrandedNodeInSameChain,
             )
           ) {
             modelChanges.addOperation(SequenceRenderer.moveCaretForward());
@@ -1922,6 +1846,420 @@ export class SequenceMode extends BaseMode {
       secondMonomer.attachmentPointsToBonds[secondMonomerAttachmentPoint] ===
         null
     );
+  }
+
+  /**
+   * Checks if a node or monomer represents a Nucleoside (Sugar-Base without Phosphate).
+   * A Nucleoside is identified by:
+   * - Being a Nucleoside instance, OR
+   * - Being a Sugar with a base attached at R3 but no phosphate at R2
+   */
+  private isNucleoside(nodeOrMonomer: SequenceNode | BaseMonomer): boolean {
+    if (nodeOrMonomer instanceof Nucleoside) {
+      return true;
+    }
+
+    const monomer =
+      'lastMonomerInNode' in nodeOrMonomer
+        ? nodeOrMonomer.lastMonomerInNode
+        : nodeOrMonomer;
+
+    return (
+      monomer instanceof Sugar &&
+      !!monomer.attachmentPointsToBonds.R3 && // Has base attached
+      !monomer.attachmentPointsToBonds.R2 // No phosphate at R2
+    );
+  }
+
+  /**
+   * Checks if a phosphate needs to be inserted between two nodes to maintain RNA/DNA structure.
+   * Returns true when connecting a Nucleoside to a Sugar without an existing phosphate link.
+   */
+  private needsPhosphateInsertion(
+    fromNodeOrMonomer: SequenceNode | BaseMonomer,
+    toMonomer: BaseMonomer,
+  ): boolean {
+    const fromMonomer =
+      'lastMonomerInNode' in fromNodeOrMonomer
+        ? fromNodeOrMonomer.lastMonomerInNode
+        : fromNodeOrMonomer;
+
+    const isFromNucleoside = this.isNucleoside(fromNodeOrMonomer);
+    const isToSugar = toMonomer instanceof Sugar;
+
+    // Phosphate needed when connecting Nucleoside (Sugar-Base) to Sugar without existing phosphate
+    return (
+      isFromNucleoside && isToSugar && !fromMonomer.attachmentPointsToBonds.R2
+    );
+  }
+
+  /**
+   * Creates a bond between two monomers, automatically inserting a phosphate if needed
+   * to maintain proper RNA/DNA structure.
+   */
+  private bondMonomersWithPhosphateIfNeeded(
+    fromNodeOrMonomer: SequenceNode | BaseMonomer,
+    toNodeOrMonomer: SequenceNode | BaseMonomer,
+    position: Vec2,
+  ): Command {
+    const fromMonomer =
+      'lastMonomerInNode' in fromNodeOrMonomer
+        ? fromNodeOrMonomer.lastMonomerInNode
+        : fromNodeOrMonomer;
+    const toMonomer =
+      'firstMonomerInNode' in toNodeOrMonomer
+        ? toNodeOrMonomer.firstMonomerInNode
+        : toNodeOrMonomer;
+
+    if (this.needsPhosphateInsertion(fromNodeOrMonomer, toMonomer)) {
+      return this.bondNodesThroughNewPhosphate(
+        position,
+        fromMonomer,
+        toMonomer,
+      );
+    }
+
+    return this.tryToCreatePolymerBond(fromMonomer, toMonomer);
+  }
+
+  /**
+   * Counts the total number of monomers in the selected sense nodes before deletion.
+   * For LinkerSequenceNodes, counts all connected monomers.
+   * For AmbiguousMonomerSequenceNodes, counts all variant monomers.
+   */
+  private countDeletedMonomersInSelections(
+    selections: TwoStrandedNodesSelection,
+  ): number {
+    if (!this.needToEditSense) {
+      return 0;
+    }
+
+    let count = 0;
+    selections.forEach((selectionRange) => {
+      selectionRange.forEach((nodeSelection) => {
+        const senseNode = nodeSelection.node.senseNode;
+        if (senseNode && !(senseNode instanceof EmptySequenceNode)) {
+          if (senseNode instanceof LinkerSequenceNode) {
+            count += senseNode.monomers.length;
+          } else if (senseNode instanceof AmbiguousMonomerSequenceNode) {
+            count += senseNode.monomer.monomers.length;
+          } else {
+            count += senseNode.monomers.length;
+          }
+        }
+      });
+    });
+    return count;
+  }
+
+  /**
+   * Checks if the entire chain was selected (no previous/next nodes in the chain).
+   */
+  private isWholeChainSelected(selections: TwoStrandedNodesSelection): boolean {
+    if (selections.length === 0) return false;
+
+    return selections.every((selectionRange) => {
+      const firstNode = selectionRange[0]?.node;
+      const lastNode = selectionRange[selectionRange.length - 1]?.node;
+      const prevInSameChain = firstNode
+        ? SequenceRenderer.getPreviousNodeInSameChain(firstNode)
+        : null;
+      const nextInSameChain = lastNode
+        ? SequenceRenderer.getNextNodeInSameChain(lastNode)
+        : null;
+      return (
+        !prevInSameChain &&
+        (!nextInSameChain ||
+          nextInSameChain.senseNode instanceof EmptySequenceNode)
+      );
+    });
+  }
+
+  /**
+   * Inserts multiple sense nodes based on the entered symbol and deletion count.
+   * Returns array of created nodes for hydrogen bonding in sync mode.
+   */
+  private insertSenseNodes(
+    editor: CoreEditor,
+    enteredSymbol: string,
+    deletedMonomerCount: number,
+    isDnaEnteringMode: boolean,
+    isEnteringSymbolP: boolean,
+    currentTwoStrandedNode: ITwoStrandedChainItem | undefined,
+    previousTwoStrandedNodeInSameChain: ITwoStrandedChainItem | undefined,
+    insertAsStandaloneChain: boolean,
+    modelChanges: Command,
+  ): SequenceNode[] {
+    const createdNodes: SequenceNode[] = [];
+    const insertCount = Math.max(1, deletedMonomerCount);
+    const originalNextNode = insertAsStandaloneChain
+      ? null
+      : currentTwoStrandedNode?.senseNode;
+    let nodeToConnect = originalNextNode;
+
+    for (let i = 0; i < insertCount; i++) {
+      const isLastInsertion = i === insertCount - 1;
+      const symbolLabel =
+        this.isAntisenseEditMode && !isEnteringSymbolP
+          ? DrawingEntitiesManager.getAntisenseBaseLabel(
+              enteredSymbol,
+              isDnaEnteringMode,
+            )
+          : enteredSymbol;
+
+      const result = this.insertNewSequenceItem(
+        editor,
+        symbolLabel,
+        isLastInsertion ? originalNextNode : null,
+        i === 0
+          ? previousTwoStrandedNodeInSameChain?.senseNode
+          : nodeToConnect ?? undefined,
+      );
+
+      if (!result) {
+        break;
+      }
+
+      modelChanges.merge(result.modelChanges);
+      nodeToConnect = result.node;
+      createdNodes.push(result.node);
+    }
+
+    return createdNodes;
+  }
+
+  /**
+   * Determines if antisense strand should be edited based on mode and existing nodes.
+   */
+  private shouldEditAntisense(
+    previousTwoStrandedNodeInSameChain: ITwoStrandedChainItem | undefined,
+    currentTwoStrandedNode: ITwoStrandedChainItem | undefined,
+  ): boolean {
+    if (!this.needToEditAntisense) {
+      return false;
+    }
+
+    const prevSense = previousTwoStrandedNodeInSameChain?.senseNode;
+    const prevAntisense = previousTwoStrandedNodeInSameChain?.antisenseNode;
+    const currSense = currentTwoStrandedNode?.senseNode;
+    const currAntisense = currentTwoStrandedNode?.antisenseNode;
+
+    if (this.isSyncEditMode) {
+      const prevHasRealSenseAndAntisense =
+        !!prevSense &&
+        !(prevSense instanceof EmptySequenceNode) &&
+        !!prevAntisense;
+
+      const currHasAntisenseWithNonEmptyContent =
+        !!currAntisense &&
+        (!(currSense instanceof EmptySequenceNode) ||
+          !(currAntisense instanceof EmptySequenceNode));
+
+      return (
+        prevHasRealSenseAndAntisense || currHasAntisenseWithNonEmptyContent
+      );
+    } else {
+      return (
+        !(prevAntisense instanceof EmptySequenceNode) ||
+        !(currAntisense instanceof EmptySequenceNode)
+      );
+    }
+  }
+
+  /**
+   * Inserts antisense nodes and creates hydrogen bonds with corresponding sense nodes in sync mode.
+   */
+  private insertAntisenseNodes(
+    editor: CoreEditor,
+    enteredSymbol: string,
+    createdSenseNodes: SequenceNode[],
+    isDnaEnteringMode: boolean,
+    isEnteringSymbolP: boolean,
+    currentTwoStrandedNode: ITwoStrandedChainItem | undefined,
+    previousTwoStrandedNodeInSameChain: ITwoStrandedChainItem | undefined,
+    insertAsStandaloneChain: boolean,
+    modelChanges: Command,
+  ): void {
+    const antisenseInsertCount =
+      this.isSyncEditMode && createdSenseNodes.length > 0
+        ? createdSenseNodes.length
+        : 1;
+
+    let antisenseNodeToConnect: SequenceNode | undefined =
+      previousTwoStrandedNodeInSameChain?.antisenseNode ?? undefined;
+
+    for (let i = 0; i < antisenseInsertCount; i++) {
+      const isLastInsertion = i === antisenseInsertCount - 1;
+      const symbolLabel =
+        this.isAntisenseEditMode ||
+        (editor.sequenceTypeEnterMode !== SequenceType.DNA &&
+          editor.sequenceTypeEnterMode !== SequenceType.RNA) ||
+        isEnteringSymbolP
+          ? enteredSymbol
+          : DrawingEntitiesManager.getAntisenseBaseLabel(
+              enteredSymbol,
+              isDnaEnteringMode,
+            );
+
+      const result = this.insertNewSequenceItem(
+        editor,
+        symbolLabel,
+        isLastInsertion
+          ? insertAsStandaloneChain
+            ? undefined
+            : currentTwoStrandedNode?.antisenseNode
+          : null,
+        antisenseNodeToConnect,
+      );
+
+      if (!result) {
+        continue;
+      }
+
+      modelChanges.merge(result.modelChanges);
+
+      // Create hydrogen bond in sync mode
+      if (this.isSyncEditMode && i < createdSenseNodes.length) {
+        this.createHydrogenBondBetweenNodes(
+          editor,
+          createdSenseNodes[i],
+          result.node,
+          modelChanges,
+        );
+      }
+
+      antisenseNodeToConnect = result.node;
+    }
+  }
+
+  /**
+   * Creates a hydrogen bond between corresponding sense and antisense nodes if applicable.
+   */
+  private createHydrogenBondBetweenNodes(
+    editor: CoreEditor,
+    senseNode: SequenceNode,
+    antisenseNode: SequenceNode,
+    modelChanges: Command,
+  ): void {
+    if (
+      (senseNode instanceof Nucleotide || senseNode instanceof Nucleoside) &&
+      (antisenseNode instanceof Nucleotide ||
+        antisenseNode instanceof Nucleoside)
+    ) {
+      modelChanges.merge(
+        editor.drawingEntitiesManager.createPolymerBond(
+          senseNode.rnaBase,
+          antisenseNode.rnaBase,
+          AttachmentPointName.HYDROGEN,
+          AttachmentPointName.HYDROGEN,
+          MACROMOLECULES_BOND_TYPES.HYDROGEN,
+        ),
+      );
+    }
+  }
+
+  /**
+   * Checks if the caret should move forward after inserting a sequence item.
+   * The caret does not move when entering a phosphate that becomes part of a linker.
+   */
+  private shouldMoveCaretAfterInsertion(
+    isDnaEnteringMode: boolean,
+    isRnaEnteringMode: boolean,
+    isEnteringSymbolP: boolean,
+    currentTwoStrandedNode: ITwoStrandedChainItem | undefined,
+    previousTwoStrandedNodeInSameChain: ITwoStrandedChainItem | undefined,
+  ): boolean {
+    if (!isDnaEnteringMode && !isRnaEnteringMode) {
+      return true;
+    }
+
+    if (!isEnteringSymbolP) {
+      return true;
+    }
+
+    const checkNodes = this.needToEditSense
+      ? [
+          previousTwoStrandedNodeInSameChain?.senseNode?.monomer,
+          currentTwoStrandedNode?.senseNode?.monomer,
+        ]
+      : [
+          previousTwoStrandedNodeInSameChain?.antisenseNode?.monomer,
+          currentTwoStrandedNode?.antisenseNode?.monomer,
+        ];
+
+    return !checkNodes.some((monomer) =>
+      LinkerSequenceNode.isPartOfLinker(monomer),
+    );
+  }
+
+  /**
+   * Creates bonds between replacement nodes in a sequence, connecting them to each other
+   * and to the original chain at connection points.
+   *
+   * This is the common bonding logic used by both monomer and preset replacement operations.
+   *
+   * @param newNodes - Array of newly created nodes (monomers or presets) to bond together
+   * @param position - Base position for phosphate insertion if needed
+   * @param hasPreviousNodeInChain - Whether there's a previous node to connect to
+   * @param hasNextNodeInChain - Whether there's a next node to connect to
+   * @param previousSelectionNode - The node before the replacement (if any)
+   * @param nextNode - The node after the replacement (if any)
+   * @param modelChanges - Command to accumulate the bonding operations
+   */
+  private createReplacementChainBonds(
+    newNodes: Array<SequenceNode | BaseMonomer>,
+    position: Vec2,
+    hasPreviousNodeInChain: boolean,
+    hasNextNodeInChain: boolean,
+    previousSelectionNode: SequenceNode | undefined,
+    nextNode: ITwoStrandedChainItem | undefined,
+    modelChanges: Command,
+  ): void {
+    for (let i = 0; i < newNodes.length; i++) {
+      // Connect to previous replacement node
+      if (i > 0) {
+        const prevNode = newNodes[i - 1];
+        const currNode = newNodes[i];
+        const prevMonomer =
+          'lastMonomerInNode' in prevNode
+            ? prevNode.lastMonomerInNode
+            : prevNode;
+        const currMonomer =
+          'firstMonomerInNode' in currNode
+            ? currNode.firstMonomerInNode
+            : currNode;
+
+        modelChanges.merge(
+          this.tryToCreatePolymerBond(prevMonomer, currMonomer),
+        );
+      }
+
+      // Connect first to original previous node
+      if (i === 0 && hasPreviousNodeInChain && previousSelectionNode) {
+        modelChanges.merge(
+          this.bondMonomersWithPhosphateIfNeeded(
+            previousSelectionNode,
+            newNodes[i],
+            position,
+          ),
+        );
+      }
+
+      // Connect last to original next node
+      if (
+        i === newNodes.length - 1 &&
+        hasNextNodeInChain &&
+        nextNode?.senseNode
+      ) {
+        modelChanges.merge(
+          this.bondMonomersWithPhosphateIfNeeded(
+            newNodes[i],
+            nextNode.senseNode,
+            position,
+          ),
+        );
+      }
+    }
   }
 
   isPasteAvailable(drawingEntitiesManager: DrawingEntitiesManager) {
@@ -2085,6 +2423,21 @@ export class SequenceMode extends BaseMode {
     const hasNextNodeInChain =
       selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2;
 
+    // Calculate replacement count based on node type
+    let replacementCount = 1;
+    if (selectedNode instanceof LinkerSequenceNode) {
+      replacementCount = selectedNode.monomers.length;
+    } else if (selectedNode instanceof AmbiguousMonomerSequenceNode) {
+      replacementCount = selectedNode.monomer.monomers.length;
+    }
+
+    // Early return if replacement count is 0 (edge case)
+    if (replacementCount === 0) {
+      return selectedNode;
+    }
+
+    // Delete all monomers in the selected node
+    // This also deletes all their bonds (including connections to previous/next nodes)
     selectedNode.monomers.forEach((monomer) => {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
       monomer.forEachBond((polymerBond) => {
@@ -2094,24 +2447,35 @@ export class SequenceMode extends BaseMode {
       });
     });
 
-    const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
-      monomerItem,
+    // Create replacement monomers
+    const allNewMonomers: BaseMonomer[] = [];
+
+    for (let i = 0; i < replacementCount; i++) {
+      // All replacement monomers are created at the same position
+      // The layout system will position them correctly based on their bonds
+      const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
+        monomerItem,
+        position,
+      );
+      const newMonomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
+
+      allNewMonomers.push(newMonomer);
+      modelChanges.merge(monomerAddCommand);
+    }
+
+    // Create bonds between all new monomers and connect to original chain
+    this.createReplacementChainBonds(
+      allNewMonomers,
       position,
-    );
-    const newMonomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
-    const newMonomerSequenceNode = new MonomerSequenceNode(newMonomer);
-
-    modelChanges.merge(monomerAddCommand);
-    modelChanges.merge(
-      this.insertNewSequenceFragment(
-        newMonomerSequenceNode,
-        nextNode?.senseNode ?? null,
-        previousSelectionNode,
-        Boolean(hasPreviousNodeInChain),
-        Boolean(hasNextNodeInChain),
-      ),
+      Boolean(hasPreviousNodeInChain),
+      Boolean(hasNextNodeInChain),
+      previousSelectionNode,
+      nextNode,
+      modelChanges,
     );
 
+    // Restore side chain connections (only to the first replacement monomer)
+    const firstNewMonomer = allNewMonomers[0];
     sideChainConnections?.forEach((sideConnectionData) => {
       const {
         firstMonomerAttachmentPointName,
@@ -2120,7 +2484,7 @@ export class SequenceMode extends BaseMode {
       } = sideConnectionData;
       if (
         !this.isConnectionPossible(
-          newMonomer,
+          firstNewMonomer,
           firstMonomerAttachmentPointName,
           secondMonomer,
           secondMonomerAttachmentPointName,
@@ -2131,7 +2495,7 @@ export class SequenceMode extends BaseMode {
 
       modelChanges.merge(
         editor.drawingEntitiesManager.createPolymerBond(
-          newMonomer,
+          firstNewMonomer,
           secondMonomer,
           firstMonomerAttachmentPointName,
           secondMonomerAttachmentPointName,
@@ -2139,10 +2503,11 @@ export class SequenceMode extends BaseMode {
       );
     });
 
+    // Restore hydrogen bonds (only to the first replacement monomer)
     preservedHydrodenBonds.forEach(({ toMonomer }) => {
       modelChanges.merge(
         editor.drawingEntitiesManager.createPolymerBond(
-          newMonomer,
+          firstNewMonomer,
           toMonomer,
           AttachmentPointName.HYDROGEN,
           AttachmentPointName.HYDROGEN,
@@ -2151,7 +2516,8 @@ export class SequenceMode extends BaseMode {
       );
     });
 
-    return newMonomerSequenceNode;
+    // Return the last created monomer for proper sequencing
+    return new MonomerSequenceNode(allNewMonomers[allNewMonomers.length - 1]);
   }
 
   private getPresetMonomerForPreservedSideChainConnection(
@@ -2409,7 +2775,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private checkNodeInsertionPossibility(newNode: SubChainNode) {
-    const previousTwoStrandedNodeInSameChain =
+    const previousTwoStrandedNodeInSameChainInSameChain =
       SequenceRenderer.previousNodeInSameChain;
     const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
     const currentNodeIsNotEmpty = !(
@@ -2419,7 +2785,7 @@ export class SequenceMode extends BaseMode {
     let missingAttachmentPoint: AttachmentPointName | null = null;
 
     const previousMonomerHasR2 = Boolean(
-      previousTwoStrandedNodeInSameChain?.senseNode?.lastMonomerInNode.hasAttachmentPoint(
+      previousTwoStrandedNodeInSameChainInSameChain?.senseNode?.lastMonomerInNode.hasAttachmentPoint(
         AttachmentPointName.R2,
       ),
     );
@@ -2427,7 +2793,7 @@ export class SequenceMode extends BaseMode {
       AttachmentPointName.R1,
     );
     const rightSideInsertImpossible =
-      Boolean(previousTwoStrandedNodeInSameChain) &&
+      Boolean(previousTwoStrandedNodeInSameChainInSameChain) &&
       (!previousMonomerHasR2 || !newMonomerHasR1);
     if (rightSideInsertImpossible && !newMonomerHasR1) {
       missingAttachmentPoint = AttachmentPointName.R1;
@@ -2515,14 +2881,14 @@ export class SequenceMode extends BaseMode {
     } else if (editor.isSequenceEditMode) {
       const newNodePosition = this.getNewNodePosition();
       const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
-      const previousTwoStrandedNodeInSameChain =
+      const previousTwoStrandedNodeInSameChainInSameChain =
         SequenceRenderer.previousNodeInSameChain;
       const nextNodeToConnect = this.isAntisenseEditMode
-        ? (currentTwoStrandedNode?.antisenseNode ?? null)
-        : (currentTwoStrandedNode?.senseNode ?? null);
+        ? currentTwoStrandedNode?.antisenseNode ?? null
+        : currentTwoStrandedNode?.senseNode ?? null;
       const previousNodeToConnect = this.isAntisenseEditMode
-        ? previousTwoStrandedNodeInSameChain?.antisenseNode
-        : previousTwoStrandedNodeInSameChain?.senseNode;
+        ? previousTwoStrandedNodeInSameChainInSameChain?.antisenseNode
+        : previousTwoStrandedNodeInSameChainInSameChain?.senseNode;
 
       const newMonomer = editor.drawingEntitiesManager.createMonomer(
         monomerItem,
@@ -2641,6 +3007,19 @@ export class SequenceMode extends BaseMode {
       [] as PreservedHydrogenBonds[],
     );
 
+    // Determine how many replacement presets to create
+    // For LinkerSequenceNodes (@), create one replacement for each monomer in the linker
+    // For AmbiguousMonomerSequenceNodes, create one replacement for each variant monomer
+    let replacementCount = 1;
+    if (selectedNode instanceof LinkerSequenceNode) {
+      replacementCount = selectedNode.monomers.length;
+    } else if (selectedNode instanceof AmbiguousMonomerSequenceNode) {
+      replacementCount = selectedNode.monomer.monomers.length;
+    } else if (selectedNode.monomer instanceof AmbiguousMonomer) {
+      replacementCount = (selectedNode.monomer as AmbiguousMonomer).monomers
+        .length;
+    }
+
     selectedNode.monomers.forEach((monomer) => {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
       monomer.forEachBond((polymerBond) => {
@@ -2659,25 +3038,37 @@ export class SequenceMode extends BaseMode {
         ? { ...preset, phosphate: undefined }
         : preset;
 
-    const newPresetNode = this.createRnaPresetNode(presetToInsert, position);
+    // Create multiple replacement presets in sequence
+    // They will be properly connected via bonds in the next step
+    const newPresetNodes: (Nucleotide | Nucleoside | LinkerSequenceNode)[] = [];
 
-    assert(newPresetNode);
+    for (let i = 0; i < replacementCount; i++) {
+      // All replacement presets are created at the same position
+      // The layout system will position them correctly based on their bonds
+      const newPresetNode = this.createRnaPresetNode(presetToInsert, position);
 
-    const rnaPresetAddModelChanges =
-      editor.drawingEntitiesManager.addRnaPresetFromNode(newPresetNode);
+      assert(newPresetNode);
 
-    modelChanges.merge(rnaPresetAddModelChanges);
-    modelChanges.merge(
-      this.insertNewSequenceFragment(
-        newPresetNode,
-        nextNode?.senseNode ?? null,
-        previousSelectionNode,
-        Boolean(hasPreviousNodeInChain),
-        Boolean(hasNextNodeInChain),
-        false,
-      ),
+      const rnaPresetAddModelChanges =
+        editor.drawingEntitiesManager.addRnaPresetFromNode(newPresetNode);
+
+      modelChanges.merge(rnaPresetAddModelChanges);
+      newPresetNodes.push(newPresetNode);
+    }
+
+    // Create bonds between all new presets and connect to original chain
+    this.createReplacementChainBonds(
+      newPresetNodes,
+      position,
+      Boolean(hasPreviousNodeInChain),
+      Boolean(hasNextNodeInChain),
+      previousSelectionNode,
+      nextNode,
+      modelChanges,
     );
 
+    // Restore side chain connections only to the first replacement preset
+    const firstNewPresetNode = newPresetNodes[0];
     sideChainConnections?.forEach((sideConnectionData) => {
       const {
         sourceMonomer,
@@ -2687,7 +3078,7 @@ export class SequenceMode extends BaseMode {
       } = sideConnectionData;
       const monomerForSideConnections =
         this.getPresetMonomerForPreservedSideChainConnection(
-          newPresetNode,
+          firstNewPresetNode,
           sourceMonomer,
         );
 
@@ -2713,22 +3104,23 @@ export class SequenceMode extends BaseMode {
       );
     });
 
+    // Restore hydrogen bonds only to the first replacement preset
     preservedHydrodenBonds.forEach(({ toMonomer, fromMonomer }) => {
       let monomerForHydrogenBond: BaseMonomer | undefined;
 
       if (
-        newPresetNode instanceof Nucleotide ||
-        newPresetNode instanceof Nucleoside
+        firstNewPresetNode instanceof Nucleotide ||
+        firstNewPresetNode instanceof Nucleoside
       ) {
         if (fromMonomer instanceof RNABase) {
-          monomerForHydrogenBond = newPresetNode.rnaBase;
+          monomerForHydrogenBond = firstNewPresetNode.rnaBase;
         } else if (fromMonomer instanceof Sugar) {
-          monomerForHydrogenBond = newPresetNode.sugar;
+          monomerForHydrogenBond = firstNewPresetNode.sugar;
         } else if (
-          newPresetNode instanceof Nucleotide &&
+          firstNewPresetNode instanceof Nucleotide &&
           fromMonomer instanceof Phosphate
         ) {
-          monomerForHydrogenBond = newPresetNode.phosphate;
+          monomerForHydrogenBond = firstNewPresetNode.phosphate;
         }
       }
 
@@ -2747,7 +3139,8 @@ export class SequenceMode extends BaseMode {
       );
     });
 
-    return newPresetNode;
+    // Return the last created preset for proper sequencing
+    return newPresetNodes[newPresetNodes.length - 1];
   }
 
   private replaceSelectionsWithPreset(
@@ -2831,14 +3224,14 @@ export class SequenceMode extends BaseMode {
     } else if (editor.isSequenceEditMode) {
       const newNodePosition = this.getNewNodePosition();
       const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
-      const previousTwoStrandedNodeInSameChain =
+      const previousTwoStrandedNodeInSameChainInSameChain =
         SequenceRenderer.previousNodeInSameChain;
       const nextNodeToConnect = this.isAntisenseEditMode
-        ? (currentTwoStrandedNode?.antisenseNode ?? null)
-        : (currentTwoStrandedNode?.senseNode ?? null);
+        ? currentTwoStrandedNode?.antisenseNode ?? null
+        : currentTwoStrandedNode?.senseNode ?? null;
       const previousNodeToConnect = this.isAntisenseEditMode
-        ? previousTwoStrandedNodeInSameChain?.antisenseNode
-        : previousTwoStrandedNodeInSameChain?.senseNode;
+        ? previousTwoStrandedNodeInSameChainInSameChain?.antisenseNode
+        : previousTwoStrandedNodeInSameChainInSameChain?.senseNode;
 
       const newPresetNode = this.createRnaPresetNode(preset, newNodePosition);
 
@@ -2887,7 +3280,7 @@ export class SequenceMode extends BaseMode {
   ) {
     const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
     const newNodePosition = this.getNewNodePosition();
-    const previousTwoStrandedNodeInSameChain =
+    const previousTwoStrandedNodeInSameChainInSameChain =
       SequenceRenderer.previousNodeInSameChain;
 
     if (
@@ -2895,7 +3288,7 @@ export class SequenceMode extends BaseMode {
       previousNodeToConnect
     ) {
       if (
-        !previousTwoStrandedNodeInSameChain?.antisenseNode &&
+        !previousTwoStrandedNodeInSameChainInSameChain?.antisenseNode &&
         !this.isR2Free(previousNodeToConnect)
       ) {
         this.showMergeWarningModal();
@@ -2988,6 +3381,19 @@ export class SequenceMode extends BaseMode {
     });
   }
 
+  /**
+   * Converts a node or existing ChainsCollection into a ChainsCollection.
+   * If the input is already a ChainsCollection, returns it as-is.
+   * Otherwise, wraps the node in a Chain and ChainsCollection.
+   */
+  private ensureChainsCollection(
+    nodeOrCollection: ChainsCollection | SubChainNode,
+  ): ChainsCollection {
+    return nodeOrCollection instanceof ChainsCollection
+      ? nodeOrCollection
+      : new ChainsCollection().add(new Chain().addNode(nodeOrCollection));
+  }
+
   private insertNewSequenceFragment(
     chainsCollectionOrNode: ChainsCollection | SubChainNode,
     nextNodeToConnect?: SequenceNode | null,
@@ -2996,17 +3402,13 @@ export class SequenceMode extends BaseMode {
     needConnectWithNextNodeInChain = true,
     addPhosphateIfNeeded = true,
   ) {
-    const chainsCollection =
-      chainsCollectionOrNode instanceof ChainsCollection
-        ? chainsCollectionOrNode
-        : new ChainsCollection().add(
-            new Chain().addNode(chainsCollectionOrNode),
-          );
+    const chainsCollection = this.ensureChainsCollection(
+      chainsCollectionOrNode,
+    );
     const currentNode =
       nextNodeToConnect === null
         ? undefined
-        : (nextNodeToConnect ??
-          SequenceRenderer.currentEdittingNode?.senseNode);
+        : nextNodeToConnect ?? SequenceRenderer.currentEdittingNode?.senseNode;
     const previousNodeInSameChain =
       previousNodeToConnect ??
       SequenceRenderer.previousNodeInSameChain?.senseNode;
@@ -3060,10 +3462,12 @@ export class SequenceMode extends BaseMode {
     if (this.isEditMode) {
       const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
       const currentNode = currentTwoStrandedNode?.senseNode;
-      const previousTwoStrandedNode = SequenceRenderer.previousNode;
-      const previousNode = previousTwoStrandedNode?.senseNode;
+      const previousTwoStrandedNodeInSameChain = SequenceRenderer.previousNode;
+      const previousNode = previousTwoStrandedNodeInSameChain?.senseNode;
       const twoStrandedNodeBeforePreviousNode = previousNode
-        ? SequenceRenderer.getPreviousNodeInSameChain(previousTwoStrandedNode)
+        ? SequenceRenderer.getPreviousNodeInSameChain(
+            previousTwoStrandedNodeInSameChain,
+          )
         : undefined;
       const nodeBeforePreviousNode =
         twoStrandedNodeBeforePreviousNode?.senseNode;

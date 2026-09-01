@@ -3,6 +3,7 @@ import { debounce, DebouncedFunc } from 'lodash';
 
 type UseDebouncedCallbackResult<T extends (...args: never[]) => unknown> = {
   debouncedCallback: (...args: Parameters<T>) => void;
+  invokeImmediately: (...args: Parameters<T>) => ReturnType<T>;
   cancel: () => void;
 };
 
@@ -33,7 +34,11 @@ export function useDebouncedCallback<T extends (...args: never[]) => unknown>(
     (...args: Parameters<T>) => debounceInstanceRef.current?.(...args),
     [],
   );
+  const invokeImmediately = useCallback(
+    (...args: Parameters<T>) => callbackRef.current(...args) as ReturnType<T>,
+    [],
+  );
   const cancel = useCallback(() => debounceInstanceRef.current?.cancel(), []);
 
-  return { debouncedCallback, cancel };
+  return { debouncedCallback, invokeImmediately, cancel };
 }

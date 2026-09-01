@@ -784,8 +784,9 @@ export class Ketcher {
     },
   ): Promise<Blob> {
     let meta: string;
+    const outputFormat = options.outputFormat || 'png';
 
-    switch (options.outputFormat) {
+    switch (outputFormat) {
       case 'svg':
         meta = 'image/svg+xml';
         break;
@@ -796,11 +797,35 @@ export class Ketcher {
         options.outputFormat = 'png';
     }
     const serverSettings = this.editor.serverSettings;
-
-    const base64 = await this.structService.generateImageAsBase64(data, {
+    const mergedOptions = {
       ...serverSettings,
       ...options,
-    });
+    };
+
+    // For PNG export with hidden charges, generate SVG first then convert to PNG
+    // This allows us to filter charge symbols from SVG before rasterization
+    const shouldHideCharges = mergedOptions['render-charges-visible'] === false;
+    if (outputFormat === 'png' && shouldHideCharges) {
+      // Generate SVG with charges hidden (post-processing in structService)
+      const svgDataUrl = await this.structService.generateImageAsBase64(data, {
+        ...mergedOptions,
+        outputFormat: 'svg',
+      });
+
+      // Convert SVG to PNG using Canvas API (scale=1 to match SVG dimensions)
+      const { svgToPng } = await import('../utilities/svgToPng');
+      const pngBlob = await svgToPng(
+        'data:image/svg+xml;base64,' + svgDataUrl,
+        1,
+      );
+      return pngBlob;
+    }
+
+    // Standard flow for SVG or PNG without charge filtering
+    const base64 = await this.structService.generateImageAsBase64(
+      data,
+      mergedOptions,
+    );
     const byteCharacters = atob(base64);
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {

@@ -51,6 +51,57 @@ import { KetcherLogger, normalizeError } from 'utilities';
 import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
 import { ketcherProvider } from 'application/ketcherProvider';
 
+/**
+ * Removes charge symbol path elements from Indigo-generated SVG.
+ * Charge symbols are rendered as simple path elements with fill-rule="nonzero"
+ * that appear near the end of the SVG document.
+ *
+ * @param svgDataUrl - SVG data URL with base64 encoding
+ * @returns SVG data URL without charge paths
+ */
+function removeChargePathsFromSvg(svgDataUrl: string): string {
+  // Constants for charge path detection
+  const CHARGE_PATH_DISTANCE_FROM_END = 15; // Lines from end where charge paths typically appear
+  const MAX_CHARGE_PATH_LENGTH = 300; // Max path data length for simple charge symbols
+
+  // Decode SVG from base64 data URL
+  const svgContent = svgDataUrl.replace(/^data:image\/svg\+xml;base64,/, '');
+  const decodedSvg = atob(svgContent);
+
+  const svgLines = decodedSvg.split('\n');
+  const filteredLines: string[] = [];
+
+  for (let i = 0; i < svgLines.length; i++) {
+    const line = svgLines[i];
+
+    // Charge path detection heuristics:
+    // 1. Contains <path> with fill-rule="nonzero"
+    // 2. Is near the end (charge paths are added last by Indigo)
+    // 3. Is a self-closing tag (ends with />)
+    // 4. Has simple path data (charge symbols are geometric shapes: +, -)
+    const isNearEnd = i > svgLines.length - CHARGE_PATH_DISTANCE_FROM_END;
+    const hasPath = line.includes('<path');
+    const hasFillRule = line.includes('fill-rule="nonzero"');
+    const isSelfClosing = line.trim().endsWith('/>');
+
+    const pathMatch = line.match(/d="([^"]+)"/);
+    const isSimplePath =
+      pathMatch && pathMatch[1].length < MAX_CHARGE_PATH_LENGTH;
+
+    const isChargePath =
+      hasPath && hasFillRule && isSelfClosing && isNearEnd && isSimplePath;
+
+    if (!isChargePath) {
+      filteredLines.push(line);
+    }
+  }
+
+  const cleanedSvg = filteredLines.join('\n');
+
+  // Return with data URL prefix
+  return 'data:image/svg+xml;base64,' + btoa(cleanedSvg);
+}
+
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
     function iterate() {
@@ -450,6 +501,7 @@ export class RemoteStructService implements StructService {
     options?: GenerateImageOptions,
   ): Promise<string> {
     const outputFormat: OutputFormatType = options?.outputFormat ?? 'png';
+    const shouldHideCharges = options?.['render-charges-visible'] === false;
 
     return indigoCall(
       'POST',
@@ -486,7 +538,19 @@ export class RemoteStructService implements StructService {
           : undefined,
       },
       (response) => response.then((resp) => resp.text()),
-    );
+    ).then((result) => {
+      // Post-process SVG output to remove charge labels if needed
+      if (shouldHideCharges && outputFormat === 'svg') {
+        try {
+          return removeChargePathsFromSvg(result);
+        } catch {
+          // Fallback to original output if post-processing fails
+          return result;
+        }
+      }
+
+      return result;
+    });
   }
 
   toggleExplicitHydrogens(

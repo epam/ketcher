@@ -885,6 +885,7 @@ class IndigoService implements StructService {
           ? getLabelRenderModeForIndigo(this.ketcherId)
           : undefined,
         'render-coloring': restOptions['render-coloring'],
+        'render-charges-visible': restOptions['render-charges-visible'],
         'render-font-size': restOptions['render-font-size'],
         'render-font-size-unit': restOptions['render-font-size-unit'],
         'render-font-size-sub': restOptions['render-font-size-sub'],

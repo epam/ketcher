@@ -50,6 +50,57 @@ const normalizeError = (error: unknown): Error => {
   }
 };
 
+/**
+ * Removes charge symbol path elements from Indigo-generated SVG.
+ * Charge symbols are rendered as simple path elements with fill-rule="nonzero"
+ * that appear near the end of the SVG document.
+ *
+ * @param base64Svg - Base64-encoded SVG string (may include data URL prefix)
+ * @returns Base64-encoded SVG without charge paths
+ */
+function removeChargePathsFromSvg(base64Svg: string): string {
+  // Constants for charge path detection
+  const CHARGE_PATH_DISTANCE_FROM_END = 15; // Lines from end where charge paths typically appear
+  const MAX_CHARGE_PATH_LENGTH = 300; // Max path data length for simple charge symbols
+
+  // Decode SVG from base64
+  const svgContent = base64Svg.replace(/^data:image\/svg\+xml;base64,/, '');
+  const decodedSvg = atob(svgContent);
+
+  const svgLines = decodedSvg.split('\n');
+  const filteredLines = [];
+
+  for (let i = 0; i < svgLines.length; i++) {
+    const line = svgLines[i];
+
+    // Charge path detection heuristics:
+    // 1. Contains <path> with fill-rule="nonzero"
+    // 2. Is near the end (charge paths are added last by Indigo)
+    // 3. Is a self-closing tag (ends with />)
+    // 4. Has simple path data (charge symbols are geometric shapes: +, -)
+    const isNearEnd = i > svgLines.length - CHARGE_PATH_DISTANCE_FROM_END;
+    const hasPath = line.includes('<path');
+    const hasFillRule = line.includes('fill-rule="nonzero"');
+    const isSelfClosing = line.trim().endsWith('/>');
+
+    const pathMatch = line.match(/d="([^"]+)"/);
+    const isSimplePath =
+      pathMatch && pathMatch[1].length < MAX_CHARGE_PATH_LENGTH;
+
+    const isChargePath =
+      hasPath && hasFillRule && isSelfClosing && isNearEnd && isSimplePath;
+
+    if (!isChargePath) {
+      filteredLines.push(line);
+    }
+  }
+
+  const cleanedSvg = filteredLines.join('\n');
+
+  // Return base64 only (wrapper will add data URL prefix)
+  return btoa(cleanedSvg);
+}
+
 type HandlerType = (
   indigo: IndigoModule,
   indigoOptions: IndigoOptions,
@@ -103,10 +154,33 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
     case Command.GenerateImageAsBase64: {
       const data: GenerateImageCommandData =
         message.data as GenerateImageCommandData;
+
+      const shouldHideCharges =
+        data.options?.['render-charges-visible'] === false;
+
+      // Remove render-charges-visible from options before passing to Indigo
+      // (Indigo doesn't recognize this parameter)
+      const { 'render-charges-visible': _, ...indigoOptions } =
+        data.options || {};
+
       handle(
-        (indigo, indigoOptions) => indigo.render(data.struct, indigoOptions),
+        (indigo, indigoOptions) => {
+          const rendered = indigo.render(data.struct, indigoOptions);
+
+          // Post-process SVG output to remove charge labels if needed
+          if (shouldHideCharges && data.outputFormat === 'svg') {
+            try {
+              return removeChargePathsFromSvg(rendered);
+            } catch {
+              // Fallback to original output if post-processing fails
+              return rendered;
+            }
+          }
+
+          return rendered;
+        },
         {
-          ...data.options,
+          ...indigoOptions,
           'render-output-format': data.outputFormat,
           'render-background-color': data.backgroundColor,
         },

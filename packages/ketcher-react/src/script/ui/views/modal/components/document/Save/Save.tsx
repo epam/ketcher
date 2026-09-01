@@ -342,6 +342,53 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
 
       serverOptions.outputFormat = type;
 
+      // For PNG preview with hidden charges, generate SVG first then convert to PNG
+      const shouldHideCharges =
+        serverOptions['render-charges-visible'] === false;
+      if (type === 'png' && shouldHideCharges) {
+        return server
+          .generateImageAsBase64(structStr, {
+            ...serverOptions,
+            outputFormat: 'svg',
+          } as GenerateImageOptions)
+          .then(async (svgBase64) => {
+            // Import svgToPng utility
+            const { svgToPng } = await import('ketcher-core');
+            // Use scale=1 to match SVG dimensions exactly
+            const pngBlob = await svgToPng(
+              'data:image/svg+xml;base64,' + svgBase64,
+              1,
+            );
+
+            // Convert blob to base64 for preview
+            return new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                const result = reader.result as string;
+                // Remove data URL prefix to get just base64
+                const base64 = result.replace(/^data:image\/png;base64,/, '');
+                resolve(base64);
+              };
+              reader.onerror = reject;
+              reader.readAsDataURL(pngBlob);
+            });
+          })
+          .then((base64) => {
+            this.setState({
+              disableControls: false,
+              tabIndex: 0,
+              imageSrc: base64,
+              isLoading: false,
+            });
+          })
+          .catch((e) => {
+            KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
+            errorHandler(e);
+            this.props.onResetForm(formState);
+            return e;
+          });
+      }
+
       return server
         .generateImageAsBase64(structStr, serverOptions as GenerateImageOptions)
         .then((base64) => {

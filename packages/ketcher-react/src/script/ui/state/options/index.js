@@ -100,6 +100,7 @@ function getSerilizedServerOptions(options) {
 
   let newOptions = {
     'render-coloring': options.atomColoring,
+    'render-charges-visible': options.showCharge,
     'render-font-size': options.fontsz,
     'render-font-size-unit': options.fontszUnit,
     'render-font-size-sub': options.fontszsub,

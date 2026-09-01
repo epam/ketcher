@@ -1,21 +1,39 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { debounce, DebouncedFunc } from 'lodash';
+
+type UseDebouncedCallbackResult<T extends (...args: never[]) => unknown> = {
+  debouncedCallback: (...args: Parameters<T>) => void;
+  cancel: () => void;
+};
 
 export function useDebouncedCallback<T extends (...args: never[]) => unknown>(
   callback: T,
   delay: number,
-): DebouncedFunc<T> {
-  const debouncedCallback = useMemo(
-    () => debounce(callback, delay),
-    [callback, delay],
-  );
+): UseDebouncedCallbackResult<T> {
+  const callbackRef = useRef(callback);
+  const debounceInstanceRef = useRef<DebouncedFunc<T> | undefined>(undefined);
 
-  useEffect(
-    () => () => {
-      debouncedCallback.cancel();
-    },
-    [debouncedCallback],
-  );
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
 
-  return debouncedCallback;
+  useEffect(() => {
+    debounceInstanceRef.current = debounce(
+      (...args: never[]) => callbackRef.current(...args),
+      delay,
+    ) as DebouncedFunc<T>;
+
+    return () => {
+      debounceInstanceRef.current?.cancel();
+      debounceInstanceRef.current = undefined;
+    };
+  }, [delay]);
+
+  const debouncedCallback = useCallback(
+    (...args: Parameters<T>) => debounceInstanceRef.current?.(...args),
+    [],
+  );
+  const cancel = useCallback(() => debounceInstanceRef.current?.cancel(), []);
+
+  return { debouncedCallback, cancel };
 }

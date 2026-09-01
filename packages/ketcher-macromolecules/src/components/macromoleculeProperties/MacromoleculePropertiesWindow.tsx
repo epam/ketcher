@@ -980,10 +980,10 @@ export const MacromoleculePropertiesWindow = () => {
   const recalculateMacromoleculeProperties =
     useRecalculateMacromoleculeProperties();
   const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
-  const debouncedRecalculateMacromoleculeProperties = useDebouncedCallback(
-    recalculateMacromoleculeProperties,
-    500,
-  );
+  const {
+    debouncedCallback: debouncedRecalculateMacromoleculeProperties,
+    cancel: cancelDebouncedRecalculateMacromoleculeProperties,
+  } = useDebouncedCallback(recalculateMacromoleculeProperties, 500);
 
   useEffect(() => {
     if (recalculatePropertiesHandler) {
@@ -1030,14 +1030,14 @@ export const MacromoleculePropertiesWindow = () => {
   // re-runs the effect above and schedules a debounced call; cancel it so
   // only this immediate calculation actually runs.
   useEffect(() => {
-    debouncedRecalculateMacromoleculeProperties.cancel();
+    cancelDebouncedRecalculateMacromoleculeProperties();
     recalculateMacromoleculeProperties(skipDataFetch);
   }, [
     unipositiveIonsMeasurementUnit,
     oligonucleotidesMeasurementUnit,
     skipDataFetch,
-    debouncedRecalculateMacromoleculeProperties,
     recalculateMacromoleculeProperties,
+    cancelDebouncedRecalculateMacromoleculeProperties,
   ]);
 
   // The properties object is re-parsed from the Indigo response on every

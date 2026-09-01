@@ -33,6 +33,8 @@ import { MacromoleculesConverter } from 'application/editor/MacromoleculesConver
 import { INVALID } from 'domain/entities/BaseMicromoleculeEntity';
 import { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { Struct } from 'domain/entities/struct';
+import { KetSerializer } from 'domain/serializers';
+import { StereoFlagAddOperation } from 'application/editor/operations/stereoFlag';
 
 function createStructWithSGroup(type = SGroup.TYPES.MUL) {
   const struct = new Struct();
@@ -340,6 +342,46 @@ describe('Drawing Entities Manager', () => {
     expect(editor.renderersContainer.sgroups.size).toEqual(1);
     expect(document.querySelector('[data-testid="s-group"]')).toBeTruthy();
     expect(document.querySelector('[data-label-text="1"]')).toBeTruthy();
+  });
+
+  it('should merge stereo flags into the target drawing entities manager', () => {
+    const targetDrawingEntitiesManager = new DrawingEntitiesManager();
+    const ketSerializer = new KetSerializer();
+    const deserializedKet = ketSerializer.deserializeToDrawingEntities(
+      JSON.stringify({
+        ket_version: '2.0.0',
+        root: {
+          nodes: [{ $ref: 'mol0' }],
+          connections: [],
+          templates: [],
+        },
+        mol0: {
+          type: 'molecule',
+          atoms: [
+            { label: 'C', location: [0, 0, 0] },
+            { label: 'C', location: [1, 0, 0], stereoLabel: '&1' },
+          ],
+          bonds: [{ type: 1, atoms: [0, 1], stereo: 1 }],
+          stereoFlagPosition: { x: -1, y: 1, z: 0 },
+        },
+      }),
+    );
+
+    expect(deserializedKet).toBeDefined();
+    if (!deserializedKet) {
+      throw new Error('Expected KET content to be deserialized');
+    }
+    const sourceDrawingEntitiesManager = deserializedKet.drawingEntitiesManager;
+    expect(sourceDrawingEntitiesManager.stereoFlags.size).toBe(1);
+
+    const { command, mergedDrawingEntities } =
+      sourceDrawingEntitiesManager.mergeInto(targetDrawingEntitiesManager);
+
+    expect(targetDrawingEntitiesManager.stereoFlags.size).toBe(1);
+    expect(mergedDrawingEntities.stereoFlags.size).toBe(1);
+    expect(command.operations).toEqual(
+      expect.arrayContaining([expect.any(StereoFlagAddOperation)]),
+    );
   });
 
   it('should split disconnected superatom fragments with attachment points into separate macro molecules', () => {

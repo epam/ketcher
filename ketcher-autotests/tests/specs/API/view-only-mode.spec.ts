@@ -1,6 +1,5 @@
-import { expect, test } from '@fixtures';
+import { expect, test, Page } from '@fixtures';
 import {
-  waitForPageInit,
   takePageScreenshot,
   openFileAndAddToCanvasAsNewProject,
   takeTopToolbarScreenshot,
@@ -46,17 +45,21 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { LabelEditDialog } from '@tests/pages/molecules/canvas/LabelEditDialog';
 
-test.describe('Tests for API setMolecule/getMolecule', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+let page: Page;
 
-  test('Check that application administrator can switch into and out of view-only mode at runtime using Ketcher API ketcher.editor.options', async ({
-    page,
-  }) => {
+test.describe('Tests for API setMolecule/getMolecule', () => {
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
+  });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+
+  test('Check that application administrator can switch into and out of view-only mode at runtime using Ketcher API ketcher.editor.options', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
-    Description: The application administrator can switch Ketcher into and out of view-only mode at runtime using 
+    Description: The application administrator can switch Ketcher into and out of view-only mode at runtime using
     the Ketcher API ketcher.editor.options({ viewOnlyMode: true }) and ketcher.editor.options({ viewOnlyMode: false })
     */
     await enableViewOnlyMode(page);
@@ -65,12 +68,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takePageScreenshot(page);
   });
 
-  test('Check that application administrator can switch into and out of view-only mode at runtime using Ketcher API ketcher.editor.setOptions', async ({
-    page,
-  }) => {
+  test('Check that application administrator can switch into and out of view-only mode at runtime using Ketcher API ketcher.editor.setOptions', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
-    Description: The application administrator can switch Ketcher into and out of view-only mode at runtime using 
+    Description: The application administrator can switch Ketcher into and out of view-only mode at runtime using
     the Ketcher API window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: true })) and window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: false }))
     */
     await enableViewOnlyModeBySetOptions(page);
@@ -79,9 +80,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takePageScreenshot(page);
   });
 
-  test('Verify that view-only mode is still turned on after two requests in a row window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: true}))', async ({
-    page,
-  }) => {
+  test('Verify that view-only mode is still turned on after two requests in a row window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: true}))', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: View-only mode is still turned on after two requests in a row window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: true}))
@@ -91,9 +90,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takePageScreenshot(page);
   });
 
-  test('Verify that view-only mode is still turned off after two requests in a row window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: false}))', async ({
-    page,
-  }) => {
+  test('Verify that view-only mode is still turned off after two requests in a row window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: false}))', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: View-only mode is still turned off after two requests in a row window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: false}))
@@ -105,14 +102,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takePageScreenshot(page);
   });
 
-  test('Get an error in console after sending request with the wrong parameters window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode123: false123}))', async ({
-    page,
-  }) => {
+  test('Get an error in console after sending request with the wrong parameters window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode123: false123}))', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Error in console after sending request with the wrong parameters window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode123: false}))
     */
-    page.on('console', (msg) => {
+    page.once('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(
           msg.type() === 'error',
@@ -127,9 +122,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     });
   });
 
-  test('Add to canvas different elements, turn on view only mode, verify that all editing tools are disabled in toolbars for elements', async ({
-    page,
-  }) => {
+  test('Add to canvas different elements, turn on view only mode, verify that all editing tools are disabled in toolbars for elements', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: All editing tools are disabled in toolbars for elements
@@ -142,9 +135,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takePageScreenshot(page, { timeout: 10000 });
   });
 
-  test('Turn on view-only mode, add to canvas different elements from file, verify that all editing tools are disabled in toolbars for elements', async ({
-    page,
-  }) => {
+  test('Turn on view-only mode, add to canvas different elements from file, verify that all editing tools are disabled in toolbars for elements', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Turn on view-only mode, add to canvas different elements from file, verify that all editing tools are disabled in toolbars for elements
@@ -157,12 +148,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takePageScreenshot(page);
   });
 
-  test('Verify that the following tools and functions are enabled in view-only mode(Open, Save, Copy) ', async ({
-    page,
-  }) => {
+  test('Verify that the following tools and functions are enabled in view-only mode(Open, Save, Copy) ', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
-    Description: Tools and functions are enabled in view-only mode(Open, Save, Copy) 
+    Description: Tools and functions are enabled in view-only mode(Open, Save, Copy)
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
@@ -174,9 +163,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeTopToolbarScreenshot(page);
   });
 
-  test('Verify that the hand and selection tools are enabled in view-only mode', async ({
-    page,
-  }) => {
+  test('Verify that the hand and selection tools are enabled in view-only mode', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Hand and selection tools are enabled in view-only mode
@@ -189,9 +176,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeLeftToolbarScreenshot(page);
   });
 
-  test('10. Verify that elements on Canvas can be copied (as MOL) in view-only mode', async ({
-    page,
-  }) => {
+  test('10. Verify that elements on Canvas can be copied (as MOL) in view-only mode', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Elements on Canvas copied (as MOL) in view-only mode
@@ -208,9 +193,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takePageScreenshot(page);
   });
 
-  test('Verify that elements on Canvas can be copied (as KET) in view-only mode', async ({
-    page,
-  }) => {
+  test('Verify that elements on Canvas can be copied (as KET) in view-only mode', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Elements on Canvas copied (as KET) in view-only mode
@@ -226,12 +209,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that the help, about and fullscreen mode are enabled in view-only mode', async ({
-    page,
-  }) => {
+  test('Verify that the help, about and fullscreen mode are enabled in view-only mode', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
-    Description: The help, about and fullscreen mode are enabled in view-only mode 
+    Description: The help, about and fullscreen mode are enabled in view-only mode
     */
     const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
     const aboutButton = CommonTopRightToolbar(page).aboutButton;
@@ -244,9 +225,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeTopToolbarScreenshot(page);
   });
 
-  test('Verify that the "Check Structure", "Calculated Values", and "3D Viewer" tools are enabled in view-only mode', async ({
-    page,
-  }) => {
+  test('Verify that the "Check Structure", "Calculated Values", and "3D Viewer" tools are enabled in view-only mode', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The "Check Structure", "Calculated Values", and "3D Viewer" tools are enabled in view-only mode
@@ -262,9 +241,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeTopToolbarScreenshot(page);
   });
 
-  test('Verify that the "Check Structure", "Calculated Values", and "3D Viewer" tools are operational in view-only mode', async ({
-    page,
-  }) => {
+  test('Verify that the "Check Structure", "Calculated Values", and "3D Viewer" tools are operational in view-only mode', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The "Check Structure", "Calculated Values", and "3D Viewer" tools are operational in view-only mode
@@ -297,9 +274,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that the "Add to Canvas" button is disabled in the "Open structure" dialog window', async ({
-    page,
-  }) => {
+  test('Verify that the "Add to Canvas" button is disabled in the "Open structure" dialog window', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The "Add to Canvas" button is disabled in the "Open structure" dialog window
@@ -335,9 +310,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test.describe('Hotkeys test', () => {
     for (const hotkey of hotkeys) {
-      test(`Verify that hotkey ${hotkey.keys} triggers ${hotkey.action}`, async ({
-        page,
-      }) => {
+      test(`Verify that hotkey ${hotkey.keys} triggers ${hotkey.action}`, async () => {
         const saveStructureTextarea =
           SaveStructureDialog(page).saveStructureTextarea;
 
@@ -362,9 +335,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     }
   });
 
-  test('Verify that hotkeys for editing works after switching from View only mode to normal mode', async ({
-    page,
-  }) => {
+  test('Verify that hotkeys for editing works after switching from View only mode to normal mode', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Hotkeys for editing works after switching from View only mode to normal mode
@@ -384,9 +355,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that editing-related hotkeys (e.g., adding or modifying elements) are disabled in view-only mode', async ({
-    page,
-  }) => {
+  test('Verify that editing-related hotkeys (e.g., adding or modifying elements) are disabled in view-only mode', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Eiting-related hotkeys (e.g., adding or modifying elements) are disabled in view-only mode
@@ -405,7 +374,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify zoom functionality in view-only mode', async ({ page }) => {
+  test('Verify zoom functionality in view-only mode', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: ZoomIn and ZoomOut works as expected.
@@ -421,9 +390,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that the right-click context menu is fully blocked in view-only mode', async ({
-    page,
-  }) => {
+  test('Verify that the right-click context menu is fully blocked in view-only mode', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The right-click context menu is fully blocked in view-only mode
@@ -445,9 +412,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that the rotation tool is fully blocked in view-only mode', async ({
-    page,
-  }) => {
+  test('Verify that the rotation tool is fully blocked in view-only mode', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: When we select structure there is no rotation tool above.
@@ -461,9 +426,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that in view-only mode, when user clicks and holds on an atom for several seconds, atoms edit window does not appear', async ({
-    page,
-  }) => {
+  test('Verify that in view-only mode, when user clicks and holds on an atom for several seconds, atoms edit window does not appear', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: In view-only mode, when user clicks and holds on an atom for several seconds, atom's edit window does not appear.
@@ -487,9 +450,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that when view mode is triggered tool should reset to selection', async ({
-    page,
-  }) => {
+  test('Check that when view mode is triggered tool should reset to selection', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: When view mode is triggered tool reset to selection (from Fragment to Rectangle).
@@ -502,12 +463,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeLeftToolbarScreenshot(page);
   });
 
-  test('Check that after disabling View Only mode, it’s possible to select all structures and move them together to a new place on the canvas', async ({
-    page,
-  }) => {
+  test('Check that after disabling View Only mode, it’s possible to select all structures and move them together to a new place on the canvas', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
-    Description: After disabling View Only mode, it’s possible to select all structures and move them together to a new place on the canvas.
+    Description: After disabling View Only mode, it's possible to select all structures and move them together to a new place on the canvas.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
@@ -524,7 +483,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check saving in KET format in View only mode', async ({ page }) => {
+  test('Check saving in KET format in View only mode', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Structure saved and opened from KET.
@@ -544,9 +503,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check saving in MOL V2000 format in View only mode', async ({
-    page,
-  }) => {
+  test('Check saving in MOL V2000 format in View only mode', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Structure saved and opened from MOL V2000.
@@ -568,9 +525,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check saving in MOL V3000 format in View only mode', async ({
-    page,
-  }) => {
+  test('Check saving in MOL V3000 format in View only mode', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Structure saved and opened from MOL V3000.

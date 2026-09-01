@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  Paper,
 } from '@mui/material';
 import React, { useMemo } from 'react';
 import { useTheme } from '@emotion/react';
@@ -104,8 +105,6 @@ export const Modal = ({
 
   const paperProps = useMemo(
     () => ({
-      ...(testId ? { testid: testId } : {}),
-      'data-testid': testId,
       style: {
         background: theme.ketcher.color.background.primary,
         borderRadius: '8px',
@@ -120,7 +119,6 @@ export const Modal = ({
       },
     }),
     [
-      testId,
       theme.ketcher.color.background.primary,
       theme.ketcher.color.text.primary,
       showExpandButton,
@@ -154,14 +152,23 @@ export const Modal = ({
 
   return (
     <StyledDialog
-      BackdropProps={backdropProps}
-      PaperProps={paperProps}
+      slotProps={{
+        backdrop: backdropProps,
+        paper: paperProps,
+      }}
+      PaperComponent={(paperComponentProps) => (
+        <Paper {...paperComponentProps} data-testid={testId} />
+      )}
       open={isOpen}
-      onClose={onClose}
+      onClose={(_event, reason) => {
+        if (reason === 'escapeKeyDown' && !showCloseButton) {
+          return;
+        }
+        onClose();
+      }}
       container={document.querySelector(
         KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
       )}
-      disableEscapeKeyDown={!showCloseButton}
       className={className}
       sx={{ padding: '24px' }}
     >

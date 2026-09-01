@@ -27,6 +27,7 @@ import {
   SettingsManager,
   getSelectionFromStruct,
 } from 'ketcher-core';
+import { showSnackbarNotification } from './notifications';
 
 import { supportedSGroupTypes } from './constants';
 import { setAnalyzingFile } from './request';
@@ -221,11 +222,15 @@ export function load(struct: string | Struct, options?) {
       if (fragment) {
         if (parsedStruct.isBlank()) {
           dispatch(removeStructAction());
+          dispatch(showSnackbarNotification('No structure'));
         } else {
           dispatch(onAction({ tool: 'paste', opts: parsedStruct }));
         }
       } else {
         editor.struct(parsedStruct, method === 'layout');
+        if (parsedStruct.isBlank()) {
+          dispatch(showSnackbarNotification('No structure'));
+        }
       }
 
       if (!preserveViewport) {

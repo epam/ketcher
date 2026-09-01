@@ -69,21 +69,17 @@ const MonomerConnection = ({
   isReconnectionDialog,
 }: Readonly<MonomerConnectionProps>): React.ReactElement => {
   const editor = useAppSelector(selectEditor);
-  const [initialFirstMonomerAttachmentPoint] = useState(
-    () => polymerBond?.firstMonomerAttachmentPoint,
-  );
-  const [initialSecondMonomerAttachmentPoint] = useState(
-    () => polymerBond?.secondMonomerAttachmentPoint,
-  );
-  const [hasFreeAttachmentPoints] = useState(
-    () =>
-      firstMonomer?.hasFreeAttachmentPoint ||
-      secondMonomer?.hasFreeAttachmentPoint,
-  );
+  const initialFirstMonomerAttachmentPoint =
+    polymerBond?.firstMonomerAttachmentPoint;
+  const initialSecondMonomerAttachmentPoint =
+    polymerBond?.secondMonomerAttachmentPoint;
 
   if (!firstMonomer || !secondMonomer) {
     throw new Error('Monomers must exist!');
   }
+
+  const hasFreeAttachmentPoints =
+    firstMonomer.hasFreeAttachmentPoint || secondMonomer.hasFreeAttachmentPoint;
 
   const [firstSelectedAttachmentPoint, setFirstSelectedAttachmentPoint] =
     useState<string | null>(

@@ -1319,6 +1319,17 @@ export class SequenceRenderer {
     this.redrawPlaceholderNodesInRow(antisenseRow);
   }
 
+  // Vertical position of the row a node is rendered on. Nodes on the same
+  // visual line share it exactly; a line break (row wrap or new chain) yields a
+  // different value, which is how placeholder highlighting is kept from bleeding
+  // across lines.
+  private static getRowY(node?: SequenceNode): number | undefined {
+    const renderer = node?.renderer;
+    return renderer instanceof BaseSequenceItemRenderer
+      ? renderer.scaledMonomerPositionForSequence?.y
+      : undefined;
+  }
+
   private static redrawPlaceholderNodesInRow(
     row: Array<SequenceNode | undefined>,
   ) {
@@ -1358,8 +1369,20 @@ export class SequenceRenderer {
         }
       }
 
-      // Placeholder is selected only if BOTH left and right are selected
-      const selected = Boolean(leftReal?.selected && rightReal?.selected);
+      // A placeholder is highlighted only when it sits inside a selected range
+      // on the SAME visual line: both bounding real nodes must be selected and
+      // rendered on the same row. Without the same-row guard the flattened row
+      // spans line/chain breaks, so a trailing placeholder at the end of a line
+      // would borrow the first node of the next line as its right neighbor and
+      // stay green even though nothing follows it on that line (#6794).
+      const onSameLine =
+        leftReal !== undefined &&
+        rightReal !== undefined &&
+        this.getRowY(leftReal.node) === this.getRowY(rightReal.node);
+
+      const selected = Boolean(
+        onSameLine && leftReal?.selected && rightReal?.selected,
+      );
       node.renderer?.applySelectionState(selected);
     });
   }

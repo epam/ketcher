@@ -1322,32 +1322,46 @@ export class SequenceRenderer {
   private static redrawPlaceholderNodesInRow(
     row: Array<SequenceNode | undefined>,
   ) {
-    let previousRealSelected = false;
-    let pendingPlaceholders: Array<BackBoneSequenceNode | EmptySequenceNode> =
-      [];
+    // Build a map of each node's left and right real neighbors
+    const realNodes: Array<{
+      node: SequenceNode;
+      selected: boolean;
+      index: number;
+    }> = [];
 
-    const flushPlaceholders = (selected: boolean) => {
-      pendingPlaceholders.forEach((placeholder) =>
-        placeholder.renderer?.applySelectionState(selected),
-      );
-      pendingPlaceholders = [];
-    };
-
-    row.forEach((node) => {
-      if (this.isPlaceholderSequenceNode(node)) {
-        pendingPlaceholders.push(node);
-        return;
+    row.forEach((node, idx) => {
+      if (node && !this.isPlaceholderSequenceNode(node)) {
+        realNodes.push({
+          node,
+          selected: Boolean(node.monomer?.selected),
+          index: idx,
+        });
       }
-
-      // A pending placeholder is selected only when the real nodes on both
-      // sides are selected. Any gap (missing node) counts as unselected.
-      const currentRealSelected = Boolean(node?.monomer?.selected);
-      flushPlaceholders(previousRealSelected && currentRealSelected);
-      previousRealSelected = currentRealSelected;
     });
 
-    // Trailing placeholders have no real node after them, so never selected.
-    flushPlaceholders(false);
+    // For each node in the row, determine if it should be selected
+    row.forEach((node, idx) => {
+      if (!this.isPlaceholderSequenceNode(node)) {
+        return; // Not a placeholder, skip
+      }
+
+      // Find the real nodes to the left and right of this placeholder
+      let leftReal: (typeof realNodes)[0] | undefined;
+      let rightReal: (typeof realNodes)[0] | undefined;
+
+      for (const realNode of realNodes) {
+        if (realNode.index < idx) {
+          leftReal = realNode; // Keep updating until we find the closest left
+        } else if (realNode.index > idx && !rightReal) {
+          rightReal = realNode; // First one to the right
+          break;
+        }
+      }
+
+      // Placeholder is selected only if BOTH left and right are selected
+      const selected = Boolean(leftReal?.selected && rightReal?.selected);
+      node.renderer?.applySelectionState(selected);
+    });
   }
 
   public static unselectEmptyAndBackboneSequenceNodes() {

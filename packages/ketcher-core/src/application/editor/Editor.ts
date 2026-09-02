@@ -2455,14 +2455,23 @@ export class CoreEditor {
   }
 
   public zoomToStructuresIfNeeded() {
-    if (
-      // Temporary solution to disable autozoom for the polymer editor in e2e tests
-      window._ketcher_isAutozoomDisabled ||
-      !this.isCurrentModeWithAutozoom() ||
-      !this.drawingEntitiesManager.hasMonomers
-    ) {
-      return;
-    }
+    // Temporary solution to disable autozoom for the polymer editor in e2e tests
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (window._ketcher_isAutozoomDisabled) return;
+
+    const { drawingEntitiesManager } = this;
+
+    // Monomers are only auto-zoomed in flex/snake modes to preserve sequence
+    // layout behaviour. Arrows have no mode-specific layout and can otherwise
+    // end up outside the visible canvas, so they always participate.
+    const hasEntitiesToAutozoom =
+      (this.isCurrentModeWithAutozoom() &&
+        drawingEntitiesManager.hasMonomers) ||
+      drawingEntitiesManager.rxnArrows.size > 0 ||
+      drawingEntitiesManager.multitailArrows.size > 0;
+
+    if (!hasEntitiesToAutozoom) return;
     const structureBbox = getRenderedStructuresBbox();
 
     ZoomTool.instance.zoomStructureToFitHalfOfCanvas(structureBbox);

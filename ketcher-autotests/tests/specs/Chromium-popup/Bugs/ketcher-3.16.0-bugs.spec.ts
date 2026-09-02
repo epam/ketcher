@@ -1,13 +1,15 @@
 import { Page, test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
-  takeEditorScreenshot,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
   selectRectangleArea,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();
@@ -48,4 +50,24 @@ test('Case 1: Copy/paste action with large structions shouldnt cause expections'
     error.includes('No valid data on clipboard'),
   );
   expect(clipboardErrors.length).toBe(0);
+});
+
+test('Case 2: Aromatize action on clean canvas shouldnt add NULL in the beginning of exported molfile', async () => {
+  /**
+   * Test task: https://github.com/epam/ketcher/issues/10502
+   * Bug: https://github.com/epam/ketcher/issues/3951
+   * Description: NULL in MOLFILE appears after Aromatize is applied to empty canvas
+   * Scenario:
+   * 1. Open the app
+   * 2. Click Aromatize button
+   * 3. Click Ctrl+S
+   * Actual result: NULL appears in the beginning of the content (Molfile V2000)
+   * Expected result: NULL is not present
+   */
+  await IndigoFunctionsToolbar(page).aromatize();
+  await CommonTopLeftToolbar(page).saveButton.click();
+  const saveMolfilePreview = (
+    await SaveStructureDialog(page).saveStructureTextarea.allTextContents()
+  ).join();
+  expect(saveMolfilePreview).not.toMatch(/^null\b/i);
 });

@@ -25,9 +25,8 @@ jobs:
       - name: check connection
         run: curl -v https://sonar.epam.com/api/server/version
 
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - uses: actions/checkout@v4
+
       - uses: sonarsource/sonarqube-scan-action@v7.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

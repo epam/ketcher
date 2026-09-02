@@ -63,6 +63,7 @@ interface SGroupData {
   nucleotideComponent: string;
   subscript: string;
   expanded: boolean;
+  contractedFromExpanded?: boolean;
   attached: boolean;
   absolute: boolean;
   showUnits: boolean;

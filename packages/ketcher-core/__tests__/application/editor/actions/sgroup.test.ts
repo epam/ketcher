@@ -139,6 +139,151 @@ describe('setExpandMonomerSGroup', () => {
     expect(struct.bonds.get(bondId)?.stereo).toBe(Bond.PATTERN.STEREO.UP);
   });
 
+  it('preserves atom positions when collapsing a monomer', () => {
+    const struct = new Struct();
+    const firstMonomerAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+    );
+    const secondMonomerAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(1, 0) }),
+    );
+    const outsideAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(2, 1) }),
+    );
+    const internalBond = new Bond({
+      begin: firstMonomerAtomId,
+      end: secondMonomerAtomId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    });
+    const internalBondId = struct.bonds.add(internalBond);
+    const connectingBond = new Bond({
+      begin: secondMonomerAtomId,
+      end: outsideAtomId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    });
+    const connectingBondId = struct.bonds.add(connectingBond);
+    struct.bondInitHalfBonds(internalBondId, internalBond);
+    struct.bondInitHalfBonds(connectingBondId, connectingBond);
+    struct.initNeighbors();
+
+    const monomerSGroupId = createMonomerSGroup(struct, firstMonomerAtomId);
+    struct.atomAddToSGroup(monomerSGroupId, secondMonomerAtomId);
+    addAttachmentPoint(struct, monomerSGroupId, firstMonomerAtomId, 1);
+    addAttachmentPoint(struct, monomerSGroupId, secondMonomerAtomId, 2);
+
+    const options = {
+      scale: 40,
+      width: 100,
+      height: 100,
+    } as unknown as RenderOptions;
+    const render = new Render(document as unknown as HTMLElement, options);
+    const restruct = new ReStruct(struct, render);
+    const positionsBeforeCollapse = [...struct.atoms.values()].map(
+      (atom) => new Vec2(atom.pp),
+    );
+
+    setExpandMonomerSGroup(restruct, monomerSGroupId, { expanded: false });
+
+    expect([...struct.atoms.values()].map((atom) => atom.pp)).toEqual(
+      positionsBeforeCollapse,
+    );
+    expect(
+      struct.sgroups.get(monomerSGroupId)?.getContractedPosition(struct)
+        .position,
+    ).toEqual(struct.atoms.get(secondMonomerAtomId)?.pp);
+
+    setExpandMonomerSGroup(restruct, monomerSGroupId, { expanded: true });
+
+    expect([...struct.atoms.values()].map((atom) => atom.pp)).toEqual(
+      positionsBeforeCollapse,
+    );
+  });
+
+  it('keeps expansion spacing stable across undo and repeated toggles', () => {
+    const struct = new Struct();
+    const firstMonomerAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+    );
+    const secondMonomerAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(1, 0) }),
+    );
+    const outsideAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(2, 0) }),
+    );
+    const internalBond = new Bond({
+      begin: firstMonomerAtomId,
+      end: secondMonomerAtomId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    });
+    const internalBondId = struct.bonds.add(internalBond);
+    const connectingBond = new Bond({
+      begin: secondMonomerAtomId,
+      end: outsideAtomId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    });
+    const connectingBondId = struct.bonds.add(connectingBond);
+    struct.bondInitHalfBonds(internalBondId, internalBond);
+    struct.bondInitHalfBonds(connectingBondId, connectingBond);
+    struct.initNeighbors();
+
+    const monomerSGroupId = createMonomerSGroup(struct, firstMonomerAtomId);
+    struct.atomAddToSGroup(monomerSGroupId, secondMonomerAtomId);
+    addAttachmentPoint(struct, monomerSGroupId, secondMonomerAtomId, 1);
+    const monomerSGroup = struct.sgroups.get(monomerSGroupId);
+    const firstMonomerAtom = struct.atoms.get(firstMonomerAtomId);
+    const secondMonomerAtom = struct.atoms.get(secondMonomerAtomId);
+    const outsideAtom = struct.atoms.get(outsideAtomId);
+    if (
+      !monomerSGroup ||
+      !firstMonomerAtom ||
+      !secondMonomerAtom ||
+      !outsideAtom
+    ) {
+      throw new Error('Expected the test structure to be initialized');
+    }
+    monomerSGroup.data.expanded = false;
+
+    const options = {
+      scale: 40,
+      width: 100,
+      height: 100,
+    } as unknown as RenderOptions;
+    const render = new Render(document as unknown as HTMLElement, options);
+    const restruct = new ReStruct(struct, render);
+    const monomerPositionsBeforeExpansion = [
+      new Vec2(firstMonomerAtom.pp),
+      new Vec2(secondMonomerAtom.pp),
+    ];
+    const outsidePositionBeforeExpansion = new Vec2(outsideAtom.pp);
+
+    const undo = setExpandMonomerSGroup(restruct, monomerSGroupId, {
+      expanded: true,
+    });
+
+    expect(struct.atoms.get(outsideAtomId)?.pp).toEqual(new Vec2(2.5, 0));
+    expect([
+      struct.atoms.get(firstMonomerAtomId)?.pp,
+      struct.atoms.get(secondMonomerAtomId)?.pp,
+    ]).toEqual(monomerPositionsBeforeExpansion);
+
+    undo.perform(restruct);
+
+    expect(struct.atoms.get(outsideAtomId)?.pp).toEqual(
+      outsidePositionBeforeExpansion,
+    );
+    expect(monomerSGroup?.isContracted()).toBe(true);
+
+    setExpandMonomerSGroup(restruct, monomerSGroupId, { expanded: true });
+    const positionAfterFirstExpansion = new Vec2(outsideAtom.pp);
+    setExpandMonomerSGroup(restruct, monomerSGroupId, { expanded: false });
+
+    expect(outsideAtom.pp).toEqual(positionAfterFirstExpansion);
+
+    setExpandMonomerSGroup(restruct, monomerSGroupId, { expanded: true });
+
+    expect(outsideAtom.pp).toEqual(positionAfterFirstExpansion);
+  });
+
   it('keeps stereo from expanded monomer when collapsing another', () => {
     const struct = new Struct();
     const atom1Id = struct.atoms.add(

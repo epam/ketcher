@@ -172,6 +172,12 @@ export function setExpandMonomerSGroup(
     action.addOp(new SGroupAttr(sgid, key, attrs[key]));
   });
 
+  if (!attrs.expanded) {
+    action.addOp(new SGroupAttr(sgid, 'contractedFromExpanded', true));
+  } else if (sGroup.data.contractedFromExpanded) {
+    action.addOp(new SGroupAttr(sgid, 'contractedFromExpanded', false));
+  }
+
   const sGroupAtoms: Set<number> = new Set(SGroup.getAtoms(struct, sGroup));
   const attachmentPoints = sGroup.getAttachmentPoints();
   const bondsToOutside = struct.bonds.filter((_, bond) => {
@@ -180,20 +186,6 @@ export function setExpandMonomerSGroup(
       (sGroupAtoms.has(bond.end) && !sGroupAtoms.has(bond.begin))
     );
   });
-
-  const attachmentAtomsFromOutside: number[] = [];
-
-  for (const bond of bondsToOutside.values()) {
-    if (
-      attachmentPoints.some(
-        (attachmentPoint) => attachmentPoint.atomId === bond.begin,
-      )
-    ) {
-      attachmentAtomsFromOutside.push(bond.end);
-    } else {
-      attachmentAtomsFromOutside.push(bond.begin);
-    }
-  }
 
   bondsToOutside.forEach((bondToOutside, bondId) => {
     const atomInsideCurrentMonomer = sGroupAtoms.has(bondToOutside.begin)
@@ -293,244 +285,288 @@ export function setExpandMonomerSGroup(
     }
   });
 
-  const sGroupBBox = SGroup.getObjBBox(
-    Array.from(sGroupAtoms.values()),
-    struct,
-  );
-  const sGroupWidth = sGroupBBox.p1.x - sGroupBBox.p0.x;
-  const sGroupHeight = sGroupBBox.p1.y - sGroupBBox.p0.y;
-  const sGroupCenter = sGroup.isContracted()
-    ? sGroup.getContractedPosition(struct).position
-    : sGroup.pp;
+  if (attrs.expanded && !sGroup.data.contractedFromExpanded) {
+    const outsideConnections = [...bondsToOutside.values()].map((bond) => {
+      const insideAtomId = sGroupAtoms.has(bond.begin) ? bond.begin : bond.end;
+      const outsideAtomId = sGroupAtoms.has(bond.begin) ? bond.end : bond.begin;
+      return { insideAtomId, outsideAtomId };
+    });
+    const internalBondLengths = [...struct.bonds.values()]
+      .filter(
+        (bond) => sGroupAtoms.has(bond.begin) && sGroupAtoms.has(bond.end),
+      )
+      .map((bond) => {
+        const beginAtom = struct.atoms.get(bond.begin);
+        const endAtom = struct.atoms.get(bond.end);
+        return beginAtom && endAtom ? Vec2.dist(beginAtom.pp, endAtom.pp) : 0;
+      })
+      .filter((length) => length > 0);
+    const standardBondLength =
+      internalBondLengths.length > 0
+        ? internalBondLengths.reduce((sum, length) => sum + length, 0) /
+          internalBondLengths.length
+        : 1;
 
-  const visitedAtoms = new Set<number>();
-  const visitedSGroups = new Set<number>();
-
-  const atomsToMove = new Map<number, number[]>();
-  const sGroupsToMove = new Map<number, number[]>();
-
-  attachmentAtomsFromOutside.forEach((startAtomId, index) => {
-    const queue: number[] = [startAtomId];
-
-    while (queue.length > 0) {
-      const currentAtomId = queue.shift() as number;
-
-      if (visitedAtoms.has(currentAtomId)) {
-        continue;
+    const getMissingExpansionVector = (index: number, moveVector: Vec2) => {
+      const fullMoveLength = moveVector.length();
+      const connection = outsideConnections[index];
+      if (fullMoveLength === 0 || !connection) {
+        return Vec2.ZERO;
       }
-      visitedAtoms.add(currentAtomId);
 
-      const atomSGroups = restruct.atoms.get(currentAtomId)?.a.sgs;
-      const atomInSGroup = atomSGroups && atomSGroups.size > 0;
-      if (atomInSGroup) {
-        for (const anotherSGroupId of atomSGroups.values()) {
-          if (visitedSGroups.has(anotherSGroupId) || anotherSGroupId === sgid) {
-            continue;
+      const insideAtom = struct.atoms.get(connection.insideAtomId);
+      const outsideAtom = struct.atoms.get(connection.outsideAtomId);
+      if (!insideAtom || !outsideAtom) {
+        return Vec2.ZERO;
+      }
+
+      const moveDirection = moveVector.scaled(1 / fullMoveLength);
+      const bondVector = outsideAtom.pp.sub(insideAtom.pp);
+      const currentProjection = Vec2.dot(bondVector, moveDirection);
+      const perpendicularLengthSquared = Math.max(
+        0,
+        bondVector.length() ** 2 - currentProjection ** 2,
+      );
+      const unexpandedProjection = Math.sqrt(
+        Math.max(0, standardBondLength ** 2 - perpendicularLengthSquared),
+      );
+      const missingDistance = Math.max(
+        0,
+        unexpandedProjection + fullMoveLength - currentProjection,
+      );
+
+      return moveVector.scaled(Math.min(1, missingDistance / fullMoveLength));
+    };
+
+    const sGroupBBox = SGroup.getObjBBox(
+      Array.from(sGroupAtoms.values()),
+      struct,
+    );
+    const sGroupWidth = sGroupBBox.p1.x - sGroupBBox.p0.x;
+    const sGroupHeight = sGroupBBox.p1.y - sGroupBBox.p0.y;
+    const sGroupCenter = sGroup.getContractedPosition(struct).position;
+
+    const visitedAtoms = new Set<number>();
+    const visitedSGroups = new Set<number>();
+    const atomsToMove = new Map<number, number[]>();
+    const sGroupsToMove = new Map<number, number[]>();
+
+    outsideConnections.forEach(({ outsideAtomId: startAtomId }, index) => {
+      const queue: number[] = [startAtomId];
+
+      while (queue.length > 0) {
+        const currentAtomId = queue.shift() as number;
+
+        if (visitedAtoms.has(currentAtomId)) {
+          continue;
+        }
+        visitedAtoms.add(currentAtomId);
+
+        const atomSGroups = restruct.atoms.get(currentAtomId)?.a.sgs;
+        if (atomSGroups && atomSGroups.size > 0) {
+          for (const anotherSGroupId of atomSGroups.values()) {
+            if (
+              visitedSGroups.has(anotherSGroupId) ||
+              anotherSGroupId === sgid
+            ) {
+              continue;
+            }
+            visitedSGroups.add(anotherSGroupId);
+
+            if (!struct.sgroups.has(anotherSGroupId)) {
+              continue;
+            }
+
+            const previousArray = sGroupsToMove.get(index) ?? [];
+            sGroupsToMove.set(index, previousArray.concat(anotherSGroupId));
           }
-          visitedSGroups.add(anotherSGroupId);
+        }
 
-          const anotherSGroup = struct.sgroups.get(anotherSGroupId);
-          if (!anotherSGroup) {
-            continue;
-          }
+        const atom = struct.atoms.get(currentAtomId);
+        if (atom) {
+          const previousArray = atomsToMove.get(index) ?? [];
+          atomsToMove.set(index, previousArray.concat(currentAtomId));
 
-          const previousArray = sGroupsToMove.get(index) ?? [];
-          sGroupsToMove.set(index, previousArray.concat(anotherSGroupId));
+          atom.neighbors.forEach((halfBondId) => {
+            const neighborAtomId = struct.halfBonds.get(halfBondId)?.end;
+            if (
+              neighborAtomId === undefined ||
+              sGroupAtoms.has(neighborAtomId)
+            ) {
+              return;
+            }
+            queue.push(neighborAtomId);
+          });
         }
       }
+    });
 
-      const atom = struct.atoms.get(currentAtomId);
-      if (atom) {
-        const previousArray = atomsToMove.get(index) ?? [];
-        atomsToMove.set(index, previousArray.concat(currentAtomId));
+    const sameLine = new Set<number>();
 
-        atom.neighbors.forEach((halfBondId) => {
-          const neighborAtomId = struct?.halfBonds?.get(halfBondId)?.end;
-          if (neighborAtomId === undefined || sGroupAtoms.has(neighborAtomId)) {
-            return;
-          }
-          queue.push(neighborAtomId);
-        });
-      }
-    }
-  });
+    sGroupsToMove.forEach((sGroupIds) => {
+      sGroupIds.forEach((sGroupId) => {
+        const movableSGroup = struct.sgroups.get(sGroupId);
+        if (!movableSGroup) {
+          return;
+        }
 
-  const sameLine = new Set<number>();
+        const movableSGroupCenter = movableSGroup.isContracted()
+          ? movableSGroup.getContractedPosition(struct).position
+          : movableSGroup.pp;
+        if (!sGroupCenter || !movableSGroupCenter) {
+          return;
+        }
 
-  sGroupsToMove.forEach((sGroupIds) => {
-    sGroupIds.forEach((sGroupId) => {
-      const movableSGroup = struct.sgroups.get(sGroupId);
-      if (!movableSGroup) {
-        return;
-      }
+        const SAME_LINE_THRESHOLD = 0.5;
+        const inOneLine =
+          movableSGroupCenter.y < sGroupCenter.y + SAME_LINE_THRESHOLD &&
+          movableSGroupCenter.y > sGroupCenter.y - SAME_LINE_THRESHOLD;
 
-      const movableSGroupCenter = movableSGroup.isContracted()
-        ? movableSGroup.getContractedPosition(struct).position
-        : movableSGroup?.pp;
-      if (!sGroupCenter || !movableSGroupCenter) {
-        return;
-      }
+        if (inOneLine) {
+          sameLine.add(sGroupId);
+          return;
+        }
 
-      const SAME_LINE_THRESHOLD = 0.5;
-      const inOneLine =
-        movableSGroupCenter.y < sGroupCenter.y + SAME_LINE_THRESHOLD &&
-        movableSGroupCenter.y > sGroupCenter.y - SAME_LINE_THRESHOLD;
+        const WIDE_LINE_THRESHOLD = 2;
+        const inWideLine =
+          movableSGroupCenter.y < sGroupCenter.y + WIDE_LINE_THRESHOLD &&
+          movableSGroupCenter.y > sGroupCenter.y - WIDE_LINE_THRESHOLD;
 
-      if (inOneLine) {
-        sameLine.add(sGroupId);
-        return;
-      }
-
-      const WIDE_LINE_THRESHOLD = 2;
-      const inWideLine =
-        movableSGroupCenter.y < sGroupCenter.y + WIDE_LINE_THRESHOLD &&
-        movableSGroupCenter.y > sGroupCenter.y - WIDE_LINE_THRESHOLD;
-
-      const movableSGroupAtoms: Set<number> = new Set(
-        SGroup.getAtoms(struct, movableSGroup),
-      );
-      const movableSGroupBondsToOutside = struct.bonds.filter((_, bond) => {
-        return (
-          (movableSGroupAtoms.has(bond.begin) &&
-            !movableSGroupAtoms.has(bond.end)) ||
-          (movableSGroupAtoms.has(bond.end) &&
-            !movableSGroupAtoms.has(bond.begin))
+        const movableSGroupAtoms = new Set(
+          SGroup.getAtoms(struct, movableSGroup),
         );
-      });
-
-      const hasComplementaryBondToMainLine =
-        movableSGroupBondsToOutside.size === 1 &&
-        [...sameLine.values()].some((sGroupId) => {
-          const mainLineSGroup = struct.sgroups.get(sGroupId);
-          if (!mainLineSGroup) {
-            return false;
-          }
-
-          const mainLineSGroupAtoms: Set<number> = new Set(
-            SGroup.getAtoms(struct, mainLineSGroup),
-          );
-          const bond = [...movableSGroupBondsToOutside.values()][0];
+        const movableSGroupBondsToOutside = struct.bonds.filter((_, bond) => {
           return (
-            mainLineSGroupAtoms.has(bond.begin) ||
-            mainLineSGroupAtoms.has(bond.end)
+            (movableSGroupAtoms.has(bond.begin) &&
+              !movableSGroupAtoms.has(bond.end)) ||
+            (movableSGroupAtoms.has(bond.end) &&
+              !movableSGroupAtoms.has(bond.begin))
           );
         });
 
-      if (inWideLine && hasComplementaryBondToMainLine) {
-        sameLine.add(sGroupId);
-      }
-    });
-  });
+        const hasComplementaryBondToMainLine =
+          movableSGroupBondsToOutside.size === 1 &&
+          [...sameLine.values()].some((mainLineSGroupId) => {
+            const mainLineSGroup = struct.sgroups.get(mainLineSGroupId);
+            if (!mainLineSGroup) {
+              return false;
+            }
 
-  const largestHeightInLine = [...sameLine.values()].reduce((acc, sGroupId) => {
-    const sGroupInLine = restruct.molecule.sgroups.get(sGroupId);
-    if (!sGroupInLine) {
-      return acc;
-    }
+            const mainLineSGroupAtoms = new Set(
+              SGroup.getAtoms(struct, mainLineSGroup),
+            );
+            const bond = [...movableSGroupBondsToOutside.values()][0];
+            return (
+              mainLineSGroupAtoms.has(bond.begin) ||
+              mainLineSGroupAtoms.has(bond.end)
+            );
+          });
 
-    if (sGroupInLine.isContracted()) {
-      return acc;
-    }
-
-    const sGroupInLineAtoms = SGroup.getAtoms(struct, sGroupInLine);
-    const sGroupInLineBBox = SGroup.getObjBBox(
-      sGroupInLineAtoms,
-      restruct.molecule,
-    );
-    const sGroupInLineHeight = sGroupInLineBBox.p1.y - sGroupInLineBBox.p0.y;
-
-    return Math.max(acc, sGroupInLineHeight);
-  }, 0);
-  const baseVerticalOffset =
-    largestHeightInLine > sGroupHeight
-      ? 0
-      : (sGroupHeight - largestHeightInLine) / 2;
-  const horizontalOffset = sGroupWidth / 2;
-
-  const handledAtoms = new Set<number>();
-  sGroupsToMove.forEach((sGroupIds) => {
-    sGroupIds.forEach((sGroupId) => {
-      const movableSGroup = restruct.molecule.sgroups.get(sGroupId);
-      if (!movableSGroup) {
-        return;
-      }
-
-      const movableSGroupCenter = movableSGroup.isContracted()
-        ? movableSGroup.getContractedPosition(restruct.molecule).position
-        : movableSGroup?.pp;
-      if (!sGroupCenter || !movableSGroupCenter) {
-        return;
-      }
-
-      const moveDown = movableSGroupCenter.y > sGroupCenter.y;
-      const moveUp = movableSGroupCenter.y < sGroupCenter.y;
-      const moveRight = movableSGroupCenter.x > sGroupCenter.x;
-      const moveLeft = movableSGroupCenter.x < sGroupCenter.x;
-      const moveHorizontally = sameLine.has(sGroupId);
-      const moveVertically = !moveHorizontally;
-
-      let horizontalDirection = 0;
-      if (moveRight) {
-        horizontalDirection = 1;
-      } else if (moveLeft) {
-        horizontalDirection = -1;
-      }
-
-      let verticalDirection = 0;
-      if (moveDown) {
-        verticalDirection = 1;
-      } else if (moveUp) {
-        verticalDirection = -1;
-      }
-
-      const moveVector = new Vec2(
-        (moveHorizontally ? 1 : 0) * horizontalDirection * horizontalOffset,
-        (moveVertically ? 1 : 0) * verticalDirection * baseVerticalOffset,
-      );
-      const finalMoveVector = attrs.expanded
-        ? moveVector
-        : moveVector.negated();
-
-      const movableSGroupAtoms = SGroup.getAtoms(struct, movableSGroup);
-      movableSGroupAtoms.forEach((aid) => {
-        action.addOp(new AtomMove(aid, finalMoveVector));
-        handledAtoms.add(aid);
+        if (inWideLine && hasComplementaryBondToMainLine) {
+          sameLine.add(sGroupId);
+        }
       });
-      action.addOp(new SGroupDataMove(sGroupId, finalMoveVector));
     });
-  });
 
-  atomsToMove.forEach((atomIds) => {
-    const intactAtoms = atomIds.filter((aid) => !handledAtoms.has(aid));
-    if (intactAtoms.length === 0) {
-      return;
-    }
+    const largestHeightInLine = [...sameLine.values()].reduce(
+      (acc, sGroupId) => {
+        const sGroupInLine = struct.sgroups.get(sGroupId);
+        if (!sGroupInLine || sGroupInLine.isContracted()) {
+          return acc;
+        }
 
-    const subStructBBox = SGroup.getObjBBox(
-      intactAtoms,
-      restruct.molecule,
-      true,
-    );
-    const subStructCenter = new Vec2(
-      subStructBBox.p0.x + (subStructBBox.p1.x - subStructBBox.p0.x) / 2,
-      subStructBBox.p0.y + (subStructBBox.p1.y - subStructBBox.p0.y) / 2,
-    );
-    const sGroupCenter = new Vec2(
-      sGroupBBox.p0.x + (sGroupBBox.p1.x - sGroupBBox.p0.x) / 2,
-      sGroupBBox.p0.y + (sGroupBBox.p1.y - sGroupBBox.p0.y) / 2,
-    );
-    const direction = subStructCenter.sub(sGroupCenter).normalized();
-    const moveVector = new Vec2(
-      (direction.x * sGroupWidth) / 2,
-      (direction.y * sGroupHeight) / 2,
-    );
+        const sGroupInLineAtoms = SGroup.getAtoms(struct, sGroupInLine);
+        const sGroupInLineBBox = SGroup.getObjBBox(sGroupInLineAtoms, struct);
+        const sGroupInLineHeight =
+          sGroupInLineBBox.p1.y - sGroupInLineBBox.p0.y;
 
-    const finalMoveVector = attrs.expanded ? moveVector : moveVector.negated();
+        return Math.max(acc, sGroupInLineHeight);
+      },
+      0,
+    );
+    const baseVerticalOffset =
+      largestHeightInLine > sGroupHeight
+        ? 0
+        : (sGroupHeight - largestHeightInLine) / 2;
+    const horizontalOffset = sGroupWidth / 2;
 
-    intactAtoms.forEach((atomId) => {
-      action.addOp(new AtomMove(atomId, finalMoveVector));
+    const handledAtoms = new Set<number>();
+    sGroupsToMove.forEach((sGroupIds, index) => {
+      sGroupIds.forEach((sGroupId) => {
+        const movableSGroup = struct.sgroups.get(sGroupId);
+        if (!movableSGroup) {
+          return;
+        }
+
+        const movableSGroupCenter = movableSGroup.isContracted()
+          ? movableSGroup.getContractedPosition(struct).position
+          : movableSGroup.pp;
+        if (!sGroupCenter || !movableSGroupCenter) {
+          return;
+        }
+
+        const moveDown = movableSGroupCenter.y > sGroupCenter.y;
+        const moveUp = movableSGroupCenter.y < sGroupCenter.y;
+        const moveRight = movableSGroupCenter.x > sGroupCenter.x;
+        const moveLeft = movableSGroupCenter.x < sGroupCenter.x;
+        const moveHorizontally = sameLine.has(sGroupId);
+
+        let horizontalDirection = 0;
+        if (moveRight) {
+          horizontalDirection = 1;
+        } else if (moveLeft) {
+          horizontalDirection = -1;
+        }
+
+        let verticalDirection = 0;
+        if (moveDown) {
+          verticalDirection = 1;
+        } else if (moveUp) {
+          verticalDirection = -1;
+        }
+
+        const fullMoveVector = new Vec2(
+          (moveHorizontally ? 1 : 0) * horizontalDirection * horizontalOffset,
+          (moveHorizontally ? 0 : 1) * verticalDirection * baseVerticalOffset,
+        );
+        const moveVector = getMissingExpansionVector(index, fullMoveVector);
+
+        const movableSGroupAtoms = SGroup.getAtoms(struct, movableSGroup);
+        movableSGroupAtoms.forEach((aid) => {
+          action.addOp(new AtomMove(aid, moveVector));
+          handledAtoms.add(aid);
+        });
+        action.addOp(new SGroupDataMove(sGroupId, moveVector));
+      });
     });
-  });
+
+    atomsToMove.forEach((atomIds, index) => {
+      const intactAtoms = atomIds.filter((aid) => !handledAtoms.has(aid));
+      if (intactAtoms.length === 0) {
+        return;
+      }
+
+      const subStructBBox = SGroup.getObjBBox(intactAtoms, struct, true);
+      const subStructCenter = new Vec2(
+        subStructBBox.p0.x + (subStructBBox.p1.x - subStructBBox.p0.x) / 2,
+        subStructBBox.p0.y + (subStructBBox.p1.y - subStructBBox.p0.y) / 2,
+      );
+      const expandedSGroupCenter = new Vec2(
+        sGroupBBox.p0.x + (sGroupBBox.p1.x - sGroupBBox.p0.x) / 2,
+        sGroupBBox.p0.y + (sGroupBBox.p1.y - sGroupBBox.p0.y) / 2,
+      );
+      const direction = subStructCenter.sub(expandedSGroupCenter).normalized();
+      const fullMoveVector = new Vec2(
+        (direction.x * sGroupWidth) / 2,
+        (direction.y * sGroupHeight) / 2,
+      );
+      const moveVector = getMissingExpansionVector(index, fullMoveVector);
+
+      intactAtoms.forEach((atomId) => {
+        action.addOp(new AtomMove(atomId, moveVector));
+      });
+    });
+  }
 
   sGroupAtoms.forEach((aid) => {
     action.mergeWith(

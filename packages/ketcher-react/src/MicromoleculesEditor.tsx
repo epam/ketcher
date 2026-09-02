@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -52,6 +51,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const appRootRef = useRef<Root | null>(null);
   const cleanupRef = useRef<(() => unknown) | null>(null);
   const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
+  const ketcherRef = useRef<Ketcher | null>(null);
 
   const setServerRef = useRef<(structService: StructService) => void>(() => {});
   const structServiceProvider = props.structServiceProvider;
@@ -63,12 +63,15 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   });
 
   useEffect(() => {
-    if (!props.ketcherId) {
+    const ketcherId = ketcherRef.current?.id;
+
+    if (!ketcherId) {
       return;
     }
+
     ketcherBuilderRef.current?.reinitializeApi(
-      props.ketcherId,
-      props.structServiceProvider,
+      ketcherId,
+      structServiceProvider,
       setServerRef.current,
     );
   }, [structServiceProvider]);
@@ -85,6 +88,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
     initPromiseRef.current?.then(({ ketcher, cleanup, builder, setServer }) => {
       cleanupRef.current = cleanup;
       ketcherBuilderRef.current = builder;
+      ketcherRef.current = ketcher;
       setServerRef.current = setServer;
       props.onSetKetcherId?.(ketcher.id);
 
@@ -95,6 +99,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       }
     });
   };
+
   useEffect(() => {
     if (initPromiseRef.current === null) {
       initKetcher();
@@ -110,6 +115,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
         appRootRef.current?.unmount();
       });
     };
+
     // TODO: provide the list of dependencies after implementing unsubscribe function
   }, []);
 

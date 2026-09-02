@@ -1323,65 +1323,47 @@ export class SequenceRenderer {
   // visual line share it exactly; a line break (row wrap or new chain) yields a
   // different value, which is how placeholder highlighting is kept from bleeding
   // across lines.
-  private static getRowY(node?: SequenceNode): number | undefined {
-    const renderer = node?.renderer;
+  private static getRowY(node: SequenceNode): number | undefined {
+    const renderer = node.renderer;
     return renderer instanceof BaseSequenceItemRenderer
-      ? renderer.scaledMonomerPositionForSequence?.y
+      ? renderer.scaledMonomerPositionForSequence.y
       : undefined;
   }
 
   private static redrawPlaceholderNodesInRow(
     row: Array<SequenceNode | undefined>,
   ) {
-    // Build a map of each node's left and right real neighbors
-    const realNodes: Array<{
-      node: SequenceNode;
-      selected: boolean;
-      index: number;
-    }> = [];
+    const realNodes = row.flatMap((node, index) =>
+      node && !this.isPlaceholderSequenceNode(node)
+        ? [
+            {
+              selected: Boolean(node.monomer?.selected),
+              index,
+              rowY: this.getRowY(node),
+            },
+          ]
+        : [],
+    );
 
-    row.forEach((node, idx) => {
-      if (node && !this.isPlaceholderSequenceNode(node)) {
-        realNodes.push({
-          node,
-          selected: Boolean(node.monomer?.selected),
-          index: idx,
-        });
-      }
-    });
-
-    // For each node in the row, determine if it should be selected
     row.forEach((node, idx) => {
       if (!this.isPlaceholderSequenceNode(node)) {
-        return; // Not a placeholder, skip
+        return;
       }
 
-      // Find the real nodes to the left and right of this placeholder
-      let leftReal: (typeof realNodes)[0] | undefined;
-      let rightReal: (typeof realNodes)[0] | undefined;
+      // Closest real neighbor on each side of the placeholder.
+      const leftReal = realNodes.filter(({ index }) => index < idx).at(-1);
+      const rightReal = realNodes.find(({ index }) => index > idx);
 
-      for (const realNode of realNodes) {
-        if (realNode.index < idx) {
-          leftReal = realNode; // Keep updating until we find the closest left
-        } else if (realNode.index > idx && !rightReal) {
-          rightReal = realNode; // First one to the right
-          break;
-        }
-      }
-
-      // A placeholder is highlighted only when it sits inside a selected range
-      // on the SAME visual line: both bounding real nodes must be selected and
-      // rendered on the same row. Without the same-row guard the flattened row
-      // spans line/chain breaks, so a trailing placeholder at the end of a line
-      // would borrow the first node of the next line as its right neighbor and
-      // stay green even though nothing follows it on that line (#6794).
-      const onSameLine =
-        leftReal !== undefined &&
-        rightReal !== undefined &&
-        this.getRowY(leftReal.node) === this.getRowY(rightReal.node);
-
+      // Highlight the placeholder only when it sits inside a selected range on
+      // the SAME visual line: both bounding real nodes must be selected and
+      // share a row. The same-row guard stops a trailing placeholder at a line
+      // end from borrowing the next line's first node as its right neighbor and
+      // staying green with nothing after it on that line (#6794).
       const selected = Boolean(
-        onSameLine && leftReal?.selected && rightReal?.selected,
+        leftReal?.selected &&
+        rightReal?.selected &&
+        leftReal.rowY !== undefined &&
+        leftReal.rowY === rightReal.rowY,
       );
       node.renderer?.applySelectionState(selected);
     });

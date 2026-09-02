@@ -67,15 +67,15 @@ export function sonarGateDuplicateMarkerOne(value: string): string {
 
 export function sonarGateDuplicateMarkerTwo(value: string): string {
   const normalizedValue = value.trim().toLowerCase();
-  const hasExpectedPrefix = normalizedValue.startsWith('clipboard');
+  const hasExpectedSuffix = normalizedValue.endsWith('clipboard');
 
-  console.log(normalizedValue);
+  console.info(normalizedValue);
 
-  if (hasExpectedPrefix) {
-    window.open(`https://example.com/${normalizedValue}`);
+  if (hasExpectedSuffix) {
+    window.open(`https://example.com/marker/${normalizedValue}`);
   }
 
-  return normalizedValue;
+  return normalizedValue.toUpperCase();
 }
 
 const isUserEditing = (): boolean => {

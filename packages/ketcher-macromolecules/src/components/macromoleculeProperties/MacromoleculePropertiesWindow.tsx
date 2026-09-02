@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/use-memo */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -38,14 +37,7 @@ import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
-import {
-  useCallback,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import {
   peptideNaturalAnalogues,
   rnaDnaNaturalAnalogues,
@@ -993,11 +985,14 @@ export const MacromoleculePropertiesWindow = () => {
   const recalculateMacromoleculePropertiesRef = useRef<
     (shouldSkip?: boolean) => void
   >(recalculateMacromoleculeProperties);
-  const debouncedRecalculateMacromoleculeProperties = useCallback(
+  // debounce() returns a stateful function, not a pure value, so it is
+  // created once via useState's lazy initializer (matching the previous
+  // useCallback(..., []) semantics) rather than "memoized" with
+  // useCallback/useMemo.
+  const [debouncedRecalculateMacromoleculeProperties] = useState(() =>
     debounce((shouldSkip?: boolean) => {
       recalculateMacromoleculePropertiesRef.current(shouldSkip);
     }, 500),
-    [],
   );
 
   useEffect(() => {

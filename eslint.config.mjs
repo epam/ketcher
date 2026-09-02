@@ -252,15 +252,7 @@ export default [
           allowElseIf: true,
         },
       ],
-      'no-magic-numbers': [
-        'warn',
-        {
-          ignore: [0, 1],
-          ignoreArrayIndexes: true,
-          ignoreDefaultValues: true,
-          ignoreClassFieldInitialValues: true,
-        },
-      ],
+      'no-magic-numbers': 'off',
       'no-nested-ternary': 'error',
       'prefer-template': 'error',
       'max-len': ['error', 180],

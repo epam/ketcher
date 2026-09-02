@@ -43,6 +43,7 @@
     "color-alpha": "^1.1.3",
     "eslint": "10.9.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-scope": "9.1.2",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-n": "^18.3.0",

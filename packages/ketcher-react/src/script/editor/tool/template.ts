@@ -334,7 +334,7 @@ class TemplateTool implements Tool {
           this.editor.event,
           dragCtx.sign1 * dragCtx.sign2 > 0,
           false,
-        ) as [Action, { atoms: number[]; bonds: number[] }];
+        );
 
         dragCtx.action = action;
         this.editor.update(dragCtx.action, true);
@@ -457,20 +457,18 @@ class TemplateTool implements Tool {
     ) {
       dragCtx.action.perform(restruct); // revert drag action
 
-      const promise = fromTemplateOnBondAction(
+      let [action, pasteItems] = fromTemplateOnBondAction(
         restruct,
         this.template,
         ci.id,
         this.editor.event,
         dragCtx.sign1 * dragCtx.sign2 > 0,
         true,
-      ) as Promise<[Action, { atoms: number[]; bonds: number[] }]>;
+      );
 
-      promise.then(([action, pasteItems]) => {
-        const mergeItems = getItemsToFuse(this.editor, pasteItems);
-        action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
-        this.editor.update(action);
-      });
+      const mergeItems = getItemsToFuse(this.editor, pasteItems);
+      action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
+      this.editor.update(action);
       return;
     }
     /* end */
@@ -567,22 +565,18 @@ class TemplateTool implements Tool {
         }
         dragCtx.action = action;
       } else if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
-        const promise = fromTemplateOnBondAction(
+        let [action, pasteItems] = fromTemplateOnBondAction(
           restruct,
           this.template,
           ci.id,
           this.editor.event,
           dragCtx.sign1 * dragCtx.sign2 > 0,
           true,
-        ) as Promise<[Action, { atoms: number[]; bonds: number[] }]>;
+        );
 
-        promise.then(([action, pasteItems]) => {
-          if (!this.isModeFunctionalGroup) {
-            const mergeItems = getItemsToFuse(this.editor, pasteItems);
-            action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
-            this.editor.update(action);
-          }
-        });
+        const mergeItems = getItemsToFuse(this.editor, pasteItems);
+        action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
+        this.editor.update(action);
 
         return;
       }

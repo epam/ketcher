@@ -124,6 +124,7 @@ const MacromoleculeMenuItems = (
       await editor?.event.confirm.dispatch({
         title: 'Editing monomers',
         text: `You are going to edit ${totalMonomerCount} monomers. Are you sure?`,
+        okButtonLabel: 'Yes',
       });
       // Promise resolves when the user clicks OK; do nothing on Cancel (caught below).
       handleEdit(true);

@@ -12,6 +12,7 @@ import * as textToStruct from 'domain/serializers/ket/fromKet/textToStruct';
 import * as validate from 'domain/serializers/ket/validate';
 
 import {
+  AttachmentGroup,
   Atom,
   AtomList,
   Bond,
@@ -83,7 +84,7 @@ const hapticAtomAtomKet = JSON.stringify({
   },
 });
 
-const hapticSapAtomKet = JSON.stringify({
+const hapticAttachmentGroupAtomKet = JSON.stringify({
   ket_version: '2.0.0',
   root: {
     nodes: [{ $ref: 'mol0' }, { $ref: 'mol1' }],
@@ -201,7 +202,7 @@ function createHapticAtomAtomStruct() {
   return struct;
 }
 
-function createHapticSapStruct() {
+function createHapticAttachmentGroupStruct() {
   const struct = new Struct();
   const feAtomId = struct.atoms.add(
     new Atom({ label: 'Fe', pp: new Vec2(0, 0) }),
@@ -212,13 +213,11 @@ function createHapticSapStruct() {
   const secondCarbonAtomId = struct.atoms.add(
     new Atom({ label: 'C', pp: new Vec2(2, 0) }),
   );
-  const superAttachmentPointAtomId = struct.atoms.add(
-    new Atom({
-      label: '*',
-      pp: new Vec2(1.5, 0),
-      endpoints: [firstCarbonAtomId, secondCarbonAtomId],
-    }),
-  );
+  const attachmentGroup = new AttachmentGroup({
+    atomIds: [firstCarbonAtomId, secondCarbonAtomId],
+  });
+  attachmentGroup.recalculatePosition(struct.atoms);
+  const attachmentGroupId = struct.addAttachmentGroup(attachmentGroup);
 
   struct.bonds.add(
     new Bond({
@@ -231,9 +230,7 @@ function createHapticSapStruct() {
     new Bond({
       type: Bond.PATTERN.TYPE.HAPTIC,
       begin: feAtomId,
-      end: superAttachmentPointAtomId,
-      endpoints: [firstCarbonAtomId, secondCarbonAtomId],
-      attach: 'ALL',
+      end: attachmentGroupId,
     }),
   );
   struct.markFragments();
@@ -258,39 +255,34 @@ function createAttachmentGroupStruct() {
     }),
   );
   struct.markFragments();
-  struct.atoms.add(
-    new Atom({
-      label: '*',
-      pp: new Vec2(0.5, 0),
-      endpoints: [firstCarbonAtomId, secondCarbonAtomId],
-      fragment: struct.atoms.get(firstCarbonAtomId)?.fragment ?? -1,
-    }),
-  );
+  const attachmentGroup = new AttachmentGroup({
+    atomIds: [firstCarbonAtomId, secondCarbonAtomId],
+    fragment: struct.atoms.get(firstCarbonAtomId)?.fragment ?? -1,
+  });
+  attachmentGroup.recalculatePosition(struct.atoms);
+  struct.addAttachmentGroup(attachmentGroup);
 
   return struct;
 }
 
 function createSharedAttachmentGroupStruct() {
-  const struct = createHapticSapStruct();
-  const superAttachmentPointAtomId = Array.from(struct.atoms.entries()).find(
-    ([, atom]) => atom.label === '*',
-  )?.[0];
+  const struct = createHapticAttachmentGroupStruct();
+  const attachmentGroupId = struct.attachmentGroups.keys().next().value;
   const secondIronAtomId = struct.atoms.add(
     new Atom({ label: 'Fe', pp: new Vec2(3, 0) }),
   );
 
-  if (superAttachmentPointAtomId !== undefined) {
-    const endpoints = struct.atoms.get(superAttachmentPointAtomId)?.endpoints;
+  if (attachmentGroupId !== undefined) {
     struct.bonds.add(
       new Bond({
         type: Bond.PATTERN.TYPE.HAPTIC,
         begin: secondIronAtomId,
-        end: superAttachmentPointAtomId,
-        endpoints,
-        attach: 'ALL',
+        end: attachmentGroupId,
       }),
     );
   }
+  struct.initHalfBonds();
+  struct.initNeighbors();
   struct.clearFragments();
   struct.markFragments();
 
@@ -471,44 +463,44 @@ describe('deserialize (ToStruct)', () => {
     expect(struct.atoms.get(hapticBonds[0].begin)?.label).toEqual('Fe');
     expect(struct.atoms.get(hapticBonds[0].end)?.label).toEqual('C');
   });
-  it('deserializes haptic SAP connections from attachment groups', () => {
-    const struct = ket.deserialize(hapticSapAtomKet);
-    const superAttachmentPointAtom = Array.from(struct.atoms.values()).find(
-      (atom) => atom.label === '*',
-    );
+  it('deserializes haptic connections to Attachment Group entities', () => {
+    const struct = ket.deserialize(hapticAttachmentGroupAtomKet);
+    const attachmentGroupEntry = Array.from(
+      struct.attachmentGroups.entries(),
+    )[0];
     const hapticBond = Array.from(struct.bonds.values()).find(
       (bond) => bond.type === Bond.PATTERN.TYPE.HAPTIC,
     );
 
-    expect(superAttachmentPointAtom?.endpoints).toEqual([1, 2, 3, 4, 5, 6]);
-    expect(hapticBond?.endpoints).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(struct.atoms.size).toBe(7);
+    expect(attachmentGroupEntry[1].atomIds).toEqual([1, 2, 3, 4, 5, 6]);
+    expect([hapticBond?.begin, hapticBond?.end]).toContain(
+      attachmentGroupEntry[0],
+    );
   });
   it('deserializes an attachment group without a haptic connection', () => {
     const struct = ket.deserializeMicromolecules(attachmentGroupOnlyKet);
-    const superAttachmentPointAtoms = Array.from(struct.atoms.values()).filter(
-      (atom) => atom.label === '*',
-    );
+    const attachmentGroups = Array.from(struct.attachmentGroups.values());
 
-    expect(superAttachmentPointAtoms).toHaveLength(1);
-    expect(superAttachmentPointAtoms[0].endpoints).toEqual([0, 1]);
+    expect(struct.atoms.size).toBe(2);
+    expect(attachmentGroups).toHaveLength(1);
+    expect(attachmentGroups[0].atomIds).toEqual([0, 1]);
     expect(struct.bonds.size).toEqual(1);
   });
   it('reuses one attachment group for multiple haptic connections', () => {
     const struct = ket.deserialize(sharedAttachmentGroupKet);
-    const superAttachmentPointAtomIds = Array.from(struct.atoms.entries())
-      .filter(([, atom]) => atom.label === '*')
-      .map(([atomId]) => atomId);
+    const attachmentGroupIds = Array.from(struct.attachmentGroups.keys());
     const hapticBonds = Array.from(struct.bonds.values()).filter(
       (bond) => bond.type === Bond.PATTERN.TYPE.HAPTIC,
     );
 
-    expect(superAttachmentPointAtomIds).toHaveLength(1);
+    expect(attachmentGroupIds).toHaveLength(1);
     expect(hapticBonds).toHaveLength(2);
     expect(
       hapticBonds.every(
         (bond) =>
-          bond.begin === superAttachmentPointAtomIds[0] ||
-          bond.end === superAttachmentPointAtomIds[0],
+          bond.begin === attachmentGroupIds[0] ||
+          bond.end === attachmentGroupIds[0],
       ),
     ).toBe(true);
   });
@@ -667,8 +659,10 @@ describe('serialize (ToKet)', () => {
     expect(result.mol1.bonds).toBeUndefined();
     expect(result.root.nodes).toEqual([{ $ref: 'mol0' }, { $ref: 'mol1' }]);
   });
-  it('serializes haptic SAP bonds as attachment groups', () => {
-    const result = JSON.parse(ket.serialize(createHapticSapStruct()));
+  it('serializes haptic bonds to Attachment Groups', () => {
+    const result = JSON.parse(
+      ket.serialize(createHapticAttachmentGroupStruct()),
+    );
     const connection = result.root.connections[0];
     const attachmentMolecule = result[connection.endpoint2.moleculeId];
 

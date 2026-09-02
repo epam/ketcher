@@ -105,12 +105,10 @@ describe('select helpers', () => {
   });
 
   describe('getMovableAtomIdsForBond', () => {
-    it('keeps the super attachment point fixed when it is the bond begin', () => {
+    it('keeps the Attachment Group fixed when it is the bond begin', () => {
       const struct = {
-        atoms: new Map([
-          [0, { label: '*', endpoints: [2, 3] }],
-          [1, { label: 'Fe', endpoints: [] }],
-        ]),
+        atoms: new Map([[1, { label: 'Fe' }]]),
+        attachmentGroups: new Map([[0, { atomIds: [2, 3] }]]),
         bonds: new Map([
           [0, { type: Bond.PATTERN.TYPE.HAPTIC, begin: 0, end: 1 }],
         ]),
@@ -119,12 +117,10 @@ describe('select helpers', () => {
       expect(getMovableAtomIdsForBond(struct as never, 0, [0, 1])).toEqual([1]);
     });
 
-    it('keeps the super attachment point fixed when it is the bond end', () => {
+    it('keeps the Attachment Group fixed when it is the bond end', () => {
       const struct = {
-        atoms: new Map([
-          [0, { label: 'Fe', endpoints: [] }],
-          [1, { label: '*', endpoints: [2, 3] }],
-        ]),
+        atoms: new Map([[0, { label: 'Fe' }]]),
+        attachmentGroups: new Map([[1, { atomIds: [2, 3] }]]),
         bonds: new Map([
           [0, { type: Bond.PATTERN.TYPE.HAPTIC, begin: 0, end: 1 }],
         ]),
@@ -133,12 +129,13 @@ describe('select helpers', () => {
       expect(getMovableAtomIdsForBond(struct as never, 0, [0, 1])).toEqual([0]);
     });
 
-    it('keeps all movable atoms for a bond without a super attachment point', () => {
+    it('keeps all movable atoms for a bond without an Attachment Group', () => {
       const struct = {
         atoms: new Map([
-          [0, { label: 'C', endpoints: [] }],
-          [1, { label: 'Fe', endpoints: [] }],
+          [0, { label: 'C' }],
+          [1, { label: 'Fe' }],
         ]),
+        attachmentGroups: new Map(),
         bonds: new Map([
           [0, { type: Bond.PATTERN.TYPE.HAPTIC, begin: 0, end: 1 }],
         ]),
@@ -151,9 +148,10 @@ describe('select helpers', () => {
   });
 
   describe('canOpenAtomProperties', () => {
-    it('does not allow atom properties for a super attachment point', () => {
+    it('does not allow atom properties for an Attachment Group', () => {
       const struct = {
-        atoms: new Map([[0, { label: '*', endpoints: [1, 2] }]]),
+        atoms: new Map(),
+        attachmentGroups: new Map([[0, { atomIds: [1, 2] }]]),
       };
 
       expect(canOpenAtomProperties(struct as never, 0)).toBe(false);
@@ -161,7 +159,8 @@ describe('select helpers', () => {
 
     it('allows atom properties for a regular atom', () => {
       const struct = {
-        atoms: new Map([[0, { label: 'C', endpoints: [] }]]),
+        atoms: new Map([[0, { label: 'C' }]]),
+        attachmentGroups: new Map(),
       };
 
       expect(canOpenAtomProperties(struct as never, 0)).toBe(true);

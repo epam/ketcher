@@ -31,9 +31,7 @@ import {
   vectorUtils,
   Atom,
   CoordinateTransformation,
-  getOrThrow,
   entityNotFoundMessage,
-  isSuperAttachmentPointAtom,
 } from 'ketcher-core';
 
 import type Editor from '../Editor';
@@ -51,6 +49,10 @@ import {
   HapticBondToolHelper,
 } from './hapticBondTool';
 
+type BondEndpointItemRef = BondItemRef & {
+  map: 'atoms' | 'attachmentGroups';
+};
+
 class BondTool implements Tool {
   private static readonly DRAG_START_THRESHOLD_PX = 10;
 
@@ -60,6 +62,12 @@ class BondTool implements Tool {
   private readonly hapticBond: HapticBondToolHelper;
   private dragCtx?: BondToolDragContext;
   isNotActiveTool: boolean | undefined;
+
+  private isBondEndpoint(
+    item?: BondItemRef | null,
+  ): item is BondEndpointItemRef {
+    return item?.map === 'atoms' || item?.map === 'attachmentGroups';
+  }
 
   constructor(editor: Editor, bondProps: Partial<BondAttributes>) {
     this.editor = editor;
@@ -77,8 +85,8 @@ class BondTool implements Tool {
         const bond = molecule.bonds.get(bondId);
         return (
           bond?.type === Bond.PATTERN.TYPE.HAPTIC &&
-          (isSuperAttachmentPointAtom(molecule.atoms.get(bond.begin)) ||
-            isSuperAttachmentPointAtom(molecule.atoms.get(bond.end)))
+          (molecule.attachmentGroups.has(bond.begin) ||
+            molecule.attachmentGroups.has(bond.end))
         );
       });
       if (hasAttachmentGroupHapticBond) {
@@ -261,7 +269,7 @@ class BondTool implements Tool {
     const degrees = vectorUtils.degrees(angle);
     this.editor.event.message.dispatch({ info: degrees + 'º' });
 
-    if (!hasItem || dragCtx.item?.map === 'atoms') {
+    if (!hasItem || this.isBondEndpoint(dragCtx.item)) {
       return this.handleBondDrag(event, dragCtx, hasItem);
     }
     return undefined;
@@ -282,7 +290,7 @@ class BondTool implements Tool {
     let beginPos;
     let endPos;
 
-    if (hasItem && dragCtx.item?.map === 'atoms') {
+    if (hasItem && this.isBondEndpoint(dragCtx.item)) {
       const item = dragCtx.item;
       ({ beginAtom, endAtom } = this.resolveAtomDragTarget(
         event,
@@ -438,7 +446,7 @@ class BondTool implements Tool {
     beginPos: Vec2 | undefined,
   ): { endAtom: number | AtomAttributes; endPos: Vec2 | undefined } {
     let endPos: Vec2 | undefined;
-    if (endAtom?.map === 'atoms') {
+    if (this.isBondEndpoint(endAtom)) {
       return { endAtom: endAtom.id, endPos };
     }
 
@@ -449,11 +457,8 @@ class BondTool implements Tool {
       if (typeof beginAtom !== 'number') {
         return { endAtom: newEndAtom, endPos };
       }
-      const atom = getOrThrow(
-        rnd.ctab.molecule.atoms,
-        beginAtom,
-        entityNotFoundMessage('Atom', beginAtom),
-      );
+      const atom = rnd.ctab.molecule.getBondEndpoint(beginAtom);
+      if (!atom) throw new Error(entityNotFoundMessage('Atom', beginAtom));
       startPos = atom.pp.get_xy0();
     }
 
@@ -580,12 +585,11 @@ class BondTool implements Tool {
         );
 
         this.editor.update(bondAddition[0]);
-      } else if (dragCtx.item.map === 'atoms') {
+      } else if (this.isBondEndpoint(dragCtx.item)) {
         // click on atom
-        const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
-          struct,
-          dragCtx.item.id,
-        );
+        const isAtomSuperatomLeavingGroup =
+          dragCtx.item.map === 'atoms' &&
+          Atom.isSuperatomLeavingGroupAtom(struct, dragCtx.item.id);
         if (!isAtomSuperatomLeavingGroup) {
           const atomClickFailure = this.hapticBond.getBondPairValidationFailure(
             struct,

@@ -21,7 +21,6 @@ import {
   type AtomAllAttributeName,
   atomGetAttr,
   Atom,
-  isSuperAttachmentPointById,
   ketcherProvider,
 } from 'ketcher-core';
 import { atom } from '../../../../data/schema/struct-schema';
@@ -29,10 +28,12 @@ import styles from '../ContextMenu.module.less';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { Icon } from 'components';
 import useMakeAttachmentPointMenuItems from '../hooks/useMakeAttachmentPointMenuItems';
-import useSuperAttachmentPointCreate from '../hooks/useSuperAttachmentPointCreate';
-import useAttachmentGroupDelete from '../hooks/useAttachmentGroupDelete';
+import useAttachmentGroupCreate, {
+  ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP,
+} from '../hooks/useAttachmentGroupCreate';
 import clsx from 'clsx';
 import { getEditableAtomIds } from '../utils';
+import { Tooltip } from '@mui/material';
 
 const {
   ringBondCount,
@@ -113,17 +114,15 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const [handleEdit, editDisabled] = useAtomEdit();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
-  const handleAttachmentGroupDelete = useAttachmentGroupDelete();
   const {
     handler: handleMarkAs,
     isVisible: markAsIsVisible,
     isDisabled: markAsIsDisabled,
   } = useMarkAs();
   const {
-    handler: handleSuperAttachmentPointCreate,
-    isVisible: superAttachmentPointCreateIsVisible,
-    isDisabled: superAttachmentPointCreateDisabled,
-  } = useSuperAttachmentPointCreate();
+    handler: handleAttachmentGroupCreate,
+    isDisabled: attachmentGroupCreateDisabled,
+  } = useAttachmentGroupCreate();
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
@@ -169,9 +168,6 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
 
   const onlyOneAtomSelected = props.propsFromTrigger?.atomIds?.length === 1;
   const selectedAtomId = props.propsFromTrigger?.atomIds?.[0];
-  const isAttachmentGroupMarker =
-    selectedAtomId !== undefined &&
-    isSuperAttachmentPointById(struct, selectedAtomId);
   const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
     struct,
     selectedAtomId,
@@ -193,19 +189,6 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     editor,
   });
 
-  if (isAttachmentGroupMarker && onlyOneAtomSelected) {
-    return (
-      <Item
-        {...props}
-        data-testid="Delete Attachment Group-option"
-        onClick={handleAttachmentGroupDelete}
-      >
-        <Icon name="deleteMenu" className={styles.icon} />
-        <span className={styles.contextMenuText}>Delete attachment group</span>
-      </Item>
-    );
-  }
-
   if (isAtomSuperatomLeavingGroup && onlyOneAtomSelected) {
     return (
       <>
@@ -226,8 +209,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const disabledForMonomerCreation = editor.isMonomerCreationWizardActive;
   const showMarkAsMenu = markAsIsVisible();
   const markAsDisabled = markAsIsDisabled();
-  const showSuperAttachmentPointCreateMenu =
-    superAttachmentPointCreateIsVisible();
+  const isAttachmentGroupCreateDisabled = attachmentGroupCreateDisabled();
 
   return (
     <>
@@ -290,17 +272,23 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         <span className={styles.contextMenuText}>{editMenuItemTitle}</span>
       </Item>
 
-      {/* Only select atoms with `Shift` key pressed */}
-      {showSuperAttachmentPointCreateMenu && (
-        <Item
-          {...props}
-          data-testid="Create Attachment Group-option"
-          onClick={handleSuperAttachmentPointCreate}
-          disabled={superAttachmentPointCreateDisabled()}
+      <Item
+        {...props}
+        data-testid="Create Attachment Group-option"
+        onClick={handleAttachmentGroupCreate}
+        disabled={isAttachmentGroupCreateDisabled}
+      >
+        <Tooltip
+          title={
+            isAttachmentGroupCreateDisabled
+              ? ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP
+              : ''
+          }
+          placement="right"
         >
-          Create attachment group
-        </Item>
-      )}
+          <span className={styles.tooltipTarget}>Create attachment group</span>
+        </Tooltip>
+      </Item>
 
       <Item
         {...props}

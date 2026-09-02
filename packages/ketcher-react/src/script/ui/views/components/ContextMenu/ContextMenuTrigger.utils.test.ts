@@ -1,42 +1,5 @@
-import { Atom, Bond, Struct, Vec2 } from 'ketcher-core';
+import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
 import { getAttachmentGroupTargetForBondHalf } from './ContextMenuTrigger.utils';
-
-jest.mock('ketcher-core', () => {
-  const actual = jest.requireActual('ketcher-core');
-
-  return {
-    ...actual,
-    getAttachmentGroupIdForHapticBondHalf: (
-      struct: Struct,
-      bond: Bond,
-      pointer: Vec2,
-    ) => {
-      if (bond.type !== Bond.PATTERN.TYPE.HAPTIC) {
-        return null;
-      }
-
-      const attachmentGroupId = [bond.begin, bond.end].find((atomId) => {
-        const atom = struct.atoms.get(atomId);
-        return atom?.label === '*' && atom.endpoints.length > 0;
-      });
-      if (attachmentGroupId === undefined) {
-        return null;
-      }
-
-      const otherAtomId =
-        attachmentGroupId === bond.begin ? bond.end : bond.begin;
-      const attachmentGroup = struct.atoms.get(attachmentGroupId);
-      const otherAtom = struct.atoms.get(otherAtomId);
-
-      return attachmentGroup &&
-        otherAtom &&
-        Vec2.dist(pointer, attachmentGroup.pp) <=
-          Vec2.dist(pointer, otherAtom.pp)
-        ? attachmentGroupId
-        : null;
-    },
-  };
-});
 
 describe('getAttachmentGroupTargetForBondHalf', () => {
   const createHapticBond = () => {
@@ -44,13 +7,9 @@ describe('getAttachmentGroupTargetForBondHalf', () => {
     const endpointId = struct.atoms.add(
       new Atom({ label: 'C', pp: new Vec2(-1, 0) }),
     );
-    const attachmentGroupId = struct.atoms.add(
-      new Atom({
-        label: '*',
-        pp: new Vec2(0, 0),
-        endpoints: [endpointId],
-      }),
-    );
+    const attachmentGroup = new AttachmentGroup({ atomIds: [endpointId] });
+    attachmentGroup.recalculatePosition(struct.atoms);
+    const attachmentGroupId = struct.addAttachmentGroup(attachmentGroup);
     const centralAtomId = struct.atoms.add(
       new Atom({ label: 'Fe', pp: new Vec2(2, 0) }),
     );
@@ -74,7 +33,7 @@ describe('getAttachmentGroupTargetForBondHalf', () => {
         { map: 'bonds', id: bondId, dist: 0.1 },
         new Vec2(0.25, 0),
       ),
-    ).toEqual({ map: 'atoms', id: attachmentGroupId, dist: 0.1 });
+    ).toEqual({ map: 'attachmentGroups', id: attachmentGroupId, dist: 0.1 });
   });
 
   it('keeps the central-atom half on the regular bond context menu', () => {

@@ -262,7 +262,7 @@ export class KetSerializer implements Serializer<Struct> {
       });
     });
 
-    const attachmentGroupAtomIdMap = addAttachmentGroupsToStruct(
+    const attachmentGroupEntityIdMap = addAttachmentGroupsToStruct(
       ket,
       resultingStruct,
       moleculeAtomIdMaps,
@@ -271,7 +271,7 @@ export class KetSerializer implements Serializer<Struct> {
       ket,
       resultingStruct,
       moleculeAtomIdMaps,
-      attachmentGroupAtomIdMap,
+      attachmentGroupEntityIdMap,
     );
     resultingStruct.name = ket.header?.moleculeName ?? '';
 

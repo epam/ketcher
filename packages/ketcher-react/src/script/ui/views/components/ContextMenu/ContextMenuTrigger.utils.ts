@@ -117,7 +117,7 @@ export function getAttachmentGroupTargetForBondHalf(
     ? null
     : {
         ...closestItem,
-        map: 'atoms',
+        map: 'attachmentGroups',
         id: attachmentGroupId,
       };
 }
@@ -222,6 +222,12 @@ export function getMenuPropsForClosestItem(
         };
       }
     }
+
+    case 'attachmentGroups':
+      return {
+        id: CONTEXT_MENU_ID.FOR_ATTACHMENT_GROUP + ketcherId,
+        attachmentGroupIds: [closestItem.id],
+      };
 
     case 'sgroups':
     case 'functionalGroups': {

@@ -20,6 +20,7 @@ import {
   StereoLabel,
 } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
+import { AttachmentGroup } from 'domain/entities/attachmentGroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
@@ -37,12 +38,7 @@ import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import type { Element, RaphaelSet } from 'raphael';
-import {
-  Scale,
-  isSuperAttachmentPointAtom,
-  isSuperAttachmentPointWithHapticBond,
-  recalculateSuperAttachmentPointPosition,
-} from 'domain/helpers';
+import { Scale, isAttachmentGroupWithHapticBond } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { assert, toFixed } from 'utilities';
@@ -59,11 +55,7 @@ import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculati
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
 import { ShowHydrogenLabels } from './showHydrogenLabels';
-import {
-  drawSuperAttachmentPointHover,
-  getSuperAttachmentPointLabelAttrs,
-  type SuperAttachmentPointHoverHost,
-} from './superAttachmentPointRender';
+import { getAttachmentGroupLabelAttrs } from './attachmentGroupRender';
 
 interface ElemAttr {
   text: string;
@@ -126,7 +118,7 @@ class ReAtom extends ReObject {
     this.component = -1;
   }
 
-  static isSelectable(): true {
+  static isSelectable(): boolean {
     return true;
   }
 
@@ -138,14 +130,6 @@ class ReAtom extends ReObject {
   }
 
   drawHover(render: Render, drawOutline = true) {
-    if (isSuperAttachmentPointAtom(this.a)) {
-      return drawSuperAttachmentPointHover(
-        this as unknown as SuperAttachmentPointHoverHost,
-        render,
-        drawOutline,
-      );
-    }
-
     const ret = this.makeHoverPlate(render, drawOutline);
 
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
@@ -380,9 +364,7 @@ class ReAtom extends ReObject {
         atom,
         sgroups,
         functionalGroups,
-      ) ||
-      Atom.isHiddenLeavingGroupAtom(struct, atomId) ||
-      isSuperAttachmentPointWithHapticBond(struct, atomId)
+      ) || Atom.isHiddenLeavingGroupAtom(struct, atomId)
     );
   };
 
@@ -528,7 +510,7 @@ class ReAtom extends ReObject {
 
   show(restruct: ReStruct, aid: number, options: RenderOptions): void {
     const struct = restruct.molecule;
-    const atom = struct.atoms.get(aid);
+    const atom = struct.getBondEndpoint(aid);
     if (!atom) {
       return;
     }
@@ -1108,7 +1090,7 @@ class ReAtom extends ReObject {
 
     // we render them together to avoid possible collisions
 
-    const fragmentId = Number(restruct.atoms.get(aid)?.a.fragment);
+    const fragmentId = Number(this.a.fragment);
     // TODO: fragment should not be null
     const fragment = restruct.molecule.frags.get(fragmentId);
 
@@ -1200,8 +1182,6 @@ class ReAtom extends ReObject {
       const path = this.makeHighlightePlate(restruct, style);
       restruct.addReObjectPath(LayerMap.hovering, this.visel, path);
     }
-
-    recalculateSuperAttachmentPointPosition(this.a, struct);
 
     if (atom.cip) {
       const paper = render.paper;
@@ -1495,11 +1475,14 @@ function isLabelVisible(
   options: RenderOptions,
   atom: ReAtom,
 ) {
-  const atomId = restruct.molecule.atoms.keyOf(atom.a);
+  const attachmentGroupId =
+    atom.a instanceof AttachmentGroup
+      ? restruct.molecule.attachmentGroups.keyOf(atom.a)
+      : null;
 
   if (
-    atomId !== null &&
-    isSuperAttachmentPointWithHapticBond(restruct.molecule, atomId)
+    attachmentGroupId !== null &&
+    isAttachmentGroupWithHapticBond(restruct.molecule, attachmentGroupId)
   ) {
     return false;
   }
@@ -1698,7 +1681,7 @@ function buildLabel(
     fill: atom.color,
     'font-style': atom.a.pseudo ? 'italic' : '',
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
-    ...getSuperAttachmentPointLabelAttrs(atom.a),
+    ...getAttachmentGroupLabelAttrs(atom.a),
   });
 
   const background =

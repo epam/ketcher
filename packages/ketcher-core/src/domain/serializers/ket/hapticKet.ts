@@ -19,12 +19,15 @@ import {
   type IKetConnectionEndPoint,
   KetConnectionType,
 } from 'application/formatters/types/ket';
-import { Atom, Bond, Pile, type Struct, Vec2 } from 'domain/entities';
-import type { Point } from 'domain/entities/vec2';
 import {
-  isAllowedNonSapHapticBondMetal,
-  isSuperAttachmentPointAtom,
-} from 'domain/helpers/hapticBond';
+  AttachmentGroup,
+  Bond,
+  Pile,
+  type Struct,
+  Vec2,
+} from 'domain/entities';
+import type { Point } from 'domain/entities/vec2';
+import { isAllowedNonAttachmentGroupHapticBondMetal } from 'domain/helpers/hapticBond';
 import { moleculeToStruct } from './fromKet/moleculeToStruct';
 
 export type KetAtomLocation = {
@@ -59,7 +62,7 @@ type HapticConnectionEndpoint =
       type: 'attachmentGroup';
       moleculeId: string;
       attachmentGroupId: string;
-      superAttachmentPointAtomId: number;
+      attachmentGroupEntityId: number;
       atomIds: number[];
     };
 
@@ -123,7 +126,7 @@ export function getHapticConnectionMoleculeIds(
 function resolveHapticConnectionEndpoint(
   endpoint: IKetConnectionEndPoint,
   moleculeAtomIdMaps: Map<string, Map<number, number>>,
-  attachmentGroupAtomIdMap: Map<string, number>,
+  attachmentGroupEntityIdMap: Map<string, number>,
   struct: Struct,
 ): HapticConnectionEndpoint | null {
   const moleculeId = endpoint.moleculeId;
@@ -150,15 +153,15 @@ function resolveHapticConnectionEndpoint(
 
   if (endpoint.attachmentGroupId !== undefined) {
     const attachmentGroupId = endpoint.attachmentGroupId.toString();
-    const superAttachmentPointAtomId = attachmentGroupAtomIdMap.get(
+    const attachmentGroupEntityId = attachmentGroupEntityIdMap.get(
       getAttachmentGroupKey(moleculeId, attachmentGroupId),
     );
     const atomIds =
-      superAttachmentPointAtomId === undefined
+      attachmentGroupEntityId === undefined
         ? undefined
-        : struct.atoms.get(superAttachmentPointAtomId)?.endpoints;
+        : struct.attachmentGroups.get(attachmentGroupEntityId)?.atomIds;
 
-    if (superAttachmentPointAtomId === undefined || !atomIds?.length) {
+    if (attachmentGroupEntityId === undefined || !atomIds?.length) {
       return null;
     }
 
@@ -166,7 +169,7 @@ function resolveHapticConnectionEndpoint(
       type: 'attachmentGroup',
       moleculeId,
       attachmentGroupId,
-      superAttachmentPointAtomId,
+      attachmentGroupEntityId,
       atomIds,
     };
   }
@@ -179,7 +182,7 @@ export function addAttachmentGroupsToStruct(
   struct: Struct,
   moleculeAtomIdMaps: Map<string, Map<number, number>>,
 ) {
-  const attachmentGroupAtomIdMap = new Map<string, number>();
+  const attachmentGroupEntityIdMap = new Map<string, number>();
 
   moleculeAtomIdMaps.forEach((atomIdMap, moleculeId) => {
     getKetMolecule(ket, moleculeId)?.attachmentGroups?.forEach(
@@ -200,32 +203,26 @@ export function addAttachmentGroupsToStruct(
 
         const resolvedAtomIds = atomIds as number[];
         const key = getAttachmentGroupKey(moleculeId, attachmentGroupId);
-        if (attachmentGroupAtomIdMap.has(key)) {
+        if (attachmentGroupEntityIdMap.has(key)) {
           return;
         }
 
-        const positions = resolvedAtomIds.map(
-          (atomId) => struct.atoms.get(atomId)?.pp ?? Vec2.ZERO,
-        );
-        const superAttachmentPointPosition = positions
-          .reduce((acc, position) => acc.add(position), Vec2.ZERO)
-          .scaled(1 / positions.length);
         const fragment = struct.atoms.get(resolvedAtomIds[0])?.fragment ?? -1;
-        const superAttachmentPointAtomId = struct.atoms.add(
-          new Atom({
-            label: '*',
-            pp: superAttachmentPointPosition,
-            endpoints: resolvedAtomIds,
-            fragment,
-          }),
+        const attachmentGroupEntity = new AttachmentGroup({
+          atomIds: resolvedAtomIds,
+          fragment,
+        });
+        attachmentGroupEntity.recalculatePosition(struct.atoms);
+        const attachmentGroupEntityId = struct.addAttachmentGroup(
+          attachmentGroupEntity,
         );
 
-        attachmentGroupAtomIdMap.set(key, superAttachmentPointAtomId);
+        attachmentGroupEntityIdMap.set(key, attachmentGroupEntityId);
       },
     );
   });
 
-  return attachmentGroupAtomIdMap;
+  return attachmentGroupEntityIdMap;
 }
 
 function addHapticBondToStruct(
@@ -240,9 +237,7 @@ function addHapticBondToStruct(
     new Bond({
       type: Bond.PATTERN.TYPE.HAPTIC,
       begin: atomEndpoint.atomId,
-      end: attachmentGroupEndpoint.superAttachmentPointAtomId,
-      endpoints: attachmentGroupEndpoint.atomIds,
-      attach: 'ALL',
+      end: attachmentGroupEndpoint.attachmentGroupEntityId,
     }),
   );
 }
@@ -251,7 +246,7 @@ export function addHapticConnectionsToStruct(
   ket: HapticKet,
   struct: Struct,
   moleculeAtomIdMaps: Map<string, Map<number, number>>,
-  attachmentGroupAtomIdMap: Map<string, number>,
+  attachmentGroupEntityIdMap: Map<string, number>,
 ) {
   let hasHapticConnections = false;
 
@@ -263,13 +258,13 @@ export function addHapticConnectionsToStruct(
     const endpoint1 = resolveHapticConnectionEndpoint(
       connection.endpoint1,
       moleculeAtomIdMaps,
-      attachmentGroupAtomIdMap,
+      attachmentGroupEntityIdMap,
       struct,
     );
     const endpoint2 = resolveHapticConnectionEndpoint(
       connection.endpoint2,
       moleculeAtomIdMaps,
-      attachmentGroupAtomIdMap,
+      attachmentGroupEntityIdMap,
       struct,
     );
 
@@ -309,7 +304,7 @@ export function addHapticConnectionsToStruct(
 
 function hasAttachmentGroupsOrHapticBonds(struct: Struct) {
   return (
-    struct.atoms.some((atom) => isSuperAttachmentPointAtom(atom)) ||
+    struct.attachmentGroups.size > 0 ||
     struct.bonds.some((bond) => bond.type === Bond.PATTERN.TYPE.HAPTIC)
   );
 }
@@ -322,15 +317,8 @@ export function prepareStructForHapticKetSerialization(struct: Struct) {
     };
   }
 
-  const atomIds = new Pile<number>();
   const bondIds = new Pile<number>();
   const originalToKetStructAtomIdMap = new Map<number, number>();
-
-  struct.atoms.forEach((atom, atomId) => {
-    if (!isSuperAttachmentPointAtom(atom)) {
-      atomIds.add(atomId);
-    }
-  });
 
   struct.bonds.forEach((bond, bondId) => {
     if (bond.type !== Bond.PATTERN.TYPE.HAPTIC) {
@@ -339,7 +327,7 @@ export function prepareStructForHapticKetSerialization(struct: Struct) {
   });
 
   const structForKet = struct.clone(
-    atomIds,
+    null,
     bondIds,
     false,
     originalToKetStructAtomIdMap,
@@ -387,16 +375,17 @@ export function buildAttachmentGroupsForKet(
 ) {
   const attachmentGroupLocations = new Map<number, AttachmentGroupLocation>();
 
-  struct.atoms.forEach((atom, atomId) => {
-    if (!isSuperAttachmentPointAtom(atom) || atom.endpoints.length < 2) {
+  struct.attachmentGroups.forEach((attachmentGroup, attachmentGroupId) => {
+    if (attachmentGroup.atomIds.length < 2) {
       return;
     }
 
-    const attachmentAtomLocations = atom.endpoints.map((endpointAtomId) =>
-      getAtomLocationForHapticConnection(
-        endpointAtomId,
-        originalAtomToKetLocation,
-      ),
+    const attachmentAtomLocations = attachmentGroup.atomIds.map(
+      (endpointAtomId) =>
+        getAtomLocationForHapticConnection(
+          endpointAtomId,
+          originalAtomToKetLocation,
+        ),
     );
     const moleculeId = attachmentAtomLocations[0]?.moleculeId;
 
@@ -414,13 +403,13 @@ export function buildAttachmentGroupsForKet(
       return;
     }
 
-    const attachmentGroupId = getOrCreateAttachmentGroup(
+    const ketAttachmentGroupId = getOrCreateAttachmentGroup(
       molecule as KetMolecule,
       attachmentAtomLocations.map((location) => Number(location?.atomId)),
     );
-    attachmentGroupLocations.set(atomId, {
+    attachmentGroupLocations.set(attachmentGroupId, {
       moleculeId,
-      attachmentGroupId,
+      attachmentGroupId: ketAttachmentGroupId,
     });
   });
 
@@ -441,15 +430,15 @@ export function buildHapticConnectionsForKet(
 
     const beginAtom = struct.atoms.get(bond.begin);
     const endAtom = struct.atoms.get(bond.end);
-    const beginAtomIsSap = isSuperAttachmentPointAtom(beginAtom);
-    const endAtomIsSap = isSuperAttachmentPointAtom(endAtom);
+    const beginIsAttachmentGroup = struct.attachmentGroups.has(bond.begin);
+    const endIsAttachmentGroup = struct.attachmentGroups.has(bond.end);
 
-    if (beginAtomIsSap || endAtomIsSap) {
-      const superAttachmentPointAtomId = beginAtomIsSap ? bond.begin : bond.end;
-      const centralAtomId = beginAtomIsSap ? bond.end : bond.begin;
-      const attachmentGroupLocation = attachmentGroupLocations.get(
-        superAttachmentPointAtomId,
-      );
+    if (beginIsAttachmentGroup || endIsAttachmentGroup) {
+      if (beginIsAttachmentGroup === endIsAttachmentGroup) return;
+      const attachmentGroupId = beginIsAttachmentGroup ? bond.begin : bond.end;
+      const centralAtomId = beginIsAttachmentGroup ? bond.end : bond.begin;
+      const attachmentGroupLocation =
+        attachmentGroupLocations.get(attachmentGroupId);
       const centralAtomLocation = getAtomLocationForHapticConnection(
         centralAtomId,
         originalAtomToKetLocation,
@@ -487,8 +476,9 @@ export function buildHapticConnectionsForKet(
       return;
     }
 
-    const beginAtomIsMetal = isAllowedNonSapHapticBondMetal(beginAtom);
-    const endAtomIsMetal = isAllowedNonSapHapticBondMetal(endAtom);
+    const beginAtomIsMetal =
+      isAllowedNonAttachmentGroupHapticBondMetal(beginAtom);
+    const endAtomIsMetal = isAllowedNonAttachmentGroupHapticBondMetal(endAtom);
     const endpoint1 =
       !beginAtomIsMetal && endAtomIsMetal ? endAtomLocation : beginAtomLocation;
     const endpoint2 =

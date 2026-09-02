@@ -5,7 +5,6 @@ import {
   type ReStruct,
   type Struct,
   Bond as BondEntity,
-  isSuperAttachmentPointAtom,
   SGroup,
 } from 'ketcher-core';
 import type { Editor, Selection } from '../../Editor';
@@ -46,7 +45,7 @@ export function getSelectedBonds(selection, molecule) {
 }
 
 export function canOpenAtomProperties(molecule: Struct, atomId: number) {
-  return !isSuperAttachmentPointAtom(molecule.atoms.get(atomId));
+  return molecule.atoms.has(atomId);
 }
 
 export function getMovableAtomIdsForBond(
@@ -59,13 +58,13 @@ export function getMovableAtomIdsForBond(
     return atomIds;
   }
 
-  const superAttachmentPointId = [bond.begin, bond.end].find((atomId) =>
-    isSuperAttachmentPointAtom(molecule.atoms.get(atomId)),
+  const attachmentGroupId = [bond.begin, bond.end].find((endpointId) =>
+    molecule.attachmentGroups.has(endpointId),
   );
 
-  return superAttachmentPointId === undefined
+  return attachmentGroupId === undefined
     ? atomIds
-    : atomIds.filter((atomId) => atomId !== superAttachmentPointId);
+    : atomIds.filter((atomId) => atomId !== attachmentGroupId);
 }
 
 export function mapAtomIdsToAtoms(atomsIds: number[], molecule): Atom[] {

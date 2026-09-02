@@ -33,18 +33,15 @@ describe('handleMovingPosibilityCursor', () => {
     });
   });
 
-  it('shows the default cursor for a super attachment point', () => {
+  it('shows the default cursor for an Attachment Group', () => {
     const attachmentGroupId = 1;
-    const item = { map: 'atoms', id: attachmentGroupId, dist: 0 } as const;
+    const item = {
+      map: 'attachmentGroups',
+      id: attachmentGroupId,
+      dist: 0,
+    } as const;
     const render = {
       options: { movingStyle: { cursor: 'move' } },
-      ctab: {
-        molecule: {
-          atoms: new Map([
-            [attachmentGroupId, { label: '*', endpoints: [2, 3] }],
-          ]),
-        },
-      },
     } as unknown as Render;
     const canvas = {
       getAttribute: () => '',
@@ -62,11 +59,6 @@ describe('handleMovingPosibilityCursor', () => {
     const item = { map: 'atoms', id: atomId, dist: 0 } as const;
     const render = {
       options: { movingStyle: { cursor: 'move' } },
-      ctab: {
-        molecule: {
-          atoms: new Map([[atomId, { label: 'C', endpoints: [] }]]),
-        },
-      },
     } as unknown as Render;
 
     expect(getItemCursor(render, item)).toBe('move');

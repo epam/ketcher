@@ -1,7 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 import {
+  AttachmentGroup,
   Atom,
-  fromOneAtomDeletion,
+  fromAttachmentGroupDeletion,
   ketcherProvider,
   Struct,
   Vec2,
@@ -17,11 +18,9 @@ jest.mock('ketcher-core', () => {
 
   return {
     ...actual,
-    fromOneAtomDeletion: jest.fn(() => 'delete-attachment-group-action'),
-    isSuperAttachmentPointById: (struct: Struct, atomId: number) => {
-      const atom = struct.atoms.get(atomId);
-      return atom?.label === '*' && atom.endpoints.length > 0;
-    },
+    fromAttachmentGroupDeletion: jest.fn(
+      () => 'delete-attachment-group-action',
+    ),
   };
 });
 
@@ -38,11 +37,9 @@ describe('useAttachmentGroupDelete', () => {
     const secondEndpointId = struct.atoms.add(
       new Atom({ label: 'C', pp: new Vec2(1, 0) }),
     );
-    const attachmentGroupId = struct.atoms.add(
-      new Atom({
-        label: '*',
-        pp: new Vec2(0.5, 0),
-        endpoints: [firstEndpointId, secondEndpointId],
+    const attachmentGroupId = struct.addAttachmentGroup(
+      new AttachmentGroup({
+        atomIds: [firstEndpointId, secondEndpointId],
       }),
     );
     const update = jest.fn();
@@ -64,13 +61,13 @@ describe('useAttachmentGroupDelete', () => {
     act(() => {
       result.current({
         props: {
-          id: 'atom-context-menu',
-          atomIds: [attachmentGroupId],
+          id: 'attachment-group-context-menu',
+          attachmentGroupIds: [attachmentGroupId],
         },
       } as never);
     });
 
-    expect(fromOneAtomDeletion).toHaveBeenCalledWith(
+    expect(fromAttachmentGroupDeletion).toHaveBeenCalledWith(
       restruct,
       attachmentGroupId,
     );
@@ -102,8 +99,8 @@ describe('useAttachmentGroupDelete', () => {
     act(() => {
       result.current({
         props: {
-          id: 'atom-context-menu',
-          atomIds: [atomId],
+          id: 'attachment-group-context-menu',
+          attachmentGroupIds: [atomId],
         },
       } as never);
     });

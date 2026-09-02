@@ -1,15 +1,14 @@
 import { difference } from 'lodash';
 import {
   Bond,
-  isAtomPartOfSuperAttachmentPoint,
-  isSuperAttachmentPointAtom,
+  isAtomPartOfAttachmentGroup,
   MonomerMicromolecule,
   type Struct,
 } from 'ketcher-core';
 import type { Selection } from 'src/script/editor/Editor';
 import { isStructureContinuous } from 'src/script/editor/utils/structureContinuity';
 
-const SUPER_ATTACHMENT_POINT_SELECTION_IGNORED_KEYS = ['enhancedFlags'];
+const ATTACHMENT_GROUP_SELECTION_IGNORED_KEYS = ['enhancedFlags'];
 
 /**
  * Remove the word `bond` out of the title
@@ -85,9 +84,7 @@ export const isBondBetweenMonomers = (
 export const noOperation = () => null;
 
 export function getEditableAtomIds(struct: Struct, atomIds: number[]) {
-  return atomIds.filter(
-    (atomId) => !isSuperAttachmentPointAtom(struct.atoms.get(atomId)),
-  );
+  return atomIds.filter((atomId) => struct.atoms.has(atomId));
 }
 
 export function getEditableBondIds(struct: Struct, bondIds: number[]) {
@@ -97,8 +94,8 @@ export function getEditableBondIds(struct: Struct, bondIds: number[]) {
       return true;
     }
 
-    return ![bond.begin, bond.end].some((atomId) =>
-      isSuperAttachmentPointAtom(struct.atoms.get(atomId)),
+    return ![bond.begin, bond.end].some((endpointId) =>
+      struct.attachmentGroups.has(endpointId),
     );
   });
 }
@@ -147,13 +144,13 @@ export function isContinuousAtomSelection(
   });
 }
 
-export function hasDisallowedSuperAttachmentPointSelectionElements(
+export function hasDisallowedAttachmentGroupSelectionElements(
   selection: Selection,
 ): boolean {
   const allowedKeys = new Set([
     'atoms',
     'bonds',
-    ...SUPER_ATTACHMENT_POINT_SELECTION_IGNORED_KEYS,
+    ...ATTACHMENT_GROUP_SELECTION_IGNORED_KEYS,
   ]);
 
   return Object.keys(selection).some((key) => {
@@ -183,7 +180,7 @@ export function areSelectedBondsAttachedToSelectedAtoms(
   });
 }
 
-export function isSuperAttachmentPointCreationSelectionVisible(
+export function isAttachmentGroupCreationSelectionValid(
   struct: Struct,
   selection: Selection | null,
 ): boolean {
@@ -191,28 +188,18 @@ export function isSuperAttachmentPointCreationSelectionVisible(
     return false;
   }
 
-  const bondIds = getBondIdsConnectingSelectedAtoms(struct, selection.atoms);
+  const atomIds = selection.atoms;
+  const bondIds = getBondIdsConnectingSelectedAtoms(struct, atomIds);
 
-  return isContinuousAtomSelection(struct, selection.atoms, bondIds);
-}
-
-export function isSuperAttachmentPointCreationSelectionValid(
-  struct: Struct,
-  selection: Selection | null,
-): boolean {
-  if (!isSuperAttachmentPointCreationSelectionVisible(struct, selection)) {
+  if (!isContinuousAtomSelection(struct, atomIds, bondIds)) {
     return false;
   }
 
-  const atomIds = selection?.atoms ?? [];
-
-  if (
-    atomIds.some((atomId) => isAtomPartOfSuperAttachmentPoint(struct, atomId))
-  ) {
+  if (atomIds.some((atomId) => isAtomPartOfAttachmentGroup(struct, atomId))) {
     return false;
   }
 
-  if (hasDisallowedSuperAttachmentPointSelectionElements(selection ?? {})) {
+  if (hasDisallowedAttachmentGroupSelectionElements(selection ?? {})) {
     return false;
   }
 

@@ -26,7 +26,6 @@ import {
 } from 'domain/entities/BaseMicromoleculeEntity';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { BondCIP } from 'domain/entities/types';
-import { remapEndpointAtomIds } from 'domain/helpers/hapticBond';
 import { HAPTIC_BOND_TYPE } from 'domain/constants/bonds';
 
 export interface BondAttributes {
@@ -45,8 +44,6 @@ export interface BondAttributes {
   endSuperatomAttachmentPointNumber?: number;
   beginSgroup?: SGroup;
   endSgroup?: SGroup;
-  endpoints?: number[];
-  attach?: 'ALL' | 'ANY';
 }
 
 export class Bond extends BaseMicromoleculeEntity {
@@ -120,8 +117,6 @@ export class Bond extends BaseMicromoleculeEntity {
   endSuperatomAttachmentPointNumber?: number;
   beginSgroup?: SGroup;
   endSgroup?: SGroup;
-  endpoints?: number[];
-  attach?: 'ALL' | 'ANY';
 
   constructor(attributes: BondAttributes) {
     super(attributes.initiallySelected);
@@ -143,8 +138,6 @@ export class Bond extends BaseMicromoleculeEntity {
       attributes.beginSuperatomAttachmentPointNumber;
     this.endSuperatomAttachmentPointNumber =
       attributes.endSuperatomAttachmentPointNumber;
-    this.endpoints = attributes.endpoints;
-    this.attach = attributes.attach;
 
     if (attributes.stereo) this.stereo = attributes.stereo;
     if (attributes.topology) this.topology = attributes.topology;
@@ -307,14 +300,14 @@ export class Bond extends BaseMicromoleculeEntity {
   }
 
   getCenter(struct: any): Vec2 {
-    const p1 = struct.atoms.get(this.begin).pp;
-    const p2 = struct.atoms.get(this.end).pp;
+    const p1 = struct.getBondEndpoint(this.begin).pp;
+    const p2 = struct.getBondEndpoint(this.end).pp;
     return Vec2.lc2(p1, 0.5, p2, 0.5);
   }
 
   getDir(struct: any): Vec2 {
-    const p1 = struct.atoms.get(this.begin)?.pp;
-    const p2 = struct.atoms.get(this.end)?.pp;
+    const p1 = struct.getBondEndpoint(this.begin)?.pp;
+    const p2 = struct.getBondEndpoint(this.end)?.pp;
     if (!p1 || !p2) return new Vec2();
     return p2.sub(p1).normalized();
   }
@@ -326,10 +319,6 @@ export class Bond extends BaseMicromoleculeEntity {
       const newEnd = aidMap.get(cp.end);
       if (newBegin !== undefined) cp.begin = newBegin;
       if (newEnd !== undefined) cp.end = newEnd;
-
-      if (cp.endpoints?.length) {
-        cp.endpoints = remapEndpointAtomIds(cp.endpoints, aidMap);
-      }
     }
     return cp;
   }

@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import createStore from '../state';
 import { initKeydownListener } from './hotkeys';
 import { act } from 'react';
-import { Atom, Bond, Struct, Vec2 } from 'ketcher-core';
+import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
 import BondTool from '../../editor/tool/bond';
 import type Editor from '../../editor/Editor';
 
@@ -64,12 +64,8 @@ describe('Hot keys', () => {
     const endpointId = struct.atoms.add(
       new Atom({ label: 'C', pp: new Vec2(0, 0) }),
     );
-    const attachmentGroupId = struct.atoms.add(
-      new Atom({
-        label: '*',
-        pp: new Vec2(0, 0),
-        endpoints: [endpointId],
-      }),
+    const attachmentGroupId = struct.addAttachmentGroup(
+      new AttachmentGroup({ atomIds: [endpointId] }),
     );
     const centralAtomId = struct.atoms.add(
       new Atom({ label: 'Fe', pp: new Vec2(1, 0) }),

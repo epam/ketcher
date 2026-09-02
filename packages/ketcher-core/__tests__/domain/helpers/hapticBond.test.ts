@@ -1,26 +1,59 @@
+/****************************************************************************
+ * Copyright 2026 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+
 import { fromAtomMerge } from 'application/editor/actions/atomMerge';
 import { fromBondsMerge } from 'application/editor/actions/bond';
 import { getItemsToFuse } from 'application/editor/actions/closelyFusing';
 import { Render, ReStruct } from 'application/render';
 import type { RenderOptions } from 'application/render/render.types';
-import { Atom } from 'domain/entities/atom';
-import { Bond } from 'domain/entities/bond';
-import { Struct } from 'domain/entities/struct';
-import { Vec2 } from 'domain/entities/vec2';
+import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'domain/entities';
 import {
   getAttachmentGroupIdForHapticBondHalf,
   getHapticBondEndPosition,
   HAPTIC_BOND_LENGTH_FACTOR,
-  isAllowedNonSapHapticBondMetal,
-  isAtomPartOfSuperAttachmentPoint,
-  isHapticBondWithAttachmentGroup,
+  isAllowedNonAttachmentGroupHapticBondMetal,
+  isAtomPartOfAttachmentGroup,
+  isAttachmentGroup,
+  isAttachmentGroupWithHapticBond,
   isHapticBondPairAllowed,
-  isSuperAttachmentPointAtom,
-  isSuperAttachmentPointWithHapticBond,
-  recalculateSuperAttachmentPointPosition,
-  remapEndpointAtomIds,
-  prepareHapticBondAttributes,
+  isHapticBondWithAttachmentGroup,
 } from 'domain/helpers/hapticBond';
+
+function addAttachmentGroup(struct: Struct, atomIds: number[]) {
+  const attachmentGroup = new AttachmentGroup({ atomIds });
+  attachmentGroup.recalculatePosition(struct.atoms);
+  const attachmentGroupId = struct.addAttachmentGroup(attachmentGroup);
+
+  return { attachmentGroup, attachmentGroupId };
+}
+
+function createReStruct(struct: Struct) {
+  struct.initHalfBonds();
+  struct.initNeighbors();
+  const render = new Render(
+    document as unknown as HTMLElement,
+    {
+      microModeScale: 20,
+      width: 100,
+      height: 100,
+    } as RenderOptions,
+  );
+
+  return new ReStruct(struct, render);
+}
 
 describe('hapticBond helpers', () => {
   it('increases the distance to an automatically created haptic bond atom', () => {
@@ -32,101 +65,80 @@ describe('hapticBond helpers', () => {
     );
   });
 
-  it('detects a super-attachment point atom by label and endpoints', () => {
-    expect(
-      isSuperAttachmentPointAtom({ label: '*', endpoints: [1, 2, 3] }),
-    ).toBe(true);
-    expect(isSuperAttachmentPointAtom({ label: '*', endpoints: [] })).toBe(
-      false,
-    );
-  });
-
-  it('detects when an atom is part of a super-attachment point', () => {
-    const struct = new Struct();
-    const endpointId = struct.atoms.add(
-      new Atom({ label: 'C', pp: new Vec2(0, 1) }),
-    );
-    const sapId = struct.atoms.add(
-      new Atom({
-        label: '*',
-        pp: new Vec2(0, 0),
-        endpoints: [endpointId],
-      }),
-    );
-    const unrelatedAtomId = struct.atoms.add(
-      new Atom({ label: 'C', pp: new Vec2(1, 1) }),
-    );
-
-    expect(isAtomPartOfSuperAttachmentPoint(struct, sapId)).toBe(true);
-    expect(isAtomPartOfSuperAttachmentPoint(struct, endpointId)).toBe(true);
-    expect(isAtomPartOfSuperAttachmentPoint(struct, unrelatedAtomId)).toBe(
-      false,
-    );
-  });
-
-  it('allows haptic bonds between a SAP and a regular atom only', () => {
-    const sapAtom = { label: '*', endpoints: [1, 2, 3] };
-    const carbonAtom = { label: 'C', endpoints: [] };
-
-    expect(isHapticBondPairAllowed(sapAtom, carbonAtom)).toBe(true);
-    expect(isHapticBondPairAllowed(sapAtom, sapAtom)).toBe(false);
-  });
-
-  it('recognizes allowed metals for non-SAP haptic bonds', () => {
-    expect(isAllowedNonSapHapticBondMetal({ label: 'Ti', endpoints: [] })).toBe(
+  it('recognizes only Attachment Group entities as attachment groups', () => {
+    expect(isAttachmentGroup(new AttachmentGroup({ atomIds: [1, 2] }))).toBe(
       true,
     );
-    expect(isAllowedNonSapHapticBondMetal({ label: 'Al', endpoints: [] })).toBe(
+    expect(isAttachmentGroup(new Atom({ label: '*' }))).toBe(false);
+  });
+
+  it('detects member atoms from the dedicated Attachment Group collection', () => {
+    const struct = new Struct();
+    const memberAtomId = struct.atoms.add(new Atom({ label: 'C' }));
+    const unrelatedAtomId = struct.atoms.add(new Atom({ label: 'C' }));
+    const { attachmentGroupId } = addAttachmentGroup(struct, [memberAtomId]);
+
+    expect(isAtomPartOfAttachmentGroup(struct, memberAtomId)).toBe(true);
+    expect(isAtomPartOfAttachmentGroup(struct, unrelatedAtomId)).toBe(false);
+    expect(isAtomPartOfAttachmentGroup(struct, attachmentGroupId)).toBe(false);
+  });
+
+  it('allows a haptic bond with exactly one Attachment Group endpoint', () => {
+    const attachmentGroup = new AttachmentGroup({ atomIds: [1, 2] });
+    const carbonAtom = new Atom({ label: 'C' });
+
+    expect(isHapticBondPairAllowed(attachmentGroup, carbonAtom)).toBe(true);
+    expect(isHapticBondPairAllowed(attachmentGroup, attachmentGroup)).toBe(
       false,
     );
   });
 
-  it('detects when a SAP has an established haptic bond', () => {
-    const struct = new Struct();
-    const sapId = struct.atoms.add(
-      new Atom({ label: '*', pp: new Vec2(0, 0), endpoints: [2, 3, 4] }),
+  it('allows atom-atom haptic bonds with exactly one supported metal', () => {
+    expect(isAllowedNonAttachmentGroupHapticBondMetal({ label: 'Ti' })).toBe(
+      true,
     );
-    const metalId = struct.atoms.add(
-      new Atom({ label: 'Fe', pp: new Vec2(1, 0) }),
+    expect(isAllowedNonAttachmentGroupHapticBondMetal({ label: 'Al' })).toBe(
+      false,
     );
-    const endpointId = struct.atoms.add(
-      new Atom({ label: 'C', pp: new Vec2(0, 1) }),
+    expect(isHapticBondPairAllowed({ label: 'Ti' }, { label: 'N' })).toBe(true);
+    expect(isHapticBondPairAllowed({ label: 'Ti' }, { label: 'Au' })).toBe(
+      false,
     );
+    expect(isHapticBondPairAllowed({ label: 'Al' }, { label: 'N' })).toBe(
+      false,
+    );
+  });
 
-    expect(isSuperAttachmentPointWithHapticBond(struct, sapId)).toBe(false);
+  it('detects whether an Attachment Group has a haptic bond', () => {
+    const struct = new Struct();
+    const memberAtomId = struct.atoms.add(new Atom({ label: 'C' }));
+    const metalId = struct.atoms.add(new Atom({ label: 'Fe' }));
+    const { attachmentGroupId } = addAttachmentGroup(struct, [memberAtomId]);
+
+    expect(isAttachmentGroupWithHapticBond(struct, attachmentGroupId)).toBe(
+      false,
+    );
 
     struct.bonds.add(
       new Bond({
         type: Bond.PATTERN.TYPE.HAPTIC,
-        begin: sapId,
+        begin: attachmentGroupId,
         end: metalId,
-        endpoints: [endpointId],
-        attach: 'ALL',
       }),
     );
 
-    expect(isSuperAttachmentPointWithHapticBond(struct, sapId)).toBe(true);
-    expect(isSuperAttachmentPointWithHapticBond(struct, metalId)).toBe(false);
+    expect(isAttachmentGroupWithHapticBond(struct, attachmentGroupId)).toBe(
+      true,
+    );
+    expect(isAttachmentGroupWithHapticBond(struct, metalId)).toBe(false);
   });
 
-  it('distinguishes Attachment Group haptic bonds from atom-to-atom haptic bonds', () => {
+  it('distinguishes group haptic bonds from atom-atom haptic bonds', () => {
     const struct = new Struct();
-    const endpointId = struct.atoms.add(
-      new Atom({ label: 'C', pp: new Vec2(0, 1) }),
-    );
-    const attachmentGroupId = struct.atoms.add(
-      new Atom({
-        label: '*',
-        pp: new Vec2(0, 0),
-        endpoints: [endpointId],
-      }),
-    );
-    const metalId = struct.atoms.add(
-      new Atom({ label: 'Fe', pp: new Vec2(1, 0) }),
-    );
-    const carbonId = struct.atoms.add(
-      new Atom({ label: 'C', pp: new Vec2(2, 0) }),
-    );
+    const memberAtomId = struct.atoms.add(new Atom({ label: 'C' }));
+    const metalId = struct.atoms.add(new Atom({ label: 'Fe' }));
+    const carbonId = struct.atoms.add(new Atom({ label: 'C' }));
+    const { attachmentGroupId } = addAttachmentGroup(struct, [memberAtomId]);
 
     expect(
       isHapticBondWithAttachmentGroup(
@@ -160,152 +172,15 @@ describe('hapticBond helpers', () => {
     ).toBe(false);
   });
 
-  it.each([
-    ['target', false],
-    ['source', true],
-  ])(
-    'does not produce fusion items when an Attachment Group haptic bond is the %s bond',
-    (_, hapticBondIsSource) => {
-      const struct = new Struct();
-      const endpointId = struct.atoms.add(
-        new Atom({ label: 'C', pp: new Vec2(0, 1) }),
-      );
-      const attachmentGroupId = struct.atoms.add(
-        new Atom({
-          label: '*',
-          pp: new Vec2(0, 0),
-          endpoints: [endpointId],
-        }),
-      );
-      const metalId = struct.atoms.add(
-        new Atom({ label: 'Fe', pp: new Vec2(2, 0) }),
-      );
-      const regularBeginId = struct.atoms.add(
-        new Atom({ label: 'C', pp: new Vec2(0, 0) }),
-      );
-      const regularEndId = struct.atoms.add(
-        new Atom({ label: 'C', pp: new Vec2(2, 0) }),
-      );
-      const hapticBondId = struct.bonds.add(
-        new Bond({
-          type: Bond.PATTERN.TYPE.HAPTIC,
-          begin: attachmentGroupId,
-          end: metalId,
-          endpoints: [endpointId],
-          attach: 'ALL',
-        }),
-      );
-      const regularBondId = struct.bonds.add(
-        new Bond({
-          type: Bond.PATTERN.TYPE.SINGLE,
-          begin: regularBeginId,
-          end: regularEndId,
-        }),
-      );
-      const sourceBondId = hapticBondIsSource ? hapticBondId : regularBondId;
-      const targetBondId = hapticBondIsSource ? regularBondId : hapticBondId;
-      const sourceBond = struct.bonds.get(sourceBondId);
-      const targetBond = struct.bonds.get(targetBondId);
-
-      if (!sourceBond || !targetBond) {
-        throw new Error('Test bonds were not created');
-      }
-
-      const editor = {
-        render: { ctab: { molecule: struct } },
-        findMerge: () => ({
-          atoms: new Map([
-            [sourceBond.begin, targetBond.begin],
-            [sourceBond.end, targetBond.end],
-          ]),
-          bonds: new Map([[sourceBondId, targetBondId]]),
-          atomToFunctionalGroup: new Map(),
-        }),
-      };
-
-      expect(
-        getItemsToFuse(editor, {
-          atoms: [sourceBond.begin, sourceBond.end],
-          bonds: [sourceBondId],
-        }),
-      ).toBeNull();
-    },
-  );
-
-  it('does not merge an Attachment Group haptic bond when called directly', () => {
+  it('resolves only the Attachment Group half of its haptic bond', () => {
     const struct = new Struct();
-    const endpointId = struct.atoms.add(
-      new Atom({ label: 'C', pp: new Vec2(0, 1) }),
-    );
-    const attachmentGroupId = struct.atoms.add(
-      new Atom({
-        label: '*',
-        pp: new Vec2(0, 0),
-        endpoints: [endpointId],
-      }),
-    );
-    const metalId = struct.atoms.add(
-      new Atom({ label: 'Fe', pp: new Vec2(2, 0) }),
-    );
-    const regularBeginId = struct.atoms.add(
+    const memberAtomId = struct.atoms.add(
       new Atom({ label: 'C', pp: new Vec2(0, 0) }),
-    );
-    const regularEndId = struct.atoms.add(
-      new Atom({ label: 'C', pp: new Vec2(2, 0) }),
-    );
-    const hapticBondId = struct.bonds.add(
-      new Bond({
-        type: Bond.PATTERN.TYPE.HAPTIC,
-        begin: attachmentGroupId,
-        end: metalId,
-        endpoints: [endpointId],
-        attach: 'ALL',
-      }),
-    );
-    const regularBondId = struct.bonds.add(
-      new Bond({
-        type: Bond.PATTERN.TYPE.SINGLE,
-        begin: regularBeginId,
-        end: regularEndId,
-      }),
-    );
-    const render = new Render(
-      document as unknown as HTMLElement,
-      {
-        microModeScale: 20,
-        width: 100,
-        height: 100,
-      } as RenderOptions,
-    );
-    const restruct = new ReStruct(struct, render);
-    const initialAtomCount = struct.atoms.size;
-    const initialBondCount = struct.bonds.size;
-
-    const action = fromBondsMerge(
-      restruct,
-      new Map([[regularBondId, hapticBondId]]),
-    );
-
-    expect(action.operations).toHaveLength(0);
-    expect(struct.atoms.size).toBe(initialAtomCount);
-    expect(struct.bonds.size).toBe(initialBondCount);
-  });
-
-  it('resolves only the Attachment Group side of a haptic bond', () => {
-    const struct = new Struct();
-    const endpointId = struct.atoms.add(
-      new Atom({ label: 'C', pp: new Vec2(0, 1) }),
-    );
-    const attachmentGroupId = struct.atoms.add(
-      new Atom({
-        label: '*',
-        pp: new Vec2(0, 0),
-        endpoints: [endpointId],
-      }),
     );
     const centralAtomId = struct.atoms.add(
       new Atom({ label: 'Fe', pp: new Vec2(2, 0) }),
     );
+    const { attachmentGroupId } = addAttachmentGroup(struct, [memberAtomId]);
     const hapticBond = new Bond({
       type: Bond.PATTERN.TYPE.HAPTIC,
       begin: centralAtomId,
@@ -331,7 +206,7 @@ describe('hapticBond helpers', () => {
         struct,
         new Bond({
           type: Bond.PATTERN.TYPE.HAPTIC,
-          begin: endpointId,
+          begin: memberAtomId,
           end: centralAtomId,
         }),
         new Vec2(0.25, 0),
@@ -339,41 +214,108 @@ describe('hapticBond helpers', () => {
     ).toBeNull();
   });
 
-  it('allows only one listed metal in a non-SAP haptic bond pair', () => {
-    expect(
-      isHapticBondPairAllowed(
-        { label: 'Ti', endpoints: [] },
-        { label: 'N', endpoints: [] },
-      ),
-    ).toBe(true);
-    expect(
-      isHapticBondPairAllowed(
-        { label: 'Ti', endpoints: [] },
-        { label: 'Au', endpoints: [] },
-      ),
-    ).toBe(false);
-    expect(
-      isHapticBondPairAllowed(
-        { label: 'Al', endpoints: [] },
-        { label: 'N', endpoints: [] },
-      ),
-    ).toBe(false);
+  it.each([
+    ['target', false],
+    ['source', true],
+  ])(
+    'does not produce fusion items when a group haptic bond is the %s bond',
+    (_, hapticBondIsSource) => {
+      const struct = new Struct();
+      const memberAtomId = struct.atoms.add(new Atom({ label: 'C' }));
+      const metalId = struct.atoms.add(new Atom({ label: 'Fe' }));
+      const regularBeginId = struct.atoms.add(new Atom({ label: 'C' }));
+      const regularEndId = struct.atoms.add(new Atom({ label: 'C' }));
+      const { attachmentGroupId } = addAttachmentGroup(struct, [memberAtomId]);
+      const hapticBondId = struct.bonds.add(
+        new Bond({
+          type: Bond.PATTERN.TYPE.HAPTIC,
+          begin: attachmentGroupId,
+          end: metalId,
+        }),
+      );
+      const regularBondId = struct.bonds.add(
+        new Bond({
+          type: Bond.PATTERN.TYPE.SINGLE,
+          begin: regularBeginId,
+          end: regularEndId,
+        }),
+      );
+      const sourceBondId = hapticBondIsSource ? hapticBondId : regularBondId;
+      const targetBondId = hapticBondIsSource ? regularBondId : hapticBondId;
+      const sourceBond = struct.bonds.get(sourceBondId)!;
+      const targetBond = struct.bonds.get(targetBondId)!;
+      const editor = {
+        render: { ctab: { molecule: struct } },
+        findMerge: () => ({
+          atoms: new Map([
+            [sourceBond.begin, targetBond.begin],
+            [sourceBond.end, targetBond.end],
+          ]),
+          bonds: new Map([[sourceBondId, targetBondId]]),
+          atomToFunctionalGroup: new Map(),
+        }),
+      };
+
+      expect(
+        getItemsToFuse(editor, {
+          atoms: [sourceBond.begin, sourceBond.end],
+          bonds: [sourceBondId],
+        }),
+      ).toBeNull();
+    },
+  );
+
+  it('does not merge an Attachment Group haptic bond directly', () => {
+    const struct = new Struct();
+    const memberAtomId = struct.atoms.add(new Atom({ label: 'C' }));
+    const metalId = struct.atoms.add(new Atom({ label: 'Fe' }));
+    const regularBeginId = struct.atoms.add(new Atom({ label: 'C' }));
+    const regularEndId = struct.atoms.add(new Atom({ label: 'C' }));
+    const { attachmentGroupId } = addAttachmentGroup(struct, [memberAtomId]);
+    const hapticBondId = struct.bonds.add(
+      new Bond({
+        type: Bond.PATTERN.TYPE.HAPTIC,
+        begin: attachmentGroupId,
+        end: metalId,
+      }),
+    );
+    const regularBondId = struct.bonds.add(
+      new Bond({
+        type: Bond.PATTERN.TYPE.SINGLE,
+        begin: regularBeginId,
+        end: regularEndId,
+      }),
+    );
+    const reStruct = createReStruct(struct);
+
+    const action = fromBondsMerge(
+      reStruct,
+      new Map([[regularBondId, hapticBondId]]),
+    );
+
+    expect(action.operations).toHaveLength(0);
+    expect(struct.atoms.size).toBe(4);
+    expect(struct.attachmentGroups.size).toBe(1);
+    expect(struct.bonds.size).toBe(2);
   });
 
-  it('remaps endpoint atom ids through an id map', () => {
-    const idMap = new Map([
-      [1, 10],
-      [2, 20],
-      [3, 30],
-    ]);
+  it('remaps member atom ids when an Attachment Group is cloned', () => {
+    const attachmentGroup = new AttachmentGroup({ atomIds: [1, 2, 99] });
+    const clone = attachmentGroup.clone(
+      undefined,
+      new Map([
+        [1, 10],
+        [2, 20],
+      ]),
+    );
 
-    expect(remapEndpointAtomIds([1, 2, 99], idMap)).toEqual([10, 20]);
+    expect(clone.atomIds).toEqual([10, 20]);
   });
 
-  it('keeps the attachment group position when an endpoint atom is merged', () => {
+  it('keeps the group center stable when a member atom is merged at the same position', () => {
     const struct = new Struct();
     const mergedAtomPosition = new Vec2(5, -9.2);
-    const endpointIds = [
+    const memberAtomIds = [
       mergedAtomPosition,
       new Vec2(4.065, -8.7),
       new Vec2(3.202, -8.2),
@@ -384,67 +326,27 @@ describe('hapticBond helpers', () => {
     const centralAtomId = struct.atoms.add(
       new Atom({ label: 'C', pp: mergedAtomPosition }),
     );
-    const attachmentGroupId = struct.atoms.add(
-      new Atom({
-        label: '*',
-        pp: Vec2.ZERO,
-        endpoints: endpointIds,
-      }),
+    const { attachmentGroup, attachmentGroupId } = addAttachmentGroup(
+      struct,
+      memberAtomIds,
     );
-    const hapticBondId = struct.bonds.add(
+    struct.bonds.add(
       new Bond({
         type: Bond.PATTERN.TYPE.HAPTIC,
         begin: centralAtomId,
         end: attachmentGroupId,
-        endpoints: endpointIds,
-        attach: 'ALL',
       }),
     );
-    struct.bondInitHalfBonds(hapticBondId);
-    struct.initNeighbors();
+    const initialPosition = new Vec2(attachmentGroup.pp);
+    const reStruct = createReStruct(struct);
+    reStruct.assignConnectedComponents();
 
-    const attachmentGroup = struct.atoms.get(attachmentGroupId);
-    if (!attachmentGroup) {
-      throw new Error('Attachment group atom was not created');
-    }
-    recalculateSuperAttachmentPointPosition(attachmentGroup, struct);
-    const initialAttachmentGroupPosition = new Vec2(attachmentGroup.pp);
-    const render = new Render(
-      document as unknown as HTMLElement,
-      {
-        microModeScale: 20,
-        width: 100,
-        height: 100,
-      } as RenderOptions,
-    );
-    const restruct = new ReStruct(struct, render);
-    restruct.assignConnectedComponents();
+    fromAtomMerge(reStruct, memberAtomIds[0], centralAtomId);
 
-    fromAtomMerge(restruct, endpointIds[0], centralAtomId);
-
-    const expectedEndpointIds = [centralAtomId, ...endpointIds.slice(1)];
-    expect(attachmentGroup.endpoints).toEqual(expectedEndpointIds);
-    expect(struct.bonds.get(hapticBondId)?.endpoints).toEqual(
-      expectedEndpointIds,
-    );
-
-    recalculateSuperAttachmentPointPosition(attachmentGroup, struct);
-    expect(attachmentGroup.pp).toEqual(initialAttachmentGroupPosition);
-  });
-
-  it('prepares haptic bond attributes from a super-attachment point atom', () => {
-    const bond = prepareHapticBondAttributes(
-      { type: Bond.PATTERN.TYPE.HAPTIC, begin: 1, end: 2 },
-      { endpoints: [3, 4] },
-      { endpoints: [] },
-    );
-
-    expect(bond).toEqual({
-      type: Bond.PATTERN.TYPE.HAPTIC,
-      begin: 1,
-      end: 2,
-      attach: 'ALL',
-      endpoints: [3, 4],
-    });
+    expect(attachmentGroup.atomIds).toEqual([
+      centralAtomId,
+      ...memberAtomIds.slice(1),
+    ]);
+    expect(attachmentGroup.pp).toEqual(initialPosition);
   });
 });

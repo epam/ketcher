@@ -1,17 +1,16 @@
-import type { Atom, AtomAttributes } from 'domain/entities/atom';
-import type { Bond, BondAttributes } from 'domain/entities/bond';
-import { Pile } from 'domain/entities/pile';
+import type { Atom } from 'domain/entities/atom';
+import type { AttachmentGroup } from 'domain/entities/attachmentGroup';
+import type { Bond } from 'domain/entities/bond';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { HAPTIC_BOND_TYPE } from 'domain/constants/bonds';
 
-type HapticBondAtomLike = Pick<AtomAttributes, 'label' | 'endpoints'> &
-  Partial<Pick<Atom, 'label' | 'endpoints'>>;
+type HapticBondEndpoint = Pick<Atom, 'label'> | AttachmentGroup;
 
 export const HAPTIC_BOND_ERROR_MESSAGE =
   'Haptic bonds are permitted only between an attachment group and a central atom, or between an atom and an element belonging to the transition metals, lanthanoids, or actinoids.';
 
-export const SAP_HAPTIC_BOND_ERROR_MESSAGE =
+export const ATTACHMENT_GROUP_HAPTIC_BOND_ERROR_MESSAGE =
   'Attachment groups can only participate in haptic bonds.';
 
 export const HAPTIC_BOND_LENGTH_FACTOR = 1.8;
@@ -88,13 +87,14 @@ const HAPTIC_BOND_ALLOWED_METALS = new Set([
   'Cn',
 ]);
 
-export function isSuperAttachmentPointAtom(atom?: HapticBondAtomLike | null) {
-  return atom?.label === '*' && (atom.endpoints?.length ?? 0) > 0;
+export function isAttachmentGroup(
+  endpoint?: HapticBondEndpoint | null,
+): endpoint is AttachmentGroup {
+  return !!endpoint && 'atomIds' in endpoint;
 }
 
-export function isSuperAttachmentPointById(struct: Struct, atomId: number) {
-  const atom = struct.atoms.get(atomId);
-  return isSuperAttachmentPointAtom(atom);
+export function isAttachmentGroupId(struct: Struct, endpointId: number) {
+  return struct.attachmentGroups.has(endpointId);
 }
 
 export function isHapticBondWithAttachmentGroup(
@@ -106,8 +106,8 @@ export function isHapticBondWithAttachmentGroup(
   }
 
   return (
-    isSuperAttachmentPointById(struct, bond.begin) ||
-    isSuperAttachmentPointById(struct, bond.end)
+    isAttachmentGroupId(struct, bond.begin) ||
+    isAttachmentGroupId(struct, bond.end)
   );
 }
 
@@ -120,12 +120,12 @@ export function getAttachmentGroupIdForHapticBondHalf(
     return null;
   }
 
-  const attachmentGroupId = isSuperAttachmentPointById(struct, bond.begin)
+  const attachmentGroupId = isAttachmentGroupId(struct, bond.begin)
     ? bond.begin
     : bond.end;
   const otherAtomId = attachmentGroupId === bond.begin ? bond.end : bond.begin;
-  const attachmentGroup = struct.atoms.get(attachmentGroupId);
-  const otherAtom = struct.atoms.get(otherAtomId);
+  const attachmentGroup = struct.attachmentGroups.get(attachmentGroupId);
+  const otherAtom = struct.getBondEndpoint(otherAtomId);
 
   if (!attachmentGroup || !otherAtom) {
     return null;
@@ -137,160 +137,133 @@ export function getAttachmentGroupIdForHapticBondHalf(
     : null;
 }
 
-export function isSuperAttachmentPointWithHapticBond(
+export function isAttachmentGroupWithHapticBond(
   struct: Struct,
-  atomId: number,
+  attachmentGroupId: number,
 ) {
-  const atom = struct.atoms.get(atomId);
-
-  if (!isSuperAttachmentPointAtom(atom)) {
+  if (!struct.attachmentGroups.has(attachmentGroupId)) {
     return false;
   }
 
   return struct.bonds.some(
     (bond) =>
       bond.type === HAPTIC_BOND_TYPE &&
-      (bond.begin === atomId || bond.end === atomId),
+      (bond.begin === attachmentGroupId || bond.end === attachmentGroupId),
   );
 }
 
-export function isSuperAttachmentPointExcludedFromSelection(
-  atom?: HapticBondAtomLike | null,
-) {
-  return isSuperAttachmentPointAtom(atom);
-}
-
-export function isAtomPartOfSuperAttachmentPoint(
-  struct: Struct,
-  atomId: number,
-) {
-  const atom = struct.atoms.get(atomId);
-
-  if (isSuperAttachmentPointAtom(atom)) {
-    return true;
-  }
-
-  return struct.atoms.some(
-    (otherAtom) =>
-      isSuperAttachmentPointAtom(otherAtom) &&
-      otherAtom.endpoints.includes(atomId),
+export function isAtomPartOfAttachmentGroup(struct: Struct, atomId: number) {
+  return struct.attachmentGroups.some((attachmentGroup) =>
+    attachmentGroup.atomIds.includes(atomId),
   );
 }
 
-export function isAllowedNonSapHapticBondMetal(
-  atom?: HapticBondAtomLike | null,
+export function isAllowedNonAttachmentGroupHapticBondMetal(
+  atom?: Pick<Atom, 'label'> | null,
 ) {
   return !!atom && HAPTIC_BOND_ALLOWED_METALS.has(atom.label);
 }
 
 export function isHapticBondPairAllowed(
-  beginAtom?: HapticBondAtomLike | null,
-  endAtom?: HapticBondAtomLike | null,
+  beginAtom?: HapticBondEndpoint | null,
+  endAtom?: HapticBondEndpoint | null,
 ) {
   if (!beginAtom || !endAtom) {
     return false;
   }
 
-  const beginAtomIsSap = isSuperAttachmentPointAtom(beginAtom);
-  const endAtomIsSap = isSuperAttachmentPointAtom(endAtom);
+  const beginIsAttachmentGroup = isAttachmentGroup(beginAtom);
+  const endIsAttachmentGroup = isAttachmentGroup(endAtom);
 
-  if (beginAtomIsSap || endAtomIsSap) {
-    return beginAtomIsSap !== endAtomIsSap;
+  if (beginIsAttachmentGroup || endIsAttachmentGroup) {
+    return beginIsAttachmentGroup !== endIsAttachmentGroup;
   }
 
-  const beginAtomIsAllowedMetal = isAllowedNonSapHapticBondMetal(beginAtom);
-  const endAtomIsAllowedMetal = isAllowedNonSapHapticBondMetal(endAtom);
+  const beginAtomIsAllowedMetal =
+    isAllowedNonAttachmentGroupHapticBondMetal(beginAtom);
+  const endAtomIsAllowedMetal =
+    isAllowedNonAttachmentGroupHapticBondMetal(endAtom);
 
   return beginAtomIsAllowedMetal !== endAtomIsAllowedMetal;
 }
 
-export function remapEndpointAtomIds(
-  endpoints: number[],
-  idMap: Map<number, number>,
-): number[] {
-  const remapped: number[] = [];
-  endpoints.forEach((endpointAtomId) => {
-    const newId = idMap.get(endpointAtomId);
-    if (newId !== undefined) {
-      remapped.push(newId);
-    }
-  });
-  return remapped;
-}
-
-export function prepareHapticBondAttributes<T extends Partial<BondAttributes>>(
-  bond: T,
-  beginAtom?: Pick<Atom, 'endpoints'> | null,
-  endAtom?: Pick<Atom, 'endpoints'> | null,
-): T {
-  if (bond.type !== HAPTIC_BOND_TYPE) {
-    return bond;
-  }
-
-  let preparedBond: T = {
-    ...bond,
-    attach: 'ALL',
-  };
-
-  if (beginAtom?.endpoints.length) {
-    preparedBond = {
-      ...preparedBond,
-      endpoints: beginAtom.endpoints,
-    };
-  } else if (endAtom?.endpoints.length) {
-    preparedBond = {
-      ...preparedBond,
-      endpoints: endAtom.endpoints,
-    };
-  }
-
-  return preparedBond;
-}
-
-export function recalculateSuperAttachmentPointPosition(
-  atom: Pick<Atom, 'label' | 'endpoints' | 'pp'>,
+export function isBondTypeAllowedForEndpoints(
   struct: Struct,
+  bond: Pick<Bond, 'begin' | 'end'>,
+  type: number,
 ) {
-  if (!isSuperAttachmentPointAtom(atom)) {
-    return;
+  const beginEndpoint = struct.getBondEndpoint(bond.begin);
+  const endEndpoint = struct.getBondEndpoint(bond.end);
+
+  if (type === HAPTIC_BOND_TYPE) {
+    return isHapticBondPairAllowed(beginEndpoint, endEndpoint);
   }
 
-  const positions = atom.endpoints.map(
-    (atomId) => struct.atoms.get(atomId)?.pp || Vec2.ZERO,
-  );
-
-  atom.pp = positions
-    .reduce((acc, pos) => acc.add(pos))
-    .scaled(1 / positions.length);
+  return !isAttachmentGroup(beginEndpoint) && !isAttachmentGroup(endEndpoint);
 }
 
-export function mergeHapticBondFragments(struct: Struct) {
-  struct.bonds.forEach((bond) => {
-    if (bond.type !== HAPTIC_BOND_TYPE || !bond.endpoints?.length) {
-      return;
+export function isAtomLabelAllowedByHapticBonds(
+  struct: Struct,
+  atomId: number,
+  label: string,
+) {
+  const atom = struct.atoms.get(atomId);
+  if (!atom) {
+    return false;
+  }
+
+  const proposedAtom = { label };
+
+  return !struct.bonds.some((bond) => {
+    if (
+      bond.type !== HAPTIC_BOND_TYPE ||
+      (bond.begin !== atomId && bond.end !== atomId)
+    ) {
+      return false;
     }
 
-    const involvedAtomIds = [bond.begin, bond.end, ...bond.endpoints];
-    const fragmentIds = new Pile<number>();
-    involvedAtomIds.forEach((aid) => {
-      const atom = struct.atoms.get(aid);
-      if (atom && atom.fragment >= 0) {
-        fragmentIds.add(atom.fragment);
-      }
-    });
+    const beginEndpoint =
+      bond.begin === atomId ? proposedAtom : struct.getBondEndpoint(bond.begin);
+    const endEndpoint =
+      bond.end === atomId ? proposedAtom : struct.getBondEndpoint(bond.end);
 
-    if (fragmentIds.size <= 1) {
-      return;
+    return !isHapticBondPairAllowed(beginEndpoint, endEndpoint);
+  });
+}
+
+export function isAtomMergeAllowedByHapticBonds(
+  struct: Struct,
+  sourceAtomId: number,
+  destinationAtomId: number,
+  mergedAtomLabel: string,
+) {
+  const mergedAtom = { label: mergedAtomLabel };
+
+  return !struct.bonds.some((bond) => {
+    if (
+      bond.type !== HAPTIC_BOND_TYPE ||
+      (![bond.begin, bond.end].includes(sourceAtomId) &&
+        ![bond.begin, bond.end].includes(destinationAtomId))
+    ) {
+      return false;
     }
 
-    const [targetFragmentId, ...fragmentsToMerge] = Array.from(fragmentIds);
-    const fragmentsToMergeSet = new Pile<number>(fragmentsToMerge);
+    if (
+      [bond.begin, bond.end].includes(sourceAtomId) &&
+      [bond.begin, bond.end].includes(destinationAtomId)
+    ) {
+      return false;
+    }
 
-    struct.atoms.forEach((atom) => {
-      if (fragmentsToMergeSet.has(atom.fragment)) {
-        atom.fragment = targetFragmentId;
-      }
-    });
-    fragmentsToMerge.forEach((fragmentId) => struct.frags.delete(fragmentId));
+    const getMergedEndpoint = (endpointId: number) => {
+      return endpointId === sourceAtomId || endpointId === destinationAtomId
+        ? mergedAtom
+        : struct.getBondEndpoint(endpointId);
+    };
+
+    return !isHapticBondPairAllowed(
+      getMergedEndpoint(bond.begin),
+      getMergedEndpoint(bond.end),
+    );
   });
 }

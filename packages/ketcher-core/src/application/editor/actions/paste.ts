@@ -30,6 +30,7 @@ import {
   AtomAttr,
   ImageUpsert,
   MultitailArrowUpsert,
+  AttachmentGroupAdd,
 } from '../operations';
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 
@@ -46,10 +47,10 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type { Image } from 'domain/entities/image';
 import { getOrThrow } from '../../../utilities';
 import { KetcherLogger } from 'utilities';
-import { remapEndpointAtomIds } from 'domain/helpers/hapticBond';
 
 export type CreatedItems = {
   atoms: number[];
+  attachmentGroups: number[];
   bonds: number[];
   rxnArrows: number[];
   rxnPluses: number[];
@@ -61,6 +62,7 @@ export type CreatedItems = {
 
 type PasteItems = {
   atoms: number[];
+  attachmentGroups: number[];
   bonds: number[];
 };
 
@@ -85,11 +87,13 @@ export function fromPaste(
   const pasteItems: PasteItems = {
     // only atoms and bonds now
     atoms: [],
+    attachmentGroups: [],
     bonds: [],
   };
 
   const items: CreatedItems = {
     atoms: [],
+    attachmentGroups: [],
     bonds: [],
     rxnArrows: [],
     rxnPluses: [],
@@ -160,15 +164,20 @@ export function fromPaste(
     );
   });
 
-  pstruct.atoms.forEach((atom, aid) => {
-    if (!atom.endpoints?.length) return;
-    const pastedAtomId = aidMap.get(aid);
-    if (pastedAtomId === undefined) return;
+  pstruct.attachmentGroups.forEach((attachmentGroup, id) => {
+    const atomIds = attachmentGroup.atomIds
+      .map((atomId) => aidMap.get(atomId))
+      .filter((atomId): atomId is number => atomId !== undefined);
+    const operation = new AttachmentGroupAdd({ atomIds }).perform(
+      restruct,
+    ) as AttachmentGroupAdd;
+    action.addOp(operation);
 
-    const pastedAtom = restruct.molecule.atoms.get(pastedAtomId);
-    if (pastedAtom) {
-      pastedAtom.endpoints = remapEndpointAtomIds(atom.endpoints, aidMap);
-    }
+    const pastedId = operation.data.id;
+    if (pastedId === null) return;
+    aidMap.set(id, pastedId);
+    pasteItems.attachmentGroups.push(pastedId);
+    items.attachmentGroups.push(pastedId);
   });
 
   pstruct.frags.forEach((frag, frid) => {
@@ -211,13 +220,10 @@ export function fromPaste(
   });
 
   pstruct.bonds.forEach((bond) => {
-    const bondToAdd = bond.endpoints?.length
-      ? { ...bond, endpoints: remapEndpointAtomIds(bond.endpoints, aidMap) }
-      : bond;
     const operation = new BondAdd(
       aidMap.get(bond.begin),
       aidMap.get(bond.end),
-      bondToAdd,
+      bond,
       false,
     ).perform(restruct) as BondAdd;
     action.addOp(operation);

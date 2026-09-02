@@ -29,7 +29,6 @@ import {
   entityNotFoundMessage,
   assert,
   KetcherLogger,
-  isSuperAttachmentPointAtom,
 } from 'ketcher-core';
 import type {
   ClosestItem,
@@ -53,6 +52,7 @@ const SELECTION_WITHIN_TEXT = 0;
 
 const findMaps: Record<string, FindMapFn> = {
   atoms: findClosestAtom,
+  attachmentGroups: findClosestAttachmentGroup,
   bonds: findClosestBond,
   enhancedFlags: findClosestEnhancedFlag,
   sgroupData: findClosestDataSGroupData,
@@ -197,6 +197,29 @@ function findClosestAtom(
   return null;
 }
 
+function findClosestAttachmentGroup(
+  restruct: ReStruct,
+  pos: Vec2,
+  skip: SkipItem | null,
+  minDist: number | null,
+) {
+  let closestId: number | null = null;
+  const maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
+  const skipId = skip?.map === 'attachmentGroups' ? skip.id : null;
+  let effectiveMinDist = Math.min(minDist ?? maxMinDist, maxMinDist);
+
+  restruct.visibleAttachmentGroups.forEach((attachmentGroup, id) => {
+    if (id === skipId) return;
+    const dist = Vec2.dist(pos, attachmentGroup.a.pp);
+    if (dist < effectiveMinDist) {
+      closestId = id;
+      effectiveMinDist = dist;
+    }
+  });
+
+  return closestId === null ? null : { id: closestId, dist: effectiveMinDist };
+}
+
 function findClosestBond(
   restruct: ReStruct,
   pos: Vec2,
@@ -220,8 +243,8 @@ function findClosestBond(
       return;
     }
 
-    const beginAtom = restruct.atoms.get(bond.b.begin);
-    const endAtom = restruct.atoms.get(bond.b.end);
+    const beginAtom = restruct.getBondEndpoint(bond.b.begin);
+    const endAtom = restruct.getBondEndpoint(bond.b.end);
     if (!beginAtom || !endAtom) {
       // visibleBonds is a stale cache mid-batch-edit; skip instead of crashing.
       KetcherLogger.warn(
@@ -589,6 +612,9 @@ function findClosestItem(
   options: ClosestFunctionOptions,
 ): ClosestItemWithMap | null {
   maps = maps ?? Object.keys(findMaps);
+  if (maps.includes('atoms') && !maps.includes('attachmentGroups')) {
+    maps = [...maps, 'attachmentGroups'];
+  }
 
   let priorityItem: ClosestItemWithMap | null = null;
 
@@ -649,8 +675,8 @@ function findCloseMerge(
   selected.bonds.forEach((bid) => {
     const bond = struct.bonds.get(bid);
     if (bond) {
-      const beginAtom = struct.atoms.get(bond.begin);
-      const endAtom = struct.atoms.get(bond.end);
+      const beginAtom = struct.getBondEndpoint(bond.begin);
+      const endAtom = struct.getBondEndpoint(bond.end);
       if (!beginAtom || !endAtom) {
         // Same stale-cache scenario as findClosestBond: skip instead of crashing.
         KetcherLogger.warn(
@@ -670,10 +696,6 @@ function findCloseMerge(
   maps.forEach((map) => {
     if (map === 'atoms') {
       Array.from(pos.atoms.keys()).forEach((atomId) => {
-        if (isSuperAttachmentPointAtom(struct.atoms.get(atomId))) {
-          return;
-        }
-
         const atomPosition = pos.atoms.get(atomId);
         if (!atomPosition) return;
         const merged = mergeAtomToAtom(
@@ -718,15 +740,6 @@ function mergeAtomToAtom(
 ) {
   const skip = { map: 'atoms', id: atomId };
   const closestAtom = findClosestAtom(restruct, atomPosition, skip, null);
-  const closestAtomEntity = closestAtom
-    ? restruct.molecule.atoms.get(closestAtom.id)
-    : undefined;
-
-  if (isSuperAttachmentPointAtom(closestAtomEntity)) {
-    // Prevent the caller from falling back to functional-group merging.
-    return true;
-  }
-
   if (closestAtom && !selected.atoms.includes(closestAtom.id)) {
     result.atoms.set(atomId, closestAtom.id);
     return true;

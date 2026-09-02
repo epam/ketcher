@@ -35,7 +35,6 @@ import {
   SGroup,
   vectorUtils,
   isHapticBondWithAttachmentGroup,
-  isSuperAttachmentPointById,
 } from 'ketcher-core';
 
 import LassoHelper from '../helper/lasso';
@@ -175,11 +174,8 @@ class SelectTool implements Tool {
         event,
         ci as ReactionArrowClosestItem,
       );
-    } else if (
-      ci.map === 'atoms' &&
-      isSuperAttachmentPointById(this.editor.struct(), ci.id)
-    ) {
-      // do nothing
+    } else if (ci.map === 'attachmentGroups') {
+      return;
     } else {
       this.dragCtx = {
         item: ci,

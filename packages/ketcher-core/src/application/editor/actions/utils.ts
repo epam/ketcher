@@ -77,15 +77,6 @@ function getReAtom(restruct: ReStruct, atomId: number) {
   return atom;
 }
 
-function getAtom(restruct: ReStruct, atomId: number): Atom {
-  const atom = restruct.molecule.atoms.get(atomId);
-  if (!atom) {
-    throwLoggedError(`Atom ${atomId} not found in struct`);
-  }
-
-  return atom;
-}
-
 function getAtomNeighbors(struct: Struct, atomId: number) {
   const neighbors = struct.atomGetNeighbors(atomId);
   if (!neighbors) {
@@ -135,7 +126,9 @@ export function atomGetSGroups(restruct: ReStruct, atomId: number): number[] {
 }
 
 export function atomGetPos(restruct: ReStruct, id: number): Vec2 {
-  return getAtom(restruct, id).pp;
+  const endpoint = restruct.molecule.getBondEndpoint(id);
+  if (!endpoint) throwLoggedError(`Bond endpoint ${id} not found in struct`);
+  return endpoint.pp;
 }
 
 export function findStereoAtoms(

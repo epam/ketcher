@@ -1,5 +1,5 @@
 import type { Atom } from 'domain/entities/atom';
-import { isSuperAttachmentPointAtom } from 'domain/helpers/hapticBond';
+import { AttachmentGroup } from 'domain/entities/attachmentGroup';
 import { LayerMap } from './generalEnumTypes';
 import { paperPathFromSVGElement } from './resgroup';
 import type { Render } from '../raphaelRender';
@@ -8,8 +8,8 @@ import paperjs from 'paper';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-export interface SuperAttachmentPointHoverHost {
-  a: Atom;
+export interface AttachmentGroupHoverHost {
+  a: AttachmentGroup;
   visel: Visel;
   makeHoverPlate(render: Render, drawOutline: boolean): any;
   attachHighlightTriggerForAttachmentPointAtom(
@@ -22,19 +22,17 @@ export interface SuperAttachmentPointHoverHost {
   ): void;
 }
 
-export function getSuperAttachmentPointLabelAttrs(
-  atom: Pick<Atom, 'label' | 'endpoints'>,
-) {
-  return isSuperAttachmentPointAtom(atom) ? { cursor: 'default' } : {};
+export function getAttachmentGroupLabelAttrs(atom: Atom) {
+  return atom instanceof AttachmentGroup ? { cursor: 'default' } : {};
 }
 
-export function drawSuperAttachmentPointHover(
-  host: SuperAttachmentPointHoverHost,
+export function drawAttachmentGroupHover(
+  host: AttachmentGroupHoverHost,
   render: Render,
   drawOutline: boolean,
 ) {
   const hoversToCombine: any[] = [];
-  const endpointIds = new Set(host.a.endpoints);
+  const atomIds = new Set(host.a.atomIds);
 
   const selfPlate = host.makeHoverPlate(render, false);
 
@@ -43,9 +41,9 @@ export function drawSuperAttachmentPointHover(
     hoversToCombine.push(selfPlate);
   }
 
-  host.a.endpoints.forEach((atomId) => {
-    const endpointAtom = render.ctab.atoms.get(atomId);
-    const atomPlate = endpointAtom?.makeHoverPlate(render, false);
+  host.a.atomIds.forEach((atomId) => {
+    const atom = render.ctab.atoms.get(atomId);
+    const atomPlate = atom?.makeHoverPlate(render, false);
 
     if (atomPlate) {
       hoversToCombine.push(atomPlate);
@@ -53,7 +51,7 @@ export function drawSuperAttachmentPointHover(
   });
 
   render.ctab.bonds.forEach((rebond) => {
-    if (endpointIds.has(rebond.b.begin) && endpointIds.has(rebond.b.end)) {
+    if (atomIds.has(rebond.b.begin) && atomIds.has(rebond.b.end)) {
       const bondPlate = rebond.makeHoverPlate(render, false);
 
       if (bondPlate) {
@@ -78,28 +76,16 @@ export function drawSuperAttachmentPointHover(
   elements.forEach((el) => {
     const paperPath = paperPathFromSVGElement(el);
 
-    if (!paperPath) {
-      return;
-    }
+    if (!paperPath) return;
+    if (!paperPath.closed) paperPath.closePath();
 
-    if (!paperPath.closed) {
-      paperPath.closePath();
-    }
-
-    if (!combinedPath) {
-      combinedPath = paperPath;
-    } else {
-      combinedPath = combinedPath.unite(paperPath);
-    }
+    combinedPath = combinedPath ? combinedPath.unite(paperPath) : paperPath;
   });
 
-  if (!combinedPath) {
-    return;
-  }
+  if (!combinedPath) return;
 
-  const combinedPathD = combinedPath.pathData;
   const hoverPath = render.paper
-    .path(combinedPathD)
+    .path(combinedPath.pathData)
     .attr({ ...render.options.hoverStyle, cursor: 'default' });
 
   render.ctab.addReObjectPath(LayerMap.hovering, host.visel, hoverPath);

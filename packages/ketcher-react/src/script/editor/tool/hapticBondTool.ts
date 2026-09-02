@@ -1,32 +1,30 @@
 import {
   Bond,
   type BondAttributes,
+  ATTACHMENT_GROUP_HAPTIC_BOND_ERROR_MESSAGE,
   HAPTIC_BOND_ERROR_MESSAGE,
-  SAP_HAPTIC_BOND_ERROR_MESSAGE,
   getHapticBondEndPosition,
   type Struct,
   isHapticBondPairAllowed,
-  isSuperAttachmentPointAtom,
+  isAttachmentGroup,
   type Vec2,
 } from 'ketcher-core';
 
 import type Editor from '../Editor';
 
-export type AtomValidationInput =
-  | number
-  | { label: string; endpoints?: number[] };
+export type AtomValidationInput = number | { label: string };
 
-export type BondValidationFailure = 'sap' | 'haptic';
+export type BondValidationFailure = 'attachmentGroup' | 'haptic';
 
 export interface HapticBondDragFlags {
   hapticValidationFailed: boolean;
-  sapValidationFailed: boolean;
+  attachmentGroupValidationFailed: boolean;
 }
 
 export function createHapticBondDragFlags(): HapticBondDragFlags {
   return {
     hapticValidationFailed: false,
-    sapValidationFailed: false,
+    attachmentGroupValidationFailed: false,
   };
 }
 
@@ -49,11 +47,11 @@ export class HapticBondToolHelper {
 
   getAtomForValidation(molecule: Struct, atomOrProps: AtomValidationInput) {
     return typeof atomOrProps === 'number'
-      ? molecule.atoms.get(atomOrProps)
+      ? molecule.getBondEndpoint(atomOrProps)
       : atomOrProps;
   }
 
-  isSuperAttachmentBondInvolved(
+  isAttachmentGroupInvolved(
     molecule: Struct,
     beginAtomOrProps: AtomValidationInput,
     endAtomOrProps: AtomValidationInput,
@@ -61,10 +59,7 @@ export class HapticBondToolHelper {
     const beginAtom = this.getAtomForValidation(molecule, beginAtomOrProps);
     const endAtom = this.getAtomForValidation(molecule, endAtomOrProps);
 
-    return (
-      isSuperAttachmentPointAtom(beginAtom) ||
-      isSuperAttachmentPointAtom(endAtom)
-    );
+    return isAttachmentGroup(beginAtom) || isAttachmentGroup(endAtom);
   }
 
   isValidHapticBond(
@@ -89,13 +84,9 @@ export class HapticBondToolHelper {
   ): BondValidationFailure | null {
     if (
       !this.isHapticBondType() &&
-      this.isSuperAttachmentBondInvolved(
-        molecule,
-        beginAtomOrProps,
-        endAtomOrProps,
-      )
+      this.isAttachmentGroupInvolved(molecule, beginAtomOrProps, endAtomOrProps)
     ) {
-      return 'sap';
+      return 'attachmentGroup';
     }
 
     if (!this.isValidHapticBond(molecule, beginAtomOrProps, endAtomOrProps)) {
@@ -121,8 +112,8 @@ export class HapticBondToolHelper {
     dragFlags: HapticBondDragFlags,
     failure: BondValidationFailure,
   ) {
-    if (failure === 'sap') {
-      dragFlags.sapValidationFailed = true;
+    if (failure === 'attachmentGroup') {
+      dragFlags.attachmentGroupValidationFailed = true;
     } else {
       dragFlags.hapticValidationFailed = true;
     }
@@ -130,13 +121,13 @@ export class HapticBondToolHelper {
 
   clearValidationFlags(dragFlags: HapticBondDragFlags) {
     dragFlags.hapticValidationFailed = false;
-    dragFlags.sapValidationFailed = false;
+    dragFlags.attachmentGroupValidationFailed = false;
   }
 
   showValidationError(failure: BondValidationFailure) {
     this.editor.errorHandler?.(
-      failure === 'sap'
-        ? SAP_HAPTIC_BOND_ERROR_MESSAGE
+      failure === 'attachmentGroup'
+        ? ATTACHMENT_GROUP_HAPTIC_BOND_ERROR_MESSAGE
         : HAPTIC_BOND_ERROR_MESSAGE,
     );
   }
@@ -167,8 +158,8 @@ export class HapticBondToolHelper {
       return 'haptic';
     }
 
-    if (dragFlags.sapValidationFailed) {
-      return 'sap';
+    if (dragFlags.attachmentGroupValidationFailed) {
+      return 'attachmentGroup';
     }
 
     if (

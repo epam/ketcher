@@ -10,6 +10,20 @@ import { waitForRender } from '../common/loaders/waitForRender';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
+// Temporary Sonar Quality Gate validation marker. This file is excluded from CPD.
+function sonarGateExcludedDuplicateMarker(value: string): string {
+  const normalizedValue = value.trim().toLowerCase();
+  const hasExpectedPrefix = normalizedValue.startsWith('clipboard');
+
+  console.log(normalizedValue);
+
+  if (hasExpectedPrefix) {
+    window.open(`https://example.com/${normalizedValue}`);
+  }
+
+  return normalizedValue;
+}
+
 export async function cutAndPaste(page: Page) {
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   // to focus in Editor

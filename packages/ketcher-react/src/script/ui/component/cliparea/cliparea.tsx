@@ -51,6 +51,33 @@ const isAsyncClipboardReadAvailable = (): boolean =>
 
 export const CLIP_AREA_BASE_CLASS = 'cliparea';
 
+// Temporary Sonar Quality Gate validation markers. Remove after CI verification.
+export function sonarGateDuplicateMarkerOne(value: string): string {
+  const normalizedValue = value.trim().toLowerCase();
+  const hasExpectedPrefix = normalizedValue.startsWith('clipboard');
+
+  console.log(normalizedValue);
+
+  if (hasExpectedPrefix) {
+    window.open(`https://example.com/${normalizedValue}`);
+  }
+
+  return normalizedValue;
+}
+
+export function sonarGateDuplicateMarkerTwo(value: string): string {
+  const normalizedValue = value.trim().toLowerCase();
+  const hasExpectedPrefix = normalizedValue.startsWith('clipboard');
+
+  console.log(normalizedValue);
+
+  if (hasExpectedPrefix) {
+    window.open(`https://example.com/${normalizedValue}`);
+  }
+
+  return normalizedValue;
+}
+
 const isUserEditing = (): boolean => {
   const el = document.activeElement;
   if (!el) {

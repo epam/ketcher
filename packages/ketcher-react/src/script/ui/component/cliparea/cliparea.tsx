@@ -35,11 +35,14 @@ const isSafariBrowser = (): boolean =>
   typeof navigator !== 'undefined' &&
   /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-const isAsyncClipboardWriteAvailable = (): boolean =>
-  isClipboardAPIAvailable() && !isSafariBrowser();
-
 const isSecureClipboardContext = (): boolean =>
   Boolean(globalThis.window?.isSecureContext);
+
+const isAsyncClipboardWriteAvailable = (): boolean =>
+  isSecureClipboardContext() &&
+  !isSafariBrowser() &&
+  typeof ClipboardItem === 'function' &&
+  typeof navigator.clipboard?.write === 'function';
 
 const isAsyncClipboardReadAvailable = (): boolean =>
   isClipboardAPIAvailable() &&
@@ -61,11 +64,11 @@ const isUserEditing = (): boolean => {
   // Check for input, textarea, or contenteditable
   return Boolean(
     el.tagName === 'TEXTAREA' ||
-    (el.tagName === 'INPUT' &&
-      (el as HTMLInputElement).type !== 'button' &&
-      (el as HTMLInputElement).type !== 'submit' &&
-      (el as HTMLInputElement).type !== 'reset') ||
-    (el as HTMLElement).contentEditable === 'true',
+      (el.tagName === 'INPUT' &&
+        (el as HTMLInputElement).type !== 'button' &&
+        (el as HTMLInputElement).type !== 'submit' &&
+        (el as HTMLInputElement).type !== 'reset') ||
+      (el as HTMLElement).contentEditable === 'true',
   );
 };
 

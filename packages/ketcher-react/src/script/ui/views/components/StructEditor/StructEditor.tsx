@@ -391,6 +391,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
       <TagComponent
         className={clsx(classes.canvas, className)}
         {...props}
+        dir="ltr"
         data-testid="ketcher-canvas"
         data-canvasmode="molecules-mode"
       >

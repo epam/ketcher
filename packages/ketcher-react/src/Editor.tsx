@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 import { lazy, Suspense, useEffect, useState } from 'react';
+import { I18nextProvider } from 'react-i18next';
 import {
   type EditorProps,
   MicromoleculesEditor as MicromoleculesEditorComponent,
@@ -8,6 +9,7 @@ import {
 import { ModeControl } from './script/ui/views/toolbars/ModeControl';
 import { LoadingCircles } from './script/ui/views/components';
 import styles from './Editor.module.less';
+import i18n from './i18n/i18n';
 import {
   type Ketcher,
   type Editor as MoleculesEditor,
@@ -137,48 +139,50 @@ export const Editor = (props: Props) => {
   };
 
   return (
-    <>
-      <div
-        data-ketcher-editor
-        className={styles.editorsWrapper}
-        style={{
-          display: showPolymerEditor ? undefined : 'none',
-        }}
-      >
-        <Suspense
-          fallback={
-            <div className={styles.switchingLoader}>
-              <LoadingCircles />
-            </div>
-          }
+    <I18nextProvider i18n={i18n}>
+      <div dir={i18n.dir()}>
+        <div
+          data-ketcher-editor
+          className={styles.editorsWrapper}
+          style={{
+            display: showPolymerEditor ? undefined : 'none',
+          }}
         >
-          {ketcherId && (
-            <MacromoleculesEditorComponent
-              togglerComponent={togglerComponent}
-              ketcherId={ketcherId}
-              isMacromoleculesEditorTurnedOn={showPolymerEditor}
-              monomersLibraryUpdate={props.monomersLibraryUpdate}
-              monomersLibraryReplace={props.monomersLibraryReplace}
-              onInit={onInitMacromoleculesEditor}
-            />
-          )}
-        </Suspense>
+          <Suspense
+            fallback={
+              <div className={styles.switchingLoader}>
+                <LoadingCircles />
+              </div>
+            }
+          >
+            {ketcherId && (
+              <MacromoleculesEditorComponent
+                togglerComponent={togglerComponent}
+                ketcherId={ketcherId}
+                isMacromoleculesEditorTurnedOn={showPolymerEditor}
+                monomersLibraryUpdate={props.monomersLibraryUpdate}
+                monomersLibraryReplace={props.monomersLibraryReplace}
+                onInit={onInitMacromoleculesEditor}
+              />
+            )}
+          </Suspense>
+        </div>
+        <div
+          data-ketcher-editor
+          className={styles.editorsWrapper}
+          style={{
+            display: showPolymerEditor ? 'none' : undefined,
+          }}
+        >
+          <MicromoleculesEditorComponent
+            {...props}
+            ketcherId={ketcherId}
+            onSetKetcherId={setKetcherId}
+            togglerComponent={togglerComponent}
+            onInit={onInitMoleculesEditor}
+          />
+        </div>
       </div>
-      <div
-        data-ketcher-editor
-        className={styles.editorsWrapper}
-        style={{
-          display: showPolymerEditor ? 'none' : undefined,
-        }}
-      >
-        <MicromoleculesEditorComponent
-          {...props}
-          ketcherId={ketcherId}
-          onSetKetcherId={setKetcherId}
-          togglerComponent={togglerComponent}
-          onInit={onInitMoleculesEditor}
-        />
-      </div>
-    </>
+    </I18nextProvider>
   );
 };

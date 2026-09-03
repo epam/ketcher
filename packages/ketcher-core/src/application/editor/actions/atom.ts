@@ -78,8 +78,8 @@ export function fromAtomsAttrs(
       'label' in attrs
         ? attrs.label
         : reset
-        ? Atom.attrGetDefault('label')
-        : atom.label;
+          ? Atom.attrGetDefault('label')
+          : atom.label;
     if (resultingLabel !== atom.label) {
       if (
         typeof resultingLabel !== 'string' ||

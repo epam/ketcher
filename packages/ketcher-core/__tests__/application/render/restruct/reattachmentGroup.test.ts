@@ -34,7 +34,7 @@ function mockSvgDomApi() {
       rotate() {
         return this;
       },
-    } as unknown as DOMMatrix);
+    }) as unknown as DOMMatrix;
   svgSvgElement.createSVGPoint = () =>
     ({
       x: 0,
@@ -42,9 +42,9 @@ function mockSvgDomApi() {
       matrixTransform() {
         return this;
       },
-    } as unknown as DOMPoint);
+    }) as unknown as DOMPoint;
   window.SVGElement.prototype.getBBox = () =>
-    ({ x: 0, y: 0, width: 10, height: 10 } as DOMRect);
+    ({ x: 0, y: 0, width: 10, height: 10 }) as DOMRect;
 }
 
 describe('ReAttachmentGroup marker states', () => {

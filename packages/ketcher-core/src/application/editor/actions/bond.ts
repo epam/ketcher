@@ -243,8 +243,8 @@ export function fromBondsAttrs(
       'type' in attrs
         ? attrs.type
         : reset
-        ? Bond.attrGetDefault('type')
-        : bond.type;
+          ? Bond.attrGetDefault('type')
+          : bond.type;
     if (
       typeof resultingType === 'number' &&
       !isBondTypeAllowedForEndpoints(struct, bond, resultingType)

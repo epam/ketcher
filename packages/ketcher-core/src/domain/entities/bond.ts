@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -45,6 +43,7 @@ export interface BondAttributes {
   endSgroup?: SGroup;
 }
 
+export type StructAtomsAndBondsAccess = Pick<Struct, 'atoms' | 'bonds'>;
 export class Bond extends BaseMicromoleculeEntity {
   static readonly PATTERN = {
     TYPE: {
@@ -297,13 +296,14 @@ export class Bond extends BaseMicromoleculeEntity {
     return !!this.reactingCenterStatus;
   }
 
-  getCenter(struct: any): Vec2 {
-    const p1 = struct.atoms.get(this.begin).pp;
-    const p2 = struct.atoms.get(this.end).pp;
+  getCenter(struct: StructAtomsAndBondsAccess): Vec2 {
+    const p1 = struct.atoms.get(this.begin)?.pp;
+    const p2 = struct.atoms.get(this.end)?.pp;
+    if (!p1 || !p2) return new Vec2();
     return Vec2.lc2(p1, 0.5, p2, 0.5);
   }
 
-  getDir(struct: any): Vec2 {
+  getDir(struct: StructAtomsAndBondsAccess): Vec2 {
     const p1 = struct.atoms.get(this.begin)?.pp;
     const p2 = struct.atoms.get(this.end)?.pp;
     if (!p1 || !p2) return new Vec2();

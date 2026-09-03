@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+/* eslint-disable react-hooks/immutability */
 
 import React, {
   type ComponentType,
@@ -34,6 +35,9 @@ type InputComponentProps = {
   onSelect?: (ev: React.SyntheticEvent, values?: unknown[]) => void;
   selected?: (testVal: unknown, value: unknown) => boolean;
   multiple?: boolean;
+  /**
+   * @deprecated Use ref instead.
+   */
   innerRef?: React.Ref<HTMLInputElement>;
   name?: string;
   className?: string;
@@ -59,6 +63,9 @@ type Props = {
    * @deprecated Use autoFocus instead. This prop no longer triggers focus and will be removed in a future version.
    */
   isFocused?: boolean;
+  /**
+   * @deprecated Use ref instead.
+   */
   innerRef?: React.Ref<HTMLInputElement>;
   schema?: InputSchema;
   multiple?: boolean;
@@ -78,23 +85,20 @@ export const GenericInput = forwardRef<HTMLInputElement, Props>(
       onChange,
       innerRef,
       type = 'text',
-      _isFocused,
+      isFocused: _isFocused,
       autoFocus,
       checked,
       ...otherProps
-    } = props as {
-      schema?: InputSchema;
-      value?: unknown;
-      onChange?: React.ChangeEventHandler<HTMLInputElement>;
-      innerRef?: React.Ref<HTMLInputElement>;
+    } = props as Props & {
       type?: React.HTMLInputTypeAttribute;
-      _isFocused?: boolean;
-      autoFocus?: boolean;
+      onChange?: React.ChangeEventHandler<HTMLInputElement>;
       checked?: boolean;
-      [key: string]: unknown;
     };
 
     const mergedRef = useCallback(
+      // Note: This callback gets a new identity when ref or innerRef change.
+      // If callers pass inline callback refs, React will detach/reattach on each render.
+      // eslint-disable-next-line react-hooks/immutability
       (node: HTMLInputElement | null) => {
         if (typeof ref === 'function') {
           ref(node);
@@ -107,6 +111,7 @@ export const GenericInput = forwardRef<HTMLInputElement, Props>(
           if (typeof innerRef === 'function') {
             innerRef(node);
           } else {
+            // eslint-disable-next-line react-hooks/immutability
             (
               innerRef as React.MutableRefObject<HTMLInputElement | null>
             ).current = node;
@@ -135,7 +140,17 @@ export const GenericInput = forwardRef<HTMLInputElement, Props>(
     );
   },
 );
-(GenericInput as any).val = function (ev: any, schema: any) {
+(
+  GenericInput as unknown as {
+    val: (
+      ev: React.ChangeEvent<HTMLInputElement>,
+      schema?: SchemaProperty,
+    ) => string | number;
+  }
+).val = function (
+  ev: React.ChangeEvent<HTMLInputElement>,
+  schema?: SchemaProperty,
+): string | number {
   const input = ev.target;
   const isInteger = schema?.type === 'integer';
   const isFloat = schema?.type === 'number';
@@ -149,6 +164,8 @@ export const GenericInput = forwardRef<HTMLInputElement, Props>(
     return Number(value) || 0;
   }
 
+  // When the value can be a float the validation is passed to the parent component
+  // because it's more complicated
   return value;
 };
 
@@ -435,6 +452,9 @@ type AnyComponentWithRefProps = {
   onSelect?: (ev: React.SyntheticEvent, values?: unknown[]) => void;
   selected?: (testVal: unknown, value: unknown) => boolean;
   multiple?: boolean;
+  /**
+   * @deprecated Use ref instead.
+   */
   innerRef?: React.Ref<HTMLInputElement>;
   name?: string;
   className?: string;

@@ -41,7 +41,6 @@ const RemoveFG = (props: Props) => {
 
   const exit = (key, res) => {
     props[key](res);
-    setTimeout(() => editor.focusCliparea(), 0);
   };
 
   return (

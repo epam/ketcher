@@ -77,7 +77,10 @@ import {
   STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT,
   DEFAULT_WORKER_TIMEOUT,
 } from './constants';
-import { getIndigoWorker } from '_indigo-worker-import-alias_';
+import {
+  getIndigoWorker,
+  terminateIndigoWorker,
+} from '_indigo-worker-import-alias_';
 
 interface KeyValuePair {
   [key: string]: number | string | boolean | object;
@@ -1005,7 +1008,11 @@ class IndigoService implements StructService {
 
   public destroy() {
     this.worker.removeEventListener('message', this.messageHandler);
-    this.worker.terminate();
+  }
+
+  public terminateWorker() {
+    this.worker.removeEventListener('message', this.messageHandler);
+    terminateIndigoWorker();
   }
 }
 

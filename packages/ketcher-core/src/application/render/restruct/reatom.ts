@@ -55,7 +55,6 @@ import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculati
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
 import { ShowHydrogenLabels } from './showHydrogenLabels';
-import { getAttachmentGroupLabelAttrs } from './attachmentGroupRender';
 
 interface ElemAttr {
   text: string;
@@ -1681,7 +1680,6 @@ function buildLabel(
     fill: atom.color,
     'font-style': atom.a.pseudo ? 'italic' : '',
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
-    ...getAttachmentGroupLabelAttrs(atom.a),
   });
 
   const background =

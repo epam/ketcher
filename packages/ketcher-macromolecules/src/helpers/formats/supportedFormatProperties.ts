@@ -27,8 +27,7 @@ export enum ChemicalMimeType {
 }
 
 interface SupportedFormatPropertiesOptions {
-  'molfile-saving-mode'?: '3000' | '2000' | 'auto';
-  [key: string]: string | number | boolean | undefined;
+  'molfile-saving-mode'?: '3000';
 }
 
 // TODO this is a duplicated class from packages/ketcher-core/src/application/formatters/supportedFormatProperties.ts

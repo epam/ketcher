@@ -5,7 +5,7 @@ import {
 } from 'domain/entities/bond';
 
 import { Vec2 } from 'domain/entities/vec2';
-import { Pool } from 'src/domain/entities/pool';
+import { Pool } from 'domain/entities/pool';
 
 const bondParams: BondAttributes = {
   begin: 1,

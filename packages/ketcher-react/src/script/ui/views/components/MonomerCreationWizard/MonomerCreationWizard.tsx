@@ -1920,7 +1920,8 @@ const MonomerCreationWizardInternal = ({
           symbol: valuesToSave.symbol,
           name: valuesToSave.name || valuesToSave.symbol,
           naturalAnalogue: valuesToSave.naturalAnalogue,
-          modificationTypes,
+          modificationTypes:
+            modificationTypes.length > 0 ? modificationTypes : undefined,
           aliasHELM: valuesToSave.aliasHELM,
           aliasBILN: valuesToSave.aliasBILN,
           structure,
@@ -2135,7 +2136,10 @@ const MonomerCreationWizardInternal = ({
                     symbol,
                     name: name || symbol,
                     naturalAnalogue,
-                    modificationTypes,
+                    modificationTypes:
+                      modificationTypes.length > 0
+                        ? modificationTypes
+                        : undefined,
                     aliasHELM,
                     aliasBILN,
                     attachmentPoints: assignedAttachmentPoints,

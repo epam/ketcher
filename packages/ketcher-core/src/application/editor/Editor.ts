@@ -78,10 +78,12 @@ import {
   IDT_ALIAS_LENGTH_ERROR_MESSAGE,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
+  MODIFICATION_TYPES_EMPTY_ERROR_MESSAGE,
   isValidBilnAlias,
   isValidHelmAlias,
   isValidHelmAliasLength,
   isValidIdtAlias,
+  isValidModificationTypes,
   getTooLongIdtAliasEntries,
   getDisallowedModificationTypes,
   DISALLOWED_MODIFICATION_TYPE_ERROR_MESSAGE,
@@ -587,16 +589,25 @@ export class CoreEditor {
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
+      // Validate modificationTypes format (empty/whitespace-only not allowed)
+      if (!isValidModificationTypes(newMonomer.props?.modificationTypes)) {
+        reportValidationError(
+          newMonomer.props.MonomerName,
+          `Monomer definition contains invalid modificationTypes value. ${MODIFICATION_TYPES_EMPTY_ERROR_MESSAGE}`,
+        );
+        return;
+      }
+
       const disallowedModificationTypes = getDisallowedModificationTypes(
         newMonomer.props?.modificationTypes,
       );
       if (disallowedModificationTypes.length > 0) {
-        const errorMessage = `Editor::updateMonomersLibrary: Load of "${
-          newMonomer.props.MonomerName
-        }" monomer has failed. ${DISALLOWED_MODIFICATION_TYPE_ERROR_MESSAGE} Offending modification type(s): ${disallowedModificationTypes.join(
-          ', ',
-        )}. The monomer was not added to the library.`;
-        KetcherLogger.error(errorMessage);
+        reportValidationError(
+          newMonomer.props.MonomerName,
+          `${DISALLOWED_MODIFICATION_TYPE_ERROR_MESSAGE} Offending modification type(s): ${disallowedModificationTypes.join(
+            ', ',
+          )}.`,
+        );
         return;
       }
 

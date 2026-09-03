@@ -22,6 +22,11 @@ export const MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH = 200;
 
 export const MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE = `The monomer group template name must not exceed ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH} characters.`;
 
+export const MODIFICATION_TYPES_MAX_LENGTH = 200;
+
+export const MODIFICATION_TYPES_EMPTY_ERROR_MESSAGE =
+  "The modificationTypes couldn't be empty";
+
 // Modification types that mark a monomer as unknown, ambiguous, or a plain
 // molecule. Such monomers must not be added to or shown in the library (#8133).
 export const DISALLOWED_MONOMER_MODIFICATION_TYPES = [
@@ -130,4 +135,47 @@ export function isMonomerSgroupWithAttachmentPoints(monomer: BaseMonomer) {
     monomer.monomerItem.props.isMicromoleculeFragment &&
     sgroups.some((sgroup) => sgroup.isSuperatomWithoutLabel)
   );
+}
+
+/**
+ * Validates the modificationTypes value according to the format requirements:
+ * - Optional field
+ * - Max length 200 characters (total sum of all elements)
+ * - Any symbol except formatting ones (tabs, newlines, etc.)
+ * - Spaces allowed
+ * - Cannot be empty or contain only whitespace/formatting characters
+ *
+ * @param modificationTypes - The value to validate (can be string[] or undefined)
+ * @returns true if valid, false if invalid
+ */
+export function isValidModificationTypes(
+  modificationTypes?: string[],
+): boolean {
+  // If modificationTypes is not provided or is not an array, it's valid (optional field)
+  if (!modificationTypes || !Array.isArray(modificationTypes)) {
+    return true;
+  }
+
+  // Empty array is invalid
+  if (modificationTypes.length === 0) {
+    return false;
+  }
+
+  // Check total length of all elements combined
+  const totalLength = modificationTypes.reduce(
+    (sum, type) => sum + type.length,
+    0,
+  );
+  if (totalLength > MODIFICATION_TYPES_MAX_LENGTH) {
+    return false;
+  }
+
+  // Check if all elements contain only whitespace/formatting characters
+  // \s matches all whitespace characters including tabs, newlines, carriage returns, etc.
+  const hasNonWhitespaceContent = modificationTypes.some((type) => {
+    const trimmed = type.replace(/\s+/g, '');
+    return trimmed.length > 0;
+  });
+
+  return hasNonWhitespaceContent;
 }

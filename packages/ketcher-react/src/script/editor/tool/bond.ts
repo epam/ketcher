@@ -45,6 +45,35 @@ import type {
 } from './bond.types';
 import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
+const BOND_CLICK_MAX_DURATION_MS = 300;
+
+function isClickOnInitialAtom(
+  dragContext: BondToolDragContext,
+  releaseItem: BondItemRef | null,
+  pointerUpTimeStamp: number,
+) {
+  if (dragContext.item?.map !== 'atoms') {
+    return false;
+  }
+
+  const isReleasedOnInitialAtom =
+    releaseItem?.map === 'atoms' && releaseItem.id === dragContext.item.id;
+  if (isReleasedOnInitialAtom) {
+    return true;
+  }
+
+  const isReleasedOnAnotherAtom =
+    releaseItem?.map === 'atoms' && releaseItem.id !== dragContext.item.id;
+  if (isReleasedOnAnotherAtom) {
+    return false;
+  }
+
+  return (
+    pointerUpTimeStamp - dragContext.pointerDownTimeStamp <=
+    BOND_CLICK_MAX_DURATION_MS
+  );
+}
+
 class BondTool implements Tool {
   private static readonly DRAG_START_THRESHOLD_PX = 10;
 
@@ -166,12 +195,13 @@ class BondTool implements Tool {
     const item: BondItemRef | undefined =
       attachmentAtomId !== undefined
         ? { map: 'atoms', id: attachmentAtomId }
-        : (ci ?? undefined);
+        : ci ?? undefined;
 
     this.dragCtx = {
       xy0: CoordinateTransformation.pageToModel(event, rnd),
       pageX0: event.clientX,
       pageY0: event.clientY,
+      pointerDownTimeStamp: event.timeStamp,
       hasStartedDragging: false,
     };
     if (item) {
@@ -474,6 +504,22 @@ class BondTool implements Tool {
       const dragCtx = this.dragCtx;
       const render = this.editor.render;
       const struct = render.ctab.molecule;
+      const releaseItem = this.editor.findItem(event, [
+        'atoms',
+      ]) as BondItemRef | null;
+      const isAtomClick = isClickOnInitialAtom(
+        dragCtx,
+        releaseItem,
+        event.timeStamp,
+      );
+
+      if (isAtomClick && dragCtx.action) {
+        // Mouse movement may have applied a temporary manually angled bond.
+        // Revert it so releasing on the initial atom retains click semantics.
+        dragCtx.action.perform(render.ctab);
+        delete dragCtx.action;
+      }
+
       if (dragCtx.action) {
         this.restoreBondWhenHoveringOnCanvas(event);
         this.editor.update(dragCtx.action);

@@ -43,7 +43,7 @@ export interface BondAttributes {
   endSgroup?: SGroup;
 }
 
-type StructAtomsAndBondsAccess = Pick<Struct, 'atoms' | 'bonds'>;
+export type StructAtomsAndBondsAccess = Pick<Struct, 'atoms' | 'bonds'>;
 export class Bond extends BaseMicromoleculeEntity {
   static readonly PATTERN = {
     TYPE: {

@@ -43,12 +43,12 @@
 
 // TODO: check and update global styles for text inputs
 input {
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  border: 1px solid @color-grey-4 !important;
+  border: 1px solid transparent !important;
+  border-color: @color-grey-4 !important;
 
   &:hover {
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    border: 1px solid @color-input-hover !important;
+    border: 1px solid transparent !important;
+    border-color: @color-input-hover !important;
   }
 }
 
@@ -87,8 +87,7 @@ input {
         .warningsArr {
           color: @color-text-primary;
           white-space: pre-line;
-          /* stylelint-disable-next-line declaration-property-value-keyword-no-deprecated */
-          word-break: break-word;
+          overflow-wrap: anywhere;
           font-size: 12px;
           line-height: 14px;
         }
@@ -110,7 +109,6 @@ input {
         height: 28px;
 
       &:not(:active) {
-        /* stylelint-disable-next-line declaration-property-value-keyword-no-deprecated */
         background-color: @color-background-primary;
         color: @color-text-primary;
       }
@@ -175,10 +173,10 @@ input {
   align-items: center;
   justify-content: center;
   height: 220px;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  border-top: 1px solid @color-grey-3;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  border-bottom: 1px solid @color-grey-3;
+  border-top: 1px solid transparent;
+  border-top-color: @color-grey-3;
+  border-bottom: 1px solid transparent;
+  border-bottom-color: @color-grey-3;
 
   img {
     background-color: @color-background-primary;

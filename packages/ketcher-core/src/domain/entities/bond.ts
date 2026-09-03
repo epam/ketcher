@@ -43,6 +43,7 @@ export interface BondAttributes {
   endSgroup?: SGroup;
 }
 
+type StructAtomsAccess = Pick<Struct, 'atoms'>;
 export class Bond extends BaseMicromoleculeEntity {
   static readonly PATTERN = {
     TYPE: {
@@ -295,16 +296,16 @@ export class Bond extends BaseMicromoleculeEntity {
     return !!this.reactingCenterStatus;
   }
 
-  getCenter(struct: Struct): Vec2 {
+  getCenter(struct: StructAtomsAccess): Vec2 {
     const p1 = struct.atoms.get(this.begin)?.pp;
     const p2 = struct.atoms.get(this.end)?.pp;
     if (!p1 || !p2) return new Vec2();
     return Vec2.lc2(p1, 0.5, p2, 0.5);
   }
 
-  getDir(struct: Struct): Vec2 {
-    const p1 = struct.atoms?.get(this.begin)?.pp;
-    const p2 = struct.atoms?.get(this.end)?.pp;
+  getDir(struct: StructAtomsAccess): Vec2 {
+    const p1 = struct.atoms.get(this.begin)?.pp;
+    const p2 = struct.atoms.get(this.end)?.pp;
     if (!p1 || !p2) return new Vec2();
     return p2.sub(p1).normalized();
   }

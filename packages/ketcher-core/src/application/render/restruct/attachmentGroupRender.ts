@@ -187,6 +187,7 @@ function drawGroupAtomsHover(
 
   const hoverPath = render.paper.path(combinedPath.pathData).attr({
     ...render.options.hoverStyle,
+    fill: 'none',
     stroke: drawOutline ? render.options.hoverStyle.stroke : 'none',
     cursor: 'default',
   });

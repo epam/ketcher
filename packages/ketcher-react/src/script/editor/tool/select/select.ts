@@ -390,7 +390,7 @@ class SelectTool implements Tool {
 
             if (attachmentGroupId !== null) {
               cursorTarget = {
-                map: 'atoms',
+                map: 'attachmentGroups',
                 id: attachmentGroupId,
                 dist: item.dist,
               };

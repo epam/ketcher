@@ -18,8 +18,7 @@
 @import '../../../../../../../style/mixins.less';
 
 .open {
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  box-shadow: 0 5px 20px @color-open-window-shadow;
+  box-shadow: 0 5px 20px rgb(103 104 132 / 25%);
   background-color: @color-background-primary;
 
   > div {
@@ -43,16 +42,14 @@
     overflow: auto;
     white-space: pre;
     border: none;
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    border-bottom: 1px solid @color-grey-3;
+    border-bottom: 1px solid #e1e5ea;
     border-radius: 0;
     resize: both;
     .scrollbar();
 
     &:hover {
       border: none;
-      /* stylelint-disable-next-line declaration-property-value-no-unknown */
-      border-bottom: 1px solid @color-grey-3;
+      border-bottom: 1px solid #e1e5ea;
       border-radius: 0;
     }
   }

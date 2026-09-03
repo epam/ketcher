@@ -16,6 +16,9 @@
 
 @import '../../../../style/mixins.less';
 
+@modal-overlay-image: data-uri('overlay.svg');
+@modal-hidden-background: fade(@hover-color, 1%);
+
 .modalOverlay {
   display: flex;
   align-items: center;
@@ -23,9 +26,7 @@
   position: absolute;
   inset: 0;
   z-index: 40;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  background-image: data-uri('overlay.svg');
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  background-image: @modal-overlay-image;
   .background-opacity(@hover-color, 0.2);
 
   &.animate {
@@ -33,8 +34,7 @@
   }
 
   &.hide {
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    background-color: fade(@hover-color, 1%);
+    background-color: @modal-hidden-background;
   }
 
   &::after {

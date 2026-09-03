@@ -6,6 +6,7 @@ import {
   clickOnCanvas,
   selectRectangleArea,
   getCoordinatesOfTheMiddleOfTheScreen,
+  takeEditorScreenshot,
 } from '@utils';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -70,4 +71,23 @@ test('Case 2: Aromatize action on clean canvas shouldnt add NULL in the beginnin
     await SaveStructureDialog(page).saveStructureTextarea.allTextContents()
   ).join();
   expect(saveMolfilePreview).not.toMatch(/^null\b/i);
+});
+
+test('Case 3: S-Group brackets should be drawn correctly for simple aromatic molecule', async () => {
+  /**
+   * Test task: https://github.com/epam/ketcher/issues/10502
+   * Bug: https://github.com/epam/ketcher/issues/3976
+   * Description: S-Group brackets should be drawn correctly for simple aromatic molecule
+   * Scenario:
+   * 1. Open the app
+   * 2. Open KET/Chromium-popup/Bugs/ketcher-3.16.0-bugs/BrokenBrackets.ket file
+   * 3. Check the S-Group brackets
+   * Actual result: brackets are rotated and only include part of the molecule
+   * Expected result: two vertical brackers are displayed at the left and right sides of the molecule
+   */
+  await openFileAndAddToCanvas(
+    page,
+    'KET/Chromium-popup/Bugs/ketcher-3.16.0-bugs/BrokenBrackets.ket',
+  );
+  await takeEditorScreenshot(page);
 });

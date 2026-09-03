@@ -46,8 +46,7 @@
     flex-direction: row;
     background-color: @color-background-primary;
     border-radius: 4px;
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    box-shadow: 0 2px 5px @color-select-box-shadow;
+    box-shadow: ~'0 2px 5px @{color-select-box-shadow}';
   }
 }
 
@@ -69,7 +68,6 @@
 .group-separator(@placement) {
   .group:not(:last-of-type) {
     margin-@{placement}: 6px;
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     border-@{placement}: 1px solid #eff2f5;
   }
 }

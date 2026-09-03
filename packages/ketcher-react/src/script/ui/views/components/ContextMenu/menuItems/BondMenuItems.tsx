@@ -11,7 +11,7 @@ import useBondTypeChange from '../hooks/useBondTypeChange';
 import useDelete from '../hooks/useDelete';
 import {
   formatTitle,
-  getNonQueryBondNames,
+  getBondNamesForContextMenu,
   isBondBetweenMonomers,
   queryBondNames,
 } from '../utils';
@@ -24,14 +24,11 @@ import { getIconName, Icon } from 'components';
 import { useChangeBondDirection } from '../hooks/useChangeBondDirection';
 import { useAppContext } from 'src/hooks/useAppContext';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
-import {
-  isHapticBondWithAttachmentGroup,
-  ketcherProvider,
-} from 'ketcher-core';
+import { isHapticBondWithAttachmentGroup, ketcherProvider } from 'ketcher-core';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
-const nonQueryBondNames = getNonQueryBondNames(tools);
+const bondNamesForContextMenu = getBondNamesForContextMenu(tools);
 
 const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
   const { ketcherId } = useAppContext();
@@ -41,7 +38,6 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
   const [handleSGroupEdit, sGroupEditDisabled, sGroupEditHidden] =
     useBondSGroupEdit();
   const handleDelete = useDelete();
-  const bondNamesWithoutEmptyValue = nonQueryBondNames.slice(1);
   const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
   const struct = editor.struct();
   const selectedBondIds = props.propsFromTrigger?.bondIds ?? [];
@@ -58,7 +54,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
     const bondIds = props.propsFromTrigger?.bondIds || [];
 
     return bondIds.length > 0
-      ? (editor.render.ctab.molecule.bonds.get(bondIds[0]) ?? null)
+      ? editor.render.ctab.molecule.bonds.get(bondIds[0]) ?? null
       : null;
   }, [props.propsFromTrigger, editor]);
 
@@ -108,7 +104,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         </span>
       </Item>
       <MenuSeparator />
-      {bondNamesWithoutEmptyValue.map((name) => {
+      {bondNamesForContextMenu.map((name) => {
         const iconName = getIconName(name);
         const classNames = styles.sameGroup;
 

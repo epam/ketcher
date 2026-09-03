@@ -1,5 +1,6 @@
 import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
 import {
+  getBondNamesForContextMenu,
   getEditableAtomIds,
   getEditableBondIds,
   isAttachmentGroupCreationSelectionValid,
@@ -22,6 +23,20 @@ function createTwoConnectedAtoms() {
 }
 
 describe('Utils', () => {
+  describe('context menu bond names', () => {
+    it('excludes the empty and haptic bond options', () => {
+      const tools = {
+        'bond-': {},
+        'bond-single': {},
+        'bond-haptic': {},
+        'bond-any': {},
+        atom: {},
+      };
+
+      expect(getBondNamesForContextMenu(tools)).toEqual(['bond-single']);
+    });
+  });
+
   describe('context menu editable selection', () => {
     it('excludes Attachment Groups from editable atoms', () => {
       const struct = new Struct();

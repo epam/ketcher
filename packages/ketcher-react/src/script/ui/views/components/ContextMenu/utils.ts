@@ -60,6 +60,13 @@ export const getNonQueryBondNames = (tools) => {
   return difference(allBondNames, queryBondNames);
 };
 
+const BOND_NAMES_EXCLUDED_FROM_CONTEXT_MENU = new Set(['bond-', 'bond-haptic']);
+
+export const getBondNamesForContextMenu = (tools) =>
+  getNonQueryBondNames(tools).filter(
+    (name) => !BOND_NAMES_EXCLUDED_FROM_CONTEXT_MENU.has(name),
+  );
+
 /**
  * Check whether a bond connects two distinct monomers
  */

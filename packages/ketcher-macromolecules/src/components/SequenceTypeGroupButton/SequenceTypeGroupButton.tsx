@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -31,6 +29,7 @@ import {
   getPersistedSequenceType,
   persistSequenceType,
 } from 'helpers/sequenceTypeStorage';
+import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 
 const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
   color:
@@ -118,7 +117,7 @@ export const SequenceTypeGroupButton = () => {
       <ButtonGroup disabled={isDisabled}>
         <SequenceTypeButton
           data-testid={`${SequenceType.RNA}Btn`}
-          title="RNA (Ctrl+Alt+R)"
+          title={`RNA (${hotkeysShortcuts.RNASequenceType})`}
           variant={
             activeSequenceType === SequenceType.RNA ? 'contained' : 'outlined'
           }
@@ -128,7 +127,7 @@ export const SequenceTypeGroupButton = () => {
         </SequenceTypeButton>
         <SequenceTypeButton
           data-testid={`${SequenceType.DNA}Btn`}
-          title="DNA (Ctrl+Alt+D)"
+          title={`DNA (${hotkeysShortcuts.DNASequenceType})`}
           variant={
             activeSequenceType === SequenceType.DNA ? 'contained' : 'outlined'
           }
@@ -138,7 +137,7 @@ export const SequenceTypeGroupButton = () => {
         </SequenceTypeButton>
         <SequenceTypeButton
           data-testid={`${SequenceType.PEPTIDE}Btn`}
-          title="Peptides (Ctrl+Alt+P)"
+          title={`Peptides (${hotkeysShortcuts.PEPTIDESequenceTYpe})`}
           variant={
             activeSequenceType === SequenceType.PEPTIDE
               ? 'contained'

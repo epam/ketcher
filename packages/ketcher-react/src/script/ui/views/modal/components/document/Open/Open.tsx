@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -17,7 +16,7 @@
  ***************************************************************************/
 
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
-import { type FC, useEffect, useMemo, useState } from 'react';
+import { type FC, useMemo, useState } from 'react';
 import { Dialog, LoadingCircles } from '../../../../components';
 import classes from './Open.module.less';
 import Recognize from '../../process/Recognize/Recognize';
@@ -96,7 +95,6 @@ const Open: FC<Props> = (props) => {
   const [structStr, setStructStr] = useState<string>('');
   const [structList, setStructList] = useState<string[]>([]);
   const [fileName, setFileName] = useState<string>('');
-  const [opener, setOpener] = useState<any>();
   const [currentState, setCurrentState] = useState(MODAL_STATES.idle);
   const [isLoading, setIsLoading] = useState(false);
   const { ketcherId } = useAppContext();
@@ -104,14 +102,6 @@ const Open: FC<Props> = (props) => {
     () => ketcherProvider.getKetcher(ketcherId),
     [ketcherId],
   );
-
-  useEffect(() => {
-    if (server) {
-      fileOpener(server).then((chosenOpener) => {
-        setOpener({ chosenOpener });
-      });
-    }
-  }, [server]);
 
   const onFileLoad = (files) => {
     if ((window as any).isKetcherFullscreenBeforeFilePicker) {
@@ -124,6 +114,11 @@ const Open: FC<Props> = (props) => {
     setIsLoading(true);
     const onLoad = (fileContent) => {
       if (fileContent.isPPTX) {
+        if (!fileContent.structures.length && files[0].size > 0) {
+          errorHandler(
+            "Report that we can't open it - may be it is password protected",
+          );
+        }
         setStructStr('');
         setStructList(fileContent.structures);
         setCurrentState(MODAL_STATES.presentationViewer);
@@ -139,7 +134,9 @@ const Open: FC<Props> = (props) => {
     };
 
     setFileName(files[0].name);
-    opener.chosenOpener(files[0]).then(onLoad, onError);
+    fileOpener(server)
+      .then((chosenOpener) => chosenOpener(files[0]))
+      .then(onLoad, onError);
   };
 
   const onImageLoad = (files) => {

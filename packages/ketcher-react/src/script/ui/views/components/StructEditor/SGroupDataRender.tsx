@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { type FC, useEffect, useRef, useState } from 'react';
+import { type FC, useLayoutEffect, useRef, useState } from 'react';
 import {
   type Render,
   type SGroup,
@@ -94,12 +93,18 @@ const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
   const [wrapperWidth, setWrapperWidth] = useState(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  // The panel is positioned from its own measured size, so it has to be
+  // measured once it is in the DOM and again whenever its content changes.
+  // Without a dependency array this would re-run after every render, including
+  // the re-render its own setState triggers. useLayoutEffect keeps the
+  // measurement and the reposition in the same commit, so the panel is never
+  // painted at its pre-measurement position.
+  useLayoutEffect(() => {
     if (wrapperRef.current) {
       setWrapperHeight(wrapperRef.current.clientHeight);
       setWrapperWidth(wrapperRef.current.clientWidth);
     }
-  });
+  }, [sGroupData]);
 
   const panelCoordinate = getPanelPositionRelativeToRect(
     clientX,

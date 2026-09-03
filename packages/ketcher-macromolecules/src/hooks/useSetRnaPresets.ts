@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './stateHooks';
 import { selectEditor } from 'state/common';
@@ -78,7 +76,7 @@ function useSetRnaPresets() {
       dispatch(loadMonomerLibrary([]));
       dispatch(clearFavorites());
     };
-  }, [editor, defaultRnaPresets]);
+  }, [editor, defaultRnaPresets, dispatch]);
 }
 
 export default useSetRnaPresets;

@@ -563,7 +563,10 @@ class Editor implements KetcherEditor {
 
     this.render.setZoom(value, event);
 
-    this.render.update();
+    // Atom label offsets are calculated in ReStruct using the current zoom.
+    // Force a redraw so labels created before and after a zoom change use the
+    // same coordinate calculation.
+    this.render.update(true);
     this.rotateController.rerender();
     return this.render.options.zoom;
   }

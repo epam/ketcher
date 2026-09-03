@@ -19,13 +19,11 @@
   width: 100%;
   position: relative;
   display: grid;
-  grid-template-areas:
-    'toolbar-top toolbar-top toolbar-top'
-    'toolbar-left canvas toolbar-right'
-    'toolbar-bottom toolbar-bottom toolbar-bottom';
-  grid-template-columns: minmax(36px, max-content) 1fr minmax(36px, max-content);
-  grid-template-rows: auto 1fr auto;
-  /* stylelint-disable-next-line */
+  grid-template:
+    'toolbar-top toolbar-top toolbar-top' auto
+    'toolbar-left canvas toolbar-right' 1fr
+    'toolbar-bottom toolbar-bottom toolbar-bottom' auto /
+    minmax(36px, max-content) 1fr minmax(36px, max-content);
   container-type: size;
 }
 

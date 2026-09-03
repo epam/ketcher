@@ -59,6 +59,7 @@ export abstract class BaseMode {
     editor.mode.destroy();
     editor.setMode(new ModeConstructor());
     editor.mode.initialize(true, isUndo, false);
+    editor.drawingEntitiesManager.restorePersistentRenderersForMode(modeName);
   }
 
   public initialize(
@@ -321,12 +322,7 @@ export abstract class BaseMode {
       drawingEntitiesManager.allEntities[0]?.[1].position;
     const offset = Vec2.diff(newNodePosition, new Vec2(firstEntityPosition));
 
-    drawingEntitiesManager.allEntities.forEach(([, drawindEntity]) => {
-      drawingEntitiesManager.moveDrawingEntityModelChange(
-        drawindEntity,
-        offset,
-      );
-    });
+    drawingEntitiesManager.moveAllEntitiesWithHiddenMicromolecules(offset);
   }
 
   unsupportedSymbolsError(errorMessage: string): void {

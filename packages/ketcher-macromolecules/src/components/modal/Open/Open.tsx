@@ -165,9 +165,7 @@ const positionStructureOnNextSequenceLine = (
 
   const offset = Vec2.diff(nextChainPosition, new Vec2(firstEntityPosition));
 
-  drawingEntitiesManager.allEntities.forEach(([, drawingEntity]) => {
-    drawingEntitiesManager.moveDrawingEntityModelChange(drawingEntity, offset);
-  });
+  drawingEntitiesManager.moveAllEntitiesWithHiddenMicromolecules(offset);
 };
 
 const addToCanvas = ({

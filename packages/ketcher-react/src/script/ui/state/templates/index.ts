@@ -187,6 +187,14 @@ function templatesReducer(state = initTmplsState, action) {
   if (tmplActions.includes(action.type))
     return { ...state, ...(action.data || {}) };
 
+  if (
+    action.type === 'MODAL_OPEN' &&
+    action.data?.name === 'templates' &&
+    typeof action.data?.prop?.tab === 'number'
+  ) {
+    return { ...state, tab: action.data.prop.tab };
+  }
+
   if (attachActions.includes(action.type)) {
     const attach = { ...state.attach, ...(action.data || {}) };
     return { ...state, attach };

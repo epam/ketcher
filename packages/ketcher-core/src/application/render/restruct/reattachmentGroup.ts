@@ -1,4 +1,4 @@
-import { AttachmentGroup } from 'domain/entities/attachmentGroup';
+import type { AttachmentGroup } from 'domain/entities/attachmentGroup';
 import type { RenderOptions } from 'application/render/render.types';
 import type { Render } from '../raphaelRender';
 import ReAtom from './reatom';

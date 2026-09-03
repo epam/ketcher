@@ -16,7 +16,7 @@
 
 import { assert } from 'utilities';
 import { Atom, radicalElectrons } from './atom';
-import { AttachmentGroup } from './attachmentGroup';
+import type { AttachmentGroup } from './attachmentGroup';
 import type { EditorSelection } from 'application/editor/editor.types';
 import { Bond } from './bond';
 import { Box2Abs } from './box2Abs';

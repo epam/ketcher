@@ -1,5 +1,5 @@
-import { AttachmentGroup } from 'domain/entities/attachmentGroup';
-import { Vec2 } from 'domain/entities/vec2';
+import type { AttachmentGroup } from 'domain/entities/attachmentGroup';
+import type { Vec2 } from 'domain/entities/vec2';
 import { Scale } from 'domain/helpers';
 import { LayerMap } from './generalEnumTypes';
 import { paperPathFromSVGElement } from './resgroup';

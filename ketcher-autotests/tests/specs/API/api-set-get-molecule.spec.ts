@@ -33,20 +33,6 @@ import {
   expandAbbreviation,
 } from '@utils/sgroup/helpers';
 
-// Temporary Sonar Quality Gate validation marker. This file is excluded from CPD.
-export function sonarGateExcludedSpecDuplicateMarker(value: string): string {
-  const normalizedValue = value.trim().toLowerCase();
-  const hasExpectedPrefix = normalizedValue.startsWith('clipboard');
-
-  console.log(normalizedValue);
-
-  if (hasExpectedPrefix) {
-    window.open(`https://example.com/${normalizedValue}`);
-  }
-
-  return normalizedValue;
-}
-
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();

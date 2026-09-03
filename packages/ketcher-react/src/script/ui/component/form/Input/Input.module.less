@@ -45,14 +45,17 @@
 }
 
 .input[type='radio']:checked + .radioButton {
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='@{color-input}' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input}' stroke-width='2'/%3E%3Ccircle cx='8' cy='8' r='4' fill='@{color-input}'/%3E%3C/svg%3E%0A");
 }
 
 .input[type='radio']:disabled + .radioButton {
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-default}' stroke-width='2' /%3E%3C/svg%3E%0A");
 }
 
 .input[type='radio']:checked:disabled + .radioButton {
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='@{color-input-default}' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-default}' stroke-width='2'/%3E%3Ccircle cx='8' cy='8' r='4' fill='@{color-input-default}'/%3E%3C/svg%3E%0A");
 }
 
@@ -70,14 +73,13 @@
 
   span {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background-color: @color-slider-body-background;
-    -webkit-transition: 0.4s;
+    transition: 0.4s;
+    /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
     transition: background 0.4s;
     border-radius: 12px;
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     border: 1px solid @border-color;
   }
 
@@ -90,7 +92,8 @@
     left: 1px;
     bottom: 1px;
     background-color: @color-slider-background;
-    -webkit-transition: 0.4s;
+    transition: 0.4s;
+    /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
     transition: transform 0.4s ease-in 0s;
   }
 
@@ -100,8 +103,6 @@
 
   input:checked + span::before {
     background-color: @color-background-primary;
-    -webkit-transform: translateX(18px);
-    -ms-transform: translateX(18px);
     transform: translateX(18px);
   }
 }

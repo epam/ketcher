@@ -45,6 +45,7 @@ function AboutDialog(props: Readonly<AboutDialogProps>) {
   const dialogParams: DialogParams = {
     onOk: props.onOk,
     onCancel: props.onOk, // Using onOk for both since About dialog only has an OK button
+    draggable: false, // About dialog should not be draggable
   };
 
   return (

@@ -37,6 +37,7 @@ export function fromAtomMerge(
   dstId: number,
 ): Action {
   if (srcId === dstId) return new Action();
+  if (!restruct.molecule.atoms.has(dstId)) return new Action();
 
   const fragAction = new Action();
   mergeFragmentsIfNeeded(fragAction, restruct, srcId, dstId);

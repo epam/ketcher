@@ -34,7 +34,10 @@ export const RootSizeProvider = ({
     setSize({ width, height });
   }, [rootRef]);
 
-  const debouncedHandleResize = useDebouncedCallback(handleResize, 100);
+  const {
+    debouncedCallback: debouncedHandleResize,
+    cancel: cancelDebouncedHandleResize,
+  } = useDebouncedCallback(handleResize, 100);
 
   useEffect(() => {
     handleResize();
@@ -45,9 +48,9 @@ export const RootSizeProvider = ({
 
     return () => {
       window.removeEventListener('resize', debouncedHandleResize);
-      debouncedHandleResize.cancel();
+      cancelDebouncedHandleResize();
     };
-  }, [debouncedHandleResize]);
+  }, [cancelDebouncedHandleResize, debouncedHandleResize]);
 
   return (
     <RootSizeContext.Provider value={size}>{children}</RootSizeContext.Provider>

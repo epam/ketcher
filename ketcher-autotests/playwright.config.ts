@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-exports */
 import * as dotenv from 'dotenv';
 import * as os from 'os';
 import { PlaywrightTestConfig, devices } from '@playwright/test';

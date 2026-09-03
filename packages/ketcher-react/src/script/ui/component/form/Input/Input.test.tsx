@@ -127,4 +127,36 @@ describe('Input component should be rendered correctly', () => {
     // Should not be focused even though isFocused is true
     expect(document.activeElement).not.toBe(input);
   });
+
+  it('should not leak isFocused prop to DOM element', () => {
+    const inputProps = {
+      name: 'test',
+      value: 'test value',
+      onChange: jest.fn(),
+      isFocused: true,
+    };
+
+    render(<Input {...inputProps} />);
+    const input = screen.getByRole('textbox');
+
+    // The isFocused prop should not appear as an attribute on the DOM element
+    expect(input).not.toHaveAttribute('isFocused');
+    expect(input).not.toHaveAttribute('isfocused');
+  });
+
+  it('should not leak isFocused prop to DOM element when false', () => {
+    const inputProps = {
+      name: 'test',
+      value: 'test value',
+      onChange: jest.fn(),
+      isFocused: false,
+    };
+
+    render(<Input {...inputProps} />);
+    const input = screen.getByRole('textbox');
+
+    // The isFocused prop should not appear as an attribute on the DOM element
+    expect(input).not.toHaveAttribute('isFocused');
+    expect(input).not.toHaveAttribute('isfocused');
+  });
 });

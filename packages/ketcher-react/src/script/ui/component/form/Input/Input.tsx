@@ -98,7 +98,6 @@ export const GenericInput = forwardRef<HTMLInputElement, Props>(
     const mergedRef = useCallback(
       // Note: This callback gets a new identity when ref or innerRef change.
       // If callers pass inline callback refs, React will detach/reattach on each render.
-      // eslint-disable-next-line react-hooks/immutability
       (node: HTMLInputElement | null) => {
         if (typeof ref === 'function') {
           ref(node);
@@ -111,7 +110,6 @@ export const GenericInput = forwardRef<HTMLInputElement, Props>(
           if (typeof innerRef === 'function') {
             innerRef(node);
           } else {
-            // eslint-disable-next-line react-hooks/immutability
             (
               innerRef as React.MutableRefObject<HTMLInputElement | null>
             ).current = node;
@@ -123,7 +121,6 @@ export const GenericInput = forwardRef<HTMLInputElement, Props>(
 
     return (
       <>
-        {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
         <input
           {...otherProps}
           type={type}
@@ -131,6 +128,7 @@ export const GenericInput = forwardRef<HTMLInputElement, Props>(
           onChange={onChange}
           className={clsx(classes.input, classes.genericInput)}
           ref={mergedRef}
+          // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus={autoFocus}
           {...(checked !== undefined ? { checked } : {})}
         />

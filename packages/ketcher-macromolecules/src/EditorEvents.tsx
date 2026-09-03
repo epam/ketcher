@@ -58,6 +58,10 @@ import {
 } from 'state/types';
 import { calculateBondPreviewPosition } from 'ketcher-react';
 import { loadDefaultPresets, loadMonomerLibrary } from 'state/library';
+import {
+  isMacroSelectionTool,
+  MACRO_SELECTION_TOOL_OPTIONS,
+} from 'components/menu/constants';
 import { useIndigoVersionToRedux } from './hooks/useIndigoVersionToRedux';
 
 const noPreviewTools = [ToolName.bondSingle, ToolName.selectRectangle];
@@ -91,7 +95,6 @@ export const EditorEvents = () => {
   useEffect(() => {
     const onSelectSelectionTool = () => {
       editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);
-      dispatch(selectTool(lastSelectedSelectionMenuItem));
     };
 
     if (editor) {
@@ -106,6 +109,13 @@ export const EditorEvents = () => {
   useEffect(() => {
     const selectToolHandler = ([toolName]: [string]) => {
       dispatch(selectTool(toolName));
+
+      if (isMacroSelectionTool(toolName)) {
+        SettingsManager.setSelectionTool('macro', {
+          tool: 'select',
+          opts: MACRO_SELECTION_TOOL_OPTIONS[toolName],
+        });
+      }
     };
     const handleError = (errorText: string) => {
       dispatch(openErrorTooltip(errorText));

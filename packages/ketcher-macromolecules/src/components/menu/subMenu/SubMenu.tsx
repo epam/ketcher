@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -32,13 +31,8 @@ import {
   usePortalStyle,
 } from 'ketcher-react';
 import { createPortal } from 'react-dom';
-import {
-  selectSelectedMenuGroupItem,
-  setSelectedMenuGroupItem,
-} from 'state/common';
-import { useAppDispatch, useAppSelector } from 'hooks';
-import { SettingsManager } from 'ketcher-core';
-import { SELECT_SUBMENU_ID } from '../constants';
+import { selectSelectedMenuGroupItem } from 'state/common';
+import { useAppSelector } from 'hooks';
 
 type SubMenuProps = {
   vertical?: boolean;
@@ -64,7 +58,6 @@ const SubMenu = ({
   activeItem,
   subMenuId,
 }: React.PropsWithChildren<SubMenuProps>) => {
-  const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const { isActive } = useMenuContext();
@@ -87,25 +80,6 @@ const SubMenu = ({
   const hideCollapse = () => {
     if (open) {
       setOpen(false);
-    }
-  };
-
-  const handleMenuItemClick = (itemId: string) => {
-    if (subMenuId && itemId !== lastActiveOption) {
-      dispatch(
-        setSelectedMenuGroupItem({
-          groupName: subMenuId,
-          activeItemName: itemId,
-        }),
-      );
-
-      if (subMenuId === SELECT_SUBMENU_ID) {
-        const toolType = itemId.replace('select-', '');
-        SettingsManager.setSelectionTool('macro', {
-          tool: 'select',
-          opts: toolType,
-        });
-      }
     }
   };
 
@@ -178,10 +152,6 @@ const SubMenu = ({
                   {subComponents.map((component) =>
                     React.cloneElement(component, {
                       key: component.props.itemId,
-                      onClick: () => {
-                        handleMenuItemClick(component.props.itemId);
-                        component.props.onClick?.();
-                      },
                     }),
                   )}
                 </OptionsContainer>

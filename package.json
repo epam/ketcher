@@ -58,8 +58,8 @@
     "prettier": "^3.9.6",
     "prettier-config-standard": "^5.0.0",
     "stylelint": "^17.14.1",
-    "stylelint-config-prettier": "^9.0.5",
-    "stylelint-config-standard": "^23.0.0",
+    "stylelint-config-standard": "^40.0.0",
+    "stylelint-config-standard-less": "^3.0.1",
     "typescript": "^6.0.3"
   },
   "resolutions": {
@@ -81,19 +81,5 @@
     "react-router": "^8.3.0",
     "react-router-dom": "^7.18.2",
     "serve-handler": "^6.1.7"
-  },
-  "stylelint": {
-    "//": "This block shadows .stylelintrc.json. See ADR 2026-08-31 for details.",
-    "overrides": [
-      {
-        "files": [
-          "**/*.less"
-        ],
-        "customSyntax": "postcss-less"
-      }
-    ],
-    "rules": {
-      "selector-class-pattern": null
-    }
   }
 }

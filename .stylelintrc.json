@@ -1,5 +1,12 @@
 {
-  "extends": ["stylelint-config-standard", "stylelint-config-prettier"],
+  "extends": ["stylelint-config-standard"],
+  "overrides": [
+    {
+      "files": ["**/*.less"],
+      "extends": ["stylelint-config-standard-less"],
+      "customSyntax": "postcss-less"
+    }
+  ],
   "rules": {
     "at-rule-no-unknown": null,
     "selector-pseudo-class-no-unknown": [
@@ -7,6 +14,7 @@
       {
         "ignorePseudoClasses": ["global"]
       }
-    ]
+    ],
+    "selector-class-pattern": null
   }
 }

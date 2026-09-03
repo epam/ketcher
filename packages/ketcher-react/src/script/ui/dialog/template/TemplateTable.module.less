@@ -86,7 +86,7 @@
     @color-background-primary 80%
   );
   background-size: 200% 100%;
-  animation: templatePreviewPlaceholderPulse 1.2s ease-in-out infinite;
+  animation: template-preview-placeholder-pulse 1.2s ease-in-out infinite;
 }
 
 .structFade {
@@ -100,7 +100,7 @@
   opacity: 1;
 }
 
-@keyframes templatePreviewPlaceholderPulse {
+@keyframes template-preview-placeholder-pulse {
   0% {
     background-position: 100% 0;
   }
@@ -110,7 +110,7 @@
 }
 
 .selectedTitle {
-  background-color: fade(@color-background-primary, 70%);
+  background-color: rgba(@color-background-primary, 0.7);
 }
 
 .td {
@@ -124,7 +124,7 @@
   align-self: start;
 
   &.selected .struct {
-    background-color: fade(@color-primary, 5%);
+    background-color: rgba(@color-primary, 0.05);
     border: 2px solid @color-primary;
   }
 }

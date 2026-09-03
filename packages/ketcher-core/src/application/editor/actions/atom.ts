@@ -32,6 +32,7 @@ import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 import { fromBondStereoUpdate } from './bondStereo';
 
 import { Action } from './action';
+import { isNumber } from 'lodash';
 import { without } from 'lodash/fp';
 import type { Pile } from 'domain/entities/pile';
 import type { Point } from 'domain/entities/vec2';
@@ -165,9 +166,9 @@ export function mergeFragmentsIfNeeded(
 ) {
   const frid = atomGetAttr(restruct, srcId, 'fragment');
   const frid2 = atomGetAttr(restruct, dstId, 'fragment');
-  assert(typeof frid === 'number', `Fragment of atom ${srcId} was not found`);
+  assert(isNumber(frid), `Fragment of atom ${srcId} was not found`);
 
-  if (frid2 !== frid && typeof frid2 === 'number') {
+  if (frid2 !== frid && isNumber(frid2)) {
     const struct = restruct.molecule;
 
     const rgid = RGroup.findRGroupByFragment(struct.rgroups, frid2);

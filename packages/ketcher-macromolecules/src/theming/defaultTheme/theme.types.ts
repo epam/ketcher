@@ -24,7 +24,9 @@ export type ThemeType = { ketcher: EditorTheme };
 export type MergedThemeType = ThemeType & MuiThemeOptions;
 
 // Declaring Theme interface to be used in styled components and useTheme hooks
-
 declare module '@emotion/react' {
+  // This interface must extend ThemeType to maintain type compatibility across the application.
+  // The empty body is intentional - it's the standard TypeScript module augmentation pattern.
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface Theme extends ThemeType {}
 }

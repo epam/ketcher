@@ -28,12 +28,8 @@ import styles from '../ContextMenu.module.less';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { Icon } from 'components';
 import useMakeAttachmentPointMenuItems from '../hooks/useMakeAttachmentPointMenuItems';
-import useAttachmentGroupCreate, {
-  ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP,
-} from '../hooks/useAttachmentGroupCreate';
 import clsx from 'clsx';
 import { getEditableAtomIds } from '../utils';
-import { Tooltip } from '@mui/material';
 
 const {
   ringBondCount,
@@ -119,10 +115,6 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     isVisible: markAsIsVisible,
     isDisabled: markAsIsDisabled,
   } = useMarkAs();
-  const {
-    handler: handleAttachmentGroupCreate,
-    isDisabled: attachmentGroupCreateDisabled,
-  } = useAttachmentGroupCreate();
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
@@ -209,8 +201,6 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const disabledForMonomerCreation = editor.isMonomerCreationWizardActive;
   const showMarkAsMenu = markAsIsVisible();
   const markAsDisabled = markAsIsDisabled();
-  const isAttachmentGroupCreateDisabled = attachmentGroupCreateDisabled();
-
   return (
     <>
       {showMarkAsMenu && (
@@ -270,24 +260,6 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       >
         <Icon name="editMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>{editMenuItemTitle}</span>
-      </Item>
-
-      <Item
-        {...props}
-        data-testid="Create Attachment Group-option"
-        onClick={handleAttachmentGroupCreate}
-        disabled={isAttachmentGroupCreateDisabled}
-      >
-        <Tooltip
-          title={
-            isAttachmentGroupCreateDisabled
-              ? ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP
-              : ''
-          }
-          placement="right"
-        >
-          <span className={styles.tooltipTarget}>Create attachment group</span>
-        </Tooltip>
       </Item>
 
       <Item

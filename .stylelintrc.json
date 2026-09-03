@@ -9,6 +9,7 @@
   ],
   "rules": {
     "at-rule-no-unknown": null,
+    "custom-property-pattern": null,
     "selector-pseudo-class-no-unknown": [
       true,
       {

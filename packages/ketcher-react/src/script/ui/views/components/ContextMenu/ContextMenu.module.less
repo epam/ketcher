@@ -20,48 +20,28 @@
 
 .contextMenu {
   // Reference https://fkhadra.github.io/react-contexify/how-to-style
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-menu-bgColor: @color-background-primary;
-  /* stylelint-disable-next-line custom-property-pattern */
-  --contexify-item-color:@color-text-primary;
-  /* stylelint-disable-next-line custom-property-pattern */
+  --contexify-item-color: @color-text-primary;
   --contexify-activeItem-color: @color-text-secondary;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-activeItem-bgColor: @color-grey-3;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-rightSlot-color: @color-text-secondary;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-activeRightSlot-color: @color-text-secondary;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-arrow-color: @color-text-primary;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-activeArrow-color: @color-text-primary;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-menu-shadow: 0 2px 5px 0 rgb(@main-color, 0.54);
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-zIndex: 1;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-menu-minWidth: 0px;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-menu-padding: 4px 4px 4px 4px;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-menu-radius: 4px;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-menu-negatePadding: var(--contexify-menu-padding);
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-itemContent-padding: 3px 20px;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-activeItem-radius: 0;
-
 
   position: fixed;
   user-select: none;
   box-sizing: border-box;
-  /* stylelint-disable-next-line custom-property-pattern */
   padding: var(--contexify-menu-padding);
-  /* stylelint-disable-next-line custom-property-pattern */
   min-width: var(--contexify-menu-minWidth);
-  /* stylelint-disable-next-line custom-property-pattern */
   z-index: var(--contexify-zIndex);
   line-height: 1.5;
 
@@ -81,7 +61,7 @@
     display: flex;
     align-items: center;
     line-height: var(--ketcher-font-size-regular);
-  }  
+  }
 
   :global(.contexify_submenu) {
     max-height: 400px;
@@ -114,8 +94,7 @@
   :global(.contexify_separator) {
     margin: 3px 0;
     height: 0;
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    border-top: 1px solid @border-color;
+    border-top: ~'1px solid @{border-color}';
     background: transparent;
   }
 
@@ -126,8 +105,7 @@
   .devider {
     content: '';
       display: block;
-      /* stylelint-disable-next-line declaration-property-value-no-unknown */
-      border-top: 1px solid @border-color;
+      border-top: ~'1px solid @{border-color}';
       margin: 3px 0;
   }
 

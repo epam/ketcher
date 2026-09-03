@@ -47,10 +47,8 @@
   white-space: nowrap;
   word-break: keep-all;
   background: @color-background-primary;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  border: 1px solid @border-color;
+  border: ~'1px solid @{border-color}';
   border-radius: 5px;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   box-shadow: 3px 4px 4px rgb(103 104 132 / 25%);
 
   // TODO: move to action button styles, when all buttons will have same style

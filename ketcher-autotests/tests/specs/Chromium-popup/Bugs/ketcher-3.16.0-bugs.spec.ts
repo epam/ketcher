@@ -11,6 +11,7 @@ import {
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();
@@ -89,5 +90,25 @@ test('Case 3: S-Group brackets should be drawn correctly for simple aromatic mol
     page,
     'KET/Chromium-popup/Bugs/ketcher-3.16.0-bugs/BrokenBrackets.ket',
   );
+  await takeEditorScreenshot(page);
+});
+
+test('Case 4: S-Group labels should be positioned correctly after adding explicit hydrogens', async () => {
+  /**
+   * Test task: https://github.com/epam/ketcher/issues/10502
+   * Bug: https://github.com/epam/ketcher/issues/3977
+   * Description: S-Group labels should be positioned correctly after adding explicit hydrogens
+   * Scenario:
+   * 1. Open the app
+   * 2. Open KET/Chromium-popup/Bugs/ketcher-3.16.0-bugs/All types of bond - Either topology - Unmarked - S-Group - Data - Bond.ket file
+   * 3. Click the Add/Remove explicit hydrogens button
+   * Actual result: S-groups labels are displayed above the structures
+   * Expected result: S-group labels stay near the structures
+   */
+  await openFileAndAddToCanvas(
+    page,
+    'KET/Chromium-popup/Bugs/ketcher-3.16.0-bugs/All types of bond - Either topology - Unmarked - S-Group - Data - Bond.ket',
+  );
+  await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
   await takeEditorScreenshot(page);
 });

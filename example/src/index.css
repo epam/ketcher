@@ -1,10 +1,10 @@
-@import 'normalize.css';
+@import url('normalize.css');
 
 body {
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -31,8 +31,8 @@ body {
     width: 800px;
     height: 650px;
     z-index: 1002;
-    max-height: calc(100vh - 4.28571rem);
-    max-width: calc(100vw - 4.28571rem);
+    max-height: calc(100vh - 4.2857rem);
+    max-width: calc(100vw - 4.2857rem);
     min-height: 19rem;
     min-width: 19rem;
 }
@@ -50,5 +50,5 @@ body {
     min-height: 350px;
     flex-grow: 1;
     margin: 20px;
-    box-shadow: 1px 4px 12px rgba(103, 104, 132, 0.18);
+    box-shadow: 1px 4px 12px rgb(103 104 132 / 18%);
 }

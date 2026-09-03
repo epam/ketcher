@@ -105,14 +105,12 @@
 
   >header {
     flex-shrink: 0;
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    box-shadow: 0 2px 4px 0 @color-accordion-shadow;
+    box-shadow: @shadow-accordion-header;
     z-index: 10;
   }
 
   >footer {
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    box-shadow: 0 -2px 4px 0 @color-accordion-shadow;
+    box-shadow: @shadow-accordion-footer;
     z-index: 10;
   }
 }

@@ -15,6 +15,7 @@
         "ignorePseudoClasses": ["global"]
       }
     ],
-    "selector-class-pattern": null
+    "selector-class-pattern": null,
+    "custom-property-pattern": "^(?:contexify-[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*|[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$"
   }
 }

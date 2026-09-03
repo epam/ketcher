@@ -418,10 +418,8 @@ export class RenderersManager {
       this.reinitializeViewModel();
       modelChanges?.execute(this);
       this.runPostRenderMethods();
-      // Placeholder nodes (the backbone "-" and antisense gap nodes) have no
-      // real monomer, so per-entity selection operations never reach them.
-      // Redraw them here so they highlight together with their neighbors and
-      // the selection stays contiguous (#6794).
+      // Placeholder nodes carry no real monomer, so redraw their selection
+      // separately to keep it contiguous (see redrawPlaceholderNodesSelection).
       const editor = this.editor ?? provideEditorInstance();
       if (editor?.isSequenceMode) {
         SequenceRenderer.redrawPlaceholderNodesSelection();

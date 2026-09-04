@@ -18,6 +18,10 @@ import type { AtomAttributes } from 'domain/entities/atom';
 import { type BondAttributes, Bond } from 'domain/entities/bond';
 import type { Vec2 } from 'domain/entities/vec2';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import {
+  isBondTypeAllowedForEndpoints,
+  isHapticBondWithAttachmentGroup,
+} from 'domain/helpers/hapticBond';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import type { SGroup } from 'domain/entities/sgroup';
 import {
@@ -52,6 +56,10 @@ export function fromBondAddition(
 ): [Action, number, number, number] {
   const action = new Action();
   const struct = reStruct.molecule;
+  const getFragmentAtomId = (endpointId: number) =>
+    struct.atoms.has(endpointId)
+      ? endpointId
+      : struct.attachmentGroups.get(endpointId)?.atomIds[0];
 
   const mouseDownNothingAndUpNothing = (
     beginAtomAttr: AtomAttributes,
@@ -86,7 +94,11 @@ export function fromBondAddition(
     beginAtomAttr: AtomAttributes,
     endAtomId: number,
   ) => {
-    const fragmentId = atomGetAttr(reStruct, endAtomId, 'fragment');
+    const fragmentAtomId = getFragmentAtomId(endAtomId);
+    const fragmentId =
+      fragmentAtomId === undefined
+        ? -1
+        : atomGetAttr(reStruct, fragmentAtomId, 'fragment');
 
     const newBeginAtomId: number = (
       action.addOp(
@@ -115,7 +127,11 @@ export function fromBondAddition(
     beginAtomId: number,
     endAtomAttr: AtomAttributes,
   ) => {
-    const fragmentId = atomGetAttr(reStruct, beginAtomId, 'fragment');
+    const fragmentAtomId = getFragmentAtomId(beginAtomId);
+    const fragmentId =
+      fragmentAtomId === undefined
+        ? -1
+        : atomGetAttr(reStruct, fragmentAtomId, 'fragment');
 
     const newEndAtomId: number = (
       action.addOp(
@@ -174,20 +190,30 @@ export function fromBondAddition(
   ).data.bid as number;
   const newBond = struct.bonds.get(newBondId);
   if (newBond) {
-    action.addOp(
-      new CalcImplicitH([newBond.begin, newBond.end]).perform(reStruct),
+    const atomIds = [newBond.begin, newBond.end].filter((id) =>
+      struct.atoms.has(id),
     );
-    action.mergeWith(fromBondStereoUpdate(reStruct, newBond));
+    if (atomIds.length) {
+      action.addOp(new CalcImplicitH(atomIds).perform(reStruct));
+    }
+    if (atomIds.length === 2) {
+      action.mergeWith(fromBondStereoUpdate(reStruct, newBond));
+    }
   }
 
   action.operations.reverse();
 
-  const mergedFragmentId = mergeFragmentsIfNeeded(
-    action,
-    reStruct,
-    beginAtomId,
-    endAtomId,
-  );
+  const beginFragmentAtomId = getFragmentAtomId(beginAtomId);
+  const endFragmentAtomId = getFragmentAtomId(endAtomId);
+  const mergedFragmentId =
+    beginFragmentAtomId !== undefined && endFragmentAtomId !== undefined
+      ? mergeFragmentsIfNeeded(
+          action,
+          reStruct,
+          beginFragmentAtomId,
+          endFragmentAtomId,
+        )
+      : undefined;
   if (struct.frags.get(mergedFragmentId || 0)?.stereoAtoms && !bond.stereo) {
     action.addOp(
       new FragmentStereoFlag(mergedFragmentId || 0).perform(reStruct),
@@ -208,22 +234,48 @@ export function fromBondsAttrs(
   const bids = Array.isArray(ids) ? ids : [ids];
 
   bids.forEach((bid) => {
+    const bond = struct.bonds.get(bid);
+    if (!bond) {
+      return;
+    }
+
+    const resultingType =
+      'type' in attrs
+        ? attrs.type
+        : reset
+          ? Bond.attrGetDefault('type')
+          : bond.type;
+    if (
+      typeof resultingType === 'number' &&
+      !isBondTypeAllowedForEndpoints(struct, bond, resultingType)
+    ) {
+      return;
+    }
+
+    let shouldRecalculateImplicitH = false;
+    let shouldUpdateStereo = false;
+
     Object.keys(Bond.attrlist).forEach((key) => {
       if (!(key in attrs) && !reset) return;
 
       const value = key in attrs ? attrs[key] : Bond.attrGetDefault(key);
 
       action.addOp(new BondAttr(bid, key, value).perform(restruct));
+      if (key === 'type') {
+        shouldRecalculateImplicitH = true;
+      }
       if (key === 'stereo' && key in attrs) {
-        const bond = struct.bonds.get(bid);
-        if (bond) {
-          action.addOp(
-            new CalcImplicitH([bond.begin, bond.end]).perform(restruct),
-          );
-          action.mergeWith(fromBondStereoUpdate(restruct, bond));
-        }
+        shouldRecalculateImplicitH = true;
+        shouldUpdateStereo = true;
       }
     });
+
+    if (shouldRecalculateImplicitH) {
+      action.addOp(new CalcImplicitH([bond.begin, bond.end]).perform(restruct));
+    }
+    if (shouldUpdateStereo) {
+      action.mergeWith(fromBondStereoUpdate(restruct, bond));
+    }
   });
 
   return action;
@@ -242,6 +294,12 @@ export function fromBondsMerge(
     const bond = struct.bonds.get(srcId);
     const bondCI = struct.bonds.get(dstId);
     if (!bond || !bondCI) return;
+    if (
+      isHapticBondWithAttachmentGroup(struct, bond) ||
+      isHapticBondWithAttachmentGroup(struct, bondCI)
+    ) {
+      return;
+    }
     const params = utils.mergeBondsParams(struct, bond, struct, bondCI);
     if (!params?.merged) return;
     atomPairs.set(bond.begin, !params.cross ? bondCI.begin : bondCI.end);

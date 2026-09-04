@@ -18,6 +18,7 @@ import { Atom } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import {
   AtomAttr,
+  AttachmentGroupAttr,
   AtomDelete,
   BondAdd,
   BondAttr,
@@ -30,6 +31,36 @@ import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 import { fromBondStereoUpdate } from './bondStereo';
 import { Action } from './action';
 import type ReStruct from 'application/render/restruct/restruct';
+import { isAtomMergeAllowedByHapticBonds } from 'domain/helpers/hapticBond';
+
+function replaceAttachmentGroupAtomId(
+  atomIds: number[],
+  srcId: number,
+  dstId: number,
+) {
+  return Array.from(
+    new Set(atomIds.map((atomId) => (atomId === srcId ? dstId : atomId))),
+  );
+}
+
+function updateAttachmentGroupsAfterAtomMerge(
+  action: Action,
+  restruct: ReStruct,
+  srcId: number,
+  dstId: number,
+) {
+  restruct.molecule.attachmentGroups.forEach((attachmentGroup, id) => {
+    if (!attachmentGroup.atomIds.includes(srcId)) return;
+
+    action.addOp(
+      new AttachmentGroupAttr(
+        id,
+        'atomIds',
+        replaceAttachmentGroupAtomId(attachmentGroup.atomIds, srcId, dstId),
+      ),
+    );
+  });
+}
 
 export function fromAtomMerge(
   restruct: ReStruct,
@@ -38,6 +69,25 @@ export function fromAtomMerge(
 ): Action {
   if (srcId === dstId) return new Action();
   if (!restruct.molecule.atoms.has(dstId)) return new Action();
+
+  const srcAtom = restruct.molecule.atoms.get(srcId);
+  const dstAtom = restruct.molecule.atoms.get(dstId);
+  if (srcAtom && dstAtom) {
+    const mergedAtomLabel =
+      atomGetDegree(restruct, srcId) === 1 && srcAtom.label === '*'
+        ? 'C'
+        : srcAtom.label;
+    if (
+      !isAtomMergeAllowedByHapticBonds(
+        restruct.molecule,
+        srcId,
+        dstId,
+        mergedAtomLabel,
+      )
+    ) {
+      return new Action();
+    }
+  }
 
   const fragAction = new Action();
   mergeFragmentsIfNeeded(fragAction, restruct, srcId, dstId);
@@ -73,7 +123,6 @@ export function fromAtomMerge(
     action.addOp(new BondDelete(nei.bid));
   });
 
-  const srcAtom = restruct.molecule.atoms.get(srcId);
   if (!srcAtom) {
     return action.perform(restruct).mergeWith(fragAction);
   }
@@ -88,6 +137,8 @@ export function fromAtomMerge(
       action.addOp(new AtomAttr(dstId, key, attrs[key]));
     }
   });
+
+  updateAttachmentGroupsAfterAtomMerge(action, restruct, srcId, dstId);
 
   const sgChanged = removeAtomFromSgroupIfNeeded(action, restruct, srcId);
 

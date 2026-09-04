@@ -1,8 +1,11 @@
 import {
   type ReMultitailArrow,
   FunctionalGroup,
+  getAttachmentGroupIdForHapticBondHalf,
   MonomerMicromolecule,
   MULTITAIL_ARROW_KEY,
+  type Struct,
+  type Vec2,
 } from 'ketcher-core';
 import type { Editor, ClosestItemWithMap } from 'src/script/editor';
 import {
@@ -93,6 +96,30 @@ function computeHasNonMonomerStructure(
   }
 
   return false;
+}
+
+export function getAttachmentGroupTargetForBondHalf(
+  struct: Struct,
+  closestItem: ClosestItemWithMap,
+  pointer: Vec2,
+): ClosestItemWithMap | null {
+  if (closestItem.map !== 'bonds') {
+    return null;
+  }
+
+  const attachmentGroupId = getAttachmentGroupIdForHapticBondHalf(
+    struct,
+    struct.bonds.get(closestItem.id),
+    pointer,
+  );
+
+  return attachmentGroupId === null
+    ? null
+    : {
+        ...closestItem,
+        map: 'attachmentGroups',
+        id: attachmentGroupId,
+      };
 }
 
 export const getIsItemInSelection = ({
@@ -196,6 +223,12 @@ export function getMenuPropsForClosestItem(
       }
     }
 
+    case 'attachmentGroups':
+      return {
+        id: CONTEXT_MENU_ID.FOR_ATTACHMENT_GROUP + ketcherId,
+        attachmentGroupIds: [closestItem.id],
+      };
+
     case 'sgroups':
     case 'functionalGroups': {
       const sGroup = struct.sgroups.get(closestItem.id);
@@ -265,6 +298,9 @@ export function getMenuPropsForSelection(
   }
 
   const { bonds, atoms, rgroupAttachmentPoints } = selection;
+  const isSingleAtomOnlySelection =
+    atoms?.length === 1 &&
+    onlyHasProperty(selection, 'atoms', IGNORED_MAPS_LIST);
 
   if (selectedFunctionalGroups.size > 0) {
     const functionalGroups = Array.from(selectedFunctionalGroups.values());
@@ -308,7 +344,12 @@ export function getMenuPropsForSelection(
         IGNORED_MAPS_LIST,
       ),
     };
-  } else if (atoms && !bonds && !rgroupAttachmentPoints) {
+  } else if (
+    atoms &&
+    !bonds &&
+    !rgroupAttachmentPoints &&
+    isSingleAtomOnlySelection
+  ) {
     return {
       id: CONTEXT_MENU_ID.FOR_ATOMS + ketcherId,
       atomIds: atoms,

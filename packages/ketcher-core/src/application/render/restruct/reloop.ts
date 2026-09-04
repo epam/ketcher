@@ -59,7 +59,7 @@ class ReLoop extends ReObject {
       if (!bond) {
         return;
       }
-      const beginAtom = restruct.atoms.get(halfBond.begin);
+      const beginAtom = restruct.getBondEndpoint(halfBond.begin);
       if (!beginAtom) {
         return;
       }
@@ -95,8 +95,8 @@ class ReLoop extends ReObject {
       if (!halfBond) {
         return;
       }
-      const beginAtom = restruct.atoms.get(halfBond.begin);
-      const endAtom = restruct.atoms.get(halfBond.end);
+      const beginAtom = restruct.getBondEndpoint(halfBond.begin);
+      const endAtom = restruct.getBondEndpoint(halfBond.end);
       if (!beginAtom || !endAtom) {
         return;
       }
@@ -163,7 +163,7 @@ class ReLoop extends ReObject {
         );
         const halfAngle = (Math.PI - angle) / 2;
         const direction = nextHalfBond.dir.rotate(halfAngle);
-        const nextBeginAtom = restruct.atoms.get(nextHalfBond.begin);
+        const nextBeginAtom = restruct.getBondEndpoint(nextHalfBond.begin);
         if (!nextBeginAtom) {
           return;
         }

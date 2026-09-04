@@ -72,12 +72,16 @@ class BaseOperation<D = unknown> {
     atomId: number,
     level = 0,
   ) {
-    const atom = restruct.atoms.get(atomId);
+    const atom = restruct.getBondEndpoint(atomId);
     if (!atom) {
       return;
     }
 
-    restruct.markAtom(atomId, level ? 1 : 0);
+    if (restruct.attachmentGroups.has(atomId)) {
+      restruct.markAttachmentGroup(atomId, level ? 1 : 0);
+    } else {
+      restruct.markAtom(atomId, level ? 1 : 0);
+    }
 
     const halfBonds = restruct.molecule.halfBonds;
 
@@ -92,12 +96,18 @@ class BaseOperation<D = unknown> {
       }
 
       restruct.markBond(halfBond.bid, 1);
-      restruct.markAtom(halfBond.end, 0);
+      if (restruct.attachmentGroups.has(halfBond.end)) {
+        restruct.markAttachmentGroup(halfBond.end, 0);
+      } else {
+        restruct.markAtom(halfBond.end, 0);
+      }
 
       if (level) {
         BaseOperation.invalidateLoop(restruct, halfBond.bid);
       }
     });
+
+    if (restruct.attachmentGroups.has(atomId)) return;
 
     const fragment = atom.a.fragment;
     const stereoLabelStyle = restruct.render.options.stereoLabelStyle;
@@ -150,6 +160,11 @@ class BaseOperation<D = unknown> {
     level = 0,
   ) {
     if (mapName === 'atoms') {
+      BaseOperation.invalidateAtom(restruct, id, level);
+      return;
+    }
+
+    if (mapName === 'attachmentGroups') {
       BaseOperation.invalidateAtom(restruct, id, level);
       return;
     }

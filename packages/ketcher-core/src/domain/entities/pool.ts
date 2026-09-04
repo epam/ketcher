@@ -43,6 +43,10 @@ export class Pool<TValue = unknown> extends Map<number, TValue> {
     return this.nextId++;
   }
 
+  reserveId(id: number): void {
+    this.nextId = Math.max(this.nextId, id + 1);
+  }
+
   keyOf(item: TValue): number | null {
     for (const [key, value] of this.entries()) {
       if (value === item) return key;

@@ -26,6 +26,7 @@ import {
 } from 'domain/entities/BaseMicromoleculeEntity';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { BondCIP } from 'domain/entities/types';
+import { HAPTIC_BOND_TYPE } from 'domain/constants/bonds';
 
 export interface BondAttributes {
   reactingCenterStatus?: number | null;
@@ -58,6 +59,7 @@ export class Bond extends BaseMicromoleculeEntity {
       ANY: 8,
       DATIVE: 9,
       HYDROGEN: 10,
+      HAPTIC: HAPTIC_BOND_TYPE,
     },
 
     STEREO: {
@@ -298,14 +300,14 @@ export class Bond extends BaseMicromoleculeEntity {
   }
 
   getCenter(struct: any): Vec2 {
-    const p1 = struct.atoms.get(this.begin).pp;
-    const p2 = struct.atoms.get(this.end).pp;
+    const p1 = struct.getBondEndpoint(this.begin).pp;
+    const p2 = struct.getBondEndpoint(this.end).pp;
     return Vec2.lc2(p1, 0.5, p2, 0.5);
   }
 
   getDir(struct: any): Vec2 {
-    const p1 = struct.atoms.get(this.begin)?.pp;
-    const p2 = struct.atoms.get(this.end)?.pp;
+    const p1 = struct.getBondEndpoint(this.begin)?.pp;
+    const p2 = struct.getBondEndpoint(this.end)?.pp;
     if (!p1 || !p2) return new Vec2();
     return p2.sub(p1).normalized();
   }

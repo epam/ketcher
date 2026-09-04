@@ -23,6 +23,7 @@ import { Bond, type BondAttributes } from 'domain/entities/bond';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
+import { getHapticBondEndPosition } from 'domain/helpers/hapticBond';
 import { KetcherLogger } from 'utilities';
 
 import closest from '../shared/closest';
@@ -71,15 +72,6 @@ function getReAtom(restruct: ReStruct, atomId: number) {
   const atom = restruct.atoms.get(atomId);
   if (!atom) {
     throwLoggedError(`Atom ${atomId} not found in restruct`);
-  }
-
-  return atom;
-}
-
-function getAtom(restruct: ReStruct, atomId: number): Atom {
-  const atom = restruct.molecule.atoms.get(atomId);
-  if (!atom) {
-    throwLoggedError(`Atom ${atomId} not found in struct`);
   }
 
   return atom;
@@ -134,7 +126,9 @@ export function atomGetSGroups(restruct: ReStruct, atomId: number): number[] {
 }
 
 export function atomGetPos(restruct: ReStruct, id: number): Vec2 {
-  return getAtom(restruct, id).pp;
+  const endpoint = restruct.molecule.getBondEndpoint(id);
+  if (!endpoint) throwLoggedError(`Bond endpoint ${id} not found in struct`);
+  return endpoint.pp;
 }
 
 export function findStereoAtoms(
@@ -328,6 +322,9 @@ export function atomForNewBond(
   }
 
   v.add_(pos);
+  if (bond?.type === Bond.PATTERN.TYPE.HAPTIC) {
+    v = getHapticBondEndPosition(pos, v);
+  }
 
   const closestAtom = findClosestAtom(restruct, v, null, 0.1);
   const a = closestAtom === null ? { label: 'C' } : closestAtom.id;

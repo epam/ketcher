@@ -25,6 +25,7 @@ import {
   addFragment,
   disableQueryElements,
   enableDearomatizeOnLoad,
+  disableDearomatizeOnLoad,
   MolFileFormat,
   setMolecule,
 } from '@utils/formats';
@@ -73,6 +74,20 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await clickInTheMiddleOfTheCanvas(page);
     await enableDearomatizeOnLoad(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, 'c1ccccc1'),
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Structure import if dearomotize-on-load is false', async () => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5110
+    Description: Aromatic Benzene ring loads as aromatic Benzene ring if dearomatize-on-load setting is set to false
+    */
+    await clickInTheMiddleOfTheCanvas(page);
+    await disableDearomatizeOnLoad(page);
     await waitForSpinnerFinishedWork(
       page,
       async () => await setMolecule(page, 'c1ccccc1'),

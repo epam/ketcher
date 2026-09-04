@@ -284,6 +284,12 @@ export async function enableDearomatizeOnLoad(page: Page): Promise<void> {
   );
 }
 
+export async function disableDearomatizeOnLoad(page: Page): Promise<void> {
+  return await page.evaluate(() =>
+    window.ketcher.setSettings({ 'general.dearomatize-on-load': false }),
+  );
+}
+
 export async function enableViewOnlyMode(page: Page): Promise<void> {
   await page.evaluate(() =>
     globalThis.window.ketcher.editor.options({ viewOnlyMode: true }),

@@ -20,6 +20,7 @@
 
 .contextMenu {
   // Reference https://fkhadra.github.io/react-contexify/how-to-style
+
   /* react-contexify uses these camelCase custom property names as its public API. */
   /* stylelint-disable custom-property-pattern */
   --contexify-menu-bgColor: @color-background-primary;
@@ -38,8 +39,6 @@
   --contexify-menu-negatePadding: var(--contexify-menu-padding);
   --contexify-itemContent-padding: 3px 20px;
   --contexify-activeItem-radius: 0;
-  /* stylelint-enable custom-property-pattern */
-
 
   position: fixed;
   user-select: none;
@@ -47,6 +46,7 @@
   padding: var(--contexify-menu-padding);
   min-width: var(--contexify-menu-minWidth);
   z-index: var(--contexify-zIndex);
+  /* stylelint-enable custom-property-pattern */
   line-height: 1.5;
 
   .icon {

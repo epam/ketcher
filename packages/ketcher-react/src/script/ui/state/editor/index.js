@@ -38,6 +38,7 @@ import { saveSettings } from '../options';
 import { memoizedDebounce } from '../../utils';
 import { updateFloatingTools } from '../floatingTools';
 import { openInfoModalWithCustomMessage } from '../shared';
+import { shouldResetToSelect } from './shouldResetToSelect';
 
 export default function initEditor(dispatch, getState, ketcherId) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
@@ -63,7 +64,7 @@ export default function initEditor(dispatch, getState, ketcherId) {
       if (!activeTool || (activeTool === 'select' && !force)) return;
       const selectMode = state.toolbar.visibleTools.select;
       const resetOption = state.options.settings.resetToSelect;
-      if (resetOption === true || resetOption === activeTool || force === true)
+      if (shouldResetToSelect(activeTool, resetOption) || force === true)
         // example: 'paste'
         dispatch({ type: 'ACTION', action: acts[selectMode].action });
       else updateAction();

@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useTranslation } from 'react-i18next';
 import { ElementWithDropdown } from './ElementWithDropdown';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
@@ -50,58 +51,59 @@ export const ExternalFuncControls = ({
   hiddenButtons,
   shortcuts,
 }: ExternalFuncProps) => {
+  const { t } = useTranslation('toolbar');
   const externalFuncButtons = [
     {
       name: 'arom',
-      title: 'Aromatize',
+      title: t('server.aromatize'),
       handler: onAromatize,
       testId: 'Aromatize button',
     },
     {
       name: 'dearom',
-      title: 'Dearomatize',
+      title: t('server.dearomatize'),
       handler: onDearomatize,
       testId: 'Dearomatize button',
     },
     {
       name: 'layout',
-      title: 'Layout',
+      title: t('server.layout'),
       handler: onLayout,
       testId: 'Layout button',
     },
     {
       name: 'clean',
-      title: 'Clean Up',
+      title: t('server.clean'),
       handler: onClean,
       testId: 'Clean Up button',
     },
     {
       name: 'cip',
-      title: 'Calculate CIP',
+      title: t('server.calculateCip'),
       handler: onCalculate,
       testId: 'Calculate CIP button',
     },
     {
       name: 'check',
-      title: 'Check Structure',
+      title: t('server.checkStructure'),
       handler: onCheck,
       testId: 'Check Structure button',
     },
     {
       name: 'analyse',
-      title: 'Calculated Values',
+      title: t('server.calculatedValues'),
       handler: onAnalyse,
       testId: 'Calculated Values button',
     },
     {
       name: 'explicit-hydrogens',
-      title: 'Add/Remove explicit hydrogens',
+      title: t('server.explicitHydrogens'),
       handler: onToggleExplicitHydrogens,
       testId: 'Add/Remove explicit hydrogens button',
     },
     {
       name: 'miew',
-      title: '3D Viewer',
+      title: t('server.viewer3d'),
       handler: onMiew,
       testId: '3D Viewer button',
     },

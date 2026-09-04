@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useTranslation } from 'react-i18next';
 import { Divider } from './Divider';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
@@ -32,11 +33,13 @@ export const UndoRedo = ({
   hiddenButtons,
   shortcuts,
 }: UndoRedoProps) => {
+  const { t } = useTranslation('toolbar');
+
   return (
     <>
       <Divider />
       <TopToolbarIconButton
-        title="Undo"
+        title={t('menu.undo')}
         onClick={onUndo}
         iconName="undo"
         disabled={disabledButtons.includes('undo')}
@@ -45,7 +48,7 @@ export const UndoRedo = ({
         testId="undo"
       />
       <TopToolbarIconButton
-        title="Redo"
+        title={t('menu.redo')}
         onClick={onRedo}
         iconName="redo"
         disabled={disabledButtons.includes('redo')}

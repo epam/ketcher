@@ -29,6 +29,7 @@ import action, {
   type UiActionAction,
 } from '../action';
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 import { hiddenAncestor } from '../state/toolbar';
 import { shortcutStr } from 'ketcher-core';
 import { Icon } from 'components';
@@ -168,11 +169,13 @@ function ActionButton({
   disableableButtons = [],
   indigoVerification,
 }: Readonly<ActionButtonProps>) {
+  const { t } = useTranslation();
   const shortcut = action.shortcut && shortcutStr(action.shortcut);
   const menuRef = useRef<HTMLButtonElement>(null);
   const disabled =
     status.disabled ||
     (indigoVerification && disableableButtons.includes(name));
+  const title = action.title ? t(action.title, action.titleParams) : '';
 
   const onClick = (event: MouseEvent<HTMLButtonElement>) => {
     if (!status.selected || isMenuOpened(menuRef.current)) {
@@ -187,7 +190,7 @@ function ActionButton({
       disabled={disabled}
       onClick={onClick}
       role="menuitem"
-      title={shortcut ? `${action.title} (${shortcut})` : action.title}
+      title={shortcut ? `${title} (${shortcut})` : title}
     >
       <Icon name={name} />
       <kbd>{shortcut}</kbd>

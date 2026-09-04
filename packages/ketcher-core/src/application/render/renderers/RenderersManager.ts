@@ -418,6 +418,12 @@ export class RenderersManager {
       this.reinitializeViewModel();
       modelChanges?.execute(this);
       this.runPostRenderMethods();
+      // Placeholder nodes carry no real monomer, so redraw their selection
+      // separately to keep it contiguous (see redrawPlaceholderNodesSelection).
+      const editor = this.editor ?? provideEditorInstance();
+      if (editor?.isSequenceMode) {
+        SequenceRenderer.redrawPlaceholderNodesSelection();
+      }
       notifyRenderComplete();
     } finally {
       if (this.zoomTool) ZoomTool.setRenderingContext(undefined);

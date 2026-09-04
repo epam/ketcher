@@ -53,6 +53,7 @@ test.describe('Hot keys', () => {
     await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.press('Shift+Tab');
     await page.keyboard.press('Shift+Tab');
+    await page.keyboard.press('Shift+Tab');
     await expect(page.getByTestId(SelectionToolType.Fragment)).toBeVisible();
     await takeLeftToolbarScreenshot(page);
   });

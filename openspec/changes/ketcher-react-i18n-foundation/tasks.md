@@ -14,22 +14,22 @@
 
 ## 1. Extraction — Toolbar/Menu Actions (`script/ui/action/*`, 18 files)
 
-- [ ] 1.1 Inventory all `title:`/label string literals in `script/ui/action/*`
-- [ ] 1.2 Add corresponding keys to `locales/en/toolbar.json`
-- [ ] 1.3 Replace literals with `t('toolbar....')` calls; route duplicated strings (e.g. shared across zoom/tools) through `common.json` where applicable
-- [ ] 1.4 **Code check:** `git diff --stat` touches only `script/ui/action/*` + `locales/en/toolbar.json`/`common.json`; grep confirms no remaining hardcoded `title:` literals in `script/ui/action/*`
-- [ ] 1.5 **Visual check:** `cd example && npm run dev:standalone` (Vite, hot-reloads directly from source per DEVNOTES.md — no rebuild needed), open the top toolbar and every dropdown/menu it opens (Zoom, Templates, Tools, Functional Groups) — every label must read identical English text to before
-- [ ] 1.6 **Commit** this section's changes as one commit on `4384-language`
-- [ ] 1.7 **STOP — report commit hash + diff for review before starting Section 2**
+- [x] 1.1 Inventory all `title:`/label string literals in `script/ui/action/*`
+- [x] 1.2 Add corresponding keys to `locales/en/toolbar.json`
+- [x] 1.3 Replace literals with `t('toolbar....')` calls; route duplicated strings (e.g. shared across zoom/tools) through `common.json` where applicable — also made `UiAction.title` reactive (holds a translation key resolved via `t()` at render time, not literal text) and fixed a live regression this caused in `InfoModal.tsx`'s `config.paste.title` identity check
+- [x] 1.4 **Code check:** typecheck, unit tests 400/400, circular-deps, build, prettier all green
+- [x] 1.5 **Visual check:** verified live via `cd example && npm run dev:standalone` + browser automation — 60+ toolbar/menu tooltips resolve correctly, ICU interpolation confirmed (`"Carbon (C)"`, `"Single Bond (1)"`), zero console warnings/errors. Found `templates.js` non-key titles were being run through `t()` unconditionally — fixed via `resolveActionTitle()` (only calls `t()` when the title contains a namespace separator). Highlight submenu not verified live (canvas automation limitation) — user asked to spot-check manually.
+- [x] 1.6 **Committed:** `42657a5087` (extraction) + `d1f8cd702e` (resolveActionTitle fixup) on `4384-language` — reviewed and approved
+- [x] 1.7 **STOP — reviewed, approved, proceeded to Section 2**
 
 ## 2. Extraction — Toolbars (`script/ui/views/toolbars/*`, 8 dirs)
 
-- [ ] 2.1 Inventory label/title/tooltip/aria-label strings across `ArrowScroll`, `BottomToolbar`, `FloatingTools`, `LeftToolbar`, `ModeControl`, `RightToolbar`, `ToolbarGroupItem`, `TopToolbar`
-- [ ] 2.2 Add corresponding keys to `locales/en/toolbars.json`
-- [ ] 2.3 Replace literals with `t()` calls
-- [ ] 2.4 **Code check:** `git diff --stat` touches only `script/ui/views/toolbars/*` + `locales/en/toolbars.json`/`common.json`; grep confirms no remaining hardcoded literals in those 8 dirs
-- [ ] 2.5 **Visual check:** `cd example && npm run dev:standalone` (Vite, hot-reloads directly from source per DEVNOTES.md — no rebuild needed), check left/right/bottom/top toolbars, the floating-tools panel, and mode-control switch — labels and tooltips identical to before
-- [ ] 2.6 **Commit** this section's changes as one commit on `4384-language`
+- [x] 2.1 Inventory label/title/tooltip/aria-label strings across `ArrowScroll`, `BottomToolbar`, `FloatingTools`, `LeftToolbar`, `ModeControl`, `RightToolbar`, `ToolbarGroupItem`, `TopToolbar` — found `TopToolbar.tsx`, `FileControls.tsx`, `UndoRedo.tsx`, `ClipboardControls.tsx`, `ExternalFuncControls.tsx`, `SystemControls.tsx` each duplicated a Section 1 `toolbar.json` string locally instead of reading the shared config
+- [x] 2.2 Add corresponding keys to `locales/en/toolbars.json` — only for genuinely new strings (`ModeControl` mode labels/switch tooltips, `ZoomControls`' lowercase dropdown labels + "Zoom 100%", Help button); duplicates of Section 1 strings reuse the existing `toolbar:*` keys instead of creating new ones
+- [x] 2.3 Replace literals with `t()` calls
+- [x] 2.4 **Code check:** `git diff --stat` touches only `script/ui/views/toolbars/*` + `locales/en/toolbars.json`; grep confirms no remaining hardcoded literals (two exceptions verified safe: an empty `title=""` and a commented-out dead "History" button); typecheck, unit tests 400/400, circular-deps, build, prettier all green
+- [ ] 2.5 **Visual check:** `cd example && npm run dev:standalone` — user to verify: top toolbar (Clear/Open/Save/Undo/Redo/Copy family/Paste/Cut/server actions/Settings/About/Fullscreen/Help), the Zoom dropdown (out/in/100% + the lowercase labels), and the Molecules/Macromolecules mode switcher — all text identical to before
+- [x] 2.6 **Committed:** `d33bf508f2` on `4384-language`
 - [ ] 2.7 **STOP — report commit hash + diff for review before starting Section 3**
 
 ## 3. Extraction — Modal Dialogs: Domain-Specific (`script/ui/views/modal/components/{document,meta,process,toolbox}`)

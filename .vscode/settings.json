@@ -1,0 +1,53 @@
+{
+  "stylelint.validate": ["css", "less"],
+  "stylelint.workingDirectories": [
+    {
+      "pattern": "packages/*",
+      "changeProcessCWD": true
+    },
+    {
+      "directory": "ketcher-autotests",
+      "changeProcessCWD": true
+    },
+    {
+      "directory": "example",
+      "changeProcessCWD": true
+    },
+    {
+      "directory": "example-ssr",
+      "changeProcessCWD": true
+    },
+    {
+      "directory": "demo",
+      "changeProcessCWD": true
+    }
+  ],
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.workingDirectories": [
+    {
+      "pattern": "packages/*",
+      "changeProcessCWD": true
+    },
+    {
+      "directory": "ketcher-autotests",
+      "changeProcessCWD": true
+    },
+    {
+      "directory": "example",
+      "changeProcessCWD": true
+    },
+    {
+      "directory": "example-ssr",
+      "changeProcessCWD": true
+    },
+    {
+      "directory": "demo",
+      "changeProcessCWD": true
+    }
+  ]
+}

@@ -14,6 +14,13 @@ The ketcher-react package contains only the functionality necessary to define co
 
 ## Installation
 
+### Requirements
+
+- **React**: 18.2.0 or higher (React 19 is also supported)
+- **Node.js**: 24.14.1 or higher
+
+### Install
+
 The ketcher-react library is available as an [NPM](https://www.npmjs.com/) package. Install it either with NPM:
 
 ```sh
@@ -34,7 +41,7 @@ import { RemoteStructServiceProvider } from 'ketcher-core'
 const structServiceProvider = new RemoteStructServiceProvider(
   process.env.REACT_APP_API_PATH!,
   {
-    'custom header': 'value' // optionally you can add custom headers object 
+    'custom header': 'value' // optionally you can add custom headers object
   }
 )
 
@@ -81,3 +88,108 @@ const MyComponent = () => {
 
 You can find the latest version of Miew-React [here](https://github.com/epam/miew/tree/master/packages/miew-react).
 The last checked version - [0.12.0](https://www.npmjs.com/package/miew-react).
+
+## Troubleshooting
+
+### "Can't resolve 'react/jsx-runtime'" or module resolution errors
+
+Ketcher requires **React 18.2.0 or higher** (or React 19.x). If you see errors like:
+
+```
+Module not found: Error: Can't resolve 'react/jsx-runtime'
+Can't import the named export 'Children' from non EcmaScript module
+```
+
+**Solution 1: Update React version**
+
+Make sure you have the correct React version installed:
+
+```sh
+npm install react@^18.2.0 react-dom@^18.2.0
+```
+
+**Solution 2: Check your bundler configuration**
+
+If you're still seeing the "Can't import the named export" error after updating React, you may need to update your webpack or build tool configuration:
+
+For **webpack 5**, ensure you have:
+
+```javascript
+// webpack.config.js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.m?js$/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+    ],
+  },
+};
+```
+
+For **Create React App**, you may need to upgrade to the latest version:
+
+```sh
+npm install react-scripts@latest
+```
+
+For **Vite**, the default configuration should work. If you encounter issues, ensure you're using Vite 4+ with the React plugin properly configured.
+
+### Editor appears but templates/icons are missing
+
+Make sure you've correctly set `staticResourcesUrl` and that the Ketcher static assets are accessible:
+
+```jsx
+// For Vite
+staticResourcesUrl={import.meta.env.BASE_URL}
+
+// For Create React App
+staticResourcesUrl={process.env.PUBLIC_URL}
+
+// Or provide absolute path
+staticResourcesUrl="/ketcher-assets"
+```
+
+### "Cannot find module 'ketcher-standalone'"
+
+Make sure you've installed the standalone package:
+
+```sh
+npm install ketcher-standalone
+```
+
+### TypeScript errors
+
+Install type definitions:
+
+```sh
+npm install --save-dev @types/react @types/react-dom
+```
+
+### Editor is blank or not visible
+
+Ensure the editor container has a defined height:
+
+```jsx
+<div style={{ height: '100vh', width: '100%' }}>
+  <Editor {...props} />
+</div>
+```
+
+### CSS styles not applied
+
+Make sure you import the CSS file:
+
+```jsx
+import 'ketcher-react/dist/index.css';
+```
+
+## Examples
+
+For complete working examples, see:
+
+- [Basic example](https://github.com/epam/ketcher/tree/master/example) - Full-featured example with both standalone and remote modes
+- [Main README](https://github.com/epam/ketcher/blob/master/README.md) - Additional usage examples and API documentation

@@ -1357,9 +1357,7 @@ export class SequenceMode extends BaseMode {
           ) {
             this.splitCurrentChain();
           } else {
-            if (this.isSyncEditMode) {
-              this.turnOffAntisenseEditMode();
-            }
+            this.turnOffAntisenseEditMode();
             this.startNewSequence();
           }
         },

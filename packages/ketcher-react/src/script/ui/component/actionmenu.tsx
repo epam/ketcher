@@ -28,6 +28,7 @@ import action, {
   type UiAction,
   type UiActionAction,
 } from '../action';
+import { resolveActionTitle } from '../action/resolveActionTitle';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { hiddenAncestor } from '../state/toolbar';
@@ -175,7 +176,7 @@ function ActionButton({
   const disabled =
     status.disabled ||
     (indigoVerification && disableableButtons.includes(name));
-  const title = action.title ? t(action.title, action.titleParams) : '';
+  const title = resolveActionTitle(t, action);
 
   const onClick = (event: MouseEvent<HTMLButtonElement>) => {
     if (!status.selected || isMenuOpened(menuRef.current)) {

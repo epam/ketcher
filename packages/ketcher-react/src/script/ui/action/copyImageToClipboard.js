@@ -20,6 +20,7 @@ import {
   ketcherProvider,
   KetSerializer,
 } from 'ketcher-core';
+import i18n from '../../../i18n/i18n';
 
 async function copyImageToClipboard() {
   const state = global.currentState;
@@ -40,7 +41,7 @@ async function copyImageToClipboard() {
     await navigator.clipboard.write([item]);
   } catch (e) {
     KetcherLogger.error('copyImageToClipboard.js::copyImageToClipboard', e);
-    errorHandler('This feature is not available in your browser');
+    errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));
   }
 }
 

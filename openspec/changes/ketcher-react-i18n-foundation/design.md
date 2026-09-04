@@ -80,19 +80,19 @@ Extraction tasks are split by source directory (`script/ui/action`, `script/ui/v
 
 ## Verification Protocol
 
-Because extraction is split across many directory-scoped tasks, potentially run by different subagents in different chat sessions over time, every section in `tasks.md` follows the same two-layer checkpoint before the next section may start:
+All work happens directly on the single branch `4384-language` in the main repo working directory (no per-section worktrees — this was tried and reverted: worktrees required their own `node_modules`/build artifacts per section and made review harder to locate, since the user's editor stays pointed at the main repo directory). Every section in `tasks.md` follows the same two-layer checkpoint before the next section may start:
 
 **Code layer:**
 
-- Each section (0 through 8) SHALL be executed in its own isolated git worktree/branch (one worktree per section), never directly on the working branch used by other in-flight sections. This keeps each section's diff self-contained and independently discardable if rejected.
-- On completion of a section, the executing agent SHALL stop and report: the worktree path/branch, a summary of changed files, and the full `git diff --stat`. It SHALL NOT merge, rebase onto, or start the next section until the user has reviewed and explicitly approved.
-- The reviewer (user, or `/code-review` run against the worktree diff) checks: no leftover hardcoded strings in the touched directory, correct namespace/key naming per Decision 2/3, no unrelated files touched.
+- Each section (0 through 8) SHALL be committed as its own commit on `4384-language`, containing only the files that section's tasks describe. Do not mix two sections into one commit, and do not start a section's changes until the prior section's commit has been made and approved.
+- On completion of a section, stop and report: the commit hash, `git show --stat HEAD`, and a summary of changes. Do NOT start the next section's changes until the user has reviewed and explicitly approved the commit.
+- The reviewer (user, or `/code-review` run against the commit) checks: no leftover hardcoded strings in the touched directory, correct namespace/key naming per Decision 2/3, no unrelated files touched.
 
 **Visual layer:**
 
-- Visual verification is manual: the user runs the app themselves (`npm run up` at the repo root, per this repo's `run` skill) against the section's worktree branch and opens the specific UI area the section touched.
+- Visual verification is manual: the user runs the app themselves (`npm run up` at the repo root, per this repo's `run` skill) against the current state of `4384-language` and opens the specific UI area the section touched.
 - Each section in `tasks.md` states exactly which screen/menu/dialog to open for the check (see the "Visual check" line added to each section below), since the expected outcome is "text looks identical to before extraction" — any visible diff is a regression.
-- No automated screenshot diffing is set up for this change; if a section's visual check reveals a regression, the agent fixes it within the same worktree before the section is reported as ready for review again.
+- No automated screenshot diffing is set up for this change; if a section's visual check reveals a regression, fix it and amend/add a follow-up commit before the section is reported as ready for review again.
 
 ## Open Questions
 

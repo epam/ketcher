@@ -298,6 +298,9 @@ export function getMenuPropsForSelection(
   }
 
   const { bonds, atoms, rgroupAttachmentPoints } = selection;
+  const isSingleAtomOnlySelection =
+    atoms?.length === 1 &&
+    onlyHasProperty(selection, 'atoms', IGNORED_MAPS_LIST);
 
   if (selectedFunctionalGroups.size > 0) {
     const functionalGroups = Array.from(selectedFunctionalGroups.values());
@@ -341,7 +344,12 @@ export function getMenuPropsForSelection(
         IGNORED_MAPS_LIST,
       ),
     };
-  } else if (atoms && !bonds && !rgroupAttachmentPoints) {
+  } else if (
+    atoms &&
+    !bonds &&
+    !rgroupAttachmentPoints &&
+    isSingleAtomOnlySelection
+  ) {
     return {
       id: CONTEXT_MENU_ID.FOR_ATOMS + ketcherId,
       atomIds: atoms,

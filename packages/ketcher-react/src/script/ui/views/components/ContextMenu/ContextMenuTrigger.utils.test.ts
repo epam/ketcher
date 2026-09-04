@@ -1,5 +1,45 @@
 import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
-import { getAttachmentGroupTargetForBondHalf } from './ContextMenuTrigger.utils';
+import {
+  getAttachmentGroupTargetForBondHalf,
+  getMenuPropsForSelection,
+} from './ContextMenuTrigger.utils';
+import { CONTEXT_MENU_ID } from './contextMenu.types';
+
+describe('getMenuPropsForSelection', () => {
+  it('uses the selection menu for a multi-atom selection', () => {
+    expect(
+      getMenuPropsForSelection({ atoms: [1, 2] }, new Map(), 'test'),
+    ).toEqual({
+      id: CONTEXT_MENU_ID.FOR_SELECTION + 'test',
+      atomIds: [1, 2],
+      bondIds: undefined,
+      rgroupAttachmentPoints: undefined,
+    });
+  });
+
+  it('keeps a single atom in the atom menu', () => {
+    expect(getMenuPropsForSelection({ atoms: [1] }, new Map(), 'test')).toEqual(
+      {
+        id: CONTEXT_MENU_ID.FOR_ATOMS + 'test',
+        atomIds: [1],
+        extraItemsSelected: false,
+      },
+    );
+  });
+
+  it('uses the selection menu when atoms and another drawing item are selected', () => {
+    expect(
+      getMenuPropsForSelection(
+        { atoms: [1, 2], rxnArrows: [3] },
+        new Map(),
+        'test',
+      ),
+    ).toMatchObject({
+      id: CONTEXT_MENU_ID.FOR_SELECTION + 'test',
+      atomIds: [1, 2],
+    });
+  });
+});
 
 describe('getAttachmentGroupTargetForBondHalf', () => {
   const createHapticBond = () => {

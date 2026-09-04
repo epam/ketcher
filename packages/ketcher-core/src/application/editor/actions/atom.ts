@@ -46,8 +46,6 @@ export function fromAtomAddition(
 ) {
   atom = { ...(atom || {}) };
   const action = new Action();
-  // When an explicit fragment id is provided, add the atom to that existing
-  // fragment instead of creating a new one.
   atom.fragment =
     fragmentId === null
       ? (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd).frid

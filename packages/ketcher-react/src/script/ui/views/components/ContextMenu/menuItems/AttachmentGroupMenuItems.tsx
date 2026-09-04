@@ -16,11 +16,11 @@ const AttachmentGroupMenuItems: FC<
   return (
     <Item
       {...props}
-      data-testid="Delete Attachment Group-option"
+      data-testid="Remove Attachment Group-option"
       onClick={handleDelete}
     >
       <Icon name="deleteMenu" className={styles.icon} />
-      <span className={styles.contextMenuText}>Delete attachment group</span>
+      <span className={styles.contextMenuText}>Remove attachment group</span>
     </Item>
   );
 };

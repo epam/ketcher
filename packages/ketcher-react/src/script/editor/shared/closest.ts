@@ -211,7 +211,10 @@ function findClosestAttachmentGroup(
   restruct.visibleAttachmentGroups.forEach((attachmentGroup, id) => {
     if (id === skipId) return;
     const dist = Vec2.dist(pos, attachmentGroup.a.pp);
-    if (dist < effectiveMinDist) {
+    if (
+      dist < effectiveMinDist ||
+      (minDist !== null && dist === effectiveMinDist)
+    ) {
       closestId = id;
       effectiveMinDist = dist;
     }
@@ -630,7 +633,11 @@ function findClosestItem(
 
       if (mp === 'sgroupData') {
         priorityItem = enrichedItem;
-      } else if (res === null || item.dist < res.dist) {
+      } else if (
+        res === null ||
+        item.dist < res.dist ||
+        (mp === 'attachmentGroups' && item.dist === res.dist)
+      ) {
         return enrichedItem;
       }
     }

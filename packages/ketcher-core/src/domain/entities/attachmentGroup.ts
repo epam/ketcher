@@ -71,9 +71,21 @@ export class AttachmentGroup extends Atom {
       return this.pp;
     }
 
-    const position = positions
-      .reduce((sum, current) => sum.add(current), new Vec2())
-      .scaled(1 / positions.length);
+    const { minX, minY, maxX, maxY } = positions.reduce(
+      (bounds, position) => ({
+        minX: Math.min(bounds.minX, position.x),
+        minY: Math.min(bounds.minY, position.y),
+        maxX: Math.max(bounds.maxX, position.x),
+        maxY: Math.max(bounds.maxY, position.y),
+      }),
+      {
+        minX: positions[0].x,
+        minY: positions[0].y,
+        maxX: positions[0].x,
+        maxY: positions[0].y,
+      },
+    );
+    const position = new Vec2((minX + maxX) / 2, (minY + maxY) / 2);
 
     this.pp = position;
     return position;

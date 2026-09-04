@@ -1,4 +1,12 @@
-import { Atom, Bond, Render, ReStruct, Struct, Vec2 } from 'ketcher-core';
+import {
+  AttachmentGroup,
+  Atom,
+  Bond,
+  Render,
+  ReStruct,
+  Struct,
+  Vec2,
+} from 'ketcher-core';
 import type { RenderOptions } from 'ketcher-core';
 import closest from './closest';
 
@@ -41,5 +49,35 @@ describe('closest.merge (findCloseMerge): stale bond references', () => {
         [],
       ),
     ).not.toThrow();
+  });
+});
+
+describe('closest.item', () => {
+  it('prioritizes an Attachment Group marker that coincides with a member atom', () => {
+    const options = {
+      microModeScale: 20,
+      width: 100,
+      height: 100,
+    } as RenderOptions;
+    const struct = new Struct();
+    const atomIds = [0, 1, 2].map((x) =>
+      struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(x, 0) })),
+    );
+    const attachmentGroup = new AttachmentGroup({ atomIds });
+    attachmentGroup.recalculatePosition(struct.atoms);
+    const attachmentGroupId = struct.addAttachmentGroup(attachmentGroup);
+    const render = new Render(document as unknown as HTMLElement, options);
+    const restruct = new ReStruct(struct, render);
+    restruct.recalculateVisibleAtomsAndBonds();
+
+    expect(
+      closest.item(
+        restruct,
+        attachmentGroup.pp,
+        ['atoms', 'attachmentGroups'],
+        null,
+        options,
+      ),
+    ).toMatchObject({ map: 'attachmentGroups', id: attachmentGroupId });
   });
 });

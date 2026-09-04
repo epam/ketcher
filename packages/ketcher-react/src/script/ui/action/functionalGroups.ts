@@ -21,7 +21,7 @@ const functionalGroupsLib = {
   'functional-groups': {
     shortcut: 'Shift+f',
     // TODO Update HELP about current tools
-    title: 'Functional Groups',
+    title: 'toolbar:functionalGroups.title',
     action: { dialog: 'templates', prop: { tab: 1 } },
     selected: (editor) => editor._tool.mode === MODES.FG,
     disabled: (_, __, options) => {

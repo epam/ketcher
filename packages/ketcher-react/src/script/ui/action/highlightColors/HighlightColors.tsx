@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Icon } from 'components';
 import {
   ColorContainer,
@@ -15,10 +16,12 @@ interface HighlightMenuProps {
 }
 
 const HighlightMenu: FC<HighlightMenuProps> = ({ onHighlight, disabled }) => {
+  const { t } = useTranslation('toolbar');
+
   return (
     <Submenu
       data-testid="Highlight-option"
-      label="Highlight"
+      label={t('highlight.label')}
       disabled={disabled}
     >
       <ColorContainer>
@@ -40,7 +43,9 @@ const HighlightMenu: FC<HighlightMenuProps> = ({ onHighlight, disabled }) => {
           }}
         >
           <Icon name="no-highlight-cross" />
-          <span style={{ marginLeft: '10px' }}>No highlight</span>
+          <span style={{ marginLeft: '10px' }}>
+            {t('highlight.noHighlight')}
+          </span>
         </div>
       </Item>
     </Submenu>

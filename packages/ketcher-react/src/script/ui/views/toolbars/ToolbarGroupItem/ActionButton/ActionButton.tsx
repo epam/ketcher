@@ -18,6 +18,7 @@ import type { UiAction, UiActionAction } from '../../../../action';
 
 import classes from './ActionButton.module.less';
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 import { shortcutStr } from 'ketcher-core';
 import { type IconName, Icon } from 'components';
 
@@ -53,6 +54,7 @@ const ActionButton = (props: Props) => {
     onAction,
     dataTestId,
   } = props;
+  const { t } = useTranslation();
 
   if (status.hidden) {
     return null;
@@ -62,6 +64,7 @@ const ActionButton = (props: Props) => {
   const disabled =
     status.disabled ||
     (indigoVerification && disableableButtons.includes(name));
+  const title = action?.title ? t(action.title, action.titleParams) : '';
 
   const handleClick = () => {
     if (action?.action) {
@@ -74,7 +77,7 @@ const ActionButton = (props: Props) => {
       data-testid={dataTestId ?? name}
       disabled={disabled}
       onClick={handleClick}
-      title={shortcut ? `${action?.title} (${shortcut})` : action?.title}
+      title={shortcut ? `${title} (${shortcut})` : title}
       className={clsx(
         classes.button,
         {

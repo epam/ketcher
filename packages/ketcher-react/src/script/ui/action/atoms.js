@@ -42,7 +42,8 @@ export const atomCuts = {
 
 export default Object.keys(atomCuts).reduce((res, label) => {
   res[`atom-${label.toLowerCase()}`] = {
-    title: `Atom ${label}`,
+    title: 'toolbar:atoms.title',
+    titleParams: { symbol: label },
     shortcut: atomCuts[label],
     action: {
       tool: 'atom',

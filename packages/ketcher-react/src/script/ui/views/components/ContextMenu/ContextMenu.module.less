@@ -20,48 +20,32 @@
 
 .contextMenu {
   // Reference https://fkhadra.github.io/react-contexify/how-to-style
-  /* stylelint-disable-next-line custom-property-pattern */
+  /* react-contexify uses these camelCase custom property names as its public API. */
+  /* stylelint-disable custom-property-pattern */
   --contexify-menu-bgColor: @color-background-primary;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-item-color:@color-text-primary;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-activeItem-color: @color-text-secondary;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-activeItem-bgColor: @color-grey-3;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-rightSlot-color: @color-text-secondary;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-activeRightSlot-color: @color-text-secondary;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-arrow-color: @color-text-primary;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-activeArrow-color: @color-text-primary;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-menu-shadow: 0 2px 5px 0 rgb(@main-color, 0.54);
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-zIndex: 1;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-menu-minWidth: 0px;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-menu-padding: 4px 4px 4px 4px;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-menu-radius: 4px;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-menu-negatePadding: var(--contexify-menu-padding);
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-itemContent-padding: 3px 20px;
-  /* stylelint-disable-next-line custom-property-pattern */
   --contexify-activeItem-radius: 0;
+  /* stylelint-enable custom-property-pattern */
 
 
   position: fixed;
   user-select: none;
   box-sizing: border-box;
-  /* stylelint-disable-next-line custom-property-pattern */
   padding: var(--contexify-menu-padding);
-  /* stylelint-disable-next-line custom-property-pattern */
   min-width: var(--contexify-menu-minWidth);
-  /* stylelint-disable-next-line custom-property-pattern */
   z-index: var(--contexify-zIndex);
   line-height: 1.5;
 

@@ -90,7 +90,7 @@ All work happens directly on the single branch `4384-language` in the main repo 
 
 **Visual layer:**
 
-- Visual verification is manual: the user runs the app themselves (`npm run up` at the repo root, per this repo's `run` skill) against the current state of `4384-language` and opens the specific UI area the section touched.
+- Visual verification is manual: the user runs the app themselves against the current state of `4384-language` and opens the specific UI area the section touched. Use `cd example && npm run dev:standalone` (or `dev:remote`) — a Vite dev server that aliases `ketcher-react`/`ketcher-core` straight to `packages/*/src` (see `example/vite.config.js`) and hot-reloads on save, per `DEVNOTES.md`'s documented "Development" flow. Do **not** use `npm run up` for this — that script does a full clean + `npm install` + production build + a Docker-based `ketcher-autotests` build + static serve; it is a full CI-parity rebuild, not a dev loop, and does not hot-reload.
 - Each section in `tasks.md` states exactly which screen/menu/dialog to open for the check (see the "Visual check" line added to each section below), since the expected outcome is "text looks identical to before extraction" — any visible diff is a regression.
 - No automated screenshot diffing is set up for this change; if a section's visual check reveals a regression, fix it and amend/add a follow-up commit before the section is reported as ready for review again.
 

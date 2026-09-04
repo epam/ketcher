@@ -14,18 +14,29 @@ import {
   selectByAtomAndBondIds,
   clickInTheMiddleOfTheCanvas,
   pasteFromClipboardAndOpenAsNewProject,
+  openFileAndAddToCanvasAsNewProject,
+  shiftCanvas,
+  getVisibleCanvas,
 } from '@utils';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
-import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import {
+  AminoAcidNaturalAnalogue,
+  MonomerType,
+  NucleotideNaturalAnalogue,
+} from '@tests/pages/constants/createMonomerDialog/Constants';
+import {
+  CreateMonomerDialog,
+  ModificationTypeDropdown,
+} from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
 import {
   MicroAtomOption,
   MonomerOnMicroOption,
+  MonomerOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { RNASection } from '@tests/pages/constants/library/Constants';
@@ -35,7 +46,20 @@ import { ImplicitHCount } from '@tests/pages/constants/atomProperties/Constants'
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
-import { verifySMARTSExport } from '@utils/files/receiveFileComparisonData';
+import {
+  verifyPNGExport,
+  verifySMARTSExport,
+  verifySVGExport,
+} from '@utils/files/receiveFileComparisonData';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { selectElementFromPeriodicTable } from '@tests/pages/molecules/canvas/PeriodicTableDialog';
+import { PeriodicTableElement } from '@tests/pages/constants/periodicTableDialog/Constants';
+import { selectAreaAndArrangeAsRing } from '@utils/macromolecules/cyclicStructure';
 
 let page: Page;
 
@@ -495,5 +519,584 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
     await expect(syncModeButton).toBeVisible();
     await expect(syncModeButton).toBeEnabled();
+  });
+
+  test('Case 26 — Add Hotkeys in Macro Mode Similar to Micro Mode', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/ketcher/issues/4694
+     * Description: Add Hotkeys in Macro Mode Similar to Micro Mode
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Paste from clipboard (e.g. press Ctrl+v) following helm HELM: RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,5:pair-5:pair|RNA1,RNA2,2:pair-8:pair$$$V2.0
+     * 3. Verify that 1 hotkey selects single bond tool
+     * 4. Verify that Del hotkey erases operation when hovering on monomer
+     * 5. Verify that Backspace hotkey erases operation when hovering on monomer
+     * Version 3.15.0
+     */
+    const helmMolecule =
+      'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,5:pair-5:pair|RNA1,RNA2,2:pair-8:pair$$$V2.0';
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      helmMolecule,
+    );
+    // Test hotkey "1" to select single bond tool
+    await page.keyboard.press('1');
+
+    await takeEditorScreenshot(page);
+    // Test Del hotkey erases when hovering on monomer
+    const monomerA = getMonomerLocator(page, { monomerAlias: 'A' }).first();
+    await monomerA.hover();
+    await page.keyboard.press('Delete');
+
+    await takeEditorScreenshot(page);
+    // Paste again for Backspace test
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      helmMolecule,
+    );
+    // Test Backspace hotkey erases when hovering on monomer
+    const monomerU = getMonomerLocator(page, { monomerAlias: 'U' }).first();
+    await monomerU.hover();
+    await page.keyboard.press('Backspace');
+
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 27 — System shows molecular mass and molecular formula even if few chains on the canvas', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/ketcher/issues/7141
+     * Description: System shows molecular mass and molecular formula even if few chains on the canvas
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from KET incorrect-mass-and-formula.ket file
+     * 3. Open Calculate properties
+     * 4. Verify that System doesn't show molecular mass and molecular formula
+     * Version 3.15.0
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Chromium-popup/Bugs/incorrect-mass-and-formula.ket',
+    );
+
+    await MacromoleculesTopToolbar(page).calculateProperties();
+
+    const calculateVariablesPanel = CalculateVariablesPanel(page);
+    await expect(calculateVariablesPanel.panel).toBeVisible();
+    await expect(calculateVariablesPanel.molecularFormula).not.toBeVisible();
+    await expect(calculateVariablesPanel.molecularMassValue).not.toBeVisible();
+
+    await takeEditorScreenshot(page);
+    await calculateVariablesPanel.closeWindow();
+  });
+
+  test('Case 28 — Add/Remove explicit hydrogens operation inside create monomer wizard causes exception: process is not defined', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/ketcher/issues/8818
+     * Description: Add/Remove explicit hydrogens operation inside create monomer wizard causes exception: process is not defined
+     * Scenario:
+     * 1. Open Molecules canvas
+     * 2. Paste followng molecule on the canvas: CCCP%91(N)(O)C.[*:1]%91 |$;;;;;;;_R1$|
+     * 3. Select whole molecule and press Create a monomer button
+     * 4. Press Add/Remove explicit hydrogens button three times
+     * 5. Verify that no exception is being thrown, R1 leaving group removed but H atom remains
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'CCCP%91(N)(O)C.[*:1]%91 |$;;;;;;;_R1$|',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).createMonomer();
+
+    const indigoFunctionsToolbar = IndigoFunctionsToolbar(page);
+    await indigoFunctionsToolbar.addRemoveExplicitHydrogens();
+    await indigoFunctionsToolbar.addRemoveExplicitHydrogens();
+    await indigoFunctionsToolbar.addRemoveExplicitHydrogens();
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+
+    await takeEditorScreenshot(page, { maxDiffPixels: 200 });
+    await CreateMonomerDialog(page).discard();
+  });
+
+  test('Case 29 — Bond to C10H20 superatom rendered wrong if loaded from CDXML', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/ketcher/issues/6851
+     * Description: Bond to C10H20 superatom rendered wrong if loaded from CDXML
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Load from CDXML: multiple_external_connections.cdr
+     * 3. Verify that the bond to C10H20 superatom is rendered correctly
+     * Version 3.15.0
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'CDXML/Chromium-popup/Bugs/multiple_external_connections.cdr.CDXML',
+    );
+
+    // Temporary diagnostic wait
+    await page.waitForTimeout(2_000);
+
+    await takeEditorScreenshot(page, { maxDiffPixels: 100 });
+  });
+
+  test('Case 30 — When pressing the “Enter” key, the “Save Structure” and “Open Structure” windows open in all modes', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/ketcher/issues/4674
+     * Description: When pressing the “Enter” key, the “Save Structure” and “Open Structure” windows open in all modes
+     * Scenario:
+     * 1. Switch to the Macro mode
+     * 2. Click on the “Save as” button and close the “Save Structure” window
+     * 3. Press the “Enter” key
+     * 4. Verify that when pressing the “Enter” key, the “Save Structure” window does not open
+     * 5. Switch to the Snake mode
+     * 6. Click on the “Open” button and close the “Open Structure” window
+     * 7. Press the “Enter” key
+     * 8. Verify that when pressing the “Enter” key, the “Open Structure” window does not open
+     * Version 3.15.0
+     */
+    const saveStructureDialog = SaveStructureDialog(page);
+    const openStructureDialog = OpenStructureDialog(page);
+    const topLeftToolbar = CommonTopLeftToolbar(page);
+
+    await topLeftToolbar.saveFile();
+    await saveStructureDialog.closeWindowButton.click();
+    await page.keyboard.press('Enter');
+
+    await expect(saveStructureDialog.window).toBeHidden();
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await topLeftToolbar.openFile();
+    await openStructureDialog.closeWindow();
+    await page.keyboard.press('Enter');
+
+    await expect(openStructureDialog.window).toBeHidden();
+  });
+
+  test('Case 31 — Update SDF and KET format to include information about preset phosphate position', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/Indigo/issues/3526
+     * Description: Update SDF and KET format to include information about preset phosphate position
+     *
+     * Scenario:
+     * 1. Go to Molecules canvas (clean canvas)
+     * 2. Paste a simple molecule on the canvas
+     * 3. Open Create Monomer wizard and select Nucleotide Preset type
+     * 4. Set name and configure Base, Sugar, and Phosphate components
+     * 5. Set Phosphate position to 5' (5-prime end)
+     * 6. Submit the preset
+     * 7. Switch to Macromolecules mode
+     * 8. Verify the nucleotide preset with 5' phosphate position appears in the library
+     * 9. Add the preset to canvas and verify it renders with phosphate on the correct (5') end
+     *
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 0);
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+    await dialog.selectType(MonomerType.NucleotidePreset);
+    await presetSection.setName('preset19');
+
+    await presetSection.setupBase({
+      atomIds: [0, 1],
+      bondIds: [0],
+      code: 'B19',
+      naturalAnalogue: NucleotideNaturalAnalogue.A,
+    });
+
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+
+    await presetSection.setupSugar({
+      atomIds: [2, 3],
+      bondIds: [2],
+      code: 'S19',
+    });
+
+    await presetSection.setupPhosphate({
+      atomIds: [4, 5],
+      bondIds: [4],
+      code: 'Ph19',
+    });
+    await presetSection.setPhosphatePosition('5');
+    await dialog.submit();
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await Library(page).openRNASection(RNASection.Presets);
+    await Library(page).setSearchValue('preset19');
+
+    const presetCard = page.getByText('preset19').first();
+    await expect(presetCard).toBeVisible();
+
+    await Library(page).dragMonomerOnCanvas(
+      {
+        alias: 'preset19',
+        testId: 'preset19_B19_S19_Ph19',
+      } as any,
+      { x: 0, y: 0, fromCenter: true },
+    );
+
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 32 — Bond length become wrong after Arrange as a Ring option applied', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/Indigo/issues/3449
+     * Description: Bond length become wrong after Arrange as a Ring option applied
+     * Scenario:
+     * 1. Open Macromolecules mode - Flex canvas (clean canvas)
+     * 2. Load following HELM: PEPTIDE1{C.C.C.C.C.C.C.C.C.C.C.C.C}$PEPTIDE1,PEPTIDE1,5:R3-8:R3$$$V2.0
+     * 3. Select ring and right tail of the chain
+     * 4. Call context menu and click Arrange as a Ring option
+     * 5. Verify that system layout monomer in the ring is as expected, distance (e.g. bond length) between monomer has the same standard length
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{C.C.C.C.C.C.C.C.C.C.C.C.C}$PEPTIDE1,PEPTIDE1,5:R3-8:R3$$$V2.0',
+    );
+
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
+    await CommonTopRightToolbar(page).selectZoomOutTool(3);
+    await page.mouse.move(370, 150);
+    await dragMouseTo(page, 800, 500);
+    await MacromoleculesTopToolbar(page).arrangeAsARing();
+
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 33 — System ignores Implicit H count value in export to SVG/PNG', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/Indigo/issues/3353
+     * Description: System ignores Implicit H count value in export to SVG/PNG
+     * Scenario:
+     * 1. Go to Periodic Table, choose Na (sodium), add it to the main screen
+     * 2. Note it is displayed as NaH
+     * 3. Right-click it, choose "Edit", in "Atom Properties", under "Query specific" label, set "Implicit H count" to 0.
+     * 4. After Apply button is pressed, molecule become shown as Na (no hydrogen, as expected)
+     * 5. Save as SVG
+     * 6. Verify that the image is saved as shown in the editor
+     * Version 3.15.0
+     */
+    await selectElementFromPeriodicTable(page, PeriodicTableElement.Na);
+    await clickInTheMiddleOfTheCanvas(page);
+
+    const sodiumAtom = getAtomLocator(page, { atomLabel: 'Na' }).first();
+    await expect(sodiumAtom).toBeVisible();
+    await ContextMenu(page, sodiumAtom).click(MicroAtomOption.Edit);
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: {
+        ImplicitHCount: ImplicitHCount.One,
+      },
+    });
+
+    await verifySMARTSExport(page, '[Na;h1]');
+    await takeEditorScreenshot(page, { maxDiffPixels: 100 });
+    await verifyPNGExport(page);
+    await verifySVGExport(page);
+  });
+
+  test('Case 34 — If the selected group is forming an n-agon with 12 or more than 12 points, the bases should be located inside of the circular structure', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/Indigo/issues/3308
+     * Description: If the selected group is forming an n-agon with 12 or more than 12 points, the bases should be located inside of the circular structure
+     * Scenario:
+     * 1. Open Macromolecules - Flex mode (clean canvas)
+     * 2. Load from HELM: RNA1{r(A).r(A).r(A).r(A).r(A).r(A).r(A).r(A).r(A).r(A).r(A).r(A)}$RNA1,RNA1,1:R1-23:R2$$$V2.0
+     * 3. Open context menu and click Create cyclic structure option.
+     * 4. Verify that system locates bases inside of the circular structure and the bond length between the base and the sugar should be 75% of the standard bond length
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A).r(A).r(A).r(A).r(A).r(A).r(A).r(A).r(A).r(A).r(A).r(A)}$RNA1,RNA1,1:R1-23:R2$$$V2.0',
+    );
+
+    await CommonTopRightToolbar(page).selectZoomOutTool(3);
+    await shiftCanvas(page, 100, 0);
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+
+    const sugar = getMonomerLocator(page, {
+      monomerAlias: 'R',
+    }).nth(5);
+    await sugar.click();
+    await ContextMenu(page, sugar).click(MonomerOption.ArrangeAsARing);
+
+    await takeEditorScreenshot(page, { maxDiffPixels: 200 });
+  });
+
+  test('Case 35 — If the selected group is forming an n-agon with 6 or more than 6 points, then the bases should be located inside of the circular structure', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/Indigo/issues/3307
+     * Description: If the selected group is forming an n-agon with 6 or more than 6 points, then the bases should be located inside of the circular structure
+     * Scenario:
+     * 1. Open Macromolecules - Flex mode (clean canvas)
+     * 2. Load from HELM: RNA1{r(A).r(A).r(A).r(A).r(A).r(A).r(A)}$RNA1,RNA1,1:R1-13:R2$$$V2.0
+     * 3. Open context menu and click Create cyclic structure option
+     * 4. Verify that system locates bases outside of the circular structure
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A).r(A).r(A).r(A).r(A).r(A).r(A)}$RNA1,RNA1,1:R1-13:R2$$$V2.0',
+    );
+
+    await CommonTopRightToolbar(page).selectZoomOutTool(3);
+    await shiftCanvas(page, 100, 0);
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+
+    const sugar = getMonomerLocator(page, {
+      monomerAlias: 'R',
+    }).nth(5);
+    await sugar.click();
+
+    await ContextMenu(page, sugar).click(MonomerOption.ArrangeAsARing);
+
+    await takeEditorScreenshot(page, { maxDiffPixels: 200 });
+  });
+
+  test('Case 36 — The "center" of the n-agon should be positioned to the right of the fixed monomer', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/ketcher/issues/3305
+     * Description: System shows molecular mass and molecular formula even if few chains on the canvas
+     * Scenario:
+     * 1. Open Macromolecules - Flex mode (clean canvas)
+     * 2. Load from KET as New project: Center of cycle should be from the right of first monomer in KET.ket
+     * 3. Select structure
+     * 4. Use Create cyclic structure option
+     * 5. Verify that the "center" of the quadrangle positioned to the right of the fixed C amino acid monomer
+     * Version 3.15.0
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Chromium-popup/Bugs/Center.of.cycle.should.be.from.the.right.of.first.monomer.in.KET.ket',
+    );
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
+
+    const canvas = await getVisibleCanvas(page);
+    const canvasBox = await canvas.boundingBox();
+    if (!canvasBox) {
+      throw new Error('Unable to determine canvas bounds');
+    }
+
+    const padding = 10;
+    await page.mouse.move(canvasBox.x + padding, canvasBox.y + padding);
+    await dragMouseTo(
+      page,
+      canvasBox.x + canvasBox.width - padding,
+      canvasBox.y + canvasBox.height - padding,
+    );
+    await MacromoleculesTopToolbar(page).arrangeAsARing();
+
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 37 — Fixed monomer of cycle on layout should be top left monomer', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/ketcher/issues/3304
+     * Description: Fixed monomer of cycle on layout should be top left monomer
+     * Scenario:
+     * 1. Open Macromolecules - Flex mode (clean canvas)
+     * 2. Load from KET as New project: Center of cycle should be from the right of first monomer in KET.ket
+     * 3. Select structure
+     * 4. Use Create cyclic structure option
+     * 5. Verify that System uses A amino acid as fixed monomer
+     * Version 3.15.0
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Chromium-popup/Bugs/Center.of.cycle.should.be.from.the.right.of.first.monomer.in.KET.ket',
+    );
+
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
+
+    const canvas = await getVisibleCanvas(page);
+    const canvasBox = await canvas.boundingBox();
+    if (!canvasBox) {
+      throw new Error('Unable to determine canvas bounds');
+    }
+
+    const padding = 10;
+    await page.mouse.move(canvasBox.x + padding, canvasBox.y + padding);
+    await dragMouseTo(
+      page,
+      canvasBox.x + canvasBox.width - padding,
+      canvasBox.y + canvasBox.height - padding,
+    );
+    await MacromoleculesTopToolbar(page).arrangeAsARing();
+
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 38 — Sequential application of “Create cyclic structure” to different segments of one chain leads to overlapping and distorted topology', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9965
+     * Bug: https://github.com/epam/ketcher/issues/3329
+     * Description: Sequential application of “Create cyclic structure” to different segments of one chain leads to overlapping and distorted topology
+     * Scenario:
+     * 1. Open Macromolecules - Flex mode (clean canvas)
+     * 2. Open chain. ketcher (46).zip
+     * 3. Select a small fragment of this chain.
+     * 4. Create cyclic structure
+     * 5. Select another segment of the same chain (not previously closed).
+     * 6. Again choose Create cyclic structure.
+     * 7. Observe that the new layout overlaps previous parts, bonds cross between cycles, and geometry is broken.
+     * 8. The “Create cyclic structure” operation should only affect one continuous, non-overlapping fragment at a time.
+     *    The rest of the structure must remain unchanged.
+     *    No new cross-bonds or overlaps should appear between previously cycled and non-cycled segments.
+     * Version 3.15.0
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Chromium-popup/Bugs/ketcher (46).ket',
+    );
+
+    await CommonTopRightToolbar(page).selectZoomOutTool(5);
+    await shiftCanvas(page, 150, 50);
+    await selectAreaAndArrangeAsRing(page, {
+      startX: 0.05,
+      endX: 0.25,
+      startY: 0.2,
+      endY: 0.8,
+    });
+    await selectAreaAndArrangeAsRing(page, {
+      startX: 0.32,
+      endX: 0.5,
+      startY: 0.2,
+      endY: 0.8,
+    });
+    await shiftCanvas(page, -150, 0);
+    await selectAreaAndArrangeAsRing(page, {
+      startX: 0.25,
+      endX: 0.45,
+      startY: 0.2,
+      endY: 0.8,
+    });
+    await selectAreaAndArrangeAsRing(page, {
+      startX: 0.53,
+      endX: 0.7,
+      startY: 0.2,
+      endY: 0.8,
+    });
+
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 39 — System provides invalid SDF content (missing semicolon) on monomer creation', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+      * Test task: https://github.com/epam/ketcher/issues/9965
+      * Bug: https://github.com/epam/ketcher/issues/3301
+      * Description: System provides invalid SDF content (missing semicolon)
+      * on monomer creation
+      *
+      * Scenario:
+      // * 1. Open Molecules mode with a clean canvas
+      * 2. Load a structure with R1 and R2 attachment points
+      * 3. Subscribe to the libraryUpdate event
+      * 4. Create an amino-acid monomer with three modification types
+      * 5. Verify that the emitted SDF contains the trailing semicolon
+      * 6. Verify the complete emitted SDF
+      *
+      * Version 3.15.0
+      */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      '[*:1]CC%91.[*:2]%91 |$_R1;;;_R2$|',
+    );
+    await selectAllStructuresOnCanvas(page);
+
+    const libraryUpdatePromise = page.evaluate(
+      () =>
+        new Promise<string>((resolve) => {
+          window.ketcher.editor.subscribe('libraryUpdate', resolve);
+        }),
+    );
+    await LeftToolbar(page).createMonomer();
+
+    const dialog = CreateMonomerDialog(page);
+    await dialog.selectType(MonomerType.AminoAcid);
+    await dialog.setCode('_a5');
+    await dialog.setName('_a5');
+    await dialog.selectNaturalAnalogue(AminoAcidNaturalAnalogue.A);
+
+    await dialog.setModificationType({
+      dropdown: ModificationTypeDropdown.First,
+      customModification: 'a11',
+    });
+    await dialog.setModificationType({
+      dropdown: ModificationTypeDropdown.Second,
+      customModification: 'a22',
+    });
+    await dialog.setModificationType({
+      dropdown: ModificationTypeDropdown.Third,
+      customModification: 'a33',
+    });
+    await dialog.setHELMAlias('HELM_ALIAS_HERE5');
+    await dialog.submit({ ignoreWarning: true });
+
+    const sdf = await libraryUpdatePromise;
+
+    expect(sdf).toContain('>  <modificationTypes>\na11;a22;a33;\n');
   });
 });

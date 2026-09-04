@@ -31,6 +31,9 @@ export const getBondNames = (tools) => {
   return Object.keys(tools).filter((key) => key.startsWith('bond-'));
 };
 
+export const getBondNamesForSelectionContextMenu = (tools) =>
+  getBondNames(tools).filter((name) => name !== 'bond-haptic');
+
 export const queryBondNames = [
   'bond-any',
   'bond-aromatic',

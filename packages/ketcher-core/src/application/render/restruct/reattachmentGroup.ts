@@ -1,22 +1,25 @@
 import type { AttachmentGroup } from 'domain/entities/attachmentGroup';
 import type { RenderOptions } from 'application/render/render.types';
 import type { Render } from '../raphaelRender';
-import ReAtom from './reatom';
 import type ReStruct from './restruct';
 import {
   drawAttachmentGroupMarker,
   drawAttachmentGroupHover,
-  type AttachmentGroupHoverHost,
 } from './attachmentGroupRender';
 import { LayerMap } from './generalEnumTypes';
 import { isAttachmentGroupWithHapticBond, Scale } from 'domain/helpers';
+import ReObject from './reobject';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import type { ReBondEndpoint } from './rebondEndpoint';
+import type { Vec2 } from 'domain/entities/vec2';
 
-export class ReAttachmentGroup extends ReAtom {
-  declare a: AttachmentGroup;
+export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
+  a: AttachmentGroup;
+  showLabel = false;
   private centerMarkerHovered = false;
 
   constructor(attachmentGroup: AttachmentGroup) {
-    super(attachmentGroup);
+    super('attachmentGroup');
     this.a = attachmentGroup;
   }
 
@@ -33,11 +36,26 @@ export class ReAttachmentGroup extends ReAtom {
 
   drawHover(render: Render, drawOutline = true) {
     return drawAttachmentGroupHover(
-      this as unknown as AttachmentGroupHoverHost,
+      this,
       render,
       drawOutline,
       this.shouldShowMarker(render),
     );
+  }
+
+  getVBoxObj(render: Render): Box2Abs | null {
+    if (this.visel.boundingBox) {
+      return super.getVBoxObj(render);
+    }
+    return new Box2Abs(this.a.pp, this.a.pp);
+  }
+
+  getShiftedSegmentPosition(
+    renderOptions: RenderOptions,
+    _direction: Vec2,
+    atomPosition = this.a.pp,
+  ): Vec2 {
+    return Scale.modelToCanvas(atomPosition, renderOptions);
   }
 
   private redrawHover(render: Render, drawOutline = true) {

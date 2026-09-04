@@ -1,6 +1,7 @@
 import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
 import {
   getBondNamesForContextMenu,
+  getBondNamesForSelectionContextMenu,
   getEditableAtomIds,
   getEditableBondIds,
   isAttachmentGroupCreationSelectionValid,
@@ -34,6 +35,20 @@ describe('Utils', () => {
       };
 
       expect(getBondNamesForContextMenu(tools)).toEqual(['bond-single']);
+    });
+
+    it('excludes haptic bonds from the selection menu but keeps query bonds', () => {
+      const tools = {
+        'bond-single': {},
+        'bond-haptic': {},
+        'bond-any': {},
+        atom: {},
+      };
+
+      expect(getBondNamesForSelectionContextMenu(tools)).toEqual([
+        'bond-single',
+        'bond-any',
+      ]);
     });
   });
 

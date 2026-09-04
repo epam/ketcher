@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, type AtomAttributes } from './atom';
+import type { Atom, AtomAttributes } from './atom';
+import { BaseMicromoleculeEntity } from './BaseMicromoleculeEntity';
+import type { BondEndpoint } from './bondEndpoint';
 import type { Pool } from './pool';
 import { Vec2 } from './vec2';
 
@@ -28,16 +30,24 @@ export type AttachmentGroupAttributes = Pick<
 /**
  * A logical endpoint shared by all atoms in a KET attachment group.
  *
- * It extends Atom only to reuse the existing bond geometry and rendering
- * infrastructure. It is stored separately from chemical atoms and its
- * position is always derived from its member atoms.
+ * It is stored separately from chemical atoms and its position is always
+ * derived from its member atoms.
  */
-export class AttachmentGroup extends Atom {
+export class AttachmentGroup
+  extends BaseMicromoleculeEntity
+  implements BondEndpoint
+{
   atomIds: number[];
+  fragment: number;
+  pp: Vec2;
+  neighbors: number[];
 
   constructor(attributes: AttachmentGroupAttributes) {
-    super({ ...attributes, label: '*' });
+    super(attributes.initiallySelected);
     this.atomIds = [...attributes.atomIds];
+    this.fragment = attributes.fragment ?? -1;
+    this.pp = attributes.pp ? new Vec2(attributes.pp) : new Vec2();
+    this.neighbors = [];
   }
 
   clone(

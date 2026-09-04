@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Atom } from 'domain/entities/atom';
+import type { BondEndpoint } from 'domain/entities/bondEndpoint';
 import { Bond } from 'domain/entities/bond';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import type { HalfBond } from 'domain/entities/halfBond';
@@ -737,7 +737,7 @@ class ReBond extends ReObject {
 }
 
 function findIncomingStereoUpBond(
-  atom: Atom,
+  atom: BondEndpoint,
   bid0: number,
   includeBoldStereoBond: boolean,
   restruct: ReStruct,

@@ -12,7 +12,7 @@ import useCreateMonomer from '../hooks/useCreateMonomer';
 import useMarkAs from '../hooks/useMarkAs';
 import {
   formatTitle,
-  getBondNames,
+  getBondNamesForSelectionContextMenu,
   monomerWizardDisallowedBondNames,
 } from '../utils';
 import type Editor from 'src/script/editor';
@@ -33,7 +33,7 @@ import useAttachmentGroupCreate, {
 } from '../hooks/useAttachmentGroupCreate';
 import { Tooltip } from '@mui/material';
 
-const bondNames = getBondNames(tools);
+const bondNames = getBondNamesForSelectionContextMenu(tools);
 
 const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   props,

@@ -2,13 +2,10 @@ import type { AttachmentGroup } from 'domain/entities/attachmentGroup';
 import type { Vec2 } from 'domain/entities/vec2';
 import { Scale } from 'domain/helpers';
 import { LayerMap } from './generalEnumTypes';
-import { paperPathFromSVGElement } from './resgroup';
 import type { Render } from '../raphaelRender';
 import type Visel from './visel';
-import type { RaphaelSet } from 'raphael';
-import paperjs from 'paper';
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Element as RaphaelElement, RaphaelSet } from 'raphael';
+import { uniteHoverPaths } from './hoverPath';
 
 const ATTACHMENT_GROUP_MARKER_VIEWBOX_SIZE = 43;
 const ATTACHMENT_GROUP_MARKER_COLOR = '#B4B9D6';
@@ -137,7 +134,7 @@ function drawGroupAtomsHover(
   render: Render,
   drawOutline: boolean,
 ) {
-  const hoversToCombine: any[] = [];
+  const hoversToCombine: Array<RaphaelElement | null | undefined> = [];
   const atomIds = new Set(host.a.atomIds);
 
   host.a.atomIds.forEach((atomId) => {
@@ -159,33 +156,10 @@ function drawGroupAtomsHover(
     }
   });
 
-  const elements: SVGElement[] = [];
+  const combinedPathData = uniteHoverPaths(hoversToCombine);
+  if (!combinedPathData) return null;
 
-  hoversToCombine.forEach((item) => {
-    if (item?.node) {
-      elements.push(item.node);
-      item.remove();
-    }
-  });
-
-  if (elements.length === 0) return null;
-
-  paperjs.setup(document.createElement('canvas'));
-
-  let combinedPath: any = null;
-
-  elements.forEach((el) => {
-    const paperPath = paperPathFromSVGElement(el);
-
-    if (!paperPath) return;
-    if (!paperPath.closed) paperPath.closePath();
-
-    combinedPath = combinedPath ? combinedPath.unite(paperPath) : paperPath;
-  });
-
-  if (!combinedPath) return null;
-
-  const hoverPath = render.paper.path(combinedPath.pathData).attr({
+  const hoverPath = render.paper.path(combinedPathData).attr({
     ...render.options.hoverStyle,
     fill: 'none',
     stroke: drawOutline ? render.options.hoverStyle.stroke : 'none',

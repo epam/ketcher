@@ -25,19 +25,20 @@ export function fromAttachmentGroupDeletion(
   const atomIds = new Set<number>();
   const fragmentIds = new Set<number>();
 
-  restruct.molecule.bonds.forEach((bond, bondId) => {
-    if (bond.begin === attachmentGroupId || bond.end === attachmentGroupId) {
-      const fragmentId = restruct.molecule.getBondFragment(bondId);
-      if (fragmentId !== undefined) {
-        fragmentIds.add(fragmentId);
-      }
-      [bond.begin, bond.end].forEach((endpointId) => {
-        if (restruct.molecule.atoms.has(endpointId)) {
-          atomIds.add(endpointId);
-        }
-      });
-      action.addOp(new BondDelete(bondId));
+  restruct.molecule.getConnectedBondIds(attachmentGroupId).forEach((bondId) => {
+    const bond = restruct.molecule.bonds.get(bondId);
+    if (!bond) return;
+
+    const fragmentId = restruct.molecule.getBondFragment(bondId);
+    if (fragmentId !== undefined) {
+      fragmentIds.add(fragmentId);
     }
+    [bond.begin, bond.end].forEach((endpointId) => {
+      if (restruct.molecule.atoms.has(endpointId)) {
+        atomIds.add(endpointId);
+      }
+    });
+    action.addOp(new BondDelete(bondId));
   });
   action.addOp(new AttachmentGroupDelete(attachmentGroupId));
   action = action.perform(restruct);

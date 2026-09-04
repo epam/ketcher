@@ -14,16 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { getConnectionType } from './hapticKetConnection';
-export type { KetAtomLocation } from './hapticKet.types';
-export {
-  addAttachmentGroupsToStruct,
-  addHapticConnectionsToStruct,
-  getHapticConnectionMoleculeIds,
-  parseMoleculeNode,
-} from './fromKet/hapticKet';
-export {
-  buildAttachmentGroupsForKet,
-  buildHapticConnectionsForKet,
-  prepareStructForHapticKetSerialization,
-} from './toKet/hapticKet';
+import type { Vec2 } from './vec2';
+
+export interface BondEndpoint {
+  fragment: number;
+  pp: Vec2;
+  neighbors: number[];
+}

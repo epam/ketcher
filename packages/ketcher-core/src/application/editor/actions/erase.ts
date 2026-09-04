@@ -170,11 +170,7 @@ export function fromFragmentDeletion(restruct, rawSelection) {
   selection.attachmentGroups = Array.from(new Set(selection.attachmentGroups));
 
   selection.attachmentGroups.forEach((attachmentGroupId) => {
-    struct.bonds.forEach((bond, bondId) => {
-      if (bond.begin === attachmentGroupId || bond.end === attachmentGroupId) {
-        selection.bonds.push(bondId);
-      }
-    });
+    selection.bonds.push(...struct.getConnectedBondIds(attachmentGroupId));
   });
   selection.bonds = Array.from(new Set(selection.bonds));
 

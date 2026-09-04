@@ -55,6 +55,7 @@ import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculati
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
 import { ShowHydrogenLabels } from './showHydrogenLabels';
+import type { ReBondEndpoint } from './rebondEndpoint';
 
 interface ElemAttr {
   text: string;
@@ -76,7 +77,7 @@ export enum ShowHydrogenLabelNames {
   On = 'On',
 }
 
-class ReAtom extends ReObject {
+class ReAtom extends ReObject implements ReBondEndpoint {
   a: Atom;
   showLabel: boolean;
   showInfoLabel: boolean;
@@ -509,7 +510,7 @@ class ReAtom extends ReObject {
 
   show(restruct: ReStruct, aid: number, options: RenderOptions): void {
     const struct = restruct.molecule;
-    const atom = struct.getBondEndpoint(aid);
+    const atom = struct.atoms.get(aid);
     if (!atom) {
       return;
     }

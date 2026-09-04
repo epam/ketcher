@@ -601,6 +601,16 @@ export class Struct {
     );
   }
 
+  getConnectedBondIds(endpointId: number): number[] {
+    const bondIds: number[] = [];
+    this.bonds.forEach((bond, bondId) => {
+      if (bond.begin === endpointId || bond.end === endpointId) {
+        bondIds.push(bondId);
+      }
+    });
+    return bondIds;
+  }
+
   initNeighbors() {
     this.atoms.forEach((atom) => {
       atom.neighbors = [];

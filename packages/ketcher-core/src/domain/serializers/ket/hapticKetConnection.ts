@@ -14,16 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { getConnectionType } from './hapticKetConnection';
-export type { KetAtomLocation } from './hapticKet.types';
-export {
-  addAttachmentGroupsToStruct,
-  addHapticConnectionsToStruct,
-  getHapticConnectionMoleculeIds,
-  parseMoleculeNode,
-} from './fromKet/hapticKet';
-export {
-  buildAttachmentGroupsForKet,
-  buildHapticConnectionsForKet,
-  prepareStructForHapticKetSerialization,
-} from './toKet/hapticKet';
+import type { IKetConnection } from 'application/formatters/types/ket';
+
+export function getConnectionType(connection: IKetConnection) {
+  return connection.type ?? connection.connectionType;
+}

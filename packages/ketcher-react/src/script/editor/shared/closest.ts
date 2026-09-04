@@ -405,19 +405,13 @@ function findClosestFrag(
   const closestBond = findClosestBond(restruct, pos, skip, minDist, options);
 
   if (closestBond) {
-    const bond = getOrThrow(
-      struct.bonds,
-      closestBond.id,
-      entityNotFoundMessage('Bond', closestBond.id),
-    );
-    const atomId = bond.begin;
-    const atom = getOrThrow(
-      struct.atoms,
-      atomId,
-      entityNotFoundMessage('Atom', atomId),
-    );
+    const fragmentId = struct.getBondFragment(closestBond.id);
+    if (fragmentId === undefined) {
+      KetcherLogger.warn(`Fragment for bond ${closestBond.id} not found`);
+      return null;
+    }
     return {
-      id: atom.fragment,
+      id: fragmentId,
       dist: closestBond.dist,
     };
   }

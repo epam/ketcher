@@ -137,6 +137,34 @@ describe('atomForNewBond', () => {
     expect((tripleResult.pos as Vec2).x).toBeCloseTo(1);
     expect((tripleResult.pos as Vec2).y).toBeCloseTo(0);
   });
+
+  it.each([
+    {
+      existingBondType: Bond.PATTERN.TYPE.TRIPLE,
+      newBondType: Bond.PATTERN.TYPE.SINGLE,
+      description: 'Single opposite Triple',
+    },
+    {
+      existingBondType: Bond.PATTERN.TYPE.SINGLE,
+      newBondType: Bond.PATTERN.TYPE.TRIPLE,
+      description: 'Triple opposite Single',
+    },
+  ])(
+    'places $description when the existing bond points left from its begin atom',
+    ({ existingBondType, newBondType }) => {
+      const reStruct = buildReStruct();
+      const center = addAtom(reStruct, new Vec2(0, 0));
+      const left = addAtom(reStruct, new Vec2(-1, 0));
+      addBond(reStruct, center, left, existingBondType);
+
+      const result = utils.atomForNewBond(reStruct, center, {
+        type: newBondType,
+      });
+
+      expect((result.pos as Vec2).x).toBeCloseTo(1);
+      expect((result.pos as Vec2).y).toBeCloseTo(0);
+    },
+  );
 });
 
 // Regression test for https://github.com/epam/ketcher/issues/346: an

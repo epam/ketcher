@@ -20,7 +20,6 @@
 .tableContent {
   display: grid;
   gap: 0 8px;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   grid-template-columns: repeat(4, 100px);
 }
 
@@ -28,7 +27,6 @@
   padding: 0 7px;
   text-align: center;
   margin: 6px 0 12px;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid transparent;
   border-radius: 6px;
   overflow: hidden;
@@ -54,13 +52,11 @@
   box-sizing: border-box;
   width: 100px;
   height: 100px;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  border: 1px solid @color-grey-5;
+  border: 1px solid ~'@{color-grey-5}';
   border-radius: 5px;
   background-color: @color-background-primary;
 
   &:hover {
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     background: @form-hover-background;
   }
 
@@ -81,15 +77,13 @@
 .structPlaceholder {
   width: 100px;
   height: 100px;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  border: 1px solid @color-grey-5;
+  border: 1px solid ~'@{color-grey-5}';
   border-radius: 5px;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   background: linear-gradient(
     90deg,
-    @color-background-primary 20%,
-    @form-hover-background 50%,
-    @color-background-primary 80%
+    ~'@{color-background-primary}' 20%,
+    ~'@{form-hover-background}' 50%,
+    ~'@{color-background-primary}' 80%
   );
   background-size: 200% 100%;
   animation: templatePreviewPlaceholderPulse 1.2s ease-in-out infinite;
@@ -135,8 +129,7 @@
   &.selected .struct {
     /* stylelint-disable-next-line declaration-property-value-no-unknown */
     background-color: fade(@color-primary, 5%);
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    border: 2px solid @color-primary;
+    border: 2px solid ~'@{color-primary}';
   }
 }
 

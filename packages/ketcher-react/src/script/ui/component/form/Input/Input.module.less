@@ -45,17 +45,14 @@
 }
 
 .input[type='radio']:checked + .radioButton {
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='@{color-input}' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input}' stroke-width='2'/%3E%3Ccircle cx='8' cy='8' r='4' fill='@{color-input}'/%3E%3C/svg%3E%0A");
 }
 
 .input[type='radio']:disabled + .radioButton {
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-default}' stroke-width='2' /%3E%3C/svg%3E%0A");
 }
 
 .input[type='radio']:checked:disabled + .radioButton {
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='@{color-input-default}' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-default}' stroke-width='2'/%3E%3Ccircle cx='8' cy='8' r='4' fill='@{color-input-default}'/%3E%3C/svg%3E%0A");
 }
 
@@ -79,8 +76,7 @@
     /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
     transition: background 0.4s;
     border-radius: 12px;
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    border: 1px solid @border-color;
+    border: 1px solid ~'@{border-color}';
   }
 
   span::before {

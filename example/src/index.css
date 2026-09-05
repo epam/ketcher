@@ -1,5 +1,4 @@
-/* stylelint-disable-next-line import-notation */
-@import 'normalize.css';
+@import url('normalize.css');
 
 body {
     margin: 0;

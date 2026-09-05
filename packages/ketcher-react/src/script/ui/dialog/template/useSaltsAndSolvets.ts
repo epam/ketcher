@@ -12,7 +12,7 @@ export default function useSaltsAndSolvents(
   saltsAndSolvents: Template[],
   filter: string,
 ) {
-  const [isFirstRender, setIsFirstRender] = useState(true);
+  const isFirstRenderRef = useRef(true);
   const timerId = useRef<null | ReturnType<typeof setTimeout>>(null);
   const [filteredSaltsAndSolvents, setFilteredSaltsAndSolvents] = useState(
     saltsAndSolvents[SALTS_AND_SOLVENTS],
@@ -44,8 +44,8 @@ export default function useSaltsAndSolvents(
   }, [saltsAndSolvents, addToSaSWithBatches]);
 
   useEffect(() => {
-    if (isFirstRender) {
-      setIsFirstRender(false);
+    if (isFirstRenderRef.current) {
+      isFirstRenderRef.current = false;
       return;
     }
     clearTimeout(timerId.current as unknown as number);

@@ -15,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import type { BaseCallProps, ModalContainerProps } from './modal.types';
 import classes from './Modal.module.less';
@@ -24,6 +24,8 @@ import clsx from 'clsx';
 import mediaSizes from './mediaSizes';
 import modals from '../../dialog';
 import useResizeObserver from 'use-resize-observer/polyfilled';
+import { ketcherProvider } from 'ketcher-core';
+import type Editor from '../../../editor';
 
 interface ModalProps extends BaseCallProps {
   modal: {
@@ -39,13 +41,21 @@ type ModalContentProps = Omit<Props, 'modal'> & {
   modal: NonNullable<Props['modal']>;
 };
 
-function ModalContent({ modal, ...rest }: ModalContentProps) {
+function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { height, width } = useResizeObserver<HTMLDivElement>({
     ref: containerRef as React.RefObject<HTMLDivElement>,
   });
 
   const Component = modals[modal.name];
+
+  useEffect(() => {
+    const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
+
+    return () => {
+      setTimeout(() => editor.focusCliparea(), 0);
+    };
+  }, [ketcherId]);
 
   if (!Component)
     throw new Error(`There is no modal window named ${modal.name}`);
@@ -62,6 +72,7 @@ function ModalContent({ modal, ...rest }: ModalContentProps) {
             (height && height <= mediaSizes.smallHeight) ||
             (width && width <= mediaSizes.smallWidth),
         })}
+        ketcherId={ketcherId}
         {...rest}
       />
     </div>

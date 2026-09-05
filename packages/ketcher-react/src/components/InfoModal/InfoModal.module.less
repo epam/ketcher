@@ -19,12 +19,9 @@
     align-items: center;
     justify-content: center;
     position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
+    inset: 0;
     z-index: 40;
-    background: rgba(119, 119, 119, 0.2);
+    background: rgb(119 119 119 / 20%);
   }
   
   .infoModalOverlay .infoModalWindow {
@@ -80,9 +77,11 @@
   }
   
   .infoModalBody::-webkit-scrollbar-thumb {
-    background-color:rgba(165,175,185,.85);
+    background-color:rgb(165 175 185 / 85%);
+    /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
     border-radius: 10px;
-    -webkit-border-radius: 10px;
+    /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
+    border-radius: 10px;
   }
   
   .infoModalBody::-webkit-scrollbar-track {
@@ -91,6 +90,7 @@
   }
   
   .infoModalBody::-webkit-scrollbar-thumb:active,
+  /* stylelint-disable-next-line nesting-selector-no-missing-scoping-root */
   &::-webkit-scrollbar-thumb:hover {
     background-color: #A5AFB9;
   }

@@ -1,15 +1,18 @@
 import * as utils from 'application/editor/actions/utils';
 
-import { type Action, fromBondAddition } from 'application/editor/actions';
+import {
+  type Action,
+  fromBondAddition,
+  fromBondsMerge,
+} from 'application/editor/actions';
 import { ReStruct, Render } from 'application/render';
 import type { RenderOptions } from 'application/render/render.types';
 import { AtomAdd } from 'application/editor/operations/atom/AtomAdd';
 import { BondAdd } from 'application/editor/operations/bond/BondAdd';
-import { Bond, Struct, Vec2 } from 'domain/entities';
+import { Atom, Bond, Struct, Vec2 } from 'domain/entities';
 
 import { restruct, singleBond } from '../../../mock-data';
 
-// eslint-disable-next-line jest/no-disabled-tests
 describe.skip('Bond Addition', () => {
   let reStruct: ReStruct;
   let action: Action;
@@ -133,5 +136,65 @@ describe('atomForNewBond', () => {
 
     expect((tripleResult.pos as Vec2).x).toBeCloseTo(1);
     expect((tripleResult.pos as Vec2).y).toBeCloseTo(0);
+  });
+});
+
+// Regression test for https://github.com/epam/ketcher/issues/346: an
+// earlier pair in the same batch can delete another pair's target atom;
+// fromBondsMerge must resolve to the atom that actually survived.
+describe('fromBondsMerge: chained merges within one batch', () => {
+  function buildReStruct(struct: Struct) {
+    const options = {
+      microModeScale: 20,
+      width: 100,
+      height: 100,
+    } as RenderOptions;
+    const render = new Render(document as unknown as HTMLElement, options);
+    const reStruct = new ReStruct(struct, render);
+    reStruct.assignConnectedComponents();
+    return reStruct;
+  }
+
+  function addAtom(struct: Struct, pos: Vec2) {
+    return struct.atoms.add(new Atom({ label: 'C', pp: pos, fragment: 0 }));
+  }
+
+  function addBond(struct: Struct, begin: number, end: number) {
+    return struct.bonds.add(
+      new Bond({ begin, end, type: Bond.PATTERN.TYPE.SINGLE }),
+    );
+  }
+
+  it('redirects a merge to the surviving atom instead of a stale/deleted one', () => {
+    const struct = new Struct();
+
+    // Pair Y (processed first): A-A2 fuses to B-B2, so A is deleted, B survives.
+    const a = addAtom(struct, new Vec2(0, 0));
+    const a2 = addAtom(struct, new Vec2(1, 0));
+    const b = addAtom(struct, new Vec2(0, 0));
+    const b2 = addAtom(struct, new Vec2(1, 0));
+    const bondYSrc = addBond(struct, a, a2);
+    const bondYDst = addBond(struct, b, b2);
+
+    // Pair X: C-C2 fuses to A-A3 - its target A is the atom pair Y just deleted.
+    const c = addAtom(struct, new Vec2(2, 0));
+    const c2 = addAtom(struct, new Vec2(3, 0));
+    const a3 = addAtom(struct, new Vec2(1, 0));
+    const bondXSrc = addBond(struct, c, c2);
+    const bondXDst = addBond(struct, a, a3);
+
+    const reStruct = buildReStruct(struct);
+
+    const mergeMap = new Map<number, number>([
+      [bondYSrc, bondYDst],
+      [bondXSrc, bondXDst],
+    ]);
+
+    expect(() => fromBondsMerge(reStruct, mergeMap)).not.toThrow();
+
+    // C must have been redirected to the surviving B, not left unmerged.
+    expect(struct.atoms.has(a)).toBe(false);
+    expect(struct.atoms.has(c)).toBe(false);
+    expect(struct.atoms.has(b)).toBe(true);
   });
 });

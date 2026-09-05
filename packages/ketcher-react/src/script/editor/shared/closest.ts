@@ -28,6 +28,7 @@ import {
   atomsForBondNotFoundMessage,
   entityNotFoundMessage,
   assert,
+  KetcherLogger,
 } from 'ketcher-core';
 import type {
   ClosestItem,
@@ -202,7 +203,6 @@ function findClosestBond(
   minDist: number | null,
   options: ClosestFunctionOptions,
 ) {
-  // eslint-disable-line max-params
   let closestBond: number | null = null;
   let closestBondCenter: number | null = null;
   const maxMinDist = 0.8 * SELECTION_DISTANCE_COEFFICIENT;
@@ -219,16 +219,15 @@ function findClosestBond(
       return;
     }
 
-    const beginAtom = getOrThrow(
-      restruct.atoms,
-      bond.b.begin,
-      atomsForBondNotFoundMessage(bid, bond.b.begin, bond.b.end),
-    );
-    const endAtom = getOrThrow(
-      restruct.atoms,
-      bond.b.end,
-      atomsForBondNotFoundMessage(bid, bond.b.begin, bond.b.end),
-    );
+    const beginAtom = restruct.atoms.get(bond.b.begin);
+    const endAtom = restruct.atoms.get(bond.b.end);
+    if (!beginAtom || !endAtom) {
+      // visibleBonds is a stale cache mid-batch-edit; skip instead of crashing.
+      KetcherLogger.warn(
+        atomsForBondNotFoundMessage(bid, bond.b.begin, bond.b.end),
+      );
+      return;
+    }
     const p1 = beginAtom.a.pp;
     const p2 = endAtom.a.pp;
 
@@ -246,11 +245,11 @@ function findClosestBond(
       closestBondCenter = bid;
     }
 
-    const hb = getOrThrow(
-      restruct.molecule.halfBonds,
-      bond.b.hb1 as number,
-      `Half-bond ${bond.b.hb1} for bond ${bid} not found`,
-    );
+    const hb = restruct.molecule.halfBonds.get(bond.b.hb1 as number);
+    if (!hb) {
+      KetcherLogger.warn(`Half-bond ${bond.b.hb1} for bond ${bid} not found`);
+      return;
+    }
     const dir = hb.dir;
     const norm = hb.norm;
 
@@ -588,7 +587,6 @@ function findClosestItem(
   skip: SkipItem | null,
   options: ClosestFunctionOptions,
 ): ClosestItemWithMap | null {
-  // eslint-disable-line max-params
   maps = maps ?? Object.keys(findMaps);
 
   let priorityItem: ClosestItemWithMap | null = null;
@@ -650,16 +648,15 @@ function findCloseMerge(
   selected.bonds.forEach((bid) => {
     const bond = struct.bonds.get(bid);
     if (bond) {
-      const beginAtom = getOrThrow(
-        struct.atoms,
-        bond.begin,
-        atomsForBondNotFoundMessage(bid, bond.begin, bond.end),
-      );
-      const endAtom = getOrThrow(
-        struct.atoms,
-        bond.end,
-        atomsForBondNotFoundMessage(bid, bond.begin, bond.end),
-      );
+      const beginAtom = struct.atoms.get(bond.begin);
+      const endAtom = struct.atoms.get(bond.end);
+      if (!beginAtom || !endAtom) {
+        // Same stale-cache scenario as findClosestBond: skip instead of crashing.
+        KetcherLogger.warn(
+          atomsForBondNotFoundMessage(bid, bond.begin, bond.end),
+        );
+        return;
+      }
       pos.bonds.set(bid, Vec2.lc2(beginAtom.pp, 0.5, endAtom.pp, 0.5));
     }
   });

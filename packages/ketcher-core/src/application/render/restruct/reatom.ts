@@ -16,6 +16,7 @@
 
 import {
   Atom,
+  AttachmentPoints,
   type AtomQueryProperties,
   StereoLabel,
 } from 'domain/entities/atom';
@@ -38,7 +39,11 @@ import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import type { Element, RaphaelSet } from 'raphael';
 import { Scale } from 'domain/helpers';
-import draw from '../draw';
+import draw, {
+  AP_PATH_SCALE,
+  AP_WAVE_HALF_PERP,
+  AP_WAVE_FAR_ALONG,
+} from '../draw';
 import util from '../util';
 import { assert, toFixed } from 'utilities';
 import type {
@@ -1145,8 +1150,32 @@ class ReAtom extends ReObject {
       }
       // estimate the shift backwards to account for the size of the aam/query text box itself
       t += util.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox));
+
+      let perpShift = new Vec2(0, 0);
+
+      if (
+        this.hasAttachmentPoint() &&
+        this.a.attachmentPoints !== AttachmentPoints.BothSides &&
+        this.a.neighbors.length > 1
+      ) {
+        perpShift = computeLateralApLabelShift(
+          ps,
+          dir,
+          8 + t,
+          aamBox.width,
+          aamBox.height,
+          options.microModeScale,
+          visel.exts,
+        );
+      }
+
       dir = dir.scaled(8 + t);
-      pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y);
+      pathAndRBoxTranslate(
+        aamPath,
+        aamBox,
+        dir.x + perpShift.x,
+        dir.y + perpShift.y,
+      );
       restruct.addReObjectPath(LayerMap.data, this.visel, aamPath, ps, true);
 
       if (customQueryTooltipText) {
@@ -2350,6 +2379,101 @@ function pathAndRBoxTranslate(
 
 function newVectorFromAngle(angle: number): Vec2 {
   return new Vec2(Math.cos(angle), Math.sin(angle));
+}
+
+/** Project an axis-aligned box onto AP-local along/perp axes. */
+function projectBoxOnApAxes(
+  W: number,
+  H: number,
+  apDir: Vec2,
+): { halfAlong: number; halfPerp: number } {
+  const ax = Math.abs(apDir.x);
+  const ay = Math.abs(apDir.y);
+  return {
+    halfAlong: (W / 2) * ax + (H / 2) * ay,
+    halfPerp: (W / 2) * ay + (H / 2) * ax,
+  };
+}
+
+/** Count atom-relative visel extents that overlap the candidate canvas-space box. */
+function countExtOverlaps(
+  exts: Box2Abs[],
+  atomPos: Vec2,
+  centerX: number,
+  centerY: number,
+  W: number,
+  H: number,
+): number {
+  const box = new Box2Abs(
+    centerX - W / 2,
+    centerY - H / 2,
+    centerX + W / 2,
+    centerY + H / 2,
+  );
+  let count = 0;
+  for (const ext of exts) {
+    const ab = ext.translate(atomPos);
+    if (
+      !(
+        box.p1.x <= ab.p0.x ||
+        box.p0.x >= ab.p1.x ||
+        box.p1.y <= ab.p0.y ||
+        box.p0.y >= ab.p1.y
+      )
+    ) {
+      count++;
+    }
+  }
+  return count;
+}
+
+/**
+ * Returns the perpendicular shift that moves a property label clear of the AP
+ * wave glyph when the label's proposed placement overlaps the nominal AP area
+ * (#3268).  Returns Vec2(0,0) when no shift is needed.
+ */
+function computeLateralApLabelShift(
+  atomPos: Vec2,
+  apDir: Vec2,
+  proposedAlongDist: number,
+  boxWidth: number,
+  boxHeight: number,
+  microModeScale: number,
+  viselExts: Box2Abs[],
+): Vec2 {
+  const waveHalfPerp = (AP_WAVE_HALF_PERP / AP_PATH_SCALE) * microModeScale;
+  const waveFarAlong = (AP_WAVE_FAR_ALONG / AP_PATH_SCALE) * microModeScale;
+  const nominalLength = 0.85 * microModeScale;
+
+  const { halfAlong, halfPerp } = projectBoxOnApAxes(
+    boxWidth,
+    boxHeight,
+    apDir,
+  );
+
+  const intersectsAlong =
+    proposedAlongDist - halfAlong < nominalLength + waveFarAlong &&
+    proposedAlongDist + halfAlong > 0;
+
+  if (!intersectsAlong || halfPerp === 0) return new Vec2(0, 0);
+
+  const shiftMag = waveHalfPerp + halfPerp + 2;
+  const perpDir = new Vec2(-apDir.y, apDir.x);
+
+  const score = (sign: 1 | -1): number =>
+    countExtOverlaps(
+      viselExts,
+      atomPos,
+      atomPos.x + apDir.x * proposedAlongDist + perpDir.x * sign * shiftMag,
+      atomPos.y + apDir.y * proposedAlongDist + perpDir.y * sign * shiftMag,
+      boxWidth,
+      boxHeight,
+    );
+
+  const posScore = score(1);
+  const negScore = score(-1);
+  const sign = negScore < posScore ? -1 : 1;
+  return perpDir.scaled(sign * shiftMag);
 }
 
 export default ReAtom;

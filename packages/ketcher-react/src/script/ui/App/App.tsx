@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -95,7 +94,7 @@ const App = (props: Props) => {
       // Ideally is to remove ketcher instance in cleanup function of the most parent component (MicromoleculesEditor, or Editor, depends on usage)
       ketcherProvider.removeKetcherInstance(ketcherId);
     };
-  }, []);
+  }, [checkServer, dispatch, ketcherId]);
 
   // Temporary workaround: add proper types for Editor
   const Editor = ConnectedEditor as React.ComponentType<{

@@ -369,6 +369,14 @@ export class MacromoleculesConverter {
       reStruct?.rxnPluses.set(rxnPlusId, new ReRxnPlus(micromoleculeRxnPlus));
     });
 
+    // findConnectedComponents() only (re)builds half-bonds/neighbors when
+    // struct.halfBonds is empty. The target struct here is frequently the
+    // pre-existing Molecules-mode struct being reused across the mode
+    // switch, so it can already carry half-bonds from before this
+    // conversion ran — which would make that guard skip rebuilding them for
+    // the bonds just added above, leaving those atoms with stale/zero
+    // neighbors and therefore wrong implicit hydrogen counts.
+    struct.halfBonds.clear();
     struct.findConnectedComponents();
     struct.setImplicitHydrogen();
     struct.setStereoLabelsToAtoms();
@@ -761,8 +769,9 @@ export class MacromoleculesConverter {
           globalAtomIdToMonomerMap.get(moleculeAtomId),
         );
       const attachmentPointNumber =
-        bond.beginSuperatomAttachmentPointNumber ??
-        bond.endSuperatomAttachmentPointNumber;
+        beginAtomSgroup instanceof MonomerMicromolecule
+          ? bond.beginSuperatomAttachmentPointNumber
+          : bond.endSuperatomAttachmentPointNumber;
 
       if (!atomToConnect || !isNumber(attachmentPointNumber)) {
         return;

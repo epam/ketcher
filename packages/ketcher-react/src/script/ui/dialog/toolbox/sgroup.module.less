@@ -17,7 +17,6 @@
 @import 'src/style/mixins';
 
 // stylelint-disable selector-pseudo-class-no-unknown
-// stylelint-disable no-descending-specificity
 .sgroup {
   width: @width-small;
   border-radius: 6px;
@@ -42,25 +41,6 @@
   fieldset {
     border: 0;
     padding: 0;
-  }
-
-  fieldset[class='sdata'] {
-    fieldset {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 24px;
-      width: 100%;
-
-      & label {
-        display: flex;
-        flex-direction: row;
-        line-height: 16px;
-
-        & > span {
-          margin-right: 3px !important;
-        }
-      }
-    }
   }
 
   form {
@@ -118,6 +98,25 @@
         border-radius: 2px;
         /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
         border-radius: 2px;
+      }
+    }
+  }
+
+  fieldset[class='sdata'] {
+    fieldset {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
+      width: 100%;
+
+      & label {
+        display: flex;
+        flex-direction: row;
+        line-height: 16px;
+
+        & > span {
+          margin-right: 3px !important;
+        }
       }
     }
   }

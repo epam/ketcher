@@ -2,18 +2,16 @@
 @import '../../style/variables';
 
 .accordion {
-  /* stylelint-disable-next-line no-descending-specificity */
-  &:global(.MuiAccordion-root.Mui-expanded) {
-    margin: 0;
-  }
-
-  /* stylelint-disable-next-line no-descending-specificity */
   &:global(.MuiAccordion-root) {
     box-shadow: none;
 
     &::before {
       opacity: 0;
     }
+  }
+
+  &:global(.MuiAccordion-root.Mui-expanded) {
+    margin: 0;
   }
 
   &:global(.MuiPaper-root) {

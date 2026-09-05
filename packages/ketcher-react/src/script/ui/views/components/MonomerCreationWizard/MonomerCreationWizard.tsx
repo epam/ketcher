@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler, react-you-might-not-need-an-effect/no-chain-state-updates */
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/immutability */
 import styles from './MonomerCreationWizard.module.less';
@@ -102,28 +102,51 @@ const getInitialWizardState = (
 
 const initialWizardState: WizardState = getInitialWizardState();
 
+type InitialWizardStateInitArg = {
+  initialValues?: MonomerCreationInitialValues;
+  hasDefaultAttachmentPoints?: boolean;
+};
+
 /**
  * Builds initial wizard state seeded with values from an existing monomer
- * being edited. When `initialValues` is undefined returns the default empty
- * wizard state.
+ * being edited (when `initialValues` is provided), and with the
+ * "defaultAttachmentPoints" notification pre-populated when the structure
+ * came in with default attachment points already assigned. Both pieces of
+ * data are only ever known at mount time (they never change while the
+ * wizard stays open), so they are folded into this lazy initializer instead
+ * of a `useEffect` that would just be reacting to the initial mount.
  */
-const getInitialWizardStateForEdit = (
-  initialValues?: MonomerCreationInitialValues,
-): WizardState => {
-  if (!initialValues) {
-    return initialWizardState;
+const getInitialWizardStateForEdit = ({
+  initialValues,
+  hasDefaultAttachmentPoints,
+}: InitialWizardStateInitArg): WizardState => {
+  const baseState: WizardState = !initialValues
+    ? initialWizardState
+    : {
+        ...initialWizardState,
+        values: {
+          type: initialValues.type,
+          symbol: initialValues.symbol,
+          name: initialValues.name,
+          naturalAnalogue: initialValues.naturalAnalogue,
+          aliasHELM: initialValues.aliasHELM,
+          aliasBILN: initialValues.aliasBILN,
+        },
+      };
+
+  if (!hasDefaultAttachmentPoints) {
+    return baseState;
   }
 
+  const notifications = new Map(baseState.notifications);
+  notifications.set('defaultAttachmentPoints', {
+    type: NotificationTypes.defaultAttachmentPoints,
+    message: NotificationMessages.defaultAttachmentPoints,
+  });
+
   return {
-    ...initialWizardState,
-    values: {
-      type: initialValues.type,
-      symbol: initialValues.symbol,
-      name: initialValues.name,
-      naturalAnalogue: initialValues.naturalAnalogue,
-      aliasHELM: initialValues.aliasHELM,
-      aliasBILN: initialValues.aliasBILN,
-    },
+    ...baseState,
+    notifications,
   };
 };
 
@@ -805,12 +828,16 @@ const MonomerCreationWizardInternal = ({
 
   // Initial wizard values are derived once on mount. The wizard is mounted
   // only while `monomerCreationState` is set (see the wrapper below), so
-  // edit-mode initial values from `editInstanceInitialValues` are seeded via
-  // the lazy initializer instead of a useEffect that would race with user
-  // input.
+  // edit-mode initial values from `editInstanceInitialValues`, as well as the
+  // "defaultAttachmentPoints" notification, are seeded via the lazy
+  // initializer instead of a useEffect that would race with user input.
   const [wizardState, wizardStateDispatch] = useReducer(
     wizardReducer,
-    monomerCreationState.editInstanceInitialValues,
+    {
+      initialValues: monomerCreationState.editInstanceInitialValues,
+      hasDefaultAttachmentPoints:
+        monomerCreationState.hasDefaultAttachmentPoints,
+    },
     getInitialWizardStateForEdit,
   );
   const [rnaPresetWizardState, rnaPresetWizardStateDispatch] = useReducer(
@@ -1152,50 +1179,13 @@ const MonomerCreationWizardInternal = ({
     }
   }, [rnaPresetProblematicAtomIds, editor]);
 
-  useEffect(() => {
-    if (monomerCreationState?.hasDefaultAttachmentPoints) {
-      wizardStateDispatch({
-        type: 'AddNotification',
-        id: 'defaultAttachmentPoints',
-      });
-    }
-  }, [monomerCreationState?.hasDefaultAttachmentPoints]);
-
-  // Show a dismissible info notification when the wizard is opened for an
-  // existing monomer whose attachment points are currently in use by canvas bonds.
-  useEffect(() => {
-    const attachmentAtomIdsWithExternalBonds =
-      monomerCreationState?.attachmentAtomIdsWithExternalBonds;
-    if (
-      !attachmentAtomIdsWithExternalBonds ||
-      attachmentAtomIdsWithExternalBonds.size === 0
-    ) {
-      return;
-    }
-
-    const attachmentPointsList = Array.from(
-      attachmentAtomIdsWithExternalBonds.keys(),
-    ).join(' and ');
-    const message = `Deleting attachment point ${attachmentPointsList} will result in deleting of bonds that use those attachment points after saving.`;
-
-    wizardStateDispatch({
-      type: 'SetNotifications',
-      notifications: new Map([
-        [
-          'usedAttachmentPointsWarning',
-          {
-            type: 'warning',
-            message,
-          },
-        ],
-      ]),
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+  // The auto-inferred phosphate position is derived purely from the current
+  // assigned attachment points and component structures, so it is computed
+  // inline (memoized) rather than synchronized one render late via an effect
+  // that merely reacts to those props/state changing.
   const autoPhosphatePosition = useMemo(() => {
     if (!monomerCreationState || !isRnaPresetType) {
-      return;
+      return undefined;
     }
 
     const sugarAttachmentPoints = new Map<
@@ -1244,11 +1234,52 @@ const MonomerCreationWizardInternal = ({
     rnaPresetWizardState.sugar.structure,
   ]);
 
+  // Show a dismissible info notification when the wizard is opened for an
+  // existing monomer whose attachment points are currently in use by canvas bonds.
   useEffect(() => {
-    if (autoPhosphatePosition) {
-      handlePhosphatePositionChange(autoPhosphatePosition);
+    const attachmentAtomIdsWithExternalBonds =
+      monomerCreationState?.attachmentAtomIdsWithExternalBonds;
+    if (
+      !attachmentAtomIdsWithExternalBonds ||
+      attachmentAtomIdsWithExternalBonds.size === 0
+    ) {
+      return;
     }
-  }, [autoPhosphatePosition, handlePhosphatePositionChange]);
+
+    const attachmentPointsList = Array.from(
+      attachmentAtomIdsWithExternalBonds.keys(),
+    ).join(' and ');
+    const message = `Deleting attachment point ${attachmentPointsList} will result in deleting of bonds that use those attachment points after saving.`;
+
+    wizardStateDispatch({
+      type: 'SetNotifications',
+      notifications: new Map([
+        [
+          'usedAttachmentPointsWarning',
+          {
+            type: 'warning',
+            message,
+          },
+        ],
+      ]),
+    });
+  }, []);
+
+  // Apply the freshly derived value (and the related error/notification
+  // resets it carries) immediately during render instead of chaining the
+  // update through a follow-up effect (see "Adjusting state when a prop
+  // changes" in the React docs).
+  const [lastAutoPhosphatePosition, setLastAutoPhosphatePosition] = useState(
+    autoPhosphatePosition,
+  );
+  if (
+    monomerCreationState &&
+    isRnaPresetType &&
+    autoPhosphatePosition !== lastAutoPhosphatePosition
+  ) {
+    setLastAutoPhosphatePosition(autoPhosphatePosition);
+    handlePhosphatePositionChange(autoPhosphatePosition);
+  }
 
   const { assignedAttachmentPoints } = monomerCreationState;
 

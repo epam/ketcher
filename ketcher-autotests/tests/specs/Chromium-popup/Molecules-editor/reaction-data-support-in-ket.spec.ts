@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';

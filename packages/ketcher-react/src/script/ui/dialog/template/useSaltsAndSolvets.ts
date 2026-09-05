@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { filterFGLib } from '../../utils';
 import type { Template } from './TemplateTable';
@@ -13,15 +16,20 @@ export default function useSaltsAndSolvents(
   const [filteredSaltsAndSolvents, setFilteredSaltsAndSolvents] = useState(
     saltsAndSolvents[SALTS_AND_SOLVENTS],
   );
-  const addToSaSWithBatches = useCallback((fullFilteredArray) => {
+  const addToSaSWithBatches = useCallback(function addToSaSWithBatches(
+    fullFilteredArray: Template[],
+  ) {
     const batchSize = 16;
+    const currentBatch = fullFilteredArray.slice(0, batchSize);
+    const remainingItems = fullFilteredArray.slice(batchSize);
+
     setFilteredSaltsAndSolvents((filteredSaltsAndSolvents) => [
       ...(filteredSaltsAndSolvents ?? []),
-      ...fullFilteredArray.splice(0, batchSize),
+      ...currentBatch,
     ]);
-    if (fullFilteredArray.length > 0) {
+    if (remainingItems.length > 0) {
       timerId.current = setTimeout(
-        () => addToSaSWithBatches(fullFilteredArray),
+        () => addToSaSWithBatches(remainingItems),
         batchDelay,
       );
     }

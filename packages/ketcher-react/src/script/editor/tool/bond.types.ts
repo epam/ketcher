@@ -22,6 +22,7 @@ export interface BondToolDragContext {
   xy0: Vec2;
   pageX0: number;
   pageY0: number;
+  pointerDownTimeStamp: number;
   hasStartedDragging: boolean;
   item?: BondItemRef;
   action?: Action;

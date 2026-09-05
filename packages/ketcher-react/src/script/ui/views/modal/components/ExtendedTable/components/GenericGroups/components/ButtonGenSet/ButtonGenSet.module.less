@@ -25,28 +25,24 @@
   vertical-align: middle;
   padding: 0;
   background: @color-background-primary;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  border: 1px solid @color-grey-6;
+  border: 1px solid ~'@{color-grey-6}';
   border-radius: 4px;
   color: @color-grey-6;
 
   &:hover {
     color: @color-text-secondary;
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    border: 1px solid @color-primary-green;
+    border: 1px solid ~'@{color-primary-green}';
   }
 
   &:focus,
   &.selected {
     background-color: @color-primary-green;
     color: @color-text-light;
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    border: 1px solid @color-primary-green;
+    border: 1px solid ~'@{color-primary-green}';
   }
 
   &:disabled {
     color: @color-grey-5;
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    border: 1px solid @color-grey-5;
+    border: 1px solid ~'@{color-grey-5}';
   }
 }

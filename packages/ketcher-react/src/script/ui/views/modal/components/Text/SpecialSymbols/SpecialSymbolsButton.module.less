@@ -62,10 +62,8 @@
   content: '';
   position: absolute;
   border: 2px solid transparent;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  border-right: 2px solid @color-background-primary;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  border-bottom: 2px solid @color-background-primary;
+  border-right: 2px solid ~'@{color-background-primary}';
+  border-bottom: 2px solid ~'@{color-background-primary}';
   top: 21px;
   left: 21px;
 }

@@ -58,8 +58,7 @@
 
   & > footer {
     min-height: 24px;
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    box-shadow: 0 -6px 6px 0 @color-accordion-shadow;
+    box-shadow: 0 -6px 6px 0 ~'@{color-accordion-shadow}';
     z-index: 10;
 
     & > input {
@@ -110,7 +109,6 @@
 .tabsContent {
   height: 50vh;
   background-color: @color-primary-light;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   overflow: hidden auto;
 
   .scrollbar();
@@ -122,7 +120,6 @@
   }
 
 .saveButton {
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   .button-secondary();
 
   &[disabled] {
@@ -155,8 +152,7 @@
   }
 
 .tabs {
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
-  box-shadow: 0 6px 6px 0 @color-accordion-shadow;
+  box-shadow: 0 6px 6px 0 ~'@{color-accordion-shadow}';
   z-index: 10;
 }
 

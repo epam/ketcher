@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { test, expect } from '@fixtures';
 import {
   pasteFromClipboardAndOpenAsNewProject,

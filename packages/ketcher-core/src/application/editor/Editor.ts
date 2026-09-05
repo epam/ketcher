@@ -1211,8 +1211,9 @@ export class CoreEditor {
     this.events.turnOnSequenceEditInRNABuilderMode.add(() =>
       this.onTurnOnSequenceEditInRNABuilderMode(),
     );
-    this.events.turnOffSequenceEditInRNABuilderMode.add(() =>
-      this.onTurnOffSequenceEditInRNABuilderMode(),
+    this.events.turnOffSequenceEditInRNABuilderMode.add(
+      (needToRemoveSelection?: boolean) =>
+        this.onTurnOffSequenceEditInRNABuilderMode(needToRemoveSelection),
     );
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
@@ -1638,7 +1639,7 @@ export class CoreEditor {
     return {
       modelChanges,
       firstMonomer: isFivePrimePhosphate ? phosphate : sugar,
-      lastMonomer: isFivePrimePhosphate ? sugar : phosphate ?? sugar,
+      lastMonomer: isFivePrimePhosphate ? sugar : (phosphate ?? sugar),
       drawingEntities: [
         ...monomers,
         ...(sugar.attachmentPointsToBonds.R2
@@ -1806,12 +1807,14 @@ export class CoreEditor {
     this.sequenceMode.turnOnSequenceEditInRNABuilderMode();
   }
 
-  private onTurnOffSequenceEditInRNABuilderMode() {
+  private onTurnOffSequenceEditInRNABuilderMode(needToRemoveSelection = true) {
     if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
-    this.sequenceMode.turnOffSequenceEditInRNABuilderMode();
+    this.sequenceMode.turnOffSequenceEditInRNABuilderMode(
+      needToRemoveSelection,
+    );
   }
 
   private onChangeSequenceTypeEnterMode(mode: SequenceType) {
@@ -1960,8 +1963,7 @@ export class CoreEditor {
 
   private onSelectMode(
     data:
-      | LayoutMode
-      | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
+      LayoutMode | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
   ) {
     const command = new Command();
     const mode = typeof data === 'object' ? data.mode : data;

@@ -24,29 +24,33 @@ export const RootSizeProvider = ({
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   const handleResize = useCallback(() => {
-    if (!rootRef?.current) {
+    const rootElement = rootRef?.current;
+
+    if (!rootElement) {
       return;
     }
 
-    const { width, height } = rootRef.current.getBoundingClientRect();
+    const { width, height } = rootElement.getBoundingClientRect();
     setSize({ width, height });
   }, [rootRef]);
 
-  const debouncedHandleResize = useDebouncedCallback(handleResize, 100);
+  const {
+    debouncedCallback: debouncedHandleResize,
+    cancel: cancelDebouncedHandleResize,
+  } = useDebouncedCallback(handleResize, 100);
 
   useEffect(() => {
     handleResize();
-  }, [isMacromoleculesEditorTurnedOn]);
+  }, [handleResize, isMacromoleculesEditorTurnedOn]);
 
   useEffect(() => {
-    debouncedHandleResize();
-
     window.addEventListener('resize', debouncedHandleResize);
 
     return () => {
       window.removeEventListener('resize', debouncedHandleResize);
+      cancelDebouncedHandleResize();
     };
-  }, [debouncedHandleResize]);
+  }, [cancelDebouncedHandleResize, debouncedHandleResize]);
 
   return (
     <RootSizeContext.Provider value={size}>{children}</RootSizeContext.Provider>

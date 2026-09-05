@@ -255,12 +255,12 @@ export class SequenceMode extends BaseMode {
     editor.events.toggleSequenceEditMode.dispatch(true);
   }
 
-  public turnOffEditMode() {
+  public turnOffEditMode(needToRemoveSelection = true) {
     if (!this.isEditMode) return;
     const editor = provideEditorInstance();
 
     this.isEditMode = false;
-    this.initialize(false, true, true);
+    this.initialize(false, needToRemoveSelection, true);
     editor.events.toggleSequenceEditMode.dispatch(false);
   }
 
@@ -273,11 +273,11 @@ export class SequenceMode extends BaseMode {
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(true);
   }
 
-  public turnOffSequenceEditInRNABuilderMode() {
+  public turnOffSequenceEditInRNABuilderMode(needToRemoveSelection = true) {
     const editor = provideEditorInstance();
 
     this.isEditInRNABuilderMode = false;
-    this.initialize(false, true, false);
+    this.initialize(false, needToRemoveSelection, false);
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(false);
   }
 
@@ -472,7 +472,10 @@ export class SequenceMode extends BaseMode {
   }
 
   public mousedown(event: MouseEvent) {
-    if (this.isEditInRNABuilderMode) return;
+    if (this.isEditInRNABuilderMode) {
+      provideEditorInstance().events.cancelSequenceEditInRNABuilderMode.dispatch();
+      return;
+    }
     const eventData: BaseRenderer | NewSequenceButton | undefined =
       event.target?.__data__;
     const isClickedOnEmptyPlace = !(
@@ -2515,8 +2518,8 @@ export class SequenceMode extends BaseMode {
       const previousTwoStrandedNodeInSameChain =
         SequenceRenderer.previousNodeInSameChain;
       const nextNodeToConnect = this.isAntisenseEditMode
-        ? currentTwoStrandedNode?.antisenseNode ?? null
-        : currentTwoStrandedNode?.senseNode ?? null;
+        ? (currentTwoStrandedNode?.antisenseNode ?? null)
+        : (currentTwoStrandedNode?.senseNode ?? null);
       const previousNodeToConnect = this.isAntisenseEditMode
         ? previousTwoStrandedNodeInSameChain?.antisenseNode
         : previousTwoStrandedNodeInSameChain?.senseNode;
@@ -2588,8 +2591,7 @@ export class SequenceMode extends BaseMode {
       ) as Phosphate;
     }
 
-    let newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode | null =
-      null;
+    let newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode;
 
     if (rnaBaseMonomer && sugarMonomer && phosphateMonomer) {
       newPresetNode = new Nucleotide(
@@ -2832,8 +2834,8 @@ export class SequenceMode extends BaseMode {
       const previousTwoStrandedNodeInSameChain =
         SequenceRenderer.previousNodeInSameChain;
       const nextNodeToConnect = this.isAntisenseEditMode
-        ? currentTwoStrandedNode?.antisenseNode ?? null
-        : currentTwoStrandedNode?.senseNode ?? null;
+        ? (currentTwoStrandedNode?.antisenseNode ?? null)
+        : (currentTwoStrandedNode?.senseNode ?? null);
       const previousNodeToConnect = this.isAntisenseEditMode
         ? previousTwoStrandedNodeInSameChain?.antisenseNode
         : previousTwoStrandedNodeInSameChain?.senseNode;
@@ -3003,7 +3005,8 @@ export class SequenceMode extends BaseMode {
     const currentNode =
       nextNodeToConnect === null
         ? undefined
-        : nextNodeToConnect ?? SequenceRenderer.currentEdittingNode?.senseNode;
+        : (nextNodeToConnect ??
+          SequenceRenderer.currentEdittingNode?.senseNode);
     const previousNodeInSameChain =
       previousNodeToConnect ??
       SequenceRenderer.previousNodeInSameChain?.senseNode;

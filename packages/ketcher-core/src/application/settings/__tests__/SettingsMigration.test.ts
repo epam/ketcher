@@ -3,8 +3,6 @@
  * Tests migration from namespaced format back to flat format
  */
 
-/* eslint-disable dot-notation */
-
 import { SettingsMigration } from '../SettingsMigration';
 
 describe('SettingsMigration', () => {

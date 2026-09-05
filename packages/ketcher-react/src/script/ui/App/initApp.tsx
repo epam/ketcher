@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -26,7 +27,7 @@ import { Provider } from 'react-redux';
 import type { Root } from 'react-dom/client';
 import createStore, { setServer } from '../state';
 import { initKeydownListener, removeKeydownListener } from '../state/hotkeys';
-import { initResize } from '../state/toolbar';
+import { initResize, removeResizeListener } from '../state/toolbar';
 import { initMouseListener, removeMouseListeners } from '../state/mouse';
 
 function initApp(
@@ -45,7 +46,7 @@ function initApp(
 ) {
   // hack to return server setter to Editor.tsx
   // because it does not have access to store
-  // eslint-disable-next-line prefer-const
+
   let getServerSetter: () => (structService: StructService) => void;
 
   const setEditor = (editor) => {
@@ -84,6 +85,7 @@ function initApp(
   return () => {
     store.dispatch(removeKeydownListener(element));
     store.dispatch(removeMouseListeners(element));
+    removeResizeListener();
   };
 }
 

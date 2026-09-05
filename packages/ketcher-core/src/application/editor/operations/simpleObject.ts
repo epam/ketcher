@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -21,9 +20,9 @@ import { Vec2 } from 'domain/entities/vec2';
 
 import Base from './BaseOperation';
 import { OperationType } from './OperationType';
-import { ReSimpleObject } from '../../render';
+import { ReSimpleObject, type ReStruct } from '../../render';
 import { Scale } from 'domain/helpers';
-import { toFixed } from 'utilities';
+import { getOrThrow, toFixed } from 'utilities';
 
 interface SimpleObjectAddData {
   id?: number;
@@ -44,7 +43,7 @@ export class SimpleObjectAdd extends Base<SimpleObjectAddData> {
     this.data = { pos, mode, toCircle, id };
   }
 
-  execute(restruct: any): void {
+  execute(restruct: ReStruct): void {
     const struct = restruct.molecule;
     const item = new SimpleObject({ mode: this.data.mode });
 
@@ -96,17 +95,26 @@ export class SimpleObjectDelete extends Base {
     this.performed = false;
   }
 
-  execute(restruct: any): void {
+  execute(restruct: ReStruct): void {
     const struct = restruct.molecule;
-    const item = struct.simpleObjects.get(this.data.id);
+    const item = getOrThrow(
+      struct.simpleObjects,
+      this.data.id,
+      `Simple object with id ${this.data.id} not found`,
+    );
     // save to data current values. In future they could be used in invert for restoring simple object
     this.data.pos = item.pos;
     this.data.mode = item.mode;
-    this.data.toCircle = item.toCircle;
     this.performed = true;
 
     restruct.markItemRemoved();
-    restruct.clearVisel(restruct.simpleObjects.get(this.data.id).visel);
+    restruct.clearVisel(
+      getOrThrow(
+        restruct.simpleObjects,
+        this.data.id,
+        `ReSimpleObject with id ${this.data.id} not found`,
+      ).visel,
+    );
     restruct.simpleObjects.delete(this.data.id);
 
     struct.simpleObjects.delete(this.data.id);
@@ -124,27 +132,33 @@ export class SimpleObjectDelete extends Base {
 
 interface SimpleObjectMoveData {
   id: number;
-  d: any;
+  d: Vec2;
   noinvalidate: boolean;
 }
 
 export class SimpleObjectMove extends Base {
   data: SimpleObjectMoveData;
 
-  constructor(id: number, d: any, noinvalidate: boolean) {
+  constructor(id: number, d: Vec2, noinvalidate: boolean) {
     super(OperationType.SIMPLE_OBJECT_MOVE);
     this.data = { id, d, noinvalidate };
   }
 
-  execute(restruct: any): void {
+  execute(restruct: ReStruct): void {
     const struct = restruct.molecule;
     const id = this.data.id;
     const d = this.data.d;
-    const item = struct.simpleObjects.get(id);
+    const item = getOrThrow(
+      struct.simpleObjects,
+      id,
+      `Simple object with id ${id} not found`,
+    );
     item.pos.forEach((p) => p.add_(d));
-    restruct.simpleObjects
-      .get(id)
-      .visel.translate(Scale.modelToCanvas(d, restruct.render.options));
+    getOrThrow(
+      restruct.simpleObjects,
+      id,
+      `ReSimpleObject with id ${id} not found`,
+    ).visel.translate(Scale.modelToCanvas(d, restruct.render.options));
     this.data.d = d.negated();
     if (!this.data.noinvalidate) {
       Base.invalidateItem(restruct, 'simpleObjects', id, 1);
@@ -170,14 +184,18 @@ export class SimpleObjectMove extends Base {
 
 interface SimpleObjectResizeData {
   id: number;
-  d: any;
+  d: Vec2;
   current: Vec2;
   anchor: Vec2;
   noinvalidate: boolean;
   toCircle: boolean;
 }
 
-function handleRectangleChangeWithAnchor(item, anchor, current) {
+function handleRectangleChangeWithAnchor(
+  item: SimpleObject,
+  anchor: Vec2,
+  current: Vec2,
+) {
   const previousPos0 = item.pos[0].get_xy0();
   const previousPos1 = item.pos[1].get_xy0();
 
@@ -204,9 +222,9 @@ export class SimpleObjectResize extends Base {
 
   constructor(
     id: number,
-    d: any,
+    d: Vec2,
     current: Vec2,
-    anchor: any,
+    anchor: Vec2,
     noinvalidate: boolean,
     toCircle: boolean,
   ) {
@@ -214,12 +232,16 @@ export class SimpleObjectResize extends Base {
     this.data = { id, d, current, anchor, noinvalidate, toCircle };
   }
 
-  execute(restruct: any): void {
+  execute(restruct: ReStruct): void {
     const struct = restruct.molecule;
     const id = this.data.id;
     const d = this.data.d;
     const current = this.data.current;
-    const item = struct.simpleObjects.get(id);
+    const item = getOrThrow(
+      struct.simpleObjects,
+      id,
+      `Simple object with id ${id} not found`,
+    );
     const anchor = this.data.anchor;
     if (item.mode === SimpleObjectMode.ellipse) {
       if (anchor) {
@@ -263,9 +285,11 @@ export class SimpleObjectResize extends Base {
       handleRectangleChangeWithAnchor(item, anchor, current);
     } else item.pos[1].add_(d);
 
-    restruct.simpleObjects
-      .get(id)
-      .visel.translate(Scale.modelToCanvas(d, restruct.render.options));
+    getOrThrow(
+      restruct.simpleObjects,
+      id,
+      `ReSimpleObject with id ${id} not found`,
+    ).visel.translate(Scale.modelToCanvas(d, restruct.render.options));
     this.data.d = d.negated();
     if (!this.data.noinvalidate) {
       Base.invalidateItem(restruct, 'simpleObjects', id, 1);

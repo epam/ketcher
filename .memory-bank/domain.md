@@ -99,7 +99,7 @@ Via the formatter factory and the Indigo service:
 
 | Format                     | Notes                                            |
 | -------------------------- | ------------------------------------------------ |
-| KET                        | Native Ketcher JSON format                       |
+| KET                        | Native Ketcher JSON format — full schema: [formats/ket-1.0-specification.md](./formats/ket-1.0-specification.md), [formats/ket-2.0-specification.md](./formats/ket-2.0-specification.md) |
 | Molfile v2000/v3000        | MDL/Symyx Molfile                                |
 | RXN                        | Reaction file                                    |
 | SMILES                     | Standard SMILES                                  |

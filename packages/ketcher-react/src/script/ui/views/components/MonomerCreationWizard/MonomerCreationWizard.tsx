@@ -1148,7 +1148,7 @@ const MonomerCreationWizardInternal = ({
 
   // Recompute atom ownership highlights only after component structures change
   // while ownership validation errors are active.
-  useEffect(() => {
+  const rnaPresetProblematicAtomIds = useMemo(() => {
     if (
       !editor?.render?.monomerCreationState ||
       !isRnaPresetType ||
@@ -1157,22 +1157,27 @@ const MonomerCreationWizardInternal = ({
       return;
     }
 
-    const { problematicAtomIds } = getRnaPresetStructureValidationResult(
+    return getRnaPresetStructureValidationResult(
       editor.struct(),
       rnaPresetComponentStructures,
-    );
-
-    editor.setProblematicAtoms(problematicAtomIds);
-    if (problematicAtomIds.size === 0) {
-      // eslint-disable-next-line react-you-might-not-need-an-effect/no-chain-state-updates -- false positive: this effect itself is synchronizing with an external system (canvas structure edits), not chaining off another effect's state update, so there's no other single handler to fold this into
-      setHasActiveRnaPresetAtomValidationErrors(false);
-    }
+    ).problematicAtomIds;
   }, [
     editor,
-    hasActiveRnaPresetAtomValidationErrors,
     isRnaPresetType,
+    hasActiveRnaPresetAtomValidationErrors,
     rnaPresetComponentStructures,
   ]);
+
+  useEffect(() => {
+    if (!rnaPresetProblematicAtomIds) {
+      return;
+    }
+
+    editor.setProblematicAtoms(rnaPresetProblematicAtomIds);
+    if (rnaPresetProblematicAtomIds.size === 0) {
+      setHasActiveRnaPresetAtomValidationErrors(false);
+    }
+  }, [rnaPresetProblematicAtomIds, editor]);
 
   // The auto-inferred phosphate position is derived purely from the current
   // assigned attachment points and component structures, so it is computed

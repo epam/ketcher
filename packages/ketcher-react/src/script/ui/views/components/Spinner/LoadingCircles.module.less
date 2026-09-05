@@ -28,6 +28,7 @@
     display: inline-block;
     width: 8px;
     height: 8px;
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     border: 2px solid @color-border-main;
     border-radius: 100%;
     box-sizing: border-box;
@@ -49,16 +50,24 @@
     0%,
     75%,
     100% {
-      -webkit-transform: translateY(0);
-      -ms-transform: translateY(0);
-      -o-transform: translateY(0);
+      /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
+      transform: translateY(0);
+      /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
+      transform: translateY(0);
+      /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
+      transform: translateY(0);
+      /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
       transform: translateY(0);
     }
 
     25% {
-      -webkit-transform: translateY(-100%);
-      -ms-transform: translateY(-100%);
-      -o-transform: translateY(-100%);
+      /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
+      transform: translateY(-100%);
+      /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
+      transform: translateY(-100%);
+      /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
+      transform: translateY(-100%);
+      /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
       transform: translateY(-100%);
     }
   }

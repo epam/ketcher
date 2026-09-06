@@ -29,8 +29,7 @@ interface MenuItem {
       }: {
         props?: {
           polymerBondRenderer?:
-            | FlexModePolymerBondRenderer
-            | SnakeModePolymerBondRenderer;
+            FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
           sequenceItemRenderer?: BaseSequenceItemRenderer;
           selectedMonomers?: BaseMonomer[];
         };
@@ -42,8 +41,7 @@ interface MenuItem {
       }: {
         props?: {
           polymerBondRenderer?:
-            | FlexModePolymerBondRenderer
-            | SnakeModePolymerBondRenderer;
+            FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
           sequenceItemRenderer?: BaseSequenceItemRenderer;
           selectedMonomers?: BaseMonomer[];
         };

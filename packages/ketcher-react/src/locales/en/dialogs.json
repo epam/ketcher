@@ -1,7 +1,36 @@
 {
   "shared": {
     "addToCanvas": "Add to Canvas",
-    "addToCanvasTooltip": "Structure will be loaded as fragment and added to Clipboard"
+    "addToCanvasTooltip": "Structure will be loaded as fragment and added to Clipboard",
+    "addButton": "Add",
+    "disabledSuffix": "{label} is disabled"
+  },
+  "confirm": {
+    "warning": "Warning!",
+    "unsupportedSgroupQuestion": "Unsupported S-group type found. Would you like to import structure without it?"
+  },
+  "infoModal": {
+    "errorMessage": "Error Message",
+    "pasteErrorText": "Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.",
+    "shortcutForPaste": "for paste",
+    "defaultCutCopyMessage": "This action is unavailable via menu. Instead, use shortcut to {command}."
+  },
+  "extendedTable": {
+    "dialogTitle": "Extended Table"
+  },
+  "periodTable": {
+    "headerTitle": "Periodic Table",
+    "typeSingle": "Single",
+    "typeList": "List",
+    "typeNotList": "Not List",
+    "tableSummary": "Periodic table of the chemical elements"
+  },
+  "text": {
+    "dialogTitle": "Text Editor",
+    "toolbarAriaLabel": "Text formatting toolbar",
+    "fontSizeLabel": "Font Size",
+    "textLabel": "Text:",
+    "specialSymbolsTitle": "symbols"
   },
   "document": {
     "save": {

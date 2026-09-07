@@ -904,9 +904,11 @@ export class Struct {
   getBondLengths(): number[] {
     const lengths: number[] = [];
     this.bonds.forEach((bond) => {
-      lengths.push(
-        Vec2.dist(this.atoms.get(bond.begin)!.pp, this.atoms.get(bond.end)!.pp),
-      );
+      const a1 = this.atoms.get(bond.begin);
+      const a2 = this.atoms.get(bond.end);
+      assert(a1, `Atom ${bond.begin} not found`);
+      assert(a2, `Atom ${bond.end} not found`);
+      lengths.push(Vec2.dist(a1.pp, a2.pp));
     });
     return lengths;
   }

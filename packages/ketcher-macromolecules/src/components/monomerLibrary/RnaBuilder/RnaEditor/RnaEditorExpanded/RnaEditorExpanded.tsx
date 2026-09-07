@@ -72,7 +72,7 @@ import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
-import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import {
   generateSequenceSelectionGroupNames,
   generateSequenceSelectionName,
@@ -575,7 +575,8 @@ export const RnaEditorExpanded = ({
 
   const onCancel = () => {
     if (isSequenceEditInRNABuilderMode) {
-      resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
+      // Keep the canvas selection in place when cancelling modification.
+      resetRnaBuilderAfterSequenceUpdate(dispatch, editor, false);
     } else if (isActivePresetEmpty && presets.length > 0) {
       resetRnaBuilder(dispatch);
       dispatch(setActivePreset(presets[0]));
@@ -619,6 +620,9 @@ export const RnaEditorExpanded = ({
         onCancel();
         event.preventDefault();
         event.stopPropagation();
+        // Prevent the global "exit" hotkey listener (registered separately on
+        // document) from clearing the selection after cancel.
+        event.stopImmediatePropagation();
       } else if (event.key === 'Enter') {
         if (isSequenceEditInRNABuilderMode) {
           onUpdateSequence();
@@ -633,7 +637,7 @@ export const RnaEditorExpanded = ({
     return () => {
       editor?.events.keyDown.remove(handleKeyDown);
     };
-  }, [editor, sequenceSelection]);
+  }, [editor, sequenceSelection, isSequenceEditInRNABuilderMode]);
 
   useEffect(() => {
     if (!isSequenceEditInRNABuilderMode) return;

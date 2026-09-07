@@ -154,8 +154,8 @@ export const Modal = ({
     <StyledDialog
       slotProps={{
         backdrop: backdropProps,
-        paper: paperProps,
       }}
+      PaperProps={paperProps}
       PaperComponent={(paperComponentProps) => (
         <Paper {...paperComponentProps} data-testid={testId} />
       )}

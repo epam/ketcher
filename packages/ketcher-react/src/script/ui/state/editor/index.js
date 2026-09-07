@@ -60,11 +60,15 @@ export default function initEditor(dispatch, getState, ketcherId) {
     (force = false) =>
     async (dispatch) => {
       const state = getState();
-      const activeTool = state.actionState?.activeTool.tool;
+      const activeToolAction = state.actionState?.activeTool;
+      const activeTool = activeToolAction?.tool;
       if (!activeTool || (activeTool === 'select' && !force)) return;
       const selectMode = state.toolbar.visibleTools.select;
       const resetOption = state.options.settings.resetToSelect;
-      if (shouldResetToSelect(activeTool, resetOption) || force === true)
+      if (
+        shouldResetToSelect(activeTool, resetOption, activeToolAction.opts) ||
+        force === true
+      )
         // example: 'paste'
         dispatch({ type: 'ACTION', action: acts[selectMode].action });
       else updateAction();

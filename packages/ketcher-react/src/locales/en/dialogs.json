@@ -1,1 +1,165 @@
-{}
+{
+  "shared": {
+    "addToCanvas": "Add to Canvas",
+    "addToCanvasTooltip": "Structure will be loaded as fragment and added to Clipboard"
+  },
+  "document": {
+    "save": {
+      "schemaTitle": "Save",
+      "filenameLabel": "File name:",
+      "formatLabel": "File format:",
+      "filenameEmptyError": "Filename should contain at least one character",
+      "filenameTooLongError": "Filename is too long",
+      "filenameInvalidCharsError": "A filename cannot contain characters: \\ / : * ? \" < > | and cannot start with '.'",
+      "copyToClipboard": "Copy to clipboard",
+      "dialogTitle": "Save Structure",
+      "saveToTemplates": "Save to Templates",
+      "previewTab": "Preview",
+      "warningsTab": "Warnings",
+      "structureContainsErrorsWarning": "Structure contains errors, please check the data, otherwise you can lose some properties or the whole structure after saving in this format."
+    },
+    "open": {
+      "dialogTitle": "Open structure",
+      "openAsNewProject": "Open as New Project",
+      "passwordProtectedError": "Report that we can't open it - may be it is password protected",
+      "errorProcessingFile": "Error processing file"
+    },
+    "openOptions": {
+      "pasteFromClipboard": "Paste from clipboard",
+      "openFromFile": "Open from file",
+      "dragFileHere": "or drag file here",
+      "imageRecognitionUnavailable": "Image Recognition service is not available",
+      "unableToAcceptImage": "Unable to accept file(s). Make sure you upload 1 image.",
+      "unableToAcceptFile": "Unable to accept file(s). {error}",
+      "openFromImage": "Open from image"
+    },
+    "cdxViewer": {
+      "noEmbeddedStructures": "No embedded structures found in the file",
+      "selectStructure": "Select structure",
+      "structureN": "Structure {number}",
+      "fileLabel": "File:",
+      "errorLabel": "Error:"
+    }
+  },
+  "meta": {
+    "settings": {
+      "headerTitle": "Settings",
+      "openFromFile": "Open from File",
+      "saveToFile": "Save to File",
+      "reset": "Reset",
+      "stereochemistryTab": "Stereochemistry",
+      "atomsTab": "Atoms",
+      "bondsTab": "Bonds",
+      "serverTab": "Server",
+      "viewer3dTab": "3D Viewer",
+      "debuggingTab": "Options for Debugging",
+      "setAcsSettings": "Set ACS Settings",
+      "applyLayoutNotice": "To fully apply these changes, you need to apply the layout.",
+      "imageResolutionTooltip": "option applicable to PNG/SVG pictures renderer",
+      "ignoreChiralFlagTooltip": "Ignore chiral flag while loading from molfiles. By default all the stereo will be ABS"
+    },
+    "about": {
+      "ok": "Ok",
+      "version": "Version {value}",
+      "build": "Build {value}",
+      "buildAt": "Build at",
+      "feedback": "Feedback",
+      "epamLifeSciences": "EPAM Life Sciences",
+      "indigoToolkit": "Indigo Toolkit",
+      "standalone": "Standalone"
+    }
+  },
+  "process": {
+    "recognize": {
+      "changeImage": "Change image",
+      "openAsNewProject": "Open as new Project",
+      "dialogTitle": "Import Structure from Image",
+      "imagoVersionLabel": "Imago version",
+      "imagoVersionOption": "Version {number}",
+      "originalImage": "Original image",
+      "recognizedStructurePreview": "Recognized structure preview",
+      "previewNotSupported": "Preview of '{type}' MIME type is not supported by current browser",
+      "pleaseChooseImage": "Please choose image"
+    },
+    "miew": {
+      "dialogTitle": "Miew",
+      "changingWarning": "Stereocenters can be changed after the strong 3D rotation",
+      "exportFailedError": "Failed to export structure from 3D viewer. Please try again.",
+      "processFailedError": "Failed to process 3D structure. The structure may be corrupted.",
+      "mergeCoordinatesFailedError": "Failed to merge 3D coordinates with the original structure.",
+      "mergeMetaFailedError": "Failed to preserve metadata while applying 3D structure."
+    },
+    "analyse": {
+      "dialogTitle": "Calculated Values",
+      "chemicalFormula": "Chemical Formula",
+      "molecularWeight": "Molecular Weight",
+      "exactMass": "Exact Mass",
+      "elementalAnalysis": "Elemental Analysis",
+      "decimalPlaces": "Decimal places"
+    },
+    "check": {
+      "schemaTitle": "Check",
+      "dialogTitle": "Structure Check",
+      "checkButton": "Check",
+      "lastCheck": "Last check:",
+      "warningSuffix": "{name} warning:",
+      "noErrorsDetected": "No errors detected",
+      "options": {
+        "valence": "Valence",
+        "radical": "Radical",
+        "isotopes": "Isotopes",
+        "pseudoatom": "Pseudoatom",
+        "stereochemistry": "Stereochemistry",
+        "chirality": "Chirality",
+        "chiralFlag": "Chiral flag",
+        "query": "Query",
+        "overlappingAtoms": "Overlapping Atoms",
+        "overlappingBonds": "Overlapping Bonds",
+        "rGroups": "R-Groups",
+        "structure3d": "3D Structure"
+      }
+    }
+  },
+  "toolbox": {
+    "automap": {
+      "dialogTitle": "Reaction Auto-Mapping",
+      "modeLabel": "Mode",
+      "discard": "Discard",
+      "keep": "Keep",
+      "alter": "Alter",
+      "clear": "Clear"
+    },
+    "atom": {
+      "dialogTitle": "Atom Properties",
+      "generalGroup": "General",
+      "querySpecificGroup": "Query specific",
+      "reactionFlagsGroup": "Reaction flags",
+      "numberLabel": "Number"
+    },
+    "bond": {
+      "dialogTitle": "Bond Properties"
+    },
+    "rgroupLogic": {
+      "dialogTitle": "R-Group Logic Condition",
+      "always": "Always",
+      "ifThenOption": "IF R{ifLabel} THEN R{thenLabel}"
+    },
+    "attach": {
+      "dialogTitle": "Attachment Points"
+    },
+    "editMonomer": {
+      "dialogTitle": "Edit Monomer",
+      "editMonomer": "Edit Monomer",
+      "editAllMonomers": "Edit All Monomers",
+      "removeGrouping": "Remove Grouping",
+      "bodyTextSingle": "\"Edit Monomer\" will open the Monomer Creation Wizard and allow editing of this instance of the monomer. \"Remove Grouping\" will turn the monomer into a purely chemical structure. How do you wish to proceed?",
+      "bodyTextIdentical": "\"Edit All Monomers\" will open the Monomer Creation Wizard and allow editing of all selected instances of the monomer. \"Remove Grouping\" will turn the monomers into a purely chemical structure. How do you wish to proceed?",
+      "bodyTextNonIdentical": "\"Remove Grouping\" will turn the monomers into purely chemical structures. How do you wish to proceed?"
+    },
+    "removeFG": {
+      "header": "Edit Abbreviation",
+      "question": "A change was detected for the abbreviation. Do you want to remove the abbreviation information from the structure and continue work with separate atoms and bonds?",
+      "removeAbbreviation": "Remove Abbreviation"
+    }
+  }
+}

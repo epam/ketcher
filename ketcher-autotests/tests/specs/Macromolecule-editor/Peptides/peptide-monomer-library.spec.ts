@@ -220,7 +220,9 @@ test.describe('Peptide library testing', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await getMonomerLocator(page, Chem.SMPEG2).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -257,7 +259,9 @@ test.describe('Peptide library testing', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await getMonomerLocator(page, Peptide.Nal).hover();
     await dragMouseTo(page, 200, 200);
     await takeEditorScreenshot(page, {

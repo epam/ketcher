@@ -283,18 +283,25 @@ export const RnaEditorExpanded = ({
         setIsSequenceSelectionUpdated(true);
         dispatch(setSequenceSelection(updatedSequenceSelection));
       } else {
-        // Inlined updatePresetMonomerGroup — newPresetRef.current avoids adding
-        // newPreset to deps, which would cause a setNewPreset→re-run loop.
-        let currentPreset = newPresetRef.current;
-        if (activePresetMonomerGroup) {
-          const groupName =
-            monomerGroupToPresetGroup[activePresetMonomerGroup.groupName];
-          currentPreset = {
-            ...newPresetRef.current,
-            [groupName]: activePresetMonomerGroup.groupItem,
-          };
-          setNewPreset(currentPreset);
-        }
+        setNewPreset((currentPreset) => {
+          const updatedPreset = activePresetMonomerGroup
+            ? {
+                ...currentPreset,
+                [monomerGroupToPresetGroup[activePresetMonomerGroup.groupName]]:
+                  activePresetMonomerGroup.groupItem,
+              }
+            : currentPreset;
+          const resolvedPhosphatePosition =
+            resolvePhosphatePosition(updatedPreset);
+          const presetFullName = updatedPreset.editedName
+            ? updatedPreset.name
+            : selectPresetFullName({
+                ...updatedPreset,
+                connections: buildRnaPresetConnections(
+                  updatedPreset,
+                  resolvedPhosphatePosition,
+                ),
+              });
 
         const resolvedPhosphatePosition =
           resolvePhosphatePosition(currentPreset);
@@ -641,7 +648,7 @@ export const RnaEditorExpanded = ({
         event.stopPropagation();
         // Prevent the global "exit" hotkey listener (registered separately on
         // document) from clearing the selection after cancel.
-        event.stopImmediatePropagation();
+        event.nativeEvent.stopImmediatePropagation();
       } else if (event.key === 'Enter') {
         if (isSequenceEditInRNABuilderMode) {
           onUpdateSequence();

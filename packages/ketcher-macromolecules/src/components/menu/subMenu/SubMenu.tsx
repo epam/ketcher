@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { ClickAwayListener } from '@mui/material';
 import { MenuItem } from '../menuItem';
 import { useMenuContext } from '../../../hooks/useMenuContext';
@@ -31,11 +31,8 @@ import {
   usePortalStyle,
 } from 'ketcher-react';
 import { createPortal } from 'react-dom';
-import {
-  selectSelectedMenuGroupItem,
-  setSelectedMenuGroupItem,
-} from 'state/common';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { selectSelectedMenuGroupItem } from 'state/common';
+import { useAppSelector } from 'hooks';
 
 type SubMenuProps = {
   vertical?: boolean;
@@ -61,7 +58,6 @@ const SubMenu = ({
   activeItem,
   subMenuId,
 }: React.PropsWithChildren<SubMenuProps>) => {
-  const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const { isActive } = useMenuContext();
@@ -99,17 +95,6 @@ const SubMenu = ({
     .filter((item) => item);
   const activeOptions = options.filter((itemKey) => isActive(itemKey));
   const activeOption = activeOptions[0];
-
-  useEffect(() => {
-    if (subMenuId && activeOption && activeOption !== lastActiveOption) {
-      dispatch(
-        setSelectedMenuGroupItem({
-          groupName: subMenuId,
-          activeItemName: activeOption,
-        }),
-      );
-    }
-  }, [dispatch, subMenuId, activeOption, lastActiveOption]);
 
   const visibleItemId =
     activeItem ?? (activeOption || lastActiveOption || options[0]);

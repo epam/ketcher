@@ -40,7 +40,7 @@ export const storage = {
     return item;
   },
   setItem(key, data) {
-    let isSet = null;
+    let isSet;
     try {
       localStorage.setItem(key, JSON.stringify(data));
       isSet = true;

@@ -5,7 +5,6 @@ import { Struct, Peptide } from 'ketcher-core';
 import { MonomerConnection } from './MonomerConnections';
 import { configureAppStore } from '../../../state/store';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 jest.spyOn(React, 'useEffect').mockImplementation(() => {});
 
 const mockStore = configureAppStore({});

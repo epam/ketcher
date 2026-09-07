@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { test, expect, Page } from '@fixtures';
 import {
   openFileAndAddToCanvas,
@@ -294,7 +292,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
         await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Keep);
         await takeEditorScreenshot(page);
       },
-      // eslint-disable-next-line no-magic-numbers
+
       30_000,
     );
     await openFileAndAddToCanvas(
@@ -314,7 +312,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
         );
         await takeEditorScreenshot(page);
       },
-      // eslint-disable-next-line no-magic-numbers
+
       30_000,
     );
   });

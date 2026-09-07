@@ -247,7 +247,7 @@ export class ViewModel {
       ) {
         if (!(index > 0 && currentHalfEdge === halfEdge)) {
           halfEdgesInPotentialLoop.push(currentHalfEdge);
-          continue; // eslint-disable-line no-continue
+          continue;
         }
 
         // loop found

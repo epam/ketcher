@@ -186,7 +186,11 @@ export function fillStructRgLabelsByMonomerTemplate(
         ? firstAtomInLeavingGroup
         : attachmentPoint.attachmentAtom,
     );
-    assert(leavingGroupAtom);
+
+    if (!leavingGroupAtom) {
+      return;
+    }
+
     leavingGroupAtom.rglabel =
       0 |
       (1 <<

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Vec2 } from 'ketcher-core';
 import Editor from '../Editor';
 import RotateTool from './rotate';

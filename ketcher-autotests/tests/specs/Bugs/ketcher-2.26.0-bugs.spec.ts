@@ -1,7 +1,3 @@
-/* eslint-disable no-inline-comments */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { test, Page, expect } from '@fixtures';
 import {
   takeEditorScreenshot,

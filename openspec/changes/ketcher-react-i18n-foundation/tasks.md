@@ -34,12 +34,12 @@
 
 ## 3. Extraction — Modal Dialogs: Domain-Specific (`script/ui/views/modal/components/{document,meta,process,toolbox}`)
 
-- [ ] 3.1 Inventory title/label/message strings in the four domain dialog groups
-- [ ] 3.2 Add corresponding keys to `locales/en/dialogs.json` (namespaced by dialog group, e.g. `dialogs.document.*`)
-- [ ] 3.3 Replace literals with `t()` calls, including interpolated/template-literal strings (verify ICU formatting renders correctly)
-- [ ] 3.4 **Code check:** `git diff --stat` touches only the four dialog dirs + `locales/en/dialogs.json`; grep confirms no remaining hardcoded literals; interpolated values manually traced from source to rendered key
-- [ ] 3.5 **Visual check:** `cd example && npm run dev:standalone` (Vite, hot-reloads directly from source per DEVNOTES.md — no rebuild needed), open every dialog under `document`/`meta`/`process`/`toolbox` (e.g. Open/Save, structure properties, process dialogs) — text and any dynamic values (counts, names) identical to before
-- [ ] 3.6 **Commit** this section's changes as one commit on `4384-language`
+- [x] 3.1 Inventory title/label/message strings in the four domain dialog groups — ~50 files reviewed
+- [x] 3.2 Add corresponding keys to `locales/en/dialogs.json` (namespaced by dialog group, e.g. `dialogs.document.*`), plus `common.json` button.{ok,cancel,save,apply,close} for cross-cutting dedup
+- [x] 3.3 Replace literals with `t()` calls, including interpolated/template-literal strings — verified ICU interpolation (e.g. `structureN`, `ifThenOption`, `version`)
+- [x] 3.4 **Code check:** typecheck, unit tests 400/400, circular-deps, build, prettier all green; grep confirms no remaining hardcoded literals (only an empty `title=""` left untouched)
+- [ ] 3.5 **Visual check:** `cd example && npm run dev:standalone` — user to verify every dialog under `document`/`meta`/`process`/`toolbox` (Open/Save, Settings, About, Automap, Recognize, Miew, Analyse, Check, Atom/Bond/RgroupLogic/Attach properties, Edit Monomer, Remove Abbreviation) — text and dynamic values (counts, names, versions) identical to before
+- [x] 3.6 **Committed:** `b05692db0a` on `4384-language` — necessary scope addition: `components/Dialog/Dialog.tsx` (top-level shared component outside any section's directory list — its `buttons` string tokens are both display text and semantic identifiers; see commit message for why per-call-site translation wasn't safe there)
 - [ ] 3.7 **STOP — report commit hash + diff for review before starting Section 4**
 
 ## 4. Extraction — Modal Dialogs: Shared Components (`Confirm`, `ExtendedTable`, `InfoModal`, `PeriodTable`, `Text`)

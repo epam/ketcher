@@ -113,19 +113,19 @@ describe('Input component should be rendered correctly', () => {
     }).not.toThrow();
   });
 
-  it('should not focus when isFocused prop is provided (regression test)', () => {
+  it('should focus when isFocused prop is provided', () => {
     const inputProps = {
       name: 'test',
       value: 'test value',
       onChange: jest.fn(),
-      isFocused: true, // This prop should be deprecated and not trigger focus
+      isFocused: true,
     };
 
     render(<Input {...inputProps} />);
     const input = screen.getByRole('textbox');
 
-    // Should not be focused even though isFocused is true
-    expect(document.activeElement).not.toBe(input);
+    // Should be focused because isFocused is true
+    expect(document.activeElement).toBe(input);
   });
 
   it('should not leak isFocused prop to DOM element', () => {

@@ -85,20 +85,32 @@ export const GenericInput = forwardRef<HTMLInputElement, Props>(
       onChange,
       innerRef,
       type = 'text',
-      isFocused: _isFocused,
+      isFocused,
       autoFocus,
       checked,
+      className,
       ...otherProps
     } = props as Props & {
       type?: React.HTMLInputTypeAttribute;
       onChange?: React.ChangeEventHandler<HTMLInputElement>;
       checked?: boolean;
+      className?: string;
     };
+
+    const inputRef = React.useRef<HTMLInputElement | null>(null);
+
+    React.useEffect(() => {
+      if (isFocused && inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, [isFocused]);
 
     const mergedRef = useCallback(
       // Note: This callback gets a new identity when ref or innerRef change.
       // If callers pass inline callback refs, React will detach/reattach on each render.
       (node: HTMLInputElement | null) => {
+        inputRef.current = node;
+
         if (typeof ref === 'function') {
           ref(node);
         } else if (ref) {
@@ -122,15 +134,15 @@ export const GenericInput = forwardRef<HTMLInputElement, Props>(
     return (
       <>
         <input
-          {...otherProps}
           type={type}
           value={value != null ? String(value) : ''}
           onChange={onChange}
-          className={clsx(classes.input, classes.genericInput)}
+          className={clsx(classes.input, classes.genericInput, className)}
           ref={mergedRef}
           // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus={autoFocus}
           {...(checked !== undefined ? { checked } : {})}
+          {...otherProps}
         />
         {type === 'checkbox' && <span className={classes.checkbox} />}
         {type === 'radio' && <span className={classes.radioButton} />}

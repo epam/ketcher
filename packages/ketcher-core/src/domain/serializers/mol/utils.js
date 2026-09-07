@@ -150,10 +150,14 @@ function calculateMedianBondLength(mols) {
   return median > 0 ? median : 1;
 }
 
-// Same normalization rule as Struct.rescale(): median bond length, not mean.
+// Same normalization rule as Struct.rescale(): median bond length, not mean, and
+// the same sanity bounds on the resulting factor.
 function rescaleMolecules(mols) {
   const medianBondLength = calculateMedianBondLength(mols);
   const scaleFactor = 1 / medianBondLength;
+  if (!Struct.isRescaleFactorSane(scaleFactor)) {
+    return;
+  }
   for (const mol of mols) {
     mol.scale(scaleFactor);
   }

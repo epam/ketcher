@@ -52,6 +52,16 @@ describe('Struct.median', () => {
   });
 });
 
+describe('Struct.isRescaleFactorSane', () => {
+  it.each([1, 0.01, 100, 0.5, 42])('accepts %p', (scale) => {
+    expect(Struct.isRescaleFactorSane(scale)).toBe(true);
+  });
+
+  it.each([0.009, 100.1, 0, -1, Infinity, NaN])('rejects %p', (scale) => {
+    expect(Struct.isRescaleFactorSane(scale)).toBe(false);
+  });
+});
+
 describe('Struct.rescale', () => {
   it('normalizes the median bond length to 1', () => {
     const struct = chain([1.54, 1.54, 1.54]);

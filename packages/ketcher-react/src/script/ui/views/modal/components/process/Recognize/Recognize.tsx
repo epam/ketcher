@@ -268,7 +268,6 @@ const mapDispatchToProps = (
     const res = result as { structStr: string; fragment: boolean };
     dispatch(
       load(res.structStr as unknown as Struct, {
-        rescale: true,
         fragment: res.fragment,
       }),
       // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4

@@ -929,6 +929,20 @@ export class Struct {
     return Struct.median(this.getBondLengths());
   }
 
+  /**
+   * A scale factor outside [0.01, 100] means the source geometry is degenerate;
+   * normalizing it would distort the drawing more than leaving it alone. Shared
+   * with rescaleMolecules() in serializers/mol/utils.js so the reaction-merge
+   * path applies the same rule rather than a copy of these bounds.
+   */
+  static isRescaleFactorSane(scale: number): boolean {
+    return (
+      Number.isFinite(scale) &&
+      scale >= Struct.MIN_RESCALE &&
+      scale <= Struct.MAX_RESCALE
+    );
+  }
+
   getAvgClosestAtomDistance(): number {
     let totalDist = 0;
     let minDist;
@@ -1122,9 +1136,7 @@ export class Struct {
     }
 
     const scale = 1 / median;
-    // Refuse absurd factors: a median outside [0.01, 100] means degenerate geometry,
-    // and normalizing it would distort the drawing more than leaving it alone.
-    if (scale < Struct.MIN_RESCALE || scale > Struct.MAX_RESCALE) {
+    if (!Struct.isRescaleFactorSane(scale)) {
       return;
     }
 

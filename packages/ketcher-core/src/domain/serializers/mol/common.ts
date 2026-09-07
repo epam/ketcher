@@ -80,51 +80,29 @@ function parseRxn(
 const prepareForSaving: Record<string, (sgroup: SGroup, mol: Struct) => void> =
   {
     MUL: SGroup.prepareMulForSaving,
-    SRU: prepareSruForSaving,
-    SUP: prepareSupForSaving,
+    // SRU, SUP and COP all serialise the bonds crossing their brackets the same way
+    SRU: prepareCrossBondsForSaving,
+    SUP: prepareCrossBondsForSaving,
+    COP: prepareCrossBondsForSaving,
     DAT: prepareDatForSaving,
     GEN: prepareGenForSaving,
-    COP: prepareCopForSaving,
     queryComponent: prepareQueryComponentForSaving,
   };
 
 /**
- * Collects the bonds crossing the SRU brackets into `sgroup.bonds`, which is what
- * the `M  SBL` line is written from.
+ * Collects the bonds crossing the s-group's brackets into `sgroup.bonds`, which is
+ * what the `M  SBL` line is written from.
  *
  * Any number of crossing bonds is supported: `makeAtomBondLines` wraps `SBL` at 15
  * ids per line and `SGroup.getBracketParameters` has a branch that draws one bracket
  * per crossing bond. Only MUL genuinely needs exactly two crossing bonds, and that
  * constraint lives in `SGroup.prepareMulForSaving`.
  */
-function prepareSruForSaving(sgroup: SGroup, mol: Struct): void {
+function prepareCrossBondsForSaving(sgroup: SGroup, mol: Struct): void {
   const xBonds: number[] = [];
   mol.bonds.forEach((bond, bid) => {
     const a1 = getAtom(mol, bond.begin);
     const a2 = getAtom(mol, bond.end);
-    if (
-      (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
-      (a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
-    ) {
-      xBonds.push(bid);
-    }
-  });
-  sgroup.bonds = xBonds;
-}
-
-function prepareCopForSaving(sgroup: SGroup, mol: Struct): void {
-  // Same cross-bond computation as SRU.
-  prepareSruForSaving(sgroup, mol);
-}
-
-function prepareSupForSaving(sgroup: SGroup, mol: Struct): void {
-  // This code is also used for GroupSru and should be moved into a separate common method
-  // It seems that such code should be used for any sgroup by this this should be checked
-  const xBonds: number[] = [];
-  mol.bonds.forEach((bond, bid) => {
-    const a1 = getAtom(mol, bond.begin);
-    const a2 = getAtom(mol, bond.end);
-
     if (
       (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
       (a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))

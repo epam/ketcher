@@ -44,13 +44,13 @@
 
 ## 4. Extraction — Modal Dialogs: Shared Components (`Confirm`, `ExtendedTable`, `InfoModal`, `PeriodTable`, `Text`)
 
-- [ ] 4.1 Inventory title/label/message strings in the five shared dialog components
-- [ ] 4.2 Add corresponding keys to `locales/en/dialogs.json` under a `dialogs.shared.*` prefix
-- [ ] 4.3 Replace literals with `t()` calls
-- [ ] 4.4 Decide and document whether `PeriodTable` element names stay data-driven from `ketcher-core` constants (not duplicated as translation keys) or get their own keys — record the decision in the report, not silently
-- [ ] 4.5 **Code check:** `git diff --stat` touches only the five shared-component dirs + `locales/en/dialogs.json`; grep confirms no remaining hardcoded literals
-- [ ] 4.6 **Visual check:** `cd example && npm run dev:standalone` (Vite, hot-reloads directly from source per DEVNOTES.md — no rebuild needed), open a Confirm dialog, the Extended/Period Table pickers, an Info modal, and a Text-input dialog — all text identical to before
-- [ ] 4.7 **Commit** this section's changes as one commit on `4384-language`
+- [x] 4.1 Inventory title/label/message strings in the five shared dialog components
+- [x] 4.2 Add corresponding keys to `locales/en/dialogs.json` under per-component prefixes (`confirm.*`, `extendedTable.*`, `infoModal.*`, `periodTable.*`, `text.*`) plus `shared.addButton`/`shared.disabledSuffix` for cross-dialog dedup
+- [x] 4.3 Replace literals with `t()` calls
+- [x] 4.4 **Decided:** `PeriodTable` element data (`el.title`/`el.label`/`el.mass` from `ketcher-core`'s `Elements`) and `ExtendedTable`'s `Generics`-sourced group/button names stay data-driven, not duplicated as translation keys — same precedent as Section 1/3's data-driven exclusions. `InfoModal`'s `shortcut.hotKey` ('CTRL/Cmd + V') also left untouched as a literal key-combo representation.
+- [x] 4.5 **Code check:** typecheck, unit tests 400/400, circular-deps, build, prettier all green; grep confirms no remaining hardcoded literals
+- [ ] 4.6 **Visual check:** `cd example && npm run dev:standalone` — user to verify a Confirm dialog, the Extended/Period Table pickers, an Info modal (incl. the Cut/Copy/Paste-unavailable message and the Paste-specific shortcut body), and the Text-input dialog (toolbar, font size, special symbols) — all text identical to before
+- [x] 4.7 **Committed:** `842712b846` on `4384-language`
 - [ ] 4.8 **STOP — report commit hash + diff for review before starting Section 5**
 
 ## 5. Extraction — Reusable UI Components (`script/ui/views/components/*`)

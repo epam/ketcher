@@ -29,6 +29,7 @@ import {
 } from '../../../../../data/schema/struct-schema';
 import classes from './Bond.module.less';
 import { useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Bond as CoreBond, SettingsManager } from 'ketcher-core';
 import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../../../../components/ContextMenu/utils';
 
@@ -46,6 +47,7 @@ type Props = BondProps &
   };
 
 const Bond = (props: Props) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   const { formState, isMonomerCreationWizardActive = false, ...rest } = props;
   const bondProps = bondSchema.properties;
   const [isCustomQuery, setIsCustomQuery] = useState(Boolean(rest.customQuery));
@@ -109,12 +111,12 @@ const Bond = (props: Props) => {
 
   return (
     <Dialog
-      title="Bond Properties"
+      title={t('dialogs:toolbox.bond.dialogTitle')}
       className={classes.bond}
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}
-      buttonsNameMap={{ OK: 'Apply' }}
+      buttonsNameMap={{ OK: t('common:button.apply') }}
       buttons={['Cancel', 'OK']}
       withDivider
     >

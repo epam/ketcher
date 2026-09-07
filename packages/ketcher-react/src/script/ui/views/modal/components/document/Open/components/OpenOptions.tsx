@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import type { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './OpenOptions.module.less';
 import { FileDrop } from './FileDrop';
@@ -41,6 +42,7 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
   isRecognizeDisabled,
   errorHandler,
 }) => {
+  const { t } = useTranslation('dialogs');
   return (
     <div className={styles.optionsContainer}>
       <button
@@ -56,15 +58,21 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
           {/* <p className={styles.textLabel}>or press Ctrl + V</p> */}
         </div>
         <div className={styles.buttonLabelWrapper}>
-          <p className={styles.buttonLabel}>Paste from clipboard</p>
+          <p className={styles.buttonLabel}>
+            {t('document.openOptions.pasteFromClipboard')}
+          </p>
         </div>
       </button>
 
       <FileDrop
         onDropAccepted={fileLoadHandler}
-        onDropRejected={(e) => errorHandler(`Unable to accept file(s). ${e}`)}
-        buttonLabel="Open from file"
-        textLabel="or drag file here"
+        onDropRejected={(e) =>
+          errorHandler(
+            t('document.openOptions.unableToAcceptFile', { error: e }),
+          )
+        }
+        buttonLabel={t('document.openOptions.openFromFile')}
+        textLabel={t('document.openOptions.dragFileHere')}
         iconName={ICON_NAMES.FILE}
         testId="open-from-file-button"
       />
@@ -72,15 +80,13 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
       <FileDrop
         accept="image/*"
         disabled={isRecognizeDisabled}
-        disabledText="Image Recognition service is not available"
+        disabledText={t('document.openOptions.imageRecognitionUnavailable')}
         onDropAccepted={imageLoadHandler}
         onDropRejected={() =>
-          errorHandler(
-            'Unable to accept file(s). Make sure you upload 1 image.',
-          )
+          errorHandler(t('document.openOptions.unableToAcceptImage'))
         }
-        buttonLabel="Open from image"
-        textLabel="or drag file here"
+        buttonLabel={t('document.openOptions.openFromImage')}
+        textLabel={t('document.openOptions.dragFileHere')}
         iconName={ICON_NAMES.IMAGE}
         testId="open-from-image-button"
       />

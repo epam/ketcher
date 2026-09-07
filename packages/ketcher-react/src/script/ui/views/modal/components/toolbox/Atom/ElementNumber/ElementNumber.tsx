@@ -16,6 +16,7 @@
 
 import { Elements } from 'ketcher-core';
 import { capitalize } from 'lodash/fp';
+import { useTranslation } from 'react-i18next';
 
 interface ElementNumberProps {
   label: string;
@@ -24,12 +25,13 @@ interface ElementNumberProps {
 type Props = ElementNumberProps;
 
 const ElementNumber = (props: Props) => {
+  const { t } = useTranslation('dialogs');
   const { label } = props;
   const value = Elements.get(capitalize(label))?.number ?? '';
 
   return (
     <label>
-      <span>Number</span>
+      <span>{t('toolbox.atom.numberLabel')}</span>
       <input
         type="text"
         readOnly

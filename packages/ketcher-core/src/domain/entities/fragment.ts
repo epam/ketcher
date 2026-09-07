@@ -19,7 +19,6 @@ import { type Point, Vec2 } from './vec2';
 import { Bond } from './bond';
 import { StereoLabel } from './atom';
 import type { Struct, StructProperty } from './struct';
-import { assert } from 'utilities';
 
 export enum StereoFlag {
   Mixed = 'MIXED',
@@ -112,11 +111,8 @@ export class Fragment {
 
   clone(aidMap: Map<number, number>) {
     const stereoAtoms = this.#stereoAtoms
-    .filter((aid) => aidMap.has(aid))
-    .map((aid) => {
-      const mappedId = aidMap.get(aid);
-      return mappedId;
-    });
+      .map((aid) => aidMap.get(aid))
+      .filter((mappedId): mappedId is number => mappedId !== undefined);
     const fr = new Fragment(
       stereoAtoms,
       this.stereoFlagPosition,

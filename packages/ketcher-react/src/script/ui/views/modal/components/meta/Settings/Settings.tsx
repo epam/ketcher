@@ -22,6 +22,7 @@ import {
   updateFormState,
 } from '../../../../../state/modal/form';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker';
 import { Dialog } from '../../../../components';
@@ -44,6 +45,7 @@ import { isEqual } from 'lodash';
 import { Icon } from 'components';
 import { ACS_STYLE_DEFAULT_SETTINGS } from 'src/constants';
 import { onAction } from 'src/script/ui/state/shared';
+import i18n from 'src/i18n/i18n';
 
 interface SettingsProps extends BaseProps {
   ketcherId: string;
@@ -78,6 +80,7 @@ const HeaderContent = ({
   formState,
   initState,
 }) => {
+  const { t } = useTranslation('dialogs');
   const getIsResetDisabled = () => {
     if (formState.result.init) return isEqual(defaultSettings, initState);
     else return isEqual(defaultSettings, formState.result);
@@ -85,9 +88,9 @@ const HeaderContent = ({
 
   return (
     <div className={classes.headerContent}>
-      <span className={classes.title}> Settings</span>
+      <span className={classes.title}> {t('meta.settings.headerTitle')}</span>
       <OpenButton
-        title="Open from File"
+        title={t('meta.settings.openFromFile')}
         key="settings"
         server={server}
         onLoad={onOpenFile}
@@ -97,7 +100,7 @@ const HeaderContent = ({
         <Icon name="open-1" />
       </OpenButton>
       <SaveButton
-        title="Save to File"
+        title={t('meta.settings.saveToFile')}
         key="ketcher-settings"
         data={JSON.stringify(formState.result)}
         filename="ketcher-settings"
@@ -107,7 +110,7 @@ const HeaderContent = ({
         <Icon name="save-1" />
       </SaveButton>
       <button
-        title="Reset"
+        title={t('meta.settings.reset')}
         key="settings-button"
         onClick={onReset}
         className={classes.button}
@@ -125,6 +128,7 @@ type Props = SettingsProps & SettingsCallProps;
 const settingsProps = settingsSchema.properties;
 
 const SettingsDialog = (props: Props) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   const {
     initState,
     formState,
@@ -147,7 +151,7 @@ const SettingsDialog = (props: Props) => {
 
   const generalTab = {
     key: 'general',
-    label: 'General',
+    label: t('common:general'),
     content: (
       <fieldset>
         <Field
@@ -184,7 +188,7 @@ const SettingsDialog = (props: Props) => {
         />
         <Field
           name="imageResolution"
-          tooltip="option applicable to PNG/SVG pictures renderer"
+          tooltip={t('dialogs:meta.settings.imageResolutionTooltip')}
           component={Select}
           options={getSelectOptionsFromSchema(settingsProps?.imageResolution)}
           data-testid="image-resolution"
@@ -194,7 +198,7 @@ const SettingsDialog = (props: Props) => {
   };
   const stereoTab = {
     key: 'stereo',
-    label: 'Stereochemistry',
+    label: t('dialogs:meta.settings.stereochemistryTab'),
     content: (
       <fieldset>
         <Field name="showStereoFlags" data-testid="show-stereo-flags" />
@@ -237,7 +241,7 @@ const SettingsDialog = (props: Props) => {
         <Field name="mixedFlagLabel" data-testid="mixed-flag-label" />
         <Field
           name="ignoreChiralFlag"
-          tooltip="Ignore chiral flag while loading from molfiles. By default all the stereo will be ABS"
+          tooltip={t('dialogs:meta.settings.ignoreChiralFlagTooltip')}
           data-testid="ignore-chiral-flag"
         />
       </fieldset>
@@ -245,7 +249,7 @@ const SettingsDialog = (props: Props) => {
   };
   const atomsTab = {
     key: 'atoms',
-    label: 'Atoms',
+    label: t('dialogs:meta.settings.atomsTab'),
     content: (
       <fieldset>
         <Field name="carbonExplicitly" data-testid="carbon-explicitly" />
@@ -264,7 +268,7 @@ const SettingsDialog = (props: Props) => {
   };
   const bondsTab = {
     key: 'bonds',
-    label: 'Bonds',
+    label: t('dialogs:meta.settings.bondsTab'),
     content: (
       <fieldset>
         <Field name="aromaticCircle" data-testid="aromatic-circle" />
@@ -298,7 +302,7 @@ const SettingsDialog = (props: Props) => {
   };
   const serverTab = {
     key: 'server',
-    label: 'Server',
+    label: t('dialogs:meta.settings.serverTab'),
     content: (
       <fieldset disabled={!appOpts.server}>
         <Field name="smart-layout" data-testid="smart-layout" />
@@ -329,7 +333,7 @@ const SettingsDialog = (props: Props) => {
   };
   const threeDViewerTab = {
     key: '3dviewer',
-    label: '3D Viewer',
+    label: t('dialogs:meta.settings.viewer3dTab'),
     content: (
       <fieldset className={classes.viewer}>
         <Field
@@ -355,7 +359,7 @@ const SettingsDialog = (props: Props) => {
   };
   const debuggingTab = {
     key: 'debugging',
-    label: 'Options for Debugging',
+    label: t('dialogs:meta.settings.debuggingTab'),
     content: (
       <fieldset>
         <Field name="showAtomIds" data-testid="show-atom-ids" />
@@ -380,7 +384,7 @@ const SettingsDialog = (props: Props) => {
       onClick={onACSStyle}
       data-testid="acs-style-button"
     >
-      Set ACS Settings
+      {t('dialogs:meta.settings.setAcsSettings')}
     </button>
   );
 
@@ -400,7 +404,7 @@ const SettingsDialog = (props: Props) => {
       result={() => [formState.result, initState]}
       valid={() => formState.valid}
       params={prop}
-      buttonsNameMap={{ OK: 'Apply' }}
+      buttonsNameMap={{ OK: t('common:button.apply') }}
       buttons={[ACSStyleButton, 'Cancel', 'OK']}
       withDivider
       needMargin={false}
@@ -458,8 +462,7 @@ const mapDispatchToProps = (dispatch, ownProps: SettingsOwnProps) => ({
           dialog: 'info-modal',
           prop: {
             title: '',
-            customText:
-              'To fully apply these changes, you need to apply the layout.',
+            customText: i18n.t('dialogs:meta.settings.applyLayoutNotice'),
             button: 'OK',
           },
         }),

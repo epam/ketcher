@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 import { changeImage, changeVersion } from '../../../../../state/options';
@@ -56,6 +57,7 @@ function FooterContent({
   copyHandler,
   isAddToCanvasDisabled,
 }: Readonly<FooterContentProps>) {
+  const { t } = useTranslation('dialogs');
   return (
     <div className={classes.footerContent}>
       <OpenButton
@@ -65,7 +67,7 @@ function FooterContent({
         className={classes.openButton}
       >
         <Icon name="open" />
-        <span>Change image</span>
+        <span>{t('process.recognize.changeImage')}</span>
       </OpenButton>
       <div>
         <DialogActionButton
@@ -73,15 +75,15 @@ function FooterContent({
           disabled={!structStr}
           clickHandler={openHandler}
           styles={classes.secondaryButton}
-          label="Open as new Project"
+          label={t('process.recognize.openAsNewProject')}
         />
         <DialogActionButton
           key="copyButton"
           disabled={!structStr || isAddToCanvasDisabled}
           clickHandler={copyHandler}
           styles={classes.primaryButton}
-          label="Add to Canvas"
-          title="Structure will be loaded as fragment and added to Clipboard"
+          label={t('shared.addToCanvas')}
+          title={t('shared.addToCanvasTooltip')}
         />
       </div>
     </div>
@@ -112,6 +114,7 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
     ...partProps
   } = prop;
   const { onRecognize, onImage, onChangeImago, ...props } = partProps;
+  const { t } = useTranslation('dialogs');
   const [canPreviewImage, setCanPreviewImage] = useState(true);
   const result = () =>
     structStr && !(structStr instanceof Promise)
@@ -142,7 +145,7 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
 
   return (
     <Dialog
-      title="Import Structure from Image"
+      title={t('process.recognize.dialogTitle')}
       className={classes.recognize}
       params={{ ...props, onOk }}
       result={result}
@@ -163,21 +166,21 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
     >
       <div className={classes.topBody}>
         <label className={classes.imagoVersion}>
-          Imago version
+          {t('process.recognize.imagoVersionLabel')}
           <Input
             type="text"
             schema={{
               enum: imagoVersions,
-              enumNames: range(1, imagoVersions.length + 1).map(
-                (i) => `Version ${i}`,
+              enumNames: range(1, imagoVersions.length + 1).map((i) =>
+                t('process.recognize.imagoVersionOption', { number: i }),
               ),
             }}
             value={version}
             onChange={(val) => onChangeImago(val as string)}
           />
         </label>
-        <span>Original image</span>
-        <span>Recognized structure preview</span>
+        <span>{t('process.recognize.originalImage')}</span>
+        <span>{t('process.recognize.recognizedStructurePreview')}</span>
       </div>
 
       <div className={classes.imagesContainer}>
@@ -196,14 +199,15 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
           {file && isImage(file) && !canPreviewImage && (
             <div className={classes.messageContainer}>
               <p>
-                Preview of '{file.type}' MIME type is not supported by current
-                browser
+                {t('process.recognize.previewNotSupported', {
+                  type: file.type,
+                })}
               </p>
             </div>
           )}
           {(!file || (!isImage(file) && clearFile())) && (
             <div className={classes.messageContainer}>
-              <p>Please choose image</p>
+              <p>{t('process.recognize.pleaseChooseImage')}</p>
             </div>
           )}
         </div>

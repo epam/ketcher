@@ -31,24 +31,21 @@ export class MonomerMicromolecule extends SGroup {
   }
 
   public override getContractedPosition(struct: Struct) {
-    const sgroupContractedPosition = super.getContractedPosition(struct);
-    const sgroupAtoms = new Set(this.atoms);
-    const connectedAtomIds = this.atoms.filter((atomId) =>
-      struct.atomGetNeighbors(atomId)?.some(({ aid }) => !sgroupAtoms.has(aid)),
-    );
+    assert(this.pp);
+    const { atomId } = super.getContractedPosition(struct);
 
-    if (connectedAtomIds.length === 1) {
-      const connectedAtomId = connectedAtomIds[0];
-      const connectedAtom = struct.atoms.get(connectedAtomId);
-      assert(connectedAtom);
+    return { position: this.pp, atomId };
+  }
 
-      return { position: connectedAtom.pp, atomId: connectedAtomId };
+  public override getContractedBondPosition(struct: Struct, atomId: number) {
+    if (!this.data.contractedFromExpanded) {
+      return this.getContractedPosition(struct);
     }
 
-    return {
-      position: this.pp ?? sgroupContractedPosition.position,
-      atomId: sgroupContractedPosition.atomId,
-    };
+    const atom = struct.atoms.get(atomId);
+    assert(atom);
+
+    return { position: atom.pp, atomId };
   }
 
   public static clone(

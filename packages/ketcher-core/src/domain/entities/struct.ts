@@ -552,26 +552,20 @@ export class Struct {
     let startCoords: Vec2;
     let endCoords: Vec2;
 
-    if (sgroup1 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
-      startCoords = sgroup1.isContracted()
-        ? (sgroup1.pp as Vec2)
-        : this.atoms.get(halfBond.begin)!.pp;
-    } else if (sgroup1 && sgroup1 !== sgroup2 && sgroup1.isContracted()) {
-      startCoords =
-        sgroup1.getContractedPosition(this).position ??
-        this.atoms.get(halfBond.begin)!.pp;
+    if (sgroup1 && sgroup1 !== sgroup2 && sgroup1.isContracted()) {
+      startCoords = sgroup1.getContractedBondPosition(
+        this,
+        halfBond.begin,
+      ).position;
     } else {
       startCoords = this.atoms.get(halfBond.begin)!.pp;
     }
 
-    if (sgroup2 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
-      endCoords = sgroup2.isContracted()
-        ? (sgroup2.pp as Vec2)
-        : this.atoms.get(halfBond.end)!.pp;
-    } else if (sgroup2 && sgroup2 !== sgroup1 && sgroup2.isContracted()) {
-      endCoords =
-        sgroup2.getContractedPosition(this).position ??
-        this.atoms.get(halfBond.end)!.pp;
+    if (sgroup2 && sgroup2 !== sgroup1 && sgroup2.isContracted()) {
+      endCoords = sgroup2.getContractedBondPosition(
+        this,
+        halfBond.end,
+      ).position;
     } else {
       endCoords = this.atoms.get(halfBond.end)!.pp;
     }

@@ -79,7 +79,7 @@ class ReBond extends ReObject {
     sgroup?: SGroup,
   ) {
     return sgroup?.isContracted()
-      ? sgroup?.getContractedPosition(struct).atomId
+      ? sgroup.getContractedBondPosition(struct, atomId).atomId
       : atomId;
   }
 
@@ -111,13 +111,19 @@ class ReBond extends ReObject {
     let p2: Vec2;
 
     if (sgroup1?.isContracted() && sgroup1 !== sgroup2) {
-      p1 = sgroup1.getContractedPosition(restruct.molecule).position;
+      p1 = sgroup1.getContractedBondPosition(
+        restruct.molecule,
+        bond.b.begin,
+      ).position;
     } else {
       p1 = beginAtom.a.pp;
     }
 
     if (sgroup2?.isContracted() && sgroup1 !== sgroup2) {
-      p2 = sgroup2.getContractedPosition(restruct.molecule).position;
+      p2 = sgroup2.getContractedBondPosition(
+        restruct.molecule,
+        bond.b.end,
+      ).position;
     } else {
       p2 = endAtom.a.pp;
     }

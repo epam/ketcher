@@ -286,57 +286,9 @@ export function setExpandMonomerSGroup(
   });
 
   if (attrs.expanded && !sGroup.data.contractedFromExpanded) {
-    const outsideConnections = [...bondsToOutside.values()].map((bond) => {
-      const insideAtomId = sGroupAtoms.has(bond.begin) ? bond.begin : bond.end;
-      const outsideAtomId = sGroupAtoms.has(bond.begin) ? bond.end : bond.begin;
-      return { insideAtomId, outsideAtomId };
-    });
-    const internalBondLengths = [...struct.bonds.values()]
-      .filter(
-        (bond) => sGroupAtoms.has(bond.begin) && sGroupAtoms.has(bond.end),
-      )
-      .map((bond) => {
-        const beginAtom = struct.atoms.get(bond.begin);
-        const endAtom = struct.atoms.get(bond.end);
-        return beginAtom && endAtom ? Vec2.dist(beginAtom.pp, endAtom.pp) : 0;
-      })
-      .filter((length) => length > 0);
-    const standardBondLength =
-      internalBondLengths.length > 0
-        ? internalBondLengths.reduce((sum, length) => sum + length, 0) /
-          internalBondLengths.length
-        : 1;
-
-    const getMissingExpansionVector = (index: number, moveVector: Vec2) => {
-      const fullMoveLength = moveVector.length();
-      const connection = outsideConnections[index];
-      if (fullMoveLength === 0 || !connection) {
-        return Vec2.ZERO;
-      }
-
-      const insideAtom = struct.atoms.get(connection.insideAtomId);
-      const outsideAtom = struct.atoms.get(connection.outsideAtomId);
-      if (!insideAtom || !outsideAtom) {
-        return Vec2.ZERO;
-      }
-
-      const moveDirection = moveVector.scaled(1 / fullMoveLength);
-      const bondVector = outsideAtom.pp.sub(insideAtom.pp);
-      const currentProjection = Vec2.dot(bondVector, moveDirection);
-      const perpendicularLengthSquared = Math.max(
-        0,
-        bondVector.length() ** 2 - currentProjection ** 2,
-      );
-      const unexpandedProjection = Math.sqrt(
-        Math.max(0, standardBondLength ** 2 - perpendicularLengthSquared),
-      );
-      const missingDistance = Math.max(
-        0,
-        unexpandedProjection + fullMoveLength - currentProjection,
-      );
-
-      return moveVector.scaled(Math.min(1, missingDistance / fullMoveLength));
-    };
+    const outsideAtomIds = [...bondsToOutside.values()].map((bond) =>
+      sGroupAtoms.has(bond.begin) ? bond.end : bond.begin,
+    );
 
     const sGroupBBox = SGroup.getObjBBox(
       Array.from(sGroupAtoms.values()),
@@ -351,7 +303,7 @@ export function setExpandMonomerSGroup(
     const atomsToMove = new Map<number, number[]>();
     const sGroupsToMove = new Map<number, number[]>();
 
-    outsideConnections.forEach(({ outsideAtomId: startAtomId }, index) => {
+    outsideAtomIds.forEach((startAtomId, index) => {
       const queue: number[] = [startAtomId];
 
       while (queue.length > 0) {
@@ -491,7 +443,7 @@ export function setExpandMonomerSGroup(
     const horizontalOffset = sGroupWidth / 2;
 
     const handledAtoms = new Set<number>();
-    sGroupsToMove.forEach((sGroupIds, index) => {
+    sGroupsToMove.forEach((sGroupIds) => {
       sGroupIds.forEach((sGroupId) => {
         const movableSGroup = struct.sgroups.get(sGroupId);
         if (!movableSGroup) {
@@ -525,11 +477,10 @@ export function setExpandMonomerSGroup(
           verticalDirection = -1;
         }
 
-        const fullMoveVector = new Vec2(
+        const moveVector = new Vec2(
           (moveHorizontally ? 1 : 0) * horizontalDirection * horizontalOffset,
           (moveHorizontally ? 0 : 1) * verticalDirection * baseVerticalOffset,
         );
-        const moveVector = getMissingExpansionVector(index, fullMoveVector);
 
         const movableSGroupAtoms = SGroup.getAtoms(struct, movableSGroup);
         movableSGroupAtoms.forEach((aid) => {
@@ -540,7 +491,7 @@ export function setExpandMonomerSGroup(
       });
     });
 
-    atomsToMove.forEach((atomIds, index) => {
+    atomsToMove.forEach((atomIds) => {
       const intactAtoms = atomIds.filter((aid) => !handledAtoms.has(aid));
       if (intactAtoms.length === 0) {
         return;
@@ -556,11 +507,10 @@ export function setExpandMonomerSGroup(
         sGroupBBox.p0.y + (sGroupBBox.p1.y - sGroupBBox.p0.y) / 2,
       );
       const direction = subStructCenter.sub(expandedSGroupCenter).normalized();
-      const fullMoveVector = new Vec2(
+      const moveVector = new Vec2(
         (direction.x * sGroupWidth) / 2,
         (direction.y * sGroupHeight) / 2,
       );
-      const moveVector = getMissingExpansionVector(index, fullMoveVector);
 
       intactAtoms.forEach((atomId) => {
         action.addOp(new AtomMove(atomId, moveVector));

@@ -408,6 +408,10 @@ export class SGroup {
     return { atomId, position: atom.pp };
   }
 
+  getContractedBondPosition(struct: Struct, _atomId: number) {
+    return this.getContractedPosition(struct);
+  }
+
   cloneAttachmentPoints(
     atomIdMap: Map<number, number>,
   ): ReadonlyArray<SGroupAttachmentPoint> {

@@ -16,6 +16,7 @@
 
 import {
   fromAttachmentGroupDeletion,
+  fromOneBondDeletion,
   fromAtomsAttrs,
   fromBondsAttrs,
 } from 'application/editor/actions';
@@ -77,6 +78,62 @@ function createAtomPair(
 }
 
 describe('haptic bond editing rules', () => {
+  it.each([false, true])(
+    'deletes one of multiple haptic bonds and restores fragments on undo (group first: %s)',
+    (groupFirst) => {
+      const struct = new Struct();
+      const memberIds = [0, 1].map((x) =>
+        struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(x, 0) })),
+      );
+      const metalIds = [0, 1].map((x) =>
+        struct.atoms.add(new Atom({ label: 'Fe', pp: new Vec2(x, 2) })),
+      );
+      struct.bonds.add(
+        new Bond({ begin: memberIds[0], end: memberIds[1], type: 1 }),
+      );
+      const group = new AttachmentGroup({ atomIds: memberIds });
+      group.recalculatePosition(struct.atoms);
+      const groupId = struct.addAttachmentGroup(group);
+      const bondIds = metalIds.map((metalId) =>
+        struct.bonds.add(
+          new Bond({
+            begin: groupFirst ? groupId : metalId,
+            end: groupFirst ? metalId : groupId,
+            type: Bond.PATTERN.TYPE.HAPTIC,
+          }),
+        ),
+      );
+      const reStruct = createReStruct(struct);
+      struct.markFragments();
+      const originalFragment = group.fragment;
+
+      const checkDeleted = () => {
+        expect(struct.bonds.has(bondIds[0])).toBe(false);
+        expect(struct.bonds.has(bondIds[1])).toBe(true);
+        expect(struct.attachmentGroups.get(groupId)).toBe(group);
+        expect(group.fragment).not.toBe(originalFragment);
+        expect(struct.frags.has(group.fragment)).toBe(true);
+        [...memberIds, metalIds[1]].forEach((id) => {
+          expect(struct.atoms.get(id)?.fragment).toBe(group.fragment);
+        });
+        expect(struct.atoms.get(metalIds[0])?.fragment).not.toBe(
+          group.fragment,
+        );
+      };
+
+      const undo = fromOneBondDeletion(reStruct, bondIds[0]);
+      checkDeleted();
+      const redo = undo.perform(reStruct);
+      expect(struct.bonds.has(bondIds[0])).toBe(true);
+      expect(group.fragment).toBe(originalFragment);
+      [...memberIds, ...metalIds].forEach((id) => {
+        expect(struct.atoms.get(id)?.fragment).toBe(originalFragment);
+      });
+      redo.perform(reStruct);
+      checkDeleted();
+    },
+  );
+
   it('reduces carbon implicit hydrogens from four to three when a haptic bond is added', () => {
     const struct = new Struct();
     const metalAtomId = struct.atoms.add(new Atom({ label: 'Fe' }));

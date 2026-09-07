@@ -298,9 +298,11 @@ export function getMenuPropsForSelection(
   }
 
   const { bonds, atoms, rgroupAttachmentPoints } = selection;
-  const isSingleAtomOnlySelection =
-    atoms?.length === 1 &&
-    onlyHasProperty(selection, 'atoms', IGNORED_MAPS_LIST);
+  const isAtomOnlySelection = onlyHasProperty(
+    selection,
+    'atoms',
+    IGNORED_MAPS_LIST,
+  );
 
   if (selectedFunctionalGroups.size > 0) {
     const functionalGroups = Array.from(selectedFunctionalGroups.values());
@@ -348,7 +350,7 @@ export function getMenuPropsForSelection(
     atoms &&
     !bonds &&
     !rgroupAttachmentPoints &&
-    isSingleAtomOnlySelection
+    isAtomOnlySelection
   ) {
     return {
       id: CONTEXT_MENU_ID.FOR_ATOMS + ketcherId,

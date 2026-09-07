@@ -971,6 +971,10 @@ export class Struct {
     let totalLength = 0;
     let cnt = 0;
     this.bonds.forEach((bond) => {
+      // Haptic bonds have variable lengths and must not determine the scale
+      // of ordinary bonds when importing or pasting a structure.
+      if (bond.type === Bond.PATTERN.TYPE.HAPTIC) return;
+
       const a1 = this.getBondEndpoint(bond.begin);
       const a2 = this.getBondEndpoint(bond.end);
       assert(a1, `Bond endpoint ${bond.begin} not found`);

@@ -6,14 +6,13 @@ import {
 import { CONTEXT_MENU_ID } from './contextMenu.types';
 
 describe('getMenuPropsForSelection', () => {
-  it('uses the selection menu for a multi-atom selection', () => {
+  it('uses the atom menu for a multi-atom selection', () => {
     expect(
       getMenuPropsForSelection({ atoms: [1, 2] }, new Map(), 'test'),
     ).toEqual({
-      id: CONTEXT_MENU_ID.FOR_SELECTION + 'test',
+      id: CONTEXT_MENU_ID.FOR_ATOMS + 'test',
       atomIds: [1, 2],
-      bondIds: undefined,
-      rgroupAttachmentPoints: undefined,
+      extraItemsSelected: false,
     });
   });
 
@@ -25,6 +24,34 @@ describe('getMenuPropsForSelection', () => {
         extraItemsSelected: false,
       },
     );
+  });
+
+  it('keeps atoms with enhanced flags in the atom menu', () => {
+    expect(
+      getMenuPropsForSelection(
+        { atoms: [1, 2], enhancedFlags: [3] },
+        new Map(),
+        'test',
+      ),
+    ).toEqual({
+      id: CONTEXT_MENU_ID.FOR_ATOMS + 'test',
+      atomIds: [1, 2],
+      extraItemsSelected: false,
+    });
+  });
+
+  it('uses the selection menu for atoms and bonds', () => {
+    expect(
+      getMenuPropsForSelection(
+        { atoms: [1, 2], bonds: [3] },
+        new Map(),
+        'test',
+      ),
+    ).toMatchObject({
+      id: CONTEXT_MENU_ID.FOR_SELECTION + 'test',
+      atomIds: [1, 2],
+      bondIds: [3],
+    });
   });
 
   it('uses the selection menu when atoms and another drawing item are selected', () => {

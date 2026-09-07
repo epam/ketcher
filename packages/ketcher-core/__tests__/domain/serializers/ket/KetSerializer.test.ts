@@ -289,6 +289,63 @@ function createSharedAttachmentGroupStruct() {
   return struct;
 }
 
+describe('KET copy/paste scaling', () => {
+  it.each([
+    ['attachment group', createHapticAttachmentGroupStruct],
+    ['shared attachment group', createSharedAttachmentGroupStruct],
+    ['atom', createHapticAtomAtomStruct],
+  ])('preserves geometry for haptic bonds (%s)', (_, createStruct) => {
+    const original = createStruct();
+    // Atom-atom haptic bonds can also be longer than ordinary bonds.
+    if (original.atoms.size === 2) {
+      original.atoms.get(1)!.pp = new Vec2(1.8, 0);
+    }
+    const serialized = ket.serialize(original);
+    const pasted = ket.deserialize(serialized);
+    const positions = Array.from(
+      pasted.atoms.values(),
+      (atom) => new Vec2(atom.pp),
+    );
+    const groupPositions = Array.from(
+      pasted.attachmentGroups.values(),
+      (group) => new Vec2(group.pp),
+    );
+
+    pasted.rescale();
+
+    Array.from(pasted.atoms.values()).forEach((atom, index) => {
+      expect(atom.pp.x).toBeCloseTo(positions[index].x);
+      expect(atom.pp.y).toBeCloseTo(positions[index].y);
+    });
+    Array.from(pasted.attachmentGroups.values()).forEach((group, index) => {
+      expect(group.pp.x).toBeCloseTo(groupPositions[index].x);
+      expect(group.pp.y).toBeCloseTo(groupPositions[index].y);
+    });
+  });
+
+  it('normalizes ordinary bonds while retaining relative haptic geometry', () => {
+    const original = createHapticAttachmentGroupStruct();
+    original.scale(2);
+    const pasted = ket.deserialize(ket.serialize(original));
+
+    pasted.rescale();
+
+    const lengths = Array.from(pasted.bonds.values(), (bond) => ({
+      type: bond.type,
+      length: Vec2.dist(
+        pasted.getBondEndpoint(bond.begin)!.pp,
+        pasted.getBondEndpoint(bond.end)!.pp,
+      ),
+    }));
+    expect(
+      lengths.find(({ type }) => type === Bond.PATTERN.TYPE.SINGLE)!.length,
+    ).toBeCloseTo(1);
+    expect(
+      lengths.find(({ type }) => type === Bond.PATTERN.TYPE.HAPTIC)!.length,
+    ).toBeCloseTo(1.5);
+  });
+});
+
 describe('deserialize (ToStruct)', () => {
   const canvas = createPolymerEditorCanvas();
   // @ts-expect-error TS6133: Instantiated for side effects (singleton registration)

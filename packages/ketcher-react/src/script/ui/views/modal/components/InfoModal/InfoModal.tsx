@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { error } from './constants';
 import { Dialog } from '../../../components';
 import { PasteErrorModalBody } from './PasteErrorModalBody';
@@ -22,13 +23,16 @@ import { PasteErrorModalBody } from './PasteErrorModalBody';
 import styles from './InfoModal.module.less';
 
 function ErrorInfoModal(props) {
+  const { t } = useTranslation(['common', 'dialogs']);
   // props.message is one of the fixed command identifiers dispatched by
   // openInfoModal('Paste' | 'Copy' | 'Cut') in state/shared.ts — not
   // display text, so compare against the literal identifier, not a
   // translatable title (see action/index.ts's `paste` action title key).
   const isPasteError = props.message === 'Paste';
 
-  const defaultCutCopyMessage = `This action is unavailable via menu. Instead, use shortcut to ${props.message}.`;
+  const defaultCutCopyMessage = t('dialogs:infoModal.defaultCutCopyMessage', {
+    command: props.message,
+  });
 
   const headerContent = <div>{props.title ?? error.message}</div>;
 
@@ -43,7 +47,7 @@ function ErrorInfoModal(props) {
           key="ok"
           data-testid={props.testId || 'info-modal-close'}
         >
-          {props.button || 'Close'}
+          {props.button || t('common:button.close')}
         </button>,
       ]}
       headerContent={headerContent}

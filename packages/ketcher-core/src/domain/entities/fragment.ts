@@ -111,12 +111,10 @@ export class Fragment {
   }
 
   clone(aidMap: Map<number, number>) {
-    const stereoAtoms = this.#stereoAtoms.map((aid) => {
+    const stereoAtoms = this.#stereoAtoms
+    .filter((aid) => aidMap.has(aid))
+    .map((aid) => {
       const mappedId = aidMap.get(aid);
-      assert(
-        mappedId !== undefined,
-        `Fragment.clone: atom id ${aid} is missing from the provided aidMap`,
-      );
       return mappedId;
     });
     const fr = new Fragment(

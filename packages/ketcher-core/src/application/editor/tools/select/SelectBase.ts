@@ -85,11 +85,8 @@ abstract class SelectBase implements BaseTool {
   private readonly canvasResizeObserver?: ResizeObserver;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
   public mode:
-    | 'moving'
-    | 'selecting'
-    | 'standby'
-    | 'rotating'
-    | 'rotating-center' = 'standby';
+    'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
+    'standby';
 
   protected rotationStartAngle = 0;
   protected rotationCenter: Vec2 | null = null;

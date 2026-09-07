@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -468,7 +466,7 @@ class ReBond extends ReObject {
     }
     this.setHover(this.hover, render);
 
-    let ipath = null;
+    let ipath: ReturnType<typeof getIdsPath>;
     const bondIdxOff = options.subFontSize * 0.6;
     if (options.showBondIds) {
       ipath = getIdsPath(bid, paper, hb1, hb2, bondIdxOff, 0.5, 0.5, hb1.norm);
@@ -821,7 +819,7 @@ function getBondPath(
   hb2: HalfBond,
   isSnapping: boolean,
 ): RenderPath | null {
-  let path: RenderPath | null = null;
+  let path: RenderPath | null;
   const render = restruct.render;
   const struct = restruct.molecule;
   const shiftA = !restruct.atoms.get(hb1.begin)?.showLabel;
@@ -1580,7 +1578,7 @@ function getBondMark(
   hb2: HalfBond,
 ) {
   const options = render.options;
-  let mark: string | null = null;
+  let mark: string;
   let tooltip: string | null = null;
   if (bond.b.customQuery) {
     mark = bond.b.customQuery;

@@ -1271,7 +1271,7 @@ function bondSingleEither(
   const bsp = 0.7 * options.stereoBond;
 
   let path = 'M' + toFixed(a.x) + ',' + toFixed(a.y);
-  let r = a;
+  let r: Vec2;
   for (let i = 0; i < nlines; ++i) {
     r = a
       .addScaled(d, step * (i + 0.5))

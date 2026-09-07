@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -64,7 +62,7 @@ export class SGroupBracketParams {
   }
 }
 
-type SGroupContext = typeof SgContexts[keyof typeof SgContexts];
+type SGroupContext = (typeof SgContexts)[keyof typeof SgContexts];
 
 interface SGroupData {
   [key: string]: unknown;
@@ -337,8 +335,7 @@ export class SGroup {
 
   addAttachmentPoints(
     attachmentPoints:
-      | ReadonlyArray<SGroupAttachmentPoint>
-      | SGroupAttachmentPoint[],
+      ReadonlyArray<SGroupAttachmentPoint> | SGroupAttachmentPoint[],
     validateUniqueness = true,
   ): void {
     for (const attachmentPoint of attachmentPoints) {

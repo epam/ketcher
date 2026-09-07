@@ -36,7 +36,10 @@ export type AtomAllAttributeName = AtomAttributeName | AtomQueryPropertiesName;
 export type AtomAllAttributeValue =
   | AtomAttributes[AtomAttributeName]
   | AtomQueryProperties[AtomQueryPropertiesName];
-type NormalizedEditorSelection = Record<typeof selectionKeys[number], number[]>;
+type NormalizedEditorSelection = Record<
+  (typeof selectionKeys)[number],
+  number[]
+>;
 type ClosestAtom = {
   id: number;
   dist: number;

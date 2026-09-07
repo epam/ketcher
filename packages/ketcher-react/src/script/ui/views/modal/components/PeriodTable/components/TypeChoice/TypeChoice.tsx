@@ -53,7 +53,6 @@ function TypeChoice({ value, onChange, disabled }: Readonly<TypeChoiceProps>) {
             schema={undefined}
             innerRef={undefined}
           />
-          {/* eslint-enable jsx-a11y/label-has-associated-control */}
           {type.title}
         </label>
       ))}

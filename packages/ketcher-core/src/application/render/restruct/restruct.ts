@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -95,8 +93,9 @@ class ReStruct {
     RaphaelPath
   >;
 
-  public connectedComponents: Pool<Pile> = new Pool();
+  public connectedComponents: Pool<Pile<number>> = new Pool();
   private readonly ccFragmentType: Pool<number> = new Pool();
+
   private structChanged = false;
   public needRecalculateVisibleAtomsAndBonds = false;
 
@@ -228,10 +227,10 @@ class ReStruct {
 
   getConnectedComponent(
     aid: Array<number> | number,
-    adjacentComponents: Pile,
-  ): Pile {
+    adjacentComponents: Pile<number>,
+  ): Pile<number> {
     const list = Array.isArray(aid) ? Array.from(aid) : [aid];
-    const ids = new Pile();
+    const ids = new Pile<number>();
 
     while (list.length > 0) {
       const aid = list.pop();
@@ -254,7 +253,7 @@ class ReStruct {
 
   addConnectedComponent(idSet: Pile<number>): number {
     const compId = this.connectedComponents.add(idSet);
-    const adjacentComponents = new Pile();
+    const adjacentComponents = new Pile<number>();
     const aidSet = this.getConnectedComponent(
       Array.from(idSet),
       adjacentComponents,
@@ -275,7 +274,12 @@ class ReStruct {
   }
 
   removeConnectedComponent(ccid: number): boolean {
-    this.connectedComponents.get(ccid)?.forEach((aid) => {
+    const connectedComponent = this.connectedComponents.get(ccid);
+    if (!connectedComponent) {
+      return false;
+    }
+
+    connectedComponent.forEach((aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.component = -1;
     });
@@ -287,7 +291,7 @@ class ReStruct {
     this.atoms.forEach((atom, aid) => {
       if (atom.component >= 0) return;
 
-      const adjacentComponents = new Pile();
+      const adjacentComponents = new Pile<number>();
       const idSet = this.getConnectedComponent(aid, adjacentComponents);
       adjacentComponents.forEach((ccid) => {
         this.removeConnectedComponent(ccid);

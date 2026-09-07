@@ -113,12 +113,12 @@ export function collectMonomerBonds(monomer: BaseMonomer): BondRecord[] {
     if (bond instanceof PolymerBond) {
       otherEntity =
         bond.firstMonomer === monomer
-          ? bond.secondMonomer ?? null
+          ? (bond.secondMonomer ?? null)
           : bond.firstMonomer;
       otherAttachmentPoint =
         bond.firstMonomer === monomer
-          ? bond.secondMonomerAttachmentPoint ?? null
-          : bond.firstMonomerAttachmentPoint ?? null;
+          ? (bond.secondMonomerAttachmentPoint ?? null)
+          : (bond.firstMonomerAttachmentPoint ?? null);
     } else if (bond instanceof MonomerToAtomBond) {
       // MonomerToAtomBond connects a monomer to an atom; we treat the atom
       // side as the "other entity" placeholder — but MonomerToAtomBond

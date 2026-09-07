@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -94,6 +92,17 @@ class ReAtom extends ReObject {
   };
 
   private expandedMonomerAttachmentPoints?: Element | null;
+
+  // Number of visel.boxes entries that belong to the atom's own label
+  // (symbol, implicit H, isotope, radical, charge, …), recorded right
+  // before the aam/stereo/query annotation is added to the visel.
+  // Selection/hover contours union only these boxes instead of the full
+  // visel bounding box, otherwise the contour ends up sized/positioned
+  // around the annotation text instead of the atom label (see #3946).
+  // Reading a slice of visel.boxes (rather than caching a Box2Abs) keeps
+  // this correct even when the visel is translated/rotated in place
+  // (e.g. dragging a fragment) without a full atom redraw.
+  private labelBoxCount = 0;
 
   constructor(atom: Atom) {
     super('atom');
@@ -282,12 +291,28 @@ class ReAtom extends ReObject {
     }
   }
 
+  // Same coordinate transform as ReObject.prototype.getVBoxObj, but applied
+  // to the union of only the atom's own label boxes rather than the full
+  // visel bounding box (which also includes the aam/stereo/query
+  // annotation).
+  private getLabelVBoxObj(render: Render): Box2Abs | null {
+    const labelBoxes = this.visel.boxes.slice(0, this.labelBoxCount);
+    if (labelBoxes.length === 0) {
+      return this.getVBoxObj(render);
+    }
+    let vbox = labelBoxes.reduce((union, box) => Box2Abs.union(union, box));
+    if (render.options.offset) {
+      vbox = vbox.translate(render.options.offset.negated());
+    }
+    return vbox.transform(Scale.canvasToModel, render.options);
+  }
+
   getLabeledSelectionContour(render: Render, highlightPadding = 0) {
     const { paper, ctab: restruct, options } = render;
     const { fontszInPx, radiusScaleFactor } = options;
     const padding = fontszInPx * radiusScaleFactor + highlightPadding;
     const radius = fontszInPx * radiusScaleFactor * 2 + highlightPadding;
-    const box = this.getVBoxObj(restruct.render);
+    const box = this.getLabelVBoxObj(restruct.render);
     if (!box) {
       return this.getUnlabeledSelectionContour(render, highlightPadding);
     }
@@ -1038,6 +1063,12 @@ class ReAtom extends ReObject {
 
     // draw hover after label is calculated
     this.setHover(this.hover, render);
+
+    // Record how many boxes belong to the label itself before the
+    // aam/stereo/query annotation below is added to the visel, so
+    // selection/hover contours can be sized around the label instead of
+    // the annotation.
+    this.labelBoxCount = this.visel.boxes.length;
 
     const stereoLabel = this.a.stereoLabel; // Enhanced Stereo
     const aamText = getAamText(this);

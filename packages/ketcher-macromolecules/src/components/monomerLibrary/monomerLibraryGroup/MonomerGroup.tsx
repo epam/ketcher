@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/use-memo */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *

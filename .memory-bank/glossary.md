@@ -53,7 +53,7 @@
 
 | Acronym | Expansion                                        | Meaning                                                                      |
 | ------- | ------------------------------------------------ | ---------------------------------------------------------------------------- |
-| KET     | Ketcher JSON Format                              | Ketcher's native JSON-based chemical structure format                        |
+| KET     | Ketcher JSON Format                              | Ketcher's native JSON-based chemical structure format — full schema in [formats/ket-1.0-specification.md](./formats/ket-1.0-specification.md) and [formats/ket-2.0-specification.md](./formats/ket-2.0-specification.md) |
 | MOL     | Molfile                                          | MDL Molfile format (V2000/V3000) - industry standard for chemical structures |
 | SMILES  | Simplified Molecular Input Line Entry System     | Linear text notation for chemical structures                                 |
 | SMARTS  | SMILES Arbitrary Target Specification            | Pattern matching extension of SMILES                                         |

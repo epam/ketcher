@@ -206,14 +206,14 @@ export const anglesToSector = {
 };
 
 export enum attachmentPointNumberToAngle {
-  'R1' = 0,
-  'R2' = 180,
-  'R3' = 270,
-  'R4' = 90,
-  'R5' = 45,
-  'R6' = 135,
-  'R7' = 315,
-  'R8' = 225,
+  R1 = 0,
+  R2 = 180,
+  R3 = 270,
+  R4 = 90,
+  R5 = 45,
+  R6 = 135,
+  R7 = 315,
+  R8 = 225,
 }
 
 export const sectorsList = [45, 90, 135, 180, 225, 270, 315, 0, 360];

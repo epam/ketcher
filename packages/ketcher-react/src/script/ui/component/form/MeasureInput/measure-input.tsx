@@ -1,5 +1,4 @@
 /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -37,8 +36,10 @@ interface Schema {
   properties?: Record<string, Schema>;
 }
 
-interface MeasureInputProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
+interface MeasureInputProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'onChange'
+> {
   schema: Schema;
   extraSchema?: Schema;
   value: number | string;
@@ -128,8 +129,7 @@ const MeasureInput = ({
     if (internalValue !== stringifiedValue) {
       onChange(parseFloat(internalValue));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [internalValue]);
+  }, [internalValue, stringifiedValue, onChange]);
 
   const handleChange = (value: unknown) => {
     const stringifiedValue = String(value);

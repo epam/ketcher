@@ -36,7 +36,6 @@ const ElementNumber = (props: Props) => {
         value={value}
         data-testid={'element-number'}
       />
-      {/* eslint-enable jsx-a11y/label-has-associated-control */}
     </label>
   );
 };

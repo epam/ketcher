@@ -1,5 +1,4 @@
 /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -209,15 +208,12 @@ export const TemplateDialog: FC<Props> = (props) => {
     saltsAndSolvents,
     filter,
   );
-  const [filteredFG, setFilteredFG] = useState(
-    functionalGroups[FUNCTIONAL_GROUPS],
+  const filteredFG = useMemo(
+    () => filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS],
+    [functionalGroups, filter],
   );
 
   const filteredTemplateLib = filterLibSelector(props);
-
-  useEffect(() => {
-    setFilteredFG(filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS]);
-  }, [functionalGroups, filter]);
 
   useEffect(() => {
     searchInputRef.current?.focus();

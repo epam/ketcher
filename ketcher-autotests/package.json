@@ -28,11 +28,11 @@
   "devDependencies": {
     "@playwright/test": "^1.62.1",
     "cross-env": "^7.0.3",
-    "eslint": "^9.39.5",
+    "eslint": "10.9.0",
     "eslint-plugin-react-you-might-not-need-an-effect": "^1.0.1",
     "glob": "^13.0.6",
     "lint-staged": "^16.4.0",
-    "prettier": "2.8.4",
+    "prettier": "^3.9.6",
     "typescript": "^6.0.3"
   },
   "dependencies": {

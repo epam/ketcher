@@ -55,11 +55,11 @@ const isUserEditing = (): boolean => {
   // Check for input, textarea, or contenteditable
   return Boolean(
     el.tagName === 'TEXTAREA' ||
-      (el.tagName === 'INPUT' &&
-        (el as HTMLInputElement).type !== 'button' &&
-        (el as HTMLInputElement).type !== 'submit' &&
-        (el as HTMLInputElement).type !== 'reset') ||
-      (el as HTMLElement).contentEditable === 'true',
+    (el.tagName === 'INPUT' &&
+      (el as HTMLInputElement).type !== 'button' &&
+      (el as HTMLInputElement).type !== 'submit' &&
+      (el as HTMLInputElement).type !== 'reset') ||
+    (el as HTMLElement).contentEditable === 'true',
   );
 };
 

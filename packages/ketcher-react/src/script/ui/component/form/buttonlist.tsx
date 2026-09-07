@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable react-hooks/immutability */
-
 import { xor } from 'lodash/fp';
 
 interface Schema {

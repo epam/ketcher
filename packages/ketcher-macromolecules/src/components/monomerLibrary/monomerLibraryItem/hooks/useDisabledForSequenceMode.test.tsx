@@ -149,4 +149,28 @@ describe('useDisabledForSequenceMode hook', () => {
       expect(result3.current).toBe(true);
     });
   });
+
+  describe('for groups without RNA builder restrictions', () => {
+    // The RNA builder renders ambiguous monomers through a MonomerGroup that
+    // passes no groupName, so this branch is reached while
+    // isSequenceEditInRNABuilderMode is true. Nothing may be disabled there,
+    // regardless of which caps the monomer happens to carry.
+    it('should return false if there is no groupName', () => {
+      mockUseAppSelector.mockReturnValue(true);
+      mockUseSelector.mockImplementation(() => true);
+      monomer.props.MonomerCaps = {};
+      const { result } = renderHook(() => useDisabledForSequenceMode(monomer));
+      expect(result.current).toBe(false);
+    });
+
+    it('should return false for a group the RNA builder does not restrict', () => {
+      mockUseAppSelector.mockReturnValue(true);
+      mockUseSelector.mockImplementation(() => true);
+      monomer.props.MonomerCaps = {};
+      const { result } = renderHook(() =>
+        useDisabledForSequenceMode(monomer, MonomerGroups.PEPTIDES),
+      );
+      expect(result.current).toBe(false);
+    });
+  });
 });

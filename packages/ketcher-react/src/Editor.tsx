@@ -157,10 +157,10 @@ export const Editor = (props: Props) => {
       moleculesEditor &&
       (macromoleculesEditor || disableMacromoleculesEditor)
     ) {
-      // While ketcher.id is guaranteed unique per session by lodash.uniqueId() in ketcher-core,
-      // we use object identity comparison (reference check) as defense-in-depth.
-      // This ensures that if a new Ketcher instance is ever created (even if IDs were to collide),
-      // the consumer is re-initialized with the correct instance, preventing system desync.
+      // After analysis, we identified potential risks in removing either check:
+      // 1. Without ID check: Risk of race conditions if onInit is called before the instance is registered in ketcherProvider.
+      // 2. Without Reference check: Risk of system desync if a new instance theoretically reuses an old ID.
+      // We keep both to ensure the consumer is initialized only when the instance is both registered AND uniquely new.
       if (
         ketcherProvider.getIndexById(ketcher.id) !== -1 &&
         initializedKetcherRef.current !== ketcher

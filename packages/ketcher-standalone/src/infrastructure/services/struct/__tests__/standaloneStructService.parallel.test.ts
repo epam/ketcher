@@ -19,9 +19,14 @@ import { Command, OutputMessage } from '../indigoWorker.types';
 import { ChemicalMimeType } from 'ketcher-core';
 import { getIndigoWorker } from '_indigo-worker-import-alias_';
 
-// Mock modules are defined in __mocks__ directory and configured in jest.config.js
-jest.mock('_indigo-worker-import-alias_');
-jest.mock('_indigo-ketcher-import-alias_');
+// Mock the build-time aliases that Rollup resolves at compile time
+jest.mock('_indigo-worker-import-alias_', () => ({
+  getIndigoWorker: jest.fn(),
+}));
+
+jest.mock('_indigo-ketcher-import-alias_', () =>
+  jest.fn(() => Promise.resolve({})),
+);
 
 // Mock ketcher-core functions that are called
 jest.mock('ketcher-core', () => {
@@ -43,15 +48,15 @@ const mockWorker = {
   terminate: jest.fn(),
 };
 
-// Set up the mock worker implementation
-(getIndigoWorker as jest.Mock).mockReturnValue(mockWorker);
-
 describe('StandaloneStructService parallel requests (issue #2485)', () => {
   let service: IndigoService;
   let messageHandler: (e: MessageEvent<OutputMessage<string>>) => void;
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Configure the mocked getIndigoWorker to return our mock worker
+    (getIndigoWorker as jest.Mock).mockReturnValue(mockWorker);
 
     service = new IndigoService({});
     service.addKetcherId('test-ketcher-id');

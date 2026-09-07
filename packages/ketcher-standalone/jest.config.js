@@ -1,22 +1,22 @@
 module.exports = {
   testMatch: ['**/__tests__/**/?(*.)+(spec|test).+(ts|js)'],
-  testPathIgnorePatterns: ['node_modules', 'dist'],
+  testPathIgnorePatterns: ['fixtures', 'dist', 'node_modules'],
   testEnvironment: 'node',
   transform: {
+    '\\.js?$': 'babel-jest',
     '^.+\\.(ts|tsx)$': [
-      'babel-jest',
+      'ts-jest',
       {
-        presets: [
-          ['@babel/preset-env', { targets: { node: 'current' } }],
-          '@babel/preset-typescript',
-        ],
+        diagnostics: {
+          warnOnly: true,
+        },
       },
     ],
   },
   moduleNameMapper: {
-    '^_indigo-worker-import-alias_$': '<rootDir>/src/__mocks__/indigoWorker.ts',
-    '^_indigo-ketcher-import-alias_$':
-      '<rootDir>/src/__mocks__/indigoModule.ts',
+    '^_indigo-worker-import-alias_$':
+      '<rootDir>/src/infrastructure/services/struct/indigoWorkerImports/useWasmLoader',
+    '^_indigo-ketcher-import-alias_$': 'indigo-ketcher',
     '^d3$': '<rootDir>/../../node_modules/d3/dist/d3.min.js',
   },
   transformIgnorePatterns: [

@@ -22,6 +22,8 @@ import {
   openFileAndAddToCanvasAsNewProject,
   shiftCanvas,
   getVisibleCanvas,
+  deleteByKeyboard,
+  keyboardPressOnCanvas,
 } from '@utils';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -550,13 +552,13 @@ test.describe('Bugs: ketcher-3.15.0', () => {
       helmMolecule,
     );
     // Test hotkey "1" to select single bond tool
-    await page.keyboard.press('1');
+    await keyboardPressOnCanvas(page, '1');
 
     await takeEditorScreenshot(page);
     // Test Del hotkey erases when hovering on monomer
     const monomerA = getMonomerLocator(page, { monomerAlias: 'A' }).first();
     await monomerA.hover();
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
 
     await takeEditorScreenshot(page);
     // Paste again for Backspace test
@@ -569,7 +571,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     // Test Backspace hotkey erases when hovering on monomer
     const monomerU = getMonomerLocator(page, { monomerAlias: 'U' }).first();
     await monomerU.hover();
-    await page.keyboard.press('Backspace');
+    await keyboardPressOnCanvas(page, 'Backspace');
 
     await takeEditorScreenshot(page);
   });
@@ -656,9 +658,6 @@ test.describe('Bugs: ketcher-3.15.0', () => {
       page,
       'CDXML/Chromium-popup/Bugs/multiple_external_connections.cdr.CDXML',
     );
-
-    // Temporary diagnostic wait
-    await page.waitForTimeout(2_000);
 
     await takeEditorScreenshot(page, { maxDiffPixels: 100 });
   });

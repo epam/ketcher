@@ -24,11 +24,6 @@ import type { Mapping } from './mol.types';
 import utils from './utils';
 import v2000 from './v2000';
 
-interface SGroupSavingError extends Error {
-  id: number;
-  'error-type': string;
-}
-
 function getAtom(mol: Struct, id: number): Atom {
   const atom = mol.atoms.get(id);
   if (!atom) {
@@ -93,6 +88,15 @@ const prepareForSaving: Record<string, (sgroup: SGroup, mol: Struct) => void> =
     queryComponent: prepareQueryComponentForSaving,
   };
 
+/**
+ * Collects the bonds crossing the SRU brackets into `sgroup.bonds`, which is what
+ * the `M  SBL` line is written from.
+ *
+ * Any number of crossing bonds is supported: `makeAtomBondLines` wraps `SBL` at 15
+ * ids per line and `SGroup.getBracketParameters` has a branch that draws one bracket
+ * per crossing bond. Only MUL genuinely needs exactly two crossing bonds, and that
+ * constraint lives in `SGroup.prepareMulForSaving`.
+ */
 function prepareSruForSaving(sgroup: SGroup, mol: Struct): void {
   const xBonds: number[] = [];
   mol.bonds.forEach((bond, bid) => {
@@ -105,14 +109,6 @@ function prepareSruForSaving(sgroup: SGroup, mol: Struct): void {
       xBonds.push(bid);
     }
   });
-  if (xBonds.length !== 0 && xBonds.length !== 2) {
-    const error = new Error(
-      'Unsupported cross-bonds number',
-    ) as SGroupSavingError;
-    error.id = sgroup.id;
-    error['error-type'] = 'cross-bond-number';
-    throw error;
-  }
   sgroup.bonds = xBonds;
 }
 

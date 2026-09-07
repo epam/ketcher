@@ -96,11 +96,7 @@ jobs:
     if: ${{ !cancelled() }}
     needs: [part]
     runs-on: ubuntu-latest
-<<<<<<< HEAD
-    container: node:24.20.0-bullseye-slim
-=======
     container: node:24-trixie-slim
->>>>>>> e5cef1f655d245ad09d3e3e392c677e970896658
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7

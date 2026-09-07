@@ -68,7 +68,7 @@ export const Editor = (props: Props) => {
     useState<CoreEditor>();
 
   const [ketcherId, setKetcherId] = useState<string>('');
-  const calledForIdRef = useRef<string | null>(null);
+  const initializedKetcherRef = useRef<Ketcher | null>(null);
   const prevShowPolymerEditorRef = useRef<boolean>(showPolymerEditor);
   const editorsReadyRef = useRef<boolean>(false);
 
@@ -113,13 +113,11 @@ export const Editor = (props: Props) => {
     };
   }, [macromoleculesEditor, togglePolymerEditor]);
 
-  /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
   useEffect(() => {
     return () => {
       window.isPolymerEditorTurnedOn = false;
     };
   }, []);
-  /* eslint-enable react-you-might-not-need-an-effect/no-event-handler */
 
   /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
   useEffect(() => {
@@ -159,16 +157,20 @@ export const Editor = (props: Props) => {
       moleculesEditor &&
       (macromoleculesEditor || disableMacromoleculesEditor)
     ) {
+      // While ketcher.id is guaranteed unique per session by lodash.uniqueId() in ketcher-core,
+      // we use object identity comparison (reference check) as defense-in-depth.
+      // This ensures that if a new Ketcher instance is ever created (even if IDs were to collide),
+      // the consumer is re-initialized with the correct instance, preventing system desync.
       if (
         ketcherProvider.getIndexById(ketcher.id) !== -1 &&
-        calledForIdRef.current !== ketcher.id
+        initializedKetcherRef.current !== ketcher
       ) {
-        calledForIdRef.current = ketcher.id;
+        initializedKetcherRef.current = ketcher;
         onInit?.(ketcher);
       }
     }
 
-    // Note: We intentionally don't reset calledForIdRef in cleanup
+    // Note: We intentionally don't reset initializedKetcherRef in cleanup
     // to avoid duplicate calls when deps change
   }, [
     ketcher,

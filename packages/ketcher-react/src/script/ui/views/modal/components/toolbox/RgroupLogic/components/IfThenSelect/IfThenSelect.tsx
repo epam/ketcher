@@ -20,22 +20,29 @@ import classes from './IfThenSelect.module.less';
 import { useFormContext } from '../../../../../../../../../hooks';
 import Select from '../../../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../../../utils';
+import { useTranslation } from 'react-i18next';
 
 type Props = Pick<RgroupLogicProps, 'label' | 'rgroupLabels' | 'name'>;
 
 const IfThenSelect = (props: Props) => {
+  const { t } = useTranslation('dialogs');
   const { rgroupLabels, label, name } = props;
   const { schema } = useFormContext();
   const desc = {
     title: schema.properties?.[name ?? '']?.title,
     enum: [0],
-    enumNames: ['Always'],
+    enumNames: [t('toolbox.rgroupLogic.always')],
   };
 
   rgroupLabels.forEach((rgroupLabel) => {
     if (label !== rgroupLabel) {
       desc.enum.push(rgroupLabel);
-      desc.enumNames.push(`IF R${label} THEN R${rgroupLabel}`);
+      desc.enumNames.push(
+        t('toolbox.rgroupLogic.ifThenOption', {
+          ifLabel: label,
+          thenLabel: rgroupLabel,
+        }),
+      );
     }
   });
 

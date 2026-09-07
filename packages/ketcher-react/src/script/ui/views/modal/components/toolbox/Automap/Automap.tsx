@@ -16,39 +16,47 @@
 
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import Form, { Field } from '../../../../../component/form/form/form';
+import { useTranslation } from 'react-i18next';
 import { Dialog } from '../../../../components';
 import classes from './Automap.module.less';
 import Select from '../../../../../component/form/Select/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
+import i18n from 'src/i18n/i18n';
 
 type Props = BaseProps & BaseCallProps;
 
 export const automapSchema = {
-  title: 'Reaction Auto-Mapping',
+  title: i18n.t('dialogs:toolbox.automap.dialogTitle'),
   type: 'object',
   required: ['mode'],
   properties: {
     mode: {
-      title: 'Mode',
+      title: i18n.t('dialogs:toolbox.automap.modeLabel'),
       enum: ['discard', 'keep', 'alter', 'clear'],
-      enumNames: ['Discard', 'Keep', 'Alter', 'Clear'],
+      enumNames: [
+        i18n.t('dialogs:toolbox.automap.discard'),
+        i18n.t('dialogs:toolbox.automap.keep'),
+        i18n.t('dialogs:toolbox.automap.alter'),
+        i18n.t('dialogs:toolbox.automap.clear'),
+      ],
       default: 'discard',
     },
   },
 };
 
 const Automap = (props: Props) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   const { formState, ...rest } = props;
   return (
     <Dialog
-      title="Reaction Auto-Mapping"
+      title={t('dialogs:toolbox.automap.dialogTitle')}
       className={classes.automap}
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}
       withDivider
       buttons={['Cancel', 'OK']}
-      buttonsNameMap={{ OK: 'Apply' }}
+      buttonsNameMap={{ OK: t('common:button.apply') }}
     >
       <Form schema={automapSchema} {...formState}>
         <Field

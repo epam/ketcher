@@ -1,5 +1,13 @@
 {
   "errors": {
     "featureNotAvailableInBrowser": "This feature is not available in your browser"
-  }
+  },
+  "button": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "apply": "Apply",
+    "close": "Close"
+  },
+  "general": "General"
 }

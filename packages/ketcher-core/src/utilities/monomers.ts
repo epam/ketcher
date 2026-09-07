@@ -161,21 +161,20 @@ export function isValidModificationTypes(
     return false;
   }
 
-  // Check total length of all elements combined
-  const totalLength = modificationTypes.reduce(
-    (sum, type) => sum + type.length,
-    0,
-  );
+  // Trim spaces from all elements before validation
+  const trimmedTypes = modificationTypes.map((type) => type.trim());
+
+  // Check if all elements are empty after trimming
+  const hasNonEmptyContent = trimmedTypes.some((type) => type.length > 0);
+  if (!hasNonEmptyContent) {
+    return false;
+  }
+
+  // Check total length of all trimmed elements combined
+  const totalLength = trimmedTypes.reduce((sum, type) => sum + type.length, 0);
   if (totalLength > MODIFICATION_TYPES_MAX_LENGTH) {
     return false;
   }
 
-  // Check if all elements contain only whitespace/formatting characters
-  // \s matches all whitespace characters including tabs, newlines, carriage returns, etc.
-  const hasNonWhitespaceContent = modificationTypes.some((type) => {
-    const trimmed = type.replace(/\s+/g, '');
-    return trimmed.length > 0;
-  });
-
-  return hasNonWhitespaceContent;
+  return true;
 }

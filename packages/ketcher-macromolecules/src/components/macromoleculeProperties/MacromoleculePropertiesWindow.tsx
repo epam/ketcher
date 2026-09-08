@@ -15,9 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable react-hooks/refs */
-
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useDebouncedCallback } from 'hooks';
 import {
   MolarMeasurementUnit,
   selectEditor,
@@ -982,24 +980,11 @@ export const MacromoleculePropertiesWindow = () => {
   const recalculateMacromoleculeProperties =
     useRecalculateMacromoleculeProperties();
   const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
-  const recalculateMacromoleculePropertiesRef = useRef<
-    (shouldSkip?: boolean) => void
-  >(recalculateMacromoleculeProperties);
-  // debounce() returns a stateful function, not a pure value, so it is
-  // created once via useState's lazy initializer (matching the previous
-  // useCallback(..., []) semantics) rather than "memoized" with
-  // useCallback/useMemo.
-  const [debouncedRecalculateMacromoleculeProperties] = useState(() =>
-    debounce((shouldSkip?: boolean) => {
-      recalculateMacromoleculePropertiesRef.current(shouldSkip);
-    }, 500),
-  );
-
-  useEffect(() => {
-    recalculateMacromoleculePropertiesRef.current = (shouldSkip?: boolean) => {
-      recalculateMacromoleculeProperties(shouldSkip);
-    };
-  }, [recalculateMacromoleculeProperties]);
+  const {
+    debouncedCallback: debouncedRecalculateMacromoleculeProperties,
+    invokeImmediately: recalculateMacromoleculePropertiesImmediately,
+    cancel: cancelDebouncedRecalculateMacromoleculeProperties,
+  } = useDebouncedCallback(recalculateMacromoleculeProperties, 500);
 
   useEffect(() => {
     if (recalculatePropertiesHandler) {
@@ -1046,13 +1031,14 @@ export const MacromoleculePropertiesWindow = () => {
   // re-runs the effect above and schedules a debounced call; cancel it so
   // only this immediate calculation actually runs.
   useEffect(() => {
-    debouncedRecalculateMacromoleculeProperties.cancel();
-    recalculateMacromoleculePropertiesRef.current(skipDataFetch);
+    cancelDebouncedRecalculateMacromoleculeProperties();
+    recalculateMacromoleculePropertiesImmediately(skipDataFetch);
   }, [
     unipositiveIonsMeasurementUnit,
     oligonucleotidesMeasurementUnit,
     skipDataFetch,
-    debouncedRecalculateMacromoleculeProperties,
+    cancelDebouncedRecalculateMacromoleculeProperties,
+    recalculateMacromoleculePropertiesImmediately,
   ]);
 
   // The properties object is re-parsed from the Indigo response on every

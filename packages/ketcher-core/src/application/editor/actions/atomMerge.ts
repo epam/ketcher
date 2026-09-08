@@ -37,6 +37,7 @@ export function fromAtomMerge(
   dstId: number,
 ): Action {
   if (srcId === dstId) return new Action();
+  if (!restruct.molecule.atoms.has(dstId)) return new Action();
 
   const fragAction = new Action();
   mergeFragmentsIfNeeded(fragAction, restruct, srcId, dstId);
@@ -65,7 +66,8 @@ export function fromAtomMerge(
       // replace old bond with new bond
       const attrs = Bond.getAttrHash(bond);
       Object.keys(attrs).forEach((key) => {
-        action.addOp(new BondAttr(mergeBondId, key, attrs[key]));
+        const attrKey = key as keyof typeof attrs;
+        action.addOp(new BondAttr(mergeBondId, attrKey, attrs[attrKey]));
       });
     }
 

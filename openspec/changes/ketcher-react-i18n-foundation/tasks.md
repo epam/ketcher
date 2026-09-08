@@ -76,12 +76,12 @@
 
 ## 7. RTL Groundwork — CSS Logical Properties Audit
 
-- [ ] 7.1 Enumerate the ~52 LESS/CSS files in `ketcher-react` using physical directional properties (`left`/`right`, `margin-left/right`, `padding-left/right`, `border-left/right`, `text-align: left/right`)
-- [ ] 7.2 Convert UI-chrome stylesheets to logical properties (`inset-inline-start/end`, `margin-inline-start/end`, `padding-inline-start/end`, `border-inline-start/end`, `text-align: start/end`)
-- [ ] 7.3 Explicitly exclude/verify `StructEditor` canvas-related styles are left untouched (canvas must not mirror under RTL)
-- [ ] 7.4 **Code check:** `git diff --stat` shows only stylesheet changes, no `.ts`/`.tsx` changes; diff each converted rule is a 1:1 physical→logical swap, not a value change
+- [x] 7.1 Enumerate the ~52 LESS/CSS files in `ketcher-react` using physical directional properties (`left`/`right`, `margin-left/right`, `padding-left/right`, `border-left/right`, `text-align: left/right`) — found 51 files (92 total LESS/CSS files in the package), 138 matching declarations
+- [x] 7.2 Convert UI-chrome stylesheets to logical properties (`inset-inline-start/end`, `margin-inline-start/end`, `padding-inline-start/end`, `border-inline-start/end`, `text-align: start/end`) — 50 files converted (1 file, `StructEditor.module.less`, deliberately excluded — see 7.3); `float: left/right` (2 occurrences) left untouched as it's not in this task's listed property set and has no stable logical equivalent in this codebase's support matrix; the `@margin-left-right` LESS variable name left as-is since it's applied symmetrically via `margin: 0 @margin-left-right` shorthand and isn't itself a directional property
+- [x] 7.3 Explicitly exclude/verify `StructEditor` canvas-related styles are left untouched (canvas must not mirror under RTL) — `StructEditor.module.less`'s `.measureLog` debug overlay (`right: 0`) is the only match in that file; confirmed untouched via empty `git diff` on that file. Safe regardless, since its ancestor is permanently `dir="ltr"` per design.md Decision 4/Section 0
+- [x] 7.4 **Code check:** typecheck, unit tests 400/400, build, prettier all green; `git diff --name-only` touches only `.less` files, zero `.ts`/`.tsx`; every changed declaration verified to be a pure property-name swap by diffing added vs. removed value tokens (identical multisets on both sides)
 - [ ] 7.5 **Visual check:** `cd example && npm run dev:standalone` (Vite, hot-reloads directly from source per DEVNOTES.md — no rebuild needed) in default (LTR) mode, walk through every UI area touched in Sections 1–6 (toolbars, dialogs, settings, components) and confirm pixel-identical layout to before the conversion
-- [ ] 7.6 **Commit** this section's changes as one commit on `4384-language`
+- [x] 7.6 **Committed:** `e49f3d389f` on `4384-language`
 - [ ] 7.7 **STOP — report commit hash + diff for review before starting Section 8**
 
 ## 8. RTL Groundwork — Directional Icon Inventory

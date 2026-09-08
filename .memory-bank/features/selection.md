@@ -18,10 +18,11 @@ Before editing, moving, deleting, or transforming parts of a drawing, the user m
 - **Flip** — Horizontal Flip (`Alt+H`) and Vertical Flip (`Alt+V`) mirror the selection, or each structure individually when nothing/everything is selected.
 - **Erase** — the _Erase tool_ (`Delete` / `Backspace`) removes hovered or selected elements.
 - **Highlight** — right-click atoms/bonds to apply one of eight highlight colours.
-- **One-shot drawing tools** — after placing text, an image, a standard reaction
-  arrow, a reaction plus, or a simple shape, the editor returns to the user's
-  saved selection tool. The Multi-Tailed Arrow tool remains active so several
-  related arrows can be placed consecutively.
+- **One-shot drawing tools** — after placing text, an image, any reaction arrow
+  other than the Multi-Tailed Arrow, a reaction plus, or a simple shape, the
+  editor returns to the user's saved selection tool regardless of the user's
+  _Reset to Select_ setting. The Multi-Tailed Arrow tool remains active so
+  several related arrows can be placed consecutively.
 
 ## Expected behavior
 

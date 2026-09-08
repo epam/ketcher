@@ -1,7 +1,7 @@
-import { MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
+import { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
 
 const oneShotDrawingTools = new Set([
-  'images',
+  IMAGE_KEY,
   'reactionplus',
   'simpleobject',
   'text',
@@ -10,7 +10,7 @@ const oneShotDrawingTools = new Set([
 export function shouldResetToSelect(
   activeTool: string,
   resetOption: boolean | 'paste',
-  toolOptions?: unknown,
+  toolOptions?: string,
 ): boolean {
   return (
     resetOption === true ||

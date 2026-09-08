@@ -1,0 +1,101 @@
+name: Update Playwright Snapshots
+on:
+  workflow_dispatch:
+    inputs:
+      test_grep:
+        description: 'Grep pattern to filter tests (leave empty to update all)'
+        required: false
+        default: ''
+
+env:
+  CI: false
+  MODE: standalone
+  KETCHER_URL: http://127.0.0.1:4002
+  DOCKER: true
+  IGNORE_UNSTABLE_TESTS: true
+  CI_ENVIRONMENT: true
+  USE_SEPARATE_INDIGO_WASM: true
+
+permissions:
+  contents: write
+
+jobs:
+  build_ketcher:
+    runs-on: ubuntu-latest
+    container: node:24-trixie-slim
+    steps:
+      - name: Install dependencies
+        run: apt-get update -y && apt-get install -y git
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 1
+      - name: Git safe
+        run: git config --global --add safe.directory '*'
+      - name: Install NPM dependencies
+        run: npm ci
+      - name: Build all packages
+        run: npm run build:packages && npm run build:example:standalone
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: ketcher-dist-update
+          path: example/dist
+
+  update_snapshots:
+    timeout-minutes: 120
+    runs-on: ubuntu-latest
+    needs: build_ketcher
+    container: mcr.microsoft.com/playwright:v1.62.1-jammy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Git safe
+        run: git config --global --add safe.directory '*'
+      - name: Install dependencies
+        run: npm ci
+      - name: Create folder for dist
+        run: mkdir -p example/dist
+      - name: Download compiled ketcher
+        uses: actions/download-artifact@v8
+        with:
+          name: ketcher-dist-update
+          path: example/dist/
+      - name: Create env file
+        run: |
+          cat > ketcher-autotests/.env << EOF
+          DOCKER=true
+          KETCHER_URL=$KETCHER_URL
+          MODE=$MODE
+          IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS
+          CI_ENVIRONMENT=$CI_ENVIRONMENT
+          USE_SEPARATE_INDIGO_WASM=$USE_SEPARATE_INDIGO_WASM
+          EOF
+      - name: Run tests with snapshot update
+        run: |
+          cd example/ && nohup npm run serve:standalone > /dev/null 2>&1 &
+          cd ketcher-autotests/
+          npx playwright install chromium
+          if [ -n "${{ inputs.test_grep }}" ]; then
+            npx playwright test --project=chromium --update-snapshots=changed --grep "${{ inputs.test_grep }}"
+          else
+            npx playwright test --project=chromium --update-snapshots=changed
+          fi
+        continue-on-error: true
+      - name: Commit and push updated snapshots
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add -A ketcher-autotests/tests/specs/
+          git add -A ketcher-autotests/tests/test-data/
+          if git diff --cached --quiet; then
+            echo "No snapshot changes to commit"
+          else
+            git commit -m "chore: update Playwright snapshots after fix"
+            git push origin HEAD:${{ github.ref_name }}
+          fi

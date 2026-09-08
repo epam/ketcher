@@ -1,6 +1,7 @@
 export { BaseRenderer } from './BaseRenderer';
 export { BaseMonomerRenderer } from './BaseMonomerRenderer';
 export { AtomRenderer } from './AtomRenderer';
+export { BondRenderer } from './BondRenderer';
 export { ChemRenderer } from './ChemRenderer';
 export { PeptideRenderer } from './PeptideRenderer';
 export { PhosphateRenderer } from './PhosphateRenderer';

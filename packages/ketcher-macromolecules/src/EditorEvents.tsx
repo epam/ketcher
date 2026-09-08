@@ -42,6 +42,7 @@ import {
   ToolName,
   AtomRenderer,
   BaseRenderer,
+  BondRenderer,
   SGroupRenderer,
   SettingsManager,
   guardForMacromoleculesEditor,
@@ -339,6 +340,7 @@ export const EditorEvents = () => {
 
       if (
         !(renderer instanceof AtomRenderer) &&
+        !(renderer instanceof BondRenderer) &&
         !(renderer instanceof SGroupRenderer)
       ) {
         return;

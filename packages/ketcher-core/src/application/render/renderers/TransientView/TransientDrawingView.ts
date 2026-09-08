@@ -30,6 +30,10 @@ import {
   GroupCentersnapView,
 } from 'application/render/renderers/TransientView/GroupCenterSnapView';
 import { type RotationViewParams, RotationView } from './RotationView';
+import {
+  type ReplacementHighlightViewParams,
+  ReplacementHighlightView,
+} from './ReplacementHighlightView';
 
 type ViewData<P> = {
   show: (layer: D3SvgElementSelection<SVGGElement, void>, params: P) => void;
@@ -226,6 +230,18 @@ export class TransientDrawingView {
 
   public hideRotation() {
     this.removeView(RotationView.viewName);
+  }
+
+  public showReplacementHighlight(params: ReplacementHighlightViewParams) {
+    this.addView(ReplacementHighlightView.viewName, {
+      show: ReplacementHighlightView.show,
+      params,
+      topLayer: true,
+    });
+  }
+
+  public hideReplacementHighlight() {
+    this.removeView(ReplacementHighlightView.viewName);
   }
 
   public clear() {

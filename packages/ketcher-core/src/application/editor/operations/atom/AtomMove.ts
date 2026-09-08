@@ -44,7 +44,7 @@ export class AtomMove extends BaseOperation {
     if (aid === null || !d) return;
     const atom = struct.atoms.get(aid);
     if (!atom) return;
-    atom.pp.add_(d); // eslint-disable-line no-underscore-dangle
+    atom.pp.add_(d);
     const reatom = restruct.atoms.get(aid);
     if (reatom) {
       const scaled = Scale.modelToCanvas(d, restruct.render.options);

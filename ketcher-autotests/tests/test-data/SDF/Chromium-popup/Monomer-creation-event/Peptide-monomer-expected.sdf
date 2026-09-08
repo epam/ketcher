@@ -52,6 +52,9 @@ monomerTemplate
 >  <aliasHELM>
 PeptTest
 
+>  <aliasBILN>
+
+
 >  <modificationTypes>
 Citrullination;modification-type-option-Hydroxylation;modification-type-option-Inversion;modification-type-option-N-methylation;Custom Modification;
 

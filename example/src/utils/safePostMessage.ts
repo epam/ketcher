@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 /**
  * Safely sends a postMessage to parent window with proper error handling
  * @param message - The message to send

@@ -42,6 +42,11 @@ The `packages/ketcher-core/src/domain/` directory must not import from `applicat
 **A6 — Single Ketcher instance per ketcherId**
 The `ketcherProvider` registry enforces at most one `Ketcher` instance per `ketcherId`. Code must use `ketcherProvider.getKetcher(id)` to retrieve instances — never store raw `Ketcher` references in module-level variables without going through the provider.
 
+**A7 — Only KET and MOL V2000 are parsed client-side for user-facing file I/O**
+`FormatterFactory` (`packages/ketcher-core/src/application/formatters/formatterFactory.ts`) routes only KET and plain MOL V2000 (within V2000's size/query-property limits) to a local, client-only formatter. Every other format — SMILES/SMARTS, InChI, CML, CDX/CDXML, RXN, **SDF**, FASTA, HELM, IDT, BILN, AxoLabs, MOL V3000, and out-of-limit MOL V2000 — falls through to `ServerFormatter`, which delegates to Indigo and returns a KET document or a structured error. Client-side handling of those formats must consume Indigo's KET/error output — never patch a client-side parser for the source format to fix an import bug.
+
+A local `SdfSerializer` also exists, but `FormatterFactory` never selects it — the SDF format case always resolves to `ServerFormatter`. `SdfSerializer` is used only to load Ketcher's bundled static template libraries (functional groups, salts/solvents, RNA presets) at startup, not for user-initiated SDF import/export.
+
 ---
 
 ## Behavioral Invariants

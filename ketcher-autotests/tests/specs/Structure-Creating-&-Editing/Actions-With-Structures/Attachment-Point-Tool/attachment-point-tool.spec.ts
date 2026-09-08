@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { test } from '@fixtures';
 import {

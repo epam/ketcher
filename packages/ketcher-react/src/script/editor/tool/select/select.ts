@@ -110,7 +110,7 @@ class SelectTool implements Tool {
     this.#lassoHelper = new LassoHelper(
       this.#mode === 'lasso' ? 0 : 1,
       editor,
-      this.#mode === 'fragment',
+      this.#mode === 'structure',
     );
   }
 
@@ -197,10 +197,12 @@ class SelectTool implements Tool {
       };
     } else if (ci.map === 'rgroups') {
       const rgroup = ctab.rgroups.get(ci.id);
-      sel = {
-        atoms: rgroup.getAtoms(rnd),
-        bonds: rgroup.getBonds(rnd),
-      };
+      if (rgroup) {
+        sel = {
+          atoms: rgroup.getAtoms(rnd),
+          bonds: rgroup.getBonds(rnd),
+        };
+      }
     } else if (ci.map === 'sgroupData') {
       if (isSelected(selection, ci)) return;
     }

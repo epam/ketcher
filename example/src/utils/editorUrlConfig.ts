@@ -6,11 +6,14 @@ export const getHiddenButtonsConfig = (): ButtonsConfig => {
 
   if (!hiddenButtons) return {};
 
-  return hiddenButtons.split(',').reduce((acc, button) => {
-    if (button) acc[button] = { hidden: true };
+  return hiddenButtons.split(',').reduce(
+    (acc, button) => {
+      if (button) acc[button] = { hidden: true };
 
-    return acc;
-  }, {} as { [val: string]: { hidden: boolean } });
+      return acc;
+    },
+    {} as { [val: string]: { hidden: boolean } },
+  );
 };
 
 export const isMacromoleculesEditorDisabled = (): boolean => {

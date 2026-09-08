@@ -1064,7 +1064,7 @@ export class Struct {
   }
 
   scaleMonomerMicromoleculeSgroups(scale: number) {
-    if (scale === 1) return;
+    if (Math.abs(scale - 1) < 1e-10) return;
 
     this.sgroups.forEach((item) => {
       if (!(item instanceof MonomerMicromolecule)) {

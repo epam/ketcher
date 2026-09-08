@@ -20,7 +20,6 @@ import {
   type ReactElement,
   useEffect,
   useLayoutEffect,
-  useRef,
 } from 'react';
 
 import clsx from 'clsx';
@@ -82,14 +81,14 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     primaryButtons,
     ...rest
   } = props;
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const draggable = params?.draggable !== false; // Default to true unless explicitly set to false
-  const { position, isDragging, handleRef, targetRef } = useDraggable({
-    enabled: draggable,
-  });
+  const { position, isDragging, handleRef, targetRef } =
+    useDraggable<HTMLDialogElement>({
+      enabled: draggable,
+    });
 
   useLayoutEffect(() => {
-    const dialogElement = dialogRef.current;
+    const dialogElement = targetRef.current;
 
     // Use document.querySelector rather than dialogElement.closest() because
     // in popup mode the native <dialog> lives inside a MUI portal appended to
@@ -124,7 +123,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
         clipArea?.focus();
       }, 0);
     };
-  }, [focusable]);
+  }, [focusable, targetRef]);
 
   const isButtonOk = (button) => {
     return button === 'OK' || button === 'Save';
@@ -146,7 +145,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
   useEffect(() => {
     const keyDown = (event: KeyboardEvent) => {
-      const isFocusInsideDialog = dialogRef.current?.contains(
+      const isFocusInsideDialog = targetRef.current?.contains(
         document.activeElement,
       );
 
@@ -173,12 +172,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
   return (
     <dialog
-      ref={(el) => {
-        dialogRef.current = el;
-        (
-          targetRef as React.MutableRefObject<HTMLDialogElement | null>
-        ).current = el;
-      }}
+      ref={targetRef}
       open
       data-testid={'info-modal-window'}
       tabIndex={-1}

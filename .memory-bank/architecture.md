@@ -15,13 +15,12 @@ The two modes coexist in the same browser tab. Switching between them is control
 
 ## Package Structure
 
-```
-packages/
-├── ketcher-core/         # Domain model, application logic, serializers, renderers
-├── ketcher-react/        # React UI for micromolecules editor (small molecules)
-├── ketcher-macromolecules/ # React UI for macromolecules editor (polymers)
-└── ketcher-standalone/   # Standalone bundle: Indigo WASM + ketcher-core glue
-```
+| Package                            | Purpose                                                 |
+| ---------------------------------- | ------------------------------------------------------- |
+| `packages/ketcher-core/`           | Domain model, application logic, serializers, renderers |
+| `packages/ketcher-react/`          | React UI for micromolecules editor (small molecules)    |
+| `packages/ketcher-macromolecules/` | React UI for macromolecules editor (polymers)           |
+| `packages/ketcher-standalone/`     | Standalone bundle: Indigo WASM + ketcher-core glue      |
 
 ## Subsystems
 
@@ -29,25 +28,23 @@ packages/
 
 The shared foundation that both UI packages build on. It owns the entire domain model (atoms, bonds, monomers, chains), both rendering pipelines, all serializers and format converters, the editor and history machinery, and the Indigo service abstraction — everything that is not React UI.
 
-```
-ketcher-core/src/
-├── application/      # Editor, renderers, formatters
-│   ├── editor/       # CoreEditor, EditorHistory, tools, operations, modes
-│   ├── render/       # Raphael (micro) & D3/SVG (macro) renderers
-│   ├── formatters/   # Read/write molecule data in various formats
-│   ├── indigo.ts     # Thin wrapper over StructService (chemistry backend)
-│   ├── ketcher.ts    # Public Ketcher facade (API surface)
-│   └── ketcherBuilder.ts / ketcherProvider.ts
-├── domain/           # Pure domain model
-│   ├── entities/     # Struct, Atom, Bond, BaseMonomer, PolymerBond, DrawingEntitiesManager, …
-│   ├── serializers/  # KET, MOL, SDF serializers
-│   ├── services/     # StructService interface, StructServiceProvider
-│   ├── constants/    # Elements, monomers, layout constants
-│   └── helpers/      # Pure helpers (monomers, rna, attachmentPoints, …)
-├── infrastructure/   # StructService HTTP implementations (remote mode)
-├── utilities/        # KetcherLogger, SettingsManager, clipboard, SVG utils
-└── types/            # Shared TypeScript type declarations
-```
+| Path                                              | Purpose                                                                 |
+| ------------------------------------------------- | ----------------------------------------------------------------------- |
+| `ketcher-core/src/application/editor/`            | CoreEditor, EditorHistory, tools, operations, modes                     |
+| `ketcher-core/src/application/render/`            | Raphael (micro) & D3/SVG (macro) renderers                              |
+| `ketcher-core/src/application/formatters/`        | Read/write molecule data in various formats                             |
+| `ketcher-core/src/application/indigo.ts`          | Thin wrapper over StructService (chemistry backend)                     |
+| `ketcher-core/src/application/ketcher.ts`         | Public Ketcher facade (API surface)                                     |
+| `ketcher-core/src/application/ketcherBuilder.ts`  | Builder for constructing Ketcher instances                              |
+| `ketcher-core/src/application/ketcherProvider.ts` | Registry: at most one Ketcher instance per ketcherId                    |
+| `ketcher-core/src/domain/entities/`               | Struct, Atom, Bond, BaseMonomer, PolymerBond, DrawingEntitiesManager, … |
+| `ketcher-core/src/domain/serializers/`            | KET, MOL, SDF serializers                                               |
+| `ketcher-core/src/domain/services/`               | StructService interface, StructServiceProvider                          |
+| `ketcher-core/src/domain/constants/`              | Elements, monomers, layout constants                                    |
+| `ketcher-core/src/domain/helpers/`                | Pure helpers (monomers, rna, attachmentPoints, …)                       |
+| `ketcher-core/src/infrastructure/`                | StructService HTTP implementations (remote mode)                        |
+| `ketcher-core/src/utilities/`                     | KetcherLogger, SettingsManager, clipboard, SVG utils                    |
+| `ketcher-core/src/types/`                         | Shared TypeScript type declarations                                     |
 
 ### 2. `ketcher-react`
 
@@ -112,7 +109,7 @@ flowchart TD
 - **EditorHistory** — pushes Command to undo/redo stack
 - **RenderersManager** — executes Command, updates SVG canvas
 
-**Format conversion flow** — see [serialization deep-dive](./modules/serialization.md) for full details.
+**Format conversion flow** — see [serialization deep-dive](./modules/serialization.md) for full details, and [formats/ket-1.0-specification.md](./formats/ket-1.0-specification.md) / [formats/ket-2.0-specification.md](./formats/ket-2.0-specification.md) for the full KET JSON schema.
 
 When the user exports or imports a structure, the formatter factory picks the right strategy based on the requested format. KET and MOL V2000 are handled by Ketcher itself. Every other format (SMILES, InChI, HELM, FASTA, and so on) is routed through Indigo — either a remote server or the embedded WASM build. In that case the model is first serialized to KET (the universal interchange format), sent to Indigo for conversion, and the result is returned. Import is the mirror: non-local formats are sent to Indigo, which returns KET, and KET is then deserialized into the internal model.
 

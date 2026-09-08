@@ -7,7 +7,6 @@ import {
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
-/* eslint-disable no-magic-numbers */
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,

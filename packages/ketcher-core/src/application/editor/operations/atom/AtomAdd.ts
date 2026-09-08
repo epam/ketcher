@@ -32,7 +32,7 @@ type Data = {
   pos: Point | null;
 };
 
-class AtomAdd extends BaseOperation {
+class AtomAdd extends BaseOperation<Data> {
   data: Data;
 
   constructor(atom?: Partial<AtomAttributes>, pos?: Point) {

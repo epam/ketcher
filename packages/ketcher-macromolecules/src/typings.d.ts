@@ -1,5 +1,5 @@
 // <reference types="react-scripts" />
-/* eslint-disable no-var, no-use-before-define */
+
 declare module '*.module.less' {
   const classes: { [key: string]: string };
   export default classes;
@@ -59,6 +59,7 @@ interface Window {
   ketcher?: {
     settingsService?: import('ketcher-core').ISettingsService;
   };
+  _ketcher_isChainLengthRulerDisabled?: boolean;
 }
 
 interface HTMLElement {

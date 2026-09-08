@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
@@ -330,7 +327,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
     await RightToolbar(page).clickAtom(Atom.Oxygen);
-    await clickOnCanvas(page, 100, 50);
+    await clickOnCanvas(page, 120, 50);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToCHEMTab();

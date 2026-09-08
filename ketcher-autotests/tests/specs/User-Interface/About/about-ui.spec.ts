@@ -38,14 +38,14 @@ test.describe('Open Ketcher', () => {
 
     await clickByLink(
       page,
-      'http://lifescience.opensource.epam.com/ketcher/#feedback',
+      'https://lifescience.opensource.epam.com/ketcher/#feedback',
     );
     await page.bringToFront();
 
-    await clickByLink(page, 'http://lifescience.opensource.epam.com/');
+    await clickByLink(page, 'https://lifescience.opensource.epam.com/');
     await page.bringToFront();
 
-    await clickByLink(page, 'http://lifescience.opensource.epam.com/indigo/');
+    await clickByLink(page, 'https://lifescience.opensource.epam.com/indigo/');
   });
 
   test('Close About floating window', async ({ page }) => {

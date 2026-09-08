@@ -325,6 +325,7 @@ export class CoreEditor {
       getKetcherRootRect: () => this.ketcherRootElementBoundingClientRect,
       getModeName: () => this.mode.modeName,
       getEditor: () => this,
+      getTransientDrawingView: () => this.transientDrawingView,
       placeItemOnCanvas: (item, position) =>
         this.placeItemOnCanvasForHandler(item, position),
       calculateAndStoreNextAutochainPosition: (lastMonomer) =>
@@ -1232,8 +1233,9 @@ export class CoreEditor {
     this.events.turnOnSequenceEditInRNABuilderMode.add(() =>
       this.onTurnOnSequenceEditInRNABuilderMode(),
     );
-    this.events.turnOffSequenceEditInRNABuilderMode.add(() =>
-      this.onTurnOffSequenceEditInRNABuilderMode(),
+    this.events.turnOffSequenceEditInRNABuilderMode.add(
+      (needToRemoveSelection?: boolean) =>
+        this.onTurnOffSequenceEditInRNABuilderMode(needToRemoveSelection),
     );
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
@@ -1282,8 +1284,6 @@ export class CoreEditor {
     this.events.setEditorLineLength.add(
       (lineLengthUpdate: Partial<EditorLineLength>) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         if (window._ketcher_isChainLengthRulerDisabled) {
           return;
         }
@@ -1303,8 +1303,6 @@ export class CoreEditor {
     this.events.toggleLineLengthHighlighting.add(
       (value: boolean, currentPosition = 0) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         if (window._ketcher_isChainLengthRulerDisabled) {
           return;
         }
@@ -1663,7 +1661,7 @@ export class CoreEditor {
     return {
       modelChanges,
       firstMonomer: isFivePrimePhosphate ? phosphate : sugar,
-      lastMonomer: isFivePrimePhosphate ? sugar : phosphate ?? sugar,
+      lastMonomer: isFivePrimePhosphate ? sugar : (phosphate ?? sugar),
       drawingEntities: [
         ...monomers,
         ...(sugar.attachmentPointsToBonds.R2
@@ -1831,12 +1829,14 @@ export class CoreEditor {
     this.sequenceMode.turnOnSequenceEditInRNABuilderMode();
   }
 
-  private onTurnOffSequenceEditInRNABuilderMode() {
+  private onTurnOffSequenceEditInRNABuilderMode(needToRemoveSelection = true) {
     if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
-    this.sequenceMode.turnOffSequenceEditInRNABuilderMode();
+    this.sequenceMode.turnOffSequenceEditInRNABuilderMode(
+      needToRemoveSelection,
+    );
   }
 
   private onChangeSequenceTypeEnterMode(mode: SequenceType) {
@@ -1985,8 +1985,7 @@ export class CoreEditor {
 
   private onSelectMode(
     data:
-      | LayoutMode
-      | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
+      LayoutMode | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
   ) {
     const command = new Command();
     const mode = typeof data === 'object' ? data.mode : data;
@@ -2486,8 +2485,6 @@ export class CoreEditor {
   public zoomToStructuresIfNeeded() {
     if (
       // Temporary solution to disable autozoom for the polymer editor in e2e tests
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       window._ketcher_isAutozoomDisabled ||
       !this.isCurrentModeWithAutozoom() ||
       !this.drawingEntitiesManager.hasMonomers

@@ -32,9 +32,6 @@ function throughFileReader(file: File): Promise<string> {
 
     rd.onload = () => {
       const content = rd.result;
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore msClose doesn't exist in File type
-      if (file.msClose) file.msClose();
       // readAsText below always yields a string result, but FileReader.result
       // is typed as string | ArrayBuffer | null, so narrow it explicitly
       // rather than trusting a cast.

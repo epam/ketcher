@@ -58,6 +58,12 @@ module.exports = override(
     config.plugins = config.plugins.filter(
       (plugin) => !(plugin instanceof HtmlWebpackPlugin),
     );
+    config.plugins = config.plugins.filter(
+      (plugin) =>
+        !['ESLintPlugin', 'ESLintWebpackPlugin'].includes(
+          plugin?.constructor?.name,
+        ),
+    );
     config.plugins.push(
       new HtmlWebpackPlugin({
         filename: 'index.html',

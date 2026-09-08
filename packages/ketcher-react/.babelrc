@@ -2,7 +2,7 @@
   "presets": [
     "@babel/env",
     ["@babel/react", { "runtime": "automatic" }],
-    ["@babel/typescript", { "allowDeclareFields": true }]
+    "@babel/typescript"
   ],
   "plugins": ["@babel/plugin-transform-runtime"]
 }

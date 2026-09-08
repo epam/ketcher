@@ -13,23 +13,18 @@ Provides a `StandaloneStructService` implementation that runs the Indigo cheminf
 
 ## Internal Structure
 
-```
-src/
-├── index.ts                    # Entry: re-exports infrastructure/services
-├── emptyIndex.js               # Shim entry so bundlers resolve Emscripten's import.meta.url (see file)
-└── infrastructure/
-    └── services/
-        ├── index.ts            # Exports StandaloneStructService(Provider)
-        └── struct/
-            ├── standaloneStructService.ts          # HTTP-free StructService impl; imports worker via _indigo-worker-import-alias_
-            ├── standaloneStructServiceProvider.ts  # StructServiceProvider (mode: 'standalone')
-            ├── indigoWorker.ts                     # Web worker; imports Indigo via _indigo-ketcher-import-alias_
-            ├── indigoWorker.types.ts               # Command / message types
-            ├── constants.ts                        # Init event names (render vs no-render)
-            └── indigoWorkerImports/                # Two worker-loading strategies swapped at build time
-                ├── useWasmLoader.ts                # web-worker-loader strategy (CJS-capable)
-                └── useOffMainThreadPlugin.ts       # OMT native-worker strategy (ESM only)
-```
+| Path                                                                               | Purpose                                                                           |
+| ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `src/index.ts`                                                                     | Entry: re-exports infrastructure/services                                         |
+| `src/emptyIndex.js`                                                                | Shim so bundlers resolve Emscripten's `import.meta.url`                           |
+| `src/infrastructure/services/index.ts`                                             | Exports `StandaloneStructService(Provider)`                                       |
+| `src/infrastructure/services/struct/standaloneStructService.ts`                    | HTTP-free `StructService` impl; imports worker via `_indigo-worker-import-alias_` |
+| `src/infrastructure/services/struct/standaloneStructServiceProvider.ts`            | `StructServiceProvider` (mode: `'standalone'`)                                    |
+| `src/infrastructure/services/struct/indigoWorker.ts`                               | Web worker; imports Indigo via `_indigo-ketcher-import-alias_`                    |
+| `src/infrastructure/services/struct/indigoWorker.types.ts`                         | Command / message types                                                           |
+| `src/infrastructure/services/struct/constants.ts`                                  | Init event names (render vs no-render)                                            |
+| `src/infrastructure/services/struct/indigoWorkerImports/useWasmLoader.ts`          | web-worker-loader strategy (CJS-capable)                                          |
+| `src/infrastructure/services/struct/indigoWorkerImports/useOffMainThreadPlugin.ts` | OMT native-worker strategy (ESM only)                                             |
 
 Build config lives at package root: `rollup.config.mjs` (six-variant config), `.babelrc`, `package.json` (`build`/`start` scripts + `exports` map).
 

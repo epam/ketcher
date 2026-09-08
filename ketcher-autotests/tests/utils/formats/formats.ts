@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {

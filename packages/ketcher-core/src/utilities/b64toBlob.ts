@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 export function b64toBlob(
   b64Data: string,
   contentType = '',

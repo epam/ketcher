@@ -55,13 +55,13 @@
 
 ## 5. Extraction — Reusable UI Components (`script/ui/views/components/*`)
 
-- [ ] 5.1 Inventory title/label/tooltip/aria-label strings in `AttachmentPointEditPopup`, `ContextMenu`, `MonomerCreationWizard`, `Spinner`, `Tooltip`
-- [ ] 5.2 Inventory the same for `StructEditor`'s own UI chrome (toolbars/overlays), explicitly excluding anything that renders inside the SVG canvas itself
-- [ ] 5.3 Add corresponding keys to `locales/en/components.json`
-- [ ] 5.4 Replace literals with `t()` calls
-- [ ] 5.5 **Code check:** `git diff --stat` touches only the listed component dirs + `locales/en/components.json`; grep confirms no remaining hardcoded literals; confirm no changes leaked into `StructEditor`'s canvas-rendering code
-- [ ] 5.6 **Visual check:** `cd example && npm run dev:standalone` (Vite, hot-reloads directly from source per DEVNOTES.md — no rebuild needed), open the attachment-point popup, right-click context menu, monomer creation wizard, a loading spinner state, and hover tooltips — text identical to before; confirm the molecule canvas itself renders unchanged
-- [ ] 5.7 **Commit** this section's changes as one commit on `4384-language`
+- [x] 5.1 Inventory title/label/tooltip/aria-label strings in `AttachmentPointEditPopup`, `ContextMenu`, `MonomerCreationWizard`, `Spinner`, `Tooltip` — `Spinner`/`Tooltip` confirmed to contain zero UI text (pure props-driven components), no changes needed
+- [x] 5.2 Inventory the same for `StructEditor`'s own UI chrome (toolbars/overlays), explicitly excluding anything that renders inside the SVG canvas itself — found one genuine string (`InfoPanel.tsx`'s "Query component" S-group label); `InfoTooltip.tsx`'s tooltip content is sourced from `ketcher-core`'s canvas rendering (`reatom.ts`/`rebond.ts` via `data-tooltip` attribute) and correctly left untouched as out-of-scope canvas-internal content
+- [x] 5.3 Add corresponding keys to `locales/en/components.json`
+- [x] 5.4 Replace literals with `t()` calls — also fixed a Section-1 regression where `BondMenuItems.tsx`/`SelectionMenuItems.tsx` rendered raw `tools[name].title` translation keys unresolved (now routed through `resolveActionTitle`)
+- [x] 5.5 **Code check:** typecheck, unit tests 400/400, circular-deps, build, prettier all green; grep (both narrow key-pattern and broad 40+-char literal sweeps) confirms no remaining hardcoded literals across all Section 5 directories; no changes leaked into `StructEditor`'s canvas-rendering code
+- [ ] 5.6 **Visual check:** `cd example && npm run dev:standalone` (Vite, hot-reloads directly from source per DEVNOTES.md — no rebuild needed), open the attachment-point popup, right-click context menu (atom/bond/selection/macromolecule variants), monomer creation wizard (all fields, RNA preset tabs, natural analogue picker, modification/aliases accordions), and hover a data S-group to see the "Query component" label — text identical to before; confirm the molecule canvas itself renders unchanged
+- [x] 5.7 **Committed:** `304a0cf8cd` on `4384-language`
 - [ ] 5.8 **STOP — report commit hash + diff for review before starting Section 6**
 
 ## 6. Extraction — Settings Panel

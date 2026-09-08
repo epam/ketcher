@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -147,52 +145,71 @@ export const RnaEditorExpanded = ({
       : undefined,
   );
 
-  const resolvePhosphatePosition = useCallback(
-    (preset: typeof newPreset): RnaPhosphatePosition | undefined => {
-      if (!preset?.phosphate) {
-        return undefined;
-      }
-
-      const {
-        is3PrimeAvailable: isRightPositionAvailable,
-        is5PrimeAvailable: isLeftPositionAvailable,
-      } = getPhosphatePositionAvailability(preset);
-
-      if (selectedPhosphatePosition === 'left' && isLeftPositionAvailable) {
-        return 'left';
-      }
-
-      if (selectedPhosphatePosition === 'right' && isRightPositionAvailable) {
-        return 'right';
-      }
-
-      if (preset.connections?.length) {
-        const presetPhosphatePosition = getRnaPresetPhosphatePosition(preset);
-
-        if (
-          (presetPhosphatePosition === 'left' && isLeftPositionAvailable) ||
-          (presetPhosphatePosition === 'right' && isRightPositionAvailable)
-        ) {
-          return presetPhosphatePosition;
-        }
-      }
-
-      if (isSequenceMode && isRightPositionAvailable) {
-        return 'right';
-      }
-
-      if (isLeftPositionAvailable && !isRightPositionAvailable) {
-        return 'left';
-      }
-
-      if (isRightPositionAvailable && !isLeftPositionAvailable) {
-        return 'right';
-      }
-
+  // Plain function — safe to call at render time and always reads the latest
+  // selectedPhosphatePosition / isSequenceMode from closure.
+  const resolvePhosphatePosition = (
+    preset: typeof newPreset,
+  ): RnaPhosphatePosition | undefined => {
+    if (!preset?.phosphate) {
       return undefined;
-    },
-    [selectedPhosphatePosition, isSequenceMode],
-  );
+    }
+
+    const {
+      is3PrimeAvailable: isRightPositionAvailable,
+      is5PrimeAvailable: isLeftPositionAvailable,
+    } = getPhosphatePositionAvailability(preset);
+
+    if (selectedPhosphatePosition === 'left' && isLeftPositionAvailable) {
+      return 'left';
+    }
+
+    if (selectedPhosphatePosition === 'right' && isRightPositionAvailable) {
+      return 'right';
+    }
+
+    if (preset.connections?.length) {
+      const presetPhosphatePosition = getRnaPresetPhosphatePosition(preset);
+
+      if (
+        (presetPhosphatePosition === 'left' && isLeftPositionAvailable) ||
+        (presetPhosphatePosition === 'right' && isRightPositionAvailable)
+      ) {
+        return presetPhosphatePosition;
+      }
+    }
+
+    if (isSequenceMode && isRightPositionAvailable) {
+      return 'right';
+    }
+
+    if (isLeftPositionAvailable && !isRightPositionAvailable) {
+      return 'left';
+    }
+
+    if (isRightPositionAvailable && !isLeftPositionAvailable) {
+      return 'right';
+    }
+
+    return undefined;
+  };
+
+  // Kept in sync every render so the monomer-group effect always calls the
+  // latest version without listing resolvePhosphatePosition as a dep (which
+  // would re-trigger on every selectedPhosphatePosition / isSequenceMode change
+  // and regenerate the preset name).
+  const resolvePhosphatePositionRef = useRef(resolvePhosphatePosition);
+  // eslint-disable-next-line react-hooks/refs
+  resolvePhosphatePositionRef.current = resolvePhosphatePosition;
+
+  // Guard refs — read inside the monomer-group effect without being listed as
+  // deps, preventing re-runs on slot clicks (activeMonomerGroup) or edit-mode
+  // toggle (isEditMode), which would drop editedName and regenerate the name.
+  const activeMonomerGroupRef = useRef(activeMonomerGroup);
+  // eslint-disable-next-line react-hooks/refs
+  activeMonomerGroupRef.current = activeMonomerGroup;
+  const isEditModeRef = useRef(isEditMode);
+  // eslint-disable-next-line react-hooks/refs
+  isEditModeRef.current = isEditMode;
 
   // For sequence edit in RNA Builder mode
   const sequenceSelection = useAppSelector(selectSequenceSelection);
@@ -248,7 +265,10 @@ export const RnaEditorExpanded = ({
   }, [dispatch, sequenceSelection]);
 
   useEffect(() => {
-    if (activeMonomerGroup !== RnaBuilderPresetsItem.Presets && isEditMode) {
+    if (
+      activeMonomerGroupRef.current !== RnaBuilderPresetsItem.Presets &&
+      isEditModeRef.current
+    ) {
       if (isSequenceEditInRNABuilderMode && activePresetMonomerGroup) {
         const monomerType =
           monomerGroupToPresetGroup[activePresetMonomerGroup.groupName];
@@ -292,7 +312,7 @@ export const RnaEditorExpanded = ({
               }
             : currentPreset;
           const resolvedPhosphatePosition =
-            resolvePhosphatePosition(updatedPreset);
+            resolvePhosphatePositionRef.current(updatedPreset);
           const presetFullName = updatedPreset.editedName
             ? updatedPreset.name
             : selectPresetFullName({
@@ -315,12 +335,16 @@ export const RnaEditorExpanded = ({
       }
     }
   }, [
-    activeMonomerGroup,
-    isEditMode,
+    // activeMonomerGroup and isEditMode are intentionally omitted — they are
+    // guard conditions read via refs. Including them would fire this effect on
+    // every slot click (activeMonomerGroup) or entering edit mode (isEditMode),
+    // which regenerates the preset name and drops editedName.
+    // resolvePhosphatePosition is intentionally omitted — it is stable (empty
+    // deps) and reads selectedPhosphatePosition/isSequenceMode via refs, so
+    // layout-mode switches no longer trigger this effect.
     isSequenceEditInRNABuilderMode,
     activePresetMonomerGroup,
     dispatch,
-    resolvePhosphatePosition,
   ]);
 
   const scrollToActiveItemInLibrary = (selectedGroup, selectedMonomer) => {

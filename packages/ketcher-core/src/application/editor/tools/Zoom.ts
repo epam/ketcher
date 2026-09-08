@@ -111,7 +111,7 @@ export class ZoomTool implements BaseTool {
 
   initActions() {
     this.zoom = zoom<SVGSVGElement, void>()
-      .extent(() => {
+      .extent((): [[number, number], [number, number]] => {
         const rect = this.canvasWrapper.node()?.getBoundingClientRect();
         return [
           [0, 0],

@@ -100,6 +100,9 @@ abstract class SelectBase implements BaseTool {
   private readonly selectEntitiesHandler = () => {
     this.updateRotationView();
   };
+  private autoScrollAnimationFrameId: number | null = null;
+  private static readonly AUTO_SCROLL_EDGE_THRESHOLD = 50; // pixels from edge to trigger auto-scroll
+  private static readonly AUTO_SCROLL_SPEED = 10; // pixels to scroll per frame
 
   /**
    * Reads renderer data from d3-bound event targets (`target.__data__`).
@@ -1006,12 +1009,61 @@ abstract class SelectBase implements BaseTool {
     return snappingOptions[0] || emptyResult;
   }
 
+  private handleAutoScrollDuringSelection(event: MouseEvent) {
+    const canvasWrapperNode = this.editor.zoomTool.canvasWrapper?.node();
+    if (!canvasWrapperNode) {
+      this.cancelAutoScroll();
+      return;
+    }
+
+    const rect = canvasWrapperNode.getBoundingClientRect();
+    const mouseY = event.clientY - rect.top;
+    const mouseX = event.clientX - rect.left;
+
+    let scrollDeltaX = 0;
+    let scrollDeltaY = 0;
+
+    // Check vertical edges
+    // Note: D3 zoom translateBy moves viewport, not content
+    // Negative values move viewport up (content appears to scroll down)
+    // Positive values move viewport down (content appears to scroll up)
+    if (mouseY < SelectBase.AUTO_SCROLL_EDGE_THRESHOLD) {
+      scrollDeltaY = SelectBase.AUTO_SCROLL_SPEED; // Mouse at top -> scroll content down
+    } else if (mouseY > rect.height - SelectBase.AUTO_SCROLL_EDGE_THRESHOLD) {
+      scrollDeltaY = -SelectBase.AUTO_SCROLL_SPEED; // Mouse at bottom -> scroll content up
+    }
+
+    // Check horizontal edges
+    if (mouseX < SelectBase.AUTO_SCROLL_EDGE_THRESHOLD) {
+      scrollDeltaX = SelectBase.AUTO_SCROLL_SPEED; // Mouse at left -> scroll content right
+    } else if (mouseX > rect.width - SelectBase.AUTO_SCROLL_EDGE_THRESHOLD) {
+      scrollDeltaX = -SelectBase.AUTO_SCROLL_SPEED; // Mouse at right -> scroll content left
+    }
+
+    if (scrollDeltaX !== 0 || scrollDeltaY !== 0) {
+      // Start continuous scrolling if not already started
+      if (this.autoScrollAnimationFrameId === null) {
+        const continuousScroll = () => {
+          this.editor.zoomTool.scrollBy(scrollDeltaX, scrollDeltaY);
+          this.autoScrollAnimationFrameId =
+            requestAnimationFrame(continuousScroll);
+        };
+        this.autoScrollAnimationFrameId =
+          requestAnimationFrame(continuousScroll);
+      }
+    } else {
+      // Mouse moved away from edges - stop scrolling
+      this.cancelAutoScroll();
+    }
+  }
+
   mousemove(event: MouseEvent) {
     if (this.mode === 'standby') {
       return;
     }
 
     if (this.mode === 'selecting') {
+      this.handleAutoScrollDuringSelection(event);
       this.updateSelectionViewParams();
       this.onSelectionMove(event.shiftKey);
       return;
@@ -1396,7 +1448,15 @@ abstract class SelectBase implements BaseTool {
     this.updateRotationView();
   }
 
+  private cancelAutoScroll() {
+    if (this.autoScrollAnimationFrameId !== null) {
+      cancelAnimationFrame(this.autoScrollAnimationFrameId);
+      this.autoScrollAnimationFrameId = null;
+    }
+  }
+
   destroy() {
+    this.cancelAutoScroll();
     this.canvasResizeObserver?.disconnect();
     this.rotationHandleUnsubscribe?.();
     this.rotationCenterUnsubscribe?.();
@@ -1412,6 +1472,7 @@ abstract class SelectBase implements BaseTool {
   }
 
   public stopMovement() {
+    this.cancelAutoScroll();
     this.mode = 'standby';
     this.editor.transientDrawingView.clear();
   }

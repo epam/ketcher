@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type FC, type PropsWithChildren, type RefObject, useRef } from 'react';
+import { type FC, type PropsWithChildren } from 'react';
 import {
   type ToolbarGroupItemCallProps,
   type ToolbarGroupItemProps,
@@ -26,17 +27,19 @@ import { AtomsList } from './AtomsList';
 import { basicAtoms } from '../../../action/atoms';
 import classes from './RightToolbar.module.less';
 import clsx from 'clsx';
-import { useInView } from 'react-intersection-observer';
 import { useResizeObserver } from '../../../../../hooks';
 import { HorizontalDivider } from '../TopToolbar/Divider';
+import { useVerticalToolbarScroll } from '../useVerticalToolbarScroll';
 
 const Group: FC<{ className?: string } & PropsWithChildren> = ({
   children,
   className,
 }) => <div className={clsx(classes.group, className)}>{children}</div>;
 
-interface RightToolbarProps
-  extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
+interface RightToolbarProps extends Omit<
+  ToolbarGroupItemProps,
+  'id' | 'options'
+> {
   className?: string;
   active?: {
     opts: any;
@@ -53,26 +56,17 @@ const RightToolbar = (props: Props) => {
   const { className, ...rest } = props;
   const { active, onAction, freqAtoms, status } = rest;
   const { ref, height } = useResizeObserver<HTMLDivElement>();
-  const [startRef, startInView] = useInView({ threshold: 1 });
-  const [endRef, endInView] = useInView({ threshold: 1 });
-  const sizeRef = useRef(null) as RefObject<HTMLDivElement | null>;
-  const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
-
-  const scrollUp = () => {
-    if (!scrollRef.current || !sizeRef.current) {
-      return;
-    }
-
-    scrollRef.current.scrollTop -= sizeRef.current.offsetHeight;
-  };
-
-  const scrollDown = () => {
-    if (!scrollRef.current || !sizeRef.current) {
-      return;
-    }
-
-    scrollRef.current.scrollTop += sizeRef.current.offsetHeight;
-  };
+  const {
+    scrollContainerRef,
+    scrollStepRef,
+    startRef,
+    endRef,
+    startInView,
+    endInView,
+    isOverflowing,
+    scrollBack,
+    scrollForward,
+  } = useVerticalToolbarScroll();
 
   return (
     <div
@@ -80,7 +74,7 @@ const RightToolbar = (props: Props) => {
       className={clsx(classes.root, className)}
       ref={ref}
     >
-      <div ref={scrollRef} className={classes.buttons}>
+      <div ref={scrollContainerRef} className={classes.buttons}>
         <div ref={startRef}>
           <Group
             className={clsx(
@@ -120,7 +114,7 @@ const RightToolbar = (props: Props) => {
 
         <div ref={endRef}>
           <Group className={classes.groupItem}>
-            <div ref={sizeRef}>
+            <div ref={scrollStepRef}>
               <ToolbarGroupItem id="any-atom" {...rest} />
               <div className={classes.button}>
                 <ToolbarGroupItem id="extended-table" {...rest} />
@@ -129,12 +123,12 @@ const RightToolbar = (props: Props) => {
           </Group>
         </div>
       </div>
-      {height && (scrollRef?.current?.scrollHeight || 0) > height && (
+      {height && isOverflowing && (
         <ArrowScroll
           startInView={startInView}
           endInView={endInView}
-          scrollForward={scrollDown}
-          scrollBack={scrollUp}
+          scrollForward={scrollForward}
+          scrollBack={scrollBack}
         />
       )}
     </div>

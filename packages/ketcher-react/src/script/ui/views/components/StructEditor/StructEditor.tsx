@@ -352,6 +352,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
       'onRgroupEdit',
       'onSgroupEdit',
       'onRemoveFG',
+      'onEditMonomer',
       'onMessage',
       'onAromatizeStruct',
       'onDearomatizeStruct',

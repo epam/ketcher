@@ -17,7 +17,6 @@
 import Logo from './logo.svg';
 import { Modal } from '../../shared/modal/Modal';
 import { About as AboutStyled } from './About.styles';
-import { useIndigoVersionToRedux } from 'src/hooks/useIndigoVersionToRedux';
 import { selectAppMeta } from 'state/common/editorSlice';
 import { useAppDispatch, useAppSelector } from 'src/hooks/stateHooks';
 
@@ -42,7 +41,6 @@ export function About({
   onClose: () => void;
 }>) {
   const dispatch = useAppDispatch();
-  useIndigoVersionToRedux();
   const { buildDate, indigoVersion, version } = useAppSelector(selectAppMeta);
   const formattedDate = formatDate(buildDate);
 

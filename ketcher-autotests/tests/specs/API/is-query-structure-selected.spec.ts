@@ -16,6 +16,15 @@ import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondProperti
 import { BondTypeOption } from '@tests/pages/constants/bondProperties/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
+let page: Page;
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+
 async function isQueryStructureSelected(page: Page): Promise<boolean> {
   return await page.evaluate(() => window.ketcher.isQueryStructureSelected());
 }
@@ -31,7 +40,7 @@ async function checkIsQueryStructureSelected(
 }
 
 test.describe('API isQueryStructureSelected for atoms', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async () => {
     await waitForPageInit(page);
     await drawBenzeneRing(page);
     await page.keyboard.press('Escape');
@@ -41,7 +50,7 @@ test.describe('API isQueryStructureSelected for atoms', () => {
     await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 
-  test('returns true, when atom has custom query', async ({ page }) => {
+  test('returns true, when atom has custom query', async () => {
     await AtomPropertiesDialog(page).setOptions({
       CustomQuery: {
         CustomQueryCheckbox: true,
@@ -51,7 +60,7 @@ test.describe('API isQueryStructureSelected for atoms', () => {
     await checkIsQueryStructureSelected(page, true);
   });
 
-  test('returns true, when atom has substitution count', async ({ page }) => {
+  test('returns true, when atom has substitution count', async () => {
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: {
         SubstitutionCount: SubstitutionCount.Four,
@@ -60,7 +69,7 @@ test.describe('API isQueryStructureSelected for atoms', () => {
     await checkIsQueryStructureSelected(page, true);
   });
 
-  test('returns true, when atom is unsaturated', async ({ page }) => {
+  test('returns true, when atom is unsaturated', async () => {
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: {
         UnsaturatedCheckbox: true,
@@ -69,7 +78,7 @@ test.describe('API isQueryStructureSelected for atoms', () => {
     await checkIsQueryStructureSelected(page, true);
   });
 
-  test('returns true, when atom is aromatic', async ({ page }) => {
+  test('returns true, when atom is aromatic', async () => {
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: {
         Aromaticity: Aromaticity.Aromatic,
@@ -78,7 +87,7 @@ test.describe('API isQueryStructureSelected for atoms', () => {
     await checkIsQueryStructureSelected(page, true);
   });
 
-  test('returns true, when structure has "Any" atom', async ({ page }) => {
+  test('returns true, when structure has "Any" atom', async () => {
     await AtomPropertiesDialog(page).cancel();
     await RightToolbar(page).anyAtom();
     await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
@@ -90,7 +99,7 @@ test.describe('API isQueryStructureSelected for atoms', () => {
 });
 
 test.describe('API isQueryStructureSelected for bonds', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async () => {
     await waitForPageInit(page);
     await drawBenzeneRing(page);
     await page.keyboard.press('Escape');
@@ -108,7 +117,7 @@ test.describe('API isQueryStructureSelected for bonds', () => {
   ];
 
   for (const queryBond of queryBonds) {
-    test(`returns true for ${queryBond[0]} bond`, async ({ page }) => {
+    test(`returns true for ${queryBond[0]} bond`, async () => {
       await BondPropertiesDialog(page).setOptions({
         type: queryBond[1],
       });
@@ -116,7 +125,7 @@ test.describe('API isQueryStructureSelected for bonds', () => {
     });
   }
 
-  test(`returns true for customQuery bond`, async ({ page }) => {
+  test(`returns true for customQuery bond`, async () => {
     await BondPropertiesDialog(page).setOptions({
       customQuery: 'x2&D3,D2',
     });
@@ -125,7 +134,7 @@ test.describe('API isQueryStructureSelected for bonds', () => {
 });
 
 test.describe('Tests for API isQueryStructureSelected for Custom Component', () => {
-  test('returns true for custom component', async ({ page }) => {
+  test('returns true for custom component', async () => {
     await waitForPageInit(page);
     await drawBenzeneRing(page);
     await selectAllStructuresOnCanvas(page);
@@ -139,7 +148,7 @@ test.describe('Tests for API isQueryStructureSelected for Custom Component', () 
 });
 
 test.describe('Tests for API isQueryStructureSelected without query features', () => {
-  test("Benzene ring doesn't have query structures", async ({ page }) => {
+  test("Benzene ring doesn't have query structures", async () => {
     await waitForPageInit(page);
     await drawBenzeneRing(page);
     await selectAllStructuresOnCanvas(page);

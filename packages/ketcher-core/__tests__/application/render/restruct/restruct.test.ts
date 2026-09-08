@@ -138,7 +138,7 @@ describe('expanded monomer rendering', () => {
         rotate() {
           return this;
         },
-      } as unknown as DOMMatrix);
+      }) as unknown as DOMMatrix;
     svgSvgElement.createSVGPoint = () =>
       ({
         x: 0,
@@ -146,9 +146,9 @@ describe('expanded monomer rendering', () => {
         matrixTransform() {
           return this;
         },
-      } as unknown as DOMPoint);
+      }) as unknown as DOMPoint;
     window.SVGElement.prototype.getBBox = () =>
-      ({ x: 0, y: 0, width: 10, height: 10 } as DOMRect);
+      ({ x: 0, y: 0, width: 10, height: 10 }) as DOMRect;
   };
 
   afterEach(() => {
@@ -260,7 +260,7 @@ describe('expanded monomer rendering', () => {
         rotate() {
           return this;
         },
-      } as unknown as DOMMatrix);
+      }) as unknown as DOMMatrix;
     svgSvgElement.createSVGPoint = () =>
       ({
         x: 0,
@@ -268,9 +268,9 @@ describe('expanded monomer rendering', () => {
         matrixTransform() {
           return this;
         },
-      } as unknown as DOMPoint);
+      }) as unknown as DOMPoint;
     window.SVGElement.prototype.getBBox = () =>
-      ({ x: 0, y: 0, width: 10, height: 10 } as DOMRect);
+      ({ x: 0, y: 0, width: 10, height: 10 }) as DOMRect;
 
     const struct = new Struct();
     const atomOutsideMonomerId = struct.atoms.add(

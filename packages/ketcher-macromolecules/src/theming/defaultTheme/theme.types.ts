@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable  @typescript-eslint/no-empty-interface */
 import '@emotion/react';
 import { ThemeOptions as MuiThemeOptions } from '@mui/material/styles';
 import { EditorTheme } from 'ketcher-core';
@@ -25,8 +24,7 @@ export type ThemeType = { ketcher: EditorTheme };
 export type MergedThemeType = ThemeType & MuiThemeOptions;
 
 // Declaring Theme interface to be used in styled components and useTheme hooks
-/* eslint-disable @typescript-eslint/no-empty-object-type */
+
 declare module '@emotion/react' {
   export interface Theme extends ThemeType {}
 }
-/* eslint-enable @typescript-eslint/no-empty-object-type */

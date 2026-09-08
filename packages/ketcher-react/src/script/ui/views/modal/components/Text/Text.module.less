@@ -23,8 +23,7 @@
 
   .controlPanel {
     display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
+    flex-flow: row nowrap;
     align-items: center;
     justify-content: space-between;
     margin: 12px 0;
@@ -40,8 +39,9 @@
   .editorInput {
     height: 182px;
     padding: 12px;
-    word-wrap: break-word;
+    overflow-wrap: break-word;
     line-height: normal;
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     border: 1px solid @color-grey-4;
     border-radius: 4px;
     margin-top: 4px;

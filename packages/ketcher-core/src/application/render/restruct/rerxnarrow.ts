@@ -94,8 +94,8 @@ class ReRxnArrow extends ReObject {
       dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
     });
 
-    const minDist: MinDistanceWithReferencePoint = dist.reduce((acc, current) =>
-      acc.minDist < current.minDist ? acc : current,
+    const minDist: MinDistanceWithReferencePoint = dist.reduce(
+      (acc, current) => (acc.minDist < current.minDist ? acc : current),
     );
 
     return minDist;
@@ -121,8 +121,8 @@ class ReRxnArrow extends ReObject {
     refPoints.push(new Vec2(a.x, a.y));
     refPoints.push(new Vec2(b.x, b.y));
 
-    if (RxnArrow.isElliptical(item)) {
-      const middlePoint = findMiddlePoint(height!, a, b);
+    if (RxnArrow.isElliptical(item) && height !== undefined) {
+      const middlePoint = findMiddlePoint(height, a, b);
       refPoints.push(middlePoint);
     }
     return refPoints;

@@ -28,6 +28,7 @@ const createUnsplit = (
   cloneDeep(
     Object.assign(Object.create(UnsplitNucleotide.prototype), {
       hydrogenBonds,
+      attachmentPointsToBonds: {},
       monomerItem: {
         props: {
           MonomerNaturalAnalogCode: naturalAnalogCode,

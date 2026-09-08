@@ -130,12 +130,36 @@ export const isAntisenseCreationDisabled = (
   const chainsCollection = ChainsCollection.fromMonomers(seedMonomers);
 
   let hasAtLeastOneValidChain = false;
+  let hasInvalidUnsplitNucleotide = false;
 
   for (const chain of chainsCollection.chains) {
     let chainHasInvalidBase = false;
     let chainHasValidSenseNucleotide = false;
 
     for (const node of chain.nodes) {
+      if ('monomer' in node && node.monomer instanceof UnsplitNucleotide) {
+        const unsplitNucleotide = node.monomer;
+
+        if (!selectedSet.has(unsplitNucleotide)) {
+          continue;
+        }
+
+        // An unsplit nucleotide always poisons the whole selection when
+        // ineligible, unlike regular chains where one invalid chain doesn't
+        // disqualify other valid chains.
+        if (
+          unsplitNucleotide.hydrogenBonds.length > 0 ||
+          !hasSenseNaturalAnalogue(unsplitNucleotide)
+        ) {
+          hasInvalidUnsplitNucleotide = true;
+          chainHasInvalidBase = true;
+          break;
+        }
+
+        chainHasValidSenseNucleotide = true;
+        continue;
+      }
+
       if (!(node instanceof Nucleotide || node instanceof Nucleoside)) {
         continue;
       }
@@ -166,6 +190,10 @@ export const isAntisenseCreationDisabled = (
     if (!chainHasInvalidBase && chainHasValidSenseNucleotide) {
       hasAtLeastOneValidChain = true;
     }
+  }
+
+  if (hasInvalidUnsplitNucleotide) {
+    return true;
   }
 
   return !hasAtLeastOneValidChain;

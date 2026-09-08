@@ -86,11 +86,11 @@
 
 ## 8. RTL Groundwork — Directional Icon Inventory
 
-- [ ] 8.1 Identify icons/graphics in `ketcher-react` UI chrome that are direction-sensitive (arrows, chevrons, navigation icons) as opposed to direction-neutral (e.g. most chemistry tool icons)
-- [ ] 8.2 Produce an inventory list (icon, file location, mirror-under-RTL: yes/no) as a design artifact for a future RTL-locale change to consume — this is a documentation artifact, no CSS/mirroring logic is implemented
-- [ ] 8.3 **Code check:** `git diff --stat` shows only the new inventory document, no source/style changes
+- [x] 8.1 Identify icons/graphics in `ketcher-react` UI chrome that are direction-sensitive (arrows, chevrons, navigation icons) as opposed to direction-neutral (e.g. most chemistry tool icons) — audited the full ~210-entry registry in `components/Icon/utils/iconNameToIcon.ts`; found only 2 truly direction-sensitive icons (`undo`, `redo`) plus one CSS-drawn (non-SVG) exception, `ArrowScroll`'s border-triangle scroll buttons
+- [x] 8.2 Produce an inventory list (icon, file location, mirror-under-RTL: yes/no) as a design artifact for a future RTL-locale change to consume — this is a documentation artifact, no CSS/mirroring logic is implemented — written to `openspec/changes/ketcher-react-i18n-foundation/rtl-icon-inventory.md`, split into Group A (mirror: yes — `undo`/`redo` + the `ArrowScroll` note), Group B (mirror: no, canvas/chemistry-notation-tied per Decision 4 — the large majority: bond/reaction-arrow/template/rgroup/monomer icons, plus the Text tool's inserted special-symbol arrow/Greek characters, which are content, not chrome), Group C (mirror: no, direction-neutral generic pictograms)
+- [x] 8.3 **Code check:** `git diff --stat` shows only the new inventory document (114 insertions, 1 file), no source/style changes
 - [ ] 8.4 **Visual check:** not applicable (no rendering change in this section) — reviewer instead reads the inventory list for completeness against the toolbars/dialogs walked in prior sections
-- [ ] 8.5 **Commit** this section's changes as one commit on `4384-language`
+- [x] 8.5 **Committed:** `b0f31ebd3c` on `4384-language`
 - [ ] 8.6 **STOP — report commit hash + diff for review before starting Section 9**
 
 ## 9. Testing

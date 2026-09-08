@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment } from 'react';
 import { MonomerGroup } from '../monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
 import {
@@ -35,7 +35,6 @@ import {
   MONOMER_LIBRARY_PEPTIDES,
   MonomerGroups,
 } from '../../../constants';
-import { selectEditorActiveTool } from 'state/common';
 import { selectFilteredPresets } from 'state/rna-builder';
 import { RnaPresetGroup } from '../RnaPresetGroup/RnaPresetGroup';
 
@@ -47,17 +46,8 @@ const MonomerList = ({
 }: IMonomerListProps) => {
   const monomers = useAppSelector(selectFilteredMonomers);
   const presets = useAppSelector(selectFilteredPresets);
-  const activeTool = useAppSelector(selectEditorActiveTool);
   const isFavoriteTab = libraryName === MONOMER_LIBRARY_FAVORITES;
   const favorites = useFavoritesGroups(monomers, presets);
-
-  const [selectedMonomers, setSelectedMonomers] = useState('');
-
-  useEffect(() => {
-    if (activeTool !== 'monomer') {
-      setSelectedMonomers('');
-    }
-  }, [activeTool]);
 
   const renderMonomerGroups = (groups: Group[]) =>
     groups.map(({ groupItems, groupTitle }) => (
@@ -67,7 +57,7 @@ const MonomerList = ({
         items={groupItems}
         libraryName={libraryName}
         onItemClick={onItemClick}
-        selectedMonomerUniqueKey={selectedMonomers}
+        selectedMonomerUniqueKey=""
       />
     ));
 
@@ -131,7 +121,7 @@ const MonomerList = ({
             items={groupItems}
             libraryName={libraryName}
             onItemClick={onItemClick}
-            selectedMonomerUniqueKey={selectedMonomers}
+            selectedMonomerUniqueKey=""
           />
         );
       })}
@@ -145,7 +135,7 @@ const MonomerList = ({
                 items={group.groupItems}
                 libraryName={libraryName}
                 onItemClick={onItemClick}
-                selectedMonomerUniqueKey={selectedMonomers}
+                selectedMonomerUniqueKey=""
               />
             );
           })}

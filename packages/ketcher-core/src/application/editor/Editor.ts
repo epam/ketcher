@@ -920,6 +920,68 @@ export class CoreEditor {
     });
   }
 
+  public checkIfIdtAliasesCollide(idtAliases: IKetIdtAliases): {
+    base: boolean;
+    endpoint5: boolean;
+    internal: boolean;
+    endpoint3: boolean;
+  } {
+    // Compare each field literally against the library (no MonomerClass scope),
+    // mirroring aliasCollisionExists in updateMonomersLibrary.
+    const base = idtAliases.base
+      ? this._monomersLibrary.some((monomerItem) => {
+          if (isAmbiguousMonomerLibraryItem(monomerItem)) {
+            return false;
+          }
+          return (
+            Boolean(monomerItem.props?.idtAliases?.base) &&
+            monomerItem.props.idtAliases?.base === idtAliases.base
+          );
+        })
+      : false;
+
+    const endpoint5 = idtAliases.modifications?.endpoint5
+      ? this._monomersLibrary.some((monomerItem) => {
+          if (isAmbiguousMonomerLibraryItem(monomerItem)) {
+            return false;
+          }
+          return (
+            Boolean(monomerItem.props?.idtAliases?.modifications?.endpoint5) &&
+            monomerItem.props.idtAliases?.modifications?.endpoint5 ===
+              idtAliases.modifications?.endpoint5
+          );
+        })
+      : false;
+
+    const internal = idtAliases.modifications?.internal
+      ? this._monomersLibrary.some((monomerItem) => {
+          if (isAmbiguousMonomerLibraryItem(monomerItem)) {
+            return false;
+          }
+          return (
+            Boolean(monomerItem.props?.idtAliases?.modifications?.internal) &&
+            monomerItem.props.idtAliases?.modifications?.internal ===
+              idtAliases.modifications?.internal
+          );
+        })
+      : false;
+
+    const endpoint3 = idtAliases.modifications?.endpoint3
+      ? this._monomersLibrary.some((monomerItem) => {
+          if (isAmbiguousMonomerLibraryItem(monomerItem)) {
+            return false;
+          }
+          return (
+            Boolean(monomerItem.props?.idtAliases?.modifications?.endpoint3) &&
+            monomerItem.props.idtAliases?.modifications?.endpoint3 ===
+              idtAliases.modifications?.endpoint3
+          );
+        })
+      : false;
+
+    return { base, endpoint5, internal, endpoint3 };
+  }
+
   public checkIfPresetCodeExists(code: string) {
     const rnaPresets = this.defaultRnaPresetsLibraryItems;
     return rnaPresets.some((preset) => preset.name === code);

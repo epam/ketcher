@@ -29,7 +29,7 @@ describe('getEditInstanceInitialValues', () => {
           aliasBILN: 'C',
           aliasAxoLabs: 'IgnoredAxoLabs',
           idtAliases: {
-            base: 'IgnoredIDT',
+            base: 'NotShownForAminoAcid',
           },
           modificationTypes: ['Natural amino acid'],
         },
@@ -44,6 +44,10 @@ describe('getEditInstanceInitialValues', () => {
       naturalAnalogue: 'C',
       aliasHELM: 'C_Copy',
       aliasBILN: 'C_Copy',
+      idtAlias5: '',
+      idtAliasInternal: '',
+      idtAlias3: '',
+      modificationTypes: ['Natural amino acid'],
       editMode: 'instance',
       originalType: KetMonomerClass.AminoAcid,
       originalSymbol: 'C',
@@ -74,15 +78,47 @@ describe('getEditInstanceInitialValues', () => {
       naturalAnalogue: '',
       aliasHELM: 'sp_Copy',
       aliasBILN: 'sp_Copy',
+      idtAlias5: '',
+      idtAliasInternal: '',
+      idtAlias3: '',
+      modificationTypes: [],
       editMode: 'instance',
       originalType: KetMonomerClass.Phosphate,
       originalSymbol: 'sP',
     });
   });
+
+  it('pre-fills expanded IDT aliases for CHEM without applying the copy suffix', () => {
+    const values = getEditInstanceInitialValues(
+      createMonomer(
+        {
+          MonomerClass: KetMonomerClass.CHEM,
+          MonomerName: 'Cy3',
+          Name: 'Cy3',
+          MonomerFullName: 'Cy3',
+          MonomerNaturalAnalogCode: 'X',
+          idtAliases: {
+            base: 'Cy3',
+            modifications: {
+              endpoint5: '/5Cy3/',
+              internal: '/iCy3/',
+              endpoint3: '/3Cy3Sp/',
+            },
+          },
+        },
+        'Cy3',
+      ),
+    );
+
+    expect(values.idtAlias5).toBe('5Cy3');
+    expect(values.idtAliasInternal).toBe('iCy3');
+    expect(values.idtAlias3).toBe('3Cy3Sp');
+    expect(values.modificationTypes).toEqual([]);
+  });
 });
 
 describe('getEditAllInstancesInitialValues', () => {
-  it('loads existing monomer fields unchanged without AxoLabs or IDT aliases', () => {
+  it('loads existing monomer fields with modification types and without AxoLabs', () => {
     const values = getEditAllInstancesInitialValues(
       createMonomer({
         MonomerClass: KetMonomerClass.AminoAcid,
@@ -94,8 +130,9 @@ describe('getEditAllInstancesInitialValues', () => {
         aliasBILN: 'C',
         aliasAxoLabs: 'IgnoredAxoLabs',
         idtAliases: {
-          base: 'IgnoredIDT',
+          base: 'NotShownForAminoAcid',
         },
+        modificationTypes: ['Natural amino acid'],
       }),
     );
 
@@ -106,6 +143,10 @@ describe('getEditAllInstancesInitialValues', () => {
       naturalAnalogue: 'C',
       aliasHELM: 'C_Copy',
       aliasBILN: 'C_Copy',
+      idtAlias5: '',
+      idtAliasInternal: '',
+      idtAlias3: '',
+      modificationTypes: ['Natural amino acid'],
       editMode: 'all',
       originalType: KetMonomerClass.AminoAcid,
       originalSymbol: 'C',

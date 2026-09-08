@@ -47,6 +47,10 @@ export type MonomerCreationInitialValues = {
   naturalAnalogue: string;
   aliasHELM: string;
   aliasBILN: string;
+  idtAlias5: string;
+  idtAliasInternal: string;
+  idtAlias3: string;
+  modificationTypes: string[];
   position?: Vec2;
   editMode?: 'instance' | 'all';
   originalType?: KetMonomerClass;

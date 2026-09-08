@@ -24,7 +24,7 @@
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  border-color: #F3F5F7;
+  border-color: #f3f5f7;
   pointer-events: none;
   font-family: @Inter;
   background-color: transparent;
@@ -75,7 +75,7 @@
   flex-direction: column;
   gap: 16px;
   padding: 12px;
-  background-color: #F3F5F7;
+  background-color: #f3f5f7;
   border-radius: 8px;
   pointer-events: auto;
   overflow: auto;
@@ -202,12 +202,13 @@
     box-shadow: none !important;
   }
 
-  :global(.MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters) {
+  :global(
+      .MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters
+    ) {
     min-height: 20px !important;
     height: 20px !important;
   }
 }
-
 
 .modificationTypeRow {
   display: flex;
@@ -297,7 +298,7 @@
   &.error {
     & :global(.MuiInputBase-input) {
       border-color: @color-secondary-red !important;
-      background: #FDE0DF !important;
+      background: #fde0df !important;
     }
   }
 }
@@ -312,4 +313,20 @@
   &:not(:last-child) {
     margin-bottom: 5px;
   }
+}
+
+.idtAliasRow {
+  display: flex;
+  gap: 4px;
+}
+
+.idtAliasCell {
+  flex: 1;
+  min-width: 0;
+}
+
+.idtPositionPrefix {
+  color: @color-grey-6;
+  font-size: 12px;
+  white-space: nowrap;
 }

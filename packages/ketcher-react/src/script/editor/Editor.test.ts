@@ -1,4 +1,4 @@
-import { Bond } from 'ketcher-core';
+import { Atom, Bond, KetMonomerClass, Struct, Vec2 } from 'ketcher-core';
 import Editor from './Editor';
 
 type MockBond = {
@@ -220,5 +220,64 @@ describe('Editor.isMonomerCreationWizardEnabled', () => {
     const terminalRGroupAtoms = getTerminalRGroupAtoms(editor);
     expect(terminalRGroupAtoms.length).toBe(1);
     expect(terminalRGroupAtoms[0][0]).toBe(0);
+  });
+});
+
+describe('Editor.saveNewMonomer', () => {
+  const createStructure = () => {
+    const struct = new Struct();
+    struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) }));
+    return struct;
+  };
+
+  const createEditor = () => {
+    const editor = Object.create(Editor.prototype) as Editor;
+    Reflect.set(editor, 'render', { monomerCreationState: {} });
+    return editor;
+  };
+
+  it('includes idtAliases on the built template when wizard IDT inputs are set', () => {
+    const { monomerTemplate } = createEditor().saveNewMonomer({
+      type: KetMonomerClass.CHEM,
+      symbol: 'Cy3',
+      name: 'Cy3',
+      naturalAnalogue: 'X',
+      modificationTypes: [],
+      aliasHELM: '',
+      aliasBILN: '',
+      idtAlias5: '5Cy3',
+      idtAliasInternal: 'iCy3',
+      idtAlias3: '3Cy3Sp',
+      structure: createStructure(),
+      attachmentPoints: new Map(),
+    });
+
+    expect(monomerTemplate.idtAliases).toEqual({
+      base: 'Cy3',
+      modifications: {
+        endpoint5: '/5Cy3/',
+        internal: '/iCy3/',
+        endpoint3: '/3Cy3Sp/',
+      },
+    });
+  });
+
+  it('omits idtAliases from the built template when all IDT inputs are blank', () => {
+    const { monomerTemplate } = createEditor().saveNewMonomer({
+      type: KetMonomerClass.CHEM,
+      symbol: 'X',
+      name: 'X',
+      naturalAnalogue: 'X',
+      modificationTypes: [],
+      aliasHELM: '',
+      aliasBILN: '',
+      idtAlias5: '',
+      idtAliasInternal: '',
+      idtAlias3: '',
+      structure: createStructure(),
+      attachmentPoints: new Map(),
+    });
+
+    expect(monomerTemplate.idtAliases).toBeUndefined();
   });
 });

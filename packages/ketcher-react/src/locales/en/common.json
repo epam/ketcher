@@ -7,7 +7,14 @@
     "cancel": "Cancel",
     "save": "Save",
     "apply": "Apply",
-    "close": "Close"
+    "close": "Close",
+    "yes": "Yes"
   },
-  "general": "General"
+  "general": "General",
+  "delete": "Delete",
+  "monomerType": {
+    "base": "Base",
+    "sugar": "Sugar",
+    "phosphate": "Phosphate"
+  }
 }

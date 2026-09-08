@@ -4,6 +4,7 @@ import AttachmentPointControls from '../AttachmentPointControls/AttachmentPointC
 import type Editor from '../../../../../../editor';
 import styles from '../AttachmentPoint/AttachmentPoint.module.less';
 import { createReadonlyAttachmentPointSelectData } from '../../hooks/useAttachmentPointSelectsData';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   name: AttachmentPointName;
@@ -31,6 +32,7 @@ const ReadonlyAttachmentPoint = ({
   atomId,
   onLeavingAtomChange,
 }: Props) => {
+  const { t } = useTranslation('components');
   const containerRef = useRef<HTMLDivElement>(null);
   const [highlight, setHighlight] = useState(false);
 
@@ -117,7 +119,9 @@ const ReadonlyAttachmentPoint = ({
       className={styles.selects}
       highlight={highlight}
       disabledName
-      nameTooltip="Attachment point numbers of internal attachment points determined by the phosphate position switcher."
+      nameTooltip={t(
+        'monomerCreationWizard.internalAttachmentPointNameTooltip',
+      )}
       disabled={!onLeavingAtomChange}
       ref={containerRef}
     />

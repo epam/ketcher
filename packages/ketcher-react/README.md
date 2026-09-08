@@ -10,7 +10,7 @@ Ketcher is an open-source web-based chemical structure editor incorporating high
 
 For more details please look at the following [link](https://github.com/epam/ketcher/blob/master/README.md).
 
-The ketcher-react package contains only the functionality necessary to define components. It is used together with [ketcher-core](https://www.npmjs.com/package/ketcher-core) and optionally with [ketcher-standalone](https://www.npmjs.com/package/ketcher-standalone) if standaolone mode is required.
+The ketcher-react package contains only the functionality necessary to define components. It is used together with [ketcher-core](https://www.npmjs.com/package/ketcher-core) and optionally with [ketcher-standalone](https://www.npmjs.com/package/ketcher-standalone) if standalone mode is required.
 
 ## Installation
 
@@ -35,59 +35,165 @@ yarn add ketcher-react
 
 ## Usage
 
-```js
-import { RemoteStructServiceProvider } from 'ketcher-core'
+Ketcher can be used in two modes:
 
-const structServiceProvider = new RemoteStructServiceProvider(
-  process.env.REACT_APP_API_PATH!,
-  {
-    'custom header': 'value' // optionally you can add custom headers object
-  }
-)
+- **Standalone mode** - all chemistry operations run in the browser (recommended for most users)
+- **Remote mode** - chemistry operations are performed by a remote Indigo service
 
-const MyComponent = () => {
+### Standalone Mode (Recommended)
+
+For a fully self-contained editor that works without any backend:
+
+```jsx
+import { Editor } from 'ketcher-react';
+import { StandaloneStructServiceProvider } from 'ketcher-standalone';
+
+import 'ketcher-react/dist/index.css';
+
+function MyEditor() {
+  const structServiceProvider = new StandaloneStructServiceProvider();
+
   return (
     <Editor
       staticResourcesUrl={process.env.PUBLIC_URL}
       structServiceProvider={structServiceProvider}
+      onInit={(ketcher) => {
+        window.ketcher = ketcher;
+        console.log('Ketcher initialized', ketcher);
+      }}
     />
-  )
+  );
 }
+
+export default MyEditor;
 ```
 
-### Indigo Service
-
-Ketcher uses Indigo Service for server operations.
-You may pass it as a property while Editor component is used or just add api_path query parameter:
+**Note:** You need to install both packages:
 
 ```sh
-<Editor staticResourcesUrl={process.env.PUBLIC_URL} apiPath={link to Indigo service} />
-    or
-http://localhost:3000/?api_path={link to Indigo service}
+npm install ketcher-react ketcher-core ketcher-standalone
 ```
+
+### Remote Mode (Requires Indigo Service)
+
+If you have an Indigo service running, you can use remote mode:
+
+```jsx
+import { Editor } from 'ketcher-react';
+import { RemoteStructServiceProvider } from 'ketcher-core';
+
+import 'ketcher-react/dist/index.css';
+
+function MyEditor() {
+  const structServiceProvider = new RemoteStructServiceProvider(
+    process.env.REACT_APP_API_PATH,
+    {
+      Authorization: '******', // optional custom headers
+    },
+  );
+
+  return (
+    <Editor
+      staticResourcesUrl={process.env.PUBLIC_URL}
+      structServiceProvider={structServiceProvider}
+      onInit={(ketcher) => {
+        window.ketcher = ketcher;
+      }}
+    />
+  );
+}
+
+export default MyEditor;
+```
+
+### Complete Minimal Example
+
+Here's a complete working example for a React app (e.g., created with Create React App or Vite):
+
+**1. Install dependencies:**
+
+```sh
+npm install ketcher-react ketcher-core ketcher-standalone
+```
+
+**2. Create your component (App.jsx):**
+
+```jsx
+import { Editor } from 'ketcher-react';
+import { StandaloneStructServiceProvider } from 'ketcher-standalone';
+import 'ketcher-react/dist/index.css';
+
+function App() {
+  return (
+    <div style={{ height: '100vh' }}>
+      <Editor
+        staticResourcesUrl=""
+        structServiceProvider={new StandaloneStructServiceProvider()}
+        onInit={(ketcher) => {
+          window.ketcher = ketcher;
+        }}
+      />
+    </div>
+  );
+}
+
+export default App;
+```
+
+**3. Make sure your public folder contains Ketcher assets**
+
+Copy static resources from `node_modules/ketcher-react/dist` to your `public` folder, or set `staticResourcesUrl` to point to where these assets are hosted.
+
+For Vite projects, you can use:
+
+```jsx
+staticResourcesUrl={import.meta.env.BASE_URL}
+```
+
+For Create React App:
+
+```jsx
+staticResourcesUrl={process.env.PUBLIC_URL}
+```
+
+### Indigo Service (Remote Mode)
+
+If you want to use Remote Mode instead of Standalone, you'll need to set up Indigo Service.
 
 You can find the instruction for service installation
 [here](https://lifescience.opensource.epam.com/indigo/service/index.html).
+
+You may pass the service URL as a property or via query parameter:
+
+```jsx
+// Via property
+<Editor
+  staticResourcesUrl={process.env.PUBLIC_URL}
+  structServiceProvider={
+    new RemoteStructServiceProvider('http://localhost:8002/v2')
+  }
+/>
+
+// Via URL query parameter
+// http://localhost:3000/?api_path=http://localhost:8002/v2
+```
 
 ### 3D Viewer
 
 Ketcher uses Miew-React for viewing and editing data in 3D.
 Miew-React package default exports Viewer component which
-initializes and renders a Miew instance inside of it
+initializes and renders a Miew instance inside of it.
 
 ```js
-...
-import Viewer from 'miew-react'
+import Viewer from 'miew-react';
 
 const MyComponent = () => {
-  return <Viewer />
-}
-...
-...
+  return <Viewer />;
+};
 ```
 
 You can find the latest version of Miew-React [here](https://github.com/epam/miew/tree/master/packages/miew-react).
-The last checked version - [0.12.0](https://www.npmjs.com/package/miew-react).
+The last checked version is [0.12.0](https://www.npmjs.com/package/miew-react).
 
 ## Troubleshooting
 
@@ -149,7 +255,7 @@ staticResourcesUrl={import.meta.env.BASE_URL}
 // For Create React App
 staticResourcesUrl={process.env.PUBLIC_URL}
 
-// Or provide absolute path
+// Or provide an absolute path
 staticResourcesUrl="/ketcher-assets"
 ```
 

@@ -270,12 +270,15 @@ export const RnaEditorExpanded = ({
     prevSelectedPhosphatePositionForPresetSync,
     setPrevSelectedPhosphatePositionForPresetSync,
   ] = useState(selectedPhosphatePosition);
+  const [hasRunPresetSync, setHasRunPresetSync] = useState(false);
 
   if (
+    !hasRunPresetSync ||
     activePresetMonomerGroup?.groupItem !== prevGroupItemForPresetSync ||
     isSequenceEditInRNABuilderMode !== prevIsSequenceEditForPresetSync ||
     selectedPhosphatePosition !== prevSelectedPhosphatePositionForPresetSync
   ) {
+    setHasRunPresetSync(true);
     setPrevGroupItemForPresetSync(activePresetMonomerGroup?.groupItem);
     setPrevIsSequenceEditForPresetSync(isSequenceEditInRNABuilderMode);
     setPrevSelectedPhosphatePositionForPresetSync(selectedPhosphatePosition);
@@ -339,10 +342,8 @@ export const RnaEditorExpanded = ({
             : node.rnaBaseMonomerItem,
       };
     });
-
     setIsSequenceSelectionUpdated(true);
     dispatch(setSequenceSelection(updatedSequenceSelection));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     activePresetMonomerGroup?.groupItem,
     isSequenceEditInRNABuilderMode,
@@ -518,7 +519,7 @@ export const RnaEditorExpanded = ({
       isPhosphatePositionReadOnly || (!is5PrimeAvailable && !is3PrimeAvailable);
     const triggerPosition = isPhosphatePositionReadOnly
       ? 'right'
-      : position ?? selectedPhosphatePosition ?? 'right';
+      : (position ?? selectedPhosphatePosition ?? 'right');
     const isPhosphateGroupActive =
       !isPhosphatePositionReadOnly &&
       activeMonomerGroup === MonomerGroups.PHOSPHATES;

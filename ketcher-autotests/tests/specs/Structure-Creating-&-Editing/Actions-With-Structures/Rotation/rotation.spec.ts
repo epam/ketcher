@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { expect, Page, test } from '@fixtures';
 import {
   clickOnCanvas,
@@ -650,8 +648,8 @@ test.describe('Rotation', () => {
     const doubleBond = getBondLocator(page, { bondId: 18 });
     const box = await doubleBond.boundingBox();
     if (!box) throw new Error('Bond bounding box not found');
-    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
-    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
     await page.mouse.move(
       coordinatesToStartSelection,
       coordinatesToStartSelection,
@@ -675,8 +673,8 @@ test.describe('Rotation', () => {
     const stereoBond = getBondLocator(page, { bondId: 14, bondStereo: 1 });
     const box = await stereoBond.boundingBox();
     if (!box) throw new Error('Bond bounding box not found');
-    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
-    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
     await page.mouse.move(
       coordinatesToStartSelection,
       coordinatesToStartSelection,

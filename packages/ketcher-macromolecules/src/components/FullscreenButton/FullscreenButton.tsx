@@ -91,7 +91,7 @@ export const FullscreenButton = (props) => {
     const fullscreenElement = getFullscreenElement();
     if (isFullScreen()) {
       exitFullscreen();
-    } else {
+    } else if (fullscreenElement) {
       requestFullscreen(fullscreenElement);
     }
   };

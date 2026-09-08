@@ -24,7 +24,7 @@ jobs:
       )
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -82,19 +82,24 @@ jobs:
 
       - name: Create pull request
         id: create_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          BRANCH_NAME: ${{ steps.vars.outputs.branch_name }}
         run: |
           PR_URL=$(gh pr create \
-            --title "#${{ github.event.issue.number }} - ${{ github.event.issue.title }}" \
-            --body "Closes #${{ github.event.issue.number }}" \
-            --head "${{ steps.vars.outputs.branch_name }}" \
+            --title "#${ISSUE_NUMBER} - ${ISSUE_TITLE}" \
+            --body "Closes #${ISSUE_NUMBER}" \
+            --head "${BRANCH_NAME}" \
             --base master)
           echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Comment on issue
-        run: |
-          gh issue comment ${{ github.event.issue.number }} \
-            --body "Generated Playwright test: ${{ steps.create_pr.outputs.pr_url }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          PR_URL: ${{ steps.create_pr.outputs.pr_url }}
+        run: |
+          gh issue comment "${ISSUE_NUMBER}" \
+            --body "Generated Playwright test: ${PR_URL}"

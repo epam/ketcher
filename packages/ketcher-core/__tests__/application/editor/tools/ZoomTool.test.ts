@@ -14,7 +14,7 @@ const makeRect = (left: number, top: number, width: number, height: number) =>
     height,
     right: left + width,
     bottom: top + height,
-  } as DOMRect);
+  }) as DOMRect;
 
 const mockGetBoundingClientRect = (element: Element, rect: DOMRect) => {
   Object.defineProperty(element, 'getBoundingClientRect', {
@@ -35,7 +35,7 @@ describe('Zoom Tool', () => {
       ({
         width: 20,
         height: 30,
-      } as DOMRect);
+      }) as DOMRect;
     canvas = createPolymerEditorCanvas();
     Object.defineProperty(canvas, 'width', {
       value: {

@@ -24,10 +24,11 @@ import { Elements } from 'domain/constants';
 import common from './common';
 import type { Mapping } from './mol.types';
 import utils from './utils';
-import { KetcherLogger } from 'utilities';
+import { assert, KetcherLogger } from 'utilities';
 import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
 
 const END_V2000 = '2D 1   1.00000     0.00000     0';
+const NO_PARENT_SGROUP_ID = -1;
 type NumberTuple = [number, number];
 
 interface ParseCTFileProps {
@@ -103,7 +104,8 @@ export class Molfile {
       .getSGroupsBFS()
       .reverse()
       .forEach((id) => {
-        const sgroup = mol.sgroups.get(id)!;
+        const sgroup = mol.sgroups.get(id);
+        if (!sgroup) return;
         let errorIgnore = false;
 
         try {
@@ -115,11 +117,12 @@ export class Molfile {
               `Error: ${
                 isErrorWithMessage(error) ? error.message : String(error)
               }`,
+              { cause: error },
             );
           }
           errorIgnore = true;
         }
-        /* eslint-disable no-mixed-operators */
+
         if (
           errorIgnore ||
           (!preserveIndigoDesc &&
@@ -159,7 +162,6 @@ export class Molfile {
     norgroups?: boolean,
     preserveIndigoDesc?: boolean,
   ) {
-    // eslint-disable-line max-statements
     /* saver */
     this.reaction = molecule.hasRxnArrow();
     this.molfile = '' + molecule.name;
@@ -294,12 +296,14 @@ export class Molfile {
 
   writeCTab2000Header() {
     /* saver */
-    this.writePaddedNumber(this.molecule!.atoms.size, 3);
-    this.writePaddedNumber(this.molecule!.bonds.size, 3);
+    const molecule = this.molecule;
+    assert(molecule !== null, 'molecule is not defined');
+    this.writePaddedNumber(molecule.atoms.size, 3);
+    this.writePaddedNumber(molecule.bonds.size, 3);
 
     this.writePaddedNumber(0, 3);
     this.writePaddedNumber(0, 3);
-    const isAbsFlag = Array.from(this.molecule!.frags.values()).some((fr) =>
+    const isAbsFlag = Array.from(molecule.frags.values()).some((fr) =>
       fr ? fr.enhancedStereoFlag === StereoFlag.Abs : false,
     );
 
@@ -314,7 +318,6 @@ export class Molfile {
   }
 
   writeCTab2000(rgroups?: Struct['rgroups']) {
-    // eslint-disable-line max-statements
     /* saver */
     const molecule = this.molecule;
     if (!molecule) return;
@@ -441,7 +444,9 @@ export class Molfile {
 
     if (atomsIds.length > 0) {
       for (const atomId of atomsIds) {
-        const atomList = molecule.atoms.get(atomId)!.atomList!;
+        const atom = molecule.atoms.get(atomId);
+        const atomList = atom?.atomList;
+        if (!atomList) continue;
         this.write('M  ALS');
         this.writePaddedNumber(atomId + 1, 4);
         this.writePaddedNumber(atomList.ids.length, 3);
@@ -472,7 +477,8 @@ export class Molfile {
     )) {
       // each group on its own
       const id = sgmapback[sGroupIdInCTab];
-      const sgroup = molecule.sgroups.get(id)!;
+      const sgroup = molecule.sgroups.get(id);
+      if (!sgroup) continue;
       if (SGroup.isQuerySGroup(sgroup)) {
         console.warn('Query group does not support in mol format');
         continue;
@@ -503,7 +509,8 @@ export class Molfile {
       this.writePaddedNumber(sGroupIdInCTab, 3);
       this.writeCR();
 
-      const parentId = molecule.sGroupForest.parent.get(id)!;
+      const parentId =
+        molecule.sGroupForest.parent.get(id) ?? NO_PARENT_SGROUP_ID;
       if (parentId >= 0) {
         this.write('M  SPL');
         this.writePaddedNumber(1, 3);

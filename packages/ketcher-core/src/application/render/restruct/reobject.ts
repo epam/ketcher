@@ -17,6 +17,8 @@
 import type { Box2Abs } from 'domain/entities/box2Abs';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
+import type { RenderOptions } from '../render.types';
+import type { Element, RaphaelPaper, RaphaelSet } from 'raphael';
 import { Scale } from 'domain/helpers';
 import Visel from './visel';
 import { IMAGE_KEY } from 'domain/constants';
@@ -24,15 +26,15 @@ import { IMAGE_KEY } from 'domain/constants';
 class ReObject {
   public visel: Visel;
   public hover = false;
-  public hovering: any = null;
+  public hovering: RaphaelSet | Element | null = null;
   public selected = false;
-  public selectionPlate: any = null;
+  public selectionPlate: RaphaelSet | Element | null = null;
 
   constructor(viselType: string) {
     this.visel = new Visel(viselType);
   }
 
-  changeSelectionStyle(options: any, drawOutline = true) {
+  changeSelectionStyle(options: RenderOptions, drawOutline = true) {
     const { hoverStyle } = options;
     if (['simpleObject', IMAGE_KEY].includes(this.visel.type)) {
       this.hovering?.attr({
@@ -85,11 +87,18 @@ class ReObject {
     this.hover = hover;
   }
 
-  drawHover(_render: Render, _drawOutline?: boolean): any {
+  drawHover(
+    _render: Render,
+    _drawOutline?: boolean,
+  ): RaphaelSet | Element | void {
     throw new Error('ReObject.drawHover is not overridden.');
   }
 
-  makeSelectionPlate(_restruct: ReStruct, _paper: any, _styles: any): any {
+  makeSelectionPlate(
+    _restruct: ReStruct,
+    _paper: RaphaelPaper,
+    _styles: RenderOptions,
+  ): RaphaelSet | Element | null {
     throw new Error('ReObject.makeSelectionPlate is not overridden');
   }
 }

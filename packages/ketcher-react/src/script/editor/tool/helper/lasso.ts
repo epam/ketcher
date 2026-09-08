@@ -46,7 +46,7 @@ class LassoHelper {
       return locate.inRectangle(rnd.ctab, this.points[0], this.points[1]);
     }
 
-    throw new Error('Selector mode unknown'); // eslint-disable-line no-else-return
+    throw new Error('Selector mode unknown');
   }
 
   begin(event: MouseEvent) {

@@ -2,7 +2,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 import type { RNABase } from 'domain/entities/RNABase';
 import type { Phosphate } from 'domain/entities/Phosphate';
 import { Sugar } from 'domain/entities/Sugar';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   getPhosphateFromSugar,
   getRnaBaseFromSugar,

@@ -58,7 +58,7 @@ const MenuItem = ({
     if (onClick) {
       onClick();
     }
-  }, [activate, itemId]);
+  }, [activate, itemId, onClick]);
 
   const isActiveItem = isActive(itemId);
   const activeClass = isActiveItem ? ' active' : '';

@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { takeEditorScreenshot } from '../helpers';
 import { waitForRender } from '../../common/loaders/waitForRender';

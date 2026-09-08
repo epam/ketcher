@@ -1,6 +1,12 @@
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { peptideMonomerItem } from '../../mock-data';
-import { Atom, Bond, SGroup, Vec2 } from 'domain/entities';
+import {
+  Atom,
+  Bond,
+  SGroup,
+  SGroupAttachmentPoint,
+  Vec2,
+} from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';
 import {
   PolymerBondAddOperation,
@@ -51,6 +57,52 @@ function createStructWithSGroup(type = SGroup.TYPES.MUL) {
   struct.markFragments();
 
   return { struct, sgroup };
+}
+
+function createStructWithSplitSGroup(options?: { name?: string }) {
+  const struct = new Struct();
+  const firstAtomId = struct.atoms.add(
+    new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+  );
+  const secondAtomId = struct.atoms.add(
+    new Atom({ label: 'C', pp: new Vec2(1, 0) }),
+  );
+  const thirdAtomId = struct.atoms.add(
+    new Atom({ label: 'C', pp: new Vec2(5, 0) }),
+  );
+  const fourthAtomId = struct.atoms.add(
+    new Atom({ label: 'C', pp: new Vec2(6, 0) }),
+  );
+  struct.bonds.add(
+    new Bond({
+      begin: firstAtomId,
+      end: secondAtomId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    }),
+  );
+  struct.bonds.add(
+    new Bond({
+      begin: thirdAtomId,
+      end: fourthAtomId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    }),
+  );
+  const sgroup = new SGroup(SGroup.TYPES.SUP);
+  sgroup.data.name = options?.name ?? '';
+  const sgroupId = struct.sgroups.add(sgroup);
+  struct.atomAddToSGroup(sgroupId, firstAtomId);
+  struct.atomAddToSGroup(sgroupId, secondAtomId);
+  struct.atomAddToSGroup(sgroupId, thirdAtomId);
+  struct.atomAddToSGroup(sgroupId, fourthAtomId);
+  sgroup.addAttachmentPoint(
+    new SGroupAttachmentPoint(firstAtomId, undefined, undefined, 1),
+  );
+  sgroup.addAttachmentPoint(
+    new SGroupAttachmentPoint(thirdAtomId, undefined, undefined, 2),
+  );
+  struct.markFragments();
+
+  return struct;
 }
 
 describe('Drawing Entities Manager', () => {
@@ -290,6 +342,44 @@ describe('Drawing Entities Manager', () => {
     expect(document.querySelector('[data-label-text="1"]')).toBeTruthy();
   });
 
+  it('should split disconnected superatom fragments with attachment points into separate macro molecules', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const struct = createStructWithSplitSGroup();
+
+    MacromoleculesConverter.convertStructToDrawingEntities(
+      struct,
+      editor.drawingEntitiesManager,
+    );
+
+    const monomers = Array.from(
+      editor.drawingEntitiesManager.monomers.values(),
+    );
+
+    expect(monomers).toHaveLength(2);
+    monomers.forEach((monomer) => {
+      const sgroup = monomer.monomerItem.struct.sgroups.get(0);
+
+      expect(sgroup?.isSuperatomWithoutLabel).toBe(true);
+      expect(sgroup?.getAttachmentPoints()).toHaveLength(1);
+    });
+  });
+
+  it('should not group disconnected fragments by S-group when attachment points are split across fragments', () => {
+    const struct = createStructWithSplitSGroup({ name: 'Split' });
+
+    const groupedFragments =
+      MacromoleculesConverter.getFragmentsGroupedBySgroup(struct);
+
+    expect(groupedFragments).toHaveLength(2);
+    groupedFragments.forEach((fragmentsGroup) => {
+      expect(fragmentsGroup).toHaveLength(1);
+    });
+  });
+
   it('should store monomer expanded state as a boolean in converted S-groups', () => {
     const struct = new Struct();
     const monomer = new Peptide(peptideMonomerItem);
@@ -329,5 +419,22 @@ describe('Drawing Entities Manager', () => {
     editor.renderersContainer.update(modelChanges);
 
     expect(document.querySelector('[data-label-text="Value"]')).toBeTruthy();
+  });
+
+  describe('getAntisenseBaseLabel', () => {
+    it.each([
+      ['A', false, 'U'],
+      ['A', true, 'T'],
+      ['C', false, 'G'],
+      ['G', false, 'C'],
+      ['T', false, 'A'],
+      ['U', false, 'A'],
+      ['X', false, undefined],
+      ['X', true, undefined],
+    ] as const)('maps %s (dna=%s) to %s', (label, isDnaAntisense, expected) => {
+      expect(
+        DrawingEntitiesManager.getAntisenseBaseLabel(label, isDnaAntisense),
+      ).toBe(expected);
+    });
   });
 });

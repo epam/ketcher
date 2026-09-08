@@ -4,7 +4,7 @@ import type { PolymerBond } from 'domain/entities/PolymerBond';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { type Selection, line } from 'd3';
 import type { BaseMonomer } from './entities/BaseMonomer';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   type Coordinates,
   canvasToMonomerCoordinates,
@@ -51,12 +51,10 @@ export class AttachmentPoint {
   protected canvasOffset: Coordinates;
   protected centerOfMonomer: Coordinates;
   protected element:
-    | Selection<SVGGElement, this, HTMLElement, never>
-    | undefined;
+    Selection<SVGGElement, this, HTMLElement, never> | undefined;
 
   private hoverableArea:
-    | Selection<SVGGElement, this, HTMLElement, never>
-    | undefined;
+    Selection<SVGGElement, this, HTMLElement, never> | undefined;
 
   protected initialAngle = 0;
   private readonly isUsed: boolean;
@@ -362,7 +360,7 @@ export class AttachmentPoint {
     polymerBond: PolymerBond | MonomerToAtomBond,
     flip = false,
   ) {
-    let angleRadians = 0;
+    let angleRadians: number;
     if (flip) {
       angleRadians = Vec2.oxAngleForVector(
         polymerBond.endPosition,

@@ -10,7 +10,6 @@ type ElementType = 'text' | 'background' | 'spacer';
  * so we don't have to add handlers to each sequence item individually.
  */
 export class SequenceEventDelegationManager {
-  // eslint-disable-next-line no-use-before-define
   private static _instance: SequenceEventDelegationManager | null = null;
   private canvas: D3SvgElementSelection<SVGGElement, void> | null = null;
   private readonly boundHandlers: Map<string, (event: MouseEvent) => void> =

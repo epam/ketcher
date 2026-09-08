@@ -55,17 +55,8 @@ exports[`Save modal renders correctly 1`] = `
               >
                 <svg
                   class="css-1td8dcm"
-                  fill="none"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M13.462 12.046l6.37 6.37-1.413 1.415-6.371-6.371-6.327 6.326-1.414-1.414 6.327-6.326-6.372-6.372L5.676 4.26l6.372 6.372 6.417-6.418 1.414 1.414-6.417 6.418z"
-                    fill="currentColor"
-                  />
-                </svg>
+                  name="close"
+                />
                 <span
                   class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
                 />
@@ -133,17 +124,8 @@ exports[`Save modal renders correctly 1`] = `
                     />
                     <svg
                       class="MuiSelect-icon MuiSelect-iconOutlined css-1bn8sss-MuiSelect-icon"
-                      fill="none"
-                      height="48"
-                      viewBox="0 0 48 48"
-                      width="48"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M24 33.23L9.782 19.012l2.828-2.828L24 27.574l11.388-11.39 2.83 2.828L24 33.23z"
-                        fill="#231F20"
-                      />
-                    </svg>
+                      name="chevron"
+                    />
                     <fieldset
                       aria-hidden="true"
                       class="MuiOutlinedInput-notchedOutline css-r01yff-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
@@ -179,24 +161,10 @@ exports[`Save modal renders correctly 1`] = `
 }
                 </textarea>
                 <button
-                  class="css-kp5gpq"
                   data-testid="copy-to-clipboard"
                   title="Copy to clipboard"
-                >
-                  <svg
-                    class="css-2ntgcm"
-                    fill="none"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    width="24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M17.25 18.75H9V8.25h8.25v10.5zm0-12H9a1.5 1.5 0 00-1.5 1.5v10.5a1.5 1.5 0 001.5 1.5h8.25a1.5 1.5 0 001.5-1.5V8.25a1.5 1.5 0 00-1.5-1.5zm-2.25-3H6a1.5 1.5 0 00-1.5 1.5v10.5H6V5.25h9v-1.5z"
-                      fill="currentcolor"
-                    />
-                  </svg>
-                </button>
+                  type="button"
+                />
               </div>
             </form>
           </div>

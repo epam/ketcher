@@ -53,6 +53,7 @@ class AtomDelete extends BaseOperation {
 
     const set = restruct.connectedComponents.get(restructedAtom.component);
     if (!set) return;
+
     set.delete(aid);
     if (set.size === 0) {
       restruct.connectedComponents.delete(restructedAtom.component);

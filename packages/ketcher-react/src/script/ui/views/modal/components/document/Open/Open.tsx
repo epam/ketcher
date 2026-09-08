@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -115,6 +114,11 @@ const Open: FC<Props> = (props) => {
     setIsLoading(true);
     const onLoad = (fileContent) => {
       if (fileContent.isPPTX) {
+        if (!fileContent.structures.length && files[0].size > 0) {
+          errorHandler(
+            "Report that we can't open it - may be it is password protected",
+          );
+        }
         setStructStr('');
         setStructList(fileContent.structures);
         setCurrentState(MODAL_STATES.presentationViewer);

@@ -255,12 +255,12 @@ export class SequenceMode extends BaseMode {
     editor.events.toggleSequenceEditMode.dispatch(true);
   }
 
-  public turnOffEditMode() {
+  public turnOffEditMode(needToRemoveSelection = true) {
     if (!this.isEditMode) return;
     const editor = provideEditorInstance();
 
     this.isEditMode = false;
-    this.initialize(false, true, true);
+    this.initialize(false, needToRemoveSelection, true);
     editor.events.toggleSequenceEditMode.dispatch(false);
   }
 
@@ -273,11 +273,11 @@ export class SequenceMode extends BaseMode {
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(true);
   }
 
-  public turnOffSequenceEditInRNABuilderMode() {
+  public turnOffSequenceEditInRNABuilderMode(needToRemoveSelection = true) {
     const editor = provideEditorInstance();
 
     this.isEditInRNABuilderMode = false;
-    this.initialize(false, true, false);
+    this.initialize(false, needToRemoveSelection, false);
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(false);
   }
 
@@ -472,7 +472,10 @@ export class SequenceMode extends BaseMode {
   }
 
   public mousedown(event: MouseEvent) {
-    if (this.isEditInRNABuilderMode) return;
+    if (this.isEditInRNABuilderMode) {
+      provideEditorInstance().events.cancelSequenceEditInRNABuilderMode.dispatch();
+      return;
+    }
     const eventData: BaseRenderer | NewSequenceButton | undefined =
       event.target?.__data__;
     const isClickedOnEmptyPlace = !(

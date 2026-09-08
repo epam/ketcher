@@ -229,7 +229,7 @@ type SaveNewMonomerData = {
   symbol: string;
   name: string;
   naturalAnalogue: string;
-  modificationTypes: string[];
+  modificationTypes?: string[];
   aliasHELM: string;
   aliasBILN: string;
   hidden?: boolean;

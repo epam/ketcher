@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { expect, test } from '@fixtures';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {

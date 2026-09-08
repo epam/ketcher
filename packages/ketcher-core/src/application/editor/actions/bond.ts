@@ -213,7 +213,11 @@ export function fromBondsAttrs(
 
       const value = key in attrs ? attrs[key] : Bond.attrGetDefault(key);
 
-      action.addOp(new BondAttr(bid, key, value).perform(restruct));
+      action.addOp(
+        new BondAttr(bid, key as keyof typeof Bond.attrlist, value).perform(
+          restruct,
+        ),
+      );
       if (key === 'stereo' && key in attrs) {
         const bond = struct.bonds.get(bid);
         if (bond) {
@@ -248,8 +252,37 @@ export function fromBondsMerge(
     atomPairs.set(bond.end, !params.cross ? bondCI.end : bondCI.begin);
   });
 
+  // Shared vertex atoms fused earlier in this batch may already be deleted;
+  // resolve through prior merges to the atom that actually survived. Can't
+  // cycle: fromAtomMerge always deletes src and keeps dst, so a resolved id
+  // is never re-inserted as a key once it has appeared as a value below.
+  const survivingAtomId = new Map<number, number>();
+  const resolveAtomId = (atomId: number): number => {
+    let resolved = atomId;
+    let next = survivingAtomId.get(resolved);
+    while (next !== undefined) {
+      resolved = next;
+      next = survivingAtomId.get(resolved);
+    }
+    return resolved;
+  };
+
   atomPairs.forEach((dst, src) => {
-    action = fromAtomMerge(restruct, src, dst).mergeWith(action);
+    const resolvedSrc = resolveAtomId(src);
+    const resolvedDst = resolveAtomId(dst);
+
+    if (
+      resolvedSrc === resolvedDst ||
+      !struct.atoms.has(resolvedSrc) ||
+      !struct.atoms.has(resolvedDst)
+    ) {
+      return;
+    }
+
+    action = fromAtomMerge(restruct, resolvedSrc, resolvedDst).mergeWith(
+      action,
+    );
+    survivingAtomId.set(resolvedSrc, resolvedDst);
   });
 
   return action;

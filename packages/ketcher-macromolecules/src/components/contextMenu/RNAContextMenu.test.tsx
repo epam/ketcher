@@ -23,7 +23,6 @@ import mockedPresets from './mockedPresets.json';
 
 jest.mock('../../../src/helpers/dom.ts', () => {
   return {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     scrollToElement: () => {},
   };
 });

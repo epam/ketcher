@@ -2578,6 +2578,27 @@ export class DrawingEntitiesManager {
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
 
+    // Merge stereo flags
+    this.stereoFlags.forEach((stereoFlag) => {
+      const newMonomer = monomerToNewMonomer.get(stereoFlag.relatedMonomer);
+      if (newMonomer) {
+        const stereoFlagAddCommand = targetDrawingEntitiesManager.addStereoFlag(
+          stereoFlag.position,
+          stereoFlag.flagType,
+          newMonomer,
+        );
+        command.merge(stereoFlagAddCommand);
+
+        const addedStereoFlag = (
+          stereoFlagAddCommand.operations[0] as StereoFlagAddOperation
+        ).stereoFlag;
+        mergedDrawingEntities.stereoFlags.set(
+          addedStereoFlag.id,
+          addedStereoFlag,
+        );
+      }
+    });
+
     return { command, mergedDrawingEntities };
   }
 

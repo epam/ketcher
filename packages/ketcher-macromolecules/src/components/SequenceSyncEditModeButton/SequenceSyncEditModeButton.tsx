@@ -67,25 +67,26 @@ export const SequenceSyncEditModeButton = () => {
 
   useEffect(() => {
     const updateHasAntisenseChains = () => {
-      setHasAtLeastOneAntisense(
-        Boolean(editor?.drawingEntitiesManager?.hasAntisenseChains),
+      const hasAntisenseChains = Boolean(
+        editor?.drawingEntitiesManager?.hasAntisenseChains,
       );
+
+      setHasAtLeastOneAntisense(hasAntisenseChains);
+
+      if (isSequenceMode && hasAntisenseChains) {
+        editor?.events.toggleIsSequenceSyncEditMode.dispatch(
+          isSequenceSyncEditMode,
+        );
+      }
     };
 
+    updateHasAntisenseChains();
     editor?.events.modelChange.add(updateHasAntisenseChains);
 
     return () => {
       editor?.events.modelChange.remove(updateHasAntisenseChains);
     };
-  }, [editor]);
-
-  useEffect(() => {
-    if (isSequenceMode && hasAtLeastOneAntisense) {
-      editor?.events.toggleIsSequenceSyncEditMode.dispatch(
-        isSequenceSyncEditMode,
-      );
-    }
-  }, [isSequenceMode, hasAtLeastOneAntisense]);
+  }, [editor, isSequenceMode, isSequenceSyncEditMode]);
 
   return isSequenceMode && hasAtLeastOneAntisense ? (
     <StyledButton

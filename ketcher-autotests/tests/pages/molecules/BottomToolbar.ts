@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { clickInTheMiddleOfTheCanvas } from '@utils/clicks';
 import { RingButton } from '../constants/ringButton/Constants';

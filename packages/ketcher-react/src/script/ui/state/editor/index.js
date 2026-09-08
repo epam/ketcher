@@ -96,7 +96,7 @@ export default function initEditor(dispatch, getState, ketcherId) {
         }).then(toElement);
       }
       const elem = selem.type === 'text' ? selem : fromElement(selem);
-      let dlg = null;
+      let dlg;
       if (elem.type === 'text') {
         // TODO: move textdialog opening logic to another place
         return openDialog(dispatch, 'text', elem);

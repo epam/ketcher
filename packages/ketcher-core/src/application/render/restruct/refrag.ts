@@ -74,7 +74,7 @@ class ReFrag extends ReObject {
         bba = bba.extend(ext, ext);
       } else {
         if (!render) {
-          render = (global as Record<string, unknown>)._ui_editor as Render; // eslint-disable-line
+          render = (global as Record<string, unknown>)._ui_editor as Render;
         }
         bba = bba
           .translate((render.options.offset || new Vec2()).negated())
@@ -87,7 +87,6 @@ class ReFrag extends ReObject {
   }
 
   _draw(render: Render, fid: number, attrs: Record<string, unknown>) {
-    // eslint-disable-line no-underscore-dangle
     const bb = this.calcBBox(render.ctab, fid, render);
 
     if (bb) {

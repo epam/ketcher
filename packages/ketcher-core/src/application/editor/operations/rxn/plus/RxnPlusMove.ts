@@ -41,7 +41,7 @@ export class RxnPlusMove extends BaseOperation {
     const rxn = restruct.rxnPluses.get(id);
     if (!rxnPlus || !rxn) return;
 
-    rxnPlus.pp.add_(d); // eslint-disable-line no-underscore-dangle
+    rxnPlus.pp.add_(d);
     const scaled = Scale.modelToCanvas(d, restruct.render.options);
     rxn.visel.translate(scaled);
 

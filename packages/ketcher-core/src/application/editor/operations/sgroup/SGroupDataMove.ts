@@ -37,7 +37,7 @@ export class SGroupDataMove extends BaseOperation {
     const sgroup = sgroups.get(id);
     if (!sgroup) return;
 
-    sgroup.pp?.add_(d); // eslint-disable-line no-underscore-dangle
+    sgroup.pp?.add_(d);
     this.data.d = d.negated();
 
     // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway

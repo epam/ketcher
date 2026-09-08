@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { moveMouseAway } from '../moveMouseAway';
 import { MonomerType } from '../types';
@@ -132,14 +131,12 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
 }> {
   if (await AttachmentPointsDialog(page).window.isVisible()) {
     if (!firstMonomerAttachmentPoint) {
-      firstMonomerAttachmentPoint = await getMinFreeAttachmentPoint(
-        firstMonomer,
-      );
+      firstMonomerAttachmentPoint =
+        await getMinFreeAttachmentPoint(firstMonomer);
     }
     if (!secondMonomerAttachmentPoint) {
-      secondMonomerAttachmentPoint = await getMinFreeAttachmentPoint(
-        secondMonomer,
-      );
+      secondMonomerAttachmentPoint =
+        await getMinFreeAttachmentPoint(secondMonomer);
     }
 
     if (firstMonomerAttachmentPoint && secondMonomerAttachmentPoint) {
@@ -160,9 +157,8 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
     };
   }
   const firstMonomerType = await firstMonomer.getAttribute('data-monomertype');
-  const secondMonomerType = await secondMonomer.getAttribute(
-    'data-monomertype',
-  );
+  const secondMonomerType =
+    await secondMonomer.getAttribute('data-monomertype');
 
   const firstMonomerAvailableAttachmentPoints =
     await getAvailableAttachmentPoints(firstMonomer);

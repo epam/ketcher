@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import { Atom, SGroup, Struct, Vec2 } from 'domain/entities';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Molfile } from '../molfile';
@@ -64,7 +66,7 @@ function roundTrip(struct: Struct): Struct {
 describe('centerMonomerMicromoleculeAtoms', () => {
   it('geometric center of sgroup atoms in v2000 equals monomer position from KET', () => {
     const monomerPosition = new Vec2(5, 3);
-    // Atom offsets are NOT centered at origin — simulating real molecular geometry
+    // Atom offsets are NOT centered at origin - simulating real molecular geometry
     const atomOffsets = [
       new Vec2(0.3, 0.5),
       new Vec2(-0.5, -0.2),

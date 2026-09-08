@@ -76,7 +76,7 @@ function useSetRnaPresets() {
       dispatch(loadMonomerLibrary([]));
       dispatch(clearFavorites());
     };
-  }, [editor, defaultRnaPresets]);
+  }, [editor, defaultRnaPresets, dispatch]);
 }
 
 export default useSetRnaPresets;

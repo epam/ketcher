@@ -83,9 +83,17 @@ export function filterFGLib(lib, filter) {
  * text, so it can be resolved reactively at render time. Schemas sourced
  * from external/data-driven sources keep literal text with no namespace
  * prefix and are returned unchanged.
+ *
+ * Matching must anchor the whole string (not just check for a ":" anywhere
+ * in it) — plain English labels ending in a punctuation colon, e.g.
+ * "File name:", would otherwise be misidentified as keys and sent through
+ * t(), which can't resolve them and logs a spurious missing-key warning.
  */
+const TRANSLATION_KEY_RE =
+  /^(?:common|toolbar|toolbars|dialogs|components|settings):[A-Za-z0-9_.-]+$/;
+
 export function resolveTranslatableText<T>(value: T, t?: TFunction): T {
-  if (typeof value !== 'string' || !t || !value.includes(':')) {
+  if (typeof value !== 'string' || !t || !TRANSLATION_KEY_RE.test(value)) {
     return value;
   }
   return t(value) as unknown as T;

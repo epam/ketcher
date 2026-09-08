@@ -1,4 +1,9 @@
-import { Action, ketcherProvider, setExpandMonomerSGroup } from 'ketcher-core';
+import {
+  Action,
+  ketcherProvider,
+  setExpandMonomerSGroup,
+  setExpandSGroup,
+} from 'ketcher-core';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAppContext } from 'src/hooks';
@@ -24,13 +29,23 @@ const useFunctionalGroupEoc = () => {
       const molecule = editor.render.ctab;
       const selectedFunctionalGroups = props?.functionalGroups;
       const action = new Action();
+      const isMultiSelection = (selectedFunctionalGroups?.length ?? 0) > 1;
+      const useGenericPath = isMultiSelection && !toExpand;
 
       selectedFunctionalGroups?.forEach((functionalGroup) => {
-        action.mergeWith(
-          setExpandMonomerSGroup(molecule, functionalGroup.relatedSGroupId, {
-            expanded: toExpand,
-          }),
-        );
+        if (useGenericPath) {
+          action.mergeWith(
+            setExpandSGroup(molecule, functionalGroup.relatedSGroupId, {
+              expanded: toExpand,
+            }),
+          );
+        } else {
+          action.mergeWith(
+            setExpandMonomerSGroup(molecule, functionalGroup.relatedSGroupId, {
+              expanded: toExpand,
+            }),
+          );
+        }
       });
 
       editor.update(action);

@@ -78,6 +78,40 @@ describe('setExpandMonomerSGroup', () => {
     (getAttachmentPointStereoBond as jest.Mock).mockReset();
   });
 
+  it('falls back to generic S-group collapse for monomers with >2 attachment points', () => {
+    const struct = new Struct();
+    const atom1Id = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+    );
+    const atom2Id = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(1, 0) }),
+    );
+    const atom3Id = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(2, 0) }),
+    );
+
+    const monomerSGroupId = createMonomerSGroup(struct, atom1Id);
+    struct.atomAddToSGroup(monomerSGroupId, atom2Id);
+    struct.atomAddToSGroup(monomerSGroupId, atom3Id);
+
+    addAttachmentPoint(struct, monomerSGroupId, atom1Id, 1);
+    addAttachmentPoint(struct, monomerSGroupId, atom2Id, 2);
+    addAttachmentPoint(struct, monomerSGroupId, atom3Id, 3);
+
+    const options = {
+      scale: 40,
+      width: 100,
+      height: 100,
+    } as unknown as RenderOptions;
+    const render = new Render(document as unknown as HTMLElement, options);
+    const restruct = new ReStruct(struct, render);
+
+    setExpandMonomerSGroup(restruct, monomerSGroupId, { expanded: false });
+
+    expect(struct.sgroups.get(monomerSGroupId)?.isExpanded()).toBe(false);
+    expect(getAttachmentPointStereoBond).not.toHaveBeenCalled();
+  });
+
   it('preserves explicit false expanded state when creating monomer S-groups', () => {
     const struct = new Struct();
     const monomer = new Peptide(peptideMonomerItem);

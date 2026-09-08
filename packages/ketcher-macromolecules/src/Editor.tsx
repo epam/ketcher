@@ -264,6 +264,7 @@ function Editor({
       ]): void => {
         setContextMenuEvent(event);
         setSelectedMonomers([]);
+        dispatch(setContextMenuActive(true));
         showSelectedMonomersContextMenu({
           event,
           props: {
@@ -278,6 +279,7 @@ function Editor({
         setSelectedMonomers(selectedMonomers);
         setContextMenuEvent(event);
         updatePasteAvailability();
+        dispatch(setContextMenuActive(true));
         showSelectedMonomersContextMenu({
           event,
           props: { selectedMonomers },

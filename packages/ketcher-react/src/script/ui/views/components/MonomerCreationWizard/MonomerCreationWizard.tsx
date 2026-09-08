@@ -1121,7 +1121,7 @@ const MonomerCreationWizardInternal = ({
 
   // Recompute atom ownership highlights only after component structures change
   // while ownership validation errors are active.
-  useEffect(() => {
+  const rnaPresetProblematicAtomIds = useMemo(() => {
     if (
       !editor?.render?.monomerCreationState ||
       !isRnaPresetType ||
@@ -1130,21 +1130,27 @@ const MonomerCreationWizardInternal = ({
       return;
     }
 
-    const { problematicAtomIds } = getRnaPresetStructureValidationResult(
+    return getRnaPresetStructureValidationResult(
       editor.struct(),
       rnaPresetComponentStructures,
-    );
-
-    editor.setProblematicAtoms(problematicAtomIds);
-    if (problematicAtomIds.size === 0) {
-      setHasActiveRnaPresetAtomValidationErrors(false);
-    }
+    ).problematicAtomIds;
   }, [
     editor,
-    hasActiveRnaPresetAtomValidationErrors,
     isRnaPresetType,
+    hasActiveRnaPresetAtomValidationErrors,
     rnaPresetComponentStructures,
   ]);
+
+  useEffect(() => {
+    if (!rnaPresetProblematicAtomIds) {
+      return;
+    }
+
+    editor.setProblematicAtoms(rnaPresetProblematicAtomIds);
+    if (rnaPresetProblematicAtomIds.size === 0) {
+      setHasActiveRnaPresetAtomValidationErrors(false);
+    }
+  }, [rnaPresetProblematicAtomIds, editor]);
 
   useEffect(() => {
     if (monomerCreationState?.hasDefaultAttachmentPoints) {
@@ -1187,7 +1193,7 @@ const MonomerCreationWizardInternal = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
+  const autoPhosphatePosition = useMemo(() => {
     if (!monomerCreationState || !isRnaPresetType) {
       return;
     }
@@ -1226,19 +1232,23 @@ const MonomerCreationWizardInternal = ({
         }
       },
     );
-    const autoPhosphatePosition = inferPhosphatePosition(
+
+    return inferPhosphatePosition(
       sugarAttachmentPoints,
       phosphateAttachmentPoints,
     );
-
-    handlePhosphatePositionChange(autoPhosphatePosition);
   }, [
     isRnaPresetType,
-    monomerCreationState?.assignedAttachmentPoints,
+    monomerCreationState,
     rnaPresetWizardState.phosphate.structure,
     rnaPresetWizardState.sugar.structure,
-    handlePhosphatePositionChange,
   ]);
+
+  useEffect(() => {
+    if (autoPhosphatePosition) {
+      handlePhosphatePositionChange(autoPhosphatePosition);
+    }
+  }, [autoPhosphatePosition, handlePhosphatePositionChange]);
 
   const { assignedAttachmentPoints } = monomerCreationState;
 

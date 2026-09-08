@@ -244,6 +244,9 @@ export const SequenceItemContextMenu = ({
 
     switch (true) {
       case menuItemId === SequenceItemContextMenuNames.modifyInRnaBuilder:
+        // Deactivate the context menu so its capture-phase Escape listener
+        // stops swallowing the first Escape press. Without this the user has
+        // to press Escape twice to leave RNA Builder mode.
         dispatch(setContextMenuActive(false));
         editor.events.turnOnSequenceEditInRNABuilderMode.dispatch();
         dispatch(setSelectedTabIndex(LIBRARY_TAB_INDEX.RNA));

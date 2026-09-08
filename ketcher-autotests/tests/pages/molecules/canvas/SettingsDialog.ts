@@ -1,5 +1,4 @@
 /* eslint-disable no-redeclare */
-/* eslint-disable prettier/prettier */
 import { Page, Locator } from '@playwright/test';
 import {
   AllSettingsOptions,

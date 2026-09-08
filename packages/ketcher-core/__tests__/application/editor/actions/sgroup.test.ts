@@ -216,7 +216,7 @@ describe('setExpandMonomerSGroup', () => {
     );
   });
 
-  it('keeps expansion spacing stable across undo and repeated toggles', () => {
+  it('restores expansion spacing across undo and repeated toggles', () => {
     const struct = new Struct();
     const firstMonomerAtomId = struct.atoms.add(
       new Atom({ label: 'C', pp: new Vec2(0, 0) }),
@@ -294,11 +294,78 @@ describe('setExpandMonomerSGroup', () => {
     const positionAfterFirstExpansion = new Vec2(outsideAtom.pp);
     setExpandMonomerSGroup(restruct, monomerSGroupId, { expanded: false });
 
-    expect(outsideAtom.pp).toEqual(positionAfterFirstExpansion);
+    expect(outsideAtom.pp).toEqual(outsidePositionBeforeExpansion);
+    expect(monomerSGroup.data.contractedFromExpanded).toBeFalsy();
 
     setExpandMonomerSGroup(restruct, monomerSGroupId, { expanded: true });
 
     expect(outsideAtom.pp).toEqual(positionAfterFirstExpansion);
+
+    setExpandMonomerSGroup(restruct, monomerSGroupId, { expanded: false });
+
+    expect(outsideAtom.pp).toEqual(outsidePositionBeforeExpansion);
+  });
+
+  it('keeps established spacing behavior for ordinary superatom S-groups', () => {
+    const struct = new Struct();
+    const firstSGroupAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+    );
+    const secondSGroupAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(1, 0) }),
+    );
+    const outsideAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(2, 0) }),
+    );
+    const internalBond = new Bond({
+      begin: firstSGroupAtomId,
+      end: secondSGroupAtomId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    });
+    const connectingBond = new Bond({
+      begin: secondSGroupAtomId,
+      end: outsideAtomId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    });
+    const internalBondId = struct.bonds.add(internalBond);
+    const connectingBondId = struct.bonds.add(connectingBond);
+    struct.bondInitHalfBonds(internalBondId, internalBond);
+    struct.bondInitHalfBonds(connectingBondId, connectingBond);
+    struct.initNeighbors();
+
+    const sGroup = new SGroup(SGroup.TYPES.SUP);
+    const sGroupId = struct.sgroups.add(sGroup);
+    sGroup.id = sGroupId;
+    sGroup.data.expanded = false;
+    sGroup.pp = new Vec2(0.5, 0);
+    struct.atomAddToSGroup(sGroupId, firstSGroupAtomId);
+    struct.atomAddToSGroup(sGroupId, secondSGroupAtomId);
+    addAttachmentPoint(struct, sGroupId, secondSGroupAtomId, 1);
+
+    const options = {
+      scale: 40,
+      width: 100,
+      height: 100,
+    } as unknown as RenderOptions;
+    const render = new Render(document as unknown as HTMLElement, options);
+    const restruct = new ReStruct(struct, render);
+    const outsideAtom = struct.atoms.get(outsideAtomId);
+    if (!outsideAtom) {
+      throw new Error('Expected the outside atom to be initialized');
+    }
+    const outsidePositionBeforeExpansion = new Vec2(outsideAtom.pp);
+
+    setExpandMonomerSGroup(restruct, sGroupId, { expanded: true });
+
+    expect(struct.atoms.get(outsideAtomId)?.pp).toEqual(new Vec2(2.5, 0));
+
+    setExpandMonomerSGroup(restruct, sGroupId, { expanded: false });
+
+    expect(struct.atoms.get(outsideAtomId)?.pp).toEqual(
+      outsidePositionBeforeExpansion,
+    );
+    expect(sGroup.data.contractedFromExpanded).toBeUndefined();
+    expect(sGroup.data.expansionSpacingApplied).toBeUndefined();
   });
 
   it('preserves established first-expansion spacing for an existing long bond', () => {
@@ -406,6 +473,9 @@ describe('setExpandMonomerSGroup', () => {
     } as unknown as RenderOptions;
     const render = new Render(document as unknown as HTMLElement, options);
     const restruct = new ReStruct(struct, render);
+    const positionsBeforeExpansion = [...struct.atoms.values()].map(
+      (atom) => new Vec2(atom.pp),
+    );
 
     const expansionUndo = setExpandMonomerSGroup(restruct, middleSGroupId, {
       expanded: true,
@@ -425,19 +495,19 @@ describe('setExpandMonomerSGroup', () => {
       expanded: false,
     });
     expect([...struct.atoms.values()].map((atom) => atom.pp)).toEqual(
-      positionsAfterExpansion,
+      positionsBeforeExpansion,
     );
     expect(
       middleSGroup.getContractedBondPosition(struct, firstMiddleAtomId),
     ).toEqual({
-      position: struct.atoms.get(firstMiddleAtomId)?.pp,
+      position: middleSGroup.pp,
       atomId: firstMiddleAtomId,
     });
     expect(
       middleSGroup.getContractedBondPosition(struct, secondMiddleAtomId),
     ).toEqual({
-      position: struct.atoms.get(secondMiddleAtomId)?.pp,
-      atomId: secondMiddleAtomId,
+      position: middleSGroup.pp,
+      atomId: firstMiddleAtomId,
     });
 
     collapseUndo.perform(restruct);
@@ -447,6 +517,9 @@ describe('setExpandMonomerSGroup', () => {
     );
 
     setExpandMonomerSGroup(restruct, middleSGroupId, { expanded: false });
+    expect([...struct.atoms.values()].map((atom) => atom.pp)).toEqual(
+      positionsBeforeExpansion,
+    );
     const reExpansionUndo = setExpandMonomerSGroup(restruct, middleSGroupId, {
       expanded: true,
     });
@@ -457,7 +530,7 @@ describe('setExpandMonomerSGroup', () => {
     reExpansionUndo.perform(restruct);
     expect(middleSGroup.isContracted()).toBe(true);
     expect([...struct.atoms.values()].map((atom) => atom.pp)).toEqual(
-      positionsAfterExpansion,
+      positionsBeforeExpansion,
     );
   });
 

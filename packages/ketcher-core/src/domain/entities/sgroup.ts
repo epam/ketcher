@@ -73,6 +73,7 @@ interface SGroupData {
   subscript: string;
   expanded: boolean;
   contractedFromExpanded?: boolean;
+  expansionSpacingApplied?: boolean;
   attached: boolean;
   absolute: boolean;
   showUnits: boolean;

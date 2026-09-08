@@ -172,10 +172,35 @@ export function setExpandMonomerSGroup(
     action.addOp(new SGroupAttr(sgid, key, attrs[key]));
   });
 
-  if (!attrs.expanded) {
-    action.addOp(new SGroupAttr(sgid, 'contractedFromExpanded', true));
-  } else if (sGroup.data.contractedFromExpanded) {
-    action.addOp(new SGroupAttr(sgid, 'contractedFromExpanded', false));
+  const isMonomer = sGroup instanceof MonomerMicromolecule;
+  const expansionSpacingApplied = Boolean(sGroup.data.expansionSpacingApplied);
+  // Existing expanded monomers keep their coordinates when collapsed. Spacing
+  // introduced by this action must still be reversed for normal round trips.
+  const preservesCoordinatesOnCollapse =
+    isMonomer && !attrs.expanded && !expansionSpacingApplied;
+  const restoresExpansionSpacing =
+    !attrs.expanded && (!isMonomer || expansionSpacingApplied);
+  const appliesExpansionSpacing =
+    attrs.expanded && (!isMonomer || !sGroup.data.contractedFromExpanded);
+  const shouldAdjustExpansionSpacing =
+    restoresExpansionSpacing || appliesExpansionSpacing;
+
+  if (isMonomer) {
+    if (preservesCoordinatesOnCollapse) {
+      action.addOp(new SGroupAttr(sgid, 'contractedFromExpanded', true));
+    } else if (sGroup.data.contractedFromExpanded) {
+      action.addOp(new SGroupAttr(sgid, 'contractedFromExpanded', false));
+    }
+
+    if (expansionSpacingApplied !== appliesExpansionSpacing) {
+      action.addOp(
+        new SGroupAttr(
+          sgid,
+          'expansionSpacingApplied',
+          appliesExpansionSpacing,
+        ),
+      );
+    }
   }
 
   const sGroupAtoms: Set<number> = new Set(SGroup.getAtoms(struct, sGroup));
@@ -186,6 +211,20 @@ export function setExpandMonomerSGroup(
       (sGroupAtoms.has(bond.end) && !sGroupAtoms.has(bond.begin))
     );
   });
+
+  const attachmentAtomsFromOutside: number[] = [];
+
+  for (const bond of bondsToOutside.values()) {
+    if (
+      attachmentPoints.some(
+        (attachmentPoint) => attachmentPoint.atomId === bond.begin,
+      )
+    ) {
+      attachmentAtomsFromOutside.push(bond.end);
+    } else {
+      attachmentAtomsFromOutside.push(bond.begin);
+    }
+  }
 
   bondsToOutside.forEach((bondToOutside, bondId) => {
     const atomInsideCurrentMonomer = sGroupAtoms.has(bondToOutside.begin)
@@ -285,25 +324,23 @@ export function setExpandMonomerSGroup(
     }
   });
 
-  if (attrs.expanded && !sGroup.data.contractedFromExpanded) {
-    const outsideAtomIds = [...bondsToOutside.values()].map((bond) =>
-      sGroupAtoms.has(bond.begin) ? bond.end : bond.begin,
-    );
-
+  if (shouldAdjustExpansionSpacing) {
     const sGroupBBox = SGroup.getObjBBox(
       Array.from(sGroupAtoms.values()),
       struct,
     );
     const sGroupWidth = sGroupBBox.p1.x - sGroupBBox.p0.x;
     const sGroupHeight = sGroupBBox.p1.y - sGroupBBox.p0.y;
-    const sGroupCenter = sGroup.getContractedPosition(struct).position;
+    const sGroupCenter = sGroup.isContracted()
+      ? sGroup.getContractedPosition(struct).position
+      : sGroup.pp;
 
     const visitedAtoms = new Set<number>();
     const visitedSGroups = new Set<number>();
     const atomsToMove = new Map<number, number[]>();
     const sGroupsToMove = new Map<number, number[]>();
 
-    outsideAtomIds.forEach((startAtomId, index) => {
+    attachmentAtomsFromOutside.forEach((startAtomId, index) => {
       const queue: number[] = [startAtomId];
 
       while (queue.length > 0) {
@@ -481,13 +518,16 @@ export function setExpandMonomerSGroup(
           (moveHorizontally ? 1 : 0) * horizontalDirection * horizontalOffset,
           (moveHorizontally ? 0 : 1) * verticalDirection * baseVerticalOffset,
         );
+        const finalMoveVector = attrs.expanded
+          ? moveVector
+          : moveVector.negated();
 
         const movableSGroupAtoms = SGroup.getAtoms(struct, movableSGroup);
         movableSGroupAtoms.forEach((aid) => {
-          action.addOp(new AtomMove(aid, moveVector));
+          action.addOp(new AtomMove(aid, finalMoveVector));
           handledAtoms.add(aid);
         });
-        action.addOp(new SGroupDataMove(sGroupId, moveVector));
+        action.addOp(new SGroupDataMove(sGroupId, finalMoveVector));
       });
     });
 
@@ -511,9 +551,12 @@ export function setExpandMonomerSGroup(
         (direction.x * sGroupWidth) / 2,
         (direction.y * sGroupHeight) / 2,
       );
+      const finalMoveVector = attrs.expanded
+        ? moveVector
+        : moveVector.negated();
 
       intactAtoms.forEach((atomId) => {
-        action.addOp(new AtomMove(atomId, moveVector));
+        action.addOp(new AtomMove(atomId, finalMoveVector));
       });
     });
   }

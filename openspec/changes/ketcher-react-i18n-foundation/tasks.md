@@ -95,10 +95,10 @@
 
 ## 9. Testing
 
-- [ ] 9.1 Add a unit test (Jest) asserting the i18n init module loads the English baseline without missing-key warnings
-- [ ] 9.2 Add a unit/lint check (or script) that fails CI if a new hardcoded string literal is introduced in a directory already migrated to `t()` calls (grep-based guard is acceptable)
-- [ ] 9.3 **Code check:** `npm run test --workspace=packages/ketcher-react` passes, including the new guard check
+- [x] 9.1 Add a unit test (Jest) asserting the i18n init module loads the English baseline without missing-key warnings — `packages/ketcher-react/src/i18n/i18n.test.ts` scans the whole `ketcher-react/src` tree for every `"namespace:key"` reference (355 found, including the prefix-variable + template-literal pattern from `options-schema.ts`/`MonomerCreationWizard.constants.ts`) and asserts each resolves via the real `i18next` instance (`i18n.exists()` + `t(key) !== key`) instead of depending on the dev-only `missingKeyHandler`
+- [x] 9.2 Add a unit/lint check (or script) that fails CI if a new hardcoded string literal is introduced in a directory already migrated to `t()` calls (grep-based guard is acceptable) — `packages/ketcher-react/src/i18n/noHardcodedStrings.test.ts`; scoped to the directories/files touched in Sections 1–6, flags literal `title=`/`label=`/`placeholder=`/`tooltip=`/`aria-label=`/`alt=` JSX attributes (vs. `={t(...)}`); 2 pre-existing reviewed exceptions allowlisted by file+snippet (a dead commented-out button, a literal-ellipsis placeholder); verified the guard actually fails by injecting a throwaway hardcoded string and confirming red, then reverting
+- [x] 9.3 **Code check:** typecheck, unit tests 403/403 (60 suites, +2 new), circular-deps, build, prettier all green, including the two new guard tests
 - [ ] 9.4 **Visual check:** `cd example && npm run dev:standalone` (Vite, hot-reloads directly from source per DEVNOTES.md — no rebuild needed), final full walkthrough of every area touched across Sections 1–8 in one pass
 - [ ] 9.5 Playwright E2E coverage: **do not start** until an explicit go-ahead is given and `.memory-bank/testing.md` has been read, per project rule — this change ships English-only so existing E2E text-based assertions should still pass unmodified; only add new E2E coverage if extraction is found to have changed selector/testid behavior
-- [ ] 9.6 **Commit** this section's changes as one commit on `4384-language`
+- [x] 9.6 **Committed:** `32ce5ddcba` on `4384-language` (covers 9.1-9.3; 9.5 pending explicit go-ahead per project rule)
 - [ ] 9.7 **STOP — report commit hash + diff for final review**

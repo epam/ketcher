@@ -23,11 +23,15 @@ import Select from '../Select';
 import styles from './measure-input.module.less';
 import formClasses from '../form/form.module.less';
 import { ErrorPopover } from '../form/errorPopover';
-import { getSelectOptionsFromSchema } from '../../../utils';
+import {
+  getSelectOptionsFromSchema,
+  resolveTranslatableText,
+} from '../../../utils';
 import { MeasurementUnits } from 'src/script/ui/data/schema/options-schema';
 import { usePopoverAnchor } from '../../../../../hooks';
 import { Icon } from 'components';
 import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 interface Schema {
   title?: string;
@@ -155,6 +159,8 @@ const MeasureInput = ({
   };
 
   const desc = schema;
+  const { t } = useTranslation();
+  const title = resolveTranslatableText(rest.title || desc?.title, t);
 
   const label = rest.title || desc?.title;
 
@@ -185,7 +191,7 @@ const MeasureInput = ({
               value={internalValue}
               onChange={handleChange}
               type="text"
-              data-testid={`${desc?.title}-value-input`}
+              data-testid={`${title}-value-input`}
             />
           </span>
           {error && anchorEl && (
@@ -202,7 +208,7 @@ const MeasureInput = ({
           options={selectOptions}
           value={extraValue}
           className={styles.select}
-          data-testid={`${desc?.title}-measure-input`}
+          data-testid={`${title}-measure-input`}
         />
       </div>
     </div>

@@ -6,6 +6,7 @@ import AttachmentPointControls from '../AttachmentPointControls/AttachmentPointC
 import type Editor from '../../../../../../editor';
 import { Icon } from '../../../../../../../components';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   name: AttachmentPointName;
@@ -28,6 +29,7 @@ const AttachmentPoint = ({
   onLeavingAtomChange,
   onRemove,
 }: Props) => {
+  const { t } = useTranslation('components');
   const attachmentPointsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -121,7 +123,7 @@ const AttachmentPoint = ({
         <button
           className={styles.removeButton}
           onClick={handleRemove}
-          aria-label="Remove attachment point"
+          aria-label={t('monomerCreationWizard.removeAttachmentPoint')}
           data-testid={`attachment-point-delete-button-${name}`}
         >
           <Icon name="deleteMenu" />

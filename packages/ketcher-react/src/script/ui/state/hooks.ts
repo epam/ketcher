@@ -1,6 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
-import type { AnyAction, Dispatch } from 'redux';
+import type { AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
+import type { StoreState } from './store.types';
 
-export const useAppDispatch = useDispatch.withTypes<Dispatch<AnyAction>>();
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const useAppSelector = useSelector.withTypes<any>();
+export type AppDispatch = ThunkDispatch<StoreState, undefined, AnyAction>;
+
+export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
+export const useAppSelector = useSelector.withTypes<StoreState>();

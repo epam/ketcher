@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-exports */
 import * as dotenv from 'dotenv';
 import * as os from 'os';
 import { PlaywrightTestConfig, devices } from '@playwright/test';
@@ -12,8 +13,6 @@ import {
 import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
-// Addign global beforeEach from testSetup
-// import './tests/testSetup';
 
 function baseURLFullScale(): string {
   if (!process.env.MODE || !process.env.KETCHER_URL) {
@@ -99,5 +98,4 @@ const config: PlaywrightTestConfig = {
   ],
 };
 
-// eslint-disable-next-line no-restricted-exports
 export default config;

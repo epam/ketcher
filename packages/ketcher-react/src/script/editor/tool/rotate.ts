@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -32,8 +33,8 @@ import {
   MonomerMicromolecule,
   RotateMonomerOperation,
   CoordinateTransformation,
+  assert,
 } from 'ketcher-core';
-import assert from 'assert';
 import { intersection, throttle } from 'lodash';
 import type { Editor, Selection } from '../Editor';
 import type { Tool } from './Tool';

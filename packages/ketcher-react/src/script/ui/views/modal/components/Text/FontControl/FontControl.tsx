@@ -14,7 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useMemo, useState, useRef } from 'react';
+import {
+  type MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+} from 'react';
 import { useClickOutside } from '../../../../../../../hooks/useClickOutside';
 import { type LexicalEditor, $getSelection, $isRangeSelection } from 'lexical';
 import {
@@ -26,30 +33,34 @@ import classes from './FontControl.module.less';
 
 import { range } from 'lodash/fp';
 
+const DEFAULT_FONT_SIZE = '13px';
+const MIN_FONT_SIZE = 4;
+const MAX_FONT_SIZE = 144;
+const fontSizes = range(MIN_FONT_SIZE, MAX_FONT_SIZE + 1);
+
 export const FontControl = ({ editor }: { editor: LexicalEditor }) => {
-  const defaultFontSize = '13px';
   const [isShowingFontSizeMenu, setIsShowingFontSizeMenu] = useState(false);
-  const [currentFontSize, setCurrentFontSize] = useState(defaultFontSize);
+  const [currentFontSize, setCurrentFontSize] = useState(DEFAULT_FONT_SIZE);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const onClickOutsideCloseDrowndown = (): void =>
     setIsShowingFontSizeMenu(false);
 
-  // TODO suppressed after upgrade to react 19. Need to fix
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   useClickOutside(wrapperRef, onClickOutsideCloseDrowndown);
 
-  const setFontSize = (e, value: string) => {
-    e.preventDefault();
-    setCurrentFontSize(value);
-    editor.update(() => {
-      const selection = $getSelection();
-      if ($isRangeSelection(selection)) {
-        $patchStyleText(selection, { 'font-size': value });
-      }
-    });
-    setIsShowingFontSizeMenu(false);
-  };
+  const setFontSize = useCallback(
+    (e: MouseEvent, value: string) => {
+      e.preventDefault();
+      setCurrentFontSize(value);
+      editor.update(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          $patchStyleText(selection, { 'font-size': value });
+        }
+      });
+      setIsShowingFontSizeMenu(false);
+    },
+    [editor],
+  );
 
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
@@ -59,17 +70,13 @@ export const FontControl = ({ editor }: { editor: LexicalEditor }) => {
           const fontSize = $getSelectionStyleValueForProperty(
             selection,
             'font-size',
-            defaultFontSize,
+            DEFAULT_FONT_SIZE,
           );
           setCurrentFontSize(fontSize);
         }
       });
     });
   }, [editor]);
-
-  const MIN_FONT_SIZE = 4;
-  const MAX_FONT_SIZE = 144;
-  const fontSizes = range(MIN_FONT_SIZE, MAX_FONT_SIZE + 1);
 
   const fontSizeOptions = useMemo(
     () =>
@@ -84,7 +91,7 @@ export const FontControl = ({ editor }: { editor: LexicalEditor }) => {
           {fontSize}
         </button>
       )),
-    [isShowingFontSizeMenu],
+    [setFontSize],
   );
 
   return (

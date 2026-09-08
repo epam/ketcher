@@ -33,8 +33,7 @@ const END_HANDLE_HIT_RADIUS_MULTIPLIER = 2;
 
 export class RxnArrowRenderer extends BaseRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGPathElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGPathElement, void> | undefined;
 
   private endHandleGroups: D3SvgElementSelection<SVGGElement, void>[] = [];
 

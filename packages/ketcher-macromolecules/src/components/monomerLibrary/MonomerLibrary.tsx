@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
 import { Tabs } from 'components/shared/Tabs';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
 import { useAppDispatch, useAppSelector } from 'hooks';
@@ -48,18 +48,13 @@ type Props = {
 };
 
 const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
-  const presetsRef = useRef<IRnaPreset[]>([]);
   const dispatch = useAppDispatch();
   const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
+  const presets = useAppSelector(selectAllPresets);
 
   useEffect(() => {
     dispatch(setSearchFilter(''));
   }, [dispatch]);
-
-  useAppSelector(selectAllPresets, (presets) => {
-    presetsRef.current = presets;
-    return true;
-  });
 
   const filterResults = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -74,9 +69,7 @@ const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
       let presetWithSameName: IRnaPreset | undefined;
 
       do {
-        presetWithSameName = presetsRef.current.find(
-          (preset) => preset.name === name,
-        );
+        presetWithSameName = presets.find((preset) => preset.name === name);
         if (presetWithSameName) name += COPY;
       } while (presetWithSameName);
 
@@ -97,7 +90,7 @@ const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
       dispatch(setIsEditMode(true));
       scrollToSelectedPreset(preset?.name);
     },
-    [dispatch],
+    [dispatch, presets],
   );
 
   const editPreset = useCallback(

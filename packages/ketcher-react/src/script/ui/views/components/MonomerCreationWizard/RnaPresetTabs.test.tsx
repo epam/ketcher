@@ -20,12 +20,18 @@ import { AttachmentPointName, KetMonomerClass } from 'ketcher-core';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
 import type { ReactNode } from 'react';
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Editor } from '../../../../editor';
 
 // Import after mocks
 import { RnaPresetTabs } from './RnaPresetTabs';
 import type { RnaPresetWizardState } from './MonomerCreationWizard.types';
+
+type HighlightObject = {
+  atoms?: number[];
+  bonds?: number[];
+  color?: string;
+  outline?: boolean;
+};
 
 // Mock the Icon component to avoid module resolution issues
 jest.mock('components', () => ({
@@ -121,7 +127,14 @@ const createMockEditor = () => {
     update: jest.fn(),
     setVisibleAssignedAttachmentPoints: jest.fn(),
     setConnectionAttachmentPoints: jest.fn(),
-  } as any;
+  } as unknown as Editor & {
+    highlights: {
+      clear: jest.Mock;
+      create: jest.Mock;
+      getAll: jest.Mock;
+    };
+    struct: jest.Mock;
+  };
 };
 
 // Helper to create initial wizard state
@@ -290,10 +303,10 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     const createCalls = mockEditor.highlights.create.mock.calls;
 
     // Flatten all calls to get all highlight objects
-    const allHighlights = createCalls.flat();
+    const allHighlights = createCalls.flat() as HighlightObject[];
 
-    const baseHighlight = allHighlights.find((h: any) => h.atoms?.includes(1));
-    const sugarHighlight = allHighlights.find((h: any) => h.atoms?.includes(4));
+    const baseHighlight = allHighlights.find((h) => h.atoms?.includes(1));
+    const sugarHighlight = allHighlights.find((h) => h.atoms?.includes(4));
 
     expect(baseHighlight).toMatchObject({
       atoms: [1, 2, 3],
@@ -345,13 +358,11 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 
     // Get all create calls and flatten
     const createCalls = mockEditor.highlights.create.mock.calls;
-    const allHighlights = createCalls.flat();
+    const allHighlights = createCalls.flat() as HighlightObject[];
 
-    const baseHighlight = allHighlights.find((h: any) => h.atoms?.includes(1));
-    const sugarHighlight = allHighlights.find((h: any) => h.atoms?.includes(4));
-    const phosphateHighlight = allHighlights.find((h: any) =>
-      h.atoms?.includes(7),
-    );
+    const baseHighlight = allHighlights.find((h) => h.atoms?.includes(1));
+    const sugarHighlight = allHighlights.find((h) => h.atoms?.includes(4));
+    const phosphateHighlight = allHighlights.find((h) => h.atoms?.includes(7));
 
     // Base should have inactive color + outline
     expect(baseHighlight).toMatchObject({
@@ -440,16 +451,16 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     fireEvent.click(baseTab);
 
     let createCalls = mockEditor.highlights.create.mock.calls;
-    let allHighlights = createCalls.flat();
+    let allHighlights = createCalls.flat() as HighlightObject[];
 
-    let baseHighlight = allHighlights.find((h: any) => h.atoms?.includes(1));
-    let sugarHighlight = allHighlights.find((h: any) => h.atoms?.includes(4));
+    let baseHighlight = allHighlights.find((h) => h.atoms?.includes(1));
+    let sugarHighlight = allHighlights.find((h) => h.atoms?.includes(4));
 
     // Base should be active
     expect(baseHighlight).toBeDefined();
     expect(sugarHighlight).toBeDefined();
-    expect(baseHighlight.color).toBe(ACTIVE_HIGHLIGHT_COLOR);
-    expect(sugarHighlight.color).toBe(INACTIVE_HIGHLIGHT_COLOR);
+    expect(baseHighlight?.color).toBe(ACTIVE_HIGHLIGHT_COLOR);
+    expect(sugarHighlight?.color).toBe(INACTIVE_HIGHLIGHT_COLOR);
 
     // Clear the mock to start fresh
     mockEditor.highlights.create.mockClear();
@@ -459,16 +470,16 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     fireEvent.click(sugarTab);
 
     createCalls = mockEditor.highlights.create.mock.calls;
-    allHighlights = createCalls.flat();
+    allHighlights = createCalls.flat() as HighlightObject[];
 
-    baseHighlight = allHighlights.find((h: any) => h.atoms?.includes(1));
-    sugarHighlight = allHighlights.find((h: any) => h.atoms?.includes(4));
+    baseHighlight = allHighlights.find((h) => h.atoms?.includes(1));
+    sugarHighlight = allHighlights.find((h) => h.atoms?.includes(4));
 
     // Now sugar should be active and base should be inactive
     expect(sugarHighlight).toBeDefined();
     expect(baseHighlight).toBeDefined();
-    expect(sugarHighlight.color).toBe(ACTIVE_HIGHLIGHT_COLOR);
-    expect(baseHighlight.color).toBe(INACTIVE_HIGHLIGHT_COLOR);
+    expect(sugarHighlight?.color).toBe(ACTIVE_HIGHLIGHT_COLOR);
+    expect(baseHighlight?.color).toBe(INACTIVE_HIGHLIGHT_COLOR);
   });
 
   it('should clear highlights but not create new ones when tab has no structure', () => {

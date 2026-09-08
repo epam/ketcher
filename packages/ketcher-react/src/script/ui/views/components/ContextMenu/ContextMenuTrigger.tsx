@@ -186,6 +186,7 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
             selection,
             selectedFunctionalGroups,
             ketcherId,
+            editor,
           );
           break;
         }

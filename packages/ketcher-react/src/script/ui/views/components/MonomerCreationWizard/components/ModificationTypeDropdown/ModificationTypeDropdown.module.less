@@ -18,11 +18,12 @@
         background: @color-primary-light;
       }
 
-      &.selectedOption,
-      &:global([aria-selected="true"].Mui-focused) {
-        background: none;
-        border-bottom: 1px solid @color-grey-3;
-      }
+&.selectedOption,
+&:global([aria-selected="true"].Mui-focused) {
+  background: none;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  border-bottom: 1px solid @color-grey-3;
+}
     }
   }
 }

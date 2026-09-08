@@ -225,6 +225,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "Natural amino acid"
+        ],
         "naturalAnalogShort": "D"
     }
 }

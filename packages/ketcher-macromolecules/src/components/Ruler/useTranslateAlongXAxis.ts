@@ -1,7 +1,7 @@
 import { RefObject, useLayoutEffect, useRef } from 'react';
 
-const useTranslateAlongXAxis = (
-  ref: RefObject<HTMLElement | SVGSVGElement>,
+const useTranslateAlongXAxis = <T extends HTMLElement | SVGSVGElement>(
+  ref: RefObject<T | null>,
   offsetX: number,
 ) => {
   const animateRef = useRef<number | null>(null);

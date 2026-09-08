@@ -1,5 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { Monomer, PresetType } from '@utils/types';
+import { RNABuilder, type RNABuilderLocators } from './library/RNABuilder';
 import {
   FavoriteStarSymbol,
   LibraryTab,
@@ -8,7 +9,6 @@ import {
   rnaSectionArea,
   rnaTabPresetsSection,
 } from '../constants/library/Constants';
-import { RNABuilder } from './library/RNABuilder';
 import { ContextMenu } from '../common/ContextMenu';
 import { getCoordinatesOfTheMiddleOfTheCanvas } from '../../utils/clicks';
 import { waitForRender } from '../../utils/common/loaders/waitForRender';
@@ -22,6 +22,7 @@ type PresetsSectionLocators = {
 
 type RNATabLocators = {
   rnaAccordion: Locator;
+  rnaEditor: Locator & RNABuilderLocators;
   presetsSection: Locator & PresetsSectionLocators;
   sugarsSection: Locator;
   basesSection: Locator;
@@ -30,6 +31,7 @@ type RNATabLocators = {
 };
 
 type LibraryLocators = {
+  libraryBody: Locator;
   searchEditbox: Locator;
   hideLibraryButton: Locator;
   showLibraryButton: Locator;
@@ -54,6 +56,10 @@ export const Library = (page: Page) => {
     page.getByTestId(LibraryTab.RNA),
     {
       rnaAccordion: page.getByTestId('rna-accordion'),
+      rnaEditor: Object.assign(
+        page.getByTestId('rna-editor'),
+        RNABuilder(page),
+      ),
       presetsSection,
       sugarsSection: page.getByTestId(RNASection.Sugars),
       basesSection: page.getByTestId(RNASection.Bases),
@@ -63,6 +69,7 @@ export const Library = (page: Page) => {
   );
 
   const locators: LibraryLocators = {
+    libraryBody: page.getByTestId('monomer-library'),
     searchEditbox: page.getByTestId('monomer-library-input'),
     hideLibraryButton: page.getByTestId('hide-monomer-library'),
     showLibraryButton: page.getByTestId('show-monomer-library'),
@@ -134,9 +141,8 @@ export const Library = (page: Page) => {
     },
 
     async isTabOpened(libraryTab: LibraryTab): Promise<boolean> {
-      const ariaSelected = await getElement(libraryTab).getAttribute(
-        'aria-selected',
-      );
+      const ariaSelected =
+        await getElement(libraryTab).getAttribute('aria-selected');
       return ariaSelected === 'true';
     },
 
@@ -169,9 +175,8 @@ export const Library = (page: Page) => {
      * Navigates to the tab and section (if applicable) where the monomer is located.
      */
     async goToMonomerLibraryLocation(monomer: Monomer | PresetType) {
-      const { libraryTab, rnaSection } = await this.getMonomerLibraryLocation(
-        monomer,
-      );
+      const { libraryTab, rnaSection } =
+        await this.getMonomerLibraryLocation(monomer);
 
       await this.openTab(libraryTab);
 
@@ -198,9 +203,7 @@ export const Library = (page: Page) => {
       const monomerCardBbox = await monomerCard.boundingBox();
       await monomerCard.click({
         position: {
-          // eslint-disable-next-line no-magic-numbers
           x: monomerCardBbox?.width ? monomerCardBbox.width / 2 : 0,
-          // eslint-disable-next-line no-magic-numbers
           y: monomerCardBbox?.height ? monomerCardBbox.height - 10 : 0,
         },
       });
@@ -340,9 +343,7 @@ export const Library = (page: Page) => {
 
       await presetCard.click({
         position: {
-          // eslint-disable-next-line no-magic-numbers
           x: presetCardBbox?.width ? presetCardBbox.width / 2 : 0,
-          // eslint-disable-next-line no-magic-numbers
           y: presetCardBbox?.height ? presetCardBbox.height - 10 : 0,
         },
       });

@@ -14,19 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Settings } from 'ketcher-core';
+import type { SettingsFormValue } from 'ketcher-core';
+
+export type SettingFieldValue = boolean | number | string;
+export type SettingFieldName = {
+  [Key in keyof SettingsFormValue]-?: Exclude<
+    SettingsFormValue[Key],
+    undefined
+  > extends SettingFieldValue
+    ? Key
+    : never;
+}[keyof SettingsFormValue];
 
 export interface FieldGroup {
   id: string;
   title: string;
-  fields: Array<keyof Settings>;
+  fields: Array<SettingFieldName>;
 }
 
 export interface FieldDefinition {
   label: string;
   type: 'checkbox' | 'number' | 'text' | 'select' | 'color';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  options?: Array<{ value: any; label: string }>;
+  options?: Array<{ value: SettingFieldValue; label: string }>;
   min?: number;
   max?: number;
   step?: number;

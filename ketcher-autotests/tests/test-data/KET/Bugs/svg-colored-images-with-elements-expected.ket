@@ -795,6 +795,7 @@
                     6
                 ],
                 "name": "Boc",
+                "expanded": false,
                 "id": 0,
                 "attachmentPoints": [
                     {

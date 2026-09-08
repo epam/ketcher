@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
@@ -1024,7 +1021,7 @@ const eligableNames = [
 ];
 
 for (const [index, eligableName] of eligableNames.entries()) {
-  test.fail(`11. Create monomer with ${eligableName.description}`, async () => {
+  test(`11. Create monomer with ${eligableName.description}`, async () => {
     // Bug: https://github.com/epam/ketcher/issues/7745
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -1057,10 +1054,7 @@ for (const [index, eligableName] of eligableNames.entries()) {
     await monomer.hover({ force: true });
     await dragTo(page, monomer, { x: 100, y: 100 });
     await monomer.hover({ force: true });
-    // dirty hack, delay should be removed after fix of https://github.com/epam/ketcher/issues/7745
-    await page.waitForTimeout(1 * 1000);
-    // await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await expect(page.getByTestId('preview-tooltip')).toBeVisible();
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
       eligableName.value,
     );

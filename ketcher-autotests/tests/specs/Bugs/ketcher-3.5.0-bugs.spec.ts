@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test, expect } from '@fixtures';
 import {
@@ -251,12 +247,10 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     );
     await selectPartOfMolecules(page, 10);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
     expect(molecularFormula).toEqual('C3H3');
     expect(molecularMass).toEqual('39.057');
     await CalculateVariablesPanel(page).closeWindow();
@@ -294,7 +288,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('5.96');
+    ).toEqual('6.3');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');

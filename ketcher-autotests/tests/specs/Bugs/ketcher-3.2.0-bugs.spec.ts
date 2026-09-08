@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
@@ -46,9 +42,9 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 
 let page: Page;
 
@@ -911,9 +907,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await keyboardTypeOnCanvas(page, 'AA');
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    const symbolP = page
-      .getByTestId(KETCHER_CANVAS)
-      .getByText('P', { exact: true });
+    const symbolP = getAbbreviationLocator(page, {
+      name: Phosphate.P.alias,
+    }).first();
     await ContextMenu(page, symbolP).click(MonomerOnMicroOption.ExpandMonomers);
     await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
     await CommonTopRightToolbar(page).setZoomInputValue('60');

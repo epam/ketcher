@@ -17,15 +17,15 @@
 import Logo from './logo.svg';
 import { Modal } from '../../shared/modal/Modal';
 import { About as AboutStyled } from './About.styles';
-import { useIndigoVersionToRedux } from 'src/hooks/useIndigoVersionToRedux';
 import { selectAppMeta } from 'state/common/editorSlice';
 import { useAppDispatch, useAppSelector } from 'src/hooks/stateHooks';
 
-const FEEDBACK_URL = 'http://lifescience.opensource.epam.com/ketcher/#feedback';
+const FEEDBACK_URL =
+  'https://lifescience.opensource.epam.com/ketcher/#feedback';
 const OVERVIEW_URL =
   'https://lifescience.opensource.epam.com/ketcher/index.html';
-const LIFE_SCIENCES_URL = 'http://lifescience.opensource.epam.com/';
-const INDIGO_URL = 'http://lifescience.opensource.epam.com/indigo/';
+const LIFE_SCIENCES_URL = 'https://lifescience.opensource.epam.com/';
+const INDIGO_URL = 'https://lifescience.opensource.epam.com/indigo/';
 
 function formatDate(isoDate = ''): string {
   if (!isoDate.includes('T')) return isoDate;
@@ -41,7 +41,6 @@ export function About({
   onClose: () => void;
 }>) {
   const dispatch = useAppDispatch();
-  useIndigoVersionToRedux();
   const { buildDate, indigoVersion, version } = useAppSelector(selectAppMeta);
   const formattedDate = formatDate(buildDate);
 

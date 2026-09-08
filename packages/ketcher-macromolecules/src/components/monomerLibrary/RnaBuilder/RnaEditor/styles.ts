@@ -46,7 +46,9 @@ export const StyledHeader = styled.button`
   }
 `;
 
-export const ExpandIcon = styled(Icon)<{ expanded?: boolean }>`
+export const ExpandIcon = styled(Icon, {
+  shouldForwardProp: (prop) => prop !== 'expanded',
+})<{ expanded?: boolean }>`
   height: 16px;
   width: 16px;
   transform: ${(props) => (props.expanded ? 'rotate(180deg)' : 'none')};

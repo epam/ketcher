@@ -99,7 +99,7 @@ class ReEnhancedFlag extends ReObject {
           ps.x,
           ps.y,
           fragment.enhancedStereoFlag
-            ? stereoFlagMap[fragment.enhancedStereoFlag] ?? ''
+            ? (stereoFlagMap[fragment.enhancedStereoFlag] ?? '')
             : '',
         )
         .attr({

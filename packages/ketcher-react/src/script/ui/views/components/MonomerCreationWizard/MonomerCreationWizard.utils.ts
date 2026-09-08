@@ -51,7 +51,7 @@ const getInitialValues = (
     ? expandIdtAliasesToWizardInputs(props.idtAliases)
     : { idtAlias5: '', idtAliasInternal: '', idtAlias3: '' };
   const modificationTypes =
-    type === KetMonomerClass.AminoAcid ? props.modificationTypes ?? [] : [];
+    type === KetMonomerClass.AminoAcid ? (props.modificationTypes ?? []) : [];
 
   return {
     type,

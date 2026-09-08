@@ -15,6 +15,7 @@ env:
   IGNORE_UNSTABLE_TESTS: true
   CI_ENVIRONMENT: true
   USE_SEPARATE_INDIGO_WASM: true
+  GENERATE_DATA: true
 
 permissions:
   contents: write
@@ -75,6 +76,7 @@ jobs:
           IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS
           CI_ENVIRONMENT=$CI_ENVIRONMENT
           USE_SEPARATE_INDIGO_WASM=$USE_SEPARATE_INDIGO_WASM
+          GENERATE_DATA=true
           EOF
       - name: Run tests with snapshot update
         run: |

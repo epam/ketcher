@@ -25,21 +25,21 @@ interface UseDraggableOptions {
   enabled?: boolean;
 }
 
-interface UseDraggableReturn {
+interface UseDraggableReturn<T extends HTMLElement> {
   position: Position;
   isDragging: boolean;
   handleRef: React.RefObject<HTMLElement | null>;
-  targetRef: React.RefObject<HTMLElement | null>;
+  targetRef: React.RefObject<T | null>;
 }
 
-export function useDraggable(
+export function useDraggable<T extends HTMLElement = HTMLElement>(
   options: UseDraggableOptions = {},
-): UseDraggableReturn {
+): UseDraggableReturn<T> {
   const { enabled = true } = options;
   const [position, setPosition] = useState<Position>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const handleRef = useRef<HTMLElement>(null);
-  const targetRef = useRef<HTMLElement>(null);
+  const targetRef = useRef<T>(null);
   const dragStartPos = useRef<Position>({ x: 0, y: 0 });
   const elementStartPos = useRef<Position>({ x: 0, y: 0 });
 

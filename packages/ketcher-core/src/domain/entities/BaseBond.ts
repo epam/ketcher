@@ -52,4 +52,13 @@ export abstract class BaseBond extends DrawingEntity {
   public set isOverlappedByMonomer(value: boolean) {
     this._isOverlappedByMonomer = value;
   }
+
+  /**
+   * Determines if this bond is rendered in snake mode.
+   * Default implementation returns false.
+   * Override in subclasses that support snake mode rendering.
+   */
+  public get isRenderedAsSnakeBond(): boolean {
+    return false;
+  }
 }

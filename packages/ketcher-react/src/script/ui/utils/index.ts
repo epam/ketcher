@@ -16,6 +16,7 @@
  ***************************************************************************/
 import _ from 'lodash';
 import { escapeRegExp, filter as _filter, flow, reduce } from 'lodash/fp';
+import type { TFunction } from 'i18next';
 import type { Option } from '../component/form/Select';
 
 const GREEK_SIMBOLS = {
@@ -76,11 +77,28 @@ export function filterFGLib(lib, filter) {
   )(lib);
 }
 
-export const getSelectOptionsFromSchema = (schema): Array<Option> => {
+/**
+ * Some schemas (e.g. options-schema.ts) store a translation key
+ * ("namespace:key.path") in `title`/`enumNames` instead of literal display
+ * text, so it can be resolved reactively at render time. Schemas sourced
+ * from external/data-driven sources keep literal text with no namespace
+ * prefix and are returned unchanged.
+ */
+export function resolveTranslatableText<T>(value: T, t?: TFunction): T {
+  if (typeof value !== 'string' || !t || !value.includes(':')) {
+    return value;
+  }
+  return t(value) as unknown as T;
+}
+
+export const getSelectOptionsFromSchema = (
+  schema,
+  t?: TFunction,
+): Array<Option> => {
   return schema.enum.reduce((options, value, index) => {
     options.push({
       value,
-      label: schema?.enumNames?.[index] ?? value,
+      label: resolveTranslatableText(schema?.enumNames?.[index] ?? value, t),
     });
 
     return options;

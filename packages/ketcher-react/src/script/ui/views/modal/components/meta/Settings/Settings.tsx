@@ -128,7 +128,7 @@ type Props = SettingsProps & SettingsCallProps;
 const settingsProps = settingsSchema.properties;
 
 const SettingsDialog = (props: Props) => {
-  const { t } = useTranslation(['common', 'dialogs']);
+  const { t } = useTranslation(['common', 'dialogs', 'settings']);
   const {
     initState,
     formState,
@@ -244,6 +244,7 @@ const SettingsDialog = (props: Props) => {
           component={Select}
           options={getSelectOptionsFromSchema(
             settingsProps?.colorStereogenicCenters,
+            t,
           )}
           data-testid="color-stereogenic-centers"
         />

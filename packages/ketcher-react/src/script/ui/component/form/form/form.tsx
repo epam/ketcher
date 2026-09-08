@@ -29,12 +29,16 @@ import Select from '../Select';
 import classes from './form.module.less';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
-import { getSelectOptionsFromSchema } from '../../../utils';
+import {
+  getSelectOptionsFromSchema,
+  resolveTranslatableText,
+} from '../../../utils';
 import { updateFormState } from '../../../state/modal/form';
 import { useFormContext, usePopoverAnchor } from '../../../../../hooks';
 import { cloneDeep, omit } from 'lodash';
 import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export interface FormOwnProps {
   children: React.ReactNode;
@@ -310,12 +314,16 @@ function Label({
   children,
   ...props
 }: Readonly<LabelProps>) {
+  const { t } = useTranslation();
+  const resolvedTitle = resolveTranslatableText(title, t) ?? '';
+  const resolvedTooltip = resolveTranslatableText(tooltip, t) ?? null;
   return (
     <label {...props}>
-      {labelPos !== 'after' && renderLabelContent(title ?? '', tooltip ?? null)}
+      {labelPos !== 'after' &&
+        renderLabelContent(resolvedTitle, resolvedTooltip)}
       {children}
       {labelPos === 'after' &&
-        renderLabelContentAfter(title ?? '', tooltip ?? null)}
+        renderLabelContentAfter(resolvedTitle, resolvedTooltip)}
     </label>
   );
 }

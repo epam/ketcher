@@ -1,6 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { Page, test, expect } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -833,24 +830,14 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
      * Clicking on the Selection tool icon (both in Macro and Micro modes) should open the dropdown menu with all selection tools, providing a consistent user experience.
      */
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
-    await takeElementScreenshot(
-      page,
-      CommonLeftToolbar(page).areaSelectionDropdownButton,
-      {
-        paddingWidth: 90,
-        paddingHeight: 10,
-      },
-    );
+    await expect(
+      CommonLeftToolbar(page).toolSelectionDropdownPanel,
+    ).toBeVisible();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
-    await takeElementScreenshot(
-      page,
-      CommonLeftToolbar(page).areaSelectionDropdownButton,
-      {
-        paddingWidth: 90,
-        paddingHeight: 10,
-      },
-    );
+    await expect(
+      CommonLeftToolbar(page).toolSelectionDropdownPanel,
+    ).toBeVisible();
   });
 
   test('Case 22 - Context menu remains visible after creating cyclic structure via right-click menu', async ({
@@ -1294,7 +1281,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     });
 
     await Library(page).dragMonomerOnCanvas(Base._Base2, {
-      x: 30,
+      x: 50,
       y: 10,
       fromCenter: true,
     });

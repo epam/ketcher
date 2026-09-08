@@ -259,7 +259,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 3
             },
             {
                 "label": "C",
@@ -293,7 +294,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 3
             },
             {
                 "label": "C",
@@ -412,7 +414,8 @@
                     0
                 ],
                 "cip": "R",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -422,7 +425,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -774,7 +778,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -784,7 +789,8 @@
                     0
                 ],
                 "cip": "R",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",

@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { expect, Page } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
@@ -35,7 +32,7 @@ import { ConfirmationMessageDialog } from '@tests/pages/molecules/canvas/Confirm
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerWizardOption } from '@tests/pages/constants/contextMenu/Constants';
-import { NotificationBanner } from '@tests/pages/molecules/canvas/NotificationBanner';
+import { NotificationBannerOnMicro } from '@tests/pages/molecules/canvas/NotificationBannerOnMicro';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;
@@ -407,9 +404,9 @@ test.describe('Wizard exit confirmation for nucleotide preset', () => {
     });
     await dialog.submit();
 
-    expect(await NotificationBanner(page).getNotificationText()).toContain(
-      'The preset was successfully added to the library',
-    );
+    expect(
+      await NotificationBannerOnMicro(page).getNotificationText(),
+    ).toContain('The preset was successfully added to the library');
   });
 });
 

@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
-
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Page, test, expect } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -425,7 +420,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      */
 
     await Library(page).openRNASection(RNASection.Presets);
-    const presetA = page.getByTestId('A_A_R_P');
+    const presetA = Library(page).getMonomerLibraryCardLocator(Preset.A);
     expect(await Library(page).isMonomerExist(Preset.A)).toBeTruthy();
 
     await presetA.hover();

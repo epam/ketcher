@@ -14,7 +14,6 @@ import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/Attac
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { waitForPageInit } from '@utils/common/loaders';
-/* eslint-disable no-magic-numbers */
 
 test.describe('Modal window', () => {
   let chem1: Locator;

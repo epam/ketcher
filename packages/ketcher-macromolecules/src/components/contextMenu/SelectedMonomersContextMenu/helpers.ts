@@ -10,7 +10,9 @@ import {
   Peptide,
   RNA_DNA_NON_MODIFIED_PART,
   RNABase,
+  rnaDnaNaturalAnalogues,
   Sugar,
+  UnsplitNucleotide,
   getAminoAcidsToModify,
   canModifyAminoAcid,
   compareByTitleWithNaturalFirst,
@@ -89,6 +91,15 @@ export const isSenseBase = (monomer: BaseMonomer | AmbiguousMonomer) => {
   return ambigues.some((v) => v === code);
 };
 
+/**
+ * An unsplit nucleotide is a fused sugar+base+phosphate monomer, so it has no
+ * RNA base to inspect — its eligibility is decided by its own natural analogue.
+ */
+const hasSenseNaturalAnalogue = (monomer: BaseMonomer) =>
+  rnaDnaNaturalAnalogues.includes(
+    monomer.monomerItem.props.MonomerNaturalAnalogCode,
+  );
+
 export const isAntisenseCreationDisabled = (
   selectedMonomers: BaseMonomer[],
 ) => {
@@ -100,6 +111,9 @@ export const isAntisenseCreationDisabled = (
       (selectedMonomer instanceof RNABase &&
         (selectedMonomer.hydrogenBonds.length > 0 ||
           selectedMonomer.covalentBonds.length > 1)) ||
+      (selectedMonomer instanceof UnsplitNucleotide &&
+        (selectedMonomer.hydrogenBonds.length > 0 ||
+          !hasSenseNaturalAnalogue(selectedMonomer))) ||
       (isRnaBaseOrAmbiguousRnaBase(selectedMonomer) &&
         !isSenseBase(selectedMonomer)) ||
       (rnaBaseForSugar &&
@@ -130,9 +144,16 @@ export const isAntisenseOptionVisible = (selectedMonomers: BaseMonomer[]) => {
       (selectedMonomer instanceof RNABase &&
         getSugarFromRnaBase(selectedMonomer)) ||
       (isSugarOrAmbiguousSugar(selectedMonomer) &&
-        getRnaBaseFromSugar(selectedMonomer))
+        getRnaBaseFromSugar(selectedMonomer)) ||
+      selectedMonomer instanceof UnsplitNucleotide
     );
   });
+};
+
+export const hasUnsplitNucleotide = (selectedMonomers: BaseMonomer[]) => {
+  return selectedMonomers?.some(
+    (selectedMonomer) => selectedMonomer instanceof UnsplitNucleotide,
+  );
 };
 
 export const AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX =

@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
@@ -63,7 +59,6 @@ import {
 } from '@utils/canvas/monomer/helpers';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
@@ -648,13 +643,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
     );
-    await page
-      .getByTestId(KETCHER_CANVAS)
-      .getByText('X')
-      .nth(0)
-      .locator('..')
-      .first()
-      .hover();
+    await getAbbreviationLocator(page, { name: Peptide.X.alias }).hover();
     await takeEditorScreenshot(page);
   });
 

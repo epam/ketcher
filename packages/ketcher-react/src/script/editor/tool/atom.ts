@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -35,6 +36,7 @@ import type Editor from '../Editor';
 import type { Tool } from './Tool';
 import { deleteFunctionalGroups } from './helper/deleteFunctionalGroups';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
+import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 class AtomTool implements Tool {
   private readonly editor: Editor;
@@ -67,7 +69,7 @@ class AtomTool implements Tool {
             return FunctionalGroup.atomsInFunctionalGroup(sgroups, atom);
           });
         if (atomsInFunctionalGroup.some((atom) => atom !== null)) {
-          editor.event.removeFG.dispatch({ fgIds: [...selectedSGroupsId] });
+          dispatchMonomerOrGroupDialog(editor, [...selectedSGroupsId]);
           this.editor.hoverIcon.hide();
           this.isNotActiveTool = true;
           return;
@@ -134,7 +136,7 @@ class AtomTool implements Tool {
       );
 
       if (fgId !== null) {
-        editor.event.removeFG.dispatch({ fgIds: [fgId] });
+        dispatchMonomerOrGroupDialog(editor, [fgId]);
         return;
       }
     }
@@ -205,37 +207,43 @@ class AtomTool implements Tool {
       atomId = sGroup?.getAttachmentAtomId();
     }
 
-    if (atomId !== undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const atom = molecule.atoms.get(atomId)!;
-      let angle = vectorUtils.calcAngle(
-        atom.pp,
-        CoordinateTransformation.pageToModel(event, rnd),
-      );
-      if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
-      const degrees = vectorUtils.degrees(angle);
-      editor.event.message.dispatch({ info: degrees + 'º' });
-      const newAtomPos = vectorUtils.calcNewAtomPos(
-        atom.pp,
-        CoordinateTransformation.pageToModel(event, rnd),
-        event.ctrlKey,
-      );
-
-      if (dragCtx.action) {
-        dragCtx.action.perform(reStruct);
-      }
-
-      dragCtx.action = fromBondAddition(
-        rnd.ctab,
-        this.#bondProps,
-        atomId,
-        { ...(atomProps ?? {}) },
-        undefined,
-        newAtomPos,
-      )[0];
-
-      editor.update(dragCtx.action, true);
+    if (atomId === undefined) {
+      return;
     }
+
+    const atom = molecule.atoms.get(atomId);
+
+    if (!atom) {
+      return;
+    }
+
+    let angle = vectorUtils.calcAngle(
+      atom.pp,
+      CoordinateTransformation.pageToModel(event, rnd),
+    );
+    if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
+    const degrees = vectorUtils.degrees(angle);
+    editor.event.message.dispatch({ info: degrees + 'º' });
+    const newAtomPos = vectorUtils.calcNewAtomPos(
+      atom.pp,
+      CoordinateTransformation.pageToModel(event, rnd),
+      event.ctrlKey,
+    );
+
+    if (dragCtx.action) {
+      dragCtx.action.perform(reStruct);
+    }
+
+    dragCtx.action = fromBondAddition(
+      rnd.ctab,
+      this.#bondProps,
+      atomId,
+      { ...(atomProps ?? {}) },
+      undefined,
+      newAtomPos,
+    )[0];
+
+    editor.update(dragCtx.action, true);
   }
 
   mouseup(event) {
@@ -349,7 +357,7 @@ export function atomLongtapEvent(tool, render) {
   dragCtx.timeout = setTimeout(() => {
     delete tool.dragCtx;
     if (fgId != null) {
-      editor.event.removeFG.dispatch({ fgIds: [fgId] });
+      dispatchMonomerOrGroupDialog(editor, [fgId]);
       return;
     }
     editor.selection(null);

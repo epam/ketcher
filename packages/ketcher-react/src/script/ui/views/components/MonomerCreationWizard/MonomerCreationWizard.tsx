@@ -1,3 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler, react-you-might-not-need-an-effect/no-chain-state-updates */
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react-hooks/immutability */
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Dialog, Icon } from 'components';
@@ -1238,7 +1242,7 @@ const MonomerCreationWizardInternal = ({
 
   // Recompute atom ownership highlights only after component structures change
   // while ownership validation errors are active.
-  useEffect(() => {
+  const rnaPresetProblematicAtomIds = useMemo(() => {
     if (
       !editor?.render?.monomerCreationState ||
       !isRnaPresetType ||
@@ -1247,21 +1251,27 @@ const MonomerCreationWizardInternal = ({
       return;
     }
 
-    const { problematicAtomIds } = getRnaPresetStructureValidationResult(
+    return getRnaPresetStructureValidationResult(
       editor.struct(),
       rnaPresetComponentStructures,
-    );
-
-    editor.setProblematicAtoms(problematicAtomIds);
-    if (problematicAtomIds.size === 0) {
-      setHasActiveRnaPresetAtomValidationErrors(false);
-    }
+    ).problematicAtomIds;
   }, [
     editor,
-    hasActiveRnaPresetAtomValidationErrors,
     isRnaPresetType,
+    hasActiveRnaPresetAtomValidationErrors,
     rnaPresetComponentStructures,
   ]);
+
+  useEffect(() => {
+    if (!rnaPresetProblematicAtomIds) {
+      return;
+    }
+
+    editor.setProblematicAtoms(rnaPresetProblematicAtomIds);
+    if (rnaPresetProblematicAtomIds.size === 0) {
+      setHasActiveRnaPresetAtomValidationErrors(false);
+    }
+  }, [rnaPresetProblematicAtomIds, editor]);
 
   useEffect(() => {
     if (monomerCreationState?.hasDefaultAttachmentPoints) {
@@ -1272,7 +1282,39 @@ const MonomerCreationWizardInternal = ({
     }
   }, [monomerCreationState?.hasDefaultAttachmentPoints]);
 
+  // Show a dismissible info notification when the wizard is opened for an
+  // existing monomer whose attachment points are currently in use by canvas bonds.
   useEffect(() => {
+    const attachmentAtomIdsWithExternalBonds =
+      monomerCreationState?.attachmentAtomIdsWithExternalBonds;
+    if (
+      !attachmentAtomIdsWithExternalBonds ||
+      attachmentAtomIdsWithExternalBonds.size === 0
+    ) {
+      return;
+    }
+
+    const attachmentPointsList = Array.from(
+      attachmentAtomIdsWithExternalBonds.keys(),
+    ).join(' and ');
+    const message = `Deleting attachment point ${attachmentPointsList} will result in deleting of bonds that use those attachment points after saving.`;
+
+    wizardStateDispatch({
+      type: 'SetNotifications',
+      notifications: new Map([
+        [
+          'usedAttachmentPointsWarning',
+          {
+            type: 'warning',
+            message,
+          },
+        ],
+      ]),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const autoPhosphatePosition = useMemo(() => {
     if (!monomerCreationState || !isRnaPresetType) {
       return;
     }
@@ -1311,19 +1353,23 @@ const MonomerCreationWizardInternal = ({
         }
       },
     );
-    const autoPhosphatePosition = inferPhosphatePosition(
+
+    return inferPhosphatePosition(
       sugarAttachmentPoints,
       phosphateAttachmentPoints,
     );
-
-    handlePhosphatePositionChange(autoPhosphatePosition);
   }, [
     isRnaPresetType,
-    monomerCreationState?.assignedAttachmentPoints,
+    monomerCreationState,
     rnaPresetWizardState.phosphate.structure,
     rnaPresetWizardState.sugar.structure,
-    handlePhosphatePositionChange,
   ]);
+
+  useEffect(() => {
+    if (autoPhosphatePosition) {
+      handlePhosphatePositionChange(autoPhosphatePosition);
+    }
+  }, [autoPhosphatePosition, handlePhosphatePositionChange]);
 
   const { assignedAttachmentPoints } = monomerCreationState;
 
@@ -1955,6 +2001,10 @@ const MonomerCreationWizardInternal = ({
         const monomerAssignedAttachmentPoints =
           assignedAttachmentPointsByMonomer.get(monomerToSave);
 
+        const remappedAttachmentPoints = new Map<
+          AttachmentPointName,
+          [number, number]
+        >();
         monomerAssignedAttachmentPoints?.forEach(
           ([attachmentAtomId, leavingGroupAtomId], attachmentPointKey) => {
             const mappedAttachmentAtomId = atomIdMap.get(attachmentAtomId);
@@ -1967,7 +2017,7 @@ const MonomerCreationWizardInternal = ({
               return;
             }
 
-            monomerAssignedAttachmentPoints.set(attachmentPointKey, [
+            remappedAttachmentPoints.set(attachmentPointKey, [
               mappedAttachmentAtomId,
               mappedLeavingGroupAtomId,
             ]);
@@ -1998,7 +2048,7 @@ const MonomerCreationWizardInternal = ({
           idtAliasInternal: valuesToSave.idtAliasInternal,
           idtAlias3: valuesToSave.idtAlias3,
           structure,
-          attachmentPoints: monomerAssignedAttachmentPoints as Map<
+          attachmentPoints: remappedAttachmentPoints as Map<
             AttachmentPointName,
             [number, number]
           >,

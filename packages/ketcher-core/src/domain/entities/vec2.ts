@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,8 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import assert from 'assert';
-import { toFixed } from 'utilities';
+import { assert, toFixed } from 'utilities';
 
 export interface Point {
   x?: number;

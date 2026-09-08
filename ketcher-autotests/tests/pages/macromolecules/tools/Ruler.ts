@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 /* tests/pages/macromolecules/tools/Ruler.ts */
 import { Page, Locator, expect } from '@playwright/test';
 import { waitForRender } from '@utils/common';

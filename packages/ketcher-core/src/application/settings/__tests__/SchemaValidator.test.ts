@@ -2,10 +2,21 @@
  * Unit tests for SchemaValidator
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-non-null-assertion */
-
 import { SchemaValidator } from '../SchemaValidator';
 import { getDefaultSettings } from '../schema';
+import type { Settings } from '../types';
+type AssertDefined = <Value>(
+  value: Value,
+  message?: string,
+) => NonNullable<Value>;
+
+// Keep this as require(): a static import from __tests__ pulls the helper into
+// the ketcher-core production build graph and breaks the package build.
+const {
+  assertDefined,
+}: {
+  assertDefined: AssertDefined;
+} = require('../../../../__tests__/utilities/assertDefined'); // eslint-disable-line @typescript-eslint/no-require-imports
 
 describe('SchemaValidator', () => {
   let validator: SchemaValidator;
@@ -24,10 +35,12 @@ describe('SchemaValidator', () => {
     });
 
     it('should validate valid custom settings', () => {
-      const settings: any = getDefaultSettings();
-      settings.resetToSelect = false;
-      settings.atomColoring = false;
-      settings.rotationStep = 30;
+      const settings = {
+        ...getDefaultSettings(),
+        resetToSelect: false as Settings['resetToSelect'],
+        atomColoring: false,
+        rotationStep: 30,
+      };
 
       const result = validator.validate(settings);
 
@@ -35,19 +48,16 @@ describe('SchemaValidator', () => {
     });
 
     it('should reject invalid rotation step (too high)', () => {
-      const settings: any = getDefaultSettings();
-      settings.rotationStep = 200; // Max is 90
+      const settings = { ...getDefaultSettings(), rotationStep: 200 }; // Max is 90
 
       const result = validator.validate(settings);
 
       expect(result.valid).toBe(false);
-      expect(result.errors).toBeDefined();
-      expect(result.errors!.length).toBeGreaterThan(0);
+      expect(assertDefined(result.errors).length).toBeGreaterThan(0);
     });
 
     it('should reject invalid rotation step (too low)', () => {
-      const settings: any = getDefaultSettings();
-      settings.rotationStep = 0; // Min is 1
+      const settings = { ...getDefaultSettings(), rotationStep: 0 }; // Min is 1
 
       const result = validator.validate(settings);
 
@@ -55,8 +65,7 @@ describe('SchemaValidator', () => {
     });
 
     it('should reject invalid bond thickness (negative)', () => {
-      const settings: any = getDefaultSettings();
-      settings.bondThickness = -1; // Min is 0.1
+      const settings = { ...getDefaultSettings(), bondThickness: -1 }; // Min is 0.1
 
       const result = validator.validate(settings);
 
@@ -64,8 +73,11 @@ describe('SchemaValidator', () => {
     });
 
     it('should reject invalid enum value', () => {
-      const settings: any = getDefaultSettings();
-      settings.showHydrogenLabels = 'invalid' as any;
+      const settings = {
+        ...getDefaultSettings(),
+        showHydrogenLabels:
+          'invalid' as unknown as Settings['showHydrogenLabels'],
+      };
 
       const result = validator.validate(settings);
 
@@ -73,8 +85,10 @@ describe('SchemaValidator', () => {
     });
 
     it('should reject invalid type', () => {
-      const settings: any = getDefaultSettings();
-      settings.resetToSelect = 'invalid'; // Should be boolean or 'paste'
+      const settings = {
+        ...getDefaultSettings(),
+        resetToSelect: 'invalid' as unknown as Settings['resetToSelect'],
+      }; // Should be boolean or 'paste'
 
       const result = validator.validate(settings);
 
@@ -164,36 +178,36 @@ describe('SchemaValidator', () => {
 
   describe('error reporting', () => {
     it('should provide error details', () => {
-      const settings: any = getDefaultSettings();
-      settings.rotationStep = 200;
+      const settings = { ...getDefaultSettings(), rotationStep: 200 };
 
       const result = validator.validate(settings);
 
       expect(result.valid).toBe(false);
-      expect(result.errors).toBeDefined();
-      expect(result.errors!.length).toBeGreaterThan(0);
+      const errors = assertDefined(result.errors);
+      expect(errors.length).toBeGreaterThan(0);
 
-      const error = result.errors![0];
+      const error = errors[0];
       expect(error).toHaveProperty('path');
       expect(error).toHaveProperty('message');
     });
 
     it('should report multiple errors', () => {
-      const settings: any = getDefaultSettings();
-      settings.rotationStep = 200; // Invalid
-      settings.bondThickness = -1; // Invalid
+      const settings = {
+        ...getDefaultSettings(),
+        rotationStep: 200, // Invalid
+        bondThickness: -1, // Invalid
+      };
 
       const result = validator.validate(settings);
 
       expect(result.valid).toBe(false);
-      expect(result.errors!.length).toBeGreaterThan(1);
+      expect(assertDefined(result.errors).length).toBeGreaterThan(1);
     });
   });
 
   describe('boundary values', () => {
     it('should accept rotation step at minimum (1)', () => {
-      const settings: any = getDefaultSettings();
-      settings.rotationStep = 1;
+      const settings = { ...getDefaultSettings(), rotationStep: 1 };
 
       const result = validator.validate(settings);
 
@@ -201,8 +215,7 @@ describe('SchemaValidator', () => {
     });
 
     it('should accept rotation step at maximum (90)', () => {
-      const settings: any = getDefaultSettings();
-      settings.rotationStep = 90;
+      const settings = { ...getDefaultSettings(), rotationStep: 90 };
 
       const result = validator.validate(settings);
 
@@ -210,8 +223,7 @@ describe('SchemaValidator', () => {
     });
 
     it('should accept bond thickness at minimum (0.1)', () => {
-      const settings: any = getDefaultSettings();
-      settings.bondThickness = 0.1;
+      const settings = { ...getDefaultSettings(), bondThickness: 0.1 };
 
       const result = validator.validate(settings);
 
@@ -219,8 +231,7 @@ describe('SchemaValidator', () => {
     });
 
     it('should accept bond thickness at maximum (96)', () => {
-      const settings: any = getDefaultSettings();
-      settings.bondThickness = 96;
+      const settings = { ...getDefaultSettings(), bondThickness: 96 };
 
       const result = validator.validate(settings);
 
@@ -230,8 +241,7 @@ describe('SchemaValidator', () => {
 
   describe('enum validation', () => {
     it('should accept valid miew mode', () => {
-      const settings: any = getDefaultSettings();
-      settings.miewMode = 'BS';
+      const settings = { ...getDefaultSettings(), miewMode: 'BS' };
 
       const result = validator.validate(settings);
 
@@ -239,8 +249,10 @@ describe('SchemaValidator', () => {
     });
 
     it('should reject invalid miew mode', () => {
-      const settings: any = getDefaultSettings();
-      settings.miewMode = 'INVALID' as any;
+      const settings = {
+        ...getDefaultSettings(),
+        miewMode: 'INVALID',
+      };
 
       const result = validator.validate(settings);
 
@@ -248,7 +260,7 @@ describe('SchemaValidator', () => {
     });
 
     it('should accept all valid hydrogen label options', () => {
-      const validOptions = [
+      const validOptions: Settings['showHydrogenLabels'][] = [
         'off',
         'Hetero',
         'Terminal',
@@ -257,8 +269,10 @@ describe('SchemaValidator', () => {
       ];
 
       validOptions.forEach((option) => {
-        const settings: any = getDefaultSettings();
-        settings.showHydrogenLabels = option as any;
+        const settings = {
+          ...getDefaultSettings(),
+          showHydrogenLabels: option,
+        };
 
         const result = validator.validate(settings);
 

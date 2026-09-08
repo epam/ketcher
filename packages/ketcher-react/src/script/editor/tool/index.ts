@@ -48,15 +48,21 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   select: SelectCommonTool,
   fragmentSelection: FragmentSelectionTool,
   sgroup: SGroupTool,
-  eraser: EraserTool,
   atom: AtomTool,
-  bond: BondTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  bond: BondTool as unknown as ToolConstructorInterface,
   chain: ChainTool,
-  template: TemplateTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  template: TemplateTool as unknown as ToolConstructorInterface,
   charge: ChargeTool,
   rgroupfragment: RGroupFragmentTool,
   apoint: APointTool,
   attach: AttachTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  eraser: EraserTool as unknown as ToolConstructorInterface,
   // Cast to ToolConstructorInterface: constructor param types are narrower
   // than `unknown[]`, but toolsMap only ever calls these with the correct args.
   reactionarrow: CommonArrowTool as unknown as ToolConstructorInterface,

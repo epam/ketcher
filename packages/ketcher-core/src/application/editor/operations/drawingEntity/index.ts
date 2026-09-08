@@ -50,9 +50,11 @@ export class DrawingEntityMoveOperation implements Operation {
   ) {}
 
   public execute() {
-    this.wasInverted
-      ? this.redoDrawingEntityChangeModel()
-      : this.moveDrawingEntityChangeModel();
+    if (this.wasInverted) {
+      this.redoDrawingEntityChangeModel();
+    } else {
+      this.moveDrawingEntityChangeModel();
+    }
   }
 
   public invert() {

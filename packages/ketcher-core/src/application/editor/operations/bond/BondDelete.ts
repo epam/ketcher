@@ -46,7 +46,6 @@ class BondDelete extends BaseOperation {
     const { bid } = this.data;
     if (bid === null) return;
 
-    // eslint-disable-line max-statements
     const struct = restruct.molecule;
     if (!this.data.bond) {
       const bondFromStruct = struct.bonds.get(bid);

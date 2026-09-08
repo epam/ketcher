@@ -23,10 +23,7 @@ export type WizardFormFieldId =
   | 'idtAlias3';
 
 export type RnaPresetWizardStateFieldId =
-  | 'base'
-  | 'sugar'
-  | 'phosphate'
-  | 'preset';
+  'base' | 'sugar' | 'phosphate' | 'preset';
 
 export type RnaPresetWizardComponentStateFieldId = Exclude<
   RnaPresetWizardStateFieldId,
@@ -81,7 +78,8 @@ export type WizardNotificationId =
   | 'phosphatePositionNotSelected'
   | 'editAllPresetWarning'
   | 'editAllPresetError'
-  | 'invalidName';
+  | 'invalidName'
+  | 'usedAttachmentPointsWarning';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,
@@ -209,8 +207,7 @@ export type AssignedAttachmentPointsByMonomerType = Map<
 
 export function isDispatchActionForRnaPreset(
   action:
-    | ActionDispatch<[WizardAction]>
-    | ActionDispatch<[RnaPresetWizardAction]>,
+    ActionDispatch<[WizardAction]> | ActionDispatch<[RnaPresetWizardAction]>,
 ): action is ActionDispatch<[RnaPresetWizardAction]> {
   return 'rnaComponentKey' in action;
 }

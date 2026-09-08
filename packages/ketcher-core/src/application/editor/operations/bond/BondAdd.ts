@@ -49,7 +49,7 @@ class BondAdd extends BaseOperation {
 
   execute(restruct: ReStruct) {
     const { begin, bond, end } = this.data;
-    // eslint-disable-line max-statements
+
     const struct = restruct.molecule;
 
     if (begin === end) {

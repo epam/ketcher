@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator, expect } from '@playwright/test';
 import {
   AminoAcidNaturalAnalogue,
@@ -383,27 +382,24 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async expandModificationSection() {
-      const modificationSectionState = await modificationSection.getAttribute(
-        'aria-expanded',
-      );
+      const modificationSectionState =
+        await modificationSection.getAttribute('aria-expanded');
       if (modificationSectionState === 'false') {
         await modificationSection.click();
       }
     },
 
     async collapseModificationSection() {
-      const modificationSectionState = await modificationSection.getAttribute(
-        'aria-expanded',
-      );
+      const modificationSectionState =
+        await modificationSection.getAttribute('aria-expanded');
       if (modificationSectionState === 'true') {
         await modificationSection.click();
       }
     },
 
     async expandAliasesSection() {
-      const aliasesSectionState = await aliasesSection.getAttribute(
-        'aria-expanded',
-      );
+      const aliasesSectionState =
+        await aliasesSection.getAttribute('aria-expanded');
       if (aliasesSectionState === 'false') {
         await aliasesSection.click();
       }
@@ -411,9 +407,8 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async collapseAliasesSection() {
-      const aliasesSectionState = await aliasesSection.getAttribute(
-        'aria-expanded',
-      );
+      const aliasesSectionState =
+        await aliasesSection.getAttribute('aria-expanded');
       if (aliasesSectionState === 'true') {
         await aliasesSection.click();
       }

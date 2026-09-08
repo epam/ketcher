@@ -41,5 +41,4 @@ export interface AbbreviationElementOption extends AbbreviationGenericOption {
 }
 
 export type AbbreviationOption =
-  | AbbreviationTemplateOption
-  | AbbreviationElementOption;
+  AbbreviationTemplateOption | AbbreviationElementOption;

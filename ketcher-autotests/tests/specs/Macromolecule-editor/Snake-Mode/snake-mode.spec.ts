@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,

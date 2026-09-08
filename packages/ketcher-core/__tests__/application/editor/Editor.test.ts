@@ -1585,7 +1585,7 @@ describe('CoreEditor', () => {
       canvas = createPolymerEditorCanvas();
       editor = new CoreEditor({
         canvas,
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
     });

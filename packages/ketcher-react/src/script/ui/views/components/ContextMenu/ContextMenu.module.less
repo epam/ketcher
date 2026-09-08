@@ -23,7 +23,7 @@
   /* stylelint-disable-next-line custom-property-pattern */
   --contexify-menu-bgColor: @color-background-primary;
   /* stylelint-disable-next-line custom-property-pattern */
-  --contexify-item-color:@color-text-primary;
+  --contexify-item-color: @color-text-primary;
   /* stylelint-disable-next-line custom-property-pattern */
   --contexify-activeItem-color: @color-text-secondary;
   /* stylelint-disable-next-line custom-property-pattern */
@@ -53,7 +53,6 @@
   /* stylelint-disable-next-line custom-property-pattern */
   --contexify-activeItem-radius: 0;
 
-
   position: fixed;
   user-select: none;
   box-sizing: border-box;
@@ -81,7 +80,7 @@
     display: flex;
     align-items: center;
     line-height: var(--ketcher-font-size-regular);
-  }  
+  }
 
   :global(.contexify_submenu) {
     max-height: 400px;
@@ -105,7 +104,7 @@
     gap: 4px;
   }
 
-  :global(.contexify_item):not(.sameGroup,:last-child) {
+  :global(.contexify_item):not(.sameGroup, :last-child) {
     &::after {
       content: none;
     }
@@ -120,15 +119,14 @@
   }
 
   :global(.contexify_rightSlot) {
-    margin-right: -15px;
+    margin-inline-end: -15px;
   }
 
   .devider {
     content: '';
-      display: block;
-      /* stylelint-disable-next-line declaration-property-value-no-unknown */
-      border-top: 1px solid @border-color;
-      margin: 3px 0;
+    display: block;
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
+    border-top: 1px solid @border-color;
+    margin: 3px 0;
   }
-
 }

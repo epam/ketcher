@@ -22,8 +22,8 @@
 
   width: 41px;
   margin-top: 12px;
-  margin-left: 6px;
-  padding-right: 5px;
+  margin-inline-start: 6px;
+  padding-inline-end: 5px;
   align-items: flex-start;
 
   // TODO: change group style, if will decide to get rid of delimiter everywhere
@@ -34,7 +34,7 @@
 
 .buttons {
   overflow: hidden;
-  padding-right: 5px;
+  padding-inline-end: 5px;
   scroll-behavior: smooth;
 }
 
@@ -51,7 +51,7 @@
 
   // TODO: move to action button styles, when all buttons will have same style
   svg {
-    right: 3px;
+    inset-inline-end: 3px;
     bottom: 3px;
   }
 
@@ -62,7 +62,7 @@
 
     & > svg {
       top: 3px;
-      left: 3px;
+      inset-inline-start: 3px;
     }
   }
 }

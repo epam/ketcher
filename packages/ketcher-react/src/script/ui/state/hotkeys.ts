@@ -36,6 +36,7 @@ import {
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
+import { restorePersistedSelectionTool } from './selectionToolPersistence';
 
 import actions from '../action';
 import { isIE } from 'react-device-detect';
@@ -123,7 +124,9 @@ function handleAbbreviationLookup(key: string, state, dispatch, event) {
     clearTimeout(abbreviationLookupTimeoutId);
     abbreviationLookupTimeoutId = undefined;
 
-    const resetAction = SettingsManager.getSettings().selectionTool;
+    const resetAction = restorePersistedSelectionTool(
+      SettingsManager.getSelectionTool('micro'),
+    );
     dispatch(onAction(resetAction));
 
     event.preventDefault();
@@ -197,7 +200,9 @@ function shouldHandleItemDirectly(
 
 function handleSelectTool(newAction, key: string, index: number) {
   if (key === 'Escape') {
-    return SettingsManager.getSettings().selectionTool;
+    return restorePersistedSelectionTool(
+      SettingsManager.getSelectionTool('micro'),
+    );
   }
   if (index === -1) {
     return {};

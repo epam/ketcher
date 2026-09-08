@@ -11,6 +11,7 @@ Before editing, moving, deleting, or transforming parts of a drawing, the user m
   - Whole structure: use the _Structure Selection_ tool, drag a marquee, or `Ctrl-click` with _Lasso_/_Rectangle_.
   - Part of a molecule: use the _Fragment Selection_ tool and click one side of a bond.
   - Multiple objects: `Shift-click` to add to the selection, or drag a marquee; `Ctrl+Shift-click` selects several whole structures.
+  - The last selected tool is restored after a page reload independently for the micro- and macromolecules editors.
 - **Deselect** — click empty canvas, or `Mod+Shift+a`. Select everything with `Mod+a`.
 - **Move** — drag a selection to move all its members together.
 - **Rotate** — the _Rotate tool_ (`Alt+r`) rotates the selection (or the whole canvas if nothing/everything is selected) in a default 15° step; hold `Ctrl` for 1° steps. `Alt+H` / `Alt+V` orient a selected bond horizontally / vertically.
@@ -53,10 +54,16 @@ Selection is reversible and non-destructive; manipulation acts only on the curre
 
 #### Scenario: Placing a static drawing object
 
-- **WHEN** the user places text, an image, a standard reaction arrow, a reaction
-  plus, or a simple shape
+- **WHEN** the user places text, an image, any reaction arrow other than the
+  Multi-Tailed Arrow, a reaction plus, or a simple shape
 - **THEN** the newly created object remains on the canvas and the saved
-  selection tool becomes active
+  selection tool becomes active regardless of the user's _Reset to Select_
+  setting
+
+#### Scenario: Restoring the Fragment Selection tool
+
+- **WHEN** the user selects _Fragment Selection_ in the micromolecules editor and reloads the page
+- **THEN** _Fragment Selection_ remains active and retains its part-of-molecule selection behavior
 
 ## Guarantees
 

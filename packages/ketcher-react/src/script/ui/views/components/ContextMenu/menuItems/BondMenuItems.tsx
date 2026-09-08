@@ -1,7 +1,9 @@
 import { type FC, useMemo } from 'react';
 import { Item, Submenu } from 'react-contexify';
+import { useTranslation } from 'react-i18next';
 import type Editor from 'src/script/editor';
 import tools from '../../../../action/tools';
+import { resolveActionTitle } from '../../../../action/resolveActionTitle';
 import styles from '../ContextMenu.module.less';
 import MenuSeparator from '../MenuSeparator';
 import useBondEdit from '../hooks/useBondEdit';
@@ -31,6 +33,7 @@ type Params = ItemEventParams<BondsContextMenuProps>;
 const nonQueryBondNames = getNonQueryBondNames(tools);
 
 const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
+  const { t } = useTranslation(['toolbar', 'components', 'common']);
   const { ketcherId } = useAppContext();
   const [handleEdit] = useBondEdit();
   const [handleTypeChange, disabled] = useBondTypeChange();
@@ -94,8 +97,8 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         <Icon name="editMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>
           {props.propsFromTrigger?.extraItemsSelected
-            ? 'Edit selected bonds...'
-            : 'Edit...'}
+            ? t('components:contextMenu.editSelectedBondsEllipsis')
+            : t('components:contextMenu.editEllipsis')}
         </span>
       </Item>
       <MenuSeparator />
@@ -114,7 +117,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
             disabled={isDisabled}
           >
             {iconName && <Icon name={iconName} className={styles.icon} />}
-            <span>{formatTitle(tools[name].title ?? '')}</span>
+            <span>{formatTitle(resolveActionTitle(t, tools[name]))}</span>
           </Item>
         );
       })}
@@ -123,7 +126,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
       <Submenu
         {...props}
         data-testid="Query bonds-option"
-        label="Query bonds"
+        label={t('components:contextMenu.queryBondsMenu')}
         className={styles.subMenu}
         disabled={disabledForMonomerCreation}
       >
@@ -139,7 +142,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
               disabled={isDisabled}
             >
               {iconName && <Icon name={iconName} className={styles.icon} />}
-              <span>{formatTitle(tools[name].title ?? '')}</span>
+              <span>{formatTitle(resolveActionTitle(t, tools[name]))}</span>
             </Item>
           );
         })}
@@ -152,7 +155,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
           onClick={changeDirection}
           disabled={bondBetweenMonomers}
         >
-          Change direction
+          {t('components:contextMenu.changeDirection')}
         </Item>
       )}
       <Item
@@ -162,7 +165,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         onClick={handleSGroupAttach}
         disabled={disabledForMonomerCreation || bondBetweenMonomers}
       >
-        Attach S-Group...
+        {t('components:contextMenu.attachSGroupEllipsis')}
       </Item>
       <HighlightMenu
         onHighlight={highlightBondWithColor}
@@ -175,12 +178,12 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         disabled={sGroupEditDisabled}
         onClick={handleSGroupEdit}
       >
-        Edit S-Group...
+        {t('components:contextMenu.editSGroupEllipsis')}
       </Item>
       <MenuSeparator />
       <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         <Icon name="deleteMenu" className={styles.icon} />
-        <span className={styles.contextMenuText}>Delete</span>
+        <span className={styles.contextMenuText}>{t('common:delete')}</span>
       </Item>
     </>
   );

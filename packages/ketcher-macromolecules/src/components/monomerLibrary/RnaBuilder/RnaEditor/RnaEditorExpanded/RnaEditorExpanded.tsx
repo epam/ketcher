@@ -198,22 +198,23 @@ export const RnaEditorExpanded = ({
   // would re-trigger on every selectedPhosphatePosition / isSequenceMode change
   // and regenerate the preset name).
   const resolvePhosphatePositionRef = useRef(resolvePhosphatePosition);
-  // eslint-disable-next-line react-hooks/refs
+  // eslint-disable-next-line react-hooks/refs -- latest-value ref: keeps the current function accessible in effects without listing it as a dep
   resolvePhosphatePositionRef.current = resolvePhosphatePosition;
 
   // Guard refs — read inside the monomer-group effect without being listed as
   // deps, preventing re-runs on slot clicks (activeMonomerGroup) or edit-mode
   // toggle (isEditMode), which would drop editedName and regenerate the name.
   const activeMonomerGroupRef = useRef(activeMonomerGroup);
-  // eslint-disable-next-line react-hooks/refs
+  // eslint-disable-next-line react-hooks/refs -- guard ref: latest value readable in effects without triggering re-runs on slot clicks
   activeMonomerGroupRef.current = activeMonomerGroup;
   const isEditModeRef = useRef(isEditMode);
-  // eslint-disable-next-line react-hooks/refs
+  // eslint-disable-next-line react-hooks/refs -- guard ref: latest value readable in effects without triggering re-runs on edit-mode toggle
   isEditModeRef.current = isEditMode;
 
   // For sequence edit in RNA Builder mode
   const sequenceSelection = useAppSelector(selectSequenceSelection);
   const sequenceSelectionRef = useRef(sequenceSelection);
+  // eslint-disable-next-line react-hooks/refs -- preserves the selection that triggered the update; avoids re-running the effect in response to its own dispatch
   sequenceSelectionRef.current = sequenceSelection;
   const sequenceSelectionName = useAppSelector(selectSequenceSelectionName);
   const isSequenceEditInRNABuilderMode = useAppSelector(

@@ -111,6 +111,13 @@ export class ZoomTool implements BaseTool {
 
   initActions() {
     this.zoom = zoom<SVGSVGElement, void>()
+      .extent(() => {
+        const rect = this.canvasWrapper.node()?.getBoundingClientRect();
+        return [
+          [0, 0],
+          [rect?.width ?? 0, rect?.height ?? 0],
+        ];
+      })
       .scaleExtent([this.MINZOOMSCALE, this.MAXZOOMSCALE])
       .wheelDelta(this.defaultWheelDelta)
       .filter((e) => {
@@ -267,11 +274,9 @@ export class ZoomTool implements BaseTool {
     isOffsetInPercents = true,
     needScrollVertical = true,
   ) {
-    const canvasWrapperHeight =
-      this.canvasWrapper.node()?.height.baseVal.value || 0;
-
-    const canvasWrapperWidth =
-      this.canvasWrapper.node()?.width.baseVal.value || 0;
+    const wrapperRect = this.canvasWrapper.node()?.getBoundingClientRect();
+    const canvasWrapperHeight = wrapperRect?.height ?? 0;
+    const canvasWrapperWidth = wrapperRect?.width ?? 0;
 
     // Calculate X offset
     let xOffsetValue: number;
@@ -363,11 +368,8 @@ export class ZoomTool implements BaseTool {
     const wrapperBoundingBox = this.canvasWrapper
       .node()
       ?.getBoundingClientRect() as DOMRect;
-    const canvasWrapperHeight =
-      this.canvasWrapper.node()?.height.baseVal.value || 0;
-
-    const canvasWrapperWidth =
-      this.canvasWrapper.node()?.width.baseVal.value || 0;
+    const canvasWrapperHeight = wrapperBoundingBox.height;
+    const canvasWrapperWidth = wrapperBoundingBox.width;
     this.scrollBars = {
       horizontal: {
         name: 'horizontal',
@@ -430,12 +432,7 @@ export class ZoomTool implements BaseTool {
       return;
     }
 
-    try {
-      this.zoom?.transform(this.canvasWrapper, new ZoomTransform(1, 0, 0));
-    } catch {
-      // SVG canvas may have relative dimensions (e.g. width="100%") that
-      // d3 cannot resolve to an absolute pixel value — skip the reset.
-    }
+    this.zoom?.transform(this.canvasWrapper, new ZoomTransform(1, 0, 0));
   }
 
   observeCanvasResize = () => {

@@ -12,6 +12,7 @@
   },
   "general": "General",
   "delete": "Delete",
+  "alreadyInUse": "Already in use",
   "monomerType": {
     "base": "Base",
     "sugar": "Sugar",

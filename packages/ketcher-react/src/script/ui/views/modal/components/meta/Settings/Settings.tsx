@@ -128,7 +128,7 @@ type Props = SettingsProps & SettingsCallProps;
 const settingsProps = settingsSchema.properties;
 
 const SettingsDialog = (props: Props) => {
-  const { t } = useTranslation(['common', 'dialogs']);
+  const { t } = useTranslation(['common', 'dialogs', 'settings']);
   const {
     initState,
     formState,
@@ -157,7 +157,7 @@ const SettingsDialog = (props: Props) => {
         <Field
           name="resetToSelect"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.resetToSelect)}
+          options={getSelectOptionsFromSchema(settingsProps?.resetToSelect, t)}
           data-testid="reset-to-select"
         />
         <Field name="rotationStep" data-testid="rotation-step" />
@@ -190,7 +190,10 @@ const SettingsDialog = (props: Props) => {
           name="imageResolution"
           tooltip={t('dialogs:meta.settings.imageResolutionTooltip')}
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.imageResolution)}
+          options={getSelectOptionsFromSchema(
+            settingsProps?.imageResolution,
+            t,
+          )}
           data-testid="image-resolution"
         />
       </fieldset>
@@ -205,7 +208,10 @@ const SettingsDialog = (props: Props) => {
         <Field
           name="stereoLabelStyle"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.stereoLabelStyle)}
+          options={getSelectOptionsFromSchema(
+            settingsProps?.stereoLabelStyle,
+            t,
+          )}
           data-testid="stereo-label-style"
         />
         <Field
@@ -228,6 +234,7 @@ const SettingsDialog = (props: Props) => {
           component={Select}
           options={getSelectOptionsFromSchema(
             settingsProps?.colorStereogenicCenters,
+            t,
           )}
           data-testid="color-stereogenic-centers"
         />
@@ -278,7 +285,10 @@ const SettingsDialog = (props: Props) => {
           labelPos={false}
           extraName="bondLengthUnit"
         />
-        <Field name="bondSpacing" extraLabel="% of length" />
+        <Field
+          name="bondSpacing"
+          extraLabel={t('settings:fields.bondSpacing.extraLabel')}
+        />
         <Field
           name="bondThickness"
           component={MeasureInput}
@@ -325,7 +335,10 @@ const SettingsDialog = (props: Props) => {
         <Field
           name="valence-mode"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.['valence-mode'])}
+          options={getSelectOptionsFromSchema(
+            settingsProps?.['valence-mode'],
+            t,
+          )}
           data-testid="valence-mode"
         />
       </fieldset>
@@ -339,19 +352,19 @@ const SettingsDialog = (props: Props) => {
         <Field
           name="miewMode"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.miewMode)}
+          options={getSelectOptionsFromSchema(settingsProps?.miewMode, t)}
           data-testid="display-mode"
         />
         <Field
           name="miewTheme"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.miewTheme)}
+          options={getSelectOptionsFromSchema(settingsProps?.miewTheme, t)}
           data-testid="background-color"
         />
         <Field
           name="miewAtomLabel"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.miewAtomLabel)}
+          options={getSelectOptionsFromSchema(settingsProps?.miewAtomLabel, t)}
           data-testid="label-coloring"
         />
       </fieldset>

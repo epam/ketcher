@@ -157,6 +157,7 @@ class SelectTool implements Tool {
 
     if (!ci) {
       onSelectionStart(event, this.editor, this.#lassoHelper);
+      this.handleMoveCloseToEdgeOfCanvas();
       return;
     }
 

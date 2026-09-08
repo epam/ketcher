@@ -1,6 +1,7 @@
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import type ReStruct from './restruct';
+import type { RaphaelPath } from './raphaelTypes';
 import type {
   Image,
   ImageReferenceName,
@@ -211,8 +212,11 @@ export class ReImage extends ReObject {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  show(restruct: ReStruct, renderOptions: RenderOptions, nextPath?: any) {
+  show(
+    restruct: ReStruct,
+    renderOptions: RenderOptions,
+    nextPath?: RaphaelPath,
+  ) {
     const scaledTopLeftWithOffset = this.getScaledPointWithOffset(
       this.image.getTopLeftPosition(),
       renderOptions,

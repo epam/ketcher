@@ -6,7 +6,7 @@
 import { EventEmitter } from 'events';
 import type { ISettingsService } from './ISettingsService';
 import {
-  type SettingsValidationError,
+  SettingsValidationError,
   type Settings,
   type DeepPartial,
   type ValidationResult,
@@ -58,7 +58,6 @@ const DEFAULT_STORAGE_KEY = 'ketcher-opts';
  * TODO: Remove this singleton and implement proper multi-instance support
  */
 export class SettingsService implements ISettingsService {
-  // eslint-disable-next-line no-use-before-define
   private static instance: SettingsService | null = null;
 
   private settings: Settings;
@@ -179,32 +178,19 @@ export class SettingsService implements ISettingsService {
     // 1. Validate partial
     const validation = this.validator.validatePartial(partial);
     if (!validation.valid) {
-      const error = new Error(
-        `Settings validation failed: ${validation.errors
-          ?.map((e) => e.message)
-          .join(', ')}`,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ) as SettingsValidationError & { errors: any[] };
-      error.name = 'SettingsValidationError';
-      error.errors = validation.errors || [];
-      throw error;
+      throw new SettingsValidationError(validation.errors || []);
     }
 
     // 2. Deep merge
-    const updated = this.deepMerge(this.settings, partial);
+    const updated = this.deepMerge(
+      this.settings as unknown as Record<string, unknown>,
+      partial as unknown as Record<string, unknown>,
+    ) as unknown as Settings;
 
     // 3. Validate complete settings
     const fullValidation = this.validator.validate(updated);
     if (!fullValidation.valid) {
-      const error = new Error(
-        `Settings validation failed: ${fullValidation.errors
-          ?.map((e) => e.message)
-          .join(', ')}`,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ) as SettingsValidationError & { errors: any[] };
-      error.name = 'SettingsValidationError';
-      error.errors = fullValidation.errors || [];
-      throw error;
+      throw new SettingsValidationError(fullValidation.errors || []);
     }
 
     // 4. Update internal state
@@ -283,7 +269,12 @@ export class SettingsService implements ISettingsService {
       const parsed = JSON.parse(json);
       return this.updateSettings(parsed);
     } catch (error) {
-      throw new Error(`Failed to import settings: ${(error as Error).message}`);
+      throw new Error(
+        `Failed to import settings: ${(error as Error).message}`,
+        {
+          cause: error,
+        },
+      );
     }
   }
 
@@ -301,16 +292,17 @@ export class SettingsService implements ISettingsService {
   /**
    * Get the settings schema (for UI generation, documentation)
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getSchema(): any {
+  getSchema(): Record<string, DeepPartial<Settings>> {
     return PRESETS;
   }
 
   /**
    * Deep merge two objects
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private deepMerge(target: any, source: any): any {
+  private deepMerge(
+    target: Record<string, unknown>,
+    source: Record<string, unknown>,
+  ): Record<string, unknown> {
     if (!source || typeof source !== 'object') {
       return target;
     }
@@ -336,7 +328,10 @@ export class SettingsService implements ISettingsService {
           !Array.isArray(targetValue)
         ) {
           // Recursively merge objects
-          result[key] = this.deepMerge(targetValue, sourceValue);
+          result[key] = this.deepMerge(
+            targetValue as Record<string, unknown>,
+            sourceValue as Record<string, unknown>,
+          );
         } else {
           // Replace value
           result[key] = sourceValue;
@@ -352,7 +347,10 @@ export class SettingsService implements ISettingsService {
    */
   private mergeWithDefaults(partial: DeepPartial<Settings>): Settings {
     const defaults = getDefaultSettings();
-    return this.deepMerge(defaults, partial) as Settings;
+    return this.deepMerge(
+      defaults as unknown as Record<string, unknown>,
+      partial as unknown as Record<string, unknown>,
+    ) as unknown as Settings;
   }
 
   /**

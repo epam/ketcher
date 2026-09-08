@@ -14,32 +14,37 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { renderHook, act } from '@testing-library/react';
+import { render, renderHook, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { type Store, createStore } from 'redux';
+import type { ReactNode } from 'react';
 import { useSettings } from '../useSettings';
-import { getDefaultSettings, ketcherProvider } from 'ketcher-core';
+import {
+  type ISettingsService,
+  type SettingsListener,
+  type Ketcher,
+  getDefaultSettings,
+  ketcherProvider,
+} from 'ketcher-core';
 
 const TEST_KETCHER_ID = 'use-settings-test';
 
 const detachMockSettingsService = () => {
   ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
-  delete (window as any).ketcher;
+  delete window.ketcher;
 };
 
-const attachMockSettingsService = (settingsService: any) => {
-  (window as any).ketcher = { settingsService };
+const attachMockSettingsService = (settingsService: ISettingsService) => {
+  window.ketcher = { settingsService } as unknown as Ketcher;
   ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
   ketcherProvider.addKetcherInstance({
     id: TEST_KETCHER_ID,
     settingsService,
-  } as any);
+  } as unknown as Ketcher);
 };
 
 // Simple mock store
-const createMockStore = (settingsService?: any) => {
+const createMockStore = (settingsService?: ISettingsService) => {
   const initialState = {
     editor: { ketcher: { settingsService } },
   };
@@ -57,32 +62,34 @@ const createMockStore = (settingsService?: any) => {
 };
 
 // Wrapper component
-const createWrapper = (store: any) =>
-  function Wrapper({ children }: { children?: any }) {
+const createWrapper = (store: Store) =>
+  function Wrapper({ children }: { children?: ReactNode }) {
     return <Provider store={store}>{children}</Provider>;
   };
 
 // Mock settings service
 const createMockSettingsService = () => {
-  const listeners: Array<(settings: any) => void> = [];
+  const listeners: SettingsListener[] = [];
   const mockSettings = getDefaultSettings();
 
   return {
+    init: jest.fn().mockResolvedValue(undefined),
     getSettings: jest.fn().mockReturnValue(mockSettings),
     updateSettings: jest.fn().mockResolvedValue(mockSettings),
     resetToDefaults: jest.fn().mockResolvedValue(mockSettings),
     loadPreset: jest.fn().mockResolvedValue(mockSettings),
     getAvailablePresets: jest.fn().mockReturnValue(['acs']),
+    validateSettings: jest.fn().mockReturnValue({ valid: true }),
     exportSettings: jest.fn().mockReturnValue(JSON.stringify(mockSettings)),
     importSettings: jest.fn().mockResolvedValue(mockSettings),
-    subscribe: jest.fn((listener) => {
+    subscribe: jest.fn((listener: SettingsListener) => {
       listeners.push(listener);
       return () => {
         const index = listeners.indexOf(listener);
         if (index > -1) listeners.splice(index, 1);
       };
     }),
-  };
+  } as unknown as ISettingsService;
 };
 
 describe('useSettings', () => {
@@ -110,6 +117,29 @@ describe('useSettings', () => {
 
       expect(result.current.settings).toBeDefined();
       expect(mockService.getSettings).toHaveBeenCalled();
+    });
+
+    it('should have settings available on the very first render, before any effect runs', () => {
+      const mockService = createMockSettingsService();
+      const store = createMockStore(mockService);
+
+      const renderedSettings: unknown[] = [];
+      function TestComponent() {
+        const { settings } = useSettings();
+        renderedSettings.push(settings);
+        return null;
+      }
+
+      render(
+        <Provider store={store}>
+          <TestComponent />
+        </Provider>,
+      );
+
+      // The first entry is what the component saw during its initial render,
+      // synchronously — i.e. before useEffect had a chance to run and set it.
+      expect(renderedSettings[0]).not.toBeNull();
+      expect(renderedSettings[0]).toEqual(mockService.getSettings());
     });
 
     it('should subscribe to settings changes', () => {

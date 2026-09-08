@@ -159,6 +159,19 @@ describe('Atom', () => {
       expect(atom.isQuery()).toBeTruthy();
     });
 
+    it.each([
+      { queryProperties: { ringMembership: 0 } },
+      { queryProperties: { ringSize: 0 } },
+      { queryProperties: { connectivity: 0 } },
+    ])('should return true for zero-valued query properties', (queryParams) => {
+      const atom = new Atom({
+        ...hydrogenParams,
+        ...queryParams,
+      });
+
+      expect(atom.isQuery()).toBe(true);
+    });
+
     it('should return falsy value if it is default atom', () => {
       const atom = new Atom(hydrogenParams);
       expect(atom.isQuery()).toBeFalsy();
@@ -304,7 +317,7 @@ describe('Atom', () => {
     it('should return false if atom has rgLabel', () => {
       const paramsWithRgLabel = {
         ...hydrogenParams,
-        rglabel: 'test',
+        rglabel: 1,
       };
 
       const atom = new Atom(paramsWithRgLabel);

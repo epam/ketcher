@@ -1,3 +1,5 @@
+import type { RenderOptions } from './render';
+
 // Types for 'setMode'
 export enum ModeTypes {
   flex = 'flex-layout-mode',
@@ -19,4 +21,18 @@ export type UpdateMonomersLibraryParams = {
   format: 'ket' | 'sdf';
   shouldPersist?: boolean;
   needDispatchLibraryUpdateEvent?: boolean;
+};
+
+type PublicApiSettingsValueMap = {
+  'general.dearomatize-on-load': RenderOptions['dearomatize-on-load'];
+  ignoreChiralFlag: RenderOptions['ignoreChiralFlag'];
+  disableQueryElements: RenderOptions['disableQueryElements'];
+  bondThickness: RenderOptions['bondThickness'];
+};
+
+export type KetcherApiSettings = Partial<{
+  [Key in keyof PublicApiSettingsValueMap]: PublicApiSettingsValueMap[Key];
+}> & {
+  disableCustomQuery?: boolean;
+  persistMonomerLibraryUpdates?: boolean;
 };

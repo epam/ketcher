@@ -20,7 +20,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-/* eslint-disable no-magic-numbers */
+import { selectMonomersAndBonds } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 
 async function moveMonomersToNewPosition(
   page: Page,
@@ -184,15 +184,19 @@ test.describe('Rectangle Selection Tool', () => {
 
     // Ethylthiocysteine was added later, so it is located above Beta Alanine
     await Library(page).dragMonomerOnCanvas(Peptide.Edc, {
-      x: center.x + shift,
-      y: center.y,
+      x: betaAlaninePosition.x + 100,
+      y: betaAlaninePosition.y + 100,
     });
+    await moveMonomer(
+      page,
+      getMonomerLocator(page, Peptide.Edc).nth(0),
+      betaAlaninePosition.x + 35,
+      betaAlaninePosition.y + 35,
+    );
     await page.keyboard.press('Escape');
 
     // Now Beta Alanine must be above Ethylthiocysteine
-    await clickOnCanvas(page, betaAlaninePosition.x, betaAlaninePosition.y, {
-      from: 'pageTopLeft',
-    });
+    await selectMonomersAndBonds(page, { monomerIds: [1] });
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 

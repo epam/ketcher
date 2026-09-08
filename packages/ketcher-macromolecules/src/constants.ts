@@ -23,8 +23,7 @@ export const MONOMER_TYPES = {
   RNA: 'RNA',
 } as const;
 export type LibraryNameType =
-  | typeof MONOMER_LIBRARY_FAVORITES
-  | keyof typeof MONOMER_TYPES;
+  typeof MONOMER_LIBRARY_FAVORITES | keyof typeof MONOMER_TYPES;
 
 export enum MonomerGroups {
   SUGARS = 'Sugars',
@@ -54,6 +53,35 @@ export const MonomerCodeToGroup: Record<MonomerGroupCodes, MonomerGroups> = {
   U: MonomerGroups.BASES,
   X: MonomerGroups.BASES,
   P: MonomerGroups.PHOSPHATES,
+} as const;
+
+export const AMINO_ACID_ONE_TO_THREE_LETTER_CODE: Record<string, string> = {
+  A: 'Ala',
+  B: 'Asx',
+  C: 'Cys',
+  D: 'Asp',
+  E: 'Glu',
+  F: 'Phe',
+  G: 'Gly',
+  H: 'His',
+  I: 'Ile',
+  J: 'Xle',
+  K: 'Lys',
+  L: 'Leu',
+  M: 'Met',
+  N: 'Asn',
+  O: 'Pyl',
+  P: 'Pro',
+  Q: 'Gln',
+  R: 'Arg',
+  S: 'Ser',
+  T: 'Thr',
+  U: 'Sec',
+  V: 'Val',
+  W: 'Trp',
+  X: 'Xaa',
+  Y: 'Tyr',
+  Z: 'Glx',
 } as const;
 
 export const FAVORITE_ITEMS_UNIQUE_KEYS = 'favoriteItemsUniqueKeys';

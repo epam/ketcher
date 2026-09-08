@@ -33,14 +33,6 @@ const ReadonlyAttachmentPoint = ({
 }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [highlight, setHighlight] = useState(false);
-  // Track the currently selected leaving atom so the select reflects user changes.
-  const [currentLeavingAtomLabel, setCurrentLeavingAtomLabel] =
-    useState<AtomLabel>(leavingAtomLabel);
-
-  // Reset when the default label changes (e.g. component re-assigned).
-  useEffect(() => {
-    setCurrentLeavingAtomLabel(leavingAtomLabel);
-  }, [leavingAtomLabel]);
 
   // Panel hover → canvas highlight
   useEffect(() => {
@@ -49,12 +41,12 @@ const ReadonlyAttachmentPoint = ({
 
     const mouseOverHandler = () => {
       if (atomId !== undefined) {
-        // Use atom-specific highlighting to avoid AP name collisions between components.
         editor.highlightAtomById(atomId);
       } else {
         editor.highlightConnectionAttachmentPoint(name);
       }
     };
+
     const mouseLeaveHandler = () => {
       if (atomId !== undefined) {
         editor.highlightAtomById(null);
@@ -78,8 +70,10 @@ const ReadonlyAttachmentPoint = ({
       const apName = (event as CustomEvent<AttachmentPointName>).detail;
       setHighlight(apName === name);
     };
+
     const handleReset = (event: Event) => {
       const apName = (event as CustomEvent<AttachmentPointName>).detail;
+
       if (apName === name) {
         setHighlight(false);
       }
@@ -108,11 +102,10 @@ const ReadonlyAttachmentPoint = ({
 
   const selectsData = createReadonlyAttachmentPointSelectData(
     name,
-    currentLeavingAtomLabel,
+    leavingAtomLabel,
   );
 
   const handleLeavingAtomChange = (newLabel: AtomLabel) => {
-    setCurrentLeavingAtomLabel(newLabel);
     onLeavingAtomChange?.(name, newLabel);
   };
 

@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const path = require('path');
+import path from 'path';
 
-module.exports = {
+export default {
   process(src, filename, _config, _options) {
     return 'module.exports = ' + JSON.stringify(path.basename(filename)) + ';';
   },

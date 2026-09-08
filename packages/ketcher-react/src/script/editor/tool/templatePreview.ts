@@ -48,6 +48,12 @@ class TemplatePreview {
   private floatingPreview: {
     atoms: number[];
     bonds: number[];
+    rxnArrows: number[];
+    rxnPluses: number[];
+    texts: number[];
+    images: number[];
+    simpleObjects: number[];
+    multitailArrows: number[];
   } | null;
 
   private position: Vec2;
@@ -164,7 +170,7 @@ class TemplatePreview {
   }
 
   private showFloatingPreview(position: Vec2) {
-    [this.floatingPreviewAction, this.floatingPreview] = fromTemplateOnCanvas(
+    [this.floatingPreviewAction, , this.floatingPreview] = fromTemplateOnCanvas(
       this.restruct,
       this.template,
       position,
@@ -206,7 +212,7 @@ class TemplatePreview {
       const sign2 = this.template.sign;
       const shouldFlip = sign1 * sign2 > 0;
 
-      const promise = fromTemplateOnBondAction(
+      let [action, pasteItems] = fromTemplateOnBondAction(
         this.restruct,
         this.template,
         ci.id,
@@ -216,14 +222,10 @@ class TemplatePreview {
         true,
       );
 
-      promise.then(([action, pasteItems]) => {
-        if (!this.isModeFunctionalGroup) {
-          const mergeItems = getItemsToFuse(this.editor, pasteItems);
-          action = fromItemsFuse(this.restruct, mergeItems).mergeWith(action);
-          this.editor.update(action, true);
-          this.connectedPreviewAction = action;
-        }
-      });
+      const mergeItems = getItemsToFuse(this.editor, pasteItems);
+      action = fromItemsFuse(this.restruct, mergeItems).mergeWith(action);
+      this.editor.update(action, true);
+      this.connectedPreviewAction = action;
     } else if (ci.map === 'atoms') {
       const angle = getAngleFromEvent(event, ci, this.restruct);
 

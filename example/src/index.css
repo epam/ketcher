@@ -56,6 +56,5 @@ body {
     min-height: 350px;
     flex-grow: 1;
     margin: 20px;
-    /* stylelint-disable-next-line alpha-value-notation, color-function-alias-notation, color-function-notation */
-    box-shadow: 1px 4px 12px rgba(103, 104, 132, 0.18);
+    box-shadow: 1px 4px 12px rgb(103 104 132 / 18%);
 }

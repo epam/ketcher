@@ -357,7 +357,7 @@ describe('serialize (ToKet)', () => {
       spy.mock.results[0].value.filter((item) => item.type === 'text').length,
     ).toBeTruthy();
   });
-  it('does not serialize "selected" property (#2637)', () => {
+  it('does not serialize "selected" property by default (#5429)', () => {
     // Create a struct with selected atoms, bonds, and other entities
     const struct = prepareStruct.clone();
     // Mark all entities as selected using setInitiallySelected
@@ -380,7 +380,7 @@ describe('serialize (ToKet)', () => {
       text.setInitiallySelected(true);
     });
 
-    // Serialize the struct
+    // Serialize the struct WITHOUT needSetSelectionToMacromolecules flag (default)
     const serialized = ket.serialize(struct);
 
     // Verify that "selected" property does not appear anywhere in the output

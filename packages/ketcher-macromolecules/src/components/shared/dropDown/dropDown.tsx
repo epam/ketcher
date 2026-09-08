@@ -160,10 +160,10 @@ export const DropDown = ({
         data-testid={testId ?? 'dropdown-select'}
         MenuProps={{
           container: portalContainer,
-          MenuListProps: {
-            style: { padding: '0' },
-          },
           slotProps: {
+            list: {
+              style: { padding: '0' },
+            },
             paper: {
               style: { ...stylesForExpanded, ...customStylesForExpanded },
             },

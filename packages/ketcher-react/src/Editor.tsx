@@ -140,7 +140,7 @@ export const Editor = (props: Props) => {
 
   return (
     <I18nextProvider i18n={i18n}>
-      <div dir={i18n.dir()}>
+      <div dir={i18n.dir()} className={styles.root}>
         <div
           data-ketcher-editor
           className={styles.editorsWrapper}

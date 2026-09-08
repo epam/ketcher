@@ -31,6 +31,7 @@ import { MultitailArrowMenuItems } from './menuItems/MultitailArrowMenuItems';
 import MacromoleculeMenuItems from './menuItems/MacromoleculeMenuItems';
 import { ketcherProvider } from 'ketcher-core';
 import AttachmentPointLabelMenuItems from './menuItems/AttachmentPointLabelMenuItems';
+import AttachmentGroupMenuItems from './menuItems/AttachmentGroupMenuItems';
 
 const props: Partial<MenuProps> = {
   animation: false,
@@ -210,6 +211,19 @@ const ContextMenu: FC = () => {
             }
           >
             <AtomMenuItems />
+          </Menu>
+
+          <Menu
+            {...props}
+            id={CONTEXT_MENU_ID.FOR_ATTACHMENT_GROUP + ketcherId}
+            onVisibilityChange={(visible) =>
+              trackVisibility(
+                CONTEXT_MENU_ID.FOR_ATTACHMENT_GROUP + ketcherId,
+                visible,
+              )
+            }
+          >
+            <AttachmentGroupMenuItems />
           </Menu>
 
           <Menu

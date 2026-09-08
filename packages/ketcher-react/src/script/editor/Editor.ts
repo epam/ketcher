@@ -119,6 +119,7 @@ const HISTORY_SIZE = 32; // put me to options
 
 const structObjects: Array<keyof typeof ReStruct.maps> = [
   'atoms',
+  'attachmentGroups',
   'bonds',
   'frags',
   'sgroups',
@@ -136,6 +137,7 @@ const structObjects: Array<keyof typeof ReStruct.maps> = [
 
 const highlightTargets = [
   'atoms',
+  'attachmentGroups',
   'bonds',
   'rxnArrows',
   'rxnPluses',
@@ -184,6 +186,7 @@ function selectStereoFlagsIfNecessary(
 
 export interface Selection {
   atoms?: Array<number>;
+  attachmentGroups?: Array<number>;
   bonds?: Array<number>;
   frags?: Array<number>;
   sgroups?: Array<number>;
@@ -3653,14 +3656,28 @@ class Editor implements KetcherEditor {
       res.bonds.forEach((bid) => {
         const bond = struct.bonds.get(bid);
         if (bond) {
-          res.atoms = res.atoms ?? [];
-          if (res.atoms.indexOf(bond.begin) < 0) {
-            res.atoms.push(bond.begin);
-          }
-
-          if (res.atoms.indexOf(bond.end) < 0) {
-            res.atoms.push(bond.end);
-          }
+          [bond.begin, bond.end].forEach((endpointId) => {
+            if (struct.attachmentGroups.has(endpointId)) {
+              res.attachmentGroups = res.attachmentGroups ?? [];
+              if (!res.attachmentGroups.includes(endpointId)) {
+                res.attachmentGroups.push(endpointId);
+              }
+              res.atoms = res.atoms ?? [];
+              const selectedAtoms = res.atoms;
+              struct.attachmentGroups
+                .get(endpointId)
+                ?.atomIds.forEach((atomId) => {
+                  if (!selectedAtoms.includes(atomId)) {
+                    selectedAtoms.push(atomId);
+                  }
+                });
+            } else {
+              res.atoms = res.atoms ?? [];
+              if (!res.atoms.includes(endpointId)) {
+                res.atoms.push(endpointId);
+              }
+            }
+          });
         }
       });
     }
@@ -3672,8 +3689,12 @@ class Editor implements KetcherEditor {
           res.bonds &&
           res.atoms &&
           res.bonds.indexOf(bid) < 0 &&
-          res.atoms.indexOf(bond.begin) >= 0 &&
-          res.atoms.indexOf(bond.end) >= 0
+          (struct.attachmentGroups.has(bond.begin)
+            ? res.attachmentGroups?.includes(bond.begin)
+            : res.atoms.includes(bond.begin)) &&
+          (struct.attachmentGroups.has(bond.end)
+            ? res.attachmentGroups?.includes(bond.end)
+            : res.atoms.includes(bond.end))
         ) {
           res.bonds.push(bid);
         }
@@ -3701,6 +3722,8 @@ class Editor implements KetcherEditor {
       new Pile(selection.images),
       new Pile(selection[MULTITAIL_ARROW_KEY]),
       bondIdMap,
+      false,
+      new Pile(selection.attachmentGroups),
     );
 
     // Copy by its own as Struct.clone doesn't support

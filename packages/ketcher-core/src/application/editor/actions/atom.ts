@@ -36,13 +36,20 @@ import { Action } from './action';
 import { without } from 'lodash/fp';
 import type ReStruct from 'application/render/restruct/restruct';
 import { assert } from 'utilities';
+import { isAtomLabelAllowedByHapticBonds } from 'domain/helpers/hapticBond';
 
-export function fromAtomAddition(restruct, pos, atom) {
+export function fromAtomAddition(
+  restruct,
+  pos,
+  atom,
+  fragmentId: number | null = null,
+) {
   atom = { ...(atom || {}) };
   const action = new Action();
-  atom.fragment = (
-    action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd
-  ).frid;
+  atom.fragment =
+    fragmentId === null
+      ? (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd).frid
+      : fragmentId;
 
   const aid = (
     action.addOp(new AtomAdd(atom, pos).perform(restruct)) as AtomAdd
@@ -62,6 +69,28 @@ export function fromAtomsAttrs(
   const aids = Array.isArray(ids) ? ids : [ids];
 
   aids.forEach((atomId) => {
+    const atom = restruct.molecule.atoms.get(atomId);
+    assert(atom != null);
+
+    const resultingLabel =
+      'label' in attrs
+        ? attrs.label
+        : reset
+          ? Atom.attrGetDefault('label')
+          : atom.label;
+    if (resultingLabel !== atom.label) {
+      if (
+        typeof resultingLabel !== 'string' ||
+        !isAtomLabelAllowedByHapticBonds(
+          restruct.molecule,
+          atomId,
+          resultingLabel,
+        )
+      ) {
+        return;
+      }
+    }
+
     Object.keys(Atom.attrlist).forEach((key) => {
       if (key === 'attachmentPoints' && !(key in attrs)) return;
       if (!(key in attrs) && !reset) return;
@@ -100,9 +129,6 @@ export function fromAtomsAttrs(
     }
     // when a heteroatom connects to an aromatic ring it's necessary to add a ImplicitHCount
     // property to this atom to specify the number of hydrogens on it.
-    const atom = restruct.molecule.atoms.get(atomId);
-    assert(atom != null);
-
     if (Atom.isInAromatizedRing(restruct.molecule, atomId)) {
       action.addOp(
         new AtomAttr(atomId, 'implicitHCount', atom.implicitH).perform(

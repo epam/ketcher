@@ -27,6 +27,7 @@ import type { Vec2 } from 'domain/entities/vec2';
 import { assert } from 'utilities';
 import { LayerMap } from './generalEnumTypes';
 import ReAtom from './reatom';
+import { ReAttachmentGroup } from './reattachmentGroup';
 import ReBond from './rebond';
 import ReDataSGroupData from './redatasgroupdata';
 import ReEnhancedFlag from './reenhancedFlag';
@@ -50,6 +51,7 @@ import { ReMultitailArrow } from './remultitailArrow';
 class ReStruct {
   public static readonly maps = {
     atoms: ReAtom,
+    attachmentGroups: ReAttachmentGroup,
     bonds: ReBond,
     rxnPluses: ReRxnPlus,
     rxnArrows: ReRxnArrow,
@@ -69,8 +71,10 @@ class ReStruct {
   public render: Render;
   public molecule: Struct;
   public atoms: Map<number, ReAtom> = new Map();
+  public attachmentGroups: Map<number, ReAttachmentGroup> = new Map();
   public bonds: Map<number, ReBond> = new Map();
   public visibleAtoms: Map<number, ReAtom> = new Map();
+  public visibleAttachmentGroups: Map<number, ReAttachmentGroup> = new Map();
   public visibleBonds: Map<number, ReBond> = new Map();
   public reloops: Map<number, ReLoop> = new Map();
   public rxnPluses: Map<number, ReRxnPlus> = new Map();
@@ -101,6 +105,7 @@ class ReStruct {
 
   // TWIMC, Those maps are accessed via dynamic names, using static maps field + 'Changed' string
   private readonly atomsChanged: Map<number, 1> = new Map();
+  private readonly attachmentGroupsChanged: Map<number, 1> = new Map();
   private readonly simpleObjectsChanged: Map<number, ReSimpleObject> =
     new Map();
 
@@ -131,6 +136,10 @@ class ReStruct {
 
     molecule.atoms.forEach((atom, aid) => {
       this.atoms.set(aid, new ReAtom(atom));
+    });
+
+    molecule.attachmentGroups.forEach((attachmentGroup, id) => {
+      this.attachmentGroups.set(id, new ReAttachmentGroup(attachmentGroup));
     });
 
     molecule.bonds.forEach((bond, bid) => {
@@ -218,6 +227,10 @@ class ReStruct {
     atom.component = -1;
   }
 
+  getBondEndpoint(id: number): ReAtom | ReAttachmentGroup | undefined {
+    return this.atoms.get(id) ?? this.attachmentGroups.get(id);
+  }
+
   clearConnectedComponents(): void {
     this.connectedComponents.clear();
     this.atoms.forEach((atom) => {
@@ -231,20 +244,38 @@ class ReStruct {
   ): Pile<number> {
     const list = Array.isArray(aid) ? Array.from(aid) : [aid];
     const ids = new Pile<number>();
+    const visitedEndpoints = new Set<number>();
 
     while (list.length > 0) {
       const aid = list.pop();
       if (aid === undefined) break;
-      ids.add(aid);
+      if (visitedEndpoints.has(aid)) continue;
+      visitedEndpoints.add(aid);
+
+      const attachmentGroup = this.attachmentGroups.get(aid);
+      if (attachmentGroup) {
+        list.push(...attachmentGroup.a.atomIds);
+        attachmentGroup.a.neighbors.forEach((neighbor) => {
+          const halfBond = this.molecule.halfBonds.get(neighbor);
+          if (halfBond) list.push(halfBond.end);
+        });
+        continue;
+      }
+
       const atom = this.atoms.get(aid);
       if (!atom) continue;
+      ids.add(aid);
       if (atom.component >= 0) adjacentComponents.add(atom.component);
+
+      this.attachmentGroups.forEach((group, groupId) => {
+        if (group.a.atomIds.includes(aid)) list.push(groupId);
+      });
 
       atom.a.neighbors.forEach((neighbor) => {
         const halfBond = this.molecule.halfBonds.get(neighbor);
         if (!halfBond) return;
         const neiId = halfBond.end;
-        if (!ids.has(neiId)) list.push(neiId);
+        if (!visitedEndpoints.has(neiId)) list.push(neiId);
       });
     }
 
@@ -379,6 +410,10 @@ class ReStruct {
     this.markItem('atoms', aid, mark);
   }
 
+  markAttachmentGroup(id: number, mark: number): void {
+    this.markItem('attachmentGroups', id, mark);
+  }
+
   markRgroupAttachmentPoint(rgAPid: number, mark: number): void {
     this.markItem('rgroupAttachmentPoints', rgAPid, mark);
   }
@@ -494,6 +529,7 @@ class ReStruct {
 
   recalculateVisibleAtomsAndBonds() {
     this.visibleAtoms = new Map();
+    this.visibleAttachmentGroups = new Map(this.attachmentGroups);
     this.visibleBonds = new Map();
 
     this.atoms.forEach((atom, aid) => {
@@ -548,6 +584,20 @@ class ReStruct {
       }
     });
 
+    this.molecule.attachmentGroups.forEach((attachmentGroup, id) => {
+      if (
+        force ||
+        attachmentGroup.atomIds.some((atomId) => this.atomsChanged.has(atomId))
+      ) {
+        attachmentGroup.recalculatePosition(this.molecule.atoms);
+        this.attachmentGroupsChanged.set(id, 1);
+        attachmentGroup.neighbors.forEach((halfBondId) => {
+          const halfBond = this.molecule.halfBonds.get(halfBondId);
+          if (halfBond) this.markBond(halfBond.bid, 1);
+        });
+      }
+    });
+
     this.atomsChanged.forEach((_value, aid) =>
       this.connectedComponentRemoveAtom(aid),
     );
@@ -598,9 +648,12 @@ class ReStruct {
     }
 
     // only update half-bonds adjacent to atoms that have moved
-    const atomsChangedArray = Array.from(this.atomsChanged.keys());
-    this.molecule.updateHalfBonds(atomsChangedArray);
-    this.molecule.sortNeighbors(atomsChangedArray);
+    const endpointIdsChanged = [
+      ...this.atomsChanged.keys(),
+      ...this.attachmentGroupsChanged.keys(),
+    ];
+    this.molecule.updateHalfBonds(endpointIdsChanged);
+    this.molecule.sortNeighbors(endpointIdsChanged);
 
     this.assignConnectedComponents();
     this.initialized = true;
@@ -609,6 +662,7 @@ class ReStruct {
     const updLoops = force || this.structChanged;
     if (updLoops) this.updateLoops();
     this.showAtoms();
+    this.showAttachmentGroups();
     this.showBonds();
     this.showRgroupAttachmentPoints();
     if (updLoops) this.showLoops();
@@ -916,6 +970,14 @@ class ReStruct {
     this.atomsChanged.forEach((_value, aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.show(this, aid, options);
+    });
+  }
+
+  private showAttachmentGroups(): void {
+    const options = this.render.options;
+    this.attachmentGroupsChanged.forEach((_value, id) => {
+      const attachmentGroup = this.attachmentGroups.get(id);
+      if (attachmentGroup) attachmentGroup.show(this, id, options);
     });
   }
 

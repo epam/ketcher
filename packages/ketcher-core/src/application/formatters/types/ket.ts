@@ -63,7 +63,8 @@ export interface IKetConnectionMonomerEndPoint {
 
 export interface IKetConnectionMoleculeEndPoint {
   moleculeId: string;
-  atomId: string;
+  atomId?: string;
+  attachmentGroupId?: string;
 }
 
 export type IKetConnectionEndPoint = IKetConnectionMonomerEndPoint &
@@ -72,6 +73,7 @@ export type IKetConnectionEndPoint = IKetConnectionMonomerEndPoint &
 export enum KetConnectionType {
   SINGLE = 'single',
   HYDROGEN = 'hydrogen',
+  HAPTIC = 'haptic',
 }
 
 export interface IKetTemplateConnectionEndPoint {
@@ -86,7 +88,8 @@ export interface IKetTemplateConnection {
 }
 
 export interface IKetConnection {
-  connectionType: KetConnectionType;
+  connectionType?: KetConnectionType;
+  type?: KetConnectionType;
   label?: string;
   endpoint1: IKetConnectionEndPoint;
   endpoint2: IKetConnectionEndPoint;

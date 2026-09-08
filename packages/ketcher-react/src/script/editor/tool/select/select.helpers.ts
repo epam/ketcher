@@ -1,5 +1,12 @@
 import { xor } from 'lodash/fp';
-import { type Atom, type Bond, type ReStruct, SGroup } from 'ketcher-core';
+import {
+  type Atom,
+  type Bond,
+  type ReStruct,
+  type Struct,
+  Bond as BondEntity,
+  SGroup,
+} from 'ketcher-core';
 import type { Editor, Selection } from '../../Editor';
 import type LassoHelper from '../helper/lasso';
 import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
@@ -35,6 +42,29 @@ export function getSelectedBonds(selection, molecule) {
     return mapBondIdsToBonds(selection?.bonds, molecule);
   }
   return [];
+}
+
+export function canOpenAtomProperties(molecule: Struct, atomId: number) {
+  return molecule.atoms.has(atomId);
+}
+
+export function getMovableAtomIdsForBond(
+  molecule: Struct,
+  bondId: number,
+  atomIds: number[],
+) {
+  const bond = molecule.bonds.get(bondId);
+  if (bond?.type !== BondEntity.PATTERN.TYPE.HAPTIC) {
+    return atomIds;
+  }
+
+  const attachmentGroupId = [bond.begin, bond.end].find((endpointId) =>
+    molecule.attachmentGroups.has(endpointId),
+  );
+
+  return attachmentGroupId === undefined
+    ? atomIds
+    : atomIds.filter((atomId) => atomId !== attachmentGroupId);
 }
 
 export function mapAtomIdsToAtoms(atomsIds: number[], molecule): Atom[] {

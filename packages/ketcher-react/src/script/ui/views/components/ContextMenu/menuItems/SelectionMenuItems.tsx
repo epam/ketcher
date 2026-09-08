@@ -12,7 +12,7 @@ import useCreateMonomer from '../hooks/useCreateMonomer';
 import useMarkAs from '../hooks/useMarkAs';
 import {
   formatTitle,
-  getBondNames,
+  getBondNamesForSelectionContextMenu,
   monomerWizardDisallowedBondNames,
 } from '../utils';
 import type Editor from 'src/script/editor';
@@ -28,8 +28,12 @@ import isHidden from '../../../../action/isHidden';
 import { useSelector } from 'react-redux';
 import { optionsSelector } from '../../../../state/options/selectors';
 import clsx from 'clsx';
+import useAttachmentGroupCreate, {
+  ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP,
+} from '../hooks/useAttachmentGroupCreate';
+import { Tooltip } from '@mui/material';
 
-const bondNames = getBondNames(tools);
+const bondNames = getBondNamesForSelectionContextMenu(tools);
 
 const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   props,
@@ -42,6 +46,10 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   const [handleAtomStereo, atomStereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
   const [handleCreateMonomer, createMonomerDisabled] = useCreateMonomer();
+  const {
+    handler: handleAttachmentGroupCreate,
+    isDisabled: attachmentGroupCreateDisabled,
+  } = useAttachmentGroupCreate();
   const {
     handler: handleMarkAs,
     isVisible: markAsIsVisible,
@@ -63,6 +71,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   const options = useSelector(optionsSelector);
   const showMarkAsMenu = markAsIsVisible();
   const markAsDisabled = markAsIsDisabled();
+  const isAttachmentGroupCreateDisabled = attachmentGroupCreateDisabled();
 
   return (
     <>
@@ -164,6 +173,24 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
           Create a monomer
         </Item>
       )}
+
+      <Item
+        {...props}
+        data-testid="Create Attachment Group-option"
+        onClick={handleAttachmentGroupCreate}
+        disabled={isAttachmentGroupCreateDisabled}
+      >
+        <Tooltip
+          title={
+            isAttachmentGroupCreateDisabled
+              ? ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP
+              : ''
+          }
+          placement="right"
+        >
+          <span className={styles.tooltipTarget}>Create attachment group</span>
+        </Tooltip>
+      </Item>
 
       <Item
         {...props}

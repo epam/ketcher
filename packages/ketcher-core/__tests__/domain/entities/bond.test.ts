@@ -58,9 +58,12 @@ describe('Bond', () => {
   describe('getCenter', () => {
     it('should return center of bond', () => {
       const bond = new Bond(bondParams);
-      const struct = { atoms: new Map() };
-      struct.atoms.set(bond.begin, { pp: new Vec2(2, 4, 6) });
-      struct.atoms.set(bond.end, { pp: new Vec2(4, 0, 2) });
+      const endpoints = new Map();
+      endpoints.set(bond.begin, { pp: new Vec2(2, 4, 6) });
+      endpoints.set(bond.end, { pp: new Vec2(4, 0, 2) });
+      const struct = {
+        getBondEndpoint: (id: number) => endpoints.get(id),
+      };
       const bondCenter = new Vec2(3, 2, 4);
 
       expect(bond.getCenter(struct)).toStrictEqual(bondCenter);
@@ -70,9 +73,12 @@ describe('Bond', () => {
   describe('getDir', () => {
     it('should return direction', () => {
       const bond = new Bond(bondParams);
-      const struct = { atoms: new Map() };
-      struct.atoms.set(bond.begin, { pp: new Vec2(2, 4, 6) });
-      struct.atoms.set(bond.end, { pp: new Vec2(4, 0, 2) });
+      const endpoints = new Map();
+      endpoints.set(bond.begin, { pp: new Vec2(2, 4, 6) });
+      endpoints.set(bond.end, { pp: new Vec2(4, 0, 2) });
+      const struct = {
+        getBondEndpoint: (id: number) => endpoints.get(id),
+      };
       const bondDir = new Vec2(
         0.4472135954999579,
         -0.8944271909999159,

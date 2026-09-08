@@ -26,6 +26,7 @@ export const SgContexts = {
 
 export const selectionKeys = [
   'atoms',
+  'attachmentGroups',
   'bonds',
   'frags',
   'sgroups',

@@ -34,7 +34,13 @@ export function provideEditorInstance(ketcherId?: string): CoreEditor {
     const editor = editorInstances.get(ketcherId);
     if (editor) return editor;
   }
-  // Fall back to the most recently registered instance for callers without context
+  // Fall back to the most recently registered instance for callers without context.
+  // Prefer the explicit last instance over map iteration to avoid leaking stale
+  // keyed instances into unscoped calls.
+  if (_lastEditorInstance) {
+    return _lastEditorInstance;
+  }
+
   const values = [...editorInstances.values()];
-  return (values[values.length - 1] ?? _lastEditorInstance) as CoreEditor;
+  return values[values.length - 1] as CoreEditor;
 }

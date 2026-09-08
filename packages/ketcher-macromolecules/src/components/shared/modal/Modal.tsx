@@ -4,7 +4,6 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-  Paper,
 } from '@mui/material';
 import React, { useMemo } from 'react';
 import { useTheme } from '@emotion/react';
@@ -105,6 +104,7 @@ export const Modal = ({
 
   const paperProps = useMemo(
     () => ({
+      ...(testId ? { 'data-testid': testId } : {}),
       style: {
         background: theme.ketcher.color.background.primary,
         borderRadius: '8px',
@@ -119,6 +119,7 @@ export const Modal = ({
       },
     }),
     [
+      testId,
       theme.ketcher.color.background.primary,
       theme.ketcher.color.text.primary,
       showExpandButton,
@@ -156,9 +157,6 @@ export const Modal = ({
         backdrop: backdropProps,
         paper: paperProps,
       }}
-      PaperComponent={(paperComponentProps) => (
-        <Paper {...paperComponentProps} data-testid={testId} />
-      )}
       open={isOpen}
       onClose={(_event, reason) => {
         if (reason === 'escapeKeyDown' && !showCloseButton) {

@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.4.1",
     "@types/node": "^16.11.26",
+    "copy-webpack-plugin": "14.0.0",
     "ketcher-core": "*",
     "ketcher-react": "*",
     "ketcher-standalone": "*",

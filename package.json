@@ -36,6 +36,10 @@
     "up": "node ./scripts/build-run.mjs"
   },
   "devDependencies": {
+    "ajv": "^8.0.0",
+    "@babel/core": "^7",
+    "@rollup/plugin-babel": "5.3.1",
+    "react-scripts": "5.0.1",
     "@eslint/css": "^1.4.0",
     "@eslint/js": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^8.66.0",
@@ -44,11 +48,14 @@
     "eslint": "10.9.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jest": "^29.16.6",
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-n": "^18.3.0",
     "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-promise": "^7.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-you-might-not-need-an-effect": "^1.0.2",
+    "eslint-plugin-testing-library": "^7.16.2",
     "eslint-plugin-workspaces": "^0.12.1",
     "eslint-scope": "9.1.2",
     "glob": "^13.0.6",
@@ -62,6 +69,7 @@
     "stylelint": "^17.14.1",
     "stylelint-config-standard": "^40.0.0",
     "stylelint-config-standard-less": "^3.0.1",
+    "tslib": "^2.8.1",
     "typescript": "^6.0.3"
   },
   "resolutions": {
@@ -74,10 +82,7 @@
   },
   "overrides": {
     "nth-check": "^2.1.1",
-    "eslint": "10.9.0",
-    "react-scripts": {
-      "eslint": "10.9.0"
-    }
+    "eslint": "10.9.0"
   },
   "dependencies": {
     "@playwright/test": "^1.62.1",

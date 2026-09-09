@@ -31,11 +31,14 @@
 
 ## 4. Translate `components.json`
 
-- [ ] 4.1 Translate all `components.json` keys (100 strings: context menus, MonomerCreationWizard, StructEditor chrome) into `zh-CN`, preserving ICU placeholders
-- [ ] 4.2 **Code check:** manual key-diff confirms 1:1 coverage with `en`; typecheck/build/tests pass
-- [ ] 4.3 **Visual check:** switch to 简体中文, walk atom/bond/selection context menus and the full MonomerCreationWizard (incl. RNA preset tabs) — confirm rendering
-- [ ] 4.4 **Commit** this section's changes as one commit on `4384-language`
-- [ ] 4.5 **STOP — report commit hash + diff for review before starting Section 5**
+- [x] 4.1 Translate all `components.json` keys (100 strings: context menus, MonomerCreationWizard, StructEditor chrome) into `zh-CN`, preserving ICU placeholders
+- [x] 4.2 **Regressions found live and fixed (not in original task list, discovered during 4.3):**
+  1. `ContextMenu/utils.ts`'s `formatTitle()` stripped a hardcoded 5-character suffix (English " Bond") off a resolved, translated bond-title string to get the bare type name for menu display. Worked by coincidence in English; zh-CN's 1-character "键" suffix meant the same slice cut into the type name itself (e.g. "Single键" → "Si"). Fixed by reading the type name directly from `titleParams` instead of slicing translated text — `formatTitle` deleted, replaced by `getBondTypeName` in `BondMenuItems.tsx`/`SelectionMenuItems.tsx`.
+  2. A broader grep swept up 6 more files with hardcoded English as bare JSX text nodes (not `title=`/`label=` attributes, the documented blind spot of the foundation change's `noHardcodedStrings.test.ts` guard) that survived the entire foundation change: `useMakeAttachmentPointMenuItems.tsx`, `RGroupAttachmentPointMenuItems.tsx`, `AttachmentPointLabelMenuItems.tsx`, `FunctionalGroupMenuItems.tsx`, `MultitailArrowMenuItems.tsx`, and `MonomerCreationWizard.tsx`'s own wizard header ("Create Monomer") + `Notification.tsx`'s dismiss button ("OK"). Fixed all 8 strings — 3 reuse existing keys (`attachmentPointEditPopup.title`, `dialogs:toolbox.removeFG.removeAbbreviation`, `contextMenu.createMonomerItem`, `common:button.ok`), 5 are new `components.json` keys. Key parity reconfirmed at 108/108 (0 missing/extra) after the additions.
+- [x] 4.3 **Code check:** manual key-diff confirms 1:1 coverage with `en` (108/108); typecheck, unit tests 403/403, circular-deps, build, prettier all green
+- [x] 4.4 **Visual check:** performed live — switched to 简体中文, confirmed atom/bond/selection context menus (bond type submenu now shows full untruncated names post-fix: Single/Single Up/Single Down/.../Dative), the full MonomerCreationWizard (Type dropdown, CHEM form, Discard/Submit, wizard header now translated), and the multitail arrow's "添加新尾部" context menu item — zero console warnings
+- [x] 4.5 **Committed:** `a1d6dc59af` on `4384-language`
+- [ ] 4.6 **STOP — report commit hash + diff for review before starting Section 5**
 
 ## 5. Translate `settings.json`
 

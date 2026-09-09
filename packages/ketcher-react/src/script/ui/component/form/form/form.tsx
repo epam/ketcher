@@ -729,4 +729,4 @@ function getErrorsObj(errors: FormValidationError[]): Record<string, string> {
   return errs;
 }
 
-export { Field, CustomQueryField, FieldWithModal, SelectOneOf };
+export { Field, CustomQueryField, FieldWithModal, SelectOneOf, Label };

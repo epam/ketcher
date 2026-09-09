@@ -72,9 +72,9 @@ Discovered while doing the original Section 6 final walkthrough: right-clicking 
 
 - [x] 7.1 Add a Jest test (extends `i18n.test.ts` or a new sibling) asserting the flattened key set of every `zh-CN/*.json` file exactly matches its `en/*.json` counterpart (no missing keys, no orphaned keys)
 - [x] 7.2 Re-run the existing `i18n.test.ts` "resolves every referenced key" check against `zh-CN` as well as `en` (switch `i18n.language` mid-test, or assert directly against the `zh-CN` resource bundle)
-- [ ] 7.3 **Code check:** typecheck, unit tests, circular-deps, build, prettier all green, including the new parity test
-- [ ] 7.4 **Visual check:** final full walkthrough in 简体中文 across every area touched in Sections 2-6, in one pass, with console tracking for `[i18n] Missing key` warnings
-- [ ] 7.5 **Commit** this section's changes as one commit on `4384-language`
+- [x] 7.3 **Code check:** typecheck clean; unit tests 412/413 (1 pre-existing skip); `test:circ` clean; `build:react` succeeded (same pre-existing warnings); prettier clean — including the new parity test, which now covers all 251 keys added in Section 6
+- [x] 7.4 **Visual check:** final full walkthrough performed live in 简体中文 in one pass, console-tracked throughout (zero `Missing key` or i18next warnings): toolbar mode switcher (分子/大分子, with macromolecules-library panel confirmed out-of-scope/still-English since it lives in the separate `ketcher-macromolecules` package), Settings dialog (all 7 accordion groups incl. the 语言 selector itself), Save Structure dialog, and — newly caught by this pass, not exercised during Section 6's own check — **`template-attach.tsx`'s live Save-to-Templates flow** (保存到模板库: title, both warning sentences with the `{name}` ICU interpolation, Molecule name placeholder, Selected attachment points, Atom/Bond ID labels, Cancel/Save buttons), plus the About dialog (Ketcher/Indigo version info, Feedback link)
+- [x] 7.5 **Commit** this section's changes as one commit on `4384-language`
 - [ ] 7.6 **STOP — report commit hash + diff for final review**
 
 ## 8. Follow-up (tracked, not blocking this change)

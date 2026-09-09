@@ -1977,7 +1977,7 @@ const MonomerCreationWizardInternal = ({
       <div className={styles.leftColumn}>
         <p className={styles.wizardTitle}>
           <Icon name={CREATE_MONOMER_TOOL_NAME} />
-          Create Monomer
+          {t('components:contextMenu.createMonomerItem')}
         </p>
 
         <div className={styles.notificationsArea}>

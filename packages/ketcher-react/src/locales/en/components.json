@@ -25,7 +25,15 @@
     "cannotEditUnknownMonomer": "Cannot edit unknown or ambiguous monomers",
     "selectSingleMonomerToEdit": "Select a single monomer to edit it",
     "editingMonomersTitle": "Editing monomers",
-    "editingMonomersQuestion": "You are going to edit {count} monomers. Are you sure?"
+    "editingMonomersQuestion": "You are going to edit {count} monomers. Are you sure?",
+    "remove": "Remove",
+    "markAsLeavingGroup": "Mark as leaving group",
+    "markAsConnectionPoint": "Mark as connection point",
+    "removeAssignment": "Remove assignment",
+    "expandAbbreviation": "Expand Abbreviation",
+    "contractAbbreviation": "Contract Abbreviation",
+    "removeTail": "Remove tail",
+    "addNewTail": "Add new tail"
   },
   "attachmentPointEditPopup": {
     "title": "Edit connection point"

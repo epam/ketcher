@@ -25,7 +25,7 @@ import {
 import { modalComponentList } from 'components/modal/modalContainer';
 import { openModal } from 'state/modal';
 import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
-import { BaseMonomer } from 'ketcher-core';
+import { BaseMonomer, EditorHistory } from 'ketcher-core';
 import {
   hasOnlyDeoxyriboseSugars,
   hasOnlyRiboseSugars,
@@ -34,7 +34,7 @@ import {
   isAntisenseOptionVisible,
   isCycleExistsForSelectedMonomers,
 } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { IconName } from 'ketcher-react';
 import { CalculateMacromoleculePropertiesButton } from 'components/macromoleculeProperties';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
@@ -99,6 +99,33 @@ export function TopMenuComponent() {
     };
   }, [editor]);
 
+  // The history lives outside React, so a model change only has to trigger a
+  // re-render - the state itself is read while rendering. Keeping it out of an
+  // effect matters: an effect runs after the paint, which would leave both
+  // buttons briefly disabled on a canvas that does have a history.
+  const [, markHistoryChanged] = useReducer(
+    (revision: number) => revision + 1,
+    0,
+  );
+
+  useEffect(() => {
+    if (!editor) {
+      return;
+    }
+
+    editor.events.modelChange.add(markHistoryChanged);
+
+    return () => {
+      editor.events.modelChange.remove(markHistoryChanged);
+    };
+  }, [editor, markHistoryChanged]);
+
+  const history = editor ? EditorHistory.getInstance(editor) : undefined;
+  const canUndo = Boolean(history && history.historyPointer > 0);
+  const canRedo = Boolean(
+    history && history.historyPointer < history.historyStack.length,
+  );
+
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
@@ -143,13 +170,13 @@ export function TopMenuComponent() {
         <Menu.Item
           itemId="undo"
           title={`Undo (${hotkeysShortcuts.undo})`}
-          disabled={isDisabled}
+          disabled={isDisabled || !canUndo}
           testId="undo"
         />
         <Menu.Item
           itemId="redo"
           title={`Redo (${hotkeysShortcuts.redo})`}
-          disabled={isDisabled}
+          disabled={isDisabled || !canRedo}
           testId="redo"
         />
       </Menu.Group>

@@ -1,1 +1,194 @@
-{}
+{
+  "shared": {
+    "addToCanvas": "添加到画布",
+    "addToCanvasTooltip": "结构将作为片段加载并添加到剪贴板",
+    "addButton": "添加",
+    "disabledSuffix": "{label} 已禁用"
+  },
+  "confirm": {
+    "warning": "警告！",
+    "unsupportedSgroupQuestion": "发现不支持的 S-基团类型。是否要在不包含它的情况下导入结构？"
+  },
+  "infoModal": {
+    "errorMessage": "错误信息",
+    "pasteErrorText": "您的浏览器不允许通过按钮粘贴剪贴板内容，请改用快捷键。",
+    "shortcutForPaste": "用于粘贴",
+    "defaultCutCopyMessage": "此操作无法通过菜单使用，请改用快捷键执行 {command}。"
+  },
+  "extendedTable": {
+    "dialogTitle": "扩展元素表"
+  },
+  "periodTable": {
+    "headerTitle": "元素周期表",
+    "typeSingle": "单个",
+    "typeList": "列表",
+    "typeNotList": "非列表",
+    "tableSummary": "化学元素周期表"
+  },
+  "text": {
+    "dialogTitle": "文本编辑器",
+    "toolbarAriaLabel": "文本格式工具栏",
+    "fontSizeLabel": "字号",
+    "textLabel": "文本：",
+    "specialSymbolsTitle": "符号"
+  },
+  "document": {
+    "save": {
+      "schemaTitle": "保存",
+      "filenameLabel": "文件名：",
+      "formatLabel": "文件格式：",
+      "filenameEmptyError": "文件名必须至少包含一个字符",
+      "filenameTooLongError": "文件名过长",
+      "filenameInvalidCharsError": "文件名不能包含以下字符：\\ / : * ? \" < > | 且不能以“.”开头",
+      "copyToClipboard": "复制到剪贴板",
+      "dialogTitle": "保存结构",
+      "saveToTemplates": "保存到模板库",
+      "previewTab": "预览",
+      "warningsTab": "警告",
+      "structureContainsErrorsWarning": "结构包含错误，请检查数据，否则以此格式保存后可能会丢失部分属性或整个结构。"
+    },
+    "open": {
+      "dialogTitle": "打开结构",
+      "openAsNewProject": "作为新项目打开",
+      "passwordProtectedError": "报告无法打开该文件 —— 可能受密码保护",
+      "errorProcessingFile": "处理文件时出错"
+    },
+    "openOptions": {
+      "pasteFromClipboard": "从剪贴板粘贴",
+      "openFromFile": "从文件打开",
+      "dragFileHere": "或将文件拖到此处",
+      "imageRecognitionUnavailable": "图像识别服务不可用",
+      "unableToAcceptImage": "无法接受文件。请确保上传 1 张图片。",
+      "unableToAcceptFile": "无法接受文件。{error}",
+      "openFromImage": "从图片打开"
+    },
+    "cdxViewer": {
+      "noEmbeddedStructures": "文件中未找到嵌入的结构",
+      "selectStructure": "选择结构",
+      "structureN": "结构 {number}",
+      "fileLabel": "文件：",
+      "errorLabel": "错误："
+    }
+  },
+  "meta": {
+    "settings": {
+      "headerTitle": "设置",
+      "openFromFile": "从文件打开",
+      "saveToFile": "保存到文件",
+      "reset": "重置",
+      "stereochemistryTab": "立体化学",
+      "atomsTab": "原子",
+      "bondsTab": "键",
+      "serverTab": "服务器",
+      "viewer3dTab": "3D 查看器",
+      "debuggingTab": "调试选项",
+      "setAcsSettings": "设置 ACS 参数",
+      "applyLayoutNotice": "要完全应用这些更改，您需要应用布局。",
+      "imageResolutionTooltip": "此选项适用于 PNG/SVG 图片渲染器",
+      "ignoreChiralFlagTooltip": "从 molfile 加载时忽略手性标志。默认情况下所有立体化学均为 ABS"
+    },
+    "about": {
+      "ok": "确定",
+      "version": "版本 {value}",
+      "build": "构建 {value}",
+      "buildAt": "构建时间",
+      "feedback": "反馈",
+      "epamLifeSciences": "EPAM Life Sciences",
+      "indigoToolkit": "Indigo 工具包",
+      "standalone": "独立版"
+    }
+  },
+  "process": {
+    "recognize": {
+      "changeImage": "更换图片",
+      "openAsNewProject": "作为新项目打开",
+      "dialogTitle": "从图片导入结构",
+      "imagoVersionLabel": "Imago 版本",
+      "imagoVersionOption": "版本 {number}",
+      "originalImage": "原始图片",
+      "recognizedStructurePreview": "识别结构预览",
+      "previewNotSupported": "当前浏览器不支持预览“{type}”MIME 类型",
+      "pleaseChooseImage": "请选择图片"
+    },
+    "miew": {
+      "dialogTitle": "Miew",
+      "changingWarning": "强烈的 3D 旋转后立体中心可能会发生变化",
+      "exportFailedError": "从 3D 查看器导出结构失败，请重试。",
+      "processFailedError": "处理 3D 结构失败，该结构可能已损坏。",
+      "mergeCoordinatesFailedError": "无法将 3D 坐标与原始结构合并。",
+      "mergeMetaFailedError": "应用 3D 结构时无法保留元数据。"
+    },
+    "analyse": {
+      "dialogTitle": "计算值",
+      "chemicalFormula": "化学式",
+      "molecularWeight": "分子量",
+      "exactMass": "精确质量",
+      "elementalAnalysis": "元素分析",
+      "decimalPlaces": "小数位数"
+    },
+    "check": {
+      "schemaTitle": "检查",
+      "dialogTitle": "结构检查",
+      "checkButton": "检查",
+      "lastCheck": "上次检查：",
+      "warningSuffix": "{name} 警告：",
+      "noErrorsDetected": "未检测到错误",
+      "options": {
+        "valence": "价态",
+        "radical": "自由基",
+        "isotopes": "同位素",
+        "pseudoatom": "假原子",
+        "stereochemistry": "立体化学",
+        "chirality": "手性",
+        "chiralFlag": "手性标志",
+        "query": "查询",
+        "overlappingAtoms": "重叠原子",
+        "overlappingBonds": "重叠键",
+        "rGroups": "R-基团",
+        "structure3d": "3D 结构"
+      }
+    }
+  },
+  "toolbox": {
+    "automap": {
+      "dialogTitle": "反应自动映射",
+      "modeLabel": "模式",
+      "discard": "放弃",
+      "keep": "保留",
+      "alter": "更改",
+      "clear": "清除"
+    },
+    "atom": {
+      "dialogTitle": "原子属性",
+      "generalGroup": "常规",
+      "querySpecificGroup": "查询专用",
+      "reactionFlagsGroup": "反应标志",
+      "numberLabel": "编号"
+    },
+    "bond": {
+      "dialogTitle": "键属性"
+    },
+    "rgroupLogic": {
+      "dialogTitle": "R-基团逻辑条件",
+      "always": "始终",
+      "ifThenOption": "如果 R{ifLabel} 则 R{thenLabel}"
+    },
+    "attach": {
+      "dialogTitle": "连接点"
+    },
+    "editMonomer": {
+      "dialogTitle": "编辑单体",
+      "editMonomer": "编辑单体",
+      "editAllMonomers": "编辑所有单体",
+      "removeGrouping": "取消分组",
+      "bodyTextSingle": "“编辑单体”将打开单体创建向导，允许编辑该单体实例。“取消分组”会将该单体转变为纯化学结构。您希望如何继续？",
+      "bodyTextIdentical": "“编辑所有单体”将打开单体创建向导，允许编辑所有选定的单体实例。“取消分组”会将这些单体转变为纯化学结构。您希望如何继续？",
+      "bodyTextNonIdentical": "“取消分组”会将这些单体转变为纯化学结构。您希望如何继续？"
+    },
+    "removeFG": {
+      "header": "编辑缩写",
+      "question": "检测到该缩写发生了变化。是否要从结构中移除缩写信息，并继续使用单独的原子和键进行操作？",
+      "removeAbbreviation": "移除缩写"
+    }
+  }
+}

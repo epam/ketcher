@@ -173,13 +173,13 @@ const Atom: FC<Props> = (props: Props) => {
           <Field
             name="explicitValence"
             component={Select}
-            options={getSelectOptionsFromSchema(atomProps.explicitValence)}
+            options={getSelectOptionsFromSchema(atomProps.explicitValence, t)}
             data-testid="explicitValence"
           />
           <Field
             name="radical"
             component={Select}
-            options={getSelectOptionsFromSchema(atomProps.radical)}
+            options={getSelectOptionsFromSchema(atomProps.radical, t)}
             data-testid="radical"
           />
         </div>
@@ -197,7 +197,7 @@ const Atom: FC<Props> = (props: Props) => {
                   key={field.name}
                   name={field.name}
                   component={Select}
-                  options={getSelectOptionsFromSchema(atomProps[field.name])}
+                  options={getSelectOptionsFromSchema(atomProps[field.name], t)}
                   data-testid={field.name}
                 />
               );
@@ -216,7 +216,7 @@ const Atom: FC<Props> = (props: Props) => {
           <Field
             name="invRet"
             component={Select}
-            options={getSelectOptionsFromSchema(atomProps.invRet)}
+            options={getSelectOptionsFromSchema(atomProps.invRet, t)}
             data-testid="inversion"
           />
           <Field

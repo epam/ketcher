@@ -53,6 +53,7 @@ The shared foundation that both UI packages build on. It owns the entire domain 
 - `MicromoleculesEditor.tsx` — mounts the Raphael canvas and Redux store
 - `script/editor/Editor.ts` — editor instance (wraps Raphael render + tool system)
 - `script/ui/` — all React UI: toolbars, dialogs, state (Redux), hotkeys
+- `src/i18n/` — `react-i18next` UI-text localization (English + Simplified Chinese today); see [modules/i18n.md](./modules/i18n.md). Covers `ketcher-react` only — `ketcher-macromolecules` is not localized.
 
 ### 3. `ketcher-macromolecules`
 

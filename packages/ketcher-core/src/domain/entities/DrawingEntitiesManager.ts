@@ -2877,10 +2877,9 @@ export class DrawingEntitiesManager {
 
     outstandingBonds.forEach((polymerBond) => {
       const previousIsOverlappedByMonomer = polymerBond.isOverlappedByMonomer;
-      polymerBond.isOverlappedByMonomer = this.checkBondForOverlapsByMonomers(
-        polymerBond,
-        monomersToCheck,
-      );
+      // Check overlap against ALL monomers, not just the moved ones
+      polymerBond.isOverlappedByMonomer =
+        this.checkBondForOverlapsByMonomers(polymerBond);
       if (polymerBond.isOverlappedByMonomer !== previousIsOverlappedByMonomer) {
         editor.renderersContainer.deletePolymerBond(polymerBond, false, false);
         editor.renderersContainer.addPolymerBond(polymerBond, false);

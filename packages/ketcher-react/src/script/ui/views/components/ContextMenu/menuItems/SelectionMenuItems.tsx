@@ -3,7 +3,6 @@ import { Item, Submenu } from 'react-contexify';
 import { useTranslation } from 'react-i18next';
 import MenuSeparator from '../MenuSeparator';
 import tools from '../../../../action/tools';
-import { resolveActionTitle } from '../../../../action/resolveActionTitle';
 import styles from '../ContextMenu.module.less';
 import useAtomEdit from '../hooks/useAtomEdit';
 import useAtomStereo from '../hooks/useAtomStereo';
@@ -13,7 +12,7 @@ import useDelete from '../hooks/useDelete';
 import useCreateMonomer from '../hooks/useCreateMonomer';
 import useMarkAs from '../hooks/useMarkAs';
 import {
-  formatTitle,
+  getBondTypeName,
   getBondNames,
   monomerWizardDisallowedBondNames,
 } from '../utils';
@@ -151,7 +150,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
               disabled={isDisabledForMonomerWizard}
             >
               {iconName && <Icon name={iconName} className={styles.icon} />}
-              <span>{formatTitle(resolveActionTitle(t, tools[name]))}</span>
+              <span>{getBondTypeName(tools[name])}</span>
             </Item>
           );
         })}

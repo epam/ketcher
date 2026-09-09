@@ -2,14 +2,18 @@ import { difference } from 'lodash';
 import { MonomerMicromolecule, type Bond, type Struct } from 'ketcher-core';
 
 /**
- * Remove the word `bond` out of the title
- *
- * @example
- * formatTitle('Single Bond') === 'Single'
+ * Bond-type menu items only want the bare type name (e.g. "Single",
+ * "Double") — sourced from ketcher-core's bondSchema.enumNames and never
+ * translated — not the full "{type} Bond" sentence used for the toolbar
+ * action's own title. Read it directly from titleParams instead of
+ * stripping a fixed-length suffix off the resolved, translated string:
+ * that used to work by coincidence in English (" Bond" is 5 characters)
+ * but corrupted the type name in any locale where the translated suffix
+ * isn't also 5 characters (e.g. zh-CN's "键" is 1 character).
  */
-export const formatTitle = (title: string) => {
-  return title.slice(0, -5);
-};
+export const getBondTypeName = (
+  action?: { titleParams?: Record<string, string> } | null,
+) => action?.titleParams?.type ?? '';
 
 /**
  * Get bond names from default export of `src/script/ui/action/tools.js`

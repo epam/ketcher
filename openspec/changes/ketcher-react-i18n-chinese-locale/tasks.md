@@ -48,15 +48,34 @@
 - [x] 5.4 **Committed:** `9338c5e448` on `4384-language`
 - [ ] 5.5 **STOP — report commit hash + diff for review before starting Section 6**
 
-## 6. Key-parity regression test + final pass
+## 6. Legacy `script/ui/dialog/*` + `struct-schema.ts` + `sdata-schema.js` (scope discovered mid-Section-6 walkthrough; pulled in per explicit user decision)
 
-- [ ] 6.1 Add a Jest test (extends `i18n.test.ts` or a new sibling) asserting the flattened key set of every `zh-CN/*.json` file exactly matches its `en/*.json` counterpart (no missing keys, no orphaned keys)
-- [ ] 6.2 Re-run the existing `i18n.test.ts` "resolves every referenced key" check against `zh-CN` as well as `en` (switch `i18n.language` mid-test, or assert directly against the `zh-CN` resource bundle)
-- [ ] 6.3 **Code check:** typecheck, unit tests, circular-deps, build, prettier all green, including the new parity test
-- [ ] 6.4 **Visual check:** final full walkthrough in 简体中文 across every area touched in Sections 2-5, in one pass, with console tracking for `[i18n] Missing key` warnings
-- [ ] 6.5 **Commit** this section's changes as one commit on `4384-language`
-- [ ] 6.6 **STOP — report commit hash + diff for final review**
+Discovered while doing the original Section 6 final walkthrough: right-clicking the R-Group label tool revealed an entirely untranslated dialog belonging to a legacy `script/ui/dialog/*` tree (17 files) that neither the foundation project nor this change's Sections 1-5 ever touched. That tree is backed by `struct-schema.ts` (also consumed by 4 already-complete foundation-project dialogs: `Atom.tsx`, `Bond.tsx`, `RgroupLogic.tsx`, `Attach.tsx`) and `sdata-schema.js`. User approved pulling both into this same change as a new section.
 
-## 7. Follow-up (tracked, not blocking this change)
+- [ ] 6.1 `struct-schema.ts`: convert property-level `title` fields and word-based `enumNames` to translation keys. **Exclusions (leave untouched):** `bond.properties.type.enumNames` (shared verbatim with `tools.ts`'s `bondTypeNames`/`getBondTypeName`, neither of which resolves through `t()`); all top-level schema `.title` fields (`atom`, `bond`, `rgroupSchema`, `labelEdit`, `attachmentPoints`, `sgroup`, `rgroupLogic`, `textSchema`, `attachSchema` — inert for display, and `bond.title` also guards a `form.tsx` identity check); numeric/valence-notation `enumNames` arrays (e.g. `['', '0', 'I', 'II', ...]`). Convert `customQueryInvalidMessage()` to build its message via module-level `i18n.t()` with an ICU count param instead of raw string interpolation.
+- [ ] 6.2 `sdata-schema.js`: translate only `sdataCustomSchema`'s 3 rendered property titles (Context/Field name/Field value). Leave the entire deep `sData`/`sdataSchema`/`contextSchema` structure untouched (default-value lookup only, never rendered).
+- [ ] 6.3 Thread `t` into every `getSelectOptionsFromSchema(...)` call site not yet passing it: `form.tsx`'s internal `SelectOneOf`, `SGroupFieldset.tsx`'s `content()`, `AtomElement.tsx`, `Bond.tsx` (topology + center only — **not** the `type` call), `IfThenSelect.tsx`.
+- [ ] 6.4 Fix the 4 `buttonsNameMap={{ OK: 'Apply' }}` overrides that bypass `Dialog.tsx`'s automatic `common:button.*` resolution — replace with `t('common:button.apply')` — and translate each dialog's own `title` prop: `rgroup.tsx` ("R-Group"), `sgroup.tsx` ("S-Group Properties"), `labeledit.tsx` ("Label Edit"), `enhancedStereo.tsx` ("Enhanced Stereochemistry")
+- [ ] 6.5 `enhancedStereo.tsx`: translate remaining bare-JSX-text strings ("Add to AND"/"Group", "Add to OR"/"Group", "Create new AND Group", "Create new OR Group"); leave "ABS" untouched (universal stereo-descriptor abbreviation)
+- [ ] 6.6 `SDataFieldset.tsx`: translate `placeholder="Enter value"` / `placeholder="Enter name"`
+- [ ] 6.7 `AbbreviationLookup.constants.tsx` + `AbbreviationLookup.tsx`: translate `NO_MATCHING_RESULTS_LABEL` / `START_TYPING_NOTIFICATION_LABEL`; update `AbbreviationLookup.test.tsx`'s assertions to match
+- [ ] 6.8 `TemplateDialog.tsx` + `EmptySearchResult.tsx` callers: translate "Structure Library", "Click to add to canvas", "Save to SDF", the "Some templates could not be exported." snackbar, `placeholder="Search by elements..."`, the 3 `<Tab label>` values (Template Library/Functional Groups/Salts and Solvents), and the 3 `textInfo="No items found"` props. **Do not touch** the module-level `const FUNCTIONAL_GROUPS = 'Functional Groups'` data-lookup-key constant, despite the coincidental text match with the translated Tab label.
+- [ ] 6.9 `template-attach.tsx`: translate dialog titles ("Save to Templates"/"Template Edit"), the two-sentence storage warning (interpolate the `warningObject` var — "Templates"/"Edited templates" — via ICU `{name}`-style param rather than string concatenation), "Selected attachment points", the "Atom ID:"/"Bond ID:" labels, the Cancel/Save/Edit button text, and `placeholder="template"`
+- [ ] 6.10 Add every new key from 6.1-6.9 to both `en/dialogs.json` (or the appropriate existing namespace) and `zh-CN/dialogs.json`, preserving 1:1 key parity and ICU placeholders
+- [ ] 6.11 **Code check:** typecheck, unit tests, circular-deps, build, prettier all green
+- [ ] 6.12 **Visual check:** R-Group dialog, S-Group Properties (incl. nested Data/DAT Context/Field name/Field value), Label Edit, Enhanced Stereochemistry (all 4 radio options + AND/OR group text), Abbreviation Lookup empty/prompt states, full Template/Structure Library dialog (header, search placeholder, 3 tabs, save button, "no items found", template-attach save/edit flow) — all under 简体中文, zero console warnings
+- [ ] 6.13 **Commit** this section's changes as one commit on `4384-language`
+- [ ] 6.14 **STOP — report commit hash + diff for review before starting Section 7**
 
-- [ ] 7.1 Native Mandarin-speaker / professional localization review of all `zh-CN` content (see design.md's translation-quality disclaimer) — file as a follow-up task, not a blocker for merging this change's infrastructure
+## 7. Key-parity regression test + final pass
+
+- [x] 7.1 Add a Jest test (extends `i18n.test.ts` or a new sibling) asserting the flattened key set of every `zh-CN/*.json` file exactly matches its `en/*.json` counterpart (no missing keys, no orphaned keys)
+- [x] 7.2 Re-run the existing `i18n.test.ts` "resolves every referenced key" check against `zh-CN` as well as `en` (switch `i18n.language` mid-test, or assert directly against the `zh-CN` resource bundle)
+- [ ] 7.3 **Code check:** typecheck, unit tests, circular-deps, build, prettier all green, including the new parity test
+- [ ] 7.4 **Visual check:** final full walkthrough in 简体中文 across every area touched in Sections 2-6, in one pass, with console tracking for `[i18n] Missing key` warnings
+- [ ] 7.5 **Commit** this section's changes as one commit on `4384-language`
+- [ ] 7.6 **STOP — report commit hash + diff for final review**
+
+## 8. Follow-up (tracked, not blocking this change)
+
+- [ ] 8.1 Native Mandarin-speaker / professional localization review of all `zh-CN` content (see design.md's translation-quality disclaimer) — file as a follow-up task, not a blocker for merging this change's infrastructure

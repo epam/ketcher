@@ -19,8 +19,9 @@
       }
 
       &.selectedOption,
-      &:global([aria-selected="true"].Mui-focused) {
+      &:global([aria-selected='true'].Mui-focused) {
         background: none;
+        /* stylelint-disable-next-line declaration-property-value-no-unknown */
         border-bottom: 1px solid @color-grey-3;
       }
     }

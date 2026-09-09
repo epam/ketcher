@@ -2,10 +2,12 @@
 @import '../../style/variables';
 
 .accordion {
+  /* stylelint-disable-next-line no-descending-specificity */
   &:global(.MuiAccordion-root.Mui-expanded) {
     margin: 0;
   }
 
+  /* stylelint-disable-next-line no-descending-specificity */
   &:global(.MuiAccordion-root) {
     box-shadow: none;
 
@@ -40,12 +42,15 @@
 
   :global(.MuiAccordionDetails-root) {
     background-color: @color-primary-light;
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     box-shadow: inset 0 -2px 8px 0 @color-accordion-shadow;
     padding: 12px 14px 4px;
   }
 
   :global(.MuiButtonBase-root.MuiAccordionSummary-root.Mui-expanded),
-  :global(.MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters) {
+  :global(
+    .MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters
+  ) {
     min-height: 40px;
     height: 40px;
     padding-left: 12px;

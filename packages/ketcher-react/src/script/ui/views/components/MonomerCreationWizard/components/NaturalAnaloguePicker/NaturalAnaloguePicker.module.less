@@ -30,6 +30,7 @@
   gap: 10px;
   border-radius: 4px;
   box-shadow: 0 6px 10px 0 #67688426;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @border-color;
   overflow: hidden;
 }
@@ -46,7 +47,8 @@
   border: 1px solid transparent !important;
   border-radius: 2px !important;
 
-  &[aria-selected='true'], &:hover {
+  &[aria-selected='true'],
+  &:hover {
     border-color: @color-primary !important;
   }
 }

@@ -31,10 +31,9 @@
     form {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
-      align-content: center;
+      place-content: center space-between;
       font-size: 12px;
-      margin: 12px 12px 10px 12px;
+      margin: 12px 12px 10px;
 
       & > label {
         display: flex;
@@ -44,9 +43,11 @@
 
         // TODO: check and update global styles for text inputs
         input {
+          /* stylelint-disable-next-line declaration-property-value-no-unknown */
           border: 1px solid @color-grey-4 !important;
 
           &:hover {
+            /* stylelint-disable-next-line declaration-property-value-no-unknown */
             border: 1px solid @color-input-hover !important;
           }
         }
@@ -86,7 +87,7 @@
         .warningsArr {
           color: @color-text-primary;
           white-space: pre-line;
-          word-break: break-word;
+          overflow-wrap: anywhere;
           font-size: 12px;
           line-height: 14px;
         }
@@ -172,7 +173,9 @@
       align-items: center;
       justify-content: center;
       height: 220px;
+      /* stylelint-disable-next-line declaration-property-value-no-unknown */
       border-top: 1px solid @color-grey-3;
+      /* stylelint-disable-next-line declaration-property-value-no-unknown */
       border-bottom: 1px solid @color-grey-3;
 
       img {
@@ -198,7 +201,7 @@
   }
 
   .saveTmpl {
-    word-wrap: normal;
+    overflow-wrap: normal;
     margin-right: auto;
     padding: 2px 8px;
   }

@@ -229,7 +229,7 @@ type SaveNewMonomerData = {
   symbol: string;
   name: string;
   naturalAnalogue: string;
-  modificationTypes: string[];
+  modificationTypes?: string[];
   aliasHELM: string;
   aliasBILN: string;
   hidden?: boolean;
@@ -1079,6 +1079,10 @@ class Editor implements KetcherEditor {
       this.potentialLeavingAtomsForAutoAssignment = [];
       this.potentialLeavingAtomsForManualAssignment = [];
     }
+
+    // Each wizard session builds fresh mappings; stale entries from prior
+    // sessions cause incorrect AP lookup in reconcileExternalBonds.
+    this.selectedToOriginalAtomsIdMap.clear();
 
     /*
      * Upon cloning the structure each entity gets a new id thus losing the mapping between the new and original one

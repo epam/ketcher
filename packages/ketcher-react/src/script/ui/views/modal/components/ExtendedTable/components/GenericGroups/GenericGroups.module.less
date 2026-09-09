@@ -19,11 +19,11 @@
 .genericGroups {
   overflow-y: auto;
   .scrollbar();
-  
+
   &::-webkit-scrollbar {
     background-color: transparent;
   }
-  
+
   margin-top: 9px;
   padding: 0 12px 12px;
 
@@ -37,13 +37,11 @@
     padding: 0;
   }
 
-  .scrollbar();
-
   .topGroupsContainer,
   .groupGenerics {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-column-gap: 20px;
+    column-gap: 20px;
   }
 
   .subgroupContainer {

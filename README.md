@@ -67,6 +67,31 @@ function App() {
 }
 ```
 
+### Accessing Ketcher embedded via IFrame
+
+When you embed the ready-to-run standalone application as an `IFrame` (rather than using
+`ketcher-react` as a component library), Ketcher initializes **asynchronously** inside the
+frame (loading the Indigo service/WASM, etc.). Because of this, `window.ketcher` inside the
+frame is only assigned once initialization finishes — reading
+`iframeEl.contentWindow.ketcher` right after the frame's `load` event (or immediately after
+inserting the `<iframe>`) will typically still be `undefined`.
+
+To reliably know when the embedded Ketcher is ready, listen for the `init` message that the
+standalone application posts to its parent window once `onInit` has fired, instead of polling
+`contentWindow.ketcher`:
+
+```javascript
+const iframeEl = document.getElementById('ifKetcher');
+
+window.addEventListener('message', (event) => {
+  if (event.source !== iframeEl.contentWindow) return;
+  if (event.data?.eventType === 'init') {
+    const ketcher = iframeEl.contentWindow.ketcher;
+    // ketcher is now guaranteed to be initialized
+  }
+});
+```
+
 ## FAQ
 
 ### How to use react component library

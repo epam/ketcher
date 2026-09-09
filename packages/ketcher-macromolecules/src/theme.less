@@ -1,86 +1,71 @@
 .Ketcher-polymer-editor-root {
   // Colors
-  --color-background-canvas: #F5F5F5;
-  --color-background-primary: #FFFFFF;
-  --color-background-secondary: #F8FEFF;
-  --color-background-overlay: rgba(94,94,94,.8);
-
-  --color-border-primary: #CAD3DD;
-  --color-border-secondary: #7C7C7F;
-
-  --color-text-primary: #333333;
+  --color-background-canvas: #f5f5f5;
+  --color-background-primary: #fff;
+  --color-background-secondary: #f8feff;
+  --color-background-overlay: rgb(94 94 94 / 80%);
+  --color-border-primary: #cad3dd;
+  --color-border-secondary: #7c7c7f;
+  --color-text-primary: #333;
   --color-text-secondary: #167782;
   --color-text-light: #585858;
-  --color-text-dark: #000000;
-  --color-text-error: #FF4A4A;
-  --color-text-lightgrey: #7C7C7F;
-
-  --color-tab-regular: #FFFFFF;
-  --color-tab-active: #E1E5EA;
-  --color-tab-hover: #00838F;
-  --color-tab-content: #EFF2F5;
-
+  --color-text-dark: #000;
+  --color-text-error: #ff4a4a;
+  --color-text-lightgrey: #7c7c7f;
+  --color-tab-regular: #fff;
+  --color-tab-active: #e1e5ea;
+  --color-tab-hover: #00838f;
+  --color-tab-content: #eff2f5;
   --color-scroll-regular: #717171;
-  --color-scroll-inactive: #DDDDDD;
-
+  --color-scroll-inactive: #ddd;
   --color-button-primary-active: #167782;
-  --color-button-primary-hover: #00838F;
-  --color-button-primary-clicked: #4FB3BF;
-  --color-button-primary-disabled: rgba(113, 113, 113, 0.4);
-
+  --color-button-primary-hover: #00838f;
+  --color-button-primary-clicked: #4fb3bf;
+  --color-button-primary-disabled: rgb(113 113 113 / 40%);
   --color-button-secondary-active: #585858;
-  --color-button-secondary-hover: #333333;
-  --color-button-secondary-clicked: #AEAEAE;
-  --color-button-secondary-disabled: rgba(113, 113, 113, 0.4);
-
+  --color-button-secondary-hover: #333;
+  --color-button-secondary-clicked: #aeaeae;
+  --color-button-secondary-disabled: rgb(113 113 113 / 40%);
   --color-button-group-active: #167782;
-  --color-button-group-hover: #2E858F;
-
+  --color-button-group-hover: #2e858f;
   --color-button-transparent-active: transparent;
-
-  --color-button-text-primary: #FFFFFF;
+  --color-button-text-primary: #fff;
   --color-button-text-secondary: #005662;
-  --color-button-text-disabled: #7A7A7A;
-
-  --color-dropdown-primary: #333333;
-  --color-dropdown-secondary: #FFFFFF;
-  --color-dropdown-hover: #DDDDDD;
-  --color-dropdown-disabled: #7A7A7A;
-
-  --color-tooltip-background: #FFFFFF;
-  --color-tooltip-text: #333333;
-
-  --color-link-active: #00838F;
+  --color-button-text-disabled: #7a7a7a;
+  --color-dropdown-primary: #333;
+  --color-dropdown-secondary: #fff;
+  --color-dropdown-hover: #ddd;
+  --color-dropdown-disabled: #7a7a7a;
+  --color-tooltip-background: #fff;
+  --color-tooltip-text: #333;
+  --color-link-active: #00838f;
   --color-link-hover: #005662;
-
-  --color-divider: #AEAEAE;
+  --color-divider: #aeaeae;
   --color-spinner: #005662;
-  --color-error: #FF4A4A;
-
+  --color-error: #ff4a4a;
   --color-input-text-default: #585858;
-  --color-input-text-active: #333333;
+  --color-input-text-active: #333;
   --color-input-text-disabled: #585858;
-  --color-input-text-error: #FF4A4A;
-
-  --color-input-background-primary: #FFFFFF;
-  --color-input-background-default: #EFF2F5;
-  --color-input-background-hover: #DDDDDD;
+  --color-input-text-error: #ff4a4a;
+  --color-input-background-primary: #fff;
+  --color-input-background-default: #eff2f5;
+  --color-input-background-hover: #ddd;
   --color-input-background-disabled: #eff2f5;
-
   --color-input-border-regular: #cad3dd;
-  --color-input-border-active: #FFFFFF;
+  --color-input-border-active: #fff;
   --color-input-border-hover: #43b5c0;
-  --color-input-border-focus: #EFF2F5;
-  --color-input-border-error: #FF4A4A;
-
-  --color-icon-grey: #B4B9D6;
+  --color-input-border-focus: #eff2f5;
+  --color-input-border-error: #ff4a4a;
+  --color-icon-grey: #b4b9d6;
   --color-icon-hover: #005662;
   --color-icon-active: #525252;
+  /* stylelint-disable-next-line custom-property-pattern */
   --color-icon-activeMenu: #005662;
-  --color-icon-clicked: #FFFFFF;
-  --color-icon-disabled: rgba(82, 82, 82, 0.4);
-
-  --color-monomer-default: #C8C8C8;
+  --color-icon-clicked: #fff;
+  /* stylelint-disable-next-line custom-property-pattern */
+  --color-icon-disabled: rgb(82 82 82 / 40%);
+  --color-monomer-default: #c8c8c8;
+  /* stylelint-disable-next-line custom-property-pattern */
   --color-editMode-sequenceInRNABuilder: #99d7dc;
 
   // Font
@@ -88,37 +73,39 @@
   --font-size-regular: 12px;
   --font-size-medium: 14px;
   --font-size-xsmall: 6px;
-
-  --font-family-montserrat: Montserrat, sans-serif;
-  --font-family-inter: Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue', Arial, sans-serif;
-  --font-family-roboto: Roboto, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue', Arial, sans-serif;
-
+  --font-family-montserrat: montserrat, sans-serif;
+  --font-family-inter:
+    inter, freesans, arimo, 'Droid Sans', helvetica, 'Helvetica Neue', arial,
+    sans-serif;
+  --font-family-roboto:
+    roboto, freesans, arimo, 'Droid Sans', helvetica, 'Helvetica Neue', arial,
+    sans-serif;
   --font-weight-light: 300;
   --font-weight-regular: 400;
   --font-weight-bold: 600;
 
   // Border
-  --border-regular: 1px solid #CAD3DD;
-  --border-small: 1px solid #E1E5EA;
+  --border-regular: 1px solid #cad3dd;
+  --border-small: 1px solid #e1e5ea;
   --border-radius-regular: 4px;
 
   // Shadow
-  --shadow-regular: 0px 1px 1px rgba(197, 203, 207, 0.7);
-  --shadow-mainLayoutBlocks: 0px 2px 5px rgba(103, 104, 132, 0.15);
+  /* stylelint-disable-next-line custom-property-pattern */
+  --shadow-regular: 0px 1px 1px rgb(197 203 207 / 70%);
+  /* stylelint-disable-next-line custom-property-pattern */
+  --shadow-mainLayoutBlocks: 0px 2px 5px rgb(103 104 132 / 15%);
 
   // Outline
-  --outline-small: 1px solid #B4B9D6;
-  --outline-medium: 2px solid #B4B9D6;
-  --outline-color: #B4B9D6;
-
+  --outline-small: 1px solid #b4b9d6;
+  --outline-medium: 2px solid #b4b9d6;
+  --outline-color: #b4b9d6;
   --outline-selected-color: #167782;
   --outline-selected-small: 1px solid #167782;
   --outline-selected-medium: 2px solid #167782;
-
   --outline-grey-small: 1px solid #585858;
 
   // Transition
-  --transition-regular: all .3s;
+  --transition-regular: all 0.3s;
 
   // Z-Index
   --zindex-base: 0;

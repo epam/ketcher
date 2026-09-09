@@ -13,23 +13,16 @@
     "ketcher-standalone": "*",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "react-scripts": "^5.0.1",
     "typescript": "^6.0.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --passWithNoTests --watchAll=false",
+    "start": "vite",
+    "build": "vite build",
+    "test": "node -e \"console.log('No demo unit tests')\"",
     "test:types": "tsc --noEmit",
-    "eject": "react-scripts eject",
+    "eject": "node -e \"console.error('Eject is not supported with Vite'); process.exit(1)\"",
     "serve": "serve -s build"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -46,6 +39,8 @@
   "devDependencies": {
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "serve": "^14.2.6"
+    "@vitejs/plugin-react": "^6.0.1",
+    "serve": "^14.2.6",
+    "vite": "^8.0.16"
   }
 }

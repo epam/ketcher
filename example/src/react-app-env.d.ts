@@ -1,1 +1,2 @@
-/// <reference types="react-scripts" />
+/// <reference types="node" />
+/// <reference types="vite/client" />

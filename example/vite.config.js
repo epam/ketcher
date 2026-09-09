@@ -11,9 +11,15 @@ import polymerEditorTSConfig from '../packages/ketcher-macromolecules/tsconfig.j
 import { valuesToReplace as ketcherReactValues } from '../packages/ketcher-react/rollup.config.mjs';
 import ketcherReactTSConfig from '../packages/ketcher-react/tsconfig.json';
 import ketcherStandaloneTSConfig from '../packages/ketcher-standalone/tsconfig.json';
-import { envVariables as exampleEnv } from './config/webpack.config';
 import { INDIGO_WORKER_IMPORTS } from '../packages/ketcher-standalone/rollup.config.mjs';
 import commonjs from 'vite-plugin-commonjs';
+
+const exampleEnv = {
+  MODE: process.env.MODE || 'standalone',
+  API_PATH: process.env.REACT_APP_API_PATH,
+  KETCHER_ENABLE_REDUX_LOGGER: JSON.stringify(false),
+  PUBLIC_URL: process.env.PUBLIC_URL || '',
+};
 
 const dotEnv = loadEnv('development', '.', '');
 Object.assign(process.env, dotEnv, exampleEnv);

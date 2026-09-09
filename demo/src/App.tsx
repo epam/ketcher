@@ -84,13 +84,15 @@ const App = () => {
         <KetcherBox>
           <Editor
             key={editorKey}
-            staticResourcesUrl={process.env.PUBLIC_URL}
+            staticResourcesUrl=""
             buttons={getHiddenButtonsConfig(hiddenButtons)}
             structServiceProvider={structServiceProvider}
             errorHandler={(err) => console.log(err)}
             onInit={(ketcher: Ketcher) => {
-              (global as any).ketcher = ketcher;
-              (global as any).KetcherFunctions = KetcherAPI(global.ketcher);
+              (globalThis as any).ketcher = ketcher;
+              (globalThis as any).KetcherFunctions = KetcherAPI(
+                (globalThis as any).ketcher,
+              );
             }}
           />
         </KetcherBox>

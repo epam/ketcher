@@ -13,12 +13,12 @@
 
 ## 2. Translate `common.json` + `toolbar.json` + `toolbars.json`
 
-- [ ] 2.1 Translate all `common.json` keys (13 strings: buttons, monomer types, shared errors) into `zh-CN`
-- [ ] 2.2 Translate all `toolbar.json` keys (88 strings: toolbar/menu action titles) into `zh-CN`
-- [ ] 2.3 Translate all `toolbars.json` keys (8 strings) into `zh-CN`
-- [ ] 2.4 **Code check:** the new key-parity test (Section 6) doesn't exist yet — instead, run a manual key-diff (`en` vs `zh-CN` leaf keys) for these three files and confirm 1:1 coverage; typecheck/build/tests still pass
-- [ ] 2.5 **Visual check:** switch to 简体中文 in Settings, confirm the top toolbar, zoom controls, and mode switcher render Chinese text with no English fallback and no layout breakage
-- [ ] 2.6 **Commit** this section's changes as one commit on `4384-language`
+- [x] 2.1 Translate all `common.json` keys (13 strings: buttons, monomer types, shared errors) into `zh-CN`
+- [x] 2.2 Translate all `toolbar.json` keys (88 strings: toolbar/menu action titles) into `zh-CN`
+- [x] 2.3 Translate all `toolbars.json` keys (8 strings) into `zh-CN`
+- [x] 2.4 **Code check:** manual key-diff (`en` vs `zh-CN` leaf keys) confirms 0 missing/0 extra for all three files; ICU placeholder preservation also verified by script; typecheck, unit tests 403/403, circular-deps, build, prettier all green
+- [x] 2.5 **Visual check:** performed live — switched to 简体中文, confirmed top toolbar tooltips (清空画布/打开/另存为/复制/粘贴/剪切/撤销/重做/etc.), mode switcher (分子/大分子), zoom dropdown (缩小/放大/缩放 100%), and Settings dialog chrome (常规/取消/应用, reused from `common.json`) all render correctly with zero console warnings. Noted one pre-existing, out-of-scope limitation: bond tool titles (e.g. "Single键") mix in an untranslated English bond-type name sourced from `ketcher-core`'s `bondSchema.enumNames` — not something either this change or the foundation change can fix without touching `ketcher-core`
+- [x] 2.6 **Committed:** `402b6834d3` on `4384-language`
 - [ ] 2.7 **STOP — report commit hash + diff for review before starting Section 3**
 
 ## 3. Translate `dialogs.json`

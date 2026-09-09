@@ -1357,7 +1357,9 @@ export class SequenceMode extends BaseMode {
           ) {
             this.splitCurrentChain();
           } else {
-            this.turnOffAntisenseEditMode();
+            if (this.isSyncEditMode) {
+              this.turnOffAntisenseEditMode();
+            }
             this.startNewSequence();
           }
         },
@@ -3060,9 +3062,22 @@ export class SequenceMode extends BaseMode {
       const currentNode = currentTwoStrandedNode?.senseNode;
       const previousTwoStrandedNode = SequenceRenderer.previousNode;
       const previousNode = previousTwoStrandedNode?.senseNode;
-      const twoStrandedNodeBeforePreviousNode = previousNode
+      let twoStrandedNodeBeforePreviousNode = previousNode
         ? SequenceRenderer.getPreviousNodeInSameChain(previousTwoStrandedNode)
         : undefined;
+      // Antisense overhangs can leave multiple empty sense columns before the
+      // end-of-chain marker. Anchor the new line to a real node, not a placeholder.
+      while (
+        twoStrandedNodeBeforePreviousNode &&
+        (!twoStrandedNodeBeforePreviousNode.senseNode ||
+          twoStrandedNodeBeforePreviousNode.senseNode instanceof
+            EmptySequenceNode)
+      ) {
+        twoStrandedNodeBeforePreviousNode =
+          SequenceRenderer.getPreviousNodeInSameChain(
+            twoStrandedNodeBeforePreviousNode,
+          );
+      }
       const nodeBeforePreviousNode =
         twoStrandedNodeBeforePreviousNode?.senseNode;
       const newNodePosition = this.getNewSequenceItemPosition(

@@ -137,7 +137,7 @@ const Bond = (props: Props) => {
         <Field
           name="topology"
           component={Select}
-          options={getSelectOptionsFromSchema(bondProps.topology)}
+          options={getSelectOptionsFromSchema(bondProps.topology, t)}
           disabled={isCustomQuery || isMonomerCreationWizardActive}
           formName="bond-properties"
           data-testid="topology"
@@ -145,7 +145,7 @@ const Bond = (props: Props) => {
         <Field
           name="center"
           component={Select}
-          options={getSelectOptionsFromSchema(bondProps.center)}
+          options={getSelectOptionsFromSchema(bondProps.center, t)}
           disabled={isCustomQuery || isMonomerCreationWizardActive}
           formName="bond-properties"
           data-testid="reacting-center"

@@ -1,6 +1,7 @@
-import type { FC } from 'react';
+import { type FC, useMemo } from 'react';
 import { Item, Submenu } from 'react-contexify';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import MenuSeparator from '../MenuSeparator';
 import useAtomEdit from '../hooks/useAtomEdit';
 import useAtomStereo from '../hooks/useAtomStereo';
@@ -25,12 +26,12 @@ import {
   ketcherProvider,
 } from 'ketcher-core';
 import { atom } from '../../../../data/schema/struct-schema';
+import { resolveTranslatableText } from 'src/script/ui/utils';
 import styles from '../ContextMenu.module.less';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { Icon } from 'components';
 import useMakeAttachmentPointMenuItems from '../hooks/useMakeAttachmentPointMenuItems';
 import clsx from 'clsx';
-import i18n from 'src/i18n/i18n';
 
 const {
   ringBondCount,
@@ -47,68 +48,74 @@ const properties: Array<AtomQueryPropertiesName> = [
   'chirality',
 ];
 
-const atomPropertiesForSubMenu: {
+function getAtomPropertiesForSubMenu(t: TFunction): {
   title: string;
   key: AtomAllAttributeName;
   buttons: { label: string; value: AtomAllAttributeValue }[];
-}[] = [
-  {
-    title: ringBondCount.title,
-    key: 'ringBondCount',
-    buttons:
-      ringBondCount.enumNames?.map((label, id) => ({
-        label,
-        value: ringBondCount.enum?.[id] as AtomAllAttributeValue,
-      })) ?? [],
-  },
-  {
-    title: hCount.title,
-    key: 'hCount',
-    buttons:
-      hCount.enumNames?.map((label, id) => ({
-        label,
-        value: hCount.enum?.[id] as AtomAllAttributeValue,
-      })) ?? [],
-  },
-  {
-    title: substitutionCount.title,
-    key: 'substitutionCount',
-    buttons:
-      substitutionCount.enumNames?.map((label, id) => ({
-        label,
-        value: substitutionCount.enum?.[id] as AtomAllAttributeValue,
-      })) ?? [],
-  },
-  {
-    title: unsaturatedAtom.title,
-    key: 'unsaturatedAtom',
-    buttons: [
-      { label: i18n.t('components:contextMenu.unsaturated'), value: 1 },
-      { label: i18n.t('components:contextMenu.saturated'), value: 0 },
-    ],
-  },
-  {
-    title: implicitHCount.title,
-    key: 'implicitHCount',
-    buttons:
-      implicitHCount.enumNames?.map((label, id) => ({
-        label,
-        value: implicitHCount.enum?.[id] as AtomAllAttributeValue,
-      })) ?? [],
-  },
-  ...properties.map((name) => ({
-    title: atom.properties[name].title,
-    key: name,
-    buttons:
-      atom.properties[name].enumNames?.map((label: string, id: number) => ({
-        label,
-        value: atom.properties[name].enum?.[id] as AtomAllAttributeValue,
-      })) ?? [],
-  })),
-];
+}[] {
+  return [
+    {
+      title: resolveTranslatableText(ringBondCount.title, t) ?? '',
+      key: 'ringBondCount',
+      buttons:
+        ringBondCount.enumNames?.map((label, id) => ({
+          label: resolveTranslatableText(label, t) ?? label,
+          value: ringBondCount.enum?.[id] as AtomAllAttributeValue,
+        })) ?? [],
+    },
+    {
+      title: resolveTranslatableText(hCount.title, t) ?? '',
+      key: 'hCount',
+      buttons:
+        hCount.enumNames?.map((label, id) => ({
+          label: resolveTranslatableText(label, t) ?? label,
+          value: hCount.enum?.[id] as AtomAllAttributeValue,
+        })) ?? [],
+    },
+    {
+      title: resolveTranslatableText(substitutionCount.title, t) ?? '',
+      key: 'substitutionCount',
+      buttons:
+        substitutionCount.enumNames?.map((label, id) => ({
+          label: resolveTranslatableText(label, t) ?? label,
+          value: substitutionCount.enum?.[id] as AtomAllAttributeValue,
+        })) ?? [],
+    },
+    {
+      title: resolveTranslatableText(unsaturatedAtom.title, t) ?? '',
+      key: 'unsaturatedAtom',
+      buttons: [
+        { label: t('components:contextMenu.unsaturated'), value: 1 },
+        { label: t('components:contextMenu.saturated'), value: 0 },
+      ],
+    },
+    {
+      title: resolveTranslatableText(implicitHCount.title, t) ?? '',
+      key: 'implicitHCount',
+      buttons:
+        implicitHCount.enumNames?.map((label, id) => ({
+          label: resolveTranslatableText(label, t) ?? label,
+          value: implicitHCount.enum?.[id] as AtomAllAttributeValue,
+        })) ?? [],
+    },
+    ...properties.map((name) => ({
+      title: resolveTranslatableText(atom.properties[name].title, t) ?? '',
+      key: name,
+      buttons:
+        atom.properties[name].enumNames?.map((label: string, id: number) => ({
+          label: resolveTranslatableText(label, t) ?? label,
+          value: atom.properties[name].enum?.[id] as AtomAllAttributeValue,
+        })) ?? [],
+    })),
+  ];
+}
 
 const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const { t } = useTranslation(['components', 'common']);
+  const atomPropertiesForSubMenu = useMemo(
+    () => getAtomPropertiesForSubMenu(t),
+    [t],
+  );
   const [handleEdit] = useAtomEdit();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();

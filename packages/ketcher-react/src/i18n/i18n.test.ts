@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import i18n from './i18n';
+import i18n, { SUPPORTED_LANGUAGES } from './i18n';
 
 const NAMESPACES = [
   'common',
@@ -70,6 +70,28 @@ function collectReferencedKeys(): Set<string> {
   return keys;
 }
 
+function flattenLocaleFile(
+  locale: string,
+  namespace: string,
+): Record<string, string> {
+  const filePath = path.join(SRC_ROOT, 'locales', locale, `${namespace}.json`);
+  const json: unknown = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  const result: Record<string, string> = {};
+
+  function walk(node: unknown, prefix: string) {
+    if (typeof node === 'string') {
+      result[prefix] = node;
+    } else if (node && typeof node === 'object') {
+      for (const [key, value] of Object.entries(node)) {
+        walk(value, prefix ? `${prefix}.${key}` : key);
+      }
+    }
+  }
+
+  walk(json, '');
+  return result;
+}
+
 describe('i18n', () => {
   it('initializes synchronously with the English baseline loaded', () => {
     expect(i18n.isInitialized).toBe(true);
@@ -90,5 +112,81 @@ describe('i18n', () => {
     );
 
     expect(missingKeys).toEqual([]);
+  });
+});
+
+describe('zh-CN locale parity', () => {
+  it.each(NAMESPACES)(
+    '%s.json: zh-CN has exactly the same keys as en',
+    (namespace) => {
+      const enKeys = Object.keys(flattenLocaleFile('en', namespace)).sort();
+      const zhKeys = Object.keys(flattenLocaleFile('zh-CN', namespace)).sort();
+
+      const missing = enKeys.filter((key) => !zhKeys.includes(key));
+      const extra = zhKeys.filter((key) => !enKeys.includes(key));
+
+      expect({ missing, extra }).toEqual({ missing: [], extra: [] });
+    },
+  );
+
+  it('preserves every ICU interpolation placeholder between en and zh-CN', () => {
+    const placeholderRe = /\{[a-zA-Z]+\}/g;
+    const mismatches: string[] = [];
+
+    for (const namespace of NAMESPACES) {
+      const en = flattenLocaleFile('en', namespace);
+      const zh = flattenLocaleFile('zh-CN', namespace);
+
+      for (const key of Object.keys(en)) {
+        if (!(key in zh)) continue; // already reported by the key-parity test above
+
+        const enPlaceholders = [...en[key].matchAll(placeholderRe)]
+          .map((match) => match[0])
+          .sort()
+          .join(',');
+        const zhPlaceholders = [...zh[key].matchAll(placeholderRe)]
+          .map((match) => match[0])
+          .sort()
+          .join(',');
+
+        if (enPlaceholders !== zhPlaceholders) {
+          mismatches.push(`${namespace}:${key}`);
+        }
+      }
+    }
+
+    expect(mismatches).toEqual([]);
+  });
+
+  it('resolves every referenced key against the zh-CN resource bundle without throwing or falling back to an empty value', async () => {
+    const referencedKeys = collectReferencedKeys();
+    await i18n.changeLanguage('zh-CN');
+
+    try {
+      const brokenKeys = [...referencedKeys].filter((key) => {
+        try {
+          const resolved: unknown = i18n.t(key);
+          return typeof resolved !== 'string' || resolved.trim() === '';
+        } catch {
+          return true;
+        }
+      });
+
+      expect(brokenKeys).toEqual([]);
+    } finally {
+      await i18n.changeLanguage('en');
+    }
+  });
+});
+
+describe('supported languages', () => {
+  it('registers a resource bundle for every language listed in SUPPORTED_LANGUAGES', () => {
+    expect(SUPPORTED_LANGUAGES.length).toBeGreaterThan(1);
+
+    for (const { code } of SUPPORTED_LANGUAGES) {
+      for (const namespace of NAMESPACES) {
+        expect(i18n.hasResourceBundle(code, namespace)).toBe(true);
+      }
+    }
   });
 });

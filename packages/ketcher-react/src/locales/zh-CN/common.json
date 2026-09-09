@@ -1,1 +1,21 @@
-{}
+{
+  "errors": {
+    "featureNotAvailableInBrowser": "此功能在您的浏览器中不可用"
+  },
+  "button": {
+    "ok": "确定",
+    "cancel": "取消",
+    "save": "保存",
+    "apply": "应用",
+    "close": "关闭",
+    "yes": "是"
+  },
+  "general": "常规",
+  "delete": "删除",
+  "alreadyInUse": "已被使用",
+  "monomerType": {
+    "base": "碱基",
+    "sugar": "糖",
+    "phosphate": "磷酸"
+  }
+}

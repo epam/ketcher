@@ -42,10 +42,10 @@
 
 ## 5. Translate `settings.json`
 
-- [ ] 5.1 Translate all `settings.json` keys (72 strings: Settings-panel field titles/enum labels) into `zh-CN`
-- [ ] 5.2 **Code check:** manual key-diff confirms 1:1 coverage with `en`; typecheck/build/tests pass
-- [ ] 5.3 **Visual check:** switch to 简体中文, walk all 7 Settings tabs — confirm every field title and dropdown option renders in Chinese
-- [ ] 5.4 **Commit** this section's changes as one commit on `4384-language`
+- [x] 5.1 Translate all `settings.json` keys (73 strings incl. `language.title` added in Section 1: Settings-panel field titles/enum labels) into `zh-CN`
+- [x] 5.2 **Code check:** manual key-diff confirms 1:1 coverage with `en` (73/73, 0 missing/extra); typecheck, unit tests 403/403, circular-deps, build, prettier all green
+- [x] 5.3 **Visual check:** performed live — switched to 简体中文, expanded all 7 Settings tabs and dumped full text content via script: every field title and dropdown option across 常规/立体化学/原子/键/服务器/3D 查看器/调试选项 renders correctly in Chinese; data-driven enums sourced from `ketcher-core` (e.g. "Terminal and Hetero") correctly remain untranslated; zero console warnings
+- [x] 5.4 **Committed:** `9338c5e448` on `4384-language`
 - [ ] 5.5 **STOP — report commit hash + diff for review before starting Section 6**
 
 ## 6. Key-parity regression test + final pass

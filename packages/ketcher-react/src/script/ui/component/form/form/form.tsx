@@ -590,6 +590,7 @@ function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
 
 const SelectOneOf = (props: SelectOneOfProps) => {
   const { title, name, schema, ...prop } = props;
+  const { t } = useTranslation();
 
   const selectDesc: {
     title?: string;
@@ -613,7 +614,7 @@ const SelectOneOf = (props: SelectOneOfProps) => {
   return (
     <Field
       name={name}
-      options={getSelectOptionsFromSchema(selectDesc)}
+      options={getSelectOptionsFromSchema(selectDesc, t)}
       title={title}
       {...prop}
       component={Select}

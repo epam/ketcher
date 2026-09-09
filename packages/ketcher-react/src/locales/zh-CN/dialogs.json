@@ -189,6 +189,257 @@
       "header": "编辑缩写",
       "question": "检测到该缩写发生了变化。是否要从结构中移除缩写信息，并继续使用单独的原子和键进行操作？",
       "removeAbbreviation": "移除缩写"
+    },
+    "rgroup": {
+      "dialogTitle": "R-基团"
+    },
+    "sgroupDialog": {
+      "dialogTitle": "S-基团属性",
+      "typeLabel": "类型"
+    },
+    "labelEditDialog": {
+      "dialogTitle": "标签编辑"
+    },
+    "enhancedStereo": {
+      "dialogTitle": "增强立体化学",
+      "addToAnd": "添加到 AND",
+      "addToOr": "添加到 OR",
+      "group": "组",
+      "createNewAndGroup": "创建新的 AND 组",
+      "createNewOrGroup": "创建新的 OR 组"
+    },
+    "structSchema": {
+      "atom": {
+        "atomType": {
+          "title": "原子类型",
+          "enumSingle": "单个",
+          "enumList": "列表",
+          "enumSpecial": "特殊"
+        },
+        "label": {
+          "title": "标签",
+          "invalidMessage": "标签错误"
+        },
+        "atomList": {
+          "title": "列表",
+          "invalidMessage": "原子列表无效"
+        },
+        "notList": {
+          "title": "非列表"
+        },
+        "pseudo": {
+          "title": "特殊",
+          "invalidMessage": "特殊原子无效"
+        },
+        "alias": {
+          "title": "别名",
+          "invalidMessage": "不允许有前导或尾随空格"
+        },
+        "charge": {
+          "title": "电荷",
+          "invalidMessage": "电荷值无效"
+        },
+        "explicitValence": {
+          "title": "价态"
+        },
+        "isotope": {
+          "title": "同位素（原子质量）",
+          "invalidMessage": "同位素值无效"
+        },
+        "radical": {
+          "title": "自由基",
+          "enumMonoradical": "单自由基",
+          "enumDiradicalSinglet": "双自由基（单线态）",
+          "enumDiradicalTriplet": "双自由基（三线态）"
+        },
+        "ringBondCount": {
+          "title": "环键数",
+          "enumAsDrawn": "按绘制"
+        },
+        "hCount": {
+          "title": "H 计数"
+        },
+        "substitutionCount": {
+          "title": "取代计数",
+          "enumAsDrawn": "按绘制"
+        },
+        "unsaturatedAtom": {
+          "title": "不饱和"
+        },
+        "aromaticity": {
+          "title": "芳香性",
+          "enumAromatic": "芳香",
+          "enumAliphatic": "脂肪族"
+        },
+        "implicitHCount": {
+          "title": "隐式 H 计数"
+        },
+        "ringMembership": {
+          "title": "环成员数"
+        },
+        "ringSize": {
+          "title": "环大小"
+        },
+        "connectivity": {
+          "title": "连接性"
+        },
+        "chirality": {
+          "title": "手性",
+          "enumAnticlockwise": "逆时针",
+          "enumClockwise": "顺时针"
+        },
+        "invRet": {
+          "title": "反转",
+          "enumInverts": "反转",
+          "enumRetains": "保留"
+        },
+        "exactChangeFlag": {
+          "title": "精确变化"
+        }
+      },
+      "cip": {
+        "title": "CIP"
+      },
+      "customQuery": {
+        "title": "自定义查询",
+        "invalidMessageTooLong": "自定义查询不能超过 {maxLength} 个字符",
+        "invalidMessageInvalid": "自定义查询无效"
+      },
+      "labelEditField": {
+        "title": "原子",
+        "invalidMessage": "原子符号错误"
+      },
+      "attachmentPoints": {
+        "primary": {
+          "title": "主要连接点"
+        },
+        "secondary": {
+          "title": "次要连接点"
+        }
+      },
+      "bond": {
+        "type": {
+          "title": "类型"
+        },
+        "topology": {
+          "title": "拓扑",
+          "enumEither": "任意",
+          "enumRing": "环",
+          "enumChain": "链"
+        },
+        "center": {
+          "title": "反应中心",
+          "enumUnmarked": "未标记",
+          "enumNotCenter": "非中心",
+          "enumCenter": "中心",
+          "enumNoChange": "无变化",
+          "enumMadeBroken": "生成/断裂",
+          "enumOrderChanges": "键级变化",
+          "enumMadeBrokenAndChanges": "生成/断裂并变化"
+        }
+      },
+      "sgroup": {
+        "variantData": "数据",
+        "variantMultipleGroup": "重复组",
+        "mulCount": {
+          "title": "重复次数"
+        },
+        "variantSruPolymer": "SRU 聚合物",
+        "subscript": {
+          "title": "聚合物标签",
+          "invalidMessage": "SRU 下标不能为空且不能包含双引号"
+        },
+        "repeatPattern": {
+          "title": "重复模式",
+          "enumHeadToTail": "头对尾",
+          "enumHeadToHead": "头对头",
+          "enumEitherUnknown": "任意（未知）"
+        },
+        "variantCopolymer": "共聚物",
+        "subtype": {
+          "title": "子类型",
+          "enumBlank": "<空白>",
+          "enumRandom": "随机",
+          "enumBlock": "嵌段",
+          "enumAlternating": "交替"
+        },
+        "variantSuperatom": "超原子",
+        "name": {
+          "title": "名称",
+          "invalidMessage": "请为超原子提供一个名称"
+        },
+        "variantQueryComponent": "查询组件",
+        "variantNucleotideComponent": "核苷酸组件",
+        "component": {
+          "title": "组件",
+          "enumSugar": "糖",
+          "enumBase": "碱基",
+          "enumPhosphate": "磷酸"
+        }
+      },
+      "rgroupLogicFields": {
+        "occurrence": {
+          "title": "出现次数",
+          "invalidMessage": "值错误"
+        },
+        "resth": {
+          "title": "RestH"
+        },
+        "condition": {
+          "title": "条件"
+        }
+      },
+      "attachSchema": {
+        "name": {
+          "title": "分子名称",
+          "invalidMessage": "模板名称必须唯一、非空，且长度不超过 128 个字符"
+        }
+      }
+    },
+    "sdata": {
+      "context": {
+        "title": "上下文"
+      },
+      "fieldName": {
+        "title": "字段名",
+        "invalidMessage": "请指定字段名"
+      },
+      "fieldValue": {
+        "title": "字段值",
+        "invalidMessage": "请指定字段值"
+      },
+      "fieldNamePlaceholder": "输入名称",
+      "fieldValuePlaceholder": "输入值"
+    },
+    "abbreviationLookup": {
+      "noMatchingResults": "无匹配结果",
+      "startTypingPrompt": "开始输入原子或模板结构名称"
+    },
+    "templateLibrary": {
+      "title": "结构库",
+      "clickToAddToCanvas": "点击以添加到画布",
+      "saveToSdf": "保存为 SDF",
+      "exportPartialFailure": "部分模板无法导出。",
+      "searchPlaceholder": "按元素搜索…",
+      "tabTemplateLibrary": "模板库",
+      "tabFunctionalGroups": "官能团",
+      "tabSaltsAndSolvents": "盐和溶剂",
+      "noItemsFound": "未找到任何项目"
+    },
+    "templateAttach": {
+      "saveDialogTitle": "保存到模板库",
+      "editDialogTitle": "模板编辑",
+      "savedLocallyWarning": "{name}保存在本地，无法在其他浏览器或计算机上访问。",
+      "sharedComputerWarning": "请注意，同一台计算机和浏览器的其他用户同样可以访问它们。",
+      "templatesName": "模板",
+      "editedTemplatesName": "已编辑的模板",
+      "namePlaceholder": "模板",
+      "selectedAttachmentPoints": "已选择的连接点",
+      "atomIdLabel": "原子 ID：",
+      "bondIdLabel": "键 ID：",
+      "cancelButton": "取消",
+      "saveButton": "保存",
+      "editButton": "编辑"
     }
   }
 }

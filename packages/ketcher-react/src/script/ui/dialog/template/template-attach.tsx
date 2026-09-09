@@ -24,6 +24,7 @@ import {
 } from '../../state/templates';
 
 import { connect } from 'react-redux';
+import { withTranslation, type WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
 import type { StoreState } from '../../state/store.types';
 import { storage } from '../../storage-ext';
@@ -77,7 +78,10 @@ interface AttachDispatchProps {
   onNameEdit: (name: string) => void;
 }
 
-type AttachProps = AttachOwnProps & AttachStateProps & AttachDispatchProps;
+type AttachProps = AttachOwnProps &
+  AttachStateProps &
+  AttachDispatchProps &
+  WithTranslation;
 
 // @TODO When theming is implemented, use theme wherever possible
 const TemplateEditDialog = styled(Dialog)`
@@ -287,7 +291,7 @@ class Attach extends Component<AttachProps> {
   }
 
   render() {
-    const { name, onNameEdit, onAttachEdit, ...prop } = this.props;
+    const { name, onNameEdit, onAttachEdit, t, ...prop } = this.props;
     const struct = this.tmpl.struct;
     const { atomid, bondid } =
       struct.atoms.get(this.props.atomid) && struct.bonds.get(this.props.bondid)
@@ -298,9 +302,13 @@ class Attach extends Component<AttachProps> {
       reuseRestructIfExist: false,
     });
     const dialogTitle =
-      this.mode === 'save' ? 'Save to Templates' : 'Template Edit';
+      this.mode === 'save'
+        ? t('dialogs:toolbox.templateAttach.saveDialogTitle')
+        : t('dialogs:toolbox.templateAttach.editDialogTitle');
     const warningObject =
-      this.mode === 'save' ? 'Templates' : 'Edited templates';
+      this.mode === 'save'
+        ? t('dialogs:toolbox.templateAttach.templatesName')
+        : t('dialogs:toolbox.templateAttach.editedTemplatesName');
 
     return (
       <TemplateEditDialog
@@ -313,13 +321,11 @@ class Attach extends Component<AttachProps> {
       >
         <Message>
           <div>
-            {warningObject} are saved locally and cannot be accessed on
-            different browsers or computers.
+            {t('dialogs:toolbox.templateAttach.savedLocallyWarning', {
+              name: warningObject,
+            })}
           </div>
-          <div>
-            Be aware that other users of the same computer and browser can
-            access them as well.
-          </div>
+          <div>{t('dialogs:toolbox.templateAttach.sharedComputerWarning')}</div>
         </Message>
         <Form
           schema={attachSchema}
@@ -350,11 +356,15 @@ class Attach extends Component<AttachProps> {
               name="name"
               value={name}
               onChange={(value) => onNameEdit(value as string)}
-              placeholder="template"
+              placeholder={t('dialogs:toolbox.templateAttach.namePlaceholder')}
             />
-            <span>Selected attachment points</span>
+            <span>
+              {t('dialogs:toolbox.templateAttach.selectedAttachmentPoints')}
+            </span>
             <AttachmentOutput data-testid="attach-output">
-              Atom ID: <strong>{atomid}</strong> Bond ID:{' '}
+              {t('dialogs:toolbox.templateAttach.atomIdLabel')}{' '}
+              <strong>{atomid}</strong>{' '}
+              {t('dialogs:toolbox.templateAttach.bondIdLabel')}{' '}
               <strong>{bondid}</strong>
             </AttachmentOutput>
             <Buttons>
@@ -364,7 +374,7 @@ class Attach extends Component<AttachProps> {
                 className={classes.button}
                 data-testid="template-cancel-button"
               >
-                Cancel
+                {t('dialogs:toolbox.templateAttach.cancelButton')}
               </CancelButton>
               <SaveButton
                 variant="contained"
@@ -377,7 +387,9 @@ class Attach extends Component<AttachProps> {
                     : 'template-edit-button'
                 }
               >
-                {this.mode === 'save' ? 'Save' : 'Edit'}
+                {this.mode === 'save'
+                  ? t('dialogs:toolbox.templateAttach.saveButton')
+                  : t('dialogs:toolbox.templateAttach.editButton')}
               </SaveButton>
             </Buttons>
           </RightColumn>
@@ -402,7 +414,7 @@ const mapDispatchToProps = (dispatch: Dispatch): AttachDispatchProps => ({
 
 // Type assertion needed due to @types/react version mismatch with react-redux
 const connector = connect(mapStateToProps, mapDispatchToProps);
-export default connector(Attach as never);
+export default connector(withTranslation(['dialogs'])(Attach) as never);
 
 function initTmpl(tmpl: TemplateItem): NormalizedTemplate {
   const normTmpl = {

@@ -139,8 +139,8 @@ export const Modal = ({
   );
 
   const subcomponents: Record<ModalSubcomponent, JSX.Element | null> = {
-    Content: null,
     Footer: null,
+    Content: null,
   };
 
   React.Children.forEach(children, (child) => {

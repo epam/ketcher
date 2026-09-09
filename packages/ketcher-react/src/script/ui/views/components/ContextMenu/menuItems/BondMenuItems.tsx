@@ -3,7 +3,6 @@ import { Item, Submenu } from 'react-contexify';
 import { useTranslation } from 'react-i18next';
 import type Editor from 'src/script/editor';
 import tools from '../../../../action/tools';
-import { resolveActionTitle } from '../../../../action/resolveActionTitle';
 import styles from '../ContextMenu.module.less';
 import MenuSeparator from '../MenuSeparator';
 import useBondEdit from '../hooks/useBondEdit';
@@ -12,7 +11,7 @@ import useBondSGroupEdit from '../hooks/useBondSGroupEdit';
 import useBondTypeChange from '../hooks/useBondTypeChange';
 import useDelete from '../hooks/useDelete';
 import {
-  formatTitle,
+  getBondTypeName,
   getNonQueryBondNames,
   isBondBetweenMonomers,
   queryBondNames,
@@ -117,7 +116,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
             disabled={isDisabled}
           >
             {iconName && <Icon name={iconName} className={styles.icon} />}
-            <span>{formatTitle(resolveActionTitle(t, tools[name]))}</span>
+            <span>{getBondTypeName(tools[name])}</span>
           </Item>
         );
       })}
@@ -142,7 +141,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
               disabled={isDisabled}
             >
               {iconName && <Icon name={iconName} className={styles.icon} />}
-              <span>{formatTitle(resolveActionTitle(t, tools[name]))}</span>
+              <span>{getBondTypeName(tools[name])}</span>
             </Item>
           );
         })}

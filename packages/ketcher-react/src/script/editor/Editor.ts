@@ -1119,6 +1119,13 @@ class Editor implements KetcherEditor {
         return;
       }
 
+      // The monomer's S-group is removed when editing, so clear the leaving
+      // atom's rglabel to show the real atom (e.g. OH, H) instead of "Rn".
+      const selectedStructLeavingAtom = selectedStruct.atoms.get(leavingAtomId);
+      if (selectedStructLeavingAtom) {
+        selectedStructLeavingAtom.rglabel = null;
+      }
+
       assignedAttachmentPoints.set(
         getAttachmentPointLabel(attachmentPoint.attachmentPointNumber),
         [attachmentAtomId, leavingAtomId],

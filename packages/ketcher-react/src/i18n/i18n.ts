@@ -9,6 +9,13 @@ import dialogs from '../locales/en/dialogs.json';
 import components from '../locales/en/components.json';
 import settings from '../locales/en/settings.json';
 
+import commonZhCN from '../locales/zh-CN/common.json';
+import toolbarZhCN from '../locales/zh-CN/toolbar.json';
+import toolbarsZhCN from '../locales/zh-CN/toolbars.json';
+import dialogsZhCN from '../locales/zh-CN/dialogs.json';
+import componentsZhCN from '../locales/zh-CN/components.json';
+import settingsZhCN from '../locales/zh-CN/settings.json';
+
 export const defaultNS = 'common';
 
 export const resources = {
@@ -20,7 +27,40 @@ export const resources = {
     components,
     settings,
   },
+  'zh-CN': {
+    common: commonZhCN,
+    toolbar: toolbarZhCN,
+    toolbars: toolbarsZhCN,
+    dialogs: dialogsZhCN,
+    components: componentsZhCN,
+    settings: settingsZhCN,
+  },
 } as const;
+
+export interface SupportedLanguage {
+  code: keyof typeof resources;
+  label: string;
+}
+
+export const SUPPORTED_LANGUAGES: SupportedLanguage[] = [
+  { code: 'en', label: 'English' },
+  { code: 'zh-CN', label: '简体中文' },
+];
+
+const DEFAULT_LANGUAGE = 'en';
+const LANGUAGE_STORAGE_KEY = 'ketcher-language';
+
+function isSupportedLanguage(value: unknown): value is keyof typeof resources {
+  return SUPPORTED_LANGUAGES.some((language) => language.code === value);
+}
+
+function getStoredLanguage(): keyof typeof resources {
+  if (typeof window === 'undefined') {
+    return DEFAULT_LANGUAGE;
+  }
+  const stored = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  return isSupportedLanguage(stored) ? stored : DEFAULT_LANGUAGE;
+}
 
 if (!i18n.isInitialized) {
   i18n
@@ -28,8 +68,8 @@ if (!i18n.isInitialized) {
     .use(initReactI18next)
     .init({
       resources,
-      lng: 'en',
-      fallbackLng: 'en',
+      lng: getStoredLanguage(),
+      fallbackLng: DEFAULT_LANGUAGE,
       defaultNS,
       ns: Object.keys(resources.en),
       interpolation: {
@@ -45,6 +85,12 @@ if (!i18n.isInitialized) {
             }
           : undefined,
     });
+
+  if (typeof window !== 'undefined') {
+    i18n.on('languageChanged', (lng) => {
+      window.localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
+    });
+  }
 }
 
 export default i18n;

@@ -101,8 +101,10 @@ abstract class SelectBase implements BaseTool {
     this.updateRotationView();
   };
   private autoScrollAnimationFrameId: number | null = null;
-  private static readonly AUTO_SCROLL_EDGE_THRESHOLD = 50; // pixels from edge to trigger auto-scroll
-  private static readonly AUTO_SCROLL_SPEED = 10; // pixels to scroll per frame
+  private autoScrollDeltaX: number = 0;
+  private autoScrollDeltaY: number = 0;
+  private static readonly AUTO_SCROLL_EDGE_THRESHOLD = 20; // pixels from edge to trigger auto-scroll
+  private static readonly AUTO_SCROLL_SPEED = 5; // pixels to scroll per frame
 
   /**
    * Reads renderer data from d3-bound event targets (`target.__data__`).
@@ -1017,43 +1019,58 @@ abstract class SelectBase implements BaseTool {
     }
 
     const rect = canvasWrapperNode.getBoundingClientRect();
-    const mouseY = event.clientY - rect.top;
-    const mouseX = event.clientX - rect.left;
 
-    let scrollDeltaX = 0;
-    let scrollDeltaY = 0;
+    // Quick check: calculate distances from edges
+    const distanceFromTop = event.clientY - rect.top;
+    const distanceFromBottom = rect.bottom - event.clientY;
+    const distanceFromLeft = event.clientX - rect.left;
+    const distanceFromRight = rect.right - event.clientX;
+
+    // Early return if mouse is not near any edge (most common case)
+    const threshold = SelectBase.AUTO_SCROLL_EDGE_THRESHOLD;
+    if (
+      distanceFromTop >= threshold &&
+      distanceFromBottom >= threshold &&
+      distanceFromLeft >= threshold &&
+      distanceFromRight >= threshold
+    ) {
+      this.cancelAutoScroll();
+      return;
+    }
+
+    // Determine scroll direction and amount - update instance variables
+    this.autoScrollDeltaX = 0;
+    this.autoScrollDeltaY = 0;
 
     // Check vertical edges
     // Note: D3 zoom translateBy moves viewport, not content
     // Negative values move viewport up (content appears to scroll down)
     // Positive values move viewport down (content appears to scroll up)
-    if (mouseY < SelectBase.AUTO_SCROLL_EDGE_THRESHOLD) {
-      scrollDeltaY = SelectBase.AUTO_SCROLL_SPEED; // Mouse at top -> scroll content down
-    } else if (mouseY > rect.height - SelectBase.AUTO_SCROLL_EDGE_THRESHOLD) {
-      scrollDeltaY = -SelectBase.AUTO_SCROLL_SPEED; // Mouse at bottom -> scroll content up
+    if (distanceFromTop < threshold) {
+      this.autoScrollDeltaY = SelectBase.AUTO_SCROLL_SPEED; // Mouse at top -> scroll content down
+    } else if (distanceFromBottom < threshold) {
+      this.autoScrollDeltaY = -SelectBase.AUTO_SCROLL_SPEED; // Mouse at bottom -> scroll content up
     }
 
     // Check horizontal edges
-    if (mouseX < SelectBase.AUTO_SCROLL_EDGE_THRESHOLD) {
-      scrollDeltaX = SelectBase.AUTO_SCROLL_SPEED; // Mouse at left -> scroll content right
-    } else if (mouseX > rect.width - SelectBase.AUTO_SCROLL_EDGE_THRESHOLD) {
-      scrollDeltaX = -SelectBase.AUTO_SCROLL_SPEED; // Mouse at right -> scroll content left
+    if (distanceFromLeft < threshold) {
+      this.autoScrollDeltaX = SelectBase.AUTO_SCROLL_SPEED; // Mouse at left -> scroll content right
+    } else if (distanceFromRight < threshold) {
+      this.autoScrollDeltaX = -SelectBase.AUTO_SCROLL_SPEED; // Mouse at right -> scroll content left
     }
 
-    if (scrollDeltaX !== 0 || scrollDeltaY !== 0) {
-      // Start continuous scrolling if not already started
-      if (this.autoScrollAnimationFrameId === null) {
-        const continuousScroll = () => {
-          this.editor.zoomTool.scrollBy(scrollDeltaX, scrollDeltaY);
-          this.autoScrollAnimationFrameId =
-            requestAnimationFrame(continuousScroll);
-        };
+    // Start continuous scrolling if not already started
+    if (this.autoScrollAnimationFrameId === null) {
+      const continuousScroll = () => {
+        // Use instance variables so direction can be updated dynamically
+        this.editor.zoomTool.scrollBy(
+          this.autoScrollDeltaX,
+          this.autoScrollDeltaY,
+        );
         this.autoScrollAnimationFrameId =
           requestAnimationFrame(continuousScroll);
-      }
-    } else {
-      // Mouse moved away from edges - stop scrolling
-      this.cancelAutoScroll();
+      };
+      this.autoScrollAnimationFrameId = requestAnimationFrame(continuousScroll);
     }
   }
 
@@ -1453,6 +1470,8 @@ abstract class SelectBase implements BaseTool {
       cancelAnimationFrame(this.autoScrollAnimationFrameId);
       this.autoScrollAnimationFrameId = null;
     }
+    this.autoScrollDeltaX = 0;
+    this.autoScrollDeltaY = 0;
   }
 
   destroy() {

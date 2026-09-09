@@ -34,7 +34,7 @@
   }
 
   .tabLabel {
-    color: #333333;
+    color: #333;
     margin-left: 4px;
   }
 
@@ -94,7 +94,7 @@
 
   &:disabled {
     background: #e1e5ea;
-    color: #333333;
+    color: #333;
     border-color: #e1e5ea;
     cursor: not-allowed;
     opacity: 0.5;
@@ -139,12 +139,14 @@
   font-weight: 500;
   line-height: 16px;
   cursor: pointer;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease,
     box-shadow 0.2s ease;
 
   &:hover {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     background: fade(@color-background-primary, 70%);
   }
 }
@@ -152,7 +154,7 @@
 .phosphatePositionButtonActive {
   border-color: @color-grey-4;
   background: @color-background-primary;
-  box-shadow: 0 2px 6px rgba(103, 104, 132, 0.18);
+  box-shadow: 0 2px 6px rgb(103 104 132 / 18%);
 }
 
 .phosphatePositionButtonLabel {

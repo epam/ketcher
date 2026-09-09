@@ -1,6 +1,6 @@
 {
   "name": "ketcher-react",
-  "version": "3.19.0-rc.1",
+  "version": "3.20.0-rc.1",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "https://lifescience.opensource.epam.com/ketcher/",
@@ -38,9 +38,9 @@
     "test:unit": "jest --passWithNoTests",
     "test:unit:update": "jest -u",
     "test:prettier": "prettier --check \"./**/*.{js,jsx,json,ts,tsx}\"",
-    "test:stylelint": "stylelint \"./**/*.{css,less}\" --formatter",
+    "test:stylelint": "stylelint \"./**/*.{css,less}\"",
     "prettier:write": "prettier --write \"./**/*.{js,jsx,json,ts,tsx}\"",
-    "stylelint:fix": "stylelint \"./**/*.{css,less}\" --formatter verbose --fix"
+    "stylelint:fix": "stylelint \"./**/*.{css,less}\" --fix"
   },
   "peerDependencies": {
     "react": "^18.2.0 || ^19.0.0",
@@ -87,18 +87,19 @@
     "whatwg-fetch": "^3.4.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@babel/preset-env": "^7.16.11",
-    "@babel/preset-react": "^7.16.7",
-    "@babel/preset-typescript": "^7.16.7",
-    "@rollup/plugin-babel": "^5.2.1",
+    "@babel/core": "8.0.1",
+    "@babel/plugin-transform-runtime": "8.0.1",
+    "@babel/preset-env": "8.0.2",
+    "@babel/preset-react": "^8.0.1",
+    "@babel/preset-typescript": "8.0.1",
+    "@rollup/plugin-babel": "^6.1.0",
     "@rollup/plugin-commonjs": "^16.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^10.0.0",
     "@rollup/plugin-replace": "^2.3.4",
     "@rollup/plugin-strip": "^2.0.0",
     "@svgr/rollup": "^8.1.0",
-    "@testing-library/jest-dom": "5.16.5",
+    "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "14.4.3",
     "@types/assert": "^1.5.11",

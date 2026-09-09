@@ -1,4 +1,7 @@
 {
+  "language": {
+    "title": "Language"
+  },
   "fields": {
     "resetToSelect": {
       "title": "Reset to Select Tool",

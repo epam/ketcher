@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
-import Form, { Field } from '../../../../../component/form/form/form';
+import Form, { Field, Label } from '../../../../../component/form/form/form';
 import {
   setDefaultSettings,
   updateFormState,
@@ -45,7 +45,7 @@ import { isEqual } from 'lodash';
 import { Icon } from 'components';
 import { ACS_STYLE_DEFAULT_SETTINGS } from 'src/constants';
 import { onAction } from 'src/script/ui/state/shared';
-import i18n from 'src/i18n/i18n';
+import i18n, { SUPPORTED_LANGUAGES } from 'src/i18n/i18n';
 
 interface SettingsProps extends BaseProps {
   ketcherId: string;

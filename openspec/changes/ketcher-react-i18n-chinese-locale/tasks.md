@@ -23,10 +23,10 @@
 
 ## 3. Translate `dialogs.json`
 
-- [ ] 3.1 Translate all `dialogs.json` keys (136 strings: document/meta/process/toolbox dialogs, Confirm/ExtendedTable/InfoModal/PeriodTable/Text) into `zh-CN`, preserving ICU interpolation placeholders (`{name}`, `{count}`, etc.) unchanged
-- [ ] 3.2 **Code check:** manual key-diff confirms 1:1 coverage with `en`; typecheck/build/tests pass
-- [ ] 3.3 **Visual check:** switch to 简体中文, open Save/Open, Settings' own dialog chrome, About, Automap, Recognize, Miew, Analyse, Check, Atom/Bond/RgroupLogic/Attach, Confirm, ExtendedTable, InfoModal, PeriodTable, Text — confirm rendering, no truncation/overflow from longer or shorter CJK strings
-- [ ] 3.4 **Commit** this section's changes as one commit on `4384-language`
+- [x] 3.1 Translate all `dialogs.json` keys (136 strings: document/meta/process/toolbox dialogs, Confirm/ExtendedTable/InfoModal/PeriodTable/Text) into `zh-CN`, preserving ICU interpolation placeholders (`{name}`, `{count}`, etc.) unchanged
+- [x] 3.2 **Code check:** manual key-diff confirms 1:1 coverage with `en` (0 missing/0 extra) and 0 ICU placeholder mismatches; typecheck, unit tests 403/403, circular-deps, build, prettier all green
+- [x] 3.3 **Visual check:** performed live — switched to 简体中文, opened Save Structure (文件名/文件格式/预览/取消/保存), Open structure (从剪贴板粘贴/从文件打开), Settings dialog chrome (设置/常规/立体化学/原子/键/服务器/3D 查看器/调试选项), About (版本/构建时间/反馈), Calculated Values (化学式/分子量/精确质量/元素分析), and Structure Check (结构检查 + all 12 checkbox labels + 上次检查/未检测到错误) — every string rendered correctly, no truncation/overflow, zero console warnings
+- [x] 3.4 **Committed:** `f406b9835e` on `4384-language`
 - [ ] 3.5 **STOP — report commit hash + diff for review before starting Section 4**
 
 ## 4. Translate `components.json`

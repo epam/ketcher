@@ -2,13 +2,13 @@
 
 ## 1. Infrastructure — locale registration, language switcher, persistence, reactive `dir`
 
-- [ ] 1.1 Create `packages/ketcher-react/src/locales/zh-CN/{common,toolbar,toolbars,dialogs,components,settings}.json` skeletons (empty `{}` placeholders — content lands in Sections 2-5) and register `zh-CN` in `i18n.ts`'s `resources`
-- [ ] 1.2 Add persisted-language read/write to `i18n.ts`: a dedicated `localStorage` key (`ketcher-language`), read on init (fallback `en`) to pick the initial `lng`
-- [ ] 1.3 Add a "Language" field to `Settings.tsx`'s General tab: independent of the settings-schema/Apply-Cancel flow (see design.md Decision 2), `onChange` calls `i18n.changeLanguage()` + persists immediately; options are English/`en` and 简体中文/`zh-CN`
-- [ ] 1.4 Make `dir` reactive: add `useTranslation()` to `Editor.tsx` so it re-renders (and re-reads `i18n.dir()`) on a live language change
-- [ ] 1.5 **Code check:** typecheck, unit tests, circular-deps, build, prettier all green
-- [ ] 1.6 **Visual check:** `cd example && npm run dev:standalone` — open Settings → General, confirm the new Language field appears and switching it changes `<html>`/wrapper `dir` state (verify via devtools, since `zh-CN` is still LTR so no visible layout change is expected); confirm the choice survives a page reload
-- [ ] 1.7 **Commit** this section's changes as one commit on `4384-language`
+- [x] 1.1 Create `packages/ketcher-react/src/locales/zh-CN/{common,toolbar,toolbars,dialogs,components,settings}.json` skeletons (empty `{}` placeholders — content lands in Sections 2-5) and register `zh-CN` in `i18n.ts`'s `resources`
+- [x] 1.2 Add persisted-language read/write to `i18n.ts`: a dedicated `localStorage` key (`ketcher-language`), read on init (fallback `en`) to pick the initial `lng`
+- [x] 1.3 Add a "Language" field to `Settings.tsx`'s General tab: independent of the settings-schema/Apply-Cancel flow (see design.md Decision 2), `onChange` calls `i18n.changeLanguage()` + persists immediately; options are English/`en` and 简体中文/`zh-CN` — implemented by exporting `Label` from `form.tsx` for visual consistency with schema-backed rows
+- [x] 1.4 Make `dir` reactive: add `useTranslation()` to `Editor.tsx` so it re-renders (and re-reads `i18n.dir()`) on a live language change
+- [x] 1.5 **Code check:** typecheck, unit tests 403/403, circular-deps, build, prettier all green
+- [x] 1.6 **Visual check:** performed live — Settings → General shows "Language" as the first field; switching to 简体中文 updates the dropdown's own label immediately, every other still-untranslated string gracefully falls back to English with zero console warnings (fallbackLng working as expected for Section 1's empty zh-CN content); reload confirms persistence; Cancel confirmed to NOT revert the language choice (per Decision 2)
+- [x] 1.7 **Committed:** `0146656d16` on `4384-language`
 - [ ] 1.8 **STOP — report commit hash + diff for review before starting Section 2**
 
 ## 2. Translate `common.json` + `toolbar.json` + `toolbars.json`

@@ -103,7 +103,7 @@ abstract class SelectBase implements BaseTool {
   private autoScrollAnimationFrameId: number | null = null;
   private autoScrollDeltaX: number = 0;
   private autoScrollDeltaY: number = 0;
-  private static readonly AUTO_SCROLL_EDGE_THRESHOLD = 20; // pixels from edge to trigger auto-scroll
+  private static readonly AUTO_SCROLL_EDGE_THRESHOLD = 15; // pixels from edge to trigger auto-scroll
   private static readonly AUTO_SCROLL_SPEED = 5; // pixels to scroll per frame
 
   /**

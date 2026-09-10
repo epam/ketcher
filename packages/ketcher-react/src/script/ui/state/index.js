@@ -112,6 +112,40 @@ function getRootReducer(setEditor) {
   };
 }
 
+// The store keeps live objects that are circular and very large: the editor
+// (its renderer holds DOM nodes), the struct service, and the parsed template
+// libraries. DevTools serialises the whole state after every action and keeps
+// a copy per action for time travel, which hangs the tab on a graph that size,
+// so these are replaced on the way out. Everything else stays inspectable, and
+// `templates` keeps its small fields - only the struct library is dropped.
+const NOT_SERIALIZED = '<not serialized>';
+
+function sanitizeForDevTools(value) {
+  if (value === null || typeof value !== 'object') {
+    return value;
+  }
+
+  const sanitized = { ...value };
+
+  ['editor', 'server', 'functionalGroups', 'saltsAndSolvents'].forEach(
+    (key) => {
+      if (key in sanitized) {
+        sanitized[key] = NOT_SERIALIZED;
+      }
+    },
+  );
+
+  if (sanitized.templates?.lib) {
+    sanitized.templates = { ...sanitized.templates, lib: NOT_SERIALIZED };
+  }
+
+  if (sanitized.lib) {
+    sanitized.lib = NOT_SERIALIZED;
+  }
+
+  return sanitized;
+}
+
 export default function (options, server, setEditor) {
   const { buttons = {}, customButtons, ...restOptions } = options;
 
@@ -148,7 +182,10 @@ export default function (options, server, setEditor) {
   // builds collapse this to plain `compose`.
   const composeEnhancers =
     (process.env.NODE_ENV !== 'production' &&
-      globalThis.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
+      globalThis.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__?.({
+        stateSanitizer: sanitizeForDevTools,
+        actionSanitizer: sanitizeForDevTools,
+      })) ||
     compose;
 
   return createStore(

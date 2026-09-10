@@ -924,7 +924,7 @@ Clicking on the _Calculate Properties_ toogle on the main toolbar, or using the 
 
 - Nucleic acid specific properties are:
      - *Melting temperature* - Calculated only for double stranded sequences, and only taking natural analogues into account; The user is able to modify the variables of oligonucleotide concentration and unipositive ion concentration; Method from _Khandelwal G. and Bhyravabhotla J. (2010)_;
-     - *Nucleotide count* - Represents the count of every base making up a nucleotide/nucleozide.
+     - *Nucleotide count* - Represents the count of every base making up a nucleotide/nucleoside.
  
 <img src=images/Calculate-Properties-2-3.8..png width = "800"/>
 

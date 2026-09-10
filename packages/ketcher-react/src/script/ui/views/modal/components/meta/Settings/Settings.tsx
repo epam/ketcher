@@ -282,6 +282,7 @@ const SettingsDialog = (props: Props) => {
           component={Select}
           options={getSelectOptionsFromSchema(
             settingsProps?.showHydrogenLabels,
+            t,
           )}
           data-testid="show-hydrogen-labels"
         />

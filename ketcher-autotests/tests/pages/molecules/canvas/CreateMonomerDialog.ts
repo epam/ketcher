@@ -464,6 +464,9 @@ export const CreateMonomerDialog = (page: Page) => {
       const clearButton = aliasesSection.helmAliasEditboxClearButton;
       if (await clearButton.isVisible()) {
         await clearButton.click();
+        await this.collapseAliasesSection();
+        await this.expandAliasesSection();
+        await page.waitForTimeout(0.3 * 1000);
       }
     },
 
@@ -486,6 +489,9 @@ export const CreateMonomerDialog = (page: Page) => {
       const clearButton = aliasesSection.bilnAliasEditboxClearButton;
       if (await clearButton.isVisible()) {
         await clearButton.click();
+        await this.collapseAliasesSection();
+        await this.expandAliasesSection();
+        await page.waitForTimeout(0.3 * 1000);
       }
     },
 

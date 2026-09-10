@@ -23,11 +23,12 @@ import {
   MonomerOrAmbiguousType,
   isAmbiguousMonomerLibraryItem,
 } from 'ketcher-core';
-import { useAppSelector, useDebouncedShowPreview } from 'hooks';
 import {
-  selectEditor,
-  selectIsSequenceEditInRNABuilderMode,
-} from 'state/common';
+  useAppSelector,
+  useDebouncedShowPreview,
+  useSequenceEditInRNABuilderMode,
+} from 'hooks';
+import { selectEditor } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
 import { PreviewType } from 'state';
 import {
@@ -47,9 +48,7 @@ const MonomerGroup = ({
 }: IMonomerGroupProps) => {
   const editor = useAppSelector(selectEditor);
   const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
-  const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
-  );
+  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
   const isMonomerDisabled = (monomer: MonomerOrAmbiguousType) => {
     if (disabled) {
       return disabled;

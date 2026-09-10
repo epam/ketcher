@@ -38,17 +38,12 @@ export const PasteFromClipboardDialog = (page: Page) => {
     ...locators,
 
     async selectContentType(contentType: MacroFileType) {
-      const contentTypeOption = page.getByText(contentType, { exact: true });
       await locators.contentTypeSelector.waitFor({ state: 'visible' });
-      if (await contentTypeOption.isHidden()) {
+      const option = page.getByTestId(`${contentType}-option`);
+      if (await option.isHidden()) {
         await locators.contentTypeSelector.click();
-        const listbox = page.getByRole('listbox');
-        await listbox.waitFor({ state: 'visible' });
-        await contentTypeOption.click();
-        if (await listbox.isVisible()) {
-          // eslint-disable-next-line no-inline-comments
-          await contentTypeOption.click(); /* retry */
-        }
+        await option.waitFor({ state: 'visible' });
+        await option.click();
       }
     },
 

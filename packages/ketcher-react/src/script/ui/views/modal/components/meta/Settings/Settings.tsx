@@ -160,12 +160,14 @@ const SettingsDialog = (props: Props) => {
     content: (
       <fieldset>
         <Label title={t('settings:language.title')} data-testid="language">
-          <Select
-            value={i18n.language}
-            onChange={(lng) => i18n.changeLanguage(lng)}
-            options={languageOptions}
-            data-testid="language-select"
-          />
+          <span>
+            <Select
+              value={i18n.language}
+              onChange={(lng) => i18n.changeLanguage(lng)}
+              options={languageOptions}
+              data-testid="language-select"
+            />
+          </span>
         </Label>
         <Field
           name="resetToSelect"

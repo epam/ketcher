@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { applyMiddleware, combineReducers, createStore } from 'redux';
+import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 import { load, onAction } from './shared';
 import optionsReducer, { initOptionsState } from './options';
 import templatesReducer, { initTmplsState } from './templates';
@@ -139,7 +139,23 @@ export default function (options, server, setEditor) {
   }
 
   const rootReducer = getRootReducer(setEditor);
-  return createStore(rootReducer, initState, applyMiddleware(...middleware));
+  // The Redux DevTools extension only sees stores created with its enhancer,
+  // which this store never used. Reading the global instead of depending on
+  // `@redux-devtools/extension` keeps it a development-only concern: rollup
+  // externalises every entry of `dependencies`, so a package added here would
+  // become a runtime dependency of every ketcher-react consumer. The
+  // `process.env.NODE_ENV` value is inlined at build time, so production
+  // builds collapse this to plain `compose`.
+  const composeEnhancers =
+    (process.env.NODE_ENV !== 'production' &&
+      globalThis.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
+    compose;
+
+  return createStore(
+    rootReducer,
+    initState,
+    composeEnhancers(applyMiddleware(...middleware)),
+  );
 }
 
 export function setServer(server) {

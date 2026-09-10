@@ -1062,6 +1062,11 @@ abstract class SelectBase implements BaseTool {
     // Start continuous scrolling if not already started
     if (this.autoScrollAnimationFrameId === null) {
       const continuousScroll = () => {
+        // Safety check: only scroll if we're still in selecting mode
+        if (this.mode !== 'selecting') {
+          this.cancelAutoScroll();
+          return;
+        }
         // Use instance variables so direction can be updated dynamically
         this.editor.zoomTool.scrollBy(
           this.autoScrollDeltaX,

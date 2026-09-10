@@ -1012,6 +1012,11 @@ abstract class SelectBase implements BaseTool {
   }
 
   private handleAutoScrollDuringSelection(event: MouseEvent) {
+    if (this.editor.mode.modeName !== 'sequence-layout-mode') {
+      this.cancelAutoScroll();
+      return;
+    }
+
     const canvasWrapperNode = this.editor.zoomTool.canvasWrapper?.node();
     if (!canvasWrapperNode) {
       this.cancelAutoScroll();

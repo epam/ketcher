@@ -16,6 +16,7 @@ Ketcher is an open-source web-based chemical structure editor incorporating high
 - :clipboard: Copy and paste between different chemical editors
 - 🛠️ Settings support (Rendering, Displaying, Debugging)
 - :camera: Use of SVG to achieve best quality in-browser chemical structure rendering
+- 🌐 Localized UI (English, Simplified Chinese) with a live language switcher in Settings
 
 ### Editor builtin tools:
 
@@ -137,6 +138,13 @@ const App = () => {
 
 Please refer to the `example/src/App.tsx` file for a complete example of how to integrate Ketcher editor into your application.
 
+## Localization (i18n)
+
+Ketcher's UI can be displayed in multiple languages. Users switch language from **Settings → General → Language**; the change applies immediately across the whole UI (toolbars, dialogs, context menus, Settings itself) with no reload, and the choice is remembered for the next visit.
+
+Currently supported: **English** and **Simplified Chinese (简体中文)**. Chemistry vocabulary (element symbols, bond-type names, file-format codes) is intentionally kept untranslated in every language, since it must stay consistent with chemistry file formats.
+
+This covers the `ketcher-react` (micromolecules) UI; the `ketcher-macromolecules` package is not localized yet.
 
 ## Ketcher API
 

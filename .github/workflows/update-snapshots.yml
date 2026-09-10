@@ -6,6 +6,9 @@ on:
         description: 'Grep pattern to filter tests (leave empty to update all)'
         required: false
         default: ''
+  push:
+    branches:
+      - 10460-expanded-salt-or-functional-group-displays-overlapping-collapsed-text-label-when-switching-to-macromolecules-mode
 
 env:
   CI: false
@@ -28,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: apt-get update -y && apt-get install -y git
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
           fetch-depth: 1
@@ -39,7 +42,7 @@ jobs:
       - name: Build all packages
         run: npm run build:packages && npm run build:example:standalone
       - name: Upload artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: ketcher-dist-update
           path: example/dist
@@ -51,7 +54,7 @@ jobs:
     container: mcr.microsoft.com/playwright:v1.62.1-jammy
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0
@@ -63,7 +66,7 @@ jobs:
       - name: Create folder for dist
         run: mkdir -p example/dist
       - name: Download compiled ketcher
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@v4
         with:
           name: ketcher-dist-update
           path: example/dist/

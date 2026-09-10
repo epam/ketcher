@@ -48,13 +48,13 @@
       "title": "自动淡化 And/Or 中心标签"
     },
     "absFlagLabel": {
-      "title": "Absolute 标志文本"
+      "title": "绝对标志文本"
     },
     "andFlagLabel": {
       "title": "AND 标志文本"
     },
     "mixedFlagLabel": {
-      "title": "Mixed 标志文本"
+      "title": "混合标志文本"
     },
     "ignoreChiralFlag": {
       "title": "忽略手性标志"

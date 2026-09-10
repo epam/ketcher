@@ -25,7 +25,7 @@ import {
 import { modalComponentList } from 'components/modal/modalContainer';
 import { openModal } from 'state/modal';
 import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
-import { BaseMonomer, EditorHistory } from 'ketcher-core';
+import { BaseMonomer, EditorHistory, ketcherProvider } from 'ketcher-core';
 import {
   hasOnlyDeoxyriboseSugars,
   hasOnlyRiboseSugars,
@@ -113,10 +113,19 @@ export function TopMenuComponent() {
       return;
     }
 
+    // Neither event alone reports every history change at the right moment.
+    // `EditorHistory.update` moves the pointer for a command with no
+    // operations but skips `modelChange` for it, while `undo`/`redo` dispatch
+    // `changeEvent` before moving the pointer. Subscribing to both leaves
+    // every path with at least one signal that lands after the move.
+    const { changeEvent } = ketcherProvider.getKetcher(editor.ketcherId) ?? {};
+
     editor.events.modelChange.add(markHistoryChanged);
+    changeEvent?.add(markHistoryChanged);
 
     return () => {
       editor.events.modelChange.remove(markHistoryChanged);
+      changeEvent?.remove(markHistoryChanged);
     };
   }, [editor, markHistoryChanged]);
 

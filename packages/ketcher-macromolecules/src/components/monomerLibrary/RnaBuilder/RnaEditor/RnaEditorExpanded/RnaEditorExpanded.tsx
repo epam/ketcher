@@ -134,8 +134,6 @@ export const RnaEditorExpanded = ({
     selectActivePresetMonomerGroup,
   );
   const [newPreset, setNewPreset] = useState(activePreset);
-  const newPresetRef = useRef(newPreset);
-  newPresetRef.current = newPreset;
 
   const [selectedPhosphatePosition, setSelectedPhosphatePosition] = useState<
     RnaPhosphatePosition | undefined
@@ -193,14 +191,6 @@ export const RnaEditorExpanded = ({
     return undefined;
   };
 
-  // Kept in sync every render so the monomer-group effect always calls the
-  // latest version without listing resolvePhosphatePosition as a dep (which
-  // would re-trigger on every selectedPhosphatePosition / isSequenceMode change
-  // and regenerate the preset name).
-  const resolvePhosphatePositionRef = useRef(resolvePhosphatePosition);
-  // eslint-disable-next-line react-hooks/refs -- latest-value ref: keeps the current function accessible in effects without listing it as a dep
-  resolvePhosphatePositionRef.current = resolvePhosphatePosition;
-
   // Guard refs — read inside the monomer-group effect without being listed as
   // deps, preventing re-runs on slot clicks (activeMonomerGroup) or edit-mode
   // toggle (isEditMode), which would drop editedName and regenerate the name.
@@ -210,6 +200,15 @@ export const RnaEditorExpanded = ({
   const isEditModeRef = useRef(isEditMode);
   // eslint-disable-next-line react-hooks/refs -- guard ref: latest value readable in effects without triggering re-runs on edit-mode toggle
   isEditModeRef.current = isEditMode;
+
+  // RnaElements.tsx dispatches a fresh { groupName, groupItem } object on every
+  // click, so depending on the whole activePresetMonomerGroup object churns
+  // identity even when the selected monomer hasn't changed. Dep on groupItem
+  // (stable identity from the store) instead, and read groupName via a ref.
+  const activePresetGroupItem = activePresetMonomerGroup?.groupItem;
+  const activePresetGroupNameRef = useRef(activePresetMonomerGroup?.groupName);
+  // eslint-disable-next-line react-hooks/refs -- latest-value ref: groupName kept in sync; the effect deps on groupItem identity to avoid re-running when the wrapper object is replaced on every click
+  activePresetGroupNameRef.current = activePresetMonomerGroup?.groupName;
 
   // For sequence edit in RNA Builder mode
   const sequenceSelection = useAppSelector(selectSequenceSelection);
@@ -270,9 +269,9 @@ export const RnaEditorExpanded = ({
       activeMonomerGroupRef.current !== RnaBuilderPresetsItem.Presets &&
       isEditModeRef.current
     ) {
-      if (isSequenceEditInRNABuilderMode && activePresetMonomerGroup) {
+      if (isSequenceEditInRNABuilderMode && activePresetGroupItem) {
         const monomerType =
-          monomerGroupToPresetGroup[activePresetMonomerGroup.groupName];
+          monomerGroupToPresetGroup[activePresetGroupNameRef.current ?? ''];
         const field = `${monomerType}Label`;
 
         // sequenceSelectionRef.current avoids adding sequenceSelection to deps,
@@ -292,10 +291,10 @@ export const RnaEditorExpanded = ({
 
             return {
               ...node,
-              [field]: activePresetMonomerGroup.groupItem.label,
+              [field]: activePresetGroupItem.label,
               rnaBaseMonomerItem:
-                activePresetMonomerGroup.groupName === 'Bases'
-                  ? activePresetMonomerGroup.groupItem
+                activePresetGroupNameRef.current === 'Bases'
+                  ? activePresetGroupItem
                   : node.rnaBaseMonomerItem,
             };
           },
@@ -305,34 +304,20 @@ export const RnaEditorExpanded = ({
         dispatch(setSequenceSelection(updatedSequenceSelection));
       } else {
         setNewPreset((currentPreset) => {
-          const updatedPreset = activePresetMonomerGroup
+          const updatedPreset = activePresetGroupItem
             ? {
                 ...currentPreset,
-                [monomerGroupToPresetGroup[activePresetMonomerGroup.groupName]]:
-                  activePresetMonomerGroup.groupItem,
+                [monomerGroupToPresetGroup[
+                  activePresetGroupNameRef.current ?? ''
+                ]]: activePresetGroupItem,
               }
             : currentPreset;
-          const resolvedPhosphatePosition =
-            resolvePhosphatePositionRef.current(updatedPreset);
           const presetFullName = updatedPreset.editedName
             ? updatedPreset.name
-            : selectPresetFullName({
-                ...updatedPreset,
-                connections: buildRnaPresetConnections(
-                  updatedPreset,
-                  resolvedPhosphatePosition,
-                ),
-              });
+            : selectPresetFullName(updatedPreset);
 
-        const resolvedPhosphatePosition =
-          resolvePhosphatePosition(currentPreset);
-        let presetFullName = newPresetRef.current?.name;
-
-        if (!currentPreset.editedName) {
-          presetFullName = selectPresetFullName(currentPreset);
-        }
-
-        setNewPreset({ ...currentPreset, name: presetFullName });
+          return { ...updatedPreset, name: presetFullName };
+        });
       }
     }
   }, [
@@ -340,11 +325,10 @@ export const RnaEditorExpanded = ({
     // guard conditions read via refs. Including them would fire this effect on
     // every slot click (activeMonomerGroup) or entering edit mode (isEditMode),
     // which regenerates the preset name and drops editedName.
-    // resolvePhosphatePosition is intentionally omitted — it is stable (empty
-    // deps) and reads selectedPhosphatePosition/isSequenceMode via refs, so
-    // layout-mode switches no longer trigger this effect.
+    // activePresetGroupNameRef (groupName) is intentionally omitted — it is
+    // kept current via a ref and read inside the effect body.
     isSequenceEditInRNABuilderMode,
-    activePresetMonomerGroup,
+    activePresetGroupItem,
     dispatch,
   ]);
 

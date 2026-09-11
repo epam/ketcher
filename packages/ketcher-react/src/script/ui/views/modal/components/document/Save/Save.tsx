@@ -62,11 +62,11 @@ const saveSchema = {
       title: 'File name:',
       type: 'string',
       maxLength: 128,
-      pattern: '^[^.<>:?"*\\\\|\\/][^<>:?"*\\\\|\\/]*$',
+      pattern: String.raw`^[^.<>:?"*\\|\/][^<>:?"*\\|\/]*$`,
       invalidMessage: (res) => {
         if (!res) return 'Filename should contain at least one character';
         if (res.length > 128) return 'Filename is too long';
-        return "A filename cannot contain characters: \\ / : * ? \" < > | and cannot start with '.'";
+        return String.raw`A filename cannot contain characters: \ / : * ? " < > | and cannot start with '.'`;
       },
     },
     format: {

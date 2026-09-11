@@ -139,14 +139,13 @@ export class SequenceViewModel {
                 firstSenseMonomerConnectedByHydrogenBond,
               )
             : undefined;
-        let twoStrandedSnakeLayoutNodeIndex = this.nodes.findIndex((node) => {
-          return node === twoStrandedSnakeLayoutNode;
-        });
-        const lastTwoStrandedNodeWithHydrogenBondIndex = this.nodes.findIndex(
-          (node) => {
-            return node === lastTwoStrandedNodeWithHydrogenBond;
-          },
-        );
+        let twoStrandedSnakeLayoutNodeIndex = twoStrandedSnakeLayoutNode
+          ? this.nodes.indexOf(twoStrandedSnakeLayoutNode)
+          : -1;
+        const lastTwoStrandedNodeWithHydrogenBondIndex =
+          lastTwoStrandedNodeWithHydrogenBond
+            ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)
+            : -1;
 
         if (
           firstSenseMonomerConnectedByHydrogenBond &&
@@ -158,10 +157,10 @@ export class SequenceViewModel {
           lastTwoStrandedNodeWithHydrogenBond =
             this.nodes[twoStrandedSnakeLayoutNodeIndex];
           for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
-            // need to get rid of this findIndex to reduce complexity
-            twoStrandedSnakeLayoutNodeIndex = this.nodes.findIndex((node) => {
-              return node === twoStrandedSnakeLayoutNode;
-            });
+            // need to get rid of this repeated index lookup to reduce complexity
+            twoStrandedSnakeLayoutNodeIndex = twoStrandedSnakeLayoutNode
+              ? this.nodes.indexOf(twoStrandedSnakeLayoutNode)
+              : -1;
 
             const currentTwoStrandedSnakeLayoutNodeIndex =
               twoStrandedSnakeLayoutNodeIndex - i;
@@ -230,11 +229,10 @@ export class SequenceViewModel {
         lastTwoStrandedNodeWithHydrogenBond
       ) {
         for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
-          const lastTwoStrandedNodeWithHydrogenBondIndex = this.nodes.findIndex(
-            (node) => {
-              return node === lastTwoStrandedNodeWithHydrogenBond;
-            },
-          );
+          const lastTwoStrandedNodeWithHydrogenBondIndex =
+            lastTwoStrandedNodeWithHydrogenBond
+              ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)
+              : -1;
           const currentTwoStrandedSnakeLayoutNodeIndex =
             lastTwoStrandedNodeWithHydrogenBondIndex + 1 + i;
           const currentTwoStrandedSnakeLayoutNode:

@@ -530,9 +530,7 @@ export class ChainsCollection {
               ) ?? {};
             if (anotherSenseChain && !handledChain.has(anotherSenseChain)) {
               const curChainIdx =
-                reorderedSenseForSequentialAntisenseChains.findIndex(
-                  (v) => v === chain,
-                );
+                reorderedSenseForSequentialAntisenseChains.indexOf(chain);
               let last = anotherSenseChain;
               for (
                 let i = curChainIdx;

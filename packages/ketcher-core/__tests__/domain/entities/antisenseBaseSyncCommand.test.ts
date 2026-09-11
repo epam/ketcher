@@ -260,7 +260,7 @@ describe('createMirroredBaseCommand', () => {
       editedBase: senseBase,
       previousNaturalAnalogue: 'A',
       newBaseMonomerItem: newBaseItem,
-      needToEditAntisense: true,
+      isSyncEditMode: true,
       resolveBaseLibraryItem,
     });
 
@@ -283,7 +283,7 @@ describe('createMirroredBaseCommand', () => {
       editedBase: antisenseBase,
       previousNaturalAnalogue: 'U',
       newBaseMonomerItem: newBaseItem,
-      needToEditAntisense: true,
+      isSyncEditMode: true,
       resolveBaseLibraryItem,
     });
 
@@ -306,7 +306,7 @@ describe('createMirroredBaseCommand', () => {
       editedBase: senseBase,
       previousNaturalAnalogue: 'A',
       newBaseMonomerItem: newBaseItem,
-      needToEditAntisense: true,
+      isSyncEditMode: true,
       resolveBaseLibraryItem,
     });
 
@@ -314,7 +314,7 @@ describe('createMirroredBaseCommand', () => {
     expect(antisenseBase.label).toBe(labelBefore);
   });
 
-  it('does nothing when antisense editing is off', () => {
+  it('does nothing when sync edit mode is off', () => {
     const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
     const labelBefore = antisenseBase.label;
     const newBaseItem = resolveBaseLibraryItem('C');
@@ -328,7 +328,7 @@ describe('createMirroredBaseCommand', () => {
       editedBase: senseBase,
       previousNaturalAnalogue: 'A',
       newBaseMonomerItem: newBaseItem,
-      needToEditAntisense: false,
+      isSyncEditMode: false,
       resolveBaseLibraryItem,
     });
 
@@ -354,7 +354,7 @@ describe('createMirroredBaseCommand', () => {
       editedBase: senseBase,
       previousNaturalAnalogue: 'A',
       newBaseMonomerItem: newBaseItem,
-      needToEditAntisense: true,
+      isSyncEditMode: true,
       resolveBaseLibraryItem,
     });
 
@@ -382,7 +382,7 @@ describe('createMirroredBaseCommand', () => {
       editedBase: senseBase,
       previousNaturalAnalogue: 'A',
       newBaseMonomerItem: newBaseItem,
-      needToEditAntisense: true,
+      isSyncEditMode: true,
       resolveBaseLibraryItem,
       partner: antisenseBase,
       wasEditedBaseEligible: true,
@@ -392,7 +392,7 @@ describe('createMirroredBaseCommand', () => {
     expect(antisenseBase.label).toBe(labelBefore);
   });
 
-  it('does nothing when antisense editing is off, even with partner and eligibility supplied explicitly', () => {
+  it('does nothing when sync edit mode is off, even with partner and eligibility supplied explicitly', () => {
     const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
     const labelBefore = antisenseBase.label;
     const newBaseItem = resolveBaseLibraryItem('C');
@@ -406,7 +406,7 @@ describe('createMirroredBaseCommand', () => {
       editedBase: senseBase,
       previousNaturalAnalogue: 'A',
       newBaseMonomerItem: newBaseItem,
-      needToEditAntisense: false,
+      isSyncEditMode: false,
       resolveBaseLibraryItem,
       partner: antisenseBase,
       wasEditedBaseEligible: true,
@@ -434,7 +434,7 @@ describe('createMirroredBaseCommand', () => {
       editedBase: senseBase,
       previousNaturalAnalogue: 'A',
       newBaseMonomerItem: newBaseItem,
-      needToEditAntisense: true,
+      isSyncEditMode: true,
       resolveBaseLibraryItem,
       partner: antisenseBase,
       wasEditedBaseEligible: true,
@@ -480,7 +480,7 @@ describe('createMirroredBaseCommand', () => {
       editedBase: floatingBase,
       previousNaturalAnalogue: 'A',
       newBaseMonomerItem: newBaseItem,
-      needToEditAntisense: true,
+      isSyncEditMode: true,
       resolveBaseLibraryItem,
       partner: antisenseBase,
     });
@@ -519,7 +519,7 @@ describe('createMirroredBaseCommand', () => {
       editedBase: senseBase,
       previousNaturalAnalogue: 'A',
       newBaseMonomerItem: newBaseItem,
-      needToEditAntisense: true,
+      isSyncEditMode: true,
       resolveBaseLibraryItem,
     });
 
@@ -555,7 +555,7 @@ describe('createMirroredBaseCommand', () => {
       editedBase: senseBase,
       previousNaturalAnalogue: 'C',
       newBaseMonomerItem: newBaseItem,
-      needToEditAntisense: true,
+      isSyncEditMode: true,
       resolveBaseLibraryItem,
     });
 
@@ -586,7 +586,7 @@ describe('createMirroredBaseCommand', () => {
       editedBase: senseBase,
       previousNaturalAnalogue: 'A',
       newBaseMonomerItem: newBaseItem,
-      needToEditAntisense: true,
+      isSyncEditMode: true,
       resolveBaseLibraryItem,
     });
 
@@ -639,7 +639,7 @@ describe('createMirroredBaseCommand', () => {
       editedBase: senseBase,
       previousNaturalAnalogue: 'C',
       newBaseMonomerItem: newBaseItem,
-      needToEditAntisense: true,
+      isSyncEditMode: true,
       resolveBaseLibraryItem,
     });
 
@@ -688,7 +688,7 @@ describe('createMirroredBaseCommand', () => {
       editedBase: senseBase,
       previousNaturalAnalogue,
       newBaseMonomerItem: newBaseItem,
-      needToEditAntisense: true,
+      isSyncEditMode: true,
       resolveBaseLibraryItem,
       partner: partnerBeforeEdit,
       wasEditedBaseEligible,
@@ -712,7 +712,7 @@ describe('createMirroredBaseCommand', () => {
       editedBase: senseBase,
       previousNaturalAnalogue: 'A',
       newBaseMonomerItem: newBaseItem,
-      needToEditAntisense: true,
+      isSyncEditMode: true,
       resolveBaseLibraryItem,
     });
 

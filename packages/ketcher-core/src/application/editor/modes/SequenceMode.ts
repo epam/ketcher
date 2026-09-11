@@ -428,7 +428,7 @@ export class SequenceMode extends BaseMode {
             editedBase,
             previousNaturalAnalogue,
             newBaseMonomerItem: baseMonomerItem,
-            needToEditAntisense: this.needToEditAntisense,
+            isSyncEditMode: this.isSyncEditMode,
             resolveBaseLibraryItem: (label) =>
               getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
             partner: partnerBeforeEdit,
@@ -2359,7 +2359,7 @@ export class SequenceMode extends BaseMode {
             editedBase,
             previousNaturalAnalogue,
             newBaseMonomerItem: monomerItem,
-            needToEditAntisense: this.needToEditAntisense,
+            isSyncEditMode: this.isSyncEditMode,
             resolveBaseLibraryItem: (label) =>
               getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
             partner: partnerBeforeEdit,

@@ -159,7 +159,15 @@ export function createMirroredBaseCommand(params: {
   editedBase: BaseMonomer;
   previousNaturalAnalogue?: string;
   newBaseMonomerItem: MonomerOrAmbiguousType;
-  needToEditAntisense: boolean;
+  /**
+   * Whether SYNC edit mode is on. Rule 2.1 makes the sync toggle alone the
+   * condition for touching the opposite strand: the editor's separate
+   * "antisense edit mode" (which strand an insertion or deletion applies to,
+   * turned on by simply clicking an antisense symbol) must NOT enable the
+   * mirror, or a non-sync edit of an antisense base would rewrite its sense
+   * partner.
+   */
+  isSyncEditMode: boolean;
   resolveBaseLibraryItem: (label: string) => MonomerOrAmbiguousType | undefined;
   /**
    * The hydrogen-bonded partner of `editedBase`, captured by the caller
@@ -196,14 +204,14 @@ export function createMirroredBaseCommand(params: {
     editedBase,
     previousNaturalAnalogue,
     newBaseMonomerItem,
-    needToEditAntisense,
+    isSyncEditMode,
     resolveBaseLibraryItem,
     partner: partnerCapturedBeforeEdit,
     wasEditedBaseEligible,
   } = params;
 
   // Rule 2.1: non-sync mode never touches the opposite strand.
-  if (!needToEditAntisense) {
+  if (!isSyncEditMode) {
     return undefined;
   }
 

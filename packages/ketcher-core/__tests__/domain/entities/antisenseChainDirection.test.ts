@@ -96,6 +96,28 @@ const callReplaceSelectionsWithMonomer = (
   return replaceSelectionsWithMonomer.call(mode, selections, monomerItem);
 };
 
+// SequenceMode keeps the sync toggle and the "antisense edit mode" flag
+// (turned on by ordinary mouse interaction with an antisense symbol) as two
+// independent private fields. They are set directly here rather than through
+// turnOffSyncEditMode()/turnOnAntisenseEditMode(), because those also call
+// SequenceMode#initialize, which re-renders the whole sequence and would
+// discard the SequenceRenderer snapshot the assertions below rely on.
+const setEditModes = (
+  mode: SequenceMode,
+  {
+    isSyncEditMode,
+    isAntisenseEditMode,
+  }: { isSyncEditMode: boolean; isAntisenseEditMode: boolean },
+) => {
+  const modeInternals = mode as unknown as {
+    _isSyncEditMode: boolean;
+    _isAntisenseEditMode: boolean;
+  };
+
+  modeInternals._isSyncEditMode = isSyncEditMode;
+  modeInternals._isAntisenseEditMode = isAntisenseEditMode;
+};
+
 // Builds a 4-nucleotide sense chain (positions 0..3, left to right) and
 // mirrors it into an antisense duplex, then renders both strands through
 // SequenceRenderer so the strand-aware lookups under test
@@ -413,6 +435,40 @@ describe('antisense chain direction', () => {
     // touched in the loop.
     expect(antisenseNucleotides[1].rnaBase.label).toBe('U');
     expect(antisenseNucleotides[2].rnaBase.label).toBe('U');
+  });
+
+  it('does not touch the opposite strand when sync edit mode is off, even though antisense edit mode is on', () => {
+    const mode = new SequenceMode();
+    const { senseNucleotides, antisenseNucleotides } =
+      buildFourNucleotideDuplex(editor);
+
+    // The exact workflow the blocked-pair error message directs users into:
+    // turn sync OFF, then click into the antisense row (which is what sets
+    // antisense edit mode) and replace one antisense base. Antisense edit
+    // mode is independent of the sync toggle, so a mirror keyed off
+    // "sync OR antisense edit mode" fires here and rewrites the sense
+    // partner; rule 2.1 says non-sync mode must leave it alone. This pins
+    // the CALLER's choice of condition: createMirroredBaseCommand's own
+    // suppression is already covered at the helper level, but it can only
+    // suppress what it is told.
+    setEditModes(mode, { isSyncEditMode: false, isAntisenseEditMode: true });
+
+    editor.drawingEntitiesManager.selectDrawingEntities(
+      antisenseNucleotides[1].monomers,
+    );
+
+    const selections = SequenceRenderer.selections;
+
+    expect(selections).toHaveLength(1);
+    expect(selections[0]).toHaveLength(1);
+    expect(senseNucleotides[1].rnaBase.label).toBe('C');
+
+    const replacementItem = findLibraryItemByAlias(editor, '2-damdA');
+
+    callReplaceSelectionsWithMonomer(mode, selections, replacementItem);
+
+    // The sense partner keeps its original base: no mirror in non-sync mode.
+    expect(senseNucleotides[1].rnaBase.label).toBe('C');
   });
 
   it('mirrors every paired base when a multi-node antisense range is replaced via the library in one call, exercising the reversed chain-order loop (regression for #6595)', () => {

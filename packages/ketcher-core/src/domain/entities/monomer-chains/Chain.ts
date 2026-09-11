@@ -172,7 +172,7 @@ export class Chain {
   }
 
   public get lastSubChain() {
-    return this.subChains[this.subChains.length - 1];
+    return this.subChains.at(-1);
   }
 
   public get nodes() {
@@ -194,7 +194,7 @@ export class Chain {
     if (this.lastNode instanceof EmptySequenceNode) {
       const nodes = this.nodes;
 
-      return nodes[nodes.length - 2];
+      return nodes.at(-2);
     } else {
       return this.lastNode;
     }

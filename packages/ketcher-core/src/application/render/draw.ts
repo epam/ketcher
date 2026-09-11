@@ -1616,7 +1616,7 @@ function selectionPolygon(
   r: Vec2[],
   options: RenderOptions,
 ) {
-  const v = r[r.length - 1];
+  const v = r.at(-1);
   let pstr = 'M' + toFixed(v.x) + ',' + toFixed(v.y);
   for (const point of r) {
     pstr += 'L' + toFixed(point.x) + ',' + toFixed(point.y);

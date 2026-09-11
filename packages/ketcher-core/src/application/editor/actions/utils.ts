@@ -295,7 +295,7 @@ export function atomForNewBond(
 
         if (
           neiNeighborAngles[0] <= Math.PI * 1.01 &&
-          neiNeighborAngles[neiNeighborAngles.length - 1] <= 1.01 * Math.PI
+          neiNeighborAngles.at(-1) <= 1.01 * Math.PI
         ) {
           maxAngle *= -1;
         }

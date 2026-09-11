@@ -267,11 +267,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
             node.monomer instanceof Phosphate ||
             this.checkIfNodeIsAmbiguousMonomerNotPeptide(node)
           ) {
-            if (groups[groups.length - 1].length > 0) {
+            if (groups.at(-1).length > 0) {
               groups.push([]);
             }
           } else {
-            groups[groups.length - 1].push(node);
+            groups.at(-1).push(node);
           }
           return groups;
         },
@@ -331,8 +331,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         nodeIndex === 0 ||
         nodeIndex === subChain.nodes.length - 1 ||
         (nodeIndex === subChain.nodes.length - 2 &&
-          subChain.nodes[subChain.nodes.length - 1].monomer instanceof
-            Phosphate) ||
+          subChain.nodes.at(-1).monomer instanceof Phosphate) ||
         this.isNthNodeInChain
       ) {
         numberToDisplay = nodeIndex + 1;
@@ -575,7 +574,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   // or has only ignored nodes after it in subchain
   private get isLastInSubChain() {
     return this.chain.subChains.some((subChain) => {
-      const lastNode = subChain.nodes[subChain.nodes.length - 1];
+      const lastNode = subChain.nodes.at(-1);
 
       return (
         !this.inIgnoreList(this.node) &&

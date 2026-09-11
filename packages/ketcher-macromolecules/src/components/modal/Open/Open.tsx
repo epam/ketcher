@@ -365,8 +365,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
     const fileName = files[0].name;
     const splittedFilenameByDot = fileName?.split('.');
-    const fileExtension =
-      splittedFilenameByDot[splittedFilenameByDot.length - 1];
+    const fileExtension = splittedFilenameByDot.at(-1);
 
     setFileName(fileName);
     if (fileExtension) {

@@ -1363,7 +1363,7 @@ class ReAtom extends ReObject {
         largeAngles.push(angles[(index + 1) % angles.length] - angle);
       }
     }
-    largeAngles.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
+    largeAngles.push(angles[0] - angles.at(-1) + 2 * Math.PI);
     let largestAngle = 0;
     let neighborAngle = -Math.PI / 2;
     for (const [index, angle] of angles.entries()) {

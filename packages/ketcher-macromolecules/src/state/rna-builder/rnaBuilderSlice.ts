@@ -572,18 +572,17 @@ export const selectFilteredPresets = createSelector(
 
         if (searchText.endsWith('/') && searchText.length > 1) {
           const aliasRest = searchText.slice(0, -1);
-          const aliasLastSymbol = searchText[searchText.length - 2];
+          const aliasLastSymbol = searchText.at(-2);
 
           return (
             (transformedIdtText?.toLowerCase().endsWith(aliasRest) &&
-              transformedIdtText[transformedIdtText.length - 1] ===
-                aliasLastSymbol) ||
+              transformedIdtText.at(-1) === aliasLastSymbol) ||
             (idtName?.endsWith(aliasRest) &&
-              idtName[idtName.length - 1] === aliasLastSymbol) ||
+              idtName.at(-1) === aliasLastSymbol) ||
             modificationAliases.some(
               (mod) =>
                 mod.toLowerCase().endsWith(aliasRest) &&
-                mod[mod.length - 1] === aliasLastSymbol,
+                mod.at(-1) === aliasLastSymbol,
             )
           );
         }

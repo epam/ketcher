@@ -884,8 +884,7 @@ export class SequenceMode extends BaseMode {
 
     selections.forEach((selectionRange) => {
       const selectionStartTwoStrandedNode = selectionRange[0].node;
-      const selectionEndTwoStrandedNode =
-        selectionRange[selectionRange.length - 1].node;
+      const selectionEndTwoStrandedNode = selectionRange.at(-1).node;
       const selectionStartNode = getNodeFromTwoStrandedNode(
         selectionStartTwoStrandedNode,
         strandType,
@@ -1632,7 +1631,7 @@ export class SequenceMode extends BaseMode {
             selectionsBeforeDeletion.length > 0 &&
             selectionsBeforeDeletion.every((selectionRange) => {
               const firstNode = selectionRange[0]?.node;
-              const lastNode = selectionRange[selectionRange.length - 1]?.node;
+              const lastNode = selectionRange.at(-1)?.node;
               const prevInSameChain = firstNode
                 ? SequenceRenderer.getPreviousNodeInSameChain(firstNode)
                 : null;

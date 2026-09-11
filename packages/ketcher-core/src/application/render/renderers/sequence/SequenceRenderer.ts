@@ -835,7 +835,7 @@ export class SequenceRenderer {
   public static get isCurrentCaretAtLastInFullRow(): boolean {
     const currentNode = this.currentEdittingNode;
     const currentRow = this.currentChainRow;
-    const lastNodeInRow = currentRow[currentRow.length - 1];
+    const lastNodeInRow = currentRow.at(-1);
 
     return (
       Boolean(currentNode) &&
@@ -853,8 +853,7 @@ export class SequenceRenderer {
     }
 
     if (this.isCurrentCaretAtLastInFullRow) {
-      const lastNodeInRow =
-        this.currentChainRow[this.currentChainRow.length - 1];
+      const lastNodeInRow = this.currentChainRow.at(-1);
 
       if (!lastNodeInRow) {
         return;
@@ -890,8 +889,7 @@ export class SequenceRenderer {
       this.moveCaretBack();
 
       if (this.isCurrentCaretAtLastInFullRow) {
-        const lastNodeInRow =
-          this.currentChainRow[this.currentChainRow.length - 1];
+        const lastNodeInRow = this.currentChainRow.at(-1);
 
         if (!lastNodeInRow) {
           return;
@@ -931,7 +929,7 @@ export class SequenceRenderer {
 
     const currentRow = this.currentChainRow;
     const currentNodeIndexInRow = currentRow.indexOf(currentEdittingNode);
-    const lastNodeInRow = currentRow[currentRow.length - 1];
+    const lastNodeInRow = currentRow.at(-1);
 
     if (!lastNodeInRow) {
       return;
@@ -1010,15 +1008,15 @@ export class SequenceRenderer {
   }
 
   public static getLastNonEmptyNode(chain: Chain) {
-    const subChainBeforeLast = chain.subChains[chain.subChains.length - 2];
+    const subChainBeforeLast = chain.subChains.at(-2);
 
-    return subChainBeforeLast.nodes[subChainBeforeLast.nodes.length - 1];
+    return subChainBeforeLast.nodes.at(-1);
   }
 
   public static getLastNode(chain: Chain) {
-    const lastSubChain = chain.subChains[chain.subChains.length - 1];
+    const lastSubChain = chain.subChains.at(-1);
 
-    return lastSubChain.nodes[lastSubChain.nodes.length - 1];
+    return lastSubChain.nodes.at(-1);
   }
 
   public static get nextNode() {

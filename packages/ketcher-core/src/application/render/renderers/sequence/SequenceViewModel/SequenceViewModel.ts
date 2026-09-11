@@ -93,7 +93,7 @@ export class SequenceViewModel {
       let nodesBeforeHydrogenConnectionToBase: SubChainNode[] = [];
       let lastTwoStrandedNodeWithHydrogenBond:
         ITwoStrandedChainItem | undefined;
-      let lastSenseChain: Chain = this.nodes[this.nodes.length - 1].chain;
+      let lastSenseChain: Chain = this.nodes.at(-1).chain;
       let lastSenseNodeIndex: number = this.nodes.length - 1;
 
       chain.forEachNodeReversed(({ node }) => {
@@ -495,7 +495,7 @@ export class SequenceViewModel {
   }
 
   public get lastTwoStrandedNode() {
-    const lastChain = this.chains[this.chains.length - 1];
+    const lastChain = this.chains.at(-1);
 
     return lastChain?.lastNode;
   }

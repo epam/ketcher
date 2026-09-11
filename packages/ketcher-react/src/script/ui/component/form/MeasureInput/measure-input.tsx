@@ -65,7 +65,7 @@ const getNewFloat = (value: string): GetNewFloatResult => {
 
   return {
     isNewFloat,
-    ...(isNewFloat && { float: `${int}.${float[float.length - 1]}` }),
+    ...(isNewFloat && { float: `${int}.${float.at(-1)}` }),
   };
 };
 

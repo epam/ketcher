@@ -9,7 +9,7 @@ export class SnakeLayoutModelChain {
   private readonly rows: ISnakeLayoutModelRow[] = [];
 
   public get lastRow() {
-    return this.rows[this.rows.length - 1];
+    return this.rows.at(-1);
   }
 
   public get lastNode() {

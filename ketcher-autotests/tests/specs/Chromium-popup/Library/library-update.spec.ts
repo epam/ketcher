@@ -830,7 +830,7 @@ test('Case 29: Update Library item with HELM alias longer than 23 symbols logs a
     const testWindow = window as ConsoleCaptureWindow;
 
     testWindow.logging = {
-      ...(testWindow.logging ?? {}),
+      ...testWindow.logging,
       enabled: true,
       level: 0,
       showTrace: false,

@@ -302,7 +302,7 @@ class Editor implements KetcherEditor {
       clientArea,
       {
         microModeScale: SCALE,
-        ...(options ?? {}),
+        ...options,
       } as RenderOptions,
       prevEditor?.render,
       options?.reuseRestructIfExist !== false,
@@ -504,7 +504,7 @@ class Editor implements KetcherEditor {
 
     this.render = new Render(this.render.clientArea, {
       microModeScale: SCALE,
-      ...(value ?? {}),
+      ...value,
     } as RenderOptions);
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
     this.render.setMolecule(struct);
@@ -2605,7 +2605,7 @@ class Editor implements KetcherEditor {
     assert(this.monomerCreationState);
 
     this.monomerCreationState.problematicAttachmentPoints = problematicPoints;
-    this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
+    this.monomerCreationState = { ...this.monomerCreationState };
     this.render.update(true);
   }
 
@@ -2619,7 +2619,7 @@ class Editor implements KetcherEditor {
     }
 
     this.monomerCreationState.problematicAtoms = problematicAtoms;
-    this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
+    this.monomerCreationState = { ...this.monomerCreationState };
     this.render.update(true);
   }
 
@@ -3310,7 +3310,7 @@ class Editor implements KetcherEditor {
       }
     }
 
-    this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
+    this.monomerCreationState = { ...this.monomerCreationState };
   }
 
   public setRnaMonomerCreationMode(isActive: boolean) {

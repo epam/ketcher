@@ -53,6 +53,7 @@ function createApi(
     calculateMacromoleculeProperties:
       structService.calculateMacromoleculeProperties.bind(structService),
     destroy: structService.destroy?.bind(structService),
+    terminateWorker: structService.terminateWorker?.bind(structService),
   });
 }
 

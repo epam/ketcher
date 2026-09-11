@@ -12,3 +12,8 @@ export function getIndigoWorker(): Worker {
   }
   return _indigoWorker;
 }
+
+export function terminateIndigoWorker(): void {
+  _indigoWorker?.terminate();
+  _indigoWorker = null;
+}

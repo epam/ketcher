@@ -1925,17 +1925,15 @@ export class SequenceMode extends BaseMode {
   private getMonomerClassForTypeComparison(
     monomer: BaseMonomer | MonomerItemType,
   ): KetMonomerClass {
-    if (!(monomer instanceof BaseMonomer)) {
-      const [, ketMonomerClass] = monomerEntityFactory(monomer);
-
-      return ketMonomerClass;
-    }
-
     if (monomer instanceof AmbiguousMonomer) {
       return monomer.monomerClass;
     }
 
-    return this.getMonomerClassForTypeComparison(monomer.monomerItem);
+    const [, ketMonomerClass] = monomerEntityFactory(
+      monomer instanceof BaseMonomer ? monomer.monomerItem : monomer,
+    );
+
+    return ketMonomerClass;
   }
 
   // Side chain connections (Rn, n>2) are only preserved when the monomer

@@ -2477,7 +2477,14 @@ export class SequenceMode extends BaseMode {
     return selections.some((selectionRange) =>
       selectionRange.some(
         (nodeSelection) =>
-          nodeSelection.node.senseNode instanceof LinkerSequenceNode,
+          // The node that would actually be replaced, resolved the same way
+          // replaceSelectionsWithMonomer resolves it. Reading senseNode
+          // directly would silently skip antisense-only selections and drop
+          // the "@ can represent multiple monomers" confirmation for them.
+          getNodeForStrand(
+            nodeSelection.node,
+            getSelectedStrandType(nodeSelection.node),
+          ) instanceof LinkerSequenceNode,
       ),
     );
   }
@@ -2495,14 +2502,23 @@ export class SequenceMode extends BaseMode {
 
     for (const selectionRange of selections) {
       for (const nodeSelection of selectionRange) {
-        const senseNode = nodeSelection.node.senseNode;
-        if (!senseNode) {
+        // The node that would actually be replaced, resolved the same way
+        // replaceSelectionsWithMonomer resolves it. Reading senseNode
+        // directly would skip antisense-only selections entirely, letting a
+        // monomer without R1/R2 be inserted mid-antisense-strand with no
+        // warning and a broken backbone.
+        const selectedNode = getNodeForStrand(
+          nodeSelection.node,
+          getSelectedStrandType(nodeSelection.node),
+        );
+
+        if (!selectedNode) {
           continue;
         }
 
         if (
           !this.checkIfNewMonomerCouldEstablishConnections(
-            senseNode,
+            selectedNode,
             monomerItem,
             sideChainConnections,
           )
@@ -2517,11 +2533,11 @@ export class SequenceMode extends BaseMode {
           ][] = [
             [
               AttachmentPointName.R1,
-              senseNode.firstMonomerInNode.attachmentPointsToBonds.R1,
+              selectedNode.firstMonomerInNode.attachmentPointsToBonds.R1,
             ],
             [
               AttachmentPointName.R2,
-              senseNode.lastMonomerInNode.attachmentPointsToBonds.R2,
+              selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2,
             ],
           ];
 

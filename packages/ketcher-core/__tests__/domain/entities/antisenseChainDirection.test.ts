@@ -3,7 +3,12 @@ import { EditorHistory } from 'application/editor/EditorHistory';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import type { TwoStrandedNodesSelection } from 'application/render/renderers/sequence/SequenceRenderer';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
-import { type BaseMonomer, Vec2 } from 'domain/entities';
+import {
+  type BaseMonomer,
+  LinkerSequenceNode,
+  Phosphate,
+  Vec2,
+} from 'domain/entities';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import type { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
@@ -118,6 +123,40 @@ const setEditModes = (
   modeInternals._isAntisenseEditMode = isAntisenseEditMode;
 };
 
+// The two validation helpers guarding library replacement, reached the same
+// cast-through-prototype way as replaceSelectionsWithMonomer above.
+const callSelectionsContainLinkerNode = (
+  mode: SequenceMode,
+  selections: TwoStrandedNodesSelection,
+) => {
+  const { selectionsContainLinkerNode } = SequenceMode.prototype as unknown as {
+    selectionsContainLinkerNode: (
+      this: SequenceMode,
+      selections: TwoStrandedNodesSelection,
+    ) => boolean;
+  };
+
+  return selectionsContainLinkerNode.call(mode, selections);
+};
+
+const callGetFirstMissingAttachmentPoint = (
+  mode: SequenceMode,
+  selections: TwoStrandedNodesSelection,
+  monomerItem: MonomerItemType,
+) => {
+  const { getFirstMissingAttachmentPoint } =
+    SequenceMode.prototype as unknown as {
+      getFirstMissingAttachmentPoint: (
+        this: SequenceMode,
+        selections: TwoStrandedNodesSelection,
+        monomerItem: MonomerItemType,
+        sideChainConnections?: boolean,
+      ) => AttachmentPointName | null;
+    };
+
+  return getFirstMissingAttachmentPoint.call(mode, selections, monomerItem);
+};
+
 // Builds a 4-nucleotide sense chain (positions 0..3, left to right) and
 // mirrors it into an antisense duplex, then renders both strands through
 // SequenceRenderer so the strand-aware lookups under test
@@ -156,13 +195,39 @@ const buildFourNucleotideDuplex = (editor: CoreEditor) => {
     return Nucleotide.fromSugar(antisenseSugar, false);
   });
 
-  const chainsCollection = ChainsCollection.fromMonomers([
-    ...drawingEntitiesManager.monomers.values(),
-  ]);
-  chainsCollection.rearrange();
-  SequenceRenderer.show(chainsCollection);
+  rerenderSequence(editor);
 
   return { senseNucleotides, antisenseNucleotides };
+};
+
+// Rebuilds the chain collection and re-renders both strands, so that a
+// structure changed after the initial build (e.g. a CHEM conjugate bonded
+// onto the antisense 5' end) is reflected in SequenceRenderer.
+function rerenderSequence(editor: CoreEditor) {
+  const chainsCollection = ChainsCollection.fromMonomers([
+    ...editor.drawingEntitiesManager.monomers.values(),
+  ]);
+
+  chainsCollection.rearrange();
+  SequenceRenderer.show(chainsCollection);
+}
+
+// The antisense strand runs opposite to display order, so its chain START is
+// the phosphate hanging off the antisense node displayed LAST -- the only
+// antisense phosphate with a free R1.
+const getAntisenseChainStartPhosphate = (editor: CoreEditor) => {
+  const phosphate = [...editor.drawingEntitiesManager.monomers.values()].find(
+    (monomer) =>
+      monomer.monomerItem.isAntisense &&
+      monomer instanceof Phosphate &&
+      !monomer.attachmentPointsToBonds.R1,
+  );
+
+  if (!phosphate) {
+    throw new Error("Fixture setup failed: no free antisense 5' phosphate");
+  }
+
+  return phosphate;
 };
 
 // Walks the backbone forward via getNextMonomerInChain starting at
@@ -644,6 +709,103 @@ describe('antisense chain direction', () => {
 
     // The sense partner keeps its original base: no mirror in non-sync mode.
     expect(senseNucleotides[1].rnaBase.label).toBe('C');
+  });
+
+  it('sees a linker node that sits on the antisense strand', () => {
+    const mode = new SequenceMode();
+
+    buildFourNucleotideDuplex(editor);
+
+    // A CHEM monomer bonded to the antisense strand's free 5' phosphate --
+    // an everyday siRNA conjugate. The chain builder turns it into a
+    // LinkerSequenceNode (the '@' symbol) on the ANTISENSE side of a display
+    // position whose sense side is the sense strand's own dangling 3'
+    // phosphate, i.e. a plain MonomerSequenceNode.
+    const chemItem = editor.monomersLibrary.find(
+      (item) =>
+        !('isAmbiguous' in item && item.isAmbiguous) &&
+        item.props?.MonomerClass === KetMonomerClass.CHEM,
+    );
+
+    if (!chemItem) {
+      throw new Error('No CHEM library item found');
+    }
+
+    const antisenseFirstPhosphate = getAntisenseChainStartPhosphate(editor);
+    const chem = editor.drawingEntitiesManager.createMonomer(
+      chemItem as MonomerItemType,
+      new Vec2(-2, 3),
+    );
+
+    editor.drawingEntitiesManager.createPolymerBond(
+      chem,
+      antisenseFirstPhosphate,
+      AttachmentPointName.R2,
+      AttachmentPointName.R1,
+    );
+    rerenderSequence(editor);
+
+    editor.drawingEntitiesManager.selectDrawingEntities([chem]);
+
+    const selections = SequenceRenderer.selections;
+
+    expect(selections).toHaveLength(1);
+    expect(selections[0]).toHaveLength(1);
+    // The sense side of that position is NOT a linker, so reading senseNode
+    // directly reports "no linker here" and the confirmation dialog warning
+    // that all of the '@' symbol's monomers are about to be deleted is
+    // skipped.
+    expect(selections[0][0].node.senseNode).not.toBeInstanceOf(
+      LinkerSequenceNode,
+    );
+    expect(selections[0][0].node.antisenseNode).toBeInstanceOf(
+      LinkerSequenceNode,
+    );
+
+    expect(callSelectionsContainLinkerNode(mode, selections)).toBe(true);
+  });
+
+  it('validates attachment points against the antisense node when only the antisense strand is selected', () => {
+    const mode = new SequenceMode();
+    const { antisenseNucleotides } = buildFourNucleotideDuplex(editor);
+
+    // Display position 0 is where the two strands disagree about backbone
+    // bonds: the sense node there is the sense strand's 5' end (R1 free, R2
+    // bonded) while the antisense node is the antisense strand's 3' end (R1
+    // bonded, R2 free). A replacement offering only R2 therefore fits the
+    // sense node and breaks the antisense one -- so the answer says which
+    // node was actually checked.
+    editor.drawingEntitiesManager.selectDrawingEntities(
+      nodeMonomers([antisenseNucleotides[0]]),
+    );
+
+    const selections = SequenceRenderer.selections;
+
+    expect(selections).toHaveLength(1);
+    expect(selections[0]).toHaveLength(1);
+
+    const monomerItemWithOnlyR2 = {
+      ...findLibraryItemByAlias(editor, '2-damdA'),
+      attachmentPoints: [
+        {
+          attachmentAtom: 0,
+          leavingGroup: { atoms: [] },
+          type: 'right',
+          label: AttachmentPointName.R2,
+        },
+      ],
+    } as MonomerItemType;
+
+    // Reading senseNode directly returns null here ("fits, insert it"), and
+    // the monomer lands mid-antisense-strand with no R1, breaking the
+    // backbone silently.
+    expect(
+      callGetFirstMissingAttachmentPoint(
+        mode,
+        selections,
+        monomerItemWithOnlyR2,
+      ),
+    ).toBe(AttachmentPointName.R1);
   });
 
   it('mirrors every paired base when a multi-node antisense range is replaced via the library in one call, exercising the reversed chain-order loop (regression for #6595)', () => {

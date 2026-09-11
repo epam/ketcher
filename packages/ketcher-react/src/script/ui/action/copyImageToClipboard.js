@@ -22,7 +22,7 @@ import {
 } from 'ketcher-core';
 
 async function copyImageToClipboard() {
-  const state = global.currentState;
+  const state = globalThis.currentState;
   const editor = state.editor;
   const options = state.options;
   const struct = editor.structSelected();

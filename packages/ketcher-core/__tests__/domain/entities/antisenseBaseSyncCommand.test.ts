@@ -319,6 +319,132 @@ describe('createMirroredBaseCommand', () => {
     expect(antisenseBase.label).toBe(labelBefore);
   });
 
+  // The three tests above (unchanged analogue, sync off, paired base
+  // selected) all rely on createMirroredBaseCommand deriving `partner` and
+  // eligibility itself. The `partner`/`wasEditedBaseEligible` short-circuit
+  // added for the ambiguous-replace and library-replace call sites must not
+  // weaken any of those suppression rules when a caller happens to supply
+  // them explicitly, so each is re-verified here with both supplied.
+  it('leaves the paired base alone when the analogue is unchanged, even with partner and eligibility supplied explicitly', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    const labelBefore = antisenseBase.label;
+    const newBaseItem = resolveBaseLibraryItem('A');
+
+    if (!newBaseItem) {
+      throw new Error('Library item A not found');
+    }
+
+    const command = createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: senseBase,
+      previousNaturalAnalogue: 'A',
+      newBaseMonomerItem: newBaseItem,
+      needToEditAntisense: true,
+      resolveBaseLibraryItem,
+      partner: antisenseBase,
+      wasEditedBaseEligible: true,
+    });
+
+    expect(command).toBeUndefined();
+    expect(antisenseBase.label).toBe(labelBefore);
+  });
+
+  it('does nothing when antisense editing is off, even with partner and eligibility supplied explicitly', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    const labelBefore = antisenseBase.label;
+    const newBaseItem = resolveBaseLibraryItem('C');
+
+    if (!newBaseItem) {
+      throw new Error('Library item C not found');
+    }
+
+    const command = createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: senseBase,
+      previousNaturalAnalogue: 'A',
+      newBaseMonomerItem: newBaseItem,
+      needToEditAntisense: false,
+      resolveBaseLibraryItem,
+      partner: antisenseBase,
+      wasEditedBaseEligible: true,
+    });
+
+    expect(command).toBeUndefined();
+    expect(antisenseBase.label).toBe(labelBefore);
+  });
+
+  it('does nothing when the paired base is itself selected, even with partner and eligibility supplied explicitly', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    const labelBefore = antisenseBase.label;
+    editor.drawingEntitiesManager.selectDrawingEntities([
+      senseBase,
+      antisenseBase,
+    ]);
+    const newBaseItem = resolveBaseLibraryItem('C');
+
+    if (!newBaseItem) {
+      throw new Error('Library item C not found');
+    }
+
+    const command = createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: senseBase,
+      previousNaturalAnalogue: 'A',
+      newBaseMonomerItem: newBaseItem,
+      needToEditAntisense: true,
+      resolveBaseLibraryItem,
+      partner: antisenseBase,
+      wasEditedBaseEligible: true,
+    });
+
+    expect(command).toBeUndefined();
+    expect(antisenseBase.label).toBe(labelBefore);
+  });
+
+  it('does not mirror an edited base that is not structurally eligible, even when an eligible partner is supplied', () => {
+    // The partner must itself be a valid, eligible, unselected duplex base
+    // (from buildDuplex) so this isolates the editedBase eligibility guard
+    // specifically: if the partner were also ineligible, `!isBaseEligibleForDuplexSync(partner)`
+    // would suppress the command regardless of whether the editedBase check
+    // ran at all, and the test would pass without exercising the guard this
+    // finding is about.
+    const { antisenseBase } = buildDuplex(editor, 'A');
+
+    // Reuses the Task 3 ineligible shape (see 'treats a base on a sugar
+    // without a backbone connection as ineligible' above): a floating
+    // nucleoside (sugar + base, no phosphate => no backbone connection).
+    // `partner` is supplied directly below, so this base does not need a
+    // real hydrogen bond of its own -- only its own (in)eligibility matters
+    // for this test.
+    const { node } = Nucleoside.createOnCanvas('C', new Vec2(5, 0));
+    const floatingBase = node.rnaBase as BaseMonomer;
+
+    expect(isBaseEligibleForDuplexSync(floatingBase)).toBe(false);
+    expect(isBaseEligibleForDuplexSync(antisenseBase)).toBe(true);
+
+    const newBaseItem = resolveBaseLibraryItem('C');
+
+    if (!newBaseItem) {
+      throw new Error('Library item C not found');
+    }
+
+    // The partner is supplied explicitly, exactly as the real call site now
+    // does unconditionally. If supplying a partner ever short-circuits the
+    // eligibility check on editedBase (the bug this finding is about), this
+    // produces a command; it must not.
+    const command = createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: floatingBase,
+      previousNaturalAnalogue: 'A',
+      newBaseMonomerItem: newBaseItem,
+      needToEditAntisense: true,
+      resolveBaseLibraryItem,
+      partner: antisenseBase,
+    });
+
+    expect(command).toBeUndefined();
+  });
+
   // The antisense strand runs in the opposite direction from the sense
   // strand, so its phosphate is the sugar's previous chain neighbor, not its
   // next one (getPhosphateFromSugar only looks forward and would find
@@ -488,21 +614,25 @@ describe('createMirroredBaseCommand', () => {
       throw new Error('Ambiguous library item N not found');
     }
 
-    // Mirrors the real call site: the partner and natural analogue are
-    // captured BEFORE the sense edit, exactly as modifySequenceInRnaBuilder
-    // does.
+    // Mirrors the real call site: the partner, eligibility, and natural
+    // analogue are all captured BEFORE the sense edit, exactly as
+    // modifySequenceInRnaBuilder does.
     const previousNaturalAnalogue = senseBase.monomerItem.props
       ?.MonomerNaturalAnalogCode as string | undefined;
     const partnerBeforeEdit = getHydrogenBondedPartner(senseBase);
+    const wasEditedBaseEligible = isBaseEligibleForDuplexSync(senseBase);
 
     expect(partnerBeforeEdit).toBe(antisenseBase);
+    expect(wasEditedBaseEligible).toBe(true);
 
     replaceMonomer(editor.drawingEntitiesManager, senseBase, ambiguousItem);
 
     // senseBase is now stale: replaceMonomer deleted it and its bonds
     // (including the R1 bond to its sugar and the hydrogen bond), so its own
-    // hydrogenBonds array is empty and it no longer reaches its sugar.
+    // hydrogenBonds array is empty, it no longer reaches its sugar, and its
+    // own eligibility would (incorrectly) read as false if recomputed now.
     expect(senseBase.hydrogenBonds).toHaveLength(0);
+    expect(isBaseEligibleForDuplexSync(senseBase)).toBe(false);
 
     const newBaseItem = resolveBaseLibraryItem('C');
 
@@ -518,6 +648,7 @@ describe('createMirroredBaseCommand', () => {
       needToEditAntisense: true,
       resolveBaseLibraryItem,
       partner: partnerBeforeEdit,
+      wasEditedBaseEligible,
     });
 
     expect(command).toBeDefined();

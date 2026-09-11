@@ -70,7 +70,22 @@
     "shapeLine": "直线形状",
     "addText": "添加文本",
     "addImage": "添加图片",
-    "bondTitle": "{type}键"
+    "bondTypeTitles": {
+      "single": "单键",
+      "up": "上楔形键",
+      "down": "下楔形键",
+      "updown": "上下楔形键",
+      "double": "双键",
+      "crossed": "顺反双键",
+      "triple": "三键",
+      "aromatic": "芳香键",
+      "any": "任意键",
+      "hydrogen": "氢键",
+      "singledouble": "单或双键",
+      "singlearomatic": "单或芳香键",
+      "doublearomatic": "双或芳香键",
+      "dative": "配位键"
+    }
   },
   "server": {
     "layout": "布局",

@@ -22,7 +22,7 @@
 }
 
 .extraLabel {
-  margin-left: 6px;
+  margin-inline-start: 6px;
   margin-top: 12px;
 }
 
@@ -33,7 +33,7 @@
 
     &::after {
       position: absolute;
-      right: -10px;
+      inset-inline-end: -10px;
       top: 7px;
       content: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8.0013 14.0002C8.73768 14.0002 9.33464 13.4032 9.33464 12.6668C9.33464 11.9304 8.73768 11.3335 8.0013 11.3335C7.26492 11.3335 6.66797 11.9304 6.66797 12.6668C6.66797 13.4032 7.26492 14.0002 8.0013 14.0002Z' fill='%23F40724'/%3E%3Cpath d='M6.66797 2H9.33464V10H6.66797V2Z' fill='%23F40724'/%3E%3C/svg%3E%0A");
     }
@@ -59,11 +59,11 @@
   align-items: center;
   gap: 3px;
 
-  &>input {
+  & > input {
     width: 114px !important;
   }
 
-  &>.editButton {
+  & > .editButton {
     width: 20px !important;
     height: 20px !important;
     min-width: 16px;
@@ -71,7 +71,7 @@
   }
 }
 
-.divWithTooltipAndAboutIcon{
+.divWithTooltipAndAboutIcon {
   display: flex;
   justify-content: space-between;
   align-items: center;

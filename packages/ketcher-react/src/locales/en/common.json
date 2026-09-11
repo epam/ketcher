@@ -1,0 +1,21 @@
+{
+  "errors": {
+    "featureNotAvailableInBrowser": "This feature is not available in your browser"
+  },
+  "button": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "apply": "Apply",
+    "close": "Close",
+    "yes": "Yes"
+  },
+  "general": "General",
+  "delete": "Delete",
+  "alreadyInUse": "Already in use",
+  "monomerType": {
+    "base": "Base",
+    "sugar": "Sugar",
+    "phosphate": "Phosphate"
+  }
+}

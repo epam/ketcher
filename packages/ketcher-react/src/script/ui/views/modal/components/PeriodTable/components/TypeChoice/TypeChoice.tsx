@@ -17,17 +17,30 @@
 import classes from './TypeChoice.module.less';
 import { GenericInput } from 'src/script/ui/component/form/Input/Input';
 import type { PeriodTableType } from '../../types';
+import { useTranslation } from 'react-i18next';
 
 interface TypeSchemaItem {
-  title: string;
+  titleKey: string;
   value: PeriodTableType;
   testId: string;
 }
 
 const typeSchema: TypeSchemaItem[] = [
-  { title: 'Single', value: 'atom', testId: 'single-radio-button' },
-  { title: 'List', value: 'list', testId: 'list-radio-button' },
-  { title: 'Not List', value: 'not-list', testId: 'not-list-radio-button' },
+  {
+    titleKey: 'periodTable.typeSingle',
+    value: 'atom',
+    testId: 'single-radio-button',
+  },
+  {
+    titleKey: 'periodTable.typeList',
+    value: 'list',
+    testId: 'list-radio-button',
+  },
+  {
+    titleKey: 'periodTable.typeNotList',
+    value: 'not-list',
+    testId: 'not-list-radio-button',
+  },
 ];
 
 interface TypeChoiceProps {
@@ -37,10 +50,11 @@ interface TypeChoiceProps {
 }
 
 function TypeChoice({ value, onChange, disabled }: Readonly<TypeChoiceProps>) {
+  const { t } = useTranslation('dialogs');
   return (
     <fieldset className={classes.fieldset} disabled={disabled}>
       {typeSchema.map((type) => (
-        <label key={type.title}>
+        <label key={type.titleKey}>
           <GenericInput
             type="radio"
             value={type.value}
@@ -53,7 +67,7 @@ function TypeChoice({ value, onChange, disabled }: Readonly<TypeChoiceProps>) {
             schema={undefined}
             innerRef={undefined}
           />
-          {type.title}
+          {t(type.titleKey)}
         </label>
       ))}
     </fieldset>

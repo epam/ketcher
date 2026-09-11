@@ -1,0 +1,171 @@
+{
+  "language": {
+    "title": "语言"
+  },
+  "fields": {
+    "resetToSelect": {
+      "title": "重置为选择工具",
+      "enumOn": "开启",
+      "enumAfterPaste": "粘贴后",
+      "enumOff": "关闭"
+    },
+    "rotationStep": {
+      "title": "旋转步长，°"
+    },
+    "showValenceWarnings": {
+      "title": "显示价态警告"
+    },
+    "atomColoring": {
+      "title": "原子着色"
+    },
+    "showStereoFlags": {
+      "title": "显示立体标志"
+    },
+    "stereoLabelStyle": {
+      "title": "立体中心标签显示",
+      "enumIupac": "IUPAC 样式",
+      "enumClassic": "经典",
+      "enumOn": "开启",
+      "enumOff": "关闭"
+    },
+    "colorOfAbsoluteCenters": {
+      "title": " 绝对中心颜色"
+    },
+    "colorOfAndCenters": {
+      "title": "AND 中心颜色"
+    },
+    "colorOfOrCenters": {
+      "title": "OR 中心颜色"
+    },
+    "colorStereogenicCenters": {
+      "title": "立体中心着色",
+      "enumLabelsOnly": "仅标签",
+      "enumBondsOnly": "仅键",
+      "enumLabelsAndBonds": "标签和键",
+      "enumOff": "关闭"
+    },
+    "autoFadeOfStereoLabels": {
+      "title": "自动淡化 And/Or 中心标签"
+    },
+    "absFlagLabel": {
+      "title": "绝对标志文本"
+    },
+    "andFlagLabel": {
+      "title": "AND 标志文本"
+    },
+    "mixedFlagLabel": {
+      "title": "混合标志文本"
+    },
+    "ignoreChiralFlag": {
+      "title": "忽略手性标志"
+    },
+    "orFlagLabel": {
+      "title": "OR 标志文本"
+    },
+    "font": {
+      "title": "字体"
+    },
+    "fontsz": {
+      "title": "字号"
+    },
+    "fontszsub": {
+      "title": "下标字号"
+    },
+    "carbonExplicitly": {
+      "title": "显式显示碳原子"
+    },
+    "showCharge": {
+      "title": "显示电荷"
+    },
+    "showValence": {
+      "title": "显示价态"
+    },
+    "showHydrogenLabels": {
+      "title": "显示氢标签"
+    },
+    "aromaticCircle": {
+      "title": "芳香键显示为圆圈"
+    },
+    "bondSpacing": {
+      "title": "键间距",
+      "extraLabel": "占长度的百分比"
+    },
+    "bondThickness": {
+      "title": "键粗细"
+    },
+    "stereoBondWidth": {
+      "title": "立体（楔形）键宽度"
+    },
+    "bondLength": {
+      "title": "键长"
+    },
+    "reactionComponentMarginSize": {
+      "title": "反应组分边距"
+    },
+    "hashSpacing": {
+      "title": "虚线间距"
+    },
+    "imageResolution": {
+      "title": "图片分辨率",
+      "enumHigh": "高",
+      "enumLow": "低"
+    },
+    "dearomatize-on-load": {
+      "title": "加载时脱芳构化"
+    },
+    "valence-mode": {
+      "title": "价态模式",
+      "enumBiovia2009": "BIOVIA 2009",
+      "enumBiovia2017": "BIOVIA 2017",
+      "enumDefault": "默认"
+    },
+    "smart-layout": {
+      "title": "智能布局"
+    },
+    "ignore-stereochemistry-errors": {
+      "title": "忽略立体化学错误"
+    },
+    "mass-skip-error-on-pseudoatoms": {
+      "title": "质量计算时忽略假原子"
+    },
+    "gross-formula-add-rsites": {
+      "title": "质量计算时添加 R 位点"
+    },
+    "aromatize-skip-superatoms": {
+      "title": "芳构化时跳过超原子"
+    },
+    "gross-formula-add-isotopes": {
+      "title": "质量计算时添加同位素"
+    },
+    "showAtomIds": {
+      "title": "显示原子 ID"
+    },
+    "showBondIds": {
+      "title": "显示键 ID"
+    },
+    "showHalfBondIds": {
+      "title": "显示半键 ID"
+    },
+    "showLoopIds": {
+      "title": "显示环 ID"
+    },
+    "miewMode": {
+      "title": "显示模式",
+      "enumLines": "线条",
+      "enumBallsAndSticks": "球棍模型",
+      "enumLicorice": "棍状模型"
+    },
+    "miewTheme": {
+      "title": "背景颜色",
+      "enumLight": "浅色",
+      "enumDark": "深色"
+    },
+    "miewAtomLabel": {
+      "title": "标签着色",
+      "enumNo": "无",
+      "enumBright": "明亮",
+      "enumBlackAndWhite": "黑白",
+      "enumBlack": "黑色"
+    }
+  }
+}

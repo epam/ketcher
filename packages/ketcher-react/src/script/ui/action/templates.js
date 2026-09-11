@@ -20,7 +20,7 @@ import isHidden from './isHidden';
 const templateLib = {
   'template-lib': {
     shortcut: 'Shift+t',
-    title: 'Structure Library',
+    title: 'toolbar:templates.structureLibrary',
     action: { dialog: 'templates', prop: { tab: null } },
     selected: (editor) => editor._tool.mode === 'classic',
     disabled: (editor, server, options) => !options.app.templates,

@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import { useTranslation } from 'react-i18next';
 import classes from './RemoveFG.module.less';
 import { useAppContext } from '../../../../../../../hooks';
 import { fromSgroupDeletion, ketcherProvider } from 'ketcher-core';
@@ -27,6 +28,7 @@ interface RemoveFGProps extends BaseProps {
 type Props = RemoveFGProps & BaseCallProps;
 
 const RemoveFG = (props: Props) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   const { ketcherId } = useAppContext();
   const editor = ketcherProvider.getKetcher(ketcherId).editor as any;
   const { fgIds } = props;
@@ -50,23 +52,23 @@ const RemoveFG = (props: Props) => {
       className={classes.window}
       data-testid="edit-abbreviation-window"
     >
-      <header className={classes.header}>Edit Abbreviation</header>
+      <header className={classes.header}>
+        {t('dialogs:toolbox.removeFG.header')}
+      </header>
       <div className={classes.question}>
-        A change was detected for the abbreviation. Do you want to remove the
-        abbreviation information from the structure and continue work with
-        separate atoms and bonds?
+        {t('dialogs:toolbox.removeFG.question')}
       </div>
       <footer className={classes.footer}>
         <input
           type="button"
-          value={'Cancel'}
+          value={t('common:button.cancel')}
           className={classes.buttonCancel}
           onClick={() => exit('onOk', false)}
           data-testid="Cancel"
         />
         <input
           type="button"
-          value={'Remove Abbreviation'}
+          value={t('dialogs:toolbox.removeFG.removeAbbreviation')}
           data-testid="remove-abbreviation-button"
           className={classes.buttonOk}
           onClick={() => exit('onOk', remove())}

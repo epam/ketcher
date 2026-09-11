@@ -34,8 +34,14 @@
   height: 100%;
   width: 100%;
   position: relative;
-  font: @base-size FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
-    Arial, sans-serif;
+  font:
+    @base-size FreeSans,
+    Arimo,
+    'Droid Sans',
+    Helvetica,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
   background-color: @color-background-canvas-light;
   color: @main-color;
 
@@ -148,7 +154,7 @@
     color: @color-text-legend;
     padding: 0;
     font-size: 12px;
-    text-align: left;
+    text-align: start;
   }
 
   input[type='radio'] {
@@ -161,7 +167,7 @@
   input[type='checkbox'] {
     vertical-align: middle;
     line-height: normal;
-    margin-right: 0.3em;
+    margin-inline-end: 0.3em;
     // TODO: style focus, active, etc
   }
 }
@@ -198,6 +204,11 @@
 }
 
 .editorsWrapper {
+  height: 100%;
+  width: 100%;
+}
+
+.root {
   height: 100%;
   width: 100%;
 }

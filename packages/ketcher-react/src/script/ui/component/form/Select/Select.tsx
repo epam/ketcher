@@ -21,6 +21,7 @@ import type { ReactNode } from 'react';
 import clsx from 'clsx';
 import styles from './Select.module.less';
 import { Icon } from 'components';
+import { useTranslation } from 'react-i18next';
 
 export interface Option {
   value: string;
@@ -63,6 +64,7 @@ const Select = ({
   error,
   title,
 }: Props) => {
+  const { t } = useTranslation('common');
   const currentValue = options?.find((option) => option.value === value);
   const isFullscreen = !!document.fullscreenElement;
   const portalContainer = isFullscreen
@@ -108,7 +110,7 @@ const Select = ({
             key={option.value}
             disableRipple={true}
             disabled={option.disabled}
-            title={option.markedAsUsed ? 'Already in use' : undefined}
+            title={option.markedAsUsed ? t('alreadyInUse') : undefined}
             className={clsx({
               [`dropdown-${formName}_${name}`]: formName,
               [styles.usedOption]: option.markedAsUsed,

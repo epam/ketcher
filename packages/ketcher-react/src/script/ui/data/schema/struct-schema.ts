@@ -18,14 +18,22 @@ import { mapOf } from './schema-helper';
 import { range } from 'lodash/fp';
 import { sdataCustomSchema } from './sdata-schema';
 import { CUSTOM_QUERY_MAX_LENGTH } from 'ketcher-core';
+import i18n from 'src/i18n/i18n';
 
 export { CUSTOM_QUERY_MAX_LENGTH };
 
 function customQueryInvalidMessage(value: unknown): string {
   if (typeof value === 'string' && value.length > CUSTOM_QUERY_MAX_LENGTH) {
-    return `Custom query must not exceed ${CUSTOM_QUERY_MAX_LENGTH} characters`;
+    return i18n.t(
+      'dialogs:toolbox.structSchema.customQuery.invalidMessageTooLong',
+      {
+        maxLength: CUSTOM_QUERY_MAX_LENGTH,
+      },
+    );
   }
-  return 'Invalid custom query';
+  return i18n.t(
+    'dialogs:toolbox.structSchema.customQuery.invalidMessageInvalid',
+  );
 }
 
 interface CommonStructSchema {
@@ -85,93 +93,115 @@ export const atom: StructSchema<AtomProperties> = {
   required: ['label'],
   properties: {
     atomType: {
-      title: 'Atom Type',
+      title: 'dialogs:toolbox.structSchema.atom.atomType.title',
       enum: ['single', 'list', 'pseudo'],
-      enumNames: ['Single', 'List', 'Special'],
+      enumNames: [
+        'dialogs:toolbox.structSchema.atom.atomType.enumSingle',
+        'dialogs:toolbox.structSchema.atom.atomType.enumList',
+        'dialogs:toolbox.structSchema.atom.atomType.enumSpecial',
+      ],
       default: 'single',
     },
     label: {
-      title: 'Label',
+      title: 'dialogs:toolbox.structSchema.atom.label.title',
       type: 'string', // TODO:should really be enum of elements
       maxLength: 3,
-      invalidMessage: 'Wrong label',
+      invalidMessage: () =>
+        i18n.t('dialogs:toolbox.structSchema.atom.label.invalidMessage'),
     },
     atomList: {
-      title: 'List',
+      title: 'dialogs:toolbox.structSchema.atom.atomList.title',
       type: 'string',
-      invalidMessage: 'Invalid atom list',
+      invalidMessage: () =>
+        i18n.t('dialogs:toolbox.structSchema.atom.atomList.invalidMessage'),
     },
     notList: {
-      title: 'Not list',
+      title: 'dialogs:toolbox.structSchema.atom.notList.title',
       type: 'boolean',
       default: false,
     },
     pseudo: {
-      title: 'Special',
+      title: 'dialogs:toolbox.structSchema.atom.pseudo.title',
       type: 'string',
-      invalidMessage: 'Invalid special atom',
+      invalidMessage: () =>
+        i18n.t('dialogs:toolbox.structSchema.atom.pseudo.invalidMessage'),
     },
     alias: {
-      title: 'Alias',
+      title: 'dialogs:toolbox.structSchema.atom.alias.title',
       type: 'string',
-      invalidMessage: 'Leading and trailing spaces are not allowed',
+      invalidMessage: () =>
+        i18n.t('dialogs:toolbox.structSchema.atom.alias.invalidMessage'),
     },
     charge: {
-      title: 'Charge',
+      title: 'dialogs:toolbox.structSchema.atom.charge.title',
       type: 'string',
       pattern: '^([+-]?)(1[0-5]|0|[0-9])([+-]?)$',
       maxLength: 4,
       default: '',
-      invalidMessage: 'Invalid charge value',
+      invalidMessage: () =>
+        i18n.t('dialogs:toolbox.structSchema.atom.charge.invalidMessage'),
     },
     explicitValence: {
-      title: 'Valence',
+      title: 'dialogs:toolbox.structSchema.atom.explicitValence.title',
       enum: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8],
       enumNames: ['', '0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'],
       default: -1,
     },
     isotope: {
-      title: 'Isotope (atomic mass)',
+      title: 'dialogs:toolbox.structSchema.atom.isotope.title',
       type: 'string',
       pattern: '^[0-9]{1,3}$|(^$)',
       default: '',
       maxLength: 3,
-      invalidMessage: 'Invalid isotope value',
+      invalidMessage: () =>
+        i18n.t('dialogs:toolbox.structSchema.atom.isotope.invalidMessage'),
     },
     radical: {
-      title: 'Radical',
+      title: 'dialogs:toolbox.structSchema.atom.radical.title',
       enum: [0, 2, 1, 3],
       enumNames: [
         '',
-        'Monoradical',
-        'Diradical (singlet)',
-        'Diradical (triplet)',
+        'dialogs:toolbox.structSchema.atom.radical.enumMonoradical',
+        'dialogs:toolbox.structSchema.atom.radical.enumDiradicalSinglet',
+        'dialogs:toolbox.structSchema.atom.radical.enumDiradicalTriplet',
       ],
       default: 0,
     },
     cip: {
-      title: 'CIP',
+      title: 'dialogs:toolbox.structSchema.cip.title',
       type: 'string',
       enum: ['R', 'S', 'r', 's'],
     },
     ringBondCount: {
-      title: 'Ring bond count',
+      title: 'dialogs:toolbox.structSchema.atom.ringBondCount.title',
       enum: [0, -2, -1, 2, 3, 4, 5, 6, 7, 8, 9],
-      enumNames: ['', 'As drawn', '0', '2', '3', '4', '5', '6', '7', '8', '9'],
+      enumNames: [
+        '',
+        'dialogs:toolbox.structSchema.atom.ringBondCount.enumAsDrawn',
+        '0',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9',
+      ],
       default: 0,
     },
     hCount: {
-      title: 'H count',
+      title: 'dialogs:toolbox.structSchema.atom.hCount.title',
       enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       enumNames: ['', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
       default: 0,
     },
     substitutionCount: {
-      title: 'Substitution count',
+      title: 'dialogs:toolbox.structSchema.atom.substitutionCount.title',
       enum: [0, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       enumNames: [
         '',
-        'As drawn',
+        'dialogs:toolbox.structSchema.atom.substitutionCount.enumAsDrawn',
         '0',
         '1',
         '2',
@@ -186,61 +216,73 @@ export const atom: StructSchema<AtomProperties> = {
       default: 0,
     },
     unsaturatedAtom: {
-      title: 'Unsaturated',
+      title: 'dialogs:toolbox.structSchema.atom.unsaturatedAtom.title',
       type: 'boolean',
       default: false,
     },
     aromaticity: {
-      title: 'Aromaticity',
+      title: 'dialogs:toolbox.structSchema.atom.aromaticity.title',
       enum: [null, 'aromatic', 'aliphatic'],
-      enumNames: ['', 'aromatic', 'aliphatic'],
+      enumNames: [
+        '',
+        'dialogs:toolbox.structSchema.atom.aromaticity.enumAromatic',
+        'dialogs:toolbox.structSchema.atom.aromaticity.enumAliphatic',
+      ],
       default: 0,
     },
     implicitHCount: {
-      title: 'Implicit H count',
+      title: 'dialogs:toolbox.structSchema.atom.implicitHCount.title',
       enum: [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       enumNames: ['', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
       default: 0,
     },
     ringMembership: {
-      title: 'Ring membership',
+      title: 'dialogs:toolbox.structSchema.atom.ringMembership.title',
       enum: [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       enumNames: ['', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
       default: 0,
     },
     ringSize: {
-      title: 'Ring size',
+      title: 'dialogs:toolbox.structSchema.atom.ringSize.title',
       enum: [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       enumNames: ['', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
       default: 0,
     },
     connectivity: {
-      title: 'Connectivity',
+      title: 'dialogs:toolbox.structSchema.atom.connectivity.title',
       enum: [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       enumNames: ['', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
       default: 0,
     },
     chirality: {
-      title: 'Chirality',
+      title: 'dialogs:toolbox.structSchema.atom.chirality.title',
       enum: [null, 'anticlockwise', 'clockwise'],
-      enumNames: ['', 'anticlockwise', 'clockwise'],
+      enumNames: [
+        '',
+        'dialogs:toolbox.structSchema.atom.chirality.enumAnticlockwise',
+        'dialogs:toolbox.structSchema.atom.chirality.enumClockwise',
+      ],
       default: 0,
     },
     customQuery: {
-      title: 'Custom Query',
+      title: 'dialogs:toolbox.structSchema.customQuery.title',
       pattern: '[^ ]',
       maxLength: CUSTOM_QUERY_MAX_LENGTH,
       type: 'string',
       invalidMessage: customQueryInvalidMessage,
     },
     invRet: {
-      title: 'Inversion',
+      title: 'dialogs:toolbox.structSchema.atom.invRet.title',
       enum: [0, 1, 2],
-      enumNames: ['', 'Inverts', 'Retains'],
+      enumNames: [
+        '',
+        'dialogs:toolbox.structSchema.atom.invRet.enumInverts',
+        'dialogs:toolbox.structSchema.atom.invRet.enumRetains',
+      ],
       default: 0,
     },
     exactChangeFlag: {
-      title: 'Exact change',
+      title: 'dialogs:toolbox.structSchema.atom.exactChangeFlag.title',
       type: 'boolean',
       default: false,
     },
@@ -268,9 +310,10 @@ export const labelEdit: StructSchema = {
   required: ['label'],
   properties: {
     label: {
-      title: 'Atom',
+      title: 'dialogs:toolbox.structSchema.labelEditField.title',
       default: '',
-      invalidMessage: 'Wrong atom symbol',
+      invalidMessage: () =>
+        i18n.t('dialogs:toolbox.structSchema.labelEditField.invalidMessage'),
       type: 'string',
     },
   },
@@ -281,11 +324,11 @@ export const attachmentPoints: StructSchema = {
   type: 'object',
   properties: {
     primary: {
-      title: 'Primary attachment point',
+      title: 'dialogs:toolbox.structSchema.attachmentPoints.primary.title',
       type: 'boolean',
     },
     secondary: {
-      title: 'Secondary attachment point',
+      title: 'dialogs:toolbox.structSchema.attachmentPoints.secondary.title',
       type: 'boolean',
     },
   },
@@ -297,7 +340,7 @@ export const bond: StructSchema = {
   required: ['type'],
   properties: {
     type: {
-      title: 'Type',
+      title: 'dialogs:toolbox.structSchema.bond.type.title',
       enum: [
         '',
         'single',
@@ -317,53 +360,58 @@ export const bond: StructSchema = {
       ],
       enumNames: [
         '',
-        'Single',
-        'Single Up',
-        'Single Down',
-        'Single Up/Down',
-        'Double',
-        'Double Cis/Trans',
-        'Triple',
-        'Aromatic',
-        'Any',
-        'Hydrogen',
-        'Single/Double',
-        'Single/Aromatic',
-        'Double/Aromatic',
-        'Dative',
+        'dialogs:toolbox.structSchema.bond.type.enumSingle',
+        'dialogs:toolbox.structSchema.bond.type.enumSingleUp',
+        'dialogs:toolbox.structSchema.bond.type.enumSingleDown',
+        'dialogs:toolbox.structSchema.bond.type.enumSingleUpDown',
+        'dialogs:toolbox.structSchema.bond.type.enumDouble',
+        'dialogs:toolbox.structSchema.bond.type.enumDoubleCisTrans',
+        'dialogs:toolbox.structSchema.bond.type.enumTriple',
+        'dialogs:toolbox.structSchema.bond.type.enumAromatic',
+        'dialogs:toolbox.structSchema.bond.type.enumAny',
+        'dialogs:toolbox.structSchema.bond.type.enumHydrogen',
+        'dialogs:toolbox.structSchema.bond.type.enumSingleDouble',
+        'dialogs:toolbox.structSchema.bond.type.enumSingleAromatic',
+        'dialogs:toolbox.structSchema.bond.type.enumDoubleAromatic',
+        'dialogs:toolbox.structSchema.bond.type.enumDative',
       ],
       default: 'single',
     },
     topology: {
-      title: 'Topology',
+      title: 'dialogs:toolbox.structSchema.bond.topology.title',
       enum: [null, 0, 1, 2],
-      enumNames: ['', 'Either', 'Ring', 'Chain'],
+      enumNames: [
+        '',
+        'dialogs:toolbox.structSchema.bond.topology.enumEither',
+        'dialogs:toolbox.structSchema.bond.topology.enumRing',
+        'dialogs:toolbox.structSchema.bond.topology.enumChain',
+      ],
       default: 0,
     },
     customQuery: {
-      title: 'Custom Query',
+      title: 'dialogs:toolbox.structSchema.customQuery.title',
       pattern: '[^ ]',
       maxLength: CUSTOM_QUERY_MAX_LENGTH,
       type: 'string',
       invalidMessage: customQueryInvalidMessage,
     },
     center: {
-      title: 'Reacting Center',
+      title: 'dialogs:toolbox.structSchema.bond.center.title',
       enum: [null, 0, -1, 1, 2, 4, 8, 12], // 5, 9, 13
       enumNames: [
         '',
-        'Unmarked',
-        'Not center',
-        'Center',
-        'No change',
-        'Made/broken',
-        'Order changes',
-        'Made/broken and changes',
+        'dialogs:toolbox.structSchema.bond.center.enumUnmarked',
+        'dialogs:toolbox.structSchema.bond.center.enumNotCenter',
+        'dialogs:toolbox.structSchema.bond.center.enumCenter',
+        'dialogs:toolbox.structSchema.bond.center.enumNoChange',
+        'dialogs:toolbox.structSchema.bond.center.enumMadeBroken',
+        'dialogs:toolbox.structSchema.bond.center.enumOrderChanges',
+        'dialogs:toolbox.structSchema.bond.center.enumMadeBrokenAndChanges',
       ], // "Order changes" x 3
       default: 0,
     },
     cip: {
-      title: 'CIP',
+      title: 'dialogs:toolbox.structSchema.cip.title',
       type: 'string',
       enum: ['E', 'Z', 'M', 'P'],
     },
@@ -382,12 +430,12 @@ const sgroup: Omit<StructSchema, 'properties'> & {
     },
     {
       key: 'MUL',
-      title: 'Multiple group',
+      title: 'dialogs:toolbox.structSchema.sgroup.variantMultipleGroup',
       type: 'object',
       properties: {
         type: { enum: ['MUL'] },
         mul: {
-          title: 'Repeat count',
+          title: 'dialogs:toolbox.structSchema.sgroup.mulCount.title',
           type: 'integer',
           default: 1,
           minimum: 1,
@@ -398,23 +446,29 @@ const sgroup: Omit<StructSchema, 'properties'> & {
     },
     {
       key: 'SRU',
-      title: 'SRU polymer',
+      title: 'dialogs:toolbox.structSchema.sgroup.variantSruPolymer',
       type: 'object',
       properties: {
         type: { enum: ['SRU'] },
         subscript: {
-          title: 'Polymer label',
+          title: 'dialogs:toolbox.structSchema.sgroup.subscript.title',
           type: 'string',
           default: 'n',
           // any string, except empty and including double quotes
           pattern: '^(?!\\s*$)[^"]+$',
-          invalidMessage:
-            'SRU subscript should not be empty and contain double quotes',
+          invalidMessage: () =>
+            i18n.t(
+              'dialogs:toolbox.structSchema.sgroup.subscript.invalidMessage',
+            ),
         },
         connectivity: {
-          title: 'Repeat Pattern',
+          title: 'dialogs:toolbox.structSchema.sgroup.repeatPattern.title',
           enum: ['ht', 'hh', 'eu'],
-          enumNames: ['Head-to-tail', 'Head-to-head', 'Either unknown'],
+          enumNames: [
+            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumHeadToTail',
+            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumHeadToHead',
+            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumEitherUnknown',
+          ],
           default: 'ht',
         },
       },
@@ -422,19 +476,28 @@ const sgroup: Omit<StructSchema, 'properties'> & {
     },
     {
       key: 'COP',
-      title: 'Copolymer',
+      title: 'dialogs:toolbox.structSchema.sgroup.variantCopolymer',
       type: 'object',
       properties: {
         type: { enum: ['COP'] },
         subtype: {
-          title: 'Subtype',
+          title: 'dialogs:toolbox.structSchema.sgroup.subtype.title',
           enum: [null, 'ran', 'blo', 'alt'],
-          enumNames: ['<Blank>', 'Random', 'Block', 'Alternating'],
+          enumNames: [
+            'dialogs:toolbox.structSchema.sgroup.subtype.enumBlank',
+            'dialogs:toolbox.structSchema.sgroup.subtype.enumRandom',
+            'dialogs:toolbox.structSchema.sgroup.subtype.enumBlock',
+            'dialogs:toolbox.structSchema.sgroup.subtype.enumAlternating',
+          ],
         },
         connectivity: {
-          title: 'Repeat Pattern',
+          title: 'dialogs:toolbox.structSchema.sgroup.repeatPattern.title',
           enum: ['ht', 'hh', 'eu'],
-          enumNames: ['Head-to-tail', 'Head-to-head', 'Either unknown'],
+          enumNames: [
+            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumHeadToTail',
+            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumHeadToHead',
+            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumEitherUnknown',
+          ],
           default: 'ht',
         },
       },
@@ -442,23 +505,24 @@ const sgroup: Omit<StructSchema, 'properties'> & {
     },
     {
       key: 'SUP',
-      title: 'Superatom',
+      title: 'dialogs:toolbox.structSchema.sgroup.variantSuperatom',
       type: 'object',
       properties: {
         type: { enum: ['SUP'] },
         name: {
-          title: 'Name',
+          title: 'dialogs:toolbox.structSchema.sgroup.name.title',
           type: 'string',
           default: '',
           minLength: 1,
-          invalidMessage: 'Please, provide a name for the superatom',
+          invalidMessage: () =>
+            i18n.t('dialogs:toolbox.structSchema.sgroup.name.invalidMessage'),
         },
       },
       required: ['name'],
     },
     {
       key: 'queryComponent',
-      title: 'Query component',
+      title: 'dialogs:toolbox.structSchema.sgroup.variantQueryComponent',
       type: 'object',
       properties: {
         type: { enum: ['queryComponent'] },
@@ -466,14 +530,18 @@ const sgroup: Omit<StructSchema, 'properties'> & {
     },
     {
       key: 'nucleotideComponent',
-      title: 'Nucleotide Component',
+      title: 'dialogs:toolbox.structSchema.sgroup.variantNucleotideComponent',
       type: 'object',
       properties: {
         type: { enum: ['nucleotideComponent'] },
         class: {
-          title: 'Component',
+          title: 'dialogs:toolbox.structSchema.sgroup.component.title',
           enum: ['SUGAR', 'BASE', 'PHOSPHATE'],
-          enumNames: ['Sugar', 'Base', 'Phosphate'],
+          enumNames: [
+            'dialogs:toolbox.structSchema.sgroup.component.enumSugar',
+            'dialogs:toolbox.structSchema.sgroup.component.enumBase',
+            'dialogs:toolbox.structSchema.sgroup.component.enumPhosphate',
+          ],
           default: 'Sugar',
         },
       },
@@ -489,17 +557,20 @@ export const rgroupLogic: StructSchema = {
   type: 'object',
   properties: {
     range: {
-      title: 'Occurrence',
+      title: 'dialogs:toolbox.structSchema.rgroupLogicFields.occurrence.title',
       type: 'string',
       maxLength: 50,
-      invalidMessage: 'Wrong value',
+      invalidMessage: () =>
+        i18n.t(
+          'dialogs:toolbox.structSchema.rgroupLogicFields.occurrence.invalidMessage',
+        ),
     },
     resth: {
-      title: 'RestH',
+      title: 'dialogs:toolbox.structSchema.rgroupLogicFields.resth.title',
       type: 'boolean',
     },
     ifthen: {
-      title: 'Condition',
+      title: 'dialogs:toolbox.structSchema.rgroupLogicFields.condition.title',
       type: 'integer',
       minimum: 0,
     },
@@ -524,12 +595,12 @@ export const attachSchema: StructSchema = {
   required: ['name'],
   properties: {
     name: {
-      title: 'Molecule name',
+      title: 'dialogs:toolbox.structSchema.attachSchema.name.title',
       type: 'string',
       minLength: 1,
       maxLength: 128,
-      invalidMessage:
-        'Template must have a unique non-empty name and no more than 128 symbols in length',
+      invalidMessage: () =>
+        i18n.t('dialogs:toolbox.structSchema.attachSchema.name.invalidMessage'),
     },
   },
 };

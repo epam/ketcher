@@ -125,7 +125,7 @@ export abstract class DrawingEntity {
   private isPointInPolygon(r: Vec2[], p: Vec2) {
     const d = new Vec2(0, 1);
     const n = d.rotate(Math.PI / 2);
-    let v0 = Vec2.diff(r.at(-1), p);
+    let v0 = Vec2.diff(r.at(-1) as Vec2, p);
     let n0 = Vec2.dot(n, v0);
     let d0 = Vec2.dot(d, v0);
     let w0 = new Vec2(0, 0);

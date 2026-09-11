@@ -884,7 +884,9 @@ export class SequenceMode extends BaseMode {
 
     selections.forEach((selectionRange) => {
       const selectionStartTwoStrandedNode = selectionRange[0].node;
-      const selectionEndTwoStrandedNode = selectionRange.at(-1).node;
+      const selectionEndTwoStrandedNode = (
+        selectionRange.at(-1) as ITwoStrandedChainItem
+      ).node;
       const selectionStartNode = getNodeFromTwoStrandedNode(
         selectionStartTwoStrandedNode,
         strandType,

@@ -835,7 +835,7 @@ export class SequenceRenderer {
   public static get isCurrentCaretAtLastInFullRow(): boolean {
     const currentNode = this.currentEdittingNode;
     const currentRow = this.currentChainRow;
-    const lastNodeInRow = currentRow.at(-1);
+    const lastNodeInRow = currentRow.at(-1) as (typeof currentRow)[number];
 
     return (
       Boolean(currentNode) &&
@@ -853,7 +853,8 @@ export class SequenceRenderer {
     }
 
     if (this.isCurrentCaretAtLastInFullRow) {
-      const lastNodeInRow = this.currentChainRow.at(-1);
+      const lastNodeInRow = this.currentChainRow.at(-1) as
+        (typeof this.currentChainRow)[number] | undefined;
 
       if (!lastNodeInRow) {
         return;
@@ -889,7 +890,8 @@ export class SequenceRenderer {
       this.moveCaretBack();
 
       if (this.isCurrentCaretAtLastInFullRow) {
-        const lastNodeInRow = this.currentChainRow.at(-1);
+        const lastNodeInRow = this.currentChainRow.at(-1) as
+          (typeof this.currentChainRow)[number] | undefined;
 
         if (!lastNodeInRow) {
           return;
@@ -929,7 +931,7 @@ export class SequenceRenderer {
 
     const currentRow = this.currentChainRow;
     const currentNodeIndexInRow = currentRow.indexOf(currentEdittingNode);
-    const lastNodeInRow = currentRow.at(-1);
+    const lastNodeInRow = currentRow.at(-1) as (typeof currentRow)[number];
 
     if (!lastNodeInRow) {
       return;
@@ -1008,15 +1010,19 @@ export class SequenceRenderer {
   }
 
   public static getLastNonEmptyNode(chain: Chain) {
-    const subChainBeforeLast = chain.subChains.at(-2);
+    const subChainBeforeLast = chain.subChains.at(-2) as
+      (typeof chain.subChains)[number] | undefined;
 
-    return subChainBeforeLast.nodes.at(-1);
+    return subChainBeforeLast.nodes.at(-1) as
+      (typeof subChainBeforeLast.nodes)[number] | undefined;
   }
 
   public static getLastNode(chain: Chain) {
-    const lastSubChain = chain.subChains.at(-1);
+    const lastSubChain = chain.subChains.at(-1) as
+      (typeof chain.subChains)[number] | undefined;
 
-    return lastSubChain.nodes.at(-1);
+    return lastSubChain.nodes.at(-1) as
+      (typeof lastSubChain.nodes)[number] | undefined;
   }
 
   public static get nextNode() {

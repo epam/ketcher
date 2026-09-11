@@ -313,7 +313,7 @@ export class ViewModel {
     for (let i = 0; i < angles.length - 1; ++i) {
       largeAngles.push(angles[(i + 1) % angles.length] - angles[i]);
     }
-    largeAngles.push(angles[0] - angles.at(-1) + 2 * Math.PI);
+    largeAngles.push(angles[0] - (angles.at(-1) as number) + 2 * Math.PI);
     let largestAngle = 0;
     let neighborAngle = -Math.PI / 2;
     for (let i = 0; i < angles.length; ++i) {

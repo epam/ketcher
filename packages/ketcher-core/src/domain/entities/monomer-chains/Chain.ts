@@ -172,7 +172,7 @@ export class Chain {
   }
 
   public get lastSubChain() {
-    return this.subChains.at(-1);
+    return this.subChains.at(-1) as (typeof this.subChains)[number];
   }
 
   public get nodes() {
@@ -194,7 +194,7 @@ export class Chain {
     if (this.lastNode instanceof EmptySequenceNode) {
       const nodes = this.nodes;
 
-      return nodes.at(-2);
+      return nodes.at(-2) as (typeof nodes)[number];
     } else {
       return this.lastNode;
     }

@@ -1,9 +1,52 @@
 import { ServerFormatter } from 'application/formatters/serverFormatter';
 import { SupportedFormat } from 'application/formatters/structFormatter.types';
+import { ketcherProvider } from 'application/ketcherProvider';
 import type { StructService } from 'domain/services';
 import type { KetSerializer } from 'domain/serializers/ket/ketSerializer';
+import { pickStandardServerOptions } from 'infrastructure/services/struct/remoteStructService';
+
+describe('pickStandardServerOptions', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('passes the SMILES saving format to Indigo services', () => {
+    jest.spyOn(ketcherProvider, 'getKetcher').mockReturnValue({
+      editor: { options: () => ({ ignoreChiralFlag: false }) },
+    } as never);
+
+    expect(
+      pickStandardServerOptions('ketcher-id', {
+        'smiles-saving-format': 'daylight',
+      }),
+    ).toMatchObject({ 'smiles-saving-format': 'daylight' });
+  });
+});
 
 describe('ServerFormatter', () => {
+  it('requests Daylight output when saving SMILES', async () => {
+    const convert = jest.fn().mockResolvedValue({ struct: 'C1=CC=CC=C1' });
+    const structService = {
+      convert,
+      layout: jest.fn(),
+    } as unknown as StructService;
+    const ketSerializer = {
+      serialize: jest.fn().mockReturnValue('{}'),
+    } as unknown as KetSerializer;
+    const formatter = new ServerFormatter(
+      structService,
+      ketSerializer,
+      SupportedFormat.smiles,
+    );
+
+    await formatter.getStringFromStructureAsync({} as never);
+
+    expect(convert).toHaveBeenCalledWith(
+      expect.objectContaining({ output_format: 'chemical/x-daylight-smiles' }),
+      expect.objectContaining({ 'smiles-saving-format': 'daylight' }),
+    );
+  });
+
   it('uses convert (not layout) for IDT input', () => {
     const convert = jest.fn();
     const layout = jest.fn();

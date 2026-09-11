@@ -177,6 +177,7 @@ export function pickStandardServerOptions(
       options?.['mass-skip-error-on-pseudoatoms'],
     'gross-formula-add-rsites': options?.['gross-formula-add-rsites'],
     'gross-formula-add-isotopes': options?.['gross-formula-add-isotopes'],
+    'smiles-saving-format': options?.['smiles-saving-format'],
     'ignore-no-chiral-flag': ketcherInstance.editor.options().ignoreChiralFlag,
     'aromatize-skip-superatoms': true,
     'valence-mode': options?.['valence-mode'],

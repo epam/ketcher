@@ -301,11 +301,18 @@ export function setExpandMonomerSGroup(
   const sGroupHeight = sGroupBBox.p1.y - sGroupBBox.p0.y;
 
   // sGroup.pp is the contracted-label anchor, set at load time. The atom
-  // positions in the struct may not be centered there (coordinate-system
-  // mismatch between macro and micro modes). Fix both directions:
+  // positions in the struct may not be centered there when a macro KET file is
+  // loaded in Molecules mode: the monomer.position in the KET is a macro-canvas
+  // coordinate while the template atoms carry micro-canvas coordinates, so the
+  // two can be far apart.
   //
-  // EXPAND: move the sgroup's atoms so their bounding-box center lands on
-  //   sGroup.pp, making the expanded structure appear where the label was.
+  // EXPAND: if the label is significantly far from the atom bounding-box center
+  //   (indicative of a cross-mode coordinate mismatch), move the atoms so their
+  //   center lands on sGroup.pp, making the expanded structure appear where the
+  //   label was.  Small deltas (< 10 units) are ignored — they arise from the
+  //   natural offset between the macro label and micro atom coordinates in
+  //   freshly-loaded KET files and centering them would push large structures
+  //   outside the visible canvas area.
   // COLLAPSE: move sGroup.pp to the current atom bounding-box center, so
   //   the label reappears at the center of the expanded structure.
   const currentPp = sGroup.pp;
@@ -314,9 +321,15 @@ export function setExpandMonomerSGroup(
     (sGroupBBox.p0.y + sGroupBBox.p1.y) / 2,
   );
 
+  // Squared-distance threshold (10 units²×10 = 100) to detect a real
+  // macro-micro coordinate mismatch vs. a small natural offset.
+  const CENTERING_DISTANCE_THRESHOLD_SQ = 100;
+
   if (attrs.expanded && currentPp) {
     const centeringDelta = currentPp.sub(atomsBBoxCenter);
-    if (centeringDelta.x !== 0 || centeringDelta.y !== 0) {
+    const distanceSq =
+      centeringDelta.x * centeringDelta.x + centeringDelta.y * centeringDelta.y;
+    if (distanceSq > CENTERING_DISTANCE_THRESHOLD_SQ) {
       sGroupAtoms.forEach((aid) => {
         action.addOp(new AtomMove(aid, centeringDelta));
       });

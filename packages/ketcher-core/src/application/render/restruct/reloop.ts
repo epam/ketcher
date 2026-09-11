@@ -192,7 +192,7 @@ class ReLoop extends ReObject {
     const { halfBonds } = struct;
     return this.loop.hbs.every((halfBondId) => {
       const halfBond = halfBonds.get(halfBondId);
-      return halfBond !== undefined && halfBond.loop === rlid;
+      return halfBond?.loop === rlid;
     });
   }
 }

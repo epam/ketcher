@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -55,6 +54,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
 
   const setServerRef = useRef<(structService: StructService) => void>(() => {});
   const structServiceProvider = props.structServiceProvider;
+  const ketcherId = props.ketcherId;
 
   const rootElRef = useRef<HTMLDivElement>(null);
 
@@ -63,39 +63,48 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   });
 
   useEffect(() => {
-    if (!props.ketcherId) {
+    if (!ketcherId) {
       return;
     }
     ketcherBuilderRef.current?.reinitializeApi(
-      props.ketcherId,
-      props.structServiceProvider,
+      ketcherId,
+      structServiceProvider,
       setServerRef.current,
     );
+    // ketcherId is intentionally omitted because changing it after initialization
+    // should not trigger reinitializeApi. The API should only be reinitialized when
+    // structServiceProvider changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [structServiceProvider]);
 
-  const initKetcher = async () => {
-    appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
-
-    initPromiseRef.current = init({
-      ...props,
-      element: rootElRef.current,
-      appRoot: appRootRef.current,
-    });
-
-    initPromiseRef.current?.then(({ ketcher, cleanup, builder, setServer }) => {
-      cleanupRef.current = cleanup;
-      ketcherBuilderRef.current = builder;
-      setServerRef.current = setServer;
-      props.onSetKetcherId?.(ketcher.id);
-
-      if (typeof props.onInit === 'function' && ketcher) {
-        props.onInit(ketcher);
-        const ketcherInitEvent = new Event(ketcherInitEventName(ketcher.id));
-        window.dispatchEvent(ketcherInitEvent);
-      }
-    });
-  };
   useEffect(() => {
+    const initKetcher = async () => {
+      appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
+
+      initPromiseRef.current = init({
+        ...props,
+        element: rootElRef.current,
+        appRoot: appRootRef.current,
+      });
+
+      initPromiseRef.current?.then(
+        ({ ketcher, cleanup, builder, setServer }) => {
+          cleanupRef.current = cleanup;
+          ketcherBuilderRef.current = builder;
+          setServerRef.current = setServer;
+          props.onSetKetcherId?.(ketcher.id);
+
+          if (typeof props.onInit === 'function' && ketcher) {
+            props.onInit(ketcher);
+            const ketcherInitEvent = new Event(
+              ketcherInitEventName(ketcher.id),
+            );
+            window.dispatchEvent(ketcherInitEvent);
+          }
+        },
+      );
+    };
+
     if (initPromiseRef.current === null) {
       initKetcher();
     } else {
@@ -111,6 +120,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       });
     };
     // TODO: provide the list of dependencies after implementing unsubscribe function
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

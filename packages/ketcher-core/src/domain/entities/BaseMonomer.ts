@@ -126,7 +126,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     bond: MonomerBond,
   ): AttachmentPointName | undefined {
     if (bond instanceof HydrogenBond) {
-      return this.hydrogenBonds.find((hydrogenBond) => hydrogenBond === bond)
+      return this.hydrogenBonds.some((hydrogenBond) => hydrogenBond === bond)
         ? AttachmentPointName.HYDROGEN
         : undefined;
     }

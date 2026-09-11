@@ -129,9 +129,11 @@ export const calculateBondPreviewPosition = (
   const canvasWrapperBoundingClientRect = ZoomTool.instance?.canvasWrapper
     .node()
     ?.getBoundingClientRect();
-  const canvasWrapperBottom = canvasWrapperBoundingClientRect?.bottom ?? 0;
-  const canvasWrapperTop = canvasWrapperBoundingClientRect?.top ?? 0;
-  const canvasWrapperRight = canvasWrapperBoundingClientRect?.right ?? 0;
+  const ketcherEditorRoot = document.querySelector(
+    KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+  );
+  const ketcherEditorRootBoundingClientRect =
+    ketcherEditorRoot?.getBoundingClientRect();
 
   assert(firstMonomerCoordinates);
   assert(secondMonomerCoordinates);
@@ -157,6 +159,32 @@ export const calculateBondPreviewPosition = (
     secondMonomerCoordinates.bottom,
   );
 
+  return calculateBondPreviewPositionByCoordinates(
+    { left, top, right, bottom },
+    canvasWrapperBoundingClientRect,
+    ketcherEditorRootBoundingClientRect,
+  );
+};
+
+type RectCoordinates = Pick<DOMRect, 'left' | 'top' | 'right' | 'bottom'>;
+
+export function calculateBondPreviewPositionByCoordinates(
+  bondWithMonomersCoordinates: RectCoordinates,
+  canvasWrapperCoordinates?: RectCoordinates,
+  ketcherRootCoordinates?: RectCoordinates,
+): PreviewStyle {
+  const { left, top, right, bottom } = bondWithMonomersCoordinates;
+  const canvasWrapperTop = canvasWrapperCoordinates?.top ?? 0;
+  const canvasWrapperBottom = canvasWrapperCoordinates?.bottom ?? 0;
+  const canvasWrapperLeft = canvasWrapperCoordinates?.left ?? 0;
+  const canvasWrapperRight = canvasWrapperCoordinates?.right ?? 0;
+  const ketcherRootTop = ketcherRootCoordinates?.top ?? 0;
+  const ketcherRootLeft = ketcherRootCoordinates?.left ?? 0;
+  const horizontalBoundaryLeft =
+    ketcherRootCoordinates?.left ?? canvasWrapperLeft;
+  const horizontalBoundaryRight =
+    ketcherRootCoordinates?.right ?? canvasWrapperRight;
+
   const width = right - left;
   const height = bottom - top;
 
@@ -165,7 +193,12 @@ export const calculateBondPreviewPosition = (
   if (width > height) {
     const leftValue = left + width / 2;
     let topValue: number;
-    if (top + canvasWrapperTop > preview.height) {
+    const spaceAbove = top - canvasWrapperTop;
+    const spaceBelow = canvasWrapperBottom - bottom;
+    if (
+      spaceAbove >= preview.heightForBond + preview.gap ||
+      spaceAbove >= spaceBelow
+    ) {
       topValue = top - preview.heightForBond - preview.gap;
     } else {
       topValue = bottom + preview.gap;
@@ -173,41 +206,46 @@ export const calculateBondPreviewPosition = (
 
     let horizontalTranslate = '0';
 
-    if (leftValue + preview.width > canvasWrapperRight) {
+    if (leftValue + preview.widthForBond / 2 > canvasWrapperRight) {
       horizontalTranslate = '-100%';
-    } else if (leftValue > preview.width / 2) {
+    } else if (leftValue - preview.widthForBond / 2 >= canvasWrapperLeft) {
       horizontalTranslate = '-50%';
     }
 
     style = {
-      top: `${topValue}px`,
-      left: `${leftValue}px`,
+      top: `${topValue - ketcherRootTop}px`,
+      left: `${leftValue - ketcherRootLeft}px`,
       transform: `translate(${horizontalTranslate}, 0)`,
     };
   } else {
     const topValue = top + height / 2;
     let leftValue: number;
-    if (left > preview.widthForBond + preview.gap) {
+    const spaceOnLeft = left - horizontalBoundaryLeft;
+    const spaceOnRight = horizontalBoundaryRight - right;
+    if (
+      spaceOnLeft >= preview.widthForBond + preview.gap ||
+      spaceOnLeft >= spaceOnRight
+    ) {
       leftValue = left - preview.widthForBond / 2 - preview.gap;
     } else {
       leftValue = right + preview.widthForBond / 2 + preview.gap;
     }
 
-    const horizontalTranslate = leftValue > preview.width / 2 ? '-50%' : '0';
+    const horizontalTranslate = '-50%';
     let verticalTranslate = '0';
 
-    if (topValue + preview.height / 2 > canvasWrapperBottom) {
+    if (topValue + preview.heightForBond / 2 > canvasWrapperBottom) {
       verticalTranslate = '-100%';
-    } else if (topValue > preview.height / 2) {
+    } else if (topValue - preview.heightForBond / 2 >= canvasWrapperTop) {
       verticalTranslate = '-50%';
     }
 
     style = {
-      top: `${topValue}px`,
-      left: `${leftValue}px`,
+      top: `${topValue - ketcherRootTop}px`,
+      left: `${leftValue - ketcherRootLeft}px`,
       transform: `translate(${horizontalTranslate}, ${verticalTranslate})`,
     };
   }
 
   return style;
-};
+}

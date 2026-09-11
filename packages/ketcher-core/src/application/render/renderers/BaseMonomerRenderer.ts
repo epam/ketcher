@@ -89,12 +89,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     // as getBoundingClientRect() and getBBox() return 0 values in Firefox
     // in this case (<path> inside <symbol>, <defs>)
     this.monomerSize = {
-      width: +(
-        this.monomerSymbolElement?.getAttribute('data-actual-width') ?? 0
-      ),
-      height: +(
-        this.monomerSymbolElement?.getAttribute('data-actual-height') ?? 0
-      ),
+      width: +(this.monomerSymbolElement?.dataset.actualWidth ?? 0),
+      height: +(this.monomerSymbolElement?.dataset.actualHeight ?? 0),
     };
     setMonomerSize(this.monomerSize);
   }

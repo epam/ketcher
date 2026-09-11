@@ -311,13 +311,10 @@ export class ReMultitailArrow extends ReObject {
         spineMoveSelectionPoint = element;
       }
       if (element.node?.setAttribute) {
-        element.node.setAttribute('data-testid', key);
+        element.node.dataset.testid = key;
         element.node.setAttribute('pointer-events', 'all');
         if (typeof this.multitailArrow.arrowId === 'number') {
-          element.node.setAttribute(
-            'data-arrow-id',
-            String(this.multitailArrow.arrowId),
-          );
+          element.node.dataset.arrowId = String(this.multitailArrow.arrowId);
         }
       }
       selectionPoints.push(element);
@@ -342,10 +339,7 @@ export class ReMultitailArrow extends ReObject {
       .attr({ ...options.selectionStyle });
 
     if (typeof this.multitailArrow.arrowId === 'number') {
-      paths.node?.setAttribute(
-        'data-arrow-id',
-        String(this.multitailArrow.arrowId),
-      );
+      paths.node.dataset.arrowId = String(this.multitailArrow.arrowId);
     }
 
     selectionSet.push(paths);
@@ -388,17 +382,11 @@ export class ReMultitailArrow extends ReObject {
 
     const path = reStruct.render.paper.path(pathBuilder.build());
     const header = reStruct.render.paper.path(headPathBuilder.build());
-    path.node?.setAttribute('data-testid', RXN_ARROW_TEST_ID);
-    path.node?.setAttribute('data-arrowtype', MULTITAIL_ARROW_TEST_ID);
+    path.node.dataset.testid = RXN_ARROW_TEST_ID;
+    path.node.dataset.arrowtype = MULTITAIL_ARROW_TEST_ID;
     if (typeof this.multitailArrow.arrowId === 'number') {
-      path.node?.setAttribute(
-        'data-arrow-id',
-        String(this.multitailArrow.arrowId),
-      );
-      header.node?.setAttribute(
-        'data-arrow-id',
-        String(this.multitailArrow.arrowId),
-      );
+      path.node.dataset.arrowId = String(this.multitailArrow.arrowId);
+      header.node.dataset.arrowId = String(this.multitailArrow.arrowId);
     }
     path.attr(renderOptions.lineattr);
     header.attr({

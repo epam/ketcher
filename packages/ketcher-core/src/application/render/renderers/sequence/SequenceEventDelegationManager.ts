@@ -81,7 +81,7 @@ export class SequenceEventDelegationManager {
   }
 
   private getElementType(target: SVGElement): ElementType | null {
-    const dataType = target.getAttribute('data-element-type');
+    const dataType = target.dataset.elementType;
     if (
       dataType === 'text' ||
       dataType === 'background' ||
@@ -97,8 +97,8 @@ export class SequenceEventDelegationManager {
       if (parentGroup) return 'spacer';
       return 'background';
     }
-    if (tagName === 'g' && target.hasAttribute('data-element-type')) {
-      return target.getAttribute('data-element-type') as ElementType;
+    if (tagName === 'g' && target.dataset.elementType !== undefined) {
+      return target.dataset.elementType as ElementType;
     }
 
     return null;

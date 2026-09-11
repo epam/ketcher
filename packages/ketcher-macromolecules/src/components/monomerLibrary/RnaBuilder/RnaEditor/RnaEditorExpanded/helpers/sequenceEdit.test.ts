@@ -18,7 +18,6 @@ describe('generateSequenceSelectionName', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 0,
         hasR1Connection: false,
-        hasAntisense: false,
         strandType: STRAND_TYPE.SENSE,
       },
     ];
@@ -40,7 +39,6 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 0,
         hasR1Connection: false,
-        hasAntisense: false,
         strandType: STRAND_TYPE.SENSE,
       },
     ];
@@ -60,7 +58,6 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 0,
         hasR1Connection: false,
-        hasAntisense: false,
         strandType: STRAND_TYPE.SENSE,
       },
       {
@@ -70,7 +67,6 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 1,
         hasR1Connection: true,
-        hasAntisense: false,
         strandType: STRAND_TYPE.SENSE,
       },
     ];
@@ -90,7 +86,6 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 0,
         hasR1Connection: false,
-        hasAntisense: false,
         strandType: STRAND_TYPE.SENSE,
       },
       {
@@ -100,7 +95,6 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 1,
         hasR1Connection: true,
-        hasAntisense: false,
         strandType: STRAND_TYPE.SENSE,
       },
     ];
@@ -120,7 +114,6 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 1,
         isNucleosideConnectedAndSelectedWithPhosphate: true,
         hasR1Connection: true,
-        hasAntisense: false,
         strandType: STRAND_TYPE.SENSE,
       },
       {
@@ -128,7 +121,6 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 2,
         hasR1Connection: true,
-        hasAntisense: false,
         strandType: STRAND_TYPE.SENSE,
       },
     ];
@@ -146,7 +138,6 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 1,
         hasR1Connection: true,
-        hasAntisense: false,
         strandType: STRAND_TYPE.SENSE,
       },
       {
@@ -156,7 +147,6 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 2,
         isNucleosideConnectedAndSelectedWithPhosphate: false,
         hasR1Connection: true,
-        hasAntisense: false,
         strandType: STRAND_TYPE.SENSE,
       },
     ];
@@ -176,7 +166,6 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 0,
         hasR1Connection: false,
-        hasAntisense: true,
         strandType: STRAND_TYPE.SENSE,
         isInSelectedAntisensePair: true,
       },
@@ -187,7 +176,6 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 1,
         hasR1Connection: false,
-        hasAntisense: true,
         strandType: STRAND_TYPE.SENSE,
         isInSelectedAntisensePair: true,
       },
@@ -209,7 +197,6 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 0,
         hasR1Connection: false,
-        hasAntisense: true,
         strandType: STRAND_TYPE.SENSE,
         isInSelectedAntisensePair: true,
       },
@@ -231,7 +218,6 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 0,
         hasR1Connection: false,
-        hasAntisense: false,
         strandType: STRAND_TYPE.SENSE,
         isInSelectedAntisensePair: false,
       },
@@ -242,7 +228,6 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 1,
         hasR1Connection: false,
-        hasAntisense: false,
         strandType: STRAND_TYPE.SENSE,
         isInSelectedAntisensePair: false,
       },

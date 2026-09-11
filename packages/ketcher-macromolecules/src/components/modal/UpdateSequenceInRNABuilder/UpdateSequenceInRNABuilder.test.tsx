@@ -35,7 +35,6 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
     sugarLabel: 'R',
     nodeIndexOverall: 0,
     hasR1Connection: false,
-    hasAntisense: false,
     strandType: STRAND_TYPE.SENSE,
   };
 

@@ -2613,10 +2613,6 @@ export class SequenceMode extends BaseMode {
     const selections = SequenceRenderer.selections;
 
     if (selections.length > 0) {
-      if (this.isSelectionsContainAntisenseChains(selections)) {
-        return;
-      }
-
       const missingAttachmentPoint = this.getFirstMissingAttachmentPoint(
         selections,
         monomerItem,

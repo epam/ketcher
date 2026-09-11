@@ -181,6 +181,13 @@ describe('duplex traversal', () => {
     ]);
     expect(isSelectedAntisensePair(senseBase)).toBe(true);
   });
+
+  it('reports a pair as not selected when only one side is selected', () => {
+    const { senseBase } = buildDuplex(editor, 'A');
+    editor.drawingEntitiesManager.selectDrawingEntities([senseBase]);
+
+    expect(isSelectedAntisensePair(senseBase)).toBe(false);
+  });
 });
 
 describe('createMirroredBaseCommand', () => {

@@ -59,6 +59,7 @@ import {
   getHydrogenBondedPartner,
   getMonomerNaturalAnalogue,
   isBaseEligibleForDuplexSync,
+  isSelectedAntisensePair,
 } from 'domain/helpers/antisenseBaseSync';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
@@ -2269,6 +2270,33 @@ export class SequenceMode extends BaseMode {
     const editor = provideEditorInstance();
     const history = EditorHistory.getInstance(editor);
     const modelChanges = new Command();
+
+    const isBaseReplacement =
+      monomerItem.props?.MonomerClass === KetMonomerClass.Base;
+    const hasSelectedAntisensePair = selections.some((selectionRange) =>
+      selectionRange.some((nodeSelection) => {
+        const nodeToReplace = getNodeForStrand(
+          nodeSelection.node,
+          getSelectedStrandType(nodeSelection.node),
+        );
+
+        const editedBase =
+          nodeToReplace instanceof Nucleotide ||
+          nodeToReplace instanceof Nucleoside
+            ? nodeToReplace.rnaBase
+            : undefined;
+
+        return isSelectedAntisensePair(editedBase);
+      }),
+    );
+
+    if (isBaseReplacement && hasSelectedAntisensePair && this.isSyncEditMode) {
+      editor.events.error.dispatch(
+        'Modification of bases is disabled in sync mode when both the sense and antisense strands are selected. Go to non-sync mode for base modification.',
+      );
+
+      return;
+    }
 
     selections.forEach((selectionRange) => {
       const strandType = getSelectedStrandType(selectionRange[0].node);

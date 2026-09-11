@@ -80,27 +80,3 @@ What goes where:
 - Completed change specs → move from `specs/active/` to `specs/archived/`
 
 Do **not** put implementation details (function names, file paths, variable names) into `features/` or `domain.md`. Those belong in `modules/` or code comments.
-
----
-
-## OpenSpec
-
-This project uses [OpenSpec](https://openspec.dev) for spec-driven development. The `openspec/` directory contains changes (proposals, specs, design, tasks) and main specs.
-
-OpenSpec changes go through: **propose → implement → archive**
-
-- Run `/opsx:propose` to start a new change
-- Run `/opsx:apply` to implement tasks
-- Run `/opsx:archive` to archive a completed change
-
-When archiving a change, also update the memory bank as described above.
-
-
-### Additional rules for opsx:apply
-- Only update the memory bank when archiving a change. Do not update it for proposals or specs in progress.
-- When completeing tasks then mark them as done one by one to not lose track of what has been done and what is left to do. Do not mark all tasks as done at once at the end.
-- Before starting writing e2e playwrite tests always ask to proceed, to ensure that context is not overloaded.
-- Before writing e2e playwrite tests read the testing.md file in the memory bank to understand the test strategy and existing test coverage.
-
-### Additional rules for opsx:archive
-- When updating any of the memory bank files, use the format described in the "File format details" section above.

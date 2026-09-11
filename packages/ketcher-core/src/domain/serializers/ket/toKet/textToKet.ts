@@ -194,7 +194,7 @@ export function textToKet(textNode) {
 
             return part;
           })
-          .filter((p: KETTextPart | null): p is KETTextPart => Boolean(p));
+          .filter(Boolean) as KETTextPart[];
 
         return paraObj;
       },

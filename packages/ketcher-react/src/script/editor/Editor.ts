@@ -3803,7 +3803,7 @@ function useToolIfNeeded(
     isContextMenuClosed(editor.contextMenu),
   ];
 
-  if (conditions.every((condition) => condition)) {
+  if (conditions.every(Boolean)) {
     editorTool[eventHandlerName]?.(event);
     return true;
   }

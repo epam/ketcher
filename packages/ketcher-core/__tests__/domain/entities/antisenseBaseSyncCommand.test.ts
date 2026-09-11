@@ -15,6 +15,7 @@ import {
   isSelectedAntisensePair,
 } from 'domain/helpers/antisenseBaseSync';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
+import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMonomer';
 import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
@@ -475,6 +476,26 @@ describe('createMirroredBaseCommand', () => {
 
     // Plain complement, not a modified one: the modification is gone.
     expect(antisenseBase.label).toBe('U');
+  });
+
+  it('finds the partner through the replacement when the edited base is ambiguous', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    const ambiguousItem = editor.monomersLibrary.find(
+      (item) => 'isAmbiguous' in item && item.isAmbiguous && item.label === 'N',
+    );
+
+    if (!ambiguousItem) {
+      throw new Error('Ambiguous library item N not found');
+    }
+
+    const command = replaceMonomer(
+      editor.drawingEntitiesManager,
+      senseBase,
+      ambiguousItem,
+    );
+
+    expect(command).toBeDefined();
+    expect(antisenseBase.hydrogenBonds).toHaveLength(1);
   });
 
   it('is reverted by inverting the returned command', () => {

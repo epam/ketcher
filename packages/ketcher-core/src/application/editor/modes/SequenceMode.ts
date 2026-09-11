@@ -54,6 +54,10 @@ import {
 } from 'domain/entities/monomer-chains/ChainsCollection';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMonomer';
+import {
+  createMirroredBaseCommand,
+  getMonomerNaturalAnalogue,
+} from 'domain/helpers/antisenseBaseSync';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
@@ -385,24 +389,41 @@ export class SequenceMode extends BaseMode {
         }
         // Update Base monomerItem object
         if (nodeToModify.rnaBase && baseMonomerItem) {
+          const editedBase = nodeToModify.rnaBase;
+          const previousNaturalAnalogue = getMonomerNaturalAnalogue(editedBase);
+
           if (
-            nodeToModify.rnaBase.monomerItem.isAmbiguous ||
+            editedBase.monomerItem.isAmbiguous ||
             baseMonomerItem.isAmbiguous
           ) {
             modelChanges.merge(
               replaceMonomer(
                 editor.drawingEntitiesManager,
-                nodeToModify.rnaBase,
+                editedBase,
                 baseMonomerItem,
               ),
             );
           } else {
             modelChanges.merge(
               editor.drawingEntitiesManager.modifyMonomerItem(
-                nodeToModify.rnaBase,
+                editedBase,
                 baseMonomerItem,
               ),
             );
+          }
+
+          const mirroredBaseCommand = createMirroredBaseCommand({
+            drawingEntitiesManager: editor.drawingEntitiesManager,
+            editedBase,
+            previousNaturalAnalogue,
+            newBaseMonomerItem: baseMonomerItem,
+            needToEditAntisense: this.needToEditAntisense,
+            resolveBaseLibraryItem: (label) =>
+              getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
+          });
+
+          if (mirroredBaseCommand) {
+            modelChanges.merge(mirroredBaseCommand);
           }
         }
       }

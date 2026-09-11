@@ -379,4 +379,76 @@ describe('antisense chain direction', () => {
     // A single undo reverts both the library replacement and its mirror.
     expect(antisenseNucleotides[1].rnaBase.label).toBe('G');
   });
+
+  it('mirrors every paired base when a multi-node sense range is replaced via the library in one call (regression for #6595)', () => {
+    const mode = new SequenceMode();
+    const { senseNucleotides, antisenseNucleotides } =
+      buildFourNucleotideDuplex(editor);
+
+    // senseNucleotides[1] ('C') and [2] ('G') are adjacent and paired with
+    // antisenseNucleotides[1] ('G') and [2] ('C') respectively. Both are
+    // replaced by the SAME library item in one call, so this proves the
+    // mirror runs independently for every node in the range using that
+    // node's own captured partner/eligibility, not just the first one (a
+    // single shared/stale value would either no-op or misattribute the
+    // update on the second node).
+    editor.drawingEntitiesManager.selectDrawingEntities([
+      ...senseNucleotides[1].monomers,
+      ...senseNucleotides[2].monomers,
+    ]);
+
+    const selections = SequenceRenderer.selections;
+
+    expect(selections).toHaveLength(1);
+    expect(selections[0]).toHaveLength(2);
+    expect(antisenseNucleotides[1].rnaBase.label).toBe('G');
+    expect(antisenseNucleotides[2].rnaBase.label).toBe('C');
+
+    const replacementItem = findLibraryItemByAlias(editor, '2-damdA');
+
+    callReplaceSelectionsWithMonomer(mode, selections, replacementItem);
+
+    // Both sense nodes became 'A' (2-damdA's natural analogue), so BOTH
+    // paired antisense bases must become 'U', not just the first one
+    // touched in the loop.
+    expect(antisenseNucleotides[1].rnaBase.label).toBe('U');
+    expect(antisenseNucleotides[2].rnaBase.label).toBe('U');
+  });
+
+  it('mirrors every paired base when a multi-node antisense range is replaced via the library in one call, exercising the reversed chain-order loop (regression for #6595)', () => {
+    const mode = new SequenceMode();
+    const { senseNucleotides, antisenseNucleotides } =
+      buildFourNucleotideDuplex(editor);
+
+    // Selecting antisenseNucleotides[1] and [2] together is the same
+    // selection used by the "replaces two adjacent mid-strand antisense
+    // nodes" structural test above, precisely because the antisense chain
+    // runs opposite to display order: chain-wise, [2] is visited BEFORE [1]
+    // by replaceSelectionsWithMonomer's reversed loop. That is exactly the
+    // case Task 6 found broken for the backbone carry, so it is the case
+    // most likely to expose a mirror that only works for the
+    // first-visited node (chain-wise [2]) and silently skips or
+    // misattributes the second (chain-wise [1]).
+    editor.drawingEntitiesManager.selectDrawingEntities([
+      ...antisenseNucleotides[1].monomers,
+      ...antisenseNucleotides[2].monomers,
+    ]);
+
+    const selections = SequenceRenderer.selections;
+
+    expect(selections).toHaveLength(1);
+    expect(selections[0]).toHaveLength(2);
+    expect(senseNucleotides[1].rnaBase.label).toBe('C');
+    expect(senseNucleotides[2].rnaBase.label).toBe('G');
+
+    const replacementItem = findLibraryItemByAlias(editor, '2-damdA');
+
+    callReplaceSelectionsWithMonomer(mode, selections, replacementItem);
+
+    // Both antisense nodes became 'A', so BOTH paired sense bases must
+    // become 'U' -- including senseNucleotides[1], the node visited SECOND
+    // by the reversed antisense loop.
+    expect(senseNucleotides[1].rnaBase.label).toBe('U');
+    expect(senseNucleotides[2].rnaBase.label).toBe('U');
+  });
 });

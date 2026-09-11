@@ -6,6 +6,7 @@ import { isTwoStrandedNodeRestrictedForHydrogenBondCreation } from './helpers';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
+  type TwoStrandedNodeSelection,
   type TwoStrandedNodesSelection,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
@@ -123,6 +124,42 @@ function getNodeForStrand(
   return strandType === STRAND_TYPE.ANTISENSE
     ? twoStrandedNode?.antisenseNode
     : twoStrandedNode?.senseNode;
+}
+
+/**
+ * Splits one selection range into maximal contiguous runs of positions that
+ * belong to the same strand.
+ *
+ * SequenceRenderer.selections starts a new range only when the PREVIOUS
+ * position was unselected; it never breaks on a strand change. So a single
+ * contiguous range can mix positions where the sense node is the selected
+ * one with positions where only the antisense node is -- an siRNA duplex
+ * with an antisense overhang selected end to end is one such range.
+ *
+ * Consumers that resolve a strand once per range (and, in the replacement
+ * loop, reverse iteration order and carry a "previous replaced node" across
+ * iterations on the strength of it) depend on one range being one strand.
+ * Splitting here restores that invariant by construction, so those consumers
+ * need no per-position strand handling of their own.
+ */
+function splitSelectionRangeByStrand(
+  selectionRange: TwoStrandedNodeSelection[],
+): TwoStrandedNodeSelection[][] {
+  const sameStrandRanges: TwoStrandedNodeSelection[][] = [];
+  let currentStrandType: STRAND_TYPE | undefined;
+
+  selectionRange.forEach((nodeSelection) => {
+    const strandType = getSelectedStrandType(nodeSelection.node);
+
+    if (strandType !== currentStrandType) {
+      sameStrandRanges.push([]);
+      currentStrandType = strandType;
+    }
+
+    sameStrandRanges[sameStrandRanges.length - 1].push(nodeSelection);
+  });
+
+  return sameStrandRanges;
 }
 
 export class SequenceMode extends BaseMode {
@@ -2299,7 +2336,15 @@ export class SequenceMode extends BaseMode {
       return;
     }
 
-    selections.forEach((selectionRange) => {
+    // A range coming out of SequenceRenderer.selections can mix strands, but
+    // the loop below resolves the strand once per range and carries state
+    // across its iterations, so it is run over one strand's worth of
+    // contiguous positions at a time.
+    const sameStrandSelectionRanges = selections.flatMap(
+      splitSelectionRangeByStrand,
+    );
+
+    sameStrandSelectionRanges.forEach((selectionRange) => {
       const strandType = getSelectedStrandType(selectionRange[0].node);
       const isAntisense = strandType === STRAND_TYPE.ANTISENSE;
       // Iteration must follow chain order, not display order, so that the

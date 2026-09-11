@@ -18,13 +18,13 @@
  ***************************************************************************/
 
 import {
+  BASE_MODIFICATION_DISABLED_IN_SYNC_MODE,
   buildRnaPresetConnections,
   Entities,
   getRnaPresetPhosphatePosition,
   RnaPhosphatePosition,
 } from 'ketcher-core';
 import { MonomerGroups } from 'src/constants';
-import { BASE_MODIFICATION_DISABLED_IN_SYNC_MODE } from 'src/constants/errors';
 import { GroupBlock } from './GroupBlock';
 import {
   ButtonsContainer,

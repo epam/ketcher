@@ -56,6 +56,7 @@ import {
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMonomer';
 import {
+  BASE_MODIFICATION_DISABLED_IN_SYNC_MODE,
   createMirroredBaseCommand,
   getHydrogenBondedPartner,
   getLibraryItemMonomerClass,
@@ -2329,9 +2330,7 @@ export class SequenceMode extends BaseMode {
     );
 
     if (isBaseReplacement && hasSelectedAntisensePair && this.isSyncEditMode) {
-      editor.events.error.dispatch(
-        'Modification of bases is disabled in sync mode when both the sense and antisense strands are selected. Go to non-sync mode for base modification.',
-      );
+      editor.events.error.dispatch(BASE_MODIFICATION_DISABLED_IN_SYNC_MODE);
 
       return;
     }

@@ -12,12 +12,10 @@ export default function useSaltsAndSolvents(
   saltsAndSolvents: Template[],
   filter: string,
 ) {
-  const [isFirstRender, setIsFirstRender] = useState(true);
   const timerId = useRef<null | ReturnType<typeof setTimeout>>(null);
   const [filteredSaltsAndSolvents, setFilteredSaltsAndSolvents] = useState(
     saltsAndSolvents[SALTS_AND_SOLVENTS],
   );
-
   const addToSaSWithBatches = useCallback(function addToSaSWithBatches(
     fullFilteredArray: Template[],
   ) {
@@ -36,24 +34,11 @@ export default function useSaltsAndSolvents(
       );
     }
   }, []);
-
   useEffect(() => {
     const filteredSaS =
       filterFGLib(saltsAndSolvents, filter)[SALTS_AND_SOLVENTS] ?? [];
     addToSaSWithBatches(filteredSaS);
-  }, [saltsAndSolvents, addToSaSWithBatches]);
-
-  useEffect(() => {
-    if (isFirstRender) {
-      setIsFirstRender(false);
-      return;
-    }
-    clearTimeout(timerId.current as unknown as number);
-    const filteredSaS = filterFGLib(saltsAndSolvents, filter)[
-      SALTS_AND_SOLVENTS
-    ];
-    setFilteredSaltsAndSolvents(filteredSaS);
-  }, [saltsAndSolvents, filter]);
+  }, [saltsAndSolvents, filter, addToSaSWithBatches]);
 
   return filteredSaltsAndSolvents;
 }

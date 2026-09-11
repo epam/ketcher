@@ -17,6 +17,19 @@ import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMo
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 /**
+ * The message shown when base modification is refused because both strands of
+ * a hydrogen-bonded pair are selected (rule 1.3 of epam/ketcher#6595). The
+ * wording is mandated verbatim by the issue -- do not reword, re-wrap or
+ * re-punctuate it.
+ *
+ * It lives here, rather than being duplicated in ketcher-macromolecules,
+ * because both the refusal guard in SequenceMode and the RNA builder's own
+ * guard must dispatch exactly the same text.
+ */
+export const BASE_MODIFICATION_DISABLED_IN_SYNC_MODE =
+  'Modification of bases is disabled in sync mode when both the sense and antisense strands are selected. Go to non-sync mode for base modification.';
+
+/**
  * Follows the existing convention in Nucleoside, Nucleotide and the sequence
  * item renderers: deoxyribose is recognized by an exact label match. Modified
  * DNA sugars are therefore not recognized, which is a documented limitation.

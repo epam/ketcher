@@ -34,7 +34,10 @@ export * from './application/utils';
 export * from './application/ketcherProvider';
 export * from './application/getStructure';
 export * from './domain/helpers/monomers';
-export { isSelectedAntisensePair } from './domain/helpers/antisenseBaseSync';
+export {
+  BASE_MODIFICATION_DISABLED_IN_SYNC_MODE,
+  isSelectedAntisensePair,
+} from './domain/helpers/antisenseBaseSync';
 
 export * from './utilities';
 export * from './types';

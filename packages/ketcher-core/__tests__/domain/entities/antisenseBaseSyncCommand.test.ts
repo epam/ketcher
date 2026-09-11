@@ -478,7 +478,7 @@ describe('createMirroredBaseCommand', () => {
     expect(antisenseBase.label).toBe('U');
   });
 
-  it('finds the partner through the replacement when the edited base is ambiguous', () => {
+  it('mirrors the paired base when the edited base was replaced (ambiguous branch), using the stale pre-replace reference', () => {
     const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
     const ambiguousItem = editor.monomersLibrary.find(
       (item) => 'isAmbiguous' in item && item.isAmbiguous && item.label === 'N',
@@ -488,14 +488,40 @@ describe('createMirroredBaseCommand', () => {
       throw new Error('Ambiguous library item N not found');
     }
 
-    const command = replaceMonomer(
-      editor.drawingEntitiesManager,
-      senseBase,
-      ambiguousItem,
-    );
+    // Mirrors the real call site: the partner and natural analogue are
+    // captured BEFORE the sense edit, exactly as modifySequenceInRnaBuilder
+    // does.
+    const previousNaturalAnalogue = senseBase.monomerItem.props
+      ?.MonomerNaturalAnalogCode as string | undefined;
+    const partnerBeforeEdit = getHydrogenBondedPartner(senseBase);
+
+    expect(partnerBeforeEdit).toBe(antisenseBase);
+
+    replaceMonomer(editor.drawingEntitiesManager, senseBase, ambiguousItem);
+
+    // senseBase is now stale: replaceMonomer deleted it and its bonds
+    // (including the R1 bond to its sugar and the hydrogen bond), so its own
+    // hydrogenBonds array is empty and it no longer reaches its sugar.
+    expect(senseBase.hydrogenBonds).toHaveLength(0);
+
+    const newBaseItem = resolveBaseLibraryItem('C');
+
+    if (!newBaseItem) {
+      throw new Error('Library item C not found');
+    }
+
+    const command = createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: senseBase,
+      previousNaturalAnalogue,
+      newBaseMonomerItem: newBaseItem,
+      needToEditAntisense: true,
+      resolveBaseLibraryItem,
+      partner: partnerBeforeEdit,
+    });
 
     expect(command).toBeDefined();
-    expect(antisenseBase.hydrogenBonds).toHaveLength(1);
+    expect(antisenseBase.label).toBe('G');
   });
 
   it('is reverted by inverting the returned command', () => {

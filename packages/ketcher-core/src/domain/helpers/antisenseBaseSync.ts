@@ -142,6 +142,23 @@ export function createMirroredBaseCommand(params: {
   newBaseMonomerItem: MonomerOrAmbiguousType;
   needToEditAntisense: boolean;
   resolveBaseLibraryItem: (label: string) => MonomerOrAmbiguousType | undefined;
+  /**
+   * The hydrogen-bonded partner of `editedBase`, captured by the caller
+   * BEFORE performing the sense-side edit. Required whenever that edit
+   * replaces or deletes `editedBase`'s underlying monomer instead of
+   * mutating it in place (the ambiguous-monomer replace branch here, and
+   * the library-replace path's node deletion): such an edit unsets every
+   * bond on the stale `editedBase` object, including its hydrogen bond and
+   * its own backbone connection, so neither the partner nor `editedBase`'s
+   * own eligibility can be re-derived from it afterwards.
+   *
+   * When supplied, this short-circuits `getHydrogenBondedPartner` AND skips
+   * re-checking `editedBase`'s own eligibility post-edit (the caller is
+   * asserting it held at the moment `partner` was captured, before the
+   * edit invalidated `editedBase`'s bonds). The partner's own eligibility
+   * is still checked, since the partner itself was not touched by the edit.
+   */
+  partner?: BaseMonomer;
 }): Command | undefined {
   const {
     drawingEntitiesManager,
@@ -150,6 +167,7 @@ export function createMirroredBaseCommand(params: {
     newBaseMonomerItem,
     needToEditAntisense,
     resolveBaseLibraryItem,
+    partner: partnerCapturedBeforeEdit,
   } = params;
 
   // Rule 2.1: non-sync mode never touches the opposite strand.
@@ -157,11 +175,12 @@ export function createMirroredBaseCommand(params: {
     return undefined;
   }
 
-  const partner = getHydrogenBondedPartner(editedBase);
+  const partner =
+    partnerCapturedBeforeEdit ?? getHydrogenBondedPartner(editedBase);
 
   if (
     !partner ||
-    !isBaseEligibleForDuplexSync(editedBase) ||
+    (!partnerCapturedBeforeEdit && !isBaseEligibleForDuplexSync(editedBase)) ||
     !isBaseEligibleForDuplexSync(partner)
   ) {
     return undefined;

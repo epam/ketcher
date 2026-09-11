@@ -32,6 +32,16 @@
   font-family: @Inter;
   color: @color-text-secondary;
   .transition-zoom;
+
+  &.draggable {
+    position: fixed;
+    transition: none;
+  }
+
+  &.dragging {
+    user-select: none;
+    cursor: move;
+  }
 }
 
 .header {
@@ -44,6 +54,11 @@
   color: @color-text-primary;
   font-weight: 500;
   padding: 12px;
+
+  &.draggableHeader {
+    cursor: move;
+    user-select: none;
+  }
 
   .btnContainer {
     flex-grow: 1;
@@ -60,6 +75,7 @@
     align-self: center;
     height: 16px;
     width: 16px;
+    cursor: pointer;
 
     .closeButton {
       height: 100%;

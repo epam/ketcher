@@ -85,8 +85,10 @@ export function identifyStructFormat(
   }
 
   const clearStr = sanitizedString
-    .replace(/\s/g, '')
-    .replace(/(\\r)|(\\n)/g, '');
+    .split(/\s+/)
+    .join('')
+    .replaceAll('\\r', '')
+    .replaceAll('\\n', '');
   const isBase64String =
     /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
   const cdxHeader = 'VjCD0100';

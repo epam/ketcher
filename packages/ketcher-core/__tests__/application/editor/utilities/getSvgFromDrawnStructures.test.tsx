@@ -50,7 +50,7 @@ describe('getSvgFromDrawnStructures', () => {
         <text>Label</text>
         <rect cursor="text"></rect>
         <g opacity="0.5"></g>
-        <g style="cursor: pointer;"></g>
+        <g style="stroke: #000; cursor: pointer; fill: none;"></g>
       </g>
     `;
 
@@ -84,8 +84,10 @@ describe('getSvgFromDrawnStructures', () => {
     // rect with cursor="text" should have attribute removed
     expect(result).not.toContain('cursor="text"');
 
-    // inline style 'cursor: pointer;' must be removed
+    // inline style 'cursor: pointer;' must be removed while preserving other style declarations
     expect(result).not.toContain('cursor: pointer;');
+    expect(result).toContain('stroke: #000;');
+    expect(result).toContain('fill: none;');
   });
 
   test('returns file SVG with numeric margin and includes xmlns', () => {

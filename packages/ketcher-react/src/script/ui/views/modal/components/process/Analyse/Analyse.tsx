@@ -62,7 +62,10 @@ type Props = AnalyseDialogProps & AnalyseDialogCallProps;
 
 function roundOff(value: string | number, round: number): string {
   if (typeof value === 'number') return value.toFixed(round);
-  return value.replace(/\d*\.\d+/g, (str) => (+str).toFixed(round));
+  return value
+    .split(/(\d*\.\d+)/)
+    .map((part, index) => (index % 2 === 1 ? (+part).toFixed(round) : part))
+    .join('');
 }
 
 const selectOptions = getSelectOptionsFromSchema({ enum: range(0, 8) });

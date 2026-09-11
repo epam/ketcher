@@ -65,7 +65,7 @@ class BondAdd extends BaseOperation {
       type: Bond.PATTERN.TYPE.SINGLE,
       begin: begin as number,
       end: end as number,
-      ...(bond ?? {}),
+      ...bond,
     };
     pp.type = pp.type || Bond.PATTERN.TYPE.SINGLE;
     pp.begin = begin as number;

@@ -74,12 +74,8 @@ function rectangleArrowHighlightAndSelection(
     `M${toFixed(start.x - wOffset)},${toFixed(start.y)}` +
     `L${toFixed(start.x - wOffset)},${toFixed(start.y - hOffset)}` +
     `L${toFixed(endX + wOffset)},${toFixed(start.y - hOffset)}` +
-    `L${toFixed(endX + wOffset)},${toFixed(
-      start.y + (!height ? hOffset : 0),
-    )}` +
-    `L${toFixed(start.x - wOffset)},${toFixed(
-      start.y + (!height ? hOffset : 0),
-    )}Z`;
+    `L${toFixed(endX + wOffset)},${toFixed(start.y + (height ? 0 : hOffset))}` +
+    `L${toFixed(start.x - wOffset)},${toFixed(start.y + (height ? 0 : hOffset))}Z`;
 
   return svgPath(path).rotate(angle, start.x, start.y).toString();
 }

@@ -1527,9 +1527,9 @@ for (const monomer of monomersToAdd) {
         await pasteFromClipboardAndAddToMacromoleculesCanvas(
           page,
           MacroFileType.HELM,
-          !sequence.Rotation
-            ? sequence.HELM
-            : (sequence.RightAnchoredHELM ?? ''),
+          sequence.Rotation
+            ? (sequence.RightAnchoredHELM ?? '')
+            : sequence.HELM,
         );
       }
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1546,7 +1546,7 @@ for (const monomer of monomersToAdd) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1603,7 +1603,7 @@ for (const monomer of monomersToAddWithEnter) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
       );
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
@@ -1619,7 +1619,7 @@ for (const monomer of monomersToAddWithEnter) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1675,7 +1675,7 @@ for (const monomer of monomersToAddWithEnter) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
       );
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
@@ -1691,7 +1691,7 @@ for (const monomer of monomersToAddWithEnter) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1745,7 +1745,7 @@ for (const monomer of monomersToAdd) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
       );
 
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1762,7 +1762,7 @@ for (const monomer of monomersToAdd) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1798,7 +1798,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -1814,7 +1814,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1847,7 +1847,7 @@ for (const sequence of sequences) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -1863,7 +1863,7 @@ for (const sequence of sequences) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1911,7 +1911,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -1920,7 +1920,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, {
-      position: !sequence.Rotation ? 3 : 7,
+      position: sequence.Rotation ? 7 : 3,
     });
 
     await keyboardPressOnCanvas(page, 'Delete');
@@ -1929,7 +1929,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
     );
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1961,7 +1961,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -1977,7 +1977,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
@@ -2008,7 +2008,7 @@ for (const sequence of sequences) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -2024,7 +2024,7 @@ for (const sequence of sequences) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
@@ -2055,7 +2055,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -2064,7 +2064,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, {
-      position: !sequence.Rotation ? 4 : 8,
+      position: sequence.Rotation ? 8 : 4,
     });
 
     await keyboardPressOnCanvas(page, 'Backspace');
@@ -2073,7 +2073,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);

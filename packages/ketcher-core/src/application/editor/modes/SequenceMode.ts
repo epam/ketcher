@@ -1816,9 +1816,9 @@ export class SequenceMode extends BaseMode {
           }
 
           this.selectionStartCaretPosition =
-            this.selectionStartCaretPosition !== -1
-              ? this.selectionStartCaretPosition
-              : SequenceRenderer.caretPosition;
+            this.selectionStartCaretPosition === -1
+              ? SequenceRenderer.caretPosition
+              : this.selectionStartCaretPosition;
           SequenceRenderer.shiftArrowSelectionInEditMode(event);
 
           if (arrowKey === 'ArrowLeft' || arrowKey === 'ArrowRight') {

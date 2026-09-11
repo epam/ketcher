@@ -74,15 +74,15 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
 
   public moveSelection(): void {
     if (
-      this.previousStateOfIsMonomersOnSameHorizontalLine !==
+      this.previousStateOfIsMonomersOnSameHorizontalLine ===
       this.polymerBond.isHorizontal
     ) {
-      this.remove();
-      this.show();
-    } else {
       assert(this.rootElement);
       this.moveStart();
       this.moveEnd();
+    } else {
+      this.remove();
+      this.show();
     }
     this.previousStateOfIsMonomersOnSameHorizontalLine =
       this.polymerBond.isHorizontal;

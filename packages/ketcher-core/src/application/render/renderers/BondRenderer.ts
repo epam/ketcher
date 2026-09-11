@@ -4,6 +4,7 @@ import type { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { type Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
 import { Bond as StructBond } from 'domain/entities/bond';
+import { SGroup } from 'domain/entities/sgroup';
 import { Scale } from 'domain/helpers';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
@@ -51,6 +52,28 @@ export class BondRenderer extends BaseRenderer {
   constructor(public bond: Bond) {
     super(bond);
     bond.setRenderer(this);
+  }
+
+  public get labelTooltipText(): string | null {
+    const struct = this.bond.firstAtom.monomer.monomerItem.struct;
+    if (!struct) {
+      return null;
+    }
+
+    let tooltipText: string | null = null;
+    struct.sgroups.forEach((sgroup) => {
+      if (
+        tooltipText ||
+        sgroup.type !== SGroup.TYPES.DAT ||
+        !SGroup.getBonds(struct, sgroup).includes(this.bond.bondIdInMicroMode)
+      ) {
+        return;
+      }
+
+      tooltipText = `${sgroup.data.fieldName}=${sgroup.data.fieldValue}`;
+    });
+
+    return tooltipText;
   }
 
   private get scaledPosition() {

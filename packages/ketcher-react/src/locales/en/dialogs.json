@@ -319,7 +319,21 @@
       },
       "bond": {
         "type": {
-          "title": "Type"
+          "title": "Type",
+          "enumSingle": "Single",
+          "enumSingleUp": "Single Up",
+          "enumSingleDown": "Single Down",
+          "enumSingleUpDown": "Single Up/Down",
+          "enumDouble": "Double",
+          "enumDoubleCisTrans": "Double Cis/Trans",
+          "enumTriple": "Triple",
+          "enumAromatic": "Aromatic",
+          "enumAny": "Any",
+          "enumHydrogen": "Hydrogen",
+          "enumSingleDouble": "Single/Double",
+          "enumSingleAromatic": "Single/Aromatic",
+          "enumDoubleAromatic": "Double/Aromatic",
+          "enumDative": "Dative"
         },
         "topology": {
           "title": "Topology",

@@ -33,7 +33,8 @@
     "expandAbbreviation": "展开缩写",
     "contractAbbreviation": "收起缩写",
     "removeTail": "移除尾部",
-    "addNewTail": "添加新尾部"
+    "addNewTail": "添加新尾部",
+    "none": "无"
   },
   "attachmentPointEditPopup": {
     "title": "编辑连接点"

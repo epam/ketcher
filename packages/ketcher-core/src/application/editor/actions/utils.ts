@@ -94,19 +94,6 @@ function getAtomNeighbors(struct: Struct, atomId: number) {
   return neighbors;
 }
 
-function getBondAngle(struct: Struct, bondId: number | null) {
-  if (bondId === null) {
-    throwLoggedError('Previous bond is required');
-  }
-
-  const bond = struct.bonds.get(bondId);
-  if (!bond) {
-    throwLoggedError(`Bond ${bondId} not found in struct`);
-  }
-
-  return bond.angle;
-}
-
 function ensureAtomId(atom: number | AtomAttributes): number {
   if (typeof atom !== 'number') {
     throwLoggedError('Expected atom id (number), but received atom attributes');
@@ -313,18 +300,13 @@ export function atomForNewBond(
           bond?.type === Bond.PATTERN.TYPE.SINGLE));
 
     if (shallBe180DegToPrevBond) {
-      const prevBondAngle = getBondAngle(restruct.molecule, prevBondId);
-      if (prevBondAngle > -90 && prevBondAngle < 90 && neighbours[0].v.x > 0) {
-        angle = (prevBondAngle * Math.PI) / 180 + Math.PI;
-      } else {
-        angle = (prevBondAngle * Math.PI) / 180;
-      }
+      v = neighbours[0].v.negated().normalized();
     } else {
       angle =
         maxAngle / 2 + Math.atan2(neighbours[maxI].v.y, neighbours[maxI].v.x);
-    }
 
-    v = v.rotate(angle);
+      v = v.rotate(angle);
+    }
   }
 
   v.add_(pos);

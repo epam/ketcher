@@ -64,7 +64,7 @@ import {
 } from 'components/menu/constants';
 import { useIndigoVersionToRedux } from './hooks/useIndigoVersionToRedux';
 
-const noPreviewTools = [ToolName.bondSingle, ToolName.selectRectangle];
+const noPreviewTools = new Set([ToolName.bondSingle, ToolName.selectRectangle]);
 
 export const EditorEvents = () => {
   const editor = useAppSelector(selectEditor);
@@ -369,7 +369,7 @@ export const EditorEvents = () => {
     const onMoveHandler = (e) => {
       handleClosePreview();
       const isLeftClick = e.buttons === 1;
-      if (!isLeftClick || !noPreviewTools.includes(activeTool)) {
+      if (!isLeftClick || !noPreviewTools.has(activeTool)) {
         handleOpenPreview(e);
       }
     };

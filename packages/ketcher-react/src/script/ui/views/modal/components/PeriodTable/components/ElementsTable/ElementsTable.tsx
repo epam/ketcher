@@ -20,12 +20,12 @@ import { Component } from 'react';
 import { type Element, Elements } from 'ketcher-core';
 import styles from './ElementsTable.module.less';
 
-const metalPrefix = [
+const metalPrefix = new Set([
   'alkali',
   'alkaline-earth',
   'transition',
   'post-transition',
-]; // 'lanthanide', 'actinide'
+]); // 'lanthanide', 'actinide'
 const atomClassNames = {
   metal: 'metal',
   unknownProps: 'unknown-props',
@@ -95,7 +95,7 @@ class ElementsTable extends Component<ElementsTableProps> {
   getAtomClassNames = (item: Element): string[] => {
     const { selected } = this.props;
 
-    const type = metalPrefix.includes(item.type ?? '')
+    const type = metalPrefix.has(item.type ?? '')
       ? `${item.type} ${atomClassNames.metal}`
       : (item.type ?? atomClassNames.unknownProps);
 

@@ -487,14 +487,14 @@ export function validation(settings): Record<string, string> | null {
   const result = new Validator().validate(settings, optionsSchema as Schema, {
     base: 'https://ketcher.local/',
   });
-  const errorsProps = result.errors.map((e) =>
-    e.property.replace(/^instance\./, ''),
+  const errorsProps = new Set(
+    result.errors.map((e) => e.property.replace(/^instance\./, '')),
   );
 
   return Object.keys(settings).reduce((res, prop) => {
     if (!optionsSchema.properties) return res;
 
-    if (optionsSchema.properties[prop] && !errorsProps.includes(prop))
+    if (optionsSchema.properties[prop] && !errorsProps.has(prop))
       res[prop] = settings[prop];
 
     return res;

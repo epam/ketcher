@@ -441,8 +441,9 @@ export class LibraryItemDragDropHandler {
       // renderer.center is already in canvas-space pixels — compare directly.
       const center = renderer.center;
 
-      const dist = Math.sqrt(
-        (cursorCanvas.x - center.x) ** 2 + (cursorCanvas.y - center.y) ** 2,
+      const dist = Math.hypot(
+        cursorCanvas.x - center.x,
+        cursorCanvas.y - center.y,
       );
 
       if (dist < minDist) {
@@ -1118,9 +1119,9 @@ export class LibraryItemDragDropHandler {
           apName,
         );
 
-        const dist = Math.sqrt(
-          (cursorCanvas.x - apCanvasPos.x) ** 2 +
-            (cursorCanvas.y - apCanvasPos.y) ** 2,
+        const dist = Math.hypot(
+          cursorCanvas.x - apCanvasPos.x,
+          cursorCanvas.y - apCanvasPos.y,
         );
 
         if (dist < minDist) {

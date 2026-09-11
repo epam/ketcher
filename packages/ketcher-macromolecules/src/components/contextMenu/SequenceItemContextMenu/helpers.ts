@@ -10,6 +10,7 @@ import {
   SequenceNode,
   isTwoStrandedNodeRestrictedForHydrogenBondCreation,
   AmbiguousMonomer,
+  STRAND_TYPE,
 } from 'ketcher-core';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 
@@ -27,6 +28,10 @@ const generateLabeledNodes = (
       twoStrandedNode,
     } = selection;
     const hasAntisense = Boolean(twoStrandedNode?.antisenseNode);
+    const strandType =
+      twoStrandedNode?.antisenseNode === node
+        ? STRAND_TYPE.ANTISENSE
+        : STRAND_TYPE.SENSE;
 
     if (node instanceof Nucleotide) {
       labeledNodes.push({
@@ -41,6 +46,7 @@ const generateLabeledNodes = (
         hasR1Connection,
         nodeIndexOverall,
         hasAntisense,
+        strandType,
       });
     } else if (node instanceof Nucleoside) {
       labeledNodes.push({
@@ -55,6 +61,7 @@ const generateLabeledNodes = (
         hasR1Connection,
         nodeIndexOverall,
         hasAntisense,
+        strandType,
       });
     } else if (node?.monomer instanceof Phosphate) {
       labeledNodes.push({
@@ -62,6 +69,7 @@ const generateLabeledNodes = (
         phosphateLabel: node?.monomer?.label,
         nodeIndexOverall,
         hasAntisense,
+        strandType,
       });
     }
   }

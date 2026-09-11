@@ -2,7 +2,11 @@ import {
   generateSequenceSelectionName,
   generateSequenceSelectionGroupNames,
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers/sequenceEdit';
-import { Entities, LabeledNodesWithPositionInSequence } from 'ketcher-core';
+import {
+  Entities,
+  LabeledNodesWithPositionInSequence,
+  STRAND_TYPE,
+} from 'ketcher-core';
 
 describe('generateSequenceSelectionName', () => {
   it('returns the properly formatted string when a nucleotide is passed', () => {
@@ -15,6 +19,7 @@ describe('generateSequenceSelectionName', () => {
         nodeIndexOverall: 0,
         hasR1Connection: false,
         hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
     ];
     expect(generateSequenceSelectionName(labeledNucleotides)).toBe('R(A)P');
@@ -36,6 +41,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 0,
         hasR1Connection: false,
         hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
     ];
     expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
@@ -55,6 +61,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 0,
         hasR1Connection: false,
         hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
       {
         type: Entities.Nucleotide,
@@ -64,6 +71,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 1,
         hasR1Connection: true,
         hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
     ];
     expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
@@ -83,6 +91,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 0,
         hasR1Connection: false,
         hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
       {
         type: Entities.Nucleotide,
@@ -92,6 +101,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 1,
         hasR1Connection: true,
         hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
     ];
     expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
@@ -111,6 +121,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         isNucleosideConnectedAndSelectedWithPhosphate: true,
         hasR1Connection: true,
         hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
       {
         type: Entities.Phosphate,
@@ -118,6 +129,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 2,
         hasR1Connection: true,
         hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
     ];
     expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
@@ -135,6 +147,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 1,
         hasR1Connection: true,
         hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
       {
         type: Entities.Nucleoside,
@@ -144,6 +157,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         isNucleosideConnectedAndSelectedWithPhosphate: false,
         hasR1Connection: true,
         hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
     ];
     expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({

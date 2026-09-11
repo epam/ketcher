@@ -423,6 +423,28 @@ const typeSchema = bondSchema.properties.type;
 const bondTypes = typeSchema.enum as string[];
 const bondTypeNames = typeSchema.enumNames as string[];
 
+// Full, per-type toolbar tool titles. Kept separate from `bondTypeNames`
+// above (which stays literal English, shared with the bond context-menu
+// submenu via `titleParams.type` below) because "{type} Bond"-style ICU
+// concatenation doesn't translate naturally into every language (e.g.
+// zh-CN bond names already include the "bond" word: "单键", "双键", ...).
+const bondTypeTitleKeys: Record<string, string> = {
+  single: 'toolbar:tools.bondTypeTitles.single',
+  up: 'toolbar:tools.bondTypeTitles.up',
+  down: 'toolbar:tools.bondTypeTitles.down',
+  updown: 'toolbar:tools.bondTypeTitles.updown',
+  double: 'toolbar:tools.bondTypeTitles.double',
+  crossed: 'toolbar:tools.bondTypeTitles.crossed',
+  triple: 'toolbar:tools.bondTypeTitles.triple',
+  aromatic: 'toolbar:tools.bondTypeTitles.aromatic',
+  any: 'toolbar:tools.bondTypeTitles.any',
+  hydrogen: 'toolbar:tools.bondTypeTitles.hydrogen',
+  singledouble: 'toolbar:tools.bondTypeTitles.singledouble',
+  singlearomatic: 'toolbar:tools.bondTypeTitles.singlearomatic',
+  doublearomatic: 'toolbar:tools.bondTypeTitles.doublearomatic',
+  dative: 'toolbar:tools.bondTypeTitles.dative',
+};
+
 const monomerWizardDisallowedBondTypes: Set<string> = new Set(
   MONOMER_WIZARD_DISALLOWED_BOND_TYPES,
 );
@@ -430,7 +452,11 @@ const monomerWizardDisallowedBondTypes: Set<string> = new Set(
 export default bondTypes.reduce<Record<string, ToolActionEntry>>(
   (res, type, i) => {
     res[`bond-${type}`] = {
-      title: 'toolbar:tools.bondTitle',
+      // `type` is '' only for the schema's unused placeholder enum entry,
+      // which is never rendered in any toolbar group (see Bond/options.ts) -
+      // fall back to a real key so it still satisfies the "every tool has a
+      // title" invariant without affecting anything user-visible.
+      title: bondTypeTitleKeys[type] ?? bondTypeTitleKeys.single,
       titleParams: { type: bondTypeNames[i] },
       shortcut: bondCuts[type],
       action: {

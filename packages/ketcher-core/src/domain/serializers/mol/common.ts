@@ -387,12 +387,8 @@ function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
   return lines;
 }
 
-// According Unicode Consortium sould be
-// nlRe = /\r\n|[\n\v\f\r\x85\u2028\u2029]/g;
-// http://www.unicode.org/reports/tr18/#Line_Boundaries
-const nlRe = /\r\n|[\n\r]/g;
 function normalizeNewlines(str: string): string {
-  return str.replace(nlRe, '\n');
+  return str.split(/\r\n|[\n\r]/).join('\n');
 }
 
 function partitionLine(

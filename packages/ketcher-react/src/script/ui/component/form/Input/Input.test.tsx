@@ -35,6 +35,16 @@ describe('Input component should be rendered correctly', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
+
+  it('normalizes commas in numeric input values', () => {
+    const value = Input.val(
+      { target: { type: 'number', value: '1,25' } },
+      { type: 'number' },
+    );
+
+    expect(value).toBe('1.25');
+  });
+
   it('should render textarea if no schema provided and type is textarea', () => {
     const textareaProps = {
       name: 'Name',

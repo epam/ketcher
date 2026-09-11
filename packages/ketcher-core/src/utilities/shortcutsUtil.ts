@@ -22,16 +22,19 @@ const shortcutAliasMap = {
   Alt: isMacOs ? 'Option' : 'Alt',
 };
 
+function formatShortcutPart(shortcutPart: string): string {
+  const alias = shortcutAliasMap[shortcutPart as keyof typeof shortcutAliasMap];
+
+  return alias || (/^[a-z]$/.test(shortcutPart) ? shortcutPart.toUpperCase() : shortcutPart);
+}
+
 export function shortcutStr(shortcut?: string | string[]) {
   if (!shortcut) {
     return '';
   }
 
   const shortcutKey = Array.isArray(shortcut) ? shortcut[0] : shortcut;
-  return shortcutKey.replace(
-    /(\b[a-z]\b$|Mod|Escape|Delete|Alt)/g,
-    (key) => shortcutAliasMap[key] || key.toUpperCase(),
-  );
+  return shortcutKey.split('+').map(formatShortcutPart).join('+');
 }
 
 export const generateMenuShortcuts = <T>(obj) =>

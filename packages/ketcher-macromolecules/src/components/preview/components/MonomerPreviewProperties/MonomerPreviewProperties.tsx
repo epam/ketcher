@@ -16,7 +16,8 @@ interface MonomerPreviewProps {
   readonly preset?: boolean;
 }
 
-const stripSquareBrackets = (text: string) => text.replace(/\[|\]/g, '');
+const stripSquareBrackets = (text: string) =>
+  text.replaceAll('[', '').replaceAll(']', '');
 
 export default function MonomerPreviewProperties({
   idtAliasesText,

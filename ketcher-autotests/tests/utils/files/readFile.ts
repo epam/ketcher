@@ -53,7 +53,7 @@ type UploadFile =
     };
 
 function normalizeBase64Content(content: string) {
-  return content.replace(/\s+/g, '');
+  return content.split(/\s+/).join('');
 }
 
 // Generated CDX snapshots may be stored as base64 text, while uploaded .cdx files
@@ -258,7 +258,8 @@ export async function filteredFile(
     .split('\n')
     .filter((_str, index) => index > filteredIndex)
     .join('\n')
-    .replace(/\s+/g, '');
+    .split(/\s+/)
+    .join('');
 }
 
 export async function pasteFromClipboardAndAddToCanvas(

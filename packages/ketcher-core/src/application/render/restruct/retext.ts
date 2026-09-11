@@ -66,6 +66,13 @@ const IS_SUPERSCRIPT = 64;
 
 const SCALE = 40; // from ketcher-core
 
+function normalizeTextWhitespace(text: string): string {
+  return text
+    .split(/([^\S\r\n]+)/)
+    .map((part, index) => (index % 2 === 1 ? '\u00a0'.repeat(part.length) : part))
+    .join('');
+}
+
 class ReText extends ReObject {
   private readonly item: Text;
   paths: Array<Array<RaphaelBaseElement>> = [];
@@ -224,8 +231,7 @@ class ReText extends ReObject {
       } else {
         textNodes.forEach((textNode: SerializedTextNode) => {
           const styles = this.getStylesFromTextNode(textNode, options);
-          const text =
-            textNode.text.replace(/[^\S\r\n]/g, '\u00a0') || '\u00a0';
+          const text = normalizeTextWhitespace(textNode.text) || '\u00a0';
 
           const path = paper.text(paperScale.x, paperScale.y, text).attr({
             font: options.font,

@@ -73,7 +73,7 @@ export function parseStruct(
 
     const format = identifyStructFormat(struct);
     if (format === SupportedFormat.cdx) {
-      struct = `base64::${struct.replace(/\s/g, '')}`;
+      struct = `base64::${struct.split(/\s+/).join('')}`;
     }
     const factory = new FormatterFactory(server);
     const queryPropertiesAreUsed = format === 'mol' && struct.includes('MRV'); // temporary check if query properties are used

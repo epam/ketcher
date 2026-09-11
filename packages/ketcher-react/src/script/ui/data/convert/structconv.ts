@@ -294,7 +294,9 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
     } as Partial<Atom>;
   }
   const pch = matchCharge(restAtom.charge as string);
-  const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : restAtom.charge;
+  const charge = pch
+    ? Number.parseInt(pch[1] + pch[3] + pch[2])
+    : restAtom.charge;
 
   const conv = {
     ...restAtom,

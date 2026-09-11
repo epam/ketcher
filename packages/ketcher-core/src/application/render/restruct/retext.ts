@@ -277,7 +277,7 @@ class ReText extends ReObject {
         textNode.style,
       );
       if (fontSizeMatch) {
-        customFontSize = parseFloat(fontSizeMatch[1]);
+        customFontSize = Number.parseFloat(fontSizeMatch[1]);
         styles['font-size'] = customFontSize + 'px';
       }
     }

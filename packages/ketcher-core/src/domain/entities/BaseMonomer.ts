@@ -176,8 +176,11 @@ export abstract class BaseMonomer extends DrawingEntity {
     for (const attachmentPoint in this.attachmentPointsToBonds) {
       const match = /R(\d+)/.exec(attachmentPoint);
       if (match) {
-        const pointNumber = parseInt(match[1]);
-        if (!isNaN(pointNumber) && pointNumber > maxAttachmentPointNumber) {
+        const pointNumber = Number.parseInt(match[1]);
+        if (
+          !Number.isNaN(pointNumber) &&
+          pointNumber > maxAttachmentPointNumber
+        ) {
           maxAttachmentPointNumber = pointNumber;
         }
       }

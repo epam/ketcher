@@ -894,6 +894,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      */
 
     await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([
       Preset.A,
       Preset.U,

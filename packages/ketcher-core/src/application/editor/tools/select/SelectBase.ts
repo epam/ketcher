@@ -87,6 +87,7 @@ abstract class SelectBase implements BaseTool {
   public mode:
     'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
     'standby';
+  protected readonly autoScrollEnabled: boolean = true;
 
   protected rotationStartAngle = 0;
   protected rotationCenter: Vec2 | null = null;
@@ -1014,7 +1015,10 @@ abstract class SelectBase implements BaseTool {
   }
 
   private handleAutoScrollDuringSelection(event: MouseEvent) {
-    if (this.editor.mode.modeName !== 'sequence-layout-mode') {
+    if (
+      !this.autoScrollEnabled ||
+      this.editor.mode.modeName !== 'sequence-layout-mode'
+    ) {
       this.cancelAutoScroll();
       return;
     }

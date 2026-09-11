@@ -1,6 +1,11 @@
-import { type BondAttributes, Bond } from 'domain/entities/bond';
+import {
+  type BondAttributes,
+  Bond,
+  StructAtomsAndBondsAccess,
+} from 'domain/entities/bond';
 
 import { Vec2 } from 'domain/entities/vec2';
+import { Pool } from 'domain/entities/pool';
 
 const bondParams: BondAttributes = {
   begin: 1,
@@ -58,12 +63,14 @@ describe('Bond', () => {
   describe('getCenter', () => {
     it('should return center of bond', () => {
       const bond = new Bond(bondParams);
-      const struct = { atoms: new Map() };
+      const struct = { atoms: new Pool(), bonds: new Pool() };
       struct.atoms.set(bond.begin, { pp: new Vec2(2, 4, 6) });
       struct.atoms.set(bond.end, { pp: new Vec2(4, 0, 2) });
       const bondCenter = new Vec2(3, 2, 4);
 
-      expect(bond.getCenter(struct)).toStrictEqual(bondCenter);
+      expect(
+        bond.getCenter(struct as unknown as StructAtomsAndBondsAccess),
+      ).toStrictEqual(bondCenter);
     });
   });
 
@@ -79,7 +86,9 @@ describe('Bond', () => {
         -0.8944271909999159,
       );
 
-      expect(bond.getDir(struct)).toStrictEqual(bondDir);
+      expect(
+        bond.getDir(struct as unknown as StructAtomsAndBondsAccess),
+      ).toStrictEqual(bondDir);
     });
   });
 

@@ -33,7 +33,8 @@
     "expandAbbreviation": "Expand Abbreviation",
     "contractAbbreviation": "Contract Abbreviation",
     "removeTail": "Remove tail",
-    "addNewTail": "Add new tail"
+    "addNewTail": "Add new tail",
+    "none": "none"
   },
   "attachmentPointEditPopup": {
     "title": "Edit connection point"

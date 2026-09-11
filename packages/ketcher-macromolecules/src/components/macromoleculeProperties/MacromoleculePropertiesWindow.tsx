@@ -644,7 +644,7 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
       finalDistanceBetweenTicks = distanceBetweenTicksWithMaximumCoverage;
     } else {
       tickValues = [
-        ...Array(Math.min(maximumNumberOfTicks, data.xs.length)).keys(),
+        ...new Array(Math.min(maximumNumberOfTicks, data.xs.length)).keys(),
       ];
       finalDistanceBetweenTicks = 1;
     }

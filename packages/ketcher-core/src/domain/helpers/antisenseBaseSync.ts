@@ -2,7 +2,13 @@ import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { MonomerOrAmbiguousType } from 'domain/types';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
-import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
+import {
+  getNextMonomerInChain,
+  getPreviousMonomerInChain,
+  getSugarFromRnaBase,
+  isAmbiguousMonomerLibraryItem,
+  isRnaBaseApplicableForAntisense,
+} from 'domain/helpers/monomers';
 
 /**
  * Follows the existing convention in Nucleoside, Nucleotide and the sequence
@@ -57,5 +63,61 @@ export function resolveMirroredBaseLabel(params: {
   return DrawingEntitiesManager.getAntisenseBaseLabel(
     newNaturalAnalogue,
     isDeoxyriboseSugarLabel(oppositeSugarLabel),
+  );
+}
+
+export function getHydrogenBondedPartner(
+  monomer?: BaseMonomer,
+): BaseMonomer | undefined {
+  const hydrogenBond = monomer?.hydrogenBonds[0];
+
+  if (!monomer || !hydrogenBond) {
+    return undefined;
+  }
+
+  return hydrogenBond.getAnotherMonomer(monomer);
+}
+
+/**
+ * The structural condition from rule 1.3: the base reaches a sugar through the
+ * R1/R3 pairing, and that sugar carries at least one backbone connection.
+ * Unsplit nucleotides satisfy the first half by monomer class.
+ */
+export function isBaseEligibleForDuplexSync(base?: BaseMonomer): boolean {
+  if (!base || !isRnaBaseApplicableForAntisense(base)) {
+    return false;
+  }
+
+  const sugar = getSugarFromRnaBase(base);
+
+  if (!sugar) {
+    // Unsplit nucleotide: the backbone connection is on the monomer itself.
+    return Boolean(
+      getPreviousMonomerInChain(base) ?? getNextMonomerInChain(base),
+    );
+  }
+
+  return Boolean(
+    getPreviousMonomerInChain(sugar) ?? getNextMonomerInChain(sugar),
+  );
+}
+
+/**
+ * True when this base and the base it is hydrogen bonded to are BOTH selected
+ * and both eligible. Rule 1.1 skips propagation for such a pair, and rule 1.3
+ * blocks base modification entirely when one exists in the selection.
+ */
+export function isSelectedAntisensePair(base?: BaseMonomer): boolean {
+  const partner = getHydrogenBondedPartner(base);
+
+  if (!base || !partner) {
+    return false;
+  }
+
+  return (
+    base.selected &&
+    partner.selected &&
+    isBaseEligibleForDuplexSync(base) &&
+    isBaseEligibleForDuplexSync(partner)
   );
 }

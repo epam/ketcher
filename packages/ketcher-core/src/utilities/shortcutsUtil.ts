@@ -25,7 +25,10 @@ const shortcutAliasMap = {
 function formatShortcutPart(shortcutPart: string): string {
   const alias = shortcutAliasMap[shortcutPart as keyof typeof shortcutAliasMap];
 
-  return alias || (/^[a-z]$/.test(shortcutPart) ? shortcutPart.toUpperCase() : shortcutPart);
+  return (
+    alias ||
+    (/^[a-z]$/.test(shortcutPart) ? shortcutPart.toUpperCase() : shortcutPart)
+  );
 }
 
 export function shortcutStr(shortcut?: string | string[]) {

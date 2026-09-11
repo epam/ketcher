@@ -69,7 +69,9 @@ const SCALE = 40; // from ketcher-core
 function normalizeTextWhitespace(text: string): string {
   return text
     .split(/([^\S\r\n]+)/)
-    .map((part, index) => (index % 2 === 1 ? '\u00a0'.repeat(part.length) : part))
+    .map((part, index) =>
+      index % 2 === 1 ? '\u00a0'.repeat(part.length) : part,
+    )
     .join('');
 }
 

@@ -78,7 +78,9 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
         continue;
       }
 
-      const text = (await option.textContent())?.replaceAll('\u200b', '').trim();
+      const text = (await option.textContent())
+        ?.replaceAll('\u200b', '')
+        .trim();
       if (text) {
         optionTexts.push(text);
       }
@@ -332,9 +334,7 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
     // Verify the leaving atom type has changed.
     await expect
       .poll(async () =>
-        (await r1AtomDropdown.textContent())
-          ?.replaceAll('\u200b', '')
-          .trim(),
+        (await r1AtomDropdown.textContent())?.replaceAll('\u200b', '').trim(),
       )
       .toBe(getAttachmentPointAtomLabel(AttachmentPointAtom.OH));
   });

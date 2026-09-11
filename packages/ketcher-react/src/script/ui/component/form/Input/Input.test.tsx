@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react';
 
 import Input from './Input';
+import { GenericInput } from './Input';
 
 describe('Input component should be rendered correctly', () => {
   it('should render slider according to props', () => {
@@ -35,9 +36,8 @@ describe('Input component should be rendered correctly', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-
   it('normalizes commas in numeric input values', () => {
-    const value = Input.val(
+    const value = GenericInput.val(
       { target: { type: 'number', value: '1,25' } },
       { type: 'number' },
     );

@@ -10,6 +10,7 @@ import { SgContexts } from 'application/editor/shared/constants';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import type { BondRenderer } from 'application/render/renderers/BondRenderer';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 import paperjs from 'paper';
 
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
@@ -72,8 +73,27 @@ export class SGroupRenderer extends BaseRenderer {
     return element;
   }
 
+  private isPlainMicromoleculeFragment(): boolean {
+    const monomer = this.sgroupDrawingEntity.monomer;
+    return (
+      monomer.monomerItem.props.isMicromoleculeFragment === true &&
+      !isMonomerSgroupWithAttachmentPoints(monomer)
+    );
+  }
+
   public show(): void {
     if (this.sgroup.data.fieldName === 'MRV_IMPLICIT_H') {
+      return;
+    }
+
+    // In macro mode, contracted named SUP SGroups (functional groups / salts)
+    // inside plain micromolecule fragments should not draw a collapsed label —
+    // their atoms/bonds are rendered directly instead.
+    if (
+      this.sgroup.type === SGroup.TYPES.SUP &&
+      this.sgroup.isContracted() &&
+      this.isPlainMicromoleculeFragment()
+    ) {
       return;
     }
 
@@ -170,7 +190,7 @@ export class SGroupRenderer extends BaseRenderer {
     this.atomRenderers = atomRenderers;
     this.bondRenderers = bondRenderers;
 
-    if (this.sgroup.isExpanded()) {
+    if (this.sgroup.isExpanded() || this.isPlainMicromoleculeFragment()) {
       return;
     }
 

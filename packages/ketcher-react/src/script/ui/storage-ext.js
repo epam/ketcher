@@ -22,7 +22,7 @@ export const storage = {
     'Your changes will be lost after the tab closing. See Help (Note 2).',
   isAvailable() {
     try {
-      const storage = global.localStorage;
+      const storage = globalThis.localStorage;
       return storage;
     } catch (e) {
       KetcherLogger.error('storage-ext.js::storage::isAvailable', e);
@@ -32,7 +32,7 @@ export const storage = {
   getItem(key) {
     let item = null;
     try {
-      item = JSON.parse(localStorage.getItem(key));
+      item = JSON.parse(globalThis.localStorage.getItem(key));
     } catch (e) {
       KetcherLogger.error('storage-ext.js::storage::getItem', e);
       console.info('LocalStorage:', e.name);
@@ -42,7 +42,7 @@ export const storage = {
   setItem(key, data) {
     let isSet;
     try {
-      localStorage.setItem(key, JSON.stringify(data));
+      globalThis.localStorage.setItem(key, JSON.stringify(data));
       isSet = true;
     } catch (e) {
       KetcherLogger.error('storage-ext.js::storage::setItem', e);

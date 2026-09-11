@@ -107,7 +107,7 @@ function getRootReducer(setEditor) {
           };
 
     // TODO: temporary solution. Need to review work with redux store
-    global.currentState = finalState;
+    globalThis.currentState = finalState;
     return finalState;
   };
 }

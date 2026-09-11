@@ -222,3 +222,45 @@ describe('Editor.isMonomerCreationWizardEnabled', () => {
     expect(terminalRGroupAtoms[0][0]).toBe(0);
   });
 });
+
+describe('Editor.zoom', () => {
+  it('redraws zoom-dependent items without forcing a full render', () => {
+    const editor = new Editor('1', document as unknown as HTMLElement, {}, {});
+
+    const rerenderZoomDependentItems = jest.fn();
+
+    editor.render.setZoom = jest.fn();
+    editor.render.update = jest.fn();
+    editor.rotateController.rerender = jest.fn();
+    editor.render.ctab = {
+      rerenderZoomDependentItems,
+    } as any;
+
+    editor.zoom(2);
+
+    expect(editor.render.setZoom).toHaveBeenCalledWith(2, undefined);
+    expect(rerenderZoomDependentItems).toHaveBeenCalledTimes(1);
+    expect(editor.render.update).not.toHaveBeenCalled();
+    expect(editor.rotateController.rerender).toHaveBeenCalledTimes(1);
+  });
+
+  it('can skip rerendering zoom-dependent items', () => {
+    const editor = new Editor('1', document as unknown as HTMLElement, {}, {});
+
+    const rerenderZoomDependentItems = jest.fn();
+
+    editor.render.setZoom = jest.fn();
+    editor.render.update = jest.fn();
+    editor.rotateController.rerender = jest.fn();
+    editor.render.ctab = {
+      rerenderZoomDependentItems,
+    } as any;
+
+    editor.zoom(2, undefined, false);
+
+    expect(editor.render.setZoom).toHaveBeenCalledWith(2, undefined);
+    expect(rerenderZoomDependentItems).not.toHaveBeenCalled();
+    expect(editor.render.update).not.toHaveBeenCalled();
+    expect(editor.rotateController.rerender).toHaveBeenCalledTimes(1);
+  });
+});

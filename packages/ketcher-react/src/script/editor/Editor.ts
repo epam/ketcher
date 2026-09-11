@@ -552,7 +552,7 @@ class Editor implements KetcherEditor {
     }
   }
 
-  zoom(value?: number, event?: WheelEvent) {
+  zoom(value?: number, event?: WheelEvent, rerenderZoomDependentItems = true) {
     if (
       arguments.length === 0 ||
       value === undefined ||
@@ -563,7 +563,11 @@ class Editor implements KetcherEditor {
 
     this.render.setZoom(value, event);
 
-    this.render.update();
+    // Atom labels and bond endpoints depend on the current zoom, but forcing a
+    // full render also reprocesses imported coordinates.
+    if (rerenderZoomDependentItems) {
+      this.render.ctab.rerenderZoomDependentItems();
+    }
     this.rotateController.rerender();
     return this.render.options.zoom;
   }
@@ -661,7 +665,7 @@ class Editor implements KetcherEditor {
         : parsedStructSizeInPixels.width / clientAreaBoundingBox.width);
 
     if (newZoomValue >= MAX_ZOOM_VALUE) {
-      this.zoom(MAX_ZOOM_VALUE);
+      this.zoom(MAX_ZOOM_VALUE, undefined, false);
       return true;
     }
 
@@ -671,6 +675,8 @@ class Editor implements KetcherEditor {
       newZoomValue < MIN_ZOOM_VALUE
         ? MIN_ZOOM_VALUE
         : Number(newZoomValue.toFixed(2)),
+      undefined,
+      false,
     );
     this.event.zoomChanged.dispatch();
 

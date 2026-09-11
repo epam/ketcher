@@ -128,6 +128,14 @@ test.describe('Snake Bond Tool', () => {
 
     await addBondedMonomersToCanvas(page, Peptide.Tza, 100, 100, 50, 25, 18);
 
+    // A transient "no free attachment points" toast can appear when the bond
+    // tool accidentally hovers a saturated monomer; wait for it to dismiss so
+    // it never lands in the screenshot.
+    const banner = NotificationBannerOnMacro(page);
+    if (await banner.isVisible()) {
+      await banner.waitForBecomeHidden();
+    }
+
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });

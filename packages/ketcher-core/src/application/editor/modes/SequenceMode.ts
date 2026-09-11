@@ -100,6 +100,23 @@ interface PreservedSideChainConnection {
   secondMonomerAttachmentPointName: AttachmentPointName;
 }
 
+function getSelectedStrandType(
+  twoStrandedNode: ITwoStrandedChainItem,
+): STRAND_TYPE {
+  return twoStrandedNode.senseNode?.monomer.selected
+    ? STRAND_TYPE.SENSE
+    : STRAND_TYPE.ANTISENSE;
+}
+
+function getNodeForStrand(
+  twoStrandedNode: ITwoStrandedChainItem | undefined,
+  strandType: STRAND_TYPE,
+): SequenceNode | undefined {
+  return strandType === STRAND_TYPE.ANTISENSE
+    ? twoStrandedNode?.antisenseNode
+    : twoStrandedNode?.senseNode;
+}
+
 export class SequenceMode extends BaseMode {
   private _isEditMode = false;
   private _isEditInRNABuilderMode = false;
@@ -346,38 +363,43 @@ export class SequenceMode extends BaseMode {
         );
       }
 
-      const nodeToModify = SequenceRenderer.getNodeByPointer(nodeIndexOverall);
+      const twoStrandedNodeToModify =
+        SequenceRenderer.getNodeByPointer(nodeIndexOverall);
+      const nodeToModify = getNodeForStrand(
+        twoStrandedNodeToModify,
+        labeledNucleoelement.strandType,
+      );
 
       if (
-        nodeToModify?.senseNode instanceof Nucleotide ||
-        nodeToModify?.senseNode instanceof Nucleoside
+        nodeToModify instanceof Nucleotide ||
+        nodeToModify instanceof Nucleoside
       ) {
         // Update Sugar monomerItem object
-        if (nodeToModify.senseNode && sugarMonomerItem) {
+        if (nodeToModify && sugarMonomerItem) {
           modelChanges.merge(
             editor.drawingEntitiesManager.modifyMonomerItem(
-              nodeToModify.senseNode.sugar,
+              nodeToModify.sugar,
               sugarMonomerItem,
             ),
           );
         }
         // Update Base monomerItem object
-        if (nodeToModify?.senseNode.rnaBase && baseMonomerItem) {
+        if (nodeToModify.rnaBase && baseMonomerItem) {
           if (
-            nodeToModify?.senseNode.rnaBase.monomerItem.isAmbiguous ||
+            nodeToModify.rnaBase.monomerItem.isAmbiguous ||
             baseMonomerItem.isAmbiguous
           ) {
             modelChanges.merge(
               replaceMonomer(
                 editor.drawingEntitiesManager,
-                nodeToModify?.senseNode.rnaBase,
+                nodeToModify.rnaBase,
                 baseMonomerItem,
               ),
             );
           } else {
             modelChanges.merge(
               editor.drawingEntitiesManager.modifyMonomerItem(
-                nodeToModify?.senseNode.rnaBase,
+                nodeToModify.rnaBase,
                 baseMonomerItem,
               ),
             );
@@ -386,19 +408,18 @@ export class SequenceMode extends BaseMode {
       }
 
       // Update monomerItem object or add Phosphate
-      if (nodeToModify?.senseNode && phosphateMonomerItem) {
+      if (nodeToModify && phosphateMonomerItem) {
         // Update Phosphate monomerItem object for Nucleotide
-        if (nodeToModify.senseNode instanceof Nucleotide) {
+        if (nodeToModify instanceof Nucleotide) {
           modelChanges.merge(
             editor.drawingEntitiesManager.modifyMonomerItem(
-              nodeToModify.senseNode.phosphate,
+              nodeToModify.phosphate,
               phosphateMonomerItem,
             ),
           );
           // Add Phosphate to Nucleoside
-        } else if (nodeToModify.senseNode instanceof Nucleoside) {
-          const sugarR2 =
-            nodeToModify.senseNode.sugar.attachmentPointsToBonds.R2;
+        } else if (nodeToModify instanceof Nucleoside) {
+          const sugarR2 = nodeToModify.sugar.attachmentPointsToBonds.R2;
 
           if (sugarR2 instanceof MonomerToAtomBond) {
             return;
@@ -416,16 +437,16 @@ export class SequenceMode extends BaseMode {
           modelChanges.merge(
             this.bondNodesThroughNewPhosphate(
               new Vec2(0, 0),
-              nodeToModify.senseNode.sugar,
+              nodeToModify.sugar,
               nextMonomerInSameChain,
               labeledNucleoelement.phosphateLabel,
             ),
           );
           // Update Phosphate monomerItem object
-        } else if (nodeToModify.senseNode.monomer instanceof Phosphate) {
+        } else if (nodeToModify.monomer instanceof Phosphate) {
           modelChanges.merge(
             editor.drawingEntitiesManager.modifyMonomerItem(
-              nodeToModify.senseNode.monomer,
+              nodeToModify.monomer,
               phosphateMonomerItem,
             ),
           );
@@ -2215,20 +2236,22 @@ export class SequenceMode extends BaseMode {
     const modelChanges = new Command();
 
     selections.forEach((selectionRange) => {
-      let previousReplacedNode = SequenceRenderer.getPreviousNodeInSameChain(
-        selectionRange[0].node,
-      )?.senseNode;
+      const strandType = getSelectedStrandType(selectionRange[0].node);
+      let previousReplacedNode = getNodeForStrand(
+        SequenceRenderer.getPreviousNodeInSameChain(selectionRange[0].node),
+        strandType,
+      );
 
       selectionRange.forEach((nodeSelection) => {
-        const senseNode = nodeSelection.node.senseNode;
+        const nodeToReplace = getNodeForStrand(nodeSelection.node, strandType);
 
-        if (!senseNode || senseNode instanceof EmptySequenceNode) {
+        if (!nodeToReplace || nodeToReplace instanceof EmptySequenceNode) {
           return;
         }
 
         previousReplacedNode = this.replaceSelectionWithMonomer(
           monomerItem,
-          senseNode,
+          nodeToReplace,
           nodeSelection.node,
           modelChanges,
           previousReplacedNode,

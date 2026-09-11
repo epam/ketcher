@@ -166,6 +166,7 @@ const RnaElementsTabsView = ({
                     key={groupTitle}
                     title={groupTitle}
                     items={groupItems}
+                    groupName={groupName as MonomerGroups}
                     libraryName={libraryName}
                     selectedMonomerUniqueKey={activeMonomerKey}
                     onItemClick={(monomer) => onSelectItem(monomer, groupName)}

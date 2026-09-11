@@ -56,10 +56,6 @@ export class Phosphate extends BaseMonomer {
       return self.unUsedAttachmentPointsNamesList[0];
     }
 
-    // If other monomer is not a Sugar, we want to open modal
-    if (!isSugarOrAmbiguousSugar(otherMonomer)) {
-      return;
-    }
     // If we chose a specific AP on other monomer, we want to determine the correct AP on this one
     if (potentialPointOnOther) {
       if (
@@ -75,6 +71,13 @@ export class Phosphate extends BaseMonomer {
       } else {
         return;
       }
+    }
+
+    // Without a chosen AP on the other monomer, only a sugar leaves one
+    // sensible bond: between two phosphates R2-R1, R1-R1 and R2-R2 are all
+    // possible, so the user has to be asked (#3808).
+    if (!isSugarOrAmbiguousSugar(otherMonomer)) {
+      return;
     }
 
     if (

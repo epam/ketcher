@@ -86,7 +86,7 @@ describe('calculateBondPreviewPositionByCoordinates', () => {
     ).toBe('504px');
   });
 
-  it('positions a bond preview without popup offsets', () => {
+  it('preserves legacy bond positioning outside popup mode', () => {
     expect(
       calculateBondPreviewPositionByCoordinates(
         { left: 500, top: 500, right: 700, bottom: 520 },
@@ -110,15 +110,6 @@ it('keeps the full preview inside a popup when neither side has room', () => {
   expect(viewportLeft).toBeGreaterThanOrEqual(100);
   expect(viewportLeft + 358).toBeLessThanOrEqual(780);
 });
-it('uses available space below a bond with a root at the viewport origin', () => {
-  const style = calculateBondPreviewPositionByCoordinates(
-    { left: 400, top: 250, right: 600, bottom: 270 },
-    { left: 40, top: 100, right: 700, bottom: 750 },
-    { left: 0, top: 0, right: 1000, bottom: 800 },
-  );
-  expect(style.top).toBe('275px');
-});
-
 it.each([
   { left: 160, top: 160, right: 300, bottom: 190 },
   { left: 600, top: 660, right: 740, bottom: 690 },

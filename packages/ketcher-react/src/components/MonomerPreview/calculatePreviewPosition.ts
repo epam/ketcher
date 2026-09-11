@@ -188,6 +188,13 @@ export function calculateBondPreviewPositionByCoordinates(
   const width = right - left;
   const height = bottom - top;
 
+  if (ketcherRootLeft === 0 && ketcherRootTop === 0) {
+    return calculateLegacyBondPreviewPosition(
+      { left, top, right, bottom },
+      { canvasWrapperTop, canvasWrapperBottom, canvasWrapperRight },
+    );
+  }
+
   let style: Required<Pick<PreviewStyle, 'top' | 'left' | 'transform'>>;
   let offsetX: number;
   let offsetY: number;
@@ -272,5 +279,62 @@ export function calculateBondPreviewPositionByCoordinates(
     ...style,
     left: `${clampedLeft - ketcherRootLeft - offsetX}px`,
     top: `${clampedTop - ketcherRootTop - offsetY}px`,
+  };
+}
+
+function calculateLegacyBondPreviewPosition(
+  { left, top, right, bottom }: RectCoordinates,
+  {
+    canvasWrapperTop,
+    canvasWrapperBottom,
+    canvasWrapperRight,
+  }: {
+    canvasWrapperTop: number;
+    canvasWrapperBottom: number;
+    canvasWrapperRight: number;
+  },
+): PreviewStyle {
+  const width = right - left;
+  const height = bottom - top;
+
+  if (width > height) {
+    const leftValue = left + width / 2;
+    const topValue =
+      top + canvasWrapperTop > preview.height
+        ? top - preview.heightForBond - preview.gap
+        : bottom + preview.gap;
+    let horizontalTranslate = '0';
+
+    if (leftValue + preview.width > canvasWrapperRight) {
+      horizontalTranslate = '-100%';
+    } else if (leftValue > preview.width / 2) {
+      horizontalTranslate = '-50%';
+    }
+
+    return {
+      top: `${topValue}px`,
+      left: `${leftValue}px`,
+      transform: `translate(${horizontalTranslate}, 0)`,
+    };
+  }
+
+  const topValue = top + height / 2;
+  const leftValue =
+    left > preview.widthForBond + preview.gap
+      ? left - preview.widthForBond / 2 - preview.gap
+      : right + preview.widthForBond / 2 + preview.gap;
+  const horizontalTranslate = leftValue > preview.width / 2 ? '-50%' : '0';
+  let verticalTranslate = '0';
+
+  if (topValue + preview.height / 2 > canvasWrapperBottom) {
+    verticalTranslate = '-100%';
+  } else if (topValue > preview.height / 2) {
+    verticalTranslate = '-50%';
+  }
+
+  return {
+    top: `${topValue}px`,
+    left: `${leftValue}px`,
+    transform: `translate(${horizontalTranslate}, ${verticalTranslate})`,
   };
 }

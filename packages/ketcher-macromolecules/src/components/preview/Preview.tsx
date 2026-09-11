@@ -39,6 +39,8 @@ export const Preview = () => {
   const previewRef = useRef<HTMLDivElement>(null);
   const isPreviewVisible = Boolean(preview?.type);
   const editor = useSelector(selectEditor);
+  const ketcherRootRect = editor?.ketcherRootElementBoundingClientRect;
+  const isPopupMode = Boolean(ketcherRootRect?.x || ketcherRootRect?.y);
 
   useLayoutEffect(() => {
     if (!previewRef.current || preview.style) {
@@ -107,7 +109,7 @@ export const Preview = () => {
       ref={previewRef}
       style={{
         ...preview?.style,
-        pointerEvents: preview.style ? 'auto' : 'none',
+        pointerEvents: preview.style || !isPopupMode ? 'auto' : 'none',
       }}
     >
       {preview.type === PreviewType.Monomer && <MonomerPreview />}
@@ -154,6 +156,27 @@ export function calculatePreviewPosition({
 }: CalculatePreviewPositionParams) {
   const topPosition = targetTop - previewHeight - previewOffset;
   const bottomPosition = targetBottom + previewOffset;
+
+  if (ketcherRootOffsetX === 0 && ketcherRootOffsetY === 0) {
+    const legacyTargetCenterX = targetLeft - targetWidth / 2;
+    const shouldPositionAbove =
+      topPosition >= canvasWrapperTop ||
+      (targetBottom + previewHeight > canvasWrapperBottom &&
+        targetBottom > canvasWrapperBottom / 2);
+
+    let left = targetLeft + targetWidth / 2 - previewWidth / 2;
+    if (legacyTargetCenterX < previewWidth / 2) {
+      left = canvasWrapperLeft;
+    } else if (legacyTargetCenterX + previewWidth / 2 >= canvasWrapperRight) {
+      const scrollBarOffset = 10;
+      left = canvasWrapperRight - previewWidth - scrollBarOffset;
+    }
+
+    return {
+      top: shouldPositionAbove ? topPosition : bottomPosition,
+      left,
+    };
+  }
 
   const canvasCenterY = (canvasWrapperTop + canvasWrapperBottom) / 2;
   const shouldPositionAbove =

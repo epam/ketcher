@@ -62,7 +62,7 @@ describe('calculatePreviewPosition', () => {
     ).toBe(445);
   });
 
-  it('keeps a preview inside the canvas when the root is at the viewport origin', () => {
+  it('preserves legacy positioning outside popup mode', () => {
     expect(
       calculatePreviewPosition({
         ...commonParams,
@@ -70,7 +70,7 @@ describe('calculatePreviewPosition', () => {
         ketcherRootOffsetX: 0,
         ketcherRootOffsetY: 0,
       }),
-    ).toEqual({ top: 195, left: 200 });
+    ).toEqual({ top: 195, left: 80 });
   });
 });
 

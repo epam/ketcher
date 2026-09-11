@@ -424,10 +424,12 @@ const bondTypes = typeSchema.enum as string[];
 const bondTypeNames = typeSchema.enumNames as string[];
 
 // Full, per-type toolbar tool titles. Kept separate from `bondTypeNames`
-// above (which stays literal English, shared with the bond context-menu
-// submenu via `titleParams.type` below) because "{type} Bond"-style ICU
-// concatenation doesn't translate naturally into every language (e.g.
-// zh-CN bond names already include the "bond" word: "单键", "双键", ...).
+// above (a translation-key array resolved separately by whatever reads
+// `titleParams.type` - see getBondTypeName/Bond.tsx) because "{type} Bond"-
+// style ICU concatenation doesn't translate naturally into every language
+// (e.g. zh-CN bond names already include the "bond" word: "单键", "双键",
+// ... whereas the bare Bond Properties dropdown / context-menu submenu
+// still want the shorter, unsuffixed English "Single"/"Double"/...).
 const bondTypeTitleKeys: Record<string, string> = {
   single: 'toolbar:tools.bondTypeTitles.single',
   up: 'toolbar:tools.bondTypeTitles.up',

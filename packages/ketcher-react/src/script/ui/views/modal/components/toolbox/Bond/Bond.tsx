@@ -59,13 +59,13 @@ const Bond = (props: Props) => {
   });
   const bondTypeOptions = useMemo(
     () =>
-      getSelectOptionsFromSchema(bondProps.type).map((option) => ({
+      getSelectOptionsFromSchema(bondProps.type, t).map((option) => ({
         ...option,
         disabled:
           isMonomerCreationWizardActive &&
           MONOMER_WIZARD_DISALLOWED_BOND_TYPES.includes(option.value),
       })),
-    [bondProps.type, isMonomerCreationWizardActive],
+    [bondProps.type, isMonomerCreationWizardActive, t],
   );
   const customValid = useMemo(
     () => ({

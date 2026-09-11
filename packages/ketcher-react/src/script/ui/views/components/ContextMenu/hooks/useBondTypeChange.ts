@@ -2,7 +2,6 @@ import {
   type BondAttributes,
   fromBondsAttrs,
   ketcherProvider,
-  bondChangingAction,
 } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
@@ -35,23 +34,6 @@ const useBondTypeChange = () => {
         bondProps.topology = 0;
         bondProps.reactingCenterStatus = 0;
       }
-
-      // If only one bond is selected, use bondChangingAction to support direction flipping
-      if (bondIds.length === 1) {
-        const bond = molecule.bonds.get(bondIds[0]);
-        if (bond) {
-          const action = bondChangingAction(
-            molecule,
-            bondIds[0],
-            bond.b,
-            bondProps,
-          );
-          editor.update(action);
-          return;
-        }
-      }
-
-      // For multiple bonds, use fromBondsAttrs
       editor.update(fromBondsAttrs(molecule, bondIds, bondProps));
     },
     [ketcherId],

@@ -11,6 +11,8 @@ import {
   isTwoStrandedNodeRestrictedForHydrogenBondCreation,
   AmbiguousMonomer,
   STRAND_TYPE,
+  isSelectedAntisensePair,
+  provideEditorInstance,
 } from 'ketcher-core';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 
@@ -18,6 +20,7 @@ const generateLabeledNodes = (
   selectionsFlatten: NodeSelection[],
 ): LabeledNodesWithPositionInSequence[] => {
   const labeledNodes: LabeledNodesWithPositionInSequence[] = [];
+  const isSyncEditMode = Boolean(provideEditorInstance().mode.isSyncEditMode);
 
   for (const selection of selectionsFlatten) {
     const {
@@ -32,6 +35,13 @@ const generateLabeledNodes = (
       twoStrandedNode?.antisenseNode === node
         ? STRAND_TYPE.ANTISENSE
         : STRAND_TYPE.SENSE;
+    const isInSelectedAntisensePair =
+      isSyncEditMode &&
+      isSelectedAntisensePair(
+        node instanceof Nucleotide || node instanceof Nucleoside
+          ? node.rnaBase
+          : node?.monomer,
+      );
 
     if (node instanceof Nucleotide) {
       labeledNodes.push({
@@ -47,6 +57,7 @@ const generateLabeledNodes = (
         nodeIndexOverall,
         hasAntisense,
         strandType,
+        isInSelectedAntisensePair,
       });
     } else if (node instanceof Nucleoside) {
       labeledNodes.push({
@@ -62,6 +73,7 @@ const generateLabeledNodes = (
         nodeIndexOverall,
         hasAntisense,
         strandType,
+        isInSelectedAntisensePair,
       });
     } else if (node?.monomer instanceof Phosphate) {
       labeledNodes.push({
@@ -70,6 +82,7 @@ const generateLabeledNodes = (
         nodeIndexOverall,
         hasAntisense,
         strandType,
+        isInSelectedAntisensePair,
       });
     }
   }

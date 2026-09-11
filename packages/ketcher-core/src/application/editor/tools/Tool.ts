@@ -128,6 +128,7 @@ export type LabeledNodesWithPositionInSequence = {
   nodeIndexOverall: number;
   hasAntisense: boolean;
   strandType: STRAND_TYPE;
+  isInSelectedAntisensePair?: boolean;
   baseLabel?: string;
   sugarLabel?: string;
   phosphateLabel?: string;

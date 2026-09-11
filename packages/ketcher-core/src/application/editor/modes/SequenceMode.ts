@@ -58,6 +58,7 @@ import {
   createMirroredBaseCommand,
   getHydrogenBondedPartner,
   getMonomerNaturalAnalogue,
+  isBaseEligibleForDuplexSync,
 } from 'domain/helpers/antisenseBaseSync';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
@@ -394,9 +395,11 @@ export class SequenceMode extends BaseMode {
           const previousNaturalAnalogue = getMonomerNaturalAnalogue(editedBase);
           // Captured before the edit: the ambiguous branch below replaces
           // editedBase's underlying monomer, which unsets all of its bonds
-          // (including this hydrogen bond), so the partner can no longer be
+          // (including this hydrogen bond and its own backbone connection),
+          // so neither the partner nor editedBase's own eligibility can be
           // re-derived from editedBase afterwards.
           const partnerBeforeEdit = getHydrogenBondedPartner(editedBase);
+          const wasEditedBaseEligible = isBaseEligibleForDuplexSync(editedBase);
 
           if (
             editedBase.monomerItem.isAmbiguous ||
@@ -427,6 +430,7 @@ export class SequenceMode extends BaseMode {
             resolveBaseLibraryItem: (label) =>
               getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
             partner: partnerBeforeEdit,
+            wasEditedBaseEligible,
           });
 
           if (mirroredBaseCommand) {

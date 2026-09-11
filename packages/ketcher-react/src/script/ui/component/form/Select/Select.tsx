@@ -63,7 +63,9 @@ const Select = ({
   error,
   title,
 }: Props) => {
-  const currentValue = options?.find((option) => option.value === value);
+  const currentValue = options?.find(
+    (option) => String(option.value) === String(value),
+  );
   const isFullscreen = !!document.fullscreenElement;
   const portalContainer = isFullscreen
     ? document.querySelector('#root')

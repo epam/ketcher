@@ -38,6 +38,10 @@ At this moment Ketcher can be embedded into your application in two ways:
 - as ready-to-run application (to find desired version please look at Assets block of [releases](https://github.com/epam/ketcher/releases)). The application can be injected as IFrame or a separate page.
 - as a [react component library](https://www.npmjs.com/package/ketcher-react)
 
+> **Note:** Ketcher no longer publishes a single UMD `ketcher.min.js`/`.css` bundle, so loading it
+> via a CDN `<script>`/`<link>` tag (as shown in some older, third-party guides) is not supported.
+> Use one of the two methods above instead.
+
 ### Installation
 
 ```bash

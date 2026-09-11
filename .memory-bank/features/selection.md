@@ -18,6 +18,11 @@ Before editing, moving, deleting, or transforming parts of a drawing, the user m
 - **Flip** — Horizontal Flip (`Alt+H`) and Vertical Flip (`Alt+V`) mirror the selection, or each structure individually when nothing/everything is selected.
 - **Erase** — the _Erase tool_ (`Delete` / `Backspace`) removes hovered or selected elements.
 - **Highlight** — right-click atoms/bonds to apply one of eight highlight colours.
+- **One-shot drawing tools** — after placing text, an image, any reaction arrow
+  other than the Multi-Tailed Arrow, a reaction plus, or a simple shape, the
+  editor returns to the user's saved selection tool regardless of the user's
+  _Reset to Select_ setting. The Multi-Tailed Arrow tool remains active so
+  several related arrows can be placed consecutively.
 
 ## Expected behavior
 
@@ -47,6 +52,14 @@ Selection is reversible and non-destructive; manipulation acts only on the curre
 
 - **WHEN** the user presses `Delete` with a selection active
 - **THEN** all selected elements are removed as a single undoable step
+
+#### Scenario: Placing a static drawing object
+
+- **WHEN** the user places text, an image, any reaction arrow other than the
+  Multi-Tailed Arrow, a reaction plus, or a simple shape
+- **THEN** the newly created object remains on the canvas and the saved
+  selection tool becomes active regardless of the user's _Reset to Select_
+  setting
 
 #### Scenario: Restoring the Fragment Selection tool
 

@@ -32,7 +32,8 @@ interface Config {
   ketcherId: string;
 }
 
-export type { Config, ButtonsConfig };
+export type { Config };
+export type { ButtonsConfig } from './builders';
 export * from './providers';
 
 async function buildKetcherAsync({

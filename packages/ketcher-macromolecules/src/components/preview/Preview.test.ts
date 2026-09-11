@@ -61,4 +61,15 @@ describe('calculatePreviewPosition', () => {
       }).top,
     ).toBe(445);
   });
+
+  it('preserves legacy positioning outside popup mode', () => {
+    expect(
+      calculatePreviewPosition({
+        ...commonParams,
+        targetLeft: 210,
+        ketcherRootOffsetX: 0,
+        ketcherRootOffsetY: 0,
+      }),
+    ).toEqual({ top: 195, left: 80 });
+  });
 });

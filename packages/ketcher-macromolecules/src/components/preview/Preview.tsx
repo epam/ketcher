@@ -101,7 +101,13 @@ export const Preview = () => {
   }
 
   return (
-    <PreviewContainer ref={previewRef} style={{ ...preview?.style }}>
+    <PreviewContainer
+      ref={previewRef}
+      style={{
+        ...preview?.style,
+        pointerEvents: preview.style ? 'auto' : 'none',
+      }}
+    >
       {preview.type === PreviewType.Monomer && <MonomerPreview />}
       {preview.type === PreviewType.Preset && <PresetPreview />}
       {preview.type === PreviewType.Bond && <BondPreview />}
@@ -146,6 +152,28 @@ export function calculatePreviewPosition({
 }: CalculatePreviewPositionParams) {
   const topPosition = targetTop - previewHeight - previewOffset;
   const bottomPosition = targetBottom + previewOffset;
+
+  if (ketcherRootOffsetX === 0 && ketcherRootOffsetY === 0) {
+    const legacyTargetCenterX = targetLeft - targetWidth / 2;
+    const shouldPositionAbove =
+      topPosition >= canvasWrapperTop ||
+      (targetBottom + previewHeight > canvasWrapperBottom &&
+        targetBottom > canvasWrapperBottom / 2);
+
+    let left = targetLeft + targetWidth / 2 - previewWidth / 2;
+    if (legacyTargetCenterX < previewWidth / 2) {
+      left = canvasWrapperLeft;
+    } else if (legacyTargetCenterX + previewWidth / 2 >= canvasWrapperRight) {
+      const scrollBarOffset = 10;
+      left = canvasWrapperRight - previewWidth - scrollBarOffset;
+    }
+
+    return {
+      top: shouldPositionAbove ? topPosition : bottomPosition,
+      left,
+    };
+  }
+
   const canvasCenterY = (canvasWrapperTop + canvasWrapperBottom) / 2;
   const shouldPositionAbove =
     topPosition >= canvasWrapperTop ||

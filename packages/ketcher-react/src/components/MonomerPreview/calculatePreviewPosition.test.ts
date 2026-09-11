@@ -85,4 +85,17 @@ describe('calculateBondPreviewPositionByCoordinates', () => {
       ).left,
     ).toBe('504px');
   });
+
+  it('preserves legacy bond positioning outside popup mode', () => {
+    expect(
+      calculateBondPreviewPositionByCoordinates(
+        { left: 500, top: 500, right: 700, bottom: 520 },
+        canvas,
+      ),
+    ).toEqual({
+      top: '227px',
+      left: '600px',
+      transform: 'translate(-50%, 0)',
+    });
+  });
 });

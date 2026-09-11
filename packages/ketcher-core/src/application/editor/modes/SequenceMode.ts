@@ -56,6 +56,7 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMonomer';
 import {
   createMirroredBaseCommand,
+  getHydrogenBondedPartner,
   getMonomerNaturalAnalogue,
 } from 'domain/helpers/antisenseBaseSync';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
@@ -391,6 +392,11 @@ export class SequenceMode extends BaseMode {
         if (nodeToModify.rnaBase && baseMonomerItem) {
           const editedBase = nodeToModify.rnaBase;
           const previousNaturalAnalogue = getMonomerNaturalAnalogue(editedBase);
+          // Captured before the edit: the ambiguous branch below replaces
+          // editedBase's underlying monomer, which unsets all of its bonds
+          // (including this hydrogen bond), so the partner can no longer be
+          // re-derived from editedBase afterwards.
+          const partnerBeforeEdit = getHydrogenBondedPartner(editedBase);
 
           if (
             editedBase.monomerItem.isAmbiguous ||
@@ -420,6 +426,7 @@ export class SequenceMode extends BaseMode {
             needToEditAntisense: this.needToEditAntisense,
             resolveBaseLibraryItem: (label) =>
               getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
+            partner: partnerBeforeEdit,
           });
 
           if (mirroredBaseCommand) {

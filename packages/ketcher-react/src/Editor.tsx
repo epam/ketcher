@@ -1,6 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-import { lazy, Suspense, useEffect, useState } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   type EditorProps,
   MicromoleculesEditor as MicromoleculesEditorComponent,
@@ -49,6 +54,13 @@ const MacromoleculesEditorComponent = lazy(
 >;
 
 export const Editor = (props: Props) => {
+  const {
+    onInit,
+    disableMacromoleculesEditor,
+    monomersLibraryUpdate,
+    monomersLibraryReplace,
+    ...restProps
+  } = props;
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
   const [moleculesEditor, setMoleculesEditor] = useState<MoleculesEditor>();
   const [ketcher, setKetcher] = useState<Ketcher>();
@@ -56,12 +68,16 @@ export const Editor = (props: Props) => {
     useState<CoreEditor>();
 
   const [ketcherId, setKetcherId] = useState<string>('');
-  const togglePolymerEditor = (toggleValue: boolean) => {
+  const initializedKetcherRef = useRef<Ketcher | null>(null);
+  const prevShowPolymerEditorRef = useRef<boolean>(showPolymerEditor);
+  const editorsReadyRef = useRef<boolean>(false);
+
+  const togglePolymerEditor = useCallback((toggleValue: boolean) => {
     setShowPolymerEditor(toggleValue);
     window.isPolymerEditorTurnedOn = toggleValue;
-  };
+  }, []);
 
-  const togglerComponent = !props.disableMacromoleculesEditor ? (
+  const togglerComponent = !disableMacromoleculesEditor ? (
     <ModeControl
       toggle={togglePolymerEditor}
       isPolymerEditor={showPolymerEditor}
@@ -95,7 +111,7 @@ export const Editor = (props: Props) => {
         );
       }
     };
-  }, [macromoleculesEditor]);
+  }, [macromoleculesEditor, togglePolymerEditor]);
 
   useEffect(() => {
     return () => {
@@ -103,8 +119,26 @@ export const Editor = (props: Props) => {
     };
   }, []);
 
+  /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
   useEffect(() => {
+    // Guard to prevent running on initial lazy-load mount when editors become ready
+    // and showPolymerEditor is false, to avoid unexpected focus shifts
     if (moleculesEditor && macromoleculesEditor) {
+      // Mark editors as ready once
+      if (!editorsReadyRef.current) {
+        editorsReadyRef.current = true;
+        prevShowPolymerEditorRef.current = showPolymerEditor;
+        return;
+      }
+
+      // Only proceed if showPolymerEditor actually changed
+      if (prevShowPolymerEditorRef.current === showPolymerEditor) {
+        prevShowPolymerEditorRef.current = showPolymerEditor;
+        return;
+      }
+
+      prevShowPolymerEditorRef.current = showPolymerEditor;
+
       if (showPolymerEditor) {
         moleculesEditor?.closeMonomerCreationWizard?.();
         macromoleculesEditor?.switchToMacromolecules();
@@ -113,19 +147,39 @@ export const Editor = (props: Props) => {
         moleculesEditor?.focusCliparea();
       }
     }
-  }, [showPolymerEditor]);
+  }, [showPolymerEditor, moleculesEditor, macromoleculesEditor]);
+  /* eslint-enable react-you-might-not-need-an-effect/no-event-handler */
 
+  /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
   useEffect(() => {
     if (
       ketcher &&
       moleculesEditor &&
-      (macromoleculesEditor || props.disableMacromoleculesEditor)
+      (macromoleculesEditor || disableMacromoleculesEditor)
     ) {
-      if (ketcherProvider.getIndexById(ketcher.id) !== -1) {
-        props.onInit?.(ketcher);
+      // After analysis, we identified potential risks in removing either check:
+      // 1. Without ID check: Risk of race conditions if onInit is called before the instance is registered in ketcherProvider.
+      // 2. Without Reference check: Risk of system desync if a new instance theoretically reuses an old ID.
+      // We keep both to ensure the consumer is initialized only when the instance is both registered AND uniquely new.
+      if (
+        ketcherProvider.getIndexById(ketcher.id) !== -1 &&
+        initializedKetcherRef.current !== ketcher
+      ) {
+        initializedKetcherRef.current = ketcher;
+        onInit?.(ketcher);
       }
     }
-  }, [moleculesEditor, macromoleculesEditor]);
+
+    // Note: We intentionally don't reset initializedKetcherRef in cleanup
+    // to avoid duplicate calls when deps change
+  }, [
+    ketcher,
+    moleculesEditor,
+    macromoleculesEditor,
+    onInit,
+    disableMacromoleculesEditor,
+  ]);
+  /* eslint-enable react-you-might-not-need-an-effect/no-event-handler */
 
   const onInitMoleculesEditor = (ketcher: Ketcher) => {
     setKetcher(ketcher);
@@ -157,8 +211,8 @@ export const Editor = (props: Props) => {
               togglerComponent={togglerComponent}
               ketcherId={ketcherId}
               isMacromoleculesEditorTurnedOn={showPolymerEditor}
-              monomersLibraryUpdate={props.monomersLibraryUpdate}
-              monomersLibraryReplace={props.monomersLibraryReplace}
+              monomersLibraryUpdate={monomersLibraryUpdate}
+              monomersLibraryReplace={monomersLibraryReplace}
               onInit={onInitMacromoleculesEditor}
             />
           )}
@@ -172,7 +226,7 @@ export const Editor = (props: Props) => {
         }}
       >
         <MicromoleculesEditorComponent
-          {...props}
+          {...restProps}
           ketcherId={ketcherId}
           onSetKetcherId={setKetcherId}
           togglerComponent={togglerComponent}

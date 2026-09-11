@@ -188,14 +188,9 @@ export function calculateBondPreviewPositionByCoordinates(
   const width = right - left;
   const height = bottom - top;
 
-  if (ketcherRootLeft === 0 && ketcherRootTop === 0) {
-    return calculateLegacyBondPreviewPosition(
-      { left, top, right, bottom },
-      { canvasWrapperTop, canvasWrapperBottom, canvasWrapperRight },
-    );
-  }
-
-  let style: PreviewStyle;
+  let style: Required<Pick<PreviewStyle, 'top' | 'left' | 'transform'>>;
+  let offsetX: number;
+  let offsetY: number;
 
   if (width > height) {
     const leftValue = left + width / 2;
@@ -219,6 +214,9 @@ export function calculateBondPreviewPositionByCoordinates(
       horizontalTranslate = '-50%';
     }
 
+    offsetX =
+      (Number.parseFloat(horizontalTranslate) / 100) * preview.widthForBond;
+    offsetY = 0;
     style = {
       top: `${topValue - ketcherRootTop}px`,
       left: `${leftValue - ketcherRootLeft}px`,
@@ -247,6 +245,9 @@ export function calculateBondPreviewPositionByCoordinates(
       verticalTranslate = '-50%';
     }
 
+    offsetX = -preview.widthForBond / 2;
+    offsetY =
+      (Number.parseFloat(verticalTranslate) / 100) * preview.heightForBond;
     style = {
       top: `${topValue - ketcherRootTop}px`,
       left: `${leftValue - ketcherRootLeft}px`,
@@ -254,62 +255,22 @@ export function calculateBondPreviewPositionByCoordinates(
     };
   }
 
-  return style;
-}
-
-function calculateLegacyBondPreviewPosition(
-  { left, top, right, bottom }: RectCoordinates,
-  {
+  // Clamp the rendered rectangle, accounting for its CSS translation.
+  const viewportLeft =
+    Number.parseFloat(style.left) + ketcherRootLeft + offsetX;
+  const viewportTop = Number.parseFloat(style.top) + ketcherRootTop + offsetY;
+  const clampedLeft = Math.max(
+    horizontalBoundaryLeft,
+    Math.min(viewportLeft, horizontalBoundaryRight - preview.widthForBond),
+  );
+  const clampedTop = Math.max(
     canvasWrapperTop,
-    canvasWrapperBottom,
-    canvasWrapperRight,
-  }: {
-    canvasWrapperTop: number;
-    canvasWrapperBottom: number;
-    canvasWrapperRight: number;
-  },
-): PreviewStyle {
-  const width = right - left;
-  const height = bottom - top;
-
-  if (width > height) {
-    const leftValue = left + width / 2;
-    const topValue =
-      top + canvasWrapperTop > preview.height
-        ? top - preview.heightForBond - preview.gap
-        : bottom + preview.gap;
-    let horizontalTranslate = '0';
-
-    if (leftValue + preview.width > canvasWrapperRight) {
-      horizontalTranslate = '-100%';
-    } else if (leftValue > preview.width / 2) {
-      horizontalTranslate = '-50%';
-    }
-
-    return {
-      top: `${topValue}px`,
-      left: `${leftValue}px`,
-      transform: `translate(${horizontalTranslate}, 0)`,
-    };
-  }
-
-  const topValue = top + height / 2;
-  const leftValue =
-    left > preview.widthForBond + preview.gap
-      ? left - preview.widthForBond / 2 - preview.gap
-      : right + preview.widthForBond / 2 + preview.gap;
-  const horizontalTranslate = leftValue > preview.width / 2 ? '-50%' : '0';
-  let verticalTranslate = '0';
-
-  if (topValue + preview.height / 2 > canvasWrapperBottom) {
-    verticalTranslate = '-100%';
-  } else if (topValue > preview.height / 2) {
-    verticalTranslate = '-50%';
-  }
+    Math.min(viewportTop, canvasWrapperBottom - preview.heightForBond),
+  );
 
   return {
-    top: `${topValue}px`,
-    left: `${leftValue}px`,
-    transform: `translate(${horizontalTranslate}, ${verticalTranslate})`,
+    ...style,
+    left: `${clampedLeft - ketcherRootLeft - offsetX}px`,
+    top: `${clampedTop - ketcherRootTop - offsetY}px`,
   };
 }

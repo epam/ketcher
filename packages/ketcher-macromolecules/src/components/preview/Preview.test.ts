@@ -62,7 +62,7 @@ describe('calculatePreviewPosition', () => {
     ).toBe(445);
   });
 
-  it('preserves legacy positioning outside popup mode', () => {
+  it('keeps a preview inside the canvas when the root is at the viewport origin', () => {
     expect(
       calculatePreviewPosition({
         ...commonParams,
@@ -70,6 +70,19 @@ describe('calculatePreviewPosition', () => {
         ketcherRootOffsetX: 0,
         ketcherRootOffsetY: 0,
       }),
-    ).toEqual({ top: 195, left: 80 });
+    ).toEqual({ top: 195, left: 200 });
   });
+});
+
+it('keeps the full preview visible when neither vertical side has room', () => {
+  const position = calculatePreviewPosition({
+    ...commonParams,
+    targetTop: 380,
+    targetBottom: 420,
+    previewHeight: 345,
+    canvasWrapperBottom: 700,
+  });
+  const viewportTop = position.top + commonParams.ketcherRootOffsetY;
+  expect(viewportTop).toBeGreaterThanOrEqual(commonParams.canvasWrapperTop);
+  expect(viewportTop + 345).toBeLessThanOrEqual(700);
 });

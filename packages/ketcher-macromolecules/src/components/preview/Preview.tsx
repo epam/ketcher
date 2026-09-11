@@ -46,7 +46,8 @@ export const Preview = () => {
     }
 
     if (preview?.type) {
-      previewRef.current.setAttribute('style', '');
+      previewRef.current.style.top = '';
+      previewRef.current.style.left = '';
 
       const PREVIEW_OFFSET = 5;
 
@@ -92,7 +93,8 @@ export const Preview = () => {
       previewRef.current.style.top = `${position.top}px`;
       previewRef.current.style.left = `${position.left}px`;
     } else {
-      previewRef.current.setAttribute('style', '');
+      previewRef.current.style.top = '';
+      previewRef.current.style.left = '';
     }
   }, [editor?.ketcherRootElementBoundingClientRect, isPreviewVisible, preview]);
 
@@ -153,27 +155,6 @@ export function calculatePreviewPosition({
   const topPosition = targetTop - previewHeight - previewOffset;
   const bottomPosition = targetBottom + previewOffset;
 
-  if (ketcherRootOffsetX === 0 && ketcherRootOffsetY === 0) {
-    const legacyTargetCenterX = targetLeft - targetWidth / 2;
-    const shouldPositionAbove =
-      topPosition >= canvasWrapperTop ||
-      (targetBottom + previewHeight > canvasWrapperBottom &&
-        targetBottom > canvasWrapperBottom / 2);
-
-    let left = targetLeft + targetWidth / 2 - previewWidth / 2;
-    if (legacyTargetCenterX < previewWidth / 2) {
-      left = canvasWrapperLeft;
-    } else if (legacyTargetCenterX + previewWidth / 2 >= canvasWrapperRight) {
-      const scrollBarOffset = 10;
-      left = canvasWrapperRight - previewWidth - scrollBarOffset;
-    }
-
-    return {
-      top: shouldPositionAbove ? topPosition : bottomPosition,
-      left,
-    };
-  }
-
   const canvasCenterY = (canvasWrapperTop + canvasWrapperBottom) / 2;
   const shouldPositionAbove =
     topPosition >= canvasWrapperTop ||
@@ -191,7 +172,13 @@ export function calculatePreviewPosition({
 
   return {
     top:
-      (shouldPositionAbove ? topPosition : bottomPosition) - ketcherRootOffsetY,
+      Math.max(
+        canvasWrapperTop,
+        Math.min(
+          shouldPositionAbove ? topPosition : bottomPosition,
+          canvasWrapperBottom - previewHeight,
+        ),
+      ) - ketcherRootOffsetY,
     left: leftPosition - ketcherRootOffsetX,
   };
 }

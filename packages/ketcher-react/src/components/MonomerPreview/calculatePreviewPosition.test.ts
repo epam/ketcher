@@ -86,7 +86,7 @@ describe('calculateBondPreviewPositionByCoordinates', () => {
     ).toBe('504px');
   });
 
-  it('preserves legacy bond positioning outside popup mode', () => {
+  it('positions a bond preview without popup offsets', () => {
     expect(
       calculateBondPreviewPositionByCoordinates(
         { left: 500, top: 500, right: 700, bottom: 520 },
@@ -98,4 +98,47 @@ describe('calculateBondPreviewPositionByCoordinates', () => {
       transform: 'translate(-50%, 0)',
     });
   });
+});
+
+it('keeps the full preview inside a popup when neither side has room', () => {
+  const style = calculateBondPreviewPositionByCoordinates(
+    { left: 420, top: 250, right: 440, bottom: 550 },
+    { left: 150, top: 150, right: 750, bottom: 700 },
+    { left: 100, top: 50, right: 780, bottom: 730 },
+  );
+  const viewportLeft = Number.parseFloat(style.left!) + 100 - 358 / 2;
+  expect(viewportLeft).toBeGreaterThanOrEqual(100);
+  expect(viewportLeft + 358).toBeLessThanOrEqual(780);
+});
+it('uses available space below a bond with a root at the viewport origin', () => {
+  const style = calculateBondPreviewPositionByCoordinates(
+    { left: 400, top: 250, right: 600, bottom: 270 },
+    { left: 40, top: 100, right: 700, bottom: 750 },
+    { left: 0, top: 0, right: 1000, bottom: 800 },
+  );
+  expect(style.top).toBe('275px');
+});
+
+it.each([
+  { left: 160, top: 160, right: 300, bottom: 190 },
+  { left: 600, top: 660, right: 740, bottom: 690 },
+  { left: 420, top: 250, right: 440, bottom: 550 },
+  { left: 200, top: 380, right: 700, bottom: 420 },
+])('keeps the rendered bond preview in bounds for %o', (bond) => {
+  const bounds = { left: 100, top: 150, right: 780, bottom: 700 };
+  const style = calculateBondPreviewPositionByCoordinates(bond, bounds, bounds);
+  const translation = style.transform?.match(/-?\d+/g)?.map(Number) ?? [];
+  expect(translation).toHaveLength(2);
+  const left =
+    Number.parseFloat(style.left ?? '') +
+    bounds.left +
+    (translation[0] / 100) * 358;
+  const top =
+    Number.parseFloat(style.top ?? '') +
+    bounds.top +
+    (translation[1] / 100) * 268;
+  expect(left).toBeGreaterThanOrEqual(bounds.left);
+  expect(left + 358).toBeLessThanOrEqual(bounds.right);
+  expect(top).toBeGreaterThanOrEqual(bounds.top);
+  expect(top + 268).toBeLessThanOrEqual(bounds.bottom);
 });

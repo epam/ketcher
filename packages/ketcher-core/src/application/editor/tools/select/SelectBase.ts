@@ -100,11 +100,13 @@ abstract class SelectBase implements BaseTool {
   private readonly selectEntitiesHandler = () => {
     this.updateRotationView();
   };
-  private autoScrollAnimationFrameId: number | null = null;
-  private autoScrollDeltaX: number = 0;
-  private autoScrollDeltaY: number = 0;
   private static readonly AUTO_SCROLL_EDGE_THRESHOLD = 15; // pixels from edge to trigger auto-scroll
   private static readonly AUTO_SCROLL_SPEED = 5; // pixels to scroll per frame
+  private static readonly AUTO_SCROLL_INITIAL_DELAY = 50; // ms before first scroll fires
+  private static readonly AUTO_SCROLL_REPEAT_DELAY = 5; // ms between subsequent scrolls
+  private autoScrollTimerId: ReturnType<typeof setTimeout> | null = null;
+  private autoScrollDeltaX: number = 0;
+  private autoScrollDeltaY: number = 0;
 
   /**
    * Reads renderer data from d3-bound event targets (`target.__data__`).
@@ -1024,64 +1026,63 @@ abstract class SelectBase implements BaseTool {
     }
 
     const rect = canvasWrapperNode.getBoundingClientRect();
+    const threshold = SelectBase.AUTO_SCROLL_EDGE_THRESHOLD;
 
-    // Quick check: calculate distances from edges
     const distanceFromTop = event.clientY - rect.top;
     const distanceFromBottom = rect.bottom - event.clientY;
     const distanceFromLeft = event.clientX - rect.left;
     const distanceFromRight = rect.right - event.clientX;
 
-    // Early return if mouse is not near any edge (most common case)
-    const threshold = SelectBase.AUTO_SCROLL_EDGE_THRESHOLD;
-    if (
-      distanceFromTop >= threshold &&
-      distanceFromBottom >= threshold &&
-      distanceFromLeft >= threshold &&
-      distanceFromRight >= threshold
-    ) {
+    // Note: D3 zoom translateBy moves viewport, not content.
+    // Negative values move viewport up (content appears to scroll down)
+    // Positive values move viewport down (content appears to scroll up)
+    let deltaX = 0;
+    let deltaY = 0;
+
+    if (distanceFromTop < threshold) {
+      deltaY = SelectBase.AUTO_SCROLL_SPEED;
+    } else if (distanceFromBottom < threshold) {
+      deltaY = -SelectBase.AUTO_SCROLL_SPEED;
+    }
+
+    if (distanceFromLeft < threshold) {
+      deltaX = SelectBase.AUTO_SCROLL_SPEED;
+    } else if (distanceFromRight < threshold) {
+      deltaX = -SelectBase.AUTO_SCROLL_SPEED;
+    }
+
+    if (deltaX === 0 && deltaY === 0) {
       this.cancelAutoScroll();
       return;
     }
 
-    // Determine scroll direction and amount - update instance variables
-    this.autoScrollDeltaX = 0;
-    this.autoScrollDeltaY = 0;
+    this.autoScrollDeltaX = deltaX;
+    this.autoScrollDeltaY = deltaY;
 
-    // Check vertical edges
-    // Note: D3 zoom translateBy moves viewport, not content
-    // Negative values move viewport up (content appears to scroll down)
-    // Positive values move viewport down (content appears to scroll up)
-    if (distanceFromTop < threshold) {
-      this.autoScrollDeltaY = SelectBase.AUTO_SCROLL_SPEED; // Mouse at top -> scroll content down
-    } else if (distanceFromBottom < threshold) {
-      this.autoScrollDeltaY = -SelectBase.AUTO_SCROLL_SPEED; // Mouse at bottom -> scroll content up
+    // Start the debounce timer only if not already running.
+    // The 150ms delay means fast test mouse moves (< 150ms in edge zone) never fire a scroll,
+    // while a real user holding the mouse at the edge will get continuous scrolling.
+    if (this.autoScrollTimerId === null) {
+      this.autoScrollTimerId = setTimeout(
+        () => this.performAutoScroll(),
+        SelectBase.AUTO_SCROLL_INITIAL_DELAY,
+      );
+    }
+  }
+
+  private performAutoScroll() {
+    if (this.mode !== 'selecting') {
+      this.autoScrollTimerId = null;
+      return;
     }
 
-    // Check horizontal edges
-    if (distanceFromLeft < threshold) {
-      this.autoScrollDeltaX = SelectBase.AUTO_SCROLL_SPEED; // Mouse at left -> scroll content right
-    } else if (distanceFromRight < threshold) {
-      this.autoScrollDeltaX = -SelectBase.AUTO_SCROLL_SPEED; // Mouse at right -> scroll content left
-    }
+    this.editor.zoomTool.scrollBy(this.autoScrollDeltaX, this.autoScrollDeltaY);
 
-    // Start continuous scrolling if not already started
-    if (this.autoScrollAnimationFrameId === null) {
-      const continuousScroll = () => {
-        // Safety check: only scroll if we're still in selecting mode
-        if (this.mode !== 'selecting') {
-          this.cancelAutoScroll();
-          return;
-        }
-        // Use instance variables so direction can be updated dynamically
-        this.editor.zoomTool.scrollBy(
-          this.autoScrollDeltaX,
-          this.autoScrollDeltaY,
-        );
-        this.autoScrollAnimationFrameId =
-          requestAnimationFrame(continuousScroll);
-      };
-      this.autoScrollAnimationFrameId = requestAnimationFrame(continuousScroll);
-    }
+    // Schedule the next scroll tick
+    this.autoScrollTimerId = setTimeout(
+      () => this.performAutoScroll(),
+      SelectBase.AUTO_SCROLL_REPEAT_DELAY,
+    );
   }
 
   mousemove(event: MouseEvent) {
@@ -1476,9 +1477,9 @@ abstract class SelectBase implements BaseTool {
   }
 
   private cancelAutoScroll() {
-    if (this.autoScrollAnimationFrameId !== null) {
-      cancelAnimationFrame(this.autoScrollAnimationFrameId);
-      this.autoScrollAnimationFrameId = null;
+    if (this.autoScrollTimerId !== null) {
+      clearTimeout(this.autoScrollTimerId);
+      this.autoScrollTimerId = null;
     }
     this.autoScrollDeltaX = 0;
     this.autoScrollDeltaY = 0;

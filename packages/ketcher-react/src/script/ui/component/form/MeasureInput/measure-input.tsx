@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type HTMLAttributes, useState } from 'react';
+import { type HTMLAttributes, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 
 import Input from '../Input/Input';
@@ -109,6 +109,8 @@ const MeasureInput = ({
   const stringifiedValue = String(value);
   const [internalValue, setInternalValue] = useState(stringifiedValue);
   const [prevPropValue, setPrevPropValue] = useState(stringifiedValue);
+
+  const internalValueRef = useRef(internalValue);
   const {
     anchorEl,
     handleOpen: handlePopoverOpen,
@@ -119,6 +121,10 @@ const MeasureInput = ({
     setPrevPropValue(stringifiedValue);
     setInternalValue(stringifiedValue);
   }
+
+  useEffect(() => {
+    internalValueRef.current = internalValue;
+  }, [internalValue]);
 
   const handleChange = (value: unknown) => {
     const newStringifiedValue = String(value);
@@ -136,7 +142,11 @@ const MeasureInput = ({
       return;
     }
 
-    const newInternalValue = getNewInternalValue(internalValue, endorcedValue);
+    const newInternalValue = getNewInternalValue(
+      internalValueRef.current,
+      endorcedValue,
+    );
+    internalValueRef.current = newInternalValue;
     setInternalValue(newInternalValue);
 
     if (newInternalValue !== stringifiedValue) {

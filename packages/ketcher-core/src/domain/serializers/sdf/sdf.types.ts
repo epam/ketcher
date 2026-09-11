@@ -24,3 +24,13 @@ export interface SdfItem {
   struct: Struct;
   props: StructAssociatedData;
 }
+
+export interface SdfSerializeSkippedItem {
+  name: string;
+  reason: string;
+}
+
+export interface SdfSerializeResult {
+  sdf: string;
+  skipped: Array<SdfSerializeSkippedItem>;
+}

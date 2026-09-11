@@ -115,7 +115,7 @@ function ColorSlider({
         max={max}
         step={step}
         value={value}
-        onChange={(e) => onValueChange(parseInt(e.target.value, 10))}
+        onChange={(e) => onValueChange(Number.parseInt(e.target.value, 10))}
         className={classes.sliderInput}
         style={{ background }}
         aria-label={ariaLabel}

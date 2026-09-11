@@ -104,7 +104,7 @@ export const FontControl = ({ editor }: { editor: LexicalEditor }) => {
           setIsShowingFontSizeMenu(!isShowingFontSizeMenu);
         }}
       >
-        {parseFloat(currentFontSize)}
+        {Number.parseFloat(currentFontSize)}
       </button>
       {isShowingFontSizeMenu ? (
         <div className={classes.fontSizeMenu}>{fontSizeOptions}</div>

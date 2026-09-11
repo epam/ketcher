@@ -284,7 +284,7 @@ const MiewDialog = ({
         ),
       );
     }
-  }, [dispatch, server, serverSettings, struct]);
+  }, [dispatch, server, serverSettings, struct, t]);
 
   return (
     <Dialog

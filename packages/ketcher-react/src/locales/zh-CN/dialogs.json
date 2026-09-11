@@ -319,7 +319,21 @@
       },
       "bond": {
         "type": {
-          "title": "类型"
+          "title": "类型",
+          "enumSingle": "单键",
+          "enumSingleUp": "上楔形键",
+          "enumSingleDown": "下楔形键",
+          "enumSingleUpDown": "上下楔形键",
+          "enumDouble": "双键",
+          "enumDoubleCisTrans": "顺反双键",
+          "enumTriple": "三键",
+          "enumAromatic": "芳香键",
+          "enumAny": "任意键",
+          "enumHydrogen": "氢键",
+          "enumSingleDouble": "单或双键",
+          "enumSingleAromatic": "单或芳香键",
+          "enumDoubleAromatic": "双或芳香键",
+          "enumDative": "配位键"
         },
         "topology": {
           "title": "拓扑",

@@ -336,7 +336,7 @@ export class RotationView extends TransientView {
       const snappedToStep =
         Math.round(rawRadius / STYLE.PROTRACTOR_RADIUS_STEP) *
         STYLE.PROTRACTOR_RADIUS_STEP;
-      let radius = snappedToStep > 0 ? snappedToStep : 0;
+      let radius = Math.max(snappedToStep, 0);
 
       const lastSnappingRadius = RotationView.lastSnappingRadius;
       if (radius > 0) {

@@ -53,6 +53,8 @@ import { isArrowKey, moveSelectedItems } from './moveSelectedItems';
 import { handleHotkeyOverItem } from './handleHotkeysOverItem';
 
 let keydownListener: ((event: KeyboardEvent) => void) | null = null;
+const affectedTools = new Set(['paste', 'template']);
+const zoomActionNames = new Set(['zoom-in', 'zoom-out']);
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -72,15 +74,14 @@ export function removeKeydownListener(element) {
 }
 
 function removeNotRenderedStruct(actionTool, group, dispatch) {
-  const affectedTools = ['paste', 'template'];
-  if (affectedTools.includes(actionTool.tool) && group?.includes('save')) {
+  if (affectedTools.has(actionTool.tool) && group?.includes('save')) {
     dispatch(removeStructAction());
   }
 }
 
 let abbreviationLookupTimeoutId: number | undefined;
 const ABBREVIATION_LOOKUP_TYPING_TIMEOUT = 1000;
-const shortcutKeys = [
+const shortcutKeys = new Set([
   '0',
   '1',
   '2',
@@ -97,7 +98,7 @@ const shortcutKeys = [
   'b',
   '+',
   '-',
-];
+]);
 
 function shouldIgnoreKeyEvent(state, event): boolean {
   if (window.isPolymerEditorTurnedOn) {
@@ -113,7 +114,7 @@ function shouldIgnoreKeyEvent(state, event): boolean {
 
 function shouldShowAbbreviationLookup(key: string, state): boolean {
   const currentlyPressedKeys = selectAbbreviationLookupValue(state);
-  const isShortcutKey = shortcutKeys.includes(key.toLowerCase());
+  const isShortcutKey = shortcutKeys.has(key.toLowerCase());
   const isTheSameKey = key.toLowerCase() === currentlyPressedKeys;
   return Boolean((!isTheSameKey || !isShortcutKey) && currentlyPressedKeys);
 }
@@ -182,7 +183,7 @@ function isActionDisabledOrHidden(actionState, actName): boolean {
 }
 
 function getNextAction(actName) {
-  return ['zoom-in', 'zoom-out'].includes(actName)
+  return zoomActionNames.has(actName)
     ? actions[actName].action()
     : actions[actName].action;
 }

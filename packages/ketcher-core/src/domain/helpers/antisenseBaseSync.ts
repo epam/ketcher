@@ -1,7 +1,10 @@
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { MonomerOrAmbiguousType } from 'domain/types';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
+import {
+  type KetMonomerClass,
+  RNA_DNA_NON_MODIFIED_PART,
+} from 'domain/constants/monomers';
 import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
@@ -11,6 +14,7 @@ import {
 } from 'domain/helpers/monomers';
 import type { Command } from 'domain/entities/Command';
 import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMonomer';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 /**
  * Follows the existing convention in Nucleoside, Nucleotide and the sequence
@@ -27,6 +31,21 @@ export function getLibraryItemNaturalAnalogue(
   return isAmbiguousMonomerLibraryItem(item)
     ? item.label
     : item.props?.MonomerNaturalAnalogCode;
+}
+
+/**
+ * Follows the same isAmbiguousMonomerLibraryItem branching used by
+ * getRnaPartLibraryItem/getPeptideLibraryItem (domain/helpers/rna.ts) and by
+ * getLibraryItemNaturalAnalogue above: an ambiguous library item has no
+ * `props`, so its monomer class must be derived from its constituent
+ * monomers via AmbiguousMonomer.getMonomerClass rather than read off props.
+ */
+export function getLibraryItemMonomerClass(
+  item: MonomerOrAmbiguousType,
+): KetMonomerClass | undefined {
+  return isAmbiguousMonomerLibraryItem(item)
+    ? AmbiguousMonomer.getMonomerClass(item.monomers)
+    : item.props?.MonomerClass;
 }
 
 export function getMonomerNaturalAnalogue(

@@ -57,6 +57,7 @@ import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMo
 import {
   createMirroredBaseCommand,
   getHydrogenBondedPartner,
+  getLibraryItemMonomerClass,
   getMonomerNaturalAnalogue,
   isBaseEligibleForDuplexSync,
   isSelectedAntisensePair,
@@ -2272,7 +2273,7 @@ export class SequenceMode extends BaseMode {
     const modelChanges = new Command();
 
     const isBaseReplacement =
-      monomerItem.props?.MonomerClass === KetMonomerClass.Base;
+      getLibraryItemMonomerClass(monomerItem) === KetMonomerClass.Base;
     const hasSelectedAntisensePair = selections.some((selectionRange) =>
       selectionRange.some((nodeSelection) => {
         const nodeToReplace = getNodeForStrand(

@@ -56,7 +56,6 @@ const defaultProps = {
   lib: [],
   selected: null,
   tab: 0,
-  initialTab: 0,
   saltsAndSolvents: [],
   functionalGroups: [],
   onAttach: jest.fn(),

@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import MenuContext, { IMenuContext } from './menuContext';
-
-export { MenuContext };
-export type { IMenuContext };
+export { default as MenuContext } from './menuContext';
+export type { IMenuContext } from './menuContext';
 export * from './RootSizeContext';

@@ -2079,12 +2079,15 @@ export class SequenceMode extends BaseMode {
     selectedNode: SequenceNode,
     selectedTwoStrandedNode: ITwoStrandedChainItem,
     modelChanges: Command,
-    previousSelectionNode?: SequenceNode,
+    previousSelectionNode: SequenceNode | undefined,
+    strandType: STRAND_TYPE,
   ) {
     const editor = provideEditorInstance();
-    const nextNode = SequenceRenderer.getNextNodeInSameChain(
-      selectedTwoStrandedNode,
-    );
+    const isAntisense = strandType === STRAND_TYPE.ANTISENSE;
+    const nextTwoStrandedNode = isAntisense
+      ? SequenceRenderer.getPreviousNodeInSameChain(selectedTwoStrandedNode)
+      : SequenceRenderer.getNextNodeInSameChain(selectedTwoStrandedNode);
+    const nextNodeInStrand = getNodeForStrand(nextTwoStrandedNode, strandType);
     const position = selectedNode.monomer.position;
     const sideChainConnections =
       this.preserveSideChainConnections(selectedNode);
@@ -2126,7 +2129,7 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         newMonomerSequenceNode,
-        nextNode?.senseNode ?? null,
+        nextNodeInStrand ?? null,
         previousSelectionNode,
         Boolean(hasPreviousNodeInChain),
         Boolean(hasNextNodeInChain),
@@ -2237,8 +2240,12 @@ export class SequenceMode extends BaseMode {
 
     selections.forEach((selectionRange) => {
       const strandType = getSelectedStrandType(selectionRange[0].node);
+      const previousTwoStrandedNode =
+        strandType === STRAND_TYPE.ANTISENSE
+          ? SequenceRenderer.getNextNodeInSameChain(selectionRange[0].node)
+          : SequenceRenderer.getPreviousNodeInSameChain(selectionRange[0].node);
       let previousReplacedNode = getNodeForStrand(
-        SequenceRenderer.getPreviousNodeInSameChain(selectionRange[0].node),
+        previousTwoStrandedNode,
         strandType,
       );
 
@@ -2255,6 +2262,7 @@ export class SequenceMode extends BaseMode {
           nodeSelection.node,
           modelChanges,
           previousReplacedNode,
+          strandType,
         );
       });
     });

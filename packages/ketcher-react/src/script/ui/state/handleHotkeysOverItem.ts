@@ -425,7 +425,7 @@ async function isChangingFunctionalGroup(
   const fgId = getFunctionalGroupIdByItem(editor, hoveredItemId, type);
 
   if (fgId !== null) {
-    await dispatchMonomerOrGroupDialog(editor, [fgId]);
+    dispatchMonomerOrGroupDialog(editor, [fgId]);
 
     return false;
   }

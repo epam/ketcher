@@ -297,9 +297,7 @@ test.describe('Connection rules for chems: ', () => {
     await dragMouseTo(page, 550, 370);
     await moveMouseAway(page);
 
-    for await (const CHEMAttachmentPoint of Object.values(
-      CHEM.attachmentPoints,
-    )) {
+    for (const CHEMAttachmentPoint of Object.values(CHEM.attachmentPoints)) {
       const tmpCHEM = tmpChemMonomers[`Test-6-Ch-${CHEMAttachmentPoint[1]}`];
       if (CHEMAttachmentPoint !== freeCHEMAttachmentPoint) {
         await bondTwoMonomersByPointToPoint(
@@ -348,9 +346,7 @@ test.describe('Connection rules for chems: ', () => {
     await dragMouseTo(page, 550, 370);
     await moveMouseAway(page);
 
-    for await (const CHEMAttachmentPoint of Object.values(
-      CHEM.attachmentPoints,
-    )) {
+    for (const CHEMAttachmentPoint of Object.values(CHEM.attachmentPoints)) {
       const tmpCHEM = tmpChemMonomers[`Test-6-Ch-${CHEMAttachmentPoint[1]}`];
       await bondTwoMonomersByPointToPoint(
         page,

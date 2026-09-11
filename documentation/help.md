@@ -69,9 +69,9 @@ You can use the buttons of the _Main_ toolbar:
 - **Layout** button (11) to change the position of the structure to work with it with the most convenience;
 - **Clean Up** button (12) to improve the appearance of the structure by assigning them uniform bond lengths and angles;
 - **Calculate CIP** button (13) to determine R/S, r/s, and E/Z stereoconfigurations;
-- **Check Structure** button (14) (`Alt+s`) to check the bellow shown properties of the structure. Check will be conducted immediately when the operation is selected. You can check only the Settings you are interested in and check structure again with new settings by clicking on Check button. Apply button will save the Settings checked and they will be applied for the file saving;
+- **Check Structure** button (14) (`Alt+s`) to check the bellow shown properties of the structure. Check will be conducted immediately when the operation is selected. You can check only the Settings you are interested in and by chosing them from the _Settings_ panel and clicking _Check_;
 
-<img src=images/Structure-Check-3.0..png width = "400"/>
+<img src=images/Structure-Check-3.20..png width = "400"/>
 
 - **Calculated Values** button (15) to display some properties of the structure;
 
@@ -664,12 +664,12 @@ After _Submit_ is clicked, the user will see an expanded monomer in molecules mo
 
 <img src=images/Monomer-Creation-Wizard-11-3.11..png width = "500"/>
 
-New monomers can be created using existing monomers by choosing _Edit Instance_ or _Edit All Instances_ options in the context menu:
+New monomers can be created using existing monomers by choosing _Edit Monomer_ or _Edit All [Monomer Code]_ options in the context menu:
 
-<img src=images/Monomer-Creation-Wizard-16-3.18..png width = "300"/>
+<img src=images/Monomer-Creation-Wizard-16-3.20..png width = "300"/>
 <img src=images/Monomer-Creation-Wizard-17-3.17..png width = "450"/>
 
-In these cases a copy of the original monomer is loaded into the Wizard (with some of its properties modified in relation to the original). _Edit Instance_ will update only the selected monomer, whereas _Edit All Instances_ will update the selected and all identical monomers on canvas.
+In these cases a copy of the original monomer is loaded into the Wizard (with some of its properties modified in relation to the original). _Edit Monomer_ will update only the selected monomer, whereas _Edit Edit All [Monomer Code]_ will update the selected and all identical monomers on canvas.
 
 ##### Creating New Presets
 
@@ -831,7 +831,7 @@ There are two differences between snake and flex modes:
 
 After a selection of a circular structure is made, in _Flex layout mode_, a new option in the context menu and on the top toolbar exists: _Arrange as a Ring_:
 
-<img src=images/Arrange-as-ring-3.10..png width = "400"/>
+<img src=images/Arrange-as-ring-3.20..png width = "500"/>
 
 When the option is chosen, the selected monomers get arranged in a regular n-agon where the monomers occupy the vertices:
 
@@ -924,7 +924,7 @@ Clicking on the _Calculate Properties_ toogle on the main toolbar, or using the 
 
 - Nucleic acid specific properties are:
      - *Melting temperature* - Calculated only for double stranded sequences, and only taking natural analogues into account; The user is able to modify the variables of oligonucleotide concentration and unipositive ion concentration; Method from _Khandelwal G. and Bhyravabhotla J. (2010)_;
-     - *Nucleotide count* - Represents the count of every base making up a nucleotide/nucleozide.
+     - *Nucleotide count* - Represents the count of every base making up a nucleotide/nucleoside.
  
 <img src=images/Calculate-Properties-2-3.8..png width = "800"/>
 
@@ -973,7 +973,7 @@ Whole structure in molecules mode:
 
 After switching to molecules mode, right-clicking on a monomer gives the option to _Expand monomer_.
 
-<img src=images/Expand-Monomer-3.4..png width = "250"/>
+<img src=images/Expand-Monomer-3.20..png width = "250"/>
 <img src=images/Expand-Monomer-2-3.4..png width = "250"/>
 
 Multiple monomers can be expanded at the same time. 

@@ -102,7 +102,7 @@ abstract class SelectBase implements BaseTool {
   };
   private static readonly AUTO_SCROLL_EDGE_THRESHOLD = 15; // pixels from edge to trigger auto-scroll
   private static readonly AUTO_SCROLL_SPEED = 5; // pixels to scroll per frame
-  private static readonly AUTO_SCROLL_INITIAL_DELAY = 50; // ms before first scroll fires
+  private static readonly AUTO_SCROLL_INITIAL_DELAY = 150; // ms before first scroll fires
   private static readonly AUTO_SCROLL_REPEAT_DELAY = 5; // ms between subsequent scrolls
   private autoScrollTimerId: ReturnType<typeof setTimeout> | null = null;
   private autoScrollDeltaX: number = 0;

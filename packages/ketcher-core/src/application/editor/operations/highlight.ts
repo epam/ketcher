@@ -68,10 +68,10 @@ export class HighlightAdd extends BaseOperation {
       outline,
     });
 
-    if (typeof this.data.highlightId !== 'number') {
-      this.data.highlightId = struct.highlights.add(highlight);
-    } else {
+    if (typeof this.data.highlightId === 'number') {
       struct.highlights.set(this.data.highlightId, highlight);
+    } else {
+      this.data.highlightId = struct.highlights.add(highlight);
     }
 
     notifyChanged(restruct, atoms, bonds, rgroupAttachmentPoints);

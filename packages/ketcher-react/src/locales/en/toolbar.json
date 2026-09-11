@@ -70,7 +70,22 @@
     "shapeLine": "Shape Line",
     "addText": "Add text",
     "addImage": "Add Image",
-    "bondTitle": "{type} Bond"
+    "bondTypeTitles": {
+      "single": "Single Bond",
+      "up": "Single Up Bond",
+      "down": "Single Down Bond",
+      "updown": "Single Up/Down Bond",
+      "double": "Double Bond",
+      "crossed": "Double Cis/Trans Bond",
+      "triple": "Triple Bond",
+      "aromatic": "Aromatic Bond",
+      "any": "Any Bond",
+      "hydrogen": "Hydrogen Bond",
+      "singledouble": "Single/Double Bond",
+      "singlearomatic": "Single/Aromatic Bond",
+      "doublearomatic": "Double/Aromatic Bond",
+      "dative": "Dative Bond"
+    }
   },
   "server": {
     "layout": "Layout",

@@ -128,13 +128,19 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       Math.abs(this.polymerBond.startPosition.x - midX) <
       Math.abs(this.polymerBond.startPosition.y - midY);
 
+    const preferBottomEdge = this.isBelowStructureCenter(
+      this.polymerBond.startPosition.y,
+    );
+
     const firstPoint = this.getPointOnBBox(
       this.polymerBond.startPosition,
       expandedBBox,
+      preferBottomEdge,
     );
     const secondPoint = this.getPointOnBBox(
       this.polymerBond.endPosition,
       expandedBBox,
+      preferBottomEdge,
     );
 
     let thirdPoint: Vec2;
@@ -252,6 +258,20 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
 
     return this.bodyElement;
   }
+  private isBelowStructureCenter(y: number): boolean {
+    const monomers = [
+      ...provideEditorInstance().drawingEntitiesManager.monomers.values(),
+    ];
+
+    if (monomers.length === 0) {
+      return false;
+    }
+
+    const structureBbox = getStructureBbox(monomers);
+    const structureMidY = structureBbox.top + structureBbox.height / 2;
+
+    return y > structureMidY;
+  }
 
   private getExpandedBoundingBox(bbox) {
     const expansionFactor = this.polymerBond.isSideChainConnection
@@ -270,7 +290,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     return { left, top, width, height };
   }
 
-  private getPointOnBBox(position: Vec2, bbox): Vec2 {
+  private getPointOnBBox(position: Vec2, bbox, preferBottomEdge = false): Vec2 {
     const { left, top, width, height } = bbox;
     const midX = left + width / 2;
     const midY = top + height / 2;
@@ -280,7 +300,10 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     if (Math.abs(position.x - midX) < Math.abs(position.y - midY)) {
       result = new Vec2(position.x > midX ? left : left + width, position.y);
     } else {
-      result = new Vec2(position.x, position.y > midY ? top + height : top);
+      const isBottomEdge = preferBottomEdge
+        ? position.y >= midY
+        : position.y > midY;
+      result = new Vec2(position.x, isBottomEdge ? top + height : top);
     }
 
     return Coordinates.modelToCanvas(result);

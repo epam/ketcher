@@ -18,7 +18,7 @@
 @import '../../../../../../../style/mixins.less';
 
 .open {
-  box-shadow: 0 5px 20px ~'@{color-open-window-shadow}';
+  box-shadow: 0 5px 20px @color-open-window-shadow;
   background-color: @color-background-primary;
 
   > div {
@@ -42,14 +42,14 @@
     overflow: auto;
     white-space: pre;
     border: none;
-    border-bottom: 1px solid ~'@{color-grey-3}';
+    border-bottom: 1px solid @color-grey-3;
     border-radius: 0;
     resize: both;
     .scrollbar();
 
     &:hover {
       border: none;
-      border-bottom: 1px solid ~'@{color-grey-3}';
+      border-bottom: 1px solid @color-grey-3;
       border-radius: 0;
     }
   }

@@ -76,7 +76,7 @@
     }
 
     &:hover {
-      border: 1px solid ~'@{color-input-hover}';
+      border: 1px solid @color-input-hover;
     }
 
     &[disabled],
@@ -101,7 +101,7 @@
     line-height: @line-height-input;
     height: 24px;
     padding: 3px 7px;
-    border: 1px solid ~'@{color-border-input}';
+    border: 1px solid @color-border-input;
     box-sizing: border-box;
     color: @color-text-primary;
 
@@ -112,14 +112,14 @@
     }
 
     &:hover {
-      border: 1px solid ~'@{color-input-hover}';
+      border: 1px solid @color-input-hover;
     }
 
     &[disabled],
     &[readonly],
     fieldset[disabled] & {
       cursor: not-allowed;
-      border: 1px solid ~'@{color-border-input}';
+      border: 1px solid @color-border-input;
       background-color: #e1e5ea;
       color: #585858;
     }
@@ -135,7 +135,7 @@
 
     &.-hidden {
       border-color: transparent;
-      margin-top: calc(0.9em + 2 * 0.3em);
+      margin-top: 0.9em + 2 * 0.3em;
     }
   }
 

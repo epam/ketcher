@@ -52,7 +52,7 @@
   box-sizing: border-box;
   width: 100px;
   height: 100px;
-  border: 1px solid ~'@{color-grey-5}';
+  border: 1px solid @color-grey-5;
   border-radius: 5px;
   background-color: @color-background-primary;
 
@@ -77,13 +77,13 @@
 .structPlaceholder {
   width: 100px;
   height: 100px;
-  border: 1px solid ~'@{color-grey-5}';
+  border: 1px solid @color-grey-5;
   border-radius: 5px;
   background: linear-gradient(
     90deg,
-    ~'@{color-background-primary}' 20%,
-    ~'@{form-hover-background}' 50%,
-    ~'@{color-background-primary}' 80%
+    @color-background-primary 20%,
+    @form-hover-background 50%,
+    @color-background-primary 80%
   );
   background-size: 200% 100%;
   animation: templatePreviewPlaceholderPulse 1.2s ease-in-out infinite;
@@ -112,7 +112,6 @@
 }
 
 .selectedTitle {
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   background-color: fade(@color-background-primary, 70%);
 }
 
@@ -127,9 +126,8 @@
   align-self: start;
 
   &.selected .struct {
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     background-color: fade(@color-primary, 5%);
-    border: 2px solid ~'@{color-primary}';
+    border: 2px solid @color-primary;
   }
 }
 

@@ -58,7 +58,7 @@
 
   & > footer {
     min-height: 24px;
-    box-shadow: 0 -6px 6px 0 ~'@{color-accordion-shadow}';
+    box-shadow: 0 -6px 6px 0 @color-accordion-shadow;
     z-index: 10;
 
     & > input {
@@ -152,13 +152,12 @@
   }
 
 .tabs {
-  box-shadow: 0 6px 6px 0 ~'@{color-accordion-shadow}';
+  box-shadow: 0 6px 6px 0 @color-accordion-shadow;
   z-index: 10;
 }
 
   :global(.MuiButtonBase-root.MuiTab-root) {
     text-transform: none;
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     color: fade(@color-text-black, 70%);
     padding: 12px 10px 8px;
     line-height: 12px;

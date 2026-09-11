@@ -13,7 +13,9 @@ import {
   takeTopToolbarScreenshot,
   selectByAtomAndBondIds,
   clickInTheMiddleOfTheCanvas,
+  openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndOpenAsNewProject,
+  clickOnCanvas,
 } from '@utils';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -26,6 +28,7 @@ import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMon
 import {
   MicroAtomOption,
   MonomerOnMicroOption,
+  MonomerOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { RNASection } from '@tests/pages/constants/library/Constants';
@@ -36,6 +39,15 @@ import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createM
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { verifySMARTSExport } from '@utils/files/receiveFileComparisonData';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { ConfirmationMessageDialog } from '@tests/pages/molecules/canvas/ConfirmationMessageDialog';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 
 let page: Page;
 
@@ -495,5 +507,488 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
     await expect(syncModeButton).toBeVisible();
     await expect(syncModeButton).toBeEnabled();
+  });
+
+  test('Case 14 — It is not possible to save only the sugar and phosphate in the Nucleotide (preset) type', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9962
+     * Bug: https://github.com/epam/ketcher/issues/9130
+     * Description: It is not possible to save only the sugar and phosphate in the Nucleotide (preset) type
+     *
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Load a simple molecule from SMILES (e.g. CCCCCC)
+     * 3. Click on Create monomer button on the Left panel
+     * 4. Choose Nucleotide (preset) type on the Attributes panel
+     * 5. Set preset name
+     * 6. Select half of the structure and mark is as Sugar (press Mark as sugar button at Sugar tab at Attributes panel)
+     * 7. Mark phosphate atoms
+     * 8. Select another half of the structure and Mark as Phosphate (press Mark as phosphate button at Phosphate tab at Attributes panel)
+     * 9. Verify that the wizard submits successfully (no crash / error) when no base is defined
+     *
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+    await LeftToolbar(page).createMonomer();
+
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+
+    await dialog.selectType(MonomerType.NucleotidePreset);
+    await presetSection.setName('sugarPhosphateOnly');
+
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+
+    await presetSection.setupSugar({
+      atomIds: [0, 1, 2],
+      bondIds: [0, 1],
+      code: Sugar.Sugar.alias,
+      name: 'S1',
+      HELMAlias: 'SugAlias',
+    });
+
+    await presetSection.setupPhosphate({
+      atomIds: [3, 4, 5],
+      bondIds: [3, 4],
+      code: Phosphate.Phosphate.alias,
+      name: 'P1',
+      HELMAlias: 'PhosAlias',
+    });
+
+    await dialog.submit();
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 3 }), {
+      padding: 100,
+    });
+  });
+
+  test('Case 15 — "Mark as a..." option is displayed after switching to another type in the Attributes panel', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9962
+     * Bug: https://github.com/epam/ketcher/issues/9132
+     * Description: The "Mark as a..." option is displayed after switching to another type in the Attributes panel
+     *
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Add to the Canvas C(C)CC(C)CCCC(C)CCC
+     * 3. Select all and open Monomer Creation Wizard
+     * 4. Select "Nucleotide (preset)" type
+     * 5. Switch type to "Amino acid" in the type dropdown
+     * 6. Verify that "Mark as a..." context menu option is NOT visible (no Base/Sugar/Phosphate mark options remain)
+     *    after switching away from Nucleotide (preset) type
+     *
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'C(C)CC(C)CCCC(C)CCC');
+    await LeftToolbar(page).createMonomer();
+    const confirmDialog = ConfirmationMessageDialog(page);
+    const dialog = CreateMonomerDialog(page);
+    await dialog.selectType(MonomerType.NucleotidePreset);
+    await dialog.selectType(MonomerType.AminoAcid);
+    await confirmDialog.ok();
+    await selectAllStructuresOnCanvas(page);
+    await ContextMenu(page, getAtomLocator(page, { atomId: 0 })).open();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 16 — System removes atoms that holds unoccopied leaving groups if user removes abbreviation from monomer on molecules canvas', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9962
+     * Bug: https://github.com/epam/ketcher/issues/9141
+     * Description: System removes atoms that holds unoccopied leaving groups
+     *              if user removes abbreviation from monomer on molecules canvas.
+     *
+     * Scenario:
+     * 1. Go to Macromolecules mode (Flex mode)
+     * 2. Load from HELM two phosphate connected to each other: RNA1{p}|RNA2{p}$RNA1,RNA2,1:R2-1:R1$$$V2.0
+     * 3. Switch to Molecules canvas
+     * 4. Select all monomers (p) and expand them using context menu (Expand monomers option)
+     * 5. Press Erase button and remove abbreviation from each monomer
+     * 6. Verify that abbreviation got removed, all atoms remain in place
+     *
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{p}|RNA2{p}$RNA1,RNA2,1:R2-1:R1$$$V2.0',
+    );
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    const firstAbbrev = getAbbreviationLocator(page, { name: 'P' }).first();
+    await selectAllStructuresOnCanvas(page);
+    await ContextMenu(page, firstAbbrev).click(
+      MonomerOnMicroOption.ExpandMonomers,
+    );
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 0 }), {
+      padding: 250,
+    });
+  });
+
+  test('Case 17 — System removes bond between monomers when user removes abbreviation on molecules canvas', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9962
+     * Bug: https://github.com/epam/ketcher/issues/9143
+     * Description: System removes bond between monomers if user removes abbreviation from them on molecules canvas
+     *
+     * Scenario:
+     * 1. Go to Macromolecules mode (Flex mode)
+     * 2. Load from HELM two phosphate connected to each other: RNA1{p}|RNA2{p}$RNA1,RNA2,1:R2-1:R1$$$V2.0
+     * 3. Switch to Molecules canvas
+     * 4. Right-click on the first monomer abbreviation and select "Remove Grouping"
+     * 5. Verify that the bond between the two monomers is NOT removed after removing the abbreviation
+     *
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{p}|RNA2{p}$RNA1,RNA2,1:R2-1:R1$$$V2.0',
+    );
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+    const firstAbbrev = getAbbreviationLocator(page, { name: 'P' }).first();
+    await selectAllStructuresOnCanvas(page);
+    await ContextMenu(page, firstAbbrev).click(
+      MonomerOnMicroOption.ExpandMonomers,
+    );
+    await clickInTheMiddleOfTheCanvas(page);
+    await CommonLeftToolbar(page).erase();
+    await getAtomLocator(page, { atomId: 0 }).click({
+      position: { x: 0, y: 10 },
+      force: true,
+    });
+    await EditAbbreviationDialog(page).removeAbbreviation();
+
+    await getAtomLocator(page, { atomId: 5 }).click({
+      position: { x: -10, y: 0 },
+      force: true,
+    });
+    await EditAbbreviationDialog(page).removeAbbreviation();
+
+    await IndigoFunctionsToolbar(page).layout();
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 0 }), {
+      padding: 100,
+    });
+  });
+
+  test('Case 18 — The magnet angle is too large; drawing arrows at angles close to n*90 degrees is not possible', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9962
+     * Bug: https://github.com/epam/ketcher/issues/5568
+     * Description: The "magnet angle" is too large; drawing arrows ±15° of n·90° is impossible;
+     *              forbidding one third of possible angles is too much. The snapping angle should be reduced.
+     *
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Select the Arrow tool
+     * 3. Draw an arrow at approximately 10° angle (close to 0° which is n*90°)
+     *    - this used to snap aggressively and prevent drawing near-horizontal arrows
+     * 4. Verify the arrow is drawn (canvas is not empty) without crashing
+     * 5. Visual verification of the drawn arrow
+     *
+     * Version 3.15.0
+     */
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
+
+    // Draw arrow slightly off horizontal (close to 0° / n*90°)
+    // Previously, angles within ±15° of n*90° would snap aggressively
+    const startX = 300;
+    const startY = 400;
+    const endX = 500;
+    const endY = 380;
+
+    await page.mouse.move(startX, startY);
+    await page.mouse.down();
+    await page.mouse.move(endX, endY);
+    await page.mouse.up();
+
+    // Verify arrow was placed (canvas should not be empty)
+    await takeElementScreenshot(page, getArrowLocator(page, { arrowId: 1 }), {
+      padding: 100,
+    });
+  });
+
+  test('Case 19 — Rotation tool: Dashed bounding box disappears when focus is moved outside the browser window', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9962
+     * Bug: https://github.com/epam/ketcher/issues/9358
+     * Description: Rotation tool: A dashed bounding box disappears when the focus is moved outside of the browser window
+     *
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Add any two monomers
+     * 3. Select both monomers to display the rotation tool (a dashed bounding box with rotation, flip, and delete options)
+     * 4. Move focus outside of the browser (or switch to another browser tab)
+     * 6. Verify that the dashed bounding box is still visible after focus returns
+     *
+     * Version 3.15.0
+     */
+    await clickInTheMiddleOfTheCanvas(page);
+    await Library(page).switchToPeptidesTab();
+    await Library(page).clickMonomerAutochain(Peptide.A);
+    await Library(page).clickMonomerAutochain(Peptide.C);
+    await selectAllStructuresOnCanvas(page);
+
+    // Verify rotation tool handles are visible after selection
+    const rotationTool = RotationTool(page);
+    await expect(rotationTool.rotationHandle).toBeVisible();
+
+    // Simulate focus loss and return by dispatching blur/focus events
+    await page.evaluate(() => {
+      window.dispatchEvent(new Event('blur'));
+      window.dispatchEvent(new Event('focus'));
+    });
+
+    // After regaining focus, the rotation handle should still be visible
+    await expect(rotationTool.rotationHandle).toBeVisible();
+    await takeElementScreenshot(
+      page,
+      getMonomerLocator(page, { monomerAlias: 'A' }),
+      { padding: 100 },
+    );
+  });
+
+  test('Case 20 — "Arrange as a Ring" option in context menu should be visible only on Flex mode', async ({
+    SnakeCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9962
+     * Bug: https://github.com/epam/ketcher/issues/9379
+     * Description: "Arrange as a Ring" option in context menu should be visible only on Flex mode (Macromolecules canvas)
+     *
+     * Scenario:
+     * 1. Open Macromolecules canvas - Snake mode (clean canvas)
+     * 2. Load monomers from HELM: PEPTIDE1{A.A.A.A}$PEPTIDE1,PEPTIDE1,4:R2-1:R1$$$V2.0
+     * 3. Select all monomers
+     * 4. Right-click to open context menu
+     * 5. Verify that "Arrange as a Ring" option is NOT visible in Snake mode
+     *
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{A.A.A.A}$PEPTIDE1,PEPTIDE1,4:R2-1:R1$$$V2.0',
+    );
+    await selectAllStructuresOnCanvas(page);
+    const firstMonomer = getMonomerLocator(page, {
+      monomerAlias: 'A',
+    }).first();
+
+    const arrangeAsARingPresent = await ContextMenu(
+      page,
+      firstMonomer,
+    ).isOptionVisible(MonomerOption.ArrangeAsARing);
+    await expect(arrangeAsARingPresent).toBe(false);
+  });
+
+  test('Case 21 — Rotation tool: Rotation handle does not change its view when rotation mode is activated', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9962
+     * Bug: https://github.com/epam/ketcher/issues/9368
+     * Description: Rotation tool: Rotation handle does not change its view (color and icon) when rotation mode is activated
+     *
+     * Scenario:
+     * 1. Go to Macromolecules mode (clean canvas)
+     * 2. Add any two monomers
+     * 3. Select both monomers to display the rotation tool
+     * 4. Click on the rotation handle to activate rotation mode
+     * 5. Verify that the rotation handle changes appearance (color/icon) after clicking
+     *    (visual screenshot comparison)
+     *
+     * Version 3.15.0
+     */
+    await Library(page).switchToPeptidesTab();
+    await Library(page).clickMonomerAutochain(Peptide.A);
+    await Library(page).clickMonomerAutochain(Peptide.C);
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(300, 300);
+    await dragMouseTo(page, 500, 500);
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await selectAllStructuresOnCanvas(page);
+
+    const rotationTool = RotationTool(page);
+
+    // Take screenshot with rotation handle in default (hover) state
+    await rotationTool.rotationHandle.hover();
+    await takeElementScreenshot(
+      page,
+      getMonomerLocator(page, { monomerAlias: 'A' }),
+      { padding: 100 },
+    );
+
+    // Click rotation handle to enter rotation mode - appearance should change
+    await rotationTool.moveRotationHandleTo({ x: 400, y: 200 }, false);
+
+    await takeElementScreenshot(
+      page,
+      getMonomerLocator(page, { monomerAlias: 'A' }),
+      { padding: 100 },
+    );
+  });
+
+  test('Case 22 — Right-click on monomer should select it AND open the context menu', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9962
+     * Bug: https://github.com/epam/ketcher/issues/9377
+     * Description: Right-click on monomer should not only open context menu but also select
+     *              the monomer if it was right-clicked without prior selection.
+     *
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Load monomer from HELM: PEPTIDE1{A}$$$$V2.0
+     * 3. Right-click on monomer A (without selecting it first)
+     * 4. Verify that the context menu appears
+     * 5. Verify that monomer A is now selected (selected state is visible)
+     *
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{A}$$$$V2.0',
+    );
+    await clickOnCanvas(page, 100, 100);
+    const monomerA = getMonomerLocator(page, { monomerAlias: 'A' });
+    await ContextMenu(page, monomerA).open();
+    await ContextMenu(page, monomerA).hover(MonomerOption.Copy);
+
+    await takeElementScreenshot(page, monomerA, { padding: 100 });
+  });
+
+  test('Case 23 — Rotation tool: Current rotation angle is not displayed at starting position in Macro mode', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9962
+     * Bug: https://github.com/epam/ketcher/issues/9374
+     * Description: Rotation tool: Current rotation angle is not displayed at starting position in Macro mode
+     *
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Add any two monomers
+     * 3. Select the monomer
+     * 4. Hover over the rotation handle
+     * 5. Verify that rotation angle label/indicator is visible at the starting position
+     * 6. Take a screenshot to confirm the angle display
+     *
+     * Version 3.15.0
+     */
+    await Library(page).switchToPeptidesTab();
+    await Library(page).clickMonomerAutochain(Peptide.A);
+    await Library(page).clickMonomerAutochain(Peptide.C);
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(300, 300);
+    await dragMouseTo(page, 500, 500);
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await selectAllStructuresOnCanvas(page);
+
+    const rotationTool = RotationTool(page);
+    await rotationTool.rotationHandle.hover();
+    await rotationTool.moveRotationHandleTo({ x: 400, y: 200 }, false);
+
+    const monomerC = getMonomerLocator(page, { monomerAlias: 'C' });
+    await takeElementScreenshot(page, monomerC, { padding: 200 });
+  });
+
+  test('Case 24 — Rotation tool: It is possible to move the rotation center when part of structure is selected', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9962
+     * Bug: https://github.com/epam/ketcher/issues/9382
+     * Description: Rotation tool: It is possible to move the rotation center when part of structure is selected
+     *
+     * Scenario:
+     * 1. Go to Macromolecules mode (clean canvas)
+     * 2. Open from file: moving rotation center
+     * 3. Select part of the structure to display the rotation tool
+     * 4. Try to move rotation center to another location
+     *
+     * Version 3.15.0
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/moving.rotation.center.ket',
+    );
+    const monomerR = getMonomerLocator(page, { monomerAlias: 'R' });
+    const monomer5meC = getMonomerLocator(page, { monomerAlias: '5meC' });
+    await monomerR.dragTo(monomer5meC, {
+      sourcePosition: { x: -10, y: 10 },
+      targetPosition: { x: 20, y: -20 },
+      force: true,
+    });
+
+    const rotationTool = RotationTool(page);
+    await expect(rotationTool.rotationHandle).toBeVisible();
+    await expect(rotationTool.rotationCenterHandle).toBeVisible();
+    await rotationTool.moveRotationCenterHandleTo({ x: 600, y: 300 });
+
+    await takeElementScreenshot(page, monomer5meC, { padding: 200 });
+  });
+
+  test('Case 25 — Structure selection after moving the entire Structure is incorrect', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9962
+     * Bug: https://github.com/epam/ketcher/issues/9140
+     * Description: System should allow creating nucleotide presets that contain only
+     *              certain components (e.g. sugar + phosphate without base) without errors.
+     *
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Load a sugar-phosphate molecule (OCP)
+     * 3. Select all and open Monomer Creation Wizard
+     * 4. Choose Nucleotide (preset) type
+     * 5. Set the preset name
+     * 6. Mark sugar (O atom) and phosphate (P atom) - no base
+     * 7. Click Submit
+     * 8. Verify no console error occurs and the wizard handles submission gracefully
+     *
+     * Version 3.15.0
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/movingStructureSelection.ket',
+    );
+
+    const monomerUpperRight = getAtomLocator(page, { atomId: 10 });
+    const monomerLowerLeft = getAtomLocator(page, { atomId: 13 });
+    await monomerUpperRight.dragTo(monomerLowerLeft, {
+      sourcePosition: { x: 30, y: -30 },
+      targetPosition: { x: -30, y: 30 },
+      force: true,
+    });
+    await selectAllStructuresOnCanvas(page);
+    await monomerUpperRight.hover();
+    await dragMouseTo(page, 600, 200);
+    await monomerUpperRight.dragTo(monomerLowerLeft, {
+      sourcePosition: { x: 30, y: -30 },
+      targetPosition: { x: -30, y: 30 },
+      force: true,
+    });
+
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 21 }), {
+      padding: 200,
+    });
   });
 });

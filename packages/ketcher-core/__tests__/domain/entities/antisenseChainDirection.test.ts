@@ -1,4 +1,5 @@
 import { CoreEditor, SequenceMode } from 'application/editor';
+import { EditorHistory } from 'application/editor/EditorHistory';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import type { TwoStrandedNodesSelection } from 'application/render/renderers/sequence/SequenceRenderer';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
@@ -20,10 +21,16 @@ import {
 // A minimal render theme with an 'X' fallback color so that
 // UnsplitNucleotideRenderer (used when a library replacement monomer is
 // rendered by replaceSelectionsWithMonomer) does not throw regardless of
-// the replacement's natural analog code.
+// the replacement's natural analog code. 'R' and 'P' are also supplied so
+// that inverting a command that deletes-and-recreates a sugar/phosphate
+// (e.g. undoing a library replacement) can render the recreated monomers.
 const testRenderTheme = {
   monomer: {
-    color: { X: { regular: 'yellow' } },
+    color: {
+      X: { regular: 'yellow' },
+      R: { regular: 'yellow' },
+      P: { regular: 'yellow' },
+    },
   },
 };
 
@@ -328,5 +335,48 @@ describe('antisense chain direction', () => {
         false,
       );
     });
+  });
+
+  it('mirrors the paired base onto the opposite strand when a sense node is replaced via the library, and reverts on undo (regression for #6595)', () => {
+    const mode = new SequenceMode();
+    const { senseNucleotides, antisenseNucleotides } =
+      buildFourNucleotideDuplex(editor);
+
+    // senseNucleotides[1] is 'C', paired (via the hydrogen bond) with
+    // antisenseNucleotides[1]'s 'G'. This exercises the select-and-
+    // replace-from-library path (not the direct createMirroredBaseCommand
+    // call), so it also proves that replaceSelectionWithMonomer's node
+    // deletion doesn't leave the mirror unable to find the partner: the
+    // partner and eligibility must be captured before that deletion runs.
+    editor.drawingEntitiesManager.selectDrawingEntities(
+      senseNucleotides[1].monomers,
+    );
+
+    const selections = SequenceRenderer.selections;
+
+    expect(selections).toHaveLength(1);
+    expect(selections[0]).toHaveLength(1);
+    expect(antisenseNucleotides[1].rnaBase.label).toBe('G');
+
+    // '2-damdA' is a modified-adenine RNA-class library preset (natural
+    // analogue 'A'), picked because it changes the natural analogue away
+    // from 'C' and is available as a whole node-replacement item, unlike
+    // the plain unmodified bases which the library only exposes as
+    // standalone Base parts.
+    const replacementItem = findLibraryItemByAlias(editor, '2-damdA');
+
+    callReplaceSelectionsWithMonomer(mode, selections, replacementItem);
+
+    // The opposite strand's base actually changed: C->A on the sense side
+    // means its partner must become A's complement, U (was G).
+    expect(antisenseNucleotides[1].rnaBase.label).toBe('U');
+
+    const history = EditorHistory.getInstance(editor);
+    const appliedCommand = history.previousCommand;
+
+    appliedCommand.invert(editor.renderersContainer);
+
+    // A single undo reverts both the library replacement and its mirror.
+    expect(antisenseNucleotides[1].rnaBase.label).toBe('G');
   });
 });

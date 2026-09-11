@@ -2301,6 +2301,20 @@ export class SequenceMode extends BaseMode {
           return;
         }
 
+        const editedBase =
+          nodeToReplace instanceof Nucleotide ||
+          nodeToReplace instanceof Nucleoside
+            ? nodeToReplace.rnaBase
+            : undefined;
+        // Captured before the edit: replaceSelectionWithMonomer deletes the
+        // selected node's monomers outright, which unsets every bond on
+        // editedBase (including its hydrogen bond and its own backbone
+        // connection), so neither the partner nor editedBase's own
+        // eligibility can be re-derived from editedBase afterwards.
+        const previousNaturalAnalogue = getMonomerNaturalAnalogue(editedBase);
+        const partnerBeforeEdit = getHydrogenBondedPartner(editedBase);
+        const wasEditedBaseEligible = isBaseEligibleForDuplexSync(editedBase);
+
         previousReplacedNode = this.replaceSelectionWithMonomer(
           monomerItem,
           nodeToReplace,
@@ -2309,6 +2323,24 @@ export class SequenceMode extends BaseMode {
           previousReplacedNode,
           strandType,
         );
+
+        if (editedBase) {
+          const mirroredBaseCommand = createMirroredBaseCommand({
+            drawingEntitiesManager: editor.drawingEntitiesManager,
+            editedBase,
+            previousNaturalAnalogue,
+            newBaseMonomerItem: monomerItem,
+            needToEditAntisense: this.needToEditAntisense,
+            resolveBaseLibraryItem: (label) =>
+              getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
+            partner: partnerBeforeEdit,
+            wasEditedBaseEligible,
+          });
+
+          if (mirroredBaseCommand) {
+            modelChanges.merge(mirroredBaseCommand);
+          }
+        }
       });
     });
 

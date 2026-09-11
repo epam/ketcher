@@ -144,21 +144,33 @@ export function createMirroredBaseCommand(params: {
   resolveBaseLibraryItem: (label: string) => MonomerOrAmbiguousType | undefined;
   /**
    * The hydrogen-bonded partner of `editedBase`, captured by the caller
-   * BEFORE performing the sense-side edit. Required whenever that edit
+   * BEFORE performing the sense-side edit. Needed whenever that edit
    * replaces or deletes `editedBase`'s underlying monomer instead of
    * mutating it in place (the ambiguous-monomer replace branch here, and
    * the library-replace path's node deletion): such an edit unsets every
-   * bond on the stale `editedBase` object, including its hydrogen bond and
-   * its own backbone connection, so neither the partner nor `editedBase`'s
-   * own eligibility can be re-derived from it afterwards.
+   * bond on the stale `editedBase` object, including its hydrogen bond, so
+   * the partner can no longer be re-derived from it afterwards.
    *
-   * When supplied, this short-circuits `getHydrogenBondedPartner` AND skips
-   * re-checking `editedBase`'s own eligibility post-edit (the caller is
-   * asserting it held at the moment `partner` was captured, before the
-   * edit invalidated `editedBase`'s bonds). The partner's own eligibility
-   * is still checked, since the partner itself was not touched by the edit.
+   * When supplied, this short-circuits `getHydrogenBondedPartner`. It is
+   * independent of `wasEditedBaseEligible` below: supplying one does not
+   * imply anything about the other, and each falls back to being computed
+   * from `editedBase` when omitted.
    */
   partner?: BaseMonomer;
+  /**
+   * Whether `editedBase` was structurally eligible for duplex sync
+   * (`isBaseEligibleForDuplexSync`), computed by the caller BEFORE
+   * performing the sense-side edit. Needed for the same reason as
+   * `partner`: an edit that replaces or deletes `editedBase`'s monomer also
+   * unsets its own backbone (R1) connection, so eligibility can no longer
+   * be re-derived from the stale reference afterwards.
+   *
+   * When omitted, eligibility is computed fresh from `editedBase`, which is
+   * correct for any edit that mutates the monomer in place rather than
+   * replacing it (e.g. the non-ambiguous `modifyMonomerItem` branch, where
+   * `editedBase`'s bonds are never touched).
+   */
+  wasEditedBaseEligible?: boolean;
 }): Command | undefined {
   const {
     drawingEntitiesManager,
@@ -168,6 +180,7 @@ export function createMirroredBaseCommand(params: {
     needToEditAntisense,
     resolveBaseLibraryItem,
     partner: partnerCapturedBeforeEdit,
+    wasEditedBaseEligible,
   } = params;
 
   // Rule 2.1: non-sync mode never touches the opposite strand.
@@ -177,10 +190,12 @@ export function createMirroredBaseCommand(params: {
 
   const partner =
     partnerCapturedBeforeEdit ?? getHydrogenBondedPartner(editedBase);
+  const editedBaseEligible =
+    wasEditedBaseEligible ?? isBaseEligibleForDuplexSync(editedBase);
 
   if (
     !partner ||
-    (!partnerCapturedBeforeEdit && !isBaseEligibleForDuplexSync(editedBase)) ||
+    !editedBaseEligible ||
     !isBaseEligibleForDuplexSync(partner)
   ) {
     return undefined;

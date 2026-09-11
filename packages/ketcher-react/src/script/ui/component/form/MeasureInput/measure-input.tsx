@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type HTMLAttributes, useState, useEffect } from 'react';
+import { type HTMLAttributes, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 
 import Input from '../Input/Input';
@@ -110,6 +109,8 @@ const MeasureInput = ({
   const stringifiedValue = String(value);
   const [internalValue, setInternalValue] = useState(stringifiedValue);
   const [prevPropValue, setPrevPropValue] = useState(stringifiedValue);
+
+  const internalValueRef = useRef(internalValue);
   const {
     anchorEl,
     handleOpen: handlePopoverOpen,
@@ -121,32 +122,35 @@ const MeasureInput = ({
     setInternalValue(stringifiedValue);
   }
 
-  // Input binds onChange once in its constructor, so handleChange is stuck with
-  // the first render's closure and cannot call the current onChange. This effect
-  // is re-created every render, so it always holds the latest onChange/value —
-  // hence the deliberate single-dep list.
   useEffect(() => {
-    if (internalValue !== stringifiedValue) {
-      onChange(parseFloat(internalValue));
-    }
-  }, [internalValue, stringifiedValue, onChange]);
+    internalValueRef.current = internalValue;
+  }, [internalValue]);
 
   const handleChange = (value: unknown) => {
-    const stringifiedValue = String(value);
+    const newStringifiedValue = String(value);
     const startsWithZero =
-      stringifiedValue !== '0' && stringifiedValue.startsWith('0');
-    const zeroWithDot = startsWithZero && stringifiedValue.includes('.');
+      newStringifiedValue !== '0' && newStringifiedValue.startsWith('0');
+    const zeroWithDot = startsWithZero && newStringifiedValue.includes('.');
 
     const endorcedValue =
       startsWithZero && !zeroWithDot
-        ? stringifiedValue.replace(/^0/, '')
-        : stringifiedValue || '0';
+        ? newStringifiedValue.replace(/^0/, '')
+        : newStringifiedValue || '0';
     const isNumber = !isNaN(Number(endorcedValue));
 
-    if (isNumber) {
-      setInternalValue((prevValue) =>
-        getNewInternalValue(prevValue, endorcedValue),
-      );
+    if (!isNumber) {
+      return;
+    }
+
+    const newInternalValue = getNewInternalValue(
+      internalValueRef.current,
+      endorcedValue,
+    );
+    internalValueRef.current = newInternalValue;
+    setInternalValue(newInternalValue);
+
+    if (newInternalValue !== stringifiedValue) {
+      onChange(parseFloat(newInternalValue));
     }
   };
 

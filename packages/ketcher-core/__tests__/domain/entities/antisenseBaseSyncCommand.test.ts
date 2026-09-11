@@ -6,10 +6,13 @@ import { Nucleoside } from 'domain/entities/Nucleoside';
 import { AttachmentPointName } from 'domain/types';
 import { KetMonomerClass } from 'domain/constants/monomers';
 import {
+  createMirroredBaseCommand,
   getHydrogenBondedPartner,
   isBaseEligibleForDuplexSync,
   isSelectedAntisensePair,
 } from 'domain/helpers/antisenseBaseSync';
+import { getRnaPartLibraryItem } from 'domain/helpers/rna';
+import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
@@ -165,5 +168,220 @@ describe('duplex traversal', () => {
       antisenseBase,
     ]);
     expect(isSelectedAntisensePair(senseBase)).toBe(true);
+  });
+});
+
+describe('createMirroredBaseCommand', () => {
+  let canvas: SVGSVGElement;
+  let editor: CoreEditor;
+
+  beforeEach(() => {
+    canvas = createPolymerEditorCanvas();
+    stubCanvasDimensions(canvas);
+    editor = new CoreEditor({
+      canvas,
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+  });
+
+  afterEach(() => {
+    canvas.remove();
+  });
+
+  const resolveBaseLibraryItem = (label: string) =>
+    getRnaPartLibraryItem(editor, label, KetMonomerClass.Base);
+
+  it('rewrites the paired base when the natural analogue changes', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    const newBaseItem = resolveBaseLibraryItem('C');
+
+    if (!newBaseItem) {
+      throw new Error('Library item C not found');
+    }
+
+    const command = createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: senseBase,
+      previousNaturalAnalogue: 'A',
+      newBaseMonomerItem: newBaseItem,
+      needToEditAntisense: true,
+      resolveBaseLibraryItem,
+    });
+
+    expect(command).toBeDefined();
+    expect(antisenseBase.label).toBe('G');
+  });
+
+  it('rewrites the paired sense base when the antisense strand is edited', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    const newBaseItem = resolveBaseLibraryItem('A');
+
+    if (!newBaseItem) {
+      throw new Error('Library item A not found');
+    }
+
+    // The antisense base opposite a sense A is U on ribose, so editing it to
+    // A must rewrite the sense side back through the same symmetric table.
+    const command = createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: antisenseBase,
+      previousNaturalAnalogue: 'U',
+      newBaseMonomerItem: newBaseItem,
+      needToEditAntisense: true,
+      resolveBaseLibraryItem,
+    });
+
+    expect(command).toBeDefined();
+    expect(senseBase.label).toBe('U');
+    expect(antisenseBase.hydrogenBonds).toHaveLength(1);
+  });
+
+  it('leaves the paired base alone when the analogue is unchanged', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    const labelBefore = antisenseBase.label;
+    const newBaseItem = resolveBaseLibraryItem('A');
+
+    if (!newBaseItem) {
+      throw new Error('Library item A not found');
+    }
+
+    const command = createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: senseBase,
+      previousNaturalAnalogue: 'A',
+      newBaseMonomerItem: newBaseItem,
+      needToEditAntisense: true,
+      resolveBaseLibraryItem,
+    });
+
+    expect(command).toBeUndefined();
+    expect(antisenseBase.label).toBe(labelBefore);
+  });
+
+  it('does nothing when antisense editing is off', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    const labelBefore = antisenseBase.label;
+    const newBaseItem = resolveBaseLibraryItem('C');
+
+    if (!newBaseItem) {
+      throw new Error('Library item C not found');
+    }
+
+    const command = createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: senseBase,
+      previousNaturalAnalogue: 'A',
+      newBaseMonomerItem: newBaseItem,
+      needToEditAntisense: false,
+      resolveBaseLibraryItem,
+    });
+
+    expect(command).toBeUndefined();
+    expect(antisenseBase.label).toBe(labelBefore);
+  });
+
+  it('does nothing when the paired base is itself selected', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    const labelBefore = antisenseBase.label;
+    editor.drawingEntitiesManager.selectDrawingEntities([
+      senseBase,
+      antisenseBase,
+    ]);
+    const newBaseItem = resolveBaseLibraryItem('C');
+
+    if (!newBaseItem) {
+      throw new Error('Library item C not found');
+    }
+
+    const command = createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: senseBase,
+      previousNaturalAnalogue: 'A',
+      newBaseMonomerItem: newBaseItem,
+      needToEditAntisense: true,
+      resolveBaseLibraryItem,
+    });
+
+    expect(command).toBeUndefined();
+    expect(antisenseBase.label).toBe(labelBefore);
+  });
+
+  it('leaves the paired sugar and phosphate untouched', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    const partnerSugar = getSugarFromRnaBase(antisenseBase);
+    const sugarLabelBefore = partnerSugar?.label;
+    const newBaseItem = resolveBaseLibraryItem('C');
+
+    if (!newBaseItem) {
+      throw new Error('Library item C not found');
+    }
+
+    createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: senseBase,
+      previousNaturalAnalogue: 'A',
+      newBaseMonomerItem: newBaseItem,
+      needToEditAntisense: true,
+      resolveBaseLibraryItem,
+    });
+
+    expect(getSugarFromRnaBase(antisenseBase)?.label).toBe(sugarLabelBefore);
+  });
+
+  it('discards a modification on the paired base', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'C');
+    const modifiedItem = resolveBaseLibraryItem('5meC');
+
+    if (!modifiedItem) {
+      throw new Error('Library item 5meC not found');
+    }
+
+    // Give the antisense side a modified base whose natural analogue is G.
+    editor.drawingEntitiesManager.modifyMonomerItem(
+      antisenseBase,
+      modifiedItem,
+    );
+
+    const newBaseItem = resolveBaseLibraryItem('A');
+
+    if (!newBaseItem) {
+      throw new Error('Library item A not found');
+    }
+
+    createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: senseBase,
+      previousNaturalAnalogue: 'C',
+      newBaseMonomerItem: newBaseItem,
+      needToEditAntisense: true,
+      resolveBaseLibraryItem,
+    });
+
+    // Plain complement, not a modified one: the modification is gone.
+    expect(antisenseBase.label).toBe('U');
+  });
+
+  it('is reverted by inverting the returned command', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    const labelBefore = antisenseBase.label;
+    const newBaseItem = resolveBaseLibraryItem('C');
+
+    if (!newBaseItem) {
+      throw new Error('Library item C not found');
+    }
+
+    const command = createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: senseBase,
+      previousNaturalAnalogue: 'A',
+      newBaseMonomerItem: newBaseItem,
+      needToEditAntisense: true,
+      resolveBaseLibraryItem,
+    });
+
+    command?.invert(editor.renderersContainer);
+
+    expect(antisenseBase.label).toBe(labelBefore);
   });
 });

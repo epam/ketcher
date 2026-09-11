@@ -194,14 +194,8 @@ const addToCanvas = ({
   if (isSequenceMode && !isCanvasEmptyBeforeOpenStructure) {
     positionStructureOnNextSequenceLine(deserialisedKet.drawingEntitiesManager);
   } else {
-    // if (isCanvasEmptyBeforeOpenStructure)
-    // {
-    // Only center the structure for the first structure (when canvas is empty)
-    // For subsequent structures, keep viewport stable to avoid unwanted scrolling
     deserialisedKet.drawingEntitiesManager.centerMacroStructure();
   }
-  // If canvas is not empty and not in sequence mode, don't center -
-  // this preserves viewport position and avoids horizontal scrollbar
 
   const { command: modelChanges } =
     deserialisedKet.drawingEntitiesManager.mergeInto(

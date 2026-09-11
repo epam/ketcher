@@ -42,6 +42,7 @@ describe('DropDown component', () => {
     render(withThemeProvider(<DropDown {...mockProps} currentSelection="" />));
 
     expect(screen.getByRole('combobox')).toBeInTheDocument();
+    expect(screen.queryByText(INITIAL_SELECTION.label)).not.toBeInTheDocument();
   });
 
   it('should render dropdown with all options when clicked', async () => {

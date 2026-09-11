@@ -416,7 +416,6 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: true,
       isSequenceFirstsOnlyNucleoelementsSelected: true,
-      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Nucleotide,
@@ -428,7 +427,6 @@ describe('SequenceItemContextMenu helpers', () => {
           sugarLabel: 'R',
           nodeIndexOverall: 0,
           hasR1Connection: false,
-          hasAntisense: false,
           strandType: STRAND_TYPE.SENSE,
           isInSelectedAntisensePair: false,
         },
@@ -448,7 +446,6 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: true,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
-      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Nucleotide,
@@ -460,7 +457,6 @@ describe('SequenceItemContextMenu helpers', () => {
           sugarLabel: 'R',
           nodeIndexOverall: 1,
           hasR1Connection: true,
-          hasAntisense: false,
           strandType: STRAND_TYPE.SENSE,
           isInSelectedAntisensePair: false,
         },
@@ -480,7 +476,6 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: true,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
-      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Nucleoside,
@@ -492,7 +487,6 @@ describe('SequenceItemContextMenu helpers', () => {
           },
           isNucleosideConnectedAndSelectedWithPhosphate: undefined,
           hasR1Connection: true,
-          hasAntisense: false,
           strandType: STRAND_TYPE.SENSE,
           isInSelectedAntisensePair: false,
         },
@@ -512,7 +506,6 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: true,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
-      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Nucleotide,
@@ -524,7 +517,6 @@ describe('SequenceItemContextMenu helpers', () => {
             label: 'A',
           },
           hasR1Connection: false,
-          hasAntisense: false,
           strandType: STRAND_TYPE.SENSE,
           isInSelectedAntisensePair: false,
         },
@@ -538,7 +530,6 @@ describe('SequenceItemContextMenu helpers', () => {
             label: 'C',
           },
           hasR1Connection: true,
-          hasAntisense: false,
           strandType: STRAND_TYPE.SENSE,
           isInSelectedAntisensePair: false,
         },
@@ -558,7 +549,6 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: true,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
-      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Nucleoside,
@@ -570,7 +560,6 @@ describe('SequenceItemContextMenu helpers', () => {
           },
           hasR1Connection: true,
           isNucleosideConnectedAndSelectedWithPhosphate: true,
-          hasAntisense: false,
           strandType: STRAND_TYPE.SENSE,
           isInSelectedAntisensePair: false,
         },
@@ -578,7 +567,6 @@ describe('SequenceItemContextMenu helpers', () => {
           type: Entities.Phosphate,
           phosphateLabel: 'P',
           nodeIndexOverall: 2,
-          hasAntisense: false,
           strandType: STRAND_TYPE.SENSE,
           isInSelectedAntisensePair: false,
         },
@@ -598,13 +586,11 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: false,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
-      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Phosphate,
           phosphateLabel: 'P',
           nodeIndexOverall: 2,
-          hasAntisense: false,
           strandType: STRAND_TYPE.SENSE,
           isInSelectedAntisensePair: false,
         },
@@ -618,7 +604,6 @@ describe('SequenceItemContextMenu helpers', () => {
           },
           hasR1Connection: true,
           isNucleosideConnectedAndSelectedWithPhosphate: false,
-          hasAntisense: false,
           strandType: STRAND_TYPE.SENSE,
           isInSelectedAntisensePair: false,
         },
@@ -638,7 +623,6 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: false,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
-      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           baseLabel: 'A',
@@ -650,7 +634,6 @@ describe('SequenceItemContextMenu helpers', () => {
           sugarLabel: 'R',
           type: Entities.Nucleotide,
           hasR1Connection: false,
-          hasAntisense: false,
           strandType: STRAND_TYPE.SENSE,
           isInSelectedAntisensePair: false,
         },
@@ -664,7 +647,6 @@ describe('SequenceItemContextMenu helpers', () => {
           sugarLabel: 'R',
           type: Entities.Nucleotide,
           hasR1Connection: true,
-          hasAntisense: false,
           strandType: STRAND_TYPE.SENSE,
           isInSelectedAntisensePair: false,
         },
@@ -672,7 +654,6 @@ describe('SequenceItemContextMenu helpers', () => {
           nodeIndexOverall: 2,
           phosphateLabel: 'P',
           type: Entities.Phosphate,
-          hasAntisense: false,
           strandType: STRAND_TYPE.SENSE,
           isInSelectedAntisensePair: false,
         },
@@ -690,7 +671,6 @@ describe('SequenceItemContextMenu helpers', () => {
 
     // When both sense and antisense are selected, we should get 4 nucleotides
     expect(result?.title).toBe('4 nucleotides');
-    expect(result?.hasAntisense).toBe(true);
     expect(result?.selectedSequenceLabeledNodes).toHaveLength(4);
   });
 

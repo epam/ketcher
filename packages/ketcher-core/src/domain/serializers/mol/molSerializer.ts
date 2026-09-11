@@ -48,8 +48,8 @@ export class MolSerializer implements Serializer<Struct> {
 
     try {
       return molfile.parseCTFile(parseCTFileParams);
-    } catch (e) {
-      KetcherLogger.error('molSerializer::MolSerializer::deserialize', e);
+    } catch (error) {
+      KetcherLogger.error('molSerializer::MolSerializer::deserialize', error);
       if (this.options.badHeaderRecover) {
         try {
           // check whether there's an extra empty line on top
@@ -58,8 +58,11 @@ export class MolSerializer implements Serializer<Struct> {
             ...parseCTFileParams,
             molfileLines: lines.slice(1),
           });
-        } catch (e1) {
-          KetcherLogger.error('molSerializer::MolSerializer::deserialize', e1);
+        } catch (extraLineError) {
+          KetcherLogger.error(
+            'molSerializer::MolSerializer::deserialize',
+            extraLineError,
+          );
         }
         try {
           // check for a missing first line
@@ -68,11 +71,14 @@ export class MolSerializer implements Serializer<Struct> {
             ...parseCTFileParams,
             molfileLines: [''].concat(lines),
           });
-        } catch (e2) {
-          KetcherLogger.error('molSerializer::MolSerializer::deserialize', e2);
+        } catch (missingFirstLineError) {
+          KetcherLogger.error(
+            'molSerializer::MolSerializer::deserialize',
+            missingFirstLineError,
+          );
         }
       }
-      throw e;
+      throw error;
     }
   }
 

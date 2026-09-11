@@ -299,9 +299,25 @@ export function setExpandMonomerSGroup(
   );
   const sGroupWidth = sGroupBBox.p1.x - sGroupBBox.p0.x;
   const sGroupHeight = sGroupBBox.p1.y - sGroupBBox.p0.y;
+
+  // When collapsing an expanded monomer, sGroup.pp is stale (set at load time
+  // and never updated as atoms move). Snap it to the atom bounding-box center
+  // so the contracted label appears at the center of the expanded structure.
+  const currentPp = sGroup.pp;
+  const atomsBBoxCenter =
+    !attrs.expanded && currentPp
+      ? new Vec2(
+          (sGroupBBox.p0.x + sGroupBBox.p1.x) / 2,
+          (sGroupBBox.p0.y + sGroupBBox.p1.y) / 2,
+        )
+      : null;
+  if (atomsBBoxCenter && currentPp) {
+    action.addOp(new SGroupDataMove(sgid, atomsBBoxCenter.sub(currentPp)));
+  }
+
   const sGroupCenter = sGroup.isContracted()
     ? sGroup.getContractedPosition(struct).position
-    : sGroup.pp;
+    : (atomsBBoxCenter ?? sGroup.pp);
 
   const visitedAtoms = new Set<number>();
   const visitedSGroups = new Set<number>();

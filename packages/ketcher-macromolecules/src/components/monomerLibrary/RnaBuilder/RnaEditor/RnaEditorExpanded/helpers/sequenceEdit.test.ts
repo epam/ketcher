@@ -166,4 +166,87 @@ describe('generateSequenceSelectionGroupNames', () => {
       Phosphates: '[multiple]',
     });
   });
+
+  it('returns [disabled] for differing bases when a selected antisense pair is present', () => {
+    const labeledNucleotides: LabeledNodesWithPositionInSequence[] = [
+      {
+        type: Entities.Nucleotide,
+        sugarLabel: 'R',
+        baseLabel: 'A',
+        phosphateLabel: 'P',
+        nodeIndexOverall: 0,
+        hasR1Connection: false,
+        hasAntisense: true,
+        isInSelectedAntisensePair: true,
+      },
+      {
+        type: Entities.Nucleotide,
+        sugarLabel: 'R',
+        baseLabel: 'C',
+        phosphateLabel: 'P',
+        nodeIndexOverall: 1,
+        hasR1Connection: false,
+        hasAntisense: true,
+        isInSelectedAntisensePair: true,
+      },
+    ];
+
+    expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
+      Sugars: 'R',
+      Bases: '[disabled]',
+      Phosphates: 'P',
+    });
+  });
+
+  it('keeps the single base symbol when a selected antisense pair is present', () => {
+    const labeledNucleotides: LabeledNodesWithPositionInSequence[] = [
+      {
+        type: Entities.Nucleotide,
+        sugarLabel: 'R',
+        baseLabel: 'A',
+        phosphateLabel: 'P',
+        nodeIndexOverall: 0,
+        hasR1Connection: false,
+        hasAntisense: true,
+        isInSelectedAntisensePair: true,
+      },
+    ];
+
+    expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
+      Sugars: 'R',
+      Bases: 'A',
+      Phosphates: 'P',
+    });
+  });
+
+  it('still returns [multiple] when no selected antisense pair is present', () => {
+    const labeledNucleotides: LabeledNodesWithPositionInSequence[] = [
+      {
+        type: Entities.Nucleotide,
+        sugarLabel: 'R',
+        baseLabel: 'A',
+        phosphateLabel: 'P',
+        nodeIndexOverall: 0,
+        hasR1Connection: false,
+        hasAntisense: false,
+        isInSelectedAntisensePair: false,
+      },
+      {
+        type: Entities.Nucleotide,
+        sugarLabel: 'R',
+        baseLabel: 'C',
+        phosphateLabel: 'P',
+        nodeIndexOverall: 1,
+        hasR1Connection: false,
+        hasAntisense: false,
+        isInSelectedAntisensePair: false,
+      },
+    ];
+
+    expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
+      Sugars: 'R',
+      Bases: '[multiple]',
+      Phosphates: 'P',
+    });
+  });
 });

@@ -6,7 +6,7 @@ import { SideChainConnectionBondRendererUtility } from 'application/render/rende
 import { SVGPathDAttributeUtility } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtility';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { assert } from 'utilities';
-import type { BaseMonomer, Vec2 } from 'domain/entities';
+import { type BaseMonomer, Vec2 } from 'domain/entities';
 import type { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   type Connection,
@@ -44,6 +44,7 @@ const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 21;
 const RNA_ANTISENSE_CHAIN_VERTICAL_LINE_LENGTH = 20;
 const RNA_SENSE_CHAIN_VERTICAL_LINE_LENGTH = 210;
+const R2_R2_OUTER_RIGHT_EXTRA_MARGIN = SnakeLayoutCellWidth / 2;
 
 // TODO?: Can it be moved to `SideChainConnectionBondRendererUtility`?
 const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
@@ -263,6 +264,30 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const endPosition = isFirstMonomerOfBondInFirstCell
       ? this.scaledPosition.endPosition
       : this.scaledPosition.startPosition;
+    const startMonomer = isFirstMonomerOfBondInFirstCell
+      ? this.polymerBond.firstMonomer
+      : this.polymerBond.secondMonomer;
+    const endMonomer = isFirstMonomerOfBondInFirstCell
+      ? this.polymerBond.secondMonomer
+      : this.polymerBond.firstMonomer;
+
+    if (
+      startMonomer &&
+      endMonomer &&
+      isVerticalConnection &&
+      this.isR2ToR2Connection &&
+      this.shouldRouteR2ToR2ConnectionOnOuterRight(startMonomer, endMonomer)
+    ) {
+      const pathDAttributeValue = this.buildOuterRightConnectionPath(
+        startMonomer,
+        endMonomer,
+        startPosition,
+        endPosition,
+      );
+
+      return this.appendSideConnectionPath(rootElement, pathDAttributeValue);
+    }
+
     const xDirection =
       startPosition.x >= (this.sideConnectionBondTurnPoint ?? endPosition.x)
         ? 180
@@ -454,6 +479,97 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         endPosition.y,
       ) + ' ';
 
+    return this.appendSideConnectionPath(rootElement, pathDAttributeValue);
+  }
+
+  private get isR2ToR2Connection(): boolean {
+    const firstAttachmentPoint =
+      this.polymerBond.firstMonomer.getAttachmentPointByBond(
+        this.polymerBond,
+      ) ??
+      this.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
+        this.polymerBond,
+      );
+    const secondAttachmentPoint =
+      this.polymerBond.secondMonomer?.getAttachmentPointByBond(
+        this.polymerBond,
+      ) ??
+      this.polymerBond.secondMonomer?.getPotentialAttachmentPointByBond(
+        this.polymerBond,
+      );
+
+    return firstAttachmentPoint === 'R2' && secondAttachmentPoint === 'R2';
+  }
+
+  private shouldRouteR2ToR2ConnectionOnOuterRight(
+    startMonomer: BaseMonomer,
+    endMonomer: BaseMonomer,
+  ): boolean {
+    const monomerToChain =
+      provideEditorInstance().drawingEntitiesManager.canvasMatrix
+        ?.chainsCollection.monomerToChain;
+    const startChain = monomerToChain?.get(startMonomer);
+    const endChain = monomerToChain?.get(endMonomer);
+
+    return Boolean(
+      startChain && endChain && startChain.length > 1 && endChain.length > 1,
+    );
+  }
+
+  private buildOuterRightConnectionPath(
+    startMonomer: BaseMonomer,
+    endMonomer: BaseMonomer,
+    startPosition: Vec2,
+    endPosition: Vec2,
+  ): string {
+    const startAnchor = this.getRightSideAnchor(startMonomer, startPosition);
+    const endAnchor = this.getRightSideAnchor(endMonomer, endPosition);
+    const rightmostMonomerEdge = Array.from(
+      provideEditorInstance().drawingEntitiesManager.monomers.values(),
+    ).reduce(
+      (rightmostEdge, monomer) => {
+        const renderer = monomer.renderer;
+
+        if (!renderer) {
+          return rightmostEdge;
+        }
+
+        return Math.max(
+          rightmostEdge,
+          renderer.scaledMonomerPosition.x + renderer.monomerSize.width,
+        );
+      },
+      Math.max(startAnchor.x, endAnchor.x),
+    );
+    const outerRightX =
+      rightmostMonomerEdge +
+      LINE_FROM_MONOMER_LENGTH +
+      CORNER_LENGTH +
+      R2_R2_OUTER_RIGHT_EXTRA_MARGIN;
+
+    return [
+      SVGPathDAttributeUtility.generateMoveTo(startAnchor.x, startAnchor.y),
+      SVGPathDAttributeUtility.generateAbsoluteLine(outerRightX, startAnchor.y),
+      SVGPathDAttributeUtility.generateAbsoluteLine(outerRightX, endAnchor.y),
+      SVGPathDAttributeUtility.generateAbsoluteLine(endAnchor.x, endAnchor.y),
+    ].join(' ');
+  }
+
+  private getRightSideAnchor(monomer: BaseMonomer, fallback: Vec2): Vec2 {
+    const renderer = monomer.renderer;
+
+    if (!renderer) {
+      return fallback;
+    }
+
+    return new Vec2(
+      renderer.scaledMonomerPosition.x + renderer.monomerSize.width,
+      renderer.scaledMonomerPosition.y + renderer.monomerSize.height / 2,
+    );
+  }
+
+  // TODO: Specify the types.
+  private appendSideConnectionPath(rootElement, pathDAttributeValue: string) {
     this.bodyElement = rootElement
       .append('path')
       .attr('class', `${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`)

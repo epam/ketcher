@@ -8,7 +8,7 @@ export const safePostMessage = (
   message: Record<string, unknown>,
   fallbackOrigin: string = globalThis.location.origin,
 ): void => {
-  if (globalThis.parent === globalThis) return;
+  if (globalThis.parent === (globalThis as unknown as Window)) return;
 
   let parentOrigin = fallbackOrigin;
   try {

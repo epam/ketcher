@@ -251,7 +251,7 @@ function handleHotkeyGroup(
 
   removeNotRenderedStruct(actionTool, group, dispatch);
 
-  if (clipArea.actions.indexOf(actName) === -1) {
+  if (!clipArea.actions.includes(actName)) {
     let newAction = getNextAction(actName);
     const hoveredItem = getHoveredItem(render.ctab);
     const { atoms, bonds } = editor.selection() ?? {};

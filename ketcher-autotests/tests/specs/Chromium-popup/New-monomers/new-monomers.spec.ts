@@ -1077,13 +1077,13 @@ test(`27. Check that newly added nineteen standalone nucleotide can be saved and
     ...internalR1R2Nucleotides,
   ]) {
     await CommonTopLeftToolbar(page).clearCanvas();
-    if (fivePrimeR2Nucleotides.some((n) => n === nucleotide)) {
+    if (fivePrimeR2Nucleotides.includes(nucleotide)) {
       await Library(page).clickMonomerAutochain(nucleotide);
       await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
-    } else if (threePrimeR1Nucleotides.some((n) => n === nucleotide)) {
+    } else if (threePrimeR1Nucleotides.includes(nucleotide)) {
       await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
       await Library(page).clickMonomerAutochain(nucleotide);
-    } else if (internalR1R2Nucleotides.some((n) => n === nucleotide)) {
+    } else if (internalR1R2Nucleotides.includes(nucleotide)) {
       await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
       await Library(page).clickMonomerAutochain(nucleotide);
       await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);

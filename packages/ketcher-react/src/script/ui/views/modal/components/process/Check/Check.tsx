@@ -15,7 +15,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type ComponentType, type FC, useEffect, useState } from 'react';
+import {
+  type ComponentType,
+  type FC,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { connect } from 'react-redux';
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
@@ -215,6 +221,11 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
   const [isCheckedWithNewSettings, setIsCheckedWithNewSettings] =
     useState(false);
 
+  const onCheckRef = useRef(onCheck);
+  useEffect(() => {
+    onCheckRef.current = onCheck;
+  }, [onCheck]);
+
   const handleApply = () => onApply(result);
 
   const handleCheck = () => {
@@ -229,9 +240,13 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
   const handleSettingsChange = () => setIsCheckedWithNewSettings(false);
 
   useEffect(() => {
-    handleCheck();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setIsStructureChecking(false);
+    onCheckRef.current(checkState.checkOptions).then(() => {
+      setIsStructureChecking(true);
+      setLastCheckDate(new Date());
+      setIsCheckedWithNewSettings(true);
+    });
+  }, [checkState]);
 
   return (
     <Dialog

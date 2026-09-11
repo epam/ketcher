@@ -28,7 +28,9 @@ const GREEK_SIMBOLS = {
 };
 
 const greekRe = new RegExp(
-  '\\b' + Object.keys(GREEK_SIMBOLS).join('\\b|\\b') + '\\b',
+  String.raw`\b` +
+    Object.keys(GREEK_SIMBOLS).join(String.raw`\b|\b`) +
+    String.raw`\b`,
   'g',
 );
 

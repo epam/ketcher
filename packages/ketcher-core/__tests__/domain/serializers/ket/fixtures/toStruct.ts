@@ -347,7 +347,7 @@ export const textKet = `{
                 {
                     "type": "text",
                     "data": {
-                        "content": "{\\"blocks\\":[{\\"key\\":\\"dikr0\\",\\"text\\":\\"Test text\\",\\"type\\":\\"unstyled\\",\\"depth\\":0,\\"inlineStyleRanges\\":[],\\"entityRanges\\":[],\\"data\\":{}}],\\"entityMap\\":{}}",
+                        "content": "${String.raw`{\"blocks\":[{\"key\":\"dikr0\",\"text\":\"Test text\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}`}",
                         "position": {
                             "x": 6.1250433921813965,
                             "y": -9.850043392181398,
@@ -738,7 +738,7 @@ export const preparedKet = `{
                 {
                     "type": "text",
                     "data": {
-                        "content": "{\\"blocks\\":[{\\"key\\":\\"dikr0\\",\\"text\\":\\"Test text\\",\\"type\\":\\"unstyled\\",\\"depth\\":0,\\"inlineStyleRanges\\":[],\\"entityRanges\\":[],\\"data\\":{}}],\\"entityMap\\":{}}",
+                        "content": "${String.raw`{\"blocks\":[{\"key\":\"dikr0\",\"text\":\"Test text\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}`}",
                         "position": {
                             "x": 6.1250433921813965,
                             "y": -9.850043392181398,

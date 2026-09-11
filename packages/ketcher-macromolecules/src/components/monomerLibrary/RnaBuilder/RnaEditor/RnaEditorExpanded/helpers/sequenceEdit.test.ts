@@ -177,6 +177,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 0,
         hasR1Connection: false,
         hasAntisense: true,
+        strandType: STRAND_TYPE.SENSE,
         isInSelectedAntisensePair: true,
       },
       {
@@ -187,6 +188,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 1,
         hasR1Connection: false,
         hasAntisense: true,
+        strandType: STRAND_TYPE.SENSE,
         isInSelectedAntisensePair: true,
       },
     ];
@@ -208,6 +210,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 0,
         hasR1Connection: false,
         hasAntisense: true,
+        strandType: STRAND_TYPE.SENSE,
         isInSelectedAntisensePair: true,
       },
     ];
@@ -229,6 +232,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 0,
         hasR1Connection: false,
         hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
         isInSelectedAntisensePair: false,
       },
       {
@@ -239,6 +243,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 1,
         hasR1Connection: false,
         hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
         isInSelectedAntisensePair: false,
       },
     ];

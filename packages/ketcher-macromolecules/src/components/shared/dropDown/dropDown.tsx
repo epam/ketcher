@@ -125,7 +125,7 @@ export const DropDown = ({
       (option) => option.id === (value as typeof currentSelection),
     );
 
-    return <span>{selectedOption.label}</span>;
+    return <span>{selectedOption?.label ?? ''}</span>;
   };
 
   const handleSelection = (event) => {

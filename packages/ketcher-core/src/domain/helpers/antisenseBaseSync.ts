@@ -9,6 +9,8 @@ import {
   isAmbiguousMonomerLibraryItem,
   isRnaBaseApplicableForAntisense,
 } from 'domain/helpers/monomers';
+import type { Command } from 'domain/entities/Command';
+import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMonomer';
 
 /**
  * Follows the existing convention in Nucleoside, Nucleotide and the sequence
@@ -120,4 +122,79 @@ export function isSelectedAntisensePair(base?: BaseMonomer): boolean {
     isBaseEligibleForDuplexSync(base) &&
     isBaseEligibleForDuplexSync(partner)
   );
+}
+
+/**
+ * Builds the command that rewrites the hydrogen-bonded partner of
+ * `editedBase` so the pair stays complementary. Direction-agnostic: the same
+ * function serves sense-to-antisense and antisense-to-sense edits, since it
+ * always mirrors from whichever base was actually edited to its partner.
+ *
+ * Returns undefined when there is nothing to mirror (sync mode is off, there
+ * is no eligible partner, the partner is itself selected, or the natural
+ * analogue did not change), so the caller can tell "no-op" apart from a real
+ * command to merge into its own.
+ */
+export function createMirroredBaseCommand(params: {
+  drawingEntitiesManager: DrawingEntitiesManager;
+  editedBase: BaseMonomer;
+  previousNaturalAnalogue?: string;
+  newBaseMonomerItem: MonomerOrAmbiguousType;
+  needToEditAntisense: boolean;
+  resolveBaseLibraryItem: (label: string) => MonomerOrAmbiguousType | undefined;
+}): Command | undefined {
+  const {
+    drawingEntitiesManager,
+    editedBase,
+    previousNaturalAnalogue,
+    newBaseMonomerItem,
+    needToEditAntisense,
+    resolveBaseLibraryItem,
+  } = params;
+
+  // Rule 2.1: non-sync mode never touches the opposite strand.
+  if (!needToEditAntisense) {
+    return undefined;
+  }
+
+  const partner = getHydrogenBondedPartner(editedBase);
+
+  if (
+    !partner ||
+    !isBaseEligibleForDuplexSync(editedBase) ||
+    !isBaseEligibleForDuplexSync(partner)
+  ) {
+    return undefined;
+  }
+
+  // Rule 1.1: the paired base is selected in its own right, so it gets its own
+  // edit and must not be overwritten by this one.
+  if (partner.selected) {
+    return undefined;
+  }
+
+  const targetLabel = resolveMirroredBaseLabel({
+    previousNaturalAnalogue,
+    newNaturalAnalogue: getLibraryItemNaturalAnalogue(newBaseMonomerItem),
+    oppositeSugarLabel: getSugarFromRnaBase(partner)?.label,
+  });
+
+  if (!targetLabel) {
+    return undefined;
+  }
+
+  const targetMonomerItem = resolveBaseLibraryItem(targetLabel);
+
+  if (!targetMonomerItem) {
+    return undefined;
+  }
+
+  // Mirrors the branching already used by modifySequenceInRnaBuilder: an
+  // in-place item swap keeps every bond, but ambiguous monomers change the
+  // entity class and need a full replace.
+  if (partner.monomerItem.isAmbiguous || targetMonomerItem.isAmbiguous) {
+    return replaceMonomer(drawingEntitiesManager, partner, targetMonomerItem);
+  }
+
+  return drawingEntitiesManager.modifyMonomerItem(partner, targetMonomerItem);
 }

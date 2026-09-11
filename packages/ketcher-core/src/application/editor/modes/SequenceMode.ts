@@ -2240,16 +2240,29 @@ export class SequenceMode extends BaseMode {
 
     selections.forEach((selectionRange) => {
       const strandType = getSelectedStrandType(selectionRange[0].node);
-      const previousTwoStrandedNode =
-        strandType === STRAND_TYPE.ANTISENSE
-          ? SequenceRenderer.getNextNodeInSameChain(selectionRange[0].node)
-          : SequenceRenderer.getPreviousNodeInSameChain(selectionRange[0].node);
+      const isAntisense = strandType === STRAND_TYPE.ANTISENSE;
+      // Iteration must follow chain order, not display order, so that the
+      // "previous replaced node" carried from one iteration to the next is
+      // actually the chain-previous of the node about to be processed. For
+      // the antisense strand, chain order runs opposite to display order
+      // (see antisenseChainDirection.test.ts), so the range is walked in
+      // reverse; the seed below is picked from whichever end of the range
+      // is chain-first accordingly.
+      const orderedSelectionRange = isAntisense
+        ? [...selectionRange].reverse()
+        : selectionRange;
+      const firstNodeInChainOrder = orderedSelectionRange[0];
+      const previousTwoStrandedNode = isAntisense
+        ? SequenceRenderer.getNextNodeInSameChain(firstNodeInChainOrder.node)
+        : SequenceRenderer.getPreviousNodeInSameChain(
+            firstNodeInChainOrder.node,
+          );
       let previousReplacedNode = getNodeForStrand(
         previousTwoStrandedNode,
         strandType,
       );
 
-      selectionRange.forEach((nodeSelection) => {
+      orderedSelectionRange.forEach((nodeSelection) => {
         const nodeToReplace = getNodeForStrand(nodeSelection.node, strandType);
 
         if (!nodeToReplace || nodeToReplace instanceof EmptySequenceNode) {

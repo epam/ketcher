@@ -1982,7 +1982,7 @@ export class CoreEditor {
     const history = EditorHistory.getInstance(this);
     const hasModeChanged = this.mode.modeName !== mode;
     const isLastCommandTurnOnSnakeMode =
-      history.previousCommand?.operations.find((operation) => {
+      history.previousCommand?.operations.some((operation) => {
         return (
           operation instanceof SelectLayoutModeOperation &&
           operation.mode === 'snake-layout-mode' &&

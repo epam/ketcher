@@ -4,7 +4,10 @@ import type { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { AttachmentPointName } from 'domain/types';
-import { KetMonomerClass } from 'domain/constants/monomers';
+import {
+  KetMonomerClass,
+  RNA_DNA_NON_MODIFIED_PART,
+} from 'domain/constants/monomers';
 import {
   createMirroredBaseCommand,
   getHydrogenBondedPartner,
@@ -12,7 +15,11 @@ import {
   isSelectedAntisensePair,
 } from 'domain/helpers/antisenseBaseSync';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
-import { getSugarFromRnaBase } from 'domain/helpers/monomers';
+import {
+  getNextMonomerInChain,
+  getPreviousMonomerInChain,
+  getSugarFromRnaBase,
+} from 'domain/helpers/monomers';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
@@ -39,12 +46,16 @@ const stubCanvasDimensions = (canvas: SVGSVGElement) => {
   });
 };
 
-export const buildDuplex = (editor: CoreEditor, senseBaseLabel: string) => {
+export const buildDuplex = (
+  editor: CoreEditor,
+  senseBaseLabel: string,
+  isDnaAntisense = false,
+) => {
   Nucleotide.createOnCanvas(senseBaseLabel, new Vec2(0, 0));
   editor.drawingEntitiesManager.selectDrawingEntities([
     ...editor.drawingEntitiesManager.monomers.values(),
   ]);
-  editor.drawingEntitiesManager.createAntisenseChain(false);
+  editor.drawingEntitiesManager.createAntisenseChain(isDnaAntisense);
 
   const senseBase = [...editor.drawingEntitiesManager.monomers.values()].find(
     (monomer) =>
@@ -307,14 +318,30 @@ describe('createMirroredBaseCommand', () => {
     expect(antisenseBase.label).toBe(labelBefore);
   });
 
+  // The antisense strand runs in the opposite direction from the sense
+  // strand, so its phosphate is the sugar's previous chain neighbor, not its
+  // next one (getPhosphateFromSugar only looks forward and would find
+  // nothing here). Take whichever side is populated.
+  const getAdjacentPhosphate = (sugar: BaseMonomer) =>
+    getNextMonomerInChain(sugar) ?? getPreviousMonomerInChain(sugar);
+
   it('leaves the paired sugar and phosphate untouched', () => {
     const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
     const partnerSugar = getSugarFromRnaBase(antisenseBase);
-    const sugarLabelBefore = partnerSugar?.label;
     const newBaseItem = resolveBaseLibraryItem('C');
 
     if (!newBaseItem) {
       throw new Error('Library item C not found');
+    }
+    if (!partnerSugar) {
+      throw new Error('Fixture setup failed: expected a sugar');
+    }
+
+    const sugarLabelBefore = partnerSugar.label;
+    const phosphateLabelBefore = getAdjacentPhosphate(partnerSugar)?.label;
+
+    if (!phosphateLabelBefore) {
+      throw new Error('Fixture setup failed: expected a phosphate');
     }
 
     createMirroredBaseCommand({
@@ -326,7 +353,90 @@ describe('createMirroredBaseCommand', () => {
       resolveBaseLibraryItem,
     });
 
-    expect(getSugarFromRnaBase(antisenseBase)?.label).toBe(sugarLabelBefore);
+    const partnerSugarAfter = getSugarFromRnaBase(antisenseBase);
+
+    expect(partnerSugarAfter?.label).toBe(sugarLabelBefore);
+    expect(
+      partnerSugarAfter && getAdjacentPhosphate(partnerSugarAfter)?.label,
+    ).toBe(phosphateLabelBefore);
+  });
+
+  it('mirrors adenine to thymine when the paired base sits on deoxyribose, and to uracil otherwise', () => {
+    // buildDuplex's third argument controls the antisense strand's sugar: DNA
+    // (deoxyribose) here, so the partner being rewritten is on DNA even
+    // though the edited base itself is on ribose. Rule: a new analogue of
+    // adenine mirrors to thymine on deoxyribose, uracil otherwise.
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'C', true);
+    const partnerSugarLabel = getSugarFromRnaBase(antisenseBase)?.label;
+
+    expect(partnerSugarLabel).toBe(RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA);
+    // Sense C mirrors to antisense G regardless of sugar, confirming the
+    // duplex was built as expected before we drive the interesting edit.
+    expect(antisenseBase.label).toBe('G');
+
+    const newBaseItem = resolveBaseLibraryItem('A');
+
+    if (!newBaseItem) {
+      throw new Error('Library item A not found');
+    }
+
+    const command = createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: senseBase,
+      previousNaturalAnalogue: 'C',
+      newBaseMonomerItem: newBaseItem,
+      needToEditAntisense: true,
+      resolveBaseLibraryItem,
+    });
+
+    expect(command).toBeDefined();
+    // Not 'U': the partner's own sugar is deoxyribose, so the DNA table is
+    // used for the rewritten side, independent of the edited base's sugar.
+    expect(antisenseBase.label).toBe('T');
+  });
+
+  it('rewrites the paired base through the ambiguous-monomer replace path', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    // R (purine: A/G) is a genuinely ambiguous library item -- isAmbiguous is
+    // only ever true for an AmbiguousMonomer, unlike a named modified
+    // monomer such as 5meC. Resolving through the antisense table, R mirrors
+    // to Y (pyrimidine: C/U on ribose), which is itself ambiguous. Either
+    // side being ambiguous is what should route through replaceMonomer
+    // instead of the in-place modifyMonomerItem swap.
+    const newBaseItem = resolveBaseLibraryItem('R');
+
+    if (!newBaseItem) {
+      throw new Error('Library item R not found');
+    }
+
+    expect(newBaseItem.isAmbiguous).toBe(true);
+
+    const command = createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: senseBase,
+      previousNaturalAnalogue: 'A',
+      newBaseMonomerItem: newBaseItem,
+      needToEditAntisense: true,
+      resolveBaseLibraryItem,
+    });
+
+    expect(command).toBeDefined();
+
+    // replaceMonomer deletes and recreates the partner monomer, so the
+    // `antisenseBase` reference captured before the edit is now stale (it
+    // was removed from the manager). Re-derive the current partner from the
+    // sense base's hydrogen bond instead of trusting that stale reference.
+    const currentPartner =
+      senseBase.hydrogenBonds[0]?.getAnotherMonomer(senseBase);
+
+    if (!currentPartner) {
+      throw new Error('Expected the sense base to still have a partner');
+    }
+
+    expect(currentPartner).not.toBe(antisenseBase);
+    expect(currentPartner.label).toBe('Y');
+    expect(currentPartner.hydrogenBonds).toHaveLength(1);
+    expect(senseBase.hydrogenBonds).toHaveLength(1);
   });
 
   it('discards a modification on the paired base', () => {
@@ -337,7 +447,12 @@ describe('createMirroredBaseCommand', () => {
       throw new Error('Library item 5meC not found');
     }
 
-    // Give the antisense side a modified base whose natural analogue is G.
+    // Give the antisense side a modified, non-ambiguous base (5meC, natural
+    // analogue C -- it does not matter that this mismatches the duplex's own
+    // G partner; the point is only that some modification is in place to be
+    // discarded). The mirror computes its target fresh from the antisense
+    // table and the partner's sugar, so whatever modification was there
+    // before is replaced with a plain library item, never carried over.
     editor.drawingEntitiesManager.modifyMonomerItem(
       antisenseBase,
       modifiedItem,

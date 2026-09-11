@@ -3,7 +3,10 @@
 import { MonomerGroups, MonomerItemType } from 'ketcher-core';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { selectIsSequenceFirstsOnlyNucleotidesSelected } from 'state/rna-builder';
+import {
+  selectIsBaseModificationBlocked,
+  selectIsSequenceFirstsOnlyNucleotidesSelected,
+} from 'state/rna-builder';
 import { useAppSelector } from 'hooks';
 import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
 
@@ -17,13 +20,16 @@ const useDisabledForSequenceMode = (
   const isSequenceFirstsOnlyNucleoelementsSelected = useSelector(
     selectIsSequenceFirstsOnlyNucleotidesSelected,
   );
+  const isBaseModificationBlocked = useAppSelector(
+    selectIsBaseModificationBlocked,
+  );
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isSequenceEditInRNABuilderMode) return setIsDisabled(false);
 
     if (groupName === MonomerGroups.BASES) {
-      setIsDisabled(!item?.props?.MonomerCaps?.R1);
+      setIsDisabled(isBaseModificationBlocked || !item?.props?.MonomerCaps?.R1);
     } else if (groupName === MonomerGroups.PHOSPHATES) {
       setIsDisabled(
         !(item?.props?.MonomerCaps?.R1 && item?.props?.MonomerCaps?.R2),
@@ -47,6 +53,7 @@ const useDisabledForSequenceMode = (
     groupName,
     isSequenceEditInRNABuilderMode,
     isSequenceFirstsOnlyNucleoelementsSelected,
+    isBaseModificationBlocked,
     item?.props?.MonomerCaps?.R1,
     item?.props?.MonomerCaps?.R2,
     item?.props?.MonomerCaps?.R3,

@@ -15,7 +15,11 @@
  ***************************************************************************/
 
 import { fireEvent, render, screen } from '@testing-library/react';
-import { LabeledNodesWithPositionInSequence, Entities } from 'ketcher-core';
+import {
+  LabeledNodesWithPositionInSequence,
+  Entities,
+  STRAND_TYPE,
+} from 'ketcher-core';
 import { UpdateSequenceInRNABuilder } from './UpdateSequenceInRNABuilder';
 
 const mockProps = {
@@ -31,7 +35,7 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
     sugarLabel: 'R',
     nodeIndexOverall: 0,
     hasR1Connection: false,
-    hasAntisense: false,
+    strandType: STRAND_TYPE.SENSE,
   };
 
   it('should render correctly', () => {

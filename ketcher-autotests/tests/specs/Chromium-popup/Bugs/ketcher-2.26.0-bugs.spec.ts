@@ -663,7 +663,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
   test('Case 24: Bond/monomer tooltip preview placed correct in on edge cases', async ({
     FlexCanvas: _,
   }) => {
-    // Works wrong in popup mode because of the bug: https://github.com/epam/ketcher/issues/7503
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5557
@@ -680,14 +679,31 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await CommonTopRightToolbar(page).setZoomInputValue('75');
     await CommonLeftToolbar(page).areaSelectionTool();
+    const expectPreviewInsideCanvas = async () => {
+      const canvas = await page.locator('#polymer-editor-canvas').boundingBox();
+      const tooltip = await MonomerPreviewTooltip(page).window.boundingBox();
+      if (!canvas || !tooltip) {
+        throw new Error('Canvas and monomer preview must be visible');
+      }
+      expect(tooltip.x).toBeGreaterThanOrEqual(canvas.x);
+      expect(tooltip.y).toBeGreaterThanOrEqual(canvas.y);
+      expect(tooltip.x + tooltip.width).toBeLessThanOrEqual(
+        canvas.x + canvas.width,
+      );
+      expect(tooltip.y + tooltip.height).toBeLessThanOrEqual(
+        canvas.y + canvas.height,
+      );
+    };
     await getMonomerLocator(page, Peptide.Cys_Bn).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await expectPreviewInsideCanvas();
     await takeEditorScreenshot(page);
     await moveMouseAway(page);
 
     const _25mo3rSugar = getMonomerLocator(page, Sugar._25mo3r);
     await _25mo3rSugar.hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await expectPreviewInsideCanvas();
     await takeEditorScreenshot(page);
     await moveMouseAway(page);
   });

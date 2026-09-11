@@ -948,9 +948,10 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await Library(page).openRNASection(RNASection.Nucleotides);
     await Library(page).selectMonomer(Nucleotide._5NitInd);
-    await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 0 }), {
-      padding: 30,
-    });
+    const symbol = getSymbolLocator(page, { symbolId: 0, symbolAlias: 'X' });
+    await expect(symbol).toHaveCount(1);
+    await expect(symbol).toBeVisible();
+    await expect(symbol).toHaveText('X');
   });
 
   test('Case 26 - In case of multipal R1 or R2 groups second R1/R2 groups should be assigned to the smallest available Rn (n>2) if available', async () => {

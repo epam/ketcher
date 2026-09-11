@@ -39,11 +39,11 @@ const App = () => {
         staticResourcesUrl={process.env.PUBLIC_URL}
         structServiceProvider={structServiceProvider}
         onInit={(ketcher: Ketcher) => {
-          window.ketcher = ketcher;
+          globalThis.ketcher = ketcher;
           safePostMessage({
             eventType: 'init',
           });
-          window.scrollTo(0, 0);
+          globalThis.scrollTo(0, 0);
         }}
       />
       {hasError && (

@@ -26,7 +26,7 @@ test.afterAll(async ({ closePage }) => {
 test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
 async function isQueryStructureSelected(page: Page): Promise<boolean> {
-  return await page.evaluate(() => window.ketcher.isQueryStructureSelected());
+  return await page.evaluate(() => globalThis.ketcher.isQueryStructureSelected());
 }
 
 async function checkIsQueryStructureSelected(

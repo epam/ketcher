@@ -679,7 +679,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const contentTypeFontSize = await contentTypeSelector
       .locator('span')
       .first()
-      .evaluate((element) => window.getComputedStyle(element).fontSize);
+      .evaluate((element) => globalThis.getComputedStyle(element).fontSize);
     expect(contentTypeFontSize).toBe('12px');
 
     await PasteFromClipboardDialog(page).selectMonomerType(
@@ -688,7 +688,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const monomerTypeFontSize = await monomerTypeSelector
       .locator('span')
       .first()
-      .evaluate((element) => window.getComputedStyle(element).fontSize);
+      .evaluate((element) => globalThis.getComputedStyle(element).fontSize);
     expect(monomerTypeFontSize).toBe('12px');
 
     await PasteFromClipboardDialog(page).selectPeptideLetterType(
@@ -697,7 +697,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const peptideLetterFontSize = await peptideLettersSelector
       .locator('span')
       .first()
-      .evaluate((element) => window.getComputedStyle(element).fontSize);
+      .evaluate((element) => globalThis.getComputedStyle(element).fontSize);
     expect(peptideLetterFontSize).toBe('12px');
 
     await takeEditorScreenshot(page);

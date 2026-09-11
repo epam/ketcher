@@ -124,7 +124,7 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let changeEventSubscriber: any;
   await page.evaluate(() => {
-    changeEventSubscriber = window.ketcher.editor.subscribe('change', () =>
+    changeEventSubscriber = globalThis.ketcher.editor.subscribe('change', () =>
       console.log('hello'),
     );
   });
@@ -142,7 +142,7 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
   await expect(brAtom).toHaveCount(1);
 
   await page.evaluate(() => {
-    window.ketcher.editor.unsubscribe('change', changeEventSubscriber);
+    globalThis.ketcher.editor.unsubscribe('change', changeEventSubscriber);
   });
 });
 
@@ -168,7 +168,7 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let changeEventSubscriber: any;
   await page.evaluate(() => {
-    changeEventSubscriber = window.ketcher.editor.subscribe('change', () =>
+    changeEventSubscriber = globalThis.ketcher.editor.subscribe('change', () =>
       console.log('in change event'),
     );
   });
@@ -180,7 +180,7 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
   expect(consoleMessage.text()).toBe('in change event');
 
   await page.evaluate(() => {
-    window.ketcher.editor.unsubscribe('change', changeEventSubscriber);
+    globalThis.ketcher.editor.unsubscribe('change', changeEventSubscriber);
   });
 });
 

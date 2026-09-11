@@ -452,7 +452,7 @@ export class RenderersManager {
 
     // redraw connected atoms labels as their connections numbers can be updated after bond is added
     [bond.firstAtom, bond.secondAtom].forEach((bondAtom) => {
-      if (bondAtom.bonds.indexOf(bond) !== -1) return;
+      if (bondAtom.bonds.includes(bond)) return;
 
       bondAtom.addBond(bond);
       this.atoms.forEach((atom) => {

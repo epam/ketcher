@@ -357,13 +357,13 @@ export class Struct {
     });
     // atoms in not RGroup
     this.atoms.forEach((atom, aid) => {
-      if (atoms.has(aid) && rgroupsIds.indexOf(atom.fragment) === -1) {
+      if (atoms.has(aid) && !rgroupsIds.includes(atom.fragment)) {
         aids.set(aid, cp.atoms.add(atom.clone(fidMap)));
       }
     });
     // atoms in RGroup
     this.atoms.forEach((atom, aid) => {
-      if (atoms.has(aid) && rgroupsIds.indexOf(atom.fragment) !== -1) {
+      if (atoms.has(aid) && rgroupsIds.includes(atom.fragment)) {
         aids.set(aid, cp.atoms.add(atom.clone(fidMap)));
       }
     });

@@ -88,7 +88,7 @@ export const isSenseBase = (monomer: BaseMonomer | AmbiguousMonomer) => {
     V,
   ];
   const code = getMonomersCode((monomer as AmbiguousMonomer).monomers);
-  return ambigues.some((v) => v === code);
+  return ambigues.includes(code);
 };
 
 /**

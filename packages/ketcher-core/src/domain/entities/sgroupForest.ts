@@ -44,7 +44,7 @@ export class SGroupForest {
         break;
       }
       const children = this.children.get(id);
-      if (typeof children === 'undefined') {
+      if (children === undefined) {
         break;
       }
 
@@ -140,7 +140,7 @@ export class SGroupForest {
 
   private resetParentLink(childId: number, id: number) {
     const parentId = this.parent.get(childId);
-    if (typeof parentId === 'undefined') {
+    if (parentId === undefined) {
       return;
     }
 
@@ -164,7 +164,7 @@ export class SGroupForest {
     }
 
     const parentId = this.parent.get(id);
-    if (typeof parentId === 'undefined') return;
+    if (parentId === undefined) return;
 
     const childs = this.children.get(parentId);
     if (!childs) return;

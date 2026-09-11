@@ -24,6 +24,7 @@ import {
   RnaPhosphatePosition,
 } from 'ketcher-core';
 import { MonomerGroups } from 'src/constants';
+import { BASE_MODIFICATION_DISABLED_IN_SYNC_MODE } from 'src/constants/errors';
 import { GroupBlock } from './GroupBlock';
 import {
   ButtonsContainer,
@@ -48,6 +49,7 @@ import {
   selectCurrentMonomerGroup,
   selectActivePresetMonomerGroup,
   selectActiveRnaBuilderItem,
+  selectIsBaseModificationBlocked,
   selectIsPresetReadyToSave,
   selectAllPresets,
   setActivePreset,
@@ -189,6 +191,9 @@ export const RnaEditorExpanded = ({
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
+  const isBaseModificationBlocked = useAppSelector(
+    selectIsBaseModificationBlocked,
+  );
   const [isSequenceSelectionUpdated, setIsSequenceSelectionUpdated] =
     useState<boolean>(false);
   const [sequenceSelectionGroupNames, setSequenceSelectionGroupNames] =
@@ -314,6 +319,14 @@ export const RnaEditorExpanded = ({
   };
 
   const selectGroup = (selectedGroup) => () => {
+    if (
+      selectedGroup === MonomerGroups.BASES &&
+      isBaseModificationBlocked &&
+      isSequenceEditInRNABuilderMode
+    ) {
+      editor?.events.error.dispatch(BASE_MODIFICATION_DISABLED_IN_SYNC_MODE);
+    }
+
     const selectedRNAPartMonomer = selectCurrentMonomerGroup(
       newPreset,
       selectedGroup,

@@ -852,12 +852,13 @@ class IndigoService implements StructService {
 
   generateImageAsBase64(
     inputData: string,
-    options: GenerateImageOptions = {
-      outputFormat: 'png',
-      backgroundColor: '',
-    },
+    options?: GenerateImageOptions,
   ): Promise<string> {
-    const { outputFormat, backgroundColor, ...restOptions } = options;
+    const {
+      outputFormat = 'png',
+      backgroundColor = '',
+      ...restOptions
+    } = (options ?? {}) as Partial<GenerateImageOptions>;
     const timeout = restOptions['request-timeout'] as number | undefined;
 
     return new Promise((resolve, reject) => {
@@ -907,7 +908,7 @@ class IndigoService implements StructService {
 
       const commandData: GenerateImageCommandData = {
         struct: inputData,
-        outputFormat: outputFormat || 'png',
+        outputFormat,
         backgroundColor,
         options: commandOptions,
       };

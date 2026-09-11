@@ -172,12 +172,12 @@ export function setDefaultSettings(): UpdateFormAction {
 }
 
 export function formReducer(
-  state: ModalFormState = { errors: {} },
+  state: ModalFormState | undefined,
   action: ModalReducerAction,
 ): ModalFormState {
+  const formState = state ?? { errors: {} };
   const actionData =
     'data' in action ? (action.data as Partial<ModalFormState>) : {};
-  const formState = state;
   const actionResult = actionData.result as Record<string, unknown>;
   const newType = actionResult?.type;
 
@@ -199,5 +199,5 @@ export function formReducer(
       action as Parameters<typeof nucleotideComponentReducer>[1],
     );
 
-  return { ...state, ...actionData };
+  return { ...formState, ...actionData };
 }

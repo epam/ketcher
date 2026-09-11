@@ -11,17 +11,19 @@ import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
   filePath: string,
-  numberOf: {
-    Structure: number;
-  } = { Structure: 1 },
+  numberOf?: {
+    Structure?: number;
+  },
 ) {
+  const { Structure = 1 } = numberOf ?? {};
+
   await CommonTopLeftToolbar(page).openFile();
   await waitForSpinnerFinishedWork(page, async () => {
     await openFile(page, filePath);
   });
   const openPPTXFileDialog = OpenPPTXFileDialog(page);
-  if (numberOf.Structure !== 1) {
-    await openPPTXFileDialog.selectStructure(numberOf);
+  if (Structure !== 1) {
+    await openPPTXFileDialog.selectStructure({ Structure });
   }
   await takeEditorScreenshot(page);
   await openPPTXFileDialog.pressOpenAsNewProjectButton();

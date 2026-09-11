@@ -52,7 +52,7 @@ test.describe('getKet', () => {
 
     try {
       await layout(page);
-    } catch (_e) {
+    } catch {
       errorCaught = true;
     }
 
@@ -82,7 +82,7 @@ test.describe('getKet', () => {
 
     try {
       await recognize(page, invalidBlob);
-    } catch (_e) {
+    } catch {
       errorCaught = true;
     }
 
@@ -130,7 +130,7 @@ test.describe('getKet', () => {
             }
             return ketcher[fmt]();
           }, format);
-        } catch (_e) {
+        } catch {
           errorCaught = true;
         }
 

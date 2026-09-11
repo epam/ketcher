@@ -279,7 +279,7 @@ const onOk = async ({
     try {
       addToCanvas({ struct, ketSerializer, editor });
       onCloseCallback();
-    } catch (_e) {
+    } catch {
       showParsingError('Error during file parsing.');
     }
     return;

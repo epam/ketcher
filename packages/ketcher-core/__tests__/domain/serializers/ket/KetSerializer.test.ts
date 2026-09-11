@@ -327,19 +327,18 @@ describe('serialize (ToKet)', () => {
         .length,
     ).toEqual(1);
     expect(
-      spy.mock.results[0].value.filter((item) => item.type === 'molecule')[0]
+      spy.mock.results[0].value.find((item) => item.type === 'molecule')
         .fragment.atoms.size,
     ).toEqual(6);
     expect(
-      spy.mock.results[0].value.filter((item) => item.type === 'molecule')[0]
+      spy.mock.results[0].value.find((item) => item.type === 'molecule')
         .fragment.bonds.size,
     ).toEqual(6);
     expect(
       spy.mock.results[0].value.filter((item) => item.type === 'arrow').length,
     ).toBeTruthy();
     expect(
-      spy.mock.results[0].value.filter((item) => item.type === 'arrow')[0].data
-        .mode,
+      spy.mock.results[0].value.find((item) => item.type === 'arrow').data.mode,
     ).toEqual('open-angle');
     expect(
       spy.mock.results[0].value.filter((item) => item.type === 'plus').length,
@@ -349,9 +348,8 @@ describe('serialize (ToKet)', () => {
         .length,
     ).toBeTruthy();
     expect(
-      spy.mock.results[0].value.filter(
-        (item) => item.type === 'simpleObject',
-      )[0].data.mode,
+      spy.mock.results[0].value.find((item) => item.type === 'simpleObject')
+        .data.mode,
     ).toEqual('rectangle');
     expect(
       spy.mock.results[0].value.filter((item) => item.type === 'text').length,

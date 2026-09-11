@@ -717,7 +717,7 @@ export class RenderersManager {
       );
       center = center.add(atomPos);
     });
-    center = center.scaled(1.0 / loop.halfEdges.length);
+    center = center.scaled(1 / loop.halfEdges.length);
 
     // Calculate the radius as the minimum distance from center to any bond
     let radius = -1;

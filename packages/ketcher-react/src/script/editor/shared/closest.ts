@@ -303,7 +303,7 @@ function findClosestEnhancedFlag(
     const p = fragment.stereoFlagPosition
       ? new Vec2(fragment.stereoFlagPosition.x, fragment.stereoFlagPosition.y)
       : Fragment.getDefaultStereoFlagPosition(restruct.molecule, id);
-    if (!p || Math.abs(pos.x - p.x) >= 1.0) return;
+    if (!p || Math.abs(pos.x - p.x) >= 1) return;
 
     const dist = Math.abs(pos.y - p.y);
 

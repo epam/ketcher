@@ -62,7 +62,10 @@ export async function getSequence(
 }
 
 export async function setZoom(page: Page, value: number) {
-  return await page.evaluate((value) => globalThis.ketcher.setZoom(value), value);
+  return await page.evaluate(
+    (value) => globalThis.ketcher.setZoom(value),
+    value,
+  );
 }
 
 export async function setMode(page: Page, mode: SupportedModes) {
@@ -148,7 +151,9 @@ export async function setMolecule(
 ): Promise<void> {
   await page.waitForLoadState('domcontentloaded');
   await page.waitForFunction(
-    () => globalThis.ketcher && typeof globalThis.ketcher.setMolecule === 'function',
+    () =>
+      globalThis.ketcher &&
+      typeof globalThis.ketcher.setMolecule === 'function',
   );
 
   for (let attempt = 0; attempt < 2; attempt++) {
@@ -169,7 +174,8 @@ export async function setMolecule(
         await page.waitForLoadState('domcontentloaded');
         await page.waitForFunction(
           () =>
-            globalThis.ketcher && typeof globalThis.ketcher.setMolecule === 'function',
+            globalThis.ketcher &&
+            typeof globalThis.ketcher.setMolecule === 'function',
         );
         continue;
       }
@@ -293,7 +299,9 @@ export async function enableViewOnlyModeBySetOptions(
   page: Page,
 ): Promise<void> {
   await page.evaluate(() =>
-    globalThis.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: true })),
+    globalThis.ketcher.editor.setOptions(
+      JSON.stringify({ viewOnlyMode: true }),
+    ),
   );
 
   await waitForViewOnlyModeState(page, true);
@@ -303,7 +311,9 @@ export async function disableViewOnlyModeBySetOptions(
   page: Page,
 ): Promise<void> {
   await page.evaluate(() =>
-    globalThis.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: false })),
+    globalThis.ketcher.editor.setOptions(
+      JSON.stringify({ viewOnlyMode: false }),
+    ),
   );
 
   await waitForViewOnlyModeState(page, false);

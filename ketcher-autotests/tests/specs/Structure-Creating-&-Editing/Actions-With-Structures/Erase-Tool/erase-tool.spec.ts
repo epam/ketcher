@@ -78,7 +78,9 @@ test.describe('Erase Tool', () => {
     };
 
     const { plusElement, scale } = await page.evaluate(() => {
-      const [plusElement] = globalThis.ketcher.editor.struct().rxnPluses.values();
+      const [plusElement] = globalThis.ketcher.editor
+        .struct()
+        .rxnPluses.values();
       return {
         plusElement: plusElement || null,
         scale: globalThis.ketcher.editor.options().microModeScale,

@@ -54,6 +54,8 @@ import type { Loop } from '../view-model/Loop';
 import type { DeepPartial } from 'types';
 import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SGroupRenderer } from 'application/render/renderers/SGroupRenderer';
+import { MacroTextRenderer } from 'application/render/renderers/MacroTextRenderer';
+import type { Text } from 'domain/entities/text';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
@@ -77,6 +79,8 @@ export class RenderersManager {
   public bonds = new Map<number, BondRenderer>();
 
   public sgroups = new Map<number, SGroupRenderer>();
+
+  public texts = new Map<number, MacroTextRenderer>();
 
   private needRecalculateMonomersEnumeration = false;
 
@@ -167,6 +171,10 @@ export class RenderersManager {
     this.sgroups.forEach((sgroupRenderer) => {
       sgroupRenderer.remove();
     });
+    this.texts.forEach((textRenderer) => {
+      textRenderer.remove();
+    });
+    this.texts.clear();
   }
 
   public deleteMonomer(monomer: BaseMonomer) {
@@ -416,6 +424,7 @@ export class RenderersManager {
     if (this.editor) setEditorRenderingContext(this.editor);
     try {
       this.reinitializeViewModel();
+      this.syncTexts();
       modelChanges?.execute(this);
       this.runPostRenderMethods();
       notifyRenderComplete();
@@ -423,6 +432,35 @@ export class RenderersManager {
       if (this.zoomTool) ZoomTool.setRenderingContext(undefined);
       if (this.editor) setEditorRenderingContext(undefined);
     }
+  }
+
+  private syncTexts() {
+    const texts =
+      this.editor?.drawingEntitiesManager.micromoleculesHiddenEntities.texts;
+    const canvas = ZoomTool.instance?.canvas;
+
+    if (!texts || !canvas) {
+      return;
+    }
+
+    const textIds = new Set<number>();
+    texts.forEach((text, id) => {
+      textIds.add(id);
+      if (this.texts.has(id)) {
+        return;
+      }
+
+      const renderer = new MacroTextRenderer(text as Text, id);
+      this.texts.set(id, renderer);
+      renderer.show(canvas);
+    });
+
+    this.texts.forEach((renderer, id) => {
+      if (!textIds.has(id)) {
+        renderer.remove();
+        this.texts.delete(id);
+      }
+    });
   }
 
   public addAtom(atom: Atom) {

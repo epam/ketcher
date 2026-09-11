@@ -11,6 +11,7 @@ import {
 import {
   createMirroredBaseCommand,
   getHydrogenBondedPartner,
+  getLibraryItemMonomerClass,
   isBaseEligibleForDuplexSync,
   isSelectedAntisensePair,
 } from 'domain/helpers/antisenseBaseSync';
@@ -187,6 +188,41 @@ describe('duplex traversal', () => {
     editor.drawingEntitiesManager.selectDrawingEntities([senseBase]);
 
     expect(isSelectedAntisensePair(senseBase)).toBe(false);
+  });
+
+  it('derives the monomer class of an ambiguous base library item from its constituent monomers', () => {
+    // Ambiguous library items (e.g. the IUPAC "N" wildcard) have no `props`
+    // at all, so their class cannot be read off `props.MonomerClass` the way
+    // a regular library item's can; it must be derived from `monomers` via
+    // AmbiguousMonomer.getMonomerClass, same as getRnaPartLibraryItem and
+    // getPeptideLibraryItem already do.
+    const ambiguousBaseItem = editor.monomersLibrary.find(
+      (item) => 'isAmbiguous' in item && item.isAmbiguous && item.label === 'N',
+    );
+
+    if (!ambiguousBaseItem) {
+      throw new Error('Ambiguous library item N not found');
+    }
+
+    expect(getLibraryItemMonomerClass(ambiguousBaseItem)).toBe(
+      KetMonomerClass.Base,
+    );
+  });
+
+  it('reads the monomer class of a non-ambiguous base library item from its props', () => {
+    const nonAmbiguousBaseItem = getRnaPartLibraryItem(
+      editor,
+      'A',
+      KetMonomerClass.Base,
+    );
+
+    if (!nonAmbiguousBaseItem) {
+      throw new Error('Library item A not found');
+    }
+
+    expect(getLibraryItemMonomerClass(nonAmbiguousBaseItem)).toBe(
+      KetMonomerClass.Base,
+    );
   });
 });
 

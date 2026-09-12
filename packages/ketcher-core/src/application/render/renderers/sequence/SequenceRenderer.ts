@@ -835,7 +835,7 @@ export class SequenceRenderer {
   public static get isCurrentCaretAtLastInFullRow(): boolean {
     const currentNode = this.currentEdittingNode;
     const currentRow = this.currentChainRow;
-    const lastNodeInRow = currentRow[currentRow.length - 1];
+    const lastNodeInRow = currentRow.at(-1) as (typeof currentRow)[number];
 
     return (
       Boolean(currentNode) &&
@@ -853,8 +853,8 @@ export class SequenceRenderer {
     }
 
     if (this.isCurrentCaretAtLastInFullRow) {
-      const lastNodeInRow =
-        this.currentChainRow[this.currentChainRow.length - 1];
+      const lastNodeInRow = this.currentChainRow.at(-1) as
+        (typeof this.currentChainRow)[number] | undefined;
 
       if (!lastNodeInRow) {
         return;
@@ -890,8 +890,8 @@ export class SequenceRenderer {
       this.moveCaretBack();
 
       if (this.isCurrentCaretAtLastInFullRow) {
-        const lastNodeInRow =
-          this.currentChainRow[this.currentChainRow.length - 1];
+        const lastNodeInRow = this.currentChainRow.at(-1) as
+          (typeof this.currentChainRow)[number] | undefined;
 
         if (!lastNodeInRow) {
           return;
@@ -931,7 +931,7 @@ export class SequenceRenderer {
 
     const currentRow = this.currentChainRow;
     const currentNodeIndexInRow = currentRow.indexOf(currentEdittingNode);
-    const lastNodeInRow = currentRow[currentRow.length - 1];
+    const lastNodeInRow = currentRow.at(-1) as (typeof currentRow)[number];
 
     if (!lastNodeInRow) {
       return;
@@ -1009,16 +1009,30 @@ export class SequenceRenderer {
     ];
   }
 
-  public static getLastNonEmptyNode(chain: Chain) {
-    const subChainBeforeLast = chain.subChains[chain.subChains.length - 2];
+  public static getLastNonEmptyNode(chain: Chain): SubChainNode {
+    const subChainBeforeLast = chain.subChains.at(-2);
+    const lastNonEmptyNode = subChainBeforeLast?.nodes.at(-1);
 
-    return subChainBeforeLast.nodes[subChainBeforeLast.nodes.length - 1];
+    if (!lastNonEmptyNode) {
+      throw new Error(
+        `Unable to get last non-empty node from chain: subChainCount=${chain.subChains.length}, penultimateNodeCount=${subChainBeforeLast?.nodes.length ?? 0}`,
+      );
+    }
+
+    return lastNonEmptyNode;
   }
 
-  public static getLastNode(chain: Chain) {
-    const lastSubChain = chain.subChains[chain.subChains.length - 1];
+  public static getLastNode(chain: Chain): SubChainNode {
+    const lastSubChain = chain.subChains.at(-1);
+    const lastNode = lastSubChain?.nodes.at(-1);
 
-    return lastSubChain.nodes[lastSubChain.nodes.length - 1];
+    if (!lastNode) {
+      throw new Error(
+        `Unable to get last node from chain: subChainCount=${chain.subChains.length}, lastSubChainNodeCount=${lastSubChain?.nodes.length ?? 0}`,
+      );
+    }
+
+    return lastNode;
   }
 
   public static get nextNode() {

@@ -400,9 +400,11 @@ class SelectTool implements Tool {
     if (dragCtx?.stopTapping) dragCtx.stopTapping();
 
     /* ignore salts and solvents */
-    const possibleSaltOrSolvent = struct.sgroups.get(
-      selectedSgroups[selectedSgroups.length - 1],
-    );
+    const lastSelectedSgroupId = selectedSgroups.at(-1);
+    const possibleSaltOrSolvent =
+      lastSelectedSgroupId === undefined
+        ? undefined
+        : struct.sgroups.get(lastSelectedSgroupId);
     const isDraggingSaltOrSolventOnStructure = SGroup.isSaltOrSolvent(
       possibleSaltOrSolvent?.item?.data?.name ?? '',
     );

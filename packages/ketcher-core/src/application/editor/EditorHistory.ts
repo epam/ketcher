@@ -51,7 +51,7 @@ export class EditorHistory {
   }
 
   update(command: Command, megreWithLatestHistoryCommand?: boolean) {
-    const latestCommand = this.historyStack[this.historyStack.length - 1];
+    const latestCommand = this.historyStack.at(-1);
     if (megreWithLatestHistoryCommand && latestCommand) {
       latestCommand.merge(command);
     } else {

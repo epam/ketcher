@@ -597,7 +597,7 @@ export const RnaEditorExpanded = ({
   };
 
   const getMonomersName = (groupName: string) => {
-    return sequenceSelectionGroupNames?.[groupName] ?? '';
+    return sequenceSelectionGroupNames?.[groupName];
   };
 
   useEffect(() => {

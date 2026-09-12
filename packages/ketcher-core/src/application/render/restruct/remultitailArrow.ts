@@ -392,16 +392,12 @@ export class ReMultitailArrow extends ReObject {
       path.node.setAttribute('data-testid', RXN_ARROW_TEST_ID);
       path.node.setAttribute('data-arrowtype', MULTITAIL_ARROW_TEST_ID);
     }
-    if (
-      path.node &&
-      header.node &&
-      typeof this.multitailArrow.arrowId === 'number'
-    ) {
-      path.node.setAttribute(
+    if (typeof this.multitailArrow.arrowId === 'number') {
+      path.node?.setAttribute(
         'data-arrow-id',
         String(this.multitailArrow.arrowId),
       );
-      header.node.setAttribute(
+      header.node?.setAttribute(
         'data-arrow-id',
         String(this.multitailArrow.arrowId),
       );

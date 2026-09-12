@@ -890,7 +890,9 @@ export class SequenceMode extends BaseMode {
       const selectionEndTwoStrandedNode = selectionRange.at(-1)?.node;
 
       if (!selectionStartTwoStrandedNode || !selectionEndTwoStrandedNode) {
-        throw new Error('Unable to process empty selection range');
+        throw new Error(
+          'Unable to process invalid selection range: missing boundary node',
+        );
       }
       const selectionStartNode = getNodeFromTwoStrandedNode(
         selectionStartTwoStrandedNode,

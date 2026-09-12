@@ -1014,7 +1014,9 @@ export class SequenceRenderer {
     const lastNonEmptyNode = subChainBeforeLast?.nodes.at(-1);
 
     if (!lastNonEmptyNode) {
-      throw new Error('Unable to get last non-empty node from chain');
+      throw new Error(
+        `Unable to get last non-empty node from chain: subChainCount=${chain.subChains.length}, penultimateNodeCount=${subChainBeforeLast?.nodes.length ?? 0}`,
+      );
     }
 
     return lastNonEmptyNode;
@@ -1025,7 +1027,9 @@ export class SequenceRenderer {
     const lastNode = lastSubChain?.nodes.at(-1);
 
     if (!lastNode) {
-      throw new Error('Unable to get last node from chain');
+      throw new Error(
+        `Unable to get last node from chain: subChainCount=${chain.subChains.length}, lastSubChainNodeCount=${lastSubChain?.nodes.length ?? 0}`,
+      );
     }
 
     return lastNode;

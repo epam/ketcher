@@ -236,16 +236,18 @@ export async function openImageAndAddToCanvas(
 export async function openPPTXFileAndAddToCanvasAsNewProject(
   page: Page,
   filePath: string,
-  numberOf: {
-    Structure: number;
-  } = { Structure: 1 },
+  numberOf?: {
+    Structure?: number;
+  },
 ) {
+  const { Structure = 1 } = numberOf ?? {};
+
   await CommonTopLeftToolbar(page).openFile();
   await waitForSpinnerFinishedWork(page, async () => {
     await openFile(page, filePath);
   });
-  if (numberOf.Structure !== 1) {
-    await OpenPPTXFileDialog(page).selectStructure(numberOf);
+  if (Structure !== 1) {
+    await OpenPPTXFileDialog(page).selectStructure({ Structure });
   }
   await OpenPPTXFileDialog(page).pressOpenAsNewProjectButton();
 }

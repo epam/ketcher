@@ -570,18 +570,21 @@ class ReBond extends ReObject {
     }
 
     bondPathElement.setAttribute('data-testid', 'bond');
-    bondPathElement.setAttribute('data-bondid', struct.bonds.keyOf(bond));
+    bondPathElement.setAttribute(
+      'data-bondid',
+      String(struct.bonds.keyOf(bond)),
+    );
     bondPathElement.setAttribute(
       'data-bondtype',
       bond.type + (bond.stereo ? 10 + 2 * bond.stereo : 0),
     );
-    bondPathElement.setAttribute('data-bondstereo', bond.stereo);
-    bondPathElement.setAttribute('data-fromatomid', bond.begin);
-    bondPathElement.setAttribute('data-toatomid', bond.end);
-    bondPathElement.setAttribute('data-topology', bond.topology);
+    bondPathElement.setAttribute('data-bondstereo', String(bond.stereo));
+    bondPathElement.setAttribute('data-fromatomid', String(bond.begin));
+    bondPathElement.setAttribute('data-toatomid', String(bond.end));
+    bondPathElement.setAttribute('data-topology', String(bond.topology));
     bondPathElement.setAttribute(
       'data-reacting-center',
-      bond.reactingCenterStatus,
+      String(bond.reactingCenterStatus),
     );
 
     const beginSGroupId = struct.getGroupIdFromAtomId(bond.begin);
@@ -592,18 +595,21 @@ class ReBond extends ReObject {
     }
 
     if (isNumber(beginSGroupId)) {
-      bondPathElement.setAttribute('data-fromsgroupid', beginSGroupId);
+      bondPathElement.setAttribute('data-fromsgroupid', String(beginSGroupId));
 
       if (struct.sgroups.get(beginSGroupId) instanceof MonomerMicromolecule) {
-        bondPathElement.setAttribute('data-frommonomerid', beginSGroupId);
+        bondPathElement.setAttribute(
+          'data-frommonomerid',
+          String(beginSGroupId),
+        );
       }
     }
 
     if (isNumber(endSGroupId)) {
-      bondPathElement.setAttribute('data-tosgroupid', endSGroupId);
+      bondPathElement.setAttribute('data-tosgroupid', String(endSGroupId));
 
       if (struct.sgroups.get(endSGroupId) instanceof MonomerMicromolecule) {
-        bondPathElement.setAttribute('data-tomonomerid', endSGroupId);
+        bondPathElement.setAttribute('data-tomonomerid', String(endSGroupId));
       }
     }
   }

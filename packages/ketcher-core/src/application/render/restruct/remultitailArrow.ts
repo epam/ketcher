@@ -338,7 +338,7 @@ export class ReMultitailArrow extends ReObject {
       .path(path)
       .attr({ ...options.selectionStyle });
 
-    if (typeof this.multitailArrow.arrowId === 'number') {
+    if (paths.node && typeof this.multitailArrow.arrowId === 'number') {
       paths.node.dataset.arrowId = String(this.multitailArrow.arrowId);
     }
 
@@ -382,9 +382,15 @@ export class ReMultitailArrow extends ReObject {
 
     const path = reStruct.render.paper.path(pathBuilder.build());
     const header = reStruct.render.paper.path(headPathBuilder.build());
-    path.node.dataset.testid = RXN_ARROW_TEST_ID;
-    path.node.dataset.arrowtype = MULTITAIL_ARROW_TEST_ID;
-    if (typeof this.multitailArrow.arrowId === 'number') {
+    if (path.node) {
+      path.node.dataset.testid = RXN_ARROW_TEST_ID;
+      path.node.dataset.arrowtype = MULTITAIL_ARROW_TEST_ID;
+    }
+    if (
+      path.node &&
+      header.node &&
+      typeof this.multitailArrow.arrowId === 'number'
+    ) {
       path.node.dataset.arrowId = String(this.multitailArrow.arrowId);
       header.node.dataset.arrowId = String(this.multitailArrow.arrowId);
     }

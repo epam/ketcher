@@ -884,7 +884,7 @@ class ReAtom extends ReObject {
             });
 
           if (apTooltip) {
-            background.node.dataset.tooltip = apTooltip;
+            background.node?.setAttribute('data-tooltip', apTooltip);
           }
 
           if (isProblematic) {
@@ -1285,42 +1285,87 @@ class ReAtom extends ReObject {
     const atomElement =
       label?.path ?? this.createInvisibleAtomTarget(restruct, render, ps);
 
-    const atomDataset = atomElement?.node?.dataset;
-    if (atomDataset) {
-      atomDataset.testid = 'atom';
-      atomDataset.atomId = String(restruct.molecule.atoms.keyOf(this.a ?? ''));
-      atomDataset.atomType = String(getAtomType(this.a));
-      atomDataset.atomlabel = String(this.a.label ?? '');
-      atomDataset.atomcharge = String(this.a.charge ?? '');
-      atomDataset.atomisotopeatomicmass = String(this.a.isotope ?? '');
-      atomDataset.atomvalence = String(this.a.valence ?? '');
-      atomDataset.atomradical = String(this.a.radical ?? '');
-      atomDataset.atomringbondcount = String(this.a.ringBondCount ?? '');
-      atomDataset.atomhcount = String(this.a.hCount ?? '');
-      atomDataset.atomsubstitutioncount = String(
-        this.a.substitutionCount ?? '',
-      );
-      atomDataset.atomunsaturated = String(this.a.unsaturatedAtom ?? '');
-      atomDataset.atomaromaticity = String(
-        this.a.queryProperties.aromaticity ?? '',
-      );
-      atomDataset.atomimplicithcount = String(this.a.implicitHCount ?? '');
-      atomDataset.atomringmembership = String(
-        this.a.queryProperties.ringMembership ?? '',
-      );
-      atomDataset.atomringsize = String(this.a.queryProperties.ringSize ?? '');
-      atomDataset.atomconnectivity = String(
-        this.a.queryProperties.connectivity ?? '',
-      );
-      atomDataset.atomchirality = String(
-        this.a.queryProperties.chirality ?? '',
-      );
-      atomDataset.atominversion = String(this.a.invRet ?? '');
-      atomDataset.atomexactchange = String(this.a.exactChangeFlag ?? '');
-      atomDataset.atomcustomquery = String(
-        this.a.queryProperties.customQuery ?? '',
-      );
-    }
+    atomElement?.node?.setAttribute('data-testid', 'atom');
+    atomElement?.node?.setAttribute(
+      'data-atom-id',
+      String(restruct.molecule.atoms.keyOf(this.a ?? '')),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atom-type',
+      String(getAtomType(this.a)),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomLabel',
+      String(this.a.label ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomCharge',
+      String(this.a.charge ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomIsotopeAtomicMass',
+      String(this.a.isotope ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomValence',
+      String(this.a.valence ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomRadical',
+      String(this.a.radical ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomRingBondCount',
+      String(this.a.ringBondCount ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomHCount',
+      String(this.a.hCount ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomSubstitutionCount',
+      String(this.a.substitutionCount ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomUnsaturated',
+      String(this.a.unsaturatedAtom ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomAromaticity',
+      String(this.a.queryProperties.aromaticity ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomImplicitHCount',
+      String(this.a.implicitHCount ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomRingMembership',
+      String(this.a.queryProperties.ringMembership ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomRingSize',
+      String(this.a.queryProperties.ringSize ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomConnectivity',
+      String(this.a.queryProperties.connectivity ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomChirality',
+      String(this.a.queryProperties.chirality ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomInversion',
+      String(this.a.invRet ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomExactChange',
+      String(this.a.exactChangeFlag ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomCustomQuery',
+      String(this.a.queryProperties.customQuery ?? ''),
+    );
   }
 
   getLargestSectorFromNeighbors(struct: Struct): {

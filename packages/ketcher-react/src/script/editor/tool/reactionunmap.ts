@@ -29,7 +29,7 @@ class ReactionUnmapTool implements Tool {
   mousemove(event) {
     const ci = this.editor.findItem(event, ['atoms']);
 
-    if (ci && ci.map === 'atoms') {
+    if (ci?.map === 'atoms') {
       this.editor.hover(
         this.editor.render.ctab.molecule.atoms.get(ci.id)?.aam ? ci : null,
         null,
@@ -44,7 +44,7 @@ class ReactionUnmapTool implements Tool {
     const ci = this.editor.findItem(event, ['atoms']);
     const atoms = this.editor.render.ctab.molecule.atoms;
 
-    if (ci && ci.map === 'atoms' && atoms.get(ci.id)?.aam) {
+    if (ci?.map === 'atoms' && atoms.get(ci.id)?.aam) {
       const action = new Action();
       const aam = atoms.get(ci.id)?.aam;
       atoms.forEach((atom, aid) => {

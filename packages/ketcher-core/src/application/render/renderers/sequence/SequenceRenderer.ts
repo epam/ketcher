@@ -1009,16 +1009,26 @@ export class SequenceRenderer {
     ];
   }
 
-  public static getLastNonEmptyNode(chain: Chain): SubChainNode | undefined {
+  public static getLastNonEmptyNode(chain: Chain): SubChainNode {
     const subChainBeforeLast = chain.subChains.at(-2);
+    const lastNonEmptyNode = subChainBeforeLast?.nodes.at(-1);
 
-    return subChainBeforeLast?.nodes.at(-1);
+    if (!lastNonEmptyNode) {
+      throw new Error('Unable to get last non-empty node from chain');
+    }
+
+    return lastNonEmptyNode;
   }
 
-  public static getLastNode(chain: Chain): SubChainNode | undefined {
+  public static getLastNode(chain: Chain): SubChainNode {
     const lastSubChain = chain.subChains.at(-1);
+    const lastNode = lastSubChain?.nodes.at(-1);
 
-    return lastSubChain?.nodes.at(-1);
+    if (!lastNode) {
+      throw new Error('Unable to get last node from chain');
+    }
+
+    return lastNode;
   }
 
   public static get nextNode() {

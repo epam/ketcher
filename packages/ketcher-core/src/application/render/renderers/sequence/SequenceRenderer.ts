@@ -1009,13 +1009,13 @@ export class SequenceRenderer {
     ];
   }
 
-  public static getLastNonEmptyNode(chain: Chain) {
+  public static getLastNonEmptyNode(chain: Chain): SubChainNode | undefined {
     const subChainBeforeLast = chain.subChains.at(-2);
 
     return subChainBeforeLast?.nodes.at(-1);
   }
 
-  public static getLastNode(chain: Chain) {
+  public static getLastNode(chain: Chain): SubChainNode | undefined {
     const lastSubChain = chain.subChains.at(-1);
 
     return lastSubChain?.nodes.at(-1);

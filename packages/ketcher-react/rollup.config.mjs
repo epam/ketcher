@@ -103,6 +103,7 @@ const config = {
       extensions,
       babelHelpers: 'runtime',
       include: includePattern,
+      inputSourceMap: false,
     }),
     copy({
       targets: [{ src: 'src/style/*.svg', dest: 'dist' }],

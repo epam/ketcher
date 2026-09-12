@@ -1010,19 +1010,15 @@ export class SequenceRenderer {
   }
 
   public static getLastNonEmptyNode(chain: Chain) {
-    const subChainBeforeLast = chain.subChains.at(-2) as
-      (typeof chain.subChains)[number] | undefined;
+    const subChainBeforeLast = chain.subChains.at(-2);
 
-    return subChainBeforeLast.nodes.at(-1) as
-      (typeof subChainBeforeLast.nodes)[number] | undefined;
+    return subChainBeforeLast?.nodes.at(-1);
   }
 
   public static getLastNode(chain: Chain) {
-    const lastSubChain = chain.subChains.at(-1) as
-      (typeof chain.subChains)[number] | undefined;
+    const lastSubChain = chain.subChains.at(-1);
 
-    return lastSubChain.nodes.at(-1) as
-      (typeof lastSubChain.nodes)[number] | undefined;
+    return lastSubChain?.nodes.at(-1);
   }
 
   public static get nextNode() {

@@ -299,9 +299,12 @@ export class SequenceMode extends BaseMode {
     SequenceRenderer.startNewSequence(indexOfRowBefore);
 
     if (SequenceRenderer.caretPosition === -1) {
-      SequenceRenderer.setCaretPositionByNode(
-        SequenceRenderer.sequenceViewModel.lastTwoStrandedNode,
-      );
+      const lastTwoStrandedNode =
+        SequenceRenderer.sequenceViewModel.lastTwoStrandedNode;
+
+      if (lastTwoStrandedNode) {
+        SequenceRenderer.setCaretPositionByNode(lastTwoStrandedNode);
+      }
     }
   }
 
@@ -883,10 +886,12 @@ export class SequenceMode extends BaseMode {
     const modelChanges = new Command();
 
     selections.forEach((selectionRange) => {
-      const selectionStartTwoStrandedNode = selectionRange[0].node;
-      const selectionEndTwoStrandedNode = (
-        selectionRange.at(-1) as ITwoStrandedChainItem
-      ).node;
+      const selectionStartTwoStrandedNode = selectionRange[0]?.node;
+      const selectionEndTwoStrandedNode = selectionRange.at(-1)?.node;
+
+      if (!selectionStartTwoStrandedNode || !selectionEndTwoStrandedNode) {
+        return;
+      }
       const selectionStartNode = getNodeFromTwoStrandedNode(
         selectionStartTwoStrandedNode,
         strandType,

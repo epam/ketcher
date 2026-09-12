@@ -231,42 +231,34 @@ export const Library = (page: Page) => {
     },
 
     getMonomerHELMAlias(monomer: Monomer | PresetType) {
-      return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.helm ?? null,
-      );
+      return getElement(monomer.testId).getAttribute('data-helm');
     },
 
     getMonomerAxoLabsAlias(monomer: Monomer | PresetType) {
-      return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.axolabs ?? null,
-      );
+      return getElement(monomer.testId).getAttribute('data-axolabs');
     },
 
     getMonomerIDTAliasBase(monomer: Monomer | PresetType) {
-      return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasBase ?? null,
-      );
+      return getElement(monomer.testId).getAttribute('data-idtalias-base');
     },
 
     getMonomerIDTAliasEp5(monomer: Monomer | PresetType) {
-      return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasModificationsEndpoint5 ?? null,
+      return getElement(monomer.testId).getAttribute(
+        'data-idtalias-modifications-endpoint5',
       );
     },
     getMonomerIDTAliasEp3(monomer: Monomer | PresetType) {
-      return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasModificationsEndpoint3 ?? null,
+      return getElement(monomer.testId).getAttribute(
+        'data-idtalias-modifications-endpoint3',
       );
     },
     getMonomerIDTAliasInternal(monomer: Monomer | PresetType) {
-      return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasModificationsInternal ?? null,
+      return getElement(monomer.testId).getAttribute(
+        'data-idtalias-modifications-internal',
       );
     },
     getMonomerModificationTypes(monomer: Monomer | PresetType) {
-      return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.modificationtype ?? null,
-      );
+      return getElement(monomer.testId).getAttribute('data-modificationtype');
     },
 
     async isMonomerExist(

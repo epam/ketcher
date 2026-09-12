@@ -230,9 +230,15 @@ class ReRGroupAttachmentPoint extends ReObject {
       return;
     }
 
-    attachmentPointElement.dataset.testid = 'attachment-point';
-    attachmentPointElement.dataset.primaryOrSecondary = this.item.type;
-    attachmentPointElement.dataset.attachedToAtomid = String(this.item.atomId);
+    attachmentPointElement.setAttribute('data-testid', 'attachment-point');
+    attachmentPointElement.setAttribute(
+      'data-primary-or-secondary',
+      this.item.type,
+    );
+    attachmentPointElement.setAttribute(
+      'data-attached-to-atomid',
+      String(this.item.atomId),
+    );
   }
 
   private getHoverPlatePath(options: RenderOptions, isHighlight = false) {

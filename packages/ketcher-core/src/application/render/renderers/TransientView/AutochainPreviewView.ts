@@ -35,8 +35,12 @@ export class AutochainPreviewView {
         monomerAutochainSymbolElementId,
       );
     const monomerAutochainPreviewSize = {
-      width: Number(monomerAutochainSymbolElement?.dataset.actualWidth ?? 0),
-      height: Number(monomerAutochainSymbolElement?.dataset.actualHeight ?? 0),
+      width: Number(
+        monomerAutochainSymbolElement?.getAttribute('data-actual-width') ?? 0,
+      ),
+      height: Number(
+        monomerAutochainSymbolElement?.getAttribute('data-actual-height') ?? 0,
+      ),
     };
 
     transientLayer

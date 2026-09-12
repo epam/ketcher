@@ -153,12 +153,13 @@ describe('Rotate controller', () => {
   });
 
   it('adds test id to rotation center handle hitbox', () => {
+    const setAttribute = jest.fn();
     const cross = {
       attr: jest.fn().mockReturnThis(),
     };
     const circle = {
       attr: jest.fn().mockReturnThis(),
-      node: { dataset: {} as DOMStringMap },
+      node: { setAttribute },
     };
     const crossSet = {
       push: jest.fn(),
@@ -184,7 +185,10 @@ describe('Rotate controller', () => {
     // @ts-ignore
     controller.drawCross();
 
-    expect(circle.node.dataset.testid).toBe('rotation-center-handle');
+    expect(setAttribute).toHaveBeenCalledWith(
+      'data-testid',
+      'rotation-center-handle',
+    );
     expect(crossSet.push).toHaveBeenCalledWith(cross, circle);
   });
 

@@ -191,8 +191,8 @@ export class ReImage extends ReObject {
         element.node.setAttribute('pointer-events', 'none');
       }
       if (hitTarget.node?.setAttribute) {
-        hitTarget.node.dataset.testid = `imageResize-${key}`;
-        hitTarget.node.dataset.imageId = String(imageId);
+        hitTarget.node.setAttribute('data-testid', `imageResize-${key}`);
+        hitTarget.node.setAttribute('data-image-id', String(imageId));
         hitTarget.node.setAttribute('pointer-events', 'all');
       }
 
@@ -231,8 +231,9 @@ export class ReImage extends ReObject {
       dimensions.x,
       dimensions.y,
     );
-    image.node.dataset.testid = 'image';
-    image.node.dataset.imageId = String(
+    image.node.setAttribute('data-testid', 'image');
+    image.node.setAttribute(
+      'data-image-id',
       restruct.molecule.images.keyOf(this.image),
     );
     restruct.addReObjectPath(LayerMap.images, this.visel, image);

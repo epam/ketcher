@@ -569,16 +569,23 @@ class ReBond extends ReObject {
       return;
     }
 
-    bondPathElement.dataset.testid = 'bond';
-    bondPathElement.dataset.bondid = String(struct.bonds.keyOf(bond));
-    bondPathElement.dataset.bondtype = String(
+    bondPathElement.setAttribute('data-testid', 'bond');
+    bondPathElement.setAttribute(
+      'data-bondid',
+      String(struct.bonds.keyOf(bond)),
+    );
+    bondPathElement.setAttribute(
+      'data-bondtype',
       bond.type + (bond.stereo ? 10 + 2 * bond.stereo : 0),
     );
-    bondPathElement.dataset.bondstereo = String(bond.stereo);
-    bondPathElement.dataset.fromatomid = String(bond.begin);
-    bondPathElement.dataset.toatomid = String(bond.end);
-    bondPathElement.dataset.topology = String(bond.topology);
-    bondPathElement.dataset.reactingCenter = String(bond.reactingCenterStatus);
+    bondPathElement.setAttribute('data-bondstereo', String(bond.stereo));
+    bondPathElement.setAttribute('data-fromatomid', String(bond.begin));
+    bondPathElement.setAttribute('data-toatomid', String(bond.end));
+    bondPathElement.setAttribute('data-topology', String(bond.topology));
+    bondPathElement.setAttribute(
+      'data-reacting-center',
+      String(bond.reactingCenterStatus),
+    );
 
     const beginSGroupId = struct.getGroupIdFromAtomId(bond.begin);
     const endSGroupId = struct.getGroupIdFromAtomId(bond.end);
@@ -588,18 +595,21 @@ class ReBond extends ReObject {
     }
 
     if (isNumber(beginSGroupId)) {
-      bondPathElement.dataset.fromsgroupid = String(beginSGroupId);
+      bondPathElement.setAttribute('data-fromsgroupid', String(beginSGroupId));
 
       if (struct.sgroups.get(beginSGroupId) instanceof MonomerMicromolecule) {
-        bondPathElement.dataset.frommonomerid = String(beginSGroupId);
+        bondPathElement.setAttribute(
+          'data-frommonomerid',
+          String(beginSGroupId),
+        );
       }
     }
 
     if (isNumber(endSGroupId)) {
-      bondPathElement.dataset.tosgroupid = String(endSGroupId);
+      bondPathElement.setAttribute('data-tosgroupid', String(endSGroupId));
 
       if (struct.sgroups.get(endSGroupId) instanceof MonomerMicromolecule) {
-        bondPathElement.dataset.tomonomerid = String(endSGroupId);
+        bondPathElement.setAttribute('data-tomonomerid', String(endSGroupId));
       }
     }
   }

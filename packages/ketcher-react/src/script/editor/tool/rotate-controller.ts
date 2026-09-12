@@ -265,7 +265,7 @@ class RotateController {
           fill: 'red',
           opacity: 0,
         });
-        circle.node.dataset.testid = 'rotation-center-handle';
+        circle.node.setAttribute('data-testid', 'rotation-center-handle');
         this.cross = this.paper.set();
         this.cross?.push(cross, circle);
         this.cross?.translate(this.center.x, this.center.y);
@@ -377,7 +377,7 @@ class RotateController {
           fill: STYLE.INITIAL_COLOR,
           stroke: 'none',
         });
-        circle.node.dataset.testid = 'rotation-handle';
+        circle.node.setAttribute('data-testid', 'rotation-handle');
 
         const leftArrow = this.paper
           .path(LEFT_ARROW_PATH)

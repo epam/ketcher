@@ -81,10 +81,18 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
       const option = getOption(optionId).first();
       const isVisible = await option.isVisible();
       await page.keyboard.press('Escape');
-      await locators.contextMenuBody.waitFor({
-        state: 'hidden',
-        timeout: 10000,
-      });
+      try {
+        await locators.contextMenuBody.waitFor({
+          state: 'hidden',
+          timeout: 2000,
+        });
+      } catch {
+        await page.mouse.click(0, 0);
+        await locators.contextMenuBody.waitFor({
+          state: 'hidden',
+          timeout: 5000,
+        });
+      }
       return isVisible;
     },
 
@@ -97,10 +105,18 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
       const option = getOption(optionId).first();
       const isEnabled = await option.isEnabled();
       await page.keyboard.press('Escape');
-      await locators.contextMenuBody.waitFor({
-        state: 'hidden',
-        timeout: 10000,
-      });
+      try {
+        await locators.contextMenuBody.waitFor({
+          state: 'hidden',
+          timeout: 2000,
+        });
+      } catch {
+        await page.mouse.click(0, 0);
+        await locators.contextMenuBody.waitFor({
+          state: 'hidden',
+          timeout: 5000,
+        });
+      }
       return isEnabled;
     },
 

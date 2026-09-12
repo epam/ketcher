@@ -39,7 +39,7 @@ const PopupApp = () => {
         open={true}
         fullScreen={false}
         maxWidth="xl"
-        disableEscapeKeyDown
+        onClose={() => undefined}
         classes={{ paper: 'ketcher-dialog' }}
       >
         <Editor

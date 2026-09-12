@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { createTheme } from '@mui/material/styles';
-import { ThemeProvider } from '@emotion/react';
+import { ThemeProvider } from '@mui/material/styles';
 import { Provider as StoreProvider } from 'react-redux';
 import { merge } from 'lodash';
 

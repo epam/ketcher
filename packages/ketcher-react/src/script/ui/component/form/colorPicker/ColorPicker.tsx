@@ -91,17 +91,20 @@ const ColorPicker = (props: Props) => {
         onClose={handleCancel}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-        PaperProps={{
-          className: classes.colorPickerWrap,
-          'data-testid': 'color-picker-preset',
+        slotProps={{
+          paper: {
+            className: classes.colorPickerWrap,
+          },
         }}
       >
-        <ColorPickerContent
-          value={value}
-          onCancel={handleCancel}
-          onApply={handleApply}
-          onContentResize={handleContentResize}
-        />
+        <div data-testid="color-picker-preset">
+          <ColorPickerContent
+            value={value}
+            onCancel={handleCancel}
+            onApply={handleApply}
+            onContentResize={handleContentResize}
+          />
+        </div>
       </Popover>
     </div>
   );

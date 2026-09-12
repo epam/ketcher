@@ -46,7 +46,7 @@ export const InputSelect = () => {
         id="standard-basic"
         label="Select atoms by ID"
         variant="standard"
-        inputProps={{ pattern: regex }}
+        slotProps={{ htmlInput: { pattern: regex.source } }}
         value={input}
         onChange={onChangeHandler}
         size="small"

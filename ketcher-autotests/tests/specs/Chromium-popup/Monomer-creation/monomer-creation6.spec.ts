@@ -665,7 +665,7 @@ test(`14. Verify that by default the functionality of saving new monomers from c
    * Version 3.10
    */
   await page.evaluate(() =>
-    window.ketcher.setSettings({ persistMonomerLibraryUpdates: true }),
+    globalThis.ketcher.setSettings({ persistMonomerLibraryUpdates: true }),
   );
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -707,7 +707,7 @@ test(`15. Verify that by default the functionality of saving new monomers from c
    * Version 3.10
    */
   await page.evaluate(() =>
-    window.ketcher.setSettings({ persistMonomerLibraryUpdates: false }),
+    globalThis.ketcher.setSettings({ persistMonomerLibraryUpdates: false }),
   );
   await pasteFromClipboardAndOpenAsNewProject(
     page,

@@ -75,10 +75,10 @@ test.describe('getKet', () => {
       },
     });
 
-    await page.waitForFunction(() => window.ketcher);
+    await page.waitForFunction(() => globalThis.ketcher);
 
     const image = await page.evaluate(async (jsonString) => {
-      const result = await window.ketcher.generateImage(jsonString);
+      const result = await globalThis.ketcher.generateImage(jsonString);
       return result;
     }, jsonString);
 

@@ -1,7 +1,7 @@
 import { ButtonsConfig } from 'ketcher-react';
 
 export const getHiddenButtonsConfig = (): ButtonsConfig => {
-  const searchParams = new URLSearchParams(window.location.search);
+  const searchParams = new URLSearchParams(globalThis.location.search);
   const hiddenButtons = searchParams.get('hiddenControls');
 
   if (!hiddenButtons) return {};
@@ -17,7 +17,7 @@ export const getHiddenButtonsConfig = (): ButtonsConfig => {
 };
 
 export const isMacromoleculesEditorDisabled = (): boolean => {
-  const searchParams = new URLSearchParams(window.location.search);
+  const searchParams = new URLSearchParams(globalThis.location.search);
 
   return searchParams.get('disableMacromoleculesEditor') === 'true';
 };

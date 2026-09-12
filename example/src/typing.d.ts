@@ -14,7 +14,12 @@ declare global {
     ): void;
 
     ketcher?: Ketcher;
+    _ketcher_isAutozoomDisabled?: boolean;
   }
+
+  var ketcher: Ketcher | undefined;
+  var isPolymerEditorTurnedOn: boolean;
+  var _ketcher_isAutozoomDisabled: boolean | undefined;
 
   declare namespace NodeJS {
     export interface ProcessEnv {

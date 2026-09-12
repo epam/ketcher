@@ -22,7 +22,7 @@ test.describe('API for switching between modes', () => {
      * Scenario:
      * 1. Add command through API
      */
-    await page.evaluate(() => window.ketcher.switchToMacromoleculesMode());
+    await page.evaluate(() => globalThis.ketcher.switchToMacromoleculesMode());
     const macroCanvas = page.locator('[data-canvasmode="macromolecules-mode"]');
     expect(macroCanvas).toBeVisible();
   });
@@ -36,7 +36,7 @@ test.describe('API for switching between modes', () => {
      * 1. Add command through API
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await page.evaluate(() => window.ketcher.switchToMoleculesMode());
+    await page.evaluate(() => globalThis.ketcher.switchToMoleculesMode());
     const microCanvas = page.locator('[data-canvasmode="molecules-mode"]');
     expect(microCanvas).toBeVisible();
   });

@@ -98,7 +98,7 @@ export async function selectByAtomAndBondIds(
   await waitForRender(page, async () => {
     await page.evaluate(
       ({ atoms, bonds, clearBefore }) => {
-        const editor = window.ketcher?.editor;
+        const editor = globalThis.ketcher?.editor;
         if (!editor) {
           throw new Error('Ketcher editor is not initialized');
         }

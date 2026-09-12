@@ -753,7 +753,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     const containsReaction = await page.evaluate(() => {
-      return window.ketcher.containsReaction();
+      return globalThis.ketcher.containsReaction();
     });
 
     expect(containsReaction).toBe(true);
@@ -767,7 +767,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      */
     await drawBenzeneRing(page);
     const containsReaction = await page.evaluate(() => {
-      return window.ketcher.containsReaction();
+      return globalThis.ketcher.containsReaction();
     });
 
     expect(containsReaction).not.toBe(true);

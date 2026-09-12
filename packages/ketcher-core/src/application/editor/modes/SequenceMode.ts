@@ -890,7 +890,7 @@ export class SequenceMode extends BaseMode {
       const selectionEndTwoStrandedNode = selectionRange.at(-1)?.node;
 
       if (!selectionStartTwoStrandedNode || !selectionEndTwoStrandedNode) {
-        return;
+        throw new Error('Unable to process empty selection range');
       }
       const selectionStartNode = getNodeFromTwoStrandedNode(
         selectionStartTwoStrandedNode,

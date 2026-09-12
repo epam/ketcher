@@ -1506,7 +1506,7 @@ function getReactingCenterPath(
   const alongIntMadeBroken = 2 * lw; // half interval between along for MADE_OR_BROKEN
   const alongSz = 1.5 * bs; // half size along for CENTER
   const acrossInt = 1.5 * bs; // half interval across for CENTER
-  const acrossSz = 3.0 * bs; // half size across for all
+  const acrossSz = 3 * bs; // half size across for all
   const tiltTan = 0.2; // tangent of the tilt angle
 
   switch (bond.b.reactingCenterStatus) {

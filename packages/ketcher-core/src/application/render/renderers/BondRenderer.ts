@@ -836,7 +836,7 @@ export class BondRenderer extends BaseRenderer {
     const alongIntMadeBroken = 2 * lw;
     const alongSz = 1.5 * bs;
     const acrossInt = 1.5 * bs;
-    const acrossSz = 3.0 * bs;
+    const acrossSz = 3 * bs;
     const tiltTan = 0.2;
 
     const points: Vec2[] = [];

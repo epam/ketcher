@@ -856,7 +856,7 @@ class IndigoService implements StructService {
   ): Promise<string> {
     const {
       outputFormat = 'png',
-      backgroundColor = '',
+      backgroundColor,
       ...restOptions
     } = (options ?? {}) as Partial<GenerateImageOptions>;
     const timeout = restOptions['request-timeout'] as number | undefined;

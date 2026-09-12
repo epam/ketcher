@@ -222,14 +222,16 @@ export class Indigo {
     options?: GenerateImageOptions,
   ): Promise<string> {
     const outputFormat = options?.outputFormat ?? 'png';
-    const backgroundColor = options?.backgroundColor ?? '';
     const bondThickness = options?.bondThickness ?? defaultBondThickness;
+
     return this.#structService.generateImageAsBase64(
       convertStructToString(struct, this.#ketSerializer),
       {
         outputFormat,
-        backgroundColor,
         bondThickness,
+        ...(options?.backgroundColor === undefined
+          ? {}
+          : { backgroundColor: options.backgroundColor }),
       },
     );
   }

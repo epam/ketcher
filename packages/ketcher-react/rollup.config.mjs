@@ -90,14 +90,14 @@ const config = {
     peerDepsExternal({ includeDependencies: true }),
     nodeResolvePlugin({ extensions }),
     commonjs(),
+    json(),
+    typescript({
+      tsconfig: './tsconfig.build.json',
+    }),
     replace({
       include: includePattern,
       preventAssignment: true,
       values: valuesToReplace,
-    }),
-    json(),
-    typescript({
-      tsconfig: './tsconfig.build.json',
     }),
     babelPlugin({
       extensions,

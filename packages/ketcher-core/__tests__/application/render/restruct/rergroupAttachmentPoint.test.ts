@@ -129,18 +129,11 @@ describe('ReRGroupAttachmentPoint', () => {
     ).toHaveLength(2);
     expect(primaryAttachmentPoint).not.toBeNull();
     expect(secondaryAttachmentPoint).not.toBeNull();
-    const primaryAttachmentPointData = (
-      primaryAttachmentPoint as SVGElement | null
-    )?.dataset;
-    const secondaryAttachmentPointData = (
-      secondaryAttachmentPoint as SVGElement | null
-    )?.dataset;
-    const atomElementData = (atomElement as SVGElement | null)?.dataset;
-    expect(primaryAttachmentPointData?.attachedToAtomid).toBe(
-      atomElementData?.atomId,
-    );
-    expect(secondaryAttachmentPointData?.attachedToAtomid).toBe(
-      atomElementData?.atomId,
-    );
+    expect(
+      primaryAttachmentPoint?.getAttribute('data-attached-to-atomid'),
+    ).toBe(atomElement?.getAttribute('data-atom-id'));
+    expect(
+      secondaryAttachmentPoint?.getAttribute('data-attached-to-atomid'),
+    ).toBe(atomElement?.getAttribute('data-atom-id'));
   });
 });

@@ -549,13 +549,11 @@ class ReAtom extends ReObject {
               'font-family': fontFamily,
             });
 
-          if (path.node) {
-            path.node.dataset.testid = 's-group-label';
-            path.node.dataset.labelText = sGroupName;
-            path.node.dataset.sgroupId = String(sgroup.id);
-            path.node.dataset.sgroupName = sGroupName;
-            path.node.dataset.sgroupType = String(sgroup.type);
-          }
+          path.node?.setAttribute('data-testid', 's-group-label');
+          path.node?.setAttribute('data-label-text', sGroupName);
+          path.node?.setAttribute('data-sgroup-id', String(sgroup.id));
+          path.node?.setAttribute('data-sgroup-name', sGroupName);
+          path.node?.setAttribute('data-sgroup-type', String(sgroup.type));
 
           restruct.addReObjectPath(
             LayerMap.data,

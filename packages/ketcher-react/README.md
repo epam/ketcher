@@ -18,6 +18,7 @@ The ketcher-react package contains only the functionality necessary to define co
 
 - **React**: 18.2.0 or higher (React 19 is also supported)
 - **Node.js**: 24.14.1 or higher
+- **Browser runtime**: a modern evergreen browser runtime. `ketcher-react` does not auto-load legacy polyfills; if you intentionally target older environments, provide your own transpilation/polyfills for ES runtime features (for example `Promise`, `Object.assign`, `requestAnimationFrame`, async/generators) and browser APIs such as `fetch`, `URLSearchParams`, `IntersectionObserver`, and `Element.closest`.
 
 ### Install
 

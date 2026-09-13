@@ -57,11 +57,9 @@
     "cfb": "^1.2.2",
     "clsx": "^1.1.1",
     "dpdm": "^4.2.0",
-    "element-closest-polyfill": "^1.0.2",
     "file-saver": "^2.0.2",
     "font-face-observer": "^1.0.0",
     "hoist-non-react-statics": "^3.3.2",
-    "intersection-observer": "^0.12.2",
     "jsonschema": "^1.5.0",
     "ketcher-core": "*",
     "lexical": "^0.40.0",
@@ -77,14 +75,11 @@
     "redux": "^5.0.1",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^3.1.0",
-    "regenerator-runtime": "^0.13.7",
     "remark-gfm": "^1.0.0",
     "remark-parse": "^9.0.0",
     "reselect": "^4.0.0",
     "subscription": "^3.0.0",
-    "url-search-params-polyfill": "^8.1.1",
-    "use-resize-observer": "^7.0.0",
-    "whatwg-fetch": "^3.4.1"
+    "use-resize-observer": "^7.0.0"
   },
   "devDependencies": {
     "@babel/core": "8.0.1",

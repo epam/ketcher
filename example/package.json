@@ -44,7 +44,6 @@
     "ketcher-standalone": "*",
     "normalize.css": "^8.0.1",
     "react": "^19.2.7",
-    "react-app-polyfill": "^2.0.0",
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.18.2"
   },
@@ -88,7 +87,6 @@
       "not op_mini all"
     ],
     "development": [
-      "ie 11",
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"

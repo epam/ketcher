@@ -16,11 +16,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import 'intersection-observer';
-import 'element-closest-polyfill';
-import 'regenerator-runtime/runtime';
-import 'url-search-params-polyfill';
-import 'whatwg-fetch';
 import './index.less';
 
 import init, { type Config } from './script';

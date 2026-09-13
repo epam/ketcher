@@ -54,8 +54,12 @@ export const valuesToReplace = {
   // TODO: add logic to init BUILD_NUMBER
   'process.env.BUILD_NUMBER': JSON.stringify(undefined),
   'process.env.HELP_LINK': JSON.stringify(getTagName()),
-  'process.env.INDIGO_VERSION': JSON.stringify(process.env.INDIGO_VERSION || ''),
-  'process.env.INDIGO_MACHINE': JSON.stringify(process.env.INDIGO_MACHINE || ''),
+  'process.env.INDIGO_VERSION': JSON.stringify(
+    process.env.INDIGO_VERSION || '',
+  ),
+  'process.env.INDIGO_MACHINE': JSON.stringify(
+    process.env.INDIGO_MACHINE || '',
+  ),
 };
 
 const config = {
@@ -90,14 +94,14 @@ const config = {
     peerDepsExternal({ includeDependencies: true }),
     nodeResolvePlugin({ extensions }),
     commonjs(),
+    json(),
+    typescript({
+      tsconfig: './tsconfig.build.json',
+    }),
     replace({
       include: includePattern,
       preventAssignment: true,
       values: valuesToReplace,
-    }),
-    json(),
-    typescript({
-      tsconfig: './tsconfig.build.json',
     }),
     babelPlugin({
       extensions,

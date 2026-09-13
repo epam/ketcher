@@ -18,6 +18,7 @@ The ketcher-react package contains only the functionality necessary to define co
 
 - **React**: 18.2.0 or higher (React 19 is also supported)
 - **Node.js**: 24.14.1 or higher
+- **Browser runtime**: a modern browser with native `fetch`, `URLSearchParams`, `IntersectionObserver`, and `Element.closest` support. `ketcher-react` no longer loads these polyfills automatically; add them in your app only if you intentionally target older browsers.
 
 ### Install
 

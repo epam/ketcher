@@ -25,6 +25,11 @@ import { AMINO_ACID_ONE_TO_THREE_LETTER_CODE } from 'src/constants';
 import { RootState } from 'state';
 import { selectFilteredMonomers } from './librarySlice';
 
+const sortLabels = (labels: string[]) =>
+  labels.sort((firstLabel, secondLabel) =>
+    firstLabel.localeCompare(secondLabel),
+  );
+
 const createAminoAcid = (oneLetter: string, name: string): MonomerItemType => ({
   label: oneLetter,
   struct: {} as MonomerItemType['struct'],
@@ -183,8 +188,8 @@ describe('selectFilteredMonomers — three-letter amino-acid codes', () => {
   ])(
     'returns expected amino-acid monomers for code %s → %j',
     (code, expectedLabels) => {
-      expect(getMatchedAminoAcidLabels(code).sort()).toEqual(
-        [...expectedLabels].sort(),
+      expect(sortLabels(getMatchedAminoAcidLabels(code))).toEqual(
+        sortLabels([...expectedLabels]),
       );
     },
   );
@@ -192,16 +197,20 @@ describe('selectFilteredMonomers — three-letter amino-acid codes', () => {
   it.each(['ala', 'ALA', 'aLa'])(
     'matches alanine case-insensitively for %s (including ambiguous X)',
     (query) => {
-      expect(getMatchedAminoAcidLabels(query).sort()).toEqual(['A', 'X']);
+      expect(sortLabels(getMatchedAminoAcidLabels(query))).toEqual(['A', 'X']);
     },
   );
 
   it('matches partial three-letter code Tr → Trp (including ambiguous X)', () => {
-    expect(getMatchedAminoAcidLabels('Tr').sort()).toEqual(['W', 'X']);
+    expect(sortLabels(getMatchedAminoAcidLabels('Tr'))).toEqual(['W', 'X']);
   });
 
   it('Gln returns Q plus ambiguous monomers that contain glutamine', () => {
-    expect(getMatchedAminoAcidLabels('Gln').sort()).toEqual(['Q', 'X', 'Z']);
+    expect(sortLabels(getMatchedAminoAcidLabels('Gln'))).toEqual([
+      'Q',
+      'X',
+      'Z',
+    ]);
   });
 
   it('Glx returns only Z, not Gln/Q', () => {
@@ -271,7 +280,10 @@ describe('selectFilteredMonomers — three-letter amino-acid codes', () => {
 
   it('still matches single-letter A and full name Tryptophan', () => {
     expect(getMatchedAminoAcidLabels('A')).toContain('A');
-    expect(getMatchedAminoAcidLabels('Tryptophan').sort()).toEqual(['W', 'X']);
+    expect(sortLabels(getMatchedAminoAcidLabels('Tryptophan'))).toEqual([
+      'W',
+      'X',
+    ]);
   });
 
   it.each(['Xyz', 'Al@', 'Al1'])(
@@ -309,6 +321,6 @@ describe('selectFilteredMonomers — three-letter amino-acid codes', () => {
   });
 
   it('ambiguous X matches Trp via its tryptophan component', () => {
-    expect(getMatchedAminoAcidLabels('Trp').sort()).toEqual(['W', 'X']);
+    expect(sortLabels(getMatchedAminoAcidLabels('Trp'))).toEqual(['W', 'X']);
   });
 });

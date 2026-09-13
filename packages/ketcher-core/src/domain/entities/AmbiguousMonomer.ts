@@ -23,6 +23,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 
 export const DEFAULT_VARIANT_MONOMER_LABEL = '%';
+const compareStrings = (a: string, b: string) => a.localeCompare(b);
 
 export const MONOMER_CLASS_TO_CONSTRUCTOR = {
   [KetMonomerClass.CHEM]: Chem,
@@ -141,7 +142,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   public get isModification() {
     const ownTemplateIds = this.variantMonomerItem.options
       .map((option) => option.templateId)
-      .sort();
+      .sort(compareStrings);
 
     const monomersLibrary = provideEditorInstance()?.monomersLibrary ?? [];
 
@@ -155,7 +156,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
 
       const libraryTemplateIds = libraryItem.options
         .map((option) => option.templateId)
-        .sort();
+        .sort(compareStrings);
 
       return (
         libraryTemplateIds.length === ownTemplateIds.length &&

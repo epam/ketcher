@@ -73,7 +73,6 @@ const config = {
       extensions,
       babelHelpers: 'runtime',
       include: includePattern,
-      inputSourceMap: false,
     }),
     cleanup({
       extensions: extensions.map((ext) => ext.replace(/^\./, '')),

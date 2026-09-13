@@ -1044,7 +1044,7 @@ test(`20. Check that the user can remove a HELM alias after it is set`, async ()
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    code: Peptide.Peptide.alias,
+    code: Peptide.Peptide2.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: '1Nal',

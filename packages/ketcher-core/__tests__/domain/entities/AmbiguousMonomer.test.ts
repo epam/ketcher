@@ -46,7 +46,7 @@ describe('AmbiguousMonomer.isModification', () => {
   it('treats matching library options as the same regardless of option order', () => {
     setEditorInstance({
       monomersLibrary: [createAmbiguousMonomerItem('library', ['B', 'A'])],
-    } as CoreEditor);
+    } as unknown as CoreEditor);
 
     const monomer = new AmbiguousMonomer(
       createAmbiguousMonomerItem('current', ['A', 'B']),

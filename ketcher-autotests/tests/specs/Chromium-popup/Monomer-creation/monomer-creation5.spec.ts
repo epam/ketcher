@@ -418,14 +418,14 @@ test(`7. Check that the user can remove a modification type after it is set`, as
   });
   await takeElementScreenshot(
     page,
-    createMonomerDialog.modificationSection.locator('..'),
+    createMonomerDialog.modificationSection.locator('..').locator('..'),
   );
   await createMonomerDialog.deleteModificationType(
     ModificationTypeDropdown.First,
   );
   await takeElementScreenshot(
     page,
-    createMonomerDialog.modificationSection.locator('..'),
+    createMonomerDialog.modificationSection.locator('..').locator('..'),
   );
   await createMonomerDialog.discard();
 });

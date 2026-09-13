@@ -461,12 +461,12 @@ test(`8. Verify that the modification type section in the attributes panel can b
   await createMonomerDialog.expandModificationSection();
   await takeElementScreenshot(
     page,
-    createMonomerDialog.modificationSection.locator('..'),
+    createMonomerDialog.modificationSection.locator('..').locator('..'),
   );
   await createMonomerDialog.collapseModificationSection();
   await takeElementScreenshot(
     page,
-    createMonomerDialog.modificationSection.locator('..'),
+    createMonomerDialog.modificationSection.locator('..').locator('..'),
   );
   await createMonomerDialog.discard();
 });
@@ -1104,12 +1104,12 @@ test(`21. Check that the HELM alias section in the attributes panel can be expan
   await createMonomerDialog.expandAliasesSection();
   await takeElementScreenshot(
     page,
-    createMonomerDialog.aliasesSection.locator('..'),
+    createMonomerDialog.aliasesSection.locator('..').locator('..'),
   );
   await createMonomerDialog.collapseAliasesSection();
   await takeElementScreenshot(
     page,
-    createMonomerDialog.aliasesSection.locator('..'),
+    createMonomerDialog.aliasesSection.locator('..').locator('..'),
   );
   await createMonomerDialog.discard();
 });

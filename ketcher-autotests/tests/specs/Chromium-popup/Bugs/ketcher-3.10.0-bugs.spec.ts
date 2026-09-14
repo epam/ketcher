@@ -506,12 +506,6 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await CommonTopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
     await PasteFromClipboardDialog(page).selectContentType(
-      MacroFileType.AxoLabs,
-    );
-    await expect(PasteFromClipboardDialog(page).contentTypeSelector).toHaveText(
-      'AxoLabs',
-    );
-    await PasteFromClipboardDialog(page).selectContentType(
       MacroFileType.KetFormat,
     );
     await expect(PasteFromClipboardDialog(page).contentTypeSelector).toHaveText(

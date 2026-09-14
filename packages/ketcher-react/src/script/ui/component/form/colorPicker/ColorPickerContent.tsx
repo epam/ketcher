@@ -70,21 +70,20 @@ function ColorPickerContent({
     onContentResize();
   }, [isCustomOpen, onContentResize]);
 
-  const pendingColorAtOpenRef = useRef(pendingColor);
-  const customColorsAtOpenRef = useRef(customColors);
   const hasSeededRef = useRef(false);
-
+  // Seed the currently-selected color into the custom-color list once, when
+  // the picker opens (ColorPickerContent mounts fresh on every open).
   useEffect(() => {
-    if (settings === null || hasSeededRef.current) {
+    if (hasSeededRef.current) {
       return;
     }
     hasSeededRef.current = true;
-    const newColors = addCustomColor(
-      customColorsAtOpenRef.current,
-      pendingColorAtOpenRef.current,
-    );
+    if (settings === null) {
+      return;
+    }
+    const newColors = addCustomColor(customColors, pendingColor);
     updateSettings({ colorPickerCustomColors: newColors });
-  }, [settings, updateSettings]);
+  }, [customColors, pendingColor, settings, updateSettings]);
 
   const applyHexColor = (hex: string) => {
     setPendingColor(hex);

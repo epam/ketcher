@@ -132,11 +132,13 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).setText('&&&');
     await TextEditorDialog(page).cancel();
 
+    await LeftToolbar(page).text();
     await clickInTheMiddleOfTheCanvas(page);
     await TextEditorDialog(page).setText('+++');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
 
+    await LeftToolbar(page).text();
     await clickOnCanvas(page, 150, 145, { from: 'pageTopLeft' });
     await TextEditorDialog(page).setText(
       'Ketcher is a tool to draw molecular structures and chemical reactions',
@@ -176,6 +178,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
 
+    await LeftToolbar(page).text();
     await clickOnCanvas(page, 150, 145, { from: 'pageTopLeft' });
     await TextEditorDialog(page).setText('Ketcher is a coool tool');
     await TextEditorDialog(page).apply();

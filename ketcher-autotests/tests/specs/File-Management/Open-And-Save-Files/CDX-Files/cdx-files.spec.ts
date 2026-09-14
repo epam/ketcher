@@ -16,18 +16,15 @@ import {
 test.describe('CDX files', () => {
   let page: Page;
 
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
 
-  test.afterAll(async () => {
-    await page.close();
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
-  test.beforeEach(async () => {
-    // Clear canvas is handled by MoleculesCanvas fixture
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   test('opening cdx files', async () => {
     /* 
@@ -100,18 +97,15 @@ test.describe('CDX files', () => {
 test.describe('CDX files without screenshots', () => {
   let page: Page;
 
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
 
-  test.afterAll(async () => {
-    await page.close();
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
-  test.beforeEach(async () => {
-    // Clear canvas is handled by MoleculesCanvas fixture
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   test('Validate that unsplit nucleotides connected with another nucleotides could be saved to Cdx file and loaded back', async () => {
     /*

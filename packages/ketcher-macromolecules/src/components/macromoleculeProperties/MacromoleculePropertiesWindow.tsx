@@ -36,8 +36,11 @@ import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
-import { peptideNaturalAnalogues, rnaDnaNaturalAnalogues } from 'ketcher-core';
-import type { SingleChainMacromoleculeProperties } from 'ketcher-core';
+import {
+  peptideNaturalAnalogues,
+  rnaDnaNaturalAnalogues,
+  type SingleChainMacromoleculeProperties,
+} from 'ketcher-core';
 import { Icon } from 'ketcher-react';
 import { DropDown } from 'components/shared/dropDown';
 import { useRecalculateMacromoleculeProperties } from '../../hooks/useRecalculateMacromoleculeProperties';

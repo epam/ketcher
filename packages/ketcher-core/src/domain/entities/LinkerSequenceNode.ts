@@ -27,7 +27,7 @@ export class LinkerSequenceNode {
   }
 
   public get lastMonomerInNode() {
-    return this.monomers[this.monomers.length - 1];
+    return this.monomers.at(-1) as (typeof this.monomers)[number];
   }
 
   public get monomers() {

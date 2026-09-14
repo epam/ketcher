@@ -299,9 +299,12 @@ export class SequenceMode extends BaseMode {
     SequenceRenderer.startNewSequence(indexOfRowBefore);
 
     if (SequenceRenderer.caretPosition === -1) {
-      SequenceRenderer.setCaretPositionByNode(
-        SequenceRenderer.sequenceViewModel.lastTwoStrandedNode,
-      );
+      const lastTwoStrandedNode =
+        SequenceRenderer.sequenceViewModel.lastTwoStrandedNode;
+
+      if (lastTwoStrandedNode) {
+        SequenceRenderer.setCaretPositionByNode(lastTwoStrandedNode);
+      }
     }
   }
 
@@ -883,9 +886,14 @@ export class SequenceMode extends BaseMode {
     const modelChanges = new Command();
 
     selections.forEach((selectionRange) => {
-      const selectionStartTwoStrandedNode = selectionRange[0].node;
-      const selectionEndTwoStrandedNode =
-        selectionRange[selectionRange.length - 1].node;
+      const selectionStartTwoStrandedNode = selectionRange[0]?.node;
+      const selectionEndTwoStrandedNode = selectionRange.at(-1)?.node;
+
+      if (!selectionStartTwoStrandedNode || !selectionEndTwoStrandedNode) {
+        throw new Error(
+          'Unable to process invalid selection range: missing boundary node',
+        );
+      }
       const selectionStartNode = getNodeFromTwoStrandedNode(
         selectionStartTwoStrandedNode,
         strandType,
@@ -1632,7 +1640,7 @@ export class SequenceMode extends BaseMode {
             selectionsBeforeDeletion.length > 0 &&
             selectionsBeforeDeletion.every((selectionRange) => {
               const firstNode = selectionRange[0]?.node;
-              const lastNode = selectionRange[selectionRange.length - 1]?.node;
+              const lastNode = selectionRange.at(-1)?.node;
               const prevInSameChain = firstNode
                 ? SequenceRenderer.getPreviousNodeInSameChain(firstNode)
                 : null;

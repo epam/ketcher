@@ -54,7 +54,7 @@ export class SelectionView {
         .attr('stroke', '#B4B9D6')
         .attr('style', 'pointer-events: none');
       if (path.length > 1) {
-        const linePoints = [path[0], path[path.length - 1]];
+        const linePoints = [path[0], path.at(-1) as [number, number]];
         transientLayer
           .append('path')
           .datum(linePoints)

@@ -36,5 +36,5 @@ export function provideEditorInstance(ketcherId?: string): CoreEditor {
   }
   // Fall back to the most recently registered instance for callers without context
   const values = [...editorInstances.values()];
-  return (values[values.length - 1] ?? _lastEditorInstance) as CoreEditor;
+  return (values.at(-1) ?? _lastEditorInstance) as CoreEditor;
 }

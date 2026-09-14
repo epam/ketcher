@@ -1,0 +1,102 @@
+name: Update Playwright Snapshots (temporary, manual)
+on:
+  workflow_dispatch:
+    inputs:
+      test_files:
+        description: 'Space-separated spec files/dirs to update snapshots for'
+        required: true
+        default: >-
+          tests/specs/Bugs/ketcher-2.26.0-bugs.spec.ts
+          tests/specs/Bugs/ketcher-3.4.0-bugs.spec.ts
+          tests/specs/Bugs/ketcher-3.6.0-bugs.spec.ts
+          "tests/specs/Settings/ACS Style/acs-style-settings.spec.ts"
+          tests/specs/Settings/General/default-settings-verification.spec.ts
+          tests/specs/User-Interface/Toolbar/toolbar.spec.ts
+
+env:
+  CI: false
+  MODE: standalone
+  KETCHER_URL: http://127.0.0.1:4002
+  DOCKER: true
+  IGNORE_UNSTABLE_TESTS: true
+  CI_ENVIRONMENT: true
+  USE_SEPARATE_INDIGO_WASM: true
+
+permissions:
+  contents: write
+
+jobs:
+  build_ketcher:
+    runs-on: ubuntu-latest
+    container: node:24-trixie-slim
+    steps:
+      - name: Install dependencies
+        run: apt-get update -y && apt-get install -y git
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+      - name: Git safe
+        run: git config --global --add safe.directory '*'
+      - name: Install NPM dependencies
+        run: npm ci
+      - name: Build all packages
+        run: npm run build:packages && npm run build:example:standalone
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: ketcher-dist-micro
+          path: example/dist
+
+  update_snapshots:
+    runs-on: ubuntu-latest
+    needs: build_ketcher
+    container: mcr.microsoft.com/playwright:v1.62.1-jammy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+      - name: Install dependencies
+        run: npm ci
+      - name: Create folder for dist
+        run: mkdir -p example/dist
+      - name: Download compiled ketcher
+        uses: actions/download-artifact@v8
+        with:
+          name: ketcher-dist-micro
+          path: example/dist/
+      - name: Create env file
+        run: |
+          cat > ketcher-autotests/.env << EOF
+          DOCKER=true
+          KETCHER_URL=$KETCHER_URL
+          MODE=$MODE
+          IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS
+          CI_ENVIRONMENT=$CI_ENVIRONMENT
+          USE_SEPARATE_INDIGO_WASM=$USE_SEPARATE_INDIGO_WASM
+          EOF
+      - name: Update snapshots
+        run: |
+          cd example/ && nohup npm run serve:standalone > /dev/null 2>&1 &
+          cd ketcher-autotests/
+          npx playwright install chromium
+          eval npx playwright test --project=chromium --update-snapshots=changed ${{ inputs.test_files }}
+      - name: Commit updated snapshots
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add '**/*-snapshots/*.png'
+          if git diff --cached --quiet; then
+            echo "No snapshot changes to commit."
+          else
+            git commit -m "test: update Playwright Linux snapshots (automated)"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: pw-report-update-snapshots
+          path: ketcher-autotests/playwright-report/
+          retention-days: 5

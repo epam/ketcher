@@ -98,6 +98,9 @@ export class Struct {
   highlights: Pool<Highlight>;
   images = new Pool<Image>();
   multitailArrows = new Pool<MultitailArrow>();
+  private static readonly MIN_RESCALE = 0.01;
+  private static readonly MAX_RESCALE = 100;
+
   private nextArrowId = 0;
 
   constructor() {
@@ -898,6 +901,48 @@ export class Struct {
     return bld.cnt > 0 ? bld.totalLength / bld.cnt : -1;
   }
 
+  getBondLengths(): number[] {
+    const lengths: number[] = [];
+    this.bonds.forEach((bond) => {
+      const a1 = this.atoms.get(bond.begin);
+      const a2 = this.atoms.get(bond.end);
+      assert(a1, `Atom ${bond.begin} not found`);
+      assert(a2, `Atom ${bond.end} not found`);
+      lengths.push(Vec2.dist(a1.pp, a2.pp));
+    });
+    return lengths;
+  }
+
+  /** Median of `values`, or -1 when there is nothing to measure. */
+  static median(values: number[]): number {
+    if (values.length === 0) {
+      return -1;
+    }
+    const sorted = [...values].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 0
+      ? (sorted[mid - 1] + sorted[mid]) / 2
+      : sorted[mid];
+  }
+
+  getMedianBondLength(): number {
+    return Struct.median(this.getBondLengths());
+  }
+
+  /**
+   * A scale factor outside [0.01, 100] means the source geometry is degenerate;
+   * normalizing it would distort the drawing more than leaving it alone. Shared
+   * with rescaleMolecules() in serializers/mol/utils.js so the reaction-merge
+   * path applies the same rule rather than a copy of these bounds.
+   */
+  static isRescaleFactorSane(scale: number): boolean {
+    return (
+      Number.isFinite(scale) &&
+      scale >= Struct.MIN_RESCALE &&
+      scale <= Struct.MAX_RESCALE
+    );
+  }
+
   getAvgClosestAtomDistance(): number {
     let totalDist = 0;
     let minDist;
@@ -1075,14 +1120,26 @@ export class Struct {
     });
   }
 
+  /**
+   * Normalizes coordinates so the median bond length becomes 1 (Ketcher's canvas
+   * unit). Applied identically to every input format; rescaleMolecules() in
+   * serializers/mol/utils.js follows the same rule for the reaction-merge path.
+   *
+   * The median rather than the mean: a handful of distorted bonds used to drag the
+   * average far from 1, shrinking the whole drawing — shapes, texts and images
+   * included — on load. See issue #5275.
+   */
   rescale() {
-    let avg = this.getAvgBondLength();
-    if (avg <= 0) {
+    const median = this.getMedianBondLength();
+    if (median <= 0) {
       return;
     }
-    if (avg < 1e-3) avg = 1;
 
-    const scale = 1 / avg;
+    const scale = 1 / median;
+    if (!Struct.isRescaleFactorSane(scale)) {
+      return;
+    }
+
     this.scale(scale);
   }
 

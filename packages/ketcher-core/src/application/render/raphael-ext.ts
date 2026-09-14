@@ -22,10 +22,7 @@ import type { RaphaelStatic } from 'raphael';
 type RaphaelModule = RaphaelStatic | { default: RaphaelStatic };
 
 const raphaelModule: RaphaelModule | undefined =
-  typeof window !== 'undefined'
-    ? // eslint-disable-next-line @typescript-eslint/no-require-imports
-      require('raphael')
-    : undefined;
+  typeof window !== 'undefined' ? require('raphael') : undefined;
 
 // Some environments (vite, webpack etc) might resolve this import differently
 // this is a workaround to make it work in all environments

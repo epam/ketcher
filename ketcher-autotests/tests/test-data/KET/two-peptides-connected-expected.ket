@@ -515,6 +515,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "N-methylation"
+        ],
         "naturalAnalogShort": "E"
     }
 }

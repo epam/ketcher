@@ -18,8 +18,7 @@
 @import '../../../../../../../../style/mixins.less';
 
 .accordionWrapper {
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden auto;
   background-color: @color-primary-light;
   .scrollbar();
 }
@@ -38,6 +37,7 @@
 .accordionSummaryWrapper {
   margin: 0;
   padding-left: @padding-modal;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border-bottom: 1px solid @color-grey-3; 
   background-color: @color-background-primary;
   width: 100%;

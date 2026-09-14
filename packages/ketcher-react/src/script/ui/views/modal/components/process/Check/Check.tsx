@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -253,8 +254,6 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
         schema={checkSchema}
         init={checkState}
         {...formState}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore - result prop is not in FormProps type definition but is accepted by the component
         result={result}
       >
         <div className={style.wrapper}>
@@ -266,8 +265,6 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
               <Field
                 name="checkOptions"
                 labelPos={false}
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore - multiple and onChange props are not in FieldProps type definition but are accepted by the component
                 multiple
                 type="checkbox"
                 disabled={!isStructureChecking}

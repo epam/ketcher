@@ -84,14 +84,15 @@ export class KetcherBuilder {
   }
 
   async build(serviceOptions?: StructServiceOptions): Promise<Ketcher> {
-    assert(this.#structServiceProvider != null);
+    assert(this.#structServiceProvider !== undefined);
+    const structServiceProvider = this.#structServiceProvider;
 
     const mergedServiceOptions: StructServiceOptions = {
       ...DefaultStructServiceOptions,
       ...serviceOptions,
     };
     const structService: StructService =
-      this.#structServiceProvider!.createStructService(mergedServiceOptions);
+      structServiceProvider.createStructService(mergedServiceOptions);
 
     // Initialize settings service if not provided
     let settingsService = this.#settingsService;
@@ -110,7 +111,7 @@ export class KetcherBuilder {
       settingsService,
     );
     structService.addKetcherId(ketcher.id);
-    ketcher[this.#structServiceProvider.mode] = true;
+    ketcher[structServiceProvider.mode] = true;
 
     ketcherProvider.addKetcherInstance(ketcher);
     return ketcher;

@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Preset } from '@tests/pages/constants/monomers/Presets';

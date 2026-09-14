@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
+import { guardForMacromoleculesEditor } from 'ketcher-core';
 
 export function useMacromoleculesHotkeys() {
   useEffect(() => {
     const HELP_LINK = (process.env.HELP_LINK as string) || 'master';
     const helpUrl = `https://github.com/epam/ketcher/blob/${HELP_LINK}/documentation/help.md#ketcher-macromolecules-mode`;
 
-    const handler = (e: KeyboardEvent) => {
+    const handler = guardForMacromoleculesEditor((e: KeyboardEvent) => {
       if (e.defaultPrevented) return;
 
       const target = e.target as HTMLElement | null;
@@ -24,7 +25,7 @@ export function useMacromoleculesHotkeys() {
         e.preventDefault();
         window.open(helpUrl, '_blank')?.focus?.();
       }
-    };
+    });
 
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);

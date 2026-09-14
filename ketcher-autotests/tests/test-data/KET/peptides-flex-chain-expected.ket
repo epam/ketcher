@@ -936,6 +936,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "N-methylation"
+        ],
         "naturalAnalogShort": "C"
     },
     "monomer1": {
@@ -1149,6 +1152,9 @@
                 },
                 "type": "side"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "D"
     },
@@ -1602,6 +1608,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "F"
     },
@@ -2132,6 +2141,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "I"
     },
@@ -3092,6 +3104,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "Inversion"
+        ],
         "naturalAnalogShort": "Q"
     },
     "monomer14": {
@@ -3286,6 +3301,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "N-methylation"
         ],
         "naturalAnalogShort": "S"
     },
@@ -5238,6 +5256,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "N-methylation"
+        ],
         "naturalAnalogShort": "R"
     },
     "monomer33": {
@@ -5846,6 +5867,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "N-methylation"
+        ],
         "naturalAnalogShort": "L"
     },
     "monomer36": {
@@ -6317,6 +6341,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "N-methylation"
+        ],
         "naturalAnalogShort": "H"
     },
     "monomer39": {
@@ -6540,6 +6567,9 @@
                 },
                 "type": "side"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "N"
     },

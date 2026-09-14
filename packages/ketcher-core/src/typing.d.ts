@@ -7,6 +7,8 @@ declare global {
     ketcher?: Ketcher;
     logging: LogSettings;
     isPolymerEditorTurnedOn: boolean;
+    _ketcher_isChainLengthRulerDisabled?: boolean;
+    _ketcher_isAutozoomDisabled?: boolean;
   }
 
   export interface SVGElement {

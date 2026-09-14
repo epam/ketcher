@@ -94,3 +94,13 @@ OpenSpec changes go through: **propose → implement → archive**
 - Run `/opsx:archive` to archive a completed change
 
 When archiving a change, also update the memory bank as described above.
+
+
+### Additional rules for opsx:apply
+- Only update the memory bank when archiving a change. Do not update it for proposals or specs in progress.
+- When completeing tasks then mark them as done one by one to not lose track of what has been done and what is left to do. Do not mark all tasks as done at once at the end.
+- Before starting writing e2e playwrite tests always ask to proceed, to ensure that context is not overloaded.
+- Before writing e2e playwrite tests read the testing.md file in the memory bank to understand the test strategy and existing test coverage.
+
+### Additional rules for opsx:archive
+- When updating any of the memory bank files, use the format described in the "File format details" section above.

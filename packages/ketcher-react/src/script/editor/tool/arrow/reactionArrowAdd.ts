@@ -6,6 +6,7 @@ import {
   fromArrowAddition,
   fromArrowDeletion,
   fromArrowResizing,
+  RxnArrowDelete,
   assert,
 } from 'ketcher-core';
 import type { Editor } from '../../Editor';
@@ -34,7 +35,6 @@ export class ReactionArrowAddTool implements ArrowAddTool {
 
   private dragCtx: ReactionArrowDragContext | null = null;
 
-  // eslint-disable-next-line no-useless-constructor
   constructor(
     private readonly editor: Editor,
     private readonly mode: RxnArrowMode,
@@ -67,27 +67,38 @@ export class ReactionArrowAddTool implements ArrowAddTool {
         this.mode,
       );
       // TODO: need to rework  actions/operations logic
-      this.dragCtx = {
+      const firstOp = action.operations[0];
+      if (!(firstOp instanceof RxnArrowDelete)) {
+        throw new Error(
+          'Expected RxnArrowDelete as the first operation of fromArrowAddition',
+        );
+      }
+      const arrowId = firstOp.data.id;
+      assert(arrowId != null);
+      const dragCtx: DragContextInProgress = {
         ...this.dragCtx,
-        itemId: action.operations[0].data.id,
+        itemId: arrowId,
         action,
       };
-      this.editor.update(this.dragCtx.action, true);
+      this.dragCtx = dragCtx;
+      this.editor.update(dragCtx.action, true);
     } else {
       this.dragCtx.action.perform(this.reStruct);
     }
 
-    this.updateResizingState(this.dragCtx.itemId, true);
+    const dragCtx = this.dragCtx;
+    assert(dragCtx != null && dragCtx.action != null);
+    this.updateResizingState(dragCtx.itemId, true);
     const isSnappingEnabled = !event.ctrlKey;
-    this.dragCtx.action = fromArrowResizing(
+    dragCtx.action = fromArrowResizing(
       this.reStruct,
-      this.dragCtx.itemId,
+      dragCtx.itemId,
       diff,
       current,
       null,
       isSnappingEnabled,
     );
-    this.editor.update(this.dragCtx.action, true);
+    this.editor.update(dragCtx.action, true);
   }
 
   mouseup(event: MouseEvent) {

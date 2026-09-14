@@ -267,13 +267,18 @@ export function fromPaste(
       rxnArrow.height,
     ).perform(restruct);
     action.addOp(operation);
-    items.rxnArrows.push(operation.data.id);
+    const rxnArrowId = operation.data.id;
+    if (rxnArrowId != null) {
+      items.rxnArrows.push(rxnArrowId);
+    }
   });
 
   pstruct.rxnPluses.forEach((plus) => {
     const operation = new RxnPlusAdd(plus.pp.add(offset)).perform(restruct);
     action.addOp(operation);
-    items.rxnPluses.push(operation.data.plid);
+    if (operation.data.plid !== null) {
+      items.rxnPluses.push(operation.data.plid);
+    }
   });
 
   pstruct.simpleObjects.forEach((simpleObject) => {

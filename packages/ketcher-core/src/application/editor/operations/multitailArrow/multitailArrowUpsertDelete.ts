@@ -15,7 +15,7 @@ interface MultitailArrowDeleteData {
   arrowId?: number;
 }
 
-export class MultitailArrowUpsert extends BaseOperation {
+export class MultitailArrowUpsert extends BaseOperation<MultitailArrowUpsertData> {
   readonly data: MultitailArrowUpsertData;
   constructor(
     private readonly multitailArrow: MultitailArrow,
@@ -42,7 +42,7 @@ export class MultitailArrowUpsert extends BaseOperation {
     BaseOperation.invalidateItem(reStruct, MULTITAIL_ARROW_KEY, id, 1);
   }
 
-  invert(): BaseOperation {
+  invert(): MultitailArrowDelete {
     if (this.data.id === undefined) {
       // execute() always assigns an id before invert() can be called via
       // BaseOperation.perform(), so a missing id here would be a programming error.
@@ -53,7 +53,7 @@ export class MultitailArrowUpsert extends BaseOperation {
   }
 }
 
-export class MultitailArrowDelete extends BaseOperation {
+export class MultitailArrowDelete extends BaseOperation<MultitailArrowDeleteData> {
   private multitailArrow?: MultitailArrow;
   readonly data: MultitailArrowDeleteData;
   constructor(id: number) {

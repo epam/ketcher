@@ -1369,9 +1369,13 @@ describe('CoreEditor', () => {
       const initialLibrarySize = editor.monomersLibrary.length;
       const initialTemplatesCount =
         editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
+
+      expect(() => {
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
+      }).toThrow(MonomerLibraryUpdateError);
 
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining(
           'Monomers with an unknown, ambiguous, or molecule modification type cannot be added to the library.',
         ),
@@ -1410,9 +1414,13 @@ describe('CoreEditor', () => {
       const initialLibrarySize = editor.monomersLibrary.length;
       const initialTemplatesCount =
         editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
+
+      expect(() => {
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
+      }).toThrow(MonomerLibraryUpdateError);
 
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining(
           'Offending modification type(s): Micromolecule',
         ),
@@ -1468,7 +1476,10 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(mixedMonomers));
+
+      expect(() => {
+        editor.updateMonomersLibrary(JSON.stringify(mixedMonomers));
+      }).toThrow(MonomerLibraryUpdateError);
 
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
       expect(
@@ -1562,6 +1573,7 @@ describe('CoreEditor', () => {
         );
 
         expect(errorSpy).toHaveBeenCalledWith(
+          'Editor::updateMonomersLibrary',
           expect.stringContaining(
             'Monomers with an unknown, ambiguous, or molecule modification type cannot be added to the library.',
           ),
@@ -1678,7 +1690,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
         peptideMonomerItem,
@@ -1822,7 +1834,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       // Add a monomer
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
@@ -1908,7 +1920,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
         peptideMonomerItem,
@@ -1940,7 +1952,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       // Add a monomer
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
@@ -1993,7 +2005,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       // Add multiple monomers
       const modelChanges1 = editor.drawingEntitiesManager.addMonomer(

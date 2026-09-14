@@ -78,10 +78,12 @@ import {
   IDT_ALIAS_LENGTH_ERROR_MESSAGE,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
+  MODIFICATION_TYPES_EMPTY_ERROR_MESSAGE,
   isValidBilnAlias,
   isValidHelmAlias,
   isValidHelmAliasLength,
   isValidIdtAlias,
+  isValidModificationTypes,
   getTooLongIdtAliasEntries,
   getDisallowedModificationTypes,
   DISALLOWED_MODIFICATION_TYPE_ERROR_MESSAGE,
@@ -324,6 +326,7 @@ export class CoreEditor {
       getKetcherRootRect: () => this.ketcherRootElementBoundingClientRect,
       getModeName: () => this.mode.modeName,
       getEditor: () => this,
+      getTransientDrawingView: () => this.transientDrawingView,
       placeItemOnCanvas: (item, position) =>
         this.placeItemOnCanvasForHandler(item, position),
       calculateAndStoreNextAutochainPosition: (lastMonomer) =>
@@ -586,16 +589,25 @@ export class CoreEditor {
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
+      // Validate modificationTypes format (empty/whitespace-only not allowed)
+      if (!isValidModificationTypes(newMonomer.props?.modificationTypes)) {
+        reportValidationError(
+          newMonomer.props.MonomerName,
+          `Monomer definition contains invalid modificationTypes value. ${MODIFICATION_TYPES_EMPTY_ERROR_MESSAGE}`,
+        );
+        return;
+      }
+
       const disallowedModificationTypes = getDisallowedModificationTypes(
         newMonomer.props?.modificationTypes,
       );
       if (disallowedModificationTypes.length > 0) {
-        const errorMessage = `Editor::updateMonomersLibrary: Load of "${
-          newMonomer.props.MonomerName
-        }" monomer has failed. ${DISALLOWED_MODIFICATION_TYPE_ERROR_MESSAGE} Offending modification type(s): ${disallowedModificationTypes.join(
-          ', ',
-        )}. The monomer was not added to the library.`;
-        KetcherLogger.error(errorMessage);
+        reportValidationError(
+          newMonomer.props.MonomerName,
+          `${DISALLOWED_MODIFICATION_TYPE_ERROR_MESSAGE} Offending modification type(s): ${disallowedModificationTypes.join(
+            ', ',
+          )}.`,
+        );
         return;
       }
 
@@ -1210,8 +1222,9 @@ export class CoreEditor {
     this.events.turnOnSequenceEditInRNABuilderMode.add(() =>
       this.onTurnOnSequenceEditInRNABuilderMode(),
     );
-    this.events.turnOffSequenceEditInRNABuilderMode.add(() =>
-      this.onTurnOffSequenceEditInRNABuilderMode(),
+    this.events.turnOffSequenceEditInRNABuilderMode.add(
+      (needToRemoveSelection?: boolean) =>
+        this.onTurnOffSequenceEditInRNABuilderMode(needToRemoveSelection),
     );
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
@@ -1260,8 +1273,6 @@ export class CoreEditor {
     this.events.setEditorLineLength.add(
       (lineLengthUpdate: Partial<EditorLineLength>) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         if (window._ketcher_isChainLengthRulerDisabled) {
           return;
         }
@@ -1281,8 +1292,6 @@ export class CoreEditor {
     this.events.toggleLineLengthHighlighting.add(
       (value: boolean, currentPosition = 0) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         if (window._ketcher_isChainLengthRulerDisabled) {
           return;
         }
@@ -1641,7 +1650,7 @@ export class CoreEditor {
     return {
       modelChanges,
       firstMonomer: isFivePrimePhosphate ? phosphate : sugar,
-      lastMonomer: isFivePrimePhosphate ? sugar : phosphate ?? sugar,
+      lastMonomer: isFivePrimePhosphate ? sugar : (phosphate ?? sugar),
       drawingEntities: [
         ...monomers,
         ...(sugar.attachmentPointsToBonds.R2
@@ -1809,12 +1818,14 @@ export class CoreEditor {
     this.sequenceMode.turnOnSequenceEditInRNABuilderMode();
   }
 
-  private onTurnOffSequenceEditInRNABuilderMode() {
+  private onTurnOffSequenceEditInRNABuilderMode(needToRemoveSelection = true) {
     if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
-    this.sequenceMode.turnOffSequenceEditInRNABuilderMode();
+    this.sequenceMode.turnOffSequenceEditInRNABuilderMode(
+      needToRemoveSelection,
+    );
   }
 
   private onChangeSequenceTypeEnterMode(mode: SequenceType) {
@@ -1963,8 +1974,7 @@ export class CoreEditor {
 
   private onSelectMode(
     data:
-      | LayoutMode
-      | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
+      LayoutMode | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
   ) {
     const command = new Command();
     const mode = typeof data === 'object' ? data.mode : data;
@@ -2461,8 +2471,6 @@ export class CoreEditor {
   public zoomToStructuresIfNeeded() {
     if (
       // Temporary solution to disable autozoom for the polymer editor in e2e tests
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       window._ketcher_isAutozoomDisabled ||
       !this.isCurrentModeWithAutozoom() ||
       !this.drawingEntitiesManager.hasMonomers

@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import { NucleotideNaturalAnalogCount } from '@tests/pages/constants/calculateVariablesPanel/Constants';

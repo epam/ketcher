@@ -66,7 +66,7 @@ export function getBondFlipSign(struct: Struct, bond: Bond): 1 | -1 {
         const hbbAtom = struct.atoms.get(halfBondBegin);
 
         if (hbbAtom) {
-          xy0.add_(hbbAtom.pp); // eslint-disable-line no-underscore-dangle
+          xy0.add_(hbbAtom.pp);
           count++;
         }
       }
@@ -76,7 +76,7 @@ export function getBondFlipSign(struct: Struct, bond: Bond): 1 | -1 {
       const atomById = struct.atoms.get(id);
 
       if (atomById) {
-        xy0.add_(atomById.pp); // eslint-disable-line no-underscore-dangle
+        xy0.add_(atomById.pp);
         count++;
       }
     });

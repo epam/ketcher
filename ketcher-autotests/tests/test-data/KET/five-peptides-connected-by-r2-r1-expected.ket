@@ -275,6 +275,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "Natural amino acid"
+        ],
         "naturalAnalogShort": "C"
     },
     "monomer1": {
@@ -458,6 +461,9 @@
                 },
                 "type": "side"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "C"
     },
@@ -857,6 +863,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "N-methylation"
+        ],
         "naturalAnalogShort": "C"
     },
     "monomer4": {
@@ -1070,6 +1079,9 @@
                 },
                 "type": "side"
             }
+        ],
+        "modificationTypes": [
+            "N-methylation"
         ],
         "naturalAnalogShort": "D"
     }

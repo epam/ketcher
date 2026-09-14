@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/preserve-manual-memoization, react-hooks/refs */
 import { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { D3DragEvent } from 'd3';
 import { useSelector } from 'react-redux';
@@ -190,8 +191,6 @@ export const RulerArea = () => {
   }
 
   // Temporary solution to disable autozoom for the macro editor in e2e tests
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const isRulerVisible = !window._ketcher_isChainLengthRulerDisabled;
 
   return isRulerVisible ? (

@@ -32,7 +32,8 @@ export class FragmentStereoFlag extends BaseOperation {
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
 
-    const fragment = struct.frags.get(this.frid)!;
+    const fragment = struct.frags.get(this.frid);
+    if (!fragment) return;
     fragment.updateStereoFlag(struct);
 
     BaseOperation.invalidateEnhancedFlag(restruct, this.frid);

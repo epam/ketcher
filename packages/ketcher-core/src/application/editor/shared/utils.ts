@@ -39,7 +39,7 @@ function calcNewAtomPos(pos0: Vec2, pos1: Vec2, ctrlKey: boolean): Vec2 {
   const vector = new Vec2(1, 0).rotate(
     ctrlKey ? calcAngle(pos0, pos1) : fracAngle(pos0, pos1),
   );
-  vector.add_(pos0); // eslint-disable-line no-underscore-dangle
+  vector.add_(pos0);
   return vector;
 }
 
@@ -59,12 +59,14 @@ function mergeBondsParams(
   struct2: Struct,
   bond2: BondAtoms,
 ) {
-  // TODO find a solution to remove not-null assertion from result atoms below
-  // https://github.com/epam/ketcher/issues/2652
-  const begin1 = struct1.atoms.get(bond1.begin)!;
-  const begin2 = struct2.atoms.get(bond2.begin)!;
-  const end1 = struct1.atoms.get(bond1.end)!;
-  const end2 = struct2.atoms.get(bond2.end)!;
+  const begin1 = struct1.atoms.get(bond1.begin);
+  const begin2 = struct2.atoms.get(bond2.begin);
+  const end1 = struct1.atoms.get(bond1.end);
+  const end2 = struct2.atoms.get(bond2.end);
+
+  if (!begin1 || !begin2 || !end1 || !end2) {
+    return null;
+  }
 
   const angle = calcAngle(begin1.pp, end1.pp) - calcAngle(begin2.pp, end2.pp);
   const mergeAngle = Math.abs(degrees(angle) % 180);
@@ -81,7 +83,7 @@ function mergeBondsParams(
 export const rotateDelta = (v: Vec2, center: Vec2, angle: number) => {
   let v1 = v.sub(center);
   v1 = v1.rotate(angle);
-  v1.add_(center); // eslint-disable-line no-underscore-dangle
+  v1.add_(center);
   return v1.sub(v);
 };
 

@@ -226,6 +226,7 @@ export class DrawingEntitiesManager {
   public rxnPluses: Map<number, RxnPlus> = new Map();
   public stereoFlags: Map<number, CoreStereoFlag> = new Map();
   public sgroups: Map<number, SGroupDrawingEntity> = new Map();
+  private selectableSgroups: Map<number, DrawingEntity> = new Map();
 
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
@@ -351,6 +352,7 @@ export class DrawingEntitiesManager {
       ...(this.multitailArrows as Map<number, DrawingEntity>),
       ...(this.rxnPluses as Map<number, DrawingEntity>),
       ...(this.stereoFlags as Map<number, DrawingEntity>),
+      ...this.selectableSgroups,
     ];
   }
 
@@ -665,6 +667,7 @@ export class DrawingEntitiesManager {
       ...this.multitailArrows.values(),
       ...this.rxnPluses.values(),
       ...this.stereoFlags.values(),
+      ...this.sgroups.values(),
     ].forEach((drawingEntity) => {
       if (
         drawingEntity instanceof BaseMonomer &&
@@ -2531,7 +2534,7 @@ export class DrawingEntitiesManager {
       }
 
       command.merge(sgroupAddCommand);
-      mergedDrawingEntities.sgroups.set(addedSGroup.id, addedSGroup);
+      mergedDrawingEntities.registerSGroupDrawingEntity(addedSGroup);
     });
 
     this.rxnArrows.forEach((rxnArrow) => {
@@ -2934,6 +2937,12 @@ export class DrawingEntitiesManager {
       drawingEntities.push(drawingEntity);
       command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
     };
+
+    if (sgroupDrawingEntity.isSelectableDataSGroup) {
+      addDrawingEntity(sgroupDrawingEntity);
+
+      return { command, drawingEntities };
+    }
 
     this.atoms.forEach((atom) => {
       if (
@@ -3386,10 +3395,7 @@ export class DrawingEntitiesManager {
     existingSGroupDrawingEntity?: SGroupDrawingEntity,
   ) {
     if (existingSGroupDrawingEntity) {
-      this.sgroups.set(
-        existingSGroupDrawingEntity.id,
-        existingSGroupDrawingEntity,
-      );
+      this.registerSGroupDrawingEntity(existingSGroupDrawingEntity);
 
       return existingSGroupDrawingEntity;
     }
@@ -3400,9 +3406,21 @@ export class DrawingEntitiesManager {
       sgroupIdInMicroMode,
     );
 
-    this.sgroups.set(sgroupDrawingEntity.id, sgroupDrawingEntity);
+    this.registerSGroupDrawingEntity(sgroupDrawingEntity);
 
     return sgroupDrawingEntity;
+  }
+
+  private registerSGroupDrawingEntity(
+    sgroupDrawingEntity: SGroupDrawingEntity,
+  ): void {
+    this.sgroups.set(sgroupDrawingEntity.id, sgroupDrawingEntity);
+
+    if (sgroupDrawingEntity.isSelectableDataSGroup) {
+      this.selectableSgroups.set(sgroupDrawingEntity.id, sgroupDrawingEntity);
+    } else {
+      this.selectableSgroups.delete(sgroupDrawingEntity.id);
+    }
   }
 
   public addSGroup(
@@ -3429,6 +3447,7 @@ export class DrawingEntitiesManager {
 
   private deleteSGroupChangeModel(sgroupDrawingEntity: SGroupDrawingEntity) {
     this.sgroups.delete(sgroupDrawingEntity.id);
+    this.selectableSgroups.delete(sgroupDrawingEntity.id);
 
     return sgroupDrawingEntity;
   }

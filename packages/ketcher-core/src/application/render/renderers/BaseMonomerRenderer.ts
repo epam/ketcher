@@ -89,27 +89,18 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     // as getBoundingClientRect() and getBBox() return 0 values in Firefox
     // in this case (<path> inside <symbol>, <defs>)
     this.monomerSize = {
-      width: +(
-        this.monomerSymbolElement?.getAttribute('data-actual-width') ?? 0
-      ),
-      height: +(
-        this.monomerSymbolElement?.getAttribute('data-actual-height') ?? 0
-      ),
+      width: +(this.monomerSymbolElement?.dataset.actualWidth ?? 0),
+      height: +(this.monomerSymbolElement?.dataset.actualHeight ?? 0),
     };
     setMonomerSize(this.monomerSize);
   }
 
-  // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
   private isSnakeBondForAttachmentPoint(
     attachmentPointName: AttachmentPointName,
   ): boolean {
-    const renderer =
-      this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer;
-    if (!renderer) return false;
-    if ('isSnake' in renderer) {
-      return renderer.isSnake && !renderer.polymerBond.isHorizontal;
-    }
-    return false;
+    const bond = this.monomer.attachmentPointsToBonds[attachmentPointName];
+    if (!bond) return false;
+    return bond.isRenderedAsSnakeBond;
   }
 
   public static get monomerSize() {
@@ -324,7 +315,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.hoveredAttachmentPoint === attachmentPointName,
       angle: customAngle ?? rotation,
       applyZoomForPositionCalculation: true,
-      // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
       isSnake: this.isSnakeBondForAttachmentPoint(attachmentPointName),
       isDragTarget: this._dragTargetAttachmentPoint === attachmentPointName,
       isDragCircleHover:

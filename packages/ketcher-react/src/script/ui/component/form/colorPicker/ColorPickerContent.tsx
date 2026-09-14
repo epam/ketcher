@@ -14,7 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type ChangeEvent, useEffect, useLayoutEffect, useState } from 'react';
+import {
+  type ChangeEvent,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import classes from './ColorPicker.module.less';
 import { useSettings } from 'src/hooks';
@@ -64,17 +70,20 @@ function ColorPickerContent({
     onContentResize();
   }, [isCustomOpen, onContentResize]);
 
+  const hasSeededRef = useRef(false);
   // Seed the currently-selected color into the custom-color list once, when
   // the picker opens (ColorPickerContent mounts fresh on every open).
   useEffect(() => {
+    if (hasSeededRef.current) {
+      return;
+    }
+    hasSeededRef.current = true;
     if (settings === null) {
       return;
     }
-
     const newColors = addCustomColor(customColors, pendingColor);
     updateSettings({ colorPickerCustomColors: newColors });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
-  }, []);
+  }, [customColors, pendingColor, settings, updateSettings]);
 
   const applyHexColor = (hex: string) => {
     setPendingColor(hex);

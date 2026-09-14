@@ -87,6 +87,7 @@ abstract class SelectBase implements BaseTool {
   public mode:
     'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
     'standby';
+  protected readonly autoScrollEnabled: boolean = true;
 
   protected rotationStartAngle = 0;
   protected rotationCenter: Vec2 | null = null;
@@ -100,6 +101,13 @@ abstract class SelectBase implements BaseTool {
   private readonly selectEntitiesHandler = () => {
     this.updateRotationView();
   };
+  private static readonly AUTO_SCROLL_EDGE_THRESHOLD = 15; // pixels from edge to trigger auto-scroll
+  private static readonly AUTO_SCROLL_SPEED = 5; // pixels to scroll per frame
+  private static readonly AUTO_SCROLL_INITIAL_DELAY = 150; // ms before first scroll fires
+  private static readonly AUTO_SCROLL_REPEAT_DELAY = 5; // ms between subsequent scrolls
+  private autoScrollTimerId: ReturnType<typeof setTimeout> | null = null;
+  private autoScrollDeltaX: number = 0;
+  private autoScrollDeltaY: number = 0;
 
   /**
    * Reads renderer data from d3-bound event targets (`target.__data__`).
@@ -1006,12 +1014,88 @@ abstract class SelectBase implements BaseTool {
     return snappingOptions[0] || emptyResult;
   }
 
+  private handleAutoScrollDuringSelection(event: MouseEvent) {
+    if (
+      !this.autoScrollEnabled ||
+      this.editor.mode.modeName !== 'sequence-layout-mode'
+    ) {
+      this.cancelAutoScroll();
+      return;
+    }
+
+    const canvasWrapperNode = this.editor.zoomTool.canvasWrapper?.node();
+    if (!canvasWrapperNode) {
+      this.cancelAutoScroll();
+      return;
+    }
+
+    const rect = canvasWrapperNode.getBoundingClientRect();
+    const threshold = SelectBase.AUTO_SCROLL_EDGE_THRESHOLD;
+
+    const distanceFromTop = event.clientY - rect.top;
+    const distanceFromBottom = rect.bottom - event.clientY;
+    const distanceFromLeft = event.clientX - rect.left;
+    const distanceFromRight = rect.right - event.clientX;
+
+    // Note: D3 zoom translateBy moves viewport, not content.
+    // Negative values move viewport up (content appears to scroll down)
+    // Positive values move viewport down (content appears to scroll up)
+    let deltaX = 0;
+    let deltaY = 0;
+
+    if (distanceFromTop < threshold) {
+      deltaY = SelectBase.AUTO_SCROLL_SPEED;
+    } else if (distanceFromBottom < threshold) {
+      deltaY = -SelectBase.AUTO_SCROLL_SPEED;
+    }
+
+    if (distanceFromLeft < threshold) {
+      deltaX = SelectBase.AUTO_SCROLL_SPEED;
+    } else if (distanceFromRight < threshold) {
+      deltaX = -SelectBase.AUTO_SCROLL_SPEED;
+    }
+
+    if (deltaX === 0 && deltaY === 0) {
+      this.cancelAutoScroll();
+      return;
+    }
+
+    this.autoScrollDeltaX = deltaX;
+    this.autoScrollDeltaY = deltaY;
+
+    // Start the debounce timer only if not already running.
+    // The 150ms delay means fast test mouse moves (< 150ms in edge zone) never fire a scroll,
+    // while a real user holding the mouse at the edge will get continuous scrolling.
+    if (this.autoScrollTimerId === null) {
+      this.autoScrollTimerId = setTimeout(
+        () => this.performAutoScroll(),
+        SelectBase.AUTO_SCROLL_INITIAL_DELAY,
+      );
+    }
+  }
+
+  private performAutoScroll() {
+    if (this.mode !== 'selecting') {
+      this.autoScrollTimerId = null;
+      return;
+    }
+
+    this.editor.zoomTool.scrollBy(this.autoScrollDeltaX, this.autoScrollDeltaY);
+
+    // Schedule the next scroll tick
+    this.autoScrollTimerId = setTimeout(
+      () => this.performAutoScroll(),
+      SelectBase.AUTO_SCROLL_REPEAT_DELAY,
+    );
+  }
+
   mousemove(event: MouseEvent) {
     if (this.mode === 'standby') {
       return;
     }
 
     if (this.mode === 'selecting') {
+      this.handleAutoScrollDuringSelection(event);
       this.updateSelectionViewParams();
       this.onSelectionMove(event.shiftKey);
       return;
@@ -1396,7 +1480,17 @@ abstract class SelectBase implements BaseTool {
     this.updateRotationView();
   }
 
+  private cancelAutoScroll() {
+    if (this.autoScrollTimerId !== null) {
+      clearTimeout(this.autoScrollTimerId);
+      this.autoScrollTimerId = null;
+    }
+    this.autoScrollDeltaX = 0;
+    this.autoScrollDeltaY = 0;
+  }
+
   destroy() {
+    this.cancelAutoScroll();
     this.canvasResizeObserver?.disconnect();
     this.rotationHandleUnsubscribe?.();
     this.rotationCenterUnsubscribe?.();
@@ -1412,6 +1506,7 @@ abstract class SelectBase implements BaseTool {
   }
 
   public stopMovement() {
+    this.cancelAutoScroll();
     this.mode = 'standby';
     this.editor.transientDrawingView.clear();
   }

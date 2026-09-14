@@ -56,9 +56,17 @@ export enum EditorType {
   Macromolecules = 1,
 }
 
-export type EditorSubscriber = {
-  handler: (data?: unknown) => void;
+export type EditorSubscriber<T = unknown> = {
+  handler: (data?: T) => void;
 };
+
+export interface RotateController {
+  isRotating: boolean;
+  rerender: () => void;
+  revert: () => void;
+  clean: () => void;
+  updateFloatingToolsPosition: () => void;
+}
 
 export interface Editor {
   isDitrty: () => boolean;
@@ -70,11 +78,14 @@ export interface Editor {
     y?: number,
   ) => Struct;
   structToAddFragment: (struct: Struct, x?: number, y?: number) => Struct;
-  subscribe: (
+  subscribe: <T = unknown>(
     eventName: string,
-    handler: (data?: unknown) => void,
-  ) => EditorSubscriber;
-  unsubscribe: (eventName: string, subscriber: EditorSubscriber) => void;
+    handler: (data?: T) => void,
+  ) => EditorSubscriber<T>;
+  unsubscribe: <T = unknown>(
+    eventName: string,
+    subscriber: EditorSubscriber<T>,
+  ) => void;
   selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null;
   undo: () => void;
   redo: () => void;
@@ -120,13 +131,7 @@ export interface Editor {
     options?: { resizeCanvas: boolean },
   ) => void;
   render: Render;
-  rotateController: {
-    isRotating: boolean;
-    rerender: () => void;
-    revert: () => void;
-    clean: () => void;
-    updateFloatingToolsPosition: () => void;
-  };
+  rotateController: RotateController;
   macromoleculeConvertionError: string | null | undefined;
   setMacromoleculeConvertionError: (errorMessage: string) => void;
   clearMacromoleculeConvertionError: () => void;

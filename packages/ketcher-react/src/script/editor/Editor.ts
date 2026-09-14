@@ -1044,7 +1044,8 @@ class Editor implements KetcherEditor {
   private originalHistoryPointer = 0;
   private readonly selectedToOriginalAtomsIdMap = new Map<number, number>();
 
-  private changeEventSubscriber: EditorSubscriber | null = null;
+  private changeEventSubscriber: EditorSubscriber<ChangeEventData[]> | null =
+    null;
 
   openMonomerCreationWizard(
     selectionOverride?: Selection,
@@ -2997,11 +2998,8 @@ class Editor implements KetcherEditor {
       return;
     }
 
-    const handleChangeEvent = (data?: unknown) => {
-      if (
-        !this.isMonomerCreationWizardActive ||
-        !this.isChangeEventDataArray(data)
-      ) {
+    const handleChangeEvent = (data: ChangeEventData[] = []) => {
+      if (!this.isMonomerCreationWizardActive) {
         return;
       }
 
@@ -3053,16 +3051,6 @@ class Editor implements KetcherEditor {
     });
 
     this.invalidateMonomerCreationWizardState(changesMap);
-  }
-
-  private isChangeEventDataArray(data: unknown): data is ChangeEventData[] {
-    return (
-      Array.isArray(data) &&
-      data.every(
-        (entry) =>
-          entry !== null && typeof entry === 'object' && 'operation' in entry,
-      )
-    );
   }
 
   private invalidateMonomerCreationWizardState(
@@ -3569,11 +3557,11 @@ class Editor implements KetcherEditor {
     this.historyPtr = 0;
   }
 
-  subscribe(
+  subscribe<T = unknown>(
     eventName: string,
-    handler: (data?: unknown) => void,
-  ): EditorSubscriber {
-    const subscriber: EditorSubscriber = {
+    handler: (data?: T) => void,
+  ): EditorSubscriber<T> {
+    const subscriber: EditorSubscriber<T> = {
       handler,
     };
 
@@ -3603,7 +3591,10 @@ class Editor implements KetcherEditor {
     return subscriber;
   }
 
-  unsubscribe(eventName: string, subscriber: EditorSubscriber): void {
+  unsubscribe<T = unknown>(
+    eventName: string,
+    subscriber: EditorSubscriber<T>,
+  ): void {
     switch (eventName) {
       case 'change': {
         ketcherProvider

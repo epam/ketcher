@@ -194,11 +194,7 @@ class PasteTool implements Tool {
         }
         const degrees = vectorUtils.degrees(angle);
 
-        // eslint-disable-next-line no-prototype-builtins
-        if (
-          this.dragCtx.hasOwnProperty('angle') &&
-          this.dragCtx.angle === degrees
-        ) {
+        if ('angle' in this.dragCtx && this.dragCtx.angle === degrees) {
           requestAnimationFrame(() => {
             isMovePreviewCalculationInProgress = false;
           });

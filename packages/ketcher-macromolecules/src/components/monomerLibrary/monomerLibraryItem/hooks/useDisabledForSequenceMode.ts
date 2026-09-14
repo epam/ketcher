@@ -51,6 +51,7 @@ const useDisabledForSequenceMode = (
     groupName,
     isSequenceEditInRNABuilderMode,
     isSequenceFirstsOnlyNucleoelementsSelected,
+    item?.props?.MonomerCaps,
     item?.props?.MonomerCaps?.R1,
     item?.props?.MonomerCaps?.R2,
     item?.props?.MonomerCaps?.R3,

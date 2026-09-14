@@ -33,6 +33,7 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
     if (await ErrorMessageDialog(page).isVisible()) {
       return;
     }
+    await page.waitForTimeout(1000);
     try {
       await ErrorMessageDialog(page).errorMessageBody.waitFor({
         state: 'visible',

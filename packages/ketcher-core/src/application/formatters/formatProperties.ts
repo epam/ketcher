@@ -62,7 +62,6 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.DaylightSmiles,
     ['.smi', '.smiles'],
     true,
-    { 'smiles-saving-format': 'daylight' },
   ),
   smilesExt: new SupportedFormatProperties(
     'Extended SMILES',

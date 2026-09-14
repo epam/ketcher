@@ -68,9 +68,9 @@ describe('Bond', () => {
       struct.atoms.set(bond.end, { pp: new Vec2(4, 0, 2) });
       const bondCenter = new Vec2(3, 2, 4);
 
-      expect(
-        bond.getCenter(struct as unknown as StructAtomsAndBondsAccess),
-      ).toStrictEqual(bondCenter);
+      expect(bond.getCenter(struct as StructAtomsAndBondsAccess)).toStrictEqual(
+        bondCenter,
+      );
     });
   });
 
@@ -86,9 +86,9 @@ describe('Bond', () => {
         -0.8944271909999159,
       );
 
-      expect(
-        bond.getDir(struct as unknown as StructAtomsAndBondsAccess),
-      ).toStrictEqual(bondDir);
+      expect(bond.getDir(struct as StructAtomsAndBondsAccess)).toStrictEqual(
+        bondDir,
+      );
     });
   });
 

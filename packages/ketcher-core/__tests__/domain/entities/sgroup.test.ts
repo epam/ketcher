@@ -106,7 +106,7 @@ describe('sgroup non-null assertion replacements', () => {
 
     expect(() =>
       SGroup.getBracketParameters(
-        { bonds } as unknown as StructAtomsAndBondsAccess,
+        { bonds } as StructAtomsAndBondsAccess,
         { 0: [existingBondId], 1: [existingBondId + 1] },
         atomSet,
         bb,
@@ -126,7 +126,7 @@ describe('sgroup non-null assertion replacements', () => {
 
     expect(() =>
       SGroup.getBracketParameters(
-        { bonds } as unknown as StructAtomsAndBondsAccess,
+        { bonds } as StructAtomsAndBondsAccess,
         { 0: [existingBondId + 1], 1: [existingBondId] },
         atomSet,
         bb,
@@ -145,7 +145,7 @@ describe('sgroup non-null assertion replacements', () => {
 
     expect(() =>
       SGroup.getBracketParameters(
-        { bonds } as unknown as StructAtomsAndBondsAccess,
+        { bonds } as StructAtomsAndBondsAccess,
         { 0: [1, 2] },
         atomSet,
         bb,
@@ -155,11 +155,8 @@ describe('sgroup non-null assertion replacements', () => {
 
   it('should throw when mass centre uses missing atom id', () => {
     const atoms = new Pool<Atom>();
-    expect(() =>
-      SGroup.getMassCentre(
-        { atoms } as unknown as StructAtomsAndBondsAccess,
-        [1],
-      ),
-    ).toThrow('SGroup.getMassCentre: atom 1 is not found');
+    expect(() => SGroup.getMassCentre({ atoms }, [1])).toThrow(
+      'SGroup.getMassCentre: atom 1 is not found',
+    );
   });
 });

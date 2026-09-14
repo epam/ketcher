@@ -939,7 +939,9 @@ test.describe('Selection tools', () => {
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await getAtomLocator(page, { atomLabel: 'N', atomId: 22 }).click({
       force: true,
     });
@@ -957,7 +959,9 @@ test.describe('Selection tools', () => {
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await getAtomLocator(page, { atomLabel: 'N', atomId: 22 }).click({
       force: true,
     });
@@ -975,7 +979,9 @@ test.describe('Selection tools', () => {
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await getAtomLocator(page, { atomLabel: 'N', atomId: 22 }).click({
       force: true,
     });
@@ -993,7 +999,9 @@ test.describe('Selection tools', () => {
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await getAtomLocator(page, { atomLabel: 'N', atomId: 22 }).click({
       force: true,
     });
@@ -1012,7 +1020,9 @@ test.describe('Selection tools', () => {
     Structure is visible on the canvas.
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await getAtomLocator(page, { atomLabel: 'N', atomId: 22 }).click({
       force: true,
     });

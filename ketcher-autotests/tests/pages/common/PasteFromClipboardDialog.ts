@@ -46,6 +46,7 @@ export const PasteFromClipboardDialog = (page: Page) => {
         await listbox.waitFor({ state: 'visible' });
         await contentTypeOption.click();
         if (await listbox.isVisible()) {
+          // eslint-disable-next-line no-inline-comments
           await contentTypeOption.click(); /* retry */
         }
       }

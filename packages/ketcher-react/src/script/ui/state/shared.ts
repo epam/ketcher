@@ -30,6 +30,7 @@ import {
 
 import { supportedSGroupTypes } from './constants';
 import { setAnalyzingFile } from './request';
+import { restorePersistedSelectionTool } from './selectionToolPersistence';
 import tools from '../action/tools';
 import { isNumber } from 'lodash';
 
@@ -93,7 +94,9 @@ export function removeStructAction(): {
   type: string;
   action?: Record<string, unknown>;
 } {
-  const savedSelectedTool = SettingsManager.selectionTool;
+  const savedSelectedTool = restorePersistedSelectionTool(
+    SettingsManager.getSelectionTool('micro'),
+  );
 
   return onAction(savedSelectedTool || tools['select-rectangle'].action);
 }

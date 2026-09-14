@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -46,7 +45,6 @@ export function toRlabel(values: number[]): number {
 }
 
 type KetMoleculeItem = KetItem & {
-  type?: string;
   atoms?: KetMoleculeNode['atoms'];
   bonds?: KetMoleculeNode['bonds'];
   sgroups?: KetMoleculeNode['sgroups'];
@@ -106,9 +104,8 @@ export function moleculeToStruct(ketItem: KetMoleculeItem): Struct {
 }
 
 export function rglabelToStruct(source: KetRgLabelNode): Atom {
-  const params: Partial<AtomAttributes> = {};
+  const params: AtomAttributes = { label: 'R#' };
   const [x = 0, y = 0, z = 0] = source.location ?? [0, 0, 0];
-  params.label = 'R#';
   ifDef(params, 'pp', {
     x,
     y: -y,
@@ -119,7 +116,7 @@ export function rglabelToStruct(source: KetRgLabelNode): Atom {
     (source.$refs ?? []).map((el) => parseInt(el.slice(3), 10)),
   );
   ifDef(params, 'rglabel', rglabel);
-  const newAtom = new Atom(params as AtomAttributes);
+  const newAtom = new Atom(params);
   newAtom.setInitiallySelected(source.selected);
   return newAtom;
 }
@@ -180,23 +177,23 @@ export function sgroupToStruct(source: KetSGroupNode): SGroup {
       ifDef(sgroup.data, 'expanded', source.expanded);
       ifDef(sgroup.data, 'class', source.class);
       ifDef(sgroup, 'id', source.id);
-      source.attachmentPoints
-        ?.filter(
-          (
-            sourceAttachmentPoint,
-          ): sourceAttachmentPoint is KetAttachmentPoint =>
-            typeof sourceAttachmentPoint.attachmentAtom === 'number',
-        )
-        .forEach(
-          (sourceAttachmentPoint, sourceAttachmentPointIndex: number) => {
-            sgroup.addAttachmentPoint(
-              sgroupAttachmentPointToStruct(
-                sourceAttachmentPoint,
-                sourceAttachmentPointIndex + 1,
-              ),
-            );
-          },
-        );
+      source.attachmentPoints?.forEach(
+        (sourceAttachmentPoint, sourceAttachmentPointIndex: number) => {
+          const { attachmentAtom } = sourceAttachmentPoint;
+          if (typeof attachmentAtom !== 'number') {
+            return;
+          }
+          sgroup.addAttachmentPoint(
+            sgroupAttachmentPointToStruct(
+              {
+                ...sourceAttachmentPoint,
+                attachmentAtom,
+              },
+              sourceAttachmentPointIndex + 1,
+            ),
+          );
+        },
+      );
       break;
     }
     case 'DAT': {

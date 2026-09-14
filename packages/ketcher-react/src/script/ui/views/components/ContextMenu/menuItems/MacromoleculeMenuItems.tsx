@@ -59,17 +59,51 @@ const MacromoleculeMenuItems = (
   const editMonomerDisabled =
     multipleMonomersSelected || unknownOrAmbiguousMonomer;
 
-  // "Create Monomer" is visible only when the selection contains multiple
-  // monomers, or exactly one monomer plus a non-monomer chemical structure.
+  // "Create Monomer" is visible only when the selection is continuous and
+  // contains multiple monomers, or exactly one monomer plus a non-monomer chemical structure.
+  const isContinuous = props.propsFromTrigger?.isContinuous ?? false;
   const createMonomerVisible =
-    multipleMonomersSelected ||
-    ((functionalGroups?.length ?? 0) === 1 && hasNonMonomerStructure);
+    isContinuous &&
+    (multipleMonomersSelected ||
+      ((functionalGroups?.length ?? 0) === 1 && hasNonMonomerStructure));
 
   // Monomer code for "Edit All [code] (n)" label.
   const monomerCode =
     sgroup instanceof MonomerMicromolecule
       ? sgroup.monomer.monomerItem.label
       : '';
+
+  const handleCreateMonomer = () => {
+    const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
+    const selection = editor.selection();
+
+    if (!selection) {
+      return;
+    }
+
+    // Use the selected atoms to derive the final bonds that include
+    // inter-monomer connecting bonds
+    const selectedAtoms = selection.atoms ?? [];
+    const finalBonds: number[] = [];
+
+    editor.struct().bonds.forEach((bond: Bond, bondId: number) => {
+      if (
+        selectedAtoms.includes(bond.begin) &&
+        selectedAtoms.includes(bond.end)
+      ) {
+        finalBonds.push(bondId);
+      }
+    });
+
+    editor.openMonomerCreationWizard({
+      atoms: selectedAtoms,
+      bonds: finalBonds,
+      rxnArrows: [],
+      rxnPluses: [],
+      texts: [],
+      rgroupAttachmentPoints: [],
+    });
+  };
 
   const handleEdit = (editAllInstances = false) => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
@@ -207,7 +241,7 @@ const MacromoleculeMenuItems = (
           <Item
             {...props}
             data-testid="Create Monomer-option"
-            onClick={() => handleEdit()}
+            onClick={handleCreateMonomer}
           >
             Create Monomer
           </Item>

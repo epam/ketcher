@@ -33,6 +33,9 @@ export class ReinitializeModeOperation implements Operation {
       true,
       this.forceRecalculateAntisense,
     );
+    editor.drawingEntitiesManager.restorePersistentRenderersForMode(
+      editor.mode.modeName,
+    );
   }
 
   public invert(renderersManager: RenderersManager) {

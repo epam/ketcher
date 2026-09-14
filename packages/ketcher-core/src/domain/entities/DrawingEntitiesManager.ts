@@ -153,6 +153,7 @@ import {
 } from 'application/editor/libraryItemDragDrop/replacementHelpers';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import { getRnaPresetPhosphatePosition } from 'application/editor/tools/rnaPresetConnections';
+import type { LayoutMode } from 'application/editor/modes/types';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -638,6 +639,33 @@ export class DrawingEntitiesManager {
     }
 
     return drawingEntity;
+  }
+
+  public moveAllEntitiesWithHiddenMicromolecules(offset: Vec2) {
+    this.allEntities.forEach(([, drawingEntity]) => {
+      this.moveDrawingEntityModelChange(drawingEntity, offset);
+    });
+
+    this.micromoleculesHiddenEntities.simpleObjects.forEach((simpleObject) => {
+      simpleObject.pos = simpleObject.pos.map((position) =>
+        position.add(offset),
+      );
+    });
+
+    this.micromoleculesHiddenEntities.texts.forEach((text) => {
+      text.position = text.position.add(offset);
+      text.pos = text.pos.map((position) => position.add(offset));
+    });
+
+    this.micromoleculesHiddenEntities.images.forEach((image) => {
+      image.addPositionOffset(offset);
+    });
+
+    this.micromoleculesHiddenEntities.multitailArrows.forEach(
+      (multitailArrow) => {
+        multitailArrow.move(offset);
+      },
+    );
   }
 
   private moveChemAtomsPoint(drawingEntity: BaseMonomer, offset?: Vec2) {
@@ -2700,9 +2728,7 @@ export class DrawingEntitiesManager {
     const structCenter = this.getMacroStructureCenter();
     const offset = Vec2.diff(centerPointOfModel, structCenter);
 
-    this.allEntities.forEach(([, entity]) => {
-      this.moveDrawingEntityModelChange(entity, offset);
-    });
+    this.moveAllEntitiesWithHiddenMicromolecules(offset);
   }
 
   public getCurrentCenterPointOfCanvas() {
@@ -2822,6 +2848,26 @@ export class DrawingEntitiesManager {
     });
 
     SequenceRenderer.clear();
+  }
+
+  private restoreSGroupRenderers() {
+    const editor = provideEditorInstance();
+
+    this.sgroups.forEach((sgroup) => {
+      editor.renderersContainer.addSGroup(sgroup);
+    });
+  }
+
+  /**
+   * Restores renderers that are stored in the model but can be detached from
+   * the render container during mode-specific canvas resets.
+   */
+  public restorePersistentRenderersForMode(modeName: LayoutMode) {
+    if (modeName === 'sequence-layout-mode') {
+      return;
+    }
+
+    this.restoreSGroupRenderers();
   }
 
   public applyFlexLayoutMode(needRedrawBonds = false) {

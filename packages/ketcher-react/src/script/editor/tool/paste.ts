@@ -111,6 +111,15 @@ class PasteTool implements Tool {
       !this.isSingleContractedGroup ||
       SGroup.isSaltOrSolvent(this.struct.sgroups.get(0)?.data.name ?? '')
     ) {
+      // Non-contracted-group paste: detect drag-from-atom to form a bond.
+      // We don't undo this.action here — the first mousemove handles that.
+      const ci = this.editor.findItem(event, ['atoms']);
+      if (ci?.map === 'atoms') {
+        this.dragCtx = {
+          xy0: CoordinateTransformation.pageToModel(event, this.editor.render),
+          item: ci,
+        };
+      }
       return;
     }
 
@@ -160,71 +169,121 @@ class PasteTool implements Tool {
     }
 
     if (this.dragCtx) {
-      // template-like logic for group-on-group actions
-      let pos0: Vec2 | null | undefined = null;
-      const pos1 = CoordinateTransformation.pageToModel(
-        event,
-        this.editor.render,
-      );
+      if (this.dragCtx.item?.map === 'atoms') {
+        // Atom-drag path: form a bond from the existing atom to the pasted struct.
+        // this.action (the paste preview) was already undone by the code above.
+        delete this.action;
 
-      const extraBond = true;
-
-      const struct = this.editor.struct();
-      const targetGroup = struct.sgroups.get(this.dragCtx.item.id);
-      const atomId = targetGroup?.getAttachmentAtomId();
-
-      if (atomId !== undefined) {
-        const atom = this.editor.struct().atoms.get(atomId);
-        pos0 = atom?.pp;
-      }
-
-      if (!pos0 || atomId === undefined) {
-        // Invariant: dragCtx.item always refers to a functional group with a
-        // resolvable attachment atom (validated in mousedown). Reaching here
-        // with no position indicates a programming error, not a runtime case.
-        throw new Error(
-          'PasteTool: attachment atom position is missing for the dragged group',
+        const atomId = this.dragCtx.item.id;
+        const pos0 = this.editor.struct().atoms.get(atomId)?.pp;
+        const pos1 = CoordinateTransformation.pageToModel(
+          event,
+          this.editor.render,
         );
+
+        if (!pos0) {
+          requestAnimationFrame(() => {
+            isMovePreviewCalculationInProgress = false;
+          });
+          return;
+        }
+
+        let angle = vectorUtils.calcAngle(pos0, pos1);
+        if (!event.ctrlKey) {
+          angle = vectorUtils.fracAngle(angle, null);
+        }
+        const degrees = vectorUtils.degrees(angle);
+
+        if ('angle' in this.dragCtx && this.dragCtx.angle === degrees) {
+          requestAnimationFrame(() => {
+            isMovePreviewCalculationInProgress = false;
+          });
+          return;
+        }
+
+        if (this.dragCtx.action) {
+          this.dragCtx.action.perform(this.restruct);
+        }
+
+        this.dragCtx.angle = degrees;
+
+        const [action] = fromTemplateOnAtom(
+          this.restruct,
+          prepareTemplateFromStruct(this.struct),
+          atomId,
+          angle,
+          true,
+        );
+
+        this.dragCtx.action = action;
+        this.editor.update(this.dragCtx.action, true);
+      } else {
+        // template-like logic for group-on-group actions
+        let pos0: Vec2 | null | undefined = null;
+        const pos1 = CoordinateTransformation.pageToModel(
+          event,
+          this.editor.render,
+        );
+
+        const extraBond = true;
+
+        const struct = this.editor.struct();
+        const targetGroup = struct.sgroups.get(this.dragCtx.item.id);
+        const atomId = targetGroup?.getAttachmentAtomId();
+
+        if (atomId !== undefined) {
+          const atom = this.editor.struct().atoms.get(atomId);
+          pos0 = atom?.pp;
+        }
+
+        if (!pos0 || atomId === undefined) {
+          // Invariant: dragCtx.item always refers to a functional group with a
+          // resolvable attachment atom (validated in mousedown). Reaching here
+          // with no position indicates a programming error, not a runtime case.
+          throw new Error(
+            'PasteTool: attachment atom position is missing for the dragged group',
+          );
+        }
+
+        // calc angle
+        let angle = vectorUtils.calcAngle(pos0, pos1);
+
+        if (!event.ctrlKey) {
+          angle = vectorUtils.fracAngle(angle, null);
+        }
+
+        const degrees = vectorUtils.degrees(angle);
+
+        // check if anything changed since last time
+        if (
+          // TODO fix the ignored rule
+          // eslint-disable-next-line no-prototype-builtins
+          this.dragCtx.hasOwnProperty('angle') &&
+          this.dragCtx.angle === degrees
+        ) {
+          requestAnimationFrame(() => {
+            isMovePreviewCalculationInProgress = false;
+          });
+          return;
+        }
+
+        if (this.dragCtx.action) {
+          this.dragCtx.action.perform(this.restruct);
+        }
+
+        this.dragCtx.angle = degrees;
+
+        const [action] = fromTemplateOnAtom(
+          this.restruct,
+          prepareTemplateFromSingleGroup(this.struct),
+          atomId,
+          angle,
+          extraBond,
+        );
+
+        this.dragCtx.action = action;
+        this.editor.update(this.dragCtx.action, true);
       }
-
-      // calc angle
-      let angle = vectorUtils.calcAngle(pos0, pos1);
-
-      if (!event.ctrlKey) {
-        angle = vectorUtils.fracAngle(angle, null);
-      }
-
-      const degrees = vectorUtils.degrees(angle);
-
-      // check if anything changed since last time
-      if (
-        // TODO fix the ignored rule
-        // eslint-disable-next-line no-prototype-builtins
-        this.dragCtx.hasOwnProperty('angle') &&
-        this.dragCtx.angle === degrees
-      ) {
-        requestAnimationFrame(() => {
-          isMovePreviewCalculationInProgress = false;
-        });
-        return;
-      }
-
-      if (this.dragCtx.action) {
-        this.dragCtx.action.perform(this.restruct);
-      }
-
-      this.dragCtx.angle = degrees;
-
-      const [action] = fromTemplateOnAtom(
-        this.restruct,
-        prepareTemplateFromSingleGroup(this.struct),
-        atomId,
-        angle,
-        extraBond,
-      );
-
-      this.dragCtx.action = action;
-      this.editor.update(this.dragCtx.action, true);
     } else {
       // common paste logic
       const [action, pasteItems] = fromPaste(
@@ -270,6 +329,20 @@ class PasteTool implements Tool {
     if (this.dragCtx) {
       const dragCtx = this.dragCtx;
       delete this.dragCtx;
+
+      if (dragCtx.item?.map === 'atoms') {
+        if (dragCtx.action) {
+          this.editor.hover(null);
+          this.editor.update(dragCtx.action);
+          this.editor.event.message.dispatch({ info: false });
+        } else if (this.action) {
+          const action = this.action;
+          delete this.action;
+          dropAndMerge(this.editor, this.mergeItems, action);
+        }
+        this.editor.tool('select');
+        return;
+      }
 
       dragCtx.action = dragCtx.action
         ? fromItemsFuse(this.restruct, dragCtx.mergeItems).mergeWith(
@@ -329,6 +402,23 @@ function prepareTemplateFromSingleGroup(molecule: Struct): EditorTemplate {
     bid: 0,
     molecule,
     angle0: atom ? vectorUtils.calcAngle(atom.pp, xy0Center) : 0, // center tilt
+  };
+}
+
+/** Builds an EditorTemplate from any pasted struct, using the first atom as the attachment point */
+function prepareTemplateFromStruct(molecule: Struct): EditorTemplate {
+  const xy0 = new Vec2();
+  molecule.atoms.forEach((atom) => {
+    xy0.add_(atom.pp);
+  });
+  const xy0Center = xy0.scaled(1 / (molecule.atoms.size || 1));
+  const aid = molecule.atoms.keys().next().value ?? 0;
+  const atom = molecule.atoms.get(aid);
+  return {
+    aid,
+    bid: 0,
+    molecule,
+    angle0: atom ? vectorUtils.calcAngle(atom.pp, xy0Center) : 0,
   };
 }
 

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -221,10 +220,7 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
   const [isCheckedWithNewSettings, setIsCheckedWithNewSettings] =
     useState(false);
 
-  const onCheckRef = useRef(onCheck);
-  useEffect(() => {
-    onCheckRef.current = onCheck;
-  }, [onCheck]);
+  const initialCheckRef = useRef(() => onCheck(result.checkOptions));
 
   const handleApply = () => onApply(result);
 
@@ -240,13 +236,13 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
   const handleSettingsChange = () => setIsCheckedWithNewSettings(false);
 
   useEffect(() => {
-    setIsStructureChecking(false);
-    onCheckRef.current(checkState.checkOptions).then(() => {
+    // On mount `isStructureChecking` is already false, so there is nothing to reset.
+    initialCheckRef.current().then(() => {
       setIsStructureChecking(true);
       setLastCheckDate(new Date());
       setIsCheckedWithNewSettings(true);
     });
-  }, [checkState]);
+  }, []);
 
   return (
     <Dialog

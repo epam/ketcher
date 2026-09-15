@@ -6,7 +6,8 @@ The macromolecules editor already models antisense duplexes end to end:
 - Hydrogen bonds are `HydrogenBond` instances stored in a monomer's `hydrogenBonds` array rather than in an attachment-point slot, though they also live in the shared `DrawingEntitiesManager.polymerBonds` map. `getAttachmentPointByBond` reports `AttachmentPointName.HYDROGEN` for both endpoints.
 - Sync state is two booleans on the `SequenceMode` instance, `_isSyncEditMode` and `_isAntisenseEditMode`, exposed through the `needToEditSense` and `needToEditAntisense` getters. `BaseMode` hardcodes both to false, so sync editing exists only in sequence layout mode.
 - Deletion already mirrors across strands in `deleteNode`, and typing already mirrors in the keyboard handler, creating the complementary base and its hydrogen bond. Both distinguish which strand is genuinely selected by checking `monomer.selected` per node.
-- The selection layer is already strand-aware. `SequenceRenderer.selections` falls back to the antisense node when the sense node is not selected, and the editor's right-click handler emits one selection entry per selected strand, each carrying the shared two-stranded node. `generateLabeledNodes` labels whichever node was selected, so the RNA Builder payload already describes antisense nodes correctly.
+- The selection layer is NOT strand-aware, and an earlier version of this document claimed it was. That claim is the root of the defects found in manual testing after the first implementation landed, and it is corrected here. Selection in sequence layout is column-based: three gestures put both strands of a position into the selection regardless of which row the user acted on. `SelectBase.mousedownEntity` pushes both the sense and the antisense monomer of the clicked column, `SequenceRenderer.getMonomersByCaretPositionRange` does the same for every column in an edit-mode drag, and `getShiftArrowChanges` does the same for shift-arrow selection. The selection rectangle is the one gesture that is genuinely geometric and selects only what it covers, but the two rows sit close enough together that an ordinary drag straddles both.
+- Because the sense monomer of a duplex column is therefore always selected, anything that infers a strand from selection state answers "sense" every time. `SequenceRenderer.selections` prefers the sense node when its monomer is selected and so emits one sense-biased entry per column, while the editor's right-click handler emits one entry per selected strand and so emits two per column. The two replacement paths read these two different shapes, which is why library replacement always rewrote the sense strand while the RNA Builder rewrote both strands with the same base.
 - The write-back layer is not strand-aware. `modifySequenceInRnaBuilder` resolves its target by index and then takes `senseNode`, and `replaceSelectionsWithMonomer` does the same while skipping any selection that has no `senseNode`. An antisense selection therefore rewrites the sense strand.
 - Neither write path can be reached on a duplex today. The "Modify in RNA Builder..." context menu item is disabled whenever a selected node has an antisense partner, and `insertMonomerFromLibrary` returns early, with no message, on the same condition. Both guards arrived in February 2025 with the antisense representation work, before duplex editing behavior had been specified.
 
@@ -17,12 +18,14 @@ The gap is therefore wider than base replacement alone. Two blanket guards make 
 **Goals:**
 
 - Allow a duplex selection to be edited at all through the RNA Builder and through the monomer library, replacing the two blanket antisense guards with the narrow blocked-pair rule the issue specifies.
-- Edit the strand the user actually selected, in both replacement entry points.
+- Track which strand each selection gesture targeted, since selection state cannot answer that question.
+- Edit the strand the gesture targeted, in both replacement entry points, once per position rather than once per strand.
 - Mirror a base replacement from one strand to its H-bonded partner, in either direction.
 - Derive the DNA versus RNA complement table from the opposite nucleotide's sugar.
-- Suppress mirroring when the natural analogue is unchanged, when the opposite base is itself selected, or when sync editing is off.
+- Suppress mirroring when the natural analogue is unchanged, when the gesture targeted both strands, or when sync editing is off.
 - Keep the original edit and its mirror in one undo step.
-- Block base modification in the RNA Builder, and in library replace, when the selection spans both strands of an H-bonded pair.
+- Block base modification in the RNA Builder, and in library replace, when the gesture targets both strands of an H-bonded pair.
+- Replace the silent preset refusal with a visible message, and let the refusal toast grow to fit its text.
 - Fix the hydrogen bond type loss in `replaceMonomer`.
 
 **Non-Goals:**
@@ -129,6 +132,44 @@ The sync condition is load-bearing rather than incidental. The error message dir
 
 **Rationale**: This is pre-existing and reachable today through drag-and-drop replacement of any base in a duplex. It becomes load-bearing here because the ambiguous-base branch of the RNA Builder path routes through `replaceMonomer`, on exactly the H-bonded pairs this feature targets. Shipping it separately keeps it reviewable and revertable on its own.
 
+### Decision 10: A purpose-built targeted-strand record, not the existing antisense edit flag
+
+**Problem**: Base replacement needs to know which strand the user meant. Selection state cannot say, because selection is column-based and the sense monomer of a duplex column is always among the selected ones.
+
+**Decision**: Add a dedicated tri-state record of the strand the current selection gesture targeted: sense, antisense, or both. Populate it at each gesture site from information already present there, and read it wherever a strand decision is made.
+
+**Rationale**: The obvious shortcut is to reuse `_isAntisenseEditMode`, which mousedown already sets from the clicked row. It was rejected on three counts. It is a caret-location flag rather than a gesture result, so it means something different from what we need and reusing it would couple two concerns that drift apart. Its setter calls `initialize()`, which clears and re-lays-out the canvas, so driving it from every view-mode click and drag tick is a flicker and performance risk. And the keyboard range gestures have no row information to feed it in the first place.
+
+**Mechanism per gesture**: the click path takes the clicked renderer's `isAntisenseNode`. Shift-extension combines the new click with the row composition of what was already selected. The edit-mode drag takes the row the drag began on, which mousedown already records. Shift-arrow takes the caret's row. Select-all is both. The selection rectangle is the exception and needs no record at all, because it is genuinely geometric and selects only the monomers it covers, so the targeted strand can be derived from selection state for that gesture alone.
+
+**Consequence**: The record must be reset when the selection is cleared, or a stale strand from a previous gesture will steer the next edit.
+
+### Decision 11: The record resolves to a binary strand before it reaches the write-back layer
+
+**Problem**: The write-back helpers take a two-way strand and default to the sense node. Handing them a third value would silently select the sense branch.
+
+**Decision**: "Both" is consumed by the blocking rule and never reaches the write-back layer. `getSelectedStrandType` and anything feeding `getNodeForStrand` or the replacement loop keep a strictly binary return type.
+
+**Rationale**: The replacement loop iterates ranges in reverse and carries a previously-replaced node across iterations on the strength of one range being one strand. A third value passing through would break both that seed logic and the chain-direction reversal that antisense ranges depend on.
+
+### Decision 12: Every user-facing count names the targeted positions
+
+**Problem**: The doubled count in the update confirmation and the doubled write share one cause: the editor's right-click handler emits one entry per selected strand, so a duplex column produces two.
+
+**Decision**: Filter to the targeted strand once, at the top of `generateSequenceContextMenuProps`, before anything derives a count, a title or an enablement flag from the flat selection. Every number the user sees for a duplex selection of N positions is N.
+
+**Rationale**: An earlier draft filtered only the RNA Builder payload, which would have left the context menu title naming 2N while the update confirmation named N. Two different numbers for one selection is a defect in its own right, whatever each one technically counts. One filter, applied once and early, keeps them in step by construction.
+
+**Consequence**: The context menu title now names the targeted positions rather than every selected monomer, so for a duplex it no longer matches what delete, copy and cut actually act on. Those actions read the selection directly and are unaffected in behavior. Menu enablement flags derived from the same flat list narrow to the targeted strand as well, and each menu item needs checking against that.
+
+### Decision 13: The preset refusal becomes visible rather than supported
+
+**Problem**: Clicking a preset in the library with a duplex selection does nothing at all. The guard that refuses it predates this change and was deliberately left in place.
+
+**Decision**: Keep preset replacement out of scope, but dispatch a message saying so instead of returning silently.
+
+**Rationale**: The spec already requires a refused replacement to explain itself, and a silent no-op reads as a broken build. Implementing preset mirroring is a separate feature with its own sugar and phosphate questions.
+
 ## Risks / Trade-offs
 
 - **Modifications on the mirrored base are lost.** When the analogue changes, the opposite base becomes the plain natural complement and any modification it carried is discarded. This is the issue's stated behavior and there is often no chemically meaningful counterpart, but users working with heavily modified duplexes will notice. Mitigation considered and rejected for scope: a confirmation dialog listing affected bases.
@@ -138,4 +179,7 @@ The sync condition is load-bearing rather than incidental. The error message dir
 - **Lifting the guards is new surface, not a refinement.** Duplex editing through the RNA Builder and the library has never run. Behavior that looks unrelated to bases, such as adding a phosphate to a nucleoside or replacing a linker node, executes on a duplex for the first time. Unit coverage cannot reach these paths, so the separate e2e effort carries more weight here than elsewhere in this change.
 - **Unsplit nucleotides carry the hydrogen bond differently.** For an unsplit nucleotide the bond may sit on the nucleotide monomer rather than on a separate base monomer, so the traversal must handle both shapes.
 - **Undo ordering.** `replaceSelectionsWithMonomer` already calls `setUndoOperationReverse` and `setUndoOperationsByPriority` on its command. Operations appended by the mirror must tolerate that reordering, or undo will leave the duplex inconsistent. Invariants A2 and A3 make this non-negotiable.
+- **A stale targeted-strand record steers the wrong edit.** The record outlives the gesture that set it, so any path that clears or replaces a selection without updating it will send the next replacement to the wrong strand. This is the likeliest defect in the follow-up work and the one least visible to unit tests.
+- **The two rows are close together.** The selection rectangle straddles both rows easily, so users will hit the both-strands-targeted block more often than the wording of the rule suggests. This is behavior, not a defect, but it makes the refusal message a frequently seen surface rather than an edge case.
+- **The first implementation shipped on a wrong premise.** The write-back design was built on the claim that the selection layer was already strand-aware. Everything downstream of that claim deserves rechecking rather than trusting, including the parts that passed review.
 - **End-to-end coverage is out of scope for this change.** Playwright coverage is owned by a separate testing team and is added after the feature lands, so this change deliberately does not touch `ketcher-autotests`. That raises the stakes on the unit tier: with no `SequenceMode` unit harness, the only coverage this change ships is the pure resolver's tests plus canvas-fixture tests for the command builder. Decision 1 exists partly so the chemistry is fully covered by fast tests that do not depend on the separate e2e effort.

@@ -106,3 +106,48 @@
 - [x] 13.3 Leave the `isSelectionsContainAntisenseChains` guard in `insertPresetFromLibrary` untouched; preset replacement on a duplex is out of scope
 - [x] 13.4 Confirm `hasAntisense` still has a consumer after this change, and remove it if it no longer does
 - [ ] 13.5 Manual smoke check in sequence mode: edit a sense base, edit an antisense base, select both strands of a pair, replace a nucleotide mid-antisense-strand, and repeat with sync editing off — NOT DONE: requires a browser; handed to the human reviewer (matrix in the Task 13 report)
+
+---
+
+> **Correction after manual testing.** Sections 14 to 18 follow from the false premise recorded in the design's Context: the selection layer is not strand-aware. Sections 1 to 13 stay as they were; these repair what that premise broke.
+
+## 14. Record which strand each selection gesture targeted
+
+- [ ] 14.1 Add a tri-state record to `SequenceMode` for the strand the current selection gesture targeted: sense, antisense, or both, with a setter that does NOT call `initialize()`
+- [ ] 14.2 Do not reuse `_isAntisenseEditMode`; it tracks the caret's location rather than a gesture result, and its setter re-lays-out the canvas
+- [ ] 14.3 In `SelectBase.mousedownEntity`, record the clicked row from the renderer's `isAntisenseNode`
+- [ ] 14.4 On shift-extension, combine the newly clicked row with the rows already represented in the selection
+- [ ] 14.5 In `SequenceMode.mousedown` and `mousedownBetweenSequenceItems`, record the row an edit-mode drag begins on
+- [ ] 14.6 In `shiftArrowSelectionInEditMode`, record the caret's row
+- [ ] 14.7 Record both strands for select-all
+- [ ] 14.8 For the selection rectangle, derive the targeted strand from which monomers are actually selected; it is geometric and selects only what it covers, so no record is needed
+- [ ] 14.9 Reset the record whenever the selection is cleared, so a stale strand cannot steer the next edit
+- [ ] 14.10 Unit-test the resolution of the record, including the derive-from-selection path
+
+## 15. Route every strand decision through the record
+
+- [ ] 15.1 Make `getSelectedStrandType` answer from the record instead of from `senseNode.monomer.selected`, which is always true on a duplex
+- [ ] 15.2 Keep the return type strictly binary; "both" must be consumed by the blocking rule and must never reach `getNodeForStrand` or the replacement loop
+- [ ] 15.3 Confirm `splitSelectionRangeByStrand` and the reverse-iteration seed in `replaceSelectionsWithMonomer` still hold once the strand comes from the record
+- [ ] 15.4 Check the two branches of `insertMonomerFromLibrary`, which pick the strand by different mechanisms, and make them agree
+
+## 16. One edit per position, not one per strand
+
+- [ ] 16.1 In `generateLabeledNodes`, emit one entry per position for the targeted strand instead of one per selected strand
+- [ ] 16.2 Filter the flat selection once at the top of `generateSequenceContextMenuProps`, before any count, title or enablement flag is derived from it, so every user-facing number is N
+- [ ] 16.2a Check each context menu item's enablement against the narrowed list, since those flags are derived from the same flat selection
+- [ ] 16.3 Confirm the update confirmation names N nucleotides rather than 2N
+- [ ] 16.4 Confirm the RNA Builder writes the chosen base once, to the targeted strand only
+
+## 17. Re-scope the both-strands block
+
+- [ ] 17.1 Make the blocked-pair predicate key off the record saying both strands were targeted, not off both partners being selected
+- [ ] 17.2 Confirm a one-strand gesture on a duplex is no longer blocked, so propagation is reachable with sync editing on
+- [ ] 17.3 Confirm a gesture that genuinely covers both rows is still blocked, with the mandated message
+- [ ] 17.4 Confirm no empty entry reaches the undo history when a replacement leaves the opposite strand unchanged
+
+## 18. Report the refusals the user can currently only guess at
+
+- [ ] 18.1 In `insertPresetFromLibrary`, dispatch a message saying preset replacement is not supported on a duplex, instead of returning silently
+- [ ] 18.2 In `StyledToast`, replace the fixed height with a minimum height, stop stretching the content, and widen the container so the mandated message is not clipped
+- [ ] 18.3 Flag the toast size change to the team that owns the Playwright screenshots

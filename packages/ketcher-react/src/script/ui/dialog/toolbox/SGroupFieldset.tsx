@@ -15,6 +15,8 @@
  ***************************************************************************/
 
 import type { JSX } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { Field } from '../../component/form/form/form';
 import Select from '../../component/form/Select';
 import { sgroupMap as schemes } from '../../data/schema/struct-schema';
@@ -40,7 +42,7 @@ const propMapping: Record<string, PropMappingValue> = {
   radiobuttons: { type: 'radio' },
 };
 
-const content = (type: string): JSX.Element[] =>
+const content = (type: string, t: TFunction): JSX.Element[] =>
   Object.keys(schemes[type].properties)
     .filter((prop) => prop !== 'type')
     .map((prop) => {
@@ -54,7 +56,10 @@ const content = (type: string): JSX.Element[] =>
             name={prop}
             key={`${type}-${prop}`}
             component={Select}
-            options={getSelectOptionsFromSchema(schemes[type].properties[prop])}
+            options={getSelectOptionsFromSchema(
+              schemes[type].properties[prop],
+              t,
+            )}
             data-testid={prop}
           />
         );
@@ -70,12 +75,13 @@ interface SGroupFieldsetProps {
 
 function SGroupFieldset({ formState }: Readonly<SGroupFieldsetProps>) {
   const { result } = formState;
+  const { t } = useTranslation();
 
   const type = result.type;
 
   return (
     <fieldset className={type === 'DAT' ? classes.data : 'base'}>
-      {content(type)}
+      {content(type, t)}
     </fieldset>
   );
 }

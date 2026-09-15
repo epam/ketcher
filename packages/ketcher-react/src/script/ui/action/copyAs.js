@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { KetcherLogger, KetSerializer, MolSerializer } from 'ketcher-core';
+import i18n from '../../../i18n/i18n';
 
 export default function copyAs(type) {
   const state = global.currentState;
@@ -43,9 +44,7 @@ export default function copyAs(type) {
     );
 
     if (simpleObjectOrText && serializer instanceof MolSerializer) {
-      errorHandler(
-        'This feature is not available for Simple objects and Text objects',
-      );
+      errorHandler(i18n.t('toolbar:copy.notAvailableForSimpleObjects'));
       return null;
     }
 
@@ -58,6 +57,6 @@ export default function copyAs(type) {
     }
   } catch (e) {
     KetcherLogger.error('copyAs.js::copyAs', e);
-    errorHandler('This feature is not available in your browser');
+    errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));
   }
 }

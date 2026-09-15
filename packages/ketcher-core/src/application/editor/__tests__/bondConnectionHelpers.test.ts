@@ -98,6 +98,33 @@ function makeAmbiguousMonomer(
   return stub as AmbiguousMonomer;
 }
 
+/**
+ * Build a stub monomer that optionally passes instanceof checks for
+ * Sugar, Phosphate, or RNABase, and has a configurable free AP list.
+ */
+function makeStub(
+  type: 'Sugar' | 'Phosphate' | 'RNABase' | 'Peptide',
+  freeAPs: AttachmentPointName[] = [
+    AttachmentPointName.R1,
+    AttachmentPointName.R2,
+  ],
+): BaseMonomer {
+  const stub = {
+    hasFreeAttachmentPoint: freeAPs.length > 0,
+    isAttachmentPointExistAndFree: (ap: AttachmentPointName) =>
+      freeAPs.includes(ap),
+    unUsedAttachmentPointsNamesList: freeAPs,
+  } as unknown as BaseMonomer;
+
+  if (type === 'Sugar') Object.setPrototypeOf(stub, Sugar.prototype);
+  else if (type === 'Phosphate')
+    Object.setPrototypeOf(stub, Phosphate.prototype);
+  else if (type === 'RNABase') Object.setPrototypeOf(stub, RNABase.prototype);
+  else Object.setPrototypeOf(stub, makePeptide().constructor.prototype);
+
+  return stub;
+}
+
 describe('shouldInvokeConnectionModal', () => {
   describe('hydrogen bond — returns undefined', () => {
     it('returns undefined when isHydrogenBond is true', () => {
@@ -283,33 +310,6 @@ describe('shouldInvokeConnectionModal', () => {
 // ---------------------------------------------------------------------------
 
 describe('findPresetMonomerForBonding', () => {
-  /**
-   * Build a stub monomer that optionally passes instanceof checks for
-   * Sugar, Phosphate, or RNABase, and has a configurable free AP list.
-   */
-  function makeStub(
-    type: 'Sugar' | 'Phosphate' | 'RNABase' | 'Peptide',
-    freeAPs: AttachmentPointName[] = [
-      AttachmentPointName.R1,
-      AttachmentPointName.R2,
-    ],
-  ): BaseMonomer {
-    const stub = {
-      hasFreeAttachmentPoint: freeAPs.length > 0,
-      isAttachmentPointExistAndFree: (ap: AttachmentPointName) =>
-        freeAPs.includes(ap),
-      unUsedAttachmentPointsNamesList: freeAPs,
-    } as unknown as BaseMonomer;
-
-    if (type === 'Sugar') Object.setPrototypeOf(stub, Sugar.prototype);
-    else if (type === 'Phosphate')
-      Object.setPrototypeOf(stub, Phosphate.prototype);
-    else if (type === 'RNABase') Object.setPrototypeOf(stub, RNABase.prototype);
-    else Object.setPrototypeOf(stub, makePeptide().constructor.prototype);
-
-    return stub;
-  }
-
   describe('R1 target → component with free R2', () => {
     it('returns the monomer that has a free R2 when target is R1', () => {
       const sugar = makeStub('Sugar', [AttachmentPointName.R2]);

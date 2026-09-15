@@ -17,6 +17,43 @@ import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
+const selectionCoords = { x: 280, y: 200 };
+
+async function selectObjects(
+  page: Page,
+  xAxisRadius: number,
+  yAxisRadius: number,
+) {
+  const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
+  await page.mouse.move(point.x - xAxisRadius, point.y - yAxisRadius);
+  await page.mouse.down();
+  await page.mouse.move(point.x + xAxisRadius, point.y + yAxisRadius);
+  await page.mouse.up();
+  return point;
+}
+
+async function clickCanvas(page: Page) {
+  await clickOnCanvas(page, selectionCoords.x, selectionCoords.y, {
+    from: 'pageTopLeft',
+  });
+}
+
+async function selectReactionLeftPart(page: Page) {
+  const shift = 5;
+  const emptySpace = { x: 100, y: 100 };
+  const mostRightAtom = await getAtomLocator(page, { atomLabel: 'Br' })
+    .first()
+    .boundingBox();
+  await page.mouse.move(emptySpace.x, emptySpace.y);
+  if (mostRightAtom) {
+    await dragMouseTo(
+      page,
+      mostRightAtom.x + mostRightAtom.width + shift,
+      mostRightAtom.y + mostRightAtom.height + shift,
+    );
+  }
+}
+
 test.describe('Rectangle selection tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -24,26 +61,6 @@ test.describe('Rectangle selection tool', () => {
 
   const xDelta = 30;
   const yDelta = 60;
-
-  async function selectObjects(
-    page: Page,
-    xAxisRadius: number,
-    yAxisRadius: number,
-  ) {
-    const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await page.mouse.move(point.x - xAxisRadius, point.y - yAxisRadius);
-    await page.mouse.down();
-    await page.mouse.move(point.x + xAxisRadius, point.y + yAxisRadius);
-    await page.mouse.up();
-    return point;
-  }
-
-  const selectionCoords = { x: 280, y: 200 };
-  async function clickCanvas(page: Page) {
-    await clickOnCanvas(page, selectionCoords.x, selectionCoords.y, {
-      from: 'pageTopLeft',
-    });
-  }
 
   test('Structure selection with rectangle selection tool', async ({
     page,
@@ -166,27 +183,11 @@ test.describe('Rectangle selection tool', () => {
 
   test('Delete with selection', async ({ page }) => {
     //  Test case: EPMLSOPKET-1352
-
-    async function selectReactionLeftPart() {
-      const shift = 5;
-      const emptySpace = { x: 100, y: 100 };
-      const mostRightAtom = await getAtomLocator(page, { atomLabel: 'Br' })
-        .first()
-        .boundingBox();
-      await page.mouse.move(emptySpace.x, emptySpace.y);
-      if (mostRightAtom) {
-        await dragMouseTo(
-          page,
-          mostRightAtom.x + mostRightAtom.width + shift,
-          mostRightAtom.y + mostRightAtom.height + shift,
-        );
-      }
-    }
     await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await selectReactionLeftPart();
+    await selectReactionLeftPart(page);
     await deleteByKeyboard(page);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 41 }).click({
       force: true,

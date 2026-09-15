@@ -413,9 +413,12 @@ describe('getSelectedStrandType resolves the targeted strand, not just selection
       );
     }
 
-    // Sanity check: the sense monomer really is selected too, so the
-    // assertions below are only meaningful because getSelectedStrandType
-    // reads the record, not because nothing else was selected.
+    // Sanity check, and proof of the override the amended controller
+    // ruling requires: position 0's OWN sense monomer really is selected
+    // too (per-position resolution alone would answer SENSE here), so the
+    // ANTISENSE result below is only possible because the explicit record
+    // overrides that node's own selection state, not because sense was
+    // somehow left unselected.
     expect(senseNucleotides[0].rnaBase.selected).toBe(true);
     expect(antisenseNucleotides[0].rnaBase.selected).toBe(true);
     expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.ANTISENSE);
@@ -470,14 +473,17 @@ describe('getSelectedStrandType resolves the targeted strand, not just selection
     ).toBe(true);
   });
 
-  // The explicit 'both' branch this task's controller ruling requires
-  // (R2): a 'both' record answers SENSE, matching today's behavior, rather
-  // than throwing out of a mouse handler. It is meant to be unreachable in
-  // practice once Task 6's guard blocks base replacement over a
-  // both-strands selection; select-all is used here only as a real gesture
-  // that records 'both', to prove the branch itself resolves correctly
-  // ahead of that guard landing.
-  it('resolves a "both" record to SENSE via the explicit both-case branch', () => {
+  // select-all writes an explicit 'both' record. getSelectedStrandType
+  // resolves that per position from each node's own selection state (per
+  // the amended controller ruling): since select-all selects both strands
+  // at every column, the sense node is selected at every position, so this
+  // honestly (not hard-codedly) resolves to SENSE everywhere -- the same
+  // outcome the earlier hard-coded 'both' branch produced, but now derived
+  // rather than assumed, which matters because the same per-position
+  // branch also has to handle the no-record rectangle-selection case
+  // correctly (see the antisenseChainDirection.test.ts mixed-strand
+  // regression tests for that case).
+  it('resolves a "both" record to SENSE per position, since select-all selects the sense node at every column', () => {
     const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
 
     hotkeysConfiguration['select-all'].handler(editor);

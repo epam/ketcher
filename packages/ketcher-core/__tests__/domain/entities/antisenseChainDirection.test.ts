@@ -506,24 +506,10 @@ describe('antisense chain direction', () => {
   // display position was unselected; it never breaks on a strand change. So a
   // selection that covers consecutive positions but picks the sense node at
   // some of them and the antisense node at others arrives as ONE range with
-  // mixed strands -- the shape produced by selecting across a duplex whose
-  // strands do not line up over their whole length (an siRNA overhang, for
-  // instance).
-  //
-  // These tests build such a selection directly via selectDrawingEntities,
-  // bypassing every real gesture (click, drag, shift-arrow, select-all).
-  // Since #6595 (Task 4 of the targeted-strand-record plan), that matters:
-  // getSelectedStrandType no longer inspects any one node's own .selected
-  // flag -- it reads SequenceRenderer.targetedStrand, which real gestures
-  // populate with a single per-gesture answer. With no gesture record (as
-  // here), targetedStrand falls back to deriving one answer for the WHOLE
-  // selection from which strands have anything selected anywhere in it: a
-  // selection that touches both strands derives to 'both', and
-  // getSelectedStrandType's explicit both-case handling (see its doc
-  // comment in SequenceMode.ts) answers SENSE for every position in it, not
-  // per-position. So a selection built this way -- a shape no instrumented
-  // gesture can actually produce post-Task-4 -- now edits the SENSE node at
-  // every touched position uniformly, exactly like pre-#6595 master.
+  // mixed strands -- the shape produced in practice by selecting across a
+  // duplex whose strands do not line up over their whole length (an siRNA
+  // overhang, for instance). Resolving the strand once from element 0 then
+  // applies the wrong strand to the rest of the range.
   // The antisense nodes are rebuilt with Nucleotide.fromSugar, and the one at
   // the antisense strand's chain end has no trailing phosphate, so its
   // `monomers` array carries an undefined slot.
@@ -544,7 +530,7 @@ describe('antisense chain direction', () => {
     });
   };
 
-  it('resolves a manually mixed-strand selection (no gesture record) to SENSE uniformly, matching pre-#6595 master, when it starts on the antisense strand', () => {
+  it('replaces the actually selected node at every position of a mixed-strand range that starts on the antisense strand', () => {
     const mode = new SequenceMode();
     const { senseNucleotides, antisenseNucleotides } =
       buildFourNucleotideDuplex(editor);
@@ -574,21 +560,21 @@ describe('antisense chain direction', () => {
 
     callReplaceSelectionsWithMonomer(mode, selections, replacementItem);
 
-    // Every position in the range is treated as SENSE (see the block
-    // comment above this describe block), so the SENSE node at every
-    // touched position is replaced...
+    // Every selected node is gone (replaced)...
     expectNodesPresent(
       editor,
-      [senseNucleotides[0], senseNucleotides[1], senseNucleotides[2]],
+      [antisenseNucleotides[0], antisenseNucleotides[1], senseNucleotides[2]],
       false,
     );
-    // ...and every ANTISENSE node -- including the two that were actually
-    // flagged selected -- is left standing.
+    // ...and no unselected node was replaced in its place. Resolving the
+    // whole range as ANTISENSE (element 0's strand) would have replaced
+    // antisenseNucleotides[2] here and left the selected sense node
+    // standing.
     expectNodesPresent(
       editor,
       [
-        antisenseNucleotides[0],
-        antisenseNucleotides[1],
+        senseNucleotides[0],
+        senseNucleotides[1],
         antisenseNucleotides[2],
         antisenseNucleotides[3],
       ],
@@ -596,16 +582,15 @@ describe('antisense chain direction', () => {
     );
   });
 
-  it('resolves a manually mixed-strand selection (no gesture record) to SENSE uniformly, matching pre-#6595 master, when it starts on the sense strand', () => {
+  it('replaces the actually selected node at every position of a mixed-strand range that starts on the sense strand', () => {
     const mode = new SequenceMode();
     const { senseNucleotides, antisenseNucleotides } =
       buildFourNucleotideDuplex(editor);
 
     // The mirror image of the previous test: element 0 is sense, and the
-    // antisense-only positions come later. The whole range still resolves
-    // to SENSE, so the sense node at every one of the four touched
-    // positions is replaced, including the two whose sense node was never
-    // itself flagged selected.
+    // antisense-only positions come later. Resolving the whole range as
+    // SENSE skips the selected antisense nodes entirely and replaces the
+    // unselected sense nodes above them instead.
     editor.drawingEntitiesManager.selectDrawingEntities(
       nodeMonomers([
         senseNucleotides[0],
@@ -626,51 +611,37 @@ describe('antisense chain direction', () => {
 
     expectNodesPresent(
       editor,
-      [senseNucleotides[0], senseNucleotides[1], senseNucleotides[2]],
+      [
+        senseNucleotides[0],
+        senseNucleotides[1],
+        antisenseNucleotides[2],
+        antisenseNucleotides[3],
+      ],
       false,
     );
-    // senseNucleotides[3]'s sugar and base are replaced along with the rest
-    // of the range...
-    expect(
-      editor.drawingEntitiesManager.monomers.has(senseNucleotides[3].sugar.id),
-    ).toBe(false);
-    expect(
-      editor.drawingEntitiesManager.monomers.has(
-        senseNucleotides[3].rnaBase.id,
-      ),
-    ).toBe(false);
-    // ...but its trailing phosphate renders as a display position of its
-    // own past the last nucleotide (see the block comment above this
-    // describe block), which this selection never touched, so it survives.
-    expect(
-      editor.drawingEntitiesManager.monomers.has(
-        senseNucleotides[3].phosphate.id,
-      ),
-    ).toBe(true);
     expectNodesPresent(
       editor,
       [
         antisenseNucleotides[0],
         antisenseNucleotides[1],
-        antisenseNucleotides[2],
-        antisenseNucleotides[3],
+        senseNucleotides[2],
+        senseNucleotides[3],
       ],
       true,
     );
   });
 
-  it('leaves the antisense strand fully connected when a manually mixed-strand selection (no gesture record) resolves to SENSE uniformly', () => {
+  it('keeps the antisense sub-range of a mixed-strand selection connected, walking it in chain order (regression for the display-order/chain-order carry)', () => {
     const mode = new SequenceMode();
     const { senseNucleotides, antisenseNucleotides } =
       buildFourNucleotideDuplex(editor);
 
-    // The mixed selection includes two ADJACENT antisense nodes ([1] and
-    // [2], whose chain order is the reverse of their display order) plus
-    // one sense node. Since the whole range resolves to SENSE uniformly
-    // (see the block comment above this describe block), none of the
-    // antisense nodes are touched at all -- the replacement instead lands
-    // on the sense node at every one of the three touched positions -- so
-    // the antisense chain is left completely intact end to end.
+    // The antisense half of the mixed range is two ADJACENT antisense nodes
+    // ([1] and [2]), i.e. exactly the pair whose chain order is the reverse
+    // of their display order. Splitting the range by strand must hand that
+    // half to the existing loop as its own range so the reversal and the
+    // carried "previous replaced node" still apply to it; splitting that
+    // merely relabelled positions would leave the backbone broken here.
     editor.drawingEntitiesManager.selectDrawingEntities(
       nodeMonomers([
         senseNucleotides[0],
@@ -688,29 +659,22 @@ describe('antisense chain direction', () => {
 
     callReplaceSelectionsWithMonomer(mode, selections, replacementItem);
 
-    expectNodesPresent(
-      editor,
-      [senseNucleotides[0], senseNucleotides[1], senseNucleotides[2]],
-      false,
-    );
-
     const visitedChain = walkMonomerChain(antisenseNucleotides[3].sugar);
     const visitedSugarIds = visitedChain
       .filter((monomer): monomer is Sugar => monomer instanceof Sugar)
       .map((sugar) => sugar.id);
 
-    // Walking forward from the antisense chain-start sugar reaches every
-    // original antisense sugar, in chain order, with none replaced or
-    // missing and no cycles.
+    // Walking forward from the untouched antisense chain-start sugar still
+    // reaches the untouched chain-end sugar, with both replaced positions
+    // gone from in between and no cycles.
     expect(visitedSugarIds).toEqual([
       antisenseNucleotides[3].sugar.id,
-      antisenseNucleotides[2].sugar.id,
-      antisenseNucleotides[1].sugar.id,
       antisenseNucleotides[0].sugar.id,
     ]);
     expect(new Set(visitedChain.map((monomer) => monomer.id)).size).toBe(
       visitedChain.length,
     );
+    expect(visitedChain).toHaveLength(5);
   });
 
   it('does not touch the opposite strand when sync edit mode is off, even though antisense edit mode is on', () => {

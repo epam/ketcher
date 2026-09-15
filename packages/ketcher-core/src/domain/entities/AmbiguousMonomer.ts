@@ -69,11 +69,21 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
     this.monomers = variantMonomerItem.monomers;
     this.monomerClass = AmbiguousMonomer.getMonomerClass(
       variantMonomerItem.monomers,
+      variantMonomerItem.subtype,
     );
     this.subtype = variantMonomerItem.subtype;
   }
 
-  public static getMonomerClass(monomers: BaseMonomer[]) {
+  public static getMonomerClass(
+    monomers: BaseMonomer[],
+    subtype?: KetAmbiguousMonomerTemplateSubType,
+  ) {
+    // HELM mixtures (`+`) represent an indeterminate chemical component rather
+    // than an RNA part that can be assembled into a nucleotide.
+    if (subtype === KetAmbiguousMonomerTemplateSubType.MIXTURE) {
+      return KetMonomerClass.CHEM;
+    }
+
     const monomerClass = resolveMonomerClass(monomers[0].monomerItem);
 
     const containDifferentMonomerTypes = monomers.some((monomer) => {

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -18,8 +17,12 @@
 import { SimpleObject } from 'domain/entities/simpleObject';
 import type { Struct } from 'domain/entities/struct';
 import { getNodeWithInvertedYCoord } from '../helpers';
+import type { KetSimpleObjectNode } from './types';
 
-export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {
+export function simpleObjectToStruct(
+  ketItem: KetSimpleObjectNode,
+  struct: Struct,
+): Struct {
   const object = ketItem.data;
   const simpleObject = new SimpleObject(getNodeWithInvertedYCoord(object));
   simpleObject.setInitiallySelected(ketItem.selected);

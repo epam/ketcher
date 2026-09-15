@@ -736,7 +736,16 @@ export class CoreEditor {
       const newMonomerTemplateRef =
         getMonomerTemplateRefFromMonomerItem(newMonomer);
 
-      if (existingMonomerIndex !== -1) {
+      if (existingMonomerIndex === -1) {
+        this._monomersLibrary.push(newMonomer);
+        didCommitAnyItem = true;
+
+        monomersLibraryParsedJson.root.templates.push(
+          getKetRef(newMonomerTemplateRef),
+        );
+        monomersLibraryParsedJson[newMonomerTemplateRef] =
+          newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
+      } else {
         const existingMonomerTemplateRef = getMonomerTemplateRefFromMonomerItem(
           this._monomersLibrary[existingMonomerIndex],
         );
@@ -745,7 +754,13 @@ export class CoreEditor {
           monomersLibraryParsedJson.root.templates.findIndex(
             (template) => template.$ref === existingMonomerTemplateRef,
           );
-        if (existingMonomerRefIndex !== -1) {
+        if (existingMonomerRefIndex === -1) {
+          // This case should never happen because if we have a monomer in the library it should have a reference in the parsed JSON
+          KetcherLogger.error(
+            'Editor::updateMonomersLibrary: A ref is missing for a monomer in library',
+            existingMonomerTemplateRef,
+          );
+        } else {
           const existingMonomer = this._monomersLibrary[existingMonomerIndex];
           const { id } = existingMonomer.props;
           const existingMonomerId = id ?? getMonomerUniqueKey(existingMonomer);
@@ -756,22 +771,7 @@ export class CoreEditor {
 
           monomersLibraryParsedJson[existingMonomerTemplateRef] =
             newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
-        } else {
-          // This case should never happen because if we have a monomer in the library it should have a reference in the parsed JSON
-          KetcherLogger.error(
-            'Editor::updateMonomersLibrary: A ref is missing for a monomer in library',
-            existingMonomerTemplateRef,
-          );
         }
-      } else {
-        this._monomersLibrary.push(newMonomer);
-        didCommitAnyItem = true;
-
-        monomersLibraryParsedJson.root.templates.push(
-          getKetRef(newMonomerTemplateRef),
-        );
-        monomersLibraryParsedJson[newMonomerTemplateRef] =
-          newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
       }
     });
 

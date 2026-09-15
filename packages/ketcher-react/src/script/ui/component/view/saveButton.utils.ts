@@ -11,7 +11,7 @@ export const fileSaver = (server): FileSaverReturnType => {
     } else if (server) {
       resolve(
         server.then(() => {
-          throw Error("Server doesn't still support echo method");
+          throw new Error("Server doesn't still support echo method");
         }),
       );
     } else {

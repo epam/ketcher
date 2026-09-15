@@ -290,6 +290,6 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
     }
 
     default:
-      throw Error('Unsupported enum type');
+      throw new Error('Unsupported enum type');
   }
 };

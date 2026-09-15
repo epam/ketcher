@@ -36,6 +36,7 @@ export * from './application/getStructure';
 export * from './domain/helpers/monomers';
 export {
   BASE_MODIFICATION_DISABLED_IN_SYNC_MODE,
+  PRESET_REPLACEMENT_UNSUPPORTED_ON_DUPLEX,
   isSelectedAntisensePair,
 } from './domain/helpers/antisenseBaseSync';
 

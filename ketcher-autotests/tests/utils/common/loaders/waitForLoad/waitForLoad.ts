@@ -20,7 +20,7 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   const loadingSpinner = page.getByTestId('loading-spinner').first();
 
   callback();
-  await page.waitForTimeout(0.3 * 1000);
+  await page.waitForTimeout(1000);
   while (await loadingSpinner.isVisible()) {
     await loadingSpinner.waitFor({ state: 'detached' });
   }

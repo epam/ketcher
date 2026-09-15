@@ -62,11 +62,7 @@ const RgroupLogic = (props: Props) => {
 
 function rangeConv(range) {
   // structConv
-  const res = range
-    .replace(/\s*/g, '')
-    .replace(/,+/g, ',')
-    .replace(/^,/, '')
-    .replace(/,$/, '');
+  const res = range.split(/\s+/).join('').split(',').filter(Boolean).join(',');
 
   return res
     .split(',')

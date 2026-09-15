@@ -92,7 +92,7 @@ export function rglabelToStruct(source) {
   ifDef(params, 'pp', {
     x: source.location[0],
     y: -source.location[1],
-    z: source.location[2] || 0.0,
+    z: source.location[2] || 0,
   });
   ifDef(params, 'attachmentPoints', source.attachmentPoints);
   const rglabel = toRlabel(source.$refs.map((el) => parseInt(el.slice(3))));

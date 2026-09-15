@@ -14,12 +14,12 @@ export const StyledTabs = styled(Tabs, {
   overflow: unset;
 
   & .MuiTabs-scroller,
-  & .MuiTabs-flexContainer {
+  & .MuiTabs-list {
     height: 100%;
     overflow: unset !important;
   }
 
-  & .MuiTabs-flexContainer {
+  & .MuiTabs-list {
     justify-content: ${({ isLayoutToRight }) =>
       isLayoutToRight ? 'flex-end' : 'flex-start'};
     padding-right: ${({ isLayoutToRight }) => (isLayoutToRight ? '16px' : '0')};

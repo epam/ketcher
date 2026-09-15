@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  createSelector,
+  createSlice,
+  PayloadAction,
+  Slice,
+} from '@reduxjs/toolkit';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { RootState } from 'state';
 import {
@@ -42,7 +47,7 @@ import {
   selectAxoLabsAliasesByPresetName,
   selectSearchFilter,
 } from 'state/library';
-import { castDraft } from 'immer';
+import { castDraft, Draft } from 'immer';
 
 export enum RnaBuilderPresetsItem {
   Presets = 'Presets',
@@ -136,7 +141,107 @@ export const monomerGroupToPresetGroup = {
   [MonomerGroups.PHOSPHATES]: 'phosphate',
 };
 
-export const rnaBuilderSlice = createSlice({
+// Explicit reducer signatures keep the exported slice's type nameable:
+// letting TS infer `Draft<IRnaBuilderState>` here makes the declaration
+// emitter try to print an internal, unexported immer/ketcher-core type.
+type RnaBuilderCaseReducers = {
+  createNewPreset: (state: Draft<IRnaBuilderState>) => void;
+  setActivePreset: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<IRnaPreset>,
+  ) => void;
+  setSequenceSelection: (
+    state: RootState,
+    action: PayloadAction<LabeledNodesWithPositionInSequence[]>,
+  ) => void;
+  setSequenceSelectionName: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<string>,
+  ) => void;
+  setIsSequenceFirstsOnlyNucleoelementsSelected: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<boolean>,
+  ) => void;
+  setActivePresetForContextMenu: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<IRnaPreset>,
+  ) => void;
+  setPresetPhosphateFilter: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<PresetPhosphateFilter>,
+  ) => void;
+  setActivePresetName: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<string>,
+  ) => void;
+  setActiveRnaBuilderItem: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<RnaBuilderItem | null>,
+  ) => void;
+  recalculateRnaBuilderValidations: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<{
+      rnaPreset: IRnaPreset;
+      isEditMode: boolean;
+      selectedPhosphatePosition?: RnaPhosphatePosition;
+    }>,
+  ) => void;
+  setActivePresetMonomerGroup: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<{
+      groupName: MonomerGroups;
+      groupItem: MonomerOrAmbiguousType;
+    } | null>,
+  ) => void;
+  savePreset: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<IRnaPreset>,
+  ) => void;
+  deletePreset: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<IRnaPreset>,
+  ) => void;
+  setIsEditMode: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<boolean>,
+  ) => void;
+  setUniqueNameError: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<string>,
+  ) => void;
+  setInvalidPresetError: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<string>,
+  ) => void;
+  setInvalidPresetNameError: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<string>,
+  ) => void;
+  setDefaultPresets: (
+    state: RootState,
+    action: PayloadAction<IRnaPreset[]>,
+  ) => void;
+  setCustomPresets: (
+    state: RootState,
+    action: PayloadAction<IRnaPreset[]>,
+  ) => void;
+  setFavoritePresetsFromLocalStorage: (state: RootState) => void;
+  clearFavorites: (state: RootState) => void;
+  setActiveMonomerKey: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<string>,
+  ) => void;
+  togglePresetFavorites: (
+    state: Draft<IRnaBuilderState>,
+    action: PayloadAction<IRnaPreset>,
+  ) => void;
+};
+
+export const rnaBuilderSlice: Slice<
+  IRnaBuilderState,
+  RnaBuilderCaseReducers,
+  'rna-builder'
+> = createSlice({
   name: 'rna-builder',
   initialState,
   reducers: {

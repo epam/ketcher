@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { castDraft } from 'immer';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { castDraft, Draft } from 'immer';
+import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import { AdditionalModalProps } from 'components/modal/modalContainer/types';
 import { RootState } from 'state';
 
@@ -45,59 +45,89 @@ export type ModalName =
   | 'confirmationDialog'
   | 'settings';
 
-export const modalSlice = createSlice({
-  name: 'modal',
-  initialState,
-  reducers: {
-    openModal: (
-      state,
-      action: PayloadAction<
-        ModalName | { name: ModalName; additionalProps: AdditionalModalProps }
-      >,
-    ) => {
-      if (typeof action.payload === 'string') {
-        state.name = action.payload;
-      } else {
-        state.name = action.payload.name;
-        state.additionalProps = castDraft(action.payload.additionalProps);
-      }
+// Explicit reducer signatures keep the exported slice's type nameable:
+// letting TS infer `Draft<ModalState>` here (which recurses into
+// `AdditionalModalProps`'s class instances) makes the declaration emitter
+// try to print immer's internal, unexported `WritableNonArrayDraft` type.
+type ModalCaseReducers = {
+  openModal: (
+    state: Draft<ModalState>,
+    action: PayloadAction<
+      ModalName | { name: ModalName; additionalProps: AdditionalModalProps }
+    >,
+  ) => void;
+  closeModal: (state: Draft<ModalState>) => void;
+  openErrorTooltip: (
+    state: Draft<ModalState>,
+    action: PayloadAction<string>,
+  ) => void;
+  closeErrorTooltip: (
+    state: Draft<ModalState>,
+    action: PayloadAction<string | undefined>,
+  ) => void;
+  openErrorModal: (
+    state: Draft<ModalState>,
+    action: PayloadAction<
+      string | { errorMessage: string; errorTitle: string }
+    >,
+  ) => void;
+  closeErrorModal: (state: Draft<ModalState>) => void;
+};
 
-      state.isOpen = true;
+export const modalSlice: Slice<ModalState, ModalCaseReducers, 'modal'> =
+  createSlice({
+    name: 'modal',
+    initialState,
+    reducers: {
+      openModal: (
+        state,
+        action: PayloadAction<
+          ModalName | { name: ModalName; additionalProps: AdditionalModalProps }
+        >,
+      ) => {
+        if (typeof action.payload === 'string') {
+          state.name = action.payload;
+        } else {
+          state.name = action.payload.name;
+          state.additionalProps = castDraft(action.payload.additionalProps);
+        }
+
+        state.isOpen = true;
+      },
+      closeModal: (state) => {
+        state.name = null;
+        state.isOpen = false;
+        state.additionalProps = null;
+      },
+      openErrorTooltip: (state, action: PayloadAction<string>) => {
+        if (!state.errorTooltips.includes(action.payload)) {
+          state.errorTooltips.push(action.payload);
+        }
+      },
+      closeErrorTooltip: (state, action: PayloadAction<string | undefined>) => {
+        state.errorTooltips = action.payload
+          ? state.errorTooltips.filter((text) => text !== action.payload)
+          : [];
+      },
+      openErrorModal: (
+        state,
+        action: PayloadAction<
+          string | { errorMessage: string; errorTitle: string }
+        >,
+      ) => {
+        if (typeof action.payload === 'string') {
+          state.errorModalText = action.payload;
+        } else {
+          const { errorMessage, errorTitle } = action.payload;
+          state.errorModalText = errorMessage;
+          state.errorModalTitle = errorTitle;
+        }
+      },
+      closeErrorModal: (state) => {
+        state.errorModalText = '';
+      },
     },
-    closeModal: (state) => {
-      state.name = null;
-      state.isOpen = false;
-      state.additionalProps = null;
-    },
-    openErrorTooltip: (state, action: PayloadAction<string>) => {
-      if (!state.errorTooltips.includes(action.payload)) {
-        state.errorTooltips.push(action.payload);
-      }
-    },
-    closeErrorTooltip: (state, action: PayloadAction<string | undefined>) => {
-      state.errorTooltips = action.payload
-        ? state.errorTooltips.filter((text) => text !== action.payload)
-        : [];
-    },
-    openErrorModal: (
-      state,
-      action: PayloadAction<
-        string | { errorMessage: string; errorTitle: string }
-      >,
-    ) => {
-      if (typeof action.payload === 'string') {
-        state.errorModalText = action.payload;
-      } else {
-        const { errorMessage, errorTitle } = action.payload;
-        state.errorModalText = errorMessage;
-        state.errorModalTitle = errorTitle;
-      }
-    },
-    closeErrorModal: (state) => {
-      state.errorModalText = '';
-    },
-  },
-});
+  });
 
 export const {
   openModal,

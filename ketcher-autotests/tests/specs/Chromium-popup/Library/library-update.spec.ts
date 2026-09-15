@@ -306,7 +306,7 @@ test('Case 13: Update Library item with compound that contains MOLv3000 file wit
   const sdfFile =
     _Phosphate1Body +
     _aliasHELM +
-    '\\/' +
+    String.raw`\/` +
     _betweenEntries +
     _idtAliases +
     'base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosphate1_ep5/,internal=/phosphate1_internal/' +
@@ -365,7 +365,7 @@ test('Case 15: Update Library item with compound that contains MOLv3000 file wit
   const sdfFile =
     _Phosphate1Body +
     _idtAliases +
-    'base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosph\\//ate1_ep5/,internal=/phosphate1_internal/' +
+    String.raw`base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosph\//ate1_ep5/,internal=/phosphate1_internal/` +
     _betweenEntries +
     _endToken;
 
@@ -394,7 +394,7 @@ test('Case 16: Update Library item with compound that contains MOLv3000 file wit
   const sdfFile =
     _Phosphate1Body +
     _idtAliases +
-    'base=_phosphate1IDT,ep3=/phospha\\//te1_ep3/,ep5=/phosphate1_ep5/,internal=/phosphate1_internal/' +
+    String.raw`base=_phosphate1IDT,ep3=/phospha\//te1_ep3/,ep5=/phosphate1_ep5/,internal=/phosphate1_internal/` +
     _betweenEntries +
     _endToken;
 
@@ -423,7 +423,7 @@ test('Case 17: Update Library item with compound that contains MOLv3000 file wit
   const sdfFile =
     _Phosphate1Body +
     _idtAliases +
-    'base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosphate1_ep5/,internal=/phospha\\//te1_internal/' +
+    String.raw`base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosphate1_ep5/,internal=/phospha\//te1_internal/` +
     _betweenEntries +
     _endToken;
 
@@ -731,7 +731,7 @@ test('Case 27: Update Library item with compound that contains MOLv3000 file wit
     'DNA' +
     _betweenEntries +
     _groupName +
-    'InproperCharacters\\//' +
+    String.raw`InproperCharacters\//` +
     _betweenEntries +
     _endToken;
 

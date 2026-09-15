@@ -203,9 +203,9 @@ export class AttachmentPoint {
     const rotation = angleDegrees + 90;
     const halfWidth = 8;
 
-    const areaHeight = Math.sqrt(
-      (monomerCenter.x - attachmentPointCenter.x) ** 2 +
-        (monomerCenter.y - attachmentPointCenter.y) ** 2,
+    const areaHeight = Math.hypot(
+      monomerCenter.x - attachmentPointCenter.x,
+      monomerCenter.y - attachmentPointCenter.y,
     );
 
     const points: Coordinates[] = [

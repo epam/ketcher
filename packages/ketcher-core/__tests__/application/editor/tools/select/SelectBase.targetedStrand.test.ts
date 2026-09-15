@@ -204,4 +204,55 @@ describe('SelectBase.mousedownEntity targeted strand recording', () => {
     // state: only sense monomers of this chain got selected.
     expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
   });
+
+  describe('destroy()', () => {
+    // Editor.selectTool assigns the new tool to `this.tool` *before* calling
+    // the old tool's destroy(), and `selectedTool` returns `this.tool` -- so
+    // by the time the old SelectBase's destroy() runs, `selectedTool.name`
+    // already reflects the tool being switched to. Mimic that here rather
+    // than driving a real tool switch, which would need a working eraser
+    // tool wired up.
+    const stubSelectedToolName = (name: string) => {
+      Object.defineProperty(editor, 'selectedTool', {
+        configurable: true,
+        get: () => ({ name }),
+      });
+    };
+
+    it('preserves the record when destroyed while switching to the eraser tool, matching the preserved selection', () => {
+      const { senseRenderers } = buildTwoPositionDuplex(editor);
+
+      selectTool.exposedMousedownEntity(senseRenderers[0]);
+      expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
+      expect(
+        editor.drawingEntitiesManager.selectedEntitiesArr.length,
+      ).toBeGreaterThan(0);
+
+      stubSelectedToolName('eraser-tool');
+      selectTool.destroy();
+
+      // The eraser-tool exception keeps the selection alive; the record
+      // describing that selection must stay alive with it.
+      expect(
+        editor.drawingEntitiesManager.selectedEntitiesArr.length,
+      ).toBeGreaterThan(0);
+      expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
+    });
+
+    it('clears the record when destroyed while switching to a non-eraser tool, matching the cleared selection', () => {
+      const { senseRenderers } = buildTwoPositionDuplex(editor);
+
+      selectTool.exposedMousedownEntity(senseRenderers[0]);
+      expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
+
+      stubSelectedToolName('some-other-tool');
+      selectTool.destroy();
+
+      expect(editor.drawingEntitiesManager.selectedEntitiesArr).toHaveLength(0);
+      // No explicit record remains, so the resolver derives from (now
+      // empty) selection state: neither row is selected, so it falls back
+      // to sense.
+      expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
+    });
+  });
 });

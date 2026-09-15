@@ -1442,13 +1442,15 @@ abstract class SelectBase implements BaseTool {
       SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
 
       this.editor.renderersContainer.update(modelChanges);
-    }
 
-    // The select tool is being torn down (tool switch, or the constructor's
-    // own initial call). Any record left over belongs to a gesture that
-    // will never resume, so clear it regardless of the eraser-tool
-    // exception above.
-    SequenceRenderer.resetTargetedStrand();
+      // The record's lifetime must match the selection it describes: this
+      // branch is the one that clears selection, so it's the one that
+      // clears the record. Switching to the eraser tool deliberately keeps
+      // selection alive (see the `if` above), so it must keep the record
+      // alive too -- otherwise the resolver would fall back to deriving
+      // from that still-selected duplex and answer "both".
+      SequenceRenderer.resetTargetedStrand();
+    }
   }
 
   public stopMovement() {

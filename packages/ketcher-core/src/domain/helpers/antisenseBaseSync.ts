@@ -30,6 +30,17 @@ export const BASE_MODIFICATION_DISABLED_IN_SYNC_MODE =
   'Modification of bases is disabled in sync mode when both the sense and antisense strands are selected. Go to non-sync mode for base modification.';
 
 /**
+ * The message shown when a preset is dropped onto a selection that spans
+ * both strands of a duplex (epam/ketcher#6595, task 7). Preset replacement
+ * on a duplex is out of scope; this message only makes the existing refusal
+ * visible instead of silent. Do not reuse or reword
+ * BASE_MODIFICATION_DISABLED_IN_SYNC_MODE -- it describes a different
+ * refusal (base modification, not preset replacement).
+ */
+export const PRESET_REPLACEMENT_UNSUPPORTED_ON_DUPLEX =
+  'Replacing a selection on a double-stranded sequence with a preset is not supported.';
+
+/**
  * Follows the existing convention in Nucleoside, Nucleotide and the sequence
  * item renderers: deoxyribose is recognized by an exact label match. Modified
  * DNA sugars are therefore not recognized, which is a documented limitation.

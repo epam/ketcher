@@ -57,6 +57,7 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMonomer';
 import {
   BASE_MODIFICATION_DISABLED_IN_SYNC_MODE,
+  PRESET_REPLACEMENT_UNSUPPORTED_ON_DUPLEX,
   createMirroredBaseCommand,
   getHydrogenBondedPartner,
   getLibraryItemMonomerClass,
@@ -3056,6 +3057,8 @@ export class SequenceMode extends BaseMode {
 
     if (selections.length > 0) {
       if (this.isSelectionsContainAntisenseChains(selections)) {
+        editor.events.error.dispatch(PRESET_REPLACEMENT_UNSUPPORTED_ON_DUPLEX);
+
         return;
       }
 

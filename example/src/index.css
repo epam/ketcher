@@ -1,6 +1,15 @@
 /* stylelint-disable-next-line import-notation */
 @import 'normalize.css';
 
+button,
+input,
+optgroup,
+select,
+textarea {
+    line-height: normal;
+    font-size: revert;
+}
+
 body {
     margin: 0;
     padding: 0;

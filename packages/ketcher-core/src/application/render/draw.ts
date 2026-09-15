@@ -614,7 +614,7 @@ function arrowFailed(
 
   const path: string[] = [];
 
-  // Arrow with arrowhead
+  // Arrow with arrowhead and failed sign lines
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y)}` +
       `L${toFixed(endX)},${toFixed(start.y)}` +
@@ -628,20 +628,12 @@ function arrowFailed(
         start.y - arrowHeadWidth,
       )}` +
       `L${toFixed(endX)},${toFixed(start.y)}Z`,
-  );
-
-  // Failed sign line 1
-  path.push(
     `M${toFixed(arrowCenter + failSignWidth)},${toFixed(
       start.y + failSignWidth,
     )}` +
       `L${toFixed(arrowCenter - failSignWidth)},${toFixed(
         start.y - failSignWidth,
       )}`,
-  );
-
-  // Failed sign line 2
-  path.push(
     `M${toFixed(arrowCenter + failSignWidth)},${toFixed(
       start.y - failSignWidth,
     )}` +
@@ -676,7 +668,7 @@ function arrowRetrosynthetic(
 
   const path: string[] = [];
 
-  // First arrow and arrowhead
+  // First and second arrows with arrowheads
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -684,10 +676,6 @@ function arrowRetrosynthetic(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
       `L${toFixed(endX + arrowHeadLength)},${toFixed(start.y)}`,
-  );
-
-  // Second arrow and arrowhead
-  path.push(
     `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(endX - arrowHeadLength)},${toFixed(
@@ -761,7 +749,7 @@ function arrowEquilibriumFilledHalfBow(
 
   const path: string[] = [];
 
-  // top arrow
+  // top and bottom arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -771,10 +759,6 @@ function arrowEquilibriumFilledHalfBow(
       `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
         start.y - arrowOffset,
       )}Z`,
-  );
-
-  // bottom arrow
-  path.push(
     `M${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x + arrowHeadLength)},${toFixed(
@@ -811,7 +795,7 @@ function arrowEquilibriumFilledTriangle(
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -822,10 +806,6 @@ function arrowEquilibriumFilledTriangle(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}Z`,
-  );
-
-  // Second arrow
-  path.push(
     `M${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x + arrowHeadLength)},${toFixed(
@@ -863,17 +843,13 @@ function arrowEquilibriumOpenAngle(
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth - arrowOffset,
       )}`,
-  );
-
-  // Second arrow
-  path.push(
     `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
       `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
@@ -910,7 +886,7 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second (unbalanced) arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -920,10 +896,6 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
       `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
         start.y - arrowOffset,
       )}Z`,
-  );
-
-  // Second (Unbalanced) arrow
-  path.push(
     `M${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x + unbalanceVal + arrowHeadLength)},${toFixed(
@@ -961,17 +933,13 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second (unbalanced) arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth - arrowOffset,
       )}`,
-  );
-
-  // Second (Unbalanced) arrow
-  path.push(
     `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
@@ -1015,7 +983,7 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second (unbalanced) arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -1025,10 +993,6 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
       `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
         start.y - arrowOffset,
       )}Z`,
-  );
-
-  // Second (Unbalanced) arrow
-  path.push(
     `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
@@ -1067,7 +1031,7 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second (unbalanced) arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -1075,10 +1039,6 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
       `L${toFixed(endX - arrowHeadLength)},${toFixed(start.y - arrowOffset)}Z`,
-  );
-
-  // Second (Unbalanced) arrow
-  path.push(
     `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +

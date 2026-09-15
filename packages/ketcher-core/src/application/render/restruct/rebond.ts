@@ -1511,10 +1511,12 @@ function getReactingCenterPath(
 
   switch (bond.b.reactingCenterStatus) {
     case Bond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
-      p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz));
-      p.push(c.addScaled(n, acrossSz).addScaled(d, -tiltTan * acrossSz));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, tiltTan * acrossSz));
+      p.push(
+        c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz),
+        c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz),
+        c.addScaled(n, acrossSz).addScaled(d, -tiltTan * acrossSz),
+        c.addScaled(n, -acrossSz).addScaled(d, tiltTan * acrossSz),
+      );
       break;
     case Bond.PATTERN.REACTING_CENTER.CENTER: // #
       p.push(
@@ -1522,48 +1524,45 @@ function getReactingCenterPath(
           .addScaled(n, acrossSz)
           .addScaled(d, tiltTan * acrossSz)
           .addScaled(d, alongIntRc),
-      );
-      p.push(
         c
           .addScaled(n, -acrossSz)
           .addScaled(d, -tiltTan * acrossSz)
           .addScaled(d, alongIntRc),
-      );
-      p.push(
         c
           .addScaled(n, acrossSz)
           .addScaled(d, tiltTan * acrossSz)
           .addScaled(d, -alongIntRc),
-      );
-      p.push(
         c
           .addScaled(n, -acrossSz)
           .addScaled(d, -tiltTan * acrossSz)
           .addScaled(d, -alongIntRc),
+        c.addScaled(d, alongSz).addScaled(n, acrossInt),
+        c.addScaled(d, -alongSz).addScaled(n, acrossInt),
+        c.addScaled(d, alongSz).addScaled(n, -acrossInt),
+        c.addScaled(d, -alongSz).addScaled(n, -acrossInt),
       );
-      p.push(c.addScaled(d, alongSz).addScaled(n, acrossInt));
-      p.push(c.addScaled(d, -alongSz).addScaled(n, acrossInt));
-      p.push(c.addScaled(d, alongSz).addScaled(n, -acrossInt));
-      p.push(c.addScaled(d, -alongSz).addScaled(n, -acrossInt));
       break;
     // case Bond.PATTERN.REACTING_CENTER.UNCHANGED: draw a circle
     case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN:
-      p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
-      p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
+      p.push(
+        c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken),
+        c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken),
+        c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken),
+        c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken),
+      );
       break;
     case Bond.PATTERN.REACTING_CENTER.ORDER_CHANGED:
-      p.push(c.addScaled(n, acrossSz));
-      p.push(c.addScaled(n, -acrossSz));
+      p.push(c.addScaled(n, acrossSz), c.addScaled(n, -acrossSz));
       break;
     case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED:
-      p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
-      p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
-      p.push(c.addScaled(n, acrossSz));
-      p.push(c.addScaled(n, -acrossSz));
+      p.push(
+        c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken),
+        c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken),
+        c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken),
+        c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken),
+        c.addScaled(n, acrossSz),
+        c.addScaled(n, -acrossSz),
+      );
       break;
     default:
       return null;

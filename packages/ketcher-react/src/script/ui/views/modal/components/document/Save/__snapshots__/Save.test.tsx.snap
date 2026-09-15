@@ -10,13 +10,14 @@ exports[`Save Dialog should be rendered correctly should render opened file form
       aria-hidden="true"
     >
       <dialog
-        class="dialog dialog"
+        class="dialog dialog draggable"
         data-testid="info-modal-window"
         open=""
+        style="transform: translate(512px, 384px); left: 0px; top: 0px; margin: 0px;"
         tabindex="-1"
       >
         <header
-          class="header withDivider"
+          class="header withDivider draggableHeader"
         >
           <span>
             Save Structure
@@ -421,13 +422,14 @@ exports[`Save Dialog should be rendered correctly should render opened file form
     aria-hidden="true"
   >
     <dialog
-      class="dialog dialog"
+      class="dialog dialog draggable"
       data-testid="info-modal-window"
       open=""
+      style="transform: translate(512px, 384px); left: 0px; top: 0px; margin: 0px;"
       tabindex="-1"
     >
       <header
-        class="header withDivider"
+        class="header withDivider draggableHeader"
       >
         <span>
           Save Structure

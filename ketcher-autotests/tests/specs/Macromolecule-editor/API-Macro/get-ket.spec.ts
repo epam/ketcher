@@ -126,7 +126,7 @@ test.describe('getKet', () => {
               [key: string]: () => Promise<any>;
             };
             if (typeof ketcher[fmt] !== 'function') {
-              throw new Error(`${fmt} is not a function`);
+              throw new TypeError(`${fmt} is not a function`);
             }
             return ketcher[fmt]();
           }, format);

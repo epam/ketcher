@@ -276,7 +276,7 @@ test('5. Switching from Micro mode to Snake and back to Micromolecules mode does
     Test task: https://github.com/epam/ketcher/issues/6935
     Description: Check that if the user enters the snake layout mode, but does not make any changes
                  to the structure before entering some other mode (flex, sequence, small molecules)
-                 the snake layout not be retained
+                 the snake layout has been changed
     Case: 
         1. Go to Macro - Snake mode
         2. Go to Micro mode
@@ -441,7 +441,7 @@ test('10. Switching from Flex to Sequence, Snake and back to Flex does not chang
   });
 });
 
-test('11. Switching from Micro to Snake, Sequence and to Flex does not change layout', async ({
+test('11. Switching from Micro to Snake, Sequence and to Flex changes layout', async ({
   SnakeCanvas: _,
 }) => {
   /*
@@ -453,7 +453,7 @@ test('11. Switching from Micro to Snake, Sequence and to Flex does not change la
         1. Switch to Snake mode to make if default
         2. Go to Micro mode - Load from KET custom monomer layout configuration
         3. Switch to Macro-Snake mode, Sequence mode and back to Flex
-        4. Take screenshot to withness layour remain unchanged
+        4. Take screenshot to withness layour has been changed
     */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(
@@ -567,7 +567,7 @@ test(
   },
 );
 
-test('15. Switching from Micro to Snake, Sequence and to Micro does not change layout', async ({
+test('15. Switching from Micro to Snake, Sequence and to Micro changes layout', async ({
   SnakeCanvas: _,
 }) => {
   /*
@@ -579,7 +579,7 @@ test('15. Switching from Micro to Snake, Sequence and to Micro does not change l
         1. Switch to Snake mode to make if default
         2. Go to Micro mode - Load from KET custom monomer layout configuration
         3. Switch to Macro-Snake mode, Sequence mode and Micro mode
-        4. Take screenshot to withness layour remain unchanged
+        4. Take screenshot to withness layour has been changed by Snake
     */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(

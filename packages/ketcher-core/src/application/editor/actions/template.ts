@@ -40,7 +40,7 @@ export type { EditorTemplate, PasteItems } from './template.types';
 
 const benzeneMoleculeName = 'Benzene';
 const cyclopentadieneMoleculeName = 'Cyclopentadiene';
-const benzeneDoubleBondIndexes = [2, 4];
+const benzeneDoubleBondIndexes = new Set([2, 4]);
 
 export function fromTemplateOnCanvas(
   restruct: ReStruct,
@@ -429,7 +429,7 @@ function placeTemplateBonds(
         const isCyclopentadieneTemplate =
           tmpl.name === cyclopentadieneMoleculeName;
         if (isBenzeneTemplate) {
-          const newBondType = benzeneDoubleBondIndexes.includes(tBondIndex)
+          const newBondType = benzeneDoubleBondIndexes.has(tBondIndex)
             ? Bond.PATTERN.TYPE.DOUBLE
             : Bond.PATTERN.TYPE.SINGLE;
           action.addOp(
@@ -443,11 +443,10 @@ function placeTemplateBonds(
           );
           const bondBegin = struct.bonds.get(beginBondIds[0]) as Bond;
           const bondEnd = struct.bonds.get(endBondIds[0]) as Bond;
-          const newBondType = Bond.getCyclopentadieneDoubleBondIndexes(
-            bond,
-            bondBegin,
-            bondEnd,
-          ).includes(tBondIndex)
+          const cyclopentadieneDoubleBondIndexes = new Set(
+            Bond.getCyclopentadieneDoubleBondIndexes(bond, bondBegin, bondEnd),
+          );
+          const newBondType = cyclopentadieneDoubleBondIndexes.has(tBondIndex)
             ? Bond.PATTERN.TYPE.DOUBLE
             : Bond.PATTERN.TYPE.SINGLE;
           action.addOp(

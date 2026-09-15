@@ -173,21 +173,24 @@ export const initTmplsState = {
   tab: 0,
 };
 
-const tmplActions = [
+const tmplActions = new Set([
   'TMPL_INIT',
   'TMPL_SELECT',
   'TMPL_CHANGE_GROUP',
   'TMPL_CHANGE_FILTER',
   'TMPL_CHANGE_TAB',
-];
+]);
 
-const attachActions = ['INIT_ATTACH', 'SET_ATTACH_POINTS', 'SET_TMPL_NAME'];
+const attachActions = new Set([
+  'INIT_ATTACH',
+  'SET_ATTACH_POINTS',
+  'SET_TMPL_NAME',
+]);
 
 function templatesReducer(state = initTmplsState, action) {
-  if (tmplActions.includes(action.type))
-    return { ...state, ...(action.data || {}) };
+  if (tmplActions.has(action.type)) return { ...state, ...(action.data || {}) };
 
-  if (attachActions.includes(action.type)) {
+  if (attachActions.has(action.type)) {
     const attach = { ...state.attach, ...(action.data || {}) };
     return { ...state, attach };
   }

@@ -66,6 +66,7 @@ const StereoLabelMinOpacity = 0.3;
 const DEFAULT_ATOM_COLOR = '#000';
 const DEFAULT_STEREO_COLOR = '#000';
 const MAX_LABEL_LENGTH = 8;
+const monomerAttachmentPointNames = new Set(attachmentPointNames);
 
 export enum ShowHydrogenLabelNames {
   Off = 'Off',
@@ -770,27 +771,20 @@ class ReAtom extends ReObject {
           assignedAttachmentPoints.values(),
         ).reduce(
           (acc, currentPair) => {
-            let attachmentAtomsIds = acc[0];
             const attachmentAtomId = currentPair[0];
-            if (!attachmentAtomsIds.includes(attachmentAtomId)) {
-              attachmentAtomsIds = attachmentAtomsIds.concat(attachmentAtomId);
-            }
+            acc[0].add(attachmentAtomId);
 
-            let leavingAtomsIds = acc[1];
             const leavingAtomId = currentPair[1];
-            if (!leavingAtomsIds.includes(leavingAtomId)) {
-              leavingAtomsIds = leavingAtomsIds.concat(leavingAtomId);
-            }
-
-            return [attachmentAtomsIds, leavingAtomsIds];
+            acc[1].add(leavingAtomId);
+            return acc;
           },
-          [[], []] as [number[], number[]],
+          [new Set<number>(), new Set<number>()] as [Set<number>, Set<number>],
         );
 
         let style: RenderOptionStyles | undefined;
-        if (attachmentAtoms.includes(aid)) {
+        if (attachmentAtoms.has(aid)) {
           style = { fill: 'none', stroke: '#4da3f8', 'stroke-width': '2px' };
-        } else if (leavingGroups.includes(aid)) {
+        } else if (leavingGroups.has(aid)) {
           style = {
             fill: '#fff8c5',
             stroke: '#f8dc8f',
@@ -1632,7 +1626,7 @@ function buildLabel(
   }
 
   const shouldStyleLabel = usageInMacromolecule !== undefined;
-  const isMonomerAttachmentPoint = attachmentPointNames.includes(text);
+  const isMonomerAttachmentPoint = monomerAttachmentPointNames.has(text);
   const isMonomerAttachmentPointSelected =
     currentlySelectedMonomerAttachmentPoint === text;
   const isMonomerAttachmentPointUsed =
@@ -2157,11 +2151,11 @@ type AtomCustomQueryPattern = {
   format: (value: string) => string;
 };
 
-const EXCLUDED_QUERY_ATTRIBUTES: readonly AtomCustomQueryPropertyName[] = [
+const EXCLUDED_QUERY_ATTRIBUTES = new Set<AtomCustomQueryPropertyName>([
   'charge',
   'explicitValence',
   'isotope',
-];
+]);
 
 const atomCustomQueryPatterns: readonly AtomCustomQueryPattern[] = [
   {
@@ -2289,7 +2283,7 @@ export function getAtomCustomQuery(
   for (const { propertyName, getValue, format } of atomCustomQueryPatterns) {
     if (
       includeOnlyQueryAttributes &&
-      EXCLUDED_QUERY_ATTRIBUTES.includes(propertyName)
+      EXCLUDED_QUERY_ATTRIBUTES.has(propertyName)
     ) {
       continue;
     }

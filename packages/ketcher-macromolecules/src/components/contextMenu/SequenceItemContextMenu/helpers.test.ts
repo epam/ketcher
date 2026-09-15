@@ -842,8 +842,9 @@ describe('SequenceItemContextMenu helpers', () => {
       [{ node: nucleotide, nodeIndexOverall: 0, hasR1Connection: false }],
     ];
 
-    it('is true when both hydrogen-bonded, eligible bases are selected and sync editing is on', () => {
+    it('is true when both hydrogen-bonded, eligible bases are selected, sync editing is on, and the record is "both"', () => {
       setSyncEditMode(true);
+      setTargetedStrand('both');
       const sense = createConnectedBase({ label: 'A', selected: true });
       const antisense = createConnectedBase({ label: 'T', selected: true });
       linkHydrogenBond(sense.base, antisense.base);
@@ -857,8 +858,38 @@ describe('SequenceItemContextMenu helpers', () => {
       ).toBe(true);
     });
 
+    // Task 6: on a duplex, selection is column-based, so both bases of a
+    // pair are selected even when the gesture targeted only one strand.
+    // `isInSelectedAntisensePair` must be false whenever the record is not
+    // 'both', regardless of that selection state -- this is the same
+    // selection (both bases selected, hydrogen bonded, eligible) as the
+    // "is true" case above, with only the record changed.
+    //
+    // Only the SENSE record is exercised here, not ANTISENSE: `selectionFor`
+    // builds a bare NodeSelection with no `twoStrandedNode`, so
+    // `filterSelectionsToTargetedStrand` (helpers.ts) classifies it as SENSE
+    // by default and would filter it out entirely for an ANTISENSE record,
+    // leaving `selectedSequenceLabeledNodes` empty rather than exercising
+    // `isInSelectedAntisensePair` at all.
+    it('is false when the record is SENSE, even though both hydrogen-bonded, eligible bases are selected and sync editing is on', () => {
+      setSyncEditMode(true);
+      setTargetedStrand(STRAND_TYPE.SENSE);
+      const sense = createConnectedBase({ label: 'A', selected: true });
+      const antisense = createConnectedBase({ label: 'T', selected: true });
+      linkHydrogenBond(sense.base, antisense.base);
+
+      const result = generateSequenceContextMenuProps(
+        selectionFor(sense.nucleotide) as unknown as NodesSelection,
+      );
+
+      expect(
+        result?.selectedSequenceLabeledNodes[0].isInSelectedAntisensePair,
+      ).toBe(false);
+    });
+
     it('is false when only the sense side of the pair is selected', () => {
       setSyncEditMode(true);
+      setTargetedStrand('both');
       const sense = createConnectedBase({ label: 'A', selected: true });
       const antisense = createConnectedBase({ label: 'T', selected: false });
       linkHydrogenBond(sense.base, antisense.base);
@@ -874,6 +905,7 @@ describe('SequenceItemContextMenu helpers', () => {
 
     it('is false when both bases are selected but are not hydrogen bonded to each other', () => {
       setSyncEditMode(true);
+      setTargetedStrand('both');
       const sense = createConnectedBase({ label: 'A', selected: true });
       // Deliberately not linked with linkHydrogenBond.
       createConnectedBase({ label: 'T', selected: true });
@@ -889,6 +921,7 @@ describe('SequenceItemContextMenu helpers', () => {
 
     it('is false when the partner base is hydrogen bonded but its sugar has no backbone connection', () => {
       setSyncEditMode(true);
+      setTargetedStrand('both');
       const sense = createConnectedBase({ label: 'A', selected: true });
       const antisense = createConnectedBase({
         label: 'T',
@@ -908,6 +941,7 @@ describe('SequenceItemContextMenu helpers', () => {
 
     it('is false when both strands are selected but sync editing is off', () => {
       setSyncEditMode(false);
+      setTargetedStrand('both');
       const sense = createConnectedBase({ label: 'A', selected: true });
       const antisense = createConnectedBase({ label: 'T', selected: true });
       linkHydrogenBond(sense.base, antisense.base);

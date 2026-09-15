@@ -137,14 +137,25 @@ export function isBaseEligibleForDuplexSync(base?: BaseMonomer): boolean {
 }
 
 /**
- * True when this base and the base it is hydrogen bonded to are BOTH selected
- * and both eligible. Rule 1.1 skips propagation for such a pair, and rule 1.3
- * blocks base modification entirely when one exists in the selection.
+ * True when the gesture targeted BOTH strands (`bothStrandsTargeted`) and
+ * this base and the base it is hydrogen bonded to are both selected and both
+ * eligible. Rule 1.3 blocks base modification entirely when this is true for
+ * a base in the selection.
+ *
+ * `base.selected && partner.selected` alone is NOT enough: selection on a
+ * duplex is column-based, so a gesture that targets only one strand still
+ * leaves the partner selected in every touched column. `bothStrandsTargeted`
+ * -- derived by the caller from `SequenceRenderer.targetedStrand` -- is what
+ * actually distinguishes "the user selected both strands" from "the partner
+ * happens to be selected because selection works that way".
  */
-export function isSelectedAntisensePair(base?: BaseMonomer): boolean {
+export function isSelectedAntisensePair(
+  base: BaseMonomer | undefined,
+  bothStrandsTargeted: boolean,
+): boolean {
   const partner = getHydrogenBondedPartner(base);
 
-  if (!base || !partner) {
+  if (!base || !partner || !bothStrandsTargeted) {
     return false;
   }
 
@@ -163,7 +174,7 @@ export function isSelectedAntisensePair(base?: BaseMonomer): boolean {
  * always mirrors from whichever base was actually edited to its partner.
  *
  * Returns undefined when there is nothing to mirror (sync mode is off, there
- * is no eligible partner, the partner is itself selected, or the natural
+ * is no eligible partner, both strands were targeted, or the natural
  * analogue did not change), so the caller can tell "no-op" apart from a real
  * command to merge into its own.
  */
@@ -181,6 +192,18 @@ export function createMirroredBaseCommand(params: {
    * partner.
    */
   isSyncEditMode: boolean;
+  /**
+   * Whether the selection gesture targeted BOTH strands, derived by the
+   * caller from `SequenceRenderer.targetedStrand`. Rule 1.1: when the
+   * gesture targeted only one strand, the paired base gets its own mirrored
+   * edit from this function and must not be skipped just because it happens
+   * to be selected too -- selection on a duplex is column-based, so the
+   * partner is selected in every touched column regardless of which strand
+   * the user actually meant to edit. Propagation is skipped only when the
+   * gesture targeted both strands, in which case the partner is being edited
+   * in its own right by the caller's own loop over the selection.
+   */
+  bothStrandsTargeted: boolean;
   resolveBaseLibraryItem: (label: string) => MonomerOrAmbiguousType | undefined;
   /**
    * The hydrogen-bonded partner of `editedBase`, captured by the caller
@@ -218,6 +241,7 @@ export function createMirroredBaseCommand(params: {
     previousNaturalAnalogue,
     newBaseMonomerItem,
     isSyncEditMode,
+    bothStrandsTargeted,
     resolveBaseLibraryItem,
     partner: partnerCapturedBeforeEdit,
     wasEditedBaseEligible,
@@ -241,9 +265,16 @@ export function createMirroredBaseCommand(params: {
     return undefined;
   }
 
-  // Rule 1.1: the paired base is selected in its own right, so it gets its own
-  // edit and must not be overwritten by this one.
-  if (partner.selected) {
+  // Rule 1.1: when both strands were targeted, the paired base is being
+  // edited in its own right by the caller's own loop over the selection, so
+  // it must not be overwritten by this mirror. `partner.selected` alone
+  // cannot detect this: selection on a duplex is column-based, so the
+  // partner is selected in every touched column regardless of which strand
+  // the gesture actually targeted -- that flaw is why this used to skip
+  // propagation on every duplex edit. `bothStrandsTargeted` is what
+  // distinguishes a real both-strands gesture from an ordinary one-strand
+  // edit on a duplex.
+  if (bothStrandsTargeted) {
     return undefined;
   }
 

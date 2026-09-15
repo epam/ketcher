@@ -57,6 +57,9 @@ const generateLabeledNodes = (
 ): LabeledNodesWithPositionInSequence[] => {
   const labeledNodes: LabeledNodesWithPositionInSequence[] = [];
   const isSyncEditMode = Boolean(provideEditorInstance().mode.isSyncEditMode);
+  // Recorded once for the whole selection: the same value must apply to
+  // every node in this batch, not be re-derived per position.
+  const bothStrandsTargeted = SequenceRenderer.targetedStrand === 'both';
 
   for (const selection of selectionsFlatten) {
     const {
@@ -76,6 +79,7 @@ const generateLabeledNodes = (
         node instanceof Nucleotide || node instanceof Nucleoside
           ? node.rnaBase
           : node?.monomer,
+        bothStrandsTargeted,
       );
 
     if (node instanceof Nucleotide) {

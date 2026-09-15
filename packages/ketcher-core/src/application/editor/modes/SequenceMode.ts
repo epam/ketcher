@@ -409,6 +409,9 @@ export class SequenceMode extends BaseMode {
     const editor = provideEditorInstance();
     const history = EditorHistory.getInstance(editor);
     const modelChanges = new Command();
+    // Recorded once for the whole gesture: the same value must apply to
+    // every node touched by this call, not be re-derived per position.
+    const bothStrandsTargeted = SequenceRenderer.targetedStrand === 'both';
 
     // Update Nucleotides one by one
     for (const labeledNucleoelement of updatedSelection) {
@@ -506,6 +509,7 @@ export class SequenceMode extends BaseMode {
               getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
             partner: partnerBeforeEdit,
             wasEditedBaseEligible,
+            bothStrandsTargeted,
           });
 
           if (mirroredBaseCommand) {
@@ -2372,6 +2376,9 @@ export class SequenceMode extends BaseMode {
     const history = EditorHistory.getInstance(editor);
     const modelChanges = new Command();
 
+    // Recorded once for the whole gesture: the same value must apply to
+    // every node touched by this call, not be re-derived per position.
+    const bothStrandsTargeted = SequenceRenderer.targetedStrand === 'both';
     const isBaseReplacement =
       getLibraryItemMonomerClass(monomerItem) === KetMonomerClass.Base;
     const hasSelectedAntisensePair = selections.some((selectionRange) =>
@@ -2387,7 +2394,7 @@ export class SequenceMode extends BaseMode {
             ? nodeToReplace.rnaBase
             : undefined;
 
-        return isSelectedAntisensePair(editedBase);
+        return isSelectedAntisensePair(editedBase, bothStrandsTargeted);
       }),
     );
 
@@ -2470,6 +2477,7 @@ export class SequenceMode extends BaseMode {
               getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
             partner: partnerBeforeEdit,
             wasEditedBaseEligible,
+            bothStrandsTargeted,
           });
 
           if (mirroredBaseCommand) {

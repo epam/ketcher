@@ -365,8 +365,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         0,
       );
 
-      maxHorizontalOffset =
-        maxHorizontalOffset > maxXOffset ? maxHorizontalOffset : maxXOffset;
+      maxHorizontalOffset = Math.max(maxHorizontalOffset, maxXOffset);
 
       if (isLastCell) {
         if (isStraightVerticalConnection) {

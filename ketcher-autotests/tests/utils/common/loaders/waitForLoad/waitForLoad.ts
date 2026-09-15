@@ -38,10 +38,10 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
         state: 'visible',
         timeout: 5000,
       });
+      return;
     } catch {
       await OpenStructureDialog(page).window.waitFor({
         state: 'detached',
-        timeout: 5000,
       });
     }
   }

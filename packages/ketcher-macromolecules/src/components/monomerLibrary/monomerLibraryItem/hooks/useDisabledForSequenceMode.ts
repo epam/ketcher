@@ -22,6 +22,10 @@ const useDisabledForSequenceMode = (
   useEffect(() => {
     if (!isSequenceEditInRNABuilderMode) return setIsDisabled(false);
 
+    // Ambiguous monomers don't have MonomerCaps; they are handled separately and
+    // must not be disabled by this hook (they lack MonomerCaps by design).
+    if (!item?.props?.MonomerCaps) return setIsDisabled(false);
+
     if (groupName === MonomerGroups.BASES) {
       setIsDisabled(!item?.props?.MonomerCaps?.R1);
     } else if (groupName === MonomerGroups.PHOSPHATES) {
@@ -47,6 +51,7 @@ const useDisabledForSequenceMode = (
     groupName,
     isSequenceEditInRNABuilderMode,
     isSequenceFirstsOnlyNucleoelementsSelected,
+    item?.props?.MonomerCaps,
     item?.props?.MonomerCaps?.R1,
     item?.props?.MonomerCaps?.R2,
     item?.props?.MonomerCaps?.R3,

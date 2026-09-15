@@ -341,7 +341,7 @@ export class Atom extends BaseMicromoleculeEntity {
   static getAttrHash(atom: Atom) {
     const attrs: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
     for (const attr in Atom.attrlist) {
-      if (typeof atom[attr] !== 'undefined') attrs[attr] = atom[attr];
+      if (atom[attr] !== undefined) attrs[attr] = atom[attr];
     }
     return attrs;
   }
@@ -1122,7 +1122,7 @@ export function radicalElectrons(radical: unknown) {
 }
 
 function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
-  return typeof value !== 'undefined' ? value : defaultValue;
+  return value !== undefined ? value : defaultValue;
 }
 
 function isCorrectPseudo(label) {

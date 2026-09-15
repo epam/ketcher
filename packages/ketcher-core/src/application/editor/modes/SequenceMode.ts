@@ -110,33 +110,47 @@ interface PreservedSideChainConnection {
   secondMonomerAttachmentPointName: AttachmentPointName;
 }
 
-// The `twoStrandedNode` parameter is no longer read: the strand now comes
-// from the per-gesture record (or its selection-state-derived fallback),
-// not from any one node's own selection state. It stays in the signature
-// because every call site still resolves a strand per selected position
-// (see splitSelectionRangeByStrand's doc comment for why per-position
-// resolution is kept even though, for a single-strand record, every
-// position in a range now answers the same way).
 function getSelectedStrandType(
-  // Prefixed with `_`: unread, kept only so every call site still passes
-  // one selected position's node (see the comment above).
-  _twoStrandedNode: ITwoStrandedChainItem,
+  twoStrandedNode: ITwoStrandedChainItem,
 ): STRAND_TYPE {
   const targetedStrand = SequenceRenderer.targetedStrand;
 
-  // The record is tri-state ('both' included) because a selection can span
-  // both strands, but this function's callers each resolve one strand at a
-  // time and must get a single answer back. A 'both' record is supposed to
-  // be unreachable here: the block on base replacement over a mixed
-  // selection in replaceSelectionsWithMonomer (hasSelectedAntisensePair +
-  // isSyncEditMode) is meant to stop execution before any per-node strand
-  // resolution happens. If that guard ever regresses, fall back to today's
-  // behavior (SENSE) rather than throwing out of a mouse handler.
-  if (targetedStrand === 'both') {
-    return STRAND_TYPE.SENSE;
+  // A single-strand answer (SENSE or ANTISENSE) is honored uniformly for
+  // every position, whether it came from an explicit per-gesture record
+  // (a drag, shift-arrow, or click that targeted one row) or from
+  // SequenceRenderer.targetedStrand's own selection-derived fallback used
+  // when there is no record at all. In the fallback case it can only be
+  // single-strand because that is the only strand selected ANYWHERE in
+  // the current selection, so every selected position necessarily agrees
+  // with it already -- resolving per position here would just recompute
+  // the same answer node by node.
+  if (targetedStrand !== 'both') {
+    return targetedStrand;
   }
 
-  return targetedStrand;
+  // targetedStrand is 'both' for one of two different reasons, and both
+  // resolve correctly per position from this node's own selection state:
+  //
+  // - No gesture record was written at all, and the selection itself
+  //   spans both strands at different positions -- e.g. a rectangle drag
+  //   (SelectRectangle.onSelectionMove) selects individual monomers by
+  //   bounding box, with no column/strand pairing, and never calls
+  //   SequenceRenderer.setTargetedStrand. On a duplex whose strands don't
+  //   line up column for column (an siRNA overhang), that can select the
+  //   sense node at some positions and the antisense node at others.
+  //   Answering uniformly here (as an earlier version of this function
+  //   did) silently edited never-selected sense nodes while the actually
+  //   selected antisense nodes stood untouched. Per-position resolution
+  //   recovers the real strand touched at each position.
+  // - An explicit 'both' record was written by a gesture that DOES select
+  //   both strands at every touched column (select-all, or shift-combined
+  //   column clicks). There, every position's sense node is selected, so
+  //   resolving per position trivially and correctly answers SENSE
+  //   everywhere -- the same outcome as a hard-coded SENSE default, but
+  //   honestly derived from actual selection state instead.
+  return twoStrandedNode.senseNode?.monomer.selected
+    ? STRAND_TYPE.SENSE
+    : STRAND_TYPE.ANTISENSE;
 }
 
 function getNodeForStrand(

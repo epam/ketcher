@@ -110,12 +110,33 @@ interface PreservedSideChainConnection {
   secondMonomerAttachmentPointName: AttachmentPointName;
 }
 
+// The `twoStrandedNode` parameter is no longer read: the strand now comes
+// from the per-gesture record (or its selection-state-derived fallback),
+// not from any one node's own selection state. It stays in the signature
+// because every call site still resolves a strand per selected position
+// (see splitSelectionRangeByStrand's doc comment for why per-position
+// resolution is kept even though, for a single-strand record, every
+// position in a range now answers the same way).
 function getSelectedStrandType(
-  twoStrandedNode: ITwoStrandedChainItem,
+  // Prefixed with `_`: unread, kept only so every call site still passes
+  // one selected position's node (see the comment above).
+  _twoStrandedNode: ITwoStrandedChainItem,
 ): STRAND_TYPE {
-  return twoStrandedNode.senseNode?.monomer.selected
-    ? STRAND_TYPE.SENSE
-    : STRAND_TYPE.ANTISENSE;
+  const targetedStrand = SequenceRenderer.targetedStrand;
+
+  // The record is tri-state ('both' included) because a selection can span
+  // both strands, but this function's callers each resolve one strand at a
+  // time and must get a single answer back. A 'both' record is supposed to
+  // be unreachable here: the block on base replacement over a mixed
+  // selection in replaceSelectionsWithMonomer (hasSelectedAntisensePair +
+  // isSyncEditMode) is meant to stop execution before any per-node strand
+  // resolution happens. If that guard ever regresses, fall back to today's
+  // behavior (SENSE) rather than throwing out of a mouse handler.
+  if (targetedStrand === 'both') {
+    return STRAND_TYPE.SENSE;
+  }
+
+  return targetedStrand;
 }
 
 function getNodeForStrand(

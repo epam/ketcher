@@ -205,10 +205,12 @@ async function receiveFile({
     ? { method: methodName, format: fileFormat }
     : { method: methodName };
 
-  await page.waitForFunction(() => window.ketcher);
+  await page.waitForFunction(() => globalThis.ketcher);
 
   const file = await page.evaluate(({ method, format }) => {
-    return format ? window.ketcher[method](format) : window.ketcher[method]();
+    return format
+      ? globalThis.ketcher[method](format)
+      : globalThis.ketcher[method]();
   }, pageData);
 
   return file.split('\n');

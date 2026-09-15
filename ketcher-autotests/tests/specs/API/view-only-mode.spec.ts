@@ -71,7 +71,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The application administrator can switch Ketcher into and out of view-only mode at runtime using 
-    the Ketcher API window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: true })) and window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: false }))
+    the Ketcher API globalThis.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: true })) and globalThis.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: false }))
     */
     await enableViewOnlyModeBySetOptions(page);
     await takePageScreenshot(page);
@@ -79,24 +79,24 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takePageScreenshot(page);
   });
 
-  test('Verify that view-only mode is still turned on after two requests in a row window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: true}))', async ({
+  test('Verify that view-only mode is still turned on after two requests in a row globalThis.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: true}))', async ({
     page,
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
-    Description: View-only mode is still turned on after two requests in a row window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: true}))
+    Description: View-only mode is still turned on after two requests in a row globalThis.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: true}))
     */
     await enableViewOnlyModeBySetOptions(page);
     await enableViewOnlyModeBySetOptions(page);
     await takePageScreenshot(page);
   });
 
-  test('Verify that view-only mode is still turned off after two requests in a row window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: false}))', async ({
+  test('Verify that view-only mode is still turned off after two requests in a row globalThis.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: false}))', async ({
     page,
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
-    Description: View-only mode is still turned off after two requests in a row window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: false}))
+    Description: View-only mode is still turned off after two requests in a row globalThis.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: false}))
     */
     await enableViewOnlyModeBySetOptions(page);
     await takePageScreenshot(page);
@@ -105,12 +105,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takePageScreenshot(page);
   });
 
-  test('Get an error in console after sending request with the wrong parameters window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode123: false123}))', async ({
+  test('Get an error in console after sending request with the wrong parameters globalThis.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode123: false123}))', async ({
     page,
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4965
-    Description: Error in console after sending request with the wrong parameters window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode123: false}))
+    Description: Error in console after sending request with the wrong parameters globalThis.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode123: false}))
     */
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
@@ -121,7 +121,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       }
     });
     await page.evaluate(() => {
-      window.ketcher.editor.setOptions(
+      globalThis.ketcher.editor.setOptions(
         JSON.stringify({ viewOnlyMode123: `false123` }),
       );
     });

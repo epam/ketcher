@@ -37,7 +37,7 @@ export async function takeElementScreenshot(
 ) {
   if (options?.hideMonomerPreview) {
     await page.evaluate(() => {
-      window.dispatchEvent(new Event('hidePreview'));
+      globalThis.dispatchEvent(new Event('hidePreview'));
     });
     await MonomerPreviewTooltip(page).waitForBecomeHidden();
   }

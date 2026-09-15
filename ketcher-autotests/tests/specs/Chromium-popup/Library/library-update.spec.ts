@@ -816,7 +816,7 @@ test('Case 29: Update Library item with HELM alias longer than 23 symbols logs a
     '123456789012345678901234' +
     _betweenEntries +
     _endToken;
-  type ConsoleCaptureWindow = typeof window & {
+  type ConsoleCaptureWindow = typeof globalThis & {
     capturedConsoleErrors: string[];
     originalConsoleError: typeof console.error;
     logging?: {
@@ -827,7 +827,7 @@ test('Case 29: Update Library item with HELM alias longer than 23 symbols logs a
   };
 
   await page.evaluate(() => {
-    const testWindow = window as ConsoleCaptureWindow;
+    const testWindow = globalThis as ConsoleCaptureWindow;
 
     testWindow.logging = {
       ...(testWindow.logging ?? {}),
@@ -844,7 +844,7 @@ test('Case 29: Update Library item with HELM alias longer than 23 symbols logs a
 
   const error = await updateMonomersLibrary(page, sdfFile);
   const consoleMessages = await page.evaluate(() => {
-    const testWindow = window as ConsoleCaptureWindow;
+    const testWindow = globalThis as ConsoleCaptureWindow;
 
     console.error = testWindow.originalConsoleError;
     return testWindow.capturedConsoleErrors;

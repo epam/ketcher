@@ -501,13 +501,14 @@ export class ZoomTool implements BaseTool {
     if (structureBbox.width < canvasWrapperSize.width / 2) {
       const scale = canvasWrapperSize.width / 2 / structureBbox.width;
       this.zoomTo(Math.min(scale, MAX_AUTOSCALE));
-      this.scrollTo(
-        new Vec2(structureBbox.left, structureBbox.top),
-        false,
-        OFFSET_FROM_CANVAS_BORDER,
-        OFFSET_FROM_CANVAS_BORDER,
-      );
     }
+
+    this.scrollTo(
+      new Vec2(structureBbox.left, structureBbox.top),
+      false,
+      OFFSET_FROM_CANVAS_BORDER,
+      OFFSET_FROM_CANVAS_BORDER,
+    );
   }
 
   public get canvasWrapperHeight() {

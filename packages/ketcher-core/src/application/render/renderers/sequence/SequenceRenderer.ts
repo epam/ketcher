@@ -1246,6 +1246,15 @@ export class SequenceRenderer {
     let modelChanges = new Command();
     const arrowKey = event.code;
 
+    // Every column this gesture touches is selected on both strands (see
+    // `getShiftArrowChanges` below), but the caret only ever sits on one
+    // row, and that row is what the user meant to edit.
+    SequenceRenderer.setTargetedStrand(
+      editor.isSequenceAntisenseEditMode
+        ? STRAND_TYPE.ANTISENSE
+        : STRAND_TYPE.SENSE,
+    );
+
     if (arrowKey === 'ArrowRight') {
       const currentEdittingNode = this.currentEdittingNode;
 

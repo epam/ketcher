@@ -2154,6 +2154,13 @@ export class CoreEditor {
     );
   }
 
+  public get isSequenceAntisenseEditMode() {
+    return (
+      this.mode.modeName === 'sequence-layout-mode' &&
+      this.sequenceMode.isAntisenseEditMode
+    );
+  }
+
   public get isSequenceEditInRNABuilderMode() {
     return (
       this.mode.modeName === 'sequence-layout-mode' &&

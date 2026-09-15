@@ -6,8 +6,6 @@
 // import { peptideMonomerItem, polymerEditorTheme } from '../../../mock-data';
 //
 
-export {};
-
 describe('PeptideRenderer', () => {
   // skipped until cyclic reference is resolved
   it.skip('should render peptide', () => {

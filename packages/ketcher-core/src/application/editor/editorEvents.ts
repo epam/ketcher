@@ -4,6 +4,7 @@ import type { CoreEditor } from 'application/editor/Editor';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { SequenceType } from 'domain/entities/monomer-chains/types';
 import { ToolName } from 'application/editor/tools/types';
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 
 export interface IEditorEvents {
   selectMonomer: Subscription;
@@ -330,6 +331,9 @@ export const hotkeysConfiguration = {
       const modelChanges =
         editor.drawingEntitiesManager.selectAllDrawingEntities();
       editor.renderersContainer.update(modelChanges);
+      // Select-all genuinely reaches both rows, so it is the tri-state's
+      // "both" case regardless of which row (if any) is currently edited.
+      SequenceRenderer.setTargetedStrand('both');
     },
   },
   hand: {

@@ -562,6 +562,12 @@ export class SequenceMode extends BaseMode {
 
     this.turnOnEditMode(eventData);
     this.setAntisenseEditMode(Boolean(eventData.isAntisenseNode));
+    // Record the row this drag begins on. `_isAntisenseEditMode` above
+    // tracks the caret's location for layout purposes; this is the
+    // selection-gesture record consumed by the write-back layer.
+    SequenceRenderer.setTargetedStrand(
+      eventData.isAntisenseNode ? STRAND_TYPE.ANTISENSE : STRAND_TYPE.SENSE,
+    );
   }
 
   public mousedown(event: MouseEvent) {
@@ -611,10 +617,15 @@ export class SequenceMode extends BaseMode {
 
       SequenceRenderer.resetLastUserDefinedCaretPosition();
 
+      // `unselectAllEntities` above resets the targeted-strand record, so
+      // the write below must come after it or it is silently wiped.
       this.unselectAllEntities();
       this.selectionStarted = true;
       this.selectionStartCaretPosition = SequenceRenderer.caretPosition;
       this.setAntisenseEditMode(Boolean(eventData.isAntisenseNode));
+      SequenceRenderer.setTargetedStrand(
+        eventData.isAntisenseNode ? STRAND_TYPE.ANTISENSE : STRAND_TYPE.SENSE,
+      );
     }
   }
 
@@ -645,7 +656,14 @@ export class SequenceMode extends BaseMode {
         startCaretPosition,
         endCaretPosition,
       );
+      // `unselectAllEntities` resets the targeted-strand record on every
+      // tick of this drag (it re-selects the whole caret range from
+      // scratch), so the record must be re-applied after it here, on every
+      // tick, rather than relying on the mousedown write to persist.
       this.unselectAllEntities();
+      SequenceRenderer.setTargetedStrand(
+        this.isAntisenseEditMode ? STRAND_TYPE.ANTISENSE : STRAND_TYPE.SENSE,
+      );
       const { command: modelChanges } =
         editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
           monomers,

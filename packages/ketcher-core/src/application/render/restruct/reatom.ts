@@ -551,9 +551,9 @@ class ReAtom extends ReObject {
 
           path.node?.setAttribute('data-testid', 's-group-label');
           path.node?.setAttribute('data-label-text', sGroupName);
-          path.node?.setAttribute('data-sgroup-id', sgroup.id);
+          path.node?.setAttribute('data-sgroup-id', String(sgroup.id));
           path.node?.setAttribute('data-sgroup-name', sGroupName);
-          path.node?.setAttribute('data-sgroup-type', sgroup.type);
+          path.node?.setAttribute('data-sgroup-type', String(sgroup.type));
 
           restruct.addReObjectPath(
             LayerMap.data,
@@ -1286,62 +1286,83 @@ class ReAtom extends ReObject {
     atomElement?.node?.setAttribute('data-testid', 'atom');
     atomElement?.node?.setAttribute(
       'data-atom-id',
-      restruct.molecule.atoms.keyOf(this.a ?? ''),
+      String(restruct.molecule.atoms.keyOf(this.a ?? '')),
     );
-    atomElement?.node?.setAttribute('data-atom-type', getAtomType(this.a));
-    atomElement?.node?.setAttribute('data-atomLabel', this.a.label ?? '');
-    atomElement?.node?.setAttribute('data-atomCharge', this.a.charge ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atom-type',
+      String(getAtomType(this.a)),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomLabel',
+      String(this.a.label ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomCharge',
+      String(this.a.charge ?? ''),
+    );
     atomElement?.node?.setAttribute(
       'data-atomIsotopeAtomicMass',
-      this.a.isotope ?? '',
+      String(this.a.isotope ?? ''),
     );
-    atomElement?.node?.setAttribute('data-atomValence', this.a.valence ?? '');
-    atomElement?.node?.setAttribute('data-atomRadical', this.a.radical ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atomValence',
+      String(this.a.valence ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomRadical',
+      String(this.a.radical ?? ''),
+    );
     atomElement?.node?.setAttribute(
       'data-atomRingBondCount',
-      this.a.ringBondCount ?? '',
+      String(this.a.ringBondCount ?? ''),
     );
-    atomElement?.node?.setAttribute('data-atomHCount', this.a.hCount ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atomHCount',
+      String(this.a.hCount ?? ''),
+    );
     atomElement?.node?.setAttribute(
       'data-atomSubstitutionCount',
-      this.a.substitutionCount ?? '',
+      String(this.a.substitutionCount ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomUnsaturated',
-      this.a.unsaturatedAtom ?? '',
+      String(this.a.unsaturatedAtom ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomAromaticity',
-      this.a.queryProperties.aromaticity ?? '',
+      String(this.a.queryProperties.aromaticity ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomImplicitHCount',
-      this.a.implicitHCount ?? '',
+      String(this.a.implicitHCount ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomRingMembership',
-      this.a.queryProperties.ringMembership ?? '',
+      String(this.a.queryProperties.ringMembership ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomRingSize',
-      this.a.queryProperties.ringSize ?? '',
+      String(this.a.queryProperties.ringSize ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomConnectivity',
-      this.a.queryProperties.connectivity ?? '',
+      String(this.a.queryProperties.connectivity ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomChirality',
-      this.a.queryProperties.chirality ?? '',
+      String(this.a.queryProperties.chirality ?? ''),
     );
-    atomElement?.node?.setAttribute('data-atomInversion', this.a.invRet ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atomInversion',
+      String(this.a.invRet ?? ''),
+    );
     atomElement?.node?.setAttribute(
       'data-atomExactChange',
-      this.a.exactChangeFlag ?? '',
+      String(this.a.exactChangeFlag ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomCustomQuery',
-      this.a.queryProperties.customQuery ?? '',
+      String(this.a.queryProperties.customQuery ?? ''),
     );
   }
 

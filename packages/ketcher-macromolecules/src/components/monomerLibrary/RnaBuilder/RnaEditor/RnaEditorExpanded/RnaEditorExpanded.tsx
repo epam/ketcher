@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -72,7 +70,14 @@ import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
-import { ChangeEvent, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   generateSequenceSelectionGroupNames,
   generateSequenceSelectionName,
@@ -129,6 +134,7 @@ export const RnaEditorExpanded = ({
     selectActivePresetMonomerGroup,
   );
   const [newPreset, setNewPreset] = useState(activePreset);
+
   const [selectedPhosphatePosition, setSelectedPhosphatePosition] = useState<
     RnaPhosphatePosition | undefined
   >(
@@ -137,6 +143,8 @@ export const RnaEditorExpanded = ({
       : undefined,
   );
 
+  // Plain function — safe to call at render time and always reads the latest
+  // selectedPhosphatePosition / isSequenceMode from closure.
   const resolvePhosphatePosition = (
     preset: typeof newPreset,
   ): RnaPhosphatePosition | undefined => {
@@ -183,8 +191,30 @@ export const RnaEditorExpanded = ({
     return undefined;
   };
 
+  // Guard refs — read inside the monomer-group effect without being listed as
+  // deps, preventing re-runs on slot clicks (activeMonomerGroup) or edit-mode
+  // toggle (isEditMode), which would drop editedName and regenerate the name.
+  const activeMonomerGroupRef = useRef(activeMonomerGroup);
+  // eslint-disable-next-line react-hooks/refs -- guard ref: latest value readable in effects without triggering re-runs on slot clicks
+  activeMonomerGroupRef.current = activeMonomerGroup;
+  const isEditModeRef = useRef(isEditMode);
+  // eslint-disable-next-line react-hooks/refs -- guard ref: latest value readable in effects without triggering re-runs on edit-mode toggle
+  isEditModeRef.current = isEditMode;
+
+  // RnaElements.tsx dispatches a fresh { groupName, groupItem } object on every
+  // click, so depending on the whole activePresetMonomerGroup object churns
+  // identity even when the selected monomer hasn't changed. Dep on groupItem
+  // (stable identity from the store) instead, and read groupName via a ref.
+  const activePresetGroupItem = activePresetMonomerGroup?.groupItem;
+  const activePresetGroupNameRef = useRef(activePresetMonomerGroup?.groupName);
+  // eslint-disable-next-line react-hooks/refs -- latest-value ref: groupName kept in sync; the effect deps on groupItem identity to avoid re-running when the wrapper object is replaced on every click
+  activePresetGroupNameRef.current = activePresetMonomerGroup?.groupName;
+
   // For sequence edit in RNA Builder mode
   const sequenceSelection = useAppSelector(selectSequenceSelection);
+  const sequenceSelectionRef = useRef(sequenceSelection);
+  // eslint-disable-next-line react-hooks/refs -- preserves the selection that triggered the update; avoids re-running the effect in response to its own dispatch
+  sequenceSelectionRef.current = sequenceSelection;
   const sequenceSelectionName = useAppSelector(selectSequenceSelectionName);
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
@@ -208,20 +238,6 @@ export const RnaEditorExpanded = ({
   const phosphatePositionDisabledTooltip = {
     left: 'Sugar must have R1, and phosphate must have R2.',
     right: 'Sugar must have R2, and phosphate must have R1.',
-  };
-
-  const updatePresetMonomerGroup = () => {
-    if (activePresetMonomerGroup) {
-      const groupName =
-        monomerGroupToPresetGroup[activePresetMonomerGroup.groupName];
-      const currentPreset = {
-        ...newPreset,
-        [groupName]: activePresetMonomerGroup.groupItem,
-      };
-      setNewPreset(currentPreset);
-      return currentPreset;
-    }
-    return newPreset;
   };
 
   useEffect(() => {
@@ -249,48 +265,72 @@ export const RnaEditorExpanded = ({
   }, [dispatch, sequenceSelection]);
 
   useEffect(() => {
-    if (activeMonomerGroup !== RnaBuilderPresetsItem.Presets && isEditMode) {
-      if (isSequenceEditInRNABuilderMode && activePresetMonomerGroup) {
+    if (
+      activeMonomerGroupRef.current !== RnaBuilderPresetsItem.Presets &&
+      isEditModeRef.current
+    ) {
+      if (isSequenceEditInRNABuilderMode && activePresetGroupItem) {
         const monomerType =
-          monomerGroupToPresetGroup[activePresetMonomerGroup.groupName];
+          monomerGroupToPresetGroup[activePresetGroupNameRef.current ?? ''];
         const field = `${monomerType}Label`;
 
-        const updatedSequenceSelection = sequenceSelection.map((node) => {
-          // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
-          // Do not set 'sugarLabel', 'baseLabel' for Phosphate
-          if (
-            (node.isNucleosideConnectedAndSelectedWithPhosphate &&
-              field === 'phosphateLabel') ||
-            (node.type === Entities.Phosphate &&
-              (field === 'sugarLabel' || field === 'baseLabel'))
-          ) {
-            return node;
-          }
+        // sequenceSelectionRef.current avoids adding sequenceSelection to deps,
+        // which would cause a dispatch→sequenceSelection-change→re-run loop.
+        const updatedSequenceSelection = sequenceSelectionRef.current.map(
+          (node) => {
+            // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
+            // Do not set 'sugarLabel', 'baseLabel' for Phosphate
+            if (
+              (node.isNucleosideConnectedAndSelectedWithPhosphate &&
+                field === 'phosphateLabel') ||
+              (node.type === Entities.Phosphate &&
+                (field === 'sugarLabel' || field === 'baseLabel'))
+            ) {
+              return node;
+            }
 
-          return {
-            ...node,
-            [field]: activePresetMonomerGroup.groupItem.label,
-            rnaBaseMonomerItem:
-              activePresetMonomerGroup.groupName === 'Bases'
-                ? activePresetMonomerGroup.groupItem
-                : node.rnaBaseMonomerItem,
-          };
-        });
+            return {
+              ...node,
+              [field]: activePresetGroupItem.label,
+              rnaBaseMonomerItem:
+                activePresetGroupNameRef.current === 'Bases'
+                  ? activePresetGroupItem
+                  : node.rnaBaseMonomerItem,
+            };
+          },
+        );
 
         setIsSequenceSelectionUpdated(true);
         dispatch(setSequenceSelection(updatedSequenceSelection));
       } else {
-        const currentPreset = updatePresetMonomerGroup();
-        let presetFullName = newPreset?.name;
+        setNewPreset((currentPreset) => {
+          const updatedPreset = activePresetGroupItem
+            ? {
+                ...currentPreset,
+                [monomerGroupToPresetGroup[
+                  activePresetGroupNameRef.current ?? ''
+                ]]: activePresetGroupItem,
+              }
+            : currentPreset;
+          const presetFullName = updatedPreset.editedName
+            ? updatedPreset.name
+            : selectPresetFullName(updatedPreset);
 
-        if (!currentPreset.editedName) {
-          presetFullName = selectPresetFullName(currentPreset);
-        }
-
-        setNewPreset({ ...currentPreset, name: presetFullName });
+          return { ...updatedPreset, name: presetFullName };
+        });
       }
     }
-  }, [activePresetMonomerGroup?.groupItem, isSequenceEditInRNABuilderMode]);
+  }, [
+    // activeMonomerGroup and isEditMode are intentionally omitted — they are
+    // guard conditions read via refs. Including them would fire this effect on
+    // every slot click (activeMonomerGroup) or entering edit mode (isEditMode),
+    // which regenerates the preset name and drops editedName.
+    // activePresetGroupNameRef (groupName) is intentionally omitted — it is
+    // kept current via a ref and read inside the effect body.
+    isSequenceEditInRNABuilderMode,
+    activePresetGroupItem,
+    dispatch,
+  ]);
 
   const scrollToActiveItemInLibrary = (selectedGroup, selectedMonomer) => {
     if (selectedGroup === RnaBuilderPresetsItem.Presets) {
@@ -507,14 +547,14 @@ export const RnaEditorExpanded = ({
     );
   };
 
-  const onUpdateSequence = () => {
+  const onUpdateSequence = useCallback(() => {
     if (getCountOfNucleoelements(sequenceSelection) > 1) {
       dispatch(openModal('updateSequenceInRNABuilder'));
     } else {
       editor?.events.modifySequenceInRnaBuilder.dispatch(sequenceSelection);
       resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     }
-  };
+  }, [sequenceSelection, dispatch, editor]);
 
   const onSave = () => {
     const presetName = newPreset?.name;
@@ -561,7 +601,7 @@ export const RnaEditorExpanded = ({
     resetRnaBuilder(dispatch);
   };
 
-  const onCancel = () => {
+  const onCancel = useCallback(() => {
     if (isSequenceEditInRNABuilderMode) {
       // Keep the canvas selection in place when cancelling modification.
       resetRnaBuilderAfterSequenceUpdate(dispatch, editor, false);
@@ -577,7 +617,14 @@ export const RnaEditorExpanded = ({
       );
       resetRnaBuilder(dispatch);
     }
-  };
+  }, [
+    isSequenceEditInRNABuilderMode,
+    dispatch,
+    editor,
+    isActivePresetEmpty,
+    presets,
+    activePreset,
+  ]);
 
   const turnOnEditMode = () => {
     dispatch(setIsEditMode(true));
@@ -610,7 +657,7 @@ export const RnaEditorExpanded = ({
         event.stopPropagation();
         // Prevent the global "exit" hotkey listener (registered separately on
         // document) from clearing the selection after cancel.
-        event.stopImmediatePropagation();
+        event.nativeEvent.stopImmediatePropagation();
       } else if (event.key === 'Enter') {
         if (isSequenceEditInRNABuilderMode) {
           onUpdateSequence();
@@ -625,17 +672,7 @@ export const RnaEditorExpanded = ({
     return () => {
       editor?.events.keyDown.remove(handleKeyDown);
     };
-  }, [editor, sequenceSelection, isSequenceEditInRNABuilderMode]);
-
-  useEffect(() => {
-    if (!isSequenceEditInRNABuilderMode) return;
-
-    const handleCancel = () => onCancel();
-    editor?.events.cancelSequenceEditInRNABuilderMode.add(handleCancel);
-    return () => {
-      editor?.events.cancelSequenceEditInRNABuilderMode.remove(handleCancel);
-    };
-  }, [editor, isSequenceEditInRNABuilderMode]);
+  }, [editor, onCancel, onUpdateSequence, isSequenceEditInRNABuilderMode]);
 
   let mainButton: JSX.Element;
   const isSaveButtonDisabled =

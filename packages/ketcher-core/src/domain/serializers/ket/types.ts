@@ -19,6 +19,7 @@ import type {
   AttachmentPoints,
 } from 'domain/entities/atom';
 import type { AtomCIP, BondCIP } from 'domain/entities/types';
+import type { RxnArrowAttributes } from 'domain/entities/rxnArrow';
 import type { StructProperty } from 'domain/entities/struct';
 import type { Vec2 } from 'domain/entities/vec2';
 
@@ -102,6 +103,20 @@ export interface KetMoleculeNode {
   stereoFlagPosition?: Vec2;
   properties?: Array<StructProperty>;
 }
+
+export interface KetArrowNode {
+  type: 'arrow';
+  data: RxnArrowAttributes;
+  selected?: boolean;
+}
+
+export interface KetPlusNode {
+  type: 'plus';
+  location: [number, number, number?];
+  selected?: boolean;
+}
+
+export type KetReactionNode = KetArrowNode | KetPlusNode;
 
 export interface KetFragment {
   atoms?: KetAtomNode[];

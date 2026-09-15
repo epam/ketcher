@@ -92,4 +92,75 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
     fireEvent.click(yesButton);
     expect(mockProps.onClose).toHaveBeenCalled();
   });
+
+  // Proves the second and third links of Task 5 Step 4's payload -> redux ->
+  // confirmation chain: given the redux sequenceSelection a duplex context
+  // menu click would have written (Task 5's filter keeps one entry per
+  // duplex position, so a one-strand selection of N positions produces an
+  // N-length array here), this modal's own real confirmation text names N,
+  // and its own real "Yes" handler dispatches modifySequenceInRnaBuilder
+  // with exactly that N-length array - not a re-derived count.
+  describe('for a one-strand selection of N duplex positions', () => {
+    // Distinct nodes (not the same object 3 times) so a length-vs-identity
+    // mixup in the write-back would be visible if it occurred.
+    const threeSenseDuplexPositions: LabeledNodesWithPositionInSequence[] = [
+      { ...labeledNucleotide, nodeIndexOverall: 0 },
+      { ...labeledNucleotide, nodeIndexOverall: 1 },
+      { ...labeledNucleotide, nodeIndexOverall: 2 },
+    ];
+
+    it('names N in its own rendered confirmation text', () => {
+      render(
+        withThemeAndStoreProvider(
+          <UpdateSequenceInRNABuilder {...mockProps} />,
+          {
+            rnaBuilder: {
+              sequenceSelection: threeSenseDuplexPositions,
+            },
+          },
+        ),
+      );
+
+      expect(
+        screen.getByTestId('update-sequence-modal-body'),
+      ).toHaveTextContent(
+        'You are going to modify 3 nucleotides. Are you sure?',
+      );
+    });
+
+    it('dispatches modifySequenceInRnaBuilder with exactly those N entries on confirm', () => {
+      const modifySequenceInRnaBuilderDispatch = jest.fn();
+
+      render(
+        withThemeAndStoreProvider(
+          <UpdateSequenceInRNABuilder {...mockProps} />,
+          {
+            rnaBuilder: {
+              sequenceSelection: threeSenseDuplexPositions,
+            },
+            editor: {
+              editor: {
+                events: {
+                  modifySequenceInRnaBuilder: {
+                    dispatch: modifySequenceInRnaBuilderDispatch,
+                  },
+                  turnOffSequenceEditInRNABuilderMode: { dispatch: () => true },
+                },
+              },
+            },
+          },
+        ),
+      );
+
+      fireEvent.click(screen.getByTestId('update-sequence-yes-button'));
+
+      expect(modifySequenceInRnaBuilderDispatch).toHaveBeenCalledTimes(1);
+      expect(modifySequenceInRnaBuilderDispatch).toHaveBeenCalledWith(
+        threeSenseDuplexPositions,
+      );
+      expect(modifySequenceInRnaBuilderDispatch.mock.calls[0][0]).toHaveLength(
+        3,
+      );
+    });
+  });
 });

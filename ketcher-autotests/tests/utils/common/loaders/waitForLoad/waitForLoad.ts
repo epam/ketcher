@@ -36,7 +36,7 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
     try {
       await ErrorMessageDialog(page).errorMessageBody.waitFor({
         state: 'visible',
-        timeout: 5000,
+        timeout: 3000,
       });
       return;
     } catch {

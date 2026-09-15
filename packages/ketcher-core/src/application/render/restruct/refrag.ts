@@ -77,7 +77,7 @@ class ReFrag extends ReObject {
           render = (global as Record<string, unknown>)._ui_editor as Render;
         }
         bba = bba
-          .translate((render.options.offset || new Vec2()).negated())
+          .translate((render.options.offset ?? new Vec2()).negated())
           .transform(Scale.canvasToModel, render.options);
       }
       ret = ret ? Box2Abs.union(ret, bba) : bba;

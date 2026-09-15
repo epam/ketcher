@@ -27,10 +27,8 @@ export class MarkAsRnaComponentOperation extends BaseOperation {
   execute(_restruct: ReStruct): void {
     assert(this.monomerCreationState);
 
-    if (!this.monomerCreationState.rnaComponentAtoms) {
-      this.monomerCreationState.rnaComponentAtoms =
-        new Map() as RnaComponentAtoms;
-    }
+    this.monomerCreationState.rnaComponentAtoms ??=
+      new Map() as RnaComponentAtoms;
 
     this.monomerCreationState.rnaComponentAtoms.set(this.componentKey, {
       atoms: [...this.newAtomIds],

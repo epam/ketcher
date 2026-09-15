@@ -10,10 +10,63 @@ import { Sugar } from 'domain/entities/Sugar';
 import { AttachmentPointName } from 'domain/types';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { STRAND_TYPE } from 'domain/constants';
+import { KetMonomerClass } from 'domain/constants/monomers';
+import type { MonomerItemType } from 'domain/types';
+import type { TwoStrandedNodesSelection } from 'application/render/renderers/sequence/SequenceRenderer';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
 } from '../../../helpers/dom';
+
+// A minimal render theme with an 'X' fallback color so that
+// UnsplitNucleotideRenderer (used when a library replacement monomer is
+// rendered by replaceSelectionsWithMonomer) does not throw regardless of
+// the replacement's natural analog code. Modeled on antisenseChainDirection
+// .test.ts's testRenderTheme.
+const testRenderTheme = {
+  monomer: {
+    color: {
+      X: { regular: 'yellow' },
+      R: { regular: 'yellow' },
+      P: { regular: 'yellow' },
+    },
+  },
+};
+
+const findLibraryItemByAlias = (editor: CoreEditor, alias: string) => {
+  const libraryItem = editor.monomersLibrary.find(
+    (item) =>
+      !('isAmbiguous' in item && item.isAmbiguous) &&
+      item.label === alias &&
+      item.props?.MonomerClass === KetMonomerClass.RNA,
+  );
+
+  if (!libraryItem) {
+    throw new Error(`Library item ${alias} not found`);
+  }
+
+  return libraryItem;
+};
+
+// Calls the private SequenceMode#replaceSelectionsWithMonomer, following the
+// cast-through-prototype pattern used for private-method tests elsewhere in
+// this codebase (see antisenseChainDirection.test.ts).
+const callReplaceSelectionsWithMonomer = (
+  mode: SequenceMode,
+  selections: TwoStrandedNodesSelection,
+  monomerItem: MonomerItemType,
+) => {
+  const { replaceSelectionsWithMonomer } =
+    SequenceMode.prototype as unknown as {
+      replaceSelectionsWithMonomer: (
+        this: SequenceMode,
+        selections: TwoStrandedNodesSelection,
+        monomerItem: MonomerItemType,
+      ) => void;
+    };
+
+  return replaceSelectionsWithMonomer.call(mode, selections, monomerItem);
+};
 
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
@@ -293,5 +346,155 @@ describe('SequenceMode targeted strand recording', () => {
 
       expect(SequenceRenderer.targetedStrand).toBe('both');
     });
+  });
+});
+
+// getSelectedStrandType (SequenceMode.ts) is the function this describe
+// block exercises: it used to read `senseNode?.monomer.selected` directly,
+// which on a duplex is always true (both strands of a touched column are
+// always selected), so it always answered SENSE -- the root cause of #6595.
+// It now answers from SequenceRenderer.targetedStrand instead. These tests
+// drive it through a real drag gesture (mousedown + mousemove, exactly like
+// the "mousedown drag inside edit mode" tests above) so the selection shape
+// is the real one: both strands selected, sense always among them. Library
+// replacement is used as the observable proxy for getSelectedStrandType's
+// answer, since the function itself is module-private.
+describe('getSelectedStrandType resolves the targeted strand, not just selection state', () => {
+  let canvas: SVGSVGElement;
+  let editor: CoreEditor;
+  let mode: SequenceMode;
+
+  beforeEach(() => {
+    canvas = createPolymerEditorCanvas();
+    stubCanvasDimensions(canvas);
+    mode = new SequenceMode();
+    editor = new CoreEditor({
+      canvas,
+      theme: {},
+      renderersContainer: createRenderersManager(testRenderTheme),
+      mode,
+    });
+  });
+
+  afterEach(() => {
+    SequenceRenderer.resetTargetedStrand();
+    canvas.remove();
+  });
+
+  // Enters edit mode via a first click on the sense row, exactly like the
+  // "mousedown drag inside edit mode" tests above.
+  const enterEditMode = (editorInstance: CoreEditor) => {
+    const { senseNucleotides, antisenseNucleotides } =
+      buildTwoPositionDuplex(editorInstance);
+
+    mode.mousedownBetweenSequenceItems(
+      mousedownEventFor(rendererForMonomer(senseNucleotides[0])),
+    );
+    SequenceRenderer.resetTargetedStrand();
+
+    return { senseNucleotides, antisenseNucleotides };
+  };
+
+  it('replaces the ANTISENSE monomer and leaves the SENSE monomer untouched for a drag that targeted the antisense row, even though both strands are selected', () => {
+    const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
+
+    // A real antisense-row drag: mousedown on the antisense symbol records
+    // ANTISENSE, then mousemove ticks select the caret range, which pulls
+    // in BOTH strands' monomers at every touched position (per the "columns
+    // select both strands" behavior described at the top of this file).
+    mode.mousedown(
+      mousedownEventFor(rendererForMonomer(antisenseNucleotides[0])),
+    );
+    expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.ANTISENSE);
+
+    for (let tick = 0; tick < 3; tick++) {
+      mode.mousemove(
+        mousedownEventFor(rendererForMonomer(senseNucleotides[1])),
+      );
+    }
+
+    // Sanity check: the sense monomer really is selected too, so the
+    // assertions below are only meaningful because getSelectedStrandType
+    // reads the record, not because nothing else was selected.
+    expect(senseNucleotides[0].rnaBase.selected).toBe(true);
+    expect(antisenseNucleotides[0].rnaBase.selected).toBe(true);
+    expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.ANTISENSE);
+
+    const selections = SequenceRenderer.selections;
+    const replacementItem = findLibraryItemByAlias(editor, 'Super-G');
+
+    callReplaceSelectionsWithMonomer(mode, selections, replacementItem);
+
+    // The defect this task fixes: before routing getSelectedStrandType
+    // through the record, this call always resolved to SENSE regardless of
+    // which row the gesture targeted, so it rewrote the sense strand
+    // instead of the antisense strand the user actually selected.
+    expect(
+      editor.drawingEntitiesManager.monomers.has(
+        antisenseNucleotides[0].sugar.id,
+      ),
+    ).toBe(false);
+    expect(
+      editor.drawingEntitiesManager.monomers.has(senseNucleotides[0].sugar.id),
+    ).toBe(true);
+  });
+
+  it('replaces the SENSE monomer and leaves the ANTISENSE monomer untouched for a drag that targeted the sense row', () => {
+    const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
+
+    mode.mousedown(mousedownEventFor(rendererForMonomer(senseNucleotides[0])));
+    expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
+
+    for (let tick = 0; tick < 3; tick++) {
+      mode.mousemove(
+        mousedownEventFor(rendererForMonomer(antisenseNucleotides[1])),
+      );
+    }
+
+    expect(senseNucleotides[0].rnaBase.selected).toBe(true);
+    expect(antisenseNucleotides[0].rnaBase.selected).toBe(true);
+    expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
+
+    const selections = SequenceRenderer.selections;
+    const replacementItem = findLibraryItemByAlias(editor, 'Super-G');
+
+    callReplaceSelectionsWithMonomer(mode, selections, replacementItem);
+
+    expect(
+      editor.drawingEntitiesManager.monomers.has(senseNucleotides[0].sugar.id),
+    ).toBe(false);
+    expect(
+      editor.drawingEntitiesManager.monomers.has(
+        antisenseNucleotides[0].sugar.id,
+      ),
+    ).toBe(true);
+  });
+
+  // The explicit 'both' branch this task's controller ruling requires
+  // (R2): a 'both' record answers SENSE, matching today's behavior, rather
+  // than throwing out of a mouse handler. It is meant to be unreachable in
+  // practice once Task 6's guard blocks base replacement over a
+  // both-strands selection; select-all is used here only as a real gesture
+  // that records 'both', to prove the branch itself resolves correctly
+  // ahead of that guard landing.
+  it('resolves a "both" record to SENSE via the explicit both-case branch', () => {
+    const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
+
+    hotkeysConfiguration['select-all'].handler(editor);
+    expect(SequenceRenderer.targetedStrand).toBe('both');
+
+    const selections = SequenceRenderer.selections;
+    const replacementItem = findLibraryItemByAlias(editor, 'Super-G');
+
+    callReplaceSelectionsWithMonomer(mode, selections, replacementItem);
+
+    expect(
+      editor.drawingEntitiesManager.monomers.has(senseNucleotides[0].sugar.id),
+    ).toBe(false);
+    expect(
+      editor.drawingEntitiesManager.monomers.has(
+        antisenseNucleotides[0].sugar.id,
+      ),
+    ).toBe(true);
   });
 });

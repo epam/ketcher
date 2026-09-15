@@ -113,31 +113,31 @@
 
 ## 14. Record which strand each selection gesture targeted
 
-- [ ] 14.1 Add a tri-state record to `SequenceMode` for the strand the current selection gesture targeted: sense, antisense, or both, with a setter that does NOT call `initialize()`
-- [ ] 14.2 Do not reuse `_isAntisenseEditMode`; it tracks the caret's location rather than a gesture result, and its setter re-lays-out the canvas
-- [ ] 14.3 In `SelectBase.mousedownEntity`, record the clicked row from the renderer's `isAntisenseNode`
-- [ ] 14.4 On shift-extension, combine the newly clicked row with the rows already represented in the selection
-- [ ] 14.5 In `SequenceMode.mousedown` and `mousedownBetweenSequenceItems`, record the row an edit-mode drag begins on
-- [ ] 14.6 In `shiftArrowSelectionInEditMode`, record the caret's row
-- [ ] 14.7 Record both strands for select-all
-- [ ] 14.8 For the selection rectangle, derive the targeted strand from which monomers are actually selected; it is geometric and selects only what it covers, so no record is needed
-- [ ] 14.9 Reset the record whenever the selection is cleared, so a stale strand cannot steer the next edit
-- [ ] 14.10 Unit-test the resolution of the record, including the derive-from-selection path
+- [x] 14.1 Add a tri-state record for the strand the current selection gesture targeted: sense, antisense, or both, with a setter that does NOT call `initialize()`. It lives on `SequenceRenderer`, beside the caret it already keeps, so the select tool can write it without importing the mode
+- [x] 14.2 Do not reuse `_isAntisenseEditMode`; it tracks the caret's location rather than a gesture result, and its setter re-lays-out the canvas
+- [x] 14.3 In `SelectBase.mousedownEntity`, record the clicked row from the renderer's `isAntisenseNode`
+- [x] 14.4 On shift-extension, combine the newly clicked row with the rows already represented in the selection
+- [x] 14.5 In `SequenceMode.mousedown` and `mousedownBetweenSequenceItems`, record the row an edit-mode drag begins on
+- [x] 14.6 In `shiftArrowSelectionInEditMode`, record the caret's row
+- [x] 14.7 Record both strands for select-all
+- [x] 14.8 For the selection rectangle, derive the targeted strand from which monomers are actually selected; it is geometric and selects only what it covers, so no record is needed
+- [x] 14.9 Reset the record whenever the selection is cleared, so a stale strand cannot steer the next edit
+- [x] 14.10 Unit-test the resolution of the record, including the derive-from-selection path
 
 ## 15. Route every strand decision through the record
 
-- [ ] 15.1 Make `getSelectedStrandType` answer from the record instead of from `senseNode.monomer.selected`, which is always true on a duplex
-- [ ] 15.2 Keep the return type strictly binary; "both" must be consumed by the blocking rule and must never reach `getNodeForStrand` or the replacement loop
-- [ ] 15.3 Confirm `splitSelectionRangeByStrand` and the reverse-iteration seed in `replaceSelectionsWithMonomer` still hold once the strand comes from the record
-- [ ] 15.4 Check the two branches of `insertMonomerFromLibrary`, which pick the strand by different mechanisms, and make them agree
+- [x] 15.1 Make `getSelectedStrandType` answer from the record instead of from `senseNode.monomer.selected`, which is always true on a duplex
+- [x] 15.2 Keep the return type strictly binary; answer uniformly only when the record names one strand, and resolve each position from its own selection state when there is no record or the record is "both"
+- [x] 15.3 Confirm `splitSelectionRangeByStrand` and the reverse-iteration seed in `replaceSelectionsWithMonomer` still hold once the strand comes from the record
+- [x] 15.4 Check the two branches of `insertMonomerFromLibrary`, which pick the strand by different mechanisms, and make them agree
 
 ## 16. One edit per position, not one per strand
 
-- [ ] 16.1 In `generateLabeledNodes`, emit one entry per position for the targeted strand instead of one per selected strand
-- [ ] 16.2 Filter the flat selection once at the top of `generateSequenceContextMenuProps`, before any count, title or enablement flag is derived from it, so every user-facing number is N
-- [ ] 16.2a Check each context menu item's enablement against the narrowed list, since those flags are derived from the same flat selection
-- [ ] 16.3 Confirm the update confirmation names N nucleotides rather than 2N
-- [ ] 16.4 Confirm the RNA Builder writes the chosen base once, to the targeted strand only
+- [x] 16.1 Emit one entry per position for the targeted strand instead of one per selected strand, by filtering before `generateLabeledNodes` runs rather than inside it
+- [x] 16.2 Filter the flat selection once at the top of `generateSequenceContextMenuProps`, before any count, title or enablement flag is derived from it, so every user-facing number is N; keep every entry when both strands were targeted
+- [x] 16.2a Check each context menu item's enablement against the narrowed list, since those flags are derived from the same flat selection
+- [x] 16.3 Confirm the update confirmation names N nucleotides rather than 2N
+- [x] 16.4 Confirm the RNA Builder writes the chosen base once, to the targeted strand only
 
 ## 17. Re-scope the both-strands block
 

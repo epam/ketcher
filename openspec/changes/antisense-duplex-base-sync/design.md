@@ -148,7 +148,9 @@ The sync condition is load-bearing rather than incidental. The error message dir
 
 **Problem**: The write-back helpers take a two-way strand and default to the sense node. Handing them a third value would silently select the sense branch.
 
-**Decision**: "Both" is consumed by the blocking rule and never reaches the write-back layer. `getSelectedStrandType` and anything feeding `getNodeForStrand` or the replacement loop keep a strictly binary return type.
+**Decision**: `getSelectedStrandType` and anything feeding `getNodeForStrand` or the replacement loop keep a strictly binary return type. When the record names one strand, every position answers that strand. When there is no record, or the record is "both", each position answers from its own selection state: the sense strand if its sense monomer is selected, otherwise the antisense strand.
+
+**Why "both" cannot simply be blocked upstream**: an earlier draft of this decision said "both" is consumed by the blocking rule and never reaches the write-back layer. That is false. The selection rectangle writes no record, and over a duplex whose strands do not line up column for column it can select the sense node at some columns and the antisense node at others, which derives to "both". Library replacement reaches the write-back layer from that state without passing the blocking rule, which only applies to base replacement in sync mode. Answering sense for every position there replaced monomers nobody selected. Resolving per position replaces exactly what was selected, and for a genuine both-strands gesture, where every column has both strands selected, it still answers sense.
 
 **Rationale**: The replacement loop iterates ranges in reverse and carries a previously-replaced node across iterations on the strength of one range being one strand. A third value passing through would break both that seed logic and the chain-direction reversal that antisense ranges depend on.
 
@@ -156,7 +158,7 @@ The sync condition is load-bearing rather than incidental. The error message dir
 
 **Problem**: The doubled count in the update confirmation and the doubled write share one cause: the editor's right-click handler emits one entry per selected strand, so a duplex column produces two.
 
-**Decision**: Filter to the targeted strand once, at the top of `generateSequenceContextMenuProps`, before anything derives a count, a title or an enablement flag from the flat selection. Every number the user sees for a duplex selection of N positions is N.
+**Decision**: Filter to the targeted strand once, at the top of `generateSequenceContextMenuProps`, before anything derives a count, a title or an enablement flag from the flat selection. Every number the user sees for a duplex selection of N positions is N. When the gesture targeted one strand, the filter keeps only that strand's entries. When it targeted both, the filter keeps every entry: the RNA Builder writes each entry to its own strand, and the both-strands block needs to see the pair.
 
 **Rationale**: An earlier draft filtered only the RNA Builder payload, which would have left the context menu title naming 2N while the update confirmation named N. Two different numbers for one selection is a defect in its own right, whatever each one technically counts. One filter, applied once and early, keeps them in step by construction.
 

@@ -25,30 +25,30 @@ export async function resetZoomLevelToDefault(page: Page) {
 
 export async function zoomOutByKeyboard(
   page: Page,
-  options: { repeat: number; timeout?: number } = { repeat: 1 },
+  { repeat = 1, timeout }: { repeat?: number; timeout?: number } = {},
 ) {
-  for (let i = 0; i < options.repeat; i++) {
+  for (let i = 0; i < repeat; i++) {
     await waitForRender(
       page,
       async () => {
         await page.keyboard.press(`ControlOrMeta+Minus`);
       },
-      options.timeout,
+      timeout,
     );
   }
 }
 
 export async function zoomInByKeyboard(
   page: Page,
-  options: { repeat: number; timeout?: number } = { repeat: 1 },
+  { repeat = 1, timeout }: { repeat?: number; timeout?: number } = {},
 ) {
-  for (let i = 0; i < options.repeat; i++) {
+  for (let i = 0; i < repeat; i++) {
     await waitForRender(
       page,
       async () => {
         await page.keyboard.press(`ControlOrMeta+Equal`);
       },
-      options.timeout,
+      timeout,
     );
   }
 }

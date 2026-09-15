@@ -3351,6 +3351,10 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(),
     );
     editor.renderersContainer.update(modelChanges);
+    // A stale targeted strand from a previous gesture must not steer the
+    // next edit. This call ends a selection gesture in every call site of
+    // `unselectAllEntities`, so resetting here is safe.
+    SequenceRenderer.resetTargetedStrand();
   }
 
   private createHydrogenBondForTwoStrandedNode(

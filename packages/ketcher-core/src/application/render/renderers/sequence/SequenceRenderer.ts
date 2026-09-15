@@ -42,6 +42,7 @@ import { SequenceViewModel } from 'application/render/renderers/sequence/Sequenc
 import { sequenceRendererStore } from 'application/render/renderers/sequence/SequenceRendererStore';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import type { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
+import { STRAND_TYPE } from 'domain/constants';
 import { assert, SettingsManager } from 'utilities';
 import { SequenceEventDelegationManager } from './SequenceEventDelegationManager';
 import ZoomTool from 'application/editor/tools/Zoom';
@@ -73,6 +74,11 @@ export type SetCaretPositionOptions = {
   afterRowEnd?: boolean;
 };
 
+// Tri-state result of a selection gesture: which strand(s) it targeted.
+// Kept separate from STRAND_TYPE, which must stay binary for the write-back
+// layer (see design Decision 11).
+export type TargetedStrand = STRAND_TYPE | 'both';
+
 export class SequenceRenderer {
   private static caretPositionValue = -1;
   private static lastUserDefinedCaretPositionValue = 0;
@@ -82,6 +88,12 @@ export class SequenceRenderer {
   private static newSequenceButtons: NewSequenceButton[] = [];
   private static readonly sequenceBondRenderers =
     new Set<SequenceBondRenderer>();
+
+  // The strand the current selection gesture targeted, or `undefined` when
+  // no gesture has recorded one — in which case `targetedStrand` derives it
+  // from selection state instead. Written on every mousedown and drag tick,
+  // so the setter below must only assign: no `initialize()`, no re-render.
+  private static targetedStrandRecord: TargetedStrand | undefined;
 
   public static get caretPosition(): number {
     return this.caretPositionValue;
@@ -113,6 +125,60 @@ export class SequenceRenderer {
 
   private static set lastChainStartPosition(value: Vec2) {
     this.lastChainStartPositionValue = value;
+  }
+
+  // Records which strand(s) the current selection gesture targeted. This is
+  // an assignment only — it must not call `initialize()` or trigger a
+  // re-render (see the field comment above).
+  public static setTargetedStrand(targetedStrand: TargetedStrand) {
+    this.targetedStrandRecord = targetedStrand;
+  }
+
+  // Clears the record so a stale strand from a previous gesture cannot
+  // steer the next edit. Call this at sites that END a selection gesture,
+  // never from a helper a gesture calls mid-flight (see call-site notes in
+  // SequenceMode and DrawingEntitiesManager).
+  public static resetTargetedStrand() {
+    this.targetedStrandRecord = undefined;
+  }
+
+  // Resolves to the strand(s) the current selection gesture targeted. When
+  // a gesture has recorded one, that record wins. Otherwise it is derived
+  // from selection state: which of the two strands have selected monomers.
+  // The derivation is correct for the selection rectangle, which is
+  // geometric and selects only what it covers.
+  public static get targetedStrand(): TargetedStrand {
+    if (this.targetedStrandRecord) {
+      return this.targetedStrandRecord;
+    }
+
+    let hasSelectedSenseMonomer = false;
+    let hasSelectedAntisenseMonomer = false;
+
+    SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
+      if (
+        !hasSelectedSenseMonomer &&
+        twoStrandedNode.senseNode?.monomers.some((monomer) => monomer.selected)
+      ) {
+        hasSelectedSenseMonomer = true;
+      }
+      if (
+        !hasSelectedAntisenseMonomer &&
+        twoStrandedNode.antisenseNode?.monomers.some(
+          (monomer) => monomer.selected,
+        )
+      ) {
+        hasSelectedAntisenseMonomer = true;
+      }
+    });
+
+    if (hasSelectedSenseMonomer && hasSelectedAntisenseMonomer) {
+      return 'both';
+    }
+
+    return hasSelectedAntisenseMonomer
+      ? STRAND_TYPE.ANTISENSE
+      : STRAND_TYPE.SENSE;
   }
 
   public static get sequenceViewModel(): SequenceViewModel {

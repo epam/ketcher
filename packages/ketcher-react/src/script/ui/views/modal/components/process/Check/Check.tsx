@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type ComponentType, type FC, useEffect, useState } from 'react';
+import {
+  type ComponentType,
+  type FC,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { connect } from 'react-redux';
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
@@ -215,6 +220,8 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
   const [isCheckedWithNewSettings, setIsCheckedWithNewSettings] =
     useState(false);
 
+  const initialCheckRef = useRef(() => onCheck(result.checkOptions));
+
   const handleApply = () => onApply(result);
 
   const handleCheck = () => {
@@ -229,8 +236,12 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
   const handleSettingsChange = () => setIsCheckedWithNewSettings(false);
 
   useEffect(() => {
-    handleCheck();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // On mount `isStructureChecking` is already false, so there is nothing to reset.
+    initialCheckRef.current().then(() => {
+      setIsStructureChecking(true);
+      setLastCheckDate(new Date());
+      setIsCheckedWithNewSettings(true);
+    });
   }, []);
 
   return (

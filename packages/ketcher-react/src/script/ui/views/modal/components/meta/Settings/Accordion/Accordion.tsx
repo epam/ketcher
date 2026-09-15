@@ -21,7 +21,7 @@ import { Icon } from 'components';
 
 const Accordion = ({ tabs, className, changedGroups }): ReactElement => {
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
-    'General',
+    'General Editing & Display',
   ]);
 
   const handleAccordionChange = (accordion) => () => {

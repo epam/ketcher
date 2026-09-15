@@ -269,7 +269,7 @@ test(
   },
 );
 
-test('5. Switching from Micro mode to Snake and back to Micromolecules mode does not change layout', async ({
+test('5. Switching from Micro mode to Snake and back to Micromolecules mode changes layout', async ({
   SnakeCanvas: _,
 }) => {
   /*

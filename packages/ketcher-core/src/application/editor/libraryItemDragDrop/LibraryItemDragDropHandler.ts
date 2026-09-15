@@ -482,7 +482,7 @@ export class LibraryItemDragDropHandler {
         // The hit monomer must itself be one of the matched components,
         // otherwise the user is hovering a part that the dragged preset does
         // not provide (e.g. a phosphate while dragging a sugar+base preset).
-        if (presetComponents && presetComponents.includes(nearestMonomer)) {
+        if (presetComponents?.includes(nearestMonomer)) {
           return {
             monomer: nearestMonomer,
             kind: 'same-geometry-preset',
@@ -607,7 +607,7 @@ export class LibraryItemDragDropHandler {
         ? this.findPresetMonomerForBonding(addedMonomers, targetAP)
         : monomersAddResult.firstMonomer;
 
-      if (droppedMonomer && droppedMonomer.hasFreeAttachmentPoint) {
+      if (droppedMonomer?.hasFreeAttachmentPoint) {
         targetMonomer.setPotentialSecondAttachmentPoint(targetAP);
         const sourceAP = droppedMonomer.getValidSourcePoint(targetMonomer);
         targetMonomer.setPotentialSecondAttachmentPoint(null);

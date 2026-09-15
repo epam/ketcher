@@ -148,6 +148,6 @@
 
 ## 18. Report the refusals the user can currently only guess at
 
-- [ ] 18.1 In `insertPresetFromLibrary`, dispatch a message saying preset replacement is not supported on a duplex, instead of returning silently
-- [ ] 18.2 In `StyledToast`, replace the fixed height with a minimum height, stop stretching the content, and widen the container so the mandated message is not clipped
+- [x] 18.1 In `insertPresetFromLibrary`, dispatch a message saying preset replacement is not supported on a duplex, instead of returning silently
+- [x] 18.2 In `StyledToast`, replace the fixed height with a minimum height, stop stretching the content, and widen the container so the mandated message is not clipped
 - [ ] 18.3 Flag the toast size change to the team that owns the Playwright screenshots

@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import initTmplLib, { initLib } from './init-lib';
+import { initLib } from './init-lib';
 
 import { KetcherLogger, KetSerializer } from 'ketcher-core';
 import { omit } from 'lodash/fp';
 import { openDialog } from '../modal';
 import { storage } from '../../storage-ext';
 
-export { initTmplLib };
+export { default as initTmplLib } from './init-lib';
 
 /* TEMPLATES */
 export function selectTmpl(tmpl) {

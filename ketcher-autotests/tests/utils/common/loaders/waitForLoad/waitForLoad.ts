@@ -33,16 +33,15 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
     if (await ErrorMessageDialog(page).isVisible()) {
       return;
     }
-    await page.waitForTimeout(1000);
     try {
       await ErrorMessageDialog(page).errorMessageBody.waitFor({
         state: 'visible',
         timeout: 5000,
       });
-      return;
     } catch {
       await OpenStructureDialog(page).window.waitFor({
         state: 'detached',
+        timeout: 5000,
       });
     }
   }

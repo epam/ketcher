@@ -14,7 +14,7 @@ describe('initResize', () => {
 
     initResize()(dispatch, getState);
 
-    expect(() => window.dispatchEvent(new Event('resize'))).not.toThrow();
+    expect(() => globalThis.dispatchEvent(new Event('resize'))).not.toThrow();
     expect(dispatch).not.toHaveBeenCalled();
   });
 
@@ -27,7 +27,7 @@ describe('initResize', () => {
     }));
 
     initResize()(dispatch, getState);
-    window.dispatchEvent(new Event('resize'));
+    globalThis.dispatchEvent(new Event('resize'));
 
     expect(update).toHaveBeenCalled();
     expect(dispatch).toHaveBeenCalledWith({
@@ -46,7 +46,7 @@ describe('initResize', () => {
 
     initResize()(dispatch, getState);
     removeResizeListener();
-    window.dispatchEvent(new Event('resize'));
+    globalThis.dispatchEvent(new Event('resize'));
 
     expect(update).not.toHaveBeenCalled();
   });

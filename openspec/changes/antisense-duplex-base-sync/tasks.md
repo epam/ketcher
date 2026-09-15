@@ -141,10 +141,10 @@
 
 ## 17. Re-scope the both-strands block
 
-- [ ] 17.1 Make the blocked-pair predicate key off the record saying both strands were targeted, not off both partners being selected
-- [ ] 17.2 Confirm a one-strand gesture on a duplex is no longer blocked, so propagation is reachable with sync editing on
-- [ ] 17.3 Confirm a gesture that genuinely covers both rows is still blocked, with the mandated message
-- [ ] 17.4 Confirm no empty entry reaches the undo history when a replacement leaves the opposite strand unchanged
+- [x] 17.1 Make the blocked-pair predicate key off the record saying both strands were targeted, not off both partners being selected
+- [x] 17.2 Confirm a one-strand gesture on a duplex is no longer blocked, so propagation is reachable with sync editing on
+- [x] 17.3 Confirm a gesture that genuinely covers both rows is still blocked, with the mandated message
+- [x] 17.4 Confirm no empty entry reaches the undo history when a replacement leaves the opposite strand unchanged
 
 ## 18. Report the refusals the user can currently only guess at
 

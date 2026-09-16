@@ -1,6 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -1076,9 +1073,8 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.MDLMolfileV3000,
     );
-    const MolfileV3000ExportResult = await SaveStructureDialog(
-      page,
-    ).getTextAreaValue();
+    const MolfileV3000ExportResult =
+      await SaveStructureDialog(page).getTextAreaValue();
     await SaveStructureDialog(page).cancel();
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(

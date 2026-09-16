@@ -35,6 +35,7 @@
 
   > header {
     flex-shrink: 0;
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     box-shadow: 0 2px 4px 0 @color-accordion-shadow;
     z-index: 10;
   }
@@ -46,14 +47,14 @@
   }
 
   > footer {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     box-shadow: 0 -2px 4px 0 @color-accordion-shadow;
     z-index: 10;
   }
 }
 
 .accordionWrapper {
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden auto;
   .scrollbar();
 }
 
@@ -70,6 +71,7 @@
 .accordionSummaryWrapper {
   margin: 0;
   padding-left: @padding-container;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border-bottom: 1px solid @color-grey-3;
   background-color: @color-background-primary;
   width: 100%;
@@ -111,6 +113,7 @@
 }
 
 .accordionDetailsWrapper {
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border-bottom: 1px solid @color-grey-3;
 }
 
@@ -127,8 +130,7 @@
 
   label {
     display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
+    flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 4px;

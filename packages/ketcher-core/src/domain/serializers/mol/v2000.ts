@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable guard-for-in */ // todo
+// todo
 
 import { Atom, AttachmentPoints, StereoLabel } from 'domain/entities/atom';
 import { AtomList } from 'domain/entities/atomList';
@@ -34,7 +34,7 @@ import type { AtomMap, SGroupMap } from './mol.types';
 const loadRGroupFragments = true; // TODO: set to load the fragments
 
 /** M-property block: string keys (CHG, alias, …) map to per-atom pools */
-type MPropertyProps = Map<string, Pool>;
+type MPropertyProps = Map<string, Pool<string | number | AtomList>>;
 
 function parseAtomLine(atomLine: string): Atom {
   /* reader */
@@ -202,7 +202,10 @@ function handleRGroupProperty(
 
   for (const a2r of a2rs) {
     const rg = Number(a2r[1]);
-    rglabels.set(a2r[0], (rglabels.get(a2r[0]) || 0) | (1 << (rg - 1)));
+    rglabels.set(
+      a2r[0],
+      ((rglabels.get(a2r[0]) as number) || 0) | (1 << (rg - 1)),
+    );
   }
 }
 
@@ -418,7 +421,7 @@ function parsePropertyLines(
   rLogic: Record<number, RGroupAttributes>,
 ): MPropertyProps {
   /* reader */
-  const props = new Map<string, Pool>();
+  const props = new Map<string, Pool<string | number | AtomList>>();
 
   while (shift < end) {
     const line = ctabLines[shift];
@@ -452,7 +455,11 @@ function parsePropertyLines(
  * @param values { Pool }
  * @param propId { string }
  */
-function applyAtomProp(atoms: Pool<Atom>, values: Pool, propId: string): void {
+function applyAtomProp(
+  atoms: Pool<Atom>,
+  values: Pool<string | number | AtomList>,
+  propId: string,
+): void {
   /* reader */
   values.forEach((propVal, aid) => {
     const atom = atoms.get(aid);
@@ -499,7 +506,6 @@ function parseCTabV2000(
   countsSplit: string[],
   ignoreChiralFlag?: boolean,
 ): Struct {
-  // eslint-disable-line max-statements
   /* reader */
   const ctab = new Struct();
   let i: number;
@@ -597,7 +603,6 @@ function parseCTabV2000(
 }
 
 function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
-  // eslint-disable-line max-statements
   ctabLines = ctabLines.slice(7);
   if (ctabLines[0].trim() !== '$CTAB') throw new Error('RGFile format invalid');
   let i = 1;
@@ -609,7 +614,6 @@ function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   ctabLines = ctabLines.slice(i + 1);
   const fragmentLines: Record<number, string[][]> = {};
   while (true) {
-    // eslint-disable-line no-constant-condition
     if (ctabLines.length === 0) throw new Error('Unexpected end of file');
     let line = ctabLines[0].trim();
     if (line === '$END MOL') {
@@ -621,7 +625,6 @@ function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
     fragmentLines[rgid] = [];
     ctabLines = ctabLines.slice(2);
     while (true) {
-      // eslint-disable-line no-constant-condition
       if (ctabLines.length === 0) throw new Error('Unexpected end of file');
       line = ctabLines[0].trim();
       if (line === '$END RGP') {
@@ -658,7 +661,6 @@ function parseRxn2000(
   shouldReactionRelayout?: boolean,
   ignoreChiralFlag?: boolean,
 ): Struct {
-  // eslint-disable-line max-statements
   /* reader */
   ctabLines = ctabLines.slice(4);
   const countsSplit = utils.partitionLine(
@@ -723,13 +725,16 @@ function labelsListToIds(labels: string[]): number[] {
  * @param lst
  * @returns { Pool }
  */
-function parsePropertyLineAtomList(hdr: string[], lst: string[]): Pool {
+function parsePropertyLineAtomList(
+  hdr: string[],
+  lst: string[],
+): Pool<AtomList> {
   /* reader */
   const aid = utils.parseDecimalInt(hdr[1]) - 1;
   const count = utils.parseDecimalInt(hdr[2]);
   const notList = hdr[4].trim() === 'T';
   const ids = labelsListToIds(lst.slice(0, count));
-  const ret = new Pool();
+  const ret = new Pool<AtomList>();
   ret.set(
     aid,
     new AtomList({

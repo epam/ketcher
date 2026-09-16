@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -46,8 +45,8 @@ test.describe('Indigo Tools - Layout', () => {
     const doubleBond = getBondLocator(page, { bondId: 18 });
     const box = await doubleBond.boundingBox();
     if (!box) throw new Error('Bond bounding box not found');
-    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
-    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
     await page.mouse.move(
       coordinatesToStartSelection,
       coordinatesToStartSelection,

@@ -1,29 +1,23 @@
 import styled, { CSSObject } from '@emotion/styled';
 
-export const EditorWrapper = styled.div(
-  (): CSSObject => ({
-    height: '100%',
-    position: 'relative',
-  }),
-);
+export const EditorWrapper = styled.div((): CSSObject => ({
+  height: '100%',
+  position: 'relative',
+}));
 
-export const TopMenuRightWrapper = styled.div(
-  (): CSSObject => ({
-    display: 'flex',
-    alignItems: 'center',
-  }),
-);
+export const TopMenuRightWrapper = styled.div((): CSSObject => ({
+  display: 'flex',
+  alignItems: 'center',
+}));
 
-export const TogglerComponentWrapper = styled.div(
-  (): CSSObject => ({
-    background: '',
-    '&.toggler-component-wrapper--disabled': {
-      opacity: 0.4,
-      pointerEvents: 'none',
-      cursor: 'default',
-    },
-  }),
-);
+export const TogglerComponentWrapper = styled.div((): CSSObject => ({
+  background: '',
+  '&.toggler-component-wrapper--disabled': {
+    opacity: 0.4,
+    pointerEvents: 'none',
+    cursor: 'default',
+  },
+}));
 
 export const CanvasWrapper = styled.svg(() => ({
   '&.handCursor': {

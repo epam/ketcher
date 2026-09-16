@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,

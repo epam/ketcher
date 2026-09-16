@@ -1,5 +1,5 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +15,6 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import type { Operation } from 'domain/entities/Operation';

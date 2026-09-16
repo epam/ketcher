@@ -39,6 +39,28 @@ function computeTotalMonomerCount(
 }
 
 /**
+ * Count how many of the provided functional groups are MonomerMicromolecules
+ * with the same label as the primary functional group.
+ * Used when the user has multiple monomers selected — the count reflects
+ * only the selected instances that will actually be replaced.
+ */
+function computeSelectedMatchingMonomerCount(
+  functionalGroups: FunctionalGroup[],
+  primaryFunctionalGroup: FunctionalGroup | undefined,
+): number {
+  if (!primaryFunctionalGroup) return 0;
+  const primarySGroup = primaryFunctionalGroup.relatedSGroup;
+  if (!(primarySGroup instanceof MonomerMicromolecule)) return 0;
+
+  const targetLabel = primarySGroup.monomer.monomerItem.label;
+  return functionalGroups.filter(
+    (fg) =>
+      fg.relatedSGroup instanceof MonomerMicromolecule &&
+      fg.relatedSGroup.monomer.monomerItem.label === targetLabel,
+  ).length;
+}
+
+/**
  * Returns true when the selection contains atoms or bonds that do NOT belong
  * to any monomer functional group (i.e. plain chemical structure elements).
  */
@@ -254,11 +276,17 @@ export function getMenuPropsForSelection(
       const primaryMonomerFG = functionalGroups.find(
         (fg) => fg.relatedSGroup instanceof MonomerMicromolecule,
       );
+      const selectedMatchingCount = computeSelectedMatchingMonomerCount(
+        functionalGroups,
+        primaryMonomerFG,
+      );
       return {
         id: CONTEXT_MENU_ID.FOR_MACROMOLECULE + ketcherId,
         functionalGroups,
         totalMonomerCount: editor
-          ? computeTotalMonomerCount(editor, primaryMonomerFG)
+          ? selectedMatchingCount > 1
+            ? selectedMatchingCount
+            : computeTotalMonomerCount(editor, primaryMonomerFG)
           : undefined,
         hasNonMonomerStructure: editor
           ? computeHasNonMonomerStructure(editor, selectedFunctionalGroups)

@@ -25,12 +25,11 @@ type ValueOf<TObject extends object> = Readonly<TObject[keyof TObject]>;
 type OperationTypeValue = ValueOf<typeof OperationType>;
 
 class BaseOperation<D = unknown> {
-  // eslint-disable-next-line no-use-before-define
   private _inverted: BaseOperation | undefined;
   type: OperationTypeValue;
   priority: number;
   data!: D;
-  // eslint-disable-next-line no-use-before-define -- inverse constructor args vary by operation
+
   static InverseConstructor: new (...args: never[]) => BaseOperation;
 
   constructor(type: OperationTypeValue, priority = 0) {

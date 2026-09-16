@@ -88,10 +88,7 @@ class SGroupCreate extends BaseOperation {
     if (expanded !== undefined) {
       sgroup.data.expanded = expanded;
       if (sgroup instanceof MonomerMicromolecule) {
-        if (Object.isFrozen(sgroup.monomer.monomerItem)) {
-          sgroup.monomer.monomerItem = { ...sgroup.monomer.monomerItem };
-        }
-        sgroup.monomer.monomerItem.expanded = expanded;
+        sgroup.setExpanded(expanded);
       }
     }
 

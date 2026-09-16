@@ -1,6 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable prettier/prettier */
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -200,7 +197,7 @@ test.describe('Template Manupulations', () => {
       await RightToolbar(page).clickAtom(Atom.Fluorine);
       await clickInTheMiddleOfTheCanvas(page);
       await CommonLeftToolbar(page).areaSelectionTool(
-        SelectionToolType.Fragment,
+        SelectionToolType.Structure,
       );
       await getAtomLocator(page, { atomLabel: 'F' }).click();
       await takeEditorScreenshot(page);
@@ -370,7 +367,7 @@ test.describe('Template Manupulations', () => {
     await LeftToolbar(page).reactionPlusTool();
     await clickOnCanvas(page, 1, 1, { from: 'pageCenter' });
     await BottomToolbar(page).clickRing(RingButton.Cyclooctane);
-    // eslint-disable-next-line no-magic-numbers
+
     await clickOnCanvas(page, 1, -4, { from: 'pageCenter' });
     await takeEditorScreenshot(page);
     await LeftToolbar(page).selectArrowTool();

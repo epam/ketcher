@@ -21,12 +21,11 @@
   align-items: center;
   justify-content: center;
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  right: 0;
+  inset: 0;
   z-index: 40;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   background-image: data-uri('overlay.svg');
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   .background-opacity(@hover-color, 0.2);
 
   &.animate {
@@ -34,6 +33,7 @@
   }
 
   &.hide {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     background-color: fade(@hover-color, 1%);
   }
 

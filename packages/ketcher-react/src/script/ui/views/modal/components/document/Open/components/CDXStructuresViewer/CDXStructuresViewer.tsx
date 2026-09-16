@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -51,7 +52,6 @@ export const CDXStructuresViewer = ({
   const [itemsMap, setItemsMap] = useState<itemsMapInterface>({});
   const loading = !!structList[selectedIndex] && !itemsMap[selectedIndex];
 
-  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     if (!itemsMap[selectedIndex] || itemsMap[selectedIndex].error) {
       inputHandler('');
@@ -76,7 +76,6 @@ export const CDXStructuresViewer = ({
       });
   };
 
-  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     if (structList[selectedIndex] && !itemsMap[selectedIndex]) {
       getImage(structList[selectedIndex], selectedIndex);

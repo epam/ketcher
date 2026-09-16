@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -61,7 +62,6 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
     ref: rootElRef as RefObject<HTMLDivElement>,
   });
 
-  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     if (!props.ketcherId) {
       return;

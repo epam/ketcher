@@ -1,3 +1,4 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -67,14 +68,12 @@ export function GenericInput({
 }) {
   const inputRef = useRef<HTMLInputElement>(innerRef);
 
-  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     if (innerRef && inputRef.current) {
       innerRef.current = inputRef.current;
     }
   }, [innerRef]);
 
-  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     if (inputRef.current && isFocused) {
       inputRef.current.focus();

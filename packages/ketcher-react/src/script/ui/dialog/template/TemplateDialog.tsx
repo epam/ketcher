@@ -1,3 +1,4 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -214,20 +215,17 @@ export const TemplateDialog: FC<Props> = (props) => {
 
   const filteredTemplateLib = filterLibSelector(props);
 
-  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     searchInputRef.current?.focus();
     onSelect(null);
   }, [tab, onSelect]);
 
-  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     if (initialTab !== null) {
       onTabChange(initialTab);
     }
   }, [initialTab, onTabChange]);
 
-  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     if (
       isMonomerCreationWizardActive &&

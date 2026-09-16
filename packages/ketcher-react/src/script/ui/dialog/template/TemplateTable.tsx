@@ -1,3 +1,4 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -106,7 +107,6 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     return () => resizeObserver.disconnect();
   }, []);
 
-  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     if (previewRenderedCount >= templates.length) {
       return;

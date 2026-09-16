@@ -1,3 +1,4 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -124,7 +125,6 @@ const MeasureInput = ({
   // the first render's closure and cannot call the current onChange. This effect
   // is re-created every render, so it always holds the latest onChange/value —
   // hence the deliberate single-dep list.
-  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     if (internalValue !== stringifiedValue) {
       onChange(parseFloat(internalValue));

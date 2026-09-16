@@ -419,6 +419,13 @@ export const selectIsSequenceFirstsOnlyNucleotidesSelected = (
   state: RootState,
 ): boolean => state.rnaBuilder.isSequenceFirstsOnlyNucleoelementsSelected;
 
+export const selectIsBaseModificationBlocked = (state: RootState): boolean =>
+  Boolean(
+    state.rnaBuilder.sequenceSelection?.some(
+      (labeledNode) => labeledNode.isInSelectedAntisensePair,
+    ),
+  );
+
 export const selectCurrentMonomerGroup = (
   preset: IRnaPreset,
   groupName: MonomerGroups | string,

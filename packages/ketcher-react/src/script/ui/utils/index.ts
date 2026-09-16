@@ -90,7 +90,7 @@ export function filterFGLib(lib, filter) {
  * t(), which can't resolve them and logs a spurious missing-key warning.
  */
 const TRANSLATION_KEY_RE =
-  /^(?:common|toolbar|toolbars|dialogs|components|settings):[A-Za-z0-9_.-]+$/;
+  /^(?:common|toolbar|toolbars|dialogs|components|settings|macromolecules|macromoleculesDialogs):[A-Za-z0-9_.-]+$/;
 
 export function resolveTranslatableText<T>(value: T, t?: TFunction): T {
   if (typeof value !== 'string' || !t || !TRANSLATION_KEY_RE.test(value)) {

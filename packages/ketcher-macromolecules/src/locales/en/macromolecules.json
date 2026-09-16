@@ -47,5 +47,36 @@
   },
   "ruler": {
     "monomersInLine": "Number of monomers in a line"
+  },
+  "macromoleculeProperties": {
+    "calculateProperties": "Calculate properties ({shortcut})",
+    "noDataAvailable": "No Data Available",
+    "selectMonomerForPeptides": "Select monomer, chain or part of a chain",
+    "selectMonomerForNucleotides": "Select a nucleotide/nucleoside, chain or part of a chain containing nucleotides/nucleosides",
+    "isoelectricPoint": "Isoelectric Point",
+    "isoelectricPointHintBefore": "The isoelectric point is calculated as the median of all pKa values for amino acids (values from ",
+    "isoelectricPointHintAfter": "). Only amino acid natural analogues are used in the calculation.",
+    "extinctionCoefficient": "Extinction Coef.(1/Mcm)",
+    "extinctionCoefficientHintBefore": "The extinction coefficient for wavelength of 280nm is calculated using the method from ",
+    "extinctionCoefficientHintAfter": " Natural analogue is used in place of a modified amino acid.",
+    "hydrophobicity": "Hydrophobicity",
+    "hydrophobicityHintYAxis": "y = Hydrophobicity score",
+    "hydrophobicityHintXAxis": "x = Position of the amino acid residue",
+    "hydrophobicityHintBefore": "The hydrophobicity is calculated using the method from ",
+    "hydrophobicityHintAfter": " Natural analogue is used in place of a modified amino acid.",
+    "meltingTemp": "Melting Temp. (°C)",
+    "meltingTempHintBefore": "The melting temperature is calculated using the method from ",
+    "meltingTempHintAfter": " Natural analogue is used in place of a modified base.",
+    "unipositiveIons": "[Unipositive Ions]",
+    "oligonucleotides": "[Oligonucleotides]",
+    "otherMonomerCount": "Other",
+    "peptidesTab": "Peptides",
+    "rnaDnaTab": "RNA/DNA"
+  },
+  "preview": {
+    "modificationType": "Modification type",
+    "unknownStructure": "Unknown structure",
+    "phosphateOnLeft": "Phosphate on the left (5')",
+    "phosphateOnRight": "Phosphate on the right (3')"
   }
 }

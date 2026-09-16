@@ -33,6 +33,7 @@ import {
 } from '../operations';
 import { Pile } from 'domain/entities/pile';
 import { RGroup } from 'domain/entities/rgroup';
+import type { SGroup } from 'domain/entities/sgroup';
 import { Vec2 } from 'domain/entities/vec2';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 
@@ -50,7 +51,27 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
   const atomsToInvalidate = new Pile<number>();
 
   if (lists.atoms) {
-    const atomSet = new Pile<number>(lists.atoms);
+    const selectedAtomSet = new Set<number>(lists.atoms);
+    const selectedSGroupSet = new Set<number>(lists.sgroups ?? []);
+    const sgroups = Array.from(struct.sgroups.values()) as SGroup[];
+    const selectedContractedSGroups = sgroups.filter(
+      (sgroup) => sgroup.isContracted() && selectedSGroupSet.has(sgroup.id),
+    );
+    const contractedSGroups = sgroups.filter(
+      (sgroup) =>
+        sgroup.isContracted() &&
+        !selectedSGroupSet.has(sgroup.id) &&
+        sgroup.atoms.length > 0 &&
+        sgroup.atoms.every((atomId) => selectedAtomSet.has(atomId)),
+    );
+    const contractedSGroupSet = new Set(contractedSGroups);
+    const contractedSGroupAtoms = new Set(
+      contractedSGroups.flatMap(({ atoms }) => atoms),
+    );
+    const atomsToMove = lists.atoms.filter(
+      (atomId) => !contractedSGroupAtoms.has(atomId),
+    );
+    const atomSet = new Pile<number>(atomsToMove);
     const bondlist: Array<number> = [];
     const relatedSgroups = getRelSGroupsBySelection(struct, lists.atoms);
 
@@ -86,11 +107,14 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
       }
     });
 
-    lists.atoms.forEach((aid) => {
+    atomsToMove.forEach((aid) => {
       action.addOp(new AtomMove(aid, d, !atomsToInvalidate.has(aid)));
     });
 
     relatedSgroups.forEach((sgroup) => {
+      if (contractedSGroupSet.has(sgroup)) {
+        return;
+      }
       sgroup?.atoms.forEach((aid) => {
         if (!atomSet.has(aid)) {
           action.addOp(new AtomMove(aid, d, true));
@@ -99,8 +123,16 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
     });
 
     if (lists.sgroupData?.length === 0) {
-      relatedSgroups.forEach((sg) => {
-        action.addOp(new SGroupDataMove(sg.id, d));
+      new Set([
+        ...relatedSgroups,
+        ...contractedSGroups,
+        ...selectedContractedSGroups,
+      ]).forEach((sg) => {
+        const implicitContractedPositionMovesWithAtoms =
+          sg.isContracted() && sg.pp === null && !contractedSGroupSet.has(sg);
+        if (!implicitContractedPositionMovesWithAtoms) {
+          action.addOp(new SGroupDataMove(sg.id, d));
+        }
       });
     }
   }

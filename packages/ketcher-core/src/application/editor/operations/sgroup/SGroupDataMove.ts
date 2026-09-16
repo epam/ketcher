@@ -23,11 +23,12 @@ export class SGroupDataMove extends BaseOperation {
   data: {
     id: number | undefined;
     d: Vec2 | undefined;
+    initializedFromNull: boolean;
   };
 
   constructor(id?: number, d?: Vec2) {
     super(OperationType.S_GROUP_DATA_MOVE);
-    this.data = { id, d };
+    this.data = { id, d, initializedFromNull: false };
   }
 
   execute(restruct: ReStruct) {
@@ -37,8 +38,24 @@ export class SGroupDataMove extends BaseOperation {
     const sgroup = sgroups.get(id);
     if (!sgroup) return;
 
-    sgroup.pp?.add_(d);
+    if (this.data.initializedFromNull) {
+      sgroup.pp?.add_(d);
+      sgroup.pp = null;
+      this.data.initializedFromNull = false;
+    } else if (sgroup.pp) {
+      sgroup.pp.add_(d);
+    } else if (sgroup.isContracted()) {
+      const { position } = sgroup.getContractedPosition(restruct.molecule);
+      sgroup.pp = position.add(d);
+      this.data.initializedFromNull = true;
+    }
     this.data.d = d.negated();
+
+    if (sgroup.isContracted?.()) {
+      const { atomId } = sgroup.getContractedPosition(restruct.molecule);
+      BaseOperation.invalidateAtom(restruct, atomId, 1);
+      BaseOperation.invalidateItem(restruct, 'sgroups', id, 1);
+    }
 
     // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway
     BaseOperation.invalidateItem(restruct, 'sgroupData', id, 1);

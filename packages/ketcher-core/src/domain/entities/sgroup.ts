@@ -410,6 +410,10 @@ export class SGroup {
       atomId = this.atoms[0];
     }
 
+    if (this.pp) {
+      return { atomId, position: this.pp };
+    }
+
     // position: always the geometric center of all atoms in the group.
     const positions = getAtomPositions(this.atoms, struct.atoms);
 

@@ -1,1 +1,51 @@
-{}
+{
+  "topMenu": {
+    "clearCanvas": "Clear Canvas ({shortcut})",
+    "open": "Open...",
+    "saveAs": "Save as...",
+    "undo": "Undo ({shortcut})",
+    "redo": "Redo ({shortcut})",
+    "arrangeAsRing": "Arrange as a Ring ({shortcut})",
+    "createAntisenseStrand": "Create Antisense Strand",
+    "createRnaAntisenseStrand": "Create RNA Antisense Strand ({shortcut})",
+    "createDnaAntisenseStrand": "Create DNA Antisense Strand ({shortcut})"
+  },
+  "leftMenu": {
+    "handTool": "Hand Tool ({shortcut})",
+    "selectRectangle": "Select Rectangle ({shortcut})",
+    "lassoSelection": "Lasso selection ({shortcut})",
+    "structureSelection": "Structure Selection ({shortcut})",
+    "erase": "Erase ({shortcut})",
+    "singleBond": "Single Bond (1)",
+    "hydrogenBond": "Hydrogen Bond (2)"
+  },
+  "floatingTools": {
+    "flipHorizontally": "Flip horizontally",
+    "flipVertically": "Flip vertically",
+    "delete": "Delete"
+  },
+  "zoom": {
+    "zoomOutTitle": "Zoom Out",
+    "zoomOutLabel": "Zoom out",
+    "zoomInTitle": "Zoom In",
+    "zoomInLabel": "Zoom in",
+    "zoomReset": "Zoom 100%"
+  },
+  "layoutMode": {
+    "switchToSequence": "Switch to sequence layout mode",
+    "switchToSnake": "Switch to snake layout mode",
+    "switchToFlex": "Switch to flex layout mode"
+  },
+  "buttons": {
+    "help": "Help (?)",
+    "about": "About"
+  },
+  "sequenceType": {
+    "rnaTooltip": "RNA ({shortcut})",
+    "dnaTooltip": "DNA ({shortcut})",
+    "peptidesTooltip": "Peptides ({shortcut})"
+  },
+  "ruler": {
+    "monomersInLine": "Number of monomers in a line"
+  }
+}

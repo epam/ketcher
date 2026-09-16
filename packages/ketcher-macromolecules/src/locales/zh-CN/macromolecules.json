@@ -1,1 +1,51 @@
-{}
+{
+  "topMenu": {
+    "clearCanvas": "清除画布 ({shortcut})",
+    "open": "打开…",
+    "saveAs": "另存为…",
+    "undo": "撤销 ({shortcut})",
+    "redo": "重做 ({shortcut})",
+    "arrangeAsRing": "排列成环 ({shortcut})",
+    "createAntisenseStrand": "创建反义链",
+    "createRnaAntisenseStrand": "创建RNA反义链 ({shortcut})",
+    "createDnaAntisenseStrand": "创建DNA反义链 ({shortcut})"
+  },
+  "leftMenu": {
+    "handTool": "抓手工具 ({shortcut})",
+    "selectRectangle": "矩形选择 ({shortcut})",
+    "lassoSelection": "套索选择 ({shortcut})",
+    "structureSelection": "结构选择 ({shortcut})",
+    "erase": "橡皮擦 ({shortcut})",
+    "singleBond": "单键 (1)",
+    "hydrogenBond": "氢键 (2)"
+  },
+  "floatingTools": {
+    "flipHorizontally": "水平翻转",
+    "flipVertically": "垂直翻转",
+    "delete": "删除"
+  },
+  "zoom": {
+    "zoomOutTitle": "缩小",
+    "zoomOutLabel": "缩小",
+    "zoomInTitle": "放大",
+    "zoomInLabel": "放大",
+    "zoomReset": "缩放 100%"
+  },
+  "layoutMode": {
+    "switchToSequence": "切换到序列布局模式",
+    "switchToSnake": "切换到蛇形布局模式",
+    "switchToFlex": "切换到自由布局模式"
+  },
+  "buttons": {
+    "help": "帮助 (?)",
+    "about": "关于"
+  },
+  "sequenceType": {
+    "rnaTooltip": "RNA ({shortcut})",
+    "dnaTooltip": "DNA ({shortcut})",
+    "peptidesTooltip": "多肽 ({shortcut})"
+  },
+  "ruler": {
+    "monomersInLine": "每行的单体数量"
+  }
+}

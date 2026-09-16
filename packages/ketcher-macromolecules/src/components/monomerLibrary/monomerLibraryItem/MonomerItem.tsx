@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { EmptyFunction } from 'helpers';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { useCallback, MouseEvent, useRef, useState } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
@@ -53,6 +54,7 @@ const MonomerItem = ({
   onClick = EmptyFunction,
   onStarClick = EmptyFunction,
 }: IMonomerItemProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const isSequenceMode = useAppSelector(selectIsSequenceMode);
@@ -93,7 +95,7 @@ const MonomerItem = ({
 
       // Validate before executing autochain to ensure validation runs even on consecutive clicks
       if (editor) {
-        const errorMessage = getAutochainErrorMessage(editor, item);
+        const errorMessage = getAutochainErrorMessage(editor, item, t);
         setAutochainErrorMessage(errorMessage);
 
         // If there's an error, don't proceed with autochain
@@ -104,19 +106,19 @@ const MonomerItem = ({
 
       editor?.events.autochain.dispatch(item);
     },
-    [editor, item],
+    [editor, item, t],
   );
 
   const onMouseOver = useCallback(
     () =>
-      editor && cardMouseOverHandler(editor, item, setAutochainErrorMessage),
-    [editor, item],
+      editor && cardMouseOverHandler(editor, item, setAutochainErrorMessage, t),
+    [editor, item, t],
   );
 
   const onAutochainIconMouseOver = useCallback(() => {
     // Re-validate on hover to ensure tooltip shows current validation state
     if (editor) {
-      const errorMessage = getAutochainErrorMessage(editor, item);
+      const errorMessage = getAutochainErrorMessage(editor, item, t);
       setAutochainErrorMessage(errorMessage);
 
       if (errorMessage) {
@@ -125,7 +127,7 @@ const MonomerItem = ({
     }
 
     editor?.events.previewAutochain.dispatch(item);
-  }, [editor, item]);
+  }, [editor, item, t]);
 
   const onAutochainIconMouseOut = useCallback(() => {
     editor?.events.removeAutochainPreview.dispatch(item);
@@ -191,7 +193,7 @@ const MonomerItem = ({
             type="button"
             onClick={addFavorite}
             className={`star ${item.favorite ? 'visible' : ''}`}
-            aria-label="Toggle favorite"
+            aria-label={t('monomerLibrary.toggleFavoriteAriaLabel')}
           >
             {FavoriteStarSymbol}
           </button>

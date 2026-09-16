@@ -16,8 +16,14 @@
 
 import { MonomerGroups } from 'src/constants';
 
-export const groupNameToRnaEditorItemLabel = {
-  [MonomerGroups.SUGARS]: 'Sugar',
-  [MonomerGroups.BASES]: 'Base',
-  [MonomerGroups.PHOSPHATES]: 'Phosphate',
+/**
+ * Values are macromoleculesDialogs translation-key suffixes, not display
+ * text - MonomerGroups itself must stay untranslated (its values are used
+ * as Redux state keys across state/library and state/rna-builder), so
+ * callers resolve these through t() rather than rendering them directly.
+ */
+export const groupNameToRnaEditorItemLabelKey = {
+  [MonomerGroups.SUGARS]: 'monomerLibrary.groupLabelSugar',
+  [MonomerGroups.BASES]: 'monomerLibrary.groupLabelBase',
+  [MonomerGroups.PHOSPHATES]: 'monomerLibrary.groupLabelPhosphate',
 };

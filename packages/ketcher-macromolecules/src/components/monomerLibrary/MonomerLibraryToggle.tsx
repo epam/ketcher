@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import { Icon } from 'ketcher-react';
 
 const StyledMonomerLibraryToggle = styled.div(({ theme }) => {
@@ -38,6 +39,7 @@ interface Props {
 }
 
 const MonomerLibraryToggle = ({ onClick }: Props) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   return (
     <StyledMonomerLibraryToggle
       onClick={onClick}
@@ -46,7 +48,7 @@ const MonomerLibraryToggle = ({ onClick }: Props) => {
       <span className="icon">
         <Icon name="arrows-left" />
       </span>{' '}
-      Show Library
+      {t('monomerLibrary.showLibrary')}
     </StyledMonomerLibraryToggle>
   );
 };

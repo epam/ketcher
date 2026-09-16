@@ -1,4 +1,34 @@
 import React from 'react';
+import i18nextInstance from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import macromolecules from '../locales/en/macromolecules.json';
+import macromoleculesDialogs from '../locales/en/macromoleculesDialogs.json';
+
+// Mirrors the subset of ketcher-react's common.json actually referenced
+// from ketcher-macromolecules via the shared i18next instance. This file
+// mocks the whole 'ketcher-react' package (including its i18n module) for
+// ketcher-macromolecules' own test suite, so the real common.json isn't
+// reachable here - keep this in sync if those keys' English text changes.
+const common = {
+  button: {
+    save: 'Save',
+    cancel: 'Cancel',
+    close: 'Close',
+  },
+};
+
+if (!i18nextInstance.isInitialized) {
+  i18nextInstance.use(initReactI18next).init({
+    lng: 'en',
+    fallbackLng: 'en',
+    resources: {
+      en: { macromolecules, macromoleculesDialogs, common },
+    },
+    interpolation: { escapeValue: false },
+  });
+}
+
+export const i18n = i18nextInstance;
 
 export const Icon = ({
   children,

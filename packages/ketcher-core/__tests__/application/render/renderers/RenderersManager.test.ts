@@ -561,7 +561,7 @@ describe('RenderersManager', () => {
     expect(baseRenderer.enumerations).toEqual([1]);
   });
 
-  it('does not enumerate a cyclic RNA chain (no valid start monomer)', () => {
+  it('keeps sequential numbering for a cyclic RNA chain closed by connecting the first and last monomer', () => {
     const first = buildRnaUnit(false);
     const second = buildRnaUnit(false);
 
@@ -598,13 +598,15 @@ describe('RenderersManager', () => {
           (subChain): subChain is RnaSubChain =>
             subChain instanceof RnaSubChain,
         )
-        .forEach((subChain) =>
-          recalculateRnaChainEnumeration(subChain, chain.isCyclic),
-        );
+        .forEach((subChain) => recalculateRnaChainEnumeration(subChain));
     });
 
-    expect(firstBaseRenderer.enumerations).toEqual([null]);
-    expect(secondBaseRenderer.enumerations).toEqual([null]);
+    const enumeratedUnits = [
+      firstBaseRenderer.enumerations,
+      secondBaseRenderer.enumerations,
+    ];
+    expect(enumeratedUnits).toContainEqual([1]);
+    expect(enumeratedUnits).toContainEqual([2]);
   });
 
   it('resets enumeration for a lone RNA base left in a ChemSubChain after its sugar and phosphate are deleted', () => {

@@ -174,6 +174,12 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
 
   afterEach(() => {
     SequenceRenderer.resetTargetedStrand();
+    // EditorHistory is a process-wide singleton keyed only by the first
+    // editor it ever saw (see EditorHistory.getInstance): without an
+    // explicit reset here, a later test's getInstance(newEditor) call would
+    // keep returning this test's instance, still pointed at this test's
+    // (by-then-removed) editor and renderersContainer.
+    EditorHistory.getInstance(editor).destroy();
     canvas.remove();
   });
 
@@ -277,6 +283,94 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
       // to U -- the antisense-to-sense direction, through the RNA Builder's
       // own write-back path.
       expect(senseNucleotides[0].rnaBase.label).toBe('U');
+    });
+
+    // The spec (design Decision behind #6595's sync propagation) says the
+    // mirrored edit and the original edit "are applied as a single undo
+    // step". Nothing exercised that until now: this drives a real
+    // propagating replacement through a single column (both strands
+    // selected at that column, exactly as a real gesture produces per the
+    // "columns select both strands" behavior documented throughout this
+    // file), then proves ONE undo() reverts BOTH bases and moves the
+    // history pointer back by exactly one -- not two separate steps.
+    it('undoes a propagating replacement as a single history step, restoring both bases; redo reapplies both', () => {
+      const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
+      const senseLabelBefore = senseNucleotides[0].rnaBase.label;
+      const antisenseLabelBefore = antisenseNucleotides[0].rnaBase.label;
+      const originalSenseBaseId = senseNucleotides[0].rnaBase.id;
+
+      // Single-column drag: sense[0] to antisense[0], both ends at position
+      // 0, so the record is SENSE and both strands are selected there.
+      dragAcrossBothPositions(senseNucleotides[0], antisenseNucleotides[0]);
+      expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
+
+      const selections = SequenceRenderer.selections
+        .map((range) =>
+          range.filter((selection) => selection.nodeIndexOverall === 0),
+        )
+        .filter((range) => range.length > 0);
+      const newBaseItem = requireBaseLibraryItem(editor, 'C');
+
+      const history = EditorHistory.getInstance(editor);
+      const historyPointerBefore = history.historyPointer;
+
+      // The directly-targeted (sense) node is deleted and recreated as a
+      // bare Base monomer by replaceSelectionWithMonomer -- so
+      // senseNucleotides[0].rnaBase, fixed at construction, goes stale the
+      // moment the replacement runs. The new sense base monomer is found by
+      // diffing the monomer map before/after instead. The mirrored
+      // (antisense) side, by contrast, is mutated in place by
+      // createMirroredBaseCommand's modifyMonomerItem call, so
+      // antisenseNucleotides[0].rnaBase -- same object throughout -- keeps
+      // reflecting its current label directly.
+      const monomerIdsBeforeReplace = new Set(
+        editor.drawingEntitiesManager.monomers.keys(),
+      );
+
+      callReplaceSelectionsWithMonomer(mode, selections, newBaseItem);
+
+      // One command was pushed for the propagating pair, not two.
+      expect(history.historyPointer).toBe(historyPointerBefore + 1);
+
+      const newSenseMonomerId = [
+        ...editor.drawingEntitiesManager.monomers.keys(),
+      ].find((id) => !monomerIdsBeforeReplace.has(id));
+
+      if (newSenseMonomerId === undefined) {
+        throw new Error(
+          'Fixture setup failed: no new sense monomer found after replace',
+        );
+      }
+
+      const newSenseLabel = () =>
+        (
+          editor.drawingEntitiesManager.monomers.get(newSenseMonomerId) as
+            { label?: string } | undefined
+        )?.label;
+
+      // Position 0: sense A -> C, antisense (mirrored) U -> G.
+      expect(newSenseLabel()).toBe('C');
+      expect(antisenseNucleotides[0].rnaBase.label).toBe('G');
+
+      history.undo();
+
+      // A single undo() restores BOTH bases and moves the pointer back by
+      // exactly one -- proof the mirrored pair was one undo step, not two.
+      expect(history.historyPointer).toBe(historyPointerBefore);
+      expect(
+        editor.drawingEntitiesManager.monomers.has(newSenseMonomerId),
+      ).toBe(false);
+      expect(
+        editor.drawingEntitiesManager.monomers.has(originalSenseBaseId),
+      ).toBe(true);
+      expect(senseNucleotides[0].rnaBase.label).toBe(senseLabelBefore);
+      expect(antisenseNucleotides[0].rnaBase.label).toBe(antisenseLabelBefore);
+
+      history.redo();
+
+      expect(history.historyPointer).toBe(historyPointerBefore + 1);
+      expect(newSenseLabel()).toBe('C');
+      expect(antisenseNucleotides[0].rnaBase.label).toBe('G');
     });
   });
 

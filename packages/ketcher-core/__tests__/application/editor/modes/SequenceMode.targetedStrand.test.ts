@@ -1,4 +1,4 @@
-import { CoreEditor, SequenceMode } from 'application/editor';
+import { CoreEditor, EditorHistory, SequenceMode } from 'application/editor';
 import { hotkeysConfiguration } from 'application/editor/editorEvents';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
@@ -502,5 +502,95 @@ describe('getSelectedStrandType resolves the targeted strand, not just selection
         antisenseNucleotides[0].sugar.id,
       ),
     ).toBe(true);
+  });
+});
+
+// Finding 1 of the whole-branch review: EditorHistory.undo()/redo() call
+// drawingEntitiesManager.unselectAllDrawingEntities() directly, bypassing
+// SequenceMode.unselectAllEntities() -- the place that pairs an unselect
+// with SequenceRenderer.resetTargetedStrand(). Without the paired reset in
+// EditorHistory itself, a record written by the gesture that produced the
+// undone/redone command survives the selection clear and can steer the next
+// edit at the wrong strand. These tests prove the record is reset, not just
+// that selection is cleared, by using an ANTISENSE record: since
+// targetedStrand's selection-derived fallback defaults to SENSE when
+// nothing is selected (see the getter in SequenceRenderer.ts), a stale
+// ANTISENSE record and a properly-reset one are observably different --
+// unlike a SENSE record, which would coincide with the fallback and prove
+// nothing.
+describe('EditorHistory undo/redo reset the targeted-strand record', () => {
+  let canvas: SVGSVGElement;
+  let editor: CoreEditor;
+  let mode: SequenceMode;
+
+  beforeEach(() => {
+    canvas = createPolymerEditorCanvas();
+    stubCanvasDimensions(canvas);
+    mode = new SequenceMode();
+    editor = new CoreEditor({
+      canvas,
+      theme: {},
+      renderersContainer: createRenderersManager(testRenderTheme),
+      mode,
+    });
+  });
+
+  afterEach(() => {
+    SequenceRenderer.resetTargetedStrand();
+    // EditorHistory is a process-wide singleton keyed only by the first
+    // editor it ever saw (see EditorHistory.getInstance): without an
+    // explicit reset here, the next test's getInstance(newEditor) call
+    // would keep returning the previous test's instance, still pointed at
+    // the previous test's (by-then-removed) editor and renderersContainer.
+    EditorHistory.getInstance(editor).destroy();
+    canvas.remove();
+  });
+
+  // Produces a real history entry, then plants a stale ANTISENSE record on
+  // top -- standing in for a gesture's record that outlives the command it
+  // accompanied, exactly what a shift-extended rectangle drag can leave
+  // behind per the review finding. The command itself only needs to be real
+  // enough for undo()/redo() to run past their early-return guards (a select
+  // command, like drawingEntitiesManager.selectDrawingEntities produces,
+  // does that): what this test is proving is that EditorHistory resets the
+  // record, not what particular edit triggered it.
+  const makeHistoryEntryAndStaleAntisenseRecord = (
+    editorInstance: CoreEditor,
+  ) => {
+    const { senseNucleotides } = buildTwoPositionDuplex(editorInstance);
+
+    const selectCommand =
+      editorInstance.drawingEntitiesManager.selectDrawingEntities([
+        senseNucleotides[0].rnaBase,
+      ]);
+    EditorHistory.getInstance(editorInstance).update(selectCommand);
+
+    SequenceRenderer.setTargetedStrand(STRAND_TYPE.ANTISENSE);
+  };
+
+  it('undo clears the record so targetedStrand falls back to derivation, not the stale record', () => {
+    makeHistoryEntryAndStaleAntisenseRecord(editor);
+    expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.ANTISENSE);
+
+    const history = EditorHistory.getInstance(editor);
+    history.undo();
+
+    // No selection survives the undo (unselectAllDrawingEntities), so the
+    // derived fallback is SENSE. Getting SENSE here -- not the ANTISENSE
+    // that was explicitly recorded -- is only possible if undo() reset the
+    // record; without the fix this assertion fails and returns ANTISENSE.
+    expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
+  });
+
+  it('redo clears the record so targetedStrand falls back to derivation, not the stale record', () => {
+    makeHistoryEntryAndStaleAntisenseRecord(editor);
+    expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.ANTISENSE);
+
+    const history = EditorHistory.getInstance(editor);
+    history.undo();
+    SequenceRenderer.setTargetedStrand(STRAND_TYPE.ANTISENSE);
+    history.redo();
+
+    expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
   });
 });

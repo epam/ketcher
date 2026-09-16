@@ -333,6 +333,9 @@ export const hotkeysConfiguration = {
       editor.renderersContainer.update(modelChanges);
       // Select-all genuinely reaches both rows, so it is the tri-state's
       // "both" case regardless of which row (if any) is currently edited.
+      // Written regardless of editor mode: a 'both' left behind from
+      // flex/snake mode is only ever cleared by re-entering sequence mode,
+      // which cycles the select tool and hits SelectBase.destroy()'s reset.
       SequenceRenderer.setTargetedStrand('both');
     },
   },

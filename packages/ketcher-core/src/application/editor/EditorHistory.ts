@@ -19,6 +19,7 @@ import type { CoreEditor } from './Editor';
 import { assert } from 'utilities';
 import { ketcherProvider } from 'application/ketcherProvider';
 import { EditorHistoryAction } from './EditorHistoryAction';
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 const HISTORY_SIZE = 32; // put me to options
 
 export type HistoryOperationType = 'undo' | 'redo';
@@ -129,6 +130,9 @@ export class EditorHistory {
     const turnOffSelectionCommand =
       this.editor?.drawingEntitiesManager.unselectAllDrawingEntities();
     this.editor?.renderersContainer.update(turnOffSelectionCommand);
+    // The selection this record described no longer exists once redo clears
+    // it; keep the record's lifetime matched to the selection's.
+    SequenceRenderer.resetTargetedStrand();
     // Dispatch after the model has been re-applied so subscribers observe the
     // up-to-date structure.
     this.editor.events.modelChange.dispatch();

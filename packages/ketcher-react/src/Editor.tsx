@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 import { lazy, Suspense, useEffect, useState } from 'react';
 import {
   type EditorProps,
@@ -103,6 +102,7 @@ export const Editor = (props: Props) => {
     };
   }, []);
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     if (moleculesEditor && macromoleculesEditor) {
       if (showPolymerEditor) {
@@ -115,6 +115,7 @@ export const Editor = (props: Props) => {
     }
   }, [showPolymerEditor]);
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     if (
       ketcher &&

@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 import {
   isLibraryItemRnaPreset,
   LibraryItemDragState,
@@ -41,6 +40,7 @@ export const DragGhost = () => {
     };
   }, [editor]);
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     if (!ZoomTool.instance || !libraryItemDragData) {
       return;
@@ -57,6 +57,7 @@ export const DragGhost = () => {
   const leftOffset = editor?.ketcherRootElementBoundingClientRect?.left || 0;
   const topOffset = editor?.ketcherRootElementBoundingClientRect?.top || 0;
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useLayoutEffect(() => {
     const element = ghostWrapperRef.current;
     if (!element || !libraryItemDragData) {

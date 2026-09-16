@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -76,6 +75,7 @@ export const ZoomInput = ({
   inputRef,
   shortcuts,
 }: ZoomInputProps) => {
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     const inputEl = inputRef.current;
     updateInputString(currentZoom, inputEl);
@@ -110,7 +110,7 @@ export const ZoomInput = ({
     const inputEl = inputRef.current;
     inputEl?.focus();
     inputEl?.select();
-  }, [inputRef]);
+  }, []);
 
   return (
     <StyledInput

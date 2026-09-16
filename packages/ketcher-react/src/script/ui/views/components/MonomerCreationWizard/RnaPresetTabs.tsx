@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
@@ -256,6 +255,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
 
   const currentTabStructure = currentTabState?.structure;
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     if (!currentTabStructure) {
       return;
@@ -269,6 +269,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   // active RNA component tab or the wizard state changes. All assigned APs
   // (R-labels) stay visible on every tab so users can see the full attachment-
   // point picture while editing a single component.
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     editor.setVisibleAssignedAttachmentPoints(undefined);
 

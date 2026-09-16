@@ -1,6 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -224,6 +222,7 @@ export const RnaEditorExpanded = ({
     return newPreset;
   };
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler, react-hooks/set-state-in-effect
   useEffect(() => {
     setNewPreset(activePreset);
     setSelectedPhosphatePosition(
@@ -233,6 +232,7 @@ export const RnaEditorExpanded = ({
     );
   }, [activePreset]);
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler, react-hooks/set-state-in-effect
   useEffect(() => {
     if (!sequenceSelection) return;
     // If modifying 1 Nucleotide or 1 Nucleoside or Nucleoside with Phosphate in sequence
@@ -248,6 +248,7 @@ export const RnaEditorExpanded = ({
     );
   }, [dispatch, sequenceSelection]);
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler, react-hooks/set-state-in-effect
   useEffect(() => {
     if (activeMonomerGroup !== RnaBuilderPresetsItem.Presets && isEditMode) {
       if (isSequenceEditInRNABuilderMode && activePresetMonomerGroup) {

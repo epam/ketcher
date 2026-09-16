@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -46,6 +45,7 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const [expandedGroups, setExpandedGroups] = useState<string[]>(['general']);
   const [isLoading, setIsLoading] = useState(false);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (!settingsService || !isModalOpen) return;
 

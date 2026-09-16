@@ -1,6 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler, react-you-might-not-need-an-effect/no-chain-state-updates */
-/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/immutability */
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
@@ -1044,6 +1042,7 @@ const MonomerCreationWizardInternal = ({
     }
   };
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     editor?.setMonomerCreationSelectedType?.(values.type);
   }, [editor, values.type]);
@@ -1141,6 +1140,7 @@ const MonomerCreationWizardInternal = ({
     rnaPresetComponentStructures,
   ]);
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler, react-hooks/set-state-in-effect
   useEffect(() => {
     if (!rnaPresetProblematicAtomIds) {
       return;
@@ -1152,6 +1152,7 @@ const MonomerCreationWizardInternal = ({
     }
   }, [rnaPresetProblematicAtomIds, editor]);
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     if (monomerCreationState?.hasDefaultAttachmentPoints) {
       wizardStateDispatch({
@@ -1244,6 +1245,7 @@ const MonomerCreationWizardInternal = ({
     rnaPresetWizardState.sugar.structure,
   ]);
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler, react-you-might-not-need-an-effect/no-chain-state-updates, react-hooks/set-state-in-effect
   useEffect(() => {
     if (autoPhosphatePosition) {
       handlePhosphatePositionChange(autoPhosphatePosition);

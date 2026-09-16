@@ -2413,14 +2413,12 @@ function countExtOverlaps(
   let count = 0;
   for (const ext of exts) {
     const ab = ext.translate(atomPos);
-    if (
-      !(
-        box.p1.x <= ab.p0.x ||
-        box.p0.x >= ab.p1.x ||
-        box.p1.y <= ab.p0.y ||
-        box.p0.y >= ab.p1.y
-      )
-    ) {
+    if (!(
+      box.p1.x <= ab.p0.x ||
+      box.p0.x >= ab.p1.x ||
+      box.p1.y <= ab.p0.y ||
+      box.p0.y >= ab.p1.y
+    )) {
       count++;
     }
   }

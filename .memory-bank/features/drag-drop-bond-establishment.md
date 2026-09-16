@@ -6,12 +6,19 @@ Building polymer chains required the user to drag a monomer from the library to 
 
 ## User interaction
 
-- **Proximity highlight** — while dragging a monomer or preset from the library, all free attachment points of any canvas monomer within 25 px become visible; the nearest AP extends it's size.
+- **Replacement check (first priority)** — while dragging, if the cursor is within the replacement proximity threshold of a canvas monomer's center, the replacement interaction activates and the AP proximity check is skipped entirely. See [monomer-replacement-drag-drop](./monomer-replacement-drag-drop.md).
+- **Proximity highlight** — when no replacement target is active, all free attachment points of any canvas monomer within 25 px become visible; the nearest AP extends its size.
 - **Bond on drop** — releasing the drag over a highlighted AP creates a polymer bond using the same default-bond rules as the Bond tool (R1-R2 for backbone, R3-R1 for sugar-base, etc.).
 - **Dialog fallback** — when no default bond can be resolved and the dropped entity has two or more free APs, the _Select Attachment Points_ dialog opens pre-populated with the target AP.
 - **Non-standard bond notification** — if the resolved bond pairs same-group attachment points (Rn–Rn), a toast notification is shown.
 
 ## Expected behavior
+
+#### Scenario: Replacement check takes priority over AP highlight
+
+- **WHEN** the cursor is within the replacement proximity threshold of a canvas monomer's center
+- **THEN** the replacement interaction activates; no AP `+` indicators are shown for that monomer
+- **AND** the AP proximity check is not evaluated for that monomer
 
 #### Scenario: AP highlight appears during drag
 
@@ -77,6 +84,7 @@ Building polymer chains required the user to drag a monomer from the library to 
 
 ## Guarantees
 
+- The replacement proximity check fires **before** the AP proximity check; the two modes are mutually exclusive.
 - A proximity bond is only attempted when `dragDropBondTarget` is set (cursor within 25 px of a free AP at release); open-canvas drops are never bonded.
 - The proximity threshold is `DRAG_BOND_PROXIMITY_THRESHOLD_PX = 25` px (screen space).
 - Only free (unoccupied) attachment points are eligible as bond targets.
@@ -92,4 +100,5 @@ Building polymer chains required the user to drag a monomer from the library to 
 ## Related
 
 - Feature: [macromolecules](./macromolecules.md)
+- Feature: [monomer-replacement-drag-drop](./monomer-replacement-drag-drop.md)
 - Module: [editor-engine](../modules/editor-engine.md)

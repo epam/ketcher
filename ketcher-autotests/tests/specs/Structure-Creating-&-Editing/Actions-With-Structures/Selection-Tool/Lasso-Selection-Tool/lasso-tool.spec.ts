@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -262,8 +261,8 @@ test.describe('Lasso Selection tool', () => {
     const box = await bondLocator.boundingBox();
     if (!box) throw new Error('Bond bounding box not found');
 
-    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
-    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
     await dragMouseTo(page, centerX + shiftCoords.x, centerY + shiftCoords.y);
 
     await selectObjects(page, yAxis, yAxis);

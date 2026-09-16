@@ -267,7 +267,10 @@ export function fromPaste(
       rxnArrow.height,
     ).perform(restruct);
     action.addOp(operation);
-    items.rxnArrows.push(operation.data.id);
+    const rxnArrowId = operation.data.id;
+    if (rxnArrowId != null) {
+      items.rxnArrows.push(rxnArrowId);
+    }
   });
 
   pstruct.rxnPluses.forEach((plus) => {

@@ -19,7 +19,7 @@ const makeRestruct = (molecule: Record<string, unknown> = {}): ReStruct =>
       rgroups: new Map(),
       ...molecule,
     },
-  } as unknown as ReStruct);
+  }) as unknown as ReStruct;
 
 describe('BaseOperation.isDummy()', () => {
   it('returns false by default (operation is treated as a real change)', () => {
@@ -51,6 +51,14 @@ describe('attribute operations isDummy()', () => {
     const restruct = makeRestruct({ bonds: new Map() });
     expect(() => new BondAttr(1, 'type', 1).isDummy(restruct)).not.toThrow();
     expect(new BondAttr(1, 'type', 1).isDummy(restruct)).toBe(false);
+  });
+
+  it('BondAttr execute does not throw when the bond is gone', () => {
+    const restruct = makeRestruct({ bonds: new Map() });
+    const operation = new BondAttr(1, 'type', 1, false);
+
+    expect(() => operation.execute(restruct)).not.toThrow();
+    expect(operation.data2).toBeNull();
   });
 
   it('RGroupAttr does not throw and is not dummy when the r-group is gone', () => {

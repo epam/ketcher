@@ -65,12 +65,12 @@ describe('FileDrop component', () => {
     const { container } = render(
       withThemeProvider(<FileDrop {...mockProps} />),
     );
-    // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
+
     const input = container.querySelector(
       'input[type=file]',
     ) as HTMLInputElement;
 
-    userEvent.upload(input, mockFile);
+    await userEvent.upload(input, mockFile);
 
     await waitFor(() => {
       expect(input.files?.[0]).toBe(mockFile);
@@ -87,11 +87,11 @@ describe('FileDrop component', () => {
     const { container } = render(
       withThemeProvider(<FileDrop {...mockProps} />),
     );
-    // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
+
     const input = container.querySelector(
       'input[type=file]',
     ) as HTMLInputElement;
-    userEvent.upload(input, mockFile);
+    await userEvent.upload(input, mockFile);
 
     await waitFor(() => {
       expect(mockProps.onDropAccepted).toHaveBeenCalled();

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { MouseButton } from './types';
 import {
@@ -86,10 +84,7 @@ export async function clickOnCanvas(
         page: Page,
         canvas: Locator,
         fromCenter:
-          | 'pageTopLeft'
-          | 'pageCenter'
-          | 'canvasTopLeft'
-          | 'canvasCenter',
+          'pageTopLeft' | 'pageCenter' | 'canvasTopLeft' | 'canvasCenter',
       ) => {
         switch (fromCenter) {
           case 'pageTopLeft':

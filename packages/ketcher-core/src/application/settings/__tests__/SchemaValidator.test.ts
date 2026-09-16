@@ -2,11 +2,21 @@
  * Unit tests for SchemaValidator
  */
 
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import { SchemaValidator } from '../SchemaValidator';
 import { getDefaultSettings } from '../schema';
 import type { Settings } from '../types';
+type AssertDefined = <Value>(
+  value: Value,
+  message?: string,
+) => NonNullable<Value>;
+
+// Keep this as require(): a static import from __tests__ pulls the helper into
+// the ketcher-core production build graph and breaks the package build.
+const {
+  assertDefined,
+}: {
+  assertDefined: AssertDefined;
+} = require('../../../../__tests__/utilities/assertDefined'); // eslint-disable-line @typescript-eslint/no-require-imports
 
 describe('SchemaValidator', () => {
   let validator: SchemaValidator;
@@ -43,8 +53,7 @@ describe('SchemaValidator', () => {
       const result = validator.validate(settings);
 
       expect(result.valid).toBe(false);
-      expect(result.errors).toBeDefined();
-      expect(result.errors!.length).toBeGreaterThan(0);
+      expect(assertDefined(result.errors).length).toBeGreaterThan(0);
     });
 
     it('should reject invalid rotation step (too low)', () => {
@@ -174,10 +183,10 @@ describe('SchemaValidator', () => {
       const result = validator.validate(settings);
 
       expect(result.valid).toBe(false);
-      expect(result.errors).toBeDefined();
-      expect(result.errors!.length).toBeGreaterThan(0);
+      const errors = assertDefined(result.errors);
+      expect(errors.length).toBeGreaterThan(0);
 
-      const error = result.errors![0];
+      const error = errors[0];
       expect(error).toHaveProperty('path');
       expect(error).toHaveProperty('message');
     });
@@ -192,7 +201,7 @@ describe('SchemaValidator', () => {
       const result = validator.validate(settings);
 
       expect(result.valid).toBe(false);
-      expect(result.errors!.length).toBeGreaterThan(1);
+      expect(assertDefined(result.errors).length).toBeGreaterThan(1);
     });
   });
 

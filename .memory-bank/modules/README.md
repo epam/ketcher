@@ -27,6 +27,7 @@ These span multiple packages and are the most valuable parts to understand. They
 
 - [editor-engine](./editor-engine.md) — the two editor controllers, tools, events, modes, converter bridge
 - [rendering](./rendering.md) — Raphael (`ReStruct`) and D3 (`RenderersManager`) pipelines
+- [transient-views](./transient-views.md) — ephemeral, read-only SVG overlays (selection, snapping, rotation, previews, replacement highlight)
 - [serialization](./serialization.md) — serializers, `FormatterFactory`, `StructService`, `Indigo`
 - [operations-history](./operations-history.md) — `Action`/`BaseOperation` and `Command`/`Operation` + undo/redo
 - [monomer-library](./monomer-library.md) — loading/caching/merging monomers, RNA presets, library UI

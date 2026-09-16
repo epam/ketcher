@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 import { ZoomTool } from 'ketcher-core';
@@ -37,17 +37,16 @@ const PreviewContainer = styled.div`
 export const Preview = () => {
   const preview = useAppSelector(selectShowPreview);
   const previewRef = useRef<HTMLDivElement>(null);
-  const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+  const isPreviewVisible = Boolean(preview?.type);
   const editor = useSelector(selectEditor);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!previewRef.current || preview.style) {
       return;
     }
 
     if (preview?.type) {
       previewRef.current.setAttribute('style', '');
-      setIsPreviewVisible(true);
 
       const PREVIEW_OFFSET = 5;
 
@@ -107,11 +106,10 @@ export const Preview = () => {
           canvasWrapperRight - previewWidth - SCROLL_BAR_OFFSET
         }px`;
       }
-    } else if (isPreviewVisible) {
-      setIsPreviewVisible(false);
+    } else {
       previewRef.current.setAttribute('style', '');
     }
-  }, [preview]);
+  }, [editor?.ketcherRootElementBoundingClientRect, isPreviewVisible, preview]);
 
   if (!preview) {
     return null;

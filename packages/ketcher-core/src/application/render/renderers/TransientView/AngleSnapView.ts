@@ -4,6 +4,7 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { arc } from 'd3';
+import { TransientView } from './TransientView';
 
 export type AngleSnapViewParams = {
   connectedMonomer: BaseMonomer;
@@ -24,7 +25,7 @@ const minimalAngleDifference = (a: number, b: number) => {
   return diff;
 };
 
-export class AngleSnapView {
+export class AngleSnapView extends TransientView {
   public static readonly viewName = 'AngleSnapView';
 
   public static show(

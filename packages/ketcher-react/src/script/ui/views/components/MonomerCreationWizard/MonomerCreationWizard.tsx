@@ -901,6 +901,7 @@ const MonomerCreationWizardInternal = ({
     [isRnaPresetType, rnaPresetWizardStateDispatch, wizardStateDispatch],
   );
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     const externalNotificationEventListener = (event: Event) => {
       const notificationId = (event as CustomEvent<WizardNotificationId>)
@@ -923,6 +924,7 @@ const MonomerCreationWizardInternal = ({
     };
   }, []);
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     const attachmentPointClickHandler = (event: Event) => {
       const clickData = (event as CustomEvent<AttachmentPointClickData>).detail;
@@ -949,6 +951,7 @@ const MonomerCreationWizardInternal = ({
 
   // Listen for component structure updates from the Editor
   // This handles auto-assignment of new atoms to components
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     const isValidRnaComponentKey = (
       key: string,
@@ -1164,6 +1167,7 @@ const MonomerCreationWizardInternal = ({
 
   // Show a dismissible info notification when the wizard is opened for an
   // existing monomer whose attachment points are currently in use by canvas bonds.
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     const attachmentAtomIdsWithExternalBonds =
       monomerCreationState?.attachmentAtomIdsWithExternalBonds;

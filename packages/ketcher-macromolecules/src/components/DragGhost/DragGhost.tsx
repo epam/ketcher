@@ -24,6 +24,7 @@ export const DragGhost = () => {
 
   const transform = useZoomTransform();
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     if (!editor) {
       return;

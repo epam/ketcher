@@ -289,12 +289,14 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     editor.setConnectionAttachmentPoints(connectionAtomIds);
   }, [editor, selectedTab, struct, wizardState, phosphatePosition]);
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     return () => {
       editor?.highlights.clear();
     };
   }, [editor?.highlights]);
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     const handleMarkAsComponent = (event: Event) => {
       const componentType = (event as CustomEvent<RnaPresetComponentType>)

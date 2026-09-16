@@ -67,6 +67,7 @@ export const Editor = (props: Props) => {
     />
   ) : undefined;
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
     const switchToMacromoleculesModeHandler = () => {
       togglePolymerEditor(true);

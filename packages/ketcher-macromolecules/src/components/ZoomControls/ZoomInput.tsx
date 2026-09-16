@@ -78,7 +78,7 @@ export const ZoomInput = ({
     const inputEl = inputRef.current;
     inputEl?.focus();
     inputEl?.select();
-  }, []);
+  }, [inputRef]);
 
   return (
     <StyledInput

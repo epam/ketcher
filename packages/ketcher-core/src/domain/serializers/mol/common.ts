@@ -24,11 +24,6 @@ import type { Mapping } from './mol.types';
 import utils from './utils';
 import v2000 from './v2000';
 
-interface SGroupSavingError extends Error {
-  id: number;
-  'error-type': string;
-}
-
 function getAtom(mol: Struct, id: number): Atom {
   const atom = mol.atoms.get(id);
   if (!atom) {
@@ -105,14 +100,9 @@ function prepareSruForSaving(sgroup: SGroup, mol: Struct): void {
       xBonds.push(bid);
     }
   });
-  if (xBonds.length !== 0 && xBonds.length !== 2) {
-    const error = new Error(
-      'Unsupported cross-bonds number',
-    ) as SGroupSavingError;
-    error.id = sgroup.id;
-    error['error-type'] = 'cross-bond-number';
-    throw error;
-  }
+  // Any number of cross-bonds is valid here: the SBL list and bracket
+  // placement (SGroup.getBracketParameters) both support arbitrary counts,
+  // same as prepareSupForSaving below.
   sgroup.bonds = xBonds;
 }
 

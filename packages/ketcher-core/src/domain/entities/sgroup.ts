@@ -790,14 +790,14 @@ export class SGroup {
       }
     });
 
-    if (xBonds.length !== 0 && xBonds.length !== 2) {
-      throw Error('Unsupported cross-bonds number');
-    }
-
+    // Only the first two cross-bonds are treated as the backbone bonds that
+    // chain the duplicated copies together; any further cross-bonds (e.g.
+    // substituents attached to the repeat unit) stay connected to the
+    // original atoms and are not replicated per copy.
     let xAtom1 = -1;
     let xAtom2 = -1;
     let crossBond: Bond | null = null;
-    if (xBonds.length === 2) {
+    if (xBonds.length >= 2) {
       const bond1 = mol.bonds.get(xBonds[0]);
       assert(
         bond1,

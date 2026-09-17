@@ -231,12 +231,12 @@ export function load(struct: string | Struct, options?) {
         editor.struct(parsedStruct, method === 'layout');
       }
 
-      if (!preserveViewport) {
+      if (!preserveViewport && !fragment) {
         editor.zoomAccordingContent(parsedStruct);
       }
 
       const isIndigoFunctionCalled = !!method;
-      if (!isPaste && !isIndigoFunctionCalled && !skipCenter) {
+      if (!isPaste && !isIndigoFunctionCalled && !skipCenter && !fragment) {
         editor.centerStruct();
       }
       if (!fragment) {

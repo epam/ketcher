@@ -233,10 +233,13 @@ const BasicPropertyName = styled('div')(() => ({
   whiteSpace: 'nowrap',
 }));
 
-const BasicPropertyValue = styled('div')(() => ({
-  fontSize: '14px',
-  fontWeight: '700',
-}));
+const BasicPropertyValue = styled('div')<{ isNoDataValue?: boolean }>(
+  ({ theme, isNoDataValue }) => ({
+    fontSize: '14px',
+    fontWeight: '700',
+    color: isNoDataValue ? theme.ketcher.color.text.lightgrey : undefined,
+  }),
+);
 
 const PropertyHintIcon = styled(Icon)(() => ({
   width: '20px',
@@ -411,11 +414,7 @@ const BasicProperty = (props: BasicPropertyProps) => {
         ) : (
           <BasicPropertyValue
             data-testid={props.testId + '-value'}
-            sx={
-              props.value === NO_DATA_VALUE
-                ? { color: 'text.disabled' }
-                : undefined
-            }
+            isNoDataValue={props.value === NO_DATA_VALUE}
           >
             {props.value}
           </BasicPropertyValue>

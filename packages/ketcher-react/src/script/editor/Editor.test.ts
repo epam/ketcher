@@ -1,4 +1,5 @@
-import { Bond } from 'ketcher-core';
+import { Bond, ketcherProvider } from 'ketcher-core';
+import { Subscription } from 'subscription';
 import Editor from './Editor';
 
 type MockBond = {
@@ -220,5 +221,67 @@ describe('Editor.isMonomerCreationWizardEnabled', () => {
     const terminalRGroupAtoms = getTerminalRGroupAtoms(editor);
     expect(terminalRGroupAtoms.length).toBe(1);
     expect(terminalRGroupAtoms[0][0]).toBe(0);
+  });
+});
+
+describe('Editor.options', () => {
+  const ketcherId = 'editor-options-test';
+
+  // Raphael cannot create a paper on a jsdom element, so the editor is given the
+  // document itself as its client area, like in rotate-controller.test.ts.
+  const createEditor = () =>
+    new Editor(ketcherId, document as unknown as HTMLElement, {
+      bondThickness: 2,
+      bondSpacing: 15,
+    });
+
+  beforeEach(() => {
+    ketcherProvider.addKetcherInstance({
+      id: ketcherId,
+      changeEvent: new Subscription(),
+    } as never);
+  });
+
+  afterEach(() => {
+    ketcherProvider.removeKetcherInstance(ketcherId);
+  });
+
+  it('keeps the current settings when an unrelated option is applied', () => {
+    const editor = createEditor();
+    const { bondThickness, bondSpacingInPx } = editor.options();
+
+    const options = editor.options({ showAtomIds: true });
+
+    expect(options.bondThickness).toBe(bondThickness);
+    expect(options.bondSpacingInPx).toBe(bondSpacingInPx);
+    expect(options.showAtomIds).toBe(true);
+  });
+
+  it('keeps the current settings when view-only mode is switched', () => {
+    const editor = createEditor();
+    const { bondThickness, bondSpacingInPx } = editor.options();
+
+    const options = editor.options({ viewOnlyMode: true });
+
+    expect(options.viewOnlyMode).toBe(true);
+    expect(options.bondThickness).toBe(bondThickness);
+    expect(options.bondSpacingInPx).toBe(bondSpacingInPx);
+  });
+
+  it('applies an option that is passed explicitly', () => {
+    const editor = createEditor();
+
+    const options = editor.options({ bondThickness: 5 });
+
+    expect(options.bondThickness).toBe(5);
+  });
+
+  it('preserves the zoom level across the render rebuild', () => {
+    const editor = createEditor();
+    editor.zoom(2);
+
+    const options = editor.options({ showAtomIds: true });
+
+    expect(options.zoom).toBe(2);
   });
 });

@@ -211,5 +211,20 @@
     "selectTitle": "Select Attachment Points",
     "reconnect": "Reconnect",
     "connect": "Connect"
+  },
+  "modal": {
+    "closeWindow": "Close window",
+    "expandWindow": "Expand window",
+    "minimizeWindow": "Minimize window"
+  },
+  "monomerName": {
+    "anyDnaBase": "Any DNA base",
+    "ambiguousDnaBase": "Ambiguous DNA Base",
+    "anyRnaBase": "Any RNA Base",
+    "ambiguousRnaBase": "Ambiguous RNA Base",
+    "ambiguousBase": "Ambiguous Base",
+    "anyAminoAcid": "Any Amino acid",
+    "ambiguousAminoAcid": "Ambiguous Amino acid",
+    "ambiguousGeneric": "Ambiguous {class}"
   }
 }

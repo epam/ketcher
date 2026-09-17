@@ -211,5 +211,20 @@
     "selectTitle": "选择连接点",
     "reconnect": "重新连接",
     "connect": "连接"
+  },
+  "modal": {
+    "closeWindow": "关闭窗口",
+    "expandWindow": "展开窗口",
+    "minimizeWindow": "最小化窗口"
+  },
+  "monomerName": {
+    "anyDnaBase": "任意 DNA 碱基",
+    "ambiguousDnaBase": "模糊 DNA 碱基",
+    "anyRnaBase": "任意 RNA 碱基",
+    "ambiguousRnaBase": "模糊 RNA 碱基",
+    "ambiguousBase": "模糊碱基",
+    "anyAminoAcid": "任意氨基酸",
+    "ambiguousAminoAcid": "模糊氨基酸",
+    "ambiguousGeneric": "模糊 {class}"
   }
 }

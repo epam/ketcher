@@ -18,13 +18,19 @@ const common = {
 };
 
 if (!i18nextInstance.isInitialized) {
+  // Uses i18next's built-in interpolator configured with the same {var}
+  // delimiters as the real app's i18next-icu plugin, instead of the real
+  // ICU plugin itself: i18next-icu pulls in intl-messageformat, which ships
+  // ESM that this package's Jest config can't transform inside
+  // node_modules. Plain variable substitution (no plural/select grammar)
+  // is all any current key needs.
   i18nextInstance.use(initReactI18next).init({
     lng: 'en',
     fallbackLng: 'en',
     resources: {
       en: { macromolecules, macromoleculesDialogs, common },
     },
-    interpolation: { escapeValue: false },
+    interpolation: { escapeValue: false, prefix: '{', suffix: '}' },
   });
 }
 

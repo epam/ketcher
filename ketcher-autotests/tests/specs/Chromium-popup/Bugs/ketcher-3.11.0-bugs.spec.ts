@@ -1281,7 +1281,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     });
 
     await Library(page).dragMonomerOnCanvas(Base._Base2, {
-      x: 50,
+      x: 80,
       y: 10,
       fromCenter: true,
     });
@@ -1289,7 +1289,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       page,
       getMonomerLocator(page, { monomerId: 0 }),
       {
-        padding: 40,
+        padding: 100,
       },
     );
   });

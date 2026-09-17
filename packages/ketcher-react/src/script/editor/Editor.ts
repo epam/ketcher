@@ -1080,6 +1080,10 @@ class Editor implements KetcherEditor {
       this.potentialLeavingAtomsForManualAssignment = [];
     }
 
+    // Each wizard session builds fresh mappings; stale entries from prior
+    // sessions cause incorrect AP lookup in reconcileExternalBonds.
+    this.selectedToOriginalAtomsIdMap.clear();
+
     /*
      * Upon cloning the structure each entity gets a new id thus losing the mapping between the new and original one
      * Original atom ids can be retrieved from the selection data (do not confuse with the selected struct) by index:

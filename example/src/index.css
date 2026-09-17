@@ -4,9 +4,9 @@
 body {
     margin: 0;
     padding: 0;
-    /* stylelint-disable-next-line font-family-name-quotes, font-family-name-quotes */
+    /* stylelint-disable-next-line font-family-name-quotes */
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    /* stylelint-disable-next-line font-family-name-quotes, font-family-name-quotes */
+    /* stylelint-disable-next-line font-family-name-quotes */
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -14,7 +14,7 @@ body {
 }
 
 code {
-    /* stylelint-disable-next-line font-family-name-quotes, font-family-name-quotes */
+    /* stylelint-disable-next-line font-family-name-quotes */
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }

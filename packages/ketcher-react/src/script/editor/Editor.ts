@@ -502,10 +502,14 @@ class Editor implements KetcherEditor {
     this.render.clientArea.innerHTML = '';
     const wasViewOnlyEnabled = !!this.render.options.viewOnlyMode;
 
+    // Keep the options the current render was built with (the user settings,
+    // plus anything applied through setOptions) and put the new values on
+    // top, otherwise every setting not passed here is lost with the old render.
     this.render = new Render(this.render.clientArea, {
       microModeScale: SCALE,
+      ...this.render.userOptions,
       ...(value ?? {}),
-    } as RenderOptions);
+    });
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
     this.render.setMolecule(struct);
 

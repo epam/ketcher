@@ -409,7 +409,14 @@ const BasicProperty = (props: BasicPropertyProps) => {
             onChange={(value) => props?.onChangeValue?.(Number(value))}
           />
         ) : (
-          <BasicPropertyValue data-testid={props.testId + '-value'}>
+          <BasicPropertyValue
+            data-testid={props.testId + '-value'}
+            sx={
+              props.value === NO_DATA_VALUE
+                ? { color: 'text.disabled' }
+                : undefined
+            }
+          >
             {props.value}
           </BasicPropertyValue>
         )}

@@ -50,7 +50,7 @@ import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { TextInputField } from 'components/shared/textInputField';
 
 const OTHER_MONOMER_COUNT_NAME = 'Other';
-const NO_DATA_VALUE = '–';
+const NO_DATA_VALUE = '-';
 
 const hasSpecificProperty = (
   macromoleculesProperties: SingleChainMacromoleculeProperties | undefined,

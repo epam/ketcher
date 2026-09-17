@@ -136,6 +136,12 @@ type ActionThunkState = {
       select: ToolVariant;
     };
   };
+  actionState: {
+    activeTool?:
+      | { tool?: string }
+      | ((editor: ActionStateEditor) => void)
+      | null;
+  };
 };
 
 // todo: find out types

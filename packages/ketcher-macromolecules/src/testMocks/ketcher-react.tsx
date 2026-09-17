@@ -10,10 +10,35 @@ import macromoleculesDialogs from '../locales/en/macromoleculesDialogs.json';
 // ketcher-macromolecules' own test suite, so the real common.json isn't
 // reachable here - keep this in sync if those keys' English text changes.
 const common = {
+  errors: {
+    featureNotAvailableInBrowser:
+      'This feature is not available in your browser',
+  },
   button: {
-    save: 'Save',
     cancel: 'Cancel',
+    save: 'Save',
+    apply: 'Apply',
     close: 'Close',
+    yes: 'Yes',
+  },
+  delete: 'Delete',
+};
+
+// Mirrors the subset of ketcher-react's dialogs.json actually referenced
+// from ketcher-macromolecules (the About dialog reuses ketcher-react's
+// existing "meta.about.*" content rather than duplicating it).
+const dialogs = {
+  meta: {
+    about: {
+      ok: 'Ok',
+      version: 'Version {value}',
+      build: 'Build {value}',
+      buildAt: 'Build at',
+      feedback: 'Feedback',
+      epamLifeSciences: 'EPAM Life Sciences',
+      indigoToolkit: 'Indigo Toolkit',
+      standalone: 'Standalone',
+    },
   },
 };
 
@@ -28,7 +53,7 @@ if (!i18nextInstance.isInitialized) {
     lng: 'en',
     fallbackLng: 'en',
     resources: {
-      en: { macromolecules, macromoleculesDialogs, common },
+      en: { macromolecules, macromoleculesDialogs, common, dialogs },
     },
     interpolation: { escapeValue: false, prefix: '{', suffix: '}' },
   });

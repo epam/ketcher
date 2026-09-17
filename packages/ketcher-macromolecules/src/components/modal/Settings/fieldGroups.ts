@@ -28,7 +28,14 @@ export type SettingFieldName = {
 
 export interface FieldGroup {
   id: string;
+  /**
+   * Frozen English literal, NOT a translation key - Playwright's
+   * settingsDialog/Constants.ts hardcodes `${title}-accordion` test ids
+   * (e.g. 'General-accordion'), so this value must never change. Use
+   * `titleKey` for the translated, user-visible group label.
+   */
   title: string;
+  titleKey: string;
   fields: Array<SettingFieldName>;
 }
 
@@ -174,32 +181,33 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
     // TODO: Replace with dynamic font detection (see ketcher-react/systemfonts.jsx)
     // This hardcoded list should be replaced with runtime font detection using FontFaceObserver
     // to only show fonts actually available on the user's system
+    // Font family names are proper nouns, not translation keys.
     options: [
-      { value: '30px Arial', label: 'Arial' },
-      { value: '30px Arial Black', label: 'Arial Black' },
-      { value: '30px Comic Sans MS', label: 'Comic Sans MS' },
-      { value: '30px Courier New', label: 'Courier New' },
-      { value: '30px Georgia', label: 'Georgia' },
-      { value: '30px Impact', label: 'Impact' },
-      { value: '30px Charcoal', label: 'Charcoal' },
-      { value: '30px Lucida Console', label: 'Lucida Console' },
-      { value: '30px Monaco', label: 'Monaco' },
-      { value: '30px Palatino Linotype', label: 'Palatino Linotype' },
-      { value: '30px Book Antiqua', label: 'Book Antiqua' },
-      { value: '30px Palatino', label: 'Palatino' },
-      { value: '30px Tahoma', label: 'Tahoma' },
-      { value: '30px Geneva', label: 'Geneva' },
-      { value: '30px Times New Roman', label: 'Times New Roman' },
-      { value: '30px Times', label: 'Times' },
-      { value: '30px Verdana', label: 'Verdana' },
-      { value: '30px Symbol', label: 'Symbol' },
-      { value: '30px MS Serif', label: 'MS Serif' },
-      { value: '30px MS Sans Serif', label: 'MS Sans Serif' },
-      { value: '30px New York', label: 'New York' },
-      { value: '30px Droid Sans', label: 'Droid Sans' },
-      { value: '30px Droid Serif', label: 'Droid Serif' },
-      { value: '30px Droid Sans Mono', label: 'Droid Sans Mono' },
-      { value: '30px Roboto', label: 'Roboto' },
+      { value: '30px Arial', labelKey: 'Arial' },
+      { value: '30px Arial Black', labelKey: 'Arial Black' },
+      { value: '30px Comic Sans MS', labelKey: 'Comic Sans MS' },
+      { value: '30px Courier New', labelKey: 'Courier New' },
+      { value: '30px Georgia', labelKey: 'Georgia' },
+      { value: '30px Impact', labelKey: 'Impact' },
+      { value: '30px Charcoal', labelKey: 'Charcoal' },
+      { value: '30px Lucida Console', labelKey: 'Lucida Console' },
+      { value: '30px Monaco', labelKey: 'Monaco' },
+      { value: '30px Palatino Linotype', labelKey: 'Palatino Linotype' },
+      { value: '30px Book Antiqua', labelKey: 'Book Antiqua' },
+      { value: '30px Palatino', labelKey: 'Palatino' },
+      { value: '30px Tahoma', labelKey: 'Tahoma' },
+      { value: '30px Geneva', labelKey: 'Geneva' },
+      { value: '30px Times New Roman', labelKey: 'Times New Roman' },
+      { value: '30px Times', labelKey: 'Times' },
+      { value: '30px Verdana', labelKey: 'Verdana' },
+      { value: '30px Symbol', labelKey: 'Symbol' },
+      { value: '30px MS Serif', labelKey: 'MS Serif' },
+      { value: '30px MS Sans Serif', labelKey: 'MS Sans Serif' },
+      { value: '30px New York', labelKey: 'New York' },
+      { value: '30px Droid Sans', labelKey: 'Droid Sans' },
+      { value: '30px Droid Serif', labelKey: 'Droid Serif' },
+      { value: '30px Droid Sans Mono', labelKey: 'Droid Sans Mono' },
+      { value: '30px Roboto', labelKey: 'Roboto' },
     ],
   },
   fontsz: {

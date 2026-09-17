@@ -70,9 +70,7 @@ exports[`UpdateSequenceInRNABuilder modal component should render correctly 1`] 
             <div
               class="css-pp7hf1"
             >
-              You are going to modify 
-              2
-               nucleotides. Are you sure?
+              You are going to modify 2 nucleotides. Are you sure?
             </div>
           </div>
           <div

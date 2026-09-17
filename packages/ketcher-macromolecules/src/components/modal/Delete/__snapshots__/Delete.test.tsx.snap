@@ -74,9 +74,7 @@ exports[`Delete component should render correctly 1`] = `
                 You are about to delete
               </div>
               <div>
-                "
-                name
-                " RNA preset.
+                "name" RNA preset.
               </div>
               <div>
                 This operation cannot be undone.

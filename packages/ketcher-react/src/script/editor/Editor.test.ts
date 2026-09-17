@@ -276,6 +276,33 @@ describe('Editor.options', () => {
     expect(options.bondThickness).toBe(5);
   });
 
+  it('recomputes the derived values when the settings change the scale', () => {
+    const editor = createEditor();
+    const { lineWidth, atomSelectionPlateRadius } = editor.options();
+
+    const options = editor.options({
+      bondLength: 80,
+      bondLengthUnit: 'px',
+      fontsz: 26,
+      fontszUnit: 'px',
+    });
+
+    expect(options.microModeScale).toBe(80);
+    expect(options.lineWidth).toBe(4);
+    expect(options.lineWidth).not.toBe(lineWidth);
+    expect(options.atomSelectionPlateRadius).toBe(26);
+    expect(options.atomSelectionPlateRadius).not.toBe(atomSelectionPlateRadius);
+  });
+
+  it('keeps the values applied through setOptions', () => {
+    const editor = createEditor();
+    editor.setOptions(JSON.stringify({ bondThickness: 4 }));
+
+    const options = editor.options({ showAtomIds: true });
+
+    expect(options.bondThickness).toBe(4);
+  });
+
   it('preserves the zoom level across the render rebuild', () => {
     const editor = createEditor();
     editor.zoom(2);

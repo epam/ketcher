@@ -40,5 +40,35 @@
     "noPhosphateGroup": "No phosphate group",
     "resetAll": "Reset all",
     "setFilter": "Set"
+  },
+  "contextMenu": {
+    "copy": "Copy",
+    "paste": "Paste",
+    "delete": "Delete",
+    "modifyAminoAcids": "Modify amino acids",
+    "rnaContextMenu": {
+      "duplicateAndEdit": "Duplicate and Edit...",
+      "edit": "Edit...",
+      "deletePreset": "Delete Preset"
+    },
+    "selectedMonomers": {
+      "createRnaAntisenseStrand": "Create Antisense RNA Strand",
+      "createDnaAntisenseStrand": "Create Antisense DNA Strand",
+      "arrangeAsRing": "Arrange as a Ring",
+      "editAttachmentPoints": "Edit Attachment Points..."
+    },
+    "sequenceItem": {
+      "editSequence": "Edit sequence",
+      "startNewSequence": "Start new sequence",
+      "createRnaAntisenseStrand": "Create RNA antisense strand",
+      "createDnaAntisenseStrand": "Create DNA antisense strand",
+      "establishHydrogenBonds": "Establish Hydrogen Bonds",
+      "removeHydrogenBonds": "Remove hydrogen bonds",
+      "modifyInRnaBuilder": "Modify in RNA Builder...",
+      "deleteAllHydrogenBondsTitle": "Deletion of all Hydrogen Bonds",
+      "deleteAllHydrogenBondsConfirm": "Deleting all hydrogen bonds will cause the separation of two chains. Do you wish to proceed?",
+      "nucleotidesCount": "{count} nucleotides",
+      "elementsCount": "{count} elements"
+    }
   }
 }

@@ -40,5 +40,35 @@
     "noPhosphateGroup": "无磷酸基团",
     "resetAll": "全部重置",
     "setFilter": "设置"
+  },
+  "contextMenu": {
+    "copy": "复制",
+    "paste": "粘贴",
+    "delete": "删除",
+    "modifyAminoAcids": "修饰氨基酸",
+    "rnaContextMenu": {
+      "duplicateAndEdit": "复制并编辑…",
+      "edit": "编辑…",
+      "deletePreset": "删除预设"
+    },
+    "selectedMonomers": {
+      "createRnaAntisenseStrand": "创建RNA反义链",
+      "createDnaAntisenseStrand": "创建DNA反义链",
+      "arrangeAsRing": "排列成环",
+      "editAttachmentPoints": "编辑连接点…"
+    },
+    "sequenceItem": {
+      "editSequence": "编辑序列",
+      "startNewSequence": "开始新序列",
+      "createRnaAntisenseStrand": "创建RNA反义链",
+      "createDnaAntisenseStrand": "创建DNA反义链",
+      "establishHydrogenBonds": "建立氢键",
+      "removeHydrogenBonds": "移除氢键",
+      "modifyInRnaBuilder": "在RNA构建器中修改…",
+      "deleteAllHydrogenBondsTitle": "删除所有氢键",
+      "deleteAllHydrogenBondsConfirm": "删除所有氢键将导致两条链分离。是否继续？",
+      "nucleotidesCount": "{count} 个核苷酸",
+      "elementsCount": "{count} 个元素"
+    }
   }
 }

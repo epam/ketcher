@@ -425,11 +425,11 @@ const SettingsDialog = (props: Props) => {
   );
 
   const tabs = [
+    generalTab,
     atomsTab,
     bondsTab,
     stereoTab,
     reactionsTab,
-    generalTab,
     threeDViewerTab,
     validationTab,
     debuggingTab,

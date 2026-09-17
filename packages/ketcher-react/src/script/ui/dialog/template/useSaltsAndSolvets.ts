@@ -1,6 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-/* eslint-disable react-hooks/set-state-in-effect */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { filterFGLib } from '../../utils';
 import type { Template } from './TemplateTable';
@@ -12,7 +10,7 @@ export default function useSaltsAndSolvents(
   saltsAndSolvents: Template[],
   filter: string,
 ) {
-  const [isFirstRender, setIsFirstRender] = useState(true);
+  const isFirstRenderRef = useRef(true);
   const timerId = useRef<null | ReturnType<typeof setTimeout>>(null);
   const [filteredSaltsAndSolvents, setFilteredSaltsAndSolvents] = useState(
     saltsAndSolvents[SALTS_AND_SOLVENTS],
@@ -43,9 +41,10 @@ export default function useSaltsAndSolvents(
     addToSaSWithBatches(filteredSaS);
   }, [saltsAndSolvents, addToSaSWithBatches]);
 
+  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
-    if (isFirstRender) {
-      setIsFirstRender(false);
+    if (isFirstRenderRef.current) {
+      isFirstRenderRef.current = false;
       return;
     }
     clearTimeout(timerId.current as unknown as number);

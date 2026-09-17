@@ -479,7 +479,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     ).toBeVisible();
     await expect(
       CalculateVariablesPanel(page).rnaTab.meltingTemperatureValue,
-    ).toHaveText('–');
+    ).toHaveText('-');
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
@@ -656,7 +656,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     ).toBeVisible();
     await expect(
       CalculateVariablesPanel(page).rnaTab.meltingTemperatureValue,
-    ).toHaveText('–');
+    ).toHaveText('-');
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 

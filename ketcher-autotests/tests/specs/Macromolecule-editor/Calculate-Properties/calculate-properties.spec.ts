@@ -1314,7 +1314,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C0', 'G0', 'T0', 'U0', 'Other-']);
+    ).toEqual(['A1', 'C-', 'G-', 'T-', 'U0', 'Other-']);
   });
 
   test('Case 46: Verify property calculations for structures containing both peptide and DNA along with additional microstructures', async ({

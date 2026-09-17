@@ -102,13 +102,13 @@ function parseDecimalInt(str: string): number {
  * Partition a line string into parts of varying lengths
  * @param str - The string to partition
  * @param parts - Array of lengths for each part
- * @param withspace - Whether there's a space between parts
+ * @param withspace - Whether there's a space between parts (default: false)
  * @returns Array of string parts
  */
 function partitionLine(
   str: string,
   parts: number[],
-  withspace: boolean,
+  withspace: boolean = false,
 ): string[] {
   /* reader */
   const res: string[] = [];
@@ -124,13 +124,13 @@ function partitionLine(
  * Partition a line string into fixed-length parts
  * @param str - The string to partition
  * @param itemLength - Length of each item
- * @param withspace - Whether there's a space between items
+ * @param withspace - Whether there's a space between items (default: false)
  * @returns Array of string parts
  */
 function partitionLineFixed(
   str: string,
   itemLength: number,
-  withspace: boolean,
+  withspace: boolean = false,
 ): string[] {
   /* reader */
   const res: string[] = [];
@@ -447,10 +447,14 @@ function createReactionArrow(
     ? new Vec2(bb2.min.x, (bb2.max.y + bb2.min.y) / 2)
     : null;
 
-  if (!v1) v1 = new Vec2(v2!.x - defaultOffset, v2!.y);
-  if (!v2) v2 = new Vec2(v1.x + defaultOffset, v1.y);
+  if (!v1 && v2) {
+    v1 = new Vec2(v2.x - defaultOffset, v2.y);
+  }
+  if (!v2 && v1) {
+    v2 = new Vec2(v1.x + defaultOffset, v1.y);
+  }
 
-  const arrowCenter = Vec2.lc2(v1, 0.5, v2, 0.5);
+  const arrowCenter = Vec2.lc2(v1 || new Vec2(), 0.5, v2 || new Vec2(), 0.5);
   const arrowStart = new Vec2(
     arrowCenter.x - 0.5 * defaultArrowLength,
     arrowCenter.y,
@@ -474,7 +478,7 @@ function createReactionArrow(
  * @param nReactants - Number of reactant molecules
  * @param nProducts - Number of product molecules
  * @param _nAgents - Number of agent molecules (currently unused, kept for API compatibility)
- * @param shouldReactionRelayout - Whether to layout fragments
+ * @param shouldReactionRelayout - Whether to layout fragments (default: false)
  * @returns Merged reaction structure
  */
 function rxnMerge(
@@ -482,7 +486,7 @@ function rxnMerge(
   nReactants: number,
   nProducts: number,
   _nAgents: number,
-  shouldReactionRelayout: boolean,
+  shouldReactionRelayout?: boolean,
 ): Struct {
   /* reader */
   const ret = new Struct();

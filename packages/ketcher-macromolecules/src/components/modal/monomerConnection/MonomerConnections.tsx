@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import { ActionButton } from 'components/shared/actionButton';
 import { Modal } from 'components/shared/modal';
 import { useAppSelector } from 'hooks';
@@ -66,6 +67,7 @@ const MonomerConnection = ({
   polymerBond,
   isReconnectionDialog,
 }: Readonly<MonomerConnectionProps>): React.ReactElement => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const editor = useAppSelector(selectEditor);
   // Selecting an attachment point mutates the bond and monomers. Preserve the
   // values from the render that opened the dialog so Cancel and Reconnect can
@@ -145,8 +147,8 @@ const MonomerConnection = ({
     <StyledModal
       title={
         isReconnectionDialog
-          ? 'Edit Attachment Points'
-          : 'Select Attachment Points'
+          ? t('monomerConnection.editTitle')
+          : t('monomerConnection.selectTitle')
       }
       isOpen={isModalOpen}
       onClose={cancelBondCreationAndClose}
@@ -186,13 +188,17 @@ const MonomerConnection = ({
 
       <Modal.Footer>
         <ActionButtonLeft
-          label="Cancel"
+          label={t('common:button.cancel')}
           data-testid={'cancel-button'}
           styleType="secondary"
           clickHandler={cancelBondCreationAndClose}
         />
         <ActionButtonRight
-          label={isReconnectionDialog ? 'Reconnect' : 'Connect'}
+          label={
+            isReconnectionDialog
+              ? t('monomerConnection.reconnect')
+              : t('monomerConnection.connect')
+          }
           data-testid={
             isReconnectionDialog ? 'Reconnect-button' : 'Connect-button'
           }

@@ -19,13 +19,23 @@ import { Icon } from 'ketcher-react';
 import { FieldWrapper, FieldLabelContent } from './Settings.styles';
 import type { SettingFieldValue } from './fieldGroups';
 
+/**
+ * `labelKey`/`options[].labelKey` are a mix of real "settings.*" translation
+ * keys and plain literal text that must never be translated (unit
+ * abbreviations px/pt/cm/inch, font family names) - resolving the literal
+ * ones through t() would just log a spurious missing-key warning for text
+ * that's supposed to render unchanged in every language.
+ */
+const resolveSettingLabel = (key: string, t: TFunction) =>
+  key.startsWith('settings.') ? t(key) : key;
+
 interface SettingsFieldProps {
   name: string;
-  label: string;
+  labelKey: string;
   type: 'checkbox' | 'number' | 'text' | 'select' | 'color';
   value: SettingFieldValue | undefined;
   onChange: (value: SettingFieldValue) => void;
-  options?: Array<{ value: SettingFieldValue; label: string }>;
+  options?: Array<{ value: SettingFieldValue; labelKey: string }>;
   min?: number;
   max?: number;
   step?: number;
@@ -34,7 +44,7 @@ interface SettingsFieldProps {
 
 export const SettingsField = ({
   name,
-  label,
+  labelKey,
   type,
   value,
   onChange,
@@ -138,7 +148,7 @@ export const SettingsField = ({
                     value={String(opt.value)}
                     sx={{ fontSize: '12px' }}
                   >
-                    {opt.label}
+                    {resolveSettingLabel(opt.labelKey, t)}
                   </MenuItem>
                 ))}
               </Select>

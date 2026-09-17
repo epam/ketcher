@@ -146,7 +146,7 @@ export const DropDown = ({
 
   return (
     <StyledFormControl className={className}>
-      {label && <label htmlFor="fileformat">File format:</label>}
+      {label && <label htmlFor="fileformat">{label}</label>}
       <DropDownSelect
         value={currentSelection}
         onChange={handleSelection}

@@ -4027,10 +4027,16 @@ export class DrawingEntitiesManager {
             const isModifiedPhosphate =
               monomer instanceof Phosphate && monomer.isModification;
             const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
+            const isAmbiguousPhosphateMonomer =
+              isAmbiguousMonomer &&
+              monomer.monomerClass === KetMonomerClass.Phosphate;
+            // AmbiguousMonomer.monomerItem lacks the `monomers` field needed to recreate it, so fall back to variantMonomerItem
             let antisenseMonomerItem: MonomerOrAmbiguousType =
-              monomer.monomerItem;
+              isAmbiguousMonomer
+                ? monomer.variantMonomerItem
+                : monomer.monomerItem;
 
-            if (isModifiedPhosphate || isAmbiguousMonomer) {
+            if (isModifiedPhosphate || isAmbiguousPhosphateMonomer) {
               const nonModifiedPhosphateItem = getRnaPartLibraryItem(
                 editor,
                 RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
@@ -4038,8 +4044,6 @@ export class DrawingEntitiesManager {
 
               if (nonModifiedPhosphateItem) {
                 antisenseMonomerItem = nonModifiedPhosphateItem;
-              } else if (isAmbiguousMonomer) {
-                antisenseMonomerItem = monomer.variantMonomerItem;
               }
             }
             const monomerAddCommand = this.addMonomer(

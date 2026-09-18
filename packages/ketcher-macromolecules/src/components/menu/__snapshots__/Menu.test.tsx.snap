@@ -38,7 +38,7 @@ exports[`Menu component should render menu component in a container 1`] = `
                 type="button"
               />
               <svg
-                class="dropdown css-zoaulv"
+                class="dropdown css-mz2ptf"
                 data-testid="dropdown-expand"
                 name="dropdown"
               />
@@ -57,7 +57,7 @@ exports[`Menu component should render menu component in a container 1`] = `
                 type="button"
               />
               <svg
-                class="dropdown css-zoaulv"
+                class="dropdown css-mz2ptf"
                 data-testid="dropdown-expand"
                 name="dropdown"
               />
@@ -76,7 +76,7 @@ exports[`Menu component should render menu component in a container 1`] = `
                 type="button"
               />
               <svg
-                class="dropdown css-zoaulv"
+                class="dropdown css-mz2ptf"
                 data-testid="dropdown-expand"
                 name="dropdown"
               />
@@ -120,7 +120,7 @@ exports[`Menu component should render menu component in a container 1`] = `
               type="button"
             />
             <svg
-              class="dropdown css-zoaulv"
+              class="dropdown css-mz2ptf"
               data-testid="dropdown-expand"
               name="dropdown"
             />
@@ -139,7 +139,7 @@ exports[`Menu component should render menu component in a container 1`] = `
               type="button"
             />
             <svg
-              class="dropdown css-zoaulv"
+              class="dropdown css-mz2ptf"
               data-testid="dropdown-expand"
               name="dropdown"
             />
@@ -158,7 +158,7 @@ exports[`Menu component should render menu component in a container 1`] = `
               type="button"
             />
             <svg
-              class="dropdown css-zoaulv"
+              class="dropdown css-mz2ptf"
               data-testid="dropdown-expand"
               name="dropdown"
             />

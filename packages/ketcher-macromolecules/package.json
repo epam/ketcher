@@ -26,7 +26,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.tsx",
   "engines": {
-    "node": ">=24.14.1"
+    "node": ">=24.20.0"
   },
   "scripts": {
     "prebuild": "shx rm -rf dist",
@@ -40,9 +40,9 @@
     "test:unit": "jest --passWithNoTests",
     "test:unit:update": "jest -u",
     "test:prettier": "prettier --check \"./**/*.{js,jsx,json,ts,tsx}\"",
-    "test:stylelint": "stylelint \"./**/*.{css,less}\" --formatter --allow-empty-input",
+    "test:stylelint": "stylelint \"./**/*.{css,less}\" --allow-empty-input",
     "prettier:write": "prettier --write \"./**/*.{js,jsx,json,ts,tsx}\"",
-    "stylelint:fix": "stylelint \"./**/*.{css,less}\" --formatter verbose --fix"
+    "stylelint:fix": "stylelint \"./**/*.{css,less}\" --fix"
   },
   "peerDependencies": {
     "react": "^18.2.0 || ^19.0.0",
@@ -71,7 +71,7 @@
     "@emotion/babel-plugin": "^11.7.2",
     "@emotion/core": "^11.0.0",
     "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/d3": "^7.4.3",

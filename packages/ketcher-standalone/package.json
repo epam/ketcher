@@ -26,7 +26,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.ts",
   "engines": {
-    "node": ">=24.14.1"
+    "node": ">=24.20.0"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production vite build && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64Cjs vite build && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasm vite build && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64WithoutRender SEPARATE_INDIGO_RENDER=true vite build && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64WithoutRenderCjs SEPARATE_INDIGO_RENDER=true vite build && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasmWithoutRender SEPARATE_INDIGO_RENDER=true vite build && tsc --emitDeclarationOnly -p tsconfig.build.json && shx cp -r .types/. dist && shx cp -r .types/. dist/cjs && shx cp -r .types/. dist/binaryWasm && shx cp -r .types/. dist/jsNoRender && shx cp -r .types/. dist/cjs/jsNoRender && shx cp -r .types/. dist/binaryWasmNoRender && shx rm -rf .types",
@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "events": "^3.3.0",
-    "indigo-ketcher": "1.47.0-rc.1",
+    "indigo-ketcher": "1.48.0-rc.1",
     "ketcher-core": "*",
     "lodash": "^4.18.1"
   },
@@ -57,7 +57,7 @@
     "prettier": "^3.9.6",
     "shx": "^0.3.3",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16"
+    "vite": "8.0.16"
   },
   "files": [
     "dist"

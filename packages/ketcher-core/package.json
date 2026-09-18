@@ -65,7 +65,6 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
     "ajv": "^8.18.0",
-    "babel-jest": "^30.3.0",
     "cross-env": "^7.0.3",
     "eslint": "10.9.0",
     "eslint-plugin-jest": "^29.16.0",

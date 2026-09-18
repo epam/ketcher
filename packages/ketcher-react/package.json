@@ -87,10 +87,6 @@
     "whatwg-fetch": "^3.4.1"
   },
   "devDependencies": {
-    "@babel/core": "8.0.1",
-    "@babel/preset-env": "8.0.2",
-    "@babel/preset-react": "^8.0.1",
-    "@babel/preset-typescript": "8.0.1",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "14.4.3",
@@ -103,7 +99,6 @@
     "@typescript-eslint/eslint-plugin": "^8.66.0",
     "@typescript-eslint/parser": "^8.66.0",
     "autoprefixer": "^10.5.4",
-    "babel-jest": "^30.3.0",
     "cross-env": "^7.0.3",
     "eslint": "10.9.0",
     "eslint-plugin-jest": "^29.16.0",

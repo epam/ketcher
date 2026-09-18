@@ -185,11 +185,27 @@ const MAX_JS_CHUNK_SIZE_BYTES = 450 * 1024;
 // explicitly requires leaving this chunk alone.
 const MIEW_CHUNK_MAX_SIZE_BYTES = Number.MAX_SAFE_INTEGER;
 
-// Sized for the single exempt vendor-miew chunk above (~1.3 MB). Every other
-// chunk is structurally capped at MAX_JS_CHUNK_SIZE_BYTES by codeSplitting, so
-// this limit cannot mask an unnoticed regression - only an explicitly exempted
-// group can exceed it. If this warning starts firing again, vendor-miew itself
-// has grown and the exemption is worth re-examining.
+// Set above the sanctioned vendor-miew exemption (~1.27 MB) so that chunk alone
+// does not trip the warning.
+//
+// This does NOT silence the warning, and is not meant to. Two chunks exceed
+// MAX_JS_CHUNK_SIZE_BYTES:
+//
+//   vendor-miew         ~1.27 MB  exempt by MIEW_CHUNK_MAX_SIZE_BYTES above,
+//                                 required by #10326
+//   ketcher-standalone ~15.5 MB   NOT exempt - it inlines the Indigo WASM, and
+//                                 `maxSize` can only split at module
+//                                 boundaries, so an indivisible module escapes
+//                                 the cap (same reason as Miew's bundled ESM)
+//
+// So on every build the warning fires and points at exactly one unsanctioned
+// problem: the inlined-WASM chunk. Leave it firing until that is addressed;
+// raising the limit past ~15.5 MB would hide it.
+//
+// Caveat: because the limit sits at 1400 rather than at
+// MAX_JS_CHUNK_SIZE_BYTES, a non-exempt chunk growing into the 450 kB - 1400 kB
+// band is not reported. Narrowing that window needs a per-chunk check rather
+// than Vite's single global threshold, which only supports one number.
 const CHUNK_SIZE_WARNING_LIMIT_KB = 1400;
 
 // Mirrors the `/node_modules/miew` test in getChunkName, which intentionally

@@ -13,7 +13,7 @@ export const HAPTIC_BOND_ERROR_MESSAGE =
 export const ATTACHMENT_GROUP_HAPTIC_BOND_ERROR_MESSAGE =
   'Attachment groups can only participate in haptic bonds.';
 
-export const HAPTIC_BOND_LENGTH_FACTOR = 1.8;
+export const HAPTIC_BOND_LENGTH_FACTOR = 1.5;
 
 export function getHapticBondEndPosition(start: Vec2, end: Vec2) {
   return start.addScaled(Vec2.diff(end, start), HAPTIC_BOND_LENGTH_FACTOR);

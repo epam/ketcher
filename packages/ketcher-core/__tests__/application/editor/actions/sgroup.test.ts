@@ -301,7 +301,11 @@ describe('setExpandMonomerSGroup', () => {
     monomerSGroupIds.forEach((sgroupId) => {
       setExpandMonomerSGroup(restruct, sgroupId, { expanded: false });
     });
-    struct.sgroups.get(monomerSGroupIds[1])?.pp?.add_(new Vec2(0, 4));
+    const movedSGroup = struct.sgroups.get(monomerSGroupIds[1]);
+    movedSGroup?.pp?.add_(new Vec2(0, 4));
+    if (movedSGroup) {
+      movedSGroup.contractedLabelMoved = true;
+    }
     monomerSGroupIds.forEach((sgroupId) => {
       setExpandMonomerSGroup(restruct, sgroupId, { expanded: true });
     });

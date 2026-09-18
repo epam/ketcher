@@ -141,6 +141,8 @@ export class SGroup {
   xBonds: number[];
   neiAtoms: number[];
   pp: Vec2 | null;
+  /** A label-only drag makes pp the contracted position instead of atom geometry. */
+  contractedLabelMoved: boolean;
   data: SGroupData;
   dataArea: Box2Abs | null;
   functionalGroup: FunctionalGroup | undefined;
@@ -169,6 +171,7 @@ export class SGroup {
     this.neiAtoms = [];
     this.attachmentPoints = [];
     this.pp = null;
+    this.contractedLabelMoved = false;
     this.dataArea = null;
     this.data = {
       mul: 1, // multiplication count for MUL group
@@ -410,7 +413,7 @@ export class SGroup {
       atomId = this.atoms[0];
     }
 
-    if (this.pp) {
+    if (this.contractedLabelMoved && this.pp) {
       return { atomId, position: this.pp };
     }
 
@@ -540,6 +543,7 @@ export class SGroup {
       return remappedAtomId;
     });
     cp.pp = sgroup.pp;
+    cp.contractedLabelMoved = sgroup.contractedLabelMoved;
     cp.bracketBox = sgroup.bracketBox;
     cp.patoms = null;
     cp.allAtoms = sgroup.allAtoms;

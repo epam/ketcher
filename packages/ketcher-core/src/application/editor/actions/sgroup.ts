@@ -80,6 +80,11 @@ const fromMonomerBondFlipWithNewStereo = (
 };
 
 const getSGroupCenter = (struct: Struct, sgroup: SGroup) => {
+  if (!sgroup.contractedLabelMoved) {
+    return sgroup.isContracted()
+      ? sgroup.getContractedPosition(struct).position
+      : sgroup.pp;
+  }
   const boundingBox = SGroup.getObjBBox(
     SGroup.getAtoms(struct, sgroup),
     struct,
@@ -374,6 +379,9 @@ export function setExpandMonomerSGroup(
       }
 
       const movableSGroupCenter = getSGroupCenter(struct, movableSGroup);
+      if (!sGroupCenter || !movableSGroupCenter) {
+        return;
+      }
 
       const SAME_LINE_THRESHOLD = 0.5;
       const inOneLine =
@@ -460,6 +468,9 @@ export function setExpandMonomerSGroup(
       }
 
       const movableSGroupCenter = getSGroupCenter(struct, movableSGroup);
+      if (!sGroupCenter || !movableSGroupCenter) {
+        return;
+      }
 
       const moveDown = movableSGroupCenter.y > sGroupCenter.y;
       const moveUp = movableSGroupCenter.y < sGroupCenter.y;

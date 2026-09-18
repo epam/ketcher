@@ -55,7 +55,10 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
     const selectedSGroupSet = new Set<number>(lists.sgroups ?? []);
     const sgroups = Array.from(struct.sgroups.values()) as SGroup[];
     const selectedContractedSGroups = sgroups.filter(
-      (sgroup) => sgroup.isContracted() && selectedSGroupSet.has(sgroup.id),
+      (sgroup) =>
+        sgroup.isContracted() &&
+        selectedSGroupSet.has(sgroup.id) &&
+        sgroup.atoms.some((atomId) => selectedAtomSet.has(atomId)),
     );
     const contractedSGroups = sgroups.filter(
       (sgroup) =>
@@ -131,7 +134,9 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
         const implicitContractedPositionMovesWithAtoms =
           sg.isContracted() && sg.pp === null && !contractedSGroupSet.has(sg);
         if (!implicitContractedPositionMovesWithAtoms) {
-          action.addOp(new SGroupDataMove(sg.id, d));
+          action.addOp(
+            new SGroupDataMove(sg.id, d, contractedSGroupSet.has(sg)),
+          );
         }
       });
     }

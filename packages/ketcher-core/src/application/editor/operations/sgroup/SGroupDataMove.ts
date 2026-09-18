@@ -23,12 +23,22 @@ export class SGroupDataMove extends BaseOperation {
   data: {
     id: number | undefined;
     d: Vec2 | undefined;
-    initializedFromNull: boolean;
+    movesContractedLabel: boolean;
+    nextContractedLabelMoved: boolean;
+    previousPosition: Vec2 | null;
+    restorePosition: boolean;
   };
 
-  constructor(id?: number, d?: Vec2) {
+  constructor(id?: number, d?: Vec2, movesContractedLabel = false) {
     super(OperationType.S_GROUP_DATA_MOVE);
-    this.data = { id, d, initializedFromNull: false };
+    this.data = {
+      id,
+      d,
+      movesContractedLabel,
+      nextContractedLabelMoved: true,
+      previousPosition: null,
+      restorePosition: false,
+    };
   }
 
   execute(restruct: ReStruct) {
@@ -38,16 +48,20 @@ export class SGroupDataMove extends BaseOperation {
     const sgroup = sgroups.get(id);
     if (!sgroup) return;
 
-    if (this.data.initializedFromNull) {
+    if (this.data.movesContractedLabel) {
+      const previousPosition = sgroup.pp;
+      sgroup.pp = this.data.restorePosition
+        ? this.data.previousPosition
+        : sgroup.getContractedPosition(restruct.molecule).position.add(d);
+      this.data.previousPosition = previousPosition;
+      this.data.restorePosition = !this.data.restorePosition;
+    } else {
       sgroup.pp?.add_(d);
-      sgroup.pp = null;
-      this.data.initializedFromNull = false;
-    } else if (sgroup.pp) {
-      sgroup.pp.add_(d);
-    } else if (sgroup.isContracted()) {
-      const { position } = sgroup.getContractedPosition(restruct.molecule);
-      sgroup.pp = position.add(d);
-      this.data.initializedFromNull = true;
+    }
+    if (this.data.movesContractedLabel) {
+      const previous = sgroup.contractedLabelMoved;
+      sgroup.contractedLabelMoved = this.data.nextContractedLabelMoved;
+      this.data.nextContractedLabelMoved = previous;
     }
     this.data.d = d.negated();
 

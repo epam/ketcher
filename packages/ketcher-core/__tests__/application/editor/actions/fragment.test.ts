@@ -55,10 +55,12 @@ describe('fromMultipleMove', () => {
     expect(sgroup.getContractedPosition(struct).position).toEqual(
       new Vec2(4, 4),
     );
+    expect(sgroup.contractedLabelMoved).toBe(true);
 
     undoAction.perform(restruct);
 
     expect(sgroup.pp).toBeNull();
+    expect(sgroup.contractedLabelMoved).toBe(false);
     expect(sgroup.getContractedPosition(struct).position).toEqual(
       new Vec2(1, 0),
     );
@@ -80,6 +82,36 @@ describe('fromMultipleMove', () => {
 
     expect(struct.atoms.get(firstAtomId)?.pp).toEqual(new Vec2(3, 4));
     expect(struct.atoms.get(secondAtomId)?.pp).toEqual(new Vec2(5, 4));
+  });
+
+  it('does not treat a stored S-group data position as a moved abbreviation', () => {
+    const { struct, sgroup } = createSGroupStruct(false);
+    sgroup.pp = new Vec2(8, 9);
+
+    expect(sgroup.getContractedPosition(struct).position).toEqual(
+      new Vec2(1, 0),
+    );
+  });
+
+  it('moves a stored label from its displayed center and restores its data position on undo', () => {
+    const { struct, restruct, sgroup, firstAtomId, secondAtomId } =
+      createSGroupStruct(false);
+    sgroup.pp = new Vec2(8, 9);
+
+    const undoAction = fromMultipleMove(
+      restruct,
+      { atoms: [firstAtomId, secondAtomId], bonds: [], sgroupData: [] },
+      new Vec2(3, 4),
+    );
+
+    expect(sgroup.getContractedPosition(struct).position).toEqual(
+      new Vec2(4, 4),
+    );
+    undoAction.perform(restruct);
+    expect(sgroup.pp).toEqual(new Vec2(8, 9));
+    expect(sgroup.getContractedPosition(struct).position).toEqual(
+      new Vec2(1, 0),
+    );
   });
 
   it('moves contracted S-group atoms during whole-structure translation', () => {
@@ -124,6 +156,19 @@ describe('fromMultipleMove', () => {
     expect(struct.atoms.get(firstAtomId)?.pp).toEqual(new Vec2(3, 4));
     expect(struct.atoms.get(secondAtomId)?.pp).toEqual(new Vec2(5, 4));
     expect(sgroup.pp).toEqual(new Vec2(11, 13));
+  });
+
+  it('does not move a selected group whose hidden atoms are absent from the move', () => {
+    const { restruct, sgroup, sgroupId } = createSGroupStruct(false);
+    sgroup.pp = new Vec2(8, 9);
+
+    fromMultipleMove(
+      restruct,
+      { atoms: [], bonds: [], sgroups: [sgroupId], sgroupData: [] },
+      new Vec2(3, 4),
+    );
+
+    expect(sgroup.pp).toEqual(new Vec2(8, 9));
   });
 
   it('moves the complete contracted S-group when only some atoms are selected', () => {

@@ -56,6 +56,9 @@ export const valuesToReplace = {
   'process.env.HELP_LINK': JSON.stringify(getTagName()),
   'process.env.INDIGO_VERSION': JSON.stringify(process.env.INDIGO_VERSION || ''),
   'process.env.INDIGO_MACHINE': JSON.stringify(process.env.INDIGO_MACHINE || ''),
+  'process.env.KETCHER_SINGLE_LANGUAGE_BUILD': JSON.stringify(
+    process.env.KETCHER_SINGLE_LANGUAGE_BUILD === 'true' ? 'true' : 'false',
+  ),
 };
 
 const config = {

@@ -159,16 +159,18 @@ const SettingsDialog = (props: Props) => {
     label: t('common:general'),
     content: (
       <fieldset>
-        <Label title={t('settings:language.title')} data-testid="language">
-          <span>
-            <Select
-              value={i18n.language}
-              onChange={(lng) => i18n.changeLanguage(lng)}
-              options={languageOptions}
-              data-testid="language-select"
-            />
-          </span>
-        </Label>
+        {SUPPORTED_LANGUAGES.length > 1 && (
+          <Label title={t('settings:language.title')} data-testid="language">
+            <span>
+              <Select
+                value={i18n.language}
+                onChange={(lng) => i18n.changeLanguage(lng)}
+                options={languageOptions}
+                data-testid="language-select"
+              />
+            </span>
+          </Label>
+        )}
         <Field
           name="resetToSelect"
           component={Select}

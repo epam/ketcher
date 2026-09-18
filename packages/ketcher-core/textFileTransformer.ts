@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { Transformer } from '@jest/transform';
+import type { Transformer } from '@jest/transform';
 
 /**
  * Jest transformer for importing text files as string modules.

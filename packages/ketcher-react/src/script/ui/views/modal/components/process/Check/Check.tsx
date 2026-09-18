@@ -228,13 +228,9 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
   const handleSettingsChange = () => setIsCheckedWithNewSettings(false);
 
   useEffect(() => {
-    // Intentionally omits setIsStructureChecking(false): on mount the loading
-    // state starts as false, so there is nothing to reset.
-    onCheck(result.checkOptions).then(() => {
-      setIsStructureChecking(true);
-      setLastCheckDate(new Date());
-      setIsCheckedWithNewSettings(true);
-    });
+    // Decided to suppress locally as per Roman Rodionov decision
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    handleCheck();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

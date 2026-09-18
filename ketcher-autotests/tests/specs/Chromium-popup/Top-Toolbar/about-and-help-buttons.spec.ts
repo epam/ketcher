@@ -5,7 +5,7 @@ import { AboutDialog } from '@tests/pages/molecules/canvas/AboutDialog';
 import {
   clickByLink,
   takeEditorScreenshot,
-  takeTopToolbarScreenshot,
+  takeElementScreenshot,
 } from '@utils';
 
 let page: Page;
@@ -33,7 +33,10 @@ test.describe('Top toolbar Macro mode', () => {
 
     const iconButton = CommonTopRightToolbar(page).aboutButton;
     await expect(iconButton).toHaveAttribute('title', 'About');
-    await takeTopToolbarScreenshot(page);
+    await takeElementScreenshot(page, iconButton, {
+      paddingHeight: 15,
+      paddingWidth: 40,
+    });
     await CommonTopRightToolbar(page).about();
     await takeEditorScreenshot(page, {
       mask: [buildVersion, buildTime, buildIndigoVersion],

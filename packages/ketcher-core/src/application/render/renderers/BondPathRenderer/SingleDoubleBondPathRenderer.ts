@@ -64,7 +64,7 @@ class SingleDoubleBondPathRenderer {
     const svgPath: SVGPathAttributes = {
       d: path,
       attrs: {
-        'stroke-dasharray': BondDashArrayMap[BondType.SingleDouble],
+        'stroke-dasharray': BondDashArrayMap[BondType.SingleDouble] ?? 'none',
         'stroke-width': `${BondWidth}`,
       },
     };

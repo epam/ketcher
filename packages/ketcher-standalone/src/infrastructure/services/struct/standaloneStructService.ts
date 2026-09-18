@@ -381,7 +381,7 @@ class IndigoService implements StructService {
     });
   }
 
-  convert(
+  async convert(
     data: ConvertData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
@@ -392,6 +392,11 @@ class IndigoService implements StructService {
     } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
     const timeout = options?.['request-timeout'] as number | undefined;
+
+    // The default monomers library is a lazily fetched asset, so make sure it
+    // has resolved before reading it - otherwise the worker receives no monomer
+    // library when this runs before macromolecules mode is ever opened.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {

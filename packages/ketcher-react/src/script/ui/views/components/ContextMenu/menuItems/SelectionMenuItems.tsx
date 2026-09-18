@@ -187,6 +187,11 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
               : ''
           }
           placement="right"
+          slotProps={{
+            tooltip: {
+              sx: { backgroundColor: '#333333' },
+            },
+          }}
         >
           <span className={styles.tooltipTarget}>Create attachment group</span>
         </Tooltip>

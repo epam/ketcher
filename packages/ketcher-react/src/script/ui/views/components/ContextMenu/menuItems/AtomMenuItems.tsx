@@ -286,6 +286,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
                 : ''
             }
             placement="right"
+            slotProps={{
+              tooltip: {
+                sx: { backgroundColor: '#333333' },
+              },
+            }}
           >
             <span className={styles.tooltipTarget}>
               Create attachment group

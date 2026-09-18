@@ -19,8 +19,10 @@ import { useAppSelector, useLayoutMode } from 'hooks';
 import { selectEditor, selectEditorActiveTool } from 'state/common';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 import { SELECT_SUBMENU_ID } from 'components/menu/constants';
+import { useTranslation } from 'react-i18next';
 
 export function LeftMenuComponent() {
+  const { t } = useTranslation('macromolecules');
   const activeTool = useAppSelector(selectEditorActiveTool);
   const editor = useAppSelector(selectEditor);
   const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
@@ -39,7 +41,7 @@ export function LeftMenuComponent() {
       <Menu.Group divider={true}>
         <Menu.Item
           itemId="hand"
-          title={`Hand Tool (${hotkeysShortcuts.hand})`}
+          title={t('leftMenu.handTool', { shortcut: hotkeysShortcuts.hand })}
           testId="hand"
         />
         <Menu.Group>
@@ -50,24 +52,30 @@ export function LeftMenuComponent() {
           >
             <Menu.Item
               itemId="select-rectangle"
-              title={`Select Rectangle (${hotkeysShortcuts.switchSelectTool})`}
+              title={t('leftMenu.selectRectangle', {
+                shortcut: hotkeysShortcuts.switchSelectTool,
+              })}
               testId="select-rectangle"
             />
             <Menu.Item
               itemId="select-lasso"
-              title={`Lasso selection (${hotkeysShortcuts.switchSelectTool})`}
+              title={t('leftMenu.lassoSelection', {
+                shortcut: hotkeysShortcuts.switchSelectTool,
+              })}
               testId="select-lasso"
             />
             <Menu.Item
               itemId="select-structure"
-              title={`Structure Selection (${hotkeysShortcuts.switchSelectTool})`}
+              title={t('leftMenu.structureSelection', {
+                shortcut: hotkeysShortcuts.switchSelectTool,
+              })}
               testId="select-structure"
             />
           </Menu.Submenu>
         </Menu.Group>
         <Menu.Item
           itemId="erase"
-          title={`Erase (${hotkeysShortcuts.erase})`}
+          title={t('leftMenu.erase', { shortcut: hotkeysShortcuts.erase })}
           testId="erase"
           disabled={isSequenceMode}
         />
@@ -80,13 +88,13 @@ export function LeftMenuComponent() {
         >
           <Menu.Item
             itemId="bond-single"
-            title="Single Bond (1)"
+            title={t('leftMenu.singleBond')}
             testId="single-bond"
             disabled={isSequenceMode}
           />
           <Menu.Item
             itemId="bond-hydrogen"
-            title="Hydrogen Bond (2)"
+            title={t('leftMenu.hydrogenBond')}
             testId="hydrogen-bond"
             disabled={isSequenceMode}
           />

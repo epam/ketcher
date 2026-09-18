@@ -1,5 +1,6 @@
 import { ChangeEvent, KeyboardEvent, memo, useRef, useState } from 'react';
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 import { LayoutMode } from 'ketcher-core';
 
 import useTranslateAlongXAxis from './useTranslateAlongXAxis';
@@ -21,6 +22,7 @@ const RulerInput = ({
   layoutMode,
   onCommitValue,
 }: Props) => {
+  const { t } = useTranslation('macromolecules');
   const ref = useRef<HTMLInputElement>(null);
 
   useTranslateAlongXAxis(ref, offsetX);
@@ -69,7 +71,7 @@ const RulerInput = ({
         styles.rulerInput,
         isDragging && styles.rulerInputDragging,
       )}
-      title="Number of monomers in a line"
+      title={t('ruler.monomersInLine')}
       type="text"
       inputMode="numeric"
       pattern="[0-9]*"

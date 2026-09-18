@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   selectAmbiguousMonomersInCategory,
   selectFilteredMonomers,
@@ -48,6 +49,7 @@ const RnaElementsAccordionView = ({
   editPreset,
   libraryName,
 }: Props) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useDispatch();
   const presets = useAppSelector(selectFilteredPresets);
   const monomers = useAppSelector(selectFilteredMonomers);
@@ -115,7 +117,7 @@ const RnaElementsAccordionView = ({
                   onClick={onNewPresetClick}
                   data-testid="new-preset-button"
                 >
-                  Add new
+                  {t('monomerLibrary.addNewPreset')}
                 </NewPresetButton>
                 <FilterIconButton
                   type="button"
@@ -125,7 +127,7 @@ const RnaElementsAccordionView = ({
                     event.stopPropagation();
                     setIsFilterOpen((prev) => !prev);
                   }}
-                  aria-label="Filter presets by phosphate position"
+                  aria-label={t('monomerLibrary.filterPresetsAriaLabel')}
                   data-testid="preset-filter-button"
                 >
                   <Icon name="filter" />

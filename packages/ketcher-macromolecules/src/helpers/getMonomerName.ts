@@ -1,9 +1,13 @@
 import { AmbiguousMonomer, BaseMonomer, KetMonomerClass } from 'ketcher-core';
+import type { TFunction } from 'i18next';
 
 const DNA_TEMPLATE_NAME_PART = 'thymine';
 const RNA_TEMPLATE_NAME_PART = 'uracil';
 
-const getAmbiguousMonomerName = (monomer: AmbiguousMonomer): string => {
+const getAmbiguousMonomerName = (
+  monomer: AmbiguousMonomer,
+  t: TFunction,
+): string => {
   const { monomerClass, variantMonomerItem } = monomer;
   const label = variantMonomerItem.label;
   const options = variantMonomerItem.options ?? [];
@@ -17,25 +21,31 @@ const getAmbiguousMonomerName = (monomer: AmbiguousMonomer): string => {
     );
 
     if (isDNA) {
-      return label === 'N' ? 'Any DNA base' : 'Ambiguous DNA Base';
+      return label === 'N'
+        ? t('monomerName.anyDnaBase')
+        : t('monomerName.ambiguousDnaBase');
     }
     if (isRNA) {
-      return label === 'N' ? 'Any RNA Base' : 'Ambiguous RNA Base';
+      return label === 'N'
+        ? t('monomerName.anyRnaBase')
+        : t('monomerName.ambiguousRnaBase');
     }
     // Generic ambiguous base (M, R, S, V)
-    return 'Ambiguous Base';
+    return t('monomerName.ambiguousBase');
   }
 
   if (monomerClass === KetMonomerClass.AminoAcid) {
-    return label === 'X' ? 'Any Amino acid' : 'Ambiguous Amino acid';
+    return label === 'X'
+      ? t('monomerName.anyAminoAcid')
+      : t('monomerName.ambiguousAminoAcid');
   }
 
-  return `Ambiguous ${monomerClass}`;
+  return t('monomerName.ambiguousGeneric', { class: monomerClass });
 };
 
-const getMonomerName = (monomer: BaseMonomer) => {
+const getMonomerName = (monomer: BaseMonomer, t: TFunction) => {
   if (monomer instanceof AmbiguousMonomer) {
-    return getAmbiguousMonomerName(monomer);
+    return getAmbiguousMonomerName(monomer, t);
   }
 
   return monomer.monomerItem.props.Name;

@@ -37,3 +37,4 @@ The ten most important features, distilled from [documentation/help.md](../../do
 9. [Clipboard (Copy / Cut / Paste)](./clipboard.md) — copy/cut/paste across chemical formats
 10. [Undo / Redo](./undo-redo.md) — bounded 32-step command history
 11. [Import, Export & Structure Checking](./import-export.md) — file formats, open/save, structure check, calculated values
+12. [Localization (i18n)](./localization.md) — language switcher, persistence, what translates vs. what stays as chemistry data

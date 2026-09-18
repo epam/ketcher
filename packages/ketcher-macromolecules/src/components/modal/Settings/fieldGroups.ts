@@ -28,14 +28,21 @@ export type SettingFieldName = {
 
 export interface FieldGroup {
   id: string;
+  /**
+   * Frozen English literal, NOT a translation key - Playwright's
+   * settingsDialog/Constants.ts hardcodes `${title}-accordion` test ids
+   * (e.g. 'General-accordion'), so this value must never change. Use
+   * `titleKey` for the translated, user-visible group label.
+   */
   title: string;
+  titleKey: string;
   fields: Array<SettingFieldName>;
 }
 
 export interface FieldDefinition {
-  label: string;
+  labelKey: string;
   type: 'checkbox' | 'number' | 'text' | 'select' | 'color';
-  options?: Array<{ value: SettingFieldValue; label: string }>;
+  options?: Array<{ value: SettingFieldValue; labelKey: string }>;
   min?: number;
   max?: number;
   step?: number;
@@ -45,6 +52,7 @@ export const FIELD_GROUPS: FieldGroup[] = [
   {
     id: 'general',
     title: 'General',
+    titleKey: 'settings.groups.general',
     fields: [
       'resetToSelect',
       'rotationStep',
@@ -63,6 +71,7 @@ export const FIELD_GROUPS: FieldGroup[] = [
   {
     id: 'stereochemistry',
     title: 'Stereochemistry',
+    titleKey: 'settings.groups.stereochemistry',
     fields: [
       'showStereoFlags',
       'stereoLabelStyle',
@@ -81,6 +90,7 @@ export const FIELD_GROUPS: FieldGroup[] = [
   {
     id: 'atoms',
     title: 'Atoms',
+    titleKey: 'settings.groups.atoms',
     fields: [
       'carbonExplicitly',
       'showCharge',
@@ -91,6 +101,7 @@ export const FIELD_GROUPS: FieldGroup[] = [
   {
     id: 'bonds',
     title: 'Bonds',
+    titleKey: 'settings.groups.bonds',
     fields: [
       'aromaticCircle',
       'bondSpacing',
@@ -105,6 +116,7 @@ export const FIELD_GROUPS: FieldGroup[] = [
   {
     id: 'server',
     title: 'Server',
+    titleKey: 'settings.groups.server',
     fields: [
       'smart-layout',
       'ignore-stereochemistry-errors',
@@ -116,352 +128,362 @@ export const FIELD_GROUPS: FieldGroup[] = [
   {
     id: 'viewer3d',
     title: '3D Viewer',
+    titleKey: 'settings.groups.viewer3d',
     fields: ['miewMode', 'miewTheme', 'miewAtomLabel'],
   },
   {
     id: 'debug',
     title: 'Options for Debugging',
+    titleKey: 'settings.groups.debug',
     fields: ['showAtomIds', 'showBondIds', 'showHalfBondIds', 'showLoopIds'],
   },
+];
+
+// Plain literal English (not translation keys): px/pt/cm/inch are unit
+// abbreviations, not language content - same convention as ketcher-react's
+// own Settings dialog (see .memory-bank/modules/i18n.md).
+const UNIT_OPTIONS = [
+  { value: 'px', labelKey: 'px' },
+  { value: 'pt', labelKey: 'pt' },
+  { value: 'cm', labelKey: 'cm' },
+  { value: 'inch', labelKey: 'inch' },
 ];
 
 export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
   // General
   resetToSelect: {
-    label: 'Reset to Select Tool',
+    labelKey: 'settings.fields.resetToSelect',
     type: 'select',
     options: [
-      { value: true, label: 'Enabled' },
-      { value: false, label: 'Disabled' },
-      { value: 'paste', label: 'After Paste' },
+      { value: true, labelKey: 'settings.fields.resetToSelectEnabled' },
+      { value: false, labelKey: 'settings.fields.resetToSelectDisabled' },
+      { value: 'paste', labelKey: 'settings.fields.resetToSelectAfterPaste' },
     ],
   },
   rotationStep: {
-    label: 'Rotation Step (degrees)',
+    labelKey: 'settings.fields.rotationStep',
     type: 'number',
     min: 1,
     max: 90,
     step: 1,
   },
   showValenceWarnings: {
-    label: 'Show Valence Warnings',
+    labelKey: 'settings.fields.showValenceWarnings',
     type: 'checkbox',
   },
   atomColoring: {
-    label: 'Atom Coloring',
+    labelKey: 'settings.fields.atomColoring',
     type: 'checkbox',
   },
   font: {
-    label: 'Font',
+    labelKey: 'settings.fields.font',
     type: 'select',
     // TODO: Replace with dynamic font detection (see ketcher-react/systemfonts.jsx)
     // This hardcoded list should be replaced with runtime font detection using FontFaceObserver
     // to only show fonts actually available on the user's system
+    // Font family names are proper nouns, not translation keys.
     options: [
-      { value: '30px Arial', label: 'Arial' },
-      { value: '30px Arial Black', label: 'Arial Black' },
-      { value: '30px Comic Sans MS', label: 'Comic Sans MS' },
-      { value: '30px Courier New', label: 'Courier New' },
-      { value: '30px Georgia', label: 'Georgia' },
-      { value: '30px Impact', label: 'Impact' },
-      { value: '30px Charcoal', label: 'Charcoal' },
-      { value: '30px Lucida Console', label: 'Lucida Console' },
-      { value: '30px Monaco', label: 'Monaco' },
-      { value: '30px Palatino Linotype', label: 'Palatino Linotype' },
-      { value: '30px Book Antiqua', label: 'Book Antiqua' },
-      { value: '30px Palatino', label: 'Palatino' },
-      { value: '30px Tahoma', label: 'Tahoma' },
-      { value: '30px Geneva', label: 'Geneva' },
-      { value: '30px Times New Roman', label: 'Times New Roman' },
-      { value: '30px Times', label: 'Times' },
-      { value: '30px Verdana', label: 'Verdana' },
-      { value: '30px Symbol', label: 'Symbol' },
-      { value: '30px MS Serif', label: 'MS Serif' },
-      { value: '30px MS Sans Serif', label: 'MS Sans Serif' },
-      { value: '30px New York', label: 'New York' },
-      { value: '30px Droid Sans', label: 'Droid Sans' },
-      { value: '30px Droid Serif', label: 'Droid Serif' },
-      { value: '30px Droid Sans Mono', label: 'Droid Sans Mono' },
-      { value: '30px Roboto', label: 'Roboto' },
+      { value: '30px Arial', labelKey: 'Arial' },
+      { value: '30px Arial Black', labelKey: 'Arial Black' },
+      { value: '30px Comic Sans MS', labelKey: 'Comic Sans MS' },
+      { value: '30px Courier New', labelKey: 'Courier New' },
+      { value: '30px Georgia', labelKey: 'Georgia' },
+      { value: '30px Impact', labelKey: 'Impact' },
+      { value: '30px Charcoal', labelKey: 'Charcoal' },
+      { value: '30px Lucida Console', labelKey: 'Lucida Console' },
+      { value: '30px Monaco', labelKey: 'Monaco' },
+      { value: '30px Palatino Linotype', labelKey: 'Palatino Linotype' },
+      { value: '30px Book Antiqua', labelKey: 'Book Antiqua' },
+      { value: '30px Palatino', labelKey: 'Palatino' },
+      { value: '30px Tahoma', labelKey: 'Tahoma' },
+      { value: '30px Geneva', labelKey: 'Geneva' },
+      { value: '30px Times New Roman', labelKey: 'Times New Roman' },
+      { value: '30px Times', labelKey: 'Times' },
+      { value: '30px Verdana', labelKey: 'Verdana' },
+      { value: '30px Symbol', labelKey: 'Symbol' },
+      { value: '30px MS Serif', labelKey: 'MS Serif' },
+      { value: '30px MS Sans Serif', labelKey: 'MS Sans Serif' },
+      { value: '30px New York', labelKey: 'New York' },
+      { value: '30px Droid Sans', labelKey: 'Droid Sans' },
+      { value: '30px Droid Serif', labelKey: 'Droid Serif' },
+      { value: '30px Droid Sans Mono', labelKey: 'Droid Sans Mono' },
+      { value: '30px Roboto', labelKey: 'Roboto' },
     ],
   },
   fontsz: {
-    label: 'Font Size',
+    labelKey: 'settings.fields.fontsz',
     type: 'number',
     min: 1,
     max: 96,
     step: 1,
   },
   fontszUnit: {
-    label: 'Font Size Unit',
+    labelKey: 'settings.fields.fontszUnit',
     type: 'select',
-    options: [
-      { value: 'px', label: 'px' },
-      { value: 'pt', label: 'pt' },
-      { value: 'cm', label: 'cm' },
-      { value: 'inch', label: 'inch' },
-    ],
+    options: UNIT_OPTIONS,
   },
   fontszsub: {
-    label: 'Sub/Superscript Font Size',
+    labelKey: 'settings.fields.fontszsub',
     type: 'number',
     min: 1,
     max: 96,
     step: 1,
   },
   fontszsubUnit: {
-    label: 'Sub/Superscript Font Size Unit',
+    labelKey: 'settings.fields.fontszsubUnit',
     type: 'select',
-    options: [
-      { value: 'px', label: 'px' },
-      { value: 'pt', label: 'pt' },
-      { value: 'cm', label: 'cm' },
-      { value: 'inch', label: 'inch' },
-    ],
+    options: UNIT_OPTIONS,
   },
   reactionComponentMarginSize: {
-    label: 'Reaction Component Margin Size',
+    labelKey: 'settings.fields.reactionComponentMarginSize',
     type: 'number',
     min: 0.1,
     max: 1000,
     step: 0.1,
   },
   reactionComponentMarginSizeUnit: {
-    label: 'Reaction Component Margin Size Unit',
+    labelKey: 'settings.fields.reactionComponentMarginSizeUnit',
     type: 'select',
-    options: [
-      { value: 'px', label: 'px' },
-      { value: 'pt', label: 'pt' },
-      { value: 'cm', label: 'cm' },
-      { value: 'inch', label: 'inch' },
-    ],
+    options: UNIT_OPTIONS,
   },
   imageResolution: {
-    label: 'Image Resolution',
+    labelKey: 'settings.fields.imageResolution',
     type: 'select',
     options: [
-      { value: '72', label: 'low (72 DPI)' },
-      { value: '600', label: 'high (600 DPI)' },
+      { value: '72', labelKey: 'settings.fields.imageResolutionLow' },
+      { value: '600', labelKey: 'settings.fields.imageResolutionHigh' },
     ],
   },
 
   // Stereochemistry
   showStereoFlags: {
-    label: 'Show Stereo Flags',
+    labelKey: 'settings.fields.showStereoFlags',
     type: 'checkbox',
   },
   stereoLabelStyle: {
-    label: 'Label Display at Stereogenic Centers',
+    labelKey: 'settings.fields.stereoLabelStyle',
     type: 'select',
     options: [
-      { value: 'Iupac', label: 'IUPAC style' },
-      { value: 'Classic', label: 'Classic' },
-      { value: 'On', label: 'On' },
-      { value: 'Off', label: 'Off' },
+      { value: 'Iupac', labelKey: 'settings.fields.stereoLabelStyleIupac' },
+      {
+        value: 'Classic',
+        labelKey: 'settings.fields.stereoLabelStyleClassic',
+      },
+      { value: 'On', labelKey: 'settings.fields.stereoLabelStyleOn' },
+      { value: 'Off', labelKey: 'settings.fields.stereoLabelStyleOff' },
     ],
   },
   colorOfAbsoluteCenters: {
-    label: 'Color of Absolute Centers',
+    labelKey: 'settings.fields.colorOfAbsoluteCenters',
     type: 'color',
   },
   colorOfAndCenters: {
-    label: 'Color of AND Centers',
+    labelKey: 'settings.fields.colorOfAndCenters',
     type: 'color',
   },
   colorOfOrCenters: {
-    label: 'Color of OR Centers',
+    labelKey: 'settings.fields.colorOfOrCenters',
     type: 'color',
   },
   colorStereogenicCenters: {
-    label: 'Color Stereogenic Centers',
+    labelKey: 'settings.fields.colorStereogenicCenters',
     type: 'select',
     options: [
-      { value: 'LabelsOnly', label: 'Labels Only' },
-      { value: 'BondsOnly', label: 'Bonds Only' },
-      { value: 'LabelsAndBonds', label: 'Labels and Bonds' },
-      { value: 'Off', label: 'Off' },
+      {
+        value: 'LabelsOnly',
+        labelKey: 'settings.fields.colorStereogenicCentersLabelsOnly',
+      },
+      {
+        value: 'BondsOnly',
+        labelKey: 'settings.fields.colorStereogenicCentersBondsOnly',
+      },
+      {
+        value: 'LabelsAndBonds',
+        labelKey: 'settings.fields.colorStereogenicCentersLabelsAndBonds',
+      },
+      {
+        value: 'Off',
+        labelKey: 'settings.fields.colorStereogenicCentersOff',
+      },
     ],
   },
   autoFadeOfStereoLabels: {
-    label: 'Auto Fade of Stereo Labels',
+    labelKey: 'settings.fields.autoFadeOfStereoLabels',
     type: 'checkbox',
   },
   absFlagLabel: {
-    label: 'Absolute Flag Label',
+    labelKey: 'settings.fields.absFlagLabel',
     type: 'text',
   },
   andFlagLabel: {
-    label: 'AND Flag Label',
+    labelKey: 'settings.fields.andFlagLabel',
     type: 'text',
   },
   orFlagLabel: {
-    label: 'OR Flag Label',
+    labelKey: 'settings.fields.orFlagLabel',
     type: 'text',
   },
   mixedFlagLabel: {
-    label: 'Mixed Flag Label',
+    labelKey: 'settings.fields.mixedFlagLabel',
     type: 'text',
   },
   ignoreChiralFlag: {
-    label: 'Ignore Chiral Flag',
+    labelKey: 'settings.fields.ignoreChiralFlag',
     type: 'checkbox',
   },
 
   // Atoms
   carbonExplicitly: {
-    label: 'Show Carbon Explicitly',
+    labelKey: 'settings.fields.carbonExplicitly',
     type: 'checkbox',
   },
   showCharge: {
-    label: 'Show Charge',
+    labelKey: 'settings.fields.showCharge',
     type: 'checkbox',
   },
   showValence: {
-    label: 'Show Valence',
+    labelKey: 'settings.fields.showValence',
     type: 'checkbox',
   },
   showHydrogenLabels: {
-    label: 'Show Hydrogen Labels',
+    labelKey: 'settings.fields.showHydrogenLabels',
     type: 'select',
     options: [
-      { value: 'off', label: 'Off' },
-      { value: 'Hetero', label: 'Heteroatoms' },
-      { value: 'Terminal', label: 'Terminal' },
-      { value: 'Terminal and Hetero', label: 'Terminal and Hetero' },
-      { value: 'On', label: 'On' },
+      { value: 'off', labelKey: 'settings.fields.showHydrogenLabelsOff' },
+      {
+        value: 'Hetero',
+        labelKey: 'settings.fields.showHydrogenLabelsHetero',
+      },
+      {
+        value: 'Terminal',
+        labelKey: 'settings.fields.showHydrogenLabelsTerminal',
+      },
+      {
+        value: 'Terminal and Hetero',
+        labelKey: 'settings.fields.showHydrogenLabelsTerminalAndHetero',
+      },
+      { value: 'On', labelKey: 'settings.fields.showHydrogenLabelsOn' },
     ],
   },
 
   // Bonds
   aromaticCircle: {
-    label: 'Aromatic Circle',
+    labelKey: 'settings.fields.aromaticCircle',
     type: 'checkbox',
   },
   bondSpacing: {
-    label: 'Bond Spacing',
+    labelKey: 'settings.fields.bondSpacing',
     type: 'number',
     min: 0.1,
     max: 10,
     step: 0.1,
   },
   bondThickness: {
-    label: 'Bond Thickness',
+    labelKey: 'settings.fields.bondThickness',
     type: 'number',
     min: 0.1,
     max: 96,
     step: 0.1,
   },
   bondThicknessUnit: {
-    label: 'Bond Thickness Unit',
+    labelKey: 'settings.fields.bondThicknessUnit',
     type: 'select',
-    options: [
-      { value: 'px', label: 'px' },
-      { value: 'pt', label: 'pt' },
-      { value: 'cm', label: 'cm' },
-      { value: 'inch', label: 'inch' },
-    ],
+    options: UNIT_OPTIONS,
   },
   stereoBondWidth: {
-    label: 'Stereo Bond Width',
+    labelKey: 'settings.fields.stereoBondWidth',
     type: 'number',
     min: 0.1,
     max: 96,
     step: 0.1,
   },
   stereoBondWidthUnit: {
-    label: 'Stereo Bond Width Unit',
+    labelKey: 'settings.fields.stereoBondWidthUnit',
     type: 'select',
-    options: [
-      { value: 'px', label: 'px' },
-      { value: 'pt', label: 'pt' },
-      { value: 'cm', label: 'cm' },
-      { value: 'inch', label: 'inch' },
-    ],
+    options: UNIT_OPTIONS,
   },
   hashSpacing: {
-    label: 'Hash Spacing',
+    labelKey: 'settings.fields.hashSpacing',
     type: 'number',
     min: 0.1,
     max: 1000,
     step: 0.1,
   },
   hashSpacingUnit: {
-    label: 'Hash Spacing Unit',
+    labelKey: 'settings.fields.hashSpacingUnit',
     type: 'select',
-    options: [
-      { value: 'px', label: 'px' },
-      { value: 'pt', label: 'pt' },
-      { value: 'cm', label: 'cm' },
-      { value: 'inch', label: 'inch' },
-    ],
+    options: UNIT_OPTIONS,
   },
 
   // Server
   'smart-layout': {
-    label: 'Smart Layout',
+    labelKey: 'settings.fields.smartLayout',
     type: 'checkbox',
   },
   'ignore-stereochemistry-errors': {
-    label: 'Ignore Stereochemistry Errors',
+    labelKey: 'settings.fields.ignoreStereochemistryErrors',
     type: 'checkbox',
   },
   'mass-skip-error-on-pseudoatoms': {
-    label: 'Skip Mass Error on Pseudoatoms',
+    labelKey: 'settings.fields.massSkipErrorOnPseudoatoms',
     type: 'checkbox',
   },
   'gross-formula-add-rsites': {
-    label: 'Add R-sites to Gross Formula',
+    labelKey: 'settings.fields.grossFormulaAddRsites',
     type: 'checkbox',
   },
   'gross-formula-add-isotopes': {
-    label: 'Add Isotopes to Gross Formula',
+    labelKey: 'settings.fields.grossFormulaAddIsotopes',
     type: 'checkbox',
   },
 
   // 3D Viewer
   miewMode: {
-    label: 'Miew Mode',
+    labelKey: 'settings.fields.miewMode',
     type: 'select',
     options: [
-      { value: 'LN', label: 'Lines' },
-      { value: 'BS', label: 'Ball and Stick' },
-      { value: 'LC', label: 'Licorice' },
+      { value: 'LN', labelKey: 'settings.fields.miewModeLines' },
+      { value: 'BS', labelKey: 'settings.fields.miewModeBallAndStick' },
+      { value: 'LC', labelKey: 'settings.fields.miewModeLicorice' },
     ],
   },
   miewTheme: {
-    label: 'Miew Theme',
+    labelKey: 'settings.fields.miewTheme',
     type: 'select',
     options: [
-      { value: 'light', label: 'Light' },
-      { value: 'dark', label: 'Dark' },
+      { value: 'light', labelKey: 'settings.fields.miewThemeLight' },
+      { value: 'dark', labelKey: 'settings.fields.miewThemeDark' },
     ],
   },
   miewAtomLabel: {
-    label: 'Miew Atom Label',
+    labelKey: 'settings.fields.miewAtomLabel',
     type: 'select',
     options: [
-      { value: 'no', label: 'None' },
-      { value: 'bright', label: 'Bright' },
-      { value: 'blackAndWhite', label: 'Black and White' },
-      { value: 'black', label: 'Black' },
+      { value: 'no', labelKey: 'settings.fields.miewAtomLabelNone' },
+      { value: 'bright', labelKey: 'settings.fields.miewAtomLabelBright' },
+      {
+        value: 'blackAndWhite',
+        labelKey: 'settings.fields.miewAtomLabelBlackAndWhite',
+      },
+      { value: 'black', labelKey: 'settings.fields.miewAtomLabelBlack' },
     ],
   },
 
   // Debug
   showAtomIds: {
-    label: 'Show Atom IDs',
+    labelKey: 'settings.fields.showAtomIds',
     type: 'checkbox',
   },
   showBondIds: {
-    label: 'Show Bond IDs',
+    labelKey: 'settings.fields.showBondIds',
     type: 'checkbox',
   },
   showHalfBondIds: {
-    label: 'Show Half-Bond IDs',
+    labelKey: 'settings.fields.showHalfBondIds',
     type: 'checkbox',
   },
   showLoopIds: {
-    label: 'Show Loop IDs',
+    labelKey: 'settings.fields.showLoopIds',
     type: 'checkbox',
   },
 };

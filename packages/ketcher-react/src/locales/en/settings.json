@@ -1,0 +1,171 @@
+{
+  "language": {
+    "title": "Language"
+  },
+  "fields": {
+    "resetToSelect": {
+      "title": "Reset to Select Tool",
+      "enumOn": "on",
+      "enumAfterPaste": "After Paste",
+      "enumOff": "off"
+    },
+    "rotationStep": {
+      "title": "Rotation Step, º"
+    },
+    "showValenceWarnings": {
+      "title": "Show valence warnings"
+    },
+    "atomColoring": {
+      "title": "Atom coloring"
+    },
+    "showStereoFlags": {
+      "title": "Show the Stereo flags"
+    },
+    "stereoLabelStyle": {
+      "title": "Label display at stereogenic centers",
+      "enumIupac": "IUPAC style",
+      "enumClassic": "Classic",
+      "enumOn": "On",
+      "enumOff": "Off"
+    },
+    "colorOfAbsoluteCenters": {
+      "title": " Absolute Center color"
+    },
+    "colorOfAndCenters": {
+      "title": "AND Centers color"
+    },
+    "colorOfOrCenters": {
+      "title": "OR Centers color"
+    },
+    "colorStereogenicCenters": {
+      "title": "Color stereogenic centers",
+      "enumLabelsOnly": "Labels Only",
+      "enumBondsOnly": "Bonds Only",
+      "enumLabelsAndBonds": "Labels And Bonds",
+      "enumOff": "Off"
+    },
+    "autoFadeOfStereoLabels": {
+      "title": "Auto fade And/Or center labels"
+    },
+    "absFlagLabel": {
+      "title": "Text of Absolute flag"
+    },
+    "andFlagLabel": {
+      "title": "Text of AND flag"
+    },
+    "mixedFlagLabel": {
+      "title": "Text of Mixed flag"
+    },
+    "ignoreChiralFlag": {
+      "title": "Ignore the chiral flag"
+    },
+    "orFlagLabel": {
+      "title": "Text of OR flag"
+    },
+    "font": {
+      "title": "Font"
+    },
+    "fontsz": {
+      "title": "Font size"
+    },
+    "fontszsub": {
+      "title": "Sub font size"
+    },
+    "carbonExplicitly": {
+      "title": "Display carbon explicitly"
+    },
+    "showCharge": {
+      "title": "Display charge"
+    },
+    "showValence": {
+      "title": "Display valence"
+    },
+    "showHydrogenLabels": {
+      "title": "Show hydrogen labels"
+    },
+    "aromaticCircle": {
+      "title": "Aromatic Bonds as circle"
+    },
+    "bondSpacing": {
+      "title": "Bond spacing",
+      "extraLabel": "% of length"
+    },
+    "bondThickness": {
+      "title": "Bond thickness"
+    },
+    "stereoBondWidth": {
+      "title": "Stereo (Wedge) bond width"
+    },
+    "bondLength": {
+      "title": "Bond length"
+    },
+    "reactionComponentMarginSize": {
+      "title": "Reaction component margin size"
+    },
+    "hashSpacing": {
+      "title": "Hash spacing"
+    },
+    "imageResolution": {
+      "title": "Image resolution",
+      "enumHigh": "high",
+      "enumLow": "low"
+    },
+    "dearomatize-on-load": {
+      "title": "dearomatize-on-load"
+    },
+    "valence-mode": {
+      "title": "Valence mode",
+      "enumBiovia2009": "BIOVIA 2009",
+      "enumBiovia2017": "BIOVIA 2017",
+      "enumDefault": "Default"
+    },
+    "smart-layout": {
+      "title": "Smart-layout"
+    },
+    "ignore-stereochemistry-errors": {
+      "title": "Ignore stereochemistry errors"
+    },
+    "mass-skip-error-on-pseudoatoms": {
+      "title": "Ignore pseudoatoms at mass"
+    },
+    "gross-formula-add-rsites": {
+      "title": "Add Rsites at mass calculation"
+    },
+    "aromatize-skip-superatoms": {
+      "title": "Skip Superatoms at aromatization"
+    },
+    "gross-formula-add-isotopes": {
+      "title": "Add Isotopes at mass calculation"
+    },
+    "showAtomIds": {
+      "title": "Show atom Ids"
+    },
+    "showBondIds": {
+      "title": "Show bonds Ids"
+    },
+    "showHalfBondIds": {
+      "title": "Show half bonds Ids"
+    },
+    "showLoopIds": {
+      "title": "Show loop Ids"
+    },
+    "miewMode": {
+      "title": "Display mode",
+      "enumLines": "Lines",
+      "enumBallsAndSticks": "Balls and Sticks",
+      "enumLicorice": "Licorice"
+    },
+    "miewTheme": {
+      "title": "Background color",
+      "enumLight": "Light",
+      "enumDark": "Dark"
+    },
+    "miewAtomLabel": {
+      "title": "Label coloring",
+      "enumNo": "No",
+      "enumBright": "Bright",
+      "enumBlackAndWhite": "Black and White",
+      "enumBlack": "Black"
+    }
+  }
+}

@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconButton } from 'ketcher-react';
 import { About } from '../modal/About/About';
 
 export function ButtonsComponents() {
+  const { t } = useTranslation('macromolecules');
   const [aboutOpen, setAboutOpen] = useState(false);
 
   const aboutProps = {
@@ -15,7 +17,7 @@ export function ButtonsComponents() {
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <IconButton
           iconName="help"
-          title="Help (?)"
+          title={t('buttons.help')}
           onClick={() => {
             const HELP_LINK = (process.env.HELP_LINK as string) || 'master';
             window.open(
@@ -27,7 +29,7 @@ export function ButtonsComponents() {
         />
         <IconButton
           iconName="about"
-          title="About"
+          title={t('buttons.about')}
           onClick={() => setAboutOpen(true)}
           testId="about-button"
         />

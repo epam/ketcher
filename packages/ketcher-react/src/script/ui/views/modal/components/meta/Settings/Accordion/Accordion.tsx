@@ -21,7 +21,7 @@ import { Icon } from 'components';
 
 const Accordion = ({ tabs, className, changedGroups }): ReactElement => {
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
-    'General',
+    'general',
   ]);
 
   const handleAccordionChange = (accordion) => () => {
@@ -38,11 +38,11 @@ const Accordion = ({ tabs, className, changedGroups }): ReactElement => {
   return (
     <div className={clsx(classes.accordionWrapper, className)}>
       {tabs.map(({ label, content, key }) => {
-        const shouldGroupBeRended = expandedAccordions.includes(label);
+        const shouldGroupBeRended = expandedAccordions.includes(key);
         return (
           <div key={key}>
             <button
-              onClick={handleAccordionChange(label)}
+              onClick={handleAccordionChange(key)}
               className={classes.accordionSummaryWrapper}
               data-testid={`${label}-accordion`}
               type="button"
@@ -59,7 +59,7 @@ const Accordion = ({ tabs, className, changedGroups }): ReactElement => {
                   <Icon name="elements-group" className={classes.groupIcon} />
                   <span>{label}</span>
                 </div>
-                {changedGroups.has(label) && (
+                {changedGroups.has(key) && (
                   <span className={classes.changeMarker}></span>
                 )}
               </div>

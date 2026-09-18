@@ -18,7 +18,8 @@ export const StyledMenu = styled(Menu)`
     opacity: 1;
     font-weight: bold;
     background: #e1e5ea;
-    margin: -4px 0 4px -4px;
+    margin-block: -4px 4px;
+    margin-inline: -4px 0;
     width: calc(100% + 8px);
     border-radius: 4px 4px 0 0;
   }
@@ -27,7 +28,7 @@ export const StyledMenu = styled(Menu)`
     height: 16px;
     display: flex;
     align-items: center;
-    margin-right: 4px;
+    margin-inline-end: 4px;
   }
   .context_menu-text {
     display: flex;
@@ -38,6 +39,6 @@ export const StyledMenu = styled(Menu)`
     display: flex;
     align-items: center;
     line-height: ${({ theme }) => theme.ketcher.font.size.regular};
-    margin-left: -3px;
+    margin-inline-start: -3px;
   }
 `;

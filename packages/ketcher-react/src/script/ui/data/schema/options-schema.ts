@@ -29,6 +29,12 @@ type ExtendedSchema = Schema & {
   default?: any;
 };
 
+// `title`/`enumNames` below hold translation keys ("settings:fields....."),
+// resolved reactively at render time via `resolveTranslatableText` in
+// component/form/form/form.tsx and utils/index.ts — mirrors how
+// UiAction.title is resolved by resolveActionTitle().
+const f = 'settings:fields.';
+
 export enum MeasurementUnits {
   Px = 'px',
   Cm = 'cm',
@@ -46,13 +52,17 @@ const editor: {
   rotationStep: ExtendedSchema;
 } = {
   resetToSelect: {
-    title: 'Reset to Select Tool',
+    title: `${f}resetToSelect.title`,
     enum: [true, 'paste', false],
-    enumNames: ['on', 'After Paste', 'off'],
+    enumNames: [
+      `${f}resetToSelect.enumOn`,
+      `${f}resetToSelect.enumAfterPaste`,
+      `${f}resetToSelect.enumOff`,
+    ],
     default: 'paste',
   },
   rotationStep: {
-    title: 'Rotation Step, º',
+    title: `${f}rotationStep.title`,
     type: 'integer',
     minimum: 1,
     maximum: 90,
@@ -99,99 +109,109 @@ const render: {
   imageResolution: ExtendedSchema;
 } = {
   showValenceWarnings: {
-    title: 'Show valence warnings',
+    title: `${f}showValenceWarnings.title`,
     type: 'boolean',
     description: 'slider',
     default: true,
   },
   atomColoring: {
-    title: 'Atom coloring',
+    title: `${f}atomColoring.title`,
     type: 'boolean',
     description: 'slider',
     default: true,
   },
   showStereoFlags: {
-    title: 'Show the Stereo flags',
+    title: `${f}showStereoFlags.title`,
     type: 'boolean',
     description: 'slider',
     default: true,
   },
   stereoLabelStyle: {
-    title: 'Label display at\u00A0stereogenic\u00A0centers',
+    title: `${f}stereoLabelStyle.title`,
     enum: [
       StereoLabelStyleType.IUPAC,
       StereoLabelStyleType.Classic,
       StereoLabelStyleType.On,
       StereoLabelStyleType.Off,
     ],
-    enumNames: ['IUPAC style', 'Classic', 'On', 'Off'],
+    enumNames: [
+      `${f}stereoLabelStyle.enumIupac`,
+      `${f}stereoLabelStyle.enumClassic`,
+      `${f}stereoLabelStyle.enumOn`,
+      `${f}stereoLabelStyle.enumOff`,
+    ],
     default: StereoLabelStyleType.IUPAC,
   },
   colorOfAbsoluteCenters: {
-    title: ' Absolute Center color',
+    title: `${f}colorOfAbsoluteCenters.title`,
     type: 'string',
     default: '#ff0000',
   },
   colorOfAndCenters: {
-    title: 'AND Centers color',
+    title: `${f}colorOfAndCenters.title`,
     type: 'string',
     default: '#0000cd',
   },
   colorOfOrCenters: {
-    title: 'OR Centers color',
+    title: `${f}colorOfOrCenters.title`,
     type: 'string',
     default: '#228b22',
   },
   colorStereogenicCenters: {
-    title: 'Color stereogenic centers',
+    title: `${f}colorStereogenicCenters.title`,
     enum: [
       StereoColoringType.LabelsOnly,
       StereoColoringType.BondsOnly,
       StereoColoringType.LabelsAndBonds,
       StereoColoringType.Off,
     ],
-    enumNames: ['Labels Only', 'Bonds Only', 'Labels And Bonds', 'Off'],
+    enumNames: [
+      `${f}colorStereogenicCenters.enumLabelsOnly`,
+      `${f}colorStereogenicCenters.enumBondsOnly`,
+      `${f}colorStereogenicCenters.enumLabelsAndBonds`,
+      `${f}colorStereogenicCenters.enumOff`,
+    ],
     default: StereoColoringType.LabelsOnly,
   },
   autoFadeOfStereoLabels: {
-    title: 'Auto fade And/Or center labels',
+    title: `${f}autoFadeOfStereoLabels.title`,
     type: 'boolean',
     description: 'slider',
     default: true,
   },
   absFlagLabel: {
-    title: 'Text of Absolute flag',
+    title: `${f}absFlagLabel.title`,
     type: 'string',
     default: 'ABS',
   },
   andFlagLabel: {
-    title: 'Text of AND flag',
+    title: `${f}andFlagLabel.title`,
     type: 'string',
     default: 'AND Enantiomer',
   },
   mixedFlagLabel: {
-    title: 'Text of Mixed flag',
+    title: `${f}mixedFlagLabel.title`,
     type: 'string',
     default: 'Mixed',
   },
   ignoreChiralFlag: {
-    title: 'Ignore the chiral flag',
+    title: `${f}ignoreChiralFlag.title`,
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   orFlagLabel: {
-    title: 'Text of OR flag',
+    title: `${f}orFlagLabel.title`,
     type: 'string',
     default: 'OR Enantiomer',
   },
   font: {
-    title: 'Font',
+    title: `${f}font.title`,
     type: 'string',
     default: '30px Arial',
   },
   fontsz: {
-    title: 'Font size',
+    title: `${f}fontsz.title`,
     type: 'number',
     default: 13,
     minimum: 0.1,
@@ -204,7 +224,7 @@ const render: {
     default: MeasurementUnits.Px,
   },
   fontszsub: {
-    title: 'Sub font size',
+    title: `${f}fontszsub.title`,
     type: 'number',
     default: 13,
     minimum: 0.1,
@@ -218,45 +238,45 @@ const render: {
   },
   // Atom
   carbonExplicitly: {
-    title: 'Display carbon explicitly',
+    title: `${f}carbonExplicitly.title`,
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   showCharge: {
-    title: 'Display charge',
+    title: `${f}showCharge.title`,
     type: 'boolean',
     description: 'slider',
     default: true,
   },
   showValence: {
-    title: 'Display valence',
+    title: `${f}showValence.title`,
     type: 'boolean',
     description: 'slider',
     default: true,
   },
   showHydrogenLabels: {
-    title: 'Show hydrogen labels',
+    title: `${f}showHydrogenLabels.title`,
     enum: Object.values(ShowHydrogenLabels),
     enumNames: Object.values(ShowHydrogenLabelNames),
     default: ShowHydrogenLabels.TerminalAndHetero,
   },
   // Bonds
   aromaticCircle: {
-    title: 'Aromatic Bonds as circle',
+    title: `${f}aromaticCircle.title`,
     type: 'boolean',
     description: 'slider',
     default: true,
   },
   bondSpacing: {
-    title: 'Bond spacing',
+    title: `${f}bondSpacing.title`,
     type: 'integer',
     default: 15,
     minimum: 1,
     maximum: 100,
   },
   bondThickness: {
-    title: 'Bond thickness',
+    title: `${f}bondThickness.title`,
     type: 'number',
     default: defaultBondThickness,
     minimum: 0.1,
@@ -269,7 +289,7 @@ const render: {
     default: MeasurementUnits.Px,
   },
   stereoBondWidth: {
-    title: 'Stereo (Wedge) bond width',
+    title: `${f}stereoBondWidth.title`,
     type: 'number',
     default: 6,
     minimum: 0.1,
@@ -282,7 +302,7 @@ const render: {
     default: MeasurementUnits.Px,
   },
   bondLength: {
-    title: 'Bond length',
+    title: `${f}bondLength.title`,
     type: 'number',
     default: 40,
     minimum: 0.1,
@@ -295,7 +315,7 @@ const render: {
     default: MeasurementUnits.Px,
   },
   reactionComponentMarginSize: {
-    title: 'Reaction component margin size',
+    title: `${f}reactionComponentMarginSize.title`,
     type: 'number',
     default: 20, // half of bond length
     minimum: 0.1,
@@ -308,7 +328,7 @@ const render: {
     default: MeasurementUnits.Px,
   },
   hashSpacing: {
-    title: 'Hash spacing',
+    title: `${f}hashSpacing.title`,
     type: 'number',
     default: 1.2,
     minimum: 0.1,
@@ -321,9 +341,9 @@ const render: {
     default: MeasurementUnits.Px,
   },
   imageResolution: {
-    title: 'Image resolution',
+    title: `${f}imageResolution.title`,
     enum: Object.values(ImageResolution),
-    enumNames: Object.keys(ImageResolution),
+    enumNames: [`${f}imageResolution.enumHigh`, `${f}imageResolution.enumLow`],
     default: ImageResolution.low,
   },
 };
@@ -340,55 +360,59 @@ const server: {
   ignoreChiralFlag: ExtendedSchema;
 } = {
   'dearomatize-on-load': {
-    title: 'dearomatize-on-load',
+    title: `${f}dearomatize-on-load.title`,
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   'valence-mode': {
-    title: 'Valence mode',
+    title: `${f}valence-mode.title`,
     enum: ['biovia-2009', 'biovia-2017', 'default'],
-    enumNames: ['BIOVIA 2009', 'BIOVIA 2017', 'Default'],
+    enumNames: [
+      `${f}valence-mode.enumBiovia2009`,
+      `${f}valence-mode.enumBiovia2017`,
+      `${f}valence-mode.enumDefault`,
+    ],
     default: 'default',
   },
   'smart-layout': {
-    title: 'Smart-layout',
+    title: `${f}smart-layout.title`,
     type: 'boolean',
     description: 'slider',
     default: true,
   },
   ignoreChiralFlag: {
-    title: 'Ignore the chiral flag',
+    title: `${f}ignoreChiralFlag.title`,
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   'ignore-stereochemistry-errors': {
-    title: 'Ignore stereochemistry errors',
+    title: `${f}ignore-stereochemistry-errors.title`,
     type: 'boolean',
     description: 'slider',
     default: true,
   },
   'mass-skip-error-on-pseudoatoms': {
-    title: 'Ignore pseudoatoms at mass',
+    title: `${f}mass-skip-error-on-pseudoatoms.title`,
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   'gross-formula-add-rsites': {
-    title: 'Add Rsites at mass calculation',
+    title: `${f}gross-formula-add-rsites.title`,
     type: 'boolean',
     description: 'slider',
     default: true,
   },
   'aromatize-skip-superatoms': {
-    title: 'Skip Superatoms at aromatization',
+    title: `${f}aromatize-skip-superatoms.title`,
     type: 'boolean',
     description: 'slider',
     default: true,
   },
   'gross-formula-add-isotopes': {
-    title: 'Add Isotopes at\u00A0mass\u00A0calculation',
+    title: `${f}gross-formula-add-isotopes.title`,
     type: 'boolean',
     description: 'slider',
     default: true,
@@ -404,25 +428,25 @@ const debug: {
   showLoopIds: ExtendedSchema;
 } = {
   showAtomIds: {
-    title: 'Show atom Ids',
+    title: `${f}showAtomIds.title`,
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   showBondIds: {
-    title: 'Show bonds Ids',
+    title: `${f}showBondIds.title`,
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   showHalfBondIds: {
-    title: 'Show half bonds Ids',
+    title: `${f}showHalfBondIds.title`,
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   showLoopIds: {
-    title: 'Show loop Ids',
+    title: `${f}showLoopIds.title`,
     type: 'boolean',
     description: 'slider',
     default: false,
@@ -435,21 +459,30 @@ const miew: {
   miewAtomLabel: ExtendedSchema;
 } = {
   miewMode: {
-    title: 'Display mode',
+    title: `${f}miewMode.title`,
     enum: ['LN', 'BS', 'LC'],
-    enumNames: ['Lines', 'Balls and Sticks', 'Licorice'],
+    enumNames: [
+      `${f}miewMode.enumLines`,
+      `${f}miewMode.enumBallsAndSticks`,
+      `${f}miewMode.enumLicorice`,
+    ],
     default: 'LN',
   },
   miewTheme: {
-    title: 'Background color',
+    title: `${f}miewTheme.title`,
     enum: ['light', 'dark'],
-    enumNames: ['Light', 'Dark'],
+    enumNames: [`${f}miewTheme.enumLight`, `${f}miewTheme.enumDark`],
     default: 'light',
   },
   miewAtomLabel: {
-    title: 'Label coloring',
+    title: `${f}miewAtomLabel.title`,
     enum: ['no', 'bright', 'blackAndWhite', 'black'],
-    enumNames: ['No', 'Bright', 'Black and White', 'Black'],
+    enumNames: [
+      `${f}miewAtomLabel.enumNo`,
+      `${f}miewAtomLabel.enumBright`,
+      `${f}miewAtomLabel.enumBlackAndWhite`,
+      `${f}miewAtomLabel.enumBlack`,
+    ],
     default: 'bright',
   },
 };

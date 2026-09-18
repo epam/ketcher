@@ -15,6 +15,8 @@
  ***************************************************************************/
 import { Modal } from 'components/shared/modal';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { ViewSwitcher } from './ViewSwitcher';
 import { ActionButton } from 'components/shared/actionButton';
 import { FileOpener, fileOpener } from './fileOpener';
@@ -82,8 +84,9 @@ const StyledDropdown = styled(SaveDropdown)({
   '& .MuiSelect-select': {
     display: 'flex',
     alignItems: 'center',
-    padding: '0 20px 0 8px',
-    paddingRight: '20px !important', // override MUI styles
+    paddingBlock: 0,
+    paddingInlineStart: '8px',
+    paddingInlineEnd: '20px !important', // override MUI styles
     height: '100%',
   },
 
@@ -98,12 +101,12 @@ const FooterFormatSelector = styled(StyledDropdown)(() => ({
 
 const FooterSequenceSelector = styled(StyledDropdown)({
   width: '76px',
-  marginLeft: '8px',
+  marginInlineStart: '8px',
 });
 
 const FooterPeptideLettersSelector = styled(StyledDropdown)({
   width: '105px',
-  marginLeft: '8px',
+  marginInlineStart: '8px',
 });
 
 const FooterButtonContainer = styled('div')({
@@ -254,6 +257,7 @@ const onOk = async ({
   onCloseCallback,
   setIsLoading,
   dispatch,
+  t,
 }: {
   struct: string;
   formatSelection: string;
@@ -262,6 +266,7 @@ const onOk = async ({
   onCloseCallback: () => void;
   setIsLoading: (isLoading: boolean) => void;
   dispatch: Dispatch<AnyAction>;
+  t: TFunction;
 }) => {
   const isKet = formatSelection === KET;
   const isSeq = formatSelection === SEQ;
@@ -272,11 +277,11 @@ const onOk = async ({
   let fileData = struct;
 
   const showParsingError = (stringError: string) => {
-    const errorMessage = 'Convert error! ' + stringError;
+    const errorMessage = t('open.convertError', { error: stringError });
     dispatch(
       openErrorModal({
         errorMessage,
-        errorTitle: isSeq || isFasta ? 'Unsupported symbols' : '',
+        errorTitle: isSeq || isFasta ? t('open.unsupportedSymbols') : '',
       }),
     );
   };
@@ -289,7 +294,7 @@ const onOk = async ({
       }
       onCloseCallback();
     } catch (_e) {
-      showParsingError('Error during file parsing.');
+      showParsingError(t('open.fileParsingError'));
     }
     return;
   } else if (
@@ -334,6 +339,7 @@ const isAnalyzingFile = false;
 const errorHandler = (error: string) => console.log(error);
 
 const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const [structStr, setStructStr] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
@@ -403,6 +409,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       onCloseCallback,
       setIsLoading,
       dispatch,
+      t,
     });
   };
 
@@ -423,6 +430,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       onCloseCallback,
       setIsLoading,
       dispatch,
+      t,
     });
   };
 
@@ -460,7 +468,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           key="openButton"
           disabled={!structStr.trim()}
           clickHandler={openHandler}
-          label="Open as New"
+          label={t('open.openAsNew')}
           styleType="secondary"
           data-testid="open-as-new-button"
         />
@@ -468,8 +476,8 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           key="copyButton"
           disabled={!structStr.trim()}
           clickHandler={addToCanvasHandler}
-          label="Add to Canvas"
-          title="Structure will be loaded as fragment and added to Clipboard"
+          label={t('open.addToCanvas')}
+          title={t('open.addToCanvasTooltip')}
           data-testid="add-to-canvas-button"
         />
       </FooterButtonContainer>
@@ -479,7 +487,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   return (
     <OpenModal
       isOpen={isModalOpen}
-      title="Open Structure"
+      title={t('open.title')}
       onClose={onCloseCallback}
       modalWidth={currentState === MODAL_STATES.textEditor ? '620px' : ''}
       testId="openStructureModal"

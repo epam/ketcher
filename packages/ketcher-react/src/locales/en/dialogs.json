@@ -1,0 +1,459 @@
+{
+  "shared": {
+    "addToCanvas": "Add to Canvas",
+    "addToCanvasTooltip": "Structure will be loaded as fragment and added to Clipboard",
+    "addButton": "Add",
+    "disabledSuffix": "{label} is disabled"
+  },
+  "confirm": {
+    "warning": "Warning!",
+    "unsupportedSgroupQuestion": "Unsupported S-group type found. Would you like to import structure without it?"
+  },
+  "infoModal": {
+    "errorMessage": "Error Message",
+    "pasteErrorText": "Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.",
+    "shortcutForPaste": "for paste",
+    "defaultCutCopyMessage": "This action is unavailable via menu. Instead, use shortcut to {command}."
+  },
+  "extendedTable": {
+    "dialogTitle": "Extended Table"
+  },
+  "periodTable": {
+    "headerTitle": "Periodic Table",
+    "typeSingle": "Single",
+    "typeList": "List",
+    "typeNotList": "Not List",
+    "tableSummary": "Periodic table of the chemical elements"
+  },
+  "text": {
+    "dialogTitle": "Text Editor",
+    "toolbarAriaLabel": "Text formatting toolbar",
+    "fontSizeLabel": "Font Size",
+    "textLabel": "Text:",
+    "specialSymbolsTitle": "symbols"
+  },
+  "document": {
+    "save": {
+      "schemaTitle": "Save",
+      "filenameLabel": "File name:",
+      "formatLabel": "File format:",
+      "filenameEmptyError": "Filename should contain at least one character",
+      "filenameTooLongError": "Filename is too long",
+      "filenameInvalidCharsError": "A filename cannot contain characters: \\ / : * ? \" < > | and cannot start with '.'",
+      "copyToClipboard": "Copy to clipboard",
+      "dialogTitle": "Save Structure",
+      "saveToTemplates": "Save to Templates",
+      "previewTab": "Preview",
+      "warningsTab": "Warnings",
+      "structureContainsErrorsWarning": "Structure contains errors, please check the data, otherwise you can lose some properties or the whole structure after saving in this format."
+    },
+    "open": {
+      "dialogTitle": "Open structure",
+      "openAsNewProject": "Open as New Project",
+      "passwordProtectedError": "Report that we can't open it - may be it is password protected",
+      "errorProcessingFile": "Error processing file"
+    },
+    "openOptions": {
+      "pasteFromClipboard": "Paste from clipboard",
+      "openFromFile": "Open from file",
+      "dragFileHere": "or drag file here",
+      "imageRecognitionUnavailable": "Image Recognition service is not available",
+      "unableToAcceptImage": "Unable to accept file(s). Make sure you upload 1 image.",
+      "unableToAcceptFile": "Unable to accept file(s). {error}",
+      "openFromImage": "Open from image"
+    },
+    "cdxViewer": {
+      "noEmbeddedStructures": "No embedded structures found in the file",
+      "selectStructure": "Select structure",
+      "structureN": "Structure {number}",
+      "fileLabel": "File:",
+      "errorLabel": "Error:"
+    }
+  },
+  "meta": {
+    "settings": {
+      "headerTitle": "Settings",
+      "openFromFile": "Open from File",
+      "saveToFile": "Save to File",
+      "reset": "Reset",
+      "stereochemistryTab": "Stereochemistry",
+      "atomsTab": "Atoms",
+      "bondsTab": "Bonds",
+      "serverTab": "Server",
+      "viewer3dTab": "3D Viewer",
+      "debuggingTab": "Options for Debugging",
+      "setAcsSettings": "Set ACS Settings",
+      "applyLayoutNotice": "To fully apply these changes, you need to apply the layout.",
+      "imageResolutionTooltip": "option applicable to PNG/SVG pictures renderer",
+      "ignoreChiralFlagTooltip": "Ignore chiral flag while loading from molfiles. By default all the stereo will be ABS"
+    },
+    "about": {
+      "ok": "Ok",
+      "version": "Version {value}",
+      "build": "Build {value}",
+      "buildAt": "Build at",
+      "feedback": "Feedback",
+      "epamLifeSciences": "EPAM Life Sciences",
+      "indigoToolkit": "Indigo Toolkit",
+      "standalone": "Standalone"
+    }
+  },
+  "process": {
+    "recognize": {
+      "changeImage": "Change image",
+      "openAsNewProject": "Open as new Project",
+      "dialogTitle": "Import Structure from Image",
+      "imagoVersionLabel": "Imago version",
+      "imagoVersionOption": "Version {number}",
+      "originalImage": "Original image",
+      "recognizedStructurePreview": "Recognized structure preview",
+      "previewNotSupported": "Preview of '{type}' MIME type is not supported by current browser",
+      "pleaseChooseImage": "Please choose image"
+    },
+    "miew": {
+      "dialogTitle": "Miew",
+      "changingWarning": "Stereocenters can be changed after the strong 3D rotation",
+      "exportFailedError": "Failed to export structure from 3D viewer. Please try again.",
+      "processFailedError": "Failed to process 3D structure. The structure may be corrupted.",
+      "mergeCoordinatesFailedError": "Failed to merge 3D coordinates with the original structure.",
+      "mergeMetaFailedError": "Failed to preserve metadata while applying 3D structure."
+    },
+    "analyse": {
+      "dialogTitle": "Calculated Values",
+      "chemicalFormula": "Chemical Formula",
+      "molecularWeight": "Molecular Weight",
+      "exactMass": "Exact Mass",
+      "elementalAnalysis": "Elemental Analysis",
+      "decimalPlaces": "Decimal places"
+    },
+    "check": {
+      "schemaTitle": "Check",
+      "dialogTitle": "Structure Check",
+      "checkButton": "Check",
+      "lastCheck": "Last check:",
+      "warningSuffix": "{name} warning:",
+      "noErrorsDetected": "No errors detected",
+      "options": {
+        "valence": "Valence",
+        "radical": "Radical",
+        "isotopes": "Isotopes",
+        "pseudoatom": "Pseudoatom",
+        "stereochemistry": "Stereochemistry",
+        "chirality": "Chirality",
+        "chiralFlag": "Chiral flag",
+        "query": "Query",
+        "overlappingAtoms": "Overlapping Atoms",
+        "overlappingBonds": "Overlapping Bonds",
+        "rGroups": "R-Groups",
+        "structure3d": "3D Structure"
+      }
+    }
+  },
+  "toolbox": {
+    "automap": {
+      "dialogTitle": "Reaction Auto-Mapping",
+      "modeLabel": "Mode",
+      "discard": "Discard",
+      "keep": "Keep",
+      "alter": "Alter",
+      "clear": "Clear"
+    },
+    "atom": {
+      "dialogTitle": "Atom Properties",
+      "generalGroup": "General",
+      "querySpecificGroup": "Query specific",
+      "reactionFlagsGroup": "Reaction flags",
+      "numberLabel": "Number"
+    },
+    "bond": {
+      "dialogTitle": "Bond Properties"
+    },
+    "rgroupLogic": {
+      "dialogTitle": "R-Group Logic Condition",
+      "always": "Always",
+      "ifThenOption": "IF R{ifLabel} THEN R{thenLabel}"
+    },
+    "attach": {
+      "dialogTitle": "Attachment Points"
+    },
+    "editMonomer": {
+      "dialogTitle": "Edit Monomer",
+      "editMonomer": "Edit Monomer",
+      "editAllMonomers": "Edit All Monomers",
+      "removeGrouping": "Remove Grouping",
+      "bodyTextSingle": "\"Edit Monomer\" will open the Monomer Creation Wizard and allow editing of this instance of the monomer. \"Remove Grouping\" will turn the monomer into a purely chemical structure. How do you wish to proceed?",
+      "bodyTextIdentical": "\"Edit All Monomers\" will open the Monomer Creation Wizard and allow editing of all selected instances of the monomer. \"Remove Grouping\" will turn the monomers into a purely chemical structure. How do you wish to proceed?",
+      "bodyTextNonIdentical": "\"Remove Grouping\" will turn the monomers into purely chemical structures. How do you wish to proceed?"
+    },
+    "removeFG": {
+      "header": "Edit Abbreviation",
+      "question": "A change was detected for the abbreviation. Do you want to remove the abbreviation information from the structure and continue work with separate atoms and bonds?",
+      "removeAbbreviation": "Remove Abbreviation"
+    },
+    "rgroup": {
+      "dialogTitle": "R-Group"
+    },
+    "sgroupDialog": {
+      "dialogTitle": "S-Group Properties",
+      "typeLabel": "Type"
+    },
+    "labelEditDialog": {
+      "dialogTitle": "Label Edit"
+    },
+    "enhancedStereo": {
+      "dialogTitle": "Enhanced Stereochemistry",
+      "addToAnd": "Add to AND",
+      "addToOr": "Add to OR",
+      "group": "Group",
+      "createNewAndGroup": "Create new AND Group",
+      "createNewOrGroup": "Create new OR Group"
+    },
+    "structSchema": {
+      "atom": {
+        "atomType": {
+          "title": "Atom Type",
+          "enumSingle": "Single",
+          "enumList": "List",
+          "enumSpecial": "Special"
+        },
+        "label": {
+          "title": "Label",
+          "invalidMessage": "Wrong label"
+        },
+        "atomList": {
+          "title": "List",
+          "invalidMessage": "Invalid atom list"
+        },
+        "notList": {
+          "title": "Not list"
+        },
+        "pseudo": {
+          "title": "Special",
+          "invalidMessage": "Invalid special atom"
+        },
+        "alias": {
+          "title": "Alias",
+          "invalidMessage": "Leading and trailing spaces are not allowed"
+        },
+        "charge": {
+          "title": "Charge",
+          "invalidMessage": "Invalid charge value"
+        },
+        "explicitValence": {
+          "title": "Valence"
+        },
+        "isotope": {
+          "title": "Isotope (atomic mass)",
+          "invalidMessage": "Invalid isotope value"
+        },
+        "radical": {
+          "title": "Radical",
+          "enumMonoradical": "Monoradical",
+          "enumDiradicalSinglet": "Diradical (singlet)",
+          "enumDiradicalTriplet": "Diradical (triplet)"
+        },
+        "ringBondCount": {
+          "title": "Ring bond count",
+          "enumAsDrawn": "As drawn"
+        },
+        "hCount": {
+          "title": "H count"
+        },
+        "substitutionCount": {
+          "title": "Substitution count",
+          "enumAsDrawn": "As drawn"
+        },
+        "unsaturatedAtom": {
+          "title": "Unsaturated"
+        },
+        "aromaticity": {
+          "title": "Aromaticity",
+          "enumAromatic": "aromatic",
+          "enumAliphatic": "aliphatic"
+        },
+        "implicitHCount": {
+          "title": "Implicit H count"
+        },
+        "ringMembership": {
+          "title": "Ring membership"
+        },
+        "ringSize": {
+          "title": "Ring size"
+        },
+        "connectivity": {
+          "title": "Connectivity"
+        },
+        "chirality": {
+          "title": "Chirality",
+          "enumAnticlockwise": "anticlockwise",
+          "enumClockwise": "clockwise"
+        },
+        "invRet": {
+          "title": "Inversion",
+          "enumInverts": "Inverts",
+          "enumRetains": "Retains"
+        },
+        "exactChangeFlag": {
+          "title": "Exact change"
+        }
+      },
+      "cip": {
+        "title": "CIP"
+      },
+      "customQuery": {
+        "title": "Custom Query",
+        "invalidMessageTooLong": "Custom query must not exceed {maxLength} characters",
+        "invalidMessageInvalid": "Invalid custom query"
+      },
+      "labelEditField": {
+        "title": "Atom",
+        "invalidMessage": "Wrong atom symbol"
+      },
+      "attachmentPoints": {
+        "primary": {
+          "title": "Primary attachment point"
+        },
+        "secondary": {
+          "title": "Secondary attachment point"
+        }
+      },
+      "bond": {
+        "type": {
+          "title": "Type",
+          "enumSingle": "Single",
+          "enumSingleUp": "Single Up",
+          "enumSingleDown": "Single Down",
+          "enumSingleUpDown": "Single Up/Down",
+          "enumDouble": "Double",
+          "enumDoubleCisTrans": "Double Cis/Trans",
+          "enumTriple": "Triple",
+          "enumAromatic": "Aromatic",
+          "enumAny": "Any",
+          "enumHydrogen": "Hydrogen",
+          "enumSingleDouble": "Single/Double",
+          "enumSingleAromatic": "Single/Aromatic",
+          "enumDoubleAromatic": "Double/Aromatic",
+          "enumDative": "Dative"
+        },
+        "topology": {
+          "title": "Topology",
+          "enumEither": "Either",
+          "enumRing": "Ring",
+          "enumChain": "Chain"
+        },
+        "center": {
+          "title": "Reacting Center",
+          "enumUnmarked": "Unmarked",
+          "enumNotCenter": "Not center",
+          "enumCenter": "Center",
+          "enumNoChange": "No change",
+          "enumMadeBroken": "Made/broken",
+          "enumOrderChanges": "Order changes",
+          "enumMadeBrokenAndChanges": "Made/broken and changes"
+        }
+      },
+      "sgroup": {
+        "variantData": "Data",
+        "variantMultipleGroup": "Multiple group",
+        "mulCount": {
+          "title": "Repeat count"
+        },
+        "variantSruPolymer": "SRU polymer",
+        "subscript": {
+          "title": "Polymer label",
+          "invalidMessage": "SRU subscript should not be empty and contain double quotes"
+        },
+        "repeatPattern": {
+          "title": "Repeat Pattern",
+          "enumHeadToTail": "Head-to-tail",
+          "enumHeadToHead": "Head-to-head",
+          "enumEitherUnknown": "Either unknown"
+        },
+        "variantCopolymer": "Copolymer",
+        "subtype": {
+          "title": "Subtype",
+          "enumBlank": "<Blank>",
+          "enumRandom": "Random",
+          "enumBlock": "Block",
+          "enumAlternating": "Alternating"
+        },
+        "variantSuperatom": "Superatom",
+        "name": {
+          "title": "Name",
+          "invalidMessage": "Please, provide a name for the superatom"
+        },
+        "variantQueryComponent": "Query component",
+        "variantNucleotideComponent": "Nucleotide Component",
+        "component": {
+          "title": "Component",
+          "enumSugar": "Sugar",
+          "enumBase": "Base",
+          "enumPhosphate": "Phosphate"
+        }
+      },
+      "rgroupLogicFields": {
+        "occurrence": {
+          "title": "Occurrence",
+          "invalidMessage": "Wrong value"
+        },
+        "resth": {
+          "title": "RestH"
+        },
+        "condition": {
+          "title": "Condition"
+        }
+      },
+      "attachSchema": {
+        "name": {
+          "title": "Molecule name",
+          "invalidMessage": "Template must have a unique non-empty name and no more than 128 symbols in length"
+        }
+      }
+    },
+    "sdata": {
+      "context": {
+        "title": "Context"
+      },
+      "fieldName": {
+        "title": "Field name",
+        "invalidMessage": "Please, specify field name"
+      },
+      "fieldValue": {
+        "title": "Field value",
+        "invalidMessage": "Please, specify field value"
+      },
+      "fieldNamePlaceholder": "Enter name",
+      "fieldValuePlaceholder": "Enter value"
+    },
+    "abbreviationLookup": {
+      "noMatchingResults": "No matching results",
+      "startTypingPrompt": "Start typing atom or template structure name"
+    },
+    "templateLibrary": {
+      "title": "Structure Library",
+      "clickToAddToCanvas": "Click to add to canvas",
+      "saveToSdf": "Save to SDF",
+      "exportPartialFailure": "Some templates could not be exported.",
+      "searchPlaceholder": "Search by elements...",
+      "tabTemplateLibrary": "Template Library",
+      "tabFunctionalGroups": "Functional Groups",
+      "tabSaltsAndSolvents": "Salts and Solvents",
+      "noItemsFound": "No items found"
+    },
+    "templateAttach": {
+      "saveDialogTitle": "Save to Templates",
+      "editDialogTitle": "Template Edit",
+      "savedLocallyWarning": "{name} are saved locally and cannot be accessed on different browsers or computers.",
+      "sharedComputerWarning": "Be aware that other users of the same computer and browser can access them as well.",
+      "templatesName": "Templates",
+      "editedTemplatesName": "Edited templates",
+      "namePlaceholder": "template",
+      "selectedAttachmentPoints": "Selected attachment points",
+      "atomIdLabel": "Atom ID:",
+      "bondIdLabel": "Bond ID:",
+      "cancelButton": "Cancel",
+      "saveButton": "Save",
+      "editButton": "Edit"
+    }
+  }
+}

@@ -4,10 +4,11 @@ import {
   ATTACHMENT_GROUP_HAPTIC_BOND_ERROR_MESSAGE,
   HAPTIC_BOND_ERROR_MESSAGE,
   getHapticBondEndPosition,
+  type ReStruct,
   type Struct,
   isHapticBondPairAllowed,
   isAttachmentGroup,
-  type Vec2,
+  Vec2,
 } from 'ketcher-core';
 
 import type Editor from '../Editor';
@@ -19,6 +20,29 @@ export type BondValidationFailure = 'attachmentGroup' | 'haptic';
 export interface HapticBondDragFlags {
   hapticValidationFailed: boolean;
   attachmentGroupValidationFailed: boolean;
+}
+
+export const HAPTIC_BOND_ATTACHMENT_GROUP_RADIUS_PX = 20;
+
+export function findHapticBondAttachmentGroupTarget(
+  restruct: ReStruct,
+  pointerPosition: Vec2,
+): number | null {
+  const { microModeScale, zoom } = restruct.render.options;
+  const radiusInModelCoordinates =
+    HAPTIC_BOND_ATTACHMENT_GROUP_RADIUS_PX / (microModeScale * zoom);
+  let closestAttachmentGroupId: number | null = null;
+  let closestDistance = radiusInModelCoordinates;
+
+  restruct.visibleAttachmentGroups.forEach((attachmentGroup, id) => {
+    const distance = Vec2.dist(pointerPosition, attachmentGroup.a.pp);
+    if (distance <= closestDistance) {
+      closestAttachmentGroupId = id;
+      closestDistance = distance;
+    }
+  });
+
+  return closestAttachmentGroupId;
 }
 
 export function createHapticBondDragFlags(): HapticBondDragFlags {

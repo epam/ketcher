@@ -16,7 +16,8 @@ export interface AttachmentGroupHoverHost {
   visel: Visel;
 }
 
-export type AttachmentGroupMarkerState = 'default' | 'centerHovered';
+export type AttachmentGroupMarkerState =
+  'default' | 'hovered' | 'connectedHovered';
 
 function getMarkerScale(render: Render, viewBoxSize: number) {
   return (render.options.atomSelectionPlateRadius * 2) / viewBoxSize;
@@ -68,7 +69,7 @@ function drawDefaultMarker(render: Render, center: Vec2): RaphaelSet {
   return marker;
 }
 
-function drawCenterHoveredMarker(render: Render, center: Vec2): RaphaelSet {
+function drawConnectedHoveredMarker(render: Render, center: Vec2): RaphaelSet {
   const scale = getMarkerScale(render, ATTACHMENT_GROUP_MARKER_VIEWBOX_SIZE);
   const innerRadius = 6.5 * scale;
   const outerRadius = 20.5 * scale;
@@ -111,16 +112,66 @@ function drawCenterHoveredMarker(render: Render, center: Vec2): RaphaelSet {
   return marker;
 }
 
+function drawHoveredMarker(render: Render, center: Vec2): RaphaelSet {
+  const scale = getMarkerScale(render, ATTACHMENT_GROUP_MARKER_VIEWBOX_SIZE);
+  const outerRadius = 20.5 * scale;
+  const innerRadius = 6.5 * scale;
+  const innerArm = 3.5 * scale;
+  const outerArm = 11.5 * scale;
+  const outlineStrokeWidth = 2 * scale;
+  const glyphStrokeWidth = 1.4 * scale;
+  const marker = render.paper.set();
+  const background = render.paper.circle(center.x, center.y, outerRadius).attr({
+    fill: '#FFFFFF',
+    stroke: ATTACHMENT_GROUP_MARKER_HOVER_COLOR,
+    'stroke-width': outlineStrokeWidth,
+    cursor: 'default',
+  });
+  const cross = render.paper
+    .path(
+      [
+        `M${center.x - outerArm},${center.y}`,
+        `H${center.x - innerArm}`,
+        `M${center.x + innerArm},${center.y}`,
+        `H${center.x + outerArm}`,
+        `M${center.x},${center.y - outerArm}`,
+        `V${center.y - innerArm}`,
+        `M${center.x},${center.y + innerArm}`,
+        `V${center.y + outerArm}`,
+      ].join(' '),
+    )
+    .attr({
+      fill: 'none',
+      stroke: ATTACHMENT_GROUP_MARKER_HOVER_COLOR,
+      'stroke-width': glyphStrokeWidth,
+      'stroke-linecap': 'round',
+      cursor: 'default',
+    });
+  const circle = render.paper.circle(center.x, center.y, innerRadius).attr({
+    fill: 'none',
+    stroke: ATTACHMENT_GROUP_MARKER_HOVER_COLOR,
+    'stroke-width': glyphStrokeWidth,
+    cursor: 'default',
+  });
+
+  marker.push(background, cross, circle);
+  return marker;
+}
+
 export function drawAttachmentGroupMarker(
   render: Render,
   position: Vec2,
   state: AttachmentGroupMarkerState,
 ): RaphaelSet {
   const center = Scale.modelToCanvas(position, render.options);
-  const marker =
-    state === 'centerHovered'
-      ? drawCenterHoveredMarker(render, center)
-      : drawDefaultMarker(render, center);
+  let marker: RaphaelSet;
+  if (state === 'connectedHovered') {
+    marker = drawConnectedHoveredMarker(render, center);
+  } else if (state === 'hovered') {
+    marker = drawHoveredMarker(render, center);
+  } else {
+    marker = drawDefaultMarker(render, center);
+  }
 
   marker.forEach((element) => {
     element.node?.setAttribute('data-attachment-group-marker-state', state);
@@ -175,13 +226,14 @@ export function drawAttachmentGroupHover(
   render: Render,
   drawOutline: boolean,
   showMarker: boolean,
+  markerState: Exclude<AttachmentGroupMarkerState, 'default'> = 'hovered',
 ) {
   const groupAtomsHover = drawGroupAtomsHover(host, render, drawOutline);
   if (!showMarker) {
     return groupAtomsHover;
   }
 
-  const marker = drawAttachmentGroupMarker(render, host.a.pp, 'centerHovered');
+  const marker = drawAttachmentGroupMarker(render, host.a.pp, markerState);
 
   marker.forEach((element) => {
     render.ctab.addReObjectPath(LayerMap.data, host.visel, element);

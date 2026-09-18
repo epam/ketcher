@@ -1,6 +1,6 @@
 import { Render, ReStruct } from 'application/render';
 import type { RenderOptions } from 'application/render/render.types';
-import { AttachmentGroup, Struct, Vec2 } from 'domain/entities';
+import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'domain/entities';
 
 type SvgSvgElementWithRaphaelMethods = SVGSVGElement & {
   createSVGMatrix: () => DOMMatrix;
@@ -63,11 +63,29 @@ describe('ReAttachmentGroup marker states', () => {
     document.body.innerHTML = '';
   });
 
-  function renderAttachmentGroup() {
+  function renderAttachmentGroup(connected = false) {
     const struct = new Struct();
+    const connectedAtomId = struct.atoms.add(
+      new Atom({ label: 'Fe', pp: new Vec2(3, 1) }),
+    );
     const attachmentGroupId = struct.addAttachmentGroup(
       new AttachmentGroup({ atomIds: [], pp: new Vec2(1, 1) }),
     );
+    if (connected) {
+      struct.bonds.add(
+        new Bond({
+          begin: attachmentGroupId,
+          end: connectedAtomId,
+          type: Bond.PATTERN.TYPE.HAPTIC,
+        }),
+      );
+      struct.initHalfBonds();
+      struct.initNeighbors();
+      struct.updateHalfBonds([
+        ...struct.atoms.keys(),
+        ...struct.attachmentGroups.keys(),
+      ]);
+    }
     const container = document.createElement('div');
     document.body.appendChild(container);
     const render = new Render(container, options);
@@ -93,14 +111,42 @@ describe('ReAttachmentGroup marker states', () => {
     expect(container.querySelector('text')?.textContent).not.toBe('*');
   });
 
-  it('renders the active marker on center hover', () => {
+  it('preserves the gray marker glyph and highlights its outline and stroke when hovered', () => {
     const { attachmentGroup, container, render } = renderAttachmentGroup();
+    const defaultGlyph = container.querySelector(
+      'path[data-attachment-group-marker-state="default"]',
+    );
 
+    attachmentGroup.setHover(true, render);
+
+    const targetElements = container.querySelectorAll(
+      '[data-attachment-group-marker-state="hovered"]',
+    );
+    const targetOutline = container.querySelector(
+      'circle[data-attachment-group-marker-state="hovered"]',
+    );
+    const targetGlyph = container.querySelector(
+      'path[data-attachment-group-marker-state="hovered"]',
+    );
+
+    expect(targetElements).toHaveLength(3);
+    expect(targetOutline?.getAttribute('stroke')).toBe('#0097a8');
+    expect(targetGlyph?.getAttribute('stroke')).toBe('#0097a8');
+    expect(targetGlyph?.getAttribute('d')).toBe(
+      defaultGlyph?.getAttribute('d'),
+    );
+    expect(targetGlyph?.getAttribute('stroke-width')).toBe(
+      defaultGlyph?.getAttribute('stroke-width'),
+    );
+  });
+
+  it('renders the existing active marker when hovered and connected', () => {
+    const { attachmentGroup, container, render } = renderAttachmentGroup(true);
     attachmentGroup.setHover(true, render);
 
     expect(
       container.querySelectorAll(
-        '[data-attachment-group-marker-state="centerHovered"]',
+        '[data-attachment-group-marker-state="connectedHovered"]',
       ),
     ).toHaveLength(3);
   });

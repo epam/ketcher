@@ -35,11 +35,16 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
   }
 
   drawHover(render: Render, drawOutline = true) {
+    const markerState = this.shouldShowMarker(render)
+      ? 'hovered'
+      : 'connectedHovered';
+
     return drawAttachmentGroupHover(
       this,
       render,
       drawOutline,
-      this.shouldShowMarker(render),
+      true,
+      markerState,
     );
   }
 

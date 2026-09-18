@@ -200,6 +200,9 @@ function mapWarningGroup(property: string) {
  * @param workerEvent - The worker event type to listen to
  * @param action - The callback function to execute on success
  * @param timeout - Timeout in milliseconds (0 means no timeout)
+ * @param shouldConsume - Optional predicate to check if response matches request.
+ *                        If provided, listener remains active until predicate returns true.
+ *                        Required for parallel requests with same event type.
  * @returns An object with setup method to initialize the timeout wrapper
  */
 function createTimeoutWrapper<T>(
@@ -207,20 +210,33 @@ function createTimeoutWrapper<T>(
   workerEvent: WorkerEvent,
   action: (data: OutputMessageWrapper<T>) => void,
   timeout: number = DEFAULT_WORKER_TIMEOUT,
+  shouldConsume?: (data: OutputMessageWrapper<T>) => boolean,
 ): {
   setup: () => void;
 } {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
   const wrappedAction = (data: OutputMessageWrapper<T>) => {
+    // Check if this response matches our request (if predicate provided)
+    if (shouldConsume && !shouldConsume(data)) {
+      return; // Keep listener registered, wait for matching response
+    }
+
+    // This response is ours, clean up and handle it
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
+    eventEmitter.off(workerEvent, wrappedAction);
     action(data);
   };
 
   const setup = () => {
-    eventEmitter.once(workerEvent, wrappedAction);
+    // Use persistent listener only when matcher is provided for parallel requests
+    if (shouldConsume) {
+      eventEmitter.on(workerEvent, wrappedAction);
+    } else {
+      eventEmitter.once(workerEvent, wrappedAction);
+    }
 
     if (timeout !== 0) {
       timeoutId = setTimeout(() => {
@@ -415,6 +431,7 @@ class IndigoService implements StructService {
         WorkerEvent.Convert,
         action,
         timeout,
+        ({ data }) => data.inputData === struct,
       );
 
       const monomerLibrary = JSON.stringify(
@@ -877,6 +894,7 @@ class IndigoService implements StructService {
         WorkerEvent.GenerateImageAsBase64,
         action,
         timeout,
+        ({ data }) => data.inputData === inputData,
       );
 
       const commandOptions: CommandOptions = {

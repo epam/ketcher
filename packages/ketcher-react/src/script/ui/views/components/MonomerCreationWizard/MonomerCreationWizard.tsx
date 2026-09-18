@@ -1216,7 +1216,7 @@ const MonomerCreationWizardInternal = ({
         ],
       ]),
     });
-  }, []);
+  }, [t]);
 
   const { assignedAttachmentPoints } = monomerCreationState;
 

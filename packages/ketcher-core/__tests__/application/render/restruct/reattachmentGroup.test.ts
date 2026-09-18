@@ -1,3 +1,4 @@
+import { fromMultipleMove } from 'application/editor/actions';
 import { Render, ReStruct } from 'application/render';
 import type { RenderOptions } from 'application/render/render.types';
 import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'domain/entities';
@@ -277,5 +278,54 @@ describe('ReAttachmentGroup marker states', () => {
     render.update(false);
 
     expect(getGroupHoverOutlines()).toHaveLength(1);
+  });
+
+  it('updates the marker and connected haptic bond while member atoms are moved', () => {
+    const struct = new Struct();
+    const memberAtomIds = [0, 2].map((x) =>
+      struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(x, 1) })),
+    );
+    const connectedAtomId = struct.atoms.add(
+      new Atom({ label: 'Fe', pp: new Vec2(4, 1) }),
+    );
+    const internalBondId = struct.bonds.add(
+      new Bond({
+        begin: memberAtomIds[0],
+        end: memberAtomIds[1],
+        type: Bond.PATTERN.TYPE.SINGLE,
+      }),
+    );
+    const attachmentGroupId = struct.addAttachmentGroup(
+      new AttachmentGroup({ atomIds: memberAtomIds }),
+    );
+    const hapticBondId = struct.bonds.add(
+      new Bond({
+        begin: attachmentGroupId,
+        end: connectedAtomId,
+        type: Bond.PATTERN.TYPE.HAPTIC,
+      }),
+    );
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const render = new Render(container, options);
+    const restruct = new ReStruct(struct, render);
+    render.ctab = restruct;
+    render.update(true);
+
+    fromMultipleMove(
+      restruct,
+      {
+        atoms: memberAtomIds,
+        attachmentGroups: [attachmentGroupId],
+        bonds: [internalBondId],
+      },
+      new Vec2(1, 2),
+    );
+    render.update(false);
+
+    expect(struct.attachmentGroups.get(attachmentGroupId)?.pp).toEqual(
+      new Vec2(2, 3),
+    );
+    expect(struct.bonds.get(hapticBondId)?.center).toEqual(new Vec2(3, 2));
   });
 });

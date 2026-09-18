@@ -28,7 +28,14 @@ import {
   provideEditorInstance,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import clsx from 'clsx';
 import { isNaturalAnalogueRequired } from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
 import {
@@ -828,6 +835,16 @@ const MonomerCreationWizardInternal = ({
   } = wizardState;
   const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
   const [modificationTypes, setModificationTypes] = useState<string[]>([]);
+  // Bumped once when the lazily fetched default monomers library resolves
+  // (see the `updateMonomersLibrary` handler below). Nothing here reads the
+  // counter itself - components such as ModificationTypeDropdown read the
+  // library straight from `provideEditorInstance()` during render, so all
+  // this needs to do is force one extra render so they pick up the library
+  // that just became available, even when no wizard field value changed.
+  const [, bumpMonomersLibraryVersion] = useReducer(
+    (tick: number) => tick + 1,
+    0,
+  );
   const [leavingGroupDialogMessage, setLeavingGroupDialogMessage] =
     useState('');
   const [pendingType, setPendingType] = useState<
@@ -909,6 +926,97 @@ const MonomerCreationWizardInternal = ({
     // asset. Start the fetch as the wizard opens so those checks are not
     // silently skipped against an empty library.
     void provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+  }, []);
+
+  // Synced to `values` inside an effect below (a plain assignment during
+  // render trips the react-hooks/refs lint rule). The library-update handler
+  // further down subscribes once on mount, so without this ref it would only
+  // ever see the empty-form snapshot captured at subscribe time; reading
+  // `wizardValuesRef.current` instead gets the field values the user has
+  // typed by the time the library resolves.
+  const wizardValuesRef = useRef(values);
+  useEffect(() => {
+    wizardValuesRef.current = values;
+  }, [values]);
+
+  useEffect(() => {
+    const coreEditor = provideEditorInstance();
+    if (!coreEditor) {
+      return;
+    }
+
+    // `ensureDefaultMonomersLibraryLoaded` above is fire-and-forget: the
+    // wizard opens before the library fetch settles, so `symbol`/aliasHELM`/
+    // `aliasBILN` uniqueness checks (validateInputs, lines ~583-648) can run
+    // against an empty library and silently miss a real conflict. Editor.ts
+    // dispatches `updateMonomersLibrary` exactly once, when the fetch
+    // settles - on success AND on failure - and never again once the
+    // library is loaded, so re-running the same checks here is purely
+    // additive: it either surfaces a conflict that was missed, or clears a
+    // notification/error that no longer holds, and does nothing at all if
+    // the library was already loaded when the wizard opened.
+    const revalidateAgainstLoadedLibrary = () => {
+      // Force a re-render so any component that reads library-derived data
+      // directly during render (e.g. ModificationTypeDropdown's options)
+      // picks up the library that just resolved, even if none of the
+      // uniqueness checks below change a field's error/notification state.
+      bumpMonomersLibraryVersion();
+
+      const currentValues = wizardValuesRef.current;
+      // Reuse validateInputs - the same function the submit path uses at
+      // lines 585/621/642 - instead of duplicating its uniqueness logic.
+      // skipMandatoryCheck=true because we only want to correct the
+      // uniqueness verdict for fields the user already filled in, not
+      // start flagging fields they haven't reached yet.
+      const {
+        errors: revalidatedErrors,
+        notifications: revalidatedNotifications,
+      } = validateInputs(currentValues, false, true);
+
+      (
+        [
+          ['symbol', 'symbolExists'],
+          ['aliasHELM', 'notUniqueHELMAlias'],
+          ['aliasBILN', 'notUniqueBILNAlias'],
+        ] as const
+      ).forEach(([fieldId, notificationId]) => {
+        if (!currentValues[fieldId]?.trim()) {
+          return;
+        }
+
+        wizardStateDispatch({
+          type: 'SetErrors',
+          errors: { [fieldId]: revalidatedErrors[fieldId] },
+        });
+
+        const revalidatedNotification =
+          revalidatedNotifications.get(notificationId);
+        if (revalidatedNotification) {
+          // The conflict was missed against the empty/loading library and
+          // only now surfaces.
+          wizardStateDispatch({
+            type: 'SetNotifications',
+            notifications: new Map([[notificationId, revalidatedNotification]]),
+          });
+        } else {
+          // Clears a notification (and, via SetErrors above, its matching
+          // field error) that was raised earlier and no longer holds now
+          // that the real library is loaded.
+          wizardStateDispatch({
+            type: 'RemoveNotification',
+            id: notificationId,
+          });
+        }
+      });
+    };
+
+    coreEditor.events.updateMonomersLibrary.add(revalidateAgainstLoadedLibrary);
+
+    return () => {
+      coreEditor.events.updateMonomersLibrary.remove(
+        revalidateAgainstLoadedLibrary,
+      );
+    };
   }, []);
 
   useEffect(() => {
@@ -1661,7 +1769,18 @@ const MonomerCreationWizardInternal = ({
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    // Submit-time validation (validateMonomerWizard/validateRnaPresetWizard,
+    // via validateOnSubmit below) reads the default monomers library for
+    // symbol/HELM/BILN alias uniqueness and RNA preset code uniqueness. That
+    // library is lazily fetched (see the mount effect above), and if the user
+    // submits before it resolves, the uniqueness checks silently pass against
+    // an empty library and a colliding monomer/preset gets saved - a wrong
+    // verdict that then persists. Awaiting here, before any validation runs,
+    // closes that window; the underlying promise is memoized, so once the
+    // library is loaded this is a no-op and does not delay/gate submission.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     wizardStateDispatch({ type: 'ResetErrors' });
     rnaPresetWizardStateDispatch({ type: 'ResetErrors' });
     wizardStateDispatch({ type: 'ResetValidationNotifications' });

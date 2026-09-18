@@ -44,8 +44,8 @@
         "type": "ambiguousMonomer",
         "id": "0",
         "position": {
-            "x": 17.74721551235541,
-            "y": -9.322047663079697
+            "x": 17.344497683336925,
+            "y": -9.079639098443618
         },
         "alias": "%",
         "templateId": "alternatives__G___Glycine__H___Histidine__I___Isoleucine__K___Lysine__L___Leucine__M___Methionine__N___Asparagine__O___Pyrrolysine__P___Proline_"

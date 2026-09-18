@@ -9,6 +9,7 @@ import {
   zoomInByKeyboard,
   zoomOutByKeyboard,
   dragMouseTo,
+  copyContentToClipboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -281,6 +282,34 @@ test(`4. Verify context menu in Snake and Flex modes when right-clicking the can
   expect(
     await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Delete),
   ).toBe(false);
+});
+
+test(`#11078 Paste is disabled when clipboard content is not applicable`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/11078
+   */
+  const canvas = page.locator(
+    '[data-testid="ketcher-canvas"][data-canvasmode="macromolecules-mode"]',
+  );
+
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+
+  await copyContentToClipboard(page, 'PEPTIDE1{A.G.C}$$$$');
+
+  await expect
+    .poll(() => ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Paste))
+    .toBe(true);
+
+  await page.keyboard.press('Escape');
+
+  await copyContentToClipboard(page, 'test 123');
+
+  await expect
+    .poll(() => ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Paste))
+    .toBe(false);
+
+  await page.keyboard.press('Escape');
+  await copyContentToClipboard(page, '');
 });
 
 test(`5. Verify context menu in Snake and Flex modes when right-clicking a bond (Delete (Copy and Paste disabled))`, async () => {

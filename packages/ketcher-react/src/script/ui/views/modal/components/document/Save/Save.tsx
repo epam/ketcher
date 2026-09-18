@@ -364,7 +364,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       // temporary check if query properties are used
       const queryPropertiesAreUsed = !!(
         type === SupportedFormat.mol &&
-        Array.from(struct.atoms).find(
+        Array.from(struct.atoms).some(
           ([_, atom]) =>
             atom.queryProperties.aromaticity ||
             atom.queryProperties.connectivity ||

@@ -38,11 +38,11 @@ const RootContainer = styled.div`
   align-items: flex-start;
   margin-bottom: 20px;
   & > * {
-    margin-right: 18px;
+    margin-inline-end: 18px;
   }
 
   & :last-child {
-    margin-right: 0;
+    margin-inline-end: 0;
   }
 `;
 

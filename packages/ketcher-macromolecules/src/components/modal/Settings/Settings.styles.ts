@@ -29,7 +29,7 @@ export const HeaderContent = styled.div`
 `;
 
 export const HeaderTitle = styled.span`
-  padding-right: 4px;
+  padding-inline-end: 4px;
 `;
 
 export const HeaderButton = styled.button`
@@ -66,7 +66,7 @@ export const FooterLeft = styled.div`
 export const FooterRight = styled.div`
   display: flex;
   gap: 8px;
-  margin-left: auto;
+  margin-inline-start: auto;
 `;
 
 export const FieldsContainer = styled.div`
@@ -95,13 +95,13 @@ export const FieldWrapper = styled.div`
 
   label > span:first-of-type {
     width: 168px;
-    margin-right: 8px;
+    margin-inline-end: 8px;
   }
 
   label > input,
   label > select,
   label > div {
     width: 120px;
-    margin-right: auto;
+    margin-inline-end: auto;
   }
 `;

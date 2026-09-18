@@ -84,8 +84,9 @@ const StyledDropdown = styled(SaveDropdown)({
   '& .MuiSelect-select': {
     display: 'flex',
     alignItems: 'center',
-    padding: '0 20px 0 8px',
-    paddingRight: '20px !important', // override MUI styles
+    paddingBlock: 0,
+    paddingInlineStart: '8px',
+    paddingInlineEnd: '20px !important', // override MUI styles
     height: '100%',
   },
 
@@ -100,12 +101,12 @@ const FooterFormatSelector = styled(StyledDropdown)(() => ({
 
 const FooterSequenceSelector = styled(StyledDropdown)({
   width: '76px',
-  marginLeft: '8px',
+  marginInlineStart: '8px',
 });
 
 const FooterPeptideLettersSelector = styled(StyledDropdown)({
   width: '105px',
-  marginLeft: '8px',
+  marginInlineStart: '8px',
 });
 
 const FooterButtonContainer = styled('div')({

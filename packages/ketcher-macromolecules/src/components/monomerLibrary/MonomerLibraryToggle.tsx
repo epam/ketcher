@@ -18,7 +18,7 @@ const StyledMonomerLibraryToggle = styled.div(({ theme }) => {
     userSelect: 'none',
     backgroundColor: theme.ketcher.color.button.primary.active,
     color: theme.ketcher.color.button.text.primary,
-    right: '12px',
+    insetInlineEnd: '12px',
     padding: '10px 8px',
     borderRadius: '4px',
 
@@ -28,7 +28,7 @@ const StyledMonomerLibraryToggle = styled.div(({ theme }) => {
       alignItems: 'center',
 
       '&.icon': {
-        marginRight: '2px',
+        marginInlineEnd: '2px',
       },
     },
   };

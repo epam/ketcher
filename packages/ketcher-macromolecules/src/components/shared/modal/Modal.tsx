@@ -49,7 +49,7 @@ const Header = styled(DialogTitle)<{ hideborder?: boolean }>(
 );
 
 const Title = styled.div({
-  marginRight: '10px',
+  marginInlineEnd: '10px',
   fontSize: '14px',
 });
 

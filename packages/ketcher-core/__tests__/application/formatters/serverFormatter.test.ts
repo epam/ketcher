@@ -1,9 +1,85 @@
 import { ServerFormatter } from 'application/formatters/serverFormatter';
 import { SupportedFormat } from 'application/formatters/structFormatter.types';
+import { ketcherProvider } from 'application/ketcherProvider';
+import { Atom, Struct } from 'domain/entities';
 import type { StructService } from 'domain/services';
 import type { KetSerializer } from 'domain/serializers/ket/ketSerializer';
+import { pickStandardServerOptions } from 'infrastructure/services/struct/remoteStructService';
+
+describe('pickStandardServerOptions', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('passes the SMILES saving format to Indigo services', () => {
+    jest.spyOn(ketcherProvider, 'getKetcher').mockReturnValue({
+      editor: { options: () => ({ ignoreChiralFlag: false }) },
+    } as never);
+
+    expect(
+      pickStandardServerOptions('ketcher-id', {
+        'smiles-saving-format': 'daylight',
+      }),
+    ).toMatchObject({ 'smiles-saving-format': 'daylight' });
+  });
+});
 
 describe('ServerFormatter', () => {
+  const createFormatter = (format: SupportedFormat) => {
+    const convert = jest.fn().mockResolvedValue({ struct: 'C1=CC=CC=C1' });
+    const structService = {
+      convert,
+      layout: jest.fn(),
+    } as unknown as StructService;
+    const ketSerializer = {
+      serialize: jest.fn().mockReturnValue('{}'),
+    } as unknown as KetSerializer;
+    const formatter = new ServerFormatter(structService, ketSerializer, format);
+
+    return { convert, formatter };
+  };
+
+  it('requests Daylight output when saving SMILES with an R-group label', async () => {
+    const { convert, formatter } = createFormatter(SupportedFormat.smiles);
+    const struct = new Struct();
+    struct.atoms.add(new Atom({ label: 'R#', rglabel: 1 }));
+
+    await formatter.getStringFromStructureAsync(struct);
+
+    expect(convert).toHaveBeenCalledWith(
+      expect.objectContaining({ output_format: 'chemical/x-daylight-smiles' }),
+      expect.objectContaining({ 'smiles-saving-format': 'daylight' }),
+    );
+  });
+
+  it('keeps the default SMILES output for structures without R-group labels', async () => {
+    const { convert, formatter } = createFormatter(SupportedFormat.smiles);
+    const struct = new Struct();
+    struct.atoms.add(new Atom({ label: 'C' }));
+
+    await formatter.getStringFromStructureAsync(struct);
+
+    expect(convert).toHaveBeenCalledWith(
+      expect.objectContaining({ output_format: 'chemical/x-daylight-smiles' }),
+      expect.not.objectContaining({ 'smiles-saving-format': 'daylight' }),
+    );
+  });
+
+  it('keeps extended SMILES output for structures with R-group labels', async () => {
+    const { convert, formatter } = createFormatter(SupportedFormat.smilesExt);
+    const struct = new Struct();
+    struct.atoms.add(new Atom({ label: 'R#', rglabel: 1 }));
+
+    await formatter.getStringFromStructureAsync(struct);
+
+    expect(convert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        output_format: 'chemical/x-chemaxon-cxsmiles',
+      }),
+      expect.not.objectContaining({ 'smiles-saving-format': 'daylight' }),
+    );
+  });
+
   it('uses convert (not layout) for IDT input', () => {
     const convert = jest.fn();
     const layout = jest.fn();

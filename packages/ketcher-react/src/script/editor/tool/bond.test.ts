@@ -128,7 +128,10 @@ describe('BondTool rejected drag preview', () => {
       }),
     );
     const { render } = createReStruct(struct);
-    const update = jest.fn();
+    render.update(false);
+    const update = jest.fn((action: Action | true) => {
+      render.update(action === true);
+    });
     const errorHandler = jest.fn();
     const editor = {
       selection: () => null,
@@ -180,7 +183,8 @@ describe('BondTool rejected drag preview', () => {
     tool.mouseup(event);
 
     expect(struct.bonds.size).toBe(0);
+    expect(struct.atoms.size).toBe(1);
     expect(errorHandler).toHaveBeenCalledWith(HAPTIC_BOND_ERROR_MESSAGE);
-    expect(update).toHaveBeenCalledWith(true);
+    expect(update).toHaveBeenLastCalledWith(expect.any(Action), true);
   });
 });

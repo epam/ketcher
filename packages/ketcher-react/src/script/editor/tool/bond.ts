@@ -597,10 +597,12 @@ class BondTool implements Tool {
         : null;
 
       if (dragCtx.action && dragEndFailure) {
-        dragCtx.action.perform(render.ctab);
+        const revertedPreviewAction = dragCtx.action.perform(render.ctab);
         delete dragCtx.action;
         this.hapticBond.showValidationError(dragEndFailure);
-        this.editor.update(true);
+        // The revert removes a temporary endpoint. An incremental update
+        // drops its stale `atomsChanged` entry before updating half-bonds.
+        this.editor.update(revertedPreviewAction, true);
       } else if (dragCtx.action) {
         this.restoreBondWhenHoveringOnCanvas(event);
         this.editor.update(dragCtx.action);

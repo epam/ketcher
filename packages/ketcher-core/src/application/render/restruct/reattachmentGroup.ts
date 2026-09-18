@@ -23,8 +23,8 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
     this.a = attachmentGroup;
   }
 
-  static isSelectable(): false {
-    return false;
+  static isSelectable(): true {
+    return true;
   }
 
   private shouldShowMarker(render: Render) {
@@ -32,6 +32,12 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
     return (
       id !== null && !isAttachmentGroupWithHapticBond(render.ctab.molecule, id)
     );
+  }
+
+  private getMarkerBackgroundColor(render: Render) {
+    return this.selected
+      ? String(render.options.selectionStyle.fill)
+      : '#FFFFFF';
   }
 
   drawHover(render: Render, drawOutline = true) {
@@ -45,6 +51,7 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
       drawOutline,
       true,
       markerState,
+      this.getMarkerBackgroundColor(render),
     );
   }
 
@@ -61,6 +68,22 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
     atomPosition = this.a.pp,
   ): Vec2 {
     return Scale.modelToCanvas(atomPosition, renderOptions);
+  }
+
+  setSelected(selected: boolean, restruct: ReStruct) {
+    if (this.selected === selected) {
+      return;
+    }
+
+    this.selected = selected;
+    const id = restruct.molecule.attachmentGroups.keyOf(this.a);
+    if (id !== null) {
+      restruct.markAttachmentGroup(id, 0);
+    }
+  }
+
+  makeSelectionPlate() {
+    return null;
   }
 
   private redrawHover(render: Render, drawOutline = true) {
@@ -97,7 +120,13 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
   show(restruct: ReStruct, id: number, _options: RenderOptions): void {
     this.a.recalculatePosition(restruct.molecule.atoms);
 
-    if (!isAttachmentGroupWithHapticBond(restruct.molecule, id)) {
+    const isConnected = isAttachmentGroupWithHapticBond(restruct.molecule, id);
+    const markerState = isConnected
+      ? 'connectedSelected'
+      : this.selected
+        ? 'selected'
+        : 'default';
+    if (!isConnected || this.selected) {
       const markerPosition = Scale.modelToCanvas(
         this.a.pp,
         restruct.render.options,
@@ -105,7 +134,8 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
       const marker = drawAttachmentGroupMarker(
         restruct.render,
         this.a.pp,
-        'default',
+        markerState,
+        this.getMarkerBackgroundColor(restruct.render),
       );
       restruct.addReObjectPath(
         LayerMap.data,

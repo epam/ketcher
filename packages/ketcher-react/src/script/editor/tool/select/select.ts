@@ -61,6 +61,7 @@ import { ReactionArrowMoveTool } from '../arrow/reactionArrowMoveTool';
 import type { ClosestItemWithMap } from '../../shared/closest.types';
 import {
   getFragSelection,
+  getAttachmentGroupSelection,
   canOpenAtomProperties,
   getNewSelectedItems,
   getMovableAtomIdsForBond,
@@ -174,8 +175,6 @@ class SelectTool implements Tool {
         event,
         ci as ReactionArrowClosestItem,
       );
-    } else if (ci.map === 'attachmentGroups') {
-      return;
     } else {
       this.dragCtx = {
         item: ci,
@@ -187,7 +186,10 @@ class SelectTool implements Tool {
       atomLongtapEvent(this, rnd);
     }
 
-    let sel = closestToSel(ci);
+    let sel =
+      ci.map === 'attachmentGroups'
+        ? getAttachmentGroupSelection(molecule, ci.id)
+        : closestToSel(ci);
     const sgroups = ctab.sgroups.get(ci.id);
     const selection = this.editor.selection();
     if (ci.map === 'frags') {
@@ -217,9 +219,9 @@ class SelectTool implements Tool {
       this.editor.selection(selMerge(sel, selection, true));
     } else {
       this.editor.selection(null);
-      this.editor.selection(
-        isItemSelected(selection, ci, ctab) ? selection : sel,
-      );
+      const shouldPreserveCurrentSelection =
+        ci.map !== 'attachmentGroups' && isItemSelected(selection, ci, ctab);
+      this.editor.selection(shouldPreserveCurrentSelection ? selection : sel);
     }
 
     this.handleMoveCloseToEdgeOfCanvas();
@@ -423,6 +425,11 @@ class SelectTool implements Tool {
     const struct = editor.render.ctab;
     const molecule = struct.molecule;
     const dragCtx = this.dragCtx;
+    const clickedAttachmentGroupId =
+      isSelectionMoveDragContext(dragCtx) &&
+      dragCtx.item.map === 'attachmentGroups'
+        ? dragCtx.item.id
+        : null;
 
     // add all items of all selectedSGroups to selection
     const selectedSgroups = selected
@@ -485,6 +492,20 @@ class SelectTool implements Tool {
     });
 
     this.editor.rotateController.rerender();
+
+    if (clickedAttachmentGroupId !== null) {
+      const itemUnderCursor = editor.findItem(
+        event,
+        getMapsForClosestItem(false),
+        null,
+      );
+      if (
+        itemUnderCursor?.map === 'attachmentGroups' &&
+        itemUnderCursor.id === clickedAttachmentGroupId
+      ) {
+        editor.hover(itemUnderCursor, null, event);
+      }
+    }
   }
 
   dblclick(event: PointerEvent) {

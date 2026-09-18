@@ -1,6 +1,7 @@
-import { Bond } from 'ketcher-core';
+import { AttachmentGroup, Atom, Bond, Struct } from 'ketcher-core';
 import {
   canOpenAtomProperties,
+  getAttachmentGroupSelection,
   getMovableAtomIdsForBond,
   getNewSelectedItems,
 } from './select.helpers';
@@ -144,6 +145,55 @@ describe('select helpers', () => {
       expect(getMovableAtomIdsForBond(struct as never, 0, [0, 1])).toEqual([
         0, 1,
       ]);
+    });
+  });
+
+  describe('getAttachmentGroupSelection', () => {
+    it('selects the marker, member atoms, and only bonds inside the group', () => {
+      const struct = new Struct();
+      const firstAtomId = struct.atoms.add(new Atom({ label: 'C' }));
+      const secondAtomId = struct.atoms.add(new Atom({ label: 'C' }));
+      const thirdAtomId = struct.atoms.add(new Atom({ label: 'C' }));
+      const externalAtomId = struct.atoms.add(new Atom({ label: 'Fe' }));
+      const firstInternalBondId = struct.bonds.add(
+        new Bond({
+          begin: firstAtomId,
+          end: secondAtomId,
+          type: Bond.PATTERN.TYPE.SINGLE,
+        }),
+      );
+      const secondInternalBondId = struct.bonds.add(
+        new Bond({
+          begin: secondAtomId,
+          end: thirdAtomId,
+          type: Bond.PATTERN.TYPE.SINGLE,
+        }),
+      );
+      struct.bonds.add(
+        new Bond({
+          begin: thirdAtomId,
+          end: externalAtomId,
+          type: Bond.PATTERN.TYPE.SINGLE,
+        }),
+      );
+      const attachmentGroupId = struct.addAttachmentGroup(
+        new AttachmentGroup({
+          atomIds: [firstAtomId, secondAtomId, thirdAtomId],
+        }),
+      );
+      struct.bonds.add(
+        new Bond({
+          begin: attachmentGroupId,
+          end: externalAtomId,
+          type: Bond.PATTERN.TYPE.HAPTIC,
+        }),
+      );
+
+      expect(getAttachmentGroupSelection(struct, attachmentGroupId)).toEqual({
+        attachmentGroups: [attachmentGroupId],
+        atoms: [firstAtomId, secondAtomId, thirdAtomId],
+        bonds: [firstInternalBondId, secondInternalBondId],
+      });
     });
   });
 

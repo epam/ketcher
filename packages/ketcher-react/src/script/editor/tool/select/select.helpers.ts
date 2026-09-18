@@ -128,6 +128,21 @@ export function isItemSelected(
   };
 
   switch (ci.map) {
+    case 'attachmentGroups': {
+      const attachmentGroupSelection = getAttachmentGroupSelection(
+        restruct.molecule,
+        ci.id,
+      );
+      return (
+        selection.attachmentGroups?.includes(ci.id) === true &&
+        attachmentGroupSelection.atoms?.every((atomId) =>
+          selection.atoms?.includes(atomId),
+        ) === true &&
+        attachmentGroupSelection.bonds?.every((bondId) =>
+          selection.bonds?.includes(bondId),
+        ) === true
+      );
+    }
     case 'sgroups':
     case 'functionalGroups': {
       const sgroup = restruct.sgroups.get(ci.id)?.item;
@@ -190,6 +205,28 @@ export function getNewSelectedItems(editor: Editor, selectedSgroups: number[]) {
   }
 
   return newSelected;
+}
+
+export function getAttachmentGroupSelection(
+  molecule: Struct,
+  attachmentGroupId: number,
+): Selection {
+  const atomIds =
+    molecule.attachmentGroups.get(attachmentGroupId)?.atomIds ?? [];
+  const atomIdSet = new Set(atomIds);
+  const bondIds: number[] = [];
+
+  molecule.bonds.forEach((bond, bondId) => {
+    if (atomIdSet.has(bond.begin) && atomIdSet.has(bond.end)) {
+      bondIds.push(bondId);
+    }
+  });
+
+  return {
+    attachmentGroups: [attachmentGroupId],
+    atoms: [...atomIds],
+    bonds: bondIds,
+  };
 }
 
 export function selectElementsOnCanvas(

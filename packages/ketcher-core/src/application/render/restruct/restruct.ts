@@ -1067,9 +1067,13 @@ class ReStruct {
   }
 
   showItemSelection(item, selected) {
-    const exists = isSelectionSvgObjectExists(item);
     // TODO: simplify me, who sets `removed`?
-    item.selected = selected;
+    if (item instanceof ReAttachmentGroup) {
+      item.setSelected(selected, this);
+    } else {
+      item.selected = selected;
+    }
+    const exists = isSelectionSvgObjectExists(item);
     if (item instanceof ReDataSGroupData) item.sgroup.selected = selected;
     if (selected) {
       if (!exists) {

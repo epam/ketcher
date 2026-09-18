@@ -17,13 +17,17 @@ export interface AttachmentGroupHoverHost {
 }
 
 export type AttachmentGroupMarkerState =
-  'default' | 'hovered' | 'connectedHovered';
+  'default' | 'selected' | 'hovered' | 'connectedSelected' | 'connectedHovered';
 
 function getMarkerScale(render: Render, viewBoxSize: number) {
   return (render.options.atomSelectionPlateRadius * 2) / viewBoxSize;
 }
 
-function drawDefaultMarker(render: Render, center: Vec2): RaphaelSet {
+function drawDefaultMarker(
+  render: Render,
+  center: Vec2,
+  backgroundColor: string,
+): RaphaelSet {
   const scale = getMarkerScale(render, ATTACHMENT_GROUP_MARKER_VIEWBOX_SIZE);
   const backgroundRadius = 20.5 * scale;
   const innerRadius = 6.5 * scale;
@@ -34,7 +38,7 @@ function drawDefaultMarker(render: Render, center: Vec2): RaphaelSet {
   const background = render.paper
     .circle(center.x, center.y, backgroundRadius)
     .attr({
-      fill: '#FFFFFF',
+      fill: backgroundColor,
       stroke: 'none',
       cursor: 'default',
     });
@@ -69,7 +73,12 @@ function drawDefaultMarker(render: Render, center: Vec2): RaphaelSet {
   return marker;
 }
 
-function drawConnectedHoveredMarker(render: Render, center: Vec2): RaphaelSet {
+function drawConnectedMarker(
+  render: Render,
+  center: Vec2,
+  backgroundColor: string,
+  drawOutline: boolean,
+): RaphaelSet {
   const scale = getMarkerScale(render, ATTACHMENT_GROUP_MARKER_VIEWBOX_SIZE);
   const innerRadius = 6.5 * scale;
   const outerRadius = 20.5 * scale;
@@ -78,8 +87,8 @@ function drawConnectedHoveredMarker(render: Render, center: Vec2): RaphaelSet {
   const outerCircle = render.paper
     .circle(center.x, center.y, outerRadius)
     .attr({
-      fill: '#FFFFFF',
-      stroke: ATTACHMENT_GROUP_MARKER_HOVER_COLOR,
+      fill: backgroundColor,
+      stroke: drawOutline ? ATTACHMENT_GROUP_MARKER_HOVER_COLOR : 'none',
       'stroke-width': strokeWidth,
       cursor: 'default',
     });
@@ -112,7 +121,12 @@ function drawConnectedHoveredMarker(render: Render, center: Vec2): RaphaelSet {
   return marker;
 }
 
-function drawHoveredMarker(render: Render, center: Vec2): RaphaelSet {
+function drawHighlightedMarker(
+  render: Render,
+  center: Vec2,
+  backgroundColor: string,
+  drawOutline: boolean,
+): RaphaelSet {
   const scale = getMarkerScale(render, ATTACHMENT_GROUP_MARKER_VIEWBOX_SIZE);
   const outerRadius = 20.5 * scale;
   const innerRadius = 6.5 * scale;
@@ -122,8 +136,8 @@ function drawHoveredMarker(render: Render, center: Vec2): RaphaelSet {
   const glyphStrokeWidth = 1.4 * scale;
   const marker = render.paper.set();
   const background = render.paper.circle(center.x, center.y, outerRadius).attr({
-    fill: '#FFFFFF',
-    stroke: ATTACHMENT_GROUP_MARKER_HOVER_COLOR,
+    fill: backgroundColor,
+    stroke: drawOutline ? ATTACHMENT_GROUP_MARKER_HOVER_COLOR : 'none',
     'stroke-width': outlineStrokeWidth,
     cursor: 'default',
   });
@@ -162,15 +176,26 @@ export function drawAttachmentGroupMarker(
   render: Render,
   position: Vec2,
   state: AttachmentGroupMarkerState,
+  backgroundColor = '#FFFFFF',
 ): RaphaelSet {
   const center = Scale.modelToCanvas(position, render.options);
   let marker: RaphaelSet;
-  if (state === 'connectedHovered') {
-    marker = drawConnectedHoveredMarker(render, center);
-  } else if (state === 'hovered') {
-    marker = drawHoveredMarker(render, center);
+  if (state === 'connectedSelected' || state === 'connectedHovered') {
+    marker = drawConnectedMarker(
+      render,
+      center,
+      backgroundColor,
+      state === 'connectedHovered',
+    );
+  } else if (state === 'selected' || state === 'hovered') {
+    marker = drawHighlightedMarker(
+      render,
+      center,
+      backgroundColor,
+      state === 'hovered',
+    );
   } else {
-    marker = drawDefaultMarker(render, center);
+    marker = drawDefaultMarker(render, center, backgroundColor);
   }
 
   marker.forEach((element) => {
@@ -226,14 +251,23 @@ export function drawAttachmentGroupHover(
   render: Render,
   drawOutline: boolean,
   showMarker: boolean,
-  markerState: Exclude<AttachmentGroupMarkerState, 'default'> = 'hovered',
+  markerState: Extract<
+    AttachmentGroupMarkerState,
+    'hovered' | 'connectedHovered'
+  > = 'hovered',
+  markerBackgroundColor = '#FFFFFF',
 ) {
   const groupAtomsHover = drawGroupAtomsHover(host, render, drawOutline);
   if (!showMarker) {
     return groupAtomsHover;
   }
 
-  const marker = drawAttachmentGroupMarker(render, host.a.pp, markerState);
+  const marker = drawAttachmentGroupMarker(
+    render,
+    host.a.pp,
+    markerState,
+    markerBackgroundColor,
+  );
 
   marker.forEach((element) => {
     render.ctab.addReObjectPath(LayerMap.data, host.visel, element);

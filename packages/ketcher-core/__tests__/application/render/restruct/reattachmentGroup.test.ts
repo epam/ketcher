@@ -2,6 +2,13 @@ import { Render, ReStruct } from 'application/render';
 import type { RenderOptions } from 'application/render/render.types';
 import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'domain/entities';
 
+jest.mock('application/render/restruct/hoverPath', () => ({
+  uniteHoverPaths: (hoverPaths: Array<{ remove?: () => void }>) => {
+    hoverPaths.forEach((hoverPath) => hoverPath.remove?.());
+    return hoverPaths.length > 0 ? 'M 0 0 L 1 0 L 1 1 Z' : undefined;
+  },
+}));
+
 type SvgSvgElementWithRaphaelMethods = SVGSVGElement & {
   createSVGMatrix: () => DOMMatrix;
   createSVGPoint: () => DOMPoint;
@@ -94,8 +101,46 @@ describe('ReAttachmentGroup marker states', () => {
     restruct.update(true);
 
     return {
+      attachmentGroupId,
       container,
       render,
+      restruct,
+      attachmentGroup: restruct.attachmentGroups.get(attachmentGroupId)!,
+    };
+  }
+
+  function renderPopulatedAttachmentGroup() {
+    const struct = new Struct();
+    const firstAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 1) }),
+    );
+    const secondAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(2, 1) }),
+    );
+    const internalBondId = struct.bonds.add(
+      new Bond({
+        begin: firstAtomId,
+        end: secondAtomId,
+        type: Bond.PATTERN.TYPE.SINGLE,
+      }),
+    );
+    const attachmentGroupId = struct.addAttachmentGroup(
+      new AttachmentGroup({ atomIds: [firstAtomId, secondAtomId] }),
+    );
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const render = new Render(container, options);
+    const restruct = new ReStruct(struct, render);
+    render.ctab = restruct;
+    restruct.update(true);
+
+    return {
+      atomIds: [firstAtomId, secondAtomId],
+      internalBondId,
+      attachmentGroupId,
+      container,
+      render,
+      restruct,
       attachmentGroup: restruct.attachmentGroups.get(attachmentGroupId)!,
     };
   }
@@ -149,5 +194,88 @@ describe('ReAttachmentGroup marker states', () => {
         '[data-attachment-group-marker-state="connectedHovered"]',
       ),
     ).toHaveLength(3);
+  });
+
+  it('renders an unconnected selected marker without an outline until it is hovered', () => {
+    const { attachmentGroup, attachmentGroupId, container, render, restruct } =
+      renderAttachmentGroup();
+
+    restruct.setSelection({ attachmentGroups: [attachmentGroupId] });
+    render.update(false);
+
+    const markerBackground = container.querySelector(
+      'circle[data-attachment-group-marker-state="selected"]',
+    );
+    const markerGlyph = container.querySelector(
+      'path[data-attachment-group-marker-state="selected"]',
+    );
+
+    expect(attachmentGroup.selected).toBe(true);
+    expect(markerBackground?.getAttribute('fill')).toBe('#57ff8f');
+    expect(markerBackground?.getAttribute('stroke')).toBe('none');
+    expect(markerGlyph?.getAttribute('stroke')).toBe('#0097a8');
+
+    attachmentGroup.setHover(true, render);
+
+    const hoveredMarkerBackground = container.querySelector(
+      'circle[data-attachment-group-marker-state="hovered"]',
+    );
+    expect(hoveredMarkerBackground?.getAttribute('stroke')).toBe('#0097a8');
+  });
+
+  it('renders a connected selected marker without an outline until it is hovered', () => {
+    const { attachmentGroup, attachmentGroupId, container, render, restruct } =
+      renderAttachmentGroup(true);
+
+    restruct.setSelection({ attachmentGroups: [attachmentGroupId] });
+    render.update(false);
+
+    const markerElements = container.querySelectorAll(
+      '[data-attachment-group-marker-state="connectedSelected"]',
+    );
+    const markerBackground = container.querySelector(
+      'circle[data-attachment-group-marker-state="connectedSelected"]',
+    );
+
+    expect(markerElements).toHaveLength(3);
+    expect(markerBackground?.getAttribute('fill')).toBe('#57ff8f');
+    expect(markerBackground?.getAttribute('stroke')).toBe('none');
+
+    attachmentGroup.setHover(true, render);
+
+    const hoveredMarkerBackground = container.querySelector(
+      'circle[data-attachment-group-marker-state="connectedHovered"]',
+    );
+    expect(hoveredMarkerBackground?.getAttribute('stroke')).toBe('#0097a8');
+  });
+
+  it('preserves the member atoms and bonds hover outline after selecting the marker', () => {
+    const {
+      atomIds,
+      internalBondId,
+      attachmentGroup,
+      attachmentGroupId,
+      container,
+      render,
+      restruct,
+    } = renderPopulatedAttachmentGroup();
+    const getGroupHoverOutlines = () =>
+      Array.from(container.querySelectorAll('path')).filter(
+        (path) =>
+          !path.hasAttribute('data-attachment-group-marker-state') &&
+          path.getAttribute('stroke') === '#0097a8',
+      );
+
+    attachmentGroup.setHover(true, render);
+    expect(getGroupHoverOutlines()).toHaveLength(1);
+
+    restruct.setSelection({
+      attachmentGroups: [attachmentGroupId],
+      atoms: atomIds,
+      bonds: [internalBondId],
+    });
+    render.update(false);
+
+    expect(getGroupHoverOutlines()).toHaveLength(1);
   });
 });

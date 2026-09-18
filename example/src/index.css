@@ -1,14 +1,19 @@
 /* stylelint-disable-next-line import-notation */
 @import 'normalize.css';
+@import url('@fontsource/inter');
+@import url('@fontsource/inter/400.css');
+@import url('@fontsource/inter/500.css');
+@import url('@fontsource/inter/600.css');
+@import url('@fontsource/inter/700.css');
 
 body {
     margin: 0;
     padding: 0;
     /* stylelint-disable-next-line font-family-name-quotes */
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    /* stylelint-disable-next-line font-family-name-quotes */
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    font-family: -apple-system, 'Inter', BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        /* stylelint-disable-next-line font-family-name-quotes */
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -16,7 +21,7 @@ body {
 code {
     /* stylelint-disable-next-line font-family-name-quotes */
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+        monospace;
 }
 
 #root {

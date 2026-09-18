@@ -32,6 +32,7 @@ export interface AtomContextMenuProps
   extends BaseContextMenuProps, WithExtraItems {
   id: string;
   atomIds: Array<number>;
+  attachmentGroupIds?: Array<number>;
 }
 
 export interface AttachmentGroupContextMenuProps extends BaseContextMenuProps {
@@ -54,6 +55,7 @@ export interface SelectionContextMenuProps
       Pick<RGroupAttachmentPointContextMenuProps, 'rgroupAttachmentPoints'>
     > {
   id: string;
+  attachmentGroupIds?: Array<number>;
 }
 
 export interface FunctionalGroupsContextMenuProps extends BaseContextMenuProps {

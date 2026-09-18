@@ -4,6 +4,7 @@ import {
   getBondNamesForSelectionContextMenu,
   getEditableAtomIds,
   getEditableBondIds,
+  getRemovableAttachmentGroupId,
   isAttachmentGroupCreationSelectionValid,
   onlyHasProperty,
 } from './utils';
@@ -255,6 +256,111 @@ describe('Utils', () => {
       expect(isAttachmentGroupCreationSelectionValid(struct, selection)).toBe(
         false,
       );
+    });
+  });
+
+  describe('Attachment Group removal selection', () => {
+    function createAttachmentGroup() {
+      const { struct, firstAtomId, secondAtomId, bondId } =
+        createTwoConnectedAtoms();
+      const attachmentGroupId = struct.addAttachmentGroup(
+        new AttachmentGroup({ atomIds: [firstAtomId, secondAtomId] }),
+      );
+
+      return {
+        struct,
+        firstAtomId,
+        secondAtomId,
+        bondId,
+        attachmentGroupId,
+      };
+    }
+
+    it('allows a selection containing only the Attachment Group marker', () => {
+      const { struct, attachmentGroupId } = createAttachmentGroup();
+
+      expect(
+        getRemovableAttachmentGroupId(struct, {
+          attachmentGroups: [attachmentGroupId],
+        }),
+      ).toBe(attachmentGroupId);
+    });
+
+    it('allows atoms that belong to one Attachment Group', () => {
+      const { struct, firstAtomId, attachmentGroupId } =
+        createAttachmentGroup();
+
+      expect(
+        getRemovableAttachmentGroupId(struct, { atoms: [firstAtomId] }),
+      ).toBe(attachmentGroupId);
+    });
+
+    it('allows the marker, participating atoms, and their internal bonds', () => {
+      const { struct, firstAtomId, secondAtomId, bondId, attachmentGroupId } =
+        createAttachmentGroup();
+
+      expect(
+        getRemovableAttachmentGroupId(struct, {
+          attachmentGroups: [attachmentGroupId],
+          atoms: [firstAtomId, secondAtomId],
+          bonds: [bondId],
+        }),
+      ).toBe(attachmentGroupId);
+    });
+
+    it('rejects atoms outside the Attachment Group', () => {
+      const { struct, firstAtomId, attachmentGroupId } =
+        createAttachmentGroup();
+      const unrelatedAtomId = struct.atoms.add(new Atom({ label: 'C' }));
+
+      expect(
+        getRemovableAttachmentGroupId(struct, {
+          attachmentGroups: [attachmentGroupId],
+          atoms: [firstAtomId, unrelatedAtomId],
+        }),
+      ).toBeNull();
+    });
+
+    it('rejects bonds that do not belong to the Attachment Group', () => {
+      const { struct, firstAtomId, attachmentGroupId } =
+        createAttachmentGroup();
+      const unrelatedAtomId = struct.atoms.add(new Atom({ label: 'C' }));
+      const externalBondId = struct.bonds.add(
+        new Bond({
+          begin: firstAtomId,
+          end: unrelatedAtomId,
+          type: Bond.PATTERN.TYPE.SINGLE,
+        }),
+      );
+
+      expect(
+        getRemovableAttachmentGroupId(struct, {
+          attachmentGroups: [attachmentGroupId],
+          atoms: [firstAtomId],
+          bonds: [externalBondId],
+        }),
+      ).toBeNull();
+    });
+
+    it('rejects multiple Attachment Groups and unrelated selected items', () => {
+      const { struct, firstAtomId, attachmentGroupId } =
+        createAttachmentGroup();
+      const thirdAtomId = struct.atoms.add(new Atom({ label: 'C' }));
+      const secondAttachmentGroupId = struct.addAttachmentGroup(
+        new AttachmentGroup({ atomIds: [thirdAtomId] }),
+      );
+
+      expect(
+        getRemovableAttachmentGroupId(struct, {
+          attachmentGroups: [attachmentGroupId, secondAttachmentGroupId],
+        }),
+      ).toBeNull();
+      expect(
+        getRemovableAttachmentGroupId(struct, {
+          atoms: [firstAtomId],
+          rxnArrows: [0],
+        }),
+      ).toBeNull();
     });
   });
 });

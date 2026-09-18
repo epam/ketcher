@@ -9,6 +9,12 @@ import type { Selection } from 'src/script/editor/Editor';
 import { isStructureContinuous } from 'src/script/editor/utils/structureContinuity';
 
 const ATTACHMENT_GROUP_SELECTION_IGNORED_KEYS = ['enhancedFlags'];
+const ATTACHMENT_GROUP_REMOVAL_ALLOWED_KEYS = new Set([
+  'attachmentGroups',
+  'atoms',
+  'bonds',
+  ...ATTACHMENT_GROUP_SELECTION_IGNORED_KEYS,
+]);
 
 /**
  * Remove the word `bond` out of the title
@@ -224,4 +230,72 @@ export function isAttachmentGroupCreationSelectionValid(
   }
 
   return true;
+}
+
+export function getRemovableAttachmentGroupId(
+  struct: Struct,
+  selection: Selection | null,
+): number | null {
+  if (!selection) {
+    return null;
+  }
+
+  const hasDisallowedSelectedItems = Object.entries(selection).some(
+    ([key, value]) =>
+      !ATTACHMENT_GROUP_REMOVAL_ALLOWED_KEYS.has(key) &&
+      Array.isArray(value) &&
+      value.length > 0,
+  );
+  if (hasDisallowedSelectedItems) {
+    return null;
+  }
+
+  const selectedAttachmentGroupIds = selection.attachmentGroups ?? [];
+  if (selectedAttachmentGroupIds.length > 1) {
+    return null;
+  }
+
+  const selectedAtomIds = selection.atoms ?? [];
+  let attachmentGroupId = selectedAttachmentGroupIds[0];
+
+  if (attachmentGroupId === undefined) {
+    if (selectedAtomIds.length === 0) {
+      return null;
+    }
+
+    const matchingAttachmentGroupIds: number[] = [];
+    struct.attachmentGroups.forEach((attachmentGroup, id) => {
+      if (attachmentGroup.atomIds.includes(selectedAtomIds[0])) {
+        matchingAttachmentGroupIds.push(id);
+      }
+    });
+
+    if (matchingAttachmentGroupIds.length !== 1) {
+      return null;
+    }
+    attachmentGroupId = matchingAttachmentGroupIds[0];
+  }
+
+  const attachmentGroup = struct.attachmentGroups.get(attachmentGroupId);
+  if (!attachmentGroup) {
+    return null;
+  }
+
+  const attachmentGroupAtomIds = new Set(attachmentGroup.atomIds);
+  if (selectedAtomIds.some((atomId) => !attachmentGroupAtomIds.has(atomId))) {
+    return null;
+  }
+
+  const selectedBondsBelongToAttachmentGroup = (selection.bonds ?? []).every(
+    (bondId) => {
+      const bond = struct.bonds.get(bondId);
+      return (
+        bond &&
+        attachmentGroupAtomIds.has(bond.begin) &&
+        attachmentGroupAtomIds.has(bond.end)
+      );
+    },
+  );
+
+  return selectedBondsBelongToAttachmentGroup ? attachmentGroupId : null;
 }

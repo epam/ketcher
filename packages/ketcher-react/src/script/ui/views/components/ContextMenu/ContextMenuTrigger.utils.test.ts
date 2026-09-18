@@ -4,6 +4,7 @@ import {
   getMenuPropsForSelection,
 } from './ContextMenuTrigger.utils';
 import { CONTEXT_MENU_ID } from './contextMenu.types';
+import type Editor from 'src/script/editor';
 
 describe('getMenuPropsForSelection', () => {
   it('uses the atom menu for a multi-atom selection', () => {
@@ -64,6 +65,53 @@ describe('getMenuPropsForSelection', () => {
     ).toMatchObject({
       id: CONTEXT_MENU_ID.FOR_SELECTION + 'test',
       atomIds: [1, 2],
+    });
+  });
+
+  it('provides the removable Attachment Group for participating atoms', () => {
+    const struct = new Struct();
+    const atomIds = [0, 1].map((x) =>
+      struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(x, 0) })),
+    );
+    const attachmentGroupId = struct.addAttachmentGroup(
+      new AttachmentGroup({ atomIds }),
+    );
+    const editor = { struct: () => struct } as Editor;
+
+    expect(
+      getMenuPropsForSelection(
+        { atoms: [atomIds[0]] },
+        new Map(),
+        'test',
+        editor,
+      ),
+    ).toMatchObject({
+      id: CONTEXT_MENU_ID.FOR_ATOMS + 'test',
+      attachmentGroupIds: [attachmentGroupId],
+    });
+  });
+
+  it('uses the selection menu for an Attachment Group-only selection', () => {
+    const struct = new Struct();
+    const atomId = struct.atoms.add(new Atom({ label: 'C' }));
+    const attachmentGroupId = struct.addAttachmentGroup(
+      new AttachmentGroup({ atomIds: [atomId] }),
+    );
+    const editor = { struct: () => struct } as Editor;
+
+    expect(
+      getMenuPropsForSelection(
+        { attachmentGroups: [attachmentGroupId] },
+        new Map(),
+        'test',
+        editor,
+      ),
+    ).toEqual({
+      id: CONTEXT_MENU_ID.FOR_SELECTION + 'test',
+      bondIds: undefined,
+      atomIds: undefined,
+      attachmentGroupIds: [attachmentGroupId],
+      rgroupAttachmentPoints: undefined,
     });
   });
 });

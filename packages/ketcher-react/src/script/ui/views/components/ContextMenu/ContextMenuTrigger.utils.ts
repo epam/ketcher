@@ -14,7 +14,7 @@ import {
   CONTEXT_MENU_ID,
 } from './contextMenu.types';
 import type { Selection } from '../../../../editor/Editor';
-import { onlyHasProperty } from './utils';
+import { getRemovableAttachmentGroupId, onlyHasProperty } from './utils';
 
 /**
  * Count how many MonomerMicromolecule SGroups on the canvas share the same
@@ -298,6 +298,13 @@ export function getMenuPropsForSelection(
   }
 
   const { bonds, atoms, rgroupAttachmentPoints } = selection;
+  const removableAttachmentGroupId = editor
+    ? getRemovableAttachmentGroupId(editor.struct(), selection)
+    : null;
+  const attachmentGroupIds =
+    removableAttachmentGroupId === null
+      ? undefined
+      : [removableAttachmentGroupId];
   const isAtomOnlySelection = onlyHasProperty(
     selection,
     'atoms',
@@ -355,6 +362,7 @@ export function getMenuPropsForSelection(
     return {
       id: CONTEXT_MENU_ID.FOR_ATOMS + ketcherId,
       atomIds: atoms,
+      ...(attachmentGroupIds ? { attachmentGroupIds } : {}),
       extraItemsSelected: !onlyHasProperty(
         selection,
         'atoms',
@@ -376,6 +384,7 @@ export function getMenuPropsForSelection(
       id: CONTEXT_MENU_ID.FOR_SELECTION + ketcherId,
       bondIds: bonds,
       atomIds: atoms,
+      ...(attachmentGroupIds ? { attachmentGroupIds } : {}),
       rgroupAttachmentPoints,
     };
   }

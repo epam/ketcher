@@ -4,10 +4,16 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import type {
   AttachmentGroupContextMenuProps,
+  AtomContextMenuProps,
   ItemEventParams,
+  SelectionContextMenuProps,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<AttachmentGroupContextMenuProps>;
+type Params = ItemEventParams<
+  | AttachmentGroupContextMenuProps
+  | AtomContextMenuProps
+  | SelectionContextMenuProps
+>;
 
 const useAttachmentGroupDelete = () => {
   const { ketcherId } = useAppContext();

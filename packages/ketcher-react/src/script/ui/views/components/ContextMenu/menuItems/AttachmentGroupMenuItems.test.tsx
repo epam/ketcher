@@ -24,5 +24,8 @@ describe('AttachmentGroupMenuItems', () => {
     expect(
       screen.getByTestId('Remove Attachment Group-option'),
     ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('Remove Attachment Group-option').querySelector('svg'),
+    ).not.toBeInTheDocument();
   });
 });

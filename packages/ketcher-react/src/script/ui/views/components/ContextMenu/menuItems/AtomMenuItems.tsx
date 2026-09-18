@@ -30,10 +30,7 @@ import { Icon } from 'components';
 import useMakeAttachmentPointMenuItems from '../hooks/useMakeAttachmentPointMenuItems';
 import clsx from 'clsx';
 import { getEditableAtomIds } from '../utils';
-import useAttachmentGroupCreate, {
-  ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP,
-} from '../hooks/useAttachmentGroupCreate';
-import { Tooltip } from '@mui/material';
+import AttachmentGroupActionMenuItem from './AttachmentGroupActionMenuItem';
 
 const {
   ringBondCount,
@@ -114,10 +111,6 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const [handleEdit, editDisabled] = useAtomEdit();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
-  const {
-    handler: handleAttachmentGroupCreate,
-    isDisabled: attachmentGroupCreateDisabled,
-  } = useAttachmentGroupCreate();
   const {
     handler: handleMarkAs,
     isVisible: markAsIsVisible,
@@ -210,7 +203,6 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const showMarkAsMenu = markAsIsVisible();
   const markAsDisabled = markAsIsDisabled();
   const showAttachmentGroupCreate = editableAtomIds.length > 1;
-  const isAttachmentGroupCreateDisabled = attachmentGroupCreateDisabled();
   return (
     <>
       {showMarkAsMenu && (
@@ -272,32 +264,10 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         <span className={styles.contextMenuText}>{editMenuItemTitle}</span>
       </Item>
 
-      {showAttachmentGroupCreate && (
-        <Item
-          {...props}
-          data-testid="Create Attachment Group-option"
-          onClick={handleAttachmentGroupCreate}
-          disabled={isAttachmentGroupCreateDisabled}
-        >
-          <Tooltip
-            title={
-              isAttachmentGroupCreateDisabled
-                ? ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP
-                : ''
-            }
-            placement="right"
-            slotProps={{
-              tooltip: {
-                sx: { backgroundColor: '#333333' },
-              },
-            }}
-          >
-            <span className={styles.tooltipTarget}>
-              Create attachment group
-            </span>
-          </Tooltip>
-        </Item>
-      )}
+      <AttachmentGroupActionMenuItem
+        {...props}
+        showCreate={showAttachmentGroupCreate}
+      />
       <Item
         {...props}
         data-testid="Enhanced stereochemistry...-option"

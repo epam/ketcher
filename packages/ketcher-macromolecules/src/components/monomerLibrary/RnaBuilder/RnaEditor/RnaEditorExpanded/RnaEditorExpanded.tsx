@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -101,6 +100,14 @@ type SequenceSelectionGroupNames = {
   [MonomerGroups.PHOSPHATES]: string;
 };
 
+function useLatestRef<T>(value: T) {
+  const ref = useRef(value);
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+  return ref;
+}
+
 export const RnaEditorExpanded = ({
   isEditMode,
   onDuplicate,
@@ -134,6 +141,7 @@ export const RnaEditorExpanded = ({
     selectActivePresetMonomerGroup,
   );
   const [newPreset, setNewPreset] = useState(activePreset);
+  const [prevActivePreset, setPrevActivePreset] = useState(activePreset);
 
   const [selectedPhosphatePosition, setSelectedPhosphatePosition] = useState<
     RnaPhosphatePosition | undefined
@@ -191,40 +199,32 @@ export const RnaEditorExpanded = ({
     return undefined;
   };
 
-  // Guard refs — read inside the monomer-group effect without being listed as
-  // deps, preventing re-runs on slot clicks (activeMonomerGroup) or edit-mode
-  // toggle (isEditMode), which would drop editedName and regenerate the name.
-  const activeMonomerGroupRef = useRef(activeMonomerGroup);
-  // eslint-disable-next-line react-hooks/refs -- guard ref: latest value readable in effects without triggering re-runs on slot clicks
-  activeMonomerGroupRef.current = activeMonomerGroup;
-  const isEditModeRef = useRef(isEditMode);
-  // eslint-disable-next-line react-hooks/refs -- guard ref: latest value readable in effects without triggering re-runs on edit-mode toggle
-  isEditModeRef.current = isEditMode;
-
-  // RnaElements.tsx dispatches a fresh { groupName, groupItem } object on every
-  // click, so depending on the whole activePresetMonomerGroup object churns
-  // identity even when the selected monomer hasn't changed. Dep on groupItem
-  // (stable identity from the store) instead, and read groupName via a ref.
+  // Latest-value refs: the sequence-selection effect must not re-run on slot
+  // clicks, edit-mode toggles, or its own setSequenceSelection dispatch.
+  // Syncing in an effect avoids writing refs during render. GroupName is read
+  // from a ref because RnaElements.tsx replaces the { groupName, groupItem }
+  // wrapper on every click while groupItem identity stays stable.
+  const activeMonomerGroupRef = useLatestRef(activeMonomerGroup);
+  const isEditModeRef = useLatestRef(isEditMode);
   const activePresetGroupItem = activePresetMonomerGroup?.groupItem;
-  const activePresetGroupNameRef = useRef(activePresetMonomerGroup?.groupName);
-  // eslint-disable-next-line react-hooks/refs -- latest-value ref: groupName kept in sync; the effect deps on groupItem identity to avoid re-running when the wrapper object is replaced on every click
-  activePresetGroupNameRef.current = activePresetMonomerGroup?.groupName;
+  const activePresetGroupNameRef = useLatestRef(
+    activePresetMonomerGroup?.groupName,
+  );
 
-  // For sequence edit in RNA Builder mode
   const sequenceSelection = useAppSelector(selectSequenceSelection);
-  const sequenceSelectionRef = useRef(sequenceSelection);
-  // eslint-disable-next-line react-hooks/refs -- preserves the selection that triggered the update; avoids re-running the effect in response to its own dispatch
-  sequenceSelectionRef.current = sequenceSelection;
+  const sequenceSelectionRef = useLatestRef(sequenceSelection);
   const sequenceSelectionName = useAppSelector(selectSequenceSelectionName);
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
   const [isSequenceSelectionUpdated, setIsSequenceSelectionUpdated] =
     useState<boolean>(false);
-  const [sequenceSelectionGroupNames, setSequenceSelectionGroupNames] =
-    useState<SequenceSelectionGroupNames | undefined>(
-      generateSequenceSelectionGroupNames(sequenceSelection),
-    );
+  const [appliedPresetGroupItem, setAppliedPresetGroupItem] = useState<{
+    initialized: boolean;
+    item: typeof activePresetGroupItem;
+  }>({ initialized: false, item: undefined });
+  const sequenceSelectionGroupNames: SequenceSelectionGroupNames | undefined =
+    generateSequenceSelectionGroupNames(sequenceSelection);
   const phosphatePosition = resolvePhosphatePosition(newPreset);
   const { is3PrimeAvailable, is5PrimeAvailable } =
     getPhosphatePositionAvailability(newPreset || {});
@@ -240,75 +240,38 @@ export const RnaEditorExpanded = ({
     right: 'Sugar must have R2, and phosphate must have R1.',
   };
 
-  useEffect(() => {
+  if (activePreset !== prevActivePreset) {
+    setPrevActivePreset(activePreset);
     setNewPreset(activePreset);
     setSelectedPhosphatePosition(
       activePreset?.connections?.length
         ? getRnaPresetPhosphatePosition(activePreset)
         : undefined,
     );
-  }, [activePreset]);
+  }
 
-  useEffect(() => {
-    if (!sequenceSelection) return;
-    // If modifying 1 Nucleotide or 1 Nucleoside or Nucleoside with Phosphate in sequence
-    if (getCountOfNucleoelements(sequenceSelection) === 1) {
-      dispatch(
-        setSequenceSelectionName(
-          generateSequenceSelectionName(sequenceSelection),
-        ),
-      );
-    }
-    setSequenceSelectionGroupNames(
-      generateSequenceSelectionGroupNames(sequenceSelection),
-    );
-  }, [dispatch, sequenceSelection]);
+  const shouldApplySelectedMonomerGroup =
+    activeMonomerGroup !== RnaBuilderPresetsItem.Presets && isEditMode;
+  const hasPresetGroupItemChanged =
+    !appliedPresetGroupItem.initialized ||
+    appliedPresetGroupItem.item !== activePresetGroupItem;
 
-  useEffect(() => {
-    if (
-      activeMonomerGroupRef.current !== RnaBuilderPresetsItem.Presets &&
-      isEditModeRef.current
-    ) {
+  if (hasPresetGroupItemChanged) {
+    setAppliedPresetGroupItem({
+      initialized: true,
+      item: activePresetGroupItem,
+    });
+
+    if (shouldApplySelectedMonomerGroup) {
       if (isSequenceEditInRNABuilderMode && activePresetGroupItem) {
-        const monomerType =
-          monomerGroupToPresetGroup[activePresetGroupNameRef.current ?? ''];
-        const field = `${monomerType}Label`;
-
-        // sequenceSelectionRef.current avoids adding sequenceSelection to deps,
-        // which would cause a dispatch→sequenceSelection-change→re-run loop.
-        const updatedSequenceSelection = sequenceSelectionRef.current.map(
-          (node) => {
-            // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
-            // Do not set 'sugarLabel', 'baseLabel' for Phosphate
-            if (
-              (node.isNucleosideConnectedAndSelectedWithPhosphate &&
-                field === 'phosphateLabel') ||
-              (node.type === Entities.Phosphate &&
-                (field === 'sugarLabel' || field === 'baseLabel'))
-            ) {
-              return node;
-            }
-
-            return {
-              ...node,
-              [field]: activePresetGroupItem.label,
-              rnaBaseMonomerItem:
-                activePresetGroupNameRef.current === 'Bases'
-                  ? activePresetGroupItem
-                  : node.rnaBaseMonomerItem,
-            };
-          },
-        );
-
         setIsSequenceSelectionUpdated(true);
-        dispatch(setSequenceSelection(updatedSequenceSelection));
       } else {
         setNewPreset((currentPreset) => {
           const updatedPreset = activePresetGroupItem
             ? {
                 ...currentPreset,
                 [monomerGroupToPresetGroup[
-                  activePresetGroupNameRef.current ?? ''
+                  activePresetMonomerGroup?.groupName ?? ''
                 ]]: activePresetGroupItem,
               }
             : currentPreset;
@@ -320,16 +283,65 @@ export const RnaEditorExpanded = ({
         });
       }
     }
+  }
+
+  useEffect(() => {
+    if (!sequenceSelection) return;
+    if (getCountOfNucleoelements(sequenceSelection) === 1) {
+      dispatch(
+        setSequenceSelectionName(
+          generateSequenceSelectionName(sequenceSelection),
+        ),
+      );
+    }
+  }, [dispatch, sequenceSelection]);
+
+  useEffect(() => {
+    if (
+      activeMonomerGroupRef.current === RnaBuilderPresetsItem.Presets ||
+      !isEditModeRef.current ||
+      !isSequenceEditInRNABuilderMode ||
+      !activePresetGroupItem
+    ) {
+      return;
+    }
+
+    const monomerType =
+      monomerGroupToPresetGroup[activePresetGroupNameRef.current ?? ''];
+    const field = `${monomerType}Label`;
+    const updatedSequenceSelection = sequenceSelectionRef.current.map(
+      (node) => {
+        // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
+        // Do not set 'sugarLabel', 'baseLabel' for Phosphate
+        if (
+          (node.isNucleosideConnectedAndSelectedWithPhosphate &&
+            field === 'phosphateLabel') ||
+          (node.type === Entities.Phosphate &&
+            (field === 'sugarLabel' || field === 'baseLabel'))
+        ) {
+          return node;
+        }
+
+        return {
+          ...node,
+          [field]: activePresetGroupItem.label,
+          rnaBaseMonomerItem:
+            activePresetGroupNameRef.current === 'Bases'
+              ? activePresetGroupItem
+              : node.rnaBaseMonomerItem,
+        };
+      },
+    );
+
+    dispatch(setSequenceSelection(updatedSequenceSelection));
   }, [
-    // activeMonomerGroup and isEditMode are intentionally omitted — they are
-    // guard conditions read via refs. Including them would fire this effect on
-    // every slot click (activeMonomerGroup) or entering edit mode (isEditMode),
-    // which regenerates the preset name and drops editedName.
-    // activePresetGroupNameRef (groupName) is intentionally omitted — it is
-    // kept current via a ref and read inside the effect body.
     isSequenceEditInRNABuilderMode,
     activePresetGroupItem,
     dispatch,
+    activeMonomerGroupRef,
+    activePresetGroupNameRef,
+    isEditModeRef,
+    sequenceSelectionRef,
   ]);
 
   const scrollToActiveItemInLibrary = (selectedGroup, selectedMonomer) => {

@@ -28,6 +28,7 @@ import {
 function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
+  const attachmentGroupList: Array<number> = [];
   const functionalGroups = restruct.molecule.functionalGroups;
   const struct: Struct = restruct.molecule;
 
@@ -98,6 +99,18 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
       atom.a.pp.y < y1
     ) {
       atomList.push(aid);
+    }
+  });
+
+  restruct.visibleAttachmentGroups.forEach((attachmentGroup, id) => {
+    const position = attachmentGroup.a.pp;
+    if (
+      position.x > x0 &&
+      position.x < x1 &&
+      position.y > y0 &&
+      position.y < y1
+    ) {
+      attachmentGroupList.push(id);
     }
   });
 
@@ -200,6 +213,7 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
 
   return {
     atoms: atomList,
+    attachmentGroups: attachmentGroupList,
     bonds: bondList,
     rxnArrows: rxnArrowsList,
     rxnPluses: rxnPlusesList,
@@ -216,6 +230,7 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
 function getElementsInPolygon(restruct: ReStruct, rr) {
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
+  const attachmentGroupList: Array<number> = [];
   const r: any = [];
   const sGroups = restruct.sgroups;
   const functionalGroups = restruct.molecule.functionalGroups;
@@ -278,6 +293,12 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
         aid === sGroup?.atoms[0])
     ) {
       atomList.push(aid);
+    }
+  });
+
+  restruct.visibleAttachmentGroups.forEach((attachmentGroup, id) => {
+    if (isPointInPolygon(r, attachmentGroup.a.pp)) {
+      attachmentGroupList.push(id);
     }
   });
 
@@ -366,6 +387,7 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
 
   return {
     atoms: atomList,
+    attachmentGroups: attachmentGroupList,
     bonds: bondList,
     rxnArrows: rxnArrowsList,
     rxnPluses: rxnPlusesList,

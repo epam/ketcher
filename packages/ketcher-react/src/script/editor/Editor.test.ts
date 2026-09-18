@@ -222,3 +222,29 @@ describe('Editor.isMonomerCreationWizardEnabled', () => {
     expect(terminalRGroupAtoms[0][0]).toBe(0);
   });
 });
+
+describe('Editor.hover', () => {
+  it('forwards Attachment Group hover to its renderer', () => {
+    const attachmentGroupRenderer = {
+      setHover: jest.fn(),
+    };
+    const tool = {};
+    const render = {
+      ctab: {
+        attachmentGroups: new Map([[7, attachmentGroupRenderer]]),
+      },
+    };
+    const editor = Object.create(Editor.prototype) as Editor;
+
+    Reflect.set(editor, '_tool', tool);
+    Reflect.set(editor, 'render', render);
+
+    editor.hover({ map: 'attachmentGroups', id: 7 });
+
+    expect(attachmentGroupRenderer.setHover).toHaveBeenCalledWith(true, render);
+    expect(Reflect.get(tool, 'ci')).toEqual({
+      map: 'attachmentGroups',
+      id: 7,
+    });
+  });
+});

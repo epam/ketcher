@@ -79,6 +79,7 @@ type LeftToolbarItemVariant =
   | 'bond-double'
   | 'bond-triple'
   | 'bond-dative'
+  | 'bond-haptic'
   | 'bond-stereo'
   | 'bond-up'
   | 'bond-down'

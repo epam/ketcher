@@ -37,7 +37,8 @@ import type {
   RaphaelSet,
 } from 'raphael';
 import type { RenderOptions } from '../render.types';
-import paperjs from 'paper';
+import { uniteHoverPaths } from './hoverPath';
+export { paperPathFromSVGElement } from './hoverPath';
 interface SGroupdrawBracketsOptions {
   set: RaphaelSet;
   render: Render;
@@ -48,40 +49,6 @@ interface SGroupdrawBracketsOptions {
   upperIndexText?: string | null;
   indexAttribute?: Record<string, string>;
   superatomClass?: SUPERATOM_CLASS;
-}
-
-// Helper function to convert SVG elements into Paper.js paths
-export function paperPathFromSVGElement(
-  element: SVGElement,
-): paper.Path | paper.CompoundPath | undefined {
-  const tagName = element.tagName;
-  let path: paper.Path | paper.CompoundPath | undefined;
-
-  if (tagName === 'circle') {
-    // Convert circle to Paper.js Path.Circle
-    const cx = parseFloat(element.getAttribute('cx') ?? '0');
-    const cy = parseFloat(element.getAttribute('cy') ?? '0');
-    const r = parseFloat(element.getAttribute('r') ?? '0');
-    path = new paperjs.Path.Circle(new paperjs.Point(cx, cy), r);
-  } else if (tagName === 'rect') {
-    // Convert rectangle to Paper.js Path.Rectangle
-    const x = parseFloat(element.getAttribute('x') ?? '0');
-    const y = parseFloat(element.getAttribute('y') ?? '0');
-    const width = parseFloat(element.getAttribute('width') ?? '0');
-    const height = parseFloat(element.getAttribute('height') ?? '0');
-    path = new paperjs.Path.Rectangle(
-      new paperjs.Rectangle(x, y, width, height),
-      new paperjs.Size(
-        parseFloat(element.getAttribute('rx') || '0'),
-        parseFloat(element.getAttribute('ry') || '0'),
-      ),
-    );
-  } else if (tagName === 'path') {
-    // Use the `d` attribute directly for Path data
-    const d = element.getAttribute('d');
-    path = d ? new paperjs.CompoundPath(d) : undefined;
-  }
-  return path;
 }
 
 class ReSGroup extends ReObject {
@@ -290,48 +257,15 @@ class ReSGroup extends ReObject {
         );
       }, this);
 
-      const elements: SVGElement[] = [];
-
-      hoversToCombine.forEach((item) => {
-        if (item?.node) {
-          elements.push(item.node);
-          item.node.remove();
-        }
-      });
-
-      paperjs.setup(document.createElement('canvas')); // Paper.js works on an offscreen canvas
-
-      // Generate Paper.js paths from all SVG elements
-      let combinedPath: paper.PathItem | undefined;
-
-      elements.forEach((el) => {
-        const paperPath = paperPathFromSVGElement(el);
-
-        if (!paperPath) {
-          return;
-        }
-
-        if (!paperPath.closed) {
-          paperPath.closePath();
-        }
-
-        if (!combinedPath) {
-          combinedPath = paperPath;
-        } else {
-          combinedPath = combinedPath.unite(paperPath);
-        }
-      });
-
-      if (!combinedPath) {
+      const combinedPathData = uniteHoverPaths(hoversToCombine);
+      if (!combinedPathData) {
         return;
       }
-
-      const combinedPathD = combinedPath.pathData;
 
       render.ctab.addReObjectPath(
         LayerMap.hovering,
         this.visel,
-        paper.path(combinedPathD).attr(options.hoverStyle),
+        paper.path(combinedPathData).attr(options.hoverStyle),
       );
       render.ctab.addReObjectPath(LayerMap.hovering, this.visel, otherHovers);
     }

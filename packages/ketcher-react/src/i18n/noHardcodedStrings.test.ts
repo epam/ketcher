@@ -3,6 +3,16 @@ import path from 'path';
 
 const SRC_ROOT = path.join(__dirname, '..');
 
+// ketcher-macromolecules/src, scanned as a second root below (Sections 1-6 of
+// the ketcher-macromolecules-i18n change). A separate root rather than a
+// ketcher-react import: this file only ever touches the filesystem, so
+// scanning a second package's source introduces no source-level dependency
+// between the two (unlike importing runtime i18n code would).
+const MACROMOLECULES_SRC_ROOT = path.join(
+  __dirname,
+  '../../../ketcher-macromolecules/src',
+);
+
 /**
  * Directories/files fully migrated to t() calls (Sections 1-6 of the
  * ketcher-react-i18n-foundation change). New JSX code added under these
@@ -24,6 +34,32 @@ const MIGRATED_PATHS = [
   'script/ui/component/form/MeasureInput/measure-input.tsx',
   'script/ui/component/form/Select/Select.tsx',
   'script/ui/utils/index.ts',
+];
+
+// Sections 1-6 of the ketcher-macromolecules-i18n change: components/shared,
+// hooks, and helpers (Section 6) plus every directory extracted in the
+// sections before it. Resolved against MACROMOLECULES_SRC_ROOT, not SRC_ROOT.
+const MACROMOLECULES_MIGRATED_PATHS = [
+  'components/menu',
+  'components/TopMenuComponent',
+  'components/LeftMenuComponent',
+  'components/FloatingTools',
+  'components/ZoomControls',
+  'components/Layout',
+  'components/LayoutModeButton',
+  'components/ButtonsComponents',
+  'components/SequenceTypeGroupButton',
+  'components/SequenceSyncEditModeButton',
+  'components/Ruler',
+  'components/FullscreenButton',
+  'components/macromoleculeProperties',
+  'components/preview',
+  'components/monomerLibrary',
+  'components/contextMenu',
+  'components/modal',
+  'components/shared',
+  'hooks',
+  'helpers',
 ];
 
 const SOURCE_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx']);
@@ -77,10 +113,10 @@ function walk(dir: string, files: string[] = []): string[] {
   return files;
 }
 
-function collectMigratedFiles(): string[] {
+function collectMigratedFiles(root: string, relativePaths: string[]): string[] {
   const files: string[] = [];
-  for (const relativePath of MIGRATED_PATHS) {
-    const absolutePath = path.join(SRC_ROOT, relativePath);
+  for (const relativePath of relativePaths) {
+    const absolutePath = path.join(root, relativePath);
     const stat = fs.statSync(absolutePath);
     if (stat.isDirectory()) {
       walk(absolutePath, files);
@@ -97,14 +133,14 @@ interface Violation {
   snippet: string;
 }
 
-function findHardcodedStrings(files: string[]): Violation[] {
+function findHardcodedStrings(root: string, files: string[]): Violation[] {
   const violations: Violation[] = [];
 
   for (const file of files) {
     const content = fs.readFileSync(file, 'utf8');
     const lines = content.split('\n');
 
-    const relativeFile = path.relative(SRC_ROOT, file);
+    const relativeFile = path.relative(root, file);
     lines.forEach((line, index) => {
       for (const match of line.matchAll(HARDCODED_ATTR_RE)) {
         if (ALLOWED_VIOLATIONS.has(`${relativeFile}:${match[0]}`)) continue;
@@ -122,10 +158,10 @@ function findHardcodedStrings(files: string[]): Violation[] {
 
 describe('no hardcoded UI strings in migrated directories', () => {
   it('does not introduce a literal title/label/placeholder/tooltip/aria-label/alt in an already-migrated file', () => {
-    const files = collectMigratedFiles();
+    const files = collectMigratedFiles(SRC_ROOT, MIGRATED_PATHS);
     expect(files.length).toBeGreaterThan(0);
 
-    const violations = findHardcodedStrings(files);
+    const violations = findHardcodedStrings(SRC_ROOT, files);
 
     if (violations.length > 0) {
       const details = violations
@@ -136,6 +172,30 @@ describe('no hardcoded UI strings in migrated directories', () => {
           `Route these through t() (see packages/ketcher-react/src/locales/README.md), ` +
           `or — if the value is genuinely not display text (a stable identifier, data-driven ` +
           `content, etc.) — extend this test's understanding rather than the app code:\n${details}`,
+      );
+    }
+  });
+
+  it('does not introduce a literal title/label/placeholder/tooltip/aria-label/alt in an already-migrated ketcher-macromolecules file', () => {
+    const files = collectMigratedFiles(
+      MACROMOLECULES_SRC_ROOT,
+      MACROMOLECULES_MIGRATED_PATHS,
+    );
+    expect(files.length).toBeGreaterThan(0);
+
+    const violations = findHardcodedStrings(MACROMOLECULES_SRC_ROOT, files);
+
+    if (violations.length > 0) {
+      const details = violations
+        .map((v) => `  ${v.file}:${v.line} → ${v.snippet}`)
+        .join('\n');
+      throw new Error(
+        `Found ${violations.length} hardcoded string(s) in migrated ketcher-macromolecules ` +
+          `i18n directories. Route these through t() (see ` +
+          `packages/ketcher-macromolecules/src/locales/README.md if present, or the pattern ` +
+          `used elsewhere in that package), or — if the value is genuinely not display text ` +
+          `(a stable identifier, data-driven content, etc.) — extend this test's understanding ` +
+          `rather than the app code:\n${details}`,
       );
     }
   });

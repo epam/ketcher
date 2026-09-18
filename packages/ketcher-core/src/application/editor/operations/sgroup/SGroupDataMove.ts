@@ -23,11 +23,22 @@ export class SGroupDataMove extends BaseOperation {
   data: {
     id: number | undefined;
     d: Vec2 | undefined;
+    movesContractedLabel: boolean;
+    nextContractedLabelMoved: boolean;
+    previousPosition: Vec2 | null;
+    restorePosition: boolean;
   };
 
-  constructor(id?: number, d?: Vec2) {
+  constructor(id?: number, d?: Vec2, movesContractedLabel = false) {
     super(OperationType.S_GROUP_DATA_MOVE);
-    this.data = { id, d };
+    this.data = {
+      id,
+      d,
+      movesContractedLabel,
+      nextContractedLabelMoved: true,
+      previousPosition: null,
+      restorePosition: false,
+    };
   }
 
   execute(restruct: ReStruct) {
@@ -37,8 +48,28 @@ export class SGroupDataMove extends BaseOperation {
     const sgroup = sgroups.get(id);
     if (!sgroup) return;
 
-    sgroup.pp?.add_(d);
+    if (this.data.movesContractedLabel) {
+      const previousPosition = sgroup.pp;
+      sgroup.pp = this.data.restorePosition
+        ? this.data.previousPosition
+        : sgroup.getContractedPosition(restruct.molecule).position.add(d);
+      this.data.previousPosition = previousPosition;
+      this.data.restorePosition = !this.data.restorePosition;
+    } else {
+      sgroup.pp?.add_(d);
+    }
+    if (this.data.movesContractedLabel) {
+      const previous = sgroup.contractedLabelMoved;
+      sgroup.contractedLabelMoved = this.data.nextContractedLabelMoved;
+      this.data.nextContractedLabelMoved = previous;
+    }
     this.data.d = d.negated();
+
+    if (sgroup.isContracted?.()) {
+      const { atomId } = sgroup.getContractedPosition(restruct.molecule);
+      BaseOperation.invalidateAtom(restruct, atomId, 1);
+      BaseOperation.invalidateItem(restruct, 'sgroups', id, 1);
+    }
 
     // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway
     BaseOperation.invalidateItem(restruct, 'sgroupData', id, 1);

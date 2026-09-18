@@ -5,6 +5,7 @@ import {
   ketcherProvider,
   setExpandMonomerSGroup,
   setExpandSGroup,
+  SGroup,
   type FunctionalGroup,
 } from 'ketcher-core';
 import type {
@@ -16,6 +17,15 @@ jest.mock('ketcher-core', () => ({
   Action: jest.fn().mockImplementation(() => ({
     mergeWith: jest.fn(),
   })),
+  SGroup: class {
+    static TYPES = { SUP: 'SUP' };
+
+    data: { class?: string } = {};
+
+    get superatomLabel() {
+      return this.data.class === 'BASE' ? 'B' : '';
+    }
+  },
   ketcherProvider: {
     getKetcher: jest.fn(() => ({
       editor: {
@@ -180,6 +190,31 @@ describe('useFunctionalGroupEoc', () => {
         name: 'ABS',
         isExpanded: true,
         relatedSGroupId: 1,
+      } as FunctionalGroup;
+
+      const params: ItemEventParams<FunctionalGroupsContextMenuProps> = {
+        props: {
+          id: 'test',
+          functionalGroups: [mockFunctionalGroup],
+        },
+      } as ItemEventParams<FunctionalGroupsContextMenuProps>;
+
+      // toExpand = false means "Contract Abbreviation"
+      const shouldHide = hidden(params, false);
+      expect(shouldHide).toBe(false);
+    });
+
+    it('should not hide Contract Abbreviation for a nucleotide component', () => {
+      const { result } = renderHook(() => useFunctionalGroupEoc());
+      const [, hidden] = result.current;
+
+      const sgroup = new SGroup(SGroup.TYPES.SUP);
+      sgroup.data.class = 'BASE';
+      const mockFunctionalGroup = {
+        name: '',
+        isExpanded: true,
+        relatedSGroupId: 1,
+        relatedSGroup: sgroup,
       } as FunctionalGroup;
 
       const params: ItemEventParams<FunctionalGroupsContextMenuProps> = {

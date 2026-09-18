@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler, react-you-might-not-need-an-effect/no-chain-state-updates */
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -281,28 +281,16 @@ export const RnaEditorExpanded = ({
         dispatch(setSequenceSelection(updatedSequenceSelection));
       } else {
         const currentPreset = updatePresetMonomerGroup();
-        const resolvedPhosphatePosition =
-          resolvePhosphatePosition(currentPreset);
         let presetFullName = newPreset?.name;
 
         if (!currentPreset.editedName) {
-          presetFullName = selectPresetFullName({
-            ...currentPreset,
-            connections: buildRnaPresetConnections(
-              currentPreset,
-              resolvedPhosphatePosition,
-            ),
-          });
+          presetFullName = selectPresetFullName(currentPreset);
         }
 
         setNewPreset({ ...currentPreset, name: presetFullName });
       }
     }
-  }, [
-    activePresetMonomerGroup?.groupItem,
-    isSequenceEditInRNABuilderMode,
-    selectedPhosphatePosition,
-  ]);
+  }, [activePresetMonomerGroup?.groupItem, isSequenceEditInRNABuilderMode]);
 
   const scrollToActiveItemInLibrary = (selectedGroup, selectedMonomer) => {
     if (selectedGroup === RnaBuilderPresetsItem.Presets) {

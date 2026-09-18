@@ -765,4 +765,46 @@ describe('serialize (ToKet)', () => {
       { id: '0', atoms: [0, 1] },
     ]);
   });
+  it('does not serialize "selected" property by default (#5429)', () => {
+    // Create a struct with selected atoms, bonds, and other entities
+    const struct = prepareStruct.clone();
+    // Mark all entities as selected using setInitiallySelected
+    struct.atoms.forEach((atom) => {
+      atom.setInitiallySelected(true);
+    });
+    struct.bonds.forEach((bond) => {
+      bond.setInitiallySelected(true);
+    });
+    struct.rxnArrows.forEach((arrow) => {
+      arrow.setInitiallySelected(true);
+    });
+    struct.rxnPluses.forEach((plus) => {
+      plus.setInitiallySelected(true);
+    });
+    struct.simpleObjects.forEach((obj) => {
+      obj.setInitiallySelected(true);
+    });
+    struct.texts.forEach((text) => {
+      text.setInitiallySelected(true);
+    });
+
+    // Serialize the struct WITHOUT needSetSelectionToMacromolecules flag (default)
+    const serialized = ket.serialize(struct);
+
+    // Verify that "selected" property does not appear anywhere in the output
+    expect(serialized).not.toContain('"selected"');
+
+    // Parse and verify no selected properties in the parsed object
+    const parsed = JSON.parse(serialized);
+    const checkForSelected = (obj: any): boolean => {
+      if (typeof obj !== 'object' || obj === null) return false;
+      for (const key in obj) {
+        if (key === 'selected') return true;
+        if (typeof obj[key] === 'object' && checkForSelected(obj[key]))
+          return true;
+      }
+      return false;
+    };
+    expect(checkForSelected(parsed)).toBe(false);
+  });
 });

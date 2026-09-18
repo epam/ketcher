@@ -146,7 +146,9 @@ test.describe('Ketcher bugs in 3.8.0', () => {
      * 5. Exit sequence edit mode by clicking on the canvas.
      * 6. Observe the active selection tool again.
      */
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
@@ -166,7 +168,9 @@ test.describe('Ketcher bugs in 3.8.0', () => {
      * 3. Click on any tool from the left toolbar (Hand, Erase, Single bond, etc.).
      * 4. Observe the active selection tool.
      */
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await CommonLeftToolbar(page).handTool();
     await takeLeftToolbarMacromoleculeScreenshot(page);

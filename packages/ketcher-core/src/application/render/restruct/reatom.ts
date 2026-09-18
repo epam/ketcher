@@ -997,7 +997,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
             connectionAttachmentPoints.values(),
           ).some(([connectionAtomId]) => connectionAtomId === aid);
 
-          if (isConnectionAtom) {
+          if (isConnectionAtom && !problematicAtoms?.has(aid)) {
             // Draw the same blue outline ring used for regular attachment atoms
             const ringPath = this.makeHighlightePlate(
               restruct,

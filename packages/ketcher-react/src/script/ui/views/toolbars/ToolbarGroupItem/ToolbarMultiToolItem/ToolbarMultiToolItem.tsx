@@ -103,7 +103,7 @@ const ToolbarMultiToolItem = (props: Props) => {
   const displayMultiToolItem = !(allInnerItemsHidden || currentStatus?.hidden);
 
   if (!currentStatus && options.length) {
-    const savedSelectionTool = SettingsManager.selectionTool;
+    const savedSelectionTool = SettingsManager.getSelectionTool('micro');
     const savedSelectionToolId = savedSelectionTool
       ? `${savedSelectionTool.tool}-${savedSelectionTool.opts}`
       : undefined;

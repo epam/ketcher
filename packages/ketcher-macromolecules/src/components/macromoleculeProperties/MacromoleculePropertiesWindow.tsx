@@ -115,7 +115,7 @@ const MolecularMass = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
   height: '24px',
-  borderLeft: '1px solid #CAD3DD',
+  borderInlineStart: '1px solid #CAD3DD',
   color: '#585858',
 }));
 
@@ -230,7 +230,7 @@ const HydrophobicityHintHeader = styled('div')(() => ({
 
 const BasicPropertyName = styled('div')(() => ({
   fontSize: '10px',
-  paddingRight: '5px',
+  paddingInlineEnd: '5px',
   whiteSpace: 'nowrap',
 }));
 
@@ -313,7 +313,7 @@ const StyledMonomersCountPanelItem = styled('div')<{
     content: '';
     position: absolute;
     bottom: 0;
-    left: 0;
+    inset-inline-start: 0;
     width: 15px;
     height: 2px;
     background: ${({ theme, monomerShortName, isPeptide }) => {

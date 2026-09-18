@@ -42,12 +42,13 @@ const DropDownSelect = styled(Select)`
     open &&
     css`
       background-color: white;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
     `}
 
   & .MuiSelect-select {
-    padding: 0 24px 0 8px;
+    padding-block: 0;
+    padding-inline: 8px 24px;
     height: 100%;
     display: flex;
     align-items: center;
@@ -79,7 +80,7 @@ const DropDownItem = styled(MenuItem)`
   font-size: 12px;
 
   &.MuiButtonBase-root:hover {
-    border-left: 2px solid #167782;
+    border-inline-start: 2px solid #167782;
   }
 
   & .MuiTypography-root {

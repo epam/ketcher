@@ -38,6 +38,25 @@ t('zoom.in'); // -> "Zoom In"
 t('common:cancel'); // cross-namespace reference
 ```
 
+## Logical CSS properties (RTL groundwork)
+
+New UI-chrome styling (Emotion `css`/`styled`, MUI `sx`) should use logical properties — `insetInlineStart`/`insetInlineEnd`, `marginInlineStart`/`marginInlineEnd`, `paddingInlineStart`/`paddingInlineEnd`, `borderInlineStart`/`borderInlineEnd`, `textAlign: 'start'`/`'end'` — instead of physical `left`/`right`. They're pixel-identical to their physical equivalents in the current LTR-only app, so this costs nothing today, but it's what makes a future RTL locale a data problem instead of a rewrite.
+
+Excluded, and must stay physical: anything computed from real screen/canvas coordinates at render time (`getBoundingClientRect()`-derived hover-preview positions, floating-toolbar placement, context-menu placement) and chemistry-domain values that only coincidentally read like directions (e.g. RNA Builder's 5′/3′ phosphate position, which is a structural fact independent of text direction). See `openspec/changes/ketcher-macromolecules-i18n/design.md` (Section 7) for the reasoning and the full file-by-file list.
+
+## Regression guards
+
+Two Jest suites in `packages/ketcher-react/src/i18n/` enforce this scheme across **both** `ketcher-react` and `ketcher-macromolecules` (the latter scanned as a second root, without either package importing the other's source — see the comments in each file for why that matters):
+
+- `i18n.test.ts` — collects every `t('ns:key')` literal (plus `ns`-bound bare `t('key')` calls resolved via each file's `useTranslation(ns)`), and asserts every one resolves in `en` and in `zh-CN`, that `en`/`zh-CN` have exactly the same keys per namespace, and that interpolation placeholders match between them. Known gap: a key referenced only through a variable (e.g. the Settings dialog's `t(labelKey)`) isn't a string literal at the call site, so it isn't found by this scan — verify those by hand.
+- `noHardcodedStrings.test.ts` — fails if a literal `title`/`label`/`placeholder`/`tooltip`/`aria-label`/`alt` shows up in a directory that's already been migrated to `t()` calls (listed per-package at the top of the file). Extend the relevant `MIGRATED_PATHS`/`MACROMOLECULES_MIGRATED_PATHS` array when a new directory finishes extraction.
+
+Run both with `npm run test:unit` in `packages/ketcher-react` (or `npx jest src/i18n` for just these two).
+
+## Single-language build mode
+
+Setting `KETCHER_SINGLE_LANGUAGE_BUILD=true` in the environment when running either package's `npm run build` strips every non-English locale payload out of the shipped bundle (verified via bundle-content grep + size diff, not just code review — see design.md Section 9) and hides the Settings language switcher entirely. Wired via each package's `rollup.config.mjs` (`@rollup/plugin-replace`, same mechanism as `NODE_ENV`) into `i18n.ts` and `ketcher-macromolecules/src/i18n/registerNamespaces.ts`: the non-English imports stay as plain ES imports (imports can't be conditional) but are referenced only inside a `!SINGLE_LANGUAGE_BUILD` branch, so Rollup's tree-shaking drops the whole branch — imports and JSON included — once the flag is replaced with a literal. Leave the env var unset (or `false`) for the normal multi-language build.
+
 ## Hard rule
 
 Never touch anything that renders inside the `StructEditor` SVG canvas (`data-testid="ketcher-canvas"` → the `editorRef` subtree). That element is explicitly pinned to `dir="ltr"` and is out of scope for text extraction — chemical structure geometry must never be affected by locale.

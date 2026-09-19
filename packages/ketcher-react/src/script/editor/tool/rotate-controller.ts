@@ -908,8 +908,7 @@ class RotateController {
         const text = drawText(textPosition).attr({
           fill: STYLE.INITIAL_COLOR,
         });
-        this.snapAngleIndicator.push(line);
-        this.snapAngleIndicator.push(text);
+        this.snapAngleIndicator.push(line, text);
         break;
       }
     }

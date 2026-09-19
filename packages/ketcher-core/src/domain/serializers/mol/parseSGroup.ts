@@ -302,8 +302,8 @@ function applyDataSGroupInfo(sg: SGroup, propData: string): void {
     false,
   );
 
-  const x = parseFloat(split[0]);
-  const y = parseFloat(split[1]);
+  const x = Number.parseFloat(split[0]);
+  const y = Number.parseFloat(split[1]);
   const attached = split[3].trim() === 'A';
   const absolute = split[4].trim() === 'A';
   const showUnits = split[5].trim() === 'U';

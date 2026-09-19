@@ -65,7 +65,7 @@ const sliderMarks = zoomList.map((zoomValue) => {
 
 export const ZoomSlider = ({ zoom, setZoom }: SliderProps) => {
   const handleChange = (event) => {
-    const parsedValue = parseFloat(event.target.value);
+    const parsedValue = Number.parseFloat(event.target.value);
     const zoomValue = scaleTransformer.getZoomValue(parsedValue);
 
     if (zoom !== zoomValue) {

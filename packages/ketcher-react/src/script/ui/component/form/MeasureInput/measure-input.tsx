@@ -127,7 +127,7 @@ const MeasureInput = ({
   // hence the deliberate single-dep list.
   useEffect(() => {
     if (internalValue !== stringifiedValue) {
-      onChange(parseFloat(internalValue));
+      onChange(Number.parseFloat(internalValue));
     }
   }, [internalValue, stringifiedValue, onChange]);
 
@@ -141,7 +141,7 @@ const MeasureInput = ({
       startsWithZero && !zeroWithDot
         ? stringifiedValue.replace(/^0/, '')
         : stringifiedValue || '0';
-    const isNumber = !isNaN(Number(endorcedValue));
+    const isNumber = !Number.isNaN(Number(endorcedValue));
 
     if (isNumber) {
       setInternalValue((prevValue) =>

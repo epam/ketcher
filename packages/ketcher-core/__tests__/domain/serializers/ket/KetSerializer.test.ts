@@ -321,40 +321,35 @@ describe('serialize (ToKet)', () => {
   it('prepareStructForKet', () => {
     const spy = jest.spyOn(prepareStructForKet, 'prepareStructForKet');
     ket.serialize(prepareStruct);
+    const preparedItems = spy.mock.results[0].value;
+    const molecule = preparedItems.find((item) => item.type === 'molecule');
+    const arrow = preparedItems.find((item) => item.type === 'arrow');
+    const simpleObject = preparedItems.find(
+      (item) => item.type === 'simpleObject',
+    );
+
     expect(spy).toHaveBeenCalled();
     expect(
-      spy.mock.results[0].value.filter((item) => item.type === 'molecule')
-        .length,
+      preparedItems.filter((item) => item.type === 'molecule').length,
     ).toEqual(1);
+    expect(molecule).toBeDefined();
+    expect(molecule!.fragment.atoms.size).toEqual(6);
+    expect(molecule!.fragment.bonds.size).toEqual(6);
     expect(
-      spy.mock.results[0].value.filter((item) => item.type === 'molecule')[0]
-        .fragment.atoms.size,
-    ).toEqual(6);
+      preparedItems.filter((item) => item.type === 'arrow').length,
+    ).toBeTruthy();
+    expect(arrow).toBeDefined();
+    expect(arrow!.data.mode).toEqual('open-angle');
     expect(
-      spy.mock.results[0].value.filter((item) => item.type === 'molecule')[0]
-        .fragment.bonds.size,
-    ).toEqual(6);
-    expect(
-      spy.mock.results[0].value.filter((item) => item.type === 'arrow').length,
+      preparedItems.filter((item) => item.type === 'plus').length,
     ).toBeTruthy();
     expect(
-      spy.mock.results[0].value.filter((item) => item.type === 'arrow')[0].data
-        .mode,
-    ).toEqual('open-angle');
-    expect(
-      spy.mock.results[0].value.filter((item) => item.type === 'plus').length,
+      preparedItems.filter((item) => item.type === 'simpleObject').length,
     ).toBeTruthy();
+    expect(simpleObject).toBeDefined();
+    expect(simpleObject!.data.mode).toEqual('rectangle');
     expect(
-      spy.mock.results[0].value.filter((item) => item.type === 'simpleObject')
-        .length,
-    ).toBeTruthy();
-    expect(
-      spy.mock.results[0].value.filter(
-        (item) => item.type === 'simpleObject',
-      )[0].data.mode,
-    ).toEqual('rectangle');
-    expect(
-      spy.mock.results[0].value.filter((item) => item.type === 'text').length,
+      preparedItems.filter((item) => item.type === 'text').length,
     ).toBeTruthy();
   });
   it('does not serialize "selected" property by default (#5429)', () => {

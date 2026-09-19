@@ -165,6 +165,22 @@ export interface InfoResult {
 
 export interface RecognizeResult extends WithStruct, WithOutputFormat {}
 
+export interface IndigoInfoResponse {
+  indigo_version: string;
+  imago_versions: Array<string>;
+}
+
+export interface ImagoUploadResponse {
+  upload_id: string;
+}
+
+export interface ImagoStatusResponse {
+  state: 'PENDING' | 'STARTED' | 'SUCCESS' | 'FAILURE' | 'REVOKED' | 'RETRY';
+  metadata?: {
+    mol_str: string;
+  };
+}
+
 export interface StructServiceOptions {
   [key: string]: string | number | boolean | undefined;
 }

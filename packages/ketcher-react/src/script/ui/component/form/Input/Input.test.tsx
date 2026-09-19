@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react';
 
 import Input from './Input';
+import { GenericInput } from './Input';
 
 describe('Input component should be rendered correctly', () => {
   it('should render slider according to props', () => {
@@ -33,6 +34,15 @@ describe('Input component should be rendered correctly', () => {
     const { asFragment } = render(<Input {...checkboxProps} />);
 
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  it('normalizes commas in numeric input values', () => {
+    const value = GenericInput.val(
+      { target: { type: 'number', value: '1,25' } },
+      { type: 'number' },
+    );
+
+    expect(value).toBe('1.25');
   });
 
   it('should render textarea if no schema provided and type is textarea', () => {

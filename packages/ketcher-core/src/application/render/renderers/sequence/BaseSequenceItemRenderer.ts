@@ -555,7 +555,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   private get isNodeInFirstSubChain(): boolean {
     if (!this.isSubChainNode(this.node)) return false;
-    return this.chain.subChains[0].nodes.indexOf(this.node) !== -1;
+    return this.chain.subChains[0].nodes.includes(this.node);
   }
 
   // returns true if node is not in ignore list and is first node in subchain

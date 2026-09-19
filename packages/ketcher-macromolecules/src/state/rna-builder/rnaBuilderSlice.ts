@@ -374,9 +374,8 @@ export const rnaBuilderSlice = createSlice({
         FAVORITE_ITEMS_UNIQUE_KEYS,
       ) ?? []) as string[];
 
-      const isKeyAlreadyExisted: boolean = favoriteItemsUniqueKeys.some(
-        (targetKey) => targetKey === uniquePresetKey,
-      );
+      const isKeyAlreadyExisted: boolean =
+        favoriteItemsUniqueKeys.includes(uniquePresetKey);
 
       if (isKeyAlreadyExisted) {
         localStorageWrapper.setItem(

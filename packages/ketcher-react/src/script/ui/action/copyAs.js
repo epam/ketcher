@@ -17,7 +17,7 @@
 import { KetcherLogger, KetSerializer, MolSerializer } from 'ketcher-core';
 
 export default function copyAs(type) {
-  const state = global.currentState;
+  const state = globalThis.currentState;
   const editor = state.editor;
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
@@ -51,8 +51,8 @@ export default function copyAs(type) {
 
     const structData = serializer.serialize(struct);
 
-    if (window.clipboardData) {
-      window.clipboardData.setData('text', structData);
+    if (globalThis.clipboardData) {
+      globalThis.clipboardData.setData('text', structData);
     } else {
       navigator.clipboard.writeText(structData);
     }

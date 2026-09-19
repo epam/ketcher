@@ -10,12 +10,12 @@ exports[`Delete component should render correctly 1`] = `
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root MuiModal-root css-6x6udt-MuiModal-root-MuiDialog-root"
+      class="MuiDialog-root MuiModal-root css-4ut05t-MuiModal-root-MuiDialog-root"
       role="presentation"
     >
       <div
         aria-hidden="true"
-        class="MuiBackdrop-root MuiModal-backdrop css-yiavyu-MuiBackdrop-root-MuiDialog-backdrop"
+        class="MuiBackdrop-root MuiModal-backdrop MuiDialog-backdrop css-1cennmq-MuiBackdrop-root-MuiDialog-backdrop"
         style="opacity: 0.4; background: rgba(94, 94, 94, 0.8); transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
       />
       <div
@@ -23,22 +23,24 @@ exports[`Delete component should render correctly 1`] = `
         tabindex="0"
       />
       <div
-        class="MuiDialog-container MuiDialog-scrollPaper css-hz1bth-MuiDialog-container"
+        class="MuiDialog-container MuiDialog-scrollPaper css-19do60a-MuiDialog-container"
         role="presentation"
         style="opacity: 1; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
         tabindex="-1"
       >
         <div
-          aria-labelledby="_r_0_"
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm css-1t1j96h-MuiPaper-root-MuiDialog-paper"
+          aria-labelledby="_r_1_"
+          aria-modal="true"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperWidthSm css-uq7k9j-MuiPaper-root-MuiDialog-paper"
+          data-mui-focusable=""
           data-testid="delete-preset-modal"
           role="dialog"
-          style="background: rgb(255, 255, 255); border-radius: 8px; color: rgb(51, 51, 51);"
-          testid="delete-preset-modal"
+          style="--Paper-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2),0px 24px 38px 3px rgba(0,0,0,0.14),0px 9px 46px 8px rgba(0,0,0,0.12); background: rgb(255, 255, 255); border-radius: 8px; color: rgb(51, 51, 51);"
+          tabindex="-1"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-15hei83-MuiTypography-root-MuiDialogTitle-root"
-            id="_r_0_"
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-gxb7vs-MuiTypography-root-MuiDialogTitle-root"
+            id="_r_1_"
           >
             <div
               class="css-1uarmuk"
@@ -47,7 +49,7 @@ exports[`Delete component should render correctly 1`] = `
             </div>
             <span>
               <button
-                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-io3cf4-MuiButtonBase-root-MuiIconButton-root"
                 data-testid="close-window-button"
                 tabindex="0"
                 title="Close window"
@@ -57,14 +59,11 @@ exports[`Delete component should render correctly 1`] = `
                   class="css-1td8dcm"
                   name="close"
                 />
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
               </button>
             </span>
           </h2>
           <div
-            class="MuiDialogContent-root css-1wbmh3t-MuiDialogContent-root"
+            class="MuiDialogContent-root css-rtr5nw-MuiDialogContent-root"
           >
             <div
               class="css-pp7hf1"
@@ -84,31 +83,25 @@ exports[`Delete component should render correctly 1`] = `
             </div>
           </div>
           <div
-            class="MuiDialogActions-root MuiDialogActions-spacing css-k8y9qp-MuiDialogActions-root"
+            class="MuiDialogActions-root MuiDialogActions-spacing css-1cme77n-MuiDialogActions-root"
           >
             <button
-              class="MuiButtonBase-root css-1gtlr3p-MuiButtonBase-root"
+              class="MuiButtonBase-root css-97x0sk-MuiButtonBase-root"
               data-testid="cancel-delete-preset-button"
               tabindex="0"
               title="Cancel"
               type="button"
             >
               Cancel
-              <span
-                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-              />
             </button>
             <button
-              class="MuiButtonBase-root css-1arq8ci-MuiButtonBase-root"
+              class="MuiButtonBase-root css-kf0pxw-MuiButtonBase-root"
               data-testid="delete-preset-button"
               tabindex="0"
               title="Delete"
               type="button"
             >
               Delete
-              <span
-                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-              />
             </button>
           </div>
         </div>

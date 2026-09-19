@@ -462,7 +462,12 @@ export const CreateMonomerDialog = (page: Page) => {
       const helmAliasEditbox = aliasesSection.helmAliasEditbox;
       await helmAliasEditbox.click();
       const clearButton = aliasesSection.helmAliasEditboxClearButton;
-      await clearButton.click();
+      if (await clearButton.isVisible()) {
+        await clearButton.click();
+        await this.collapseAliasesSection();
+        await this.expandAliasesSection();
+        await page.waitForTimeout(0.3 * 1000);
+      }
     },
 
     async setHELMAlias(helmAlias: string) {
@@ -482,7 +487,12 @@ export const CreateMonomerDialog = (page: Page) => {
       const bilnAliasEditbox = aliasesSection.bilnAliasEditbox;
       await bilnAliasEditbox.click();
       const clearButton = aliasesSection.bilnAliasEditboxClearButton;
-      await clearButton.click();
+      if (await clearButton.isVisible()) {
+        await clearButton.click();
+        await this.collapseAliasesSection();
+        await this.expandAliasesSection();
+        await page.waitForTimeout(0.3 * 1000);
+      }
     },
 
     async setBILNAlias(bilnAlias: string) {

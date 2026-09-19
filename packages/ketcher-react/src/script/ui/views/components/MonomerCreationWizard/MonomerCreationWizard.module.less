@@ -24,7 +24,7 @@
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  border-color: #F3F5F7;
+  border-color: #f3f5f7;
   pointer-events: none;
   font-family: @Inter;
   background-color: transparent;
@@ -75,7 +75,7 @@
   flex-direction: column;
   gap: 16px;
   padding: 12px;
-  background-color: #F3F5F7;
+  background-color: #f3f5f7;
   border-radius: 8px;
   pointer-events: auto;
   overflow: auto;
@@ -108,7 +108,7 @@
 }
 
 .inputError {
-  background-color: #FDE0DF !important;
+  background-color: #fde0df !important;
   /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @color-secondary-red !important;
 }
@@ -202,12 +202,13 @@
     box-shadow: none !important;
   }
 
-  :global(.MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters) {
+  :global(
+    .MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters
+  ) {
     min-height: 20px !important;
     height: 20px !important;
   }
 }
-
 
 .modificationTypeRow {
   display: flex;
@@ -297,7 +298,7 @@
   &.error {
     & :global(.MuiInputBase-input) {
       border-color: @color-secondary-red !important;
-      background: #FDE0DF !important;
+      background: #fde0df !important;
     }
   }
 }

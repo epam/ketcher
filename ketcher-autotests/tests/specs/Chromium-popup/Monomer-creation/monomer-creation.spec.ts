@@ -1120,7 +1120,7 @@ const nonEligableCodes = [
   },
   {
     description: '2. Incorrect characters',
-    code: '!@#$%^&*()_-+{}[]~}<>;,.\\|/:',
+    code: String.raw`!@#$%^&*()_-+{}[]~}<>;,.\|/:`,
     type: MonomerType.CHEM,
     errorMessage:
       'The monomer code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',

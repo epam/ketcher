@@ -192,7 +192,7 @@ export class ReImage extends ReObject {
       }
       if (hitTarget.node?.setAttribute) {
         hitTarget.node.setAttribute('data-testid', `imageResize-${key}`);
-        hitTarget.node.setAttribute('data-image-id', imageId);
+        hitTarget.node.setAttribute('data-image-id', String(imageId));
         hitTarget.node.setAttribute('pointer-events', 'all');
       }
 

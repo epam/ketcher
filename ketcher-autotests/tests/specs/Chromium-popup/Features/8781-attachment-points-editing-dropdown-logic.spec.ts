@@ -18,102 +18,100 @@ import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
+const dragStartX = 600;
+const dragStartY = 200;
+const dragEndX = 500;
+const dragEndY = 250;
+
+async function openCreateMonomerDialogWithChemType(smiles: string) {
+  await pasteFromClipboardAndOpenAsNewProject(page, smiles);
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+
+  const leftToolbar = LeftToolbar(page);
+  await expect(leftToolbar.createMonomerButton).toBeVisible();
+  await leftToolbar.createMonomer();
+
+  const createMonomerDialog = CreateMonomerDialog(page);
+  await expect(createMonomerDialog.window).toBeVisible();
+  await createMonomerDialog.selectType(MonomerType.CHEM);
+
+  // Keep structure clear of the attributes panel before atom interactions.
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(dragStartX, dragStartY);
+  await dragMouseTo(page, dragEndX, dragEndY);
+
+  return createMonomerDialog;
+}
+
+async function markAtomAsConnectionPoint(atomLabel: string, atomIndex = 0) {
+  const atom = getAtomLocator(page, { atomLabel }).nth(atomIndex);
+  await ContextMenu(page, atom).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+  return atom;
+}
+
+async function markAtomAsLeavingGroup(atomLabel: string, atomIndex = 0) {
+  const atom = getAtomLocator(page, { atomLabel }).nth(atomIndex);
+  await ContextMenu(page, atom).click(ConnectionPointOption.MarkAsLeavingGroup);
+  return atom;
+}
+
+async function getVisibleAttachmentPointAtomOptionTexts() {
+  await expect(page.getByTestId(AttachmentPointAtom.H).first()).toBeVisible();
+
+  const allOptions = page.getByRole('option');
+  const count = await allOptions.count();
+  const optionTexts: string[] = [];
+
+  for (let i = 0; i < count; i++) {
+    const option = allOptions.nth(i);
+    if (!(await option.isVisible())) {
+      continue;
+    }
+
+    const text = (await option.textContent())?.replace(/\u200b/g, '').trim();
+    if (text) {
+      optionTexts.push(text);
+    }
+  }
+
+  return optionTexts;
+}
+
+function getAttachmentPointAtomLabel(atom: AttachmentPointAtom) {
+  switch (atom) {
+    case AttachmentPointAtom.OH:
+      return 'OH';
+    case AttachmentPointAtom.NH2:
+      return 'NH2';
+    case AttachmentPointAtom.CH3:
+      return 'CH3';
+    default:
+      return atom.replace(/-option$/, '');
+  }
+}
+
+async function expectAttachmentPointAtomOptionSelected(
+  atom: AttachmentPointAtom,
+) {
+  const option = page.getByTestId(atom).first();
+  await expect(option).toBeVisible();
+
+  const ariaSelected = await option.getAttribute('aria-selected');
+  const className = (await option.getAttribute('class')) ?? '';
+  expect(
+    ariaSelected === 'true' ||
+      className.includes('Mui-selected') ||
+      className.includes('selected'),
+  ).toBeTruthy();
+}
 
 test.describe('Attachment points editing dropdown logic in monomer creation wizard', () => {
   const minimumDropdownOptionsCount = 3;
   const positionTolerancePx = 3;
   const centerDivider = 2;
-  const dragStartX = 600;
-  const dragStartY = 200;
-  const dragEndX = 500;
-  const dragEndY = 250;
-
-  async function openCreateMonomerDialogWithChemType(smiles: string) {
-    await pasteFromClipboardAndOpenAsNewProject(page, smiles);
-    await clickOnCanvas(page, 0, 0);
-    await selectAllStructuresOnCanvas(page);
-
-    const leftToolbar = LeftToolbar(page);
-    await expect(leftToolbar.createMonomerButton).toBeVisible();
-    await leftToolbar.createMonomer();
-
-    const createMonomerDialog = CreateMonomerDialog(page);
-    await expect(createMonomerDialog.window).toBeVisible();
-    await createMonomerDialog.selectType(MonomerType.CHEM);
-
-    // Keep structure clear of the attributes panel before atom interactions.
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(dragStartX, dragStartY);
-    await dragMouseTo(page, dragEndX, dragEndY);
-
-    return createMonomerDialog;
-  }
-
-  async function markAtomAsConnectionPoint(atomLabel: string, atomIndex = 0) {
-    const atom = getAtomLocator(page, { atomLabel }).nth(atomIndex);
-    await ContextMenu(page, atom).click(
-      ConnectionPointOption.MarkAsConnectionPoint,
-    );
-    return atom;
-  }
-
-  async function markAtomAsLeavingGroup(atomLabel: string, atomIndex = 0) {
-    const atom = getAtomLocator(page, { atomLabel }).nth(atomIndex);
-    await ContextMenu(page, atom).click(
-      ConnectionPointOption.MarkAsLeavingGroup,
-    );
-    return atom;
-  }
-
-  async function getVisibleAttachmentPointAtomOptionTexts() {
-    await expect(page.getByTestId(AttachmentPointAtom.H).first()).toBeVisible();
-
-    const allOptions = page.getByRole('option');
-    const count = await allOptions.count();
-    const optionTexts: string[] = [];
-
-    for (let i = 0; i < count; i++) {
-      const option = allOptions.nth(i);
-      if (!(await option.isVisible())) {
-        continue;
-      }
-
-      const text = (await option.textContent())?.replace(/\u200b/g, '').trim();
-      if (text) {
-        optionTexts.push(text);
-      }
-    }
-
-    return optionTexts;
-  }
-
-  function getAttachmentPointAtomLabel(atom: AttachmentPointAtom) {
-    switch (atom) {
-      case AttachmentPointAtom.OH:
-        return 'OH';
-      case AttachmentPointAtom.NH2:
-        return 'NH2';
-      case AttachmentPointAtom.CH3:
-        return 'CH3';
-      default:
-        return atom.replace(/-option$/, '');
-    }
-  }
-
-  async function expectAttachmentPointAtomOptionSelected(
-    atom: AttachmentPointAtom,
-  ) {
-    const option = page.getByTestId(atom).first();
-    await expect(option).toBeVisible();
-
-    const ariaSelected = await option.getAttribute('aria-selected');
-    const className = (await option.getAttribute('class')) ?? '';
-    expect(
-      ariaSelected === 'true' ||
-        className.includes('Mui-selected') ||
-        className.includes('selected'),
-    ).toBeTruthy();
-  }
 
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();

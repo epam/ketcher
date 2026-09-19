@@ -66,7 +66,7 @@ class BondDelete extends BaseOperation {
       if (halfBond && halfBond.loop >= 0) {
         restruct.loopRemove(halfBond.loop);
       }
-    }, restruct);
+    });
     restruct.clearVisel(rebond.visel);
     restruct.bonds.delete(bid);
     restruct.markItemRemoved();

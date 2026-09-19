@@ -114,7 +114,7 @@ test.describe(`Bond tool:`, () => {
       await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
 
       const countBonds = await page.evaluate(() => {
-        return window.ketcher.editor.struct().bonds.size;
+        return globalThis.ketcher.editor.struct().bonds.size;
       });
 
       expect(countBonds).toEqual(drawnBonds);
@@ -129,7 +129,7 @@ test.describe(`Bond tool:`, () => {
       await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click();
 
       const countBondsWithRing = await page.evaluate(() => {
-        return window.ketcher.editor.struct().bonds.size;
+        return globalThis.ketcher.editor.struct().bonds.size;
       });
 
       expect(countBondsWithRing).toEqual(drawnBondsWithRing);
@@ -139,7 +139,7 @@ test.describe(`Bond tool:`, () => {
       await getAtomLocator(page, { atomLabel: 'C', atomId: 12 }).click();
 
       const sizeAfterErase = await page.evaluate(() => {
-        return window.ketcher.editor.struct().bonds.size;
+        return globalThis.ketcher.editor.struct().bonds.size;
       });
 
       expect(sizeAfterErase).toEqual(bondAfterErase);
@@ -149,7 +149,7 @@ test.describe(`Bond tool:`, () => {
       await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click();
 
       const sizeWithRingAndBond = await page.evaluate(() => {
-        return window.ketcher.editor.struct().bonds.size;
+        return globalThis.ketcher.editor.struct().bonds.size;
       });
 
       expect(sizeWithRingAndBond).toEqual(drawnBondsWithRing);
@@ -208,14 +208,14 @@ test.describe(`Bond tool:`, () => {
       await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
 
       const chainSize = await page.evaluate(() => {
-        return window.ketcher.editor.struct().bonds.size;
+        return globalThis.ketcher.editor.struct().bonds.size;
       });
       expect(chainSize).toEqual(chainSizeWithBond);
 
       await CommonTopLeftToolbar(page).undo();
 
       const chainSizeAfterUndo = await page.evaluate(() => {
-        return window.ketcher.editor.struct().bonds.size;
+        return globalThis.ketcher.editor.struct().bonds.size;
       });
       expect(chainSizeAfterUndo).toEqual(chainSizeWithoutBondAfterUndo);
 
@@ -224,35 +224,35 @@ test.describe(`Bond tool:`, () => {
       await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).click();
 
       const editedChain = await page.evaluate(() => {
-        return window.ketcher.editor.struct().bonds.size;
+        return globalThis.ketcher.editor.struct().bonds.size;
       });
       expect(editedChain).toEqual(chainSizeAfterMultipleEditing);
 
       await CommonTopLeftToolbar(page).undo();
 
       const editedChainUndo = await page.evaluate(() => {
-        return window.ketcher.editor.struct().bonds.size;
+        return globalThis.ketcher.editor.struct().bonds.size;
       });
       expect(editedChainUndo).toEqual(chainSizeWithBond);
 
       await CommonTopLeftToolbar(page).undo();
 
       const editedChainUndoTwice = await page.evaluate(() => {
-        return window.ketcher.editor.struct().bonds.size;
+        return globalThis.ketcher.editor.struct().bonds.size;
       });
       expect(editedChainUndoTwice).toEqual(chainSizeWithoutBondAfterUndo);
 
       await CommonTopLeftToolbar(page).redo();
 
       const editedChainRedo = await page.evaluate(() => {
-        return window.ketcher.editor.struct().bonds.size;
+        return globalThis.ketcher.editor.struct().bonds.size;
       });
       expect(editedChainRedo).toEqual(chainSizeWithBond);
 
       await CommonTopLeftToolbar(page).redo();
 
       const editedChainRedoTwice = await page.evaluate(() => {
-        return window.ketcher.editor.struct().bonds.size;
+        return globalThis.ketcher.editor.struct().bonds.size;
       });
       expect(editedChainRedoTwice).toEqual(chainSizeAfterMultipleEditing);
       await takeEditorScreenshot(page);

@@ -516,11 +516,11 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     const changeEventTriggered = await page.evaluate(() => {
       return new Promise<boolean>((resolve) => {
         let eventFired = false;
-        window.ketcher.editor.subscribe('change', () => {
+        globalThis.ketcher.editor.subscribe('change', () => {
           console.log('in change event');
           eventFired = true;
         });
-        (window as any).__changeEventTriggered = () => eventFired;
+        (globalThis as any).__changeEventTriggered = () => eventFired;
         resolve(true);
       });
     });
@@ -531,7 +531,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await Library(page).clickMonomerAutochain(Peptide.A);
 
     const eventFired = await page.evaluate(() => {
-      return (window as any).__changeEventTriggered?.() ?? false;
+      return (globalThis as any).__changeEventTriggered?.() ?? false;
     });
     expect(eventFired).toBeTruthy();
 

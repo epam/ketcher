@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { filterFGLib } from '../../utils';
 import type { Template } from './TemplateTable';

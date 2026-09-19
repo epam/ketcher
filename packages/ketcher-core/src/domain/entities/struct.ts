@@ -812,12 +812,10 @@ export class Struct {
         return;
       }
 
-      if (!bb) {
-        bb = {
-          min: new Vec2(points[0]),
-          max: new Vec2(points[0]),
-        };
-      }
+      bb ??= {
+        min: new Vec2(points[0]),
+        max: new Vec2(points[0]),
+      };
 
       const boundingBox = bb;
 

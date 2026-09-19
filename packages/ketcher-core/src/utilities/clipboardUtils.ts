@@ -121,7 +121,9 @@ export async function getStructStringFromClipboardData(
  * Checks whether the system clipboard currently holds any content that can be
  * pasted onto the canvas. Used to enable/disable the "Paste" context-menu item.
  */
-export async function isPasteContentAvailable(): Promise<boolean> {
+export async function isPasteContentAvailable(
+  validateContent: (content: string) => Promise<boolean>,
+): Promise<boolean> {
   if (!isClipboardAPIAvailable()) {
     return true;
   }
@@ -129,7 +131,7 @@ export async function isPasteContentAvailable(): Promise<boolean> {
   try {
     const clipboardData = await navigator.clipboard.read();
     const structStr = await getStructStringFromClipboardData(clipboardData);
-    return Boolean(structStr?.trim());
+    return structStr?.trim() ? validateContent(structStr) : false;
   } catch (error) {
     return error instanceof DOMException && error.name === 'NotAllowedError';
   }

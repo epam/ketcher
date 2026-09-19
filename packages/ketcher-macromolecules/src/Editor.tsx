@@ -205,8 +205,11 @@ function Editor({
   const [selectedMonomers, setSelectedMonomers] = useState<BaseMonomer[]>([]);
   const [isPasteAvailable, setIsPasteAvailable] = useState(true);
   const updatePasteAvailability = useCallback(() => {
-    isPasteContentAvailable().then(setIsPasteAvailable);
-  }, []);
+    if (!editor) return;
+    isPasteContentAvailable((content) =>
+      editor.mode.isPasteContentValid(content),
+    ).then(setIsPasteAvailable);
+  }, [editor]);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
   });

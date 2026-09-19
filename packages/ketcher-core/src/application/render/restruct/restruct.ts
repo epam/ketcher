@@ -1086,7 +1086,7 @@ function scaleRPath(path, scaleFactor: number): void {
       scaleRPath(pathItem, scaleFactor);
     }
   } else {
-    if (typeof path.attrs !== 'undefined') {
+    if (path.attrs !== undefined) {
       if ('font-size' in path.attrs) {
         path.attr('font-size', path.attrs['font-size'] * scaleFactor);
       } else if ('stroke-width' in path.attrs) {

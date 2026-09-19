@@ -1179,6 +1179,8 @@ const MonomerCreationWizardInternal = ({
     }
   }, [rnaPresetProblematicAtomIds, editor]);
 
+  const { assignedAttachmentPoints } = monomerCreationState;
+
   // The auto-inferred phosphate position is derived purely from the current
   // assigned attachment points and component structures, so it is computed
   // inline (memoized) rather than synchronized one render late via an effect
@@ -1197,7 +1199,7 @@ const MonomerCreationWizardInternal = ({
       [number, number]
     >();
 
-    monomerCreationState.assignedAttachmentPoints.forEach(
+    assignedAttachmentPoints.forEach(
       ([attachmentAtomId, leavingGroupAtomId], attachmentPointName) => {
         if (
           rnaPresetWizardState.sugar.structure?.atoms?.includes(
@@ -1229,7 +1231,7 @@ const MonomerCreationWizardInternal = ({
     );
   }, [
     isRnaPresetType,
-    monomerCreationState,
+    assignedAttachmentPoints,
     rnaPresetWizardState.phosphate.structure,
     rnaPresetWizardState.sugar.structure,
   ]);
@@ -1280,8 +1282,6 @@ const MonomerCreationWizardInternal = ({
     setLastAutoPhosphatePosition(autoPhosphatePosition);
     handlePhosphatePositionChange(autoPhosphatePosition);
   }
-
-  const { assignedAttachmentPoints } = monomerCreationState;
 
   const validateMonomerWizard = (
     assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
@@ -1951,7 +1951,8 @@ const MonomerCreationWizardInternal = ({
           symbol: valuesToSave.symbol,
           name: valuesToSave.name || valuesToSave.symbol,
           naturalAnalogue: valuesToSave.naturalAnalogue,
-          modificationTypes,
+          modificationTypes:
+            modificationTypes.length > 0 ? modificationTypes : undefined,
           aliasHELM: valuesToSave.aliasHELM,
           aliasBILN: valuesToSave.aliasBILN,
           structure,
@@ -2166,7 +2167,10 @@ const MonomerCreationWizardInternal = ({
                     symbol,
                     name: name || symbol,
                     naturalAnalogue,
-                    modificationTypes,
+                    modificationTypes:
+                      modificationTypes.length > 0
+                        ? modificationTypes
+                        : undefined,
                     aliasHELM,
                     aliasBILN,
                     attachmentPoints: assignedAttachmentPoints,

@@ -22,7 +22,7 @@ import { RGroup } from 'domain/entities/rgroup';
 import { Fragment } from 'domain/entities/fragment';
 
 function paddedNum(number, width, precision) {
-  const parsedNumber = parseFloat(number);
+  const parsedNumber = Number.parseFloat(number);
 
   const numStr = parsedNumber.toFixed(precision || 0).replace(',', '.'); // Really need to replace?
   if (numStr.length > width) throw new Error('number does not fit');
@@ -36,9 +36,9 @@ function paddedNum(number, width, precision) {
  */
 function parseDecimalInt(str) {
   /* reader */
-  const val = parseInt(str, 10);
+  const val = Number.parseInt(str, 10);
 
-  return isNaN(val) ? 0 : val;
+  return Number.isNaN(val) ? 0 : val;
 }
 
 function partitionLine(
@@ -361,7 +361,7 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
   scaffold.mergeInto(ret, null, null, false, true);
 
   Object.keys(rgroups).forEach((id) => {
-    const rgid = parseInt(id, 10);
+    const rgid = Number.parseInt(id, 10);
 
     for (const ctab of rgroups[rgid]) {
       ctab.rgroups.set(rgid, new RGroup());

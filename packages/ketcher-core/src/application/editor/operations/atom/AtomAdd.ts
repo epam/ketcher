@@ -47,7 +47,7 @@ class AtomAdd extends BaseOperation<Data> {
 
     const pp: Partial<AtomAttributes> & { label: string } = {
       label: '',
-      ...(atom ?? {}),
+      ...atom,
     };
     pp.label = pp.label || 'C';
 

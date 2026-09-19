@@ -44,7 +44,7 @@ export function fromAtomAddition(
   pos: Point | null,
   atom?: Partial<AtomAttributes>,
 ) {
-  const atomAttrs: Partial<AtomAttributes> = { ...(atom ?? {}) };
+  const atomAttrs: Partial<AtomAttributes> = { ...atom };
   const action = new Action();
 
   const fragmentAdd = new FragmentAdd();

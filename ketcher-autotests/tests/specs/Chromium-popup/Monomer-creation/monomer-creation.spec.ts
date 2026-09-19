@@ -753,7 +753,7 @@ test(`12. Check that Nucleotide (preset) is placed 6 in the Type drop-down`, asy
     .evaluateAll((elements) =>
       elements
         .map((element) => element.getAttribute('data-testid'))
-        .filter((testId): testId is string => Boolean(testId)),
+        .filter(Boolean),
     );
 
   const monomerTypeOptionsOrder = actualOptionsOrder.filter((testId) =>

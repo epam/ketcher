@@ -92,7 +92,7 @@ const SubMenu = ({
 
   const options = subComponents
     .map((item) => item.props.itemId)
-    .filter((item) => item);
+    .filter(Boolean);
   const activeOptions = options.filter((itemKey) => isActive(itemKey));
   const activeOption = activeOptions[0];
 

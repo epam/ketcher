@@ -14,7 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-import FormulaInput from './FormulaInput';
-import FrozenInput from './FrozenInput';
-
-export { FormulaInput, FrozenInput };
+export { default as FormulaInput } from './FormulaInput';
+export { default as FrozenInput } from './FrozenInput';

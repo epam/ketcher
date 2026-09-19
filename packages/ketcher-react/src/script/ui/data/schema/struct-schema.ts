@@ -19,7 +19,7 @@ import { range } from 'lodash/fp';
 import { sdataCustomSchema } from './sdata-schema';
 import { CUSTOM_QUERY_MAX_LENGTH } from 'ketcher-core';
 
-export { CUSTOM_QUERY_MAX_LENGTH };
+export { CUSTOM_QUERY_MAX_LENGTH } from 'ketcher-core';
 
 function customQueryInvalidMessage(value: unknown): string {
   if (typeof value === 'string' && value.length > CUSTOM_QUERY_MAX_LENGTH) {

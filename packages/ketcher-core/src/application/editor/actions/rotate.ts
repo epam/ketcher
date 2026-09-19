@@ -320,7 +320,7 @@ export function fromRotate(restruct, selection, center, angle: number) {
   if (selection.sgroupData) {
     selection.sgroupData.forEach((did) => {
       const data = struct.sgroups.get(did);
-      if (!data || !data.pp) return;
+      if (!data?.pp) return;
 
       action.addOp(
         new SGroupDataMove(did, rotateDelta(data.pp, center, angle)),

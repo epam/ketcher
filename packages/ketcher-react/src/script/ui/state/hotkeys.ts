@@ -176,7 +176,7 @@ function handleRotateEscape(editor) {
 
 function isActionDisabledOrHidden(actionState, actName): boolean {
   return (
-    (actionState[actName] && actionState[actName].disabled === true) ||
+    actionState[actName]?.disabled === true ||
     actionState[actName]?.hidden === true
   );
 }
@@ -299,7 +299,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   const key = keyNorm(event);
   const hoveredItem = getHoveredItem(render.ctab);
 
-  if (key && key.length === 1 && !hoveredItem) {
+  if (key?.length === 1 && !hoveredItem) {
     const abbreviationLookupHandled = handleAbbreviationLookup(
       key,
       state,

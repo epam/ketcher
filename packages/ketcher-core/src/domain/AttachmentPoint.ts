@@ -242,9 +242,12 @@ export class AttachmentPoint {
       );
 
     hoverableAreaElement
-      .on('mouseover', (event: MouseEventWithAttachmentPoint) => {
-        event.attachmentPointName = this.attachmentPointName;
-        this.editorEvents.mouseOverAttachmentPoint.dispatch(event);
+      .on('mouseover', (event: MouseEvent) => {
+        const eventWithAttachmentPoint = event as MouseEventWithAttachmentPoint;
+        eventWithAttachmentPoint.attachmentPointName = this.attachmentPointName;
+        this.editorEvents.mouseOverAttachmentPoint.dispatch(
+          eventWithAttachmentPoint,
+        );
       })
       .on('mouseleave', (event: MouseEvent) => {
         this.editorEvents.mouseLeaveAttachmentPoint.dispatch(event);
@@ -252,13 +255,19 @@ export class AttachmentPoint {
       .on('mousemove', (event: MouseEvent) => {
         this.editorEvents.mouseMoveAttachmentPoint.dispatch(event);
       })
-      .on('mousedown', (event: MouseEventWithAttachmentPoint) => {
-        event.attachmentPointName = this.attachmentPointName;
-        this.editorEvents.mouseDownAttachmentPoint.dispatch(event);
+      .on('mousedown', (event: MouseEvent) => {
+        const eventWithAttachmentPoint = event as MouseEventWithAttachmentPoint;
+        eventWithAttachmentPoint.attachmentPointName = this.attachmentPointName;
+        this.editorEvents.mouseDownAttachmentPoint.dispatch(
+          eventWithAttachmentPoint,
+        );
       })
-      .on('mouseup', (event: MouseEventWithAttachmentPoint) => {
-        event.attachmentPointName = this.attachmentPointName;
-        this.editorEvents.mouseUpAttachmentPoint.dispatch(event);
+      .on('mouseup', (event: MouseEvent) => {
+        const eventWithAttachmentPoint = event as MouseEventWithAttachmentPoint;
+        eventWithAttachmentPoint.attachmentPointName = this.attachmentPointName;
+        this.editorEvents.mouseUpAttachmentPoint.dispatch(
+          eventWithAttachmentPoint,
+        );
       });
 
     return hoverableAreaElement;

@@ -222,17 +222,17 @@ export class RotationView extends TransientView {
       .attr('fill', 'transparent')
       .attr('stroke', 'none')
       .attr('style', 'pointer-events: all')
-      .on('mousedown', (event: PointerEvent) => {
+      .on('mousedown', (event: MouseEvent) => {
         event.stopPropagation();
         event.preventDefault();
         RotationView.rotationCenterSubscribers.forEach((listener) =>
-          listener({ type: 'down', event }),
+          listener({ type: 'down', event: event as PointerEvent }),
         );
       })
-      .on('mousemove', (event: PointerEvent) => {
+      .on('mousemove', (event: MouseEvent) => {
         if (event.buttons !== 1) return;
         RotationView.rotationCenterSubscribers.forEach((listener) =>
-          listener({ type: 'drag', event }),
+          listener({ type: 'drag', event: event as PointerEvent }),
         );
       });
 
@@ -266,17 +266,19 @@ export class RotationView extends TransientView {
       .attr('class', 'rotation-handle')
       .attr('data-testid', 'rotation-handle')
       .attr('transform', `translate(${handleCenterX},${handleCenterY})`)
-      .on('mousedown', (event: PointerEvent) => {
+      .on('mousedown', (event: MouseEvent) => {
         event.stopPropagation();
         event.preventDefault();
+
         RotationView.rotationHandleSubscribers.forEach((listener) =>
-          listener({ type: 'down', event }),
+          listener({ type: 'down', event: event as PointerEvent }),
         );
       })
-      .on('mousedown', (event: PointerEvent) => {
+      .on('mousemove', (event: MouseEvent) => {
         if (event.buttons !== 1) return;
+
         RotationView.rotationHandleSubscribers.forEach((listener) =>
-          listener({ type: 'drag', event }),
+          listener({ type: 'drag', event: event as PointerEvent }),
         );
       });
 

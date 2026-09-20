@@ -1700,18 +1700,16 @@ export class SequenceMode extends BaseMode {
           const prevSense = previousTwoStrandedNodeInSameChain?.senseNode;
           const prevAntisense =
             previousTwoStrandedNodeInSameChain?.antisenseNode;
-          const currSense = currentTwoStrandedNode?.senseNode;
           const currAntisense = currentTwoStrandedNode?.antisenseNode;
+          const isNonEmptySequenceNode = (node?: SequenceNode | null) =>
+            Boolean(node) && !(node instanceof EmptySequenceNode);
 
           const prevHasRealSenseAndAntisense =
-            !!prevSense &&
-            !(prevSense instanceof EmptySequenceNode) &&
-            !!prevAntisense;
+            isNonEmptySequenceNode(prevSense) &&
+            isNonEmptySequenceNode(prevAntisense);
 
           const currHasAntisenseWithNonEmptyContent =
-            !!currAntisense &&
-            (!(currSense instanceof EmptySequenceNode) ||
-              !(currAntisense instanceof EmptySequenceNode));
+            isNonEmptySequenceNode(currAntisense);
 
           const shouldEditAntisenseInSyncMode =
             prevHasRealSenseAndAntisense || currHasAntisenseWithNonEmptyContent;

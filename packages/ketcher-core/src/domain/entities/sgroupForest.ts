@@ -195,8 +195,8 @@ export function checkOverlapping(
       const sgAtoms = SGroup.getAtoms(struct, sg);
 
       return sgAtoms.length < atoms.length
-        ? sgAtoms.findIndex((aid) => atoms.indexOf(aid) === -1) >= 0
-        : atoms.findIndex((aid) => sgAtoms.indexOf(aid) === -1) >= 0;
+        ? sgAtoms.some((aid) => !atoms.includes(aid))
+        : atoms.some((aid) => !sgAtoms.includes(aid));
     },
     queryComponent: (sid: number) => {
       const sg = struct.sgroups.get(sid);
@@ -209,7 +209,7 @@ export function checkOverlapping(
   const sgroups = atoms.reduce((res, aid) => {
     const atom = struct.atoms.get(aid);
     return atom ? res.union(atom.sgs) : res;
-  }, new Pile());
+  }, new Pile<number>());
 
   return Array.from(sgroups).some(searchFunction[sGroupType]);
 }

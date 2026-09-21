@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import * as moleculeToKet from 'domain/serializers/ket/toKet/moleculeToKet';
 import * as moleculeToStruct from 'domain/serializers/ket/fromKet/moleculeToStruct';
 import * as prepareStructForKet from 'domain/serializers/ket/toKet/prepare';
@@ -44,6 +46,7 @@ import {
   createRenderersManager,
 } from '../../../helpers/dom';
 import { CoreEditor } from 'application/editor';
+import { KetcherLogger } from 'utilities';
 
 const ket = new KetSerializer();
 
@@ -186,6 +189,19 @@ describe('deserialize (ToStruct)', () => {
     expect(
       spy.mock.results[0].value.rgroups.get(14) instanceof RGroup,
     ).toBeTruthy();
+  });
+  it('logs an error when R-group logic is missing', () => {
+    const errorSpy = jest
+      .spyOn(KetcherLogger, 'error')
+      .mockImplementation(() => undefined);
+
+    const struct = rgroupToStruct.rgroupToStruct({});
+
+    expect(errorSpy).toHaveBeenCalledWith(
+      'R-group logic (rlogic) is missing on a KET R-group item',
+    );
+    expect(struct.rgroups.size).toBe(0);
+    errorSpy.mockRestore();
   });
   it('validation function', () => {
     const spy = jest.spyOn(validate, 'validate');
@@ -340,5 +356,47 @@ describe('serialize (ToKet)', () => {
     expect(
       spy.mock.results[0].value.filter((item) => item.type === 'text').length,
     ).toBeTruthy();
+  });
+  it('does not serialize "selected" property by default (#5429)', () => {
+    // Create a struct with selected atoms, bonds, and other entities
+    const struct = prepareStruct.clone();
+    // Mark all entities as selected using setInitiallySelected
+    struct.atoms.forEach((atom) => {
+      atom.setInitiallySelected(true);
+    });
+    struct.bonds.forEach((bond) => {
+      bond.setInitiallySelected(true);
+    });
+    struct.rxnArrows.forEach((arrow) => {
+      arrow.setInitiallySelected(true);
+    });
+    struct.rxnPluses.forEach((plus) => {
+      plus.setInitiallySelected(true);
+    });
+    struct.simpleObjects.forEach((obj) => {
+      obj.setInitiallySelected(true);
+    });
+    struct.texts.forEach((text) => {
+      text.setInitiallySelected(true);
+    });
+
+    // Serialize the struct WITHOUT needSetSelectionToMacromolecules flag (default)
+    const serialized = ket.serialize(struct);
+
+    // Verify that "selected" property does not appear anywhere in the output
+    expect(serialized).not.toContain('"selected"');
+
+    // Parse and verify no selected properties in the parsed object
+    const parsed = JSON.parse(serialized);
+    const checkForSelected = (obj: any): boolean => {
+      if (typeof obj !== 'object' || obj === null) return false;
+      for (const key in obj) {
+        if (key === 'selected') return true;
+        if (typeof obj[key] === 'object' && checkForSelected(obj[key]))
+          return true;
+      }
+      return false;
+    };
+    expect(checkForSelected(parsed)).toBe(false);
   });
 });

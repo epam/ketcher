@@ -53,6 +53,15 @@ describe('useDisabledForSequenceMode hook', () => {
       );
       expect(result.current).toBe(true);
     });
+
+    it('should return false for ambiguous monomers without MonomerCaps', () => {
+      mockUseAppSelector.mockReturnValue(true);
+      delete monomer.props.MonomerCaps;
+      const { result } = renderHook(() =>
+        useDisabledForSequenceMode(monomer, MonomerGroups.BASES),
+      );
+      expect(result.current).toBe(false);
+    });
   });
 
   describe('for Phosphates', () => {

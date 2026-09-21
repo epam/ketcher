@@ -10,7 +10,6 @@ export class MultitailArrowAddTool implements ArrowAddTool {
   static readonly MIN_HEIGHT = 2.5;
   static readonly MIN_WIDTH = 1.2;
 
-  // eslint-disable-next-line no-useless-constructor
   constructor(private readonly editor: Editor) {}
 
   private get render() {

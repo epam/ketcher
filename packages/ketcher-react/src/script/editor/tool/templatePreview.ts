@@ -212,7 +212,7 @@ class TemplatePreview {
       const sign2 = this.template.sign;
       const shouldFlip = sign1 * sign2 > 0;
 
-      const promise = fromTemplateOnBondAction(
+      let [action, pasteItems] = fromTemplateOnBondAction(
         this.restruct,
         this.template,
         ci.id,
@@ -222,14 +222,10 @@ class TemplatePreview {
         true,
       );
 
-      promise.then(([action, pasteItems]) => {
-        if (!this.isModeFunctionalGroup) {
-          const mergeItems = getItemsToFuse(this.editor, pasteItems);
-          action = fromItemsFuse(this.restruct, mergeItems).mergeWith(action);
-          this.editor.update(action, true);
-          this.connectedPreviewAction = action;
-        }
-      });
+      const mergeItems = getItemsToFuse(this.editor, pasteItems);
+      action = fromItemsFuse(this.restruct, mergeItems).mergeWith(action);
+      this.editor.update(action, true);
+      this.connectedPreviewAction = action;
     } else if (ci.map === 'atoms') {
       const angle = getAngleFromEvent(event, ci, this.restruct);
 

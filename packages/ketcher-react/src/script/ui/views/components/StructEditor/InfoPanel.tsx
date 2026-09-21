@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -89,7 +90,6 @@ interface InfoPanelProps {
 
 const InfoPanel: FC<InfoPanelProps> = (props) => {
   const { clientX, clientY, render, className, groupStruct, sGroup } = props;
-  const groupName = sGroup?.data?.name;
 
   const sGroupData = useMemo<string | null>(() => {
     if (sGroup && SGroup.isDataSGroup(sGroup)) {
@@ -98,11 +98,11 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
       return 'Query component';
     }
     return null;
-  }, [groupStruct, sGroup]);
+  }, [sGroup]);
 
   const molecule = useMemo<Struct | null>(
     () => (groupStruct ? groupStruct.clone() : null),
-    [groupName, groupStruct],
+    [groupStruct],
   );
 
   // Ambiguous monomer tooltip uses marker coordinates, not mouse position,

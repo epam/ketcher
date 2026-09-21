@@ -47,15 +47,25 @@ function updateVisibleTools(visibleTool, activeTool) {
   );
 }
 
+let resizeListener = null;
+
 export function initResize() {
   return function (dispatch, getState) {
-    const onResize = throttle(250, () => {
+    resizeListener = throttle(250, () => {
       const state = getState();
+      if (!state.editor) return;
       state.editor.render.update();
       dispatch({ type: 'CLEAR_VISIBLE', data: state.actionState.activeTool });
     });
-    addEventListener('resize', onResize); // eslint-disable-line
+    addEventListener('resize', resizeListener);
   };
+}
+
+export function removeResizeListener() {
+  if (resizeListener) {
+    removeEventListener('resize', resizeListener);
+    resizeListener = null;
+  }
 }
 
 /* REDUCER */

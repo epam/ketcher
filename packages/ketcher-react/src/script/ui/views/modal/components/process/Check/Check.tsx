@@ -228,6 +228,8 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
   const handleSettingsChange = () => setIsCheckedWithNewSettings(false);
 
   useEffect(() => {
+    // Decided to suppress because this is intended behaviour for this component
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     handleCheck();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -303,6 +305,15 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
             </div>
           </div>
         </div>
+        <p
+          className={style.idsExplanation}
+          data-testid="check-structure-id-explanation"
+        >
+          Some checks will return atom or bond IDs for the elements causing the
+          error. To visualize them toggle on the &apos;Show Atom IDs&apos; and
+          &apos;Show Bond IDs&apos; in the &apos;Debugging&apos; section of
+          Settings.
+        </p>
       </Form>
     </Dialog>
   );

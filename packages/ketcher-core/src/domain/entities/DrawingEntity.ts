@@ -123,7 +123,6 @@ export abstract class DrawingEntity {
   }
 
   private isPointInPolygon(r: Vec2[], p: Vec2) {
-    // eslint-disable-line max-statements
     const d = new Vec2(0, 1);
     const n = d.rotate(Math.PI / 2);
     let v0 = Vec2.diff(r[r.length - 1], p);
@@ -132,7 +131,7 @@ export abstract class DrawingEntity {
     let w0 = new Vec2(0, 0);
     let counter = 0;
     const eps = 1e-5;
-    let flag1 = false;
+    let flag1: boolean;
     let flag0 = false;
 
     for (const point of r) {
@@ -144,12 +143,10 @@ export abstract class DrawingEntity {
       if (n1 * n0 < 0) {
         if (d1 * d0 > -eps) {
           if (d0 > -eps) flag1 = true;
-          /* eslint-disable no-mixed-operators */
         } else if (
           (Math.abs(n0) * Math.abs(d1) - Math.abs(n1) * Math.abs(d0)) * d1 >
           0
         ) {
-          /* eslint-enable no-mixed-operators */
           flag1 = true;
         }
       }

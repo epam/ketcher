@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type CSSProperties, type RefObject, useEffect, useState } from 'react';
+import {
+  type CSSProperties,
+  type RefObject,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
 type HookParams = [
@@ -32,7 +37,7 @@ function usePortalStyle([
 ]: HookParams): [CSSProperties] {
   const [portalStyle, setPortalStyle] = useState<CSSProperties>({});
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!ref.current) {
       return;
     }

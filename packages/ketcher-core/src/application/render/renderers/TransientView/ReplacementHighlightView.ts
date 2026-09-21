@@ -9,6 +9,12 @@ import {
 } from 'application/render/renderers/monomerHighlightShapes';
 import paperjs from 'paper';
 
+type UnitedPaperPath = {
+  unite(path: InstanceType<typeof paperjs.CompoundPath>): UnitedPaperPath;
+  remove(): void;
+  pathData: string;
+};
+
 export type ReplacementHighlightViewParams = {
   /** The canvas monomers that will be replaced on drop. */
   monomers: BaseMonomer[];
@@ -37,7 +43,6 @@ const NECK_HALF_WIDTH = 0.6;
  * union to produce one continuous path that hugs each shape and flows smoothly
  * across the necks — without SVG filters or sampled SDF contouring.
  */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class ReplacementHighlightView extends TransientView {
   public static readonly viewName = 'ReplacementHighlightView';
@@ -82,7 +87,7 @@ export class ReplacementHighlightView extends TransientView {
   ): HighlightPathData | undefined {
     paperjs.setup(document.createElement('canvas'));
 
-    let combinedPath: paper.PathItem | undefined;
+    let combinedPath: UnitedPaperPath | undefined;
 
     pathsData.forEach((pathData) => {
       const path = new paperjs.CompoundPath(pathData);

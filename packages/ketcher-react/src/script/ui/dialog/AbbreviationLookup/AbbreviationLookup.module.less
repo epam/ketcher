@@ -29,13 +29,15 @@
 .input {
   width: 100%;
 
-  &.input[type=text] {
+  &.input[type="text"] {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     border: 1.5px solid @color-primary-green;
     padding: 5px 8px 5px 24px;
     font-size: 12px;
     line-height: 14px;
 
     &:hover {
+      /* stylelint-disable-next-line declaration-property-value-no-unknown */
       border: 1.5px solid @color-primary-green;
     }
   }
@@ -77,6 +79,7 @@
   line-height: 14px;
 
   &:global(.MuiAutocomplete-noOptions) {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     padding: 8px;
   }
 }
@@ -88,6 +91,7 @@
   }
 
   :global(li.MuiAutocomplete-option.Mui-focused), :global(li.MuiAutocomplete-option.Mui-focusVisible) {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     border-left: 2px solid @color-primary-green;
     background-color: #F3F5F7;
   }

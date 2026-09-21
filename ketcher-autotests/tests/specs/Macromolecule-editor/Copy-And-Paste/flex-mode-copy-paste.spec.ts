@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { test } from '@fixtures';
 import {

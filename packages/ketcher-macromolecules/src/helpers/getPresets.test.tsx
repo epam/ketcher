@@ -1,4 +1,3 @@
-/* eslint-disable jest/expect-expect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *

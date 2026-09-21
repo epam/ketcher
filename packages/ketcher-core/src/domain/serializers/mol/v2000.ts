@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable guard-for-in */ // todo
+// todo
 
 import { Atom, AttachmentPoints, StereoLabel } from 'domain/entities/atom';
 import { AtomList } from 'domain/entities/atomList';
@@ -506,7 +506,6 @@ function parseCTabV2000(
   countsSplit: string[],
   ignoreChiralFlag?: boolean,
 ): Struct {
-  // eslint-disable-line max-statements
   /* reader */
   const ctab = new Struct();
   let i: number;
@@ -604,7 +603,6 @@ function parseCTabV2000(
 }
 
 function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
-  // eslint-disable-line max-statements
   ctabLines = ctabLines.slice(7);
   if (ctabLines[0].trim() !== '$CTAB') throw new Error('RGFile format invalid');
   let i = 1;
@@ -616,7 +614,6 @@ function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   ctabLines = ctabLines.slice(i + 1);
   const fragmentLines: Record<number, string[][]> = {};
   while (true) {
-    // eslint-disable-line no-constant-condition
     if (ctabLines.length === 0) throw new Error('Unexpected end of file');
     let line = ctabLines[0].trim();
     if (line === '$END MOL') {
@@ -628,7 +625,6 @@ function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
     fragmentLines[rgid] = [];
     ctabLines = ctabLines.slice(2);
     while (true) {
-      // eslint-disable-line no-constant-condition
       if (ctabLines.length === 0) throw new Error('Unexpected end of file');
       line = ctabLines[0].trim();
       if (line === '$END RGP') {
@@ -665,7 +661,6 @@ function parseRxn2000(
   shouldReactionRelayout?: boolean,
   ignoreChiralFlag?: boolean,
 ): Struct {
-  // eslint-disable-line max-statements
   /* reader */
   ctabLines = ctabLines.slice(4);
   const countsSplit = utils.partitionLine(

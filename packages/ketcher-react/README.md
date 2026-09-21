@@ -17,7 +17,7 @@ The ketcher-react package contains only the functionality necessary to define co
 ### Requirements
 
 - **React**: 18.2.0 or higher (React 19 is also supported)
-- **Node.js**: 24.14.1 or higher
+- **Node.js**: 24.20.0 or higher
 
 ### Install
 

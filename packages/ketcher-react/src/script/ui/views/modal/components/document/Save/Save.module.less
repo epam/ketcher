@@ -87,8 +87,7 @@ input {
         .warningsArr {
           color: @color-text-primary;
           white-space: pre-line;
-          /* stylelint-disable-next-line declaration-property-value-keyword-no-deprecated */
-          word-break: break-word;
+          overflow-wrap: anywhere;
           font-size: 12px;
           line-height: 14px;
         }
@@ -110,7 +109,6 @@ input {
         height: 28px;
 
       &:not(:active) {
-        /* stylelint-disable-next-line declaration-property-value-keyword-no-deprecated */
         background-color: @color-background-primary;
         color: @color-text-primary;
       }

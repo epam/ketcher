@@ -17,6 +17,10 @@ import { defaultTheme } from 'theming/defaultTheme';
 const testTheme = merge(createTheme(), { ketcher: defaultTheme });
 
 const useLayoutModeMock = jest.fn(() => 'sequence-layout-mode');
+const mockEditorEvents = {
+  keyDown: { add: () => true, remove: () => true },
+  cancelSequenceEditInRNABuilderMode: { add: () => true, remove: () => true },
+};
 
 jest.mock('hooks', () => ({
   ...jest.requireActual('hooks'),
@@ -60,7 +64,7 @@ describe('Test Rna Editor Expanded component', () => {
           editor: {
             editor: {
               isSequenceEditInRNABuilderMode: true,
-              events: { keyDown: { add: () => true, remove: () => true } },
+              events: mockEditorEvents,
             },
           },
           rnaBuilder: {
@@ -167,7 +171,7 @@ describe('Test Rna Editor Expanded component', () => {
       editor: {
         editor: {
           isSequenceEditInRNABuilderMode: true,
-          events: { keyDown: { add: () => true, remove: () => true } },
+          events: mockEditorEvents,
         },
       },
       rnaBuilder: {

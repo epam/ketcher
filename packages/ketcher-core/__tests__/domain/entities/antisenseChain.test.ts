@@ -133,9 +133,9 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
         (monomer) => monomer.label === RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
       ),
     ).toBe(true);
-    expect(
-      antisenseMonomers.map((monomer) => monomer.label).includes('U'),
-    ).toBe(true);
+    expect(antisenseMonomers.some((monomer) => monomer.label === 'U')).toBe(
+      true,
+    );
   });
 
   it('complements 2-damdA into P+R+U and keeps the original as sense', () => {
@@ -174,9 +174,9 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
         (monomer) => monomer.label === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA,
       ),
     ).toBe(true);
-    expect(
-      antisenseMonomers.map((monomer) => monomer.label).includes('T'),
-    ).toBe(true);
+    expect(antisenseMonomers.some((monomer) => monomer.label === 'T')).toBe(
+      true,
+    );
   });
 
   it('is a no-op for 5NitInd (natural analogue X)', () => {
@@ -234,7 +234,9 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     );
     const interFragmentBond = antisenseCovalentBonds.some((bond) => {
       const monomers = [bond.firstMonomer, bond.secondMonomer];
-      return phosphates.every((phosphate) => monomers.includes(phosphate));
+      return phosphates.every((phosphate) =>
+        monomers.some((monomer) => monomer === phosphate),
+      );
     });
 
     expect(interFragmentBond).toBe(false);
@@ -281,7 +283,7 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     ).toHaveLength(2);
     // No verbatim copy of the unsplit nucleotide on the antisense strand.
     expect(
-      antisenseMonomers.map((monomer) => monomer.label).includes('2-damdA'),
+      antisenseMonomers.some((monomer) => monomer.label === '2-damdA'),
     ).toBe(false);
   });
 

@@ -186,6 +186,7 @@ export class SequenceMode extends BaseMode {
     const command = super.initialize(needRemoveSelection);
     const editor = provideEditorInstance();
 
+    editor.zoomTool.forgetRememberedZoomTransform();
     editor.drawingEntitiesManager.clearCanvas();
 
     const needRecalculateOldAntisense =

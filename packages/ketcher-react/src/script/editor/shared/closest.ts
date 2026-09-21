@@ -49,6 +49,7 @@ type FindMapFn = (
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 const SELECTION_WITHIN_TEXT = 0;
+const SELECTION_DISTANCE_COEFFICIENT_FOR_ATTACHMENT_GROUP = 0.5;
 
 const findMaps: Record<string, FindMapFn> = {
   atoms: findClosestAtom,
@@ -204,7 +205,7 @@ function findClosestAttachmentGroup(
   minDist: number | null,
 ) {
   let closestId: number | null = null;
-  const maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
+  const maxMinDist = SELECTION_DISTANCE_COEFFICIENT_FOR_ATTACHMENT_GROUP;
   const skipId = skip?.map === 'attachmentGroups' ? skip.id : null;
   let effectiveMinDist = Math.min(minDist ?? maxMinDist, maxMinDist);
 

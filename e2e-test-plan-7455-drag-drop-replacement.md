@@ -178,6 +178,13 @@ Conventions: shared-page pattern where a file is single-mode (`initFlexCanvas` /
 
 Each phase ends with running the new spec locally (`npm run serve` on port 4002 + from `ketcher-autotests/`: `npx playwright test <spec>` or `npm run test:debug -- <spec>`) and fixing before moving on.
 
+### Phase 0 results (done 2026-09-21)
+
+- Spike spec `tests/specs/Chromium-popup/Monomer-Replacement/spike-drag-drop-replacement.spec.ts` — **both tests pass** (chromium-popup, ~6 s):
+  - Drop a library monomer on another monomer's center → target replaced (old alias count 0, new alias count 1). Replacement works headless via `dragMonomerOnCanvas` with bounding-box-center coordinates. ✅
+  - Drop 40 px away from the center → no replacement, new monomer added (both present). 10 px radius behaves as expected. ✅
+- Notes: `Peptide.G` does not exist in the Peptides enum — use existing entries (e.g. `Peptide.C`). Spike file to be deleted/absorbed into Phase 3 spec.
+
 ## 9. Rules & constraints to respect (from CLAUDE.md / testing.md)
 
 - New tests go in the **chromium-popup** project only.

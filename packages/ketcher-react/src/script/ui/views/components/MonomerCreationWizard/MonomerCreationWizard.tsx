@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/immutability */
@@ -28,7 +27,14 @@ import {
   provideEditorInstance,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import clsx from 'clsx';
 import { isNaturalAnalogueRequired } from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
 import {
@@ -1169,11 +1175,18 @@ const MonomerCreationWizardInternal = ({
     }
   }, [monomerCreationState?.hasDefaultAttachmentPoints]);
 
+  // Capture the attachment-point-in-use data once at mount so the effect below
+  // can read it without adding it as a reactive dep (the notification is only
+  // relevant when the wizard opens, not on subsequent state changes).
+  const attachmentAtomIdsAtOpenRef = useRef(
+    monomerCreationState?.attachmentAtomIdsWithExternalBonds,
+  );
+
   // Show a dismissible info notification when the wizard is opened for an
   // existing monomer whose attachment points are currently in use by canvas bonds.
   useEffect(() => {
     const attachmentAtomIdsWithExternalBonds =
-      monomerCreationState?.attachmentAtomIdsWithExternalBonds;
+      attachmentAtomIdsAtOpenRef.current;
     if (
       !attachmentAtomIdsWithExternalBonds ||
       attachmentAtomIdsWithExternalBonds.size === 0
@@ -1198,11 +1211,12 @@ const MonomerCreationWizardInternal = ({
         ],
       ]),
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const { assignedAttachmentPoints } = monomerCreationState;
+
   const autoPhosphatePosition = useMemo(() => {
-    if (!monomerCreationState || !isRnaPresetType) {
+    if (!isRnaPresetType) {
       return;
     }
 
@@ -1215,7 +1229,7 @@ const MonomerCreationWizardInternal = ({
       [number, number]
     >();
 
-    monomerCreationState.assignedAttachmentPoints.forEach(
+    assignedAttachmentPoints.forEach(
       ([attachmentAtomId, leavingGroupAtomId], attachmentPointName) => {
         if (
           rnaPresetWizardState.sugar.structure?.atoms?.includes(
@@ -1247,7 +1261,7 @@ const MonomerCreationWizardInternal = ({
     );
   }, [
     isRnaPresetType,
-    monomerCreationState,
+    assignedAttachmentPoints,
     rnaPresetWizardState.phosphate.structure,
     rnaPresetWizardState.sugar.structure,
   ]);
@@ -1257,8 +1271,6 @@ const MonomerCreationWizardInternal = ({
       handlePhosphatePositionChange(autoPhosphatePosition);
     }
   }, [autoPhosphatePosition, handlePhosphatePositionChange]);
-
-  const { assignedAttachmentPoints } = monomerCreationState;
 
   const validateMonomerWizard = (
     assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
@@ -1928,7 +1940,8 @@ const MonomerCreationWizardInternal = ({
           symbol: valuesToSave.symbol,
           name: valuesToSave.name || valuesToSave.symbol,
           naturalAnalogue: valuesToSave.naturalAnalogue,
-          modificationTypes,
+          modificationTypes:
+            modificationTypes.length > 0 ? modificationTypes : undefined,
           aliasHELM: valuesToSave.aliasHELM,
           aliasBILN: valuesToSave.aliasBILN,
           structure,
@@ -2143,7 +2156,10 @@ const MonomerCreationWizardInternal = ({
                     symbol,
                     name: name || symbol,
                     naturalAnalogue,
-                    modificationTypes,
+                    modificationTypes:
+                      modificationTypes.length > 0
+                        ? modificationTypes
+                        : undefined,
                     aliasHELM,
                     aliasBILN,
                     attachmentPoints: assignedAttachmentPoints,

@@ -21,7 +21,6 @@ import {
   selectEditor,
   selectEditorActiveTool,
   selectIsSequenceEditInRNABuilderMode,
-  selectTool,
 } from 'state/common';
 import { modalComponentList } from 'components/modal/modalContainer';
 import { openModal } from 'state/modal';
@@ -108,7 +107,6 @@ export function TopMenuComponent() {
     } else if (name === 'clear') {
       editor?.events.resetSequenceEditMode.dispatch();
       editor?.events.selectTool.dispatch([name]);
-      dispatch(selectTool(lastSelectedSelectionMenuItem));
       editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);
       if (isSequenceEditInRNABuilderMode)
         resetRnaBuilderAfterSequenceUpdate(dispatch, editor);

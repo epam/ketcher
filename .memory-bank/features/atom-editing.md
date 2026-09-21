@@ -1,5 +1,10 @@
 # Atom Editing
 
+> **Read when:** a ticket changes how atoms are placed, replaced or charged, or which atom
+> properties the user can set.
+> **Skip when:** you need the implementation — the `modules/` files have it; this file describes
+> behaviour only.
+
 ## Problem
 
 Chemists need to place, replace, and annotate atoms in a 2D structure — choosing any element, adjusting charge, and setting atom-level properties (isotope, valence, radical, query attributes) — without editing raw file formats.

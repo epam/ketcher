@@ -1,5 +1,9 @@
 # Editor Engine
 
+> **Read when:** tools, modes, editor events, instance resolution, or the bridge between the micro
+> and macro editors.
+> **Skip when:** pure model, serializer or styling work.
+
 > The two editor controllers that own tools, selection, events, and the edit loop.
 
 This is a cross-cutting deep-dive. For package boundaries see [ketcher-react](./ketcher-react.md) and [ketcher-macromolecules](./ketcher-macromolecules.md). For the mutation/undo machinery see [operations-history](./operations-history.md).

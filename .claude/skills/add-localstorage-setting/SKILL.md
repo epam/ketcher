@@ -1,6 +1,6 @@
 ---
 name: add-localstorage-setting
-description: 'Persist a new setting in LocalStorage via the ketcher-opts mechanism and wire it into a React component in ketcher-react. Use when: a component needs to remember user preferences, UI state, or editor options across page reloads; adding a new field to SettingsService and reading/writing it through the useSettings hook; replacing direct localStorage access with the standard settings store.'
+description: 'Persist a user setting in LocalStorage through SettingsService (ketcher-opts) and read or write it from a ketcher-react component with useSettings. Use when UI state or editor options must survive a reload, or to replace direct localStorage access.'
 argument-hint: '<setting-name> <type> <default> in <component-file-path> — e.g. colorPickerCustomColors string[] [] in src/script/ui/component/form/colorPicker/ColorPicker.tsx'
 ---
 

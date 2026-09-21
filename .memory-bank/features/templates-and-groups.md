@@ -1,5 +1,9 @@
 # Templates, Functional Groups & Structural Groups
 
+> **Read when:** templates, functional groups, R-Groups or S-Groups.
+> **Skip when:** you need the implementation — the `modules/` files have it; this file describes
+> behaviour only.
+
 ## Problem
 
 Drawing common rings, reusable fragments, functional groups, Markush (R-Group) structures, and structural (S-Group) annotations atom-by-atom is slow and error-prone. Ketcher provides libraries and grouping tools so users insert and annotate these constructs directly.

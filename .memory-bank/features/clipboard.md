@@ -1,5 +1,9 @@
 # Clipboard (Copy / Cut / Paste)
 
+> **Read when:** copy, cut or paste behaviour, or the formats exchanged through the clipboard.
+> **Skip when:** you need the implementation — the `modules/` files have it; this file describes
+> behaviour only.
+
 ## Problem
 
 Users need to duplicate parts of a structure, move content within a drawing, and exchange structures with other applications by copying to and pasting from the system clipboard in several chemical formats.

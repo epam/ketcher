@@ -1,5 +1,8 @@
 # Operations & History
 
+> **Read when:** adding or changing any model mutation, or anything about undo/redo.
+> **Skip when:** read-only features, UI and styles.
+
 > How every model change is encapsulated for undo/redo.
 
 Cross-cutting deep-dive. Every mutation of model in Ketcher is an operation; the editor never mutates the model in place. There are **two parallel systems** that share the same operations folder but use different abstractions — one for micromolecules, one for macromolecules.

@@ -1,3 +1,5 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -21,6 +23,7 @@ import {
   useRef,
   useTransition,
   useLayoutEffect,
+  useMemo,
 } from 'react';
 import type { Struct } from 'ketcher-core';
 import clsx from 'clsx';
@@ -53,13 +56,8 @@ interface TemplateTableProps {
 // then progressively mount heavy SVG previews with low-priority updates.
 const INITIAL_PREVIEW_COUNT = 4;
 const PREVIEW_BATCH_SIZE = 4;
-// How long a batch may wait for idle time before the browser is asked to run
-// it regardless. Capped at 100ms because a longer deadline (500ms) leaves a
-// pause that is perceptible before the previews appear.
 const PREVIEW_IDLE_TIMEOUT_MS = 100;
 
-// Single source of truth for where preview hydration starts, so the initial
-// render, the reset on templates change, and the batch scheduler cannot drift.
 const getInitialPreviewCount = (templateCount: number) =>
   Math.min(INITIAL_PREVIEW_COUNT, templateCount);
 
@@ -97,74 +95,69 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
       return;
     }
 
-    const calculateSize = () => {
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (rect) {
-        setContainerSize({ width: rect.width, height: rect.height });
-      }
+    const updateContainerSize = (width: number, height: number) => {
+      setContainerSize((previousSize) => {
+        if (previousSize?.width === width && previousSize.height === height) {
+          return previousSize;
+        }
+
+        return { width, height };
+      });
     };
 
-    // Calculate on mount
-    calculateSize();
+    const container = containerRef.current;
+    const initialRect = container.getBoundingClientRect();
+    updateContainerSize(initialRect.width, initialRect.height);
 
-    // Recalculate on resize
-    const resizeObserver = new ResizeObserver(calculateSize);
-    resizeObserver.observe(containerRef.current);
+    const resizeObserver = new ResizeObserver(([entry]) => {
+      updateContainerSize(entry.contentRect.width, entry.contentRect.height);
+    });
+    resizeObserver.observe(container);
 
     return () => resizeObserver.disconnect();
   }, []);
 
-  // Progressive preview hydration reacts to the idle/frame scheduler (an
-  // external system), so each scheduled batch schedules the next one
-  // directly instead of relying on an effect that watches the count state.
   useEffect(() => {
-    let cancelled = false;
-    let idleCallbackId: number | undefined;
-    let frameId: number | undefined;
+    if (previewRenderedCount >= templates.length) {
+      return;
+    }
 
-    const scheduleNext = (currentCount: number) => {
-      if (currentCount >= templates.length) {
-        return;
-      }
-
-      const requestIdle = window.requestIdleCallback;
-      const runBatch = () => {
-        if (cancelled) {
-          return;
-        }
-        const nextCount = Math.min(
-          currentCount + PREVIEW_BATCH_SIZE,
-          templates.length,
-        );
-        startTransition(() => setPreviewRenderedCount(nextCount));
-        scheduleNext(nextCount);
+    const requestIdle = window.requestIdleCallback;
+    if (typeof requestIdle === 'function') {
+      const callback = requestIdle(
+        () => {
+          startTransition(() => {
+            setPreviewRenderedCount((prev) =>
+              Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
+            );
+          });
+        },
+        { timeout: PREVIEW_IDLE_TIMEOUT_MS },
+      );
+      return () => {
+        window.cancelIdleCallback?.(callback);
       };
+    }
 
-      if (typeof requestIdle === 'function') {
-        idleCallbackId = requestIdle(runBatch, {
-          timeout: PREVIEW_IDLE_TIMEOUT_MS,
-        });
-      } else {
-        frameId = window.requestAnimationFrame(runBatch);
-      }
-    };
-
-    scheduleNext(getInitialPreviewCount(templates.length));
-
-    return () => {
-      cancelled = true;
-      if (idleCallbackId !== undefined)
-        window.cancelIdleCallback?.(idleCallbackId);
-      if (frameId !== undefined) window.cancelAnimationFrame(frameId);
-    };
-  }, [templates, startTransition]);
+    const frameId = window.requestAnimationFrame(() => {
+      startTransition(() => {
+        setPreviewRenderedCount((prev) =>
+          Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
+        );
+      });
+    });
+    return () => window.cancelAnimationFrame(frameId);
+  }, [previewRenderedCount, templates.length, startTransition]);
 
   // Pass container size to StructRender to avoid getBoundingClientRect() calls
   // This eliminates forced reflows during rendering batches
-  const optimizedRenderOptions = {
-    ...renderOptions,
-    ...(containerSize && { wrapperDimensions: containerSize }),
-  };
+  const optimizedRenderOptions = useMemo(
+    () => ({
+      ...renderOptions,
+      ...(containerSize && { wrapperDimensions: containerSize }),
+    }),
+    [renderOptions, containerSize],
+  );
 
   return (
     <div

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type FC, type KeyboardEvent, memo } from 'react';
+import { type FC, type KeyboardEvent, memo, useMemo } from 'react';
 import clsx from 'clsx';
 import classes from './TemplateTable.module.less';
 import { greekify } from '../../utils';
@@ -87,6 +87,16 @@ const TemplateItem: FC<TemplateItemProps> = memo(
     onDelete,
     onAttach,
   }) => {
+    const previewOptions = useMemo(
+      () => ({
+        ...renderOptions,
+        autoScaleMargin: 10,
+        cachePrefix: 'templates',
+        downScale: true,
+      }),
+      [renderOptions],
+    );
+
     return (
       <div className={clsx(classes.td, { [classes.selected]: isSelected })}>
         <button
@@ -103,12 +113,7 @@ const TemplateItem: FC<TemplateItemProps> = memo(
                   struct={tmpl.struct}
                   className={classes.struct}
                   fullsize={true}
-                  options={{
-                    ...renderOptions,
-                    autoScaleMargin: 10,
-                    cachePrefix: 'templates',
-                    downScale: true,
-                  }}
+                  options={previewOptions}
                 />
               </div>
             ) : (

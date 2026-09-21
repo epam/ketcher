@@ -11,7 +11,6 @@ import {
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();

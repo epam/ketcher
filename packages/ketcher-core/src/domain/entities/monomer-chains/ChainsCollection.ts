@@ -455,9 +455,6 @@ export class ChainsCollection {
     monomerToChain: Map<BaseMonomer, Chain>,
     monomerToNode: Map<BaseMonomer, SubChainNode>,
   ) {
-    let complimentaryChain: Chain | undefined;
-    let complimentaryNode: SubChainNode | undefined;
-
     for (const monomerToCheck of node.monomers) {
       const { monomer, complimentaryMonomer } =
         this.getFirstComplimentaryMonomer(monomerToCheck) || {};
@@ -485,7 +482,7 @@ export class ChainsCollection {
       };
     }
 
-    return { complimentaryChain, complimentaryNode };
+    return { complimentaryChain: undefined, complimentaryNode: undefined };
   }
 
   private reorderChainsPutSenseChainOrderInAccordanceAntisenseConnection() {

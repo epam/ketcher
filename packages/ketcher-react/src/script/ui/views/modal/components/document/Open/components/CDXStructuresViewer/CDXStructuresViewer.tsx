@@ -1,3 +1,4 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { MenuList } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
@@ -58,27 +59,32 @@ export const CDXStructuresViewer = ({
     }
   }, [inputHandler, itemsMap, selectedIndex]);
 
-  const getImage = (str, index) => {
-    parseStruct(str, server)
-      .then((struct) => {
-        setItemsMap((state) => ({
-          ...state,
-          [index]: { base64struct: str, struct },
-        }));
-      })
-      .catch((error) => {
-        setItemsMap((state) => ({
-          ...state,
-          [index]: { base64struct: str, error: error.message || error },
-        }));
-      });
-  };
+  const getImage = useCallback(
+    (str, index) => {
+      parseStruct(str, server)
+        .then((struct) => {
+          setItemsMap((state) => ({
+            ...state,
+            [index]: { base64struct: str, struct },
+          }));
+        })
+        .catch((error) => {
+          setItemsMap((state) => ({
+            ...state,
+            [index]: { base64struct: str, error: error.message || error },
+          }));
+        });
+    },
+    [server],
+  );
+
+  const currentStructItem = structList[selectedIndex];
 
   useEffect(() => {
-    if (structList[selectedIndex] && !itemsMap[selectedIndex]) {
-      getImage(structList[selectedIndex], selectedIndex);
+    if (currentStructItem && !itemsMap[selectedIndex]) {
+      getImage(currentStructItem, selectedIndex);
     }
-  }, [itemsMap, selectedIndex]);
+  }, [getImage, itemsMap, selectedIndex, currentStructItem]);
 
   const renderStructure = (structure: item) => {
     if (loading) {

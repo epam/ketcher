@@ -20,7 +20,10 @@ const PHOSPHATE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Phosphate].autochainPreview;
 
 export class PhosphateRenderer extends BaseMonomerRenderer {
-  constructor(public monomer: Phosphate, scale?: number) {
+  constructor(
+    public monomer: Phosphate,
+    scale?: number,
+  ) {
     super(
       monomer,
       PHOSPHATE_HOVERED_ELEMENT_ID,

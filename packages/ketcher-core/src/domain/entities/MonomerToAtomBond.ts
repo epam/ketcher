@@ -7,10 +7,12 @@ import { BaseBond } from './BaseBond';
 
 export class MonomerToAtomBond extends BaseBond {
   public renderer?:
-    | MonomerToAtomBondRenderer
-    | MonomerToAtomBondSequenceRenderer = undefined;
+    MonomerToAtomBondRenderer | MonomerToAtomBondSequenceRenderer = undefined;
 
-  constructor(public monomer: BaseMonomer, public atom: Atom) {
+  constructor(
+    public monomer: BaseMonomer,
+    public atom: Atom,
+  ) {
     super();
   }
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +16,7 @@
  ***************************************************************************/
 
 const isMac =
-  typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false; // eslint-disable-line no-undef
+  typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;
 
 export const KeyboardModifiers = {
   Alt: 'Alt',
@@ -121,7 +122,7 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
 
     key = normalizeCode(e.code);
   } else {
-    throw new Error('normalizeShortcut expects string or KeyboardEvent');
+    throw new TypeError('normalizeShortcut expects string or KeyboardEvent');
   }
 
   const appliedModifiersInOrder = CanonicalModifiersOrder.filter((modifier) =>

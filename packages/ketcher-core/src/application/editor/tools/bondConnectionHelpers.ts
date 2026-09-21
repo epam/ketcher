@@ -210,8 +210,8 @@ export function findPresetMonomerForBonding(
     targetAP === AttachmentPointName.R1
       ? AttachmentPointName.R2
       : targetAP === AttachmentPointName.R2
-      ? AttachmentPointName.R1
-      : null;
+        ? AttachmentPointName.R1
+        : null;
 
   if (oppositeAP) {
     const match = addedMonomers.find((m) =>

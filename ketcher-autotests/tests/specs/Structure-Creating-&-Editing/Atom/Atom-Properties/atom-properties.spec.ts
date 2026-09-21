@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
@@ -2021,9 +2019,9 @@ test.describe('Atom Properties', () => {
       Description: All Connectivity options added to Benzene structure.
       Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
-      // eslint-disable-next-line no-magic-numbers
+
       const atomIndices = [2, 1, 3];
-      // eslint-disable-next-line no-magic-numbers
+
       const optionIndices = [
         ConnectivityOption.Zero,
         ConnectivityOption.Three,

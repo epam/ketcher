@@ -58,11 +58,12 @@ to open a file. Every file in the bank carries them; a new file without them is 
 
 - No implementation details in `features/` or `domain.md` — function names, paths and variables
   belong in `modules/` or in the code.
-- Anchor non-obvious claims with a symbol anchor, `` `path#Symbol` ``: a path from the repository
-  root plus a literal that occurs in that file. Name the commit it was verified on.
-  Not line numbers: they are wrong as soon as a line is inserted above, and wrong silently.
-  `node .claude/skills/ketcher-memory-bank/scripts/check-anchors.mjs` resolves every anchor; a
-  failing anchor is a defect in the document, to be fixed by whoever finds it.
+- Back a non-obvious claim about code with an excerpt of that code: the few lines that carry the
+  reason, in a fenced block, preceded by the file path from the repository root and the commit it
+  was copied on. A reader who opens the file sees at once when the code no longer looks like that,
+  and the excerpt still explains the claim when the file has moved. Not line numbers: they go wrong
+  as soon as a line is inserted above, and silently. An excerpt that no longer matches the code is a
+  defect in the document, to be fixed by whoever finds it.
 - Prefer correcting an existing file over adding a new one. Duplicated knowledge diverges.
 - Mark partial coverage with a `<!-- STUB: … -->` line naming what is missing.
 

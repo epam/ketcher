@@ -12,9 +12,9 @@ Document formats: [.memory-bank/README.md](../../.memory-bank/README.md). Syncin
 change: the `ketcher-memory-bank` skill.
 
 - Every bank file opens with `> **Read when:**` and `> **Skip when:**` so a reader can skip it unread.
-- Cite code as `` `path#Symbol` `` — a path from the repository root and a literal that occurs in
-  that file — and name the commit it was checked on. No line numbers: they go wrong silently.
-  `node .claude/skills/ketcher-memory-bank/scripts/check-anchors.mjs` verifies every anchor.
+- Back a claim about code with a short excerpt of it — the lines that carry the reason, with the file
+  path and the commit it was copied on — so a stale claim shows as soon as the file is opened. No
+  line numbers: they go wrong silently.
 - One fact, one place. Rules, skills and agents cite invariants by ID instead of restating them;
   `CLAUDE.md` stays a routing table.
 - Everything under `.claude/` and `.memory-bank/` is written in English. Keep skill and agent

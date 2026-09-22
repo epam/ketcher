@@ -656,7 +656,7 @@ export class SequenceMode extends BaseMode {
   ) {
     const editor = provideEditorInstance();
     const modelChanges = new Command();
-    const { modelChanges: addedNodeModelChanges, node: nodeToAdd } =
+    const creationResult =
       nextNodeToConnect instanceof Nucleotide ||
       nextNodeToConnect instanceof Nucleoside ||
       (nextNodeToConnect instanceof BackBoneSequenceNode &&
@@ -672,6 +672,13 @@ export class SequenceMode extends BaseMode {
             newNodePosition,
             getSugarBySequenceType(editor.sequenceTypeEnterMode),
           );
+
+    if (!creationResult) {
+      return;
+    }
+
+    const { modelChanges: addedNodeModelChanges, node: nodeToAdd } =
+      creationResult;
 
     // If creation failed (symbol not found in library), return undefined
     if (!addedNodeModelChanges || !nodeToAdd) {
@@ -2455,8 +2462,8 @@ export class SequenceMode extends BaseMode {
       const previousTwoStrandedNodeInSameChain =
         SequenceRenderer.previousNodeInSameChain;
       const nextNodeToConnect = this.isAntisenseEditMode
-        ? currentTwoStrandedNode?.antisenseNode ?? null
-        : currentTwoStrandedNode?.senseNode ?? null;
+        ? (currentTwoStrandedNode?.antisenseNode ?? null)
+        : (currentTwoStrandedNode?.senseNode ?? null);
       const previousNodeToConnect = this.isAntisenseEditMode
         ? previousTwoStrandedNodeInSameChain?.antisenseNode
         : previousTwoStrandedNodeInSameChain?.senseNode;
@@ -2763,8 +2770,8 @@ export class SequenceMode extends BaseMode {
       const previousTwoStrandedNodeInSameChain =
         SequenceRenderer.previousNodeInSameChain;
       const nextNodeToConnect = this.isAntisenseEditMode
-        ? currentTwoStrandedNode?.antisenseNode ?? null
-        : currentTwoStrandedNode?.senseNode ?? null;
+        ? (currentTwoStrandedNode?.antisenseNode ?? null)
+        : (currentTwoStrandedNode?.senseNode ?? null);
       const previousNodeToConnect = this.isAntisenseEditMode
         ? previousTwoStrandedNodeInSameChain?.antisenseNode
         : previousTwoStrandedNodeInSameChain?.senseNode;
@@ -2934,7 +2941,8 @@ export class SequenceMode extends BaseMode {
     const currentNode =
       nextNodeToConnect === null
         ? undefined
-        : nextNodeToConnect ?? SequenceRenderer.currentEdittingNode?.senseNode;
+        : (nextNodeToConnect ??
+          SequenceRenderer.currentEdittingNode?.senseNode);
     const previousNodeInSameChain =
       previousNodeToConnect ??
       SequenceRenderer.previousNodeInSameChain?.senseNode;

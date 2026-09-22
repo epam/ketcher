@@ -1,4 +1,4 @@
-import styled, { CSSObject } from '@emotion/styled';
+import styled from '@emotion/styled';
 
 export const EditorWrapper = styled.div(
   (): CSSObject => ({
@@ -8,7 +8,7 @@ export const EditorWrapper = styled.div(
 );
 
 export const TopMenuRightWrapper = styled.div(
-  (): CSSObject => ({
+  () => ({
     display: 'flex',
     alignItems: 'center',
   }),

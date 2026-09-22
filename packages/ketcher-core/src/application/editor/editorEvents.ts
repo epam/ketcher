@@ -82,8 +82,7 @@ export interface IEditorEvents {
   flipVertical: Subscription;
 }
 
-export function createEditorEvents(): IEditorEvents {
-  return {
+export const editorEvents: IEditorEvents = {
     selectMonomer: new Subscription(),
     selectPreset: new Subscription(),
     selectTool: new Subscription(),
@@ -158,7 +157,10 @@ export function createEditorEvents(): IEditorEvents {
     layoutCircular: new Subscription(),
     flipHorizontal: new Subscription(),
     flipVertical: new Subscription(),
-  };
+  };export function resetEditorEvents() {
+  for (const key of Object.keys(editorEvents) as Array<keyof IEditorEvents>) {
+    editorEvents[key] = new Subscription();
+  }
 }
 export const renderersEvents: ToolEventHandlerName[] = [
   'mouseOverPolymerBond',

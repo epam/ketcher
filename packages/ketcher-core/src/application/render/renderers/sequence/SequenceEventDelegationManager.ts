@@ -1,5 +1,5 @@
 import type { D3SvgElementSelection } from 'application/render/types';
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { editorEvents } from 'application/editor/editorEvents';
 import type { BaseSequenceItemRenderer } from './BaseSequenceItemRenderer';
 import { select } from 'd3';
 
@@ -114,7 +114,7 @@ export class SequenceEventDelegationManager {
     if (elementType === 'text' || elementType === 'background') {
       renderer.drawBackgroundElementHover();
       if (elementType === 'text') {
-        provideEditorInstance().events.mouseOverSequenceItem.dispatch(event);
+        editorEvents.mouseOverSequenceItem.dispatch(event);
       }
     }
   }
@@ -126,7 +126,7 @@ export class SequenceEventDelegationManager {
     const { elementType } = result;
 
     if (elementType === 'text') {
-      provideEditorInstance().events.mouseOnMoveSequenceItem.dispatch(event);
+      editorEvents.mouseOnMoveSequenceItem.dispatch(event);
     }
   }
 
@@ -140,7 +140,7 @@ export class SequenceEventDelegationManager {
 
     renderer.removeBackgroundElementHover();
     if (elementType === 'text') {
-      provideEditorInstance().events.mouseLeaveSequenceItem.dispatch(event);
+      editorEvents.mouseLeaveSequenceItem.dispatch(event);
     }
   }
 
@@ -151,11 +151,9 @@ export class SequenceEventDelegationManager {
     const { elementType } = result;
 
     if (elementType === 'spacer') {
-      provideEditorInstance().events.mousedownBetweenSequenceItems.dispatch(
-        event,
-      );
+      editorEvents.mousedownBetweenSequenceItems.dispatch(event);
     } else if (elementType === 'background') {
-      provideEditorInstance().events.mouseDownOnSequenceItem.dispatch(event);
+      editorEvents.mouseDownOnSequenceItem.dispatch(event);
     }
   }
 
@@ -166,7 +164,7 @@ export class SequenceEventDelegationManager {
     const { elementType } = result;
 
     if (elementType === 'background') {
-      provideEditorInstance().events.clickOnSequenceItem.dispatch(event);
+      editorEvents.clickOnSequenceItem.dispatch(event);
     }
   }
 
@@ -177,7 +175,7 @@ export class SequenceEventDelegationManager {
     const { elementType } = result;
 
     if (elementType === 'text' || elementType === 'background') {
-      provideEditorInstance().events.doubleClickOnSequenceItem.dispatch(event);
+      editorEvents.doubleClickOnSequenceItem.dispatch(event);
     }
   }
 }

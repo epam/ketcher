@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable no-undef */
-
 import { KetcherLogger, KetSerializer, MolSerializer } from 'ketcher-core';
 import type { SerializationType, StructSerializer } from './copyAs.types';
 

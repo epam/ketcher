@@ -53,6 +53,7 @@ async function copyImageToClipboard(): Promise<void> {
       generateImageOptions,
     );
 
+    // eslint-disable-next-line no-undef
     const item = new ClipboardItem({ [image.type]: image });
     await navigator.clipboard.write([item]);
   } catch (e: unknown) {

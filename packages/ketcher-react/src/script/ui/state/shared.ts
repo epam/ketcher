@@ -231,7 +231,7 @@ export function load(struct: string | Struct, options?) {
         editor.struct(parsedStruct, method === 'layout');
       }
 
-      if (!preserveViewport && !fragment) {
+      if (!preserveViewport) {
         editor.zoomAccordingContent(parsedStruct);
       }
 

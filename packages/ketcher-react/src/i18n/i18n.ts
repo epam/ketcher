@@ -108,7 +108,6 @@ if (!i18n.isInitialized) {
       missingKeyHandler:
         process.env.NODE_ENV === 'development'
           ? (_lngs, ns, key) => {
-              // eslint-disable-next-line no-console
               console.warn(`[i18n] Missing key "${key}" in namespace "${ns}"`);
             }
           : undefined,

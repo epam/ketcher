@@ -209,6 +209,31 @@ Decisions / findings from Phase 2:
 - **Preset drop target center (to verify in Phase 4):** for `dragLibraryItemOntoMonomer` onto a preset, pass the **sugar component** locator as the target (presets are anchored on their sugar); confirm the 10 px radius behaves from that point.
 - Both temporary files (`spike-drag-drop-replacement.spec.ts`, `generate-fixtures.spec.ts`) stay on this branch until Phases 3–5 absorb/replace them; delete before archiving.
 
+### Phase 3 results (done 2026-09-22)
+
+`tests/specs/Chromium-popup/Monomer-Replacement/drag-drop-replace-monomer.spec.ts` — **9/9 pass** (chromium-popup, ~24 s), shared-page pattern (`initFlexCanvas`); the snake test switches mode via `selectLayoutModeTool(LayoutMode.Snake)` (precedent: `snake-layout-for-micromolecules.spec.ts`).
+
+| Test | Req. covered |
+|------|--------------|
+| Replaces a terminal peptide monomer, keeps neighbor bond, neighbors don't move | 1–2, 11 (flex) |
+| Replaces an internal monomer, re-establishes bonds on both sides (`countMonomerBonds` = 2) | 3 |
+| Replaces a peptide with chem EG, backbone bond kept (`countMonomerBonds(EG)` = 1) | QA note (chem bonds) |
+| Drop 40 px from center does NOT replace — new monomer added | 1 (negative) |
+| `replacement-highlight` appears mid-drag over target, clears on cancel | 1 (visual feedback) |
+| Monomer dropped onto preset base replaces only that component (sugar + phosphate kept) | monomer-onto-preset |
+| "Deletion of bonds" modal (exact text asserted) — Cancel leaves canvas unchanged | 3.1 |
+| Modal — Yes: replacement done, C–EG side bond deleted (`countMonomerBonds(EG)` = 0), new monomer re-bonded to both neighbors | 3.1 |
+| Snake mode: internal replacement, neighbors keep positions | 11 (snake) |
+
+Implementation notes / deviations from the plan table:
+
+- **Modal setup** (req. 3.1): fixture A–C–D chain + chem EG bonded to cysteine's side AP via `bondTwoMonomers(page, C, EG, AttachmentPoint.R3, AttachmentPoint.R1)` (peptide→chem opens the AP dialog; handled by the POM). Replacement item is Alanine (only left/right APs) → the C–EG bond would be lost. The new alanine is disambiguated from the original one by proximity to the replaced monomer's former center (`getMonomerClosestToPoint` helper, local to the spec).
+- **"No layout re-trigger" (req. 11) is asserted via bounding-box deltas** of the neighbor monomers (±1 px tolerance), not screenshots — deterministic and snapshot-free; screenshot comparison would only prove the same thing noisily. Same approach available for req. 12/13 in Phases 4–5.
+- **`Peptide.F` constant fixed**: `testId` was stale (`F___Phenylalanine-ethylthiocysteine`) and matched no library card; corrected to `F___Phenylalanine` per `monomers.ket`. Only affects library drags (canvas locators are alias+type based), so existing specs are unaffected.
+- EG has left+right APs (`monomers.ket`), so dropping it on a chain-end peptide re-establishes the backbone bond without a modal — verified by the passing chem test.
+- Spike spec `spike-drag-drop-replacement.spec.ts` **deleted** — all four spike cases are absorbed into this spec (tests 1/2, 4, 5; bond helpers used throughout). `generate-fixtures.spec.ts` stays until Phases 4–5 are done (may be reused for the deferred `rn-all-occupied.ket`).
+- Environment note: local Playwright needed `npx playwright install chromium` (cache had a different build); root `npx eslint` is broken in this checkout (`@eslint/css` missing) — pre-existing, unrelated.
+
 ## 9. Rules & constraints to respect (from CLAUDE.md / testing.md)
 
 - New tests go in the **chromium-popup** project only.

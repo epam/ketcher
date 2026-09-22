@@ -5,9 +5,9 @@
   "fields": {
     "resetToSelect": {
       "title": "重置为选择工具",
-      "enumOn": "开启",
-      "enumAfterPaste": "粘贴后",
-      "enumOff": "关闭"
+      "enumOn": "自动选择：开启",
+      "enumAfterPaste": "自动选择：粘贴后",
+      "enumOff": "手动选择"
     },
     "rotationStep": {
       "title": "旋转步长，°"
@@ -22,14 +22,14 @@
       "title": "显示立体标志"
     },
     "stereoLabelStyle": {
-      "title": "立体中心标签显示",
+      "title": "手性中心标签显示",
       "enumIupac": "IUPAC 样式",
       "enumClassic": "经典",
       "enumOn": "开启",
       "enumOff": "关闭"
     },
     "colorOfAbsoluteCenters": {
-      "title": " 绝对中心颜色"
+      "title": "ABS 中心颜色"
     },
     "colorOfAndCenters": {
       "title": "AND 中心颜色"
@@ -38,7 +38,7 @@
       "title": "OR 中心颜色"
     },
     "colorStereogenicCenters": {
-      "title": "立体中心着色",
+      "title": "手性中心着色",
       "enumLabelsOnly": "仅标签",
       "enumBondsOnly": "仅键",
       "enumLabelsAndBonds": "标签和键",
@@ -69,10 +69,10 @@
       "title": "字号"
     },
     "fontszsub": {
-      "title": "下标字号"
+      "title": "上标/下标字号"
     },
     "carbonExplicitly": {
-      "title": "显式显示碳原子"
+      "title": "显式显示碳原子标签"
     },
     "showCharge": {
       "title": "显示电荷"
@@ -81,7 +81,7 @@
       "title": "显示价态"
     },
     "showHydrogenLabels": {
-      "title": "显示氢标签"
+      "title": "显式显示氢标签"
     },
     "aromaticCircle": {
       "title": "芳香键显示为圆圈"

@@ -162,13 +162,11 @@ const MeasureInput = ({
   const { t } = useTranslation();
   const title = resolveTranslatableText(rest.title || desc?.title, t);
 
-  const label = rest.title || desc?.title;
-
   return (
     <div className={clsx(styles.measureInput, className)} {...rest}>
       {tooltip ? (
         <div className={formClasses.divWithTooltipAndAboutIcon}>
-          <span>{label}</span>
+          <span>{title}</span>
           <Tooltip title={tooltip}>
             <div>
               <Icon name="about"></Icon>
@@ -176,7 +174,7 @@ const MeasureInput = ({
           </Tooltip>
         </div>
       ) : (
-        <span>{label}</span>
+        <span>{title}</span>
       )}
       <div style={{ display: 'flex' }}>
         <div className={clsx(error && formClasses.dataError)}>

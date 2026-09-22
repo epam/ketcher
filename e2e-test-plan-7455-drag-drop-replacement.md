@@ -185,6 +185,15 @@ Each phase ends with running the new spec locally (`npm run serve` on port 4002 
   - Drop 40 px away from the center → no replacement, new monomer added (both present). 10 px radius behaves as expected. ✅
 - Notes: `Peptide.G` does not exist in the Peptides enum — use existing entries (e.g. `Peptide.C`). Spike file to be deleted/absorbed into Phase 3 spec.
 
+### Phase 1 results (done 2026-09-21)
+
+- **Source change made:** `data-testid="replacement-highlight"` added to the highlight path in `packages/ketcher-core/src/application/render/renderers/TransientView/ReplacementHighlightView.ts` (one line). Rebuilt core + example; attribute verified in served bundles.
+- **New utilities:**
+  - `ketcher-autotests/tests/utils/macromolecules/replacement.ts` — `getElementCenterInCanvasCoords`, `dragLibraryItemOntoMonomer`, and the non-releasing drag trio `startDragLibraryItem` / `moveDragToCanvasCoords` / `releaseDrag` / `cancelDrag` (cancel = release over the library, which d3-drag treats as no-op since placement only happens inside the canvas wrapper).
+  - `ketcher-autotests/tests/utils/macromolecules/bonds.ts` — `getMonomerId`, `getMonomerBonds`, `countMonomerBonds`, `hasBondBetweenMonomers`, `getBondAttachmentPoints` (all built on `data-testid="bond"` + monomer/AP attributes).
+- **Verification:** all 4 spike tests pass (chromium-popup, ~6 s): replacement, 10 px radius, highlight attribute appears mid-drag and clears on cancel, bond helpers on two bonded monomers. Type-check (`tsc --noEmit`) passes.
+- **Gotcha found:** in popup mode with the library open, canvas-relative x beyond ~450 lands on the library panel (drop silently cancelled). Keep drop coordinates ≤ ~420 or use full-screen mode for wide layouts.
+
 ## 9. Rules & constraints to respect (from CLAUDE.md / testing.md)
 
 - New tests go in the **chromium-popup** project only.

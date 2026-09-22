@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { CSSObject } from '@emotion/react';
 
 export const EditorWrapper = styled.div((): CSSObject => ({
   height: '100%',

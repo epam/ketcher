@@ -31,6 +31,7 @@ QA note: replacement must keep bonds between monomers and small molecules (chems
 - **Replacement logic** lives in `packages/ketcher-core/src/application/editor/libraryItemDragDrop/LibraryItemDragDropHandler.ts` (`executeReplacement`, `computeLostBondsForReplacement`) — useful reference when debugging, not directly testable from E2E.
 - **Library POM** (`tests/pages/macromolecules/Library.ts`): `dragMonomerOnCanvas(monomer, { x, y, fromCenter? })` already drops at canvas-relative coordinates → we can drop onto a target by computing the target monomer's center from its bounding box. Presets are supported via `Preset.*` constants (`PresetType`).
 - **Canvas monomer locators**: `getMonomerLocator(page, Monomer | Preset | options)` → `[data-testid="monomer"][data-monomeralias=...][data-monomertype=...]`. Replacement is verified by alias/type counts before/after.
+  - **CORRECTION (Phase 2): a preset placed on the canvas is rendered as its component monomers** (sugar / base / phosphate), each with its own `data-monomertype` (`Sugar`/`Base`/`Phosphate`). There is **no** element with `data-monomertype="Preset"` — `getMonomerLocator(page, Preset.X)` matches nothing on the canvas. Verify preset presence via component locators (e.g. `getMonomerLocator(page, Preset.A.base)`), and bond preset chains component-to-component (`phosphate → sugar`), mirroring `tests/specs/Macromolecule-editor/Snake-Mode/snake-bond-tool.spec.ts`.
 - **Preset constants** (`tests/pages/constants/monomers/Presets.ts`): e.g. `Preset.A` (sugar R, base A, phosphate P), `Preset.T`, `Preset.U`, `Preset.C`, `Preset.G`, `Preset.dR_U_P` (deoxy sugar → different geometry), `Preset.R__P` (no base). Same-geometry pairs for req. 4–7: e.g. `A` vs `C`/`G`/`T`/`U` (same R+P, different base); different geometry: `dR(U)P` (deoxyribose).
 - **Bonding helpers**: `bondTwoMonomers`, `connectMonomersWithBonds(page, [names], bondType)` to pre-build chains; `Chem` monomers for "bonds with small molecules" QA note.
 - **Layout mode switching**: `MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex | Snake)`.
@@ -157,14 +158,7 @@ Conventions: shared-page pattern where a file is single-mode (`initFlexCanvas` /
 
 - **Prefer `.ket` fixture files** over drawing chains via mouse: create fixtures under `tests/test-data/Monomer-Replacement/` (generate once by hand in Ketcher) and load with `openFileAndAddToCanvasMacro(page, path)`. This is the primary approach for all pre-built chains — including non-standard bond lengths/angles (req. 12.2), Rn-occupancy setups (req. 10.3), and long chains near the viewport edge (req. 14).
 - In-canvas construction (`dragMonomerOnCanvas` + `connectMonomersWithBonds`) is acceptable only for trivially simple chains (2–3 monomers) where a fixture would be overkill.
-- Suggested fixtures (final set decided during implementation):
-  - `monomer-chain-simple.ket` — A–C peptide chain (terminal + internal replacement targets)
-  - `preset-chain-same-geometry.ket` — A–C nucleotide presets, standard bonds
-  - `preset-non-standard-bonds.ket` — preset chain with non-standard bond lengths/angles (req. 12.2)
-  - `preset-phosphate-bonded.ket` — preset bonded via phosphate to next nucleotide (req. 7.1)
-  - `rn-bond-priority.ket` / `rn-all-occupied.ket` — req. 10.2 / 10.3 setups
-  - `long-chain-viewport-edge.ket` — long chain positioned so a replacement shift pushes content out of view (req. 14)
-  - `chem-bonded-target.ket` — chem monomer bonded to the replacement target (QA note)
+- Final fixture set (created in Phase 2, see "Phase 2 results" in §8): `monomer-chain-simple.ket`, `preset-chain-same-geometry.ket` (also serves as req. 7.1 setup — standard preset chains bond via the phosphate), `preset-non-standard-bonds.ket`, `rn-bond-priority.ket`, `long-chain-viewport-edge.ket`, `chem-bonded-target.ket`. `rn-all-occupied.ket` (req. 10.3) is deferred to Phase 5 and will be constructed per implementation.
 
 ## 8. Implementation order
 
@@ -194,6 +188,27 @@ Each phase ends with running the new spec locally (`npm run serve` on port 4002 
 - **Verification:** all 4 spike tests pass (chromium-popup, ~6 s): replacement, 10 px radius, highlight attribute appears mid-drag and clears on cancel, bond helpers on two bonded monomers. Type-check (`tsc --noEmit`) passes.
 - **Gotcha found:** in popup mode with the library open, canvas-relative x beyond ~450 lands on the library panel (drop silently cancelled). Keep drop coordinates ≤ ~420 or use full-screen mode for wide layouts.
 
+### Phase 2 results (done 2026-09-22)
+
+Fixtures generated in Ketcher via a temporary Playwright script (`tests/specs/Chromium-popup/Monomer-Replacement/generate-fixtures.spec.ts` — builds each structure on a live canvas, exports via `window.ketcher.getKet()`, then re-opens every file to verify the round trip; **12/12 pass**). Stored under `tests/test-data/Monomer-Replacement/`:
+
+| Fixture | Content | Used by |
+|---------|---------|---------|
+| `monomer-chain-simple.ket` | Peptide A–C–D chain (terminal + internal replacement targets) | Phase 3 (req. 1–3, 3.1, 11) |
+| `preset-chain-same-geometry.ket` | RNA presets A–C, standard bond **phosphate(R2) → sugar(R1)** | Phase 4 (req. 4–7, 12) |
+| `preset-non-standard-bonds.ket` | Same A–C chain placed diagonally (non-standard bond length/angle) | Phase 4 (req. 12.2) |
+| `rn-bond-priority.ket` | Preset A – lone sugar R – preset C; bonds: A.phosphate→R, R(R2)→C.phosphate(R2) | Phase 5 (req. 8–10) |
+| `long-chain-viewport-edge.ket` | 16-preset RNA chain (A-C-G-U ×4, pasted as sequence) | Phase 5 (req. 14) |
+| `chem-bonded-target.ket` | Peptide A–C chain, C bonded to chem EG via C.R2(OH)/EG.R1(H) | Phase 5 (QA note) |
+
+Decisions / findings from Phase 2:
+
+- **`preset-phosphate-bonded.ket` NOT created** — redundant: the standard preset chain already bonds through the phosphate (APs `R2`→`R1`, logged above). `preset-chain-same-geometry.ket` serves as the req. 7.1 setup; the replacement item for that modal case is still to be chosen in Phase 4 (no same-geometry R+P preset lacks a phosphate — see open question #5).
+- **`rn-all-occupied.ket` deferred to Phase 5** — "all Rn occupied" construction is non-trivial; build per implementation (plan already anticipates this for similar cases).
+- **Connection rules (empirical):** sugar→sugar bonding between a lone sugar and a preset is rejected; sugar→phosphate is allowed but opens the attachment-point dialog (handle via `AttachmentPointsDialog` POM with explicit APs — ribose R1 / phosphate R1 are disabled when occupied). Peptide→chem bonding also opens the dialog (cysteine R1 disabled once backbone-bonded → use R2(OH)).
+- **Preset drop target center (to verify in Phase 4):** for `dragLibraryItemOntoMonomer` onto a preset, pass the **sugar component** locator as the target (presets are anchored on their sugar); confirm the 10 px radius behaves from that point.
+- Both temporary files (`spike-drag-drop-replacement.spec.ts`, `generate-fixtures.spec.ts`) stay on this branch until Phases 3–5 absorb/replace them; delete before archiving.
+
 ## 9. Rules & constraints to respect (from CLAUDE.md / testing.md)
 
 - New tests go in the **chromium-popup** project only.
@@ -210,7 +225,8 @@ Each phase ends with running the new spec locally (`npm run serve` on port 4002 
 |---|----------|------------|
 | 1 | Assertability of smooth scroll (req. 14) | Final-state screenshot fallback; document as limitation if not stably assertable |
 | 2 | Screenshot stability for layout-reflow tests (animation during re-layout) | Use `waitForRender` + existing banner/spinner waits; add tolerance (`maxDiffPixels`) only where genuinely noisy |
-| 3 | Which concrete preset pairs in `Presets.ts` match each same-geometry rule, incl. phosphate-side variants (negative case in 5.2) | Pick pairs from `tests/pages/constants/monomers/Presets.ts` during Phase 2; verify empirically in the spike |
-| 4 | Whether the §4.3 highlight data attribute is worth adding vs. screenshot-only coverage | Decide in Phase 1 based on where/how the highlight is rendered in the SVG |
+| 3 | Which concrete preset pairs in `Presets.ts` match each same-geometry rule, incl. phosphate-side variants (negative case in 5.2) | Resolved for same-geometry: `A` vs `C`/`G`/`T`/`U` (same R+P). Phosphate-side negative pair still to be picked from `Presets.ts` in Phase 4 and verified empirically |
+| 4 | Whether the §4.3 highlight data attribute is worth adding vs. screenshot-only coverage | Resolved in Phase 1: attribute added (`data-testid="replacement-highlight"`) |
+| 5 | Req. 7.1 modal case: which same-geometry replacement item lacks the bonded AP? All R+P presets (A/C/G/T/U) have a phosphate, so dropping one onto a phosphate-bonded preset may never trigger "Deletion of bonds" | Phase 4: test empirically (e.g. `Preset.A` → `Preset.C` on `preset-chain-same-geometry.ket`); if no modal appears for any same-geometry pair, re-scope 7.1 to a non-preset AP (e.g. bond to a chem/H-bond) or document as not triggerable |
 
 Resolved during planning (no longer open): drop distance threshold = **10 px**; "same geometry" rule = matching component composition (sugar+base+phosphate / sugar+base / sugar+phosphate) with phosphate on the same side of the sugar; bond verification via bond data attributes (helpers in §4.2); `.ket` fixtures as the primary way to build chains (§7).

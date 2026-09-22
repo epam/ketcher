@@ -5,9 +5,9 @@
   "fields": {
     "resetToSelect": {
       "title": "Reset to Select Tool",
-      "enumOn": "on",
-      "enumAfterPaste": "After Paste",
-      "enumOff": "off"
+      "enumOn": "Auto-Select On",
+      "enumAfterPaste": "Auto-Select After Paste",
+      "enumOff": "Manual Select"
     },
     "rotationStep": {
       "title": "Rotation Step, º"
@@ -22,14 +22,14 @@
       "title": "Show the Stereo flags"
     },
     "stereoLabelStyle": {
-      "title": "Label display at stereogenic centers",
+      "title": "Label display at chiral centers",
       "enumIupac": "IUPAC style",
       "enumClassic": "Classic",
       "enumOn": "On",
       "enumOff": "Off"
     },
     "colorOfAbsoluteCenters": {
-      "title": " Absolute Center color"
+      "title": "ABS Center color"
     },
     "colorOfAndCenters": {
       "title": "AND Centers color"
@@ -38,7 +38,7 @@
       "title": "OR Centers color"
     },
     "colorStereogenicCenters": {
-      "title": "Color stereogenic centers",
+      "title": "Color chiral centers",
       "enumLabelsOnly": "Labels Only",
       "enumBondsOnly": "Bonds Only",
       "enumLabelsAndBonds": "Labels And Bonds",
@@ -69,10 +69,10 @@
       "title": "Font size"
     },
     "fontszsub": {
-      "title": "Sub font size"
+      "title": "Subscript/Superscript font size"
     },
     "carbonExplicitly": {
-      "title": "Display carbon explicitly"
+      "title": "Display carbon labels explicitly"
     },
     "showCharge": {
       "title": "Display charge"
@@ -81,7 +81,7 @@
       "title": "Display valence"
     },
     "showHydrogenLabels": {
-      "title": "Show hydrogen labels"
+      "title": "Display hydrogen labels explicitly"
     },
     "aromaticCircle": {
       "title": "Aromatic Bonds as circle"
@@ -129,7 +129,7 @@
       "title": "Ignore pseudoatoms at mass"
     },
     "gross-formula-add-rsites": {
-      "title": "Add Rsites at mass calculation"
+      "title": "Add R sites at mass calculation"
     },
     "aromatize-skip-superatoms": {
       "title": "Skip Superatoms at aromatization"
@@ -138,16 +138,16 @@
       "title": "Add Isotopes at mass calculation"
     },
     "showAtomIds": {
-      "title": "Show atom Ids"
+      "title": "Show atom IDs"
     },
     "showBondIds": {
-      "title": "Show bonds Ids"
+      "title": "Show bonds IDs"
     },
     "showHalfBondIds": {
-      "title": "Show half bonds Ids"
+      "title": "Show half bonds IDs"
     },
     "showLoopIds": {
-      "title": "Show loop Ids"
+      "title": "Show loop IDs"
     },
     "miewMode": {
       "title": "Display mode",

@@ -15,6 +15,8 @@
  ***************************************************************************/
 
 import { Select, MenuItem, FormControl, Switch, Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { Icon } from 'ketcher-react';
 import { FieldWrapper, FieldLabelContent } from './Settings.styles';
 import type { SettingFieldValue } from './fieldGroups';
@@ -39,7 +41,7 @@ interface SettingsFieldProps {
   min?: number;
   max?: number;
   step?: number;
-  tooltip?: string;
+  tooltipKey?: string;
 }
 
 export const SettingsField = ({
@@ -52,8 +54,11 @@ export const SettingsField = ({
   min,
   max,
   step,
-  tooltip,
+  tooltipKey,
 }: SettingsFieldProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
+  const label = resolveSettingLabel(labelKey, t);
+  const tooltip = tooltipKey ? resolveSettingLabel(tooltipKey, t) : undefined;
   const labelContent = tooltip ? (
     <FieldLabelContent>
       <span>{label}</span>

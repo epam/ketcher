@@ -54,7 +54,11 @@ const editor: {
   resetToSelect: {
     title: `${f}resetToSelect.title`,
     enum: [true, 'paste', false],
-    enumNames: ['Auto-Select On', 'Auto-Select After Paste', 'Manual Select'],
+    enumNames: [
+      `${f}resetToSelect.enumOn`,
+      `${f}resetToSelect.enumAfterPaste`,
+      `${f}resetToSelect.enumOff`,
+    ],
     default: 'paste',
   },
   rotationStep: {
@@ -123,7 +127,7 @@ const render: {
     default: true,
   },
   stereoLabelStyle: {
-    title: 'Label display at\u00A0chiral\u00A0centers',
+    title: `${f}stereoLabelStyle.title`,
     enum: [
       StereoLabelStyleType.IUPAC,
       StereoLabelStyleType.Classic,
@@ -139,7 +143,7 @@ const render: {
     default: StereoLabelStyleType.IUPAC,
   },
   colorOfAbsoluteCenters: {
-    title: 'ABS Center color',
+    title: `${f}colorOfAbsoluteCenters.title`,
     type: 'string',
     default: '#ff0000',
   },
@@ -154,7 +158,7 @@ const render: {
     default: '#228b22',
   },
   colorStereogenicCenters: {
-    title: 'Color chiral centers',
+    title: `${f}colorStereogenicCenters.title`,
     enum: [
       StereoColoringType.LabelsOnly,
       StereoColoringType.BondsOnly,
@@ -220,7 +224,7 @@ const render: {
     default: MeasurementUnits.Px,
   },
   fontszsub: {
-    title: 'Subscript/Superscript font size',
+    title: `${f}fontszsub.title`,
     type: 'number',
     default: 13,
     minimum: 0.1,
@@ -234,7 +238,7 @@ const render: {
   },
   // Atom
   carbonExplicitly: {
-    title: 'Display carbon labels explicitly',
+    title: `${f}carbonExplicitly.title`,
     type: 'boolean',
     description: 'slider',
     default: false,
@@ -252,7 +256,7 @@ const render: {
     default: true,
   },
   showHydrogenLabels: {
-    title: 'Display hydrogen labels explicitly',
+    title: `${f}showHydrogenLabels.title`,
     enum: Object.values(ShowHydrogenLabels),
     enumNames: Object.values(ShowHydrogenLabelNames),
     default: ShowHydrogenLabels.TerminalAndHetero,
@@ -396,7 +400,7 @@ const server: {
     default: false,
   },
   'gross-formula-add-rsites': {
-    title: 'Add R sites at mass calculation',
+    title: `${f}gross-formula-add-rsites.title`,
     type: 'boolean',
     description: 'slider',
     default: true,
@@ -424,25 +428,25 @@ const debug: {
   showLoopIds: ExtendedSchema;
 } = {
   showAtomIds: {
-    title: 'Show atom IDs',
+    title: `${f}showAtomIds.title`,
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   showBondIds: {
-    title: 'Show bonds IDs',
+    title: `${f}showBondIds.title`,
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   showHalfBondIds: {
-    title: 'Show half bonds IDs',
+    title: `${f}showHalfBondIds.title`,
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   showLoopIds: {
-    title: 'Show loop IDs',
+    title: `${f}showLoopIds.title`,
     type: 'boolean',
     description: 'slider',
     default: false,

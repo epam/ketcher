@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -20,28 +19,48 @@ import {
   KetcherLogger,
   ketcherProvider,
   KetSerializer,
+  type GenerateImageOptions,
 } from 'ketcher-core';
+import type { CurrentAppState } from './types';
 
-async function copyImageToClipboard() {
-  const state = global.currentState;
+declare global {
+  interface Window {
+    currentState: CurrentAppState;
+  }
+}
+
+async function copyImageToClipboard(): Promise<void> {
+  const state: CurrentAppState = (global as unknown as Window).currentState;
   const editor = state.editor;
   const options = state.options;
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
+
   try {
     const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
     const ketSerializer = new KetSerializer();
-    const structStr = ketSerializer.serialize(struct);
-    const image = await ketcher.generateImage(structStr, {
+    const structStr: string = ketSerializer.serialize(struct);
+
+    const generateImageOptions: GenerateImageOptions = {
       outputFormat: 'png',
       backgroundColor: '255, 255, 255',
-      bondThickness: options.settings.bondThickness || defaultBondThickness,
-    });
+      bondThickness:
+        (options.settings.bondThickness as number) || defaultBondThickness,
+    };
+
+    const image: Blob = await ketcher.generateImage(
+      structStr,
+      generateImageOptions,
+    );
+
     const item = new ClipboardItem({ [image.type]: image });
     await navigator.clipboard.write([item]);
-  } catch (e) {
-    KetcherLogger.error('copyImageToClipboard.js::copyImageToClipboard', e);
-    errorHandler('This feature is not available in your browser');
+  } catch (e: unknown) {
+    KetcherLogger.error('copyImageToClipboard.ts::copyImageToClipboard', e);
+
+    if (errorHandler) {
+      errorHandler('This feature is not available in your browser');
+    }
   }
 }
 

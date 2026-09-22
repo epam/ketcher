@@ -1,4 +1,5 @@
-import styled, { CSSObject } from '@emotion/styled';
+import styled from '@emotion/styled';
+import { CSSObject } from '@emotion/react';
 
 export const EditorWrapper = styled.div(
   (): CSSObject => ({
@@ -7,12 +8,10 @@ export const EditorWrapper = styled.div(
   }),
 );
 
-export const TopMenuRightWrapper = styled.div(
-  (): CSSObject => ({
-    display: 'flex',
-    alignItems: 'center',
-  }),
-);
+export const TopMenuRightWrapper = styled.div(() => ({
+  display: 'flex',
+  alignItems: 'center',
+}));
 
 // TODO suppressed after upgrade to react 19. Need to fix
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

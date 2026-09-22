@@ -26,6 +26,7 @@ import {
   TripleBondPathRenderer,
 } from 'application/render/renderers/BondPathRenderer';
 import util from 'application/render/util';
+import { editorEvents } from 'application/editor/editorEvents';
 import {
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
@@ -536,11 +537,11 @@ export class BondRenderer extends BaseRenderer {
 
     hoverPath
       .on('mouseenter', (event) => {
-        provideEditorInstance().events.mouseOverDrawingEntity.dispatch(event);
+        editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.appendHover();
       })
       .on('mouseleave', (event) => {
-        provideEditorInstance().events.mouseLeaveDrawingEntity.dispatch(event);
+        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.removeHover();
       });
   }

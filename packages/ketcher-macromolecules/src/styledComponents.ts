@@ -1,11 +1,11 @@
-import styled, { CSSObject } from '@emotion/styled';
+import styled from '@emotion/styled';
 
 export const EditorWrapper = styled.div((): CSSObject => ({
   height: '100%',
   position: 'relative',
 }));
 
-export const TopMenuRightWrapper = styled.div((): CSSObject => ({
+export const TopMenuRightWrapper = styled.div(() => ({
   display: 'flex',
   alignItems: 'center',
 }));

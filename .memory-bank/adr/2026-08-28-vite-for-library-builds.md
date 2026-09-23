@@ -172,12 +172,13 @@ this migration introduces on top of master, so citing it as this migration's rea
 version overstates its cause. The ADR and any changelog should give the breaking changes below as
 the reason instead.
 
-**The major version bump is justified by five other breaking changes:**
+**The major version bump is justified by six other breaking changes:**
 
 1. **Lazy monomer library API.** `CoreEditor` no longer loads the default monomer library in its
    constructor; a synchronous read of `monomersLibrary`/`monomersLibraryParsedJson` now returns
-   empty until the async load resolves, and `updateMonomersLibrary`/`replaceMonomersLibrary` fire
-   later.
+   empty until the async load resolves, and the `updateMonomersLibrary` event (dispatched after
+   the library changes) now fires later too. (`replaceMonomersLibrary` is a method a consumer
+   calls directly, not an event — it doesn't "fire" on its own.)
 2. **`ketcher-standalone` asset layout.** The worker and `.wasm` for the two fetch-based variants
    (`binaryWasm`, `binaryWasmNoRender`) now live in an `assets/` subdirectory with hashed names,
    one `.wasm` per variant instead of both.
@@ -189,17 +190,23 @@ the reason instead.
    unaffected.
 5. **Dropped CJS `.d.ts` and CSS source maps.** `ketcher-react/dist/cjs/**/*.d.ts` (507 files)
    and `ketcher-macromolecules`'s `dist/index.css.map` are no longer emitted.
+6. **`ketcher-standalone` `main`/`module` now resolve to real files.**
+   `require('ketcher-standalone')` used to return `{}` (`main` pointed at an empty placeholder
+   built from `src/emptyIndex.js`); it now returns the package's real named exports (see the
+   metadata correction above). Fixing wrong metadata is still a behavior change for a consumer
+   that relied on — or merely tolerated — `require('ketcher-standalone')` being empty.
 
 ### Breaking changes vs 3.18.0
 
 | Change | Who it affects | Status on this branch |
 | --- | --- | --- |
-| The monomer library is empty until it loads. `CoreEditor` no longer loads it in its constructor, so a synchronous read of `monomersLibrary`/`monomersLibraryParsedJson` returns empty, and `updateMonomersLibrary`/`replaceMonomersLibrary` fire later. | Anyone who reads the library directly — and more broadly than "macromolecules-mode users only": `getKet`, `setMolecule`, `addFragment`, and both `convert()` calls now wait for the library, so any API call loads and parses the ~3.5 MB library even without opening macromolecules mode. For npm/bundler consumers it arrives as a **code-split JS chunk** pulled in via dynamic import — only `example`'s standalone build fetches it as a separately hosted asset. | The clobbering race between this load and a consumer's own `updateMonomersLibrary`/`replaceMonomersLibrary` call is fixed: both methods now `await` the default library load first, with a regression test covering the ordering. |
-| `binaryWasm`/`binaryWasmNoRender` asset layout: files live in `assets/` with hashed names, and each variant ships one `.wasm` instead of both. | Anyone copying these files by a hard-coded path. | Layout itself is unchanged. The consumer-bundler blocker (the worker/`.wasm` `new URL(...)` calls were emitted as computed expressions a consumer's bundler can't statically detect, so the worker chunk and/or `.wasm` were dropped from the consumer's own build → 404 at runtime) is fixed: both are now emitted as the literal `new Worker(new URL('./assets/...', import.meta.url), { type: 'module' })` / `new URL('./assets/....wasm', import.meta.url)` forms. CI now builds a throwaway Vite consumer and a webpack 5 consumer against the packed `dist` and asserts both emit the `.wasm` and a separate worker chunk. |
+| The monomer library is empty until it loads. `CoreEditor` no longer loads it in its constructor, so a synchronous read of `monomersLibrary`/`monomersLibraryParsedJson` returns empty, and the `updateMonomersLibrary` event fires later. | Anyone who reads the library directly — and more broadly than "macromolecules-mode users only": `getKet`, `setMolecule`, `addFragment`, and both `convert()` calls now wait for the library, so any API call loads and parses the ~3.5 MB library even without opening macromolecules mode. For npm/bundler consumers it arrives as a **code-split JS chunk** pulled in via dynamic import — only `example`'s standalone build fetches it as a separately hosted asset. | The clobbering race between this load and a consumer's own `updateMonomersLibrary`/`replaceMonomersLibrary` call is fixed: both methods now `await` the default library load first, with a regression test covering the ordering (including the reverse race, where the consumer's own call is what starts the default load). |
+| `binaryWasm`/`binaryWasmNoRender` asset layout: files live in `assets/` with hashed names, and each variant ships one `.wasm` instead of both. | Anyone copying these files by a hard-coded path. | Layout itself is unchanged. The consumer-bundler blocker (the worker/`.wasm` `new URL(...)` calls were emitted as computed expressions a consumer's bundler can't statically detect, so the worker chunk and/or `.wasm` were dropped from the consumer's own build → 404 at runtime) is fixed: both are now emitted as the literal `new Worker(new URL('./assets/indigoWorker-<hash>.js', import.meta.url), { type: 'module' })` form in `main.js`, and, inside that worker chunk itself, `new URL('./indigo-ketcher-<version>-<hash>.wasm', import.meta.url)` — relative to the *worker* file, not `main.js`, since both land flat in the same `assets/` directory. CI builds a throwaway Vite consumer and a webpack 5 consumer against the packed `dist`, each importing and instantiating both the `binaryWasm` and `binaryWasmNoRender` variants, and asserts every consumer's build emits a `.wasm` and a worker chunk per variant. The webpack consumer needs no extra bundler config: webpack 5's default asset handling already emits the `new URL('./x.wasm', import.meta.url)` reference as a real output file with no `module.rules` entry required (verified empirically before deciding not to add one). |
 | Inline builds now use a module worker created from a Blob URL (before: a classic worker from base64). | Browsers without module workers (Firefox < 114, Safari < 15), strict `worker-src` CSP rules. | Unchanged. |
 | CSS Modules class names changed format (`X-module_root__hash` → `_root_hash_N`). Global class names are unchanged. | Consumers who style Ketcher's internal classes. | Unchanged. |
 | `ketcher-react/dist/cjs/**/*.d.ts` (507 files) and CSS source maps are no longer shipped. | Deep imports of the CJS types; CSS debugging in devtools only. | Unchanged. |
 | The CSS minifier drops some vendor prefixes and writes colors as `#rrggbbaa`. | Old browsers only. | Unchanged. |
+| `ketcher-standalone`'s `main`/`module` now resolve to real files instead of an empty placeholder / an unemitted file. `require('ketcher-standalone')` returns real named exports instead of `{}`. | Anyone who imported `ketcher-standalone` via `main`/`module` and relied on (or tolerated) getting nothing back. | Deliberate, scoped exception to "the published contract is frozen" (see the metadata correction above) — the wrong metadata is fixed as part of this version bump, not preserved. |
 
 **Fixed since the original review (no longer breaking vs 3.18.0):**
 
@@ -208,14 +215,12 @@ the reason instead.
   default, silently changing default-import interop for CJS consumers). Fixed by adding
   `esModule: true` to `rolldownOptions.output` — the same mechanism the other two packages
   already used.
-- **`ketcher-standalone` `main`/`module`.** No longer point at an empty placeholder and an
-  unemitted file (see the metadata correction above); both now resolve to real shipped files that
-  match the `exports` map.
 
-**Not breaking:** `exports`, `main`, `module` (now correct — see above), `types`, `sideEffects`,
-peer dependencies, and `engines` match master's build. `ketcher-react` briefly leaked the
-bundler helper `__toESM` as an extra CJS export (harmless, but flagged for cleanup); it has since
-been stripped by a dedicated `renderChunk` plugin.
+**Not breaking:** `exports`, `types`, `sideEffects`, peer dependencies, and `engines` match
+master's build. `ketcher-react` briefly leaked the bundler helper `__toESM` as an extra CJS
+export (harmless, but flagged for cleanup); it has since been stripped by a dedicated
+`renderChunk` plugin. `ketcher-standalone`'s `main`/`module` are **not** in this list — see the
+breaking-changes table above.
 
 The bump lands as a single commit after the migration completes, so that four interdependent
 `package.json` files are not churning while the builds are still changing. It needs the release

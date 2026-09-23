@@ -93,6 +93,7 @@ describe('CoreEditor', () => {
       const microEditor = {
         struct: jest.fn(() => struct),
         render: {
+          setMolecule: jest.fn(),
           ctab: {
             render: {
               setMolecule: jest.fn(),
@@ -104,6 +105,8 @@ describe('CoreEditor', () => {
         },
         clear: jest.fn(),
         clearHistory: jest.fn(),
+        addHistoryAction: jest.fn(),
+        selection: jest.fn(),
         zoom: jest.fn(),
         setMacromoleculeConvertionError: jest.fn(),
       };
@@ -150,6 +153,31 @@ describe('CoreEditor', () => {
 
       expect(monomer).toBeDefined();
       expect(monomer.position).not.toEqual(new Vec2(200, 200));
+    });
+
+    it('refreshes canvas offsets after a history-restored mode becomes visible', () => {
+      const canvas = createPolymerEditorCanvas();
+      const editor = new CoreEditor({
+        canvas,
+        theme: {},
+        renderersContainer: createRenderersManager(),
+      });
+      editor.switchToMacromolecules();
+      const bounds = {
+        x: 75,
+        y: 120,
+        left: 75,
+        top: 120,
+        width: 500,
+        height: 500,
+      } as DOMRect;
+      jest.spyOn(canvas, 'getBoundingClientRect').mockReturnValue(bounds);
+
+      editor.switchToMacromolecules();
+
+      expect(editor.canvasOffset).toBe(bounds);
+      expect(EditorHistory.getInstance(editor).historyPointer).toBe(0);
+      editor.destroy();
     });
   });
 

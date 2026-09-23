@@ -34,16 +34,23 @@ Every user action that changes the canvas is recorded as one atomic history entr
 - **WHEN** the user performs more than 32 undoable actions
 - **THEN** only the most recent 32 actions remain reversible and older actions are dropped from history
 
+#### Scenario: Undo and redo across editor modes
+
+- **WHEN** the user switches between molecules and macromolecules
+- **THEN** the switch is recorded as one history entry without discarding earlier edits
+- **AND** undoing or redoing that entry restores the corresponding mode and its original structure
+- **AND** further undo/redo continues through edits in either mode in chronological order
+- Selecting the already active mode does not add an entry. A new edit or mode switch after undo discards the shared redo branch.
+
 ## Guarantees
 
-- The undo/redo history is bounded to **32 steps** in both the molecules and macromolecules editors.
+- The editors share one undo/redo history bounded to **32 steps**, including mode switches.
 - Each user action is exactly one atomic history entry, implemented via the command pattern.
 - Undo/redo restores both the domain model and its rendered view together.
 
 ## Limitations
 
 - History is capped at 32 steps; actions older than the cap cannot be undone.
-- The two editors keep **separate** histories; switching modes does not merge them.
 
 ## Related
 

@@ -7,6 +7,7 @@ import {
   renderersEvents,
 } from 'application/editor/editorEvents';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import { MonomerWizardCanvasOperation } from './operations/monomerCreation/MonomerWizardCanvasOperation';
 import {
   type LayoutMode,
   DEFAULT_LAYOUT_MODE,
@@ -133,6 +134,7 @@ import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import {
   getKetRef,
   getMonomerTemplateRefFromMonomerItem,
+  setMonomerTemplatePrefix,
   KetSerializer,
 } from 'domain/serializers';
 import type { SequenceMode } from './modes/types/sequenceMode';
@@ -324,7 +326,9 @@ export class CoreEditor {
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.viewModel = new ViewModel();
     this.dragDropHandler = new LibraryItemDragDropHandler({
-      drawingEntitiesManager: this.drawingEntitiesManager,
+      get drawingEntitiesManager() {
+        return this.getEditor().drawingEntitiesManager;
+      },
       renderersContainer: this.renderersContainer,
       events: this.events,
       getCanvasOffset: () => this.canvasOffset,
@@ -535,10 +539,12 @@ export class CoreEditor {
     const isEditedMonomer = (monomer: MonomerItemType) =>
       !isAmbiguousMonomerLibraryItem(monomer) &&
       getMonomerTemplateRefFromMonomerItem(monomer) === editedMonomerRef;
+    const editedMonomer = editedMonomerRef
+      ? this._monomersLibrary.find(isEditedMonomer)
+      : undefined;
     if (
       editedMonomerRef &&
-      (newMonomersLibraryChunk.length !== 1 ||
-        !this._monomersLibrary.some(isEditedMonomer))
+      (newMonomersLibraryChunk.length !== 1 || !editedMonomer)
     ) {
       throw new Error(
         'The original monomer is no longer available for editing.',
@@ -681,6 +687,17 @@ export class CoreEditor {
 
       const newMonomerModificationAliases =
         getIdtModificationAliases(newMonomer);
+      const originalModificationAliases = editedMonomer
+        ? getIdtModificationAliases(editedMonomer)
+        : [];
+      const hasOriginalSymbol =
+        editedMonomer?.props.MonomerName === newMonomer.props.MonomerName &&
+        editedMonomer?.props.MonomerClass === newMonomer.props.MonomerClass;
+      // Bundled entries can share aliases; unchanged aliases are not new collisions.
+      const hasChangedHelmAlias =
+        editedMonomer?.props.aliasHELM !== newMonomer.props.aliasHELM;
+      const hasChangedBilnAlias =
+        editedMonomer?.props.aliasBILN !== newMonomer.props.aliasBILN;
 
       const conflictingMonomer = this._monomersLibrary.find((monomer) => {
         if (
@@ -695,19 +712,27 @@ export class CoreEditor {
           getIdtModificationAliases(monomer);
 
         return (
-          (Boolean(editedMonomerRef) && areSameMonomers(monomer, newMonomer)) ||
+          (Boolean(editedMonomerRef) &&
+            !hasOriginalSymbol &&
+            areSameMonomers(monomer, newMonomer)) ||
           (Boolean(editedMonomerRef) &&
             monomer.props?.MonomerClass === newMonomer.props.MonomerClass &&
-            (monomer.props.aliasHELM === newMonomer.props.MonomerName ||
-              monomer.props.MonomerName === newMonomer.props.aliasHELM)) ||
+            ((!hasOriginalSymbol &&
+              monomer.props.aliasHELM === newMonomer.props.MonomerName) ||
+              (hasChangedHelmAlias &&
+                monomer.props.MonomerName === newMonomer.props.aliasHELM))) ||
           (Boolean(newMonomer.props?.aliasHELM) &&
+            hasChangedHelmAlias &&
             monomer.props?.aliasHELM === newMonomer.props?.aliasHELM) ||
           (newMonomerHasBilnAliasUniquenessScope &&
             Boolean(newMonomer.props?.aliasBILN) &&
+            hasChangedBilnAlias &&
             hasBilnAliasUniquenessScope(monomer.props?.MonomerClass) &&
             monomer.props?.aliasBILN === newMonomer.props?.aliasBILN) ||
-          newMonomerModificationAliases.some((alias) =>
-            existingMonomerModificationAliases.includes(alias),
+          newMonomerModificationAliases.some(
+            (alias) =>
+              !originalModificationAliases.includes(alias) &&
+              existingMonomerModificationAliases.includes(alias),
           )
         );
       });
@@ -943,11 +968,21 @@ export class CoreEditor {
     return this._monomersLibrary;
   }
 
-  public isMonomerUsedInPreset(monomer: MonomerItemType) {
+  public isMonomerReferencedInLibrary(monomer: MonomerItemType) {
     const ref = getMonomerTemplateRefFromMonomerItem(monomer);
     return (
       this._monomersLibraryParsedJson?.root.templates.some(({ $ref }) => {
         const template = this._monomersLibraryParsedJson?.[$ref];
+        if (
+          template?.type === KetTemplateType.AMBIGUOUS_MONOMER_TEMPLATE &&
+          'options' in template
+        ) {
+          return template.options.some(
+            ({ templateId }) =>
+              templateId === ref ||
+              setMonomerTemplatePrefix(templateId) === ref,
+          );
+        }
         return (
           template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
           template.templates.some((component) => component.$ref === ref)
@@ -960,8 +995,10 @@ export class CoreEditor {
     monomer: MonomerItemType,
     shouldPersist = true,
   ) {
-    if (this.isMonomerUsedInPreset(monomer)) {
-      throw new Error('A monomer used in an RNA preset cannot be deleted.');
+    if (this.isMonomerReferencedInLibrary(monomer)) {
+      throw new Error(
+        'A monomer used in an RNA preset or ambiguous monomer cannot be deleted.',
+      );
     }
     const ref = getMonomerTemplateRefFromMonomerItem(monomer);
     const index = this._monomersLibrary.findIndex(
@@ -2450,6 +2487,7 @@ export class CoreEditor {
       return;
     }
     const originalManager = this.drawingEntitiesManager;
+    let canvasChanged = false;
     this.mode = this.monomerWizardMode;
     try {
       if (savedCanvas) {
@@ -2461,6 +2499,7 @@ export class CoreEditor {
             struct,
             manager,
           );
+        canvasChanged = true;
         originalManager.clearCanvas();
         this.drawingEntitiesManager = manager;
         this.viewModel.initialize([...manager.bonds.values()]);
@@ -2474,14 +2513,19 @@ export class CoreEditor {
         } else {
           this.renderersContainer.update(modelChanges);
         }
-        EditorHistory.getInstance(this).destroy();
-        this.events.modelChange.dispatch();
+        const command = new Command();
+        command.addOperation(
+          new MonomerWizardCanvasOperation(
+            originalManager,
+            manager,
+            this.restoreMonomerWizardCanvas.bind(this),
+          ),
+        );
+        EditorHistory.getInstance(this).update(command);
       }
     } catch (error) {
-      if (this.drawingEntitiesManager !== originalManager) {
-        this.drawingEntitiesManager.clearCanvas();
-        this.drawingEntitiesManager = originalManager;
-        this.mode.initialize(false, false, false);
+      if (canvasChanged) {
+        this.restoreMonomerWizardCanvas(originalManager);
       }
       throw error;
     } finally {
@@ -2490,6 +2534,24 @@ export class CoreEditor {
       this.micromoleculesEditor.clear();
       this.micromoleculesEditor.clearHistory();
     }
+  }
+
+  private restoreMonomerWizardCanvas(manager: DrawingEntitiesManager) {
+    const previousManager = this.drawingEntitiesManager;
+    this.drawingEntitiesManager = manager;
+    previousManager.clearCanvas();
+    this.viewModel.initialize([...manager.bonds.values()]);
+    if (this.mode.modeName === 'sequence-layout-mode') {
+      this.mode.initialize(false, false, false);
+    } else {
+      this.renderersContainer.update(manager.applyFlexLayoutMode());
+    }
+    manager.sgroups.forEach((group) =>
+      this.renderersContainer.addSGroup(group),
+    );
+    manager.stereoFlags.forEach((flag) =>
+      this.renderersContainer.addStereoFlag(flag),
+    );
   }
 
   public switchToMicromolecules() {

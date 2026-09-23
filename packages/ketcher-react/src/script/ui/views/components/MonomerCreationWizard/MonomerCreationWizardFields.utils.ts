@@ -57,8 +57,19 @@ export const hasMonomerFieldCollision = (
   field: 'symbol' | 'aliasHELM' | 'aliasBILN',
   value: string,
   type: KetMonomerClass | 'rnaPreset' | undefined,
-) =>
-  library.some(({ props }) => {
+  original?: MonomerItemType,
+) => {
+  const originalValue =
+    field === 'symbol'
+      ? (original?.props.MonomerCode ?? original?.props.MonomerName)
+      : original?.props[field];
+  if (
+    originalValue === value &&
+    (field !== 'symbol' || original?.props.MonomerClass === type)
+  ) {
+    return false;
+  }
+  return library.some(({ props }) => {
     if (field === 'aliasBILN') {
       return (
         (props.MonomerClass === KetMonomerClass.AminoAcid ||
@@ -72,6 +83,7 @@ export const hasMonomerFieldCollision = (
       (field === 'aliasHELM' && props.aliasHELM === value)
     );
   });
+};
 
 export const isValidMonomerName = (name: string, initialName?: string) =>
   name === initialName || /^[a-zA-Z0-9-_* ]*$/.test(name);

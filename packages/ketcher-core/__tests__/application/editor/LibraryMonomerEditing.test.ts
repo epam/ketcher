@@ -1,6 +1,7 @@
 import { CoreEditor, MonomerLibraryUpdateError } from 'application/editor';
 import { SettingsManager, KetcherLogger } from 'utilities';
 import type { MonomerItemType } from 'domain/types';
+import { parseMonomersLibrary } from 'application/editor/helpers';
 
 const template = (id: string, alias: string) => ({
   type: 'monomerTemplate',
@@ -44,6 +45,45 @@ describe('editing monomer library entries by identity', () => {
   });
 
   afterEach(() => jest.restoreAllMocks());
+
+  it('accepts unchanged built-in aliases shared by templates in the initial library', () => {
+    const editor = makeEditor();
+    const original = {
+      ...template('original', 'A'),
+      class: 'AminoAcid',
+      classHELM: 'PEPTIDE',
+      aliasHELM: 'A',
+      aliasBILN: 'A',
+    };
+    const parsed = parseMonomersLibrary(
+      libraryData(
+        original,
+        {
+          ...template('base', 'A'),
+          class: 'Base',
+          classHELM: 'RNA',
+          aliasHELM: 'A',
+        },
+        { ...template('other', 'Other'), aliasBILN: 'A' },
+      ),
+    );
+    Object.assign(editor, {
+      _monomersLibrary: parsed.monomersLibrary,
+      _monomersLibraryParsedJson: parsed.monomersLibraryParsedJson,
+    });
+    expect(() =>
+      editor.updateMonomersLibrary(
+        libraryData({ ...original, id: 'edited', fullName: 'Updated name' }),
+        'monomerTemplate-original',
+      ),
+    ).not.toThrow();
+    expect(editor.monomersLibrary).toHaveLength(3);
+    expect(editor.monomersLibrary[0].props).toMatchObject({
+      id: 'original',
+      aliasHELM: 'A',
+      aliasBILN: 'A',
+    });
+  });
 
   it('ignores ambiguous entries when locating and validating an edit', () => {
     const editor = makeEditor();
@@ -169,5 +209,23 @@ describe('editing monomer library entries by identity', () => {
     } finally {
       SettingsManager.monomerLibraryUpdates = updates;
     }
+  });
+
+  it('preserves components required by ambiguous library templates', () => {
+    const editor = makeEditor();
+    editor.updateMonomersLibrary(libraryData(template('original', 'A')));
+    const parsed = editor.monomersLibraryParsedJson;
+    if (!parsed) throw new Error('Missing library');
+    parsed.root.templates.push({ $ref: 'ambiguousMonomerTemplate-variant' });
+    parsed['ambiguousMonomerTemplate-variant'] = {
+      type: 'ambiguousMonomerTemplate',
+      id: 'variant',
+      subtype: 'alternatives',
+      options: [{ templateId: 'original' }],
+    } as (typeof parsed)[string];
+    expect(() =>
+      editor.removeMonomerFromLibrary(editor.monomersLibrary[0]),
+    ).toThrow('ambiguous monomer');
+    expect(editor.monomersLibrary).toHaveLength(1);
   });
 });

@@ -27,6 +27,8 @@ import {
 import { SnakeMode } from 'application/editor/modes/SnakeMode';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { EditorHistory } from 'application/editor/EditorHistory';
+import type { LibraryItemDragDropHandlerDeps } from 'application/editor/libraryItemDragDrop/LibraryItemDragDropHandler';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 type RescaleStructForModeTransitionContext = {
   micromoleculesEditor: {
@@ -63,6 +65,33 @@ const callRescaleStructForModeTransition = (
 };
 
 describe('CoreEditor', () => {
+  it('uses the current canvas for library drag/drop after manager swaps', () => {
+    const canvas = createPolymerEditorCanvas();
+    const editor = new CoreEditor({
+      canvas,
+      theme: coreEditorTheme,
+      renderersContainer: createRenderersManager(polymerEditorTheme),
+    });
+    const { deps } = (
+      editor as unknown as {
+        dragDropHandler: { deps: LibraryItemDragDropHandlerDeps };
+      }
+    ).dragDropHandler;
+    const originalManager = editor.drawingEntitiesManager;
+    const replacementManager = new DrawingEntitiesManager();
+
+    try {
+      expect(deps.drawingEntitiesManager).toBe(originalManager);
+      editor.drawingEntitiesManager = replacementManager;
+      expect(deps.drawingEntitiesManager).toBe(replacementManager);
+      editor.drawingEntitiesManager = originalManager;
+      expect(deps.drawingEntitiesManager).toBe(originalManager);
+    } finally {
+      editor.destroy();
+      canvas.remove();
+    }
+  });
+
   describe('switchToMacromolecules', () => {
     const originalGetBBox = SVGElement.prototype.getBBox;
 

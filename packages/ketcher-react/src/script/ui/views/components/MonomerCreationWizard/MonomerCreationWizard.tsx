@@ -602,7 +602,13 @@ const validateInputs = (
 
       if (
         !skipUniquenessChecks &&
-        hasMonomerFieldCollision(library, 'symbol', value, values.type)
+        hasMonomerFieldCollision(
+          library,
+          'symbol',
+          value,
+          values.type,
+          originalMonomerItem,
+        )
       ) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('symbolExists', {
@@ -637,7 +643,13 @@ const validateInputs = (
 
       if (
         !skipUniquenessChecks &&
-        hasMonomerFieldCollision(library, 'aliasHELM', value, values.type)
+        hasMonomerFieldCollision(
+          library,
+          'aliasHELM',
+          value,
+          values.type,
+          originalMonomerItem,
+        )
       ) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('notUniqueHELMAlias', {
@@ -660,7 +672,13 @@ const validateInputs = (
 
       if (
         !skipUniquenessChecks &&
-        hasMonomerFieldCollision(library, 'aliasBILN', value, values.type)
+        hasMonomerFieldCollision(
+          library,
+          'aliasBILN',
+          value,
+          values.type,
+          originalMonomerItem,
+        )
       ) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('notUniqueBILNAlias', {

@@ -18,7 +18,9 @@ const createEditor = (modeName = 'flex-layout-mode') => {
   const editor = Object.create(CoreEditor.prototype) as CoreEditor;
   const struct = new Struct();
   const manager = new DrawingEntitiesManager();
-  jest.spyOn(manager, 'clearCanvas').mockImplementation(() => undefined);
+  jest
+    .spyOn(DrawingEntitiesManager.prototype, 'clearCanvas')
+    .mockImplementation(() => undefined);
   Object.assign(editor, {
     _type: EditorType.Macromolecules,
     mode: { modeName, initialize: jest.fn() },
@@ -30,7 +32,13 @@ const createEditor = (modeName = 'flex-layout-mode') => {
     },
     rescaleStructForModeTransition: jest.fn(() => 1),
     viewModel: { initialize: jest.fn() },
-    renderersContainer: { update: jest.fn() },
+    renderersContainer: {
+      update: jest.fn(),
+      reinitializeViewModel: jest.fn(),
+      runPostRenderMethods: jest.fn(),
+      addSGroup: jest.fn(),
+      addStereoFlag: jest.fn(),
+    },
     events: { modelChange: { dispatch: jest.fn() } },
   });
   return { editor, manager, struct };
@@ -127,6 +135,90 @@ describe('temporary monomer wizard mode session', () => {
     editor.finishMonomerWizardSession(false);
     expect(convert).not.toHaveBeenCalled();
     expect(editor.drawingEntitiesManager).toBe(manager);
+  });
+
+  it.each(['flex-layout-mode', 'snake-layout-mode', 'sequence-layout-mode'])(
+    'saves as one undoable canvas replacement in %s without losing earlier history',
+    (modeName) => {
+      const { editor, manager } = createEditor(modeName);
+      const history = EditorHistory.getInstance(editor);
+      const previousOperation = { execute: jest.fn(), invert: jest.fn() };
+      const previousCommand = new Command();
+      previousCommand.addOperation(previousOperation);
+      history.historyStack = [previousCommand];
+      history.historyPointer = 1;
+      jest
+        .spyOn(DrawingEntitiesManager.prototype, 'unselectAllDrawingEntities')
+        .mockReturnValue(new Command());
+      const snake = jest
+        .spyOn(DrawingEntitiesManager.prototype, 'applySnakeLayout')
+        .mockReturnValue(new Command());
+      jest
+        .spyOn(DrawingEntitiesManager.prototype, 'applyFlexLayoutMode')
+        .mockReturnValue(new Command());
+      jest
+        .spyOn(DrawingEntitiesManager.prototype, 'recalculateAntisenseChains')
+        .mockReturnValue(new Command());
+      jest
+        .spyOn(MacromoleculesConverter, 'convertStructToDrawingEntities')
+        .mockReturnValue({ modelChanges: new Command() } as never);
+
+      editor.beginMonomerWizardSession();
+      editor.finishMonomerWizardSession(true);
+      const savedManager = editor.drawingEntitiesManager;
+      expect(EditorHistory.getInstance(editor)).toBe(history);
+      expect(history.historyPointer).toBe(2);
+      expect(history.previousCommand.operations).toHaveLength(1);
+
+      history.undo();
+      expect(editor.drawingEntitiesManager).toBe(manager);
+      expect(history.historyPointer).toBe(1);
+      history.redo();
+      expect(editor.drawingEntitiesManager).toBe(savedManager);
+      expect(history.historyPointer).toBe(2);
+      expect(snake).toHaveBeenCalledTimes(
+        modeName === 'snake-layout-mode' ? 1 : 0,
+      );
+      history.undo();
+      history.undo();
+      expect(previousOperation.invert).toHaveBeenCalledTimes(1);
+      expect(editor.drawingEntitiesManager).toBe(manager);
+    },
+  );
+
+  it('restores the original model and history if rendering the saved canvas fails', () => {
+    const { editor, manager } = createEditor();
+    const originalMonomer = new Peptide(peptideMonomerItem, new Vec2(12, 34));
+    manager.monomers.set(originalMonomer.id, originalMonomer);
+    const history = EditorHistory.getInstance(editor);
+    history.historyStack = [new Command()];
+    history.historyPointer = 1;
+    jest
+      .spyOn(DrawingEntitiesManager.prototype, 'applyFlexLayoutMode')
+      .mockReturnValue(new Command());
+    jest
+      .spyOn(DrawingEntitiesManager.prototype, 'recalculateAntisenseChains')
+      .mockReturnValue(new Command());
+    jest
+      .spyOn(MacromoleculesConverter, 'convertStructToDrawingEntities')
+      .mockReturnValue({ modelChanges: new Command() } as never);
+    jest
+      .spyOn(editor.renderersContainer, 'update')
+      .mockImplementationOnce(() => {
+        throw new Error('Render failed');
+      });
+
+    editor.beginMonomerWizardSession(false);
+    expect(() => editor.finishMonomerWizardSession(true)).toThrow(
+      'Render failed',
+    );
+
+    expect(editor.drawingEntitiesManager).toBe(manager);
+    expect(manager.monomers.get(originalMonomer.id)).toBe(originalMonomer);
+    expect(originalMonomer.position).toEqual(new Vec2(12, 34));
+    expect(history.historyPointer).toBe(1);
+    expect(history.historyStack).toHaveLength(1);
+    expect(editor._type).toBe(EditorType.Macromolecules);
   });
 
   it('converts a detached monomer without consuming hidden entities or mutating its template', () => {

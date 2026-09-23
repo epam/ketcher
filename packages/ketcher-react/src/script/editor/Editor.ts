@@ -1199,6 +1199,7 @@ class Editor implements KetcherEditor {
     monomerToAtomIdMap: Map<BaseMonomer, Map<number, number>>,
   ) {
     const leavingAtoms = new Set<number>();
+    const attachmentPlaceholders = new Map<number, number>();
     monomerToAtomIdMap.forEach((atomMap, monomer) => {
       if (!Array.from(atomMap.values()).every((id) => selectedAtoms.has(id))) {
         return;
@@ -1207,6 +1208,30 @@ class Editor implements KetcherEditor {
         if (
           monomer.isAttachmentPointUsed(monomer.listOfAttachmentPoints[index])
         ) {
+          const template = monomer.monomerItem.struct;
+          const attachmentAtom = template.atoms.get(point.attachmentAtom);
+          if (attachmentAtom?.label === 'R#') {
+            // Legacy templates use a terminal R-group itself as the AP.
+            const bonds = Array.from(template.bonds.values()).filter(
+              (bond) =>
+                bond.begin === point.attachmentAtom ||
+                bond.end === point.attachmentAtom,
+            );
+            if (bonds.length !== 1) {
+              throw new Error(
+                'Cannot expand a non-terminal attachment placeholder.',
+              );
+            }
+            const neighborId =
+              bonds[0].begin === point.attachmentAtom
+                ? bonds[0].end
+                : bonds[0].begin;
+            const placeholderId = atomMap.get(point.attachmentAtom);
+            const attachmentId = atomMap.get(neighborId);
+            assert(isNumber(placeholderId) && isNumber(attachmentId));
+            attachmentPlaceholders.set(placeholderId, attachmentId);
+            leavingAtoms.add(placeholderId);
+          }
           point.leavingGroup?.atoms.forEach((id) => {
             const atomId = atomMap.get(id);
             if (isNumber(atomId)) leavingAtoms.add(atomId);
@@ -1234,9 +1259,13 @@ class Editor implements KetcherEditor {
       selectedAtoms.delete(id);
     });
     Array.from(struct.bonds.entries()).forEach(([id, bond]) => {
-      if (leavingAtoms.has(bond.begin) || leavingAtoms.has(bond.end)) {
+      const begin = attachmentPlaceholders.get(bond.begin) ?? bond.begin;
+      const end = attachmentPlaceholders.get(bond.end) ?? bond.end;
+      if (begin === end || leavingAtoms.has(begin) || leavingAtoms.has(end)) {
         struct.bonds.delete(id);
       } else {
+        bond.begin = begin;
+        bond.end = end;
         if (selectedAtoms.has(bond.begin)) {
           bond.beginSuperatomAttachmentPointNumber = undefined;
         }

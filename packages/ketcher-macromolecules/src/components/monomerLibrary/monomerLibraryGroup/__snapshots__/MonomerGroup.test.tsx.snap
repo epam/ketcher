@@ -2,7 +2,7 @@
 
 exports[`Monomer Group should apply correct style if selected 1`] = `
 <div
-  class="css-w61mbe"
+  class="css-mtuocq"
   data-monomer-item-id="RRMonomerName___RRName"
   data-testid="RRMonomerName___RRName"
 >
@@ -11,6 +11,17 @@ exports[`Monomer Group should apply correct style if selected 1`] = `
   >
     R
   </span>
+  <button
+    aria-haspopup="menu"
+    aria-label="Actions for R"
+    class="dots"
+    type="button"
+  >
+    <svg
+      class="css-x2ejol"
+      name="vertical-dots"
+    />
+  </button>
   <div
     aria-label=""
     class="css-daj1kg"
@@ -48,7 +59,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           class="css-1a3tnc1"
         >
           <div
-            class="css-mfw0go"
+            class="css-yfafb2"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
@@ -57,6 +68,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             >
               R
             </span>
+            <button
+              aria-haspopup="menu"
+              aria-label="Actions for R"
+              class="dots"
+              type="button"
+            >
+              <svg
+                class="css-x2ejol"
+                name="vertical-dots"
+              />
+            </button>
             <div
               aria-label=""
               class="css-daj1kg"
@@ -76,7 +98,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1mkwiyz"
+            class="css-1nnahju"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
@@ -85,6 +107,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             >
               m
             </span>
+            <button
+              aria-haspopup="menu"
+              aria-label="Actions for m"
+              class="dots"
+              type="button"
+            >
+              <svg
+                class="css-x2ejol"
+                name="vertical-dots"
+              />
+            </button>
             <div
               aria-label=""
               class="css-daj1kg"
@@ -104,7 +137,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-rt02do"
+            class="css-zd6xyf"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
@@ -113,6 +146,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             >
               d
             </span>
+            <button
+              aria-haspopup="menu"
+              aria-label="Actions for d"
+              class="dots"
+              type="button"
+            >
+              <svg
+                class="css-x2ejol"
+                name="vertical-dots"
+              />
+            </button>
             <div
               aria-label=""
               class="css-daj1kg"
@@ -132,7 +176,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-mfw0go"
+            class="css-yfafb2"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
@@ -141,6 +185,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             >
               ar
             </span>
+            <button
+              aria-haspopup="menu"
+              aria-label="Actions for ar"
+              class="dots"
+              type="button"
+            >
+              <svg
+                class="css-x2ejol"
+                name="vertical-dots"
+              />
+            </button>
             <div
               aria-label=""
               class="css-daj1kg"
@@ -160,7 +215,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1mkwiyz"
+            class="css-1nnahju"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
@@ -169,6 +224,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             >
               Ld
             </span>
+            <button
+              aria-haspopup="menu"
+              aria-label="Actions for Ld"
+              class="dots"
+              type="button"
+            >
+              <svg
+                class="css-x2ejol"
+                name="vertical-dots"
+              />
+            </button>
             <div
               aria-label=""
               class="css-daj1kg"
@@ -204,7 +270,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
         class="css-1a3tnc1"
       >
         <div
-          class="css-mfw0go"
+          class="css-yfafb2"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
@@ -213,6 +279,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           >
             R
           </span>
+          <button
+            aria-haspopup="menu"
+            aria-label="Actions for R"
+            class="dots"
+            type="button"
+          >
+            <svg
+              class="css-x2ejol"
+              name="vertical-dots"
+            />
+          </button>
           <div
             aria-label=""
             class="css-daj1kg"
@@ -232,7 +309,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1mkwiyz"
+          class="css-1nnahju"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
@@ -241,6 +318,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           >
             m
           </span>
+          <button
+            aria-haspopup="menu"
+            aria-label="Actions for m"
+            class="dots"
+            type="button"
+          >
+            <svg
+              class="css-x2ejol"
+              name="vertical-dots"
+            />
+          </button>
           <div
             aria-label=""
             class="css-daj1kg"
@@ -260,7 +348,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-rt02do"
+          class="css-zd6xyf"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
@@ -269,6 +357,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           >
             d
           </span>
+          <button
+            aria-haspopup="menu"
+            aria-label="Actions for d"
+            class="dots"
+            type="button"
+          >
+            <svg
+              class="css-x2ejol"
+              name="vertical-dots"
+            />
+          </button>
           <div
             aria-label=""
             class="css-daj1kg"
@@ -288,7 +387,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-mfw0go"
+          class="css-yfafb2"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
@@ -297,6 +396,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           >
             ar
           </span>
+          <button
+            aria-haspopup="menu"
+            aria-label="Actions for ar"
+            class="dots"
+            type="button"
+          >
+            <svg
+              class="css-x2ejol"
+              name="vertical-dots"
+            />
+          </button>
           <div
             aria-label=""
             class="css-daj1kg"
@@ -316,7 +426,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1mkwiyz"
+          class="css-1nnahju"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
@@ -325,6 +435,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           >
             Ld
           </span>
+          <button
+            aria-haspopup="menu"
+            aria-label="Actions for Ld"
+            class="dots"
+            type="button"
+          >
+            <svg
+              class="css-x2ejol"
+              name="vertical-dots"
+            />
+          </button>
           <div
             aria-label=""
             class="css-daj1kg"
@@ -412,7 +533,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           class="css-1a3tnc1"
         >
           <div
-            class="css-mfw0go"
+            class="css-yfafb2"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
@@ -421,6 +542,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             >
               R
             </span>
+            <button
+              aria-haspopup="menu"
+              aria-label="Actions for R"
+              class="dots"
+              type="button"
+            >
+              <svg
+                class="css-x2ejol"
+                name="vertical-dots"
+              />
+            </button>
             <div
               aria-label=""
               class="css-daj1kg"
@@ -440,7 +572,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1mkwiyz"
+            class="css-1nnahju"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
@@ -449,6 +581,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             >
               m
             </span>
+            <button
+              aria-haspopup="menu"
+              aria-label="Actions for m"
+              class="dots"
+              type="button"
+            >
+              <svg
+                class="css-x2ejol"
+                name="vertical-dots"
+              />
+            </button>
             <div
               aria-label=""
               class="css-daj1kg"
@@ -468,7 +611,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-rt02do"
+            class="css-zd6xyf"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
@@ -477,6 +620,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             >
               d
             </span>
+            <button
+              aria-haspopup="menu"
+              aria-label="Actions for d"
+              class="dots"
+              type="button"
+            >
+              <svg
+                class="css-x2ejol"
+                name="vertical-dots"
+              />
+            </button>
             <div
               aria-label=""
               class="css-daj1kg"
@@ -496,7 +650,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-mfw0go"
+            class="css-yfafb2"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
@@ -505,6 +659,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             >
               ar
             </span>
+            <button
+              aria-haspopup="menu"
+              aria-label="Actions for ar"
+              class="dots"
+              type="button"
+            >
+              <svg
+                class="css-x2ejol"
+                name="vertical-dots"
+              />
+            </button>
             <div
               aria-label=""
               class="css-daj1kg"
@@ -524,7 +689,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1mkwiyz"
+            class="css-1nnahju"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
@@ -533,6 +698,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             >
               Ld
             </span>
+            <button
+              aria-haspopup="menu"
+              aria-label="Actions for Ld"
+              class="dots"
+              type="button"
+            >
+              <svg
+                class="css-x2ejol"
+                name="vertical-dots"
+              />
+            </button>
             <div
               aria-label=""
               class="css-daj1kg"
@@ -563,7 +739,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
         class="css-1a3tnc1"
       >
         <div
-          class="css-mfw0go"
+          class="css-yfafb2"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
@@ -572,6 +748,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           >
             R
           </span>
+          <button
+            aria-haspopup="menu"
+            aria-label="Actions for R"
+            class="dots"
+            type="button"
+          >
+            <svg
+              class="css-x2ejol"
+              name="vertical-dots"
+            />
+          </button>
           <div
             aria-label=""
             class="css-daj1kg"
@@ -591,7 +778,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1mkwiyz"
+          class="css-1nnahju"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
@@ -600,6 +787,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           >
             m
           </span>
+          <button
+            aria-haspopup="menu"
+            aria-label="Actions for m"
+            class="dots"
+            type="button"
+          >
+            <svg
+              class="css-x2ejol"
+              name="vertical-dots"
+            />
+          </button>
           <div
             aria-label=""
             class="css-daj1kg"
@@ -619,7 +817,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-rt02do"
+          class="css-zd6xyf"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
@@ -628,6 +826,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           >
             d
           </span>
+          <button
+            aria-haspopup="menu"
+            aria-label="Actions for d"
+            class="dots"
+            type="button"
+          >
+            <svg
+              class="css-x2ejol"
+              name="vertical-dots"
+            />
+          </button>
           <div
             aria-label=""
             class="css-daj1kg"
@@ -647,7 +856,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-mfw0go"
+          class="css-yfafb2"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
@@ -656,6 +865,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           >
             ar
           </span>
+          <button
+            aria-haspopup="menu"
+            aria-label="Actions for ar"
+            class="dots"
+            type="button"
+          >
+            <svg
+              class="css-x2ejol"
+              name="vertical-dots"
+            />
+          </button>
           <div
             aria-label=""
             class="css-daj1kg"
@@ -675,7 +895,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1mkwiyz"
+          class="css-1nnahju"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
@@ -684,6 +904,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           >
             Ld
           </span>
+          <button
+            aria-haspopup="menu"
+            aria-label="Actions for Ld"
+            class="dots"
+            type="button"
+          >
+            <svg
+              class="css-x2ejol"
+              name="vertical-dots"
+            />
+          </button>
           <div
             aria-label=""
             class="css-daj1kg"

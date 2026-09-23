@@ -41,9 +41,7 @@ type TemplateGroups = Record<string, Template[]>;
  * jsonschema `Schema`, plain records), so `enum`/`enumNames` are validated at
  * runtime rather than relied on structurally.
  */
-type EnumSchemaLike =
-  | { enum?: unknown; enumNames?: unknown }
-  | Record<string, unknown>;
+type EnumSchemaLike = { enum?: unknown; enumNames?: unknown };
 
 export function greekify(str: string): string {
   return str.replace(greekRe, (sym) => GREEK_SIMBOLS[sym]);

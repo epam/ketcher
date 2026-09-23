@@ -115,6 +115,64 @@ const dropInlineWorkerMapsPlugin = () => ({
   },
 });
 
+// Rolldown emits cross-chunk asset references (the worker constructor in
+// `main.js`, and the .wasm lookup inside the worker chunk itself, both from
+// `?no-inline`/native-worker handling above) as a computed expression -
+// `new URL("" + new URL('<file>', import.meta.url).href, "" +
+// import.meta.url)` - so the URL still resolves correctly regardless of
+// which chunk ends up referencing it. Consumer bundlers (webpack 5's
+// asset-modules worker plugin, Vite's own `?worker` detection) only
+// statically recognise the literal form - `new Worker(new URL('./file.js',
+// import.meta.url), { type: 'module' })` and `new URL('./file.wasm',
+// import.meta.url)` - and otherwise copy the call through unchanged, so the
+// worker/.wasm are never emitted into the consumer's own build (review
+// blocker B2; 404 at runtime). Both chunks in every `copyWasm` variant sit
+// flat in the same `assets/` output directory (`base: './'`, no
+// `preserveModules`), so the two forms resolve to the same URL here -
+// rewriting the computed form to the literal one after the bundle is
+// assembled is safe.
+const workerUrlRE =
+  /new Worker\(new URL\(\s*(?:\/\*\s*@vite-ignore\s*\*\/\s*)?"" \+ new URL\((["'])([^"']+)\1, import\.meta\.url\)\.href,\s*"" \+ import\.meta\.url\s*\), \{ type: "module" \}\)/g;
+
+const wasmUrlHrefRE =
+  /new URL\("" \+ new URL\((["'])([^"']+\.wasm)\1, import\.meta\.url\)\.href, "" \+ import\.meta\.url\)\.href/g;
+
+const literalWorkerUrlPlugin = () => ({
+  name: 'ketcher-standalone-literal-worker-url',
+  generateBundle(_options, bundle) {
+    for (const file of Object.values(bundle)) {
+      // The main lib entry (`main.js`, containing the `new Worker(...)`
+      // call) comes through as a rollup/rolldown `chunk`. The worker itself
+      // was already built by Vite's separate worker pipeline and is
+      // injected here as a pre-built `asset` (its own `findWasmBinary()`
+      // call lives in that asset's source) - so both shapes need checking.
+      const isChunk = file.type === 'chunk';
+      const isJsAsset = file.type === 'asset' && file.fileName.endsWith('.js');
+      if (!isChunk && !isJsAsset) continue;
+
+      const key = isChunk ? 'code' : 'source';
+      let code = file[key];
+      if (typeof code !== 'string') continue;
+
+      workerUrlRE.lastIndex = 0;
+      if (workerUrlRE.test(code)) {
+        code = code.replace(
+          workerUrlRE,
+          "new Worker(new URL('./$2', import.meta.url), { type: 'module' })",
+        );
+      }
+      wasmUrlHrefRE.lastIndex = 0;
+      if (wasmUrlHrefRE.test(code)) {
+        code = code.replace(
+          wasmUrlHrefRE,
+          "new URL('./$2', import.meta.url).href",
+        );
+      }
+      file[key] = code;
+    }
+  },
+});
+
 export default defineConfig({
   // These bundles are consumed from `node_modules/ketcher-standalone/dist/...`,
   // not served from a site root. Vite's default `base: '/'` would emit the
@@ -142,7 +200,9 @@ export default defineConfig({
     format: 'es',
     plugins: () => (variant.copyWasm ? [noInlineWasmPlugin()] : []),
   },
-  plugins: variant.copyWasm ? [] : [dropInlineWorkerMapsPlugin()],
+  plugins: variant.copyWasm
+    ? [literalWorkerUrlPlugin()]
+    : [dropInlineWorkerMapsPlugin()],
   build: {
     minify: false,
     sourcemap: true,

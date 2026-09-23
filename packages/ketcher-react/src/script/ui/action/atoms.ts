@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { UiAction, AtomActionOpts } from './action.types';
+import type { UiAction } from './action.types';
 
 export const basicAtoms: readonly string[] = [
   'H',
@@ -61,7 +61,7 @@ export default Object.keys(atomCuts).reduce<AtomActionsMap>((res, label) => {
     shortcut: atomCuts[label],
     action: {
       tool: 'atom',
-      opts: { label } as AtomActionOpts,
+      opts: { label } as unknown,
     },
   };
   res[`atom-${label.toLowerCase()}`] = atomAction;

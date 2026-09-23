@@ -146,7 +146,7 @@ type AtomActionOpts = {
 // todo: find out types
 type ActionObj = {
   tool?: string;
-  opts?: Record<string, unknown> | AtomActionOpts;
+  opts?: unknown;
   dialog?: string;
   thunk?: (dispatch: Dispatch, getState: () => ActionThunkState) => void;
 };

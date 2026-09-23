@@ -14,9 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const basicAtoms = ['H', 'C', 'N', 'O', 'S', 'P', 'F', 'Cl', 'Br', 'I'];
+import type { UiAction, AtomActionOpts } from './action.types';
 
-export const atomCuts = {
+export const basicAtoms: readonly string[] = [
+  'H',
+  'C',
+  'N',
+  'O',
+  'S',
+  'P',
+  'F',
+  'Cl',
+  'Br',
+  'I',
+] as const;
+
+export const atomCuts: Readonly<Record<string, string>> = {
   H: 'h',
   C: 'c',
   N: 'n',
@@ -38,16 +51,19 @@ export const atomCuts = {
   D: 'd',
   B: 'Shift+b',
   '*': 'Shift+8',
-};
+} as const;
 
-export default Object.keys(atomCuts).reduce((res, label) => {
-  res[`atom-${label.toLowerCase()}`] = {
+type AtomActionsMap = Record<string, UiAction>;
+
+export default Object.keys(atomCuts).reduce<AtomActionsMap>((res, label) => {
+  const atomAction: UiAction = {
     title: `Atom ${label}`,
     shortcut: atomCuts[label],
     action: {
       tool: 'atom',
-      opts: { label },
+      opts: { label } as AtomActionOpts,
     },
   };
+  res[`atom-${label.toLowerCase()}`] = atomAction;
   return res;
 }, {});

@@ -138,10 +138,15 @@ type ActionThunkState = {
   };
 };
 
+// Specific action option types
+type AtomActionOpts = {
+  label: string;
+};
+
 // todo: find out types
 type ActionObj = {
   tool?: string;
-  opts?: unknown;
+  opts?: Record<string, unknown> | AtomActionOpts;
   dialog?: string;
   thunk?: (dispatch: Dispatch, getState: () => ActionThunkState) => void;
 };
@@ -183,4 +188,4 @@ type Tools = {
   [key in ToolVariant]: UiAction;
 };
 
-export type { Tools, UiAction, UiActionAction };
+export type { Tools, UiAction, UiActionAction, AtomActionOpts };

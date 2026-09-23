@@ -125,8 +125,9 @@ const dropInlineWorkerMapsPlugin = () => ({
 // statically recognise the literal form - `new Worker(new URL('./file.js',
 // import.meta.url), { type: 'module' })` and `new URL('./file.wasm',
 // import.meta.url)` - and otherwise copy the call through unchanged, so the
-// worker/.wasm are never emitted into the consumer's own build (review
-// blocker B2; 404 at runtime). Both chunks in every `copyWasm` variant sit
+// worker/.wasm are never emitted into the consumer's own build (#10326;
+// see the ADR: .memory-bank/adr/2026-08-28-vite-for-library-builds.md;
+// 404 at runtime). Both chunks in every `copyWasm` variant sit
 // flat in the same `assets/` output directory (`base: './'`, no
 // `preserveModules`), so the two forms resolve to the same URL here -
 // rewriting the computed form to the literal one after the bundle is
@@ -199,17 +200,18 @@ const literalWorkerUrlPlugin = () => ({
     // the bundle - the worker constructor in `main.js`, the wasm lookup
     // inside the worker chunk. Silently emitting 0 rewrites would mean
     // Rolldown changed how it renders these cross-chunk references and this
-    // plugin stopped matching anything, silently reintroducing review
-    // blocker B2 (see the comment above `workerUrlRE`) with no build-time
-    // signal at all.
+    // plugin stopped matching anything, silently reintroducing the #10326
+    // regression fixed here (see the comment above `workerUrlRE`, and the
+    // ADR: .memory-bank/adr/2026-08-28-vite-for-library-builds.md) with no
+    // build-time signal at all.
     if (workerRewrites === 0 || wasmRewrites === 0) {
       this.error(
         'ketcher-standalone-literal-worker-url: expected at least one ' +
           `worker-URL and one wasm-URL rewrite in this copyWasm build, got ` +
           `${workerRewrites} worker rewrite(s) and ${wasmRewrites} wasm ` +
           'rewrite(s). The computed-URL patterns this plugin matches no ' +
-          'longer appear in the bundle - either the fix is silently broken ' +
-          '(review blocker B2) or Rolldown changed its output shape and the ' +
+          'longer appear in the bundle - either the fix (#10326) is ' +
+          'silently broken or Rolldown changed its output shape and the ' +
           'regexes need updating.',
       );
     }

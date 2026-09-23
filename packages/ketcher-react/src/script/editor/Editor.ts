@@ -23,6 +23,7 @@ import {
   type IKetMonomerTemplate,
   type MonomerCreationInitialValues,
   type MonomerCreationState,
+  type MonomerItemType,
   type Pool,
   type ReStruct,
   type RenderOptions,
@@ -30,6 +31,10 @@ import {
   type RnaPresetComponentKey,
   type ComponentStructureUpdateData,
   type BaseMonomer,
+  type MonomerCreationWizardRequest,
+  CoreAtom,
+  MonomerMicromolecule,
+  provideEditorInstance,
   Action,
   Atom,
   AtomLabel,
@@ -113,6 +118,12 @@ import type {
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
 import { isNumber } from 'lodash';
 import paperjs from 'paper';
+import {
+  getEditAllInstancesInitialValues,
+  getEditInstanceInitialValues,
+  getLibraryEditInitialValues,
+  getSelectedSGroupIdsForEditAll,
+} from '../ui/views/components/MonomerCreationWizard/MonomerCreationWizard.utils';
 
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
@@ -284,6 +295,7 @@ class Editor implements KetcherEditor {
     apiSettings: PipelineSubscription;
     cursor: Subscription;
     updateFloatingTools: Subscription<FloatingToolsParams>;
+    monomerWizardStateChange: Subscription<boolean>;
   };
 
   public serverSettings: Record<string, unknown> = {};
@@ -355,6 +367,7 @@ class Editor implements KetcherEditor {
       showInfo: new PipelineSubscription(),
       apiSettings: new PipelineSubscription(),
       updateFloatingTools: new Subscription(),
+      monomerWizardStateChange: new Subscription<boolean>(),
     };
 
     domEventSetup(this, clientArea);
@@ -683,6 +696,7 @@ class Editor implements KetcherEditor {
 
   private set monomerCreationState(state: MonomerCreationState) {
     this.render.monomerCreationState = state;
+    this.event.monomerWizardStateChange.dispatch(Boolean(state));
   }
 
   public setMonomerCreationSelectedType(
@@ -1046,6 +1060,263 @@ class Editor implements KetcherEditor {
   private changeEventSubscriber: {
     handler: ((action?: unknown) => void) | ((data: ChangeEventData[]) => void);
   } | null = null;
+
+  private onMonomerWizardFinish?: (savedCanvas: boolean) => void;
+
+  private completeMonomerWizardSession(savedCanvas: boolean) {
+    const onFinish = this.onMonomerWizardFinish;
+    this.onMonomerWizardFinish = undefined;
+    onFinish?.(savedCanvas);
+  }
+
+  private finishMonomerWizardAfterMerge(merge: () => void) {
+    setTimeout(() => {
+      try {
+        merge();
+        this.completeMonomerWizardSession(true);
+      } catch (error) {
+        this.completeMonomerWizardSession(false);
+        this.errorHandler?.(
+          error instanceof Error ? error.message : String(error),
+        );
+      }
+    }, 0);
+  }
+
+  openMonomerCreationWizardFromMacro(
+    request: MonomerCreationWizardRequest,
+    onFinish: (savedCanvas: boolean) => void,
+  ) {
+    const macroEditor = provideEditorInstance(this.ketcherId);
+    const selectedEntities =
+      macroEditor.drawingEntitiesManager.selectedEntities;
+    const isLibraryRequest =
+      request.mode === 'library' || request.mode === 'duplicate';
+    const { struct, monomerToAtomIdMap } =
+      macroEditor.beginMonomerWizardSession(!isLibraryRequest);
+    this.onMonomerWizardFinish = (savedCanvas) =>
+      onFinish(savedCanvas && !isLibraryRequest);
+    try {
+      if (request.mode === 'library' || request.mode === 'duplicate') {
+        assert(request.libraryItem);
+        this.openLibraryMonomerCreationWizard(
+          request.libraryItem,
+          request.mode,
+        );
+        return;
+      }
+
+      const atomIds = new Set<number>();
+      if (request.mode === 'create') {
+        selectedEntities.forEach(([, entity]) => {
+          if (entity instanceof CoreAtom) {
+            const atomId = monomerToAtomIdMap
+              .get(entity.monomer)
+              ?.get(entity.atomIdInMicroMode);
+            if (isNumber(atomId)) atomIds.add(atomId);
+          } else {
+            monomerToAtomIdMap.get(entity as BaseMonomer)?.forEach((atomId) => {
+              atomIds.add(atomId);
+            });
+          }
+        });
+        this.prepareMacroMonomersForCreation(
+          struct,
+          atomIds,
+          monomerToAtomIdMap,
+        );
+      } else {
+        assert(request.monomer);
+        monomerToAtomIdMap.get(request.monomer)?.forEach((atomId) => {
+          atomIds.add(atomId);
+        });
+      }
+      if (!atomIds.size) {
+        throw new Error('Select a structure to create or edit a monomer.');
+      }
+      const bonds = Array.from(struct.bonds.entries())
+        .filter(([, bond]) => atomIds.has(bond.begin) && atomIds.has(bond.end))
+        .map(([id]) => id);
+      const selection = { atoms: Array.from(atomIds), bonds };
+      this.struct(struct, false);
+      this.selection(selection);
+      if (request.mode === 'create') {
+        if (!this.isMonomerCreationWizardEnabled) {
+          throw new Error(
+            'The selected structure cannot be used to create a monomer.',
+          );
+        }
+        this.openMonomerCreationWizard(selection);
+      } else {
+        const sgroup = Array.from(struct.sgroups.values()).find(
+          (group) =>
+            group instanceof MonomerMicromolecule &&
+            group.atoms.some((atomId) => atomIds.has(atomId)),
+        );
+        assert(sgroup instanceof MonomerMicromolecule);
+        assert(request.monomer);
+        const initialValues =
+          request.mode === 'all'
+            ? getEditAllInstancesInitialValues(
+                request.monomer,
+                macroEditor.monomersLibraryParsedJson,
+              )
+            : getEditInstanceInitialValues(request.monomer);
+        if (request.mode === 'all') {
+          const selectedMonomerAtoms = new Set(
+            selectedEntities.flatMap(([, entity]) =>
+              Array.from(
+                monomerToAtomIdMap.get(entity as BaseMonomer)?.values() ?? [],
+              ),
+            ),
+          );
+          initialValues.selectedSGroupIds = getSelectedSGroupIdsForEditAll(
+            Array.from(struct.functionalGroups.values()).filter((group) =>
+              group.relatedSGroup.atoms.some((id) =>
+                selectedMonomerAtoms.has(id),
+              ),
+            ),
+            request.monomer,
+          );
+        }
+        this.openMonomerCreationWizard(
+          selection,
+          { ...initialValues, position: sgroup.pp ?? undefined },
+          sgroup.getAttachmentPoints(),
+          sgroup.monomer,
+        );
+      }
+    } catch (error) {
+      this.closeMonomerCreationWizard(true);
+      this.completeMonomerWizardSession(false);
+      throw error;
+    }
+  }
+
+  private prepareMacroMonomersForCreation(
+    struct: Struct,
+    selectedAtoms: Set<number>,
+    monomerToAtomIdMap: Map<BaseMonomer, Map<number, number>>,
+  ) {
+    const leavingAtoms = new Set<number>();
+    const attachmentPlaceholders = new Map<number, number>();
+    monomerToAtomIdMap.forEach((atomMap, monomer) => {
+      if (!Array.from(atomMap.values()).every((id) => selectedAtoms.has(id))) {
+        return;
+      }
+      monomer.monomerItem.attachmentPoints?.forEach((point, index) => {
+        if (
+          monomer.isAttachmentPointUsed(monomer.listOfAttachmentPoints[index])
+        ) {
+          const template = monomer.monomerItem.struct;
+          const attachmentAtom = template.atoms.get(point.attachmentAtom);
+          if (attachmentAtom?.label === 'R#') {
+            // Legacy templates use a terminal R-group itself as the AP.
+            const bonds = Array.from(template.bonds.values()).filter(
+              (bond) =>
+                bond.begin === point.attachmentAtom ||
+                bond.end === point.attachmentAtom,
+            );
+            if (bonds.length !== 1) {
+              throw new Error(
+                'Cannot expand a non-terminal attachment placeholder.',
+              );
+            }
+            const neighborId =
+              bonds[0].begin === point.attachmentAtom
+                ? bonds[0].end
+                : bonds[0].begin;
+            const placeholderId = atomMap.get(point.attachmentAtom);
+            const attachmentId = atomMap.get(neighborId);
+            assert(isNumber(placeholderId) && isNumber(attachmentId));
+            attachmentPlaceholders.set(placeholderId, attachmentId);
+            leavingAtoms.add(placeholderId);
+          }
+          point.leavingGroup?.atoms.forEach((id) => {
+            const atomId = atomMap.get(id);
+            if (isNumber(atomId)) leavingAtoms.add(atomId);
+          });
+        }
+      });
+    });
+    Array.from(struct.sgroups.entries()).forEach(([id, group]) => {
+      if (
+        group.isMonomer &&
+        group.atoms.every((atomId) => selectedAtoms.has(atomId))
+      ) {
+        struct.sGroupDelete(id);
+        Array.from(struct.functionalGroups.entries()).forEach(
+          ([fgId, functionalGroup]) => {
+            if (functionalGroup.relatedSGroupId === id) {
+              struct.functionalGroups.delete(fgId);
+            }
+          },
+        );
+      }
+    });
+    leavingAtoms.forEach((id) => {
+      struct.atoms.delete(id);
+      selectedAtoms.delete(id);
+    });
+    Array.from(struct.bonds.entries()).forEach(([id, bond]) => {
+      const begin = attachmentPlaceholders.get(bond.begin) ?? bond.begin;
+      const end = attachmentPlaceholders.get(bond.end) ?? bond.end;
+      if (begin === end || leavingAtoms.has(begin) || leavingAtoms.has(end)) {
+        struct.bonds.delete(id);
+      } else {
+        bond.begin = begin;
+        bond.end = end;
+        if (selectedAtoms.has(bond.begin)) {
+          bond.beginSuperatomAttachmentPointNumber = undefined;
+        }
+        if (selectedAtoms.has(bond.end)) {
+          bond.endSuperatomAttachmentPointNumber = undefined;
+        }
+      }
+    });
+    struct.initHalfBonds();
+    struct.initNeighbors();
+  }
+
+  openLibraryMonomerCreationWizard(
+    libraryItem: MonomerItemType,
+    mode: 'library' | 'duplicate',
+  ) {
+    if (libraryItem.props.unresolved || libraryItem.struct.atoms.size === 0) {
+      throw new Error('The selected monomer has no editable structure.');
+    }
+    const previousStruct = this.struct();
+    const atomIdMap = new Map<number, number>();
+    const structure = libraryItem.struct.clone(null, null, true, atomIdMap);
+    const [Monomer] = monomerFactory(libraryItem);
+    const monomer = new Monomer(libraryItem);
+    const attachmentPoints =
+      MacromoleculesConverter.convertMonomerAttachmentPointsToSGroupAttachmentPoints(
+        monomer,
+        atomIdMap,
+      );
+    const initialValues =
+      mode === 'library'
+        ? getLibraryEditInitialValues(libraryItem)
+        : { ...getEditInstanceInitialValues(libraryItem), libraryOnly: true };
+    this.struct(structure, false);
+    this.openMonomerCreationWizard(
+      {
+        atoms: Array.from(structure.atoms.keys()),
+        bonds: Array.from(structure.bonds.keys()),
+      },
+      initialValues,
+      attachmentPoints,
+      monomer,
+    );
+    this.originalStruct = previousStruct;
+    if (this.monomerCreationState) {
+      this.monomerCreationState = {
+        ...this.monomerCreationState,
+        attachmentAtomIdsWithExternalBonds: undefined,
+      };
+    }
+  }
 
   openMonomerCreationWizard(
     selectionOverride?: Selection,
@@ -1466,7 +1737,10 @@ class Editor implements KetcherEditor {
     this.update(finalAction);
   }
 
-  closeMonomerCreationWizard(restoreOriginalStruct = false) {
+  closeMonomerCreationWizard(
+    restoreOriginalStruct = false,
+    notifySession = true,
+  ) {
     if (!this.isMonomerCreationWizardActive) {
       return;
     }
@@ -1483,6 +1757,9 @@ class Editor implements KetcherEditor {
     this.monomerCreationState = null;
 
     this.tool('select');
+    if (notifySession) {
+      this.completeMonomerWizardSession(false);
+    }
   }
 
   saveNewMonomer(data: SaveNewMonomerData) {
@@ -2190,7 +2467,7 @@ class Editor implements KetcherEditor {
       },
     );
 
-    this.closeMonomerCreationWizard();
+    this.closeMonomerCreationWizard(false, false);
     const loadOriginalAction = fromNewCanvas(
       this.render.ctab,
       this.originalStruct,
@@ -2199,7 +2476,7 @@ class Editor implements KetcherEditor {
     this.event.change.dispatch();
 
     // this.struct() defers render via setTimeout, so wait for that.
-    setTimeout(() => {
+    this.finishMonomerWizardAfterMerge(() => {
       // Delete selected atoms (ignoreHistory — intermediate step).
       const newAction = new Action();
       newAction.mergeWith(
@@ -2348,7 +2625,7 @@ class Editor implements KetcherEditor {
           bonds: Array.from(selectedBonds),
         });
       }
-    }, 0);
+    });
   }
 
   /**

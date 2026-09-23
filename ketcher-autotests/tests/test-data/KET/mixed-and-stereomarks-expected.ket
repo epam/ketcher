@@ -67,7 +67,8 @@
                     -6.974300367340246,
                     0
                 ],
-                "stereoLabel": "&2"
+                "stereoLabel": "&2",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -76,7 +77,8 @@
                     -7.974900000036707,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -85,7 +87,8 @@
                     -8.475499816274812,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -94,7 +97,8 @@
                     -7.97509999996329,
                     0
                 ],
-                "stereoLabel": "&1"
+                "stereoLabel": "&1",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -103,7 +107,8 @@
                     -6.974400367303537,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",

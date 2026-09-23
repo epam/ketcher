@@ -26,7 +26,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -36,7 +37,8 @@
                     0
                 ],
                 "cip": "r",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -46,7 +48,8 @@
                     0
                 ],
                 "cip": "R",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "Cl",
@@ -208,7 +211,8 @@
                     0
                 ],
                 "cip": "R",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -218,7 +222,8 @@
                     0
                 ],
                 "cip": "s",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -228,7 +233,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "Cl",
@@ -390,7 +396,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -400,7 +407,8 @@
                     0
                 ],
                 "cip": "R",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -434,7 +442,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",

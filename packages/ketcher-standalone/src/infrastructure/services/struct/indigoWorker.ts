@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable no-restricted-globals */
 
 import {
   AromatizeCommandData,
@@ -29,6 +28,8 @@ import {
   DearomatizeCommandData,
   GenerateImageCommandData,
   GenerateInchIKeyCommandData,
+  IndigoModule,
+  IndigoOptions,
   InputMessage,
   LayoutCommandData,
   OutputMessage,
@@ -36,8 +37,6 @@ import {
   CalculateMacromoleculePropertiesCommandData,
 } from './indigoWorker.types';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import indigoModuleFn from '_indigo-ketcher-import-alias_';
 
 const normalizeError = (error: unknown): Error => {
@@ -51,13 +50,8 @@ const normalizeError = (error: unknown): Error => {
   }
 };
 
-interface IndigoOptions {
-  set: (key: string, value: string) => void;
-}
-
 type HandlerType = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  indigo: any,
+  indigo: IndigoModule,
   indigoOptions: IndigoOptions,
 ) => string;
 
@@ -69,8 +63,7 @@ function handle(
   messageType?: Command,
   inputData?: string,
 ) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  module.then((indigo: any) => {
+  module.then((indigo: IndigoModule) => {
     const indigoOptions = new indigo.MapStringString();
     setOptions(indigoOptions, options ?? {});
     let msg: OutputMessage<string>;

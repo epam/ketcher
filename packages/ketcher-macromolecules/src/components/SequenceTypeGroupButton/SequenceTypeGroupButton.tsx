@@ -29,6 +29,7 @@ import {
   getPersistedSequenceType,
   persistSequenceType,
 } from 'helpers/sequenceTypeStorage';
+import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 
 const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
   color:
@@ -76,19 +77,14 @@ export const SequenceTypeGroupButton = () => {
   const [activeSequenceType, setActiveSequenceType] = useState<SequenceType>(
     editor?.events.changeSequenceTypeEnterMode,
   );
-  const [isSequenceMode, setIsSequenceMode] = useState(false);
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
   const layoutMode = useLayoutMode();
+  const isSequenceMode = layoutMode === 'sequence-layout-mode';
   const isDisabled = !!isSequenceEditInRNABuilderMode;
 
   const dispatch = useAppDispatch();
-
-  const onToggleSequenceMode = (data) => {
-    const mode = typeof data === 'object' ? data.mode : data;
-    setIsSequenceMode(mode === 'sequence-layout-mode');
-  };
 
   useEffect(() => {
     const onChangeSequenceType = (mode: SequenceType) => {
@@ -102,21 +98,15 @@ export const SequenceTypeGroupButton = () => {
       setActiveSequenceType(mode);
       persistSequenceType(mode);
     };
-    editor?.events.selectMode.add(onToggleSequenceMode);
     editor?.events.changeSequenceTypeEnterMode.add(onChangeSequenceType);
     editor?.events.changeSequenceTypeEnterMode.dispatch(
       getPersistedSequenceType(),
     );
 
     return () => {
-      editor?.events.selectMode.remove(onToggleSequenceMode);
       editor?.events.changeSequenceTypeEnterMode.remove(onChangeSequenceType);
     };
-  }, [editor]);
-
-  useEffect(() => {
-    onToggleSequenceMode(layoutMode);
-  }, [layoutMode]);
+  }, [editor, dispatch]);
 
   const handleSelectSequenceType = (sequenceType: string) => {
     editor?.events.changeSequenceTypeEnterMode.dispatch(sequenceType);
@@ -127,7 +117,7 @@ export const SequenceTypeGroupButton = () => {
       <ButtonGroup disabled={isDisabled}>
         <SequenceTypeButton
           data-testid={`${SequenceType.RNA}Btn`}
-          title="RNA (Ctrl+Alt+R)"
+          title={`RNA (${hotkeysShortcuts.RNASequenceType})`}
           variant={
             activeSequenceType === SequenceType.RNA ? 'contained' : 'outlined'
           }
@@ -137,7 +127,7 @@ export const SequenceTypeGroupButton = () => {
         </SequenceTypeButton>
         <SequenceTypeButton
           data-testid={`${SequenceType.DNA}Btn`}
-          title="DNA (Ctrl+Alt+D)"
+          title={`DNA (${hotkeysShortcuts.DNASequenceType})`}
           variant={
             activeSequenceType === SequenceType.DNA ? 'contained' : 'outlined'
           }
@@ -147,7 +137,7 @@ export const SequenceTypeGroupButton = () => {
         </SequenceTypeButton>
         <SequenceTypeButton
           data-testid={`${SequenceType.PEPTIDE}Btn`}
-          title="Peptides (Ctrl+Alt+P)"
+          title={`Peptides (${hotkeysShortcuts.PEPTIDESequenceTYpe})`}
           variant={
             activeSequenceType === SequenceType.PEPTIDE
               ? 'contained'

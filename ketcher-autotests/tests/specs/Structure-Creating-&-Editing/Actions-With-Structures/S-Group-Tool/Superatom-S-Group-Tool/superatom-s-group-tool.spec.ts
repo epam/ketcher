@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
@@ -8,6 +7,7 @@ import {
   clickOnCanvas,
   MolFileFormat,
   keyboardPressOnCanvas,
+  moveMouseAway,
 } from '@utils';
 import {
   copyAndPaste,
@@ -209,6 +209,7 @@ test.describe('Superatom S-Group tool', () => {
     await EditAbbreviationDialog(page).removeAbbreviation();
     await keyboardPressOnCanvas(page, 'o');
     await clickInTheMiddleOfTheCanvas(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

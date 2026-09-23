@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { expect, Page } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
@@ -35,7 +32,7 @@ import { ConfirmationMessageDialog } from '@tests/pages/molecules/canvas/Confirm
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerWizardOption } from '@tests/pages/constants/contextMenu/Constants';
-import { NotificationBanner } from '@tests/pages/molecules/canvas/NotificationBanner';
+import { NotificationBannerOnMicro } from '@tests/pages/molecules/canvas/NotificationBannerOnMicro';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;
@@ -407,9 +404,9 @@ test.describe('Wizard exit confirmation for nucleotide preset', () => {
     });
     await dialog.submit();
 
-    expect(await NotificationBanner(page).getNotificationText()).toContain(
-      'The preset was successfully added to the library',
-    );
+    expect(
+      await NotificationBannerOnMicro(page).getNotificationText(),
+    ).toContain('The preset was successfully added to the library');
   });
 });
 
@@ -778,4 +775,50 @@ test.describe('Preset code formatting and default component code behavior', () =
 
     await dialog.discard();
   });
+});
+
+test('Problematic atom is highlighted in red when Phosphate tab is active', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/10248
+   * Description: An atom assigned to multiple nucleotide components should
+   * remain highlighted in red when the corresponding component tab is active.
+   *
+   * Case:
+   *      1. Load a carbon chain
+   *      2. Open the monomer creation wizard
+   *      3. Select Nucleotide (preset)
+   *      4. Define Base and Sugar components
+   *      5. Assign one Sugar atom to Phosphate as well
+   *      6. Submit while the Phosphate tab is active
+   *      7. Verify the shared atom is highlighted in red
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+  await LeftToolbar(page).createMonomer();
+  await shiftCanvas(page, -150, 50);
+  await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+  await presetSection.setName('Issue 10248 preset');
+
+  await presetSection.setupBase({
+    atomIds: [0, 1],
+    bondIds: [0],
+    code: 'TESTB',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  });
+
+  await presetSection.setupSugar({
+    atomIds: [2, 3, 4],
+    bondIds: [2, 3],
+    code: 'TESTS',
+  });
+
+  await presetSection.setupPhosphate({
+    atomIds: [4, 5],
+    bondIds: [4],
+    code: 'TESTP',
+  });
+
+  await dialog.submit();
+
+  await takeEditorScreenshot(page);
 });

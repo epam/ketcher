@@ -33,7 +33,7 @@ export function deleteFunctionalGroups(
       action.mergeWith(
         fromFragmentDeletion(struct, {
           atoms: atomsWithoutAttachmentPoint,
-          bonds: SGroup.getBonds(struct, sGroupItem),
+          bonds: SGroup.getBonds(struct.molecule, sGroupItem),
         }),
       );
     }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   type ElementLabel,
   type AtomColor,
@@ -60,7 +61,7 @@ export class HoverIcon {
   }
 
   isOverLoader(event: MouseEvent) {
-    const target = <HTMLDivElement>event?.relatedTarget ?? event.target;
+    const target = (event?.relatedTarget ?? event.target) as Element | null;
     return target?.classList?.contains('loading-spinner');
   }
 

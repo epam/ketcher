@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -401,11 +398,8 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '59. List of RNAs of inline Extended Smiles (R(A)P, R(C)P, R(G)P)',
     HELMString:
-      // eslint-disable-next-line max-len
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])[p%91%92(=O)O.[*:2]%91.[*:1]%92 |$;;;_R2;_R1$|].' +
-      // eslint-disable-next-line max-len
       '[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]([C1(N)=NC(=O)N%91C=C1.[*:1]%91 |$;;;;;;;;_R1$|])[p%91%92(=O)O.[*:2]%91.[*:1]%92 |$;;;_R2;_R1$|].' +
-      // eslint-disable-next-line max-len
       '[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]([C1(C2=C(N=C(N)N1)N%91C=N2)=O.[*:1]%91 |$;;;;;;;;;;;_R1$|])[p%91%92(=O)O.[*:2]%91.[*:1]%92 |$;;;_R2;_R1$|]}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2339',

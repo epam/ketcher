@@ -17,6 +17,7 @@ import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
   getRnaBaseFromSugar,
+  isLinearChem,
   isMonomerConnectedToR2RnaBase,
   isRnaBaseApplicableForAntisense,
   isRnaBaseOrAmbiguousRnaBase,
@@ -269,11 +270,22 @@ export class ChainsCollection {
         R1ConnectedMonomer instanceof Sugar &&
         getRnaBaseFromSugar(R1ConnectedMonomer) === monomer;
 
-      return (
+      const isStart =
         (isFirstMonomerWithR2R1connection ||
           isMonomerConnectedToR2RnaBase(monomer)) &&
-        !isRnaBaseConnectedToSugar
-      );
+        !isRnaBaseConnectedToSugar;
+      if (isStart && !isMonomerConnectedToR2RnaBase(monomer)) {
+        const previousMonomer = getPreviousMonomerInChain(monomer);
+
+        if (
+          previousMonomer &&
+          (isLinearChem(monomer) || isLinearChem(previousMonomer))
+        ) {
+          return false;
+        }
+      }
+
+      return isStart;
     });
 
     return firstMonomersInRegularChains;
@@ -443,9 +455,6 @@ export class ChainsCollection {
     monomerToChain: Map<BaseMonomer, Chain>,
     monomerToNode: Map<BaseMonomer, SubChainNode>,
   ) {
-    let complimentaryChain: Chain | undefined;
-    let complimentaryNode: SubChainNode | undefined;
-
     for (const monomerToCheck of node.monomers) {
       const { monomer, complimentaryMonomer } =
         this.getFirstComplimentaryMonomer(monomerToCheck) || {};
@@ -473,7 +482,7 @@ export class ChainsCollection {
       };
     }
 
-    return { complimentaryChain, complimentaryNode };
+    return { complimentaryChain: undefined, complimentaryNode: undefined };
   }
 
   private reorderChainsPutSenseChainOrderInAccordanceAntisenseConnection() {

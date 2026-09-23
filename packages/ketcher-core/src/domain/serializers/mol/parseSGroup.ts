@@ -22,7 +22,7 @@ import type { Struct } from 'domain/entities/struct';
 
 import type { SGroupMap, AtomMap, PostLoadHandler } from './mol.types';
 import utils from './utils';
-import assert from 'assert';
+import { assert } from 'utilities';
 
 function readKeyValuePairs(
   str: string,
@@ -53,12 +53,10 @@ function readKeyMultiValuePairs(
   const count = utils.parseDecimalInt(partition[0]);
   for (let i = 0; i < count; ++i) {
     ret.push([
-      /* eslint-disable no-mixed-operators */
       utils.parseDecimalInt(partition[2 * i + 1]) - 1,
       valueString
         ? partition[2 * i + 2].trim()
         : utils.parseDecimalInt(partition[2 * i + 2]),
-      /* eslint-enable no-mixed-operators */
     ]);
   }
   return ret;
@@ -67,7 +65,7 @@ function readKeyMultiValuePairs(
 function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
   if (!mol || !atomMap) return;
 
-  sgroup.data.mul = sgroup.data.subscript - 0;
+  sgroup.data.mul = Number(sgroup.data.subscript);
   const atomReductionMap: Record<number, number> = {};
 
   sgroup.atoms = SGroup.filterAtoms(sgroup.atoms, atomMap);
@@ -76,8 +74,8 @@ function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
   // mark repetitions for removal
   for (let k = 1; k < sgroup.data.mul; ++k) {
     for (let m = 0; m < sgroup.patoms.length; ++m) {
-      const raid = sgroup.atoms[k * sgroup.patoms.length + m]; // eslint-disable-line no-mixed-operators
-      if (raid < 0) continue; // eslint-disable-line no-continue
+      const raid = sgroup.atoms[k * sgroup.patoms.length + m];
+      if (raid < 0) continue;
       if (sgroup.patoms[m] < 0) throw new Error('parent atom missing');
       atomReductionMap[raid] = sgroup.patoms[m]; // "merge" atom in parent
     }

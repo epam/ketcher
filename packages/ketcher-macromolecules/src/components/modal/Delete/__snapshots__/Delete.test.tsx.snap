@@ -29,7 +29,7 @@ exports[`Delete component should render correctly 1`] = `
         tabindex="-1"
       >
         <div
-          aria-labelledby="«r0»"
+          aria-labelledby="_r_0_"
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm css-1t1j96h-MuiPaper-root-MuiDialog-paper"
           data-testid="delete-preset-modal"
           role="dialog"
@@ -38,7 +38,7 @@ exports[`Delete component should render correctly 1`] = `
         >
           <h2
             class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-15hei83-MuiTypography-root-MuiDialogTitle-root"
-            id="«r0»"
+            id="_r_0_"
           >
             <div
               class="css-1uarmuk"
@@ -55,17 +55,8 @@ exports[`Delete component should render correctly 1`] = `
               >
                 <svg
                   class="css-1td8dcm"
-                  fill="none"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M13.462 12.046l6.37 6.37-1.413 1.415-6.371-6.371-6.327 6.326-1.414-1.414 6.327-6.326-6.372-6.372L5.676 4.26l6.372 6.372 6.417-6.418 1.414 1.414-6.417 6.418z"
-                    fill="currentColor"
-                  />
-                </svg>
+                  name="close"
+                />
                 <span
                   class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
                 />

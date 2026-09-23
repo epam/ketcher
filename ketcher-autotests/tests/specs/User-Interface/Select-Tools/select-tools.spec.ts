@@ -34,8 +34,8 @@ test.describe('Select tools tests', () => {
     const box = await bondLocator.boundingBox();
     if (!box) throw new Error('Bond bounding box not found');
 
-    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
-    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
     await page.mouse.move(centerX, centerY);
 
     const cursor = await page.getByTestId('canvas').getAttribute('cursor');
@@ -52,7 +52,9 @@ test.describe('Select tools tests', () => {
       Place two 'Benzene' on the canvas and drag one onto the other
     */
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
       force: true,
     });

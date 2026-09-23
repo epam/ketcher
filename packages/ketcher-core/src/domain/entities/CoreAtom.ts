@@ -3,11 +3,12 @@ import type { Vec2 } from 'domain/entities/vec2';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { type Bond, BondType } from 'domain/entities/CoreBond';
 import type { BaseRenderer } from 'application/render';
-import { AtomLabel, Elements } from 'domain/constants';
+import { AtomLabel, type CoreAtomLabel, Elements } from 'domain/constants';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { isNumber } from 'lodash';
 import { MonomerToAtomBond } from './MonomerToAtomBond';
 import type { AtomCIP } from './types';
+import type { AtomList } from 'domain/entities/atomList';
 
 export enum AtomRadical {
   None,
@@ -24,6 +25,7 @@ export interface AtomProperties {
   alias?: string | null;
   cip?: AtomCIP | null;
   stereoLabel?: string | null;
+  atomList?: AtomList | null;
 }
 
 export class Atom extends DrawingEntity {
@@ -34,7 +36,7 @@ export class Atom extends DrawingEntity {
     position: Vec2,
     public monomer: BaseMonomer,
     public atomIdInMicroMode: number,
-    public label: AtomLabel,
+    public label: CoreAtomLabel,
     public properties: AtomProperties = {},
   ) {
     super(position);

@@ -48,23 +48,35 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   select: SelectCommonTool,
   fragmentSelection: FragmentSelectionTool,
   sgroup: SGroupTool,
-  eraser: EraserTool,
   atom: AtomTool,
-  bond: BondTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  bond: BondTool as unknown as ToolConstructorInterface,
   chain: ChainTool,
-  template: TemplateTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  template: TemplateTool as unknown as ToolConstructorInterface,
   charge: ChargeTool,
   rgroupfragment: RGroupFragmentTool,
   apoint: APointTool,
   attach: AttachTool,
-  reactionarrow: CommonArrowTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  eraser: EraserTool as unknown as ToolConstructorInterface,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  reactionarrow: CommonArrowTool as unknown as ToolConstructorInterface,
   reactionplus: ReactionPlusTool,
   reactionmap: ReactionMapTool,
   reactionunmap: ReactionUnmapTool,
   paste: PasteTool,
-  rotate: RotateTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  rotate: RotateTool as unknown as ToolConstructorInterface,
   enhancedStereo: EnhancedStereoTool,
-  simpleobject: SimpleObjectTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  simpleobject: SimpleObjectTool as unknown as ToolConstructorInterface,
   text: TextTool,
   [IMAGE_KEY]: ImageTool,
   [CREATE_MONOMER_TOOL_NAME]: CreateMonomerTool,

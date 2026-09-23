@@ -58,7 +58,7 @@ const toolActions: Record<string, ToolActionEntry> = {
   'select-structure': {
     title: 'Structure Selection',
     shortcut: ['Shift+Tab', 'Escape'],
-    action: { tool: 'select', opts: 'fragment' },
+    action: { tool: 'select', opts: 'structure' },
     hidden: (options) => isHidden(options, 'select-structure'),
   },
   'select-fragment': {
@@ -82,12 +82,15 @@ const toolActions: Record<string, ToolActionEntry> = {
     shortcut: 'Alt+e',
     title: 'Stereochemistry',
     action: { tool: 'enhancedStereo' },
-    disabled: (editor) =>
-      editor.isMonomerCreationWizardActive ||
-      findStereoAtoms(
-        editor?.struct(),
-        Array.from(editor?.struct().atoms.keys()),
-      ).length === 0,
+    disabled: (editor) => {
+      if (editor.isMonomerCreationWizardActive) {
+        return true;
+      }
+      const struct = editor?.struct?.();
+      const atomIds =
+        editor?.selection?.()?.atoms ?? Array.from(struct.atoms.keys());
+      return findStereoAtoms(struct, atomIds).length === 0;
+    },
     hidden: (options) => isHidden(options, 'enhanced-stereo'),
   },
   'charge-plus': {

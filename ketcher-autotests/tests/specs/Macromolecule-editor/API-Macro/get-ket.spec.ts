@@ -52,7 +52,7 @@ test.describe('getKet', () => {
 
     try {
       await layout(page);
-    } catch (e) {
+    } catch (_e) {
       errorCaught = true;
     }
 
@@ -82,7 +82,7 @@ test.describe('getKet', () => {
 
     try {
       await recognize(page, invalidBlob);
-    } catch (e) {
+    } catch (_e) {
       errorCaught = true;
     }
 
@@ -126,11 +126,11 @@ test.describe('getKet', () => {
               [key: string]: () => Promise<any>;
             };
             if (typeof ketcher[fmt] !== 'function') {
-              throw new Error(`${fmt} is not a function`);
+              throw new TypeError(`${fmt} is not a function`);
             }
             return ketcher[fmt]();
           }, format);
-        } catch (e) {
+        } catch (_e) {
           errorCaught = true;
         }
 

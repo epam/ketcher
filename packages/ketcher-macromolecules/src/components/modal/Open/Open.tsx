@@ -42,7 +42,7 @@ import {
 } from '../save/Save.styles';
 import { LoadingCircles } from './AnalyzingFile/LoadingCircles';
 import { useAppDispatch } from 'hooks';
-import { openErrorModal } from 'state/modal';
+import { openErrorModal, openErrorTooltip } from 'state/modal';
 import { AnyAction, Dispatch } from 'redux';
 import styled from '@emotion/styled';
 import { Option } from 'components/shared/dropDown/dropDown';
@@ -178,13 +178,17 @@ const addToCanvas = ({
   ketSerializer: KetSerializer;
   editor: CoreEditor;
   struct: string;
-}) => {
+}): boolean => {
   const isCanvasEmptyBeforeOpenStructure =
     !editor.drawingEntitiesManager.hasDrawingEntities;
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
 
   if (!deserialisedKet) {
     throw new Error('Error during parsing file');
+  }
+
+  if (!deserialisedKet.drawingEntitiesManager.hasDrawingEntities) {
+    return false;
   }
 
   const isSequenceMode = editor.mode.modeName === 'sequence-layout-mode';
@@ -237,6 +241,8 @@ const addToCanvas = ({
   editor.calculateAndStoreNextAutochainPosition(
     deserialisedKet.drawingEntitiesManager,
   );
+
+  return true;
 };
 
 // TODO: replace after the implementation of the function for processing the structure from the file
@@ -265,7 +271,7 @@ const onOk = async ({
   let inputFormat;
   let fileData = struct;
 
-  const showParsingError = (stringError) => {
+  const showParsingError = (stringError: string) => {
     const errorMessage = 'Convert error! ' + stringError;
     dispatch(
       openErrorModal({
@@ -277,9 +283,12 @@ const onOk = async ({
 
   if (isKet) {
     try {
-      addToCanvas({ struct, ketSerializer, editor });
+      const hasStructure = addToCanvas({ struct, ketSerializer, editor });
+      if (!hasStructure) {
+        dispatch(openErrorTooltip('No structure'));
+      }
       onCloseCallback();
-    } catch (e) {
+    } catch (_e) {
       showParsingError('Error during file parsing.');
     }
     return;
@@ -304,7 +313,14 @@ const onOk = async ({
       output_format: ChemicalMimeType.KET,
       input_format: inputFormat,
     });
-    addToCanvas({ struct: ketStruct.struct, ketSerializer, editor });
+    const hasStructure = addToCanvas({
+      struct: ketStruct.struct,
+      ketSerializer,
+      editor,
+    });
+    if (!hasStructure) {
+      dispatch(openErrorTooltip('No structure'));
+    }
     onCloseCallback();
   } catch (error) {
     const stringError = normalizeError(error).message;
@@ -315,7 +331,7 @@ const onOk = async ({
   }
 };
 const isAnalyzingFile = false;
-const errorHandler = (error) => console.log(error);
+const errorHandler = (error: string) => console.log(error);
 
 const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const dispatch = useAppDispatch();
@@ -357,7 +373,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       windowContext.isKetcherFullscreenBeforeFilePicker = false;
     }
 
-    const onLoad = (fileContent) => {
+    const onLoad = (fileContent: string) => {
       setStructStr(fileContent);
       setCurrentState(MODAL_STATES.textEditor);
     };

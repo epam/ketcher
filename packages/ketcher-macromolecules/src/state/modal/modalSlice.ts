@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { castDraft } from 'immer';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AdditionalModalProps } from 'components/modal/modalContainer/types';
 import { RootState } from 'state';
@@ -58,9 +59,7 @@ export const modalSlice = createSlice({
         state.name = action.payload;
       } else {
         state.name = action.payload.name;
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        state.additionalProps = action.payload.additionalProps;
+        state.additionalProps = castDraft(action.payload.additionalProps);
       }
 
       state.isOpen = true;

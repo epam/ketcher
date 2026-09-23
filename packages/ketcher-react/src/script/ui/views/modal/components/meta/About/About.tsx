@@ -21,6 +21,13 @@ import { connect } from 'react-redux';
 import { Fragment } from 'react';
 import type { Dispatch } from 'redux';
 
+const FEEDBACK_URL =
+  'https://lifescience.opensource.epam.com/ketcher/#feedback';
+const OVERVIEW_URL =
+  'https://lifescience.opensource.epam.com/ketcher/index.html';
+const LIFE_SCIENCES_URL = 'https://lifescience.opensource.epam.com/';
+const INDIGO_URL = 'https://lifescience.opensource.epam.com/indigo/';
+
 interface AboutDialogProps {
   date: string;
   indigoVersion?: string;
@@ -98,11 +105,7 @@ function AboutDialog(props: Readonly<AboutDialogProps>) {
             </div>
             <br />
             <div className={classes.indigoVersion}>
-              <a
-                href="http://lifescience.opensource.epam.com/indigo/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href={INDIGO_URL} target="_blank" rel="noopener noreferrer">
                 {' '}
                 Indigo Toolkit
               </a>
@@ -140,9 +143,9 @@ const mapStateToProps = (state: AppState) => ({
   date: state.options.app.buildDate.replace('T', '; '),
   indigoVersion: state.options.app.indigoVersion,
   indigoMachine: state.options.app.indigoMachine,
-  feedbackLink: 'http://lifescience.opensource.epam.com/ketcher/#feedback',
-  overviewLink: 'https://lifescience.opensource.epam.com/ketcher/index.html',
-  lifeScienciesLink: 'http://lifescience.opensource.epam.com/',
+  feedbackLink: FEEDBACK_URL,
+  overviewLink: OVERVIEW_URL,
+  lifeScienciesLink: LIFE_SCIENCES_URL,
   version: state.options.app.version,
 });
 

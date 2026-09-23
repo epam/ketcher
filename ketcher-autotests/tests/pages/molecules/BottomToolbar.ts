@@ -67,6 +67,8 @@ export const BottomToolbar = (page: Page) => {
 
     async structureLibrary() {
       await locators.structureLibraryButton.click();
+      // Wait for the structure library content to load before proceeding with further actions
+      await page.waitForTimeout(500);
     },
 
     async clickRing(RingButton: RingButton) {

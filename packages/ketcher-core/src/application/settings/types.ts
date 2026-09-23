@@ -44,11 +44,7 @@ export interface Settings {
   readonly showCharge: boolean;
   readonly showValence: boolean;
   readonly showHydrogenLabels:
-    | 'off'
-    | 'Hetero'
-    | 'Terminal'
-    | 'Terminal and Hetero'
-    | 'On';
+    'off' | 'Hetero' | 'Terminal' | 'Terminal and Hetero' | 'On';
 
   // Bonds
   readonly aromaticCircle: boolean;
@@ -95,6 +91,9 @@ export interface Settings {
   readonly editorLineLength: Record<string, number>;
   readonly disableCustomQuery: boolean;
   readonly monomerLibraryUpdates: string[];
+
+  // Color picker
+  readonly colorPickerCustomColors: readonly string[];
 }
 
 /**

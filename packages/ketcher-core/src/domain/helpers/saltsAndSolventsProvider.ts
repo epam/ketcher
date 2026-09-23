@@ -16,7 +16,6 @@
 import type { Struct } from '../entities';
 
 export class SaltsAndSolventsProvider {
-  // eslint-disable-next-line no-use-before-define
   private static instance: SaltsAndSolventsProvider;
   saltsAndSolventsList: Struct[];
   constructor() {

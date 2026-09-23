@@ -1,5 +1,4 @@
 import '@testing-library/jest-dom';
-import '@testing-library/jest-dom/extend-expect';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
 import { Provider as StoreProvider } from 'react-redux';
@@ -8,6 +7,24 @@ import { merge } from 'lodash';
 import { configureAppStore, RootState } from 'state';
 import { defaultTheme } from 'theming/defaultTheme';
 
+class MockIntersectionObserver {
+  observe = jest.fn();
+  disconnect = jest.fn();
+  unobserve = jest.fn();
+  takeRecords = jest.fn();
+}
+
+Object.defineProperty(window, 'IntersectionObserver', {
+  writable: true,
+  configurable: true,
+  value: MockIntersectionObserver,
+});
+
+Object.defineProperty(global, 'IntersectionObserver', {
+  writable: true,
+  configurable: true,
+  value: MockIntersectionObserver,
+});
 const muiTheme = createTheme();
 const mergedTheme = merge(muiTheme, { ketcher: defaultTheme });
 

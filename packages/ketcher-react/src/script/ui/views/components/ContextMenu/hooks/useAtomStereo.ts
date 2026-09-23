@@ -29,7 +29,9 @@ const useAtomStereo = () => {
           stereoAtomIdsRef.current,
         );
 
-        action && editor.update(action);
+        if (action) {
+          editor.update(action);
+        }
       } catch (e) {
         KetcherLogger.error('useAtomStereo.ts::useAtomStereo::handler', e);
         noOperation();

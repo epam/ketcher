@@ -16,14 +16,7 @@
 
 import * as structFormat from '../../../../../data/convert/structConverter';
 
-import {
-  type ClipboardEvent,
-  type ContextType,
-  type MouseEvent,
-  type RefObject,
-  Component,
-  createRef,
-} from 'react';
+import { type ContextType, type RefObject, Component, createRef } from 'react';
 import { createSelector } from 'reselect';
 import Form, { Field } from '../../../../../component/form/form/form';
 import {
@@ -42,7 +35,6 @@ import {
   KetcherLogger,
   Atom,
   isClipboardAPIAvailable,
-  legacyCopy,
   SupportedFormat,
 } from 'ketcher-core';
 
@@ -108,7 +100,7 @@ interface PreviewContentProps {
   classes: typeof classes;
   structStr: string;
   textAreaRef: RefObject<HTMLTextAreaElement | null>;
-  handleCopy: (event: MouseEvent | ClipboardEvent) => void;
+  handleCopy: () => void;
 }
 
 interface FormState {
@@ -372,7 +364,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       // temporary check if query properties are used
       const queryPropertiesAreUsed = !!(
         type === SupportedFormat.mol &&
-        Array.from(struct.atoms).find(
+        Array.from(struct.atoms).some(
           ([_, atom]) =>
             atom.queryProperties.aromaticity ||
             atom.queryProperties.connectivity ||
@@ -386,6 +378,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         type,
         { ...options, ignoreChiralFlag },
         queryPropertiesAreUsed,
+        struct,
       );
       const getStructFromStringByType = () => {
         if (type === SupportedFormat.ket) {
@@ -541,24 +534,22 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     );
   };
 
-  handleCopy = (event: MouseEvent | ClipboardEvent): void => {
+  handleCopy = (): void => {
     const { structStr } = this.state;
 
-    try {
-      if (isClipboardAPIAvailable()) {
-        navigator.clipboard.writeText(structStr || '');
-      } else if ('clipboardData' in event) {
-        legacyCopy(event.clipboardData, {
-          'text/plain': structStr,
-        });
-        event.preventDefault();
-      }
-    } catch (e) {
+    if (!isClipboardAPIAvailable()) {
+      this.props.editor.errorHandler(
+        'This feature is not available in your browser',
+      );
+      return;
+    }
+
+    navigator.clipboard.writeText(structStr || '').catch((e) => {
       KetcherLogger.error('copyAs.js::copyAs', e);
       this.props.editor.errorHandler(
         'This feature is not available in your browser',
       );
-    }
+    });
   };
 
   renderSaveFile = (): JSX.Element | null => {

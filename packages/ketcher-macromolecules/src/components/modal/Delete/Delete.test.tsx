@@ -17,6 +17,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { Delete } from './Delete';
+import type { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 
 const mockProps = {
   isModalOpen: true,
@@ -24,33 +25,19 @@ const mockProps = {
 };
 
 describe('Delete component', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const preset: any = {
-    base: {
-      label: 'A',
-    },
-    phosphate: {
-      label: 'P',
-    },
-    sugar: {
-      label: 'R',
-    },
+  const preset = {
+    base: { label: 'A' },
+    phosphate: { label: 'P' },
+    sugar: { label: 'R' },
     name: 'A',
-  };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const presetCustom: any = {
-    base: {
-      label: '25A',
-    },
-    phosphate: {
-      label: 'P',
-    },
-    sugar: {
-      label: 'R',
-    },
+  } as unknown as IRnaPreset;
+  const presetCustom = {
+    base: { label: '25A' },
+    phosphate: { label: 'P' },
+    sugar: { label: 'R' },
     name: 'MyRna',
     nameInList: 'MyRna',
-  };
+  } as unknown as IRnaPreset;
   it('should render correctly', () => {
     expect(
       render(

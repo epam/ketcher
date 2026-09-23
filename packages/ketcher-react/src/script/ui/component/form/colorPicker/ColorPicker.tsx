@@ -14,94 +14,43 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
+import { Popover, type PopoverActions } from '@mui/material';
 
-import { HexColorPicker, HexColorInput } from 'react-colorful';
 import classes from './ColorPicker.module.less';
 import clsx from 'clsx';
 import { Icon } from 'components';
+import ColorPickerContent from './ColorPickerContent';
 
-interface ColorPickerProps {
+interface Props {
   value: string;
   name: string;
-}
-
-interface ColorPickerCallProps {
   onChange: (value: string) => void;
 }
 
-type Props = ColorPickerProps & ColorPickerCallProps;
-
-const presetColors = [
-  '#FF4545',
-  '#FFAD31',
-  '#68D442',
-  '#3ACACC',
-  '#4434FF',
-  '#9C9C9C',
-  '#000000',
-];
-
 const ColorPicker = (props: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const { onChange, value } = props;
+  const [isOpen, setIsOpen] = useState(false);
+  const [triggerElement, setTriggerElement] =
+    useState<HTMLButtonElement | null>(null);
+  const popoverActionRef = useRef<PopoverActions>(null);
   const paletteId = 'color-picker-' + useId();
 
-  const handleChange = useCallback(
-    (color) => {
-      onChange(color);
-    },
-    [onChange],
-  );
-
-  const throttle = useCallback((func, limit) => {
-    let inThrottle;
-    return (e) => {
-      if (!inThrottle) {
-        func(e);
-        inThrottle = true;
-        setTimeout(() => {
-          inThrottle = false;
-        }, limit);
-      }
-    };
-  }, []);
-
-  const handleClick = useCallback(
-    throttle((e) => {
-      e.preventDefault();
-      setIsOpen((prev) => !prev);
-      setIsPaletteOpen(false);
-    }, 200),
-    [],
-  );
-
-  const handlePaletteOpen = () => {
-    setIsPaletteOpen(true);
-  };
-  const handleColorChange = (color) => {
-    handleChange(color);
+  const handleContentResize = () => {
+    popoverActionRef.current?.updatePosition();
   };
 
-  const handleBlur = (e) => {
-    if (!e.currentTarget.contains(e.relatedTarget)) {
-      handleClick(e);
-    }
+  const handleToggleOpen = () => {
+    setIsOpen((prev) => !prev);
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleClick(e);
-    }
+  const handleApply = (color: string) => {
+    onChange(color);
+    setIsOpen(false);
   };
 
-  const handleWrapperKeyDown = (e) => {
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+  const handleCancel = () => {
+    setIsOpen(false);
   };
 
   return (
@@ -109,81 +58,51 @@ const ColorPicker = (props: Props) => {
       className={classes.colorPickerWrapper}
       data-testid={isOpen ? 'color-picker-field-open' : 'color-picker-field'}
       onClick={(e) => e.preventDefault()}
-      onKeyDown={handleWrapperKeyDown}
       role="none"
     >
       <button
+        ref={setTriggerElement}
         type="button"
-        className={clsx({
-          [classes.colorPickerInput]: true,
-          [classes.selectedInput]: isOpen,
-        })}
+        className={clsx(
+          classes.colorPickerInput,
+          isOpen && classes.selectedInput,
+        )}
         aria-controls={paletteId}
         aria-expanded={isOpen}
         aria-haspopup="true"
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
+        onClick={handleToggleOpen}
       >
         <div
           className={classes.colorPickerPreview}
           data-testid={`${props.name}-color-picker-preview`}
           style={{ backgroundColor: value }}
         />
-
         <Icon
-          className={clsx({
-            [classes.expandIcon]: true,
-            [classes.turnedIcon]: !isOpen,
-          })}
+          className={clsx(classes.expandIcon, !isOpen && classes.turnedIcon)}
           name="chevron"
         />
       </button>
-      {isOpen && (
-        <div
-          className={clsx(
-            classes.colorPickerWrap,
-            isPaletteOpen && classes.withPalette,
-          )}
-          id={paletteId}
-          onBlur={handleBlur}
-          data-testid="color-picker-preset"
-          role="none"
-        >
-          <div className={classes.presetColors}>
-            <button
-              className={clsx(
-                classes.chooseColor,
-                isPaletteOpen && classes.clicked,
-              )}
-              onClick={handlePaletteOpen}
-              autoFocus
-              data-testid="color-picker-btn"
-            />
-            {presetColors.map((color) => (
-              <button
-                key={color}
-                onClick={() => handleColorChange(color)}
-                style={{ backgroundColor: color }}
-                className={classes.presetColor}
-              />
-            ))}
-          </div>
 
-          {isPaletteOpen && (
-            <div className={classes.colorPicker} data-testid="color-palette">
-              <HexColorPicker color={value} onChange={handleChange} />
-              <div className={classes.colorContainer}>
-                <span className={classes.hex}>HEX</span>
-                <HexColorInput
-                  data-testid="color-picker-input"
-                  color={value}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+      <Popover
+        id={paletteId}
+        action={popoverActionRef}
+        open={isOpen}
+        anchorEl={triggerElement}
+        onClose={handleCancel}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        PaperProps={{
+          className: classes.colorPickerWrap,
+          'data-testid': 'color-picker-preset',
+        }}
+      >
+        <ColorPickerContent
+          value={value}
+          onCancel={handleCancel}
+          onApply={handleApply}
+          onContentResize={handleContentResize}
+        />
+      </Popover>
     </div>
   );
 };

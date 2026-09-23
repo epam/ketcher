@@ -14,7 +14,12 @@ export function getStructure(
 ): Promise<string> {
   const serverSettings =
     ketcherProvider.getKetcher(ketcherId).editor.serverSettings;
-  const formatter = formatterFactory.create(structureFormat, serverSettings);
+  const formatter = formatterFactory.create(
+    structureFormat,
+    serverSettings,
+    undefined,
+    struct,
+  );
   const drawingEntitiesManagerCloningResult = drawingEntitiesManager?.mergeInto(
     new DrawingEntitiesManager(),
   );

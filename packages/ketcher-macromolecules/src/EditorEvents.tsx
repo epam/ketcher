@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -21,15 +22,14 @@ import {
   selectIsContextMenuActive,
   selectLastSelectedSelectionMenuItem,
   selectTool,
-  showPreview,
 } from 'state/common';
 import { openErrorModal, openErrorTooltip, openModal } from 'state/modal';
 import {
   ConfirmationDialogOnlyProps,
   MonomerConnectionOnlyProps,
 } from 'components/modal/modalContainer';
-import { useAppDispatch, useAppSelector } from 'hooks';
-import { debounce } from 'lodash';
+import { useAppDispatch, useAppSelector, useDebouncedShowPreview } from 'hooks';
+
 import {
   AmbiguousMonomer,
   BaseMonomer,
@@ -40,6 +40,10 @@ import {
   BackBoneSequenceNode,
   LinkerSequenceNode,
   ToolName,
+  AtomRenderer,
+  BaseRenderer,
+  SettingsManager,
+  guardForMacromoleculesEditor,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
 import {
@@ -50,9 +54,15 @@ import {
   PresetPreviewState,
   PreviewStyle,
   PreviewType,
+  TextPreviewState,
 } from 'state/types';
 import { calculateBondPreviewPosition } from 'ketcher-react';
 import { loadDefaultPresets, loadMonomerLibrary } from 'state/library';
+import {
+  isMacroSelectionTool,
+  MACRO_SELECTION_TOOL_OPTIONS,
+} from 'components/menu/constants';
+import { useIndigoVersionToRedux } from './hooks/useIndigoVersionToRedux';
 
 const noPreviewTools = [ToolName.bondSingle, ToolName.selectRectangle];
 
@@ -70,8 +80,9 @@ export const EditorEvents = () => {
   const handleMonomersLibraryUpdate = useCallback(() => {
     dispatch(loadMonomerLibrary(editor?.monomersLibrary));
     dispatch(loadDefaultPresets(editor?.defaultRnaPresetsLibraryItems));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
+
+  useIndigoVersionToRedux();
 
   useEffect(() => {
     editor?.events.updateMonomersLibrary.add(handleMonomersLibraryUpdate);
@@ -79,12 +90,11 @@ export const EditorEvents = () => {
     return () => {
       editor?.events.updateMonomersLibrary.remove(handleMonomersLibraryUpdate);
     };
-  }, [editor]);
+  }, [editor, handleMonomersLibraryUpdate]);
 
   useEffect(() => {
     const onSelectSelectionTool = () => {
       editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);
-      dispatch(selectTool(lastSelectedSelectionMenuItem));
     };
 
     if (editor) {
@@ -97,60 +107,67 @@ export const EditorEvents = () => {
   }, [dispatch, editor, lastSelectedSelectionMenuItem]);
 
   useEffect(() => {
-    const handler = ([toolName]: [string]) => {
-      if (toolName !== activeTool) {
-        dispatch(selectTool(toolName));
+    const selectToolHandler = ([toolName]: [string]) => {
+      dispatch(selectTool(toolName));
+
+      if (isMacroSelectionTool(toolName)) {
+        SettingsManager.setSelectionTool('macro', {
+          tool: 'select',
+          opts: MACRO_SELECTION_TOOL_OPTIONS[toolName],
+        });
       }
     };
+    const handleError = (errorText: string) => {
+      dispatch(openErrorTooltip(errorText));
+    };
+    const handleOpenErrorModal = (
+      errorData: string | { errorMessage: string; errorTitle: string },
+    ) => {
+      dispatch(openErrorModal(errorData));
+    };
+    const handleOpenMonomerConnectionModal = (
+      additionalProps: MonomerConnectionOnlyProps,
+    ) => dispatch(openModal({ name: 'monomerConnection', additionalProps }));
+    const handleOpenConfirmationDialog = (
+      additionalProps: ConfirmationDialogOnlyProps,
+    ) => dispatch(openModal({ name: 'confirmationDialog', additionalProps }));
 
     if (editor) {
-      editor.events.error.add((errorText) => {
-        dispatch(openErrorTooltip(errorText));
-      });
-      editor.events.openErrorModal.add(
-        (errorData: string | { errorMessage: string; errorTitle: string }) => {
-          dispatch(openErrorModal(errorData));
-        },
-      );
-
-      dispatch(selectTool('select-rectangle'));
-      editor.events.selectTool.dispatch(['select-rectangle']);
+      editor.events.error.add(handleError);
+      editor.events.openErrorModal.add(handleOpenErrorModal);
       editor.events.openMonomerConnectionModal.add(
-        (additionalProps: MonomerConnectionOnlyProps) =>
-          dispatch(
-            openModal({
-              name: 'monomerConnection',
-              additionalProps,
-            }),
-          ),
+        handleOpenMonomerConnectionModal,
       );
-      editor.events.openConfirmationDialog.add(
-        (additionalProps: ConfirmationDialogOnlyProps) =>
-          dispatch(
-            openModal({
-              name: 'confirmationDialog',
-              additionalProps,
-            }),
-          ),
-      );
-      editor.events.selectTool.add(handler);
+      editor.events.openConfirmationDialog.add(handleOpenConfirmationDialog);
+      editor.events.selectTool.add(selectToolHandler);
+
+      // Initialize with saved selection tool or default to rectangle
+      const savedSelectionTool = SettingsManager.getSelectionTool('macro');
+      const initialTool = savedSelectionTool?.opts
+        ? `select-${savedSelectionTool.opts}`
+        : 'select-rectangle';
+
+      editor.events.selectTool.dispatch([initialTool]);
     }
 
     return () => {
       dispatch(selectTool(null));
-      editor?.events.selectTool.remove(handler);
+      editor?.events.selectTool.remove(selectToolHandler);
+      editor?.events.error.remove(handleError);
+      editor?.events.openErrorModal.remove(handleOpenErrorModal);
+      editor?.events.openMonomerConnectionModal.remove(
+        handleOpenMonomerConnectionModal,
+      );
+      editor?.events.openConfirmationDialog.remove(
+        handleOpenConfirmationDialog,
+      );
     };
-  }, [editor]);
+  }, [editor, dispatch]);
 
-  const dispatchShowPreview = useCallback(
-    (payload) => dispatch(showPreview(payload)),
-    [dispatch],
-  );
-
-  const debouncedShowPreview = useCallback(
-    debounce((p) => dispatchShowPreview(p), 500),
-    [dispatchShowPreview],
-  );
+  const {
+    showPreview: debouncedShowPreview,
+    closePreview: handleClosePreview,
+  } = useDebouncedShowPreview();
 
   const handleOpenBondPreview = useCallback(
     (polymerBond: PolymerBond, style: PreviewStyle) => {
@@ -315,10 +332,27 @@ export const EditorEvents = () => {
     [handleOpenBondPreview, debouncedShowPreview, presets, isContextMenuActive],
   );
 
-  const handleClosePreview = useCallback(() => {
-    debouncedShowPreview.cancel();
-    dispatch(showPreview(undefined));
-  }, [debouncedShowPreview, dispatch]);
+  const handleOpenAtomLabelTooltip = useCallback(
+    (e) => {
+      const renderer: BaseRenderer = e.target.__data__;
+
+      if (!(renderer instanceof AtomRenderer)) {
+        return;
+      }
+
+      const tooltipText: string | null | undefined = renderer?.labelTooltipText;
+      if (!tooltipText) {
+        return;
+      }
+      const textPreviewData: TextPreviewState = {
+        type: PreviewType.Text,
+        text: tooltipText,
+        target: e.target,
+      };
+      debouncedShowPreview(textPreviewData);
+    },
+    [debouncedShowPreview],
+  );
 
   useEffect(() => {
     editor?.events.mouseOverMonomer.add(handleOpenPreview);
@@ -329,6 +363,8 @@ export const EditorEvents = () => {
     editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
     editor?.events.mouseOverPolymerBond.add(handleOpenPreview);
     editor?.events.mouseLeavePolymerBond.add(handleClosePreview);
+    editor?.events.mouseOverDrawingEntity.add(handleOpenAtomLabelTooltip);
+    editor?.events.mouseLeaveDrawingEntity.add(handleClosePreview);
 
     const onMoveHandler = (e) => {
       handleClosePreview();
@@ -342,31 +378,42 @@ export const EditorEvents = () => {
     editor?.events.mouseOnMoveSequenceItem.add(onMoveHandler);
     editor?.events.mouseOnMovePolymerBond.add(onMoveHandler);
 
-    window.addEventListener('hidePreview', handleClosePreview);
+    const guardedHandleClosePreview =
+      guardForMacromoleculesEditor(handleClosePreview);
+    window.addEventListener('hidePreview', guardedHandleClosePreview);
 
     return () => {
       editor?.events.mouseOverMonomer.remove(handleOpenPreview);
       editor?.events.mouseLeaveMonomer.remove(handleClosePreview);
       editor?.events.mouseLeaveAttachmentPoint.remove(handleClosePreview);
+      editor?.events.mouseDownAttachmentPoint.remove(handleClosePreview);
       editor?.events.mouseOverSequenceItem.remove(handleOpenPreview);
       editor?.events.mouseLeaveSequenceItem.remove(handleClosePreview);
       editor?.events.mouseOverPolymerBond.remove(handleOpenPreview);
       editor?.events.mouseLeavePolymerBond.remove(handleClosePreview);
+      editor?.events.mouseOverDrawingEntity.remove(handleOpenAtomLabelTooltip);
+      editor?.events.mouseLeaveDrawingEntity.remove(handleClosePreview);
 
       editor?.events.mouseOnMoveMonomer.remove(onMoveHandler);
       editor?.events.mouseMoveAttachmentPoint.remove(onMoveHandler);
       editor?.events.mouseOnMoveSequenceItem.remove(onMoveHandler);
       editor?.events.mouseOnMovePolymerBond.remove(onMoveHandler);
 
-      window.removeEventListener('hidePreview', handleClosePreview);
+      window.removeEventListener('hidePreview', guardedHandleClosePreview);
     };
-  }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
+  }, [
+    editor,
+    activeTool,
+    handleOpenPreview,
+    handleClosePreview,
+    handleOpenAtomLabelTooltip,
+  ]);
 
   useEffect(() => {
     if (!hasAtLeastOneAntisense) {
       editor?.events.resetSequenceEditMode.dispatch();
     }
-  }, [hasAtLeastOneAntisense]);
+  }, [hasAtLeastOneAntisense, editor]);
 
   return <></>;
 };

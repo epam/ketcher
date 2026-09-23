@@ -14,22 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Select, MenuItem, FormControl, Switch } from '@mui/material';
-import { FieldWrapper } from './Settings.styles';
+import { Select, MenuItem, FormControl, Switch, Tooltip } from '@mui/material';
+import { Icon } from 'ketcher-react';
+import { FieldWrapper, FieldLabelContent } from './Settings.styles';
+import type { SettingFieldValue } from './fieldGroups';
 
 interface SettingsFieldProps {
   name: string;
   label: string;
   type: 'checkbox' | 'number' | 'text' | 'select' | 'color';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onChange: (value: any) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  options?: Array<{ value: any; label: string }>;
+  value: SettingFieldValue | undefined;
+  onChange: (value: SettingFieldValue) => void;
+  options?: Array<{ value: SettingFieldValue; label: string }>;
   min?: number;
   max?: number;
   step?: number;
+  tooltip?: string;
 }
 
 export const SettingsField = ({
@@ -42,13 +42,34 @@ export const SettingsField = ({
   min,
   max,
   step,
+  tooltip,
 }: SettingsFieldProps) => {
+  const labelContent = tooltip ? (
+    <FieldLabelContent>
+      <span>{label}</span>
+      <Tooltip title={tooltip}>
+        <div>
+          <Icon name="about" />
+        </div>
+      </Tooltip>
+    </FieldLabelContent>
+  ) : (
+    <span>{label}</span>
+  );
+  const stringValue = typeof value === 'string' ? value : undefined;
+  const numberValue = typeof value === 'number' ? value : undefined;
+  let selectValue: string | number = '';
+  if (typeof value === 'boolean') {
+    selectValue = String(value);
+  } else if (value !== undefined) {
+    selectValue = value;
+  }
   const renderField = () => {
     switch (type) {
       case 'checkbox':
         return (
           <label>
-            <span>{label}</span>
+            {labelContent}
             <Switch
               checked={Boolean(value)}
               onChange={(e) => onChange(e.target.checked)}
@@ -61,10 +82,10 @@ export const SettingsField = ({
       case 'number':
         return (
           <label>
-            <span>{label}</span>
+            {labelContent}
             <input
               type="number"
-              value={value ?? ''}
+              value={numberValue ?? ''}
               onChange={(e) => onChange(Number(e.target.value))}
               min={min}
               max={max}
@@ -84,11 +105,16 @@ export const SettingsField = ({
       case 'select':
         return (
           <label>
-            <span>{label}</span>
+            {labelContent}
             <FormControl size="small" sx={{ border: 'none' }}>
               <Select
-                value={value ?? ''}
-                onChange={(e) => onChange(e.target.value)}
+                value={selectValue}
+                onChange={(e) => {
+                  const option = options?.find(
+                    (opt) => String(opt.value) === e.target.value,
+                  );
+                  onChange(option?.value ?? e.target.value);
+                }}
                 displayEmpty
                 data-testid={`setting-${name}`}
                 sx={{
@@ -109,7 +135,7 @@ export const SettingsField = ({
                 {options?.map((opt) => (
                   <MenuItem
                     key={String(opt.value)}
-                    value={opt.value}
+                    value={String(opt.value)}
                     sx={{ fontSize: '12px' }}
                   >
                     {opt.label}
@@ -123,11 +149,11 @@ export const SettingsField = ({
       case 'color':
         return (
           <label>
-            <span>{label}</span>
+            {labelContent}
             <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
               <input
                 type="color"
-                value={value ?? '#000000'}
+                value={stringValue ?? '#000000'}
                 onChange={(e) => onChange(e.target.value)}
                 data-testid={`setting-${name}`}
                 style={{
@@ -141,7 +167,7 @@ export const SettingsField = ({
               />
               <input
                 type="text"
-                value={value ?? '#000000'}
+                value={stringValue ?? '#000000'}
                 onChange={(e) => onChange(e.target.value)}
                 style={{
                   width: '85px',
@@ -160,10 +186,10 @@ export const SettingsField = ({
       default:
         return (
           <label>
-            <span>{label}</span>
+            {labelContent}
             <input
               type="text"
-              value={value ?? ''}
+              value={stringValue ?? ''}
               onChange={(e) => onChange(e.target.value)}
               data-testid={`setting-${name}`}
               style={{

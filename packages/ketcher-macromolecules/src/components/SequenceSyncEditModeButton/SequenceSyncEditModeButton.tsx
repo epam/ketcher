@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAppSelector, useLayoutMode } from 'hooks';
-import { hasAntisenseChains, selectEditor } from 'state/common';
+import { selectEditor } from 'state/common';
 import styled from '@emotion/styled';
 import { Button } from 'ketcher-react';
 import { blurActiveElement } from 'helpers/canvas';
@@ -51,11 +51,16 @@ export const SequenceSyncEditModeButton = () => {
   const editor = useAppSelector(selectEditor);
   const [isSequenceSyncEditMode, setIsSequenceSyncEditMode] = useState(true);
   const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
-  const hasAtLeastOneAntisense = useAppSelector(hasAntisenseChains);
+  const [hasAtLeastOneAntisense, setHasAtLeastOneAntisense] = useState(
+    Boolean(editor?.drawingEntitiesManager?.hasAntisenseChains),
+  );
+
+  const isSequenceSyncEditModeRef = useRef(isSequenceSyncEditMode);
 
   const handleClick = () => {
     const isSequenceSyncEditModeNewState = !isSequenceSyncEditMode;
 
+    isSequenceSyncEditModeRef.current = isSequenceSyncEditModeNewState;
     setIsSequenceSyncEditMode(isSequenceSyncEditModeNewState);
     editor?.events.toggleIsSequenceSyncEditMode.dispatch(
       isSequenceSyncEditModeNewState,
@@ -64,12 +69,27 @@ export const SequenceSyncEditModeButton = () => {
   };
 
   useEffect(() => {
-    if (isSequenceMode && hasAtLeastOneAntisense) {
-      editor?.events.toggleIsSequenceSyncEditMode.dispatch(
-        isSequenceSyncEditMode,
+    const updateHasAntisenseChains = () => {
+      const hasAntisenseChains = Boolean(
+        editor?.drawingEntitiesManager?.hasAntisenseChains,
       );
-    }
-  }, [isSequenceMode, hasAtLeastOneAntisense]);
+
+      setHasAtLeastOneAntisense(hasAntisenseChains);
+
+      if (isSequenceMode && hasAntisenseChains) {
+        editor?.events.toggleIsSequenceSyncEditMode.dispatch(
+          isSequenceSyncEditModeRef.current,
+        );
+      }
+    };
+
+    updateHasAntisenseChains();
+    editor?.events.modelChange.add(updateHasAntisenseChains);
+
+    return () => {
+      editor?.events.modelChange.remove(updateHasAntisenseChains);
+    };
+  }, [editor, isSequenceMode]);
 
   return isSequenceMode && hasAtLeastOneAntisense ? (
     <StyledButton

@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';

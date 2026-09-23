@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -36,7 +37,7 @@ async function copyImageToClipboard() {
       backgroundColor: '255, 255, 255',
       bondThickness: options.settings.bondThickness || defaultBondThickness,
     });
-    const item = new ClipboardItem({ [image.type]: image }); // eslint-disable-line no-undef
+    const item = new ClipboardItem({ [image.type]: image });
     await navigator.clipboard.write([item]);
   } catch (e) {
     KetcherLogger.error('copyImageToClipboard.js::copyImageToClipboard', e);

@@ -76,6 +76,20 @@ export const FieldsContainer = styled.div`
   padding: 8px 0;
 `;
 
+export const FieldLabelContent = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 168px;
+  margin-right: 8px;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+  }
+`;
+
 export const FieldWrapper = styled.div`
   display: flex;
   align-items: center;

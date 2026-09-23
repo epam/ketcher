@@ -48,7 +48,7 @@ const editor: {
   resetToSelect: {
     title: 'Reset to Select Tool',
     enum: [true, 'paste', false],
-    enumNames: ['on', 'After Paste', 'off'],
+    enumNames: ['Auto-Select On', 'Auto-Select After Paste', 'Manual Select'],
     default: 'paste',
   },
   rotationStep: {
@@ -117,7 +117,7 @@ const render: {
     default: true,
   },
   stereoLabelStyle: {
-    title: 'Label display at\u00A0stereogenic\u00A0centers',
+    title: 'Label display at\u00A0chiral\u00A0centers',
     enum: [
       StereoLabelStyleType.IUPAC,
       StereoLabelStyleType.Classic,
@@ -128,7 +128,7 @@ const render: {
     default: StereoLabelStyleType.IUPAC,
   },
   colorOfAbsoluteCenters: {
-    title: ' Absolute Center color',
+    title: 'ABS Center color',
     type: 'string',
     default: '#ff0000',
   },
@@ -143,7 +143,7 @@ const render: {
     default: '#228b22',
   },
   colorStereogenicCenters: {
-    title: 'Color stereogenic centers',
+    title: 'Color chiral centers',
     enum: [
       StereoColoringType.LabelsOnly,
       StereoColoringType.BondsOnly,
@@ -204,21 +204,21 @@ const render: {
     default: MeasurementUnits.Px,
   },
   fontszsub: {
-    title: 'Sub font size',
+    title: 'Subscript/Superscript font size',
     type: 'number',
     default: 13,
     minimum: 0.1,
     maximum: 96,
   },
   fontszsubUnit: {
-    title: 'Sub font size unit',
+    title: 'Subscript/Superscript font size unit',
     enum: Object.values(MeasurementUnits),
     enumNames: Object.values(MeasurementUnits),
     default: MeasurementUnits.Px,
   },
   // Atom
   carbonExplicitly: {
-    title: 'Display carbon explicitly',
+    title: 'Display carbon labels explicitly',
     type: 'boolean',
     description: 'slider',
     default: false,
@@ -236,7 +236,7 @@ const render: {
     default: true,
   },
   showHydrogenLabels: {
-    title: 'Show hydrogen labels',
+    title: 'Display hydrogen labels explicitly',
     enum: Object.values(ShowHydrogenLabels),
     enumNames: Object.values(ShowHydrogenLabelNames),
     default: ShowHydrogenLabels.TerminalAndHetero,
@@ -376,7 +376,7 @@ const server: {
     default: false,
   },
   'gross-formula-add-rsites': {
-    title: 'Add Rsites at mass calculation',
+    title: 'Add R sites at mass calculation',
     type: 'boolean',
     description: 'slider',
     default: true,
@@ -404,25 +404,25 @@ const debug: {
   showLoopIds: ExtendedSchema;
 } = {
   showAtomIds: {
-    title: 'Show atom Ids',
+    title: 'Show atom IDs',
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   showBondIds: {
-    title: 'Show bonds Ids',
+    title: 'Show bonds IDs',
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   showHalfBondIds: {
-    title: 'Show half bonds Ids',
+    title: 'Show half bonds IDs',
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   showLoopIds: {
-    title: 'Show loop Ids',
+    title: 'Show loop IDs',
     type: 'boolean',
     description: 'slider',
     default: false,

@@ -1,11 +1,12 @@
 export enum SettingsSection {
-  General = 'General-accordion',
+  General = 'General Editing & Display-accordion',
   Stereochemistry = 'Stereochemistry-accordion',
   Atoms = 'Atoms-accordion',
   Bonds = 'Bonds-accordion',
-  Server = 'Server-accordion',
+  Reactions = 'Reactions & Components-accordion',
+  Validation = 'Validation & Calculation-accordion',
   ThreeDViewer = '3D Viewer-accordion',
-  OptionsForDebugging = 'Options for Debugging-accordion',
+  Debugging = 'Debugging-accordion',
 }
 
 export enum GeneralSetting {
@@ -16,8 +17,8 @@ export enum GeneralSetting {
   Font = 'font-selection-input-span',
   FontSize = 'Font size-value-input',
   FontSizeUnits = 'Font size-measure-input',
-  SubFontSize = 'Sub font size-value-input',
-  SubFontSizeUnits = 'Sub font size-measure-input',
+  SubFontSize = 'Subscript/Superscript font size-value-input',
+  SubFontSizeUnits = 'Subscript/Superscript font size-measure-input',
   ReactionComponentMarginSize = 'Reaction component margin size-value-input',
   ReactionComponentMarginSizeUnits = 'Reaction component margin size-measure-input',
   ImageResolution = 'image-resolution-input-span',
@@ -87,9 +88,9 @@ export enum MeasurementUnit {
 }
 
 export enum ResetToSelectToolOption {
-  On = 'on-option',
-  AfterPaste = 'After Paste-option',
-  Off = 'off-option',
+  On = 'Auto-Select On-option',
+  AfterPaste = 'Auto-Select After Paste-option',
+  Off = 'Manual Select-option',
 }
 
 export enum FontOption {

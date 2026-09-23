@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import {
   type EditorProps,
@@ -15,6 +15,7 @@ import {
   type Editor as MoleculesEditor,
   type CoreEditor,
   ketcherProvider,
+  type MonomerCreationWizardRequest,
 } from 'ketcher-core';
 
 type Props = Omit<EditorProps, 'ketcherId'> & {
@@ -62,6 +63,12 @@ export const Editor = (props: Props) => {
     useState<CoreEditor>();
 
   const [ketcherId, setKetcherId] = useState<string>('');
+  const [isMonomerWizardOpen, setIsMonomerWizardOpen] = useState(false);
+  const pendingWizard = useRef<MonomerCreationWizardRequest | undefined>(
+    undefined,
+  );
+  const wizardSessionActive = useRef(false);
+  const skipModeConversion = useRef(false);
   const togglePolymerEditor = (toggleValue: boolean) => {
     setShowPolymerEditor(toggleValue);
     window.isPolymerEditorTurnedOn = toggleValue;
@@ -69,16 +76,40 @@ export const Editor = (props: Props) => {
 
   const togglerComponent = !props.disableMacromoleculesEditor ? (
     <ModeControl
-      toggle={togglePolymerEditor}
+      toggle={(value) => {
+        if (!isMonomerWizardOpen) togglePolymerEditor(value);
+      }}
       isPolymerEditor={showPolymerEditor}
+      disabled={isMonomerWizardOpen}
     />
   ) : undefined;
 
   useEffect(() => {
+    const onWizardStateChange = (active: boolean) => {
+      setIsMonomerWizardOpen(active || wizardSessionActive.current);
+    };
+    moleculesEditor?.event.monomerWizardStateChange.add(onWizardStateChange);
+    return () => {
+      moleculesEditor?.event.monomerWizardStateChange.remove(
+        onWizardStateChange,
+      );
+    };
+  }, [moleculesEditor]);
+
+  useEffect(() => {
     const switchToMacromoleculesModeHandler = () => {
+      if (wizardSessionActive.current) return;
       togglePolymerEditor(true);
     };
     const switchToMoleculesModeHandler = () => {
+      if (wizardSessionActive.current) return;
+      togglePolymerEditor(false);
+    };
+    const openWizardHandler = (request: MonomerCreationWizardRequest) => {
+      if (wizardSessionActive.current) return;
+      wizardSessionActive.current = true;
+      pendingWizard.current = request;
+      setIsMonomerWizardOpen(true);
       togglePolymerEditor(false);
     };
 
@@ -89,6 +120,9 @@ export const Editor = (props: Props) => {
       macromoleculesEditor.events.switchToMoleculesMode.add(
         switchToMoleculesModeHandler,
       );
+      macromoleculesEditor.events.openMonomerCreationWizard.add(
+        openWizardHandler,
+      );
     }
 
     return () => {
@@ -98,6 +132,9 @@ export const Editor = (props: Props) => {
         );
         macromoleculesEditor.events.switchToMoleculesMode.remove(
           switchToMoleculesModeHandler,
+        );
+        macromoleculesEditor.events.openMonomerCreationWizard.remove(
+          openWizardHandler,
         );
       }
     };
@@ -111,6 +148,38 @@ export const Editor = (props: Props) => {
 
   useEffect(() => {
     if (moleculesEditor && macromoleculesEditor) {
+      if (skipModeConversion.current) {
+        skipModeConversion.current = false;
+        return;
+      }
+      const request = pendingWizard.current;
+      if (request) {
+        pendingWizard.current = undefined;
+        const finishSession = (savedCanvas: boolean) => {
+          try {
+            macromoleculesEditor.finishMonomerWizardSession(savedCanvas);
+          } finally {
+            wizardSessionActive.current = false;
+            skipModeConversion.current = true;
+            setIsMonomerWizardOpen(false);
+            togglePolymerEditor(true);
+          }
+        };
+        try {
+          moleculesEditor.openMonomerCreationWizardFromMacro(
+            request,
+            finishSession,
+          );
+        } catch (error) {
+          // Roll back the imperative transition if opening the wizard failed.
+          // eslint-disable-next-line react-you-might-not-need-an-effect/no-chain-state-updates
+          if (wizardSessionActive.current) finishSession(false);
+          moleculesEditor.errorHandler?.(
+            error instanceof Error ? error.message : String(error),
+          );
+        }
+        return;
+      }
       if (showPolymerEditor) {
         moleculesEditor?.closeMonomerCreationWizard?.();
         macromoleculesEditor?.switchToMacromolecules();

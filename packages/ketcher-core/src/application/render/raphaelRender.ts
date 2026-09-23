@@ -30,7 +30,7 @@ import { KetcherLogger } from 'utilities';
 import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
-import type { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName, MonomerItemType } from 'domain/types';
 import type { KetMonomerClass } from 'application/formatters/types/ket';
 import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -49,6 +49,9 @@ export type MonomerCreationInitialValues = {
   aliasBILN: string;
   position?: Vec2;
   editMode?: 'instance' | 'all';
+  libraryOnly?: boolean;
+  originalMonomerItem?: MonomerItemType;
+  modificationTypes?: string[];
   originalType?: KetMonomerClass;
   originalSymbol?: string;
   presetRequirements?: EditAllInstancesPresetRequirements;

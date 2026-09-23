@@ -173,6 +173,14 @@ export default defineConfig({
         exports: 'named',
         banner: license,
         entryFileNames: '[name].js',
+        // Rollup 2 emitted the `__esModule` marker on CJS output; Rolldown
+        // does not by default. Without it, TypeScript's and Babel's interop
+        // treat this as a non-ES module and build a namespace of
+        // NON-CONFIGURABLE getters, silently changing behaviour for every
+        // CJS consumer using interop. Restored explicitly, matching
+        // ketcher-core/ketcher-react's vite.config.mjs. (Ignored for the
+        // `es` format variants, where it has no meaning.)
+        esModule: true,
       },
     },
   },

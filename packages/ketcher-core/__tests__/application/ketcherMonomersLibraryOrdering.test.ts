@@ -30,7 +30,8 @@ const flushMicrotasks = () =>
 // started by something else on mount) and resolved *after* the consumer's
 // call, its resolution clobbered the consumer's library because
 // `setMonomersLibrary` overwrites `_monomersLibrary`/`_monomersLibraryParsedJson`
-// wholesale. See T4-monomer-library-ordering.md.
+// wholesale. See #10326 and the ADR:
+// .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
 describe('Ketcher monomer library ordering vs. the lazy default load', () => {
   let canvas: SVGSVGElement;
   let coreEditor: CoreEditor;
@@ -39,43 +40,27 @@ describe('Ketcher monomer library ordering vs. the lazy default load', () => {
   const DEFAULT_MONOMER_NAME = 'DEFAULTCHEM';
   const CONSUMER_MONOMER_NAME = 'CONSUMERCHEM';
 
-  const defaultMonomer = {
-    root: { templates: [{ $ref: `monomerTemplate-${DEFAULT_MONOMER_NAME}` }] },
-    [`monomerTemplate-${DEFAULT_MONOMER_NAME}`]: {
+  const makeMonomer = (name: string) => ({
+    root: { templates: [{ $ref: `monomerTemplate-${name}` }] },
+    [`monomerTemplate-${name}`]: {
       type: 'monomerTemplate',
-      id: DEFAULT_MONOMER_NAME,
+      id: name,
       class: 'CHEM',
       classHELM: 'CHEM',
-      fullName: 'Default Chem',
-      name: DEFAULT_MONOMER_NAME,
+      fullName: `${name} full name`,
+      name,
       naturalAnalogShort: 'X',
       props: {
-        MonomerName: DEFAULT_MONOMER_NAME,
+        MonomerName: name,
         MonomerClass: 'CHEM',
-        Name: DEFAULT_MONOMER_NAME,
+        Name: name,
         MonomerNaturalAnalogCode: 'X',
       },
     },
-  };
+  });
 
-  const consumerMonomer = {
-    root: { templates: [{ $ref: `monomerTemplate-${CONSUMER_MONOMER_NAME}` }] },
-    [`monomerTemplate-${CONSUMER_MONOMER_NAME}`]: {
-      type: 'monomerTemplate',
-      id: CONSUMER_MONOMER_NAME,
-      class: 'CHEM',
-      classHELM: 'CHEM',
-      fullName: 'Consumer Chem',
-      name: CONSUMER_MONOMER_NAME,
-      naturalAnalogShort: 'X',
-      props: {
-        MonomerName: CONSUMER_MONOMER_NAME,
-        MonomerClass: 'CHEM',
-        Name: CONSUMER_MONOMER_NAME,
-        MonomerNaturalAnalogCode: 'X',
-      },
-    },
-  };
+  const defaultMonomer = makeMonomer(DEFAULT_MONOMER_NAME);
+  const consumerMonomer = makeMonomer(CONSUMER_MONOMER_NAME);
 
   beforeEach(() => {
     canvas = createPolymerEditorCanvas();
@@ -176,6 +161,61 @@ describe('Ketcher monomer library ordering vs. the lazy default load', () => {
     );
 
     await flushMicrotasks();
+
+    resolveDefaultLoad();
+    await backgroundDefaultLoad;
+    await updatePromise;
+
+    const names = coreEditor.monomersLibrary.map(
+      (item) => item.props.MonomerName,
+    );
+    expect(names).toContain(CONSUMER_MONOMER_NAME);
+    expect(names).toContain(DEFAULT_MONOMER_NAME);
+  });
+
+  // The mirror image of the two races above: the consumer's call is the one
+  // that starts the default load (nothing else was in flight yet), and a
+  // second, independent request for it - e.g. app start-up mounting
+  // macromolecules mode a beat later - only joins the same memoized promise
+  // afterwards. The consumer's own write must still win: it runs after the
+  // default-load's apply-on-resolve side effect, inside the same awaited
+  // call chain that triggered it.
+  it('keeps the consumer library in place when replaceMonomersLibrary starts the default load itself', async () => {
+    const { resolveDefaultLoad } = deferDefaultMonomersLoad();
+
+    // The consumer's call is issued first; it is the one that kicks off
+    // `ensureDefaultMonomersLibraryLoaded()`.
+    const replacePromise = ketcher.replaceMonomersLibrary(
+      JSON.stringify(consumerMonomer),
+    );
+
+    // Something else (e.g. app start-up) only requests the default load
+    // afterwards - it joins the promise the consumer's call already started.
+    await flushMicrotasks();
+    const backgroundDefaultLoad =
+      coreEditor.ensureDefaultMonomersLibraryLoaded();
+
+    resolveDefaultLoad();
+    await backgroundDefaultLoad;
+    await replacePromise;
+
+    const names = coreEditor.monomersLibrary.map(
+      (item) => item.props.MonomerName,
+    );
+    expect(names).toContain(CONSUMER_MONOMER_NAME);
+    expect(names).not.toContain(DEFAULT_MONOMER_NAME);
+  });
+
+  it('keeps the consumer library in place when updateMonomersLibrary starts the default load itself', async () => {
+    const { resolveDefaultLoad } = deferDefaultMonomersLoad();
+
+    const updatePromise = ketcher.updateMonomersLibrary(
+      JSON.stringify(consumerMonomer),
+    );
+
+    await flushMicrotasks();
+    const backgroundDefaultLoad =
+      coreEditor.ensureDefaultMonomersLibraryLoaded();
 
     resolveDefaultLoad();
     await backgroundDefaultLoad;

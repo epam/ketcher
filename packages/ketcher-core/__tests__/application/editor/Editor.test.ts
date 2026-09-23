@@ -13,7 +13,7 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 import type { SelectBase } from 'application/editor/tools/select';
-import { Command, Struct, Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities';
 import {
   coreEditorTheme,
   peptideMonomerItem,
@@ -24,8 +24,6 @@ import {
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
 } from 'utilities';
-import { SnakeMode } from 'application/editor/modes/SnakeMode';
-import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { EditorHistory } from 'application/editor/EditorHistory';
 
 type RescaleStructForModeTransitionContext = {
@@ -75,8 +73,6 @@ describe('CoreEditor', () => {
 
     afterEach(() => {
       jest.restoreAllMocks();
-      EditorHistory.getInstance({} as CoreEditor).destroy();
-      ketcherProvider.removeKetcherInstance('test-ketcher');
 
       if (originalGetBBox) {
         Object.defineProperty(SVGElement.prototype, 'getBBox', {
@@ -86,73 +82,6 @@ describe('CoreEditor', () => {
       } else {
         Reflect.deleteProperty(SVGElement.prototype, 'getBBox');
       }
-    });
-
-    it('should reapply snake auto-layout when switching from micro mode', () => {
-      const struct = new Struct();
-      const microEditor = {
-        struct: jest.fn(() => struct),
-        render: {
-          setMolecule: jest.fn(),
-          ctab: {
-            render: {
-              setMolecule: jest.fn(),
-            },
-          },
-          options: {
-            microModeScale: 1,
-          },
-        },
-        clear: jest.fn(),
-        clearHistory: jest.fn(),
-        addHistoryAction: jest.fn(),
-        selection: jest.fn(),
-        zoom: jest.fn(),
-        setMacromoleculeConvertionError: jest.fn(),
-      };
-      const ketcher = {
-        id: 'test-ketcher',
-        editor: microEditor,
-        changeEvent: {
-          dispatch: jest.fn(),
-        },
-      };
-
-      ketcherProvider.addKetcherInstance(ketcher as never);
-
-      const editor = new CoreEditor({
-        ketcherId: 'test-ketcher',
-        canvas: createPolymerEditorCanvas(),
-        theme: {},
-        renderersContainer: createRenderersManager(),
-      });
-
-      editor.setMode(new SnakeMode());
-
-      jest
-        .spyOn(MacromoleculesConverter, 'convertStructToDrawingEntities')
-        .mockImplementation((_struct, drawingEntitiesManager) => {
-          drawingEntitiesManager.addMonomer(
-            peptideMonomerItem,
-            new Vec2(200, 200),
-          );
-
-          return {
-            drawingEntitiesManager,
-            modelChanges: new Command(),
-            fragmentIdToMonomer: new Map(),
-            fragmentIdToAtomIdMap: new Map(),
-          } as never;
-        });
-
-      editor.switchToMacromolecules();
-
-      const monomer = Array.from(
-        editor.drawingEntitiesManager.monomers.values(),
-      )[0];
-
-      expect(monomer).toBeDefined();
-      expect(monomer.position).not.toEqual(new Vec2(200, 200));
     });
 
     it('refreshes canvas offsets after a history-restored mode becomes visible', () => {

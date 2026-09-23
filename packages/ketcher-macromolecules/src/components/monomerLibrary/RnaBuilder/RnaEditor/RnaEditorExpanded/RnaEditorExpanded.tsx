@@ -214,6 +214,11 @@ export const RnaEditorExpanded = ({
   );
   const [isSequenceSelectionUpdated, setIsSequenceSelectionUpdated] =
     useState<boolean>(false);
+  const [
+    lastAppliedPresetMonomerGroupItem,
+    setLastAppliedPresetMonomerGroupItem,
+  ] = useState(activePresetGroupItem);
+  const [wasEditMode, setWasEditMode] = useState(isEditMode);
   const [appliedPresetSync, setAppliedPresetSync] = useState<{
     initialized: boolean;
     item: typeof activePresetGroupItem;
@@ -225,6 +230,22 @@ export const RnaEditorExpanded = ({
   });
   const sequenceSelectionGroupNames: SequenceSelectionGroupNames | undefined =
     generateSequenceSelectionGroupNames(sequenceSelection);
+  if (isEditMode !== wasEditMode) {
+    setWasEditMode(isEditMode);
+    if (isEditMode) {
+      setLastAppliedPresetMonomerGroupItem(activePresetGroupItem);
+      setIsSequenceSelectionUpdated(false);
+    }
+  } else if (
+    activeMonomerGroup !== RnaBuilderPresetsItem.Presets &&
+    isEditMode &&
+    isSequenceEditInRNABuilderMode &&
+    activePresetGroupItem &&
+    activePresetGroupItem !== lastAppliedPresetMonomerGroupItem
+  ) {
+    setLastAppliedPresetMonomerGroupItem(activePresetGroupItem);
+    setIsSequenceSelectionUpdated(true);
+  }
   const phosphatePosition = resolvePhosphatePosition(newPreset);
   const { is3PrimeAvailable, is5PrimeAvailable } =
     getPhosphatePositionAvailability(newPreset || {});
@@ -264,26 +285,22 @@ export const RnaEditorExpanded = ({
       isSequenceEdit: isSequenceEditInRNABuilderMode,
     });
 
-    if (shouldApplySelectedMonomerGroup) {
-      if (isSequenceEditInRNABuilderMode && activePresetGroupItem) {
-        setIsSequenceSelectionUpdated(true);
-      } else {
-        setNewPreset((currentPreset) => {
-          const updatedPreset = activePresetGroupItem
-            ? {
-                ...currentPreset,
-                [monomerGroupToPresetGroup[
-                  activePresetMonomerGroup?.groupName ?? ''
-                ]]: activePresetGroupItem,
-              }
-            : currentPreset;
-          const presetFullName = updatedPreset.editedName
-            ? updatedPreset.name
-            : selectPresetFullName(updatedPreset);
+    if (shouldApplySelectedMonomerGroup && !isSequenceEditInRNABuilderMode) {
+      setNewPreset((currentPreset) => {
+        const updatedPreset = activePresetGroupItem
+          ? {
+              ...currentPreset,
+              [monomerGroupToPresetGroup[
+                activePresetMonomerGroup?.groupName ?? ''
+              ]]: activePresetGroupItem,
+            }
+          : currentPreset;
+        const presetFullName = updatedPreset.editedName
+          ? updatedPreset.name
+          : selectPresetFullName(updatedPreset);
 
-          return { ...updatedPreset, name: presetFullName };
-        });
-      }
+        return { ...updatedPreset, name: presetFullName };
+      });
     }
   }
 

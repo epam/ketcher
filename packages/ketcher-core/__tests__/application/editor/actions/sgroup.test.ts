@@ -58,6 +58,7 @@ const addAttachmentPoint = (
   sgroupId: number,
   atomId: number,
   attachmentPointNumber: number,
+  leaveAtomId?: number,
 ) => {
   const sgroup = struct.sgroups.get(sgroupId);
   if (!sgroup) {
@@ -66,7 +67,7 @@ const addAttachmentPoint = (
   sgroup.addAttachmentPoint(
     new SGroupAttachmentPoint(
       atomId,
-      undefined,
+      leaveAtomId,
       undefined,
       attachmentPointNumber,
     ),
@@ -186,6 +187,81 @@ describe('setExpandMonomerSGroup', () => {
     setExpandMonomerSGroup(restruct, firstMonomerSGroupId, { expanded: false });
 
     expect(struct.bonds.get(bondId)?.stereo).toBe(Bond.PATTERN.STEREO.DOWN);
+  });
+
+  it('draws the opposite stereo bond on the second attachment point of a chiral phosphate', () => {
+    const struct = new Struct();
+    const phosphorusId = struct.atoms.add(
+      new Atom({ label: 'P', pp: new Vec2(0, 0) }),
+    );
+    const leftNeighborId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(-1, 0) }),
+    );
+    const rightNeighborId = struct.atoms.add(
+      new Atom({ label: 'N', pp: new Vec2(1, 0) }),
+    );
+    const firstBondId = struct.bonds.add(
+      new Bond({
+        begin: leftNeighborId,
+        end: phosphorusId,
+        type: Bond.PATTERN.TYPE.SINGLE,
+        beginSuperatomAttachmentPointNumber: 1,
+        endSuperatomAttachmentPointNumber: 1,
+      }),
+    );
+    const secondBondId = struct.bonds.add(
+      new Bond({
+        begin: rightNeighborId,
+        end: phosphorusId,
+        type: Bond.PATTERN.TYPE.SINGLE,
+        beginSuperatomAttachmentPointNumber: 1,
+        endSuperatomAttachmentPointNumber: 2,
+      }),
+    );
+    struct.bondInitHalfBonds(firstBondId);
+    struct.bondInitHalfBonds(secondBondId);
+    struct.initNeighbors();
+
+    const phosphateSGroupId = createMonomerSGroup(struct, phosphorusId);
+    const leftMonomerSGroupId = createMonomerSGroup(struct, leftNeighborId);
+    const rightMonomerSGroupId = createMonomerSGroup(struct, rightNeighborId);
+    // Both attachment points of a chiral phosphate sit on the phosphorus
+    addAttachmentPoint(struct, phosphateSGroupId, phosphorusId, 1, 1);
+    addAttachmentPoint(struct, phosphateSGroupId, phosphorusId, 2, 2);
+    addAttachmentPoint(struct, leftMonomerSGroupId, leftNeighborId, 1);
+    addAttachmentPoint(struct, rightMonomerSGroupId, rightNeighborId, 1);
+
+    const phosphateSGroup = struct.sgroups.get(phosphateSGroupId);
+    const stereoBondMock = getAttachmentPointStereoBond as jest.Mock;
+    stereoBondMock.mockImplementation((sgroup, attachmentPoint) =>
+      sgroup === phosphateSGroup && attachmentPoint.attachmentPointNumber === 1
+        ? Bond.PATTERN.STEREO.UP
+        : null,
+    );
+
+    const options = {
+      scale: 40,
+      width: 100,
+      height: 100,
+    } as unknown as RenderOptions;
+    const render = new Render(document as unknown as HTMLElement, options);
+    const restruct = new ReStruct(struct, render);
+
+    setExpandMonomerSGroup(restruct, phosphateSGroupId, { expanded: false });
+
+    // Both bonds are flipped so that their narrow end sits at the phosphorus,
+    // which gives them new ids
+    const getBond = (neighborId: number) => {
+      const bondId = struct.findBondId(phosphorusId, neighborId);
+      return bondId === null ? undefined : struct.bonds.get(bondId);
+    };
+    const firstAttachmentPointBond = getBond(leftNeighborId);
+    const secondAttachmentPointBond = getBond(rightNeighborId);
+
+    expect(firstAttachmentPointBond?.stereo).toBe(Bond.PATTERN.STEREO.UP);
+    expect(firstAttachmentPointBond?.begin).toBe(phosphorusId);
+    expect(secondAttachmentPointBond?.stereo).toBe(Bond.PATTERN.STEREO.DOWN);
+    expect(secondAttachmentPointBond?.begin).toBe(phosphorusId);
   });
 
   it('keeps connected monomers in one fragment after removing abbreviations', () => {

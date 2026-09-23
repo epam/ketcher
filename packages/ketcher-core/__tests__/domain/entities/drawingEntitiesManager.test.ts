@@ -33,6 +33,7 @@ import { MacromoleculesConverter } from 'application/editor/MacromoleculesConver
 import { INVALID } from 'domain/entities/BaseMicromoleculeEntity';
 import { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { Struct } from 'domain/entities/struct';
+import { Text } from 'domain/entities/text';
 
 function createStructWithSGroup(type = SGroup.TYPES.MUL) {
   const struct = new Struct();
@@ -419,6 +420,56 @@ describe('Drawing Entities Manager', () => {
     editor.renderersContainer.update(modelChanges);
 
     expect(document.querySelector('[data-label-text="Value"]')).toBeTruthy();
+  });
+
+  it('should render imported molecule text in macromolecules mode', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const struct = new Struct();
+    struct.texts.add(
+      new Text({
+        content: JSON.stringify({
+          root: {
+            type: 'root',
+            children: [
+              {
+                type: 'paragraph',
+                children: [
+                  {
+                    type: 'text',
+                    text: 'Imported caption',
+                    format: 0,
+                    style: '',
+                  },
+                ],
+              },
+            ],
+          },
+        }),
+        position: new Vec2(1, 1),
+        pos: [
+          new Vec2(1, 1),
+          new Vec2(1, 0.65),
+          new Vec2(4, 0.65),
+          new Vec2(4, 1),
+        ],
+      }),
+    );
+
+    const { modelChanges } =
+      MacromoleculesConverter.convertStructToDrawingEntities(
+        struct,
+        editor.drawingEntitiesManager,
+      );
+
+    editor.renderersContainer.update(modelChanges);
+
+    expect(
+      document.querySelector('[data-testid="macro-text-label"]')?.textContent,
+    ).toContain('Imported caption');
   });
 
   describe('getAntisenseBaseLabel', () => {

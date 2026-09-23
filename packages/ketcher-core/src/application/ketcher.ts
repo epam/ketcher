@@ -923,6 +923,13 @@ export class Ketcher {
       );
     }
 
+    // The default monomers library is a lazily fetched asset. If a default
+    // load is already in flight (e.g. kicked off elsewhere without being
+    // awaited), it must finish - and be applied - before this consumer
+    // update is applied, otherwise the default load resolving afterwards
+    // would overwrite this update via its own wholesale library replace.
+    await editor.ensureDefaultMonomersLibraryLoaded();
+
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,
       params,
@@ -956,6 +963,13 @@ export class Ketcher {
         'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
       );
     }
+
+    // The default monomers library is a lazily fetched asset. If a default
+    // load is already in flight (e.g. kicked off elsewhere without being
+    // awaited), it must finish - and be applied - before this consumer
+    // replace is applied, otherwise the default load resolving afterwards
+    // would overwrite this replace via its own wholesale library replace.
+    await editor.ensureDefaultMonomersLibraryLoaded();
 
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,

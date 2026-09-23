@@ -144,27 +144,102 @@ minor artifacts also changed: the six `index.js.map` files are no longer emitted
 had empty `sources` and `mappings`, and the new `index.js` carries no `sourceMappingURL`), and
 the four inline variants emit an unused sourcemap alongside the Blob-inlined worker.
 
-**Known-wrong metadata is preserved deliberately.** `ketcher-standalone`'s `main` and `module`
-fields point at `dist/index.js` and `dist/index.modern.js`, but the build emits `dist/main.js`.
-Its `exports` map is correct, so modern resolvers are unaffected and only tooling that ignores
-`exports` sees the broken paths. Correcting them could change resolution for consumers who are
-currently working by accident, so they are left as-is and should be fixed in a deliberate
-version bump instead.
+**`main`/`module` metadata is fixed, not preserved.** `ketcher-standalone`'s `main` and `module`
+fields used to point at `dist/index.js` (an empty placeholder built from `src/emptyIndex.js`,
+which exists only to satisfy an emscripten-generated `import.meta.url`/`require('url')`
+resolution quirk) and `dist/index.modern.js` (a file the build never emitted at all). This ADR
+originally decided to leave that broken metadata in place until a deliberate version bump — this
+is that version bump. `main` now points to `dist/cjs/main.js` and `module` to `dist/main.js`,
+matching the `exports` map's `require`/`import` conditions for the `.` entry exactly. This is a
+deliberate, scoped exception to "the published contract is frozen": only the `.` entry's
+`main`/`module` changed; `types` (`dist/index.d.ts`) was already correct despite the name
+collision with the empty JS placeholder, and none of the six sub-path `exports` entries
+(`./dist/binaryWasm`, `./dist/jsNoRender`, `./dist/binaryWasmNoRender`, …) were touched.
 
-**Published packages ship modern syntax, and that is a breaking change.** The Rollup builds ran
-`@babel/preset-env` with no explicit target, which downleveled output toward ES5. Dropping Babel
-drops that too: `ketcher-core`'s `Editor.modern.js` went from 18 downlevel helpers and 1 raw
-`class` to 0 and 6, and `ketcher-macromolecules`' `dist/index.js` fell from 3.56 MB to 602 KB.
+**The major version bump is not about syntax level — that framing was wrong.** The original
+justification was that dropping Babel drops ES5 downleveling too: `@babel/preset-env` ran with
+no explicit target under Rollup, so `ketcher-core`'s `Editor.modern.js` went from 18 downlevel
+helpers and 1 raw `class` to 0 and 6 once Babel was removed, and `ketcher-macromolecules`'
+`dist/index.js` fell from 3.56 MB to 602 KB.
 
-This is the failure mode the frozen contract exists to catch: the build stays green, tests pass,
-`example-ssr` renders, and only a consumer on an older browser breaks — at runtime, silently.
-The reduction in supported browsers is therefore handled as a **major version bump** rather than
-hidden behind build configuration. Consumers who need the old floor should transpile these
-packages in their own build, which is now the ordinary expectation for a library shipping ESM.
+That comparison was against npm's published `3.18.0`, not against this repository's current
+`master`. Master's own `3.20.0-rc.1` — built before this migration, still on Rollup 2 — already
+ships the same modern syntax (native `class`, optional chaining, `async`), because master
+separately upgraded to Babel 8, which changed `@babel/preset-env`'s default targets independently
+of this migration. **This branch does not change the syntax level relative to master.** The
+syntax-level regression is real only against the last npm release, `3.18.0`; it is not something
+this migration introduces on top of master, so citing it as this migration's reason for a major
+version overstates its cause. The ADR and any changelog should give the breaking changes below as
+the reason instead.
+
+**The major version bump is justified by five other breaking changes:**
+
+1. **Lazy monomer library API.** `CoreEditor` no longer loads the default monomer library in its
+   constructor; a synchronous read of `monomersLibrary`/`monomersLibraryParsedJson` now returns
+   empty until the async load resolves, and `updateMonomersLibrary`/`replaceMonomersLibrary` fire
+   later.
+2. **`ketcher-standalone` asset layout.** The worker and `.wasm` for the two fetch-based variants
+   (`binaryWasm`, `binaryWasmNoRender`) now live in an `assets/` subdirectory with hashed names,
+   one `.wasm` per variant instead of both.
+3. **Module worker from a Blob URL.** Inline (base64) builds construct their worker from a Blob
+   URL instead of a classic base64 worker — a problem for browsers without module-worker support
+   and for strict `worker-src` CSP policies.
+4. **CSS Modules class name format.** Rolldown's CSS Modules hashing convention differs from
+   `rollup-plugin-postcss`'s (`X-module_root__hash` → `_root_hash_N`). Global class names are
+   unaffected.
+5. **Dropped CJS `.d.ts` and CSS source maps.** `ketcher-react/dist/cjs/**/*.d.ts` (507 files)
+   and `ketcher-macromolecules`'s `dist/index.css.map` are no longer emitted.
+
+### Breaking changes vs 3.18.0
+
+| Change | Who it affects | Status on this branch |
+| --- | --- | --- |
+| The monomer library is empty until it loads. `CoreEditor` no longer loads it in its constructor, so a synchronous read of `monomersLibrary`/`monomersLibraryParsedJson` returns empty, and `updateMonomersLibrary`/`replaceMonomersLibrary` fire later. | Anyone who reads the library directly — and more broadly than "macromolecules-mode users only": `getKet`, `setMolecule`, `addFragment`, and both `convert()` calls now wait for the library, so any API call loads and parses the ~3.5 MB library even without opening macromolecules mode. For npm/bundler consumers it arrives as a **code-split JS chunk** pulled in via dynamic import — only `example`'s standalone build fetches it as a separately hosted asset. | The clobbering race between this load and a consumer's own `updateMonomersLibrary`/`replaceMonomersLibrary` call is fixed: both methods now `await` the default library load first, with a regression test covering the ordering. |
+| `binaryWasm`/`binaryWasmNoRender` asset layout: files live in `assets/` with hashed names, and each variant ships one `.wasm` instead of both. | Anyone copying these files by a hard-coded path. | Layout itself is unchanged. The consumer-bundler blocker (the worker/`.wasm` `new URL(...)` calls were emitted as computed expressions a consumer's bundler can't statically detect, so the worker chunk and/or `.wasm` were dropped from the consumer's own build → 404 at runtime) is fixed: both are now emitted as the literal `new Worker(new URL('./assets/...', import.meta.url), { type: 'module' })` / `new URL('./assets/....wasm', import.meta.url)` forms. CI now builds a throwaway Vite consumer and a webpack 5 consumer against the packed `dist` and asserts both emit the `.wasm` and a separate worker chunk. |
+| Inline builds now use a module worker created from a Blob URL (before: a classic worker from base64). | Browsers without module workers (Firefox < 114, Safari < 15), strict `worker-src` CSP rules. | Unchanged. |
+| CSS Modules class names changed format (`X-module_root__hash` → `_root_hash_N`). Global class names are unchanged. | Consumers who style Ketcher's internal classes. | Unchanged. |
+| `ketcher-react/dist/cjs/**/*.d.ts` (507 files) and CSS source maps are no longer shipped. | Deep imports of the CJS types; CSS debugging in devtools only. | Unchanged. |
+| The CSS minifier drops some vendor prefixes and writes colors as `#rrggbbaa`. | Old browsers only. | Unchanged. |
+
+**Fixed since the original review (no longer breaking vs 3.18.0):**
+
+- **No `__esModule` marker in `ketcher-standalone/dist/cjs/main.js`.** Same root cause as
+  `ketcher-core`/`ketcher-react` (Rollup 2 emitted the marker on CJS output; Rolldown does not by
+  default, silently changing default-import interop for CJS consumers). Fixed by adding
+  `esModule: true` to `rolldownOptions.output` — the same mechanism the other two packages
+  already used.
+- **`ketcher-standalone` `main`/`module`.** No longer point at an empty placeholder and an
+  unemitted file (see the metadata correction above); both now resolve to real shipped files that
+  match the `exports` map.
+
+**Not breaking:** `exports`, `main`, `module` (now correct — see above), `types`, `sideEffects`,
+peer dependencies, and `engines` match master's build. `ketcher-react` briefly leaked the
+bundler helper `__toESM` as an extra CJS export (harmless, but flagged for cleanup); it has since
+been stripped by a dedicated `renderChunk` plugin.
 
 The bump lands as a single commit after the migration completes, so that four interdependent
 `package.json` files are not churning while the builds are still changing. It needs the release
 owner's agreement before it ships.
+
+**`vite` is pinned to exactly `8.0.16` in all four packages, not only in `ketcher-standalone`.**
+For `ketcher-standalone` the reason is on record, in the commit that tightened its range from
+`^8.0.16` to `8.0.16` (`c325be7cfd`, "Restore master tooling reverted by merge 21e59ce41"): its
+`.wasm` emission for the two fetch variants depends on Vite's asset plugin evaluating the
+`?no-inline` tag *ahead of* the `if (build.lib) return true` branch that otherwise inlines every
+rewritten asset in library mode (see "The `.wasm` for the two fetch variants is now emitted, not
+copied" above) — a patch release could reorder or change that check and silently re-inline the
+~16 MB `.wasm` into the JS bundle. No equivalent reason is recorded for `ketcher-core`,
+`ketcher-react`, or `ketcher-macromolecules`: each package's first Vite migration commit
+(`fec1d845e5`, `908791e094`, `38bf23024c` respectively) introduces the exact `"vite": "8.0.16"`
+pin directly, with no explanation in the commit message, mirroring the exact-pin style `example`
+already used for its own (pre-migration) Vite dependency. `c325be7cfd`'s own message calls
+`ketcher-standalone` "the only loose Vite range" at that point, implying the other three were
+already exact-pinned by convention rather than for a documented technical reason. No further
+justification for those three was found in git history or this ADR; one should not be invented —
+if the release owner wants a stated reason, the most likely candidate is the same class of risk
+as `ketcher-standalone`'s (an undocumented Rolldown behavior — `preserveModules`, tree-shaking
+scope, minify defaults — that this ADR's spike had to determine empirically and that a patch bump
+could silently change), but that is speculation, not a recorded fact.
 
 **CSS source maps are lost for `ketcher-macromolecules`.** Producing a single `dist/index.css`
 requires `build.cssCodeSplit: false`, and in that path Vite 8.0.16 emits the extracted CSS via a

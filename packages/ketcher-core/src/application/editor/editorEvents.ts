@@ -4,6 +4,7 @@ import type { CoreEditor } from 'application/editor/Editor';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { SequenceType } from 'domain/entities/monomer-chains/types';
 import { ToolName } from 'application/editor/tools/types';
+import type { MonomerCreationWizardRequest } from './editor.types';
 
 export interface IEditorEvents {
   selectMonomer: Subscription;
@@ -78,6 +79,7 @@ export interface IEditorEvents {
   removeAutochainPreview: Subscription;
   switchToMacromoleculesMode: Subscription;
   switchToMoleculesMode: Subscription;
+  openMonomerCreationWizard: Subscription<MonomerCreationWizardRequest>;
   layoutCircular: Subscription;
   flipHorizontal: Subscription;
   flipVertical: Subscription;
@@ -157,6 +159,7 @@ export function createEditorEvents(): IEditorEvents {
     removeAutochainPreview: new Subscription(),
     switchToMacromoleculesMode: new Subscription(),
     switchToMoleculesMode: new Subscription(),
+    openMonomerCreationWizard: new Subscription<MonomerCreationWizardRequest>(),
     layoutCircular: new Subscription(),
     flipHorizontal: new Subscription(),
     flipVertical: new Subscription(),

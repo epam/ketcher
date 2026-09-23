@@ -49,6 +49,9 @@ jobs:
       - name: Run build
         run: npx cross-env CI=false npm run build
 
+      - name: Check ketcher-standalone consumer builds (Vite + webpack 5)
+        run: node scripts/check-standalone-consumer.mjs
+
       - name: Run tests
         run: npm test
         env:

@@ -1,17 +1,20 @@
 import { ChemicalMimeType } from 'ketcher-core';
+import StandaloneStructService from '../../../../src/infrastructure/services/struct/standaloneStructService';
 
-const order: string[] = [];
+// Lets any microtask chain that does NOT depend on a still-pending promise
+// run to completion, without depending on - or deadlocking behind - that
+// pending promise. `setTimeout` only fires once the whole microtask queue
+// has drained, so this deterministically captures "whatever settles on its
+// own settles first". Mirrors the core ordering test's own
+// `flushMicrotasks` (ketcherMonomersLibraryOrdering.test.ts).
+const flushMicrotasks = () =>
+  new Promise<void>((resolve) => setTimeout(resolve, 0));
 
-let resolveDefaultLoad!: () => void;
-const defaultLoadGate = new Promise<void>((resolve) => {
-  resolveDefaultLoad = resolve;
-});
+let order: string[];
+let resolveDefaultLoad: () => void;
 
 const fakeEditor = {
-  ensureDefaultMonomersLibraryLoaded: jest.fn(async () => {
-    await defaultLoadGate;
-    order.push('default-library-loaded');
-  }),
+  ensureDefaultMonomersLibraryLoaded: jest.fn(),
   get monomersLibraryParsedJson() {
     order.push('monomer-library-read');
     return {};
@@ -23,22 +26,27 @@ jest.mock('ketcher-core', () => ({
   provideEditorInstance: jest.fn(() => fakeEditor),
 }));
 
-// Regression/guard test for the ordering fixed for Ketcher.updateMonomersLibrary
-// / replaceMonomersLibrary in T4: the default monomers library is a lazily
-// fetched asset, so anything that reads it (here, the monomer library baked
-// into a `convert` worker command, see standaloneStructService.ts ~L399/~L425)
-// must await `ensureDefaultMonomersLibraryLoaded()` first - otherwise the
-// worker can receive no monomer library when this runs before macromolecules
-// mode is ever opened.
+// Regression/guard test for the ordering fixed by #10326 (see the ADR:
+// .memory-bank/adr/2026-08-28-vite-for-library-builds.md): the default
+// monomers library is a lazily fetched asset, so anything that reads it
+// (here, the monomer library baked into a `convert` worker command) must
+// await `ensureDefaultMonomersLibraryLoaded()` first - otherwise the worker
+// can receive no monomer library when this runs before macromolecules mode
+// is ever opened.
 describe('StandaloneStructService (IndigoService) convert()', () => {
-  it('awaits the default monomers library before reading it into the convert command', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const StandaloneStructService =
-      require('../../../../src/infrastructure/services/struct/standaloneStructService')
-        .default as new (options: unknown) => {
-        convert: (data: unknown, options?: unknown) => Promise<unknown>;
-      };
+  beforeEach(() => {
+    order = [];
 
+    const defaultLoadGate = new Promise<void>((resolve) => {
+      resolveDefaultLoad = resolve;
+    });
+    fakeEditor.ensureDefaultMonomersLibraryLoaded = jest.fn(async () => {
+      await defaultLoadGate;
+      order.push('default-library-loaded');
+    });
+  });
+
+  it('awaits the default monomers library before reading it into the convert command', async () => {
     const service = new StandaloneStructService({});
 
     // Fire-and-forget: the worker never replies in this test, and no
@@ -60,14 +68,13 @@ describe('StandaloneStructService (IndigoService) convert()', () => {
     // Let the `convert()` call run up to its first await (on
     // ensureDefaultMonomersLibraryLoaded). It must not have read the
     // monomer library yet.
-    await Promise.resolve();
-    await Promise.resolve();
+    await flushMicrotasks();
     expect(order).toEqual([]);
 
     resolveDefaultLoad();
     // Let the now-unblocked microtask chain run to the point where the
     // monomer library is read into the convert command's options.
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await flushMicrotasks();
 
     expect(order).toEqual(['default-library-loaded', 'monomer-library-read']);
   });

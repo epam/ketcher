@@ -82,6 +82,7 @@ import {
   getLeavingAtomForAttachmentPoint,
   hasPhosphatePositionAttachmentPointConflict,
 } from './RnaPresetAttachmentPointValidation';
+import { ensureMonomersLibraryLoadedForSubmit } from './MonomerCreationWizard.utils';
 import type {
   FinishNewMonomersCreationData,
   Selection,
@@ -1783,16 +1784,13 @@ const MonomerCreationWizardInternal = ({
   };
 
   const handleSubmit = async () => {
-    // Submit-time validation (validateMonomerWizard/validateRnaPresetWizard,
-    // via validateOnSubmit below) reads the default monomers library for
-    // symbol/HELM/BILN alias uniqueness and RNA preset code uniqueness. That
-    // library is lazily fetched (see the mount effect above), and if the user
-    // submits before it resolves, the uniqueness checks silently pass against
-    // an empty library and a colliding monomer/preset gets saved - a wrong
-    // verdict that then persists. Awaiting here, before any validation runs,
-    // closes that window; the underlying promise is memoized, so once the
-    // library is loaded this is a no-op and does not delay/gate submission.
-    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+    // See ensureMonomersLibraryLoadedForSubmit's own comment for why this
+    // must run before any validation below (validateMonomerWizard/
+    // validateRnaPresetWizard, via validateOnSubmit).
+    const coreEditor = provideEditorInstance();
+    if (coreEditor) {
+      await ensureMonomersLibraryLoadedForSubmit(coreEditor);
+    }
 
     wizardStateDispatch({ type: 'ResetErrors' });
     rnaPresetWizardStateDispatch({ type: 'ResetErrors' });

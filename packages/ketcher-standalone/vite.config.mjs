@@ -137,9 +137,30 @@ const workerUrlRE =
 const wasmUrlHrefRE =
   /new URL\("" \+ new URL\((["'])([^"']+\.wasm)\1, import\.meta\.url\)\.href, "" \+ import\.meta\.url\)\.href/g;
 
+// Rewrites every match of `regex` in `code` via its capture groups (passed
+// straight through to `buildReplacement`, same signature as the function
+// form of `String.prototype.replace`), returning how many replacements were
+// made alongside the result. Counting and rewriting happen in the same
+// `replace` pass instead of a `test()` + `replace()` pair, so there's only
+// one place that needs to reset the shared regex's `lastIndex` (`test()`
+// alone would otherwise require it twice: once before testing, once before
+// replacing, since both advance the same stateful `g`-flagged regex).
+const rewriteAndCount = (code, regex, buildReplacement) => {
+  let count = 0;
+  regex.lastIndex = 0;
+  const result = code.replace(regex, (...matchArgs) => {
+    count += 1;
+    return buildReplacement(...matchArgs);
+  });
+  return { code: result, count };
+};
+
 const literalWorkerUrlPlugin = () => ({
   name: 'ketcher-standalone-literal-worker-url',
   generateBundle(_options, bundle) {
+    let workerRewrites = 0;
+    let wasmRewrites = 0;
+
     for (const file of Object.values(bundle)) {
       // The main lib entry (`main.js`, containing the `new Worker(...)`
       // call) comes through as a rollup/rolldown `chunk`. The worker itself
@@ -151,24 +172,46 @@ const literalWorkerUrlPlugin = () => ({
       if (!isChunk && !isJsAsset) continue;
 
       const key = isChunk ? 'code' : 'source';
-      let code = file[key];
+      const code = file[key];
       if (typeof code !== 'string') continue;
 
-      workerUrlRE.lastIndex = 0;
-      if (workerUrlRE.test(code)) {
-        code = code.replace(
-          workerUrlRE,
-          "new Worker(new URL('./$2', import.meta.url), { type: 'module' })",
-        );
-      }
-      wasmUrlHrefRE.lastIndex = 0;
-      if (wasmUrlHrefRE.test(code)) {
-        code = code.replace(
-          wasmUrlHrefRE,
-          "new URL('./$2', import.meta.url).href",
-        );
-      }
-      file[key] = code;
+      const worker = rewriteAndCount(
+        code,
+        workerUrlRE,
+        (_match, _quote, fileName) =>
+          `new Worker(new URL('./${fileName}', import.meta.url), { type: 'module' })`,
+      );
+      workerRewrites += worker.count;
+
+      const wasm = rewriteAndCount(
+        worker.code,
+        wasmUrlHrefRE,
+        (_match, _quote, fileName) =>
+          `new URL('./${fileName}', import.meta.url).href`,
+      );
+      wasmRewrites += wasm.count;
+
+      file[key] = wasm.code;
+    }
+
+    // This plugin is only ever wired in for the two `copyWasm` variants
+    // (see `plugins:` below), where both patterns MUST appear somewhere in
+    // the bundle - the worker constructor in `main.js`, the wasm lookup
+    // inside the worker chunk. Silently emitting 0 rewrites would mean
+    // Rolldown changed how it renders these cross-chunk references and this
+    // plugin stopped matching anything, silently reintroducing review
+    // blocker B2 (see the comment above `workerUrlRE`) with no build-time
+    // signal at all.
+    if (workerRewrites === 0 || wasmRewrites === 0) {
+      this.error(
+        'ketcher-standalone-literal-worker-url: expected at least one ' +
+          `worker-URL and one wasm-URL rewrite in this copyWasm build, got ` +
+          `${workerRewrites} worker rewrite(s) and ${wasmRewrites} wasm ` +
+          'rewrite(s). The computed-URL patterns this plugin matches no ' +
+          'longer appear in the bundle - either the fix is silently broken ' +
+          '(review blocker B2) or Rolldown changed its output shape and the ' +
+          'regexes need updating.',
+      );
     }
   },
 });

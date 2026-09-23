@@ -996,6 +996,9 @@ export class CoreEditor {
       keySettings[shortcutKey]?.handler &&
       !isEditableInputTarget(event.target)
     ) {
+      if (shortcutKey === 'undo' || shortcutKey === 'redo') {
+        event.stopImmediatePropagation();
+      }
       keySettings[shortcutKey].handler(this);
       event.preventDefault();
     }

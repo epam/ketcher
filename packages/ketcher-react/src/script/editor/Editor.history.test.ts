@@ -15,6 +15,10 @@ import {
   ketcherProvider,
 } from 'ketcher-core';
 import Editor from './Editor';
+import {
+  initKeydownListener,
+  removeKeydownListener,
+} from '../ui/state/hotkeys';
 
 describe('History across molecule and macromolecule modes', () => {
   let micro: Editor;
@@ -187,6 +191,50 @@ describe('History across molecule and macromolecule modes', () => {
     macro.switchToMacromolecules();
     expect(micro.historySize().undo).toBe(1);
   });
+
+  it.each(['undo', 'redo'] as const)(
+    'handles a keyboard %s crossing into macro mode only once',
+    (operation) => {
+      addMicroStructure();
+      macro.switchToMacromolecules();
+      addMonomer();
+      macro.switchToMicromolecules();
+      if (operation === 'redo') {
+        micro.undo();
+        history.undo();
+        history.undo();
+      }
+      const pointer = micro.historyPtr;
+      const target = document.createElement('div');
+      document.body.appendChild(target);
+      initKeydownListener(target)(
+        () => micro[operation](),
+        () => ({
+          editor: micro,
+          actionState: { activeTool: {} },
+          abbreviationLookup: { isOpen: false },
+        }),
+      );
+      try {
+        target.dispatchEvent(
+          new KeyboardEvent('keydown', {
+            key: 'z',
+            code: 'KeyZ',
+            ctrlKey: true,
+            shiftKey: operation === 'redo',
+            bubbles: true,
+            cancelable: true,
+          }),
+        );
+        expect(macro._type).toBe(EditorType.Macromolecules);
+        expect(micro.historyPtr).toBe(
+          pointer + (operation === 'undo' ? -1 : 1),
+        );
+      } finally {
+        removeKeydownListener(target)();
+      }
+    },
+  );
 
   it('shares the 32-entry limit between both editors', () => {
     for (let index = 0; index < 20; index++) {

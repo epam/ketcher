@@ -66,7 +66,7 @@ Action factory functions (the `fromXxx(...)` helpers, organized by concern such 
 - Micro-to-macro conversion works on a clone so scaling and conversion cannot invalidate earlier micro operations. Restored macro commands retain their original model references.
 - `CoreEditor` sets the restored editor type before notifying the UI, making the resulting mode-switch effect a no-op instead of a second conversion/history entry.
 
-**Standard macro mutation pattern** (repeated across the editor, modes, and tools): get the history singleton, build a Command from a drawing-entities-manager method, then hand the Command to both the history and the renderers container. The drawing-entities manager is the factory that produces Commands, and it is where the vast majority of Command construction happens.
+**Standard macro mutation pattern** (repeated across the editor, modes, and tools): get the editor's history adapter, build a Command from a drawing-entities-manager method, then hand the Command to both the history and the renderers container. The drawing-entities manager is the factory that produces Commands, and it is where the vast majority of Command construction happens.
 
 ## Assumptions & constraints
 

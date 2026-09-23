@@ -84,9 +84,9 @@ export class Nucleotide {
       KetMonomerClass.Sugar,
     );
 
-    assert(sugarLibraryItem);
-    assert(rnaBaseLibraryItem);
-    assert(phosphateLibraryItem);
+    if (!sugarLibraryItem || !rnaBaseLibraryItem || !phosphateLibraryItem) {
+      return;
+    }
 
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(

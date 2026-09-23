@@ -41,10 +41,10 @@ export const MonomerLibraryContextMenu = () => {
         <ContextMenu
           id={CONTEXT_MENU_ID.FOR_MONOMER_LIBRARY}
           menuItems={[
-            { name: 'edit', title: 'Edit...', disabled: editingDisabled },
+            { name: 'edit', title: 'Edit', disabled: editingDisabled },
             {
               name: 'duplicateandedit',
-              title: 'Duplicate and Edit...',
+              title: 'Duplicate and Edit',
               disabled: editingDisabled,
               separator: true,
             },
@@ -54,7 +54,9 @@ export const MonomerLibraryContextMenu = () => {
               disabled: ({ props }) => {
                 const item = (props as LibraryMenuProps | undefined)
                   ?.libraryItem;
-                return !item || !editor || editor.isMonomerUsedInPreset(item);
+                return (
+                  !item || !editor || editor.isMonomerReferencedInLibrary(item)
+                );
               },
             },
           ]}

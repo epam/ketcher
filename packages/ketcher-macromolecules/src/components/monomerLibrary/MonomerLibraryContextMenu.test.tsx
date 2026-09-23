@@ -52,7 +52,7 @@ describe('monomer library menu', () => {
     const editor = {
       events: { openMonomerCreationWizard: { dispatch: openWizard } },
       removeMonomerFromLibrary: removeMonomer,
-      isMonomerUsedInPreset: jest.fn(() => false),
+      isMonomerReferencedInLibrary: jest.fn(() => false),
     } as unknown as CoreEditor;
     render(
       withThemeAndStoreProvider(
@@ -70,8 +70,8 @@ describe('monomer library menu', () => {
     renderMenu();
     const items = root.querySelectorAll('.contexify_item');
     expect(Array.from(items, (item) => item.textContent)).toEqual([
-      'Edit...',
-      'Duplicate and Edit...',
+      'Edit',
+      'Duplicate and Edit',
       'Delete',
     ]);
     expect(

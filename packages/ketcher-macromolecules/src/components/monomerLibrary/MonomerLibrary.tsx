@@ -40,6 +40,7 @@ import {
   MonomerLibraryToggle,
 } from './styles';
 import { Icon } from 'ketcher-react';
+import { MonomerLibraryContextMenu } from './MonomerLibraryContextMenu';
 
 const COPY = '_Copy';
 
@@ -138,6 +139,7 @@ const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
         selectedTabIndex={selectedTabIndex}
         onChange={handleTabChange}
       />
+      <MonomerLibraryContextMenu />
     </MonomerLibraryContainer>
   );
 };

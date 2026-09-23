@@ -20,6 +20,7 @@ import {
 } from './helpers';
 import { SequenceItemContextMenuNames } from 'components/contextMenu/SequenceItemContextMenu/SequenceItemContextMenu';
 import { PointerEvent } from 'react';
+import { useMonomerCreationMenu } from '../useMonomerCreationMenu';
 
 type SelectedMonomersContextMenuType = {
   selectedMonomers?: BaseMonomer[];
@@ -34,6 +35,7 @@ export const SelectedMonomersContextMenu = ({
 }: SelectedMonomersContextMenuType) => {
   const selectedMonomers = _selectedMonomers || [];
   const editor = useAppSelector(selectEditor);
+  const monomerCreationMenu = useMonomerCreationMenu(editor, selectedMonomers);
   const { hideAll } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS,
   });
@@ -137,6 +139,7 @@ export const SelectedMonomersContextMenu = ({
       }) => !isBondContext(props),
       separator: true,
     },
+    ...monomerCreationMenu.menuItems,
     {
       name: 'delete',
       title: 'Delete',
@@ -146,6 +149,7 @@ export const SelectedMonomersContextMenu = ({
   ];
 
   const handleMenuChange = ({ id: menuItemId, props }: ItemParams) => {
+    if (monomerCreationMenu.handleMenuChange(menuItemId)) return;
     switch (true) {
       case menuItemId === 'layout_circular':
         editor?.events.layoutCircular.dispatch();
@@ -205,6 +209,7 @@ export const SelectedMonomersContextMenu = ({
         id={CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS}
         handleMenuChange={handleMenuChange}
         menuItems={menuItems}
+        onVisibilityChange={monomerCreationMenu.onVisibilityChange}
       ></ContextMenu>,
       ketcherEditorRootElement,
     )

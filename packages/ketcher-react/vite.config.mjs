@@ -12,6 +12,7 @@ import {
 import { createExternalPredicate } from '../../build-config/external-predicate.mjs';
 import { createPathAliases } from '../../build-config/path-aliases.mjs';
 import { createRawTextPlugin } from '../../build-config/raw-text-plugin.mjs';
+import { createStripLeakedRuntimeExportsPlugin } from '../../build-config/strip-leaked-runtime-exports-plugin.mjs';
 
 const pkg = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
@@ -51,6 +52,14 @@ const pathAliases = createPathAliases(rootDir);
 const sdfRawTextPlugin = createRawTextPlugin({
   name: 'ketcher-react-sdf-raw-text',
   extension: '.sdf',
+});
+
+// See build-config/strip-leaked-runtime-exports-plugin.mjs for why this is
+// needed: Rolldown's CJS renderer leaks its internal `__toESM` interop
+// helper into this package's named exports. The `es` output never needs
+// this helper and is unaffected.
+const stripLeakedToEsmExportPlugin = createStripLeakedRuntimeExportsPlugin({
+  format: 'cjs',
 });
 
 // rollup-plugin-copy copied `src/style/*.svg` into `dist` as real files
@@ -113,6 +122,7 @@ export default defineConfig({
     svgr({ include: '**/*.svg' }),
     sdfRawTextPlugin,
     copySvgAssetsPlugin(),
+    stripLeakedToEsmExportPlugin,
   ],
   build: {
     // Rolldown minifies library output by default; Rollup did not. Publishing

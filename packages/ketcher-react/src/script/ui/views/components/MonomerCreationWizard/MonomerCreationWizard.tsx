@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/immutability */
 import styles from './MonomerCreationWizard.module.less';
@@ -998,6 +997,7 @@ const MonomerCreationWizardInternal = ({
   const applyTypeChange = (newType: KetMonomerClass | string) => {
     setModificationTypes([]);
     setPhosphatePosition(undefined);
+    editor?.setMonomerCreationSelectedType?.(newType as KetMonomerClass);
     if ((type === 'rnaPreset' || newType === 'rnaPreset') && type !== newType) {
       wizardStateDispatch({
         type: 'ResetWizard',
@@ -1049,10 +1049,6 @@ const MonomerCreationWizardInternal = ({
       });
     }
   };
-
-  useEffect(() => {
-    editor?.setMonomerCreationSelectedType?.(values.type);
-  }, [editor, values.type]);
 
   const monomerTypeSelectOptions = useMemo(
     () =>

@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler, react-you-might-not-need-an-effect/no-chain-state-updates */
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/immutability */
 import styles from './MonomerCreationWizard.module.less';
@@ -1236,14 +1235,25 @@ const MonomerCreationWizardInternal = ({
   };
 
   // Recompute atom ownership highlights only after component structures change
-  // while ownership validation errors are active.
-  const rnaPresetProblematicAtomIds = useMemo(() => {
+  // while ownership validation errors are active. `problematicAtomIds` is
+  // derived purely from other state/props, so it is computed inline (memoized)
+  // instead of being synchronized one render late via an effect.
+  //
+  // `hasActiveRnaPresetAtomValidationErrors` is intentionally NOT cleared here
+  // when the recomputed set becomes empty: doing so during render caused
+  // React to re-render before committing, so `problematicAtomIds` (guarded by
+  // the now-false flag) became `null` and the sync effect below skipped
+  // pushing the empty set to the editor, leaving stale highlights on screen.
+  // The flag now stays active until the next submit/discard (see
+  // `handleSubmit`/`handleDiscard`), so every recompute — including one that
+  // resolves to an empty set — is always synced to the editor.
+  const problematicAtomIds = useMemo(() => {
     if (
       !editor?.render?.monomerCreationState ||
       !isRnaPresetType ||
       !hasActiveRnaPresetAtomValidationErrors
     ) {
-      return;
+      return null;
     }
 
     return getRnaPresetStructureValidationResult(
@@ -1257,16 +1267,13 @@ const MonomerCreationWizardInternal = ({
     rnaPresetComponentStructures,
   ]);
 
+  // Syncing the derived problematic-atom set to the (non-React) editor render
+  // state is a legitimate effect: it just informs an external system.
   useEffect(() => {
-    if (!rnaPresetProblematicAtomIds) {
-      return;
+    if (problematicAtomIds) {
+      editor.setProblematicAtoms(problematicAtomIds);
     }
-
-    editor.setProblematicAtoms(rnaPresetProblematicAtomIds);
-    if (rnaPresetProblematicAtomIds.size === 0) {
-      setHasActiveRnaPresetAtomValidationErrors(false);
-    }
-  }, [rnaPresetProblematicAtomIds, editor]);
+  }, [editor, problematicAtomIds]);
 
   useEffect(() => {
     if (monomerCreationState?.hasDefaultAttachmentPoints) {
@@ -1277,11 +1284,18 @@ const MonomerCreationWizardInternal = ({
     }
   }, [monomerCreationState?.hasDefaultAttachmentPoints]);
 
+  // Capture the attachment-point-in-use data once at mount so the effect below
+  // can read it without adding it as a reactive dep (the notification is only
+  // relevant when the wizard opens, not on subsequent state changes).
+  const attachmentAtomIdsAtOpenRef = useRef(
+    monomerCreationState?.attachmentAtomIdsWithExternalBonds,
+  );
+
   // Show a dismissible info notification when the wizard is opened for an
   // existing monomer whose attachment points are currently in use by canvas bonds.
   useEffect(() => {
     const attachmentAtomIdsWithExternalBonds =
-      monomerCreationState?.attachmentAtomIdsWithExternalBonds;
+      attachmentAtomIdsAtOpenRef.current;
     if (
       !attachmentAtomIdsWithExternalBonds ||
       attachmentAtomIdsWithExternalBonds.size === 0
@@ -1306,11 +1320,12 @@ const MonomerCreationWizardInternal = ({
         ],
       ]),
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const { assignedAttachmentPoints } = monomerCreationState;
+
   const autoPhosphatePosition = useMemo(() => {
-    if (!monomerCreationState || !isRnaPresetType) {
+    if (!isRnaPresetType) {
       return;
     }
 
@@ -1323,7 +1338,7 @@ const MonomerCreationWizardInternal = ({
       [number, number]
     >();
 
-    monomerCreationState.assignedAttachmentPoints.forEach(
+    assignedAttachmentPoints.forEach(
       ([attachmentAtomId, leavingGroupAtomId], attachmentPointName) => {
         if (
           rnaPresetWizardState.sugar.structure?.atoms?.includes(
@@ -1355,7 +1370,7 @@ const MonomerCreationWizardInternal = ({
     );
   }, [
     isRnaPresetType,
-    monomerCreationState,
+    assignedAttachmentPoints,
     rnaPresetWizardState.phosphate.structure,
     rnaPresetWizardState.sugar.structure,
   ]);
@@ -1365,8 +1380,6 @@ const MonomerCreationWizardInternal = ({
       handlePhosphatePositionChange(autoPhosphatePosition);
     }
   }, [autoPhosphatePosition, handlePhosphatePositionChange]);
-
-  const { assignedAttachmentPoints } = monomerCreationState;
 
   const validateMonomerWizard = (
     assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,

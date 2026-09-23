@@ -73,12 +73,14 @@ type BondsSectionLocators = {
   hashSpacingUnitsCombobox: Locator;
 };
 
-type ServerSectionLocators = {
-  smartLayoutSwitcher: Locator;
-  ignoreStereochemistryErrorsSwitcher: Locator;
-  ignorePseudoatomsAtMassSwitcher: Locator;
+type ReactionsSectionLocators = {
   addRsitesAtMassCalculationSwitcher: Locator;
   addIsotopesAtMassCalculationSwitcher: Locator;
+};
+
+type ValidationSectionLocators = {
+  ignoreStereochemistryErrorsSwitcher: Locator;
+  ignorePseudoatomsAtMassSwitcher: Locator;
 };
 
 type ThreeDViewerSectionLocators = {
@@ -88,6 +90,7 @@ type ThreeDViewerSectionLocators = {
 };
 
 type OptionsForDebuggingSectionLocators = {
+  smartLayoutSwitcher: Locator;
   showAtomIdsSwitcher: Locator;
   showBondsIdsSwitcher: Locator;
   showHalfBondsIdsSwitcher: Locator;
@@ -104,7 +107,8 @@ type SettingsDialogLocators = {
   stereochemistrySection: Locator;
   atomsSection: Locator;
   bondsSection: Locator;
-  serverSection: Locator;
+  reactionsSection: Locator;
+  validationSection: Locator;
   threeDViewerSection: Locator;
   optionsForDebuggingSection: Locator;
   setACSSettingsButton: Locator;
@@ -222,21 +226,26 @@ export const SettingsDialog = (page: Page) => {
     },
   );
 
-  const serverSection: Locator & ServerSectionLocators = Object.assign(
-    page.getByTestId(SettingsSection.Server),
+  const reactionsSection: Locator & ReactionsSectionLocators = Object.assign(
+    page.getByTestId(SettingsSection.Reactions),
     {
-      smartLayoutSwitcher: page.getByTestId(ServerSetting.SmartLayout),
-      ignoreStereochemistryErrorsSwitcher: page.getByTestId(
-        ServerSetting.IgnoreStereochemistryErrors,
-      ),
-      ignorePseudoatomsAtMassSwitcher: page.getByTestId(
-        ServerSetting.IgnorePseudoatomsAtMass,
-      ),
       addRsitesAtMassCalculationSwitcher: page.getByTestId(
         ServerSetting.AddRsitesAtMassCalculation,
       ),
       addIsotopesAtMassCalculationSwitcher: page.getByTestId(
         ServerSetting.AddIsotopesAtMassCalculation,
+      ),
+    },
+  );
+
+  const validationSection: Locator & ValidationSectionLocators = Object.assign(
+    page.getByTestId(SettingsSection.Validation),
+    {
+      ignoreStereochemistryErrorsSwitcher: page.getByTestId(
+        ServerSetting.IgnoreStereochemistryErrors,
+      ),
+      ignorePseudoatomsAtMassSwitcher: page.getByTestId(
+        ServerSetting.IgnorePseudoatomsAtMass,
       ),
     },
   );
@@ -254,8 +263,9 @@ export const SettingsDialog = (page: Page) => {
 
   const optionsForDebuggingSection: Locator &
     OptionsForDebuggingSectionLocators = Object.assign(
-    page.getByTestId(SettingsSection.OptionsForDebugging),
+    page.getByTestId(SettingsSection.Debugging),
     {
+      smartLayoutSwitcher: page.getByTestId(ServerSetting.SmartLayout),
       showAtomIdsSwitcher: page.getByTestId(
         OptionsForDebuggingSetting.ShowAtomIds,
       ),
@@ -281,7 +291,8 @@ export const SettingsDialog = (page: Page) => {
     stereochemistrySection,
     atomsSection,
     bondsSection,
-    serverSection,
+    reactionsSection,
+    validationSection,
     threeDViewerSection,
     optionsForDebuggingSection,
     setACSSettingsButton: page.getByTestId('acs-style-button'),
@@ -294,9 +305,10 @@ export const SettingsDialog = (page: Page) => {
     [SettingsSection.Stereochemistry]: locators.stereochemistrySection,
     [SettingsSection.Atoms]: locators.atomsSection,
     [SettingsSection.Bonds]: locators.bondsSection,
-    [SettingsSection.Server]: locators.serverSection,
+    [SettingsSection.Reactions]: locators.reactionsSection,
+    [SettingsSection.Validation]: locators.validationSection,
     [SettingsSection.ThreeDViewer]: locators.threeDViewerSection,
-    [SettingsSection.OptionsForDebugging]: locators.optionsForDebuggingSection,
+    [SettingsSection.Debugging]: locators.optionsForDebuggingSection,
   };
 
   return {
@@ -359,6 +371,23 @@ export const SettingsDialog = (page: Page) => {
 
 let cachedMap: Map<string, SettingsSection> | null = null;
 
+// The "*Setting" constant groups below no longer line up 1:1 with the
+// Settings dialog's accordion sections (fields were regrouped without
+// renaming the TS identifiers used across spec files, to avoid churn).
+// These per-field overrides route each moved field to its real section;
+// everything else still falls back to its constant group's original section.
+const SECTION_OVERRIDES = new Map<string, SettingsSection>([
+  [GeneralSetting.ShowValenceWarnings, SettingsSection.Validation],
+  [GeneralSetting.AtomColoring, SettingsSection.Atoms],
+  [GeneralSetting.ReactionComponentMarginSize, SettingsSection.Reactions],
+  [GeneralSetting.ReactionComponentMarginSizeUnits, SettingsSection.Reactions],
+  [ServerSetting.SmartLayout, SettingsSection.Debugging],
+  [ServerSetting.IgnoreStereochemistryErrors, SettingsSection.Validation],
+  [ServerSetting.IgnorePseudoatomsAtMass, SettingsSection.Validation],
+  [ServerSetting.AddRsitesAtMassCalculation, SettingsSection.Reactions],
+  [ServerSetting.AddIsotopesAtMassCalculation, SettingsSection.Reactions],
+]);
+
 function createOptionToSectionMap(): Map<string, SettingsSection> {
   if (cachedMap) return cachedMap;
   const map = new Map<string, SettingsSection>();
@@ -375,15 +404,19 @@ function createOptionToSectionMap(): Map<string, SettingsSection> {
   Object.values(BondsSetting).forEach((val) =>
     map.set(val, SettingsSection.Bonds),
   );
+  // ServerSetting fields are now split across the Reactions & Components,
+  // Validation & Calculation, and Debugging sections; see SECTION_OVERRIDES.
   Object.values(ServerSetting).forEach((val) =>
-    map.set(val, SettingsSection.Server),
+    map.set(val, SettingsSection.Validation),
   );
   Object.values(ThreeDViewerSetting).forEach((val) =>
     map.set(val, SettingsSection.ThreeDViewer),
   );
   Object.values(OptionsForDebuggingSetting).forEach((val) =>
-    map.set(val, SettingsSection.OptionsForDebugging),
+    map.set(val, SettingsSection.Debugging),
   );
+
+  SECTION_OVERRIDES.forEach((section, val) => map.set(val, section));
 
   cachedMap = map;
   return cachedMap;

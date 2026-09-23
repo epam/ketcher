@@ -150,7 +150,17 @@ export const isAntisenseCreationDisabled = (
     return true;
   }
 
-  return !ChainsCollection.fromMonomers(monomers).chains.some((chain) => {
+  // A base alone does not start a backbone chain, so its sugar is added to
+  // find the chain it belongs to; only the selected monomers are checked
+  const sugarsOfSelectedBases = monomers
+    .filter((monomer) => monomer instanceof RNABase)
+    .map((rnaBase) => getSugarFromRnaBase(rnaBase))
+    .filter((sugar) => sugar !== undefined);
+
+  return !ChainsCollection.fromMonomers([
+    ...monomers,
+    ...sugarsOfSelectedBases,
+  ]).chains.some((chain) => {
     const selectedMonomersInChain = chain.nodes
       .flatMap((node) => node.monomers)
       .filter((monomer) => monomers.includes(monomer));

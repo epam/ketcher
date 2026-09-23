@@ -1,18 +1,10 @@
 module.exports = {
-  cache: false,
   clearMocks: true,
   testMatch: ['**/__tests__/**/?(*.)+(spec|test).+(ts|js)'],
   testPathIgnorePatterns: ['dist', 'node_modules'],
   testEnvironment: 'node',
   transform: {
-    '^.+\\.(js|ts)$': [
-      'ts-jest',
-      {
-        diagnostics: {
-          warnOnly: true,
-        },
-      },
-    ],
+    '^.+\\.(js|ts)$': 'ts-jest',
   },
   moduleNameMapper: {
     // Resolved at build time via `resolve.alias` in vite.config.mjs; for unit

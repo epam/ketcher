@@ -20,6 +20,18 @@ Each package has its own Jest configuration. Tests live in `__tests__/` director
   - Tests Redux slices, hooks, and components
   - Config: `packages/ketcher-macromolecules/jest.config.js`
 - **ketcher-standalone**: minimal unit tests
+  - Config: `packages/ketcher-standalone/jest.config.js` (`ts-jest`, `testEnvironment: 'node'`)
+  - `moduleNameMapper` swaps two build-time-only resolutions for test doubles: the
+    `_indigo-worker-import-alias_` placeholder (normally resolved to a real worker shim via
+    `resolve.alias` in `vite.config.mjs`) is pointed at
+    `__tests__/__mocks__/indigoWorkerAlias.ts`, a minimal fake worker; `d3` is pointed at
+    `node_modules/d3/dist/d3.min.js` because `ketcher-core`'s dist bundle re-exports its render
+    tools, which import `d3` as an ESM-only package that ts-jest's CJS transform can't otherwise
+    resolve (mirrors `ketcher-core`/`ketcher-react`'s own Jest config).
+  - `ketcher-core` itself is mocked per-test with `jest.mock('ketcher-core', () => ({
+    ...jest.requireActual('ketcher-core'), provideEditorInstance: jest.fn(...) }))` to control the
+    editor instance a test observes (see
+    `__tests__/infrastructure/services/struct/standaloneStructService.test.ts` for the pattern).
 
 Run all unit tests: `npm run test` (from root)
 Run type checks: `npm run test:types`

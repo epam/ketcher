@@ -177,3 +177,13 @@ imported by another package, and no build may read another package's `dist/` out
 is therefore the only check that the published contract, the CJS `require` conditions, and
 SSR-safety hold. A build tooling change is verified by: build → diff `dist/` against the previous
 baseline → `example-ssr` builds and renders → Playwright suite green.
+
+`example`/`example-ssr` still don't cover `ketcher-standalone`'s `binaryWasm`/`binaryWasmNoRender`
+build variants against a real external bundler: `example` only ever uses the default inline
+build. `scripts/check-standalone-consumer.mjs` closes that gap and runs in CI right after the
+build job. It `npm pack`s `ketcher-core` and `ketcher-standalone`, installs the tarballs into two
+throwaway consumer projects (one Vite, one webpack 5) built in the OS temp dir, and asserts each
+consumer's own build output contains a `.wasm` file and a separate Indigo worker chunk for
+**both** variants — guarding against the worker/`.wasm` `new URL(...)` reference regressing from
+a literal, statically-detectable form back to a computed one (see the ADR:
+`.memory-bank/adr/2026-08-28-vite-for-library-builds.md`).

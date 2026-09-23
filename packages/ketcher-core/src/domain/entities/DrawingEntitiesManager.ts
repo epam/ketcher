@@ -3776,14 +3776,29 @@ export class DrawingEntitiesManager {
     node: SubChainNode,
     isDnaAntisense: boolean,
   ) {
+    // A base already bonded to something besides its sugar cannot pair with
+    // an antisense base (requirement 1.2 of #5678)
     if (node instanceof Nucleotide || node instanceof Nucleoside) {
+      const { rnaBase } = node;
+
+      if (
+        rnaBase.hydrogenBonds.length > 0 ||
+        rnaBase.covalentBonds.length > 1
+      ) {
+        return undefined;
+      }
+
       return DrawingEntitiesManager.getAntisenseBaseLabel(
-        node.rnaBase,
+        rnaBase,
         isDnaAntisense,
       );
     }
 
     if (isUnsplitNucleotideNode(node)) {
+      if (node.monomer.hydrogenBonds.length > 0) {
+        return undefined;
+      }
+
       const naturalAnalogCode =
         node.monomer.monomerItem.props.MonomerNaturalAnalogCode;
 

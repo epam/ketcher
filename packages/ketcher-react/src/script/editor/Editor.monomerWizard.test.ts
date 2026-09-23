@@ -298,6 +298,55 @@ describe('macro monomer wizard bridge', () => {
     ]);
   });
 
+  it('creates a continuous structure from bonded legacy R-group attachment atoms', () => {
+    const monomers = [makeMonomer(), makeMonomer()];
+    const struct = new Struct();
+    const mapping = new Map<BaseMonomer, Map<number, number>>();
+    monomers.forEach((monomer, index) => {
+      const template = monomer.monomerItem.struct;
+      template.atoms.get(1)!.label = 'R#';
+      template.atoms.get(1)!.rglabel = 1;
+      monomer.monomerItem.attachmentPoints = [
+        { attachmentAtom: 1, leavingGroup: { atoms: [] }, label: 'R1' },
+      ];
+      const offset = index * 2;
+      const group = new MonomerMicromolecule(SGroup.TYPES.SUP, monomer);
+      group.id = struct.sgroups.add(group);
+      [0, 1].forEach((localId) => {
+        const atomId = struct.atoms.add(template.atoms.get(localId)!.clone());
+        struct.atomAddToSGroup(group.id, atomId);
+      });
+      struct.bonds.add(new Bond({ begin: offset, end: offset + 1, type: 1 }));
+      mapping.set(
+        monomer,
+        new Map([
+          [0, offset],
+          [1, offset + 1],
+        ]),
+      );
+      jest.spyOn(monomer, 'isAttachmentPointUsed').mockReturnValue(true);
+    });
+    struct.bonds.add(new Bond({ begin: 1, end: 3, type: 1 }));
+    const selected = new Set([0, 1, 2, 3]);
+    const editor = createEditor(struct);
+    (editor.selection as jest.Mock).mockImplementation(() => ({
+      atoms: Array.from(selected),
+    }));
+    Reflect.get(editor, 'prepareMacroMonomersForCreation').call(
+      editor,
+      struct,
+      selected,
+      mapping,
+    );
+
+    expect(editor.isMonomerCreationWizardEnabled).toBe(true);
+    expect(selected).toEqual(new Set([0, 2]));
+    expect(Array.from(struct.bonds.values())).toEqual([
+      expect.objectContaining({ begin: 0, end: 2 }),
+    ]);
+    expect(monomers[0].monomerItem.struct.atoms.get(1)?.rglabel).toBe(1);
+  });
+
   it('restores on discard and not before the deferred save merge completes', () => {
     jest.useFakeTimers();
     const editor = createEditor();

@@ -116,6 +116,37 @@ describe('library edit field uniqueness', () => {
     ).toBe(true);
   });
 
+  it.each(['aliasHELM', 'aliasBILN'] as const)(
+    'allows an unchanged %s even when bundled entries share it',
+    (field) => {
+      const sharedAliasEntry: MonomerItemType = {
+        ...other,
+        props: {
+          ...other.props,
+          MonomerClass: KetMonomerClass.CHEM,
+          [field]: original.props[field],
+        },
+      };
+      expect(
+        hasMonomerFieldCollision(
+          [sharedAliasEntry],
+          field,
+          original.props[field] as string,
+          KetMonomerClass.AminoAcid,
+          original,
+        ),
+      ).toBe(false);
+      expect(
+        hasMonomerFieldCollision(
+          [sharedAliasEntry],
+          field,
+          original.props[field] as string,
+          KetMonomerClass.AminoAcid,
+        ),
+      ).toBe(true);
+    },
+  );
+
   it('excludes the original modification types by persistent identity', () => {
     expect(getOtherLibraryMonomers([original, other], { ...original })).toEqual(
       [other],

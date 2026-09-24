@@ -195,7 +195,6 @@ test.describe('RNA Library', () => {
       */
       await Library(page).openRNASection(data.component);
 
-      await moveMouseAway(page);
       await takeMonomerLibraryScreenshot(page);
 
       // Reset to default state: expand the 'Presets' component after verifying the last item
@@ -1479,7 +1478,7 @@ test.describe('RNA Library', () => {
     // Case 24
     await Library(page).hoverMonomer(Chem.SMPEG2);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
+    await takeMonomerLibraryScreenshot(page);
     await moveMouseAway(page);
 
     // Case 25

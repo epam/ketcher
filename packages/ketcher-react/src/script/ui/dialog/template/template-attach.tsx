@@ -295,15 +295,6 @@ class Attach extends Component<AttachProps> {
         : this.tmpl.props;
     const options = Object.assign(editorStyles, this.props.globalSettings, {
       microModeScale: getScale(struct),
-      // getOptionsWithConvertedUnits() re-derives microModeScale from
-      // bondLength/bondLengthUnit whenever both are set, which they always
-      // are once globalSettings is spread in (the Settings dialog's "Bond
-      // length" default). That silently overwrote this auto-fit scale with
-      // the user's main-canvas bond length, so every template preview here
-      // rendered at a fixed size instead of scaling to fit the box. Unset
-      // bondLengthUnit (leaving bondLength/bondSpacing conversion untouched)
-      // so that override is skipped and the auto-fit scale above wins.
-      bondLengthUnit: undefined,
       reuseRestructIfExist: false,
     });
     const dialogTitle =

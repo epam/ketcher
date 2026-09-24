@@ -15,6 +15,11 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 
+const sortLabels = (labels: string[]) =>
+  labels.sort((firstLabel, secondLabel) =>
+    firstLabel.localeCompare(secondLabel),
+  );
+
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
@@ -152,9 +157,9 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     ].filter((monomer) => monomer.monomerItem.isAntisense);
 
     expect(antisenseMonomers).toHaveLength(3);
-    expect(antisenseMonomers.map((monomer) => monomer.label).sort()).toEqual(
-      ['P', 'R', 'U'].sort(),
-    );
+    expect(
+      sortLabels(antisenseMonomers.map((monomer) => monomer.label)),
+    ).toEqual(sortLabels(['P', 'R', 'U']));
     expect(unsplit.hydrogenBonds.length).toBe(1);
   });
 

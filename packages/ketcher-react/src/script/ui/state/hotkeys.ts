@@ -509,6 +509,10 @@ function isAbleToCopy(editor: Editor): boolean {
   return true;
 }
 
+function getClipboardMimeType(struct: { isReaction: boolean }) {
+  return struct.isReaction ? ChemicalMimeType.Rxn : ChemicalMimeType.Mol;
+}
+
 async function clipData(editor: Editor) {
   if (!isAbleToCopy(editor)) {
     return null;
@@ -532,9 +536,7 @@ async function clipData(editor: Editor) {
 
     res[ChemicalMimeType.KET] = ket;
 
-    const type = struct.isReaction
-      ? ChemicalMimeType.Mol
-      : ChemicalMimeType.Rxn;
+    const type = getClipboardMimeType(struct);
 
     res['text/plain'] = data;
     res[type] = data;
@@ -564,9 +566,7 @@ function legacyClipData(editor: Editor) {
     const ket = serializer.serialize(struct);
     res[ChemicalMimeType.KET] = ket;
 
-    const type = struct.isReaction
-      ? ChemicalMimeType.Mol
-      : ChemicalMimeType.Rxn;
+    const type = getClipboardMimeType(struct);
     const data = molSerializer.serialize(struct);
     res['text/plain'] = data;
     res[type] = data;

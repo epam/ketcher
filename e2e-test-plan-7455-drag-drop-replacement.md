@@ -272,6 +272,13 @@ Findings that changed the plan (all verified empirically via temporary probe spe
 - **Cleanup:** temporary specs deleted — `probe-preset-onto-monomer.spec.ts`, `generate-long-chain-lone-monomer.spec.ts`, `generate-fixtures.spec.ts` (all findings absorbed into Phases 2–5 notes above; no OpenSpec change exists for this work, so nothing is held back for archiving). Superseded fixture `long-chain-viewport-edge.ket` deleted. Final state: 3 specs + 7 `.ket` fixtures under `tests/test-data/Monomer-Replacement/`.
 - **Committed** on branch `tests-for-drag-n-drop-replace`.
 
+### Post-completion addition (2026-09-24): undo/redo coverage
+
+The original plan was scoped strictly to the issue #7455 requirement list, which omitted undo/redo — a gap against testing.md's "Expectations for New Features" (undo/redo behavior when applicable). Replacement is a proper `EditorHistory` command (`buildReplacementCommand` in `LibraryItemDragDropHandler.ts`), so it is applicable. Added 3 tests (suite now **29/29 pass**):
+
+- Monomer spec: undo restores the original monomer with its bonds; redo re-applies the replacement
+- Preset spec: undo of a same-geometry preset replacement restores all components and the inter-preset bond
+
 ### Phase 5 results (done 2026-09-23)
 
 `tests/specs/Chromium-popup/Monomer-Replacement/drag-drop-replace-preset-onto-monomer.spec.ts` — **8/8 pass** (chromium-popup, ~13 s), shared-page pattern (`initFlexCanvas`); flex tests select `LayoutMode.Flex` explicitly, the snake test opens the file first and then switches to snake (mode state persists across tests on the shared page).

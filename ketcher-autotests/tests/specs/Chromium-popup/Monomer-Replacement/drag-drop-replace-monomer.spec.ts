@@ -7,7 +7,11 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
-import { openFileAndAddToCanvasMacro } from '@utils/index';
+import {
+  openFileAndAddToCanvasMacro,
+  redoByKeyboard,
+  undoByKeyboard,
+} from '@utils/index';
 import {
   AttachmentPoint,
   getMonomerLocator,
@@ -328,6 +332,51 @@ test.describe('Drag-and-drop monomer replacement (issue #7455)', () => {
 
     // The side-chain bond to the chem monomer was deleted.
     expect(await countMonomerBonds(page, chemEG)).toBe(0);
+  });
+
+  test('Restores the original monomer and its bonds when the replacement is undone', async () => {
+    /*
+     * Test case: #7455 - Monomer replacement via drag-and-drop from library
+     * Description: Undoing a drag-and-drop replacement restores the original
+     * monomer with all of its bonds intact (undo/redo coverage).
+     */
+    await openFileAndAddToCanvasMacro(page, CHAIN_FIXTURE);
+    const monomerA = getMonomerLocator(page, Peptide.A);
+    const monomerC = getMonomerLocator(page, Peptide.C);
+
+    await dragLibraryItemOntoMonomer(page, Peptide.F, monomerA);
+    expect(await monomerA.count()).toBe(0);
+    expect(await getMonomerLocator(page, Peptide.F).count()).toBe(1);
+
+    await undoByKeyboard(page);
+
+    expect(await monomerA.count()).toBe(1);
+    expect(await getMonomerLocator(page, Peptide.F).count()).toBe(0);
+    expect(await monomerC.count()).toBe(1);
+    expect(await hasBondBetweenMonomers(page, monomerA, monomerC)).toBe(true);
+  });
+
+  test('Re-applies the replacement when it is redone after undo', async () => {
+    /*
+     * Test case: #7455 - Monomer replacement via drag-and-drop from library
+     * Description: Redoing an undone drag-and-drop replacement re-applies it —
+     * the replacement monomer is back with its bond to the neighbor
+     * (undo/redo coverage).
+     */
+    await openFileAndAddToCanvasMacro(page, CHAIN_FIXTURE);
+    const monomerA = getMonomerLocator(page, Peptide.A);
+    const monomerC = getMonomerLocator(page, Peptide.C);
+
+    await dragLibraryItemOntoMonomer(page, Peptide.F, monomerA);
+    await undoByKeyboard(page);
+    expect(await monomerA.count()).toBe(1);
+
+    await redoByKeyboard(page);
+
+    const monomerF = getMonomerLocator(page, Peptide.F);
+    expect(await monomerA.count()).toBe(0);
+    expect(await monomerF.count()).toBe(1);
+    expect(await hasBondBetweenMonomers(page, monomerF, monomerC)).toBe(true);
   });
 
   test('Does not re-trigger the layout when replacing a monomer in snake mode', async () => {

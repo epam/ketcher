@@ -6,7 +6,7 @@ import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
-import { openFileAndAddToCanvasMacro } from '@utils/index';
+import { openFileAndAddToCanvasMacro, undoByKeyboard } from '@utils/index';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   countMonomerBonds,
@@ -138,6 +138,40 @@ test.describe('Drag-and-drop preset replacement (issue #7455)', () => {
       'right',
     );
     expect(await hasBondBetweenMonomers(page, newPhosphate, sugarC)).toBe(true);
+  });
+
+  test('Restores the original preset and its bonds when the replacement is undone', async () => {
+    /*
+     * Test case: #7455 - Monomer replacement via drag-and-drop from library
+     * Description: Undoing a same-geometry preset replacement restores the
+     * original preset — all of its components are back and the inter-preset
+     * bond is re-established (undo/redo coverage).
+     */
+    await openFileAndAddToCanvasMacro(page, PRESET_CHAIN_FIXTURE);
+    const sugarA = await extremeMonomer(
+      getMonomerLocator(page, Sugar.R),
+      'left',
+    );
+
+    await dragLibraryItemOntoMonomer(page, Preset.C, sugarA);
+    expect(await getMonomerLocator(page, Base.A).count()).toBe(0);
+    expect(await getMonomerLocator(page, Base.C).count()).toBe(2);
+
+    await undoByKeyboard(page);
+
+    expect(await getMonomerLocator(page, Base.A).count()).toBe(1);
+    expect(await getMonomerLocator(page, Base.C).count()).toBe(1);
+
+    // The inter-preset bond (phosphate -> next sugar) is re-established.
+    const phosphateA = await extremeMonomer(
+      getMonomerLocator(page, Phosphate.P),
+      'left',
+    );
+    const sugarC = await extremeMonomer(
+      getMonomerLocator(page, Sugar.R),
+      'right',
+    );
+    expect(await hasBondBetweenMonomers(page, phosphateA, sugarC)).toBe(true);
   });
 
   test('Replaces the whole preset when dropped onto any of its components', async () => {

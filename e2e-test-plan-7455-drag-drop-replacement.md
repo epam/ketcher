@@ -198,13 +198,15 @@ Fixtures generated in Ketcher via a temporary Playwright script (`tests/specs/Ch
 | `preset-chain-same-geometry.ket` | RNA presets A–C, standard bond **phosphate(R2) → sugar(R1)** | Phase 4 (req. 4–7, 12) |
 | `preset-non-standard-bonds.ket` | Same A–C chain placed diagonally (non-standard bond length/angle) | Phase 4 (req. 12.2) |
 | `rn-bond-priority.ket` | Preset A – lone sugar R – preset C; bonds: A.phosphate→R, R(R2)→C.phosphate(R2) | Phase 5 (req. 8–10) |
-| `long-chain-viewport-edge.ket` | 16-preset RNA chain (A-C-G-U ×4, pasted as sequence) | Phase 5 (req. 14) |
+| `preset-lone-phosphate.ket` | Preset A – lone phosphate P – preset C; bonds: A.P(R2)→P(R1), P(R2)→C.S(R1) | Phase 5 (req. 13.2 — flex shift needs the backbone to continue through the new P's R2) |
+| `long-chain-lone-monomer.ket` | 4-preset RNA chain extended with a terminal lone phosphate + lone sugar (downward, canvas is narrow) | Phase 5 (req. 14) |
+| `long-chain-viewport-edge.ket` | 16-preset RNA chain (A-C-G-U ×4, pasted as sequence) | superseded by `long-chain-lone-monomer.ket` in Phase 5 (a preset→monomer replacement needs a lone monomer target; an all-preset chain only triggers the preset→preset path) |
 | `chem-bonded-target.ket` | Peptide A–C chain, C bonded to chem EG via C.R2(OH)/EG.R1(H) | Phase 5 (QA note) |
 
 Decisions / findings from Phase 2:
 
 - **`preset-phosphate-bonded.ket` NOT created** — redundant: the standard preset chain already bonds through the phosphate (APs `R2`→`R1`, logged above). `preset-chain-same-geometry.ket` serves as the req. 7.1 setup; the replacement item for that modal case is still to be chosen in Phase 4 (no same-geometry R+P preset lacks a phosphate — see open question #5).
-- **`rn-all-occupied.ket` deferred to Phase 5** — "all Rn occupied" construction is non-trivial; build per implementation (plan already anticipates this for similar cases).
+- **`rn-all-occupied.ket` not needed** — resolved in Phase 5: the req. 10.3 modal case is built from `monomer-chain-simple.ket` + inline EG (cysteine R1/R2/R3 all occupied; Preset.A offers only free R1 + R2).
 - **Connection rules (empirical):** sugar→sugar bonding between a lone sugar and a preset is rejected; sugar→phosphate is allowed but opens the attachment-point dialog (handle via `AttachmentPointsDialog` POM with explicit APs — ribose R1 / phosphate R1 are disabled when occupied). Peptide→chem bonding also opens the dialog (cysteine R1 disabled once backbone-bonded → use R2(OH)).
 - **Preset drop target center (to verify in Phase 4):** for `dragLibraryItemOntoMonomer` onto a preset, pass the **sugar component** locator as the target (presets are anchored on their sugar); confirm the 10 px radius behaves from that point.
 - Both temporary files (`spike-drag-drop-replacement.spec.ts`, `generate-fixtures.spec.ts`) stay on this branch until Phases 3–5 absorb/replace them; delete before archiving.
@@ -234,6 +236,68 @@ Implementation notes / deviations from the plan table:
 - Spike spec `spike-drag-drop-replacement.spec.ts` **deleted** — all four spike cases are absorbed into this spec (tests 1/2, 4, 5; bond helpers used throughout). `generate-fixtures.spec.ts` stays until Phases 4–5 are done (may be reused for the deferred `rn-all-occupied.ket`).
 - Environment note: local Playwright needed `npx playwright install chromium` (cache had a different build); root `npx eslint` is broken in this checkout (`@eslint/css` missing) — pre-existing, unrelated.
 
+### Phase 4 results (done 2026-09-23)
+
+`tests/specs/Chromium-popup/Monomer-Replacement/drag-drop-replace-preset.spec.ts` — **9/9 pass** (chromium-popup, ~10 s), shared-page pattern (`initFlexCanvas`); snake tests switch mode via `selectLayoutModeTool(LayoutMode.Snake)`.
+
+| Test | Req. covered |
+|------|--------------|
+| Same-geometry preset replacement (base change), inter-preset bond re-established | 4–6 |
+| Drop onto any component (base) replaces the whole preset | 4 |
+| Different-sugar preset (`dR(U)P`) still replaces a ribose preset | 4/6 (re-scoped, see below) |
+| "Deletion of bonds" modal — `12ddR()P` lacks R3 → bond to kept base would be lost; Cancel keeps original | 7.1 |
+| Modal — Yes: kept base orphaned (`countMonomerBonds` = 0), new phosphate re-bonded internally + inter-preset (2 bonds) | 7.1 |
+| No layout re-trigger, standard bonds (flex) — neighbor preset keeps positions | 12.1 |
+| No layout re-trigger, standard bonds (snake) | 12.1 |
+| No layout re-trigger even with non-standard bond geometry (re-scoped req. 12.2) | 12 |
+| Flex keeps the new preset's sugar at the replaced one's position (non-standard fixture) | 12.3 |
+
+Findings that changed the plan (all verified empirically via temporary probe specs, since deleted):
+
+- **Open question #5 RESOLVED — the req. 7.1 modal IS triggerable for preset→preset**, but not with standard R+P presets: in a standard chain the inter-preset bond runs through phosphate R2, which is free on every R+P preset, so same-geometry swaps never lose bonds (probes showed `dialog=false` for `C`/`G`/`dR(U)P` onto `A`). The working case: drop **`12ddR()P`** (sugar+phosphate, no base) onto a full preset — the 12ddR sugar template has only R1/R2 APs (no R3), so the bond to the *kept* base is lost → modal. Cancel/Yes both covered; after Yes the kept base stays on canvas but orphaned.
+- **Open question #3 RESOLVED / re-scoped — "different geometry" negative cases as written do not exist in the library:**
+  - `dR(U)P` onto `A` **is** a whole-preset replacement (sugar R→dR, base A→U). `presetsHaveSameGeometry`/`getMatchingPresetComponents` (`replacementHelpers.ts`) compare slot composition + phosphate side only and intentionally ignore monomer identities. The plan's "different sugar = not same geometry" note is not what the implementation does — test documents actual behavior instead.
+  - **No left-phosphate library preset exists** (group templates carry no connections; `getRnaPresetPhosphatePosition` defaults to `'right'`), so the "phosphate on opposite side" negative cannot be triggered by a library drag at all. Documented, not tested.
+- **Req. 12.2 re-scoped — same-geometry preset replacement NEVER re-runs the layout** (explicit in `LibraryItemDragDropHandler.buildReplacementCommand`: "No re-layout for same-geometry preset replacement (task 7.2, 7.3)"). The snake layout trigger (`applySnakeLayout`) exists only on the **preset→monomer** path — that is req. 13, covered in Phase 5. Also: snake mode normalizes non-standard bond geometry *on file load*, so a reflow-on-replacement was unobservable anyway; flex keeps the hand-adjusted diagonal (probe offsets confirmed). The spec instead asserts the chain's non-standard geometry survives replacement untouched.
+- **Test-design gotcha:** after replacing preset A with another C, two identical presets exist and first-match locators resolve to the *replaced* components (they keep their original DOM order). Neighbors are tracked by stable `data-monomerid` (`getMonomerId` + `getMonomerLocator({ monomerId })`) — see `capturePresetC()` in the spec.
+- **Stale constants found:** `Presets.ts` lists 38 presets but the library only contains 21 group templates — e.g. `R()P` (`Preset.R__P`) and `R(A)` have no library card (hover times out). The only base-less R+P-style preset actually available is `12ddR()P` (`Preset._12ddR__P`).
+- Temporary probe specs (`probe-preset-replacement.spec.ts`, `probe-preset-layout.spec.ts`) deleted — findings absorbed above. `generate-fixtures.spec.ts` stays until Phase 5.
+
+### Phase 6 results (done 2026-09-24)
+
+**Docker snapshot generation not applicable:** none of the three specs use `toHaveScreenshot` or `verifyFileExport` — Phases 3–5 deliberately replaced screenshot assertions with deterministic structural checks (alias/type counts, bond data attributes, bounding-box deltas), so there are no snapshot directories to generate or commit. The Docker step from §8 is dropped.
+
+- **Full suite verified:** all three specs run together — **25/26 pass** (chromium-popup, ~34 s). The single failure is environmental, not a test defect: the local server on port 4002 serves a *different checkout* (`ketcher_new`), whose build predates this branch's Phase-1 source change, so `data-testid="replacement-highlight"` does not exist there and the highlight test (5.1) cannot find the element. Against a build of this branch (Phases 1/3 verification, and CI, which builds from the PR) the test passes. No test code was changed for this.
+- **Stability fix in `tests/utils/macromolecules/replacement.ts`:** `moveDragToCanvasCoords` / `cancelDrag` now move the mouse in steps (`DRAG_MOVE_STEPS = 10`) instead of a single jump — a one-shot move can be missed by the drag-over handler, which made mid-drag highlight assertions flaky.
+- **Cleanup:** temporary specs deleted — `probe-preset-onto-monomer.spec.ts`, `generate-long-chain-lone-monomer.spec.ts`, `generate-fixtures.spec.ts` (all findings absorbed into Phases 2–5 notes above; no OpenSpec change exists for this work, so nothing is held back for archiving). Superseded fixture `long-chain-viewport-edge.ket` deleted. Final state: 3 specs + 7 `.ket` fixtures under `tests/test-data/Monomer-Replacement/`.
+- **Committed** on branch `tests-for-drag-n-drop-replace`.
+
+### Phase 5 results (done 2026-09-23)
+
+`tests/specs/Chromium-popup/Monomer-Replacement/drag-drop-replace-preset-onto-monomer.spec.ts` — **8/8 pass** (chromium-popup, ~13 s), shared-page pattern (`initFlexCanvas`); flex tests select `LayoutMode.Flex` explicitly, the snake test opens the file first and then switches to snake (mode state persists across tests on the shared page).
+
+| Test | Req. covered |
+|------|--------------|
+| Preset replaces a single monomer; new sugar anchored at the old position | 8–9 |
+| R1 bond re-established on the new sugar (AP attributes asserted); R2 bond dropped without a modal because the new sugar's R2 is consumed by the internal sugar–phosphate bond | 10 |
+| "Deletion of bonds" modal when no preset component has a free Rn — Cancel keeps the original | 10.3 |
+| Modal Yes: R1 → new sugar, R2 falls back to the phosphate (priority), R3 deleted and the chem EG orphaned | 10.1–10.3 |
+| Snake mode: `applySnakeLayout` re-lays out the downstream preset (≥30 px shift); upstream preset keeps positions | 13.1 |
+| Flex mode: downstream backbone (sugar + phosphate) shifts one cell; side-branch base stays put; downstream bond re-established on the new phosphate's R2; upstream R1 bond dropped | 13.2 |
+| Chem bond kept: C–EG re-routed to the new phosphate's free R2 | QA note (small-molecule bonds) |
+| Terminal monomer of a long chain replaced near the viewport edge; upstream bond kept (req. 14 limitation documented in-test) | 14 (limited, see below) |
+
+Findings that changed the plan (verified against source + temporary probes, deleted after absorption):
+
+- **Req. 10 routing is role-locked for RNA targets**: `findNewPresetComponentForBond` (`DrawingEntitiesManager.ts`) routes a bond to the new component of the *same role* as the original component (sugar → sugar). The sugar > phosphate > base priority only applies to standalone monomers that are not recognised RNA components (peptides/chem) — covered by the peptide modal tests. Consequence: when a lone sugar is replaced by a full preset, its R2 bond is **silently dropped** even though `computeLostBondsForReplacement` predicts 0 lost bonds (it unions template free APs across all components), so no modal appears. Documented in the test; possible implementation inconsistency worth flagging to the team.
+- **Flex shift only reaches monomers downstream of the new phosphate's R2**: `shiftDownstreamChainMonomers` traverses `getNextMonomerInChain(anchor)`. When the backbone does not continue through the new P's R2 (e.g. the replaced lone sugar's R2 bond was dropped), nothing shifts even though the preset has sugar + phosphate. To observe a real shift, the target must be a **lone phosphate** (`preset-lone-phosphate.ket`): the downstream bond re-establishes on the new P's R2 and C's sugar + P shift one cell; the side-branch base is not shifted (not part of the backbone traversal) — asserted.
+- **Req. 14 smooth auto-scroll is NOT implemented**: task 7.8 in the archived change `2026-08-13-monomer-replacement-drag-drop` is unchecked and no scroll code exists in the replacement flow. The long-chain test asserts structural final state only; limitation documented in-test and here (open question #1 closed).
+- **New fixtures**: `preset-lone-phosphate.ket` (A – lone P – C) and `long-chain-lone-monomer.ket` (4-preset chain + terminal lone P + lone S). The long chain extends *downward* because pasted RNA sequences end with a sugar (no terminal phosphate), the popup canvas area is narrow (~530 px wide, library panel on the right), and sugar→sugar bonding is rejected by the connection rules.
+- **Structural target selection**: the lone monomer is found as the only sugar without an R3 bond (`findLoneSugar`). Median-x heuristics break in snake mode — the P-to-P bond in `rn-bond-priority.ket` splits the backbone into two chains, reordering x positions (a probe run accidentally replaced preset C instead of the lone sugar).
+- **Anchor tolerance**: the new sugar is anchored at the target's model position, but bounding-box centers carry a per-glyph offset — ~0 px when replacing a sugar with a sugar, ~5 px when replacing a phosphate (different glyph) — hence `ANCHOR_TOLERANCE_PX = 6`.
+- **`rn-all-occupied.ket` not needed**: the req. 10.3 modal case is built from `monomer-chain-simple.ket` + inline EG (cysteine R1/R2/R3 all occupied; Preset.A offers only free R1 + R2) — no extra fixture required.
+- Temporary files deleted: `probe-preset-onto-monomer.spec.ts`, `generate-long-chain-lone-monomer.spec.ts`. `generate-fixtures.spec.ts` stays until archiving (Phase 6).
+
 ## 9. Rules & constraints to respect (from CLAUDE.md / testing.md)
 
 - New tests go in the **chromium-popup** project only.
@@ -248,10 +312,10 @@ Implementation notes / deviations from the plan table:
 
 | # | Question | Mitigation |
 |---|----------|------------|
-| 1 | Assertability of smooth scroll (req. 14) | Final-state screenshot fallback; document as limitation if not stably assertable |
+| 1 | Assertability of smooth scroll (req. 14) | **Resolved in Phase 5:** the auto-scroll is not implemented at all (task 7.8 unchecked, no scroll code in the replacement flow) — nothing to assert; covered by a structural long-chain test with the limitation documented |
 | 2 | Screenshot stability for layout-reflow tests (animation during re-layout) | Use `waitForRender` + existing banner/spinner waits; add tolerance (`maxDiffPixels`) only where genuinely noisy |
-| 3 | Which concrete preset pairs in `Presets.ts` match each same-geometry rule, incl. phosphate-side variants (negative case in 5.2) | Resolved for same-geometry: `A` vs `C`/`G`/`T`/`U` (same R+P). Phosphate-side negative pair still to be picked from `Presets.ts` in Phase 4 and verified empirically |
+| 3 | Which concrete preset pairs in `Presets.ts` match each same-geometry rule, incl. phosphate-side variants (negative case in 5.2) | **Resolved in Phase 4:** slot composition + phosphate side only — monomer identity ignored (`dR(U)P` replaces `A`). No left-phosphate library preset exists, so the opposite-side negative is untestable via library drag (documented) |
 | 4 | Whether the §4.3 highlight data attribute is worth adding vs. screenshot-only coverage | Resolved in Phase 1: attribute added (`data-testid="replacement-highlight"`) |
-| 5 | Req. 7.1 modal case: which same-geometry replacement item lacks the bonded AP? All R+P presets (A/C/G/T/U) have a phosphate, so dropping one onto a phosphate-bonded preset may never trigger "Deletion of bonds" | Phase 4: test empirically (e.g. `Preset.A` → `Preset.C` on `preset-chain-same-geometry.ket`); if no modal appears for any same-geometry pair, re-scope 7.1 to a non-preset AP (e.g. bond to a chem/H-bond) or document as not triggerable |
+| 5 | Req. 7.1 modal case: which same-geometry replacement item lacks the bonded AP? All R+P presets (A/C/G/T/U) have a phosphate, so dropping one onto a phosphate-bonded preset may never trigger "Deletion of bonds" | **Resolved in Phase 4:** standard R+P swaps never trigger it (inter-preset bond uses phosphate R2, free on all R+P presets). Working case: `12ddR()P` (no base; 12ddR lacks R3) onto a full preset → bond to kept base lost → modal. Both Cancel/Yes covered |
 
 Resolved during planning (no longer open): drop distance threshold = **10 px**; "same geometry" rule = matching component composition (sugar+base+phosphate / sugar+base / sugar+phosphate) with phosphate on the same side of the sugar; bond verification via bond data attributes (helpers in §4.2); `.ket` fixtures as the primary way to build chains (§7).

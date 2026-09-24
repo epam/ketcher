@@ -52,6 +52,9 @@ export async function startDragLibraryItem(
   await page.mouse.down();
 }
 
+/** Number of intermediate pointer events when moving an in-progress drag. */
+const DRAG_MOVE_STEPS = 10;
+
 /** Moves the in-progress drag to canvas-relative coordinates without releasing the mouse. */
 export async function moveDragToCanvasCoords(
   page: Page,
@@ -61,7 +64,11 @@ export async function moveDragToCanvasCoords(
   if (!canvasBB) {
     throw new Error('Canvas bounding box is not available');
   }
-  await page.mouse.move(canvasBB.x + coords.x, canvasBB.y + coords.y);
+  // Move in steps so intermediate drag events fire along the path — a single
+  // jump can be missed by the drag-over handler, which made highlight tests flaky.
+  await page.mouse.move(canvasBB.x + coords.x, canvasBB.y + coords.y, {
+    steps: DRAG_MOVE_STEPS,
+  });
 }
 
 /** Releases the in-progress drag at the current mouse position. */
@@ -83,6 +90,7 @@ export async function cancelDrag(page: Page) {
   await page.mouse.move(
     libraryBB.x + libraryBB.width / 2,
     libraryBB.y + libraryBB.height / 2,
+    { steps: DRAG_MOVE_STEPS },
   );
   await waitForRender(page, async () => {
     await page.mouse.up();

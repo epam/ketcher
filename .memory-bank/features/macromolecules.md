@@ -100,6 +100,13 @@ Monomers connect through defined attachment points, sequences render as single-l
 - **WHEN** the sugar and/or phosphate that made a base part of a numbered preset chain are deleted, leaving the base without a valid enumerable chain
 - **THEN** the base's enumeration number is cleared rather than left showing a stale value
 
+#### Scenario: Hover previews near editor boundaries
+
+- **WHEN** a monomer or bond preview does not fit on either preferred side of its target
+- **THEN** its position is constrained to keep it visible within the editor (provided the preview fits the available area), even if it must overlap the target
+- **AND** positioning works both at the page origin and in an offset popup
+- **AND** canvas previews without interactive content allow pointer events to reach the canvas underneath
+
 ## Guarantees
 
 - Monomer shape and color encode type (hexagons = amino acids, rounded squares = sugars, rhombuses = bases, circles = phosphates, pentagons = nucleotides, etc.).

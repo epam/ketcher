@@ -9,6 +9,7 @@ import {
   MacroFileType,
   takeElementScreenshot,
   takeEditorScreenshot,
+  takeTopToolbarScreenshot,
   dragMouseTo,
   selectByAtomAndBondIds,
   clickInTheMiddleOfTheCanvas,
@@ -130,24 +131,10 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     await monomerC.click({ modifiers: ['Shift'] });
 
     await MacromoleculesTopToolbar(page).expandSwitchLayoutModeDropdown();
-    await takeElementScreenshot(
-      page,
-      MacromoleculesTopToolbar(page).switchLayoutModeDropdownButton,
-      {
-        paddingWidth: 1,
-        paddingHeight: 50,
-      },
-    );
+    await takeTopToolbarScreenshot(page);
 
     await MacromoleculesTopToolbar(page).expandCreateAntisenseStrandDropdown();
-    await takeElementScreenshot(
-      page,
-      MacromoleculesTopToolbar(page).createAntisenseStrandDropdownButton,
-      {
-        paddingWidth: 1,
-        paddingHeight: 13,
-      },
-    );
+    await takeTopToolbarScreenshot(page);
   });
 
   test('Case 3 — Labels for monomer natural analog category is missing if filter applied in Ketcher popup mode', async ({

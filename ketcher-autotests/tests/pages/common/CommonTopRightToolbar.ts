@@ -125,12 +125,26 @@ export const CommonTopRightToolbar = (page: Page) => {
       );
 
       if (!(await macromoleculesCanvas.isVisible())) {
-        await waitForRender(page, async () => {
-          await switcher.waitFor({ state: 'visible' });
-          await switcher.click();
-          await macroOption.waitFor({ state: 'visible' });
-          await macroOption.click();
-        });
+        await waitForRender(
+          page,
+          async () => {
+            await switcher.waitFor({ state: 'visible' });
+            await switcher.click();
+            await macroOption.waitFor({ state: 'visible' });
+            await macroOption.click();
+          },
+          // The default monomers library is a lazily fetched asset, and the
+          // Molecules -> Macromolecules switch now awaits it before actually
+          // converting/redrawing the struct (see Editor.tsx), so the render
+          // that dispatches "renderComplete" (itself debounced by 250ms) can
+          // start well after this callback returns on a cold fetch. The
+          // previous 250ms budget raced the fetch and reliably lost, letting
+          // the test proceed before the switch's redraw (and legacy struct
+          // scrollbar) had actually happened. Give it a generous ceiling
+          // instead; waitForRender still just logs a warning on timeout, it
+          // does not fail the test.
+          3000,
+        );
       }
 
       await MacromoleculesTopToolbar(

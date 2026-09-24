@@ -414,20 +414,9 @@ class ReStruct {
    * because this will lead incorrect center position for the move atom around it
    * because of atom's vBox contain text label with is not constant after flip/rotate
    * and this lead to unstable flip tool work
-   *
-   * The same instability applies to any DOM-timing-dependent read of an atom's
-   * visel bounding box (e.g. right after load, before/after a render reflow) -
-   * not just flip/rotate. So this method also accepts an empty/undefined
-   * selection (meaning "the whole structure"), same as getVBoxObj, so other
-   * callers that need a render-timing-independent center (like load-time
-   * centering) can use it instead of getVBoxObj.
    */
 
-  getSelectionBoxCenter(selection?: SelectionMap): Vec2 | undefined {
-    if (isSelectionEmpty(selection)) {
-      selection = this.getAllElementsAsSelectionMap();
-    }
-
+  getSelectionBoxCenter(selection: SelectionMap): Vec2 | undefined {
     let boundingBox: Box2Abs | null = null;
 
     for (const atomId of selection.atoms ?? []) {

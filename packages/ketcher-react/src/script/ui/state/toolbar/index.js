@@ -31,7 +31,7 @@ const MAX_ATOMS = 7;
 
 function updateVisibleTools(visibleTool, activeTool) {
   const regExp = /(bond)(-)(common|stereo|query)/;
-  const menuHeight = window.innerHeight;
+  const menuHeight = globalThis.innerHeight;
 
   return Object.keys(visibleTool).reduce(
     (res, key) => {
@@ -142,7 +142,7 @@ export function hiddenAncestor(el, base) {
 
   while (
     findEl &&
-    window.getComputedStyle(findEl).overflow !== 'hidden' &&
+    globalThis.getComputedStyle(findEl).overflow !== 'hidden' &&
     !findEl.classList.contains('opened')
   ) {
     if (findEl === base) return null;

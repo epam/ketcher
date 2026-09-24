@@ -142,6 +142,7 @@ import {
   LibraryItemDragDropHandler,
   type IAutochainMonomerAddResult,
 } from 'application/editor/libraryItemDragDrop';
+import { addAxoLabsNucleotidePresets } from './axoLabsNucleotidePresets';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 
@@ -888,6 +889,12 @@ export class CoreEditor {
 
   public get monomersLibraryParsedJson() {
     return this._monomersLibraryParsedJson;
+  }
+
+  public get monomersLibraryForIndigo() {
+    return this._monomersLibraryParsedJson
+      ? addAxoLabsNucleotidePresets(this._monomersLibraryParsedJson)
+      : null;
   }
 
   public get monomersLibrary() {

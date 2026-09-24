@@ -24,7 +24,10 @@ interface PresetGridProps {
   onSelectColor: (color: string) => void;
 }
 
-function PresetGrid({ selectedColor, onSelectColor }: PresetGridProps) {
+function PresetGrid({
+  selectedColor,
+  onSelectColor,
+}: Readonly<PresetGridProps>) {
   return (
     <div className={classes.presetGrid} data-testid="color-picker-preset-grid">
       {presetColors.map((color) => (

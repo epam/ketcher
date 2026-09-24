@@ -38,7 +38,7 @@ function ColorSlider({
   background,
   thumbColor,
   ariaLabel,
-}: ColorSliderProps) {
+}: Readonly<ColorSliderProps>) {
   const containerRef = useRef<HTMLDivElement>(null);
   // Track container width as state so re-measuring on resize triggers re-render
   const [containerWidth, setContainerWidth] = useState(0);

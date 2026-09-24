@@ -56,7 +56,9 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const { ketcherId, structServiceProvider } = props;
 
   const propsRef = useRef(props);
-  propsRef.current = props;
+  useEffect(() => {
+    propsRef.current = props;
+  }, [props]);
 
   const rootElRef = useRef<HTMLDivElement>(null);
 

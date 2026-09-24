@@ -608,7 +608,7 @@ export class SGroupRenderer extends BaseRenderer {
       ),
       ...this.getSGroupBondRenderers()
         .map((bondRenderer) => this.getBondHoverPath(bondRenderer))
-        .filter((path): path is paper.CompoundPath => Boolean(path)),
+        .filter((path): path is paper.CompoundPath => path !== null),
     ];
 
     let combinedPath: paper.PathItem | undefined;

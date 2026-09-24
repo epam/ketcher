@@ -428,7 +428,6 @@ test.describe('Macro-Micro-Switcher2', () => {
     await getAtomLocator(page, { atomLabel: 'Zn' }).first().dblclick({
       force: true,
     });
-    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

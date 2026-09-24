@@ -113,6 +113,12 @@ export default defineConfig({
     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json'],
   },
   css: {
+    // rollup-plugin-postcss's default CSS-modules class name pattern -
+    // Vite's own default differs, which would break consumers (and tests)
+    // matching on class names like `App-module_canvas__<hash>`.
+    modules: {
+      generateScopedName: '[name]_[local]__[hash:base64:5]',
+    },
     postcss: {
       plugins: [autoprefixer({ grid: 'autoplace' })],
     },

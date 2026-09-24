@@ -187,7 +187,7 @@ the reason instead.
    and for strict `worker-src` CSP policies.
 4. **CSS Modules class name format.** Rolldown's CSS Modules hashing convention differs from
    `rollup-plugin-postcss`'s (`X-module_root__hash` → `_root_hash_N`). Global class names are
-   unaffected.
+   unaffected. Fixed since the original review — see below.
 5. **Dropped CJS `.d.ts` and CSS source maps.** `ketcher-react/dist/cjs/**/*.d.ts` (507 files)
    and `ketcher-macromolecules`'s `dist/index.css.map` are no longer emitted.
 6. **`ketcher-standalone` `main`/`module` now resolve to real files.**
@@ -203,7 +203,7 @@ the reason instead.
 | The monomer library is empty until it loads. `CoreEditor` no longer loads it in its constructor, so a synchronous read of `monomersLibrary`/`monomersLibraryParsedJson` returns empty, and the `updateMonomersLibrary` event fires later. | Anyone who reads the library directly — and more broadly than "macromolecules-mode users only": `getKet`, `setMolecule`, `addFragment`, and both `convert()` calls now wait for the library, so any API call loads and parses the ~3.5 MB library even without opening macromolecules mode. For npm/bundler consumers it arrives as a **code-split JS chunk** pulled in via dynamic import — only `example`'s standalone build fetches it as a separately hosted asset. | The clobbering race between this load and a consumer's own `updateMonomersLibrary`/`replaceMonomersLibrary` call is fixed: both methods now `await` the default library load first, with a regression test covering the ordering (including the reverse race, where the consumer's own call is what starts the default load). |
 | `binaryWasm`/`binaryWasmNoRender` asset layout: files live in `assets/` with hashed names, and each variant ships one `.wasm` instead of both. | Anyone copying these files by a hard-coded path. | Layout itself is unchanged. The consumer-bundler blocker (the worker/`.wasm` `new URL(...)` calls were emitted as computed expressions a consumer's bundler can't statically detect, so the worker chunk and/or `.wasm` were dropped from the consumer's own build → 404 at runtime) is fixed: both are now emitted as the literal `new Worker(new URL('./assets/indigoWorker-<hash>.js', import.meta.url), { type: 'module' })` form in `main.js`, and, inside that worker chunk itself, `new URL('./indigo-ketcher-<version>-<hash>.wasm', import.meta.url)` — relative to the *worker* file, not `main.js`, since both land flat in the same `assets/` directory. CI builds a throwaway Vite consumer and a webpack 5 consumer against the packed `dist`, each importing and instantiating both the `binaryWasm` and `binaryWasmNoRender` variants, and asserts every consumer's build emits a `.wasm` and a worker chunk per variant. The webpack consumer needs no extra bundler config: webpack 5's default asset handling already emits the `new URL('./x.wasm', import.meta.url)` reference as a real output file with no `module.rules` entry required (verified empirically before deciding not to add one). |
 | Inline builds now use a module worker created from a Blob URL (before: a classic worker from base64). | Browsers without module workers (Firefox < 114, Safari < 15), strict `worker-src` CSP rules. | Unchanged. |
-| CSS Modules class names changed format (`X-module_root__hash` → `_root_hash_N`). Global class names are unchanged. | Consumers who style Ketcher's internal classes. | Unchanged. |
+| CSS Modules class names changed format (`X-module_root__hash` → `_root_hash_N`). Global class names are unchanged. | Consumers who style Ketcher's internal classes. | Fixed — see below. |
 | `ketcher-react/dist/cjs/**/*.d.ts` (507 files) and CSS source maps are no longer shipped. | Deep imports of the CJS types; CSS debugging in devtools only. | Unchanged. |
 | The CSS minifier drops some vendor prefixes and writes colors as `#rrggbbaa`. | Old browsers only. | Unchanged. |
 | `ketcher-standalone`'s `main`/`module` now resolve to real files instead of an empty placeholder / an unemitted file. `require('ketcher-standalone')` returns real named exports instead of `{}`. | Anyone who imported `ketcher-standalone` via `main`/`module` and relied on (or tolerated) getting nothing back. | Deliberate, scoped exception to "the published contract is frozen" (see the metadata correction above) — the wrong metadata is fixed as part of this version bump, not preserved. |
@@ -215,6 +215,15 @@ the reason instead.
   default, silently changing default-import interop for CJS consumers). Fixed by adding
   `esModule: true` to `rolldownOptions.output` — the same mechanism the other two packages
   already used.
+- **CSS Modules class names now match the Rollup baseline exactly.** Vite's default
+  (`postcss-modules`' own bare default) differs from Rolldown's `_root_hash_N` cited above — it's
+  `_${name}_${hash}_${lineNumber}`, since `ketcher-react`'s and `ketcher-macromolecules`' Vite
+  configs left `css.modules` unset. `rollup-plugin-postcss` (used by both on `master`) does not
+  leave its own default either: it explicitly hard-codes
+  `generateScopedName: '[name]_[local]__[hash:base64:5]'`. Both packages' `vite.config.mjs` now
+  set the same pattern via `css.modules.generateScopedName`, producing byte-identical class names
+  (e.g. `App-module_canvas__<hash>`, `ActionButton-module_selected__<hash>`) to the `master`
+  Rollup build.
 
 **Not breaking:** `exports`, `types`, `sideEffects`, peer dependencies, and `engines` match
 master's build. `ketcher-react` briefly leaked the bundler helper `__toESM` as an extra CJS

@@ -20,6 +20,7 @@ import type {
 } from 'domain/entities/atom';
 import type { AtomCIP, BondCIP } from 'domain/entities/types';
 import type { StructProperty } from 'domain/entities/struct';
+import type { SimpleObjectAttributes } from 'domain/entities/simpleObject';
 import type { Vec2 } from 'domain/entities/vec2';
 
 export interface KetAtomNode {
@@ -101,6 +102,12 @@ export interface KetMoleculeNode {
   sgroups?: KetSGroupNode[];
   stereoFlagPosition?: Vec2;
   properties?: Array<StructProperty>;
+}
+
+export interface KetSimpleObjectNode {
+  type: 'simpleObject';
+  data: SimpleObjectAttributes;
+  selected?: boolean;
 }
 
 export interface KetFragment {

@@ -2,9 +2,10 @@ import { drawnStructuresSelector } from 'application/editor/constants';
 import { type Editor, EditorType } from 'application/editor/editor.types';
 import {
   type IEditorEvents,
-  createEditorEvents,
+  editorEvents,
   hotkeysConfiguration,
   renderersEvents,
+  resetEditorEvents,
 } from 'application/editor/editorEvents';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
@@ -310,7 +311,8 @@ export class CoreEditor {
       drawnStructuresSelector,
     ) as SVGGElement;
     this.mode = mode ?? new (getModeConstructor(DEFAULT_LAYOUT_MODE))();
-    this.events = createEditorEvents();
+    resetEditorEvents();
+    this.events = editorEvents;
     KetSerializer.setMonomerFactory(monomerFactory);
     this.setMonomersLibrary(monomersDataRaw);
     this.events.updateMonomersLibrary.dispatch();
@@ -340,12 +342,7 @@ export class CoreEditor {
     this.setupCopyPasteEvent();
     this.resetCanvasOffset();
     this.resetKetcherRootElementOffset();
-    this.zoomTool = ZoomTool.initInstance(
-      this.drawingEntitiesManager,
-      this.canvas,
-    );
-    this.renderersContainer.zoomTool = this.zoomTool;
-    this.renderersContainer.editor = this;
+    this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     this.transientDrawingView = new TransientDrawingView();
     setEditorInstance(this);
     this.micromoleculesEditor = ketcher?.editor;
@@ -2369,16 +2366,9 @@ export class CoreEditor {
 
   private resetModeIfNeeded() {
     if (this.previousModes.length === 0) {
-      const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+      const ketcher = ketcherProvider.getKetcher();
       const isBlank = ketcher?.editor?.struct().isBlank();
       const oldModeName = this.mode?.modeName;
-
-      // Preserve explicitly selected snake mode when there is no mode history
-      // yet (e.g., freshly initialized editor switched from micro mode).
-      if (oldModeName === 'snake-layout-mode') {
-        return;
-      }
-
       const newModeName = isBlank
         ? DEFAULT_LAYOUT_MODE
         : HAS_CONTENT_LAYOUT_MODE;
@@ -2415,7 +2405,7 @@ export class CoreEditor {
 
     if (this.mode.modeName === 'snake-layout-mode') {
       modelChanges.merge(
-        this.drawingEntitiesManager.applySnakeLayout(true, true, true),
+        this.drawingEntitiesManager.applySnakeLayout(true, true, false),
       );
     }
 
@@ -2503,6 +2493,6 @@ export class CoreEditor {
 
   public destroy() {
     this.unsubscribeEvents();
-    resetEditorInstance(this.ketcherId);
+    resetEditorInstance();
   }
 }

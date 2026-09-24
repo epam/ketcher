@@ -71,12 +71,12 @@ export class RGroupFragment extends BaseOperation {
     }
 
     let rgNew = struct.rgroups.get(this.rgid_new);
-    if (!rgNew) {
+    if (rgNew) {
+      restruct.markItem('rgroups', this.rgid_new, 1);
+    } else {
       rgNew = this.rg_new || new RGroup();
       struct.rgroups.set(this.rgid_new, rgNew);
       restruct.rgroups.set(this.rgid_new, new ReRGroup(rgNew));
-    } else {
-      restruct.markItem('rgroups', this.rgid_new, 1);
     }
 
     rgNew.frags.add(this.frid);

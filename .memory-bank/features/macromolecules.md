@@ -84,6 +84,20 @@ Monomers connect through defined attachment points, sequences render as single-l
 - **WHEN** the sync toggle is on and the user edits one strand of a double-stranded sequence
 - **THEN** the complementary strand is updated to match; **WHEN** the toggle is off, the other strand is left unchanged
 
+#### Scenario: Replacing or modifying a paired nucleotide
+
+- **WHEN** library replacement or RNA Builder modification changes a base's natural analogue in sync mode
+- **THEN** an unselected nucleotide/nucleoside joined to that base by a hydrogen bond receives the complementary base: DNA for deoxyribose sugar, RNA for other sugars
+- **AND** the opposite base is unchanged when its partner's natural analogue is unchanged, or when sync mode is off
+- **AND** both changes are undone together
+
+#### Scenario: Modifying both strands in RNA Builder
+
+- **WHEN** the sync-mode selection includes both hydrogen-bonded bases attached through R1–R3 to sugars with backbone connections
+- **THEN** base modification is disabled, even if the bases are not complementary; sugar and phosphate modification remain available
+- **AND** the base slot shows their shared symbol, or `[disabled]` when the symbols differ
+- **AND** clicking the base slot disables all library bases and shows: "Modification of bases is disabled in sync mode when both the sense and antisense strands are selected. Go to non-sync mode for base modification."
+
 #### Scenario: Snake-mode auto-layout
 
 - **WHEN** the user enters snake mode

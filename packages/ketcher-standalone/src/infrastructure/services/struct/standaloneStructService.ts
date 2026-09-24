@@ -199,13 +199,7 @@ function mapWarningGroup(property: string) {
  * @param eventEmitter - The event emitter instance
  * @param workerEvent - The worker event type to listen to
  * @param action - The callback function to execute on success
- * @param reject - Called with the timeout error when the worker does not
- *   reply in time, so the caller's promise actually settles instead of being
- *   left pending forever. A bare `throw` here would land inside the
- *   `setTimeout` callback's own task, not inside the caller's Promise
- *   executor, so it can never reach that promise's `reject` - the promise
- *   would hang indefinitely (see #10326 ticket 01: `page.evaluate: Resulting
- *   promise was garbage collected` when a worker call outlives its timeout).
+ * @param reject - The callback function to execute on timeout
  * @param timeout - Timeout in milliseconds (0 means no timeout)
  * @returns An object with setup method to initialize the timeout wrapper
  */

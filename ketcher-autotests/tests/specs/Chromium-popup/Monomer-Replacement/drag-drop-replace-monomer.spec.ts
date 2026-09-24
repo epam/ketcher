@@ -200,10 +200,7 @@ test.describe('Drag-and-drop monomer replacement (issue #7455)', () => {
      */
     await openFileAndAddToCanvasMacro(page, CHAIN_FIXTURE);
     const monomerA = getMonomerLocator(page, Peptide.A);
-    const targetCenter = await getElementCenterInCanvasCoords(
-      page,
-      monomerA,
-    );
+    const targetCenter = await getElementCenterInCanvasCoords(page, monomerA);
 
     await Library(page).dragMonomerOnCanvas(Peptide.F, {
       x: targetCenter.x + OUT_OF_RADIUS_OFFSET,
@@ -223,10 +220,7 @@ test.describe('Drag-and-drop monomer replacement (issue #7455)', () => {
      */
     await openFileAndAddToCanvasMacro(page, CHAIN_FIXTURE);
     const monomerA = getMonomerLocator(page, Peptide.A);
-    const targetCenter = await getElementCenterInCanvasCoords(
-      page,
-      monomerA,
-    );
+    const targetCenter = await getElementCenterInCanvasCoords(page, monomerA);
     const highlight = page.getByTestId('replacement-highlight');
     expect(await highlight.count()).toBe(0);
 
@@ -325,7 +319,10 @@ test.describe('Drag-and-drop monomer replacement (issue #7455)', () => {
     expect(await chemEG.count()).toBe(1);
 
     // The new alanine sits where the cysteine was.
-    const newAlanine = await getMonomerClosestToPoint(Peptide.A, replacedCenter);
+    const newAlanine = await getMonomerClosestToPoint(
+      Peptide.A,
+      replacedCenter,
+    );
     expect(await countMonomerBonds(page, newAlanine)).toBe(2);
     expect(await hasBondBetweenMonomers(page, newAlanine, monomerD)).toBe(true);
 

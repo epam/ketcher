@@ -1,0 +1,67 @@
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+
+.container {
+  position: absolute;
+  right: 12px;
+  bottom: 8px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: min(460px, calc(100% - 56px));
+  padding: 6px 10px;
+  border: 1px solid #d7dce5;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 2px 6px rgba(103, 104, 132, 0.15);
+}
+
+.label {
+  flex-shrink: 0;
+  color: #6f7892;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.button {
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #1d3557;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+
+  &:hover .value {
+    color: #0b65c2;
+    text-decoration: underline;
+  }
+}
+
+.value {
+  display: block;
+  overflow: hidden;
+  color: #2f405f;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -2483,6 +2483,16 @@ export class CoreEditor {
     ketcher?.editor.clearHistory();
     ketcher?.editor.zoom(1);
     this._type = EditorType.Macromolecules;
+
+    // The macro canvas's scrollbars are otherwise only redrawn by a
+    // ResizeObserver on the canvas wrapper, which fires when the wrapper's
+    // own size changes (e.g. becoming visible), not when the structures
+    // drawn inside it change. Since the switch to Macromolecules now waits
+    // on the lazily loaded default monomers library before converting and
+    // rendering the struct here, that ResizeObserver firing can no longer be
+    // relied on to happen after this content is drawn. Explicitly refresh
+    // the scrollbars so they reflect the structure that was just rendered.
+    ZoomTool.instance.drawScrollBars();
   }
 
   private rescaleStructForModeTransition(

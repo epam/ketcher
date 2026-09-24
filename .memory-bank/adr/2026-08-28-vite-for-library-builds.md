@@ -215,15 +215,15 @@ the reason instead.
   default, silently changing default-import interop for CJS consumers). Fixed by adding
   `esModule: true` to `rolldownOptions.output` — the same mechanism the other two packages
   already used.
-- **CSS Modules class names now match the Rollup baseline exactly.** Vite's default
+- **CSS Modules class names now match the Rollup baseline format.** Vite's default
   (`postcss-modules`' own bare default) differs from Rolldown's `_root_hash_N` cited above — it's
   `_${name}_${hash}_${lineNumber}`, since `ketcher-react`'s and `ketcher-macromolecules`' Vite
   configs left `css.modules` unset. `rollup-plugin-postcss` (used by both on `master`) does not
   leave its own default either: it explicitly hard-codes
   `generateScopedName: '[name]_[local]__[hash:base64:5]'`. Both packages' `vite.config.mjs` now
-  set the same pattern via `css.modules.generateScopedName`, producing byte-identical class names
-  (e.g. `App-module_canvas__<hash>`, `ActionButton-module_selected__<hash>`) to the `master`
-  Rollup build.
+  set the same pattern via `css.modules.generateScopedName`, producing the same class-name format
+  (`[name]_[local]__[hash]`, e.g. `App-module_canvas__<hash>`) as the `master` Rollup build (hashes
+  were not compared against a master build).
 
 **Not breaking:** `exports`, `types`, `sideEffects`, peer dependencies, and `engines` match
 master's build. `ketcher-react` briefly leaked the bundler helper `__toESM` as an extra CJS

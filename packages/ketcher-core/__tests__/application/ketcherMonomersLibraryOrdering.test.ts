@@ -89,7 +89,7 @@ describe('Ketcher monomer library ordering vs. the lazy default load', () => {
 
   afterEach(() => {
     ketcherProvider.removeKetcherInstance(ketcher.id);
-    resetEditorInstance(coreEditor.ketcherId);
+    resetEditorInstance();
     jest.restoreAllMocks();
   });
 

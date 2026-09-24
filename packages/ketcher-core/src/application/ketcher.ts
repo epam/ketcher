@@ -872,6 +872,13 @@ export class Ketcher {
           {
             ...serverSettings,
             outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
+            // A whole-library replace/update can carry thousands of monomers
+            // (e.g. bulk SDF imports); converting that much data can
+            // legitimately take longer than the struct service's default
+            // per-request timeout, which is sized for a single interactive
+            // structure edit, not a bulk asset load. Disable it here rather
+            // than letting a large-but-healthy conversion time out.
+            'request-timeout': 0,
           },
         );
 

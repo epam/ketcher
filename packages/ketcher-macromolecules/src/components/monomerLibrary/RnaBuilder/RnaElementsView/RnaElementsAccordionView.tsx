@@ -27,6 +27,7 @@ import {
   FilterIconButton,
 } from './styles';
 import { PresetPhosphateFilterPopup } from './PresetPhosphateFilterPopup';
+import { groupNameToTabLabelKey } from './groupNameToTabLabelKey';
 import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPresetGroup';
 import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
 import { memo, useState } from 'react';
@@ -105,6 +106,7 @@ const RnaElementsAccordionView = ({
           <Summary
             iconName={groupData.iconName as IconName}
             groupName={groupData.groupName}
+            label={t(groupNameToTabLabelKey[groupData.groupName])}
             quantity={quantity}
             expanded={expanded}
           />

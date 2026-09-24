@@ -7,8 +7,6 @@ import IndigoWorker from 'web-worker:./../indigoWorker';
 let _indigoWorker: InstanceType<typeof IndigoWorker> | null = null;
 
 export function getIndigoWorker(): Worker {
-  if (!_indigoWorker) {
-    _indigoWorker = new IndigoWorker();
-  }
+  _indigoWorker ??= new IndigoWorker();
   return _indigoWorker;
 }

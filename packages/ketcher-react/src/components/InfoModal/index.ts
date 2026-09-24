@@ -14,6 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import InfoModal from './InfoModal';
-
-export { InfoModal };
+export { default as InfoModal } from './InfoModal';

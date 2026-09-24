@@ -1,2 +1,1 @@
-import { ArrowScroll } from './ArrowScroll';
-export { ArrowScroll };
+export { ArrowScroll } from './ArrowScroll';

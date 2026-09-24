@@ -1,5 +1,5 @@
 import { MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
-import { bondCommon, bondQuery, bondSpecial, bondStereo } from './Bond/options';
+export { bondCommon, bondQuery, bondSpecial, bondStereo } from './Bond/options';
 import { makeItems } from '../ToolbarGroupItem/utils';
 import type { ToolbarItem } from '../toolbar.types';
 
@@ -54,10 +54,6 @@ const mappingOptions: ToolbarItem[] = makeItems([
 
 export {
   rGroupOptions,
-  bondCommon,
-  bondQuery,
-  bondSpecial,
-  bondStereo,
   shapeOptions,
   selectOptions,
   arrowsOptions,

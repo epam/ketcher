@@ -3710,11 +3710,11 @@ class Editor implements KetcherEditor {
     // Copy by its own as Struct.clone doesn't support
     // arrows/pluses id sets
     struct.rxnArrows.forEach((item, id) => {
-      if ((selection.rxnArrows ?? []).indexOf(id) !== -1)
+      if ((selection.rxnArrows ?? []).includes(id))
         dst.rxnArrows.add(item.clone());
     });
     struct.rxnPluses.forEach((item, id) => {
-      if ((selection.rxnPluses ?? []).indexOf(id) !== -1)
+      if ((selection.rxnPluses ?? []).includes(id))
         dst.rxnPluses.add(item.clone());
     });
 
@@ -3932,7 +3932,7 @@ function getReStructMap(
 }
 
 function setHover(ci: HoverTarget, visible: boolean, render: Render) {
-  if (highlightTargets.indexOf(ci.map) === -1) {
+  if (!highlightTargets.includes(ci.map)) {
     return false;
   }
 

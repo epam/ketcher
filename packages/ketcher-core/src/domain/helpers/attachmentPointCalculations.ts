@@ -137,9 +137,9 @@ export function getSearchFunction(
       newPointCoord.y,
     );
 
-    const isCurrentMonomerAtNewPoint = elementsAtPoint.some(
-      (element) => element === monomer.renderer?.bodyElement?.node(),
-    );
+    const monomerBodyElement = monomer.renderer?.bodyElement?.node();
+    const isCurrentMonomerAtNewPoint =
+      !!monomerBodyElement && elementsAtPoint.includes(monomerBodyElement);
 
     let newAngle: number;
     if (isCurrentMonomerAtNewPoint) {

@@ -30,8 +30,8 @@ Renderers (Raphael `ReStruct` and D3 `RenderersManager`) are read-only consumers
 **A2 — All model mutations go through Command + BaseOperation**
 Every change to `DrawingEntitiesManager` or `Struct` must be encoded as a `Command` containing `BaseOperation` objects with `execute()` and `invert()`. Direct mutations outside this pattern break undo/redo.
 
-**A3 — EditorHistory is the only undo/redo stack for macromolecules**
-The `EditorHistory` singleton (max 32 steps) is the authoritative undo/redo mechanism for the macro editor. History must be updated via `EditorHistory.update(command)` after every undoable operation.
+**A3 — Macromolecule commands enter the shared undo/redo history**
+History must be updated via `EditorHistory.update(command)` after every undoable macro operation. In the combined editor, it adapts commands to the same 32-step stack as micro edits and mode switches; history must not be cleared on mode transitions.
 
 **A4 — domain layer has no rendering or React imports**
 The `packages/ketcher-core/src/domain/` directory must not import from `application/render/`, `application/editor/` (except types), React, or any UI framework. It must remain a pure TypeScript domain layer.

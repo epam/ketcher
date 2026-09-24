@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,6 +15,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * limitations under the License.
  ***************************************************************************/
 
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
   type AromatizeData,
   type AromatizeResult,
@@ -268,7 +268,7 @@ export class RemoteStructService implements StructService {
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
     const monomerLibrary = JSON.stringify(
-      provideEditorInstance()?.monomersLibraryParsedJson,
+      provideEditorInstance()?.monomersLibraryForIndigo,
     );
     const expandedOptions = {
       monomerLibrary,

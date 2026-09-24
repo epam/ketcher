@@ -101,6 +101,11 @@ const MONOMER_LIBRARY_FORMAT_OPTIONS = {
   outputContentType: ChemicalMimeType.MonomerLibrary,
 } as const;
 
+// A whole-library convert can carry thousands of monomers, so give it more
+// room than a single interactive edit, but still a finite bound so a
+// crashed/unresponsive worker rejects instead of hanging forever.
+const MONOMER_LIBRARY_CONVERT_TIMEOUT_MS = 5 * 60 * 1000;
+
 export class Ketcher {
   _id: string;
   logging: LogSettings;
@@ -872,13 +877,7 @@ export class Ketcher {
           {
             ...serverSettings,
             outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
-            // A whole-library replace/update can carry thousands of monomers
-            // (e.g. bulk SDF imports); converting that much data can
-            // legitimately take longer than the struct service's default
-            // per-request timeout, which is sized for a single interactive
-            // structure edit, not a bulk asset load. Disable it here rather
-            // than letting a large-but-healthy conversion time out.
-            'request-timeout': 0,
+            'request-timeout': MONOMER_LIBRARY_CONVERT_TIMEOUT_MS,
           },
         );
 

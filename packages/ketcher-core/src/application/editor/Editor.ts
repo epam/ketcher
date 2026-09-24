@@ -2477,29 +2477,27 @@ export class CoreEditor {
       this.resetCanvasOffset();
       this.resetKetcherRootElementOffset();
       this.zoomTool.resetZoom();
-      if (struct) {
+
+      if (type === EditorType.Macromolecules) {
+        this.events.switchToMacromoleculesMode.dispatch();
+
+        // timeout is needed to render canvas before rendering entities on it, otherwise some of them
+        // will be rendered incorrectly. F.e. bonds will overlap with atom labels, because
+        // bond render calculates offset from bbox of atom labels.
+        setTimeout(() => {
+          this.viewModel.initialize([...drawingEntitiesManager.bonds.values()]);
+          this.mode.initialize(false, false, false);
+        }, 0);
+      } else {
+        this.events.switchToMoleculesMode.dispatch();
+
+        if (!struct) {
+          return;
+        }
+
         this.micromoleculesEditor.render.setMolecule(struct);
         this.micromoleculesEditor.macromoleculeConvertionError =
           conversionError;
-      }
-      this.viewModel.initialize([...drawingEntitiesManager.bonds.values()]);
-
-      if (type === EditorType.Macromolecules) {
-        if (this.isSequenceMode) {
-          this.mode.initialize(false, false, false);
-        } else {
-          drawingEntitiesManager.applyFlexLayoutMode();
-          drawingEntitiesManager.sgroups.forEach((sgroup) =>
-            this.renderersContainer.addSGroup(sgroup),
-          );
-          drawingEntitiesManager.stereoFlags.forEach((flag) =>
-            this.renderersContainer.addStereoFlag(flag),
-          );
-          this.renderersContainer.update();
-        }
-        this.events.switchToMacromoleculesMode.dispatch();
-      } else {
-        this.events.switchToMoleculesMode.dispatch();
       }
       this.events.layoutModeChange.dispatch(modeName);
       this.events.modelChange.dispatch();

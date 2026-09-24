@@ -41,7 +41,7 @@ export default function ButtonGroup<T>({
 
   const isNumericLabel = useCallback((text: string): boolean => {
     const trimmed = (text || '').trim();
-    return trimmed !== '' && !isNaN(Number(trimmed));
+    return trimmed !== '' && !Number.isNaN(Number(trimmed));
   }, []);
 
   const {

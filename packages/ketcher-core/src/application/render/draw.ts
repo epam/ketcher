@@ -1439,7 +1439,12 @@ function bondDative(
   const a = halfBond1.p;
   const b = halfBond2.p;
 
-  if (isNaN(a.x) || isNaN(a.y) || isNaN(b.x) || isNaN(b.y)) {
+  if (
+    Number.isNaN(a.x) ||
+    Number.isNaN(a.y) ||
+    Number.isNaN(b.x) ||
+    Number.isNaN(b.y)
+  ) {
     return paper.path('');
   }
 

@@ -1,8 +1,18 @@
 import { renderHook } from '@testing-library/react';
-import { MonomerGroups, MonomerItemType, Struct } from 'ketcher-core';
+import {
+  MonomerGroups,
+  MonomerItemType,
+  Struct,
+  AmbiguousMonomerType,
+  RNABase,
+  KetMonomerClass,
+  KetAmbiguousMonomerTemplateSubType,
+} from 'ketcher-core';
 import { useSelector } from 'react-redux';
 import { useAppSelector } from 'hooks';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
+import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
+import { selectIsBaseModificationDisabled } from 'state/rna-builder';
 
 jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
@@ -27,6 +37,11 @@ const monomer: MonomerItemType = {
 };
 
 describe('useDisabledForSequenceMode hook', () => {
+  beforeEach(() => {
+    mockUseAppSelector.mockImplementation(
+      (selector) => selector === selectIsSequenceEditInRNABuilderMode,
+    );
+  });
   it('should return false if isSequenceEditInRNABuilderMode is false', () => {
     mockUseAppSelector.mockReturnValue(false);
     const { result } = renderHook(() =>
@@ -36,8 +51,27 @@ describe('useDisabledForSequenceMode hook', () => {
   });
 
   describe('for Bases', () => {
-    it('should return false if there is R1', () => {
+    it('disables ambiguous bases even when their group does not pass a groupName', () => {
       mockUseAppSelector.mockReturnValue(true);
+      const ambiguous: AmbiguousMonomerType = {
+        id: 'ambiguous-base',
+        label: 'N',
+        isAmbiguous: true,
+        subtype: KetAmbiguousMonomerTemplateSubType.ALTERNATIVES,
+        options: [],
+        monomers: [
+          new RNABase({
+            ...monomer,
+            props: { ...monomer.props, MonomerClass: KetMonomerClass.Base },
+          }),
+        ],
+      };
+      const { result } = renderHook(() =>
+        useDisabledForSequenceMode(ambiguous),
+      );
+      expect(result.current).toBe(true);
+    });
+    it('should return false if there is R1', () => {
       monomer.props.MonomerCaps = { R1: 'H' };
       const { result } = renderHook(() =>
         useDisabledForSequenceMode(monomer, MonomerGroups.BASES),
@@ -55,13 +89,28 @@ describe('useDisabledForSequenceMode hook', () => {
     });
 
     it('should return false for ambiguous monomers without MonomerCaps', () => {
-      mockUseAppSelector.mockReturnValue(true);
       delete monomer.props.MonomerCaps;
       const { result } = renderHook(() =>
         useDisabledForSequenceMode(monomer, MonomerGroups.BASES),
       );
       expect(result.current).toBe(false);
     });
+
+    it.each([true, false])(
+      'disables all bases for a selected pair (has caps: %s)',
+      (hasCaps) => {
+        mockUseAppSelector.mockImplementation(
+          (selector) =>
+            selector === selectIsSequenceEditInRNABuilderMode ||
+            selector === selectIsBaseModificationDisabled,
+        );
+        monomer.props.MonomerCaps = hasCaps ? { R1: 'H' } : undefined;
+        const { result } = renderHook(() =>
+          useDisabledForSequenceMode(monomer, MonomerGroups.BASES),
+        );
+        expect(result.current).toBe(true);
+      },
+    );
   });
 
   describe('for Phosphates', () => {

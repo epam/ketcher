@@ -19,11 +19,17 @@ import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { RootState } from 'state';
 import {
   getRnaPresetPhosphatePosition,
+  getSugarFromRnaBase,
+  BaseMonomer,
   LabeledNodesWithPositionInSequence,
   MONOMER_CONST,
   MonomerOrAmbiguousType,
   RnaPhosphatePosition,
   RnaPresetWithOptionalFields,
+  Nucleotide,
+  Nucleoside,
+  PolymerBond,
+  SequenceRenderer,
 } from 'ketcher-core';
 import { localStorageWrapper } from 'helpers/localStorage';
 import {
@@ -134,6 +140,55 @@ export const monomerGroupToPresetGroup = {
   [MonomerGroups.BASES]: 'base',
   [MonomerGroups.SUGARS]: 'sugar',
   [MonomerGroups.PHOSPHATES]: 'phosphate',
+};
+
+export const SYNC_BASE_MODIFICATION_ERROR =
+  'Modification of bases is disabled in sync mode when both the sense and antisense strands are selected. Go to non-sync mode for base modification.';
+
+export const selectIsBaseModificationDisabled = (state: RootState): boolean => {
+  const editor = state.editor.editor;
+  if (
+    !editor?.isSequenceEditInRNABuilderMode ||
+    !editor.isSequenceSyncEditMode
+  ) {
+    return false;
+  }
+
+  const selectedBases = new Set<BaseMonomer>(
+    (state.rnaBuilder.sequenceSelection ?? []).flatMap((selection) => {
+      const pair = SequenceRenderer.getNodeByPointer(
+        selection.nodeIndexOverall,
+      );
+      const node = selection.isAntisense
+        ? pair?.antisenseNode
+        : pair?.senseNode;
+      return node instanceof Nucleotide || node instanceof Nucleoside
+        ? [node.rnaBase]
+        : [];
+    }),
+  );
+  const hasBackboneConnection = (base: BaseMonomer) => {
+    const sugar = getSugarFromRnaBase(base);
+    return [
+      sugar?.attachmentPointsToBonds.R1,
+      sugar?.attachmentPointsToBonds.R2,
+    ].some(
+      (bond) => bond instanceof PolymerBond && bond.isBackBoneChainConnection,
+    );
+  };
+
+  return [...selectedBases].some(
+    (base) =>
+      hasBackboneConnection(base) &&
+      base.hydrogenBonds.some((bond) => {
+        const opposite = bond.getAnotherMonomer(base);
+        return (
+          opposite &&
+          selectedBases.has(opposite) &&
+          hasBackboneConnection(opposite)
+        );
+      }),
+  );
 };
 
 export const rnaBuilderSlice = createSlice({

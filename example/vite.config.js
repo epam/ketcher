@@ -589,6 +589,10 @@ export default defineConfig({
     ],
   },
   css: {
+    // Match rollup-plugin-postcss so existing class selectors stay stable.
+    modules: {
+      generateScopedName: '[name]_[local]__[hash:base64:5]',
+    },
     devSourcemap: true,
     preprocessorOptions: {
       less: {

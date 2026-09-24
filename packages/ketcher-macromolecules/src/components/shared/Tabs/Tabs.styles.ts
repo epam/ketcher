@@ -39,6 +39,7 @@ export const StyledTab = styled(Tab, {
   min-width: 0;
   position: relative;
   padding: 7px 12px;
+  font-family: ${({ theme }) => theme.ketcher.font.family.inter};
   font-size: ${({ theme }) => theme.ketcher.font.size.regular};
   text-transform: none;
   cursor: pointer;

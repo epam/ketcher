@@ -665,7 +665,7 @@ class RotateController {
       Vec2.dist(this.handleCenter, this.center) -
       STYLE.HANDLE_MARGIN -
       STYLE.HANDLE_RADIUS;
-    this.initialRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0;
+    this.initialRadius = Math.max(newProtractorRadius, 0);
     const [degree0Line, degree0TextPos] = this.getProtractorBaseInfo(
       this.initialRadius,
     );
@@ -712,7 +712,7 @@ class RotateController {
           Vec2.dist(this.handleCenter, this.center) -
           STYLE.HANDLE_MARGIN -
           STYLE.HANDLE_RADIUS;
-        let newRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0;
+        let newRadius = Math.max(newProtractorRadius, 0);
         lastSnappingRadius = lastSnappingRadius ?? this.initialRadius;
         if (
           newRadius >= lastSnappingRadius * 1.4 ||

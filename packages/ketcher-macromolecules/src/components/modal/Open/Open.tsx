@@ -288,7 +288,7 @@ const onOk = async ({
         dispatch(openErrorTooltip('No structure'));
       }
       onCloseCallback();
-    } catch (_e) {
+    } catch {
       showParsingError('Error during file parsing.');
     }
     return;

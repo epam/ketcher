@@ -149,7 +149,7 @@ export const selectIsBaseModificationDisabled = (state: RootState): boolean => {
   const editor = state.editor.editor;
   if (
     !editor?.isSequenceEditInRNABuilderMode ||
-    !editor.isSequenceSyncEditMode
+    !editor.sequenceMode?.isSyncEditMode
   ) {
     return false;
   }

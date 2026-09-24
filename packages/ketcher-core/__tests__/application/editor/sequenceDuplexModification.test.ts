@@ -9,6 +9,7 @@ import { Nucleotide, Nucleoside, Vec2 } from 'domain/entities';
 import { KetMonomerClass, RNA_DNA_NON_MODIFIED_PART } from 'domain/constants';
 import { AttachmentPointName, Entities } from 'domain/types';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
+import { getNextMonomerInChain } from 'domain/helpers/monomers';
 import type {
   IRnaPreset,
   LabeledNodesWithPositionInSequence,
@@ -296,7 +297,101 @@ describe('sequence duplex modification', () => {
     mode.insertMonomerFromLibrary(item);
     expect(antisense.rnaBase.label).toBe('U');
     assertPaired(antisense.rnaBase, '2-damdA');
+
+    const unsplit = antisense.rnaBase.hydrogenBonds[0].getAnotherMonomer(
+      antisense.rnaBase,
+    )!;
+    editor.drawingEntitiesManager.selectDrawingEntities([unsplit]);
+    mode.insertPresetFromLibrary(preset('C'));
+    expect(antisense.rnaBase.label).toBe('G');
+    assertPaired(antisense.rnaBase, 'C');
+    EditorHistory.getInstance(editor).undo();
+    expect(antisense.rnaBase.label).toBe('U');
+    assertPaired(antisense.rnaBase, '2-damdA');
   });
+
+  it.each(['preset', 'monomer'])(
+    'preserves side bonds and the unselected chain during %s replacement',
+    (source) => {
+      const { sense, antisense } = createPair();
+      const other = Nucleotide.createOnCanvas('C', new Vec2(8, 0))!.node;
+      const next = Nucleotide.createOnCanvas('C', new Vec2(12, 0))!.node;
+      const manager = editor.drawingEntitiesManager;
+      manager.createPolymerBond(
+        other.phosphate,
+        next.sugar,
+        AttachmentPointName.R2,
+        AttachmentPointName.R1,
+      );
+      const originalBackbone = other.phosphate.attachmentPointsToBonds.R2;
+      manager.createPolymerBond(
+        sense.sugar,
+        other.sugar,
+        AttachmentPointName.R1,
+        AttachmentPointName.R1,
+      );
+      mode.initialize();
+      manager.selectDrawingEntities(sense.monomers);
+      editor.events.openConfirmationDialog.add(({ onConfirm }) => onConfirm());
+      if (source === 'preset') {
+        mode.insertPresetFromLibrary(preset('A'));
+      } else {
+        const item = getRnaPartLibraryItem(
+          editor,
+          '2-damdA',
+          KetMonomerClass.RNA,
+        )!;
+        if (item.isAmbiguous) throw new Error('Expected an unsplit nucleotide');
+        mode.insertMonomerFromLibrary(item);
+      }
+      expect(other.phosphate.attachmentPointsToBonds.R2).toBe(originalBackbone);
+      expect(next.sugar.attachmentPointsToBonds.R1).toBe(originalBackbone);
+      expect(other.sugar.attachmentPointsToBonds.R1).toBeTruthy();
+      assertPaired(antisense.rnaBase, source === 'preset' ? 'A' : '2-damdA');
+    },
+  );
+
+  it.each(['preset', 'monomer'])(
+    'keeps backbone direction after leaving antisense editing during %s replacement',
+    (source) => {
+      const { sense, antisense } = createPair();
+      const next = Nucleotide.createOnCanvas('G', new Vec2(4, 0))!.node;
+      const phosphate = getNextMonomerInChain(sense.sugar)!;
+      editor.drawingEntitiesManager.createPolymerBond(
+        phosphate,
+        next.sugar,
+        AttachmentPointName.R2,
+        AttachmentPointName.R1,
+      );
+      mode.initialize();
+      mode.turnOnEditMode();
+      mode['turnOnAntisenseEditMode']();
+      SequenceRenderer.setCaretPosition(0);
+      mode.turnOffEditMode();
+      expect(mode.isAntisenseEditMode).toBe(true);
+      editor.drawingEntitiesManager.selectDrawingEntities([
+        ...sense.monomers,
+        phosphate,
+      ]);
+      const error = jest.fn();
+      editor.events.error.add(error);
+      if (source === 'preset') {
+        mode.insertPresetFromLibrary(preset('A'));
+      } else {
+        const item = getRnaPartLibraryItem(
+          editor,
+          '2-damdA',
+          KetMonomerClass.RNA,
+        )!;
+        if (item.isAmbiguous) throw new Error('Expected an unsplit nucleotide');
+        mode.insertMonomerFromLibrary(item);
+      }
+      expect(error).not.toHaveBeenCalled();
+      expect(next.sugar.attachmentPointsToBonds.R1).toBeTruthy();
+      expect(SequenceRenderer.chainsCollection.chains).toHaveLength(2);
+      assertPaired(antisense.rnaBase, source === 'preset' ? 'A' : '2-damdA');
+    },
+  );
 
   it('keeps multiple antisense replacements connected in backbone order', () => {
     const senseNodes = ['G', 'G', 'G'].map(

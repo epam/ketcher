@@ -117,7 +117,7 @@ describe('RNA Builder duplex base restrictions', () => {
       editor: {
         editor: {
           isSequenceEditInRNABuilderMode: true,
-          isSequenceSyncEditMode: sync,
+          sequenceMode: { isSyncEditMode: sync },
           events: { ...mockEditorEvents, error: { dispatch: error } },
         },
       },

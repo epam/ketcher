@@ -23,6 +23,7 @@ import {
   RNABase,
   SequenceType,
   Sugar,
+  UnsplitNucleotide,
   Vec2,
 } from 'domain/entities';
 import { BaseRenderer } from 'application/render/renderers/internal';
@@ -466,7 +467,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private synchronizeOppositeBase(
-    base: RNABase | AmbiguousMonomer,
+    base: RNABase | AmbiguousMonomer | UnsplitNucleotide,
     newItem: MonomerOrAmbiguousType,
   ) {
     const command = new Command();
@@ -480,7 +481,7 @@ export class SequenceMode extends BaseMode {
     if (
       !this.isSyncEditMode ||
       !naturalAnalogue ||
-      !getSugarFromRnaBase(base) ||
+      (!getSugarFromRnaBase(base) && !(base instanceof UnsplitNucleotide)) ||
       naturalAnalogue === oldNaturalAnalogue
     ) {
       return command;
@@ -519,6 +520,13 @@ export class SequenceMode extends BaseMode {
       }
     }
     return command;
+  }
+
+  private getBaseForSynchronization(node: SubChainNode) {
+    if (node instanceof Nucleotide || node instanceof Nucleoside) {
+      return node.rnaBase;
+    }
+    return node.monomer instanceof UnsplitNucleotide ? node.monomer : undefined;
   }
 
   public click(event: MouseEvent) {
@@ -2142,6 +2150,25 @@ export class SequenceMode extends BaseMode {
     return sideConnectionsData;
   }
 
+  private getReplacementNeighbors(
+    node: SubChainNode,
+    monomerToNode: Map<BaseMonomer, SubChainNode>,
+  ) {
+    const previousBond = node.firstMonomerInNode.attachmentPointsToBonds.R1;
+    const nextBond = node.lastMonomerInNode.attachmentPointsToBonds.R2;
+    return {
+      previousNode:
+        previousBond instanceof PolymerBond &&
+        previousBond.isBackBoneChainConnection
+          ? getPreviousConnectedNode(node, monomerToNode)
+          : undefined,
+      nextNode:
+        nextBond instanceof PolymerBond && nextBond.isBackBoneChainConnection
+          ? getNextConnectedNode(node, monomerToNode)
+          : undefined,
+    };
+  }
+
   private replaceSelectionWithMonomer(
     monomerItem: MonomerItemType,
     selectedNode: SubChainNode,
@@ -2149,8 +2176,10 @@ export class SequenceMode extends BaseMode {
     modelChanges: Command,
   ) {
     const editor = provideEditorInstance();
-    const nextNode = getNextConnectedNode(selectedNode, monomerToNode);
-    const previousNode = getPreviousConnectedNode(selectedNode, monomerToNode);
+    const { nextNode, previousNode } = this.getReplacementNeighbors(
+      selectedNode,
+      monomerToNode,
+    );
     const position = selectedNode.monomer.position;
     const sideChainConnections =
       this.preserveSideChainConnections(selectedNode);
@@ -2167,11 +2196,6 @@ export class SequenceMode extends BaseMode {
       },
       [] as PreservedHydrogenBonds[],
     );
-    const hasPreviousNodeInChain =
-      selectedNode.firstMonomerInNode.attachmentPointsToBonds.R1;
-    const hasNextNodeInChain =
-      selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2;
-
     selectedNode.monomers.forEach((monomer) => {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
       monomer.forEachBond((polymerBond) => {
@@ -2189,15 +2213,13 @@ export class SequenceMode extends BaseMode {
     const newMonomerSequenceNode = new MonomerSequenceNode(newMonomer);
 
     modelChanges.merge(monomerAddCommand);
-    modelChanges.merge(
-      this.insertNewSequenceFragment(
-        newMonomerSequenceNode,
-        nextNode ?? null,
-        previousNode,
-        Boolean(hasPreviousNodeInChain),
-        Boolean(hasNextNodeInChain),
-      ),
+    this.connectNodes(
+      previousNode,
+      newMonomerSequenceNode,
+      modelChanges,
+      position,
     );
+    this.connectNodes(newMonomerSequenceNode, nextNode, modelChanges, position);
 
     sideChainConnections?.forEach((sideConnectionData) => {
       const {
@@ -2308,10 +2330,9 @@ export class SequenceMode extends BaseMode {
       monomerItem.props.MonomerClass === KetMonomerClass.DNA
     ) {
       selectedNodes.forEach((node) => {
-        if (node instanceof Nucleotide || node instanceof Nucleoside) {
-          modelChanges.merge(
-            this.synchronizeOppositeBase(node.rnaBase, monomerItem),
-          );
+        const base = this.getBaseForSynchronization(node);
+        if (base) {
+          modelChanges.merge(this.synchronizeOppositeBase(base, monomerItem));
         }
       });
     }
@@ -2691,13 +2712,11 @@ export class SequenceMode extends BaseMode {
     modelChanges: Command,
   ) {
     const editor = provideEditorInstance();
-    const nextNode = getNextConnectedNode(selectedNode, monomerToNode);
-    const previousNode = getPreviousConnectedNode(selectedNode, monomerToNode);
+    const { nextNode, previousNode } = this.getReplacementNeighbors(
+      selectedNode,
+      monomerToNode,
+    );
     const position = selectedNode.monomer.position;
-    const hasPreviousNodeInChain =
-      selectedNode.firstMonomerInNode.attachmentPointsToBonds.R1;
-    const hasNextNodeInChain =
-      selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2;
 
     const sideChainConnections =
       this.preserveSideChainConnections(selectedNode);
@@ -2747,16 +2766,14 @@ export class SequenceMode extends BaseMode {
       editor.drawingEntitiesManager.addRnaPresetFromNode(newPresetNode);
 
     modelChanges.merge(rnaPresetAddModelChanges);
-    modelChanges.merge(
-      this.insertNewSequenceFragment(
-        newPresetNode,
-        nextNode ?? null,
-        previousNode,
-        Boolean(hasPreviousNodeInChain),
-        Boolean(hasNextNodeInChain),
-        false,
-      ),
+    this.connectNodes(
+      previousNode,
+      newPresetNode,
+      modelChanges,
+      position,
+      false,
     );
+    this.connectNodes(newPresetNode, nextNode, modelChanges, position, false);
 
     sideChainConnections?.forEach((sideConnectionData) => {
       const {
@@ -2800,7 +2817,10 @@ export class SequenceMode extends BaseMode {
         newPresetNode instanceof Nucleotide ||
         newPresetNode instanceof Nucleoside
       ) {
-        if (isRnaBaseOrAmbiguousRnaBase(fromMonomer)) {
+        if (
+          isRnaBaseOrAmbiguousRnaBase(fromMonomer) ||
+          fromMonomer instanceof UnsplitNucleotide
+        ) {
           monomerForHydrogenBond = newPresetNode.rnaBase;
         } else if (fromMonomer instanceof Sugar) {
           monomerForHydrogenBond = newPresetNode.sugar;
@@ -2842,8 +2862,9 @@ export class SequenceMode extends BaseMode {
     const base = preset.base;
     if (base) {
       selectedNodes.forEach((node) => {
-        if (node instanceof Nucleotide || node instanceof Nucleoside) {
-          modelChanges.merge(this.synchronizeOppositeBase(node.rnaBase, base));
+        const sourceBase = this.getBaseForSynchronization(node);
+        if (sourceBase) {
+          modelChanges.merge(this.synchronizeOppositeBase(sourceBase, base));
         }
       });
     }

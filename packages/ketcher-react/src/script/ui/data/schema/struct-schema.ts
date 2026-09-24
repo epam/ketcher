@@ -407,7 +407,7 @@ const sgroup: Omit<StructSchema, 'properties'> & {
           type: 'string',
           default: 'n',
           // any string, except empty and including double quotes
-          pattern: '^(?!\\s*$)[^"]+$',
+          pattern: String.raw`^(?!\s*$)[^"]+$`,
           invalidMessage:
             'SRU subscript should not be empty and contain double quotes',
         },

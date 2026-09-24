@@ -228,16 +228,16 @@ function layoutReactionFragments(
 ) {
   let xorig = 0;
   for (let j = 0; j < molReact.length; ++j) {
-    xorig += shiftMol(ret, molReact[j], bbReact[j], xorig, false) + 2.0;
+    xorig += shiftMol(ret, molReact[j], bbReact[j], xorig, false) + 2;
   }
-  xorig += 2.0;
+  xorig += 2;
   for (let j = 0; j < molAgent.length; ++j) {
-    xorig += shiftMol(ret, molAgent[j], bbAgent[j], xorig, true) + 2.0;
+    xorig += shiftMol(ret, molAgent[j], bbAgent[j], xorig, true) + 2;
   }
-  xorig += 2.0;
+  xorig += 2;
 
   for (let j = 0; j < molProd.length; ++j) {
-    xorig += shiftMol(ret, molProd[j], bbProd[j], xorig, false) + 2.0;
+    xorig += shiftMol(ret, molProd[j], bbProd[j], xorig, false) + 2;
   }
 }
 

@@ -72,6 +72,7 @@ const config = {
     babelPlugin({
       extensions,
       babelHelpers: 'runtime',
+      inputSourceMap: false,
       include: includePattern,
     }),
     cleanup({

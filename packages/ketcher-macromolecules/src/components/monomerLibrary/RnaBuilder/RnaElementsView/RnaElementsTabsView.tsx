@@ -13,6 +13,7 @@ import {
   CompactDetailsContainer,
 } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/styles';
 import { PresetPhosphateFilterPopup } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/PresetPhosphateFilterPopup';
+import { groupNameToTabLabelKey } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/groupNameToTabLabelKey';
 import {
   selectAmbiguousMonomersInCategory,
   selectFilteredMonomers,
@@ -79,7 +80,8 @@ const RnaElementsTabsView = ({
             (acc, group) => acc + (group.groupItems.length || 0),
             0,
           );
-          const caption = selected ? `${groupName} (${quantity})` : null;
+          const label = t(groupNameToTabLabelKey[groupName]);
+          const caption = selected ? `${label} (${quantity})` : null;
 
           return (
             <RnaTabWrapper
@@ -88,7 +90,7 @@ const RnaElementsTabsView = ({
             >
               <RnaTab
                 label={caption}
-                title={groupName}
+                title={label}
                 selected={selected}
                 icon={<Icon name={iconName as IconName} />}
                 onClick={() => dispatch(setActiveRnaBuilderItem(groupName))}

@@ -14,16 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconName } from 'ketcher-react';
+import { MonomerGroups } from 'src/constants';
+import { RnaBuilderPresetsItem } from 'state/rna-builder';
 
-export interface ISummaryProps {
-  groupName: string;
-  label: string;
-  quantity: number;
-  expanded: boolean;
-  iconName: IconName;
-}
-
-export interface IStyledIconProps {
-  expanded?: boolean;
-}
+/**
+ * Values are macromoleculesDialogs translation-key suffixes, not display
+ * text - groupName doubles as a Redux state key (setActiveRnaBuilderItem,
+ * selectAmbiguousMonomersInCategory, data-testid suffixes), so callers
+ * resolve these through t() rather than rendering groupName directly.
+ */
+export const groupNameToTabLabelKey = {
+  [RnaBuilderPresetsItem.Presets]: 'monomerLibrary.presetsTab',
+  [MonomerGroups.SUGARS]: 'monomerLibrary.sugarsTab',
+  [MonomerGroups.BASES]: 'monomerLibrary.basesTab',
+  [MonomerGroups.PHOSPHATES]: 'monomerLibrary.phosphatesTab',
+  [MonomerGroups.NUCLEOTIDES]: 'monomerLibrary.nucleotidesTab',
+};

@@ -517,7 +517,7 @@ class BondTool implements Tool {
           delete dragCtx.existedBond;
         }
       } else if (dragCtx.item.map === 'bonds') {
-        const bondProps = { ...(this.bondProps || {}) };
+        const bondProps = { ...this.bondProps };
         const bond = struct.bonds.get(dragCtx.item.id) as Bond;
 
         this.editor.update(

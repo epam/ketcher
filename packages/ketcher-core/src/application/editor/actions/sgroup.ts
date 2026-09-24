@@ -100,7 +100,7 @@ export function fromSeveralSgroupAddition(
   }
 
   return descriptors.reduce((acc, fValue) => {
-    const localAttrs = { ...(attrs || {}) };
+    const localAttrs = { ...attrs };
     localAttrs.fieldValue = fValue;
 
     return acc.mergeWith(

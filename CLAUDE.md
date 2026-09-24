@@ -6,6 +6,10 @@ This file provides guidance to AI assistants (Claude, Copilot, Cursor, etc.) whe
 
 Ketcher is an open-source **chemical structure editor** built with TypeScript and React. It renders molecules, reactions, macromolecules, and monomers using a custom MVC architecture over SVG.
 
+## Git rules
+
+- **Never commit autonomously.** If a commit seems warranted, ask the user first and commit only after explicit approval. Staging (`git add`) is fine without asking.
+
 ---
 
 ## Memory Bank

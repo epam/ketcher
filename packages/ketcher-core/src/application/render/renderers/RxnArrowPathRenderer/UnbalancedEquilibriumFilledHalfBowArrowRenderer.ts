@@ -21,7 +21,7 @@ export class UnbalancedEquilibriumFilledHalfBowArrowRenderer {
     const endX = start.x + arrowLength;
     const pathParts: string[] = [];
 
-    // First arrow
+    // First and second (unbalanced) arrows
     pathParts.push(
       `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
         `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -31,10 +31,6 @@ export class UnbalancedEquilibriumFilledHalfBowArrowRenderer {
         `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
           start.y - arrowOffset,
         )}Z`,
-    );
-
-    // Second (Unbalanced) arrow
-    pathParts.push(
       `M${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
         `L${toFixed(start.x + unbalanceVal)},${toFixed(
           start.y + arrowOffset,

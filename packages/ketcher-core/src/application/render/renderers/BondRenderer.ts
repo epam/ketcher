@@ -848,18 +848,12 @@ export class BondRenderer extends BaseRenderer {
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, tiltTan * acrossSz),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -tiltTan * acrossSz),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, -tiltTan * acrossSz),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, tiltTan * acrossSz),
@@ -871,35 +865,21 @@ export class BondRenderer extends BaseRenderer {
             .addScaled(normal, acrossSz)
             .addScaled(direction, tiltTan * acrossSz)
             .addScaled(direction, alongIntRc),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -tiltTan * acrossSz)
             .addScaled(direction, alongIntRc),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, tiltTan * acrossSz)
             .addScaled(direction, -alongIntRc),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -tiltTan * acrossSz)
             .addScaled(direction, -alongIntRc),
-        );
-        points.push(
           center.addScaled(direction, alongSz).addScaled(normal, acrossInt),
-        );
-        points.push(
           center.addScaled(direction, -alongSz).addScaled(normal, acrossInt),
-        );
-        points.push(
           center.addScaled(direction, alongSz).addScaled(normal, -acrossInt),
-        );
-        points.push(
           center.addScaled(direction, -alongSz).addScaled(normal, -acrossInt),
         );
         break;
@@ -908,50 +888,40 @@ export class BondRenderer extends BaseRenderer {
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
         );
         break;
       case StructBond.PATTERN.REACTING_CENTER.ORDER_CHANGED: // |
-        points.push(center.addScaled(normal, acrossSz));
-        points.push(center.addScaled(normal, -acrossSz));
+        points.push(
+          center.addScaled(normal, acrossSz),
+          center.addScaled(normal, -acrossSz),
+        );
         break;
       case StructBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED: // ||| combined
         points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
+          center.addScaled(normal, acrossSz),
+          center.addScaled(normal, -acrossSz),
         );
-        points.push(center.addScaled(normal, acrossSz));
-        points.push(center.addScaled(normal, -acrossSz));
         break;
       default:
         return;

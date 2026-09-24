@@ -26,6 +26,10 @@ type TurnOnMacromoleculesEditorOptions = {
   enableFlexMode?: boolean;
 };
 
+// Generous ceiling for the Molecules -> Macromolecules switch's render,
+// which can start late while the default monomers library is fetched.
+const MACROMOLECULES_SWITCH_RENDER_TIMEOUT_MS = 3000;
+
 export const CommonTopRightToolbar = (page: Page) => {
   const locators: CommonTopRightToolbarLocators = {
     ketcherModeSwitcherCombobox: page
@@ -133,17 +137,9 @@ export const CommonTopRightToolbar = (page: Page) => {
             await macroOption.waitFor({ state: 'visible' });
             await macroOption.click();
           },
-          // The default monomers library is a lazily fetched asset, and the
-          // Molecules -> Macromolecules switch now awaits it before actually
-          // converting/redrawing the struct (see Editor.tsx), so the render
-          // that dispatches "renderComplete" (itself debounced by 250ms) can
-          // start well after this callback returns on a cold fetch. The
-          // previous 250ms budget raced the fetch and reliably lost, letting
-          // the test proceed before the switch's redraw (and legacy struct
-          // scrollbar) had actually happened. Give it a generous ceiling
-          // instead; waitForRender still just logs a warning on timeout, it
-          // does not fail the test.
-          3000,
+          // Give the switch's render enough time to start once the default
+          // monomers library (lazily fetched) resolves.
+          MACROMOLECULES_SWITCH_RENDER_TIMEOUT_MS,
         );
       }
 

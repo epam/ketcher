@@ -1870,6 +1870,18 @@ export class SequenceMode extends BaseMode {
     return true;
   }
 
+  // Pasting at a caret that has neither a previous node nor a real current node is
+  // equivalent to starting brand new, independent sequences, so multi-fragment paste
+  // does not need to be squashed into a single chained fragment there.
+  private isPastingAtEmptySequencePosition(): boolean {
+    const currentNode = SequenceRenderer.currentEdittingNode;
+    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+    const isPasteInEnd =
+      currentNode?.senseNode instanceof EmptySequenceNode || !currentNode;
+
+    return isPasteInEnd && !previousNodeInSameChain;
+  }
+
   isPasteAllowedByMode(drawingEntitiesManager: DrawingEntitiesManager) {
     const editor = provideEditorInstance();
     const chainsCollection = ChainsCollection.fromMonomers([
@@ -1879,7 +1891,10 @@ export class SequenceMode extends BaseMode {
       return true;
     }
 
-    if (chainsCollection.chains.length > 1) {
+    if (
+      chainsCollection.chains.length > 1 &&
+      !this.isPastingAtEmptySequencePosition()
+    ) {
       editor.events.error.dispatch(
         'Paste of several fragments is prohibited in text-editing mode.',
       );
@@ -1945,7 +1960,7 @@ export class SequenceMode extends BaseMode {
     const isPasteInEnd =
       currentNode?.senseNode instanceof EmptySequenceNode || !currentNode;
     const isPasteInStart = !previousNodeInSameChain;
-    if (isPasteInEnd && !previousNodeInSameChain) return true;
+    if (this.isPastingAtEmptySequencePosition()) return true;
     if (isPasteInEnd) {
       return (
         this.isR1Free(firstNodeOfNewFragment) &&

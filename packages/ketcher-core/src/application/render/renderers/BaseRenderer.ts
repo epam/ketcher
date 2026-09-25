@@ -69,6 +69,10 @@ export abstract class BaseRenderer implements IBaseRenderer {
     return rootNode.getBoundingClientRect();
   }
 
+  public get labelTooltipText(): string | null {
+    return null;
+  }
+
   public get width() {
     return this.rootBBox?.width ?? 0;
   }

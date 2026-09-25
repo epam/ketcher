@@ -1879,7 +1879,10 @@ export class SequenceMode extends BaseMode {
       return true;
     }
 
-    if (chainsCollection.chains.length > 1) {
+    if (
+      chainsCollection.chains.length > 1 &&
+      !this.isPairedPasteFragment(chainsCollection)
+    ) {
       editor.events.error.dispatch(
         'Paste of several fragments is prohibited in text-editing mode.',
       );
@@ -1891,7 +1894,51 @@ export class SequenceMode extends BaseMode {
       return false;
     }
 
+    if (this.isPairedPasteFragment(chainsCollection)) {
+      drawingEntitiesManager.recalculateAntisenseChains(false);
+    }
+
     return this.deleteSelection();
+  }
+
+  private isPairedPasteFragment(chainsCollection: ChainsCollection) {
+    const [firstChain] = chainsCollection.chains;
+    return (
+      chainsCollection.chains.length === 2 &&
+      chainsCollection.chains.every((chain) => !chain.isCyclic) &&
+      chainsCollection.getAllChainsWithConnectionInBlock(firstChain).length ===
+        2
+    );
+  }
+
+  private getPairedPasteConnections(chainsCollection: ChainsCollection) {
+    const currentNode = SequenceRenderer.currentEdittingNode;
+    const previousNode = SequenceRenderer.previousNodeInSameChain;
+
+    return chainsCollection.chains.map((chain) => {
+      const previous = chain.isAntisense
+        ? currentNode?.antisenseNode
+        : previousNode?.senseNode;
+      const next = chain.isAntisense
+        ? previousNode?.antisenseNode
+        : currentNode?.senseNode;
+
+      return {
+        chain,
+        previous:
+          previous instanceof BackBoneSequenceNode
+            ? previous.firstConnectedNode
+            : previous instanceof EmptySequenceNode
+              ? undefined
+              : previous,
+        next:
+          next instanceof BackBoneSequenceNode
+            ? next.secondConnectedNode
+            : next instanceof EmptySequenceNode
+              ? undefined
+              : next,
+      };
+    });
   }
 
   private isR1Free(entity?: SequenceNode | BaseMonomer): boolean {
@@ -1938,6 +1985,28 @@ export class SequenceMode extends BaseMode {
     const chainsCollection = ChainsCollection.fromMonomers([
       ...drawingEntitiesManager.monomers.values(),
     ]);
+    if (this.isPairedPasteFragment(chainsCollection)) {
+      return this.getPairedPasteConnections(chainsCollection).every(
+        ({ chain, previous, next }) => {
+          const bond = previous?.lastMonomerInNode.attachmentPointsToBonds.R2;
+          const replacesBackbone =
+            previous &&
+            bond instanceof PolymerBond &&
+            !bond.isSideChainConnection &&
+            bond.getAnotherMonomer(previous.lastMonomerInNode) ===
+              next?.firstMonomerInNode;
+
+          return (
+            (!previous ||
+              (this.isR1Free(chain.firstNode) &&
+                (replacesBackbone || this.isR2Free(previous)))) &&
+            (!next ||
+              (this.isR2Free(chain.lastNode) &&
+                (replacesBackbone || this.isR1Free(next))))
+          );
+        },
+      );
+    }
     const currentNode = SequenceRenderer.currentEdittingNode;
     const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
     const lastNodeOfNewFragment = chainsCollection.lastNode;
@@ -1975,6 +2044,46 @@ export class SequenceMode extends BaseMode {
     const chainsCollection = ChainsCollection.fromMonomers([
       ...drawingEntitiesManager.monomers.values(),
     ]);
+
+    if (this.isPairedPasteFragment(chainsCollection)) {
+      const modelChanges = new Command();
+      const previousCaretPosition = SequenceRenderer.caretPosition;
+      const pastedMonomers = new Set(drawingEntitiesManager.monomers.values());
+      const position = this.getNewNodePosition();
+
+      this.getPairedPasteConnections(chainsCollection).forEach(
+        ({ chain, previous, next }) => {
+          this.deleteBondToNextNodeInChain(previous, modelChanges);
+          this.connectNodes(previous, chain.firstNode, modelChanges, position);
+          this.connectNodes(chain.lastNode, next, modelChanges, position);
+        },
+      );
+
+      modelChanges.addOperation(new ReinitializeModeOperation());
+      modelChanges.addOperation({
+        execute: () => {
+          let nextCaretPosition = previousCaretPosition;
+          SequenceRenderer.forEachNode(
+            ({ twoStrandedNode, nodeIndexOverall }) => {
+              const containsPastedNode = [
+                twoStrandedNode.senseNode,
+                twoStrandedNode.antisenseNode,
+              ].some((node) =>
+                node?.monomers.some(
+                  (monomer) =>
+                    pastedMonomers.has(monomer) &&
+                    (!monomer.isPhosphate || node.monomer.isPhosphate),
+                ),
+              );
+              if (containsPastedNode) nextCaretPosition = nodeIndexOverall + 1;
+            },
+          );
+          SequenceRenderer.setCaretPosition(nextCaretPosition);
+        },
+        invert: () => SequenceRenderer.setCaretPosition(previousCaretPosition),
+      });
+      return modelChanges;
+    }
 
     const currentSequence = SequenceRenderer.currentChain;
 

@@ -152,6 +152,10 @@ function handleAliasProperty(
 
 /**
  * Handles simple atom property types (CHG, RAD, ISO, RBC, UNS, APO)
+ *
+ * A property block may be spread over several `M  XXX` lines: the writer emits at
+ * most 8 entries per line, so every subsequent line must be merged into the pool
+ * built from the previous ones (last value wins for a repeated atom).
  */
 function handleSimpleAtomProperty(
   propName: string,
@@ -159,7 +163,16 @@ function handleSimpleAtomProperty(
   props: MPropertyProps,
 ): void {
   if (!props.get(propName)) {
-    props.set(propName, sGroup.readKeyValuePairs(propertyData, false));
+    props.set(propName, new Pool<string | number | AtomList>());
+  }
+  const pool = props.get(propName);
+  if (!pool) {
+    return;
+  }
+
+  const values = sGroup.readKeyValuePairs(propertyData, false);
+  for (const [atomId, value] of values) {
+    pool.set(atomId, value);
   }
 }
 

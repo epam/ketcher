@@ -71,6 +71,9 @@ export interface Editor {
   selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null;
   undo: () => void;
   redo: () => void;
+  historyStack: Action[];
+  historyPtr: number;
+  addHistoryAction: (action: Action) => void;
   clear: () => void;
   clearHistory: () => void;
   options(): RenderOptions;

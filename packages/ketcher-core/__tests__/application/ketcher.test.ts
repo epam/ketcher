@@ -5,8 +5,6 @@
 // import { StructService } from 'domain/services';
 // import { mock } from 'jest-mock-extended';
 
-export {};
-
 // skipped until cyclic reference is resolved
 describe.skip('contructor()', () => {
   it('should throw exception when editor is null', () => {

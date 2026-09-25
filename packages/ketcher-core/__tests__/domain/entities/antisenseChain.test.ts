@@ -251,7 +251,13 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
       editor,
       new Vec2(1.5, 0),
     );
-    const { node: nucleotide } = Nucleotide.createOnCanvas('A', new Vec2(3, 0));
+    const creationResult = Nucleotide.createOnCanvas('A', new Vec2(3, 0));
+
+    if (!creationResult) {
+      return;
+    }
+
+    const { node: nucleotide } = creationResult;
 
     dem.createPolymerBond(
       unsplit,

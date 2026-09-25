@@ -2,9 +2,10 @@ import { drawnStructuresSelector } from 'application/editor/constants';
 import { type Editor, EditorType } from 'application/editor/editor.types';
 import {
   type IEditorEvents,
-  createEditorEvents,
+  editorEvents,
   hotkeysConfiguration,
   renderersEvents,
+  resetEditorEvents,
 } from 'application/editor/editorEvents';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
@@ -95,6 +96,7 @@ import {
 } from 'utilities';
 import monomersDataRaw from './data/monomers.ket';
 import { type HistoryOperationType, EditorHistory } from './EditorHistory';
+import { EditorHistoryAction } from './EditorHistoryAction';
 import { Coordinates } from './shared/coordinates';
 import ZoomTool from './tools/Zoom';
 import { ViewModel } from 'application/render/view-model/ViewModel';
@@ -310,7 +312,8 @@ export class CoreEditor {
       drawnStructuresSelector,
     ) as SVGGElement;
     this.mode = mode ?? new (getModeConstructor(DEFAULT_LAYOUT_MODE))();
-    this.events = createEditorEvents();
+    resetEditorEvents();
+    this.events = editorEvents;
     KetSerializer.setMonomerFactory(monomerFactory);
     this.setMonomersLibrary(monomersDataRaw);
     this.events.updateMonomersLibrary.dispatch();
@@ -318,8 +321,11 @@ export class CoreEditor {
     this.renderersContainer = renderersContainer;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.viewModel = new ViewModel();
+    const editor = this;
     this.dragDropHandler = new LibraryItemDragDropHandler({
-      drawingEntitiesManager: this.drawingEntitiesManager,
+      get drawingEntitiesManager() {
+        return editor.drawingEntitiesManager;
+      },
       renderersContainer: this.renderersContainer,
       events: this.events,
       getCanvasOffset: () => this.canvasOffset,
@@ -340,12 +346,7 @@ export class CoreEditor {
     this.setupCopyPasteEvent();
     this.resetCanvasOffset();
     this.resetKetcherRootElementOffset();
-    this.zoomTool = ZoomTool.initInstance(
-      this.drawingEntitiesManager,
-      this.canvas,
-    );
-    this.renderersContainer.zoomTool = this.zoomTool;
-    this.renderersContainer.editor = this;
+    this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     this.transientDrawingView = new TransientDrawingView();
     setEditorInstance(this);
     this.micromoleculesEditor = ketcher?.editor;
@@ -992,6 +993,9 @@ export class CoreEditor {
       keySettings[shortcutKey]?.handler &&
       !isEditableInputTarget(event.target)
     ) {
+      if (shortcutKey === 'undo' || shortcutKey === 'redo') {
+        event.stopImmediatePropagation();
+      }
       keySettings[shortcutKey].handler(this);
       event.preventDefault();
     }
@@ -1982,7 +1986,7 @@ export class CoreEditor {
     const history = EditorHistory.getInstance(this);
     const hasModeChanged = this.mode.modeName !== mode;
     const isLastCommandTurnOnSnakeMode =
-      history.previousCommand?.operations.find((operation) => {
+      history.previousCommand?.operations.some((operation) => {
         return (
           operation instanceof SelectLayoutModeOperation &&
           operation.mode === 'snake-layout-mode' &&
@@ -2329,20 +2333,26 @@ export class CoreEditor {
   }
 
   public switchToMicromolecules() {
-    const history = EditorHistory.getInstance(this);
-    const struct = this.micromoleculesEditor.struct();
-    const reStruct = this.micromoleculesEditor.render.ctab;
+    if (this._type === EditorType.Micromolecules) {
+      this.micromoleculesEditor?.update(true);
+      return;
+    }
+    const restorePreviousMode = this.captureModeState();
+    const struct = new Struct();
     const zoomTool = ZoomTool.instance;
 
     this.clearTransientViews();
     this.clearSelection();
 
+    const hiddenEntities =
+      this.drawingEntitiesManager.micromoleculesHiddenEntities;
     const { conversionErrorMessage } =
       MacromoleculesConverter.convertDrawingEntitiesToStruct(
         this.drawingEntitiesManager,
         struct,
-        reStruct,
       );
+    // Conversion consumes these entities, but the saved macro state needs them.
+    this.drawingEntitiesManager.micromoleculesHiddenEntities = hiddenEntities;
 
     if (conversionErrorMessage) {
       const ketcher = ketcherProvider.getKetcher(this.ketcherId);
@@ -2357,28 +2367,24 @@ export class CoreEditor {
       'macroToMicro',
     );
 
-    history.destroy();
     this.drawingEntitiesManager.clearCanvas();
     zoomTool.resetZoom();
     struct.applyMonomersTransformations(scaleFactor);
-    reStruct.render.setMolecule(struct);
+    this.micromoleculesEditor.render.setMolecule(struct);
 
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
+    this.zoomTool.drawingEntitiesManager = this.drawingEntitiesManager;
+    this.micromoleculesEditor.addHistoryAction(
+      new EditorHistoryAction(restorePreviousMode, this.captureModeState()),
+    );
   }
 
   private resetModeIfNeeded() {
     if (this.previousModes.length === 0) {
-      const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+      const ketcher = ketcherProvider.getKetcher();
       const isBlank = ketcher?.editor?.struct().isBlank();
       const oldModeName = this.mode?.modeName;
-
-      // Preserve explicitly selected snake mode when there is no mode history
-      // yet (e.g., freshly initialized editor switched from micro mode).
-      if (oldModeName === 'snake-layout-mode') {
-        return;
-      }
-
       const newModeName = isBlank
         ? DEFAULT_LAYOUT_MODE
         : HAS_CONTENT_LAYOUT_MODE;
@@ -2387,25 +2393,34 @@ export class CoreEditor {
         return;
       }
 
-      this.onSelectMode(newModeName);
+      this.mode.destroy();
+      this.previousModes.push(this.mode);
+      this.mode = new (getModeConstructor(newModeName))();
       this.events.layoutModeChange.dispatch(newModeName);
     }
   }
 
   public switchToMacromolecules() {
+    // History restores the model before React makes the canvas visible.
     this.resetCanvasOffset();
     this.resetKetcherRootElementOffset();
+    if (this._type === EditorType.Macromolecules) {
+      return;
+    }
+    this.micromoleculesEditor?.selection(null);
+    const restorePreviousMode = this.captureModeState();
+    this.drawingEntitiesManager = new DrawingEntitiesManager();
+    this.zoomTool.drawingEntitiesManager = this.drawingEntitiesManager;
     this.resetModeIfNeeded();
     this.clearTransientViews();
     this.clearSelection();
 
-    const struct = this.micromoleculesEditor?.struct() ?? new Struct();
+    const struct = this.micromoleculesEditor?.struct().clone() ?? new Struct();
 
     // Rescale coords from micro to macro so the visual position is preserved
     // when microModeScale (ACS bond length) differs from macroModeScale.
     this.rescaleStructForModeTransition(struct, 'microToMacro');
 
-    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const { modelChanges } =
       MacromoleculesConverter.convertStructToDrawingEntities(
         struct,
@@ -2415,7 +2430,7 @@ export class CoreEditor {
 
     if (this.mode.modeName === 'snake-layout-mode') {
       modelChanges.merge(
-        this.drawingEntitiesManager.applySnakeLayout(true, true, true),
+        this.drawingEntitiesManager.applySnakeLayout(true, true, false),
       );
     }
 
@@ -2431,10 +2446,62 @@ export class CoreEditor {
       this.renderersContainer.update(modelChanges);
     }
 
-    ketcher?.editor.clear();
-    ketcher?.editor.clearHistory();
-    ketcher?.editor.zoom(1);
+    this.micromoleculesEditor?.render.setMolecule(new Struct());
+    this.micromoleculesEditor?.zoom(1);
     this._type = EditorType.Macromolecules;
+    this.micromoleculesEditor?.addHistoryAction(
+      new EditorHistoryAction(restorePreviousMode, this.captureModeState()),
+    );
+  }
+
+  private captureModeState(): () => void {
+    const type = this._type;
+    const struct = this.micromoleculesEditor?.struct();
+    const drawingEntitiesManager = this.drawingEntitiesManager;
+    const modeName = this.mode.modeName;
+    const previousModes = [...this.previousModes];
+    const conversionError =
+      this.micromoleculesEditor?.macromoleculeConvertionError;
+
+    return () => {
+      this.clearTransientViews();
+      this.clearSelection();
+      this.drawingEntitiesManager.clearCanvas();
+      this.mode.destroy();
+      this._type = type;
+      window.isPolymerEditorTurnedOn = type === EditorType.Macromolecules;
+      this.drawingEntitiesManager = drawingEntitiesManager;
+      this.zoomTool.drawingEntitiesManager = drawingEntitiesManager;
+      this.mode = new (getModeConstructor(modeName))();
+      this.previousModes.splice(0, this.previousModes.length, ...previousModes);
+      this.resetCanvasOffset();
+      this.resetKetcherRootElementOffset();
+      this.zoomTool.resetZoom();
+
+      if (type === EditorType.Macromolecules) {
+        this.events.switchToMacromoleculesMode.dispatch();
+
+        // timeout is needed to render canvas before rendering entities on it, otherwise some of them
+        // will be rendered incorrectly. F.e. bonds will overlap with atom labels, because
+        // bond render calculates offset from bbox of atom labels.
+        setTimeout(() => {
+          this.viewModel.initialize([...drawingEntitiesManager.bonds.values()]);
+          this.mode.initialize(false, false, false);
+        }, 0);
+      } else {
+        this.events.switchToMoleculesMode.dispatch();
+
+        if (!struct) {
+          return;
+        }
+
+        this.micromoleculesEditor.render.setMolecule(struct);
+        this.micromoleculesEditor.macromoleculeConvertionError =
+          conversionError;
+      }
+      this.events.layoutModeChange.dispatch(modeName);
+      this.events.modelChange.dispatch();
+    };
   }
 
   private rescaleStructForModeTransition(
@@ -2504,7 +2571,8 @@ export class CoreEditor {
   }
 
   public destroy() {
+    EditorHistory.getInstance(this).destroy();
     this.unsubscribeEvents();
-    resetEditorInstance(this.ketcherId);
+    resetEditorInstance();
   }
 }

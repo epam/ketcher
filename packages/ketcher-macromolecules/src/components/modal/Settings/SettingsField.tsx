@@ -14,8 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Select, MenuItem, FormControl, Switch } from '@mui/material';
-import { FieldWrapper } from './Settings.styles';
+import { Select, MenuItem, FormControl, Switch, Tooltip } from '@mui/material';
+import { Icon } from 'ketcher-react';
+import { FieldWrapper, FieldLabelContent } from './Settings.styles';
 import type { SettingFieldValue } from './fieldGroups';
 
 interface SettingsFieldProps {
@@ -28,6 +29,7 @@ interface SettingsFieldProps {
   min?: number;
   max?: number;
   step?: number;
+  tooltip?: string;
 }
 
 export const SettingsField = ({
@@ -40,7 +42,20 @@ export const SettingsField = ({
   min,
   max,
   step,
+  tooltip,
 }: SettingsFieldProps) => {
+  const labelContent = tooltip ? (
+    <FieldLabelContent>
+      <span>{label}</span>
+      <Tooltip title={tooltip}>
+        <div>
+          <Icon name="about" />
+        </div>
+      </Tooltip>
+    </FieldLabelContent>
+  ) : (
+    <span>{label}</span>
+  );
   const stringValue = typeof value === 'string' ? value : undefined;
   const numberValue = typeof value === 'number' ? value : undefined;
   let selectValue: string | number = '';
@@ -54,7 +69,7 @@ export const SettingsField = ({
       case 'checkbox':
         return (
           <label>
-            <span>{label}</span>
+            {labelContent}
             <Switch
               checked={Boolean(value)}
               onChange={(e) => onChange(e.target.checked)}
@@ -67,7 +82,7 @@ export const SettingsField = ({
       case 'number':
         return (
           <label>
-            <span>{label}</span>
+            {labelContent}
             <input
               type="number"
               value={numberValue ?? ''}
@@ -90,7 +105,7 @@ export const SettingsField = ({
       case 'select':
         return (
           <label>
-            <span>{label}</span>
+            {labelContent}
             <FormControl size="small" sx={{ border: 'none' }}>
               <Select
                 value={selectValue}
@@ -134,7 +149,7 @@ export const SettingsField = ({
       case 'color':
         return (
           <label>
-            <span>{label}</span>
+            {labelContent}
             <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
               <input
                 type="color"
@@ -171,7 +186,7 @@ export const SettingsField = ({
       default:
         return (
           <label>
-            <span>{label}</span>
+            {labelContent}
             <input
               type="text"
               value={stringValue ?? ''}

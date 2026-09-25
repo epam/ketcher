@@ -671,7 +671,7 @@ export class SequenceMode extends BaseMode {
   ) {
     const editor = provideEditorInstance();
     const modelChanges = new Command();
-    const { modelChanges: addedNodeModelChanges, node: nodeToAdd } =
+    const creationResult =
       nextNodeToConnect instanceof Nucleotide ||
       nextNodeToConnect instanceof Nucleoside ||
       (nextNodeToConnect instanceof BackBoneSequenceNode &&
@@ -687,6 +687,13 @@ export class SequenceMode extends BaseMode {
             newNodePosition,
             getSugarBySequenceType(editor.sequenceTypeEnterMode),
           );
+
+    if (!creationResult) {
+      return;
+    }
+
+    const { modelChanges: addedNodeModelChanges, node: nodeToAdd } =
+      creationResult;
 
     // If creation failed (symbol not found in library), return undefined
     if (!addedNodeModelChanges || !nodeToAdd) {

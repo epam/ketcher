@@ -1985,18 +1985,7 @@ export class CoreEditor {
     const ModeConstructor = getModeConstructor(mode);
     const history = EditorHistory.getInstance(this);
     const hasModeChanged = this.mode.modeName !== mode;
-    const isLastCommandTurnOnSnakeMode =
-      history.previousCommand?.operations.some((operation) => {
-        return (
-          operation instanceof SelectLayoutModeOperation &&
-          operation.mode === 'snake-layout-mode' &&
-          operation.prevMode !== 'snake-layout-mode'
-        );
-      });
-
-    if (isLastCommandTurnOnSnakeMode) {
-      history.undo();
-    }
+    this.undoLatestSnakeLayout();
 
     this.mode.destroy();
     this.previousModes.push(this.mode);
@@ -2006,6 +1995,22 @@ export class CoreEditor {
       command,
       typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
     );
+  }
+
+  private undoLatestSnakeLayout() {
+    const history = EditorHistory.getInstance(this);
+    const isLatestCommandTurningOnSnakeMode =
+      history.previousCommand?.operations.some((operation) => {
+        return (
+          operation instanceof SelectLayoutModeOperation &&
+          operation.mode === 'snake-layout-mode' &&
+          operation.prevMode !== 'snake-layout-mode'
+        );
+      });
+
+    if (isLatestCommandTurningOnSnakeMode) {
+      history.undo();
+    }
   }
 
   public setMode(mode: BaseMode) {
@@ -2337,6 +2342,12 @@ export class CoreEditor {
       this.micromoleculesEditor?.update(true);
       return;
     }
+
+    // Snake layout is a temporary macro-mode presentation. Follow the same
+    // path used when leaving Snake for another macro layout, so its generated
+    // positions are not exported to the molecules editor.
+    this.undoLatestSnakeLayout();
+
     const restorePreviousMode = this.captureModeState();
     const struct = new Struct();
     const zoomTool = ZoomTool.instance;

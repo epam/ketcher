@@ -50,6 +50,10 @@ describe('History across molecule and macromolecule modes', () => {
     );
     canvas.innerHTML =
       '<defs><symbol id="peptide"><path class="monomer-body"/></symbol></defs><g class="drawn-structures"/>';
+    Object.defineProperty(canvas, 'width', {
+      configurable: true,
+      value: { baseVal: { value: 800 } },
+    });
     document.body.appendChild(canvas);
     macro = new CoreEditor({
       ketcherId,
@@ -190,6 +194,25 @@ describe('History across molecule and macromolecule modes', () => {
     macro.switchToMacromolecules();
     macro.switchToMacromolecules();
     expect(micro.historySize().undo).toBe(1);
+  });
+
+  it('exports Flex positions when switching to molecules from Snake mode', () => {
+    macro.switchToMacromolecules();
+    macro.events.selectMode.dispatch('flex-layout-mode');
+    addMonomer();
+    const monomer = Array.from(
+      macro.drawingEntitiesManager.monomers.values(),
+    )[0];
+    const flexPosition = new Vec2(monomer.position);
+
+    macro.events.selectMode.dispatch('snake-layout-mode');
+    expect(monomer.position).not.toEqual(flexPosition);
+
+    macro.switchToMicromolecules();
+
+    const [convertedMonomer] = Array.from(micro.struct().sgroups.values());
+    expect(convertedMonomer?.pp).toEqual(monomer.position);
+    expect(macro.mode.modeName).toBe('flex-layout-mode');
   });
 
   it.each(['undo', 'redo'] as const)(

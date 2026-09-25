@@ -367,6 +367,31 @@ class ReStruct {
     this.structChanged = false;
   }
 
+  rerenderZoomDependentItems(): void {
+    this.visibleAtoms.forEach((_atom, atomId) => {
+      this.markAtom(atomId, 1);
+    });
+    this.visibleBonds.forEach((_bond, bondId) => {
+      this.markBond(bondId, 1);
+    });
+    this.enhancedFlags.forEach((_flag, fragmentId) => {
+      this.markItem('enhancedFlags', fragmentId, 1);
+    });
+    this.rgroupAttachmentPoints.forEach((_point, pointId) => {
+      this.markRgroupAttachmentPoint(pointId, 1);
+    });
+
+    const changedAtomIds = Array.from(this.visibleAtoms.keys());
+    this.molecule.updateHalfBonds(changedAtomIds);
+    this.molecule.sortNeighbors(changedAtomIds);
+
+    this.showAtoms();
+    this.showBonds();
+    this.showRgroupAttachmentPoints();
+    this.showEnhancedFlags();
+    this.clearMarks();
+  }
+
   markItemRemoved(): void {
     this.structChanged = true;
   }

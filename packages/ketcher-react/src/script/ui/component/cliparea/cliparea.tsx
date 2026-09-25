@@ -53,11 +53,11 @@ const isUserEditing = (): boolean => {
   // Check for input, textarea, or contenteditable
   return Boolean(
     el.tagName === 'TEXTAREA' ||
-      (el.tagName === 'INPUT' &&
-        (el as HTMLInputElement).type !== 'button' &&
-        (el as HTMLInputElement).type !== 'submit' &&
-        (el as HTMLInputElement).type !== 'reset') ||
-      (el as HTMLElement).contentEditable === 'true',
+    (el.tagName === 'INPUT' &&
+      (el as HTMLInputElement).type !== 'button' &&
+      (el as HTMLInputElement).type !== 'submit' &&
+      (el as HTMLInputElement).type !== 'reset') ||
+    (el as HTMLElement).contentEditable === 'true',
   );
 };
 
@@ -309,16 +309,36 @@ async function copy(data: ClipboardData): Promise<void> {
       );
     });
 
-    const clipboardItem = new ClipboardItem(clipboardItemData);
+    let clipboardItem: ClipboardItem | undefined;
+
+    try {
+      clipboardItem = new ClipboardItem(clipboardItemData);
+    } catch (e) {
+      KetcherLogger.info(
+        'cannot create ClipboardItem, falling back to writeText',
+        e,
+      );
+
+      // Fallback for browsers that don't support ClipboardItem constructor or
+      // custom mime types in ClipboardItem constructor
+      if (navigator.clipboard.writeText) {
+        // Fallback to simple text copy
+        const textData = data['text/plain'] || JSON.stringify(data);
+
+        await navigator.clipboard.writeText(textData);
+
+        return;
+      } else {
+        KetcherLogger.error('cliparea.tsx::copy', e);
+      }
+    }
 
     // Chrome: clipboardItem.presentationStyle is undefined
     // Safari-specific check for presentationStyle property
-    const itemWithPresentationStyle = clipboardItem as ClipboardItem & {
-      presentationStyle?: string;
-    };
     if (
-      itemWithPresentationStyle.presentationStyle &&
-      itemWithPresentationStyle.presentationStyle === 'unspecified'
+      !clipboardItem ||
+      (clipboardItem.presentationStyle &&
+        clipboardItem.presentationStyle === 'unspecified')
     ) {
       if (navigator.clipboard.writeText) {
         // Fallback to simple text copy

@@ -2476,6 +2476,8 @@ export class CoreEditor {
   }
 
   public zoomToStructuresIfNeeded() {
+    ZoomTool.instance.forgetRememberedZoomTransform();
+
     if (
       // Temporary solution to disable autozoom for the polymer editor in e2e tests
       window._ketcher_isAutozoomDisabled ||

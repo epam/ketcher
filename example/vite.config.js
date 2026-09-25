@@ -659,7 +659,7 @@ export default defineConfig({
         ),
       },
       {
-        find: 'ketcher-standalone',
+        find: /^ketcher-standalone$/,
         replacement: resolve(
           __dirname,
           '../packages/ketcher-standalone/src/index.ts',

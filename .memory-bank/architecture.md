@@ -1,6 +1,8 @@
 # Architecture
 
-> How is the system organized?
+> **Read when:** you need the package map, the subsystems, or how an edit or a format conversion
+> flows end to end.
+> **Skip when:** you already know the subsystem — open its file in `modules/` instead.
 
 ## Overview
 

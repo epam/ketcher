@@ -1,5 +1,10 @@
 # ketcher-core
 
+> **Read when:** orientation in ketcher-core: its public API, key files, dependencies and
+> constraints.
+> **Skip when:** you need one subsystem in depth — `rendering.md`, `serialization.md`,
+> `operations-history.md`.
+
 > The shared library that contains all domain entities, application logic, serializers, and renderers.
 
 ## Responsibility

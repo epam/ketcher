@@ -1,6 +1,6 @@
 ---
 name: security-code-reviewer
-description: Use this agent when you need to review code for security vulnerabilities, input validation issues, or authentication/authorization flaws. Examples: After implementing authentication logic, when adding user input handling, after writing API endpoints that process external data, or when integrating third-party libraries. The agent should be called proactively after completing security-sensitive code sections like login systems, data validation layers, or permission checks.
+description: "Reviews a change for security problems: input validation, injection, unsafe file and format handling, risky dependencies. One of the four reviewers /review-pr runs."
 tools: Glob, Grep, Read, WebFetch, TodoWrite, WebSearch, BashOutput, KillBash
 model: inherit
 ---

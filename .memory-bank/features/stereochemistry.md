@@ -1,5 +1,9 @@
 # Stereochemistry
 
+> **Read when:** stereo bonds, CIP labels or enhanced stereochemistry.
+> **Skip when:** you need the implementation — the `modules/` files have it; this file describes
+> behaviour only.
+
 ## Problem
 
 Many molecules are chiral, and their biological and chemical behavior depends on 3D configuration. Ketcher must let users express stereochemistry in 2D (stereo bonds), compute standard descriptors, and group stereocenters with enhanced-stereochemistry relationships.

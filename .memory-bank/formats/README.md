@@ -1,5 +1,8 @@
 # Formats
 
+> **Read when:** choosing between KET 1.0 and 2.0, or finding where a field is specified.
+> **Skip when:** the change does not touch the KET format.
+
 Full reference specifications for chemical/data file formats native to Ketcher, transcribed from their source documents. Complements the format overview in [../domain.md](../domain.md#supported-chemical-formats) and the implementation deep-dive in [../modules/serialization.md](../modules/serialization.md).
 
 ## Documents

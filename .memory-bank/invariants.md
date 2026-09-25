@@ -1,6 +1,8 @@
 # Invariants
 
-> What must never be broken?
+> **Read when:** before changing the model, operations or history, the renderers, format routing or
+> the monomer library.
+> **Skip when:** the change is limited to UI layout, styles, documentation or tests.
 
 These are architectural and domain rules that must always remain true. Unlike implementation details, invariants define the contracts that all future changes must preserve.
 

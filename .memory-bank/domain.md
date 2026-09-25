@@ -1,6 +1,8 @@
 # Domain
 
-> What concepts exist in the problem domain?
+> **Read when:** a chemistry or polymer concept is unclear (S-Group, R-Group, monomer, attachment
+> point, chain, reaction), or you need the list of supported formats.
+> **Skip when:** you need code locations — see `modules/`; for a single term, grep `glossary.md`.
 
 ## Overview
 

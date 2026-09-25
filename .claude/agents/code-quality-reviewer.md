@@ -1,6 +1,6 @@
 ---
 name: code-quality-reviewer
-description: Use this agent when you need to review code for quality, maintainability, and adherence to best practices. Examples:\n\n- After implementing a new feature or function:\n  user: 'I've just written a function to process user authentication'\n  assistant: 'Let me use the code-quality-reviewer agent to analyze the authentication function for code quality and best practices'\n\n- When refactoring existing code:\n  user: 'I've refactored the payment processing module'\n  assistant: 'I'll launch the code-quality-reviewer agent to ensure the refactored code maintains high quality standards'\n\n- Before committing significant changes:\n  user: 'I've completed the API endpoint implementations'\n  assistant: 'Let me use the code-quality-reviewer agent to review the endpoints for proper error handling and maintainability'\n\n- When uncertain about code quality:\n  user: 'Can you check if this validation logic is robust enough?'\n  assistant: 'I'll use the code-quality-reviewer agent to thoroughly analyze the validation logic'
+description: "Reviews a change for quality and maintainability: readability, naming, duplication, error handling, TypeScript and React practice. One of the four reviewers /review-pr runs."
 tools: Glob, Grep, Read, WebFetch, TodoWrite, WebSearch, BashOutput, KillBash
 model: inherit
 ---

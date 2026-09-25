@@ -1,5 +1,9 @@
 # Selection & Manipulation
 
+> **Read when:** selection tools, and moving, rotating, flipping or erasing a selection.
+> **Skip when:** you need the implementation — the `modules/` files have it; this file describes
+> behaviour only.
+
 ## Problem
 
 Before editing, moving, deleting, or transforming parts of a drawing, the user must be able to select exactly the atoms, bonds, structures, or other objects they intend to act on — and then move, rotate, flip, or erase them.

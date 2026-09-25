@@ -1,5 +1,9 @@
 # Monomer Drag-and-Drop
 
+> **Read when:** dragging library items onto the macromolecules canvas: ghost preview, placement,
+> mode differences.
+> **Skip when:** other macromolecule interactions.
+
 > How library items (monomers, ambiguous monomers, RNA presets) are dragged from the library panel and placed on the macromolecules canvas.
 
 Complements [monomer-library](./monomer-library.md) (the library data and UI) and [editor-engine](./editor-engine.md) (modes, tools, events).

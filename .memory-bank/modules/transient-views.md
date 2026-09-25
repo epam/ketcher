@@ -1,5 +1,8 @@
 # Transient Views
 
+> **Read when:** selection, snapping, rotation or preview overlays on the macromolecules canvas.
+> **Skip when:** persistent model rendering.
+
 > Short-lived, purely-visual overlays drawn over the macromolecules canvas — never part of the model, operations, serialization, or undo/redo.
 
 Cross-cutting deep-dive within the macromolecules render layer. Complements [rendering](./rendering.md) (the D3 renderers that draw the persistent model) and [monomer-drag-and-drop](./monomer-drag-and-drop.md) (one of its consumers).

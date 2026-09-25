@@ -180,6 +180,9 @@ test.describe('Autotests: generated example', () => {
 ```
 
 ### What to avoid
+- Do not import `test`, `expect`, `Page` or `Locator` from `@playwright/test` in a spec — always from `@fixtures`. Only page-object files import from `@playwright/test`.
+- Do not hardcode monomer test ids such as `'A___Alanine'`: use the enums in `@tests/pages/constants/monomers/*` (`Peptide.A`, `Sugar.R`, `Base.C`, `Chem.Test_6_Ch`, `Preset.A`).
+- Do not call `page.getByTestId(...)` or `page.locator(...)` directly in a spec; go through a page object, and add a locator to the page object when one is missing.
 - Do not introduce new libraries.
 - Do not duplicate selectors that already exist in page objects or utils.
 - Do not hardcode sleeps when an existing wait helper or UI state check can be used.

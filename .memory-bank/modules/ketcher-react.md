@@ -1,5 +1,8 @@
 # ketcher-react
 
+> **Read when:** the micromolecules React shell: store, toolbars, dialogs, the integration host API.
+> **Skip when:** core model or rendering work.
+
 > React UI package for the micromolecules (small molecule) editor.
 
 ## Responsibility

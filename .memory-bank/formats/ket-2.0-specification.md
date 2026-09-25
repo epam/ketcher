@@ -1,5 +1,8 @@
 # KET 2.0 specification
 
+> **Read when:** adding or changing a KET field, or a KET import/export bug.
+> **Skip when:** work on other formats. It is 40 KB — grep the section you need.
+
 ## Support
 
 Indigo: starting from 1.28.0

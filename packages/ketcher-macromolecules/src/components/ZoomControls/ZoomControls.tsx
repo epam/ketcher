@@ -52,7 +52,14 @@ export const ZoomControls = () => {
     }
 
     const handler = () => {
-      setCurrentZoom(Math.round(zoomTool.getZoomLevel() * 100));
+      const newZoom = Math.round(zoomTool.getZoomLevel() * 100);
+      setCurrentZoom(newZoom);
+
+      const inputEl = inputRef.current;
+      updateInputString(newZoom, inputEl);
+      if (document.activeElement === inputEl) {
+        inputEl?.select();
+      }
     };
 
     zoomTool.subscribeOnZoomEvent(handler);

@@ -40,6 +40,7 @@ import {
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
@@ -61,6 +62,27 @@ test.afterAll(async ({ closePage }) => {
 
 test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 test.describe('Sequence edit mode', () => {
+  test('#4528 Enter starts a new sequence without toggling fullscreen', async () => {
+    await keyboardTypeOnCanvas(page, 'CCC');
+    await CommonTopRightToolbar(page).fullScreen();
+
+    await expect
+      .poll(() => page.evaluate(() => !!document.fullscreenElement))
+      .toBe(true);
+
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Enter');
+
+    await expect
+      .poll(() => page.evaluate(() => !!document.fullscreenElement))
+      .toBe(true);
+
+    await keyboardTypeOnCanvas(page, 'A');
+    await expect(getSymbolLocator(page, { symbolAlias: 'A' })).toHaveCount(1);
+
+    await CommonTopRightToolbar(page).fullScreen();
+  });
+
   test('Text-editing mode activates when users start a new sequence or edit an existing one', async () => {
     /*
     Test case: #3650

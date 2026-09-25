@@ -105,13 +105,16 @@ export class SequenceMode extends BaseMode {
   private _isEditInRNABuilderMode = false;
   private _isAntisenseEditMode = false;
   private _isSyncEditMode = true;
-  private isFirstInit = true;
+  // Only true when constructed without a previous mode, i.e. the very first mode
+  // the editor is initialized with, not when switching from another mode.
+  private isFirstInit: boolean;
   private selectionStarted = false;
   private selectionStartCaretPosition = -1;
   private mousemoveCounter = 0;
 
   constructor(previousMode?: LayoutMode) {
     super('sequence-layout-mode', previousMode);
+    this.isFirstInit = previousMode === undefined;
   }
 
   public get isEditMode() {

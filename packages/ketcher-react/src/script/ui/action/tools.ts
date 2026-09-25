@@ -36,51 +36,51 @@ type ToolActionEntry = Omit<UiAction, 'action'> & {
 
 const toolActions: Record<string, ToolActionEntry> = {
   hand: {
-    title: 'Hand tool',
+    title: 'toolbar:tools.hand',
     enabledInViewOnly: true,
     shortcut: 'Mod+Alt+h',
     action: { tool: 'hand' },
     hidden: (options) => isHidden(options, 'hand'),
   },
   'select-rectangle': {
-    title: 'Rectangle Selection',
+    title: 'toolbar:tools.selectRectangle',
     enabledInViewOnly: true,
     shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'select', opts: 'rectangle' },
     hidden: (options) => isHidden(options, 'select-rectangle'),
   },
   'select-lasso': {
-    title: 'Lasso Selection',
+    title: 'toolbar:tools.selectLasso',
     enabledInViewOnly: true,
     shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'select', opts: 'lasso' },
   },
   'select-structure': {
-    title: 'Structure Selection',
+    title: 'toolbar:tools.selectStructure',
     shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'select', opts: 'structure' },
     hidden: (options) => isHidden(options, 'select-structure'),
   },
   'select-fragment': {
-    title: 'Fragment Selection',
+    title: 'toolbar:tools.selectFragment',
     shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'fragmentSelection' },
     hidden: (options) => isHidden(options, 'select-fragment'),
   },
   erase: {
-    title: 'Erase',
+    title: 'toolbar:tools.erase',
     shortcut: ['Delete', 'Backspace'],
     action: { tool: 'eraser', opts: 1 }, // TODO last selector mode is better
     hidden: (options) => isHidden(options, 'erase'),
   },
   chain: {
-    title: 'Chain',
+    title: 'toolbar:tools.chain',
     action: { tool: 'chain' },
     hidden: (options) => isHidden(options, 'chain'),
   },
   'enhanced-stereo': {
     shortcut: 'Alt+e',
-    title: 'Stereochemistry',
+    title: 'toolbar:tools.stereochemistry',
     action: { tool: 'enhancedStereo' },
     disabled: (editor) => {
       if (editor.isMonomerCreationWizardActive) {
@@ -95,38 +95,38 @@ const toolActions: Record<string, ToolActionEntry> = {
   },
   'charge-plus': {
     shortcut: ['Equal', 'Shift+Equal', 'NumpadAdd'],
-    title: 'Charge Plus',
+    title: 'toolbar:tools.chargePlus',
     action: { tool: 'charge', opts: 1 },
     hidden: (options) => isHidden(options, 'charge-plus'),
   },
   'charge-minus': {
     shortcut: ['Minus', 'NumpadSubtract'],
-    title: 'Charge Minus',
+    title: 'toolbar:tools.chargeMinus',
     action: { tool: 'charge', opts: -1 },
     hidden: (options) => isHidden(options, 'charge-minus'),
   },
   'transform-rotate': {
-    title: 'Rotate Tool',
+    title: 'toolbar:tools.rotate',
     action: { tool: 'rotate' },
     hidden: (options) => isHidden(options, 'transform-rotate'),
   },
   'transform-flip-h': {
     shortcut: 'Alt+h',
-    title: 'Horizontal Flip',
+    title: 'toolbar:tools.flipHorizontal',
     action: { tool: 'rotate', opts: 'horizontal' },
     disabled: isFlipDisabled,
     hidden: (options) => isHidden(options, 'transform-flip-h'),
   },
   'transform-flip-v': {
     shortcut: 'Alt+v',
-    title: 'Vertical Flip',
+    title: 'toolbar:tools.flipVertical',
     action: { tool: 'rotate', opts: 'vertical' },
     disabled: isFlipDisabled,
     hidden: (options) => isHidden(options, 'transform-flip-v'),
   },
   sgroup: {
     shortcut: 'Mod+g',
-    title: 'S-Group',
+    title: 'toolbar:tools.sgroup',
     action: { tool: 'sgroup' },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'sgroup'),
@@ -136,43 +136,43 @@ const toolActions: Record<string, ToolActionEntry> = {
     hidden: (options) => isHidden(options, 'arrows'),
   },
   'reaction-arrow-open-angle': {
-    title: 'Arrow Open Angle Tool',
+    title: 'toolbar:tools.arrowOpenAngle',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.OpenAngle },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-arrow-open-angle'),
   },
   'reaction-arrow-filled-triangle': {
-    title: 'Arrow Filled Triangle Tool',
+    title: 'toolbar:tools.arrowFilledTriangle',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.FilledTriangle },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-arrow-filled-triangle'),
   },
   'reaction-arrow-filled-bow': {
-    title: 'Arrow Filled Bow Tool',
+    title: 'toolbar:tools.arrowFilledBow',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.FilledBow },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-arrow-filled-bow'),
   },
   'reaction-arrow-dashed-open-angle': {
-    title: 'Arrow Dashed Open Angle Tool',
+    title: 'toolbar:tools.arrowDashedOpenAngle',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.DashedOpenAngle },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-arrow-dashed-open-angle'),
   },
   'reaction-arrow-failed': {
-    title: 'Failed Arrow Tool',
+    title: 'toolbar:tools.arrowFailed',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.Failed },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-arrow-failed'),
   },
   'reaction-arrow-retrosynthetic': {
-    title: 'Retrosynthetic Arrow Tool',
+    title: 'toolbar:tools.arrowRetrosynthetic',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.Retrosynthetic },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-arrow-retrosynthetic'),
   },
   'reaction-arrow-both-ends-filled-triangle': {
-    title: 'Arrow Both Ends Filled Triangle Tool',
+    title: 'toolbar:tools.arrowBothEndsFilledTriangle',
     action: {
       tool: 'reactionarrow',
       opts: RxnArrowMode.BothEndsFilledTriangle,
@@ -182,7 +182,7 @@ const toolActions: Record<string, ToolActionEntry> = {
       isHidden(options, 'reaction-arrow-both-ends-filled-triangle'),
   },
   'reaction-arrow-equilibrium-filled-half-bow': {
-    title: 'Arrow Equilibrium Filled Half Bow Tool',
+    title: 'toolbar:tools.arrowEquilibriumFilledHalfBow',
     action: {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EquilibriumFilledHalfBow,
@@ -192,7 +192,7 @@ const toolActions: Record<string, ToolActionEntry> = {
       isHidden(options, 'reaction-arrow-equilibrium-filled-half-bow'),
   },
   'reaction-arrow-equilibrium-filled-triangle': {
-    title: 'Arrow Equilibrium Filled Triangle Tool',
+    title: 'toolbar:tools.arrowEquilibriumFilledTriangle',
     action: {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EquilibriumFilledTriangle,
@@ -202,14 +202,14 @@ const toolActions: Record<string, ToolActionEntry> = {
       isHidden(options, 'reaction-arrow-equilibrium-filled-triangle'),
   },
   'reaction-arrow-equilibrium-open-angle': {
-    title: 'Arrow Equilibrium Open Angle Tool',
+    title: 'toolbar:tools.arrowEquilibriumOpenAngle',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.EquilibriumOpenAngle },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) =>
       isHidden(options, 'reaction-arrow-equilibrium-open-angle'),
   },
   'reaction-arrow-unbalanced-equilibrium-filled-half-bow': {
-    title: 'Arrow Unbalanced Equilibrium Filled Half Bow Tool',
+    title: 'toolbar:tools.arrowUnbalancedEquilibriumFilledHalfBow',
     action: {
       tool: 'reactionarrow',
       opts: RxnArrowMode.UnbalancedEquilibriumFilledHalfBow,
@@ -222,7 +222,7 @@ const toolActions: Record<string, ToolActionEntry> = {
       ),
   },
   'reaction-arrow-unbalanced-equilibrium-open-half-angle': {
-    title: 'Arrow Unbalanced Equilibrium Open Half Angle Tool',
+    title: 'toolbar:tools.arrowUnbalancedEquilibriumOpenHalfAngle',
     action: {
       tool: 'reactionarrow',
       opts: RxnArrowMode.UnbalancedEquilibriumOpenHalfAngle,
@@ -235,7 +235,7 @@ const toolActions: Record<string, ToolActionEntry> = {
       ),
   },
   'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow': {
-    title: 'Arrow Unbalanced Equilibrium Large Filled Half Bow Tool',
+    title: 'toolbar:tools.arrowUnbalancedEquilibriumLargeFilledHalfBow',
     action: {
       tool: 'reactionarrow',
       opts: RxnArrowMode.UnbalancedEquilibriumLargeFilledHalfBow,
@@ -248,7 +248,7 @@ const toolActions: Record<string, ToolActionEntry> = {
       ),
   },
   'reaction-arrow-unbalanced-equilibrium-filled-half-triangle': {
-    title: 'Arrow Unbalanced Equilibrium Filled Half Triangle Tool',
+    title: 'toolbar:tools.arrowUnbalancedEquilibriumFilledHalfTriangle',
     action: {
       tool: 'reactionarrow',
       opts: RxnArrowMode.UnbalancedEquilibriumFilledHalfTriangle,
@@ -261,7 +261,7 @@ const toolActions: Record<string, ToolActionEntry> = {
       ),
   },
   'reaction-arrow-elliptical-arc-arrow-filled-bow': {
-    title: 'Arrow Elliptical Arc Filled Bow Tool',
+    title: 'toolbar:tools.arrowEllipticalArcFilledBow',
     action: {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EllipticalArcFilledBow,
@@ -271,7 +271,7 @@ const toolActions: Record<string, ToolActionEntry> = {
       isHidden(options, 'reaction-arrow-elliptical-arc-arrow-filled-bow'),
   },
   'reaction-arrow-elliptical-arc-arrow-filled-triangle': {
-    title: 'Arrow Elliptical Arc Filled Triangle Tool',
+    title: 'toolbar:tools.arrowEllipticalArcFilledTriangle',
     action: {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EllipticalArcFilledTriangle,
@@ -281,7 +281,7 @@ const toolActions: Record<string, ToolActionEntry> = {
       isHidden(options, 'reaction-arrow-elliptical-arc-arrow-filled-triangle'),
   },
   'reaction-arrow-elliptical-arc-arrow-open-angle': {
-    title: 'Arrow Elliptical Arc Open Angle Tool',
+    title: 'toolbar:tools.arrowEllipticalArcOpenAngle',
     action: {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EllipticalArcOpenAngle,
@@ -291,7 +291,7 @@ const toolActions: Record<string, ToolActionEntry> = {
       isHidden(options, 'reaction-arrow-elliptical-arc-arrow-open-angle'),
   },
   'reaction-arrow-elliptical-arc-arrow-open-half-angle': {
-    title: 'Arrow Elliptical Arc Open Half Angle Tool',
+    title: 'toolbar:tools.arrowEllipticalArcOpenHalfAngle',
     action: {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EllipticalArcOpenHalfAngle,
@@ -301,7 +301,7 @@ const toolActions: Record<string, ToolActionEntry> = {
       isHidden(options, 'reaction-arrow-elliptical-arc-arrow-open-half-angle'),
   },
   [MULTITAIL_ARROW_TOOL_NAME]: {
-    title: 'Multi-Tailed Arrow Tool',
+    title: 'toolbar:tools.multitailArrow',
     action: {
       tool: 'reactionarrow',
       opts: MULTITAIL_ARROW_TOOL_NAME,
@@ -310,7 +310,7 @@ const toolActions: Record<string, ToolActionEntry> = {
     hidden: (options) => isHidden(options, MULTITAIL_ARROW_TOOL_NAME),
   },
   'reaction-plus': {
-    title: 'Reaction Plus Tool',
+    title: 'toolbar:tools.reactionPlus',
     action: { tool: 'reactionplus' },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-plus'),
@@ -320,13 +320,13 @@ const toolActions: Record<string, ToolActionEntry> = {
     hidden: (options) => isHidden(options, 'reaction-mapping-tools'),
   },
   'reaction-map': {
-    title: 'Reaction Mapping Tool',
+    title: 'toolbar:tools.reactionMap',
     action: { tool: 'reactionmap' },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-map'),
   },
   'reaction-unmap': {
-    title: 'Reaction Unmapping Tool',
+    title: 'toolbar:tools.reactionUnmap',
     action: { tool: 'reactionunmap' },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-unmap'),
@@ -337,28 +337,28 @@ const toolActions: Record<string, ToolActionEntry> = {
   },
   'rgroup-label': {
     shortcut: 'Mod+r',
-    title: 'R-Group Label Tool',
+    title: 'toolbar:tools.rgroupLabel',
     action: { tool: 'rgroupatom' },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'rgroup-label'),
   },
   'rgroup-fragment': {
     shortcut: ['Mod+Shift+r', 'Mod+r'],
-    title: 'R-Group Fragment Tool',
+    title: 'toolbar:tools.rgroupFragment',
     action: { tool: 'rgroupfragment' },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'rgroup-fragment'),
   },
   'rgroup-attpoints': {
     shortcut: 'Mod+r',
-    title: 'Attachment Point Tool',
+    title: 'toolbar:tools.attachmentPoint',
     action: { tool: 'apoint' },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'rgroup-attpoints'),
   },
   [CREATE_MONOMER_TOOL_NAME]: {
     shortcut: 'Mod+m',
-    title: 'Create a monomer',
+    title: 'toolbar:tools.createMonomer',
     action: {
       tool: CREATE_MONOMER_TOOL_NAME,
     },
@@ -372,26 +372,26 @@ const toolActions: Record<string, ToolActionEntry> = {
     hidden: (options) => isHidden(options, 'shapes'),
   },
   'shape-ellipse': {
-    title: 'Shape Ellipse',
+    title: 'toolbar:tools.shapeEllipse',
     action: { tool: 'simpleobject', opts: SimpleObjectMode.ellipse },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'shape-ellipse'),
   },
   'shape-rectangle': {
-    title: 'Shape Rectangle',
+    title: 'toolbar:tools.shapeRectangle',
     action: { tool: 'simpleobject', opts: SimpleObjectMode.rectangle },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'shape-rectangle'),
   },
   'shape-line': {
-    title: 'Shape Line',
+    title: 'toolbar:tools.shapeLine',
     action: { tool: 'simpleobject', opts: SimpleObjectMode.line },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'shape-line'),
   },
   text: {
     shortcut: 'Alt+t',
-    title: 'Add text',
+    title: 'toolbar:tools.addText',
     action: { tool: 'text' },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'text'),
@@ -400,7 +400,7 @@ const toolActions: Record<string, ToolActionEntry> = {
     hidden: (options) => isHidden(options, 'bonds'),
   },
   [IMAGE_KEY]: {
-    title: 'Add Image',
+    title: 'toolbar:tools.addImage',
     action: { tool: IMAGE_KEY },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, IMAGE_KEY),
@@ -423,6 +423,30 @@ const typeSchema = bondSchema.properties.type;
 const bondTypes = typeSchema.enum as string[];
 const bondTypeNames = typeSchema.enumNames as string[];
 
+// Full, per-type toolbar tool titles. Kept separate from `bondTypeNames`
+// above (a translation-key array resolved separately by whatever reads
+// `titleParams.type` - see getBondTypeName/Bond.tsx) because "{type} Bond"-
+// style ICU concatenation doesn't translate naturally into every language
+// (e.g. zh-CN bond names already include the "bond" word: "单键", "双键",
+// ... whereas the bare Bond Properties dropdown / context-menu submenu
+// still want the shorter, unsuffixed English "Single"/"Double"/...).
+const bondTypeTitleKeys: Record<string, string> = {
+  single: 'toolbar:tools.bondTypeTitles.single',
+  up: 'toolbar:tools.bondTypeTitles.up',
+  down: 'toolbar:tools.bondTypeTitles.down',
+  updown: 'toolbar:tools.bondTypeTitles.updown',
+  double: 'toolbar:tools.bondTypeTitles.double',
+  crossed: 'toolbar:tools.bondTypeTitles.crossed',
+  triple: 'toolbar:tools.bondTypeTitles.triple',
+  aromatic: 'toolbar:tools.bondTypeTitles.aromatic',
+  any: 'toolbar:tools.bondTypeTitles.any',
+  hydrogen: 'toolbar:tools.bondTypeTitles.hydrogen',
+  singledouble: 'toolbar:tools.bondTypeTitles.singledouble',
+  singlearomatic: 'toolbar:tools.bondTypeTitles.singlearomatic',
+  doublearomatic: 'toolbar:tools.bondTypeTitles.doublearomatic',
+  dative: 'toolbar:tools.bondTypeTitles.dative',
+};
+
 const monomerWizardDisallowedBondTypes: Set<string> = new Set(
   MONOMER_WIZARD_DISALLOWED_BOND_TYPES,
 );
@@ -430,7 +454,12 @@ const monomerWizardDisallowedBondTypes: Set<string> = new Set(
 export default bondTypes.reduce<Record<string, ToolActionEntry>>(
   (res, type, i) => {
     res[`bond-${type}`] = {
-      title: `${bondTypeNames[i]} Bond`,
+      // `type` is '' only for the schema's unused placeholder enum entry,
+      // which is never rendered in any toolbar group (see Bond/options.ts) -
+      // fall back to a real key so it still satisfies the "every tool has a
+      // title" invariant without affecting anything user-visible.
+      title: bondTypeTitleKeys[type] ?? bondTypeTitleKeys.single,
+      titleParams: { type: bondTypeNames[i] },
       shortcut: bondCuts[type],
       action: {
         tool: 'bond',

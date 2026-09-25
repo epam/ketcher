@@ -15,6 +15,7 @@
  ***************************************************************************/
 import { Icon, IconName } from 'ketcher-react';
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import { FileDrop } from './FileDrop';
 import { OpenOptionText } from './sharedStyles';
 
@@ -37,11 +38,11 @@ const RootContainer = styled.div`
   align-items: flex-start;
   margin-bottom: 20px;
   & > * {
-    margin-right: 18px;
+    margin-inline-end: 18px;
   }
 
   & :last-child {
-    margin-right: 0;
+    margin-inline-end: 0;
   }
 `;
 
@@ -75,6 +76,7 @@ const OpenOptions = ({
   fileLoadHandler,
   errorHandler,
 }: OpenOptionsProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   return (
     <RootContainer>
       <DropContainer
@@ -82,14 +84,14 @@ const OpenOptions = ({
         onClick={selectClipboard}
       >
         <Icon name={ICON_NAMES.PASTE} />
-        <OpenOptionText>Paste from clipboard</OpenOptionText>
+        <OpenOptionText>{t('open.pasteFromClipboard')}</OpenOptionText>
       </DropContainer>
       <DropContainer data-testid="open-from-file-button">
         <FileDrop
           onDropAccepted={fileLoadHandler}
           onDropRejected={(e) => errorHandler(`Unable to accept file(s). ${e}`)}
-          buttonLabel="Open from file"
-          textLabel="or drag file here"
+          buttonLabel={t('open.openFromFile')}
+          textLabel={t('open.orDragFileHere')}
           iconName={ICON_NAMES.FILE}
         />
       </DropContainer>
@@ -98,11 +100,11 @@ const OpenOptions = ({
           accept="image/*"
           onDropAccepted={fileLoadHandler}
           onDropRejected={(e) => errorHandler(`Unable to accept file(s). ${e}`)}
-          buttonLabel="Open from image"
-          textLabel="or drag file here"
+          buttonLabel={t('open.openFromImage')}
+          textLabel={t('open.orDragFileHere')}
           iconName={ICON_NAMES.IMAGE}
           disabled
-          disabledText="Image Recognition service is not available"
+          disabledText={t('open.imageRecognitionUnavailable')}
         />
       </DropContainer>
     </RootContainer>

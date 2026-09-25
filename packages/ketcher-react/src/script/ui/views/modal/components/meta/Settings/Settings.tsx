@@ -16,12 +16,13 @@
  ***************************************************************************/
 
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
-import Form, { Field } from '../../../../../component/form/form/form';
+import Form, { Field, Label } from '../../../../../component/form/form/form';
 import {
   setDefaultSettings,
   updateFormState,
 } from '../../../../../state/modal/form';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker';
 import { Dialog } from '../../../../components';
@@ -44,6 +45,7 @@ import { isEqual } from 'lodash';
 import { Icon } from 'components';
 import { ACS_STYLE_DEFAULT_SETTINGS } from 'src/constants';
 import { onAction } from 'src/script/ui/state/shared';
+import i18n, { SUPPORTED_LANGUAGES } from 'src/i18n/i18n';
 
 interface SettingsProps extends BaseProps {
   ketcherId: string;
@@ -78,6 +80,7 @@ const HeaderContent = ({
   formState,
   initState,
 }) => {
+  const { t } = useTranslation('dialogs');
   const getIsResetDisabled = () => {
     if (formState.result.init) return isEqual(defaultSettings, initState);
     else return isEqual(defaultSettings, formState.result);
@@ -85,9 +88,9 @@ const HeaderContent = ({
 
   return (
     <div className={classes.headerContent}>
-      <span className={classes.title}> Settings</span>
+      <span className={classes.title}> {t('meta.settings.headerTitle')}</span>
       <OpenButton
-        title="Open from File"
+        title={t('meta.settings.openFromFile')}
         key="settings"
         server={server}
         onLoad={onOpenFile}
@@ -97,7 +100,7 @@ const HeaderContent = ({
         <Icon name="open-1" />
       </OpenButton>
       <SaveButton
-        title="Save to File"
+        title={t('meta.settings.saveToFile')}
         key="ketcher-settings"
         data={JSON.stringify(formState.result)}
         filename="ketcher-settings"
@@ -107,7 +110,7 @@ const HeaderContent = ({
         <Icon name="save-1" />
       </SaveButton>
       <button
-        title="Reset"
+        title={t('meta.settings.reset')}
         key="settings-button"
         onClick={onReset}
         className={classes.button}
@@ -125,6 +128,7 @@ type Props = SettingsProps & SettingsCallProps;
 const settingsProps = settingsSchema.properties;
 
 const SettingsDialog = (props: Props) => {
+  const { t } = useTranslation(['common', 'dialogs', 'settings']);
   const {
     initState,
     formState,
@@ -145,9 +149,14 @@ const SettingsDialog = (props: Props) => {
     return changed;
   }, [initState, formState.result]);
 
+  const languageOptions = SUPPORTED_LANGUAGES.map(({ code, label }) => ({
+    value: code,
+    label,
+  }));
+
   const atomsTab = {
     key: 'atoms',
-    label: 'Atoms',
+    label: t('dialogs:meta.settings.atomsTab'),
     content: (
       <fieldset>
         <Field name="carbonExplicitly" data-testid="carbon-explicitly" />
@@ -158,6 +167,7 @@ const SettingsDialog = (props: Props) => {
           component={Select}
           options={getSelectOptionsFromSchema(
             settingsProps?.showHydrogenLabels,
+            t,
           )}
           data-testid="show-hydrogen-labels"
         />
@@ -167,7 +177,7 @@ const SettingsDialog = (props: Props) => {
   };
   const bondsTab = {
     key: 'bonds',
-    label: 'Bonds',
+    label: t('dialogs:meta.settings.bondsTab'),
     content: (
       <fieldset>
         <Field name="aromaticCircle" data-testid="aromatic-circle" />
@@ -177,7 +187,10 @@ const SettingsDialog = (props: Props) => {
           labelPos={false}
           extraName="bondLengthUnit"
         />
-        <Field name="bondSpacing" extraLabel="% of length" />
+        <Field
+          name="bondSpacing"
+          extraLabel={t('settings:fields.bondSpacing.extraLabel')}
+        />
         <Field
           name="bondThickness"
           component={MeasureInput}
@@ -192,7 +205,7 @@ const SettingsDialog = (props: Props) => {
         />
         <Field
           name="hashSpacing"
-          tooltip="Sets the spacing for 'down' stereochemical bond."
+          tooltip={t('dialogs:meta.settings.hashSpacingTooltip')}
           component={MeasureInput}
           labelPos={false}
           extraName="hashSpacingUnit"
@@ -202,36 +215,39 @@ const SettingsDialog = (props: Props) => {
   };
   const stereoTab = {
     key: 'stereo',
-    label: 'Stereochemistry',
+    label: t('dialogs:meta.settings.stereochemistryTab'),
     content: (
       <fieldset>
         <Field
           name="showStereoFlags"
-          tooltip="Display stereochemistry designation labels (ABS, AND Enantiomer, OR Enantiomer and Mixed) for the whole molecule."
+          tooltip={t('dialogs:meta.settings.showStereoFlagsTooltip')}
           data-testid="show-stereo-flags"
         />
         <Field
           name="stereoLabelStyle"
-          tooltip="Controls the placement of stereochemical labels. At the chiral centers, On displays ‘abs’, ‘or’, ‘and’, and mixed labels; Classic displays ‘or’ and mixed labels; IUPAC Style displays mixed labels; and Off displays none."
+          tooltip={t('dialogs:meta.settings.stereoLabelStyleTooltip')}
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.stereoLabelStyle)}
+          options={getSelectOptionsFromSchema(
+            settingsProps?.stereoLabelStyle,
+            t,
+          )}
           data-testid="stereo-label-style"
         />
         <Field
           name="colorOfAbsoluteCenters"
-          tooltip="Color of atom ABS label (centers with a defined absolute configuration)."
+          tooltip={t('dialogs:meta.settings.colorOfAbsoluteCentersTooltip')}
           component={ColorPicker}
           data-testid="color-of-absolute-centers"
         />
         <Field
           name="colorOfAndCenters"
-          tooltip="Color of atom & (AND) label (both isomers at the marked centers are included)."
+          tooltip={t('dialogs:meta.settings.colorOfAndCentersTooltip')}
           component={ColorPicker}
           data-testid="color-of-and-centers"
         />
         <Field
           name="colorOfOrCenters"
-          tooltip="Color of atom OR labels (one isomer at the marked center is included)."
+          tooltip={t('dialogs:meta.settings.colorOfOrCentersTooltip')}
           component={ColorPicker}
           data-testid="color-of-or-centers"
         />
@@ -240,12 +256,13 @@ const SettingsDialog = (props: Props) => {
           component={Select}
           options={getSelectOptionsFromSchema(
             settingsProps?.colorStereogenicCenters,
+            t,
           )}
           data-testid="color-stereogenic-centers"
         />
         <Field
           name="autoFadeOfStereoLabels"
-          tooltip="Automatically fades center labels when a molecule has many chiral centers."
+          tooltip={t('dialogs:meta.settings.autoFadeOfStereoLabelsTooltip')}
           data-testid="auto-fade-of-stereo-labels"
         />
         <Field name="absFlagLabel" data-testid="abs-flag-label" />
@@ -254,7 +271,7 @@ const SettingsDialog = (props: Props) => {
         <Field name="mixedFlagLabel" data-testid="mixed-flag-label" />
         <Field
           name="ignoreChiralFlag"
-          tooltip="Hide stereo flags and show labels only for non-absolute chiral centers on load from MOL files."
+          tooltip={t('dialogs:meta.settings.ignoreChiralFlagTooltip')}
           data-testid="ignore-chiral-flag"
         />
       </fieldset>
@@ -262,12 +279,14 @@ const SettingsDialog = (props: Props) => {
   };
   const reactionsTab = {
     key: 'reactions',
-    label: 'Reactions & Components',
+    label: t('dialogs:meta.settings.reactionsTab'),
     content: (
       <fieldset>
         <Field
           name="reactionComponentMarginSize"
-          tooltip="Adjust the spacing between reactants, products, arrows, catalyst in reaction diagrams."
+          tooltip={t(
+            'dialogs:meta.settings.reactionComponentMarginSizeTooltip',
+          )}
           component={MeasureInput}
           labelPos={false}
           extraName="reactionComponentMarginSizeUnit"
@@ -287,18 +306,30 @@ const SettingsDialog = (props: Props) => {
   };
   const generalTab = {
     key: 'general',
-    label: 'General Editing & Display',
+    label: t('dialogs:meta.settings.generalTab'),
     content: (
       <fieldset>
+        {SUPPORTED_LANGUAGES.length > 1 && (
+          <Label title={t('settings:language.title')} data-testid="language">
+            <span>
+              <Select
+                value={i18n.language}
+                onChange={(lng) => i18n.changeLanguage(lng)}
+                options={languageOptions}
+                data-testid="language-select"
+              />
+            </span>
+          </Label>
+        )}
         <Field
           name="resetToSelect"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.resetToSelect)}
+          options={getSelectOptionsFromSchema(settingsProps?.resetToSelect, t)}
           data-testid="reset-to-select"
         />
         <Field
           name="rotationStep"
-          tooltip="Allows the rotation tool to move only at the specified angle increments. To disable, hold CTRL."
+          tooltip={t('dialogs:meta.settings.rotationStepTooltip')}
           data-testid="rotation-step"
         />
         <Field
@@ -320,9 +351,12 @@ const SettingsDialog = (props: Props) => {
         />
         <Field
           name="imageResolution"
-          tooltip="Set image quality for PNG files: Low = 72 DPI, High = 600 DPI."
+          tooltip={t('dialogs:meta.settings.imageResolutionTooltip')}
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.imageResolution)}
+          options={getSelectOptionsFromSchema(
+            settingsProps?.imageResolution,
+            t,
+          )}
           data-testid="image-resolution"
         />
       </fieldset>
@@ -330,25 +364,25 @@ const SettingsDialog = (props: Props) => {
   };
   const threeDViewerTab = {
     key: '3dviewer',
-    label: '3D Viewer',
+    label: t('dialogs:meta.settings.viewer3dTab'),
     content: (
       <fieldset className={classes.viewer}>
         <Field
           name="miewMode"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.miewMode)}
+          options={getSelectOptionsFromSchema(settingsProps?.miewMode, t)}
           data-testid="display-mode"
         />
         <Field
           name="miewTheme"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.miewTheme)}
+          options={getSelectOptionsFromSchema(settingsProps?.miewTheme, t)}
           data-testid="background-color"
         />
         <Field
           name="miewAtomLabel"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.miewAtomLabel)}
+          options={getSelectOptionsFromSchema(settingsProps?.miewAtomLabel, t)}
           data-testid="label-coloring"
         />
       </fieldset>
@@ -356,18 +390,20 @@ const SettingsDialog = (props: Props) => {
   };
   const validationTab = {
     key: 'validation',
-    label: 'Validation & Calculation',
+    label: t('dialogs:meta.settings.validationTab'),
     content: (
       <fieldset>
         <Field
           name="showValenceWarnings"
-          tooltip="Underline atom in red when their valence is exceeded."
+          tooltip={t('dialogs:meta.settings.showValenceWarningsTooltip')}
           data-testid="show-valence-warnings"
         />
         <fieldset disabled={!appOpts.server}>
           <Field
             name="ignore-stereochemistry-errors"
-            tooltip="Allow conversion between file formats for structures with invalid stereochemistry without showing errors."
+            tooltip={t(
+              'dialogs:meta.settings.ignoreStereochemistryErrorsTooltip',
+            )}
             data-testid="ignore-stereochemistry-errors"
           />
           <Field
@@ -379,6 +415,7 @@ const SettingsDialog = (props: Props) => {
             component={Select}
             options={getSelectOptionsFromSchema(
               settingsProps?.['valence-mode'],
+              t,
             )}
             data-testid="valence-mode"
           />
@@ -388,13 +425,13 @@ const SettingsDialog = (props: Props) => {
   };
   const debuggingTab = {
     key: 'debugging',
-    label: 'Debugging',
+    label: t('dialogs:meta.settings.debuggingTab'),
     content: (
       <fieldset>
         <fieldset disabled={!appOpts.server}>
           <Field
             name="smart-layout"
-            tooltip="Displays cyclic structures as regular polygons with equal bond angles and lengths when off, or irregular polygons when on."
+            tooltip={t('dialogs:meta.settings.smartLayoutTooltip')}
             data-testid="smart-layout"
           />
         </fieldset>
@@ -420,7 +457,7 @@ const SettingsDialog = (props: Props) => {
       onClick={onACSStyle}
       data-testid="acs-style-button"
     >
-      Set ACS Settings
+      {t('dialogs:meta.settings.setAcsSettings')}
     </button>
   );
 
@@ -441,7 +478,7 @@ const SettingsDialog = (props: Props) => {
       result={() => [formState.result, initState]}
       valid={() => formState.valid}
       params={prop}
-      buttonsNameMap={{ OK: 'Apply' }}
+      buttonsNameMap={{ OK: t('common:button.apply') }}
       buttons={[ACSStyleButton, 'Cancel', 'OK']}
       withDivider
       needMargin={false}
@@ -499,8 +536,7 @@ const mapDispatchToProps = (dispatch, ownProps: SettingsOwnProps) => ({
           dialog: 'info-modal',
           prop: {
             title: '',
-            customText:
-              'To fully apply these changes, you need to apply the layout.',
+            customText: i18n.t('dialogs:meta.settings.applyLayoutNotice'),
             button: 'OK',
           },
         }),

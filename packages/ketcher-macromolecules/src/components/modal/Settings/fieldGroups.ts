@@ -28,24 +28,32 @@ export type SettingFieldName = {
 
 export interface FieldGroup {
   id: string;
+  /**
+   * Frozen English literal, NOT a translation key - Playwright's
+   * settingsDialog/Constants.ts hardcodes `${title}-accordion` test ids
+   * (e.g. 'General-accordion'), so this value must never change. Use
+   * `titleKey` for the translated, user-visible group label.
+   */
   title: string;
+  titleKey: string;
   fields: Array<SettingFieldName>;
 }
 
 export interface FieldDefinition {
-  label: string;
+  labelKey: string;
   type: 'checkbox' | 'number' | 'text' | 'select' | 'color';
-  options?: Array<{ value: SettingFieldValue; label: string }>;
+  options?: Array<{ value: SettingFieldValue; labelKey: string }>;
   min?: number;
   max?: number;
   step?: number;
-  tooltip?: string;
+  tooltipKey?: string;
 }
 
 export const FIELD_GROUPS: FieldGroup[] = [
   {
     id: 'atoms',
     title: 'Atoms',
+    titleKey: 'settings.groups.atoms',
     fields: [
       'carbonExplicitly',
       'showCharge',
@@ -57,6 +65,7 @@ export const FIELD_GROUPS: FieldGroup[] = [
   {
     id: 'bonds',
     title: 'Bonds',
+    titleKey: 'settings.groups.bonds',
     // bondLength is not tracked by the macromolecules settings form; omitted.
     fields: [
       'aromaticCircle',
@@ -72,6 +81,7 @@ export const FIELD_GROUPS: FieldGroup[] = [
   {
     id: 'stereochemistry',
     title: 'Stereochemistry',
+    titleKey: 'settings.groups.stereochemistry',
     fields: [
       'showStereoFlags',
       'stereoLabelStyle',
@@ -90,6 +100,7 @@ export const FIELD_GROUPS: FieldGroup[] = [
   {
     id: 'reactions',
     title: 'Reactions & Components',
+    titleKey: 'settings.groups.reactions',
     fields: [
       'reactionComponentMarginSize',
       'reactionComponentMarginSizeUnit',
@@ -100,6 +111,7 @@ export const FIELD_GROUPS: FieldGroup[] = [
   {
     id: 'general',
     title: 'General Editing & Display',
+    titleKey: 'settings.groups.general',
     fields: [
       'resetToSelect',
       'rotationStep',
@@ -114,11 +126,13 @@ export const FIELD_GROUPS: FieldGroup[] = [
   {
     id: 'viewer3d',
     title: '3D Viewer',
+    titleKey: 'settings.groups.viewer3d',
     fields: ['miewMode', 'miewTheme', 'miewAtomLabel'],
   },
   {
     id: 'validation',
     title: 'Validation & Calculation',
+    titleKey: 'settings.groups.validation',
     // valence-mode is not tracked by the macromolecules settings form; omitted.
     fields: [
       'showValenceWarnings',
@@ -129,6 +143,7 @@ export const FIELD_GROUPS: FieldGroup[] = [
   {
     id: 'debug',
     title: 'Debugging',
+    titleKey: 'settings.groups.debug',
     fields: [
       'smart-layout',
       'showAtomIds',
@@ -139,368 +154,365 @@ export const FIELD_GROUPS: FieldGroup[] = [
   },
 ];
 
+// Plain literal English (not translation keys): px/pt/cm/inch are unit
+// abbreviations, not language content - same convention as ketcher-react's
+// own Settings dialog (see .memory-bank/modules/i18n.md).
+const UNIT_OPTIONS = [
+  { value: 'px', labelKey: 'px' },
+  { value: 'pt', labelKey: 'pt' },
+  { value: 'cm', labelKey: 'cm' },
+  { value: 'inch', labelKey: 'inch' },
+];
+
 export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
   // General
   resetToSelect: {
-    label: 'Reset to Select Tool',
+    labelKey: 'settings.fields.resetToSelect',
     type: 'select',
     options: [
-      { value: true, label: 'Auto-Select On' },
-      { value: 'paste', label: 'Auto-Select After Paste' },
-      { value: false, label: 'Manual Select' },
+      { value: true, labelKey: 'settings.fields.resetToSelectOn' },
+      { value: 'paste', labelKey: 'settings.fields.resetToSelectAfterPaste' },
+      { value: false, labelKey: 'settings.fields.resetToSelectManual' },
     ],
   },
   rotationStep: {
-    label: 'Rotation Step, º',
+    labelKey: 'settings.fields.rotationStep',
     type: 'number',
     min: 1,
     max: 90,
     step: 1,
-    tooltip:
-      'Allows the rotation tool to move only at the specified angle increments. To disable, hold CTRL.',
+    tooltipKey: 'settings.fields.rotationStepTooltip',
   },
   showValenceWarnings: {
-    label: 'Show valence warnings',
+    labelKey: 'settings.fields.showValenceWarnings',
     type: 'checkbox',
-    tooltip: 'Underline atom in red when their valence is exceeded.',
+    tooltipKey: 'settings.fields.showValenceWarningsTooltip',
   },
   atomColoring: {
-    label: 'Atom coloring',
+    labelKey: 'settings.fields.atomColoring',
     type: 'checkbox',
   },
   font: {
-    label: 'Font',
+    labelKey: 'settings.fields.font',
     type: 'select',
     // TODO: Replace with dynamic font detection (see ketcher-react/systemfonts.jsx)
     // This hardcoded list should be replaced with runtime font detection using FontFaceObserver
     // to only show fonts actually available on the user's system
+    // Font family names are proper nouns, not translation keys.
     options: [
-      { value: '30px Arial', label: 'Arial' },
-      { value: '30px Arial Black', label: 'Arial Black' },
-      { value: '30px Comic Sans MS', label: 'Comic Sans MS' },
-      { value: '30px Courier New', label: 'Courier New' },
-      { value: '30px Georgia', label: 'Georgia' },
-      { value: '30px Impact', label: 'Impact' },
-      { value: '30px Charcoal', label: 'Charcoal' },
-      { value: '30px Lucida Console', label: 'Lucida Console' },
-      { value: '30px Monaco', label: 'Monaco' },
-      { value: '30px Palatino Linotype', label: 'Palatino Linotype' },
-      { value: '30px Book Antiqua', label: 'Book Antiqua' },
-      { value: '30px Palatino', label: 'Palatino' },
-      { value: '30px Tahoma', label: 'Tahoma' },
-      { value: '30px Geneva', label: 'Geneva' },
-      { value: '30px Times New Roman', label: 'Times New Roman' },
-      { value: '30px Times', label: 'Times' },
-      { value: '30px Verdana', label: 'Verdana' },
-      { value: '30px Symbol', label: 'Symbol' },
-      { value: '30px MS Serif', label: 'MS Serif' },
-      { value: '30px MS Sans Serif', label: 'MS Sans Serif' },
-      { value: '30px New York', label: 'New York' },
-      { value: '30px Droid Sans', label: 'Droid Sans' },
-      { value: '30px Droid Serif', label: 'Droid Serif' },
-      { value: '30px Droid Sans Mono', label: 'Droid Sans Mono' },
-      { value: '30px Roboto', label: 'Roboto' },
+      { value: '30px Arial', labelKey: 'Arial' },
+      { value: '30px Arial Black', labelKey: 'Arial Black' },
+      { value: '30px Comic Sans MS', labelKey: 'Comic Sans MS' },
+      { value: '30px Courier New', labelKey: 'Courier New' },
+      { value: '30px Georgia', labelKey: 'Georgia' },
+      { value: '30px Impact', labelKey: 'Impact' },
+      { value: '30px Charcoal', labelKey: 'Charcoal' },
+      { value: '30px Lucida Console', labelKey: 'Lucida Console' },
+      { value: '30px Monaco', labelKey: 'Monaco' },
+      { value: '30px Palatino Linotype', labelKey: 'Palatino Linotype' },
+      { value: '30px Book Antiqua', labelKey: 'Book Antiqua' },
+      { value: '30px Palatino', labelKey: 'Palatino' },
+      { value: '30px Tahoma', labelKey: 'Tahoma' },
+      { value: '30px Geneva', labelKey: 'Geneva' },
+      { value: '30px Times New Roman', labelKey: 'Times New Roman' },
+      { value: '30px Times', labelKey: 'Times' },
+      { value: '30px Verdana', labelKey: 'Verdana' },
+      { value: '30px Symbol', labelKey: 'Symbol' },
+      { value: '30px MS Serif', labelKey: 'MS Serif' },
+      { value: '30px MS Sans Serif', labelKey: 'MS Sans Serif' },
+      { value: '30px New York', labelKey: 'New York' },
+      { value: '30px Droid Sans', labelKey: 'Droid Sans' },
+      { value: '30px Droid Serif', labelKey: 'Droid Serif' },
+      { value: '30px Droid Sans Mono', labelKey: 'Droid Sans Mono' },
+      { value: '30px Roboto', labelKey: 'Roboto' },
     ],
   },
   fontsz: {
-    label: 'Font size',
+    labelKey: 'settings.fields.fontsz',
     type: 'number',
     min: 1,
     max: 96,
     step: 1,
   },
   fontszUnit: {
-    label: 'Font size unit',
+    labelKey: 'settings.fields.fontszUnit',
     type: 'select',
-    options: [
-      { value: 'px', label: 'px' },
-      { value: 'cm', label: 'cm' },
-      { value: 'pt', label: 'pt' },
-      { value: 'inch', label: 'inch' },
-    ],
+    options: UNIT_OPTIONS,
   },
   fontszsub: {
-    label: 'Subscript/Superscript font size',
+    labelKey: 'settings.fields.fontszsub',
     type: 'number',
     min: 1,
     max: 96,
     step: 1,
   },
   fontszsubUnit: {
-    label: 'Subscript/Superscript font size unit',
+    labelKey: 'settings.fields.fontszsubUnit',
     type: 'select',
-    options: [
-      { value: 'px', label: 'px' },
-      { value: 'cm', label: 'cm' },
-      { value: 'pt', label: 'pt' },
-      { value: 'inch', label: 'inch' },
-    ],
+    options: UNIT_OPTIONS,
   },
   reactionComponentMarginSize: {
-    label: 'Reaction component margin size',
+    labelKey: 'settings.fields.reactionComponentMarginSize',
     type: 'number',
     min: 0.1,
     max: 1000,
     step: 0.1,
-    tooltip:
-      'Adjust the spacing between reactants, products, arrows, catalyst in reaction diagrams.',
+    tooltipKey: 'settings.fields.reactionComponentMarginSizeTooltip',
   },
   reactionComponentMarginSizeUnit: {
-    label: 'Reaction component margin size unit',
+    labelKey: 'settings.fields.reactionComponentMarginSizeUnit',
     type: 'select',
-    options: [
-      { value: 'px', label: 'px' },
-      { value: 'cm', label: 'cm' },
-      { value: 'pt', label: 'pt' },
-      { value: 'inch', label: 'inch' },
-    ],
+    options: UNIT_OPTIONS,
   },
   imageResolution: {
-    label: 'Image resolution',
+    labelKey: 'settings.fields.imageResolution',
     type: 'select',
-    tooltip: 'Set image quality for PNG files: Low = 72 DPI, High = 600 DPI.',
+    tooltipKey: 'settings.fields.imageResolutionTooltip',
     options: [
-      { value: '600', label: 'high' },
-      { value: '72', label: 'low' },
+      { value: '72', labelKey: 'settings.fields.imageResolutionLow' },
+      { value: '600', labelKey: 'settings.fields.imageResolutionHigh' },
     ],
   },
 
   // Stereochemistry
   showStereoFlags: {
-    label: 'Show the Stereo flags',
+    labelKey: 'settings.fields.showStereoFlags',
     type: 'checkbox',
-    tooltip:
-      'Display stereochemistry designation labels (ABS, AND Enantiomer, OR Enantiomer and Mixed) for the whole molecule.',
+    tooltipKey: 'settings.fields.showStereoFlagsTooltip',
   },
   stereoLabelStyle: {
-    label: 'Label display at chiral centers',
+    labelKey: 'settings.fields.stereoLabelStyle',
     type: 'select',
-    tooltip:
-      'Controls the placement of stereochemical labels. At the chiral centers, On displays ‘abs’, ‘or’, ‘and’, and mixed labels; Classic displays ‘or’ and mixed labels; IUPAC Style displays mixed labels; and Off displays none.',
+    tooltipKey: 'settings.fields.stereoLabelStyleTooltip',
     options: [
-      { value: 'Iupac', label: 'IUPAC style' },
-      { value: 'Classic', label: 'Classic' },
-      { value: 'On', label: 'On' },
-      { value: 'Off', label: 'Off' },
+      { value: 'Iupac', labelKey: 'settings.fields.stereoLabelStyleIupac' },
+      {
+        value: 'Classic',
+        labelKey: 'settings.fields.stereoLabelStyleClassic',
+      },
+      { value: 'On', labelKey: 'settings.fields.stereoLabelStyleOn' },
+      { value: 'Off', labelKey: 'settings.fields.stereoLabelStyleOff' },
     ],
   },
   colorOfAbsoluteCenters: {
-    label: 'ABS Center color',
+    labelKey: 'settings.fields.colorOfAbsoluteCenters',
     type: 'color',
-    tooltip:
-      'Color of atom ABS label (centers with a defined absolute configuration).',
+    tooltipKey: 'settings.fields.colorOfAbsoluteCentersTooltip',
   },
   colorOfAndCenters: {
-    label: 'AND Centers color',
+    labelKey: 'settings.fields.colorOfAndCenters',
     type: 'color',
-    tooltip:
-      'Color of atom & (AND) label (both isomers at the marked centers are included).',
+    tooltipKey: 'settings.fields.colorOfAndCentersTooltip',
   },
   colorOfOrCenters: {
-    label: 'OR Centers color',
+    labelKey: 'settings.fields.colorOfOrCenters',
     type: 'color',
-    tooltip:
-      'Color of atom OR labels (one isomer at the marked center is included).',
+    tooltipKey: 'settings.fields.colorOfOrCentersTooltip',
   },
   colorStereogenicCenters: {
-    label: 'Color chiral centers',
+    labelKey: 'settings.fields.colorStereogenicCenters',
     type: 'select',
     options: [
-      { value: 'LabelsOnly', label: 'Labels Only' },
-      { value: 'BondsOnly', label: 'Bonds Only' },
-      { value: 'LabelsAndBonds', label: 'Labels And Bonds' },
-      { value: 'Off', label: 'Off' },
+      {
+        value: 'LabelsOnly',
+        labelKey: 'settings.fields.colorStereogenicCentersLabelsOnly',
+      },
+      {
+        value: 'BondsOnly',
+        labelKey: 'settings.fields.colorStereogenicCentersBondsOnly',
+      },
+      {
+        value: 'LabelsAndBonds',
+        labelKey: 'settings.fields.colorStereogenicCentersLabelsAndBonds',
+      },
+      {
+        value: 'Off',
+        labelKey: 'settings.fields.colorStereogenicCentersOff',
+      },
     ],
   },
   autoFadeOfStereoLabels: {
-    label: 'Auto fade And/Or center labels',
+    labelKey: 'settings.fields.autoFadeOfStereoLabels',
     type: 'checkbox',
-    tooltip:
-      'Automatically fades center labels when a molecule has many chiral centers.',
+    tooltipKey: 'settings.fields.autoFadeOfStereoLabelsTooltip',
   },
   absFlagLabel: {
-    label: 'Text of Absolute flag',
+    labelKey: 'settings.fields.absFlagLabel',
     type: 'text',
   },
   andFlagLabel: {
-    label: 'Text of AND flag',
+    labelKey: 'settings.fields.andFlagLabel',
     type: 'text',
   },
   orFlagLabel: {
-    label: 'Text of OR flag',
+    labelKey: 'settings.fields.orFlagLabel',
     type: 'text',
   },
   mixedFlagLabel: {
-    label: 'Text of Mixed flag',
+    labelKey: 'settings.fields.mixedFlagLabel',
     type: 'text',
   },
   ignoreChiralFlag: {
-    label: 'Ignore the chiral flag',
+    labelKey: 'settings.fields.ignoreChiralFlag',
     type: 'checkbox',
-    tooltip:
-      'Hide stereo flags and show labels only for non-absolute chiral centers on load from MOL files.',
+    tooltipKey: 'settings.fields.ignoreChiralFlagTooltip',
   },
 
   // Atoms
   carbonExplicitly: {
-    label: 'Display carbon labels explicitly',
+    labelKey: 'settings.fields.carbonExplicitly',
     type: 'checkbox',
   },
   showCharge: {
-    label: 'Display charge',
+    labelKey: 'settings.fields.showCharge',
     type: 'checkbox',
   },
   showValence: {
-    label: 'Display valence',
+    labelKey: 'settings.fields.showValence',
     type: 'checkbox',
   },
   showHydrogenLabels: {
-    label: 'Display hydrogen labels explicitly',
+    labelKey: 'settings.fields.showHydrogenLabels',
     type: 'select',
     options: [
-      { value: 'off', label: 'Off' },
-      { value: 'Hetero', label: 'Hetero' },
-      { value: 'Terminal', label: 'Terminal' },
-      { value: 'Terminal and Hetero', label: 'Terminal and Hetero' },
-      { value: 'On', label: 'On' },
+      { value: 'off', labelKey: 'settings.fields.showHydrogenLabelsOff' },
+      {
+        value: 'Hetero',
+        labelKey: 'settings.fields.showHydrogenLabelsHetero',
+      },
+      {
+        value: 'Terminal',
+        labelKey: 'settings.fields.showHydrogenLabelsTerminal',
+      },
+      {
+        value: 'Terminal and Hetero',
+        labelKey: 'settings.fields.showHydrogenLabelsTerminalAndHetero',
+      },
+      { value: 'On', labelKey: 'settings.fields.showHydrogenLabelsOn' },
     ],
   },
 
   // Bonds
   aromaticCircle: {
-    label: 'Aromatic Bonds as circle',
+    labelKey: 'settings.fields.aromaticCircle',
     type: 'checkbox',
   },
   bondSpacing: {
-    label: 'Bond spacing',
+    labelKey: 'settings.fields.bondSpacing',
     type: 'number',
     min: 0.1,
     max: 10,
     step: 0.1,
   },
   bondThickness: {
-    label: 'Bond thickness',
+    labelKey: 'settings.fields.bondThickness',
     type: 'number',
     min: 0.1,
     max: 96,
     step: 0.1,
   },
   bondThicknessUnit: {
-    label: 'Bond thickness unit',
+    labelKey: 'settings.fields.bondThicknessUnit',
     type: 'select',
-    options: [
-      { value: 'px', label: 'px' },
-      { value: 'cm', label: 'cm' },
-      { value: 'pt', label: 'pt' },
-      { value: 'inch', label: 'inch' },
-    ],
+    options: UNIT_OPTIONS,
   },
   stereoBondWidth: {
-    label: 'Stereo (Wedge) bond width',
+    labelKey: 'settings.fields.stereoBondWidth',
     type: 'number',
     min: 0.1,
     max: 96,
     step: 0.1,
   },
   stereoBondWidthUnit: {
-    label: 'Stereo (Wedge) bond width unit',
+    labelKey: 'settings.fields.stereoBondWidthUnit',
     type: 'select',
-    options: [
-      { value: 'px', label: 'px' },
-      { value: 'cm', label: 'cm' },
-      { value: 'pt', label: 'pt' },
-      { value: 'inch', label: 'inch' },
-    ],
+    options: UNIT_OPTIONS,
   },
   hashSpacing: {
-    label: 'Hash spacing',
+    labelKey: 'settings.fields.hashSpacing',
     type: 'number',
     min: 0.1,
     max: 1000,
     step: 0.1,
-    tooltip: "Sets the spacing for 'down' stereochemical bond.",
+    tooltipKey: 'settings.fields.hashSpacingTooltip',
   },
   hashSpacingUnit: {
-    label: 'Hash spacing unit',
+    labelKey: 'settings.fields.hashSpacingUnit',
     type: 'select',
-    options: [
-      { value: 'px', label: 'px' },
-      { value: 'cm', label: 'cm' },
-      { value: 'pt', label: 'pt' },
-      { value: 'inch', label: 'inch' },
-    ],
+    options: UNIT_OPTIONS,
   },
 
   // Reactions & Components / Validation & Calculation / Debugging
   'smart-layout': {
-    label: 'Smart-layout',
+    labelKey: 'settings.fields.smartLayout',
     type: 'checkbox',
-    tooltip:
-      'Displays cyclic structures as regular polygons with equal bond angles and lengths when off, or irregular polygons when on.',
+    tooltipKey: 'settings.fields.smartLayoutTooltip',
   },
   'ignore-stereochemistry-errors': {
-    label: 'Ignore stereochemistry errors',
+    labelKey: 'settings.fields.ignoreStereochemistryErrors',
     type: 'checkbox',
-    tooltip:
-      'Allow conversion between file formats for structures with invalid stereochemistry without showing errors.',
+    tooltipKey: 'settings.fields.ignoreStereochemistryErrorsTooltip',
   },
   'mass-skip-error-on-pseudoatoms': {
-    label: 'Ignore pseudoatoms at mass',
+    labelKey: 'settings.fields.massSkipErrorOnPseudoatoms',
     type: 'checkbox',
   },
   'gross-formula-add-rsites': {
-    label: 'Add R sites at mass calculation',
+    labelKey: 'settings.fields.grossFormulaAddRsites',
     type: 'checkbox',
   },
   'gross-formula-add-isotopes': {
-    label: 'Add Isotopes at mass calculation',
+    labelKey: 'settings.fields.grossFormulaAddIsotopes',
     type: 'checkbox',
   },
 
   // 3D Viewer
   miewMode: {
-    label: 'Display mode',
+    labelKey: 'settings.fields.miewMode',
     type: 'select',
     options: [
-      { value: 'LN', label: 'Lines' },
-      { value: 'BS', label: 'Balls and Sticks' },
-      { value: 'LC', label: 'Licorice' },
+      { value: 'LN', labelKey: 'settings.fields.miewModeLines' },
+      { value: 'BS', labelKey: 'settings.fields.miewModeBallAndStick' },
+      { value: 'LC', labelKey: 'settings.fields.miewModeLicorice' },
     ],
   },
   miewTheme: {
-    label: 'Background color',
+    labelKey: 'settings.fields.miewTheme',
     type: 'select',
     options: [
-      { value: 'light', label: 'Light' },
-      { value: 'dark', label: 'Dark' },
+      { value: 'light', labelKey: 'settings.fields.miewThemeLight' },
+      { value: 'dark', labelKey: 'settings.fields.miewThemeDark' },
     ],
   },
   miewAtomLabel: {
-    label: 'Label coloring',
+    labelKey: 'settings.fields.miewAtomLabel',
     type: 'select',
     options: [
-      { value: 'no', label: 'No' },
-      { value: 'bright', label: 'Bright' },
-      { value: 'blackAndWhite', label: 'Black and White' },
-      { value: 'black', label: 'Black' },
+      { value: 'no', labelKey: 'settings.fields.miewAtomLabelNone' },
+      { value: 'bright', labelKey: 'settings.fields.miewAtomLabelBright' },
+      {
+        value: 'blackAndWhite',
+        labelKey: 'settings.fields.miewAtomLabelBlackAndWhite',
+      },
+      { value: 'black', labelKey: 'settings.fields.miewAtomLabelBlack' },
     ],
   },
 
   // Debug
   showAtomIds: {
-    label: 'Show atom IDs',
+    labelKey: 'settings.fields.showAtomIds',
     type: 'checkbox',
   },
   showBondIds: {
-    label: 'Show bonds IDs',
+    labelKey: 'settings.fields.showBondIds',
     type: 'checkbox',
   },
   showHalfBondIds: {
-    label: 'Show half bonds IDs',
+    labelKey: 'settings.fields.showHalfBondIds',
     type: 'checkbox',
   },
   showLoopIds: {
-    label: 'Show loop IDs',
+    labelKey: 'settings.fields.showLoopIds',
     type: 'checkbox',
   },
 };

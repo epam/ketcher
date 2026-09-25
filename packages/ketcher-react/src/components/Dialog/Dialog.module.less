@@ -25,7 +25,7 @@
   vertical-align: middle;
   display: flex;
   flex-direction: column;
-  text-align: left;
+  text-align: start;
   background-color: @color-background-primary;
   border-radius: 8px;
   background-clip: padding-box;
@@ -55,7 +55,7 @@
   .buttonTop {
     background-color: transparent;
     border: none;
-    margin-left: auto;
+    margin-inline-start: auto;
     padding: 0;
     align-self: center;
     height: 16px;
@@ -73,16 +73,16 @@
   justify-content: flex-end;
   padding: 16px 12px 12px;
   gap: 8px;
-    
-    .ok {
-      /* stylelint-disable-next-line declaration-property-value-no-unknown */
-      .button-primary();
-    }
 
-    .cancel {
-      /* stylelint-disable-next-line declaration-property-value-no-unknown */
-      .button-secondary();
-    }
+  .ok {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
+    .button-primary();
+  }
+
+  .cancel {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
+    .button-secondary();
+  }
 }
 
 .withDivider {

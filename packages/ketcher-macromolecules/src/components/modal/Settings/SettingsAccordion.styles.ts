@@ -47,6 +47,6 @@ export const ChangeIndicator = styled.span`
   height: 10px;
   border-radius: 50%;
   background-color: #167782;
-  margin-left: auto;
-  margin-right: 8px;
+  margin-inline-start: auto;
+  margin-inline-end: 8px;
 `;

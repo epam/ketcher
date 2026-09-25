@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 import { useAppDispatch, useAppSelector, useDebouncedCallback } from 'hooks';
+import { useTranslation } from 'react-i18next';
 import {
   MolarMeasurementUnit,
   selectEditor,
@@ -114,7 +115,7 @@ const MolecularMass = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
   height: '24px',
-  borderLeft: '1px solid #CAD3DD',
+  borderInlineStart: '1px solid #CAD3DD',
   color: '#585858',
 }));
 
@@ -229,7 +230,7 @@ const HydrophobicityHintHeader = styled('div')(() => ({
 
 const BasicPropertyName = styled('div')(() => ({
   fontSize: '10px',
-  paddingRight: '5px',
+  paddingInlineEnd: '5px',
   whiteSpace: 'nowrap',
 }));
 
@@ -312,7 +313,7 @@ const StyledMonomersCountPanelItem = styled('div')<{
     content: '';
     position: absolute;
     bottom: 0;
-    left: 0;
+    inset-inline-start: 0;
     width: 15px;
     height: 2px;
     background: ${({ theme, monomerShortName, isPeptide }) => {
@@ -351,6 +352,7 @@ interface MonomersCountPanelProps {
 }
 
 const MonomersCountPanel = (props: MonomersCountPanelProps) => {
+  const { t } = useTranslation('macromolecules');
   const naturalAnaloguesArray = props.isPeptide
     ? peptideNaturalAnalogues
     : rnaDnaNaturalAnalogues;
@@ -380,7 +382,9 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
             key={monomerShortName}
           >
             <StyledMonomersCountPanelItemName>
-              {monomerShortName}
+              {monomerShortName === OTHER_MONOMER_COUNT_NAME
+                ? t('macromoleculeProperties.otherMonomerCount')
+                : monomerShortName}
             </StyledMonomersCountPanelItemName>
             <div>{count === undefined ? NO_DATA_VALUE : count}</div>
           </StyledMonomersCountPanelItem>
@@ -730,11 +734,14 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
 };
 
 const PeptideProperties = (props: PeptidePropertiesProps) => {
+  const { t } = useTranslation('macromolecules');
   return props.isError ? (
     <TabContentErrorWrapper>
-      <TabContentErrorTitle>No Data Available</TabContentErrorTitle>
+      <TabContentErrorTitle>
+        {t('macromoleculeProperties.noDataAvailable')}
+      </TabContentErrorTitle>
       <TabContentErrorDescription>
-        Select monomer, chain or part of a chain
+        {t('macromoleculeProperties.selectMonomerForPeptides')}
       </TabContentErrorDescription>
     </TabContentErrorWrapper>
   ) : (
@@ -742,7 +749,7 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
       <PeptideBasicPropertiesWrapper>
         <BasicPropertiesWrapper>
           <BasicProperty
-            name="Isoelectric Point"
+            name={t('macromoleculeProperties.isoelectricPoint')}
             testId="Isoelectric Point"
             value={
               isNumber(props.macromoleculesProperties.pKa)
@@ -751,15 +758,14 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
             }
             hint={
               <div>
-                The isoelectric point is calculated as the median of all pKa
-                values for amino acids (values from{' '}
-                <i>Miclotte et. al. (2020))</i>. Only amino acid natural
-                analogues are used in the calculation.
+                {t('macromoleculeProperties.isoelectricPointHintBefore')}
+                <i>Miclotte et. al. (2020))</i>
+                {t('macromoleculeProperties.isoelectricPointHintAfter')}
               </div>
             }
           />
           <BasicProperty
-            name="Extinction Coef.(1/Mcm)"
+            name={t('macromoleculeProperties.extinctionCoefficient')}
             testId="Extinction Coefficient"
             value={
               isNumber(props.macromoleculesProperties.extinctionCoefficient)
@@ -768,26 +774,29 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
             }
             hint={
               <div>
-                The extinction coefficient for wavelength of 280nm is calculated
-                using the method from{' '}
-                <i>Gill, S.C. and von Hippel, P.H. (1989).</i> Natural analogue
-                is used in place of a modified amino acid.
+                {t('macromoleculeProperties.extinctionCoefficientHintBefore')}
+                <i>Gill, S.C. and von Hippel, P.H. (1989).</i>
+                {t('macromoleculeProperties.extinctionCoefficientHintAfter')}
               </div>
             }
           ></BasicProperty>
         </BasicPropertiesWrapper>
         <BasicProperty
-          name="Hydrophobicity"
+          name={t('macromoleculeProperties.hydrophobicity')}
           testId="Hydrophobicity"
           hint={
             <div>
               <HydrophobicityHintHeader>
-                <div>y = Hydrophobicity score</div>
-                <div>x = Position of the amino acid residue</div>
+                <div>
+                  {t('macromoleculeProperties.hydrophobicityHintYAxis')}
+                </div>
+                <div>
+                  {t('macromoleculeProperties.hydrophobicityHintXAxis')}
+                </div>
               </HydrophobicityHintHeader>
-              The hydrophobicity is calculated using the method from{' '}
-              <i>Black S.D. and Mould D.R. (1991).</i> Natural analogue is used
-              in place of a modified amino acid.
+              {t('macromoleculeProperties.hydrophobicityHintBefore')}
+              <i>Black S.D. and Mould D.R. (1991).</i>
+              {t('macromoleculeProperties.hydrophobicityHintAfter')}
             </div>
           }
         />
@@ -814,6 +823,7 @@ const containOnlyPartOfNumber = (value: number) => {
 };
 
 const RnaProperties = (props: DnaRnaPropertiesProps) => {
+  const { t } = useTranslation('macromolecules');
   const dispatch = useAppDispatch();
   const unipositiveIonsMeasurementUnit = useAppSelector(
     selectUnipositiveIonsMeasurementUnit,
@@ -844,17 +854,18 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
 
   return props.isError ? (
     <TabContentErrorWrapper>
-      <TabContentErrorTitle>No Data Available</TabContentErrorTitle>
+      <TabContentErrorTitle>
+        {t('macromoleculeProperties.noDataAvailable')}
+      </TabContentErrorTitle>
       <TabContentErrorDescription>
-        Select a nucleotide/nucleoside, chain or part of a chain containing
-        nucleotides/nucleosides
+        {t('macromoleculeProperties.selectMonomerForNucleotides')}
       </TabContentErrorDescription>
     </TabContentErrorWrapper>
   ) : (
     <TabContentWrapper>
       <RnaBasicPropertiesWrapper>
         <BasicProperty
-          name="Melting Temp. (°C)"
+          name={t('macromoleculeProperties.meltingTemp')}
           value={
             isNumber(props.macromoleculesProperties.Tm)
               ? _round(props.macromoleculesProperties.Tm, 1)
@@ -863,15 +874,15 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
           testId="Melting-Temperature"
           hint={
             <div>
-              The melting temperature is calculated using the method from{' '}
-              <i>Khandelwal G. and Bhyravabhotla J. (2010).</i> Natural analogue
-              is used in place of a modified base.
+              {t('macromoleculeProperties.meltingTempHintBefore')}
+              <i>Khandelwal G. and Bhyravabhotla J. (2010).</i>
+              {t('macromoleculeProperties.meltingTempHintAfter')}
             </div>
           }
         />
         <BasicPropertiesWrapper>
           <BasicProperty
-            name="[Unipositive Ions]"
+            name={t('macromoleculeProperties.unipositiveIons')}
             value={unipositiveIonsValue}
             options={['nM', 'μM', 'mM']}
             testId="Unipositive Ions"
@@ -884,7 +895,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             onChangeValue={onChangeUnipositiveIonsValue}
           />
           <BasicProperty
-            name="[Oligonucleotides]"
+            name={t('macromoleculeProperties.oligonucleotides')}
             value={oligonucleotidesValue}
             options={['nM', 'μM', 'mM']}
             testId="Oligonucleotides"
@@ -949,6 +960,7 @@ const calculateDefaultTabIndex = (
 let recalculatePropertiesHandler: () => void;
 
 export const MacromoleculePropertiesWindow = () => {
+  const { t } = useTranslation('macromolecules');
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const macromoleculesProperties = useAppSelector(
@@ -1164,7 +1176,7 @@ export const MacromoleculePropertiesWindow = () => {
           isLayoutToRight
           tabs={[
             {
-              caption: 'Peptides',
+              caption: t('macromoleculeProperties.peptidesTab'),
               testId: 'peptides-properties-tab',
               component: PeptideProperties,
               props: {
@@ -1173,7 +1185,7 @@ export const MacromoleculePropertiesWindow = () => {
               },
             },
             {
-              caption: 'RNA/DNA',
+              caption: t('macromoleculeProperties.rnaDnaTab'),
               component: RnaProperties,
               testId: 'rna-properties-tab',
               props: {

@@ -1,0 +1,82 @@
+{
+  "topMenu": {
+    "clearCanvas": "清除画布 ({shortcut})",
+    "open": "打开…",
+    "saveAs": "另存为…",
+    "undo": "撤销 ({shortcut})",
+    "redo": "重做 ({shortcut})",
+    "arrangeAsRing": "排列成环 ({shortcut})",
+    "createAntisenseStrand": "创建反义链",
+    "createRnaAntisenseStrand": "创建RNA反义链 ({shortcut})",
+    "createDnaAntisenseStrand": "创建DNA反义链 ({shortcut})"
+  },
+  "leftMenu": {
+    "handTool": "抓手工具 ({shortcut})",
+    "selectRectangle": "矩形选择 ({shortcut})",
+    "lassoSelection": "套索选择 ({shortcut})",
+    "structureSelection": "结构选择 ({shortcut})",
+    "erase": "橡皮擦 ({shortcut})",
+    "singleBond": "单键 (1)",
+    "hydrogenBond": "氢键 (2)"
+  },
+  "floatingTools": {
+    "flipHorizontally": "水平翻转",
+    "flipVertically": "垂直翻转",
+    "delete": "删除"
+  },
+  "zoom": {
+    "zoomOutTitle": "缩小",
+    "zoomOutLabel": "缩小",
+    "zoomInTitle": "放大",
+    "zoomInLabel": "放大",
+    "zoomReset": "缩放 100%"
+  },
+  "layoutMode": {
+    "switchToSequence": "切换到序列布局模式",
+    "switchToSnake": "切换到蛇形布局模式",
+    "switchToFlex": "切换到自由布局模式"
+  },
+  "buttons": {
+    "help": "帮助 (?)",
+    "about": "关于"
+  },
+  "sequenceType": {
+    "rnaTooltip": "RNA ({shortcut})",
+    "dnaTooltip": "DNA ({shortcut})",
+    "peptidesTooltip": "多肽 ({shortcut})"
+  },
+  "ruler": {
+    "monomersInLine": "每行的单体数量"
+  },
+  "macromoleculeProperties": {
+    "calculateProperties": "计算属性 ({shortcut})",
+    "noDataAvailable": "无可用数据",
+    "selectMonomerForPeptides": "选择单体、链或链的一部分",
+    "selectMonomerForNucleotides": "选择核苷酸/核苷、链或包含核苷酸/核苷的链的一部分",
+    "isoelectricPoint": "等电点",
+    "isoelectricPointHintBefore": "等电点是所有氨基酸pKa值的中位数（数值来自 ",
+    "isoelectricPointHintAfter": "）。计算中仅使用氨基酸天然类似物。",
+    "extinctionCoefficient": "消光系数(1/Mcm)",
+    "extinctionCoefficientHintBefore": "280nm波长处的消光系数使用以下方法计算：",
+    "extinctionCoefficientHintAfter": " 修饰氨基酸用其天然类似物代替。",
+    "hydrophobicity": "疏水性",
+    "hydrophobicityHintYAxis": "y = 疏水性得分",
+    "hydrophobicityHintXAxis": "x = 氨基酸残基位置",
+    "hydrophobicityHintBefore": "疏水性使用以下方法计算：",
+    "hydrophobicityHintAfter": " 修饰氨基酸用其天然类似物代替。",
+    "meltingTemp": "熔解温度 (°C)",
+    "meltingTempHintBefore": "熔解温度使用以下方法计算：",
+    "meltingTempHintAfter": " 修饰碱基用其天然类似物代替。",
+    "unipositiveIons": "[一价阳离子]",
+    "oligonucleotides": "[寡核苷酸]",
+    "otherMonomerCount": "其他",
+    "peptidesTab": "多肽",
+    "rnaDnaTab": "RNA/DNA"
+  },
+  "preview": {
+    "modificationType": "修饰类型",
+    "unknownStructure": "未知结构",
+    "phosphateOnLeft": "磷酸在左侧 (5')",
+    "phosphateOnRight": "磷酸在右侧 (3')"
+  }
+}

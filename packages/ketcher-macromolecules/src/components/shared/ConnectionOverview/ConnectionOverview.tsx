@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BaseMonomer } from 'ketcher-core';
 import {
   AttachmentPointsRow,
@@ -22,8 +23,9 @@ const ConnectionOverview = ({
   firstMonomerOverview,
   secondMonomerOverview,
 }: Props) => {
-  const firstMonomerName = getMonomerName(firstMonomer);
-  const secondMonomerName = getMonomerName(secondMonomer);
+  const { t } = useTranslation('macromoleculesDialogs');
+  const firstMonomerName = getMonomerName(firstMonomer, t);
+  const secondMonomerName = getMonomerName(secondMonomer, t);
 
   return (
     <AttachmentPointsRow>

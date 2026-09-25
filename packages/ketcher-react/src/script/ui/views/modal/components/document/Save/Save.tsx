@@ -53,24 +53,26 @@ import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import { IconButton } from 'components';
 import type { ThunkDispatch } from 'redux-thunk';
 import type { AnyAction } from 'redux';
+import i18n from 'src/i18n/i18n';
 
 const saveSchema = {
-  title: 'Save',
+  title: i18n.t('dialogs:document.save.schemaTitle'),
   type: 'object',
   properties: {
     filename: {
-      title: 'File name:',
+      title: i18n.t('dialogs:document.save.filenameLabel'),
       type: 'string',
       maxLength: 128,
       pattern: '^[^.<>:?"*\\\\|\\/][^<>:?"*\\\\|\\/]*$',
       invalidMessage: (res) => {
-        if (!res) return 'Filename should contain at least one character';
-        if (res.length > 128) return 'Filename is too long';
-        return "A filename cannot contain characters: \\ / : * ? \" < > | and cannot start with '.'";
+        if (!res) return i18n.t('dialogs:document.save.filenameEmptyError');
+        if (res.length > 128)
+          return i18n.t('dialogs:document.save.filenameTooLongError');
+        return i18n.t('dialogs:document.save.filenameInvalidCharsError');
       },
     },
     format: {
-      title: 'File format:',
+      title: i18n.t('dialogs:document.save.formatLabel'),
       enum: Object.keys(formatProperties),
       enumNames: Object.keys(formatProperties).map(
         (format) => formatProperties[format].name,
@@ -220,7 +222,7 @@ const PreviewContent = ({
     <IconButton
       onClick={handleCopy}
       iconName="copy"
-      title="Copy to clipboard"
+      title={i18n.t('dialogs:document.save.copyToClipboard')}
       testId="copy-to-clipboard"
     />
   </div>
@@ -427,9 +429,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   getWarnings = (format: SupportedFormat | OutputFormatType): string[] => {
     const { struct, moleculeErrors } = this.props;
     const warnings: string[] = [];
-    const structWarning =
-      'Structure contains errors, please check the data, otherwise you ' +
-      'can lose some properties or the whole structure after saving in this format.';
+    const structWarning = i18n.t(
+      'dialogs:document.save.structureContainsErrorsWarning',
+    );
     if (!this.isImageFormat(format)) {
       const saveWarning = structFormat.couldBeSaved(struct, format);
       const isStructInvalid = this.showStructWarningMessage(format);
@@ -482,19 +484,19 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       warnings.length === 0
         ? [
             {
-              caption: 'Preview',
+              caption: i18n.t('dialogs:document.save.previewTab'),
               component: this.renderSaveFile,
               tabIndex: 0,
             },
           ]
         : [
             {
-              caption: 'Preview',
+              caption: i18n.t('dialogs:document.save.previewTab'),
               component: this.renderSaveFile,
               tabIndex: 0,
             },
             {
-              caption: 'Warnings',
+              caption: i18n.t('dialogs:document.save.warningsTab'),
               component: this.renderWarnings,
               tabIndex: 1,
             },
@@ -539,7 +541,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
 
     if (!isClipboardAPIAvailable()) {
       this.props.editor.errorHandler(
-        'This feature is not available in your browser',
+        i18n.t('common:errors.featureNotAvailableInBrowser'),
       );
       return;
     }
@@ -547,7 +549,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     navigator.clipboard.writeText(structStr || '').catch((e) => {
       KetcherLogger.error('copyAs.js::copyAs', e);
       this.props.editor.errorHandler(
-        'This feature is not available in your browser',
+        i18n.t('common:errors.featureNotAvailableInBrowser'),
       );
     });
   };
@@ -630,7 +632,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         onClick={() => this.props.onTmplSave(this.props.struct)}
         data-testid="save-to-templates-button"
       >
-        Save to Templates
+        {i18n.t('dialogs:document.save.saveToTemplates')}
       </button>,
     ];
 
@@ -642,7 +644,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         type="button"
         data-testid="cancel-button"
       >
-        Cancel
+        {i18n.t('common:button.cancel')}
       </button>,
     );
 
@@ -665,7 +667,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           }
           className={classes.ok}
         >
-          Save
+          {i18n.t('common:button.save')}
         </SaveButton>,
       );
     } else {
@@ -687,7 +689,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           disabled={disableControls || !formState.valid || isCleanStruct}
           className={classes.ok}
         >
-          Save
+          {i18n.t('common:button.save')}
         </SaveButton>,
       );
     }
@@ -699,7 +701,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     return (
       <DialogComponent
         className={classes.dialog}
-        title="Save Structure"
+        title={i18n.t('dialogs:document.save.dialogTitle')}
         params={this.props}
         buttons={this.getButtons()}
         needMargin={false}

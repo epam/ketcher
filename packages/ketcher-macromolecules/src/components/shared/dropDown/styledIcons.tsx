@@ -31,7 +31,7 @@ const ChevronStyled = styled(Icon)`
   transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   font-size: 1.5rem;
   position: absolute;
-  right: 7px;
+  inset-inline-end: 7px;
   top: calc(50% - 0.5em);
   pointer-events: none;
   fill: #5b6077;

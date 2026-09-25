@@ -12,7 +12,7 @@ import useCreateMonomer from '../hooks/useCreateMonomer';
 import useMarkAs from '../hooks/useMarkAs';
 import {
   formatTitle,
-  getBondNames,
+  getBondNamesForSelectionContextMenu,
   monomerWizardDisallowedBondNames,
 } from '../utils';
 import type Editor from 'src/script/editor';
@@ -28,8 +28,9 @@ import isHidden from '../../../../action/isHidden';
 import { useSelector } from 'react-redux';
 import { optionsSelector } from '../../../../state/options/selectors';
 import clsx from 'clsx';
+import AttachmentGroupActionMenuItem from './AttachmentGroupActionMenuItem';
 
-const bondNames = getBondNames(tools);
+const bondNames = getBondNamesForSelectionContextMenu(tools);
 
 const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   props,
@@ -164,6 +165,8 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
           Create a monomer
         </Item>
       )}
+
+      <AttachmentGroupActionMenuItem {...props} showCreate />
 
       <Item
         {...props}

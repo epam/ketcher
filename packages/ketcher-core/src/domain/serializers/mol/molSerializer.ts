@@ -17,6 +17,7 @@
 import type { MolSerializerOptions } from './mol.types';
 import { Molfile } from './molfile';
 import type { Serializer } from '../serializers.types';
+import { Atom } from 'domain/entities/atom';
 import type { Struct } from 'domain/entities/struct';
 import { KetcherLogger } from 'utilities';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
@@ -78,9 +79,26 @@ export class MolSerializer implements Serializer<Struct> {
 
   serialize(_struct: Struct): string {
     const struct = KetSerializer.removeLeavingGroupsFromConnectedAtoms(_struct);
+    const serializationStruct = struct.clone();
+
+    // Molfile writers only understand atom endpoints. Materialize attachment
+    // groups in this disposable projection so editor Struct.atoms stays purely
+    // chemical while legacy export can still resolve every bond endpoint.
+    serializationStruct.attachmentGroups.forEach((attachmentGroup, id) => {
+      attachmentGroup.recalculatePosition(serializationStruct.atoms);
+      serializationStruct.atoms.set(
+        id,
+        new Atom({
+          label: '*',
+          pp: attachmentGroup.pp,
+          fragment: attachmentGroup.fragment,
+        }),
+      );
+    });
+    serializationStruct.attachmentGroups.clear();
 
     return new Molfile().saveMolecule(
-      struct,
+      serializationStruct,
       this.options.ignoreErrors,
       this.options.noRgroups,
       this.options.preserveIndigoDesc,

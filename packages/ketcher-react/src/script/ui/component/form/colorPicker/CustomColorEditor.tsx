@@ -45,7 +45,7 @@ function CustomColorEditor({
   onLightnessChange,
   onHexInputChange,
   onDeleteCustomColor,
-}: CustomColorEditorProps) {
+}: Readonly<CustomColorEditorProps>) {
   const lightnessBg = `linear-gradient(to right, #ffffff, ${hslToHex(
     hue,
     100,

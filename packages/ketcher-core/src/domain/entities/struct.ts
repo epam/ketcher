@@ -1064,7 +1064,7 @@ export class Struct {
   }
 
   scaleMonomerMicromoleculeSgroups(scale: number) {
-    if (scale === 1) return;
+    if (Math.abs(scale - 1) < 1e-10) return;
 
     this.sgroups.forEach((item) => {
       if (!(item instanceof MonomerMicromolecule)) {
@@ -1084,6 +1084,10 @@ export class Struct {
 
     const scale = 1 / avg;
     this.scale(scale);
+    // scale() skips MonomerMicromolecule.pp to avoid double-scaling in mode
+    // transitions (which scale pp separately). Here we must scale it explicitly
+    // so that pp stays aligned with atom positions after bond-length normalisation.
+    this.scaleMonomerMicromoleculeSgroups(scale);
   }
 
   loopHasSelfIntersections(hbs: Array<number>) {

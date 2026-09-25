@@ -140,9 +140,7 @@ export default defineConfig({
     // ketcher-macromolecules/vite.config.mjs - see that file's comment and
     // .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
     cssMinify: isProduction,
-    // Current builds run `rollup -c -m true`. See
-    // .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
-    sourcemap: true,
+    sourcemap: !isProduction,
     emptyOutDir: false,
     // Vite only skips wrapping dynamic import() in its browser-only preload
     // helper (window.dispatchEvent) when build.lib is set - modulePreload:

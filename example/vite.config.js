@@ -684,7 +684,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'build',
-    sourcemap: true,
+    sourcemap: !isProduction,
     chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT_KB,
     rolldownOptions: {
       output: {

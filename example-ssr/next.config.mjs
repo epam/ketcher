@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  productionBrowserSourceMaps: false,
   // `ketcher-core` imports `paper` for rendering. `paper`'s Node entry point
   // (dist/node/self.js) does `require('jsdom')` wrapped in a try/catch and
   // falls back to a lightweight stub when it's unavailable - which is the

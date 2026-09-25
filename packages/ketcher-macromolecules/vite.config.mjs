@@ -74,7 +74,7 @@ const emotionBabelPlugin = () => ({
       filename: id,
       sourceType: 'module',
       plugins: ['@emotion/babel-plugin'],
-      sourceMaps: true,
+      sourceMaps: !isProduction,
     });
 
     if (!result || result.code === code) {
@@ -137,9 +137,7 @@ export default defineConfig({
     // `build.minify`, which would turn CSS minification off too. See
     // .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
     cssMinify: isProduction,
-    // Current builds run `rollup -c -m true`. See
-    // .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
-    sourcemap: true,
+    sourcemap: !isProduction,
     emptyOutDir: false,
     lib: {
       entry: resolve(rootDir, pkg.source),

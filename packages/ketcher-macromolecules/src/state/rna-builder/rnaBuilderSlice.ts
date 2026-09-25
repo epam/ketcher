@@ -530,6 +530,9 @@ export const selectFilteredPresets = createSelector(
     return presetsAll
       .filter((item: IRnaPreset) => {
         const name = item.name?.toLowerCase();
+        if (searchText === '-' || searchText === '_') {
+          return name?.includes(searchText) ?? false;
+        }
         const sugarName = item.sugar?.label?.toLowerCase();
         const phosphateName = item.phosphate?.label?.toLowerCase();
         const baseName = item.base?.label?.toLowerCase();

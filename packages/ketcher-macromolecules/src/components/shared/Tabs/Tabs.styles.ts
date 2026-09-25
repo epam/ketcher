@@ -14,12 +14,12 @@ export const StyledTabs = styled(Tabs, {
   overflow: unset;
 
   & .MuiTabs-scroller,
-  & .MuiTabs-flexContainer {
+  & .MuiTabs-list {
     height: 100%;
     overflow: unset !important;
   }
 
-  & .MuiTabs-flexContainer {
+  & .MuiTabs-list {
     justify-content: ${({ isLayoutToRight }) =>
       isLayoutToRight ? 'flex-end' : 'flex-start'};
     padding-right: ${({ isLayoutToRight }) => (isLayoutToRight ? '16px' : '0')};
@@ -39,6 +39,7 @@ export const StyledTab = styled(Tab, {
   min-width: 0;
   position: relative;
   padding: 7px 12px;
+  font-family: ${({ theme }) => theme.ketcher.font.family.inter};
   font-size: ${({ theme }) => theme.ketcher.font.size.regular};
   text-transform: none;
   cursor: pointer;

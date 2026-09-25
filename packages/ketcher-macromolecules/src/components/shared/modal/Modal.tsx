@@ -104,8 +104,7 @@ export const Modal = ({
 
   const paperProps = useMemo(
     () => ({
-      ...(testId ? { testid: testId } : {}),
-      'data-testid': testId,
+      ...(testId ? { 'data-testid': testId } : {}),
       style: {
         background: theme.ketcher.color.background.primary,
         borderRadius: '8px',
@@ -140,8 +139,8 @@ export const Modal = ({
   );
 
   const subcomponents: Record<ModalSubcomponent, JSX.Element | null> = {
-    Content: null,
     Footer: null,
+    Content: null,
   };
 
   React.Children.forEach(children, (child) => {
@@ -154,14 +153,20 @@ export const Modal = ({
 
   return (
     <StyledDialog
-      BackdropProps={backdropProps}
-      PaperProps={paperProps}
+      slotProps={{
+        backdrop: backdropProps,
+        paper: paperProps,
+      }}
       open={isOpen}
-      onClose={onClose}
+      onClose={(_event, reason) => {
+        if (reason === 'escapeKeyDown' && !showCloseButton) {
+          return;
+        }
+        onClose();
+      }}
       container={document.querySelector(
         KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
       )}
-      disableEscapeKeyDown={!showCloseButton}
       className={className}
       sx={{ padding: '24px' }}
     >

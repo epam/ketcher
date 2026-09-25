@@ -24,8 +24,8 @@ import {
   useState,
   RefObject,
 } from 'react';
-import { Global, ThemeProvider } from '@emotion/react';
-import { createTheme } from '@mui/material/styles';
+import { Global } from '@emotion/react';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { merge } from 'lodash';
 import {
   BaseMonomer,
@@ -261,6 +261,7 @@ function Editor({
       ]): void => {
         setContextMenuEvent(event);
         setSelectedMonomers([]);
+        dispatch(setContextMenuActive(true));
         showSelectedMonomersContextMenu({
           event,
           props: {
@@ -275,6 +276,7 @@ function Editor({
         setSelectedMonomers(selectedMonomers);
         setContextMenuEvent(event);
         updatePasteAvailability();
+        dispatch(setContextMenuActive(true));
         showSelectedMonomersContextMenu({
           event,
           props: { selectedMonomers },

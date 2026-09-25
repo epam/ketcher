@@ -44,7 +44,7 @@
 
 .oneRowTitleTable {
   grid-auto-rows: 134px;
-  
+
   .structTitle {
     max-height: 16px;
   }
@@ -149,42 +149,43 @@
   cursor: inherit;
 }
 
-  .button {
-    .btn();
+.button {
+  .btn();
 
-    margin: 0;
-    border-radius: 0;
-    width: 18px;
-    height: 18px;
-    border: none;
-    color: #636363;
-    background-color: transparent;
-    cursor: pointer;
-    padding: 0;
+  margin: 0;
+  border-radius: 0;
+  width: 18px;
+  height: 18px;
+  border: none;
+  color: #636363;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
 
-    & > svg {
-      width: inherit;
-      height: inherit;
+  & > svg {
+    width: inherit;
+    height: inherit;
+  }
+
+  &:hover,
+  &:active {
+    & path {
+      fill: @color-button-primary-hover;
     }
-
-    &:hover, &:active {
-      & path {
-        fill: @color-button-primary-hover;
-      }
-    }
   }
+}
 
-  .deleteButton {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-  }
+.deleteButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
 
-  .editButton {
-    position: absolute;
-    top: 78px;
-    right: 5px;
-  }
+.editButton {
+  position: absolute;
+  top: 78px;
+  right: 5px;
+}
 
 div.structure {
   padding: 0; // TODO: tmp hack to fit viewbox

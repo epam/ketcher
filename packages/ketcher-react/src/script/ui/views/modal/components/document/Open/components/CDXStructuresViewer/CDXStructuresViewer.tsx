@@ -15,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { MenuList } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
@@ -50,41 +50,67 @@ export const CDXStructuresViewer = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [itemsMap, setItemsMap] = useState<itemsMapInterface>({});
   const loading = !!structList[selectedIndex] && !itemsMap[selectedIndex];
-
+  const selectedIndexRef = useRef(selectedIndex);
   useEffect(() => {
-    if (!itemsMap[selectedIndex] || itemsMap[selectedIndex].error) {
+    selectedIndexRef.current = selectedIndex;
+  }, [selectedIndex]);
+  const itemsMapRef = useRef(itemsMap);
+  useEffect(() => {
+    itemsMapRef.current = itemsMap;
+  }, [itemsMap]);
+
+  const notifyInputHandler = (structItem?: item) => {
+    if (!structItem || structItem.error) {
       inputHandler('');
     } else {
-      inputHandler(itemsMap[selectedIndex].base64struct);
+      inputHandler(structItem.base64struct);
     }
-  }, [inputHandler, itemsMap, selectedIndex]);
+  };
 
-  const getImage = useCallback(
-    (str, index) => {
-      parseStruct(str, server)
-        .then((struct) => {
-          setItemsMap((state) => ({
-            ...state,
-            [index]: { base64struct: str, struct },
-          }));
-        })
-        .catch((error) => {
-          setItemsMap((state) => ({
-            ...state,
-            [index]: { base64struct: str, error: error.message || error },
-          }));
-        });
-    },
-    [server],
-  );
+  const getImage = (str: string, index: number) => {
+    parseStruct(str, server)
+      .then((struct) => {
+        const newItem = { base64struct: str, struct };
+        setItemsMap((state) => ({
+          ...state,
+          [index]: newItem,
+        }));
+        if (selectedIndexRef.current === index) {
+          notifyInputHandler(newItem);
+        }
+      })
+      .catch((error) => {
+        const newItem = { base64struct: str, error: error.message || error };
+        setItemsMap((state) => ({
+          ...state,
+          [index]: newItem,
+        }));
+        if (selectedIndexRef.current === index) {
+          notifyInputHandler(newItem);
+        }
+      });
+  };
 
-  const currentStructItem = structList[selectedIndex];
-
+  // Loads the structure for the currently selected index whenever a new
+  // structList is provided (e.g. a new file is opened). Selection-driven
+  // loading is handled directly in the selection click handler.
   useEffect(() => {
-    if (currentStructItem && !itemsMap[selectedIndex]) {
-      getImage(currentStructItem, selectedIndex);
+    const currentIndex = selectedIndexRef.current;
+    if (structList[currentIndex] && !itemsMapRef.current[currentIndex]) {
+      getImage(structList[currentIndex], currentIndex);
     }
-  }, [getImage, itemsMap, selectedIndex, currentStructItem]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [structList]);
+
+  const handleSelectStructure = (index: number) => {
+    setSelectedIndex(index);
+    const existingItem = itemsMap[index];
+    if (structList[index] && !existingItem) {
+      getImage(structList[index], index);
+    } else {
+      notifyInputHandler(existingItem);
+    }
+  };
 
   const renderStructure = (structure: item) => {
     if (loading) {
@@ -126,7 +152,7 @@ export const CDXStructuresViewer = ({
                 key={value + index}
                 data-testid={`cdx-structure-${index + 1}`}
                 selected={index === selectedIndex}
-                onClick={() => setSelectedIndex(index)}
+                onClick={() => handleSelectStructure(index)}
               >
                 {`Structure ${index + 1}`}
                 {itemsMap[index]?.error && <Icon name="error" />}

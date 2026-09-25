@@ -233,3 +233,90 @@ describe('setExpandMonomerSGroup', () => {
     expect(moleculeNodes[0].fragment?.bonds.size).toBe(1);
   });
 });
+
+describe('fromSgroupDeletion', () => {
+  const buildCollapsedMonomerWithLeavingAtom = () => {
+    const struct = new Struct();
+    const attachmentAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+    );
+    const leaveAtomId = struct.atoms.add(
+      new Atom({ label: 'Cl', pp: new Vec2(1, 0) }),
+    );
+    const bondId = struct.bonds.add(
+      new Bond({
+        begin: attachmentAtomId,
+        end: leaveAtomId,
+        type: Bond.PATTERN.TYPE.SINGLE,
+      }),
+    );
+    struct.bondInitHalfBonds(bondId);
+    struct.initNeighbors();
+
+    const sgroupId = createMonomerSGroup(struct, attachmentAtomId);
+    const sgroup = struct.sgroups.get(sgroupId);
+    if (sgroup instanceof MonomerMicromolecule) {
+      sgroup.data.expanded = false;
+      sgroup.addAttachmentPoint(
+        new SGroupAttachmentPoint(attachmentAtomId, leaveAtomId, undefined, 1),
+      );
+    }
+
+    const options = {
+      scale: 40,
+      width: 100,
+      height: 100,
+    } as unknown as RenderOptions;
+    const render = new Render(document as unknown as HTMLElement, options);
+    const restruct = new ReStruct(struct, render);
+
+    return { struct, restruct, sgroupId, attachmentAtomId, leaveAtomId };
+  };
+
+  it('expands a still-collapsed monomer before removing its S-group, so the leaving atom keeps its real label instead of a generic cap (#11312)', () => {
+    const { struct, restruct, sgroupId, leaveAtomId } =
+      buildCollapsedMonomerWithLeavingAtom();
+
+    fromSgroupDeletion(restruct, sgroupId);
+
+    // Before the fix, a still-collapsed monomer's leaving atom was relabeled
+    // with a generic MonomerCaps fallback ('H'), discarding its real
+    // chemistry and layout. The fix expands the monomer first (mirroring
+    // "Expand monomer"), so the exposed leaving atom keeps its real label and
+    // only its rglabel is cleared.
+    expect(struct.atoms.get(leaveAtomId)?.label).toBe('Cl');
+    expect(struct.atoms.get(leaveAtomId)?.rglabel).toBeNull();
+  });
+
+  it('recomputes implicit hydrogens/valence on the exposed attachment atom after removing a collapsed monomer grouping (#11314)', () => {
+    const { struct, restruct, sgroupId, attachmentAtomId } =
+      buildCollapsedMonomerWithLeavingAtom();
+
+    // Seed a stale/incorrect implicitH value, as if it had been computed
+    // while the monomer was still collapsed and never recalculated.
+    const attachmentAtom = struct.atoms.get(attachmentAtomId);
+    if (attachmentAtom) {
+      attachmentAtom.implicitH = 99;
+    }
+
+    fromSgroupDeletion(restruct, sgroupId);
+
+    expect(struct.atoms.get(attachmentAtomId)?.implicitH).not.toBe(99);
+    expect(struct.atoms.get(attachmentAtomId)?.badConn).toBe(false);
+  });
+
+  it('does not expand a monomer whose props are unresolved before removing its S-group', () => {
+    const { struct, restruct, sgroupId, leaveAtomId } =
+      buildCollapsedMonomerWithLeavingAtom();
+    const sgroup = struct.sgroups.get(sgroupId);
+    if (sgroup instanceof MonomerMicromolecule) {
+      sgroup.monomer.monomerItem.props.unresolved = true;
+    }
+
+    fromSgroupDeletion(restruct, sgroupId);
+
+    // Expansion is skipped for an unresolved monomer, so the leaving atom
+    // still goes through the generic MonomerCaps fallback ('H').
+    expect(struct.atoms.get(leaveAtomId)?.label).toBe('H');
+  });
+});

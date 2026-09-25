@@ -43,13 +43,18 @@ import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 import { Action } from './action';
 import { SgContexts } from '../shared/constants';
 import { uniq } from 'lodash/fp';
-import { fromAtomsAttrs, mergeFragmentsIfNeeded } from './atom';
+import {
+  checkAtomValence,
+  fromAtomsAttrs,
+  mergeFragmentsIfNeeded,
+} from './atom';
 import {
   SGroupAttachmentPointAdd,
   SGroupAttachmentPointRemove,
 } from 'application/editor/operations/sgroup/sgroupAttachmentPoints';
 import type Restruct from 'application/render/restruct/restruct';
 import { assert } from 'utilities';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
@@ -579,6 +584,25 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
   const struct = restruct.molecule;
 
   const sG = restruct.sgroups.get(id)?.item;
+
+  // Mirror "Remove Abbreviation" / spec 1.1.4 (#7864): expand a still-collapsed
+  // monomer (via the same pass "Expand monomer" uses) before tearing down its
+  // S-group, so the newly-exposed atoms are correctly repositioned relative to
+  // neighbors and cross-monomer stereo bonds are resolved (#11312).
+  // setExpandMonomerSGroup performs its ops eagerly (unlike the rest of this
+  // function's deferred `action`), so only run it when we're actually going to
+  // apply this action - a needPerform=false caller must not have restruct
+  // touched before it performs the action itself.
+  let expandAction: Action | undefined;
+  if (
+    needPerform &&
+    sG instanceof MonomerMicromolecule &&
+    !(sG.monomer instanceof AmbiguousMonomer) &&
+    !sG.monomer?.monomerItem?.props?.unresolved
+  ) {
+    expandAction = setExpandMonomerSGroup(restruct, id, { expanded: true });
+  }
+
   const atoms = SGroup.getAtoms(struct, sG);
   const atomsSet = new Set(atoms);
   const outsideConnections: Array<readonly [number, number]> = [];
@@ -638,7 +662,12 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
 
   action.addOp(new SGroupDelete(id));
 
-  // After SGroup is deleted, resolve leaving groups on plain structure
+  // After SGroup is deleted, resolve leaving groups on plain structure.
+  // In the common case the monomer was just force-expanded above, so
+  // `isExpanded` is true here and the `else` branch below is unreachable;
+  // it still runs for: a needPerform=false caller (removeSgroupIfNeeded),
+  // an ambiguous/unresolved monomer (expand is skipped for those), or as a
+  // defensive fallback if expansion above didn't happen for another reason.
   if (sG instanceof MonomerMicromolecule) {
     const isExpanded = sG.isExpanded();
     const monomerCaps = sG.monomer?.monomerItem?.props?.MonomerCaps ?? {};
@@ -704,8 +733,32 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
   if (needPerform) {
     action = action.perform(restruct);
 
+    if (expandAction) {
+      action = expandAction.mergeWith(action);
+    }
+
     outsideConnections.forEach(([atomId, neighborAtomId]) => {
       mergeFragmentsIfNeeded(action, restruct, atomId, neighborAtomId);
+    });
+
+    // The SGroup's leaving-group atoms/bonds were removed above, which changes
+    // the real explicit-bond count on its former attachment atoms. Their
+    // cached implicitH/badConn (see Struct.calcImplicitHydrogen) were computed
+    // while the group was still collapsed and are never recalculated
+    // automatically, so recompute them now to avoid a stale valence-error
+    // warning or wrong hydrogen count on the exposed atoms (#11314; the
+    // companion layout fix - expanding the monomer before deletion - is the
+    // setExpandMonomerSGroup(...) call above, which addresses #11312).
+    // Neighboring atoms across a cross-monomer bond (still inside their own,
+    // possibly still-collapsed, S-group) are recomputed too: the expand step
+    // above can replace their connecting bond (delete+re-add, to fix its
+    // stereo flag) without touching the neighbor's own cached valence.
+    const atomsToRecheckValence = new Set(atoms);
+    outsideConnections.forEach(([, neighborAtomId]) => {
+      atomsToRecheckValence.add(neighborAtomId);
+    });
+    atomsToRecheckValence.forEach((atomId) => {
+      action = checkAtomValence(restruct, atomId).mergeWith(action);
     });
   }
 

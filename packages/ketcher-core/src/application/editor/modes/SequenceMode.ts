@@ -70,6 +70,7 @@ import { getNodeFromTwoStrandedNode } from 'domain/helpers/chains';
 import type { CoreEditor } from 'application/editor/Editor';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import { KetMonomerClass } from 'application/formatters';
+import { monomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
 import { registerMode } from './modesRegistry';
 
 const naturalAnalogues = uniq([
@@ -1931,6 +1932,33 @@ export class SequenceMode extends BaseMode {
     );
   }
 
+  private getMonomerClassForTypeComparison(
+    monomer: BaseMonomer | MonomerItemType,
+  ): KetMonomerClass {
+    if (monomer instanceof AmbiguousMonomer) {
+      return monomer.monomerClass;
+    }
+
+    const [, ketMonomerClass] = monomerEntityFactory(
+      monomer instanceof BaseMonomer ? monomer.monomerItem : monomer,
+    );
+
+    return ketMonomerClass;
+  }
+
+  // Side chain connections (Rn, n>2) are only preserved when the monomer
+  // being inserted is of the same type (peptide/chem/sugar/base/phosphate/
+  // nucleotide) as the monomer it replaces, per requirement 4.5.
+  private isSameMonomerTypeForSideChainConnection(
+    existingMonomer: BaseMonomer,
+    newMonomer: BaseMonomer | MonomerItemType,
+  ): boolean {
+    return (
+      this.getMonomerClassForTypeComparison(existingMonomer) ===
+      this.getMonomerClassForTypeComparison(newMonomer)
+    );
+  }
+
   isPasteAvailable(drawingEntitiesManager: DrawingEntitiesManager) {
     if (!this.isEditMode) {
       return true;
@@ -2121,11 +2149,16 @@ export class SequenceMode extends BaseMode {
 
     sideChainConnections?.forEach((sideConnectionData) => {
       const {
+        sourceMonomer,
         firstMonomerAttachmentPointName,
         secondMonomer,
         secondMonomerAttachmentPointName,
       } = sideConnectionData;
       if (
+        !this.isSameMonomerTypeForSideChainConnection(
+          sourceMonomer,
+          newMonomer,
+        ) ||
         !this.isConnectionPossible(
           newMonomer,
           firstMonomerAttachmentPointName,
@@ -2292,6 +2325,16 @@ export class SequenceMode extends BaseMode {
             : !bond.isBackBoneChainConnection))
       ) {
         return true;
+      }
+
+      if (
+        sideChainConnections &&
+        !this.isSameMonomerTypeForSideChainConnection(
+          selectedNode.monomer,
+          monomerItem,
+        )
+      ) {
+        return false;
       }
 
       return newMonomerAttachmentPoints.attachmentPointsList.includes(key);

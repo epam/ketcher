@@ -147,6 +147,10 @@ export type WizardAction =
     }
   | {
       type: 'ResetValidationNotifications';
+    }
+  | {
+      type: 'SetStructure';
+      structure: Selection;
     };
 
 export type RnaPresetWizardAction =

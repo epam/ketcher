@@ -92,6 +92,9 @@ export abstract class BaseMode {
       const shortcutKey = keyNorm.lookup(hotKeys, event)?.[0];
 
       if (shortcutKey && this.keyboardEventHandlers[shortcutKey]) {
+        if (shortcutKey === 'start-new-sequence') {
+          event.preventDefault();
+        }
         event.stopImmediatePropagation();
       }
     }

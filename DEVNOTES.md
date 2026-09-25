@@ -224,7 +224,7 @@ server {
   # see here https://lifescience.opensource.epam.com/indigo/service/index.html
   location / {
     root /srv/www;
-    index ketcher.html;
+    index index.html;
     try_files $uri $uri/ @indigoservice;
   }
 
@@ -247,7 +247,7 @@ Run
 docker-compose up -d
 ```
 
-Service with Ketcher will be run under localhost:8080/ketcher.html
+Service with Ketcher will be run under localhost:8080
 
 ## Custom Buttons
 

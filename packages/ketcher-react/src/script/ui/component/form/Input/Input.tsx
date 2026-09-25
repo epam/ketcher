@@ -428,19 +428,11 @@ class Input extends PureComponent<
   Props & { innerRef: React.Ref<HTMLInputElement> }
 > {
   component: ComponentType<InputComponentProps>;
-  ctrl: {
-    type?: string;
-    onChange?: (val: unknown) => void;
-    onSelect?: (ev: React.SyntheticEvent, values?: unknown[]) => void;
-    selected?: (testVal: unknown, value: unknown) => boolean;
-    multiple?: boolean;
-  };
 
   constructor(props: Props & { innerRef: React.Ref<HTMLInputElement> }) {
     super(props);
     this.component = (props.component ||
       componentMap(props)) as ComponentType<InputComponentProps>;
-    this.ctrl = ctrlMap(this.component, props);
   }
 
   render() {
@@ -450,11 +442,12 @@ class Input extends PureComponent<
       innerRef,
       ...restProps
     } = this.props;
+    const ctrl = ctrlMap(this.component, this.props);
     return (
       <AnyComponentWithRef
         Component={this.component}
         ref={innerRef}
-        {...this.ctrl}
+        {...ctrl}
         {...restProps}
       />
     );

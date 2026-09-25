@@ -46,8 +46,20 @@ export class MonomerMicromolecule extends SGroup {
 
   public override getContractedPosition(struct: Struct) {
     assert(this.pp);
-    const sgroupContractedPosition = super.getContractedPosition(struct);
-    return { position: this.pp, atomId: sgroupContractedPosition.atomId };
+    const { atomId } = super.getContractedPosition(struct);
+
+    return { position: this.pp, atomId };
+  }
+
+  public override getContractedBondPosition(struct: Struct, atomId: number) {
+    if (!this.data.contractedFromExpanded) {
+      return this.getContractedPosition(struct);
+    }
+
+    const atom = struct.atoms.get(atomId);
+    assert(atom);
+
+    return { position: atom.pp, atomId };
   }
 
   public static clone(
@@ -68,6 +80,10 @@ export class MonomerMicromolecule extends SGroup {
         })
       : monomerMicromolecule.atoms;
     monomerMicromoleculeClone.data.expanded = monomerMicromolecule.isExpanded();
+    monomerMicromoleculeClone.data.contractedFromExpanded =
+      monomerMicromolecule.data.contractedFromExpanded;
+    monomerMicromoleculeClone.data.expansionSpacingApplied =
+      monomerMicromolecule.data.expansionSpacingApplied;
     monomerMicromoleculeClone.data.name = monomerMicromolecule.data.name;
     if (needCloneAttachmentPoints && atomIdMap) {
       monomerMicromoleculeClone.addAttachmentPoints(

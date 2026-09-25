@@ -12,6 +12,7 @@ import {
 } from './contextMenu.types';
 import type { Selection } from '../../../../editor/Editor';
 import { onlyHasProperty } from './utils';
+import { isStructureContinuous } from '../../../../editor/utils/structureContinuity';
 
 /**
  * Count how many MonomerMicromolecule SGroups on the canvas share the same
@@ -154,6 +155,7 @@ export function getMenuPropsForClosestItem(
           functionalGroups: [functionalGroup],
           totalMonomerCount: computeTotalMonomerCount(editor, functionalGroup),
           hasNonMonomerStructure: false,
+          isContinuous: true,
         };
       } else {
         return {
@@ -187,6 +189,7 @@ export function getMenuPropsForClosestItem(
           functionalGroups: [functionalGroup],
           totalMonomerCount: computeTotalMonomerCount(editor, functionalGroup),
           hasNonMonomerStructure: false,
+          isContinuous: true,
         };
       } else {
         return {
@@ -219,6 +222,7 @@ export function getMenuPropsForClosestItem(
                     functionalGroup,
                   ),
                   hasNonMonomerStructure: false,
+                  isContinuous: true,
                 }
               : {}),
           }
@@ -290,6 +294,9 @@ export function getMenuPropsForSelection(
           : undefined,
         hasNonMonomerStructure: editor
           ? computeHasNonMonomerStructure(editor, selectedFunctionalGroups)
+          : undefined,
+        isContinuous: editor
+          ? isStructureContinuous(editor.struct(), editor.explicitSelected())
           : undefined,
       };
     }

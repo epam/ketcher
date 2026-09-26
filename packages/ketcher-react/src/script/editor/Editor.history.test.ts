@@ -33,7 +33,7 @@ describe('History across molecule and macromolecule modes', () => {
     },
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     Object.defineProperty(SVGElement.prototype, 'getBBox', {
       configurable: true,
       value: () => ({ x: 0, y: 0, width: 10, height: 10 }),
@@ -67,6 +67,7 @@ describe('History across molecule and macromolecule modes', () => {
     macro.events.switchToMoleculesMode.add(() =>
       macro.switchToMicromolecules(),
     );
+    await macro.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {

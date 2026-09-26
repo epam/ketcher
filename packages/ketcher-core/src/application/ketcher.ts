@@ -29,6 +29,7 @@ import type {
 } from 'domain/services';
 
 import {
+  type CoreEditor,
   type Editor,
   getSelectionFromStruct,
   MonomerLibraryConvertError,
@@ -99,6 +100,11 @@ const MONOMER_LIBRARY_FORMAT_OPTIONS = {
   outputFormat: ChemicalMimeType.MonomerLibrary,
   outputContentType: ChemicalMimeType.MonomerLibrary,
 } as const;
+
+// A whole-library convert can carry thousands of monomers, so give it more
+// room than a single interactive edit, but still a finite bound so a
+// crashed/unresponsive worker rejects instead of hanging forever.
+const MONOMER_LIBRARY_CONVERT_TIMEOUT_MS = 5 * 60 * 1000;
 
 export class Ketcher {
   _id: string;
@@ -326,7 +332,14 @@ export class Ketcher {
     return rxnfile;
   }
 
-  getKet(): Promise<string> {
+  async getKet(): Promise<string> {
+    // The default monomers library is a lazily fetched asset. The KET
+    // serializer reads it synchronously to enrich monomer templates (idtAliases,
+    // aliasAxoLabs, aliasBILN, modificationTypes) and silently skips enrichment
+    // when it is absent, so await it here at the async public boundary rather
+    // than making the serializer async.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     return getStructure(
       this.id,
       this.#formatterFactory,
@@ -546,6 +559,13 @@ export class Ketcher {
     const macromoleculesEditor = provideEditorInstance();
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
+    // The default monomers library is a lazily fetched asset. The KET
+    // serializer reads it synchronously to enrich monomer templates (idtAliases,
+    // aliasAxoLabs, aliasBILN, modificationTypes) and silently skips enrichment
+    // when it is absent, so await it here at the async public boundary rather
+    // than making the serializer async.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
@@ -613,6 +633,13 @@ export class Ketcher {
     const macromoleculesEditor = provideEditorInstance();
 
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
+
+    // The default monomers library is a lazily fetched asset. The KET
+    // serializer reads it synchronously to enrich monomer templates (idtAliases,
+    // aliasAxoLabs, aliasBILN, modificationTypes) and silently skips enrichment
+    // when it is absent, so await it here at the async public boundary rather
+    // than making the serializer async.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
@@ -850,6 +877,7 @@ export class Ketcher {
           {
             ...serverSettings,
             outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
+            'request-timeout': MONOMER_LIBRARY_CONVERT_TIMEOUT_MS,
           },
         );
 
@@ -888,6 +916,18 @@ export class Ketcher {
     return convertResult.struct;
   }
 
+  // The default monomers library is a lazily fetched asset. If a default
+  // load is already in flight (e.g. kicked off elsewhere without being
+  // awaited), it must finish - and be applied - before a consumer's
+  // update/replace is applied, otherwise the default load resolving
+  // afterwards would overwrite it via its own wholesale library replace.
+  // Shared by updateMonomersLibrary/replaceMonomersLibrary below.
+  private async ensureDefaultLibraryLoadedBeforeConsumerWrite(
+    editor: CoreEditor,
+  ) {
+    await editor.ensureDefaultMonomersLibraryLoaded();
+  }
+
   public async updateMonomersLibrary(
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,
@@ -901,6 +941,8 @@ export class Ketcher {
         'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
       );
     }
+
+    await this.ensureDefaultLibraryLoadedBeforeConsumerWrite(editor);
 
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,
@@ -935,6 +977,8 @@ export class Ketcher {
         'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
       );
     }
+
+    await this.ensureDefaultLibraryLoadedBeforeConsumerWrite(editor);
 
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,

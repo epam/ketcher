@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import type { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import type { Struct } from 'domain/entities/struct';
 import type { StructFormatter } from './structFormatter.types';
@@ -41,6 +42,12 @@ export class KetFormatter implements StructFormatter {
   }
 
   async getStructureFromStringAsync(content: string): Promise<Struct> {
+    // The default monomers library is a lazily fetched asset. The KET
+    // serializer reads it synchronously to enrich monomer templates while
+    // parsing, so await it here: UI file loads reach this formatter directly,
+    // without passing through ketcher.setMolecule's own wait.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     return this.#ketSerializer.deserialize(content);
   }
 

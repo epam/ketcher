@@ -70,7 +70,12 @@ const EditMonomer = (props: Props) => {
     onOk(true);
   };
 
-  const handleEditMonomer = (editAllInstances = false) => {
+  const handleEditMonomer = async (editAllInstances = false) => {
+    // The default monomers library is a lazily fetched asset, so make sure it
+    // has resolved before reading it below - this dialog is reachable from
+    // molecules mode, without macromolecules mode ever being opened.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const struct = editor.struct();
     const firstSgroup = struct.sgroups.get(fgIds[0]);

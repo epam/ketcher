@@ -17,6 +17,16 @@
 import { mapOf } from './schema-helper';
 import { range } from 'lodash/fp';
 import { sdataCustomSchema } from './sdata-schema';
+import { CUSTOM_QUERY_MAX_LENGTH } from 'ketcher-core';
+
+export { CUSTOM_QUERY_MAX_LENGTH };
+
+function customQueryInvalidMessage(value: unknown): string {
+  if (typeof value === 'string' && value.length > CUSTOM_QUERY_MAX_LENGTH) {
+    return `Custom query must not exceed ${CUSTOM_QUERY_MAX_LENGTH} characters`;
+  }
+  return 'Invalid custom query';
+}
 
 interface CommonStructSchema {
   key?: string;
@@ -219,8 +229,9 @@ export const atom: StructSchema<AtomProperties> = {
     customQuery: {
       title: 'Custom Query',
       pattern: '[^ ]',
+      maxLength: CUSTOM_QUERY_MAX_LENGTH,
       type: 'string',
-      invalidMessage: 'Invalid custom query',
+      invalidMessage: customQueryInvalidMessage,
     },
     invRet: {
       title: 'Inversion',
@@ -332,8 +343,9 @@ export const bond: StructSchema = {
     customQuery: {
       title: 'Custom Query',
       pattern: '[^ ]',
+      maxLength: CUSTOM_QUERY_MAX_LENGTH,
       type: 'string',
-      invalidMessage: 'Invalid custom query',
+      invalidMessage: customQueryInvalidMessage,
     },
     center: {
       title: 'Reacting Center',
@@ -416,8 +428,8 @@ const sgroup: Omit<StructSchema, 'properties'> & {
         type: { enum: ['COP'] },
         subtype: {
           title: 'Subtype',
-          enum: ['ran', 'blo', 'alt'],
-          enumNames: ['Random', 'Block', 'Alternating'],
+          enum: [null, 'ran', 'blo', 'alt'],
+          enumNames: ['<Blank>', 'Random', 'Block', 'Alternating'],
         },
         connectivity: {
           title: 'Repeat Pattern',

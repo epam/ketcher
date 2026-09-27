@@ -71,3 +71,21 @@ export function guardForMicromoleculesEditor<T extends (...args: any[]) => any>(
     return undefined;
   }) as unknown as T;
 }
+
+// Copy/cut listeners are registered outside the editor's own input element
+// (on `document` in macromolecules mode, on the cliparea's container in
+// micromolecules mode), so they also fire when the user selects unrelated
+// page text (e.g. an error toast) and presses Ctrl+C. Only treat it as a
+// structure copy if the live selection is actually inside the given element.
+export function isSelectionOutsideElement(
+  containerEl: Element | null,
+): boolean {
+  if (!containerEl) {
+    return false;
+  }
+  const selection = document.getSelection();
+  if (!selection || selection.isCollapsed || !selection.anchorNode) {
+    return false;
+  }
+  return !containerEl.contains(selection.anchorNode);
+}

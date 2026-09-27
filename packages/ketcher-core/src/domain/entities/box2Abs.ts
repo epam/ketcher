@@ -17,21 +17,43 @@
 import { Vec2 } from './vec2';
 import { assert } from 'utilities';
 
+interface RelativeBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+interface AbsoluteBox {
+  min: Vec2;
+  max: Vec2;
+}
+
 export class Box2Abs {
   readonly p0: Vec2;
   readonly p1: Vec2;
 
   constructor();
   constructor(p: Vec2);
+  constructor(box: AbsoluteBox);
   constructor(p0: Vec2, p1: Vec2);
   constructor(x0: number, y0: number, x1: number, y1: number);
-  constructor(...args: Array<any>) {
-    if (args.length === 1 && 'min' in args[0] && 'max' in args[0]) {
-      this.p0 = args[0].min;
-      this.p1 = args[0].max;
-    }
-
-    if (args.length === 2) {
+  constructor(
+    ...args:
+      | []
+      | [Vec2]
+      | [Vec2, Vec2]
+      | [number, number, number, number]
+      | [AbsoluteBox]
+  ) {
+    if (args.length === 1 && args[0] instanceof Vec2) {
+      this.p0 = args[0];
+      this.p1 = args[0];
+    } else if (args.length === 1 && 'min' in args[0] && 'max' in args[0]) {
+      const boxArg = args[0] as AbsoluteBox;
+      this.p0 = boxArg.min;
+      this.p1 = boxArg.max;
+    } else if (args.length === 2) {
       this.p0 = args[0];
       this.p1 = args[1];
     } else if (args.length === 4) {
@@ -42,7 +64,7 @@ export class Box2Abs {
       this.p1 = new Vec2();
     } else {
       throw new Error(
-        'Box2Abs constructor only accepts 4 numbers or 2 vectors or no args!',
+        'Box2Abs constructor only accepts a point, box bounds, 2 vectors, 4 numbers, or no args!',
       );
     }
   }
@@ -81,7 +103,7 @@ export class Box2Abs {
     return new Box2Abs(this.p0.add(d), this.p1.add(d));
   }
 
-  transform(f: (p: Vec2, options: any) => Vec2, options: any): Box2Abs {
+  transform<T>(f: (p: Vec2, options: T) => Vec2, options: T): Box2Abs {
     assert(typeof f === 'function');
 
     return new Box2Abs(f(this.p0, options), f(this.p1, options));
@@ -104,7 +126,7 @@ export class Box2Abs {
     return size.x === 0 && size.y === 0;
   }
 
-  static fromRelBox(relBox: any): Box2Abs {
+  static fromRelBox(relBox: RelativeBox): Box2Abs {
     return new Box2Abs(
       relBox.x,
       relBox.y,

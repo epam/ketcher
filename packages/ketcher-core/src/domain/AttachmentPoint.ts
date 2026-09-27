@@ -11,6 +11,7 @@ import {
   findLabelPoint,
   getSearchFunction,
 } from './helpers/attachmentPointCalculations';
+import { editorEvents } from 'application/editor/editorEvents';
 import {
   type AttachmentPointConstructorParams,
   AttachmentPointName,
@@ -51,22 +52,17 @@ export class AttachmentPoint {
   protected canvasOffset: Coordinates;
   protected centerOfMonomer: Coordinates;
   protected element:
-    | Selection<SVGGElement, this, HTMLElement, never>
-    | undefined;
+    Selection<SVGGElement, this, HTMLElement, never> | undefined;
 
   private hoverableArea:
-    | Selection<SVGGElement, this, HTMLElement, never>
-    | undefined;
+    Selection<SVGGElement, this, HTMLElement, never> | undefined;
 
   protected initialAngle = 0;
   private readonly isUsed: boolean;
   private readonly isDragTarget: boolean;
   private readonly isDragCircleHover: boolean;
   private readonly isSnake: boolean;
-  private get editorEvents() {
-    return provideEditorInstance().events;
-  }
-
+  private readonly editorEvents: typeof editorEvents;
   private readonly applyZoomForPositionCalculation: boolean;
 
   constructor(
@@ -90,6 +86,7 @@ export class AttachmentPoint {
     this.initialAngle = constructorParams.angle;
     this.applyZoomForPositionCalculation =
       constructorParams.applyZoomForPositionCalculation;
+    this.editorEvents = editorEvents;
     this.attachmentPoint = null;
 
     if (!skipInit) {
@@ -362,7 +359,7 @@ export class AttachmentPoint {
     polymerBond: PolymerBond | MonomerToAtomBond,
     flip = false,
   ) {
-    let angleRadians = 0;
+    let angleRadians: number;
     if (flip) {
       angleRadians = Vec2.oxAngleForVector(
         polymerBond.endPosition,

@@ -62,7 +62,7 @@ function throughFileReader(file) {
   }
 
   return new Promise((resolve, reject) => {
-    const rd = new FileReader(); // eslint-disable-line no-undef
+    const rd = new FileReader();
 
     rd.onload = (e) => {
       let content, structures;

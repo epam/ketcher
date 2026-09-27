@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator, expect } from '@playwright/test';
 import { waitForSpinnerFinishedWork } from '@utils/common/loaders/waitForSpinnerFinishedWork/waitForSpinnerFinishedWork';
 import { MiewDialog } from './canvas/MiewDialog';

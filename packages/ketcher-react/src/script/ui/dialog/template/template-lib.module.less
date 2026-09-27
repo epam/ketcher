@@ -58,6 +58,7 @@
 
   & > footer {
     min-height: 24px;
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     box-shadow: 0 -6px 6px 0 @color-accordion-shadow;
     z-index: 10;
 
@@ -77,12 +78,12 @@
       width: 424px;
       padding-left: 35px;
       background-color: @color-primary-light;
-      margin: 0 14px 16px 14px;
+      margin: 0 14px 16px;
       height: 28px;
 
       &::placeholder {
         font-weight: 400;
-        opacity: 90%;
+        opacity: 0.9;
       }
     }
 
@@ -106,34 +107,35 @@
     margin-right: 8px;
   }
 
-  .tabsContent {
-    height: 50vh;
-    background-color: @color-primary-light;
-    overflow-y: auto;
-    overflow-x: hidden;
+.tabsContent {
+  height: 50vh;
+  background-color: @color-primary-light;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  overflow: hidden auto;
 
-    .scrollbar();
-  }
+  .scrollbar();
+}
 
   .resultsContainer {
     padding: 12px 14px 4px;
     background-color: @color-primary-light;
   }
 
-  .saveButton {
-    .button-secondary();
+.saveButton {
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  .button-secondary();
 
-    &[disabled] {
-      pointer-events: none;
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
+  &[disabled] {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.6;
   }
+}
 
-  /* stylelint-disable selector-pseudo-class-no-unknown, no-descending-specificity */
-  :global(.MuiTabs-indicator) {
-    background-color: @color-primary;
-  }
+/* stylelint-disable selector-pseudo-class-no-unknown, no-descending-specificity */
+:global(.MuiTabs-indicator) {
+  background-color: @color-primary;
+}
 
   :global(.MuiTabs-flexContainer) {
     background-color: @color-primary-light;
@@ -152,13 +154,15 @@
     height: 32px;
   }
 
-  .tabs {
-    box-shadow: 0 6px 6px 0 @color-accordion-shadow;
-    z-index: 10;
-  }
+.tabs {
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  box-shadow: 0 6px 6px 0 @color-accordion-shadow;
+  z-index: 10;
+}
 
   :global(.MuiButtonBase-root.MuiTab-root) {
     text-transform: none;
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     color: fade(@color-text-black, 70%);
     padding: 12px 10px 8px;
     line-height: 12px;

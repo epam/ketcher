@@ -411,8 +411,7 @@ export class KetSerializer implements Serializer<Struct> {
     if (!library) return;
 
     const libraryTemplate = library[setMonomerTemplatePrefix(template.id)] as
-      | IKetMonomerTemplate
-      | undefined;
+      IKetMonomerTemplate | undefined;
 
     if (!libraryTemplate) return;
 

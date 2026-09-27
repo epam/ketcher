@@ -96,7 +96,7 @@ export default function initEditor(dispatch, getState, ketcherId) {
         }).then(toElement);
       }
       const elem = selem.type === 'text' ? selem : fromElement(selem);
-      let dlg = null;
+      let dlg;
       if (elem.type === 'text') {
         // TODO: move textdialog opening logic to another place
         return openDialog(dispatch, 'text', elem);
@@ -193,6 +193,8 @@ export default function initEditor(dispatch, getState, ketcherId) {
         .then(toSgroup),
     onRemoveFG: (result) =>
       sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),
+    onEditMonomer: (payload) =>
+      sleep(0).then(() => openDialog(dispatch, 'editMonomer', payload)),
     onMessage: (msg) => {
       if (msg.error) {
         // TODO: add error handler call

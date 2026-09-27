@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 import { lazy, Suspense, useEffect, useState } from 'react';
 import {
   type EditorProps,
@@ -38,7 +40,7 @@ interface MacromoleculesEditorProps {
  *  traverse this dynamic import. If this import is ever changed to a static one, the flag must be removed
  *  and the resulting cross-package cycle (ketcher-macromolecules -> ketcher-react) must be resolved first.
  */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore ketcher-macromolecules is not available during ketcher-react build (dynamic import)
 const MacromoleculesEditorComponent = lazy(
   () => import('ketcher-macromolecules'),

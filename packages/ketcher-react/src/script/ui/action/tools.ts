@@ -58,7 +58,7 @@ const toolActions: Record<string, ToolActionEntry> = {
   'select-structure': {
     title: 'Structure Selection',
     shortcut: ['Shift+Tab', 'Escape'],
-    action: { tool: 'select', opts: 'fragment' },
+    action: { tool: 'select', opts: 'structure' },
     hidden: (options) => isHidden(options, 'select-structure'),
   },
   'select-fragment': {

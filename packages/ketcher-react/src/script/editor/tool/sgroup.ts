@@ -39,6 +39,7 @@ import type { Editor, Selection } from '../Editor';
 import type { Tool } from './Tool';
 import { filterNotPartOfSuperatomWithoutLabel } from './helper/filterNotInCollapsedSGroup';
 import type { ClosestItemWithMap } from '../shared/closest.types';
+import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 interface SGroupDialogResult {
   type?: string;
@@ -168,7 +169,7 @@ class SGroupTool implements Tool {
 
       if (result.length) {
         this.editor.selection(null);
-        this.editor.event.removeFG.dispatch({ fgIds: result });
+        dispatchMonomerOrGroupDialog(this.editor, result);
         return;
       }
 
@@ -238,7 +239,7 @@ class SGroupTool implements Tool {
       const sgroup = sgroups.get(ci.id);
 
       if (FunctionalGroup.isFunctionalGroup(sgroup?.item)) {
-        this.editor.event.removeFG.dispatch({ fgIds: [ci.id] });
+        dispatchMonomerOrGroupDialog(this.editor, [ci.id]);
         return;
       }
     }
@@ -255,7 +256,7 @@ class SGroupTool implements Tool {
         }
       }
       if (result.length > 0) {
-        this.editor.event.removeFG.dispatch({ fgIds: result });
+        dispatchMonomerOrGroupDialog(this.editor, result);
         return;
       }
     } else if (bondResult.length > 0) {
@@ -271,7 +272,7 @@ class SGroupTool implements Tool {
         }
       }
 
-      this.editor.event.removeFG.dispatch({ fgIds: result });
+      dispatchMonomerOrGroupDialog(this.editor, result);
       return;
     }
 
@@ -730,7 +731,7 @@ class SGroupTool implements Tool {
     if (this.shouldRemoveSingleFunctionalGroup(functionalGroupIds)) {
       this.editor.selection(null);
       this.lassoHelper.cancel();
-      this.editor.event.removeFG.dispatch({ fgIds: functionalGroupIds });
+      dispatchMonomerOrGroupDialog(this.editor, functionalGroupIds);
       return;
     }
 
@@ -760,9 +761,12 @@ class SGroupTool implements Tool {
     const selection = editor.selection() ?? {};
     const sg = id !== null ? struct.sgroups.get(id) : null;
 
-    // Prevent opening S-Group properties for expanded monomers
-    // Editing S-Group properties of expanded monomers can cause data corruption
-    // when switching between Molecules and Macromolecules canvas
+    // Show "Edit Monomer" dialog for monomer S-groups instead of S-Group properties
+    if (sg?.isMonomer && id !== null) {
+      editor.event.editMonomer.dispatch({ fgIds: [id], variant: 'single' });
+      return Promise.resolve();
+    }
+
     if (sg?.isMonomer) {
       return Promise.resolve();
     }
@@ -1000,11 +1004,10 @@ function countOfSelectedComponents(
   restruct: ReStruct,
   atoms: Array<number>,
 ): number {
-  const atomSet = new Pile(atoms);
+  const atomSet = new Pile<number>(atoms);
 
   return Array.from(restruct.connectedComponents.values()).reduce(
-    (acc: number, component) =>
-      acc + (atomSet.isSuperset(component as Pile) ? 1 : 0),
+    (acc: number, component) => acc + (atomSet.isSuperset(component) ? 1 : 0),
     0,
   );
 }

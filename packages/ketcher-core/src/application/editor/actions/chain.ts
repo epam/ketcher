@@ -35,7 +35,6 @@ export function fromChain(
   nSect: number,
   atomId: number | null,
 ) {
-  // eslint-disable-line max-params
   const dx = Math.cos(Math.PI / 6);
   const dy = Math.sin(Math.PI / 6);
 

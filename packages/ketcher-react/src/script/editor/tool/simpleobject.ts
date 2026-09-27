@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -95,7 +96,7 @@ class SimpleObjectTool implements Tool {
           // TODO: need to rework  actions/operations logic
           const addOperation = action.operations[0];
           if (!(addOperation instanceof SimpleObjectDelete)) {
-            throw new Error(
+            throw new TypeError(
               'Expected SimpleObjectDelete as the first operation of fromSimpleObjectAddition',
             );
           }

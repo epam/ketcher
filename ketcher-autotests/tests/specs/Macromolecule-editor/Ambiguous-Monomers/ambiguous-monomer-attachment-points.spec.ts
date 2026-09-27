@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { Page, test } from '@fixtures';
 import {

@@ -48,6 +48,7 @@
   scroll-behavior: smooth;
   background-color: @color-background-primary;
   border-radius: 4px;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   box-shadow: 0 2px 5px @color-select-box-shadow;
 
   .button {
@@ -65,10 +66,7 @@
     border-radius: 4px;
 
     svg {
-      top: 1px;
-      bottom: 1px;
-      left: 1px;
-      right: 1px;
+      inset: 1px;
       margin: auto;
     }
   }

@@ -20,6 +20,7 @@
 
 .monomerCreationWizard {
   .wizardBox();
+
   display: flex;
   justify-content: space-between;
   gap: 8px;
@@ -31,9 +32,10 @@
 
 .monomerCreationWizardBackdrop {
   .wizardBox();
+
   pointer-events: none;
-  background-color: #ffffff;
-  box-shadow: 0px 2px 5px 0px #67688426;
+  background-color: #fff;
+  box-shadow: 0 2px 5px 0 #67688426;
 }
 
 .leftColumn {
@@ -107,12 +109,14 @@
 
 .inputError {
   background-color: #FDE0DF !important;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @color-secondary-red !important;
 }
 
 .divider {
   width: 100%;
   margin: 16px 0;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border-bottom: 1px solid @color-grey-3;
 }
 
@@ -135,7 +139,7 @@
 .attachmentPoints {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 8px;
+  gap: 8px;
 }
 
 .attachmentPointsExtra {
@@ -169,12 +173,14 @@
 }
 
 .buttonDiscard {
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @color-grey-6;
   background-color: transparent;
   color: @color-grey-6;
 }
 
 .buttonSubmit {
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @color-primary;
   background-color: @color-primary;
   color: #fff;
@@ -229,6 +235,7 @@
   width: 100%;
   padding: 2px 0;
   background: none;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @color-grey-6;
   color: @color-grey-6;
   border-radius: 3px;
@@ -253,12 +260,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgb(0 0 0 / 20%);
   z-index: 1000;
 }
 
 .DialogMessage {
-  margin: 16px 0 10px 0;
+  margin: 16px 0 10px;
 }
 
 .inputField {
@@ -296,7 +303,7 @@
 }
 
 .inputLabel {
-  margin: 0 0 4px 0;
+  margin: 0 0 4px;
   font-size: 12px;
   line-height: 14px;
 }

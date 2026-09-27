@@ -204,7 +204,6 @@ export function textToKet(textNode) {
   };
 
   return {
-    selected: textNode.selected,
     ...convertToKET20Text(getNodeWithInvertedYCoord(textNode.data)),
   };
 }

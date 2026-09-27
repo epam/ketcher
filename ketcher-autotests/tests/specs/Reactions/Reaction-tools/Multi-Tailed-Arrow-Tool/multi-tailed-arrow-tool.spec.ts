@@ -1,6 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,

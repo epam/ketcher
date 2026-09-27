@@ -1,10 +1,9 @@
-import { test } from '@fixtures';
+import { test, Page } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   pasteFromClipboardAndAddToCanvas,
-  waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
@@ -15,11 +14,19 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 
 test.describe('CDX files', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
 
-  test('opening cdx files', async ({ page }) => {
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+
+  test('opening cdx files', async () => {
     /* 
     Test case: EPMLSOPKET-12514
     Description: Open CDX files
@@ -28,7 +35,7 @@ test.describe('CDX files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('opening cdx files with R-group', async ({ page }) => {
+  test('opening cdx files with R-group', async () => {
     /* 
     Test case: EPMLSOPKET-6973
     Description: Open CDX files with R-group
@@ -39,7 +46,7 @@ test.describe('CDX files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('opening cdx files from clipboard', async ({ page }) => {
+  test('opening cdx files from clipboard', async () => {
     /* 
   Test case: EPMLSOPKET-6972, EPMLSOPKET-8929
   Description: Open structure created in another chemical editor from clickboard
@@ -53,9 +60,7 @@ test.describe('CDX files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open from .cdx file with contracted and expanded functional groups', async ({
-    page,
-  }) => {
+  test('Open from .cdx file with contracted and expanded functional groups', async () => {
     /* 
     Test case: EPMLSOPKET-6970
     Description: Abbreviation appears contracted.
@@ -73,9 +78,7 @@ test.describe('CDX files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open from .cdx file with contracted and expanded Salts and Solvents', async ({
-    page,
-  }) => {
+  test('Open from .cdx file with contracted and expanded Salts and Solvents', async () => {
     /* 
     Test case: EPMLSOPKET-6971
     Description: Abbreviation appears contracted.
@@ -92,13 +95,19 @@ test.describe('CDX files', () => {
 });
 
 test.describe('CDX files without screenshots', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
 
-  test('Validate that unsplit nucleotides connected with another nucleotides could be saved to Cdx file and loaded back', async ({
-    page,
-  }) => {
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+
+  test('Validate that unsplit nucleotides connected with another nucleotides could be saved to Cdx file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with another nucleotides could be saved to Cdx file and loaded back
@@ -116,9 +125,7 @@ test.describe('CDX files without screenshots', () => {
     );
   });
 
-  test('Validate that unsplit nucleotides connected with chems could be saved to Cdx file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides connected with chems could be saved to Cdx file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with chems could be saved to Cdx file and loaded back
@@ -136,9 +143,7 @@ test.describe('CDX files without screenshots', () => {
     );
   });
 
-  test('Validate that unsplit nucleotides connected with bases could be saved to Cdx file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides connected with bases could be saved to Cdx file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with bases could be saved to Cdx file and loaded back
@@ -156,9 +161,7 @@ test.describe('CDX files without screenshots', () => {
     );
   });
 
-  test('Validate that unsplit nucleotides connected with sugars could be saved to Cdx file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides connected with sugars could be saved to Cdx file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with sugars could be saved to Cdx file and loaded back
@@ -176,9 +179,7 @@ test.describe('CDX files without screenshots', () => {
     );
   });
 
-  test('Validate that unsplit nucleotides connected with phosphates could be saved to Cdx file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides connected with phosphates could be saved to Cdx file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with phosphates could be saved to Cdx file and loaded back
@@ -195,9 +196,7 @@ test.describe('CDX files without screenshots', () => {
     );
   });
 
-  test('Validate that unsplit nucleotides connected with peptides could be saved to Cdx file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides connected with peptides could be saved to Cdx file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with peptides could be saved to Cdx file and loaded back
@@ -215,9 +214,7 @@ test.describe('CDX files without screenshots', () => {
     );
   });
 
-  test('Validate that simple schema with retrosynthetic arrow could be saved to Cdx file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that simple schema with retrosynthetic arrow could be saved to Cdx file and loaded back', async () => {
     /*
     Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
@@ -235,9 +232,7 @@ test.describe('CDX files without screenshots', () => {
     );
   });
 
-  test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to Cdx file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to Cdx file and loaded back', async () => {
     /*
     * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2205
     Test case: #2097
@@ -256,9 +251,7 @@ test.describe('CDX files without screenshots', () => {
     );
   });
 
-  test('Validate that the schema with two retrosynthetic arrows could be saved to Cdx file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that the schema with two retrosynthetic arrows could be saved to Cdx file and loaded back', async () => {
     /*
     Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
@@ -276,9 +269,7 @@ test.describe('CDX files without screenshots', () => {
     );
   });
 
-  test('Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to Cdx file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to Cdx file and loaded back', async () => {
     /*
     Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
@@ -296,9 +287,7 @@ test.describe('CDX files without screenshots', () => {
     );
   });
 
-  test('Validate that the schema with vertical retrosynthetic arrow and pluses could be saved to Cdx file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that the schema with vertical retrosynthetic arrow and pluses could be saved to Cdx file and loaded back', async () => {
     /*
     Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
@@ -316,9 +305,7 @@ test.describe('CDX files without screenshots', () => {
     );
   });
 
-  test('Validate that the schema with diagonal retrosynthetic arrow could be saved to Cdx file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that the schema with diagonal retrosynthetic arrow could be saved to Cdx file and loaded back', async () => {
     /*
     Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
@@ -336,9 +323,7 @@ test.describe('CDX files without screenshots', () => {
     );
   });
 
-  test('Verify that a single reaction containing only reactants can be saved/loaded from CDX with appropriate positions', async ({
-    page,
-  }) => {
+  test('Verify that a single reaction containing only reactants can be saved/loaded from CDX with appropriate positions', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2238
      * Description: Single reaction containing only reactants can be saved/loaded from CDX with appropriate positions.
@@ -360,9 +345,7 @@ test.describe('CDX files without screenshots', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that a single reaction containing only products can be saved/loaded from CDX with appropriate positions', async ({
-    page,
-  }) => {
+  test('Verify that a single reaction containing only products can be saved/loaded from CDX with appropriate positions', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2238
      * Description: Single reaction containing only products can be saved/loaded from CDX with appropriate positions.
@@ -384,9 +367,7 @@ test.describe('CDX files without screenshots', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that a single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDX, ignoring the MTA', async ({
-    page,
-  }) => {
+  test('Verify that a single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDX, ignoring the MTA', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2238
      * Description: Single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDX, ignoring the MTA.
@@ -408,9 +389,7 @@ test.describe('CDX files without screenshots', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that multiple individual reactions (without any cascading) can be saved/loaded from CDX with correct positions', async ({
-    page,
-  }) => {
+  test('Verify that multiple individual reactions (without any cascading) can be saved/loaded from CDX with correct positions', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2238
      * Description: Multiple individual reactions (without any cascading) can be saved/loaded from CDX with correct positions.
@@ -432,9 +411,7 @@ test.describe('CDX files without screenshots', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that several cascaded reactions can be saved/loaded from CDX, ignoring multi-tail arrows', async ({
-    page,
-  }) => {
+  test('Verify that several cascaded reactions can be saved/loaded from CDX, ignoring multi-tail arrows', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2238
      * Description: Several cascaded reactions can be saved/loaded from CDX, ignoring multi-tail arrows.
@@ -456,9 +433,7 @@ test.describe('CDX files without screenshots', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that a combination of a single reaction and a cascaded reaction can be saved/loaded from CDX with correct positioning, ignoring MTAs', async ({
-    page,
-  }) => {
+  test('Verify that a combination of a single reaction and a cascaded reaction can be saved/loaded from CDX with correct positioning, ignoring MTAs', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2238
      * Description: Combination of a single reaction and a cascaded reaction can be saved/loaded from CDX with correct positioning, ignoring MTAs.
@@ -480,9 +455,7 @@ test.describe('CDX files without screenshots', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that a cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDX, ignoring MTAs', async ({
-    page,
-  }) => {
+  test('Verify that a cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDX, ignoring MTAs', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2238
      * Description: Cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDX, ignoring MTAs.
@@ -504,9 +477,7 @@ test.describe('CDX files without screenshots', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the saving/loading a pathway with mixed single reactions and cascades from CDX,  MTAs are ignored', async ({
-    page,
-  }) => {
+  test('Verify the saving/loading a pathway with mixed single reactions and cascades from CDX,  MTAs are ignored', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2238
      * Description: Saving/loading a pathway with mixed single reactions and cascades from CDX,  MTAs are ignored.

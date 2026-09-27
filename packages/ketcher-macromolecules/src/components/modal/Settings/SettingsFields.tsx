@@ -52,6 +52,7 @@ export const SettingsFields = ({
             min={field.min}
             max={field.max}
             step={field.step}
+            tooltip={field.tooltip}
             onChange={(value) => onChange({ [fieldName]: value })}
           />
         );

@@ -3451,16 +3451,20 @@ class Editor implements KetcherEditor {
       this.render.update(true, null); // force
     } else {
       if (!ignoreHistory && !action.isDummy(this.render.ctab)) {
-        this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action);
-        if (this.historyStack.length > HISTORY_SIZE) {
-          this.historyStack.shift();
-        }
-        this.historyPtr = this.historyStack.length;
-        this.event.change.dispatch(action); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
-        ketcherProvider.getKetcher(this.ketcherId).changeEvent.dispatch(action);
+        this.addHistoryAction(action);
       }
       this.render.update(false, null);
     }
+  }
+
+  addHistoryAction(action: Action) {
+    this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action);
+    if (this.historyStack.length > HISTORY_SIZE) {
+      this.historyStack.shift();
+    }
+    this.historyPtr = this.historyStack.length;
+    this.event.change.dispatch(action);
+    ketcherProvider.getKetcher(this.ketcherId).changeEvent.dispatch(action);
   }
 
   historySize(): { readonly undo: number; readonly redo: number } {

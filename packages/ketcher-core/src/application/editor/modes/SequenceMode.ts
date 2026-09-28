@@ -61,7 +61,6 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMonomer';
 import {
   BASE_MODIFICATION_DISABLED_IN_SYNC_MODE,
-  PRESET_REPLACEMENT_UNSUPPORTED_ON_DUPLEX,
   createMirroredBaseCommand,
   getHydrogenBondedPartner,
   getMonomerNaturalAnalogue,
@@ -2713,17 +2712,6 @@ export class SequenceMode extends BaseMode {
     };
   }
 
-  private isSelectionsContainAntisenseChains(
-    selections: TwoStrandedNodesSelection,
-  ) {
-    return selections.some((selectionRange) => {
-      return selectionRange.some(
-        (twoStrandedNodeSelection) =>
-          twoStrandedNodeSelection.node.antisenseNode,
-      );
-    });
-  }
-
   /**
    * Rule 1.3 of epam/ketcher#6595, for every path that sets a new base
    * through the library. Refuses, and reports the refusal, when sync
@@ -3136,9 +3124,7 @@ export class SequenceMode extends BaseMode {
     const selections = SequenceRenderer.selections;
 
     if (selections.length > 0) {
-      if (this.isSelectionsContainAntisenseChains(selections)) {
-        editor.events.error.dispatch(PRESET_REPLACEMENT_UNSUPPORTED_ON_DUPLEX);
-
+      if (this.refuseIfBaseModificationBlocked(selections, preset.base)) {
         return;
       }
 

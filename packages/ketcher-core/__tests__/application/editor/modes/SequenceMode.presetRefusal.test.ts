@@ -8,18 +8,24 @@ import type { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
 import { AttachmentPointName } from 'domain/types';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
-import { PRESET_REPLACEMENT_UNSUPPORTED_ON_DUPLEX } from 'domain/helpers/antisenseBaseSync';
+import { BASE_MODIFICATION_DISABLED_IN_SYNC_MODE } from 'domain/helpers/antisenseBaseSync';
+import { STRAND_TYPE } from 'domain/constants';
+import { KetMonomerClass } from 'domain/constants/monomers';
+import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
 } from '../../../helpers/dom';
 
-// Task 7 of epam/ketcher#6595: clicking a preset in the library while a
-// duplex selection is active used to silently no-op. This suite asserts
-// the refusal is now reported, and that the canvas/history stay untouched
-// (preset replacement on a duplex is explicitly out of scope). The
-// duplex-fixture and gesture pattern is copied from
+// Task 3 of epam/ketcher#6595's preset-duplex-replacement change: clicking a
+// preset in the library used to refuse outright on any selection with an
+// antisense partner in it, which left issue items 1.1/1.2 unimplemented for
+// this gesture and also refused a plain sense-only selection in non-sync
+// mode, against item 2.1. The blanket guard is gone; the preset entry point
+// now goes through the same shared refusal (rule 1.3) as the other library
+// entry point, and only refuses when the gesture actually targeted BOTH
+// strands. The duplex-fixture and gesture pattern is copied from
 // SequenceMode.antisenseDuplexSync.test.ts, which already establishes it as
 // the way to build a real sense/antisense pair selected together.
 
@@ -114,13 +120,34 @@ const rendererForMonomer = (nucleotide: Nucleotide) => {
 const mousedownEventFor = (renderer: BaseSequenceItemRenderer) =>
   ({ target: { __data__: renderer } }) as unknown as MouseEvent;
 
+const buildPreset = (
+  editor: CoreEditor,
+  baseLabel: string | undefined,
+): IRnaPreset => {
+  const sugar = getRnaPartLibraryItem(editor, 'R', KetMonomerClass.Sugar);
+  const phosphate = getRnaPartLibraryItem(
+    editor,
+    'P',
+    KetMonomerClass.Phosphate,
+  );
+  const base = baseLabel
+    ? getRnaPartLibraryItem(editor, baseLabel, KetMonomerClass.Base)
+    : undefined;
+
+  if (!sugar || !phosphate || (baseLabel && !base)) {
+    throw new Error('Fixture setup failed: preset parts not found');
+  }
+
+  return { name: baseLabel ?? 'R-P', sugar, phosphate, base };
+};
+
 // A real gesture, copied from SequenceMode.antisenseDuplexSync.test.ts:
 // enter edit mode with a first click on the sense row, then mousedown +
 // mousemove ticks on the SAME position. Selection on a duplex is
 // column-based, so this pulls in BOTH strands' monomers at position 0 even
-// though only the sense row was dragged -- exactly the real-gesture
-// duplex-selection shape the brief asks for.
-const selectBothStrandsAtPositionZero = (
+// though only the sense row was dragged, but the gesture still records
+// SENSE -- the "one strand targeted" shape the preset path must now handle.
+const selectSenseRowAtPositionZero = (
   mode: SequenceMode,
   senseNucleotides: Nucleotide[],
 ) => {
@@ -136,10 +163,26 @@ const selectBothStrandsAtPositionZero = (
   }
 };
 
-describe('SequenceMode.insertPresetFromLibrary duplex refusal (task 7)', () => {
+describe('SequenceMode.insertPresetFromLibrary duplex refusal (task 3)', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
   let mode: SequenceMode;
+
+  // Selects both strands at position 0 and records 'both'. Copied from
+  // SequenceMode.antisenseDuplexSync.test.ts: the drag gesture never records
+  // 'both' for a single mousedown+mousemove on this fixture.
+  const selectBothStrandsAtPositionZero = (
+    senseNucleotides: Nucleotide[],
+    antisenseNucleotides: Nucleotide[],
+  ) => {
+    editor.drawingEntitiesManager.selectDrawingEntities(
+      [
+        ...senseNucleotides[0].monomers,
+        ...antisenseNucleotides[0].monomers,
+      ].filter(Boolean),
+    );
+    SequenceRenderer.setTargetedStrand('both');
+  };
 
   beforeEach(() => {
     canvas = createPolymerEditorCanvas();
@@ -158,37 +201,60 @@ describe('SequenceMode.insertPresetFromLibrary duplex refusal (task 7)', () => {
     canvas.remove();
   });
 
-  it('dispatches PRESET_REPLACEMENT_UNSUPPORTED_ON_DUPLEX exactly once and leaves the monomers and history unchanged, for a duplex selection', () => {
+  it('replaces the sense nucleotides and reports nothing, for a one-strand gesture on a duplex', () => {
     const { senseNucleotides, antisenseNucleotides } =
       buildTwoPositionDuplex(editor);
 
-    selectBothStrandsAtPositionZero(mode, senseNucleotides);
+    // The gesture the file already models: a drag along the sense row,
+    // which selects both strands at every touched column but records SENSE.
+    selectSenseRowAtPositionZero(mode, senseNucleotides);
+    expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
 
-    const selections = SequenceRenderer.selections;
+    const antisenseMonomerIds = antisenseNucleotides[0].monomers
+      .filter(Boolean)
+      .map((monomer) => monomer.id);
+    const originalSenseBaseId = senseNucleotides[0].rnaBase.id;
+    const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
 
+    mode.insertPresetFromLibrary(buildPreset(editor, 'C'));
+
+    // No refusal, and the sense base really was replaced.
+    expect(dispatchSpy).not.toHaveBeenCalled();
     expect(
-      selections.some((range) =>
-        range.some((selection) => selection.node.antisenseNode),
-      ),
-    ).toBe(true);
+      editor.drawingEntitiesManager.monomers.has(originalSenseBaseId),
+    ).toBe(false);
+    // The antisense monomers at that column are still the same objects:
+    // the preset went to the targeted strand only.
+    antisenseMonomerIds.forEach((id) => {
+      expect(editor.drawingEntitiesManager.monomers.has(id)).toBe(true);
+    });
+
+    dispatchSpy.mockRestore();
+  });
+
+  it('refuses a preset with the mandated message when the gesture targeted both strands', () => {
+    const { senseNucleotides, antisenseNucleotides } =
+      buildTwoPositionDuplex(editor);
+
+    selectBothStrandsAtPositionZero(senseNucleotides, antisenseNucleotides);
 
     const senseLabelBefore = senseNucleotides[0].rnaBase.label;
     const antisenseLabelBefore = antisenseNucleotides[0].rnaBase.label;
-    const senseMonomerCountBefore = editor.drawingEntitiesManager.monomers.size;
+    const monomerCountBefore = editor.drawingEntitiesManager.monomers.size;
     const history = EditorHistory.getInstance(editor);
     const historyLengthBefore = history.historyStack.length;
     const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
 
-    mode.insertPresetFromLibrary({} as IRnaPreset);
+    mode.insertPresetFromLibrary(buildPreset(editor, 'C'));
 
     expect(dispatchSpy).toHaveBeenCalledTimes(1);
     expect(dispatchSpy).toHaveBeenCalledWith(
-      PRESET_REPLACEMENT_UNSUPPORTED_ON_DUPLEX,
+      BASE_MODIFICATION_DISABLED_IN_SYNC_MODE,
     );
     expect(senseNucleotides[0].rnaBase.label).toBe(senseLabelBefore);
     expect(antisenseNucleotides[0].rnaBase.label).toBe(antisenseLabelBefore);
     expect(editor.drawingEntitiesManager.monomers.size).toBe(
-      senseMonomerCountBefore,
+      monomerCountBefore,
     );
     expect(history.historyStack.length).toBe(historyLengthBefore);
 

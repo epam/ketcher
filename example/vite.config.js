@@ -609,6 +609,26 @@ export default defineConfig({
       preventAssignment: true,
       values: polymerEditorValues,
     }),
+    {
+      ...replace({
+        include: '**/example/src/**',
+        preventAssignment: true,
+        values: {
+          require: 'await import',
+        },
+      }),
+      apply: 'serve',
+    },
+    {
+      ...replace({
+        include: '**/ketcher-core/src/**',
+        preventAssignment: true,
+        values: {
+          require: 'await import',
+        },
+      }),
+      apply: 'serve',
+    },
     normalizeHtmlTransformHook(
       createHtmlPlugin({
         pages: htmlPages,

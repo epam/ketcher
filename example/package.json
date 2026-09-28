@@ -66,7 +66,6 @@
     "shx": "^0.3.3",
     "typescript": "^6.0.3",
     "vite": "8.3.1",
-    "vite-plugin-commonjs": "^0.10.4",
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-raw": "^1.0.3",
     "vite-plugin-svgr": "^4.5.0"

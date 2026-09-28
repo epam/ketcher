@@ -2,7 +2,7 @@ import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { MonomerOrAmbiguousType } from 'domain/types';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
-  type KetMonomerClass,
+  KetMonomerClass,
   RNA_DNA_NON_MODIFIED_PART,
 } from 'domain/constants/monomers';
 import {
@@ -70,6 +70,26 @@ export function getLibraryItemMonomerClass(
   return isAmbiguousMonomerLibraryItem(item)
     ? AmbiguousMonomer.getMonomerClass(item.monomers)
     : item.props?.MonomerClass;
+}
+
+/**
+ * Whether replacing a node with this library item would set a new base on
+ * it. True for a base monomer, and for an unsplit nucleotide, whose base is
+ * part of the monomer itself (monomer class RNA or DNA). False for sugars,
+ * phosphates, CHEM and peptides: those replace the node without giving it a
+ * base, so rule 1.3 has nothing to be ambiguous about.
+ *
+ * A preset is not a library item and has no monomer class of its own; the
+ * caller passes `preset.base`, which is an ordinary Base-class item.
+ */
+export function itemCarriesBase(item: MonomerOrAmbiguousType): boolean {
+  const monomerClass = getLibraryItemMonomerClass(item);
+
+  return (
+    monomerClass === KetMonomerClass.Base ||
+    monomerClass === KetMonomerClass.RNA ||
+    monomerClass === KetMonomerClass.DNA
+  );
 }
 
 export function getMonomerNaturalAnalogue(

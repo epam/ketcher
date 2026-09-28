@@ -27,7 +27,6 @@ import {
 
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { SnakeMode } from 'application/editor/modes/SnakeMode';
-import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { FlexMode } from 'application/editor/modes/FlexMode';
 

@@ -249,6 +249,11 @@ function handleHotkeyGroup(
     return;
   }
 
+  if (actName === 'undo' || actName === 'redo') {
+    // A history entry can switch editors while this key event is still bubbling.
+    event.stopImmediatePropagation();
+  }
+
   removeNotRenderedStruct(actionTool, group, dispatch);
 
   if (clipArea.actions.indexOf(actName) === -1) {

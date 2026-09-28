@@ -10,7 +10,11 @@ import {
   type TwoStrandedNodesSelection,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
-import { type MonomerItemType, AttachmentPointName } from 'domain/types';
+import {
+  type MonomerItemType,
+  type MonomerOrAmbiguousType,
+  AttachmentPointName,
+} from 'domain/types';
 import { Command } from 'domain/entities/Command';
 import {
   AmbiguousMonomer,
@@ -60,10 +64,10 @@ import {
   PRESET_REPLACEMENT_UNSUPPORTED_ON_DUPLEX,
   createMirroredBaseCommand,
   getHydrogenBondedPartner,
-  getLibraryItemMonomerClass,
   getMonomerNaturalAnalogue,
   isBaseEligibleForDuplexSync,
   isSelectedAntisensePair,
+  itemCarriesBase,
 } from 'domain/helpers/antisenseBaseSync';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
@@ -2380,30 +2384,6 @@ export class SequenceMode extends BaseMode {
     // Recorded once for the whole gesture: the same value must apply to
     // every node touched by this call, not be re-derived per position.
     const bothStrandsTargeted = SequenceRenderer.targetedStrand === 'both';
-    const isBaseReplacement =
-      getLibraryItemMonomerClass(monomerItem) === KetMonomerClass.Base;
-    const hasSelectedAntisensePair = selections.some((selectionRange) =>
-      selectionRange.some((nodeSelection) => {
-        const nodeToReplace = getNodeForStrand(
-          nodeSelection.node,
-          getSelectedStrandType(nodeSelection.node),
-        );
-
-        const editedBase =
-          nodeToReplace instanceof Nucleotide ||
-          nodeToReplace instanceof Nucleoside
-            ? nodeToReplace.rnaBase
-            : undefined;
-
-        return isSelectedAntisensePair(editedBase, bothStrandsTargeted);
-      }),
-    );
-
-    if (isBaseReplacement && hasSelectedAntisensePair && this.isSyncEditMode) {
-      editor.events.error.dispatch(BASE_MODIFICATION_DISABLED_IN_SYNC_MODE);
-
-      return;
-    }
 
     // A range coming out of SequenceRenderer.selections can mix strands, but
     // the loop below resolves the strand once per range and carries state
@@ -2737,6 +2717,63 @@ export class SequenceMode extends BaseMode {
     });
   }
 
+  /**
+   * Rule 1.3 of epam/ketcher#6595, for every path that sets a new base
+   * through the library. Refuses, and reports the refusal, when sync
+   * editing is on, the gesture targeted BOTH strands, the selection holds
+   * at least one eligible hydrogen-bonded pair, and the clicked item would
+   * set a new base.
+   *
+   * It lives here, called from both library entry points before any
+   * confirmation dialog, rather than inside the replacement loops: a
+   * refusal raised from inside the loop arrives only after the user has
+   * already confirmed a destructive-sounding dialog, and keying it off the
+   * item's monomer class let unsplit nucleotides through, rewriting the
+   * sense base while propagation was suppressed for the very same
+   * both-strands record.
+   *
+   * Returns true when the caller must stop.
+   */
+  private refuseIfBaseModificationBlocked(
+    selections: TwoStrandedNodesSelection,
+    newBaseCarryingItem: MonomerOrAmbiguousType | undefined,
+  ): boolean {
+    if (!this.isSyncEditMode || !newBaseCarryingItem) {
+      return false;
+    }
+
+    if (!itemCarriesBase(newBaseCarryingItem)) {
+      return false;
+    }
+
+    const bothStrandsTargeted = SequenceRenderer.targetedStrand === 'both';
+    const hasSelectedAntisensePair = selections.some((selectionRange) =>
+      selectionRange.some((nodeSelection) => {
+        const nodeToReplace = getNodeForStrand(
+          nodeSelection.node,
+          getSelectedStrandType(nodeSelection.node),
+        );
+        const editedBase =
+          nodeToReplace instanceof Nucleotide ||
+          nodeToReplace instanceof Nucleoside
+            ? nodeToReplace.rnaBase
+            : undefined;
+
+        return isSelectedAntisensePair(editedBase, bothStrandsTargeted);
+      }),
+    );
+
+    if (!hasSelectedAntisensePair) {
+      return false;
+    }
+
+    provideEditorInstance().events.error.dispatch(
+      BASE_MODIFICATION_DISABLED_IN_SYNC_MODE,
+    );
+
+    return true;
+  }
+
   public insertMonomerFromLibrary(monomerItem: MonomerItemType) {
     const editor = provideEditorInstance();
     const history = EditorHistory.getInstance(editor);
@@ -2744,6 +2781,10 @@ export class SequenceMode extends BaseMode {
     const selections = SequenceRenderer.selections;
 
     if (selections.length > 0) {
+      if (this.refuseIfBaseModificationBlocked(selections, monomerItem)) {
+        return;
+      }
+
       const missingAttachmentPoint = this.getFirstMissingAttachmentPoint(
         selections,
         monomerItem,

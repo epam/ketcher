@@ -406,14 +406,11 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
 
       expect(mode.isSyncEditMode).toBe(true);
 
-      const selections = selectBothStrandsAtPositionZero(
-        senseNucleotides,
-        antisenseNucleotides,
-      );
+      selectBothStrandsAtPositionZero(senseNucleotides, antisenseNucleotides);
       const newBaseItem = requireBaseLibraryItem(editor, 'C');
       const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
 
-      callReplaceSelectionsWithMonomer(mode, selections, newBaseItem);
+      mode.insertMonomerFromLibrary(newBaseItem);
 
       expect(dispatchSpy).toHaveBeenCalledWith(
         BASE_MODIFICATION_DISABLED_IN_SYNC_MODE,

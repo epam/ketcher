@@ -7,6 +7,7 @@ import { Vec2 } from 'domain/entities';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import type { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 import { AttachmentPointName } from 'domain/types';
 import { Entities } from 'domain/types';
 import type { LabeledNodesWithPositionInSequence } from 'application/editor/tools/Tool';
@@ -432,14 +433,31 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
       (mode as unknown as { _isSyncEditMode: boolean })._isSyncEditMode = false;
       expect(mode.isSyncEditMode).toBe(false);
 
-      const selections = selectBothStrandsAtPositionZero(
-        senseNucleotides,
-        antisenseNucleotides,
-      );
+      // Position 0's fixture carries a real backbone bond forward to
+      // position 1 (sense[0].phosphate R2 -> sense[1].sugar R1). Routing
+      // through the real insertMonomerFromLibrary entry point (required to
+      // exercise the sync gate for real, see the comment below) also runs
+      // the generic "would this monomer still hold the chain together"
+      // pre-check ahead of the sync gate, and a lone base item has no R2 of
+      // its own to satisfy it -- a legitimate check, unrelated to sync
+      // editing. Dropping the forward backbone bond here makes position 0
+      // chain-terminal, same as any node the sync gate would actually be
+      // exercised on in isolation.
+      const backboneBondToNextSenseNode =
+        senseNucleotides[0].phosphate.attachmentPointsToBonds.R2;
+      if (backboneBondToNextSenseNode instanceof PolymerBond) {
+        editor.drawingEntitiesManager.deletePolymerBond(
+          backboneBondToNextSenseNode,
+        );
+      }
+
+      // Sets up the both-strands selection state that
+      // insertMonomerFromLibrary reads from SequenceRenderer.
+      selectBothStrandsAtPositionZero(senseNucleotides, antisenseNucleotides);
       const newBaseItem = requireBaseLibraryItem(editor, 'C');
       const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
 
-      callReplaceSelectionsWithMonomer(mode, selections, newBaseItem);
+      mode.insertMonomerFromLibrary(newBaseItem);
 
       expect(dispatchSpy).not.toHaveBeenCalledWith(
         BASE_MODIFICATION_DISABLED_IN_SYNC_MODE,

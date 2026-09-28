@@ -555,7 +555,7 @@ export class CoreEditor {
         idtAliases?.modifications?.internal
           ? `IDT internal alias "${idtAliases.modifications.internal}"`
           : null,
-      ].filter((value): value is string => Boolean(value));
+      ].filter(Boolean) as string[];
 
     const formatAliasDetails = (monomer: MonomerItemType) =>
       [
@@ -567,7 +567,7 @@ export class CoreEditor {
           : null,
         ...formatIdtAliasDetails(monomer.props?.idtAliases),
       ]
-        .filter((value): value is string => Boolean(value))
+        .filter(Boolean)
         .join(', ');
 
     const getCollisionErrorMessage = (
@@ -2313,7 +2313,7 @@ export class CoreEditor {
       this.canvas.contains(event?.target) || editorTool.isSelectionRunning?.(),
     ];
 
-    if (conditions.every((condition) => condition)) {
+    if (conditions.every(Boolean)) {
       editorTool[eventHandlerName]?.(event);
       return true;
     }

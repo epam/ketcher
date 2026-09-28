@@ -1,6 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   type EditorProps,
   MicromoleculesEditor as MicromoleculesEditorComponent,
@@ -63,6 +70,7 @@ export const Editor = (props: Props) => {
   );
   const wizardSessionActive = useRef(false);
   const skipModeConversion = useRef(false);
+  const pendingWizardFinish = useRef<boolean | undefined>(undefined);
   const togglePolymerEditor = (toggleValue: boolean) => {
     setShowPolymerEditor(toggleValue);
     window.isPolymerEditorTurnedOn = toggleValue;
@@ -140,6 +148,29 @@ export const Editor = (props: Props) => {
     };
   }, []);
 
+  /*
+   * Runs after the macromolecules canvas is shown but before the browser
+   * paints, so the rebuilt structures are measured against a laid-out canvas
+   * and the user never sees the pre-wizard canvas flash.
+   */
+  useLayoutEffect(() => {
+    const savedCanvas = pendingWizardFinish.current;
+
+    if (savedCanvas === undefined || !macromoleculesEditor) {
+      return;
+    }
+
+    pendingWizardFinish.current = undefined;
+
+    try {
+      macromoleculesEditor.finishMonomerWizardSession(savedCanvas);
+    } catch (error) {
+      moleculesEditor?.errorHandler?.(
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+  }, [showPolymerEditor]);
+
   useEffect(() => {
     if (moleculesEditor && macromoleculesEditor) {
       if (skipModeConversion.current) {
@@ -149,15 +180,18 @@ export const Editor = (props: Props) => {
       const request = pendingWizard.current;
       if (request) {
         pendingWizard.current = undefined;
+        /*
+         * Only schedules the restore: rebuilding the macromolecules canvas
+         * measures the DOM (monomer labels are laid out from getBBox), and
+         * that canvas is still hidden until React re-renders in macro mode.
+         * The layout effect above performs it once the canvas is on screen.
+         */
         const finishSession = (savedCanvas: boolean) => {
-          try {
-            macromoleculesEditor.finishMonomerWizardSession(savedCanvas);
-          } finally {
-            wizardSessionActive.current = false;
-            skipModeConversion.current = true;
-            setIsMonomerWizardOpen(false);
-            togglePolymerEditor(true);
-          }
+          wizardSessionActive.current = false;
+          skipModeConversion.current = true;
+          pendingWizardFinish.current = savedCanvas;
+          setIsMonomerWizardOpen(false);
+          togglePolymerEditor(true);
         };
         try {
           moleculesEditor.openMonomerCreationWizardFromMacro(

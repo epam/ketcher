@@ -138,6 +138,38 @@ describe('Editor monomer wizard mode bridge', () => {
     expect(mockMacroEditor.switchToMacromolecules).not.toHaveBeenCalled();
   });
 
+  /*
+   * Rebuilding the canvas measures the DOM (monomer labels are positioned from
+   * getBBox), which silently returns zeros inside a display:none subtree.
+   */
+  it('rebuilds the canvas only once the macromolecules editor is visible', async () => {
+    await initialize();
+    const macroWrapperDisplay = () =>
+      (
+        screen
+          .getByTestId('init-macro')
+          .closest('[data-ketcher-editor]') as HTMLElement
+      ).style.display;
+    const displayWhenRestored: string[] = [];
+    mockMacroEditor.finishMonomerWizardSession.mockImplementationOnce(() => {
+      displayWhenRestored.push(macroWrapperDisplay());
+    });
+
+    act(() =>
+      mockMacroEditor.events.openMonomerCreationWizard.dispatch({
+        mode: 'create',
+      }),
+    );
+    expect(macroWrapperDisplay()).toBe('none');
+
+    const finish =
+      mockMicroEditor.openMonomerCreationWizardFromMacro.mock.calls[0][1];
+    act(() => finish(true));
+
+    expect(displayWhenRestored).toEqual(['']);
+    expect(macroWrapperDisplay()).toBe('');
+  });
+
   it('restores macro mode after an opening error without converting the original canvas', async () => {
     await initialize();
     mockMicroEditor.openMonomerCreationWizardFromMacro.mockImplementationOnce(

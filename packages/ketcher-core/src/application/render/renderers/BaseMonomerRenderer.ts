@@ -123,23 +123,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   /**
-   * Body size to lay out labels and other in-body decorations against.
-   *
-   * Prefers the rendered box, but falls back to the size declared on the
-   * symbol: getBBox() reports zeros while the canvas sits in a `display: none`
-   * subtree, which is the case for monomers rendered as the monomer creation
-   * wizard hands control back to macromolecules mode. `measured` tells callers
-   * whether the box was real, so unmeasured results are not cached or reused.
-   */
-  protected get labelBodySize() {
-    const bbox = this.rootBBox;
-
-    return bbox?.width && bbox?.height
-      ? { width: bbox.width, height: bbox.height, measured: true }
-      : { ...this.monomerSize, measured: false };
-  }
-
-  /**
    * The path that outlines this monomer's replacement-highlight area.
    *
    * The default is a rectangle matching the monomer body; renderers with a
@@ -467,32 +450,16 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     );
     const monomerUniqueKey = this.monomer.label + monomerClass;
 
-    const cachedPosition = labelPositions[monomerUniqueKey];
-    const bodySize = this.labelBodySize;
-
-    if (cachedPosition) {
-      textElement.attr('x', cachedPosition.x).attr('y', cachedPosition.y);
-    } else if (bodySize.measured) {
+    if (!labelPositions[monomerUniqueKey]) {
       const textBBox = (textElement.node() as SVGTextElement).getBBox();
-      const position = {
-        x: bodySize.width / 2 - textBBox.width / 2,
-        y: bodySize.height / 2,
+      labelPositions[monomerUniqueKey] = {
+        x: this.width / 2 - textBBox.width / 2,
+        y: this.height / 2,
       };
-
-      labelPositions[monomerUniqueKey] = position;
-      textElement.attr('x', position.x).attr('y', position.y);
-    } else {
-      /*
-       * Nothing is measurable on a hidden canvas, so centre on the declared
-       * body size and let the anchor replace the text width. This position is
-       * deliberately left uncached: caching it would pin every later monomer
-       * sharing this label to a value derived from an unrendered canvas.
-       */
-      textElement
-        .attr('text-anchor', 'middle')
-        .attr('x', bodySize.width / 2)
-        .attr('y', bodySize.height / 2);
     }
+    textElement
+      .attr('x', labelPositions[monomerUniqueKey]?.x ?? 0)
+      .attr('y', labelPositions[monomerUniqueKey]?.y ?? 0);
 
     if (this.scale && this.scale !== 1) {
       labelPositions[monomerUniqueKey] = undefined;

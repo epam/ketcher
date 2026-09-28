@@ -1,4 +1,4 @@
-import { CoreEditor } from 'application/editor';
+import { compareStrings, CoreEditor } from 'application/editor';
 import { type BaseMonomer, Vec2 } from 'domain/entities';
 import type { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { Nucleotide } from 'domain/entities/Nucleotide';
@@ -15,10 +15,7 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 
-const sortLabels = (labels: string[]) =>
-  labels.sort((firstLabel, secondLabel) =>
-    firstLabel.localeCompare(secondLabel),
-  );
+const sortLabels = (labels: string[]) => labels.sort(compareStrings);
 
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),

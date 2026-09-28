@@ -2484,6 +2484,9 @@ export class CoreEditor {
         } else {
           this.renderersContainer.update(modelChanges);
         }
+        // The canvas the user left behind is gone: drop the transient views
+        // (rotation handles, snap hints) and the selection they were drawn for.
+        this.resetCanvasInteractionState();
         const command = new Command();
         command.addOperation(
           new MonomerWizardCanvasOperation(
@@ -2523,6 +2526,12 @@ export class CoreEditor {
     manager.stereoFlags.forEach((flag) =>
       this.renderersContainer.addStereoFlag(flag),
     );
+    this.resetCanvasInteractionState();
+  }
+
+  private resetCanvasInteractionState() {
+    this.clearTransientViews();
+    this.clearSelection();
   }
 
   public switchToMicromolecules() {

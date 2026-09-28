@@ -21,7 +21,11 @@ const createEditor = (modeName = 'flex-layout-mode') => {
   jest
     .spyOn(DrawingEntitiesManager.prototype, 'clearCanvas')
     .mockImplementation(() => undefined);
+  jest
+    .spyOn(DrawingEntitiesManager.prototype, 'unselectAllDrawingEntities')
+    .mockImplementation(() => new Command());
   Object.assign(editor, {
+    transientDrawingView: { clear: jest.fn(), update: jest.fn() },
     _type: EditorType.Macromolecules,
     mode: { modeName, initialize: jest.fn() },
     drawingEntitiesManager: manager,
@@ -106,6 +110,34 @@ describe('temporary monomer wizard mode session', () => {
       expect(editor.isMonomerWizardSessionActive).toBe(false);
     },
   );
+
+  it('drops transient views and selection left over from before the session', () => {
+    const { editor } = createEditor();
+    jest
+      .spyOn(MacromoleculesConverter, 'convertStructToDrawingEntities')
+      .mockReturnValue({ modelChanges: new Command() } as never);
+
+    editor.beginMonomerWizardSession();
+    expect(editor.transientDrawingView.clear).not.toHaveBeenCalled();
+
+    editor.finishMonomerWizardSession(true);
+
+    expect(editor.transientDrawingView.clear).toHaveBeenCalled();
+    expect(
+      editor.drawingEntitiesManager.unselectAllDrawingEntities,
+    ).toHaveBeenCalled();
+  });
+
+  it('keeps the selection of the untouched canvas when the wizard is cancelled', () => {
+    const { editor } = createEditor();
+    editor.beginMonomerWizardSession();
+    editor.finishMonomerWizardSession(false);
+
+    expect(editor.transientDrawingView.clear).not.toHaveBeenCalled();
+    expect(
+      editor.drawingEntitiesManager.unselectAllDrawingEntities,
+    ).not.toHaveBeenCalled();
+  });
 
   it('keeps the original canvas and exits the session if saved conversion fails', () => {
     const { editor, manager } = createEditor();

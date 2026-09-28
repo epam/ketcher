@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -26,6 +26,13 @@
     -->
     <title>Ketcher Demo</title>
     <script src="%PUBLIC_URL%/js/ketcherFunctions.js"></script>
+    <!--
+      HACK: https://github.com/bevacqua/dragula/issues/602#issuecomment-1109840139
+      Fix: global is not defined. App.tsx assigns to `global.ketcher` directly.
+    -->
+    <script>
+      var global = global || window;
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -40,5 +47,6 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>

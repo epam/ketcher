@@ -189,7 +189,11 @@ const RnaElementsTabsView = ({
             )}
             key={groupName}
           >
-            <CompactDetailsContainer>{details}</CompactDetailsContainer>
+            <CompactDetailsContainer
+              data-testid={`rna-accordion-details-${groupName}`}
+            >
+              {details}
+            </CompactDetailsContainer>
           </RnaTabContent>
         );
       })}

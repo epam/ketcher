@@ -104,15 +104,34 @@ export const Editor = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    if (moleculesEditor && macromoleculesEditor) {
-      if (showPolymerEditor) {
-        moleculesEditor?.closeMonomerCreationWizard?.();
-        macromoleculesEditor?.switchToMacromolecules();
-      } else {
-        macromoleculesEditor?.switchToMicromolecules();
-        moleculesEditor?.focusCliparea();
-      }
+    if (!moleculesEditor || !macromoleculesEditor) {
+      return;
     }
+
+    if (!showPolymerEditor) {
+      macromoleculesEditor.switchToMicromolecules();
+      moleculesEditor.focusCliparea();
+      return;
+    }
+
+    moleculesEditor.closeMonomerCreationWizard?.();
+
+    // The default monomers library is a lazily fetched asset, so it may not be
+    // resolved yet. switchToMacromolecules converts the struct into drawing
+    // entities and needs the library present, so wait for it before switching.
+    // ensureDefaultMonomersLibraryLoaded is idempotent, so only the first
+    // switch actually fetches.
+    let cancelled = false;
+
+    macromoleculesEditor.ensureDefaultMonomersLibraryLoaded().then(() => {
+      if (!cancelled) {
+        macromoleculesEditor.switchToMacromolecules();
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [showPolymerEditor]);
 
   useEffect(() => {

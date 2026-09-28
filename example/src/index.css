@@ -1,5 +1,23 @@
+/*
+ * @csstools/normalize.css, not the plain normalize.css package.
+ *
+ * The previous react-scripts build ran `postcss-normalize`
+ * (react-scripts/config/webpack.config.js), which rewrites
+ * `@import 'normalize.css'` to the browserslist-tailored
+ * `@csstools/normalize.css`. Every selector in that file is wrapped in
+ * `:where(...)`, so the reset has zero specificity and never competes with
+ * our own styles; for form controls it sets only `margin: 0`.
+ *
+ * Vite inlines `@import` before user PostCSS plugins run, so the plugin
+ * cannot be reintroduced here. Importing the same stylesheet directly keeps
+ * the reset identical to the react-scripts output. Importing plain
+ * normalize.css instead pulls in 8.x, whose plain type selectors DO compete -
+ * `button, input, optgroup, select, textarea { font-family: inherit;
+ * font-size: 100%; line-height: 1.15 }` plus a `sub, sup` rule - which shifts
+ * text baselines ~1px across every dialog.
+ */
 /* stylelint-disable-next-line import-notation */
-@import 'normalize.css';
+@import '@csstools/normalize.css';
 
 body {
     margin: 0;

@@ -88,7 +88,7 @@ export class Box2Abs {
     return new Box2Abs(this.p0.min(p), this.p1.max(p));
   }
 
-  contains(p: Vec2, ext = 0.0): boolean {
+  contains(p: Vec2, ext = 0): boolean {
     assert(p != null);
 
     return (

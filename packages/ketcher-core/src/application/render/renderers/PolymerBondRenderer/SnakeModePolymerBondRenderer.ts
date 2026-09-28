@@ -1,4 +1,5 @@
 import { SnakeMode } from 'application/editor/modes/SnakeMode';
+import { editorEvents } from 'application/editor/editorEvents';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
@@ -54,10 +55,7 @@ const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
 //  - `SnakeModeSideChainBondRenderer` (blue “snake” line)
 //  - `SnakeModeRNABaseAndSugarBondRenderer` (black straight line)
 export class SnakeModePolymerBondRenderer extends BaseRenderer {
-  private get editorEvents() {
-    return provideEditorInstance().events;
-  }
-
+  private readonly editorEvents: typeof editorEvents;
   private isSnakeBond = false; // `SnakeModeBackboneBondRenderer` or `SnakeModeRNABaseAndSugarBondRenderer`.
   // TODO: Specify the types.
   private selectionElement;
@@ -70,6 +68,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   constructor(public readonly polymerBond: PolymerBond) {
     super(polymerBond);
     this.polymerBond.setRenderer(this);
+    this.editorEvents = editorEvents;
     this.calculateIsSnakeBond();
   }
 
@@ -390,8 +389,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         0,
       );
 
-      maxHorizontalOffset =
-        maxHorizontalOffset > maxXOffset ? maxHorizontalOffset : maxXOffset;
+      maxHorizontalOffset = Math.max(maxHorizontalOffset, maxXOffset);
 
       if (isLastCell) {
         if (isStraightVerticalConnection) {

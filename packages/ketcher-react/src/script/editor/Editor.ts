@@ -3253,7 +3253,7 @@ class Editor implements KetcherEditor {
 
                 // Check if the other end (bond.end) can be a leaving atom (has only one neighbor)
                 const endAtom = this.struct().atoms.get(bond.end);
-                if (endAtom && endAtom.neighbors.length === 1) {
+                if (endAtom?.neighbors.length === 1) {
                   const updatedLeavingAtomIds = new Set(leavingAtomIds);
                   updatedLeavingAtomIds.add(bond.end);
                   this.monomerCreationState.potentialAttachmentPoints.set(
@@ -3277,7 +3277,7 @@ class Editor implements KetcherEditor {
 
                 // Check if the other end (bond.begin) can be a leaving atom (has only one neighbor)
                 const beginAtom = this.struct().atoms.get(bond.begin);
-                if (beginAtom && beginAtom.neighbors.length === 1) {
+                if (beginAtom?.neighbors.length === 1) {
                   const updatedLeavingAtomIds = new Set(leavingAtomIds);
                   updatedLeavingAtomIds.add(bond.begin);
                   this.monomerCreationState.potentialAttachmentPoints.set(
@@ -3357,7 +3357,7 @@ class Editor implements KetcherEditor {
       const res: Selection = {};
 
       Object.keys(resolvedCi).forEach((key) => {
-        if (resolvedCi && resolvedCi[key] && resolvedCi[key].length > 0)
+        if (resolvedCi[key]?.length > 0)
           // TODO: deep merge
           res[key] = resolvedCi[key].slice();
       });

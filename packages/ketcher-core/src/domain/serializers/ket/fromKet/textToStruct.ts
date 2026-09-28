@@ -161,9 +161,7 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
  */
 function isKetV2Format(ketItem: any): ketItem is KETTextV2 {
   return (
-    ketItem &&
-    ketItem.boundingBox !== undefined &&
-    ketItem.paragraphs !== undefined
+    ketItem?.boundingBox !== undefined && ketItem?.paragraphs !== undefined
   );
 }
 

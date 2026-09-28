@@ -114,9 +114,9 @@ const dropInlineWorkerMapsPlugin = () => ({
 // Rolldown emits cross-chunk asset references (the worker constructor in
 // `main.js`, and the .wasm lookup inside the worker chunk itself, both from
 // `?no-inline`/native-worker handling above) as a computed expression -
-// `new URL("" + new URL('<file>', import.meta.url).href, "" +
-// import.meta.url)` - so the URL still resolves correctly regardless of
-// which chunk ends up referencing it. Consumer bundlers (webpack 5's
+// `new URL(new URL('<file>', import.meta.url).href, "" + import.meta.url)`.
+// Older Rolldown versions also emit `"" +` before the inner `new URL`.
+// Consumer bundlers (webpack 5's
 // asset-modules worker plugin, Vite's own `?worker` detection) only
 // statically recognise the literal form - `new Worker(new URL('./file.js',
 // import.meta.url), { type: 'module' })` and `new URL('./file.wasm',
@@ -129,10 +129,10 @@ const dropInlineWorkerMapsPlugin = () => ({
 // rewriting the computed form to the literal one after the bundle is
 // assembled is safe.
 const workerUrlRE =
-  /new Worker\(new URL\(\s*(?:\/\*\s*@vite-ignore\s*\*\/\s*)?"" \+ new URL\((["'])([^"']+)\1, import\.meta\.url\)\.href,\s*"" \+ import\.meta\.url\s*\), \{ type: "module" \}\)/g;
+  /new Worker\(new URL\(\s*(?:\/\*\s*@vite-ignore\s*\*\/\s*)?(?:"" \+ )?new URL\((["'])([^"']+)\1, import\.meta\.url\)\.href,\s*"" \+ import\.meta\.url\s*\), \{ type: "module" \}\)/g;
 
 const wasmUrlHrefRE =
-  /new URL\("" \+ new URL\((["'])([^"']+\.wasm)\1, import\.meta\.url\)\.href, "" \+ import\.meta\.url\)\.href/g;
+  /new URL\(\s*(?:"" \+ )?new URL\((["'])([^"']+\.wasm)\1, import\.meta\.url\)\.href,\s*"" \+ import\.meta\.url\)\.href/g;
 
 // Rewrites every match of `regex` in `code` via its capture groups (passed
 // straight through to `buildReplacement`, same signature as the function

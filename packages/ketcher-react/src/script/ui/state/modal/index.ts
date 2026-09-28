@@ -90,7 +90,7 @@ function modalReducer(
       if (state?.parentModal) {
         const restoredProp = {
           ...state.parentModal.prop,
-          ...(state.parentModal.form?.result ?? {}),
+          ...state.parentModal.form?.result,
           isRestoredModal: true,
         } as ModalDialogProps;
         return { ...state.parentModal, prop: restoredProp };

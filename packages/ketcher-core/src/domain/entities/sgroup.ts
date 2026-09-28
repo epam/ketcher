@@ -722,7 +722,7 @@ export class SGroup {
           const d = atomSet.has(b.begin)
             ? b.getDir(mol)
             : b.getDir(mol).negated();
-          brackets.push(new SGroupBracketParams(c, d, 0.2, 1.0));
+          brackets.push(new SGroupBracketParams(c, d, 0.2, 1));
         }
       })();
     }
@@ -797,7 +797,7 @@ export class SGroup {
     });
 
     if (xBonds.length !== 0 && xBonds.length !== 2) {
-      throw Error('Unsupported cross-bonds number');
+      throw new Error('Unsupported cross-bonds number');
     }
 
     let xAtom1 = -1;
@@ -875,7 +875,7 @@ export class SGroup {
     for (const atomId of atoms) {
       const atom = mol.atoms.get(atomId);
       assert(atom, `SGroup.getMassCentre: atom ${atomId} is not found`);
-      c = c.addScaled(atom.pp, 1.0 / atoms.length);
+      c = c.addScaled(atom.pp, 1 / atoms.length);
     }
     return c;
   }

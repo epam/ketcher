@@ -995,7 +995,7 @@ class ReAtom extends ReObject {
             connectionAttachmentPoints.values(),
           ).some(([connectionAtomId]) => connectionAtomId === aid);
 
-          if (isConnectionAtom) {
+          if (isConnectionAtom && !problematicAtoms?.has(aid)) {
             // Draw the same blue outline ring used for regular attachment atoms
             const ringPath = this.makeHighlightePlate(
               restruct,
@@ -1689,8 +1689,8 @@ function buildLabel(
 
   const rbb = util.relBox(path.getBBox());
   draw.recenterText(path, rbb);
-  let rightMargin = (rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom);
-  let leftMargin = (-rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom);
+  let rightMargin = (rbb.width / 2) * Math.min(options.zoom, 1);
+  let leftMargin = (-rbb.width / 2) * Math.min(options.zoom, 1);
 
   if (atom.a.atomList !== null) {
     const xShift =
@@ -1980,7 +1980,7 @@ function showHydrogen(
         hydroIndexPath,
         hydroIndexRbb,
         data.rightMargin +
-          0.15 * hydroIndexRbb.width * (options.zoom > 1 ? 1 : options.zoom) +
+          0.15 * hydroIndexRbb.width * Math.min(options.zoom, 1) +
           delta,
         0.2 * (atom.label?.rbb.height ?? 0),
       );
@@ -2182,7 +2182,7 @@ const atomCustomQueryPatterns: readonly AtomCustomQueryPattern[] = [
       if (value === '') return value;
       const regExpResult = /^([+-]?)(\d{1,3}|1000)([+-]?)$/.exec(value);
       const charge = regExpResult
-        ? parseInt(
+        ? Number.parseInt(
             regExpResult[1] + regExpResult[3] + regExpResult[2],
           ).toString()
         : value;

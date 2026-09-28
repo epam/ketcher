@@ -9,7 +9,6 @@ import {
   createReplaceValues,
 } from '../../build-config/replace-values.mjs';
 import { createExternalPredicate } from '../../build-config/external-predicate.mjs';
-import { createPathAliases } from '../../build-config/path-aliases.mjs';
 import { createRawTextPlugin } from '../../build-config/raw-text-plugin.mjs';
 
 const pkg = JSON.parse(
@@ -27,16 +26,9 @@ const rootDir = new URL('.', import.meta.url).pathname;
 // `events`), so no Node-builtin externals are passed here.
 const { external } = createExternalPredicate({ pkg });
 
-// The `ketcher-react`/`ketcher-react/*` entries in tsconfig `paths` are
-// intentionally NOT part of this package's build aliases (see
-// tsconfig.build.json, which the shared helper reads): that mapping points
-// at `src/types/ketcher-react.d.ts`, an ambient `declare module
-// 'ketcher-react'` used only to give TypeScript richer types for the *real*
-// `ketcher-react` package. It must stay external at runtime (confirmed
-// against the Rollup baseline: `dist/index.js`/`dist/index.modern.js` both
-// still import the real `ketcher-react` package, not the local shim).
+// Use only the build-time paths: tsconfig.json's `ketcher-react` aliases point
+// at an ambient type shim and must not redirect the runtime package import.
 const srcDir = resolve(rootDir, 'src');
-const pathAliases = createPathAliases(rootDir);
 
 const ketRawTextPlugin = createRawTextPlugin({
   name: 'ketcher-macromolecules-ket-raw-text',
@@ -104,8 +96,9 @@ const output = (format, entryFileNames) => ({
 });
 
 export default defineConfig({
+  tsconfig: 'tsconfig.build.json',
   resolve: {
-    alias: pathAliases,
+    tsconfigPaths: true,
     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json'],
   },
   css: {

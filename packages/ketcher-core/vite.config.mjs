@@ -4,7 +4,6 @@ import { defineConfig } from 'vite';
 import { license } from '../../license-banner.mjs';
 import { mode } from '../../build-config/replace-values.mjs';
 import { createExternalPredicate } from '../../build-config/external-predicate.mjs';
-import { createPathAliases } from '../../build-config/path-aliases.mjs';
 import { createRawTextPlugin } from '../../build-config/raw-text-plugin.mjs';
 
 const pkg = JSON.parse(
@@ -18,14 +17,6 @@ const rootDir = new URL('.', import.meta.url).pathname;
 // external (nothing else under src/ imports a Node builtin - confirmed by
 // grep). Explicit per .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
 const { external } = createExternalPredicate({ pkg, nodeBuiltins: ['events'] });
-
-// The Rollup build resolved bare `domain/*`, `application/*`,
-// `infrastructure/*`, `utilities` and `types` imports via
-// @rollup/plugin-typescript's TS-aware resolveId (which honors tsconfig
-// `paths`). Rolldown's native TS transform does not do this, so these
-// aliases are derived from the same tsconfig `paths` (see
-// build-config/path-aliases.mjs).
-const pathAliases = createPathAliases(rootDir);
 
 const ketRawTextPlugin = createRawTextPlugin({
   name: 'ketcher-core-ket-raw-text',
@@ -51,8 +42,9 @@ const output = (format, entryFileNames) => ({
 });
 
 export default defineConfig({
+  tsconfig: 'tsconfig.build.json',
   resolve: {
-    alias: pathAliases,
+    tsconfigPaths: true,
     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json'],
   },
   define: {

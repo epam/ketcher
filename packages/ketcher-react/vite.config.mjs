@@ -10,7 +10,6 @@ import {
   getTagName,
 } from '../../build-config/replace-values.mjs';
 import { createExternalPredicate } from '../../build-config/external-predicate.mjs';
-import { createPathAliases } from '../../build-config/path-aliases.mjs';
 import { createRawTextPlugin } from '../../build-config/raw-text-plugin.mjs';
 
 const pkg = JSON.parse(
@@ -37,16 +36,6 @@ const { external } = createExternalPredicate({
   pkg,
   extraExternals: [pkg.name],
 });
-
-// rollup-plugin-typescript2 resolved this package's tsconfig.build.json
-// `paths` (`components`, `src/*`) at bundle time via a TS-aware resolveId.
-// Rolldown's native TS transform does not do this, so these aliases are
-// derived from that same tsconfig.build.json (see
-// build-config/path-aliases.mjs). `tsconfig.json`'s additional
-// `ketcher-core`-internal aliases are IDE/typecheck-only (see tsconfig.json
-// comments / notes) and must NOT be used for the actual build -
-// tsconfig.build.json overrides `paths` entirely, so they are never read.
-const pathAliases = createPathAliases(rootDir);
 
 const sdfRawTextPlugin = createRawTextPlugin({
   name: 'ketcher-react-sdf-raw-text',
@@ -99,8 +88,11 @@ const output = (format, entryFileNames) => ({
 });
 
 export default defineConfig({
+  // tsconfig.build.json limits resolution to the aliases used by this bundle;
+  // tsconfig.json adds ketcher-core aliases for editor/typecheck support only.
+  tsconfig: 'tsconfig.build.json',
   resolve: {
-    alias: pathAliases,
+    tsconfigPaths: true,
     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json'],
   },
   css: {

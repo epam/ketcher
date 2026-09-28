@@ -122,7 +122,7 @@ import {
   getEditAllInstancesInitialValues,
   getEditInstanceInitialValues,
   getLibraryEditInitialValues,
-  getSelectedSGroupIdsForEditAll,
+  isSameMonomerType,
 } from '../ui/views/components/MonomerCreationWizard/MonomerCreationWizard.utils';
 
 const SCALE = provideEditorSettings().microModeScale;
@@ -583,6 +583,18 @@ class Editor implements KetcherEditor {
 
   centerStruct() {
     const structure = this.render.ctab;
+
+    /*
+     * While macromolecules mode is on, this canvas is hidden and its
+     * ResizeObserver has collapsed the view box to 0x0. Entering the monomer
+     * wizard straight from macro mode centers in the same tick the canvas is
+     * shown again, before the observer fires, so re-measure here instead of
+     * centering against an empty box (which lands the struct in the corner).
+     */
+    if (!this.render.viewBox.width || !this.render.viewBox.height) {
+      this.render.resizeViewBox();
+    }
+
     const structCenter = getStructCenter(structure);
     const viewBoxCenter = new Vec2(
       this.render.viewBox.minX + this.render.viewBox.width / 2,
@@ -1146,43 +1158,38 @@ class Editor implements KetcherEditor {
         }
         this.openMonomerCreationWizard(selection);
       } else {
-        const sgroup = Array.from(struct.sgroups.values()).find(
-          (group) =>
-            group instanceof MonomerMicromolecule &&
-            group.atoms.some((atomId) => atomIds.has(atomId)),
-        );
-        assert(sgroup instanceof MonomerMicromolecule);
         assert(request.monomer);
-        const initialValues =
-          request.mode === 'all'
-            ? getEditAllInstancesInitialValues(
-                request.monomer,
-                macroEditor.monomersLibraryParsedJson,
-              )
-            : getEditInstanceInitialValues(request.monomer);
+        const findSGroupId = (monomer: BaseMonomer) => {
+          const monomerAtomIds = monomerToAtomIdMap.get(monomer);
+          if (!monomerAtomIds) {
+            return undefined;
+          }
+          const monomerAtomIdsSet = new Set(monomerAtomIds.values());
+          return Array.from(struct.sgroups.entries()).find(
+            ([, group]) =>
+              group instanceof MonomerMicromolecule &&
+              group.atoms.some((atomId) => monomerAtomIdsSet.has(atomId)),
+          )?.[0];
+        };
+
+        // The edited monomer must come first — it defines the wizard's values.
+        const primarySGroupId = findSGroupId(request.monomer);
+        assert(isNumber(primarySGroupId));
+        const sgroupIds = [primarySGroupId];
+
         if (request.mode === 'all') {
-          const selectedMonomerAtoms = new Set(
-            selectedEntities.flatMap(([, entity]) =>
-              Array.from(
-                monomerToAtomIdMap.get(entity as BaseMonomer)?.values() ?? [],
-              ),
-            ),
-          );
-          initialValues.selectedSGroupIds = getSelectedSGroupIdsForEditAll(
-            Array.from(struct.functionalGroups.values()).filter((group) =>
-              group.relatedSGroup.atoms.some((id) =>
-                selectedMonomerAtoms.has(id),
-              ),
-            ),
-            request.monomer,
-          );
+          selectedEntities.forEach(([, entity]) => {
+            if (entity === request.monomer) {
+              return;
+            }
+            const sgroupId = findSGroupId(entity as BaseMonomer);
+            if (isNumber(sgroupId)) {
+              sgroupIds.push(sgroupId);
+            }
+          });
         }
-        this.openMonomerCreationWizard(
-          selection,
-          { ...initialValues, position: sgroup.pp ?? undefined },
-          sgroup.getAttachmentPoints(),
-          sgroup.monomer,
-        );
+
+        this.openEditMonomerWizard(sgroupIds, request.mode === 'all');
       }
     } catch (error) {
       this.closeMonomerCreationWizard(true);
@@ -1276,6 +1283,69 @@ class Editor implements KetcherEditor {
     struct.initNeighbors();
   }
 
+  /**
+   * Opens the wizard for monomer sgroups that are already present in the
+   * current struct. `sgroupIds[0]` is the monomer being edited; the rest only
+   * matter for "edit all instances", where they scope the update to the user's
+   * selection.
+   *
+   * Both entry points funnel through here: the "Edit Monomer" dialog in
+   * molecules mode, and the macromolecules context menu (which loads the
+   * converted struct into this editor first).
+   */
+  openEditMonomerWizard(sgroupIds: number[], editAllInstances = false) {
+    const struct = this.struct();
+    const primarySgroup = struct.sgroups.get(sgroupIds[0]);
+
+    if (!(primarySgroup instanceof MonomerMicromolecule)) {
+      return false;
+    }
+
+    const { monomer } = primarySgroup;
+    const atoms = [...primarySgroup.atoms];
+    const bonds = Array.from(struct.bonds.entries())
+      .filter(
+        ([, bond]) => atoms.includes(bond.begin) && atoms.includes(bond.end),
+      )
+      .map(([id]) => id);
+
+    const initialValues = editAllInstances
+      ? getEditAllInstancesInitialValues(
+          monomer,
+          provideEditorInstance(this.ketcherId)?.monomersLibraryParsedJson,
+        )
+      : getEditInstanceInitialValues(monomer);
+
+    if (editAllInstances) {
+      const selectedSGroupIds = sgroupIds.filter((id) => {
+        const sgroup = struct.sgroups.get(id);
+        return (
+          sgroup instanceof MonomerMicromolecule &&
+          isSameMonomerType(sgroup, monomer)
+        );
+      });
+
+      if (selectedSGroupIds.length > 1) {
+        initialValues.selectedSGroupIds = selectedSGroupIds;
+      }
+    }
+
+    this.openMonomerCreationWizard(
+      { atoms, bonds },
+      {
+        ...initialValues,
+        /*
+         * `monomer.position` is stale after a macro -> micro transition because
+         * the struct is rescaled afterwards, while `pp` is kept in sync.
+         */
+        ...(primarySgroup.pp ? { position: new Vec2(primarySgroup.pp) } : {}),
+      },
+      primarySgroup.getAttachmentPoints(),
+    );
+
+    return true;
+  }
+
   openLibraryMonomerCreationWizard(
     libraryItem: MonomerItemType,
     mode: 'library' | 'duplicate',
@@ -1305,7 +1375,6 @@ class Editor implements KetcherEditor {
       },
       initialValues,
       attachmentPoints,
-      monomer,
     );
     this.originalStruct = previousStruct;
     if (this.monomerCreationState) {
@@ -1320,7 +1389,6 @@ class Editor implements KetcherEditor {
     selectionOverride?: Selection,
     editInstanceInitialValues?: MonomerCreationInitialValues,
     editInstanceAttachmentPoints?: ReadonlyArray<SGroupAttachmentPoint>,
-    editingMonomer?: BaseMonomer,
   ) {
     const currentStruct = this.render.ctab.molecule;
     const rawSelection = selectionOverride ??
@@ -1636,7 +1704,6 @@ class Editor implements KetcherEditor {
             attachmentAtomIdsWithExternalBonds,
           }
         : {}),
-      ...(editingMonomer ? { editingMonomer } : {}),
     };
 
     this.originalHistoryStack = this.historyStack;
@@ -3616,13 +3683,10 @@ class Editor implements KetcherEditor {
     if (ci === 'all') {
       selectAll = true;
       // TODO: better way will be this.struct()
-      resolvedCi = structObjects.reduce(
-        (res, key) => {
-          res[key] = Array.from(ReStruct[key].keys());
-          return res;
-        },
-        {} as Record<string, number[]>,
-      );
+      resolvedCi = structObjects.reduce((res, key) => {
+        res[key] = Array.from(ReStruct[key].keys());
+        return res;
+      }, {} as Record<string, number[]>);
     }
 
     if (ci === 'descriptors') {
@@ -4261,7 +4325,9 @@ function setHover(ci: HoverTarget, visible: boolean, render: Render) {
 
       for (const element of elements) {
         const paperPath = paperPathFromSVGElement(element) as
-          paper.Path | paper.CompoundPath | undefined;
+          | paper.Path
+          | paper.CompoundPath
+          | undefined;
 
         if (!paperPath) {
           continue;

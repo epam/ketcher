@@ -9,20 +9,13 @@ import useMonomerExpansionHandlers, {
 } from '../hooks/useMonomerExpansionHandlers';
 import useRemoveGrouping from '../hooks/useRemoveGrouping';
 import {
-  type Bond,
   fromFragmentDeletion,
   isAmbiguousMonomerLibraryItem,
   ketcherProvider,
   MonomerMicromolecule,
-  provideEditorInstance,
 } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
-import {
-  getEditAllInstancesInitialValues,
-  getEditInstanceInitialValues,
-  getSelectedSGroupIdsForEditAll,
-} from '../../MonomerCreationWizard/MonomerCreationWizard.utils';
 
 const MacromoleculeMenuItems = (
   props: MenuItemsProps<MacromoleculeContextMenuProps>,
@@ -73,48 +66,9 @@ const MacromoleculeMenuItems = (
 
   const handleEdit = (editAllInstances = false) => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-    const sg = functionalGroups?.[0]?.relatedSGroup;
+    const sgroupIds = (functionalGroups ?? []).map((fg) => fg.relatedSGroupId);
 
-    if (!(sg instanceof MonomerMicromolecule)) {
-      return;
-    }
-
-    const atoms = [...sg.atoms];
-    const bonds: number[] = [];
-    editor.struct().bonds.forEach((bond: Bond, bondId: number) => {
-      if (atoms.includes(bond.begin) && atoms.includes(bond.end)) {
-        bonds.push(bondId);
-      }
-    });
-
-    let editAllInitialValues = getEditAllInstancesInitialValues(
-      sg.monomer,
-      provideEditorInstance()?.monomersLibraryParsedJson,
-    );
-
-    if (editAllInstances && (functionalGroups?.length ?? 0) > 1) {
-      const selectedSGroupIds = getSelectedSGroupIdsForEditAll(
-        functionalGroups ?? [],
-        sg.monomer,
-      );
-      editAllInitialValues = { ...editAllInitialValues, selectedSGroupIds };
-    }
-
-    editor.openMonomerCreationWizard(
-      {
-        atoms,
-        bonds,
-        rxnArrows: [],
-        rxnPluses: [],
-        texts: [],
-        rgroupAttachmentPoints: [],
-      },
-      editAllInstances
-        ? editAllInitialValues
-        : getEditInstanceInitialValues(sg.monomer),
-      sg.getAttachmentPoints(),
-      sg.monomer,
-    );
+    editor.openEditMonomerWizard(sgroupIds, editAllInstances);
   };
 
   const handleEditAll = async () => {

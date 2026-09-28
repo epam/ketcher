@@ -367,6 +367,8 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
     (mode as unknown as { _isSyncEditMode: boolean })._isSyncEditMode = false;
     expect(mode.isSyncEditMode).toBe(false);
 
+    const originalSenseBaseId = senseNucleotides[0].rnaBase.id;
+
     const selections = SequenceRenderer.selections
       .map((range) =>
         range.filter((selection) => selection.nodeIndexOverall === 0),
@@ -375,6 +377,13 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
 
     callReplaceSelectionsWithPreset(mode, selections, buildPreset(editor, 'C'));
 
+    // The targeted sense node really was replaced: the preset replacement
+    // deletes the selected node's monomers and creates new ones, so the
+    // original base's id is gone (same pattern as
+    // SequenceMode.presetRefusal.test.ts).
+    expect(
+      editor.drawingEntitiesManager.monomers.has(originalSenseBaseId),
+    ).toBe(false);
     expect(antisenseNucleotides[0].rnaBase.label).toBe('U');
   });
 

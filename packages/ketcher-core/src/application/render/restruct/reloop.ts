@@ -88,7 +88,7 @@ class ReLoop extends ReObject {
       }
     }
 
-    this.centre = this.centre.scaled(1.0 / halfBondIds.length);
+    this.centre = this.centre.scaled(1 / halfBondIds.length);
     this.radius = -1;
     for (const halfBondId of halfBondIds) {
       const halfBond = molecule.halfBonds.get(halfBondId);

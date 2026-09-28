@@ -1566,7 +1566,7 @@ function bracket(
   options: RenderOptions,
 ) {
   bracketWidth = bracketWidth || 0.25;
-  bracketHeight = bracketHeight || 1.0;
+  bracketHeight = bracketHeight || 1;
   const halfBracketHeight = 0.5;
   const bracketPoint0 = bondCenter.addScaled(
     bracketDirection,

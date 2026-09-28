@@ -354,13 +354,16 @@ export function isAttachmentBond(
   { begin, end }: Bond,
   selection: EditorSelection,
 ) {
-  if (!selection.atoms) {
+  if (!selection.atoms && !selection.attachmentGroups) {
     return false;
   }
+  const isEndpointSelected = (endpointId: number) =>
+    selection.atoms?.includes(endpointId) === true ||
+    selection.attachmentGroups?.includes(endpointId) === true;
   const isBondStartsInSelectionAndEndsOutside =
-    selection.atoms.includes(begin) && !selection.atoms.includes(end);
+    isEndpointSelected(begin) && !isEndpointSelected(end);
   const isBondEndsInSelectionAndStartsOutside =
-    selection.atoms.includes(end) && !selection.atoms.includes(begin);
+    isEndpointSelected(end) && !isEndpointSelected(begin);
   return (
     isBondStartsInSelectionAndEndsOutside ||
     isBondEndsInSelectionAndStartsOutside

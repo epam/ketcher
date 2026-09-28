@@ -234,39 +234,37 @@ the reason instead.
   were not compared against a master build).
 
 **Not breaking:** `exports`, `types`, `sideEffects`, peer dependencies, and `engines` match
-master's build. During the migration, `ketcher-react` briefly leaked the bundler helper
-`__toESM` as an extra CJS export; a dedicated `renderChunk` plugin stripped it. A follow-up
-build with Vite 8.3.1 and the plugin disabled emits no runtime-helper exports, and the CJS
-entry's 42 public export names match the 8.0.16 baseline, so the workaround has been removed.
-`ketcher-standalone`'s `main`/`module` are **not** in this list — see the breaking-changes table
-above.
+master's build. The `ketcher-react` Vite 8.3.1 CJS build emits the same 42 public exports as
+the 8.0.16 baseline, with no leaked Rolldown runtime helpers; no helper-stripping plugin is
+needed. `ketcher-standalone`'s `main`/`module` are **not** in this list — see the
+breaking-changes table above.
 
 The bump lands as a single commit after the migration completes, so that four interdependent
 `package.json` files are not churning while the builds are still changing. It needs the release
 owner's agreement before it ships.
 
-**`vite` is pinned to exactly `8.0.16` in all four packages, not only in `ketcher-standalone`.**
-For `ketcher-standalone` the reason is on record, in the commit that tightened its range from
-`^8.0.16` to `8.0.16` (`c325be7cfd`, "Restore master tooling reverted by merge 21e59ce41"): its
-`.wasm` emission for the two fetch variants depends on Vite's asset plugin evaluating the
-`?no-inline` tag _ahead of_ the `if (build.lib) return true` branch that otherwise inlines every
-rewritten asset in library mode (see "The `.wasm` for the two fetch variants is now emitted, not
-copied" above) — a patch release could reorder or change that check and silently re-inline the
-~16 MB `.wasm` into the JS bundle. No equivalent reason is recorded for `ketcher-core`,
-`ketcher-react`, or `ketcher-macromolecules`: each package's first Vite migration commit
-(`fec1d845e5`, `908791e094`, `38bf23024c` respectively) introduces the exact `"vite": "8.0.16"`
-pin directly, with no explanation in the commit message, mirroring the exact-pin style `example`
-already used for its own (pre-migration) Vite dependency. `c325be7cfd`'s own message calls
-`ketcher-standalone` "the only loose Vite range" at that point, implying the other three were
-already exact-pinned by convention rather than for a documented technical reason. No further
-justification for those three was found in git history or this ADR; one should not be invented —
-if the release owner wants a stated reason, the most likely candidate is the same class of risk
-as `ketcher-standalone`'s (an undocumented Rolldown behavior — `preserveModules`, tree-shaking
-scope, minify defaults — that this ADR's spike had to determine empirically and that a patch bump
-could silently change), but that is speculation, not a recorded fact.
+**`vite` is pinned to exactly `8.3.1` in all four library packages, not only in
+`ketcher-standalone`.** Its specific technical reason is the standalone fetch variants:
+their `.wasm` emission depends on Vite's asset plugin evaluating the `?no-inline` tag
+_ahead of_ the `if (build.lib) return true` branch that otherwise inlines every rewritten
+asset in library mode (see "The `.wasm` for the two fetch variants is now emitted, not
+copied" above). A patch release could reorder or change that check and silently re-inline
+the ~16 MB `.wasm` into the JS bundle. Re-verified with Vite 8.3.1: `binaryWasm` and
+`binaryWasmNoRender` each emit a separate `.wasm` file referenced by their emitted worker,
+rather than inlining the binary into JavaScript.
+
+No equivalent reason is recorded for `ketcher-core`, `ketcher-react`, or
+`ketcher-macromolecules`: their first Vite migration commits (`fec1d845e5`,
+`908791e094`, `38bf23024c` respectively) introduced exact pins without explaining them,
+following the exact-version convention already used by `example`. `c325be7cfd` calls
+`ketcher-standalone` "the only loose Vite range" at that point, implying the other three
+were pinned by convention rather than for a documented technical reason. No further
+justification for those three was found in git history or this ADR; one should not invent
+one. A similar Rolldown-behavior risk is possible, but remains speculation rather than a
+recorded fact.
 
 **`ketcher-macromolecules` does not emit a CSS source map.** Producing a single `dist/index.css`
-requires `build.cssCodeSplit: false`, and in that path Vite 8.0.16 emits the extracted CSS via a
+requires `build.cssCodeSplit: false`, and in that path Vite 8.3.1 emits the extracted CSS via a
 plain `emitFile` call with no sourcemap generation — no configuration produces `index.css.map`,
 including in watch builds. This affects CSS debugging in devtools only.
 

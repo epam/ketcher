@@ -62,8 +62,8 @@ const EXEC_TIMEOUT_MS = 5 * 60 * 1000;
 // Pin the consumers' bundler versions to what this repo already builds
 // with (or a webpack 5 baseline, since nothing in the repo uses webpack) -
 // exact versions, not ranges or "latest", so this check doesn't start
-// failing from an unrelated bundler release (mirrors the exact `"vite":
-// "8.0.16"` pin ketcher-standalone's own package.json already uses).
+// failing from an unrelated bundler release (mirrors the exact Vite version
+// pinned in ketcher-standalone's package.json).
 const VITE_VERSION = readJson(join(standalonePkgDir, 'package.json'))
   .devDependencies.vite;
 const WEBPACK_VERSION = '5.99.0';

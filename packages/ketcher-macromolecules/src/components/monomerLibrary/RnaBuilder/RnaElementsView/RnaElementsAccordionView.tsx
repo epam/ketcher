@@ -173,6 +173,7 @@ const RnaElementsAccordionView = ({
                     key={group.groupTitle}
                     title={group.groupTitle}
                     items={group.groupItems}
+                    groupName={groupData.groupName as MonomerGroups}
                     libraryName={libraryName}
                     selectedMonomerUniqueKey={activeMonomerKey}
                     onItemClick={(monomer) =>

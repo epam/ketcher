@@ -75,10 +75,12 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
     const fontSize = 6;
     const Y_OFFSET_FROM_MIDDLE = -2;
 
+    const { width, height } = this.labelBodySize;
+
     const foreignObject = rootElement
       .append('foreignObject')
-      .attr('width', this.width)
-      .attr('height', this.height - this.height / 3)
+      .attr('width', width)
+      .attr('height', height - height / 3)
       .attr('font-size', `${fontSize}px`)
       .attr('line-height', `${fontSize}px`)
       .attr('font-weight', '700')
@@ -86,7 +88,7 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
       .style('user-select', 'none')
       .attr('pointer-events', 'none')
       .attr('x', '4px')
-      .attr('y', this.height / 2 + Y_OFFSET_FROM_MIDDLE);
+      .attr('y', height / 2 + Y_OFFSET_FROM_MIDDLE);
 
     foreignObject
       .append('xhtml:div')

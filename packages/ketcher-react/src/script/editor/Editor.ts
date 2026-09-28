@@ -705,9 +705,7 @@ class Editor implements KetcherEditor {
     const state = this.monomerCreationState;
     if (!state) return;
 
-    if (!state.rnaComponentAtoms) {
-      state.rnaComponentAtoms = new Map();
-    }
+    state.rnaComponentAtoms ??= new Map();
 
     const prevComponentData = state.rnaComponentAtoms.get(componentKey);
     const prevAtomIds = prevComponentData?.atoms ?? [];

@@ -234,10 +234,12 @@ the reason instead.
   were not compared against a master build).
 
 **Not breaking:** `exports`, `types`, `sideEffects`, peer dependencies, and `engines` match
-master's build. `ketcher-react` briefly leaked the bundler helper `__toESM` as an extra CJS
-export (harmless, but flagged for cleanup); it has since been stripped by a dedicated
-`renderChunk` plugin. `ketcher-standalone`'s `main`/`module` are **not** in this list — see the
-breaking-changes table above.
+master's build. During the migration, `ketcher-react` briefly leaked the bundler helper
+`__toESM` as an extra CJS export; a dedicated `renderChunk` plugin stripped it. A follow-up
+build with Vite 8.3.1 and the plugin disabled emits no runtime-helper exports, and the CJS
+entry's 42 public export names match the 8.0.16 baseline, so the workaround has been removed.
+`ketcher-standalone`'s `main`/`module` are **not** in this list — see the breaking-changes table
+above.
 
 The bump lands as a single commit after the migration completes, so that four interdependent
 `package.json` files are not churning while the builds are still changing. It needs the release

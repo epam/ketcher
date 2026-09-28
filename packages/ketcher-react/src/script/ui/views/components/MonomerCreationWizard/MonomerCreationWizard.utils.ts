@@ -1,6 +1,7 @@
 import {
   AttachmentPointName,
   type BaseMonomer,
+  type CoreEditor,
   type FunctionalGroup,
   getMonomerTemplateRefFromMonomerItem,
   type MonomerCreationInitialValues,
@@ -9,6 +10,26 @@ import {
   MonomerMicromolecule,
   Vec2,
 } from 'ketcher-core';
+
+// Submit-time validation (validateMonomerWizard/validateRnaPresetWizard in
+// MonomerCreationWizard.tsx) reads the default monomers library for
+// symbol/HELM/BILN alias uniqueness and RNA preset code uniqueness. That
+// library is lazily fetched, so a submit that races the fetch would run
+// those checks against an empty library and silently let a colliding
+// monomer/preset through. This guard - await the load, then read the
+// library it resolved to - closes that window; the underlying promise is
+// memoized, so once the library is loaded this is a no-op that doesn't
+// delay submission. Pulled out as its own function so the ordering can be
+// unit-tested without mounting the wizard's 2000+ line component.
+export async function ensureMonomersLibraryLoadedForSubmit(
+  editor: Pick<
+    CoreEditor,
+    'ensureDefaultMonomersLibraryLoaded' | 'monomersLibraryParsedJson'
+  >,
+) {
+  await editor.ensureDefaultMonomersLibraryLoaded();
+  return editor.monomersLibraryParsedJson;
+}
 
 const COPY_SUFFIX = '_Copy';
 

@@ -1,5 +1,10 @@
-import { type BaseMonomer, KetMonomerClass } from 'ketcher-core';
 import {
+  type BaseMonomer,
+  type CoreEditor,
+  KetMonomerClass,
+} from 'ketcher-core';
+import {
+  ensureMonomersLibraryLoadedForSubmit,
   getEditAllInstancesInitialValues,
   getEditInstanceInitialValues,
 } from './MonomerCreationWizard.utils';
@@ -265,5 +270,49 @@ describe('getEditAllInstancesInitialValues', () => {
     );
 
     expect(values.name).toBe('Cysteine_Copy');
+  });
+});
+
+describe('ensureMonomersLibraryLoadedForSubmit', () => {
+  // Regression/guard test for #10326: submit-time validation reads the
+  // default monomers library for symbol/HELM/BILN alias uniqueness and RNA
+  // preset code uniqueness, but that library is lazily fetched. This
+  // guards the ordering without mounting MonomerCreationWizard itself (see
+  // this function's own comment in MonomerCreationWizard.utils.ts).
+  it('awaits the default monomers library before reading it', async () => {
+    const order: string[] = [];
+    let resolveDefaultLoad!: () => void;
+    const defaultLoadGate = new Promise<void>((resolve) => {
+      resolveDefaultLoad = resolve;
+    });
+
+    const fakeEditor = {
+      ensureDefaultMonomersLibraryLoaded: jest.fn(async () => {
+        await defaultLoadGate;
+        order.push('default-library-loaded');
+      }),
+      get monomersLibraryParsedJson() {
+        order.push('monomer-library-read');
+        return { root: { templates: [] } };
+      },
+    } as unknown as Pick<
+      CoreEditor,
+      'ensureDefaultMonomersLibraryLoaded' | 'monomersLibraryParsedJson'
+    >;
+
+    const resultPromise = ensureMonomersLibraryLoadedForSubmit(fakeEditor);
+
+    // Let the call run up to its first await (on
+    // ensureDefaultMonomersLibraryLoaded). It must not have read the
+    // monomer library yet.
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(order).toEqual([]);
+
+    resolveDefaultLoad();
+    const result = await resultPromise;
+
+    expect(order).toEqual(['default-library-loaded', 'monomer-library-read']);
+    expect(result).toEqual({ root: { templates: [] } });
   });
 });

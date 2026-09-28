@@ -2576,6 +2576,27 @@ class Editor implements KetcherEditor {
             atom.pp = atom.pp.add(monomerShiftVector);
           }
         });
+
+        /*
+         * `fromSgroupAddition` placed brand new monomers at the centre of their
+         * wizard structure, i.e. in wizard coordinates, so their `pp` needs the
+         * same shift as the atoms. `pp` is what the macromolecules converter
+         * reads, so without this a newly created monomer jumps to wherever the
+         * wizard happened to centre it. Edited instances are excluded: they
+         * were given their original `pp` explicitly.
+         */
+        if (!editAllInitialValues?.position) {
+          const mergedAtomIds = new Set(atomIdMap.values());
+          struct.sgroups.forEach((sgroup) => {
+            if (
+              sgroup.pp &&
+              sgroup.atoms.length > 0 &&
+              sgroup.atoms.every((atomId) => mergedAtomIds.has(atomId))
+            ) {
+              sgroup.pp = sgroup.pp.add(monomerShiftVector);
+            }
+          });
+        }
       }
 
       externalBonds.forEach((bond) => {
@@ -2644,6 +2665,13 @@ class Editor implements KetcherEditor {
       // The CanvasLoad swaps the canvas from the current (post-mutation)
       // state to a clean clone. Undo reverses the swap, restoring the
       // pre-mutation originalStruct.
+      //
+      // Never re-center here: the merge above deliberately restored every
+      // monomer to the coordinates it had before the wizard opened (see
+      // `monomerShiftVector`), and centering would shift the whole struct to
+      // the middle of the view box again. Coming back from macro mode that
+      // shift is permanent — the monomer would land in the canvas center on
+      // every edit.
       this.struct(
         this.struct().clone(
           undefined,
@@ -2658,6 +2686,7 @@ class Editor implements KetcherEditor {
           undefined,
           true,
         ),
+        false,
       );
 
       const createdMonomers = new Set(

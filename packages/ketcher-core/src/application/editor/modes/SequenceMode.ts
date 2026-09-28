@@ -1723,15 +1723,9 @@ export class SequenceMode extends BaseMode {
           const shouldEditAntisenseInSyncMode =
             prevHasRealSenseAndAntisense || currHasAntisenseWithNonEmptyContent;
 
-          const shouldEditAntisenseInAsyncMode =
-            !(prevAntisense instanceof EmptySequenceNode) ||
-            !(currAntisense instanceof EmptySequenceNode);
-
           if (
             this.needToEditAntisense &&
-            (this.isSyncEditMode
-              ? shouldEditAntisenseInSyncMode
-              : shouldEditAntisenseInAsyncMode)
+            (!this.isSyncEditMode || shouldEditAntisenseInSyncMode)
           ) {
             const antisenseNodeCreationResult = this.insertNewSequenceItem(
               editor,

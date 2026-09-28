@@ -26,6 +26,8 @@ import { ErrorPopover } from '../form/errorPopover';
 import { getSelectOptionsFromSchema } from '../../../utils';
 import { MeasurementUnits } from 'src/script/ui/data/schema/options-schema';
 import { usePopoverAnchor } from '../../../../../hooks';
+import { Icon } from 'components';
+import { Tooltip } from '@mui/material';
 
 interface Schema {
   title?: string;
@@ -48,6 +50,7 @@ interface MeasureInputProps extends Omit<
   onExtraChange: (value: string) => void;
   name?: string;
   error?: string;
+  tooltip?: string;
 }
 
 interface GetNewFloatResult {
@@ -105,6 +108,7 @@ const MeasureInput = ({
   name: _name,
   error,
   className,
+  tooltip,
   ...rest
 }: MeasureInputProps) => {
   const stringifiedValue = String(value);
@@ -152,9 +156,22 @@ const MeasureInput = ({
 
   const desc = schema;
 
+  const label = rest.title || desc?.title;
+
   return (
     <div className={clsx(styles.measureInput, className)} {...rest}>
-      <span>{rest.title || desc?.title}</span>
+      {tooltip ? (
+        <div className={formClasses.divWithTooltipAndAboutIcon}>
+          <span>{label}</span>
+          <Tooltip title={tooltip}>
+            <div>
+              <Icon name="about"></Icon>
+            </div>
+          </Tooltip>
+        </div>
+      ) : (
+        <span>{label}</span>
+      )}
       <div style={{ display: 'flex' }}>
         <div className={clsx(error && formClasses.dataError)}>
           <span

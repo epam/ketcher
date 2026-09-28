@@ -13,7 +13,7 @@ Ketcher runs **two independent editor controllers** — one for micromolecules, 
 | Model     | `Struct` via a render-structure wrapper | `DrawingEntitiesManager` |
 | Render    | Raphael                                 | D3/SVG                   |
 | Mutations | Action + base operation                 | Command + operation      |
-| History   | stack held inside the editor            | history singleton        |
+| History   | shared stack held inside the editor     | adapter to shared stack  |
 | Modes     | single                                  | Flex / Snake / Sequence  |
 
 ## Micromolecules editor

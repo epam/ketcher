@@ -38,7 +38,7 @@ import {
   isPasteContentAvailable,
   DeepPartial,
 } from 'ketcher-core';
-import { configureAppStore } from 'state';
+import { store } from 'state';
 import {
   defaultTheme,
   EditorTheme,
@@ -146,7 +146,6 @@ function EditorContainer({
   monomersLibraryReplace,
   isMacromoleculesEditorTurnedOn,
 }: Readonly<EditorContainerProps>) {
-  const [store] = useState(() => configureAppStore());
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
@@ -158,7 +157,7 @@ function EditorContainer({
 
   useEffect(() => {
     store.dispatch(initKetcherId(ketcherId));
-  }, [ketcherId, store]);
+  }, [ketcherId]);
 
   return (
     <Provider store={store}>
@@ -185,7 +184,6 @@ function EditorContainer({
 }
 
 function Editor({
-  ketcherId,
   theme,
   togglerComponent,
   monomersLibraryUpdate,
@@ -217,7 +215,6 @@ function Editor({
   useEffect(() => {
     dispatch(
       createEditor({
-        ketcherId,
         theme,
         canvas: canvasRef.current,
         monomersLibraryUpdate,

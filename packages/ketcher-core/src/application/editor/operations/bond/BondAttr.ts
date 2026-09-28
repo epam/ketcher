@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -55,14 +54,12 @@ export class BondAttr extends BaseOperation {
         return;
       }
 
-      if (!this.data2) {
-        this.data2 = {
-          bid,
-          attribute,
-          value: bond[attribute],
-          needInvalidateBond,
-        };
-      }
+      this.data2 ??= {
+        bid,
+        attribute,
+        value: bond[attribute],
+        needInvalidateBond,
+      };
 
       (bond as unknown as Record<BondAttributeName, unknown>)[attribute] =
         value;

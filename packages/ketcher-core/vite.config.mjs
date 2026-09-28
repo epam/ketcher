@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import { license } from '../../license-banner.mjs';
 import { mode } from '../../build-config/replace-values.mjs';
+import { createTsconfigPathResolution } from '../../build-config/tsconfig-path-resolution.mjs';
 import { createExternalPredicate } from '../../build-config/external-predicate.mjs';
 import { createRawTextPlugin } from '../../build-config/raw-text-plugin.mjs';
 
@@ -42,11 +43,7 @@ const output = (format, entryFileNames) => ({
 });
 
 export default defineConfig({
-  tsconfig: 'tsconfig.build.json',
-  resolve: {
-    tsconfigPaths: true,
-    extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json'],
-  },
+  ...createTsconfigPathResolution(),
   define: {
     'process.env.NODE_ENV': JSON.stringify(
       isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,

@@ -9,6 +9,7 @@ import {
   createReplaceValues,
   getTagName,
 } from '../../build-config/replace-values.mjs';
+import { createTsconfigPathResolution } from '../../build-config/tsconfig-path-resolution.mjs';
 import { createExternalPredicate } from '../../build-config/external-predicate.mjs';
 import { createRawTextPlugin } from '../../build-config/raw-text-plugin.mjs';
 
@@ -90,11 +91,7 @@ const output = (format, entryFileNames) => ({
 export default defineConfig({
   // tsconfig.build.json limits resolution to the aliases used by this bundle;
   // tsconfig.json adds ketcher-core aliases for editor/typecheck support only.
-  tsconfig: 'tsconfig.build.json',
-  resolve: {
-    tsconfigPaths: true,
-    extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json'],
-  },
+  ...createTsconfigPathResolution(),
   css: {
     // rollup-plugin-postcss's default CSS-modules class name pattern -
     // Vite's own default differs, which would break consumers (and tests)

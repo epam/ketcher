@@ -1,8 +1,9 @@
-import { compareStrings, CoreEditor } from 'application/editor';
+import { CoreEditor } from 'application/editor';
 import { type BaseMonomer, Vec2 } from 'domain/entities';
 import type { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { AttachmentPointName } from 'domain/types';
+import { compareStrings } from 'utilities';
 import {
   KetMonomerClass,
   RNA_DNA_NON_MODIFIED_PART,

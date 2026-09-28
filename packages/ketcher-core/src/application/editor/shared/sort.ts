@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { compareStrings } from 'utilities';
 import { NATURAL_AMINO_ACID_MODIFICATION_TYPE } from '../Editor';
 
-export function compareStrings(a: string, b: string): number {
-  return a.localeCompare(b);
-}
+export { compareStrings };
 
 export function compareStringsWithNaturalFirst(a: string, b: string): number {
   const aTitle = (a || '').toLowerCase();

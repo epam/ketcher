@@ -21,9 +21,9 @@ import { RNABase } from 'domain/entities/RNABase';
 import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
+import { compareStrings } from 'utilities';
 
 export const DEFAULT_VARIANT_MONOMER_LABEL = '%';
-const compareStrings = (a: string, b: string) => a.localeCompare(b);
 
 export const MONOMER_CLASS_TO_CONSTRUCTOR = {
   [KetMonomerClass.CHEM]: Chem,

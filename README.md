@@ -140,11 +140,11 @@ Please refer to the `example/src/App.tsx` file for a complete example of how to 
 
 ## Localization (i18n)
 
-Ketcher's UI can be displayed in multiple languages. Users switch language from **Settings → General → Language**; the change applies immediately across the whole UI (toolbars, dialogs, context menus, Settings itself) with no reload, and the choice is remembered for the next visit. This covers both the `ketcher-react` (small molecules) and `ketcher-macromolecules` UIs.
+Ketcher ships as an **English-only build by default** — the smallest bundle, no language switcher in Settings, nothing to configure.
 
-Currently supported: **English** and **Simplified Chinese (简体中文)**. Chemistry vocabulary (element symbols, bond-type names, file-format codes) is intentionally kept untranslated in every language, since it must stay consistent with chemistry file formats.
+Consumers who want multiple languages opt in at build time by setting `KETCHER_MULTI_LANGUAGE_BUILD=true` when building `ketcher-react`/`ketcher-macromolecules`. That produces the multi-language variant of the app: a **Settings → General → Language** switcher appears, users can switch language with no reload (applying immediately across toolbars, dialogs, context menus, Settings itself), and the choice is remembered for the next visit. This covers both the `ketcher-react` (small molecules) and `ketcher-macromolecules` UIs.
 
-Consumers who only need English can drop the non-English translation payload from the production bundle entirely by setting `KETCHER_SINGLE_LANGUAGE_BUILD=true` when building `ketcher-react`/`ketcher-macromolecules` — this also hides the language switcher in Settings, since there's nothing to switch to.
+Currently supported in the multi-language build: **English** and **Simplified Chinese (简体中文)**. Chemistry vocabulary (element symbols, bond-type names, file-format codes) is intentionally kept untranslated in every language, since it must stay consistent with chemistry file formats.
 
 ## Ketcher API
 

@@ -49,8 +49,8 @@ export const valuesToReplace = {
   'process.env.INDIGO_MACHINE': JSON.stringify(
     process.env.INDIGO_MACHINE || '',
   ),
-  'process.env.KETCHER_SINGLE_LANGUAGE_BUILD': JSON.stringify(
-    process.env.KETCHER_SINGLE_LANGUAGE_BUILD === 'true' ? 'true' : 'false',
+  'process.env.KETCHER_MULTI_LANGUAGE_BUILD': JSON.stringify(
+    process.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true' ? 'true' : 'false',
   ),
 };
 

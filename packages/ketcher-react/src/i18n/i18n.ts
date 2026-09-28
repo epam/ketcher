@@ -10,8 +10,8 @@ import components from '../locales/en/components.json';
 import settings from '../locales/en/settings.json';
 
 // Imported unconditionally (ES module imports can't be conditional), but
-// referenced only inside the `!SINGLE_LANGUAGE_BUILD` branch below. Once
-// @rollup/plugin-replace substitutes KETCHER_SINGLE_LANGUAGE_BUILD with a
+// referenced only inside the `MULTI_LANGUAGE_BUILD` branch below. Once
+// @rollup/plugin-replace substitutes KETCHER_MULTI_LANGUAGE_BUILD with a
 // literal, Rollup's tree-shaking removes the now-unreachable branch and,
 // with it, these imports and the JSON modules they pull in — this is the
 // same "shrink the bundle via NODE_ENV" pattern plugin-replace's own docs
@@ -26,12 +26,13 @@ import settingsZhCN from '../locales/zh-CN/settings.json';
 
 export const defaultNS = 'common';
 
-// Customer build-time requirement: a flag that strips every non-English
-// locale payload out of the shipped bundle, leaving only English. Read once
-// as a plain boolean so every branch below folds to a literal after
-// @rollup/plugin-replace substitutes the env var at build time.
-const SINGLE_LANGUAGE_BUILD =
-  process.env.KETCHER_SINGLE_LANGUAGE_BUILD === 'true';
+// English-only is the default build. Opting into every other locale is a
+// build-time flag rather than the default, so the common case ships the
+// smallest bundle. Read once as a plain boolean so every branch below folds
+// to a literal after @rollup/plugin-replace substitutes the env var at
+// build time.
+const MULTI_LANGUAGE_BUILD =
+  process.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true';
 
 type LocaleResources = {
   common: typeof common;
@@ -43,15 +44,13 @@ type LocaleResources = {
 };
 
 // Typed as if both locales are always present, even though the 'zh-CN' key
-// is genuinely absent at runtime in a single-language build — the type only
-// needs to describe the full (non-flagged) shape so SupportedLanguage/
-// isSupportedLanguage keep working unchanged across both build variants.
+// is genuinely absent at runtime in the default single-language build — the
+// type only needs to describe the full (non-flagged) shape so
+// SupportedLanguage/isSupportedLanguage keep working unchanged across both
+// build variants.
 export const resources: { en: LocaleResources; 'zh-CN': LocaleResources } =
-  SINGLE_LANGUAGE_BUILD
-    ? ({
-        en: { common, toolbar, toolbars, dialogs, components, settings },
-      } as { en: LocaleResources; 'zh-CN': LocaleResources })
-    : {
+  MULTI_LANGUAGE_BUILD
+    ? {
         en: { common, toolbar, toolbars, dialogs, components, settings },
         'zh-CN': {
           common: commonZhCN,
@@ -61,19 +60,22 @@ export const resources: { en: LocaleResources; 'zh-CN': LocaleResources } =
           components: componentsZhCN,
           settings: settingsZhCN,
         },
-      };
+      }
+    : ({
+        en: { common, toolbar, toolbars, dialogs, components, settings },
+      } as { en: LocaleResources; 'zh-CN': LocaleResources });
 
 export interface SupportedLanguage {
   code: keyof typeof resources;
   label: string;
 }
 
-export const SUPPORTED_LANGUAGES: SupportedLanguage[] = SINGLE_LANGUAGE_BUILD
-  ? [{ code: 'en', label: 'English' }]
-  : [
+export const SUPPORTED_LANGUAGES: SupportedLanguage[] = MULTI_LANGUAGE_BUILD
+  ? [
       { code: 'en', label: 'English' },
       { code: 'zh-CN', label: '简体中文' },
-    ];
+    ]
+  : [{ code: 'en', label: 'English' }];
 
 const DEFAULT_LANGUAGE = 'en';
 const LANGUAGE_STORAGE_KEY = 'ketcher-language';

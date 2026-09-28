@@ -53,9 +53,9 @@ Two Jest suites in `packages/ketcher-react/src/i18n/` enforce this scheme across
 
 Run both with `npm run test:unit` in `packages/ketcher-react` (or `npx jest src/i18n` for just these two).
 
-## Single-language build mode
+## Single-language build is the default
 
-Setting `KETCHER_SINGLE_LANGUAGE_BUILD=true` in the environment when running either package's `npm run build` strips every non-English locale payload out of the shipped bundle (verified via bundle-content grep + size diff, not just code review — see design.md Section 9) and hides the Settings language switcher entirely. Wired via each package's `rollup.config.mjs` (`@rollup/plugin-replace`, same mechanism as `NODE_ENV`) into `i18n.ts` and `ketcher-macromolecules/src/i18n/registerNamespaces.ts`: the non-English imports stay as plain ES imports (imports can't be conditional) but are referenced only inside a `!SINGLE_LANGUAGE_BUILD` branch, so Rollup's tree-shaking drops the whole branch — imports and JSON included — once the flag is replaced with a literal. Leave the env var unset (or `false`) for the normal multi-language build.
+English-only is the default build — the common case ships the smallest bundle, and there's no Settings language switcher since there's nothing to switch to. Setting `KETCHER_MULTI_LANGUAGE_BUILD=true` in the environment when running either package's `npm run build` opts into every other locale instead (verified via bundle-content grep + size diff, not just code review — see design.md Section 9) and makes the Settings language switcher appear. Wired via each package's `rollup.config.mjs` (`@rollup/plugin-replace`, same mechanism as `NODE_ENV`) into `i18n.ts` and `ketcher-macromolecules/src/i18n/registerNamespaces.ts`: the non-English imports stay as plain ES imports (imports can't be conditional) but are referenced only inside a `MULTI_LANGUAGE_BUILD` branch, so Rollup's tree-shaking drops the whole branch — imports and JSON included — once the flag is replaced with a literal. Leave the env var unset (or `false`) for the default single-language build.
 
 ## Hard rule
 

@@ -99,7 +99,6 @@ describe('macro monomer wizard bridge', () => {
         expect.arrayContaining([
           expect.objectContaining({ atomId: 0, leaveAtomId: 1 }),
         ]),
-        expect.any(Peptide),
       );
       expect((editor.struct as jest.Mock).mock.calls[0][0]).not.toBe(
         monomer.monomerItem.struct,
@@ -158,7 +157,6 @@ describe('macro monomer wizard bridge', () => {
           position: sg.pp,
         }),
         sg.getAttachmentPoints(),
-        sg.monomer,
       );
     },
   );
@@ -198,13 +196,11 @@ describe('macro monomer wizard bridge', () => {
         jest.fn(),
       );
 
+      // Scoping is left unset when there is nothing to narrow down to.
       expect(
-        (editor.openMonomerCreationWizard as jest.Mock).mock.calls[0][1],
-      ).toEqual(
-        expect.objectContaining({
-          selectedSGroupIds: selectedCount > 1 ? [0, 1] : undefined,
-        }),
-      );
+        (editor.openMonomerCreationWizard as jest.Mock).mock.calls[0][1]
+          .selectedSGroupIds,
+      ).toEqual(selectedCount > 1 ? [0, 1] : undefined);
     },
   );
 

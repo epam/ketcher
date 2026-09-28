@@ -77,7 +77,6 @@ describe('opening library monomers in the wizard', () => {
             attachmentPointNumber: 1,
           }),
         ],
-        expect.anything(),
       );
       expect(Reflect.get(editor, 'originalStruct')).toBe(originalStruct);
       expect(

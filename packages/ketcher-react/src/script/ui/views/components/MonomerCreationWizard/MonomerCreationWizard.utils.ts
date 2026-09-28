@@ -1,7 +1,6 @@
 import {
   AttachmentPointName,
   type BaseMonomer,
-  type FunctionalGroup,
   getMonomerTemplateRefFromMonomerItem,
   type MonomerCreationInitialValues,
   type MonomerItemType,
@@ -107,7 +106,8 @@ const getTemplateClass = (
   monomersLibraryParsedJson: MonomersLibraryParsedJson,
 ) => {
   const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
-    MonomerTemplate | undefined;
+    | MonomerTemplate
+    | undefined;
 
   return templateRef.class ?? template?.class;
 };
@@ -163,7 +163,8 @@ export const getEditAllInstancesInitialValues = (
     monomersLibraryParsedJson?.root?.templates?.forEach(
       (templateRef: { $ref?: string }) => {
         const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
-          RnaPresetTemplate | undefined;
+          | RnaPresetTemplate
+          | undefined;
         const isRnaPreset =
           template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
           template?.class === KetMonomerClass.RNA;
@@ -228,42 +229,10 @@ export const getEditAllInstancesInitialValues = (
 };
 
 /**
- * Extracts the sgroup IDs from a list of functional groups that match the
- * primary monomer's type and symbol. Returns `undefined` when fewer than two
- * matching groups are found (no restriction needed in that case).
- *
- * Use this when the user has multiple monomers of the same type selected and
- * "Edit All Instances" should be scoped to only those selections.
- */
-export const getSelectedSGroupIdsForEditAll = (
-  functionalGroups: FunctionalGroup[],
-  primaryMonomer: BaseMonomer,
-): number[] | undefined => {
-  const primaryType = primaryMonomer.monomerItem.props.MonomerClass;
-  const primarySymbol =
-    primaryMonomer.monomerItem.props.MonomerCode ??
-    primaryMonomer.monomerItem.label;
-
-  const matchingIds = functionalGroups
-    .filter((fg) => {
-      if (!(fg.relatedSGroup instanceof MonomerMicromolecule)) {
-        return false;
-      }
-      const { props, label } = fg.relatedSGroup.monomer.monomerItem;
-      const symbol = props.MonomerCode ?? label;
-      return props.MonomerClass === primaryType && symbol === primarySymbol;
-    })
-    .map((fg) => fg.relatedSGroupId);
-
-  return matchingIds.length > 1 ? matchingIds : undefined;
-};
-
-/**
  * Returns true when the given `MonomerMicromolecule` sgroup represents the
  * same monomer type and symbol as `primaryMonomer`.
  *
- * Use this to filter a plain list of sgroup IDs (e.g. from a dialog that
- * receives raw IDs rather than `FunctionalGroup` objects).
+ * Use this to scope "edit all instances" to the sgroups the user selected.
  */
 export const isSameMonomerType = (
   sgroup: MonomerMicromolecule,

@@ -122,7 +122,7 @@ class ReFrag extends ReObject {
       return;
     }
 
-    fid = parseInt(String(fid), 10);
+    fid = Number.parseInt(String(fid), 10);
 
     render.ctab.atoms.forEach((atom) => {
       if (atom.a.fragment === fid) {

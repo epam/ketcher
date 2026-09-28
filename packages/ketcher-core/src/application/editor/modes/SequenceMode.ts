@@ -2639,18 +2639,27 @@ export class SequenceMode extends BaseMode {
     sideChainConnections?: boolean,
   ) {
     return selections.some((selectionRange) =>
-      selectionRange.some((nodeSelection) =>
-        [preset.sugar, preset.base, preset.phosphate].some(
+      selectionRange.some((nodeSelection) => {
+        // The node that would actually be replaced, resolved the same way
+        // replaceSelectionsWithPreset resolves it. Reading senseNode
+        // directly would skip antisense-only selections, dropping the
+        // "side chain connections will be deleted" confirmation for them.
+        const selectedNode = getNodeForStrand(
+          nodeSelection.node,
+          getSelectedStrandType(nodeSelection.node),
+        );
+
+        return [preset.sugar, preset.base, preset.phosphate].some(
           (monomer) =>
             monomer &&
-            nodeSelection.node.senseNode &&
+            selectedNode &&
             !this.checkIfNewMonomerCouldEstablishConnections(
-              nodeSelection.node.senseNode,
+              selectedNode,
               monomer,
               sideChainConnections,
             ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
@@ -2916,12 +2925,18 @@ export class SequenceMode extends BaseMode {
     selectedNode: SequenceNode,
     selectedTwoStrandedNode: ITwoStrandedChainItem,
     modelChanges: Command,
-    previousSelectionNode?: SequenceNode,
+    previousSelectionNode: SequenceNode | undefined,
+    strandType: STRAND_TYPE,
   ) {
     const editor = provideEditorInstance();
-    const nextNode = SequenceRenderer.getNextNodeInSameChain(
-      selectedTwoStrandedNode,
-    );
+    const isAntisense = strandType === STRAND_TYPE.ANTISENSE;
+    // An antisense chain runs opposite to the two-stranded display order,
+    // so the node that follows this one IN THE CHAIN sits at the previous
+    // display position. Mirrors replaceSelectionWithMonomer.
+    const nextTwoStrandedNode = isAntisense
+      ? SequenceRenderer.getPreviousNodeInSameChain(selectedTwoStrandedNode)
+      : SequenceRenderer.getNextNodeInSameChain(selectedTwoStrandedNode);
+    const nextNodeInStrand = getNodeForStrand(nextTwoStrandedNode, strandType);
     const position = selectedNode.monomer.position;
     const hasPreviousNodeInChain =
       selectedNode.firstMonomerInNode.attachmentPointsToBonds.R1;
@@ -2953,11 +2968,10 @@ export class SequenceMode extends BaseMode {
       });
     });
 
-    const nextSenseNode = nextNode?.senseNode;
     const presetToInsert =
       selectedNode instanceof Nucleoside &&
-      nextSenseNode instanceof MonomerSequenceNode &&
-      nextSenseNode.monomer instanceof Phosphate &&
+      nextNodeInStrand instanceof MonomerSequenceNode &&
+      nextNodeInStrand.monomer instanceof Phosphate &&
       preset.phosphate
         ? { ...preset, phosphate: undefined }
         : preset;
@@ -2973,7 +2987,7 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         newPresetNode,
-        nextNode?.senseNode ?? null,
+        nextNodeInStrand ?? null,
         previousSelectionNode,
         Boolean(hasPreviousNodeInChain),
         Boolean(hasNextNodeInChain),
@@ -3061,24 +3075,49 @@ export class SequenceMode extends BaseMode {
     const history = EditorHistory.getInstance(editor);
     const modelChanges = new Command();
 
-    selections.forEach((selectionRange) => {
-      let previousReplacedNode = SequenceRenderer.getPreviousNodeInSameChain(
-        selectionRange[0].node,
-      )?.senseNode;
+    // One range must be one strand: the loop below resolves the strand once
+    // per range and carries `previousReplacedNode` across its iterations on
+    // the strength of that. Mirrors replaceSelectionsWithMonomer.
+    const sameStrandSelectionRanges = selections.flatMap(
+      splitSelectionRangeByStrand,
+    );
 
-      selectionRange.forEach((nodeSelection) => {
-        const senseNode = nodeSelection.node.senseNode;
+    sameStrandSelectionRanges.forEach((selectionRange) => {
+      const strandType = getSelectedStrandType(selectionRange[0].node);
+      const isAntisense = strandType === STRAND_TYPE.ANTISENSE;
+      // Iteration follows chain order, not display order, so the
+      // "previous replaced node" carried across iterations really is the
+      // chain-previous of the node about to be processed. An antisense
+      // chain runs opposite to display order, so its ranges are walked in
+      // reverse and the seed is taken from whichever end is chain-first.
+      const orderedSelectionRange = isAntisense
+        ? [...selectionRange].reverse()
+        : selectionRange;
+      const firstNodeInChainOrder = orderedSelectionRange[0];
+      const previousTwoStrandedNode = isAntisense
+        ? SequenceRenderer.getNextNodeInSameChain(firstNodeInChainOrder.node)
+        : SequenceRenderer.getPreviousNodeInSameChain(
+            firstNodeInChainOrder.node,
+          );
+      let previousReplacedNode = getNodeForStrand(
+        previousTwoStrandedNode,
+        strandType,
+      );
 
-        if (!senseNode || senseNode instanceof EmptySequenceNode) {
+      orderedSelectionRange.forEach((nodeSelection) => {
+        const nodeToReplace = getNodeForStrand(nodeSelection.node, strandType);
+
+        if (!nodeToReplace || nodeToReplace instanceof EmptySequenceNode) {
           return;
         }
 
         previousReplacedNode = this.replaceSelectionWithPreset(
           preset,
-          senseNode,
+          nodeToReplace,
           nodeSelection.node,
           modelChanges,
           previousReplacedNode,
+          strandType,
         );
       });
     });

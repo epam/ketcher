@@ -236,13 +236,18 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
 
     callReplaceSelectionsWithPreset(mode, selections, buildPreset(editor, 'C'));
 
-    // Every sense monomer survives untouched: the preset went to the
-    // antisense strand.
+    // Every sense monomer survives untouched (same node identity): the
+    // preset went to the antisense strand, not the sense one.
     senseBaseIdsBefore.forEach((id) => {
       expect(editor.drawingEntitiesManager.monomers.has(id)).toBe(true);
     });
-    expect(senseNucleotides[0].rnaBase.label).toBe('A');
-    expect(senseNucleotides[1].rnaBase.label).toBe('C');
+    // Their base LABELS do change, though (Task 4): this is a genuine
+    // single-strand (ANTISENSE) gesture, so rule 1.1 mirrors the preset's
+    // base onto each touched position's hydrogen-bonded partner. Position 0:
+    // antisense U -> C, so partner sense A mirrors to complement(C) = G.
+    // Position 1: antisense G -> C, so partner sense C mirrors to G too.
+    expect(senseNucleotides[0].rnaBase.label).toBe('G');
+    expect(senseNucleotides[1].rnaBase.label).toBe('G');
   });
 
   it('splits a range that mixes strands, replacing only what is selected at each position', () => {
@@ -311,5 +316,115 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
     // the untouched sense base still has exactly one.
     expect(senseNucleotides[0].rnaBase.hydrogenBonds.length).toBe(1);
     expect(senseNucleotides[1].rnaBase.hydrogenBonds.length).toBe(1);
+  });
+
+  it('rewrites the hydrogen-bonded partner when the preset changes the natural analogue', () => {
+    const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
+
+    // A one-strand drag along the sense row: both strands end up selected
+    // at every touched column, but the record says SENSE.
+    dragAcrossBothPositions(senseNucleotides[0], senseNucleotides[0]);
+    expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
+
+    const selections = SequenceRenderer.selections
+      .map((range) =>
+        range.filter((selection) => selection.nodeIndexOverall === 0),
+      )
+      .filter((range) => range.length > 0);
+
+    callReplaceSelectionsWithPreset(mode, selections, buildPreset(editor, 'C'));
+
+    // Position 0: sense A -> C via the preset's base, so its partner U must
+    // mirror to G. The partner is mutated in place by modifyMonomerItem,
+    // so this reference stays valid.
+    expect(antisenseNucleotides[0].rnaBase.label).toBe('G');
+  });
+
+  it('leaves the partner alone when the preset keeps the natural analogue', () => {
+    const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
+
+    dragAcrossBothPositions(senseNucleotides[0], senseNucleotides[0]);
+
+    const selections = SequenceRenderer.selections
+      .map((range) =>
+        range.filter((selection) => selection.nodeIndexOverall === 0),
+      )
+      .filter((range) => range.length > 0);
+
+    // The sense base at position 0 is already 'A'.
+    callReplaceSelectionsWithPreset(mode, selections, buildPreset(editor, 'A'));
+
+    expect(antisenseNucleotides[0].rnaBase.label).toBe('U');
+  });
+
+  it('leaves the partner alone in non-sync mode', () => {
+    const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
+
+    dragAcrossBothPositions(senseNucleotides[0], senseNucleotides[0]);
+
+    // Set the field directly: turnOffSyncEditMode() calls initialize(),
+    // which re-lays-out the canvas and destroys the selection under test.
+    (mode as unknown as { _isSyncEditMode: boolean })._isSyncEditMode = false;
+    expect(mode.isSyncEditMode).toBe(false);
+
+    const selections = SequenceRenderer.selections
+      .map((range) =>
+        range.filter((selection) => selection.nodeIndexOverall === 0),
+      )
+      .filter((range) => range.length > 0);
+
+    callReplaceSelectionsWithPreset(mode, selections, buildPreset(editor, 'C'));
+
+    expect(antisenseNucleotides[0].rnaBase.label).toBe('U');
+  });
+
+  it('undoes a propagating preset replacement as a single history step', () => {
+    const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
+    const antisenseLabelBefore = antisenseNucleotides[0].rnaBase.label;
+
+    dragAcrossBothPositions(senseNucleotides[0], senseNucleotides[0]);
+
+    const selections = SequenceRenderer.selections
+      .map((range) =>
+        range.filter((selection) => selection.nodeIndexOverall === 0),
+      )
+      .filter((range) => range.length > 0);
+    const history = EditorHistory.getInstance(editor);
+    const historyPointerBefore = history.historyPointer;
+
+    callReplaceSelectionsWithPreset(mode, selections, buildPreset(editor, 'C'));
+
+    expect(history.historyPointer).toBe(historyPointerBefore + 1);
+    expect(antisenseNucleotides[0].rnaBase.label).toBe('G');
+
+    history.undo();
+
+    expect(history.historyPointer).toBe(historyPointerBefore);
+    expect(antisenseNucleotides[0].rnaBase.label).toBe(antisenseLabelBefore);
+  });
+
+  it("replaces the targeted strand and drops that column's hydrogen bond, for a preset with no base", () => {
+    const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
+    const antisensePartner = antisenseNucleotides[0].rnaBase;
+
+    dragAcrossBothPositions(senseNucleotides[0], senseNucleotides[0]);
+
+    const selections = SequenceRenderer.selections
+      .map((range) =>
+        range.filter((selection) => selection.nodeIndexOverall === 0),
+      )
+      .filter((range) => range.length > 0);
+
+    callReplaceSelectionsWithPreset(
+      mode,
+      selections,
+      buildPreset(editor, undefined),
+    );
+
+    // Nothing to mirror from, so the partner keeps its own base -- and the
+    // pairing at that column is gone, because the new node has no base for
+    // the hydrogen bond to re-attach to. Same as on a single strand today.
+    expect(antisensePartner.label).toBe('U');
+    expect(antisensePartner.hydrogenBonds.length).toBe(0);
   });
 });

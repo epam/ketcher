@@ -3065,6 +3065,10 @@ export class SequenceMode extends BaseMode {
     const history = EditorHistory.getInstance(editor);
     const modelChanges = new Command();
 
+    // Recorded once for the whole gesture: the same value must apply to
+    // every node touched by this call, not be re-derived per position.
+    const bothStrandsTargeted = SequenceRenderer.targetedStrand === 'both';
+
     // One range must be one strand: the loop below resolves the strand once
     // per range and carries `previousReplacedNode` across its iterations on
     // the strength of that. Mirrors replaceSelectionsWithMonomer.
@@ -3101,6 +3105,20 @@ export class SequenceMode extends BaseMode {
           return;
         }
 
+        const editedBase =
+          nodeToReplace instanceof Nucleotide ||
+          nodeToReplace instanceof Nucleoside
+            ? nodeToReplace.rnaBase
+            : undefined;
+        // Captured before the edit: replaceSelectionWithPreset deletes the
+        // selected node's monomers outright, which unsets every bond on
+        // editedBase -- including its hydrogen bond and its own backbone
+        // connection -- so neither the partner nor editedBase's own
+        // eligibility can be re-derived from it afterwards.
+        const previousNaturalAnalogue = getMonomerNaturalAnalogue(editedBase);
+        const partnerBeforeEdit = getHydrogenBondedPartner(editedBase);
+        const wasEditedBaseEligible = isBaseEligibleForDuplexSync(editedBase);
+
         previousReplacedNode = this.replaceSelectionWithPreset(
           preset,
           nodeToReplace,
@@ -3109,6 +3127,28 @@ export class SequenceMode extends BaseMode {
           previousReplacedNode,
           strandType,
         );
+
+        // A preset with no base sets no new natural analogue, so there is
+        // nothing to mirror; resolveMirroredBaseLabel would refuse it
+        // anyway, but skipping here keeps the intent explicit.
+        if (editedBase && preset.base) {
+          const mirroredBaseCommand = createMirroredBaseCommand({
+            drawingEntitiesManager: editor.drawingEntitiesManager,
+            editedBase,
+            previousNaturalAnalogue,
+            newBaseMonomerItem: preset.base,
+            isSyncEditMode: this.isSyncEditMode,
+            resolveBaseLibraryItem: (label) =>
+              getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
+            partner: partnerBeforeEdit,
+            wasEditedBaseEligible,
+            bothStrandsTargeted,
+          });
+
+          if (mirroredBaseCommand) {
+            modelChanges.merge(mirroredBaseCommand);
+          }
+        }
       });
     });
 

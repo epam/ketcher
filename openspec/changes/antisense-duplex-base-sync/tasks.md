@@ -158,18 +158,18 @@
 
 ## 19. Support preset replacement on a duplex
 
-- [ ] 19.1 Extract the both-strands refusal out of `replaceSelectionsWithMonomer` into one private method on `SequenceMode` that takes the selections and the item carrying the new base, and returns whether the edit is refused
-- [ ] 19.2 Key that method off any item that would set a new base: a `Base`-class monomer, an unsplit nucleotide, or a preset with a base; leave items that set no base unblocked
-- [ ] 19.3 Call it at the top of both `insertMonomerFromLibrary` and `insertPresetFromLibrary`, before any confirmation dialog, dispatching the mandated message verbatim and leaving the canvas unchanged
-- [ ] 19.4 Confirm a both-strands gesture with an unsplit nucleotide is now refused rather than rewriting the sense strand and leaving its partner stale
-- [ ] 19.5 Remove the `isSelectionsContainAntisenseChains` guard from `insertPresetFromLibrary`, and the helper itself if nothing else uses it
-- [ ] 19.6 Delete `PRESET_REPLACEMENT_UNSUPPORTED_ON_DUPLEX`, its re-export from `ketcher-core`'s index, and rewrite `SequenceMode.presetRefusal.test.ts` around the new behavior rather than deleting it
-- [ ] 19.7 In `replaceSelectionsWithPreset`, split each range with `splitSelectionRangeByStrand`, resolve `strandType` once per range, iterate antisense ranges in reverse, and seed `previousReplacedNode` from the chain-previous node of that strand
-- [ ] 19.8 Thread `strandType` into `replaceSelectionWithPreset`; resolve the node to replace, the next node handed to `insertNewSequenceFragment`, and the phosphate-dropping heuristic through `getNodeForStrand` and the direction-appropriate chain walker
-- [ ] 19.9 Make `selectionsCantPreserveConnectionsWithPreset` resolve its node per strand, as `getFirstMissingAttachmentPoint` and `selectionsContainLinkerNode` already do
-- [ ] 19.10 In the per-node loop, capture the previous natural analogue, the H-bonded partner and the edited base's eligibility BEFORE the delete, then call `createMirroredBaseCommand` with `preset.base` as the new item and merge the result into the same `Command`
-- [ ] 19.11 Confirm a preset with no base neither mirrors nor is refused, and that the column's hydrogen bond is dropped exactly as it is on a single-stranded chain today
-- [ ] 19.12 Unit-test preset replacement on the sense strand, on the antisense strand, the backbone and hydrogen bond after an antisense replacement, mirroring when the analogue changes, no mirroring when it does not, no mirroring in non-sync mode, and the both-strands refusal for a preset and for an unsplit nucleotide
-- [ ] 19.13 Confirm the original edit and its mirror remain a single undo step, and that no empty entry reaches the history
-- [ ] 19.14 Run the `ketcher-core` gate including `test:circ`, rebuild `ketcher-core`, then run the `ketcher-macromolecules` gate
+- [x] 19.1 Extract the both-strands refusal out of `replaceSelectionsWithMonomer` into one private method on `SequenceMode` that takes the selections and the item carrying the new base, and returns whether the edit is refused
+- [x] 19.2 Key that method off any item that would set a new base: a `Base`-class monomer, an unsplit nucleotide, or a preset with a base; leave items that set no base unblocked
+- [x] 19.3 Call it at the top of both `insertMonomerFromLibrary` and `insertPresetFromLibrary`, before any confirmation dialog, dispatching the mandated message verbatim and leaving the canvas unchanged
+- [x] 19.4 Confirm a both-strands gesture with an unsplit nucleotide is now refused rather than rewriting the sense strand and leaving its partner stale
+- [x] 19.5 Remove the `isSelectionsContainAntisenseChains` guard from `insertPresetFromLibrary`, and the helper itself if nothing else uses it
+- [x] 19.6 Delete `PRESET_REPLACEMENT_UNSUPPORTED_ON_DUPLEX`, its re-export from `ketcher-core`'s index, and rewrite `SequenceMode.presetRefusal.test.ts` around the new behavior rather than deleting it
+- [x] 19.7 In `replaceSelectionsWithPreset`, split each range with `splitSelectionRangeByStrand`, resolve `strandType` once per range, iterate antisense ranges in reverse, and seed `previousReplacedNode` from the chain-previous node of that strand
+- [x] 19.8 Thread `strandType` into `replaceSelectionWithPreset`; resolve the node to replace, the next node handed to `insertNewSequenceFragment`, and the phosphate-dropping heuristic through `getNodeForStrand` and the direction-appropriate chain walker
+- [x] 19.9 Make `selectionsCantPreserveConnectionsWithPreset` resolve its node per strand, as `getFirstMissingAttachmentPoint` and `selectionsContainLinkerNode` already do
+- [x] 19.10 In the per-node loop, capture the previous natural analogue, the H-bonded partner and the edited base's eligibility BEFORE the delete, then call `createMirroredBaseCommand` with `preset.base` as the new item and merge the result into the same `Command`
+- [x] 19.11 Confirm a preset with no base neither mirrors nor is refused, and that the column's hydrogen bond is dropped exactly as it is on a single-stranded chain today
+- [x] 19.12 Unit-test preset replacement on the sense strand, on the antisense strand, the backbone and hydrogen bond after an antisense replacement, mirroring when the analogue changes, no mirroring when it does not, no mirroring in non-sync mode, and the both-strands refusal for a preset and for an unsplit nucleotide
+- [x] 19.13 Confirm the original edit and its mirror remain a single undo step, and that no empty entry reaches the history
+- [x] 19.14 Run the `ketcher-core` gate including `test:circ`, rebuild `ketcher-core`, then run the `ketcher-macromolecules` gate
 - [ ] 19.15 Manual smoke check in sequence mode: replace a sense nucleotide with a preset, an antisense nucleotide with a preset, both strands with a preset, both strands with an unsplit nucleotide, and repeat with sync editing off — requires a browser; hand the matrix to the human reviewer

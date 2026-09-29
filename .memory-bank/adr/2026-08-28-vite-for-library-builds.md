@@ -14,15 +14,14 @@ Two targets are explicitly excluded:
   to Vite would mean abandoning SSR or rewriting the app.
 - **`ketcher-autotests`** has no bundler to migrate.
 
-The **published runtime contract is stable**: every package keeps its current file names, output
-formats, and JavaScript `import`/`require` targets. Scoped metadata fixes may expose already-emitted
-type declarations or the package manifest without changing those runtime outputs (see
-_Consequences_).
+The migration aimed to preserve the published runtime contract by default. The follow-up
+[ADR on Vite output stability](./2026-09-29-vite-output-stability-policy.md) defines that policy
+and records its deliberate exceptions, including corrected export conditions and fixed
+standalone asset names.
 
-All Vite package and app builds explicitly share the `baseline-widely-available` JavaScript
-target. With Vite 8, that baseline corresponds to Chrome/Edge 111+, Firefox 114+, and Safari
-16.4+. This makes the output syntax target explicit rather than relying on Vite's implicit
-default; it does not set source-level Babel targets or add runtime API polyfills.
+The explicit browser baseline and its support implications are also recorded in the follow-up
+ADR. It distinguishes Vite's JavaScript syntax target from source-level Babel targets and runtime
+API polyfills.
 
 Vite production artifacts do not emit JavaScript or CSS source maps.
 Non-production watch builds retain source maps for local debugging;
@@ -107,9 +106,12 @@ screenshots are not a reason to retain Babel.
 
 **The migration is verified against real consumers, not just builds.** Each package must build,
 diff cleanly against its Rollup baseline, and then be exercised by `example-ssr` before the
-Playwright suite runs. `example-ssr` is the only target that resolves the packages from `dist`
-through their `exports` maps — `example` aliases them to source — so it is the sole check that
-the frozen contract, the CJS `require` conditions, and SSR-safety actually hold.
+Playwright suite runs. `example-ssr` resolves package outputs through their `exports` maps —
+`example` aliases them to source — and exercises runtime entrypoints and SSR safety. CI also runs
+`npm run check:package-metadata` to validate packed package metadata and declaration resolution,
+and `scripts/check-standalone-consumer.mjs` to exercise standalone's worker and `.wasm` outputs in
+external Vite and webpack consumers. The current stability policy is documented in the follow-up
+ADR.
 
 **`ketcher-standalone` moved to Vite too, on a second attempt.** The first attempt aborted:
 four of its six variants inline the Indigo worker via `rollup-plugin-web-worker-loader`, which
@@ -155,7 +157,8 @@ consumer happened to copy them to their web root.
 **Internal chunk layout changed; the published contract did not.** The worker and `.wasm` now
 live in an `assets/` subdirectory with fixed names: `indigoWorker.js` and
 `indigo-ketcher[-norender]-<version>.wasm`. `indigoWorker.types.js` is folded into the worker
-chunk. Nothing in the `exports` map or in any consumer references those paths.
+chunk. These files are not export-map entry points; the worker references the `.wasm` asset, and
+the fixed names introduced by #11999 are the supported asset paths (see the follow-up ADR).
 Vite production artifacts emit no JavaScript or CSS source maps. This removes the large maps
 that Rolldown embeds in package output; the maps were useful for consumer debugging but materially
 increased package size. Non-production watch builds retain maps for local debugging, except for
@@ -168,14 +171,14 @@ resolution quirk) and `dist/index.modern.js` (a file the build never emitted at 
 originally decided to leave that broken metadata in place until a deliberate version bump — this
 is that version bump. `main` now points to `dist/cjs/main.js` and `module` to `dist/main.js`,
 matching the `exports` map's `require`/`import` conditions for the `.` entry exactly. This is a
-deliberate, scoped exception to the stable runtime contract: only the `.` entry's
+deliberate, scoped exception to the stable-output policy: only the `.` entry's
 `main`/`module` changed; `types` (`dist/index.d.ts`) was already correct despite the name
-collision with the empty JS placeholder, and none of the six sub-path `exports` entries
-(`./dist/binaryWasm`, `./dist/jsNoRender`, `./dist/binaryWasmNoRender`, …) were untouched by the
-initial migration. The follow-up in #11992 corrects root type resolution for `ketcher-react` and
-`ketcher-macromolecules` and adds `types` conditions to `ketcher-standalone` subpath exports,
-pointing at their emitted `index.d.ts` files. It also exposes `./package.json` from each affected
-export map. These metadata corrections leave all JavaScript `import`/`require` targets unchanged.
+collision with the empty JS placeholder. The initial migration retained the JavaScript
+`import`/`require` targets for the variant subpaths. #11992 later added `types` conditions that
+point at emitted declarations and exposed `./package.json` from the affected export maps. #11993
+then removed the invalid `require` conditions from `./dist/binaryWasm` and
+`./dist/binaryWasmNoRender`, whose targets were ESM files; `./dist/jsNoRender` keeps its CJS
+target. These deliberate export-condition corrections are documented in the follow-up ADR.
 
 **The major version bump is not about syntax level — that framing was wrong.** The original
 justification was that dropping Babel drops ES5 downleveling too: `@babel/preset-env` ran with
@@ -227,7 +230,7 @@ the reason instead.
 | CSS Modules class names changed format (`X-module_root__hash` → `_root_hash_N`). Global class names are unchanged.                                                                                                                        | Consumers who style Ketcher's internal classes.                                                                                                                                                                                                                                                                                                                                                                                                                         | Fixed — see below.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | `ketcher-react/dist/cjs/**/*.d.ts` (507 files) and production JS/CSS source maps are no longer shipped.                                                                                                                                   | Deep imports of the CJS types; debugging production assets.                                                                                                                                                                                                                                                                                                                                                                                                             | Intentional; watch builds retain maps where Vite supports them.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | The CSS minifier drops some vendor prefixes and writes colors as `#rrggbbaa`.                                                                                                                                                             | Old browsers only.                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Unchanged.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| `ketcher-standalone`'s `main`/`module` now resolve to real files instead of an empty placeholder / an unemitted file. `require('ketcher-standalone')` returns real named exports instead of `{}`.                                         | Anyone who imported `ketcher-standalone` via `main`/`module` and relied on (or tolerated) getting nothing back.                                                                                                                                                                                                                                                                                                                                                         | Deliberate, scoped exception to "the published contract is frozen" (see the metadata correction above) — the wrong metadata is fixed as part of this version bump, not preserved.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `ketcher-standalone`'s `main`/`module` now resolve to real files instead of an empty placeholder / an unemitted file. `require('ketcher-standalone')` returns real named exports instead of `{}`.                                         | Anyone who imported `ketcher-standalone` via `main`/`module` and relied on (or tolerated) getting nothing back.                                                                                                                                                                                                                                                                                                                                                         | Deliberate, scoped exception to the stable-by-default output policy (see the metadata correction above) — the wrong metadata is fixed as part of this version bump, not preserved.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 
 **Fixed since the original review (no longer breaking vs 3.18.0):**
 
@@ -246,35 +249,24 @@ the reason instead.
   (`[name]_[local]__[hash]`, e.g. `App-module_canvas__<hash>`) as the `master` Rollup build (hashes
   were not compared against a master build).
 
-**Not breaking:** `exports`, `types`, `sideEffects`, peer dependencies, and `engines` match
-master's build. The `ketcher-react` Vite 8.3.1 CJS build emits the same 42 public exports as
-the 8.0.16 baseline, with no leaked Rolldown runtime helpers; no helper-stripping plugin is
-needed. `ketcher-standalone`'s `main`/`module` are **not** in this list — see the
-breaking-changes table above.
+**Other package metadata:** aside from the documented `main`/`module`, `types`, and export
+condition corrections above, `sideEffects`, peer dependencies, and `engines` match the prior
+contract. The `ketcher-react` Vite 8.3.1 CJS build emits the same 42 public exports as the 8.0.16
+baseline, with no leaked Rolldown runtime helpers; no helper-stripping plugin is needed.
 
 The bump lands as a single commit after the migration completes, so that four interdependent
 `package.json` files are not churning while the builds are still changing. It needs the release
 owner's agreement before it ships.
 
-**`vite` is pinned to exactly `8.3.1` in all four library packages, not only in
-`ketcher-standalone`.** Its specific technical reason is the standalone fetch variants:
-their `.wasm` emission depends on Vite's asset plugin evaluating the `?no-inline` tag
-_ahead of_ the `if (build.lib) return true` branch that otherwise inlines every rewritten
-asset in library mode (see "The `.wasm` for the two fetch variants is now emitted, not
-copied" above). A patch release could reorder or change that check and silently re-inline
-the ~16 MB `.wasm` into the JS bundle. Re-verified with Vite 8.3.1: `binaryWasm` and
-`binaryWasmNoRender` each emit a separate `.wasm` file referenced by their emitted worker,
-rather than inlining the binary into JavaScript.
-
-No equivalent reason is recorded for `ketcher-core`, `ketcher-react`, or
-`ketcher-macromolecules`: their first Vite migration commits (`fec1d845e5`,
-`908791e094`, `38bf23024c` respectively) introduced exact pins without explaining them,
-following the exact-version convention already used by `example`. `c325be7cfd` calls
-`ketcher-standalone` "the only loose Vite range" at that point, implying the other three
-were pinned by convention rather than for a documented technical reason. No further
-justification for those three was found in git history or this ADR; one should not invent
-one. A similar Rolldown-behavior risk is possible, but remains speculation rather than a
-recorded fact.
+**Vite version ranges vary by target.** `ketcher-core`, `ketcher-react`, and
+`ketcher-macromolecules` declare `^8.3.1`; `ketcher-standalone`, `example`, and `demo` pin
+`8.3.1`. The standalone exact pin is intentional: fetch variants rely on Vite's asset plugin
+evaluating the `?no-inline` tag _ahead of_ the `if (build.lib) return true` branch that otherwise
+inlines rewritten assets in library mode (see "The `.wasm` for the two fetch variants is now
+emitted, not copied" above). A patch release could reorder or change that check and silently
+re-inline the ~16 MB `.wasm` into JavaScript. Vite 8.3.1 emits a separate `.wasm` file for each
+fetch variant, and its worker references that file. The version ranges and standalone pin are
+part of the follow-up ADR's stable-output policy.
 
 **`ketcher-macromolecules` does not emit a CSS source map.** Producing a single `dist/index.css`
 requires `build.cssCodeSplit: false`, and in that path Vite 8.3.1 emits the extracted CSS via a

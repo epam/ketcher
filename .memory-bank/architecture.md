@@ -9,7 +9,12 @@ Ketcher is a web-based chemical structure editor built as a TypeScript/React mon
 - **Micromolecules mode** — classic 2D small-molecule/reaction editor (atoms, bonds, SGroups, R-Groups, etc.)
 - **Macromolecules mode** — polymer/sequence editor for peptides, RNA, DNA, and CHEM monomers
 
-The two modes coexist in the same browser tab. Switching between them is controlled via the `ModeControl` toggle component or ketcher api. Each mode has its own editor instance, renderer, and state management, but they share a single `Ketcher` facade and the `ketcher-core` domain/application layer.
+When macromolecules editing is enabled, the two modes coexist in the same browser tab. Switching
+between them is controlled via the `ModeControl` toggle component or Ketcher API. Each mode has its
+own editor instance, renderer, and state management, but they share a single `Ketcher` facade and
+the `ketcher-core` domain/application layer. Integrators may opt out; then the lazily loaded
+macromolecules package is not requested, no macromolecules core editor is created, and APIs or UI
+that require it handle its absence safely.
 
 ---
 
@@ -137,7 +142,7 @@ flowchart LR
 
 ## Build & Toolchain
 
-> Migration in progress. See [ADR 2026-08-28 — Vite for library builds](./adr/2026-08-28-vite-for-library-builds.md) for the decision and its rationale.
+> See [ADR 2026-08-28 — Vite for library builds](./adr/2026-08-28-vite-for-library-builds.md) for the migration rationale and [ADR 2026-09-29 — Vite output stability policy](./adr/2026-09-29-vite-output-stability-policy.md) for the current browser and published-output contract.
 
 The repository is an npm-workspaces monorepo with no additional monorepo tool (no Lerna, Nx, or
 Turbo). Cross-package orchestration is plain npm scripts sequenced with `npm-run-all2`.
@@ -146,23 +151,25 @@ Turbo). Cross-package orchestration is plain npm scripts sequenced with `npm-run
 `example-ssr` builds with Next.js, and `ketcher-autotests` has no bundler. No Rollup config
 remains in the repository.
 
-| Target                            | Kind    | Builder                                             |
-| --------------------------------- | ------- | --------------------------------------------------- |
-| `packages/ketcher-core`           | library | Vite 8, per-file output (`preserveModules`)         |
-| `packages/ketcher-react`          | library | Vite 8, dual ESM/CJS, extracted CSS                 |
-| `packages/ketcher-macromolecules` | library | Vite 8, single-file dual output, extracted CSS      |
-| `packages/ketcher-standalone`     | library | Vite 8, six build variants over one config          |
-| `example`                         | app     | Vite 8                                              |
-| `demo`                            | app     | Vite 8                                              |
-| `example-ssr`                     | app     | Next.js — not a Vite target                         |
+| Target                            | Kind    | Builder                                        |
+| --------------------------------- | ------- | ---------------------------------------------- |
+| `packages/ketcher-core`           | library | Vite 8, per-file output (`preserveModules`)    |
+| `packages/ketcher-react`          | library | Vite 8, dual ESM/CJS, extracted CSS            |
+| `packages/ketcher-macromolecules` | library | Vite 8, single-file dual output, extracted CSS |
+| `packages/ketcher-standalone`     | library | Vite 8, six build variants over one config     |
+| `example`                         | app     | Vite 8                                         |
+| `demo`                            | app     | Vite 8                                         |
+| `example-ssr`                     | app     | Next.js — not a Vite target                    |
 
 ### Invariants
 
-**Published runtime outputs are stable.** Package file names, output formats, and JavaScript
-`import`/`require` targets do not change as a result of build tooling work. Type and package
-metadata may receive scoped correctness fixes without changing those runtime outputs; #11992
-exposes existing declarations through `types` conditions and adds `./package.json` exports to the
-affected package maps.
+**Published outputs are stable by default.** Ordinary build-tool changes preserve package file
+names, output formats, and JavaScript `import`/`require` mappings. Intentional correctness changes
+are documented exceptions: #11993 removed invalid `require` conditions from the standalone
+`binaryWasm` and `binaryWasmNoRender` subpaths, and #11999 replaced hashed worker/`.wasm` asset
+names with fixed names. #11992 also exposes existing declarations through `types` conditions and
+adds `./package.json` exports to the affected maps. See the follow-up Vite ADR for the policy and
+its complete rationale.
 
 **Type declarations are emitted by TypeScript, not the bundler.** Each package runs
 `tsc --emitDeclarationOnly`, plus `tsc-alias` where path aliases are used.
@@ -175,17 +182,16 @@ imported by another package, and no build may read another package's `dist/` out
 ### Verification
 
 `example` aliases the four packages to their **source**, so it never exercises the published
-`dist/` output. `example-ssr` resolves them through their `exports` maps as a real consumer, and
-is therefore the only check that the published contract, the CJS `require` conditions, and
-SSR-safety hold. A build tooling change is verified by: build → diff `dist/` against the previous
-baseline → `example-ssr` builds and renders → Playwright suite green.
+`dist/` output. `example-ssr` resolves package outputs through their `exports` maps and exercises
+runtime entrypoints and SSR safety. CI also runs `npm run check:package-metadata` after the build;
+it packs all four publishable packages and checks their metadata and declaration resolutions with
+publint and Are The Types Wrong.
 
 `example`/`example-ssr` still don't cover `ketcher-standalone`'s `binaryWasm`/`binaryWasmNoRender`
 build variants against a real external bundler: `example` only ever uses the default inline
-build. `scripts/check-standalone-consumer.mjs` closes that gap and runs in CI right after the
-build job. It `npm pack`s `ketcher-core` and `ketcher-standalone`, installs the tarballs into two
-throwaway consumer projects (one Vite, one webpack 5) built in the OS temp dir, and asserts each
-consumer's own build output contains a `.wasm` file and a separate Indigo worker chunk for
-**both** variants — guarding against the worker/`.wasm` `new URL(...)` reference regressing from
-a literal, statically-detectable form back to a computed one (see the ADR:
-`.memory-bank/adr/2026-08-28-vite-for-library-builds.md`).
+build. `scripts/check-standalone-consumer.mjs` closes that gap and runs in CI after the metadata
+check. It `npm pack`s `ketcher-core` and `ketcher-standalone`, installs the tarballs into separate
+Vite and webpack 5 consumer projects in an OS temporary directory outside the repository, and
+asserts that each consumer emits a distinct worker file and matching `.wasm` asset for both
+variants. Keeping the consumers outside the repository prevents Node and npm from falling back
+to workspace links or local `dist/` output and masking undeclared package dependencies.

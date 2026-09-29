@@ -84,7 +84,7 @@ CJS output only exists for the base64 variants: the binaryWasm ones load their w
 ### Dev Workflow
 
 - `npm run build` — production; runs all six variants sequentially (`NODE_ENV=production`, source maps on).
-- `npm run start` — development watch mode; builds only the default `base64` variant (`NODE_ENV=development`).
+- `npm run start` — development watch mode; builds only the default `base64` variant (`NODE_ENV=development`) and runs `tsc --watch --noEmit` alongside Vite.
 
 ## Dependencies
 

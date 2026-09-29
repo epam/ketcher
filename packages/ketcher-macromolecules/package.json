@@ -31,7 +31,9 @@
   "scripts": {
     "prebuild": "shx rm -rf dist",
     "build": "cross-env NODE_ENV=production vite build && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
-    "start": "cross-env NODE_ENV=development vite build --watch",
+    "start": "run-p --print-label start:vite start:typecheck",
+    "start:vite": "cross-env NODE_ENV=development vite build --watch",
+    "start:typecheck": "tsc --watch --noEmit",
     "test": "run-s test:prettier test:stylelint test:eslint:quiet test:types test:unit",
     "test:eslint": "eslint .",
     "test:eslint:quiet": "npm run test:eslint -- --quiet",

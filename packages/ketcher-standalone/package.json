@@ -29,7 +29,7 @@
     "node": ">=24.20.0"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production vite build && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64Cjs vite build && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasm vite build && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64WithoutRender SEPARATE_INDIGO_RENDER=true vite build && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64WithoutRenderCjs SEPARATE_INDIGO_RENDER=true vite build && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasmWithoutRender SEPARATE_INDIGO_RENDER=true vite build && tsc --emitDeclarationOnly -p tsconfig.build.json && shx cp -r .types/. dist && shx cp -r .types/. dist/cjs && shx cp -r .types/. dist/binaryWasm && shx cp -r .types/. dist/jsNoRender && shx cp -r .types/. dist/cjs/jsNoRender && shx cp -r .types/. dist/binaryWasmNoRender && shx rm -rf .types",
+    "build": "node ./scripts/build.mjs && tsc --emitDeclarationOnly -p tsconfig.build.json && shx cp -r .types/. dist && shx cp -r .types/. dist/cjs && shx cp -r .types/. dist/binaryWasm && shx cp -r .types/. dist/jsNoRender && shx cp -r .types/. dist/cjs/jsNoRender && shx cp -r .types/. dist/binaryWasmNoRender && shx rm -rf .types",
     "start": "cross-env NODE_ENV=development vite build --watch",
     "test": "run-s test:prettier test:eslint:quiet test:types test:unit",
     "test:eslint": "eslint .",

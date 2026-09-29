@@ -258,14 +258,12 @@ export default defineConfig({
     lib: {
       entry: {
         main: resolve(rootDir, 'src/index.ts'),
-        index: resolve(rootDir, 'src/emptyIndex.js'),
       },
       formats: [variant.format],
     },
     rolldownOptions: {
       input: {
         main: resolve(rootDir, 'src/index.ts'),
-        index: resolve(rootDir, 'src/emptyIndex.js'),
       },
       external,
       output: {

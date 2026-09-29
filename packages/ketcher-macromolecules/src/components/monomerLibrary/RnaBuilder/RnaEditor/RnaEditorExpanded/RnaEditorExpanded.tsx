@@ -637,16 +637,14 @@ export const RnaEditorExpanded = ({
   };
 
   const getMonomersName = (groupName: string) => {
-    if (!sequenceSelectionGroupNames) return '';
-
     if (
       groupName === MonomerGroups.BASES &&
       isBaseModificationDisabled &&
-      sequenceSelectionGroupNames[groupName] === '[multiple]'
+      sequenceSelectionGroupNames?.[groupName] === '[multiple]'
     ) {
       return '[disabled]';
     }
-    return sequenceSelectionGroupNames[groupName];
+    return sequenceSelectionGroupNames?.[groupName];
   };
 
   useEffect(() => {

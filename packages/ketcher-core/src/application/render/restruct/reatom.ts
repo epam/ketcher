@@ -2182,7 +2182,7 @@ const atomCustomQueryPatterns: readonly AtomCustomQueryPattern[] = [
       if (value === '') return value;
       const regExpResult = /^([+-]?)(\d{1,3}|1000)([+-]?)$/.exec(value);
       const charge = regExpResult
-        ? parseInt(
+        ? Number.parseInt(
             regExpResult[1] + regExpResult[3] + regExpResult[2],
           ).toString()
         : value;

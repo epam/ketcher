@@ -62,7 +62,6 @@
     "hoist-non-react-statics": "^3.3.2",
     "i18next": "^26.4.1",
     "i18next-icu": "^2.4.4",
-    "intersection-observer": "^0.12.2",
     "intl-messageformat": "^11.2.14",
     "jsonschema": "^1.5.0",
     "ketcher-core": "*",

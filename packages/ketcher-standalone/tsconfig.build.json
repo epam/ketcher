@@ -6,5 +6,5 @@
     "rootDir": "src",
     "outDir": ".types"
   },
-  "exclude": ["node_modules", "dist", "__tests__/**/*", "src/emptyIndex.js"]
+  "exclude": ["node_modules", "dist", "__tests__/**/*"]
 }

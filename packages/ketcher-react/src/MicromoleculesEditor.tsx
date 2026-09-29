@@ -53,12 +53,13 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
 
   const setServerRef = useRef<(structService: StructService) => void>(() => {});
-  const { ketcherId, structServiceProvider } = props;
+  const { structServiceProvider } = props;
 
   const propsRef = useRef(props);
-  useEffect(() => {
-    propsRef.current = props;
-  }, [props]);
+  propsRef.current = props;
+
+  const ketcherIdRef = useRef(props.ketcherId);
+  ketcherIdRef.current = props.ketcherId;
 
   const rootElRef = useRef<HTMLDivElement>(null);
 
@@ -67,15 +68,15 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   });
 
   useEffect(() => {
-    if (!ketcherId) {
+    if (!ketcherIdRef.current) {
       return;
     }
     ketcherBuilderRef.current?.reinitializeApi(
-      ketcherId,
+      ketcherIdRef.current,
       structServiceProvider,
       setServerRef.current,
     );
-  }, [ketcherId, structServiceProvider]);
+  }, [structServiceProvider]);
 
   useEffect(() => {
     const initKetcher = async () => {

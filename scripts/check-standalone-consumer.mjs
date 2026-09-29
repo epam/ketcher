@@ -29,15 +29,17 @@
  */
 
 import { execFileSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
 import {
   mkdirSync,
+  mkdtempSync,
   writeFileSync,
   readFileSync,
   rmSync,
   readdirSync,
   existsSync,
 } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { basename, join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { EXEC_TIMEOUT_MS, npmPack } from './npm-pack.mjs';
 
@@ -106,14 +108,9 @@ function main() {
   );
   verifyStandaloneAssetNames();
 
-  const workDir = join(
-    repoRoot,
-    'node_modules',
-    '.cache',
-    'ketcher-standalone-consumer',
-  );
-  rmSync(workDir, { recursive: true, force: true });
-  mkdirSync(workDir, { recursive: true });
+  // Keep consumers outside the repository so resolution cannot fall back to
+  // workspace packages and mask undeclared dependencies.
+  const workDir = mkdtempSync(join(tmpdir(), 'ketcher-standalone-consumer-'));
   log(`Working directory: ${workDir}`);
 
   try {
@@ -289,6 +286,7 @@ module.exports = {
 // Consumers may add their own hash when emitting workers from the package's
 // fixed `indigoWorker.js` URL, so accept either name in their build output.
 const CONSUMER_WORKER_NAME_RE = /indigoWorker(?:-[\w.-]+)?\.js/g;
+const CONSUMER_WORKER_FILE_RE = /^indigoWorker(?:-[\w.-]+)?\.js$/;
 
 function verifyConsumerOutput(bundlerName, distDir) {
   const files = listFilesRecursive(distDir);
@@ -305,27 +303,61 @@ function verifyConsumerOutput(bundlerName, distDir) {
     );
   }
 
-  let workerReferences = 0;
+  const workerFilesByVariant = new Map();
+  for (const variant of STANDALONE_VARIANTS) {
+    const expectedWasmFile = WASM_FILE_NAMES[variant];
+    const workerFiles = new Set(
+      files.filter(
+        (file) =>
+          CONSUMER_WORKER_FILE_RE.test(basename(file)) &&
+          readTextIfPossible(file)?.includes(expectedWasmFile),
+      ),
+    );
+
+    if (workerFiles.size === 0) {
+      fail(
+        `${bundlerName} consumer build does not emit a distinct Indigo worker file for ` +
+          `${variant} (${distDir}).`,
+      );
+    }
+
+    workerFilesByVariant.set(variant, workerFiles);
+  }
+
+  const referencedWorkerFiles = new Set();
   for (const file of files) {
     if (file.endsWith('.wasm') || file === join(distDir, 'main.js')) continue;
     const text = readTextIfPossible(file);
     if (!text) continue;
-    workerReferences += Array.from(
-      text.matchAll(CONSUMER_WORKER_NAME_RE),
-    ).length;
+    for (const match of text.matchAll(CONSUMER_WORKER_NAME_RE)) {
+      referencedWorkerFiles.add(match[0]);
+    }
   }
 
-  if (workerReferences < expectedCount) {
+  if (referencedWorkerFiles.size < expectedCount) {
     fail(
-      `${bundlerName} consumer build references ${workerReferences} Indigo worker URL(s) ` +
+      `${bundlerName} consumer build references ${referencedWorkerFiles.size} distinct Indigo ` +
+        `worker file(s) in its output (${distDir}), expected at least ${expectedCount}.`,
+    );
+  }
+
+  const workerFiles = new Set(
+    [...workerFilesByVariant.values()].flatMap((variantFiles) => [
+      ...variantFiles,
+    ]),
+  );
+  if (workerFiles.size < expectedCount) {
+    fail(
+      `${bundlerName} consumer build emits ${workerFiles.size} distinct Indigo worker file(s) ` +
         `in its output (${distDir}), expected at least ${expectedCount} - one per checked ` +
-        'variant. The Indigo worker was not split out as its own file for every variant.',
+        'variant.',
     );
   }
 
   log(
-    `${bundlerName}: OK (${wasmFiles.length} .wasm file(s), ${workerReferences} worker URL ` +
-      'reference(s) present)',
+    `${bundlerName}: OK (${wasmFiles.length} .wasm file(s), ${workerFiles.size} distinct ` +
+      `worker file(s) across the checked variants, ${referencedWorkerFiles.size} distinct ` +
+      'worker references)',
   );
 }
 

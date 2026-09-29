@@ -40,6 +40,9 @@ export const Preview = () => {
   const isPreviewVisible = Boolean(preview?.type);
   const editor = useSelector(selectEditor);
   const ketcherRootRect = editor?.ketcherRootElementBoundingClientRect;
+  // TODO: Replace this offset-based popup heuristic with an explicit mode flag
+  // or a comparison of the Ketcher root and app containers. An embedded editor
+  // can also have an offset, and a popup can be positioned at the viewport origin.
   const isPopupMode = Boolean(ketcherRootRect?.x || ketcherRootRect?.y);
 
   useLayoutEffect(() => {

@@ -188,6 +188,10 @@ export function calculateBondPreviewPositionByCoordinates(
   const width = right - left;
   const height = bottom - top;
 
+  // TODO: Replace this offset-based popup heuristic with an explicit mode flag
+  // or a comparison of the Ketcher root and app containers, as in Preview.
+  // A root at the viewport origin is assumed to use the legacy layout, but a
+  // popup can also be at the origin and an embedded editor can have an offset.
   if (ketcherRootLeft === 0 && ketcherRootTop === 0) {
     return calculateLegacyBondPreviewPosition(
       { left, top, right, bottom },

@@ -29,6 +29,7 @@
     "test": "npm run test --workspace=packages/ketcher-core --workspace=packages/ketcher-react --workspace=packages/ketcher-standalone --workspace=packages/ketcher-macromolecules",
     "test:types": "npm run test:types --workspaces",
     "check:autotests": "cd ketcher-autotests && npm run check:code",
+    "check:package-metadata": "node scripts/check-package-metadata.mjs",
     "serve:remote": "cd example && npm run serve:remote",
     "serve:standalone": "cd example && npm run serve:standalone",
     "serve": "run-p serve:remote serve:standalone",
@@ -36,6 +37,7 @@
     "up": "node ./scripts/build-run.mjs"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "@eslint/css": "^1.4.0",
     "@eslint/js": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^8.66.0",
@@ -62,6 +64,7 @@
     "postcss-less": "^6.0.0",
     "prettier": "^3.9.6",
     "prettier-config-standard": "^5.0.0",
+    "publint": "^0.3.24",
     "shx": "^0.3.3",
     "stylelint": "^17.14.1",
     "stylelint-config-standard": "^40.0.0",

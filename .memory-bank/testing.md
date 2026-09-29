@@ -49,6 +49,23 @@ All E2E tests live in `ketcher-autotests/`. This is a separate npm workspace.
 
 TypeScript type checks run separately per package: `npm run test:types --workspaces`
 
+### 4. Published Package Metadata
+
+After `npm run build`, run `npm run check:package-metadata` to pack all four publishable
+workspaces and check each tarball with `publint` (errors) and Are The Types Wrong. The CI build job
+runs the same check, so it validates packed files rather than workspace links.
+
+`ketcher-core` currently has no `exports` map, so this check cannot catch problems in a future
+core exports map. Add a packed-consumer type-resolution assertion if one is introduced.
+
+ATW's `unexpected-module-syntax` rule is ignored for the ESM `.js` entries in standalone,
+macromolecules, and react: all declare Node 24.20+ (which detects their module syntax), while
+ATW's Node 16 profile flags the ambiguous extensions. The macromolecules `Editor.d.ts` also
+imports an unshipped `theme.less`; its `internal-resolution-error` is a separate declaration
+packaging defect (same class as #12004). The two packages' CSS export paths are excluded from
+ATW's JS/type analysis; `publint` still checks their packed tarballs. The packed Vite/webpack
+consumer check covers the standalone entries.
+
 ---
 
 ## E2E Test Architecture

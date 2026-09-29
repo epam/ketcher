@@ -30,7 +30,6 @@
 
 import { execFileSync } from 'node:child_process';
 import {
-  mkdtempSync,
   mkdirSync,
   writeFileSync,
   readFileSync,
@@ -38,9 +37,9 @@ import {
   readdirSync,
   existsSync,
 } from 'node:fs';
-import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { EXEC_TIMEOUT_MS, npmPack } from './npm-pack.mjs';
 
 const repoRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 const corePkgDir = join(repoRoot, 'packages/ketcher-core');
@@ -63,10 +62,6 @@ const WASM_FILE_NAMES = {
   binaryWasm: `indigo-ketcher-${INDIGO_VERSION}.wasm`,
   binaryWasmNoRender: `indigo-ketcher-norender-${INDIGO_VERSION}.wasm`,
 };
-
-// A generous ceiling for each install/build step, so a network stall or a
-// bundler hang fails this check instead of hanging a CI job indefinitely.
-const EXEC_TIMEOUT_MS = 5 * 60 * 1000;
 
 // Pin the consumers' bundler versions to what this repo already builds
 // with (or a webpack 5 baseline, since nothing in the repo uses webpack) -
@@ -111,7 +106,14 @@ function main() {
   );
   verifyStandaloneAssetNames();
 
-  const workDir = mkdtempSync(join(tmpdir(), 'ketcher-standalone-consumer-'));
+  const workDir = join(
+    repoRoot,
+    'node_modules',
+    '.cache',
+    'ketcher-standalone-consumer',
+  );
+  rmSync(workDir, { recursive: true, force: true });
+  mkdirSync(workDir, { recursive: true });
   log(`Working directory: ${workDir}`);
 
   try {
@@ -202,16 +204,6 @@ function verifyStandaloneAssetNames() {
       );
     }
   }
-}
-
-function npmPack(pkgDir, destDir) {
-  const output = execFileSync(
-    'npm',
-    ['pack', '--silent', '--pack-destination', destDir],
-    { cwd: pkgDir, encoding: 'utf8', timeout: EXEC_TIMEOUT_MS },
-  ).trim();
-  const fileName = output.split('\n').pop().trim();
-  return join(destDir, fileName);
 }
 
 function npmInstall(consumerDir) {

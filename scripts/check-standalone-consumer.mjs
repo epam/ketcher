@@ -283,11 +283,6 @@ module.exports = {
   );
 }
 
-// Consumers may add their own hash when emitting workers from the package's
-// fixed `indigoWorker.js` URL, so accept either name in their build output.
-const CONSUMER_WORKER_NAME_RE = /indigoWorker(?:-[\w.-]+)?\.js/g;
-const CONSUMER_WORKER_FILE_RE = /^indigoWorker(?:-[\w.-]+)?\.js$/;
-
 function verifyConsumerOutput(bundlerName, distDir) {
   const files = listFilesRecursive(distDir);
   const wasmFiles = files.filter((f) => f.endsWith('.wasm'));
@@ -303,42 +298,47 @@ function verifyConsumerOutput(bundlerName, distDir) {
     );
   }
 
+  // Consumer bundlers rename emitted assets, so match each output WASM to its
+  // package variant by content and find the worker that references that name.
+  const javascriptFiles = files
+    .filter((file) => /\.(js|mjs|cjs)$/.test(file))
+    .filter((file) => file !== join(distDir, 'main.js'))
+    .map((file) => ({ file, code: readTextIfPossible(file) }));
   const workerFilesByVariant = new Map();
   for (const variant of STANDALONE_VARIANTS) {
-    const expectedWasmFile = WASM_FILE_NAMES[variant];
+    const packageWasmFile = join(
+      standalonePkgDir,
+      'dist',
+      variant,
+      'assets',
+      WASM_FILE_NAMES[variant],
+    );
+    const packageWasmContents = readFileSync(packageWasmFile);
+    const emittedWasmFile = wasmFiles.find((file) =>
+      readFileSync(file).equals(packageWasmContents),
+    );
+
+    if (!emittedWasmFile) {
+      fail(
+        `${bundlerName} consumer build does not emit the .wasm file for ` +
+          `${variant} (${distDir}).`,
+      );
+    }
+
     const workerFiles = new Set(
-      files.filter(
-        (file) =>
-          CONSUMER_WORKER_FILE_RE.test(basename(file)) &&
-          readTextIfPossible(file)?.includes(expectedWasmFile),
-      ),
+      javascriptFiles
+        .filter(({ code }) => code?.includes(basename(emittedWasmFile)))
+        .map(({ file }) => file),
     );
 
     if (workerFiles.size === 0) {
       fail(
         `${bundlerName} consumer build does not emit a distinct Indigo worker file for ` +
-          `${variant} (${distDir}).`,
+          `${variant} that references ${basename(emittedWasmFile)} (${distDir}).`,
       );
     }
 
     workerFilesByVariant.set(variant, workerFiles);
-  }
-
-  const referencedWorkerFiles = new Set();
-  for (const file of files) {
-    if (file.endsWith('.wasm') || file === join(distDir, 'main.js')) continue;
-    const text = readTextIfPossible(file);
-    if (!text) continue;
-    for (const match of text.matchAll(CONSUMER_WORKER_NAME_RE)) {
-      referencedWorkerFiles.add(match[0]);
-    }
-  }
-
-  if (referencedWorkerFiles.size < expectedCount) {
-    fail(
-      `${bundlerName} consumer build references ${referencedWorkerFiles.size} distinct Indigo ` +
-        `worker file(s) in its output (${distDir}), expected at least ${expectedCount}.`,
-    );
   }
 
   const workerFiles = new Set(
@@ -353,11 +353,9 @@ function verifyConsumerOutput(bundlerName, distDir) {
         'variant.',
     );
   }
-
   log(
     `${bundlerName}: OK (${wasmFiles.length} .wasm file(s), ${workerFiles.size} distinct ` +
-      `worker file(s) across the checked variants, ${referencedWorkerFiles.size} distinct ` +
-      'worker references)',
+      'worker file(s), with a matching worker/.wasm pair for each checked variant)',
   );
 }
 

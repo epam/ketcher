@@ -1,4 +1,5 @@
 import { CoreEditor } from 'application/editor/Editor';
+import { KetMonomerClass } from 'domain/constants/monomers';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { EditorType } from 'application/editor/editor.types';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
@@ -137,6 +138,81 @@ describe('temporary monomer wizard mode session', () => {
     expect(
       editor.drawingEntitiesManager.unselectAllDrawingEntities,
     ).not.toHaveBeenCalled();
+  });
+
+  describe('replacing the canvas instances of a monomer edited from a library card', () => {
+    const newMonomerItem = {
+      label: 'A',
+      props: { MonomerName: 'A', MonomerClass: KetMonomerClass.AminoAcid },
+    } as never;
+    const createMonomer = (label: string, MonomerClass: KetMonomerClass) =>
+      ({
+        monomerItem: { label, props: { MonomerName: label, MonomerClass } },
+      }) as never;
+
+    const setUp = () => {
+      const { editor, manager } = createEditor();
+      const target = createMonomer('A', KetMonomerClass.AminoAcid);
+      manager.monomers = new Map([
+        [1, target],
+        [2, createMonomer('A', KetMonomerClass.CHEM)],
+        [3, createMonomer('C', KetMonomerClass.AminoAcid)],
+      ]);
+      const replace = jest
+        .spyOn(manager, 'replaceMonomer')
+        .mockReturnValue({ command: new Command(), newMonomer: {} as never });
+
+      return { editor, manager, target, replace };
+    };
+
+    it('swaps only the instances sharing the original code and type', () => {
+      const { editor, target, replace } = setUp();
+
+      editor.beginMonomerWizardSession(false);
+      editor.scheduleMonomerWizardInstanceReplacement({
+        monomerClass: KetMonomerClass.AminoAcid,
+        symbol: 'A',
+        newMonomerItem,
+      });
+      editor.finishMonomerWizardSession(false);
+
+      expect(replace).toHaveBeenCalledTimes(1);
+      expect(replace).toHaveBeenCalledWith(target, newMonomerItem);
+      expect(editor.renderersContainer.update).toHaveBeenCalled();
+    });
+
+    it('leaves the canvas untouched when no instance matches', () => {
+      const { editor, replace } = setUp();
+
+      editor.beginMonomerWizardSession(false);
+      editor.scheduleMonomerWizardInstanceReplacement({
+        monomerClass: KetMonomerClass.AminoAcid,
+        symbol: 'Absent',
+        newMonomerItem,
+      });
+      editor.finishMonomerWizardSession(false);
+
+      expect(replace).not.toHaveBeenCalled();
+      expect(editor.renderersContainer.update).not.toHaveBeenCalled();
+    });
+
+    it('does not carry a queued replacement into a later session', () => {
+      const { editor, replace } = setUp();
+
+      editor.beginMonomerWizardSession(false);
+      editor.scheduleMonomerWizardInstanceReplacement({
+        monomerClass: KetMonomerClass.AminoAcid,
+        symbol: 'A',
+        newMonomerItem,
+      });
+      editor.finishMonomerWizardSession(false);
+      replace.mockClear();
+
+      editor.beginMonomerWizardSession(false);
+      editor.finishMonomerWizardSession(false);
+
+      expect(replace).not.toHaveBeenCalled();
+    });
   });
 
   it('keeps the original canvas and exits the session if saved conversion fails', () => {

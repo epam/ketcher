@@ -79,6 +79,22 @@ const fromMonomerBondFlipWithNewStereo = (
   return action;
 };
 
+const getSGroupCenter = (struct: Struct, sgroup: SGroup) => {
+  if (!sgroup.contractedLabelMoved) {
+    return sgroup.isContracted()
+      ? sgroup.getContractedPosition(struct).position
+      : sgroup.pp;
+  }
+  const boundingBox = SGroup.getObjBBox(
+    SGroup.getAtoms(struct, sgroup),
+    struct,
+  );
+  return new Vec2(
+    boundingBox.p0.x + (boundingBox.p1.x - boundingBox.p0.x) / 2,
+    boundingBox.p0.y + (boundingBox.p1.y - boundingBox.p0.y) / 2,
+  );
+};
+
 export function fromSeveralSgroupAddition(
   restruct: Restruct,
   type,
@@ -299,9 +315,7 @@ export function setExpandMonomerSGroup(
   );
   const sGroupWidth = sGroupBBox.p1.x - sGroupBBox.p0.x;
   const sGroupHeight = sGroupBBox.p1.y - sGroupBBox.p0.y;
-  const sGroupCenter = sGroup.isContracted()
-    ? sGroup.getContractedPosition(struct).position
-    : sGroup.pp;
+  const sGroupCenter = getSGroupCenter(struct, sGroup);
 
   const visitedAtoms = new Set<number>();
   const visitedSGroups = new Set<number>();
@@ -364,9 +378,7 @@ export function setExpandMonomerSGroup(
         return;
       }
 
-      const movableSGroupCenter = movableSGroup.isContracted()
-        ? movableSGroup.getContractedPosition(struct).position
-        : movableSGroup?.pp;
+      const movableSGroupCenter = getSGroupCenter(struct, movableSGroup);
       if (!sGroupCenter || !movableSGroupCenter) {
         return;
       }
@@ -455,9 +467,7 @@ export function setExpandMonomerSGroup(
         return;
       }
 
-      const movableSGroupCenter = movableSGroup.isContracted()
-        ? movableSGroup.getContractedPosition(restruct.molecule).position
-        : movableSGroup?.pp;
+      const movableSGroupCenter = getSGroupCenter(struct, movableSGroup);
       if (!sGroupCenter || !movableSGroupCenter) {
         return;
       }

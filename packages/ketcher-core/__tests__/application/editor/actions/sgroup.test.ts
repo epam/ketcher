@@ -232,4 +232,91 @@ describe('setExpandMonomerSGroup', () => {
     expect(moleculeNodes[0].fragment?.atoms.size).toBe(2);
     expect(moleculeNodes[0].fragment?.bonds.size).toBe(1);
   });
+
+  it('restores monomer geometry after a contracted label is moved', () => {
+    const struct = new Struct();
+    const monomerSGroupIds: number[] = [];
+    const atomIds: number[] = [];
+
+    [0, 3, 6].forEach((x) => {
+      const firstAtomId = struct.atoms.add(
+        new Atom({ label: 'C', pp: new Vec2(x, 0) }),
+      );
+      const secondAtomId = struct.atoms.add(
+        new Atom({ label: 'C', pp: new Vec2(x + 1, 0) }),
+      );
+      const monomer = new Peptide(peptideMonomerItem);
+      monomer.monomerItem.expanded = true;
+      const sgroup = new MonomerMicromolecule(SGroup.TYPES.SUP, monomer);
+      const sgroupId = struct.sgroups.add(sgroup);
+      sgroup.id = sgroupId;
+      sgroup.data.expanded = true;
+      sgroup.pp = new Vec2(x + 0.5, 0);
+      struct.atomAddToSGroup(sgroupId, firstAtomId);
+      struct.atomAddToSGroup(sgroupId, secondAtomId);
+      addAttachmentPoint(struct, sgroupId, firstAtomId, 1);
+      addAttachmentPoint(struct, sgroupId, secondAtomId, 2);
+      monomerSGroupIds.push(sgroupId);
+      atomIds.push(firstAtomId, secondAtomId);
+    });
+
+    for (let index = 0; index < atomIds.length - 1; index += 2) {
+      const bond = new Bond({
+        begin: atomIds[index],
+        end: atomIds[index + 1],
+        type: Bond.PATTERN.TYPE.SINGLE,
+      });
+      const bondId = struct.bonds.add(bond);
+      struct.bondInitHalfBonds(bondId, bond);
+    }
+    [
+      [atomIds[1], atomIds[2]],
+      [atomIds[3], atomIds[4]],
+    ].forEach(([begin, end]) => {
+      const bond = new Bond({
+        begin,
+        end,
+        type: Bond.PATTERN.TYPE.SINGLE,
+      });
+      const bondId = struct.bonds.add(bond);
+      struct.bondInitHalfBonds(bondId, bond);
+    });
+    struct.initNeighbors();
+
+    const options = {
+      scale: 40,
+      width: 100,
+      height: 100,
+    } as unknown as RenderOptions;
+    const render = new Render(document as unknown as HTMLElement, options);
+    const restruct = new ReStruct(struct, render);
+    const initialPositions = atomIds.map((atomId) => {
+      const atom = struct.atoms.get(atomId);
+      if (!atom) {
+        throw new Error(`Atom ${atomId} is not found`);
+      }
+      return new Vec2(atom.pp);
+    });
+
+    monomerSGroupIds.forEach((sgroupId) => {
+      setExpandMonomerSGroup(restruct, sgroupId, { expanded: false });
+    });
+    const movedSGroup = struct.sgroups.get(monomerSGroupIds[1]);
+    movedSGroup?.pp?.add_(new Vec2(0, 4));
+    if (movedSGroup) {
+      movedSGroup.contractedLabelMoved = true;
+    }
+    monomerSGroupIds.forEach((sgroupId) => {
+      setExpandMonomerSGroup(restruct, sgroupId, { expanded: true });
+    });
+
+    atomIds.forEach((atomId, index) => {
+      expect(struct.atoms.get(atomId)?.pp.x).toBeCloseTo(
+        initialPositions[index].x,
+      );
+      expect(struct.atoms.get(atomId)?.pp.y).toBeCloseTo(
+        initialPositions[index].y,
+      );
+    });
+  });
 });

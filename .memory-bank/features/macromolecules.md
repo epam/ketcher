@@ -7,6 +7,8 @@ Beyond small molecules, users work with biopolymers — peptides and nucleic aci
 ## User interaction
 
 - **Mode switch** — the _Molecules/Macromolecules switcher_ enters macromolecules mode.
+- **Integrator opt-out** — setting `disableMacromoleculesEditor` hides the mode switcher and
+  prevents the macromolecules editor from being loaded; the micromolecules editor remains usable.
 - **Monomer library** — Favorites, Peptides, RNA, and CHEM tabs; search by name, symbol, or IDT alias; hover a card for a preview. The _RNA Builder_ creates sugar-base-phosphate presets, and a _Monomer Creation Wizard_ (`Ctrl+M`)(available through molecules mode) defines custom monomers/presets with attachment points.
   - Exact `-` and `_` searches match only the short name displayed on monomer and RNA preset cards, avoiding matches from internal alias or metadata fields.
 - **Layout modes** — the _modes switcher_ toggles **Sequence** (single-letter, text-editor-like), **Snake** (auto-layouted shapes), and **Flex** (free shapes) views. A _Sequence typing type switcher_ selects RNA/DNA/Peptide interpretation for keyboard input (`Ctrl+Alt+R/D/P`).
@@ -18,6 +20,12 @@ Beyond small molecules, users work with biopolymers — peptides and nucleic aci
 ## Expected behavior
 
 Monomers connect through defined attachment points, sequences render as single-letter codes, and layout modes present the same chemistry differently.
+
+#### Scenario: Macromolecules editor disabled by integrator
+
+- **WHEN** an integrator sets `disableMacromoleculesEditor`
+- **THEN** the mode switcher is hidden and the macromolecules editor is not loaded
+- **AND** the micromolecules editor initializes and reports readiness normally
 
 #### Scenario: Default backbone connection
 

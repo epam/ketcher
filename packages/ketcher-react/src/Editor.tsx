@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import {
   type EditorProps,
   MicromoleculesEditor as MicromoleculesEditorComponent,
@@ -47,17 +47,23 @@ export const Editor = (props: Props) => {
   const [ketcher, setKetcher] = useState<Ketcher>();
   const [macromoleculesEditor, setMacromoleculesEditor] =
     useState<CoreEditor>();
+  const initializedKetcherId = useRef<string | undefined>(undefined);
 
   const [ketcherId, setKetcherId] = useState<string>('');
+  const isMacromoleculesEditorEnabled = !props.disableMacromoleculesEditor;
+  const isMacromoleculesEditorTurnedOn =
+    isMacromoleculesEditorEnabled && showPolymerEditor;
+
   const togglePolymerEditor = (toggleValue: boolean) => {
-    setShowPolymerEditor(toggleValue);
-    window.isPolymerEditorTurnedOn = toggleValue;
+    const nextValue = isMacromoleculesEditorEnabled && toggleValue;
+    setShowPolymerEditor(nextValue);
+    window.isPolymerEditorTurnedOn = nextValue;
   };
 
-  const togglerComponent = !props.disableMacromoleculesEditor ? (
+  const togglerComponent = isMacromoleculesEditorEnabled ? (
     <ModeControl
       toggle={togglePolymerEditor}
-      isPolymerEditor={showPolymerEditor}
+      isPolymerEditor={isMacromoleculesEditorTurnedOn}
     />
   ) : undefined;
 
@@ -69,7 +75,7 @@ export const Editor = (props: Props) => {
       togglePolymerEditor(false);
     };
 
-    if (macromoleculesEditor) {
+    if (macromoleculesEditor && isMacromoleculesEditorEnabled) {
       macromoleculesEditor.events.switchToMacromoleculesMode.add(
         switchToMacromoleculesModeHandler,
       );
@@ -88,7 +94,7 @@ export const Editor = (props: Props) => {
         );
       }
     };
-  }, [macromoleculesEditor]);
+  }, [macromoleculesEditor, isMacromoleculesEditorEnabled]);
 
   useEffect(() => {
     return () => {
@@ -97,11 +103,15 @@ export const Editor = (props: Props) => {
   }, []);
 
   useEffect(() => {
+    window.isPolymerEditorTurnedOn = isMacromoleculesEditorTurnedOn;
+  }, [isMacromoleculesEditorTurnedOn]);
+
+  useEffect(() => {
     if (!moleculesEditor || !macromoleculesEditor) {
       return;
     }
 
-    if (!showPolymerEditor) {
+    if (!isMacromoleculesEditorTurnedOn) {
       macromoleculesEditor.switchToMicromolecules();
       moleculesEditor.focusCliparea();
       return;
@@ -125,7 +135,7 @@ export const Editor = (props: Props) => {
     return () => {
       cancelled = true;
     };
-  }, [showPolymerEditor]);
+  }, [isMacromoleculesEditorTurnedOn]);
 
   useEffect(() => {
     if (
@@ -133,11 +143,20 @@ export const Editor = (props: Props) => {
       moleculesEditor &&
       (macromoleculesEditor || props.disableMacromoleculesEditor)
     ) {
-      if (ketcherProvider.getIndexById(ketcher.id) !== -1) {
-        props.onInit?.(ketcher);
+      if (
+        props.onInit &&
+        initializedKetcherId.current !== ketcher.id &&
+        ketcherProvider.getIndexById(ketcher.id) !== -1
+      ) {
+        props.onInit(ketcher);
+        initializedKetcherId.current = ketcher.id;
       }
     }
-  }, [moleculesEditor, macromoleculesEditor]);
+  }, [
+    moleculesEditor,
+    macromoleculesEditor,
+    props.disableMacromoleculesEditor,
+  ]);
 
   const onInitMoleculesEditor = (ketcher: Ketcher) => {
     setKetcher(ketcher);
@@ -154,7 +173,7 @@ export const Editor = (props: Props) => {
         data-ketcher-editor
         className={styles.editorsWrapper}
         style={{
-          display: showPolymerEditor ? undefined : 'none',
+          display: isMacromoleculesEditorTurnedOn ? undefined : 'none',
         }}
       >
         <Suspense
@@ -164,11 +183,11 @@ export const Editor = (props: Props) => {
             </div>
           }
         >
-          {ketcherId && (
+          {ketcherId && isMacromoleculesEditorEnabled && (
             <MacromoleculesEditorComponent
               togglerComponent={togglerComponent}
               ketcherId={ketcherId}
-              isMacromoleculesEditorTurnedOn={showPolymerEditor}
+              isMacromoleculesEditorTurnedOn={isMacromoleculesEditorTurnedOn}
               monomersLibraryUpdate={props.monomersLibraryUpdate}
               monomersLibraryReplace={props.monomersLibraryReplace}
               onInit={onInitMacromoleculesEditor}
@@ -180,7 +199,7 @@ export const Editor = (props: Props) => {
         data-ketcher-editor
         className={styles.editorsWrapper}
         style={{
-          display: showPolymerEditor ? 'none' : undefined,
+          display: isMacromoleculesEditorTurnedOn ? 'none' : undefined,
         }}
       >
         <MicromoleculesEditorComponent

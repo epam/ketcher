@@ -8,7 +8,6 @@ import { BROWSER_BUILD_TARGET } from '../../build-config/browser-target.mjs';
 import {
   mode,
   createReplaceValues,
-  getTagName,
 } from '../../build-config/replace-values.mjs';
 import { createTsconfigPathResolution } from '../../build-config/tsconfig-path-resolution.mjs';
 import { createExternalPredicate } from '../../build-config/external-predicate.mjs';
@@ -47,7 +46,6 @@ const sdfRawTextPlugin = createRawTextPlugin({
 const valuesToReplace = createReplaceValues({
   version: pkg.version,
   isProduction,
-  helpLink: getTagName(),
 });
 
 const output = (format, entryFileNames) => ({
@@ -86,10 +84,7 @@ export default defineConfig({
     },
   },
   define: valuesToReplace,
-  plugins: [
-    svgr({ include: '**/*.svg' }),
-    sdfRawTextPlugin,
-  ],
+  plugins: [svgr({ include: '**/*.svg' }), sdfRawTextPlugin],
   build: {
     target: BROWSER_BUILD_TARGET,
     // Rolldown minifies library output by default; Rollup did not. Publishing

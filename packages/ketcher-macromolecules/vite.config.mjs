@@ -36,7 +36,6 @@ const ketRawTextPlugin = createRawTextPlugin({
 const valuesToReplace = createReplaceValues({
   version: pkg.version,
   isProduction,
-  helpLink: process.env.HELP_LINK || 'master',
 });
 
 const cssBanner = {

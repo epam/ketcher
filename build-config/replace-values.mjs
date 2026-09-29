@@ -48,7 +48,9 @@ export const getTagName = () => {
   }
 };
 
-const formatBuildDate = (date) => date.toISOString().slice(0, 19);
+const ISO_DATE_SECONDS_LENGTH = 19;
+const formatBuildDate = (date) =>
+  date.toISOString().slice(0, ISO_DATE_SECONDS_LENGTH);
 
 const getBuildDate = () => {
   const sourceDateEpoch = process.env.SOURCE_DATE_EPOCH;

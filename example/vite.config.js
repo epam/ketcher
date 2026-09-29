@@ -12,11 +12,7 @@ import polymerEditorTSConfig from '../packages/ketcher-macromolecules/tsconfig.j
 import ketcherReactPkg from '../packages/ketcher-react/package.json';
 import ketcherReactTSConfig from '../packages/ketcher-react/tsconfig.json';
 import ketcherStandaloneTSConfig from '../packages/ketcher-standalone/tsconfig.json';
-import {
-  createReplaceValues,
-  getTagName,
-  mode,
-} from '../build-config/replace-values.mjs';
+import { createReplaceValues, mode } from '../build-config/replace-values.mjs';
 import { INDIGO_WORKER_IMPORTS } from '../build-config/indigo-worker-imports.mjs';
 import { BROWSER_BUILD_TARGET } from '../build-config/browser-target.mjs';
 
@@ -37,13 +33,11 @@ const exampleEnv = {
 const ketcherReactValues = createReplaceValues({
   version: ketcherReactPkg.version,
   isProduction,
-  helpLink: getTagName(),
 });
 
 const polymerEditorValues = createReplaceValues({
   version: polymerEditorPkg.version,
   isProduction,
-  helpLink: process.env.HELP_LINK || 'master',
 });
 
 const dotEnv = loadEnv(process.env.NODE_ENV || 'development', __dirname, '');

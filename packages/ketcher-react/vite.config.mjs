@@ -1,5 +1,5 @@
-import { readFileSync, mkdirSync, copyFileSync, globSync } from 'node:fs';
-import { resolve, basename } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
 import autoprefixer from 'autoprefixer';
@@ -41,25 +41,6 @@ const { external } = createExternalPredicate({
 const sdfRawTextPlugin = createRawTextPlugin({
   name: 'ketcher-react-sdf-raw-text',
   extension: '.sdf',
-});
-
-// rollup-plugin-copy copied `src/style/*.svg` into `dist` as real files
-// (distinct from the `vite-plugin-svgr`-handled `.svg`-as-React-component
-// imports elsewhere in src). Verified empirically (per notes/ketcher-react.md)
-// that this glob currently matches zero files, so this is a no-op today -
-// preserved so the contract still holds if files are added later.
-const copySvgAssetsPlugin = () => ({
-  name: 'ketcher-react-copy-style-svgs',
-  generateBundle() {
-    const matches = globSync('src/style/*.svg', { cwd: rootDir });
-
-    for (const match of matches) {
-      const src = resolve(rootDir, match);
-      const dest = resolve(rootDir, 'dist', basename(match));
-      mkdirSync(resolve(rootDir, 'dist'), { recursive: true });
-      copyFileSync(src, dest);
-    }
-  },
 });
 
 const valuesToReplace = createReplaceValues({
@@ -107,7 +88,6 @@ export default defineConfig({
   plugins: [
     svgr({ include: '**/*.svg' }),
     sdfRawTextPlugin,
-    copySvgAssetsPlugin(),
   ],
   build: {
     // Rolldown minifies library output by default; Rollup did not. Publishing

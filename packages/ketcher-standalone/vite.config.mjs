@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import { license } from '../../license-banner.mjs';
+import { BROWSER_BUILD_TARGET } from '../../build-config/browser-target.mjs';
 import { mode } from '../../build-config/replace-values.mjs';
 import { createExternalPredicate } from '../../build-config/external-predicate.mjs';
 import { INDIGO_WORKER_IMPORTS } from '../../build-config/indigo-worker-imports.mjs';
@@ -245,6 +246,7 @@ export default defineConfig({
     ? [literalWorkerUrlPlugin()]
     : [dropInlineWorkerMapsPlugin()],
   build: {
+    target: BROWSER_BUILD_TARGET,
     minify: false,
     sourcemap: !isProduction,
     emptyOutDir: Boolean(variant.clean),

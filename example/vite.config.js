@@ -18,6 +18,7 @@ import {
   mode,
 } from '../build-config/replace-values.mjs';
 import { INDIGO_WORKER_IMPORTS } from '../build-config/indigo-worker-imports.mjs';
+import { BROWSER_BUILD_TARGET } from '../build-config/browser-target.mjs';
 
 // Computed before the process.env assignment below, to match the point at which
 // the packages' own builds resolve these values.
@@ -690,6 +691,7 @@ export default defineConfig({
     ],
   },
   build: {
+    target: BROWSER_BUILD_TARGET,
     outDir: 'build',
     sourcemap: !isProduction,
     chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT_KB,

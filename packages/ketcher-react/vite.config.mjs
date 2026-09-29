@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
 import autoprefixer from 'autoprefixer';
 import { license } from '../../license-banner.mjs';
+import { BROWSER_BUILD_TARGET } from '../../build-config/browser-target.mjs';
 import {
   mode,
   createReplaceValues,
@@ -90,6 +91,7 @@ export default defineConfig({
     sdfRawTextPlugin,
   ],
   build: {
+    target: BROWSER_BUILD_TARGET,
     // Rolldown minifies library output by default; Rollup did not. Publishing
     // minified library code breaks downstream stack traces and makes output
     // diffing impossible. See

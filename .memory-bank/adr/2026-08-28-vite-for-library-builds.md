@@ -19,6 +19,11 @@ formats, and JavaScript `import`/`require` targets. Scoped metadata fixes may ex
 type declarations or the package manifest without changing those runtime outputs (see
 _Consequences_).
 
+All Vite package and app builds explicitly share the `baseline-widely-available` JavaScript
+target. With Vite 8, that baseline corresponds to Chrome/Edge 111+, Firefox 114+, and Safari
+16.4+. This makes the output syntax target explicit rather than relying on Vite's implicit
+default; it does not set source-level Babel targets or add runtime API polyfills.
+
 Vite production artifacts do not emit JavaScript or CSS source maps.
 Non-production watch builds retain source maps for local debugging;
 inline-worker maps that resolve against a Blob URL are stripped there as well.

@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import { license } from '../../license-banner.mjs';
 import { mode } from '../../build-config/replace-values.mjs';
+import { BROWSER_BUILD_TARGET } from '../../build-config/browser-target.mjs';
 import { createTsconfigPathResolution } from '../../build-config/tsconfig-path-resolution.mjs';
 import { createExternalPredicate } from '../../build-config/external-predicate.mjs';
 import { createRawTextPlugin } from '../../build-config/raw-text-plugin.mjs';
@@ -51,6 +52,7 @@ export default defineConfig({
   },
   plugins: [ketRawTextPlugin],
   build: {
+    target: BROWSER_BUILD_TARGET,
     // Rolldown minifies library output by default; Rollup did not. Publishing
     // minified library code breaks downstream stack traces and makes output
     // diffing impossible. See

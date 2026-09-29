@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import { BROWSER_BUILD_TARGET } from '../build-config/browser-target.mjs';
 
 // Minimal-change migration off react-scripts (CRA/webpack) onto Vite.
 // `demo` consumes the published packages (ketcher-core/react/standalone) as
@@ -30,6 +31,7 @@ export default defineConfig({
     'process.env.PUBLIC_URL': JSON.stringify(publicUrl),
   },
   build: {
+    target: BROWSER_BUILD_TARGET,
     outDir: 'build',
     sourcemap: false,
   },

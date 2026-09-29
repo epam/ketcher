@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
 import autoprefixer from 'autoprefixer';
-import * as babel from '@babel/core';
+import emotion from '@rolldown/plugin-emotion';
 import {
   mode,
   createReplaceValues,
@@ -27,55 +27,9 @@ const rootDir = new URL('.', import.meta.url).pathname;
 // `events`), so no Node-builtin externals are passed here.
 const { external } = createExternalPredicate({ pkg });
 
-// Use only the build-time paths: tsconfig.json's `ketcher-react` aliases point
-// at an ambient type shim and must not redirect the runtime package import.
-const srcDir = resolve(rootDir, 'src');
-
 const ketRawTextPlugin = createRawTextPlugin({
   name: 'ketcher-macromolecules-ket-raw-text',
   extension: '.ket',
-});
-
-// Reproduces the one Babel plugin the SPEC says to keep: Emotion's, for
-// stable class names (the suite is screenshot-based). Everything else
-// Babel-related (the `.babelrc` presets, `@babel/plugin-transform-runtime`,
-// `@babel/runtime`) is dropped - Rolldown's native TS/JSX transform (which
-// honors this package's tsconfig `jsx`/`jsxImportSource` settings) replaces
-// them.
-//
-// In the Rollup baseline, Babel ran *after* TS-to-JS transpilation
-// (`rollup-plugin-typescript2`), i.e. on code whose JSX had already been
-// compiled to `jsx()`/`jsxs()` calls by TS's own `jsx: "react-jsx"` setting.
-// Emotion's babel plugin does not need raw JSX to do its job - it rewrites
-// `styled(...)`/`css` tagged-template call sites, which survive JSX
-// compilation unchanged - so running it here, after Rolldown's own transform
-// step, on plain JS, reproduces that ordering.
-const emotionBabelPlugin = () => ({
-  name: 'ketcher-macromolecules-emotion-babel',
-  transform(code, id) {
-    if (!id.startsWith(srcDir) || id.includes('node_modules')) {
-      return null;
-    }
-
-    if (!/\.(js|jsx|ts|tsx)$/.test(id.split('?')[0])) {
-      return null;
-    }
-
-    const result = babel.transformSync(code, {
-      babelrc: false,
-      configFile: false,
-      filename: id,
-      sourceType: 'module',
-      plugins: ['@emotion/babel-plugin'],
-      sourceMaps: !isProduction,
-    });
-
-    if (!result || result.code === code) {
-      return null;
-    }
-
-    return { code: result.code, map: result.map };
-  },
 });
 
 const valuesToReplace = createReplaceValues({
@@ -113,7 +67,11 @@ export default defineConfig({
   plugins: [
     svgr({ include: '**/*.svg' }),
     ketRawTextPlugin,
-    emotionBabelPlugin(),
+    emotion({
+      sourceMap: !isProduction,
+      autoLabel: 'dev-only',
+      labelFormat: '[local]',
+    }),
   ],
   build: {
     // Rolldown minifies library output by default; Rollup did not. Publishing

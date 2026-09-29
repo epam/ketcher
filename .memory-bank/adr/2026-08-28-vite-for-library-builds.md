@@ -93,8 +93,10 @@ must configure against explicitly rather than inherit:
 | `rollup-plugin-string` has no equivalent, so `.ket` imports fail to parse                            | A small inline raw-text transform in the shared build config                                                                   |
 
 Babel is dropped along with the `@babel/runtime` runtime dependency, since Vite transpiles
-natively. The one exception is `ketcher-macromolecules`, which keeps Emotion's Babel plugin:
-it produces stable class names, and this repository's test suite is screenshot-based.
+natively. `ketcher-macromolecules` uses `@rolldown/plugin-emotion` for Emotion's transform
+instead of Babel; it preserves the `styled(...)` target metadata and stable class behavior.
+The screenshot suite runs on `example`, which has never used this package's Babel transform, so
+screenshots are not a reason to retain Babel.
 
 ## Consequences
 

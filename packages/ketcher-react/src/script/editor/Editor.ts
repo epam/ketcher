@@ -2033,9 +2033,10 @@ class Editor implements KetcherEditor {
     });
 
     if (isRnaType) {
-      const templateId = monomersData
-        .map((monomerData) => monomerData.monomerTemplate.id)
-        .join('_');
+      const templateId = [
+        rnaPresetName,
+        ...monomersData.map((monomerData) => monomerData.monomerTemplate.id),
+      ].join('_');
       const templateRef = setMonomerGroupTemplatePrefix(templateId);
       const sugarMonomerTemplate = monomersData.find(
         ({ monomerTemplate }) =>

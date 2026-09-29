@@ -291,17 +291,17 @@ export const rnaBuilderSlice = createSlice({
       state: RootState,
       action: PayloadAction<IRnaPreset[]>,
     ) => {
-      const defaultNucleotide = action.payload[0];
-      if (!defaultNucleotide) {
+      if (!action.payload.length) {
         return;
       }
-      const presetExists = state.presetsDefault.find(
-        (item: IRnaPreset) => item.name === defaultNucleotide.name,
-      );
-      if (presetExists) {
-        return;
-      }
-      state.presetsDefault = action.payload;
+      state.presetsDefault = action.payload.map((incomingPreset) => {
+        const existingPreset = state.presetsDefault.find(
+          (item: IRnaPreset) => item.name === incomingPreset.name,
+        );
+        return existingPreset
+          ? { ...incomingPreset, favorite: existingPreset.favorite }
+          : incomingPreset;
+      });
     },
     setCustomPresets: (
       state: RootState,

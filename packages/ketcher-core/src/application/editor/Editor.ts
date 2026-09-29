@@ -527,10 +527,16 @@ export class CoreEditor {
         return false;
       }
 
+      const firstMonomerId =
+        firstMonomer.props.id ?? getMonomerUniqueKey(firstMonomer);
+      const secondMonomerId =
+        secondMonomer.props.id ?? getMonomerUniqueKey(secondMonomer);
+
       return (
         firstMonomer.props.MonomerName === secondMonomer.props.MonomerName &&
         firstMonomer.props.MonomerClass === secondMonomer.props.MonomerClass &&
-        firstMonomer.props.hidden === secondMonomer.props.hidden
+        firstMonomer.props.hidden === secondMonomer.props.hidden &&
+        firstMonomerId === secondMonomerId
       );
     };
     const getIdtAliasesList = (idtAliases?: IKetIdtAliases): string[] => {

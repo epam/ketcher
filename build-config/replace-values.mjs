@@ -30,35 +30,72 @@ export const mode = {
 };
 
 /**
- * The nearest git tag, used as the documentation link target.
- * Falls back to `master` outside a git checkout (e.g. in a Docker build).
+ * The documentation link target. `HELP_LINK` can override the nearest git
+ * tag, which falls back to `master` outside a git checkout (e.g. in Docker).
  */
 export const getTagName = () => {
+  if (process.env.HELP_LINK) {
+    return process.env.HELP_LINK;
+  }
+
   try {
-    return execSync('git describe --tags --abbrev=0', { encoding: 'utf8' });
+    return execSync('git describe --tags --abbrev=0', {
+      encoding: 'utf8',
+    }).trim();
   } catch (error) {
     console.error(error);
     return 'master';
   }
 };
 
+const formatBuildDate = (date) => date.toISOString().slice(0, 19);
+
+const getBuildDate = () => {
+  const sourceDateEpoch = process.env.SOURCE_DATE_EPOCH;
+
+  if (sourceDateEpoch !== undefined) {
+    const epochSeconds = Number(sourceDateEpoch);
+    const date = new Date(epochSeconds * 1000);
+
+    if (
+      !/^\d+$/.test(sourceDateEpoch) ||
+      !Number.isSafeInteger(epochSeconds) ||
+      Number.isNaN(date.getTime())
+    ) {
+      throw new Error(
+        'SOURCE_DATE_EPOCH must be a non-negative integer timestamp in seconds',
+      );
+    }
+
+    return formatBuildDate(date);
+  }
+
+  try {
+    const commitEpochSeconds = Number(
+      execSync('git log -1 --format=%ct', { encoding: 'utf8' }).trim(),
+    );
+    return formatBuildDate(new Date(commitEpochSeconds * 1000));
+  } catch {
+    // Source archives without Git metadata must remain buildable.
+    return formatBuildDate(new Date());
+  }
+};
+
 /**
  * `process.env.*` substitutions injected into a package's bundle.
  *
- * `helpLink` differs per package by design: ketcher-react resolves it from the
- * git tag, while ketcher-macromolecules reads it from the environment.
+ * Build metadata uses a shared source so packages built from the same commit
+ * receive identical values.
  */
-export const createReplaceValues = ({ version, isProduction, helpLink }) => ({
+export const createReplaceValues = ({ version, isProduction }) => ({
   'process.env.NODE_ENV': JSON.stringify(
     isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
   ),
   'process.env.VERSION': JSON.stringify(version),
-  'process.env.BUILD_DATE': JSON.stringify(
-    new Date().toISOString().slice(0, 19),
-  ),
+  'process.env.BUILD_DATE': JSON.stringify(getBuildDate()),
   // TODO: add logic to init BUILD_NUMBER
   'process.env.BUILD_NUMBER': JSON.stringify(undefined),
-  'process.env.HELP_LINK': JSON.stringify(helpLink),
+  'process.env.HELP_LINK': JSON.stringify(getTagName()),
   'process.env.INDIGO_VERSION': JSON.stringify(
     process.env.INDIGO_VERSION || '',
   ),

@@ -253,7 +253,8 @@ export abstract class BaseMode {
         drawingEntitiesManager &&
         this.isPasteAllowedByMode(drawingEntitiesManager),
       );
-    } catch {
+    } catch (error) {
+      KetcherLogger.error('BaseMode.ts::isPasteContentValid', error);
       return false;
     }
   }

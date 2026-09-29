@@ -1,5 +1,4 @@
 module.exports = {
-  cache: false,
   clearMocks: true,
   testMatch: ['**/src/**/?(*.)+(spec|test).[jt]s?(x)'],
   testPathIgnorePatterns: ['fixtures', 'dist', 'node_modules'],

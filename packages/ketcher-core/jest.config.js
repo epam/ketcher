@@ -1,5 +1,4 @@
 module.exports = {
-  cache: false,
   testMatch: ['**/__tests__/**/?(*.)+(spec|test).+(ts|js)'],
   testPathIgnorePatterns: ['fixtures', 'dist', 'node_modules'],
   testEnvironment: 'jsdom',

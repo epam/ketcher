@@ -42,6 +42,8 @@ import {
 import { getStructureBbox } from 'domain/entities/structureBbox';
 import { RotationView } from 'application/render/renderers/TransientView/RotationView';
 import { Atom } from 'domain/entities/CoreAtom';
+import type { RxnArrow } from 'domain/entities/CoreRxnArrow';
+import { isRxnArrowEndHandle } from 'application/render/renderers/RxnArrowRenderer';
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -85,8 +87,16 @@ abstract class SelectBase implements BaseTool {
   private readonly canvasResizeObserver?: ResizeObserver;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
   public mode:
-    'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
-    'standby';
+    | 'moving'
+    | 'selecting'
+    | 'standby'
+    | 'rotating'
+    | 'rotating-center'
+    | 'resizing-arrow' = 'standby';
+
+  private resizingArrow: RxnArrow | null = null;
+  private resizingEndIndex: 0 | 1 = 0;
+  private resizingPreviousPosition: Vec2 | null = null;
 
   protected rotationStartAngle = 0;
   protected rotationCenter: Vec2 | null = null;
@@ -160,7 +170,14 @@ abstract class SelectBase implements BaseTool {
       }
       this.onSelectionStart();
     } else {
-      const renderer = event.target?.__data__;
+      const targetData = event.target?.__data__;
+
+      if (isRxnArrowEndHandle(targetData)) {
+        this.startArrowResize(event, targetData);
+        return;
+      }
+
+      const renderer = targetData;
 
       if (!renderer || !(renderer instanceof BaseRenderer)) {
         const modelChanges = new Command();
@@ -379,6 +396,50 @@ abstract class SelectBase implements BaseTool {
           ...bondsInsideChain,
         ]),
       );
+    }
+
+    modelChanges.merge(
+      this.editor.drawingEntitiesManager.hideAllMonomersHoverAndAttachmentPoints(),
+    );
+
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
+  private startArrowResize(
+    event: MouseEvent,
+    handleData: { rxnArrowRenderer: { arrow: RxnArrow }; endIndex: 0 | 1 },
+  ): void {
+    const arrow = handleData.rxnArrowRenderer.arrow;
+    const { endIndex } = handleData;
+    const modKey = isMacOs ? event.metaKey : event.ctrlKey;
+
+    this.mode = 'resizing-arrow';
+    this.resizingArrow = arrow;
+    this.resizingEndIndex = endIndex;
+    this.resizingPreviousPosition = new Vec2(arrow.startEndPosition[endIndex]);
+
+    const modelChanges = new Command();
+
+    if (!event.shiftKey && !modKey) {
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.unselectAllDrawingEntities(),
+      );
+      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
+      const { command: selectModelChanges } =
+        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities([
+          arrow,
+        ]);
+      modelChanges.merge(selectModelChanges);
+    } else if (event.shiftKey && !arrow.selected) {
+      const drawingEntities = [
+        ...this.editor.drawingEntitiesManager.selectedEntitiesArr,
+        arrow,
+      ];
+      const { command: selectModelChanges } =
+        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
+          drawingEntities,
+        );
+      modelChanges.merge(selectModelChanges);
     }
 
     modelChanges.merge(
@@ -1031,6 +1092,20 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
+    if (this.mode === 'resizing-arrow' && this.resizingArrow) {
+      const current = Coordinates.canvasToModel(
+        this.editor.lastCursorPositionOfCanvas,
+      );
+      const modelChanges = this.editor.drawingEntitiesManager.resizeRxnArrow(
+        this.resizingArrow,
+        this.resizingEndIndex,
+        current,
+        { isSnappingEnabled: !event.ctrlKey },
+      );
+      this.editor.renderersContainer.update(modelChanges);
+      return;
+    }
+
     if (!this.firstMonomerPositionBeforeMove) {
       this.firstMonomerPositionBeforeMove = this.editor.drawingEntitiesManager
         .selectedMonomers[0]?.position
@@ -1151,6 +1226,34 @@ abstract class SelectBase implements BaseTool {
       if (this.mode === 'rotating-center') {
         this.mode = 'standby';
         this.updateRotationView();
+        return;
+      }
+
+      if (this.mode === 'resizing-arrow' && this.resizingArrow) {
+        const currentPosition = new Vec2(
+          this.resizingArrow.startEndPosition[this.resizingEndIndex],
+        );
+        const epsilon = 0.001;
+
+        if (
+          this.resizingPreviousPosition &&
+          Vec2.dist(currentPosition, this.resizingPreviousPosition) > epsilon
+        ) {
+          const modelChanges =
+            this.editor.drawingEntitiesManager.resizeRxnArrow(
+              this.resizingArrow,
+              this.resizingEndIndex,
+              currentPosition,
+              {
+                isSnappingEnabled: false,
+                previousPosition: this.resizingPreviousPosition,
+              },
+            );
+          history.update(modelChanges);
+        }
+
+        this.resizingArrow = null;
+        this.resizingPreviousPosition = null;
         return;
       }
 

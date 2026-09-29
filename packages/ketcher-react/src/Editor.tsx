@@ -16,11 +16,13 @@ import {
   ketcherProvider,
 } from 'ketcher-core';
 
-type Props = Omit<EditorProps, 'ketcherId'> & {
-  disableMacromoleculesEditor?: boolean;
-  monomersLibraryUpdate?: string | JSON;
-  monomersLibraryReplace?: string | JSON;
-};
+type Props = Omit<EditorProps, 'ketcherId'> &
+  Pick<
+    MacromoleculesEditorProps,
+    'monomersLibraryUpdate' | 'monomersLibraryReplace'
+  > & {
+    disableMacromoleculesEditor?: boolean;
+  };
 
 /*
  * TODO:

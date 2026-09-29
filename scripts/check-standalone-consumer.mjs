@@ -22,10 +22,10 @@
  * This script packs `ketcher-standalone` (and `ketcher-core`, its only
  * workspace dependency) with `npm pack`, installs the tarballs into two
  * throwaway consumer projects - one built with Vite, one with webpack 5 -
- * each importing and instantiating BOTH fetch-based variants
- * (`binaryWasm`, `binaryWasmNoRender`), and fails if either consumer's
- * build output is missing a worker chunk or a .wasm file for either
- * variant.
+ * each importing and instantiating the default entry plus BOTH fetch-based
+ * variants (`binaryWasm`, `binaryWasmNoRender`), and fails if either
+ * consumer's build output is missing a worker chunk or a .wasm file for
+ * either fetch-based variant.
  */
 
 import { execFileSync } from 'node:child_process';
@@ -45,15 +45,24 @@ import { fileURLToPath } from 'node:url';
 const repoRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 const corePkgDir = join(repoRoot, 'packages/ketcher-core');
 const standalonePkgDir = join(repoRoot, 'packages/ketcher-standalone');
+const INDIGO_VERSION = readJson(
+  join(repoRoot, 'node_modules/indigo-ketcher/package.json'),
+).version;
 
 // Both fetch-based (`copyWasm`) variants share the same worker/.wasm
 // consumer-detectability fix (see literalWorkerUrlPlugin in
 // packages/ketcher-standalone/vite.config.mjs) but are built from separate
-// entries, so a fix to one can regress the other silently. Both are
-// imported into the same consumer entry below rather than run as four
-// separate installs/builds, since the whole cost of this check is the
+// entries, so a fix to one can regress the other silently. They and the
+// default entry are imported into the same consumer entry below rather than
+// run as separate installs/builds, since the whole cost of this check is the
 // install + build, not the import count.
 const STANDALONE_VARIANTS = ['binaryWasm', 'binaryWasmNoRender'];
+const WORKER_FILE_NAME = 'indigoWorker.js';
+const WORKER_NAME_RE = /indigoWorker\.js/;
+const WASM_FILE_NAMES = {
+  binaryWasm: `indigo-ketcher-${INDIGO_VERSION}.wasm`,
+  binaryWasmNoRender: `indigo-ketcher-norender-${INDIGO_VERSION}.wasm`,
+};
 
 // A generous ceiling for each install/build step, so a network stall or a
 // bundler hang fails this check instead of hanging a CI job indefinitely.
@@ -74,25 +83,33 @@ const WEBPACK_CLI_VERSION = '5.1.4';
 // nobody imports can be tree-shaken away by a production build before it
 // ever reaches the worker/.wasm reference this check is looking for.
 function buildConsumerEntry() {
-  const imports = STANDALONE_VARIANTS.map(
-    (variant, index) =>
-      `import { StandaloneStructService as Service${index} } from 'ketcher-standalone/dist/${variant}';`,
-  ).join('\n');
-  const instantiations = STANDALONE_VARIANTS.map(
-    (_variant, index) =>
-      `globalThis.__ketcherStandaloneService${index} = new Service${index}();`,
-  ).join('\n');
+  const imports = [
+    "import { StandaloneStructService as DefaultService } from 'ketcher-standalone';",
+    ...STANDALONE_VARIANTS.map(
+      (variant, index) =>
+        `import { StandaloneStructService as Service${index} } from 'ketcher-standalone/dist/${variant}';`,
+    ),
+  ].join('\n');
+  const instantiations = [
+    'globalThis.__ketcherStandaloneDefaultService = new DefaultService();',
+    ...STANDALONE_VARIANTS.map(
+      (_variant, index) =>
+        `globalThis.__ketcherStandaloneService${index} = new Service${index}();`,
+    ),
+  ].join('\n');
 
   return `${imports}\n\n${instantiations}\n`;
 }
 
 function main() {
   ensureBuilt(corePkgDir, 'ketcher-core', join('dist', 'index.js'));
+  ensureBuilt(standalonePkgDir, 'ketcher-standalone', join('dist', 'main.js'));
   ensureBuilt(
     standalonePkgDir,
     'ketcher-standalone',
     join('dist', 'binaryWasm', 'main.js'),
   );
+  verifyStandaloneAssetNames();
 
   const workDir = mkdtempSync(join(tmpdir(), 'ketcher-standalone-consumer-'));
   log(`Working directory: ${workDir}`);
@@ -123,7 +140,7 @@ function main() {
     verifyConsumerOutput('webpack 5', join(webpackDir, 'dist'));
 
     console.log(
-      '\n✅ ketcher-standalone binaryWasm/binaryWasmNoRender builds work in both a Vite and a webpack 5 consumer\n',
+      '\n✅ ketcher-standalone default/binaryWasm/binaryWasmNoRender builds work in both a Vite and a webpack 5 consumer\n',
     );
   } finally {
     rmSync(workDir, { recursive: true, force: true });
@@ -140,6 +157,51 @@ function ensureBuilt(pkgDir, workspaceName, requiredFile) {
     `${workspaceName}'s ${requiredFile} is missing - building ${workspaceName} first...`,
   );
   run('npm', ['run', 'build', `--workspace=${workspaceName}`], repoRoot);
+}
+
+function verifyStandaloneAssetNames() {
+  for (const variant of STANDALONE_VARIANTS) {
+    const assetsDir = join(standalonePkgDir, 'dist', variant, 'assets');
+    const assetNames = readdirSync(assetsDir);
+    const workerFileNames = assetNames.filter((name) =>
+      /^indigoWorker.*\.js$/.test(name),
+    );
+    const wasmFileNames = assetNames.filter((name) => name.endsWith('.wasm'));
+    const expectedWasmFileName = WASM_FILE_NAMES[variant];
+
+    if (
+      workerFileNames.length !== 1 ||
+      workerFileNames[0] !== WORKER_FILE_NAME ||
+      wasmFileNames.length !== 1 ||
+      wasmFileNames[0] !== expectedWasmFileName
+    ) {
+      fail(
+        `ketcher-standalone ${variant} must emit ${WORKER_FILE_NAME} and ` +
+          `${expectedWasmFileName} in ${assetsDir}; found worker file(s) ` +
+          `[${workerFileNames.join(', ')}] and .wasm file(s) ` +
+          `[${wasmFileNames.join(', ')}].`,
+      );
+    }
+
+    const mainCode = readFileSync(
+      join(standalonePkgDir, 'dist', variant, 'main.js'),
+      'utf8',
+    );
+    if (!WORKER_NAME_RE.test(mainCode)) {
+      fail(
+        `ketcher-standalone ${variant} main.js must reference the fixed ` +
+          `${WORKER_FILE_NAME} URL literally.`,
+      );
+    }
+
+    const workerCode = readFileSync(join(assetsDir, WORKER_FILE_NAME), 'utf8');
+    if (!workerCode.includes(expectedWasmFileName)) {
+      fail(
+        `ketcher-standalone ${variant} ${WORKER_FILE_NAME} must reference ` +
+          `${expectedWasmFileName} literally.`,
+      );
+    }
+  }
 }
 
 function npmPack(pkgDir, destDir) {
@@ -232,17 +294,9 @@ module.exports = {
   );
 }
 
-// Every fetch-based variant's worker chunk is emitted from the literal
-// `new URL('./indigoWorker-<hash>.js', import.meta.url)` reference
-// literalWorkerUrlPlugin produces (see vite.config.mjs), so this name
-// survives into a consumer's build even when the bundler renames the
-// chunk file itself: Vite keeps the original file name (a static asset
-// copy), and webpack keeps the resolved path as a literal string inside
-// its `import.meta.url` polyfill even though the emitted chunk file gets a
-// numeric id. Matching on this known name - not by grepping for the
-// generic `onmessage` string every worker-ish file tends to contain - is
-// what actually identifies *this* worker instead of any other.
-const WORKER_NAME_RE = /indigoWorker-[\w.-]+\.js/g;
+// Consumers may add their own hash when emitting workers from the package's
+// fixed `indigoWorker.js` URL, so accept either name in their build output.
+const CONSUMER_WORKER_NAME_RE = /indigoWorker(?:-[\w.-]+)?\.js/g;
 
 function verifyConsumerOutput(bundlerName, distDir) {
   const files = listFilesRecursive(distDir);
@@ -259,28 +313,27 @@ function verifyConsumerOutput(bundlerName, distDir) {
     );
   }
 
-  const workerFileNames = new Set();
+  let workerReferences = 0;
   for (const file of files) {
     if (file.endsWith('.wasm') || file === join(distDir, 'main.js')) continue;
     const text = readTextIfPossible(file);
     if (!text) continue;
-    for (const match of text.matchAll(WORKER_NAME_RE)) {
-      workerFileNames.add(match[0]);
-    }
+    workerReferences += Array.from(
+      text.matchAll(CONSUMER_WORKER_NAME_RE),
+    ).length;
   }
 
-  if (workerFileNames.size < expectedCount) {
+  if (workerReferences < expectedCount) {
     fail(
-      `${bundlerName} consumer build references ${workerFileNames.size} distinct Indigo ` +
-        `worker file(s) in its output (${distDir}), expected at least ${expectedCount} - ` +
-        'one per checked variant. The Indigo worker was not split out as its own file for ' +
-        'every variant.',
+      `${bundlerName} consumer build references ${workerReferences} Indigo worker URL(s) ` +
+        `in its output (${distDir}), expected at least ${expectedCount} - one per checked ` +
+        'variant. The Indigo worker was not split out as its own file for every variant.',
     );
   }
 
   log(
-    `${bundlerName}: OK (${wasmFiles.length} .wasm file(s), ${workerFileNames.size} worker ` +
-      'chunk(s) present)',
+    `${bundlerName}: OK (${wasmFiles.length} .wasm file(s), ${workerReferences} worker URL ` +
+      'reference(s) present)',
   );
 }
 

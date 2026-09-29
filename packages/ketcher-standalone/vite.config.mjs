@@ -240,6 +240,12 @@ export default defineConfig({
   // indigo import that pulls in the .wasm lives entirely inside the worker.
   worker: {
     format: 'es',
+    rollupOptions: {
+      output: {
+        entryFileNames: 'assets/[name].js',
+        assetFileNames: 'assets/[name][extname]',
+      },
+    },
     plugins: () => (variant.copyWasm ? [noInlineWasmPlugin()] : []),
   },
   plugins: variant.copyWasm

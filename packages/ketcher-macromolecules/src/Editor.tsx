@@ -37,6 +37,7 @@ import {
   NodesSelection,
   isPasteContentAvailable,
   DeepPartial,
+  HORIZONTAL_SCROLLBAR_TRACK_HEIGHT,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -395,6 +396,11 @@ function Editor({
             style={{
               overflow: 'hidden',
               overflowClipMargin: 'content-box',
+              // Reserves HORIZONTAL_SCROLLBAR_TRACK_HEIGHT px at the bottom
+              // so structures can never be positioned underneath the
+              // horizontal scrollbar (drawn inside this SVG the same way
+              // as the vertical one).
+              height: `calc(100% - ${HORIZONTAL_SCROLLBAR_TRACK_HEIGHT}px)`,
             }}
           >
             <defs>

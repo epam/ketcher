@@ -24,6 +24,7 @@ import {
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
 } from 'utilities';
+import { EditorHistory } from 'application/editor/EditorHistory';
 
 type RescaleStructForModeTransitionContext = {
   micromoleculesEditor: {
@@ -60,6 +61,55 @@ const callRescaleStructForModeTransition = (
 };
 
 describe('CoreEditor', () => {
+  describe('switchToMacromolecules', () => {
+    const originalGetBBox = SVGElement.prototype.getBBox;
+
+    beforeEach(() => {
+      Object.defineProperty(SVGElement.prototype, 'getBBox', {
+        configurable: true,
+        value: jest.fn(() => ({ x: 0, y: 0, width: 10, height: 10 })),
+      });
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+
+      if (originalGetBBox) {
+        Object.defineProperty(SVGElement.prototype, 'getBBox', {
+          configurable: true,
+          value: originalGetBBox,
+        });
+      } else {
+        Reflect.deleteProperty(SVGElement.prototype, 'getBBox');
+      }
+    });
+
+    it('refreshes canvas offsets after a history-restored mode becomes visible', () => {
+      const canvas = createPolymerEditorCanvas();
+      const editor = new CoreEditor({
+        canvas,
+        theme: {},
+        renderersContainer: createRenderersManager(),
+      });
+      editor.switchToMacromolecules();
+      const bounds = {
+        x: 75,
+        y: 120,
+        left: 75,
+        top: 120,
+        width: 500,
+        height: 500,
+      } as DOMRect;
+      jest.spyOn(canvas, 'getBoundingClientRect').mockReturnValue(bounds);
+
+      editor.switchToMacromolecules();
+
+      expect(editor.canvasOffset).toBe(bounds);
+      expect(EditorHistory.getInstance(editor).historyPointer).toBe(0);
+      editor.destroy();
+    });
+  });
+
   it('should create MonomerLibraryConvertError with a cause', () => {
     const cause = new Error('convert failed');
     const error = new MonomerLibraryConvertError(

@@ -54,6 +54,22 @@ export const RnaElements = ({
   );
 
   const [newPreset, setNewPreset] = useState(activePreset);
+  // The RNA builder is reset through redux, which cannot reach this local copy
+  // of the preset being built. Re-syncing it whenever the active preset or the
+  // edit mode changes keeps a cancelled preset's monomers from constraining the
+  // library the next time a group is expanded (#9690).
+  const [prevBuilderState, setPrevBuilderState] = useState({
+    activePreset,
+    isEditMode,
+  });
+
+  if (
+    prevBuilderState.activePreset !== activePreset ||
+    prevBuilderState.isEditMode !== isEditMode
+  ) {
+    setPrevBuilderState({ activePreset, isEditMode });
+    setNewPreset(activePreset);
+  }
 
   useEffect(() => {
     if (!isEditMode) {

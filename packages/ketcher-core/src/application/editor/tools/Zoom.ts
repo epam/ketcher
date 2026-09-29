@@ -66,41 +66,18 @@ export class ZoomTool implements BaseTool {
   MAXZOOMSCALE = 4;
 
   private static _instance: ZoomTool;
-  // Per-rendering-operation context so each RenderersManager renders to its own canvas
-
-  private static _renderingContext: ZoomTool | undefined;
-
   public static get instance() {
-    return ZoomTool._renderingContext ?? ZoomTool._instance;
-  }
-
-  static setRenderingContext(zoomTool: ZoomTool | undefined) {
-    ZoomTool._renderingContext = zoomTool;
-  }
-
-  static initInstance(
-    drawingEntitiesManager: DrawingEntitiesManager,
-    canvas?: SVGSVGElement,
-  ) {
-    ZoomTool._instance = new ZoomTool(drawingEntitiesManager, canvas);
     return ZoomTool._instance;
   }
 
-  private constructor(
-    drawingEntitiesManager: DrawingEntitiesManager,
-    canvas?: SVGSVGElement,
-  ) {
-    if (canvas) {
-      this.canvasWrapper = select<SVGSVGElement, void>(
-        canvas,
-      ) as unknown as D3SvgElementSelection<SVGSVGElement, void>;
-      this.canvas = select(canvas).select<SVGGElement>(
-        drawnStructuresSelector,
-      ) as unknown as D3SvgElementSelection<SVGGElement, void>;
-    } else {
-      this.canvasWrapper = select(canvasSelector);
-      this.canvas = select(drawnStructuresSelector);
-    }
+  static initInstance(drawingEntitiesManager: DrawingEntitiesManager) {
+    ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
+    return ZoomTool._instance;
+  }
+
+  private constructor(drawingEntitiesManager: DrawingEntitiesManager) {
+    this.canvasWrapper = select(canvasSelector);
+    this.canvas = select(drawnStructuresSelector);
 
     this.zoomLevel = 1;
     this._zoomTransform = new ZoomTransform(1, 0, 0);
@@ -111,6 +88,13 @@ export class ZoomTool implements BaseTool {
 
   initActions() {
     this.zoom = zoom<SVGSVGElement, void>()
+      .extent((): [[number, number], [number, number]] => {
+        const rect = this.canvasWrapper.node()?.getBoundingClientRect();
+        return [
+          [0, 0],
+          [rect?.width ?? 0, rect?.height ?? 0],
+        ];
+      })
       .scaleExtent([this.MINZOOMSCALE, this.MAXZOOMSCALE])
       .wheelDelta(this.defaultWheelDelta)
       .filter((e) => {
@@ -267,11 +251,9 @@ export class ZoomTool implements BaseTool {
     isOffsetInPercents = true,
     needScrollVertical = true,
   ) {
-    const canvasWrapperHeight =
-      this.canvasWrapper.node()?.height.baseVal.value || 0;
-
-    const canvasWrapperWidth =
-      this.canvasWrapper.node()?.width.baseVal.value || 0;
+    const wrapperRect = this.canvasWrapper.node()?.getBoundingClientRect();
+    const canvasWrapperHeight = wrapperRect?.height ?? 0;
+    const canvasWrapperWidth = wrapperRect?.width ?? 0;
 
     // Calculate X offset
     let xOffsetValue: number;
@@ -363,11 +345,8 @@ export class ZoomTool implements BaseTool {
     const wrapperBoundingBox = this.canvasWrapper
       .node()
       ?.getBoundingClientRect() as DOMRect;
-    const canvasWrapperHeight =
-      this.canvasWrapper.node()?.height.baseVal.value || 0;
-
-    const canvasWrapperWidth =
-      this.canvasWrapper.node()?.width.baseVal.value || 0;
+    const canvasWrapperHeight = wrapperBoundingBox.height;
+    const canvasWrapperWidth = wrapperBoundingBox.width;
     this.scrollBars = {
       horizontal: {
         name: 'horizontal',

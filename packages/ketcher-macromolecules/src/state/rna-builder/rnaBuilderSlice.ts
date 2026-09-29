@@ -447,9 +447,6 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
   const base = preset.base?.label ?? preset.base?.props.MonomerName ?? '';
   const phosphate =
     preset.phosphate?.label ?? preset.phosphate?.props.MonomerName ?? '';
-  const phosphatePosition = getRnaPresetPhosphatePosition(
-    preset as RnaPresetWithOptionalFields,
-  );
   let fullName = sugar;
 
   if (sugar && phosphate) {
@@ -460,11 +457,11 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
     fullName += base;
   }
 
+  // The phosphate is always appended, whatever position the picker holds:
+  // prefixing it for 5' leaves no cue where the phosphate label ends and the
+  // sugar label begins, so the name would become ambiguous (#9693).
   if (phosphate) {
-    fullName =
-      phosphatePosition === 'left'
-        ? `${phosphate}${fullName}`
-        : `${fullName}${phosphate}`;
+    fullName += phosphate;
   }
 
   return fullName;

@@ -88,6 +88,15 @@ const matchesAminoAcidThreeLetterCode = (
   return code ? code.toLowerCase().includes(searchFilter) : false;
 };
 
+// Exact '-' and '_' queries bypass normal multi-field matching because internal
+// IDT/HELM/BILN-related fields can otherwise create results for characters not
+// visible on the card.
+const SHORT_NAME_ONLY_SEARCH_CHARACTERS: readonly string[] = ['-', '_'];
+
+export function isShortNameOnlySearch(text: string): boolean {
+  return SHORT_NAME_ONLY_SEARCH_CHARACTERS.includes(text);
+}
+
 const initialState: LibraryState = {
   monomers: [],
   defaultRnaPresets: [],
@@ -392,8 +401,7 @@ export const selectFilteredMonomers = createSelector(
   (state): Array<MonomerOrAmbiguousType & { favorite: boolean }> => {
     const { searchFilter, monomers, favorites } = state;
     const normalizedSearchFilter = searchFilter.toLowerCase();
-    const isShortNameOnlySearch =
-      normalizedSearchFilter === '-' || normalizedSearchFilter === '_';
+    const shortNameOnly = isShortNameOnlySearch(normalizedSearchFilter);
     const checkMonomerMatch = (
       searchFilter: string,
       {
@@ -569,7 +577,7 @@ export const selectFilteredMonomers = createSelector(
         if (!item.isAmbiguous && (item as MonomerItemType).props?.hidden) {
           return false;
         }
-        if (isShortNameOnlySearch) {
+        if (shortNameOnly) {
           return item.label.toLowerCase().includes(normalizedSearchFilter);
         }
         if (item.isAmbiguous) {

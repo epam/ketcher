@@ -35,7 +35,7 @@ import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import {
   peptideNaturalAnalogues,
   rnaDnaNaturalAnalogues,
@@ -1081,42 +1081,34 @@ export const MacromoleculePropertiesWindow = () => {
     hasCommonError ||
     !hasSpecificProperty(firstMacromoleculesProperties, 'nucleotides');
 
-  const grossFormula = useMemo(() => {
-    return (
-      <GrossFormula data-testid="Gross-formula">
-        {(firstMacromoleculesProperties?.grossFormula || NO_DATA_VALUE)
-          .split(' ')
-          .map((atomNameWithAmount, index, array) => (
-            <span key={`${atomNameWithAmount}-${index}`}>
-              <GrossFormulaPart part={atomNameWithAmount} />
-              {index < array.length - 1 ? ' ' : ''}
-            </span>
-          ))}
-      </GrossFormula>
-    );
-  }, [firstMacromoleculesProperties?.grossFormula]);
+  const grossFormula = (
+    <GrossFormula data-testid="Gross-formula">
+      {(firstMacromoleculesProperties?.grossFormula || NO_DATA_VALUE)
+        .split(' ')
+        .map((atomNameWithAmount, index, array) => (
+          <span key={`${atomNameWithAmount}-${index}`}>
+            <GrossFormulaPart part={atomNameWithAmount} />
+            {index < array.length - 1 ? ' ' : ''}
+          </span>
+        ))}
+    </GrossFormula>
+  );
 
-  const molecularMassValue = useMemo(() => {
-    if (!isNumber(firstMacromoleculesProperties?.mass)) {
-      return (
-        <MolecularMassAmount data-testid="Molecular-Mass-Value">
-          {NO_DATA_VALUE}
-        </MolecularMassAmount>
-      );
-    }
-
-    return (
-      <>
-        <MolecularMassAmount data-testid="Molecular-Mass-Value">
-          {_round(
-            firstMacromoleculesProperties?.mass /
-              massMeasurementUnitToNumber[massMeasurementUnit],
-            3,
-          )}
-        </MolecularMassAmount>{' '}
-      </>
-    );
-  }, [firstMacromoleculesProperties?.mass, massMeasurementUnit]);
+  const molecularMassValue = !isNumber(firstMacromoleculesProperties?.mass) ? (
+    <MolecularMassAmount data-testid="Molecular-Mass-Value">
+      {NO_DATA_VALUE}
+    </MolecularMassAmount>
+  ) : (
+    <>
+      <MolecularMassAmount data-testid="Molecular-Mass-Value">
+        {_round(
+          firstMacromoleculesProperties.mass /
+            massMeasurementUnitToNumber[massMeasurementUnit],
+          3,
+        )}
+      </MolecularMassAmount>{' '}
+    </>
+  );
 
   return isMacromoleculesPropertiesWindowOpened ? (
     <StyledWrapper

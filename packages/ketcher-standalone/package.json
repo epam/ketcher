@@ -69,16 +69,14 @@
       "require": "./dist/cjs/main.js"
     },
     "./dist/binaryWasm": {
-      "import": "./dist/binaryWasm/main.js",
-      "require": "./dist/binaryWasm/main.js"
+      "import": "./dist/binaryWasm/main.js"
     },
     "./dist/jsNoRender": {
       "import": "./dist/jsNoRender/main.js",
       "require": "./dist/cjs/jsNoRender/main.js"
     },
     "./dist/binaryWasmNoRender": {
-      "import": "./dist/binaryWasmNoRender/main.js",
-      "require": "./dist/binaryWasmNoRender/main.js"
+      "import": "./dist/binaryWasmNoRender/main.js"
     }
   }
 }

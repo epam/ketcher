@@ -1,4 +1,9 @@
-import { Bond } from 'ketcher-core';
+import {
+  Bond,
+  resetEditorInstance,
+  setEditorInstance,
+  type CoreEditor,
+} from 'ketcher-core';
 import Editor from './Editor';
 
 type MockBond = {
@@ -132,10 +137,22 @@ const createMockEditorForRGroupBond = (
 describe('Editor.isMonomerCreationWizardEnabled', () => {
   beforeEach(() => {
     jest.spyOn(window, 'dispatchEvent').mockImplementation(() => true);
+    setEditorInstance({} as unknown as CoreEditor);
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
+    resetEditorInstance();
+  });
+
+  it('disables monomer creation when the macromolecules editor is unavailable', () => {
+    resetEditorInstance();
+    const editor = createMockEditorForRGroupBond(
+      Bond.PATTERN.TYPE.SINGLE,
+      Bond.PATTERN.STEREO.UP,
+    );
+
+    expect(getIsMonomerCreationWizardEnabled(editor)).toBe(false);
   });
 
   it('disables monomer creation for explicit R-group with non-compliant bond stereo', () => {
@@ -220,5 +237,12 @@ describe('Editor.isMonomerCreationWizardEnabled', () => {
     const terminalRGroupAtoms = getTerminalRGroupAtoms(editor);
     expect(terminalRGroupAtoms.length).toBe(1);
     expect(terminalRGroupAtoms[0][0]).toBe(0);
+  });
+
+  it('does not open the wizard when the macromolecules editor is unavailable', () => {
+    resetEditorInstance();
+    const editor = Object.create(Editor.prototype) as Editor;
+
+    expect(() => editor.openMonomerCreationWizard()).not.toThrow();
   });
 });

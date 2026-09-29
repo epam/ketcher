@@ -366,11 +366,19 @@ export class Ketcher {
     );
   }
 
+  /**
+   * Rejects if the macromolecules editor is unavailable or disabled.
+   */
   async getSequence(
     format: '1-letter' | '3-letter' = '1-letter',
   ): Promise<string> {
     if (format === '1-letter' || format === '3-letter') {
       const editor = provideEditorInstance();
+      if (!editor) {
+        throw new Error(
+          'Cannot get a sequence because the macromolecules editor is unavailable.',
+        );
+      }
       const indigo = this.indigo;
 
       const ketSerializer = new KetSerializer();

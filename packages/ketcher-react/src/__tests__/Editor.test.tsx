@@ -1,11 +1,4 @@
-import {
-  act,
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import type * as ReactTypes from 'react';
 import { ketcherProvider, type Ketcher } from 'ketcher-core';
 import { Editor } from '../Editor';
@@ -50,32 +43,10 @@ jest.mock('../MicromoleculesEditor', () => {
   };
 });
 
-jest.mock('../script/ui/views/toolbars/ModeControl', () => {
-  const React = jest.requireActual('react') as typeof ReactTypes;
-
-  return {
-    ModeControl: ({ toggle }: { toggle: (value: boolean) => void }) =>
-      React.createElement(
-        'button',
-        {
-          'data-testid': 'mode-control',
-          onClick: () => toggle(true),
-        },
-        'Toggle mode',
-      ),
-  };
-});
-
 jest.mock(
   'ketcher-macromolecules',
   () => {
     const React = jest.requireActual('react') as typeof ReactTypes;
-
-    (
-      globalThis as typeof globalThis & {
-        macromoleculesEditorImportTriggered?: boolean;
-      }
-    ).macromoleculesEditorImportTriggered = true;
 
     return {
       __esModule: true,
@@ -93,9 +64,6 @@ const testKetcher = {
   id: TEST_KETCHER_ID,
   editor: {},
 } as unknown as Ketcher;
-const globalWithImportState = globalThis as typeof globalThis & {
-  macromoleculesEditorImportTriggered?: boolean;
-};
 const editorProps: Omit<
   ReactTypes.ComponentProps<typeof Editor>,
   'disableMacromoleculesEditor' | 'onInit'
@@ -111,65 +79,46 @@ describe('Editor', () => {
   beforeEach(() => {
     ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
     ketcherProvider.addKetcherInstance(testKetcher);
-    globalWithImportState.macromoleculesEditorImportTriggered = false;
-    window.isPolymerEditorTurnedOn = true;
   });
 
   afterEach(() => {
     cleanup();
     ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
-    delete globalWithImportState.macromoleculesEditorImportTriggered;
   });
 
-  it('skips the macromolecules import when disabled and safely restores it when enabled', async () => {
-    const onInit = jest.fn();
-    const props = { ...editorProps, onInit };
+  it('does not expose macromolecules UI when the feature is disabled', () => {
+    render(<Editor {...editorProps} disableMacromoleculesEditor />);
 
-    const { rerender } = render(
-      <Editor {...props} disableMacromoleculesEditor />,
-    );
-
-    expect(screen.getByTestId('molecules-editor')).toBeInTheDocument();
-    expect(screen.queryByTestId('mode-control')).not.toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(onInit).toHaveBeenCalledWith(testKetcher);
-      expect(window.isPolymerEditorTurnedOn).toBe(false);
-    });
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 0));
-    });
-
-    expect(globalWithImportState.macromoleculesEditorImportTriggered).toBe(
-      false,
-    );
+    expect(screen.queryByTestId('polymer-toggler')).not.toBeInTheDocument();
     expect(
       screen.queryByTestId('macromolecules-editor'),
     ).not.toBeInTheDocument();
+  });
 
-    rerender(<Editor {...props} />);
+  it('reports micromolecules initialization when the feature is disabled', async () => {
+    const onInit = jest.fn();
 
+    render(
+      <Editor {...editorProps} onInit={onInit} disableMacromoleculesEditor />,
+    );
+
+    expect(screen.getByTestId('molecules-editor')).toBeInTheDocument();
     await waitFor(() => {
-      expect(globalWithImportState.macromoleculesEditorImportTriggered).toBe(
-        true,
-      );
-      expect(screen.getByTestId('macromolecules-editor')).toBeInTheDocument();
-      expect(screen.getByTestId('mode-control')).toBeInTheDocument();
+      expect(onInit).toHaveBeenCalledWith(testKetcher);
     });
+  });
 
-    fireEvent.click(screen.getByTestId('mode-control'));
-    expect(window.isPolymerEditorTurnedOn).toBe(true);
+  it('loads the macromolecules editor when the feature is enabled', async () => {
+    render(<Editor {...editorProps} />);
 
-    rerender(<Editor {...props} disableMacromoleculesEditor />);
-
-    await waitFor(() => {
-      expect(window.isPolymerEditorTurnedOn).toBe(false);
-      expect(screen.queryByTestId('macromolecules-editor')).toBeNull();
-      expect(screen.queryByTestId('mode-control')).toBeNull();
-    });
-    expect(onInit).toHaveBeenCalledTimes(1);
     expect(
-      screen.getByTestId('molecules-editor').parentElement?.style.display,
-    ).toBe('');
+      await screen.findByTestId('macromolecules-editor'),
+    ).toBeInTheDocument();
+  });
+
+  it('exposes the mode switcher when the feature is enabled', () => {
+    render(<Editor {...editorProps} />);
+
+    expect(screen.getByTestId('polymer-toggler')).toBeInTheDocument();
   });
 });

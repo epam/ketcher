@@ -626,7 +626,7 @@ const validateInputs = (
 
       if (
         !skipUniquenessChecks &&
-        editor.checkIfMonomerSymbolClassPairExists(value, values.type)
+        editor?.checkIfMonomerSymbolClassPairExists(value, values.type)
       ) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('symbolExists', {
@@ -788,7 +788,7 @@ const validateModificationTypes = (
   const notifications = new Map<WizardNotificationId, WizardNotification>();
   const errors: Record<string, boolean> = {};
   const modificationTypesGroupedByNaturalAnalogue =
-    editor.getAllAminoAcidsModificationTypesGroupedByNaturalAnalogue();
+    editor?.getAllAminoAcidsModificationTypesGroupedByNaturalAnalogue() ?? {};
   const hasEmptyType = modificationTypes.some(
     (modificationType) => !modificationType.trim(),
   );
@@ -1709,7 +1709,7 @@ const MonomerCreationWizardInternal = ({
       } else {
         // Validate preset code uniqueness (only if format is valid)
         const coreEditor = provideEditorInstance();
-        if (coreEditor.checkIfPresetCodeExists(presetCode)) {
+        if (coreEditor?.checkIfPresetCodeExists(presetCode)) {
           needSaveMonomers = false;
           rnaPresetWizardStateDispatch({
             type: 'SetErrors',
@@ -1817,9 +1817,10 @@ const MonomerCreationWizardInternal = ({
     // must run before any validation below (validateMonomerWizard/
     // validateRnaPresetWizard, via validateOnSubmit).
     const coreEditor = provideEditorInstance();
-    if (coreEditor) {
-      await ensureMonomersLibraryLoadedForSubmit(coreEditor);
+    if (!coreEditor) {
+      return;
     }
+    await ensureMonomersLibraryLoadedForSubmit(coreEditor);
 
     wizardStateDispatch({ type: 'ResetErrors' });
     rnaPresetWizardStateDispatch({ type: 'ResetErrors' });
@@ -2351,7 +2352,7 @@ const MonomerCreationWizardInternal = ({
 const MonomerCreationWizard = () => {
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
 
-  if (!monomerCreationState) {
+  if (!provideEditorInstance() || !monomerCreationState) {
     return null;
   }
 

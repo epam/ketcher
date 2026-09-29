@@ -64,6 +64,7 @@ import {
   normalizeMonomerAtomsPositions,
   Pile,
   provideEditorSettings,
+  provideEditorInstance,
   Render,
   Scale,
   setMonomerTemplatePrefix,
@@ -851,6 +852,10 @@ class Editor implements KetcherEditor {
       return false;
     }
 
+    if (!provideEditorInstance()) {
+      return false;
+    }
+
     const currentStruct = this.struct();
     const selection = this.selection();
 
@@ -1051,6 +1056,10 @@ class Editor implements KetcherEditor {
     editInstanceAttachmentPoints?: ReadonlyArray<SGroupAttachmentPoint>,
     editingMonomer?: BaseMonomer,
   ) {
+    if (!provideEditorInstance()) {
+      return;
+    }
+
     const currentStruct = this.render.ctab.molecule;
     const rawSelection = selectionOverride ??
       this.selection() ?? {

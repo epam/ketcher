@@ -183,6 +183,17 @@ interface ModifyAminoAcidsHandlerParams {
   modificationType: string;
 }
 
+/**
+ * Identifies the canvas monomers to swap out after a monomer wizard session,
+ * and the library item to swap in. A monomer is identified by its class and
+ * its code, the pair the user edits in the wizard's attributes panel.
+ */
+export interface MonomerInstanceReplacement {
+  monomerClass: KetMonomerClass | undefined;
+  symbol: string;
+  newMonomerItem: MonomerItemType;
+}
+
 export const EditorClassName = 'Ketcher-polymer-editor-root';
 export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
 export const NATURAL_AMINO_ACID_MODIFICATION_TYPE = 'Natural amino acid';
@@ -244,6 +255,7 @@ export class CoreEditor {
   public sequenceTypeEnterMode = SequenceType.RNA;
   private readonly micromoleculesEditor: Editor;
   private monomerWizardMode?: BaseMode;
+  private pendingMonomerWizardInstanceReplacement?: MonomerInstanceReplacement;
 
   public get isMonomerWizardSessionActive() {
     return Boolean(this.monomerWizardMode);
@@ -2465,6 +2477,9 @@ export class CoreEditor {
     const originalManager = this.drawingEntitiesManager;
     let canvasChanged = false;
     this.mode = this.monomerWizardMode;
+    // Read it now so a failed restore cannot leave a stale request behind.
+    const instanceReplacement = this.pendingMonomerWizardInstanceReplacement;
+    this.pendingMonomerWizardInstanceReplacement = undefined;
     try {
       if (savedCanvas) {
         const struct = this.micromoleculesEditor.struct();
@@ -2512,6 +2527,71 @@ export class CoreEditor {
       this._type = EditorType.Macromolecules;
       this.micromoleculesEditor.clear();
       this.micromoleculesEditor.clearHistory();
+    }
+
+    if (instanceReplacement) {
+      this.replaceMonomerInstances(instanceReplacement);
+    }
+  }
+
+  /**
+   * Queues a swap of every canvas instance of a monomer for a new library item.
+   *
+   * Editing a monomer from a library card leaves the canvas untouched for the
+   * whole wizard session, so the instances can only be swapped on the way back
+   * — and only once macromolecules mode is on screen again, since monomer
+   * renderers measure the DOM and a hidden canvas measures as 0x0.
+   * `finishMonomerWizardSession` is the point where both hold.
+   */
+  public scheduleMonomerWizardInstanceReplacement(
+    replacement: MonomerInstanceReplacement,
+  ) {
+    this.pendingMonomerWizardInstanceReplacement = replacement;
+  }
+
+  private replaceMonomerInstances({
+    monomerClass,
+    symbol,
+    newMonomerItem,
+  }: MonomerInstanceReplacement) {
+    // `replaceMonomer` adds and deletes monomers, so iterate over a snapshot.
+    const monomers = [...this.drawingEntitiesManager.monomers.values()];
+    const command = new Command();
+    let replacedAnyMonomer = false;
+
+    monomers.forEach((monomer) => {
+      const monomerItem = monomer.monomerItem;
+
+      if (isAmbiguousMonomerLibraryItem(monomerItem)) {
+        return;
+      }
+
+      const { props, label } = monomerItem;
+
+      if (
+        props.MonomerClass !== monomerClass ||
+        (props.MonomerCode ?? label) !== symbol
+      ) {
+        return;
+      }
+
+      command.merge(
+        this.drawingEntitiesManager.replaceMonomer(monomer, newMonomerItem)
+          .command,
+      );
+      replacedAnyMonomer = true;
+    });
+
+    if (!replacedAnyMonomer) {
+      return;
+    }
+
+    command.setUndoOperationsByPriority();
+    EditorHistory.getInstance(this).update(command);
+    this.renderersContainer.update(command);
+
+    if (this.mode.modeName === 'sequence-layout-mode') {
+      this.mode.initialize(false, false, false);
     }
   }
 

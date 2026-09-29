@@ -39,9 +39,21 @@ describe('saving library wizard changes', () => {
     bonds: [],
     root: { templates: [], nodes: [], connections: [] },
   };
+  const savedItem: MonomerItemType = {
+    label: 'A',
+    struct: new Struct(),
+    props: {
+      id: 'original',
+      MonomerName: 'A',
+      Name: 'New name',
+      MonomerNaturalAnalogCode: 'A',
+      MonomerClass: KetMonomerClass.AminoAcid,
+    },
+  };
   const update = jest.fn();
   const conversion = jest.fn();
   const dispatch = jest.fn();
+  const scheduleReplacement = jest.fn();
   let persist: jest.SpyInstance;
   const ketcher = {
     id: 'test',
@@ -67,22 +79,28 @@ describe('saving library wizard changes', () => {
       },
       checkIfMonomerSymbolClassPairExists: () => false,
       updateMonomersLibrary: update,
+      monomersLibrary: [savedItem],
+      scheduleMonomerWizardInstanceReplacement: scheduleReplacement,
     });
   });
 
   afterEach(() => jest.restoreAllMocks());
 
-  it('saves a rename against the original identity, retaining properties without controls', async () => {
+  it('supersedes the library entry when the code and the type are unchanged, retaining properties without controls', async () => {
     await saveLibraryMonomer(
       ketcher,
-      { monomerTemplate: template, monomerRef: 'monomerTemplate-new-id' },
+      {
+        monomerTemplate: { ...template, alias: 'A', fullName: 'New name' },
+        monomerRef: 'monomerTemplate-new-id',
+      },
       original,
     );
     const [ket, ref] = update.mock.calls[0];
     expect(ref).toBe('monomerTemplate-original');
     expect(JSON.parse(ket)['monomerTemplate-original']).toMatchObject({
       id: 'original',
-      alias: 'Renamed',
+      alias: 'A',
+      fullName: 'New name',
       aliasAxoLabs: 'original-axo',
       idtAliases: { base: 'original-idt' },
     });
@@ -91,6 +109,63 @@ describe('saving library wizard changes', () => {
       editedMonomerRef: ref,
     });
     expect(dispatch).toHaveBeenCalledWith('sdf');
+  });
+
+  it('adds a distinct monomer when the code changed, leaving the original alone', async () => {
+    await saveLibraryMonomer(
+      ketcher,
+      { monomerTemplate: template, monomerRef: 'monomerTemplate-new-id' },
+      original,
+    );
+    const [ket, ref] = update.mock.calls[0];
+    expect(ref).toBeUndefined();
+    const saved = JSON.parse(ket)['monomerTemplate-new-id'];
+    expect(saved).toMatchObject({ id: 'new-id', alias: 'Renamed' });
+    expect(saved).not.toHaveProperty('aliasAxoLabs');
+    expect(saved).not.toHaveProperty('idtAliases');
+    expect(persist.mock.calls[0][0]).toBe(ket);
+  });
+
+  it('adds a distinct monomer when the type changed, leaving the original alone', async () => {
+    await saveLibraryMonomer(
+      ketcher,
+      {
+        monomerTemplate: {
+          ...template,
+          alias: 'A',
+          class: KetMonomerClass.CHEM,
+        },
+        monomerRef: 'monomerTemplate-new-id',
+      },
+      original,
+    );
+    const [ket, ref] = update.mock.calls[0];
+    expect(ref).toBeUndefined();
+    expect(JSON.parse(ket)['monomerTemplate-new-id']).toMatchObject({
+      id: 'new-id',
+      alias: 'A',
+      class: KetMonomerClass.CHEM,
+    });
+  });
+
+  it('rejects a changed code that another monomer of the same class already uses', async () => {
+    (provideEditorInstance as jest.Mock).mockReturnValue({
+      monomersLibraryParsedJson: {
+        'monomerTemplate-original': { ...template, id: 'original', alias: 'A' },
+      },
+      checkIfMonomerSymbolClassPairExists: () => true,
+      updateMonomersLibrary: update,
+      monomersLibrary: [savedItem],
+      scheduleMonomerWizardInstanceReplacement: scheduleReplacement,
+    });
+    await expect(
+      saveLibraryMonomer(
+        ketcher,
+        { monomerTemplate: template, monomerRef: 'monomerTemplate-new-id' },
+        original,
+      ),
+    ).rejects.toThrow('A monomer with this code already exists.');
+    expect(update).not.toHaveBeenCalled();
   });
 
   it('creates duplicates without inheriting the original unsupported properties', async () => {
@@ -105,6 +180,30 @@ describe('saving library wizard changes', () => {
     expect(saved).not.toHaveProperty('aliasAxoLabs');
     expect(saved).not.toHaveProperty('idtAliases');
     expect(saved).not.toHaveProperty('modificationTypes');
+  });
+
+  it('queues the replacement of the original monomer instances on the canvas', async () => {
+    await saveLibraryMonomer(
+      ketcher,
+      {
+        monomerTemplate: { ...template, alias: 'A' },
+        monomerRef: 'monomerTemplate-new-id',
+      },
+      original,
+    );
+    expect(scheduleReplacement).toHaveBeenCalledWith({
+      monomerClass: KetMonomerClass.AminoAcid,
+      symbol: 'A',
+      newMonomerItem: savedItem,
+    });
+  });
+
+  it('leaves the canvas alone when duplicating', async () => {
+    await saveLibraryMonomer(ketcher, {
+      monomerTemplate: { ...template, alias: 'A_Copy' },
+      monomerRef: 'monomerTemplate-new-id',
+    });
+    expect(scheduleReplacement).not.toHaveBeenCalled();
   });
 
   it('does not change or persist the library if conversion fails', async () => {

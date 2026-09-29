@@ -1,6 +1,7 @@
 import {
   getMonomerTemplateRefFromMonomerItem,
   type IKetMonomerTemplate,
+  isAmbiguousMonomerLibraryItem,
   type Ketcher,
   KetTemplateType,
   type MonomerItemType,
@@ -16,21 +17,35 @@ export const saveLibraryMonomer = async (
   original?: MonomerItemType,
 ) => {
   const editor = provideEditorInstance(ketcher.id);
-  const originalRef = original
+  const editedRef = original
     ? getMonomerTemplateRefFromMonomerItem(original)
     : undefined;
-  const originalTemplate = originalRef
-    ? editor.monomersLibraryParsedJson?.[originalRef]
+  const editedTemplate = editedRef
+    ? editor.monomersLibraryParsedJson?.[editedRef]
     : undefined;
-  if (
-    originalRef &&
-    originalTemplate?.type !== KetTemplateType.MONOMER_TEMPLATE
-  ) {
+  if (editedRef && editedTemplate?.type !== KetTemplateType.MONOMER_TEMPLATE) {
     throw new Error('The original monomer is no longer available for editing.');
   }
-  const originalMonomerTemplate = originalTemplate as
+  const editedMonomerTemplate = editedTemplate as
     IKetMonomerTemplate | undefined;
   const { root: _root, ...createdTemplate } = data.monomerTemplate;
+
+  /*
+   * The type and the code together identify a monomer. Keeping both means the
+   * user edited that library entry, so the new version supersedes it. Changing
+   * either one makes a distinct monomer, which is added to the library while
+   * the original stays visible and usable — including its identity, its id and
+   * the properties (aliases) that have no control in the attributes panel.
+   */
+  const supersedesOriginal =
+    Boolean(editedMonomerTemplate) &&
+    createdTemplate.class === editedMonomerTemplate?.class &&
+    createdTemplate.alias === editedMonomerTemplate?.alias;
+  const originalMonomerTemplate = supersedesOriginal
+    ? editedMonomerTemplate
+    : undefined;
+  const originalRef = supersedesOriginal ? editedRef : undefined;
+
   const template = {
     ...originalMonomerTemplate,
     ...createdTemplate,
@@ -60,6 +75,31 @@ export const saveLibraryMonomer = async (
     throw new Error('A monomer with this code already exists.');
   }
   editor.updateMonomersLibrary(ket, originalRef);
+
+  /*
+   * Submitting after "Edit" replaces every instance of that monomer on the
+   * canvas with the new version. "Duplicate and Edit" leaves the canvas alone,
+   * and it is the only library entry point that passes no `original`.
+   *
+   * The canvas cannot be touched here — macromolecules mode is still hidden —
+   * so the swap is queued and performed by the editor on the way back.
+   */
+  if (original) {
+    const savedMonomerItem = editor.monomersLibrary.find(
+      (item) =>
+        !isAmbiguousMonomerLibraryItem(item) &&
+        getMonomerTemplateRefFromMonomerItem(item) === ref,
+    );
+
+    if (savedMonomerItem) {
+      editor.scheduleMonomerWizardInstanceReplacement({
+        monomerClass: original.props.MonomerClass,
+        symbol: original.props.MonomerCode ?? original.label,
+        newMonomerItem: savedMonomerItem,
+      });
+    }
+  }
+
   if (SettingsManager.persistMonomerLibraryUpdates) {
     SettingsManager.addMonomerLibraryUpdate(
       originalRef

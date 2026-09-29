@@ -100,7 +100,7 @@ export function fromSeveralSgroupAddition(
   }
 
   return descriptors.reduce((acc, fValue) => {
-    const localAttrs = { ...(attrs || {}) };
+    const localAttrs = { ...attrs };
     localAttrs.fieldValue = fValue;
 
     return acc.mergeWith(
@@ -539,29 +539,6 @@ export function setExpandMonomerSGroup(
   });
 
   return action.perform(restruct);
-}
-
-// todo delete after supporting expand - collapse for 2 attachment points
-export function expandSGroupWithMultipleAttachmentPoint(restruct) {
-  const action = new Action();
-
-  const struct = restruct.molecule;
-
-  struct.sgroups.forEach((sgroup: SGroup) => {
-    if (
-      sgroup.isNotContractible(struct) &&
-      !(sgroup instanceof MonomerMicromolecule) &&
-      !SGroup.isSuperAtom(sgroup)
-    ) {
-      action.mergeWith(
-        setExpandSGroup(restruct, sgroup.id, {
-          expanded: true,
-        }),
-      );
-    }
-  });
-
-  return action;
 }
 
 export function sGroupAttributeAction(id, attrs) {

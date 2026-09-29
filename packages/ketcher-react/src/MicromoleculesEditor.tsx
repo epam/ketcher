@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -56,10 +55,9 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const { structServiceProvider } = props;
 
   const propsRef = useRef(props);
-  propsRef.current = props;
-
-  const ketcherIdRef = useRef(props.ketcherId);
-  ketcherIdRef.current = props.ketcherId;
+  useEffect(() => {
+    propsRef.current = props;
+  });
 
   const rootElRef = useRef<HTMLDivElement>(null);
 
@@ -68,11 +66,11 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   });
 
   useEffect(() => {
-    if (!ketcherIdRef.current) {
+    if (!propsRef.current.ketcherId) {
       return;
     }
     ketcherBuilderRef.current?.reinitializeApi(
-      ketcherIdRef.current,
+      propsRef.current.ketcherId,
       structServiceProvider,
       setServerRef.current,
     );

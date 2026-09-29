@@ -17,5 +17,5 @@
       "src/*": ["./src/*"]
     }
   },
-  "exclude": ["**/*.test.ts", "**/*.test.tsx", "dist/**/*"]
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "**/testMocks/**/*", "dist/**/*"]
 }

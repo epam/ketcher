@@ -158,9 +158,11 @@ remains in the repository.
 
 ### Invariants
 
-**The published contract is frozen.** Package file names, output formats, and
-`main`/`module`/`types`/`exports` entries do not change as a result of build tooling work.
-Some of that metadata is known to be wrong (see the ADR) and is preserved deliberately.
+**Published runtime outputs are stable.** Package file names, output formats, and JavaScript
+`import`/`require` targets do not change as a result of build tooling work. Type and package
+metadata may receive scoped correctness fixes without changing those runtime outputs; #11992
+exposes existing declarations through `types` conditions and adds `./package.json` exports to the
+affected package maps.
 
 **Type declarations are emitted by TypeScript, not the bundler.** Each package runs
 `tsc --emitDeclarationOnly`, plus `tsc-alias` where path aliases are used.

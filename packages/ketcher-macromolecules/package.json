@@ -107,13 +107,15 @@
   ],
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.modern.js",
       "require": "./dist/index.js"
     },
     "./dist/index.css": {
       "import": "./dist/index.css",
       "require": "./dist/index.css"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "sideEffects": [
     "*.css",

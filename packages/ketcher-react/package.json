@@ -118,14 +118,15 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/index.js",
       "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
       "require": "./dist/cjs/index.js"
     },
     "./dist/index.css": {
       "import": "./dist/index.css",
       "require": "./dist/index.css",
       "default": "./dist/index.css"
-    }
+    },
+    "./package.json": "./package.json"
   }
 }

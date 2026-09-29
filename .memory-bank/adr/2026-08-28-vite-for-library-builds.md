@@ -14,9 +14,10 @@ Two targets are explicitly excluded:
   to Vite would mean abandoning SSR or rewriting the app.
 - **`ketcher-autotests`** has no bundler to migrate.
 
-The **published contract is frozen**: every package keeps its current file names, output
-formats, and `main`/`module`/`types`/`exports` entries, including entries that are currently
-wrong (see _Consequences_).
+The **published runtime contract is stable**: every package keeps its current file names, output
+formats, and JavaScript `import`/`require` targets. Scoped metadata fixes may expose already-emitted
+type declarations or the package manifest without changing those runtime outputs (see
+_Consequences_).
 
 Vite production artifacts do not emit JavaScript or CSS source maps.
 Non-production watch builds retain source maps for local debugging;
@@ -144,7 +145,7 @@ through a separate pipeline, and the indigo import lives entirely inside the wor
 `base: '/'` would emit the worker and `.wasm` URLs as `/assets/...` — resolving only if the
 consumer happened to copy them to their web root.
 
-**Internal chunk layout changed; the published contract did not.** The worker and `.wasm` now
+**Internal chunk layout changed; JavaScript entry points did not.** The worker and `.wasm` now
 live in an `assets/` subdirectory with hashed names, and `indigoWorker.types.js` is folded into
 the worker chunk. Nothing in the `exports` map or in any consumer references those paths.
 Vite production artifacts emit no JavaScript or CSS source maps. This removes the large maps
@@ -159,10 +160,14 @@ resolution quirk) and `dist/index.modern.js` (a file the build never emitted at 
 originally decided to leave that broken metadata in place until a deliberate version bump — this
 is that version bump. `main` now points to `dist/cjs/main.js` and `module` to `dist/main.js`,
 matching the `exports` map's `require`/`import` conditions for the `.` entry exactly. This is a
-deliberate, scoped exception to "the published contract is frozen": only the `.` entry's
+deliberate, scoped exception to the stable runtime contract: only the `.` entry's
 `main`/`module` changed; `types` (`dist/index.d.ts`) was already correct despite the name
 collision with the empty JS placeholder, and none of the six sub-path `exports` entries
-(`./dist/binaryWasm`, `./dist/jsNoRender`, `./dist/binaryWasmNoRender`, …) were touched.
+(`./dist/binaryWasm`, `./dist/jsNoRender`, `./dist/binaryWasmNoRender`, …) were untouched by the
+initial migration. The follow-up in #11992 corrects root type resolution for `ketcher-react` and
+`ketcher-macromolecules` and adds `types` conditions to `ketcher-standalone` subpath exports,
+pointing at their emitted `index.d.ts` files. It also exposes `./package.json` from each affected
+export map. These metadata corrections leave all JavaScript `import`/`require` targets unchanged.
 
 **The major version bump is not about syntax level — that framing was wrong.** The original
 justification was that dropping Babel drops ES5 downleveling too: `@babel/preset-env` ran with

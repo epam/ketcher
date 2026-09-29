@@ -69,14 +69,18 @@
       "require": "./dist/cjs/main.js"
     },
     "./dist/binaryWasm": {
+      "types": "./dist/binaryWasm/index.d.ts",
       "import": "./dist/binaryWasm/main.js"
     },
     "./dist/jsNoRender": {
+      "types": "./dist/jsNoRender/index.d.ts",
       "import": "./dist/jsNoRender/main.js",
       "require": "./dist/cjs/jsNoRender/main.js"
     },
     "./dist/binaryWasmNoRender": {
+      "types": "./dist/binaryWasmNoRender/index.d.ts",
       "import": "./dist/binaryWasmNoRender/main.js"
-    }
+    },
+    "./package.json": "./package.json"
   }
 }

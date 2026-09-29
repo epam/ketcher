@@ -29,7 +29,6 @@ import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
 import {
   BaseMonomer,
-  CoreEditor,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   EditorLineLength,
   SetEditorLineLengthAction,
@@ -37,6 +36,7 @@ import {
   NodesSelection,
   isPasteContentAvailable,
   DeepPartial,
+  type MacromoleculesEditorProps,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -124,17 +124,8 @@ import './theme.less';
 
 const muiTheme = createTheme(muiOverrides);
 
-interface EditorProps {
-  ketcherId: string;
+interface EditorProps extends MacromoleculesEditorProps<JSX.Element> {
   theme?: DeepPartial<EditorTheme>;
-  togglerComponent?: JSX.Element;
-  monomersLibraryUpdate?: string | JSON;
-  monomersLibraryReplace?: string | JSON;
-  onInit?: (editor: CoreEditor) => void;
-}
-
-interface EditorContainerProps extends EditorProps {
-  isMacromoleculesEditorTurnedOn?: boolean;
 }
 
 function EditorContainer({
@@ -145,7 +136,7 @@ function EditorContainer({
   monomersLibraryUpdate,
   monomersLibraryReplace,
   isMacromoleculesEditorTurnedOn,
-}: Readonly<EditorContainerProps>) {
+}: Readonly<EditorProps>) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)

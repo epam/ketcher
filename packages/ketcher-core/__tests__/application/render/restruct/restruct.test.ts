@@ -109,6 +109,7 @@ describe('expanded monomer rendering', () => {
     });
     const bondId = struct.bonds.add(bond);
     struct.bondInitHalfBonds(bondId, bond);
+    return bondId;
   };
 
   const mockSvgGeometry = () => {
@@ -152,6 +153,85 @@ describe('expanded monomer rendering', () => {
 
   afterEach(() => {
     document.body.innerHTML = '';
+  });
+
+  it('keeps external bond geometry when an expanded monomer is collapsed', () => {
+    mockSvgGeometry();
+
+    const struct = new Struct();
+    const unrelatedAttachmentAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+    );
+    const connectedAtomId = struct.atoms.add(
+      new Atom({ label: 'N', pp: new Vec2(1, 1) }),
+    );
+    const outsideAtomId = struct.atoms.add(
+      new Atom({ label: 'O', pp: new Vec2(3, 2) }),
+    );
+    addBond(struct, unrelatedAttachmentAtomId, connectedAtomId);
+    const externalBondId = addBond(struct, connectedAtomId, outsideAtomId);
+
+    const monomer = new Peptide(peptideMonomerItem);
+    const monomerSGroup = new MonomerMicromolecule(SGroup.TYPES.SUP, monomer);
+    const monomerSGroupId = struct.sgroups.add(monomerSGroup);
+    monomerSGroup.id = monomerSGroupId;
+    monomerSGroup.data.expanded = true;
+    monomerSGroup.pp = new Vec2(-2, -2);
+    struct.atomAddToSGroup(monomerSGroupId, unrelatedAttachmentAtomId);
+    struct.atomAddToSGroup(monomerSGroupId, connectedAtomId);
+    monomerSGroup.addAttachmentPoint(
+      new SGroupAttachmentPoint(
+        unrelatedAttachmentAtomId,
+        undefined,
+        undefined,
+        1,
+      ),
+    );
+    monomerSGroup.addAttachmentPoint(
+      new SGroupAttachmentPoint(connectedAtomId, undefined, undefined, 2),
+    );
+
+    struct.initNeighbors();
+    struct.setImplicitHydrogen();
+
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const render = new Render(container, option);
+    const restruct = new ReStruct(struct, render);
+    restruct.update(true);
+
+    const expandedBond = restruct.bonds.get(externalBondId)?.b;
+    const expandedHalfBond1 = struct.halfBonds.get(expandedBond?.hb1 ?? -1);
+    const expandedHalfBond2 = struct.halfBonds.get(expandedBond?.hb2 ?? -1);
+    if (!expandedBond || !expandedHalfBond1 || !expandedHalfBond2) {
+      throw new Error('Expected the external bond to be rendered');
+    }
+    const expandedGeometry = {
+      center: new Vec2(expandedBond.center),
+      length: expandedBond.len,
+      angle: expandedBond.angle,
+      firstEndpoint: new Vec2(expandedHalfBond1.p),
+      secondEndpoint: new Vec2(expandedHalfBond2.p),
+    };
+
+    monomerSGroup.data.expanded = false;
+    monomerSGroup.data.contractedFromExpanded = true;
+    restruct.update(true);
+
+    const collapsedBond = restruct.bonds.get(externalBondId)?.b;
+    const collapsedHalfBond1 = struct.halfBonds.get(collapsedBond?.hb1 ?? -1);
+    const collapsedHalfBond2 = struct.halfBonds.get(collapsedBond?.hb2 ?? -1);
+    expect(collapsedBond).toBeDefined();
+    expect({
+      center: collapsedBond && new Vec2(collapsedBond.center),
+      length: collapsedBond?.len,
+      angle: collapsedBond?.angle,
+      firstEndpoint: collapsedHalfBond1 && new Vec2(collapsedHalfBond1.p),
+      secondEndpoint: collapsedHalfBond2 && new Vec2(collapsedHalfBond2.p),
+    }).toEqual(expandedGeometry);
+    expect(monomerSGroup.getContractedPosition(struct).position).toEqual(
+      monomerSGroup.pp,
+    );
   });
 
   it('shows CH3 for an expanded monomer with one visible atom and one leaving group', () => {

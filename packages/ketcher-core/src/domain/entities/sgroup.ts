@@ -72,6 +72,8 @@ interface SGroupData {
   nucleotideComponent: string;
   subscript: string;
   expanded: boolean;
+  contractedFromExpanded?: boolean;
+  expansionSpacingApplied?: boolean;
   attached: boolean;
   absolute: boolean;
   showUnits: boolean;
@@ -420,6 +422,10 @@ export class SGroup {
     const atom = struct.atoms.get(atomId);
     assert(atom, `SGroup.getContractedPosition: atom ${atomId} is not found`);
     return { atomId, position: atom.pp };
+  }
+
+  getContractedBondPosition(struct: Struct, _atomId: number) {
+    return this.getContractedPosition(struct);
   }
 
   cloneAttachmentPoints(

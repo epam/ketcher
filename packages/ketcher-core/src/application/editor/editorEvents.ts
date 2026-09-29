@@ -159,10 +159,11 @@ export const editorEvents: IEditorEvents = {
   switchToMacromoleculesMode: new Subscription(),
   switchToMoleculesMode: new Subscription(),
   openMonomerCreationWizard: new Subscription<MonomerCreationWizardRequest>(),
-    layoutCircular: new Subscription(),
-    flipHorizontal: new Subscription(),
-    flipVertical: new Subscription(),
-  };export function resetEditorEvents() {
+  layoutCircular: new Subscription(),
+  flipHorizontal: new Subscription(),
+  flipVertical: new Subscription(),
+};
+export function resetEditorEvents() {
   for (const key of Object.keys(editorEvents) as Array<keyof IEditorEvents>) {
     editorEvents[key] = new Subscription();
   }

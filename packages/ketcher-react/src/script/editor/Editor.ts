@@ -1097,7 +1097,7 @@ class Editor implements KetcherEditor {
     request: MonomerCreationWizardRequest,
     onFinish: (savedCanvas: boolean) => void,
   ) {
-    const macroEditor = provideEditorInstance(this.ketcherId);
+    const macroEditor = provideEditorInstance();
     const selectedEntities =
       macroEditor.drawingEntitiesManager.selectedEntities;
     const isLibraryRequest =
@@ -1312,7 +1312,7 @@ class Editor implements KetcherEditor {
     const initialValues = editAllInstances
       ? getEditAllInstancesInitialValues(
           monomer,
-          provideEditorInstance(this.ketcherId)?.monomersLibraryParsedJson,
+          provideEditorInstance()?.monomersLibraryParsedJson,
         )
       : getEditInstanceInitialValues(monomer);
 

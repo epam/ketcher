@@ -61,8 +61,7 @@ describe('temporary monomer wizard mode session', () => {
       const { editor, manager } = createEditor(modeName);
       const mode = editor.mode;
       const history = EditorHistory.getInstance(editor);
-      history.historyStack = [new Command()];
-      history.historyPointer = 1;
+      history.update(new Command());
       const hidden = manager.micromoleculesHiddenEntities;
 
       editor.beginMonomerWizardSession();
@@ -253,8 +252,7 @@ describe('temporary monomer wizard mode session', () => {
       const previousOperation = { execute: jest.fn(), invert: jest.fn() };
       const previousCommand = new Command();
       previousCommand.addOperation(previousOperation);
-      history.historyStack = [previousCommand];
-      history.historyPointer = 1;
+      history.update(previousCommand);
       jest
         .spyOn(DrawingEntitiesManager.prototype, 'unselectAllDrawingEntities')
         .mockReturnValue(new Command());
@@ -276,7 +274,7 @@ describe('temporary monomer wizard mode session', () => {
       const savedManager = editor.drawingEntitiesManager;
       expect(EditorHistory.getInstance(editor)).toBe(history);
       expect(history.historyPointer).toBe(2);
-      expect(history.previousCommand.operations).toHaveLength(1);
+      expect(history.previousCommand?.operations).toHaveLength(1);
 
       history.undo();
       expect(editor.drawingEntitiesManager).toBe(manager);
@@ -299,8 +297,7 @@ describe('temporary monomer wizard mode session', () => {
     const originalMonomer = new Peptide(peptideMonomerItem, new Vec2(12, 34));
     manager.monomers.set(originalMonomer.id, originalMonomer);
     const history = EditorHistory.getInstance(editor);
-    history.historyStack = [new Command()];
-    history.historyPointer = 1;
+    history.update(new Command());
     jest
       .spyOn(DrawingEntitiesManager.prototype, 'applyFlexLayoutMode')
       .mockReturnValue(new Command());

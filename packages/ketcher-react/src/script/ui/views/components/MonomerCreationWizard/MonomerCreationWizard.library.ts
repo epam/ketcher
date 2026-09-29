@@ -16,7 +16,7 @@ export const saveLibraryMonomer = async (
   data: Pick<FinishNewMonomersCreationData, 'monomerTemplate' | 'monomerRef'>,
   original?: MonomerItemType,
 ) => {
-  const editor = provideEditorInstance(ketcher.id);
+  const editor = provideEditorInstance();
   const editedRef = original
     ? getMonomerTemplateRefFromMonomerItem(original)
     : undefined;

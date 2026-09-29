@@ -20,9 +20,6 @@ const ATW_IGNORED_RULES = {
     'unexpected-module-syntax',
   ],
   'ketcher-macromolecules': [
-    // The emitted Editor.d.ts imports an unshipped theme.less; this separate
-    // declarations-packaging defect is the same class as #12004.
-    'internal-resolution-error',
     // Node 24.20+ detects the ESM .js entry despite its ambiguous extension.
     'unexpected-module-syntax',
   ],

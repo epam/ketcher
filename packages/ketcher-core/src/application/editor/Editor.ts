@@ -157,30 +157,7 @@ export interface SkippedMonomerItem {
   reason: string;
 }
 
-/**
- * Thrown by `CoreEditor.updateMonomersLibrary` when one or more incoming
- * monomer definitions are invalid and could not be committed to the library.
- *
- * `partialSuccess` is `true` when at least one item from the payload was
- * committed successfully alongside the failures, and `false` when every item
- * was rejected.
- *
- * `skippedItems` holds a structured list of every rejected item — `name` is
- * the monomer or template identifier, `reason` is a human-readable explanation
- * of why it was skipped.
- *
- * @example
- * try {
- *   await ketcher.updateMonomersLibrary(data);
- * } catch (err) {
- *   if (err instanceof MonomerLibraryUpdateError) {
- *     console.warn(`Partial success: ${err.partialSuccess}`);
- *     err.skippedItems.forEach(({ name, reason }) =>
- *       console.warn(`Skipped ${name}: ${reason}`)
- *     );
- *   }
- * }
- */
+/** @deprecated No longer thrown by `CoreEditor.updateMonomersLibrary`. */
 export class MonomerLibraryUpdateError extends Error {
   readonly partialSuccess: boolean;
   readonly skippedItems: SkippedMonomerItem[];
@@ -488,12 +465,7 @@ export class CoreEditor {
 
   /**
    * Upserts the provided monomer definitions into the in-memory library.
-   *
-   * @throws {MonomerLibraryUpdateError} When one or more items fail validation.
-   *   `skippedItems` lists every rejected monomer with a `name` and `reason`.
-   *   `partialSuccess` is `true` when at least one item was committed before
-   *   the error was raised. There is no rollback, so items committed before
-   *   the first failure remain in the library.
+   * Invalid items are logged and skipped.
    */
   public updateMonomersLibrary(monomersDataRaw: string | JSON) {
     // `_monomersLibraryParsedJson` is always initialized by `setMonomersLibrary`
@@ -512,12 +484,12 @@ export class CoreEditor {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
-    const skippedItems: SkippedMonomerItem[] = [];
     const reportValidationError = (name: string, reason: string) => {
-      KetcherLogger.error('Editor::updateMonomersLibrary', reason);
-      skippedItems.push({ name, reason });
+      KetcherLogger.error(
+        'Editor::updateMonomersLibrary',
+        `${name}: ${reason}`,
+      );
     };
-    let didCommitAnyItem = false;
 
     const areSameMonomers = (
       firstMonomer?: MonomerItemType,
@@ -753,7 +725,6 @@ export class CoreEditor {
           this._monomersLibrary[existingMonomerIndex] = newMonomer;
           this._monomersLibrary[existingMonomerIndex].props.id =
             existingMonomerId;
-          didCommitAnyItem = true;
 
           monomersLibraryParsedJson[existingMonomerTemplateRef] =
             newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
@@ -766,7 +737,6 @@ export class CoreEditor {
         }
       } else {
         this._monomersLibrary.push(newMonomer);
-        didCommitAnyItem = true;
 
         monomersLibraryParsedJson.root.templates.push(
           getKetRef(newMonomerTemplateRef),
@@ -872,7 +842,6 @@ export class CoreEditor {
       }
 
       monomersLibraryParsedJson[templateRef.$ref] = templateDefinition;
-      didCommitAnyItem = true;
       if (
         !monomersLibraryParsedJson.root.templates.find(
           (existingTemplateRef) =>
@@ -884,10 +853,6 @@ export class CoreEditor {
     });
 
     this.events.updateMonomersLibrary.dispatch();
-
-    if (skippedItems.length > 0) {
-      throw new MonomerLibraryUpdateError(skippedItems, didCommitAnyItem);
-    }
   }
 
   public get monomersLibraryParsedJson() {

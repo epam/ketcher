@@ -208,6 +208,7 @@ export interface IKetMonomerGroupTemplate {
   idtAliases?: IKetIdtAliases;
   aliasAxoLabs?: string;
   aliasBILN?: string;
+  hidden?: boolean;
 }
 
 export interface IKetMacromoleculesContentRootProperty {

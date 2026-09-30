@@ -2121,10 +2121,7 @@ export class DrawingEntitiesManager {
     if (isSnakeMode) {
       const editor = provideEditorInstance();
       const editorSettings = provideEditorSettings();
-      const canvasWidth =
-        editor.canvas.width?.baseVal?.value ||
-        editor.canvas.getBoundingClientRect().width;
-
+      const canvasWidth = editor.canvas.width.baseVal.value;
       const cellWidthInAngstroms =
         SnakeLayoutCellWidth / editorSettings.macroModeScale;
 
@@ -2764,6 +2761,15 @@ export class DrawingEntitiesManager {
     this.rxnPluses.forEach((rxnPlus) => {
       editor.renderersContainer.deleteRxnPlus(rxnPlus);
       editor.renderersContainer.addRxnPlus(rxnPlus);
+    });
+
+    this.sgroups.forEach((sgroup) => {
+      editor.renderersContainer.deleteSGroup(sgroup);
+      editor.renderersContainer.addSGroup(sgroup);
+    });
+    this.stereoFlags.forEach((flag) => {
+      editor.renderersContainer.deleteStereoFlag(flag);
+      editor.renderersContainer.addStereoFlag(flag);
     });
   }
 

@@ -46,7 +46,7 @@ export function fromAtomAddition(
   atom?: Partial<AtomAttributes>,
   fragmentId: number | null = null,
 ) {
-  const atomAttrs: Partial<AtomAttributes> = { ...(atom ?? {}) };
+  const atomAttrs: Partial<AtomAttributes> = { ...atom };
   const action = new Action();
 
   if (fragmentId === null) {

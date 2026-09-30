@@ -11,6 +11,7 @@ import {
   findLabelPoint,
   getSearchFunction,
 } from './helpers/attachmentPointCalculations';
+import { editorEvents } from 'application/editor/editorEvents';
 import {
   type AttachmentPointConstructorParams,
   AttachmentPointName,
@@ -61,10 +62,7 @@ export class AttachmentPoint {
   private readonly isDragTarget: boolean;
   private readonly isDragCircleHover: boolean;
   private readonly isSnake: boolean;
-  private get editorEvents() {
-    return provideEditorInstance().events;
-  }
-
+  private readonly editorEvents: typeof editorEvents;
   private readonly applyZoomForPositionCalculation: boolean;
 
   constructor(
@@ -88,6 +86,7 @@ export class AttachmentPoint {
     this.initialAngle = constructorParams.angle;
     this.applyZoomForPositionCalculation =
       constructorParams.applyZoomForPositionCalculation;
+    this.editorEvents = editorEvents;
     this.attachmentPoint = null;
 
     if (!skipInit) {
@@ -203,9 +202,9 @@ export class AttachmentPoint {
     const rotation = angleDegrees + 90;
     const halfWidth = 8;
 
-    const areaHeight = Math.sqrt(
-      (monomerCenter.x - attachmentPointCenter.x) ** 2 +
-        (monomerCenter.y - attachmentPointCenter.y) ** 2,
+    const areaHeight = Math.hypot(
+      monomerCenter.x - attachmentPointCenter.x,
+      monomerCenter.y - attachmentPointCenter.y,
     );
 
     const points: Coordinates[] = [

@@ -640,7 +640,7 @@ class BondTool implements Tool {
           return true;
         }
 
-        const v = new Vec2(1.0 / 2, 0).rotate(
+        const v = new Vec2(1 / 2, 0).rotate(
           this.bondProps.type === Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0,
         );
         const bondAddition = fromBondAddition(
@@ -683,7 +683,7 @@ class BondTool implements Tool {
           delete dragCtx.existedBond;
         }
       } else if (dragCtx.item.map === 'bonds') {
-        const bondProps = { ...(this.bondProps || {}) };
+        const bondProps = { ...this.bondProps };
         const bond = struct.bonds.get(dragCtx.item.id) as Bond;
         const bondClickFailure = this.hapticBond.getBondPairValidationFailure(
           struct,

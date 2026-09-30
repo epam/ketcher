@@ -1704,10 +1704,10 @@ test.describe('Macro-Micro-Switcher', () => {
     },
   );
 
-  test('Check that Undo-Redo invalidation if we change mode from micro to macro and back', async () => {
+  test('Undo-Redo should work if we change mode from micro to macro and back', async () => {
     /*
     Test case: #4530
-    Description: Undo-Redo invalidation if we change mode from micro to macro and back.
+    Description: Undo-Redo should work if we change mode from micro to macro and back.
     */
     await openFileAndAddToCanvas(
       page,

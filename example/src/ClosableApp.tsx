@@ -31,7 +31,16 @@ const App = () => {
 
   return (
     <StrictMode>
-      {!isVisisible ? (
+      {isVisisible ? (
+        <button
+          onClick={() => {
+            setIsVisisible(false);
+            setMolecule('');
+          }}
+        >
+          Hide
+        </button>
+      ) : (
         <>
           <button onClick={() => setIsVisisible(true)}>Show empty</button>
           <button
@@ -82,15 +91,6 @@ M  END
             Show molecule
           </button>
         </>
-      ) : (
-        <button
-          onClick={() => {
-            setIsVisisible(false);
-            setMolecule('');
-          }}
-        >
-          Hide
-        </button>
       )}
       {isVisisible && (
         <Editor

@@ -7,9 +7,9 @@ vi.stubGlobal(
   'ResizeObserver',
   vi.fn(function () {
     return {
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
+      observe: vi.fn(),
+      unobserve: vi.fn(),
+      disconnect: vi.fn(),
     };
   }),
 );

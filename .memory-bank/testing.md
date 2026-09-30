@@ -12,7 +12,9 @@ Each package runs unit tests with Vitest using a `vitest.config.mjs` that merges
 Vite configuration. This keeps test transforms and path aliases aligned with production. Core,
 React, and macromolecules use the `jsdom` environment; standalone uses `node`.
 
-- **ketcher-core**: `packages/ketcher-core/__tests__/` and `packages/ketcher-core/src/**`
+- **ketcher-core**: `packages/ketcher-core/__tests__/` and
+  `packages/ketcher-core/src/**/__tests__/` (the former Jest `testMatch` also required
+  `*.spec`/`*.test` filenames with `.ts` or `.js` extensions)
 - **ketcher-react**: `packages/ketcher-react/src/**`
 - **ketcher-macromolecules**: `packages/ketcher-macromolecules/src/**`
 - **ketcher-standalone**: `packages/ketcher-standalone/__tests__/`

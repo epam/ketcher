@@ -28,8 +28,10 @@ const { fakeEditor, order } = vi.hoisted(() => {
 
 let resolveDefaultLoad: () => void;
 
-vi.mock('ketcher-core', () => ({
-  ChemicalMimeType: { Mol: 'mol' },
+vi.mock('paper', () => ({ default: {} }));
+
+vi.mock('ketcher-core', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('ketcher-core')>()),
   getLabelRenderModeForIndigo: vi.fn(),
   pickStandardServerOptions: vi.fn(() => ({})),
   provideEditorInstance: vi.fn(() => fakeEditor),

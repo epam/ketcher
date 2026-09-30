@@ -136,9 +136,11 @@ const configWithWasmFetch = {
     },
   ],
   plugins: [
-    ...baseConfig.plugins,
+    // Resolve the aliases before the TypeScript plugin: tsconfig `paths` maps the
+    // worker alias to the web-worker-loader import, which this build never processes.
     replaceIndigoAlias('indigo-ketcher/binaryWasm'),
     useIndigoWorkerImport(INDIGO_WORKER_IMPORTS.OFF_MAIN_THREAD_PLUGIN),
+    ...baseConfig.plugins,
     copy({
       targets: [
         {
@@ -198,9 +200,11 @@ const configWithWasmWithoutRender = {
     },
   ],
   plugins: [
-    ...baseConfig.plugins,
+    // Resolve the aliases before the TypeScript plugin: tsconfig `paths` maps the
+    // worker alias to the web-worker-loader import, which this build never processes.
     replaceIndigoAlias('indigo-ketcher/binaryWasmNoRender'),
     useIndigoWorkerImport(INDIGO_WORKER_IMPORTS.OFF_MAIN_THREAD_PLUGIN),
+    ...baseConfig.plugins,
     copy({
       targets: [
         {

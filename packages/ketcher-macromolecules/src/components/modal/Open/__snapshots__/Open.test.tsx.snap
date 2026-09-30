@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Open component should render correctly 1`] = `
+exports[`Open component > should render correctly 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body
@@ -10,7 +10,7 @@ exports[`Open component should render correctly 1`] = `
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root MuiModal-root css-1ezeeef-MuiModal-root-MuiDialog-root"
+      class="MuiDialog-root e1o3ta020 e1p7mi8t0 MuiModal-root css-12eo7mm-MuiModal-root-MuiDialog-root-StyledDialog-OpenModal"
       role="presentation"
     >
       <div
@@ -37,11 +37,11 @@ exports[`Open component should render correctly 1`] = `
           testid="openStructureModal"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-15hei83-MuiTypography-root-MuiDialogTitle-root"
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root e1p7mi8t1 css-5ydugg-MuiTypography-root-MuiDialogTitle-root-Header"
             id="_r_0_"
           >
             <div
-              class="css-1uarmuk"
+              class="css-1646qpa-Title e1p7mi8t2"
             >
               Open Structure
             </div>
@@ -54,7 +54,7 @@ exports[`Open component should render correctly 1`] = `
                 type="button"
               >
                 <svg
-                  class="css-1td8dcm"
+                  class="css-1erujtq-StyledIcon e1p7mi8t3"
                   name="close"
                 />
                 <span
@@ -64,33 +64,33 @@ exports[`Open component should render correctly 1`] = `
             </span>
           </h2>
           <div
-            class="MuiDialogContent-root css-1wbmh3t-MuiDialogContent-root"
+            class="MuiDialogContent-root e1p7mi8t4 css-s9veb4-MuiDialogContent-root-Content-scrollbarThin"
           >
             <div
-              class="css-1xilxz1"
+              class="css-5hrr2e-OpenFileWrapper ef17xw00"
             >
               <div
-                class="css-9brf46"
+                class="css-pi46rz-RootContainer et9048s0"
               >
                 <div
-                  class="css-uve29d"
+                  class="css-foy7k2-DropContainer et9048s1"
                   data-testid="paste-from-clipboard-button"
                 >
                   <svg
                     name="open-window-paste-icon"
                   />
                   <p
-                    class="css-9x63nq"
+                    class="css-sgg9ug-OpenOptionText e1a1f80u0"
                   >
                     Paste from clipboard
                   </p>
                 </div>
                 <div
-                  class="css-uve29d"
+                  class="css-foy7k2-DropContainer et9048s1"
                   data-testid="open-from-file-button"
                 >
                   <button
-                    class="css-1mbhme1"
+                    class="css-1qzfx5o-DropzoneButton e1s5y1va2"
                     style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
                     tabindex="0"
                     type="button"
@@ -102,29 +102,29 @@ exports[`Open component should render correctly 1`] = `
                       type="file"
                     />
                     <svg
-                      class="css-1opl6cd"
+                      class="css-1amycvo-StyledIcon e1s5y1va0"
                       name="open-window-upload-icon"
                     />
                     <div
-                      class="css-1b8y5ux"
+                      class="css-1flc7s7-ButtonContainer e1s5y1va1"
                     >
                       <span>
                         or drag file here
                       </span>
                     </div>
                     <p
-                      class="css-9x63nq"
+                      class="css-sgg9ug-OpenOptionText e1a1f80u0"
                     >
                       Open from file
                     </p>
                   </button>
                 </div>
                 <div
-                  class="css-uve29d"
+                  class="css-foy7k2-DropContainer et9048s1"
                   data-testid="open-from-image-button"
                 >
                   <button
-                    class="css-1mbhme1"
+                    class="css-1qzfx5o-DropzoneButton e1s5y1va2"
                     disabled=""
                     style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
                     tabindex="-1"
@@ -138,12 +138,12 @@ exports[`Open component should render correctly 1`] = `
                       type="file"
                     />
                     <svg
-                      class="css-1iqv54s"
+                      class="css-4fh0bc-StyledIcon e1s5y1va0"
                       disabled=""
                       name="image-frame"
                     />
                     <p
-                      class="css-1uh9od2"
+                      class="css-1e0xerj-DisabledText e1a1f80u1"
                     >
                       Image Recognition service is not available
                     </p>

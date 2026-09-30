@@ -14,11 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
+
 import { render, screen, fireEvent } from '@testing-library/react';
 
 import { Modal } from '.';
 
-const mockOnCloseHandler = jest.fn();
+const mockOnCloseHandler = vi.fn();
 
 const mockModal = () => {
   return (
@@ -70,7 +72,7 @@ describe('Modal component', () => {
   });
 
   it('should show "Expand window" tooltip when not expanded', () => {
-    const mockSetExpanded = jest.fn();
+    const mockSetExpanded = vi.fn();
     render(
       withThemeProvider(
         <Modal
@@ -90,7 +92,7 @@ describe('Modal component', () => {
   });
 
   it('should show "Minimize window" tooltip when expanded', () => {
-    const mockSetExpanded = jest.fn();
+    const mockSetExpanded = vi.fn();
     render(
       withThemeProvider(
         <Modal
@@ -111,7 +113,7 @@ describe('Modal component', () => {
 
   it('should toggle tooltip when expand button is clicked', () => {
     let expanded = false;
-    const mockSetExpanded = jest.fn((newValue) => {
+    const mockSetExpanded = vi.fn((newValue) => {
       expanded = newValue;
     });
 

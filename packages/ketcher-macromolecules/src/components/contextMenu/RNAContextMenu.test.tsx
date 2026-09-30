@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 import { ModalContainer } from 'components/modal/modalContainer';
 import { RnaBuilder } from 'components/monomerLibrary/RnaBuilder';
@@ -21,7 +23,7 @@ import { MONOMER_TYPES } from 'src/constants';
 import { EditorClassName } from 'ketcher-react';
 import mockedPresets from './mockedPresets.json';
 
-jest.mock('../../../src/helpers/dom.ts', () => {
+vi.mock('../../../src/helpers/dom.ts', () => {
   return {
     scrollToElement: () => {},
   };
@@ -64,8 +66,8 @@ const monomerData = [
   },
 ];
 describe('RNA ContextMenu', () => {
-  const editPreset = jest.fn();
-  const duplicatePreset = jest.fn();
+  const editPreset = vi.fn();
+  const duplicatePreset = vi.fn();
   const initialState = {
     library: {
       searchFilter: '',

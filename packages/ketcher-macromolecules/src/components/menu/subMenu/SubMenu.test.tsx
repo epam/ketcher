@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -21,7 +23,7 @@ import { Menu, MenuContext } from 'components/menu';
 import { configureAppStore } from 'state';
 import { defaultTheme } from 'theming/defaultTheme';
 
-const mockClickHandler = jest.fn();
+const mockClickHandler = vi.fn();
 const MOCK_NAME = 'select-lasso';
 
 const mockValue = {

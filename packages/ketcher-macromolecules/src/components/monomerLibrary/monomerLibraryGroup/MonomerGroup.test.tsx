@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
+
 import { render, screen } from '@testing-library/react';
 import { Struct } from 'ketcher-core';
 
@@ -76,7 +78,7 @@ describe('Monomer Group', () => {
     ],
     groupTitle: 'Mock title',
   };
-  const onItemClick = jest.fn();
+  const onItemClick = vi.fn();
 
   it('should render correct without title prop', () => {
     const view = render(

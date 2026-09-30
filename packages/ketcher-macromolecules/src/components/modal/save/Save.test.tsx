@@ -14,14 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
+
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Save } from 'components/modal/save';
 import userEvent from '@testing-library/user-event';
 import { type CoreEditor, Struct } from 'ketcher-core';
 import * as ketcherCore from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
+import { getPropertiesByFormat } from 'helpers/formats';
 
-const mockOnClose = jest.fn();
+const mockOnClose = vi.fn();
 
 const mockProps = {
   onClose: mockOnClose,
@@ -30,17 +33,17 @@ const mockProps = {
 
 describe('Save modal', () => {
   it('renders correctly', () => {
-    jest.spyOn(ketcherCore, 'provideEditorInstance').mockImplementation(() => {
+    vi.spyOn(ketcherCore, 'provideEditorInstance').mockImplementation(() => {
       return {
         drawingEntitiesManager: {
           micromoleculesHiddenEntities: {
             clone: () => {
               return new Struct();
             },
-            mergeInto: jest.fn(),
+            mergeInto: vi.fn(),
           },
-          setMicromoleculesHiddenEntities: jest.fn(),
-          detectBondsOverlappedByMonomers: jest.fn(),
+          setMicromoleculesHiddenEntities: vi.fn(),
+          detectBondsOverlappedByMonomers: vi.fn(),
           monomers: [],
           polymerBonds: [],
           bonds: [],
@@ -51,7 +54,7 @@ describe('Save modal', () => {
           rxnPluses: [],
         },
         viewModel: {
-          initialize: jest.fn(),
+          initialize: vi.fn(),
         },
       } as unknown as CoreEditor;
     });
@@ -101,11 +104,11 @@ describe('Save modal', () => {
   });
 
   it('should pass molfile-saving-mode option when converting to MOL V3000 format', () => {
-    const mockConvert = jest.fn().mockResolvedValue({
+    const mockConvert = vi.fn().mockResolvedValue({
       struct: 'V3000 format result',
     });
 
-    jest.spyOn(IndigoProvider, 'getIndigo').mockReturnValue({
+    vi.spyOn(IndigoProvider, 'getIndigo').mockReturnValue({
       convert: mockConvert,
     } as unknown as ReturnType<typeof IndigoProvider.getIndigo>);
 
@@ -113,11 +116,11 @@ describe('Save modal', () => {
       drawingEntitiesManager: {
         micromoleculesHiddenEntities: {
           clone: () => new Struct(),
-          mergeInto: jest.fn(),
+          mergeInto: vi.fn(),
         },
-        setMicromoleculesHiddenEntities: jest.fn(),
-        detectBondsOverlappedByMonomers: jest.fn(),
-        validateIfApplicableForFasta: jest.fn().mockReturnValue(true),
+        setMicromoleculesHiddenEntities: vi.fn(),
+        detectBondsOverlappedByMonomers: vi.fn(),
+        validateIfApplicableForFasta: vi.fn().mockReturnValue(true),
         molecules: [],
         monomers: new Map(),
         polymerBonds: [],
@@ -131,18 +134,18 @@ describe('Save modal', () => {
       monomersLibrary: {},
       canvas: document.createElement('canvas'),
       viewModel: {
-        initialize: jest.fn(),
+        initialize: vi.fn(),
       },
       events: {
         error: {
-          dispatch: jest.fn(),
+          dispatch: vi.fn(),
         },
       },
     } as unknown as CoreEditor;
 
-    jest
-      .spyOn(ketcherCore, 'provideEditorInstance')
-      .mockImplementation(() => mockEditor);
+    vi.spyOn(ketcherCore, 'provideEditorInstance').mockImplementation(
+      () => mockEditor,
+    );
 
     render(withThemeAndStoreProvider(<Save {...mockProps} />));
 
@@ -154,7 +157,6 @@ describe('Save modal', () => {
     // Since we can't easily simulate the dropdown interaction,
     // we verify the implementation by checking that getPropertiesByFormat('mol')
     // returns the correct options with 'molfile-saving-mode': '3000'
-    const { getPropertiesByFormat } = require('helpers/formats');
     const molProperties = getPropertiesByFormat('mol');
 
     expect(molProperties.options).toEqual({ 'molfile-saving-mode': '3000' });

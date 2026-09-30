@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -18,9 +20,9 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { OpenOptions } from './OpenOptions';
 
 const mockProps = {
-  selectClipboard: jest.fn(),
-  fileLoadHandler: jest.fn(),
-  errorHandler: jest.fn(),
+  selectClipboard: vi.fn(),
+  fileLoadHandler: vi.fn(),
+  errorHandler: vi.fn(),
 };
 
 describe('OpenOptions component', () => {

@@ -14,11 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
+
 import { render, screen, fireEvent } from '@testing-library/react';
 
 import { DropDown, DropDownProps } from './dropDown';
 
-const mockSelectionHandler = jest.fn();
+const mockSelectionHandler = vi.fn();
 const MOCK_OPTIONS = [
   { id: '1', label: 'Cat' },
   { id: '2', label: 'Dog' },

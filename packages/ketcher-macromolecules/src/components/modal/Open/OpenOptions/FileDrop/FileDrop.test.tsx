@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -23,7 +25,7 @@ const mockProps = {
   buttonLabel: 'Open from file',
   textLabel: 'or drag file here',
   iconName: 'arrow-upward' as IconName,
-  onDropAccepted: jest.fn(),
+  onDropAccepted: vi.fn(),
 } as FileDropProps;
 
 const mockOptionalProps = {

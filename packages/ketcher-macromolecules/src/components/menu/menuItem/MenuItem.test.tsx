@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,7 +18,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Menu, MenuContext } from 'components/menu';
 
-const mockClickHandler = jest.fn();
+const mockClickHandler = vi.fn();
 const MOCK_NAME = 'select-lasso';
 
 const mockValue = {

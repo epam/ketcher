@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
+
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
@@ -22,9 +24,9 @@ import { IndigoProvider } from 'ketcher-react';
 import { type CoreEditor, Struct } from 'ketcher-core';
 import * as ketcherCore from 'ketcher-core';
 
-jest.spyOn(React, 'useEffect').mockImplementation(() => {});
+vi.spyOn(React, 'useEffect').mockImplementation(() => {});
 global.ketcher = {
-  logging: jest.fn(),
+  logging: vi.fn(),
 };
 
 describe('Open component', () => {
@@ -32,7 +34,7 @@ describe('Open component', () => {
     expect(
       render(
         withThemeAndStoreProvider(
-          <Open isModalOpen={true} onClose={jest.fn()} />,
+          <Open isModalOpen={true} onClose={vi.fn()} />,
         ),
       ),
     ).toMatchSnapshot();
@@ -44,7 +46,7 @@ describe('Open component', () => {
       onClose: () => expect(mockProps.onClose).toHaveBeenCalled(),
     };
 
-    jest.spyOn(ketcherCore, 'provideEditorInstance').mockImplementation(() => {
+    vi.spyOn(ketcherCore, 'provideEditorInstance').mockImplementation(() => {
       return {
         drawingEntitiesManager: {
           monomers: new Map(),
@@ -52,11 +54,11 @@ describe('Open component', () => {
           micromoleculesHiddenEntities: new Struct(),
         },
         renderersContainer: {
-          update: jest.fn(),
+          update: vi.fn(),
         },
       } as unknown as CoreEditor;
     });
-    jest.spyOn(IndigoProvider, 'getIndigo').mockReturnValue({
+    vi.spyOn(IndigoProvider, 'getIndigo').mockReturnValue({
       convert: () => {
         return {
           struct:
@@ -78,7 +80,7 @@ describe('Open component', () => {
   it('buttons should be disabled when textarea is empty', () => {
     const mockProps = {
       isModalOpen: true,
-      onClose: jest.fn(),
+      onClose: vi.fn(),
     };
 
     render(withThemeAndStoreProvider(<Open {...mockProps} />));
@@ -95,7 +97,7 @@ describe('Open component', () => {
   it('buttons should be disabled when textarea contains only whitespace', () => {
     const mockProps = {
       isModalOpen: true,
-      onClose: jest.fn(),
+      onClose: vi.fn(),
     };
 
     render(withThemeAndStoreProvider(<Open {...mockProps} />));
@@ -115,7 +117,7 @@ describe('Open component', () => {
   it('buttons should be enabled when textarea has valid content', () => {
     const mockProps = {
       isModalOpen: true,
-      onClose: jest.fn(),
+      onClose: vi.fn(),
     };
 
     render(withThemeAndStoreProvider(<Open {...mockProps} />));

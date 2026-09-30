@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { render, screen } from '@testing-library/react';
 import { KetMonomerClass, Struct } from 'ketcher-core';
 import { MONOMER_TYPES, MonomerGroups } from 'src/constants';
@@ -5,10 +7,10 @@ import { MONOMER_TYPES, MonomerGroups } from 'src/constants';
 import RnaElementsTabsView from './RnaElementsTabsView';
 
 describe('RnaElementsTabsView', () => {
-  const onSelectItem = jest.fn();
-  const onNewPresetClick = jest.fn();
-  const duplicatePreset = jest.fn();
-  const editPreset = jest.fn();
+  const onSelectItem = vi.fn();
+  const onNewPresetClick = vi.fn();
+  const duplicatePreset = vi.fn();
+  const editPreset = vi.fn();
 
   const initialState = {
     library: {

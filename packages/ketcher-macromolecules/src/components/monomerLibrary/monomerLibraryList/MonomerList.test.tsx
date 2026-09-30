@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
+
 import { render, screen } from '@testing-library/react';
 import { MONOMER_LIBRARY_FAVORITES, MONOMER_TYPES } from '../../../constants';
 
@@ -21,9 +23,9 @@ import { MonomerList } from './MonomerList';
 import { preset } from 'src/testMockData/monomerPresets';
 
 describe('Monomer List', () => {
-  const duplicatePreset = jest.fn();
-  const editPreset = jest.fn();
-  const onItemClick = jest.fn();
+  const duplicatePreset = vi.fn();
+  const editPreset = vi.fn();
+  const onItemClick = vi.fn();
   const initialState = {
     library: {
       searchFilter: '',

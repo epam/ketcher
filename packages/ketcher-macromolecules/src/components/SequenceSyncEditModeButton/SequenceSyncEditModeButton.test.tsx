@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
+
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
@@ -25,8 +27,8 @@ import { rnaBuilderReducer } from 'state/rna-builder';
 import { EditorEvents } from '../../EditorEvents';
 import { SequenceSyncEditModeButton } from '.';
 
-jest.mock('hooks', () => ({
-  ...jest.requireActual('hooks'),
+vi.mock('hooks', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('hooks')>()),
   useLayoutMode: () => 'sequence-layout-mode',
 }));
 
@@ -144,7 +146,7 @@ describe('SequenceSyncEditModeButton', () => {
     hasAntisenseChains = true;
     renderComponents();
 
-    const dispatchSpy = jest.spyOn(
+    const dispatchSpy = vi.spyOn(
       fakeEditor.events.toggleIsSequenceSyncEditMode,
       'dispatch',
     );
@@ -165,7 +167,7 @@ describe('SequenceSyncEditModeButton', () => {
       fireEvent.click(screen.getByTestId('sync_sequence_edit_mode'));
     });
 
-    const dispatchSpy = jest.spyOn(
+    const dispatchSpy = vi.spyOn(
       fakeEditor.events.toggleIsSequenceSyncEditMode,
       'dispatch',
     );

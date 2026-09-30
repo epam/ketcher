@@ -53,6 +53,10 @@ import { assert } from 'utilities';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
+import {
+  findAttachmentPointForBond,
+  getOppositeAttachmentPointStereoBond,
+} from 'domain/helpers/monomerAttachmentPointStereo';
 
 const fromMonomerBondFlipWithNewStereo = (
   struct: Struct,
@@ -216,16 +220,20 @@ export function setExpandMonomerSGroup(
 
       const otherMonomerIsExpanded = otherSGroup.isExpanded();
 
-      const currentMonomerAP = attachmentPoints.find(
-        (ap) => ap.atomId === atomInsideCurrentMonomer,
+      const currentMonomerAP = findAttachmentPointForBond(
+        attachmentPoints,
+        bondToOutside,
+        atomInsideCurrentMonomer,
       );
       if (!currentMonomerAP) {
         continue;
       }
 
       const otherMonomerAPs = otherSGroup.getAttachmentPoints();
-      const otherMonomerAP = otherMonomerAPs.find(
-        (ap) => ap.atomId === atomOutsideCurrentMonomer,
+      const otherMonomerAP = findAttachmentPointForBond(
+        otherMonomerAPs,
+        bondToOutside,
+        atomOutsideCurrentMonomer,
       );
       if (!otherMonomerAP) {
         continue;
@@ -261,34 +269,50 @@ export function setExpandMonomerSGroup(
         }
       }
 
+      const setStereoWithNarrowEndAtAtom = (atomId: number, stereo: number) => {
+        if (bondToOutside.begin !== atomId) {
+          action.mergeWith(
+            fromMonomerBondFlipWithNewStereo(struct, bondId, stereo),
+          );
+        } else {
+          action.addOp(new BondAttr(bondId, 'stereo', stereo));
+        }
+      };
+
       if (hasEffectiveCurrentStereo && !hasEffectiveOtherStereo) {
-        if (bondToOutside.begin !== atomInsideCurrentMonomer) {
-          action.mergeWith(
-            fromMonomerBondFlipWithNewStereo(
-              struct,
-              bondId,
-              currentMonomerStereoValue,
-            ),
-          );
-        } else {
-          action.addOp(
-            new BondAttr(bondId, 'stereo', currentMonomerStereoValue),
-          );
-        }
+        setStereoWithNarrowEndAtAtom(
+          atomInsideCurrentMonomer,
+          currentMonomerStereoValue,
+        );
       } else if (!hasEffectiveCurrentStereo && hasEffectiveOtherStereo) {
-        if (bondToOutside.begin !== atomOutsideCurrentMonomer) {
-          action.mergeWith(
-            fromMonomerBondFlipWithNewStereo(
-              struct,
-              bondId,
-              otherMonomerStereoValue,
-            ),
-          );
-        } else {
-          action.addOp(new BondAttr(bondId, 'stereo', otherMonomerStereoValue));
-        }
+        setStereoWithNarrowEndAtAtom(
+          atomOutsideCurrentMonomer,
+          otherMonomerStereoValue,
+        );
       } else if (hasEffectiveCurrentStereo && hasEffectiveOtherStereo) {
         action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.NONE));
+      } else {
+        // Neither attachment point is marked, but a chiral phosphate marks only
+        // one of the two attachment points it keeps on the same atom, so the
+        // other bond is drawn with the opposite wedge.
+        const currentMonomerOppositeStereo =
+          getOppositeAttachmentPointStereoBond(sGroup, currentMonomerAP);
+        const otherMonomerOppositeStereo = getOppositeAttachmentPointStereoBond(
+          otherSGroup,
+          otherMonomerAP,
+        );
+
+        if (currentMonomerOppositeStereo !== null) {
+          setStereoWithNarrowEndAtAtom(
+            atomInsideCurrentMonomer,
+            currentMonomerOppositeStereo,
+          );
+        } else if (otherMonomerOppositeStereo !== null) {
+          setStereoWithNarrowEndAtAtom(
+            atomOutsideCurrentMonomer,
+            otherMonomerOppositeStereo,
+          );
+        }
       }
     }
   });

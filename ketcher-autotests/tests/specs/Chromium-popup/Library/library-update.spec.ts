@@ -1,9 +1,3 @@
-/* eslint-disable prefer-template */
-/* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
 import { Base } from '@tests/pages/constants/monomers/Bases';
@@ -312,7 +306,7 @@ test('Case 13: Update Library item with compound that contains MOLv3000 file wit
   const sdfFile =
     _Phosphate1Body +
     _aliasHELM +
-    '\\/' +
+    String.raw`\/` +
     _betweenEntries +
     _idtAliases +
     'base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosphate1_ep5/,internal=/phosphate1_internal/' +
@@ -371,7 +365,7 @@ test('Case 15: Update Library item with compound that contains MOLv3000 file wit
   const sdfFile =
     _Phosphate1Body +
     _idtAliases +
-    'base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosph\\//ate1_ep5/,internal=/phosphate1_internal/' +
+    String.raw`base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosph\//ate1_ep5/,internal=/phosphate1_internal/` +
     _betweenEntries +
     _endToken;
 
@@ -400,7 +394,7 @@ test('Case 16: Update Library item with compound that contains MOLv3000 file wit
   const sdfFile =
     _Phosphate1Body +
     _idtAliases +
-    'base=_phosphate1IDT,ep3=/phospha\\//te1_ep3/,ep5=/phosphate1_ep5/,internal=/phosphate1_internal/' +
+    String.raw`base=_phosphate1IDT,ep3=/phospha\//te1_ep3/,ep5=/phosphate1_ep5/,internal=/phosphate1_internal/` +
     _betweenEntries +
     _endToken;
 
@@ -429,7 +423,7 @@ test('Case 17: Update Library item with compound that contains MOLv3000 file wit
   const sdfFile =
     _Phosphate1Body +
     _idtAliases +
-    'base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosphate1_ep5/,internal=/phospha\\//te1_internal/' +
+    String.raw`base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosphate1_ep5/,internal=/phospha\//te1_internal/` +
     _betweenEntries +
     _endToken;
 
@@ -540,31 +534,28 @@ test.fail(
   },
 );
 
-test.fail(
-  'Case 21: Update Library item with compound that contains MOLv3000 file with modificationType field that contain improper characters (quotation marks and so on)',
-  async () => {
-    // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8357
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with modificationType field that contain improper characters (quotation marks and so on)
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Execute command in console
-     * 3. Check that the structure doesn't appears in the Library
-     *
-     * Version 3.9
-     */
+test('Case 21: Update Library item with compound that contains MOLv3000 file with modificationType field that contain improper characters (quotation marks and so on)', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8345
+   * Description: Update Library item with compound that contains MOLv3000 file with modificationType field that contain improper characters (quotation marks and so on)
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute command in console
+   * 3. Check that the structure doesn't appears in the Library
+   *
+   * Version 3.9
+   * Fixed by: #8357
+   */
 
-    const sdfFile =
-      _Peptide1Body + _modificationTypes + ' \t ' + _betweenEntries + _endToken;
+  const sdfFile =
+    _Peptide1Body + _modificationTypes + ' \t ' + _betweenEntries + _endToken;
 
-    const error = await updateMonomersLibrary(page, sdfFile);
-    expect(error).not.toBeNull();
-    expect(
-      await Library(page).isMonomerExist(Peptide._Peptide1),
-    ).not.toBeTruthy();
-  },
-);
+  const error = await updateMonomersLibrary(page, sdfFile);
+  expect(error).not.toBeNull();
+  expect(
+    await Library(page).isMonomerExist(Peptide._Peptide1),
+  ).not.toBeTruthy();
+});
 
 test('Case 22: Update Library item with compound that contains MOLv3000 file with groupClass field that has non-RNA value (try DNA)', async () => {
   /*
@@ -740,7 +731,7 @@ test('Case 27: Update Library item with compound that contains MOLv3000 file wit
     'DNA' +
     _betweenEntries +
     _groupName +
-    'InproperCharacters\\//' +
+    String.raw`InproperCharacters\//` +
     _betweenEntries +
     _endToken;
 
@@ -828,12 +819,22 @@ test('Case 29: Update Library item with HELM alias longer than 23 symbols logs a
   type ConsoleCaptureWindow = typeof window & {
     capturedConsoleErrors: string[];
     originalConsoleError: typeof console.error;
+    logging?: {
+      enabled?: boolean;
+      level?: number;
+      showTrace?: boolean;
+    };
   };
 
   await page.evaluate(() => {
     const testWindow = window as ConsoleCaptureWindow;
 
-    window.ketcher.logging.enabled = true;
+    testWindow.logging = {
+      ...testWindow.logging,
+      enabled: true,
+      level: 0,
+      showTrace: false,
+    };
     testWindow.capturedConsoleErrors = [];
     testWindow.originalConsoleError = console.error;
     console.error = (...args) => {

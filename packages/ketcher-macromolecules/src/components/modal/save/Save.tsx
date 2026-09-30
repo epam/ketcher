@@ -155,10 +155,16 @@ export const Save = ({
           );
         }
       }
-      const result = await indigo.convert({
-        struct: serializedKet,
-        output_format: formatDetector[fileFormat],
-      });
+      const formatProperties = getPropertiesByFormat(fileFormat);
+      // Pass format-specific options (e.g., 'molfile-saving-mode': '3000' for MOL V3000)
+      // to ensure correct format version is used during conversion
+      const result = await indigo.convert(
+        {
+          struct: serializedKet,
+          output_format: formatDetector[fileFormat],
+        },
+        formatProperties.options,
+      );
       setStruct(result.struct);
     } catch (error) {
       let stringError;

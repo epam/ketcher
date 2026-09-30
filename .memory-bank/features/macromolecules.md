@@ -8,6 +8,7 @@ Beyond small molecules, users work with biopolymers — peptides and nucleic aci
 
 - **Mode switch** — the _Molecules/Macromolecules switcher_ enters macromolecules mode.
 - **Monomer library** — Favorites, Peptides, RNA, and CHEM tabs; search by name, symbol, or IDT alias; hover a card for a preview. The _RNA Builder_ creates sugar-base-phosphate presets, and a _Monomer Creation Wizard_ (`Ctrl+M`)(available through molecules mode) defines custom monomers/presets with attachment points.
+  - Exact `-` and `_` searches match only the short name displayed on monomer and RNA preset cards, avoiding matches from internal alias or metadata fields.
 - **Layout modes** — the _modes switcher_ toggles **Sequence** (single-letter, text-editor-like), **Snake** (auto-layouted shapes), and **Flex** (free shapes) views. A _Sequence typing type switcher_ selects RNA/DNA/Peptide interpretation for keyboard input (`Ctrl+Alt+R/D/P`).
 - **Adding monomers** — type/paste in sequence mode, drag-and-drop from the library, use the card _arrow icon_ (autochain), or open/paste files.
 - **Bonds** — the _Bond tool_ makes single covalent bonds (at attachment points or centers, with a _Select Attachment Points_ dialog when a default bond is ambiguous) and hydrogen bonds (center-to-center only).
@@ -88,6 +89,24 @@ Monomers connect through defined attachment points, sequences render as single-l
 
 - **WHEN** the user enters snake mode
 - **THEN** monomers and small molecules on the canvas are automatically laid out; entering flex mode applies no layout
+
+#### Scenario: Chain enumeration
+
+- **WHEN** a peptide chain forms, or an RNA/DNA sugar-phosphate chain starts from a sugar/phosphate that has no R1 attachment point, a free R1 attachment point, or an R1 occupied by a bond to another attachment point than R2
+- **THEN** Ketcher numbers each eligible monomer sequentially along the chain, including a lone sugar-base-phosphate unit
+- **AND** if no monomer in the chain satisfies that starting condition, no enumeration is shown
+
+#### Scenario: Enumeration removed when a monomer leaves its preset chain
+
+- **WHEN** the sugar and/or phosphate that made a base part of a numbered preset chain are deleted, leaving the base without a valid enumerable chain
+- **THEN** the base's enumeration number is cleared rather than left showing a stale value
+
+#### Scenario: Hover previews near editor boundaries
+
+- **WHEN** a monomer or bond preview does not fit on either preferred side of its target
+- **THEN** its position is constrained to keep it visible within the editor (provided the preview fits the available area), even if it must overlap the target
+- **AND** positioning works both at the page origin and in an offset popup
+- **AND** canvas previews without interactive content allow pointer events to reach the canvas underneath
 
 ## Guarantees
 

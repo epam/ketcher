@@ -8,6 +8,8 @@ import { PolymerBondRendererFactory } from 'application/render/renderers/Polymer
 import {
   type Loop,
   type RGroupAttachmentPoint,
+  type Atom,
+  type Bond,
   Box2Abs,
   Pool,
   Struct,
@@ -393,11 +395,11 @@ const mockBonds = [
   },
 ];
 
-const atoms = new Pool();
-mockAtoms.forEach((atom, key) => atoms.set(key, atom));
+const atoms = new Pool<Atom>();
+mockAtoms.forEach((atom, key) => atoms.set(key, atom as Atom));
 
-const bonds = new Pool();
-mockBonds.forEach((bond, key) => bonds.set(key, bond));
+const bonds = new Pool<Bond>();
+mockBonds.forEach((bond, key) => bonds.set(key, bond as Bond));
 
 const mockHalfBonds = [
   {

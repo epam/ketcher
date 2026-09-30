@@ -100,7 +100,7 @@ export function fromSeveralSgroupAddition(
   }
 
   return descriptors.reduce((acc, fValue) => {
-    const localAttrs = { ...(attrs || {}) };
+    const localAttrs = { ...attrs };
     localAttrs.fieldValue = fValue;
 
     return acc.mergeWith(
@@ -541,29 +541,6 @@ export function setExpandMonomerSGroup(
   return action.perform(restruct);
 }
 
-// todo delete after supporting expand - collapse for 2 attachment points
-export function expandSGroupWithMultipleAttachmentPoint(restruct) {
-  const action = new Action();
-
-  const struct = restruct.molecule;
-
-  struct.sgroups.forEach((sgroup: SGroup) => {
-    if (
-      sgroup.isNotContractible(struct) &&
-      !(sgroup instanceof MonomerMicromolecule) &&
-      !SGroup.isSuperAtom(sgroup)
-    ) {
-      action.mergeWith(
-        setExpandSGroup(restruct, sgroup.id, {
-          expanded: true,
-        }),
-      );
-    }
-  });
-
-  return action;
-}
-
 export function sGroupAttributeAction(id, attrs) {
   const action = new Action();
 
@@ -725,7 +702,6 @@ export function fromSgroupAddition(
   oldSgroup?,
   monomer?: BaseMonomer,
 ) {
-  // eslint-disable-line
   let action = new Action();
 
   sgid = isNumber(sgid) ? sgid : restruct.molecule.sgroups.newId();
@@ -895,7 +871,7 @@ function fromQueryComponentSGroupAction(
 }
 
 function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
-  const allFragments = new Pile(
+  const allFragments = new Pile<number>(
     sourceAtoms.map((aid) => restruct.atoms.get(aid).a.fragment),
   );
 
@@ -922,8 +898,8 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
     {
       action: new Action(),
       selection: {
-        atoms: [],
-        bonds: [],
+        atoms: [] as number[],
+        bonds: [] as number[],
       },
     },
   );

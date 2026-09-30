@@ -1,4 +1,4 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { editorEvents } from 'application/editor/editorEvents';
 import {
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
@@ -25,19 +25,17 @@ import {
 } from './helpers';
 
 export class FlexModePolymerBondRenderer extends BaseRenderer {
-  private get editorEvents() {
-    return provideEditorInstance().events;
-  }
-
+  private readonly editorEvents: typeof editorEvents;
   // TODO: Specify the types.
   private selectionElement;
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
   private path = '';
-  public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
+  declare public bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
     super(polymerBond);
     this.polymerBond.setRenderer(this);
+    this.editorEvents = editorEvents;
   }
 
   public get rootBBox(): DOMRect | undefined {

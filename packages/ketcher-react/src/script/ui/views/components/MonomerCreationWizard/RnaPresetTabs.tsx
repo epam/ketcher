@@ -1,3 +1,4 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
@@ -323,9 +324,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const hasErrorInTab = (
     wizardState: WizardState | RnaPresetWizardStatePresetFieldValue,
   ) => {
-    return Object.values(wizardState.errors).some((errorValue) =>
-      Boolean(errorValue),
-    );
+    return Object.values(wizardState.errors).some(Boolean);
   };
   // A "missing components" error must colour only the tabs of the components
   // that are actually missing — not every component tab, and not the Preset

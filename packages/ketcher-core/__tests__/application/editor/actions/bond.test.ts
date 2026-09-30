@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import * as utils from 'application/editor/actions/utils';
 
 import {
@@ -87,12 +88,12 @@ describe.skip('Bond Addition', () => {
   });
 
   test('function `atomForNewBond` will be called if `endAtomPos` is `undefined`', () => {
-    const spy = jest.spyOn(utils, 'atomForNewBond');
+    const spy = vi.spyOn(utils, 'atomForNewBond');
     fromBondAddition(reStruct, singleBond, 3, { label: 'C' });
     expect(spy).toHaveBeenCalled();
   });
   test('function `atomGetAttr` will be called', () => {
-    const spy = jest.spyOn(utils, 'atomGetAttr');
+    const spy = vi.spyOn(utils, 'atomGetAttr');
     fromBondAddition(reStruct, singleBond, 5, 1);
     expect(spy).toHaveBeenCalled();
   });

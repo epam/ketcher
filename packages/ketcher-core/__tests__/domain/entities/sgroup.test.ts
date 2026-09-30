@@ -1,22 +1,22 @@
+import { vi } from 'vitest';
 import type { ReStruct } from 'application/render/restruct';
 import { restruct } from '../../mock-data';
-import { SGroup } from 'domain/entities';
-import { mock } from 'jest-mock-extended';
+import { Bond, SGroup } from 'domain/entities';
 import type { Render } from 'src';
 import type { Atom } from 'domain/entities/atom';
 import { Box2Abs } from 'domain/entities/box2Abs';
-import type { Bond } from 'domain/entities/bond';
 import { Pile } from 'domain/entities/pile';
 import { Pool } from 'domain/entities/pool';
 import { Vec2 } from 'domain/entities/vec2';
 
 describe('sgroup should calculate S-Group bounding box correctly', () => {
   it('should calculate S-Group attachments points bounding box', () => {
-    const render = mock<Render>();
-    render.ctab = restruct as unknown as ReStruct;
+    const render = {
+      ctab: restruct as unknown as ReStruct,
+    } as unknown as Render;
     const sGroup = new SGroup('MUL');
     sGroup.atoms = [0, 1, 2, 3, 4];
-    const attachmentsSpy = jest.spyOn(
+    const attachmentsSpy = vi.spyOn(
       render.ctab,
       'getRGroupAttachmentPointsVBoxByAtomIds',
     );
@@ -102,7 +102,9 @@ describe('sgroup non-null assertion replacements', () => {
     const atomSet = new Pile<number>();
     const bb = new Box2Abs(new Vec2(0, 0), new Vec2(1, 1));
     const bonds = new Pool<Bond>();
-    const existingBondId = bonds.add(mock<Bond>());
+    const existingBondId = bonds.add(
+      new Bond({ begin: 0, end: 1, type: Bond.PATTERN.TYPE.SINGLE }),
+    );
 
     expect(() =>
       SGroup.getBracketParameters(
@@ -122,7 +124,9 @@ describe('sgroup non-null assertion replacements', () => {
     const atomSet = new Pile<number>();
     const bb = new Box2Abs(new Vec2(0, 0), new Vec2(1, 1));
     const bonds = new Pool<Bond>();
-    const existingBondId = bonds.add(mock<Bond>());
+    const existingBondId = bonds.add(
+      new Bond({ begin: 0, end: 1, type: Bond.PATTERN.TYPE.SINGLE }),
+    );
 
     expect(() =>
       SGroup.getBracketParameters(

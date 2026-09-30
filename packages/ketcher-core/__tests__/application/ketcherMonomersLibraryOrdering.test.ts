@@ -1,4 +1,4 @@
-import { mock } from 'jest-mock-extended';
+import { vi } from 'vitest';
 import {
   CoreEditor,
   type Editor as MicromoleculeEditor,
@@ -71,18 +71,18 @@ describe('Ketcher monomer library ordering vs. the lazy default load', () => {
     });
     setEditorInstance(coreEditor);
 
-    const structService = mock<StructService>();
-    structService.convert.mockResolvedValue({
+    const convert = vi.fn<StructService['convert']>();
+    convert.mockResolvedValue({
       struct: 'SDF_PLACEHOLDER',
       format: ChemicalMimeType.MonomerLibrary,
     });
-    const formatterFactory = mock<FormatterFactory>();
+    const structService = { convert } as unknown as StructService;
+    const formatterFactory = {} as unknown as FormatterFactory;
 
     ketcher = new Ketcher(structService, formatterFactory);
-    const micromoleculeEditor = mock<MicromoleculeEditor>();
-    Object.defineProperty(micromoleculeEditor, 'serverSettings', {
-      value: {},
-    });
+    const micromoleculeEditor = {
+      serverSettings: {},
+    } as unknown as MicromoleculeEditor;
     ketcher.addEditor(micromoleculeEditor);
     ketcherProvider.addKetcherInstance(ketcher);
   });
@@ -90,7 +90,7 @@ describe('Ketcher monomer library ordering vs. the lazy default load', () => {
   afterEach(() => {
     ketcherProvider.removeKetcherInstance(ketcher.id);
     resetEditorInstance();
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   // Deferred default load: the "default" library is only applied once
@@ -104,18 +104,16 @@ describe('Ketcher monomer library ordering vs. the lazy default load', () => {
       resolveDefaultLoad = resolve;
     });
 
-    jest
-      .spyOn(
-        coreEditor as unknown as {
-          initializeDefaultMonomersLibrary: () => Promise<void>;
-        },
-        'initializeDefaultMonomersLibrary',
-      )
-      .mockImplementation(async () => {
-        await gate;
-        coreEditor.clearMonomersLibrary();
-        coreEditor.updateMonomersLibrary(JSON.stringify(defaultMonomer));
-      });
+    vi.spyOn(
+      coreEditor as unknown as {
+        initializeDefaultMonomersLibrary: () => Promise<void>;
+      },
+      'initializeDefaultMonomersLibrary',
+    ).mockImplementation(async () => {
+      await gate;
+      coreEditor.clearMonomersLibrary();
+      coreEditor.updateMonomersLibrary(JSON.stringify(defaultMonomer));
+    });
 
     return { resolveDefaultLoad };
   }

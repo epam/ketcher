@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { type Mock, vi } from 'vitest';
 import {
   fromSgroupDeletion,
   setExpandMonomerSGroup,
@@ -36,8 +37,8 @@ import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointS
 import { peptideMonomerItem } from '../../../mock-data';
 import { SGroupCreate } from 'application/editor/operations/sgroup';
 
-jest.mock('domain/helpers/getAttachmentPointStereoBond', () => ({
-  getAttachmentPointStereoBond: jest.fn(),
+vi.mock('domain/helpers/getAttachmentPointStereoBond', () => ({
+  getAttachmentPointStereoBond: vi.fn(),
 }));
 
 const createMonomerSGroup = (struct: Struct, atomId: number) => {
@@ -75,7 +76,7 @@ const addAttachmentPoint = (
 
 describe('setExpandMonomerSGroup', () => {
   afterEach(() => {
-    (getAttachmentPointStereoBond as jest.Mock).mockReset();
+    (getAttachmentPointStereoBond as Mock).mockReset();
   });
 
   it('preserves explicit false expanded state when creating monomer S-groups', () => {
@@ -164,7 +165,7 @@ describe('setExpandMonomerSGroup', () => {
 
     const firstMonomerSGroup = struct.sgroups.get(firstMonomerSGroupId);
     const secondMonomerSGroup = struct.sgroups.get(secondMonomerSGroupId);
-    const stereoBondMock = getAttachmentPointStereoBond as jest.Mock;
+    const stereoBondMock = getAttachmentPointStereoBond as Mock;
     stereoBondMock.mockImplementation((sgroup) => {
       if (sgroup === firstMonomerSGroup) {
         return Bond.PATTERN.STEREO.UP;

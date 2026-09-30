@@ -1460,6 +1460,20 @@ class Editor implements KetcherEditor {
         return;
       }
 
+      /*
+       * Monomer templates keep an `rglabel` on every leaving group atom (see
+       * `fillStructRgLabelsByMonomerTemplate`). Inside the wizard the monomer
+       * sgroup is gone, so the renderer can no longer resolve that label back
+       * to the real element and would draw the atom as "R1"/"R2" instead of
+       * "O", "H", etc. The attachment point name is drawn separately anyway,
+       * so drop the rglabel — exactly like the newly created leaving atoms of
+       * the "create monomer" flow do.
+       */
+      const leavingAtom = selectedStruct.atoms.get(leavingAtomId);
+      if (leavingAtom && leavingAtom.label !== 'R#') {
+        leavingAtom.rglabel = null;
+      }
+
       assignedAttachmentPoints.set(
         getAttachmentPointLabel(attachmentPoint.attachmentPointNumber),
         [attachmentAtomId, leavingAtomId],

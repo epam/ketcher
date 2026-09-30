@@ -1077,8 +1077,6 @@ updateMonomersLibrary(
 via `KetcherLogger`; valid monomers are still added. The promise does not
 reject because of invalid monomers.
 
-> `MonomerLibraryUpdateError` is deprecated and no longer thrown.
-
 **UpdateMonomersLibraryParams:**
 
 ```typescript

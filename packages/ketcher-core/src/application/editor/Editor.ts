@@ -152,26 +152,6 @@ const turnOnScrollAnimation = (
   canvas.style('transition', `transform ${SCROLL_SMOOTHNESS_IM_MS}ms ease`);
 };
 
-export interface SkippedMonomerItem {
-  name: string;
-  reason: string;
-}
-
-/** @deprecated No longer thrown by `CoreEditor.updateMonomersLibrary`. */
-export class MonomerLibraryUpdateError extends Error {
-  readonly partialSuccess: boolean;
-  readonly skippedItems: SkippedMonomerItem[];
-
-  constructor(skippedItems: SkippedMonomerItem[], partialSuccess: boolean) {
-    super(
-      skippedItems.map(({ name, reason }) => `${name}: ${reason}`).join('\n'),
-    );
-    this.name = 'MonomerLibraryUpdateError';
-    this.skippedItems = [...skippedItems];
-    this.partialSuccess = partialSuccess;
-  }
-}
-
 export class MonomerLibraryConvertError extends Error {
   constructor(message: string, cause?: Error) {
     super(message, { cause });

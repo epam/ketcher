@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
 
 import { render, screen } from '@testing-library/react';
 import { MONOMER_LIBRARY_FAVORITES, MONOMER_TYPES } from '../../../constants';

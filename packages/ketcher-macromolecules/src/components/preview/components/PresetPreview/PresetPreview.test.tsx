@@ -1,5 +1,6 @@
 import { Provider } from 'react-redux';
 import { render, screen } from '@testing-library/react';
+import { withThemeProvider } from 'src/testUtils/themeProvider';
 import PresetPreview from './PresetPreview';
 import { configureAppStore } from 'state';
 import { showPreview } from 'state/common';

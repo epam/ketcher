@@ -1,4 +1,5 @@
 import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
 
 import { Entities, MonomerOrAmbiguousType } from 'ketcher-core';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';

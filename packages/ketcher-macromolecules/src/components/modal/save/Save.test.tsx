@@ -15,6 +15,8 @@
  ***************************************************************************/
 
 import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
+import { withThemeProvider } from 'src/testUtils/themeProvider';
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Save } from 'components/modal/save';

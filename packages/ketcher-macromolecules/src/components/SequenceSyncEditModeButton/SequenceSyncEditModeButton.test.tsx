@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { vi } from 'vitest';
+import { withThemeProvider } from 'src/testUtils/themeProvider';
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { configureStore } from '@reduxjs/toolkit';

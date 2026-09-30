@@ -15,6 +15,8 @@ import { vi } from 'vitest';
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { withThemeProvider } from 'src/testUtils/themeProvider';
+
 import { render, screen, fireEvent } from '@testing-library/react';
 
 import { OpenOptions } from './OpenOptions';

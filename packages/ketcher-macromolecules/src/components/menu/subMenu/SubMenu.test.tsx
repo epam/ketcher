@@ -1,4 +1,5 @@
 import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
 
 /****************************************************************************
  * Copyright 2021 EPAM Systems

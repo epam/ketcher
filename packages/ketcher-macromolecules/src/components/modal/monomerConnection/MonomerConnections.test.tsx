@@ -1,4 +1,5 @@
 import { vi } from 'vitest';
+import { withThemeProvider } from 'src/testUtils/themeProvider';
 
 import React from 'react';
 import { Provider } from 'react-redux';

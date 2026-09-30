@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { vi } from 'vitest';
+import { withThemeProvider } from 'src/testUtils/themeProvider';
 
 import { render, screen, fireEvent } from '@testing-library/react';
 

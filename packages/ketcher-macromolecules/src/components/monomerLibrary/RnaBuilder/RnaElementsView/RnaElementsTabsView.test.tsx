@@ -1,4 +1,5 @@
 import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
 
 import { render, screen } from '@testing-library/react';
 import { KetMonomerClass, Struct } from 'ketcher-core';

@@ -186,19 +186,7 @@ export async function updateMonomersLibrary(
 ): Promise<void> {
   return await page.evaluate(
     ({ rawMonomersData, params }) =>
-      window.ketcher
-        .updateMonomersLibrary(rawMonomersData, params)
-        .catch((err: unknown) => {
-          if (
-            err &&
-            typeof err === 'object' &&
-            (err as { name?: string }).name === 'MonomerLibraryUpdateError' &&
-            (err as { partialSuccess?: boolean }).partialSuccess
-          ) {
-            return;
-          }
-          throw err;
-        }),
+      window.ketcher.updateMonomersLibrary(rawMonomersData, params),
     { rawMonomersData, params },
   );
 }
@@ -210,19 +198,7 @@ export async function replaceMonomersLibrary(
 ): Promise<void> {
   return await page.evaluate(
     ({ rawMonomersData, params }) =>
-      window.ketcher
-        .replaceMonomersLibrary(rawMonomersData, params)
-        .catch((err: unknown) => {
-          if (
-            err &&
-            typeof err === 'object' &&
-            (err as { name?: string }).name === 'MonomerLibraryUpdateError' &&
-            (err as { partialSuccess?: boolean }).partialSuccess
-          ) {
-            return;
-          }
-          throw err;
-        }),
+      window.ketcher.replaceMonomersLibrary(rawMonomersData, params),
     { rawMonomersData, params },
   );
 }

@@ -516,7 +516,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     const changeEventTriggered = await page.evaluate(() => {
       return new Promise<boolean>((resolve) => {
         let eventFired = false;
-        globalThis.ketcher.editor.subscribe('change', () => {
+        globalThis.window.ketcher.editor.subscribe('change', () => {
           console.log('in change event');
           eventFired = true;
         });

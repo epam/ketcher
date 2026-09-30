@@ -10,12 +10,12 @@ declare global {
 
 export async function showRuler(page: Page) {
   await page.evaluate(() => {
-    globalThis._ketcher_isChainLengthRulerDisabled = false;
+    globalThis.window._ketcher_isChainLengthRulerDisabled = false;
   });
 }
 
 export async function hideRuler(page: Page) {
   await page.evaluate(() => {
-    globalThis._ketcher_isChainLengthRulerDisabled = true;
+    globalThis.window._ketcher_isChainLengthRulerDisabled = true;
   });
 }

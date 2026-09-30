@@ -17,10 +17,6 @@ declare global {
     _ketcher_isAutozoomDisabled?: boolean;
   }
 
-  var ketcher: Ketcher | undefined;
-  var isPolymerEditorTurnedOn: boolean;
-  var _ketcher_isAutozoomDisabled: boolean | undefined;
-
   declare namespace NodeJS {
     export interface ProcessEnv {
       API_PATH?: string;

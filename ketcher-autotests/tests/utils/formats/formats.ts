@@ -40,15 +40,15 @@ export declare type FileFormat =
   | SequenceFileFormat;
 
 export async function getKet(page: Page): Promise<string> {
-  return await page.evaluate(() => globalThis.ketcher.getKet());
+  return await page.evaluate(() => globalThis.window.ketcher.getKet());
 }
 
 export async function getFasta(page: Page): Promise<string> {
-  return await page.evaluate(() => globalThis.ketcher.getFasta());
+  return await page.evaluate(() => globalThis.window.ketcher.getFasta());
 }
 
 export async function getIdt(page: Page): Promise<string> {
-  return await page.evaluate(() => globalThis.ketcher.getIdt());
+  return await page.evaluate(() => globalThis.window.ketcher.getIdt());
 }
 
 export async function getSequence(
@@ -56,48 +56,51 @@ export async function getSequence(
   fileFormat?: SequenceFileFormat,
 ): Promise<string> {
   return await page.evaluate(
-    (fileFormat) => globalThis.ketcher.getSequence(fileFormat),
+    (fileFormat) => globalThis.window.ketcher.getSequence(fileFormat),
     fileFormat,
   );
 }
 
 export async function setZoom(page: Page, value: number) {
   return await page.evaluate(
-    (value) => globalThis.ketcher.setZoom(value),
+    (value) => globalThis.window.ketcher.setZoom(value),
     value,
   );
 }
 
 export async function setMode(page: Page, mode: SupportedModes) {
-  return await page.evaluate((mode) => globalThis.ketcher.setMode(mode), mode);
+  return await page.evaluate(
+    (mode) => globalThis.window.ketcher.setMode(mode),
+    mode,
+  );
 }
 
 export async function getCml(page: Page): Promise<string> {
-  return await page.evaluate(() => globalThis.ketcher.getCml());
+  return await page.evaluate(() => globalThis.window.ketcher.getCml());
 }
 
 export async function getCdxml(page: Page): Promise<string> {
-  return await page.evaluate(() => globalThis.ketcher.getCDXml());
+  return await page.evaluate(() => globalThis.window.ketcher.getCDXml());
 }
 
 export async function getCdx(page: Page) {
-  return await page.evaluate(() => globalThis.ketcher.getCDX());
+  return await page.evaluate(() => globalThis.window.ketcher.getCDX());
 }
 
 export async function getSmiles(page: Page): Promise<string> {
-  return await page.evaluate(() => globalThis.ketcher.getSmiles());
+  return await page.evaluate(() => globalThis.window.ketcher.getSmiles());
 }
 
 export async function getInchi(page: Page): Promise<string> {
-  return await page.evaluate(() => globalThis.ketcher.getInchi());
+  return await page.evaluate(() => globalThis.window.ketcher.getInchi());
 }
 
 export async function getInChIKey(page: Page) {
-  return await page.evaluate(() => globalThis.ketcher.getInChIKey());
+  return await page.evaluate(() => globalThis.window.ketcher.getInChIKey());
 }
 
 export async function getExtendedSmiles(page: Page): Promise<string> {
-  return await page.evaluate(() => globalThis.ketcher.getSmiles(true));
+  return await page.evaluate(() => globalThis.window.ketcher.getSmiles(true));
 }
 
 export async function getMolfile(
@@ -105,7 +108,7 @@ export async function getMolfile(
   fileFormat?: MolfileFormat,
 ): Promise<string> {
   return await page.evaluate(
-    (fileFormat) => globalThis.ketcher.getMolfile(fileFormat),
+    (fileFormat) => globalThis.window.ketcher.getMolfile(fileFormat),
     fileFormat,
   );
 }
@@ -115,7 +118,7 @@ export async function getRxn(
   fileFormat?: MolfileFormat,
 ): Promise<string> {
   return await page.evaluate(
-    (fileFormat) => globalThis.ketcher.getRxn(fileFormat),
+    (fileFormat) => globalThis.window.ketcher.getRxn(fileFormat),
     fileFormat,
   );
 }
@@ -125,13 +128,13 @@ export async function getRdf(
   fileFormat?: MolfileFormat,
 ): Promise<string> {
   return await page.evaluate(
-    (fileFormat) => globalThis.ketcher.getRdf(fileFormat),
+    (fileFormat) => globalThis.window.ketcher.getRdf(fileFormat),
     fileFormat,
   );
 }
 
 export async function getSmarts(page: Page): Promise<string> {
-  return await page.evaluate(() => globalThis.ketcher.getSmarts());
+  return await page.evaluate(() => globalThis.window.ketcher.getSmarts());
 }
 
 export async function getSdf(
@@ -139,7 +142,7 @@ export async function getSdf(
   fileFormat: MolfileFormat = 'v2000',
 ): Promise<string> {
   return await page.evaluate(
-    (fileFormat) => globalThis.ketcher.getSdf(fileFormat),
+    (fileFormat) => globalThis.window.ketcher.getSdf(fileFormat),
     fileFormat,
   );
 }
@@ -152,15 +155,15 @@ export async function setMolecule(
   await page.waitForLoadState('domcontentloaded');
   await page.waitForFunction(
     () =>
-      globalThis.ketcher &&
-      typeof globalThis.ketcher.setMolecule === 'function',
+      globalThis.window.ketcher &&
+      typeof globalThis.window.ketcher.setMolecule === 'function',
   );
 
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       return await page.evaluate(
         ({ structStr, position }) =>
-          globalThis.ketcher.setMolecule(structStr, { position }),
+          globalThis.window.ketcher.setMolecule(structStr, { position }),
         { structStr, position },
       );
     } catch (error) {
@@ -174,8 +177,8 @@ export async function setMolecule(
         await page.waitForLoadState('domcontentloaded');
         await page.waitForFunction(
           () =>
-            globalThis.ketcher &&
-            typeof globalThis.ketcher.setMolecule === 'function',
+            globalThis.window.ketcher &&
+            typeof globalThis.window.ketcher.setMolecule === 'function',
         );
         continue;
       }
@@ -192,7 +195,7 @@ export async function updateMonomersLibrary(
 ): Promise<void> {
   return await page.evaluate(
     ({ rawMonomersData, params }) =>
-      globalThis.ketcher
+      globalThis.window.ketcher
         .updateMonomersLibrary(rawMonomersData, params)
         .catch((err: unknown) => {
           if (
@@ -216,7 +219,7 @@ export async function replaceMonomersLibrary(
 ): Promise<void> {
   return await page.evaluate(
     ({ rawMonomersData, params }) =>
-      globalThis.ketcher
+      globalThis.window.ketcher
         .replaceMonomersLibrary(rawMonomersData, params)
         .catch((err: unknown) => {
           if (
@@ -238,13 +241,13 @@ export async function addFragment(
   structStr: string,
 ): Promise<void> {
   return await page.evaluate(
-    (structStr) => globalThis.ketcher.addFragment(structStr),
+    (structStr) => globalThis.window.ketcher.addFragment(structStr),
     structStr,
   );
 }
 
 export async function layout(page: Page): Promise<void> {
-  return await page.evaluate(() => globalThis.ketcher.layout());
+  return await page.evaluate(() => globalThis.window.ketcher.layout());
 }
 
 interface RecognizeImagePayload {
@@ -267,7 +270,7 @@ export async function recognize(
   return await page.evaluate(
     async ({ buffer, type, version }: RecognizeImagePayload) => {
       const image = new Blob([buffer], { type });
-      return globalThis.ketcher.recognize(image, version);
+      return globalThis.window.ketcher.recognize(image, version);
     },
     imagePayload,
   );
@@ -275,13 +278,15 @@ export async function recognize(
 
 export async function enableDearomatizeOnLoad(page: Page): Promise<void> {
   return await page.evaluate(() =>
-    globalThis.ketcher.setSettings({ 'general.dearomatize-on-load': true }),
+    globalThis.window.ketcher.setSettings({
+      'general.dearomatize-on-load': true,
+    }),
   );
 }
 
 export async function enableViewOnlyMode(page: Page): Promise<void> {
   await page.evaluate(() =>
-    globalThis.ketcher.editor.options({ viewOnlyMode: true }),
+    globalThis.window.ketcher.editor.options({ viewOnlyMode: true }),
   );
 
   await waitForViewOnlyModeState(page, true);
@@ -289,7 +294,7 @@ export async function enableViewOnlyMode(page: Page): Promise<void> {
 
 export async function disableViewOnlyMode(page: Page): Promise<void> {
   await page.evaluate(() =>
-    globalThis.ketcher.editor.options({ viewOnlyMode: false }),
+    globalThis.window.ketcher.editor.options({ viewOnlyMode: false }),
   );
 
   await waitForViewOnlyModeState(page, false);
@@ -299,7 +304,7 @@ export async function enableViewOnlyModeBySetOptions(
   page: Page,
 ): Promise<void> {
   await page.evaluate(() =>
-    globalThis.ketcher.editor.setOptions(
+    globalThis.window.ketcher.editor.setOptions(
       JSON.stringify({ viewOnlyMode: true }),
     ),
   );
@@ -311,7 +316,7 @@ export async function disableViewOnlyModeBySetOptions(
   page: Page,
 ): Promise<void> {
   await page.evaluate(() =>
-    globalThis.ketcher.editor.setOptions(
+    globalThis.window.ketcher.editor.setOptions(
       JSON.stringify({ viewOnlyMode: false }),
     ),
   );
@@ -338,7 +343,7 @@ export async function waitForViewOnlyModeState(
 
 export async function disableQueryElements(page: Page): Promise<void> {
   return await page.evaluate(() => {
-    return globalThis.ketcher.setSettings({
+    return globalThis.window.ketcher.setSettings({
       disableQueryElements: ['Pol', 'CYH', 'CXH'],
     });
   });

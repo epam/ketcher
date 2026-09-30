@@ -6,8 +6,4 @@ declare global {
     isPolymerEditorTurnedOn: boolean;
     _ketcher_isAutozoomDisabled?: boolean;
   }
-
-  var ketcher: Ketcher;
-  var isPolymerEditorTurnedOn: boolean;
-  var _ketcher_isAutozoomDisabled: boolean | undefined;
 }

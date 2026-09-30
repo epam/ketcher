@@ -52,7 +52,7 @@ const PopupApp = () => {
           staticResourcesUrl={process.env.PUBLIC_URL}
           structServiceProvider={structServiceProvider}
           onInit={(ketcher: Ketcher) => {
-            globalThis.ketcher = ketcher;
+            globalThis.window.ketcher = ketcher;
             safePostMessage({
               eventType: 'init',
             });

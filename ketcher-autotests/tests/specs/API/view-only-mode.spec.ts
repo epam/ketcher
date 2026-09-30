@@ -121,7 +121,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       }
     });
     await page.evaluate(() => {
-      globalThis.ketcher.editor.setOptions(
+      globalThis.window.ketcher.editor.setOptions(
         JSON.stringify({ viewOnlyMode123: `false123` }),
       );
     });

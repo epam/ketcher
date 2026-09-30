@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -20,15 +19,16 @@ import { type ReStruct, ReRGroup } from '../../../render';
 import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import { RGroup } from 'domain/entities/rgroup';
+import type { Struct } from 'domain/entities/struct';
 
 export class RGroupFragment extends BaseOperation {
-  readonly rgid_new: any;
-  readonly rg_new: any;
-  rgid_old: any;
-  rg_old: any;
-  readonly frid: any;
+  readonly rgid_new: number | null;
+  readonly rg_new: RGroup | null | undefined;
+  rgid_old: number | null;
+  rg_old: RGroup | null | undefined;
+  readonly frid: number;
 
-  constructor(rgroupId: any, fragmentId: any, rg?: any) {
+  constructor(rgroupId: number | null, fragmentId: number, rg?: RGroup | null) {
     super(OperationType.R_GROUP_FRAGMENT);
     this.rgid_new = rgroupId;
     this.rg_new = rg;
@@ -48,13 +48,16 @@ export class RGroupFragment extends BaseOperation {
     this.setNew(struct, restruct);
   }
 
-  private removeOld(struct: any, restruct: any) {
-    if (!this.rg_old) {
+  private removeOld(struct: Struct, restruct: ReStruct) {
+    if (!this.rg_old || this.rgid_old === null) {
       return;
     }
 
     this.rg_old.frags.delete(this.frid);
-    restruct.clearVisel(restruct.rgroups.get(this.rgid_old).visel);
+    const reRGroup = restruct.rgroups.get(this.rgid_old);
+    if (reRGroup) {
+      restruct.clearVisel(reRGroup.visel);
+    }
 
     if (this.rg_old.frags.size === 0) {
       restruct.rgroups.delete(this.rgid_old);
@@ -65,7 +68,7 @@ export class RGroupFragment extends BaseOperation {
     }
   }
 
-  private setNew(struct: any, restruct: ReStruct) {
+  private setNew(struct: Struct, restruct: ReStruct) {
     if (!this.rgid_new) {
       return;
     }

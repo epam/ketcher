@@ -376,7 +376,7 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
             monomerShortName={monomerShortName}
             data-testid={monomerShortName + '-option'}
             isPeptide={props.isPeptide}
-            disabled={count === 0}
+            disabled={!count}
             key={monomerShortName}
           >
             <StyledMonomersCountPanelItemName>

@@ -54,13 +54,12 @@ export function fromChain(
   let addedAtoms = atomId ? -1 : 0;
 
   let id0: number =
-    atomId !== null
-      ? atomId
-      : ((
-          action.addOp(
-            new AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct),
-          ) as AtomAdd
-        ).data.aid as number);
+    atomId ??
+    ((
+      action.addOp(
+        new AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct),
+      ) as AtomAdd
+    ).data.aid as number);
 
   chainItems.atoms.push(id0);
   action.operations.reverse();

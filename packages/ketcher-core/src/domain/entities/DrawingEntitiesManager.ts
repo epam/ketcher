@@ -2762,6 +2762,15 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteRxnPlus(rxnPlus);
       editor.renderersContainer.addRxnPlus(rxnPlus);
     });
+
+    this.sgroups.forEach((sgroup) => {
+      editor.renderersContainer.deleteSGroup(sgroup);
+      editor.renderersContainer.addSGroup(sgroup);
+    });
+    this.stereoFlags.forEach((flag) => {
+      editor.renderersContainer.deleteStereoFlag(flag);
+      editor.renderersContainer.addStereoFlag(flag);
+    });
   }
 
   public applyMonomersSequenceLayout() {
@@ -2874,10 +2883,9 @@ export class DrawingEntitiesManager {
 
     outstandingBonds.forEach((polymerBond) => {
       const previousIsOverlappedByMonomer = polymerBond.isOverlappedByMonomer;
-      polymerBond.isOverlappedByMonomer = this.checkBondForOverlapsByMonomers(
-        polymerBond,
-        monomersToCheck,
-      );
+      // Check overlap against ALL monomers, not just the moved ones
+      polymerBond.isOverlappedByMonomer =
+        this.checkBondForOverlapsByMonomers(polymerBond);
       if (polymerBond.isOverlappedByMonomer !== previousIsOverlappedByMonomer) {
         editor.renderersContainer.deletePolymerBond(polymerBond, false, false);
         editor.renderersContainer.addPolymerBond(polymerBond, false);

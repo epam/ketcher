@@ -53,7 +53,7 @@ The shared foundation that both UI packages build on. It owns the entire domain 
 - `MicromoleculesEditor.tsx` — mounts the Raphael canvas and Redux store
 - `script/editor/Editor.ts` — editor instance (wraps Raphael render + tool system)
 - `script/ui/` — all React UI: toolbars, dialogs, state (Redux), hotkeys
-- `src/i18n/` — `react-i18next` UI-text localization (English + Simplified Chinese today); see [modules/i18n.md](./modules/i18n.md). Covers `ketcher-react` only — `ketcher-macromolecules` is not localized.
+- `src/i18n/` — `react-i18next` UI-text localization (English + Simplified Chinese today); see [modules/i18n.md](./modules/i18n.md). The shared `i18next` instance lives here and also serves `ketcher-macromolecules` (see below) — both packages' UI translate together as one unit.
 
 ### 3. `ketcher-macromolecules`
 
@@ -61,6 +61,8 @@ The shared foundation that both UI packages build on. It owns the entire domain 
 - `Editor.tsx` — creates `CoreEditor`, owns the D3/SVG canvas, mounts Redux store
 - `state/common/editorSlice.ts` — primary Redux slice (editor instance, layout mode, tools, preview, line-length)
 - `components/` — MonomerLibrary, ContextMenu, TopMenu, LeftMenu, ZoomControls, Ruler, Modals, etc.
+- Own translation namespaces (`macromolecules`, `macromoleculesDialogs`) registered into `ketcher-react`'s shared `i18next` instance at runtime — see [modules/i18n.md](./modules/i18n.md).
+- **Build-order dependency on `ketcher-react`:** `ketcher-react/src/Editor.tsx` lazily imports this package (`import('ketcher-macromolecules')`), and since this package isn't a declared dependency of `ketcher-react`, Rollup does not externalize it — it inlines a full snapshot of whatever is currently in `packages/ketcher-macromolecules/dist` at the moment `ketcher-react` is built. The root `build:packages` script therefore builds `ketcher-macromolecules` *before* `ketcher-react` (`core → (standalone ‖ macromolecules) → react`); building `ketcher-react` first bakes in a stale, one-cycle-behind copy of this package with no build error to signal it.
 
 ### 4. `ketcher-standalone`
 

@@ -1,8 +1,8 @@
 # ketcher-react locales
 
-`en` + `zh-CN` today. See `openspec/changes/ketcher-react-i18n-foundation/design.md` for the full rationale — this file is the quick-reference for anyone doing an extraction task.
+`en` + `zh-CN` today. See `openspec/changes/archive/2026-09-08-ketcher-react-i18n-foundation/design.md` for the full rationale — this file is the quick-reference for anyone doing an extraction task.
 
-`ketcher-macromolecules` reuses this same shared `i18next` instance (it renders inside `ketcher-react`'s `<I18nextProvider>`) but owns two of its own namespaces, `macromolecules`/`macromoleculesDialogs`, defined in `packages/ketcher-macromolecules/src/locales/<locale>/*.json` and merged in via `i18n.addResourceBundle(...)` from `packages/ketcher-macromolecules/src/i18n/registerNamespaces.ts` — not added to the `resources` object below, to avoid a reverse `ketcher-react -> ketcher-macromolecules` source dependency. See `openspec/changes/ketcher-macromolecules-i18n/design.md` for the full rationale.
+`ketcher-macromolecules` reuses this same shared `i18next` instance (it renders inside `ketcher-react`'s `<I18nextProvider>`) but owns two of its own namespaces, `macromolecules`/`macromoleculesDialogs`, defined in `packages/ketcher-macromolecules/src/locales/<locale>/*.json` and merged in via `i18n.addResourceBundle(...)` from `packages/ketcher-macromolecules/src/i18n/registerNamespaces.ts` — not added to the `resources` object below, to avoid a reverse `ketcher-react -> ketcher-macromolecules` source dependency. See `openspec/changes/archive/2026-09-30-ketcher-macromolecules-i18n/design.md` for the full rationale.
 
 ## Key naming convention
 
@@ -42,7 +42,7 @@ t('common:cancel'); // cross-namespace reference
 
 New UI-chrome styling (Emotion `css`/`styled`, MUI `sx`) should use logical properties — `insetInlineStart`/`insetInlineEnd`, `marginInlineStart`/`marginInlineEnd`, `paddingInlineStart`/`paddingInlineEnd`, `borderInlineStart`/`borderInlineEnd`, `textAlign: 'start'`/`'end'` — instead of physical `left`/`right`. They're pixel-identical to their physical equivalents in the current LTR-only app, so this costs nothing today, but it's what makes a future RTL locale a data problem instead of a rewrite.
 
-Excluded, and must stay physical: anything computed from real screen/canvas coordinates at render time (`getBoundingClientRect()`-derived hover-preview positions, floating-toolbar placement, context-menu placement) and chemistry-domain values that only coincidentally read like directions (e.g. RNA Builder's 5′/3′ phosphate position, which is a structural fact independent of text direction). See `openspec/changes/ketcher-macromolecules-i18n/design.md` (Section 7) for the reasoning and the full file-by-file list.
+Excluded, and must stay physical: anything computed from real screen/canvas coordinates at render time (`getBoundingClientRect()`-derived hover-preview positions, floating-toolbar placement, context-menu placement) and chemistry-domain values that only coincidentally read like directions (e.g. RNA Builder's 5′/3′ phosphate position, which is a structural fact independent of text direction). See `openspec/changes/archive/2026-09-30-ketcher-macromolecules-i18n/design.md` (Section 7) for the reasoning and the full file-by-file list.
 
 ## Regression guards
 

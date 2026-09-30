@@ -835,6 +835,59 @@ class Editor implements KetcherEditor {
     return Editor.suitableAttachmentPointStereoTypes.has(bond.stereo);
   }
 
+  /**
+   * Derives the "attachment atom -> candidate leaving atoms" map straight from a
+   * struct: every terminal atom held by a bond that can carry an attachment
+   * point is a leaving group candidate for its only neighbour.
+   *
+   * `isMonomerCreationWizardEnabled` builds the same information from the
+   * canvas selection, but it never runs when an existing monomer is opened for
+   * editing, so that path needs this instead.
+   */
+  private static collectPotentialAttachmentPoints(
+    struct: Struct,
+    excludedLeavingAtomIds: Set<number> = new Set(),
+  ) {
+    const bondsPerAtom = new Map<number, number>();
+    struct.bonds.forEach((bond) => {
+      bondsPerAtom.set(bond.begin, (bondsPerAtom.get(bond.begin) ?? 0) + 1);
+      bondsPerAtom.set(bond.end, (bondsPerAtom.get(bond.end) ?? 0) + 1);
+    });
+
+    const potentialAttachmentPoints = new Map<number, Set<number>>();
+    struct.bonds.forEach((bond) => {
+      if (!Editor.isBondSuitableForAttachmentPoint(bond)) {
+        return;
+      }
+
+      (
+        [
+          [bond.begin, bond.end],
+          [bond.end, bond.begin],
+        ] as const
+      ).forEach(([attachmentAtomId, leavingAtomId]) => {
+        if (
+          bondsPerAtom.get(leavingAtomId) !== 1 ||
+          excludedLeavingAtomIds.has(leavingAtomId)
+        ) {
+          return;
+        }
+
+        const leavingAtomIds = potentialAttachmentPoints.get(attachmentAtomId);
+        if (leavingAtomIds) {
+          leavingAtomIds.add(leavingAtomId);
+        } else {
+          potentialAttachmentPoints.set(
+            attachmentAtomId,
+            new Set([leavingAtomId]),
+          );
+        }
+      });
+    });
+
+    return potentialAttachmentPoints;
+  }
+
   private static isValidTerminalRGroupAtom(
     atom: Atom | undefined,
     struct: Struct,
@@ -1659,7 +1712,24 @@ class Editor implements KetcherEditor {
       ]);
     });
 
-    const potentialAttachmentPoints = new Map<number, Set<number>>();
+    /*
+     * Editing an existing monomer never goes through
+     * `isMonomerCreationWizardEnabled`, so there is no precomputed selection
+     * data to derive leaving group candidates from (the stale one is dropped
+     * above). Read them off the wizard struct instead, otherwise no terminal
+     * atom of an edited monomer could be marked as a leaving group.
+     */
+    const potentialAttachmentPoints = editInstanceInitialValues
+      ? Editor.collectPotentialAttachmentPoints(
+          selectedStruct,
+          new Set(
+            Array.from(
+              assignedAttachmentPoints.values(),
+              ([, leavingAtomId]) => leavingAtomId,
+            ),
+          ),
+        )
+      : new Map<number, Set<number>>();
     this.potentialLeavingAtomsForManualAssignment.forEach((leavingAtomId) => {
       const leavingAtom = currentStruct.atoms.get(leavingAtomId);
       assert(leavingAtom);
@@ -3626,57 +3696,53 @@ class Editor implements KetcherEditor {
               );
             }
 
-            // Handle potential attachment points
-            // If a suitable bond is created from a potential attachment atom,
-            // add the other end to the set of potential leaving atoms
+            /*
+             * Handle potential attachment points.
+             * A suitable bond makes its terminal end a leaving group candidate
+             * for the other end — including when that other end was not a
+             * candidate attachment atom before, e.g. an atom drawn inside the
+             * wizard on a previously saturated chain end.
+             */
             if (Editor.isBondSuitableForAttachmentPoint(bond)) {
-              // Check if bond.begin is a potential attachment atom
-              if (
-                this.monomerCreationState.potentialAttachmentPoints.has(
-                  bond.begin,
-                )
-              ) {
-                const leavingAtomIds =
-                  this.monomerCreationState.potentialAttachmentPoints.get(
-                    bond.begin,
-                  );
-                assert(leavingAtomIds);
+              const { assignedAttachmentPoints, potentialAttachmentPoints } =
+                this.monomerCreationState;
+              const assignedAtomIds = new Set<number>();
+              assignedAttachmentPoints.forEach(
+                ([attachmentAtomId, leavingAtomId]) => {
+                  assignedAtomIds.add(attachmentAtomId);
+                  assignedAtomIds.add(leavingAtomId);
+                },
+              );
 
-                // Check if the other end (bond.end) can be a leaving atom (has only one neighbor)
-                const endAtom = this.struct().atoms.get(bond.end);
-                if (endAtom?.neighbors.length === 1) {
-                  const updatedLeavingAtomIds = new Set(leavingAtomIds);
-                  updatedLeavingAtomIds.add(bond.end);
-                  this.monomerCreationState.potentialAttachmentPoints.set(
-                    bond.begin,
-                    updatedLeavingAtomIds,
+              (
+                [
+                  [bond.begin, bond.end],
+                  [bond.end, bond.begin],
+                ] as const
+              ).forEach(([attachmentAtomId, leavingAtomId]) => {
+                const leavingAtom = this.struct().atoms.get(leavingAtomId);
+
+                if (
+                  leavingAtom?.neighbors.length !== 1 ||
+                  assignedAtomIds.has(leavingAtomId)
+                ) {
+                  return;
+                }
+
+                const leavingAtomIds =
+                  potentialAttachmentPoints.get(attachmentAtomId);
+                if (leavingAtomIds) {
+                  potentialAttachmentPoints.set(
+                    attachmentAtomId,
+                    new Set(leavingAtomIds).add(leavingAtomId),
+                  );
+                } else {
+                  potentialAttachmentPoints.set(
+                    attachmentAtomId,
+                    new Set([leavingAtomId]),
                   );
                 }
-              }
-
-              // Check if bond.end is a potential attachment atom
-              if (
-                this.monomerCreationState.potentialAttachmentPoints.has(
-                  bond.end,
-                )
-              ) {
-                const leavingAtomIds =
-                  this.monomerCreationState.potentialAttachmentPoints.get(
-                    bond.end,
-                  );
-                assert(leavingAtomIds);
-
-                // Check if the other end (bond.begin) can be a leaving atom (has only one neighbor)
-                const beginAtom = this.struct().atoms.get(bond.begin);
-                if (beginAtom?.neighbors.length === 1) {
-                  const updatedLeavingAtomIds = new Set(leavingAtomIds);
-                  updatedLeavingAtomIds.add(bond.begin);
-                  this.monomerCreationState.potentialAttachmentPoints.set(
-                    bond.end,
-                    updatedLeavingAtomIds,
-                  );
-                }
-              }
+              });
             }
 
             // Handle RNA preset component auto-assignment

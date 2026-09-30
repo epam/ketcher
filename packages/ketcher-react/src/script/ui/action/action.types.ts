@@ -120,7 +120,7 @@ type ActionStateEditor = Editor & {
   struct(value: Struct | null): Struct;
 };
 
-type ActionStateOptions = {
+export type ActionStateOptions = {
   app: {
     server?: unknown;
     templates?: unknown;
@@ -159,7 +159,7 @@ type GetDisabledState = (
   server: unknown,
   options: ActionStateOptions,
 ) => boolean;
-type GetHiddenState = (options: ActionStateOptions) => boolean;
+export type GetHiddenState = (options: ActionStateOptions) => boolean;
 
 export type GetActionState =
   GetSelectedState | GetDisabledState | GetHiddenState;

@@ -68,24 +68,24 @@ interface HTMLElement {
   webkitRequestFullscreen?: () => void;
 }
 
-// Functions available in Jest testing environment, declared in setupTests.tsx
+// Functions available in the Vitest testing environment, declared in setupTests.tsx
 
 /**
  * Wraps component in provider of Emotion/Mui merged theme
  */
-declare var withThemeProvider: typeof jestHelpers.withThemeProvider;
+declare var withThemeProvider: typeof testHelpers.withThemeProvider;
 
 /**
  * Wraps component in provider of Redux store
  */
-declare var withStoreProvider: typeof jestHelpers.withStoreProvider;
+declare var withStoreProvider: typeof testHelpers.withStoreProvider;
 
 /**
  * Wraps component in Redux store and Emotion/Mui theme providers
  */
-declare var withThemeAndStoreProvider: typeof jestHelpers.withThemeAndStoreProvider;
+declare var withThemeAndStoreProvider: typeof testHelpers.withThemeAndStoreProvider;
 
-declare namespace jestHelpers {
+declare namespace testHelpers {
   import type { RootState } from './state';
   function withThemeProvider(arg: JSX.Element): React.Element;
   function withStoreProvider(

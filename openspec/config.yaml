@@ -26,7 +26,7 @@ context: |
   ├── domain.md           # Domain concepts: atoms, bonds, monomers, reactions
   ├── glossary.md         # Term definitions used in code and product
   ├── invariants.md       # Rules labeled D1/A1/etc. that must never be broken
-  ├── testing.md          # Test strategy: Jest (unit), Playwright (E2E)
+  ├── testing.md          # Test strategy: Vitest (unit), Playwright (E2E)
   ├── features/           # Current observable behavior of each product feature
   │   └── <feature>.md    # Problem / User interaction / Expected behavior (WHEN/THEN) / Guarantees / Limitations
   ├── modules/            # Deep-dive docs for each subsystem

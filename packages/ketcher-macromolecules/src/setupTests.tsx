@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
 import { Provider as StoreProvider } from 'react-redux';

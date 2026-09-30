@@ -4,7 +4,6 @@ import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import prettierConfig from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
-import jestPlugin from 'eslint-plugin-jest';
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import nPlugin from 'eslint-plugin-n';
 import promisePlugin from 'eslint-plugin-promise';
@@ -75,7 +74,6 @@ export default [
         ...sanitizeGlobals(globals.browser),
         ...sanitizeGlobals(globals.node),
         ...sanitizeGlobals(globals.es2024),
-        ...sanitizeGlobals(globals.jest),
         console: 'readonly',
         process: 'readonly',
         Buffer: 'readonly',
@@ -92,7 +90,6 @@ export default [
     plugins: {
       '@typescript-eslint': tseslint,
       import: importPlugin,
-      jest: jestPlugin,
       'jsx-a11y': jsxA11yPlugin,
       n: nPlugin,
       promise: promisePlugin,
@@ -131,7 +128,6 @@ export default [
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'error',
       'react-hooks/preserve-manual-memoization': 'off',
-      'jest/expect-expect': 'off',
       'testing-library/no-container': 'off',
       'testing-library/no-node-access': 'off',
       'testing-library/no-unnecessary-act': 'off',

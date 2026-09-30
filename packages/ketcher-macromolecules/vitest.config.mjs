@@ -28,6 +28,8 @@ export default mergeConfig(viteConfig, {
   test: {
     environment: 'jsdom',
     globals: true,
+    // Threads start faster than forks; keeps per-file isolation.
+    pool: 'threads',
     include: ['src/**/*.{spec,test}.{ts,tsx}'],
     setupFiles: ['./vitest.setup.mjs'],
   },

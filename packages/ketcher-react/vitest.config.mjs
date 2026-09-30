@@ -20,6 +20,8 @@ export default mergeConfig(viteConfig, {
     clearMocks: true,
     environment: 'jsdom',
     globals: true,
+    // Threads start faster than forks; keeps per-file isolation.
+    pool: 'threads',
     include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}'],
     setupFiles: ['./vitest.setup.mjs'],
   },

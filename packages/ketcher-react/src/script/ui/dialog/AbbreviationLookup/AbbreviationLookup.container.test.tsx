@@ -1,41 +1,47 @@
+import { vi } from 'vitest';
+
 import { AbbreviationLookupContainer } from './AbbreviationLookup.container';
 import { render, screen } from '@testing-library/react';
 
-jest.mock('react-redux', () => {
+vi.mock('react-redux', () => {
   return {
     useSelector: (fn) => fn(),
   };
 });
 
-const ABBREVIATION_CONTENT = 'ABBREVIATION_CONTENT';
-jest.mock('./AbbreviationLookup', () => {
+const { ABBREVIATION_CONTENT, mockedUseOptions, mockedIsOpen } = vi.hoisted(
+  () => ({
+    ABBREVIATION_CONTENT: 'ABBREVIATION_CONTENT',
+    mockedUseOptions: vi.fn().mockImplementation(() => []),
+    mockedIsOpen: { value: false },
+  }),
+);
+vi.mock('./AbbreviationLookup', () => {
   return {
     AbbreviationLookup: () => <div>{ABBREVIATION_CONTENT}</div>,
   };
 });
 
-const mockedUseOptions = jest.fn().mockImplementation(() => []);
-jest.mock('./hooks/useOptions', () => {
+vi.mock('./hooks/useOptions', () => {
   return {
     useOptions: () => mockedUseOptions(),
   };
 });
 
-let mockedIsOpen = false;
-jest.mock('../../state/abbreviationLookup/selectors', () => ({
-  selectIsAbbreviationLookupOpen: () => mockedIsOpen,
+vi.mock('../../state/abbreviationLookup/selectors', () => ({
+  selectIsAbbreviationLookupOpen: () => mockedIsOpen.value,
 }));
 
 describe('AbbreviationLookupContainer', () => {
   it('Should not render Abbreviation Lookup if it is not open', () => {
-    mockedIsOpen = false;
+    mockedIsOpen.value = false;
     render(<AbbreviationLookupContainer />);
     const abbreviation = screen.queryByText(ABBREVIATION_CONTENT);
     expect(abbreviation).not.toBeInTheDocument();
   });
 
   it('Should render Abbreviation Lookup if it is open', () => {
-    mockedIsOpen = true;
+    mockedIsOpen.value = true;
     render(<AbbreviationLookupContainer />);
     const abbreviation = screen.queryByText(ABBREVIATION_CONTENT);
     expect(abbreviation).toBeInTheDocument();

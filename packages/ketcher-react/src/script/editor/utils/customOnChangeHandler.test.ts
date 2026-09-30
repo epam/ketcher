@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
 import { customOnChangeHandler } from './customOnChangeHandler';
 
 describe('customOnChangeHandler', () => {
@@ -24,14 +25,14 @@ describe('customOnChangeHandler', () => {
   });
 
   it('should call handler with no arguments when action is undefined', () => {
-    const handler = jest.fn();
+    const handler = vi.fn();
     customOnChangeHandler(undefined, handler);
     expect(handler).toHaveBeenCalledWith();
   });
 
   it('should call handler when in macro mode (isPolymerEditorTurnedOn = true)', () => {
     window.isPolymerEditorTurnedOn = true;
-    const handler = jest.fn();
+    const handler = vi.fn();
     const action = { operations: [] };
     customOnChangeHandler(action, handler);
     expect(handler).toHaveBeenCalledWith();
@@ -39,7 +40,7 @@ describe('customOnChangeHandler', () => {
 
   it('should call handler with empty data when action has no operations in micro mode', () => {
     window.isPolymerEditorTurnedOn = false;
-    const handler = jest.fn();
+    const handler = vi.fn();
     const action = {};
     customOnChangeHandler(action, handler);
     expect(handler).toHaveBeenCalledWith([]);
@@ -47,7 +48,7 @@ describe('customOnChangeHandler', () => {
 
   it('should call handler with empty data when action.operations is not an array in micro mode', () => {
     window.isPolymerEditorTurnedOn = false;
-    const handler = jest.fn();
+    const handler = vi.fn();
     const action = { operations: 'not-an-array' };
     customOnChangeHandler(action, handler);
     expect(handler).toHaveBeenCalledWith([]);
@@ -55,14 +56,14 @@ describe('customOnChangeHandler', () => {
 
   it('should call handler with empty data when action is null in micro mode', () => {
     window.isPolymerEditorTurnedOn = false;
-    const handler = jest.fn();
+    const handler = vi.fn();
     customOnChangeHandler(null, handler);
     expect(handler).toHaveBeenCalledWith([]);
   });
 
   it('should not mutate the original operations array', () => {
     window.isPolymerEditorTurnedOn = false;
-    const handler = jest.fn();
+    const handler = vi.fn();
     const operation1 = { _inverted: { type: 'test1' } };
     const operation2 = { _inverted: { type: 'test2' } };
     const operations = [operation1, operation2];
@@ -77,7 +78,7 @@ describe('customOnChangeHandler', () => {
 
   it('should process operations and call handler with data in micro mode', () => {
     window.isPolymerEditorTurnedOn = false;
-    const handler = jest.fn();
+    const handler = vi.fn();
     const operation = {
       _inverted: {
         type: 'unknownType',

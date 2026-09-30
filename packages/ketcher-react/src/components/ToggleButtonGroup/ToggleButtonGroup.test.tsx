@@ -14,9 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import ButtonGroup from './ToggleButtonGroup';
 import classes from './ToggleButtonGroup.module.less';
 
@@ -26,7 +27,7 @@ describe('ButtonGroup', () => {
     { label: 'Label 2', value: '2' },
     { label: '', value: '3' },
   ];
-  const onClickMock = jest.fn();
+  const onClickMock = vi.fn();
   const defaultValue = '2';
 
   beforeEach(() => {

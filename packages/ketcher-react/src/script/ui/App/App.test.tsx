@@ -1,11 +1,17 @@
+import { vi } from 'vitest';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 import { App } from './App';
 
-const mockDispatch = jest.fn();
-const mockUseSelector = jest.fn();
-const mockRemoveKetcherInstance = jest.fn();
+const { mockDispatch, mockUseSelector, mockRemoveKetcherInstance } = vi.hoisted(
+  () => ({
+    mockDispatch: vi.fn(),
+    mockUseSelector: vi.fn(),
+    mockRemoveKetcherInstance: vi.fn(),
+  }),
+);
 
-jest.mock('@mui/material', () => ({
+vi.mock('@mui/material', () => ({
   ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
   Snackbar: ({
     children,
@@ -17,70 +23,70 @@ jest.mock('@mui/material', () => ({
   createTheme: () => ({}),
 }));
 
-jest.mock('../views/toolbars', () => ({
+vi.mock('../views/toolbars', () => ({
   BottomToolbarContainer: () => <div data-testid="bottom-toolbar" />,
   LeftToolbarContainer: () => <div data-testid="left-toolbar" />,
   RightToolbarContainer: () => <div data-testid="right-toolbar" />,
   TopToolbarContainer: () => <div data-testid="top-toolbar" />,
 }));
 
-jest.mock('../views/AppClipArea', () => () => (
-  <div data-testid="app-clip-area" />
-));
-jest.mock('./AppHidden', () => ({
+vi.mock('../views/AppClipArea', () => ({
+  default: () => <div data-testid="app-clip-area" />,
+}));
+vi.mock('./AppHidden', () => ({
   AppHiddenContainer: () => <div data-testid="app-hidden-container" />,
 }));
-jest.mock('../views/modal', () => () => (
-  <div data-testid="app-modal-container" />
-));
-jest.mock('../views/Editor', () => () => (
-  <div data-testid="connected-editor" />
-));
-jest.mock('../dialog/AbbreviationLookup', () => ({
+vi.mock('../views/modal', () => ({
+  default: () => <div data-testid="app-modal-container" />,
+}));
+vi.mock('../views/Editor', () => ({
+  default: () => <div data-testid="connected-editor" />,
+}));
+vi.mock('../dialog/AbbreviationLookup', () => ({
   AbbreviationLookupContainer: () => (
     <div data-testid="abbreviation-lookup-container" />
   ),
 }));
 
-jest.mock('../../../hooks', () => ({
+vi.mock('../../../hooks', () => ({
   useAppContext: () => ({ ketcherId: 'test-ketcher-id', prevKetcherId: '' }),
-  useSettings: jest.fn(),
-  useSubscriptionOnEvents: jest.fn(),
+  useSettings: vi.fn(),
+  useSubscriptionOnEvents: vi.fn(),
 }));
 
-jest.mock('../state/hooks', () => ({
+vi.mock('../state/hooks', () => ({
   useAppDispatch: () => mockDispatch,
 }));
 
-jest.mock('../state/functionalGroups', () => ({
-  initFGroups: jest.fn(() => ({ type: 'INIT_FGROUPS' })),
-  initFGTemplates: jest.fn(() => ({ type: 'INIT_FG_TEMPLATES' })),
+vi.mock('../state/functionalGroups', () => ({
+  initFGroups: vi.fn(() => ({ type: 'INIT_FGROUPS' })),
+  initFGTemplates: vi.fn(() => ({ type: 'INIT_FG_TEMPLATES' })),
 }));
 
-jest.mock('../state/saltsAndSolvents', () => ({
-  initSaltsAndSolvents: jest.fn(() => ({ type: 'INIT_SALTS_AND_SOLVENTS' })),
-  initSaltsAndSolventsTemplates: jest.fn(() => ({
+vi.mock('../state/saltsAndSolvents', () => ({
+  initSaltsAndSolvents: vi.fn(() => ({ type: 'INIT_SALTS_AND_SOLVENTS' })),
+  initSaltsAndSolventsTemplates: vi.fn(() => ({
     type: 'INIT_SALTS_AND_SOLVENTS_TEMPLATES',
   })),
 }));
 
-jest.mock('../state/templates/init-lib', () => ({
-  initLib: jest.fn(() => ({ type: 'INIT_LIB' })),
+vi.mock('../state/templates/init-lib', () => ({
+  initLib: vi.fn(() => ({ type: 'INIT_LIB' })),
 }));
 
-jest.mock('ketcher-core', () => ({
+vi.mock('ketcher-core', () => ({
   ketcherProvider: {
     removeKetcherInstance: (...args: unknown[]) =>
       mockRemoveKetcherInstance(...args),
   },
 }));
 
-jest.mock('react-redux', () => ({
+vi.mock('react-redux', () => ({
   useSelector: (selector: (state: unknown) => unknown) =>
     mockUseSelector(selector),
 }));
 
-jest.mock('components', () => ({
+vi.mock('components', () => ({
   IconButton: ({
     testId,
     onClick,
@@ -96,7 +102,7 @@ jest.mock('components', () => ({
 
 describe('App notification banner', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockUseSelector.mockImplementation((selector) =>
       selector({
         notifications: {
@@ -108,7 +114,7 @@ describe('App notification banner', () => {
   });
 
   it('renders test ids for the notification banner and close button', () => {
-    render(<App checkServer={jest.fn()} />);
+    render(<App checkServer={vi.fn()} />);
 
     expect(screen.getByTestId('notification-banner')).toHaveTextContent(
       'The monomer was successfully added to the library.',
@@ -119,7 +125,7 @@ describe('App notification banner', () => {
   });
 
   it('hides the notification when the close button is clicked', () => {
-    render(<App checkServer={jest.fn()} />);
+    render(<App checkServer={vi.fn()} />);
 
     fireEvent.click(screen.getByTestId('notification-banner-close-button'));
 

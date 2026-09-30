@@ -1,55 +1,65 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`InfoModal should be rendered correctly should render Paste shortcut message if Paste message dispatched to props 1`] = `
+exports[`InfoModal should be rendered correctly > should render Paste shortcut message if Paste message dispatched to props 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
       <dialog
-        class="dialog infoModal"
+        class="_dialog_f84003 _infoModal_aae9af"
         data-testid="info-modal-window"
         open=""
         tabindex="-1"
       >
         <header
-          class="header"
+          class="_header_f84003"
         >
           <div>
             Error Message
           </div>
           <div
-            class="btnContainer"
+            class="_btnContainer_f84003"
           >
             <button
-              class="buttonTop"
+              class="_buttonTop_f84003"
               data-testid="close-window-button"
             >
-              <icon-close.svg
-                class="closeButton"
-              />
+              <svg
+                class="_closeButton_f84003"
+                fill="none"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13.4617 12.0459L19.8327 18.4169L18.4187 19.8309L12.0477 13.4599L5.72072 19.7859L4.30672 18.3719L10.6337 12.0459L4.26172 5.67387L5.67572 4.25987L12.0477 10.6319L18.4647 4.21387L19.8787 5.62787L13.4617 12.0459Z"
+                  fill="currentColor"
+                />
+              </svg>
             </button>
           </div>
         </header>
         <div
-          class="body withMargin"
+          class="_body_f84003 _withMargin_f84003"
           data-testid="info-modal-body"
         >
           <div>
             <div
-              class="pasteErrorModalBody"
+              class="_pasteErrorModalBody_74d1f9"
               data-testid="error-message-body"
             >
               <div>
                 Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.
               </div>
               <div
-                class="shortcutsBlock"
+                class="_shortcutsBlock_74d1f9"
               >
                 <div
-                  class="shortcuts"
+                  class="_shortcuts_74d1f9"
                 >
                   <div
-                    class="shortcut"
+                    class="_shortcut_74d1f9"
                     data-testid="infoModal-shortcut-for-paste"
                   >
                     CTRL/Cmd + V
@@ -63,10 +73,10 @@ exports[`InfoModal should be rendered correctly should render Paste shortcut mes
           </div>
         </div>
         <footer
-          class="footer"
+          class="_footer_f84003"
         >
           <button
-            class="ok"
+            class="_ok_aae9af"
             data-testid="info-modal-close"
           >
             Close
@@ -77,50 +87,60 @@ exports[`InfoModal should be rendered correctly should render Paste shortcut mes
   </body>,
   "container": <div>
     <dialog
-      class="dialog infoModal"
+      class="_dialog_f84003 _infoModal_aae9af"
       data-testid="info-modal-window"
       open=""
       tabindex="-1"
     >
       <header
-        class="header"
+        class="_header_f84003"
       >
         <div>
           Error Message
         </div>
         <div
-          class="btnContainer"
+          class="_btnContainer_f84003"
         >
           <button
-            class="buttonTop"
+            class="_buttonTop_f84003"
             data-testid="close-window-button"
           >
-            <icon-close.svg
-              class="closeButton"
-            />
+            <svg
+              class="_closeButton_f84003"
+              fill="none"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M13.4617 12.0459L19.8327 18.4169L18.4187 19.8309L12.0477 13.4599L5.72072 19.7859L4.30672 18.3719L10.6337 12.0459L4.26172 5.67387L5.67572 4.25987L12.0477 10.6319L18.4647 4.21387L19.8787 5.62787L13.4617 12.0459Z"
+                fill="currentColor"
+              />
+            </svg>
           </button>
         </div>
       </header>
       <div
-        class="body withMargin"
+        class="_body_f84003 _withMargin_f84003"
         data-testid="info-modal-body"
       >
         <div>
           <div
-            class="pasteErrorModalBody"
+            class="_pasteErrorModalBody_74d1f9"
             data-testid="error-message-body"
           >
             <div>
               Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.
             </div>
             <div
-              class="shortcutsBlock"
+              class="_shortcutsBlock_74d1f9"
             >
               <div
-                class="shortcuts"
+                class="_shortcuts_74d1f9"
               >
                 <div
-                  class="shortcut"
+                  class="_shortcut_74d1f9"
                   data-testid="infoModal-shortcut-for-paste"
                 >
                   CTRL/Cmd + V
@@ -134,10 +154,10 @@ exports[`InfoModal should be rendered correctly should render Paste shortcut mes
         </div>
       </div>
       <footer
-        class="footer"
+        class="_footer_f84003"
       >
         <button
-          class="ok"
+          class="_ok_aae9af"
           data-testid="info-modal-close"
         >
           Close
@@ -206,38 +226,48 @@ exports[`InfoModal should be rendered correctly should render Paste shortcut mes
 }
 `;
 
-exports[`InfoModal should be rendered correctly should render default error message for Cut and Copy actions 1`] = `
+exports[`InfoModal should be rendered correctly > should render default error message for Cut and Copy actions 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
       <dialog
-        class="dialog infoModal"
+        class="_dialog_f84003 _infoModal_aae9af"
         data-testid="info-modal-window"
         open=""
         tabindex="-1"
       >
         <header
-          class="header"
+          class="_header_f84003"
         >
           <div>
             Error Message
           </div>
           <div
-            class="btnContainer"
+            class="_btnContainer_f84003"
           >
             <button
-              class="buttonTop"
+              class="_buttonTop_f84003"
               data-testid="close-window-button"
             >
-              <icon-close.svg
-                class="closeButton"
-              />
+              <svg
+                class="_closeButton_f84003"
+                fill="none"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13.4617 12.0459L19.8327 18.4169L18.4187 19.8309L12.0477 13.4599L5.72072 19.7859L4.30672 18.3719L10.6337 12.0459L4.26172 5.67387L5.67572 4.25987L12.0477 10.6319L18.4647 4.21387L19.8787 5.62787L13.4617 12.0459Z"
+                  fill="currentColor"
+                />
+              </svg>
             </button>
           </div>
         </header>
         <div
-          class="body withMargin"
+          class="_body_f84003 _withMargin_f84003"
           data-testid="info-modal-body"
         >
           <div>
@@ -245,10 +275,10 @@ exports[`InfoModal should be rendered correctly should render default error mess
           </div>
         </div>
         <footer
-          class="footer"
+          class="_footer_f84003"
         >
           <button
-            class="ok"
+            class="_ok_aae9af"
             data-testid="info-modal-close"
           >
             Close
@@ -259,32 +289,42 @@ exports[`InfoModal should be rendered correctly should render default error mess
   </body>,
   "container": <div>
     <dialog
-      class="dialog infoModal"
+      class="_dialog_f84003 _infoModal_aae9af"
       data-testid="info-modal-window"
       open=""
       tabindex="-1"
     >
       <header
-        class="header"
+        class="_header_f84003"
       >
         <div>
           Error Message
         </div>
         <div
-          class="btnContainer"
+          class="_btnContainer_f84003"
         >
           <button
-            class="buttonTop"
+            class="_buttonTop_f84003"
             data-testid="close-window-button"
           >
-            <icon-close.svg
-              class="closeButton"
-            />
+            <svg
+              class="_closeButton_f84003"
+              fill="none"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M13.4617 12.0459L19.8327 18.4169L18.4187 19.8309L12.0477 13.4599L5.72072 19.7859L4.30672 18.3719L10.6337 12.0459L4.26172 5.67387L5.67572 4.25987L12.0477 10.6319L18.4647 4.21387L19.8787 5.62787L13.4617 12.0459Z"
+                fill="currentColor"
+              />
+            </svg>
           </button>
         </div>
       </header>
       <div
-        class="body withMargin"
+        class="_body_f84003 _withMargin_f84003"
         data-testid="info-modal-body"
       >
         <div>
@@ -292,10 +332,10 @@ exports[`InfoModal should be rendered correctly should render default error mess
         </div>
       </div>
       <footer
-        class="footer"
+        class="_footer_f84003"
       >
         <button
-          class="ok"
+          class="_ok_aae9af"
           data-testid="info-modal-close"
         >
           Close

@@ -1,12 +1,14 @@
+import { vi } from 'vitest';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { SystemControls } from './SystemControls';
 
-jest.mock('ketcher-core', () => ({
+vi.mock('ketcher-core', () => ({
   shortcutStr: () => 'Shift+/',
 }));
 
-jest.mock('./TopToolbarIconButton', () => ({
+vi.mock('./TopToolbarIconButton', () => ({
   TopToolbarIconButton: ({
     testId,
     iconName,
@@ -31,10 +33,10 @@ describe('SystemControls', () => {
   const defaultProps = {
     disabledButtons: [],
     hiddenButtons: [],
-    onSettingsOpen: jest.fn(),
-    onAboutOpen: jest.fn(),
-    onFullscreen: jest.fn(),
-    onHelp: jest.fn(),
+    onSettingsOpen: vi.fn(),
+    onAboutOpen: vi.fn(),
+    onFullscreen: vi.fn(),
+    onHelp: vi.fn(),
   };
 
   let fullscreenElement: Element | null = null;
@@ -49,7 +51,7 @@ describe('SystemControls', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('shows fullscreen-enter icon when document is not fullscreen', () => {

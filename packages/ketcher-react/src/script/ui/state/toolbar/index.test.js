@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { initResize, removeResizeListener } from './index';
 
 describe('initResize', () => {
@@ -9,8 +11,8 @@ describe('initResize', () => {
   // the resize handler ran before the editor was set in the store and threw
   // "Cannot read properties of null (reading 'render')".
   it('should not throw when a resize event fires before state.editor is set', () => {
-    const dispatch = jest.fn();
-    const getState = jest.fn(() => ({ editor: null }));
+    const dispatch = vi.fn();
+    const getState = vi.fn(() => ({ editor: null }));
 
     initResize()(dispatch, getState);
 
@@ -19,9 +21,9 @@ describe('initResize', () => {
   });
 
   it('should update the editor render and clear the active tool on resize', () => {
-    const update = jest.fn();
-    const dispatch = jest.fn();
-    const getState = jest.fn(() => ({
+    const update = vi.fn();
+    const dispatch = vi.fn();
+    const getState = vi.fn(() => ({
       editor: { render: { update } },
       actionState: { activeTool: 'select' },
     }));
@@ -37,9 +39,9 @@ describe('initResize', () => {
   });
 
   it('should stop reacting to resize after removeResizeListener is called', () => {
-    const update = jest.fn();
-    const dispatch = jest.fn();
-    const getState = jest.fn(() => ({
+    const update = vi.fn();
+    const dispatch = vi.fn();
+    const getState = vi.fn(() => ({
       editor: { render: { update } },
       actionState: { activeTool: 'select' },
     }));

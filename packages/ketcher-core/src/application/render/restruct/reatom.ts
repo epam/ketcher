@@ -324,7 +324,7 @@ class ReAtom extends ReObject {
     const ps1 = Scale.modelToCanvas(box.p0, restruct.render.options);
     const ps2 = Scale.modelToCanvas(box.p1, restruct.render.options);
     const width = ps2.x - ps1.x;
-    const height = fontszInPx * 1.23;
+    const height = ps2.y - ps1.y;
     return paper.rect(
       ps1.x - padding,
       ps1.y - padding,

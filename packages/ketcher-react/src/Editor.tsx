@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import {
   type EditorProps,
   MicromoleculesEditor as MicromoleculesEditorComponent,
@@ -51,25 +50,18 @@ const MacromoleculesEditorComponent = lazy(
 export const Editor = (props: Props) => {
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
   const [moleculesEditor, setMoleculesEditor] = useState<MoleculesEditor>();
-  const [ketcher, setKetcher] = useState<Ketcher>();
   const [macromoleculesEditor, setMacromoleculesEditor] =
     useState<CoreEditor>();
 
-  const [ketcherId, setKetcherId] = useState<string>('');
+  // Refs (not state) so both init callbacks always see the latest instances,
+  // regardless of which render they were created in.
+  const ketcherRef = useRef<Ketcher | undefined>(undefined);
+  const macromoleculesEditorRef = useRef<CoreEditor | undefined>(undefined);
 
+  const [ketcherId, setKetcherId] = useState<string>('');
   const togglePolymerEditor = (toggleValue: boolean) => {
     setShowPolymerEditor(toggleValue);
     window.isPolymerEditorTurnedOn = toggleValue;
-
-    if (moleculesEditor && macromoleculesEditor) {
-      if (toggleValue) {
-        moleculesEditor.closeMonomerCreationWizard?.();
-        macromoleculesEditor.switchToMacromolecules();
-      } else {
-        macromoleculesEditor.switchToMicromolecules();
-        moleculesEditor.focusCliparea();
-      }
-    }
   };
 
   const togglerComponent = !props.disableMacromoleculesEditor ? (
@@ -106,9 +98,7 @@ export const Editor = (props: Props) => {
         );
       }
     };
-    // moleculesEditor is included so the handlers above never capture a stale
-    // togglePolymerEditor closure (it now uses moleculesEditor directly).
-  }, [macromoleculesEditor, moleculesEditor]);
+  }, [macromoleculesEditor]);
 
   useEffect(() => {
     return () => {
@@ -116,25 +106,52 @@ export const Editor = (props: Props) => {
     };
   }, []);
 
+  /*
+   * This effect is synchronization with the DOM, not event handling.
+   * The imperative editors must switch only after React has committed the
+   * visibility change of their wrappers (display: none -> visible).
+   * Moving this logic into togglePolymerEditor was attempted, but it renders
+   * into a still-hidden container (zero-size SVG bounding boxes, focus fails),
+   * which broke the e2e test that expands monomers in micromolecules mode.
+   */
+  /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
   useEffect(() => {
-    if (
-      ketcher &&
-      moleculesEditor &&
-      (macromoleculesEditor || props.disableMacromoleculesEditor)
-    ) {
-      if (ketcherProvider.getIndexById(ketcher.id) !== -1) {
-        props.onInit?.(ketcher);
+    if (moleculesEditor && macromoleculesEditor) {
+      if (showPolymerEditor) {
+        moleculesEditor?.closeMonomerCreationWizard?.();
+        macromoleculesEditor?.switchToMacromolecules();
+      } else {
+        macromoleculesEditor?.switchToMicromolecules();
+        moleculesEditor?.focusCliparea();
       }
     }
-  }, [moleculesEditor, macromoleculesEditor]);
+  }, [showPolymerEditor]);
+  /* eslint-enable react-you-might-not-need-an-effect/no-event-handler */
+
+  // Called from both init callbacks. The editors initialize asynchronously in
+  // no guaranteed order, so props.onInit fires on whichever call finds both
+  // ready (or only the molecules editor, if macromolecules is disabled).
+  const notifyInitIfReady = () => {
+    const ketcher = ketcherRef.current;
+    if (
+      ketcher &&
+      (macromoleculesEditorRef.current || props.disableMacromoleculesEditor) &&
+      ketcherProvider.getIndexById(ketcher.id) !== -1
+    ) {
+      props.onInit?.(ketcher);
+    }
+  };
 
   const onInitMoleculesEditor = (ketcher: Ketcher) => {
-    setKetcher(ketcher);
+    ketcherRef.current = ketcher;
     setMoleculesEditor(ketcher.editor);
+    notifyInitIfReady();
   };
 
   const onInitMacromoleculesEditor = (macromoleculesEditor: CoreEditor) => {
+    macromoleculesEditorRef.current = macromoleculesEditor;
     setMacromoleculesEditor(macromoleculesEditor);
+    notifyInitIfReady();
   };
 
   return (

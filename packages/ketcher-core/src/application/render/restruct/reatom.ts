@@ -305,7 +305,9 @@ class ReAtom extends ReObject {
     if (labelBoxes.length === 0) {
       return this.getVBoxObj(render);
     }
-    let vbox = labelBoxes.reduce((union, box) => Box2Abs.union(union, box));
+    let vbox = labelBoxes
+      .slice(1)
+      .reduce((union, box) => Box2Abs.union(union, box), labelBoxes[0]);
     if (render.options.offset) {
       vbox = vbox.translate(render.options.offset.negated());
     }

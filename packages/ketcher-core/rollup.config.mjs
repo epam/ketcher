@@ -28,6 +28,7 @@ const includePattern = 'src/**/*';
 
 const config = {
   input: pkg.source,
+  external: /^node:/,
   output: [
     {
       dir: 'dist',

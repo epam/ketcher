@@ -20,7 +20,7 @@ const TAG = 'tool/image.ts';
 const supportedMimes = ['png', 'svg+xml'];
 
 const supportedMimesForRegex = supportedMimes
-  .map((item) => item.replace('+', '\\+'))
+  .map((item) => item.replace('+', String.raw`\+`))
   .join('|');
 
 const allowList = new RegExp(`^image/(${supportedMimesForRegex})$`);

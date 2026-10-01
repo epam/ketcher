@@ -121,11 +121,11 @@ export const DropDown = ({
     : undefined;
 
   const renderLabelById = (value: unknown) => {
-    const selectedOption = options.filter(
+    const selectedOption = options.find(
       (option) => option.id === (value as typeof currentSelection),
-    )[0];
+    );
 
-    return <span>{selectedOption.label}</span>;
+    return <span>{selectedOption?.label ?? ''}</span>;
   };
 
   const handleSelection = (event) => {

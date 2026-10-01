@@ -3,7 +3,7 @@
  * Centralized settings management with validation, persistence, and reactive updates
  */
 
-import { EventEmitter } from 'node:events';
+import { EventEmitter } from 'events';
 import type { ISettingsService } from './ISettingsService';
 import {
   SettingsValidationError,

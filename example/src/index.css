@@ -19,7 +19,6 @@ body {
 }
 
 code {
-    /* stylelint-disable-next-line font-family-name-quotes */
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
         monospace;
 }

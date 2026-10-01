@@ -520,6 +520,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
             }}
             options={getSelectOptionsFromSchema(
               this.saveSchema.properties.format,
+              i18n.t,
             )}
             component={Select}
             className="file-format-list"

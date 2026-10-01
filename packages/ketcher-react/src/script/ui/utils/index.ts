@@ -80,22 +80,13 @@ export function filterFGLib(lib, filter) {
 }
 
 /**
- * Some schemas (e.g. options-schema.ts) store a translation key
- * ("namespace:key.path") in `title`/`enumNames` instead of literal display
- * text, so it can be resolved reactively at render time. Schemas sourced
- * from external/data-driven sources keep literal text with no namespace
- * prefix and are returned unchanged.
- *
- * Matching must anchor the whole string (not just check for a ":" anywhere
- * in it) — plain English labels ending in a punctuation colon, e.g.
- * "File name:", would otherwise be misidentified as keys and sent through
- * t(), which can't resolve them and logs a spurious missing-key warning.
+ * Every schema `title`/`enumNames` value must be an explicit
+ * "namespace:key.path" translation key — there is no literal-text
+ * passthrough. `t` is required (not optional) so a call site can't
+ * silently skip translation by omitting it.
  */
-const TRANSLATION_KEY_RE =
-  /^(?:common|toolbar|toolbars|dialogs|components|settings|macromolecules|macromoleculesDialogs):[A-Za-z0-9_.-]+$/;
-
-export function resolveTranslatableText<T>(value: T, t?: TFunction): T {
-  if (typeof value !== 'string' || !t || !TRANSLATION_KEY_RE.test(value)) {
+export function resolveTranslatableText<T>(value: T, t: TFunction): T {
+  if (typeof value !== 'string') {
     return value;
   }
   return t(value) as unknown as T;
@@ -103,7 +94,7 @@ export function resolveTranslatableText<T>(value: T, t?: TFunction): T {
 
 export const getSelectOptionsFromSchema = (
   schema,
-  t?: TFunction,
+  t: TFunction,
 ): Array<Option> => {
   return schema.enum.reduce((options, value, index) => {
     options.push({

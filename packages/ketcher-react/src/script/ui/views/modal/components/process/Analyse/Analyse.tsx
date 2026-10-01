@@ -16,7 +16,7 @@
 
 import { FormulaInput, FrozenInput } from './components';
 
-import { type ReactElement, useEffect } from 'react';
+import { type ReactElement, useEffect, useMemo } from 'react';
 import type { Action } from 'redux';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -67,7 +67,9 @@ function roundOff(value: string | number, round: number): string {
   return value.replace(/\d*\.\d+/g, (str) => (+str).toFixed(round));
 }
 
-const selectOptions = getSelectOptionsFromSchema({ enum: range(0, 8) });
+const DECIMAL_PLACES_ENUM_NAMES = range(0, 8).map(
+  (n) => `common:decimalPlaces.n${n}`,
+);
 
 const analyseItems: AnalyseItem[] = [
   {
@@ -158,6 +160,14 @@ function AnalyseDialog({
   useEffect(() => {
     onAnalyse();
   }, [onAnalyse]);
+  const selectOptions = useMemo(
+    () =>
+      getSelectOptionsFromSchema(
+        { enum: range(0, 8), enumNames: DECIMAL_PLACES_ENUM_NAMES },
+        t,
+      ),
+    [t],
+  );
 
   return (
     <Dialog

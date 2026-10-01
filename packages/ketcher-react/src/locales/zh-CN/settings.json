@@ -2,6 +2,12 @@
   "language": {
     "title": "语言"
   },
+  "units": {
+    "px": "px",
+    "cm": "cm",
+    "pt": "pt",
+    "inch": "inch"
+  },
   "fields": {
     "resetToSelect": {
       "title": "重置为选择工具",

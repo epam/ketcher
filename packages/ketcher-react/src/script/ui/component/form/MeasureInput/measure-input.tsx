@@ -15,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type HTMLAttributes, useState, useEffect } from 'react';
+import { type HTMLAttributes, useState, useEffect, useMemo } from 'react';
 import clsx from 'clsx';
 
 import Input from '../Input/Input';
@@ -62,9 +62,12 @@ interface GetNewFloatResult {
   float?: string;
 }
 
-const selectOptions = getSelectOptionsFromSchema({
-  enum: Object.values(MeasurementUnits),
-});
+const UNIT_ENUM_NAMES = [
+  'settings:units.px',
+  'settings:units.cm',
+  'settings:units.pt',
+  'settings:units.inch',
+];
 
 const getNewFloat = (value: string): GetNewFloatResult => {
   const [int, float] = value.split('.');
@@ -161,6 +164,14 @@ const MeasureInput = ({
   const desc = schema;
   const { t } = useTranslation();
   const title = resolveTranslatableText(rest.title || desc?.title, t);
+  const selectOptions = useMemo(
+    () =>
+      getSelectOptionsFromSchema(
+        { enum: Object.values(MeasurementUnits), enumNames: UNIT_ENUM_NAMES },
+        t,
+      ),
+    [t],
+  );
 
   return (
     <div className={clsx(styles.measureInput, className)} {...rest}>

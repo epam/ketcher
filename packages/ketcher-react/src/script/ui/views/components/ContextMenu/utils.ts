@@ -19,8 +19,8 @@ import { resolveTranslatableText } from 'src/script/ui/utils';
  * (e.g. zh-CN's "键" is 1 character).
  */
 export const getBondTypeName = (
-  action?: { titleParams?: Record<string, string> } | null,
-  t?: TFunction,
+  action: { titleParams?: Record<string, string> } | null | undefined,
+  t: TFunction,
 ) => resolveTranslatableText(action?.titleParams?.type ?? '', t);
 
 /**

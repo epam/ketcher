@@ -61,7 +61,7 @@ const Automap = (props: Props) => {
       <Form schema={automapSchema} {...formState}>
         <Field
           name="mode"
-          options={getSelectOptionsFromSchema(automapSchema.properties.mode)}
+          options={getSelectOptionsFromSchema(automapSchema.properties.mode, t)}
           {...props}
           component={Select}
           data-testid="automap-mode"

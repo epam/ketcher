@@ -52,7 +52,7 @@ const IfThenSelect = (props: Props) => {
       className={classes.field}
       {...props}
       component={Select}
-      options={getSelectOptionsFromSchema(desc)}
+      options={getSelectOptionsFromSchema(desc, t)}
     />
   );
 };

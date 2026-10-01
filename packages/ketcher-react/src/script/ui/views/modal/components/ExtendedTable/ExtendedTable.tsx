@@ -14,14 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromElement, toElement } from '../../../../data/convert/structconv';
+import {
+  type ElementFormData,
+  fromElement,
+  toElement,
+} from '../../../../data/convert/structconv';
 
 import { Dialog } from '../../../components';
 import GenericGroups from './components/GenericGroups';
 import classes from './ExtendedTable.module.less';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
-import { Editor } from 'ketcher-core';
+import type { Dispatch } from 'redux';
+import type { Editor } from 'ketcher-core';
 import { onAction } from '../../../../state';
 import { useState } from 'react';
 
@@ -41,7 +45,7 @@ interface TableProps {
 
 const Table = (props: TableProps) => {
   const [value, setValue] = useState<string | null>(
-    props.pseudo ? props.label ?? null : null,
+    props.pseudo ? (props.label ?? null) : null,
   );
 
   const selected = (label: string): boolean => value === label;
@@ -107,7 +111,8 @@ function mapSelectionToProps(editor: Editor): Partial<StateProps> {
   if (selection?.atoms?.length === 1) {
     const struct = editor.struct();
     const atom = struct.atoms.get(selection.atoms[0]);
-    return { ...fromElement(atom) };
+    if (!atom) return {};
+    return { ...fromElement(atom) } as Partial<StateProps>;
   }
 
   return {};
@@ -126,7 +131,12 @@ const mapDispatchToProps = (
   return {
     onOk: (result: unknown) => {
       if (!ownProps.isNestedModal) {
-        dispatch(onAction({ tool: 'atom', opts: toElement(result) }));
+        dispatch(
+          onAction({
+            tool: 'atom',
+            opts: toElement(result as ElementFormData),
+          }),
+        );
       }
       ownProps.onOk(result);
     },

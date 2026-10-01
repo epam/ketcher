@@ -1,16 +1,15 @@
-/* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   dragMouseTo,
@@ -61,7 +60,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
   for (const testCase of testCasesForOpeningFiles) {
     const index = -1;
@@ -138,9 +137,8 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       false,
     );
 
-    const convertErrorMessage = await ErrorMessageDialog(
-      page,
-    ).getErrorMessage();
+    const convertErrorMessage =
+      await ErrorMessageDialog(page).getErrorMessage();
     const expectedErrorMessage =
       'Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: ' +
       "'molecule auto loader: SMILES loader: cycle number 0 is not allowed', " +
@@ -172,7 +170,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(Atom.Hydrogen);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
       const pointXToMoveElement = x - shiftForHydrogen;
       const pointYToMoveElement = y - 0;
@@ -186,19 +184,19 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
 
     async function addAndMovePlusSymbol() {
       await LeftToolbar(page).reactionPlusTool();
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await CommonLeftToolbar(page).areaSelectionTool();
 
       await moveMouseToTheMiddleOfTheScreen(page);
       await dragMouseTo(page, x - shiftForReactionPlus, y);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
     }
 
     async function addAndMoveOxygen() {
       const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(Atom.Oxygen);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
       const pointXToMoveElement = x - shiftForOxygen;
       const pointYToMoveElement = y - 0;
@@ -211,8 +209,8 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     }
 
     async function addArrowSymbol() {
-      await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
-      await clickInTheMiddleOfTheScreen(page);
+      await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
+      await clickInTheMiddleOfTheCanvas(page);
       await CommonLeftToolbar(page).areaSelectionTool();
     }
 

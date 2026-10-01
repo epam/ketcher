@@ -16,7 +16,7 @@
 
 import Atom from '../../../../../../../component/view/Atom';
 import clsx from 'clsx';
-import { Element } from 'ketcher-core';
+import type { Element } from 'ketcher-core';
 
 interface OutinerRowProps {
   row: Element[];

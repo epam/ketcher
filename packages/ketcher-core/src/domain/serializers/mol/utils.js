@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import {
-  Bond,
-  RxnArrow,
-  RxnPlus,
-  Struct,
-  Vec2,
-  RGroup,
-  Fragment,
-} from 'domain/entities';
+import { Bond } from 'domain/entities/bond';
+import { RxnArrow } from 'domain/entities/rxnArrow';
+import { RxnPlus } from 'domain/entities/rxnPlus';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
+import { RGroup } from 'domain/entities/rgroup';
+import { Fragment } from 'domain/entities/fragment';
 
 function paddedNum(number, width, precision) {
-  const parsedNumber = parseFloat(number);
+  const parsedNumber = Number.parseFloat(number);
 
   const numStr = parsedNumber.toFixed(precision || 0).replace(',', '.'); // Really need to replace?
   if (numStr.length > width) throw new Error('number does not fit');
@@ -38,9 +36,9 @@ function paddedNum(number, width, precision) {
  */
 function parseDecimalInt(str) {
   /* reader */
-  const val = parseInt(str, 10);
+  const val = Number.parseInt(str, 10);
 
-  return isNaN(val) ? 0 : val; // eslint-disable-line
+  return Number.isNaN(val) ? 0 : val;
 }
 
 function partitionLine(
@@ -178,7 +176,7 @@ function categorizeMolecules(mols, nReactants, nProducts) {
   for (let j = 0; j < mols.length; ++j) {
     const mol = mols[j];
     const bb = mol.getCoordBoundingBoxObj();
-    if (!bb) continue; // eslint-disable-line no-continue
+    if (!bb) continue;
 
     const fragmentType = getFragmentType(j, nReactants, nProducts);
 
@@ -202,20 +200,19 @@ function categorizeMolecules(mols, nReactants, nProducts) {
 }
 
 function shiftMol(ret, mol, bb, xorig, over) {
-  // eslint-disable-line max-params
   const d = new Vec2(
     xorig - bb.min.x,
     over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2,
   );
   mol.atoms.forEach((atom) => {
-    atom.pp.add_(d); // eslint-disable-line no-underscore-dangle
+    atom.pp.add_(d);
   });
 
   mol.sgroups.forEach((item) => {
-    if (item.pp) item.pp.add_(d); // eslint-disable-line no-underscore-dangle
+    if (item.pp) item.pp.add_(d);
   });
-  bb.min.add_(d); // eslint-disable-line no-underscore-dangle
-  bb.max.add_(d); // eslint-disable-line no-underscore-dangle
+  bb.min.add_(d);
+  bb.max.add_(d);
   mol.mergeInto(ret);
   return bb.max.x - bb.min.x;
 }
@@ -231,16 +228,16 @@ function layoutReactionFragments(
 ) {
   let xorig = 0;
   for (let j = 0; j < molReact.length; ++j) {
-    xorig += shiftMol(ret, molReact[j], bbReact[j], xorig, false) + 2.0;
+    xorig += shiftMol(ret, molReact[j], bbReact[j], xorig, false) + 2;
   }
-  xorig += 2.0;
+  xorig += 2;
   for (let j = 0; j < molAgent.length; ++j) {
-    xorig += shiftMol(ret, molAgent[j], bbAgent[j], xorig, true) + 2.0;
+    xorig += shiftMol(ret, molAgent[j], bbAgent[j], xorig, true) + 2;
   }
-  xorig += 2.0;
+  xorig += 2;
 
   for (let j = 0; j < molProd.length; ++j) {
-    xorig += shiftMol(ret, molProd[j], bbProd[j], xorig, false) + 2.0;
+    xorig += shiftMol(ret, molProd[j], bbProd[j], xorig, false) + 2;
   }
 }
 
@@ -320,7 +317,6 @@ function rxnMerge(
   nAgents,
   shouldReactionRelayout,
 ) /* Struct */ {
-  // eslint-disable-line max-statements
   /* reader */
   const ret = new Struct();
 
@@ -352,7 +348,7 @@ function rxnMerge(
   const bbProdAll = aggregateBoundingBoxes(bbProd);
 
   const arrow = createReactionArrow(bbReactAll, bbProdAll);
-  ret.rxnArrows.add(arrow);
+  ret.addRxnArrow(arrow);
 
   ret.isReaction = true;
   return ret;
@@ -365,7 +361,7 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
   scaffold.mergeInto(ret, null, null, false, true);
 
   Object.keys(rgroups).forEach((id) => {
-    const rgid = parseInt(id, 10);
+    const rgid = Number.parseInt(id, 10);
 
     for (const ctab of rgroups[rgid]) {
       ctab.rgroups.set(rgid, new RGroup());

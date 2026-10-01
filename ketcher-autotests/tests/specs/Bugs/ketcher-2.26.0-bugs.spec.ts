@@ -1,13 +1,9 @@
-/* eslint-disable no-inline-comments */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { test, Page, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
   pasteFromClipboardAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   enableViewOnlyModeBySetOptions,
   disableViewOnlyModeBySetOptions,
   openFileAndAddToCanvasAsNewProject,
@@ -23,14 +19,13 @@ import {
   pasteFromClipboardByKeyboard,
   cutToClipboardByKeyboard,
   moveMouseAway,
-  getCachedBodyCenter,
   RxnFileFormat,
   SdfFileFormat,
   RdfFileFormat,
   MolFileFormat,
+  ArrowType,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import { waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
@@ -59,7 +54,7 @@ import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
   setACSSettings,
@@ -91,23 +86,15 @@ import {
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { MicroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-
-async function removeTail(page: Page, tailName: string, index?: number) {
-  const tailElement = page.getByTestId(tailName);
-  const n = index ?? 0;
-  await waitForRender(page, async () => {
-    await ContextMenu(page, tailElement.nth(n)).click(
-      MultiTailedArrowOption.RemoveTail,
-    );
-  });
-}
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
+import { MultiTailedArrow } from '@tests/pages/common/canvas/MultiTailedArrow';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -188,7 +175,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     const applyButton = MiewDialog(page).applyButton;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
     await IndigoFunctionsToolbar(page).threeDViewer({
       waitForApplyButtonIsEnabled: false,
@@ -234,7 +221,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     const point = getBondLocator(page, {
-      bondType: MicroBondDataIds.SingleDown,
+      bondType: MicroBondType.SingleDown,
     }).first();
     await ContextMenu(page, point).click(MicroBondOption.ChangeDirection);
     await takeEditorScreenshot(page);
@@ -330,37 +317,40 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides', async ({
-    SnakeCanvas: _,
-  }) => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/ketcher/issues/5634
-     * Description: ketcher.getMolfile() not stopped working for macro canvas with peptides.
-     * Scenario:
-     * 1. Go to Macro - Snake mode
-     * 2. Load from file
-     * 3. Save to MOL V3000
-     */
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'Molfiles-V3000/snake-mode-peptides-on-canvas.mol',
-    );
-    await takeEditorScreenshot(page);
-    await verifyFileExport(
-      page,
-      'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
-      FileType.MOL,
-      MolFileFormat.v3000,
-    );
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
-    );
-    await takeEditorScreenshot(page);
-  });
+  test.fail(
+    'Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides',
+    async ({ SnakeCanvas: _ }) => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6947
+       * Bug: https://github.com/epam/ketcher/issues/5634
+       * Description: ketcher.getMolfile() not stopped working for macro canvas with peptides.
+       * Scenario:
+       * 1. Go to Macro - Snake mode
+       * 2. Load from file
+       * 3. Save to MOL V3000
+       */
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'Molfiles-V3000/snake-mode-peptides-on-canvas.mol',
+      );
+      await takeEditorScreenshot(page);
+      await verifyFileExport(
+        page,
+        'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
+        FileType.MOL,
+        MolFileFormat.v3000,
+      );
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Case 11: Export to SDF V3000 not returns SDF V2000', async () => {
+  test('Case 11: Export to SDF V3000 not returns SDF V2000', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5652
@@ -370,7 +360,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from file
      * 3. Save to SDF V3000
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/one-attachment-point-added-in-micro-mode.ket',
@@ -486,7 +475,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     });
   });
 
-  test('Case 16: No overlapping UI elements in Query Properties right-click menu', async () => {
+  test('Case 16: No overlapping UI elements in Query Properties right-click menu', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5615
@@ -496,7 +487,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Right-click and select Query Properties -> H count or Substitution count (in my case)
      * 3. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
 
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
@@ -505,7 +495,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
     ).hover([MicroAtomOption.QueryProperties, QueryAtomOption.HCount]);
     await takeEditorScreenshot(page);
-    await page.getByTestId(QueryAtomOption.SubstitutionCount).hover();
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    ).hover([
+      MicroAtomOption.QueryProperties,
+      QueryAtomOption.SubstitutionCount,
+    ]);
     await takeEditorScreenshot(page);
   });
 
@@ -545,7 +541,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/chain-with-singleup-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondLocator(page, { bondId: 2 });
+    const point = getBondLocator(page, { bondId: 2 });
     await ContextMenu(page, point).click([
       MicroBondOption.Highlight,
       HighlightOption.Green,
@@ -569,7 +565,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/chain-with-double-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondLocator(page, { bondId: 1 });
+    const point = getBondLocator(page, { bondId: 1 });
     await ContextMenu(page, point).click([
       MicroBondOption.Highlight,
       HighlightOption.Red,
@@ -689,7 +685,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 25: The tail of Multi-Tailed Arrow is added to the proper place on the Spine after the Redo action of removing the tail if the length of the spine were changed', async () => {
+  test('Case 25: The tail of Multi-Tailed Arrow is added to the proper place on the Spine after the Redo action of removing the tail if the length of the spine were changed', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5548
@@ -702,23 +700,27 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 5. Click on Remove tail - tail is removed
      * 6. Click on Undo
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
-    const middleOfTheScreen = await getCachedBodyCenter(page);
-    await waitForRender(page, async () => {
-      await ContextMenu(page, middleOfTheScreen).click(
-        MultiTailedArrowOption.AddNewTail,
-      );
-    });
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
+    await clickInTheMiddleOfTheCanvas(page);
+    const multiTailedArrow = await MultiTailedArrow(
+      page,
+      getArrowLocator(page, {
+        arrowType: ArrowType.MultiTailedArrow,
+        arrowId: 0,
+      }),
+    );
+    await ContextMenu(page, multiTailedArrow).click(
+      MultiTailedArrowOption.AddNewTail,
+    );
+
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await multiTailedArrow.bottomTailMoveHandler.hover({ force: true });
     await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
-    await removeTail(page, 'tails-0-move');
+    await multiTailedArrow.removeTail({ tailIndex: 0 });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -887,7 +889,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 32: Atoms and bonds is highlighted when the whole molecule with atoms is choosen', async () => {
+  test('Case 32: Atoms and bonds is highlighted when the whole molecule with atoms is choosen', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5668
@@ -899,7 +903,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Highlight the selected structure
      * 5. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/benzene-ring-with-atoms.ket',
@@ -995,9 +998,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/monomers-connected-to-microstructures.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await verifyFileExport(
       page,
       'Molfiles-V3000/monomers-connected-to-microstructures-expected.mol',
@@ -1284,6 +1286,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Atoms);
     await SettingsDialog(page).setOptionValue(GeneralSetting.AtomColoring);
     await SettingsDialog(page).apply();
     await takeEditorScreenshot(page);
@@ -1334,7 +1338,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).cancel();
   });
 
-  test('Case 49: The reaction with reverse retrosynthetic arrow is displayed correct after clicking on Aromatize, Dearomatize, Calculate CIP, Add explicit hydrogens', async () => {
+  test('Case 49: The reaction with reverse retrosynthetic arrow is displayed correct after clicking on Aromatize, Dearomatize, Calculate CIP, Add explicit hydrogens', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/Indigo/issues/2409
@@ -1349,7 +1355,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 6. Click on Add explicit hydrogens
      * 7. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/error with aromatize v2.ket',

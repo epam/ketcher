@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
-
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -24,7 +20,7 @@ import {
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Base } from '@tests/pages/constants/monomers/Bases';
@@ -345,7 +341,7 @@ for (const leftMonomer of shortMonomerList) {
         rightMonomerLocator,
         undefined,
         undefined,
-        MacroBondType.Hydrogen,
+        MacroBondTool.Hydrogen,
       );
 
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -497,8 +493,6 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Nucleotide._2_damdA,
-    // shouldFail: true,
-    // issueNumber: 'https://github.com/epam/ketcher/issues/6840',
   },
 ];
 
@@ -541,7 +535,7 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
         rightMonomerLocator,
         undefined,
         undefined,
-        MacroBondType.Hydrogen,
+        MacroBondTool.Hydrogen,
       );
 
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -589,7 +583,7 @@ test(`3. Check that shorter chain (fewer monomers) should get "flipped", and if 
     getMonomerLocator(page, { monomerAlias: 'U' }),
     undefined,
     undefined,
-    MacroBondType.Hydrogen,
+    MacroBondTool.Hydrogen,
   );
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
@@ -638,7 +632,7 @@ test(`4. For R3-R1 sugar-base side connections (when the base does not have hydr
     getMonomerLocator(page, { monomerAlias: 'U' }),
     undefined,
     undefined,
-    MacroBondType.Hydrogen,
+    MacroBondTool.Hydrogen,
   );
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
@@ -840,7 +834,7 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
         rightMonomerLocator,
         undefined,
         undefined,
-        MacroBondType.Hydrogen,
+        MacroBondTool.Hydrogen,
       );
 
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -920,7 +914,7 @@ for (const leftMonomer of shortMonomerList) {
           rightMonomerLocator,
           undefined,
           undefined,
-          MacroBondType.Hydrogen,
+          MacroBondTool.Hydrogen,
         );
 
         await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -947,8 +941,7 @@ test('12. AxoLabs: No-shift complementary pair establishes hydrogen bonds', asyn
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.AxoLabs,
-    `5'-ACGp-3'
-5'-UGCp-3'`,
+    `5'-ACGp-3'\n5'-UGCp-3'`,
   );
   const baseGLocator = getMonomerLocator(page, {
     monomerType: MonomerType.Base,
@@ -991,8 +984,7 @@ test('13. AxoLabs: Shifted alignment establishes partial hydrogen bonds (AUGCA/U
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.AxoLabs,
-    `5'-AUGCA-3'
-5'-UGC-3'`,
+    `5'-AUGCA-3'\n5'-UGC-3'`,
   );
   const baseCLocator = getMonomerLocator(page, {
     monomerType: MonomerType.Base,
@@ -1034,8 +1026,7 @@ test('14. AxoLabs: Shifted alignment establishes partial hydrogen bonds (ACG/ACG
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.AxoLabs,
-    `5'-ACGp-3'
-5'-ACGp-3'`,
+    `5'-ACGp-3'\n5'-ACGp-3'`,
   );
   const baseGLocator = getMonomerLocator(page, {
     monomerType: MonomerType.Base,
@@ -1078,10 +1069,7 @@ test('15. AxoLabs: Even number of strings pairs 1-2 and 3-4 (shifted pair + ACG/
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.AxoLabs,
-    `5'-AUGCA-3'
-5'-UGC-3'
-5'-ACGp-3'
-5'-UGC-3'`,
+    `5'-AUGCA-3'\n5'-UGC-3'\n5'-ACGp-3'\n5'-UGC-3'`,
   );
   const phosphatePLocator = getMonomerLocator(page, {
     monomerType: MonomerType.Phosphate,
@@ -1095,7 +1083,7 @@ test('15. AxoLabs: Even number of strings pairs 1-2 and 3-4 (shifted pair + ACG/
     LayoutMode.Sequence,
   );
   const phosphatePSymbolLocator = getSymbolLocator(page, {
-    symbolAlias: 'P',
+    symbolAlias: 'p',
     dataSymbolType: SymbolType.Phosphate,
   });
   await CommonLeftToolbar(page).areaSelectionTool();
@@ -1122,9 +1110,7 @@ test('16. AxoLabs: Odd number of strings leaves last unpaired (ACG/UGC + ACG)', 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.AxoLabs,
-    `5'-ACGp-3'
-5'-UGCp-3'
-5'-ACGp-3'`,
+    `5'-ACGp-3'\n5'-UGCp-3'\n5'-ACGp-3'`,
   );
   const sugarRLocator = getMonomerLocator(page, {
     monomerType: MonomerType.Sugar,
@@ -1165,8 +1151,7 @@ test('17. AxoLabs: DNA complementary alignment establishes hydrogen bonds (AAT/T
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.AxoLabs,
-    `5'-AATm-3'
-5'-TmTm-3'`,
+    `5'-AATm-3'\n5'-TmTm-3'`,
   );
   const baseTLocator = getMonomerLocator(page, {
     monomerType: MonomerType.Base,
@@ -1208,8 +1193,7 @@ test('18. AxoLabs: Tie alignment chooses left-most position (GAG/C)', async () =
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.AxoLabs,
-    `5'-GAGp-3'
-5'-Cp-3'`,
+    `5'-GAGp-3'\n5'-Cp-3'`,
   );
   const phosphatePLocator = getMonomerLocator(page, {
     monomerType: MonomerType.Phosphate,

@@ -77,7 +77,8 @@
                     -1.25,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -246,6 +247,7 @@
         "fullName": "D-Glutamine",
         "alias": "dQ",
         "aliasHELM": "dQ",
+        "aliasBILN": "dQ",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

@@ -1,30 +1,32 @@
-import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
+import type { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import {
-  BaseMonomer,
-  Chain,
+  type BaseMonomer,
+  type Chain,
+  type SubChainNode,
   LinkerSequenceNode,
   Nucleoside,
   Nucleotide,
   RNABase,
-  SubChainNode,
 } from 'domain/entities';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { isNumber } from 'lodash';
 import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
-import { CoreEditor, provideEditorSettings } from 'application/editor';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { getStructureBbox } from 'domain/entities/structureBbox';
 import { SettingsManager } from 'utilities';
 import {
-  ISnakeLayoutModelRow,
-  ISnakeLayoutMonomersNode,
+  type ISnakeLayoutModelRow,
+  type ISnakeLayoutMonomersNode,
+  type ITwoStrandedSnakeLayoutNode,
   isTwoStrandedSnakeLayoutNode,
-  ITwoStrandedSnakeLayoutNode,
 } from 'domain/entities/snake-layout-model/types';
 import { SnakeLayoutModelChain } from 'domain/entities/snake-layout-model/SnakeLayoutModelChain';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
 import { Atom } from 'domain/entities/CoreAtom';
-import { Bond } from 'domain/entities/CoreBond';
+import type { Bond } from 'domain/entities/CoreBond';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 
@@ -116,7 +118,7 @@ export class SnakeLayoutModel {
   private fillAntisenseNodes(chainsCollection: ChainsCollection) {
     const handledChainNodes = new Set<SubChainNode>();
     const monomerToChain = chainsCollection.monomerToChain;
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     chainsCollection.chains.forEach((chain) => {
       if (!chain.isAntisense) {
@@ -124,8 +126,7 @@ export class SnakeLayoutModel {
       }
       let nodesBeforeHydrogenConnectionToBase: ISnakeLayoutMonomersNode[] = [];
       let lastTwoStrandedNodeWithHydrogenBond:
-        | ITwoStrandedSnakeLayoutNode
-        | undefined;
+        ITwoStrandedSnakeLayoutNode | undefined;
 
       chain.forEachNodeReversed(({ node }) => {
         if (handledChainNodes.has(node)) {
@@ -175,14 +176,13 @@ export class SnakeLayoutModel {
                   firstSenseMonomerConnectedByHydrogenBond,
                 )
               : undefined;
-          let twoStrandedSnakeLayoutNodeIndex = this.nodes.findIndex((node) => {
-            return node === twoStrandedSnakeLayoutNode;
-          });
-          const lastTwoStrandedNodeWithHydrogenBondIndex = this.nodes.findIndex(
-            (node) => {
-              return node === lastTwoStrandedNodeWithHydrogenBond;
-            },
-          );
+          let twoStrandedSnakeLayoutNodeIndex = twoStrandedSnakeLayoutNode
+            ? this.nodes.indexOf(twoStrandedSnakeLayoutNode)
+            : -1;
+          const lastTwoStrandedNodeWithHydrogenBondIndex =
+            lastTwoStrandedNodeWithHydrogenBond
+              ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)
+              : -1;
 
           if (
             firstSenseMonomerConnectedByHydrogenBond &&
@@ -198,10 +198,10 @@ export class SnakeLayoutModel {
               i < nodesBeforeHydrogenConnectionToBase.length;
               i++
             ) {
-              // need to get rid of this findIndex to reduce complexity
-              twoStrandedSnakeLayoutNodeIndex = this.nodes.findIndex((node) => {
-                return node === twoStrandedSnakeLayoutNode;
-              });
+              // need to get rid of this repeated index lookup to reduce complexity
+              twoStrandedSnakeLayoutNodeIndex = twoStrandedSnakeLayoutNode
+                ? this.nodes.indexOf(twoStrandedSnakeLayoutNode)
+                : -1;
 
               const currentTwoStrandedSnakeLayoutNodeIndex =
                 twoStrandedSnakeLayoutNodeIndex - i;
@@ -263,16 +263,15 @@ export class SnakeLayoutModel {
         lastTwoStrandedNodeWithHydrogenBond
       ) {
         for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
-          const lastTwoStrandedNodeWithHydrogenBondIndex = this.nodes.findIndex(
-            (node) => {
-              return node === lastTwoStrandedNodeWithHydrogenBond;
-            },
-          );
+          const lastTwoStrandedNodeWithHydrogenBondIndex =
+            lastTwoStrandedNodeWithHydrogenBond
+              ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)
+              : -1;
           const currentTwoStrandedSnakeLayoutNodeIndex =
             lastTwoStrandedNodeWithHydrogenBondIndex + 1 + i;
           const currentTwoStrandedSnakeLayoutNode:
-            | ITwoStrandedSnakeLayoutNode
-            | undefined = this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
+            ITwoStrandedSnakeLayoutNode | undefined =
+            this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
           const currentAntisenseSnakeLayoutNode =
             nodesBeforeHydrogenConnectionToBase[i];
           const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =
@@ -474,8 +473,7 @@ export class SnakeLayoutModel {
 
         nodeIndexToMolecules.forEach((molecules) => {
           molecules.forEach((molecule) => {
-            const moleculeBbox =
-              DrawingEntitiesManager.getStructureBbox(molecule);
+            const moleculeBbox = getStructureBbox(molecule);
             const cellsNeededHorizontally = Math.ceil(
               (moleculeBbox.width + cellSizeInAngstroms / 2) /
                 cellSizeInAngstroms,

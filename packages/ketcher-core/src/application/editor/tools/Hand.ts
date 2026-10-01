@@ -1,5 +1,7 @@
-import { BaseTool, CoreEditor, ZoomTool } from 'application/editor';
-import { D3DragEvent, drag, DragBehavior, select } from 'd3';
+import type { CoreEditor } from 'application/editor/Editor';
+import type { BaseTool } from 'application/editor/tools/Tool';
+import { ZoomTool } from 'application/editor/tools/Zoom';
+import { type D3DragEvent, type DragBehavior, drag, select } from 'd3';
 
 export class HandTool implements BaseTool {
   private readonly dragBehavior: DragBehavior<SVGSVGElement, unknown, unknown>;

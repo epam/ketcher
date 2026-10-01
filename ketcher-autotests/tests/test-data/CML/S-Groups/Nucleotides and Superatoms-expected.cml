@@ -73,7 +73,7 @@
             <bond atomRefs2="a28 a31" order="1"/>
             <bond atomRefs2="a31 a29" order="1"/>
         </bondArray>
-        <molecule id="sg0" atomRefs="a0 a1 a2 a3" role="SuperatomSgroup">
+        <molecule id="sg1" atomRefs="a0 a1 a2 a3" role="SuperatomSgroup">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="0"/>
                 <MPoint x="0" y="0"/>
@@ -81,7 +81,7 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a4 a5 a6 a7 a8 a9 a10 a14" role="SuperatomSgroup">
+        <molecule id="sg2" atomRefs="a4 a5 a6 a7 a8 a9 a10 a14" role="SuperatomSgroup">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="0"/>
                 <MPoint x="0" y="0"/>
@@ -89,7 +89,7 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a11 a12 a13 a15" role="SuperatomSgroup">
+        <molecule id="sg3" atomRefs="a11 a12 a13 a15" role="SuperatomSgroup">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="0"/>
                 <MPoint x="0" y="0"/>
@@ -97,7 +97,7 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a27 a28 a29 a31" role="SuperatomSgroup" title="Base">
+        <molecule id="sg4" atomRefs="a27 a28 a29 a31" role="SuperatomSgroup" title="Base">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="0"/>
                 <MPoint x="0" y="0"/>
@@ -105,7 +105,7 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a16 a17 a18 a19" role="SuperatomSgroup" title="Sugar">
+        <molecule id="sg5" atomRefs="a16 a17 a18 a19" role="SuperatomSgroup" title="Sugar">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="0"/>
                 <MPoint x="0" y="0"/>
@@ -113,7 +113,7 @@
                 <MPoint x="0" y="0"/>
             </MBracket>
         </molecule>
-        <molecule id="sg0" atomRefs="a20 a21 a22 a23 a24 a25 a26 a30" role="SuperatomSgroup" title="Phosphate">
+        <molecule id="sg6" atomRefs="a20 a21 a22 a23 a24 a25 a26 a30" role="SuperatomSgroup" title="Phosphate">
             <MBracket type="SQUARE">
                 <MPoint x="0" y="0"/>
                 <MPoint x="0" y="0"/>

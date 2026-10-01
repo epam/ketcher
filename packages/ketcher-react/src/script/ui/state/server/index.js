@@ -15,7 +15,8 @@
  ***************************************************************************/
 
 import { ChemicalMimeType, KetcherLogger, KetSerializer } from 'ketcher-core';
-import { appUpdate, setStruct } from '../options';
+import { appUpdate } from '../options/actions';
+import { setStruct } from '../options';
 import { omit, without } from 'lodash/fp';
 
 import { checkErrors } from '../modal/form';
@@ -156,6 +157,8 @@ export function serverTransform(method, data, struct) {
 
         return dispatch(
           load(loadedStruct, {
+            preserveViewport:
+              method === 'aromatize' || method === 'dearomatize',
             rescale: method === 'layout',
             reactionRelayout: method === 'clean',
             method,

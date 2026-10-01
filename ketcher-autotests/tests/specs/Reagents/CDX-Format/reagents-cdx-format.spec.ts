@@ -4,7 +4,7 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   pasteFromClipboardAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   readFileContent,
 } from '@utils';
 import {
@@ -55,7 +55,7 @@ test.describe('Reagents CDX format', () => {
       'CDX/reagents-below-and-above-arrow.cdx',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 

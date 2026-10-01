@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -14,13 +13,33 @@ import {
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+
+const xAxis = 250;
+const yAxis = 200;
+
+async function selectObjects(page: Page, xAxis: number, yAxis: number) {
+  const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
+  await page.mouse.move(point.x - xAxis, point.y - yAxis);
+  await page.mouse.down();
+  await page.mouse.move(point.x + xAxis, point.y - yAxis);
+  await page.mouse.move(point.x + xAxis, point.y + yAxis);
+  await page.mouse.move(point.x - xAxis, point.y + yAxis);
+  await waitForRender(page, async () => {
+    await page.mouse.up();
+  });
+  return point;
+}
+
+async function clickCanvas(page: Page) {
+  await clickOnCanvas(page, xAxis, yAxis, { from: 'pageTopLeft' });
+}
 
 test.describe('Lasso Selection tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -29,25 +48,6 @@ test.describe('Lasso Selection tool', () => {
 
   const xDelta = 30;
   const yDelta = 60;
-  const xAxis = 250;
-  const yAxis = 200;
-
-  async function selectObjects(page: Page, xAxis: number, yAxis: number) {
-    const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await page.mouse.move(point.x - xAxis, point.y - yAxis);
-    await page.mouse.down();
-    await page.mouse.move(point.x + xAxis, point.y - yAxis);
-    await page.mouse.move(point.x + xAxis, point.y + yAxis);
-    await page.mouse.move(point.x - xAxis, point.y + yAxis);
-    await waitForRender(page, async () => {
-      await page.mouse.up();
-    });
-    return point;
-  }
-
-  async function clickCanvas(page: Page) {
-    await clickOnCanvas(page, xAxis, yAxis, { from: 'pageTopLeft' });
-  }
 
   test('Selection of atom/bond/molecule', async ({ page }) => {
     /*
@@ -184,7 +184,7 @@ test.describe('Lasso Selection tool', () => {
      */
     const selectCoords = { x: 50, y: 50 };
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleAromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleAromatic);
     await clickOnCanvas(page, 670, 260, {
       from: 'pageTopLeft',
     });
@@ -262,8 +262,8 @@ test.describe('Lasso Selection tool', () => {
     const box = await bondLocator.boundingBox();
     if (!box) throw new Error('Bond bounding box not found');
 
-    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
-    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
     await dragMouseTo(page, centerX + shiftCoords.x, centerY + shiftCoords.y);
 
     await selectObjects(page, yAxis, yAxis);
@@ -330,7 +330,7 @@ test.describe('Lasso Selection tool', () => {
      */
     const yShift = 100;
     const xShift = 500;
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleAromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleAromatic);
     await clickOnCanvas(page, xAxis, yAxis, { from: 'pageTopLeft' });
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,

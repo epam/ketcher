@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +16,7 @@
  ***************************************************************************/
 import _ from 'lodash';
 import { escapeRegExp, filter as _filter, flow, reduce } from 'lodash/fp';
-import { Option } from '../component/form/Select';
+import type { Option } from '../component/form/Select';
 
 const GREEK_SIMBOLS = {
   Alpha: 'A',
@@ -27,7 +28,9 @@ const GREEK_SIMBOLS = {
 };
 
 const greekRe = new RegExp(
-  '\\b' + Object.keys(GREEK_SIMBOLS).join('\\b|\\b') + '\\b',
+  String.raw`\b` +
+    Object.keys(GREEK_SIMBOLS).join(String.raw`\b|\b`) +
+    String.raw`\b`,
   'g',
 );
 
@@ -43,7 +46,8 @@ export function filterLib(lib, filter: string) {
       (item: any) =>
         !trimmedFilter ||
         re.test(greekify(item.struct.name)) ||
-        re.test(greekify(item.props.group)),
+        re.test(greekify(item.props.group)) ||
+        (item.props.abbreviation && re.test(greekify(item.props.abbreviation))),
     ),
     reduce((res, item) => {
       if (!res[item.props.group]) res[item.props.group] = [item];

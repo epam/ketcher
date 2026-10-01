@@ -29,7 +29,7 @@ import { TopToolbarIconButton } from './TopToolbarIconButton';
 import { CustomButtons } from './CustomButtons';
 import { ketcherProvider } from 'ketcher-core';
 import { cloneElement, useCallback, useMemo } from 'react';
-import { CustomButton } from '../../../../builders/ketcher/CustomButtons';
+import type { CustomButton } from '../../../../builders/ketcher/CustomButtons';
 
 type VoidFunction = () => void;
 
@@ -205,6 +205,7 @@ export const TopToolbar = ({
           onSave={onSave}
           shortcuts={shortcuts}
           hiddenButtons={hiddenButtons}
+          disabledButtons={disabledButtons}
         />
         <ClipboardControls
           onCopy={onCopy}

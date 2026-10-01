@@ -1,5 +1,8 @@
 import { CoreEditor, EditorHistory } from 'application/editor';
-import { createPolymerEditorCanvas } from '../../helpers/dom';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../helpers/dom';
 import { Command } from 'domain/entities/Command';
 
 describe('EditorHistory', () => {
@@ -8,7 +11,11 @@ describe('EditorHistory', () => {
   let history: EditorHistory;
   beforeEach(() => {
     canvas = createPolymerEditorCanvas();
-    editor = new CoreEditor({ theme: {}, canvas });
+    editor = new CoreEditor({
+      theme: {},
+      canvas,
+      renderersContainer: createRenderersManager(),
+    });
     history = EditorHistory.getInstance(editor);
   });
 
@@ -25,6 +32,13 @@ describe('EditorHistory', () => {
     history.destroy();
     const historyInstance2 = EditorHistory.getInstance(editor);
     expect(history).not.toBe(historyInstance2);
+  });
+
+  it('keeps histories scoped to their editor', () => {
+    const otherHistory = EditorHistory.getInstance({} as CoreEditor);
+    expect(otherHistory).not.toBe(history);
+    expect(EditorHistory.getInstance(editor)).toBe(history);
+    otherHistory.destroy();
   });
 
   it('should add commands into history stack', () => {

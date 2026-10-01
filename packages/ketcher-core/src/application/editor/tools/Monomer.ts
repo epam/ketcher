@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { BaseTool } from 'application/editor/tools/Tool';
-import { BaseMonomer, AmbiguousMonomer, Vec2 } from 'domain/entities';
-import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import type { BaseTool } from 'application/editor/tools/Tool';
+import { type BaseMonomer, AmbiguousMonomer, Vec2 } from 'domain/entities';
+import type { CoreEditor } from 'application/editor/Editor';
+import { EditorHistory } from 'application/editor/internal';
 import {
-  BaseMonomerRenderer,
+  type BaseMonomerRenderer,
   AmbiguousMonomerRenderer,
 } from 'application/render/renderers';
-import { MonomerOrAmbiguousType } from 'domain/types';
+import type { MonomerOrAmbiguousType } from 'domain/types';
+import type { Command } from 'domain/entities/Command';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { Coordinates } from '../shared/coordinates';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 
@@ -30,26 +32,25 @@ class MonomerTool implements BaseTool {
   private monomerPreview: BaseMonomer | AmbiguousMonomer | undefined;
 
   private monomerPreviewRenderer:
-    | BaseMonomerRenderer
-    | AmbiguousMonomerRenderer
-    | undefined;
+    BaseMonomerRenderer | AmbiguousMonomerRenderer | undefined;
 
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.8;
   readonly MONOMER_PREVIEW_OFFSET_X = 30;
   readonly MONOMER_PREVIEW_OFFSET_Y = 30;
   history: EditorHistory;
+  private readonly monomer: MonomerOrAmbiguousType;
   constructor(
     private readonly editor: CoreEditor,
-    private readonly monomer: MonomerOrAmbiguousType,
+    ...args: unknown[]
   ) {
-    this.editor = editor;
+    const [monomer] = args as [MonomerOrAmbiguousType];
     this.monomer = monomer;
     this.history = EditorHistory.getInstance(this.editor);
   }
 
   mousedown() {
     assert(this.monomerPreviewRenderer);
-    let modelChanges;
+    let modelChanges: Command;
     const position = Coordinates.canvasToModel(
       new Vec2(
         this.editor.lastCursorPositionOfCanvas.x,

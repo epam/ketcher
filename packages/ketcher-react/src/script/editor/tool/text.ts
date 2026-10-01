@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,9 +16,9 @@
  ***************************************************************************/
 
 import {
+  type Text,
+  type Vec2,
   Action,
-  Text,
-  Vec2,
   fromMultipleMove,
   fromTextCreation,
   fromTextDeletion,
@@ -25,7 +26,7 @@ import {
   KetcherLogger,
   CoordinateTransformation,
 } from 'ketcher-core';
-import { Tool } from './Tool';
+import type { Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
 
 interface Result {
@@ -47,7 +48,7 @@ class TextTool implements Tool {
 
     this.editor.selection(null);
 
-    if (closestItem && closestItem.map === 'texts') {
+    if (closestItem?.map === 'texts') {
       this.editor.hover(null);
       this.editor.selection({ texts: [closestItem.id] });
       this.dragCtx = {
@@ -151,10 +152,12 @@ function propsDialog(
         editor.update(
           fromTextCreation(editor.render.ctab, content, position, pos),
         );
-      } else if (!content) {
-        editor.update(fromTextDeletion(editor.render.ctab, id!));
-      } else if (content !== origilContent) {
-        editor.update(fromTextUpdating(editor.render.ctab, id!, content));
+      } else if (id !== null && id !== undefined) {
+        if (!content) {
+          editor.update(fromTextDeletion(editor.render.ctab, id));
+        } else if (content !== origilContent) {
+          editor.update(fromTextUpdating(editor.render.ctab, id, content));
+        }
       }
     })
     .catch((e) => {

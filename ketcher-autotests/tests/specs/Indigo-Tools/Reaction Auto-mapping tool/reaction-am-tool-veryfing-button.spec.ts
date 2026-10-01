@@ -1,5 +1,4 @@
-/* eslint-disable no-magic-numbers */
-import { test, expect } from '@fixtures';
+import { test, expect, Page } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
@@ -13,32 +12,44 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { AutoMapModeOption } from '@tests/pages/constants/reactionAutoMappingDialog/Constants';
 import { ReactionAutoMappingDialog } from '@tests/pages/molecules/canvas/ReactionAutoMappingDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
+let page: Page;
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+
 test.describe('Verifying buttons on reaction am tool dropdown', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async () => {
     await waitForPageInit(page);
   });
 
-  test('open reaction map dropdown', async ({ page }) => {
+  test('open reaction map dropdown', async () => {
     /**
      * Test case: EPMLSOPKET-2865
      * Description: Verifying of the button
      */
-    const button = page.getByTestId(ReactionMappingType.ReactionMapping);
-    await button.click();
-    expect(button).toHaveAttribute('title', 'Reaction Mapping Tool');
+    const reactionMappingToolsButton = page.getByTestId(
+      ReactionMappingType.ReactionMapping,
+    );
+    await reactionMappingToolsButton.click();
+    expect(reactionMappingToolsButton).toHaveAttribute(
+      'title',
+      'Reaction Mapping Tool',
+    );
     await takeEditorScreenshot(page);
   });
 
-  test('Not possible when the reaction is absent on canvas', async ({
-    page,
-  }) => {
+  test('Not possible when the reaction is absent on canvas', async () => {
     /**
      * Test case: EPMLSOPKET-1801
      * Description: Not possible when the reaction is absent on canvas
@@ -61,7 +72,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     await LeftToolbar(page).expandReactionMappingToolsDropdown();
     await expect(reactionAutoMappingButton).toBeDisabled();
 
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     await clickOnCanvas(page, point2.x, point2.y, { from: 'pageCenter' });
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionAutoMapping,
@@ -69,7 +80,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('UI dialog', async ({ page }) => {
+  test('UI dialog', async () => {
     /**
      * Test case: EPMLSOPKET-1808
      * Description:  UI dialog
@@ -95,7 +106,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     ];
 
     for (const mode of modes) {
-      test(`${mode} mode`, async ({ page }) => {
+      test(`${mode} mode`, async () => {
         await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
         const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);
         await LeftToolbar(page).selectReactionMappingTool(
@@ -128,7 +139,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
   });
 
   test.describe('With autoMapping', () => {
-    test.afterEach(async ({ page }) => {
+    test.afterEach(async () => {
       await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
@@ -155,9 +166,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       await takeEditorScreenshot(page);
     });
 
-    test('After the manual mapping with incorrect ordering', async ({
-      page,
-    }) => {
+    test('After the manual mapping with incorrect ordering', async () => {
       /**
        * Test cases: EPMLSOPKET-1817
        * Description: After the manual mapping with incorrect ordering
@@ -175,7 +184,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       );
     });
 
-    test('After the manual mapping with incorrect pairs', async ({ page }) => {
+    test('After the manual mapping with incorrect pairs', async () => {
       /**
        * Test cases: EPMLSOPKET-1818
        * Description: After the manual mapping with incorrect pairs
@@ -193,7 +202,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       );
     });
 
-    test('Compare the behavior', async ({ page }) => {
+    test('Compare the behavior', async () => {
       /**
        * Test cases: EPMLSOPKET-1819
        * Description: Compare the behavior
@@ -202,7 +211,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     });
   });
 
-  test('Clear mode', async ({ page }) => {
+  test('Clear mode', async () => {
     /**
      * Test cases: EPMLSOPKET-1821
      * Description: Clear mode
@@ -235,7 +244,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Half reaction on canvas', async ({ page }) => {
+  test('Half reaction on canvas', async () => {
     /**
      * Test cases: EPMLSOPKET-1821
      * Description: Half reaction on canvas
@@ -250,7 +259,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
   });
 
   // TODO: This test is currently highly unstable, figure out how to wait for rendering to complete properly
-  test.skip('Verifying of the correct automapping', async ({ page }) => {
+  test.skip('Verifying of the correct automapping', async () => {
     /**
      * Test cases: EPMLSOPKET-1832
      * Description:  Verifying of the correct automapping
@@ -283,7 +292,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
         await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Keep);
         await takeEditorScreenshot(page);
       },
-      // eslint-disable-next-line no-magic-numbers
+
       30_000,
     );
     await openFileAndAddToCanvas(
@@ -303,7 +312,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
         );
         await takeEditorScreenshot(page);
       },
-      // eslint-disable-next-line no-magic-numbers
+
       30_000,
     );
   });

@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, ReactNode } from 'react';
-import { Element, ElementLabel } from 'ketcher-core';
+import type { FC, ReactNode } from 'react';
+import type { Element, ElementLabel } from 'ketcher-core';
 import Atom from '../../../../../../../component/view/Atom';
 import clsx from 'clsx';
 

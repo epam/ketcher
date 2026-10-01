@@ -1,4 +1,4 @@
-import { CustomButton } from '../../../../builders/ketcher/CustomButtons';
+import type { CustomButton } from '../../../../builders/ketcher/CustomButtons';
 import { Divider } from './Divider';
 import { TopToolbarCustomIconButton } from './TopToolbarIconButton';
 import { ElementWithDropdown } from './ElementWithDropdown';

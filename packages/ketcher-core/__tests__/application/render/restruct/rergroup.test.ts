@@ -1,8 +1,8 @@
-import { ReRGroup, ReStruct } from 'application/render/restruct';
+import { type ReStruct, ReRGroup } from 'application/render/restruct';
 import { restruct } from '../../../mock-data';
 import { RGroup } from 'domain/entities';
 import { mock, mockFn } from 'jest-mock-extended';
-import { Render } from 'src';
+import type { Render } from 'src';
 
 describe('rergroup should calculate R-Group bounding box correctly', () => {
   it('should calculate R-Group attachments points bounding box', () => {

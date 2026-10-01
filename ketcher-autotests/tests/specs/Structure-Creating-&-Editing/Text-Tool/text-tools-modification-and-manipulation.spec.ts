@@ -1,10 +1,9 @@
-/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   waitForRender,
   clickOnCanvas,
@@ -120,7 +119,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).setText(pasteText);
     await TextEditorDialog(page).cancel();
     await LeftToolbar(page).text();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await TextEditorDialog(page).setText(pasteText);
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
@@ -133,11 +132,13 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).setText('&&&');
     await TextEditorDialog(page).cancel();
 
-    await clickInTheMiddleOfTheScreen(page);
+    await LeftToolbar(page).text();
+    await clickInTheMiddleOfTheCanvas(page);
     await TextEditorDialog(page).setText('+++');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
 
+    await LeftToolbar(page).text();
     await clickOnCanvas(page, 150, 145, { from: 'pageTopLeft' });
     await TextEditorDialog(page).setText(
       'Ketcher is a tool to draw molecular structures and chemical reactions',
@@ -177,7 +178,8 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
 
-    await page.getByTestId('canvas').click({ position: { x: 100, y: 100 } });
+    await LeftToolbar(page).text();
+    await clickOnCanvas(page, 150, 145, { from: 'pageTopLeft' });
     await TextEditorDialog(page).setText('Ketcher is a coool tool');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
@@ -212,12 +214,9 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
-    await page
-      .getByTestId('erase')
-      .filter({ has: page.locator(':visible') })
-      .click();
+    await CommonLeftToolbar(page).erase();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await CommonTopLeftToolbar(page).undo();

@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component, useCallback, useState } from 'react';
+import { Component } from 'react';
 
-import Ajv, { ErrorObject } from 'ajv';
+import { type ValidationError, type Schema, Validator } from 'jsonschema';
 import { ErrorPopover } from './errorPopover';
 import {
+  type FormContextValue,
+  type FormSchema,
+  type SchemaProperty,
   FormContext,
-  FormContextValue,
-  FormSchema,
-  SchemaProperty,
 } from '../../../../../contexts';
 import Input from '../Input/Input';
 import Select from '../Select';
@@ -31,7 +31,7 @@ import clsx from 'clsx';
 import { connect } from 'react-redux';
 import { getSelectOptionsFromSchema } from '../../../utils';
 import { updateFormState } from '../../../state/modal/form';
-import { useFormContext } from '../../../../../hooks';
+import { useFormContext, usePopoverAnchor } from '../../../../../hooks';
 import { cloneDeep, omit } from 'lodash';
 import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
@@ -39,10 +39,8 @@ import { Tooltip } from '@mui/material';
 export interface FormOwnProps {
   children: React.ReactNode;
   schema: FormSchema;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  init?: Record<string, any> | null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  customValid?: Record<string, (value: any) => boolean | string>;
+  init?: Record<string, unknown> | null;
+  customValid?: Record<string, (value: string) => boolean | string>;
   serialize?: Record<string, string>;
   deserialize?: Record<string, string>;
 }
@@ -56,14 +54,12 @@ interface FormDispatchProps {
 }
 
 interface FormStateProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  result: Record<string, any>;
+  result: Record<string, unknown>;
   errors?: Record<string, string>;
 }
 
 // Generic shareable FormState interface for use in dialogs
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface FormState<TResult = Record<string, any>> {
+export interface FormState<TResult = Record<string, unknown>> {
   result: TResult;
   valid: boolean;
   errors?: Record<string, string>;
@@ -71,14 +67,32 @@ export interface FormState<TResult = Record<string, any>> {
 
 type FormProps = FormOwnProps & FormDispatchProps & FormStateProps;
 
+function applySchemaDefaults<T extends Record<string, unknown>>(
+  state: T,
+  schema: FormSchema,
+): T {
+  const defaultsApplied: Record<string, unknown> = { ...state };
+
+  Object.entries(schema.properties ?? {}).forEach(([name, property]) => {
+    if (property !== null && typeof property === 'object') {
+      const defaultValue = (property as SchemaProperty).default;
+      // Only set default if key is completely missing from state
+      if (defaultValue !== undefined && !(name in defaultsApplied)) {
+        defaultsApplied[name] = defaultValue;
+      }
+    }
+  });
+
+  return defaultsApplied as T;
+}
+
 // Keep backward-compatible export
 export type { FormProps };
 
 export interface FieldProps {
   title?: string;
   name?: string;
-  // Select props is not assignable to Record<string, unknown> causes error in components
-  component?: React.ComponentType<any> | string; // eslint-disable-line @typescript-eslint/no-explicit-any
+  component?: React.ElementType | string;
   options?: Array<{ value: string; label: string }>;
   disabled?: boolean;
   formName?: string;
@@ -89,13 +103,11 @@ export interface FieldProps {
   extraName?: string;
   tooltip?: string;
   extraLabel?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  schema?: SchemaProperty | any[];
+  schema?: SchemaProperty | unknown[];
   extraSchema?: SchemaProperty;
   type?: string;
   value?: string | number | boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onChange?: (value: any) => void;
+  onChange?: (value: unknown) => void;
   placeholder?: string;
   checked?: boolean;
   multiple?: boolean;
@@ -105,8 +117,7 @@ export interface FieldProps {
 }
 
 export interface FieldWithModalProps extends FieldProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onEdit?: (onChange: (value: any) => void) => void;
+  onEdit?: (onChange: (value: unknown) => void) => void;
   autoFocus?: boolean;
 }
 
@@ -118,23 +129,25 @@ export interface CustomQueryFieldProps extends FieldProps {
   checkboxValue?: boolean;
   onCheckboxChange?: (
     value: boolean,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    formState: any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onChange: (value: any) => void,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    updateFormState: (settings: any) => void,
+    formState: Record<string, unknown>,
+    onChange: (value: unknown) => void,
+    updateFormState: (settings: Record<string, unknown>) => void,
   ) => void;
 }
 
-type AjvErrorWithInvalidMessage = ErrorObject & {
-  parentSchema?: { invalidMessage?: string | ((data: unknown) => string) };
+interface KetcherSchema extends Schema {
+  invalidMessage?: string | ((data: unknown) => string);
+}
+
+type FormValidationError = ValidationError & {
+  schema: KetcherSchema;
 };
 
 class Form extends Component<FormProps> {
   schema: ReturnType<typeof propSchema>;
   private _cachedSchema: FormSchema;
   private _contextValue: FormContextValue;
+
   constructor(props: FormProps) {
     super(props);
     const { onUpdate, schema, init } = this.props;
@@ -142,34 +155,35 @@ class Form extends Component<FormProps> {
     this.schema = propSchema(schema, props);
 
     if (init) {
-      const { valid, errors } = this.schema.serialize(init);
-      const errs = getErrorsObj(errors as AjvErrorWithInvalidMessage[]);
-      const initialState = { ...init, init: true };
+      const initialState = applySchemaDefaults({ ...init, init: true }, schema);
+      const { valid, errors } = this.schema.serialize(initialState);
+      const errs = getErrorsObj(errors);
       onUpdate(initialState, valid, errs);
     }
     this.updateState = this.updateState.bind(this);
-
     this._cachedSchema = schema;
     this._contextValue = { schema, stateStore: this };
   }
 
   componentDidUpdate(prevProps: FormProps) {
     const { schema, result, customValid, serialize, deserialize } = this.props;
+
     if (
       (schema.key && schema.key !== prevProps.schema.key) ||
       (customValid !== prevProps.customValid &&
         (schema.title === 'Atom' || schema.title === 'Bond'))
     ) {
       this.schema = propSchema(schema, { customValid, serialize, deserialize });
-      this.schema.serialize(result); // hack: valid first state
-      this.updateState(result);
+      const stateWithDefaults = applySchemaDefaults(result, schema);
+      this.schema.serialize(stateWithDefaults);
+      this.updateState(stateWithDefaults);
     }
   }
 
   updateState(newState: Record<string, unknown>) {
     const { onUpdate } = this.props;
     const { instance, valid, errors } = this.schema.serialize(newState);
-    const errs = getErrorsObj(errors as AjvErrorWithInvalidMessage[]);
+    const errs = getErrorsObj(errors);
     onUpdate(instance as Record<string, unknown>, valid, errs);
   }
 
@@ -178,25 +192,25 @@ class Form extends Component<FormProps> {
     const value = result[name];
     const extraValue = extraName ? result[extraName] : null;
 
-    const handleOnChange = (fieldName: string, fieldValue: unknown) => {
-      const newState = { ...this.props.result, [fieldName]: fieldValue };
-      this.updateState(newState);
-      if (onChange) onChange(fieldValue);
-    };
-
     return {
       dataError: errors?.[name],
       value,
       extraValue,
-      onChange: (val: unknown) => handleOnChange(name, val),
-      onExtraChange: (val: unknown) => handleOnChange(extraName ?? '', val),
+      onChange: (val: unknown) => {
+        const newState = { ...this.props.result, [name]: val };
+        this.updateState(newState);
+        if (onChange) onChange(val);
+      },
+      onExtraChange: (val: unknown) => {
+        const newState = { ...this.props.result, [extraName ?? '']: val };
+        this.updateState(newState);
+      },
     };
   }
 
   render() {
     const { schema, children } = this.props;
 
-    // Update the cached context value only if schema has changed
     if (this._cachedSchema !== schema) {
       this._cachedSchema = schema;
       this._contextValue = { schema, stateStore: this };
@@ -221,14 +235,14 @@ export default connect(null, (dispatch) => ({
     dispatch(updateFormState({ result, valid, errors }));
   },
   // Workaround: @types/react version conflict — react-redux's types reference a different @types/react than what Ketcher uses.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-}))(Form as any) as React.ComponentType<FormOwnProps & FormStateProps>;
+}))(Form as unknown as React.ComponentClass<FormProps>) as React.ComponentType<
+  FormOwnProps & FormStateProps
+>;
 
 interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
   labelPos?: string | boolean;
   title?: string;
   tooltip?: string;
-  error?: string;
   children?: React.ReactNode;
 }
 
@@ -293,10 +307,9 @@ function Label({
   labelPos,
   title,
   tooltip,
-  error: _error,
   children,
   ...props
-}: LabelProps) {
+}: Readonly<LabelProps>) {
   return (
     <label {...props}>
       {labelPos !== 'after' && renderLabelContent(title ?? '', tooltip ?? null)}
@@ -307,18 +320,7 @@ function Label({
   );
 }
 
-function usePopoverAnchor() {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const handleOpen = useCallback((event: React.MouseEvent) => {
-    setAnchorEl(event.currentTarget as HTMLElement);
-  }, []);
-  const handleClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
-  return { anchorEl, handleOpen, handleClose };
-}
-
-function Field(props: FieldProps) {
+function Field(props: Readonly<FieldProps>) {
   const {
     name,
     extraName,
@@ -337,13 +339,12 @@ function Field(props: FieldProps) {
   const { schema, stateStore } = useFormContext();
   const desc: SchemaProperty =
     ((!Array.isArray(rest.schema) && rest.schema) ||
-      schema.properties?.[name ?? '']) ??
+      schema?.properties?.[name ?? '']) ??
     {};
   const { dataError, onExtraChange, extraValue, ...fieldOpts } =
     stateStore.field(name ?? '', onChange, extraName);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const Component = component as React.ComponentType<any>;
+  const Component = component;
   const formField = Component ? (
     <Component
       name={name}
@@ -351,8 +352,9 @@ function Field(props: FieldProps) {
       className={className}
       onExtraChange={onExtraChange}
       extraValue={extraValue}
+      {...(labelPos === false && { error: dataError })}
       {...(extraName && {
-        extraSchema: rest.extraSchema || schema.properties?.[extraName],
+        extraSchema: rest.extraSchema || schema?.properties?.[extraName],
       })}
       {...fieldOpts}
       {...rest}
@@ -368,12 +370,47 @@ function Field(props: FieldProps) {
     />
   );
 
-  if (labelPos === false) return formField;
+  if (labelPos === false) {
+    if (Component) {
+      return formField;
+    }
+
+    const isSelectableControl =
+      rest.type === 'radio' || rest.type === 'checkbox';
+    const showError = Boolean(dataError) && !isSelectableControl;
+
+    return (
+      <>
+        <span className={clsx({ [classes.dataError]: showError }, className)}>
+          <span
+            className={classes.inputWrapper}
+            onMouseEnter={handlePopoverOpen}
+            onMouseLeave={handlePopoverClose}
+            data-testid={
+              props['data-testid']
+                ? `${props['data-testid']}-input-span`
+                : undefined
+            }
+            role="none"
+          >
+            {formField}
+          </span>
+        </span>
+        {showError && dataError && anchorEl && (
+          <ErrorPopover
+            anchorEl={anchorEl}
+            open={!!anchorEl}
+            error={dataError}
+            onClose={handlePopoverClose}
+          />
+        )}
+      </>
+    );
+  }
   return (
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}
-      error={dataError}
-      title={rest.title || desc.title}
+      title={rest.title ?? desc.title}
       labelPos={labelPos}
       tooltip={rest?.tooltip}
       data-testid={props['data-testid']}
@@ -400,7 +437,7 @@ function Field(props: FieldProps) {
   );
 }
 
-function FieldWithModal(props: FieldWithModalProps) {
+function FieldWithModal(props: Readonly<FieldWithModalProps>) {
   const { name, onChange, labelPos, className, onEdit, ...rest } = props;
   // Separate Label/wrapper-only props from Input-compatible props
   const {
@@ -422,15 +459,14 @@ function FieldWithModal(props: FieldWithModalProps) {
   const { schema, stateStore } = useFormContext();
   const desc: SchemaProperty =
     ((!Array.isArray(inputRest.schema) && inputRest.schema) ||
-      schema.properties?.[name ?? '']) ??
+      schema?.properties?.[name ?? '']) ??
     {};
   const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
 
   return (
     <Label
       className={className}
-      error={dataError}
-      title={title || desc.title}
+      title={title ?? desc.title}
       labelPos={labelPos}
       tooltip={tooltip}
     >
@@ -466,7 +502,7 @@ function FieldWithModal(props: FieldWithModalProps) {
   );
 }
 
-function CustomQueryField(props: CustomQueryFieldProps) {
+function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
   const {
     name,
     onChange,
@@ -491,12 +527,12 @@ function CustomQueryField(props: CustomQueryFieldProps) {
   const { schema, stateStore } = useFormContext();
   const desc: SchemaProperty =
     ((!Array.isArray(rest.schema) && rest.schema) ||
-      schema.properties?.[name ?? '']) ??
+      schema?.properties?.[name ?? '']) ??
     {};
   const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
-  const handleCheckboxChange = (value: boolean) => {
+  const handleCheckboxChange = (value: unknown) => {
     onCheckboxChange?.(
-      value,
+      value as boolean,
       stateStore.props.result,
       fieldOpts.onChange,
       stateStore.updateState,
@@ -585,19 +621,22 @@ function propSchema(
     serialize = {},
     deserialize = {},
   }: {
-    customValid?: Record<string, (value: unknown) => boolean | string>;
+    customValid?: Record<string, (value: string) => boolean | string>;
     serialize?: Record<string, string>;
     deserialize?: Record<string, string>;
   },
 ) {
-  const ajv = new Ajv({ allErrors: true, verbose: true, strictSchema: false });
+  const validator = new Validator();
   const schemaCopy = cloneDeep(schema);
-
   if (customValid) {
     Object.entries(customValid).forEach(([formatName, formatValidator]) => {
-      ajv.addFormat(formatName, formatValidator as (data: string) => boolean);
+      validator.customFormats[formatName] = (value: string) =>
+        Boolean(formatValidator(value));
 
-      if (!schemaCopy.properties) return;
+      if (!schemaCopy.properties) {
+        return;
+      }
+
       const rest = omit(schemaCopy.properties[formatName], [
         'pattern',
         'maxLength',
@@ -612,18 +651,23 @@ function propSchema(
     });
   }
 
-  const validate = ajv.compile(schemaCopy);
-
   return {
-    key: schema.key || '',
+    key: schema.key ?? '',
     serialize: (inst: Record<string, unknown>) => {
-      const isValid = validate(inst);
-      const errors = validate.errors || [];
+      // Pass an explicit base URI so jsonschema's resolveUrl() always receives
+      // a valid absolute URL as `from`.  Without this, it calls
+      // resolveUrl(undefined, ...) → new URL(undefined, 'resolve://'), which
+      // throws "Invalid URL" in Chromium <130 (Playwright ≤1.44) because that
+      // engine parses the base 'resolve://' (empty host) before inspecting the
+      // first argument.
+      const result = validator.validate(inst, schemaCopy as Schema, {
+        base: 'https://ketcher.local/',
+      });
 
       return {
         instance: serializeRewrite(serialize, inst, schemaCopy),
-        valid: isValid,
-        errors,
+        valid: result.valid,
+        errors: result.errors as unknown as FormValidationError[],
       };
     },
     deserialize: (inst: Record<string, unknown>) => {
@@ -658,20 +702,19 @@ function deserializeRewrite(
   return instance;
 }
 
-function getInvalidMessage(item: AjvErrorWithInvalidMessage): string {
-  if (!item.parentSchema?.invalidMessage) return item.message ?? '';
-  return typeof item.parentSchema.invalidMessage === 'function'
-    ? item.parentSchema.invalidMessage(item.data)
-    : item.parentSchema.invalidMessage;
+function getInvalidMessage(item: FormValidationError): string {
+  if (!item.schema?.invalidMessage) return item.message ?? '';
+  return typeof item.schema.invalidMessage === 'function'
+    ? item.schema.invalidMessage(item.instance)
+    : item.schema.invalidMessage;
 }
 
-function getErrorsObj(
-  errors: AjvErrorWithInvalidMessage[],
-): Record<string, string> {
+function getErrorsObj(errors: FormValidationError[]): Record<string, string> {
   const errs: Record<string, string> = {};
 
   errors.forEach((item) => {
-    const field = item.instancePath.slice(1);
+    // jsonschema uses "instance.fieldName"; strip the "instance." prefix
+    const field = item.property.replace(/^instance\./, '');
     if (!errs[field]) errs[field] = getInvalidMessage(item);
   });
 

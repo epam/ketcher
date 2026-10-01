@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import EventEmitter from 'events';
+import type EventEmitter from 'events';
 import { KetcherLogger } from './KetcherLogger';
 
 export enum KetcherAsyncEvents {
@@ -23,7 +23,7 @@ export enum KetcherAsyncEvents {
   FAILURE = 'FAILURE',
 }
 
-export const runAsyncAction = async <T = any>(
+export const runAsyncAction = async <T = unknown>(
   action: () => Promise<T>,
   eventEmitter: EventEmitter,
 ): Promise<T | undefined> => {

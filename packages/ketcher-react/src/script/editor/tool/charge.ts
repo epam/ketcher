@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,8 +16,8 @@
  ***************************************************************************/
 
 import { Atom, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core';
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 
 class ChargeTool implements Tool {
   private readonly editor: Editor;
@@ -32,7 +33,7 @@ class ChargeTool implements Tool {
     const struct = this.editor.render.ctab;
     const molecule = struct.molecule;
     const ci = this.editor.findItem(event, ['atoms']);
-    const atom = ci && ci.map === 'atoms' ? molecule.atoms.get(ci.id) : null;
+    const atom = ci?.map === 'atoms' ? molecule.atoms.get(ci.id) : null;
     if (atom && this.isChargeableAtom(atom)) {
       this.editor.hover(ci);
     } else {
@@ -86,7 +87,7 @@ class ChargeTool implements Tool {
       }
     }
 
-    if (ci && ci.map === 'atoms') {
+    if (ci?.map === 'atoms') {
       const atom = molecule.atoms.get(ci.id);
       if (atom && this.isChargeableAtom(atom)) {
         this.editor.hover(ci);

@@ -1,4 +1,4 @@
-import { Reducer } from 'react';
+import type { Reducer } from 'react';
 
 export interface FloatingToolsState {
   visible: boolean;

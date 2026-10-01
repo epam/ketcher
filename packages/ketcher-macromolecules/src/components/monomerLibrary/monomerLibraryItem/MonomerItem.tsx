@@ -28,9 +28,13 @@ import {
 import { IMonomerItemProps } from './types';
 import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
-import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
+import { MonomerItemType, isAmbiguousMonomerLibraryItem } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
-import { selectEditor, selectIsSequenceMode } from 'state/common';
+import {
+  selectEditor,
+  selectIsSequenceMode,
+  selectIsDragging,
+} from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
 import {
   cardMouseOverHandler,
@@ -47,10 +51,12 @@ const MonomerItem = ({
   isSelected,
   disabled,
   onClick = EmptyFunction,
+  onStarClick = EmptyFunction,
 }: IMonomerItemProps) => {
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const isSequenceMode = useAppSelector(selectIsSequenceMode);
+  const isDragging = useAppSelector(selectIsDragging);
   const [autochainErrorMessage, setAutochainErrorMessage] =
     useState<string>('');
 
@@ -75,9 +81,10 @@ const MonomerItem = ({
   const addFavorite = useCallback(
     (event: MouseEvent) => {
       event.stopPropagation();
+      onStarClick();
       dispatch(toggleMonomerFavorites(item));
     },
-    [dispatch, item],
+    [dispatch, item, onStarClick],
   );
 
   const onAutochainIconClick = useCallback(
@@ -124,15 +131,13 @@ const MonomerItem = ({
     editor?.events.removeAutochainPreview.dispatch(item);
   }, [editor, item]);
 
-  // TODO suppressed after upgrade to react 19. Need to fix
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   useLibraryItemDrag(item, cardRef);
 
   return (
     <Card
       selected={isSelected}
       disabled={isDisabled}
+      isDragging={isDragging}
       data-testid={monomerKey}
       data-monomer-item-id={monomerKey}
       item={monomerItem}
@@ -159,6 +164,7 @@ const MonomerItem = ({
       }
       data-axolabs={monomerItem?.props.aliasAxoLabs ?? undefined}
       data-helm={monomerItem?.props.aliasHELM ?? undefined}
+      data-biln={monomerItem?.props.aliasBILN ?? undefined}
       data-modificationtype={getModificationTypeAttribute(
         monomerItem?.props.modificationTypes,
       )}

@@ -1,16 +1,16 @@
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { Scale } from 'domain/helpers';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
 import util from '../util';
 
 export class MonomerToAtomBondRenderer extends BaseRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGLineElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGLineElement, void> | undefined;
 
   constructor(public monomerToAtomBond: MonomerToAtomBond) {
     super(monomerToAtomBond);
@@ -86,9 +86,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       // Calculate direction vector from start to end (bond direction)
       const directionX = endPositionInPixels.x - startPositionInPixels.x;
       const directionY = endPositionInPixels.y - startPositionInPixels.y;
-      const distance = Math.sqrt(
-        directionX * directionX + directionY * directionY,
-      );
+      const distance = Math.hypot(directionX, directionY);
 
       // Normalize the direction vector
       const normalizedDirectionX = directionX / distance;
@@ -141,7 +139,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
         .insert('g', `.monomer`)
         .data([this])
         .attr('data-testid', 'bond')
-        .attr('data-type', 'covalent')
+        .attr('data-bondtype', 'covalent')
         .attr('data-bondid', this.monomerToAtomBond.id)
         .attr('data-frommonomerid', this.monomerToAtomBond.monomer.id)
         .attr('data-toatomid', this.monomerToAtomBond.atom.id)
@@ -168,8 +166,8 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
         'y2',
         this.scaledPosition.endPosition.y - this.scaledPosition.startPosition.y,
       )
-      .attr('stroke', '#333333')
-      .attr('stroke-width', 1);
+      .attr('stroke', '#000')
+      .attr('stroke-width', this.editorSettings.microModeScale / 20);
     this.appendHover();
   }
 
@@ -218,7 +216,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
         'y2',
         this.scaledPosition.endPosition.y - this.scaledPosition.startPosition.y,
       )
-      .attr('stroke', '#57ff8f')
+      .attr('stroke', SELECTION_COLOR)
       .attr('stroke-width', 10);
   }
 

@@ -1,5 +1,10 @@
-import { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName } from 'domain/types';
 import type { FlipDirection } from 'application/editor/shared/utils.types';
+import type { KetMonomerClass } from 'domain/constants/monomers';
+
+// KetMonomerClass lives in the domain layer; re-exported here for backward
+// compatibility so all existing application-layer imports continue to work.
+export { KetMonomerClass } from 'domain/constants/monomers';
 
 export enum KetNodeType {
   MONOMER = 'monomer',
@@ -89,25 +94,8 @@ export interface IKetConnection {
 }
 
 export type monomerClass =
-  | 'RNA'
-  | 'PEPTIDE'
-  | 'CHEM'
-  | 'UNKNOWN'
-  | 'DNA'
-  | 'MODDNA';
+  'RNA' | 'PEPTIDE' | 'CHEM' | 'UNKNOWN' | 'DNA' | 'MODDNA';
 
-export enum KetMonomerClass {
-  AminoAcid = 'AminoAcid',
-  Sugar = 'Sugar',
-  Phosphate = 'Phosphate',
-  Base = 'Base',
-  Terminator = 'Terminator',
-  Linker = 'Linker',
-  Unknown = 'Unknown',
-  CHEM = 'CHEM',
-  RNA = 'RNA',
-  DNA = 'DNA',
-}
 export type IKetAttachmentPointType = 'left' | 'right' | 'side';
 
 export interface IKetAttachmentPoint {
@@ -150,6 +138,14 @@ export type KetMonomerTemplateAtom = {
   location: [number, number, number];
 };
 
+export interface IKetMonomerTemplateRef {
+  $ref: string;
+}
+
+export interface IKetNodeRef {
+  $ref: string;
+}
+
 export interface IKetMonomerTemplate {
   type: KetTemplateType.MONOMER_TEMPLATE;
   class?: KetMonomerClass;
@@ -170,13 +166,16 @@ export interface IKetMonomerTemplate {
   naturalAnalog?: string;
   attachmentPoints?: IKetAttachmentPoint[];
   root: {
-    nodes;
+    nodes: IKetNodeRef[];
+    connections?: IKetTemplateConnection[];
+    templates?: IKetMonomerTemplateRef[];
   };
   classHELM?: string;
   name?: string;
   idtAliases?: IKetIdtAliases;
   unresolved?: boolean;
   aliasAxoLabs?: string;
+  aliasBILN?: string;
   atoms: KetMonomerTemplateAtom[];
   bonds: [];
   modificationTypes?: string[];
@@ -192,10 +191,6 @@ export interface IKetAmbiguousMonomerTemplate {
   alias?: string;
 }
 
-export interface IKetMonomerTemplateRef {
-  $ref: string;
-}
-
 export enum KetMonomerGroupTemplateClass {
   RNA = 'RNA',
 }
@@ -209,10 +204,8 @@ export interface IKetMonomerGroupTemplate {
   connections?: IKetTemplateConnection[];
   idtAliases?: IKetIdtAliases;
   aliasAxoLabs?: string;
-}
-
-export interface IKetNodeRef {
-  $ref: string;
+  aliasBILN?: string;
+  hidden?: boolean;
 }
 
 export interface IKetMacromoleculesContentRootProperty {

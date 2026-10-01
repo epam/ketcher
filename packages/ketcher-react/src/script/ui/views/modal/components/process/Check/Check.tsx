@@ -14,11 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { FC, useEffect, useState } from 'react';
+import { type ComponentType, type FC, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import type { AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
 import Form, {
+  type FormState,
   Field,
-  FormState,
 } from '../../../../../component/form/form/form';
 import { Dialog } from '../../../../components';
 import ErrorsCheck from './components';
@@ -34,6 +36,7 @@ interface MoleculeErrors {
 type CheckOption =
   | 'valence'
   | 'radicals'
+  | 'isotopes'
   | 'pseudoatoms'
   | 'stereo'
   | 'query'
@@ -62,6 +65,7 @@ interface CheckSchema {
 
 interface CheckState {
   checkOptions: CheckOption[];
+  [key: string]: unknown;
 }
 
 interface CheckFormState extends FormState<CheckState> {
@@ -108,28 +112,30 @@ const checkSchema: CheckSchema = {
         enum: [
           'valence',
           'radicals',
+          'isotopes',
           'pseudoatoms',
           'stereo',
+          'chiral',
+          'chiral_flag',
           'query',
           'overlapping_atoms',
           'overlapping_bonds',
           'rgroups',
-          'chiral',
           '3d',
-          'chiral_flag',
         ],
         enumNames: [
           'Valence',
           'Radical',
+          'Isotopes',
           'Pseudoatom',
           'Stereochemistry',
+          'Chirality',
+          'Chiral flag',
           'Query',
           'Overlapping Atoms',
           'Overlapping Bonds',
           'R-Groups',
-          'Chirality',
           '3D Structure',
-          'Chiral flag',
         ],
       },
     },
@@ -222,6 +228,8 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
   const handleSettingsChange = () => setIsCheckedWithNewSettings(false);
 
   useEffect(() => {
+    // Decided to suppress because this is intended behaviour for this component
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     handleCheck();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -247,8 +255,6 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
         schema={checkSchema}
         init={checkState}
         {...formState}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore - result prop is not in FormProps type definition but is accepted by the component
         result={result}
       >
         <div className={style.wrapper}>
@@ -260,8 +266,6 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
               <Field
                 name="checkOptions"
                 labelPos={false}
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore - multiple and onChange props are not in FieldProps type definition but are accepted by the component
                 multiple
                 type="checkbox"
                 disabled={!isStructureChecking}
@@ -301,6 +305,15 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
             </div>
           </div>
         </div>
+        <p
+          className={style.idsExplanation}
+          data-testid="check-structure-id-explanation"
+        >
+          Some checks will return atom or bond IDs for the elements causing the
+          error. To visualize them toggle on the &apos;Show Atom IDs&apos; and
+          &apos;Show Bond IDs&apos; in the &apos;Debugging&apos; section of
+          Settings.
+        </p>
       </Form>
     </Dialog>
   );
@@ -312,7 +325,7 @@ const mapStateToProps = (state: State): CheckDialogStateProps => ({
 });
 
 const mapDispatchToProps = (
-  dispatch: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  dispatch: ThunkDispatch<State, undefined, AnyAction>,
   ownProps: CheckDialogOwnProps,
 ): CheckDialogDispatchProps => ({
   onCheck: (opts: CheckOption[]) =>
@@ -323,12 +336,9 @@ const mapDispatchToProps = (
   },
 });
 
-// Workaround: @types/react version conflict with connect()
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CheckDialogAny = CheckDialog as any;
-const Check = connect(
+const ConnectedCheckDialog = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CheckDialogAny) as React.ComponentType<CheckDialogOwnProps>;
+)(CheckDialog);
 
-export default Check;
+export default ConnectedCheckDialog as ComponentType<CheckDialogOwnProps>;

@@ -17,10 +17,10 @@
 import { AtomAdd, FragmentAdd } from '../operations';
 
 import { Action } from './action';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 import { atomGetAttr } from './utils';
 import { fromBondAddition } from './bond';
-import { ReAtom, ReStruct } from 'application/render';
+import type { ReAtom, ReStruct } from 'application/render';
 
 export const removeInfoLabelFromAtoms = (restruct: ReStruct) => {
   restruct.atoms.forEach((atom: ReAtom) => {
@@ -28,33 +28,38 @@ export const removeInfoLabelFromAtoms = (restruct: ReStruct) => {
   });
 };
 
-export function fromChain(restruct, p0, v, nSect, atomId) {
-  // eslint-disable-line max-params
+export function fromChain(
+  restruct: ReStruct,
+  p0: Vec2,
+  v: number,
+  nSect: number,
+  atomId: number | null,
+) {
   const dx = Math.cos(Math.PI / 6);
   const dy = Math.sin(Math.PI / 6);
 
   let action = new Action();
 
   const frid =
-    atomId !== null
-      ? atomGetAttr(restruct, atomId, 'fragment')
-      : (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd).frid;
+    atomId === null
+      ? ((action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd)
+          .frid as number)
+      : (atomGetAttr(restruct, atomId, 'fragment') as number);
 
-  const chainItems: any = {
+  const chainItems: { atoms: number[]; bonds: number[] } = {
     atoms: [],
     bonds: [],
   };
 
   let addedAtoms = atomId ? -1 : 0;
 
-  let id0 =
-    atomId !== null
-      ? atomId
-      : (
-          action.addOp(
-            new AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct),
-          ) as AtomAdd
-        ).data.aid;
+  let id0: number =
+    atomId ??
+    ((
+      action.addOp(
+        new AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct),
+      ) as AtomAdd
+    ).data.aid as number);
 
   chainItems.atoms.push(id0);
   action.operations.reverse();
@@ -79,8 +84,10 @@ export function fromChain(restruct, p0, v, nSect, atomId) {
   addedAtoms += chainItems.atoms.length;
 
   const lastAtomInChain = restruct.atoms.get(id0);
-  lastAtomInChain.showInfoLabel = true;
-  lastAtomInChain.infoLabel = addedAtoms;
+  if (lastAtomInChain) {
+    lastAtomInChain.showInfoLabel = true;
+    lastAtomInChain.infoLabel = String(addedAtoms);
+  }
 
   return [action, chainItems];
 }

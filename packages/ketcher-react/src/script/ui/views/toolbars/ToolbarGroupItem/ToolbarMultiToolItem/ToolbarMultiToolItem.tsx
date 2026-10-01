@@ -15,13 +15,16 @@
  ***************************************************************************/
 
 import {
+  type ActionButtonCallProps,
+  type ActionButtonProps,
   ActionButton,
-  ActionButtonCallProps,
-  ActionButtonProps,
 } from '../ActionButton';
-import { GroupDescriptor, MultiToolVariant } from './variants/variants.types';
-import { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types';
-import action, { UiAction, UiActionAction } from '../../../../action';
+import type {
+  GroupDescriptor,
+  MultiToolVariant,
+} from './variants/variants.types';
+import type { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types';
+import action, { type UiAction, type UiActionAction } from '../../../../action';
 
 import { useRef } from 'react';
 import clsx from 'clsx';
@@ -100,23 +103,21 @@ const ToolbarMultiToolItem = (props: Props) => {
   const displayMultiToolItem = !(allInnerItemsHidden || currentStatus?.hidden);
 
   if (!currentStatus && options.length) {
-    const savedSelectionTool = SettingsManager.selectionTool;
-    const savedSelectionToolId =
-      savedSelectionTool &&
-      `${savedSelectionTool.tool}-${savedSelectionTool.opts}`;
-    currentId =
-      savedSelectionTool &&
-      savedSelectionToolId &&
-      options.filter(
-        (option) =>
-          !status[option.id]?.hidden && option.id === savedSelectionToolId,
-      )[0]?.id;
+    const savedSelectionTool = SettingsManager.getSelectionTool('micro');
+    const savedSelectionToolId = savedSelectionTool
+      ? `${savedSelectionTool.tool}-${savedSelectionTool.opts}`
+      : undefined;
+    const savedSelectionOption = savedSelectionToolId
+      ? options.find(
+          (option) =>
+            !status[option.id]?.hidden && option.id === savedSelectionToolId,
+        )
+      : undefined;
 
-    if (!currentId) {
-      currentId =
-        options.filter((option) => !status[option.id]?.hidden)[0]?.id ??
-        options[0].id;
-    }
+    currentId =
+      savedSelectionOption?.id ??
+      options.find((option) => !status[option.id]?.hidden)?.id ??
+      options[0].id;
   }
   const onOpenOptions = () => {
     // TODO: same as #type above
@@ -140,6 +141,7 @@ const ToolbarMultiToolItem = (props: Props) => {
       ref={ref}
       className={classes.root}
       data-testid={`${id}-drop-down-button`}
+      data-is-selected={selected ? 'true' : 'false'}
     >
       <ActionButton
         {...actionButtonProps}

@@ -10,12 +10,12 @@ export const Form = styled.form({
 export const Row = styled.div({
   display: 'flex',
   justifyContent: 'space-between',
+  alignItems: 'flex-end',
   marginBottom: '16px',
 });
 
 export const StyledDropdown = styled(DropDown)(({ theme }) => ({
   width: '230px',
-  height: '28px',
   flexShrink: 0,
 
   '& .MuiOutlinedInput-root:hover:not(.Mui-disabled)': {

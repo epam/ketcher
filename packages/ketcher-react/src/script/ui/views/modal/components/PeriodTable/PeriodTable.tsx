@@ -16,15 +16,15 @@
 
 import { AtomInfo, ElementsTable, TypeChoice } from './components';
 import { fromElement, toElement } from '../../../../data/convert/structconv';
-import { PeriodTableResult, PeriodTableType } from './types';
+import type { PeriodTableResult, PeriodTableType } from './types';
 
-import { Component, FC } from 'react';
+import { type FC, Component } from 'react';
 import { Dialog } from '../../../components';
-import { Editor, Element, Elements } from 'ketcher-core';
+import { type Editor, type Element, Elements } from 'ketcher-core';
 import { addAtoms } from '../../../../state/toolbar';
 import classes from './PeriodTable.module.less';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { onAction } from '../../../../state';
 import { xor } from 'lodash/fp';
 import { Icon } from 'components';
@@ -214,7 +214,8 @@ function mapSelectionToProps(editor: Editor): Partial<TableStateProps> {
   ) {
     const struct = editor.struct();
     const atom = struct.atoms.get(selection.atoms[0]);
-    return { ...fromElement(atom) };
+    if (!atom) return {};
+    return { ...fromElement(atom) } as Partial<TableStateProps>;
   }
 
   return {};

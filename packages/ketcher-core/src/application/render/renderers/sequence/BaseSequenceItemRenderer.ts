@@ -1,25 +1,28 @@
-import { D3SvgElementSelection } from 'application/render/types';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
+import type { D3SvgElementSelection } from 'application/render/types';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
-import {
+import type {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
+import type { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-import { CoreEditor } from 'application/editor/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { SequenceRenderer } from 'application/render';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
+import { sequenceRendererStore } from 'application/render/renderers/sequence/SequenceRendererStore';
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
 import { isNumber } from 'lodash';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
-import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
-import { SequenceMode } from 'application/editor';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { MONOMER_CONST } from 'domain/constants';
 import { SettingsManager } from 'utilities';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
+const CARET_X_OFFSET_BEFORE_NODE = -17;
+const CARET_X_OFFSET_AFTER_NODE = 3;
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
@@ -71,7 +74,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   private get isSingleEmptyNode() {
     return (
-      SequenceRenderer.sequenceViewModel.length === 1 &&
+      sequenceRendererStore.sequenceViewModel.length === 1 &&
       this.node instanceof EmptySequenceNode
     );
   }
@@ -124,23 +127,19 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   protected get isSequenceEditModeTurnedOn() {
-    return CoreEditor.provideEditorInstance().isSequenceEditMode;
+    return provideEditorInstance().isSequenceEditMode;
   }
 
   protected get isSequenceEditInRnaBuilderModeTurnedOn() {
-    return CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+    return provideEditorInstance().isSequenceEditInRNABuilderMode;
   }
 
   private get isAntisenseEditMode() {
-    const editorMode = CoreEditor.provideEditorInstance().mode;
-
-    return editorMode instanceof SequenceMode && editorMode.isAntisenseEditMode;
+    return provideEditorInstance().mode.isAntisenseEditMode;
   }
 
   private get isSyncEditMode() {
-    const editorMode = CoreEditor.provideEditorInstance().mode;
-
-    return editorMode instanceof SequenceMode && editorMode.isSyncEditMode;
+    return provideEditorInstance().mode.isSyncEditMode;
   }
 
   protected appendRootElement() {
@@ -151,7 +150,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('data-testid', 'sequence-item')
       .attr('data-symbol-id', this.node.monomer.id)
       .attr('data-chain-id', this.chain.id)
-      // .attr('data-symbol-count', this.chain.id)
+      .attr('data-symbol-alias', this.symbolToDisplay)
       .attr(
         'data-side-connection-number',
         this.node.monomers.reduce(
@@ -298,7 +297,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
     const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
     let numberToDisplay;
-    const caclulateNumberToDisplay = (subChain) => {
+    const calculateNumberToDisplay = (subChain: BaseSubChain) => {
       if (!this.isSubChainNode(this.node)) return false;
 
       const nodeIndex = subChain.nodes.indexOf(this.node);
@@ -342,7 +341,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       return numberToDisplay !== undefined;
     };
 
-    this.chain.subChains.some(caclulateNumberToDisplay);
+    this.chain.subChains.some(calculateNumberToDisplay);
 
     if (isNumber(numberToDisplay)) {
       return numberToDisplay;
@@ -409,7 +408,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   // in snake/flex layout mode is represented as % in hexagon
-  private checkIfNodeIsAmbiguousMonomerPeptide(node) {
+  private checkIfNodeIsAmbiguousMonomerPeptide(node: SequenceNode) {
     return (
       node instanceof AmbiguousMonomerSequenceNode &&
       node.monomer.monomerClass === MONOMER_CONST.AMINO_ACID
@@ -418,7 +417,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   // in snake/flex layout mode is represented as % in:
   // rectangle, circle, diamond, rounded rectangle, etc. (not hexagon)
-  private checkIfNodeIsAmbiguousMonomerNotPeptide(node) {
+  private checkIfNodeIsAmbiguousMonomerNotPeptide(node: SequenceNode) {
     return (
       node instanceof AmbiguousMonomerSequenceNode &&
       node.monomer.monomerClass !== MONOMER_CONST.AMINO_ACID
@@ -591,7 +590,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       : (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0;
   }
 
-  public showCaret() {
+  public showCaret(xOffset = CARET_X_OFFSET_BEFORE_NODE) {
     this.caretElement = this.spacerElement?.append('g');
 
     if (this.isSyncEditMode && this.isAntisenseNode) {
@@ -620,13 +619,17 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     ) {
       this.caretElement
         ?.append('line')
-        .attr('x1', -17)
+        .attr('x1', xOffset)
         .attr('y1', -1)
-        .attr('x2', -17)
+        .attr('x2', xOffset)
         .attr('y2', 21)
         .attr('stroke', '#333')
         .attr('class', 'blinking');
     }
+  }
+
+  public showCaretAfterNode() {
+    this.showCaret(CARET_X_OFFSET_AFTER_NODE);
   }
 
   public removeCaret() {
@@ -634,7 +637,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.caretElement = undefined;
   }
 
-  public redrawCaret(editingNodeIndexOverall?: number) {
+  public redrawCaret(editingNodeIndexOverall?: number, afterRowEnd = false) {
     this.removeCaret();
 
     if (
@@ -642,7 +645,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         this.isEditingSymbol(editingNodeIndexOverall)) ||
       this.isSingleEmptyNode
     ) {
-      this.showCaret();
+      if (afterRowEnd) {
+        this.showCaretAfterNode();
+      } else {
+        this.showCaret();
+      }
     }
   }
 
@@ -656,12 +663,18 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private appendChainStartArrow() {
-    this.rootElement
+    const arrowElement = this.rootElement
       ?.append('use')
       .attr('x', -17)
       .attr('y', -27)
       .attr('data-testid', 'sequence-start-arrow')
       .attr('href', `#${CHAIN_START_ARROW_SYMBOL_ID}`);
+
+    if (this.isAntisenseNode) {
+      // Rotate around the arrow glyph's own center (not the whole use/symbol box,
+      // whose fill-box is computed unreliably for use+symbol), keeping it in place.
+      arrowElement?.attr('transform', 'rotate(180, -11, -6)');
+    }
   }
 
   private drawGreyOverlay() {
@@ -749,7 +762,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         .attr('class', 'dynamic-element');
     } else {
       this.selectionRectangle
-        ?.attr('fill', '#57FF8F')
+        ?.attr('fill', SELECTION_COLOR)
         .attr('x', -4)
         .attr('y', -16)
         .attr('width', 20)
@@ -826,7 +839,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     if (this.node.monomer.selected) {
       this.selectionRectangle?.attr(
         'fill',
-        this.isSequenceEditInRnaBuilderModeTurnedOn ? '#99D6DC' : '#57FF8F',
+        this.isSequenceEditInRnaBuilderModeTurnedOn
+          ? '#99D6DC'
+          : SELECTION_COLOR,
       );
     } else {
       this.backgroundElement?.attr('fill', 'none');

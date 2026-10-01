@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { Container, DetailsContainer, SummaryContainer } from './styles';
-import { IAccordionProps } from './types';
+import type { IAccordionProps } from './types';
 
 export const Accordion = ({
   summary,

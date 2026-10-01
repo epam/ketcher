@@ -1,4 +1,4 @@
-import type { ImageReferenceName } from 'domain/entities';
+import type { ImageReferenceName } from 'domain/entities/image';
 
 export const IMAGE_KEY = 'images';
 export const IMAGE_SERIALIZE_KEY = 'image';

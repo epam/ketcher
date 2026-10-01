@@ -1,4 +1,3 @@
-/* eslint-disable no-empty-pattern */
 import { test as utils } from '../utilsFixtures';
 import { test as pageObjects } from '../commonPageObjectFixtures';
 import { waitForIndigoToLoad, waitForKetcherInit } from '@utils';

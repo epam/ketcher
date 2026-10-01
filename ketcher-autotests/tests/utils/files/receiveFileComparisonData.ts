@@ -50,6 +50,7 @@ type FileTypeHandler =
 
 const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.KET]: getKet,
+  // This actually returns Base64 CDX content. https://www.youtube.com/watch?v=-Ui4prpCZ0w
   [FileType.CDX]: getCdx,
   [FileType.CDXML]: getCdxml,
   [FileType.SMARTS]: getSmarts,
@@ -78,7 +79,28 @@ async function getFileContent(
   }
 
   // If fileFormat is provided ('v2000' or 'v3000'), pass it to the handler
-  return fileFormat ? handler(page, fileFormat) : handler(page);
+  const fileContent = fileFormat
+    ? await (
+        handler as (page: Page, fileFormat: FileFormat) => Promise<string>
+      )(page, fileFormat)
+    : await (handler as (page: Page) => Promise<string>)(page);
+
+  return fileContent;
+}
+
+// Filter file lines: by default drop lines containing '-INDIGO-', 'Ketcher',
+// '$DATM', or '$MDL'. When indexes are provided, exclude those line indexes.
+function filterExportLines(lines: string[], indexes: number[]): string[] {
+  if (indexes.length === 0) {
+    return lines.filter(
+      (line) =>
+        !line.includes('-INDIGO-') &&
+        !line.includes('$DATM') &&
+        !line.includes('$MDL') &&
+        !line.includes('Ketcher'),
+    );
+  }
+  return filterByIndexes(lines, indexes);
 }
 
 export async function verifyFileExport(
@@ -102,24 +124,9 @@ export async function verifyFileExport(
     fileFormat: format,
     metaDataIndexes,
   });
-  // Function to filter lines
-  const filterLines = (lines: string[], indexes: number[]) => {
-    if (indexes.length === 0) {
-      // Default behavior: ignore lines containing '-INDIGO-', 'Ketcher' and '$DATM'
-      return lines.filter(
-        (line) =>
-          !line.includes('-INDIGO-') &&
-          !line.includes('$DATM') &&
-          !line.includes('$MDL') &&
-          !line.includes('Ketcher'),
-      );
-    }
-    // If indexes are specified, filter lines by indexes
-    return filterByIndexes(lines, indexes);
-  };
   // Apply filtering to both files
-  const filteredFile = filterLines(file, metaDataIndexes);
-  const filteredFileExpected = filterLines(fileExpected, metaDataIndexes);
+  const filteredFile = filterExportLines(file, metaDataIndexes);
+  const filteredFileExpected = filterExportLines(fileExpected, metaDataIndexes);
   // Compare the filtered files
   expect(filteredFile).toEqual(filteredFileExpected);
 }
@@ -137,28 +144,15 @@ export async function verifyConsoleExport(
   await saveToFile(resolvedExpectedFilename, consoleContent);
   // This line for filtering out example file content (named as fileExpected)
   // and file content from memory (named as file) from unnessusary data
-  const fileExpected = (await readFileContent(expectedFilename)).split('\n');
+  const fileExpected = (await readFileContent(resolvedExpectedFilename)).split(
+    '\n',
+  );
 
-  // Function to filter lines
-  const filterLines = (lines: string[], indexes: number[]) => {
-    if (indexes.length === 0) {
-      // Default behavior: ignore lines containing '-INDIGO-', 'Ketcher' and '$DATM'
-      return lines.filter(
-        (line) =>
-          !line.includes('-INDIGO-') &&
-          !line.includes('$DATM') &&
-          !line.includes('$MDL') &&
-          !line.includes('Ketcher'),
-      );
-    }
-    // If indexes are specified, filter lines by indexes
-    return filterByIndexes(lines, indexes);
-  };
-  const filteredConsoleContent = filterLines(
+  const filteredConsoleContent = filterExportLines(
     consoleContent.split('\n'),
     metaDataIndexes,
   );
-  const filteredFileExpected = filterLines(fileExpected, metaDataIndexes);
+  const filteredFileExpected = filterExportLines(fileExpected, metaDataIndexes);
   // Compare the filtered files
   expect(filteredConsoleContent).toEqual(filteredFileExpected);
 }
@@ -212,10 +206,12 @@ async function receiveFile({
     ? { method: methodName, format: fileFormat }
     : { method: methodName };
 
-  await page.waitForFunction(() => window.ketcher);
+  await page.waitForFunction(() => globalThis.window.ketcher);
 
   const file = await page.evaluate(({ method, format }) => {
-    return format ? window.ketcher[method](format) : window.ketcher[method]();
+    return format
+      ? globalThis.window.ketcher[method](format)
+      : globalThis.window.ketcher[method]();
   }, pageData);
 
   return file.split('\n');
@@ -282,9 +278,8 @@ export async function verifyAxoLabsExport(
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.AxoLabs,
   );
-  const AxoLabsExportResult = await SaveStructureDialog(
-    page,
-  ).getTextAreaValue();
+  const AxoLabsExportResult =
+    await SaveStructureDialog(page).getTextAreaValue();
 
   expect(AxoLabsExportResult).toEqual(AxoLabsExportExpected);
 
@@ -335,9 +330,8 @@ export async function verifySequence1LetterCodeExport(
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence1LetterCode,
   );
-  const Sequence1LetterCodeExportResult = await SaveStructureDialog(
-    page,
-  ).getTextAreaValue();
+  const Sequence1LetterCodeExportResult =
+    await SaveStructureDialog(page).getTextAreaValue();
 
   expect(Sequence1LetterCodeExportResult).toEqual(
     Sequence1LetterCodeExportExpected,
@@ -412,9 +406,8 @@ export async function verifyInChIKeyExport(
   await SaveStructureDialog(page).chooseFileFormat(
     MoleculesFileFormatType.InChIKey,
   );
-  const InChIKeyExportResult = await SaveStructureDialog(
-    page,
-  ).getTextAreaValue();
+  const InChIKeyExportResult =
+    await SaveStructureDialog(page).getTextAreaValue();
 
   expect(InChIKeyExportResult).toEqual(InChIKeyExportExpected);
 

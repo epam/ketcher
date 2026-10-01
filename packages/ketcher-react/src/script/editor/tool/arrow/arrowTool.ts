@@ -1,8 +1,7 @@
-import Editor from '../../Editor';
-import { CoordinateTransformation, Vec2 } from 'ketcher-core';
+import type Editor from '../../Editor';
+import { type Vec2, CoordinateTransformation } from 'ketcher-core';
 
 export abstract class ArrowTool {
-  // eslint-disable-next-line no-useless-constructor
   constructor(protected readonly editor: Editor) {}
 
   protected get render() {

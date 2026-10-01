@@ -2,19 +2,22 @@ import {
   AmbiguousMonomer,
   BaseMonomer,
   BaseSequenceItemRenderer,
-  CoreEditor,
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
   isRnaBaseOrAmbiguousRnaBase,
+  isSugarOrAmbiguousSugar,
   KetAmbiguousMonomerTemplateSubType,
   Peptide,
   RNA_DNA_NON_MODIFIED_PART,
   RNABase,
+  rnaDnaNaturalAnalogues,
   Sugar,
+  UnsplitNucleotide,
   getAminoAcidsToModify,
   canModifyAminoAcid,
   compareByTitleWithNaturalFirst,
   MonomerToAtomBond,
+  provideEditorInstance,
 } from 'ketcher-core';
 
 const getMonomersCode = (monomers: BaseMonomer[]) => {
@@ -88,6 +91,15 @@ export const isSenseBase = (monomer: BaseMonomer | AmbiguousMonomer) => {
   return ambigues.some((v) => v === code);
 };
 
+/**
+ * An unsplit nucleotide is a fused sugar+base+phosphate monomer, so it has no
+ * RNA base to inspect — its eligibility is decided by its own natural analogue.
+ */
+const hasSenseNaturalAnalogue = (monomer: BaseMonomer) =>
+  rnaDnaNaturalAnalogues.includes(
+    monomer.monomerItem.props.MonomerNaturalAnalogCode,
+  );
+
 export const isAntisenseCreationDisabled = (
   selectedMonomers: BaseMonomer[],
 ) => {
@@ -99,6 +111,9 @@ export const isAntisenseCreationDisabled = (
       (selectedMonomer instanceof RNABase &&
         (selectedMonomer.hydrogenBonds.length > 0 ||
           selectedMonomer.covalentBonds.length > 1)) ||
+      (selectedMonomer instanceof UnsplitNucleotide &&
+        (selectedMonomer.hydrogenBonds.length > 0 ||
+          !hasSenseNaturalAnalogue(selectedMonomer))) ||
       (isRnaBaseOrAmbiguousRnaBase(selectedMonomer) &&
         !isSenseBase(selectedMonomer)) ||
       (rnaBaseForSugar &&
@@ -128,9 +143,17 @@ export const isAntisenseOptionVisible = (selectedMonomers: BaseMonomer[]) => {
     return (
       (selectedMonomer instanceof RNABase &&
         getSugarFromRnaBase(selectedMonomer)) ||
-      (selectedMonomer instanceof Sugar && getRnaBaseFromSugar(selectedMonomer))
+      (isSugarOrAmbiguousSugar(selectedMonomer) &&
+        getRnaBaseFromSugar(selectedMonomer)) ||
+      selectedMonomer instanceof UnsplitNucleotide
     );
   });
+};
+
+export const hasUnsplitNucleotide = (selectedMonomers: BaseMonomer[]) => {
+  return selectedMonomers?.some(
+    (selectedMonomer) => selectedMonomer instanceof UnsplitNucleotide,
+  );
 };
 
 export const AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX =
@@ -142,7 +165,7 @@ export const getModifyAminoAcidsMenuItems = (
   const modificationsForSelection = new Set<string>();
   const modificationTypesDisabledByAttachmentPoints = new Set<string>();
   const naturalAnalogueToSelectedMonomers = new Map<string, BaseMonomer[]>();
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
 
   selectedMonomers.forEach((selectedMonomer) => {
     const monomerNaturalAnalogCode =
@@ -178,24 +201,26 @@ export const getModifyAminoAcidsMenuItems = (
     }
 
     modificationTypes.forEach((modificationType) => {
-      // If modification does not have R1 or R2 attachment points to persist connection
-      if (
-        monomersWithSameNaturalAnalogCode.some(
-          (monomer: BaseMonomer) =>
-            monomer.label !== monomerLibraryItem.label &&
-            !canModifyAminoAcid(monomer, monomerLibraryItem),
-        )
-      ) {
-        modificationTypesDisabledByAttachmentPoints.add(modificationType);
-
-        return;
-      }
-
+      // Check if all monomers in this group already have this modification
       if (
         monomersWithSameNaturalAnalogCode.every(
           (monomer) => monomer.label === monomerLibraryItem.label,
         )
       ) {
+        return;
+      }
+
+      // Check if at least one monomer in this group can be modified
+      const hasAtLeastOneEligibleMonomer =
+        monomersWithSameNaturalAnalogCode.some(
+          (monomer: BaseMonomer) =>
+            monomer.label !== monomerLibraryItem.label &&
+            canModifyAminoAcid(monomer, monomerLibraryItem),
+        );
+
+      // If NO monomer is eligible, disable this modification
+      if (!hasAtLeastOneEligibleMonomer) {
+        modificationTypesDisabledByAttachmentPoints.add(modificationType);
         return;
       }
 

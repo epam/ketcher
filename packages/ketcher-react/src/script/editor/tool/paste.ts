@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +16,8 @@
  ***************************************************************************/
 
 import {
-  expandSGroupWithMultipleAttachmentPoint,
+  type Struct,
+  type EditorTemplate,
   fromItemsFuse,
   fromPaste,
   fromTemplateOnAtom,
@@ -23,17 +25,17 @@ import {
   getItemsToFuse,
   notifyItemsToMergeInitializationComplete,
   SGroup,
-  Struct,
   Vec2,
   vectorUtils,
   CoordinateTransformation,
 } from 'ketcher-core';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { dropAndMerge } from './helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
-import { Tool } from './Tool';
+import type { Tool } from './Tool';
 import { debounce } from 'lodash';
+import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 let isMovePreviewCalculationInProgress = false;
 
@@ -50,8 +52,7 @@ const debouncedSetAndHoverMergeItems = debounce(function (
   );
   pasteToolInstance.setMergeItems(mergeItems);
   notifyItemsToMergeInitializationComplete();
-},
-50);
+}, 50);
 
 class PasteTool implements Tool {
   private readonly editor: Editor;
@@ -73,7 +74,10 @@ class PasteTool implements Tool {
     const { clientHeight, clientWidth } = rnd.clientArea;
     const clientAreaRect = rnd.clientArea.getBoundingClientRect();
     const point = this.editor.lastEvent
-      ? CoordinateTransformation.pageToModel(this.editor.lastEvent, rnd)
+      ? CoordinateTransformation.pageToModel(
+          this.editor.lastEvent as MouseEvent,
+          rnd,
+        )
       : CoordinateTransformation.pageToModel(
           {
             clientX: clientAreaRect.left + clientWidth / 2,
@@ -85,8 +89,6 @@ class PasteTool implements Tool {
     const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point);
     this.action = action;
     this.editor.update(this.action, true);
-
-    action.mergeWith(expandSGroupWithMultipleAttachmentPoint(this.restruct));
 
     this.editor.update(this.action, true);
 
@@ -104,7 +106,7 @@ class PasteTool implements Tool {
   mousedown(event) {
     if (
       !this.isSingleContractedGroup ||
-      SGroup.isSaltOrSolvent(this.struct.sgroups.get(0)?.data.name)
+      SGroup.isSaltOrSolvent(this.struct.sgroups.get(0)?.data.name ?? '')
     ) {
       return;
     }
@@ -114,12 +116,16 @@ class PasteTool implements Tool {
       this.action?.perform(this.restruct);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const closestGroupItem = this.editor.findItem(event, ['functionalGroups'])!;
-    const closestGroup = this.editor.struct().sgroups.get(closestGroupItem?.id);
+    const closestGroupItem = this.editor.findItem(event, ['functionalGroups']);
+    const closestGroup = closestGroupItem
+      ? this.editor.struct().sgroups.get(closestGroupItem.id)
+      : undefined;
 
     // not dropping on a group (tmp, should be removed when dealing with other entities)
-    if (!closestGroupItem || SGroup.isSaltOrSolvent(closestGroup?.data.name)) {
+    if (
+      !closestGroupItem ||
+      SGroup.isSaltOrSolvent(closestGroup?.data.name ?? '')
+    ) {
       // recreate action and continue as usual
       const [action] = fromPaste(
         this.restruct,
@@ -169,9 +175,17 @@ class PasteTool implements Tool {
         pos0 = atom?.pp;
       }
 
+      if (!pos0 || atomId === undefined) {
+        // Invariant: dragCtx.item always refers to a functional group with a
+        // resolvable attachment atom (validated in mousedown). Reaching here
+        // with no position indicates a programming error, not a runtime case.
+        throw new Error(
+          'PasteTool: attachment atom position is missing for the dragged group',
+        );
+      }
+
       // calc angle
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      let angle = vectorUtils.calcAngle(pos0!, pos1);
+      let angle = vectorUtils.calcAngle(pos0, pos1);
 
       if (!event.ctrlKey) {
         angle = vectorUtils.fracAngle(angle, null);
@@ -246,7 +260,7 @@ class PasteTool implements Tool {
     );
 
     if (groupsIdsInvolvedInMerge.length) {
-      this.editor.event.removeFG.dispatch({ fgIds: groupsIdsInvolvedInMerge });
+      dispatchMonomerOrGroupDialog(this.editor, groupsIdsInvolvedInMerge);
       return;
     }
 
@@ -294,33 +308,25 @@ class PasteTool implements Tool {
   }
 }
 
-type Template = {
-  aid?: number;
-  molecule?: Struct;
-  xy0?: Vec2;
-  angle0?: number;
-};
-
 /** Adds position and angle info to the molecule, similar to Template tool native behavior */
-function prepareTemplateFromSingleGroup(molecule: Struct): Template | null {
-  const template: Template = {};
+function prepareTemplateFromSingleGroup(molecule: Struct): EditorTemplate {
   const sgroup = molecule.sgroups.get(0);
   const xy0 = new Vec2();
 
   molecule.atoms.forEach((atom) => {
-    xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
+    xy0.add_(atom.pp);
   });
 
-  template.aid = sgroup?.getAttachmentAtomId() ?? 0;
-  template.molecule = molecule;
-  template.xy0 = xy0.scaled(1 / (molecule.atoms.size || 1)); // template center
+  const xy0Center = xy0.scaled(1 / (molecule.atoms.size || 1)); // template center
+  const aid = sgroup?.getAttachmentAtomId() ?? 0;
+  const atom = molecule.atoms.get(aid);
 
-  const atom = molecule.atoms.get(template.aid);
-  if (atom) {
-    template.angle0 = vectorUtils.calcAngle(atom.pp, template.xy0); // center tilt
-  }
-
-  return template;
+  return {
+    aid,
+    bid: 0,
+    molecule,
+    angle0: atom ? vectorUtils.calcAngle(atom.pp, xy0Center) : 0, // center tilt
+  };
 }
 
 export default PasteTool;

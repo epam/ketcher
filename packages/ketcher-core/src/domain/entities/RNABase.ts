@@ -1,6 +1,6 @@
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 import { AttachmentPointName } from 'domain/types';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';

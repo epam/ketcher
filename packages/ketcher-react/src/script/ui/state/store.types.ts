@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import type { Struct } from 'ketcher-core';
+
 // TODO: This is a partial type definition of the Redux store.
 // The actual store structure is more complex and should be expanded
 // as more components are migrated to TypeScript.
@@ -27,7 +29,7 @@ export interface TemplatesState {
     bondid: number;
   };
   lib: Array<{
-    struct: import('ketcher-core').Struct;
+    struct: Struct;
     props: {
       atomid?: string | number;
       bondid?: string | number;

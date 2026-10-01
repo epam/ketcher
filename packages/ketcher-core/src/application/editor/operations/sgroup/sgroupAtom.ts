@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
-import { ReStruct } from '../../../render';
-import { SGroup } from 'domain/entities';
-
-// todo: separate classes: now here is circular dependency in `invert` method
+import type { ReStruct } from '../../../render';
+import { SGroup } from 'domain/entities/sgroup';
+import { assert } from 'utilities';
 
 type Data = {
-  sgid: any;
-  aid: any;
+  sgid?: number;
+  aid?: number;
 };
 
 class SGroupAtomAdd extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any, aid?: any) {
+  constructor(sgroupId?: number, aid?: number) {
     super(OperationType.S_GROUP_ATOM_ADD, OperationPriority.S_GROUP_ATOM_ADD);
     this.data = { sgid: sgroupId, aid };
   }
@@ -38,43 +36,47 @@ class SGroupAtomAdd extends BaseOperation {
   execute(restruct: ReStruct) {
     const { aid, sgid } = this.data;
 
+    if (aid === undefined || sgid === undefined) {
+      return;
+    }
+
     const struct = restruct.molecule;
-    const atom = struct.atoms.get(aid)!;
-    const sgroup = struct.sgroups.get(sgid)!;
+    const atom = struct.atoms.get(aid);
+    const sgroup = struct.sgroups.get(sgid);
+
+    assert(atom, `OpSGroupAtomAdd: Atom ${aid} not found`);
+    assert(sgroup, `OpSGroupAtomAdd: S-Group ${sgid} not found`);
 
     if (sgroup.atoms.indexOf(aid) >= 0) {
       return;
     }
 
-    if (!atom) {
-      throw new Error('OpSGroupAtomAdd: Atom ' + aid + ' not found');
-    }
-
     struct.atomAddToSGroup(sgid, aid);
     BaseOperation.invalidateAtom(restruct, aid);
-  }
-
-  invert() {
-    const inverted = new SGroupAtomRemove();
-    inverted.data = this.data;
-    return inverted;
   }
 }
 
 class SGroupAtomRemove extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any, aid?: any) {
-    super(OperationType.S_GROUP_ATOM_REMOVE, 4);
+  constructor(sgroupId?: number, aid?: number) {
+    super(
+      OperationType.S_GROUP_ATOM_REMOVE,
+      OperationPriority.S_GROUP_ATOM_REMOVE,
+    );
     this.data = { sgid: sgroupId, aid };
   }
 
   execute(restruct: ReStruct) {
     const { aid, sgid } = this.data;
 
+    if (aid === undefined || sgid === undefined) {
+      return;
+    }
+
     const struct = restruct.molecule;
-    const atom = struct.atoms.get(aid)!;
-    const sgroup = struct.sgroups.get(sgid)!;
+    const atom = struct.atoms.get(aid);
+    const sgroup = struct.sgroups.get(sgid);
 
     if (!atom || !sgroup) {
       return;
@@ -84,12 +86,9 @@ class SGroupAtomRemove extends BaseOperation {
     atom.sgs.delete(sgid);
     BaseOperation.invalidateAtom(restruct, aid);
   }
-
-  invert() {
-    const inverted = new SGroupAtomAdd();
-    inverted.data = this.data;
-    return inverted;
-  }
 }
+
+SGroupAtomAdd.InverseConstructor = SGroupAtomRemove;
+SGroupAtomRemove.InverseConstructor = SGroupAtomAdd;
 
 export { SGroupAtomAdd, SGroupAtomRemove };

@@ -230,7 +230,8 @@
                     -2,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "O",
@@ -421,6 +422,7 @@
         "fullName": "Arginine",
         "alias": "R",
         "aliasHELM": "R",
+        "aliasBILN": "R",
         "attachmentPoints": [
             {
                 "attachmentAtom": 4,
@@ -449,6 +451,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "R"
     },

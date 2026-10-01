@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Action,
+  type Action,
   CoordinateTransformation,
   Scale,
   Vec2,
   vectorUtils,
 } from 'ketcher-core';
 import { throttle } from 'lodash';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import RotateTool from './rotate';
 import SelectTool from './select/select';
@@ -264,6 +265,7 @@ class RotateController {
           fill: 'red',
           opacity: 0,
         });
+        circle.node.setAttribute('data-testid', 'rotation-center-handle');
         this.cross = this.paper.set();
         this.cross?.push(cross, circle);
         this.cross?.translate(this.center.x, this.center.y);
@@ -663,7 +665,7 @@ class RotateController {
       Vec2.dist(this.handleCenter, this.center) -
       STYLE.HANDLE_MARGIN -
       STYLE.HANDLE_RADIUS;
-    this.initialRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0;
+    this.initialRadius = Math.max(newProtractorRadius, 0);
     const [degree0Line, degree0TextPos] = this.getProtractorBaseInfo(
       this.initialRadius,
     );
@@ -710,7 +712,7 @@ class RotateController {
           Vec2.dist(this.handleCenter, this.center) -
           STYLE.HANDLE_MARGIN -
           STYLE.HANDLE_RADIUS;
-        let newRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0;
+        let newRadius = Math.max(newProtractorRadius, 0);
         lastSnappingRadius = lastSnappingRadius ?? this.initialRadius;
         if (
           newRadius >= lastSnappingRadius * 1.4 ||

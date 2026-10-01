@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { KetcherLogger } from './KetcherLogger';
-import { LayoutMode } from 'application/editor';
+import type { LayoutMode } from 'application/editor/modes/types';
 
 export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings';
 export const KETCHER_SAVED_OPTIONS_KEY = 'ketcher-opts';
@@ -32,9 +32,27 @@ const DefaultEditorLineLength: EditorLineLength = {
 
 export const SetEditorLineLengthAction = 'SetEditorLineLength';
 
+/**
+ * Shape of the selection tool persisted in local storage.
+ * Mirrors the `ActionObj` used by the UI reducer that assigns it,
+ * but is kept minimal here to avoid coupling `ketcher-core` to
+ * UI-layer action types.
+ */
+export interface PersistedSelectionTool {
+  tool: 'select';
+  opts?: unknown;
+}
+
+/**
+ * Editor mode for selection tool persistence.
+ * - 'macro': Macromolecules mode (ketcher-macromolecules package)
+ * - 'micro': Micromolecules mode (ketcher-react package)
+ */
+export type EditorMode = 'macro' | 'micro';
+
 interface SavedSettings {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  selectionTool?: any;
+  selectionToolMacro?: PersistedSelectionTool;
+  selectionToolMicro?: PersistedSelectionTool;
   disableCustomQuery?: boolean;
   editorLineLength?: EditorLineLength;
   monomerLibraryUpdates?: string[];
@@ -51,9 +69,11 @@ export class SettingsManager {
 
   static getSettings(): SavedSettings {
     try {
-      return JSON.parse(
+      const settings = JSON.parse(
         localStorage.getItem(KETCHER_SAVED_SETTINGS_KEY) ?? '{}',
       );
+      delete settings.selectionTool;
+      return settings;
     } catch (e) {
       KetcherLogger.error(
         'settingsManager.ts::SettingsManager::getSettings',
@@ -101,17 +121,31 @@ export class SettingsManager {
     localStorage.setItem(KETCHER_SAVED_OPTIONS_KEY, JSON.stringify(options));
   }
 
-  static get selectionTool() {
-    const { selectionTool } = this.getSettings();
-    return selectionTool;
+  /**
+   * Get the persisted selection tool for the specified editor mode.
+   * @param mode - 'macro' for macromolecules editor, 'micro' for micro editor
+   */
+  static getSelectionTool(mode: EditorMode) {
+    const settings = this.getSettings();
+    const key = mode === 'macro' ? 'selectionToolMacro' : 'selectionToolMicro';
+    return settings[key];
   }
 
-  static set selectionTool(selectionTool) {
+  /**
+   * Save the selection tool for the specified editor mode.
+   * @param mode - 'macro' for macromolecules editor, 'micro' for micro editor
+   * @param selectionTool - The selection tool to persist
+   */
+  static setSelectionTool(
+    mode: EditorMode,
+    selectionTool: PersistedSelectionTool | undefined,
+  ) {
     const settings = this.getSettings();
+    const key = mode === 'macro' ? 'selectionToolMacro' : 'selectionToolMicro';
 
     this.saveSettings({
       ...settings,
-      selectionTool,
+      [key]: selectionTool,
     });
   }
 

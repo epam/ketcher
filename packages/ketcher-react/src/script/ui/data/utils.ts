@@ -11,6 +11,6 @@ import { atom } from './schema/struct-schema';
  * matchCharge("15+") === ["15+", "", "15", "+"]
  */
 export function matchCharge(charge: string) {
-  const regex = new RegExp(atom.properties.charge.pattern);
+  const regex = new RegExp(atom.properties.charge.pattern as string);
   return regex.exec(charge);
 }

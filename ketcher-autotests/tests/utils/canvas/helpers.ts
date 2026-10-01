@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable no-useless-escape */
 import {
   LocatorScreenshotOptions,
   Page,
@@ -19,7 +17,6 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 const scrollBarHideCssPath = './tests/utils/hideScroll.css';
@@ -40,7 +37,7 @@ export async function takeElementScreenshot(
 ) {
   if (options?.hideMonomerPreview) {
     await page.evaluate(() => {
-      window.dispatchEvent(new Event('hidePreview'));
+      globalThis.dispatchEvent(new Event('hidePreview'));
     });
     await MonomerPreviewTooltip(page).waitForBecomeHidden();
   }
@@ -99,7 +96,7 @@ export async function takePresetsScreenshot(
   page: Page,
   options?: { mask?: Locator[]; maxDiffPixelRatio?: number },
 ) {
-  await takeElementScreenshot(page, page.getByTestId('rna-accordion'), options);
+  await takeElementScreenshot(page, Library(page).rnaTab.rnaAccordion, options);
 }
 
 export async function takeRNABuilderScreenshot(
@@ -113,7 +110,7 @@ export async function takeRNABuilderScreenshot(
 ) {
   await takeElementScreenshot(
     page,
-    page.getByTestId('rna-editor-expanded'),
+    Library(page).rnaTab.rnaEditor.rnaEditorBody,
     options,
   );
 }
@@ -132,11 +129,7 @@ export async function takeMonomerLibraryScreenshot(
     // That works only for Macromolecule editor
     await page.keyboard.press(`ControlOrMeta+KeyB`);
   }
-  await takeElementScreenshot(
-    page,
-    page.getByTestId('monomer-library'),
-    options,
-  );
+  await takeElementScreenshot(page, Library(page).libraryBody, options);
 }
 
 export async function takeEditorScreenshot(
@@ -155,7 +148,7 @@ export async function takeEditorScreenshot(
     await page.keyboard.press(`ControlOrMeta+KeyB`);
     options.stylePath = [...(options.stylePath || []), scrollBarHideCssPath];
   }
-  await takeElementScreenshot(page, page.getByTestId(KETCHER_CANVAS), options);
+  await takeElementScreenshot(page, await getVisibleCanvas(page), options);
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
@@ -318,4 +311,14 @@ export async function selectCanvasArea(
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await page.mouse.move(firstCorner.x, firstCorner.y);
   await dragMouseTo(page, secondCorner.x, secondCorner.y);
+}
+
+export async function getVisibleCanvas(page: Page): Promise<Locator> {
+  const canvas = page.locator(`[data-testid="ketcher-canvas"]:visible`).first();
+  await canvas.waitFor({
+    state: 'visible',
+    timeout: 10000,
+  });
+
+  return canvas;
 }

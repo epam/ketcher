@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { provideEditorInstance } from 'application/editor/editorSingleton';
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,26 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { Operation } from 'domain/entities/Operation';
-import { CoreEditor } from 'application/editor/internal';
-import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { Operation } from 'domain/entities/Operation';
 
 export class ReinitializeModeOperation implements Operation {
   public priority = 2;
 
-  public execute(_renderersManager: RenderersManager) {
-    const editor = CoreEditor.provideEditorInstance();
+  constructor(private readonly forceRecalculateAntisense = false) {}
 
-    editor.mode.initialize(false);
+  public execute(_renderersManager: RenderersManager) {
+    const editor = provideEditorInstance();
+
+    editor.mode.initialize(
+      false,
+      undefined,
+      true,
+      this.forceRecalculateAntisense,
+    );
   }
 
-  public invert(_renderersManager: RenderersManager) {
-    const editor = CoreEditor.provideEditorInstance();
-
-    editor.mode.initialize(false);
+  public invert(renderersManager: RenderersManager) {
+    this.execute(renderersManager);
   }
 }
 
@@ -41,15 +44,16 @@ export class RestoreSequenceCaretPositionOperation implements Operation {
   constructor(
     private readonly previousPosition: number,
     private readonly nextPosition: number,
+    private readonly setCaretPosition: (position: number) => void,
   ) {
     this.execute();
   }
 
   public execute() {
-    SequenceRenderer.setCaretPosition(this.nextPosition);
+    this.setCaretPosition(this.nextPosition);
   }
 
   public invert(_renderersManager: RenderersManager) {
-    SequenceRenderer.setCaretPosition(this.previousPosition);
+    this.setCaretPosition(this.previousPosition);
   }
 }

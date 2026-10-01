@@ -1,5 +1,6 @@
-import { FC } from 'react';
-import { Item, Submenu, Separator } from 'react-contexify';
+import type { FC } from 'react';
+import { Item, Submenu } from 'react-contexify';
+import MenuSeparator from '../MenuSeparator';
 import tools from '../../../../action/tools';
 import styles from '../ContextMenu.module.less';
 import useAtomEdit from '../hooks/useAtomEdit';
@@ -9,9 +10,13 @@ import useBondTypeChange from '../hooks/useBondTypeChange';
 import useDelete from '../hooks/useDelete';
 import useCreateMonomer from '../hooks/useCreateMonomer';
 import useMarkAs from '../hooks/useMarkAs';
-import { formatTitle, getBondNames } from '../utils';
-import Editor from 'src/script/editor';
 import {
+  formatTitle,
+  getBondNames,
+  monomerWizardDisallowedBondNames,
+} from '../utils';
+import type Editor from 'src/script/editor';
+import type {
   MenuItemsProps,
   SelectionContextMenuProps,
 } from '../contextMenu.types';
@@ -132,10 +137,18 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
       >
         {bondNames.map((name) => {
           const iconName = getIconName(name);
+          const isDisabledForMonomerWizard =
+            editor.isMonomerCreationWizardActive &&
+            monomerWizardDisallowedBondNames.includes(name);
           return (
-            <Item id={name} onClick={handleTypeChange} key={name}>
+            <Item
+              id={name}
+              onClick={handleTypeChange}
+              key={name}
+              disabled={isDisabledForMonomerWizard}
+            >
               {iconName && <Icon name={iconName} className={styles.icon} />}
-              <span>{formatTitle(tools[name].title)}</span>
+              <span>{formatTitle(tools[name].title ?? '')}</span>
             </Item>
           );
         })}
@@ -161,7 +174,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
         Enhanced stereochemistry...
       </Item>
       <HighlightMenu onHighlight={highlightBondWithColor} />
-      <Separator />
+      <MenuSeparator />
       <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         Delete
       </Item>

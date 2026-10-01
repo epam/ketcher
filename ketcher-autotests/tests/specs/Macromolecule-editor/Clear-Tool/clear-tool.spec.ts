@@ -7,18 +7,19 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import {} from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-/* eslint-disable no-magic-numbers */
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 test.describe('Clear Canvas Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToPeptidesTab();
   });
 
@@ -75,16 +76,14 @@ test.describe('Clear Canvas Tool', () => {
     Test case: Clear canvas Tool
     Description: Clear canvas button tooltip is located in the left toolbar.
     */
-    const icon = {
+    const clearCanvasButton = {
       testId: 'clear-canvas',
       title: 'Clear Canvas (Ctrl+Del)',
     };
-    const iconButton = page
-      .getByTestId(icon.testId)
-      .filter({ has: page.locator(':visible') });
-    await expect(iconButton).toHaveAttribute('title', icon.title);
-    await iconButton.hover();
-    expect(icon.title).toBeTruthy();
+    const button = CommonTopLeftToolbar(page).clearCanvasButton;
+    await expect(button).toHaveAttribute('title', clearCanvasButton.title);
+    await button.hover();
+    expect(clearCanvasButton.title).toBeTruthy();
   });
 
   test('Check clearing canvas by use short key "CTRL+Delete"', async ({
@@ -200,6 +199,7 @@ test.describe('Clear Canvas Tool', () => {
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page);
   });
 });

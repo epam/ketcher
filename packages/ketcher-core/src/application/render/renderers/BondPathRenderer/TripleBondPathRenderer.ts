@@ -1,6 +1,6 @@
 import {
-  SVGPathAttributes,
-  BondVectors,
+  type SVGPathAttributes,
+  type BondVectors,
   BondWidth,
   BondSpace,
 } from 'application/render/renderers/BondPathRenderer/constants';

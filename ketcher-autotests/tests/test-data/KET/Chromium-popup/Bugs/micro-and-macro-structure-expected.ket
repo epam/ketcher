@@ -146,7 +146,8 @@
                     0.25,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -239,6 +240,7 @@
         "id": "A___Alanine",
         "fullName": "Alanine",
         "alias": "A",
+        "aliasBILN": "A",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -258,6 +260,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "A"
     }

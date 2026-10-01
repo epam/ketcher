@@ -260,7 +260,8 @@
                     0,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -384,6 +385,7 @@
         "fullName": "Valine",
         "alias": "V",
         "aliasHELM": "V",
+        "aliasBILN": "V",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

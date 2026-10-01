@@ -1,5 +1,5 @@
-import { tfx } from 'utilities';
-import { Vec2 } from 'domain/entities';
+import { toFixed } from 'utilities';
+import { Vec2 } from 'domain/entities/vec2';
 
 interface Point2D {
   x: number;
@@ -8,7 +8,7 @@ interface Point2D {
 
 export class PathBuilder {
   static generatePoint(point: Point2D): string {
-    return `${tfx(point.x)},${tfx(point.y)}`;
+    return `${toFixed(point.x)},${toFixed(point.y)}`;
   }
 
   private pathParts: Array<string>;

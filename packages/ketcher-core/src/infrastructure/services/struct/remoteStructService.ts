@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,41 +16,40 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CoreEditor } from 'application/editor';
 import {
-  AromatizeData,
-  AromatizeResult,
-  AutomapData,
-  AutomapResult,
-  CalculateCipData,
-  CalculateCipResult,
-  CalculateData,
-  CalculateMacromoleculePropertiesData,
-  CalculateMacromoleculePropertiesResult,
-  CalculateResult,
-  CheckData,
-  CheckResult,
-  ChemicalMimeType,
-  CleanData,
-  CleanResult,
-  ConvertData,
-  ConvertResult,
-  DearomatizeData,
-  DearomatizeResult,
-  ExplicitHydrogensData,
-  ExplicitHydrogensResult,
-  GenerateImageOptions,
-  InfoResult,
-  LayoutData,
-  LayoutResult,
-  OutputFormatType,
-  RecognizeResult,
-  StructService,
-  StructServiceOptions,
+  type AromatizeData,
+  type AromatizeResult,
+  type AutomapData,
+  type AutomapResult,
+  type CalculateCipData,
+  type CalculateCipResult,
+  type CalculateData,
+  type CalculateMacromoleculePropertiesData,
+  type CalculateMacromoleculePropertiesResult,
+  type CalculateResult,
+  type CheckData,
+  type CheckResult,
+  type CleanData,
+  type CleanResult,
+  type ConvertData,
+  type ConvertResult,
+  type DearomatizeData,
+  type DearomatizeResult,
+  type ExplicitHydrogensData,
+  type ExplicitHydrogensResult,
+  type GenerateImageOptions,
+  type InfoResult,
+  type LayoutData,
+  type LayoutResult,
+  type OutputFormatType,
+  type RecognizeResult,
+  type StructService,
+  type StructServiceOptions,
 } from 'domain/services';
+import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { KetcherLogger, normalizeError } from 'utilities';
 import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
-import { ketcherProvider } from 'application/utils';
+import { ketcherProvider } from 'application/ketcherProvider';
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -83,25 +84,47 @@ function request(
 ) {
   let requestUrl = url;
   if (data && method === 'GET') requestUrl = parametrizeUrl(url, data);
-  let response: any = fetch(requestUrl, {
-    method,
-    headers: {
-      Accept: 'application/json',
-      ...(headers ?? {}),
-    },
-    body: method !== 'GET' ? data : undefined,
-    credentials: 'same-origin',
-  });
+
+  const mergedHeaders = {
+    Accept: 'application/json',
+    ...headers,
+  };
+
+  let response: any;
+  try {
+    response = fetch(requestUrl, {
+      method,
+      headers: mergedHeaders,
+      body: method !== 'GET' ? data : undefined,
+      credentials: 'same-origin',
+    });
+  } catch (error) {
+    const details = error instanceof Error ? error.message : String(error);
+    return Promise.reject(
+      new Error(
+        `Invalid custom headers passed to RemoteStructServiceProvider: ${details}`,
+      ),
+    );
+  }
 
   if (responseHandler) {
     response = responseHandler(response);
   } else {
     response = response.then((response) =>
+      // Error responses (e.g. a 413 from a reverse proxy rejecting an
+      // oversized body) are not guaranteed to have a JSON body, so parsing
+      // must not be the thing that decides whether the request succeeded.
       response
         .json()
-        .then((res) =>
-          response.ok ? res : Promise.reject(new Error(res.error)),
-        ),
+        .catch(() => null)
+        .then((res) => {
+          if (response.ok) return res;
+          const message =
+            res?.error ||
+            response.statusText ||
+            `Request failed with status ${response.status}`;
+          return Promise.reject(new Error(message));
+        }),
     );
   }
 
@@ -120,11 +143,11 @@ function indigoCall(
     options,
     responseHandler?: (promise: Promise<any>) => Promise<any>,
   ) {
-    const body = { ...(data ?? {}) };
+    const body = { ...data };
     body.options = {
-      ...(body.options ?? {}),
-      ...(defaultOptions ?? {}),
-      ...(options ?? {}),
+      ...body.options,
+      ...defaultOptions,
+      ...options,
     };
     return request(
       method,
@@ -156,6 +179,7 @@ export function pickStandardServerOptions(
     'gross-formula-add-isotopes': options?.['gross-formula-add-isotopes'],
     'ignore-no-chiral-flag': ketcherInstance.editor.options().ignoreChiralFlag,
     'aromatize-skip-superatoms': true,
+    'valence-mode': options?.['valence-mode'],
   };
 }
 
@@ -210,10 +234,15 @@ export class RemoteStructService implements StructService {
   async info(): Promise<InfoResult> {
     let indigoVersion: string;
     let imagoVersions: Array<string>;
-    let isAvailable = false;
+    let isAvailable: boolean;
 
     try {
-      const response = await request('GET', this.apiPath + 'info');
+      const response = await request(
+        'GET',
+        this.apiPath + 'info',
+        undefined,
+        this.customHeaders,
+      );
       indigoVersion = response.indigo_version;
       imagoVersions = response.imago_versions;
       isAvailable = true;
@@ -239,7 +268,7 @@ export class RemoteStructService implements StructService {
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
     const monomerLibrary = JSON.stringify(
-      CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
+      provideEditorInstance()?.monomersLibraryParsedJson,
     );
     const expandedOptions = {
       monomerLibrary,
@@ -393,13 +422,13 @@ export class RemoteStructService implements StructService {
       blob,
       {
         'Content-Type': blob.type ?? 'application/octet-stream',
+        ...this.customHeaders,
       },
     );
-    const status = request.bind(
-      null,
-      'GET',
-      this.apiPath + 'imago/uploads/:id',
-    );
+    const statusUrl = this.apiPath + 'imago/uploads/:id';
+    const { customHeaders } = this;
+    const status = (data: { id: string }) =>
+      request('GET', statusUrl, data, customHeaders);
     return req
       .then((data) =>
         pollDeferred(

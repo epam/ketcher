@@ -92,7 +92,8 @@
                     -8.68749994830352,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "N",
@@ -195,7 +196,7 @@
         ],
         "stereoFlagPosition": {
             "x": 10.227157648464644,
-            "y": 6.187499972380114,
+            "y": 6.187499988431177,
             "z": 0
         }
     },

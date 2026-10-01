@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Vec2 } from 'ketcher-core';
 import Editor from '../Editor';
 import RotateTool from './rotate';
@@ -58,7 +57,12 @@ describe('Rotate controller', () => {
    */
   it('hides when active tool is not SelectTool', () => {
     const ketcherId = '1';
-    const editor = new Editor(ketcherId, document, {}, {});
+    const editor = new Editor(
+      ketcherId,
+      document as unknown as HTMLElement,
+      {},
+      {},
+    );
     const NonSelectTool = new RotateTool(editor, undefined);
     const paper = jest.fn();
     const visibleAtoms = [0, 1];
@@ -91,7 +95,12 @@ describe('Rotate controller', () => {
    */
   it('rerenders while zooming', () => {
     const ketcherId = '1';
-    const editor = new Editor(ketcherId, document, {}, {});
+    const editor = new Editor(
+      ketcherId,
+      document as unknown as HTMLElement,
+      {},
+      {},
+    );
     editor.rotateController.rerender = jest.fn();
 
     editor.zoom(2);
@@ -141,6 +150,46 @@ describe('Rotate controller', () => {
     expect(controller.center.x).toBe(3);
     // @ts-ignore
     expect(controller.center.y).toBe(3);
+  });
+
+  it('adds test id to rotation center handle hitbox', () => {
+    const setAttribute = jest.fn();
+    const cross = {
+      attr: jest.fn().mockReturnThis(),
+    };
+    const circle = {
+      attr: jest.fn().mockReturnThis(),
+      node: { setAttribute },
+    };
+    const crossSet = {
+      push: jest.fn(),
+      translate: jest.fn(),
+    };
+
+    const controller = new RotateController({ selection: () => null } as any);
+    // @ts-ignore
+    controller.originalCenter = new Vec2(1, 1);
+    // @ts-ignore
+    controller.editor.render = {
+      paper: {
+        path: jest.fn().mockReturnValue(cross),
+        circle: jest.fn().mockReturnValue(circle),
+        set: jest.fn().mockReturnValue(crossSet),
+      },
+      options: {
+        microModeScale: 1,
+        offset: new Vec2(),
+      } as any,
+    };
+
+    // @ts-ignore
+    controller.drawCross();
+
+    expect(setAttribute).toHaveBeenCalledWith(
+      'data-testid',
+      'rotation-center-handle',
+    );
+    expect(crossSet.push).toHaveBeenCalledWith(cross, circle);
   });
 
   it('shows half predefined degrees', () => {
@@ -206,7 +255,12 @@ describe('Rotate controller', () => {
    */
   it(`cancels rotation without modifying history stack`, () => {
     const ketcherId = '1';
-    const editor = new Editor(ketcherId, document, {}, {});
+    const editor = new Editor(
+      ketcherId,
+      document as unknown as HTMLElement,
+      {},
+      {},
+    );
     editor.render.ctab.molecule.getSelectedVisibleAtoms = () => [];
     // @ts-ignore
     editor.rotateController.rotateTool.dragCtx = {

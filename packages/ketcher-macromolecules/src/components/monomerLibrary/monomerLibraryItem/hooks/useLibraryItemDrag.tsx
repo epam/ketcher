@@ -1,14 +1,15 @@
 import { RefObject, useEffect } from 'react';
 import { D3DragEvent, drag, select } from 'd3';
-import { selectEditor } from 'state/common';
+import { selectEditor, setIsDragging } from 'state/common';
 import { IRnaPreset, MonomerOrAmbiguousType, ZoomTool } from 'ketcher-core';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-export const useLibraryItemDrag = (
+export const useLibraryItemDrag = <T extends HTMLElement>(
   item: IRnaPreset | MonomerOrAmbiguousType,
-  itemRef: RefObject<HTMLElement>,
+  itemRef: RefObject<T | null>,
 ) => {
   const editor = useSelector(selectEditor);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!editor || !itemRef.current) {
@@ -17,7 +18,7 @@ export const useLibraryItemDrag = (
 
     const itemElement = select(itemRef.current);
 
-    const dragBehavior = drag<HTMLElement, unknown>()
+    const dragBehavior = drag<T, unknown>()
       .on('start', () => {
         // In sequence layout we do not allow DnD; cancel visual drag early
         editor.isLibraryItemDragCancelled =
@@ -26,10 +27,12 @@ export const useLibraryItemDrag = (
           document.body.style.cursor = 'grabbing';
         }
       })
-      .on('drag', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
+      .on('drag', (event: D3DragEvent<T, unknown, unknown>) => {
         if (editor.isLibraryItemDragCancelled) {
           return;
         }
+
+        dispatch(setIsDragging(true));
 
         const { clientX: x, clientY: y } = event.sourceEvent;
         editor.events.setLibraryItemDragState.dispatch({
@@ -40,7 +43,7 @@ export const useLibraryItemDrag = (
           },
         });
       })
-      .on('end', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
+      .on('end', (event: D3DragEvent<T, unknown, unknown>) => {
         if (!editor.isLibraryItemDragCancelled) {
           const { clientX: x, clientY: y } = event.sourceEvent;
           const canvasWrapperBoundingClientRect =
@@ -55,6 +58,22 @@ export const useLibraryItemDrag = (
             const mouseWithinCanvas =
               x >= left && x <= right && y >= top && y <= bottom;
             if (mouseWithinCanvas) {
+              // Re-evaluate the replacement target at the exact drop position
+              // before dispatching the place event. The last drag (mousemove)
+              // event may have fired at a slightly different cursor position,
+              // so dragReplaceTarget could be stale or cleared. Dispatching
+              // here with the real drop coordinates ensures the replacement
+              // highlight and target are correct at the moment of the drop.
+              editor.events.setLibraryItemDragState.dispatch({
+                item,
+                position: {
+                  x:
+                    x -
+                    (editor.ketcherRootElementBoundingClientRect?.left || 0),
+                  y:
+                    y - (editor.ketcherRootElementBoundingClientRect?.top || 0),
+                },
+              });
               editor.events.placeLibraryItemOnCanvas.dispatch(item, {
                 x: scaledX,
                 y: scaledY,
@@ -66,6 +85,7 @@ export const useLibraryItemDrag = (
         editor.events.setLibraryItemDragState.dispatch(null);
         editor.isLibraryItemDragCancelled = false;
         document.body.style.cursor = '';
+        dispatch(setIsDragging(false));
       });
 
     itemElement.call(dragBehavior);
@@ -73,5 +93,5 @@ export const useLibraryItemDrag = (
     return () => {
       itemElement.on('.drag', null);
     };
-  }, [editor, item, itemRef]);
+  }, [editor, item, itemRef, dispatch]);
 };

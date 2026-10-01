@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IIconButtonCustomIconProps } from './types';
+import type { IIconButtonCustomIconProps } from './types';
 import { IconButtonBase } from './IconButtonBase';
 import { StyledCustomIcon } from './styles';
 

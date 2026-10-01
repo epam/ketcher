@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,22 +15,41 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Action } from '../editor/actions';
-import { MonomerCreationState, Render } from 'application/render';
-import { Struct } from 'domain/entities';
-import { selectionKeys } from './shared/constants';
-import { PipelineSubscription, Subscription } from 'subscription';
-import { IRnaPreset } from 'application/editor/tools';
+import type { Action } from './actions/action';
+import type {
+  MonomerCreationState,
+  Render,
+  RenderOptions,
+} from 'application/render';
+import type { Struct } from 'domain/entities/struct';
+import type { selectionKeys } from './shared/constants';
+import type { PipelineSubscription, Subscription } from 'subscription';
+import type { IRnaPreset } from './tools/Tool';
+import type { MonomerOrAmbiguousType, AttachmentPointName } from 'domain/types';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
-export type EditorSelection = {
-  [key in typeof selectionKeys[number]]?: number[];
-} & {
+export type EditMonomerVariant = 'single' | 'identical' | 'non-identical';
+
+export interface EditMonomerPayload {
+  fgIds: number[];
+  variant: EditMonomerVariant;
+}
+
+export type EditorSelection = Partial<
+  Record<(typeof selectionKeys)[number], number[]>
+> & {
   enhancedFlags?: number[];
 };
 export type FloatingToolsParams = {
   visible?: boolean;
   rotateHandlePosition?: { x: number; y: number };
 };
+
+export type EditorOptions = Partial<
+  RenderOptions & {
+    viewOnlyMode: boolean;
+  }
+>;
 
 export enum EditorType {
   Micromolecules = 0,
@@ -51,10 +71,14 @@ export interface Editor {
   selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null;
   undo: () => void;
   redo: () => void;
+  historyStack: Action[];
+  historyPtr: number;
+  addHistoryAction: (action: Action) => void;
   clear: () => void;
   clearHistory: () => void;
-  options: (value?: any) => any;
-  setOptions: (opts: string) => any;
+  options(): RenderOptions;
+  options(value: EditorOptions): void;
+  setOptions: (opts: string) => void;
   zoom: (value?: any) => any;
   structSelected: () => Struct;
   explicitSelected: () => EditorSelection;
@@ -74,6 +98,7 @@ export interface Editor {
     quickEdit: PipelineSubscription;
     attachEdit: PipelineSubscription;
     removeFG: PipelineSubscription;
+    editMonomer: PipelineSubscription;
     change: Subscription;
     selectionChange: PipelineSubscription;
     aromatizeStruct: PipelineSubscription;
@@ -105,9 +130,18 @@ export interface Editor {
 }
 
 export type LibraryItemDragState = {
-  item: IRnaPreset;
+  item: IRnaPreset | MonomerOrAmbiguousType;
   position: {
     x: number;
     y: number;
   };
 } | null;
+
+/**
+ * Identifies a specific free attachment point on a monomer.
+ * Used to track drag-over hover targets during library-item drag operations.
+ */
+export type AttachmentPointTarget = {
+  monomer: BaseMonomer;
+  attachmentPointName: AttachmentPointName;
+};

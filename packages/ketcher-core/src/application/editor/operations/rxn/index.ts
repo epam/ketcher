@@ -15,13 +15,14 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { RxnArrow, RxnArrowMode, Vec2 } from 'domain/entities';
+import { RxnArrow, RxnArrowMode } from 'domain/entities/rxnArrow';
+import { Vec2 } from 'domain/entities/vec2';
 
 import Base from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import { ReRxnArrow } from '../../../render';
 import { KetcherLogger } from 'utilities';
-import Restruct from 'application/render/restruct/restruct';
+import type Restruct from 'application/render/restruct/restruct';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -30,9 +31,10 @@ type RxnArrowAddData = {
   pos: Array<Vec2>;
   mode: RxnArrowMode;
   height?: number;
+  arrowId?: number;
 };
 
-class RxnArrowAdd extends Base {
+class RxnArrowAdd extends Base<RxnArrowAddData> {
   data: RxnArrowAddData;
 
   constructor(
@@ -40,26 +42,35 @@ class RxnArrowAdd extends Base {
     mode: RxnArrowMode = RxnArrowMode.OpenAngle,
     id?: number,
     height?: number,
+    arrowId?: number,
   ) {
     super(OperationType.RXN_ARROW_ADD);
-    this.data = { pos, mode, id, height };
+    this.data = { pos, mode, id, height, arrowId };
   }
 
-  execute(restruct: any): void {
+  execute(restruct: Restruct): void {
     const struct = restruct.molecule;
     const item = new RxnArrow({
       mode: this.data.mode,
       height: this.data.height,
+      arrowId: this.data.arrowId,
     });
 
     if (this.data.id == null) {
-      const index = struct.rxnArrows.add(item);
+      const index = struct.addRxnArrow(item);
       this.data.id = index;
+      this.data.arrowId = item.arrowId;
     } else {
-      struct.rxnArrows.set(this.data.id, item);
+      struct.setRxnArrow(this.data.id, item);
     }
 
-    const itemId = this.data.id!;
+    const itemId = this.data.id;
+    if (itemId == null) {
+      KetcherLogger.error(
+        'RxnArrowAdd.execute(): rxnArrow id was not assigned',
+      );
+      return;
+    }
 
     restruct.rxnArrows.set(itemId, new ReRxnArrow(item));
 
@@ -73,23 +84,30 @@ class RxnArrowAdd extends Base {
     Base.invalidateItem(restruct, 'rxnArrows', itemId, 1);
   }
 
-  invert(): Base {
-    return new RxnArrowDelete(this.data.id!);
+  invert(): RxnArrowDelete {
+    const itemId = this.data.id;
+    if (itemId == null) {
+      KetcherLogger.error('RxnArrowAdd.invert(): rxnArrow id was not assigned');
+      return new RxnArrowDelete();
+    }
+
+    return new RxnArrowDelete(itemId);
   }
 }
 
 interface RxnArrowDeleteData {
-  id: number;
+  id?: number;
   pos?: Array<Vec2>;
   mode?: RxnArrowMode;
   height?: number;
+  arrowId?: number;
 }
 
-class RxnArrowDelete extends Base {
+class RxnArrowDelete extends Base<RxnArrowDeleteData> {
   data: RxnArrowDeleteData;
   performed: boolean;
 
-  constructor(id: number) {
+  constructor(id?: number) {
     super(OperationType.RXN_ARROW_DELETE);
     this.data = { id, pos: [], mode: RxnArrowMode.OpenAngle };
     this.performed = false;
@@ -97,23 +115,31 @@ class RxnArrowDelete extends Base {
 
   execute(restruct: Restruct): void {
     KetcherLogger.log('RxnArrowDelete.execute(), start', this.data);
+    const itemId = this.data.id;
+    if (itemId == null) {
+      KetcherLogger.error(
+        'RxnArrowDelete.execute(): rxnArrow id is not assigned',
+      );
+      return;
+    }
+
     const struct = restruct.molecule;
-    const item = struct.rxnArrows.get(this.data.id);
-    if (!item) throw new Error(`rxnArrow not found with id: ${this.data.id}`);
+    const item = struct.rxnArrows.get(itemId);
+    if (!item) throw new Error(`rxnArrow not found with id: ${itemId}`);
 
     this.data.pos = item.pos;
     this.data.mode = item.mode;
     this.data.height = item.height;
+    this.data.arrowId = item.arrowId;
     this.performed = true;
 
     restruct.markItemRemoved();
-    const reItem = restruct.rxnArrows.get(this.data.id);
-    if (!reItem)
-      throw new Error(`reRxnArrow not found with id: ${this.data.id}`);
+    const reItem = restruct.rxnArrows.get(itemId);
+    if (!reItem) throw new Error(`reRxnArrow not found with id: ${itemId}`);
     restruct.clearVisel(reItem.visel);
-    restruct.rxnArrows.delete(this.data.id);
+    restruct.rxnArrows.delete(itemId);
 
-    struct.rxnArrows.delete(this.data.id);
+    struct.rxnArrows.delete(itemId);
 
     KetcherLogger.log('RxnArrowDelete.execute(), end');
   }
@@ -124,6 +150,7 @@ class RxnArrowDelete extends Base {
       this.data.mode,
       this.data.id,
       this.data.height,
+      this.data.arrowId,
     );
   }
 }

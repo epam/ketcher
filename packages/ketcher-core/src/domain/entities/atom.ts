@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,19 +15,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AtomList, AtomListParams } from './atomList';
-import { Point, Vec2 } from './vec2';
+import { type AtomListParams, AtomList } from './atomList';
+import { type Point, Vec2 } from './vec2';
 
 import { Elements } from 'domain/constants';
 import { Pile } from './pile';
-import { Struct } from './struct';
+import type { Struct } from './struct';
 import {
+  type initiallySelectedType,
   BaseMicromoleculeEntity,
-  initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
 import { isNumber } from 'lodash';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { AtomCIP } from './types';
+import type { AtomCIP } from './types';
 import { SGroup } from 'domain/entities/sgroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 
@@ -91,7 +91,7 @@ export interface AtomAttributes {
    * Note: value `-1` has been converted to `3` by indigo.
    */
   attachmentPoints?: AttachmentPoints | null;
-  rglabel?: string | null;
+  rglabel?: number | null;
   charge?: number | null;
   radical?: number;
   cip?: AtomCIP | null;
@@ -202,7 +202,7 @@ export class Atom extends BaseMicromoleculeEntity {
   sgs: Pile<number>;
   badConn: boolean;
   alias: string | null;
-  rglabel: string | null;
+  rglabel: number | null;
   aam: number;
   invRet: number;
   exactChangeFlag: number;
@@ -398,15 +398,17 @@ export class Atom extends BaseMicromoleculeEntity {
       this.label === 'GH*';
     return Boolean(
       this.substitutionCount !== 0 ||
-        this.unsaturatedAtom !== 0 ||
-        this.ringBondCount !== 0 ||
-        isAnyAtom ||
-        isAnyMetal ||
-        isAnyHalogen ||
-        isAnyGroup ||
-        this.hCount !== 0 ||
-        this.atomList !== null ||
-        Object.values(queryProperties).some((value) => value),
+      this.unsaturatedAtom !== 0 ||
+      this.ringBondCount !== 0 ||
+      isAnyAtom ||
+      isAnyMetal ||
+      isAnyHalogen ||
+      isAnyGroup ||
+      this.hCount !== 0 ||
+      this.atomList !== null ||
+      Object.values(queryProperties).some(
+        (value) => Boolean(value) || value === 0,
+      ),
     );
   }
 
@@ -957,7 +959,7 @@ export class Atom extends BaseMicromoleculeEntity {
   ) {
     let sgroup: SGroup | undefined;
 
-    if (structOrSgroup instanceof SGroup) {
+    if (Atom.isSGroup(structOrSgroup)) {
       sgroup = structOrSgroup;
     } else if (searchBySgroups) {
       sgroup = structOrSgroup.getGroupFromAtomIdBySgroups(atomId);
@@ -1081,7 +1083,7 @@ export class Atom extends BaseMicromoleculeEntity {
     const sGroup = searchBySgroups
       ? struct.getGroupFromAtomIdBySgroups(atomId)
       : struct.getGroupFromAtomId(atomId);
-    const isMonomer = sGroup instanceof MonomerMicromolecule;
+    const isMonomer = sGroup?.isMonomer;
 
     if (!sGroup || (!isMonomer && !sGroup?.isSuperatomWithoutLabel)) {
       return false;
@@ -1089,14 +1091,20 @@ export class Atom extends BaseMicromoleculeEntity {
 
     return Boolean(
       Atom.isSuperatomLeavingGroupAtom(struct, atomId, searchBySgroups) &&
-        attachmentAtomExternalConnections?.find((_, bond) =>
-          bond.begin === attachmentPoint?.atomId
-            ? bond.beginSuperatomAttachmentPointNumber ===
-              attachmentPoint?.attachmentPointNumber
-            : bond.endSuperatomAttachmentPointNumber ===
-              attachmentPoint?.attachmentPointNumber,
-        ) !== null,
+      attachmentAtomExternalConnections?.find((_, bond) =>
+        bond.begin === attachmentPoint?.atomId
+          ? bond.beginSuperatomAttachmentPointNumber ===
+            attachmentPoint?.attachmentPointNumber
+          : bond.endSuperatomAttachmentPointNumber ===
+            attachmentPoint?.attachmentPointNumber,
+      ) !== null,
     );
+  }
+
+  private static isSGroup(
+    structOrSgroup: Struct | SGroup,
+  ): structOrSgroup is SGroup {
+    return structOrSgroup instanceof SGroup;
   }
 }
 

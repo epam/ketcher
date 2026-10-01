@@ -1,13 +1,13 @@
-import { ClosestItemWithMap } from '../shared/closest.types';
+import type { ClosestItemWithMap } from '../shared/closest.types';
 import {
+  type ImageReferencePositionInfo,
+  type MultitailArrowReferencePosition,
+  type Render,
   IMAGE_KEY,
   imageReferencePositionToCursor,
   MULTITAIL_ARROW_KEY,
   multitailArrowReferenceLinesToCursor,
   multitailReferencePositionToCursor,
-  ImageReferencePositionInfo,
-  MultitailArrowReferencePosition,
-  Render,
 } from 'ketcher-core';
 
 export function getItemCursor(

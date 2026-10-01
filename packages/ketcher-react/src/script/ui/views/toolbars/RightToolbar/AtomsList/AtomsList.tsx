@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -18,7 +19,7 @@ import { ElementColor, Elements, shortcutStr } from 'ketcher-core';
 import { atomCuts } from '../../../../action/atoms';
 
 import Atom from '../../../../component/view/Atom';
-import { Tools, UiActionAction } from '../../../../action';
+import type { Tools, UiActionAction } from '../../../../action';
 import { forwardRef } from 'react';
 import style from '../../../../../../components/styles/consts';
 import styled from '@emotion/styled';
@@ -74,7 +75,7 @@ const StyledAtom = styled(Atom)((props: any) => {
 
 const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
   const { atoms, active, status, onAction } = props;
-  const isAtom = active && active.tool === 'atom';
+  const isAtom = active?.tool === 'atom';
 
   return (
     <div ref={ref}>
@@ -82,7 +83,7 @@ const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
         const element = Elements.get(label);
         const shortcut =
           atoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null;
-        const isSelected = isAtom && active && active.opts.label === label;
+        const isSelected = isAtom && active?.opts.label === label;
         const id = `atom-${label.toLowerCase()}`;
         return (
           <StyledAtom

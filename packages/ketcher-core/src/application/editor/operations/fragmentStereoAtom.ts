@@ -14,57 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from './BaseOperation';
-import { OperationPriority, OperationType } from './OperationType';
-import { ReStruct } from '../../render';
+import { FragmentAddStereoAtom } from './FragmentAddStereoAtom';
+import { FragmentDeleteStereoAtom } from './FragmentDeleteStereoAtom';
 
-type Data = {
-  frid: any;
-  aid: any;
-};
+FragmentAddStereoAtom.InverseConstructor = FragmentDeleteStereoAtom;
+FragmentDeleteStereoAtom.InverseConstructor = FragmentAddStereoAtom;
 
-class FragmentStereoAtom extends BaseOperation {
-  readonly data: Data;
-  private readonly add: boolean;
-
-  constructor(fragmentId: any, atomId: any, add: boolean) {
-    super(
-      add
-        ? OperationType.FRAGMENT_ADD_STEREO_ATOM
-        : OperationType.FRAGMENT_DELETE_STEREO_ATOM,
-      add
-        ? OperationPriority.FRAGMENT_ADD_STEREO_ATOM
-        : OperationPriority.FRAGMENT_DELETE_STEREO_ATOM,
-    );
-    this.data = { frid: fragmentId, aid: atomId };
-    this.add = add;
-  }
-
-  execute(restruct: ReStruct) {
-    const { aid, frid } = this.data;
-
-    const frag = restruct.molecule.frags.get(frid);
-    if (frag) {
-      frag.updateStereoAtom(restruct.molecule, aid, frid, this.add);
-      BaseOperation.invalidateEnhancedFlag(restruct, frid);
-    }
-  }
-
-  invert() {
-    return new FragmentStereoAtom(this.data.frid, this.data.aid, !this.add);
-  }
-}
-
-class FragmentAddStereoAtom extends FragmentStereoAtom {
-  constructor(fragmentId: any, atomId: any) {
-    super(fragmentId, atomId, true);
-  }
-}
-
-class FragmentDeleteStereoAtom extends FragmentStereoAtom {
-  constructor(fragmentId: any, atomId: any) {
-    super(fragmentId, atomId, false);
-  }
-}
-
-export { FragmentStereoAtom, FragmentAddStereoAtom, FragmentDeleteStereoAtom };
+export { FragmentAddStereoAtom, FragmentDeleteStereoAtom };

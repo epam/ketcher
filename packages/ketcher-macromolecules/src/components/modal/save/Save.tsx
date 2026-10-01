@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react';
+import { useState, type MouseEvent } from 'react';
 
 import { Modal } from 'components/shared/modal';
 import { Option } from 'components/shared/dropDown/dropDown';
@@ -27,12 +27,11 @@ import {
   ChemicalMimeType,
   KetSerializer,
   StructService,
-  CoreEditor,
   KetcherLogger,
   getSvgFromDrawnStructures,
   isClipboardAPIAvailable,
-  legacyCopy,
   isHelmCompatible,
+  provideEditorInstance,
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 import { RequiredModalProps } from '../modalContainer';
@@ -49,8 +48,7 @@ import {
 import styled from '@emotion/styled';
 import { useAppDispatch } from 'hooks';
 import { openErrorModal } from 'state/modal';
-// TODO: Make it type safe by using `SupportedFormats` as id
-const options: Array<Option> = [
+const options: Array<Option & { id: SupportedFormats }> = [
   { id: 'ket', label: 'Ket Format' },
   { id: 'mol', label: 'MDL Molfile V3000' },
   { id: 'sequence', label: 'Sequence (1-letter code)' },
@@ -60,6 +58,7 @@ const options: Array<Option> = [
   { id: 'axo-labs', label: 'AxoLabs' },
   { id: 'svg', label: 'SVG Document' },
   { id: 'helm', label: 'HELM' },
+  { id: 'biln', label: 'BILN' },
 ];
 
 const formatDetector = {
@@ -70,6 +69,7 @@ const formatDetector = {
   idt: ChemicalMimeType.IDT,
   'axo-labs': ChemicalMimeType.AXOLABS,
   helm: ChemicalMimeType.HELM,
+  biln: ChemicalMimeType.BILN,
 };
 
 const StyledModal = styled(Modal)({
@@ -90,16 +90,22 @@ export const Save = ({
   isModalOpen,
 }: RequiredModalProps): JSX.Element => {
   const dispatch = useAppDispatch();
+  const indigo = IndigoProvider.getIndigo() as StructService;
+  const editor = provideEditorInstance();
   const [currentFileFormat, setCurrentFileFormat] =
     useState<SupportedFormats>('ket');
   const [currentFileName, setCurrentFileName] = useState('ketcher');
-  const [struct, setStruct] = useState('');
+  const [struct, setStruct] = useState(() => {
+    const ketSerializer = new KetSerializer();
+    return ketSerializer.serialize(
+      editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
+      editor.drawingEntitiesManager,
+    );
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [svgData, setSvgData] = useState<string | undefined>();
-  const indigo = IndigoProvider.getIndigo() as StructService;
-  const editor = CoreEditor.provideEditorInstance();
 
-  const handleSelectChange = async (fileFormat) => {
+  const handleSelectChange = async (fileFormat: SupportedFormats) => {
     setCurrentFileFormat(fileFormat);
     const ketSerializer = new KetSerializer();
     const serializedKet = ketSerializer.serialize(
@@ -112,33 +118,35 @@ export const Save = ({
       return;
     }
     if (fileFormat === 'svg') {
-      // Get Ketcher root element offset for SVG positioning
-      const ketcherRootRect = editor.ketcherRootElementBoundingClientRect;
-      const ketcherRootOffsetX = ketcherRootRect?.x || 0;
-      const ketcherRootOffsetY = ketcherRootRect?.y || 0;
-
-      const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview', {
-        horizontal: ketcherRootOffsetX,
-        vertical: ketcherRootOffsetY,
-      });
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview');
       setSvgData(svgData);
       return;
     }
-    if (
-      fileFormat === 'helm' &&
-      !isHelmCompatible(
-        Array.from(editor.drawingEntitiesManager.monomers.values()),
-        editor.monomersLibrary,
-      )
-    ) {
-      editor.events.error.dispatch(
-        'Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.',
-      );
+    if (fileFormat === 'helm') {
+      if (editor.drawingEntitiesManager.molecules.length > 0) {
+        editor.events.error.dispatch(
+          'The molecule will be exported using inline SMILES, and on load will appear as a CHEM monomer',
+        );
+      }
+      if (
+        !isHelmCompatible(
+          Array.from(editor.drawingEntitiesManager.monomers.values()),
+          editor.monomersLibrary,
+        )
+      ) {
+        editor.events.error.dispatch(
+          'Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.',
+        );
+      }
     }
 
     try {
       setIsLoading(true);
-      if (fileFormat === 'fasta' || fileFormat === 'sequence') {
+      if (
+        fileFormat === 'fasta' ||
+        fileFormat === 'sequence' ||
+        fileFormat === 'idt'
+      ) {
         const isValid =
           editor.drawingEntitiesManager.validateIfApplicableForFasta();
         if (!isValid) {
@@ -147,10 +155,16 @@ export const Save = ({
           );
         }
       }
-      const result = await indigo.convert({
-        struct: serializedKet,
-        output_format: formatDetector[fileFormat],
-      });
+      const formatProperties = getPropertiesByFormat(fileFormat);
+      // Pass format-specific options (e.g., 'molfile-saving-mode': '3000' for MOL V3000)
+      // to ensure correct format version is used during conversion
+      const result = await indigo.convert(
+        {
+          struct: serializedKet,
+          output_format: formatDetector[fileFormat],
+        },
+        formatProperties.options,
+      );
       setStruct(result.struct);
     } catch (error) {
       let stringError;
@@ -168,22 +182,14 @@ export const Save = ({
     }
   };
 
-  const handleInputChange = (value) => {
+  const handleInputChange = (value: string) => {
     setCurrentFileName(value);
   };
 
   const handleSave = () => {
     let blobPart;
     if (currentFileFormat === 'svg') {
-      // Get Ketcher root element offset for SVG positioning
-      const ketcherRootRect = editor.ketcherRootElementBoundingClientRect;
-      const ketcherRootOffsetX = ketcherRootRect?.x || 0;
-      const ketcherRootOffsetY = ketcherRootRect?.y || 0;
-
-      const svgData = getSvgFromDrawnStructures(editor.canvas, 'file', {
-        horizontal: ketcherRootOffsetX,
-        vertical: ketcherRootOffsetY,
-      });
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'file');
       if (!svgData) {
         onClose();
         return;
@@ -200,33 +206,19 @@ export const Save = ({
     onClose();
   };
 
-  const handleCopy = (event) => {
+  const handleCopy = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    try {
-      if (isClipboardAPIAvailable()) {
-        navigator.clipboard.writeText(struct);
-      } else {
-        legacyCopy(event.clipboardData, {
-          'text/plain': struct,
-        });
-      }
-    } catch (e) {
+    if (!isClipboardAPIAvailable()) {
+      dispatch(openErrorModal('This feature is not available in your browser'));
+      return;
+    }
+
+    navigator.clipboard.writeText(struct).catch((e) => {
       KetcherLogger.error('copyAs.js::copyAs', e);
       dispatch(openErrorModal('This feature is not available in your browser'));
-    }
+    });
   };
-
-  useEffect(() => {
-    if (currentFileFormat === 'ket') {
-      const ketSerializer = new KetSerializer();
-      const serializedKet = ketSerializer.serialize(
-        editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
-        editor.drawingEntitiesManager,
-      );
-      setStruct(serializedKet);
-    }
-  }, [currentFileFormat]);
 
   return (
     <StyledModal
@@ -251,7 +243,9 @@ export const Save = ({
               label="File format:"
               options={options}
               currentSelection={currentFileFormat}
-              selectionHandler={handleSelectChange}
+              selectionHandler={(value) =>
+                handleSelectChange(value as SupportedFormats)
+              }
               customStylesForExpanded={stylesForExpanded}
               testId="file-format-list"
             />

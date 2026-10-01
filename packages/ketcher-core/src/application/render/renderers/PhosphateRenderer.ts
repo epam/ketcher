@@ -1,12 +1,16 @@
-import { Selection } from 'd3';
-import { Phosphate } from 'domain/entities/Phosphate';
+import type { Selection } from 'd3';
+import type { Phosphate } from 'domain/entities/Phosphate';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import {
   MONOMER_SYMBOLS_IDS,
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'application/formatters/types/ket';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
+import {
+  type HighlightPathData,
+  createCircleHighlightPath,
+} from 'application/render/renderers/monomerHighlightShapes';
 
 const PHOSPHATE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Phosphate].hover;
@@ -16,7 +20,10 @@ const PHOSPHATE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Phosphate].autochainPreview;
 
 export class PhosphateRenderer extends BaseMonomerRenderer {
-  constructor(public monomer: Phosphate, scale?: number) {
+  constructor(
+    public monomer: Phosphate,
+    scale?: number,
+  ) {
     super(
       monomer,
       PHOSPHATE_HOVERED_ELEMENT_ID,
@@ -28,6 +35,15 @@ export class PhosphateRenderer extends BaseMonomerRenderer {
 
   protected getMonomerColor(theme) {
     return theme.monomer.color[RNA_DNA_NON_MODIFIED_PART.PHOSPHATE].regular;
+  }
+
+  public getHighlightPath(offset = 0): HighlightPathData {
+    const { width, height } = this.monomerSize;
+    return createCircleHighlightPath(
+      this.center,
+      Math.min(width, height) / 2,
+      offset,
+    );
   }
 
   public get textColor() {

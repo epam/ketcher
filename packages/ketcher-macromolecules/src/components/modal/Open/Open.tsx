@@ -19,18 +19,18 @@ import { ViewSwitcher } from './ViewSwitcher';
 import { ActionButton } from 'components/shared/actionButton';
 import { FileOpener, fileOpener } from './fileOpener';
 import {
+  type CoreEditor,
   ChemicalMimeType,
   KetSerializer,
   StructService,
-  CoreEditor,
   KetcherLogger,
   EditorHistory,
-  SequenceMode,
   macromoleculesFilesInputFormats,
   ModeTypes,
-  SnakeMode,
-  FlexMode,
   normalizeError,
+  provideEditorInstance,
+  SequenceRenderer,
+  Vec2,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
@@ -42,10 +42,11 @@ import {
 } from '../save/Save.styles';
 import { LoadingCircles } from './AnalyzingFile/LoadingCircles';
 import { useAppDispatch } from 'hooks';
-import { openErrorModal } from 'state/modal';
+import { openErrorModal, openErrorTooltip } from 'state/modal';
 import { AnyAction, Dispatch } from 'redux';
 import styled from '@emotion/styled';
 import { Option } from 'components/shared/dropDown/dropDown';
+import { MODAL_STATES, MODAL_STATES_VALUES } from './openModalStates';
 
 export interface Props {
   onClose: () => void;
@@ -130,6 +131,7 @@ const options: Array<Option> = [
   { id: 'idt', label: 'IDT' },
   { id: 'axo-labs', label: 'AxoLabs' },
   { id: 'helm', label: 'HELM' },
+  { id: 'biln', label: 'BILN' },
 ];
 
 const additionalOptions: Array<Option> = [
@@ -145,13 +147,28 @@ const peptideLettersFormatOptions: Array<Option> = [
 
 const inputFormats = macromoleculesFilesInputFormats;
 
-export const MODAL_STATES = {
-  openOptions: 'openOptions',
-  textEditor: 'textEditor',
-} as const;
+const positionStructureOnNextSequenceLine = (
+  drawingEntitiesManager: NonNullable<
+    ReturnType<KetSerializer['deserializeToDrawingEntities']>
+  >['drawingEntitiesManager'],
+) => {
+  // Always place the imported structure at the next chain/line position,
+  // independent of sequence edit mode (where getNewNodePosition() would
+  // return an insertion point inside the current chain instead).
+  const nextChainPosition = SequenceRenderer.getNextChainPosition();
+  const firstEntityPosition =
+    drawingEntitiesManager.allEntities[0]?.[1].position;
 
-export type MODAL_STATES_VALUES =
-  typeof MODAL_STATES[keyof typeof MODAL_STATES];
+  if (!firstEntityPosition) {
+    return;
+  }
+
+  const offset = Vec2.diff(nextChainPosition, new Vec2(firstEntityPosition));
+
+  drawingEntitiesManager.allEntities.forEach(([, drawingEntity]) => {
+    drawingEntitiesManager.moveDrawingEntityModelChange(drawingEntity, offset);
+  });
+};
 
 const addToCanvas = ({
   ketSerializer,
@@ -161,7 +178,7 @@ const addToCanvas = ({
   ketSerializer: KetSerializer;
   editor: CoreEditor;
   struct: string;
-}) => {
+}): boolean => {
   const isCanvasEmptyBeforeOpenStructure =
     !editor.drawingEntitiesManager.hasDrawingEntities;
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
@@ -170,23 +187,30 @@ const addToCanvas = ({
     throw new Error('Error during parsing file');
   }
 
-  deserialisedKet.drawingEntitiesManager.centerMacroStructure();
+  if (!deserialisedKet.drawingEntitiesManager.hasDrawingEntities) {
+    return false;
+  }
+
+  const isSequenceMode = editor.mode.modeName === 'sequence-layout-mode';
+  const isSnakeMode = editor.mode.modeName === 'snake-layout-mode';
+  const isFlexMode = editor.mode.modeName === 'flex-layout-mode';
+
+  if (isSequenceMode && !isCanvasEmptyBeforeOpenStructure) {
+    positionStructureOnNextSequenceLine(deserialisedKet.drawingEntitiesManager);
+  } else {
+    deserialisedKet.drawingEntitiesManager.centerMacroStructure();
+  }
+
   const { command: modelChanges } =
     deserialisedKet.drawingEntitiesManager.mergeInto(
       editor.drawingEntitiesManager,
     );
   const editorHistory = EditorHistory.getInstance(editor);
-  const isSequenceMode = editor.mode instanceof SequenceMode;
-  const isSnakeMode = editor.mode instanceof SnakeMode;
-  const isFlexMode = editor.mode instanceof FlexMode;
 
   if (isFlexMode) {
-    if (editor.drawingEntitiesManager.hasAntisenseChains) {
-      modelChanges.merge(
-        editor.drawingEntitiesManager.applySnakeLayout(true, true, true),
-      );
-      modelChanges.setUndoOperationsByPriority();
-    }
+    modelChanges.merge(
+      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
   }
 
   editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();
@@ -217,6 +241,8 @@ const addToCanvas = ({
   editor.calculateAndStoreNextAutochainPosition(
     deserialisedKet.drawingEntitiesManager,
   );
+
+  return true;
 };
 
 // TODO: replace after the implementation of the function for processing the structure from the file
@@ -241,11 +267,11 @@ const onOk = async ({
   const isSeq = formatSelection === SEQ;
   const isFasta = formatSelection === FASTA;
   const ketSerializer = new KetSerializer();
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
   let inputFormat;
   let fileData = struct;
 
-  const showParsingError = (stringError) => {
+  const showParsingError = (stringError: string) => {
     const errorMessage = 'Convert error! ' + stringError;
     dispatch(
       openErrorModal({
@@ -257,9 +283,12 @@ const onOk = async ({
 
   if (isKet) {
     try {
-      addToCanvas({ struct, ketSerializer, editor });
+      const hasStructure = addToCanvas({ struct, ketSerializer, editor });
+      if (!hasStructure) {
+        dispatch(openErrorTooltip('No structure'));
+      }
       onCloseCallback();
-    } catch (e) {
+    } catch {
       showParsingError('Error during file parsing.');
     }
     return;
@@ -284,7 +313,14 @@ const onOk = async ({
       output_format: ChemicalMimeType.KET,
       input_format: inputFormat,
     });
-    addToCanvas({ struct: ketStruct.struct, ketSerializer, editor });
+    const hasStructure = addToCanvas({
+      struct: ketStruct.struct,
+      ketSerializer,
+      editor,
+    });
+    if (!hasStructure) {
+      dispatch(openErrorTooltip('No structure'));
+    }
     onCloseCallback();
   } catch (error) {
     const stringError = normalizeError(error).message;
@@ -295,7 +331,7 @@ const onOk = async ({
   }
 };
 const isAnalyzingFile = false;
-const errorHandler = (error) => console.log(error);
+const errorHandler = (error: string) => console.log(error);
 
 const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const dispatch = useAppDispatch();
@@ -314,18 +350,6 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     useState(ONE_LETTER);
 
   useEffect(() => {
-    const splittedFilenameByDot = fileName?.split('.');
-    const fileExtension =
-      splittedFilenameByDot[splittedFilenameByDot.length - 1];
-
-    if (fileExtension) {
-      const option = options.find((el) => el.id === fileExtension);
-      const id = option?.id ? option.id : SEQ;
-      setFormatSelection(id);
-    }
-  }, [fileName]);
-
-  useEffect(() => {
     fileOpener().then((chosenOpener) => {
       setOpener({ chosenOpener });
     });
@@ -340,13 +364,33 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   }, [onClose]);
 
   const onFileLoad = (files: File[]) => {
-    const onLoad = (fileContent) => {
+    const windowContext = window as unknown as Record<string, unknown>;
+
+    if (windowContext.isKetcherFullscreenBeforeFilePicker) {
+      document.documentElement.requestFullscreen?.().catch(() => {
+        /* Fullscreen restoration failed or was denied by the browser */
+      });
+      windowContext.isKetcherFullscreenBeforeFilePicker = false;
+    }
+
+    const onLoad = (fileContent: string) => {
       setStructStr(fileContent);
       setCurrentState(MODAL_STATES.textEditor);
     };
     const onError = () => errorHandler('Error processing file');
 
-    setFileName(files[0].name);
+    const fileName = files[0].name;
+    const splittedFilenameByDot = fileName?.split('.');
+    const fileExtension =
+      splittedFilenameByDot[splittedFilenameByDot.length - 1];
+
+    setFileName(fileName);
+    if (fileExtension) {
+      const option = options.find((el) => el.id === fileExtension);
+      const id = option?.id ? option.id : SEQ;
+      setFormatSelection(id);
+    }
+
     opener?.chosenOpener(files[0]).then(onLoad, onError);
   };
 
@@ -363,7 +407,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   };
 
   const openHandler = () => {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const history = EditorHistory.getInstance(editor);
     const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
 

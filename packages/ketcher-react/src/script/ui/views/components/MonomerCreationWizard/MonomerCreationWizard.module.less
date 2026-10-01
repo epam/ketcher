@@ -1,20 +1,41 @@
 @import '../../../../../style/variables.less';
 
-.monomerCreationWizard {
+// Geometry shared by the wizard panel and its backdrop. The wizard panel
+// itself is transparent; the white backdrop is rendered by
+// <MonomerCreationWizardBackdrop /> earlier in the canvas DOM so the canvas
+// SVG paints above the white panel but below the wizard's interactive controls.
+// The border and padding are part of the mixin so both elements have the
+// exact same outer box size under default content-box sizing.
+.wizardBox() {
   position: absolute;
   top: 0;
   left: 0;
   height: calc(100% - 66px);
   width: calc(100% - 62px);
+  margin: 16px 11px;
+  padding: 16px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.monomerCreationWizard {
+  .wizardBox();
+
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  margin: 16px 11px;
-  padding: 16px;
-  border: 1px dashed #CAD3DD;
-  border-radius: 12px;
+  border-color: #F3F5F7;
   pointer-events: none;
   font-family: @Inter;
+  background-color: transparent;
+}
+
+.monomerCreationWizardBackdrop {
+  .wizardBox();
+
+  pointer-events: none;
+  background-color: #fff;
+  box-shadow: 0 2px 5px 0 #67688426;
 }
 
 .leftColumn {
@@ -22,6 +43,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-height: 0;
 }
 
 .wizardTitle {
@@ -35,6 +57,10 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 4px;
+  pointer-events: auto;
 }
 
 .rightColumn {
@@ -83,12 +109,14 @@
 
 .inputError {
   background-color: #FDE0DF !important;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @color-secondary-red !important;
 }
 
 .divider {
   width: 100%;
   margin: 16px 0;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border-bottom: 1px solid @color-grey-3;
 }
 
@@ -111,7 +139,7 @@
 .attachmentPoints {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 8px;
+  gap: 8px;
 }
 
 .attachmentPointsExtra {
@@ -145,12 +173,14 @@
 }
 
 .buttonDiscard {
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @color-grey-6;
   background-color: transparent;
   color: @color-grey-6;
 }
 
 .buttonSubmit {
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @color-primary;
   background-color: @color-primary;
   color: #fff;
@@ -205,6 +235,7 @@
   width: 100%;
   padding: 2px 0;
   background: none;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @color-grey-6;
   color: @color-grey-6;
   border-radius: 3px;
@@ -229,12 +260,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgb(0 0 0 / 20%);
   z-index: 1000;
 }
 
 .DialogMessage {
-  margin: 16px 0 10px 0;
+  margin: 16px 0 10px;
 }
 
 .inputField {
@@ -272,7 +303,13 @@
 }
 
 .inputLabel {
-  margin: 0 0 4px 0;
+  margin: 0 0 4px;
   font-size: 12px;
   line-height: 14px;
+}
+
+.aliasField {
+  &:not(:last-child) {
+    margin-bottom: 5px;
+  }
 }

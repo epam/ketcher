@@ -1,10 +1,10 @@
 import {
+  type ReStruct,
+  type Action,
   FunctionalGroup,
   SGroup,
   fromSgroupDeletion,
   fromFragmentDeletion,
-  ReStruct,
-  Action,
 } from 'ketcher-core';
 
 export function deleteFunctionalGroups(
@@ -33,7 +33,7 @@ export function deleteFunctionalGroups(
       action.mergeWith(
         fromFragmentDeletion(struct, {
           atoms: atomsWithoutAttachmentPoint,
-          bonds: SGroup.getBonds(struct, sGroupItem),
+          bonds: SGroup.getBonds(struct.molecule, sGroupItem),
         }),
       );
     }

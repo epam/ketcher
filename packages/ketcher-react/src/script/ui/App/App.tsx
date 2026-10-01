@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -32,7 +33,11 @@ import {
   initSaltsAndSolvents,
   initSaltsAndSolventsTemplates,
 } from '../state/saltsAndSolvents';
-import { useAppContext, useSubscriptionOnEvents } from '../../../hooks';
+import {
+  useAppContext,
+  useSubscriptionOnEvents,
+  useSettings,
+} from '../../../hooks';
 import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup';
 import { initLib } from '../state/templates/init-lib';
 import { ketcherProvider } from 'ketcher-core';
@@ -63,6 +68,10 @@ const App = (props: Props) => {
   const { checkServer } = props;
   const snackbarNotificationText = useSelector(selectSnackbarNotificationText);
 
+  // Enable bidirectional sync between Redux and Core settings
+  // This ensures settings changes in macromolecules mode are reflected in small molecules mode
+  useSettings();
+
   useSubscriptionOnEvents();
   const { ketcherId, prevKetcherId } = useAppContext();
 
@@ -72,13 +81,7 @@ const App = (props: Props) => {
 
   useEffect(() => {
     checkServer();
-    // TODO suppressed after upgrade to react 19. Need to fix
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     dispatch(initFGTemplates());
-    // TODO suppressed after upgrade to react 19. Need to fix
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     dispatch(initSaltsAndSolventsTemplates());
 
     return () => {
@@ -119,12 +122,7 @@ const App = (props: Props) => {
         <BottomToolbarContainer className={classes.bottom} />
         <RightToolbarContainer className={classes.right} />
 
-        {
-          // TODO suppressed after upgrade to react 19. Need to fix
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          <AppClipArea />
-        }
+        <AppClipArea />
         <AppModalContainer ketcherId={ketcherId} />
         <AbbreviationLookupContainer />
         <Snackbar
@@ -133,13 +131,17 @@ const App = (props: Props) => {
           onClose={handleCloseSnackbarNotification}
           autoHideDuration={6000}
         >
-          <div className={classes.toastNotification}>
+          <div
+            className={classes.toastNotification}
+            data-testid="notification-banner"
+          >
             <div className={classes.toastNotificationText}>
               {snackbarNotificationText}
             </div>
             <IconButton
               iconName="close"
               className={classes.toastNotificationCloseIcon}
+              testId="notification-banner-close-button"
               onClick={handleCloseSnackbarNotification}
             />
           </div>

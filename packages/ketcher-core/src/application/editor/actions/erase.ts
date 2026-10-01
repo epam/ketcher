@@ -27,19 +27,17 @@ import {
   SimpleObjectDelete,
   TextDelete,
 } from '../operations';
-import { RGroup } from 'domain/entities';
+import { RGroup } from 'domain/entities/rgroup';
 import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 
 import { Action } from './action';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { atomGetDegree, formatSelection } from './utils';
-import {
-  fromBondStereoUpdate,
-  removeAttachmentPointFromSuperatom,
-} from '../actions/bond';
+import { removeAttachmentPointFromSuperatom } from '../actions/bond';
+import { fromBondStereoUpdate } from './bondStereo';
 import { fromFragmentSplit } from './fragment';
 import { fromRGroupAttachmentPointDeletion } from './rgroupAttachmentPoint';
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 import { isNumber } from 'lodash';
 import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
 
@@ -50,7 +48,7 @@ export function fromOneAtomDeletion(restruct, atomId: number) {
 function fromBondDeletion(
   restruct: ReStruct,
   bid: number,
-  skipAtoms: Array<any> = [],
+  skipAtoms: number[] = [],
 ) {
   let action = new Action();
 
@@ -71,8 +69,9 @@ function fromBondDeletion(
     });
   }
 
-  const bond: any = restruct.molecule.bonds.get(bid);
-  const atomsToRemove: Array<any> = [];
+  const bond = restruct.molecule.bonds.get(bid);
+  assert(bond != null);
+  const atomsToRemove: number[] = [];
 
   action.addOp(new BondDelete(bid));
 
@@ -241,9 +240,15 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     .mergeWith(actionRemoveBonds)
     .mergeWith(actionToDeleteRGroupAttachmentPoints);
 
-  const rgForRemove: Array<number> = frids.map(
-    (frid) => RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid)!,
-  );
+  const rgForRemove = frids.reduce<Array<number>>((acc, frid) => {
+    const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
+
+    if (isNumber(rgid)) {
+      acc.push(rgid);
+    }
+
+    return acc;
+  }, []);
 
   while (frids.length > 0) {
     action = fromFragmentSplit(restruct, frids.pop(), rgForRemove).mergeWith(

@@ -1,5 +1,5 @@
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { select } from 'd3';
@@ -7,7 +7,7 @@ import {
   canvasSelector,
   drawnStructuresSelector,
 } from 'application/editor/constants';
-import { Vec2 } from 'domain/entities';
+import type { Vec2 } from 'domain/entities/vec2';
 
 export interface IBaseRenderer {
   show(theme): void;
@@ -67,6 +67,10 @@ export abstract class BaseRenderer implements IBaseRenderer {
     if (!rootNode) return undefined;
 
     return rootNode.getBoundingClientRect();
+  }
+
+  public get labelTooltipText(): string | null {
+    return null;
   }
 
   public get width() {

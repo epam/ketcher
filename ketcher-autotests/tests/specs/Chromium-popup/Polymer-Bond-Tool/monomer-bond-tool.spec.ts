@@ -1,10 +1,8 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { MacroBondOption } from '@tests/pages/constants/contextMenu/Constants';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
@@ -73,6 +71,7 @@ test.describe('Monomer bond tool', () => {
       MacroBondOption.EditAttachmentPoints,
     );
     await takeElementScreenshot(page, AttachmentPointsDialog(page).window);
+    await AttachmentPointsDialog(page).cancel();
   });
 
   test('Case 3: Check that "Select Connection Points" dialogues have their title changed to "Select Attachment Points" in opened context window', async () => {
@@ -87,7 +86,7 @@ test.describe('Monomer bond tool', () => {
      * Version 3.10
      */
     await openFileAndAddToCanvasMacro(page, 'KET/chems-not-connected.ket');
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await bondTwoMonomers(
       page,
       getMonomerLocator(page, Chem.Test_6_Ch),

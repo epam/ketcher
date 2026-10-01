@@ -256,7 +256,8 @@
                     -1.001,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "N",
@@ -385,6 +386,7 @@
         "fullName": "O-phospho-L-serine",
         "alias": "SerPO3",
         "aliasHELM": "Ser_PO3H2",
+        "aliasBILN": "Ser_PO3H2",
         "attachmentPoints": [
             {
                 "attachmentAtom": 7,

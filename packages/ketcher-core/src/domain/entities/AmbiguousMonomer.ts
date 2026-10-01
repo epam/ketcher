@@ -1,16 +1,17 @@
 import { BaseMonomer } from './BaseMonomer';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { Vec2 } from 'domain/entities/vec2';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { Vec2 } from 'domain/entities/vec2';
 import { Struct } from 'domain/entities/struct';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import { resolveMonomerClass } from 'application/editor/operations/monomer/resolveMonomerClass';
 import {
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
-} from 'application/formatters';
-import { IVariantMonomer } from 'domain/entities/types';
-import { AmbiguousMonomerType, AttachmentPointName } from 'domain/types';
+} from 'application/formatters/types/ket';
+import type { IVariantMonomer } from 'domain/entities/types';
+import type { AmbiguousMonomerType, AttachmentPointName } from 'domain/types';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
+import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { Chem } from 'domain/entities/Chem';
 import { Peptide } from 'domain/entities/Peptide';
@@ -18,6 +19,8 @@ import { Phosphate } from 'domain/entities/Phosphate';
 import { Sugar } from 'domain/entities/Sugar';
 import { RNABase } from 'domain/entities/RNABase';
 import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 
 export const DEFAULT_VARIANT_MONOMER_LABEL = '%';
 
@@ -71,12 +74,12 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   }
 
   public static getMonomerClass(monomers: BaseMonomer[]) {
-    const [, , monomerClass] = monomerFactory(monomers[0].monomerItem);
+    const monomerClass = resolveMonomerClass(monomers[0].monomerItem);
 
     const containDifferentMonomerTypes = monomers.some((monomer) => {
-      const [, , MonomerClassToCompare] = monomerFactory(monomer.monomerItem);
+      const monomerClassToCompare = resolveMonomerClass(monomer.monomerItem);
 
-      return monomerClass !== MonomerClassToCompare;
+      return monomerClass !== monomerClassToCompare;
     });
 
     if (containDifferentMonomerTypes) {
@@ -134,6 +137,35 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
     return monomerCaps;
   }
 
+  // TODO: Optimize that function on ketcher start it iterate only ambigouse monomer instead of whole library
+  public get isModification() {
+    const ownTemplateIds = this.variantMonomerItem.options
+      .map((option) => option.templateId)
+      .sort();
+
+    const monomersLibrary = provideEditorInstance()?.monomersLibrary ?? [];
+
+    const existsInLibrary = monomersLibrary.some((libraryItem) => {
+      if (
+        !isAmbiguousMonomerLibraryItem(libraryItem) ||
+        libraryItem.subtype !== this.subtype
+      ) {
+        return false;
+      }
+
+      const libraryTemplateIds = libraryItem.options
+        .map((option) => option.templateId)
+        .sort();
+
+      return (
+        libraryTemplateIds.length === ownTemplateIds.length &&
+        libraryTemplateIds.every((id, index) => id === ownTemplateIds[index])
+      );
+    });
+
+    return !existsInLibrary;
+  }
+
   public getValidSourcePoint(_secondMonomer?: BaseMonomer) {
     return MONOMER_CLASS_TO_CONSTRUCTOR[
       this.monomerClass
@@ -152,6 +184,9 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
       [KetMonomerClass.AminoAcid]: PeptideSubChain,
       [KetMonomerClass.RNA]: RnaSubChain,
       [KetMonomerClass.DNA]: RnaSubChain,
+      [KetMonomerClass.Sugar]: RnaSubChain,
+      [KetMonomerClass.Phosphate]: PhosphateSubChain,
+      [KetMonomerClass.Base]: ChemSubChain,
     };
 
     return monomerClassToSubchainConstructor[this.monomerClass] || ChemSubChain;

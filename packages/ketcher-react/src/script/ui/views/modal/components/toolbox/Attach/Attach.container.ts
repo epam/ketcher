@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +16,7 @@
  ***************************************************************************/
 
 import AttachPoints from './Attach';
-import { BaseProps } from '../../../modal.types';
+import type { BaseProps } from '../../../modal.types';
 import { connect } from 'react-redux';
 
 type StateProps = Pick<BaseProps, 'formState'>;

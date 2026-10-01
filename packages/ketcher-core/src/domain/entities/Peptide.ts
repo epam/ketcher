@@ -1,7 +1,7 @@
 import { BaseMonomer } from './BaseMonomer';
 import { AttachmentPointName } from 'domain/types';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 
 export class Peptide extends BaseMonomer {
   public getValidSourcePoint(secondMonomer?: BaseMonomer) {

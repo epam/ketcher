@@ -91,7 +91,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -245,6 +246,7 @@
         "fullName": "D-Asparagine",
         "alias": "dN",
         "aliasHELM": "dN",
+        "aliasBILN": "dN",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

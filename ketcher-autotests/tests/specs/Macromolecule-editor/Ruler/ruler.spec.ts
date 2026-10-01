@@ -1,7 +1,3 @@
-/* eslint-disable no-inline-comments */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -542,7 +538,7 @@ test.describe('Tests for Ruler', () => {
      */
     await Ruler(page).setLength('100');
     await Ruler(page).hoverOnInputField();
-    await expect(page.getByTitle('Number of monomers in a line')).toBeVisible();
+    await expect(Ruler(page).valueInput).toBeVisible();
     await Ruler(page).setLength('30');
   });
 

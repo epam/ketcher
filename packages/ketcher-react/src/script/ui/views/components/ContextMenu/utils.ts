@@ -1,4 +1,5 @@
 import { difference } from 'lodash';
+import { MonomerMicromolecule, type Bond, type Struct } from 'ketcher-core';
 
 /**
  * Remove the word `bond` out of the title
@@ -29,6 +30,16 @@ export const queryBondNames = [
   'bond-doublearomatic',
 ];
 
+export const MONOMER_WIZARD_DISALLOWED_BOND_TYPES = [
+  'any',
+  'singledouble',
+  'singlearomatic',
+  'doublearomatic',
+];
+
+export const monomerWizardDisallowedBondNames =
+  MONOMER_WIZARD_DISALLOWED_BOND_TYPES.map((type) => `bond-${type}`);
+
 /**
  * Get bond names except for query bonds
  *
@@ -38,6 +49,27 @@ export const queryBondNames = [
 export const getNonQueryBondNames = (tools) => {
   const allBondNames = getBondNames(tools);
   return difference(allBondNames, queryBondNames);
+};
+
+/**
+ * Check whether a bond connects two distinct monomers
+ */
+export const isBondBetweenMonomers = (
+  bond: Bond | null | undefined,
+  struct: Struct,
+) => {
+  if (!bond) {
+    return false;
+  }
+
+  const beginAtomSgroup = struct.getGroupFromAtomId(bond.begin);
+  const endAtomSgroup = struct.getGroupFromAtomId(bond.end);
+
+  return (
+    beginAtomSgroup instanceof MonomerMicromolecule &&
+    endAtomSgroup instanceof MonomerMicromolecule &&
+    beginAtomSgroup !== endAtomSgroup
+  );
 };
 
 export const noOperation = () => null;

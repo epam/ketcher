@@ -52,16 +52,7 @@ function Sgroup({ formState, ...props }: Readonly<SgroupProps>) {
   const { result, valid } = formState;
 
   const type = result.type;
-  const canEnableCopolymer = (props.selectedSruCount ?? 0) >= 2;
-  const availableSchemes = useMemo(
-    () =>
-      canEnableCopolymer
-        ? schemes
-        : Object.fromEntries(
-            Object.entries(schemes).filter(([key]) => key !== 'COP'),
-          ),
-    [canEnableCopolymer, schemes],
-  );
+  const availableSchemes = schemes;
 
   const serialize = useMemo(
     () =>

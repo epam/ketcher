@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,15 +15,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
-import { BaseCallProps, ModalContainerProps } from './modal.types';
+import type { BaseCallProps, ModalContainerProps } from './modal.types';
 import classes from './Modal.module.less';
 import selectClasses from '../../component/form/Select/Select.module.less';
 import clsx from 'clsx';
 import mediaSizes from './mediaSizes';
 import modals from '../../dialog';
 import useResizeObserver from 'use-resize-observer/polyfilled';
+import { ketcherProvider } from 'ketcher-core';
+import type Editor from '../../../editor';
 
 interface ModalProps extends BaseCallProps {
   modal: {
@@ -34,16 +37,25 @@ interface ModalProps extends BaseCallProps {
 
 type Props = ModalProps & BaseCallProps & ModalContainerProps;
 
-function Modal(props: Props) {
-  const { modal, ...rest } = props;
+type ModalContentProps = Omit<Props, 'modal'> & {
+  modal: NonNullable<Props['modal']>;
+};
+
+function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { height, width } = useResizeObserver<HTMLDivElement>({
-    ref: containerRef,
+    ref: containerRef as React.RefObject<HTMLDivElement>,
   });
 
-  if (!modal) return null;
-
   const Component = modals[modal.name];
+
+  useEffect(() => {
+    const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
+
+    return () => {
+      setTimeout(() => editor.focusCliparea(), 0);
+    };
+  }, [ketcherId]);
 
   if (!Component)
     throw new Error(`There is no modal window named ${modal.name}`);
@@ -60,10 +72,19 @@ function Modal(props: Props) {
             (height && height <= mediaSizes.smallHeight) ||
             (width && width <= mediaSizes.smallWidth),
         })}
+        ketcherId={ketcherId}
         {...rest}
       />
     </div>
   );
+}
+
+function Modal(props: Props) {
+  const { modal, ...rest } = props;
+
+  if (!modal) return null;
+
+  return <ModalContent modal={modal} {...rest} />;
 }
 
 export type { ModalProps };

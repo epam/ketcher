@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Operation } from 'domain/entities/Operation';
-import { BaseMonomer } from 'domain/entities';
-import { AttachmentPointName } from 'domain/types';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { Operation } from 'domain/entities/Operation';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { AttachmentPointName } from 'domain/types';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class AttachmentPointHoverOperation implements Operation {
   constructor(

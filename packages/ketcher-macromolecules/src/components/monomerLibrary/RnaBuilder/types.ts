@@ -13,29 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import {
-  IKetIdtAliases,
-  IKetTemplateConnection,
-  MonomerItemType,
-} from 'ketcher-core';
+export type { IRnaPreset } from 'ketcher-core';
 
 export interface IExpandIconProps {
   expanded: boolean;
-}
-
-// TODO: Perhaps more than one interface is needed.
-//  One with a minimum set of required readonly properties used by each use case,
-//  and also for places of use of `favorites`, `idtAliases` and others, which reuse the first interface.
-export interface IRnaPreset {
-  name?: string;
-  nameInList?: string;
-  base?: MonomerItemType;
-  sugar?: MonomerItemType;
-  phosphate?: MonomerItemType;
-  default?: boolean;
-  favorite?: boolean;
-  readonly idtAliases?: IKetIdtAliases;
-  readonly aliasAxoLabs?: string;
-  editedName?: boolean;
-  connections?: IKetTemplateConnection[];
 }

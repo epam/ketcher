@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 import {
+  type ToolbarGroupItemCallProps,
+  type ToolbarGroupItemProps,
   ToolbarGroupItem,
-  ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps,
 } from '../../ToolbarGroupItem';
 
 import { rGroupOptions } from '../leftToolbarOptions';

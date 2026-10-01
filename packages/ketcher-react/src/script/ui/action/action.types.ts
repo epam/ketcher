@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dispatch } from 'redux';
-import { Struct } from 'ketcher-core';
-import Editor from '../../editor/Editor';
+import type { Dispatch } from 'redux';
+import type { Struct } from 'ketcher-core';
+import type Editor from '../../editor/Editor';
 
 type ToolVariant =
   | 'any-atom'
@@ -162,9 +162,7 @@ type GetDisabledState = (
 type GetHiddenState = (options: ActionStateOptions) => boolean;
 
 export type GetActionState =
-  | GetSelectedState
-  | GetDisabledState
-  | GetHiddenState;
+  GetSelectedState | GetDisabledState | GetHiddenState;
 
 type IsSelectedState = boolean | GetSelectedState;
 type IsDisabledState = boolean | GetDisabledState;

@@ -14,22 +14,52 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Struct, Vec2 } from 'domain/entities';
-import { RaphaelPaper } from 'raphael';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
+import type { RaphaelPaper } from 'raphael';
 
 import Raphael from './raphael-ext';
-import { ReStruct } from './restruct';
+import ReStruct from './restruct/restruct';
+import type Visel from './restruct/visel';
 import { Scale } from 'domain/helpers';
 import defaultOptions from './options';
 import draw from './draw';
-import { RenderOptions, ViewBox } from './render.types';
+import type { RenderOptions, ViewBox } from './render.types';
 import { KetcherLogger } from 'utilities';
 import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
-import { AttachmentPointName } from 'domain/types';
-import { KetMonomerClass } from 'application/formatters/types/ket';
-import { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+import type { AttachmentPointName } from 'domain/types';
+import type { KetMonomerClass } from 'application/formatters/types/ket';
+import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+
+export type EditAllInstancesPresetRequirements = {
+  type: KetMonomerClass;
+  attachmentPoints: AttachmentPointName[];
+};
+
+export type MonomerCreationInitialValues = {
+  type: KetMonomerClass;
+  symbol: string;
+  name: string;
+  naturalAnalogue: string;
+  aliasHELM: string;
+  aliasBILN: string;
+  position?: Vec2;
+  editMode?: 'instance' | 'all';
+  originalType?: KetMonomerClass;
+  originalSymbol?: string;
+  presetRequirements?: EditAllInstancesPresetRequirements;
+  /**
+   * When editMode is 'all' and the user had multiple monomers of the same
+   * type/symbol selected, this contains the SGroup IDs of those specific
+   * monomers. If provided, only these monomers will be replaced instead of
+   * all canvas instances.
+   */
+  selectedSGroupIds?: number[];
+};
 
 export type RnaComponentAtoms = Map<
   RnaPresetComponentKey,
@@ -39,15 +69,30 @@ export type RnaComponentAtoms = Map<
 export type MonomerCreationState = {
   // R-label mapping to [attachment atom id, leaving atom id]
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
+  // Optional restriction: when set to a subset of assignedAttachmentPoints,
+  // only those are drawn on canvas. When undefined, all assigned attachment
+  // points are displayed.
+  visibleAssignedAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
   // Attachment atom id to a set of connected leaving atom ids
   potentialAttachmentPoints: Map<number, Set<number>>;
   problematicAttachmentPoints: Set<AttachmentPointName>;
+  problematicAtoms?: Set<number>;
   clickedAttachmentPoint?: AttachmentPointName | null;
   selectedMonomerClass?: KetMonomerClass | 'rnaPreset';
   hasDefaultAttachmentPoints?: boolean;
   // RNA preset component atoms and bonds
   rnaComponentAtoms?: RnaComponentAtoms;
   isRnaPresetMode?: boolean;
+  // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
+  connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
+  editInstanceInitialValues?: MonomerCreationInitialValues;
+  attachmentAtomIdsWithExternalBonds?: Map<
+    AttachmentPointName,
+    [number, number]
+  >;
+  // Reference to the BaseMonomer entity on the macromolecules canvas being
+  // edited. Populated only when editing an existing monomer.
+  editingMonomer?: BaseMonomer;
 } | null;
 
 export class Render {
@@ -59,8 +104,9 @@ export class Render {
   // TODO https://github.com/epam/ketcher/issues/2630
   public ctab: ReStruct;
   public options: RenderOptions;
+  public combinedHover: Visel | null = null;
   public viewBox!: ViewBox;
-  private readonly userOpts: RenderOptions;
+  private readonly userOpts: Partial<RenderOptions>;
   private oldCb: Box2Abs | null = null;
   private scrollbar: ScrollbarContainer;
   private resizeObserver: ResizeObserver | null = null;
@@ -68,7 +114,7 @@ export class Render {
 
   constructor(
     clientArea: HTMLElement,
-    options: RenderOptions,
+    options: Partial<RenderOptions>,
     currentRender?: Render,
     reuseRestructIfExist?: boolean,
   ) {
@@ -108,7 +154,8 @@ export class Render {
   };
 
   unobserveCanvasResize = () => {
-    this.resizeObserver?.unobserve(this.paper.canvas);
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
   };
 
   updateOptions(opts: string) {
@@ -233,7 +280,6 @@ export class Render {
   }
 
   update(force = false, viewSz: Vec2 | null = null) {
-    // eslint-disable-line max-statements
     viewSz =
       viewSz ??
       new Vec2(
@@ -254,11 +300,7 @@ export class Render {
       }
 
       const isAutoScale = this.options.autoScale || this.options.downScale;
-      if (!isAutoScale) {
-        if (!this.oldCb) this.oldCb = new Box2Abs();
-        this.scrollbar.update();
-        this.options.offset = this.options.offset ?? new Vec2();
-      } else {
+      if (isAutoScale) {
         const sz1 = bb.sz();
         const marg = this.options.autoScaleMargin;
         const mv = new Vec2(marg, marg);
@@ -282,6 +324,10 @@ export class Render {
           csz.x * rescale,
           csz.y * rescale,
         );
+      } else {
+        if (!this.oldCb) this.oldCb = new Box2Abs();
+        this.scrollbar.update();
+        this.options.offset = this.options.offset ?? new Vec2();
       }
 
       notifyRenderComplete();

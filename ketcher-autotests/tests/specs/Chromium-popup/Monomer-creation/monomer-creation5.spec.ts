@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
@@ -30,6 +27,7 @@ import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   AttachmentPoint,
+  getAttachmentPointLocator,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
@@ -54,8 +52,8 @@ import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import {
-  MicroBondDataIds,
   MicroBondType,
+  MicroBondTool,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { PeriodicTableElement } from '@tests/pages/constants/periodicTableDialog/Constants';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
@@ -107,7 +105,7 @@ test(`1. Check that the user can set one modification type for amino acids by cl
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     modificationTypes: [
@@ -162,7 +160,7 @@ test(`2. Check that the user can set few modification types for amino acids by c
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide2.alias,
+    code: Peptide.Peptide2.alias,
     name: 'Peptide2 Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.D,
     modificationTypes: [
@@ -294,7 +292,7 @@ test(`5. Check that the modification type must be unique for one natural analogu
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     modificationTypes: [
@@ -365,7 +363,7 @@ test(`6. Check that if the user changes the monomer type after they've entered a
     dropdown: ModificationTypeDropdown.First,
     type: ModificationType.Citrullination,
   });
-  await createMonomerDialog.setSymbol(Base.Base.alias);
+  await createMonomerDialog.setCode(Base.Base.alias);
   await createMonomerDialog.setName('Base Test monomer');
   await createMonomerDialog.selectType(MonomerType.Base);
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
@@ -384,7 +382,7 @@ test(`6. Check that if the user changes the monomer type after they've entered a
 
   await monomerOnCanvas.hover();
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
-  expect(await MonomerPreviewTooltip(page).getModificationTypes()).toEqual('');
+  expect(await MonomerPreviewTooltip(page).getModificationTypes()).toBeNull();
 });
 
 test(`7. Check that the user can remove a modification type after it is set`, async () => {
@@ -502,7 +500,7 @@ test(`9. Check that if a monomer with a new modification type is saved, that new
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     modificationTypes: [
@@ -557,7 +555,7 @@ test(`10. Check that the user can set a HELM alias for amino acids by clicking o
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide3.alias,
+    code: Peptide.Peptide3.alias,
     name: 'Peptide3 Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: 'CustomHELMAliasPeptide',
@@ -606,7 +604,7 @@ test(`11. Check that the user can set a HELM alias for sugars by clicking on + A
 
   await createMonomer(page, {
     type: MonomerType.Sugar,
-    symbol: Sugar.Sugar.alias,
+    code: Sugar.Sugar.alias,
     name: 'Sugar Test monomer',
     HELMAlias: 'CustomHELMAliasSugar',
   });
@@ -654,7 +652,7 @@ test(`12. Check that the user can set a HELM alias for bases by clicking on + Ad
 
   await createMonomer(page, {
     type: MonomerType.Base,
-    symbol: Base.Base.alias,
+    code: Base.Base.alias,
     name: 'Base Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
     HELMAlias: 'CustomHELMAliasBase',
@@ -703,7 +701,7 @@ test(`13. Check that the user can set a HELM alias for  phosphates by clicking o
 
   await createMonomer(page, {
     type: MonomerType.Phosphate,
-    symbol: Phosphate.Phosphate.alias,
+    code: Phosphate.Phosphate.alias,
     name: 'Phosphate Test monomer',
     HELMAlias: 'CustomHELMAliasPhosphate',
   });
@@ -723,7 +721,7 @@ test(`13. Check that the user can set a HELM alias for  phosphates by clicking o
   );
 });
 
-test(`14. Check that the option + Add HELM alias appears only after monomer type Amino acid, Base, Sugar, or Phosphate is chosen`, async () => {
+test(`14. Check that the option + Add HELM alias appears only after monomer type Amino acid, CHEM Base, Sugar, or Phosphate is chosen`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8436
    * Description: Check that the option + Add HELM alias appears only after monomer type Amino acid, Base, Sugar, or Phosphate is chosen
@@ -757,7 +755,7 @@ test(`14. Check that the option + Add HELM alias appears only after monomer type
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   await expect(createMonomerDialog.aliasesSection).not.toBeVisible();
   await createMonomerDialog.selectType(MonomerType.CHEM);
-  await expect(createMonomerDialog.aliasesSection).not.toBeVisible();
+  await expect(createMonomerDialog.aliasesSection).toBeVisible();
   await createMonomerDialog.discard();
 });
 
@@ -789,7 +787,7 @@ test(`15. Check that the HELM symbol must be a string of uppercase and lowercase
 
   await createMonomer(page, {
     type: MonomerType.Phosphate,
-    symbol: Phosphate.Phosphate2.alias,
+    code: Phosphate.Phosphate2.alias,
     name: 'Phosphate Test monomer',
     HELMAlias: 'ABCdef-123_*',
   });
@@ -837,7 +835,7 @@ test(`16. Check add prohibited HELM symbols`, async () => {
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: '$#@',
@@ -886,7 +884,7 @@ test(`17. Check that the HELM alias string must be unique for one HELM class (pe
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: '1Nal',
@@ -934,7 +932,7 @@ test(`18. Check when the HELM alias string NOT unique for one HELM class (peptid
 
   await createMonomer(page, {
     type: MonomerType.Base,
-    symbol: Base.Base.alias,
+    code: Base.Base.alias,
     name: 'Base Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
     HELMAlias: '1Nal',
@@ -987,7 +985,7 @@ test(`19. Check if an issue with the HELM alias exists the HELM alias field is h
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Nucleotide.Nucleotide.alias,
+    code: Nucleotide.Nucleotide.alias,
     name: 'Nucleotide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: '1Nal',
@@ -1046,7 +1044,7 @@ test(`20. Check that the user can remove a HELM alias after it is set`, async ()
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: '1Nal',
@@ -1148,7 +1146,10 @@ test(`22. Check that hovering over R1 for sugars give 5' on the tooltip preview`
   await createMonomerDialog.selectType(MonomerType.Sugar);
   // shifting canvas to make tooltip appear fully
   await shiftCanvas(page, -150, 50);
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   await attachmentPointR1.hover({ force: true });
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'visible',
@@ -1158,7 +1159,10 @@ test(`22. Check that hovering over R1 for sugars give 5' on the tooltip preview`
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'hidden',
   });
-  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
+  const attachmentPointR2 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R2,
+  ).first();
   await attachmentPointR2.hover({ force: true });
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'visible',
@@ -1199,7 +1203,10 @@ test(`23. Check that hovering over R1 for phosphates give 5' on the tooltip prev
   await createMonomerDialog.selectType(MonomerType.Phosphate);
   // shifting canvas to make tooltip appear fully
   await shiftCanvas(page, -150, 50);
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   await attachmentPointR1.hover({ force: true });
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'visible',
@@ -1209,7 +1216,10 @@ test(`23. Check that hovering over R1 for phosphates give 5' on the tooltip prev
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'hidden',
   });
-  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
+  const attachmentPointR2 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R2,
+  ).first();
   await attachmentPointR2.hover({ force: true });
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'visible',
@@ -1250,7 +1260,10 @@ test(`23. Check that hovering over R1 for nucleotides give 5' on the tooltip pre
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   // shifting canvas to make tooltip appear fully
   await shiftCanvas(page, -150, 50);
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   await attachmentPointR1.hover({ force: true });
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'visible',
@@ -1260,7 +1273,10 @@ test(`23. Check that hovering over R1 for nucleotides give 5' on the tooltip pre
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'hidden',
   });
-  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
+  const attachmentPointR2 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R2,
+  ).first();
   await attachmentPointR2.hover({ force: true });
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'visible',
@@ -1297,10 +1313,12 @@ test(`24. Verify that options/toolbar icons are now enabled for atoms in create 
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
 
-  await ContextMenu(page, targetAtom).open();
-
-  await expect(page.getByTestId(MicroAtomOption.Edit)).toBeEnabled();
-  await expect(page.getByTestId(MicroAtomOption.Delete)).toBeEnabled();
+  expect(
+    await ContextMenu(page, targetAtom).isOptionVisible(MicroAtomOption.Edit),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetAtom).isOptionVisible(MicroAtomOption.Delete),
+  ).toBeTruthy();
 
   await clickOnCanvas(page, 0, 0);
   await CreateMonomerDialog(page).discard();
@@ -1429,21 +1447,54 @@ test(`27. Verify that in create monomer wizard: for bonds in the right-click men
 
   const targetBond = getBondLocator(page, {}).first();
 
-  await ContextMenu(page, targetBond).open();
-
-  await Promise.all([
-    expect(page.getByTestId(MicroBondOption.Edit)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.Single)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.SingleUp)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.SingleDown)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.SingleUpDown)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.Double)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.DoubleCisTrans)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.Triple)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.Hydrogen)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.Dative)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.Delete)).toBeEnabled(),
-  ]);
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(MicroBondOption.Edit),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(MicroBondOption.Single),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(MicroBondOption.Double),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(
+      MicroBondOption.SingleUp,
+    ),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(
+      MicroBondOption.SingleDown,
+    ),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(
+      MicroBondOption.SingleUpDown,
+    ),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(
+      MicroBondOption.DoubleCisTrans,
+    ),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(
+      MicroBondOption.DoubleCisTrans,
+    ),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(MicroBondOption.Triple),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(
+      MicroBondOption.Hydrogen,
+    ),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(MicroBondOption.Dative),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(MicroBondOption.Delete),
+  ).toBeTruthy();
 
   await clickOnCanvas(page, 0, 0);
   await CreateMonomerDialog(page).discard();
@@ -1857,12 +1908,12 @@ test(`38. Verify that in create monomer wizard: user can add bonds to molecule a
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
   const targetSingleBond = getBondLocator(page, {
-    bondType: MicroBondDataIds.Single,
+    bondType: MicroBondType.Single,
   });
   const targetDoubleBond = getBondLocator(page, {
-    bondType: MicroBondDataIds.Double,
+    bondType: MicroBondType.Double,
   });
-  await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
 
   await targetSingleBond.first().click({ force: true });
   await expect(targetDoubleBond.first()).toBeVisible();

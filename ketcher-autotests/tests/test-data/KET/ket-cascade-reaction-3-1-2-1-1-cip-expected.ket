@@ -233,7 +233,12 @@
                 ],
                 "stereo": 3
             }
-        ]
+        ],
+        "stereoFlagPosition": {
+            "x": 22.110072281277937,
+            "y": 6.346826868826908,
+            "z": 0
+        }
     },
     "mol1": {
         "type": "molecule",
@@ -254,7 +259,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 3
             },
             {
                 "label": "C",
@@ -288,7 +294,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 3
             },
             {
                 "label": "C",
@@ -381,7 +388,12 @@
                 ],
                 "stereo": 4
             }
-        ]
+        ],
+        "stereoFlagPosition": {
+            "x": 17.40812578901302,
+            "y": 5.592082301586644,
+            "z": 0
+        }
     },
     "mol2": {
         "type": "molecule",
@@ -402,7 +414,8 @@
                     0
                 ],
                 "cip": "R",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -412,7 +425,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -514,7 +528,12 @@
                 ],
                 "stereo": 6
             }
-        ]
+        ],
+        "stereoFlagPosition": {
+            "x": 13.505065635591706,
+            "y": 4.201365679723818,
+            "z": 0
+        }
     },
     "mol3": {
         "type": "molecule",
@@ -759,7 +778,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -769,7 +789,8 @@
                     0
                 ],
                 "cip": "R",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -863,6 +884,11 @@
                 ],
                 "stereo": 1
             }
-        ]
+        ],
+        "stereoFlagPosition": {
+            "x": 9.42236470328248,
+            "y": 7.67360630031678,
+            "z": 0
+        }
     }
 }

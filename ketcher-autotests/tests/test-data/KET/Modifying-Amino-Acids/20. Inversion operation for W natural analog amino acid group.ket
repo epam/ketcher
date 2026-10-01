@@ -186,7 +186,8 @@
                     -1.448,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -444,6 +445,7 @@
         "fullName": "D-Tryptophan",
         "alias": "dW",
         "aliasHELM": "dW",
+        "aliasBILN": "dW",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

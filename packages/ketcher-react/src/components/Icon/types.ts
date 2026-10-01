@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { iconNameToIcon } from './utils/iconNameToIcon';
-import { MouseEvent } from 'react';
+import type { iconNameToIcon } from './utils/iconNameToIcon';
+import type { MouseEvent } from 'react';
 
 export type SvgComponent = React.FunctionComponent<
   React.SVGProps<SVGSVGElement> & {

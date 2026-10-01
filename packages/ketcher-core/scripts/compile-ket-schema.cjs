@@ -20,4 +20,9 @@ const ajv = new Ajv({
 });
 const validate = ajv.compile(schema);
 
-fs.writeFileSync(outputPath, `${standaloneCode(ajv, validate)}\n`, 'utf8');
+const generatedCode = standaloneCode(ajv, validate).replace(
+  /const (\w+) = require\("ajv\/dist\/runtime\/([^"]+)"\)\.default;/g,
+  'const $1Module = require("ajv/dist/runtime/$2");const $1 = typeof $1Module === "function" ? $1Module : typeof $1Module.default === "function" ? $1Module.default : $1Module.default.default;',
+);
+
+fs.writeFileSync(outputPath, `${generatedCode}\n`, 'utf8');

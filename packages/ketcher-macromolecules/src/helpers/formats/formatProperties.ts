@@ -28,6 +28,7 @@ export type SupportedFormats =
   | 'idt'
   | 'axo-labs'
   | 'helm'
+  | 'biln'
   | 'svg';
 
 type FormatProperties = {
@@ -85,6 +86,7 @@ const formatProperties: FormatProperties = {
     {},
   ),
   helm: new SupportedFormatProperties('HELM', ChemicalMimeType.HELM, ['.helm']),
+  biln: new SupportedFormatProperties('BILN', ChemicalMimeType.BILN, ['.biln']),
   svg: new SupportedFormatProperties('SVG Document', ChemicalMimeType.Svg, [
     '.svg',
   ]),

@@ -38,11 +38,12 @@ import { saveSettings } from '../options';
 import { memoizedDebounce } from '../../utils';
 import { updateFloatingTools } from '../floatingTools';
 import { openInfoModalWithCustomMessage } from '../shared';
+import { shouldResetToSelect } from './shouldResetToSelect';
 
-export default function initEditor(dispatch, getState) {
+export default function initEditor(dispatch, getState, ketcherId) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
   const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
-  const getSelectedSruCount = () => {
+  const getSelectedSruCount = (sgroupType) => {
     const editor = getState().editor;
     if (!editor?.structSelected) return 0;
     const selectedStruct = editor.structSelected();
@@ -52,18 +53,22 @@ export default function initEditor(dispatch, getState) {
         count += 1;
       }
     }
-    return count;
+    return sgroupType === 'COP' ? Math.max(2, count) : count;
   };
 
   const resetToSelect =
     (force = false) =>
     async (dispatch) => {
       const state = getState();
-      const activeTool = state.actionState?.activeTool.tool;
+      const activeToolAction = state.actionState?.activeTool;
+      const activeTool = activeToolAction?.tool;
       if (!activeTool || (activeTool === 'select' && !force)) return;
       const selectMode = state.toolbar.visibleTools.select;
       const resetOption = state.options.settings.resetToSelect;
-      if (resetOption === true || resetOption === activeTool || force === true)
+      if (
+        shouldResetToSelect(activeTool, resetOption, activeToolAction.opts) ||
+        force === true
+      )
         // example: 'paste'
         dispatch({ type: 'ACTION', action: acts[selectMode].action });
       else updateAction();
@@ -96,7 +101,7 @@ export default function initEditor(dispatch, getState) {
         }).then(toElement);
       }
       const elem = selem.type === 'text' ? selem : fromElement(selem);
-      let dlg = null;
+      let dlg;
       if (elem.type === 'text') {
         // TODO: move textdialog opening logic to another place
         return openDialog(dispatch, 'text', elem);
@@ -187,12 +192,14 @@ export default function initEditor(dispatch, getState) {
         .then(() =>
           openDialog(dispatch, 'sgroup', {
             ...fromSgroup(sgroup),
-            selectedSruCount: getSelectedSruCount(),
+            selectedSruCount: getSelectedSruCount(sgroup.type),
           }),
         )
         .then(toSgroup),
     onRemoveFG: (result) =>
       sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),
+    onEditMonomer: (payload) =>
+      sleep(0).then(() => openDialog(dispatch, 'editMonomer', payload)),
     onMessage: (msg) => {
       if (msg.error) {
         // TODO: add error handler call
@@ -229,7 +236,7 @@ export default function initEditor(dispatch, getState) {
     onMouseDown: () => {
       updateAction();
     },
-    onConfirm: () => openDialog(dispatch, 'confirm'),
+    onConfirm: (payload) => openDialog(dispatch, 'confirm', payload),
     onShowInfo: (payload) => {
       if (payload) {
         const { groupStruct, event, sGroup } = payload;
@@ -238,7 +245,7 @@ export default function initEditor(dispatch, getState) {
         highlightFG(dispatch, { groupStruct: null, sGroup: null });
       }
     },
-    onApiSettings: (payload) => dispatch(saveSettings(payload)),
+    onApiSettings: (payload) => dispatch(saveSettings(payload, ketcherId)),
 
     onUpdateFloatingTools: memoizedDebounce(
       /**

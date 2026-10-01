@@ -1,8 +1,8 @@
-import { Selection } from 'd3';
-import { Chem } from 'domain/entities/Chem';
+import type { Selection } from 'd3';
+import type { Chem } from 'domain/entities/Chem';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'application/formatters/types/ket';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 
 const CHEM_HOVERED_ELEMENT_ID = MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM].hover;
@@ -11,7 +11,10 @@ const CHEM_AUTOCHAIN_PREVIEW_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM].autochainPreview;
 
 export class ChemRenderer extends BaseMonomerRenderer {
-  constructor(public monomer: Chem, scale?: number) {
+  constructor(
+    public monomer: Chem,
+    scale?: number,
+  ) {
     super(
       monomer,
       CHEM_HOVERED_ELEMENT_ID,

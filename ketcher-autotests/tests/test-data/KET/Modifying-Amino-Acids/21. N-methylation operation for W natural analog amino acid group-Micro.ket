@@ -186,7 +186,8 @@
                     -1.448,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -444,6 +445,7 @@
         "fullName": "N-Methyl-Tryptophan",
         "alias": "meW",
         "aliasHELM": "meW",
+        "aliasBILN": "meW",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

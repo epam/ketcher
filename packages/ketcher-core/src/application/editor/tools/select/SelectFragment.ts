@@ -1,6 +1,6 @@
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
-import { CoreEditor } from 'application/editor';
-import { BaseRenderer } from 'application/render';
+import type { CoreEditor } from 'application/editor/Editor';
+import type { BaseRenderer } from 'application/render';
 
 export class SelectFragment extends SelectBase {
   constructor(readonly editor: CoreEditor) {
@@ -27,8 +27,9 @@ export class SelectFragment extends SelectBase {
     renderer: BaseRenderer,
     shiftKey = false,
     modKey = false,
+    altKey = false,
   ): void {
-    super.mousedownEntity(renderer, shiftKey, modKey);
+    super.mousedownEntity(renderer, shiftKey, modKey, altKey);
     const command =
       this.editor.drawingEntitiesManager.selectAllConnectedEntities(
         renderer.drawingEntity,

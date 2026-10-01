@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { Locator, Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -16,7 +14,7 @@ import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
 } from '@utils/macromolecules/polymerBond';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
 
@@ -1710,7 +1708,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     moleculeType: string;
     fileName: string;
     alias: string;
-    atomLocatorSelectors: string[];
+    atomIds: number[];
     connectionPointShifts: { x: number; y: number }[];
   }
 
@@ -1719,14 +1717,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       moleculeType: 'Molecule',
       fileName: 'KET/Molecule-Templates/1 - Benzene ring.ket',
       alias: 'Benzene ring',
-      atomLocatorSelectors: [
-        'g > circle',
-        'g:nth-child(2) > circle',
-        'g:nth-child(3) > circle',
-        'g:nth-child(4) > circle',
-        'g:nth-child(5) > circle',
-        'g:nth-child(6) > circle',
-      ],
+      atomIds: [5, 4, 3, 2, 1, 0],
       connectionPointShifts: [
         { x: 0, y: 2 },
         { x: -2, y: 2 },
@@ -1740,13 +1731,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
 
   async function loadMonomer(page: Page, leftMonomer: IMonomer) {
     await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
-
-    const canvasLocator = page.getByTestId(KETCHER_CANVAS).first();
-    const leftMonomerLocator = canvasLocator
-      .locator(`text=${leftMonomer.alias}`)
-      .first();
-
-    await leftMonomerLocator.hover({ force: true });
+    await getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).hover({
+      force: true,
+    });
     await dragMouseTo(page, 300, 380);
     await moveMouseAway(page);
   }
@@ -1760,17 +1747,16 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     page: Page,
     leftPeptide: IMonomer,
     rightMolecule: IMolecule,
-    attachmentPoint: string,
+    attachmentPoint: AttachmentPoint,
     atomIndex: number,
   ) {
     const leftPeptideLocator = getMonomerLocator(page, {
       monomerAlias: leftPeptide.alias,
     }).first();
 
-    const rightMoleculeLocator = page
-      .getByTestId(KETCHER_CANVAS)
-      .locator(rightMolecule.atomLocatorSelectors[atomIndex])
-      .first();
+    const rightMoleculeLocator = getAtomLocator(page, {
+      atomId: rightMolecule.atomIds[atomIndex],
+    }).first();
 
     await bondMonomerPointToMoleculeAtom(
       page,
@@ -1801,9 +1787,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         const attachmentPointCount = Object.keys(
           leftMonomer.attachmentPoints,
         ).length;
-        const atomCount = Object.keys(
-          rightMolecule.atomLocatorSelectors,
-        ).length;
+        const atomCount = Object.keys(rightMolecule.atomIds).length;
 
         for (
           let atomIndex = 0;
@@ -1814,7 +1798,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
             page,
             leftMonomer,
             rightMolecule,
-            Object.keys(leftMonomer.attachmentPoints)[atomIndex],
+            Object.values(leftMonomer.attachmentPoints)[atomIndex],
             atomIndex,
           );
         }

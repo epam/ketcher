@@ -1,6 +1,6 @@
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
+import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import type { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 export enum Entities {
   Nucleotide = 'Nucleotide',

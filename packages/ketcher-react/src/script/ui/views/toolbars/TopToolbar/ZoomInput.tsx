@@ -1,3 +1,4 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,11 +16,11 @@
  ***************************************************************************/
 
 import {
-  FocusEvent,
-  KeyboardEvent,
+  type FocusEvent,
+  type KeyboardEvent,
+  type RefObject,
   useEffect,
   useCallback,
-  RefObject,
 } from 'react';
 import styled from '@emotion/styled';
 

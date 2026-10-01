@@ -180,21 +180,21 @@ export const FloatingTools = () => {
       <ToolButton
         onClick={handleFlipHorizontal}
         title="Flip horizontally"
-        data-testid="floating-tool-flip-h"
+        data-testid="transform-flip-h"
       >
         <Icon name={'transform-flip-h' as IconName} />
       </ToolButton>
       <ToolButton
         onClick={handleFlipVertical}
         title="Flip vertically"
-        data-testid="floating-tool-flip-v"
+        data-testid="transform-flip-v"
       >
         <Icon name={'transform-flip-v' as IconName} />
       </ToolButton>
       <ToolButton
         onClick={handleDelete}
         title="Delete"
-        data-testid="floating-tool-delete"
+        data-testid="float-delete"
       >
         <Icon name={'delete' as IconName} />
       </ToolButton>

@@ -1,8 +1,8 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
-import { OperationType } from 'application/editor';
-import { MonomerCreationState, ReStruct } from 'application/render';
-import assert from 'assert';
-import { AttachmentPointName } from 'domain/types';
+import { OperationType } from 'application/editor/operations/OperationType';
+import type { MonomerCreationState, ReStruct } from 'application/render';
+import { assert } from 'utilities';
+import type { AttachmentPointName } from 'domain/types';
 
 export class ReassignLeavingAtomOperation extends BaseOperation {
   constructor(
@@ -28,7 +28,7 @@ export class ReassignLeavingAtomOperation extends BaseOperation {
       newAtomPair,
     );
 
-    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
+    this.monomerCreationState = { ...this.monomerCreationState };
 
     BaseOperation.invalidateAtom(restruct, this.attachmentAtomId);
     BaseOperation.invalidateAtom(restruct, this.newLeavingAtomId);
@@ -43,5 +43,9 @@ export class ReassignLeavingAtomOperation extends BaseOperation {
       this.previousLeavingAtomId,
       this.newLeavingAtomId,
     );
+  }
+
+  isDummy() {
+    return this.newLeavingAtomId === this.previousLeavingAtomId;
   }
 }

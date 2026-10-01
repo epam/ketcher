@@ -13,23 +13,26 @@ test.describe('Macromolecules delete RNA presets', () => {
     await page.goto('', { waitUntil: 'domcontentloaded' });
     await waitForKetcherInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await Library(page).switchToRNATab();
+    // Wait for the library to load
+    await page.waitForTimeout(1000);
   });
 
   test('Should not delete default RNA preset', async ({ page }) => {
-    const libraryPresetA = page.getByTestId(Preset.A.testId);
+    const libraryPresetA = Library(page).getMonomerLibraryCardLocator(Preset.A);
     await ContextMenu(page, libraryPresetA).open();
     await takeMonomerLibraryScreenshot(page);
   });
 
   test('Delete copy RNA preset', async ({ page }) => {
-    const libraryPresetA = page.getByTestId(Preset.A.testId);
+    const libraryPresetA = Library(page).getMonomerLibraryCardLocator(Preset.A);
     await ContextMenu(page, libraryPresetA).click(
       LibraryPresetOption.DuplicateAndEdit,
     );
     await Library(page).rnaBuilder.save();
 
-    const createdPreset = page.getByTestId('A_Copy_A_R_P');
+    const createdPreset = Library(page).getMonomerLibraryCardLocator(
+      Preset.A_Copy,
+    );
     await expect(createdPreset).toBeVisible();
 
     await ContextMenu(page, createdPreset).click(

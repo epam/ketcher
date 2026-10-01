@@ -1,12 +1,12 @@
 import {
+  type SVGPathAttributes,
+  type BondVectors,
   BondDashArrayMap,
   BondSpace,
-  SVGPathAttributes,
-  BondVectors,
   BondWidth,
   LinesOffset,
 } from 'application/render/renderers/BondPathRenderer/constants';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 import { BondType } from 'domain/entities/CoreBond';
 
 class SingleDoubleBondPathRenderer {

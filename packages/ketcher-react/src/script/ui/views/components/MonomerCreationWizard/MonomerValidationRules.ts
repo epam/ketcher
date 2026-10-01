@@ -51,11 +51,11 @@ export const MONOMER_VALIDATION_RULES: MonomerValidationRule[] = [
     requirements: [
       {
         attachmentPoint: AttachmentPointName.R1,
-        expectedLeavingGroup: AtomLabel.O,
+        expectedLeavingGroup: AtomLabel.H,
       },
     ],
     warningMessage:
-      'Base monomers typically have a hydroxyl as the leaving group for R1. Do you wish to proceed with the current attachment points?',
+      'Base monomers typically have a hydrogen as the leaving group for R1. Do you wish to proceed with the current attachment points?',
   },
   {
     monomerType: KetMonomerClass.Phosphate,

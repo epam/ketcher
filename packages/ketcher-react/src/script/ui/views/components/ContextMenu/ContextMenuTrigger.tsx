@@ -15,11 +15,11 @@
  ***************************************************************************/
 
 import { FunctionalGroup, ketcherProvider } from 'ketcher-core';
-import { FC, PropsWithChildren, useCallback } from 'react';
+import { type FC, type PropsWithChildren, useCallback } from 'react';
 import { useContextMenu } from 'react-contexify';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
-import { CONTEXT_MENU_ID, ContextMenuProps } from './contextMenu.types';
+import type Editor from 'src/script/editor';
+import { type ContextMenuProps, CONTEXT_MENU_ID } from './contextMenu.types';
 import {
   getShouldResetSelection,
   getShowProps,
@@ -63,7 +63,9 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
           !sGroup.isSuperatomWithoutLabel && sGroup.atoms.includes(atomId),
       );
 
-      sGroupId !== null && selectedSGroupsIds.add(sGroupId);
+      if (sGroupId !== null) {
+        selectedSGroupsIds.add(sGroupId);
+      }
     });
 
     return {
@@ -91,10 +93,10 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
       // TODO: Consider a better approach to handle context menus for auxiliary UI elements
       const target = event.target as Element;
       if (editor.isMonomerCreationWizardActive) {
-        const rLabelElement = target.closest('[data-attachment-point-name]');
+        const rLabelElement = target.closest('[data-attachment-point-alias]');
         if (rLabelElement) {
           const attachmentPointName = rLabelElement.getAttribute(
-            'data-attachment-point-name',
+            'data-attachment-point-alias',
           );
           if (attachmentPointName) {
             show({
@@ -147,12 +149,13 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         ketcherId,
       });
 
-      showProps &&
+      if (showProps) {
         show({
           id: showProps.id,
           event,
           props: { ...showProps, ketcherId },
         });
+      }
     },
     [getSelectedGroupsInfo, show, ketcherId],
   );

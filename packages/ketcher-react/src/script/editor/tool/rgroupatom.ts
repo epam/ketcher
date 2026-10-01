@@ -22,8 +22,8 @@ import {
   KetcherLogger,
   CoordinateTransformation,
 } from 'ketcher-core';
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 
 class RGroupAtomTool implements Tool {
   private readonly editor: Editor;
@@ -131,7 +131,7 @@ function propsDialog(editor, id, pos) {
   Promise.resolve(res)
     .then((elem) => {
       // TODO review: using Atom.attrlist as a source of default property values
-      elem = { ...Atom.attrlist, ...(elem || {}) };
+      elem = { ...Atom.attrlist, ...elem };
 
       if (!id && id !== 0 && elem.rglabel) {
         editor.update(fromAtomAddition(editor.render.ctab, pos, elem));

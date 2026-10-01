@@ -1,12 +1,16 @@
 import { editorEvents } from 'application/editor/editorEvents';
+import {
+  SELECTION_COLOR,
+  SELECTION_HOVERED_COLOR,
+} from 'application/render/renderers/constants';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
-import { D3SvgElementSelection } from 'application/render/types';
-import assert from 'assert';
+import type { D3SvgElementSelection } from 'application/render/types';
+import { assert } from 'utilities';
 import { MonomerSize } from 'domain/constants';
-import { Vec2 } from 'domain/entities';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import { Vec2 } from 'domain/entities/vec2';
+import { getStructureBbox } from 'domain/entities/structureBbox';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseRenderer } from '../BaseRenderer';
 import {
   CORNER_LENGTH,
@@ -26,7 +30,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   private selectionElement;
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
   private path = '';
-  public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
+  declare public bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
     super(polymerBond);
@@ -68,15 +72,15 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
 
   public moveSelection(): void {
     if (
-      this.previousStateOfIsMonomersOnSameHorizontalLine !==
+      this.previousStateOfIsMonomersOnSameHorizontalLine ===
       this.polymerBond.isHorizontal
     ) {
-      this.remove();
-      this.show();
-    } else {
       assert(this.rootElement);
       this.moveStart();
       this.moveEnd();
+    } else {
+      this.remove();
+      this.show();
     }
     this.previousStateOfIsMonomersOnSameHorizontalLine =
       this.polymerBond.isHorizontal;
@@ -108,7 +112,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       return;
     }
 
-    const subStructureBBox = DrawingEntitiesManager.getStructureBbox([
+    const subStructureBBox = getStructureBbox([
       this.polymerBond.firstMonomer,
       this.polymerBond.secondMonomer,
     ]);
@@ -316,7 +320,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
         ?.insert('path', ':first-child')
         .attr('d', this.path)
         .attr('fill', 'none')
-        .attr('stroke', '#57FF8F')
+        .attr('stroke', SELECTION_COLOR)
         .attr('stroke-width', '5')
         .attr('class', 'dynamic-element');
     } else {
@@ -383,7 +387,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     this.bodyElement.attr('stroke', '#0097A8').attr('pointer-events', 'none');
 
     if (this.polymerBond.selected && this.selectionElement) {
-      this.selectionElement.attr('stroke', '#CCFFDD');
+      this.selectionElement.attr('stroke', SELECTION_HOVERED_COLOR);
     }
   }
 
@@ -397,7 +401,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none');
 
     if (this.polymerBond.selected && this.selectionElement) {
-      this.selectionElement.attr('stroke', '#57FF8F');
+      this.selectionElement.attr('stroke', SELECTION_COLOR);
     }
 
     return this.hoverAreaElement.attr('stroke', 'transparent');

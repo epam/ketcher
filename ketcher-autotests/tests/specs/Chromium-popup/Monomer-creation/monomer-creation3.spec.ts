@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
@@ -24,7 +21,10 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { AttachmentPoint } from '@utils/macromolecules/monomer';
+import {
+  AttachmentPoint,
+  getAttachmentPointLocator,
+} from '@utils/macromolecules/monomer';
 import {
   AttachmentPointAtom,
   AttachmentPointOption,
@@ -133,61 +133,14 @@ const eligableForMonomerCreation: IMoleculesForMonomerCreation[] = [
     loadString: '[#6]%91.[*:1]-%91',
   },
   {
-    testDescription: '16. Double bond connected to R-Group',
-    loadString: '[#6]%91.[*:1]=%91',
-  },
-  {
-    testDescription: '17. Triple bond connected to R-Group',
-    loadString: '[#6]%91.[*:1]#%91',
-  },
-  {
-    testDescription: '18. Any bond connected to R-Group',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAD/338AAKANAf/ffwAAoCsBA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAABAIABwAzBAMAAABBAAIIAAAAAAAAAB4ABoAAAAAAAAIIAAAAAAAAAB4AIwgBAAAABw4AAQAAAAMAYADIAAAAUjEAAAAABYAHAAAABAYEAAYAAAAFBgQABQAAAAAGAgD//wAAAAAAAAAAAAA=',
-  },
-  {
-    testDescription: '19. Aromatic bond connected to R-Group',
-    loadString: '[#6]%91.[*:1]:%91',
-  },
-  {
-    testDescription: '20. Single/Double connected to R-Group',
-    loadString: '[#6]%91.[*:1]!:;-,=%91',
-  },
-  {
-    testDescription: '21. Single/Aromatic bond connected to R-Group',
-    loadString: '[#6]%91.[*:1]%91',
-  },
-  {
-    testDescription: '22. Double/Aromatic bond connected to R-Group',
-    loadString: '[#6]%91.[*:1]=,:%91',
-  },
-  {
-    testDescription: '23. Dative bond connected to R-Group',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAoIYAAGARAQCghgAAYC8BA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAABAIABwAzBAMAAABBAAIIAAAAAAAAAB4ABoAAAAAAAAIIAAAAAAAAAB4AIwgBAAAABw4AAQAAAAMAYADIAAAAUjEAAAAABYAHAAAABAYEAAYAAAAFBgQABQAAAAAGAgAAEAAAAAAAAAAAAAA=',
-  },
-  {
-    testDescription: '24. Hydrogen bond connected to R-Group',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAoIYAAGARAQCghgAAYC8BA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAABAIABwAzBAMAAABBAAIIAAAAAAAAAB4ABoAAAAAAAAIIAAAAAAAAAB4AIwgBAAAABw4AAQAAAAMAYADIAAAAUjEAAAAABYAHAAAABAYEAAYAAAAFBgQABQAAAAAGAgAAEAAAAAAAAAAAAAA=',
-  },
-  {
     testDescription: '25. Single Up bond connected to R-Group',
     loadString: '[#6]%91.[*:1]/%91',
   },
   {
     testDescription: '26. Single Down bond connected to R-Group',
-    loadString: '[#6]%91.[*:1]%91',
-  },
-  {
-    testDescription: '27. Single Up/Down bond connected to R-Group',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAA4I4AAGAjAQDgjgAAYEEBA4AEAAAABIAFAAAAAAQCAAcAMwQDAAAAQQACCAAAAAAAAAAeAAaAAAAAAAACCAAAAAAAAAAeACMIAQAAAAcOAAEAAAADAGAAyAAAAFIxAAAAAASABgAAAAACCAAAAAAAAAAAAAAABYAHAAAABAYEAAUAAAAFBgQABgAAAAEGAgAIAAAAAAAAAAAAAAA=',
-  },
-  {
-    testDescription: '28. Double CIS/Trans bond connected to R-Group',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAA4I4AAGAjAQDgjgAAYEEBA4AEAAAABIAFAAAAAAQCAAcAMwQDAAAAQQACCAAAAAAAAAAeAAaAAAAAAAACCAAAAAAAAAAeACMIAQAAAAcOAAEAAAADAGAAyAAAAFIxAAAAAASABgAAAAACCAAAAAAAAAAAAAAABYAHAAAABAYEAAUAAAAFBgQABgAAAAAGAgACAAEGAgAIAAAAAAAAAAAAAAA=',
+    // prettier-ignore
+    // eslint-disable-next-line no-useless-escape
+    loadString: '[#6]%91.[*:1]\%91',
   },
   {
     testDescription: '29. Molecule with eight R-Groups on terminal positions',
@@ -228,6 +181,55 @@ for (const monomerToCreate of eligableForMonomerCreation) {
 }
 
 const notEligableForMonomerCreation1: IMoleculesForMonomerCreation[] = [
+  {
+    testDescription: '16. Double bond connected to R-Group',
+    loadString: '[#6]%91.[*:1]=%91',
+  },
+  {
+    testDescription: '17. Triple bond connected to R-Group',
+    loadString: '[#6]%91.[*:1]#%91',
+  },
+  {
+    testDescription: '18. Any bond connected to R-Group',
+    loadString:
+      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAD/338AAKANAf/ffwAAoCsBA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAABAIABwAzBAMAAABBAAIIAAAAAAAAAB4ABoAAAAAAAAIIAAAAAAAAAB4AIwgBAAAABw4AAQAAAAMAYADIAAAAUjEAAAAABYAHAAAABAYEAAYAAAAFBgQABQAAAAAGAgD//wAAAAAAAAAAAAA=',
+  },
+  {
+    testDescription: '19. Aromatic bond connected to R-Group',
+    loadString: '[#6]%91.[*:1]:%91',
+  },
+  {
+    testDescription: '20. Single/Double connected to R-Group',
+    loadString: '[#6]%91.[*:1]!:;-,=%91',
+  },
+  {
+    testDescription: '21. Single/Aromatic bond connected to R-Group',
+    loadString: '[#6]%91.[*:1]%91',
+  },
+  {
+    testDescription: '23. Dative bond connected to R-Group',
+    loadString:
+      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAoIYAAGARAQCghgAAYC8BA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAABAIABwAzBAMAAABBAAIIAAAAAAAAAB4ABoAAAAAAAAIIAAAAAAAAAB4AIwgBAAAABw4AAQAAAAMAYADIAAAAUjEAAAAABYAHAAAABAYEAAYAAAAFBgQABQAAAAAGAgAAEAAAAAAAAAAAAAA=',
+  },
+  {
+    testDescription: '22. Double/Aromatic bond connected to R-Group',
+    loadString: '[#6]%91.[*:1]=,:%91',
+  },
+  {
+    testDescription: '24. Hydrogen bond connected to R-Group',
+    loadString:
+      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAoIYAAGARAQCghgAAYC8BA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAABAIABwAzBAMAAABBAAIIAAAAAAAAAB4ABoAAAAAAAAIIAAAAAAAAAB4AIwgBAAAABw4AAQAAAAMAYADIAAAAUjEAAAAABYAHAAAABAYEAAYAAAAFBgQABQAAAAAGAgAAEAAAAAAAAAAAAAA=',
+  },
+  {
+    testDescription: '27. Single Up/Down bond connected to R-Group',
+    loadString:
+      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAA4I4AAGAjAQDgjgAAYEEBA4AEAAAABIAFAAAAAAQCAAcAMwQDAAAAQQACCAAAAAAAAAAeAAaAAAAAAAACCAAAAAAAAAAeACMIAQAAAAcOAAEAAAADAGAAyAAAAFIxAAAAAASABgAAAAACCAAAAAAAAAAAAAAABYAHAAAABAYEAAUAAAAFBgQABgAAAAEGAgAIAAAAAAAAAAAAAAA=',
+  },
+  {
+    testDescription: '28. Double CIS/Trans bond connected to R-Group',
+    loadString:
+      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAA4I4AAGAjAQDgjgAAYEEBA4AEAAAABIAFAAAAAAQCAAcAMwQDAAAAQQACCAAAAAAAAAAeAAaAAAAAAAACCAAAAAAAAAAeACMIAQAAAAcOAAEAAAADAGAAyAAAAFIxAAAAAASABgAAAAACCAAAAAAAAAAAAAAABYAHAAAABAYEAAUAAAAFBgQABgAAAAAGAgACAAEGAgAIAAAAAAAAAAAAAAA=',
+  },
   {
     testDescription: '2. R-Groups not at terminal positions',
     loadString:
@@ -534,8 +536,14 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
 //   await page.mouse.move(600, 200);
 //   await dragMouseTo(page, 600, 250);
 
-//   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
-//   const attachmentPointR3 = page.getByTestId(AttachmentPoint.R3).first();
+//   const attachmentPointR1 = getAttachmentPointLocator(
+//     page,
+//     AttachmentPoint.R1,
+//   ).first();
+//   const attachmentPointR3 = getAttachmentPointLocator(
+//     page,
+//     AttachmentPoint.R3,
+//   ).first();
 
 //   await EditConnectionPointPopup(
 //     page,
@@ -575,7 +583,10 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
 //   await page.mouse.move(600, 200);
 //   await dragMouseTo(page, 600, 250);
 
-//   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+//   const attachmentPointR1 = getAttachmentPointLocator(
+//     page,
+//     AttachmentPoint.R1,
+//   ).first();
 //   await ContextMenu(page, attachmentPointR1).click(
 //     ConnectionPointOption.EditConnectionPoint,
 //   );
@@ -584,7 +595,10 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
 //     AttachmentPointName.R3,
 //   );
 
-//   const attachmentPointR3 = page.getByTestId(AttachmentPoint.R3).first();
+//   const attachmentPointR3 = getAttachmentPointLocator(
+//     page,
+//     AttachmentPoint.R3,
+//   ).first();
 //   await expect(attachmentPointR3).toHaveText('R3');
 
 //   await CreateMonomerDialog(page).discard();
@@ -618,7 +632,10 @@ test(`12. Check that for already set APs the user can Delete the AP by r-clickin
   await page.mouse.move(600, 200);
   await dragMouseTo(page, 600, 250);
 
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   await ContextMenu(page, attachmentPointR1).click(
     ConnectionPointOption.RemoveAssignment,
   );
@@ -658,7 +675,10 @@ test(`13. Check that users can set a new AP by selecting a potential AA, and R-n
     ConnectionPointOption.MarkAsLeavingGroup,
   );
 
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   await expect(attachmentPointR1).toBeVisible();
 
   await CreateMonomerDialog(page).discard();
@@ -847,14 +867,38 @@ test(`18. Check that for an already set APs the user can Delete the AP, by click
   await page.mouse.move(600, 200);
   await dragMouseTo(page, 425, 200);
 
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
-  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
-  const attachmentPointR3 = page.getByTestId(AttachmentPoint.R3).first();
-  const attachmentPointR4 = page.getByTestId(AttachmentPoint.R4).first();
-  const attachmentPointR5 = page.getByTestId(AttachmentPoint.R5).first();
-  const attachmentPointR6 = page.getByTestId(AttachmentPoint.R6).first();
-  const attachmentPointR7 = page.getByTestId(AttachmentPoint.R7).first();
-  const attachmentPointR8 = page.getByTestId(AttachmentPoint.R8).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
+  const attachmentPointR2 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R2,
+  ).first();
+  const attachmentPointR3 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R3,
+  ).first();
+  const attachmentPointR4 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R4,
+  ).first();
+  const attachmentPointR5 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R5,
+  ).first();
+  const attachmentPointR6 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R6,
+  ).first();
+  const attachmentPointR7 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R7,
+  ).first();
+  const attachmentPointR8 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R8,
+  ).first();
 
   await CreateMonomerDialog(page).deleteAttachmentPoint(
     AttachmentPointOption.R1,
@@ -921,8 +965,14 @@ test(`19. Check that for an already set APs the user can change the R-group numb
   await page.mouse.move(600, 200);
   await dragMouseTo(page, 425, 200);
 
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
-  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
+  const attachmentPointR2 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R2,
+  ).first();
 
   await CreateMonomerDialog(page).changeAttachmentPointName({
     oldName: AttachmentPointOption.R2,
@@ -1042,7 +1092,7 @@ test(`22. Check that if no APs were set for a monomer, and the user clicks on Su
   await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.CHEM);
-  await CreateMonomerDialog(page).setSymbol('TestMonomer');
+  await CreateMonomerDialog(page).setCode('TestMonomer');
   await CreateMonomerDialog(page).setName('TestMonomerName');
   await CreateMonomerDialog(page).submit();
   expect(
@@ -1137,7 +1187,7 @@ test(`24. Check that if the user clicks on Summit, the new monomer (CHEM) gets s
   await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.CHEM);
-  await CreateMonomerDialog(page).setSymbol(Chem.CHEM.alias);
+  await CreateMonomerDialog(page).setCode(Chem.CHEM.alias);
   await CreateMonomerDialog(page).setName('CHEM Test monomer');
   await CreateMonomerDialog(page).submit();
 
@@ -1178,7 +1228,7 @@ test(`25. Check that if the user clicks on Summit, the new monomer (Peptide) get
   await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.AminoAcid);
-  await CreateMonomerDialog(page).setSymbol(Peptide.Peptide.alias);
+  await CreateMonomerDialog(page).setCode(Peptide.Peptide.alias);
   await CreateMonomerDialog(page).setName('Peptide Test monomer');
   await CreateMonomerDialog(page).selectNaturalAnalogue(
     AminoAcidNaturalAnalogue.A,
@@ -1222,7 +1272,7 @@ test(`26. Check that if the user clicks on Summit, the new monomer (Base) gets s
   await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.Base);
-  await CreateMonomerDialog(page).setSymbol(Base.Base.alias);
+  await CreateMonomerDialog(page).setCode(Base.Base.alias);
   await CreateMonomerDialog(page).setName('Base Test monomer');
   await CreateMonomerDialog(page).selectNaturalAnalogue(
     NucleotideNaturalAnalogue.A,
@@ -1266,11 +1316,18 @@ test(`27. Check that if the user clicks on Summit, the new monomer (Phosphate) g
   await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.Phosphate);
-  await CreateMonomerDialog(page).setSymbol(Phosphate.Phosphate.alias);
+  await CreateMonomerDialog(page).setCode(Phosphate.Phosphate.alias);
   await CreateMonomerDialog(page).setName('Phosphate Test monomer');
   await CreateMonomerDialog(page).submit({ ignoreWarning: true });
+  await getAtomLocator(page, { atomLabel: 'C' })
+    .nth(1)
+    .waitFor({ state: 'visible' });
 
-  await takeEditorScreenshot(page);
+  await takeElementScreenshot(
+    page,
+    getAtomLocator(page, { atomLabel: 'C' }).nth(1),
+    { padding: 50 },
+  );
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await Library(page).hoverMonomer(Phosphate.Phosphate);
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -1307,7 +1364,7 @@ test(`28. Check that if the user clicks on Summit, the new monomer (Sugar) gets 
   await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.Sugar);
-  await CreateMonomerDialog(page).setSymbol(Sugar.Sugar.alias);
+  await CreateMonomerDialog(page).setCode(Sugar.Sugar.alias);
   await CreateMonomerDialog(page).setName('Sugar Test monomer');
   await CreateMonomerDialog(page).submit({ ignoreWarning: true });
 
@@ -1347,7 +1404,7 @@ test(`29. Check that if the user clicks on Summit, the new monomer (Nucleotide) 
   await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.NucleotideMonomer);
-  await CreateMonomerDialog(page).setSymbol(Nucleotide.Nucleotide.alias);
+  await CreateMonomerDialog(page).setCode(Nucleotide.Nucleotide.alias);
   await CreateMonomerDialog(page).setName('Nucleotide Test monomer');
   await CreateMonomerDialog(page).selectNaturalAnalogue(
     NucleotideNaturalAnalogue.A,

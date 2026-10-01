@@ -3,6 +3,11 @@ declare module '*.less' {
   export default classes;
 }
 
+declare namespace JSX {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  type Element = React.ReactElement<any, any>;
+}
+
 declare module '*.sdf' {
   const content: string;
   export default content;
@@ -76,7 +81,7 @@ declare module 'subscription' {
 }
 
 declare module 'ketcher-macromolecules' {
-  import * as React from 'react';
+  import type * as React from 'react';
   interface MacromoleculesEditorProps {
     ketcherId: string;
     togglerComponent?: JSX.Element;

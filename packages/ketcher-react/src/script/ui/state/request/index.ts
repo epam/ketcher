@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 import {
+  type RequestActionTypes,
+  type RequestState,
   INDIGO_VERIFICATION,
   ANALYZING_FILE,
-  RequestActionTypes,
-  RequestState,
 } from './request.types';
 
 export function indigoVerification(data: boolean): RequestActionTypes {

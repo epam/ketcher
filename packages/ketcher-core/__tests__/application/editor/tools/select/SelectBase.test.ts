@@ -2,7 +2,11 @@ import { CoreEditor, EditorHistory } from 'application/editor';
 import { SelectRectangle } from 'application/editor/tools/select';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { RxnArrowMode, Vec2 } from 'domain/entities';
-import { createPolymerEditorCanvas } from '../../../../helpers/dom';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../../../helpers/dom';
 
 class TestSelectRectangle extends SelectRectangle {
   public setMovementState(before: Vec2, after: Vec2) {
@@ -28,7 +32,11 @@ describe('SelectBase mouseup', () => {
 
   beforeEach(() => {
     canvas = createPolymerEditorCanvas();
-    editor = new CoreEditor({ theme: {}, canvas });
+    editor = new CoreEditor({
+      theme: {},
+      canvas,
+      renderersContainer: createRenderersManager(),
+    });
     selectTool = new TestSelectRectangle(editor);
     history = EditorHistory.getInstance(editor);
   });
@@ -45,7 +53,8 @@ describe('SelectBase mouseup', () => {
       [new Vec2(0, 0), new Vec2(1, 0)],
     );
     addArrowCommand.execute(editor.renderersContainer);
-    const arrow = editor.drawingEntitiesManager.rxnArrows.values().next().value;
+    const arrow = editor.drawingEntitiesManager.rxnArrows.values().next()
+      .value as DrawingEntity;
     const selectCommand =
       editor.drawingEntitiesManager.selectDrawingEntity(arrow);
     selectCommand.execute(editor.renderersContainer);

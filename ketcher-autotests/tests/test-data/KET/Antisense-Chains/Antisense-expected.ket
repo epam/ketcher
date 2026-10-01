@@ -397,7 +397,8 @@
                     1.176,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -406,7 +407,8 @@
                     0.188,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -415,7 +417,8 @@
                     -0.266,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -424,7 +427,8 @@
                     0.441,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "O",
@@ -586,7 +590,7 @@
         "id": "R___Ribose",
         "fullName": "Ribose",
         "alias": "R",
-        "aliasHELM": "r",
+        "aliasHELM": "R",
         "attachmentPoints": [
             {
                 "attachmentAtom": 10,
@@ -879,7 +883,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
-        "aliasHELM": "p",
+        "aliasHELM": "P",
         "aliasAxoLabs": "p",
         "attachmentPoints": [
             {
@@ -901,6 +905,13 @@
                 }
             }
         ],
+        "idtAliases": {
+            "base": "Phos",
+            "modifications": {
+                "endpoint3": "/3Phos/",
+                "endpoint5": "/5Phos/"
+            }
+        },
         "naturalAnalogShort": "P"
     },
     "monomer3": {
@@ -1378,7 +1389,8 @@
                     1.501,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -1628,6 +1640,7 @@
         "fullName": "3-(1-naphthyl)-alanine",
         "alias": "1Nal",
         "aliasHELM": "1Nal",
+        "aliasBILN": "1Nal",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -1687,7 +1700,8 @@
                     -1.502,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -1900,6 +1914,7 @@
         "fullName": "S-benzylcysteine",
         "alias": "Cys_Bn",
         "aliasHELM": "Cys_Bn",
+        "aliasBILN": "Cys_Bn",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -1983,7 +1998,8 @@
                     -0.75,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "N",
@@ -2105,6 +2121,7 @@
         "fullName": "(2S)-2-amino-4-methoxy-4-oxobutanoic acid",
         "alias": "AspOMe",
         "aliasHELM": "Asp_OMe",
+        "aliasBILN": "Asp_OMe",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,

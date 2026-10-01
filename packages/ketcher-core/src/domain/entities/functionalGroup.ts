@@ -14,14 +14,38 @@
  * limitations under the License.
  ***************************************************************************/
 import type { ReSGroup } from 'application/render';
-import assert from 'assert';
-import { FunctionalGroupsProvider } from '../helpers';
-import { Atom } from './atom';
-import { Bond } from './bond';
-import { Pool } from './pool';
+import { assert } from 'utilities';
+import { FunctionalGroupsProvider, SaltsAndSolventsProvider } from '../helpers';
+import type { Atom } from './atom';
+import type { Bond } from './bond';
+import type { Pool } from './pool';
 import { SGroup } from './sgroup';
-import { Struct } from './struct';
-import { HalfBond } from './halfBond';
+import type { Struct } from './struct';
+import type { HalfBond } from './halfBond';
+
+const isSaltOrSolvent = (moleculeName: string): boolean => {
+  const saltsAndSolventsProvider = SaltsAndSolventsProvider.getInstance();
+  const saltsAndSolvents = saltsAndSolventsProvider.getSaltsAndSolventsList();
+  return saltsAndSolvents.some(
+    ({ name, abbreviation }) =>
+      name === moleculeName || moleculeName === abbreviation,
+  );
+};
+
+const getSGroupBonds = (molecule: Struct, sgroup: SGroup): number[] => {
+  const atoms = sgroup.allAtoms
+    ? Array.from(molecule.atoms.keys())
+    : (sgroup.atoms as number[]);
+  const bonds: number[] = [];
+
+  molecule.bonds.forEach((bond, bid) => {
+    if (atoms.includes(bond.begin) && atoms.includes(bond.end)) {
+      bonds.push(bid);
+    }
+  });
+
+  return bonds;
+};
 
 export class FunctionalGroup {
   readonly #sgroup: SGroup;
@@ -42,7 +66,7 @@ export class FunctionalGroup {
   }
 
   get isExpanded(): boolean {
-    return this.#sgroup.data.expanded;
+    return Boolean(this.#sgroup.data.expanded);
   }
 
   get relatedSGroup(): SGroup {
@@ -59,7 +83,7 @@ export class FunctionalGroup {
     return (
       type === 'SUP' &&
       (functionalGroups.some((type) => type.name === name) ||
-        SGroup.isSaltOrSolvent(name))
+        isSaltOrSolvent(name))
     );
   }
 
@@ -90,7 +114,7 @@ export class FunctionalGroup {
       return null;
     }
     for (const fg of functionalGroups.values()) {
-      const bonds = SGroup.getBonds(molecule, fg.relatedSGroup);
+      const bonds = getSGroupBonds(molecule, fg.relatedSGroup);
       if (bonds.includes(bond)) return bond;
     }
     return null;
@@ -155,8 +179,12 @@ export class FunctionalGroup {
     isFunctionalGroupReturned?: boolean,
   ): FunctionalGroup | number | null {
     for (const fg of functionalGroups.values()) {
-      const bonds = SGroup.getBonds(molecule, fg.relatedSGroup);
-      if (!fg.relatedSGroup.isSuperatomWithoutLabel && bonds.includes(bondId)) {
+      const bonds = getSGroupBonds(molecule, fg.relatedSGroup);
+      if (
+        bondId !== null &&
+        !fg.relatedSGroup.isSuperatomWithoutLabel &&
+        bonds.includes(bondId)
+      ) {
         return isFunctionalGroupReturned ? fg : fg.relatedSGroupId;
       }
     }
@@ -203,7 +231,7 @@ export class FunctionalGroup {
   ) {
     return [...sGroups.values()].some((_sGroup) => {
       const sGroup = 'item' in _sGroup ? _sGroup?.item : _sGroup;
-      const atomsInSGroup = sGroup?.atoms;
+      const atomsInSGroup = sGroup?.atoms ?? [];
       const isContracted = FunctionalGroup.isContractedFunctionalGroup(
         sGroup,
         functionalGroups,

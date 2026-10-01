@@ -16,24 +16,28 @@
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
-import { ReStruct } from '../../../render';
+import type { ReStruct } from '../../../render';
+import type { Vec2 } from 'domain/entities/vec2';
 
 export class SGroupDataMove extends BaseOperation {
   data: {
-    id: any;
-    d: any;
+    id: number | undefined;
+    d: Vec2 | undefined;
   };
 
-  constructor(id?: any, d?: any) {
+  constructor(id?: number, d?: Vec2) {
     super(OperationType.S_GROUP_DATA_MOVE);
     this.data = { id, d };
   }
 
   execute(restruct: ReStruct) {
     const { d, id } = this.data;
+    if (id === undefined || d === undefined) return;
     const { sgroups } = restruct.molecule;
+    const sgroup = sgroups.get(id);
+    if (!sgroup) return;
 
-    sgroups.get(id)!.pp?.add_(d); // eslint-disable-line no-underscore-dangle
+    sgroup.pp?.add_(d);
     this.data.d = d.negated();
 
     // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway
@@ -44,5 +48,10 @@ export class SGroupDataMove extends BaseOperation {
     const inverted = new SGroupDataMove();
     inverted.data = this.data;
     return inverted;
+  }
+
+  isDummy() {
+    const { d } = this.data;
+    return d?.x === 0 && d?.y === 0;
   }
 }

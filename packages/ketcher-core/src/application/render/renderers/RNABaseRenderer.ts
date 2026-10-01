@@ -1,11 +1,16 @@
-import { Selection } from 'd3';
-import { RNABase } from 'domain/entities/RNABase';
+import type { Selection } from 'd3';
+import type { RNABase } from 'domain/entities/RNABase';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import {
   MONOMER_SYMBOLS_IDS,
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'application/formatters/types/ket';
+import {
+  type HighlightPathData,
+  createDiamondHighlightPath,
+} from 'application/render/renderers/monomerHighlightShapes';
+import { Vec2 } from 'domain/entities';
 
 const RNABASE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Base].hover;
@@ -15,7 +20,10 @@ const RNABASE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Base].autochainPreview;
 
 export class RNABaseRenderer extends BaseMonomerRenderer {
-  constructor(public monomer: RNABase, scale?: number) {
+  constructor(
+    public monomer: RNABase,
+    scale?: number,
+  ) {
     super(
       monomer,
       RNABASE_HOVERED_ELEMENT_ID,
@@ -30,6 +38,14 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
       return '#fff';
     }
     return this.monomer.isModification ? '#fff' : '#333333';
+  }
+
+  public getHighlightPath(offset = 0): HighlightPathData {
+    const { width, height } = this.monomerSize;
+    // TODO :  investigate why RNABase symbol is not centered correctly and remove this offset
+    const ADDITIONAL_Y_OFFSET = 1;
+    const center = new Vec2(this.center.x, this.center.y - ADDITIONAL_Y_OFFSET);
+    return createDiamondHighlightPath(center, width, height, offset);
   }
 
   protected get modificationConfig() {

@@ -1,8 +1,10 @@
 import { HalfEdge } from 'application/render/view-model/HalfEdge';
-import { Bond } from 'domain/entities/CoreBond';
+import type { Bond } from 'domain/entities/CoreBond';
 import { KetcherLogger } from 'utilities';
-import { Box2Abs, Pile, Vec2 } from 'domain/entities';
-import { Atom } from 'domain/entities/CoreAtom';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Pile } from 'domain/entities/pile';
+import { Vec2 } from 'domain/entities/vec2';
+import type { Atom } from 'domain/entities/CoreAtom';
 import { Loop } from 'application/render/view-model/Loop';
 
 export class ViewModel {
@@ -132,7 +134,7 @@ export class ViewModel {
     let continueFlag = true;
 
     while (continueFlag) {
-      const atomToHalfBond = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
+      const atomToHalfBond: Record<number, number> = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
       continueFlag = false;
 
       for (let l = 0; l < halfEdgesInLoop.length; ++l) {
@@ -218,7 +220,7 @@ export class ViewModel {
   }
 
   private findLoops() {
-    const newLoops: Array<number[]> = [];
+    const newLoops: number[] = [];
     const bondsToMark = new Pile<number>();
 
     /*
@@ -245,13 +247,13 @@ export class ViewModel {
       ) {
         if (!(index > 0 && currentHalfEdge === halfEdge)) {
           halfEdgesInPotentialLoop.push(currentHalfEdge);
-          continue; // eslint-disable-line no-continue
+          continue;
         }
 
         // loop found
         const subloops = this.partitionLoop(halfEdgesInPotentialLoop);
         subloops.forEach((halfEdgesInSubLoop) => {
-          let loopId;
+          let loopId: number;
           if (
             this.loopIsInner(halfEdgesInSubLoop) &&
             !this.loopHasSelfIntersections(halfEdgesInSubLoop)

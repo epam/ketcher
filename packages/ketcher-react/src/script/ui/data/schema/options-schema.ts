@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,15 +16,15 @@
  ***************************************************************************/
 
 import {
-  StereLabelStyleType,
+  StereoLabelStyleType,
   StereoColoringType,
   ShowHydrogenLabels,
   ShowHydrogenLabelNames,
   defaultBondThickness,
 } from 'ketcher-core';
-import Ajv, { SchemaObject } from 'ajv';
+import { type Schema, Validator } from 'jsonschema';
 
-type ExtendedSchema = SchemaObject & {
+type ExtendedSchema = Schema & {
   enumNames?: Array<string>;
   default?: any;
 };
@@ -47,7 +48,7 @@ const editor: {
   resetToSelect: {
     title: 'Reset to Select Tool',
     enum: [true, 'paste', false],
-    enumNames: ['on', 'After Paste', 'off'],
+    enumNames: ['Auto-Select On', 'Auto-Select After Paste', 'Manual Select'],
     default: 'paste',
   },
   rotationStep: {
@@ -116,18 +117,18 @@ const render: {
     default: true,
   },
   stereoLabelStyle: {
-    title: 'Label display at\u00A0stereogenic\u00A0centers',
+    title: 'Label display at\u00A0chiral\u00A0centers',
     enum: [
-      StereLabelStyleType.IUPAC,
-      StereLabelStyleType.Classic,
-      StereLabelStyleType.On,
-      StereLabelStyleType.Off,
+      StereoLabelStyleType.IUPAC,
+      StereoLabelStyleType.Classic,
+      StereoLabelStyleType.On,
+      StereoLabelStyleType.Off,
     ],
     enumNames: ['IUPAC style', 'Classic', 'On', 'Off'],
-    default: StereLabelStyleType.IUPAC,
+    default: StereoLabelStyleType.IUPAC,
   },
   colorOfAbsoluteCenters: {
-    title: ' Absolute Center color',
+    title: 'ABS Center color',
     type: 'string',
     default: '#ff0000',
   },
@@ -142,7 +143,7 @@ const render: {
     default: '#228b22',
   },
   colorStereogenicCenters: {
-    title: 'Color stereogenic centers',
+    title: 'Color chiral centers',
     enum: [
       StereoColoringType.LabelsOnly,
       StereoColoringType.BondsOnly,
@@ -203,21 +204,21 @@ const render: {
     default: MeasurementUnits.Px,
   },
   fontszsub: {
-    title: 'Sub font size',
+    title: 'Subscript/Superscript font size',
     type: 'number',
     default: 13,
     minimum: 0.1,
     maximum: 96,
   },
   fontszsubUnit: {
-    title: 'Sub font size unit',
+    title: 'Subscript/Superscript font size unit',
     enum: Object.values(MeasurementUnits),
     enumNames: Object.values(MeasurementUnits),
     default: MeasurementUnits.Px,
   },
   // Atom
   carbonExplicitly: {
-    title: 'Display carbon explicitly',
+    title: 'Display carbon labels explicitly',
     type: 'boolean',
     description: 'slider',
     default: false,
@@ -235,7 +236,7 @@ const render: {
     default: true,
   },
   showHydrogenLabels: {
-    title: 'Show hydrogen labels',
+    title: 'Display hydrogen labels explicitly',
     enum: Object.values(ShowHydrogenLabels),
     enumNames: Object.values(ShowHydrogenLabelNames),
     default: ShowHydrogenLabels.TerminalAndHetero,
@@ -332,8 +333,10 @@ const server: {
   'ignore-stereochemistry-errors': ExtendedSchema;
   'mass-skip-error-on-pseudoatoms': ExtendedSchema;
   'gross-formula-add-rsites': ExtendedSchema;
+  'aromatize-skip-superatoms': ExtendedSchema;
   'gross-formula-add-isotopes': ExtendedSchema;
   'dearomatize-on-load': ExtendedSchema;
+  'valence-mode': ExtendedSchema;
   ignoreChiralFlag: ExtendedSchema;
 } = {
   'dearomatize-on-load': {
@@ -341,6 +344,12 @@ const server: {
     type: 'boolean',
     description: 'slider',
     default: false,
+  },
+  'valence-mode': {
+    title: 'Valence mode',
+    enum: ['biovia-2009', 'biovia-2017', 'default'],
+    enumNames: ['BIOVIA 2009', 'BIOVIA 2017', 'Default'],
+    default: 'default',
   },
   'smart-layout': {
     title: 'Smart-layout',
@@ -367,7 +376,13 @@ const server: {
     default: false,
   },
   'gross-formula-add-rsites': {
-    title: 'Add Rsites at mass calculation',
+    title: 'Add R sites at mass calculation',
+    type: 'boolean',
+    description: 'slider',
+    default: true,
+  },
+  'aromatize-skip-superatoms': {
+    title: 'Skip Superatoms at aromatization',
     type: 'boolean',
     description: 'slider',
     default: true,
@@ -389,25 +404,25 @@ const debug: {
   showLoopIds: ExtendedSchema;
 } = {
   showAtomIds: {
-    title: 'Show atom Ids',
+    title: 'Show atom IDs',
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   showBondIds: {
-    title: 'Show bonds Ids',
+    title: 'Show bonds IDs',
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   showHalfBondIds: {
-    title: 'Show half bonds Ids',
+    title: 'Show half bonds IDs',
     type: 'boolean',
     description: 'slider',
     default: false,
   },
   showLoopIds: {
-    title: 'Show loop Ids',
+    title: 'Show loop IDs',
     type: 'boolean',
     description: 'slider',
     default: false,
@@ -457,10 +472,11 @@ const optionsSchema: ExtendedSchema = {
 export default optionsSchema;
 
 export function getDefaultOptions(): Record<string, any> {
-  if (!optionsSchema.properties) return {};
+  const props = optionsSchema.properties;
+  if (!props) return {};
 
-  return Object.keys(optionsSchema.properties).reduce((res, prop) => {
-    res[prop] = optionsSchema.properties[prop].default;
+  return Object.keys(props).reduce((res, prop) => {
+    res[prop] = props[prop].default;
     return res;
   }, {});
 }
@@ -468,20 +484,17 @@ export function getDefaultOptions(): Record<string, any> {
 export function validation(settings): Record<string, string> | null {
   if (typeof settings !== 'object' || settings === null) return null;
 
-  const ajv = new Ajv({
-    allErrors: true,
-    keywords: [{ keyword: 'enumNames', schemaType: 'array' }],
+  const result = new Validator().validate(settings, optionsSchema as Schema, {
+    base: 'https://ketcher.local/',
   });
-
-  const validate = ajv.compile(optionsSchema);
-  validate(settings);
-  const errors = validate.errors || [];
-  const errorsProps = errors.map((el) => el.instancePath.slice(1));
+  const errorsProps = result.errors.map((e) =>
+    e.property.replace(/^instance\./, ''),
+  );
 
   return Object.keys(settings).reduce((res, prop) => {
     if (!optionsSchema.properties) return res;
 
-    if (optionsSchema.properties[prop] && errorsProps.indexOf(prop) === -1)
+    if (optionsSchema.properties[prop] && !errorsProps.includes(prop))
       res[prop] = settings[prop];
 
     return res;

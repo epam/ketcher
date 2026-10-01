@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useState } from 'react';
+import { type ReactElement, useState } from 'react';
 import classes from './Accordion.module.less';
 import clsx from 'clsx';
 import { Icon } from 'components';
 
-const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
+const Accordion = ({ tabs, className, changedGroups }): ReactElement => {
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
-    'General',
+    'General Editing & Display',
   ]);
 
   const handleAccordionChange = (accordion) => () => {

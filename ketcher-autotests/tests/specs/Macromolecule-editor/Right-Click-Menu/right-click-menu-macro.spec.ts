@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { Page, expect, test } from '@fixtures';
 import {
   resetZoomLevelToDefault,
@@ -7,10 +5,11 @@ import {
   MacroFileType,
   takeElementScreenshot,
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   zoomInByKeyboard,
   zoomOutByKeyboard,
   dragMouseTo,
+  copyContentToClipboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -22,8 +21,7 @@ import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
-import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -60,9 +58,6 @@ test(`1. Verify context menu in Snake and Flex modes when right-clicking a monom
    *
    * Version 3.6
    */
-  const copyOption = page.getByTestId(MonomerOption.Copy);
-  const pasteOption = page.getByTestId(MonomerOption.Paste);
-  const deleteOption = page.getByTestId(MonomerOption.Delete);
   const peptideA = getMonomerLocator(page, Peptide.A);
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
@@ -77,9 +72,15 @@ test(`1. Verify context menu in Snake and Flex modes when right-clicking a monom
     page,
     ContextMenu(page, peptideA).contextMenuBody,
   );
-  await expect(copyOption).toBeEnabled();
-  await expect(pasteOption).toBeDisabled();
-  await expect(deleteOption).toBeEnabled();
+  expect(
+    await ContextMenu(page, peptideA).isOptionEnabled(MonomerOption.Copy),
+  ).toBe(true);
+  expect(
+    await ContextMenu(page, peptideA).isOptionEnabled(MonomerOption.Paste),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, peptideA).isOptionEnabled(MonomerOption.Delete),
+  ).toBe(true);
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await peptideA.click();
@@ -88,9 +89,15 @@ test(`1. Verify context menu in Snake and Flex modes when right-clicking a monom
     page,
     ContextMenu(page, peptideA).contextMenuBody,
   );
-  await expect(copyOption).toBeEnabled();
-  await expect(pasteOption).toBeDisabled();
-  await expect(deleteOption).toBeEnabled();
+  expect(
+    await ContextMenu(page, peptideA).isOptionEnabled(MonomerOption.Copy),
+  ).toBe(true);
+  expect(
+    await ContextMenu(page, peptideA).isOptionEnabled(MonomerOption.Paste),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, peptideA).isOptionEnabled(MonomerOption.Delete),
+  ).toBe(true);
 });
 
 test(`2. Verify context menu in Snake and Flex modes when right-clicking a part of the chain (Copy and Delete (Paste disabled))`, async () => {
@@ -111,9 +118,6 @@ test(`2. Verify context menu in Snake and Flex modes when right-clicking a part 
    *
    * Version 3.6
    */
-  const copyOption = page.getByTestId(MonomerOption.Copy);
-  const pasteOption = page.getByTestId(MonomerOption.Paste);
-  const deleteOption = page.getByTestId(MonomerOption.Delete);
   const peptideC = getMonomerLocator(page, Peptide.C);
   const peptideD = getMonomerLocator(page, Peptide.D);
   const peptideE = getMonomerLocator(page, Peptide.E);
@@ -135,9 +139,15 @@ test(`2. Verify context menu in Snake and Flex modes when right-clicking a part 
     page,
     ContextMenu(page, peptideD).contextMenuBody,
   );
-  await expect(copyOption).toBeEnabled();
-  await expect(pasteOption).toBeDisabled();
-  await expect(deleteOption).toBeEnabled();
+  expect(
+    await ContextMenu(page, peptideD).isOptionEnabled(MonomerOption.Copy),
+  ).toBe(true);
+  expect(
+    await ContextMenu(page, peptideD).isOptionEnabled(MonomerOption.Paste),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, peptideD).isOptionEnabled(MonomerOption.Delete),
+  ).toBe(true);
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await page.keyboard.down('Shift');
@@ -151,18 +161,22 @@ test(`2. Verify context menu in Snake and Flex modes when right-clicking a part 
     page,
     ContextMenu(page, peptideD).contextMenuBody,
   );
-  await expect(copyOption).toBeEnabled();
-  await expect(pasteOption).toBeDisabled();
-  await expect(deleteOption).toBeEnabled();
+  expect(
+    await ContextMenu(page, peptideD).isOptionEnabled(MonomerOption.Copy),
+  ).toBe(true);
+  expect(
+    await ContextMenu(page, peptideD).isOptionEnabled(MonomerOption.Paste),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, peptideD).isOptionEnabled(MonomerOption.Delete),
+  ).toBe(true);
 });
 
-test.fail(
-  `3. Verify context menu in Snake and Flex modes when right-clicking a bond (Delete (Copy and Paste disabled))`,
-  async () => {
-    /*
+test(`3. Verify context menu in Snake and Flex modes when right-clicking a bond (Delete (Copy and Paste disabled))`, async () => {
+  /*
    * Test task: https://github.com/epam/ketcher/issues/7391
    * Test case: Verify context menu in Snake and Flex modes when right-clicking a bond (Delete (Copy and Paste disabled))
-
+   *
    * Case:
    *      0. Go to Flex mode
    *      1. Load chain of some monomers
@@ -175,92 +189,128 @@ test.fail(
    *      7. Take menu screenshot to validate options: Delete (Copy and Paste disabled)
    *
    * Version 3.6
-   * IMPORTANT: Test fails because of the bug: https://github.com/epam/ketcher/issues/7326
    */
-    const copyOption = page.getByTestId(MonomerOption.Copy);
-    const pasteOption = page.getByTestId(MonomerOption.Paste);
-    const deleteOption = page.getByTestId(MonomerOption.Delete);
-    const randomBond = getBondLocator(page, {
-      bondType: MacroBondDataIds.Single,
-    }).first();
+  const randomBond = getBondLocator(page, {
+    bondType: MacroBondType.Single,
+  }).first();
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      page,
-      MacroFileType.HELM,
-      'PEPTIDE1{A.C.D.E.F}$$$$V2.0',
-    );
-    await randomBond.click({ force: true });
-    await ContextMenu(page, randomBond).open();
-    await takeElementScreenshot(
-      page,
-      ContextMenu(page, randomBond).contextMenuBody,
-    );
-    await expect(copyOption).toBeDisabled();
-    await expect(pasteOption).toBeDisabled();
-    await expect(deleteOption).toBeEnabled();
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{A.C.D.E.F}$$$$V2.0',
+  );
+  await randomBond.click({ force: true });
+  await ContextMenu(page, randomBond).open();
+  await takeElementScreenshot(
+    page,
+    ContextMenu(page, randomBond).contextMenuBody,
+  );
+  expect(
+    await ContextMenu(page, randomBond).isOptionEnabled(MonomerOption.Copy),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, randomBond).isOptionEnabled(MonomerOption.Paste),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, randomBond).isOptionEnabled(MonomerOption.Delete),
+  ).toBe(true);
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    await randomBond.click({ force: true });
-    await ContextMenu(page, randomBond).open();
-    await takeElementScreenshot(
-      page,
-      ContextMenu(page, randomBond).contextMenuBody,
-    );
-    await expect(copyOption).toBeDisabled();
-    await expect(pasteOption).toBeDisabled();
-    await expect(deleteOption).toBeEnabled();
-  },
-);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await randomBond.click({ force: true });
+  await ContextMenu(page, randomBond).open();
+  await takeElementScreenshot(
+    page,
+    ContextMenu(page, randomBond).contextMenuBody,
+  );
+  expect(
+    await ContextMenu(page, randomBond).isOptionEnabled(MonomerOption.Copy),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, randomBond).isOptionEnabled(MonomerOption.Paste),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, randomBond).isOptionEnabled(MonomerOption.Delete),
+  ).toBe(true);
+});
 
-test.fail(
-  `4. Verify context menu in Snake and Flex modes when right-clicking the canvas (Paste (Copy and Delete disabled))`,
-  async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7391
-     * Test case: Verify context menu in Snake and Flex modes when right-clicking the canvas (Paste (Copy and Delete disabled))
-     *
-     * Case:
-     *      0. Go to Flex mode
-     *      1. Select any bond
-     *      2. Right-click on empty canvas to open context menu
-     *      3. Take menu screenshot to validate options: Delete, Copy and Paste are disabled
-     *      4. Go to Snake mode
-     *      5. Select any bond
-     *      6. Right-click on empty canvas to open context menu
-     *      7. Take menu screenshot to validate options: Delete, Copy and Paste are disabled
-     *
-     * Version 3.6
-     * IMPORTANT: Test fails because of the bug: https://github.com/epam/ketcher/issues/7392
-     */
-    const copyOption = page.getByTestId(MonomerOption.Copy);
-    const pasteOption = page.getByTestId(MonomerOption.Paste);
-    const deleteOption = page.getByTestId(MonomerOption.Delete);
-    const canvas = page.getByTestId(KETCHER_CANVAS).first();
+test(`4. Verify context menu in Snake and Flex modes when right-clicking the canvas (Paste (Copy and Delete disabled))`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7391
+   * Test case: Verify context menu in Snake and Flex modes when right-clicking the canvas (Paste (Copy and Delete disabled))
+   *
+   * Case:
+   *      0. Go to Flex mode
+   *      1. Select any bond
+   *      2. Right-click on empty canvas to open context menu
+   *      3. Take menu screenshot to validate options: Delete, Copy and Paste are disabled
+   *      4. Go to Snake mode
+   *      5. Select any bond
+   *      6. Right-click on empty canvas to open context menu
+   *      7. Take menu screenshot to validate options: Delete, Copy and Paste are disabled
+   *
+   * Version 3.6
+   */
+  const canvas = page.locator(
+    '[data-testid="ketcher-canvas"][data-canvasmode="macromolecules-mode"]',
+  );
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
-    await ContextMenu(page, canvas).open();
-    await takeElementScreenshot(
-      page,
-      ContextMenu(page, canvas).contextMenuBody,
-    );
-    await expect(copyOption).toBeDisabled();
-    await expect(pasteOption).toBeDisabled();
-    await expect(deleteOption).toBeDisabled();
+  await ContextMenu(page, canvas).open();
+  await takeElementScreenshot(page, ContextMenu(page, canvas).contextMenuBody);
+  expect(
+    await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Copy),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Paste),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Delete),
+  ).toBe(false);
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
-    await ContextMenu(page, canvas).open();
-    await takeElementScreenshot(
-      page,
-      ContextMenu(page, canvas).contextMenuBody,
-    );
-    await expect(copyOption).toBeDisabled();
-    await expect(pasteOption).toBeDisabled();
-    await expect(deleteOption).toBeDisabled();
-  },
-);
+  await ContextMenu(page, canvas).open();
+  await takeElementScreenshot(page, ContextMenu(page, canvas).contextMenuBody);
+  expect(
+    await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Copy),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Paste),
+  ).toBe(false);
+  expect(
+    await ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Delete),
+  ).toBe(false);
+});
+
+test(`#11078 Paste is disabled when clipboard content is not applicable`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/11078
+   */
+  const canvas = page.locator(
+    '[data-testid="ketcher-canvas"][data-canvasmode="macromolecules-mode"]',
+  );
+
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+
+  await copyContentToClipboard(page, 'PEPTIDE1{A.G.C}$$$$');
+
+  await expect
+    .poll(() => ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Paste))
+    .toBe(true);
+
+  await page.keyboard.press('Escape');
+
+  await copyContentToClipboard(page, 'test 123');
+
+  await expect
+    .poll(() => ContextMenu(page, canvas).isOptionEnabled(MonomerOption.Paste))
+    .toBe(false);
+
+  await page.keyboard.press('Escape');
+  await copyContentToClipboard(page, '');
+});
 
 test(`5. Verify context menu in Snake and Flex modes when right-clicking a bond (Delete (Copy and Paste disabled))`, async () => {
   /*
@@ -385,7 +435,9 @@ test(`7. Verify Undo/Redo after using Copy, Paste from right-click menu`, async 
    * Version 3.6
    */
   const peptideA = getMonomerLocator(page, Peptide.A);
-  const canvas = page.getByTestId(KETCHER_CANVAS).first();
+  const canvas = page.locator(
+    '[data-testid="ketcher-canvas"][data-canvasmode="macromolecules-mode"]',
+  );
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -395,7 +447,7 @@ test(`7. Verify Undo/Redo after using Copy, Paste from right-click menu`, async 
   );
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, peptideA).click(MonomerOption.Copy);
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await ContextMenu(page, canvas).click(MonomerOption.Paste);
   await takeEditorScreenshot(page, {
     hideMacromoleculeEditorScrollBars: true,

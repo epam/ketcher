@@ -4,9 +4,6 @@
 // import { StructServiceProvider } from 'domain/services';
 // import { mock } from 'jest-mock-extended';
 
-// eslint-disable-next-line jest/no-export
-export {};
-
 // skipped until cyclic reference is resolved
 
 describe.skip('build()', () => {
@@ -22,8 +19,7 @@ describe.skip('build()', () => {
 
   it('should throw exception when Editor is null', () => {
     // const provider: StructServiceProvider = mock<StructServiceProvider>();
-    // // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // const editor: Editor = null as any as Editor;
+    // const editor: Editor = null as unknown as Editor;
     // const builder: KetcherBuilder =
     //   new KetcherBuilder().withStructServiceProvider(provider);
     //

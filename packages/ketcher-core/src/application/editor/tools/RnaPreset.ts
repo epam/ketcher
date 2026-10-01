@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
+import type { Tool, IRnaPreset } from 'application/editor/tools/Tool';
 import { Sugar } from 'domain/entities/Sugar';
-import { BaseMonomer, Vec2 } from 'domain/entities';
+import { type BaseMonomer, Vec2 } from 'domain/entities';
 
-import { CoreEditor, EditorHistory } from 'application/editor/internal';
-import { BaseMonomerRenderer } from 'application/render/renderers';
-import { MonomerItemType } from 'domain/types';
+import type { CoreEditor } from 'application/editor/Editor';
+import { EditorHistory } from 'application/editor/internal';
+import type { BaseMonomerRenderer } from 'application/render/renderers';
+import type { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
-import { RNABase } from 'domain/entities/RNABase';
+import type { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { Coordinates } from '../shared/coordinates';
 
 import { SnakeLayoutCellWidth } from 'domain/constants';
-import { IKetTemplateConnection } from 'application/formatters';
+import type { IKetTemplateConnection } from 'application/formatters';
 import { getRnaPresetPhosphatePosition } from './rnaPresetConnections';
 
 class RnaPresetTool implements Tool {
@@ -49,7 +50,11 @@ class RnaPresetTool implements Tool {
   readonly PHOSPHATE_PREVIEW_OFFSET_X = 18;
   history: EditorHistory;
 
-  constructor(private readonly editor: CoreEditor, preset: IRnaPreset) {
+  constructor(
+    private readonly editor: CoreEditor,
+    ...args: unknown[]
+  ) {
+    const [preset] = args as [IRnaPreset];
     this.editor = editor;
     if (preset?.base) {
       this.rnaBase = preset?.base;
@@ -73,6 +78,20 @@ class RnaPresetTool implements Tool {
       return;
     }
 
+    let phosphatePosition: Vec2 | undefined;
+    if (this.phosphatePreviewRenderer) {
+      const phosphateOffset =
+        getRnaPresetPhosphatePosition(this) === 'left'
+          ? -SnakeLayoutCellWidth
+          : SnakeLayoutCellWidth;
+      phosphatePosition = Coordinates.canvasToModel(
+        new Vec2(
+          this.editor.lastCursorPositionOfCanvas.x + phosphateOffset,
+          this.editor.lastCursorPositionOfCanvas.y,
+        ),
+      );
+    }
+
     const { command: modelChanges, monomers } =
       this.editor.drawingEntitiesManager.addRnaPreset({
         sugar: this.sugar,
@@ -83,17 +102,7 @@ class RnaPresetTool implements Tool {
           ),
         ),
         phosphate: this.phosphate,
-        phosphatePosition: this.phosphatePreviewRenderer
-          ? Coordinates.canvasToModel(
-              new Vec2(
-                this.editor.lastCursorPositionOfCanvas.x +
-                  (getRnaPresetPhosphatePosition(this) === 'left'
-                    ? -SnakeLayoutCellWidth
-                    : SnakeLayoutCellWidth),
-                this.editor.lastCursorPositionOfCanvas.y,
-              ),
-            )
-          : undefined,
+        phosphatePosition,
         rnaBase: this.rnaBase,
         rnaBasePosition: this.rnaBasePreviewRenderer
           ? Coordinates.canvasToModel(

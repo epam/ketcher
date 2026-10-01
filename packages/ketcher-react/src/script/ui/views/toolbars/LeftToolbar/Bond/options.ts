@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { GroupDescriptor } from '../../ToolbarGroupItem/ToolbarMultiToolItem/variants/variants.types';
-import { ToolbarItem } from '../../toolbar.types';
+import type { GroupDescriptor } from '../../ToolbarGroupItem/ToolbarMultiToolItem/variants/variants.types';
+import type { ToolbarItem } from '../../toolbar.types';
 import { makeItems } from '../../ToolbarGroupItem/utils';
 
 const bondCommon: ToolbarItem[] = makeItems([

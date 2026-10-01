@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { $getSelection, $isRangeSelection, LexicalEditor } from 'lexical';
+import { type LexicalEditor, $getSelection, $isRangeSelection } from 'lexical';
 
 import { SpecialSymbolsList } from '../SpecialSymbolsList/SpecialSymbolsList';
 import classes from './SpecialSymbolsButton.module.less';

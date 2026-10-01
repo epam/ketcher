@@ -1,9 +1,12 @@
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import { mapAtomIdsToAtoms } from 'src/script/editor/tool/select';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
-import { AtomContextMenuProps, ItemEventParams } from '../contextMenu.types';
+import type {
+  AtomContextMenuProps,
+  ItemEventParams,
+} from '../contextMenu.types';
 import { ketcherProvider } from 'ketcher-core';
 
 type Params = ItemEventParams<AtomContextMenuProps>;

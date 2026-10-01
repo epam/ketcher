@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,12 +16,12 @@
  ***************************************************************************/
 
 import {
+  type LeftToolbarCallProps,
+  type LeftToolbarProps,
   LeftToolbar,
-  LeftToolbarCallProps,
-  LeftToolbarProps,
 } from './LeftToolbar';
 
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { onAction } from '../../../state';
 

@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { Page, test } from '@fixtures';
 import {
@@ -9,7 +8,7 @@ import {
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   getMonomerLocator,
   MonomerLocatorOptions,
@@ -454,7 +453,7 @@ test.describe('Monomer APs checks: ', () => {
         MacroFileType.HELM,
         ambiguousMonomer.HELMString,
       );
-      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
       await getMonomerLocator(
         page,
         ambiguousMonomer.monomerLocatorOptions,

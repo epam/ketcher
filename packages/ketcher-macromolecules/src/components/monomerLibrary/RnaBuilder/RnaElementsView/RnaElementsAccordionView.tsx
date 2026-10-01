@@ -4,7 +4,7 @@ import {
 } from 'state/library';
 import { MonomerGroups } from '../../../../constants';
 import { Summary } from './Summary';
-import { IconName } from 'ketcher-react';
+import { Icon, IconName } from 'ketcher-react';
 import {
   recalculateRnaBuilderValidations,
   RnaBuilderItem,
@@ -13,17 +13,22 @@ import {
   selectFilteredPresets,
   selectIsActivePresetNewAndEmpty,
   selectIsEditMode,
+  selectPresetPhosphateFilter,
 } from 'state/rna-builder';
 import {
   DetailsContainer,
   DisabledArea,
   StyledAccordion,
   StyledAccordionWrapper,
-  StyledButton,
+  NewPresetButton,
+  PresetToolbar,
+  PresetsScrollArea,
+  FilterIconButton,
 } from './styles';
+import { PresetPhosphateFilterPopup } from './PresetPhosphateFilterPopup';
 import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPresetGroup';
 import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
-import { memo, useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'hooks';
 import { RnaElementsViewProps } from './types';
@@ -51,9 +56,25 @@ const RnaElementsAccordionView = ({
     selectIsActivePresetNewAndEmpty,
   );
   const activeMonomerKey = useAppSelector(selectActiveMonomerKey);
+  const presetPhosphateFilter = useAppSelector(selectPresetPhosphateFilter);
+  // The filter icon shows a small indicator dot whenever the current filter
+  // state differs from the default ("all options off"), per spec.
+  const isFilterActive = Boolean(
+    presetPhosphateFilter?.fivePrime ||
+    presetPhosphateFilter?.threePrime ||
+    presetPhosphateFilter?.noPhosphate,
+  );
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);
+  const [prevActiveRnaBuilderItem, setPrevActiveRnaBuilderItem] =
+    useState(activeRnaBuilderItem);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  if (activeRnaBuilderItem !== prevActiveRnaBuilderItem) {
+    setPrevActiveRnaBuilderItem(activeRnaBuilderItem);
+    setExpandedAccordion(activeRnaBuilderItem);
+  }
 
   const handleAccordionSummaryClick = (rnaBuilderItem: RnaBuilderItem) => {
     if (expandedAccordion === rnaBuilderItem) {
@@ -65,10 +86,6 @@ const RnaElementsAccordionView = ({
       );
     }
   };
-
-  useEffect(() => {
-    setExpandedAccordion(activeRnaBuilderItem);
-  }, [activeRnaBuilderItem]);
 
   return (
     <>
@@ -93,17 +110,39 @@ const RnaElementsAccordionView = ({
         const details =
           groupData.groupName === RnaBuilderPresetsItem.Presets ? (
             <DetailsContainer>
-              <StyledButton
-                onClick={onNewPresetClick}
-                data-testid="new-preset-button"
-              >
-                New Preset
-              </StyledButton>
-              <RnaPresetGroup
-                duplicatePreset={duplicatePreset}
-                editPreset={editPreset}
-                presets={presets}
-              />
+              <PresetToolbar>
+                <NewPresetButton
+                  onClick={onNewPresetClick}
+                  data-testid="new-preset-button"
+                >
+                  Add new
+                </NewPresetButton>
+                <FilterIconButton
+                  type="button"
+                  active={isFilterOpen}
+                  hasIndicator={isFilterActive}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setIsFilterOpen((prev) => !prev);
+                  }}
+                  aria-label="Filter presets by phosphate position"
+                  data-testid="preset-filter-button"
+                >
+                  <Icon name="filter" />
+                </FilterIconButton>
+                {isFilterOpen && (
+                  <PresetPhosphateFilterPopup
+                    onClose={() => setIsFilterOpen(false)}
+                  />
+                )}
+              </PresetToolbar>
+              <PresetsScrollArea>
+                <RnaPresetGroup
+                  duplicatePreset={duplicatePreset}
+                  editPreset={editPreset}
+                  presets={presets}
+                />
+              </PresetsScrollArea>
               {isEditMode && !isActivePresetNewAndEmpty && <DisabledArea />}
             </DetailsContainer>
           ) : (
@@ -134,6 +173,7 @@ const RnaElementsAccordionView = ({
                     key={group.groupTitle}
                     title={group.groupTitle}
                     items={group.groupItems}
+                    groupName={groupData.groupName as MonomerGroups}
                     libraryName={libraryName}
                     selectedMonomerUniqueKey={activeMonomerKey}
                     onItemClick={(monomer) =>

@@ -13,7 +13,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { selectionDelete } from '../Rotation/utils';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 function checkElementExists(element: RxnPlus | RxnArrow, errorMsg: string) {
   if (!element) {
     throw new Error(errorMsg);
@@ -47,17 +47,16 @@ test.describe('Erase Tool', () => {
     });
 
     const atomSize = await page.evaluate(() => {
-      return window.ketcher.editor.struct().atoms.size;
+      return globalThis.window.ketcher.editor.struct().atoms.size;
     });
     expect(atomSize).toEqual(atomSizeAfterErase);
 
     await waitForRender(page, async () => {
-      // eslint-disable-next-line no-magic-numbers
       await getBondLocator(page, { bondId: 24 }).click({ force: true });
     });
 
     const bondSize = await page.evaluate(() => {
-      return window.ketcher.editor.struct().bonds.size;
+      return globalThis.window.ketcher.editor.struct().bonds.size;
     });
     expect(bondSize).toEqual(bondsSizeAfterErase);
     await takeEditorScreenshot(page);
@@ -79,10 +78,12 @@ test.describe('Erase Tool', () => {
     };
 
     const { plusElement, scale } = await page.evaluate(() => {
-      const [plusElement] = window.ketcher.editor.struct().rxnPluses.values();
+      const [plusElement] = globalThis.window.ketcher.editor
+        .struct()
+        .rxnPluses.values();
       return {
         plusElement: plusElement || null,
-        scale: window.ketcher.editor.options().microModeScale,
+        scale: globalThis.window.ketcher.editor.options().microModeScale,
       };
     });
 
@@ -96,7 +97,7 @@ test.describe('Erase Tool', () => {
     await clickOnCanvas(page, plusPnt.x, plusPnt.y, { from: 'pageTopLeft' });
 
     const plusDeleted = await page.evaluate(() => {
-      return window.ketcher.editor.struct().rxnPluses.size;
+      return globalThis.window.ketcher.editor.struct().rxnPluses.size;
     });
 
     expect(plusDeleted).toEqual(plusAfterDelete);
@@ -104,16 +105,18 @@ test.describe('Erase Tool', () => {
     await CommonTopLeftToolbar(page).undo();
 
     const plusOnCanvas = await page.evaluate(() => {
-      return window.ketcher.editor.struct().rxnPluses.size;
+      return globalThis.window.ketcher.editor.struct().rxnPluses.size;
     });
 
     expect(plusOnCanvas).toEqual(reactionPlus);
 
     const { arrowElement } = await page.evaluate(() => {
-      const [element] = window.ketcher.editor.struct().rxnArrows.values();
+      const [element] = globalThis.window.ketcher.editor
+        .struct()
+        .rxnArrows.values();
       return {
         arrowElement: element || null,
-        scale: window.ketcher.editor.options().microModeScale,
+        scale: globalThis.window.ketcher.editor.options().microModeScale,
       };
     });
 
@@ -128,21 +131,21 @@ test.describe('Erase Tool', () => {
     };
 
     await selectAllStructuresOnCanvas(page);
-    await selectionDelete(page);
+    await RotationTool(page).delete();
 
     await clickOnCanvas(page, arrowMiddle.x, arrowMiddle.y, {
       from: 'pageTopLeft',
     });
 
     const arrowDeleted = await page.evaluate(() => {
-      return window.ketcher.editor.struct().rxnArrows.size;
+      return globalThis.window.ketcher.editor.struct().rxnArrows.size;
     });
     expect(arrowDeleted).toEqual(arrowAfterDelete);
 
     await CommonTopLeftToolbar(page).undo();
 
     const arrowOnCanvas = await page.evaluate(() => {
-      return window.ketcher.editor.struct().rxnArrows.size;
+      return globalThis.window.ketcher.editor.struct().rxnArrows.size;
     });
     expect(arrowOnCanvas).toEqual(reactionArrow);
     await takeEditorScreenshot(page);

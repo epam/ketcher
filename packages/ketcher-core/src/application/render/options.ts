@@ -14,12 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 import utils from '../editor/shared/utils';
-import { ShowHydrogenLabels } from './restruct/reatom';
-import { RenderOptions } from './render.types';
+import { ShowHydrogenLabels } from './restruct/showHydrogenLabels';
+import type { RenderOptions } from './render.types';
+import {
+  SELECTION_COLOR,
+  SELECTION_HOVERED_COLOR,
+} from 'application/render/renderers/constants';
 
-function defaultOptions(renderOptions: RenderOptions): RenderOptions {
+function defaultOptions(renderOptions: Partial<RenderOptions>): RenderOptions {
   const options = getOptionsWithConvertedUnits(renderOptions);
 
   const scaleFactorMicro = options.microModeScale || 100;
@@ -60,7 +64,7 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
 
     microModeScale: scaleFactorMicro,
     macroModeScale: scaleFactorMacro,
-    zoom: 1.0,
+    zoom: 1,
     offset: new Vec2(),
 
     lineWidth: scaleFactorMicro / 20,
@@ -91,18 +95,17 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
       stroke: '#365CFF',
       'stroke-width': options.bondThicknessInPx * 1.5,
     },
-    /* eslint-enable quote-props */
     selectionStyle: {
-      fill: '#57FF8F',
-      stroke: '#57FF8F',
+      fill: SELECTION_COLOR,
+      stroke: SELECTION_COLOR,
     },
     hoverStyle: {
       stroke: '#0097A8',
-      fill: '#CCFFDD',
+      fill: SELECTION_HOVERED_COLOR,
       'stroke-width': (0.6 * scaleFactorMicro) / 20,
     },
     innerHoverStyle: {
-      stroke: '#CCFFDD',
+      stroke: SELECTION_HOVERED_COLOR,
       fill: 'none',
       'stroke-width': (4.6 * scaleFactorMicro) / 20,
     },
@@ -115,7 +118,7 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
       'stroke-width': '1px',
     },
     selectionStyleSimpleObject: {
-      stroke: '#57FF8F',
+      stroke: SELECTION_COLOR,
       'stroke-width': scaleFactorMicro / 4,
       'stroke-linecap': 'round',
     },
@@ -129,7 +132,7 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
     viewOnlyMode: false,
   };
 
-  return { ...(defaultOptions || {}), ...(options || {}) };
+  return { ...defaultOptions, ...options };
 }
 
 const measureMap = {
@@ -160,7 +163,7 @@ function convertHashSpacingToPx(
 }
 
 export function getOptionsWithConvertedUnits(
-  options: RenderOptions,
+  options: Partial<RenderOptions>,
 ): RenderOptions {
   const convertedOptions: Partial<
     Pick<
@@ -243,7 +246,7 @@ export function getOptionsWithConvertedUnits(
   return {
     ...options,
     ...convertedOptions,
-  };
+  } as RenderOptions;
 }
 
 export default defaultOptions;

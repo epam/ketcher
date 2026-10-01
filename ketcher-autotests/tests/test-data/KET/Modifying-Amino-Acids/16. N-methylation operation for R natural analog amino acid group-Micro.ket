@@ -221,7 +221,8 @@
                     -1.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -420,6 +421,7 @@
         "fullName": "N-Methyl-Arginine",
         "alias": "meR",
         "aliasHELM": "meR",
+        "aliasBILN": "meR",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

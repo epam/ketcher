@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/static-components */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -13,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { IIconProps } from './types';
+import type { IIconProps } from './types';
 import { getIconByName } from './utils/getIconByName';
 
 const Icon = ({

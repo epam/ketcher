@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Modal, ModalProps } from './Modal';
+import { type ModalProps, Modal } from './Modal';
 
-import { BaseCallProps, ModalContainerProps } from './modal.types';
-import { Dispatch } from 'redux';
+import type { BaseCallProps, ModalContainerProps } from './modal.types';
+import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { omit } from 'lodash/fp';
 

@@ -31,7 +31,9 @@ import {
   ImageMove,
   MultitailArrowMove,
 } from '../operations';
-import { Pile, RGroup, Vec2 } from 'domain/entities';
+import { Pile } from 'domain/entities/pile';
+import { RGroup } from 'domain/entities/rgroup';
+import { Vec2 } from 'domain/entities/vec2';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
@@ -44,11 +46,11 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
 
   const action = new Action();
   const struct = restruct.molecule;
-  const loops = new Pile();
-  const atomsToInvalidate = new Pile();
+  const loops = new Pile<number>();
+  const atomsToInvalidate = new Pile<number>();
 
   if (lists.atoms) {
-    const atomSet = new Pile(lists.atoms);
+    const atomSet = new Pile<number>(lists.atoms);
     const bondlist: Array<number> = [];
     const relatedSgroups = getRelSGroupsBySelection(struct, lists.atoms);
 
@@ -182,7 +184,7 @@ export function fromStereoFlagUpdate(restruct, frid, flag = null) {
  */
 function processAtom(restruct, aid, frid, newfrid) {
   const queue = [aid];
-  const usedIds = new Pile(queue);
+  const usedIds = new Pile<number>(queue);
 
   while (queue.length > 0) {
     const id = queue.shift();

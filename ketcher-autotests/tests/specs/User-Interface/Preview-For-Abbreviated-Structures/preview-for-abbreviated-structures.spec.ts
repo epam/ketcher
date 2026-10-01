@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
@@ -7,7 +6,7 @@ import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   moveMouseToTheMiddleOfTheScreen,
   waitForPageInit,
 } from '@utils';
@@ -23,7 +22,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     await waitForPageInit(page);
     // place a benzene ring in the middle of the screen
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
   });
 
   test('Should show a preview of a functional group when hovering over atom', async ({
@@ -92,8 +91,8 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     const box = await bondLocator.boundingBox();
     if (!box) throw new Error('Bond bounding box not found');
 
-    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
-    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
 
     await page.mouse.move(centerX + shiftCoords2.x, centerY + shiftCoords2.y);
 
@@ -107,8 +106,8 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     const box = await bondLocator.boundingBox();
     if (!box) throw new Error('Bond bounding box not found');
 
-    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
-    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
 
     await page.mouse.move(centerX + shiftCoords2.x, centerY + shiftCoords2.y);
 
@@ -124,8 +123,8 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     const box = await bondLocator.boundingBox();
     if (!box) throw new Error('Bond bounding box not found');
 
-    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
-    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
 
     await takeEditorScreenshot(page);
 

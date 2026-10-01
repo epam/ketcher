@@ -1,4 +1,4 @@
-import {
+import type {
   AttachmentPointLabelContextMenuProps,
   MenuItemsProps,
 } from '../contextMenu.types';
@@ -7,13 +7,13 @@ import { Icon } from '../../../../../../components';
 import styles from '../ContextMenu.module.less';
 import { useAppContext } from '../../../../../../hooks';
 import {
-  AttachmentPointClickData,
+  type AttachmentPointClickData,
   Coordinates,
   ketcherProvider,
   MonomerCreationAttachmentPointClickEvent,
+  assert,
 } from 'ketcher-core';
-import Editor from '../../../../../editor';
-import assert from 'assert';
+import type Editor from '../../../../../editor';
 
 const AttachmentPointLabelMenuItems = ({
   propsFromTrigger,

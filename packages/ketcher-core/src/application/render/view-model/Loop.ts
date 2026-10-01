@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { HalfEdge } from 'application/render/view-model/HalfEdge';
-import { Bond } from 'domain/entities';
+import type { HalfEdge } from 'application/render/view-model/HalfEdge';
+import { Bond } from 'domain/entities/bond';
 
 export class Loop {
   public doubleBondsAmount = 0;
   public aromatic = true;
 
-  constructor(public halfEdges: Array<HalfEdge>, public isConvex = false) {
+  constructor(
+    public halfEdges: Array<HalfEdge>,
+    public isConvex = false,
+  ) {
     this.calculateDoubleBondsAmount();
   }
 

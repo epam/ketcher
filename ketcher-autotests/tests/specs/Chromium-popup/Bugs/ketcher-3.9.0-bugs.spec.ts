@@ -1,6 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -11,8 +8,8 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { Valence } from '@tests/pages/constants/atomProperties/Constants';
 import {
-  MacroBondType,
-  MicroBondDataIds,
+  MacroBondTool,
+  MicroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   ConnectionPointOption,
@@ -56,7 +53,7 @@ import { TextEditorDialog } from '@tests/pages/molecules/canvas/TextEditorDialog
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   clickOnCanvas,
-  clickOnMiddleOfCanvas,
+  clickInTheMiddleOfTheCanvas,
   copyToClipboardByKeyboard,
   dragMouseTo,
   keyboardTypeOnCanvas,
@@ -76,7 +73,7 @@ import {
   zoomOutByKeyboard,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { getTextLabelLocator } from '@utils/canvas/text/getTextLabelLocator';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -88,6 +85,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import {
   AttachmentPoint,
+  getAttachmentPointLocator,
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
@@ -125,7 +123,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{d([Hyp])p.r(A)p.d([Hyp])p.r(A)p.d([Hyp])}$$$$V2.0',
+      'RNA1{[dR]([In])P.R(A)P.[dR]([In])P.R(A)P.[dR]([In])}$$$$V2.0',
     );
     await CommonLeftToolbar(page).erase();
     await selectAllStructuresOnCanvas(page);
@@ -158,7 +156,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
      * Version 3.9
      */
     await BottomToolbar(page).benzene();
-    await clickOnMiddleOfCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -168,10 +166,10 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await newSequenceButton.click();
 
     const singleBonds = getBondLocator(page, {
-      bondType: MicroBondDataIds.Single,
+      bondType: MicroBondType.Single,
     });
     const doubleBonds = getBondLocator(page, {
-      bondType: MicroBondDataIds.Double,
+      bondType: MicroBondType.Double,
     });
 
     expect(await singleBonds.count()).toBe(3);
@@ -241,7 +239,13 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       page,
       getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
     ).open();
-    await takeElementScreenshot(page, page.getByTestId(MicroBondOption.Delete));
+    await takeElementScreenshot(
+      page,
+      ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+      ).getOptionLocator(MicroBondOption.Delete),
+    );
   });
 
   test('Case 5: Line between Paste option and Create RNA antisense strand option is missing in the context menu', async ({
@@ -267,9 +271,16 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     );
     await ContextMenu(page, getMonomerLocator(page, Base.A).first()).open();
     await page.waitForTimeout(0.2 * 1000);
-    await takeElementScreenshot(page, page.getByTestId(MonomerOption.Paste), {
-      padding: 10,
-    });
+    await takeElementScreenshot(
+      page,
+      ContextMenu(
+        page,
+        getMonomerLocator(page, Base.A).first(),
+      ).getOptionLocator(MonomerOption.Paste),
+      {
+        padding: 10,
+      },
+    );
   });
 
   test('Case 6: Missing separator line above "Delete" in context menu', async ({
@@ -301,7 +312,10 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await page.waitForTimeout(0.2 * 1000);
     await takeElementScreenshot(
       page,
-      page.getByTestId(SequenceSymbolOption.Delete),
+      ContextMenu(
+        page,
+        getSymbolLocator(page, { symbolAlias: 'A' }),
+      ).getOptionLocator(SequenceSymbolOption.Delete),
       {
         padding: 20,
       },
@@ -330,7 +344,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     );
     await verifyHELMExport(
       page,
-      'RNA1{[Unknown sugar](A)p.r([Unknown base])p.[Unknown sugar]([Unknown base])p.[Unknown sugar](A)[Unknown phosphate].r([Unknown base])[Unknown phosphate].[Unknown sugar]([Unknown base])[Unknown phosphate].[Unknown sugar](A).r([Unknown base]).[Unknown sugar]([Unknown base])}$$$$V2.0',
+      'RNA1{[Unknown sugar](A)P.R([Unknown base])P.[Unknown sugar]([Unknown base])P.[Unknown sugar](A)[Unknown phosphate].R([Unknown base])[Unknown phosphate].[Unknown sugar]([Unknown base])[Unknown phosphate].[Unknown sugar](A).R([Unknown base]).[Unknown sugar]([Unknown base])}$$$$V2.0',
     );
   });
 
@@ -385,7 +399,10 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await page.waitForTimeout(0.2 * 1000);
     await takeElementScreenshot(
       page,
-      page.getByTestId(RingBondCountOption.Six),
+      ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+      ).getOptionLocator(RingBondCountOption.Six),
       { padding: 80 },
     );
   });
@@ -471,8 +488,11 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
         { x: atomBoundingBox.x + 40, y: atomBoundingBox.y + 40 },
       );
     }
-    await ContextMenu(page, phosphateAtom).open();
-    expect(page.getByTestId(MicroAtomOption.CreateAMonomer)).toBeEnabled();
+    expect(
+      await ContextMenu(page, phosphateAtom).isOptionEnabled(
+        MicroAtomOption.CreateAMonomer,
+      ),
+    ).toBeTruthy();
   });
 
   test('Case 14: IDT alias of CHEM 5TAMRA is displayed wrong', async ({
@@ -727,10 +747,12 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       `5'-(vinu)-3'`,
     );
 
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     const vinU = getMonomerLocator(page, Nucleotide.vinU);
     await vinU.hover();
-    await expect(vinU.getByTestId(AttachmentPoint.R2)).toBeVisible();
+    await expect(
+      getAttachmentPointLocator(vinU, AttachmentPoint.R2),
+    ).toBeVisible();
   });
 
   test('Case 23: Do not save added/updated monomer in local storage', async ({
@@ -819,7 +841,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await deselectAtomAndBonds(page);
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.CHEM);
-    await createMonomerDialog.setSymbol('TempSymbol');
+    await createMonomerDialog.setCode('TempSymbol');
     await createMonomerDialog.setName('TempName');
     await createMonomerDialog.submit();
     expect(
@@ -852,10 +874,9 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
 
     await pasteFromClipboardAndOpenAsNewProject(page, 'CC*');
     const bond = getBondLocator(page, {}).first();
-    await ContextMenu(page, bond).open();
-    await expect(
-      page.getByTestId(MicroBondOption.EditSGroup),
-    ).not.toBeVisible();
+    expect(
+      await ContextMenu(page, bond).isOptionVisible(MicroBondOption.EditSGroup),
+    ).toBeFalsy();
   });
 
   test('Case 27: System loads invdC monomer as unresolved monomer from AxoLabs', async ({
@@ -938,7 +959,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     );
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.Sugar);
-    await createMonomerDialog.setSymbol('qeg');
+    await createMonomerDialog.setCode('qeg');
     await createMonomerDialog.setName('gly');
     await createMonomerDialog.submit();
 
@@ -1000,9 +1021,12 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(page, 600, 250);
+    await dragMouseTo(page, 600, 300);
 
-    const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+    const attachmentPointR1 = getAttachmentPointLocator(
+      page,
+      AttachmentPoint.R1,
+    ).first();
     await ContextMenu(page, attachmentPointR1).click(
       ConnectionPointOption.EditConnectionPoint,
     );
@@ -1049,9 +1073,8 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.MDLMolfileV3000,
     );
-    const MolfileV3000ExportResult = await SaveStructureDialog(
-      page,
-    ).getTextAreaValue();
+    const MolfileV3000ExportResult =
+      await SaveStructureDialog(page).getTextAreaValue();
     await SaveStructureDialog(page).cancel();
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1124,7 +1147,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{[d12r].p}$$$$V2.0',
+      'RNA1{[12ddR].P}$$$$V2.0',
     );
 
     const d12r = getMonomerLocator(page, Sugar._12ddR);
@@ -1363,11 +1386,11 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]p}$$$$V2.0',
+      'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]P}$$$$V2.0',
     );
     await verifyHELMExport(
       page,
-      'RNA1{[O1[C@H](CO[*:1])[C@@H](O[*:2])[C@@H](O)[C@@H]1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|].p}$$$$V2.0',
+      'RNA1{[O1[C@H](CO[*:1])[C@@H](O[*:2])[C@@H](O)[C@@H]1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|].P}$$$$V2.0',
     );
   });
 

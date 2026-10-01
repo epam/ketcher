@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,14 +16,14 @@
  ***************************************************************************/
 
 import {
+  type Struct,
+  type ReStruct,
   FunctionalGroup,
   IMAGE_KEY,
-  Struct,
   Vec2,
-  ReStruct,
   MULTITAIL_ARROW_KEY,
+  assert,
 } from 'ketcher-core';
-import assert from 'assert';
 
 function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   const bondList: Array<number> = [];
@@ -148,12 +149,8 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
 
   const sgroupDataList: Array<number> = [];
   restruct.sgroupData.forEach((item, id) => {
-    if (
-      item.sgroup.pp.x > x0 &&
-      item.sgroup.pp.x < x1 &&
-      item.sgroup.pp.y > y0 &&
-      item.sgroup.pp.y < y1
-    ) {
+    const pp = item.sgroup.pp;
+    if (pp && pp.x > x0 && pp.x < x1 && pp.y > y0 && pp.y < y1) {
       sgroupDataList.push(id);
     }
   });
@@ -217,7 +214,6 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
 }
 
 function getElementsInPolygon(restruct: ReStruct, rr) {
-  // eslint-disable-line max-statements
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
   const r: any = [];
@@ -337,7 +333,7 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
 
   const sgroupDataList: Array<number> = [];
   restruct.sgroupData.forEach((item, id) => {
-    if (isPointInPolygon(r, item.sgroup.pp)) {
+    if (item.sgroup.pp && isPointInPolygon(r, item.sgroup.pp)) {
       sgroupDataList.push(id);
     }
   });
@@ -386,7 +382,6 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
 // TODO: test me see testPolygon from
 // 'Remove unused methods from render' commit
 function isPointInPolygon(r, p) {
-  // eslint-disable-line max-statements
   const d = new Vec2(0, 1);
   const n = d.rotate(Math.PI / 2);
   let v0 = Vec2.diff(r[r.length - 1], p);
@@ -395,7 +390,7 @@ function isPointInPolygon(r, p) {
   let w0 = new Vec2(0, 0);
   let counter = 0;
   const eps = 1e-5;
-  let flag1 = false;
+  let flag1;
   let flag0 = false;
 
   for (const point of r) {
@@ -407,12 +402,10 @@ function isPointInPolygon(r, p) {
     if (n1 * n0 < 0) {
       if (d1 * d0 > -eps) {
         if (d0 > -eps) flag1 = true;
-        /* eslint-disable no-mixed-operators */
       } else if (
         (Math.abs(n0) * Math.abs(d1) - Math.abs(n1) * Math.abs(d0)) * d1 >
         0
       ) {
-        /* eslint-enable no-mixed-operators */
         flag1 = true;
       }
     }

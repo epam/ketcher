@@ -1,6 +1,6 @@
 import { Page, test, expect } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -12,7 +12,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
   BondReactingCenterOption,
@@ -22,10 +22,10 @@ import {
 
 async function drawStructure(page: Page) {
   await waitForPageInit(page);
-  await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-  await clickInTheMiddleOfTheScreen(page);
-  await clickInTheMiddleOfTheScreen(page);
-  await clickInTheMiddleOfTheScreen(page);
+  await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
+  await clickInTheMiddleOfTheCanvas(page);
+  await clickInTheMiddleOfTheCanvas(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await page.keyboard.press('Escape');
 }
 
@@ -63,7 +63,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
       type: BondTypeOption.SingleDown,
     });
     await takeEditorScreenshot(page);
-    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])\\[#6]');
+    await verifySMARTSExport(page, String.raw`[#6](-[#6])(-[#6])\[#6]`);
   });
 
   test('Setting bond type - single up/down', async () => {
@@ -335,7 +335,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
      * Test case: https://github.com/epam/ketcher/issues/3328
      * Description: Single down bond should be converted to custom query as: \
      */
-    const expectedValue = '\\';
+    const expectedValue = String.raw`${String.fromCharCode(92)}`;
     await BondPropertiesDialog(page).selectBondType(BondTypeOption.SingleDown);
     await BondPropertiesDialog(page).checkCustomQueryCheckbox();
     expect(await BondPropertiesDialog(page).getCustomQueryText()).toEqual(

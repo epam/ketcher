@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,26 +15,49 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { lazy, Suspense, useCallback, useMemo, useRef, useState } from 'react';
+import {
+  type ComponentType,
+  lazy,
+  Suspense,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import type { AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
 import { Dialog, LoadingCircles } from '../../../../components';
 import {
+  type Struct,
+  type StructService,
   FormatterFactory,
   KetcherLogger,
   ketcherProvider,
-  Struct,
-  StructService,
   SupportedFormat,
 } from 'ketcher-core';
 import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema';
 import classes from './Miew.module.less';
 import { connect } from 'react-redux';
-import { load } from '../../../../../state';
+import { load, parseStruct } from '../../../../../state/shared';
+import { showSnackbarNotification } from '../../../../../state/notifications';
 import { pick } from 'lodash/fp';
-import { Miew as MiewAsType } from 'miew';
+import type { Miew as MiewAsType } from 'miew';
 import { createSelector } from 'reselect';
 import { useAppContext } from 'src/hooks';
+import {
+  alignToCentroid,
+  collapseExpandedSuperatoms,
+  mergeCoordinatesFromResult,
+  mergeMetaObjects,
+  needsMetaPreservation,
+  needsStructurePreservation,
+} from './miewStructMerge';
 
-const Viewer = lazy(() => import('miew-react'));
+const Viewer = lazy(() =>
+  import('miew-react').then((module) => ({
+    default: module.default as unknown as ComponentType<any>,
+  })),
+);
 
 type MiewDialogProps = {
   miewOpts: any;
@@ -44,7 +68,8 @@ type MiewDialogProps = {
   miewTheme: 'dark' | 'light';
 };
 type MiewDialogCallProps = {
-  onExportCML: (cmlStruct: string) => void;
+  dispatch: ThunkDispatch<unknown, undefined, AnyAction>;
+  serverSettings: Record<string, unknown>;
 };
 type Props = MiewDialogProps & MiewDialogCallProps;
 
@@ -117,7 +142,8 @@ const MiewDialog = ({
   miewOpts,
   server,
   struct,
-  onExportCML,
+  dispatch,
+  serverSettings,
   miewTheme = 'light',
   ...prop
 }: Props) => {
@@ -140,9 +166,10 @@ const MiewDialog = ({
       miewRef.current = miew;
       const factory = new FormatterFactory(server);
       const service = factory.create(SupportedFormat.cml);
+      const moleculeOnlyStruct = struct.clone(null, null, true);
 
       service
-        .getStructureFromStructAsync(struct)
+        .getStringFromStructureAsync(moleculeOnlyStruct)
         .then((res) =>
           miew.load(res, { sourceType: 'immediate', fileType: 'cml' }),
         )
@@ -157,13 +184,109 @@ const MiewDialog = ({
     [miewOpts, server, struct],
   );
 
-  const exportCML = useCallback(() => {
+  const exportCML = useCallback(async () => {
     const cmlStruct = miewRef.current?.exportCML();
+
     if (!cmlStruct) {
+      KetcherLogger.error(
+        'Miew.tsx::MiewDialog::exportCML',
+        'Failed to export structure from 3D viewer',
+      );
+      dispatch(
+        showSnackbarNotification(
+          'Failed to export structure from 3D viewer. Please try again.',
+        ),
+      );
       return;
     }
-    onExportCML(cmlStruct);
-  }, [onExportCML, miewRef]);
+
+    const shouldPreserveStructure = needsStructurePreservation(struct);
+    const shouldPreserveMeta = needsMetaPreservation(struct);
+
+    if (!shouldPreserveStructure && !shouldPreserveMeta) {
+      dispatch(load(cmlStruct));
+      return;
+    }
+
+    let result: Struct;
+
+    try {
+      result = await parseStruct(cmlStruct, server, serverSettings);
+      result.rescale();
+      alignToCentroid(result, struct);
+    } catch (e) {
+      KetcherLogger.error(
+        'Miew.tsx::MiewDialog::exportCML::parseAndPrepareResult',
+        e,
+      );
+      dispatch(
+        showSnackbarNotification(
+          'Failed to process 3D structure. The structure may be corrupted.',
+        ),
+      );
+      return;
+    }
+
+    if (shouldPreserveStructure) {
+      try {
+        const preserved = struct.clone();
+        preserved.enableInitiallySelected();
+
+        if (!mergeCoordinatesFromResult(result, preserved)) {
+          KetcherLogger.error(
+            'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
+            'Coordinate merge validation failed',
+          );
+          dispatch(
+            showSnackbarNotification(
+              'Failed to merge 3D coordinates with the original structure.',
+            ),
+          );
+          return;
+        }
+
+        collapseExpandedSuperatoms(preserved);
+        preserved.findConnectedComponents();
+        preserved.setImplicitHydrogen();
+        preserved.setStereoLabelsToAtoms();
+        preserved.markFragments();
+
+        dispatch(
+          load(preserved, {
+            preserveViewport: true,
+            skipCenter: true,
+          }),
+        );
+        return;
+      } catch (e) {
+        KetcherLogger.error(
+          'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
+          e,
+        );
+        dispatch(
+          showSnackbarNotification(
+            'Failed to merge 3D coordinates with the original structure.',
+          ),
+        );
+        return;
+      }
+    }
+
+    try {
+      mergeMetaObjects(result, struct);
+      dispatch(load(result, { preserveViewport: true, skipCenter: true }));
+    } catch (e) {
+      KetcherLogger.error(
+        'Miew.tsx::MiewDialog::exportCML::mergeMetaObjects',
+        e,
+      );
+      dispatch(
+        showSnackbarNotification(
+          'Failed to preserve metadata while applying 3D structure.',
+        ),
+      );
+    }
+  }, [dispatch, server, serverSettings, struct]);
 
   return (
     <Dialog
@@ -216,14 +339,11 @@ const mapStateToProps = (state) => ({
   server: state.options.app.server ? state.server : null,
   struct: state.editor.struct(),
   miewTheme: state.options.settings.miewTheme,
+  serverSettings: state.options.getServerSettings(),
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onExportCML: (cmlStruct) => {
-    dispatch(load(cmlStruct));
-    // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
-    // See PR #731 (https://github.com/epam/ketcher/pull/731)
-  },
+  dispatch,
 });
 
 const Miew = connect(mapStateToProps, mapDispatchToProps)(MiewDialog);

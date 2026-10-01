@@ -14,11 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Struct } from 'domain/entities';
-import { Image } from 'domain/entities/image';
+import type { Struct } from 'domain/entities/struct';
+import { type KetFileImageNode, Image } from 'domain/entities/image';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function imageToStruct(ketItem: any, struct: Struct): Struct {
+export function imageToStruct(
+  ketItem: KetFileImageNode,
+  struct: Struct,
+): Struct {
   struct.images.add(Image.fromKetNode(ketItem));
   return struct;
 }

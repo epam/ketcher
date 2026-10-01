@@ -16,32 +16,46 @@
 import styled from '@emotion/styled';
 import { StructRender } from 'ketcher-react';
 
-export const Container = styled.div`
+export const Container = styled.div<{ isLongName?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: start;
   gap: 8px;
+  overflow: hidden;
+  width: ${(props) => (props.isLongName ? '450px' : '345px')};
+  height: 345px;
   background: ${(props) => props.theme.ketcher.color.background.primary};
   border: ${(props) => props.theme.ketcher.border.regular};
   border-radius: ${(props) => props.theme.ketcher.border.radius.regular};
   box-shadow: ${(props) => props.theme.ketcher.shadow.regular};
 `;
 
-export const MonomerName = styled.p`
+export const MonomerName = styled.p<{ isLongName?: boolean }>`
   width: calc(100% - 16px);
   padding: 8px;
   color: ${(props) => props.theme.ketcher.color.text.primary};
   background-color: #cceaee;
-  font-size: ${(props) => props.theme.ketcher.font.size.regular};
+  font-size: ${(props) =>
+    props.isLongName ? '8px' : props.theme.ketcher.font.size.regular};
   font-weight: 700;
   word-break: break-all;
   text-align: left;
   margin: 0;
   white-space: pre-wrap;
+  ${(props) =>
+    props.isLongName &&
+    `
+    max-height: 200px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 15;
+    -webkit-box-orient: vertical;
+  `}
 `;
 
 export const StyledStructRender = styled(StructRender)`
-  height: 100%;
+  flex: 1 1 auto;
+  min-height: 80px;
   width: 100%;
   padding: 0 8px;
 `;
@@ -49,6 +63,7 @@ export const StyledStructRender = styled(StructRender)`
 export const InfoBlock = styled.div`
   width: 100%;
   display: flex;
+  flex-shrink: 0;
   gap: 8px;
   padding: 0 8px 4px;
 `;

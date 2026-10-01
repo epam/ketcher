@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
@@ -44,7 +41,7 @@ const waitForLibraryUpdate = async (page: Page, timeout = 20_000) => {
           resolve(sdf);
         };
 
-        window.ketcher.editor.subscribe('libraryUpdate', handler);
+        globalThis.window.ketcher.editor.subscribe('libraryUpdate', handler);
 
         setTimeout(() => {
           if (!resolved) resolve('');
@@ -86,7 +83,7 @@ test(`1. Check that system sends update on peptide monomer creation`, async () =
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     modificationTypes: [
@@ -146,7 +143,7 @@ test(`2. Check that system sends update on base monomer creation`, async () => {
 
   await createMonomer(page, {
     type: MonomerType.Base,
-    symbol: Base.Base.alias,
+    code: Base.Base.alias,
     name: 'Base Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
     HELMAlias: 'BaseTest',
@@ -184,7 +181,7 @@ test(`3. Check that system sends update on sugar monomer creation`, async () => 
 
   await createMonomer(page, {
     type: MonomerType.Sugar,
-    symbol: Sugar.Sugar.alias,
+    code: Sugar.Sugar.alias,
     name: 'Sugar Test monomer',
     HELMAlias: 'SugarTest',
   });
@@ -221,7 +218,7 @@ test(`4. Check that system sends update on phosphate monomer creation`, async ()
 
   await createMonomer(page, {
     type: MonomerType.Phosphate,
-    symbol: Phosphate.Phosphate.alias,
+    code: Phosphate.Phosphate.alias,
     name: 'Phosphate Test monomer',
     HELMAlias: 'PhosphateTest',
   });
@@ -257,7 +254,7 @@ test(`5. Check that system sends update on nucleotide monomer creation`, async (
   });
   await createMonomer(page, {
     type: MonomerType.NucleotideMonomer,
-    symbol: Nucleotide.Nucleotide.alias,
+    code: Nucleotide.Nucleotide.alias,
     name: 'Nucleotide Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   });
@@ -294,7 +291,7 @@ test(`6. Check that system sends update on CHEM monomer creation`, async () => {
 
   await createMonomer(page, {
     type: MonomerType.CHEM,
-    symbol: Chem.CHEM.alias,
+    code: Chem.CHEM.alias,
     name: 'CHEM Test monomer',
   });
   await waiter;
@@ -330,7 +327,7 @@ test(`7. Check that system sends update on peptide monomer without modification 
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide2.alias,
+    code: Peptide.Peptide2.alias,
     name: 'Peptide2 Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: 'PeptTest',
@@ -368,7 +365,7 @@ test(`8. Check that system sends update on peptide monomer without modification 
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide3.alias,
+    code: Peptide.Peptide3.alias,
     name: 'Peptide3 Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   });
@@ -405,7 +402,7 @@ test(`9. Check that system sends update on base monomer without HELM alias creat
 
   await createMonomer(page, {
     type: MonomerType.Base,
-    symbol: Base.Base2.alias,
+    code: Base.Base2.alias,
     name: 'Base2 Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   });
@@ -442,7 +439,7 @@ test(`10. Check that system sends update on sugar monomer without HELM alias cre
 
   await createMonomer(page, {
     type: MonomerType.Sugar,
-    symbol: Sugar.Sugar2.alias,
+    code: Sugar.Sugar2.alias,
     name: 'Sugar2 Test monomer',
   });
   await waiter;
@@ -478,7 +475,7 @@ test(`11. Check that system sends update on phosphate monomer without HELM alias
 
   await createMonomer(page, {
     type: MonomerType.Phosphate,
-    symbol: Phosphate.Phosphate2.alias,
+    code: Phosphate.Phosphate2.alias,
     name: 'Phosphate2 Test monomer',
   });
   await waiter;

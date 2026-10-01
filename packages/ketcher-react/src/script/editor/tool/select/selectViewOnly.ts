@@ -1,7 +1,7 @@
-import { Tool } from '../Tool';
-import Editor from '../../Editor';
+import type { Tool } from '../Tool';
+import type Editor from '../../Editor';
 import LassoHelper from '../helper/lasso';
-import { SelectMode } from './select.types';
+import type { SelectMode } from './select.types';
 import {
   onSelectionEnd,
   onSelectionLeave,
@@ -18,7 +18,7 @@ export class SelectViewOnlyTool implements Tool {
     this.lassoHelper = new LassoHelper(
       this.mode === 'lasso' ? 0 : 1,
       editor,
-      this.mode === 'fragment',
+      this.mode === 'structure',
     );
   }
 

@@ -1,4 +1,4 @@
-import { Bond, BondAttributes } from 'domain/entities/bond';
+import { type BondAttributes, Bond } from 'domain/entities/bond';
 
 import { Vec2 } from 'domain/entities/vec2';
 

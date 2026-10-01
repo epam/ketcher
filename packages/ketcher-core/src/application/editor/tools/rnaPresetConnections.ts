@@ -1,8 +1,8 @@
 import {
-  IKetTemplateConnection,
+  type IKetTemplateConnection,
   KetConnectionType,
-} from 'application/formatters';
-import {
+} from 'application/formatters/types/ket';
+import type {
   IRnaPreset,
   RnaPhosphatePosition,
 } from 'application/editor/tools/Tool';
@@ -10,7 +10,7 @@ import { AttachmentPointName } from 'domain/types';
 import {
   setAmbiguousMonomerTemplatePrefix,
   setMonomerTemplatePrefix,
-} from 'domain/serializers';
+} from 'domain/serializers/ket/helpers';
 
 const getMonomerTemplateId = (monomer: IRnaPreset['base']) => {
   const templateId =
@@ -56,8 +56,13 @@ const isSugarPhosphateConnection = (
   );
 };
 
+export type RnaPresetWithOptionalFields = Pick<
+  IRnaPreset,
+  'sugar' | 'phosphate' | 'connections'
+>;
+
 export const getRnaPresetPhosphatePosition = (
-  preset: Pick<IRnaPreset, 'sugar' | 'phosphate' | 'connections'>,
+  preset: Partial<RnaPresetWithOptionalFields>,
 ): RnaPhosphatePosition | undefined => {
   if (!preset?.phosphate) {
     return undefined;
@@ -92,7 +97,7 @@ export const getRnaPresetPhosphatePosition = (
 };
 
 export const buildRnaPresetConnections = (
-  preset: Pick<IRnaPreset, 'base' | 'sugar' | 'phosphate'>,
+  preset: Partial<Pick<IRnaPreset, 'base' | 'sugar' | 'phosphate'>>,
   phosphatePosition?: RnaPhosphatePosition,
 ): IKetTemplateConnection[] => {
   const baseTemplateId = getMonomerTemplateId(preset.base);

@@ -1,24 +1,28 @@
-import { SnakeMode } from 'application/editor';
+import { SnakeMode } from 'application/editor/modes/SnakeMode';
 import { editorEvents } from 'application/editor/editorEvents';
-import { CoreEditor } from 'application/editor/internal';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
 import { SideChainConnectionBondRendererUtility } from 'application/render/renderers/PolymerBondRenderer/SideChainConnectionBondRendererUtility';
 import { SVGPathDAttributeUtility } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtility';
-import { D3SvgElementSelection } from 'application/render/types';
-import assert from 'assert';
-import { BaseMonomer, Vec2 } from 'domain/entities';
-import { Cell } from 'domain/entities/canvas-matrix/Cell';
+import type { D3SvgElementSelection } from 'application/render/types';
+import { assert } from 'utilities';
+import type { BaseMonomer, Vec2 } from 'domain/entities';
+import type { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   type Connection,
   type ConnectionDirectionInDegrees,
   type ConnectionDirectionOfLastCell,
 } from 'domain/entities/canvas-matrix/Connection';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { isNumber } from 'lodash';
 import { BaseRenderer } from '../BaseRenderer';
+import {
+  SELECTION_COLOR,
+  SELECTION_HOVERED_COLOR,
+} from 'application/render/renderers/constants';
 import {
   CORNER_LENGTH,
   DOUBLE_CORNER_LENGTH,
@@ -57,7 +61,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private path = '';
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
   private sideConnectionBondTurnPoint?: number;
-  public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
+  private hoverLineAreaElement?: D3SvgElementSelection<SVGLineElement, void>;
+  declare public bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
     super(polymerBond);
@@ -108,7 +113,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   public getSideConnectionEndpointAngle(monomer: BaseMonomer): number {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
     const startCellDirection = cells?.[0].connections?.find(
@@ -150,15 +155,15 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   public moveSelection(): void {
     if (
-      this.previousStateOfIsMonomersOnSameHorizontalLine !==
+      this.previousStateOfIsMonomersOnSameHorizontalLine ===
       this.polymerBond.isHorizontal
     ) {
-      this.remove();
-      this.show();
-    } else {
       assert(this.rootElement);
       this.moveStart();
       this.moveEnd();
+    } else {
+      this.remove();
+      this.show();
     }
     this.previousStateOfIsMonomersOnSameHorizontalLine =
       this.polymerBond.isHorizontal;
@@ -166,7 +171,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   // TODO: Specify the types.
   public appendBond(rootElement) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
 
@@ -359,8 +364,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         0,
       );
 
-      maxHorizontalOffset =
-        maxHorizontalOffset > maxXOffset ? maxHorizontalOffset : maxXOffset;
+      maxHorizontalOffset = Math.max(maxHorizontalOffset, maxXOffset);
 
       if (isLastCell) {
         if (isStraightVerticalConnection) {
@@ -890,7 +894,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       } else {
         this.selectionElement = this.rootElement
           ?.insert('line', ':first-child')
-          .attr('stroke', '#57FF8F')
+          .attr('stroke', SELECTION_COLOR)
           .attr('x1', this.scaledPosition.startPosition.x)
           .attr('y1', this.scaledPosition.startPosition.y)
           .attr('x2', this.scaledPosition.endPosition.x)
@@ -915,7 +919,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     }
   }
 
-  private moveSnakeBondEnd(): void {
+  private moveSnakeBond(): void {
     const startPosition = this.scaledPosition.startPosition;
     const endPosition = this.scaledPosition.endPosition;
     this.updateSnakeBondPath(startPosition, endPosition);
@@ -928,18 +932,19 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.selectionElement?.attr('d', this.path);
   }
 
+  private moveSnakeBondEnd(): void {
+    this.moveSnakeBond();
+  }
+
   private moveGraphBondEnd(): void {
     assert(this.bodyElement);
-    assert(this.hoverAreaElement);
+    assert(this.hoverLineAreaElement);
     this.bodyElement
       .attr('x2', this.scaledPosition.endPosition.x)
       .attr('y2', this.scaledPosition.endPosition.y);
 
-    this.hoverAreaElement
+    this.hoverLineAreaElement
       .attr('x2', this.scaledPosition.endPosition.x)
-      // TODO fix type error appeared without ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       .attr('y2', this.scaledPosition.endPosition.y);
 
     this.hoverCircleAreaElement
@@ -960,30 +965,18 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   private moveSnakeBondStart(): void {
-    const startPosition = this.scaledPosition.startPosition;
-    const endPosition = this.scaledPosition.endPosition;
-    this.updateSnakeBondPath(startPosition, endPosition);
-
-    assert(this.bodyElement);
-    assert(this.hoverAreaElement);
-    this.bodyElement.attr('d', this.path);
-
-    this.hoverAreaElement.attr('d', this.path);
-    this.selectionElement?.attr('d', this.path);
+    this.moveSnakeBond();
   }
 
   private moveGraphBondStart(): void {
     assert(this.bodyElement);
-    assert(this.hoverAreaElement);
+    assert(this.hoverLineAreaElement);
     this.bodyElement
       .attr('x1', this.scaledPosition.startPosition.x)
       .attr('y1', this.scaledPosition.startPosition.y);
 
-    this.hoverAreaElement
+    this.hoverLineAreaElement
       .attr('x1', this.scaledPosition.startPosition.x)
-      // TODO fix type error appeared without ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       .attr('y1', this.scaledPosition.startPosition.y);
 
     this.selectionElement
@@ -1003,7 +996,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         .attr('fill-opacity', 0)
         .attr('stroke-width', '5');
     } else {
-      this.hoverAreaElement = this.rootElement
+      this.hoverLineAreaElement = this.rootElement
         ?.append('line')
         .attr('stroke', 'transparent')
         .attr('x1', this.scaledPosition.startPosition.x)
@@ -1011,6 +1004,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         .attr('x2', this.scaledPosition.endPosition.x)
         .attr('y2', this.scaledPosition.endPosition.y)
         .attr('stroke-width', '10');
+      this.hoverAreaElement = this.hoverLineAreaElement;
 
       this.hoverCircleAreaElement = this.rootElement
         ?.append('circle')
@@ -1024,30 +1018,36 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     }
   }
 
+  private updateAllSideConnectionBondsColor(
+    getColor: (renderer: SnakeModePolymerBondRenderer) => string,
+  ): void {
+    const editor = provideEditorInstance();
+    const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
+      `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
+    );
+
+    Array.from(allSideConnectionBondsBodyElements).forEach(
+      (bondBodyElement) => {
+        const renderer =
+          bondBodyElement.__data__ as SnakeModePolymerBondRenderer;
+        bondBodyElement.setAttribute('stroke', getColor(renderer));
+      },
+    );
+  }
+
   public appendHover(): void {
     assert(this.bodyElement);
 
-    const editor = CoreEditor.provideEditorInstance();
-
     if (this.polymerBond.isSideChainConnection) {
-      const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
-        `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
-      );
-
-      Array.from(allSideConnectionBondsBodyElements).forEach(
-        (bondBodyElement) => {
-          bondBodyElement.setAttribute(
-            'stroke',
-            this.isHydrogenBond ? 'lightgrey' : '#C0E2E6',
-          );
-        },
+      this.updateAllSideConnectionBondsColor((renderer) =>
+        renderer.isHydrogenBond ? 'lightgrey' : '#C0E2E6',
       );
     }
 
     this.bodyElement.attr('stroke', '#0097A8').attr('pointer-events', 'none');
 
     if (this.polymerBond.selected && this.selectionElement) {
-      this.selectionElement.attr('stroke', '#CCFFDD');
+      this.selectionElement.attr('stroke', SELECTION_HOVERED_COLOR);
     }
   }
 
@@ -1056,25 +1056,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
 
-    const editor = CoreEditor.provideEditorInstance();
-
     if (this.polymerBond.isSideChainConnection) {
-      const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
-        `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
-      );
-
-      Array.from(allSideConnectionBondsBodyElements).forEach(
-        (bondBodyElement) => {
-          const renderer =
-            bondBodyElement.__data__ as SnakeModePolymerBondRenderer;
-
-          bondBodyElement.setAttribute(
-            'stroke',
-            renderer.polymerBond.isSideChainConnection && !this.isHydrogenBond
-              ? '#43B5C0'
-              : '#333333',
-          );
-        },
+      this.updateAllSideConnectionBondsColor((renderer) =>
+        renderer.polymerBond.isSideChainConnection && !renderer.isHydrogenBond
+          ? '#43B5C0'
+          : '#333333',
       );
     }
 
@@ -1088,7 +1074,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('pointer-events', 'stroke');
 
     if (this.polymerBond.selected && this.selectionElement) {
-      this.selectionElement.attr('stroke', '#57FF8F');
+      this.selectionElement.attr('stroke', SELECTION_COLOR);
     }
 
     return this.hoverAreaElement.attr('stroke', 'transparent');
@@ -1112,9 +1098,26 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   public remove(): void {
+    // Check the SVG element's class directly instead of this.polymerBond.isSideChainConnection
+    // because by the time remove() is called, the attachment points in the model may already be
+    // destroyed, causing isSideChainConnection to return false even though the bond was rendered
+    // as a side-chain connection
+    const isSideChainConnection = this.bodyElement
+      ?.attr('class')
+      ?.includes(SIDE_CONNECTION_BODY_ELEMENT_CLASS);
+
     super.remove();
     if (this.polymerBond.hovered) {
       this.editorEvents.mouseLeaveMonomer.dispatch();
+    }
+
+    // After a side-chain bond is removed, set all remaining side-chain bonds to the default color (#43B5C0)
+    if (isSideChainConnection) {
+      this.updateAllSideConnectionBondsColor((renderer) =>
+        renderer.polymerBond.isSideChainConnection && !renderer.isHydrogenBond
+          ? '#43B5C0'
+          : '#333333',
+      );
     }
   }
 }

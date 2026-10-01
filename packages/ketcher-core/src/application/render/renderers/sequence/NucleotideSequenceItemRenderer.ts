@@ -1,5 +1,5 @@
-import { Nucleotide } from 'domain/entities';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { Nucleotide } from 'domain/entities/Nucleotide';
+import type { D3SvgElementSelection } from 'application/render/types';
 
 import { RNASequenceItemRenderer } from './RNASequenceItemRenderer';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';

@@ -5,7 +5,7 @@ import {
   waitForPageInit,
   layout,
   recognize,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -15,11 +15,14 @@ import {
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 test.describe('getKet', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
   test('with two monomers bonded', async ({ page }) => {
@@ -49,7 +52,7 @@ test.describe('getKet', () => {
 
     try {
       await layout(page);
-    } catch (e) {
+    } catch {
       errorCaught = true;
     }
 
@@ -79,7 +82,7 @@ test.describe('getKet', () => {
 
     try {
       await recognize(page, invalidBlob);
-    } catch (e) {
+    } catch {
       errorCaught = true;
     }
 
@@ -107,7 +110,7 @@ test.describe('getKet', () => {
          * Description: 'getSmiles','getRxn','getSmarts','getCml','getSdf','getCDXml','getCDX', method throws an Error
          */
 
-        await page.waitForFunction(() => (window as any).ketcher);
+        await page.waitForFunction(() => (globalThis as any).ketcher);
 
         let errorCaught = false;
 
@@ -119,15 +122,15 @@ test.describe('getKet', () => {
 
         try {
           await page.evaluate((fmt) => {
-            const ketcher = (window as any).ketcher as unknown as {
+            const ketcher = (globalThis as any).ketcher as unknown as {
               [key: string]: () => Promise<any>;
             };
             if (typeof ketcher[fmt] !== 'function') {
-              throw new Error(`${fmt} is not a function`);
+              throw new TypeError(`${fmt} is not a function`);
             }
             return ketcher[fmt]();
           }, format);
-        } catch (e) {
+        } catch {
           errorCaught = true;
         }
 
@@ -156,7 +159,7 @@ test.describe('getKet', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Hydrogen);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
 
     await verifyFileExport(

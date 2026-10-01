@@ -70,7 +70,8 @@
                     0,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "N",
@@ -187,6 +188,7 @@
         "fullName": "L-2-aminobutyric acid",
         "alias": "Abu",
         "aliasHELM": "Abu",
+        "aliasBILN": "Abu",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -242,7 +244,8 @@
                     -1.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -500,6 +503,7 @@
         "fullName": "3-(2-naphthyl)-alanine",
         "alias": "2Nal",
         "aliasHELM": "2Nal",
+        "aliasBILN": "Nal",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -563,7 +567,8 @@
                     -0.751,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -746,6 +751,7 @@
         "fullName": "D-3-(3-pyridyl)-alanine",
         "alias": "D-3Pal",
         "aliasHELM": "D-3Pal",
+        "aliasBILN": "D-3Pal",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,

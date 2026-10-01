@@ -15,6 +15,8 @@
  ***************************************************************************/
 
 import {
+  type ReStruct,
+  type Struct,
   Vec2,
   fromItemsFuse,
   fromTemplateOnAtom,
@@ -24,111 +26,83 @@ import {
   getItemsToFuse,
   FunctionalGroup,
   SGroup,
-  ReStruct,
-  Struct,
   fromFragmentDeletion,
   fromSgroupDeletion,
   Action,
   vectorUtils,
-  Bond,
   BondAttr,
   AtomAttr,
   MonomerMicromolecule,
   CoordinateTransformation,
 } from 'ketcher-core';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { MODES } from 'src/constants';
-import { Tool } from './Tool';
+import type { Tool } from './Tool';
 import TemplatePreview from './templatePreview';
+import {
+  getAngleFromEvent,
+  getBondFlipSign,
+  getSign,
+} from './template.helpers';
+import type {
+  DragContext,
+  InternalTemplate,
+  Sign,
+  TemplateToolInput,
+} from './template.types';
+import type { ClosestItemWithMap } from '../shared/closest.types';
 
-export function getBondFlipSign(struct: Struct, bond: Bond): number {
-  const xy0 = new Vec2();
-  const frid = struct.atoms.get(bond.begin)?.fragment;
-  const frIds = struct.getFragmentIds(frid as number);
-  let count = 0;
-
-  let loop = struct.halfBonds.get(bond?.hb1 as number)?.loop;
-
-  if (loop && loop < 0) {
-    loop = struct.halfBonds.get(bond?.hb2 as number)?.loop;
-  }
-
-  if (loop && loop >= 0) {
-    const loopHbs = struct.loops.get(loop)?.hbs;
-    loopHbs?.forEach((hb) => {
-      const halfBondBegin = struct.halfBonds.get(hb)?.begin;
-
-      if (halfBondBegin) {
-        const hbbAtom = struct.atoms.get(halfBondBegin);
-
-        if (hbbAtom) {
-          xy0.add_(hbbAtom.pp); // eslint-disable-line no-underscore-dangle
-          count++;
-        }
-      }
-    });
-  } else {
-    frIds.forEach((id) => {
-      const atomById = struct.atoms.get(id);
-
-      if (atomById) {
-        xy0.add_(atomById.pp); // eslint-disable-line no-underscore-dangle
-        count++;
-      }
-    });
-  }
-
-  const v0 = xy0.scaled(1 / count);
-  return getSign(struct, bond, v0) || 1;
-}
-
-export function getAngleFromEvent(event, ci, restruct) {
-  const degree = restruct.atoms.get(ci.id)?.a.neighbors.length;
-  let angle;
-  if (degree && degree > 1) {
-    // common case
-    angle = null;
-  } else if (degree === 1) {
-    // on chain end
-    const atom = restruct.molecule.atoms.get(ci.id);
-    const neiId =
-      atom && restruct.molecule.halfBonds.get(atom.neighbors[0])?.end;
-    const nei: any =
-      (neiId || neiId === 0) && restruct.molecule.atoms.get(neiId);
-
-    angle = event.ctrlKey
-      ? vectorUtils.calcAngle(nei?.pp, atom?.pp)
-      : vectorUtils.fracAngle(vectorUtils.calcAngle(nei.pp, atom?.pp), null);
-  } else {
-    // on single atom
-    angle = 0;
-  }
-  return angle;
-}
+export { getAngleFromEvent, getBondFlipSign, getSign };
 
 class TemplateTool implements Tool {
   private readonly editor: Editor;
-  private readonly mode: any;
-  private readonly template: any;
+  private readonly mode: string | null;
+  private readonly template: InternalTemplate;
   private readonly findItems: Array<string>;
   public templatePreview: TemplatePreview | null;
-  private dragCtx: any;
+  private dragCtx: DragContext | undefined;
   private targetGroupsIds: Array<number> = [];
   private readonly isSaltOrSolvent: boolean;
   private event: Event | undefined;
 
-  constructor(editor: Editor, tmpl) {
+  constructor(editor: Editor, tmpl: TemplateToolInput) {
     this.editor = editor;
     this.mode = getTemplateMode(tmpl);
     this.editor.selection(null);
     this.isSaltOrSolvent = SGroup.isSaltOrSolvent(tmpl.struct.name);
     const sGroup = tmpl.struct.sgroups.values().next().value as
-      | SGroup
-      | undefined;
+      SGroup | undefined;
+
+    const frag = tmpl.struct;
+    frag.rescale();
+
+    const xy0 = new Vec2();
+    frag.atoms.forEach((atom) => {
+      xy0.add_(atom.pp);
+    });
+
+    const xy0Center = xy0.scaled(1 / (frag.atoms.size || 1));
+    // Number() is used instead of parseInt() because tmpl.aid/bid are typed
+    // as string | number | undefined, and TypeScript's parseInt() only accepts
+    // string. Number() coerces all three variants: Number(undefined) → NaN,
+    // Number(n: number) → n, Number(s: string) → parsed value or NaN.
+    // NaN is falsy so the || operator falls through to the fallback, giving
+    // identical runtime behaviour to the original parseInt() call.
+    // Note: Number("") returns 0, but aid/bid values come from numeric SDF
+    // fields and will never be an empty string in practice.
+    const aid = (Number(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0;
+    const templateAtom = frag.atoms.get(aid);
+
     this.template = {
-      aid: (parseInt(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0,
-      bid: parseInt(tmpl.bid) || 0,
+      aid,
+      bid: Number(tmpl.bid) || 0,
+      sign: 0,
+      molecule: frag,
+      xy0: xy0Center,
+      angle0: templateAtom
+        ? vectorUtils.calcAngle(templateAtom.pp, xy0Center)
+        : 0,
     };
 
     this.templatePreview = new TemplatePreview(
@@ -137,28 +111,16 @@ class TemplateTool implements Tool {
       this.mode,
     );
 
-    const frag = tmpl.struct;
-    frag.rescale();
-
-    const xy0 = new Vec2();
-    frag.atoms.forEach((atom) => {
-      xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
-    });
-
-    this.template.molecule = frag; // preloaded struct
     this.findItems = [];
-    this.template.xy0 = xy0.scaled(1 / (frag.atoms.size || 1)); // template center
 
-    const atom = frag.atoms.get(this.template.aid);
-    if (atom) {
-      this.template.angle0 = vectorUtils.calcAngle(atom.pp, this.template.xy0); // center tilt
+    if (templateAtom) {
       this.findItems.push('atoms');
     }
 
     const bond = frag.bonds.get(this.template.bid);
     if (bond && !this.isModeFunctionalGroup) {
       // template location sign against attachment bond
-      this.template.sign = getSign(frag, bond, this.template.xy0);
+      this.template.sign = getSign(frag, bond, xy0Center);
       this.findItems.push('bonds');
     }
 
@@ -181,7 +143,7 @@ class TemplateTool implements Tool {
   }
 
   private get closestItem() {
-    return this.editor.findItem(this.event, [
+    return this.editor.findItem(this.event as Event, [
       'atoms',
       'bonds',
       'sgroups',
@@ -287,6 +249,8 @@ class TemplateTool implements Tool {
     this.dragCtx = {
       xy0: CoordinateTransformation.pageToModel(event, this.editor.render),
       item: this.editor.findItem(this.event, this.findItems),
+      sign1: 0,
+      sign2: 0,
     };
 
     const dragCtx = this.dragCtx;
@@ -300,7 +264,10 @@ class TemplateTool implements Tool {
 
     if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       // calculate fragment center
-      const bond = this.struct.bonds.get(ci.id)!;
+      const bond = this.struct.bonds.get(ci.id);
+      if (!bond) {
+        return;
+      }
 
       // calculate default template flip
       dragCtx.sign1 = getBondFlipSign(this.struct, bond);
@@ -308,15 +275,22 @@ class TemplateTool implements Tool {
     }
   }
 
-  mousemove(event) {
+  mousemove(event: MouseEvent) {
     if (!this.dragCtx) {
+      // editor.hover and movePreview are typed as requiring PointerEvent, but
+      // they only access MouseEvent-compatible properties (clientX/clientY and
+      // findItem coordinates). The Tool interface uses the base Event type for
+      // compatibility so we cast here. In practice all tool mouse events are
+      // dispatched as PointerEvent at runtime (PointerEvent extends MouseEvent),
+      // and no PointerEvent-specific properties (pointerId, pressure, etc.) are
+      // accessed by the callee, making this cast safe.
       this.editor.hover(
         this.editor.findItem(event, this.findItems),
         null,
-        event,
+        event as PointerEvent,
       );
 
-      this.templatePreview?.movePreview(event);
+      this.templatePreview?.movePreview(event as PointerEvent);
 
       return;
     }
@@ -334,12 +308,16 @@ class TemplateTool implements Tool {
     const ci = dragCtx.item;
     let targetPos: Vec2 | null | undefined = null;
     /* moving when attached to bond */
-    if (ci && ci.map === 'bonds' && !this.isModeFunctionalGroup) {
+    if (ci?.map === 'bonds' && !this.isModeFunctionalGroup) {
       const bond = this.struct.bonds.get(ci.id);
-      let sign = getSign(this.struct, bond, eventPosition);
+      if (!bond) {
+        return;
+      }
+
+      let sign: Sign = getSign(this.struct, bond, eventPosition);
 
       if (dragCtx.sign1 * this.template.sign > 0) {
-        sign = -sign;
+        sign = -sign as Sign;
       }
 
       if (sign !== dragCtx.sign2 || !dragCtx.action) {
@@ -355,7 +333,7 @@ class TemplateTool implements Tool {
           this.editor.event,
           dragCtx.sign1 * dragCtx.sign2 > 0,
           false,
-        ) as Array<any>;
+        );
 
         dragCtx.action = action;
         this.editor.update(dragCtx.action, true);
@@ -367,7 +345,7 @@ class TemplateTool implements Tool {
     }
     /* end */
 
-    let extraBond: boolean | null = null;
+    let extraBond = false;
     // calc initial pos and is extra bond needed
     if (!ci) {
       //  ci.type == 'Canvas'
@@ -436,6 +414,7 @@ class TemplateTool implements Tool {
       );
     } else if (ci?.map === 'atoms' || ci?.map === 'functionalGroups') {
       const atomId = getTargetAtomId(this.struct, ci);
+      if (atomId === undefined) return;
       [action] = fromTemplateOnAtom(
         this.editor.render.ctab,
         this.template,
@@ -447,13 +426,16 @@ class TemplateTool implements Tool {
     }
     dragCtx.action = action;
 
-    this.editor.update(dragCtx.action, true);
+    if (dragCtx.action) {
+      this.editor.update(dragCtx.action, true);
+    }
 
     // TODO: refactor after #2195 comes into effect
     if (this.targetGroupsIds.length) this.targetGroupsIds.length = 0;
   }
 
-  mouseup(event?) {
+  mouseup(event?: Event) {
+    const mouseEvent = event as MouseEvent | undefined;
     const dragCtx = this.dragCtx;
 
     if (!dragCtx) {
@@ -466,28 +448,21 @@ class TemplateTool implements Tool {
     let ci = dragCtx.item;
 
     /* after moving around bond */
-    if (
-      dragCtx.action &&
-      ci &&
-      ci.map === 'bonds' &&
-      !this.isModeFunctionalGroup
-    ) {
+    if (dragCtx.action && ci?.map === 'bonds' && !this.isModeFunctionalGroup) {
       dragCtx.action.perform(restruct); // revert drag action
 
-      const promise = fromTemplateOnBondAction(
+      let [action, pasteItems] = fromTemplateOnBondAction(
         restruct,
         this.template,
         ci.id,
         this.editor.event,
         dragCtx.sign1 * dragCtx.sign2 > 0,
         true,
-      ) as Promise<any>;
+      );
 
-      promise.then(([action, pasteItems]) => {
-        const mergeItems = getItemsToFuse(this.editor, pasteItems);
-        action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
-        this.editor.update(action);
-      });
+      const mergeItems = getItemsToFuse(this.editor, pasteItems);
+      action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
+      this.editor.update(action);
       return;
     }
     /* end */
@@ -504,7 +479,10 @@ class TemplateTool implements Tool {
       this.targetGroupsIds.length
     ) {
       const restruct = this.editor.render.ctab;
-      const functionalGroupToReplace = this.struct.sgroups.get(ci.id)!;
+      const functionalGroupToReplace = this.struct.sgroups.get(ci.id);
+      if (!functionalGroupToReplace) {
+        return;
+      }
 
       if (
         this.isSaltOrSolvent &&
@@ -515,7 +493,7 @@ class TemplateTool implements Tool {
           template: this.template,
           dragCtx,
           editor: this.editor,
-          event,
+          event: mouseEvent,
         });
         return;
       }
@@ -535,7 +513,12 @@ class TemplateTool implements Tool {
         fromFragmentDeletion(restruct, { atoms: atomsWithoutAttachmentAtom }),
       );
 
-      ci = { map: 'atoms', id: sGroupPositionAtomId };
+      // Reassign ci to the attachment atom of the replaced functional group so
+      // the template is placed on that atom. dist is 0 because this atom IS
+      // the merge target (zero distance from the intended attachment point);
+      // ClosestItemWithMap requires dist but it is not read in the atom-merge
+      // code path that follows.
+      ci = { map: 'atoms', id: sGroupPositionAtomId, dist: 0 };
     }
 
     if (!dragCtx.action) {
@@ -545,7 +528,7 @@ class TemplateTool implements Tool {
           template: this.template,
           dragCtx,
           editor: this.editor,
-          event,
+          event: mouseEvent,
         });
         return;
       } else if (ci.map === 'atoms') {
@@ -557,12 +540,12 @@ class TemplateTool implements Tool {
             template: this.template,
             dragCtx,
             editor: this.editor,
-            event,
+            event: mouseEvent,
           });
           return;
         }
 
-        const angle = getAngleFromEvent(event, ci, restruct);
+        const angle = getAngleFromEvent(mouseEvent, ci, restruct);
 
         [action] = fromTemplateOnAtom(
           restruct,
@@ -576,22 +559,18 @@ class TemplateTool implements Tool {
         }
         dragCtx.action = action;
       } else if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
-        const promise = fromTemplateOnBondAction(
+        let [action, pasteItems] = fromTemplateOnBondAction(
           restruct,
           this.template,
           ci.id,
           this.editor.event,
           dragCtx.sign1 * dragCtx.sign2 > 0,
           true,
-        ) as Promise<any>;
+        );
 
-        promise.then(([action, pasteItems]) => {
-          if (!this.isModeFunctionalGroup) {
-            const mergeItems = getItemsToFuse(this.editor, pasteItems);
-            action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
-            this.editor.update(action);
-          }
-        });
+        const mergeItems = getItemsToFuse(this.editor, pasteItems);
+        action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
+        this.editor.update(action);
 
         return;
       }
@@ -604,10 +583,16 @@ class TemplateTool implements Tool {
       new AtomAttr(id, 'isPreview', false).perform(restruct);
     }
     const completeAction = dragCtx.action;
-    if (completeAction && !completeAction.isDummy()) {
+    if (completeAction && !completeAction.isDummy(restruct)) {
       this.editor.update(completeAction);
     }
-    this.editor.hover(this.editor.findItem(event, null), null, event);
+    if (mouseEvent) {
+      this.editor.hover(
+        this.editor.findItem(mouseEvent, null),
+        null,
+        mouseEvent as PointerEvent,
+      );
+    }
   }
 
   cancel() {
@@ -632,10 +617,10 @@ function addOnCanvasWithoutMerge({
   event,
 }: {
   restruct: ReStruct;
-  template: Struct;
-  dragCtx;
+  template: InternalTemplate;
+  dragCtx: Pick<DragContext, 'xy0'>;
   editor: Editor;
-  event: PointerEvent;
+  event?: MouseEvent;
 }) {
   const [action] = fromTemplateOnCanvas(
     restruct,
@@ -646,42 +631,33 @@ function addOnCanvasWithoutMerge({
   );
   editor.update(action);
   editor.selection(null);
-  editor.hover(editor.findItem(event, null), null, event);
+  if (event) {
+    editor.hover(editor.findItem(event, null), null, event as PointerEvent);
+  }
   editor.event.message.dispatch({
     info: false,
   });
 }
 
-function getTemplateMode(tmpl) {
+function getTemplateMode(tmpl: TemplateToolInput): string | null {
   if (tmpl.mode) {
     return tmpl.mode;
   }
 
-  if (['Functional Groups', 'Salts and Solvents'].includes(tmpl.props?.group)) {
+  if (
+    tmpl.props?.group &&
+    ['Functional Groups', 'Salts and Solvents'].includes(tmpl.props.group)
+  ) {
     return MODES.FG;
   }
 
   return null;
 }
 
-export function getSign(molecule, bond, v) {
-  const begin = molecule.atoms.get(bond.begin).pp;
-  const end = molecule.atoms.get(bond.end).pp;
-
-  const sign = Vec2.cross(Vec2.diff(begin, end), Vec2.diff(v, end));
-
-  if (sign > 0) {
-    return 1;
-  }
-
-  if (sign < 0) {
-    return -1;
-  }
-
-  return 0;
-}
-
-function getTargetAtomId(struct: Struct, ci): number | void {
+function getTargetAtomId(
+  struct: Struct,
+  ci: ClosestItemWithMap,
+): number | void {
   if (ci.map === 'atoms') {
     return ci.id;
   }

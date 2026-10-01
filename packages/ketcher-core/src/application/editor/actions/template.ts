@@ -14,31 +14,42 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, SGroup, Struct, Vec2 } from 'domain/entities';
+import { Atom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { AtomAdd, BondAdd, BondAttr, CalcImplicitH } from '../operations';
 import { atomForNewBond, atomGetAttr } from './utils';
 import { fromAtomsAttrs, mergeSgroups } from './atom';
-import { fromBondStereoUpdate, fromBondsAttrs, fromBondAddition } from './bond';
+import { fromBondsAttrs, fromBondAddition } from './bond';
+import { fromBondStereoUpdate } from './bondStereo';
 
 import { Action } from './action';
 import closest from '../shared/closest';
 import { fromAromaticTemplateOnBond } from './aromaticFusing';
-import { fromPaste } from './paste';
+import { fromPaste, type CreatedItems } from './paste';
 import utils from '../shared/utils';
 import { fromSgroupAddition } from './sgroup';
+import type { ReStruct } from 'application/render';
+import { KetcherLogger } from 'utilities';
+import { isNumber } from 'lodash';
+import type { EditorTemplate, PasteItems } from './template.types';
+
+export type { EditorTemplate, PasteItems } from './template.types';
 
 const benzeneMoleculeName = 'Benzene';
 const cyclopentadieneMoleculeName = 'Cyclopentadiene';
 const benzeneDoubleBondIndexes = [2, 4];
 
 export function fromTemplateOnCanvas(
-  restruct,
-  template,
-  pos,
+  restruct: ReStruct,
+  template: EditorTemplate,
+  pos: Vec2,
   angle = 0,
   isPreview = true,
-): [Action, { atoms: number[]; bonds: number[] }] {
-  const [action, pasteItems] = fromPaste(
+): [Action, { atoms: number[]; bonds: number[] }, CreatedItems] {
+  const [action, pasteItems, items] = fromPaste(
     restruct,
     template.molecule,
     pos,
@@ -48,13 +59,17 @@ export function fromTemplateOnCanvas(
 
   action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct));
 
-  return [action, pasteItems];
+  return [action, pasteItems, items];
 }
 
-function extraBondAction(restruct, aid, angle) {
+function extraBondAction(
+  restruct: ReStruct,
+  aid: number,
+  angle: number | null,
+) {
   let action = new Action();
-  const frid = atomGetAttr(restruct, aid, 'fragment');
-  let additionalAtom: any = null;
+  const frid = atomGetAttr(restruct, aid, 'fragment') as number;
+  let additionalAtom: number | null;
 
   if (angle === null) {
     const middleAtom = atomForNewBond(restruct, aid);
@@ -70,31 +85,41 @@ function extraBondAction(restruct, aid, angle) {
     action.operations.reverse();
     additionalAtom = actionRes[2];
   } else {
+    const pivotAtom = restruct.molecule.atoms.get(aid);
+    if (!pivotAtom) {
+      KetcherLogger.error(
+        `template.ts::extraBondAction: atom ${aid} not found`,
+      );
+      return { action, aid1: aid };
+    }
+
     const operation = new AtomAdd(
       { label: 'C', fragment: frid },
-      new Vec2(1, 0)
-        .rotate(angle)
-        .add(restruct.molecule.atoms.get(aid).pp)
-        .get_xy0(),
-    ).perform(restruct) as AtomAdd;
-
-    action.addOp(operation);
-    action.addOp(
-      new BondAdd(aid, operation.data.aid, { type: 1 }).perform(restruct),
+      new Vec2(1, 0).rotate(angle).add(pivotAtom.pp).get_xy0(),
     );
+    action.addOp(operation.perform(restruct));
+    const newAtomId = operation.data.aid;
+    if (!isNumber(newAtomId)) {
+      KetcherLogger.error(
+        'template.ts::extraBondAction: atom id was not assigned after AtomAdd',
+      );
+      return { action, aid1: aid };
+    }
 
-    additionalAtom = operation.data.aid;
+    action.addOp(new BondAdd(aid, newAtomId, { type: 1 }).perform(restruct));
+
+    additionalAtom = newAtomId;
   }
 
   return { action, aid1: additionalAtom };
 }
 
 export function fromTemplateOnAtom(
-  restruct,
-  template,
-  aid,
-  angle,
-  extraBond,
+  restruct: ReStruct,
+  template: EditorTemplate,
+  aid: number,
+  angle: number | null,
+  extraBond: boolean,
   isPreview = false,
 ): [Action, { atoms: number[]; bonds: number[] }] {
   let action = new Action();
@@ -105,9 +130,16 @@ export function fromTemplateOnAtom(
   const isTmplSingleGroup = template.molecule.isSingleGroup();
 
   let atom = struct.atoms.get(aid); // aid - the atom that was clicked on
+  if (!atom) {
+    KetcherLogger.error(
+      `template.ts::fromTemplateOnAtom: atom ${aid} not found`,
+    );
+    return [action, { atoms: [], bonds: [] }];
+  }
+  const clickedAtom = atom;
   let aid1 = aid; // aid1 - the atom on the other end of the extra bond || aid
 
-  let delta: any = null;
+  let delta: number;
 
   if (extraBond) {
     // create extra bond after click on atom
@@ -115,30 +147,42 @@ export function fromTemplateOnAtom(
     action = extraRes.action;
     aid1 = extraRes.aid1;
 
-    atom = struct.atoms.get(aid1);
-    delta =
-      utils.calcAngle(struct.atoms.get(aid).pp, atom.pp) - template.angle0;
-  } else {
-    if (angle === null) {
-      angle = utils.calcAngle(atom.pp, atomForNewBond(restruct, aid).pos);
+    const atom1 = struct.atoms.get(aid1);
+    if (!atom1) {
+      KetcherLogger.error(
+        `template.ts::fromTemplateOnAtom: extra bond atom ${aid1} not found`,
+      );
+      return [action, { atoms: [], bonds: [] }];
     }
-    delta = angle - template.angle0;
+    atom = atom1;
+    delta = utils.calcAngle(clickedAtom.pp, atom.pp) - template.angle0;
+  } else {
+    delta =
+      (angle ?? utils.calcAngle(atom.pp, atomForNewBond(restruct, aid).pos)) -
+      template.angle0;
   }
 
-  const map = new Map();
-  const xy0 = tmpl.atoms.get(template.aid).pp;
+  const map = new Map<number, number>();
+  const tmplAttachAtom = tmpl.atoms.get(template.aid);
+  if (!tmplAttachAtom) {
+    KetcherLogger.error(
+      `template.ts::fromTemplateOnAtom: template attachment atom ${template.aid} not found`,
+    );
+    return [action, { atoms: [], bonds: [] }];
+  }
+  const xy0 = tmplAttachAtom.pp;
   const frid = atomGetAttr(restruct, aid, 'fragment');
 
   /* For merge */
-  const pasteItems = {
+  const pasteItems: { atoms: number[]; bonds: number[] } = {
     // only atoms and bonds now
-    atoms: [] as number[],
-    bonds: [] as number[],
+    atoms: [],
+    bonds: [],
   };
   /* ----- */
 
   tmpl.atoms.forEach((a, id) => {
-    const attrs: any = Atom.getAttrHash(a);
+    const attrs = Atom.getAttrHash(a) as Record<string, unknown>;
     attrs.fragment = frid;
 
     if (id === template.aid) {
@@ -152,8 +196,8 @@ export function fromTemplateOnAtom(
         restruct,
       ) as AtomAdd;
       action.addOp(operation);
-      map.set(id, operation.data.aid);
-      pasteItems.atoms.push(operation.data.aid);
+      map.set(id, operation.data.aid as number);
+      pasteItems.atoms.push(operation.data.aid as number);
     }
   });
 
@@ -161,19 +205,21 @@ export function fromTemplateOnAtom(
 
   tmpl.bonds.forEach((bond) => {
     const operation = new BondAdd(
-      map.get(bond.begin),
-      map.get(bond.end),
+      map.get(bond.begin) as number,
+      map.get(bond.end) as number,
       bond,
     ).perform(restruct) as BondAdd;
     action.addOp(operation);
-    new BondAttr(operation.data.bid, 'isPreview', isPreview).perform(restruct);
+    new BondAttr(operation.data.bid as number, 'isPreview', isPreview).perform(
+      restruct,
+    );
 
-    pasteItems.bonds.push(operation.data.bid);
+    pasteItems.bonds.push(operation.data.bid as number);
   });
 
   tmpl.sgroups.forEach((sg: SGroup) => {
     const newsgid = restruct.molecule.sgroups.newId();
-    const sgAtoms = sg.atoms.map((aid) => map.get(aid));
+    const sgAtoms = sg.atoms.map((aid) => map.get(aid) as number);
     const attachmentPoints = sg.cloneAttachmentPoints(map);
     const sgAction = fromSgroupAddition(
       restruct,
@@ -198,30 +244,38 @@ export function fromTemplateOnAtom(
   action.operations.reverse();
 
   action.addOp(new CalcImplicitH([...pasteItems.atoms, aid]).perform(restruct));
-  action.mergeWith(
-    fromBondStereoUpdate(
-      restruct,
-      restruct.molecule.bonds.get(pasteItems.bonds[0]),
-    ),
-  );
+  if (pasteItems.bonds.length) {
+    const firstPastedBond = restruct.molecule.bonds.get(pasteItems.bonds[0]);
+    if (!firstPastedBond) {
+      KetcherLogger.error(
+        `template.ts::fromTemplateOnAtom: pasted bond ${pasteItems.bonds[0]} not found`,
+      );
+      return [action, pasteItems];
+    }
+    action.mergeWith(fromBondStereoUpdate(restruct, firstPastedBond));
+  }
 
   return [action, pasteItems];
 }
 
+type FromTemplateOnBondResult = [Action, { atoms: number[]; bonds: number[] }];
+
 export function fromTemplateOnBondAction(
-  restruct,
-  template,
-  bid,
-  events,
-  flip,
-  force,
+  restruct: ReStruct,
+  template: EditorTemplate,
+  bid: number,
+  events: unknown,
+  flip: boolean,
+  force: boolean,
   isPreview = false,
-) {
+): FromTemplateOnBondResult {
   if (!force) return fromTemplateOnBond(restruct, template, bid, flip);
 
-  const simpleFusing = (restruct, template, bid) =>
-    fromTemplateOnBond(restruct, template, bid, flip, isPreview); // eslint-disable-line
-  /* aromatic merge (Promise) */
+  const simpleFusing = (
+    restruct: ReStruct,
+    template: EditorTemplate,
+    bid: number,
+  ) => fromTemplateOnBond(restruct, template, bid, flip, isPreview);
   return fromAromaticTemplateOnBond(
     restruct,
     template,
@@ -269,94 +323,104 @@ function getConnectingBond(
   return null;
 }
 
-function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
-  // TODO: refactor function !!
-  const action = new Action();
-
-  const tmpl = template.molecule;
-  const struct = restruct.molecule;
-
-  const bond = struct.bonds.get(bid);
-  const tmplBond = tmpl.bonds.get(template.bid);
-
-  const tmplBegin = tmpl.atoms.get(flip ? tmplBond.end : tmplBond.begin);
-
-  const atomsMap = new Map([
-    [tmplBond.begin, flip ? bond.end : bond.begin],
-    [tmplBond.end, flip ? bond.begin : bond.end],
-  ]);
-
-  // calc angle
-  const bondAtoms = {
-    begin: flip ? tmplBond.end : tmplBond.begin,
-    end: flip ? tmplBond.begin : tmplBond.end,
-  };
-  const { angle, scale } = utils.mergeBondsParams(
-    struct,
-    bond,
-    tmpl,
-    bondAtoms,
-  );
-
-  const frid = struct.getBondFragment(bid);
-
-  /* For merge */
-  const pasteItems: any = {
-    // only atoms and bonds now
-    atoms: [],
-    bonds: [],
-  };
-  /* ----- */
+function placeTemplateAtoms(
+  restruct: ReStruct,
+  tmpl: Struct,
+  struct: Struct,
+  tmplBond: Bond,
+  tmplBegin: Atom,
+  bond: Bond,
+  atomsMap: Map<number, number>,
+  frid: number | undefined,
+  angle: number,
+  scale: number,
+  action: Action,
+  pasteItems: PasteItems,
+) {
+  const bondBeginAtom = struct.atoms.get(bond.begin);
+  if (!bondBeginAtom) {
+    KetcherLogger.error(
+      `template.ts::placeTemplateAtoms: bond begin atom ${bond.begin} not found`,
+    );
+    return;
+  }
 
   tmpl.atoms.forEach((atom, id) => {
-    const attrs: any = Atom.getAttrHash(atom);
+    const attrs = Atom.getAttrHash(atom) as Record<string, unknown>;
     attrs.fragment = frid;
     if (id === tmplBond.begin || id === tmplBond.end) {
-      action.mergeWith(fromAtomsAttrs(restruct, atomsMap.get(id), attrs, true));
+      const mappedAtomId = atomsMap.get(id);
+      if (mappedAtomId === undefined) {
+        KetcherLogger.error(
+          `template.ts::placeTemplateAtoms: mapped atom for template atom ${id} not found`,
+        );
+        return;
+      }
+      action.mergeWith(fromAtomsAttrs(restruct, mappedAtomId, attrs, true));
       return;
     }
 
     const v = Vec2.diff(atom.pp, tmplBegin.pp)
       .rotate(angle)
       .scaled(scale)
-      .add(struct.atoms.get(bond.begin).pp);
+      .add(bondBeginAtom.pp);
     const mergeA = closest.atom(restruct, v, null, 0.1);
 
     if (mergeA === null) {
       const operation = new AtomAdd(attrs, v).perform(restruct) as AtomAdd;
       action.addOp(operation);
-      atomsMap.set(id, operation.data.aid);
-      pasteItems.atoms.push(operation.data.aid);
+      atomsMap.set(id, operation.data.aid as number);
+      pasteItems.atoms.push(operation.data.aid as number);
     } else {
       atomsMap.set(id, mergeA.id);
+      const mappedAtomId = atomsMap.get(id);
+      if (mappedAtomId === undefined) {
+        KetcherLogger.error(
+          `template.ts::placeTemplateAtoms: mapped atom for template atom ${id} not found after merge`,
+        );
+        return;
+      }
 
-      action.mergeWith(fromAtomsAttrs(restruct, atomsMap.get(id), attrs, true));
+      action.mergeWith(fromAtomsAttrs(restruct, mappedAtomId, attrs, true));
       // TODO [RB] need to merge fragments?
     }
   });
   mergeSgroups(action, restruct, pasteItems.atoms, bond.begin);
+}
 
-  // When a template of "Benzene" molecule is attached it
-  // uses specific fusing rules when attaching to a bond
-  // that is connected exactly to one bond on each side.
-  // For more info please refer to: https://github.com/epam/ketcher/issues/1855
-  const fusingBondType = getConnectingBond(tmpl, struct, bid, bond);
+function placeTemplateBonds(
+  restruct: ReStruct,
+  tmpl: Struct,
+  struct: Struct,
+  tmplBond: Bond,
+  bond: Bond,
+  bid: number,
+  atomsMap: Map<number, number>,
+  fusingBondType: number | null,
+  isPreview: boolean,
+  action: Action,
+  pasteItems: PasteItems,
+) {
   const isFusingBenzeneBySpecialRules = fusingBondType !== null;
 
   tmpl.bonds.forEach((tBond, tBondIndex) => {
-    const existId = struct.findBondId(
-      atomsMap.get(tBond.begin),
-      atomsMap.get(tBond.end),
-    );
-    let previewBondId = null;
+    const beginAtomId = atomsMap.get(tBond.begin);
+    const endAtomId = atomsMap.get(tBond.end);
+    if (beginAtomId === undefined || endAtomId === undefined) {
+      KetcherLogger.error(
+        `template.ts::placeTemplateBonds: mapped atoms for template bond (${tBond.begin}, ${tBond.end}) not found`,
+      );
+      return;
+    }
+
+    const existId = struct.findBondId(beginAtomId, endAtomId);
+    let previewBondId: number | null;
     if (existId === null) {
-      const operation = new BondAdd(
-        atomsMap.get(tBond.begin),
-        atomsMap.get(tBond.end),
-        tBond,
-      ).perform(restruct) as BondAdd;
+      const operation = new BondAdd(beginAtomId, endAtomId, tBond).perform(
+        restruct,
+      ) as BondAdd;
       action.addOp(operation);
-      const newBondId = operation.data.bid;
+      const newBondId = operation.data.bid as number;
       previewBondId = newBondId;
 
       if (isFusingBenzeneBySpecialRules) {
@@ -376,8 +440,8 @@ function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
             struct,
             bid,
           );
-          const bondBegin = struct.bonds.get(beginBondIds[0])!;
-          const bondEnd = struct.bonds.get(endBondIds[0])!;
+          const bondBegin = struct.bonds.get(beginBondIds[0]) as Bond;
+          const bondEnd = struct.bonds.get(endBondIds[0]) as Bond;
           const newBondType = Bond.getCyclopentadieneDoubleBondIndexes(
             bond,
             bondBegin,
@@ -404,10 +468,19 @@ function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
       previewBondId = bid;
     }
     action.addOp(
-      new BondAttr(previewBondId, 'isPreview', isPreview).perform(restruct),
+      new BondAttr(previewBondId as number, 'isPreview', isPreview).perform(
+        restruct,
+      ),
     );
   });
+}
 
+function applyTemplatePostProcessing(
+  restruct: ReStruct,
+  bond: Bond,
+  pasteItems: PasteItems,
+  action: Action,
+) {
   if (pasteItems.atoms.length) {
     action.addOp(
       new CalcImplicitH([bond.begin, bond.end, ...pasteItems.atoms]).perform(
@@ -417,13 +490,103 @@ function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
   }
 
   if (pasteItems.bonds.length) {
-    action.mergeWith(
-      fromBondStereoUpdate(
-        restruct,
-        restruct.molecule.bonds.get(pasteItems.bonds[0]),
-      ),
-    );
+    const firstPastedBond = restruct.molecule.bonds.get(pasteItems.bonds[0]);
+    if (!firstPastedBond) {
+      KetcherLogger.error(
+        `template.ts::applyTemplatePostProcessing: pasted bond ${pasteItems.bonds[0]} not found`,
+      );
+      return;
+    }
+    action.mergeWith(fromBondStereoUpdate(restruct, firstPastedBond));
   }
+}
+
+function fromTemplateOnBond(
+  restruct: ReStruct,
+  template: EditorTemplate,
+  bid: number,
+  flip: boolean,
+  isPreview = false,
+): [Action, PasteItems] {
+  const action = new Action();
+
+  const tmpl = template.molecule;
+  const struct = restruct.molecule;
+
+  const bond = struct.bonds.get(bid);
+  const tmplBond = tmpl.bonds.get(template.bid);
+
+  if (!bond || !tmplBond) {
+    KetcherLogger.error(
+      `template.ts::fromTemplateOnBond: bond ${bid} or template bond ${template.bid} not found`,
+    );
+    return [action, { atoms: [], bonds: [] }];
+  }
+
+  const tmplBegin = tmpl.atoms.get(flip ? tmplBond.end : tmplBond.begin);
+  if (!tmplBegin) {
+    KetcherLogger.error(
+      `template.ts::fromTemplateOnBond: template begin atom not found`,
+    );
+    return [action, { atoms: [], bonds: [] }];
+  }
+
+  const atomsMap = new Map<number, number>([
+    [tmplBond.begin, flip ? bond.end : bond.begin],
+    [tmplBond.end, flip ? bond.begin : bond.end],
+  ]);
+
+  const bondAtoms = {
+    begin: flip ? tmplBond.end : tmplBond.begin,
+    end: flip ? tmplBond.begin : tmplBond.end,
+  };
+  const mergeParams = utils.mergeBondsParams(struct, bond, tmpl, bondAtoms);
+  if (!mergeParams) return [action, { atoms: [], bonds: [] }];
+  const { angle, scale } = mergeParams;
+
+  const frid = struct.getBondFragment(bid);
+
+  const pasteItems: { atoms: number[]; bonds: number[] } = {
+    atoms: [],
+    bonds: [],
+  };
+
+  placeTemplateAtoms(
+    restruct,
+    tmpl,
+    struct,
+    tmplBond,
+    tmplBegin,
+    bond,
+    atomsMap,
+    frid,
+    angle,
+    scale,
+    action,
+    pasteItems,
+  );
+
+  // When a template of "Benzene" molecule is attached it
+  // uses specific fusing rules when attaching to a bond
+  // that is connected exactly to one bond on each side.
+  // For more info please refer to: https://github.com/epam/ketcher/issues/1855
+  const fusingBondType = getConnectingBond(tmpl, struct, bid, bond);
+
+  placeTemplateBonds(
+    restruct,
+    tmpl,
+    struct,
+    tmplBond,
+    bond,
+    bid,
+    atomsMap,
+    fusingBondType,
+    isPreview,
+    action,
+    pasteItems,
+  );
+
+  applyTemplatePostProcessing(restruct, bond, pasteItems, action);
 
   action.operations.reverse();
 

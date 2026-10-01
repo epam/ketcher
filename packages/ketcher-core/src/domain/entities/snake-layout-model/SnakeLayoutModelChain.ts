@@ -1,9 +1,9 @@
-import {
+import type {
   ISnakeLayoutModelRow,
   ITwoStrandedSnakeLayoutNode,
 } from 'domain/entities/snake-layout-model/types';
-import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
-import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
+import type { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
+import type { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 
 export class SnakeLayoutModelChain {
   private readonly rows: ISnakeLayoutModelRow[] = [];

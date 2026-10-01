@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { expect, test } from '@fixtures';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
@@ -7,7 +6,7 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   waitForPageInit,
   takeTopToolbarScreenshot,
   waitForRender,
@@ -17,6 +16,19 @@ import { getKet } from '@utils/formats';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+
+function countKetElements(parsed: {
+  root: { nodes: Array<{ $ref?: string; type?: string }> };
+}) {
+  const nodes = parsed.root.nodes;
+  return {
+    molecules: nodes.filter((node) => node.$ref).length,
+    plus: nodes.filter((node) => node.type === 'plus').length,
+    arrows: nodes.filter((node) => node.type === 'arrow').length,
+    texts: nodes.filter((node) => node.type === 'text').length,
+    simpleObjects: nodes.filter((node) => node.type === 'simpleObject').length,
+  };
+}
 
 test.describe('3D Viewer', () => {
   test.beforeEach(async ({ page }) => {
@@ -33,7 +45,7 @@ test.describe('3D Viewer', () => {
     Position of structure on the canvas is not changed. 
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
     await dragMouseAndMoveTo(page, 20);
     await waitForRender(page, async () => {
@@ -131,7 +143,7 @@ test.describe('3D Viewer', () => {
     */
     // we need remove or block the variable number of frames per second in the lower right corner
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
     await expect(page).toHaveScreenshot({
       animations: 'disabled',
@@ -149,7 +161,7 @@ test.describe('3D Viewer', () => {
     Position of the structure on the canvas is changed. 
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     const initialStructureData = await getKet(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -231,5 +243,38 @@ test.describe('3D Viewer', () => {
 
     // Compare the initial and changed structure data
     expect(initialStructureData).not.toEqual(changedStructureData);
+  });
+
+  test('Reaction with static objects preserves all elements after Apply (#5388)', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvas(page, 'KET/reaction-with-static-objects.ket');
+    const initialKet = JSON.parse(await getKet(page));
+    const initialCounts = countKetElements(initialKet);
+
+    expect(initialCounts).toEqual({
+      molecules: 3,
+      plus: 1,
+      arrows: 1,
+      texts: 1,
+      simpleObjects: 1,
+    });
+
+    const miew = MiewDialog(page);
+    await IndigoFunctionsToolbar(page).threeDViewer();
+    await waitForRender(page, async () => {
+      await miew.apply();
+    });
+
+    await expect(miew.applyButton).toBeHidden();
+    await expect(
+      page.getByText(
+        'this field is used only for serialization/deserialization',
+      ),
+    ).toHaveCount(0);
+
+    const finalKet = JSON.parse(await getKet(page));
+    expect(countKetElements(finalKet)).toEqual(initialCounts);
+    await takeEditorScreenshot(page);
   });
 });

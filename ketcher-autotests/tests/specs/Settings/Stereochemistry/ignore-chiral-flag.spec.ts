@@ -1,9 +1,8 @@
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   takeEditorScreenshot,
@@ -39,7 +38,7 @@ test.describe('Ignore Chiral Flag', () => {
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.ARGLArginine,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -57,7 +56,7 @@ test.describe('Ignore Chiral Flag', () => {
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.ARGLArginine,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await cutAndPaste(page);
     await clickOnCanvas(page, pointY, pointZ, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -73,7 +72,7 @@ test.describe('Ignore Chiral Flag', () => {
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.ARGLArginine,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);

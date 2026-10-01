@@ -1,11 +1,10 @@
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   takeEditorScreenshot,
   moveMouseAway,
   MacroFileType,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
 } from '@utils';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import {
@@ -137,7 +136,7 @@ test.describe('Import/export sequence:', () => {
         Enter symbols A, T, C, G, U (case insensitive) in the sequence input.
         Ensure no errors are displayed.
     */
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       [MacroFileType.Sequence, SequenceMonomerType.RNA],

@@ -25,17 +25,15 @@ import {
   SGroupDataMove,
   TextMove,
 } from '../operations';
-import {
-  Bond,
-  Fragment,
-  MonomerMicromolecule,
-  Struct,
-  Vec2,
-} from 'domain/entities';
-import { ReStruct } from 'application/render';
+import { Bond } from 'domain/entities/bond';
+import { Fragment } from 'domain/entities/fragment';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import type { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
+import type { ReStruct } from 'application/render';
 import { getRelSGroupsBySelection, structSelection } from './utils';
 import { Action } from './action';
-import { EditorSelection } from '../editor.types';
+import type { EditorSelection } from '../editor.types';
 import { FlipMonomerOperation } from 'application/editor/operations/monomer/FlipMonomerOperation';
 import type { FlipDirection } from '../shared/utils.types';
 import { flipPointByCenter, rotateDelta } from '../shared/utils';
@@ -262,7 +260,6 @@ function fromStructureFlip(
 }
 
 export function fromRotate(restruct, selection, center, angle: number) {
-  // eslint-disable-line
   const struct = restruct.molecule;
 
   const action = new Action();
@@ -303,6 +300,8 @@ export function fromRotate(restruct, selection, center, angle: number) {
   if (selection.rxnPluses) {
     selection.rxnPluses.forEach((pid) => {
       const plus = struct.rxnPluses.get(pid);
+      if (!plus) return;
+
       action.addOp(new RxnPlusMove(pid, rotateDelta(plus.pp, center, angle)));
     });
   }
@@ -310,6 +309,8 @@ export function fromRotate(restruct, selection, center, angle: number) {
   if (selection.texts) {
     selection.texts.forEach((textId) => {
       const text = struct.texts.get(textId);
+      if (!text) return;
+
       action.addOp(
         new TextMove(textId, rotateDelta(text.position, center, angle)),
       );
@@ -319,6 +320,8 @@ export function fromRotate(restruct, selection, center, angle: number) {
   if (selection.sgroupData) {
     selection.sgroupData.forEach((did) => {
       const data = struct.sgroups.get(did);
+      if (!data?.pp) return;
+
       action.addOp(
         new SGroupDataMove(did, rotateDelta(data.pp, center, angle)),
       );
@@ -329,6 +332,8 @@ export function fromRotate(restruct, selection, center, angle: number) {
     selection.enhancedFlags.forEach((flagId) => {
       const frId = flagId;
       const frag = restruct.molecule.frags.get(frId);
+      if (!frag) return;
+
       action.addOp(
         new EnhancedFlagMove(
           flagId,

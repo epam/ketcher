@@ -17,7 +17,7 @@
 import styled from '@emotion/styled';
 import Icon from '../../Icon/Icon';
 import { style } from 'src/components/styles';
-import { IStyledButtonProps } from './types';
+import type { IStyledButtonProps } from './types';
 import { css } from '@emotion/react';
 
 export const StyledButton = styled('button', {

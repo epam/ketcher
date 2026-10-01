@@ -1,14 +1,14 @@
 import { test, expect } from '@fixtures';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { molV2000 } from '@tests/test-data/JSON/molV2000-result';
-import { clickInTheMiddleOfTheScreen, waitForPageInit } from '@utils';
+import { clickInTheMiddleOfTheCanvas, waitForPageInit } from '@utils';
 
 test('getting molV2000 from Ketcher API', async ({ page }) => {
   await waitForPageInit(page);
   await BottomToolbar(page).benzene();
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   const [, , molFile] = (
-    await page.evaluate(() => window.ketcher.getMolfile())
+    await page.evaluate(() => globalThis.window.ketcher.getMolfile())
   ).split('\n');
   const [, , molV2000Test] = molV2000.split('\n');
   expect(molFile).toBe(molV2000Test);

@@ -4,7 +4,7 @@ export async function replaceMonomersLibrary(
   page: Page,
   sdfString: string,
 ): Promise<string | null> {
-  return page.evaluate(async (cmd) => {
+  return await page.evaluate(async (cmd) => {
     try {
       await window.ketcher.replaceMonomersLibrary(cmd);
       return null;

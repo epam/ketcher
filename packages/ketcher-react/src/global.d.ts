@@ -1,6 +1,8 @@
-import { BaseRenderer, Ketcher } from 'ketcher-core';
+import type { BaseRenderer, Ketcher } from 'ketcher-core';
 
 declare global {
+  let global: typeof globalThis;
+
   export interface Window {
     ketcher?: Ketcher;
     isPolymerEditorTurnedOn: boolean;

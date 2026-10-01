@@ -74,7 +74,8 @@
                     -8.739714301403462,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -83,7 +84,8 @@
                     -9.239714323703351,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -92,7 +94,8 @@
                     -8.739714301403462,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -220,7 +223,7 @@
         ],
         "stereoFlagPosition": {
             "x": 5.849716737728644,
-            "y": 6.739714256803685,
+            "y": 6.739714212203909,
             "z": 0
         }
     },
@@ -423,7 +426,8 @@
                     -9.976049157263933,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "O",
@@ -440,7 +444,8 @@
                     -9.317935648297961,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -449,7 +454,8 @@
                     -8.574790626140189,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -614,7 +620,7 @@
         ],
         "stereoFlagPosition": {
             "x": 21.494954404496866,
-            "y": 6.596642837382571,
+            "y": 6.596642792782795,
             "z": 0
         }
     },

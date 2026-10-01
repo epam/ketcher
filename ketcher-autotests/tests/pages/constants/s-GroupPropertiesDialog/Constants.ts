@@ -28,6 +28,12 @@ export enum RepeatPatternOption {
   EitherUnknown = 'Either unknown-option',
 }
 
+export enum SubtypeOption {
+  Random = 'Random-option',
+  Block = 'Block-option',
+  Alternating = 'Alternating-option',
+}
+
 export enum ComponentOption {
   Sugar = 'Sugar-option',
   Base = 'Base-option',
@@ -49,6 +55,11 @@ export type SGroupPropertiesSettings =
   | {
       Type: TypeOption.SRUPolymer;
       PolymerLabel: string;
+      RepeatPattern: RepeatPatternOption;
+    }
+  | {
+      Type: TypeOption.Copolymer;
+      Subtype: SubtypeOption;
       RepeatPattern: RepeatPatternOption;
     }
   | {

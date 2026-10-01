@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,18 +16,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import 'intersection-observer';
-import 'element-closest-polyfill';
-import 'regenerator-runtime/runtime';
-import 'url-search-params-polyfill';
-import 'whatwg-fetch';
 import './index.less';
 
-import init, { Config } from './script';
-import { RefObject, useEffect, useRef } from 'react';
-import { createRoot, Root } from 'react-dom/client';
+import init, { type Config } from './script';
+import { type RefObject, useEffect, useRef } from 'react';
+import { type Root, createRoot } from 'react-dom/client';
 
-import { Ketcher, StructService } from 'ketcher-core';
+import type { Ketcher, StructService } from 'ketcher-core';
 import classes from './Editor.module.less';
 import clsx from 'clsx';
 import { useResizeObserver } from './hooks';
@@ -33,7 +30,7 @@ import {
   ketcherInitEventName,
   KETCHER_ROOT_NODE_CLASS_NAME,
 } from './constants';
-import { KetcherBuilder } from './script/builders';
+import type { KetcherBuilder } from './script/builders';
 
 const mediaSizes = {
   smallWidth: 1040,
@@ -50,7 +47,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const appRootRef = useRef<Root | null>(null);
   const cleanupRef = useRef<(() => unknown) | null>(null);
   const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+
   const setServerRef = useRef<(structService: StructService) => void>(() => {});
   const structServiceProvider = props.structServiceProvider;
 

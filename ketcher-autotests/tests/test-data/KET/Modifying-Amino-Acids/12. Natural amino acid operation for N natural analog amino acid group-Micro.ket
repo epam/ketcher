@@ -92,7 +92,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -246,6 +247,7 @@
         "fullName": "Asparagine",
         "alias": "N",
         "aliasHELM": "N",
+        "aliasBILN": "N",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -274,6 +276,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "N"
     },

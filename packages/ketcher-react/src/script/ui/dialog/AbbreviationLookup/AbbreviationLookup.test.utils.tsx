@@ -1,12 +1,12 @@
 import {
-  AbbreviationElementOption,
-  AbbreviationGenericOption,
-  AbbreviationOption,
-  AbbreviationTemplateOption,
+  type AbbreviationElementOption,
+  type AbbreviationGenericOption,
+  type AbbreviationOption,
+  type AbbreviationTemplateOption,
   AbbreviationType,
 } from './AbbreviationLookup.types';
-import { Template } from '../template/TemplateTable';
-import { Element } from 'ketcher-core';
+import type { Template } from '../template/TemplateTable';
+import type { Element } from 'ketcher-core';
 import { KETCHER_ROOT_NODE_CLASS_NAME } from 'src/constants';
 
 export const createGenericOption = (

@@ -16,7 +16,7 @@
 
 import classes from './TypeChoice.module.less';
 import { GenericInput } from 'src/script/ui/component/form/Input/Input';
-import { PeriodTableType } from '../../types';
+import type { PeriodTableType } from '../../types';
 
 interface TypeSchemaItem {
   title: string;
@@ -41,7 +41,6 @@ function TypeChoice({ value, onChange, disabled }: Readonly<TypeChoiceProps>) {
     <fieldset className={classes.fieldset} disabled={disabled}>
       {typeSchema.map((type) => (
         <label key={type.title}>
-          {/* eslint-disable jsx-a11y/label-has-associated-control */}
           <GenericInput
             type="radio"
             value={type.value}
@@ -54,7 +53,6 @@ function TypeChoice({ value, onChange, disabled }: Readonly<TypeChoiceProps>) {
             schema={undefined}
             innerRef={undefined}
           />
-          {/* eslint-enable jsx-a11y/label-has-associated-control */}
           {type.title}
         </label>
       ))}

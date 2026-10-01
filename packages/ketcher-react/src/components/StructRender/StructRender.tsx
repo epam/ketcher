@@ -22,7 +22,7 @@ import {
 } from 'ketcher-core';
 import { useEffect, useRef } from 'react';
 import { Container } from './styles';
-import { IStructRenderProps } from './types';
+import type { IStructRenderProps } from './types';
 
 const normalizeStruct = (molV2000StringOrStruct: string | Struct) => {
   if (molV2000StringOrStruct instanceof Struct) {
@@ -33,7 +33,7 @@ const normalizeStruct = (molV2000StringOrStruct: string | Struct) => {
     return new MolSerializer().deserialize(molV2000StringOrStruct);
   } catch (e) {
     KetcherLogger.error('StructRenderer.tsx::normalizeStruct', e);
-    throw Error('Could not parse Struct');
+    throw new Error('Could not parse Struct', { cause: e });
   }
 };
 

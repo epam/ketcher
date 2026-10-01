@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import {
   ClickTarget,
@@ -46,7 +45,7 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
           state: 'hidden',
           timeout: 1000,
         });
-      } catch (error) {
+      } catch (_error) {
         await page.keyboard.press('Escape');
         await locators.contextMenuBody.waitFor({
           state: 'hidden',
@@ -71,6 +70,42 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
           await option.hover();
         }
       }
+    },
+
+    async isOptionVisible(optionId: ContextMenuOption): Promise<boolean> {
+      await this.open();
+      await locators.contextMenuBody.waitFor({
+        state: 'visible',
+        timeout: 10000,
+      });
+      const option = getOption(optionId).first();
+      const isVisible = await option.isVisible();
+      await page.keyboard.press('Escape');
+      await locators.contextMenuBody.waitFor({
+        state: 'hidden',
+        timeout: 10000,
+      });
+      return isVisible;
+    },
+
+    async isOptionEnabled(optionId: ContextMenuOption): Promise<boolean> {
+      await this.open();
+      await locators.contextMenuBody.waitFor({
+        state: 'visible',
+        timeout: 10000,
+      });
+      const option = getOption(optionId).first();
+      const isEnabled = await option.isEnabled();
+      await page.keyboard.press('Escape');
+      await locators.contextMenuBody.waitFor({
+        state: 'hidden',
+        timeout: 10000,
+      });
+      return isEnabled;
+    },
+
+    getOptionLocator(optionId: ContextMenuOption): Locator {
+      return getOption(optionId).first();
     },
   };
 };

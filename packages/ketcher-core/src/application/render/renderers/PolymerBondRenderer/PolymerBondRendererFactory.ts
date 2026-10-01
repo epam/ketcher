@@ -1,7 +1,7 @@
-import { CoreEditor } from 'application/editor';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 export enum LayoutMode {
@@ -10,11 +10,9 @@ export enum LayoutMode {
 }
 
 type PolymerBondRendererClass =
-  | FlexModePolymerBondRenderer
-  | SnakeModePolymerBondRenderer;
+  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
 type PolymerBondRendererClassType =
-  | typeof FlexModePolymerBondRenderer
-  | typeof SnakeModePolymerBondRenderer;
+  typeof FlexModePolymerBondRenderer | typeof SnakeModePolymerBondRenderer;
 const polymerBondRendererMap = new Map<
   LayoutMode,
   PolymerBondRendererClassType
@@ -48,6 +46,6 @@ export class PolymerBondRendererFactory {
 }
 
 function checkIfIsSnakeMode(): boolean {
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
   return editor?.mode.modeName === 'snake-layout-mode';
 }

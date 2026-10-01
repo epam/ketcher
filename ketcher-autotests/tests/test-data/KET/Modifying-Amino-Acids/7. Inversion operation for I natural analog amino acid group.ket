@@ -140,7 +140,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -181,7 +182,8 @@
                     0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -281,6 +283,7 @@
         "fullName": "D-Isoleucine",
         "alias": "dI",
         "aliasHELM": "dI",
+        "aliasBILN": "dI",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

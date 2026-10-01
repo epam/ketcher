@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,12 +15,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useEffect, FC } from 'react';
+import { type FC, useMemo } from 'react';
 import {
+  type Render,
+  type Struct,
   Scale,
   Vec2,
-  Render,
-  Struct,
   SGroup,
   CoordinateTransformation,
   MonomerMicromolecule,
@@ -30,12 +31,7 @@ import SGroupDataRender from './SGroupDataRender';
 import { functionGroupInfoSelector } from '../../../state/functionalGroups/selectors';
 import { connect } from 'react-redux';
 import clsx from 'clsx';
-import {
-  AmbiguousMonomerPreview,
-  PreviewType,
-  StructRender,
-  calculateAmbiguousMonomerPreviewTop,
-} from 'components';
+import { AmbiguousMonomerPreview, PreviewType, StructRender } from 'components';
 import classes from './InfoPanel.module.less';
 
 const HOVER_PANEL_PADDING = 20;
@@ -94,23 +90,47 @@ interface InfoPanelProps {
 
 const InfoPanel: FC<InfoPanelProps> = (props) => {
   const { clientX, clientY, render, className, groupStruct, sGroup } = props;
-  const [molecule, setMolecule] = useState<Struct | null>(null);
-  const [sGroupData, setSGroupData] = useState<string | null>(null);
-  const groupName = sGroup?.data?.name;
 
-  useEffect(() => {
+  const sGroupData = useMemo<string | null>(() => {
     if (sGroup && SGroup.isDataSGroup(sGroup)) {
-      setSGroupData(`${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`);
+      return `${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`;
     } else if (sGroup && SGroup.isQuerySGroup(sGroup)) {
-      setSGroupData('Query component');
-    } else {
-      setSGroupData(null);
+      return 'Query component';
     }
-  }, [groupStruct, sGroup]);
+    return null;
+  }, [sGroup]);
 
-  useEffect(() => {
-    setMolecule(groupStruct ? groupStruct.clone() : null);
-  }, [groupName, groupStruct]);
+  const molecule = useMemo<Struct | null>(
+    () => (groupStruct ? groupStruct.clone() : null),
+    [groupStruct],
+  );
+
+  // Ambiguous monomer tooltip uses marker coordinates, not mouse position,
+  // so it must be checked before the clientX/clientY guard.
+  // sGroup.pp must exist to avoid assertion error in getContractedPosition.
+  if (sGroup instanceof MonomerMicromolecule && render && sGroup.pp) {
+    const monomer = sGroup.monomer;
+    if (monomer instanceof AmbiguousMonomer) {
+      const { position } = sGroup.getContractedPosition(render.ctab.molecule);
+      const markerPos = CoordinateTransformation.modelToView(position, render);
+      const TOOLTIP_GAP = 10;
+
+      return (
+        <AmbiguousMonomerPreview
+          preview={{
+            type: PreviewType.AmbiguousMonomer,
+            monomer: monomer.variantMonomerItem,
+          }}
+          style={{
+            position: 'absolute',
+            left: `${markerPos.x}px`,
+            top: `${markerPos.y + TOOLTIP_GAP}px`,
+            transform: 'translate(-50%, 0)',
+          }}
+        />
+      );
+    }
+  }
 
   const nonTooltipSGroup =
     !sGroup || SGroup.isMulSGroup(sGroup) || SGroup.isSRUSGroup(sGroup);
@@ -134,32 +154,6 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
     sGroup &&
     !SGroup.isDataSGroup(sGroup) &&
     !SGroup.isQuerySGroup(sGroup);
-
-  if (sGroup instanceof MonomerMicromolecule) {
-    const monomer = sGroup.monomer;
-    if (monomer instanceof AmbiguousMonomer) {
-      return (
-        <AmbiguousMonomerPreview
-          preview={{
-            type: PreviewType.AmbiguousMonomer,
-            monomer: monomer.variantMonomerItem,
-          }}
-          style={{
-            position: 'absolute',
-            left: `${clientX - 50}px`,
-            top: calculateAmbiguousMonomerPreviewTop(
-              monomer.variantMonomerItem,
-            )({
-              left: clientX - 50,
-              top: clientY - 65,
-              bottom: clientY - 25,
-            }),
-            transform: 'translate(-50%, 0)',
-          }}
-        />
-      );
-    }
-  }
 
   return showMolecule ? (
     <div

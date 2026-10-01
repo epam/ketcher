@@ -1,12 +1,14 @@
-import {
+import type {
   MonomerItemType,
   Entities,
   MonomerOrAmbiguousType,
 } from 'domain/types';
-import {
+import type {
   IKetMonomerGroupTemplate,
   IKetTemplateConnection,
-} from 'application/formatters';
+  IKetIdtAliases,
+} from 'application/formatters/types/ket';
+import type { CoreEditor } from 'application/editor/Editor';
 
 interface ToolEventHandler {
   click?(event: Event): void;
@@ -54,6 +56,8 @@ interface ToolEventHandler {
   rightClickSequence?(event: Event): void;
 
   rightClickCanvas?(event: Event): void;
+
+  rightClickCanvasSequence?(event: Event): void;
 
   rightClickPolymerBond?(event: Event): void;
 
@@ -105,12 +109,15 @@ export interface IRnaPreset {
   phosphatePosition?: 'left' | 'right';
   default?: boolean;
   favorite?: boolean;
+  readonly idtAliases?: IKetIdtAliases;
+  readonly aliasAxoLabs?: string;
   editedName?: boolean;
   connections?: IKetTemplateConnection[];
 }
 
 export interface IRnaLabeledPreset
-  extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate' | 'connections'>,
+  extends
+    Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate' | 'connections'>,
     Pick<IKetMonomerGroupTemplate, 'templates' | 'connections'> {
   connections?: IKetTemplateConnection[];
 }
@@ -133,6 +140,8 @@ export interface Tool extends ToolEventHandler {
   isSelectionRunning?(): boolean;
 
   isNotActiveTool?: boolean;
+
+  readonly name?: string;
 }
 
 export interface BaseTool extends Tool {
@@ -141,10 +150,10 @@ export interface BaseTool extends Tool {
 
 export type PeptideToolOptions = MonomerItemType;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ToolConstructorInterface = new (editor: any, ...args: any[]) =>
-  | Tool
-  | BaseTool;
+export type ToolConstructorInterface = new (
+  editor: CoreEditor,
+  ...args: unknown[]
+) => Tool | BaseTool;
 
 export type ToolEventHandlerName = keyof ToolEventHandler;
 

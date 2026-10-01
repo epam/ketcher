@@ -1,21 +1,25 @@
-import { FC } from 'react';
-import { Item, Submenu, Separator } from 'react-contexify';
+import type { FC } from 'react';
+import { Item, Submenu } from 'react-contexify';
+import MenuSeparator from '../MenuSeparator';
 import useAtomEdit from '../hooks/useAtomEdit';
 import useAtomStereo from '../hooks/useAtomStereo';
 import useDelete from '../hooks/useDelete';
 import useMarkAs from '../hooks/useMarkAs';
-import { AtomContextMenuProps, MenuItemsProps } from '../contextMenu.types';
+import type {
+  AtomContextMenuProps,
+  MenuItemsProps,
+} from '../contextMenu.types';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import ButtonGroup from '../../../../../../components/ToggleButtonGroup/ToggleButtonGroup';
 import {
+  type AtomAttributeName,
+  type AtomAllAttributeValue,
+  type AtomQueryPropertiesName,
+  type AtomQueryProperties,
+  type AtomAllAttributeName,
   atomGetAttr,
-  AtomAttributeName,
-  AtomAllAttributeValue,
-  AtomQueryPropertiesName,
-  AtomQueryProperties,
-  AtomAllAttributeName,
   Atom,
   ketcherProvider,
 } from 'ketcher-core';
@@ -49,26 +53,29 @@ const atomPropertiesForSubMenu: {
   {
     title: ringBondCount.title,
     key: 'ringBondCount',
-    buttons: ringBondCount.enumNames.map((label, id) => ({
-      label,
-      value: ringBondCount.enum[id],
-    })),
+    buttons:
+      ringBondCount.enumNames?.map((label, id) => ({
+        label,
+        value: ringBondCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   {
     title: hCount.title,
     key: 'hCount',
-    buttons: hCount.enumNames.map((label, id) => ({
-      label,
-      value: hCount.enum[id],
-    })),
+    buttons:
+      hCount.enumNames?.map((label, id) => ({
+        label,
+        value: hCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   {
     title: substitutionCount.title,
     key: 'substitutionCount',
-    buttons: substitutionCount.enumNames.map((label, id) => ({
-      label,
-      value: substitutionCount.enum[id],
-    })),
+    buttons:
+      substitutionCount.enumNames?.map((label, id) => ({
+        label,
+        value: substitutionCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   {
     title: unsaturatedAtom.title,
@@ -81,20 +88,20 @@ const atomPropertiesForSubMenu: {
   {
     title: implicitHCount.title,
     key: 'implicitHCount',
-    buttons: implicitHCount.enumNames.map((label, id) => ({
-      label,
-      value: implicitHCount.enum[id],
-    })),
+    buttons:
+      implicitHCount.enumNames?.map((label, id) => ({
+        label,
+        value: implicitHCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   ...properties.map((name) => ({
     title: atom.properties[name].title,
     key: name,
-    buttons: atom.properties[name].enumNames.map(
-      (label: string, id: number) => ({
+    buttons:
+      atom.properties[name].enumNames?.map((label: string, id: number) => ({
         label,
-        value: atom.properties[name].enum[id],
-      }),
-    ),
+        value: atom.properties[name].enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   })),
 ];
 
@@ -174,7 +181,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     return (
       <>
         <HighlightMenu onHighlight={highlightAtomWithColor} />
-        <Separator />
+        <MenuSeparator />
         <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
           <Icon name="deleteMenu" className={styles.icon} />
           <span className={styles.contextMenuText}>Delete</span>
@@ -239,7 +246,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       {makeAttachmentPointMenuItems && (
         <>
           {makeAttachmentPointMenuItems}
-          <Separator />
+          <MenuSeparator />
         </>
       )}
       <Item
@@ -290,7 +297,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         onHighlight={highlightAtomWithColor}
         disabled={disabledForMonomerCreation}
       />
-      <Separator />
+      <MenuSeparator />
       <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         <Icon name="deleteMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>Delete</span>

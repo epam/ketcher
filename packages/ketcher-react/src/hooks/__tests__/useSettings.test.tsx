@@ -1,0 +1,297 @@
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+
+import { render, renderHook, act } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { type Store, createStore } from 'redux';
+import type { ReactNode } from 'react';
+import { useSettings } from '../useSettings';
+import {
+  type ISettingsService,
+  type SettingsListener,
+  type Ketcher,
+  getDefaultSettings,
+  ketcherProvider,
+} from 'ketcher-core';
+
+const TEST_KETCHER_ID = 'use-settings-test';
+
+const detachMockSettingsService = () => {
+  ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
+  delete window.ketcher;
+};
+
+const attachMockSettingsService = (settingsService: ISettingsService) => {
+  window.ketcher = { settingsService } as unknown as Ketcher;
+  ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
+  ketcherProvider.addKetcherInstance({
+    id: TEST_KETCHER_ID,
+    settingsService,
+  } as unknown as Ketcher);
+};
+
+// Simple mock store
+const createMockStore = (settingsService?: ISettingsService) => {
+  const initialState = {
+    editor: { ketcher: { settingsService } },
+  };
+
+  const rootReducer = (state = initialState) => state;
+
+  // Mock window.ketcher with the settingsService
+  if (settingsService) {
+    attachMockSettingsService(settingsService);
+  } else {
+    detachMockSettingsService();
+  }
+
+  return createStore(rootReducer);
+};
+
+// Wrapper component
+const createWrapper = (store: Store) =>
+  function Wrapper({ children }: { children?: ReactNode }) {
+    return <Provider store={store}>{children}</Provider>;
+  };
+
+// Mock settings service
+const createMockSettingsService = () => {
+  const listeners: SettingsListener[] = [];
+  const mockSettings = getDefaultSettings();
+
+  return {
+    init: jest.fn().mockResolvedValue(undefined),
+    getSettings: jest.fn().mockReturnValue(mockSettings),
+    updateSettings: jest.fn().mockResolvedValue(mockSettings),
+    resetToDefaults: jest.fn().mockResolvedValue(mockSettings),
+    loadPreset: jest.fn().mockResolvedValue(mockSettings),
+    getAvailablePresets: jest.fn().mockReturnValue(['acs']),
+    validateSettings: jest.fn().mockReturnValue({ valid: true }),
+    exportSettings: jest.fn().mockReturnValue(JSON.stringify(mockSettings)),
+    importSettings: jest.fn().mockResolvedValue(mockSettings),
+    subscribe: jest.fn((listener: SettingsListener) => {
+      listeners.push(listener);
+      return () => {
+        const index = listeners.indexOf(listener);
+        if (index > -1) listeners.splice(index, 1);
+      };
+    }),
+  } as unknown as ISettingsService;
+};
+
+describe('useSettings', () => {
+  afterEach(() => {
+    detachMockSettingsService();
+  });
+
+  describe('initialization', () => {
+    it('should return null settings when service is unavailable', () => {
+      const store = createMockStore();
+      const { result } = renderHook(() => useSettings(), {
+        wrapper: createWrapper(store),
+      });
+
+      expect(result.current.settings).toBeNull();
+    });
+
+    it('should load settings from service on mount', () => {
+      const mockService = createMockSettingsService();
+      const store = createMockStore(mockService);
+
+      const { result } = renderHook(() => useSettings(), {
+        wrapper: createWrapper(store),
+      });
+
+      expect(result.current.settings).toBeDefined();
+      expect(mockService.getSettings).toHaveBeenCalled();
+    });
+
+    it('should have settings available on the very first render, before any effect runs', () => {
+      const mockService = createMockSettingsService();
+      const store = createMockStore(mockService);
+
+      const renderedSettings: unknown[] = [];
+      function TestComponent() {
+        const { settings } = useSettings();
+        renderedSettings.push(settings);
+        return null;
+      }
+
+      render(
+        <Provider store={store}>
+          <TestComponent />
+        </Provider>,
+      );
+
+      // The first entry is what the component saw during its initial render,
+      // synchronously — i.e. before useEffect had a chance to run and set it.
+      expect(renderedSettings[0]).not.toBeNull();
+      expect(renderedSettings[0]).toEqual(mockService.getSettings());
+    });
+
+    it('should subscribe to settings changes', () => {
+      const mockService = createMockSettingsService();
+      const store = createMockStore(mockService);
+
+      renderHook(() => useSettings(), {
+        wrapper: createWrapper(store),
+      });
+
+      expect(mockService.subscribe).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('flat settings structure', () => {
+    it('should return settings with flat structure', () => {
+      const mockService = createMockSettingsService();
+      const store = createMockStore(mockService);
+
+      const { result } = renderHook(() => useSettings(), {
+        wrapper: createWrapper(store),
+      });
+
+      expect(result.current.settings).toBeDefined();
+      expect(result.current.settings).toHaveProperty('resetToSelect');
+      expect(result.current.settings).toHaveProperty('atomColoring');
+      expect(result.current.settings).toHaveProperty('smart-layout');
+    });
+  });
+
+  describe('updateSettings', () => {
+    it('should call service updateSettings with flat format', async () => {
+      const mockService = createMockSettingsService();
+      const store = createMockStore(mockService);
+
+      const { result } = renderHook(() => useSettings(), {
+        wrapper: createWrapper(store),
+      });
+
+      const partial = { resetToSelect: false };
+
+      await act(async () => {
+        await result.current.updateSettings(partial);
+      });
+
+      expect(mockService.updateSettings).toHaveBeenCalledWith(partial);
+    });
+
+    it('should throw error when service unavailable', async () => {
+      const store = createMockStore();
+
+      const { result } = renderHook(() => useSettings(), {
+        wrapper: createWrapper(store),
+      });
+
+      await expect(async () => {
+        await result.current.updateSettings({
+          resetToSelect: false,
+        });
+      }).rejects.toThrow('Settings service not available');
+    });
+  });
+
+  describe('resetToDefaults', () => {
+    it('should call service resetToDefaults', async () => {
+      const mockService = createMockSettingsService();
+      const store = createMockStore(mockService);
+
+      const { result } = renderHook(() => useSettings(), {
+        wrapper: createWrapper(store),
+      });
+
+      await act(async () => {
+        await result.current.resetToDefaults();
+      });
+
+      expect(mockService.resetToDefaults).toHaveBeenCalled();
+    });
+  });
+
+  describe('loadPreset', () => {
+    it('should call service loadPreset with preset name', async () => {
+      const mockService = createMockSettingsService();
+      const store = createMockStore(mockService);
+
+      const { result } = renderHook(() => useSettings(), {
+        wrapper: createWrapper(store),
+      });
+
+      await act(async () => {
+        await result.current.loadPreset('acs');
+      });
+
+      expect(mockService.loadPreset).toHaveBeenCalledWith('acs');
+    });
+  });
+
+  describe('exportSettings', () => {
+    it('should call service exportSettings', () => {
+      const mockService = createMockSettingsService();
+      const store = createMockStore(mockService);
+
+      const { result } = renderHook(() => useSettings(), {
+        wrapper: createWrapper(store),
+      });
+
+      const exported = result.current.exportSettings();
+
+      expect(mockService.exportSettings).toHaveBeenCalled();
+      expect(typeof exported).toBe('string');
+    });
+  });
+
+  describe('importSettings', () => {
+    it('should call service importSettings with flat JSON', async () => {
+      const mockService = createMockSettingsService();
+      const store = createMockStore(mockService);
+
+      const { result } = renderHook(() => useSettings(), {
+        wrapper: createWrapper(store),
+      });
+
+      const json = '{"resetToSelect":false}';
+
+      await act(async () => {
+        await result.current.importSettings(json);
+      });
+
+      expect(mockService.importSettings).toHaveBeenCalledWith(json);
+    });
+  });
+
+  describe('availablePresets', () => {
+    it('should return available presets from service', () => {
+      const mockService = createMockSettingsService();
+      const store = createMockStore(mockService);
+
+      const { result } = renderHook(() => useSettings(), {
+        wrapper: createWrapper(store),
+      });
+
+      expect(result.current.availablePresets).toEqual(['acs']);
+    });
+
+    it('should return empty array when service unavailable', () => {
+      const store = createMockStore();
+
+      const { result } = renderHook(() => useSettings(), {
+        wrapper: createWrapper(store),
+      });
+
+      expect(result.current.availablePresets).toEqual([]);
+    });
+  });
+});

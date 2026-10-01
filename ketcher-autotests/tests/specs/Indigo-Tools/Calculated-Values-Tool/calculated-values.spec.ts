@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { expect, Page, test } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -8,7 +6,7 @@ import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   dragMouseTo,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
@@ -153,15 +151,17 @@ test.describe('Calculated Values Tools', () => {
 
     await openFileAndAddToCanvas(page, 'Rxn-V2000/calcvalues-reaction.rxn');
     await IndigoFunctionsToolbar(page).calculatedValues();
+    await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(3);
+    await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(3);
 
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('[C6H6]+[C2H4] > [C8H10]');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '[78.11]+[28.05] > [106.17]',
+      '[78.114]+[28.054] > [106.168]',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
-      '[78.05]+[28.03] > [106.08]',
+      '[78.047]+[28.031] > [106.078]',
     );
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
@@ -176,6 +176,10 @@ test.describe('Calculated Values Tools', () => {
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '[78.0]+[28.0] > [106.1]',
     );
+
+    // Restore defaults to keep subsequent tests independent from decimal-place state.
+    await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(3);
+    await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(3);
   });
 
   test('One structure on canvas (Benzene ring)', async () => {
@@ -196,7 +200,7 @@ test.describe('Calculated Values Tools', () => {
     */
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
 
     await expect(
@@ -239,18 +243,21 @@ test.describe('Calculated Values Tools', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(page, x + 300, y - 600);
     await IndigoFunctionsToolbar(page).calculatedValues();
+    await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(3);
+    await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(3);
+
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,
-    ).toContainText('C9H9O2');
+    ).toContainText('C3H4O2');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '149.2',
+      '72.063',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
-      '149.1',
+      '72.021',
     );
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
-    ).toHaveValue('C 72.5 H 6.1 O 21.4');
+    ).toHaveValue('C 50.0 H 5.6 O 44.4');
   });
 
   test('Calculation of exact mass for the reaction components', async () => {
@@ -290,7 +297,7 @@ test.describe('Calculated Values Tools', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Sulfur);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,
@@ -735,6 +742,9 @@ test.describe('Calculated Values Tools', () => {
     'Check', 'Cancel', 'Apply', X buttons
     */
     await IndigoFunctionsToolbar(page).checkStructure();
+    await expect(StructureCheckDialog(page).idsExplanation).toHaveText(
+      "Some checks will return atom or bond IDs for the elements causing the error. To visualize them toggle on the 'Show Atom IDs' and 'Show Bond IDs' in the 'Debugging' section of Settings.",
+    );
     await takeEditorScreenshot(page, {
       mask: [StructureCheckDialog(page).lastCheckInfo],
     });

@@ -129,7 +129,8 @@
                     -0.75,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -268,6 +269,7 @@
         "fullName": "Methionine",
         "alias": "M",
         "aliasHELM": "M",
+        "aliasBILN": "M",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -287,6 +289,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "M"
     },

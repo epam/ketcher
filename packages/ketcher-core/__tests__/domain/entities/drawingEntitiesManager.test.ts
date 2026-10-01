@@ -1,6 +1,12 @@
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { peptideMonomerItem } from '../../mock-data';
-import { Vec2 } from 'domain/entities';
+import {
+  Atom,
+  Bond,
+  SGroup,
+  SGroupAttachmentPoint,
+  Vec2,
+} from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';
 import {
   PolymerBondAddOperation,
@@ -18,10 +24,109 @@ import {
   MonomerHoverOperation,
 } from 'application/editor/operations/monomer';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { createPolymerEditorCanvas } from '../../helpers/dom';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../helpers/dom';
 import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
+import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import { INVALID } from 'domain/entities/BaseMicromoleculeEntity';
+import { RxnArrowMode } from 'domain/entities/rxnArrow';
+import { Struct } from 'domain/entities/struct';
+
+function createStructWithSGroup(type = SGroup.TYPES.MUL) {
+  const struct = new Struct();
+  const firstAtomId = struct.atoms.add(
+    new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+  );
+  const secondAtomId = struct.atoms.add(
+    new Atom({ label: 'C', pp: new Vec2(1, 0) }),
+  );
+  struct.bonds.add(
+    new Bond({
+      begin: firstAtomId,
+      end: secondAtomId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    }),
+  );
+  const sgroup = new SGroup(type);
+  sgroup.data.fieldName = 'FieldName';
+  sgroup.data.fieldValue = 'Value';
+  const sgroupId = struct.sgroups.add(sgroup);
+  struct.atomAddToSGroup(sgroupId, firstAtomId);
+  struct.atomAddToSGroup(sgroupId, secondAtomId);
+  struct.markFragments();
+
+  return { struct, sgroup };
+}
+
+function createStructWithSplitSGroup(options?: { name?: string }) {
+  const struct = new Struct();
+  const firstAtomId = struct.atoms.add(
+    new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+  );
+  const secondAtomId = struct.atoms.add(
+    new Atom({ label: 'C', pp: new Vec2(1, 0) }),
+  );
+  const thirdAtomId = struct.atoms.add(
+    new Atom({ label: 'C', pp: new Vec2(5, 0) }),
+  );
+  const fourthAtomId = struct.atoms.add(
+    new Atom({ label: 'C', pp: new Vec2(6, 0) }),
+  );
+  struct.bonds.add(
+    new Bond({
+      begin: firstAtomId,
+      end: secondAtomId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    }),
+  );
+  struct.bonds.add(
+    new Bond({
+      begin: thirdAtomId,
+      end: fourthAtomId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    }),
+  );
+  const sgroup = new SGroup(SGroup.TYPES.SUP);
+  sgroup.data.name = options?.name ?? '';
+  const sgroupId = struct.sgroups.add(sgroup);
+  struct.atomAddToSGroup(sgroupId, firstAtomId);
+  struct.atomAddToSGroup(sgroupId, secondAtomId);
+  struct.atomAddToSGroup(sgroupId, thirdAtomId);
+  struct.atomAddToSGroup(sgroupId, fourthAtomId);
+  sgroup.addAttachmentPoint(
+    new SGroupAttachmentPoint(firstAtomId, undefined, undefined, 1),
+  );
+  sgroup.addAttachmentPoint(
+    new SGroupAttachmentPoint(thirdAtomId, undefined, undefined, 2),
+  );
+  struct.markFragments();
+
+  return struct;
+}
 
 describe('Drawing Entities Manager', () => {
+  const originalGetBBox = SVGElement.prototype.getBBox;
+
+  beforeEach(() => {
+    Object.defineProperty(SVGElement.prototype, 'getBBox', {
+      configurable: true,
+      value: jest.fn(() => ({ x: 0, y: 0, width: 10, height: 10 })),
+    });
+  });
+
+  afterEach(() => {
+    if (originalGetBBox) {
+      Object.defineProperty(SVGElement.prototype, 'getBBox', {
+        configurable: true,
+        value: originalGetBBox,
+      });
+    } else {
+      Reflect.deleteProperty(SVGElement.prototype, 'getBBox');
+    }
+  });
+
   it('should create monomer', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
     const command = drawingEntitiesManager.addMonomer(
@@ -92,6 +197,7 @@ describe('Drawing Entities Manager', () => {
     const editor = new CoreEditor({
       canvas: createPolymerEditorCanvas(),
       theme: {},
+      renderersContainer: createRenderersManager(),
     });
     const drawingEntitiesManager = editor.drawingEntitiesManager;
     const renderersManager = new RenderersManager({ theme: {} });
@@ -109,6 +215,7 @@ describe('Drawing Entities Manager', () => {
     const editor = new CoreEditor({
       canvas: createPolymerEditorCanvas(),
       theme: {},
+      renderersContainer: createRenderersManager(),
     });
     const drawingEntitiesManager = editor.drawingEntitiesManager;
     const renderersManager = new RenderersManager({ theme: {} });
@@ -173,5 +280,165 @@ describe('Drawing Entities Manager', () => {
     expect(peptide.hovered).toBeFalsy();
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(MonomerHoverOperation);
+  });
+
+  it('should normalize invalid selection flags for reaction entities', () => {
+    const drawingEntitiesManager = new DrawingEntitiesManager();
+
+    drawingEntitiesManager.addRxnArrow(
+      RxnArrowMode.OpenAngle,
+      [new Vec2(0, 0), new Vec2(10, 0)],
+      undefined,
+      INVALID,
+    );
+    drawingEntitiesManager.addRxnPlus(new Vec2(5, 5), INVALID);
+
+    expect(
+      Array.from(drawingEntitiesManager.rxnArrows.values())[0],
+    ).toMatchObject({
+      initiallySelected: undefined,
+    });
+    expect(
+      Array.from(drawingEntitiesManager.rxnPluses.values())[0],
+    ).toMatchObject({
+      initiallySelected: undefined,
+    });
+
+    const struct = new Struct();
+    MacromoleculesConverter.convertDrawingEntitiesToStruct(
+      drawingEntitiesManager,
+      struct,
+    );
+
+    const rxnArrow = Array.from(struct.rxnArrows.values())[0];
+    const rxnPlus = Array.from(struct.rxnPluses.values())[0];
+
+    expect(rxnArrow.getInitiallySelected()).toBeUndefined();
+    expect(rxnPlus.getInitiallySelected()).toBeUndefined();
+  });
+
+  it('should create macro S-group drawing entities for micromolecule fragments', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const { struct } = createStructWithSGroup();
+
+    const { modelChanges } =
+      MacromoleculesConverter.convertStructToDrawingEntities(
+        struct,
+        editor.drawingEntitiesManager,
+      );
+
+    expect(editor.drawingEntitiesManager.sgroups.size).toEqual(1);
+    expect(
+      [...editor.drawingEntitiesManager.sgroups.values()][0].sgroup.type,
+    ).toBe(SGroup.TYPES.MUL);
+
+    editor.renderersContainer.update(modelChanges);
+
+    expect(editor.renderersContainer.sgroups.size).toEqual(1);
+    expect(document.querySelector('[data-testid="s-group"]')).toBeTruthy();
+    expect(document.querySelector('[data-label-text="1"]')).toBeTruthy();
+  });
+
+  it('should split disconnected superatom fragments with attachment points into separate macro molecules', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const struct = createStructWithSplitSGroup();
+
+    MacromoleculesConverter.convertStructToDrawingEntities(
+      struct,
+      editor.drawingEntitiesManager,
+    );
+
+    const monomers = Array.from(
+      editor.drawingEntitiesManager.monomers.values(),
+    );
+
+    expect(monomers).toHaveLength(2);
+    monomers.forEach((monomer) => {
+      const sgroup = monomer.monomerItem.struct.sgroups.get(0);
+
+      expect(sgroup?.isSuperatomWithoutLabel).toBe(true);
+      expect(sgroup?.getAttachmentPoints()).toHaveLength(1);
+    });
+  });
+
+  it('should not group disconnected fragments by S-group when attachment points are split across fragments', () => {
+    const struct = createStructWithSplitSGroup({ name: 'Split' });
+
+    const groupedFragments =
+      MacromoleculesConverter.getFragmentsGroupedBySgroup(struct);
+
+    expect(groupedFragments).toHaveLength(2);
+    groupedFragments.forEach((fragmentsGroup) => {
+      expect(fragmentsGroup).toHaveLength(1);
+    });
+  });
+
+  it('should store monomer expanded state as a boolean in converted S-groups', () => {
+    const struct = new Struct();
+    const monomer = new Peptide(peptideMonomerItem);
+    monomer.monomerItem.expanded = undefined;
+
+    const collapsedSGroup =
+      MacromoleculesConverter.convertMonomerToMonomerMicromolecule(
+        monomer,
+        struct,
+      );
+
+    expect(collapsedSGroup.data.expanded).toBe(false);
+
+    monomer.monomerItem.expanded = true;
+    const expandedSGroup =
+      MacromoleculesConverter.convertMonomerToMonomerMicromolecule(
+        monomer,
+        struct,
+      );
+
+    expect(expandedSGroup.data.expanded).toBe(true);
+  });
+
+  it('should render macro data S-group field values', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const { struct } = createStructWithSGroup(SGroup.TYPES.DAT);
+    const { modelChanges } =
+      MacromoleculesConverter.convertStructToDrawingEntities(
+        struct,
+        editor.drawingEntitiesManager,
+      );
+
+    editor.renderersContainer.update(modelChanges);
+
+    expect(document.querySelector('[data-label-text="Value"]')).toBeTruthy();
+    expect(
+      [...editor.renderersContainer.sgroups.values()][0].labelTooltipText,
+    ).toBe('FieldName=Value');
+  });
+
+  describe('getAntisenseBaseLabel', () => {
+    it.each([
+      ['A', false, 'U'],
+      ['A', true, 'T'],
+      ['C', false, 'G'],
+      ['G', false, 'C'],
+      ['T', false, 'A'],
+      ['U', false, 'A'],
+      ['X', false, undefined],
+      ['X', true, undefined],
+    ] as const)('maps %s (dna=%s) to %s', (label, isDnaAntisense, expected) => {
+      expect(
+        DrawingEntitiesManager.getAntisenseBaseLabel(label, isDnaAntisense),
+      ).toBe(expected);
+    });
   });
 });

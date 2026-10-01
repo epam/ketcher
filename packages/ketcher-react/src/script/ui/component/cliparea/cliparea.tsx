@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component, createRef, RefObject } from 'react';
+import { type RefObject, Component, createRef } from 'react';
 import clsx from 'clsx';
 import classes from './cliparea.module.less';
 import {
@@ -22,6 +23,7 @@ import {
   notifyRequestCompleted,
   isControlKey,
   isClipboardAPIAvailable,
+  isSelectionOutsideElement,
   notifyCopyCut,
 } from 'ketcher-core';
 
@@ -29,6 +31,13 @@ const ieCb: DataTransfer | undefined =
   typeof window !== 'undefined'
     ? (window as Window & { clipboardData?: DataTransfer }).clipboardData
     : undefined;
+
+const isSafariBrowser = (): boolean =>
+  typeof navigator !== 'undefined' &&
+  /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+const isAsyncClipboardWriteAvailable = (): boolean =>
+  isClipboardAPIAvailable() && !isSafariBrowser();
 
 export const CLIP_AREA_BASE_CLASS = 'cliparea';
 let needSkipCopyEvent = false;
@@ -46,11 +55,11 @@ const isUserEditing = (): boolean => {
   // Check for input, textarea, or contenteditable
   return Boolean(
     el.tagName === 'TEXTAREA' ||
-      (el.tagName === 'INPUT' &&
-        (el as HTMLInputElement).type !== 'button' &&
-        (el as HTMLInputElement).type !== 'submit' &&
-        (el as HTMLInputElement).type !== 'reset') ||
-      (el as HTMLElement).contentEditable === 'true',
+    (el.tagName === 'INPUT' &&
+      (el as HTMLInputElement).type !== 'button' &&
+      (el as HTMLInputElement).type !== 'submit' &&
+      (el as HTMLInputElement).type !== 'reset') ||
+    (el as HTMLElement).contentEditable === 'true',
   );
 };
 
@@ -68,6 +77,7 @@ interface ClipAreaProps {
     data: ClipboardItem[] | ClipboardData,
     isSmarts?: boolean,
   ) => Promise<void>;
+  onLegacyCopy: () => ClipboardData | null | undefined;
   onLegacyCut: () => ClipboardData | null | undefined;
   onLegacyPaste: (data: ClipboardData, isSmarts?: boolean) => void;
   target?: HTMLElement;
@@ -114,10 +124,14 @@ class ClipArea extends Component<ClipAreaProps> {
           event.preventDefault();
       },
       copy: (event: ClipboardEvent) => {
-        if (!this.props.focused() || isUserEditing()) {
+        if (
+          !this.props.focused() ||
+          isUserEditing() ||
+          isSelectionOutsideElement(el)
+        ) {
           return;
         }
-        if (isClipboardAPIAvailable()) {
+        if (isAsyncClipboardWriteAvailable()) {
           this.props.onCopy().then((data) => {
             if (!data) {
               return;
@@ -128,39 +142,51 @@ class ClipArea extends Component<ClipAreaProps> {
             });
           });
         } else {
-          if (needSkipCopyEvent) {
-            needSkipCopyEvent = false;
-            return;
+          if (isSafariBrowser()) {
+            const data = this.props.onLegacyCopy();
+            if (data && event.clipboardData) {
+              legacyCopy(event.clipboardData, data);
+            }
+            event.preventDefault();
+          } else {
+            if (needSkipCopyEvent) {
+              needSkipCopyEvent = false;
+              return;
+            }
+            needSkipCopyEvent = true;
+
+            this.props.onCopy().then((data) => {
+              // It is possible to have access to clipboard data through evt.clipboardData
+              // only in synchronous code. That's why we dispatch 'copy' event here after server call.
+              // It will not work with long operations which time > 5 sec, because browser will close access
+              // to clipboard data if user did not interact with application.
+              addEventListener(
+                'copy',
+                (evt: Event) => {
+                  const clipboardEvent = evt as ClipboardEvent;
+                  if (clipboardEvent.clipboardData && data) {
+                    legacyCopy(clipboardEvent.clipboardData, data);
+                  }
+                  evt.preventDefault();
+                },
+                { once: true },
+              );
+              document.execCommand('copy');
+            });
+
+            event.preventDefault();
           }
-          needSkipCopyEvent = true;
-
-          this.props.onCopy().then((data) => {
-            // It is possible to have access to clipboard data through evt.clipboardData
-            // only in synchronous code. That's why we dispatch 'copy' event here after server call.
-            // It will not work with long operations which time > 5 sec, because browser will close access
-            // to clipboard data if user did not interact with application.
-            addEventListener(
-              'copy',
-              (evt: Event) => {
-                const clipboardEvent = evt as ClipboardEvent;
-                if (clipboardEvent.clipboardData && data) {
-                  legacyCopy(clipboardEvent.clipboardData, data);
-                }
-                evt.preventDefault();
-              },
-              { once: true },
-            );
-            document.execCommand('copy');
-          });
-
-          event.preventDefault();
         }
       },
       cut: (event: ClipboardEvent) => {
-        if (!this.props.focused() || isUserEditing()) {
+        if (
+          !this.props.focused() ||
+          isUserEditing() ||
+          isSelectionOutsideElement(el)
+        ) {
           return;
         }
-        if (isClipboardAPIAvailable()) {
+        if (isAsyncClipboardWriteAvailable()) {
           (async () => {
             const data = await this.props.onCut();
             if (!data) return;
@@ -293,16 +319,36 @@ async function copy(data: ClipboardData): Promise<void> {
       );
     });
 
-    const clipboardItem = new ClipboardItem(clipboardItemData);
+    let clipboardItem: ClipboardItem | undefined;
+
+    try {
+      clipboardItem = new ClipboardItem(clipboardItemData);
+    } catch (e) {
+      KetcherLogger.info(
+        'cannot create ClipboardItem, falling back to writeText',
+        e,
+      );
+
+      // Fallback for browsers that don't support ClipboardItem constructor or
+      // custom mime types in ClipboardItem constructor
+      if (navigator.clipboard.writeText) {
+        // Fallback to simple text copy
+        const textData = data['text/plain'] || JSON.stringify(data);
+
+        await navigator.clipboard.writeText(textData);
+
+        return;
+      } else {
+        KetcherLogger.error('cliparea.tsx::copy', e);
+      }
+    }
 
     // Chrome: clipboardItem.presentationStyle is undefined
     // Safari-specific check for presentationStyle property
-    const itemWithPresentationStyle = clipboardItem as ClipboardItem & {
-      presentationStyle?: string;
-    };
     if (
-      itemWithPresentationStyle.presentationStyle &&
-      itemWithPresentationStyle.presentationStyle === 'unspecified'
+      !clipboardItem ||
+      (clipboardItem.presentationStyle &&
+        clipboardItem.presentationStyle === 'unspecified')
     ) {
       if (navigator.clipboard.writeText) {
         // Fallback to simple text copy

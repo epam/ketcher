@@ -15,16 +15,14 @@
  ***************************************************************************/
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  changeImage,
-  changeVersion,
-  shouldFragment,
-} from '../../../../../state/options';
+import type { AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
+import { changeImage, changeVersion } from '../../../../../state/options';
 
 import { Dialog } from '../../../../components';
 import Input from '../../../../../component/form/Input/Input';
 import OpenButton from '../../../../../component/view/openbutton';
-import { FileContent } from '../../../../../component/view/openButton.types';
+import type { FileContent } from '../../../../../component/view/openButton.types';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import classes from './Recognize.module.less';
 import { connect } from 'react-redux';
@@ -33,17 +31,18 @@ import { range } from 'lodash/fp';
 import { recognize } from '../../../../../state/server';
 import { DialogActionButton } from 'src/script/ui/views/modal/components/document/Open/components/DialogActionButton';
 import { Icon, StructRender } from 'components';
-import { ketcherProvider, Struct } from 'ketcher-core';
+import { type Struct, ketcherProvider } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
 
 type StructStringOrPromise = string | Promise<unknown> | null;
+type RecognizeImageFile = File | FileContent | null;
 
 function isImage(file: File | null): boolean {
   return file?.type?.includes('image') ?? false;
 }
 
 interface FooterContentProps {
-  onImage: (file: File | FileContent | null) => void;
+  onImage: (file: RecognizeImageFile) => void;
   structStr: StructStringOrPromise;
   openHandler: () => void;
   copyHandler: () => void;
@@ -98,8 +97,7 @@ interface RecognizeDialogProps {
   onOk: (result: unknown) => void;
   onCancel: () => void;
   onRecognize: (file: File | null, version: string) => void;
-  isFragment: (v: boolean) => void;
-  onImage: (file: File | FileContent | null) => void;
+  onImage: (file: RecognizeImageFile) => void;
   onChangeImago: (version: string) => void;
 }
 
@@ -113,15 +111,7 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
     onOk,
     ...partProps
   } = prop;
-  const {
-    onRecognize,
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    isFragment,
-    /* eslint-enable @typescript-eslint/no-unused-vars */
-    onImage,
-    onChangeImago,
-    ...props
-  } = partProps;
+  const { onRecognize, onImage, onChangeImago, ...props } = partProps;
   const [canPreviewImage, setCanPreviewImage] = useState(true);
   const result = () =>
     structStr && !(structStr instanceof Promise)
@@ -173,7 +163,6 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
     >
       <div className={classes.topBody}>
         <label className={classes.imagoVersion}>
-          {/* eslint-disable jsx-a11y/label-has-associated-control */}
           Imago version
           <Input
             type="text"
@@ -184,9 +173,8 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
               ),
             }}
             value={version}
-            onChange={onChangeImago}
+            onChange={(val) => onChangeImago(val as string)}
           />
-          {/* eslint-enable jsx-a11y/label-has-associated-control */}
         </label>
         <span>Original image</span>
         <span>Recognized structure preview</span>
@@ -238,10 +226,11 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
   );
 }
 
+type WindowWithWebkitURL = Window & { webkitURL?: typeof globalThis.URL };
+
 function url(file: File | null): string | null {
   if (!file) return null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const URL = window.URL || (window as any).webkitURL;
+  const URL = window.URL || (window as WindowWithWebkitURL).webkitURL;
   return URL ? URL.createObjectURL(file) : 'No preview';
 }
 
@@ -268,10 +257,10 @@ const mapStateToProps = (state: RecognizeState) => ({
     state.options.recognize.version ?? state.options.app.imagoVersions[1],
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapDispatchToProps = (dispatch: any) => ({
-  isFragment: (v: boolean) => dispatch(shouldFragment(v)),
-  onImage: (file: File | FileContent | null) => dispatch(changeImage(file)),
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<RecognizeState, undefined, AnyAction>,
+) => ({
+  onImage: (file: RecognizeImageFile) => dispatch(changeImage(file)),
   onRecognize: (file: File | null, ver: string) =>
     dispatch(recognize(file, ver)),
   onChangeImago: (ver: string) => dispatch(changeVersion(ver)),

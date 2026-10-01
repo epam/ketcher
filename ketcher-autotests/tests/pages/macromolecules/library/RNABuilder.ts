@@ -1,8 +1,9 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { moveMouseAway } from '@utils/moveMouseAway';
 
-type RNABuilderLocators = {
+export type RNABuilderLocators = {
   rnaBuilderSection: Locator;
+  rnaEditorBody: Locator;
   nameYourStructureEditbox: Locator;
   sugarSlot: Locator;
   baseSlot: Locator;
@@ -17,6 +18,7 @@ type RNABuilderLocators = {
 export const RNABuilder = (page: Page) => {
   const locators: RNABuilderLocators = {
     rnaBuilderSection: page.getByTestId('rna-builder-expand-button'),
+    rnaEditorBody: page.getByTestId('rna-editor-expanded'),
     nameYourStructureEditbox: page.getByTestId('name-your-structure-editbox'),
     sugarSlot: page.getByTestId('rna-builder-slot--sugar'),
     baseSlot: page.getByTestId('rna-builder-slot--base'),
@@ -49,48 +51,63 @@ export const RNABuilder = (page: Page) => {
       }
     },
 
+    async setCustomPresetName(name: string) {
+      await moveMouseAway(page);
+      await this.expand();
+      await expect(locators.nameYourStructureEditbox).toBeInViewport();
+      await locators.nameYourStructureEditbox.fill(name);
+    },
+
     async selectSugarSlot() {
       await moveMouseAway(page);
+      await this.expand();
       await expect(locators.sugarSlot).toBeInViewport();
       await locators.sugarSlot.click();
     },
 
     async selectBaseSlot() {
       await moveMouseAway(page);
+      await this.expand();
       await expect(locators.baseSlot).toBeInViewport();
       await locators.baseSlot.click();
     },
 
     async selectPhosphateSlot() {
       await moveMouseAway(page);
+      await this.expand();
       await expect(locators.phosphateSlot).toBeInViewport();
       await locators.phosphateSlot.click();
     },
 
     async addToPresets() {
       await moveMouseAway(page);
+      await this.expand();
       await expect(locators.addToPresetsButton).toBeInViewport();
       await locators.addToPresetsButton.click();
     },
 
     async save() {
       await moveMouseAway(page);
+      await this.expand();
       await expect(locators.saveButton).toBeInViewport();
       await locators.saveButton.click();
     },
 
     async cancel() {
       await moveMouseAway(page);
+      await this.expand();
       await locators.cancelButton.click();
     },
 
     async duplicateAndEdit() {
       await moveMouseAway(page);
+      await this.expand();
       await locators.duplicateAndEditButton.click();
     },
 
     async edit() {
       await moveMouseAway(page);
+      await this.expand();
       await locators.editButton.click();
     },
   };

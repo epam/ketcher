@@ -1,9 +1,12 @@
 import { findStereoAtoms, KetcherLogger, ketcherProvider } from 'ketcher-core';
 import { useCallback, useRef } from 'react';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import EnhancedStereoTool from 'src/script/editor/tool/enhanced-stereo';
-import { AtomContextMenuProps, ItemEventParams } from '../contextMenu.types';
+import type {
+  AtomContextMenuProps,
+  ItemEventParams,
+} from '../contextMenu.types';
 import { noOperation } from '../utils';
 
 type Params = ItemEventParams<AtomContextMenuProps>;
@@ -26,7 +29,9 @@ const useAtomStereo = () => {
           stereoAtomIdsRef.current,
         );
 
-        action && editor.update(action);
+        if (action) {
+          editor.update(action);
+        }
       } catch (e) {
         KetcherLogger.error('useAtomStereo.ts::useAtomStereo::handler', e);
         noOperation();

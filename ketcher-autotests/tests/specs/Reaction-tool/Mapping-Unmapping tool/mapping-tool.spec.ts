@@ -1,14 +1,14 @@
-/* eslint-disable no-magic-numbers */
-import { test } from '@fixtures';
+import { expect, test } from '@fixtures';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   openFileAndAddToCanvas,
   waitForPageInit,
   mapTwoAtoms,
   RxnFileFormat,
   deleteByKeyboard,
   dragTo,
+  getKet,
 } from '@utils';
 import {
   FileType,
@@ -73,7 +73,7 @@ test.describe('Mapping Tools', () => {
     // EPMLSOPKET-1828
     await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-rection-benz.rxn');
     await CommonLeftToolbar(page).erase();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
   });
 
   test('Click atoms to map atoms of reactants or products', async ({
@@ -98,20 +98,47 @@ test.describe('Mapping Tools', () => {
     // EPMLSOPKET-12961
     // Undo not working properly https://github.com/epam/ketcher/issues/2174
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
+    const ketNoMapping = await getKet(page);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
+    expect(await getKet(page)).toEqual(ketNoMapping);
+  });
+
+  test('Undo restores previous mapping after remapping', async ({ page }) => {
+    // Sibling of https://github.com/epam/ketcher/issues/2174 (variant c):
+    // remapping between two existing mappings must undo to the prior state.
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionMapping,
+    );
+    const atomA = getAtomLocator(page, { atomLabel: 'C' }).nth(0);
+    const atomB = getAtomLocator(page, { atomLabel: 'C' }).nth(1);
+    await atomA.click();
+    await atomB.click();
+    const ketBeforeRemap = await getKet(page);
+
+    await mapTwoAtoms(page, atomA, atomB);
+    const ketAfterRemap = await getKet(page);
+    expect(ketAfterRemap).not.toEqual(ketBeforeRemap);
+
+    await CommonTopLeftToolbar(page).undo();
+    expect(await getKet(page)).toEqual(ketBeforeRemap);
+
+    await CommonTopLeftToolbar(page).redo();
+    expect(await getKet(page)).toEqual(ketAfterRemap);
   });
 
   test.describe('Mapping reactions', () => {
     test.beforeEach(async ({ page }) => {
       await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-reaction.rxn');
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
     });
 
     test('Remove the reaction components', async ({ page }) => {

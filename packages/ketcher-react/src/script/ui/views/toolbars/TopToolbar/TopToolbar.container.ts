@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,7 +17,7 @@
 
 import { TopToolbar } from './TopToolbar';
 
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { onAction } from '../../../state';
 import action from 'src/script/ui/action/index';
@@ -103,7 +104,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onZoomOut: () => dispatchAction('zoom-out'),
     onZoom: (zoomValue: number) =>
       dispatch(onAction((editor) => editor.zoom(zoomValue / 100))),
-    onSettingsOpen: () => dispatchAction('settings'),
+    onSettingsOpen: () => {
+      dispatchAction('settings');
+    },
     onLayout: () => dispatchAction('layout'),
     onClean: () => dispatchAction('clean'),
     onAromatize: () => dispatchAction('arom'),

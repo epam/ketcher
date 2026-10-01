@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -865,12 +862,11 @@ test(`1. Check that amino acid modifications are not present in list if they are
     monomerType: MonomerType.Peptide,
   }).first();
 
-  await ContextMenu(page, randomPeptide).open();
-
-  const modifyAminoAcidsOption = page
-    .getByTestId(MonomerOption.ModifyAminoAcids)
-    .first();
-  await expect(modifyAminoAcidsOption).toHaveCount(0);
+  expect(
+    await ContextMenu(page, randomPeptide).isOptionVisible(
+      MonomerOption.ModifyAminoAcids,
+    ),
+  ).toBe(false);
 });
 
 test('2. Check that phosphorylation modifies only eligable monomers', async () => {
@@ -3829,6 +3825,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -3878,6 +3875,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -3927,6 +3925,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -3976,6 +3975,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -4025,6 +4025,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -4074,6 +4075,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -4123,6 +4125,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,

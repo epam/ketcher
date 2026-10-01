@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,11 +15,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Struct, Text } from 'domain/entities';
+import type { Struct } from 'domain/entities/struct';
+import { Text } from 'domain/entities/text';
 import { getNodeWithInvertedYCoord } from '../helpers';
 import {
+  type DraftEditorState,
   convertDraftToLexical,
-  DraftEditorState,
 } from 'application/render/restruct/draftToLexical';
 
 const IS_BOLD = 1;
@@ -159,9 +161,7 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
  */
 function isKetV2Format(ketItem: any): ketItem is KETTextV2 {
   return (
-    ketItem &&
-    ketItem.boundingBox !== undefined &&
-    ketItem.paragraphs !== undefined
+    ketItem?.boundingBox !== undefined && ketItem?.paragraphs !== undefined
   );
 }
 
@@ -178,7 +178,7 @@ export function textToStruct(ketItem: any, struct: Struct) {
 
     // If the incoming node.content is Draft.js shape (stringified or object),
     // convert it to Lexical format at parse time so we store only Lexical JSON.
-    if (node && node.content) {
+    if (node?.content) {
       try {
         // If content is a JSON string, try to parse it
         const parsed =
@@ -190,7 +190,7 @@ export function textToStruct(ketItem: any, struct: Struct) {
           const lexical = convertDraftToLexical(parsed as DraftEditorState);
           node.content = JSON.stringify(lexical);
         }
-      } catch (e) {
+      } catch {
         // Leave content as-is if parsing/conversion fails
         // (content may already be Lexical or plain text)
       }

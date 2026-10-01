@@ -163,7 +163,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -302,6 +303,7 @@
         "fullName": "N-Methyl-Cysteine",
         "alias": "meC",
         "aliasHELM": "meC",
+        "aliasBILN": "meC",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

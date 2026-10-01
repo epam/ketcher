@@ -1,6 +1,6 @@
 import utils from 'application/editor/shared/utils';
-import { ReStruct } from 'application/render';
-import { Vec2 } from 'domain/entities';
+import type { ReStruct } from 'application/render';
+import type { Vec2 } from 'domain/entities/vec2';
 import { OperationType } from '../OperationType';
 import Base from '../BaseOperation';
 
@@ -52,5 +52,9 @@ export class RxnArrowRotate extends Base {
       this.data.noinvalidate,
     );
     return move;
+  }
+
+  isDummy() {
+    return this.data.angle === 0;
   }
 }

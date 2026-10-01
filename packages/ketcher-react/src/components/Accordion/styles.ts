@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
-import { IDetailsContainerProps } from './types';
+import type { IDetailsContainerProps } from './types';
 
 export const Container = styled.div({
   overflow: 'hidden',

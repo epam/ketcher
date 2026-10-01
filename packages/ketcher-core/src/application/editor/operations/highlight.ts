@@ -15,8 +15,8 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { Highlight } from 'domain/entities';
-import { ReStruct } from '../../render';
+import { Highlight } from 'domain/entities/highlight';
+import type { ReStruct } from '../../render';
 
 import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
@@ -27,6 +27,7 @@ type Data = {
   rgroupAttachmentPoints: Array<number>;
   color: string;
   highlightId?: number;
+  outline?: boolean;
 };
 
 export class HighlightAdd extends BaseOperation {
@@ -38,6 +39,7 @@ export class HighlightAdd extends BaseOperation {
     rgroupAttachmentPoints: Array<number>,
     color: string,
     highlightId?: number,
+    outline?: boolean,
   ) {
     super(OperationType.ADD_HIGHLIGHT);
     this.data = {
@@ -46,11 +48,12 @@ export class HighlightAdd extends BaseOperation {
       rgroupAttachmentPoints,
       color,
       highlightId,
+      outline,
     };
   }
 
   execute(restruct: ReStruct) {
-    const { atoms, bonds, rgroupAttachmentPoints, color } = this.data;
+    const { atoms, bonds, rgroupAttachmentPoints, color, outline } = this.data;
 
     if (!color) {
       return;
@@ -62,12 +65,13 @@ export class HighlightAdd extends BaseOperation {
       bonds,
       rgroupAttachmentPoints,
       color,
+      outline,
     });
 
-    if (typeof this.data.highlightId !== 'number') {
-      this.data.highlightId = struct.highlights.add(highlight);
-    } else {
+    if (typeof this.data.highlightId === 'number') {
       struct.highlights.set(this.data.highlightId, highlight);
+    } else {
+      this.data.highlightId = struct.highlights.add(highlight);
     }
 
     notifyChanged(restruct, atoms, bonds, rgroupAttachmentPoints);
@@ -226,6 +230,21 @@ export class HighlightUpdate extends BaseOperation {
       color,
     );
     return inverted;
+  }
+
+  isDummy(restruct?: ReStruct) {
+    if (!restruct) return false;
+    const highlight = restruct.molecule.highlights.get(
+      this.newData.highlightId,
+    );
+    if (!highlight) return false;
+    return (
+      highlight.color === this.newData.color &&
+      highlight.atoms.length === this.newData.atoms.length &&
+      highlight.bonds.length === this.newData.bonds.length &&
+      highlight.atoms.every((id, i) => this.newData.atoms[i] === id) &&
+      highlight.bonds.every((id, i) => this.newData.bonds[i] === id)
+    );
   }
 }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC } from 'react';
+import type { FC } from 'react';
 
 import styles from './OpenOptions.module.less';
 import { FileDrop } from './FileDrop';

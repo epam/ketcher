@@ -14,16 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RaphaelAxisAlignedBoundingBox, RaphaelPaper } from 'raphael';
-import { Atom, Bond, Box2Abs, HalfBond, Vec2 } from 'domain/entities';
-import assert from 'assert';
-import { ReStruct, LayerMap } from './restruct';
-import Visel from './restruct/visel';
-import {
-  RelativeBox,
-  RenderOptions,
-  UsageInMacromolecule,
-} from './render.types';
+import type { RaphaelAxisAlignedBoundingBox, RaphaelPaper } from 'raphael';
+import { Atom } from 'domain/entities/atom';
+import type { Bond } from 'domain/entities/bond';
+import type { Box2Abs } from 'domain/entities/box2Abs';
+import type { HalfBond } from 'domain/entities/halfBond';
+import { Vec2 } from 'domain/entities/vec2';
+import { assert } from 'utilities';
+import { LayerMap } from './restruct/generalEnumTypes';
+import type ReStruct from './restruct/restruct';
+import type Visel from './restruct/visel';
+import type { RelativeBox, RenderOptions } from './render.types';
+import { UsageInMacromolecule } from './render.constants';
 
 function relBox(box: RaphaelAxisAlignedBoundingBox): RelativeBox {
   return {
@@ -80,7 +82,7 @@ function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
   const id1 = rd[pid] > rd[nid] ? pid : nid;
 
   // simple proportion to calculate the shift
-  /* eslint-disable no-mixed-operators */
+
   return (
     rd[id0] +
     (Math.abs(rc[id0]) * (rd[id1] - rd[id0])) /

@@ -1,12 +1,14 @@
-import { Ketcher } from 'ketcher-core';
-import { BaseRenderer } from 'application/render';
-import { LogSettings } from 'utilities';
+import type { Ketcher } from 'ketcher-core';
+import type { BaseRenderer } from 'application/render';
+import type { LogSettings } from 'utilities';
 
 declare global {
   export interface Window {
     ketcher?: Ketcher;
     logging: LogSettings;
     isPolymerEditorTurnedOn: boolean;
+    _ketcher_isChainLengthRulerDisabled?: boolean;
+    _ketcher_isAutozoomDisabled?: boolean;
   }
 
   export interface SVGElement {

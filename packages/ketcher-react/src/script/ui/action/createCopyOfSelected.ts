@@ -1,4 +1,4 @@
-import { Editor, fromPaste, Struct, Vec2 } from 'ketcher-core';
+import { type Editor, type Struct, type Vec2, fromPaste } from 'ketcher-core';
 
 export const createCopyOfSelected = (editor: Editor, point: Vec2) => {
   const restruct = editor.render.ctab;

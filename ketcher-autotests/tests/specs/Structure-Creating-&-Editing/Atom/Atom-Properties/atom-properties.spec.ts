@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   waitForRender,
   clickOnCanvas,
   MolFileFormat,
@@ -21,7 +19,7 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -212,7 +210,7 @@ test.describe('Atom Properties', () => {
       Description: The appeared symbol is colored with the same color as in the Periodic Table.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
 
     await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).dblclick({
@@ -295,7 +293,7 @@ test.describe('Atom Properties', () => {
       Description: The appeared symbol is colored with the same color as in the Periodic Table.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
 
     await selectAllStructuresOnCanvas(page);
@@ -1479,10 +1477,10 @@ test.describe('Atom Properties', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Phosphorus);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await clickInTheMiddleOfTheScreen(page);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1667,7 +1665,7 @@ test.describe('Atom Properties', () => {
       PeriodicTableElement.Mo,
       PeriodicTableElement.W,
     ]);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
@@ -1683,7 +1681,7 @@ test.describe('Atom Properties', () => {
       PeriodicTableElement.Mo,
       PeriodicTableElement.W,
     ]);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
@@ -1695,7 +1693,7 @@ test.describe('Atom Properties', () => {
       Description: The Generic Group symbol is present on the canvas.
     */
     await selectExtendedTableElement(page, ExtendedTableButton.G);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
@@ -1707,7 +1705,7 @@ test.describe('Atom Properties', () => {
       Description: The Generic Group symbol is present in Atom Properties modal.
     */
     await selectExtendedTableElement(page, ExtendedTableButton.GH_STAR);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -2021,9 +2019,9 @@ test.describe('Atom Properties', () => {
       Description: All Connectivity options added to Benzene structure.
       Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
-      // eslint-disable-next-line no-magic-numbers
+
       const atomIndices = [2, 1, 3];
-      // eslint-disable-next-line no-magic-numbers
+
       const optionIndices = [
         ConnectivityOption.Zero,
         ConnectivityOption.Three,

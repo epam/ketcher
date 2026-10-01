@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { UiAction, UiActionAction } from '../../../../action';
+import type { UiAction, UiActionAction } from '../../../../action';
 
 import classes from './ActionButton.module.less';
 import clsx from 'clsx';
 import { shortcutStr } from 'ketcher-core';
-import { Icon, IconName } from 'components';
+import { type IconName, Icon } from 'components';
 
 interface ActionButtonProps {
   name: IconName;

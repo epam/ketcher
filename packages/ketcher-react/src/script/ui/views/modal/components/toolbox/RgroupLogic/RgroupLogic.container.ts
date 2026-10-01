@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseProps } from '../../../modal.types';
+import type { BaseProps } from '../../../modal.types';
 import RgroupLogic from './RgroupLogic';
 import { connect } from 'react-redux';
 

@@ -14,8 +14,8 @@ import {
 import { closeAbbreviationLookup } from '../../state/abbreviationLookup';
 import { onAction } from '../../state';
 import {
-  AbbreviationElementOption,
-  AbbreviationTemplateOption,
+  type AbbreviationElementOption,
+  type AbbreviationTemplateOption,
   AbbreviationType,
 } from './AbbreviationLookup.types';
 

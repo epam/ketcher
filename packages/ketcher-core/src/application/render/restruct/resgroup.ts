@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,74 +15,71 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Box2Abs,
-  FunctionalGroup,
-  SGroup,
-  Vec2,
-  MonomerMicromolecule,
-  SUPERATOM_CLASS,
-} from 'domain/entities';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { SGroup, SUPERATOM_CLASS } from 'domain/entities/sgroup';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Vec2 } from 'domain/entities/vec2';
 import { SgContexts } from 'application/editor/shared/constants';
 import ReDataSGroupData from './redatasgroupdata';
-import ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type ReStruct from './restruct';
+import type { Render } from '../raphaelRender';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 import BracketParams from '../bracket-params';
-import { RaphaelPaper } from 'raphael';
-import { RenderOptions } from '../render.types';
+import type {
+  Element as RaphaelElement,
+  RaphaelPaper,
+  RaphaelSet,
+} from 'raphael';
+import type { RenderOptions } from '../render.types';
 import paperjs from 'paper';
 interface SGroupdrawBracketsOptions {
-  set: any;
+  set: RaphaelSet;
   render: Render;
   sgroup: SGroup;
   bracketBox: Box2Abs;
   direction: Vec2;
   lowerIndexText?: string | null;
   upperIndexText?: string | null;
-  indexAttribute?: object;
+  indexAttribute?: Record<string, string>;
   superatomClass?: SUPERATOM_CLASS;
 }
 
-export const SUPERATOM_CLASS_TEXT = {
-  [SUPERATOM_CLASS.BASE]: 'Base',
-  [SUPERATOM_CLASS.SUGAR]: 'Sugar',
-  [SUPERATOM_CLASS.PHOSPHATE]: 'Phosphate',
-};
-
 // Helper function to convert SVG elements into Paper.js paths
-export function paperPathFromSVGElement(element) {
+export function paperPathFromSVGElement(
+  element: SVGElement,
+): paper.Path | paper.CompoundPath | undefined {
   const tagName = element.tagName;
-  let path;
+  let path: paper.Path | paper.CompoundPath | undefined;
 
   if (tagName === 'circle') {
     // Convert circle to Paper.js Path.Circle
-    const cx = parseFloat(element.getAttribute('cx'));
-    const cy = parseFloat(element.getAttribute('cy'));
-    const r = parseFloat(element.getAttribute('r'));
+    const cx = Number.parseFloat(element.getAttribute('cx') ?? '0');
+    const cy = Number.parseFloat(element.getAttribute('cy') ?? '0');
+    const r = Number.parseFloat(element.getAttribute('r') ?? '0');
     path = new paperjs.Path.Circle(new paperjs.Point(cx, cy), r);
   } else if (tagName === 'rect') {
     // Convert rectangle to Paper.js Path.Rectangle
-    const x = parseFloat(element.getAttribute('x'));
-    const y = parseFloat(element.getAttribute('y'));
-    const width = parseFloat(element.getAttribute('width'));
-    const height = parseFloat(element.getAttribute('height'));
+    const x = Number.parseFloat(element.getAttribute('x') ?? '0');
+    const y = Number.parseFloat(element.getAttribute('y') ?? '0');
+    const width = Number.parseFloat(element.getAttribute('width') ?? '0');
+    const height = Number.parseFloat(element.getAttribute('height') ?? '0');
     path = new paperjs.Path.Rectangle(
       new paperjs.Rectangle(x, y, width, height),
       new paperjs.Size(
-        parseFloat(element.getAttribute('rx') || '0'),
-        parseFloat(element.getAttribute('ry') || '0'),
+        Number.parseFloat(element.getAttribute('rx') || '0'),
+        Number.parseFloat(element.getAttribute('ry') || '0'),
       ),
     );
   } else if (tagName === 'path') {
     // Use the `d` attribute directly for Path data
     const d = element.getAttribute('d');
-    path = new paperjs.CompoundPath(d);
+    path = d ? new paperjs.CompoundPath(d) : undefined;
   }
   return path;
 }
@@ -89,7 +87,7 @@ export function paperPathFromSVGElement(element) {
 class ReSGroup extends ReObject {
   public item: SGroup | undefined;
   public render!: Render;
-  private expandedMonomerAttachmentPoints?: any; // Raphael paths
+  private expandedMonomerAttachmentPoints?: RaphaelSet; // Raphael paths
 
   constructor(sgroup: SGroup) {
     super('sgroup');
@@ -106,11 +104,14 @@ class ReSGroup extends ReObject {
    * @param sgroup {SGroup}
    * @returns {*}
    */
-  draw(remol: ReStruct, sgroup: SGroup): any {
+  draw(remol: ReStruct, sgroup: SGroup): RaphaelSet {
     this.render = remol.render;
     let set = this.render.paper.set();
     SGroup.bracketPos(sgroup, remol.molecule, remol, this.render);
     const bracketBox = sgroup.bracketBox;
+    if (!bracketBox) {
+      return set;
+    }
     const direction = sgroup.bracketDirection;
     sgroup.areas = [bracketBox];
     if (sgroup.isExpanded()) {
@@ -123,7 +124,7 @@ class ReSGroup extends ReObject {
       };
       switch (sgroup.type) {
         case 'MUL': {
-          SGroupdrawBracketsOptions.lowerIndexText = sgroup.data.mul;
+          SGroupdrawBracketsOptions.lowerIndexText = String(sgroup.data.mul);
           break;
         }
         case 'SRU': {
@@ -144,11 +145,15 @@ class ReSGroup extends ReObject {
           break;
         }
         case 'SUP': {
-          SGroupdrawBracketsOptions.lowerIndexText =
-            sgroup.data.name || SUPERATOM_CLASS_TEXT[sgroup.data.class];
+          const superatomClass = sgroup.data.class as
+            SUPERATOM_CLASS | undefined;
+          SGroupdrawBracketsOptions.lowerIndexText = sgroup.superatomLabel;
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
-          SGroupdrawBracketsOptions.superatomClass = sgroup.data.class;
+          SGroupdrawBracketsOptions.superatomClass = superatomClass;
+          if (sgroup instanceof MonomerMicromolecule) {
+            set.push(drawExpandedMonomerLabel(remol, sgroup, bracketBox));
+          }
           break;
         }
         case 'DAT': {
@@ -191,20 +196,17 @@ class ReSGroup extends ReObject {
     let height = 0;
     const sGroup = this.item;
     if (sGroup) {
-      const { atomId, position } = sGroup.getContractedPosition(
-        render.ctab.molecule,
-      );
-      if (sGroup?.isContracted() && position) {
+      if (sGroup?.isContracted()) {
+        const { atomId } = sGroup.getContractedPosition(render.ctab.molecule);
         const reSGroupAtom = render.ctab.atoms.get(atomId);
         const sGroupTextBoundingBox =
           reSGroupAtom?.visel.boundingBox || reSGroupAtom?.visel.oldBoundingBox;
         if (sGroupTextBoundingBox) {
-          const { x, y } = Scale.modelToCanvas(position, render.options);
           const { p0, p1 } = sGroupTextBoundingBox;
           width = p1.x - p0.x + padding * 2;
           height = p1.y - p0.y + padding * 2;
-          startX = x - width / 2;
-          startY = y - height / 2;
+          startX = p0.x - padding;
+          startY = p0.y - padding;
         }
       }
     }
@@ -212,7 +214,7 @@ class ReSGroup extends ReObject {
     return { startX, startY, width, height };
   }
 
-  getContractedSelectionContour(render: Render): any {
+  getContractedSelectionContour(render: Render): RaphaelElement {
     const { paper, options } = render;
     const { fontszInPx, radiusScaleFactor } = options;
     const radius = fontszInPx * radiusScaleFactor * 2;
@@ -226,8 +228,8 @@ class ReSGroup extends ReObject {
   makeSelectionPlate(
     restruct: ReStruct,
     _paper: RaphaelPaper,
-    options: any,
-  ): any {
+    options: RenderOptions,
+  ): RaphaelElement | undefined {
     const sgroup = this.item;
     const functionalGroups = restruct.molecule.functionalGroups;
     const render = restruct.render;
@@ -241,14 +243,13 @@ class ReSGroup extends ReObject {
   }
 
   drawHover(render: Render): void {
-    // eslint-disable-line max-statements
     const options = render.options;
     const paper = render.paper;
     const sGroupItem = this.item;
     if (sGroupItem) {
       const { a0, a1, b0, b1 } = getHighlighPathInfo(sGroupItem, render);
       const functionalGroups = render.ctab.molecule.functionalGroups;
-      const hoversToCombine: Array<any> = [];
+      const hoversToCombine: Array<RaphaelElement | null | undefined> = [];
       const otherHovers = paper.set();
 
       if (
@@ -265,14 +266,14 @@ class ReSGroup extends ReObject {
         sGroupItem.hovering = paper
           .path(
             'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
-            tfx(a0.x),
-            tfx(a0.y),
-            tfx(a1.x),
-            tfx(a1.y),
-            tfx(b1.x),
-            tfx(b1.y),
-            tfx(b0.x),
-            tfx(b0.y),
+            toFixed(a0.x),
+            toFixed(a0.y),
+            toFixed(a1.x),
+            toFixed(a1.y),
+            toFixed(b1.x),
+            toFixed(b1.y),
+            toFixed(b0.x),
+            toFixed(b0.y),
           )
           .attr(options.hoverStyle);
         otherHovers.push(sGroupItem.hovering);
@@ -282,14 +283,14 @@ class ReSGroup extends ReObject {
         const atom = render?.ctab?.atoms?.get(aid);
 
         hoversToCombine.push(atom?.makeHoverPlate(render));
-      }, this);
+      });
       SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach((bid) => {
         hoversToCombine.push(
           render?.ctab?.bonds?.get(bid)?.makeHoverPlate(render),
         );
-      }, this);
+      });
 
-      const elements: Element[] = [];
+      const elements: SVGElement[] = [];
 
       hoversToCombine.forEach((item) => {
         if (item?.node) {
@@ -301,7 +302,7 @@ class ReSGroup extends ReObject {
       paperjs.setup(document.createElement('canvas')); // Paper.js works on an offscreen canvas
 
       // Generate Paper.js paths from all SVG elements
-      let combinedPath: any = null;
+      let combinedPath: paper.PathItem | undefined;
 
       elements.forEach((el) => {
         const paperPath = paperPathFromSVGElement(el);
@@ -370,7 +371,7 @@ class ReSGroup extends ReObject {
         const atom = render?.ctab?.atoms?.get(aid);
 
         set.push(atom?.makeMonomerAttachmentPointHighlightPlate(render));
-      }, this);
+      });
 
       render.ctab.addReObjectPath(LayerMap.atom, this.visel, set);
       this.expandedMonomerAttachmentPoints = render.paper.setFinish();
@@ -383,7 +384,16 @@ class ReSGroup extends ReObject {
     if (sgroup && sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
       const remol = render.ctab;
       const path = this.draw(remol, sgroup);
-      restruct.addReObjectPath(LayerMap.data, this.visel, path, null, true);
+      const includeInBoundingBox = !(
+        sgroup instanceof MonomerMicromolecule && sgroup.isExpanded()
+      );
+      restruct.addReObjectPath(
+        LayerMap.data,
+        this.visel,
+        path,
+        null,
+        includeInBoundingBox,
+      );
       this.setHover(this.hover, render); // TODO: fix this
     }
   }
@@ -486,14 +496,14 @@ function SGroupdrawBrackets({
         indexPos.x + iconSize / 2 + iconOffsetFromBracket
       },${indexPos.y - iconSize / 2}
                          L${indexPos.x + iconSize + iconOffsetFromBracket},${
-        indexPos.y
-      }
+                           indexPos.y
+                         }
                          L${
                            indexPos.x + iconSize / 2 + iconOffsetFromBracket
                          },${indexPos.y + iconSize / 2}
                          L${indexPos.x + iconOffsetFromBracket},${
-        indexPos.y
-      } Z`;
+                           indexPos.y
+                         } Z`;
       icon = render.paper.path(rhombusPath);
     }
 
@@ -512,6 +522,10 @@ function SGroupdrawBrackets({
         font: render.options.font,
         'font-size': render.options.fontszsubInPx,
       });
+    if (isLowerText) {
+      indexPath.node?.setAttribute('data-testid', 's-group-label');
+      indexPath.node?.setAttribute('data-label-text', text);
+    }
     if (indexAttribute) indexPath.attr(indexAttribute);
 
     // Bounding box adjustment and final positioning
@@ -543,11 +557,14 @@ function showValue(
   pos: Vec2 | undefined,
   sgroup: SGroup,
   options: RenderOptions,
-): any {
-  const text = paper.text(pos?.x, pos?.y, sgroup.data.fieldValue).attr({
+  value = sgroup.data.fieldValue,
+): RaphaelSet {
+  const text = paper.text(pos?.x, pos?.y, value).attr({
     font: options.font,
     'font-size': options.fontszsubInPx,
   });
+  text.node?.setAttribute('data-testid', 's-group-label');
+  text.node?.setAttribute('data-label-text', value);
   const box = text.getBBox();
   let rect = paper.rect(
     box.x - 1,
@@ -565,10 +582,29 @@ function showValue(
   return set;
 }
 
-function drawGroupDat(restruct: ReStruct, sgroup: SGroup) {
-  SGroup.bracketPos(sgroup, restruct.molecule);
-  sgroup.areas = sgroup.bracketBox ? [sgroup.bracketBox] : [];
+function drawExpandedMonomerLabel(
+  restruct: ReStruct,
+  sgroup: MonomerMicromolecule,
+  monomerBBox: Box2Abs,
+): RaphaelSet {
+  const { render } = restruct;
+  const labelPosition = monomerBBox.p1
+    .add(new Vec2(0, 0.3))
+    .scaled(render.options.microModeScale);
+  const label = showValue(
+    render.paper,
+    labelPosition,
+    sgroup,
+    render.options,
+    sgroup.data.name || '?',
+  );
+  const labelBBox = util.relBox(label.getBBox());
+  label.translateAbs(0.5 * labelBBox.width, -0.5 * labelBBox.height);
 
+  return label;
+}
+
+function drawGroupDat(restruct: ReStruct, sgroup: SGroup) {
   if (sgroup.pp === null) sgroup.calculatePP(restruct.molecule);
 
   return sgroup.data.attached
@@ -576,7 +612,7 @@ function drawGroupDat(restruct: ReStruct, sgroup: SGroup) {
     : drawAbsoluteDat(restruct, sgroup);
 }
 
-function drawAbsoluteDat(restruct: ReStruct, sgroup: SGroup): any {
+function drawAbsoluteDat(restruct: ReStruct, sgroup: SGroup): RaphaelSet {
   const render = restruct.render;
   const options = render.options;
   const paper = render.paper;
@@ -602,7 +638,7 @@ function drawAbsoluteDat(restruct: ReStruct, sgroup: SGroup): any {
   return set;
 }
 
-function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): any {
+function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): RaphaelSet {
   const render = restruct.render;
   const options = render.options;
   const paper = render.paper;
@@ -677,7 +713,11 @@ function getHighlighPathInfo(
   size: number;
 } {
   const options = render.options;
-  let bracketBox = sgroup.bracketBox.transform(Scale.modelToCanvas, options);
+  const sGroupBracketBox = sgroup.bracketBox;
+  if (!sGroupBracketBox) {
+    throw new Error('SGroup bracket box is not defined');
+  }
+  let bracketBox = sGroupBracketBox.transform(Scale.modelToCanvas, options);
   const lineWidth = options.lineWidth;
   const vext = new Vec2(lineWidth * 4, lineWidth * 6);
   bracketBox = bracketBox.extend(vext, vext);

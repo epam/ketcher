@@ -4,6 +4,7 @@ import {
   IKetIdtAliases,
   MonomerItemType,
   PolymerBond,
+  RnaPhosphatePosition,
 } from 'ketcher-core';
 
 export enum PreviewType {
@@ -11,6 +12,7 @@ export enum PreviewType {
   Preset = 'preset',
   Bond = 'bond',
   AmbiguousMonomer = 'ambiguousMonomer',
+  Text = 'text',
 }
 
 export interface PreviewStyle {
@@ -46,6 +48,7 @@ export interface PresetPreviewState extends BasePreviewState {
   readonly name?: string;
   readonly idtAliases?: IKetIdtAliases;
   readonly aliasAxoLabs?: string;
+  readonly phosphatePosition?: RnaPhosphatePosition;
 }
 
 export interface BondPreviewState extends BasePreviewState {
@@ -59,8 +62,14 @@ export interface AmbiguousMonomerPreviewState extends BasePreviewState {
   readonly presetMonomers?: ReadonlyArray<MonomerItemType | undefined>;
 }
 
+export interface TextPreviewState extends BasePreviewState {
+  readonly type: PreviewType.Text;
+  readonly text: string;
+}
+
 export type EditorStatePreview =
   | MonomerPreviewState
   | PresetPreviewState
   | BondPreviewState
-  | AmbiguousMonomerPreviewState;
+  | AmbiguousMonomerPreviewState
+  | TextPreviewState;

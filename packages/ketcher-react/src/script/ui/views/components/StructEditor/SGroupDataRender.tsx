@@ -1,5 +1,10 @@
-import { useEffect, useRef, useState, FC } from 'react';
-import { Vec2, Render, SGroup, CoordinateTransformation } from 'ketcher-core';
+import { type FC, useLayoutEffect, useRef, useState } from 'react';
+import {
+  type Render,
+  type SGroup,
+  Vec2,
+  CoordinateTransformation,
+} from 'ketcher-core';
 import clsx from 'clsx';
 import classes from './InfoPanel.module.less';
 import { calculateMiddleCoordsForRect } from './helpers';
@@ -25,10 +30,13 @@ function getPanelPositionRelativeToRect(
     return null;
   }
 
+  const hoveringWithAttrs = sGroup.hovering as {
+    attrs?: { path?: Array<Array<number>> };
+  };
+
   // [['M', 23, 43], ['L', 23, 24]] we should remove first elements => [[23,43], [23,24]]
-  const rectCoords: Array<Array<number>> = sGroup.hovering.attrs?.path?.map(
-    (line) => line.slice(1),
-  );
+  const rectCoords: Array<Array<number>> =
+    hoveringWithAttrs.attrs?.path?.map((line) => line.slice(1)) ?? [];
 
   const [middleLeftSide, middleBottomSide, middleRightSide, middleTopSide] =
     calculateMiddleCoordsForRect(rectCoords);
@@ -85,12 +93,18 @@ const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
   const [wrapperWidth, setWrapperWidth] = useState(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  // The panel is positioned from its own measured size, so it has to be
+  // measured once it is in the DOM and again whenever its content changes.
+  // Without a dependency array this would re-run after every render, including
+  // the re-render its own setState triggers. useLayoutEffect keeps the
+  // measurement and the reposition in the same commit, so the panel is never
+  // painted at its pre-measurement position.
+  useLayoutEffect(() => {
     if (wrapperRef.current) {
       setWrapperHeight(wrapperRef.current.clientHeight);
       setWrapperWidth(wrapperRef.current.clientWidth);
     }
-  });
+  }, [sGroupData]);
 
   const panelCoordinate = getPanelPositionRelativeToRect(
     clientX,

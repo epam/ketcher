@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
+  setContextMenuActive,
 } from 'state/common';
 import {
   NodesSelection,
@@ -50,6 +51,7 @@ import { PointerEvent } from 'react';
 type SequenceItemContextMenuType = {
   selections?: NodesSelection;
   contextMenuEvent?: PointerEvent;
+  isPasteAvailable?: boolean;
 };
 
 export enum SequenceItemContextMenuNames {
@@ -70,6 +72,7 @@ export enum SequenceItemContextMenuNames {
 export const SequenceItemContextMenu = ({
   selections,
   contextMenuEvent,
+  isPasteAvailable = true,
 }: SequenceItemContextMenuType) => {
   const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
@@ -127,7 +130,7 @@ export const SequenceItemContextMenu = ({
       name: SequenceItemContextMenuNames.paste,
       title: 'Paste',
       icon: <Icon name={'pasteNavBar' as IconName} />,
-      disabled: false,
+      disabled: !isPasteAvailable,
       separator: true,
     },
     {
@@ -241,6 +244,10 @@ export const SequenceItemContextMenu = ({
 
     switch (true) {
       case menuItemId === SequenceItemContextMenuNames.modifyInRnaBuilder:
+        // Deactivate the context menu so its capture-phase Escape listener
+        // stops swallowing the first Escape press. Without this the user has
+        // to press Escape twice to leave RNA Builder mode.
+        dispatch(setContextMenuActive(false));
         editor.events.turnOnSequenceEditInRNABuilderMode.dispatch();
         dispatch(setSelectedTabIndex(LIBRARY_TAB_INDEX.RNA));
         dispatch(setIsEditMode(true));

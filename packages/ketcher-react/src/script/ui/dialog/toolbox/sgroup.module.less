@@ -16,7 +16,6 @@
 @import 'src/style/variables';
 @import 'src/style/mixins';
 
-// stylelint-disable selector-pseudo-class-no-unknown
 // stylelint-disable no-descending-specificity
 .sgroup {
   width: @width-small;
@@ -42,25 +41,6 @@
   fieldset {
     border: 0;
     padding: 0;
-  }
-
-  fieldset[class='sdata'] {
-    fieldset {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 24px;
-      width: 100%;
-
-      & label {
-        display: flex;
-        flex-direction: row;
-        line-height: 16px;
-
-        & > span {
-          margin-right: 3px !important;
-        }
-      }
-    }
   }
 
   form {
@@ -115,7 +95,25 @@
         background-color: @color-background-primary;
         width: 4px;
         border-radius: 2px;
-        -webkit-border-radius: 2px;
+      }
+    }
+  }
+
+  fieldset[class='sdata'] {
+    fieldset {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
+      width: 100%;
+
+      & label {
+        display: flex;
+        flex-direction: row;
+        line-height: 16px;
+
+        & > span {
+          margin-right: 3px !important;
+        }
       }
     }
   }

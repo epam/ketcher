@@ -467,6 +467,7 @@
         "fullName": "Glycine",
         "alias": "G",
         "aliasHELM": "G",
+        "aliasBILN": "G",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

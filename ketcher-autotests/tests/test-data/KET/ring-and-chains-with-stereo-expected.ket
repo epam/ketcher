@@ -26,7 +26,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -36,7 +37,8 @@
                     0
                 ],
                 "cip": "r",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -46,7 +48,8 @@
                     0
                 ],
                 "cip": "R",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "Cl",
@@ -192,8 +195,8 @@
             }
         ],
         "stereoFlagPosition": {
-            "x": 15.309036254882812,
-            "y": 9.203375816345215,
+            "x": 15.309036126607204,
+            "y": 9.203375739229411,
             "z": 0
         }
     },
@@ -208,7 +211,8 @@
                     0
                 ],
                 "cip": "R",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -218,7 +222,8 @@
                     0
                 ],
                 "cip": "s",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -228,7 +233,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "Cl",
@@ -374,8 +380,8 @@
             }
         ],
         "stereoFlagPosition": {
-            "x": 23.16476058959961,
-            "y": 9.059625625610352,
+            "x": 23.164760395500274,
+            "y": 9.059625549699042,
             "z": 0
         }
     },
@@ -390,7 +396,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -400,7 +407,8 @@
                     0
                 ],
                 "cip": "R",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -434,7 +442,8 @@
                     0
                 ],
                 "cip": "S",
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -623,8 +632,8 @@
             }
         ],
         "stereoFlagPosition": {
-            "x": 10.023600578308105,
-            "y": 3.3949248790740967,
+            "x": 10.023600494319574,
+            "y": 3.3949248506277563,
             "z": 0
         }
     }

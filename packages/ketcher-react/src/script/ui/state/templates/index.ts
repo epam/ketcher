@@ -86,10 +86,12 @@ export function editTmpl(tmpl) {
     openDialog(dispatch, 'attach', { tmpl })
       .then(
         (formData) => {
-          tmpl.struct.name = formData ? formData.name.trim() : tmpl.struct.name;
-          tmpl.props = formData
-            ? { ...(tmpl.props || {}), ...(formData.attach || {}) }
-            : tmpl.props;
+          const data = formData as {
+            name: string;
+            attach?: Record<string, unknown>;
+          };
+          tmpl.struct.name = data ? data.name.trim() : tmpl.struct.name;
+          tmpl.props = data ? { ...tmpl.props, ...data.attach } : tmpl.props;
 
           if (tmpl.props.group === 'User Templates')
             updateLocalStore(getState().templates.lib);
@@ -128,7 +130,11 @@ export function saveUserTmpl(struct) {
 
   return (dispatch, getState) => {
     openDialog(dispatch, 'attach', { tmpl })
-      .then(({ name, attach }) => {
+      .then((result) => {
+        const { name, attach } = result as {
+          name: string;
+          attach?: Record<string, unknown>;
+        };
         tmpl.struct.name = name.trim();
         tmpl.props = { ...attach, group: 'User Templates' };
 
@@ -176,11 +182,10 @@ const tmplActions = [
 const attachActions = ['INIT_ATTACH', 'SET_ATTACH_POINTS', 'SET_TMPL_NAME'];
 
 function templatesReducer(state = initTmplsState, action) {
-  if (tmplActions.includes(action.type))
-    return { ...state, ...(action.data || {}) };
+  if (tmplActions.includes(action.type)) return { ...state, ...action.data };
 
   if (attachActions.includes(action.type)) {
-    const attach = { ...state.attach, ...(action.data || {}) };
+    const attach = { ...state.attach, ...action.data };
     return { ...state, attach };
   }
 

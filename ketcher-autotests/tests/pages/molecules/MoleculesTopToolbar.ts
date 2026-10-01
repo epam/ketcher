@@ -1,6 +1,8 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
-import { waitForSpinnerFinishedWork } from '@utils/common/loaders';
+import {
+  waitForRender,
+  waitForSpinnerFinishedWork,
+} from '@utils/common/loaders';
 
 type MoleculesTopToolbarLocators = {
   copyButton: Locator;
@@ -50,17 +52,21 @@ export const MoleculesTopToolbar = (page: Page) => {
     },
 
     async paste() {
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await locators.pasteButton.click(),
-      );
+      await waitForRender(page, async () => {
+        await waitForSpinnerFinishedWork(
+          page,
+          async () => await locators.pasteButton.click(),
+        );
+      });
     },
 
     async cut() {
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await locators.cutButton.click(),
-      );
+      await waitForRender(page, async () => {
+        await waitForSpinnerFinishedWork(
+          page,
+          async () => await locators.cutButton.click(),
+        );
+      });
     },
 
     async expandCopyDropdown() {
@@ -73,7 +79,7 @@ export const MoleculesTopToolbar = (page: Page) => {
           .getByTestId('copy-button-dropdown-triangle')
           .click();
         await copyToolbar.waitFor({ state: 'visible', timeout: 5000 });
-      } catch (error) {
+      } catch (_error) {
         console.warn(
           "Copy dropdown section didn't appeared after click in 5 seconds",
         );

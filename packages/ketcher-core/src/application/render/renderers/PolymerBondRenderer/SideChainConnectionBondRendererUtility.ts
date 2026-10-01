@@ -4,7 +4,7 @@ import type {
 } from 'application/render';
 import { SVGPathDAttributeUtility } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtility';
 import { SnakeLayoutCellWidth } from 'domain/constants';
-import type { BaseMonomer } from 'domain/entities';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { Cell } from 'domain/entities/canvas-matrix/Cell';
 import type {
   Connection,
@@ -44,14 +44,14 @@ export class SideChainConnectionBondRendererUtility {
     const yOffset = (this.cellHeight / 2) * sin;
     const maxXOffset = cell.connections.reduce(
       (max: number, connection: Connection): number => {
-        return max > connection.xOffset ? max : connection.xOffset;
+        return Math.max(max, connection.xOffset);
       },
       0,
     );
     const maxYOffset = cell.connections.reduce(
       (max: number, connection: Connection): number => {
         const connectionYOffset = connection.yOffset || 0;
-        return max > connectionYOffset ? max : connectionYOffset;
+        return Math.max(max, connectionYOffset);
       },
       0,
     );

@@ -1,4 +1,4 @@
-export enum MicroBondType {
+export enum MicroBondTool {
   Single = 'bond-single',
   Double = 'bond-double',
   Triple = 'bond-triple',
@@ -15,17 +15,17 @@ export enum MicroBondType {
   DoubleCisTrans = 'bond-crossed',
 }
 
-export enum MacroBondType {
+export enum MacroBondTool {
   Single = 'single-bond',
   Hydrogen = 'hydrogen-bond',
 }
 
-export enum MacroBondDataIds {
+export enum MacroBondType {
   Single = 'covalent',
   Hydrogen = 'hydrogen',
 }
 
-export enum MicroBondDataIds {
+export enum MicroBondType {
   Single = '1',
   Double = '2',
   Triple = '3',

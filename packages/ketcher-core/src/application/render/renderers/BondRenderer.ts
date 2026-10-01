@@ -1,16 +1,18 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { Atom } from 'domain/entities/CoreAtom';
+import type { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
+import { type Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
 import { Bond as StructBond } from 'domain/entities/bond';
+import { SGroup } from 'domain/entities/sgroup';
 import { Scale } from 'domain/helpers';
-import { Box2Abs, Vec2 } from 'domain/entities';
-import { CoreEditor } from 'application/editor';
-import { HalfEdge } from 'application/render/view-model/HalfEdge';
-import { ViewModel } from 'application/render/view-model/ViewModel';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Vec2 } from 'domain/entities/vec2';
+import type { HalfEdge } from 'application/render/view-model/HalfEdge';
+import type { ViewModel } from 'application/render/view-model/ViewModel';
 import { KetcherLogger } from 'utilities';
-import { D3SvgElementSelection } from 'application/render/types';
-import {
+import type { D3SvgElementSelection } from 'application/render/types';
+import type {
   SVGPathAttributes,
   BondVectors,
 } from 'application/render/renderers/BondPathRenderer/constants';
@@ -26,6 +28,10 @@ import {
 } from 'application/render/renderers/BondPathRenderer';
 import util from 'application/render/util';
 import { editorEvents } from 'application/editor/editorEvents';
+import {
+  SELECTION_COLOR,
+  SELECTION_HOVERED_COLOR,
+} from 'application/render/renderers/constants';
 
 const BOND_WIDTH = 2;
 // Use same scale factor as Molecules mode (microModeScale = 40)
@@ -42,12 +48,33 @@ const TOPOLOGY_OFFSET_Y_MULTIPLIER = 1;
 
 export class BondRenderer extends BaseRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGPathElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGPathElement, void> | undefined;
 
   constructor(public bond: Bond) {
     super(bond);
     bond.setRenderer(this);
+  }
+
+  public get labelTooltipText(): string | null {
+    const struct = this.bond.firstAtom.monomer.monomerItem.struct;
+    if (!struct) {
+      return null;
+    }
+
+    let tooltipText: string | null = null;
+    struct.sgroups.forEach((sgroup) => {
+      if (
+        tooltipText ||
+        sgroup.type !== SGroup.TYPES.DAT ||
+        !SGroup.getBonds(struct, sgroup).includes(this.bond.bondIdInMicroMode)
+      ) {
+        return;
+      }
+
+      tooltipText = `${sgroup.data.fieldName}=${sgroup.data.fieldValue}`;
+    });
+
+    return tooltipText;
   }
 
   private get scaledPosition() {
@@ -206,19 +233,23 @@ export class BondRenderer extends BaseRenderer {
   public appendSelection() {
     const pathShape = this.getSelectionContour();
 
+    if (!pathShape) {
+      return;
+    }
+
     if (this.selectionElement) {
       this.selectionElement.attr('d', pathShape);
     } else {
       this.selectionElement = this.canvas
         ?.insert('path', ':first-child')
         .attr('d', pathShape)
-        .attr('fill', '#57ff8f')
+        .attr('fill', SELECTION_COLOR)
         .attr('class', 'dynamic-element');
     }
 
     this.rootElement
       ?.select(`#${this.cipElementId} rect`)
-      ?.attr('fill', '#57ff8f');
+      ?.attr('fill', SELECTION_COLOR);
   }
 
   public removeSelection() {
@@ -237,6 +268,10 @@ export class BondRenderer extends BaseRenderer {
 
     const pathShape = this.getSelectionContour();
 
+    if (!pathShape) {
+      return;
+    }
+
     this.hoverElement = this.canvas
       ?.insert('path', ':first-child')
       .attr('d', pathShape)
@@ -251,6 +286,24 @@ export class BondRenderer extends BaseRenderer {
   public removeHover() {
     this.hoverElement?.remove();
     this.hoverElement = undefined;
+  }
+
+  public redrawHover() {
+    if (this.drawingEntity.hovered) {
+      const hoverElement = this.appendHover();
+      if (hoverElement) {
+        this.hoverElement = hoverElement;
+      }
+      if (this.bond.selected) {
+        this.selectionElement?.attr('fill', SELECTION_HOVERED_COLOR);
+      }
+    } else {
+      this.removeHover();
+      this.hoverElement = undefined;
+      if (this.bond.selected) {
+        this.selectionElement?.attr('fill', SELECTION_COLOR);
+      }
+    }
   }
 
   public drawSelection() {
@@ -295,7 +348,7 @@ export class BondRenderer extends BaseRenderer {
 
   getSelectionPoints() {
     // please refer to: ketcher-core/docs/data/hover_selection_1.png
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     const halfEdges = viewModel.bondsToHalfEdges.get(this.bond);
     const firstHalfEdge = halfEdges?.[0];
@@ -427,7 +480,17 @@ export class BondRenderer extends BaseRenderer {
     ];
   }
 
-  private getSelectionContour() {
+  public getHoverContourPath(): string | undefined {
+    return this.getSelectionContour();
+  }
+
+  private getSelectionContour(): string | undefined {
+    const selectionPoints = this.getSelectionPoints();
+
+    if (selectionPoints.length !== 8) {
+      return undefined;
+    }
+
     const [
       startPadTop,
       startTop,
@@ -437,17 +500,15 @@ export class BondRenderer extends BaseRenderer {
       endBottom,
       startPadBottom,
       startBottom,
-    ] = this.getSelectionPoints();
+    ] = selectionPoints;
 
-    const pathString = `
+    return `
       M ${startTop.x} ${startTop.y}
       L ${endTop.x} ${endTop.y}
       C ${endPadTop.x} ${endPadTop.y}, ${endPadBottom.x} ${endPadBottom.y}, ${endBottom.x} ${endBottom.y}
       L ${startBottom.x} ${startBottom.y}
       C ${startPadBottom.x} ${startPadBottom.y}, ${startPadTop.x} ${startPadTop.y}, ${startTop.x} ${startTop.y}
     `;
-
-    return pathString;
   }
 
   public moveSelection() {
@@ -508,7 +569,7 @@ export class BondRenderer extends BaseRenderer {
   }
 
   private get halfEdges() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     return viewModel.bondsToHalfEdges.get(this.bond);
   }
@@ -548,7 +609,7 @@ export class BondRenderer extends BaseRenderer {
   }
 
   show() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
 
     this.rootElement = this.rootElement || this.appendRootElement();
@@ -563,7 +624,10 @@ export class BondRenderer extends BaseRenderer {
     switch (this.bond.type) {
       case BondType.Single:
         if (this.bond.stereo === BondStereo.Up) {
-          bondSVGPaths = SingleUpBondPathRenderer.preparePaths(bondVectors);
+          bondSVGPaths = SingleUpBondPathRenderer.preparePaths(
+            bondVectors,
+            viewModel,
+          );
         } else if (this.bond.stereo === BondStereo.Down) {
           bondSVGPaths = SingleDownBondPathRenderer.preparePaths(bondVectors);
         } else if (this.bond.stereo === BondStereo.Either) {
@@ -716,7 +780,7 @@ export class BondRenderer extends BaseRenderer {
 
     // Adjust position based on double bond shift
     const doubleBondShift = this.getDoubleBondShift(
-      CoreEditor.provideEditorInstance().viewModel,
+      provideEditorInstance().viewModel,
       firstHalfEdge,
       secondHalfEdge,
     );
@@ -796,7 +860,7 @@ export class BondRenderer extends BaseRenderer {
     const alongIntMadeBroken = 2 * lw;
     const alongSz = 1.5 * bs;
     const acrossInt = 1.5 * bs;
-    const acrossSz = 3.0 * bs;
+    const acrossSz = 3 * bs;
     const tiltTan = 0.2;
 
     const points: Vec2[] = [];
@@ -992,6 +1056,14 @@ export class BondRenderer extends BaseRenderer {
     super.remove();
     this.removeHover();
     this.removeSelection();
+  }
+
+  public setVisibility(isVisible: boolean): void {
+    super.setVisibility(isVisible);
+
+    const display = isVisible ? '' : 'none';
+    this.rootElement?.style('display', display);
+    this.selectionElement?.style('display', display);
   }
 
   public move() {

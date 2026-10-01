@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-use-before-define,@typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
-import { OperationType } from 'application/editor';
-import { ReStruct } from 'application/render';
-import { FixedPrecisionCoordinates } from 'domain/entities';
+import { OperationType } from 'application/editor/operations/OperationType';
+import type { ReStruct } from 'application/render';
+import type { FixedPrecisionCoordinates } from 'domain/entities/fixedPrecision';
 
 export class MultitailArrowAddTail extends BaseOperation {
   constructor(
@@ -25,7 +25,13 @@ export class MultitailArrowAddTail extends BaseOperation {
   }
 
   invert() {
-    return new MultitailArrowRemoveTail(this.itemId, this.tailId!);
+    if (this.tailId === undefined) {
+      // `tailId` is assigned in `execute()` before `invert()` can be
+      // meaningfully called; reaching this branch means `invert()` was
+      // called before `execute()`, which is a programming error.
+      throw new Error('MultitailArrowAddTail.invert() called before execute()');
+    }
+    return new MultitailArrowRemoveTail(this.itemId, this.tailId);
   }
 }
 

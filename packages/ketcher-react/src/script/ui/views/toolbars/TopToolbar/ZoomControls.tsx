@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useRef, useCallback, RefObject } from 'react';
+import { type RefObject, useState, useRef, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';
 
@@ -82,8 +82,8 @@ const ShortcutLabel = styled('span')`
 `;
 
 const getIntegerFromString = (zoomInput: string | undefined): number => {
-  const zoomNumber = parseInt(zoomInput ?? '');
-  if (isNaN(zoomNumber)) {
+  const zoomNumber = Number.parseInt(zoomInput ?? '');
+  if (Number.isNaN(zoomNumber)) {
     return 0;
   }
   return zoomNumber;
@@ -126,6 +126,7 @@ export const ZoomControls = ({
   shortcuts,
 }: ZoomProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -149,9 +150,11 @@ export const ZoomControls = ({
       onZoomSubmit();
     }
     setIsExpanded(false);
+    setAnchorEl(null);
   };
 
   const onExpand = () => {
+    setAnchorEl(containerRef.current);
     setIsExpanded(true);
   };
 
@@ -171,7 +174,7 @@ export const ZoomControls = ({
       <Dropdown
         open={isExpanded}
         onClose={onClose}
-        anchorEl={containerRef.current}
+        anchorEl={anchorEl}
         container={
           document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
           document.querySelector(KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR)

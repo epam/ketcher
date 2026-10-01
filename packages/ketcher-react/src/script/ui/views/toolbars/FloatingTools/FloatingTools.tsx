@@ -1,11 +1,13 @@
-import action, { UiActionAction } from '../../../action';
+import action, { type UiActionAction } from '../../../action';
 import {
+  type ActionButtonProps,
   ActionButton,
-  ActionButtonProps,
 } from '../ToolbarGroupItem/ActionButton';
 import { type ToolbarItemVariant } from '../toolbar.types';
 import classes from './FloatingTools.module.less';
 import { getIconName } from 'components';
+
+const FLOATING_ERASE_TEST_ID = 'float-delete';
 
 export type FloatingToolsProps = {
   visible: boolean;
@@ -56,6 +58,7 @@ export const FloatingTools: React.FC<Props> = ({
               indigoVerification={indigoVerification}
               onAction={onAction}
               disableableButtons={[]}
+              dataTestId={name === 'erase' ? FLOATING_ERASE_TEST_ID : undefined}
               key={name}
             />
           )

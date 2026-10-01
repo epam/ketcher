@@ -17,7 +17,7 @@
 import { Header, MainRow, OutinerRow } from './components';
 import { Component } from 'react';
 
-import { Elements, Element } from 'ketcher-core';
+import { type Element, Elements } from 'ketcher-core';
 import styles from './ElementsTable.module.less';
 
 const metalPrefix = [
@@ -97,7 +97,7 @@ class ElementsTable extends Component<ElementsTableProps> {
 
     const type = metalPrefix.includes(item.type ?? '')
       ? `${item.type} ${atomClassNames.metal}`
-      : item.type ?? atomClassNames.unknownProps;
+      : (item.type ?? atomClassNames.unknownProps);
 
     const classes = [
       ...type.split(' '),

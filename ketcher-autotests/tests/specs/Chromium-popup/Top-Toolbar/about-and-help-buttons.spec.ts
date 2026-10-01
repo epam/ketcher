@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -34,25 +30,18 @@ test.describe('Top toolbar Macro mode', () => {
     const buildVersion = AboutDialog(page).buildVersion;
     const buildTime = AboutDialog(page).buildTime;
     const buildIndigoVersion = AboutDialog(page).buildIndigoVersion;
-    const iconAbout = {
-      testId: 'about-button',
-      title: 'About',
-    };
-    const iconHelp = {
-      testId: 'help-button',
-      title: 'Help (?)',
-    };
-    const iconButton = page.getByTestId(iconAbout.testId).first();
-    await expect(iconButton).toHaveAttribute('title', iconAbout.title);
+
+    const iconButton = CommonTopRightToolbar(page).aboutButton;
+    await expect(iconButton).toHaveAttribute('title', 'About');
     await takeTopToolbarScreenshot(page);
-    await iconButton.click();
+    await CommonTopRightToolbar(page).about();
     await takeEditorScreenshot(page, {
       mask: [buildVersion, buildTime, buildIndigoVersion],
     });
     await AboutDialog(page).closeByOk();
-    const helpButton = page.getByTestId(iconHelp.testId).first();
-    await expect(helpButton).toHaveAttribute('title', iconHelp.title);
-    await helpButton.click();
+    const helpButton = CommonTopRightToolbar(page).helpButton;
+    await expect(helpButton).toHaveAttribute('title', 'Help (?)');
+    await CommonTopRightToolbar(page).help();
   });
 
   test('Case 2: Check links in About floating window', async () => {
@@ -72,11 +61,11 @@ test.describe('Top toolbar Macro mode', () => {
     await page.bringToFront();
     await clickByLink(
       page,
-      'http://lifescience.opensource.epam.com/ketcher/#feedback',
+      'https://lifescience.opensource.epam.com/ketcher/#feedback',
     );
     await page.bringToFront();
-    await clickByLink(page, 'http://lifescience.opensource.epam.com/');
+    await clickByLink(page, 'https://lifescience.opensource.epam.com/');
     await page.bringToFront();
-    await clickByLink(page, 'http://lifescience.opensource.epam.com/indigo/');
+    await clickByLink(page, 'https://lifescience.opensource.epam.com/indigo/');
   });
 });

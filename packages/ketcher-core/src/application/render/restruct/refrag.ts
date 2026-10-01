@@ -14,12 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Vec2 } from 'domain/entities';
-import { Fragment } from 'domain/entities/fragment';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Vec2 } from 'domain/entities/vec2';
+import type { Fragment } from 'domain/entities/fragment';
 
 import ReObject from './reobject';
-import ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type ReStruct from './restruct';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 
 class ReFrag extends ReObject {
@@ -73,10 +74,10 @@ class ReFrag extends ReObject {
         bba = bba.extend(ext, ext);
       } else {
         if (!render) {
-          render = (global as Record<string, unknown>)._ui_editor as Render; // eslint-disable-line
+          render = (global as Record<string, unknown>)._ui_editor as Render;
         }
         bba = bba
-          .translate((render.options.offset || new Vec2()).negated())
+          .translate((render.options.offset ?? new Vec2()).negated())
           .transform(Scale.canvasToModel, render.options);
       }
       ret = ret ? Box2Abs.union(ret, bba) : bba;
@@ -86,7 +87,6 @@ class ReFrag extends ReObject {
   }
 
   _draw(render: Render, fid: number, attrs: Record<string, unknown>) {
-    // eslint-disable-line no-underscore-dangle
     const bb = this.calcBBox(render.ctab, fid, render);
 
     if (bb) {
@@ -122,7 +122,7 @@ class ReFrag extends ReObject {
       return;
     }
 
-    fid = parseInt(String(fid), 10);
+    fid = Number.parseInt(String(fid), 10);
 
     render.ctab.atoms.forEach((atom) => {
       if (atom.a.fragment === fid) {

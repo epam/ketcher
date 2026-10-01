@@ -1,0 +1,60 @@
+import { BaseOperation } from 'application/editor/operations/BaseOperation';
+import type ReStruct from 'application/render/restruct/restruct';
+import type {
+  MonomerCreationState,
+  RnaComponentAtoms,
+} from 'application/render';
+import { OperationType } from 'application/editor/operations/OperationType';
+import {
+  type ComponentStructureUpdateData,
+  type RnaPresetComponentKey,
+  MonomerCreationComponentStructureUpdateEvent,
+} from 'application/editor/shared/customEvents';
+import { assert } from 'utilities';
+
+export class MarkAsRnaComponentOperation extends BaseOperation {
+  constructor(
+    private readonly monomerCreationState: MonomerCreationState,
+    private readonly componentKey: RnaPresetComponentKey,
+    private readonly newAtomIds: number[],
+    private readonly newBondIds: number[],
+    private readonly prevAtomIds: number[],
+    private readonly prevBondIds: number[],
+  ) {
+    super(OperationType.MONOMER_CREATION_MARK_RNA_COMPONENT);
+  }
+
+  execute(_restruct: ReStruct): void {
+    assert(this.monomerCreationState);
+
+    this.monomerCreationState.rnaComponentAtoms ??=
+      new Map() as RnaComponentAtoms;
+
+    this.monomerCreationState.rnaComponentAtoms.set(this.componentKey, {
+      atoms: [...this.newAtomIds],
+      bonds: [...this.newBondIds],
+    });
+
+    const eventData: ComponentStructureUpdateData = {
+      componentKey: this.componentKey,
+      atomIds: this.newAtomIds,
+      bondIds: this.newBondIds,
+    };
+    window.dispatchEvent(
+      new CustomEvent(MonomerCreationComponentStructureUpdateEvent, {
+        detail: eventData,
+      }),
+    );
+  }
+
+  invert(): BaseOperation {
+    return new MarkAsRnaComponentOperation(
+      this.monomerCreationState,
+      this.componentKey,
+      this.prevAtomIds,
+      this.prevBondIds,
+      this.newAtomIds,
+      this.newBondIds,
+    );
+  }
+}

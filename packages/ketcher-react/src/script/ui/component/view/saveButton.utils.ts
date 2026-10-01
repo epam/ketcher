@@ -1,17 +1,17 @@
 import { saveAs } from 'file-saver';
-import { FileSaverReturnType } from './saveButton.types';
+import type { FileSaverReturnType } from './saveButton.types';
 
 export const fileSaver = (server): FileSaverReturnType => {
   return new Promise((resolve, reject) => {
     if (global.Blob && saveAs) {
       resolve((data, fn, type) => {
-        const blob = new Blob([data], { type }); // eslint-disable-line no-undef
+        const blob = new Blob([data], { type });
         saveAs(blob, fn);
       });
     } else if (server) {
       resolve(
         server.then(() => {
-          throw Error("Server doesn't still support echo method");
+          throw new Error("Server doesn't still support echo method");
         }),
       );
     } else {

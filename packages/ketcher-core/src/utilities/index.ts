@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 export * from './ifDef';
-export * from './tfx';
+export * from './toFixed';
 export * from './runAsyncAction';
 export * from './b64toBlob';
 export * from './notifyRequestCompleted';
@@ -28,3 +28,7 @@ export * from './getSvgFromDrawnStructures';
 export * from './ensureString';
 export * from './normalizeError';
 export * from './monomers';
+export * from './dom';
+export * from './getOrThrow';
+export * from './errorMessages';
+export * from './assert';

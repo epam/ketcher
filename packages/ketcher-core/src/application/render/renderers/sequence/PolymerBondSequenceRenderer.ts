@@ -1,15 +1,16 @@
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import assert from 'assert';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
+import { assert } from 'utilities';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-import { D3SvgElementSelection } from 'application/render/types';
-import { SubChainNode, Vec2 } from 'domain/entities';
+import type { D3SvgElementSelection } from 'application/render/types';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { Vec2 } from 'domain/entities/vec2';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGPathElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGPathElement, void> | undefined;
 
   constructor(
     public polymerBond: PolymerBond,
@@ -108,7 +109,7 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
       this.selectionElement?.remove();
       this.selectionElement = this.rootElement
         ?.insert('path', ':first-child')
-        .attr('stroke', '#57FF8F')
+        .attr('stroke', SELECTION_COLOR)
         .attr('stroke-width', '6')
         .attr('fill', 'none');
 
@@ -119,7 +120,7 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
   }
 
   private getBondPath() {
-    let path = '';
+    let path: string;
     if (this.areMonomersOnSameRow) {
       path = `M ${this.scaledPosition.startPosition.x + 6},
       ${this.mainLineY.mainLineY1 + 5} 

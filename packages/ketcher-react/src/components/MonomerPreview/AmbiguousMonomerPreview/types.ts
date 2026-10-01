@@ -1,4 +1,4 @@
-import {
+import type {
   AmbiguousMonomerType,
   AttachmentPointsToBonds,
   IKetIdtAliases,
@@ -11,6 +11,7 @@ export enum PreviewType {
   Preset = 'preset',
   Bond = 'bond',
   AmbiguousMonomer = 'ambiguousMonomer',
+  Text = 'text',
 }
 
 export interface PreviewStyle {

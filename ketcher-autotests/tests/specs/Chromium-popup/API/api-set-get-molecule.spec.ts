@@ -1,9 +1,8 @@
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   waitForPageInit,
 } from '@utils';
 import { enableDearomatizeOnLoad, setMolecule } from '@utils/formats';
@@ -44,7 +43,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 10091
     Description: Aromatic Benzene ring loads as non aromatic Benzene ring
     */
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableDearomatizeOnLoad(page);
     await waitForSpinnerFinishedWork(
       page,

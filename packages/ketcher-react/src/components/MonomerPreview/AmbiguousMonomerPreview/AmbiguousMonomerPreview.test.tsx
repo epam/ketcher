@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { AmbiguousMonomerPreview } from './AmbiguousMonomerPreview';
-import { AmbiguousMonomerPreviewState, PreviewType } from './types';
-import { AmbiguousMonomerType } from 'ketcher-core';
+import { type AmbiguousMonomerPreviewState, PreviewType } from './types';
+import type { AmbiguousMonomerType } from 'ketcher-core';
 
 describe('AmbiguousMonomerPreview', () => {
   it('should sort mixed monomers by percentage from highest to lowest', () => {
@@ -73,8 +73,9 @@ describe('AmbiguousMonomerPreview', () => {
     expect(percentMatches).not.toBeNull();
 
     const percentages =
-      percentMatches?.map((match) => parseInt(match.replace('%', ''), 10)) ||
-      [];
+      percentMatches?.map((match) =>
+        Number.parseInt(match.replace('%', ''), 10),
+      ) || [];
 
     // Verify percentages are sorted from highest to lowest
     for (let i = 0; i < percentages.length - 1; i++) {

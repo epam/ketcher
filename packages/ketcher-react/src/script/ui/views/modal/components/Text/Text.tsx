@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,15 +17,15 @@
 
 import React, { useCallback, useState, useEffect } from 'react';
 import {
+  type LexicalEditor,
+  type TextFormatType,
+  type SerializedEditorState,
   $getRoot,
   $getSelection,
   $isRangeSelection,
   FORMAT_TEXT_COMMAND,
   KEY_ENTER_COMMAND,
   COMMAND_PRIORITY_HIGH,
-  LexicalEditor,
-  TextFormatType,
-  SerializedEditorState,
 } from 'lexical';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
@@ -32,16 +33,17 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 
 import { Dialog } from '../../../components';
-import { DialogParams } from '../../../../../../components/Dialog/Dialog';
+import type { DialogParams } from '../../../../../../components/Dialog/Dialog';
 import { FontControl } from './FontControl';
 import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton';
 import { TextButton } from './TextButton';
 import { TextCommand } from 'ketcher-core';
 import classes from './Text.module.less';
 import { connect } from 'react-redux';
-import { IconName } from 'components';
+import type { IconName } from 'components';
 
 interface TextProps extends DialogParams {
   formState: any;
@@ -226,6 +228,7 @@ const TextEditorInner = (props: {
         }
         ErrorBoundary={LexicalErrorBoundary}
       />
+      <HistoryPlugin />
       <EnterKeyPlugin />
       <EditorRefPlugin editorRef={editorRef} />
       <AutoFocusPlugin />

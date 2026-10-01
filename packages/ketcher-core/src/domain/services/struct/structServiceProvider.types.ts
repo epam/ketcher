@@ -14,7 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { StructService, StructServiceOptions } from './structService.types';
+import type {
+  StructService,
+  StructServiceOptions,
+} from './structService.types';
 
 export type ServiceMode = 'standalone' | 'remote';
 

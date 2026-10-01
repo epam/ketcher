@@ -38,6 +38,7 @@ export enum ChemicalMimeType {
   IDT = 'chemical/x-idt',
   AXOLABS = 'chemical/x-axo-labs',
   HELM = 'chemical/x-helm',
+  BILN = 'chemical/x-biln',
   RDF = 'chemical/x-rdf',
   MonomerLibrary = 'chemical/x-monomer-library',
 }
@@ -83,9 +84,7 @@ export interface CheckResult {
 }
 
 export interface ConvertData
-  extends WithStruct,
-    WithOutputFormat,
-    WithInputFormat {}
+  extends WithStruct, WithOutputFormat, WithInputFormat {}
 
 export interface ConvertResult extends WithStruct, WithFormat {}
 
@@ -94,9 +93,7 @@ export interface LayoutData extends WithStruct, WithOutputFormat {}
 export interface LayoutResult extends WithStruct, WithFormat {}
 
 export interface CleanData
-  extends WithStruct,
-    WithSelection,
-    WithOutputFormat {}
+  extends WithStruct, WithSelection, WithOutputFormat {}
 
 export interface CleanResult extends WithStruct, WithFormat {}
 

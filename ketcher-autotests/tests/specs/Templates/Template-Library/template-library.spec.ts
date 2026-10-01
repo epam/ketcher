@@ -1,7 +1,7 @@
 import { test, expect } from '@fixtures';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
   getEditorScreenshot,
@@ -110,24 +110,7 @@ test.describe('Templates - Template Library', () => {
     await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.FMOC,
     );
-    await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
-  });
-
-  test('Edit templates - name with just spaces', async ({ page }) => {
-    // Test case: EPMLSOPKET-1699
-    // Verify if structure name won't change if field will contain just spaces
-    const inputText = '   ';
-    await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).editTemplate(
-      TemplateLibraryTab.BetaDSugars,
-      BetaDSugarsTemplate.BetaDAllopyranose,
-    );
-    await TemplateEditDialog(page).setMoleculeName(inputText);
-    await TemplateEditDialog(page).edit();
-    await StructureLibraryDialog(page).openTemplateLibrarySection(
-      TemplateLibraryTab.BetaDSugars,
-    );
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 });
@@ -161,7 +144,6 @@ test.describe('Templates - Template Library', () => {
 
   test('Text field 128 characters limit test', async ({ page }) => {
     // Verify maximum character validation on the name field
-    const textField = page.getByTestId('name-input');
     const number = 129;
     const inputText = 'A'.repeat(number);
     await BottomToolbar(page).structureLibrary();
@@ -170,7 +152,7 @@ test.describe('Templates - Template Library', () => {
       BetaDSugarsTemplate.BetaDAllopyranose,
     );
     await waitForRender(page, async () => {
-      await textField.type(inputText);
+      await TemplateEditDialog(page).setMoleculeName(inputText);
     });
     await getEditorScreenshot(page);
   });

@@ -102,6 +102,8 @@ export const OperationType = Object.freeze({
   MONOMER_CREATION_REASSIGN_LGA:
     'Monomer creation :: Reassign leaving group atom',
   MONOMER_CREATION_REMOVE_AP: 'Monomer creation :: Remove attachment point',
+  MONOMER_CREATION_MARK_RNA_COMPONENT:
+    'Monomer creation :: Mark as RNA component',
 });
 
 export enum OperationPriority {
@@ -115,6 +117,7 @@ export enum OperationPriority {
   S_GROUP_ATOM_ADD = 3,
   S_GROUP_ATTACHMENT_POINT_ADD = 3,
   R_GROUP_ATTACHMENT_POINT_ADD = 3,
+  S_GROUP_ATOM_REMOVE = 4,
   S_GROUP_ATTR = 4,
   ATOM_DELETE = 5,
   FRAGMENT_STEREO_FLAG = 6,

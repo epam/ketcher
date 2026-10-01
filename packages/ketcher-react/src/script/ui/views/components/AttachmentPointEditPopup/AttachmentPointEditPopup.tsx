@@ -1,17 +1,17 @@
 import { useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import {
-  AtomLabel,
-  AttachmentPointClickData,
-  AttachmentPointName,
+  type AtomLabel,
+  type AttachmentPointClickData,
+  type AttachmentPointName,
+  assert,
 } from 'ketcher-core';
 import AttachmentPointControls from '../MonomerCreationWizard/components/AttachmentPointControls/AttachmentPointControls';
 import { useAttachmentPointSelectsData } from '../MonomerCreationWizard/hooks/useAttachmentPointSelectsData';
 
 import styles from './AttachmentPointEditPopup.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
-import { Editor } from '../../../../editor';
-import assert from 'assert';
+import type { Editor } from '../../../../editor';
 
 type Props = {
   data: AttachmentPointClickData;

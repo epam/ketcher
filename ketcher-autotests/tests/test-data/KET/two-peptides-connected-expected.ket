@@ -99,7 +99,8 @@
                     1.4445,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "N",
@@ -264,6 +265,7 @@
         "id": "Phe4Me___p-Methylphenylalanine",
         "fullName": "p-Methylphenylalanine",
         "alias": "Phe4Me",
+        "aliasBILN": "Phe_4Me",
         "attachmentPoints": [
             {
                 "attachmentAtom": 7,
@@ -306,7 +308,8 @@
                     -0.6551750378754172,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -482,6 +485,7 @@
         "id": "meE___N-Methyl-Glutamic acid",
         "fullName": "N-Methyl-Glutamic acid",
         "alias": "meE",
+        "aliasBILN": "meE",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,
@@ -510,6 +514,9 @@
                 },
                 "type": "side"
             }
+        ],
+        "modificationTypes": [
+            "N-methylation"
         ],
         "naturalAnalogShort": "E"
     }

@@ -1,6 +1,8 @@
-import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { STRAND_TYPE } from 'domain/constants';
-import { BaseMonomer, PolymerBond, SubChainNode } from 'domain/entities';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { PolymerBond } from 'domain/entities/PolymerBond';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 
 export const getNodeFromTwoStrandedNode = (
   twoStrandedNode: ITwoStrandedChainItem,

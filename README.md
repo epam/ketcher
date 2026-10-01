@@ -67,6 +67,31 @@ function App() {
 }
 ```
 
+### Accessing Ketcher embedded via IFrame
+
+When you embed the ready-to-run standalone application as an `IFrame` (rather than using
+`ketcher-react` as a component library), Ketcher initializes **asynchronously** inside the
+frame (loading the Indigo service/WASM, etc.). Because of this, `window.ketcher` inside the
+frame is only assigned once initialization finishes — reading
+`iframeEl.contentWindow.ketcher` right after the frame's `load` event (or immediately after
+inserting the `<iframe>`) will typically still be `undefined`.
+
+To reliably know when the embedded Ketcher is ready, listen for the `init` message that the
+standalone application posts to its parent window once `onInit` has fired, instead of polling
+`contentWindow.ketcher`:
+
+```javascript
+const iframeEl = document.getElementById('ifKetcher');
+
+window.addEventListener('message', (event) => {
+  if (event.source !== iframeEl.contentWindow) return;
+  if (event.data?.eventType === 'init') {
+    const ketcher = iframeEl.contentWindow.ketcher;
+    // ketcher is now guaranteed to be initialized
+  }
+});
+```
+
 ## FAQ
 
 ### How to use react component library
@@ -76,7 +101,7 @@ Look at the following [link](packages/ketcher-react/README.md) for details.
 ### Configure indigo service
 
 You can find the instruction for service installation
-[here](http://lifescience.opensource.epam.com/indigo/service/index.html).
+[here](https://lifescience.opensource.epam.com/indigo/service/index.html).
 
 ## Packages
 
@@ -92,7 +117,7 @@ You can find the instruction for service installation
 Ketcher uses Miew-React for viewing and editing data in 3D.
 
 You can find the latest version of Miew-React [here](https://github.com/epam/miew/tree/master/packages/miew-react).
-The last checked version - [1.0.0](https://www.npmjs.com/package/miew-react).
+The last checked version - [0.12.0](https://www.npmjs.com/package/miew-react).
 
 ## Macromolecules mode
 Starting with version 3.0, Ketcher supports a new control in the top toolbar that allows switching to macromolecules editing mode. If you prefer having only small molecules editing mode available, you can remove the mode switcher from the toolbar by passing `disableMacromoleculesEditor` property to the `Editor` component.
@@ -1048,6 +1073,10 @@ updateMonomersLibrary(
 - `monomersData` - Monomer data (KET or SDF format)
 - `params` (optional) - Update parameters
 
+**Invalid monomers:** monomers that fail validation are skipped and reported
+via `KetcherLogger`; valid monomers are still added. The promise does not
+reject because of invalid monomers.
+
 **UpdateMonomersLibraryParams:**
 
 ```typescript
@@ -1086,6 +1115,10 @@ replaceMonomersLibrary(
 **Replaces** entire monomer library (removes all existing monomers).
 
 **Parameters:** Same as `updateMonomersLibrary`
+
+**Invalid monomers:** same as `updateMonomersLibrary`: invalid monomers are
+skipped and reported via `KetcherLogger`, and the promise does not reject
+because of them.
 
 **Example:**
 
@@ -1605,6 +1638,11 @@ Ketcher supports modern browsers:
 ## Contribution
 
 See [Contributing Guide](./DEVNOTES.md).
+
+## Community Projects & Integrations
+- https://github.com/Marco-Matlock/Excel-Addin - Excel plugin to run Ketcher on a task pane as an Office Addin
+- https://github.com/katalystnord/ketcher-desktop - Desktop application for Ketcher made on electron
+- https://github.com/yulei-chen/obsidian-ketcher - An Obsidian plugin to view or draw chemical structures and reactions using Ketcher
 
 ## License
 

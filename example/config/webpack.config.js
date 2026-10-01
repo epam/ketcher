@@ -33,6 +33,12 @@ module.exports = override(
   }),
   addWebpackPlugin(new webpack.EnvironmentPlugin(envVariables)),
   addWebpackPlugin(
+    new webpack.NormalModuleReplacementPlugin(
+      /^node:events$/,
+      require.resolve('events/'),
+    ),
+  ),
+  addWebpackPlugin(
     new HtmlReplaceWebpackPlugin([
       {
         pattern: '@@version',

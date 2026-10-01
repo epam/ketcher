@@ -71,7 +71,7 @@ import {
   provideEditorInstance,
 } from 'ketcher-core';
 
-import EventEmitter from 'events';
+import EventEmitter from 'node:events';
 import {
   STRUCT_SERVICE_INITIALIZED_EVENT,
   STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT,

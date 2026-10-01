@@ -40,7 +40,7 @@ import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import type { MolfileFormat } from 'domain/serializers/mol/mol.types';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 import {
   type LogSettings,
   LogLevel,

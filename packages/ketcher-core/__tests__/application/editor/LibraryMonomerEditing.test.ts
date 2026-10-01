@@ -1,4 +1,4 @@
-import { CoreEditor, MonomerLibraryUpdateError } from 'application/editor';
+import { CoreEditor } from 'application/editor';
 import { SettingsManager, KetcherLogger } from 'utilities';
 import type { MonomerItemType } from 'domain/types';
 import { parseMonomersLibrary } from 'application/editor/helpers';
@@ -147,12 +147,18 @@ describe('editing monomer library entries by identity', () => {
       if (field === 'HELM') modified.aliasHELM = 'helmB';
       if (field === 'BILN') modified.aliasBILN = 'bilnB';
       if (field === 'code-as-HELM') modified.alias = 'helmB';
+      // Colliding items are reported and skipped rather than throwing, so a
+      // stored update that no longer validates cannot break the editor.
       expect(() =>
         editor.updateMonomersLibrary(
           libraryData(modified),
           'monomerTemplate-original',
         ),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
+      expect(KetcherLogger.error).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining(modified.alias),
+      );
       expect(
         editor.monomersLibrary.map(({ props }) => props.MonomerName),
       ).toEqual(['A', 'B']);

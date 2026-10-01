@@ -474,13 +474,8 @@ export class CoreEditor {
 
   /**
    * Upserts the provided monomer definitions into the in-memory library.
-   * Invalid items are logged and skipped.
-   *
-   * @throws {MonomerLibraryUpdateError} When one or more items fail validation.
-   *   `skippedItems` lists every rejected monomer with a `name` and `reason`.
-   *   `partialSuccess` is `true` when at least one item was committed before
-   *   the error was raised. There is no rollback, so items committed before
-   *   the first failure remain in the library.
+   * Invalid items are reported via `KetcherLogger` and skipped; valid items
+   * from the same payload are still committed.
    */
   public updateMonomersLibrary(
     monomersDataRaw: string | JSON,

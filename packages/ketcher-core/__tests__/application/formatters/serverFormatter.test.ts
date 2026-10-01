@@ -11,17 +11,20 @@ describe('pickStandardServerOptions', () => {
     jest.restoreAllMocks();
   });
 
-  it('passes the SMILES saving format to Indigo services', () => {
-    jest.spyOn(ketcherProvider, 'getKetcher').mockReturnValue({
-      editor: { options: () => ({ ignoreChiralFlag: false }) },
-    } as never);
+  it.each(['daylight', 'chemaxon'])(
+    'passes the %s SMILES saving format to Indigo services',
+    (smilesSavingFormat) => {
+      jest.spyOn(ketcherProvider, 'getKetcher').mockReturnValue({
+        editor: { options: () => ({ ignoreChiralFlag: false }) },
+      } as never);
 
-    expect(
-      pickStandardServerOptions('ketcher-id', {
-        'smiles-saving-format': 'daylight',
-      }),
-    ).toMatchObject({ 'smiles-saving-format': 'daylight' });
-  });
+      expect(
+        pickStandardServerOptions('ketcher-id', {
+          'smiles-saving-format': smilesSavingFormat,
+        }),
+      ).toMatchObject({ 'smiles-saving-format': smilesSavingFormat });
+    },
+  );
 });
 
 describe('ServerFormatter', () => {
@@ -52,7 +55,7 @@ describe('ServerFormatter', () => {
     );
   });
 
-  it('keeps the default SMILES output for structures without R-group labels', async () => {
+  it('requests Daylight output for structures without R-group labels', async () => {
     const { convert, formatter } = createFormatter(SupportedFormat.smiles);
     const struct = new Struct();
     struct.atoms.add(new Atom({ label: 'C' }));
@@ -61,11 +64,11 @@ describe('ServerFormatter', () => {
 
     expect(convert).toHaveBeenCalledWith(
       expect.objectContaining({ output_format: 'chemical/x-daylight-smiles' }),
-      expect.not.objectContaining({ 'smiles-saving-format': 'daylight' }),
+      expect.objectContaining({ 'smiles-saving-format': 'daylight' }),
     );
   });
 
-  it('keeps extended SMILES output for structures with R-group labels', async () => {
+  it('requests Chemaxon output when saving extended SMILES', async () => {
     const { convert, formatter } = createFormatter(SupportedFormat.smilesExt);
     const struct = new Struct();
     struct.atoms.add(new Atom({ label: 'R#', rglabel: 1 }));
@@ -76,7 +79,7 @@ describe('ServerFormatter', () => {
       expect.objectContaining({
         output_format: 'chemical/x-chemaxon-cxsmiles',
       }),
-      expect.not.objectContaining({ 'smiles-saving-format': 'daylight' }),
+      expect.objectContaining({ 'smiles-saving-format': 'chemaxon' }),
     );
   });
 

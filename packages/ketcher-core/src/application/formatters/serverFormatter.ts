@@ -41,9 +41,6 @@ type LayoutPromise = (
   options?: StructServiceOptions,
 ) => Promise<LayoutResult>;
 
-const hasRGroupLabels = (struct: Struct): boolean =>
-  struct.atoms.some((atom) => atom.label === 'R#' && atom.rglabel !== null);
-
 export class ServerFormatter implements StructFormatter {
   readonly #structService: StructService;
   readonly #ketSerializer: KetSerializer;
@@ -78,13 +75,7 @@ export class ServerFormatter implements StructFormatter {
           struct: stringifiedStruct,
           output_format: formatProperties.mime,
         },
-        {
-          ...this.#options,
-          ...formatProperties.options,
-          ...(this.#format === SupportedFormat.smiles && hasRGroupLabels(struct)
-            ? { 'smiles-saving-format': 'daylight' }
-            : {}),
-        },
+        { ...this.#options, ...formatProperties.options },
       );
 
       return convertResult.struct;

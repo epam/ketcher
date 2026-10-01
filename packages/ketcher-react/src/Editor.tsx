@@ -1,5 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   type EditorProps,
   MicromoleculesEditor as MicromoleculesEditorComponent,
@@ -50,9 +56,10 @@ const MacromoleculesEditorComponent = lazy(
 export const Editor = (props: Props) => {
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
   const [moleculesEditor, setMoleculesEditor] = useState<MoleculesEditor>();
-  const [ketcher, setKetcher] = useState<Ketcher>();
   const [macromoleculesEditor, setMacromoleculesEditor] =
     useState<CoreEditor>();
+  const ketcherRef = useRef<Ketcher | undefined>(undefined);
+  const macromoleculesEditorRef = useRef<CoreEditor | undefined>(undefined);
 
   const [ketcherId, setKetcherId] = useState<string>('');
 
@@ -108,9 +115,7 @@ export const Editor = (props: Props) => {
         );
       }
     };
-    // moleculesEditor is included so the handlers above never capture a stale
-    // togglePolymerEditor closure (it now uses moleculesEditor directly).
-  }, [macromoleculesEditor, moleculesEditor]);
+  }, [macromoleculesEditor, togglePolymerEditor]);
 
   useEffect(() => {
     return () => {
@@ -118,25 +123,24 @@ export const Editor = (props: Props) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (
-      ketcher &&
-      moleculesEditor &&
-      (macromoleculesEditor || props.disableMacromoleculesEditor)
-    ) {
-      if (ketcherProvider.getIndexById(ketcher.id) !== -1) {
-        props.onInit?.(ketcher);
-      }
-    }
-  }, [moleculesEditor, macromoleculesEditor]);
-
   const onInitMoleculesEditor = (ketcher: Ketcher) => {
-    setKetcher(ketcher);
+    ketcherRef.current = ketcher;
     setMoleculesEditor(ketcher.editor);
+    if (
+      (macromoleculesEditorRef.current || props.disableMacromoleculesEditor) &&
+      ketcherProvider.getIndexById(ketcher.id) !== -1
+    ) {
+      props.onInit?.(ketcher);
+    }
   };
 
   const onInitMacromoleculesEditor = (macromoleculesEditor: CoreEditor) => {
+    macromoleculesEditorRef.current = macromoleculesEditor;
     setMacromoleculesEditor(macromoleculesEditor);
+    const ketcher = ketcherRef.current;
+    if (ketcher && ketcherProvider.getIndexById(ketcher.id) !== -1) {
+      props.onInit?.(ketcher);
+    }
   };
 
   return (

@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import {
   type EditorProps,
   MicromoleculesEditor as MicromoleculesEditorComponent,
@@ -56,10 +55,24 @@ export const Editor = (props: Props) => {
     useState<CoreEditor>();
 
   const [ketcherId, setKetcherId] = useState<string>('');
-  const togglePolymerEditor = (toggleValue: boolean) => {
-    setShowPolymerEditor(toggleValue);
-    window.isPolymerEditorTurnedOn = toggleValue;
-  };
+
+  const togglePolymerEditor = useCallback(
+    (toggleValue: boolean) => {
+      setShowPolymerEditor(toggleValue);
+      window.isPolymerEditorTurnedOn = toggleValue;
+
+      if (moleculesEditor && macromoleculesEditor) {
+        if (toggleValue) {
+          moleculesEditor.closeMonomerCreationWizard?.();
+          macromoleculesEditor.switchToMacromolecules();
+        } else {
+          macromoleculesEditor.switchToMicromolecules();
+          moleculesEditor.focusCliparea();
+        }
+      }
+    },
+    [moleculesEditor, macromoleculesEditor],
+  );
 
   const togglerComponent = !props.disableMacromoleculesEditor ? (
     <ModeControl
@@ -95,25 +108,15 @@ export const Editor = (props: Props) => {
         );
       }
     };
-  }, [macromoleculesEditor]);
+    // moleculesEditor is included so the handlers above never capture a stale
+    // togglePolymerEditor closure (it now uses moleculesEditor directly).
+  }, [macromoleculesEditor, moleculesEditor]);
 
   useEffect(() => {
     return () => {
       window.isPolymerEditorTurnedOn = false;
     };
   }, []);
-
-  useEffect(() => {
-    if (moleculesEditor && macromoleculesEditor) {
-      if (showPolymerEditor) {
-        moleculesEditor?.closeMonomerCreationWizard?.();
-        macromoleculesEditor?.switchToMacromolecules();
-      } else {
-        macromoleculesEditor?.switchToMicromolecules();
-        moleculesEditor?.focusCliparea();
-      }
-    }
-  }, [showPolymerEditor]);
 
   useEffect(() => {
     if (

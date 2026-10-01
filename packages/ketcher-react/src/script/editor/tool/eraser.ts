@@ -18,6 +18,7 @@ import {
   fromArrowDeletion,
   fromFragmentDeletion,
   fromOneAtomDeletion,
+  fromAttachmentGroupDeletion,
   fromOneBondDeletion,
   fromPlusDeletion,
   fromImageDeletion,
@@ -357,6 +358,8 @@ class EraserTool implements Tool {
 
     if (ci.map === 'atoms') {
       this.editor.update(fromOneAtomDeletion(restruct, ci.id));
+    } else if (ci.map === 'attachmentGroups') {
+      this.editor.update(fromAttachmentGroupDeletion(restruct, ci.id));
     } else if (ci.map === 'bonds') {
       this.editor.update(fromOneBondDeletion(restruct, ci.id));
     } else if (

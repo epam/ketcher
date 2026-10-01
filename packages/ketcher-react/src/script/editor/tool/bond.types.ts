@@ -23,6 +23,8 @@ export interface BondToolDragContext {
   pageX0: number;
   pageY0: number;
   hasStartedDragging: boolean;
+  hapticValidationFailed: boolean;
+  attachmentGroupValidationFailed: boolean;
   item?: BondItemRef;
   action?: Action;
   existedBond?: Bond;

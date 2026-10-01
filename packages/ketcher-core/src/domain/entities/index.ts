@@ -15,6 +15,8 @@
  ***************************************************************************/
 
 export * from './atom';
+export * from './attachmentGroup';
+export * from './bondEndpoint';
 export * from './atomList';
 export * from './bond';
 export * from './fixedPrecision';

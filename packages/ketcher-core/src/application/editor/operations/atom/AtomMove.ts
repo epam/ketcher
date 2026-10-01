@@ -17,7 +17,7 @@
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
-import { Scale } from 'domain/helpers';
+import { isAtomPartOfAttachmentGroup, Scale } from 'domain/helpers';
 import type { Vec2 } from 'domain/entities';
 
 type Data = {
@@ -55,6 +55,10 @@ export class AtomMove extends BaseOperation {
 
     if (!this.data.noinvalidate) {
       BaseOperation.invalidateAtom(restruct, aid, 1);
+    } else if (isAtomPartOfAttachmentGroup(struct, aid)) {
+      // Attachment Group positions are derived from their member atoms.
+      // Mark the moved member so ReStruct also redraws the group and its bonds.
+      restruct.markAtom(aid, 0);
     }
   }
 

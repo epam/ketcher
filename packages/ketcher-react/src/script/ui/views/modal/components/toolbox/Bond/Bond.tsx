@@ -57,12 +57,14 @@ const Bond = (props: Props) => {
   });
   const bondTypeOptions = useMemo(
     () =>
-      getSelectOptionsFromSchema(bondProps.type).map((option) => ({
-        ...option,
-        disabled:
-          isMonomerCreationWizardActive &&
-          MONOMER_WIZARD_DISALLOWED_BOND_TYPES.includes(option.value),
-      })),
+      getSelectOptionsFromSchema(bondProps.type)
+        .filter((option) => option.value !== 'haptic')
+        .map((option) => ({
+          ...option,
+          disabled:
+            isMonomerCreationWizardActive &&
+            MONOMER_WIZARD_DISALLOWED_BOND_TYPES.includes(option.value),
+        })),
     [bondProps.type, isMonomerCreationWizardActive],
   );
   const customValid = useMemo(

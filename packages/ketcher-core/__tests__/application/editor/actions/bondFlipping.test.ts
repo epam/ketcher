@@ -65,6 +65,7 @@ function buildRestruct(stereo: number, stereoLabel: string | null = null) {
       [extraId, new ReAtom(atomExtra)],
     ]),
     bonds: new Map([[bondId, new ReBond(stereoBond)]]),
+    attachmentGroups: new Map(),
     enhancedFlags: new Map(),
     enhancedFlagsChanged: new Map(),
     atomsChanged: new Map(),
@@ -72,11 +73,15 @@ function buildRestruct(stereo: number, stereoLabel: string | null = null) {
     render: { options: { stereoLabelStyle: 'Off' } },
     markAtom: jest.fn(),
     markBond: jest.fn(),
+    markAttachmentGroup: jest.fn(),
     markItem: jest.fn(),
     markItemRemoved: jest.fn(),
     clearVisel: jest.fn(),
     loopRemove: jest.fn(),
     connectedComponents: new Map(),
+    getBondEndpoint(atomId: number) {
+      return this.atoms.get(atomId) ?? this.attachmentGroups.get(atomId);
+    },
   };
 
   return { restruct, bondId, beginId, endId };

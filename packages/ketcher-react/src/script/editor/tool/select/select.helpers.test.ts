@@ -1,17 +1,10 @@
-import { getNewSelectedItems } from './select.helpers';
-
-jest.mock(
-  'ketcher-core',
-  () => ({
-    SGroup: {
-      getAtoms: jest.fn((_, sgroup) => sgroup.atoms),
-      getBonds: jest.fn((_, sgroup) => sgroup.bonds),
-    },
-  }),
-  { virtual: true },
-);
-
-const getSGroupMock = () => jest.requireMock('ketcher-core').SGroup;
+import { AttachmentGroup, Atom, Bond, Struct } from 'ketcher-core';
+import {
+  canOpenAtomProperties,
+  getAttachmentGroupSelection,
+  getMovableAtomIdsForBond,
+  getNewSelectedItems,
+} from './select.helpers';
 
 describe('select helpers', () => {
   beforeEach(() => {
@@ -109,8 +102,118 @@ describe('select helpers', () => {
         atoms: [],
         bonds: [],
       });
-      expect(getSGroupMock().getAtoms).not.toHaveBeenCalled();
-      expect(getSGroupMock().getBonds).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getMovableAtomIdsForBond', () => {
+    it('keeps the Attachment Group fixed when it is the bond begin', () => {
+      const struct = {
+        atoms: new Map([[1, { label: 'Fe' }]]),
+        attachmentGroups: new Map([[0, { atomIds: [2, 3] }]]),
+        bonds: new Map([
+          [0, { type: Bond.PATTERN.TYPE.HAPTIC, begin: 0, end: 1 }],
+        ]),
+      };
+
+      expect(getMovableAtomIdsForBond(struct as never, 0, [0, 1])).toEqual([1]);
+    });
+
+    it('keeps the Attachment Group fixed when it is the bond end', () => {
+      const struct = {
+        atoms: new Map([[0, { label: 'Fe' }]]),
+        attachmentGroups: new Map([[1, { atomIds: [2, 3] }]]),
+        bonds: new Map([
+          [0, { type: Bond.PATTERN.TYPE.HAPTIC, begin: 0, end: 1 }],
+        ]),
+      };
+
+      expect(getMovableAtomIdsForBond(struct as never, 0, [0, 1])).toEqual([0]);
+    });
+
+    it('keeps all movable atoms for a bond without an Attachment Group', () => {
+      const struct = {
+        atoms: new Map([
+          [0, { label: 'C' }],
+          [1, { label: 'Fe' }],
+        ]),
+        attachmentGroups: new Map(),
+        bonds: new Map([
+          [0, { type: Bond.PATTERN.TYPE.HAPTIC, begin: 0, end: 1 }],
+        ]),
+      };
+
+      expect(getMovableAtomIdsForBond(struct as never, 0, [0, 1])).toEqual([
+        0, 1,
+      ]);
+    });
+  });
+
+  describe('getAttachmentGroupSelection', () => {
+    it('selects the marker, member atoms, and only bonds inside the group', () => {
+      const struct = new Struct();
+      const firstAtomId = struct.atoms.add(new Atom({ label: 'C' }));
+      const secondAtomId = struct.atoms.add(new Atom({ label: 'C' }));
+      const thirdAtomId = struct.atoms.add(new Atom({ label: 'C' }));
+      const externalAtomId = struct.atoms.add(new Atom({ label: 'Fe' }));
+      const firstInternalBondId = struct.bonds.add(
+        new Bond({
+          begin: firstAtomId,
+          end: secondAtomId,
+          type: Bond.PATTERN.TYPE.SINGLE,
+        }),
+      );
+      const secondInternalBondId = struct.bonds.add(
+        new Bond({
+          begin: secondAtomId,
+          end: thirdAtomId,
+          type: Bond.PATTERN.TYPE.SINGLE,
+        }),
+      );
+      struct.bonds.add(
+        new Bond({
+          begin: thirdAtomId,
+          end: externalAtomId,
+          type: Bond.PATTERN.TYPE.SINGLE,
+        }),
+      );
+      const attachmentGroupId = struct.addAttachmentGroup(
+        new AttachmentGroup({
+          atomIds: [firstAtomId, secondAtomId, thirdAtomId],
+        }),
+      );
+      struct.bonds.add(
+        new Bond({
+          begin: attachmentGroupId,
+          end: externalAtomId,
+          type: Bond.PATTERN.TYPE.HAPTIC,
+        }),
+      );
+
+      expect(getAttachmentGroupSelection(struct, attachmentGroupId)).toEqual({
+        attachmentGroups: [attachmentGroupId],
+        atoms: [firstAtomId, secondAtomId, thirdAtomId],
+        bonds: [firstInternalBondId, secondInternalBondId],
+      });
+    });
+  });
+
+  describe('canOpenAtomProperties', () => {
+    it('does not allow atom properties for an Attachment Group', () => {
+      const struct = {
+        atoms: new Map(),
+        attachmentGroups: new Map([[0, { atomIds: [1, 2] }]]),
+      };
+
+      expect(canOpenAtomProperties(struct as never, 0)).toBe(false);
+    });
+
+    it('allows atom properties for a regular atom', () => {
+      const struct = {
+        atoms: new Map([[0, { label: 'C' }]]),
+        attachmentGroups: new Map(),
+      };
+
+      expect(canOpenAtomProperties(struct as never, 0)).toBe(true);
     });
   });
 });

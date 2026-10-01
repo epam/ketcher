@@ -21,6 +21,7 @@ import {
   StereoLabel,
 } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
+import { AttachmentGroup } from 'domain/entities/attachmentGroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
@@ -38,7 +39,7 @@ import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import type { Element, RaphaelSet } from 'raphael';
-import { Scale } from 'domain/helpers';
+import { Scale, isAttachmentGroupWithHapticBond } from 'domain/helpers';
 import draw, {
   AP_PATH_SCALE,
   AP_WAVE_HALF_PERP,
@@ -59,6 +60,7 @@ import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculati
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
 import { ShowHydrogenLabels } from './showHydrogenLabels';
+import type { ReBondEndpoint } from './rebondEndpoint';
 
 interface ElemAttr {
   text: string;
@@ -80,7 +82,7 @@ export enum ShowHydrogenLabelNames {
   On = 'On',
 }
 
-class ReAtom extends ReObject {
+class ReAtom extends ReObject implements ReBondEndpoint {
   a: Atom;
   showLabel: boolean;
   showInfoLabel: boolean;
@@ -121,7 +123,7 @@ class ReAtom extends ReObject {
     this.component = -1;
   }
 
-  static isSelectable(): true {
+  static isSelectable(): boolean {
     return true;
   }
 
@@ -1093,7 +1095,7 @@ class ReAtom extends ReObject {
 
     // we render them together to avoid possible collisions
 
-    const fragmentId = Number(restruct.atoms.get(aid)?.a.fragment);
+    const fragmentId = Number(this.a.fragment);
     // TODO: fragment should not be null
     const fragment = restruct.molecule.frags.get(fragmentId);
 
@@ -1502,6 +1504,18 @@ function isLabelVisible(
   options: RenderOptions,
   atom: ReAtom,
 ) {
+  const attachmentGroupId =
+    atom.a instanceof AttachmentGroup
+      ? restruct.molecule.attachmentGroups.keyOf(atom.a)
+      : null;
+
+  if (
+    attachmentGroupId !== null &&
+    isAttachmentGroupWithHapticBond(restruct.molecule, attachmentGroupId)
+  ) {
+    return false;
+  }
+
   const isAttachmentPointAtom = Boolean(atom.a.attachmentPoints);
   const isCarbon = atom.a.label.toLowerCase() === 'c';
   const visibleNeighbors = getVisibleNeighborHalfBondIds(

@@ -22,7 +22,7 @@ import {
 } from 'ketcher-core';
 
 async function copyImageToClipboard() {
-  const state = window.currentState;
+  const state = globalThis.currentState;
   const editor = state.editor;
   const options = state.options;
   const struct = editor.structSelected();
@@ -36,8 +36,8 @@ async function copyImageToClipboard() {
       backgroundColor: '255, 255, 255',
       bondThickness: options.settings.bondThickness || defaultBondThickness,
     });
-    const item = new window.ClipboardItem({ [image.type]: image });
-    await window.navigator.clipboard.write([item]);
+    const item = new globalThis.ClipboardItem({ [image.type]: image });
+    await globalThis.navigator.clipboard.write([item]);
   } catch (e) {
     KetcherLogger.error('copyImageToClipboard.js::copyImageToClipboard', e);
     errorHandler('This feature is not available in your browser');

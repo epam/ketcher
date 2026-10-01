@@ -24,20 +24,19 @@ import {
   toElement,
   toSgroup,
   toStereoLabel,
-} from '../../data/convert/structconv';
-import type {
-  ElementFormData,
-  SGroupFormData,
-  SGroupInput,
+  type ElementFormData,
+  type SGroupFormData,
+  type SGroupInput,
 } from '../../data/convert/structconv';
 
-import { Elements, KetcherLogger } from 'ketcher-core';
-import type {
-  Atom,
-  Bond,
-  EditMonomerPayload,
-  FloatingToolsParams,
-  Struct,
+import {
+  Elements,
+  KetcherLogger,
+  type Atom,
+  type Bond,
+  type EditMonomerPayload,
+  type FloatingToolsParams,
+  type Struct,
 } from 'ketcher-core';
 import acts from '../../action';
 import type { UiActionAction } from '../../action/action.types';

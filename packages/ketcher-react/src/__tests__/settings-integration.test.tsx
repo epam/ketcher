@@ -291,9 +291,11 @@ describe('Settings Integration Tests', () => {
       const storage = new MemoryStorageAdapter();
 
       // Pre-populate storage with flat format
-      const presets = JSON.parse(JSON.stringify(getDefaultSettings()));
-      presets.resetToSelect = true;
-      presets.rotationStep = 99;
+      const presets = {
+        ...globalThis.structuredClone(getDefaultSettings()),
+        resetToSelect: true,
+        rotationStep: 99,
+      };
       await storage.save('ketcher-opts', presets);
 
       // Create new service (should load from storage)

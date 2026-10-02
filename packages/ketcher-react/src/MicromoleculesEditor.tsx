@@ -22,7 +22,7 @@ import 'whatwg-fetch';
 import './index.less';
 
 import init, { type Config } from './script';
-import { type RefObject, useEffect, useRef } from 'react';
+import { type RefObject, useEffect, useRef, useState } from 'react';
 import { type Root, createRoot } from 'react-dom/client';
 
 import type { Ketcher, StructService } from 'ketcher-core';
@@ -52,12 +52,8 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
 
   const setServerRef = useRef<(structService: StructService) => void>(() => {});
-  const { structServiceProvider } = props;
-
-  const propsRef = useRef(props);
-  useEffect(() => {
-    propsRef.current = props;
-  });
+  const { structServiceProvider, ketcherId } = props;
+  const [initialProps] = useState(props);
 
   const rootElRef = useRef<HTMLDivElement>(null);
 
@@ -66,22 +62,22 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   });
 
   useEffect(() => {
-    if (!propsRef.current.ketcherId) {
+    if (!ketcherId) {
       return;
     }
     ketcherBuilderRef.current?.reinitializeApi(
-      propsRef.current.ketcherId,
+      ketcherId,
       structServiceProvider,
       setServerRef.current,
     );
-  }, [structServiceProvider]);
+  }, [structServiceProvider, ketcherId]);
 
   useEffect(() => {
     const initKetcher = async () => {
       appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
 
       initPromiseRef.current = init({
-        ...propsRef.current,
+        ...initialProps,
         element: rootElRef.current,
         appRoot: appRootRef.current,
       });
@@ -91,10 +87,10 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
           cleanupRef.current = cleanup;
           ketcherBuilderRef.current = builder;
           setServerRef.current = setServer;
-          propsRef.current.onSetKetcherId?.(ketcher.id);
+          initialProps.onSetKetcherId?.(ketcher.id);
 
-          if (typeof propsRef.current.onInit === 'function' && ketcher) {
-            propsRef.current.onInit(ketcher);
+          if (typeof initialProps.onInit === 'function' && ketcher) {
+            initialProps.onInit(ketcher);
             const ketcherInitEvent = new Event(
               ketcherInitEventName(ketcher.id),
             );
@@ -118,7 +114,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
         appRootRef.current?.unmount();
       });
     };
-  }, []);
+  }, [initialProps]);
 
   return (
     <div

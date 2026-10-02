@@ -410,7 +410,7 @@ class SelectTool implements Tool {
       SGroup.isSuperAtom(possibleSaltOrSolvent?.item) &&
       !FunctionalGroup.isFunctionalGroup(possibleSaltOrSolvent?.item);
     const isMergePrevented =
-      !!dragCtx &&
+      Boolean(dragCtx) &&
       (isDraggingCustomSgroupOnStructure ||
         isDraggingSaltOrSolventOnStructure ||
         this.isDraggingStructureOnSaltOrSolvent(dragCtx, struct.sgroups));
@@ -432,13 +432,16 @@ class SelectTool implements Tool {
     }
 
     if (isSelectionMoveDragContext(dragCtx)) {
-      if (isMergePrevented && dragCtx.mergeItems) {
-        editor.selection(null);
-      }
-      if (isMergePrevented || !isMergingToMacroMolecule(this.editor, dragCtx)) {
+      if (isMergePrevented) {
+        // No merge, but the move still has to be committed to history.
+        if (dragCtx.mergeItems) {
+          editor.selection(null);
+        }
+        dropAndMerge(editor, null, dragCtx.action, dragCtx.copyAction);
+      } else if (!isMergingToMacroMolecule(this.editor, dragCtx)) {
         dropAndMerge(
           editor,
-          isMergePrevented ? null : dragCtx.mergeItems,
+          dragCtx.mergeItems,
           dragCtx.action,
           dragCtx.copyAction,
         );

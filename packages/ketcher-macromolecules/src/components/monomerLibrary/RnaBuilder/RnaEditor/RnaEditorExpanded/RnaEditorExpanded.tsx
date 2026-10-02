@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 import {
+  BASE_MODIFICATION_DISABLED_IN_SYNC_MODE,
   buildRnaPresetConnections,
   Entities,
   getRnaPresetPhosphatePosition,
@@ -48,6 +49,7 @@ import {
   selectCurrentMonomerGroup,
   selectActivePresetMonomerGroup,
   selectActiveRnaBuilderItem,
+  selectIsBaseModificationBlocked,
   selectIsPresetReadyToSave,
   selectAllPresets,
   setActivePreset,
@@ -188,6 +190,9 @@ export const RnaEditorExpanded = ({
   const sequenceSelectionName = useAppSelector(selectSequenceSelectionName);
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
+  );
+  const isBaseModificationBlocked = useAppSelector(
+    selectIsBaseModificationBlocked,
   );
   const [isSequenceSelectionUpdated, setIsSequenceSelectionUpdated] =
     useState<boolean>(false);
@@ -346,6 +351,14 @@ export const RnaEditorExpanded = ({
   };
 
   const selectGroup = (selectedGroup) => () => {
+    if (
+      selectedGroup === MonomerGroups.BASES &&
+      isBaseModificationBlocked &&
+      isSequenceEditInRNABuilderMode
+    ) {
+      editor?.events.error.dispatch(BASE_MODIFICATION_DISABLED_IN_SYNC_MODE);
+    }
+
     const selectedRNAPartMonomer = selectCurrentMonomerGroup(
       newPreset,
       selectedGroup,

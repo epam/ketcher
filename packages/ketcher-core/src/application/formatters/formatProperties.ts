@@ -62,11 +62,14 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.DaylightSmiles,
     ['.smi', '.smiles'],
     true,
+    { 'smiles-saving-format': 'daylight' },
   ),
   smilesExt: new SupportedFormatProperties(
     'Extended SMILES',
     ChemicalMimeType.ExtendedSmiles,
     ['.cxsmi', '.cxsmiles'],
+    false,
+    { 'smiles-saving-format': 'chemaxon' },
   ),
   smarts: new SupportedFormatProperties(
     'Daylight SMARTS',

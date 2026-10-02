@@ -54,6 +54,12 @@ English-only is the default build — the common case ships the smallest bundle,
 
 Set the flag either by exporting it before running either package's `npm run build`, or by copying the repo-root `.env.example` to `.env` and setting `KETCHER_MULTI_LANGUAGE_BUILD=true` there — both `rollup.config.mjs` files load the repo-root `.env` (via `dotenv`) before reading `process.env`, so a value already exported in the shell always wins over the `.env` file. `.env` is gitignored; commit changes to `.env.example` instead.
 
+## Adding a language
+
+Drop a complete set of this package's six namespace files (see the map above) under `src/locales/<code>/`, then run `npm run i18n:generate` (or just `npm run build`/`start`/`test` — it's a `pre*` hook in `package.json`). No edit to `i18n.ts` is needed: `scripts/generate-locale-resources.mjs` scans `src/locales/`, writes `src/i18n/localeResources.generated.ts`, and the new language's Settings-switcher label is computed automatically from its own `Intl.DisplayNames` endonym. A locale missing even one namespace file is skipped with a console warning rather than exposed half-translated — see `adr/2026-10-02-generated-locale-resources.md`.
+
+`ketcher-macromolecules` has its own copy of this script for its two namespaces (`macromolecules`/`macromoleculesDialogs`) — a language can be generated/complete in one package while still missing in the other; i18next falls back to English per-key for whatever's absent rather than erroring.
+
 ## Crowdin compatibility test (unconfigured, scoped)
 
 The repo-root `crowdin.yml` is a scoped compatibility test, not a configured pipeline — it covers only `ketcher-react`'s `common.json` (source `en` → target `zh-CN`). Its purpose: confirm Crowdin round-trips our actual file layout — flat nested JSON, `i18next-icu` single-brace placeholders (`{count}`, `{shortcut}`, etc.) — without mangling keys or placeholders.

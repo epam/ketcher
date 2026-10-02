@@ -27,6 +27,7 @@ import { ExternalFuncControls } from './ExternalFuncControls';
 import { Divider } from './Divider';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 import { CustomButtons } from './CustomButtons';
+import { getExpandedToolbarWidth } from './getExpandedToolbarWidth';
 import { ketcherProvider } from 'ketcher-core';
 import { cloneElement, useCallback, useMemo } from 'react';
 import type { CustomButton } from '../../../../builders/ketcher/CustomButtons';
@@ -72,8 +73,9 @@ export interface PanelProps {
   customButtons: Array<CustomButton>;
 }
 
-const collapseLimit = 650;
-const CUSTOM_BUTTON_ADDITIONAL_WIDTH = 40;
+// The toolbar spans the app container whose width the CSS container queries
+// are resolved against, so the container is the panel plus its padding.
+const PANEL_HORIZONTAL_PADDING = 22;
 
 const ControlsPanel = styled('div')`
   display: flex;
@@ -82,7 +84,7 @@ const ControlsPanel = styled('div')`
   justify-content: space-between;
   gap: 0px;
   height: 36px;
-  padding: 0px 22px;
+  padding: 0px ${PANEL_HORIZONTAL_PADDING}px;
   background-color: #ffffff;
   box-shadow: 0px 2px 5px rgba(103, 104, 132, 0.15);
 
@@ -171,13 +173,14 @@ export const TopToolbar = ({
     [ketcher],
   );
 
-  const collapseLimitWithCustomButtons = useMemo(() => {
-    return (
-      collapseLimit + customButtons.length * CUSTOM_BUTTON_ADDITIONAL_WIDTH
-    );
-  }, [customButtons.length]);
-
-  const isCollapsed = width < collapseLimitWithCustomButtons;
+  const isCollapsed =
+    width <
+    getExpandedToolbarWidth({
+      containerWidth: width + 2 * PANEL_HORIZONTAL_PADDING,
+      hiddenButtons,
+      customButtonsCount: customButtons.length,
+      hasModeSwitcher: Boolean(togglerComponent),
+    });
   const renderedTogglerComponent = togglerComponent
     ? cloneElement(togglerComponent, {
         disabled: isModeSwitcherDisabled,

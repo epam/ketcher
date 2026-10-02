@@ -28,7 +28,7 @@ const StyledButton = styled(Button)<{ isActive?: boolean }>(
     backgroundColor: isActive
       ? theme.ketcher.color.button.group.active
       : 'white',
-    marginRight: '8px',
+    marginInlineEnd: '8px',
     border: isActive
       ? theme.ketcher.outline.selected.color
       : theme.ketcher.outline.small,

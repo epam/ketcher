@@ -16,8 +16,9 @@
 
 import { FormulaInput, FrozenInput } from './components';
 
-import { type ReactElement, useEffect } from 'react';
+import { type ReactElement, useEffect, useMemo } from 'react';
 import type { Action } from 'redux';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import type { ThunkDispatch } from 'redux-thunk';
 import { range } from 'lodash/fp';
@@ -42,6 +43,7 @@ interface RoundSettings {
 
 interface AnalyseItem {
   name: string;
+  nameKey: string;
   key: string;
   round?: AnalyseRoundName;
   withSelector: boolean;
@@ -65,28 +67,34 @@ function roundOff(value: string | number, round: number): string {
   return value.replace(/\d*\.\d+/g, (str) => (+str).toFixed(round));
 }
 
-const selectOptions = getSelectOptionsFromSchema({ enum: range(0, 8) });
+const DECIMAL_PLACES_ENUM_NAMES = range(0, 8).map(
+  (n) => `common:decimalPlaces.n${n}`,
+);
 
 const analyseItems: AnalyseItem[] = [
   {
     name: 'Chemical Formula',
+    nameKey: 'process.analyse.chemicalFormula',
     key: 'gross',
     withSelector: false,
   },
   {
     name: 'Molecular Weight',
+    nameKey: 'process.analyse.molecularWeight',
     key: 'molecular-weight',
     round: 'roundWeight',
     withSelector: true,
   },
   {
     name: 'Exact Mass',
+    nameKey: 'process.analyse.exactMass',
     key: 'monoisotopic-mass',
     round: 'roundMass',
     withSelector: true,
   },
   {
     name: 'Elemental Analysis',
+    nameKey: 'process.analyse.elementalAnalysis',
     key: 'mass-composition',
     round: 'roundElAnalysis',
     withSelector: false,
@@ -148,19 +156,28 @@ function AnalyseDialog({
   onChangeRound,
   ...props
 }: Props) {
+  const { t } = useTranslation(['common', 'dialogs']);
   useEffect(() => {
     onAnalyse();
   }, [onAnalyse]);
+  const selectOptions = useMemo(
+    () =>
+      getSelectOptionsFromSchema(
+        { enum: range(0, 8), enumNames: DECIMAL_PLACES_ENUM_NAMES },
+        t,
+      ),
+    [t],
+  );
 
   return (
     <Dialog
-      title="Calculated Values"
+      title={t('dialogs:process.analyse.dialogTitle')}
       className={classes.analyse}
       withDivider={true}
       needMargin={true}
       valid={() => true}
       buttons={['OK']}
-      buttonsNameMap={{ OK: 'Close' }}
+      buttonsNameMap={{ OK: t('common:button.close') }}
       params={props}
     >
       <ul>
@@ -171,12 +188,12 @@ function AnalyseDialog({
             data-testid={item.name + '-wrapper'}
           >
             <div className={classes.inputWrapper}>
-              <label>{item.name}:</label>
+              <label>{t(`dialogs:${item.nameKey}`)}:</label>
               {renderInputComponent(item, values, loading, round)}
             </div>
             {item.withSelector && item.round ? (
               <div className={classes.selectWrapper}>
-                <span>Decimal places</span>
+                <span>{t('dialogs:process.analyse.decimalPlaces')}</span>
                 <Select
                   options={selectOptions}
                   value={round[item.round]}

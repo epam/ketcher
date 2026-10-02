@@ -18,6 +18,14 @@ import type { Editor, Struct, StructService } from 'ketcher-core';
 import type { Action } from 'redux';
 import type { ButtonsConfig } from '../../builders/ketcher/ButtonsConfig';
 import type { CustomButton } from '../../builders/ketcher/CustomButtons';
+import type { OptionsState } from './options/types';
+
+export type {
+  AnalyseRoundName,
+  AnalyseState,
+  AnalyseValues,
+  OptionsState,
+} from './options/types';
 
 // TODO: This is a partial type definition of the Redux store.
 // The actual store structure is more complex and should be expanded
@@ -48,27 +56,6 @@ export interface ModalState {
     valid: boolean;
     result: Record<string, unknown>;
   };
-}
-
-export interface AnalyseValues {
-  gross?: string;
-  'molecular-weight'?: number;
-  'monoisotopic-mass'?: number;
-  'mass-composition'?: string;
-  [key: string]: string | number | undefined;
-}
-
-export interface AnalyseState {
-  values: AnalyseValues | null;
-  loading: boolean;
-  roundWeight: number;
-  roundMass: number;
-  roundElAnalysis: number;
-}
-
-export interface OptionsState {
-  analyse: AnalyseState;
-  settings: Record<string, unknown>;
 }
 
 export interface StoreState {

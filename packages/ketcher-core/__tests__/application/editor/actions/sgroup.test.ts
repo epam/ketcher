@@ -233,3 +233,114 @@ describe('setExpandMonomerSGroup', () => {
     expect(moleculeNodes[0].fragment?.bonds.size).toBe(1);
   });
 });
+
+describe('setExpandMonomerSGroup for functional groups', () => {
+  const createStructWithFunctionalGroup = (
+    outsideAtomPositions: [Vec2, Vec2],
+    expanded: boolean,
+    withAttachmentPoint = true,
+  ) => {
+    const struct = new Struct();
+    const addAtom = (label: string, pp: Vec2) =>
+      struct.atoms.add(new Atom({ label, pp, fragment: 0 }));
+    const addBond = (begin: number, end: number) => {
+      const bond = new Bond({ begin, end, type: Bond.PATTERN.TYPE.SINGLE });
+      const bondId = struct.bonds.add(bond);
+      struct.bondInitHalfBonds(bondId, bond);
+    };
+
+    const outsideAtomIds = outsideAtomPositions.map((pp) => addAtom('C', pp));
+    const attachmentAtomId = addAtom('C', new Vec2(1.866, -0.5));
+    const groupAtomIds = [attachmentAtomId, addAtom('O', new Vec2(2.732, 0))];
+    addBond(outsideAtomIds[0], outsideAtomIds[1]);
+    addBond(outsideAtomIds[1], attachmentAtomId);
+    addBond(groupAtomIds[0], groupAtomIds[1]);
+    struct.initNeighbors();
+
+    const sgroup = new SGroup(SGroup.TYPES.SUP);
+    const sgroupId = struct.sgroups.add(sgroup);
+    sgroup.id = sgroupId;
+    sgroup.data.name = 'FG';
+    sgroup.data.expanded = expanded;
+    groupAtomIds.forEach((atomId) => struct.atomAddToSGroup(sgroupId, atomId));
+    if (withAttachmentPoint) {
+      sgroup.addAttachmentPoint(
+        new SGroupAttachmentPoint(attachmentAtomId, undefined, undefined),
+      );
+    }
+
+    const options = {
+      scale: 40,
+      width: 100,
+      height: 100,
+    } as unknown as RenderOptions;
+    const render = new Render(document as unknown as HTMLElement, options);
+    const restruct = new ReStruct(struct, render);
+
+    const getPositions = (atomIds: number[]) =>
+      atomIds.map(
+        (atomId) => new Vec2(struct.atoms.get(atomId)?.pp ?? new Vec2()),
+      );
+    const getOutsidePositions = () => getPositions(outsideAtomIds);
+    const getGroupPositions = () => getPositions(groupAtomIds);
+
+    return {
+      restruct,
+      struct,
+      sgroupId,
+      getOutsidePositions,
+      getGroupPositions,
+    };
+  };
+
+  it('keeps an attached structure in place when it does not collide with the expanded group', () => {
+    const { restruct, struct, sgroupId, getOutsidePositions } =
+      createStructWithFunctionalGroup([new Vec2(0, 0), new Vec2(1, 0)], false);
+    const positionsBefore = getOutsidePositions();
+
+    setExpandMonomerSGroup(restruct, sgroupId, { expanded: true });
+
+    expect(struct.sgroups.get(sgroupId)?.isExpanded()).toBe(true);
+    expect(getOutsidePositions()).toEqual(positionsBefore);
+  });
+
+  it('moves an attached structure away when it collides with the expanded group', () => {
+    const { restruct, sgroupId, getOutsidePositions } =
+      createStructWithFunctionalGroup(
+        [new Vec2(2.7, 0.1), new Vec2(1, 0)],
+        false,
+      );
+    const positionsBefore = getOutsidePositions();
+
+    setExpandMonomerSGroup(restruct, sgroupId, { expanded: true });
+
+    expect(getOutsidePositions()).not.toEqual(positionsBefore);
+  });
+
+  it('keeps an attached structure in place when contracting the group', () => {
+    const { restruct, struct, sgroupId, getOutsidePositions } =
+      createStructWithFunctionalGroup([new Vec2(0, 0), new Vec2(1, 0)], true);
+    const positionsBefore = getOutsidePositions();
+
+    setExpandMonomerSGroup(restruct, sgroupId, { expanded: false });
+
+    expect(struct.sgroups.get(sgroupId)?.isExpanded()).toBe(false);
+    expect(getOutsidePositions()).toEqual(positionsBefore);
+  });
+
+  it('keeps all atoms in place when expanding a superatom without attachment points', () => {
+    const { restruct, sgroupId, getOutsidePositions, getGroupPositions } =
+      createStructWithFunctionalGroup(
+        [new Vec2(0, 0), new Vec2(1, 0)],
+        false,
+        false,
+      );
+    const outsidePositionsBefore = getOutsidePositions();
+    const groupPositionsBefore = getGroupPositions();
+
+    setExpandMonomerSGroup(restruct, sgroupId, { expanded: true });
+
+    expect(getOutsidePositions()).toEqual(outsidePositionsBefore);
+    expect(getGroupPositions()).toEqual(groupPositionsBefore);
+  });
+});

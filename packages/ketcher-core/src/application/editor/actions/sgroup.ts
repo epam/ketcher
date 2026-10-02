@@ -152,6 +152,28 @@ export function setExpandSGroup(
   return action.perform(restruct);
 }
 
+const MIN_DISTANCE_TO_EXPANDED_SGROUP_ATOM = 0.5;
+
+const isCollidingWithSGroupAtoms = (
+  struct: Struct,
+  atomId: number,
+  sGroupAtoms: Set<number>,
+) => {
+  const position = struct.atoms.get(atomId)?.pp;
+  if (!position) {
+    return false;
+  }
+
+  return [...sGroupAtoms].some((sGroupAtomId) => {
+    const sGroupAtomPosition = struct.atoms.get(sGroupAtomId)?.pp;
+    return (
+      sGroupAtomPosition !== undefined &&
+      Vec2.dist(position, sGroupAtomPosition) <
+        MIN_DISTANCE_TO_EXPANDED_SGROUP_ATOM
+    );
+  });
+};
+
 export function setExpandMonomerSGroup(
   restruct: Restruct,
   sgid: number,
@@ -183,16 +205,11 @@ export function setExpandMonomerSGroup(
 
   const attachmentAtomsFromOutside: number[] = [];
 
+  // Superatoms loaded from files may have no attachment points.
   for (const bond of bondsToOutside.values()) {
-    if (
-      attachmentPoints.some(
-        (attachmentPoint) => attachmentPoint.atomId === bond.begin,
-      )
-    ) {
-      attachmentAtomsFromOutside.push(bond.end);
-    } else {
-      attachmentAtomsFromOutside.push(bond.begin);
-    }
+    attachmentAtomsFromOutside.push(
+      sGroupAtoms.has(bond.begin) ? bond.end : bond.begin,
+    );
   }
 
   bondsToOutside.forEach((bondToOutside, bondId) => {
@@ -355,6 +372,22 @@ export function setExpandMonomerSGroup(
     }
   });
 
+  // Only contracted monomers overlap their neighbours; other S-groups keep a
+  // full layout, so only colliding neighbours are moved.
+  const shouldMoveFragment = (index: number) => {
+    if (sGroup.isMonomer) {
+      return true;
+    }
+
+    if (!attrs.expanded) {
+      return false;
+    }
+
+    return (atomsToMove.get(index) ?? []).some((atomId) =>
+      isCollidingWithSGroupAtoms(struct, atomId, sGroupAtoms),
+    );
+  };
+
   const sameLine = new Set<number>();
 
   sGroupsToMove.forEach((sGroupIds) => {
@@ -448,7 +481,11 @@ export function setExpandMonomerSGroup(
   const horizontalOffset = sGroupWidth / 2;
 
   const handledAtoms = new Set<number>();
-  sGroupsToMove.forEach((sGroupIds) => {
+  sGroupsToMove.forEach((sGroupIds, index) => {
+    if (!shouldMoveFragment(index)) {
+      return;
+    }
+
     sGroupIds.forEach((sGroupId) => {
       const movableSGroup = restruct.molecule.sgroups.get(sGroupId);
       if (!movableSGroup) {
@@ -500,7 +537,11 @@ export function setExpandMonomerSGroup(
     });
   });
 
-  atomsToMove.forEach((atomIds) => {
+  atomsToMove.forEach((atomIds, index) => {
+    if (!shouldMoveFragment(index)) {
+      return;
+    }
+
     const intactAtoms = atomIds.filter((aid) => !handledAtoms.has(aid));
     if (intactAtoms.length === 0) {
       return;

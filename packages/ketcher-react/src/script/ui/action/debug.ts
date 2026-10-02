@@ -15,20 +15,28 @@
  ***************************************************************************/
 
 import { MolSerializer } from 'ketcher-core';
+import type { GetHiddenState, UiAction } from './action.types';
+import type Editor from '../../editor/Editor';
 import isHidden from './isHidden';
 
-const debugObj = {
+type DebugActions = {
+  'force-update': UiAction;
+  'qs-serialize': UiAction;
+  hidden: GetHiddenState;
+};
+
+const debugObj: DebugActions = {
   // original: for dev purposes
   'force-update': {
     shortcut: 'Ctrl+Shift+r',
-    action: (editor) => {
+    action: (editor: Editor) => {
       editor.update(true);
     },
     hidden: (options) => isHidden(options, 'force-update'),
   },
   'qs-serialize': {
     shortcut: 'Alt+Shift+r',
-    action: (editor) => {
+    action: (editor: Editor) => {
       const molSerializer = new MolSerializer();
       const molStr = molSerializer.serialize(editor.struct());
       const molQs = 'mol=' + encodeURIComponent(molStr).replace(/%20/g, '+');

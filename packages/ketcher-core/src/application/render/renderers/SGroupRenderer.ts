@@ -64,17 +64,12 @@ export class SGroupRenderer extends BaseRenderer {
   }
 
   private get isUnconnectedMicromoleculeFragment(): boolean {
-    const monomer = this.sgroupDrawingEntity.monomer;
-
-    if (!monomer.monomerItem.props.isMicromoleculeFragment) {
-      return false;
-    }
-
-    const hasAttachmentPointInStruct = monomer.monomerItem.struct.sgroups.some(
-      (sgroup) => sgroup.getAttachmentPoints().length > 0,
+    return (
+      Boolean(
+        this.sgroupDrawingEntity.monomer.monomerItem.props
+          .isMicromoleculeFragment,
+      ) && this.sgroup.getAttachmentPoints().length === 0
     );
-
-    return !hasAttachmentPointInStruct && monomer.bonds.length === 0;
   }
 
   public get labelTooltipText(): string | null {

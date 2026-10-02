@@ -5,6 +5,7 @@ import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { Scale } from 'domain/helpers';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { SGroup, Vec2 } from 'domain/entities';
+import { geometricCenter } from 'domain/entities/geometry';
 import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SgContexts } from 'application/editor/shared/constants';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
@@ -60,6 +61,15 @@ export class SGroupRenderer extends BaseRenderer {
 
   private get sgroup() {
     return this.sgroupDrawingEntity.sgroup;
+  }
+
+  private get isUnconnectedMicromoleculeFragment(): boolean {
+    return (
+      Boolean(
+        this.sgroupDrawingEntity.monomer.monomerItem.props
+          .isMicromoleculeFragment,
+      ) && this.sgroup.getAttachmentPoints().length === 0
+    );
   }
 
   public get labelTooltipText(): string | null {
@@ -160,7 +170,10 @@ export class SGroupRenderer extends BaseRenderer {
       return;
     }
 
-    const { position } = this.sgroup.getContractedPosition(this.struct);
+    const livePositions = this.getLiveAtomPositions();
+    const position = livePositions
+      ? geometricCenter(livePositions)
+      : this.sgroup.getContractedPosition(this.struct).position;
 
     this.appendText(Scale.modelToCanvas(position, this.editorSettings), label, {
       'font-weight': 'bold',
@@ -171,6 +184,26 @@ export class SGroupRenderer extends BaseRenderer {
     return new Set(SGroup.getAtoms(this.struct, this.sgroup));
   }
 
+  private getLiveAtomPositions(): Vec2[] | null {
+    if (this.atomRenderers.size === 0) {
+      return null;
+    }
+
+    const sgroupAtomIds = this.getSGroupAtomIds();
+    const positions: Vec2[] = [];
+
+    this.atomRenderers.forEach((atomRenderer) => {
+      if (
+        atomRenderer.atom.monomer === this.sgroupDrawingEntity.monomer &&
+        sgroupAtomIds.has(atomRenderer.atom.atomIdInMicroMode)
+      ) {
+        positions.push(atomRenderer.atom.position);
+      }
+    });
+
+    return positions.length > 0 ? positions : null;
+  }
+
   public applyExpandedStateToStructure(
     atomRenderers: Map<number, AtomRenderer>,
     bondRenderers: Map<number, BondRenderer>,
@@ -178,7 +211,7 @@ export class SGroupRenderer extends BaseRenderer {
     this.atomRenderers = atomRenderers;
     this.bondRenderers = bondRenderers;
 
-    if (this.sgroup.isExpanded()) {
+    if (this.sgroup.isExpanded() || this.isUnconnectedMicromoleculeFragment) {
       return;
     }
 
@@ -249,18 +282,27 @@ export class SGroupRenderer extends BaseRenderer {
 
   private calculateBracketBox(): Box2Abs | null {
     const contentBoxes: Box2Abs[] = [];
+    const livePositions = this.getLiveAtomPositions();
 
-    SGroup.getAtoms(this.struct, this.sgroup).forEach((atomId) => {
-      const atom = this.struct.atoms.get(atomId);
+    if (livePositions) {
+      livePositions.forEach((position) => {
+        contentBoxes.push(
+          new Box2Abs(position, position).extend(BORDER_EXT, BORDER_EXT),
+        );
+      });
+    } else {
+      SGroup.getAtoms(this.struct, this.sgroup).forEach((atomId) => {
+        const atom = this.struct.atoms.get(atomId);
 
-      if (!atom) {
-        return;
-      }
+        if (!atom) {
+          return;
+        }
 
-      contentBoxes.push(
-        new Box2Abs(atom.pp, atom.pp).extend(BORDER_EXT, BORDER_EXT),
-      );
-    });
+        contentBoxes.push(
+          new Box2Abs(atom.pp, atom.pp).extend(BORDER_EXT, BORDER_EXT),
+        );
+      });
+    }
 
     const bracketBox = contentBoxes.reduce<Box2Abs | null>(
       (box, contentBox) => (box ? Box2Abs.union(box, contentBox) : contentBox),

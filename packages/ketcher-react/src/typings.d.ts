@@ -3,6 +3,14 @@ declare module '*.less' {
   export default classes;
 }
 
+// Needed for `import 'react-contexify/ReactContexify.css'`
+// (see script/ui/views/components/ContextMenu/ContextMenu.tsx). Previously
+// declared in the now-deleted rollup-plugin-shims.d.ts.
+declare module '*.css' {
+  const content: string;
+  export default content;
+}
+
 declare namespace JSX {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   type Element = React.ReactElement<any, any>;
@@ -82,10 +90,9 @@ declare module 'subscription' {
 
 declare module 'ketcher-macromolecules' {
   import type * as React from 'react';
-  interface MacromoleculesEditorProps {
-    ketcherId: string;
-    togglerComponent?: JSX.Element;
-  }
-  const MacromoleculesEditor: React.ComponentType<MacromoleculesEditorProps>;
+  import type { MacromoleculesEditorProps } from 'ketcher-core';
+  const MacromoleculesEditor: React.ComponentType<
+    MacromoleculesEditorProps<React.ReactElement>
+  >;
   export default MacromoleculesEditor;
 }

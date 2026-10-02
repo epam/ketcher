@@ -26,6 +26,10 @@ type TurnOnMacromoleculesEditorOptions = {
   enableFlexMode?: boolean;
 };
 
+// Generous ceiling for the Molecules -> Macromolecules switch's render,
+// which can start late while the default monomers library is fetched.
+const MACROMOLECULES_SWITCH_RENDER_TIMEOUT_MS = 3000;
+
 export const CommonTopRightToolbar = (page: Page) => {
   const locators: CommonTopRightToolbarLocators = {
     ketcherModeSwitcherCombobox: page
@@ -125,12 +129,18 @@ export const CommonTopRightToolbar = (page: Page) => {
       );
 
       if (!(await macromoleculesCanvas.isVisible())) {
-        await waitForRender(page, async () => {
-          await switcher.waitFor({ state: 'visible' });
-          await switcher.click();
-          await macroOption.waitFor({ state: 'visible' });
-          await macroOption.click();
-        });
+        await waitForRender(
+          page,
+          async () => {
+            await switcher.waitFor({ state: 'visible' });
+            await switcher.click();
+            await macroOption.waitFor({ state: 'visible' });
+            await macroOption.click();
+          },
+          // Give the switch's render enough time to start once the default
+          // monomers library (lazily fetched) resolves.
+          MACROMOLECULES_SWITCH_RENDER_TIMEOUT_MS,
+        );
       }
 
       await MacromoleculesTopToolbar(

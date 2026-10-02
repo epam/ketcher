@@ -39,13 +39,7 @@
       "src/*": ["./src/*"],
       "ketcher-react": ["./src/types/ketcher-react"],
       "ketcher-react/*": ["./src/types/ketcher-react/*"]
-    },
-    "plugins": [
-      {
-        "transform": "@zerollup/ts-transform-paths",
-        "exclude": ["*"]
-      }
-    ]
+    }
   },
   "include": ["src"]
 }

@@ -20,6 +20,18 @@ Each package has its own Jest configuration. Tests live in `__tests__/` director
   - Tests Redux slices, hooks, and components
   - Config: `packages/ketcher-macromolecules/jest.config.js`
 - **ketcher-standalone**: minimal unit tests
+  - Config: `packages/ketcher-standalone/jest.config.js` (`ts-jest`, `testEnvironment: 'node'`)
+  - `moduleNameMapper` swaps two build-time-only resolutions for test doubles: the
+    `_indigo-worker-import-alias_` placeholder (normally resolved to a real worker shim via
+    `resolve.alias` in `vite.config.mjs`) is pointed at
+    `__tests__/__mocks__/indigoWorkerAlias.ts`, a minimal fake worker; `d3` is pointed at
+    `node_modules/d3/dist/d3.min.js` because `ketcher-core`'s dist bundle re-exports its render
+    tools, which import `d3` as an ESM-only package that ts-jest's CJS transform can't otherwise
+    resolve (mirrors `ketcher-core`/`ketcher-react`'s own Jest config).
+  - `ketcher-core` itself is mocked per-test with `jest.mock('ketcher-core', () => ({
+    ...jest.requireActual('ketcher-core'), provideEditorInstance: jest.fn(...) }))` to control the
+    editor instance a test observes (see
+    `__tests__/infrastructure/services/struct/standaloneStructService.test.ts` for the pattern).
 
 Run all unit tests: `npm run test` (from root)
 Run type checks: `npm run test:types`
@@ -36,6 +48,23 @@ All E2E tests live in `ketcher-autotests/`. This is a separate npm workspace.
 ### 3. Type Checking
 
 TypeScript type checks run separately per package: `npm run test:types --workspaces`
+
+### 4. Published Package Metadata
+
+After `npm run build`, run `npm run check:package-metadata` to pack all four publishable
+workspaces and check each tarball with `publint` (errors) and Are The Types Wrong. The CI build job
+runs the same check, so it validates packed files rather than workspace links.
+
+`ketcher-core` currently has no `exports` map, so this check cannot catch problems in a future
+core exports map. Add a packed-consumer type-resolution assertion if one is introduced.
+
+ATW's `unexpected-module-syntax` rule is ignored for the ESM `.js` entries in standalone,
+macromolecules, and react: all declare Node 24.20+ (which detects their module syntax), while
+ATW's Node 16 profile flags the ambiguous extensions. The macromolecules `Editor.d.ts` also
+imports an unshipped `theme.less`; its `internal-resolution-error` is a separate declaration
+packaging defect (same class as #12004). The two packages' CSS export paths are excluded from
+ATW's JS/type analysis; `publint` still checks their packed tarballs. The packed Vite/webpack
+consumer check covers the standalone entries.
 
 ---
 

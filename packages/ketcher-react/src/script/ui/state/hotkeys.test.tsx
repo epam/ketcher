@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import createStore from '../state';
 import { initKeydownListener } from './hotkeys';
 import { act } from 'react';
+import type { StructService } from 'ketcher-core';
 
 jest.mock('react-intersection-observer', () => {
   return {
@@ -58,7 +59,7 @@ describe('Hot keys', () => {
 });
 
 function renderWithMockStore(component) {
-  const store = createStore({}, {}, () => null);
+  const store = createStore({}, {} as StructService, () => null);
   store.dispatch(initKeydownListener(document));
   store.dispatch({
     type: 'INIT',

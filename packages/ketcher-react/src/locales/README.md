@@ -54,6 +54,28 @@ English-only is the default build — the common case ships the smallest bundle,
 
 Set the flag either by exporting it before running either package's `npm run build`, or by copying the repo-root `.env.example` to `.env` and setting `KETCHER_MULTI_LANGUAGE_BUILD=true` there — both `rollup.config.mjs` files load the repo-root `.env` (via `dotenv`) before reading `process.env`, so a value already exported in the shell always wins over the `.env` file. `.env` is gitignored; commit changes to `.env.example` instead.
 
+## Crowdin compatibility test (unconfigured, scoped)
+
+The repo-root `crowdin.yml` is a scoped compatibility test, not a configured pipeline — it covers only `ketcher-react`'s `common.json` (source `en` → target `zh-CN`). Its purpose: confirm Crowdin round-trips our actual file layout — flat nested JSON, `i18next-icu` single-brace placeholders (`{count}`, `{shortcut}`, etc.) — without mangling keys or placeholders.
+
+This matters because no single built-in Crowdin JSON type matches our format exactly:
+
+- `i18next_json` expects i18next's default double-brace interpolation (`{{variable}}`); our `i18next-icu` plugin uses single-brace ICU syntax (`{variable}`) instead, so this type would likely fail to recognize our placeholders as protected.
+- `react_intl` understands single-brace ICU syntax, but expects each key's value to be a `{ defaultMessage, description }` object, not our flat `{ "key": "string" }` shape.
+
+`crowdin.yml` therefore uses the generic `type: "json"` and the test is **manual**: after uploading, open `common.json` in Crowdin's web editor and check whether `{count}`/`{label}`/etc. render as a highlighted, protected placeholder (not plain editable text) — that's the actual answer to "does our approach work with this platform."
+
+To run it yourself (uses your own Crowdin project — nothing here is pre-authenticated):
+
+```bash
+export CROWDIN_PROJECT_ID=<your numeric project id>
+export CROWDIN_PERSONAL_TOKEN=<your personal access token>
+npx @crowdin/cli config lint      # validate crowdin.yml, no auth needed
+npx @crowdin/cli upload sources   # push common.json as the source
+# ...translate/pseudo-translate zh-CN in the Crowdin UI...
+npx @crowdin/cli download --language zh-CN   # pull back ONLY zh-CN (project has other target languages configured, e.g. zh-TW, that aren't registered in i18n.ts)
+```
+
 ## Hard rule
 
 Never touch anything that renders inside the `StructEditor` SVG canvas (`data-testid="ketcher-canvas"` → the `editorRef` subtree). That element is explicitly pinned to `dir="ltr"` and is out of scope for text extraction — chemical structure geometry must never be affected by locale.

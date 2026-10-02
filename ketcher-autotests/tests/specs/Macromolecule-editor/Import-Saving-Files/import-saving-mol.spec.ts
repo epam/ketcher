@@ -524,6 +524,39 @@ test.describe('Import-Saving .mol Files', () => {
       MolFileFormat.v3000,
     );
   });
+
+  test('#11983 Preview shows monomers with stacked atom coordinates', async ({
+    FlexCanvas: _,
+  }) => {
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/Bugs/monomer-with-all-zero-atom-coordinates.mol',
+      MacroFileType.MOLv3000,
+    );
+
+    await getMonomerLocator(page, { monomerAlias: 'nC6n8A' }).hover();
+    const preview = MonomerPreviewTooltip(page);
+    await preview.waitForBecomeVisible();
+
+    const svg = preview.monomerPreviewTooltipPicture.locator('svg');
+    await expect(svg).toBeVisible();
+
+    // Zero-coordinate structures must produce a finite, nonzero viewBox.
+    await expect
+      .poll(async () => {
+        const viewBox = await svg.getAttribute('viewBox');
+        if (!viewBox?.trim()) return false;
+
+        const values = viewBox.trim().split(/\s+/).map(Number);
+        return (
+          values.length === 4 &&
+          values.every(Number.isFinite) &&
+          values[2] > 0 &&
+          values[3] > 0
+        );
+      })
+      .toBe(true);
+  });
 });
 
 test.describe('Import modified .mol files from external editor', () => {

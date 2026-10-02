@@ -2,22 +2,22 @@
 
 exports[`Monomer Group > should apply correct style if selected 1`] = `
 <div
-  class="css-c9w1yo-Card e1fkopzz0"
+  class="css-1iegw5a-Card e1fkopzz0"
   data-monomer-item-id="RRMonomerName___RRName"
   data-testid="RRMonomerName___RRName"
 >
   <span
-    class="css-kgpf6o-CardTitle e1fkopzz2"
+    class="css-1da7ffc-CardTitle e1fkopzz2"
   >
     R
   </span>
   <div
     aria-label=""
-    class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+    class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
     data-mui-internal-clone-element="true"
   >
     <svg
-      class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+      class="autochain css-p643xf-AutochainIcon e1fkopzz3"
       name="monomer-autochain"
     />
   </div>
@@ -37,33 +37,33 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="css-1dlt2rs-GroupContainerRow-GroupContainerColumn e8901gh2"
+        class="css-1roke0u-GroupContainerRow-GroupContainerColumn e8901gh2"
       >
         <div
-          class="css-10ruynl-GroupTitle e8901gh3"
+          class="css-tw020n-GroupTitle e8901gh3"
         >
           Mock title
         </div>
         <div
-          class="css-16h2xp3-ItemsContainer e8901gh0"
+          class="css-1ls8773-ItemsContainer e8901gh0"
         >
           <div
-            class="css-1co2s1k-Card e1fkopzz0"
+            class="css-13jk9wb-Card e1fkopzz0"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
             <span
-              class="css-kgpf6o-CardTitle e1fkopzz2"
+              class="css-1da7ffc-CardTitle e1fkopzz2"
             >
               R
             </span>
             <div
               aria-label=""
-              class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+              class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+                class="autochain css-p643xf-AutochainIcon e1fkopzz3"
                 name="monomer-autochain"
               />
             </div>
@@ -76,22 +76,22 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-7z07nv-Card e1fkopzz0"
+            class="css-t26n47-Card e1fkopzz0"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
             <span
-              class="css-kgpf6o-CardTitle e1fkopzz2"
+              class="css-1da7ffc-CardTitle e1fkopzz2"
             >
               m
             </span>
             <div
               aria-label=""
-              class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+              class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+                class="autochain css-p643xf-AutochainIcon e1fkopzz3"
                 name="monomer-autochain"
               />
             </div>
@@ -104,22 +104,22 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-12pvqbn-Card e1fkopzz0"
+            class="css-7fm85v-Card e1fkopzz0"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
             <span
-              class="css-kgpf6o-CardTitle e1fkopzz2"
+              class="css-1da7ffc-CardTitle e1fkopzz2"
             >
               d
             </span>
             <div
               aria-label=""
-              class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+              class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+                class="autochain css-p643xf-AutochainIcon e1fkopzz3"
                 name="monomer-autochain"
               />
             </div>
@@ -132,22 +132,22 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1co2s1k-Card e1fkopzz0"
+            class="css-13jk9wb-Card e1fkopzz0"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
             <span
-              class="css-kgpf6o-CardTitle e1fkopzz2"
+              class="css-1da7ffc-CardTitle e1fkopzz2"
             >
               ar
             </span>
             <div
               aria-label=""
-              class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+              class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+                class="autochain css-p643xf-AutochainIcon e1fkopzz3"
                 name="monomer-autochain"
               />
             </div>
@@ -160,22 +160,22 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-7z07nv-Card e1fkopzz0"
+            class="css-t26n47-Card e1fkopzz0"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
             <span
-              class="css-kgpf6o-CardTitle e1fkopzz2"
+              class="css-1da7ffc-CardTitle e1fkopzz2"
             >
               Ld
             </span>
             <div
               aria-label=""
-              class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+              class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+                class="autochain css-p643xf-AutochainIcon e1fkopzz3"
                 name="monomer-autochain"
               />
             </div>
@@ -193,33 +193,33 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-1dlt2rs-GroupContainerRow-GroupContainerColumn e8901gh2"
+      class="css-1roke0u-GroupContainerRow-GroupContainerColumn e8901gh2"
     >
       <div
-        class="css-10ruynl-GroupTitle e8901gh3"
+        class="css-tw020n-GroupTitle e8901gh3"
       >
         Mock title
       </div>
       <div
-        class="css-16h2xp3-ItemsContainer e8901gh0"
+        class="css-1ls8773-ItemsContainer e8901gh0"
       >
         <div
-          class="css-1co2s1k-Card e1fkopzz0"
+          class="css-13jk9wb-Card e1fkopzz0"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
           <span
-            class="css-kgpf6o-CardTitle e1fkopzz2"
+            class="css-1da7ffc-CardTitle e1fkopzz2"
           >
             R
           </span>
           <div
             aria-label=""
-            class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+            class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+              class="autochain css-p643xf-AutochainIcon e1fkopzz3"
               name="monomer-autochain"
             />
           </div>
@@ -232,22 +232,22 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-7z07nv-Card e1fkopzz0"
+          class="css-t26n47-Card e1fkopzz0"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
           <span
-            class="css-kgpf6o-CardTitle e1fkopzz2"
+            class="css-1da7ffc-CardTitle e1fkopzz2"
           >
             m
           </span>
           <div
             aria-label=""
-            class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+            class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+              class="autochain css-p643xf-AutochainIcon e1fkopzz3"
               name="monomer-autochain"
             />
           </div>
@@ -260,22 +260,22 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-12pvqbn-Card e1fkopzz0"
+          class="css-7fm85v-Card e1fkopzz0"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
           <span
-            class="css-kgpf6o-CardTitle e1fkopzz2"
+            class="css-1da7ffc-CardTitle e1fkopzz2"
           >
             d
           </span>
           <div
             aria-label=""
-            class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+            class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+              class="autochain css-p643xf-AutochainIcon e1fkopzz3"
               name="monomer-autochain"
             />
           </div>
@@ -288,22 +288,22 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1co2s1k-Card e1fkopzz0"
+          class="css-13jk9wb-Card e1fkopzz0"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
           <span
-            class="css-kgpf6o-CardTitle e1fkopzz2"
+            class="css-1da7ffc-CardTitle e1fkopzz2"
           >
             ar
           </span>
           <div
             aria-label=""
-            class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+            class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+              class="autochain css-p643xf-AutochainIcon e1fkopzz3"
               name="monomer-autochain"
             />
           </div>
@@ -316,22 +316,22 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-7z07nv-Card e1fkopzz0"
+          class="css-t26n47-Card e1fkopzz0"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
           <span
-            class="css-kgpf6o-CardTitle e1fkopzz2"
+            class="css-1da7ffc-CardTitle e1fkopzz2"
           >
             Ld
           </span>
           <div
             aria-label=""
-            class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+            class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+              class="autochain css-p643xf-AutochainIcon e1fkopzz3"
               name="monomer-autochain"
             />
           </div>
@@ -406,28 +406,28 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="css-1dlt2rs-GroupContainerRow-GroupContainerColumn e8901gh2"
+        class="css-1roke0u-GroupContainerRow-GroupContainerColumn e8901gh2"
       >
         <div
-          class="css-16h2xp3-ItemsContainer e8901gh0"
+          class="css-1ls8773-ItemsContainer e8901gh0"
         >
           <div
-            class="css-1co2s1k-Card e1fkopzz0"
+            class="css-13jk9wb-Card e1fkopzz0"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
             <span
-              class="css-kgpf6o-CardTitle e1fkopzz2"
+              class="css-1da7ffc-CardTitle e1fkopzz2"
             >
               R
             </span>
             <div
               aria-label=""
-              class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+              class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+                class="autochain css-p643xf-AutochainIcon e1fkopzz3"
                 name="monomer-autochain"
               />
             </div>
@@ -440,22 +440,22 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-7z07nv-Card e1fkopzz0"
+            class="css-t26n47-Card e1fkopzz0"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
             <span
-              class="css-kgpf6o-CardTitle e1fkopzz2"
+              class="css-1da7ffc-CardTitle e1fkopzz2"
             >
               m
             </span>
             <div
               aria-label=""
-              class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+              class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+                class="autochain css-p643xf-AutochainIcon e1fkopzz3"
                 name="monomer-autochain"
               />
             </div>
@@ -468,22 +468,22 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-12pvqbn-Card e1fkopzz0"
+            class="css-7fm85v-Card e1fkopzz0"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
             <span
-              class="css-kgpf6o-CardTitle e1fkopzz2"
+              class="css-1da7ffc-CardTitle e1fkopzz2"
             >
               d
             </span>
             <div
               aria-label=""
-              class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+              class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+                class="autochain css-p643xf-AutochainIcon e1fkopzz3"
                 name="monomer-autochain"
               />
             </div>
@@ -496,22 +496,22 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1co2s1k-Card e1fkopzz0"
+            class="css-13jk9wb-Card e1fkopzz0"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
             <span
-              class="css-kgpf6o-CardTitle e1fkopzz2"
+              class="css-1da7ffc-CardTitle e1fkopzz2"
             >
               ar
             </span>
             <div
               aria-label=""
-              class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+              class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+                class="autochain css-p643xf-AutochainIcon e1fkopzz3"
                 name="monomer-autochain"
               />
             </div>
@@ -524,22 +524,22 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-7z07nv-Card e1fkopzz0"
+            class="css-t26n47-Card e1fkopzz0"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
             <span
-              class="css-kgpf6o-CardTitle e1fkopzz2"
+              class="css-1da7ffc-CardTitle e1fkopzz2"
             >
               Ld
             </span>
             <div
               aria-label=""
-              class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+              class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+                class="autochain css-p643xf-AutochainIcon e1fkopzz3"
                 name="monomer-autochain"
               />
             </div>
@@ -557,28 +557,28 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-1dlt2rs-GroupContainerRow-GroupContainerColumn e8901gh2"
+      class="css-1roke0u-GroupContainerRow-GroupContainerColumn e8901gh2"
     >
       <div
-        class="css-16h2xp3-ItemsContainer e8901gh0"
+        class="css-1ls8773-ItemsContainer e8901gh0"
       >
         <div
-          class="css-1co2s1k-Card e1fkopzz0"
+          class="css-13jk9wb-Card e1fkopzz0"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
           <span
-            class="css-kgpf6o-CardTitle e1fkopzz2"
+            class="css-1da7ffc-CardTitle e1fkopzz2"
           >
             R
           </span>
           <div
             aria-label=""
-            class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+            class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+              class="autochain css-p643xf-AutochainIcon e1fkopzz3"
               name="monomer-autochain"
             />
           </div>
@@ -591,22 +591,22 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-7z07nv-Card e1fkopzz0"
+          class="css-t26n47-Card e1fkopzz0"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
           <span
-            class="css-kgpf6o-CardTitle e1fkopzz2"
+            class="css-1da7ffc-CardTitle e1fkopzz2"
           >
             m
           </span>
           <div
             aria-label=""
-            class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+            class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+              class="autochain css-p643xf-AutochainIcon e1fkopzz3"
               name="monomer-autochain"
             />
           </div>
@@ -619,22 +619,22 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-12pvqbn-Card e1fkopzz0"
+          class="css-7fm85v-Card e1fkopzz0"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
           <span
-            class="css-kgpf6o-CardTitle e1fkopzz2"
+            class="css-1da7ffc-CardTitle e1fkopzz2"
           >
             d
           </span>
           <div
             aria-label=""
-            class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+            class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+              class="autochain css-p643xf-AutochainIcon e1fkopzz3"
               name="monomer-autochain"
             />
           </div>
@@ -647,22 +647,22 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1co2s1k-Card e1fkopzz0"
+          class="css-13jk9wb-Card e1fkopzz0"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
           <span
-            class="css-kgpf6o-CardTitle e1fkopzz2"
+            class="css-1da7ffc-CardTitle e1fkopzz2"
           >
             ar
           </span>
           <div
             aria-label=""
-            class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+            class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+              class="autochain css-p643xf-AutochainIcon e1fkopzz3"
               name="monomer-autochain"
             />
           </div>
@@ -675,22 +675,22 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-7z07nv-Card e1fkopzz0"
+          class="css-t26n47-Card e1fkopzz0"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
           <span
-            class="css-kgpf6o-CardTitle e1fkopzz2"
+            class="css-1da7ffc-CardTitle e1fkopzz2"
           >
             Ld
           </span>
           <div
             aria-label=""
-            class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+            class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+              class="autochain css-p643xf-AutochainIcon e1fkopzz3"
               name="monomer-autochain"
             />
           </div>

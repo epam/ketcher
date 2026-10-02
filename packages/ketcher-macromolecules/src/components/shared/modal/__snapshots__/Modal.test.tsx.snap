@@ -10,7 +10,7 @@ exports[`Modal component > should render correctly 1`] = `
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root e1p7mi8t0 MuiModal-root css-hgzzkh-MuiModal-root-MuiDialog-root-StyledDialog"
+      class="MuiDialog-root e1p7mi8t0 MuiModal-root css-1jdzgd6-MuiModal-root-MuiDialog-root-StyledDialog"
       role="presentation"
     >
       <div
@@ -35,11 +35,11 @@ exports[`Modal component > should render correctly 1`] = `
           style="background: rgb(255, 255, 255); border-radius: 8px; color: rgb(51, 51, 51);"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root e1p7mi8t1 css-5ydugg-MuiTypography-root-MuiDialogTitle-root-Header"
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root e1p7mi8t1 css-1qwf79-MuiTypography-root-MuiDialogTitle-root-Header"
             id="_r_0_"
           >
             <div
-              class="css-1646qpa-Title e1p7mi8t2"
+              class="css-exf1lv-Title e1p7mi8t2"
             >
               title
             </div>
@@ -52,7 +52,7 @@ exports[`Modal component > should render correctly 1`] = `
                 type="button"
               >
                 <svg
-                  class="css-1erujtq-StyledIcon e1p7mi8t3"
+                  class="css-1w4ja22-StyledIcon e1p7mi8t3"
                   name="close"
                 />
                 <span
@@ -62,7 +62,7 @@ exports[`Modal component > should render correctly 1`] = `
             </span>
           </h2>
           <div
-            class="MuiDialogContent-root e1p7mi8t4 css-s9veb4-MuiDialogContent-root-Content-scrollbarThin"
+            class="MuiDialogContent-root e1p7mi8t4 css-1p0tn8w-MuiDialogContent-root-Content-scrollbarThin"
           >
             Content
           </div>

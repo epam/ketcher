@@ -6,31 +6,31 @@ exports[`Monomer List > should render correct with groups 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="css-2uuqrh-MonomerListContainer eez3m0t0"
+        class="css-15k7m6m-MonomerListContainer eez3m0t0"
       >
         <div
-          class="css-1dlt2rs-GroupContainerRow-GroupContainerColumn e8901gh2"
+          class="css-1roke0u-GroupContainerRow-GroupContainerColumn e8901gh2"
         >
           <div
-            class="css-16h2xp3-ItemsContainer e8901gh0"
+            class="css-1ls8773-ItemsContainer e8901gh0"
           >
             <div
-              class="css-eqptkk-Card e1fkopzz0"
+              class="css-ia0osi-Card e1fkopzz0"
               data-monomer-item-id="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
               data-testid="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
             >
               <span
-                class="css-kgpf6o-CardTitle e1fkopzz2"
+                class="css-1da7ffc-CardTitle e1fkopzz2"
               >
                 Phe4SD
               </span>
               <div
                 aria-label=""
-                class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+                class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
                 data-mui-internal-clone-element="true"
               >
                 <svg
-                  class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+                  class="autochain css-p643xf-AutochainIcon e1fkopzz3"
                   name="monomer-autochain"
                 />
               </div>
@@ -49,31 +49,31 @@ exports[`Monomer List > should render correct with groups 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-2uuqrh-MonomerListContainer eez3m0t0"
+      class="css-15k7m6m-MonomerListContainer eez3m0t0"
     >
       <div
-        class="css-1dlt2rs-GroupContainerRow-GroupContainerColumn e8901gh2"
+        class="css-1roke0u-GroupContainerRow-GroupContainerColumn e8901gh2"
       >
         <div
-          class="css-16h2xp3-ItemsContainer e8901gh0"
+          class="css-1ls8773-ItemsContainer e8901gh0"
         >
           <div
-            class="css-eqptkk-Card e1fkopzz0"
+            class="css-ia0osi-Card e1fkopzz0"
             data-monomer-item-id="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
             data-testid="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
           >
             <span
-              class="css-kgpf6o-CardTitle e1fkopzz2"
+              class="css-1da7ffc-CardTitle e1fkopzz2"
             >
               Phe4SD
             </span>
             <div
               aria-label=""
-              class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+              class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+                class="autochain css-p643xf-AutochainIcon e1fkopzz3"
                 name="monomer-autochain"
               />
             </div>
@@ -149,31 +149,31 @@ exports[`Monomer List > should render correct without groups 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="css-2uuqrh-MonomerListContainer eez3m0t0"
+        class="css-15k7m6m-MonomerListContainer eez3m0t0"
       >
         <div
-          class="css-1dlt2rs-GroupContainerRow-GroupContainerColumn e8901gh2"
+          class="css-1roke0u-GroupContainerRow-GroupContainerColumn e8901gh2"
         >
           <div
-            class="css-16h2xp3-ItemsContainer e8901gh0"
+            class="css-1ls8773-ItemsContainer e8901gh0"
           >
             <div
-              class="css-7z07nv-Card e1fkopzz0"
+              class="css-t26n47-Card e1fkopzz0"
               data-monomer-item-id="PEG2___Diethylene Glycol"
               data-testid="PEG2___Diethylene Glycol"
             >
               <span
-                class="css-kgpf6o-CardTitle e1fkopzz2"
+                class="css-1da7ffc-CardTitle e1fkopzz2"
               >
                 PEG2
               </span>
               <div
                 aria-label=""
-                class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+                class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
                 data-mui-internal-clone-element="true"
               >
                 <svg
-                  class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+                  class="autochain css-p643xf-AutochainIcon e1fkopzz3"
                   name="monomer-autochain"
                 />
               </div>
@@ -192,31 +192,31 @@ exports[`Monomer List > should render correct without groups 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-2uuqrh-MonomerListContainer eez3m0t0"
+      class="css-15k7m6m-MonomerListContainer eez3m0t0"
     >
       <div
-        class="css-1dlt2rs-GroupContainerRow-GroupContainerColumn e8901gh2"
+        class="css-1roke0u-GroupContainerRow-GroupContainerColumn e8901gh2"
       >
         <div
-          class="css-16h2xp3-ItemsContainer e8901gh0"
+          class="css-1ls8773-ItemsContainer e8901gh0"
         >
           <div
-            class="css-7z07nv-Card e1fkopzz0"
+            class="css-t26n47-Card e1fkopzz0"
             data-monomer-item-id="PEG2___Diethylene Glycol"
             data-testid="PEG2___Diethylene Glycol"
           >
             <span
-              class="css-kgpf6o-CardTitle e1fkopzz2"
+              class="css-1da7ffc-CardTitle e1fkopzz2"
             >
               PEG2
             </span>
             <div
               aria-label=""
-              class="css-60zmzo-AutochainIconWrapper e1fkopzz4"
+              class="css-1dm515m-AutochainIconWrapper e1fkopzz4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1a7xfkw-AutochainIcon e1fkopzz3"
+                class="autochain css-p643xf-AutochainIcon e1fkopzz3"
                 name="monomer-autochain"
               />
             </div>

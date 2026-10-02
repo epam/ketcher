@@ -10,7 +10,7 @@ exports[`Delete component > should render correctly 1`] = `
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root e1p7mi8t0 MuiModal-root css-hgzzkh-MuiModal-root-MuiDialog-root-StyledDialog"
+      class="MuiDialog-root e1p7mi8t0 MuiModal-root css-1jdzgd6-MuiModal-root-MuiDialog-root-StyledDialog"
       role="presentation"
     >
       <div
@@ -37,11 +37,11 @@ exports[`Delete component > should render correctly 1`] = `
           testid="delete-preset-modal"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root e1p7mi8t1 css-5ydugg-MuiTypography-root-MuiDialogTitle-root-Header"
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root e1p7mi8t1 css-1qwf79-MuiTypography-root-MuiDialogTitle-root-Header"
             id="_r_0_"
           >
             <div
-              class="css-1646qpa-Title e1p7mi8t2"
+              class="css-exf1lv-Title e1p7mi8t2"
             >
               Delete RNA Preset
             </div>
@@ -54,7 +54,7 @@ exports[`Delete component > should render correctly 1`] = `
                 type="button"
               >
                 <svg
-                  class="css-1erujtq-StyledIcon e1p7mi8t3"
+                  class="css-1w4ja22-StyledIcon e1p7mi8t3"
                   name="close"
                 />
                 <span
@@ -64,10 +64,10 @@ exports[`Delete component > should render correctly 1`] = `
             </span>
           </h2>
           <div
-            class="MuiDialogContent-root e1p7mi8t4 css-s9veb4-MuiDialogContent-root-Content-scrollbarThin"
+            class="MuiDialogContent-root e1p7mi8t4 css-1p0tn8w-MuiDialogContent-root-Content-scrollbarThin"
           >
             <div
-              class="css-1te2p8k-DeleteTextWrapper eyjwgbm0"
+              class="css-1t7fiom-DeleteTextWrapper eyjwgbm0"
               data-testid="delete-preset-popup-content"
             >
               <div>
@@ -84,10 +84,10 @@ exports[`Delete component > should render correctly 1`] = `
             </div>
           </div>
           <div
-            class="MuiDialogActions-root MuiDialogActions-spacing e1p7mi8t5 css-93ecy-MuiDialogActions-root-Footer"
+            class="MuiDialogActions-root MuiDialogActions-spacing e1p7mi8t5 css-yxeup4-MuiDialogActions-root-Footer"
           >
             <button
-              class="MuiButtonBase-root e1bfqn4b0 e13vbsxw1 css-1bqbnia-MuiButtonBase-root-SecondaryButton-StyledActionButton"
+              class="MuiButtonBase-root e1bfqn4b0 e13vbsxw1 css-4f1cqi-MuiButtonBase-root-SecondaryButton-baseButtonStyle-StyledActionButton"
               data-testid="cancel-delete-preset-button"
               tabindex="0"
               title="Cancel"
@@ -99,7 +99,7 @@ exports[`Delete component > should render correctly 1`] = `
               />
             </button>
             <button
-              class="MuiButtonBase-root e1bfqn4b0 e13vbsxw0 css-1fqlj5r-MuiButtonBase-root-PrimaryButton-StyledActionButton"
+              class="MuiButtonBase-root e1bfqn4b0 e13vbsxw0 css-1o0l253-MuiButtonBase-root-PrimaryButton-baseButtonStyle-StyledActionButton"
               data-testid="delete-preset-button"
               tabindex="0"
               title="Delete"

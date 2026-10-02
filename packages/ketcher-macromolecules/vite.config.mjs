@@ -68,7 +68,9 @@ export default defineConfig({
     svgr({ include: '**/*.svg' }),
     ketRawTextPlugin,
     emotion({
-      sourceMap: !isProduction,
+      // Source maps embed absolute paths into Emotion's serialized styles,
+      // which makes class-name hashes in snapshots machine-dependent.
+      sourceMap: !isProduction && !process.env.VITEST,
       autoLabel: 'dev-only',
       labelFormat: '[local]',
     }),

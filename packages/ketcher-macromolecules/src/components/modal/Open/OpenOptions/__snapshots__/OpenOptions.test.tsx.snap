@@ -6,27 +6,27 @@ exports[`OpenOptions component > should render correctly 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="css-pi46rz-RootContainer et9048s0"
+        class="css-jnb4b2-RootContainer et9048s0"
       >
         <div
-          class="css-foy7k2-DropContainer et9048s1"
+          class="css-vhyujj-DropContainer et9048s1"
           data-testid="paste-from-clipboard-button"
         >
           <svg
             name="open-window-paste-icon"
           />
           <p
-            class="css-sgg9ug-OpenOptionText e1a1f80u0"
+            class="css-xkeazw-OpenOptionText e1a1f80u0"
           >
             Paste from clipboard
           </p>
         </div>
         <div
-          class="css-foy7k2-DropContainer et9048s1"
+          class="css-vhyujj-DropContainer et9048s1"
           data-testid="open-from-file-button"
         >
           <button
-            class="css-1qzfx5o-DropzoneButton e1s5y1va2"
+            class="css-1e3isln-DropzoneButton e1s5y1va2"
             style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
             tabindex="0"
             type="button"
@@ -38,29 +38,29 @@ exports[`OpenOptions component > should render correctly 1`] = `
               type="file"
             />
             <svg
-              class="css-1amycvo-StyledIcon e1s5y1va0"
+              class="css-8ctlu6-StyledIcon e1s5y1va0"
               name="open-window-upload-icon"
             />
             <div
-              class="css-1flc7s7-ButtonContainer e1s5y1va1"
+              class="css-jm0alk-ButtonContainer e1s5y1va1"
             >
               <span>
                 or drag file here
               </span>
             </div>
             <p
-              class="css-sgg9ug-OpenOptionText e1a1f80u0"
+              class="css-xkeazw-OpenOptionText e1a1f80u0"
             >
               Open from file
             </p>
           </button>
         </div>
         <div
-          class="css-foy7k2-DropContainer et9048s1"
+          class="css-vhyujj-DropContainer et9048s1"
           data-testid="open-from-image-button"
         >
           <button
-            class="css-1qzfx5o-DropzoneButton e1s5y1va2"
+            class="css-1e3isln-DropzoneButton e1s5y1va2"
             disabled=""
             style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
             tabindex="-1"
@@ -74,12 +74,12 @@ exports[`OpenOptions component > should render correctly 1`] = `
               type="file"
             />
             <svg
-              class="css-4fh0bc-StyledIcon e1s5y1va0"
+              class="css-1yp754b-StyledIcon e1s5y1va0"
               disabled=""
               name="image-frame"
             />
             <p
-              class="css-1e0xerj-DisabledText e1a1f80u1"
+              class="css-1rqk9fy-DisabledText e1a1f80u1"
             >
               Image Recognition service is not available
             </p>
@@ -90,27 +90,27 @@ exports[`OpenOptions component > should render correctly 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-pi46rz-RootContainer et9048s0"
+      class="css-jnb4b2-RootContainer et9048s0"
     >
       <div
-        class="css-foy7k2-DropContainer et9048s1"
+        class="css-vhyujj-DropContainer et9048s1"
         data-testid="paste-from-clipboard-button"
       >
         <svg
           name="open-window-paste-icon"
         />
         <p
-          class="css-sgg9ug-OpenOptionText e1a1f80u0"
+          class="css-xkeazw-OpenOptionText e1a1f80u0"
         >
           Paste from clipboard
         </p>
       </div>
       <div
-        class="css-foy7k2-DropContainer et9048s1"
+        class="css-vhyujj-DropContainer et9048s1"
         data-testid="open-from-file-button"
       >
         <button
-          class="css-1qzfx5o-DropzoneButton e1s5y1va2"
+          class="css-1e3isln-DropzoneButton e1s5y1va2"
           style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
           tabindex="0"
           type="button"
@@ -122,29 +122,29 @@ exports[`OpenOptions component > should render correctly 1`] = `
             type="file"
           />
           <svg
-            class="css-1amycvo-StyledIcon e1s5y1va0"
+            class="css-8ctlu6-StyledIcon e1s5y1va0"
             name="open-window-upload-icon"
           />
           <div
-            class="css-1flc7s7-ButtonContainer e1s5y1va1"
+            class="css-jm0alk-ButtonContainer e1s5y1va1"
           >
             <span>
               or drag file here
             </span>
           </div>
           <p
-            class="css-sgg9ug-OpenOptionText e1a1f80u0"
+            class="css-xkeazw-OpenOptionText e1a1f80u0"
           >
             Open from file
           </p>
         </button>
       </div>
       <div
-        class="css-foy7k2-DropContainer et9048s1"
+        class="css-vhyujj-DropContainer et9048s1"
         data-testid="open-from-image-button"
       >
         <button
-          class="css-1qzfx5o-DropzoneButton e1s5y1va2"
+          class="css-1e3isln-DropzoneButton e1s5y1va2"
           disabled=""
           style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
           tabindex="-1"
@@ -158,12 +158,12 @@ exports[`OpenOptions component > should render correctly 1`] = `
             type="file"
           />
           <svg
-            class="css-4fh0bc-StyledIcon e1s5y1va0"
+            class="css-1yp754b-StyledIcon e1s5y1va0"
             disabled=""
             name="image-frame"
           />
           <p
-            class="css-1e0xerj-DisabledText e1a1f80u1"
+            class="css-1rqk9fy-DisabledText e1a1f80u1"
           >
             Image Recognition service is not available
           </p>

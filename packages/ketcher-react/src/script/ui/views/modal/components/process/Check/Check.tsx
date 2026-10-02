@@ -26,26 +26,16 @@ import { Dialog } from '../../../../components';
 import ErrorsCheck from './components';
 import { check } from '../../../../../state/server';
 import { checkOpts } from '../../../../../state/options';
+import type {
+  CheckOption,
+  OptionsCheckState,
+} from '../../../../../state/options/types';
 import style from './Check.module.less';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 
 interface MoleculeErrors {
   [key: string]: string;
 }
-
-type CheckOption =
-  | 'valence'
-  | 'radicals'
-  | 'isotopes'
-  | 'pseudoatoms'
-  | 'stereo'
-  | 'query'
-  | 'overlapping_atoms'
-  | 'overlapping_bonds'
-  | 'rgroups'
-  | 'chiral'
-  | '3d'
-  | 'chiral_flag';
 
 interface CheckSchema {
   title: string;
@@ -63,10 +53,7 @@ interface CheckSchema {
   };
 }
 
-interface CheckState {
-  checkOptions: CheckOption[];
-  [key: string]: unknown;
-}
+type CheckState = OptionsCheckState;
 
 interface CheckFormState extends FormState<CheckState> {
   moleculeErrors: MoleculeErrors;

@@ -14,24 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  FunctionalGroup,
-  ketcherProvider,
-  MULTITAIL_ARROW_KEY,
-} from 'ketcher-core';
+import { FunctionalGroup, ketcherProvider } from 'ketcher-core';
 import { type FC, type PropsWithChildren, useCallback } from 'react';
 import { useContextMenu } from 'react-contexify';
 import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
+import { type ContextMenuProps, CONTEXT_MENU_ID } from './contextMenu.types';
 import {
-  type ContextMenuProps,
-  ContextMenuTriggerType,
-  CONTEXT_MENU_ID,
-} from './contextMenu.types';
-import {
-  getIsItemInSelection,
-  getMenuPropsForClosestItem,
-  getMenuPropsForSelection,
+  getShouldResetSelection,
+  getShowProps,
 } from './ContextMenuTrigger.utils';
 import TemplateTool from 'src/script/editor/tool/template';
 
@@ -126,9 +117,6 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
       const { selectedFunctionalGroups, selectedSGroupsIds } =
         getSelectedGroupsInfo();
 
-      let showProps: ContextMenuProps | null = null;
-      let triggerType: ContextMenuTriggerType;
-
       if (!closestItem) {
         const isLeftMouseButtonPressed = event.buttons === 1;
         const isRotationReverted = isLeftMouseButtonPressed;
@@ -138,59 +126,28 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         }
 
         return;
-      } else if (!selection) {
-        triggerType = ContextMenuTriggerType.ClosestItem;
-      } else if (
-        getIsItemInSelection({
+      }
+
+      if (
+        getShouldResetSelection({
           item: closestItem,
           selection,
           selectedFunctionalGroups,
           selectedSGroupsIds,
         })
       ) {
-        if (
-          !selection.bonds &&
-          !selection.atoms &&
-          !selection.rgroupAttachmentPoints
-        ) {
-          if (selection[MULTITAIL_ARROW_KEY]) {
-            triggerType = ContextMenuTriggerType.ClosestItem;
-          } else {
-            triggerType = ContextMenuTriggerType.None;
-          }
-        } else {
-          triggerType = ContextMenuTriggerType.Selection;
-        }
-      } else {
         // closestItem is outside of selection
         editor.selection(null);
-        triggerType = ContextMenuTriggerType.ClosestItem;
       }
 
-      switch (triggerType) {
-        case ContextMenuTriggerType.None: {
-          return;
-        }
-
-        case ContextMenuTriggerType.ClosestItem: {
-          showProps = getMenuPropsForClosestItem(
-            editor,
-            closestItem,
-            ketcherId,
-          );
-          break;
-        }
-
-        case ContextMenuTriggerType.Selection: {
-          showProps = getMenuPropsForSelection(
-            selection,
-            selectedFunctionalGroups,
-            ketcherId,
-            editor,
-          );
-          break;
-        }
-      }
+      const showProps: ContextMenuProps | null = getShowProps({
+        editor,
+        item: closestItem,
+        selection,
+        selectedFunctionalGroups,
+        selectedSGroupsIds,
+        ketcherId,
+      });
 
       if (showProps) {
         show({

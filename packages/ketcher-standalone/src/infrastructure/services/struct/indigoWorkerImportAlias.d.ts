@@ -14,40 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const basicAtoms = ['H', 'C', 'N', 'O', 'S', 'P', 'F', 'Cl', 'Br', 'I'];
-
-export const atomCuts = {
-  H: 'h',
-  C: 'c',
-  N: 'n',
-  O: 'o',
-  S: 's',
-  P: 'p',
-  F: 'f',
-  Cl: 'l',
-  Br: 'b',
-  I: 'i',
-  A: 'a',
-  Q: 'q',
-  R: 'r',
-  K: 'k',
-  M: 'm',
-  Si: 'Shift+s',
-  Na: 'Shift+n',
-  X: 'x',
-  D: 'd',
-  B: 'Shift+b',
-  '*': 'Shift+8',
-};
-
-export default Object.keys(atomCuts).reduce((res, label) => {
-  res[`atom-${label.toLowerCase()}`] = {
-    title: `Atom ${label}`,
-    shortcut: atomCuts[label],
-    action: {
-      tool: 'atom',
-      opts: { label },
-    },
-  };
-  return res;
-}, {});
+/**
+ * This module alias is resolved by Rollup at build time via the `@rollup/plugin-alias`
+ * configuration in `rollup.config.mjs`. The alias `_indigo-worker-import-alias_` is
+ * replaced with one of the modules in `indigoWorkerImports/`, depending on the build type.
+ * Do not map it with tsconfig `paths`: rollup-plugin-typescript2 would resolve it before
+ * the alias plugin and every build would get the same worker loader.
+ */
+declare module '_indigo-worker-import-alias_' {
+  export function getIndigoWorker(): Worker;
+}

@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/immutability */
 import styles from './MonomerCreationWizard.module.less';
@@ -113,14 +112,35 @@ const initialWizardState: WizardState = getInitialWizardState();
  * being edited. When `initialValues` is undefined returns the default empty
  * wizard state.
  */
-const getInitialWizardStateForEdit = (
-  initialValues?: MonomerCreationInitialValues,
-): WizardState => {
+type MonomerCreationWizardInitialState = {
+  initialValues?: MonomerCreationInitialValues;
+  hasDefaultAttachmentPoints?: boolean;
+};
+
+const getInitialWizardStateForEdit = ({
+  initialValues,
+  hasDefaultAttachmentPoints,
+}: MonomerCreationWizardInitialState): WizardState => {
   if (!initialValues) {
-    return initialWizardState;
+    if (!hasDefaultAttachmentPoints) {
+      return initialWizardState;
+    }
+
+    return {
+      ...initialWizardState,
+      notifications: new Map([
+        [
+          'defaultAttachmentPoints',
+          {
+            type: NotificationTypes.defaultAttachmentPoints,
+            message: NotificationMessages.defaultAttachmentPoints,
+          },
+        ],
+      ]),
+    };
   }
 
-  return {
+  const state = {
     ...initialWizardState,
     values: {
       type: initialValues.type,
@@ -130,6 +150,23 @@ const getInitialWizardStateForEdit = (
       aliasHELM: initialValues.aliasHELM,
       aliasBILN: initialValues.aliasBILN,
     },
+  };
+
+  if (!hasDefaultAttachmentPoints) {
+    return state;
+  }
+
+  return {
+    ...state,
+    notifications: new Map([
+      [
+        'defaultAttachmentPoints',
+        {
+          type: NotificationTypes.defaultAttachmentPoints,
+          message: NotificationMessages.defaultAttachmentPoints,
+        },
+      ],
+    ]),
   };
 };
 
@@ -816,7 +853,11 @@ const MonomerCreationWizardInternal = ({
   // input.
   const [wizardState, wizardStateDispatch] = useReducer(
     wizardReducer,
-    monomerCreationState.editInstanceInitialValues,
+    {
+      initialValues: monomerCreationState.editInstanceInitialValues,
+      hasDefaultAttachmentPoints:
+        monomerCreationState.hasDefaultAttachmentPoints,
+    },
     getInitialWizardStateForEdit,
   );
   const [rnaPresetWizardState, rnaPresetWizardStateDispatch] = useReducer(
@@ -998,6 +1039,7 @@ const MonomerCreationWizardInternal = ({
   const applyTypeChange = (newType: KetMonomerClass | string) => {
     setModificationTypes([]);
     setPhosphatePosition(undefined);
+    editor?.setMonomerCreationSelectedType?.(newType as KetMonomerClass);
     if ((type === 'rnaPreset' || newType === 'rnaPreset') && type !== newType) {
       wizardStateDispatch({
         type: 'ResetWizard',
@@ -1049,10 +1091,6 @@ const MonomerCreationWizardInternal = ({
       });
     }
   };
-
-  useEffect(() => {
-    editor?.setMonomerCreationSelectedType?.(values.type);
-  }, [editor, values.type]);
 
   const monomerTypeSelectOptions = useMemo(
     () =>
@@ -1165,15 +1203,6 @@ const MonomerCreationWizardInternal = ({
       editor.setProblematicAtoms(problematicAtomIds);
     }
   }, [editor, problematicAtomIds]);
-
-  useEffect(() => {
-    if (monomerCreationState?.hasDefaultAttachmentPoints) {
-      wizardStateDispatch({
-        type: 'AddNotification',
-        id: 'defaultAttachmentPoints',
-      });
-    }
-  }, [monomerCreationState?.hasDefaultAttachmentPoints]);
 
   // Capture the attachment-point-in-use data once at mount so the effect below
   // can read it without adding it as a reactive dep (the notification is only

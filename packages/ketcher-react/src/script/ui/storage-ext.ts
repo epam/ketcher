@@ -15,38 +15,44 @@
  ***************************************************************************/
 
 import { KetcherLogger } from 'ketcher-core';
+import type { IStorage } from './types';
 
 /* local storage */
-export const storage = {
+export const storage: IStorage = {
   warningMessage:
     'Your changes will be lost after the tab closing. See Help (Note 2).',
-  isAvailable() {
+  isAvailable(): Storage | false {
     try {
-      const storage = globalThis.localStorage;
-      return storage;
-    } catch (e) {
-      KetcherLogger.error('storage-ext.js::storage::isAvailable', e);
+      const localStorageRef: Storage = globalThis.localStorage;
+      return localStorageRef;
+    } catch (e: unknown) {
+      KetcherLogger.error('storage-ext.ts::storage::isAvailable', e);
       return false;
     }
   },
-  getItem(key) {
-    let item = null;
+  getItem(key: string): unknown | null {
+    let item: unknown | null = null;
     try {
-      item = JSON.parse(globalThis.localStorage.getItem(key));
-    } catch (e) {
-      KetcherLogger.error('storage-ext.js::storage::getItem', e);
-      console.info('LocalStorage:', e.name);
+      const stored = globalThis.localStorage.getItem(key);
+      if (stored !== null) {
+        item = JSON.parse(stored);
+      }
+    } catch (e: unknown) {
+      KetcherLogger.error('storage-ext.ts::storage::getItem', e);
+      const error = e as Error;
+      console.info('LocalStorage:', error.name);
     }
     return item;
   },
-  setItem(key, data) {
-    let isSet;
+  setItem(key: string, data: unknown): boolean {
+    let isSet: boolean;
     try {
       globalThis.localStorage.setItem(key, JSON.stringify(data));
       isSet = true;
-    } catch (e) {
-      KetcherLogger.error('storage-ext.js::storage::setItem', e);
-      console.info('LocalStorage:', e.name);
+    } catch (e: unknown) {
+      KetcherLogger.error('storage-ext.ts::storage::setItem', e);
+      const error = e as Error;
+      console.info('LocalStorage:', error.name);
       isSet = false;
     }
     return isSet;

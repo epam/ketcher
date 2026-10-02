@@ -1073,37 +1073,9 @@ updateMonomersLibrary(
 - `monomersData` - Monomer data (KET or SDF format)
 - `params` (optional) - Update parameters
 
-**Throws:**
-
-- `MonomerLibraryUpdateError` - thrown when one or more monomers fail
-  validation. The library is partially updated on throw; valid items already
-  committed are kept, and there is no rollback.
-- `MonomerLibraryUpdateError.skippedItems` - array of skipped entries with
-  `{ name: string; reason: string }` objects.
-- `MonomerLibraryUpdateError.partialSuccess` - `true` when at least one item
-  was committed before the error was raised.
-
-**Error handling example:**
-
-Import `MonomerLibraryUpdateError` from the package entry point used in your app.
-
-```javascript
-try {
-  await ketcher.updateMonomersLibrary(monomersKet, {
-    format: 'ket',
-    shouldPersist: true
-  });
-} catch (error) {
-  if (error instanceof MonomerLibraryUpdateError) {
-    console.warn('Partial success:', error.partialSuccess);
-    error.skippedItems.forEach(({ name, reason }) => {
-      console.warn(`Skipped ${name}: ${reason}`);
-    });
-  } else {
-    throw error;
-  }
-}
-```
+**Invalid monomers:** monomers that fail validation are skipped and reported
+via `KetcherLogger`; valid monomers are still added. The promise does not
+reject because of invalid monomers.
 
 **UpdateMonomersLibraryParams:**
 
@@ -1144,37 +1116,9 @@ replaceMonomersLibrary(
 
 **Parameters:** Same as `updateMonomersLibrary`
 
-**Throws:**
-
-- `MonomerLibraryUpdateError` - thrown when one or more monomers fail
-  validation. The replacement is partially applied on throw; items processed
-  before the failure remain in the library, and there is no rollback.
-- `MonomerLibraryUpdateError.skippedItems` - array of skipped entries with
-  `{ name: string; reason: string }` objects.
-- `MonomerLibraryUpdateError.partialSuccess` - `true` when at least one item
-  was committed before the error was raised.
-
-**Error handling example:**
-
-Import `MonomerLibraryUpdateError` from the package entry point used in your app.
-
-```javascript
-try {
-  await ketcher.replaceMonomersLibrary(monomersKet, {
-    format: 'ket',
-    shouldPersist: true
-  });
-} catch (error) {
-  if (error instanceof MonomerLibraryUpdateError) {
-    console.warn('Partial success:', error.partialSuccess);
-    error.skippedItems.forEach(({ name, reason }) => {
-      console.warn(`Skipped ${name}: ${reason}`);
-    });
-  } else {
-    throw error;
-  }
-}
-```
+**Invalid monomers:** same as `updateMonomersLibrary`: invalid monomers are
+skipped and reported via `KetcherLogger`, and the promise does not reject
+because of them.
 
 **Example:**
 

@@ -121,6 +121,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(C)P.R(G)P.R(T)P}$$$$V2.0',
     );
+    await page.evaluate(() =>
+      navigator.clipboard.writeText('RNA1{R(A)P.R(C)P.R(G)P.R(T)P}$$$$V2.0'),
+    );
     const anySymbol = getSymbolLocator(page, {}).first();
     await ContextMenu(page, anySymbol).open();
     await takeEditorScreenshot(page, {

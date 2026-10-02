@@ -16,7 +16,6 @@
 
 import styled from '@emotion/styled';
 import { Accordion, Button } from 'ketcher-react';
-import { Tab } from '@mui/material';
 import { ActionButton } from 'components/shared/actionButton';
 
 export const RnaAccordionContainer = styled.div`
@@ -323,24 +322,25 @@ export const RnaTabWrapper = styled.div`
   }
 `;
 
-export const RnaTab = styled(Tab)<{ selected?: boolean }>`
+export const RnaTab = styled.button<{ selected?: boolean }>`
   height: 24px;
   min-height: 24px;
-  min-width: 24px;
-  ${({ selected }) => (selected ? 'min-width: 104px;' : '')}
+  min-width: ${({ selected }) => (selected ? '104px' : '24px')};
   display: flex;
   flex-direction: row;
   gap: 4px;
   align-items: center;
   justify-content: center;
   padding: 4px;
-  ${({ selected }) => (selected ? 'margin-top: -8px;' : '')}
+  margin-top: ${({ selected }) => (selected ? '-8px' : '0')};
   font-weight: 400;
   font-size: 10px;
   border-radius: 4px;
   background-color: white;
   opacity: ${({ selected }) => (selected ? 1 : 0.6)};
   text-transform: none;
+  border: none;
+  cursor: pointer;
 
   &:hover {
     background-color: #f3f8f9;
@@ -350,9 +350,6 @@ export const RnaTab = styled(Tab)<{ selected?: boolean }>`
     height: 16px;
     width: 16px;
     color: #b4b9d6;
-
-    &.MuiTab-iconWrapper {
-      margin: 0;
-    }
+    margin: 0;
   }
 `;

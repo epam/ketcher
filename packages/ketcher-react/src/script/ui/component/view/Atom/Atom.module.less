@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
- @import '../../../../../style/variables';
- @import '../../../../../style/mixins';
+@import '../../../../../style/variables';
+@import '../../../../../style/mixins';
 
- 
- .atom {
+.atom {
   .btn();
 
   position: relative;
@@ -30,13 +29,10 @@
   background-color: transparent;
   cursor: pointer;
 
-   &[disabled] {
+  &[disabled] {
     background-image: none;
     box-shadow: none;
     cursor: not-allowed;
-    opacity: .5;
-   }
-
- }
-
- 
+    opacity: 0.5;
+  }
+}

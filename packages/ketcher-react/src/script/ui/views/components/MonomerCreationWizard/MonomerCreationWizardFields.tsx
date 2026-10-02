@@ -357,6 +357,11 @@ const MonomerCreationWizardFields = (
                         onFieldChange('aliasHELM', newValue)
                       }
                       data-testid="helm-alias-input"
+                      slotProps={{
+                        clearIndicator: {
+                          'data-testid': 'CloseIcon',
+                        },
+                      }}
                       renderInput={(params) => (
                         <TextField
                           {...params}

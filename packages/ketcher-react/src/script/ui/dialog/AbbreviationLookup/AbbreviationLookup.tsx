@@ -19,7 +19,6 @@ import {
   type CSSProperties,
   type FocusEvent,
   type KeyboardEvent,
-  type MutableRefObject,
   type SyntheticEvent,
   useLayoutEffect,
   useRef,
@@ -173,22 +172,24 @@ export const AbbreviationLookup = ({ options }: Props) => {
           noOptions: classes.noOptions,
         }}
         renderInput={(params) => {
+          const inputProps = params.slotProps.htmlInput;
           return (
-            <div className={classes.inputContainer} ref={params.InputProps.ref}>
+            <div
+              className={classes.inputContainer}
+              ref={params.slotProps.input.ref}
+            >
               <Icon name="search" className={classes.searchIcon} />
               <input
                 type="text"
-                {...params.inputProps}
+                {...inputProps}
                 ref={(ref) => {
                   inputRef.current = ref;
 
-                  // this workaround is required to have access to `ref` field of inputProps that isn't provided
-                  // by types, but present in the field
-                  (
-                    params.inputProps as {
-                      ref: MutableRefObject<HTMLInputElement | null>;
-                    }
-                  ).ref.current = ref;
+                  if (typeof inputProps.ref === 'function') {
+                    inputProps.ref(ref);
+                  } else if (inputProps.ref) {
+                    inputProps.ref.current = ref;
+                  }
                 }}
                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
                   setLookupValue(event.target.value);

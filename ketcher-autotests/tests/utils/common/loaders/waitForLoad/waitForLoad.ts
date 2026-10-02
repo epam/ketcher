@@ -20,7 +20,7 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   const loadingSpinner = page.getByTestId('loading-spinner').first();
 
   callback();
-  await page.waitForTimeout(0.3 * 1000);
+  await page.waitForTimeout(0.5 * 1000);
   while (await loadingSpinner.isVisible()) {
     await loadingSpinner.waitFor({ state: 'detached' });
   }
@@ -33,9 +33,17 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
     if (await ErrorMessageDialog(page).isVisible()) {
       return;
     }
-    await OpenStructureDialog(page).window.waitFor({
-      state: 'detached',
-    });
+    try {
+      await ErrorMessageDialog(page).errorMessageBody.waitFor({
+        state: 'visible',
+        timeout: 3000,
+      });
+      return;
+    } catch {
+      await OpenStructureDialog(page).window.waitFor({
+        state: 'detached',
+      });
+    }
   }
   // this spinner appear in Molecules mode (after openStructureDialog close)
   if (await loadingSpinner.isVisible()) {

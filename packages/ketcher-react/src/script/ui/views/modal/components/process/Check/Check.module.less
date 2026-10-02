@@ -19,16 +19,16 @@
 .dialog_body {
   width: 444px;
 
-  & > * {
+  &>* {
     background-color: @color-background-primary;
   }
 
-  & > div {
+  &>div {
     margin: 0;
     overflow: auto;
   }
 
-  & > footer {
+  &>footer {
     border-radius: inherit;
   }
 
@@ -40,16 +40,16 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-      
-      .buttonSecondary {
-        .button-secondary();
-      }
 
-      .buttonPrimary {
-        .button-primary();
-      }
+    .buttonSecondary {
+      .button-secondary();
+    }
 
-    & > .buttonsRight {
+    .buttonPrimary {
+      .button-primary();
+    }
+
+    &>.buttonsRight {
       display: flex;
       gap: 8px;
     }
@@ -62,6 +62,10 @@
 
     .checkInfo {
       flex-grow: 1;
+
+      span:first-child {
+        display: block;
+      }
     }
 
     .settings {
@@ -98,17 +102,17 @@
         }
 
         div {
-          margin: 7px 3px 17px 12px ;
+          margin: 7px 3px 17px 12px;
 
           dt {
             font-weight: bold;
             margin-bottom: 4px;
           }
 
-dd {
-  overflow-wrap: anywhere;
-  margin-inline-start: 0;
-}
+          dd {
+            overflow-wrap: anywhere;
+            margin-inline-start: 0;
+          }
         }
       }
     }
@@ -121,7 +125,7 @@ dd {
     .warningsContainer {
       overflow-y: auto;
       .scrollbar();
-    
+
       height: 287px;
     }
 

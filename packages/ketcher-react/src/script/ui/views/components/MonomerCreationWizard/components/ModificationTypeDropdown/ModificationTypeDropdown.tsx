@@ -128,7 +128,7 @@ export default function ModificationTypeDropdown(
           </li>
         );
       }}
-      ListboxComponent={OptionsListbox}
+      slots={{ listbox: OptionsListbox }}
       sx={{ width: '100%' }}
       freeSolo
       forcePopupIcon

@@ -59,7 +59,7 @@
     "ketcher-core": "*",
     "ketcher-react": "*",
     "lodash": "^4.18.1",
-    "next": "16.3.4",
+    "next": "^16.3.8",
     "react-contexify": "^6.0.0",
     "react-dropzone": "^11.7.1",
     "react-intersection-observer": "^9.16.0",

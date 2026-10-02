@@ -10,7 +10,7 @@ exports[`Open component > should render correctly 1`] = `
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root e1o3ta020 e1p7mi8t0 MuiModal-root css-12eo7mm-MuiModal-root-MuiDialog-root-StyledDialog-OpenModal"
+      class="MuiDialog-root epw1vd60 e1p7mi8t0 MuiModal-root css-1v6fdod-MuiModal-root-MuiDialog-root-StyledDialog-OpenModal"
       role="presentation"
     >
       <div

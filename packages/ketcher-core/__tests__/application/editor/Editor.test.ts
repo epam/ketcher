@@ -1745,11 +1745,11 @@ describe('CoreEditor', () => {
 
     it('should clear selection and dispatch rightClickCanvas in flex mode on right-click on empty canvas', () => {
       editor.setMode(new FlexMode());
-      const unselectSpy = jest.spyOn(
+      const unselectSpy = vi.spyOn(
         editor.drawingEntitiesManager,
         'unselectAllDrawingEntities',
       );
-      const rightClickCanvasHandler = jest.fn();
+      const rightClickCanvasHandler = vi.fn();
       editor.events.rightClickCanvas.add(rightClickCanvasHandler);
 
       const canvasElement = document.createElement('div');
@@ -1773,11 +1773,11 @@ describe('CoreEditor', () => {
 
     it('should clear selection and dispatch rightClickCanvas in snake mode on right-click on empty canvas', () => {
       editor.setMode(new SnakeMode());
-      const unselectSpy = jest.spyOn(
+      const unselectSpy = vi.spyOn(
         editor.drawingEntitiesManager,
         'unselectAllDrawingEntities',
       );
-      const rightClickCanvasHandler = jest.fn();
+      const rightClickCanvasHandler = vi.fn();
       editor.events.rightClickCanvas.add(rightClickCanvasHandler);
 
       const canvasElement = document.createElement('div');
@@ -1801,15 +1801,15 @@ describe('CoreEditor', () => {
 
     it('should clear selection and dispatch rightClickCanvasSequence in sequence mode on right-click on empty canvas', () => {
       // editor defaults to sequence-layout-mode (DEFAULT_LAYOUT_MODE)
-      const unselectSpy = jest.spyOn(
+      const unselectSpy = vi.spyOn(
         editor.drawingEntitiesManager,
         'unselectAllDrawingEntities',
       );
-      const unselectSequenceSpy = jest.spyOn(
+      const unselectSequenceSpy = vi.spyOn(
         SequenceRenderer,
         'unselectEmptyAndBackboneSequenceNodes',
       );
-      const rightClickCanvasSequenceHandler = jest.fn();
+      const rightClickCanvasSequenceHandler = vi.fn();
       editor.events.rightClickCanvasSequence.add(
         rightClickCanvasSequenceHandler,
       );
@@ -1855,12 +1855,12 @@ describe('CoreEditor', () => {
         editor.drawingEntitiesManager.selectDrawingEntity(monomer);
       editor.renderersContainer.update(selectChanges);
 
-      const unselectSpy = jest.spyOn(
+      const unselectSpy = vi.spyOn(
         editor.drawingEntitiesManager,
         'unselectAllDrawingEntities',
       );
-      const rightClickSelectedMonomersHandler = jest.fn();
-      const rightClickCanvasHandler = jest.fn();
+      const rightClickSelectedMonomersHandler = vi.fn();
+      const rightClickCanvasHandler = vi.fn();
       editor.events.rightClickSelectedMonomers.add(
         rightClickSelectedMonomersHandler,
       );
@@ -1912,13 +1912,13 @@ describe('CoreEditor', () => {
         editor.drawingEntitiesManager.selectDrawingEntity(monomer);
       editor.renderersContainer.update(selectChanges);
 
-      const unselectSpy = jest.spyOn(
+      const unselectSpy = vi.spyOn(
         editor.drawingEntitiesManager,
         'unselectAllDrawingEntities',
       );
-      const rightClickSelectedMonomersHandler = jest.fn();
-      const rightClickCanvasHandler = jest.fn();
-      const rightClickCanvasSequenceHandler = jest.fn();
+      const rightClickSelectedMonomersHandler = vi.fn();
+      const rightClickCanvasHandler = vi.fn();
+      const rightClickCanvasSequenceHandler = vi.fn();
       editor.events.rightClickSelectedMonomers.add(
         rightClickSelectedMonomersHandler,
       );
@@ -1933,7 +1933,7 @@ describe('CoreEditor', () => {
 
       const hasEFP = 'elementsFromPoint' in document;
       const savedEFP = hasEFP ? document.elementsFromPoint : undefined;
-      (document as unknown as Record<string, unknown>).elementsFromPoint = jest
+      (document as unknown as Record<string, unknown>).elementsFromPoint = vi
         .fn()
         .mockReturnValue([rendererEl]);
 

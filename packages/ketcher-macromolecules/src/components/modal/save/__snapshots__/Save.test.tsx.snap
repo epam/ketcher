@@ -92,7 +92,7 @@ exports[`Save modal > renders correctly 1`] = `
                   </label>
                 </div>
                 <div
-                  class="MuiFormControl-root eel0ht22 e1sh74880 css-1t8yk9e-MuiFormControl-root-StyledFormControl-StyledDropdown"
+                  class="MuiFormControl-root eel0ht22 e9ihc070 css-vanef0-MuiFormControl-root-StyledFormControl-StyledDropdown"
                 >
                   <label
                     for="fileformat"
@@ -100,7 +100,7 @@ exports[`Save modal > renders correctly 1`] = `
                     File format:
                   </label>
                   <div
-                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl e1sh74881 css-f0rw1k-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root-DropDownSelect"
+                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl e9ihc071 css-lay470-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root-DropDownSelect"
                     data-testid="file-format-list"
                   >
                     <div

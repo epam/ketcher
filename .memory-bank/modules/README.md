@@ -1,5 +1,8 @@
 # Modules
 
+> **Read when:** finding the deep dive for a subsystem.
+> **Skip when:** you already know the module file.
+
 Each file in this directory describes a single subsystem of Ketcher.
 
 ## Convention
@@ -32,3 +35,4 @@ These span multiple packages and are the most valuable parts to understand. They
 - [operations-history](./operations-history.md) — `Action`/`BaseOperation` and `Command`/`Operation` + undo/redo
 - [monomer-library](./monomer-library.md) — loading/caching/merging monomers, RNA presets, library UI
 - [monomer-drag-and-drop](./monomer-drag-and-drop.md) — dragging library items onto the canvas (D3 drag, ghost preview, placement, mode differences)
+- [indigo-boundary](./indigo-boundary.md) — what Indigo computes rather than Ketcher, standalone (WASM worker) vs remote (`indigo-service`), and where the two disagree

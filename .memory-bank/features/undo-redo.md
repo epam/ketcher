@@ -1,5 +1,9 @@
 # Undo / Redo
 
+> **Read when:** the user-visible undo/redo contract in either mode.
+> **Skip when:** you need the implementation — the `modules/` files have it; this file describes
+> behaviour only.
+
 ## Problem
 
 Editing is iterative and error-prone. Users must be able to reliably reverse a mistaken action and re-apply it, restoring both the chemical model and its on-screen rendering.

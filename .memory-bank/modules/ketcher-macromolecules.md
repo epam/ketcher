@@ -1,5 +1,9 @@
 # ketcher-macromolecules
 
+> **Read when:** the macromolecules React shell: store, components, layout modes, how it drives
+> `CoreEditor`.
+> **Skip when:** the change is inside the core editor, the renderers or the model.
+
 > React UI package for the macromolecules (polymer) editor.
 
 ## Responsibility

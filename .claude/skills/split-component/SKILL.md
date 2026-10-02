@@ -1,6 +1,6 @@
 ---
 name: split-component
-description: 'Split a bloated React component file into multiple co-located files following Ketcher project conventions. Use when: a component file has grown too large; it mixes constants, utility functions, and subcomponents in one file; you want to improve maintainability by separating concerns. Produces: ComponentName.constants.ts, ComponentName.utils.ts, SubComponentName.tsx — all co-located flat in the same folder, with a barrel index.ts. A ComponentName.types.ts may be created for shared domain types, but component props interfaces always stay local to their component file.'
+description: 'Split a bloated React component file into co-located Name.constants.ts, Name.utils.ts, sub-component files and a barrel index.ts, following Ketcher conventions (props interfaces stay with their component). Use when a component file mixes constants, helpers and subcomponents or has grown too large.'
 argument-hint: 'Path to the component file to split (e.g. src/.../MyComponent.tsx)'
 ---
 

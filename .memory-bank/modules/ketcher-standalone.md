@@ -1,5 +1,8 @@
 # ketcher-standalone
 
+> **Read when:** the WASM bundle: its six build variants, entry points and worker loading.
+> **Skip when:** remote-mode-only or UI work.
+
 > Self-contained Ketcher bundle: ships Indigo WASM and requires no backend server.
 
 ## Responsibility

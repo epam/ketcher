@@ -1,106 +1,55 @@
 # CLAUDE.md
 
-This file provides guidance to AI assistants (Claude, Copilot, Cursor, etc.) when working with this repository.
+Guidance for AI assistants (Claude, Copilot, Cursor) working in this repository.
 
-## What is Ketcher
+**Ketcher** is an open-source chemical structure editor: TypeScript and React over a custom MVC
+architecture rendering molecules, reactions and macromolecules to SVG. It is an npm-workspaces
+monorepo; chemistry that is not computed in the browser is computed by Indigo.
 
-Ketcher is an open-source **chemical structure editor** built with TypeScript and React. It renders molecules, reactions, macromolecules, and monomers using a custom MVC architecture over SVG.
+This file is loaded into every session, so it stays a routing table. The knowledge is in
+`.memory-bank/` and is read on demand — open the one file that matches the task, not the whole bank.
+Each bank file opens with "Read when / Skip when", so it can be skipped without being read.
 
----
+## Where to look
 
-## Memory Bank
+- **rules that must never break** — [.memory-bank/invariants.md](.memory-bank/invariants.md); read
+  it before changing the model, the history, the renderers or format routing
+- **what a term means** — [.memory-bank/glossary.md](.memory-bank/glossary.md) (grep it),
+  [.memory-bank/domain.md](.memory-bank/domain.md)
+- **where things live, how events and formats flow** — [.memory-bank/architecture.md](.memory-bank/architecture.md)
+- **a subsystem in depth** — [.memory-bank/modules/README.md](.memory-bank/modules/README.md) is the index
+- **what a feature promises the user** — [.memory-bank/features/README.md](.memory-bank/features/README.md)
+- **the KET schema** — [.memory-bank/formats/README.md](.memory-bank/formats/README.md)
+- **unit tests, types, lint** — [.memory-bank/testing.md](.memory-bank/testing.md);
+  **Playwright E2E** — [.memory-bank/testing-e2e.md](.memory-bank/testing-e2e.md)
+- **a past architectural decision** — [.memory-bank/adr/README.md](.memory-bank/adr/README.md)
+- **writing into the bank** — [.memory-bank/README.md](.memory-bank/README.md) for the formats and rules
 
-The `.memory-bank/` directory at the repo root is the **canonical knowledge base** for this project. Read it before starting any non-trivial task.
+Path-scoped conventions in `.claude/rules/` load by themselves when a matching file is opened — but
+only when this checkout is the session's primary working directory. In a session started elsewhere,
+read the rule whose `paths:` matches a file before editing it.
 
-### When to read it
+## Working agreements
 
-- Before implementing a feature, fixing a bug, or refactoring code
-- Before writing tests
-- Before proposing or designing a change
-- Whenever you are unsure about architecture, domain terms, or invariants
-
-### Structure and file formats
-
-```
-.memory-bank/
-├── architecture.md     # How the system is organized: packages, subsystems, data flow
-├── domain.md           # Domain concepts: atoms, bonds, monomers, reactions, etc.
-├── glossary.md         # Term definitions used in code and product
-├── invariants.md       # Rules that must never be broken (architectural + domain)
-├── testing.md          # Testing strategy: unit (Jest), integration, E2E (Playwright)
-│
-├── features/           # Current observable behavior of each product feature
-│   ├── README.md       # Index + format convention
-│   └── <feature>.md    # Problem / User interaction / Expected behavior / Guarantees / Limitations
-│
-├── modules/            # Deep-dive documentation for each subsystem
-│   ├── README.md       # Index + format convention
-│   └── <module>.md     # Responsibility / Public interfaces / Dependencies / Dependents / Constraints
-│
-├── adr/                # Architecture Decision Records
-│   ├── README.md       # Format convention
-│   └── YYYY-MM-DD-<title>.md  # Decision / Context / Alternatives / Rationale / Consequences
-│
-└── specs/              # Feature specifications tied to changes
-    ├── active/         # Specs for changes currently in progress
-    │   └── <change-name>/   # proposal.md, requirements.md, design.md, tasks.md
-    └── archived/       # Completed specs (read-only historical records)
-        └── <change-name>/
-```
-
-### File format details
-
-| File                       | Purpose                      | Key sections                                                                                |
-| -------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------- |
-| `architecture.md`          | System overview              | Package structure, subsystems, data flow                                                    |
-| `domain.md`                | Domain model concepts        | Entities, relationships, constraints                                                        |
-| `glossary.md`              | Shared vocabulary            | Term, Definition, Used In                                                                   |
-| `invariants.md`            | Non-negotiable rules         | Labeled D1/A1/etc., what must never break                                                   |
-| `testing.md`               | Test strategy                | Levels, locations, how to run                                                               |
-| `features/<name>.md`       | Product behavior             | Problem, User interaction, Expected behavior (WHEN/THEN scenarios), Guarantees, Limitations |
-| `modules/<name>.md`        | Subsystem docs               | Responsibility, Public interfaces, Dependencies, Dependents, Assumptions & constraints      |
-| `adr/<date>-<title>.md`    | Architectural decisions      | Decision, Context, Alternatives considered, Rationale, Consequences                         |
-| `specs/active/<change>/`   | In-progress change artifacts | proposal.md, requirements.md, design.md, tasks.md                                           |
-| `specs/archived/<change>/` | Historical records           | Same structure, read-only                                                                   |
-
-### How to update the memory bank
-
-Update the memory bank **whenever product behavior or architecture changes**. The right time is:
-
-- **During implementation** — if you discover something wrong or missing, fix it immediately
-- **After completing a change** — extract lasting knowledge before archiving
-
-What goes where:
-
-- New or changed feature behavior → `features/<name>.md` (create if new)
-- Architectural changes → `architecture.md` and/or a new `adr/YYYY-MM-DD-<title>.md`
-- New subsystem → `modules/<name>.md`
-- New terms → `glossary.md`
-- New non-negotiable rules → `invariants.md`
-- Completed change specs → move from `specs/active/` to `specs/archived/`
-
-Do **not** put implementation details (function names, file paths, variable names) into `features/` or `domain.md`. Those belong in `modules/` or code comments.
-
----
+- **Read the relevant memory-bank file before implementing, fixing, refactoring, or writing tests.**
+  Guessing at architecture here is expensive: the model, the renderers and the history are coupled
+  through invariants that no compiler enforces.
+- **Verify narrowly.** `node .claude/skills/ketcher-verify/scripts/verify.mjs` (`/ketcher-verify`)
+  runs Prettier, ESLint, Stylelint, `tsc` and the related Jest tests for the changed files only.
+  `npm test` is the whole CI pipeline for four packages — run it only when asked.
+- **Read large files by range.** Grep for the symbol, then read the lines around it: several core
+  files are 2–5k lines. Never read `packages/ketcher-core/src/application/editor/data/monomers.ket`
+  (3.5 MB) or `package-lock.json` (1.9 MB) whole.
+- **Ask before writing Playwright E2E tests.** They are long and they fill the context window; agree
+  on scope first, and read [.memory-bank/testing-e2e.md](.memory-bank/testing-e2e.md) before starting.
+- **Update the bank in the same change that invalidates it.** A file that describes last month's
+  behaviour is worse than no file, because it is believed.
 
 ## OpenSpec
 
-This project uses [OpenSpec](https://openspec.dev) for spec-driven development. The `openspec/` directory contains changes (proposals, specs, design, tasks) and main specs.
+Spec-driven changes live in `openspec/changes/`: `propose → implement → archive`, via `/opsx:propose`,
+`/opsx:apply`, `/opsx:archive` where the OpenSpec CLI is installed — the commands are not committed
+here; without them, follow `openspec/config.yaml` by hand.
 
-OpenSpec changes go through: **propose → implement → archive**
-
-- Run `/opsx:propose` to start a new change
-- Run `/opsx:apply` to implement tasks
-- Run `/opsx:archive` to archive a completed change
-
-When archiving a change, also update the memory bank as described above.
-
-
-### Additional rules for opsx:apply
-- Only update the memory bank when archiving a change. Do not update it for proposals or specs in progress.
-- When completeing tasks then mark them as done one by one to not lose track of what has been done and what is left to do. Do not mark all tasks as done at once at the end.
-- Before starting writing e2e playwrite tests always ask to proceed, to ensure that context is not overloaded.
-- Before writing e2e playwrite tests read the testing.md file in the memory bank to understand the test strategy and existing test coverage.
-
-### Additional rules for opsx:archive
-- When updating any of the memory bank files, use the format described in the "File format details" section above.
+- Mark tasks done one at a time as you complete them, not in a batch at the end.
+- Update the memory bank when **archiving** a change, not while a proposal or spec is in progress.

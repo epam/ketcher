@@ -1,5 +1,9 @@
 # Bond Editing
 
+> **Read when:** a ticket changes bond types, chains, bond geometry or bond properties.
+> **Skip when:** you need the implementation — the `modules/` files have it; this file describes
+> behaviour only.
+
 ## Problem
 
 Structures are defined by the bonds between atoms. Chemists need to draw bonds of many types (single, double, triple, aromatic, stereo, dative, query, hydrogen), build carbon chains quickly, and change bond type or geometry after the fact.

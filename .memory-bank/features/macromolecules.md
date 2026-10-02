@@ -1,5 +1,10 @@
 # Macromolecules (Polymers)
 
+> **Read when:** polymer editing as the user sees it: the monomer library, sequence/snake/flex
+> layouts, antisense strands, polymer properties.
+> **Skip when:** you need the implementation — the `modules/` files have it; this file describes
+> behaviour only.
+
 ## Problem
 
 Beyond small molecules, users work with biopolymers — peptides and nucleic acids built from monomers. Ketcher's macromolecules mode lets users assemble, view, and edit these polymers at monomer granularity and as sequences, create antisense strands, compute polymer properties, and bridge to molecules mode.

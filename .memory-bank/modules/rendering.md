@@ -1,5 +1,9 @@
 # Rendering
 
+> **Read when:** changing how something is drawn — the Raphael `ReStruct` pipeline or the D3
+> renderers.
+> **Skip when:** model or format work that renders through existing code.
+
 > The two rendering pipelines that turn the domain model into on-screen graphics.
 
 Cross-cutting deep-dive. Both pipelines live under the core package's render layer but are entirely separate.

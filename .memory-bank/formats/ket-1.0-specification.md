@@ -1,5 +1,9 @@
 # KET 1.0 specification
 
+> **Read when:** reading or migrating a legacy KET 1.0 document.
+> **Skip when:** new work targets 2.0. To check one field, grep this 36 KB file instead of reading
+> it.
+
 ## General Structure
 
 KET format is represented by JSON, with the following structure (object properties are defined below).

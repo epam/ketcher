@@ -1,5 +1,8 @@
 # Monomer Library
 
+> **Read when:** loading, caching or merging monomers, RNA presets, or the library panel.
+> **Skip when:** canvas-only changes.
+
 > The catalog of polymer building blocks (peptides, RNA/DNA, CHEM) used by the macromolecules editor.
 
 Deep-dive complementing the entities in [../domain.md](../domain.md) and the UI in [ketcher-macromolecules](./ketcher-macromolecules.md).

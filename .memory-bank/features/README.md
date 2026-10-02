@@ -1,5 +1,8 @@
 # Feature Specifications
 
+> **Read when:** finding which feature spec describes a user-visible behaviour.
+> **Skip when:** you already know the feature file.
+
 Each file in this directory describes the **current observable behavior** of a product feature. They are the canonical description of product behavior and intentionally avoid implementation details.
 
 ## Convention

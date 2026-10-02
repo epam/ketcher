@@ -1,5 +1,10 @@
 # Import, Export & Structure Checking
 
+> **Read when:** opening, saving or pasting files, the structure check, or calculated values — as
+> the user sees them.
+> **Skip when:** you need the implementation — the `modules/` files have it; this file describes
+> behaviour only.
+
 ## Problem
 
 Structures must move in and out of Ketcher in the many chemical file formats used across cheminformatics, and users need to validate a structure and inspect its computed properties before saving.

@@ -1,5 +1,9 @@
 # Reactions
 
+> **Read when:** reaction arrows, pluses, atom mapping, multi-step or pathway reactions.
+> **Skip when:** you need the implementation — the `modules/` files have it; this file describes
+> behaviour only.
+
 ## Problem
 
 Chemists represent transformations, not just single molecules. Ketcher must let users assemble reaction schemes — reactants, products, reagents/catalysts, arrows, pluses, and atom-to-atom mappings — including multi-step and pathway reactions, and preserve that structure through export.

@@ -1,5 +1,8 @@
 # Architecture Decision Records
 
+> **Read when:** recording an architectural decision, or looking for the reason behind one.
+> **Skip when:** otherwise — no decision has been recorded yet.
+
 Each file in this directory documents one significant architectural decision.
 
 ## Convention

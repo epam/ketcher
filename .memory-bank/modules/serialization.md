@@ -1,5 +1,8 @@
 # Serialization & Formats
 
+> **Read when:** serializers, `FormatterFactory`, `StructService`, or an import/export bug.
+> **Skip when:** rendering and UI work.
+
 > Reading and writing chemical structures in ~25 text formats.
 
 Cross-cutting deep-dive. Complements the format table in [../domain.md](../domain.md#supported-chemical-formats). For the authoritative KET JSON schema (field-by-field), see [../formats/](../formats/README.md) — **v2.0 is current and is what to target for new work; v1.0 is kept for backwards-compatible reads and historical context only.**

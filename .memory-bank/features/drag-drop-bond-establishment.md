@@ -1,5 +1,10 @@
 # Drag-Drop Bond Establishment
 
+> **Read when:** dropping a library monomer or preset near a canvas monomer: attachment-point
+> highlighting and automatic bond creation.
+> **Skip when:** you need the implementation — the `modules/` files have it; this file describes
+> behaviour only.
+
 ## Problem
 
 Building polymer chains required the user to drag a monomer from the library to place it, then manually draw a bond with the Bond tool. This two-step flow was slow when assembling long sequences. This feature extends drag-and-drop so that releasing a dragged item near a free attachment point automatically creates a polymer bond.

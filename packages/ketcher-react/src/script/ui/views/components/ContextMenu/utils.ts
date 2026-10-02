@@ -1,5 +1,10 @@
 import { difference } from 'lodash';
-import { MonomerMicromolecule, type Bond, type Struct } from 'ketcher-core';
+import {
+  Bond,
+  MonomerMicromolecule,
+  type Bond as BondType,
+  type Struct,
+} from 'ketcher-core';
 
 /**
  * Remove the word `bond` out of the title
@@ -55,7 +60,7 @@ export const getNonQueryBondNames = (tools) => {
  * Check whether a bond connects two distinct monomers
  */
 export const isBondBetweenMonomers = (
-  bond: Bond | null | undefined,
+  bond: BondType | null | undefined,
   struct: Struct,
 ) => {
   if (!bond) {
@@ -71,6 +76,13 @@ export const isBondBetweenMonomers = (
     beginAtomSgroup !== endAtomSgroup
   );
 };
+
+export const isHydrogenBondBetweenMonomers = (
+  bond: BondType | null | undefined,
+  struct: Struct,
+) =>
+  bond?.type === Bond.PATTERN.TYPE.HYDROGEN &&
+  isBondBetweenMonomers(bond, struct);
 
 export const noOperation = () => null;
 

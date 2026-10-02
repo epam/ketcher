@@ -25,22 +25,42 @@ import {
   ketcherProvider,
   normalizeSettingsForCore,
   normalizeSettingsForForm,
+  type Settings,
+  type SettingsFormValue,
 } from 'ketcher-core';
-
 import { pick } from 'lodash/fp';
+import type { Dispatch, UnknownAction } from 'redux';
 import { storage } from '../../storage-ext';
 import { reinitializeTemplateLibrary } from '../templates/init-lib';
-import { APP_OPTIONS_ACTION } from './actions';
+import { APP_OPTIONS_ACTION, OPTIONS_UPDATE_ACTION } from './actions';
+import type {
+  AnalyseRoundName,
+  OptionsAction,
+  OptionsState,
+  RecognizeActionType,
+  RecognizeImageFile,
+} from './types';
 
-export const initOptionsState = {
+function readSettings(): SettingsFormValue {
+  return Object.assign(
+    getDefaultOptions(),
+    validation(storage.getItem(KETCHER_SAVED_OPTIONS_KEY)),
+  ) as SettingsFormValue;
+}
+
+export const initOptionsState: OptionsState = {
   app: {
     server: false,
     templates: false,
     functionalGroups: false,
     saltsAndSolvents: false,
+    buildDate: '',
+    version: '',
+    imagoVersions: [],
   },
   analyse: {
     values: null,
+    loading: false,
     roundWeight: 3,
     roundMass: 3,
     roundElAnalysis: 1,
@@ -67,29 +87,25 @@ export const initOptionsState = {
     fragment: false,
     version: null,
   },
-  settings: Object.assign(
-    getDefaultOptions(),
-    validation(storage.getItem(KETCHER_SAVED_OPTIONS_KEY)),
-  ),
+  settings: readSettings(),
   getSettings() {
-    this.settings = Object.assign(
-      getDefaultOptions(),
-      validation(storage.getItem(KETCHER_SAVED_OPTIONS_KEY)),
-    );
+    this.settings = readSettings();
   },
   getServerSettings() {
-    const seriliazedServerOptions = getSerilizedServerOptions(this.settings);
+    const serializedServerOptions = getSerializedServerOptions(this.settings);
     const defaultServerOptions = pick(SERVER_OPTIONS, this.settings);
 
     return {
       ...defaultServerOptions,
-      ...seriliazedServerOptions,
+      ...serializedServerOptions,
     };
   },
 };
 
-function getSerilizedServerOptions(options) {
-  let renderStereoStyle;
+function getSerializedServerOptions(
+  options: SettingsFormValue,
+): Record<string, unknown> {
+  let renderStereoStyle: string;
   if (!options.showStereoFlags) {
     renderStereoStyle = 'none';
   } else if (options.ignoreChiralFlag) {
@@ -98,7 +114,7 @@ function getSerilizedServerOptions(options) {
     renderStereoStyle = 'old';
   }
 
-  let newOptions = {
+  let newOptions: Record<string, unknown> = {
     'render-coloring': options.atomColoring,
     'render-font-size': options.fontsz,
     'render-font-size-unit': options.fontszUnit,
@@ -109,7 +125,7 @@ function getSerilizedServerOptions(options) {
     'bond-length-unit': options.bondLengthUnit,
     'render-bond-thickness': options.bondThickness,
     'render-bond-thickness-unit': options.bondThicknessUnit,
-    'render-bond-spacing': options.bondSpacing / 100,
+    'render-bond-spacing': Number(options.bondSpacing) / 100,
     'render-stereo-bond-width': options.stereoBondWidth,
     'render-stereo-bond-width-unit': options.stereoBondWidthUnit,
     'render-hash-spacing': options.hashSpacing,
@@ -132,48 +148,40 @@ function getSerilizedServerOptions(options) {
   return newOptions;
 }
 
-export function appUpdate(data) {
-  return (dispatch) => {
-    dispatch({ type: 'APP_OPTIONS', data });
-    dispatch({ type: 'UPDATE' });
+export function appUpdate(data: Partial<OptionsState['app']>) {
+  return (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: APP_OPTIONS_ACTION, data });
+    dispatch({ type: OPTIONS_UPDATE_ACTION });
   };
 }
 
 /* SETTINGS */
-export function saveSettings(newSettings, ketcherId) {
-  return async (dispatch) => {
-    // Try to update via ketcher-core settings service if available
-    // Use window.ketcher since Redux state doesn't store the Ketcher instance
+export function saveSettings(
+  newSettings: SettingsFormValue,
+  ketcherId?: string,
+) {
+  return async (dispatch: Dispatch<UnknownAction>): Promise<void> => {
     const settingsService =
       ketcherProvider.getKetcher(ketcherId)?.settingsService;
 
     if (settingsService) {
       try {
-        // Transform settings to match SettingsService schema
         const transformedSettings = normalizeSettingsForCore(newSettings);
-
-        // Direct update - both Core and Redux use flat format now
         await settingsService.updateSettings(transformedSettings);
-        // Core service handles localStorage and emits events
-        // The event will trigger syncSettingsFromCore via useSettings hook
-      } catch (error) {
+      } catch (error: unknown) {
         KetcherLogger.error(
           'Failed to update settings via core service:',
           error,
         );
-        // Fall back to direct localStorage write
         storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
       }
     } else {
-      // No core service available, use legacy localStorage
       storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
     }
 
-    // Reinitialize template library and update init state
     reinitializeTemplateLibrary();
     initOptionsState.getSettings();
 
-    // Dispatch Redux action for backward compatibility
     dispatch({
       type: 'SAVE_SETTINGS',
       data: newSettings,
@@ -184,17 +192,18 @@ export function saveSettings(newSettings, ketcherId) {
 /**
  * Sync settings from ketcher-core SettingsService to Redux
  * Used for backward compatibility - Redux becomes a passive consumer
- * @param {Settings} coreSettings - Settings from ketcher-core in flat format
  */
-export function syncSettingsFromCore(coreSettings) {
-  // Transform from SettingsService format to Redux format
+export function syncSettingsFromCore(coreSettings: Partial<Settings>) {
   const normalizedSettings = normalizeSettingsForForm(coreSettings, {
     removeCoreOnlyFields: true,
   });
+  const defaultOptionNames = Object.keys(getDefaultOptions()) as Array<
+    keyof SettingsFormValue
+  >;
   const reduxSettings = pick(
-    Object.keys(getDefaultOptions()),
+    defaultOptionNames,
     normalizedSettings,
-  );
+  ) as SettingsFormValue;
 
   return {
     type: 'SYNC_SETTINGS_FROM_CORE',
@@ -203,7 +212,10 @@ export function syncSettingsFromCore(coreSettings) {
 }
 
 /* ANALYZE */
-export function changeRound(roundName, value) {
+export function changeRound(
+  roundName: AnalyseRoundName,
+  value: number | string,
+) {
   return {
     type: 'CHANGE_ANALYSE',
     data: { [roundName]: value },
@@ -211,28 +223,28 @@ export function changeRound(roundName, value) {
 }
 
 /* RECOGNIZE */
-const recognizeActions = [
+const recognizeActions: readonly RecognizeActionType[] = [
   'SET_RECOGNIZE_STRUCT',
   'CHANGE_RECOGNIZE_FILE',
   'CHANGE_IMAGO_VERSION',
   'IS_FRAGMENT_RECOGNIZE',
 ];
 
-export function setStruct(str) {
+export function setStruct(str: string | Promise<unknown> | null) {
   return {
     type: 'SET_RECOGNIZE_STRUCT',
     data: { structStr: str },
   };
 }
 
-export function changeVersion(version) {
+export function changeVersion(version: string | null) {
   return {
     type: 'CHANGE_IMAGO_VERSION',
     data: { version },
   };
 }
 
-export function changeImage(file) {
+export function changeImage(file: RecognizeImageFile) {
   return {
     type: 'CHANGE_RECOGNIZE_FILE',
     data: {
@@ -242,7 +254,7 @@ export function changeImage(file) {
   };
 }
 
-export function shouldFragment(isFrag) {
+export function shouldFragment(isFrag: boolean) {
   return {
     type: 'IS_FRAGMENT_RECOGNIZE',
     data: { fragment: isFrag },
@@ -250,7 +262,7 @@ export function shouldFragment(isFrag) {
 }
 
 /* CHECK */
-export function checkOpts(data) {
+export function checkOpts(data: OptionsState['check']) {
   return {
     type: 'SAVE_CHECK_OPTS',
     data,
@@ -258,29 +270,51 @@ export function checkOpts(data) {
 }
 
 /* REDUCER */
-function optionsReducer(state = {}, action) {
-  const { type, data } = action;
-  if (type === APP_OPTIONS_ACTION)
-    return { ...state, app: { ...state.app, ...data } };
+function isOptionsAction<T extends OptionsAction['type']>(
+  action: UnknownAction,
+  type: T,
+): action is Extract<OptionsAction, { type: T }> {
+  return action.type === type;
+}
 
-  if (type === 'SAVE_SETTINGS') {
-    return { ...state, settings: { ...state.settings, ...data } };
+function optionsReducer(
+  state: OptionsState = initOptionsState,
+  action: UnknownAction,
+): OptionsState {
+  if (isOptionsAction(action, APP_OPTIONS_ACTION)) {
+    return { ...state, app: { ...state.app, ...action.data } };
   }
 
-  if (type === 'SYNC_SETTINGS_FROM_CORE') {
-    return { ...state, settings: { ...state.settings, ...data } };
+  if (isOptionsAction(action, 'SAVE_SETTINGS')) {
+    return { ...state, settings: { ...state.settings, ...action.data } };
   }
 
-  if (type === 'SAVE_CHECK_OPTS') return { ...state, check: data };
+  if (isOptionsAction(action, 'SYNC_SETTINGS_FROM_CORE')) {
+    return { ...state, settings: { ...state.settings, ...action.data } };
+  }
 
-  if (type === 'CHANGE_ANALYSE')
-    return { ...state, analyse: { ...state.analyse, ...data, loading: false } };
+  if (isOptionsAction(action, 'SAVE_CHECK_OPTS')) {
+    return { ...state, check: action.data };
+  }
 
-  if (type === 'ANALYSE_LOADING')
+  if (isOptionsAction(action, 'CHANGE_ANALYSE')) {
+    return {
+      ...state,
+      analyse: { ...state.analyse, ...action.data, loading: false },
+    };
+  }
+
+  if (action.type === 'ANALYSE_LOADING') {
     return { ...state, analyse: { ...state.analyse, loading: true } };
+  }
 
-  if (recognizeActions.includes(type))
-    return { ...state, recognize: { ...state.recognize, ...data } };
+  if (
+    recognizeActions.includes(action.type as RecognizeActionType) &&
+    isOptionsAction(action, action.type as RecognizeActionType)
+  ) {
+    return { ...state, recognize: { ...state.recognize, ...action.data } };
+  }
+
   return state;
 }
 

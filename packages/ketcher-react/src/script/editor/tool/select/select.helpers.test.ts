@@ -1,21 +1,20 @@
+import { vi } from 'vitest';
+
 import { getNewSelectedItems } from './select.helpers';
+import { SGroup } from 'ketcher-core';
 
-jest.mock(
-  'ketcher-core',
-  () => ({
-    SGroup: {
-      getAtoms: jest.fn((_, sgroup) => sgroup.atoms),
-      getBonds: jest.fn((_, sgroup) => sgroup.bonds),
-    },
-  }),
-  { virtual: true },
-);
+vi.mock('ketcher-core', () => ({
+  SGroup: {
+    getAtoms: vi.fn((_, sgroup) => sgroup.atoms),
+    getBonds: vi.fn((_, sgroup) => sgroup.bonds),
+  },
+}));
 
-const getSGroupMock = () => jest.requireMock('ketcher-core').SGroup;
+const getSGroupMock = () => SGroup;
 
 describe('select helpers', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('getNewSelectedItems', () => {

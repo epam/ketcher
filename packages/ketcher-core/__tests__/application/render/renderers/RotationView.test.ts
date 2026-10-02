@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { select } from 'd3';
 import { RotationView } from 'application/render/renderers/TransientView/RotationView';
 import { Coordinates } from 'application/editor';
@@ -7,7 +8,7 @@ import { createSvgElement } from '../../../helpers/dom';
 
 describe('RotationView', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should render active rotation handle style in rotating mode', () => {
@@ -15,7 +16,7 @@ describe('RotationView', () => {
     const layer = createSvgElement('g') as SVGGElement;
     svg.appendChild(layer);
     document.body.appendChild(svg);
-    jest.spyOn(Coordinates, 'canvasToView').mockReturnValue(new Vec2(100, 100));
+    vi.spyOn(Coordinates, 'canvasToView').mockReturnValue(new Vec2(100, 100));
 
     RotationView.show(
       select(layer) as unknown as D3SvgElementSelection<SVGGElement, void>,
@@ -46,7 +47,7 @@ describe('RotationView', () => {
     const layer = createSvgElement('g') as SVGGElement;
     svg.appendChild(layer);
     document.body.appendChild(svg);
-    jest.spyOn(Coordinates, 'canvasToView').mockReturnValue(new Vec2(100, 100));
+    vi.spyOn(Coordinates, 'canvasToView').mockReturnValue(new Vec2(100, 100));
 
     RotationView.show(
       select(layer) as unknown as D3SvgElementSelection<SVGGElement, void>,

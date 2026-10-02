@@ -18,7 +18,7 @@ import {
 import { Peptide } from 'domain/entities/Peptide';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import type { MonomerItemType } from 'domain/types';
-import { mockFn } from 'jest-mock-extended';
+import { vi } from 'vitest';
 import { KetMonomerClass } from 'domain/constants/monomers';
 
 const mockAtoms = [
@@ -652,7 +652,7 @@ const mockFrags = [
     stereoFlagPosition: undefined,
     enhancedStereoFlag: 'ABS',
     updateStereoFlag() {},
-    calcBBox: mockFn().mockReturnValue({
+    calcBBox: vi.fn(() => ({
       p0: {
         x: 4,
         y: 6,
@@ -663,7 +663,7 @@ const mockFrags = [
         y: 8,
         z: 0,
       },
-    }),
+    })),
   },
 ];
 const frags = new Map();
@@ -685,7 +685,7 @@ const molecule = {
     children: {
       key: -1,
       value: [],
-      get: mockFn().mockReturnValue([]),
+      get: vi.fn(() => []),
     },
     atomSets: {},
   },
@@ -712,7 +712,7 @@ const molecule = {
   bondInitHalfBonds() {},
   atomAddNeighbor() {},
   setImplicitHydrogen() {},
-  getRGroupAttachmentPointsByAtomId: mockFn().mockReturnValue([0]),
+  getRGroupAttachmentPointsByAtomId: vi.fn(() => [0]),
 };
 
 export const restruct = {
@@ -730,19 +730,20 @@ export const restruct = {
   markBond() {},
   markItem() {},
   rgroupAttachmentPoints: new Pool<ReRGroupAttachmentPoint>(),
-  getRGroupAttachmentPointsVBoxByAtomIds: mockFn().mockReturnValue(
-    new Box2Abs(
-      new Vec2({
-        x: 6,
-        y: 7,
-        z: 0,
-      }),
-      new Vec2({
-        x: 7,
-        y: 9,
-        z: 0,
-      }),
-    ),
+  getRGroupAttachmentPointsVBoxByAtomIds: vi.fn(
+    () =>
+      new Box2Abs(
+        new Vec2({
+          x: 6,
+          y: 7,
+          z: 0,
+        }),
+        new Vec2({
+          x: 7,
+          y: 9,
+          z: 0,
+        }),
+      ),
   ),
 };
 

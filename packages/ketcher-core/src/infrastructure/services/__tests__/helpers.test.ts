@@ -14,13 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { type Mock, vi } from 'vitest';
 import { ShowHydrogenLabels } from 'application/render';
 import { ketcherProvider } from 'application/ketcherProvider';
 import { getLabelRenderModeForIndigo } from '../helpers';
 
-jest.mock('application/ketcherProvider', () => ({
+vi.mock('application/ketcherProvider', () => ({
   ketcherProvider: {
-    getKetcher: jest.fn(),
+    getKetcher: vi.fn(),
   },
 }));
 
@@ -30,7 +31,7 @@ function mockEditorOptions(
   carbonExplicitly: boolean,
   showHydrogenLabels: ShowHydrogenLabels,
 ) {
-  (ketcherProvider.getKetcher as jest.Mock).mockReturnValue({
+  (ketcherProvider.getKetcher as Mock).mockReturnValue({
     editor: {
       options: () => ({ carbonExplicitly, showHydrogenLabels }),
     },

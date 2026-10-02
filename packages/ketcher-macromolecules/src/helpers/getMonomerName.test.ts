@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { BaseMonomer, KetMonomerClass } from 'ketcher-core';
 import getMonomerName from './getMonomerName';
 
@@ -6,26 +8,21 @@ interface MockVariantMonomerItem {
   options: Array<{ templateId: string }>;
 }
 
-// Mock the AmbiguousMonomer class
-jest.mock('ketcher-core', () => {
-  const actualKetcherCore = jest.requireActual('ketcher-core');
-
-  // Create a mock class that will be recognized by instanceof check
+const { MockAmbiguousMonomer } = vi.hoisted(() => {
   class MockAmbiguousMonomer {
-    variantMonomerItem: {
-      label: string;
-      options: Array<{ templateId: string }>;
-    };
-
-    monomerClass = '';
-
-    constructor(variantMonomerItem: {
-      label: string;
-      options: Array<{ templateId: string }>;
-    }) {
-      this.variantMonomerItem = variantMonomerItem;
-    }
+    constructor(
+      public variantMonomerItem: MockVariantMonomerItem,
+      public monomerClass: KetMonomerClass,
+    ) {}
   }
+
+  return { MockAmbiguousMonomer };
+});
+
+// Mock the AmbiguousMonomer class
+vi.mock('ketcher-core', async (importOriginal) => {
+  const actualKetcherCore =
+    await importOriginal<typeof import('ketcher-core')>();
 
   return {
     ...actualKetcherCore,
@@ -33,16 +30,11 @@ jest.mock('ketcher-core', () => {
   };
 });
 
-// Import after mocking to get the mocked version
-
-const { AmbiguousMonomer } = require('ketcher-core');
-
 const createMockAmbiguousMonomer = (
   variantMonomerItem: MockVariantMonomerItem,
-  monomerClass: string,
+  monomerClass: KetMonomerClass,
 ) => {
-  const monomer = new AmbiguousMonomer(variantMonomerItem);
-  monomer.monomerClass = monomerClass;
+  const monomer = new MockAmbiguousMonomer(variantMonomerItem, monomerClass);
   return monomer as unknown as BaseMonomer;
 };
 

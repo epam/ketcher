@@ -14,13 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 import { LabeledNodesWithPositionInSequence, Entities } from 'ketcher-core';
 import { UpdateSequenceInRNABuilder } from './UpdateSequenceInRNABuilder';
 
 const mockProps = {
   isModalOpen: true,
-  onClose: jest.fn(),
+  onClose: vi.fn(),
 };
 
 describe('UpdateSequenceInRNABuilder modal component', () => {

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { AtomAdd, AtomDelete } from 'application/editor/operations';
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import { OperationType } from 'application/editor/operations/OperationType';
@@ -52,7 +53,7 @@ describe('BaseOperation.invert()', () => {
       }
     }
 
-    const errorSpy = jest
+    const errorSpy = vi
       .spyOn(KetcherLogger, 'error')
       .mockImplementation(() => undefined);
     const op = new UnwiredOperation();

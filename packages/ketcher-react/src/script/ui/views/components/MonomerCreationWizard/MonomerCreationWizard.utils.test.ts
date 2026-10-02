@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import {
   type BaseMonomer,
   type CoreEditor,
@@ -287,7 +289,7 @@ describe('ensureMonomersLibraryLoadedForSubmit', () => {
     });
 
     const fakeEditor = {
-      ensureDefaultMonomersLibraryLoaded: jest.fn(async () => {
+      ensureDefaultMonomersLibraryLoaded: vi.fn(async () => {
         await defaultLoadGate;
         order.push('default-library-loaded');
       }),

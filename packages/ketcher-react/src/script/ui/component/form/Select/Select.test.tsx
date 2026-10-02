@@ -1,15 +1,13 @@
+import { vi } from 'vitest';
+
 import { render } from '@testing-library/react';
 import Select from './Select';
 
-jest.mock(
-  'ketcher-core',
-  () => ({
-    IMAGE_KEY: 'image',
-    MULTITAIL_ARROW_TOOL_NAME: 'multitail',
-    CREATE_MONOMER_TOOL_NAME: 'createMonomer',
-  }),
-  { virtual: true },
-);
+vi.mock('ketcher-core', () => ({
+  IMAGE_KEY: 'image',
+  MULTITAIL_ARROW_TOOL_NAME: 'multitail',
+  CREATE_MONOMER_TOOL_NAME: 'createMonomer',
+}));
 
 const mockProps = {
   options: [
@@ -17,7 +15,7 @@ const mockProps = {
     { value: 'option2', label: 'option2' },
     { value: 'option3', label: 'option3' },
   ],
-  onChange: jest.fn(),
+  onChange: vi.fn(),
 };
 
 describe('Select component should be rendered correctly', () => {

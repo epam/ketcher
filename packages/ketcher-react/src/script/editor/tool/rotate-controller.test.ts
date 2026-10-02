@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { Vec2 } from 'ketcher-core';
 import Editor from '../Editor';
 import RotateTool from './rotate';
@@ -16,7 +18,7 @@ describe('Rotate controller', () => {
   it(`hides for only one visible atom`, () => {
     // @ts-ignore
     const tool = () => new SelectTool();
-    const paper = jest.fn();
+    const paper = vi.fn();
     const selection = () => null;
     const visibleAtoms = [1];
     const editor = {
@@ -64,7 +66,7 @@ describe('Rotate controller', () => {
       {},
     );
     const NonSelectTool = new RotateTool(editor, undefined);
-    const paper = jest.fn();
+    const paper = vi.fn();
     const visibleAtoms = [0, 1];
     const controller = new RotateController({
       selection: () => null,
@@ -101,7 +103,7 @@ describe('Rotate controller', () => {
       {},
       {},
     );
-    editor.rotateController.rerender = jest.fn();
+    editor.rotateController.rerender = vi.fn();
 
     editor.zoom(2);
 
@@ -114,7 +116,7 @@ describe('Rotate controller', () => {
    */
   it('can be only dragged by left mouse button', () => {
     const controller = new RotateController({ selection: () => null } as any);
-    const changeCrossColor = jest.fn();
+    const changeCrossColor = vi.fn();
     // @ts-ignore
     controller.cross = {
       attr: changeCrossColor,
@@ -153,17 +155,17 @@ describe('Rotate controller', () => {
   });
 
   it('adds test id to rotation center handle hitbox', () => {
-    const setAttribute = jest.fn();
+    const setAttribute = vi.fn();
     const cross = {
-      attr: jest.fn().mockReturnThis(),
+      attr: vi.fn().mockReturnThis(),
     };
     const circle = {
-      attr: jest.fn().mockReturnThis(),
+      attr: vi.fn().mockReturnThis(),
       node: { setAttribute },
     };
     const crossSet = {
-      push: jest.fn(),
-      translate: jest.fn(),
+      push: vi.fn(),
+      translate: vi.fn(),
     };
 
     const controller = new RotateController({ selection: () => null } as any);
@@ -172,9 +174,9 @@ describe('Rotate controller', () => {
     // @ts-ignore
     controller.editor.render = {
       paper: {
-        path: jest.fn().mockReturnValue(cross),
-        circle: jest.fn().mockReturnValue(circle),
-        set: jest.fn().mockReturnValue(crossSet),
+        path: vi.fn().mockReturnValue(cross),
+        circle: vi.fn().mockReturnValue(circle),
+        set: vi.fn().mockReturnValue(crossSet),
       },
       options: {
         microModeScale: 1,
@@ -267,7 +269,7 @@ describe('Rotate controller', () => {
       action: { operations: [], perform: () => undefined },
     };
     editor.rotateController.isRotating = true;
-    const updateRender = jest.spyOn(editor.render, 'update');
+    const updateRender = vi.spyOn(editor.render, 'update');
 
     editor.rotateController.revert();
     const selectTool = new SelectTool(editor, 'rectangle');

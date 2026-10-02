@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { render } from '@testing-library/react';
 
 import Input from './Input';
@@ -14,7 +16,7 @@ describe('Input component should be rendered correctly', () => {
         description: 'slider',
         default: true,
       },
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
     const { asFragment } = render(<Input {...sliderProps} />);
@@ -27,7 +29,7 @@ describe('Input component should be rendered correctly', () => {
       name: 'Name',
       value: true,
       type: 'checkbox',
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
     const { asFragment } = render(<Input {...checkboxProps} />);
@@ -40,7 +42,7 @@ describe('Input component should be rendered correctly', () => {
       name: 'Name',
       value: 'value',
       type: 'textarea',
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
     const { asFragment } = render(<Input {...textareaProps} />);

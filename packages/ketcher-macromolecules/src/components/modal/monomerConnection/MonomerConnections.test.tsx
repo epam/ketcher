@@ -1,3 +1,6 @@
+import { vi } from 'vitest';
+import { withThemeProvider } from 'src/testUtils/themeProvider';
+
 import React from 'react';
 import { Provider } from 'react-redux';
 import { render, screen } from '@testing-library/react';
@@ -5,7 +8,7 @@ import { Struct, Peptide } from 'ketcher-core';
 import { MonomerConnection } from './MonomerConnections';
 import { configureAppStore } from '../../../state/store';
 
-jest.spyOn(React, 'useEffect').mockImplementation(() => {});
+vi.spyOn(React, 'useEffect').mockImplementation(() => {});
 
 const mockStore = configureAppStore({});
 const monomerData = {
@@ -34,7 +37,7 @@ secondPeptide.attachmentPointsToBonds = { R1: null, R2: null };
 secondPeptide.monomerItem.props.MonomerCaps = { R1: 'OH', R2: 'OH' };
 
 const mockProps = {
-  onClose: jest.fn(),
+  onClose: vi.fn(),
   isModalOpen: true,
   firstMonomer: firstPeptide,
   secondMonomer: secondPeptide,

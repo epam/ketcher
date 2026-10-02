@@ -1,3 +1,6 @@
+import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,7 +19,7 @@
 import { render } from '@testing-library/react';
 import { Menu } from 'components/menu/Menu';
 
-const menuItemChanged = jest.fn();
+const menuItemChanged = vi.fn();
 
 const MenuContainer = () => {
   return (

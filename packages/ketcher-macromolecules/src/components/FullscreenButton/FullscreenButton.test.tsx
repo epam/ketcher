@@ -1,10 +1,14 @@
+import { type Mock, vi } from 'vitest';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { FullscreenButton } from '.';
 
-const mockGetFullscreenElement = jest.fn();
+const { mockGetFullscreenElement } = vi.hoisted(() => ({
+  mockGetFullscreenElement: vi.fn(),
+}));
 
-jest.mock('ketcher-react', () => ({
+vi.mock('ketcher-react', () => ({
   IconButton: ({
     onClick,
     iconName,
@@ -20,8 +24,8 @@ jest.mock('ketcher-react', () => ({
 }));
 
 describe('FullscreenButton component', () => {
-  const mockExitFullscreen = jest.fn();
-  const mockRequestFullscreen = jest.fn();
+  const mockExitFullscreen = vi.fn();
+  const mockRequestFullscreen = vi.fn();
   let fullscreenElement: Element | null = null;
 
   beforeEach(() => {
@@ -38,14 +42,14 @@ describe('FullscreenButton component', () => {
     });
 
     const container = document.createElement('div') as HTMLDivElement & {
-      requestFullscreen: jest.Mock;
+      requestFullscreen: Mock;
     };
     container.requestFullscreen = mockRequestFullscreen;
     mockGetFullscreenElement.mockReturnValue(container);
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should sync button state with document fullscreen changes', () => {

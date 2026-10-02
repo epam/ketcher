@@ -29,11 +29,13 @@ Characteristics:
 ```typescript
 // BAD: Tests implementation details
 test("checkout calls paymentService.process", async () => {
-  const mockPayment = jest.mock(paymentService);
+  const processPayment = vi.spyOn(paymentService, "process");
   await checkout(cart, payment);
-  expect(mockPayment.process).toHaveBeenCalledWith(cart.total);
+  expect(processPayment).toHaveBeenCalledWith(cart.total);
 });
 ```
+
+Import `vi` from `vitest` when creating spies or mocks.
 
 Red flags:
 

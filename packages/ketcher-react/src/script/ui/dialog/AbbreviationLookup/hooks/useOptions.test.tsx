@@ -1,26 +1,44 @@
+import { vi } from 'vitest';
+
 import { useOptions } from './useOptions';
 import { renderHook } from '@testing-library/react';
 import type { Element } from 'ketcher-core';
 import { AbbreviationType } from '../AbbreviationLookup.types';
 
-jest.mock('react-redux', () => {
+vi.mock('react-redux', () => {
   return {
     useSelector: (fn) => fn(),
   };
 });
 
-const ELEMENT: Element = {
-  number: 6,
-  label: 'C',
-  period: 2,
-  group: 4,
-  title: 'Carbon',
-  state: 'solid',
-  origin: 'primordial',
-  type: 'other-nonmetal',
-  mass: 12.011,
-};
-jest.mock('ketcher-core', () => {
+const { ELEMENT, FUNCTIONAL_GROUP, TEMPLATE, SALT_AND_SOLVENT } = vi.hoisted(
+  () => ({
+    ELEMENT: {
+      number: 6,
+      label: 'C',
+      period: 2,
+      group: 4,
+      title: 'Carbon',
+      state: 'solid',
+      origin: 'primordial',
+      type: 'other-nonmetal',
+      mass: 12.011,
+    } satisfies Element,
+    FUNCTIONAL_GROUP: {
+      props: {},
+      struct: { abbreviation: 'FG', name: 'Function Group' },
+    },
+    TEMPLATE: {
+      props: {},
+      struct: { abbreviation: 'TMPL', name: 'Template' },
+    },
+    SALT_AND_SOLVENT: {
+      props: {},
+      struct: { abbreviation: 'SaS', name: 'Salts And Solvents' },
+    },
+  }),
+);
+vi.mock('ketcher-core', () => {
   return {
     Elements: {
       getAll: () => [ELEMENT],
@@ -28,31 +46,19 @@ jest.mock('ketcher-core', () => {
   };
 });
 
-const FUNCTIONAL_GROUP = {
-  props: {},
-  struct: { abbreviation: 'FG', name: 'Function Group' },
-};
-jest.mock('../../../state/functionalGroups/selectors', () => {
+vi.mock('../../../state/functionalGroups/selectors', () => {
   return {
     functionalGroupsSelector: () => [FUNCTIONAL_GROUP, FUNCTIONAL_GROUP],
   };
 });
 
-const TEMPLATE = {
-  props: {},
-  struct: { abbreviation: 'TMPL', name: 'Template' },
-};
-jest.mock('../../../state/templates/selectors', () => {
+vi.mock('../../../state/templates/selectors', () => {
   return {
     templatesLibSelector: () => [TEMPLATE, TEMPLATE],
   };
 });
 
-const SALT_AND_SOLVENT = {
-  props: {},
-  struct: { abbreviation: 'SaS', name: 'Salts And Solvents' },
-};
-jest.mock('../../../state/saltsAndSolvents/selectors', () => {
+vi.mock('../../../state/saltsAndSolvents/selectors', () => {
   return {
     saltsAndSolventsSelector: () => [SALT_AND_SOLVENT],
   };

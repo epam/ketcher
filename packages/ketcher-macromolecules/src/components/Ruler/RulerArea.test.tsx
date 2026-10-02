@@ -1,3 +1,5 @@
+import { type Mock, vi } from 'vitest';
+
 import { render, screen } from '@testing-library/react';
 import { useSelector } from 'react-redux';
 
@@ -5,34 +7,34 @@ import { RootSizeContext } from '../../contexts';
 
 import { RulerArea } from './RulerArea';
 
-jest.mock('react-redux', () => ({
-  useSelector: jest.fn(),
+vi.mock('react-redux', () => ({
+  useSelector: vi.fn(),
 }));
 
-jest.mock('hooks', () => ({
+vi.mock('hooks', () => ({
   useLayoutMode: () => 'sequence-layout-mode',
 }));
 
-jest.mock('../../hooks/useZoomTransform', () => ({
+vi.mock('../../hooks/useZoomTransform', () => ({
   useZoomTransform: () => ({
     applyX: (value: number) => value,
     invertX: (value: number) => value,
   }),
 }));
 
-jest.mock('./RulerInput', () => ({
+vi.mock('./RulerInput', () => ({
   __esModule: true,
   default: ({ offsetX }: { offsetX: number }) => (
     <input data-testid="ruler-input" data-offset-x={offsetX} />
   ),
 }));
 
-jest.mock('./RulerHandle', () => ({
+vi.mock('./RulerHandle', () => ({
   __esModule: true,
   default: () => null,
 }));
 
-jest.mock('./RulerScale', () => ({
+vi.mock('./RulerScale', () => ({
   __esModule: true,
   default: () => null,
 }));
@@ -53,12 +55,12 @@ describe('RulerArea', () => {
     const editor = {
       canvas,
       events: {
-        setEditorLineLength: { dispatch: jest.fn() },
-        toggleLineLengthHighlighting: { dispatch: jest.fn() },
+        setEditorLineLength: { dispatch: vi.fn() },
+        toggleLineLengthHighlighting: { dispatch: vi.fn() },
       },
     };
 
-    (useSelector as unknown as jest.Mock).mockImplementation((selector) => {
+    (useSelector as unknown as Mock).mockImplementation((selector) => {
       const selectorName = selector.name;
 
       if (selectorName === 'selectEditorLineLength') {

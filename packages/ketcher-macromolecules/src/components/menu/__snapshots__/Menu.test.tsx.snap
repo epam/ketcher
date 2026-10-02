@@ -1,82 +1,82 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Menu component should render menu component in a container 1`] = `
+exports[`Menu component > should render menu component in a container 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
       <div
-        class="css-jiic2r"
+        class="css-i9o1db-MenuLayout exovft20"
       >
         <div
-          class="css-498x9x"
+          class="css-1rl6iqi-StyledGroup exovft23"
         >
           <button
-            class="open css-8n7ktb"
+            class="open css-11r181m-StyledIconButton e433jth0"
             title=""
             type="button"
           />
         </div>
         <div
-          class="css-498x9x"
+          class="css-1rl6iqi-StyledGroup exovft23"
         >
           <button
-            class="erase css-8n7ktb"
+            class="erase css-11r181m-StyledIconButton e433jth0"
             title=""
             type="button"
           />
           <div
-            class="css-22lzhe"
+            class="css-1cliz6h-RootContainer e1e75din1"
             data-is-selected="false"
           >
             <div
-              class="css-5su45f"
+              class="css-1geybxc-VisibleItem e1e75din4"
             >
               <button
-                class="select-lasso css-8n7ktb"
+                class="select-lasso css-11r181m-StyledIconButton e433jth0"
                 title=""
                 type="button"
               />
               <svg
-                class="dropdown css-zoaulv"
+                class="dropdown css-1sh4ogt-StyledDropdownIcon e1e75din0"
                 data-testid="dropdown-expand"
                 name="dropdown"
               />
             </div>
           </div>
           <div
-            class="css-22lzhe"
+            class="css-1cliz6h-RootContainer e1e75din1"
             data-is-selected="false"
           >
             <div
-              class="css-5su45f"
+              class="css-1geybxc-VisibleItem e1e75din4"
             >
               <button
-                class="shape-rectangle css-8n7ktb"
+                class="shape-rectangle css-11r181m-StyledIconButton e433jth0"
                 title=""
                 type="button"
               />
               <svg
-                class="dropdown css-zoaulv"
+                class="dropdown css-1sh4ogt-StyledDropdownIcon e1e75din0"
                 data-testid="dropdown-expand"
                 name="dropdown"
               />
             </div>
           </div>
           <div
-            class="css-22lzhe"
+            class="css-1cliz6h-RootContainer e1e75din1"
             data-is-selected="false"
           >
             <div
-              class="css-5su45f"
+              class="css-1geybxc-VisibleItem e1e75din4"
             >
               <button
-                class="transform-flip-h css-8n7ktb"
+                class="transform-flip-h css-11r181m-StyledIconButton e433jth0"
                 title=""
                 type="button"
               />
               <svg
-                class="dropdown css-zoaulv"
+                class="dropdown css-1sh4ogt-StyledDropdownIcon e1e75din0"
                 data-testid="dropdown-expand"
                 name="dropdown"
               />
@@ -88,77 +88,77 @@ exports[`Menu component should render menu component in a container 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-jiic2r"
+      class="css-i9o1db-MenuLayout exovft20"
     >
       <div
-        class="css-498x9x"
+        class="css-1rl6iqi-StyledGroup exovft23"
       >
         <button
-          class="open css-8n7ktb"
+          class="open css-11r181m-StyledIconButton e433jth0"
           title=""
           type="button"
         />
       </div>
       <div
-        class="css-498x9x"
+        class="css-1rl6iqi-StyledGroup exovft23"
       >
         <button
-          class="erase css-8n7ktb"
+          class="erase css-11r181m-StyledIconButton e433jth0"
           title=""
           type="button"
         />
         <div
-          class="css-22lzhe"
+          class="css-1cliz6h-RootContainer e1e75din1"
           data-is-selected="false"
         >
           <div
-            class="css-5su45f"
+            class="css-1geybxc-VisibleItem e1e75din4"
           >
             <button
-              class="select-lasso css-8n7ktb"
+              class="select-lasso css-11r181m-StyledIconButton e433jth0"
               title=""
               type="button"
             />
             <svg
-              class="dropdown css-zoaulv"
+              class="dropdown css-1sh4ogt-StyledDropdownIcon e1e75din0"
               data-testid="dropdown-expand"
               name="dropdown"
             />
           </div>
         </div>
         <div
-          class="css-22lzhe"
+          class="css-1cliz6h-RootContainer e1e75din1"
           data-is-selected="false"
         >
           <div
-            class="css-5su45f"
+            class="css-1geybxc-VisibleItem e1e75din4"
           >
             <button
-              class="shape-rectangle css-8n7ktb"
+              class="shape-rectangle css-11r181m-StyledIconButton e433jth0"
               title=""
               type="button"
             />
             <svg
-              class="dropdown css-zoaulv"
+              class="dropdown css-1sh4ogt-StyledDropdownIcon e1e75din0"
               data-testid="dropdown-expand"
               name="dropdown"
             />
           </div>
         </div>
         <div
-          class="css-22lzhe"
+          class="css-1cliz6h-RootContainer e1e75din1"
           data-is-selected="false"
         >
           <div
-            class="css-5su45f"
+            class="css-1geybxc-VisibleItem e1e75din4"
           >
             <button
-              class="transform-flip-h css-8n7ktb"
+              class="transform-flip-h css-11r181m-StyledIconButton e433jth0"
               title=""
               type="button"
             />
             <svg
-              class="dropdown css-zoaulv"
+              class="dropdown css-1sh4ogt-StyledDropdownIcon e1e75din0"
               data-testid="dropdown-expand"
               name="dropdown"
             />

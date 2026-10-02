@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { fromBondFlipping } from 'application/editor/actions/bond';
 import * as bondStereoModule from 'application/editor/actions/bondStereo';
 import { Action } from 'application/editor/actions';
@@ -70,12 +71,12 @@ function buildRestruct(stereo: number, stereoLabel: string | null = null) {
     atomsChanged: new Map(),
     bondsChanged: new Map(),
     render: { options: { stereoLabelStyle: 'Off' } },
-    markAtom: jest.fn(),
-    markBond: jest.fn(),
-    markItem: jest.fn(),
-    markItemRemoved: jest.fn(),
-    clearVisel: jest.fn(),
-    loopRemove: jest.fn(),
+    markAtom: vi.fn(),
+    markBond: vi.fn(),
+    markItem: vi.fn(),
+    markItemRemoved: vi.fn(),
+    clearVisel: vi.fn(),
+    loopRemove: vi.fn(),
     connectedComponents: new Map(),
   };
 
@@ -84,7 +85,7 @@ function buildRestruct(stereo: number, stereoLabel: string | null = null) {
 
 describe('fromBondFlipping', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('transfers stereoLabel and stereoParity from old begin to old end for a stereo bond', () => {
@@ -133,7 +134,7 @@ describe('fromBondFlipping', () => {
   });
 
   it('does not call fromBondStereoUpdate for a non-stereo bond', () => {
-    const spy = jest
+    const spy = vi
       .spyOn(bondStereoModule, 'fromBondStereoUpdate')
       .mockReturnValue(new Action());
 

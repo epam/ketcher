@@ -53,6 +53,49 @@ const createMonomerSGroup = (struct: Struct, atomId: number) => {
   return sgroupId;
 };
 
+const createRestruct = (struct: Struct) => {
+  const options = {
+    scale: 40,
+    width: 100,
+    height: 100,
+  } as unknown as RenderOptions;
+  const render = new Render(document as unknown as HTMLElement, options);
+  return new ReStruct(struct, render);
+};
+
+/**
+ * Builds a plain zig-zag carbon chain of unit bond length, the micromolecules
+ * equivalent of drawing `CCCCCCCC` on the canvas.
+ */
+const createZigZagChain = (struct: Struct, atomsCount: number) => {
+  const atomIds: number[] = [];
+  for (let index = 0; index < atomsCount; index++) {
+    atomIds.push(
+      struct.atoms.add(
+        new Atom({
+          label: 'C',
+          pp: new Vec2(
+            index * Math.cos(Math.PI / 6),
+            index % 2 === 0 ? 0 : -0.5,
+          ),
+        }),
+      ),
+    );
+  }
+
+  for (let index = 0; index < atomsCount - 1; index++) {
+    const bond = new Bond({
+      begin: atomIds[index],
+      end: atomIds[index + 1],
+      type: Bond.PATTERN.TYPE.SINGLE,
+    });
+    const bondId = struct.bonds.add(bond);
+    struct.bondInitHalfBonds(bondId, bond);
+  }
+
+  return atomIds;
+};
+
 const addAttachmentPoint = (
   struct: Struct,
   sgroupId: number,
@@ -186,6 +229,135 @@ describe('setExpandMonomerSGroup', () => {
     setExpandMonomerSGroup(restruct, firstMonomerSGroupId, { expanded: false });
 
     expect(struct.bonds.get(bondId)?.stereo).toBe(Bond.PATTERN.STEREO.DOWN);
+  });
+
+  describe('repositioning of the neighbour structures', () => {
+    /*
+     * Reproduces creating a monomer out of the middle of a plain chain: the
+     * monomer covers atoms 2..4 plus a branch that makes it taller than the
+     * chain, so its label is not centred between its attachment points.
+     */
+    const createChainWithMonomerInTheMiddle = () => {
+      const struct = new Struct();
+      const atomIds = createZigZagChain(struct, 8);
+      const branchAtomId = struct.atoms.add(
+        new Atom({ label: 'O', pp: new Vec2(2 * Math.cos(Math.PI / 6), -1.5) }),
+      );
+      const branchBond = new Bond({
+        begin: atomIds[3],
+        end: branchAtomId,
+        type: Bond.PATTERN.TYPE.SINGLE,
+      });
+      const branchBondId = struct.bonds.add(branchBond);
+      struct.bondInitHalfBonds(branchBondId, branchBond);
+      struct.initNeighbors();
+
+      const monomer = new Peptide(peptideMonomerItem);
+      monomer.monomerItem.expanded = true;
+      const sgroup = new MonomerMicromolecule(SGroup.TYPES.SUP, monomer);
+      const sgroupId = struct.sgroups.add(sgroup);
+      sgroup.id = sgroupId;
+      sgroup.data.expanded = true;
+      [atomIds[2], atomIds[3], atomIds[4], branchAtomId].forEach((atomId) =>
+        struct.atomAddToSGroup(sgroupId, atomId),
+      );
+      sgroup.pp = new Vec2(2 * Math.cos(Math.PI / 6), -0.5);
+      addAttachmentPoint(struct, sgroupId, atomIds[2], 1);
+      addAttachmentPoint(struct, sgroupId, atomIds[4], 2);
+
+      return {
+        struct,
+        sgroup,
+        sgroupId,
+        // The two atoms outside the monomer that its bonds to outside reach.
+        leftNeighbourId: atomIds[1],
+        rightNeighbourId: atomIds[5],
+        leftAttachmentId: atomIds[2],
+        rightAttachmentId: atomIds[4],
+        atomIds,
+      };
+    };
+
+    it('keeps bonds to outside at their original length and angle when collapsing', () => {
+      const {
+        struct,
+        sgroup,
+        sgroupId,
+        leftNeighbourId,
+        rightNeighbourId,
+        leftAttachmentId,
+        rightAttachmentId,
+      } = createChainWithMonomerInTheMiddle();
+      const pairs = [
+        [leftNeighbourId, leftAttachmentId],
+        [rightNeighbourId, rightAttachmentId],
+      ];
+      // Bond vectors while expanded, measured from the attachment atom.
+      const expandedBondVectors = pairs.map(([neighbourId, attachmentId]) =>
+        Vec2.diff(
+          struct.atoms.get(neighbourId)!.pp,
+          struct.atoms.get(attachmentId)!.pp,
+        ),
+      );
+
+      setExpandMonomerSGroup(createRestruct(struct), sgroupId, {
+        expanded: false,
+      });
+
+      // Collapsed, the same bonds end on the label, so they are measured from it.
+      pairs.forEach(([neighbourId], index) => {
+        const collapsedBondVector = Vec2.diff(
+          struct.atoms.get(neighbourId)!.pp,
+          sgroup.getContractedPosition(struct).position,
+        );
+
+        expect(collapsedBondVector.x).toBeCloseTo(expandedBondVectors[index].x);
+        expect(collapsedBondVector.y).toBeCloseTo(expandedBondVectors[index].y);
+      });
+    });
+
+    it('restores the original positions when expanding back', () => {
+      const { struct, sgroupId, atomIds } = createChainWithMonomerInTheMiddle();
+      const positionsBefore = atomIds.map(
+        (atomId) => new Vec2(struct.atoms.get(atomId)!.pp),
+      );
+
+      setExpandMonomerSGroup(createRestruct(struct), sgroupId, {
+        expanded: false,
+      });
+      setExpandMonomerSGroup(createRestruct(struct), sgroupId, {
+        expanded: true,
+      });
+
+      atomIds.forEach((atomId, index) => {
+        expect(struct.atoms.get(atomId)!.pp.x).toBeCloseTo(
+          positionsBefore[index].x,
+        );
+        expect(struct.atoms.get(atomId)!.pp.y).toBeCloseTo(
+          positionsBefore[index].y,
+        );
+      });
+    });
+
+    it('moves the whole outside fragment as one piece', () => {
+      const { struct, sgroupId, atomIds } = createChainWithMonomerInTheMiddle();
+      const outsideFragment = [atomIds[5], atomIds[6], atomIds[7]];
+      const positionsBefore = outsideFragment.map(
+        (atomId) => new Vec2(struct.atoms.get(atomId)!.pp),
+      );
+
+      setExpandMonomerSGroup(createRestruct(struct), sgroupId, {
+        expanded: false,
+      });
+
+      const shifts = outsideFragment.map((atomId, index) =>
+        Vec2.diff(struct.atoms.get(atomId)!.pp, positionsBefore[index]),
+      );
+      shifts.forEach((shift) => {
+        expect(shift.x).toBeCloseTo(shifts[0].x);
+        expect(shift.y).toBeCloseTo(shifts[0].y);
+      });
+    });
   });
 
   it('keeps connected monomers in one fragment after removing abbreviations', () => {

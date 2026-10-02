@@ -13,10 +13,10 @@
  * fall back to English per-key, which is a worse failure mode than just
  * not offering the language yet).
  */
-import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { format, resolveConfig } from 'prettier';
 
 const NAMESPACES = [
   'common',
@@ -117,8 +117,12 @@ for (const locale of extraLocales) {
 lines.push('} as const;');
 lines.push('');
 
-writeFileSync(outFile, lines.join('\n'));
-execFileSync('npx', ['prettier', '--write', outFile], { stdio: 'ignore' });
+const prettierConfig = await resolveConfig(outFile, { editorconfig: true });
+const formattedSource = await format(lines.join('\n'), {
+  ...prettierConfig,
+  filepath: outFile,
+});
+writeFileSync(outFile, formattedSource);
 console.log(
   `generate-locale-resources: wrote ${path.relative(process.cwd(), outFile)} — base "en" + extra [${extraLocales.join(', ') || 'none'}]`,
 );

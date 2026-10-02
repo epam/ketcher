@@ -21,6 +21,11 @@ Copy/cut serializes the selection to the clipboard; paste deserializes clipboard
 - **WHEN** the user copies a selected fragment and then pastes
 - **THEN** an independent duplicate of the fragment is added to the canvas
 
+#### Scenario: Paste in Flex mode
+
+- **WHEN** the user pastes a fragment in Flex mode
+- **THEN** the fragment's geometric center is placed at the cursor position
+
 #### Scenario: Cut removes the source
 
 - **WHEN** the user cuts a selection

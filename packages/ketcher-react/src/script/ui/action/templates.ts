@@ -16,26 +16,44 @@
 
 import templates from '../data/templates';
 import isHidden from './isHidden';
+import type { Struct } from 'ketcher-core';
+import type { UiAction } from './action.types';
+import type { Tool } from '../../editor/tool/Tool';
 
-const templateLib = {
+type ToolWithMode = Tool & {
+  mode: unknown;
+};
+
+const templateStructs = templates as Struct[];
+
+const isToolWithMode = (tool: Tool | null): tool is ToolWithMode =>
+  typeof tool === 'object' && tool !== null && 'mode' in tool;
+
+const templateLib: Record<string, UiAction> = {
   'template-lib': {
     shortcut: 'Shift+t',
     title: 'Structure Library',
     action: { dialog: 'templates', prop: { tab: null } },
-    selected: (editor) => editor._tool.mode === 'classic',
-    disabled: (editor, server, options) => !options.app.templates,
+    selected: (editor) =>
+      isToolWithMode(editor._tool) && editor._tool.mode === 'classic',
+    disabled: (_editor, _server, options) => !options.app.templates,
     hidden: (options) => isHidden(options, 'template-lib'),
   },
 };
 
-export default templates.reduce((res, struct, i) => {
-  res[`template-${i}`] = {
-    title: `${struct.name}`,
-    shortcut: 't',
-    action: {
-      tool: 'template',
-      opts: { struct },
-    },
-  };
-  return res;
-}, templateLib);
+const templateActions = templateStructs.reduce<Record<string, UiAction>>(
+  (res, struct, i) => {
+    res[`template-${i}`] = {
+      title: `${struct.name}`,
+      shortcut: 't',
+      action: {
+        tool: 'template',
+        opts: { struct },
+      },
+    };
+    return res;
+  },
+  templateLib,
+);
+
+export default templateActions;

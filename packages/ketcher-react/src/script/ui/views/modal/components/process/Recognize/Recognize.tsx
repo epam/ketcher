@@ -18,11 +18,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 import { changeImage, changeVersion } from '../../../../../state/options';
+import type { RecognizeImageFile } from '../../../../../state/options/types';
 
 import { Dialog } from '../../../../components';
 import Input from '../../../../../component/form/Input/Input';
 import OpenButton from '../../../../../component/view/openbutton';
-import type { FileContent } from '../../../../../component/view/openButton.types';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import classes from './Recognize.module.less';
 import { connect } from 'react-redux';
@@ -35,8 +35,6 @@ import { type Struct, ketcherProvider } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
 
 type StructStringOrPromise = string | Promise<unknown> | null;
-type RecognizeImageFile = File | FileContent | null;
-
 function isImage(file: File | null): boolean {
   return file?.type?.includes('image') ?? false;
 }
@@ -268,7 +266,6 @@ const mapDispatchToProps = (
     const res = result as { structStr: string; fragment: boolean };
     dispatch(
       load(res.structStr as unknown as Struct, {
-        rescale: true,
         fragment: res.fragment,
       }),
       // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4

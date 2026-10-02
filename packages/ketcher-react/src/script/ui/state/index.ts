@@ -14,7 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { applyMiddleware, combineReducers, createStore } from 'redux';
+import {
+  applyMiddleware,
+  combineReducers,
+  legacy_createStore as createStore,
+  type Middleware,
+  type Reducer,
+  type Store,
+  type UnknownAction,
+} from 'redux';
+import type { Editor } from 'ketcher-core';
 import { load, onAction } from './shared';
 import optionsReducer, { initOptionsState } from './options';
 import templatesReducer, { initTmplsState } from './templates';
@@ -32,6 +41,14 @@ import { thunk } from 'redux-thunk';
 import toolbarReducer from './toolbar';
 import floatingToolsReducer from './floatingTools';
 import notificationsReducer, { initNotificationsState } from './notifications';
+import type { AppDispatch } from './hooks';
+import type {
+  InitAction,
+  ServerState,
+  SetEditor,
+  SetServerAction,
+  StoreOptions,
+} from './store.types';
 
 export { onAction, load };
 
@@ -43,8 +60,8 @@ const shared = combineReducers({
   toolbar: toolbarReducer,
   modal: modalReducer,
   abbreviationLookup: abbreviationLookupReducer,
-  server: (store = null) => store,
-  editor: (store = null) => store,
+  server: (store: ServerState | null = null) => store,
+  editor: (store: Editor | null = null) => store,
   options: optionsReducer,
   templates: templatesReducer,
   functionalGroups: functionalGroupsReducer,
@@ -54,69 +71,83 @@ const shared = combineReducers({
   notifications: notificationsReducer,
 });
 
-function getRootReducer(setEditor) {
+export type RootState = ReturnType<typeof shared>;
+
+type PreloadedRootState = Pick<
+  RootState,
+  'actionState' | 'editor' | 'modal' | 'server' | 'templates' | 'notifications'
+> & { options: RootState['options'] };
+
+export type AppStore = Store<RootState, UnknownAction> & {
+  dispatch: AppDispatch;
+};
+
+// INIT and UPDATE actions merge arbitrary payload keys into the state
+type WorkingState = Partial<RootState> & Record<string, unknown>;
+
+function getRootReducer(
+  setEditor: SetEditor,
+): Reducer<RootState, UnknownAction, PreloadedRootState> {
   return function root(state, action) {
-    let updatedState = state;
+    let updatedState: WorkingState = { ...state };
 
     switch (action.type) {
       case 'INIT': {
-        setEditor(action.editor);
+        const initAction = action as InitAction;
+        setEditor(initAction.editor);
         // Extract action data (excluding type) and merge into state
-        const data = { ...action };
-        delete data.type;
-        if (data) {
-          updatedState = { ...updatedState, ...data };
-        }
+        const { type: _type, ...data } = initAction;
+        updatedState = { ...updatedState, ...data };
         // Set server
         updatedState = {
           ...updatedState,
-          server: action.server || updatedState.server,
+          server: initAction.server || updatedState.server,
         };
         break;
       }
 
       case 'UPDATE': {
-        const data = { ...action };
-        delete data.type;
-        if (data) {
-          updatedState = { ...updatedState, ...data };
-        }
+        const { type: _type, ...data } = action;
+        updatedState = { ...updatedState, ...data };
         break;
       }
 
       case SET_SERVER: {
+        const { server } = action as SetServerAction;
         updatedState = {
           ...updatedState,
-          server: action.server || updatedState.server,
+          server: server || updatedState.server,
         };
         break;
       }
     }
 
-    const sh = shared(updatedState, {
+    // Slices missing from the preloaded state are filled in by the shared reducers
+    const sh = shared(updatedState as RootState, {
       ...action,
       ...pick(['editor', 'server', 'options'], updatedState),
     });
 
-    const finalState =
-      sh === updatedState.shared
-        ? updatedState
-        : {
-            ...updatedState,
-            ...sh,
-          };
+    const finalState = {
+      ...updatedState,
+      ...sh,
+    };
 
     // TODO: temporary solution. Need to review work with redux store
-    globalThis.currentState = finalState;
+    (globalThis as { currentState?: RootState }).currentState = finalState;
     return finalState;
   };
 }
 
-export default function (options, server, setEditor) {
+export default function (
+  options: StoreOptions,
+  server: ServerState | undefined,
+  setEditor: SetEditor,
+): AppStore {
   const { buttons = {}, customButtons, ...restOptions } = options;
 
   // TODO: redux localStorage here
-  const initState = {
+  const initState: PreloadedRootState = {
     actionState: null,
     editor: null,
     modal: null,
@@ -130,7 +161,7 @@ export default function (options, server, setEditor) {
     notifications: initNotificationsState,
   };
 
-  const middleware = [thunk];
+  const middleware: Middleware[] = [thunk];
   if (
     process.env.NODE_ENV !== 'production' &&
     process.env.KETCHER_ENABLE_REDUX_LOGGER === 'true'
@@ -139,10 +170,14 @@ export default function (options, server, setEditor) {
   }
 
   const rootReducer = getRootReducer(setEditor);
-  return createStore(rootReducer, initState, applyMiddleware(...middleware));
+  return createStore(
+    rootReducer,
+    initState,
+    applyMiddleware(...middleware),
+  ) as AppStore;
 }
 
-export function setServer(server) {
+export function setServer(server: ServerState): SetServerAction {
   return {
     type: SET_SERVER,
     server,

@@ -26,7 +26,7 @@ import {
 import templatesRawData from '../../../../templates/salts-and-solvents.sdf';
 import { MODES } from 'src/constants';
 
-interface SaltsAndSolventsState {
+export interface SaltsAndSolventsState {
   lib: [];
   mode: string;
 }

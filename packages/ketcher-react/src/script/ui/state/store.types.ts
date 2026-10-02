@@ -14,7 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Struct } from 'ketcher-core';
+import type { Editor, Struct, StructService } from 'ketcher-core';
+import type { Action } from 'redux';
+import type { ButtonsConfig } from '../../builders/ketcher/ButtonsConfig';
+import type { CustomButton } from '../../builders/ketcher/CustomButtons';
 
 // TODO: This is a partial type definition of the Redux store.
 // The actual store structure is more complex and should be expanded
@@ -72,4 +75,29 @@ export interface StoreState {
   templates: TemplatesState;
   modal: ModalState;
   options: OptionsState;
+}
+
+export type SetEditor = (editor: Editor) => void;
+
+// In standalone mode the server is a rejected promise instead of a StructService
+export type ServerState = StructService | Promise<never>;
+
+export interface StoreOptions {
+  buttons?: ButtonsConfig;
+  customButtons?: Array<CustomButton>;
+  [key: string]: unknown;
+}
+
+export interface InitAction extends Action<'INIT'> {
+  editor: Editor;
+  server?: ServerState;
+  [key: string]: unknown;
+}
+
+export interface UpdateAction extends Action<'UPDATE'> {
+  [key: string]: unknown;
+}
+
+export interface SetServerAction extends Action<'SET_SERVER'> {
+  server?: ServerState;
 }

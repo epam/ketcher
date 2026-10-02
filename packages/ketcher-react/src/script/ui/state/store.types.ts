@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import type { Editor, Struct, StructService } from 'ketcher-core';
-import type { Action } from 'redux';
+import type { Action, compose } from 'redux';
 import type { ButtonsConfig } from '../../builders/ketcher/ButtonsConfig';
 import type { CustomButton } from '../../builders/ketcher/CustomButtons';
 import type { OptionsState } from './options/types';
@@ -88,3 +88,18 @@ export interface UpdateAction extends Action<'UPDATE'> {
 export interface SetServerAction extends Action<'SET_SERVER'> {
   server?: ServerState;
 }
+
+export type DevToolsSanitizer = (value: unknown) => unknown;
+
+export interface ReduxDevToolsOptions {
+  stateSanitizer?: DevToolsSanitizer;
+  actionSanitizer?: DevToolsSanitizer;
+}
+
+export type ReduxDevToolsCompose = (
+  options?: ReduxDevToolsOptions,
+) => typeof compose;
+
+export type DevToolsGlobal = typeof globalThis & {
+  __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: ReduxDevToolsCompose;
+};

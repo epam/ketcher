@@ -17,6 +17,7 @@
 import {
   applyMiddleware,
   combineReducers,
+  compose,
   legacy_createStore as createStore,
   type Middleware,
   type Reducer,
@@ -43,6 +44,7 @@ import floatingToolsReducer from './floatingTools';
 import notificationsReducer, { initNotificationsState } from './notifications';
 import type { AppDispatch } from './hooks';
 import type {
+  DevToolsGlobal,
   InitAction,
   ServerState,
   SetEditor,
@@ -139,6 +141,45 @@ function getRootReducer(
   };
 }
 
+// The store keeps live objects that are circular and very large: the editor
+// (its renderer holds DOM nodes), the struct service, and the parsed template
+// libraries. DevTools serialises the whole state after every action and keeps
+// a copy per action for time travel, which hangs the tab on a graph that size,
+// so these are replaced on the way out. Everything else stays inspectable, and
+// `templates` keeps its small fields - only the struct library is dropped.
+const NOT_SERIALIZED = '<not serialized>';
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object';
+}
+
+function sanitizeForDevTools(value: unknown): unknown {
+  if (!isRecord(value)) {
+    return value;
+  }
+
+  const sanitized: Record<string, unknown> = { ...value };
+
+  ['editor', 'server', 'functionalGroups', 'saltsAndSolvents'].forEach(
+    (key) => {
+      if (key in sanitized) {
+        sanitized[key] = NOT_SERIALIZED;
+      }
+    },
+  );
+
+  const { templates } = sanitized;
+  if (isRecord(templates) && templates.lib) {
+    sanitized.templates = { ...templates, lib: NOT_SERIALIZED };
+  }
+
+  if (sanitized.lib) {
+    sanitized.lib = NOT_SERIALIZED;
+  }
+
+  return sanitized;
+}
+
 export default function (
   options: StoreOptions,
   server: ServerState | undefined,
@@ -170,11 +211,26 @@ export default function (
   }
 
   const rootReducer = getRootReducer(setEditor);
+  // The Redux DevTools extension only sees stores created with its enhancer,
+  // which this store never used. Reading the global instead of depending on
+  // `@redux-devtools/extension` keeps it a development-only concern: rollup
+  // externalises every entry of `dependencies`, so a package added here would
+  // become a runtime dependency of every ketcher-react consumer. The
+  // `process.env.NODE_ENV` value is inlined at build time, so production
+  // builds collapse this to plain `compose`.
+  const composeEnhancers =
+    (process.env.NODE_ENV !== 'production' &&
+      (globalThis as DevToolsGlobal).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__?.({
+        stateSanitizer: sanitizeForDevTools,
+        actionSanitizer: sanitizeForDevTools,
+      })) ||
+    compose;
+
   return createStore(
     rootReducer,
     initState,
-    applyMiddleware(...middleware),
-  ) as AppStore;
+    composeEnhancers(applyMiddleware(...middleware)),
+  );
 }
 
 export function setServer(server: ServerState): SetServerAction {

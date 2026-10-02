@@ -19,7 +19,6 @@ import {
   type Vec2,
   CoordinateTransformation,
   fromImageResize,
-  fromItemsFuse,
   fromMultipleMove,
   fromSimpleObjectResizing,
   fromTextDeletion,
@@ -410,15 +409,11 @@ class SelectTool implements Tool {
     const isDraggingCustomSgroupOnStructure =
       SGroup.isSuperAtom(possibleSaltOrSolvent?.item) &&
       !FunctionalGroup.isFunctionalGroup(possibleSaltOrSolvent?.item);
-    if (
-      dragCtx &&
+    const isMergePrevented =
+      Boolean(dragCtx) &&
       (isDraggingCustomSgroupOnStructure ||
         isDraggingSaltOrSolventOnStructure ||
-        this.isDraggingStructureOnSaltOrSolvent(dragCtx, struct.sgroups))
-    ) {
-      preventSaltAndSolventsMerge(struct, dragCtx, editor);
-      this.dragCtx = null;
-    }
+        this.isDraggingStructureOnSaltOrSolvent(dragCtx, struct.sgroups));
     /* end */
     if (isArrowDragContext(dragCtx)) {
       if (CommonArrowTool.isDragContextReaction(dragCtx)) {
@@ -437,7 +432,13 @@ class SelectTool implements Tool {
     }
 
     if (isSelectionMoveDragContext(dragCtx)) {
-      if (!isMergingToMacroMolecule(this.editor, dragCtx)) {
+      if (isMergePrevented) {
+        // No merge, but the move still has to be committed to history.
+        if (dragCtx.mergeItems) {
+          editor.selection(null);
+        }
+        dropAndMerge(editor, null, dragCtx.action, dragCtx.copyAction);
+      } else if (!isMergingToMacroMolecule(this.editor, dragCtx)) {
         dropAndMerge(
           editor,
           dragCtx.mergeItems,
@@ -738,24 +739,6 @@ function getHoverTarget(
     id: item.id,
     items: fragSelection,
   };
-}
-
-function preventSaltAndSolventsMerge(
-  struct: ReStruct,
-  dragCtx: Pick<NonNullable<DragContext>, 'action' | 'mergeItems'>,
-  editor: Editor,
-) {
-  const action = dragCtx.action
-    ? fromItemsFuse(struct, null).mergeWith(dragCtx.action)
-    : fromItemsFuse(struct, null);
-  editor.hover(null);
-  if (dragCtx.mergeItems) {
-    editor.selection(null);
-  }
-  editor.update(action);
-  editor.event.message.dispatch({
-    info: false,
-  });
 }
 
 function getMapsForClosestItem(selectFragment: boolean) {

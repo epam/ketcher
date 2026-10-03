@@ -11,6 +11,7 @@ import {
   SequenceNode,
   isTwoStrandedNodeRestrictedForHydrogenBondCreation,
   AmbiguousMonomer,
+  getNextMonomerInChain,
 } from 'ketcher-core';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 
@@ -20,14 +21,21 @@ const generateLabeledNodes = (
   const labeledNodes: LabeledNodesWithPositionInSequence[] = [];
 
   for (const selection of selectionsFlatten) {
-    const {
-      node,
-      nodeIndexOverall,
-      isNucleosideConnectedAndSelectedWithPhosphate,
-      hasR1Connection,
-      twoStrandedNode,
-    } = selection;
+    const { node, nodeIndexOverall, twoStrandedNode } = selection;
     const hasAntisense = Boolean(twoStrandedNode?.antisenseNode);
+    const isAntisense = twoStrandedNode?.antisenseNode === node;
+    const strand = isAntisense ? { isAntisense: true } : {};
+    const hasR1Connection =
+      isAntisense && (node instanceof Nucleotide || node instanceof Nucleoside)
+        ? Boolean(node.sugar.attachmentPointsToBonds.R1)
+        : selection.hasR1Connection;
+    const nextMonomer =
+      isAntisense && node instanceof Nucleoside
+        ? getNextMonomerInChain(node.sugar)
+        : undefined;
+    const isNucleosideConnectedAndSelectedWithPhosphate = isAntisense
+      ? nextMonomer instanceof Phosphate && nextMonomer.selected
+      : selection.isNucleosideConnectedAndSelectedWithPhosphate;
 
     if (node instanceof Nucleotide) {
       labeledNodes.push({
@@ -42,6 +50,7 @@ const generateLabeledNodes = (
         hasR1Connection,
         nodeIndexOverall,
         hasAntisense,
+        ...strand,
       });
     } else if (node instanceof Nucleoside) {
       labeledNodes.push({
@@ -56,6 +65,7 @@ const generateLabeledNodes = (
         hasR1Connection,
         nodeIndexOverall,
         hasAntisense,
+        ...strand,
       });
     } else if (node?.monomer instanceof Phosphate) {
       labeledNodes.push({
@@ -63,6 +73,7 @@ const generateLabeledNodes = (
         phosphateLabel: node?.monomer?.label,
         nodeIndexOverall,
         hasAntisense,
+        ...strand,
       });
     }
   }

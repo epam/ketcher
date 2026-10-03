@@ -1,14 +1,16 @@
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import type {
+import {
   AttachmentPointName,
-  MonomerItemType,
-  MonomerOrAmbiguousType,
+  type MonomerItemType,
+  type MonomerOrAmbiguousType,
 } from 'domain/types';
 import { Command } from 'domain/entities/Command';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
 import type { Atom } from 'domain/entities/CoreAtom';
 import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { assert } from 'utilities';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 import type { DrawingEntitiesManager } from './DrawingEntitiesManager';
 
@@ -18,6 +20,9 @@ export function replaceMonomer(
   newMonomerItem: MonomerOrAmbiguousType,
 ): Command {
   const command = new Command();
+  const hydrogenBondPartners = monomer.hydrogenBonds.map((bond) =>
+    bond.getAnotherMonomer(monomer),
+  );
   const polymerBondInfoList: {
     id: number;
     firstMonomer: BaseMonomer;
@@ -27,7 +32,10 @@ export function replaceMonomer(
     bond?: PolymerBond;
   }[] = Array.from(drawingEntitiesManager.polymerBonds)
     .filter(([_id, bond]) => {
-      return bond.firstMonomer === monomer || bond.secondMonomer === monomer;
+      return (
+        !(bond instanceof HydrogenBond) &&
+        (bond.firstMonomer === monomer || bond.secondMonomer === monomer)
+      );
     })
     .map(([id, bond]) => {
       return {
@@ -138,6 +146,20 @@ export function replaceMonomer(
         monomerToAtomBondInfo.attachmentPoint,
       ),
     );
+  }
+
+  for (const partner of hydrogenBondPartners) {
+    if (partner) {
+      command.merge(
+        drawingEntitiesManager.createPolymerBond(
+          newMonomer,
+          partner,
+          AttachmentPointName.HYDROGEN,
+          AttachmentPointName.HYDROGEN,
+          MACROMOLECULES_BOND_TYPES.HYDROGEN,
+        ),
+      );
+    }
   }
 
   return command;

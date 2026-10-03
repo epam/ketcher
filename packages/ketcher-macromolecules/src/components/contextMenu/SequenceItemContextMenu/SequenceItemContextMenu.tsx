@@ -210,8 +210,7 @@ export const SequenceItemContextMenu = ({
     {
       name: SequenceItemContextMenuNames.modifyInRnaBuilder,
       title: t('contextMenu.sequenceItem.modifyInRnaBuilder'),
-      disabled:
-        !menuProps?.isSelectedOnlyNucleoelements || menuProps.hasAntisense,
+      disabled: !menuProps?.isSelectedOnlyNucleoelements,
       hidden: ({
         props,
       }: {

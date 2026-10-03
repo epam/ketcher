@@ -62,6 +62,8 @@ import {
   selectIsActivePresetNewAndEmpty,
   recalculateRnaBuilderValidations,
   setActiveMonomerKey,
+  selectIsBaseModificationDisabled,
+  SYNC_BASE_MODIFICATION_ERROR,
 } from 'state/rna-builder';
 import { useAppSelector, useIsCompactView, useLayoutMode } from 'hooks';
 import {
@@ -126,6 +128,9 @@ export const RnaEditorExpanded = ({
   const isActivePresetEmpty = useAppSelector(selectIsActivePresetNewAndEmpty);
   const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
   const editor = useAppSelector(selectEditor);
+  const isBaseModificationDisabled = useAppSelector(
+    selectIsBaseModificationDisabled,
+  );
   const presets = useAppSelector(selectAllPresets);
   const activePresetMonomerGroup = useAppSelector(
     selectActivePresetMonomerGroup,
@@ -348,6 +353,9 @@ export const RnaEditorExpanded = ({
   };
 
   const selectGroup = (selectedGroup) => () => {
+    if (selectedGroup === MonomerGroups.BASES && isBaseModificationDisabled) {
+      editor?.events.error.dispatch(SYNC_BASE_MODIFICATION_ERROR);
+    }
     const selectedRNAPartMonomer = selectCurrentMonomerGroup(
       newPreset,
       selectedGroup,
@@ -636,6 +644,13 @@ export const RnaEditorExpanded = ({
   };
 
   const getMonomersName = (groupName: string) => {
+    if (
+      groupName === MonomerGroups.BASES &&
+      isBaseModificationDisabled &&
+      sequenceSelectionGroupNames?.[groupName] === '[multiple]'
+    ) {
+      return '[disabled]';
+    }
     return sequenceSelectionGroupNames?.[groupName];
   };
 

@@ -125,6 +125,7 @@ export interface IRnaLabeledPreset
 export type LabeledNodesWithPositionInSequence = {
   type: Entities;
   nodeIndexOverall: number;
+  isAntisense?: boolean;
   hasAntisense: boolean;
   baseLabel?: string;
   sugarLabel?: string;

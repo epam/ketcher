@@ -143,7 +143,8 @@ export function isMonomerSgroupWithAttachmentPoints(monomer: BaseMonomer) {
  * - Max length 200 characters (total sum of all elements)
  * - Any symbol except formatting ones (tabs, newlines, etc.)
  * - Spaces allowed
- * - Cannot be empty or contain only whitespace/formatting characters
+ * - An empty array is valid (no modification types)
+ * - Cannot contain only whitespace/formatting characters
  *
  * @param modificationTypes - The value to validate (can be string[] or undefined)
  * @returns true if valid, false if invalid
@@ -156,9 +157,8 @@ export function isValidModificationTypes(
     return true;
   }
 
-  // Empty array is invalid
   if (modificationTypes.length === 0) {
-    return false;
+    return true;
   }
 
   // Trim spaces from all elements before validation

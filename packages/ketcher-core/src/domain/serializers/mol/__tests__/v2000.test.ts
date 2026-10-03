@@ -451,6 +451,57 @@ describe('parseCTabV2000', () => {
       expect(struct.atoms.get(1)!.isotope).toBe(11);
     });
 
+    // A property block holds at most 8 entries per line, so writers continue it on
+    // further `M  XXX` lines. Every line must be merged, not just the first one.
+    it('should parse isotopes spread over several M  ISO lines', () => {
+      const atomLine =
+        '   14.0000   -3.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0';
+      const lines = [
+        ...Array.from({ length: 10 }, () => atomLine),
+        'M  ISO  8   1   2   2   2   3   2   4   2   5   2   6   2   7   2   8   2',
+        'M  ISO  2   9   2  10   2',
+      ];
+
+      const struct = molParsers.parseCTabV2000(lines, createCountsLine(10));
+
+      for (let atomId = 0; atomId < 10; atomId++) {
+        expect(struct.atoms.get(atomId)!.isotope).toBe(2);
+      }
+    });
+
+    it('should parse charges spread over several M  CHG lines', () => {
+      const atomLine =
+        '   14.0000   -3.0000    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0';
+      const lines = [
+        ...Array.from({ length: 9 }, () => atomLine),
+        'M  CHG  8   1   1   2   1   3   1   4   1   5   1   6   1   7   1   8   1',
+        'M  CHG  1   9  -1',
+      ];
+
+      const struct = molParsers.parseCTabV2000(lines, createCountsLine(9));
+
+      for (let atomId = 0; atomId < 8; atomId++) {
+        expect(struct.atoms.get(atomId)!.charge).toBe(1);
+      }
+      expect(struct.atoms.get(8)!.charge).toBe(-1);
+    });
+
+    it('should let a later property line override an earlier value for the same atom', () => {
+      const atomLine =
+        '   14.0000   -3.0000    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0';
+      const lines = [
+        atomLine,
+        atomLine,
+        'M  CHG  2   1   1   2   1',
+        'M  CHG  1   2   3',
+      ];
+
+      const struct = molParsers.parseCTabV2000(lines, createCountsLine(2));
+
+      expect(struct.atoms.get(0)!.charge).toBe(1);
+      expect(struct.atoms.get(1)!.charge).toBe(3);
+    });
+
     it('should parse ringBondCount', () => {
       const lines = [
         '   14.0000   -3.0000    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0',

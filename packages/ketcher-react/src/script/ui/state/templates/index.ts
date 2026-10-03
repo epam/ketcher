@@ -91,9 +91,7 @@ export function editTmpl(tmpl) {
             attach?: Record<string, unknown>;
           };
           tmpl.struct.name = data ? data.name.trim() : tmpl.struct.name;
-          tmpl.props = data
-            ? { ...(tmpl.props || {}), ...(data.attach || {}) }
-            : tmpl.props;
+          tmpl.props = data ? { ...tmpl.props, ...data.attach } : tmpl.props;
 
           if (tmpl.props.group === 'User Templates')
             updateLocalStore(getState().templates.lib);

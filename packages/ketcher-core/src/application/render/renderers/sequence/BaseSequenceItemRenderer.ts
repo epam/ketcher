@@ -297,6 +297,18 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
     const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
     let numberToDisplay;
+
+    if (
+      !this.isAntisenseNode &&
+      this.twoStrandedNode?.startsNewSenseChainInRow
+    ) {
+      return senseNodeIndex + 1;
+    }
+
+    if (this.isAntisenseNode && isNumber(antisenseNodeIndex)) {
+      return antisenseNodeIndex + 1;
+    }
+
     const calculateNumberToDisplay = (subChain: BaseSubChain) => {
       if (!this.isSubChainNode(this.node)) return false;
 
@@ -347,10 +359,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       return numberToDisplay;
     }
 
-    if (this.isAntisenseNode && isNumber(antisenseNodeIndex)) {
-      return antisenseNodeIndex + 1;
-    }
-
     return senseNodeIndex + 1;
   }
 
@@ -383,13 +391,33 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private needDisplayCounter(editingNodeIndexOverall?: number) {
+    if (
+      this.isAntisenseNode &&
+      this.twoStrandedNode?.showAntisenseCounterInRow
+    ) {
+      return true;
+    }
+
+    if (
+      this.isAntisenseNode &&
+      this.twoStrandedNode?.hideAntisenseCounterInRow
+    ) {
+      return false;
+    }
+
     return (
       !this.inIgnoreList(this.node) &&
       // don't display counters for first node in chain even if it is last node
       // for example, chain:
       //     3   1     4
       // A A A @ A A A A
-      !this.isSubChainNodeBeginningOfChain &&
+      (!this.isSubChainNodeBeginningOfChain ||
+        (!this.isAntisenseNode &&
+          this.twoStrandedNode?.startsNewSenseChainInRow)) &&
+      !(
+        !this.isAntisenseNode &&
+        this.twoStrandedNode?.isFollowedByConnectedSenseChain
+      ) &&
       // display for first and last in subchain (except last MonomerSequenceNode)
       // for second last in subchain if last is MonomerSequenceNode (ex. Phosphate)
       // for every nth node in row (10th) in chain

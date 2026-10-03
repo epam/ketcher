@@ -78,7 +78,7 @@ function paddedNum(
   width: number,
   precision?: number,
 ): string {
-  const parsedNumber = parseFloat(String(number));
+  const parsedNumber = Number.parseFloat(String(number));
 
   const numStr = parsedNumber.toFixed(precision || 0).replace(',', '.'); // Really need to replace?
   if (numStr.length > width) throw new Error('number does not fit');
@@ -93,9 +93,9 @@ function paddedNum(
  */
 function parseDecimalInt(str: string): number {
   /* reader */
-  const val = parseInt(str, 10);
+  const val = Number.parseInt(str, 10);
 
-  return isNaN(val) ? 0 : val;
+  return Number.isNaN(val) ? 0 : val;
 }
 
 /**
@@ -198,32 +198,31 @@ const fmtInfo: FmtInfo = {
 };
 
 /**
- * Calculate the average bond length of molecules
+ * Calculate the median bond length across molecules
  * @param mols - Array of molecules (Struct instances)
- * @returns Average bond length
+ * @returns Median bond length, or 1 if no positive bond length exists
  */
-function calculateAverageBondLength(mols: Struct[]): number {
-  const bondLengthData: { cnt: number; totalLength: number } = {
-    cnt: 0,
-    totalLength: 0,
-  };
+function calculateMedianBondLength(mols: Struct[]): number {
+  const lengths: number[] = [];
   for (const mol of mols) {
-    const bondLengthDataMol = mol.getBondLengthData();
-    bondLengthData.cnt += bondLengthDataMol.cnt;
-    bondLengthData.totalLength += bondLengthDataMol.totalLength;
+    // Appended one by one on purpose: push(...arr) overflows the stack once a
+    // reaction carries more than ~100k bonds across all its fragments.
+    for (const length of mol.getBondLengths()) {
+      lengths.push(length);
+    }
   }
-  return bondLengthData.cnt === 0
-    ? 1
-    : bondLengthData.totalLength / bondLengthData.cnt;
+  const median = Struct.median(lengths);
+  return median > 0 ? median : 1;
 }
 
-/**
- * Rescale molecules to have a consistent average bond length
- * @param mols - Array of molecules to rescale
- */
+// Same normalization rule as Struct.rescale(): median bond length, not mean, and
+// the same sanity bounds on the resulting factor.
 function rescaleMolecules(mols: Struct[]): void {
-  const avgBondLength = calculateAverageBondLength(mols);
-  const scaleFactor = 1 / avgBondLength;
+  const medianBondLength = calculateMedianBondLength(mols);
+  const scaleFactor = 1 / medianBondLength;
+  if (!Struct.isRescaleFactorSane(scaleFactor)) {
+    return;
+  }
   for (const mol of mols) {
     mol.scale(scaleFactor);
   }
@@ -349,16 +348,16 @@ function layoutReactionFragments(
 ): void {
   let xorig = 0;
   for (let j = 0; j < molReact.length; ++j) {
-    xorig += shiftMol(ret, molReact[j], bbReact[j], xorig, false) + 2.0;
+    xorig += shiftMol(ret, molReact[j], bbReact[j], xorig, false) + 2;
   }
-  xorig += 2.0;
+  xorig += 2;
   for (let j = 0; j < molAgent.length; ++j) {
-    xorig += shiftMol(ret, molAgent[j], bbAgent[j], xorig, true) + 2.0;
+    xorig += shiftMol(ret, molAgent[j], bbAgent[j], xorig, true) + 2;
   }
-  xorig += 2.0;
+  xorig += 2;
 
   for (let j = 0; j < molProd.length; ++j) {
-    xorig += shiftMol(ret, molProd[j], bbProd[j], xorig, false) + 2.0;
+    xorig += shiftMol(ret, molProd[j], bbProd[j], xorig, false) + 2;
   }
 }
 
@@ -538,7 +537,7 @@ function rgMerge(scaffold: Struct, rgroups: Record<number, Struct[]>): Struct {
   scaffold.mergeInto(ret, null, null, false, true);
 
   Object.keys(rgroups).forEach((id: string) => {
-    const rgid = parseInt(id, 10);
+    const rgid = Number.parseInt(id, 10);
 
     for (const ctab of rgroups[rgid]) {
       ctab.rgroups.set(rgid, new RGroup());

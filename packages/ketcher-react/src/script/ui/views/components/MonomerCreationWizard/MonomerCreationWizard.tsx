@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler, react-you-might-not-need-an-effect/no-chain-state-updates */
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/immutability */
 import styles from './MonomerCreationWizard.module.less';
@@ -88,6 +87,7 @@ import type {
 } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
+import { useTranslation } from 'react-i18next';
 
 const getInitialWizardState = (
   type = KetMonomerClass.CHEM,
@@ -113,14 +113,35 @@ const initialWizardState: WizardState = getInitialWizardState();
  * being edited. When `initialValues` is undefined returns the default empty
  * wizard state.
  */
-const getInitialWizardStateForEdit = (
-  initialValues?: MonomerCreationInitialValues,
-): WizardState => {
+type MonomerCreationWizardInitialState = {
+  initialValues?: MonomerCreationInitialValues;
+  hasDefaultAttachmentPoints?: boolean;
+};
+
+const getInitialWizardStateForEdit = ({
+  initialValues,
+  hasDefaultAttachmentPoints,
+}: MonomerCreationWizardInitialState): WizardState => {
   if (!initialValues) {
-    return initialWizardState;
+    if (!hasDefaultAttachmentPoints) {
+      return initialWizardState;
+    }
+
+    return {
+      ...initialWizardState,
+      notifications: new Map([
+        [
+          'defaultAttachmentPoints',
+          {
+            type: NotificationTypes.defaultAttachmentPoints,
+            message: NotificationMessages.defaultAttachmentPoints,
+          },
+        ],
+      ]),
+    };
   }
 
-  return {
+  const state = {
     ...initialWizardState,
     values: {
       type: initialValues.type,
@@ -130,6 +151,23 @@ const getInitialWizardStateForEdit = (
       aliasHELM: initialValues.aliasHELM,
       aliasBILN: initialValues.aliasBILN,
     },
+  };
+
+  if (!hasDefaultAttachmentPoints) {
+    return state;
+  }
+
+  return {
+    ...state,
+    notifications: new Map([
+      [
+        'defaultAttachmentPoints',
+        {
+          type: NotificationTypes.defaultAttachmentPoints,
+          message: NotificationMessages.defaultAttachmentPoints,
+        },
+      ],
+    ]),
   };
 };
 
@@ -804,6 +842,7 @@ type MonomerCreationWizardInternalProps = {
 const MonomerCreationWizardInternal = ({
   monomerCreationState,
 }: MonomerCreationWizardInternalProps) => {
+  const { t } = useTranslation(['components', 'common']);
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
@@ -816,7 +855,11 @@ const MonomerCreationWizardInternal = ({
   // input.
   const [wizardState, wizardStateDispatch] = useReducer(
     wizardReducer,
-    monomerCreationState.editInstanceInitialValues,
+    {
+      initialValues: monomerCreationState.editInstanceInitialValues,
+      hasDefaultAttachmentPoints:
+        monomerCreationState.hasDefaultAttachmentPoints,
+    },
     getInitialWizardStateForEdit,
   );
   const [rnaPresetWizardState, rnaPresetWizardStateDispatch] = useReducer(
@@ -998,6 +1041,7 @@ const MonomerCreationWizardInternal = ({
   const applyTypeChange = (newType: KetMonomerClass | string) => {
     setModificationTypes([]);
     setPhosphatePosition(undefined);
+    editor?.setMonomerCreationSelectedType?.(newType as KetMonomerClass);
     if ((type === 'rnaPreset' || newType === 'rnaPreset') && type !== newType) {
       wizardStateDispatch({
         type: 'ResetWizard',
@@ -1049,10 +1093,6 @@ const MonomerCreationWizardInternal = ({
       });
     }
   };
-
-  useEffect(() => {
-    editor?.setMonomerCreationSelectedType?.(values.type);
-  }, [editor, values.type]);
 
   const monomerTypeSelectOptions = useMemo(
     () =>
@@ -1126,14 +1166,25 @@ const MonomerCreationWizardInternal = ({
   };
 
   // Recompute atom ownership highlights only after component structures change
-  // while ownership validation errors are active.
-  const rnaPresetProblematicAtomIds = useMemo(() => {
+  // while ownership validation errors are active. `problematicAtomIds` is
+  // derived purely from other state/props, so it is computed inline (memoized)
+  // instead of being synchronized one render late via an effect.
+  //
+  // `hasActiveRnaPresetAtomValidationErrors` is intentionally NOT cleared here
+  // when the recomputed set becomes empty: doing so during render caused
+  // React to re-render before committing, so `problematicAtomIds` (guarded by
+  // the now-false flag) became `null` and the sync effect below skipped
+  // pushing the empty set to the editor, leaving stale highlights on screen.
+  // The flag now stays active until the next submit/discard (see
+  // `handleSubmit`/`handleDiscard`), so every recompute — including one that
+  // resolves to an empty set — is always synced to the editor.
+  const problematicAtomIds = useMemo(() => {
     if (
       !editor?.render?.monomerCreationState ||
       !isRnaPresetType ||
       !hasActiveRnaPresetAtomValidationErrors
     ) {
-      return;
+      return null;
     }
 
     return getRnaPresetStructureValidationResult(
@@ -1147,25 +1198,13 @@ const MonomerCreationWizardInternal = ({
     rnaPresetComponentStructures,
   ]);
 
+  // Syncing the derived problematic-atom set to the (non-React) editor render
+  // state is a legitimate effect: it just informs an external system.
   useEffect(() => {
-    if (!rnaPresetProblematicAtomIds) {
-      return;
+    if (problematicAtomIds) {
+      editor.setProblematicAtoms(problematicAtomIds);
     }
-
-    editor.setProblematicAtoms(rnaPresetProblematicAtomIds);
-    if (rnaPresetProblematicAtomIds.size === 0) {
-      setHasActiveRnaPresetAtomValidationErrors(false);
-    }
-  }, [rnaPresetProblematicAtomIds, editor]);
-
-  useEffect(() => {
-    if (monomerCreationState?.hasDefaultAttachmentPoints) {
-      wizardStateDispatch({
-        type: 'AddNotification',
-        id: 'defaultAttachmentPoints',
-      });
-    }
-  }, [monomerCreationState?.hasDefaultAttachmentPoints]);
+  }, [editor, problematicAtomIds]);
 
   // Capture the attachment-point-in-use data once at mount so the effect below
   // can read it without adding it as a reactive dep (the notification is only
@@ -1189,7 +1228,10 @@ const MonomerCreationWizardInternal = ({
     const attachmentPointsList = Array.from(
       attachmentAtomIdsWithExternalBonds.keys(),
     ).join(' and ');
-    const message = `Deleting attachment point ${attachmentPointsList} will result in deleting of bonds that use those attachment points after saving.`;
+    const message = t(
+      'components:monomerCreationWizard.notifications.usedAttachmentPointsWarning',
+      { points: attachmentPointsList },
+    );
 
     wizardStateDispatch({
       type: 'SetNotifications',
@@ -1203,7 +1245,7 @@ const MonomerCreationWizardInternal = ({
         ],
       ]),
     });
-  }, []);
+  }, [t]);
 
   const { assignedAttachmentPoints } = monomerCreationState;
 
@@ -1984,7 +2026,7 @@ const MonomerCreationWizardInternal = ({
       <div className={styles.leftColumn}>
         <p className={styles.wizardTitle}>
           <Icon name={CREATE_MONOMER_TOOL_NAME} />
-          Create Monomer
+          {t('components:contextMenu.createMonomerItem')}
         </p>
 
         <div className={styles.notificationsArea}>
@@ -2011,12 +2053,14 @@ const MonomerCreationWizardInternal = ({
             )}
           >
             <AttributeField
-              title="Type"
+              title={t('components:monomerCreationWizard.typeFieldLabel')}
               control={
                 <Select
                   className={styles.input}
                   options={monomerTypeSelectOptions}
-                  placeholder="Select monomer type"
+                  placeholder={t(
+                    'components:monomerCreationWizard.typeFieldPlaceholder',
+                  )}
                   data-testid="type-select"
                   value={type}
                   onChange={(value) => {
@@ -2027,7 +2071,9 @@ const MonomerCreationWizardInternal = ({
               }
               required
             />
-            <p className={styles.attributesTitle}>Attributes</p>
+            <p className={styles.attributesTitle}>
+              {t('components:monomerCreationWizard.attributesTitle')}
+            </p>
             {isPresetType ? (
               <RnaPresetTabs
                 wizardState={rnaPresetWizardState}
@@ -2073,14 +2119,14 @@ const MonomerCreationWizardInternal = ({
             onClick={handleDiscard}
             data-testid="discard-button"
           >
-            Discard
+            {t('components:monomerCreationWizard.discardButton')}
           </button>
           <button
             className={styles.buttonSubmit}
             onClick={handleSubmit}
             data-testid="submit-button"
           >
-            Submit
+            {t('components:monomerCreationWizard.submitButton')}
           </button>
         </div>
       </div>
@@ -2090,7 +2136,9 @@ const MonomerCreationWizardInternal = ({
           <div className={styles.dialogOverlay}>
             <Dialog
               className={styles.smallDialog}
-              title="Confirm type change"
+              title={t(
+                'components:monomerCreationWizard.confirmTypeChangeTitle',
+              )}
               withDivider={true}
               valid={() => true}
               params={{
@@ -2107,12 +2155,14 @@ const MonomerCreationWizardInternal = ({
                 },
               }}
               buttons={['OK', 'Cancel']}
-              buttonsNameMap={{ OK: 'Yes', Cancel: 'Cancel' }}
+              buttonsNameMap={{
+                OK: t('common:button.yes'),
+                Cancel: t('common:button.cancel'),
+              }}
               primaryButtons={['Cancel']}
             >
               <div className={styles.DialogMessage}>
-                Changing the type will result in a loss of inputted data. Do you
-                wish to proceed?
+                {t('components:monomerCreationWizard.confirmTypeChangeMessage')}
               </div>
             </Dialog>
           </div>,
@@ -2124,7 +2174,9 @@ const MonomerCreationWizardInternal = ({
           <div className={styles.dialogOverlay}>
             <Dialog
               className={styles.smallDialog}
-              title="Non-typical attachment points"
+              title={t(
+                'components:monomerCreationWizard.nonTypicalAttachmentPointsTitle',
+              )}
               withDivider={true}
               valid={() => true}
               params={{
@@ -2172,7 +2224,10 @@ const MonomerCreationWizardInternal = ({
                 onCancel: () => setLeavingGroupDialogMessage(''),
               }}
               buttons={['OK', 'Cancel']}
-              buttonsNameMap={{ OK: 'Yes', Cancel: 'Cancel' }}
+              buttonsNameMap={{
+                OK: t('common:button.yes'),
+                Cancel: t('common:button.cancel'),
+              }}
               primaryButtons={['Cancel']}
             >
               <div className={styles.DialogMessage}>

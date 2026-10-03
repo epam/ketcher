@@ -92,9 +92,8 @@ const SubMenu = ({
 
   const options = subComponents
     .map((item) => item.props.itemId)
-    .filter((item) => item);
-  const activeOptions = options.filter((itemKey) => isActive(itemKey));
-  const activeOption = activeOptions[0];
+    .filter(Boolean);
+  const activeOption = options.find((itemKey) => isActive(itemKey));
 
   const visibleItemId =
     activeItem ?? (activeOption || lastActiveOption || options[0]);

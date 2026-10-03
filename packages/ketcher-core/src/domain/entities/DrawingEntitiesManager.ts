@@ -2121,10 +2121,7 @@ export class DrawingEntitiesManager {
     if (isSnakeMode) {
       const editor = provideEditorInstance();
       const editorSettings = provideEditorSettings();
-      const canvasWidth =
-        editor.canvas.width?.baseVal?.value ||
-        editor.canvas.getBoundingClientRect().width;
-
+      const canvasWidth = editor.canvas.width.baseVal.value;
       const cellWidthInAngstroms =
         SnakeLayoutCellWidth / editorSettings.macroModeScale;
 
@@ -2764,6 +2761,15 @@ export class DrawingEntitiesManager {
     this.rxnPluses.forEach((rxnPlus) => {
       editor.renderersContainer.deleteRxnPlus(rxnPlus);
       editor.renderersContainer.addRxnPlus(rxnPlus);
+    });
+
+    this.sgroups.forEach((sgroup) => {
+      editor.renderersContainer.deleteSGroup(sgroup);
+      editor.renderersContainer.addSGroup(sgroup);
+    });
+    this.stereoFlags.forEach((flag) => {
+      editor.renderersContainer.deleteStereoFlag(flag);
+      editor.renderersContainer.addStereoFlag(flag);
     });
   }
 
@@ -3776,14 +3782,29 @@ export class DrawingEntitiesManager {
     node: SubChainNode,
     isDnaAntisense: boolean,
   ) {
+    // A base already bonded to something besides its sugar cannot pair with
+    // an antisense base (requirement 1.2 of #5678)
     if (node instanceof Nucleotide || node instanceof Nucleoside) {
+      const { rnaBase } = node;
+
+      if (
+        rnaBase.hydrogenBonds.length > 0 ||
+        rnaBase.covalentBonds.length > 1
+      ) {
+        return undefined;
+      }
+
       return DrawingEntitiesManager.getAntisenseBaseLabel(
-        node.rnaBase,
+        rnaBase,
         isDnaAntisense,
       );
     }
 
     if (isUnsplitNucleotideNode(node)) {
+      if (node.monomer.hydrogenBonds.length > 0) {
+        return undefined;
+      }
+
       const naturalAnalogCode =
         node.monomer.monomerItem.props.MonomerNaturalAnalogCode;
 

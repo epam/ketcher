@@ -16,6 +16,7 @@ Ketcher is an open-source web-based chemical structure editor incorporating high
 - :clipboard: Copy and paste between different chemical editors
 - 🛠️ Settings support (Rendering, Displaying, Debugging)
 - :camera: Use of SVG to achieve best quality in-browser chemical structure rendering
+- 🌐 Localized UI (English, Simplified Chinese) with a live language switcher in Settings
 
 ### Editor builtin tools:
 
@@ -137,6 +138,13 @@ const App = () => {
 
 Please refer to the `example/src/App.tsx` file for a complete example of how to integrate Ketcher editor into your application.
 
+## Localization (i18n)
+
+Ketcher ships as an **English-only build by default** — the smallest bundle, no language switcher in Settings, nothing to configure.
+
+Consumers who want multiple languages opt in at build time by setting `KETCHER_MULTI_LANGUAGE_BUILD=true` when building `ketcher-react`/`ketcher-macromolecules` — either export it in the shell, or copy the repo-root `.env.example` to `.env` and set it there. That produces the multi-language variant of the app: a **Settings → General → Language** switcher appears, users can switch language with no reload (applying immediately across toolbars, dialogs, context menus, Settings itself), and the choice is remembered for the next visit. This covers both the `ketcher-react` (small molecules) and `ketcher-macromolecules` UIs.
+
+Currently supported in the multi-language build: **English** and **Simplified Chinese (简体中文)**. Chemistry vocabulary (element symbols, bond-type names, file-format codes) is intentionally kept untranslated in every language, since it must stay consistent with chemistry file formats.
 
 ## Ketcher API
 
@@ -1073,37 +1081,9 @@ updateMonomersLibrary(
 - `monomersData` - Monomer data (KET or SDF format)
 - `params` (optional) - Update parameters
 
-**Throws:**
-
-- `MonomerLibraryUpdateError` - thrown when one or more monomers fail
-  validation. The library is partially updated on throw; valid items already
-  committed are kept, and there is no rollback.
-- `MonomerLibraryUpdateError.skippedItems` - array of skipped entries with
-  `{ name: string; reason: string }` objects.
-- `MonomerLibraryUpdateError.partialSuccess` - `true` when at least one item
-  was committed before the error was raised.
-
-**Error handling example:**
-
-Import `MonomerLibraryUpdateError` from the package entry point used in your app.
-
-```javascript
-try {
-  await ketcher.updateMonomersLibrary(monomersKet, {
-    format: 'ket',
-    shouldPersist: true
-  });
-} catch (error) {
-  if (error instanceof MonomerLibraryUpdateError) {
-    console.warn('Partial success:', error.partialSuccess);
-    error.skippedItems.forEach(({ name, reason }) => {
-      console.warn(`Skipped ${name}: ${reason}`);
-    });
-  } else {
-    throw error;
-  }
-}
-```
+**Invalid monomers:** monomers that fail validation are skipped and reported
+via `KetcherLogger`; valid monomers are still added. The promise does not
+reject because of invalid monomers.
 
 **UpdateMonomersLibraryParams:**
 
@@ -1144,37 +1124,9 @@ replaceMonomersLibrary(
 
 **Parameters:** Same as `updateMonomersLibrary`
 
-**Throws:**
-
-- `MonomerLibraryUpdateError` - thrown when one or more monomers fail
-  validation. The replacement is partially applied on throw; items processed
-  before the failure remain in the library, and there is no rollback.
-- `MonomerLibraryUpdateError.skippedItems` - array of skipped entries with
-  `{ name: string; reason: string }` objects.
-- `MonomerLibraryUpdateError.partialSuccess` - `true` when at least one item
-  was committed before the error was raised.
-
-**Error handling example:**
-
-Import `MonomerLibraryUpdateError` from the package entry point used in your app.
-
-```javascript
-try {
-  await ketcher.replaceMonomersLibrary(monomersKet, {
-    format: 'ket',
-    shouldPersist: true
-  });
-} catch (error) {
-  if (error instanceof MonomerLibraryUpdateError) {
-    console.warn('Partial success:', error.partialSuccess);
-    error.skippedItems.forEach(({ name, reason }) => {
-      console.warn(`Skipped ${name}: ${reason}`);
-    });
-  } else {
-    throw error;
-  }
-}
-```
+**Invalid monomers:** same as `updateMonomersLibrary`: invalid monomers are
+skipped and reported via `KetcherLogger`, and the promise does not reject
+because of them.
 
 **Example:**
 

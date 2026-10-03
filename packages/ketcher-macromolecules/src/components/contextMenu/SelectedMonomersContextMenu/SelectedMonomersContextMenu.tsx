@@ -1,4 +1,5 @@
 import { ItemParams, useContextMenu } from 'react-contexify';
+import { useTranslation } from 'react-i18next';
 import { CONTEXT_MENU_ID } from '../types';
 import { createPortal } from 'react-dom';
 import {
@@ -33,6 +34,7 @@ export const SelectedMonomersContextMenu = ({
   contextMenuEvent,
   isPasteAvailable = true,
 }: SelectedMonomersContextMenuType) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const selectedMonomers = _selectedMonomers || [];
   const editor = useAppSelector(selectEditor);
   const monomerCreationMenu = useMonomerCreationMenu(editor, selectedMonomers);
@@ -76,14 +78,14 @@ export const SelectedMonomersContextMenu = ({
   const menuItems = [
     {
       name: 'copy',
-      title: 'Copy',
+      title: t('contextMenu.copy'),
       icon: <Icon name={'copyMenu' as IconName} />,
       disabled: ({ props = {} }) =>
         isBondContext(props) || isCanvasContext(props),
     },
     {
       name: SequenceItemContextMenuNames.paste,
-      title: 'Paste',
+      title: t('contextMenu.paste'),
       icon: <Icon name={'pasteNavBar' as IconName} />,
       disabled: ({ props = {} }) =>
         !isCanvasContext(props) || !isPasteAvailable,
@@ -91,7 +93,7 @@ export const SelectedMonomersContextMenu = ({
     },
     {
       name: 'create_antisense_rna_chain',
-      title: 'Create Antisense RNA Strand',
+      title: t('contextMenu.selectedMonomers.createRnaAntisenseStrand'),
       separator: false,
       disabled: isAntisenseCreationDisabled(selectedMonomers),
       hidden: ({ props }: { props?: { selectedMonomers?: BaseMonomer[] } }) => {
@@ -103,7 +105,7 @@ export const SelectedMonomersContextMenu = ({
     },
     {
       name: 'create_antisense_dna_chain',
-      title: 'Create Antisense DNA Strand',
+      title: t('contextMenu.selectedMonomers.createDnaAntisenseStrand'),
       disabled: isAntisenseCreationDisabled(selectedMonomers),
       hidden: ({ props }: { props?: { selectedMonomers?: BaseMonomer[] } }) => {
         return (
@@ -115,20 +117,20 @@ export const SelectedMonomersContextMenu = ({
     },
     {
       name: SequenceItemContextMenuNames.modifyAminoAcids,
-      title: 'Modify amino acids',
+      title: t('contextMenu.modifyAminoAcids'),
       disabled: false,
       hidden: !modifyAminoAcidsMenuItems.length,
       subMenuItems: modifyAminoAcidsMenuItems,
     },
     {
       name: 'layout_circular',
-      title: 'Arrange as a Ring',
+      title: t('contextMenu.selectedMonomers.arrangeAsRing'),
       disabled: cyclicStructureFormationDisabled,
       hidden: !isFlexMode,
     },
     {
       name: 'edit_attachment_points',
-      title: 'Edit Attachment Points...',
+      title: t('contextMenu.selectedMonomers.editAttachmentPoints'),
       disabled: ({
         props,
       }: {
@@ -142,7 +144,7 @@ export const SelectedMonomersContextMenu = ({
     ...monomerCreationMenu.menuItems,
     {
       name: 'delete',
-      title: 'Delete',
+      title: t('contextMenu.delete'),
       icon: <Icon name={'deleteMenu' as IconName} />,
       disabled: ({ props = {} }) => isCanvasContext(props),
     },

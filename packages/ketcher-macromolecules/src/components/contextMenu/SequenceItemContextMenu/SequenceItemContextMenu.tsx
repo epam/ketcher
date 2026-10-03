@@ -1,4 +1,5 @@
 import { ItemParams } from 'react-contexify';
+import { useTranslation } from 'react-i18next';
 import { CONTEXT_MENU_ID } from '../types';
 import { createPortal } from 'react-dom';
 import {
@@ -75,9 +76,10 @@ export const SequenceItemContextMenu = ({
   contextMenuEvent,
   isPasteAvailable = true,
 }: SequenceItemContextMenuType) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
-  const menuProps = generateSequenceContextMenuProps(selections);
+  const menuProps = generateSequenceContextMenuProps(selections, t);
   const selectedMonomers: BaseMonomer[] =
     selections?.flat()?.flatMap((nodeSelection) => {
       return nodeSelection.node.monomers;
@@ -135,20 +137,20 @@ export const SequenceItemContextMenu = ({
     },
     {
       name: SequenceItemContextMenuNames.copy,
-      title: 'Copy',
+      title: t('contextMenu.copy'),
       icon: <Icon name={'copyMenu' as IconName} />,
       disabled: selectedMonomers?.length === 0,
     },
     {
       name: SequenceItemContextMenuNames.paste,
-      title: 'Paste',
+      title: t('contextMenu.paste'),
       icon: <Icon name={'pasteNavBar' as IconName} />,
       disabled: !isPasteAvailable,
       separator: true,
     },
     {
       name: SequenceItemContextMenuNames.editSequence,
-      title: 'Edit sequence',
+      title: t('contextMenu.sequenceItem.editSequence'),
       disabled: false,
       hidden: ({
         props,
@@ -158,27 +160,27 @@ export const SequenceItemContextMenu = ({
     },
     {
       name: SequenceItemContextMenuNames.startNewSequence,
-      title: 'Start new sequence',
+      title: t('contextMenu.sequenceItem.startNewSequence'),
       disabled: false,
       separator: isAntisenseBlockVisible || isHydrogenBondBlockVisible,
     },
     {
       name: SequenceItemContextMenuNames.createRnaAntisenseStrand,
-      title: 'Create RNA antisense strand',
+      title: t('contextMenu.sequenceItem.createRnaAntisenseStrand'),
       disabled: isAntisenseCreationDisabled(selectedMonomers),
       hidden: () =>
         !selectedMonomers || !isAntisenseOptionVisible(selectedMonomers),
     },
     {
       name: SequenceItemContextMenuNames.createDnaAntisenseStrand,
-      title: 'Create DNA antisense strand',
+      title: t('contextMenu.sequenceItem.createDnaAntisenseStrand'),
       disabled: isAntisenseCreationDisabled(selectedMonomers),
       hidden: () =>
         !selectedMonomers || !isAntisenseOptionVisible(selectedMonomers),
     },
     {
       name: SequenceItemContextMenuNames.establishHydrogenBond,
-      title: 'Establish Hydrogen Bonds',
+      title: t('contextMenu.sequenceItem.establishHydrogenBonds'),
       disabled: ({
         props,
       }: {
@@ -198,7 +200,7 @@ export const SequenceItemContextMenu = ({
     },
     {
       name: SequenceItemContextMenuNames.deleteHydrogenBond,
-      title: 'Remove hydrogen bonds',
+      title: t('contextMenu.sequenceItem.removeHydrogenBonds'),
       disabled: ({
         props,
       }: {
@@ -220,7 +222,7 @@ export const SequenceItemContextMenu = ({
     },
     {
       name: SequenceItemContextMenuNames.modifyInRnaBuilder,
-      title: 'Modify in RNA Builder...',
+      title: t('contextMenu.sequenceItem.modifyInRnaBuilder'),
       disabled:
         !menuProps?.isSelectedOnlyNucleoelements || menuProps.hasAntisense,
       hidden: ({
@@ -236,7 +238,7 @@ export const SequenceItemContextMenu = ({
     },
     {
       name: SequenceItemContextMenuNames.modifyAminoAcids,
-      title: 'Modify amino acids',
+      title: t('contextMenu.modifyAminoAcids'),
       disabled: false,
       hidden: !modifyAminoAcidsMenuItems.length,
       subMenuItems: modifyAminoAcidsMenuItems,
@@ -245,7 +247,7 @@ export const SequenceItemContextMenu = ({
     ...monomerCreationMenu.menuItems,
     {
       name: SequenceItemContextMenuNames.delete,
-      title: 'Delete',
+      title: t('contextMenu.delete'),
       disabled: selectedMonomers?.length === 0,
       icon: <Icon name={'deleteMenu' as IconName} />,
     },
@@ -392,9 +394,10 @@ export const SequenceItemContextMenu = ({
 
         if (isGoingToDeleteAllHydrogenBondsForAnyChain) {
           editor.events.openConfirmationDialog.dispatch({
-            title: 'Deletion of all Hydrogen Bonds',
-            confirmationText:
-              'Deleting all hydrogen bonds will cause the separation of two chains. Do you wish to proceed?',
+            title: t('contextMenu.sequenceItem.deleteAllHydrogenBondsTitle'),
+            confirmationText: t(
+              'contextMenu.sequenceItem.deleteAllHydrogenBondsConfirm',
+            ),
             onConfirm: () => {
               editor.events.deleteHydrogenBond.dispatch(
                 props.sequenceItemRenderer,

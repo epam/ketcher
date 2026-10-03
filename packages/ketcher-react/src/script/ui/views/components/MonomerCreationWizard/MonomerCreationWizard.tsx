@@ -95,6 +95,7 @@ import {
   isValidMonomerName,
 } from './MonomerCreationWizardFields.utils';
 import { saveLibraryMonomer } from './MonomerCreationWizard.library';
+import { useTranslation } from 'react-i18next';
 
 const getInitialWizardState = (
   type = KetMonomerClass.CHEM,
@@ -884,6 +885,7 @@ type MonomerCreationWizardInternalProps = {
 const MonomerCreationWizardInternal = ({
   monomerCreationState,
 }: MonomerCreationWizardInternalProps) => {
+  const { t } = useTranslation(['components', 'common']);
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
@@ -1279,7 +1281,10 @@ const MonomerCreationWizardInternal = ({
     const attachmentPointsList = Array.from(
       attachmentAtomIdsWithExternalBonds.keys(),
     ).join(' and ');
-    const message = `Deleting attachment point ${attachmentPointsList} will result in deleting of bonds that use those attachment points after saving.`;
+    const message = t(
+      'components:monomerCreationWizard.notifications.usedAttachmentPointsWarning',
+      { points: attachmentPointsList },
+    );
 
     wizardStateDispatch({
       type: 'SetNotifications',
@@ -1293,7 +1298,7 @@ const MonomerCreationWizardInternal = ({
         ],
       ]),
     });
-  }, []);
+  }, [t]);
 
   const { assignedAttachmentPoints } = monomerCreationState;
 
@@ -2118,7 +2123,9 @@ const MonomerCreationWizardInternal = ({
       <div className={styles.leftColumn}>
         <p className={styles.wizardTitle}>
           <Icon name={CREATE_MONOMER_TOOL_NAME} />
-          {originalMonomerItem ? 'Edit Monomer' : 'Create Monomer'}
+          {originalMonomerItem
+            ? t('components:contextMenu.editMonomer')
+            : t('components:contextMenu.createMonomerItem')}
         </p>
 
         <div className={styles.notificationsArea}>
@@ -2145,12 +2152,14 @@ const MonomerCreationWizardInternal = ({
             )}
           >
             <AttributeField
-              title="Type"
+              title={t('components:monomerCreationWizard.typeFieldLabel')}
               control={
                 <Select
                   className={styles.input}
                   options={monomerTypeSelectOptions}
-                  placeholder="Select monomer type"
+                  placeholder={t(
+                    'components:monomerCreationWizard.typeFieldPlaceholder',
+                  )}
                   data-testid="type-select"
                   value={type}
                   onChange={(value) => {
@@ -2161,7 +2170,9 @@ const MonomerCreationWizardInternal = ({
               }
               required
             />
-            <p className={styles.attributesTitle}>Attributes</p>
+            <p className={styles.attributesTitle}>
+              {t('components:monomerCreationWizard.attributesTitle')}
+            </p>
             {isPresetType ? (
               <RnaPresetTabs
                 wizardState={rnaPresetWizardState}
@@ -2210,7 +2221,7 @@ const MonomerCreationWizardInternal = ({
             data-testid="discard-button"
             disabled={isSaving}
           >
-            Discard
+            {t('components:monomerCreationWizard.discardButton')}
           </button>
           <button
             className={styles.buttonSubmit}
@@ -2218,7 +2229,7 @@ const MonomerCreationWizardInternal = ({
             data-testid="submit-button"
             disabled={isSaving}
           >
-            Submit
+            {t('components:monomerCreationWizard.submitButton')}
           </button>
         </div>
       </div>
@@ -2228,7 +2239,9 @@ const MonomerCreationWizardInternal = ({
           <div className={styles.dialogOverlay}>
             <Dialog
               className={styles.smallDialog}
-              title="Confirm type change"
+              title={t(
+                'components:monomerCreationWizard.confirmTypeChangeTitle',
+              )}
               withDivider={true}
               valid={() => true}
               params={{
@@ -2245,12 +2258,14 @@ const MonomerCreationWizardInternal = ({
                 },
               }}
               buttons={['OK', 'Cancel']}
-              buttonsNameMap={{ OK: 'Yes', Cancel: 'Cancel' }}
+              buttonsNameMap={{
+                OK: t('common:button.yes'),
+                Cancel: t('common:button.cancel'),
+              }}
               primaryButtons={['Cancel']}
             >
               <div className={styles.DialogMessage}>
-                Changing the type will result in a loss of inputted data. Do you
-                wish to proceed?
+                {t('components:monomerCreationWizard.confirmTypeChangeMessage')}
               </div>
             </Dialog>
           </div>,
@@ -2262,7 +2277,9 @@ const MonomerCreationWizardInternal = ({
           <div className={styles.dialogOverlay}>
             <Dialog
               className={styles.smallDialog}
-              title="Non-typical attachment points"
+              title={t(
+                'components:monomerCreationWizard.nonTypicalAttachmentPointsTitle',
+              )}
               withDivider={true}
               valid={() => true}
               params={{
@@ -2313,7 +2330,10 @@ const MonomerCreationWizardInternal = ({
                 onCancel: () => setLeavingGroupDialogMessage(''),
               }}
               buttons={['OK', 'Cancel']}
-              buttonsNameMap={{ OK: 'Yes', Cancel: 'Cancel' }}
+              buttonsNameMap={{
+                OK: t('common:button.yes'),
+                Cancel: t('common:button.cancel'),
+              }}
               primaryButtons={['Cancel']}
             >
               <div className={styles.DialogMessage}>

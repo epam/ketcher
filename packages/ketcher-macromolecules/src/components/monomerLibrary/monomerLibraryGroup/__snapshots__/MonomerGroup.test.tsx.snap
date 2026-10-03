@@ -2,7 +2,7 @@
 
 exports[`Monomer Group should apply correct style if selected 1`] = `
 <div
-  class="css-mtuocq"
+  class="css-1fi9oj1"
   data-monomer-item-id="RRMonomerName___RRName"
   data-testid="RRMonomerName___RRName"
 >
@@ -24,7 +24,7 @@ exports[`Monomer Group should apply correct style if selected 1`] = `
   </button>
   <div
     aria-label=""
-    class="css-daj1kg"
+    class="css-aj3s7v"
     data-mui-internal-clone-element="true"
   >
     <svg
@@ -59,7 +59,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           class="css-1a3tnc1"
         >
           <div
-            class="css-yfafb2"
+            class="css-pq9ik7"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
@@ -81,7 +81,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
@@ -98,7 +98,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1nnahju"
+            class="css-1azixe2"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
@@ -120,7 +120,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
@@ -137,7 +137,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-zd6xyf"
+            class="css-2qnjv3"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
@@ -159,7 +159,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
@@ -176,7 +176,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-yfafb2"
+            class="css-pq9ik7"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
@@ -198,7 +198,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
@@ -215,7 +215,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1nnahju"
+            class="css-1azixe2"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
@@ -237,7 +237,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
@@ -270,7 +270,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
         class="css-1a3tnc1"
       >
         <div
-          class="css-yfafb2"
+          class="css-pq9ik7"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
@@ -292,7 +292,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
@@ -309,7 +309,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1nnahju"
+          class="css-1azixe2"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
@@ -331,7 +331,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
@@ -348,7 +348,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-zd6xyf"
+          class="css-2qnjv3"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
@@ -370,7 +370,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
@@ -387,7 +387,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-yfafb2"
+          class="css-pq9ik7"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
@@ -409,7 +409,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
@@ -426,7 +426,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1nnahju"
+          class="css-1azixe2"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
@@ -448,7 +448,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
@@ -533,7 +533,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           class="css-1a3tnc1"
         >
           <div
-            class="css-yfafb2"
+            class="css-pq9ik7"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
@@ -555,7 +555,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
@@ -572,7 +572,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1nnahju"
+            class="css-1azixe2"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
@@ -594,7 +594,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
@@ -611,7 +611,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-zd6xyf"
+            class="css-2qnjv3"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
@@ -633,7 +633,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
@@ -650,7 +650,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-yfafb2"
+            class="css-pq9ik7"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
@@ -672,7 +672,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
@@ -689,7 +689,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1nnahju"
+            class="css-1azixe2"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
@@ -711,7 +711,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
@@ -739,7 +739,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
         class="css-1a3tnc1"
       >
         <div
-          class="css-yfafb2"
+          class="css-pq9ik7"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
@@ -761,7 +761,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
@@ -778,7 +778,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1nnahju"
+          class="css-1azixe2"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
@@ -800,7 +800,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
@@ -817,7 +817,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-zd6xyf"
+          class="css-2qnjv3"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
@@ -839,7 +839,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
@@ -856,7 +856,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-yfafb2"
+          class="css-pq9ik7"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
@@ -878,7 +878,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
@@ -895,7 +895,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1nnahju"
+          class="css-1azixe2"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
@@ -917,7 +917,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg

@@ -6,7 +6,7 @@ import {
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
 import type { D3SvgElementSelection } from 'application/render/types';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { MonomerSize } from 'domain/constants';
 import { Vec2 } from 'domain/entities/vec2';
 import { getStructureBbox } from 'domain/entities/structureBbox';
@@ -30,7 +30,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   private selectionElement;
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
   private path = '';
-  public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
+  declare public bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
     super(polymerBond);
@@ -72,15 +72,15 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
 
   public moveSelection(): void {
     if (
-      this.previousStateOfIsMonomersOnSameHorizontalLine !==
+      this.previousStateOfIsMonomersOnSameHorizontalLine ===
       this.polymerBond.isHorizontal
     ) {
-      this.remove();
-      this.show();
-    } else {
       assert(this.rootElement);
       this.moveStart();
       this.moveEnd();
+    } else {
+      this.remove();
+      this.show();
     }
     this.previousStateOfIsMonomersOnSameHorizontalLine =
       this.polymerBond.isHorizontal;

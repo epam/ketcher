@@ -2,7 +2,7 @@
 
 exports[`Monomer Group should apply correct style if selected 1`] = `
 <div
-  class="css-w61mbe"
+  class="css-1mwj7d"
   data-monomer-item-id="RRMonomerName___RRName"
   data-testid="RRMonomerName___RRName"
 >
@@ -13,27 +13,13 @@ exports[`Monomer Group should apply correct style if selected 1`] = `
   </span>
   <div
     aria-label=""
-    class="css-daj1kg"
+    class="css-aj3s7v"
     data-mui-internal-clone-element="true"
   >
     <svg
       class="autochain css-1u7bcdc"
-      height="13"
-      viewBox="0 0 13 13"
-      width="13"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        clip-rule="evenodd"
-        d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-        fill="currentColor"
-        fill-rule="evenodd"
-      />
-      <path
-        d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-        fill="currentColor"
-      />
-    </svg>
+      name="monomer-autochain"
+    />
   </div>
   <button
     aria-label="Toggle favorite"
@@ -62,7 +48,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           class="css-1a3tnc1"
         >
           <div
-            class="css-mfw0go"
+            class="css-1bi8elg"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
@@ -73,27 +59,13 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
                 class="autochain css-1u7bcdc"
-                height="13"
-                viewBox="0 0 13 13"
-                width="13"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                />
-                <path
-                  d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                  fill="currentColor"
-                />
-              </svg>
+                name="monomer-autochain"
+              />
             </div>
             <button
               aria-label="Toggle favorite"
@@ -104,7 +76,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1mkwiyz"
+            class="css-fjd4hq"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
@@ -115,27 +87,13 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
                 class="autochain css-1u7bcdc"
-                height="13"
-                viewBox="0 0 13 13"
-                width="13"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                />
-                <path
-                  d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                  fill="currentColor"
-                />
-              </svg>
+                name="monomer-autochain"
+              />
             </div>
             <button
               aria-label="Toggle favorite"
@@ -146,7 +104,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-rt02do"
+            class="css-cvcuw4"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
@@ -157,27 +115,13 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
                 class="autochain css-1u7bcdc"
-                height="13"
-                viewBox="0 0 13 13"
-                width="13"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                />
-                <path
-                  d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                  fill="currentColor"
-                />
-              </svg>
+                name="monomer-autochain"
+              />
             </div>
             <button
               aria-label="Toggle favorite"
@@ -188,7 +132,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-mfw0go"
+            class="css-1bi8elg"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
@@ -199,27 +143,13 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
                 class="autochain css-1u7bcdc"
-                height="13"
-                viewBox="0 0 13 13"
-                width="13"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                />
-                <path
-                  d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                  fill="currentColor"
-                />
-              </svg>
+                name="monomer-autochain"
+              />
             </div>
             <button
               aria-label="Toggle favorite"
@@ -230,7 +160,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1mkwiyz"
+            class="css-fjd4hq"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
@@ -241,27 +171,13 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
                 class="autochain css-1u7bcdc"
-                height="13"
-                viewBox="0 0 13 13"
-                width="13"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                />
-                <path
-                  d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                  fill="currentColor"
-                />
-              </svg>
+                name="monomer-autochain"
+              />
             </div>
             <button
               aria-label="Toggle favorite"
@@ -288,7 +204,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
         class="css-1a3tnc1"
       >
         <div
-          class="css-mfw0go"
+          class="css-1bi8elg"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
@@ -299,27 +215,13 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
               class="autochain css-1u7bcdc"
-              height="13"
-              viewBox="0 0 13 13"
-              width="13"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clip-rule="evenodd"
-                d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                fill="currentColor"
-                fill-rule="evenodd"
-              />
-              <path
-                d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                fill="currentColor"
-              />
-            </svg>
+              name="monomer-autochain"
+            />
           </div>
           <button
             aria-label="Toggle favorite"
@@ -330,7 +232,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1mkwiyz"
+          class="css-fjd4hq"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
@@ -341,27 +243,13 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
               class="autochain css-1u7bcdc"
-              height="13"
-              viewBox="0 0 13 13"
-              width="13"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clip-rule="evenodd"
-                d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                fill="currentColor"
-                fill-rule="evenodd"
-              />
-              <path
-                d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                fill="currentColor"
-              />
-            </svg>
+              name="monomer-autochain"
+            />
           </div>
           <button
             aria-label="Toggle favorite"
@@ -372,7 +260,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-rt02do"
+          class="css-cvcuw4"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
@@ -383,27 +271,13 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
               class="autochain css-1u7bcdc"
-              height="13"
-              viewBox="0 0 13 13"
-              width="13"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clip-rule="evenodd"
-                d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                fill="currentColor"
-                fill-rule="evenodd"
-              />
-              <path
-                d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                fill="currentColor"
-              />
-            </svg>
+              name="monomer-autochain"
+            />
           </div>
           <button
             aria-label="Toggle favorite"
@@ -414,7 +288,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-mfw0go"
+          class="css-1bi8elg"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
@@ -425,27 +299,13 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
               class="autochain css-1u7bcdc"
-              height="13"
-              viewBox="0 0 13 13"
-              width="13"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clip-rule="evenodd"
-                d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                fill="currentColor"
-                fill-rule="evenodd"
-              />
-              <path
-                d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                fill="currentColor"
-              />
-            </svg>
+              name="monomer-autochain"
+            />
           </div>
           <button
             aria-label="Toggle favorite"
@@ -456,7 +316,7 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1mkwiyz"
+          class="css-fjd4hq"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
@@ -467,27 +327,13 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
               class="autochain css-1u7bcdc"
-              height="13"
-              viewBox="0 0 13 13"
-              width="13"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clip-rule="evenodd"
-                d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                fill="currentColor"
-                fill-rule="evenodd"
-              />
-              <path
-                d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                fill="currentColor"
-              />
-            </svg>
+              name="monomer-autochain"
+            />
           </div>
           <button
             aria-label="Toggle favorite"
@@ -566,7 +412,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           class="css-1a3tnc1"
         >
           <div
-            class="css-mfw0go"
+            class="css-1bi8elg"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
@@ -577,27 +423,13 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
                 class="autochain css-1u7bcdc"
-                height="13"
-                viewBox="0 0 13 13"
-                width="13"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                />
-                <path
-                  d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                  fill="currentColor"
-                />
-              </svg>
+                name="monomer-autochain"
+              />
             </div>
             <button
               aria-label="Toggle favorite"
@@ -608,7 +440,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1mkwiyz"
+            class="css-fjd4hq"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
@@ -619,27 +451,13 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
                 class="autochain css-1u7bcdc"
-                height="13"
-                viewBox="0 0 13 13"
-                width="13"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                />
-                <path
-                  d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                  fill="currentColor"
-                />
-              </svg>
+                name="monomer-autochain"
+              />
             </div>
             <button
               aria-label="Toggle favorite"
@@ -650,7 +468,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-rt02do"
+            class="css-cvcuw4"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
@@ -661,27 +479,13 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
                 class="autochain css-1u7bcdc"
-                height="13"
-                viewBox="0 0 13 13"
-                width="13"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                />
-                <path
-                  d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                  fill="currentColor"
-                />
-              </svg>
+                name="monomer-autochain"
+              />
             </div>
             <button
               aria-label="Toggle favorite"
@@ -692,7 +496,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-mfw0go"
+            class="css-1bi8elg"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
@@ -703,27 +507,13 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
                 class="autochain css-1u7bcdc"
-                height="13"
-                viewBox="0 0 13 13"
-                width="13"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                />
-                <path
-                  d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                  fill="currentColor"
-                />
-              </svg>
+                name="monomer-autochain"
+              />
             </div>
             <button
               aria-label="Toggle favorite"
@@ -734,7 +524,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1mkwiyz"
+            class="css-fjd4hq"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
@@ -745,27 +535,13 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-aj3s7v"
               data-mui-internal-clone-element="true"
             >
               <svg
                 class="autochain css-1u7bcdc"
-                height="13"
-                viewBox="0 0 13 13"
-                width="13"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                />
-                <path
-                  d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                  fill="currentColor"
-                />
-              </svg>
+                name="monomer-autochain"
+              />
             </div>
             <button
               aria-label="Toggle favorite"
@@ -787,7 +563,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
         class="css-1a3tnc1"
       >
         <div
-          class="css-mfw0go"
+          class="css-1bi8elg"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
@@ -798,27 +574,13 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
               class="autochain css-1u7bcdc"
-              height="13"
-              viewBox="0 0 13 13"
-              width="13"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clip-rule="evenodd"
-                d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                fill="currentColor"
-                fill-rule="evenodd"
-              />
-              <path
-                d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                fill="currentColor"
-              />
-            </svg>
+              name="monomer-autochain"
+            />
           </div>
           <button
             aria-label="Toggle favorite"
@@ -829,7 +591,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1mkwiyz"
+          class="css-fjd4hq"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
@@ -840,27 +602,13 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
               class="autochain css-1u7bcdc"
-              height="13"
-              viewBox="0 0 13 13"
-              width="13"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clip-rule="evenodd"
-                d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                fill="currentColor"
-                fill-rule="evenodd"
-              />
-              <path
-                d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                fill="currentColor"
-              />
-            </svg>
+              name="monomer-autochain"
+            />
           </div>
           <button
             aria-label="Toggle favorite"
@@ -871,7 +619,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-rt02do"
+          class="css-cvcuw4"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
@@ -882,27 +630,13 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
               class="autochain css-1u7bcdc"
-              height="13"
-              viewBox="0 0 13 13"
-              width="13"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clip-rule="evenodd"
-                d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                fill="currentColor"
-                fill-rule="evenodd"
-              />
-              <path
-                d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                fill="currentColor"
-              />
-            </svg>
+              name="monomer-autochain"
+            />
           </div>
           <button
             aria-label="Toggle favorite"
@@ -913,7 +647,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-mfw0go"
+          class="css-1bi8elg"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
@@ -924,27 +658,13 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
               class="autochain css-1u7bcdc"
-              height="13"
-              viewBox="0 0 13 13"
-              width="13"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clip-rule="evenodd"
-                d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                fill="currentColor"
-                fill-rule="evenodd"
-              />
-              <path
-                d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                fill="currentColor"
-              />
-            </svg>
+              name="monomer-autochain"
+            />
           </div>
           <button
             aria-label="Toggle favorite"
@@ -955,7 +675,7 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1mkwiyz"
+          class="css-fjd4hq"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
@@ -966,27 +686,13 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-aj3s7v"
             data-mui-internal-clone-element="true"
           >
             <svg
               class="autochain css-1u7bcdc"
-              height="13"
-              viewBox="0 0 13 13"
-              width="13"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clip-rule="evenodd"
-                d="M10.95.25c1.132 0 2.05.895 2.05 2v8l-.01.204c-.106 1.009-.979 1.796-2.04 1.796H4.784l-.129-.004a2.066 2.066 0 01-1.503-.785l-.074-.102-2.734-4a1.96 1.96 0 01-.08-2.09l.08-.128 2.734-4A2.061 2.061 0 014.655.254L4.784.25h6.166zm-6.166 1c-.32 0-.613.137-.808.357l-.078.1-2.733 4a.956.956 0 000 1.086l2.733 4 .078.1c.195.22.488.357.808.357h6.166c.61 0 1.055-.475 1.055-1v-8c0-.525-.445-1-1.055-1H4.784z"
-                fill="currentColor"
-                fill-rule="evenodd"
-              />
-              <path
-                d="M7.461 5.745h2.494v1H7.46V9.25h-.995V6.745H3.982v-1h2.484V3.25h.995v2.495z"
-                fill="currentColor"
-              />
-            </svg>
+              name="monomer-autochain"
+            />
           </div>
           <button
             aria-label="Toggle favorite"

@@ -88,16 +88,14 @@ export const StructureLibraryDialog = (page: Page) => {
     },
 
     async isTabOpened(tabSection: TabSection): Promise<boolean> {
-      const ariaSelected = await getElement(tabSection).getAttribute(
-        'aria-selected',
-      );
+      const ariaSelected =
+        await getElement(tabSection).getAttribute('aria-selected');
       return ariaSelected === 'true';
     },
 
     async isSectionOpened(sectionName: TemplateLibraryTab): Promise<boolean> {
-      const ariaExpanded = await getElement(sectionName).getAttribute(
-        'aria-expanded',
-      );
+      const ariaExpanded =
+        await getElement(sectionName).getAttribute('aria-expanded');
       return ariaExpanded === 'true';
     },
 
@@ -113,6 +111,8 @@ export const StructureLibraryDialog = (page: Page) => {
     async openTab(tabSection: TabSection) {
       if (!(await this.isTabOpened(tabSection))) {
         await getElement(tabSection).click();
+        // Wait for the content to load after switching tabs
+        await page.waitForTimeout(250);
       }
     },
 

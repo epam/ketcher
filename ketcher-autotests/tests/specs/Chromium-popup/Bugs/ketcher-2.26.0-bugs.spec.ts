@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-inline-comments */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -26,15 +21,14 @@ import {
   readFileContent,
   pasteFromClipboardAndOpenAsNewProject,
   moveMouseAway,
-  getCachedBodyCenter,
   RxnFileFormat,
   SdfFileFormat,
   RdfFileFormat,
   MolFileFormat,
   zoomOutByKeyboard,
+  ArrowType,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import { waitForRender } from '@utils/common';
 
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
@@ -100,16 +94,8 @@ import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
-
-async function removeTail(page: Page, tailName: string, index?: number) {
-  const tailElement = page.getByTestId(tailName);
-  const n = index ?? 0;
-  await waitForRender(page, async () => {
-    await ContextMenu(page, tailElement.nth(n)).click(
-      MultiTailedArrowOption.RemoveTail,
-    );
-  });
-}
+import { MultiTailedArrow } from '@tests/pages/common/canvas/MultiTailedArrow';
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
 
 let page: Page;
 
@@ -324,40 +310,35 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides',
-    async () => {
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/6947
-       * Bug: https://github.com/epam/ketcher/issues/5634
-       * Description: ketcher.getMolfile() not stopped working for macro canvas with Peptide.
-       * Scenario:
-       * 1. Go to Macro - Snake mode
-       * 2. Load from file
-       * 3. Save to MOL V3000
-       */
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas.mol',
-      );
-      await takeEditorScreenshot(page);
-      await verifyFileExport(
-        page,
-        'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas-expected.mol',
-        FileType.MOL,
-        MolFileFormat.v3000,
-      );
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas-expected.mol',
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5634
+     * Description: ketcher.getMolfile() not stopped working for macro canvas with Peptide.
+     * Scenario:
+     * 1. Go to Macro - Snake mode
+     * 2. Load from file
+     * 3. Save to MOL V3000
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas.mol',
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas-expected.mol',
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Case 11: Export to SDF V3000 not returns SDF V2000', async ({
     MoleculesCanvas: _,
@@ -674,8 +655,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SettingsDialog(page).closeWindowButton.click();
   });
 
-  test('Case 24: Bond/monomer tooltip preview placed correct in on edge cases', async () => {
-    // Works wrong in popup mode because of the bug: https://github.com/epam/ketcher/issues/7503
+  test('Case 24: Bond/monomer tooltip preview placed correct in on edge cases', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5557
@@ -686,23 +668,37 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Hover over the bond/monomer
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Chromium-popup/Bond tooltip preview placed wrong in on edge cases (popup).ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('75');
     await CommonLeftToolbar(page).areaSelectionTool();
+    const expectPreviewInsideCanvas = async () => {
+      const canvas = await page.locator('#polymer-editor-canvas').boundingBox();
+      const tooltip = await MonomerPreviewTooltip(page).window.boundingBox();
+      if (!canvas || !tooltip) {
+        throw new Error('Canvas and monomer preview must be visible');
+      }
+      expect(tooltip.x).toBeGreaterThanOrEqual(canvas.x);
+      expect(tooltip.y).toBeGreaterThanOrEqual(canvas.y);
+      expect(tooltip.x + tooltip.width).toBeLessThanOrEqual(
+        canvas.x + canvas.width,
+      );
+      expect(tooltip.y + tooltip.height).toBeLessThanOrEqual(
+        canvas.y + canvas.height,
+      );
+    };
     await getMonomerLocator(page, Peptide.Cys_Bn).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await expectPreviewInsideCanvas();
     await takeEditorScreenshot(page);
     await moveMouseAway(page);
 
     const _25mo3rSugar = getMonomerLocator(page, Sugar._25mo3r);
     await _25mo3rSugar.hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await expectPreviewInsideCanvas();
     await takeEditorScreenshot(page);
     await moveMouseAway(page);
   });
@@ -724,26 +720,33 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
-    const middleOfTheScreen = await getCachedBodyCenter(page);
-    await waitForRender(page, async () => {
-      await ContextMenu(page, middleOfTheScreen).click(
-        MultiTailedArrowOption.AddNewTail,
-      );
-    });
+    const multiTailedArrow = await MultiTailedArrow(
+      page,
+      getArrowLocator(page, {
+        arrowType: ArrowType.MultiTailedArrow,
+        arrowId: 0,
+      }),
+    );
+    await ContextMenu(page, multiTailedArrow).click(
+      MultiTailedArrowOption.AddNewTail,
+    );
+
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await multiTailedArrow.bottomTailMoveHandler.hover({ force: true });
     await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
-    await removeTail(page, 'tails-0-move');
+    await multiTailedArrow.removeTail({ tailIndex: 0 });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
-  test('Case 26: Edit Attachment Points dialog cant cause invalid connection between monomers', async () => {
+  test('Case 26: Edit Attachment Points dialog cant cause invalid connection between monomers', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5205
@@ -758,9 +761,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 7. Take screenshot
      */
     const bondLine = getBondLocator(page, {});
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasMacro(
       page,
       'KET/Chromium-popup/two-nucleotides.ket',
@@ -783,7 +783,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await AttachmentPointsDialog(page).reconnect();
   });
 
-  test('Case 27: Atom/Bond selection not remains on the canvas after clear canvas', async () => {
+  test('Case 27: Atom/Bond selection not remains on the canvas after clear canvas', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5788
@@ -794,9 +796,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Select all
      * 4. Press Clear canvas button
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Chromium-popup/Bond properties are not implemented.ket',
@@ -835,7 +834,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     });
   });
 
-  test('Case 29: Bonds between micro and macro structures can be selected and deleted in Macro mode', async () => {
+  test('Case 29: Bonds between micro and macro structures can be selected and deleted in Macro mode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5686
@@ -847,9 +848,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Delete the selected structures
      * 5. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Chromium-popup/Bonds between micro and macro structures can be selected and deleted.ket',
@@ -861,7 +859,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 30: Micro structures connected to polymer chains are shown on Sequence mode canvas', async () => {
+  test('Case 30: Micro structures connected to polymer chains are shown on Sequence mode canvas', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5673
@@ -872,9 +872,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Switch to Macro mode - Sequence
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Chromium-popup/Micro structures connected to polymer chains are not shown on Sequence mode canvas.ket',
@@ -886,7 +883,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 31: Moving of selected microstructures on macro canvas works correct', async () => {
+  test('Case 31: Moving of selected microstructures on macro canvas works correct', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5659
@@ -898,9 +897,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Move selected structures to the right
      * 5. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Chromium-popup/Bond properties are not implemented.ket',
@@ -970,7 +966,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeLeftToolbarScreenshot(page);
   });
 
-  test('Case 34: Clear canvas work for micro structures on macro mode', async () => {
+  test('Case 34: Clear canvas work for micro structures on macro mode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5657
@@ -980,9 +978,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from file
      * 3. Press Clear canvas button
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Chromium-popup/Bond properties are not implemented.ket',
@@ -1029,9 +1024,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/monomers-connected-to-microstructures.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await verifyFileExport(
       page,
       'Molfiles-V3000/Chromium-popup/monomers-connected-to-microstructures-expected.mol',
@@ -1049,7 +1042,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     });
   });
 
-  test('Case 37: Loading a KET file in macro mode, bond connections are preserved and microstructures are not shifted', async () => {
+  test('Case 37: Loading a KET file in macro mode, bond connections are preserved and microstructures are not shifted', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5886
@@ -1058,9 +1053,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 1. Open file in macro mode->Flex mode
      * 2. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Chromium-popup/monomers-connected-to-microstructures.ket',
@@ -1331,6 +1323,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Atoms);
     await SettingsDialog(page).setOptionValue(GeneralSetting.AtomColoring);
     await SettingsDialog(page).apply();
     await takeEditorScreenshot(page);
@@ -1354,7 +1348,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 48: System shouldnt allow user to export alternatives ambiguous monomers to IDT (since only mixtures are supported)', async () => {
+  test('Case 48: System shouldnt allow user to export alternatives ambiguous monomers to IDT (since only mixtures are supported)', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/Indigo/issues/2440
@@ -1366,9 +1362,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Click on Save to IDT
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Chromium-popup/Ambiguous DNA Bases (alternatives).ket',
@@ -1790,7 +1783,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test.fail(
     'Case 65: System should throw an error in case of wrong IUBcode',
-    async () => {
+    async ({ FlexCanvas: _ }) => {
       // Test fail due to https://github.com/epam/indigo/issues/3220
       /*
        * Test case: https://github.com/epam/ketcher/issues/6947
@@ -1800,9 +1793,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
        * 1. Toggle to Macro - Flex mode
        * 2. Load IDT from paste from clipboard way: (YY:00330067)
        */
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-        enableFlexMode: true,
-      });
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.IDT,
@@ -1818,35 +1808,36 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     },
   );
 
-  test.fail('Case 66: Sugar R should not save in the IDT format', async () => {
-    // Test fails due to https://github.com/epam/Indigo/issues/3200
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/Indigo/issues/2122
-     * Description: Sugar R should not save in the IDT format.
-     * Scenario:
-     * 1. Toggle to Macro - Flex mode
-     * 2. Add Sugar R to Canvas
-     * 3. Save to IDT
-     * 4. Take screenshot
-     */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
-    await Library(page).dragMonomerOnCanvas(Sugar.R, {
-      x: 0,
-      y: 0,
-      fromCenter: true,
-    });
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.IDT,
-    );
-    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-    expect(errorMessage).toContain(
-      'Convert error! Sequence saver: Cannot save molecule in IDT format - sugar whithout base.',
-    );
-    await ErrorMessageDialog(page).close();
-    await SaveStructureDialog(page).cancel();
-  });
+  test.fail(
+    'Case 66: Sugar R should not save in the IDT format',
+    async ({ FlexCanvas: _ }) => {
+      // Test fails due to https://github.com/epam/Indigo/issues/3200
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6947
+       * Bug: https://github.com/epam/Indigo/issues/2122
+       * Description: Sugar R should not save in the IDT format.
+       * Scenario:
+       * 1. Toggle to Macro - Flex mode
+       * 2. Add Sugar R to Canvas
+       * 3. Save to IDT
+       * 4. Take screenshot
+       */
+
+      await Library(page).dragMonomerOnCanvas(Sugar.R, {
+        x: 0,
+        y: 0,
+        fromCenter: true,
+      });
+      await CommonTopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.IDT,
+      );
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
+        'Convert error! Sequence saver: Cannot save molecule in IDT format - sugar whithout base.',
+      );
+      await ErrorMessageDialog(page).close();
+      await SaveStructureDialog(page).cancel();
+    },
+  );
 });

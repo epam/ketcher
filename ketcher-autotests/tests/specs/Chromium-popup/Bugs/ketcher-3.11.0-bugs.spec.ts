@@ -1,6 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { Page, test, expect } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -105,6 +102,8 @@ import {
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { getSGroupLabelLocator } from '@utils/canvas/s-group-signes/getSGroupLabelLocator';
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
+import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
 
@@ -529,10 +528,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await openFileAndAddToCanvasMacro(page, 'KET/sugar-phosphate-core.ket');
     expect(
-      await ContextMenu(
-        page,
-        getBondLocator(page, { bondId: 45 }),
-      ).isOptionEnabled(MacroBondOption.Delete),
+      await ContextMenu(page, getBondLocator(page, {}).first()).isOptionEnabled(
+        MacroBondOption.Delete,
+      ),
     ).toBeTruthy();
   });
 
@@ -681,7 +679,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const contentTypeFontSize = await contentTypeSelector
       .locator('span')
       .first()
-      .evaluate((element) => window.getComputedStyle(element).fontSize);
+      .evaluate((element) => globalThis.getComputedStyle(element).fontSize);
     expect(contentTypeFontSize).toBe('12px');
 
     await PasteFromClipboardDialog(page).selectMonomerType(
@@ -690,7 +688,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const monomerTypeFontSize = await monomerTypeSelector
       .locator('span')
       .first()
-      .evaluate((element) => window.getComputedStyle(element).fontSize);
+      .evaluate((element) => globalThis.getComputedStyle(element).fontSize);
     expect(monomerTypeFontSize).toBe('12px');
 
     await PasteFromClipboardDialog(page).selectPeptideLetterType(
@@ -699,7 +697,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const peptideLetterFontSize = await peptideLettersSelector
       .locator('span')
       .first()
-      .evaluate((element) => window.getComputedStyle(element).fontSize);
+      .evaluate((element) => globalThis.getComputedStyle(element).fontSize);
     expect(peptideLetterFontSize).toBe('12px');
 
     await takeEditorScreenshot(page);
@@ -817,33 +815,29 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 21 - In Macro mode clicking on Selection tool icon does not open dropdown menu as in Micro mode', async () => {
+  test('Case 21 - In Macro mode clicking on Selection tool icon does not open dropdown menu as in Micro mode', async ({
+    FlexCanvas: _,
+  }) => {
     /* Test case: https://github.com/epam/ketcher/issues/8974
      * Bug: https://github.com/epam/ketcher/issues/7776
      * Steps:
      * 1. Open Ketcher in Macro mode.
      * 2. Click on the Selection tool icon (not the triangle part).
-     * 3. Observe that no dropdown appears.
+     * 3. Observe that dropdown appears.
      * 4. Switch to Micro mode.
      * 5. Click on the Selection tool icon → dropdown with all selection tools appears.
      * Expected Result:
      * Clicking on the Selection tool icon (both in Macro and Micro modes) should open the dropdown menu with all selection tools, providing a consistent user experience.
      */
-
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'KET/Ambiguous-monomers-bonds/ketcherPhosphateMixedAndAlternatives.ket',
-    );
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await expect(
+      CommonLeftToolbar(page).toolSelectionDropdownPanel,
+    ).toBeVisible();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
-    await takeElementScreenshot(
-      page,
-      CommonLeftToolbar(page).areaSelectionDropdownButton,
-      {
-        padding: 90,
-      },
-    );
+    await expect(
+      CommonLeftToolbar(page).toolSelectionDropdownPanel,
+    ).toBeVisible();
   });
 
   test('Case 22 - Context menu remains visible after creating cyclic structure via right-click menu', async ({
@@ -859,7 +853,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
      * Expected Result: After clicking Create cyclic structure, the context menu should automatically close.
      * The cyclic structure should be generated, and the canvas should regain focus immediately.
      */
-
+    await pageReload(page);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/polymer-chain-that-meets-cyclic-structure-criteria.ket',
@@ -929,7 +923,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       MacroFileType.HELM,
       'CHEM1{[4aPEGMal]}|CHEM2{[4FB]}|CHEM3{[A6OH]}$CHEM2,CHEM1,1:R2-1:R1|CHEM3,CHEM2,1:R2-1:R1$$$V2.0',
     );
-    const chainlocator = getSymbolLocator(page, { symbolId: 7 });
+    const chainlocator = getSymbolLocator(page, { symbolAlias: '@' });
     const locators = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).handTool();
     await chainlocator.hover({ force: true });
@@ -937,9 +931,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await CommonLeftToolbar(page).areaSelectionTool();
     await chainlocator.hover({ force: true });
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeElementScreenshot(page, chainlocator, {
-      padding: 120,
-    });
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Case 25 - 5NitInd unsplit nucleotide should be shown as X symbol instead of @ one', async ({
@@ -956,9 +948,10 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await Library(page).openRNASection(RNASection.Nucleotides);
     await Library(page).selectMonomer(Nucleotide._5NitInd);
-    await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 0 }), {
-      padding: 30,
-    });
+    const symbol = getSymbolLocator(page, { symbolId: 0, symbolAlias: 'X' });
+    await expect(symbol).toHaveCount(1);
+    await expect(symbol).toBeVisible();
+    await expect(symbol).toHaveText('X');
   });
 
   test('Case 26 - In case of multipal R1 or R2 groups second R1/R2 groups should be assigned to the smallest available Rn (n>2) if available', async () => {
@@ -1157,12 +1150,22 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       'Molfiles-V2000/complex-molecule-for-layout.mol',
     );
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
-    await selectWithLasso(page, 420, 290, [
-      { x: 740, y: 170 },
-      { x: 740, y: 455 },
-      { x: 300, y: 455 },
-      { x: 300, y: 170 },
-      { x: 420, y: 290 },
+    // Start on empty canvas: starting on an atom or bracket drags it instead of
+    // drawing the lasso. Edges keep >= 12px from every atom, so a few pixels of
+    // canvas offset left by earlier tests cannot change what gets selected.
+    await selectWithLasso(page, 300, 180, [
+      { x: 620, y: 180 },
+      { x: 620, y: 285 },
+      { x: 735, y: 285 },
+      { x: 735, y: 312 },
+      { x: 765, y: 312 },
+      { x: 765, y: 470 },
+      { x: 600, y: 470 },
+      { x: 600, y: 437 },
+      { x: 428, y: 437 },
+      { x: 428, y: 480 },
+      { x: 300, y: 480 },
+      { x: 300, y: 180 },
     ]);
     await layout(page);
     await CommonTopRightToolbar(page).setZoomInputValue('40');
@@ -1289,7 +1292,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     });
 
     await Library(page).dragMonomerOnCanvas(Base._Base2, {
-      x: 30,
+      x: 50,
       y: 10,
       fromCenter: true,
     });
@@ -1366,7 +1369,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
      */
 
     await openFileAndAddToCanvasAsNewProject(page, 'CDXML/cdxml-3261.cdxml');
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, getArrowLocator(page, {}), {
+      padding: 250,
+    });
     await verifyFileExport(
       page,
       'CDXML/cdxml-3261-expected.cdxml',

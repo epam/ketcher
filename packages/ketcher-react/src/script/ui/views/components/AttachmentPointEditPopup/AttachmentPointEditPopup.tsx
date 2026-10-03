@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import type {
-  AtomLabel,
-  AttachmentPointClickData,
-  AttachmentPointName,
+import {
+  type AtomLabel,
+  type AttachmentPointClickData,
+  type AttachmentPointName,
+  assert,
 } from 'ketcher-core';
 import AttachmentPointControls from '../MonomerCreationWizard/components/AttachmentPointControls/AttachmentPointControls';
 import { useAttachmentPointSelectsData } from '../MonomerCreationWizard/hooks/useAttachmentPointSelectsData';
@@ -11,7 +13,6 @@ import { useAttachmentPointSelectsData } from '../MonomerCreationWizard/hooks/us
 import styles from './AttachmentPointEditPopup.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import type { Editor } from '../../../../editor';
-import assert from 'assert';
 
 type Props = {
   data: AttachmentPointClickData;
@@ -34,6 +35,7 @@ const AttachmentPointEditPopup = ({
   onClose,
   editor,
 }: Props) => {
+  const { t } = useTranslation('components');
   const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -127,7 +129,7 @@ const AttachmentPointEditPopup = ({
       ref={popupRef}
       data-testid="attachment-point-edit-popup"
     >
-      <p className={styles.title}>Edit connection point</p>
+      <p className={styles.title}>{t('attachmentPointEditPopup.title')}</p>
       <AttachmentPointControls
         data={selectsData}
         onNameChange={handleNameChange}

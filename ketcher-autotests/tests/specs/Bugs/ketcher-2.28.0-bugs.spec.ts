@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
@@ -11,6 +8,7 @@ import {
   clickInTheMiddleOfTheCanvas,
   copyToClipboardByKeyboard,
   MacroFileType,
+  moveMouseAway,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToCanvas,
@@ -59,6 +57,7 @@ import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureL
 import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 declare global {
   interface Window {
@@ -125,8 +124,9 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let changeEventSubscriber: any;
   await page.evaluate(() => {
-    changeEventSubscriber = window.ketcher.editor.subscribe('change', () =>
-      console.log('hello'),
+    changeEventSubscriber = globalThis.window.ketcher.editor.subscribe(
+      'change',
+      () => console.log('hello'),
     );
   });
   await BottomToolbar(page).structureLibrary();
@@ -137,13 +137,16 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
   await atomToolbar.clickAtom(Atom.Bromine);
 
   await clickInTheMiddleOfTheCanvas(page);
-  await takeEditorScreenshot(page, {
-    hideMonomerPreview: true,
-    hideMacromoleculeEditorScrollBars: true,
-  });
+  await moveMouseAway(page);
+
+  const brAtom = getAtomLocator(page, { atomLabel: 'Br' });
+  await expect(brAtom).toHaveCount(1);
 
   await page.evaluate(() => {
-    window.ketcher.editor.unsubscribe('change', changeEventSubscriber);
+    globalThis.window.ketcher.editor.unsubscribe(
+      'change',
+      changeEventSubscriber,
+    );
   });
 });
 
@@ -169,8 +172,9 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let changeEventSubscriber: any;
   await page.evaluate(() => {
-    changeEventSubscriber = window.ketcher.editor.subscribe('change', () =>
-      console.log('in change event'),
+    changeEventSubscriber = globalThis.window.ketcher.editor.subscribe(
+      'change',
+      () => console.log('in change event'),
     );
   });
 
@@ -181,7 +185,10 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
   expect(consoleMessage.text()).toBe('in change event');
 
   await page.evaluate(() => {
-    window.ketcher.editor.unsubscribe('change', changeEventSubscriber);
+    globalThis.window.ketcher.editor.unsubscribe(
+      'change',
+      changeEventSubscriber,
+    );
   });
 });
 

@@ -28,7 +28,7 @@ const getIsMonomerCreationWizardEnabled = (editor: Editor): boolean => {
     Editor.prototype,
     'isMonomerCreationWizardEnabled',
     editor,
-  ) as boolean;
+  );
 };
 
 const getTerminalRGroupAtoms = (editor: Editor) => {

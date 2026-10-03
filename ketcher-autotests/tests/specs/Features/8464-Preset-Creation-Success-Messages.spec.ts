@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import { shiftCanvas } from '@utils/index';
@@ -10,7 +8,7 @@ import {
   MonomerType as MonomerTypeInDropdown,
 } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
-import { NotificationBanner } from '@tests/pages/molecules/canvas/NotificationBanner';
+import { NotificationBannerOnMicro } from '@tests/pages/molecules/canvas/NotificationBannerOnMicro';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;
@@ -70,17 +68,16 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await dialog.submit();
 
     // Verify notification appears in standalone environment
-    await NotificationBanner(page).waitForBecomeVisible();
-    const notificationText = await NotificationBanner(
-      page,
-    ).getNotificationText();
+    await NotificationBannerOnMicro(page).waitForBecomeVisible();
+    const notificationText =
+      await NotificationBannerOnMicro(page).getNotificationText();
     expect(notificationText).toContain(
       'The preset was successfully added to the library',
     );
 
     // Verify the notification mechanism works (can be closed/dismissed)
-    expect(await NotificationBanner(page).isVisible()).toBeTruthy();
-    await NotificationBanner(page).close();
-    await NotificationBanner(page).waitForBecomeHidden();
+    expect(await NotificationBannerOnMicro(page).isVisible()).toBeTruthy();
+    await NotificationBannerOnMicro(page).close();
+    await NotificationBannerOnMicro(page).waitForBecomeHidden();
   });
 });

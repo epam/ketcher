@@ -223,7 +223,7 @@ function sgroupAttachmentPointToStruct(
     atomId,
     leavingAtomId,
     attachmentId,
-    attachmentId && !isNaN(Number(attachmentId))
+    attachmentId && !Number.isNaN(Number(attachmentId))
       ? Number(attachmentId)
       : attachmentPointNumber,
   );

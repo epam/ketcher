@@ -107,7 +107,7 @@ export function normalizeSettingsForCore(
   }
 
   if (typeof settings.imageResolution === 'string') {
-    transformed.imageResolution = parseInt(settings.imageResolution, 10);
+    transformed.imageResolution = Number.parseInt(settings.imageResolution, 10);
   }
 
   if (settings.showHydrogenLabels === 'all') {

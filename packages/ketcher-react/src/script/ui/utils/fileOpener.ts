@@ -14,24 +14,47 @@
  * limitations under the License.
  ***************************************************************************/
 import * as CFB from 'cfb';
+import type {
+  ActiveXObjectConstructor,
+  FileContent,
+  FileSystemObject,
+  FileWithMsClose,
+  OpenerFunction,
+} from './fileOpener.types';
 
-export function fileOpener(server) {
-  return new Promise((resolve, reject) => {
+const ForReading = 1;
+
+function getActiveXObject(): ActiveXObjectConstructor | undefined {
+  return (globalThis as { ActiveXObject?: ActiveXObjectConstructor })
+    .ActiveXObject;
+}
+
+function isThenable(value: unknown): value is PromiseLike<unknown> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as PromiseLike<unknown>).then === 'function'
+  );
+}
+
+export function fileOpener(server?: unknown): Promise<OpenerFunction> {
+  return new Promise<OpenerFunction>((resolve, reject) => {
+    const ActiveXObject = getActiveXObject();
     // TODO: refactor return
     if (globalThis.FileReader) {
       resolve(throughFileReader);
-    } else if (globalThis.ActiveXObject) {
+    } else if (ActiveXObject) {
       try {
-        const fso = new globalThis.ActiveXObject('Scripting.FileSystemObject');
+        const fso = new ActiveXObject('Scripting.FileSystemObject');
         resolve((file) => Promise.resolve(throughFileSystemObject(fso, file)));
       } catch (e) {
         reject(
           e instanceof Error ? e : new Error('Failed to open file via ActiveX'),
         );
       }
-    } else if (server) {
+    } else if (isThenable(server)) {
       resolve(
-        server.then(() => {
+        server.then((): OpenerFunction => {
           throw Error("Server doesn't still support echo method");
         }),
       );
@@ -41,7 +64,7 @@ export function fileOpener(server) {
   });
 }
 
-function arrayBufferToBase64(buffer) {
+function arrayBufferToBase64(buffer: ArrayLike<number>): string {
   let binary = '';
   const bytes = new Uint8Array(buffer);
   const len = bytes.byteLength;
@@ -51,43 +74,53 @@ function arrayBufferToBase64(buffer) {
   return btoa(binary);
 }
 
-function throughFileReader(file) {
+function readPPTXStructures(buffer: ArrayBuffer): string[] {
+  const cfb = CFB.read(new Uint8Array(buffer), { type: 'array' });
+  const structures: string[] = [];
+  cfb.FullPaths.forEach((path) => {
+    if (path.endsWith('.bin')) {
+      const ole = CFB.find(cfb, path);
+      if (!ole) return;
+      const sdf = CFB.find(CFB.parse(ole.content), 'CONTENTS');
+      if (!sdf) return;
+      const base64String = arrayBufferToBase64(sdf.content);
+      if (base64String.startsWith('VmpDRDAxMDAEAw')) {
+        structures.push(base64String);
+      }
+    }
+  });
+  return structures;
+}
+
+function throughFileReader(file: FileWithMsClose): Promise<FileContent> {
   const CDX = 'cdx';
   const PPTX = 'pptx';
-  let fileType;
+  let fileType: typeof CDX | typeof PPTX | undefined;
   if (file.name.endsWith('cdx') && !file.name.endsWith('b64cdx')) {
     fileType = CDX;
   } else if (file.name.endsWith('pptx')) {
     fileType = PPTX;
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise<FileContent>((resolve, reject) => {
     const rd = new FileReader();
 
-    rd.onload = (e) => {
-      let content, structures;
-      let cfb;
+    rd.onload = () => {
+      const { result } = rd;
+      let content: FileContent;
       switch (fileType) {
         case CDX:
-          content = rd.result.split(',').at(-1);
+          content = String(result).split(',').at(-1) ?? '';
           break;
         case PPTX:
-          cfb = CFB.read(new Uint8Array(e.target.result), { type: 'array' });
-          structures = [];
-          cfb.FullPaths.forEach((path) => {
-            if (path.endsWith('.bin')) {
-              const ole = CFB.find(cfb, path);
-              const sdf = CFB.find(CFB.parse(ole?.content), 'CONTENTS');
-              const base64String = arrayBufferToBase64(sdf?.content);
-              if (base64String.startsWith('VmpDRDAxMDAEAw')) {
-                structures.push(base64String);
-              }
-            }
-          });
-          content = { structures, isPPTX: true };
+          content = {
+            structures:
+              result instanceof ArrayBuffer ? readPPTXStructures(result) : [],
+            isPPTX: true,
+          };
           break;
         default:
-          content = rd.result;
+          content = typeof result === 'string' ? result : '';
           break;
       }
       if (file.msClose) file.msClose();
@@ -111,9 +144,9 @@ function throughFileReader(file) {
   });
 }
 
-function throughFileSystemObject(fso, file) {
+function throughFileSystemObject(fso: FileSystemObject, file: File): string {
   // IE9 and below
-  const fd = fso.OpenTextFile(file.name, 1);
+  const fd = fso.OpenTextFile(file.name, ForReading);
   const content = fd.ReadAll();
   fd.Close();
   return content;

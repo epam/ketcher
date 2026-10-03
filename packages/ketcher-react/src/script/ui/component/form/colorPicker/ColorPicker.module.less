@@ -34,8 +34,7 @@
   background-color: @color-background-primary;
   color: @color-text-primary;
   font-size: @font-size-input;
-  padding-right: 7px;
-  padding-left: 3px;
+  padding-inline: 3px 7px;
   cursor: default;
   box-sizing: border-box;
   display: flex;
@@ -60,7 +59,7 @@
 
 .expandIcon {
   width: 16px;
-  margin-left: auto;
+  margin-inline-start: auto;
   transform: rotate(180deg);
   transition: transform 300ms ease-in-out;
 }
@@ -121,8 +120,8 @@
   box-shadow:
     /* stylelint-disable-next-line declaration-property-value-no-unknown */
     0 0 0 2px @color-background-primary,
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    0 0 0 3px @color-grey-6;
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */ 0 0
+      0 3px @color-grey-6;
 }
 
 // ── Custom colors section ─────────────────────────────────────────────────────
@@ -372,7 +371,7 @@
   .button-primary();
 
   flex: 1 0 0;
-   gap: 1px;
+  gap: 1px;
 }
 
 .checkIcon {

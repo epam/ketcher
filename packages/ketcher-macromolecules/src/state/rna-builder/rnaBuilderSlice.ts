@@ -45,6 +45,7 @@ import {
 import { transformRnaPresetToRnaLabeledPreset } from './rnaBuilderSlice.helper';
 import { getValidations } from 'helpers/rnaValidations';
 import {
+  isShortNameOnlySearch,
   selectAxoLabsAliasesByPresetName,
   selectSearchFilter,
 } from 'state/library';
@@ -581,10 +582,15 @@ export const selectFilteredPresets = createSelector(
     phosphateFilter,
   ): Array<IRnaPreset & { favorite?: boolean }> => {
     const searchText = searchFilter.toLowerCase();
+    // See isShortNameOnlySearch for why '-' and '_' bypass multi-field matching.
+    const shortNameOnly = isShortNameOnlySearch(searchText);
 
     return presetsAll
       .filter((item: IRnaPreset) => {
         const name = item.name?.toLowerCase();
+        if (shortNameOnly) {
+          return name?.includes(searchText) ?? false;
+        }
         const sugarName = item.sugar?.label?.toLowerCase();
         const phosphateName = item.phosphate?.label?.toLowerCase();
         const baseName = item.base?.label?.toLowerCase();

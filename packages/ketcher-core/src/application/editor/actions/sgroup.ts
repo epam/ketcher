@@ -262,7 +262,11 @@ export function setExpandMonomerSGroup(
       }
 
       if (hasEffectiveCurrentStereo && !hasEffectiveOtherStereo) {
-        if (bondToOutside.begin !== atomInsideCurrentMonomer) {
+        if (bondToOutside.begin === atomInsideCurrentMonomer) {
+          action.addOp(
+            new BondAttr(bondId, 'stereo', currentMonomerStereoValue),
+          );
+        } else {
           action.mergeWith(
             fromMonomerBondFlipWithNewStereo(
               struct,
@@ -270,13 +274,11 @@ export function setExpandMonomerSGroup(
               currentMonomerStereoValue,
             ),
           );
-        } else {
-          action.addOp(
-            new BondAttr(bondId, 'stereo', currentMonomerStereoValue),
-          );
         }
       } else if (!hasEffectiveCurrentStereo && hasEffectiveOtherStereo) {
-        if (bondToOutside.begin !== atomOutsideCurrentMonomer) {
+        if (bondToOutside.begin === atomOutsideCurrentMonomer) {
+          action.addOp(new BondAttr(bondId, 'stereo', otherMonomerStereoValue));
+        } else {
           action.mergeWith(
             fromMonomerBondFlipWithNewStereo(
               struct,
@@ -284,8 +286,6 @@ export function setExpandMonomerSGroup(
               otherMonomerStereoValue,
             ),
           );
-        } else {
-          action.addOp(new BondAttr(bondId, 'stereo', otherMonomerStereoValue));
         }
       } else if (hasEffectiveCurrentStereo && hasEffectiveOtherStereo) {
         action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.NONE));
@@ -541,29 +541,6 @@ export function setExpandMonomerSGroup(
   return action.perform(restruct);
 }
 
-// todo delete after supporting expand - collapse for 2 attachment points
-export function expandSGroupWithMultipleAttachmentPoint(restruct) {
-  const action = new Action();
-
-  const struct = restruct.molecule;
-
-  struct.sgroups.forEach((sgroup: SGroup) => {
-    if (
-      sgroup.isNotContractible(struct) &&
-      !(sgroup instanceof MonomerMicromolecule) &&
-      !SGroup.isSuperAtom(sgroup)
-    ) {
-      action.mergeWith(
-        setExpandSGroup(restruct, sgroup.id, {
-          expanded: true,
-        }),
-      );
-    }
-  });
-
-  return action;
-}
-
 export function sGroupAttributeAction(id, attrs) {
   const action = new Action();
 
@@ -748,9 +725,9 @@ export function fromSgroupAddition(
   }
 
   action.addOp(
-    type !== 'DAT'
-      ? new SGroupAddToHierarchy(sgid)
-      : new SGroupAddToHierarchy(sgid, -1, []),
+    type === 'DAT'
+      ? new SGroupAddToHierarchy(sgid, -1, [])
+      : new SGroupAddToHierarchy(sgid),
   );
 
   action = action.perform(restruct);

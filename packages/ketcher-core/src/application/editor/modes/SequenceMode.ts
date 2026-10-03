@@ -950,9 +950,11 @@ export class SequenceMode extends BaseMode {
     }
 
     if (this.needToEditAntisense && currentTwoStrandedNode?.antisenseNode) {
+      // A dash stands for the R2 bond of its first connected node on either
+      // strand, so that is the node whose bond has to go.
       this.deleteBondToNextNodeInChain(
         currentTwoStrandedNode.antisenseNode instanceof BackBoneSequenceNode
-          ? currentTwoStrandedNode.antisenseNode.secondConnectedNode
+          ? currentTwoStrandedNode.antisenseNode.firstConnectedNode
           : currentTwoStrandedNode.antisenseNode,
         modelChanges,
       );
@@ -1913,9 +1915,9 @@ export class SequenceMode extends BaseMode {
           }
 
           this.selectionStartCaretPosition =
-            this.selectionStartCaretPosition !== -1
-              ? this.selectionStartCaretPosition
-              : SequenceRenderer.caretPosition;
+            this.selectionStartCaretPosition === -1
+              ? SequenceRenderer.caretPosition
+              : this.selectionStartCaretPosition;
           SequenceRenderer.shiftArrowSelectionInEditMode(event);
 
           if (arrowKey === 'ArrowLeft' || arrowKey === 'ArrowRight') {

@@ -300,11 +300,7 @@ export class Render {
       }
 
       const isAutoScale = this.options.autoScale || this.options.downScale;
-      if (!isAutoScale) {
-        if (!this.oldCb) this.oldCb = new Box2Abs();
-        this.scrollbar.update();
-        this.options.offset = this.options.offset ?? new Vec2();
-      } else {
+      if (isAutoScale) {
         const sz1 = bb.sz();
         const marg = this.options.autoScaleMargin;
         const mv = new Vec2(marg, marg);
@@ -328,6 +324,10 @@ export class Render {
           csz.x * rescale,
           csz.y * rescale,
         );
+      } else {
+        if (!this.oldCb) this.oldCb = new Box2Abs();
+        this.scrollbar.update();
+        this.options.offset = this.options.offset ?? new Vec2();
       }
 
       notifyRenderComplete();

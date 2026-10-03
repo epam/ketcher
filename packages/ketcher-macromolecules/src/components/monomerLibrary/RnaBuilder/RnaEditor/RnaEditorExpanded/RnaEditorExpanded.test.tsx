@@ -18,6 +18,8 @@ import { Provider as StoreProvider } from 'react-redux';
 import { ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
+import i18next from 'i18next';
+import macromoleculesDialogs from 'src/locales/en/macromoleculesDialogs.json';
 import { RnaEditorExpanded } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/RnaEditorExpanded';
 import { EmptyFunction } from 'helpers';
 import { configureAppStore } from 'state';
@@ -33,6 +35,13 @@ import { defaultTheme } from 'theming/defaultTheme';
 import { generateSequenceContextMenuProps } from 'components/contextMenu/SequenceItemContextMenu/helpers';
 
 const testTheme = merge(createTheme(), { ketcher: defaultTheme });
+const i18nTestInstance = i18next.createInstance();
+i18nTestInstance.init({
+  lng: 'en',
+  resources: { en: { macromoleculesDialogs } },
+  interpolation: { escapeValue: false, prefix: '{', suffix: '}' },
+});
+const t = i18nTestInstance.getFixedT('en', 'macromoleculesDialogs');
 
 const useLayoutModeMock = jest.fn(() => 'sequence-layout-mode');
 const useIsCompactViewMock = jest.fn(() => true);
@@ -107,13 +116,16 @@ describe('RNA Builder duplex base restrictions', () => {
     }
     jest.spyOn(SequenceRenderer, 'getNodeByPointer').mockReturnValue(pair);
     const selectedNodes = selectBoth ? [sense, antisense] : [sense];
-    const contextMenu = generateSequenceContextMenuProps([
-      selectedNodes.map((node) => ({
-        node,
-        nodeIndexOverall: 0,
-        twoStrandedNode: pair,
-      })),
-    ])!;
+    const contextMenu = generateSequenceContextMenuProps(
+      [
+        selectedNodes.map((node) => ({
+          node,
+          nodeIndexOverall: 0,
+          twoStrandedNode: pair,
+        })),
+      ],
+      t,
+    )!;
     const error = jest.fn();
     const store = configureAppStore({
       editor: {

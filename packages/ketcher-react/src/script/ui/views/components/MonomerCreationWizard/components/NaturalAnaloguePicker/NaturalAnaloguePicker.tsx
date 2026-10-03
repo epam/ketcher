@@ -7,7 +7,10 @@ import styles from './NaturalAnaloguePicker.module.less';
 import NaturalAnalogueChip from '../NaturalAnalogueChip/NaturalAnalogueChip';
 import { Icon } from 'components';
 import { KetMonomerClass } from 'ketcher-core';
+import { isNaturalAnalogueRequired } from '../../MonomerCreationWizardFields.utils';
 import { useTranslation } from 'react-i18next';
+
+export { isNaturalAnalogueRequired };
 
 interface ChipGridSelectProps {
   monomerType: KetMonomerClass | 'rnaPreset' | undefined;
@@ -55,16 +58,6 @@ const rnaOptions = [
   { value: 'U', label: 'U', color: '#CA7DE3' },
   { value: 'X', label: 'X', color: '#CCCBD6' },
 ];
-
-export const isNaturalAnalogueRequired = (
-  monomerType: KetMonomerClass | 'rnaPreset' | undefined,
-) => {
-  return (
-    monomerType === KetMonomerClass.AminoAcid ||
-    monomerType === KetMonomerClass.Base ||
-    monomerType === KetMonomerClass.RNA
-  );
-};
 
 const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
   monomerType,

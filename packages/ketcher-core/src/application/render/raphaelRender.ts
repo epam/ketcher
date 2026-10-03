@@ -106,7 +106,7 @@ export class Render {
   public options: RenderOptions;
   public combinedHover: Visel | null = null;
   public viewBox!: ViewBox;
-  private readonly userOpts: Partial<RenderOptions>;
+  private userOpts: Partial<RenderOptions>;
   private oldCb: Box2Abs | null = null;
   private scrollbar: ScrollbarContainer;
   private resizeObserver: ResizeObserver | null = null;
@@ -158,10 +158,20 @@ export class Render {
     this.resizeObserver = null;
   };
 
+  /**
+   * The options this render was asked for, without the values defaultOptions
+   * derives from them. This is the right base for building a render with
+   * changed options: the derived values get recomputed instead of carried over.
+   */
+  get userOptions(): Partial<RenderOptions> {
+    return this.userOpts;
+  }
+
   updateOptions(opts: string) {
     try {
       const passedOptions = JSON.parse(opts);
       if (passedOptions && typeof passedOptions === 'object') {
+        this.userOpts = { ...this.userOpts, ...passedOptions };
         this.options = { ...this.options, ...passedOptions };
         return this.options;
       }

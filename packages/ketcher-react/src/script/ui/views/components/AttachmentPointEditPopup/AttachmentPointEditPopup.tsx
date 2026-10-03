@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
   type AtomLabel,
@@ -35,6 +36,7 @@ const AttachmentPointEditPopup = ({
   onClose,
   editor,
 }: Props) => {
+  const { t } = useTranslation('components');
   const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -215,7 +217,7 @@ const AttachmentPointEditPopup = ({
       ref={popupRef}
       data-testid="attachment-point-edit-popup"
     >
-      <p className={styles.title}>Edit connection point</p>
+      <p className={styles.title}>{t('attachmentPointEditPopup.title')}</p>
       <AttachmentPointControls
         data={selectsData}
         onNameChange={handleNameChange}

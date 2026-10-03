@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -20,9 +21,10 @@ import {
   ketcherProvider,
   KetSerializer,
 } from 'ketcher-core';
+import i18n from '../../../i18n/i18n';
 
 async function copyImageToClipboard() {
-  const state = global.currentState;
+  const state = globalThis.currentState;
   const editor = state.editor;
   const options = state.options;
   const struct = editor.structSelected();
@@ -36,11 +38,11 @@ async function copyImageToClipboard() {
       backgroundColor: '255, 255, 255',
       bondThickness: options.settings.bondThickness || defaultBondThickness,
     });
-    const item = new ClipboardItem({ [image.type]: image }); // eslint-disable-line no-undef
+    const item = new ClipboardItem({ [image.type]: image });
     await navigator.clipboard.write([item]);
   } catch (e) {
     KetcherLogger.error('copyImageToClipboard.js::copyImageToClipboard', e);
-    errorHandler('This feature is not available in your browser');
+    errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));
   }
 }
 

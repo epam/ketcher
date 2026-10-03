@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-// stylelint-disable selector-pseudo-class-no-unknown
 // stylelint-disable no-descending-specificity
 @import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
@@ -70,16 +69,16 @@
 
 .accordionSummaryWrapper {
   margin: 0;
-  padding-left: @padding-container;
+  padding-inline-start: @padding-container;
   /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border-bottom: 1px solid @color-grey-3;
   background-color: @color-background-primary;
   width: 100%;
   border-top: none;
-  border-left: none;
-  border-right: none;
+  border-inline-start: none;
+  border-inline-end: none;
   font: inherit;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
 
   &:disabled {

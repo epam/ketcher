@@ -261,7 +261,7 @@ export class Ketcher {
 
   async getMolfile(molfileFormat?: MolfileFormat): Promise<string> {
     if (this.containsReaction()) {
-      throw Error(
+      throw new Error(
         'The structure cannot be saved as *.MOL due to reaction arrows.',
       );
     }
@@ -308,7 +308,7 @@ export class Ketcher {
       throw new Error('RXN format is not available in macro mode');
     }
     if (!this.containsReaction()) {
-      throw Error(
+      throw new Error(
         'The structure cannot be saved as *.RXN: there is no reaction arrows.',
       );
     }

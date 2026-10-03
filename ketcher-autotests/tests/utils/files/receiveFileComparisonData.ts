@@ -50,7 +50,8 @@ type FileTypeHandler =
 
 const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.KET]: getKet,
-  [FileType.CDX]: getCdx, // This actually returns Base64 CDX content. https://www.youtube.com/watch?v=-Ui4prpCZ0w
+  // This actually returns Base64 CDX content. https://www.youtube.com/watch?v=-Ui4prpCZ0w
+  [FileType.CDX]: getCdx,
   [FileType.CDXML]: getCdxml,
   [FileType.SMARTS]: getSmarts,
   [FileType.SMILES]: getSmiles,
@@ -205,10 +206,12 @@ async function receiveFile({
     ? { method: methodName, format: fileFormat }
     : { method: methodName };
 
-  await page.waitForFunction(() => window.ketcher);
+  await page.waitForFunction(() => globalThis.window.ketcher);
 
   const file = await page.evaluate(({ method, format }) => {
-    return format ? window.ketcher[method](format) : window.ketcher[method]();
+    return format
+      ? globalThis.window.ketcher[method](format)
+      : globalThis.window.ketcher[method]();
   }, pageData);
 
   return file.split('\n');

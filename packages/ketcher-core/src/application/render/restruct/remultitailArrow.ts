@@ -54,7 +54,9 @@ export class ReMultitailArrow extends ReObject {
 
   static getTailIdFromRefName(name: string): number | null {
     if (name.startsWith(MultitailArrowRefName.TAILS)) {
-      return parseInt(name.replace(`${MultitailArrowRefName.TAILS}-`, ''));
+      return Number.parseInt(
+        name.replace(`${MultitailArrowRefName.TAILS}-`, ''),
+      );
     }
     return null;
   }
@@ -484,7 +486,7 @@ export class ReMultitailArrow extends ReObject {
           : acc;
       },
       {
-        distance: Infinity,
+        distance: Number.POSITIVE_INFINITY,
         ref: null,
       } as MultitailArrowClosestReferencePosition,
     );

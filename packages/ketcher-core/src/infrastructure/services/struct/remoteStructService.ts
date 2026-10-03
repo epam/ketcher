@@ -92,7 +92,7 @@ function request(
 
   const mergedHeaders = {
     Accept: 'application/json',
-    ...(headers ?? {}),
+    ...headers,
   };
 
   let response: any;
@@ -148,11 +148,11 @@ function indigoCall(
     options,
     responseHandler?: (promise: Promise<any>) => Promise<any>,
   ) {
-    const body = { ...(data ?? {}) };
+    const body = { ...data };
     body.options = {
-      ...(body.options ?? {}),
-      ...(defaultOptions ?? {}),
-      ...(options ?? {}),
+      ...body.options,
+      ...defaultOptions,
+      ...options,
     };
     return request(
       method,

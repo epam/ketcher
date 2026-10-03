@@ -255,12 +255,12 @@ export class SequenceMode extends BaseMode {
     editor.events.toggleSequenceEditMode.dispatch(true);
   }
 
-  public turnOffEditMode() {
+  public turnOffEditMode(needToRemoveSelection = true) {
     if (!this.isEditMode) return;
     const editor = provideEditorInstance();
 
     this.isEditMode = false;
-    this.initialize(false, true, true);
+    this.initialize(false, needToRemoveSelection, true);
     editor.events.toggleSequenceEditMode.dispatch(false);
   }
 
@@ -273,11 +273,11 @@ export class SequenceMode extends BaseMode {
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(true);
   }
 
-  public turnOffSequenceEditInRNABuilderMode() {
+  public turnOffSequenceEditInRNABuilderMode(needToRemoveSelection = true) {
     const editor = provideEditorInstance();
 
     this.isEditInRNABuilderMode = false;
-    this.initialize(false, true, false);
+    this.initialize(false, needToRemoveSelection, false);
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(false);
   }
 
@@ -472,7 +472,10 @@ export class SequenceMode extends BaseMode {
   }
 
   public mousedown(event: MouseEvent) {
-    if (this.isEditInRNABuilderMode) return;
+    if (this.isEditInRNABuilderMode) {
+      provideEditorInstance().events.cancelSequenceEditInRNABuilderMode.dispatch();
+      return;
+    }
     const eventData: BaseRenderer | NewSequenceButton | undefined =
       event.target?.__data__;
     const isClickedOnEmptyPlace = !(
@@ -667,7 +670,7 @@ export class SequenceMode extends BaseMode {
   ) {
     const editor = provideEditorInstance();
     const modelChanges = new Command();
-    const { modelChanges: addedNodeModelChanges, node: nodeToAdd } =
+    const creationResult =
       nextNodeToConnect instanceof Nucleotide ||
       nextNodeToConnect instanceof Nucleoside ||
       (nextNodeToConnect instanceof BackBoneSequenceNode &&
@@ -683,6 +686,13 @@ export class SequenceMode extends BaseMode {
             newNodePosition,
             getSugarBySequenceType(editor.sequenceTypeEnterMode),
           );
+
+    if (!creationResult) {
+      return;
+    }
+
+    const { modelChanges: addedNodeModelChanges, node: nodeToAdd } =
+      creationResult;
 
     // If creation failed (symbol not found in library), return undefined
     if (!addedNodeModelChanges || !nodeToAdd) {
@@ -850,9 +860,11 @@ export class SequenceMode extends BaseMode {
     }
 
     if (this.needToEditAntisense && currentTwoStrandedNode?.antisenseNode) {
+      // A dash stands for the R2 bond of its first connected node on either
+      // strand, so that is the node whose bond has to go.
       this.deleteBondToNextNodeInChain(
         currentTwoStrandedNode.antisenseNode instanceof BackBoneSequenceNode
-          ? currentTwoStrandedNode.antisenseNode.secondConnectedNode
+          ? currentTwoStrandedNode.antisenseNode.firstConnectedNode
           : currentTwoStrandedNode.antisenseNode,
         modelChanges,
       );
@@ -1813,9 +1825,9 @@ export class SequenceMode extends BaseMode {
           }
 
           this.selectionStartCaretPosition =
-            this.selectionStartCaretPosition !== -1
-              ? this.selectionStartCaretPosition
-              : SequenceRenderer.caretPosition;
+            this.selectionStartCaretPosition === -1
+              ? SequenceRenderer.caretPosition
+              : this.selectionStartCaretPosition;
           SequenceRenderer.shiftArrowSelectionInEditMode(event);
 
           if (arrowKey === 'ArrowLeft' || arrowKey === 'ArrowRight') {

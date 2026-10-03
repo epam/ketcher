@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,24 +14,32 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RGroup } from 'domain/entities/rgroup';
+import { RGroup, type RGroupAttributes } from 'domain/entities/rgroup';
 import type { Struct } from 'domain/entities/struct';
 
-import { ifDef } from 'utilities';
+import { ifDef, KetcherLogger } from 'utilities';
 import { moleculeToStruct } from './moleculeToStruct';
+import type { KetItem, KetRGroupLogic } from './types';
 
-export function rgroupToStruct(ketItem): Struct {
+export function rgroupToStruct(ketItem: KetItem): Struct {
   const struct = moleculeToStruct(ketItem);
-  const rgroup = rgroupLogicToStruct(ketItem.rlogic);
-  struct.frags.forEach((_value: any, key) => {
+  const rlogic = ketItem.rlogic;
+  if (!rlogic) {
+    KetcherLogger.error(
+      'R-group logic (rlogic) is missing on a KET R-group item',
+    );
+    return struct;
+  }
+  const rgroup = rgroupLogicToStruct(rlogic);
+  struct.frags.forEach((_value, key) => {
     rgroup.frags.add(key);
   });
-  if (ketItem.rlogic) struct.rgroups.set(ketItem.rlogic.number, rgroup);
+  struct.rgroups.set(rlogic.number, rgroup);
   return struct;
 }
 
-export function rgroupLogicToStruct(rglogic) {
-  const params = {};
+export function rgroupLogicToStruct(rglogic: KetRGroupLogic): RGroup {
+  const params: RGroupAttributes = {};
   ifDef(params, 'range', rglogic.range);
   ifDef(params, 'resth', rglogic.resth);
   ifDef(params, 'ifthen', rglogic.ifthen);

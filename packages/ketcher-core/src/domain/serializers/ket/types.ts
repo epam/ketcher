@@ -23,6 +23,10 @@ import type { RxnArrowAttributes } from 'domain/entities/rxnArrow';
 import type { StructProperty } from 'domain/entities/struct';
 import type { Vec2 } from 'domain/entities/vec2';
 
+export interface KetHeader {
+  moleculeName?: string;
+}
+
 export interface KetAtomNode {
   type?: 'atom-list';
   label?: string;
@@ -123,9 +127,15 @@ export interface KetFragment {
   bonds?: KetBondNode[];
 }
 
+export interface KetRGroupLogic {
+  number: number;
+  range?: string;
+  resth?: boolean;
+  ifthen?: number;
+}
+
 export interface KetItem {
+  type?: string;
   fragments?: KetFragment[];
-  rlogic?: {
-    number: number;
-  };
+  rlogic?: KetRGroupLogic;
 }

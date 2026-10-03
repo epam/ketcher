@@ -119,7 +119,7 @@ describe('centerMonomerMicromoleculeAtoms', () => {
     // Bond length between first two atoms should be preserved (distance = 2)
     const dx = parsedPositions[0].x - parsedPositions[1].x;
     const dy = parsedPositions[0].y - parsedPositions[1].y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+    const distance = Math.hypot(dx, dy);
     expect(distance).toBeCloseTo(2, PRECISION);
   });
 });

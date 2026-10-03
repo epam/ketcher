@@ -18,7 +18,6 @@
 import {
   type Struct,
   type EditorTemplate,
-  expandSGroupWithMultipleAttachmentPoint,
   fromItemsFuse,
   fromPaste,
   fromTemplateOnAtom,
@@ -90,8 +89,6 @@ class PasteTool implements Tool {
     const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point);
     this.action = action;
     this.editor.update(this.action, true);
-
-    action.mergeWith(expandSGroupWithMultipleAttachmentPoint(this.restruct));
 
     this.editor.update(this.action, true);
 

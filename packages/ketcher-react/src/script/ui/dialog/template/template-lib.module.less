@@ -29,7 +29,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding-left: 2px;
+  padding-inline-start: 2px;
 
   & > span {
     line-height: 16px;
@@ -75,7 +75,7 @@
 
     input[type='search'] {
       width: 424px;
-      padding-left: 35px;
+      padding-inline-start: 35px;
       background-color: @color-primary-light;
       margin: 0 14px 16px;
       height: 28px;
@@ -91,7 +91,7 @@
       height: 28px;
       position: absolute;
       top: 0;
-      left: 14px;
+      inset-inline-start: 14px;
       color: @color-primary;
     }
   }
@@ -102,8 +102,7 @@
   }
 
   .groupIcon {
-    margin-left: 15px;
-    margin-right: 8px;
+    margin-inline: 15px 8px;
   }
 
 .tabsContent {
@@ -129,7 +128,7 @@
   }
 }
 
-/* stylelint-disable selector-pseudo-class-no-unknown, no-descending-specificity */
+/* stylelint-disable no-descending-specificity */
 :global(.MuiTabs-indicator) {
   background-color: @color-primary;
 }

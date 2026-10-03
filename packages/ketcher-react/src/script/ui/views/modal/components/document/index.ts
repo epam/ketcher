@@ -14,7 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Open from './Open';
-import Save from './Save';
-
-export { Open, Save };
+export { default as Open } from './Open';
+export { default as Save } from './Save';

@@ -53,7 +53,11 @@ import type {
 } from './template.types';
 import type { ClosestItemWithMap } from '../shared/closest.types';
 
-export { getAngleFromEvent, getBondFlipSign, getSign };
+export {
+  getAngleFromEvent,
+  getBondFlipSign,
+  getSign,
+} from './template.helpers';
 
 class TemplateTool implements Tool {
   private readonly editor: Editor;

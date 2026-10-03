@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import StandaloneStructService from './standaloneStructService';
-import StandaloneStructServiceProvider from './standaloneStructServiceProvider';
-
-export { StandaloneStructService, StandaloneStructServiceProvider };
+export { default as StandaloneStructService } from './standaloneStructService';
+export { default as StandaloneStructServiceProvider } from './standaloneStructServiceProvider';
 export * from './constants';

@@ -14,9 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import AtomInfo from './AtomInfo';
-import ElementsTable from './ElementsTable';
-import GenericGroups from '../../ExtendedTable/components/GenericGroups';
-import TypeChoice from './TypeChoice';
-
-export { ElementsTable, AtomInfo, TypeChoice, GenericGroups };
+export { default as AtomInfo } from './AtomInfo';
+export { default as ElementsTable } from './ElementsTable';
+export { default as GenericGroups } from '../../ExtendedTable/components/GenericGroups';
+export { default as TypeChoice } from './TypeChoice';

@@ -1,3 +1,1 @@
-import { mapTwoAtoms } from './helpers';
-
-export { mapTwoAtoms };
+export { mapTwoAtoms } from './helpers';

@@ -95,7 +95,7 @@ function request<T = unknown>(
 
   const mergedHeaders = {
     Accept: 'application/json',
-    ...(headers ?? {}),
+    ...headers,
   };
 
   let fetchResponse: Promise<Response>;

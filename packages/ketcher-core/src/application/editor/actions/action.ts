@@ -59,10 +59,8 @@ export class Action {
     // anything (operations that don't override `isDummy` always count as a
     // real change). Without `restruct` we can only tell that an action with no
     // operations is a dummy.
-    return (
-      this.operations.find((operation) =>
-        restruct ? !operation.isDummy(restruct) : true,
-      ) === undefined
+    return !this.operations.some((operation) =>
+      restruct ? !operation.isDummy(restruct) : true,
     );
   }
 }

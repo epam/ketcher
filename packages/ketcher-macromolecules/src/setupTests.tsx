@@ -1,5 +1,4 @@
 import '@testing-library/jest-dom';
-import '@testing-library/jest-dom/extend-expect';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
 import { Provider as StoreProvider } from 'react-redux';

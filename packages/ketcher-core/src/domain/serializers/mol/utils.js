@@ -358,7 +358,6 @@ function rxnMerge(
   const arrow = createReactionArrow(bbReactAll, bbProdAll);
   ret.addRxnArrow(arrow);
 
-  ret.isReaction = true;
   return ret;
 }
 

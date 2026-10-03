@@ -108,7 +108,7 @@ for (const locale of extraLocales) {
   ).join(', ');
   lines.push(`  '${locale}': { ${fields} },`);
 }
-lines.push('} as const;');
+lines.push('} as const satisfies Record<string, typeof BASE_RESOURCES>;');
 lines.push('');
 
 const prettierConfig = await resolveConfig(outFile, { editorconfig: true });

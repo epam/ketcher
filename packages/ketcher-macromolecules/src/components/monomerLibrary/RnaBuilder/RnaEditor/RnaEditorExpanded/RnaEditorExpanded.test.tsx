@@ -1,5 +1,5 @@
 import { Entities, MonomerOrAmbiguousType } from 'ketcher-core';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { Provider as StoreProvider } from 'react-redux';
 import { ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
@@ -17,6 +17,7 @@ import { defaultTheme } from 'theming/defaultTheme';
 const testTheme = merge(createTheme(), { ketcher: defaultTheme });
 
 const useLayoutModeMock = jest.fn(() => 'sequence-layout-mode');
+const useIsCompactViewMock = jest.fn(() => true);
 const mockEditorEvents = {
   keyDown: { add: () => true, remove: () => true },
   cancelSequenceEditInRNABuilderMode: { add: () => true, remove: () => true },
@@ -25,9 +26,14 @@ const mockEditorEvents = {
 jest.mock('hooks', () => ({
   ...jest.requireActual('hooks'),
   useLayoutMode: () => useLayoutModeMock(),
+  useIsCompactView: () => useIsCompactViewMock(),
 }));
 
 describe('Test Rna Editor Expanded component', () => {
+  afterEach(() => {
+    useIsCompactViewMock.mockReturnValue(true);
+  });
+
   it('should render correctly in edit mode', async () => {
     render(
       withThemeAndStoreProvider(
@@ -151,6 +157,47 @@ describe('Test Rna Editor Expanded component', () => {
 
     expect(onDuplicateHandler).toHaveBeenCalled();
     expect(rnaEditorExpanded).toMatchSnapshot();
+  });
+
+  it('shows "Not selected" for an empty phosphate slot in sequence edit mode', () => {
+    useIsCompactViewMock.mockReturnValue(false);
+
+    render(
+      withThemeAndStoreProvider(
+        <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />,
+        {
+          editor: {
+            editor: {
+              isSequenceEditInRNABuilderMode: true,
+              events: mockEditorEvents,
+            },
+          },
+          rnaBuilder: {
+            activePreset: {},
+            sequenceSelectionName: '1 nucleoside',
+            sequenceSelection: [
+              {
+                type: Entities.Nucleoside,
+                sugarLabel: 'R',
+                baseLabel: 'A',
+                nodeIndexOverall: 0,
+                hasR1Connection: false,
+                hasAntisense: false,
+                isNucleosideConnectedAndSelectedWithPhosphate: false,
+              },
+            ],
+            presetsDefault: [],
+            presetsCustom: [],
+          },
+        },
+      ),
+    );
+
+    expect(
+      within(screen.getByTestId('rna-builder-slot--phosphate')).getByText(
+        'Not selected',
+      ),
+    ).toBeInTheDocument();
   });
 
   it('should not enable the Update button when re-entering edit mode without picking a new monomer', async () => {

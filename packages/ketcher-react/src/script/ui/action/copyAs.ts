@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { KetcherLogger, KetSerializer, MolSerializer } from 'ketcher-core';
+import i18n from '../../../i18n/i18n';
 import type { SerializationType, StructSerializer } from './copyAs.types';
 
 /**
@@ -25,7 +26,7 @@ import type { SerializationType, StructSerializer } from './copyAs.types';
  * @throws Logs error to KetcherLogger if operation fails
  */
 export default function copyAs(type: SerializationType): string | null {
-  const state = global.currentState;
+  const state = globalThis.currentState;
 
   if (!state || !state.editor) {
     KetcherLogger.error(
@@ -69,9 +70,7 @@ export default function copyAs(type: SerializationType): string | null {
 
     // MOL format doesn't support simple objects and text objects
     if (hasSimpleObjectsOrTexts && serializer instanceof MolSerializer) {
-      errorHandler(
-        'This feature is not available for Simple objects and Text objects',
-      );
+      errorHandler(i18n.t('toolbar:copy.notAvailableForSimpleObjects'));
       return null;
     }
 
@@ -79,12 +78,12 @@ export default function copyAs(type: SerializationType): string | null {
     const structData = serializer.serialize(struct);
 
     // Attempt to copy to clipboard using the appropriate API
-    const legacyWindow = window as unknown as {
+    const legacyGlobal = globalThis as unknown as {
       clipboardData?: { setData: (type: string, data: string) => void };
     };
-    if (legacyWindow.clipboardData) {
+    if (legacyGlobal.clipboardData) {
       // Legacy IE support
-      legacyWindow.clipboardData.setData('text', structData);
+      legacyGlobal.clipboardData.setData('text', structData);
     } else {
       // Modern browsers using Clipboard API
       navigator.clipboard.writeText(structData);
@@ -94,7 +93,7 @@ export default function copyAs(type: SerializationType): string | null {
   } catch (e) {
     const error = e instanceof Error ? e : new Error(String(e));
     KetcherLogger.error('copyAs.ts::copyAs', error);
-    errorHandler('This feature is not available in your browser');
+    errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));
     return null;
   }
 }

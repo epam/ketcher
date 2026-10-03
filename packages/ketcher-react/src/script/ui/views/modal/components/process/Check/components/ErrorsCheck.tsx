@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useTranslation } from 'react-i18next';
+
 interface CheckSchemaItem {
   type: string;
   enum: string[];
@@ -44,6 +46,7 @@ interface ErrorsCheckProps {
 }
 
 function ErrorsCheck(props: Readonly<ErrorsCheckProps>) {
+  const { t } = useTranslation('dialogs');
   const { moleculeErrors, checkSchema } = props;
   const moleculeErrorsTypes = Object.keys(moleculeErrors);
 
@@ -57,12 +60,14 @@ function ErrorsCheck(props: Readonly<ErrorsCheckProps>) {
     <fieldset>
       {moleculeErrorsTypes.length === 0 ? (
         <div>
-          <dd>No errors detected</dd>
+          <dd>{t('process.check.noErrorsDetected')}</dd>
         </div>
       ) : (
         moleculeErrorsTypes.map((type) => (
           <div key={type} data-testid={`${type}-warning`}>
-            <dt>{getOptionName(type)} warning:</dt>
+            <dt>
+              {t('process.check.warningSuffix', { name: getOptionName(type) })}
+            </dt>
             <dd>{moleculeErrors[type]}</dd>
           </div>
         ))

@@ -22,7 +22,7 @@ import { RGroup } from 'domain/entities/rgroup';
 import { Fragment } from 'domain/entities/fragment';
 
 function paddedNum(number, width, precision) {
-  const parsedNumber = parseFloat(number);
+  const parsedNumber = Number.parseFloat(number);
 
   const numStr = parsedNumber.toFixed(precision || 0).replace(',', '.'); // Really need to replace?
   if (numStr.length > width) throw new Error('number does not fit');
@@ -36,9 +36,9 @@ function paddedNum(number, width, precision) {
  */
 function parseDecimalInt(str) {
   /* reader */
-  const val = parseInt(str, 10);
+  const val = Number.parseInt(str, 10);
 
-  return isNaN(val) ? 0 : val;
+  return Number.isNaN(val) ? 0 : val;
 }
 
 function partitionLine(
@@ -135,21 +135,29 @@ const FRAGMENT = {
 
 const SHOULD_RESCALE_MOLECULES = true;
 
-function calculateAverageBondLength(mols) {
-  const bondLengthData = { cnt: 0, totalLength: 0 };
+// Pooled across every fragment of the reaction so reactants, agents and products
+// keep their sizes relative to one another.
+function calculateMedianBondLength(mols) {
+  const lengths = [];
   for (const mol of mols) {
-    const bondLengthDataMol = mol.getBondLengthData();
-    bondLengthData.cnt += bondLengthDataMol.cnt;
-    bondLengthData.totalLength += bondLengthDataMol.totalLength;
+    // Appended one by one on purpose: push(...arr) overflows the stack once a
+    // reaction carries more than ~100k bonds across all its fragments.
+    for (const length of mol.getBondLengths()) {
+      lengths.push(length);
+    }
   }
-  return bondLengthData.cnt === 0
-    ? 1
-    : bondLengthData.totalLength / bondLengthData.cnt;
+  const median = Struct.median(lengths);
+  return median > 0 ? median : 1;
 }
 
+// Same normalization rule as Struct.rescale(): median bond length, not mean, and
+// the same sanity bounds on the resulting factor.
 function rescaleMolecules(mols) {
-  const avgBondLength = calculateAverageBondLength(mols);
-  const scaleFactor = 1 / avgBondLength;
+  const medianBondLength = calculateMedianBondLength(mols);
+  const scaleFactor = 1 / medianBondLength;
+  if (!Struct.isRescaleFactorSane(scaleFactor)) {
+    return;
+  }
   for (const mol of mols) {
     mol.scale(scaleFactor);
   }
@@ -228,16 +236,16 @@ function layoutReactionFragments(
 ) {
   let xorig = 0;
   for (let j = 0; j < molReact.length; ++j) {
-    xorig += shiftMol(ret, molReact[j], bbReact[j], xorig, false) + 2.0;
+    xorig += shiftMol(ret, molReact[j], bbReact[j], xorig, false) + 2;
   }
-  xorig += 2.0;
+  xorig += 2;
   for (let j = 0; j < molAgent.length; ++j) {
-    xorig += shiftMol(ret, molAgent[j], bbAgent[j], xorig, true) + 2.0;
+    xorig += shiftMol(ret, molAgent[j], bbAgent[j], xorig, true) + 2;
   }
-  xorig += 2.0;
+  xorig += 2;
 
   for (let j = 0; j < molProd.length; ++j) {
-    xorig += shiftMol(ret, molProd[j], bbProd[j], xorig, false) + 2.0;
+    xorig += shiftMol(ret, molProd[j], bbProd[j], xorig, false) + 2;
   }
 }
 
@@ -361,7 +369,7 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
   scaffold.mergeInto(ret, null, null, false, true);
 
   Object.keys(rgroups).forEach((id) => {
-    const rgid = parseInt(id, 10);
+    const rgid = Number.parseInt(id, 10);
 
     for (const ctab of rgroups[rgid]) {
       ctab.rgroups.set(rgid, new RGroup());

@@ -24,6 +24,7 @@ import {
   PhosphatePositionIconWrapper,
 } from './PresetPreview.styles';
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import { selectShowPreview } from 'state/common';
 import { IconName } from 'ketcher-react';
 import { KetMonomerClass, MonomerItemType } from 'ketcher-core';
@@ -52,6 +53,7 @@ interface Props {
 }
 
 const PresetPreview = ({ className }: Props) => {
+  const { t } = useTranslation('macromolecules');
   const preview = useAppSelector(selectShowPreview) as PresetPreviewState;
 
   const { monomers, name, position, idtAliases, aliasAxoLabs } = preview;
@@ -82,11 +84,11 @@ const PresetPreview = ({ className }: Props) => {
 
   let phosphatePositionTooltip: string | undefined;
   if (preview.phosphatePosition === 'left') {
-    phosphatePositionTooltip = "Phosphate on the left (5')";
+    phosphatePositionTooltip = t('preview.phosphateOnLeft');
   } else {
     phosphatePositionTooltip =
       preview.phosphatePosition === 'right'
-        ? "Phosphate on the right (3')"
+        ? t('preview.phosphateOnRight')
         : undefined;
   }
   const getMonomerNameText = (monomer: MonomerItemType) =>

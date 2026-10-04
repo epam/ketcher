@@ -9,7 +9,7 @@ import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SgContexts } from 'application/editor/shared/constants';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import type { BondRenderer } from 'application/render/renderers/BondRenderer';
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { editorEvents } from 'application/editor/editorEvents';
 import paperjs from 'paper';
 
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
@@ -68,6 +68,14 @@ export class SGroupRenderer extends BaseRenderer {
 
   private get sgroup() {
     return this.sgroupDrawingEntity.sgroup;
+  }
+
+  public get labelTooltipText(): string | null {
+    if (this.sgroup.type !== SGroup.TYPES.DAT) {
+      return null;
+    }
+
+    return `${this.sgroup.data.fieldName}=${this.sgroup.data.fieldValue}`;
   }
 
   private addLabelElement<ElementType extends SVGElement>(
@@ -661,7 +669,7 @@ export class SGroupRenderer extends BaseRenderer {
       ),
       ...this.getSGroupBondRenderers()
         .map((bondRenderer) => this.getBondHoverPath(bondRenderer))
-        .filter((path): path is paper.CompoundPath => Boolean(path)),
+        .filter((path): path is paper.CompoundPath => path !== null),
     ];
 
     let combinedPath: paper.PathItem | undefined;
@@ -742,11 +750,11 @@ export class SGroupRenderer extends BaseRenderer {
 
     this.hoverAreaElement
       .on('mouseover', (event) => {
-        provideEditorInstance().events.mouseOverDrawingEntity.dispatch(event);
+        editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.appendHover();
       })
       .on('mouseleave', (event) => {
-        provideEditorInstance().events.mouseLeaveDrawingEntity.dispatch(event);
+        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.removeHover();
       });
   }

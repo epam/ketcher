@@ -50,6 +50,7 @@ function createStructWithSGroup(type = SGroup.TYPES.MUL) {
     }),
   );
   const sgroup = new SGroup(type);
+  sgroup.data.fieldName = 'FieldName';
   sgroup.data.fieldValue = 'Value';
   const sgroupId = struct.sgroups.add(sgroup);
   struct.atomAddToSGroup(sgroupId, firstAtomId);
@@ -420,9 +421,12 @@ describe('Drawing Entities Manager', () => {
     editor.renderersContainer.update(modelChanges);
 
     const valueElement = document.querySelector('[data-label-text="Value"]');
+    expect(valueElement).toBeTruthy();
+    expect(
+      [...editor.renderersContainer.sgroups.values()][0].labelTooltipText,
+    ).toBe('FieldName=Value');
     const valueGroup = valueElement?.parentElement;
     const initialTransform = valueGroup?.getAttribute('transform');
-    expect(valueElement).toBeTruthy();
 
     const sgroupDrawingEntity = [
       ...editor.drawingEntitiesManager.sgroups.values(),

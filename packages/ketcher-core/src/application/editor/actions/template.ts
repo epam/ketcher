@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -158,10 +157,9 @@ export function fromTemplateOnAtom(
     atom = atom1;
     delta = utils.calcAngle(clickedAtom.pp, atom.pp) - template.angle0;
   } else {
-    if (angle === null) {
-      angle = utils.calcAngle(atom.pp, atomForNewBond(restruct, aid).pos);
-    }
-    delta = angle - template.angle0;
+    delta =
+      (angle ?? utils.calcAngle(atom.pp, atomForNewBond(restruct, aid).pos)) -
+      template.angle0;
   }
 
   const map = new Map<number, number>();
@@ -268,27 +266,9 @@ export function fromTemplateOnBondAction(
   bid: number,
   events: unknown,
   flip: boolean,
-  force: false,
-  isPreview?: boolean,
-): FromTemplateOnBondResult;
-export function fromTemplateOnBondAction(
-  restruct: ReStruct,
-  template: EditorTemplate,
-  bid: number,
-  events: unknown,
-  flip: boolean,
-  force: true,
-  isPreview?: boolean,
-): Promise<FromTemplateOnBondResult>;
-export function fromTemplateOnBondAction(
-  restruct: ReStruct,
-  template: EditorTemplate,
-  bid: number,
-  events: unknown,
-  flip: boolean,
   force: boolean,
   isPreview = false,
-): FromTemplateOnBondResult | Promise<FromTemplateOnBondResult> {
+): FromTemplateOnBondResult {
   if (!force) return fromTemplateOnBond(restruct, template, bid, flip);
 
   const simpleFusing = (
@@ -296,7 +276,6 @@ export function fromTemplateOnBondAction(
     template: EditorTemplate,
     bid: number,
   ) => fromTemplateOnBond(restruct, template, bid, flip, isPreview);
-  /* aromatic merge (Promise) */
   return fromAromaticTemplateOnBond(
     restruct,
     template,

@@ -45,7 +45,7 @@ export const waitForCustomEvent = async (
           resolve(true);
         };
 
-        window.addEventListener(eventName, handler, { once: true });
+        globalThis.addEventListener(eventName, handler, { once: true });
 
         setTimeout(() => {
           if (!resolved) resolve(false);

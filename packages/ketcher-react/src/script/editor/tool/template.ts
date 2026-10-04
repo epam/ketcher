@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -309,7 +308,7 @@ class TemplateTool implements Tool {
     const ci = dragCtx.item;
     let targetPos: Vec2 | null | undefined = null;
     /* moving when attached to bond */
-    if (ci && ci.map === 'bonds' && !this.isModeFunctionalGroup) {
+    if (ci?.map === 'bonds' && !this.isModeFunctionalGroup) {
       const bond = this.struct.bonds.get(ci.id);
       if (!bond) {
         return;
@@ -334,7 +333,7 @@ class TemplateTool implements Tool {
           this.editor.event,
           dragCtx.sign1 * dragCtx.sign2 > 0,
           false,
-        ) as [Action, { atoms: number[]; bonds: number[] }];
+        );
 
         dragCtx.action = action;
         this.editor.update(dragCtx.action, true);
@@ -449,28 +448,21 @@ class TemplateTool implements Tool {
     let ci = dragCtx.item;
 
     /* after moving around bond */
-    if (
-      dragCtx.action &&
-      ci &&
-      ci.map === 'bonds' &&
-      !this.isModeFunctionalGroup
-    ) {
+    if (dragCtx.action && ci?.map === 'bonds' && !this.isModeFunctionalGroup) {
       dragCtx.action.perform(restruct); // revert drag action
 
-      const promise = fromTemplateOnBondAction(
+      let [action, pasteItems] = fromTemplateOnBondAction(
         restruct,
         this.template,
         ci.id,
         this.editor.event,
         dragCtx.sign1 * dragCtx.sign2 > 0,
         true,
-      ) as Promise<[Action, { atoms: number[]; bonds: number[] }]>;
+      );
 
-      promise.then(([action, pasteItems]) => {
-        const mergeItems = getItemsToFuse(this.editor, pasteItems);
-        action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
-        this.editor.update(action);
-      });
+      const mergeItems = getItemsToFuse(this.editor, pasteItems);
+      action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
+      this.editor.update(action);
       return;
     }
     /* end */
@@ -567,22 +559,18 @@ class TemplateTool implements Tool {
         }
         dragCtx.action = action;
       } else if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
-        const promise = fromTemplateOnBondAction(
+        let [action, pasteItems] = fromTemplateOnBondAction(
           restruct,
           this.template,
           ci.id,
           this.editor.event,
           dragCtx.sign1 * dragCtx.sign2 > 0,
           true,
-        ) as Promise<[Action, { atoms: number[]; bonds: number[] }]>;
+        );
 
-        promise.then(([action, pasteItems]) => {
-          if (!this.isModeFunctionalGroup) {
-            const mergeItems = getItemsToFuse(this.editor, pasteItems);
-            action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
-            this.editor.update(action);
-          }
-        });
+        const mergeItems = getItemsToFuse(this.editor, pasteItems);
+        action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
+        this.editor.update(action);
 
         return;
       }

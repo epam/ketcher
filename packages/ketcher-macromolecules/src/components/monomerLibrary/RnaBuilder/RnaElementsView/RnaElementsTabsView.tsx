@@ -1,4 +1,5 @@
 import { memo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   RnaTabContent,
   DetailsContainer,
@@ -12,6 +13,7 @@ import {
   CompactDetailsContainer,
 } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/styles';
 import { PresetPhosphateFilterPopup } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/PresetPhosphateFilterPopup';
+import { groupNameToTabLabelKey } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/groupNameToTabLabelKey';
 import {
   selectAmbiguousMonomersInCategory,
   selectFilteredMonomers,
@@ -43,6 +45,7 @@ const RnaElementsTabsView = ({
   editPreset,
   libraryName,
 }: RnaElementsViewProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useDispatch();
   const presets = useAppSelector(selectFilteredPresets);
   const monomers = useAppSelector(selectFilteredMonomers);
@@ -77,7 +80,8 @@ const RnaElementsTabsView = ({
             (acc, group) => acc + (group.groupItems.length || 0),
             0,
           );
-          const caption = selected ? `${groupName} (${quantity})` : null;
+          const label = t(groupNameToTabLabelKey[groupName]);
+          const caption = selected ? `${label} (${quantity})` : null;
 
           return (
             <RnaTabWrapper
@@ -85,7 +89,7 @@ const RnaElementsTabsView = ({
               className={clsx(selected && 'rna-tab--selected')}
             >
               <RnaTab
-                title={groupName}
+                title={label}
                 selected={selected}
                 onClick={() => dispatch(setActiveRnaBuilderItem(groupName))}
                 data-testid={`summary-${groupName}`}
@@ -115,7 +119,7 @@ const RnaElementsTabsView = ({
                   onClick={onNewPresetClick}
                   data-testid="new-preset-button"
                 >
-                  Add new
+                  {t('monomerLibrary.addNewPreset')}
                 </NewPresetButton>
                 <FilterIconButton
                   type="button"
@@ -125,7 +129,7 @@ const RnaElementsTabsView = ({
                     event.stopPropagation();
                     setIsFilterOpen((prev) => !prev);
                   }}
-                  aria-label="Filter presets by phosphate position"
+                  aria-label={t('monomerLibrary.filterPresetsAriaLabel')}
                   data-testid="preset-filter-button"
                 >
                   <Icon name="filter" />

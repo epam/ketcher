@@ -38,7 +38,7 @@
         display: flex;
         flex-direction: column;
         width: calc(1 / 2 * 100% - 6px);
-        text-align: left;
+        text-align: start;
 
         // TODO: check and update global styles for text inputs
         input {
@@ -52,14 +52,14 @@
         }
 
         > span {
-          margin-right: 8px;
+          margin-inline-end: 8px;
         }
       }
     }
 
     .tabs {
       outline: none;
-      padding-left: 12px;
+      padding-inline-start: 12px;
 
       &[tabindex='0'] {
         a:nth-child(2) {
@@ -100,7 +100,7 @@
       button {
         opacity: 0;
         position: absolute;
-        right: 12px;
+        inset-inline-end: 12px;
         top: 12px;
         border-radius: 4px;
         padding: 2px;
@@ -201,7 +201,7 @@
 
   .saveTmpl {
     overflow-wrap: normal;
-    margin-right: auto;
+    margin-inline-end: auto;
     padding: 2px 8px;
   }
 }

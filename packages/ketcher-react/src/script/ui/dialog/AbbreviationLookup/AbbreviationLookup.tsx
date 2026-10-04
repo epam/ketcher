@@ -25,6 +25,7 @@ import {
   useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { assert } from 'ketcher-core';
 import { Icon } from 'components';
 import MuiAutocomplete, {
@@ -46,11 +47,7 @@ import {
   type AbbreviationOption,
   AbbreviationType,
 } from './AbbreviationLookup.types';
-import {
-  ABBREVIATION_LOOKUP_TEST_ID,
-  NO_MATCHING_RESULTS_LABEL,
-  START_TYPING_NOTIFICATION_LABEL,
-} from './AbbreviationLookup.constants';
+import { ABBREVIATION_LOOKUP_TEST_ID } from './AbbreviationLookup.constants';
 import { CLIP_AREA_BASE_CLASS } from '../../component/cliparea/cliparea';
 
 interface Props {
@@ -58,6 +55,7 @@ interface Props {
 }
 
 export const AbbreviationLookup = ({ options }: Props) => {
+  const { t } = useTranslation('dialogs');
   const inputRef = useRef<HTMLInputElement | null>(null);
   const autocompleteRef = useRef<HTMLInputElement | null>(null);
 
@@ -162,8 +160,8 @@ export const AbbreviationLookup = ({ options }: Props) => {
         autoHighlight
         noOptionsText={
           loweredLookupValue
-            ? NO_MATCHING_RESULTS_LABEL
-            : START_TYPING_NOTIFICATION_LABEL
+            ? t('toolbox.abbreviationLookup.noMatchingResults')
+            : t('toolbox.abbreviationLookup.startTypingPrompt')
         }
         classes={{
           option: classes.optionItem,

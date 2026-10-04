@@ -68,7 +68,7 @@
     width: 7px;
     height: 7px;
     position: absolute;
-    right: 0;
+    inset-inline-end: 0;
     bottom: 0;
   }
   &:hover > svg {
@@ -270,7 +270,7 @@
 
   text-indent: @wider-than-any-screen * @approximate-em-value;
   overflow: hidden;
-  text-align: left;
+  text-align: start;
 }
 
 .text-hide() {
@@ -348,14 +348,14 @@
 
   & > input[type='file'] {
     // hide file input
-    left: -9999px;
+    inset-inline-start: -9999px;
     position: absolute;
   }
 
   & + button,
   & + input[type='submit'],
   & + input[type='reset'] {
-    margin-left: 0.3em;
+    margin-inline-start: 0.3em;
   }
 }
 

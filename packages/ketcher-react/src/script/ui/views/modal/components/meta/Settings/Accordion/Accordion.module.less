@@ -25,7 +25,7 @@
 
 .expandIcon {
   width: 16px;
-  margin-right: @margin-left-right;
+  margin-inline-end: @margin-left-right;
   transform: rotate(180deg);
   transition: transform 300ms ease-in-out;
 }
@@ -36,16 +36,16 @@
 
 .accordionSummaryWrapper {
   margin: 0;
-  padding-left: @padding-modal;
+  padding-inline-start: @padding-modal;
   /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border-bottom: 1px solid @color-grey-3;
   background-color: @color-background-primary;
   width: 100%;
   border-top: none;
-  border-left: none;
-  border-right: none;
+  border-inline-start: none;
+  border-inline-end: none;
   font: inherit;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
 }
 
@@ -92,7 +92,7 @@
   align-items: center;
 
   > span {
-    margin-left: 6px;
+    margin-inline-start: 6px;
     height: 12px;
   }
 }
@@ -103,8 +103,7 @@
   width: 10px;
   height: 10px;
   vertical-align: middle;
-  margin-right: 1px;
-  margin-left: auto;
+  margin-inline: auto 1px;
   background-repeat: no-repeat;
   background-size: 100%;
 }

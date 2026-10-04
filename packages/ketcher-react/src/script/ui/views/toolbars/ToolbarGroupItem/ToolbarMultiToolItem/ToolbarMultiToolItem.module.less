@@ -24,7 +24,7 @@
   width: 7px;
   height: 7px;
   position: absolute;
-  right: 0;
+  inset-inline-end: 0;
   bottom: 0;
   fill: @main-color;
 }
@@ -47,9 +47,11 @@
   white-space: nowrap;
   word-break: keep-all;
   background: @color-background-primary;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @border-color;
   border-radius: 5px;
-  box-shadow: 3px 4px 4px rgba(103, 104, 132, 0.25);
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  box-shadow: 3px 4px 4px rgb(103 104 132 / 25%);
 
   // TODO: move to action button styles, when all buttons will have same style
   & > button {
@@ -58,7 +60,7 @@
 
     & > svg {
       top: 3px;
-      left: 3px;
+      inset-inline-start: 3px;
     }
   }
 

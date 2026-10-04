@@ -75,7 +75,7 @@ const StyledAtom = styled(Atom)((props: any) => {
 
 const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
   const { atoms, active, status, onAction } = props;
-  const isAtom = active && active.tool === 'atom';
+  const isAtom = active?.tool === 'atom';
 
   return (
     <div ref={ref}>
@@ -83,7 +83,7 @@ const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
         const element = Elements.get(label);
         const shortcut =
           atoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null;
-        const isSelected = isAtom && active && active.opts.label === label;
+        const isSelected = isAtom && active?.opts.label === label;
         const id = `atom-${label.toLowerCase()}`;
         return (
           <StyledAtom

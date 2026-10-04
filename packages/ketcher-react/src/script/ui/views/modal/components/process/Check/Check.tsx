@@ -17,8 +17,6 @@
 import { type ComponentType, type FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import type { AnyAction } from 'redux';
-import type { ThunkDispatch } from 'redux-thunk';
 import Form, {
   type FormState,
   Field,
@@ -33,6 +31,7 @@ import type {
 } from '../../../../../state/options/types';
 import style from './Check.module.less';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
+import type { AppDispatch } from 'src/script/ui/state/hooks';
 import i18n from 'src/i18n/i18n';
 
 interface MoleculeErrors {
@@ -318,7 +317,7 @@ const mapStateToProps = (state: State): CheckDialogStateProps => ({
 });
 
 const mapDispatchToProps = (
-  dispatch: ThunkDispatch<State, undefined, AnyAction>,
+  dispatch: AppDispatch,
   ownProps: CheckDialogOwnProps,
 ): CheckDialogDispatchProps => ({
   onCheck: (opts: CheckOption[]) =>

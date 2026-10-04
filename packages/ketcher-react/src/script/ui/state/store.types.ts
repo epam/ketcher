@@ -16,6 +16,11 @@
 
 import type { Struct } from 'ketcher-core';
 import type { OptionsState } from './options/types';
+import type Editor from 'src/script/editor';
+import type { Api } from 'src/script/api';
+import type { ToolVariant } from '../action';
+import type { ThunkAction } from 'redux-thunk';
+import type { Action } from 'redux';
 
 export type {
   AnalyseRoundName,
@@ -56,7 +61,50 @@ export interface ModalState {
 }
 
 export interface StoreState {
+  editor: Editor;
+  server: Api;
   templates: TemplatesState;
   modal: ModalState;
+  toolbar: {
+    visibleTools: {
+      select: ToolVariant;
+    };
+  };
   options: OptionsState;
+  struct?: Struct;
 }
+
+export interface ServerResponse {
+  indigoVersion?: string;
+  imagoVersions?: string[];
+  isAvailable?: boolean;
+}
+
+export interface KetcherCheckErrors {
+  chiral_flag?: string;
+  valence?: string;
+}
+
+export type AutomapMode = 'discard' | 'keep' | 'alter' | 'clear';
+
+export type AutomapRequest = {
+  mode: AutomapMode;
+};
+
+export type ServerTransformMethod =
+  | 'layout'
+  | 'clean'
+  | 'aromatize'
+  | 'dearomatize'
+  | 'calculateCip'
+  | 'toggleExplicitHydrogens'
+  | 'automap'
+  | 'check'
+  | 'calculate';
+
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  StoreState,
+  unknown,
+  Action<string>
+>;

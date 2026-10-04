@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -99,7 +98,7 @@ class ReEnhancedFlag extends ReObject {
           ps.x,
           ps.y,
           fragment.enhancedStereoFlag
-            ? stereoFlagMap[fragment.enhancedStereoFlag] ?? ''
+            ? (stereoFlagMap[fragment.enhancedStereoFlag] ?? '')
             : '',
         )
         .attr({

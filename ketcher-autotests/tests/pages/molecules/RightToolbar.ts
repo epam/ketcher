@@ -15,6 +15,8 @@ type RightToolbarLocators = {
   periodicTableButton: Locator;
   anyAtomButton: Locator;
   extendedTableButton: Locator;
+  arrowScrollUpButton: Locator;
+  arrowScrollDownButton: Locator;
 };
 
 export const RightToolbar = (page: Page) => {
@@ -35,6 +37,12 @@ export const RightToolbar = (page: Page) => {
     periodicTableButton: page.getByTestId('period-table'),
     anyAtomButton: page.getByTestId('any-atom'),
     extendedTableButton: page.getByTestId('extended-table'),
+    arrowScrollUpButton: page
+      .getByTestId('right-toolbar')
+      .getByTestId('arrow-scroll-left-button'),
+    arrowScrollDownButton: page
+      .getByTestId('right-toolbar')
+      .getByTestId('arrow-scroll-right-button'),
   };
 
   return {

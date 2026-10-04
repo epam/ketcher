@@ -28,12 +28,20 @@ import { MONOMER_CONST, RNA_DNA_NON_MODIFIED_PART } from 'domain/constants';
 import type { MonomerItemType } from 'domain/types';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';
 
-const customizer = (value: any) => {
-  if (typeof value === 'object' && value.y) {
+const hasNumericYCoordinate = (value: unknown): value is { y: number } =>
+  typeof value === 'object' &&
+  value !== null &&
+  'y' in value &&
+  typeof value.y === 'number';
+
+const customizer = (value: unknown): unknown => {
+  if (hasNumericYCoordinate(value) && value.y) {
     const clonedValue = cloneDeep(value);
     clonedValue.y = -clonedValue.y;
     return clonedValue;
   }
+
+  return undefined;
 };
 
 export const getNodeWithInvertedYCoord = <T>(node: T): T =>

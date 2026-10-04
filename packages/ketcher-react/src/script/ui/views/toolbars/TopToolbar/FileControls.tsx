@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { useTranslation } from 'react-i18next';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
 interface FileControlsProps {
@@ -20,6 +21,7 @@ interface FileControlsProps {
   onSave: () => void;
   shortcuts: { [key in string]: string };
   hiddenButtons: string[];
+  disabledButtons: string[];
 }
 
 export const FileControls = ({
@@ -27,23 +29,28 @@ export const FileControls = ({
   onSave,
   shortcuts,
   hiddenButtons,
+  disabledButtons,
 }: FileControlsProps) => {
+  const { t } = useTranslation('toolbar');
+
   return (
     <>
       <TopToolbarIconButton
-        title="Open..."
+        title={t('menu.open')}
         onClick={onFileOpen}
         iconName="open"
         shortcut={shortcuts.open}
         isHidden={hiddenButtons.includes('open')}
+        disabled={disabledButtons.includes('open')}
         testId="open-file-button"
       />
       <TopToolbarIconButton
-        title="Save as..."
+        title={t('menu.save')}
         onClick={onSave}
         iconName="save"
         shortcut={shortcuts.save}
         isHidden={hiddenButtons.includes('save')}
+        disabled={disabledButtons.includes('save')}
         testId="save-file-button"
       />
     </>

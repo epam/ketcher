@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -90,7 +91,7 @@ export interface AtomAttributes {
    * Note: value `-1` has been converted to `3` by indigo.
    */
   attachmentPoints?: AttachmentPoints | null;
-  rglabel?: string | null;
+  rglabel?: number | null;
   charge?: number | null;
   radical?: number;
   cip?: AtomCIP | null;
@@ -201,7 +202,7 @@ export class Atom extends BaseMicromoleculeEntity {
   sgs: Pile<number>;
   badConn: boolean;
   alias: string | null;
-  rglabel: string | null;
+  rglabel: number | null;
   aam: number;
   invRet: number;
   exactChangeFlag: number;
@@ -397,15 +398,17 @@ export class Atom extends BaseMicromoleculeEntity {
       this.label === 'GH*';
     return Boolean(
       this.substitutionCount !== 0 ||
-        this.unsaturatedAtom !== 0 ||
-        this.ringBondCount !== 0 ||
-        isAnyAtom ||
-        isAnyMetal ||
-        isAnyHalogen ||
-        isAnyGroup ||
-        this.hCount !== 0 ||
-        this.atomList !== null ||
-        Object.values(queryProperties).some((value) => value),
+      this.unsaturatedAtom !== 0 ||
+      this.ringBondCount !== 0 ||
+      isAnyAtom ||
+      isAnyMetal ||
+      isAnyHalogen ||
+      isAnyGroup ||
+      this.hCount !== 0 ||
+      this.atomList !== null ||
+      Object.values(queryProperties).some(
+        (value) => Boolean(value) || value === 0,
+      ),
     );
   }
 
@@ -1088,13 +1091,13 @@ export class Atom extends BaseMicromoleculeEntity {
 
     return Boolean(
       Atom.isSuperatomLeavingGroupAtom(struct, atomId, searchBySgroups) &&
-        attachmentAtomExternalConnections?.find((_, bond) =>
-          bond.begin === attachmentPoint?.atomId
-            ? bond.beginSuperatomAttachmentPointNumber ===
-              attachmentPoint?.attachmentPointNumber
-            : bond.endSuperatomAttachmentPointNumber ===
-              attachmentPoint?.attachmentPointNumber,
-        ) !== null,
+      attachmentAtomExternalConnections?.find((_, bond) =>
+        bond.begin === attachmentPoint?.atomId
+          ? bond.beginSuperatomAttachmentPointNumber ===
+            attachmentPoint?.attachmentPointNumber
+          : bond.endSuperatomAttachmentPointNumber ===
+            attachmentPoint?.attachmentPointNumber,
+      ) !== null,
     );
   }
 

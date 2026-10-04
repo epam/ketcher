@@ -2,6 +2,12 @@
  * Settings type definitions for Ketcher
  */
 
+import type { DeepPartial } from 'types';
+
+export type { DeepPartial };
+
+export type CssLengthUnit = 'px' | 'pt' | 'cm' | 'inch';
+
 /**
  * Complete settings structure in flat format
  */
@@ -15,9 +21,9 @@ export interface Settings {
   readonly atomColoring: boolean;
   readonly font: string;
   readonly fontsz: number;
-  readonly fontszUnit: 'px' | 'pt' | 'cm' | 'inch';
+  readonly fontszUnit: CssLengthUnit;
   readonly fontszsub: number;
-  readonly fontszsubUnit: 'px' | 'pt' | 'cm' | 'inch';
+  readonly fontszsubUnit: CssLengthUnit;
 
   // Stereochemistry
   readonly showStereoFlags: boolean;
@@ -38,30 +44,26 @@ export interface Settings {
   readonly showCharge: boolean;
   readonly showValence: boolean;
   readonly showHydrogenLabels:
-    | 'off'
-    | 'Hetero'
-    | 'Terminal'
-    | 'Terminal and Hetero'
-    | 'On';
+    'off' | 'Hetero' | 'Terminal' | 'Terminal and Hetero' | 'On';
 
   // Bonds
   readonly aromaticCircle: boolean;
   readonly bondSpacing: number;
   readonly bondLength: number;
-  readonly bondLengthUnit: 'px' | 'cm' | 'pt' | 'inch';
+  readonly bondLengthUnit: CssLengthUnit;
   readonly bondThickness: number;
-  readonly bondThicknessUnit: 'px' | 'cm' | 'pt' | 'inch';
+  readonly bondThicknessUnit: CssLengthUnit;
   readonly stereoBondWidth: number;
-  readonly stereoBondWidthUnit: 'px' | 'cm' | 'pt' | 'inch';
+  readonly stereoBondWidthUnit: CssLengthUnit;
   readonly hashSpacing: number;
-  readonly hashSpacingUnit: 'px' | 'cm' | 'pt' | 'inch';
+  readonly hashSpacingUnit: CssLengthUnit;
 
   // Image resolution
   readonly imageResolution: number;
 
   // Reaction
   readonly reactionComponentMarginSize: number;
-  readonly reactionComponentMarginSizeUnit: 'px' | 'pt' | 'cm' | 'inch';
+  readonly reactionComponentMarginSizeUnit: CssLengthUnit;
 
   // Server-side processing settings
   readonly 'smart-layout': boolean;
@@ -71,6 +73,7 @@ export interface Settings {
   readonly 'aromatize-skip-superatoms': boolean;
   readonly 'dearomatize-on-load': boolean;
   readonly 'gross-formula-add-isotopes': boolean;
+  readonly 'valence-mode': 'biovia-2009' | 'biovia-2017' | 'default';
 
   // Debug/developer settings
   readonly showAtomIds: boolean;
@@ -88,6 +91,9 @@ export interface Settings {
   readonly editorLineLength: Record<string, number>;
   readonly disableCustomQuery: boolean;
   readonly monomerLibraryUpdates: string[];
+
+  // Color picker
+  readonly colorPickerCustomColors: readonly string[];
 }
 
 /**
@@ -106,13 +112,6 @@ export interface ValidationResult {
   valid: boolean;
   errors?: ValidationError[];
 }
-
-/**
- * Deep partial type helper
- */
-export type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
 
 /**
  * Storage abstraction interface

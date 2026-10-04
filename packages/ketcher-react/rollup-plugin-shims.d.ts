@@ -50,3 +50,8 @@ declare module 'rollup-plugin-string' {
     options?: RollupStringOptions,
   ): import('rollup').Plugin;
 }
+
+declare module '*.css' {
+  const content: string;
+  export default content;
+}

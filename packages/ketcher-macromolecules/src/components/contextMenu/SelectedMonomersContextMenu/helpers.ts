@@ -2,6 +2,7 @@ import {
   AmbiguousMonomer,
   BaseMonomer,
   BaseSequenceItemRenderer,
+  ChainsCollection,
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
   isRnaBaseOrAmbiguousRnaBase,
@@ -10,7 +11,9 @@ import {
   Peptide,
   RNA_DNA_NON_MODIFIED_PART,
   RNABase,
+  rnaDnaNaturalAnalogues,
   Sugar,
+  UnsplitNucleotide,
   getAminoAcidsToModify,
   canModifyAminoAcid,
   compareByTitleWithNaturalFirst,
@@ -89,23 +92,82 @@ export const isSenseBase = (monomer: BaseMonomer | AmbiguousMonomer) => {
   return ambigues.some((v) => v === code);
 };
 
+/**
+ * An unsplit nucleotide is a fused sugar+base+phosphate monomer, so it has no
+ * RNA base to inspect — its eligibility is decided by its own natural analogue.
+ */
+const hasSenseNaturalAnalogue = (monomer: BaseMonomer) =>
+  rnaDnaNaturalAnalogues.includes(
+    monomer.monomerItem.props.MonomerNaturalAnalogCode,
+  );
+
+const isMonomerIneligibleForAntisense = (selectedMonomer: BaseMonomer) => {
+  const rnaBaseForSugar =
+    selectedMonomer instanceof Sugar && getRnaBaseFromSugar(selectedMonomer);
+
+  return (
+    (selectedMonomer instanceof RNABase &&
+      (selectedMonomer.hydrogenBonds.length > 0 ||
+        selectedMonomer.covalentBonds.length > 1)) ||
+    (selectedMonomer instanceof UnsplitNucleotide &&
+      (selectedMonomer.hydrogenBonds.length > 0 ||
+        !hasSenseNaturalAnalogue(selectedMonomer))) ||
+    (isRnaBaseOrAmbiguousRnaBase(selectedMonomer) &&
+      !isSenseBase(selectedMonomer)) ||
+    (rnaBaseForSugar &&
+      (rnaBaseForSugar.hydrogenBonds.length > 0 ||
+        rnaBaseForSugar.covalentBonds.length > 1 ||
+        !isSenseBase(rnaBaseForSugar)))
+  );
+};
+
+export const isAntisenseOptionVisible = (selectedMonomers: BaseMonomer[]) => {
+  return selectedMonomers?.some((selectedMonomer) => {
+    return (
+      (selectedMonomer instanceof RNABase &&
+        getSugarFromRnaBase(selectedMonomer)) ||
+      (isSugarOrAmbiguousSugar(selectedMonomer) &&
+        getRnaBaseFromSugar(selectedMonomer)) ||
+      selectedMonomer instanceof UnsplitNucleotide
+    );
+  });
+};
+
+/**
+ * The eligibility rules apply per chain: an ineligible chain in the selection
+ * does not block the antisense creation for the other chains (requirement 1.3
+ * of #5678), but one ineligible base still disables it for its own chain.
+ */
 export const isAntisenseCreationDisabled = (
   selectedMonomers: BaseMonomer[],
 ) => {
-  return selectedMonomers?.some((selectedMonomer: BaseMonomer) => {
-    const rnaBaseForSugar =
-      selectedMonomer instanceof Sugar && getRnaBaseFromSugar(selectedMonomer);
+  // The selection event also carries bonds, which cannot be grouped in chains
+  const monomers = selectedMonomers?.filter(
+    (entity) => entity instanceof BaseMonomer,
+  );
+
+  if (!monomers?.length) {
+    return true;
+  }
+
+  // A base alone does not start a backbone chain, so its sugar is added to
+  // find the chain it belongs to; only the selected monomers are checked
+  const sugarsOfSelectedBases = monomers
+    .filter((monomer) => monomer instanceof RNABase)
+    .map((rnaBase) => getSugarFromRnaBase(rnaBase))
+    .filter((sugar) => sugar !== undefined);
+
+  return !ChainsCollection.fromMonomers([
+    ...monomers,
+    ...sugarsOfSelectedBases,
+  ]).chains.some((chain) => {
+    const selectedMonomersInChain = chain.nodes
+      .flatMap((node) => node.monomers)
+      .filter((monomer) => monomers.includes(monomer));
 
     return (
-      (selectedMonomer instanceof RNABase &&
-        (selectedMonomer.hydrogenBonds.length > 0 ||
-          selectedMonomer.covalentBonds.length > 1)) ||
-      (isRnaBaseOrAmbiguousRnaBase(selectedMonomer) &&
-        !isSenseBase(selectedMonomer)) ||
-      (rnaBaseForSugar &&
-        (rnaBaseForSugar.hydrogenBonds.length > 0 ||
-          rnaBaseForSugar.covalentBonds.length > 1 ||
-          !isSenseBase(rnaBaseForSugar)))
+      isAntisenseOptionVisible(selectedMonomersInChain) &&
+      !selectedMonomersInChain.some(isMonomerIneligibleForAntisense)
     );
   });
 };
@@ -124,15 +186,10 @@ export const hasOnlyRiboseSugars = (selectedMonomers: BaseMonomer[]) => {
   );
 };
 
-export const isAntisenseOptionVisible = (selectedMonomers: BaseMonomer[]) => {
-  return selectedMonomers?.some((selectedMonomer) => {
-    return (
-      (selectedMonomer instanceof RNABase &&
-        getSugarFromRnaBase(selectedMonomer)) ||
-      (isSugarOrAmbiguousSugar(selectedMonomer) &&
-        getRnaBaseFromSugar(selectedMonomer))
-    );
-  });
+export const hasUnsplitNucleotide = (selectedMonomers: BaseMonomer[]) => {
+  return selectedMonomers?.some(
+    (selectedMonomer) => selectedMonomer instanceof UnsplitNucleotide,
+  );
 };
 
 export const AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX =

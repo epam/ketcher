@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import {
   type ReSGroup,
   type ReStruct,
@@ -41,13 +39,14 @@ import LassoHelper from '../helper/lasso';
 import { isMergingToMacroMolecule } from '../helper/isMacroMolecule';
 import { atomLongtapEvent } from '../atom';
 import SGroupTool from '../sgroup';
-import type { Editor } from '../../Editor';
+import type { Editor, Selection } from '../../Editor';
 import { dropAndMerge } from '../helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
 import { updateSelectedAtoms } from '../../../ui/state/modal/atoms';
 import { updateSelectedBonds } from '../../../ui/state/modal/bonds';
+import { isHydrogenBondBetweenMonomers } from '../../../ui/views/components/ContextMenu/utils';
 import { filterNotInContractedSGroup } from '../helper/filterNotInCollapsedSGroup';
-import type { Tool } from '../Tool';
+import type { HoverTarget, Tool } from '../Tool';
 import { handleMovingPosibilityCursor } from '../../utils';
 import { getItemCursor } from '../../utils/getItemCursor';
 import type {
@@ -58,7 +57,9 @@ import type {
 import { CommonArrowTool } from '../arrow/commonArrow';
 import { MultitailArrowMoveTool } from '../arrow/multitailArrowMoveTool';
 import { ReactionArrowMoveTool } from '../arrow/reactionArrowMoveTool';
+import type { ClosestItemWithMap } from '../../shared/closest.types';
 import {
+  getFragSelection,
   getNewSelectedItems,
   getSelectedAtoms,
   getSelectedBonds,
@@ -97,6 +98,8 @@ class SelectTool implements Tool {
   isReadyForCopy = false;
   isCopied = false;
   readonly isMoving = false;
+  private lastHoveredFragmentId?: number;
+  private lastHoveredFragmentTarget: HoverTarget | null = null;
   private readonly multitailArrowMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
   private readonly reactionArrowMoveTool: ArrowMoveTool<ReactionArrowClosestItem>;
 
@@ -108,7 +111,7 @@ class SelectTool implements Tool {
     this.#lassoHelper = new LassoHelper(
       this.#mode === 'lasso' ? 0 : 1,
       editor,
-      this.#mode === 'fragment',
+      this.#mode === 'structure',
     );
   }
 
@@ -183,11 +186,7 @@ class SelectTool implements Tool {
     const sgroups = ctab.sgroups.get(ci.id);
     const selection = this.editor.selection();
     if (ci.map === 'frags') {
-      const frag = ctab.frags.get(ci.id);
-      sel = {
-        atoms: frag.fragGetAtoms(ctab, ci.id),
-        bonds: frag.fragGetBonds(ctab, ci.id),
-      };
+      sel = getFragSelection(ctab, ci.id) ?? sel;
     } else if (
       (ci.map === 'sgroups' || ci.map === 'functionalGroups') &&
       sgroups
@@ -199,10 +198,12 @@ class SelectTool implements Tool {
       };
     } else if (ci.map === 'rgroups') {
       const rgroup = ctab.rgroups.get(ci.id);
-      sel = {
-        atoms: rgroup.getAtoms(rnd),
-        bonds: rgroup.getBonds(rnd),
-      };
+      if (rgroup) {
+        sel = {
+          atoms: rgroup.getAtoms(rnd),
+          bonds: rgroup.getBonds(rnd),
+        };
+      }
     } else if (ci.map === 'sgroupData') {
       if (isSelected(selection, ci)) return;
     }
@@ -354,7 +355,20 @@ class SelectTool implements Tool {
           this.#lassoHelper.fragment || event.altKey,
         );
         const item = editor.findItem(event, maps, null);
-        editor.hover(item, null, event);
+        let hoverTarget: HoverTarget | null = item;
+
+        if (item?.map === 'frags') {
+          if (this.lastHoveredFragmentId !== item.id) {
+            this.lastHoveredFragmentId = item.id;
+            this.lastHoveredFragmentTarget = getHoverTarget(item, editor);
+          }
+          hoverTarget = this.lastHoveredFragmentTarget;
+        } else {
+          this.lastHoveredFragmentId = undefined;
+          this.lastHoveredFragmentTarget = null;
+        }
+
+        editor.hover(hoverTarget, null, event);
         handleMovingPosibilityCursor(
           item,
           this.editor.render.paper.canvas,
@@ -391,7 +405,7 @@ class SelectTool implements Tool {
       selectedSgroups[selectedSgroups.length - 1],
     );
     const isDraggingSaltOrSolventOnStructure = SGroup.isSaltOrSolvent(
-      possibleSaltOrSolvent?.item?.data?.name,
+      possibleSaltOrSolvent?.item?.data?.name ?? '',
     );
     const isDraggingCustomSgroupOnStructure =
       SGroup.isSuperAtom(possibleSaltOrSolvent?.item) &&
@@ -442,7 +456,7 @@ class SelectTool implements Tool {
     this.editor.rotateController.rerender();
   }
 
-  dblclick(event) {
+  dblclick(event: PointerEvent) {
     const editor = this.editor;
     const struct = editor.render.ctab;
     const { molecule, sgroups } = struct;
@@ -531,6 +545,10 @@ class SelectTool implements Tool {
       });
     } else if (ci.map === 'bonds') {
       const bonds = getSelectedBonds(selection, molecule);
+      if (bonds.some((bond) => isHydrogenBondBetweenMonomers(bond, molecule))) {
+        return true;
+      }
+
       const changeBondPromise = editor.event.bondEdit.dispatch(bonds);
       updateSelectedBonds({
         bonds: selection?.bonds ?? [],
@@ -577,6 +595,8 @@ class SelectTool implements Tool {
     onSelectionLeave(this.editor, this.#lassoHelper);
 
     this.dragCtx = null;
+    this.lastHoveredFragmentId = undefined;
+    this.lastHoveredFragmentTarget = null;
 
     this.editor.hover(null);
   }
@@ -594,10 +614,10 @@ class SelectTool implements Tool {
         .map(({ item }) => item)
         .filter((sgroup): sgroup is SGroup => !!sgroup);
       isDraggingOnSaltOrSolventAtom = mergeAtoms.some((atomId) =>
-        SGroup.isAtomInSaltOrSolvent(atomId as number, sgroupsOnCanvas),
+        SGroup.isAtomInSaltOrSolvent(atomId, sgroupsOnCanvas),
       );
       isDraggingOnSaltOrSolventBond = mergeBonds.some((bondId) =>
-        SGroup.isBondInSaltOrSolvent(bondId as number, sgroupsOnCanvas),
+        SGroup.isBondInSaltOrSolvent(bondId, sgroupsOnCanvas),
       );
     }
     return isDraggingOnSaltOrSolventAtom || isDraggingOnSaltOrSolventBond;
@@ -683,14 +703,41 @@ class SelectTool implements Tool {
   }
 }
 
-function closestToSel(ci) {
-  const res = {};
-  res[ci.map] = [ci.id];
-  return res;
+type ClosestSelectableItem = Pick<ClosestItemWithMap, 'id' | 'map'>;
+
+function closestToSel(ci: ClosestSelectableItem): Record<string, number[]> {
+  return {
+    [ci.map]: [ci.id],
+  };
 }
 
-function isSelected(selection, item) {
+function isSelected(
+  selection: Selection | null | undefined,
+  item: ClosestSelectableItem,
+): boolean {
   return selection?.[item.map]?.includes(item.id) ?? false;
+}
+
+function getHoverTarget(
+  item: ClosestItemWithMap | null,
+  editor: Editor,
+): HoverTarget | null {
+  if (item?.map !== 'frags') {
+    return item;
+  }
+
+  const ctab = editor.render.ctab;
+  const fragSelection = getFragSelection(ctab, item.id);
+
+  if (!fragSelection) {
+    return item;
+  }
+
+  return {
+    map: 'merge',
+    id: item.id,
+    items: fragSelection,
+  };
 }
 
 function preventSaltAndSolventsMerge(

@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
@@ -324,7 +321,7 @@ test(`6. Check warning messages on Base monomer if R1 attachment point with a le
 
   await expect(WarningMessageDialog(page).window).toBeVisible();
   expect(await WarningMessageDialog(page).getWarningMessage()).toContain(
-    'Base monomers typically have a hydroxyl as the leaving group for R1. Do you wish to proceed with the current attachment points?',
+    'Base monomers typically have a hydrogen as the leaving group for R1. Do you wish to proceed with the current attachment points?',
   );
 
   await WarningMessageDialog(page).cancel();
@@ -668,7 +665,9 @@ test(`14. Verify that by default the functionality of saving new monomers from c
    * Version 3.10
    */
   await page.evaluate(() =>
-    window.ketcher.setSettings({ persistMonomerLibraryUpdates: true }),
+    globalThis.window.ketcher.setSettings({
+      persistMonomerLibraryUpdates: true,
+    }),
   );
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -710,7 +709,9 @@ test(`15. Verify that by default the functionality of saving new monomers from c
    * Version 3.10
    */
   await page.evaluate(() =>
-    window.ketcher.setSettings({ persistMonomerLibraryUpdates: false }),
+    globalThis.window.ketcher.setSettings({
+      persistMonomerLibraryUpdates: false,
+    }),
   );
   await pasteFromClipboardAndOpenAsNewProject(
     page,

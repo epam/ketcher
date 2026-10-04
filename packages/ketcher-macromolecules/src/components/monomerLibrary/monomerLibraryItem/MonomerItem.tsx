@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { EmptyFunction } from 'helpers';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { useCallback, MouseEvent, useRef, useState } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
@@ -28,7 +29,7 @@ import {
 import { IMonomerItemProps } from './types';
 import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
-import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
+import { MonomerItemType, isAmbiguousMonomerLibraryItem } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
 import {
   selectEditor,
@@ -51,7 +52,9 @@ const MonomerItem = ({
   isSelected,
   disabled,
   onClick = EmptyFunction,
+  onStarClick = EmptyFunction,
 }: IMonomerItemProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const isSequenceMode = useAppSelector(selectIsSequenceMode);
@@ -80,9 +83,10 @@ const MonomerItem = ({
   const addFavorite = useCallback(
     (event: MouseEvent) => {
       event.stopPropagation();
+      onStarClick();
       dispatch(toggleMonomerFavorites(item));
     },
-    [dispatch, item],
+    [dispatch, item, onStarClick],
   );
 
   const onAutochainIconClick = useCallback(
@@ -91,7 +95,7 @@ const MonomerItem = ({
 
       // Validate before executing autochain to ensure validation runs even on consecutive clicks
       if (editor) {
-        const errorMessage = getAutochainErrorMessage(editor, item);
+        const errorMessage = getAutochainErrorMessage(editor, item, t);
         setAutochainErrorMessage(errorMessage);
 
         // If there's an error, don't proceed with autochain
@@ -102,19 +106,19 @@ const MonomerItem = ({
 
       editor?.events.autochain.dispatch(item);
     },
-    [editor, item],
+    [editor, item, t],
   );
 
   const onMouseOver = useCallback(
     () =>
-      editor && cardMouseOverHandler(editor, item, setAutochainErrorMessage),
-    [editor, item],
+      editor && cardMouseOverHandler(editor, item, setAutochainErrorMessage, t),
+    [editor, item, t],
   );
 
   const onAutochainIconMouseOver = useCallback(() => {
     // Re-validate on hover to ensure tooltip shows current validation state
     if (editor) {
-      const errorMessage = getAutochainErrorMessage(editor, item);
+      const errorMessage = getAutochainErrorMessage(editor, item, t);
       setAutochainErrorMessage(errorMessage);
 
       if (errorMessage) {
@@ -123,15 +127,12 @@ const MonomerItem = ({
     }
 
     editor?.events.previewAutochain.dispatch(item);
-  }, [editor, item]);
+  }, [editor, item, t]);
 
   const onAutochainIconMouseOut = useCallback(() => {
     editor?.events.removeAutochainPreview.dispatch(item);
   }, [editor, item]);
 
-  // TODO suppressed after upgrade to react 19. Need to fix
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   useLibraryItemDrag(item, cardRef);
 
   return (
@@ -192,7 +193,7 @@ const MonomerItem = ({
             type="button"
             onClick={addFavorite}
             className={`star ${item.favorite ? 'visible' : ''}`}
-            aria-label="Toggle favorite"
+            aria-label={t('monomerLibrary.toggleFavoriteAriaLabel')}
           >
             {FavoriteStarSymbol}
           </button>

@@ -3,8 +3,6 @@
  * Tests migration from namespaced format back to flat format
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, dot-notation */
-
 import { SettingsMigration } from '../SettingsMigration';
 
 describe('SettingsMigration', () => {
@@ -57,7 +55,7 @@ describe('SettingsMigration', () => {
     });
 
     it('should handle non-object input', () => {
-      const migrated = SettingsMigration.migrate('not an object' as any);
+      const migrated = SettingsMigration.migrate('not an object');
 
       expect(migrated).toEqual({});
     });
@@ -92,7 +90,7 @@ describe('SettingsMigration', () => {
       const namespacedFormat = {
         render: {
           atomColoring: false,
-          bondThickness: 2.0,
+          bondThickness: 2,
           font: '30px Arial',
           showStereoFlags: true,
         },
@@ -102,7 +100,7 @@ describe('SettingsMigration', () => {
 
       expect(migrated).toEqual({
         atomColoring: false,
-        bondThickness: 2.0,
+        bondThickness: 2,
         font: '30px Arial',
         showStereoFlags: true,
       });

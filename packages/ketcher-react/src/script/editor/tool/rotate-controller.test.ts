@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Vec2 } from 'ketcher-core';
 import Editor from '../Editor';
 import RotateTool from './rotate';
@@ -58,7 +57,12 @@ describe('Rotate controller', () => {
    */
   it('hides when active tool is not SelectTool', () => {
     const ketcherId = '1';
-    const editor = new Editor(ketcherId, document, {}, {});
+    const editor = new Editor(
+      ketcherId,
+      document as unknown as HTMLElement,
+      {},
+      {},
+    );
     const NonSelectTool = new RotateTool(editor, undefined);
     const paper = jest.fn();
     const visibleAtoms = [0, 1];
@@ -91,7 +95,12 @@ describe('Rotate controller', () => {
    */
   it('rerenders while zooming', () => {
     const ketcherId = '1';
-    const editor = new Editor(ketcherId, document, {}, {});
+    const editor = new Editor(
+      ketcherId,
+      document as unknown as HTMLElement,
+      {},
+      {},
+    );
     editor.rotateController.rerender = jest.fn();
 
     editor.zoom(2);
@@ -246,7 +255,12 @@ describe('Rotate controller', () => {
    */
   it(`cancels rotation without modifying history stack`, () => {
     const ketcherId = '1';
-    const editor = new Editor(ketcherId, document, {}, {});
+    const editor = new Editor(
+      ketcherId,
+      document as unknown as HTMLElement,
+      {},
+      {},
+    );
     editor.render.ctab.molecule.getSelectedVisibleAtoms = () => [];
     // @ts-ignore
     editor.rotateController.rotateTool.dragCtx = {

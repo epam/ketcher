@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import type { Operation } from 'domain/entities/Operation';
@@ -150,9 +148,11 @@ export class AtomDeleteOperation implements Operation {
 
   public invertAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.addAtom(this.atom);
+    renderersManager.rerenderSGroups();
   }
 
   public executeAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.deleteAtom(this.atom);
+    renderersManager.rerenderSGroups();
   }
 }

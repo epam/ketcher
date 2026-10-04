@@ -6,7 +6,9 @@ import type {
 import type {
   IKetMonomerGroupTemplate,
   IKetTemplateConnection,
+  IKetIdtAliases,
 } from 'application/formatters/types/ket';
+import type { CoreEditor } from 'application/editor/Editor';
 
 interface ToolEventHandler {
   click?(event: Event): void;
@@ -107,12 +109,15 @@ export interface IRnaPreset {
   phosphatePosition?: 'left' | 'right';
   default?: boolean;
   favorite?: boolean;
+  readonly idtAliases?: IKetIdtAliases;
+  readonly aliasAxoLabs?: string;
   editedName?: boolean;
   connections?: IKetTemplateConnection[];
 }
 
 export interface IRnaLabeledPreset
-  extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate' | 'connections'>,
+  extends
+    Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate' | 'connections'>,
     Pick<IKetMonomerGroupTemplate, 'templates' | 'connections'> {
   connections?: IKetTemplateConnection[];
 }
@@ -145,10 +150,10 @@ export interface BaseTool extends Tool {
 
 export type PeptideToolOptions = MonomerItemType;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ToolConstructorInterface = new (editor: any, ...args: any[]) =>
-  | Tool
-  | BaseTool;
+export type ToolConstructorInterface = new (
+  editor: CoreEditor,
+  ...args: unknown[]
+) => Tool | BaseTool;
 
 export type ToolEventHandlerName = keyof ToolEventHandler;
 

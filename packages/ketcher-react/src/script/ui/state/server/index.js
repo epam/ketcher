@@ -157,7 +157,8 @@ export function serverTransform(method, data, struct) {
 
         return dispatch(
           load(loadedStruct, {
-            rescale: method === 'layout',
+            preserveViewport:
+              method === 'aromatize' || method === 'dearomatize',
             reactionRelayout: method === 'clean',
             method,
           }),

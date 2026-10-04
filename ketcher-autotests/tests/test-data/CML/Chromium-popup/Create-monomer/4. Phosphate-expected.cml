@@ -10,7 +10,7 @@
             <bond atomRefs2="a2 a0" order="1"/>
             <bond atomRefs2="a2 a3" order="1"/>
         </bondArray>
-        <molecule id="sg0" atomRefs="a2 a3" role="SuperatomSgroup" title="Phosphate31">
+        <molecule id="sg1" atomRefs="a2 a3" role="SuperatomSgroup" title="Phosphate31">
             <MBracket type="SQUARE">
                 <MPoint x="-0.433" y="0.25"/>
                 <MPoint x="0" y="0"/>

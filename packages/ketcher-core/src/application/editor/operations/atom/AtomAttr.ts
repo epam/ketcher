@@ -19,16 +19,16 @@ import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
 
 type Data = {
-  aid?: any;
-  attribute?: any;
-  value?: any;
+  aid?: number;
+  attribute?: string;
+  value?: unknown;
 };
 
 export class AtomAttr extends BaseOperation {
   data: Data | null;
   data2: Data | null;
 
-  constructor(atomId?: any, attribute?: any, value?: any) {
+  constructor(atomId?: number, attribute?: string, value?: unknown) {
     super(OperationType.ATOM_ATTR, OperationPriority.ATOM_ATTR);
     this.data = { aid: atomId, attribute, value };
     this.data2 = null;
@@ -37,17 +37,19 @@ export class AtomAttr extends BaseOperation {
   execute(restruct: ReStruct) {
     if (this.data) {
       const { aid, attribute, value } = this.data;
-
-      const atom = restruct.molecule.atoms.get(aid)!;
-      if (!this.data2) {
-        this.data2 = {
-          aid,
-          attribute,
-          value: atom[attribute],
-        };
+      if (aid === undefined || attribute === undefined) {
+        return;
       }
 
-      atom[attribute] = value;
+      const atom = restruct.molecule.atoms.get(aid);
+      if (!atom) return;
+      this.data2 ??= {
+        aid,
+        attribute,
+        value: Reflect.get(atom, attribute),
+      };
+
+      Reflect.set(atom, attribute, value);
       BaseOperation.invalidateAtom(restruct, aid);
     }
   }
@@ -60,9 +62,18 @@ export class AtomAttr extends BaseOperation {
   }
 
   isDummy(restruct: ReStruct) {
-    return (
-      restruct.molecule.atoms.get(this.data?.aid)![this.data?.attribute] ===
-      this.data?.value
-    );
+    const data = this.data;
+    if (!data) {
+      return false;
+    }
+    const { aid, attribute, value } = data;
+    if (aid === undefined || attribute === undefined) {
+      return false;
+    }
+    const atom = restruct.molecule.atoms.get(aid);
+    if (!atom) {
+      return false;
+    }
+    return Reflect.get(atom, attribute) === value;
   }
 }

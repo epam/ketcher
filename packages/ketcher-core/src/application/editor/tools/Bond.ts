@@ -19,21 +19,14 @@ import type { BaseTool } from 'application/editor/tools/Tool';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import type { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
-import {
-  AmbiguousMonomer,
-  UnresolvedMonomer,
-  UnsplitNucleotide,
-} from 'domain/entities';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Chem } from 'domain/entities/Chem';
 import { Command } from 'domain/entities/Command';
-import { Peptide } from 'domain/entities/Peptide';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { RNABase } from 'domain/entities/RNABase';
-import { Sugar } from 'domain/entities/Sugar';
-import { AttachmentPointName } from 'domain/types';
+import {
+  AttachmentPointName,
+  type MouseEventWithAttachmentPoint,
+} from 'domain/types';
 // FIXME: If we replace '../shared/coordinates' by 'application/editor' to make it shorter,
 //  we get `Uncaught ReferenceError: Cannot access 'PolymerBond' before initialization`,
 //  which probably due to a circular dependency
@@ -44,13 +37,12 @@ import {
   MACROMOLECULES_BOND_TYPES,
   ToolName,
 } from 'application/editor/tools/types';
-import { KetMonomerClass } from 'application/formatters';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { shouldInvokeConnectionModal } from 'application/editor/tools/bondConnectionHelpers';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
-  | FlexModePolymerBondRenderer
-  | SnakeModePolymerBondRenderer;
+  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
@@ -60,8 +52,9 @@ class PolymerBond implements BaseTool {
 
   constructor(
     private readonly editor: CoreEditor,
-    options: { toolName: ToolName },
+    ...args: unknown[]
   ) {
+    const [options] = args as [{ toolName: ToolName }];
     this.editor = editor;
     this.history = EditorHistory.getInstance(this.editor);
     this.bondType =
@@ -74,12 +67,12 @@ class PolymerBond implements BaseTool {
     return this.bondType === MACROMOLECULES_BOND_TYPES.HYDROGEN;
   }
 
-  public mouseDownAttachmentPoint(event) {
+  public mouseDownAttachmentPoint(event: MouseEventWithAttachmentPoint): void {
     if (this.isHydrogenBond) {
       return;
     }
 
-    const selectedRenderer = event.target.__data__;
+    const selectedRenderer = event.target?.__data__;
     if (
       selectedRenderer instanceof AttachmentPoint &&
       !selectedRenderer.monomer.isAttachmentPointUsed(event.attachmentPointName)
@@ -104,8 +97,8 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  public mousedown(event) {
-    const selectedRenderer = event.target.__data__;
+  public mousedown(event: MouseEvent) {
+    const selectedRenderer = event.target?.__data__;
     if (
       selectedRenderer instanceof BaseMonomerRenderer ||
       selectedRenderer instanceof AttachmentPoint
@@ -143,11 +136,10 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  // FIXME: Specify the types.
-  public mouseLeavePolymerBond(event): void {
-    const renderer: FlexModeOrSnakeModePolymerBondRenderer =
-      event.target.__data__;
-    if (this.bondRenderer || !renderer.polymerBond) return;
+  public mouseLeavePolymerBond(event: MouseEvent): void {
+    const renderer = event.target?.__data__ as
+      FlexModeOrSnakeModePolymerBondRenderer | undefined;
+    if (this.bondRenderer || !renderer?.polymerBond) return;
 
     const modelChanges =
       this.editor.drawingEntitiesManager.hidePolymerBondInformation(
@@ -156,12 +148,12 @@ class PolymerBond implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  // FIXME: Specify the types.
-  public mouseOverPolymerBond(event) {
+  public mouseOverPolymerBond(event: MouseEvent) {
     if (this.bondRenderer) return;
 
-    const renderer: FlexModeOrSnakeModePolymerBondRenderer =
-      event.target.__data__;
+    const renderer = event.target?.__data__ as
+      FlexModeOrSnakeModePolymerBondRenderer | undefined;
+    if (!renderer) return;
     const modelChanges =
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
         renderer.polymerBond,
@@ -169,9 +161,10 @@ class PolymerBond implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  public mouseOverMonomer(event) {
-    const renderer: BaseMonomerRenderer = event.target.__data__;
-    let modelChanges;
+  public mouseOverMonomer(event: MouseEvent) {
+    const renderer = event.target?.__data__ as BaseMonomerRenderer | undefined;
+    if (!renderer) return;
+    let modelChanges: Command;
 
     if (this.bondRenderer) {
       // Don't need to do anything if we hover over the first monomer of the bond
@@ -199,13 +192,13 @@ class PolymerBond implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  public mouseOverAttachmentPoint(event) {
+  public mouseOverAttachmentPoint(event: MouseEventWithAttachmentPoint) {
     if (this.isHydrogenBond) {
       return;
     }
 
-    const renderer: AttachmentPoint = event.target.__data__;
-    let modelChanges;
+    const renderer = event.target?.__data__ as unknown as AttachmentPoint;
+    let modelChanges: Command;
 
     if (renderer.monomer.isAttachmentPointUsed(event.attachmentPointName)) {
       return;
@@ -239,19 +232,21 @@ class PolymerBond implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  public mouseLeaveMonomer(event) {
-    const eventToElementData = event.toElement?.__data__;
-    const eventFromElementData = event.fromElement?.__data__;
+  public mouseLeaveMonomer(event: MouseEvent) {
+    const eventToElementData = event.relatedTarget?.__data__;
+    const eventFromElementData = event.target?.__data__ as
+      BaseMonomerRenderer | undefined;
     if (
       eventToElementData instanceof AttachmentPoint &&
-      eventToElementData.monomer === eventFromElementData.monomer
+      eventToElementData.monomer === eventFromElementData?.monomer
     ) {
       eventToElementData.monomer.removePotentialBonds();
 
       return;
     }
 
-    const renderer: BaseMonomerRenderer = event.target.__data__;
+    const renderer = event.target?.__data__ as BaseMonomerRenderer | undefined;
+    if (!renderer) return;
 
     if (
       renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer &&
@@ -267,11 +262,13 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  public mouseLeaveAttachmentPoint(event) {
+  public mouseLeaveAttachmentPoint(event: MouseEvent) {
     if (this.isBondConnectionModalOpen) {
       return;
     }
-    const attachmentPointRenderer: AttachmentPoint = event.target.__data__;
+    const attachmentPointRenderer = event.target
+      ?.__data__ as unknown as AttachmentPoint;
+    if (!attachmentPointRenderer) return;
     if (
       attachmentPointRenderer.monomer.renderer !==
       this.bondRenderer?.polymerBond?.firstMonomer?.renderer
@@ -285,8 +282,9 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  public mouseUpAttachmentPoint(event) {
-    const renderer = event.target.__data__ as AttachmentPoint;
+  public mouseUpAttachmentPoint(event: MouseEventWithAttachmentPoint) {
+    const renderer = event.target?.__data__ as unknown as AttachmentPoint;
+    if (!renderer) return;
     const isFirstMonomerHovered =
       renderer.monomer.renderer ===
       this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
@@ -422,16 +420,16 @@ class PolymerBond implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  public mouseUpMonomer(event) {
-    const renderer = event.target.__data__;
+  public mouseUpMonomer(event: MouseEvent) {
+    const renderer = event.target?.__data__ as BaseMonomerRenderer | undefined;
     const isFirstMonomerHovered =
       renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
-    if (this.bondRenderer && !isFirstMonomerHovered) {
+    if (this.bondRenderer && renderer?.monomer && !isFirstMonomerHovered) {
       const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
-      const secondMonomer = renderer.monomer;
+      const secondMonomer = renderer?.monomer;
 
-      for (const attachmentPoint in secondMonomer.attachmentPointsToBonds) {
+      for (const attachmentPoint in secondMonomer?.attachmentPointsToBonds) {
         const bond = secondMonomer.attachmentPointsToBonds[attachmentPoint];
         if (!bond) {
           continue;
@@ -484,12 +482,13 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  public mouseUpAtom(event) {
+  public mouseUpAtom(event: MouseEvent) {
     if (!this.bondRenderer || this.isHydrogenBond) {
       return;
     }
 
-    const atomRenderer = event.target.__data__ as AtomRenderer;
+    const atomRenderer = event.target?.__data__ as AtomRenderer | undefined;
+    if (!atomRenderer) return;
     const monomer = this.bondRenderer?.polymerBond.firstMonomer;
 
     if (!this.isHydrogenBond && !monomer.chosenFirstAttachmentPointForBond) {
@@ -613,120 +612,12 @@ class PolymerBond implements BaseTool {
     secondMonomer: BaseMonomer,
     checkForPotentialBonds = true,
   ) {
-    if (this.isHydrogenBond) {
-      return;
-    }
-
-    // No Modal: no free attachment point on second monomer
-    if (!secondMonomer.hasFreeAttachmentPoint) {
-      return false;
-    }
-
-    // No Modal: Both monomers have APs selected
-    if (
-      firstMonomer.chosenFirstAttachmentPointForBond !== null &&
-      secondMonomer.chosenSecondAttachmentPointForBond !== null
-    ) {
-      return false;
-    }
-
-    // Modal: either of the monomers doesn't have any potential APs
-    if (
-      checkForPotentialBonds &&
-      (!firstMonomer.hasPotentialBonds() || !secondMonomer.hasPotentialBonds())
-    ) {
-      return true;
-    }
-
-    // No Modal: Both monomers have only 1 attachment point
-    if (
-      firstMonomer.unUsedAttachmentPointsNamesList.length === 1 &&
-      secondMonomer.unUsedAttachmentPointsNamesList.length === 1
-    ) {
-      return false;
-    }
-
-    // Modal: Any or both monomers are Chems
-    if (
-      firstMonomer instanceof Chem ||
-      secondMonomer instanceof Chem ||
-      (firstMonomer instanceof AmbiguousMonomer &&
-        firstMonomer.monomerClass === KetMonomerClass.CHEM) ||
-      (secondMonomer instanceof AmbiguousMonomer &&
-        secondMonomer.monomerClass === KetMonomerClass.CHEM)
-    ) {
-      return true;
-    }
-
-    // Modal: Any or both monomers are unresolved
-    if (
-      firstMonomer instanceof UnresolvedMonomer ||
-      secondMonomer instanceof UnresolvedMonomer
-    ) {
-      return true;
-    }
-
-    // Modal: One monomer is Peptide and another is RNA monomer
-    const rnaMonomerClasses = [Sugar, RNABase, Phosphate];
-    const firstMonomerIsRNA = rnaMonomerClasses.find(
-      (RNAClass) => firstMonomer instanceof RNAClass,
+    return shouldInvokeConnectionModal(
+      firstMonomer,
+      secondMonomer,
+      checkForPotentialBonds,
+      this.isHydrogenBond,
     );
-    const secondMonomerIsRNA = rnaMonomerClasses.find(
-      (RNAClass) => secondMonomer instanceof RNAClass,
-    );
-    if (
-      (firstMonomerIsRNA && secondMonomer instanceof Peptide) ||
-      (secondMonomerIsRNA && firstMonomer instanceof Peptide) ||
-      (firstMonomerIsRNA && secondMonomer instanceof UnsplitNucleotide) ||
-      (secondMonomerIsRNA && firstMonomer instanceof UnsplitNucleotide) ||
-      (firstMonomerIsRNA &&
-        secondMonomer instanceof AmbiguousMonomer &&
-        secondMonomer.monomerClass === KetMonomerClass.AminoAcid) ||
-      (secondMonomerIsRNA &&
-        firstMonomer instanceof AmbiguousMonomer &&
-        firstMonomer.monomerClass === KetMonomerClass.AminoAcid)
-    ) {
-      return true;
-    }
-
-    // Modal: special case for Peptide chain
-    if (secondMonomer instanceof Peptide && firstMonomer instanceof Peptide) {
-      // one of monomers has more than 2 AP
-      const hasPlentyAttachmentPoints =
-        firstMonomer.listOfAttachmentPoints.length > 2 ||
-        secondMonomer.listOfAttachmentPoints.length > 2;
-
-      // at least one of monomers has more than 1 free AP
-      const hasPlentyFreeAttachmentPoints =
-        firstMonomer.unUsedAttachmentPointsNamesList.length > 1 ||
-        secondMonomer.unUsedAttachmentPointsNamesList.length > 1;
-
-      // there is no possibility to connect R1-R2
-      const BothR1AttachmentPointUsed =
-        firstMonomer.isAttachmentPointUsed(AttachmentPointName.R1) &&
-        secondMonomer.isAttachmentPointUsed(AttachmentPointName.R1);
-
-      const BothR2AttachmentPointUsed =
-        firstMonomer.isAttachmentPointUsed(AttachmentPointName.R2) &&
-        secondMonomer.isAttachmentPointUsed(AttachmentPointName.R2);
-
-      const R1AndR2AttachmentPointUsed =
-        (firstMonomer.isAttachmentPointUsed(AttachmentPointName.R2) &&
-          firstMonomer.isAttachmentPointUsed(AttachmentPointName.R1)) ||
-        (secondMonomer.isAttachmentPointUsed(AttachmentPointName.R2) &&
-          secondMonomer.isAttachmentPointUsed(AttachmentPointName.R1));
-
-      if (
-        hasPlentyAttachmentPoints &&
-        hasPlentyFreeAttachmentPoints &&
-        (BothR1AttachmentPointUsed ||
-          BothR2AttachmentPointUsed ||
-          R1AndR2AttachmentPointUsed)
-      ) {
-        return true;
-      }
-    }
-    return false;
   }
 }
 

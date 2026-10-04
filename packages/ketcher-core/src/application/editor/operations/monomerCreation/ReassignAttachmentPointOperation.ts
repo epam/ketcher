@@ -17,7 +17,7 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import type { MonomerCreationState } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
-import assert from 'assert';
+import { assert } from 'utilities';
 import type { AttachmentPointName } from 'domain/types';
 import type Restruct from 'application/render/restruct/restruct';
 
@@ -69,5 +69,9 @@ export class ReassignAttachmentPointOperation extends BaseOperation {
       this.newName,
       this.currentName,
     );
+  }
+
+  isDummy() {
+    return this.currentName === this.newName;
   }
 }

@@ -40,7 +40,6 @@ import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import type { MolfileFormat } from 'domain/serializers/mol/mol.types';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
-import assert from 'assert';
 import { EventEmitter } from 'events';
 import {
   type LogSettings,
@@ -50,6 +49,7 @@ import {
   getSvgFromDrawnStructures,
   KetcherLogger,
   ensureString,
+  assert,
 } from 'utilities';
 import { ketcherProvider } from './ketcherProvider';
 import {
@@ -60,6 +60,7 @@ import {
 import { type EditorSelection, EditorType } from './editor/editor.types';
 import {
   type ExportImageParams,
+  type KetcherApiSettings,
   type SupportedImageFormats,
   type SupportedModes,
   type UpdateMonomersLibraryParams,
@@ -74,14 +75,24 @@ import { getStructure } from 'application/getStructure';
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
   needZoom?: boolean;
+  preserveCanvasPosition?: boolean;
 };
 
-const allowedApiSettings = {
-  'general.dearomatize-on-load': 'dearomatize-on-load',
-  ignoreChiralFlag: 'ignoreChiralFlag',
-  disableQueryElements: 'disableQueryElements',
-  bondThickness: 'bondThickness',
-};
+const allowedApiSettings = [
+  ['general.dearomatize-on-load', 'dearomatize-on-load'],
+  ['ignoreChiralFlag', 'ignoreChiralFlag'],
+  ['disableQueryElements', 'disableQueryElements'],
+  ['bondThickness', 'bondThickness'],
+] as const;
+
+type AllowedApiSetting = (typeof allowedApiSettings)[number][0];
+type AllowedClientSetting = (typeof allowedApiSettings)[number][1];
+type KetcherGetSettingsResult = Partial<
+  Record<AllowedApiSetting, KetcherApiSettings[AllowedApiSetting]>
+>;
+type KetcherSetOptionsPayload = Partial<
+  Record<AllowedClientSetting, KetcherApiSettings[AllowedApiSetting]>
+>;
 
 const MONOMER_LIBRARY_FORMAT_OPTIONS = {
   inputFormat: ChemicalMimeType.MonomerLibrary,
@@ -102,9 +113,16 @@ export class Ketcher {
   libraryUpdateEvent: Subscription;
 
   get editor(): Editor {
-    // we should assign editor exactly after ketcher creation
-    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-    return this.#editor!;
+    // we should assign editor exactly after ketcher creation, so #editor
+    // being null here would indicate a programming error (accessing the
+    // editor before Ketcher has finished initializing), not a normal
+    // runtime case
+    if (!this.#editor) {
+      throw new Error(
+        'Editor is not initialized yet. It should be assigned right after Ketcher creation.',
+      );
+    }
+    return this.#editor;
   }
 
   get eventBus(): EventEmitter {
@@ -172,17 +190,17 @@ export class Ketcher {
   }
 
   // TEMP.: getting only dearomatize-on-load setting
-  get settings() {
+  get settings(): KetcherGetSettingsResult {
     const options = this.editor.options();
-    const result = Object.entries(allowedApiSettings).reduce(
-      (acc, [apiSetting, clientSetting]) => {
-        if (clientSetting in options) {
-          return { ...acc, [apiSetting]: clientSetting };
-        }
-        return acc;
-      },
-      {},
-    );
+    const result: KetcherGetSettingsResult = {};
+
+    for (const [apiSetting, clientSetting] of allowedApiSettings) {
+      const value = options[clientSetting];
+
+      if (value !== undefined) {
+        result[apiSetting] = value;
+      }
+    }
 
     if (!Object.keys(result).length) {
       throw new Error('Allowed options are not provided');
@@ -195,17 +213,19 @@ export class Ketcher {
     this.#editor = editor;
   }
 
-  // TODO: create options type
-  setSettings(settings: Record<string, string | boolean>) {
+  setSettings(settings: KetcherApiSettings): void {
     // TODO: need to expand this and refactor this method
     if (!settings) {
       throw new Error('Please provide settings');
     }
-    const options = {};
-    for (const [apiSetting, clientSetting] of Object.entries(
-      allowedApiSettings,
-    )) {
-      options[clientSetting] = settings[apiSetting];
+    const options: KetcherSetOptionsPayload = {};
+
+    for (const [apiSetting, clientSetting] of allowedApiSettings) {
+      const value = settings[apiSetting];
+
+      if (value !== undefined) {
+        options[clientSetting] = value;
+      }
     }
 
     if (Object.hasOwn(settings, 'disableCustomQuery')) {
@@ -241,7 +261,7 @@ export class Ketcher {
 
   async getMolfile(molfileFormat?: MolfileFormat): Promise<string> {
     if (this.containsReaction()) {
-      throw Error(
+      throw new Error(
         'The structure cannot be saved as *.MOL due to reaction arrows.',
       );
     }
@@ -288,7 +308,7 @@ export class Ketcher {
       throw new Error('RXN format is not available in macro mode');
     }
     if (!this.containsReaction()) {
-      throw Error(
+      throw new Error(
         'The structure cannot be saved as *.RXN: there is no reaction arrows.',
       );
     }
@@ -361,6 +381,7 @@ export class Ketcher {
           error instanceof Error ? error.message : 'Unknown error occurred';
         throw new Error(
           `Failed to convert structure to ${format} format: ${errorMessage}`,
+          { cause: error },
         );
       }
     }
@@ -543,7 +564,11 @@ export class Ketcher {
           this,
         );
 
-        struct.rescale();
+        const preserveCanvasPosition = options?.preserveCanvasPosition === true;
+
+        if (!preserveCanvasPosition) {
+          struct.rescale();
+        }
 
         const { x, y } = options?.position ?? {};
 
@@ -556,8 +581,10 @@ export class Ketcher {
         // Clean up initiallySelected flags after restoring selection
         this.editor.struct().disableInitiallySelected();
 
-        this.editor.zoomAccordingContent(struct);
-        if (x == null && y == null) {
+        if (!preserveCanvasPosition) {
+          this.editor.zoomAccordingContent(struct);
+        }
+        if (x == null && y == null && !preserveCanvasPosition) {
           this.editor.centerStruct();
         }
       }
@@ -678,7 +705,9 @@ export class Ketcher {
     await runAsyncAction<void>(async () => {
       const struct = await this._indigo.aromatize(this.editor.struct());
       const ketSerializer = new KetSerializer();
-      await this.setMolecule(ketSerializer.serialize(struct));
+      await this.setMolecule(ketSerializer.serialize(struct), {
+        preserveCanvasPosition: true,
+      });
     }, this.eventBus);
   }
 
@@ -690,7 +719,9 @@ export class Ketcher {
     await runAsyncAction<void>(async () => {
       const struct = await this._indigo.dearomatize(this.editor.struct());
       const ketSerializer = new KetSerializer();
-      await this.setMolecule(ketSerializer.serialize(struct));
+      await this.setMolecule(ketSerializer.serialize(struct), {
+        preserveCanvasPosition: true,
+      });
     }, this.eventBus);
   }
 
@@ -720,7 +751,7 @@ export class Ketcher {
   exportImage(format: SupportedImageFormats, params?: ExportImageParams) {
     const editor = provideEditorInstance();
     const fileName = 'ketcher';
-    let blobPart;
+    let blobPart: string | undefined;
 
     if (format === 'svg' && editor?.canvas) {
       blobPart = getSvgFromDrawnStructures(
@@ -752,7 +783,7 @@ export class Ketcher {
       outputFormat: 'png',
     },
   ): Promise<Blob> {
-    let meta = '';
+    let meta: string;
 
     switch (options.outputFormat) {
       case 'svg':
@@ -823,7 +854,7 @@ export class Ketcher {
         );
 
         dataInKetFormat = convertResult.struct;
-      } catch (error) {
+      } catch (error: unknown) {
         const originalMessage =
           error instanceof Error ? error.message : String(error);
         throw new MonomerLibraryConvertError(

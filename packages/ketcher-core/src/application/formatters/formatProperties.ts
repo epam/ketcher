@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ChemicalMimeType } from 'domain/services';
+import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import type { SupportedFormat } from './structFormatter.types';
 import { SupportedFormatProperties } from './supportedFormatProperties';
 
@@ -118,6 +118,7 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.SDF,
     ['.sdf'],
     true,
+    { 'molfile-saving-mode': '2000' },
   ),
   sdfV3000: new SupportedFormatProperties(
     'SDF V3000',

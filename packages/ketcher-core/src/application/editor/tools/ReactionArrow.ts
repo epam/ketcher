@@ -6,7 +6,7 @@ import type { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import type { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';
 import type { ToolName } from 'application/editor/tools/types';
-import assert from 'assert';
+import { assert } from 'utilities';
 
 class ReactionArrow implements BaseTool {
   static readonly MIN_LENGTH = 0.5;
@@ -21,8 +21,9 @@ class ReactionArrow implements BaseTool {
 
   constructor(
     private readonly editor: CoreEditor,
-    options: { toolName: ToolName; mode: RxnArrowMode },
+    ...args: unknown[]
   ) {
+    const [options] = args as [{ toolName: ToolName; mode: RxnArrowMode }];
     this.history = EditorHistory.getInstance(this.editor);
     this.mode = options.mode;
   }

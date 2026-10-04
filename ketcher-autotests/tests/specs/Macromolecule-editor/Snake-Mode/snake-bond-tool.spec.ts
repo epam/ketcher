@@ -124,12 +124,15 @@ test.describe('Snake Bond Tool', () => {
     Test case: #3280 - Check snake mode
     Description: Snake bond tool
     */
-    await Library(page).switchToPeptidesTab();
-
     await addBondedMonomersToCanvas(page, Peptide.Tza, 100, 100, 50, 25, 18);
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
+
+    const banner = NotificationBannerOnMacro(page);
+    if (await banner.isVisible()) {
+      await banner.close();
+    }
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 

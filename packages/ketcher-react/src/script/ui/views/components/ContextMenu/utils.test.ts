@@ -190,6 +190,19 @@ describe('Utils', () => {
       ).toBe(true);
     });
 
+    it('is enabled when Select All also selects the fragment', () => {
+      const { struct, firstAtomId, secondAtomId, bondId } =
+        createTwoConnectedAtoms();
+
+      expect(
+        isAttachmentGroupCreationSelectionValid(struct, {
+          atoms: [firstAtomId, secondAtomId],
+          bonds: [bondId],
+          frags: [0],
+        }),
+      ).toBe(true);
+    });
+
     it('is disabled when fewer than two atoms are selected', () => {
       const { struct, firstAtomId } = createTwoConnectedAtoms();
 

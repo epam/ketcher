@@ -8,7 +8,7 @@ import {
 import type { Selection } from 'src/script/editor/Editor';
 import { isStructureContinuous } from 'src/script/editor/utils/structureContinuity';
 
-const ATTACHMENT_GROUP_SELECTION_IGNORED_KEYS = ['enhancedFlags'];
+const ATTACHMENT_GROUP_SELECTION_IGNORED_KEYS = ['enhancedFlags', 'frags'];
 const ATTACHMENT_GROUP_REMOVAL_ALLOWED_KEYS = new Set([
   'attachmentGroups',
   'atoms',

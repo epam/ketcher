@@ -39,6 +39,7 @@ import { selMerge } from './select';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
 import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
+import { runDeleteWithAttachmentGroupSplitConfirm } from '../utils/attachmentGroupSplit';
 
 class EraserTool implements Tool {
   private readonly editor: Editor;
@@ -65,14 +66,15 @@ class EraserTool implements Tool {
     ];
     this.lassoHelper = new LassoHelper(mode, editor, null);
 
-    if (editor.selection()) {
-      const action = fromFragmentDeletion(
-        editor.render.ctab,
-        editor.selection(),
-      );
-      editor.update(action);
-      editor.selection(null);
+    const selection = editor.selection();
+    if (selection) {
       this.isNotActiveTool = true;
+      runDeleteWithAttachmentGroupSplitConfirm(
+        editor,
+        selection,
+        () => fromFragmentDeletion(editor.render.ctab, selection),
+        () => editor.selection(null),
+      );
     }
   }
 
@@ -249,8 +251,12 @@ class EraserTool implements Tool {
         newSelected.atoms.length > 0
           ? selMerge(this.lassoHelper.end(), newSelected, false)
           : this.lassoHelper.end();
-      this.editor.update(fromFragmentDeletion(rnd.ctab, sel));
-      this.editor.selection(null);
+      runDeleteWithAttachmentGroupSplitConfirm(
+        this.editor,
+        sel,
+        () => fromFragmentDeletion(rnd.ctab, sel),
+        () => this.editor.selection(null),
+      );
     }
   }
 
@@ -357,11 +363,27 @@ class EraserTool implements Tool {
     this.editor.hover(null);
 
     if (ci.map === 'atoms') {
-      this.editor.update(fromOneAtomDeletion(restruct, ci.id));
-    } else if (ci.map === 'attachmentGroups') {
+      runDeleteWithAttachmentGroupSplitConfirm(
+        this.editor,
+        { atoms: [ci.id] },
+        () => fromOneAtomDeletion(restruct, ci.id),
+        () => this.editor.selection(null),
+      );
+      return;
+    }
+
+    if (ci.map === 'bonds') {
+      runDeleteWithAttachmentGroupSplitConfirm(
+        this.editor,
+        { bonds: [ci.id] },
+        () => fromOneBondDeletion(restruct, ci.id),
+        () => this.editor.selection(null),
+      );
+      return;
+    }
+
+    if (ci.map === 'attachmentGroups') {
       this.editor.update(fromAttachmentGroupDeletion(restruct, ci.id));
-    } else if (ci.map === 'bonds') {
-      this.editor.update(fromOneBondDeletion(restruct, ci.id));
     } else if (
       (ci.map === 'sgroups' || ci.map === 'functionalGroups') &&
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)

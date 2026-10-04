@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
   openFileAndAddToCanvasMacro,
@@ -120,9 +119,8 @@ test.describe('Import-Saving .fasta Files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.FASTA,
     );
-    const convertErrorMessage = await ErrorMessageDialog(
-      page,
-    ).getErrorMessage();
+    const convertErrorMessage =
+      await ErrorMessageDialog(page).getErrorMessage();
     const expectedErrorMessage =
       'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
@@ -135,9 +133,8 @@ test.describe('Import-Saving .fasta Files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.FASTA,
     );
-    const convertErrorMessage = await ErrorMessageDialog(
-      page,
-    ).getErrorMessage();
+    const convertErrorMessage =
+      await ErrorMessageDialog(page).getErrorMessage();
     const expectedErrorMessage =
       'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
@@ -304,9 +301,8 @@ test.describe('Import-Saving .fasta Files', () => {
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.FASTA,
       );
-      const convertErrorMessage = await ErrorMessageDialog(
-        page,
-      ).getErrorMessage();
+      const convertErrorMessage =
+        await ErrorMessageDialog(page).getErrorMessage();
       const expectedErrorMessage =
         'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
       expect(convertErrorMessage).toEqual(expectedErrorMessage);

@@ -55,8 +55,6 @@ export function getRenderedStructuresBbox(drawingEntities?: DrawingEntity[]) {
     }
     const monomerPosition = monomer.baseRenderer?.scaledPosition;
     assert(monomerPosition);
-    assert(monomerPosition);
-
     expandBbox(bbox, monomerPosition);
   });
 

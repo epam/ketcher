@@ -17,7 +17,7 @@ describe('Hot keys', () => {
   it('should select last chosen selected tool when user press ESC', async () => {
     renderWithMockStore(<LeftToolbarContainer />);
     const text = screen.getByTestId('text');
-    // eslint-disable-next-line testing-library/no-unnecessary-act
+
     act(() => {
       fireEvent.click(text);
       fireEvent.keyDown(text, {
@@ -30,7 +30,7 @@ describe('Hot keys', () => {
 
   it('Shift+Tab to switch selection tool', async () => {
     renderWithMockStore(<LeftToolbarContainer />);
-    // eslint-disable-next-line testing-library/no-unnecessary-act
+
     act(() => {
       fireEvent.keyDown(document, {
         code: 'Tab',
@@ -38,6 +38,22 @@ describe('Hot keys', () => {
       });
     });
     expect(screen.getByTestId('select-lasso').className).toContain('selected');
+  });
+
+  // Regression test for https://github.com/epam/ketcher/issues/3152:
+  // '0' (Any Bond) was missing from the shortcutKeys list used to tell a
+  // repeated shortcut press apart from the start of an abbreviation search,
+  // so pressing '0' a second time incorrectly opened the Abbreviation
+  // Lookup, unlike the equivalent '1'-'4' bond shortcuts.
+  it('should not open Abbreviation lookup when pressing "0" (Any Bond) several times', async () => {
+    const { store } = renderWithMockStore(<LeftToolbarContainer />);
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    act(() => {
+      fireEvent.keyDown(document, { code: 'Digit0', key: '0' });
+      fireEvent.keyDown(document, { code: 'Digit0', key: '0' });
+      fireEvent.keyDown(document, { code: 'Digit0', key: '0' });
+    });
+    expect(store.getState().abbreviationLookup.isOpen).toBe(false);
   });
 });
 

@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import {
@@ -1827,9 +1824,7 @@ test(`45.2 Check that newly added two phosphates can be connected to any monomer
       page,
       monomer,
       monomerConnectTo,
-      (
-        await getAvailableAttachmentPoints(monomer)
-      )[0],
+      (await getAvailableAttachmentPoints(monomer))[0],
       AttachmentPoint.R1,
     );
 
@@ -1866,9 +1861,7 @@ test(`46.1 Check that newly added eleven presets can be connected to any monomer
       page,
       monomer,
       monomerConnectTo,
-      (
-        await getAvailableAttachmentPoints(monomer)
-      )[0],
+      (await getAvailableAttachmentPoints(monomer))[0],
       AttachmentPoint.R1,
     );
 
@@ -1905,9 +1898,7 @@ test(`46.2 Check that newly added eleven presets can be connected to any monomer
       page,
       monomer,
       monomerConnectTo,
-      (
-        await getAvailableAttachmentPoints(monomer)
-      )[0],
+      (await getAvailableAttachmentPoints(monomer))[0],
       AttachmentPoint.R2,
     );
 
@@ -1944,9 +1935,7 @@ test(`47.1 Check that newly added nineteen standalone nucleotide can be connecte
       page,
       monomer,
       monomerConnectTo,
-      (
-        await getAvailableAttachmentPoints(monomer)
-      )[0],
+      (await getAvailableAttachmentPoints(monomer))[0],
       AttachmentPoint.R1,
     );
 
@@ -1983,9 +1972,7 @@ test(`47.2 Check that newly added nineteen standalone nucleotide can be connecte
       page,
       monomer,
       monomerConnectTo,
-      (
-        await getAvailableAttachmentPoints(monomer)
-      )[0],
+      (await getAvailableAttachmentPoints(monomer))[0],
       AttachmentPoint.R1,
     );
 
@@ -2023,9 +2010,7 @@ test(`48.1  Check that newly added sixty-five new CHEMs can be connected to any 
       page,
       monomer,
       monomerConnectTo,
-      (
-        await getAvailableAttachmentPoints(monomer)
-      )[0],
+      (await getAvailableAttachmentPoints(monomer))[0],
       AttachmentPoint.R1,
     );
 
@@ -2063,9 +2048,7 @@ test(`48.2 Check that newly added sixty-five new CHEMs can be connected to any m
       page,
       monomer,
       monomerConnectTo,
-      (
-        await getAvailableAttachmentPoints(monomer)
-      )[0],
+      (await getAvailableAttachmentPoints(monomer))[0],
       AttachmentPoint.R1,
     );
 

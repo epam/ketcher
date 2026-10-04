@@ -1,4 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 import { lazy, Suspense, useEffect, useState } from 'react';
+import { I18nextProvider, useTranslation } from 'react-i18next';
 import {
   type EditorProps,
   MicromoleculesEditor as MicromoleculesEditorComponent,
@@ -6,6 +9,7 @@ import {
 import { ModeControl } from './script/ui/views/toolbars/ModeControl';
 import { LoadingCircles } from './script/ui/views/components';
 import styles from './Editor.module.less';
+import i18n from './i18n/i18n';
 import {
   type Ketcher,
   type Editor as MoleculesEditor,
@@ -38,7 +42,7 @@ interface MacromoleculesEditorProps {
  *  traverse this dynamic import. If this import is ever changed to a static one, the flag must be removed
  *  and the resulting cross-package cycle (ketcher-macromolecules -> ketcher-react) must be resolved first.
  */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore ketcher-macromolecules is not available during ketcher-react build (dynamic import)
 const MacromoleculesEditorComponent = lazy(
   () => import('ketcher-macromolecules'),
@@ -47,6 +51,10 @@ const MacromoleculesEditorComponent = lazy(
 >;
 
 export const Editor = (props: Props) => {
+  // Subscribes this component to react-i18next's languageChanged event so
+  // `dir` below is re-evaluated on a live language switch, not just on next
+  // full page load. The hook's `t`/`i18n` return values aren't used here.
+  useTranslation();
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
   const [moleculesEditor, setMoleculesEditor] = useState<MoleculesEditor>();
   const [ketcher, setKetcher] = useState<Ketcher>();
@@ -135,48 +143,50 @@ export const Editor = (props: Props) => {
   };
 
   return (
-    <>
-      <div
-        data-ketcher-editor
-        className={styles.editorsWrapper}
-        style={{
-          display: showPolymerEditor ? undefined : 'none',
-        }}
-      >
-        <Suspense
-          fallback={
-            <div className={styles.switchingLoader}>
-              <LoadingCircles />
-            </div>
-          }
+    <I18nextProvider i18n={i18n}>
+      <div dir={i18n.dir()} className={styles.root}>
+        <div
+          data-ketcher-editor
+          className={styles.editorsWrapper}
+          style={{
+            display: showPolymerEditor ? undefined : 'none',
+          }}
         >
-          {ketcherId && (
-            <MacromoleculesEditorComponent
-              togglerComponent={togglerComponent}
-              ketcherId={ketcherId}
-              isMacromoleculesEditorTurnedOn={showPolymerEditor}
-              monomersLibraryUpdate={props.monomersLibraryUpdate}
-              monomersLibraryReplace={props.monomersLibraryReplace}
-              onInit={onInitMacromoleculesEditor}
-            />
-          )}
-        </Suspense>
+          <Suspense
+            fallback={
+              <div className={styles.switchingLoader}>
+                <LoadingCircles />
+              </div>
+            }
+          >
+            {ketcherId && (
+              <MacromoleculesEditorComponent
+                togglerComponent={togglerComponent}
+                ketcherId={ketcherId}
+                isMacromoleculesEditorTurnedOn={showPolymerEditor}
+                monomersLibraryUpdate={props.monomersLibraryUpdate}
+                monomersLibraryReplace={props.monomersLibraryReplace}
+                onInit={onInitMacromoleculesEditor}
+              />
+            )}
+          </Suspense>
+        </div>
+        <div
+          data-ketcher-editor
+          className={styles.editorsWrapper}
+          style={{
+            display: showPolymerEditor ? 'none' : undefined,
+          }}
+        >
+          <MicromoleculesEditorComponent
+            {...props}
+            ketcherId={ketcherId}
+            onSetKetcherId={setKetcherId}
+            togglerComponent={togglerComponent}
+            onInit={onInitMoleculesEditor}
+          />
+        </div>
       </div>
-      <div
-        data-ketcher-editor
-        className={styles.editorsWrapper}
-        style={{
-          display: showPolymerEditor ? 'none' : undefined,
-        }}
-      >
-        <MicromoleculesEditorComponent
-          {...props}
-          ketcherId={ketcherId}
-          onSetKetcherId={setKetcherId}
-          togglerComponent={togglerComponent}
-          onInit={onInitMoleculesEditor}
-        />
-      </div>
-    </>
+    </I18nextProvider>
   );
 };

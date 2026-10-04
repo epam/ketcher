@@ -294,7 +294,9 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
     } as Partial<Atom>;
   }
   const pch = matchCharge(restAtom.charge as string);
-  const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : restAtom.charge;
+  const charge = pch
+    ? Number.parseInt(pch[1] + pch[3] + pch[2])
+    : restAtom.charge;
 
   const conv = {
     ...restAtom,
@@ -303,7 +305,7 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
     // no need to pass and display zero values(0, -0) explicitly
     charge: restAtom.charge && charge !== 0 ? Number(charge) : null,
     // Empty string from cleared form field must become null like undefined (not ?? alone).
-    alias: restAtom.alias === '' ? null : restAtom.alias ?? null,
+    alias: restAtom.alias === '' ? null : (restAtom.alias ?? null),
     exactChangeFlag: +(restAtom.exactChangeFlag ?? false),
     unsaturatedAtom: +(restAtom.unsaturatedAtom ?? false),
     queryProperties: {
@@ -436,7 +438,7 @@ export function fromBond(sbond?: Bond) {
     type: isCustomQuery ? '' : fromBondType(type, stereo),
     topology: sbond.topology,
     center: sbond.reactingCenterStatus,
-    customQuery: !isCustomQuery ? '' : sbond.customQuery?.toString() ?? '',
+    customQuery: !isCustomQuery ? '' : (sbond.customQuery?.toString() ?? ''),
   };
 }
 

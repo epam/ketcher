@@ -38,7 +38,7 @@ export function identifyStructFormat(
     }
   } catch (e) {
     KetcherLogger.error('identifyStructFormat.ts::identifyStructFromat', e);
-  } // eslint-disable-line
+  }
 
   const isRXN = sanitizedString.includes('$RXN');
   const isSDF = sanitizedString.includes('\n$$$$');

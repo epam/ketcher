@@ -1,9 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable promise/param-names */
-/* eslint-disable no-inline-comments */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   keyboardPressOnCanvas,
@@ -600,7 +594,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C0', 'G1', 'T1', 'U0', 'Other0']);
+    ).toEqual(['A1', 'C-', 'G1', 'T1', 'U-', 'Other-']);
   });
 
   test('Case 22: Check if a natural analogue does not appear within the selection, the appropriate card is grayed out', async () => {
@@ -639,7 +633,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C1', 'G1', 'T0', 'U0', 'Other0']);
+    ).toEqual(['A1', 'C1', 'G1', 'T-', 'U-', 'Other-']);
   });
 
   test('Case 23: Check Calculation Properties for standard R2-R1 connected monomers with microstructure', async ({
@@ -674,29 +668,29 @@ test.describe('Calculate Properties tests', () => {
     expect(
       await CalculateVariablesPanel(page).getPeptideNaturalAnalogCountList(),
     ).toEqual([
-      'A0',
+      'A-',
       'C1',
-      'D0',
-      'E0',
-      'F0',
-      'G0',
-      'H0',
-      'I0',
-      'K0',
-      'L0',
-      'M0',
-      'N0',
-      'O0',
-      'P0',
-      'Q0',
-      'R0',
-      'S0',
-      'T0',
-      'U0',
-      'V0',
-      'W0',
-      'Y0',
-      'Other0',
+      'D-',
+      'E-',
+      'F-',
+      'G-',
+      'H-',
+      'I-',
+      'K-',
+      'L-',
+      'M-',
+      'N-',
+      'O-',
+      'P-',
+      'Q-',
+      'R-',
+      'S-',
+      'T-',
+      'U-',
+      'V-',
+      'W-',
+      'Y-',
+      'Other-',
     ]);
     await takePageScreenshot(page);
   });
@@ -733,29 +727,29 @@ test.describe('Calculate Properties tests', () => {
     expect(
       await CalculateVariablesPanel(page).getPeptideNaturalAnalogCountList(),
     ).toEqual([
-      'A0',
+      'A-',
       'C1',
-      'D0',
-      'E0',
-      'F0',
-      'G0',
-      'H0',
-      'I0',
-      'K0',
-      'L0',
-      'M0',
-      'N0',
-      'O0',
-      'P0',
-      'Q0',
-      'R0',
-      'S0',
-      'T0',
-      'U0',
-      'V0',
-      'W0',
-      'Y0',
-      'Other0',
+      'D-',
+      'E-',
+      'F-',
+      'G-',
+      'H-',
+      'I-',
+      'K-',
+      'L-',
+      'M-',
+      'N-',
+      'O-',
+      'P-',
+      'Q-',
+      'R-',
+      'S-',
+      'T-',
+      'U-',
+      'V-',
+      'W-',
+      'Y-',
+      'Other-',
     ]);
   });
 
@@ -773,12 +767,10 @@ test.describe('Calculate Properties tests', () => {
       'KET/single-benzene-ring.ket',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C6H6');
     expect(molecularMass).toEqual('78.114');
@@ -800,12 +792,10 @@ test.describe('Calculate Properties tests', () => {
     );
     await selectPartOfMolecules(page, 10);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C3H3');
     expect(molecularMass).toEqual('39.057');
@@ -829,12 +819,10 @@ test.describe('Calculate Properties tests', () => {
     );
     await selectPartOfMolecules(page, -80);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C2H2');
     expect(molecularMass).toEqual('26.038');
@@ -858,12 +846,10 @@ test.describe('Calculate Properties tests', () => {
     );
     await selectPartOfMolecules(page, -80);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C3H3');
     expect(molecularMass).toEqual('39.057');
@@ -887,12 +873,10 @@ test.describe('Calculate Properties tests', () => {
     );
     await selectAllStructuresOnCanvas(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C9H11NO');
     expect(molecularMass).toEqual('149.193');
@@ -916,12 +900,10 @@ test.describe('Calculate Properties tests', () => {
     );
     await selectAllStructuresOnCanvas(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C16H18N5O6P');
     expect(molecularMass).toEqual('407.323');
@@ -941,12 +923,10 @@ test.describe('Calculate Properties tests', () => {
     await openFileAndAddToCanvasAsNewProjectMacro(page, 'KET/naphthalene.ket');
     await selectAllStructuresOnCanvas(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C10H8');
     expect(molecularMass).toEqual('128.174');
@@ -965,12 +945,10 @@ test.describe('Calculate Properties tests', () => {
      */
     await Library(page).selectMonomer(Peptide.A);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C3H7NO2');
     expect(molecularMass).toEqual('89.094');
@@ -987,12 +965,10 @@ test.describe('Calculate Properties tests', () => {
      */
     await Library(page).selectMonomer(Preset.A);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C10H14N5O7P');
     expect(molecularMass).toEqual('347.224');
@@ -1009,12 +985,10 @@ test.describe('Calculate Properties tests', () => {
      */
     await Library(page).selectMonomer(Chem.Test_6_Ch);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C14H28BrClINO2');
     expect(molecularMass).toEqual('484.637');
@@ -1038,12 +1012,10 @@ test.describe('Calculate Properties tests', () => {
     );
     await selectAllStructuresOnCanvas(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C33H43N5O10S');
     expect(molecularMass).toEqual('701.792');
@@ -1063,9 +1035,8 @@ test.describe('Calculate Properties tests', () => {
     await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'AAAAA');
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const isoelectricPoint = await CalculateVariablesPanel(
-      page,
-    ).getIsoelectricPointValue();
+    const isoelectricPoint =
+      await CalculateVariablesPanel(page).getIsoelectricPointValue();
 
     expect(isoelectricPoint).toEqual('6.11');
   });
@@ -1085,9 +1056,8 @@ test.describe('Calculate Properties tests', () => {
       'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const meltingTemperature = await CalculateVariablesPanel(
-      page,
-    ).getMeltingTemperatureValue();
+    const meltingTemperature =
+      await CalculateVariablesPanel(page).getMeltingTemperatureValue();
 
     expect(meltingTemperature).toEqual('-12.4');
   });
@@ -1107,9 +1077,8 @@ test.describe('Calculate Properties tests', () => {
       'RNA1{[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const meltingTemperature = await CalculateVariablesPanel(
-      page,
-    ).getMeltingTemperatureValue();
+    const meltingTemperature =
+      await CalculateVariablesPanel(page).getMeltingTemperatureValue();
 
     expect(meltingTemperature).toEqual('-12.4');
   });
@@ -1290,7 +1259,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C1', 'G1', 'T1', 'U1', 'Other0']);
+    ).toEqual(['A1', 'C1', 'G1', 'T1', 'U1', 'Other-']);
   });
 
   test('Case 44: Verify correct property calculations for DNA containing modified bases', async () => {
@@ -1316,7 +1285,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C1', 'G1', 'T1', 'U1', 'Other0']);
+    ).toEqual(['A1', 'C1', 'G1', 'T1', 'U1', 'Other-']);
   });
 
   test('Case 45: Verify property calculations for structures containing both peptide and RNA along with additional microstructures', async ({
@@ -1345,7 +1314,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C0', 'G0', 'T0', 'U0', 'Other0']);
+    ).toEqual(['A1', 'C-', 'G-', 'T-', 'U-', 'Other-']);
   });
 
   test('Case 46: Verify property calculations for structures containing both peptide and DNA along with additional microstructures', async ({
@@ -1372,7 +1341,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C0', 'G0', 'T0', 'U0', 'Other0']);
+    ).toEqual(['A1', 'C-', 'G-', 'T-', 'U-', 'Other-']);
   });
 
   test('Case 47: Verify calculate properties for Peptides if Phosphate is missing in mixed chain', async ({
@@ -1400,7 +1369,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C0', 'G0', 'T0', 'U0', 'Other0']);
+    ).toEqual(['A1', 'C-', 'G-', 'T-', 'U-', 'Other-']);
   });
 
   test('Case 48: Verify calculate properties when two chains are connected via a CHEM', async ({
@@ -1427,7 +1396,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C0', 'G0', 'T0', 'U0', 'Other0']);
+    ).toEqual(['A1', 'C-', 'G-', 'T-', 'U-', 'Other-']);
   });
 
   test('Case 49: Verify calculate properties when two chains are connected via a microstructure with attachment points', async ({
@@ -1454,7 +1423,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C0', 'G0', 'T0', 'U0', 'Other0']);
+    ).toEqual(['A1', 'C-', 'G-', 'T-', 'U-', 'Other-']);
   });
 
   test('Case 50: Verify calculate properties when two chains are connected via a microstructure without attachment points', async ({
@@ -1483,7 +1452,7 @@ test.describe('Calculate Properties tests', () => {
     // );
     // expect(
     //   await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    // ).toEqual(['A1', 'C0', 'G0', 'T0', 'U0', 'Other0']);
+    // ).toEqual(['A1', 'C-', 'G-', 'T-', 'U-', 'Other-']);
     await takePageScreenshot(page);
   });
 

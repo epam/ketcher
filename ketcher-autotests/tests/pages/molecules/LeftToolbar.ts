@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { RGroupType } from '../constants/rGroupSelectionTool/Constants';
 import { ArrowTool } from '../constants/arrowSelectionTool/Constants';

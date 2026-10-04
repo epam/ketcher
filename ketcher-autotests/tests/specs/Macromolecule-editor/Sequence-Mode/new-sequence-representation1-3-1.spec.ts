@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
   MacroFileType,
@@ -1539,7 +1536,7 @@ for (const monomer of monomersToAddWithDashAndEnter) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
       );
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
@@ -1559,7 +1556,7 @@ for (const monomer of monomersToAddWithDashAndEnter) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1612,7 +1609,7 @@ for (const monomer of monomersToAddWithDashAndEnter) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
       );
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
@@ -1632,7 +1629,7 @@ for (const monomer of monomersToAddWithDashAndEnter) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1686,7 +1683,7 @@ for (const monomer of monomersToAdd) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
       );
 
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1707,7 +1704,7 @@ for (const monomer of monomersToAdd) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1742,7 +1739,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -1762,7 +1759,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1795,7 +1792,7 @@ for (const sequence of sequences) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -1815,7 +1812,7 @@ for (const sequence of sequences) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });

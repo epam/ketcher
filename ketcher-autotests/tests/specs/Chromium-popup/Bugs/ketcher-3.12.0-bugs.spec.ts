@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
@@ -519,11 +516,11 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     const changeEventTriggered = await page.evaluate(() => {
       return new Promise<boolean>((resolve) => {
         let eventFired = false;
-        window.ketcher.editor.subscribe('change', () => {
+        globalThis.window.ketcher.editor.subscribe('change', () => {
           console.log('in change event');
           eventFired = true;
         });
-        (window as any).__changeEventTriggered = () => eventFired;
+        (globalThis as any).__changeEventTriggered = () => eventFired;
         resolve(true);
       });
     });
@@ -534,7 +531,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await Library(page).clickMonomerAutochain(Peptide.A);
 
     const eventFired = await page.evaluate(() => {
-      return (window as any).__changeEventTriggered?.() ?? false;
+      return (globalThis as any).__changeEventTriggered?.() ?? false;
     });
     expect(eventFired).toBeTruthy();
 

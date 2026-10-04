@@ -33,7 +33,6 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { NotificationBannerOnMacro } from '@tests/pages/macromolecules/canvas/NotificationBannerOnMacro';
-/* eslint-disable no-magic-numbers */
 
 async function createBondedMonomers(page: Page) {
   await Library(page).dragMonomerOnCanvas(Peptide.dU, {
@@ -125,12 +124,15 @@ test.describe('Snake Bond Tool', () => {
     Test case: #3280 - Check snake mode
     Description: Snake bond tool
     */
-    await Library(page).switchToPeptidesTab();
-
     await addBondedMonomersToCanvas(page, Peptide.Tza, 100, 100, 50, 25, 18);
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
+
+    const banner = NotificationBannerOnMacro(page);
+    if (await banner.isVisible()) {
+      await banner.close();
+    }
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 

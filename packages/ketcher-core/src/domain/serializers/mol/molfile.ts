@@ -76,7 +76,7 @@ export class Molfile {
   parseCTFile(props: ParseCTFileProps): Struct {
     const { molfileLines, shouldReactionRelayout, ignoreChiralFlag } = props;
     let ret: Struct;
-    if (molfileLines[0].search('\\$RXN') === 0) {
+    if (molfileLines[0].search(String.raw`\$RXN`) === 0) {
       ret = common.parseRxn(
         molfileLines,
         shouldReactionRelayout,
@@ -131,7 +131,7 @@ export class Molfile {
           errors += +errorIgnore;
           toRemove.push(sgroup.id);
         }
-      }, this);
+      });
 
     if (errors) {
       throw new Error(
@@ -356,14 +356,14 @@ export class Molfile {
       this.writeAtom(atom, label);
 
       this.mapping[id] = i++;
-    }, this);
+    });
 
     this.bondMapping = {};
     i = 1;
     molecule.bonds.forEach((bond, id) => {
       this.bondMapping[id] = i++;
       this.writeBond(bond);
-    }, this);
+    });
 
     while (atomsProps.length > 0) {
       this.writeAtomProps(atomsProps[0]);

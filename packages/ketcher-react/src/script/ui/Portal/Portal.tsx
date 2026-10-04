@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -125,7 +126,7 @@ class Portal extends Component<Props> {
     if (prevStyle) {
       Object.keys(prevStyle).forEach((property) => {
         this.element.style[property] = '';
-      }, this);
+      });
     }
 
     if (!style) {
@@ -134,7 +135,7 @@ class Portal extends Component<Props> {
 
     Object.keys(style).forEach((property) => {
       this.element.style[property] = style[property];
-    }, this);
+    });
   }
 
   render() {

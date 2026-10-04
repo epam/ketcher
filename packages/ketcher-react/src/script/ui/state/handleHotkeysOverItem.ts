@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Dispatch } from 'redux';
 import {
   fromAtomAddition,
@@ -27,6 +28,7 @@ import {
 import SGroupTool from '../../editor/tool/sgroup';
 import { deleteFunctionalGroups } from '../../editor/tool/helper/deleteFunctionalGroups';
 import TemplateTool from '../../editor/tool/template';
+import { dispatchMonomerOrGroupDialog } from '../../editor/tool/monomerDialog.helpers';
 
 type TNewAction = {
   tool?: string;
@@ -381,7 +383,7 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
       rglabel,
       fragId: atom ? atom.fragment : null,
     });
-    element = { ...Atom.attrlist, ...(element || {}) };
+    element = { ...Atom.attrlist, ...element };
 
     if (!hoveredItemId && hoveredItemId !== 0 && element.rglabel) {
       editor.update(fromAtomAddition(editor.render.ctab, null, element));
@@ -423,7 +425,7 @@ async function isChangingFunctionalGroup(
   const fgId = getFunctionalGroupIdByItem(editor, hoveredItemId, type);
 
   if (fgId !== null) {
-    await editor.event.removeFG.dispatch({ fgIds: [fgId] });
+    dispatchMonomerOrGroupDialog(editor, [fgId]);
 
     return false;
   }

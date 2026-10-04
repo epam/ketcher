@@ -3,6 +3,7 @@ import type {
   MenuItemsProps,
 } from '../contextMenu.types';
 import { Item } from 'react-contexify';
+import { useTranslation } from 'react-i18next';
 import MenuSeparator from '../MenuSeparator';
 import useMonomerExpansionHandlers, {
   canExpandMonomer,
@@ -21,11 +22,13 @@ import type Editor from 'src/script/editor';
 import {
   getEditAllInstancesInitialValues,
   getEditInstanceInitialValues,
+  getSelectedSGroupIdsForEditAll,
 } from '../../MonomerCreationWizard/MonomerCreationWizard.utils';
 
 const MacromoleculeMenuItems = (
   props: MenuItemsProps<MacromoleculeContextMenuProps>,
 ) => {
+  const { t } = useTranslation(['components', 'common']);
   const { ketcherId } = useAppContext();
   const [action, hidden] = useMonomerExpansionHandlers();
   const removeGroupingHandler = useRemoveGrouping();
@@ -47,6 +50,12 @@ const MacromoleculeMenuItems = (
   const collapseText = multipleMonomersSelected
     ? 'Collapse monomers'
     : 'Collapse monomer';
+  const expandLabel = multipleMonomersSelected
+    ? t('components:contextMenu.expandMonomers')
+    : t('components:contextMenu.expandMonomer');
+  const collapseLabel = multipleMonomersSelected
+    ? t('components:contextMenu.collapseMonomers')
+    : t('components:contextMenu.collapseMonomer');
 
   const unknownOrAmbiguousMonomer =
     !(sgroup instanceof MonomerMicromolecule) ||
@@ -86,6 +95,19 @@ const MacromoleculeMenuItems = (
       }
     });
 
+    let editAllInitialValues = getEditAllInstancesInitialValues(
+      sg.monomer,
+      provideEditorInstance()?.monomersLibraryParsedJson,
+    );
+
+    if (editAllInstances && (functionalGroups?.length ?? 0) > 1) {
+      const selectedSGroupIds = getSelectedSGroupIdsForEditAll(
+        functionalGroups ?? [],
+        sg.monomer,
+      );
+      editAllInitialValues = { ...editAllInitialValues, selectedSGroupIds };
+    }
+
     editor.openMonomerCreationWizard(
       {
         atoms,
@@ -96,12 +118,10 @@ const MacromoleculeMenuItems = (
         rgroupAttachmentPoints: [],
       },
       editAllInstances
-        ? getEditAllInstancesInitialValues(
-            sg.monomer,
-            provideEditorInstance()?.monomersLibraryParsedJson,
-          )
+        ? editAllInitialValues
         : getEditInstanceInitialValues(sg.monomer),
       sg.getAttachmentPoints(),
+      sg.monomer,
     );
   };
 
@@ -110,8 +130,11 @@ const MacromoleculeMenuItems = (
 
     try {
       await editor?.event.confirm.dispatch({
-        title: 'Editing monomers',
-        text: `You are going to edit ${totalMonomerCount} monomers. Are you sure?`,
+        title: t('components:contextMenu.editingMonomersTitle'),
+        text: t('components:contextMenu.editingMonomersQuestion', {
+          count: totalMonomerCount,
+        }),
+        okButtonLabel: t('common:button.yes'),
       });
       // Promise resolves when the user clicks OK; do nothing on Cancel (caught below).
       handleEdit(true);
@@ -162,7 +185,7 @@ const MacromoleculeMenuItems = (
         onClick={(params) => action(params, true)}
         disabled={expandingDisabled}
       >
-        {expandText}
+        {expandLabel}
       </Item>
       <Item
         {...props}
@@ -170,7 +193,7 @@ const MacromoleculeMenuItems = (
         hidden={(params) => hidden(params, false)}
         onClick={(params) => action(params, false)}
       >
-        {collapseText}
+        {collapseLabel}
       </Item>
       <Item
         {...props}
@@ -179,11 +202,11 @@ const MacromoleculeMenuItems = (
         disabled={unknownOrAmbiguousMonomer}
         title={
           unknownOrAmbiguousMonomer
-            ? 'Cannot edit unknown or ambiguous monomers'
+            ? t('components:contextMenu.cannotEditUnknownMonomer')
             : undefined
         }
       >
-        Remove Grouping
+        {t('components:contextMenu.removeGrouping')}
       </Item>
 
       <MenuSeparator />
@@ -196,7 +219,7 @@ const MacromoleculeMenuItems = (
             data-testid="Create Monomer-option"
             onClick={() => handleEdit()}
           >
-            Create Monomer
+            {t('components:contextMenu.createMonomerItem')}
           </Item>
           <MenuSeparator />
         </>
@@ -209,10 +232,12 @@ const MacromoleculeMenuItems = (
         onClick={() => handleEdit()}
         disabled={editMonomerDisabled}
         title={
-          editMonomerDisabled ? 'Select a single monomer to edit it' : undefined
+          editMonomerDisabled
+            ? t('components:contextMenu.selectSingleMonomerToEdit')
+            : undefined
         }
       >
-        Edit Monomer
+        {t('components:contextMenu.editMonomer')}
       </Item>
       <Item
         {...props}
@@ -223,11 +248,14 @@ const MacromoleculeMenuItems = (
         disabled={unknownOrAmbiguousMonomer}
         title={
           unknownOrAmbiguousMonomer
-            ? 'Cannot edit unknown or ambiguous monomers'
+            ? t('components:contextMenu.cannotEditUnknownMonomer')
             : undefined
         }
       >
-        Edit All <strong>{monomerCode}</strong> ({totalMonomerCount})
+        {t('components:contextMenu.editAllMonomers', {
+          code: monomerCode,
+          count: totalMonomerCount,
+        })}
       </Item>
 
       <MenuSeparator />
@@ -238,7 +266,7 @@ const MacromoleculeMenuItems = (
         data-testid="Delete Monomer-option"
         onClick={handleDelete}
       >
-        Delete
+        {t('common:delete')}
       </Item>
     </>
   );

@@ -1,10 +1,13 @@
 import {
   AttachmentPointName,
   type BaseMonomer,
+  expandIdtAliasesToWizardInputs,
+  type FunctionalGroup,
   getMonomerTemplateRefFromMonomerItem,
   type MonomerCreationInitialValues,
   KetMonomerClass,
   KetTemplateType,
+  MonomerMicromolecule,
   Vec2,
 } from 'ketcher-core';
 
@@ -19,6 +22,13 @@ const isNaturalAnalogueSupported = (
   monomerType === KetMonomerClass.AminoAcid ||
   monomerType === KetMonomerClass.Base ||
   monomerType === KetMonomerClass.RNA;
+
+const isIdtAliasSupported = (
+  monomerType: KetMonomerClass | 'rnaPreset' | undefined,
+) =>
+  monomerType === KetMonomerClass.RNA ||
+  monomerType === KetMonomerClass.CHEM ||
+  monomerType === KetMonomerClass.Phosphate;
 
 const getInitialValues = (
   monomer: BaseMonomer,
@@ -37,6 +47,11 @@ const getInitialValues = (
   const position = monomer.position
     ? { position: new Vec2(monomer.position) }
     : {};
+  const idtAliases = isIdtAliasSupported(type)
+    ? expandIdtAliasesToWizardInputs(props.idtAliases)
+    : { idtAlias5: '', idtAliasInternal: '', idtAlias3: '' };
+  const modificationTypes =
+    type === KetMonomerClass.AminoAcid ? (props.modificationTypes ?? []) : [];
 
   return {
     type,
@@ -45,6 +60,8 @@ const getInitialValues = (
     naturalAnalogue,
     aliasHELM: getValue(props.aliasHELM),
     aliasBILN: getValue(props.aliasBILN),
+    ...idtAliases,
+    modificationTypes,
     originalType: type,
     originalSymbol: symbol,
     ...position,
@@ -94,8 +111,7 @@ const getTemplateClass = (
   monomersLibraryParsedJson: MonomersLibraryParsedJson,
 ) => {
   const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
-    | MonomerTemplate
-    | undefined;
+    MonomerTemplate | undefined;
 
   return templateRef.class ?? template?.class;
 };
@@ -151,8 +167,7 @@ export const getEditAllInstancesInitialValues = (
     monomersLibraryParsedJson?.root?.templates?.forEach(
       (templateRef: { $ref?: string }) => {
         const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
-          | RnaPresetTemplate
-          | undefined;
+          RnaPresetTemplate | undefined;
         const isRnaPreset =
           template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
           template?.class === KetMonomerClass.RNA;
@@ -214,4 +229,57 @@ export const getEditAllInstancesInitialValues = (
         }
       : {}),
   };
+};
+
+/**
+ * Extracts the sgroup IDs from a list of functional groups that match the
+ * primary monomer's type and symbol. Returns `undefined` when fewer than two
+ * matching groups are found (no restriction needed in that case).
+ *
+ * Use this when the user has multiple monomers of the same type selected and
+ * "Edit All Instances" should be scoped to only those selections.
+ */
+export const getSelectedSGroupIdsForEditAll = (
+  functionalGroups: FunctionalGroup[],
+  primaryMonomer: BaseMonomer,
+): number[] | undefined => {
+  const primaryType = primaryMonomer.monomerItem.props.MonomerClass;
+  const primarySymbol =
+    primaryMonomer.monomerItem.props.MonomerCode ??
+    primaryMonomer.monomerItem.label;
+
+  const matchingIds = functionalGroups
+    .filter((fg) => {
+      if (!(fg.relatedSGroup instanceof MonomerMicromolecule)) {
+        return false;
+      }
+      const { props, label } = fg.relatedSGroup.monomer.monomerItem;
+      const symbol = props.MonomerCode ?? label;
+      return props.MonomerClass === primaryType && symbol === primarySymbol;
+    })
+    .map((fg) => fg.relatedSGroupId);
+
+  return matchingIds.length > 1 ? matchingIds : undefined;
+};
+
+/**
+ * Returns true when the given `MonomerMicromolecule` sgroup represents the
+ * same monomer type and symbol as `primaryMonomer`.
+ *
+ * Use this to filter a plain list of sgroup IDs (e.g. from a dialog that
+ * receives raw IDs rather than `FunctionalGroup` objects).
+ */
+export const isSameMonomerType = (
+  sgroup: MonomerMicromolecule,
+  primaryMonomer: BaseMonomer,
+): boolean => {
+  const { props, label } = sgroup.monomer.monomerItem;
+  const symbol = props.MonomerCode ?? label;
+  const primarySymbol =
+    primaryMonomer.monomerItem.props.MonomerCode ??
+    primaryMonomer.monomerItem.label;
+  return (
+    props.MonomerClass === primaryMonomer.monomerItem.props.MonomerClass &&
+    symbol === primarySymbol
+  );
 };

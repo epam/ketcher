@@ -94,12 +94,7 @@ export interface IKetConnection {
 }
 
 export type monomerClass =
-  | 'RNA'
-  | 'PEPTIDE'
-  | 'CHEM'
-  | 'UNKNOWN'
-  | 'DNA'
-  | 'MODDNA';
+  'RNA' | 'PEPTIDE' | 'CHEM' | 'UNKNOWN' | 'DNA' | 'MODDNA';
 
 export type IKetAttachmentPointType = 'left' | 'right' | 'side';
 
@@ -143,6 +138,14 @@ export type KetMonomerTemplateAtom = {
   location: [number, number, number];
 };
 
+export interface IKetMonomerTemplateRef {
+  $ref: string;
+}
+
+export interface IKetNodeRef {
+  $ref: string;
+}
+
 export interface IKetMonomerTemplate {
   type: KetTemplateType.MONOMER_TEMPLATE;
   class?: KetMonomerClass;
@@ -163,7 +166,9 @@ export interface IKetMonomerTemplate {
   naturalAnalog?: string;
   attachmentPoints?: IKetAttachmentPoint[];
   root: {
-    nodes;
+    nodes: IKetNodeRef[];
+    connections?: IKetTemplateConnection[];
+    templates?: IKetMonomerTemplateRef[];
   };
   classHELM?: string;
   name?: string;
@@ -186,10 +191,6 @@ export interface IKetAmbiguousMonomerTemplate {
   alias?: string;
 }
 
-export interface IKetMonomerTemplateRef {
-  $ref: string;
-}
-
 export enum KetMonomerGroupTemplateClass {
   RNA = 'RNA',
 }
@@ -204,10 +205,6 @@ export interface IKetMonomerGroupTemplate {
   idtAliases?: IKetIdtAliases;
   aliasAxoLabs?: string;
   aliasBILN?: string;
-}
-
-export interface IKetNodeRef {
-  $ref: string;
 }
 
 export interface IKetMacromoleculesContentRootProperty {

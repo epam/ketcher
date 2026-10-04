@@ -17,10 +17,10 @@ import {
   type AmbiguousMonomerType,
   type PolymerBond,
   ZoomTool,
+  assert,
 } from 'ketcher-core';
 import { preview } from './constants';
 import type { PreviewStyle } from './AmbiguousMonomerPreview/types';
-import assert from 'assert';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'src/constants';
 
 export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
@@ -160,7 +160,7 @@ export const calculateBondPreviewPosition = (
   const width = right - left;
   const height = bottom - top;
 
-  let style: PreviewStyle = {};
+  let style: PreviewStyle;
 
   if (width > height) {
     const leftValue = left + width / 2;

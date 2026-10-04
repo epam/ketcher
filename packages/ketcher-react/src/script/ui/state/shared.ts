@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -29,6 +30,7 @@ import {
 
 import { supportedSGroupTypes } from './constants';
 import { setAnalyzingFile } from './request';
+import { restorePersistedSelectionTool } from './selectionToolPersistence';
 import tools from '../action/tools';
 import { isNumber } from 'lodash';
 
@@ -92,7 +94,9 @@ export function removeStructAction(): {
   type: string;
   action?: Record<string, unknown>;
 } {
-  const savedSelectedTool = SettingsManager.selectionTool;
+  const savedSelectedTool = restorePersistedSelectionTool(
+    SettingsManager.getSelectionTool('micro'),
+  );
 
   return onAction(savedSelectedTool || tools['select-rectangle'].action);
 }
@@ -109,6 +113,7 @@ export function load(struct: string | Struct, options?) {
       isPaste,
       method,
       preserveViewport = false,
+      skipCenter = false,
       ...otherOptions
     } = options;
     otherOptions = {
@@ -231,7 +236,7 @@ export function load(struct: string | Struct, options?) {
       }
 
       const isIndigoFunctionCalled = !!method;
-      if (!isPaste && !isIndigoFunctionCalled) {
+      if (!isPaste && !isIndigoFunctionCalled && !skipCenter) {
         editor.centerStruct();
       }
       if (!fragment) {

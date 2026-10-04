@@ -217,7 +217,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -370,6 +371,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "S"
     },

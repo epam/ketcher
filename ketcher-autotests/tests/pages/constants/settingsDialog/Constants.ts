@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 export enum SettingsSection {
   General = 'General-accordion',
   Stereochemistry = 'Stereochemistry-accordion',

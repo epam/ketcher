@@ -1,4 +1,5 @@
 import { difference } from 'lodash';
+import { MonomerMicromolecule, type Bond, type Struct } from 'ketcher-core';
 
 /**
  * Remove the word `bond` out of the title
@@ -48,6 +49,27 @@ export const monomerWizardDisallowedBondNames =
 export const getNonQueryBondNames = (tools) => {
   const allBondNames = getBondNames(tools);
   return difference(allBondNames, queryBondNames);
+};
+
+/**
+ * Check whether a bond connects two distinct monomers
+ */
+export const isBondBetweenMonomers = (
+  bond: Bond | null | undefined,
+  struct: Struct,
+) => {
+  if (!bond) {
+    return false;
+  }
+
+  const beginAtomSgroup = struct.getGroupFromAtomId(bond.begin);
+  const endAtomSgroup = struct.getGroupFromAtomId(bond.end);
+
+  return (
+    beginAtomSgroup instanceof MonomerMicromolecule &&
+    endAtomSgroup instanceof MonomerMicromolecule &&
+    beginAtomSgroup !== endAtomSgroup
+  );
 };
 
 export const noOperation = () => null;

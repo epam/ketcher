@@ -15,7 +15,7 @@ import styles from './Modal.module.less';
 
 interface ModalProps {
   children: JSX.Element | Array<JSX.Element>;
-  title: string;
+  title: React.ReactNode;
   isOpen: boolean;
   showCloseButton?: boolean;
   showExpandButton?: boolean;
@@ -121,9 +121,11 @@ export const Modal = ({
     }),
     [
       testId,
+      theme.ketcher.color.background.primary,
       theme.ketcher.color.text.primary,
-      theme.ketcher.color.background.canvas,
+      showExpandButton,
       expanded,
+      modalWidth,
     ],
   );
 

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { expect, Page, test } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -153,6 +151,8 @@ test.describe('Calculated Values Tools', () => {
 
     await openFileAndAddToCanvas(page, 'Rxn-V2000/calcvalues-reaction.rxn');
     await IndigoFunctionsToolbar(page).calculatedValues();
+    await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(3);
+    await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(3);
 
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,
@@ -243,6 +243,9 @@ test.describe('Calculated Values Tools', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(page, x + 300, y - 600);
     await IndigoFunctionsToolbar(page).calculatedValues();
+    await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(3);
+    await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(3);
+
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('C3H4O2');

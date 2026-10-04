@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetcherLogger, Settings, SettingsFormValue } from 'ketcher-core';
+import { KetcherLogger, SettingsFormValue } from 'ketcher-core';
 import { SettingsField } from './SettingsField';
-import { FIELD_DEFINITIONS } from './fieldGroups';
+import { FIELD_DEFINITIONS, SettingFieldName } from './fieldGroups';
 import { FieldsContainer } from './Settings.styles';
 
 interface SettingsFieldsProps {
-  fields: Array<keyof Settings>;
+  fields: Array<SettingFieldName>;
   settings: SettingsFormValue;
   onChange: (partial: Partial<SettingsFormValue>) => void;
 }

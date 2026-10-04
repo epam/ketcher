@@ -36,7 +36,9 @@
       "theming/*": ["./src/theming/*"],
       "helpers": ["./src/helpers"],
       "helpers/*": ["./src/helpers/*"],
-      "src/*": ["./src/*"]
+      "src/*": ["./src/*"],
+      "ketcher-react": ["./src/types/ketcher-react"],
+      "ketcher-react/*": ["./src/types/ketcher-react/*"]
     },
     "plugins": [
       {

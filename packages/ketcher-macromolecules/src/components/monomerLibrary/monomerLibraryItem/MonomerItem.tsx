@@ -131,9 +131,6 @@ const MonomerItem = ({
     editor?.events.removeAutochainPreview.dispatch(item);
   }, [editor, item]);
 
-  // TODO suppressed after upgrade to react 19. Need to fix
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   useLibraryItemDrag(item, cardRef);
 
   return (

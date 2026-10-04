@@ -1,5 +1,4 @@
-import assert from 'assert';
-import { MonomerMicromolecule, SGroup, Struct } from 'ketcher-core';
+import { MonomerMicromolecule, SGroup, Struct, assert } from 'ketcher-core';
 import type Editor from '../Editor';
 
 let showTooltipTimer: ReturnType<typeof setTimeout> | null = null;
@@ -143,7 +142,7 @@ export function setFunctionalGroupsTooltip({
   let infoPanelData: null | InfoPanelData = null;
   const checkFunctionGroupTypes = ['sgroups', 'functionalGroups'];
   const closestCollapsibleStructures = editor.findItem(
-    event,
+    event as Event,
     checkFunctionGroupTypes,
   );
   if (closestCollapsibleStructures && event) {

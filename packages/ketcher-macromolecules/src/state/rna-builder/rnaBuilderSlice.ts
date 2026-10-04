@@ -51,9 +51,7 @@ export enum RnaBuilderPresetsItem {
 export type RnaBuilderNucleotidesItem = 'Nucleotides';
 
 export type RnaBuilderItem =
-  | RnaBuilderPresetsItem
-  | MonomerGroups
-  | RnaBuilderNucleotidesItem;
+  RnaBuilderPresetsItem | MonomerGroups | RnaBuilderNucleotidesItem;
 
 // Filter applied to RNA presets in the library based on the position of the
 // phosphate group in the preset. Each flag enables one of three buckets:
@@ -191,7 +189,8 @@ export const rnaBuilderSlice = createSlice({
       );
     },
     setActivePresetName: (state, action: PayloadAction<string>) => {
-      state.activePreset!.name = action.payload;
+      if (!state.activePreset) return;
+      state.activePreset.name = action.payload;
     },
     setActiveRnaBuilderItem: (
       state,
@@ -249,9 +248,11 @@ export const rnaBuilderSlice = createSlice({
           (presetInList) => presetInList.name === newPreset.nameInList,
         );
         newPreset.nameInList = newPreset.name;
-        presetIndexInList === -1
-          ? state.presetsCustom.push(newPreset)
-          : state.presetsCustom.splice(presetIndexInList, 1, newPreset);
+        if (presetIndexInList === -1) {
+          state.presetsCustom.push(newPreset);
+        } else {
+          state.presetsCustom.splice(presetIndexInList, 1, newPreset);
+        }
       } else {
         state.presetsCustom.push(newPreset);
       }

@@ -1,6 +1,6 @@
 import type { RNABase } from 'domain/entities/RNABase';
 import type { Sugar } from 'domain/entities/Sugar';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,

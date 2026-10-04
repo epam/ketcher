@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { StructureCheckSetting } from '@tests/pages/constants/structureCheck/Constants';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/index';

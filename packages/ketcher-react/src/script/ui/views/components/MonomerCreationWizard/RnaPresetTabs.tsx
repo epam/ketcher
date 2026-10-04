@@ -1,3 +1,4 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
@@ -50,7 +51,10 @@ import {
   getConnectionAttachmentPointsForRnaPresetComponent,
   getVisibleAttachmentPointsForRnaPreset,
 } from './RnaPresetAttachmentPointsVisibility';
-import { hasRequiredRnaPresetComponents } from './RnaPresetStructureValidation';
+import {
+  getRnaPresetComponentKeysToSave,
+  hasRequiredRnaPresetComponents,
+} from './RnaPresetStructureValidation';
 
 interface IRnaPresetTabsProps {
   wizardState: RnaPresetWizardState;
@@ -68,14 +72,20 @@ interface IRnaPresetTabsProps {
   ) => void;
 }
 
+// Active component (its tab is open): soft pale-blue shading (#8851 §2.2.2).
 const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
-const INACTIVE_HIGHLIGHT_COLOR = '#EFF2F5';
-const RNA_COMPONENT_KEYS = ['base', 'sugar', 'phosphate'] as const;
-const RNA_COMPONENT_HINTS: Record<RnaPresetComponentKey, string> = {
+// Inactive component (its tab is not open): fluorescent-cyan outline (#8851 §2.2.1).
+const INACTIVE_HIGHLIGHT_COLOR = '#00EAFF';
+const RNA_COMPONENT_KEYS = [
+  'base',
+  'sugar',
+  'phosphate',
+] as const satisfies readonly RnaPresetComponentKey[];
+const RNA_COMPONENT_HINTS = {
   base: 'Select all atoms that form the base.',
   sugar: 'Select all atoms that form the sugar.',
   phosphate: 'Select all atoms that form the phosphate.',
-};
+} satisfies Record<RnaPresetComponentKey, string>;
 
 export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -184,6 +194,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
           bonds: componentState.structure.bonds || [],
           rgroupAttachmentPoints: [],
           color: highlightColor,
+          // Active tab → filled shading; other tabs → stroked outline.
+          outline: !isActiveTab,
         });
       });
     },
@@ -316,11 +328,22 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       Boolean(errorValue),
     );
   };
-  // Keep component tabs red only while the missing-components condition still
-  // applies; marking the required components clears the visual state immediately.
-  const hasComponentsError =
+  // A "missing components" error must colour only the tabs of the components
+  // that are actually missing — not every component tab, and not the Preset
+  // (overview) tab. A valid preset is sugar (mandatory) plus base and/or
+  // phosphate; marking the required components clears the state immediately (#10247).
+  const hasMissingComponentsError =
     Boolean(wizardState.preset.errors.components) &&
     !hasRequiredRnaPresetComponents(wizardState);
+  const definedComponentKeys = getRnaPresetComponentKeysToSave(wizardState);
+  const isMissingComponentTab = (componentKey: RnaPresetComponentKey) =>
+    hasMissingComponentsError && !definedComponentKeys.includes(componentKey);
+  // The Preset tab reflects only its own errors (e.g. the Code field), never the
+  // whole-preset "missing components" error.
+  const hasPresetOwnError = Object.entries(wizardState.preset.errors).some(
+    ([errorKey, errorValue]) =>
+      errorKey !== 'components' && Boolean(errorValue),
+  );
 
   return (
     <div>
@@ -332,7 +355,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         <Tab
           className={clsx(
             styles.styledTab,
-            hasErrorInTab(wizardState.preset) && styles.errorTab,
+            hasPresetOwnError && styles.errorTab,
           )}
           data-testid="nucleotide-preset-tab"
           label={<div className={styles.tabLabel}>Preset</div>}
@@ -341,7 +364,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         <Tab
           className={clsx(
             styles.styledTab,
-            (hasErrorInTab(wizardState.base) || hasComponentsError) &&
+            (hasErrorInTab(wizardState.base) ||
+              isMissingComponentTab('base')) &&
               styles.errorTab,
           )}
           data-testid="nucleotide-base-tab"
@@ -351,7 +375,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         <Tab
           className={clsx(
             styles.styledTab,
-            (hasErrorInTab(wizardState.sugar) || hasComponentsError) &&
+            (hasErrorInTab(wizardState.sugar) ||
+              isMissingComponentTab('sugar')) &&
               styles.errorTab,
           )}
           data-testid="nucleotide-sugar-tab"
@@ -361,7 +386,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         <Tab
           className={clsx(
             styles.styledTab,
-            (hasErrorInTab(wizardState.phosphate) || hasComponentsError) &&
+            (hasErrorInTab(wizardState.phosphate) ||
+              isMissingComponentTab('phosphate')) &&
               styles.errorTab,
           )}
           data-testid="nucleotide-phosphate-tab"

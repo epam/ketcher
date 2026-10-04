@@ -1,6 +1,7 @@
 import {
   DISALLOWED_MONOMER_MODIFICATION_TYPES,
   buildIdtAliasesFromWizardInputs,
+  expandIdtAliasesToWizardInputs,
   getDisallowedModificationTypes,
   HELM_ALIAS_MAX_LENGTH,
   isValidHelmAliasLength,
@@ -128,6 +129,99 @@ describe('monomers utilities', () => {
           endpoint5: '/5/',
         },
       });
+    });
+  });
+
+  describe('expandIdtAliasesToWizardInputs', () => {
+    it('returns empty strings when idtAliases or base is absent', () => {
+      expect(expandIdtAliasesToWizardInputs()).toEqual({
+        idtAlias5: '',
+        idtAliasInternal: '',
+        idtAlias3: '',
+      });
+      expect(expandIdtAliasesToWizardInputs(undefined)).toEqual({
+        idtAlias5: '',
+        idtAliasInternal: '',
+        idtAlias3: '',
+      });
+    });
+
+    it('re-expands a collapsed base into 5/i/3 indicator forms', () => {
+      expect(expandIdtAliasesToWizardInputs({ base: 'Sp18' })).toEqual({
+        idtAlias5: '5Sp18',
+        idtAliasInternal: 'iSp18',
+        idtAlias3: '3Sp18',
+      });
+    });
+
+    it('strips terminal slashes from partial modifications', () => {
+      expect(
+        expandIdtAliasesToWizardInputs({
+          base: 'Phos',
+          modifications: {
+            endpoint5: '/5Phos/',
+            endpoint3: '/3Phos/',
+          },
+        }),
+      ).toEqual({
+        idtAlias5: '5Phos',
+        idtAliasInternal: '',
+        idtAlias3: '3Phos',
+      });
+    });
+
+    it('strips terminal slashes from all three modifications', () => {
+      expect(
+        expandIdtAliasesToWizardInputs({
+          base: 'Cy3',
+          modifications: {
+            endpoint5: '/5Cy3/',
+            internal: '/iCy3/',
+            endpoint3: '/3Cy3Sp/',
+          },
+        }),
+      ).toEqual({
+        idtAlias5: '5Cy3',
+        idtAliasInternal: 'iCy3',
+        idtAlias3: '3Cy3Sp',
+      });
+    });
+
+    it.each([
+      {
+        label: 'collapsed base',
+        stored: { base: 'Sp18' },
+      },
+      {
+        label: 'partial modifications',
+        stored: {
+          base: 'Phos',
+          modifications: {
+            endpoint5: '/5Phos/',
+            endpoint3: '/3Phos/',
+          },
+        },
+      },
+      {
+        label: 'all three modifications',
+        stored: {
+          base: 'Cy3',
+          modifications: {
+            endpoint5: '/5Cy3/',
+            internal: '/iCy3/',
+            endpoint3: '/3Cy3Sp/',
+          },
+        },
+      },
+    ])('round-trips expand → build for $label', ({ stored }) => {
+      const expanded = expandIdtAliasesToWizardInputs(stored);
+      expect(
+        buildIdtAliasesFromWizardInputs(
+          expanded.idtAlias5,
+          expanded.idtAliasInternal,
+          expanded.idtAlias3,
+        ),
+      ).toEqual(stored);
     });
   });
 

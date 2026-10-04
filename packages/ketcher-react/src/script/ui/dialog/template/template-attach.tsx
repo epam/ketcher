@@ -349,7 +349,7 @@ class Attach extends Component<AttachProps> {
             <NameInput
               name="name"
               value={name}
-              onChange={onNameEdit}
+              onChange={(value) => onNameEdit(value as string)}
               placeholder="template"
             />
             <span>Selected attachment points</span>

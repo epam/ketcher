@@ -22,7 +22,7 @@ export const getMonomerPropertyVisibility = (
   return {
     displayNaturalAnalogue,
     displayModificationTypes,
-    displayAliases: displayHelmAlias || displayBilnAlias,
+    displayAliases: displayHelmAlias || displayBilnAlias || displayIdtAlias,
     displayHelmAlias,
     displayBilnAlias,
     displayIdtAlias,

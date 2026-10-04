@@ -47,7 +47,13 @@ describe('Test Rna Editor Expanded component', () => {
           editor: {
             editor: {
               isSequenceEditInRNABuilderMode: true,
-              events: { keyDown: { add: () => true, remove: () => true } },
+              events: {
+                keyDown: { add: () => true, remove: () => true },
+                cancelSequenceEditInRNABuilderMode: {
+                  add: () => true,
+                  remove: () => true,
+                },
+              },
             },
           },
           rnaBuilder: {

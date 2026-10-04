@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator, expect } from '@playwright/test';
 import {
   AminoAcidNaturalAnalogue,
@@ -60,6 +59,12 @@ type AliasesSectionLocators = {
   helmAliasEditboxClearButton: Locator;
   bilnAliasEditbox: Locator;
   bilnAliasEditboxClearButton: Locator;
+  idtAlias5Editbox: Locator;
+  idtAlias5EditboxClearButton: Locator;
+  idtAliasInternalEditbox: Locator;
+  idtAliasInternalEditboxClearButton: Locator;
+  idtAlias3Editbox: Locator;
+  idtAlias3EditboxClearButton: Locator;
 };
 
 type CreateMonomerDialogLocators = {
@@ -228,6 +233,18 @@ export const CreateMonomerDialog = (page: Page) => {
       bilnAliasEditboxClearButton: page
         .getByTestId('biln-alias-input')
         .getByTestId('CloseIcon'),
+      idtAlias5Editbox: page.getByTestId('idt-alias-5-input'),
+      idtAlias5EditboxClearButton: page
+        .getByTestId('idt-alias-5-input')
+        .getByTestId('CloseIcon'),
+      idtAliasInternalEditbox: page.getByTestId('idt-alias-internal-input'),
+      idtAliasInternalEditboxClearButton: page
+        .getByTestId('idt-alias-internal-input')
+        .getByTestId('CloseIcon'),
+      idtAlias3Editbox: page.getByTestId('idt-alias-3-input'),
+      idtAlias3EditboxClearButton: page
+        .getByTestId('idt-alias-3-input')
+        .getByTestId('CloseIcon'),
     },
   );
 
@@ -365,27 +382,24 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async expandModificationSection() {
-      const modificationSectionState = await modificationSection.getAttribute(
-        'aria-expanded',
-      );
+      const modificationSectionState =
+        await modificationSection.getAttribute('aria-expanded');
       if (modificationSectionState === 'false') {
         await modificationSection.click();
       }
     },
 
     async collapseModificationSection() {
-      const modificationSectionState = await modificationSection.getAttribute(
-        'aria-expanded',
-      );
+      const modificationSectionState =
+        await modificationSection.getAttribute('aria-expanded');
       if (modificationSectionState === 'true') {
         await modificationSection.click();
       }
     },
 
     async expandAliasesSection() {
-      const aliasesSectionState = await aliasesSection.getAttribute(
-        'aria-expanded',
-      );
+      const aliasesSectionState =
+        await aliasesSection.getAttribute('aria-expanded');
       if (aliasesSectionState === 'false') {
         await aliasesSection.click();
       }
@@ -393,9 +407,8 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async collapseAliasesSection() {
-      const aliasesSectionState = await aliasesSection.getAttribute(
-        'aria-expanded',
-      );
+      const aliasesSectionState =
+        await aliasesSection.getAttribute('aria-expanded');
       if (aliasesSectionState === 'true') {
         await aliasesSection.click();
       }

@@ -52,7 +52,6 @@ test.describe('Erase Tool', () => {
     expect(atomSize).toEqual(atomSizeAfterErase);
 
     await waitForRender(page, async () => {
-      // eslint-disable-next-line no-magic-numbers
       await getBondLocator(page, { bondId: 24 }).click({ force: true });
     });
 

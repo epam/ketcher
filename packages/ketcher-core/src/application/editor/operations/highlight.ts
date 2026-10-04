@@ -27,6 +27,7 @@ type Data = {
   rgroupAttachmentPoints: Array<number>;
   color: string;
   highlightId?: number;
+  outline?: boolean;
 };
 
 export class HighlightAdd extends BaseOperation {
@@ -38,6 +39,7 @@ export class HighlightAdd extends BaseOperation {
     rgroupAttachmentPoints: Array<number>,
     color: string,
     highlightId?: number,
+    outline?: boolean,
   ) {
     super(OperationType.ADD_HIGHLIGHT);
     this.data = {
@@ -46,11 +48,12 @@ export class HighlightAdd extends BaseOperation {
       rgroupAttachmentPoints,
       color,
       highlightId,
+      outline,
     };
   }
 
   execute(restruct: ReStruct) {
-    const { atoms, bonds, rgroupAttachmentPoints, color } = this.data;
+    const { atoms, bonds, rgroupAttachmentPoints, color, outline } = this.data;
 
     if (!color) {
       return;
@@ -62,6 +65,7 @@ export class HighlightAdd extends BaseOperation {
       bonds,
       rgroupAttachmentPoints,
       color,
+      outline,
     });
 
     if (typeof this.data.highlightId !== 'number') {

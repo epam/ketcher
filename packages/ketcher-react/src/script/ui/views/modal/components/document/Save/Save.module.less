@@ -31,10 +31,9 @@
     form {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
-      align-content: center;
+      place-content: center space-between;
       font-size: 12px;
-      margin: 12px 12px 10px 12px;
+      margin: 12px 12px 10px;
 
       & > label {
         display: flex;
@@ -42,14 +41,16 @@
         width: calc(1 / 2 * 100% - 6px);
         text-align: left;
 
-        // TODO: check and update global styles for text inputs
-        input {
-          border: 1px solid @color-grey-4 !important;
+// TODO: check and update global styles for text inputs
+input {
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  border: 1px solid @color-grey-4 !important;
 
-          &:hover {
-            border: 1px solid @color-input-hover !important;
-          }
-        }
+  &:hover {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
+    border: 1px solid @color-input-hover !important;
+  }
+}
 
         > span {
           margin-right: 8px;
@@ -86,6 +87,7 @@
         .warningsArr {
           color: @color-text-primary;
           white-space: pre-line;
+          /* stylelint-disable-next-line declaration-property-value-keyword-no-deprecated */
           word-break: break-word;
           font-size: 12px;
           line-height: 14px;
@@ -107,10 +109,11 @@
         width: 28px;
         height: 28px;
 
-        &:not(:active) {
-          background-color: @color-background-primary;
-          color: @color-text-primary;
-        }
+      &:not(:active) {
+        /* stylelint-disable-next-line declaration-property-value-keyword-no-deprecated */
+        background-color: @color-background-primary;
+        color: @color-text-primary;
+      }
       }
 
       &:hover button {
@@ -166,21 +169,23 @@
       margin-top: 20%;
     }
 
-    .imageContainer {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 220px;
-      border-top: 1px solid @color-grey-3;
-      border-bottom: 1px solid @color-grey-3;
+.imageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 220px;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  border-top: 1px solid @color-grey-3;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  border-bottom: 1px solid @color-grey-3;
 
-      img {
-        background-color: @color-background-primary;
-        max-height: 220px;
-        max-width: 428px;
-      }
-    }
+  img {
+    background-color: @color-background-primary;
+    max-height: 220px;
+    max-width: 428px;
+  }
+}
 
     .previewMessage {
       text-align: center;
@@ -198,7 +203,7 @@
   }
 
   .saveTmpl {
-    word-wrap: normal;
+    overflow-wrap: normal;
     margin-right: auto;
     padding: 2px 8px;
   }

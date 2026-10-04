@@ -98,8 +98,6 @@ export const attachmentPointNames = [
   'R8',
 ];
 
-export type LeavingGroup = 'O' | 'OH' | 'H';
-
 export type AttachmentPointConstructorParams = {
   rootElement: D3SvgElementSelection<SVGGElement, void>;
   monomer: BaseMonomer;
@@ -112,6 +110,8 @@ export type AttachmentPointConstructorParams = {
   angle: number;
   isSnake: boolean;
   applyZoomForPositionCalculation: boolean;
+  isDragTarget?: boolean;
+  isDragCircleHover?: boolean;
 };
 
 export type PreviewAttachmentPointConstructorParams =
@@ -126,3 +126,7 @@ export type ConcreteMonomer = Peptide | Sugar | RNABase | Phosphate | Chem;
 export type AttachmentPointsToBonds = Partial<
   Record<AttachmentPointName, PolymerBond | MonomerToAtomBond | null>
 >;
+
+export type MouseEventWithAttachmentPoint = MouseEvent & {
+  attachmentPointName: AttachmentPointName;
+};

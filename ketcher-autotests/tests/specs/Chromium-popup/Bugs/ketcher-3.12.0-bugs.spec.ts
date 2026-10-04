@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
@@ -32,6 +29,8 @@ import {
   dragTo,
   setMolecule,
   readFileContent,
+  openFileAndAddToCanvasAsNewProjectMacro,
+  pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
@@ -67,6 +66,7 @@ import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/Abbrev
 import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
 import { EditConnectionPointPopup } from '@tests/pages/molecules/canvas/createMonomer/EditConnectionPointPopup';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -327,10 +327,9 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
     await RightToolbar(page).clickAtom(Atom.Oxygen);
-    await clickOnCanvas(page, 100, 50);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await clickOnCanvas(page, 120, 50);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToCHEMTab();
     await Library(page).clickMonomerAutochain(Chem.Test_6_Ch);
     for (let i = 1; i <= 6; i++) {
@@ -720,7 +719,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
 
-    await setMolecule(page, '[Pt](C)(C)(C)(C)C');
+    await pasteFromClipboardAndOpenAsNewProject(page, '[Pt](C)(C)(C)(C)C');
     await takeEditorScreenshot(page);
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -744,13 +743,9 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
 
-    const ketMolecule = await readFileContent(
-      "KET/Bugs/Carbon label doesn't apper in case of 180 degree angle on macro mode.ket",
-    );
-    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    await openFileAndAddToCanvasAsNewProjectMacro(
       page,
-      MacroFileType.KetFormat,
-      ketMolecule,
+      "KET/Bugs/Carbon label doesn't apper in case of 180 degree angle on macro mode.ket",
     );
 
     const atomInMacroMode = getAtomLocator(page, {
@@ -795,10 +790,10 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      *
      * Version 3.12.0
      */
-
-    const smilesMolecule =
-      'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|';
-    await setMolecule(page, smilesMolecule);
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
+    );
 
     await LeftToolbar(page).createMonomer();
 
@@ -807,6 +802,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await dragMouseTo(page, 500, 300);
 
     await takeEditorScreenshot(page);
+    await CreateMonomerDialog(page).discard();
   });
 
   test("Case 24 — System shouldn't allow to upload monomers with no base IDT alias defined", async ({
@@ -828,7 +824,10 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      *
      * Version 3.12.0
      */
-    await setMolecule(page, '[*:1]C%91.[*:2]%91 |$_R1;;_R2$|');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      '[*:1]C%91.[*:2]%91 |$_R1;;_R2$|',
+    );
     await selectAllStructuresOnCanvas(page);
 
     await LeftToolbar(page).createMonomer();

@@ -17,60 +17,77 @@
 import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
+import type { RGroup, RGroupAttributes } from 'domain/entities/rgroup';
 
-type Data = {
-  rgid: any;
-  attribute: any;
-  value: any;
+export type RGroupAttributeKey = keyof RGroupAttributes;
+
+type Data<K extends RGroupAttributeKey = RGroupAttributeKey> = {
+  rgid?: number;
+  attribute?: K;
+  value?: RGroup[K];
 };
 
-export class RGroupAttr extends BaseOperation {
-  data: Data | null;
-  data2: Data | null;
+export class RGroupAttr<
+  K extends RGroupAttributeKey = RGroupAttributeKey,
+> extends BaseOperation {
+  data: Data<K> | null;
+  data2: Data<K> | null;
 
-  constructor(rgroupId?: any, attribute?: any, value?: any) {
+  constructor(rgroupId?: number, attribute?: K, value?: RGroup[K]) {
     super(OperationType.R_GROUP_ATTR);
     this.data = { rgid: rgroupId, attribute, value };
     this.data2 = null;
   }
 
   execute(restruct: ReStruct) {
-    if (this.data) {
-      const { rgid, attribute, value } = this.data;
-
-      const rgp = restruct.molecule.rgroups.get(rgid)!;
-
-      if (!rgp) {
-        return;
-      }
-
-      if (!this.data2) {
-        this.data2 = {
-          rgid,
-          attribute,
-          value: rgp[attribute],
-        };
-      }
-
-      rgp[attribute] = value;
-
-      BaseOperation.invalidateItem(restruct, 'rgroups', rgid);
+    if (!this.data) {
+      return;
     }
+
+    const { rgid, attribute, value } = this.data;
+
+    if (rgid === undefined || attribute === undefined || value === undefined) {
+      return;
+    }
+
+    const rgp = restruct.molecule.rgroups.get(rgid);
+
+    if (!rgp) {
+      return;
+    }
+
+    if (!this.data2) {
+      this.data2 = {
+        rgid,
+        attribute,
+        value: rgp[attribute],
+      };
+    }
+
+    rgp[attribute] = value;
+
+    BaseOperation.invalidateItem(restruct, 'rgroups', rgid);
   }
 
   invert() {
-    const inverted = new RGroupAttr();
+    const inverted = new RGroupAttr<K>();
     inverted.data = this.data2;
     inverted.data2 = this.data;
     return inverted;
   }
 
   isDummy(restruct: ReStruct) {
-    if (this.data) {
-      const { rgid, attribute, value } = this.data;
-      const rgroup = restruct.molecule.rgroups.get(rgid);
-      return rgroup ? rgroup[attribute] === value : false;
+    if (!this.data) {
+      return false;
     }
-    return false;
+
+    const { rgid, attribute, value } = this.data;
+
+    if (rgid === undefined || attribute === undefined) {
+      return false;
+    }
+
+    const rgroup = restruct.molecule.rgroups.get(rgid);
+    return rgroup ? rgroup[attribute] === value : false;
   }
 }

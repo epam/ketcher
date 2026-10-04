@@ -10,7 +10,7 @@ import {
   type RnaPresetComponentKey,
   MonomerCreationComponentStructureUpdateEvent,
 } from 'application/editor/shared/customEvents';
-import assert from 'assert';
+import { assert } from 'utilities';
 
 export class MarkAsRnaComponentOperation extends BaseOperation {
   constructor(

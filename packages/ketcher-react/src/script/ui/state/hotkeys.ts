@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -35,6 +36,7 @@ import {
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
+import { restorePersistedSelectionTool } from './selectionToolPersistence';
 
 import actions from '../action';
 import { isIE } from 'react-device-detect';
@@ -79,6 +81,7 @@ function removeNotRenderedStruct(actionTool, group, dispatch) {
 let abbreviationLookupTimeoutId: number | undefined;
 const ABBREVIATION_LOOKUP_TYPING_TIMEOUT = 1000;
 const shortcutKeys = [
+  '0',
   '1',
   '2',
   '3',
@@ -97,12 +100,14 @@ const shortcutKeys = [
 ];
 
 function shouldIgnoreKeyEvent(state, event): boolean {
+  if (window.isPolymerEditorTurnedOn) {
+    return true;
+  }
   if (state.modal || selectIsAbbreviationLookupOpen(state)) {
     return true;
   }
   // TODO: It is done to intercept hotkeys when editing inputs in monomer creation wizard
   // It targets plain inputs only, ideally it has to be incorporated with ClipArea functionality
-  // Ideally x2 – create a common event interception layer for both micro and macro editors
   return isEditableInputTarget(event.target);
 }
 
@@ -119,7 +124,9 @@ function handleAbbreviationLookup(key: string, state, dispatch, event) {
     clearTimeout(abbreviationLookupTimeoutId);
     abbreviationLookupTimeoutId = undefined;
 
-    const resetAction = SettingsManager.getSettings().selectionTool;
+    const resetAction = restorePersistedSelectionTool(
+      SettingsManager.getSelectionTool('micro'),
+    );
     dispatch(onAction(resetAction));
 
     event.preventDefault();
@@ -186,19 +193,40 @@ function shouldHandleItemDirectly(
 ): hoveredItem is Record<string, number> {
   return Boolean(
     hoveredItem &&
-      newAction.tool !== 'select' &&
-      newAction.dialog !== 'templates',
+    newAction.tool !== 'select' &&
+    newAction.dialog !== 'templates',
   );
 }
 
 function handleSelectTool(newAction, key: string, index: number) {
   if (key === 'Escape') {
-    return SettingsManager.getSettings().selectionTool;
+    return restorePersistedSelectionTool(
+      SettingsManager.getSelectionTool('micro'),
+    );
   }
   if (index === -1) {
     return {};
   }
   return newAction;
+}
+
+// While hovering a bond, cycling through a shared shortcut (e.g. '1' for
+// single/up/down/updown) must advance from the bond's own current type/stereo,
+// not from the active toolbar tool (which doesn't change just from hovering,
+// so re-pressing the key would otherwise always land on the same entry) (#3705).
+function getNextBondTypeAction(hoveredItem, group, render) {
+  const hoveredBondId = hoveredItem.bonds;
+  if (hoveredBondId === undefined) return null;
+
+  const bond = render.ctab.bonds.get(hoveredBondId)?.b;
+  if (!bond) return null;
+
+  const currentIndex = group.findIndex((actName) => {
+    const opts = actions[actName]?.action?.opts;
+    return opts?.type === bond.type && opts?.stereo === bond.stereo;
+  });
+
+  return getNextAction(group[(currentIndex + 1) % group.length]);
 }
 
 function handleHotkeyGroup(
@@ -233,7 +261,10 @@ function handleHotkeyGroup(
     if (actName === 'erase' && hasSelection) {
       dispatch(onAction(newAction));
     } else if (shouldHandleItemDirectly(hoveredItem, newAction)) {
-      newAction = getCurrentAction(group[index]) || newAction;
+      newAction =
+        getNextBondTypeAction(hoveredItem, group, render) ||
+        getCurrentAction(group[index]) ||
+        newAction;
       handleHotkeyOverItem({
         hoveredItem,
         newAction,
@@ -365,7 +396,7 @@ export function initClipboard(dispatch, getState) {
     formats,
     focused() {
       const state = getState();
-      return !state.modal;
+      return !state.modal && !window.isPolymerEditorTurnedOn;
     },
     onLegacyCopy() {
       const state = getState();
@@ -506,7 +537,9 @@ async function clipData(editor: Editor) {
     return res;
   } catch (e: any) {
     KetcherLogger.error('hotkeys.ts::clipData', e);
-    errorHandler && errorHandler(e.message);
+    if (errorHandler) {
+      errorHandler(e.message);
+    }
   }
 
   return null;
@@ -536,7 +569,9 @@ function legacyClipData(editor: Editor) {
     return res;
   } catch (e: any) {
     KetcherLogger.error('hotkeys.ts::legacyClipData', e);
-    errorHandler && errorHandler(e.message);
+    if (errorHandler) {
+      errorHandler(e.message);
+    }
   }
 
   return null;

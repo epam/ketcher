@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
-/* eslint-disable max-len */
 import { Page, test, expect } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -16,6 +13,8 @@ import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/C
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import { shiftCanvas } from '@utils/index';
 import { MonomerType } from '@utils/types';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;
@@ -81,6 +80,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await dialog.submit();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     // Verify preset is created successfully
     expect(

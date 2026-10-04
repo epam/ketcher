@@ -1,6 +1,7 @@
 import { CoreEditor, FlexMode } from 'application/editor';
 import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import {
+  coreEditorTheme,
   getFinishedPolymerBond,
   peptideMonomerItem,
   polymerEditorTheme,
@@ -114,7 +115,7 @@ describe('Select Rectangle Tool', () => {
     } as MouseEvent;
     const selectRectangleTool = new SelectRectangle(
       new CoreEditor({
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         canvas: createPolymerEditorCanvas(),
         renderersContainer: createRenderersManager(polymerEditorTheme),
         mode: new FlexMode(),
@@ -130,7 +131,7 @@ describe('Select Rectangle Tool', () => {
     const canvas: SVGSVGElement = createPolymerEditorCanvas();
     const mode = new FlexMode();
     const editor = new CoreEditor({
-      theme: polymerEditorTheme,
+      theme: coreEditorTheme,
       canvas,
       renderersContainer: createRenderersManager(polymerEditorTheme),
       mode,

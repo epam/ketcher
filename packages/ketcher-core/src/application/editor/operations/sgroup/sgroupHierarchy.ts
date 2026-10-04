@@ -17,17 +17,18 @@
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
+import { KetcherLogger } from 'utilities';
 
 type Data = {
-  sgid: any;
-  parent?: any;
-  children?: any;
+  sgid: number;
+  parent?: number;
+  children?: number[];
 };
 
 class SGroupAddToHierarchy extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any, parent?: any, children?: any) {
+  constructor(sgroupId: number, parent?: number, children?: number[]) {
     super(
       OperationType.S_GROUP_ADD_TO_HIERACHY,
       OperationPriority.S_GROUP_ADD_TO_HIERACHY,
@@ -39,7 +40,11 @@ class SGroupAddToHierarchy extends BaseOperation {
     const { sgid, parent, children } = this.data;
 
     const struct = restruct.molecule;
-    const sgroup = struct.sgroups.get(sgid)!;
+    const sgroup = struct.sgroups.get(sgid);
+    if (!sgroup) {
+      KetcherLogger.error(`SGroupAddToHierarchy: S-Group ${sgid} not found`);
+      return;
+    }
     const relations = struct.sGroupForest.insert(sgroup, parent, children);
 
     this.data.parent = relations.parent;
@@ -50,12 +55,12 @@ class SGroupAddToHierarchy extends BaseOperation {
 class SGroupRemoveFromHierarchy extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any) {
+  constructor(sgroupId: number) {
     super(OperationType.S_GROUP_REMOVE_FROM_HIERACHY, 110);
     this.data = { sgid: sgroupId };
   }
 
-  execute(restruct: any) {
+  execute(restruct: ReStruct) {
     const { sgid } = this.data;
     const struct = restruct.molecule;
 

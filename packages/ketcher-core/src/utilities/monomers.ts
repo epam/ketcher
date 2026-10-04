@@ -138,6 +138,7 @@ const stripPositionIndicator = (
  * Builds a canonical `IKetIdtAliases` from the three wizard IDT inputs.
  * Collapses matching 5′/internal/3′ indicator forms to `{ base }` when possible;
  * otherwise stores a `base` plus per-position slash-wrapped modifications.
+ * Returns `undefined` when no position yields content (empty or slash-only input).
  */
 export function buildIdtAliasesFromWizardInputs(
   idt5?: string,
@@ -178,7 +179,7 @@ export function buildIdtAliasesFromWizardInputs(
   } else if (core3) {
     base = stripPositionIndicator(core3, '3');
   } else {
-    // Unreachable: at least one position is defined above.
+    // Every provided position stripped to empty (e.g. only slashes were entered) — no base to derive.
     return undefined;
   }
 
@@ -194,6 +195,43 @@ export function buildIdtAliasesFromWizardInputs(
   }
 
   return { base, modifications };
+}
+
+/**
+ * Expands a stored `IKetIdtAliases` back into the three wizard IDT inputs —
+ * the inverse of `buildIdtAliasesFromWizardInputs`. A collapsed `{ base }` is
+ * re-expanded into its 5′/internal/3′ indicator forms so that re-saving
+ * collapses to the same `{ base }`; otherwise each position shows its stored
+ * modification without the wrapping slashes (the save transform re-adds them).
+ */
+export function expandIdtAliasesToWizardInputs(idtAliases?: IKetIdtAliases): {
+  idtAlias5: string;
+  idtAliasInternal: string;
+  idtAlias3: string;
+} {
+  if (!idtAliases?.base) {
+    return { idtAlias5: '', idtAliasInternal: '', idtAlias3: '' };
+  }
+
+  if (!idtAliases.modifications) {
+    return {
+      idtAlias5: `5${idtAliases.base}`,
+      idtAliasInternal: `i${idtAliases.base}`,
+      idtAlias3: `3${idtAliases.base}`,
+    };
+  }
+
+  return {
+    idtAlias5: idtAliases.modifications.endpoint5
+      ? stripTerminalSlashes(idtAliases.modifications.endpoint5)
+      : '',
+    idtAliasInternal: idtAliases.modifications.internal
+      ? stripTerminalSlashes(idtAliases.modifications.internal)
+      : '',
+    idtAlias3: idtAliases.modifications.endpoint3
+      ? stripTerminalSlashes(idtAliases.modifications.endpoint3)
+      : '',
+  };
 }
 
 export function isValidHelmAlias(alias: string) {

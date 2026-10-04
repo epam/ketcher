@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
@@ -60,7 +58,7 @@ test.beforeAll(async ({ initSequenceCanvas }) => {
 test.afterAll(async ({ closePage }) => {
   await closePage();
 });
-// eslint-disable-next-line @typescript-eslint/no-empty-function
+
 test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 test.describe('Sequence edit mode', () => {
   test('Text-editing mode activates when users start a new sequence or edit an existing one', async () => {
@@ -1154,6 +1152,7 @@ test.describe('Sequence edit mode', () => {
       'KET/rna-AAAAAA-sequence-expected.ket',
       FileType.KET,
     );
+    await clickInTheMiddleOfTheCanvas(page);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/rna-AAAAAA-sequence-expected.ket',
@@ -1185,6 +1184,7 @@ test.describe('Sequence edit mode', () => {
       'KET/dna-AAAAAA-sequence-expected.ket',
       FileType.KET,
     );
+    await clickInTheMiddleOfTheCanvas(page);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/dna-AAAAAA-sequence-expected.ket',
@@ -1217,6 +1217,7 @@ test.describe('Sequence edit mode', () => {
       FileType.MOL,
       MolFileFormat.v3000,
     );
+    await clickInTheMiddleOfTheCanvas(page);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V3000/rna-AAAAAA-sequence-expected.mol',
@@ -1249,6 +1250,7 @@ test.describe('Sequence edit mode', () => {
       FileType.MOL,
       MolFileFormat.v3000,
     );
+    await clickInTheMiddleOfTheCanvas(page);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V3000/dna-AAAAAA-sequence-expected.mol',
@@ -1461,10 +1463,11 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Check that when r-clicking outside of the sequence "Copy" and "Delete" disabled, and "Paste" enabled', async () => {
+  test('Check that when r-clicking outside of the sequence "Copy" and "Delete" disabled, and "Paste" disabled when clipboard is empty', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6472
-     * Description: When r-clicking outside of the sequence "Copy" and "Delete" disabled, and "Paste" enabled.
+     * Description: When r-clicking outside of the sequence "Copy" and "Delete" disabled,
+     * and "Paste" disabled because clipboard is empty (https://github.com/epam/ketcher/issues/7392).
      * Scenario:
      * 1. Go to Macro - Sequence mode - RNA
      * 2. Start typing "ACGTU" in the sequence

@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,11 +16,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import 'intersection-observer';
-import 'element-closest-polyfill';
-import 'regenerator-runtime/runtime';
-import 'url-search-params-polyfill';
-import 'whatwg-fetch';
 import './index.less';
 
 import init, { type Config } from './script';
@@ -50,7 +47,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const appRootRef = useRef<Root | null>(null);
   const cleanupRef = useRef<(() => unknown) | null>(null);
   const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+
   const setServerRef = useRef<(structService: StructService) => void>(() => {});
   const structServiceProvider = props.structServiceProvider;
 

@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable camelcase */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import { RNASection } from '@tests/pages/constants/library/Constants';
@@ -282,6 +278,7 @@ test.describe('API for update Library', () => {
      */
     const SDF_EMPTY = await readFileContent('SDF/SDF_EMPTY.sdf');
     await replaceMonomersLibrary(page, SDF_EMPTY, { format: 'sdf' });
+    await Library(page).switchToRNATab();
     await takeMonomerLibraryScreenshot(page);
     await Library(page).switchToPeptidesTab();
     await takeMonomerLibraryScreenshot(page);

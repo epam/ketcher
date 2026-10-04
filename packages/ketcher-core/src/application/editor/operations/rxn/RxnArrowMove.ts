@@ -14,33 +14,37 @@
  * limitations under the License.
  ***************************************************************************/
 
+import type { ReStruct } from 'application/render';
+import type { Vec2 } from 'domain/entities/vec2';
+import { Scale } from 'domain/helpers';
 import Base from '../BaseOperation';
 import { OperationType } from '../OperationType';
-import { Scale } from 'domain/helpers';
 
 interface RxnArrowMoveData {
-  id: number;
-  d: any;
-  noinvalidate: boolean;
+  id?: number;
+  d?: Vec2;
+  noinvalidate?: boolean;
 }
 
 export class RxnArrowMove extends Base {
   data: RxnArrowMoveData;
 
-  constructor(id?: any, d?: any, noinvalidate?: any) {
+  constructor(id?: number, d?: Vec2, noinvalidate?: boolean) {
     super(OperationType.RXN_ARROW_MOVE);
     this.data = { id, d, noinvalidate };
   }
 
-  execute(restruct: any): void {
+  execute(restruct: ReStruct): void {
     const struct = restruct.molecule;
     const id = this.data.id;
     const d = this.data.d;
+    if (id === undefined || d === undefined) return;
     const item = struct.rxnArrows.get(id);
+    if (!item) return;
     item.pos.forEach((p) => p.add_(d));
-    restruct.rxnArrows
-      .get(id)
-      .visel.translate(Scale.modelToCanvas(d, restruct.render.options));
+    const reItem = restruct.rxnArrows.get(id);
+    if (!reItem) return;
+    reItem.visel.translate(Scale.modelToCanvas(d, restruct.render.options));
     this.data.d = d.negated();
     if (!this.data.noinvalidate) {
       Base.invalidateItem(restruct, 'rxnArrows', id, 1);

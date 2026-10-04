@@ -6,7 +6,7 @@
 import type { ISettingsStorage, Settings } from './types';
 
 export class MemoryStorageAdapter implements ISettingsStorage {
-  private storage: Map<string, Settings> = new Map();
+  private readonly storage: Map<string, Settings> = new Map();
 
   /**
    * Load settings from memory

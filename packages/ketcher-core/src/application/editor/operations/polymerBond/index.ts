@@ -81,6 +81,32 @@ export class PolymerBondMoveOperation implements Operation {
   }
 }
 
+/**
+ * Snaps a polymer bond's endpoints to the current positions of its linked
+ * monomers by calling `moveToLinkedEntities()` and then re-rendering.
+ *
+ * Unlike `PolymerBondMoveOperation`, this operation is fully symmetric:
+ * both `execute` and `invert` snap the bond to its monomers' current
+ * positions. This makes it suitable for undo-safe chain-shift operations
+ * where monomers are moved and bonds must follow in both directions.
+ */
+export class PolymerBondSnapToMonomersOperation implements Operation {
+  constructor(public polymerBond: PolymerBond) {}
+
+  private snap(renderersManager: RenderersManager) {
+    this.polymerBond.moveToLinkedEntities();
+    renderersManager.movePolymerBond(this.polymerBond);
+  }
+
+  public execute(renderersManager: RenderersManager) {
+    this.snap(renderersManager);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    this.snap(renderersManager);
+  }
+}
+
 export class PolymerBondShowInfoOperation implements Operation {
   constructor(public polymerBond: PolymerBond) {}
 

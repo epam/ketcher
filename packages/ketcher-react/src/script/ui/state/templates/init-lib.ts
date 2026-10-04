@@ -121,7 +121,7 @@ function userTmpls(): SdfItem[] {
 export function prefetchStatic(url: string): Promise<string> {
   return fetch(url, { credentials: 'same-origin' }).then((resp) => {
     if (resp.ok) return resp.text();
-    throw Error('Could not fetch ' + url);
+    throw new Error('Could not fetch ' + url);
   });
 }
 

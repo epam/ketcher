@@ -25,6 +25,7 @@ test.describe('Hotkeys', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
   test('Check Clear Canvas (Ctrl+Del) Shortcut', async ({ page }) => {

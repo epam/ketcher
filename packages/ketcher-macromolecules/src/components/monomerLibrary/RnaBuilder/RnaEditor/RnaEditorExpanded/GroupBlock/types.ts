@@ -23,6 +23,5 @@ export interface IGroupBlockProps {
   monomerName?: string;
   testid?: string;
   selected?: boolean;
-  disabled?: boolean;
   onClick?: () => void;
 }

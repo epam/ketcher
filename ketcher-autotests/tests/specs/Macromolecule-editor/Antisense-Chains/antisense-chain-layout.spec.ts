@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
-
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -497,8 +493,6 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Nucleotide._2_damdA,
-    // shouldFail: true,
-    // issueNumber: 'https://github.com/epam/ketcher/issues/6840',
   },
 ];
 

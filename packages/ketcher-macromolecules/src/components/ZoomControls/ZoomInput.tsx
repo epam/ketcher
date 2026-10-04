@@ -1,3 +1,4 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -56,7 +57,7 @@ export const ZoomInput = ({
         inputEl.select();
       }
     },
-    [onZoomSubmit, inputRef, hotkeysShortcuts],
+    [onZoomSubmit, inputRef],
   );
 
   const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {

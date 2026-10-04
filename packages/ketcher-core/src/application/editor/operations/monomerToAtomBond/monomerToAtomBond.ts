@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import type { Operation } from 'domain/entities/Operation';
@@ -64,7 +62,8 @@ export class MonomerToAtomBondDeleteOperation implements Operation {
     renderersManager.deleteMonomerToAtomBond(this.monomerToAtomBond);
   }
 
-  public invert() {
+  public invert(_renderersManager: RenderersManager) {
+    // Invert for delete operation only updates the model; renderer update is handled in invertAfterAllOperations.
     this.addMonomerToAtomBondChangeModel(this.monomerToAtomBond);
   }
 

@@ -16,7 +16,6 @@
 
 import { Atom } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import {
   AtomAttr,
   AtomDelete,
@@ -38,6 +37,7 @@ export function fromAtomMerge(
   dstId: number,
 ): Action {
   if (srcId === dstId) return new Action();
+  if (!restruct.molecule.atoms.has(dstId)) return new Action();
 
   const fragAction = new Action();
   mergeFragmentsIfNeeded(fragAction, restruct, srcId, dstId);
@@ -66,7 +66,8 @@ export function fromAtomMerge(
       // replace old bond with new bond
       const attrs = Bond.getAttrHash(bond);
       Object.keys(attrs).forEach((key) => {
-        action.addOp(new BondAttr(mergeBondId, key, attrs[key]));
+        const attrKey = key as keyof typeof attrs;
+        action.addOp(new BondAttr(mergeBondId, attrKey, attrs[attrKey]));
       });
     }
 
@@ -100,10 +101,7 @@ export function fromAtomMerge(
     for (const attachmentPoint of sgroup.getAttachmentPoints()) {
       if (attachmentPoint.atomId === srcId) {
         action.addOp(
-          new SGroupAttachmentPointRemove(
-            sgroupId,
-            new SGroupAttachmentPoint(srcId, undefined, undefined),
-          ),
+          new SGroupAttachmentPointRemove(sgroupId, attachmentPoint),
         );
         return;
       }

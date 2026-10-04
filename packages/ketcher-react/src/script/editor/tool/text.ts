@@ -48,7 +48,7 @@ class TextTool implements Tool {
 
     this.editor.selection(null);
 
-    if (closestItem && closestItem.map === 'texts') {
+    if (closestItem?.map === 'texts') {
       this.editor.hover(null);
       this.editor.selection({ texts: [closestItem.id] });
       this.dragCtx = {

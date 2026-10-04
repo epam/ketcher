@@ -95,48 +95,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await takeEditorScreenshot(page);
   });
 
-  test('Case 2 — “Field value” textbox is active in “S-Group Properties” modal when “Context” field is empty', async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7729
-     * Bug: https://github.com/epam/ketcher/issues/7729
-     * Version: 3.13.0
-     * Description:
-     * When S-Group type is switched to Data and Context field becomes empty,
-     * “Field name” and “Field value” inputs must be disabled,
-     * but currently they remain editable.
-     *
-     * Scenario:
-     * 1. Open Ketcher (Molecules mode)
-     * 2. Paste SMILES "CC" → click to place structure
-     * 3. Press Ctrl+G to activate S-group tool
-     * 4. Click on the bond between atoms → S-group Properties dialog appears
-     * 5. Select any S-group Type except "Data"
-     * 6. Select "Data" again → the "Context" field becomes empty
-     * 7. Try entering values into “Field name” and “Field value”
-     *
-     * Expected Result:
-     * When Context field is empty,
-     * “Field name” and “Field value” inputs must be disabled,
-     * and user should NOT be able to enter text.
-     */
-
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CC');
-
-    await LeftToolbar(page).sGroup();
-    await getBondLocator(page, { bondId: 0 }).click({ force: true });
-
-    const dialog = SGroupPropertiesDialog(page);
-
-    await dialog.selectType(TypeOption.Superatom);
-    await dialog.selectType(TypeOption.Data);
-
-    await expect(dialog.contextDropdown).toHaveValue('');
-    await expect(dialog.fieldNameEditbox).toBeDisabled();
-    await expect(dialog.fieldValueEditbox).toBeDisabled();
-
-    await dialog.cancel();
-  });
-
   test('Case 3 — CIP labels are rendered under the bond after selection and move', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/9137

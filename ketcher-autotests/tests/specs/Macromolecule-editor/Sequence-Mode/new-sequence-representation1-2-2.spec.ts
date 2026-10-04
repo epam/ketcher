@@ -1935,9 +1935,9 @@ for (const monomer of monomersToAdd) {
         await pasteFromClipboardAndAddToMacromoleculesCanvas(
           page,
           MacroFileType.HELM,
-          !sequence.Rotation
-            ? sequence.HELM
-            : (sequence.RightAnchoredHELM ?? ''),
+          sequence.Rotation
+            ? (sequence.RightAnchoredHELM ?? '')
+            : sequence.HELM,
         );
       }
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1958,7 +1958,7 @@ for (const monomer of monomersToAdd) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(

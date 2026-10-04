@@ -38,6 +38,7 @@ import { saveSettings } from '../options';
 import { memoizedDebounce } from '../../utils';
 import { updateFloatingTools } from '../floatingTools';
 import { openInfoModalWithCustomMessage } from '../shared';
+import { shouldResetToSelect } from './shouldResetToSelect';
 
 export default function initEditor(dispatch, getState, ketcherId) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
@@ -59,7 +60,8 @@ export default function initEditor(dispatch, getState, ketcherId) {
     (force = false) =>
     async (dispatch) => {
       const state = getState();
-      const activeTool = state.actionState?.activeTool.tool;
+      const activeToolAction = state.actionState?.activeTool;
+      const activeTool = activeToolAction?.tool;
       if (!activeTool || (activeTool === 'select' && !force)) {
         // Even when the active tool doesn't need to be reset (e.g. a
         // context-menu action like "Remove Grouping"/"Expand Monomer" runs
@@ -70,7 +72,10 @@ export default function initEditor(dispatch, getState, ketcherId) {
       }
       const selectMode = state.toolbar.visibleTools.select;
       const resetOption = state.options.settings.resetToSelect;
-      if (resetOption === true || resetOption === activeTool || force === true)
+      if (
+        shouldResetToSelect(activeTool, resetOption, activeToolAction.opts) ||
+        force === true
+      )
         // example: 'paste'
         dispatch({ type: 'ACTION', action: acts[selectMode].action });
       else updateAction();

@@ -263,7 +263,9 @@ test.describe('Open Ketcher', () => {
       'Molfiles-V2000/R-fragment-structure.mol',
     );
 
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await getAtomLocator(page, { atomLabel: 'R#' }).nth(0).click({
       force: true,
     });

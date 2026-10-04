@@ -14,7 +14,7 @@ class SingleBondPathRenderer {
     const { startPosition, endPosition } = bondVectors;
 
     const strokeDasharray =
-      type !== undefined ? BondDashArrayMap[type] : 'none';
+      type === undefined ? 'none' : BondDashArrayMap[type];
     const svgPath: SVGPathAttributes = {
       d: `
           M${startPosition.x},${startPosition.y}

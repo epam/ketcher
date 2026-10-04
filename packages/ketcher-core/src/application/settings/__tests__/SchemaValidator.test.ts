@@ -131,7 +131,7 @@ describe('SchemaValidator', () => {
     it('should validate partial render settings', () => {
       const partial = {
         atomColoring: false,
-        bondThickness: 2.0,
+        bondThickness: 2,
       };
 
       const result = validator.validatePartial(partial);

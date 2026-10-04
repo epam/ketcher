@@ -71,10 +71,18 @@ export class ImageResize extends BaseOperation {
   }
 
   invert(): BaseOperation {
+    // `previousPosition` is only null before `execute` has run. `invert` is
+    // only ever called on an operation that has already been executed, so
+    // reaching this with a null value indicates a programming error.
+    if (!this.previousPosition) {
+      throw new Error(
+        'ImageResize: cannot invert an operation that has not been executed yet',
+      );
+    }
+
     return new ImageResize(
       this.id,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.previousPosition!,
+      this.previousPosition,
       this.referencePositionName,
     );
   }

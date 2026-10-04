@@ -4,6 +4,7 @@ import type { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { type Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
 import { Bond as StructBond } from 'domain/entities/bond';
+import { SGroup } from 'domain/entities/sgroup';
 import { Scale } from 'domain/helpers';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
@@ -47,12 +48,33 @@ const TOPOLOGY_OFFSET_Y_MULTIPLIER = 1;
 
 export class BondRenderer extends BaseRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGPathElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGPathElement, void> | undefined;
 
   constructor(public bond: Bond) {
     super(bond);
     bond.setRenderer(this);
+  }
+
+  public get labelTooltipText(): string | null {
+    const struct = this.bond.firstAtom.monomer.monomerItem.struct;
+    if (!struct) {
+      return null;
+    }
+
+    let tooltipText: string | null = null;
+    struct.sgroups.forEach((sgroup) => {
+      if (
+        tooltipText ||
+        sgroup.type !== SGroup.TYPES.DAT ||
+        !SGroup.getBonds(struct, sgroup).includes(this.bond.bondIdInMicroMode)
+      ) {
+        return;
+      }
+
+      tooltipText = `${sgroup.data.fieldName}=${sgroup.data.fieldValue}`;
+    });
+
+    return tooltipText;
   }
 
   private get scaledPosition() {
@@ -602,7 +624,10 @@ export class BondRenderer extends BaseRenderer {
     switch (this.bond.type) {
       case BondType.Single:
         if (this.bond.stereo === BondStereo.Up) {
-          bondSVGPaths = SingleUpBondPathRenderer.preparePaths(bondVectors);
+          bondSVGPaths = SingleUpBondPathRenderer.preparePaths(
+            bondVectors,
+            viewModel,
+          );
         } else if (this.bond.stereo === BondStereo.Down) {
           bondSVGPaths = SingleDownBondPathRenderer.preparePaths(bondVectors);
         } else if (this.bond.stereo === BondStereo.Either) {
@@ -835,7 +860,7 @@ export class BondRenderer extends BaseRenderer {
     const alongIntMadeBroken = 2 * lw;
     const alongSz = 1.5 * bs;
     const acrossInt = 1.5 * bs;
-    const acrossSz = 3.0 * bs;
+    const acrossSz = 3 * bs;
     const tiltTan = 0.2;
 
     const points: Vec2[] = [];

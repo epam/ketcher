@@ -50,9 +50,11 @@ export class DrawingEntityMoveOperation implements Operation {
   ) {}
 
   public execute() {
-    this.wasInverted
-      ? this.redoDrawingEntityChangeModel()
-      : this.moveDrawingEntityChangeModel();
+    if (this.wasInverted) {
+      this.redoDrawingEntityChangeModel();
+    } else {
+      this.moveDrawingEntityChangeModel();
+    }
   }
 
   public invert() {
@@ -86,24 +88,7 @@ export class DrawingEntityMoveOperation implements Operation {
   }
 
   public invertAfterAllOperations(renderersManager: RenderersManager) {
-    if (
-      this.drawingEntity instanceof BaseBond ||
-      this.drawingEntity instanceof RxnArrow ||
-      this.drawingEntity instanceof MultitailArrow ||
-      this.drawingEntity instanceof RxnPlus ||
-      this.drawingEntity instanceof CoreStereoFlag
-    ) {
-      renderersManager.redrawDrawingEntity(this.drawingEntity);
-    } else {
-      renderersManager.moveDrawingEntity(this.drawingEntity);
-    }
-
-    if (
-      this.drawingEntity instanceof Atom ||
-      this.drawingEntity instanceof Bond
-    ) {
-      renderersManager.rerenderSGroups();
-    }
+    this.executeAfterAllOperations(renderersManager);
   }
 }
 

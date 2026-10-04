@@ -8,7 +8,11 @@ import { SequenceRenderer } from 'application/render/renderers/sequence/Sequence
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { Vec2 } from 'domain/entities';
 import { AttachmentPointName } from 'domain/types';
-import { peptideMonomerItem, polymerEditorTheme } from '../../../../mock-data';
+import {
+  coreEditorTheme,
+  peptideMonomerItem,
+  polymerEditorTheme,
+} from '../../../../mock-data';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
@@ -95,7 +99,7 @@ describe('SequenceRenderer', () => {
   beforeEach(() => {
     canvas = createPolymerEditorCanvas();
     editor = new CoreEditor({
-      theme: polymerEditorTheme,
+      theme: coreEditorTheme,
       canvas,
       renderersContainer: createRenderersManager(polymerEditorTheme),
       mode: new SequenceMode(),
@@ -127,7 +131,7 @@ describe('SequenceRenderer', () => {
     // ClearTool performs all of its work in the constructor as a side effect.
     // Instantiating it is how the tool is "run",
     // so the constructed instance is intentionally discarded.
-    // eslint-disable-next-line no-new
+
     // @ts-expect-error TS6133.
     const _ = new ClearTool(editor);
 

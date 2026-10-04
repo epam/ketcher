@@ -5,13 +5,12 @@ import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonom
 import type { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
 import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import assert from 'assert';
+import { assert } from 'utilities';
 import type { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
-import { Sugar } from 'domain/entities/Sugar';
 import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { Vec2 } from 'domain/entities/vec2';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -31,6 +30,7 @@ import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerT
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/sequence/MonomerToAtomBondSequenceRenderer';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import type { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
@@ -43,6 +43,7 @@ import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
 import type { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 import { StereoFlagRenderer } from 'application/render/renderers/StereoFlagRenderer';
 import { Scale } from 'domain/helpers';
+import { isValidRnaEnumerationStartMonomer } from 'domain/helpers/monomers';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import ZoomTool from 'application/editor/tools/Zoom';
 import type { Loop } from '../view-model/Loop';
@@ -51,8 +52,7 @@ import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SGroupRenderer } from 'application/render/renderers/SGroupRenderer';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
-  | FlexModePolymerBondRenderer
-  | SnakeModePolymerBondRenderer;
+  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
 
 type ThemeType = DeepPartial<{ ketcher: EditorTheme }>;
 
@@ -236,21 +236,61 @@ export class RenderersManager {
     });
   }
 
-  private recalculateRnaChainEnumeration(subChain: RnaSubChain) {
-    let currentEnumeration = 1;
-    const nucleotidesAmount = subChain.nodes.reduce(
-      (nucleotidesAmount, node) =>
-        node instanceof Nucleotide ||
-        node instanceof Nucleoside ||
-        node.monomer instanceof UnsplitNucleotide
-          ? nucleotidesAmount + 1
-          : nucleotidesAmount,
-      0,
+  private isRnaEnumerationNode(node: RnaSubChain['nodes'][number]) {
+    return (
+      node instanceof Nucleotide ||
+      node instanceof Nucleoside ||
+      node.monomer instanceof UnsplitNucleotide
     );
+  }
 
-    subChain.nodes.forEach((node) => {
+  private getRnaEnumerationSegmentLength(
+    subChain: RnaSubChain,
+    startNodeIndex: number,
+  ) {
+    let segmentLength = 0;
+
+    for (
+      let index = startNodeIndex;
+      index < subChain.nodes.length &&
+      this.isRnaEnumerationNode(subChain.nodes[index]);
+      index++
+    ) {
+      segmentLength++;
+    }
+
+    return segmentLength;
+  }
+
+  private recalculateRnaChainEnumeration(
+    subChain: RnaSubChain,
+    isChainCyclic: boolean,
+  ) {
+    const startMonomer = subChain.nodes[0]?.firstMonomerInNode;
+
+    if (isChainCyclic && !isValidRnaEnumerationStartMonomer(startMonomer)) {
+      subChain.nodes.forEach((node) => {
+        node.monomers.forEach((monomer) => {
+          monomer.renderer?.setEnumeration(null);
+          monomer.renderer?.redrawEnumeration(false);
+        });
+      });
+      return;
+    }
+
+    let currentEnumeration = 1;
+    let currentSegmentLength = 0;
+
+    subChain.nodes.forEach((node, nodeIndex) => {
+      if (this.isRnaEnumerationNode(node) && currentSegmentLength === 0) {
+        currentSegmentLength = this.getRnaEnumerationSegmentLength(
+          subChain,
+          nodeIndex,
+        );
+      }
+
       const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
-        ? currentEnumeration === nucleotidesAmount
+        ? currentEnumeration === currentSegmentLength
         : currentEnumeration === 1;
 
       if (node instanceof Nucleotide || node instanceof Nucleoside) {
@@ -268,11 +308,21 @@ export class RenderersManager {
         node instanceof LinkerSequenceNode
       ) {
         node.monomers.forEach((monomer) => {
-          if (monomer instanceof Sugar) {
-            monomer.renderer?.redrawEnumeration(false);
-          }
+          monomer.renderer?.setEnumeration(null);
+          monomer.renderer?.redrawEnumeration(false);
         });
+        currentEnumeration = 1;
+        currentSegmentLength = 0;
       }
+    });
+  }
+
+  private resetSubChainEnumeration(subChain: BaseSubChain) {
+    subChain.nodes.forEach((node) => {
+      node.monomers.forEach((monomer) => {
+        monomer.renderer?.setEnumeration(null);
+        monomer.renderer?.redrawEnumeration(false);
+      });
     });
   }
 
@@ -290,7 +340,9 @@ export class RenderersManager {
           subChain instanceof RnaSubChain ||
           subChain instanceof PhosphateSubChain
         ) {
-          this.recalculateRnaChainEnumeration(subChain);
+          this.recalculateRnaChainEnumeration(subChain, chain.isCyclic);
+        } else {
+          this.resetSubChainEnumeration(subChain);
         }
       });
     });
@@ -652,7 +704,7 @@ export class RenderersManager {
       );
       center = center.add(atomPos);
     });
-    center = center.scaled(1.0 / loop.halfEdges.length);
+    center = center.scaled(1 / loop.halfEdges.length);
 
     // Calculate the radius as the minimum distance from center to any bond
     let radius = -1;

@@ -19,7 +19,8 @@
 
 .tableContent {
   display: grid;
-  grid-gap: 0 8px;
+  gap: 0 8px;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   grid-template-columns: repeat(4, 100px);
 }
 
@@ -27,6 +28,7 @@
   padding: 0 7px;
   text-align: center;
   margin: 6px 0 12px;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid transparent;
   border-radius: 6px;
   overflow: hidden;
@@ -42,7 +44,7 @@
 
 .oneRowTitleTable {
   grid-auto-rows: 134px;
-  
+
   .structTitle {
     max-height: 16px;
   }
@@ -52,23 +54,70 @@
   box-sizing: border-box;
   width: 100px;
   height: 100px;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @color-grey-5;
   border-radius: 5px;
   background-color: @color-background-primary;
 
   &:hover {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     background: @form-hover-background;
   }
 
   & svg {
     width: 100px;
     height: 100px;
-    left: -2px;
+    inset-inline-start: -2px;
     top: -1px;
   }
 }
 
+.structSlot {
+  width: 100px;
+  height: 100px;
+  position: relative;
+}
+
+.structPlaceholder {
+  width: 100px;
+  height: 100px;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  border: 1px solid @color-grey-5;
+  border-radius: 5px;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  background: linear-gradient(
+    90deg,
+    @color-background-primary 20%,
+    @form-hover-background 50%,
+    @color-background-primary 80%
+  );
+  background-size: 200% 100%;
+  animation: template-preview-placeholder-pulse 1.2s ease-in-out infinite;
+}
+
+.structFade {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 160ms ease-out;
+}
+
+.structVisible {
+  opacity: 1;
+}
+
+@keyframes template-preview-placeholder-pulse {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
 .selectedTitle {
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   background-color: fade(@color-background-primary, 70%);
 }
 
@@ -83,47 +132,60 @@
   align-self: start;
 
   &.selected .struct {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     background-color: fade(@color-primary, 5%);
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     border: 2px solid @color-primary;
   }
 }
 
-  .button {
-    .btn();
+.selectButton {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  text-align: inherit;
+  cursor: inherit;
+}
 
-    margin: 0;
-    border-radius: 0;
-    width: 18px;
-    height: 18px;
-    border: none;
-    color: #636363;
-    background-color: transparent;
-    cursor: pointer;
-    padding: 0;
+.button {
+  .btn();
 
-    & > svg {
-      width: inherit;
-      height: inherit;
+  margin: 0;
+  border-radius: 0;
+  width: 18px;
+  height: 18px;
+  border: none;
+  color: #636363;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+
+  & > svg {
+    width: inherit;
+    height: inherit;
+  }
+
+  &:hover,
+  &:active {
+    & path {
+      fill: @color-button-primary-hover;
     }
-
-    &:hover, &:active {
-      & path {
-        fill: @color-button-primary-hover;
-      }
-    }
   }
+}
 
-  .deleteButton {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-  }
+.deleteButton {
+  position: absolute;
+  top: 5px;
+  inset-inline-end: 5px;
+}
 
-  .editButton {
-    position: absolute;
-    top: 78px;
-    right: 5px;
-  }
+.editButton {
+  position: absolute;
+  top: 78px;
+  inset-inline-end: 5px;
+}
 
 div.structure {
   padding: 0; // TODO: tmp hack to fit viewbox

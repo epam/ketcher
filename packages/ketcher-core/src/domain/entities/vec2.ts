@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,8 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import assert from 'assert';
-import { toFixed } from 'utilities';
+import { assert, toFixed } from 'utilities';
 
 export interface Point {
   x?: number;
@@ -26,7 +26,7 @@ export interface Point {
 // Optimize major GC in case of importing big sequences - only parse float when necessary
 // most of the time it is already a number from atom.clone
 function toNumber(value: number | string): number {
-  return typeof value === 'number' ? value : parseFloat(value);
+  return typeof value === 'number' ? value : Number.parseFloat(value);
 }
 
 export class Vec2 {
@@ -139,7 +139,7 @@ export class Vec2 {
   }
 
   length(): number {
-    return Math.sqrt(this.x * this.x + this.y * this.y);
+    return Math.hypot(this.x, this.y);
   }
 
   equals(v: Vec2): boolean {
@@ -165,7 +165,7 @@ export class Vec2 {
   }
 
   scaled(sInitial: number): Vec2 {
-    const s = isFinite(sInitial) ? sInitial : 1;
+    const s = Number.isFinite(sInitial) ? sInitial : 1;
     return new Vec2(this.x * s, this.y * s, this.z * s);
   }
 

@@ -44,6 +44,7 @@ export interface IEditorEvents {
   deleteHydrogenBond: Subscription;
   turnOnSequenceEditInRNABuilderMode: Subscription;
   turnOffSequenceEditInRNABuilderMode: Subscription;
+  cancelSequenceEditInRNABuilderMode: Subscription;
   modifySequenceInRnaBuilder: Subscription;
   mouseOverSequenceItem: Subscription;
   mouseOnMoveSequenceItem: Subscription;
@@ -65,6 +66,7 @@ export interface IEditorEvents {
   pasteFromClipboard: Subscription;
   deleteSelectedStructure: Subscription;
   selectEntities: Subscription;
+  modelChange: Subscription;
   toggleMacromoleculesPropertiesVisibility: Subscription;
   modifyAminoAcids: Subscription;
   setEditorLineLength: Subscription;
@@ -120,6 +122,7 @@ export const editorEvents: IEditorEvents = {
   deleteHydrogenBond: new Subscription(),
   turnOnSequenceEditInRNABuilderMode: new Subscription(),
   turnOffSequenceEditInRNABuilderMode: new Subscription(),
+  cancelSequenceEditInRNABuilderMode: new Subscription(),
   modifySequenceInRnaBuilder: new Subscription(),
   mouseOverSequenceItem: new Subscription(),
   mouseOnMoveSequenceItem: new Subscription(),
@@ -141,6 +144,7 @@ export const editorEvents: IEditorEvents = {
   pasteFromClipboard: new Subscription(),
   deleteSelectedStructure: new Subscription(),
   selectEntities: new Subscription(),
+  modelChange: new Subscription(),
   toggleMacromoleculesPropertiesVisibility: new Subscription(),
   modifyAminoAcids: new Subscription(),
   setEditorLineLength: new Subscription(),
@@ -156,7 +160,6 @@ export const editorEvents: IEditorEvents = {
   flipHorizontal: new Subscription(),
   flipVertical: new Subscription(),
 };
-
 export function resetEditorEvents() {
   for (const key of Object.keys(editorEvents) as Array<keyof IEditorEvents>) {
     editorEvents[key] = new Subscription();
@@ -214,19 +217,19 @@ const selectBondTool = (editor: CoreEditor, toolName: ToolName) => {
 
 export const hotkeysConfiguration = {
   RNASequenceType: {
-    shortcut: ['Control+Alt+r'],
+    shortcut: ['Mod+Alt+r'],
     handler: (editor: CoreEditor) => {
       editor.events.changeSequenceTypeEnterMode.dispatch(SequenceType.RNA);
     },
   },
   DNASequenceType: {
-    shortcut: ['Control+Alt+d'],
+    shortcut: ['Mod+Alt+d'],
     handler: (editor: CoreEditor) => {
       editor.events.changeSequenceTypeEnterMode.dispatch(SequenceType.DNA);
     },
   },
   PEPTIDESequenceTYpe: {
-    shortcut: ['Control+Alt+p'],
+    shortcut: ['Mod+Alt+p'],
     handler: (editor: CoreEditor) => {
       editor.events.changeSequenceTypeEnterMode.dispatch(SequenceType.PEPTIDE);
     },

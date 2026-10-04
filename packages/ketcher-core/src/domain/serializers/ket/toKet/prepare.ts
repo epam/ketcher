@@ -30,7 +30,7 @@ export function prepareStructForKet(struct: Struct) {
 
     const fragsAtoms = Array.from(rgroup.frags.values()).reduce(
       (res, frid) => res.union(struct.getFragmentIds(frid)),
-      new Pile(),
+      new Pile<number>(),
     );
 
     ketNodes.push({
@@ -55,7 +55,6 @@ export function prepareStructForKet(struct: Struct) {
         pos: item.pos,
         height: item.height,
       },
-      selected: item.getInitiallySelected(),
     });
   });
 
@@ -64,7 +63,6 @@ export function prepareStructForKet(struct: Struct) {
       type: 'plus',
       center: item.pp,
       data: {},
-      selected: item.getInitiallySelected(),
     });
   });
 
@@ -76,7 +74,6 @@ export function prepareStructForKet(struct: Struct) {
         mode: item.mode,
         pos: item.pos,
       },
-      selected: item.getInitiallySelected(),
     });
   });
 
@@ -89,7 +86,6 @@ export function prepareStructForKet(struct: Struct) {
         position: item.position,
         pos: item.pos,
       },
-      selected: item.getInitiallySelected(),
     });
   });
 

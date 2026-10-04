@@ -32,7 +32,7 @@ type Data = {
   pos: Point | null;
 };
 
-class AtomAdd extends BaseOperation {
+class AtomAdd extends BaseOperation<Data> {
   data: Data;
 
   constructor(atom?: Partial<AtomAttributes>, pos?: Point) {
@@ -47,17 +47,17 @@ class AtomAdd extends BaseOperation {
 
     const pp: Partial<AtomAttributes> & { label: string } = {
       label: '',
-      ...(atom ?? {}),
+      ...atom,
     };
     pp.label = pp.label || 'C';
 
     let aid: number;
-    if (typeof this.data.aid !== 'number') {
-      aid = struct.atoms.add(new Atom(pp));
-      this.data.aid = aid;
-    } else {
+    if (typeof this.data.aid === 'number') {
       aid = this.data.aid;
       struct.atoms.set(aid, new Atom(pp));
+    } else {
+      aid = struct.atoms.add(new Atom(pp));
+      this.data.aid = aid;
     }
 
     // notifyAtomAdded

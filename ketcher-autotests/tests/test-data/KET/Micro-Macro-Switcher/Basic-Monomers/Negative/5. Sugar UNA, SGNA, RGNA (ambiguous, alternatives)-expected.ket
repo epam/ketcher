@@ -26,8 +26,8 @@
         "type": "ambiguousMonomer",
         "id": "0",
         "position": {
-            "x": 17.721044279556637,
-            "y": -10.428619600858688
+            "x": 18.13678103754114,
+            "y": -10.623273627449041
         },
         "alias": "%",
         "templateId": "alternatives__UNA___2'-3'-Unlocked-ribose__SGNA___S Propanetriol (GNA sugar)__RGNA___R Propanetriol (GNA sugar)_"
@@ -67,7 +67,8 @@
                     -2.1029,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -76,7 +77,8 @@
                     0.1499,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -278,7 +280,8 @@
                     -0.326,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -435,7 +438,8 @@
                     -0.326,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",

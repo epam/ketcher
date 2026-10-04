@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { SelectionToolType } from '../constants/areaSelectionTool/Constants';
@@ -43,7 +42,9 @@ export const CommonLeftToolbar = (page: Page) => {
       .filter({ has: page.locator(':visible') })
       .getByTestId('dropdown-expand'),
     bondMultiToolSection: page.getByTestId('multi-tool-dropdown').first(),
-    toolSelectionDropdownPanel: page.getByTestId('multi-tool-dropdown').first(),
+    toolSelectionDropdownPanel: page
+      .getByTestId('multi-tool-dropdown')
+      .filter({ has: page.locator(':visible') }),
   };
 
   return {

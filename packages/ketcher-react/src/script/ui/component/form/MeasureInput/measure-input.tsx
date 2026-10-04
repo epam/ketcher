@@ -1,3 +1,4 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,14 +15,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type HTMLAttributes, useState, useEffect } from 'react';
+import { type HTMLAttributes, useState, useEffect, useMemo } from 'react';
 import clsx from 'clsx';
 
 import Input from '../Input/Input';
 import Select from '../Select';
 import styles from './measure-input.module.less';
-import { getSelectOptionsFromSchema } from '../../../utils';
+import formClasses from '../form/form.module.less';
+import { ErrorPopover } from '../form/errorPopover';
+import {
+  getSelectOptionsFromSchema,
+  resolveTranslatableText,
+} from '../../../utils';
 import { MeasurementUnits } from 'src/script/ui/data/schema/options-schema';
+import { usePopoverAnchor } from '../../../../../hooks';
+import { Icon } from 'components';
+import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 interface Schema {
   title?: string;
@@ -32,8 +42,10 @@ interface Schema {
   properties?: Record<string, Schema>;
 }
 
-interface MeasureInputProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
+interface MeasureInputProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'onChange'
+> {
   schema: Schema;
   extraSchema?: Schema;
   value: number | string;
@@ -41,6 +53,8 @@ interface MeasureInputProps
   onChange: (value: number) => void;
   onExtraChange: (value: string) => void;
   name?: string;
+  error?: string;
+  tooltip?: string;
 }
 
 interface GetNewFloatResult {
@@ -48,9 +62,12 @@ interface GetNewFloatResult {
   float?: string;
 }
 
-const selectOptions = getSelectOptionsFromSchema({
-  enum: Object.values(MeasurementUnits),
-});
+const UNIT_ENUM_NAMES = [
+  'settings:units.px',
+  'settings:units.cm',
+  'settings:units.pt',
+  'settings:units.inch',
+];
 
 const getNewFloat = (value: string): GetNewFloatResult => {
   const [int, float] = value.split('.');
@@ -96,39 +113,36 @@ const MeasureInput = ({
   onChange,
   onExtraChange,
   name: _name,
+  error,
   className,
+  tooltip,
   ...rest
 }: MeasureInputProps) => {
-  const [internalValue, setInternalValue] = useState(String(value));
+  const stringifiedValue = String(value);
+  const [internalValue, setInternalValue] = useState(stringifiedValue);
+  const [prevPropValue, setPrevPropValue] = useState(stringifiedValue);
+  const {
+    anchorEl,
+    handleOpen: handlePopoverOpen,
+    handleClose: handlePopoverClose,
+  } = usePopoverAnchor();
 
-  // NOTE: onChange handler in the Input comopnent (packages/ketcher-react/src/script/ui/component/form/Input/Input.tsx)
-  // is mapped to the internal function via constructor
-  // therefore the referencies to the MeasureInput's state are not updated
-  // so we need to sync the props and the internal value through useEffects and use callbacks with
-  // previous state to have the latest value
+  if (prevPropValue !== stringifiedValue) {
+    setPrevPropValue(stringifiedValue);
+    setInternalValue(stringifiedValue);
+  }
 
+  // Input binds onChange once in its constructor, so handleChange is stuck with
+  // the first render's closure and cannot call the current onChange. This effect
+  // is re-created every render, so it always holds the latest onChange/value —
+  // hence the deliberate single-dep list.
   useEffect(() => {
-    setInternalValue((prevValue) => {
-      if (prevValue !== String(value)) {
-        return String(value);
-      }
-
-      return prevValue;
-    });
-  }, [value]);
-
-  useEffect(() => {
-    if (internalValue !== String(value)) {
-      const isNewInternalValueValid = !isNaN(parseFloat(internalValue));
-
-      if (isNewInternalValueValid) {
-        onChange(parseFloat(internalValue));
-      }
+    if (internalValue !== stringifiedValue) {
+      onChange(Number.parseFloat(internalValue));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [internalValue]);
+  }, [internalValue, stringifiedValue, onChange]);
 
-  const handleChange = (value: number | string) => {
+  const handleChange = (value: unknown) => {
     const stringifiedValue = String(value);
     const startsWithZero =
       stringifiedValue !== '0' && stringifiedValue.startsWith('0');
@@ -138,7 +152,7 @@ const MeasureInput = ({
       startsWithZero && !zeroWithDot
         ? stringifiedValue.replace(/^0/, '')
         : stringifiedValue || '0';
-    const isNumber = !isNaN(Number(endorcedValue));
+    const isNumber = !Number.isNaN(Number(endorcedValue));
 
     if (isNumber) {
       setInternalValue((prevValue) =>
@@ -148,24 +162,62 @@ const MeasureInput = ({
   };
 
   const desc = schema;
+  const { t } = useTranslation();
+  const title = resolveTranslatableText(rest.title || desc?.title, t);
+  const selectOptions = useMemo(
+    () =>
+      getSelectOptionsFromSchema(
+        { enum: Object.values(MeasurementUnits), enumNames: UNIT_ENUM_NAMES },
+        t,
+      ),
+    [t],
+  );
 
   return (
     <div className={clsx(styles.measureInput, className)} {...rest}>
-      <span>{rest.title || desc?.title}</span>
+      {tooltip ? (
+        <div className={formClasses.divWithTooltipAndAboutIcon}>
+          <span>{title}</span>
+          <Tooltip title={tooltip}>
+            <div>
+              <Icon name="about"></Icon>
+            </div>
+          </Tooltip>
+        </div>
+      ) : (
+        <span>{title}</span>
+      )}
       <div style={{ display: 'flex' }}>
-        <Input
-          schema={schema}
-          value={internalValue}
-          onChange={handleChange}
-          type="text"
-          data-testid={`${desc?.title}-value-input`}
-        />
+        <div className={clsx(error && formClasses.dataError)}>
+          <span
+            className={clsx(formClasses.inputWrapper, styles.errorWrapper)}
+            onMouseEnter={error ? handlePopoverOpen : undefined}
+            onMouseLeave={error ? handlePopoverClose : undefined}
+            role="none"
+          >
+            <Input
+              schema={schema}
+              value={internalValue}
+              onChange={handleChange}
+              type="text"
+              data-testid={`${title}-value-input`}
+            />
+          </span>
+          {error && anchorEl && (
+            <ErrorPopover
+              anchorEl={anchorEl}
+              open={!!anchorEl}
+              error={error}
+              onClose={handlePopoverClose}
+            />
+          )}
+        </div>
         <Select
           onChange={onExtraChange}
           options={selectOptions}
           value={extraValue}
           className={styles.select}
-          data-testid={`${desc?.title}-measure-input`}
+          data-testid={`${title}-measure-input`}
         />
       </div>
     </div>

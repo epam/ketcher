@@ -50,9 +50,16 @@ export class RotateMonomerOperation extends BaseOperation {
   }
 
   invert() {
+    // When the original operation cleared the rotation (value === null), the
+    // only way to restore it is to set the previously stored absolute value
+    // back, since the current rotation is 0/undefined at that point.
+    // Otherwise this operation just adds a delta to whatever the current
+    // rotation is, so undoing it must add the opposite delta rather than the
+    // absolute previous value - otherwise repeated rotate/undo/rotate cycles
+    // would accumulate an incorrect angle.
     return new RotateMonomerOperation({
       id: this.data.id,
-      value: this.previousValue,
+      value: this.data.value === null ? this.previousValue : -this.data.value,
     });
   }
 

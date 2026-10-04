@@ -22,8 +22,9 @@ import {
   AmbiguousMonomerRenderer,
 } from 'application/render/renderers';
 import type { MonomerOrAmbiguousType } from 'domain/types';
+import type { Command } from 'domain/entities/Command';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { Coordinates } from '../shared/coordinates';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 
@@ -31,26 +32,25 @@ class MonomerTool implements BaseTool {
   private monomerPreview: BaseMonomer | AmbiguousMonomer | undefined;
 
   private monomerPreviewRenderer:
-    | BaseMonomerRenderer
-    | AmbiguousMonomerRenderer
-    | undefined;
+    BaseMonomerRenderer | AmbiguousMonomerRenderer | undefined;
 
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.8;
   readonly MONOMER_PREVIEW_OFFSET_X = 30;
   readonly MONOMER_PREVIEW_OFFSET_Y = 30;
   history: EditorHistory;
+  private readonly monomer: MonomerOrAmbiguousType;
   constructor(
     private readonly editor: CoreEditor,
-    private readonly monomer: MonomerOrAmbiguousType,
+    ...args: unknown[]
   ) {
-    this.editor = editor;
+    const [monomer] = args as [MonomerOrAmbiguousType];
     this.monomer = monomer;
     this.history = EditorHistory.getInstance(this.editor);
   }
 
   mousedown() {
     assert(this.monomerPreviewRenderer);
-    let modelChanges;
+    let modelChanges: Command;
     const position = Coordinates.canvasToModel(
       new Vec2(
         this.editor.lastCursorPositionOfCanvas.x,

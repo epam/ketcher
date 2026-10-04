@@ -3,11 +3,12 @@ import type {
   MenuItemsProps,
 } from '../contextMenu.types';
 import type { Editor } from 'src/script/editor';
-import assert from 'assert';
 import { Item } from 'react-contexify';
 import { Icon } from '../../../../../../components';
 import styles from '../ContextMenu.module.less';
 import type { ReactNode } from 'react';
+import { assert } from 'ketcher-core';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   props: MenuItemsProps<AtomContextMenuProps>;
@@ -20,6 +21,7 @@ const useMakeAttachmentPointMenuItems = ({
   selectedAtomId,
   editor,
 }: Props) => {
+  const { t } = useTranslation('components');
   const selectedAtomInMonomerCreationWizard =
     selectedAtomId !== undefined && editor.isMonomerCreationWizardActive;
 
@@ -74,7 +76,7 @@ const useMakeAttachmentPointMenuItems = ({
         data-testid="mark-as-leaving-group"
       >
         <Icon name="leavingGroup" className={styles.icon} />
-        Mark as leaving group
+        {t('contextMenu.markAsLeavingGroup')}
       </Item>,
     );
   }
@@ -98,7 +100,7 @@ const useMakeAttachmentPointMenuItems = ({
       key="mark-as-connection-point"
     >
       <Icon name="connectionPoint" className={styles.icon} />
-      Mark as connection point
+      {t('contextMenu.markAsConnectionPoint')}
     </Item>,
   );
 

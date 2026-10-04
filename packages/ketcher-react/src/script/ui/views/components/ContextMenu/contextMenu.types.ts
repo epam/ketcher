@@ -26,28 +26,26 @@ interface WithExtraItems {
 }
 
 export interface BondsContextMenuProps
-  extends BaseContextMenuProps,
-    WithExtraItems {
+  extends BaseContextMenuProps, WithExtraItems {
   id: string;
   bondIds: Array<number>;
 }
 
 export interface AtomContextMenuProps
-  extends BaseContextMenuProps,
-    WithExtraItems {
+  extends BaseContextMenuProps, WithExtraItems {
   id: string;
   atomIds: Array<number>;
 }
 
 export interface RGroupAttachmentPointContextMenuProps
-  extends BaseContextMenuProps,
-    WithExtraItems {
+  extends BaseContextMenuProps, WithExtraItems {
   id: string;
   rgroupAttachmentPoints: Array<number>;
   atomIds?: AtomContextMenuProps['atomIds'];
 }
 export interface SelectionContextMenuProps
-  extends BaseContextMenuProps,
+  extends
+    BaseContextMenuProps,
     Partial<Pick<BondsContextMenuProps, 'bondIds'>>,
     Partial<Pick<AtomContextMenuProps, 'atomIds'>>,
     Partial<
@@ -64,6 +62,10 @@ export interface FunctionalGroupsContextMenuProps extends BaseContextMenuProps {
 export interface MacromoleculeContextMenuProps extends BaseContextMenuProps {
   id: string;
   functionalGroups: FunctionalGroup[];
+  /** Total count of monomers on canvas with the same code as the primary monomer */
+  totalMonomerCount?: number;
+  /** True when the selection contains at least one non-monomer chemical structure element */
+  hasNonMonomerStructure?: boolean;
 }
 
 export interface MultitailArrowContextMenuProps {
@@ -72,8 +74,7 @@ export interface MultitailArrowContextMenuProps {
   tailId: number | null;
 }
 
-export interface AttachmentPointLabelContextMenuProps
-  extends BaseContextMenuProps {
+export interface AttachmentPointLabelContextMenuProps extends BaseContextMenuProps {
   id: string;
   attachmentPointId: AttachmentPointId;
   attachmentPointName: AttachmentPointName;

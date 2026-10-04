@@ -5,7 +5,7 @@ import type {
   MonomerCreationState,
   ReStruct,
 } from 'application/render';
-import assert from 'assert';
+import { assert } from 'utilities';
 
 export class ReassignLeavingAtomOperation extends BaseOperation {
   constructor(
@@ -36,7 +36,7 @@ export class ReassignLeavingAtomOperation extends BaseOperation {
       },
     );
 
-    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
+    this.monomerCreationState = { ...this.monomerCreationState };
 
     BaseOperation.invalidateAtom(restruct, this.attachmentAtomId);
     BaseOperation.invalidateAtom(restruct, this.newLeavingAtomId);

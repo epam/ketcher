@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -48,6 +45,7 @@ import {
   verticalFlipByKeyboard,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -151,10 +149,7 @@ test('5. Verify that the existing atom can be replaced with star atom on the can
    */
   await CommonTopRightToolbar(page).setZoomInputValue('400');
   await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CN=1');
-  const atomToReplace = page
-    .getByText('N', { exact: true })
-    .locator(':scope:visible')
-    .first();
+  const atomToReplace = getAtomLocator(page, { atomLabel: 'N' });
   await ContextMenu(page, atomToReplace).click(MicroAtomOption.Edit);
   await AtomPropertiesDialog(page).selectAtomType(AtomType.Special);
   await AtomPropertiesDialog(page).editLabel();
@@ -184,11 +179,7 @@ test('6. Verify that the existing atom can be replaced with star atom on the can
    */
   await CommonTopRightToolbar(page).setZoomInputValue('400');
   await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CN=1');
-  // Change to getAtomLocator later
-  const atomToReplace = page
-    .getByText('N', { exact: true })
-    .locator(':scope:visible')
-    .first();
+  const atomToReplace = getAtomLocator(page, { atomLabel: 'N' });
   await waitForRender(page, async () => {
     await atomToReplace.click();
   });
@@ -214,11 +205,7 @@ test('7. Verify the star atom s behavior during undo/redo actions after adding o
   await clickInTheMiddleOfTheCanvas(page);
   await page.keyboard.press('Escape');
   await moveMouseAway(page);
-  // Change to getAtomLocator later
-  const starAtom = page
-    .getByText('*', { exact: true })
-    .locator(':scope:visible')
-    .first();
+  const starAtom = getAtomLocator(page, { atomLabel: '*' });
   await expect(starAtom).toHaveCount(1);
   await undoByKeyboard(page);
   await expect(starAtom).toHaveCount(0);
@@ -290,11 +277,7 @@ test('10. Verify deletion of the star atom from the canvas using the delete opti
     'C1=C*=CC=C1 |$;;star_e;;;$|',
   );
   await CommonLeftToolbar(page).erase();
-  // Change to getAtomLocator later
-  const atomToDelete = page
-    .getByText('*', { exact: true })
-    .locator(':scope:visible')
-    .first();
+  const atomToDelete = getAtomLocator(page, { atomLabel: '*' });
   await atomToDelete.click();
   await takeEditorScreenshot(page);
 });

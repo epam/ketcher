@@ -9,7 +9,7 @@ import {
 } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
 import { RemoveAttachmentPointOperation } from './RemoveAttachmentPointOperation';
-import assert from 'assert';
+import { assert } from 'utilities';
 import type { AttachmentPointName } from 'domain/types';
 import { getNextFreeAttachmentPoint } from 'domain/helpers';
 

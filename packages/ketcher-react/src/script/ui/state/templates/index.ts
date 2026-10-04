@@ -91,9 +91,7 @@ export function editTmpl(tmpl) {
             attach?: Record<string, unknown>;
           };
           tmpl.struct.name = data ? data.name.trim() : tmpl.struct.name;
-          tmpl.props = data
-            ? { ...(tmpl.props || {}), ...(data.attach || {}) }
-            : tmpl.props;
+          tmpl.props = data ? { ...tmpl.props, ...data.attach } : tmpl.props;
 
           if (tmpl.props.group === 'User Templates')
             updateLocalStore(getState().templates.lib);
@@ -184,11 +182,10 @@ const tmplActions = [
 const attachActions = ['INIT_ATTACH', 'SET_ATTACH_POINTS', 'SET_TMPL_NAME'];
 
 function templatesReducer(state = initTmplsState, action) {
-  if (tmplActions.includes(action.type))
-    return { ...state, ...(action.data || {}) };
+  if (tmplActions.includes(action.type)) return { ...state, ...action.data };
 
   if (attachActions.includes(action.type)) {
-    const attach = { ...state.attach, ...(action.data || {}) };
+    const attach = { ...state.attach, ...action.data };
     return { ...state, attach };
   }
 

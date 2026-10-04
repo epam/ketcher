@@ -8,7 +8,7 @@ import {
   type ReStruct,
 } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { getNextFreeAttachmentPoint } from 'domain/helpers';
 import type { AttachmentPointName } from 'domain/types';
 import { RemoveAttachmentPointOperation } from './RemoveAttachmentPointOperation';

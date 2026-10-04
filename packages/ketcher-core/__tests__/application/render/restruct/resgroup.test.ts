@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   type ReStruct,
+  type ReAtom,
   ReRGroupAttachmentPoint,
   ReSGroup,
   Render,
@@ -84,15 +84,15 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
       xxx: '   ',
     },
   ];
-  let reSgroup;
-  let sGroup;
-  let attachmentsSpy;
+  let reSgroup: ReSGroup;
+  let sGroup: SGroup;
+  let attachmentsSpy: jest.SpyInstance;
   beforeEach(() => {
     const primaryAttachmentPoint = new RGroupAttachmentPoint(2, 'primary');
     restruct.molecule.rgroupAttachmentPoints.add(primaryAttachmentPoint);
     const reRGroupAttachmentPoint = new ReRGroupAttachmentPoint(
       primaryAttachmentPoint,
-      {} as any,
+      {} as unknown as ReAtom,
     );
     reRGroupAttachmentPoint.lineDirectionVector = new Vec2({
       x: 8.466993649170329,
@@ -107,7 +107,7 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
     } as RenderOptions;
     const render = new Render(document as unknown as HTMLElement, option);
     render.ctab = restruct as unknown as ReStruct;
-    restruct.render = render as any;
+    (restruct as unknown as { render: Render }).render = render;
     sGroup = new SGroup('MUL');
     reSgroup = new ReSGroup(sGroup);
     sGroup.isNotContractible = mockFn().mockReturnValue(false);
@@ -116,16 +116,16 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
       render.ctab,
       'getRGroupAttachmentPointsVBoxByAtomIds',
     );
-    const bonds = new Pool();
+    const bonds = new Pool<Bond>();
     mockBonds.forEach((bond, i) => bonds.set(i, new Bond(bond)));
     restruct.molecule.bonds = bonds;
   });
 
   it('should draw brackets with attachment points with more than 2 cross bonds per atom with 1 attachment point', () => {
-    const bonds = new Pool();
+    const bonds = new Pool<Bond>();
     mockBonds.forEach((bond, i) => bonds.set(i, new Bond(bond)));
     restruct.molecule.bonds = bonds;
-    reSgroup.draw(restruct, sGroup);
+    reSgroup.draw(restruct as unknown as ReStruct, sGroup);
     expect(attachmentsSpy).toHaveBeenCalled();
   });
 
@@ -134,7 +134,7 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
     restruct.molecule.rgroupAttachmentPoints.add(secondAttachmentPoint);
     const reRGroupAttachmentPoint = new ReRGroupAttachmentPoint(
       secondAttachmentPoint,
-      {} as any,
+      {} as unknown as ReAtom,
     );
     reRGroupAttachmentPoint.lineDirectionVector = new Vec2({
       x: -7.6009730086857115,
@@ -144,7 +144,7 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
     restruct.rgroupAttachmentPoints.set(1, reRGroupAttachmentPoint);
     restruct.molecule.getRGroupAttachmentPointsByAtomId =
       mockFn().mockReturnValue([0, 1]);
-    reSgroup.draw(restruct, sGroup);
+    reSgroup.draw(restruct as unknown as ReStruct, sGroup);
     expect(attachmentsSpy).toHaveBeenCalled();
   });
 
@@ -153,7 +153,7 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
     restruct.molecule.rgroupAttachmentPoints.add(secondAttachmentPoint);
     const reRGroupAttachmentPoint = new ReRGroupAttachmentPoint(
       secondAttachmentPoint,
-      {} as any,
+      {} as unknown as ReAtom,
     );
     reRGroupAttachmentPoint.lineDirectionVector = new Vec2({
       x: -7.6009730086857115,
@@ -165,7 +165,7 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
     restruct.molecule.getRGroupAttachmentPointsByAtomId = mockFn()
       .mockReturnValue([0])
       .mockReturnValueOnce([1]);
-    reSgroup.draw(restruct, sGroup);
+    reSgroup.draw(restruct as unknown as ReStruct, sGroup);
     expect(attachmentsSpy).toHaveBeenCalled();
   });
 });

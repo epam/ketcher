@@ -30,7 +30,7 @@ it('should change selection style correctly for rxn arrows when selected', () =>
       fill: '#CCFFDD',
       'stroke-width': 20,
     },
-  };
+  } as unknown as RenderOptions;
   reObject.hovering = {
     attr: jest.fn((style) => expect(style['fill-opacity']).toBe(1)),
   };

@@ -20,6 +20,7 @@ import ButtonList from '../../../component/form/buttonlist';
 import { Dialog } from '../../../views/components';
 import classes from './rgroup.module.less';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { rgroupSchema } from '../../../data/schema/struct-schema';
 
 interface RGroupResult {
@@ -54,13 +55,14 @@ interface RGroupStoreState {
 type Props = RGroupProps & RGroupCallProps;
 
 function RGroup({ disabledIds, values, formState, type, ...props }: Props) {
+  const { t } = useTranslation(['common', 'dialogs']);
   return (
     <Dialog
-      title="R-Group"
+      title={t('dialogs:toolbox.rgroup.dialogTitle')}
       className={classes.rgroup}
       params={props}
       result={() => formState.result}
-      buttonsNameMap={{ OK: 'Apply' }}
+      buttonsNameMap={{ OK: t('common:button.apply') }}
       buttons={['Cancel', 'OK']}
       withDivider
     >

@@ -19,6 +19,13 @@ Beyond small molecules, users work with biopolymers — peptides and nucleic aci
 
 Monomers connect through defined attachment points, sequences render as single-letter codes, and layout modes present the same chemistry differently.
 
+#### Scenario: Editing an attachment point in the monomer creation wizard
+
+- **WHEN** the user chooses _Edit connection point_ from an R-label's context menu
+- **THEN** the dialog prefers a position above the attachment atom, leaving atom, and R-label without covering them; when space above is insufficient, it uses space below or to either side
+- **AND** it follows the attachment point when the canvas is scrolled or zoomed
+- **AND** its position is constrained to the visible canvas; when no non-overlapping placement fits, keeping the controls reachable takes priority
+
 #### Scenario: Default backbone connection
 
 - **WHEN** the user types or joins monomers within one sequence

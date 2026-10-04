@@ -21,10 +21,7 @@ type ComponentAttachmentPointNames = Record<
 >;
 
 type ConnectionAttachmentPointId =
-  | 'sugar-base'
-  | 'base-sugar'
-  | 'sugar-phosphate'
-  | 'phosphate-sugar';
+  'sugar-base' | 'base-sugar' | 'sugar-phosphate' | 'phosphate-sugar';
 
 const CONNECTION_ATTACHMENT_POINT_IDS: Record<
   ConnectionAttachmentPointId,

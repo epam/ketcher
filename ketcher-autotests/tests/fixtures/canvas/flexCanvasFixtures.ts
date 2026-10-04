@@ -1,4 +1,3 @@
-/* eslint-disable no-empty-pattern */
 import { test as utils } from '../utilsFixtures';
 import { test as pageObjects } from '../commonPageObjectFixtures';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -17,6 +16,7 @@ export const test = mergeTests(utils, pageObjects).extend<
       MacromoleculesTopToolbar,
       resetZoomLevelToDefault,
       clearLocalStorage,
+      resetClipboard,
     },
     use,
   ) => {
@@ -32,6 +32,7 @@ export const test = mergeTests(utils, pageObjects).extend<
     }
     await resetZoomLevelToDefault(page);
     await clearLocalStorage(page);
+    await resetClipboard(page);
   },
   initFlexCanvas: [
     async (

@@ -2,11 +2,21 @@
  * Unit tests for MemoryStorageAdapter
  */
 
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';
 import { getDefaultSettings } from '../schema';
+import type { Settings } from '../types';
+type AssertDefined = <Value>(
+  value: Value,
+  message?: string,
+) => NonNullable<Value>;
+
+// Keep this as require(): a static import from __tests__ pulls the helper into
+// the ketcher-core production build graph and breaks the package build.
+const {
+  assertDefined,
+}: {
+  assertDefined: AssertDefined;
+} = require('../../../../__tests__/utilities/assertDefined'); // eslint-disable-line @typescript-eslint/no-require-imports
 
 describe('MemoryStorageAdapter', () => {
   let adapter: MemoryStorageAdapter;
@@ -29,8 +39,7 @@ describe('MemoryStorageAdapter', () => {
     });
 
     it('should load settings that were previously saved', async () => {
-      const testSettings: any = getDefaultSettings();
-      testSettings.resetToSelect = false;
+      const testSettings = { ...getDefaultSettings(), resetToSelect: false };
 
       await adapter.save('test-key', testSettings);
       const loaded = await adapter.load('test-key');
@@ -60,38 +69,31 @@ describe('MemoryStorageAdapter', () => {
     });
 
     it('should overwrite existing settings', async () => {
-      const settings1: any = getDefaultSettings();
-      settings1.resetToSelect = false;
+      const settings1 = { ...getDefaultSettings(), resetToSelect: false };
 
-      const settings2: any = getDefaultSettings();
-      settings2.resetToSelect = true;
+      const settings2 = { ...getDefaultSettings(), resetToSelect: true };
 
       await adapter.save('test-key', settings1);
       await adapter.save('test-key', settings2);
 
-      const loaded = await adapter.load('test-key');
-      expect(loaded).toBeDefined();
+      const loaded = assertDefined(await adapter.load('test-key'));
 
-      expect(loaded!.resetToSelect).toBe(true);
+      expect(loaded.resetToSelect).toBe(true);
     });
 
     it('should support multiple keys', async () => {
-      const settings1: any = getDefaultSettings();
-      settings1.resetToSelect = false;
+      const settings1 = { ...getDefaultSettings(), resetToSelect: false };
 
-      const settings2: any = getDefaultSettings();
-      settings2.resetToSelect = true;
+      const settings2 = { ...getDefaultSettings(), resetToSelect: true };
 
       await adapter.save('key1', settings1);
       await adapter.save('key2', settings2);
 
-      const loaded1 = await adapter.load('key1');
-      const loaded2 = await adapter.load('key2');
-      expect(loaded1).toBeDefined();
-      expect(loaded2).toBeDefined();
+      const loaded1 = assertDefined(await adapter.load('key1'));
+      const loaded2 = assertDefined(await adapter.load('key2'));
 
-      expect(loaded1!.resetToSelect).toBe(false);
-      expect(loaded2!.resetToSelect).toBe(true);
+      expect(loaded1.resetToSelect).toBe(false);
+      expect(loaded2.resetToSelect).toBe(true);
     });
   });
 
@@ -156,8 +158,10 @@ describe('MemoryStorageAdapter', () => {
 
   describe('data isolation', () => {
     it('should store independent copies of settings', async () => {
-      const testSettings: any = getDefaultSettings();
-      testSettings.resetToSelect = false;
+      const testSettings = {
+        ...getDefaultSettings(),
+        resetToSelect: false as Settings['resetToSelect'],
+      };
 
       await adapter.save('test-key', testSettings);
 
@@ -165,9 +169,8 @@ describe('MemoryStorageAdapter', () => {
       testSettings.resetToSelect = true;
 
       // Stored version should not be affected
-      const loaded = await adapter.load('test-key');
-      expect(loaded).toBeDefined();
-      expect(loaded!.resetToSelect).toBe(false);
+      const loaded = assertDefined(await adapter.load('test-key'));
+      expect(loaded.resetToSelect).toBe(false);
     });
   });
 });

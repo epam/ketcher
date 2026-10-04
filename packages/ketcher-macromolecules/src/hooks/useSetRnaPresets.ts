@@ -28,9 +28,11 @@ function useSetRnaPresets() {
     if (!editor) return;
 
     const monomersLibrary = editor.monomersLibrary;
-    const defaultPresetsTemplates = defaultRnaPresets.length
-      ? defaultRnaPresets
-      : editor.defaultRnaPresetsLibraryItems;
+    const defaultPresetsTemplates = (
+      defaultRnaPresets.length
+        ? defaultRnaPresets
+        : editor.defaultRnaPresetsLibraryItems
+    ).filter((preset) => !preset.hidden);
     const defaultPresets: IRnaPreset[] = [
       ...getPresets(monomersLibrary, defaultPresetsTemplates, true),
     ];
@@ -58,7 +60,8 @@ function useSetRnaPresets() {
         }
       }
 
-      customLabeledPresets = getCachedCustomRnaPresets()!;
+      customLabeledPresets =
+        getCachedCustomRnaPresets() ?? customLabeledPresets;
       customPresets = getPresets(monomersLibrary, customLabeledPresets);
     }
 
@@ -75,7 +78,7 @@ function useSetRnaPresets() {
       dispatch(loadMonomerLibrary([]));
       dispatch(clearFavorites());
     };
-  }, [editor, defaultRnaPresets]);
+  }, [editor, defaultRnaPresets, dispatch]);
 }
 
 export default useSetRnaPresets;

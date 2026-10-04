@@ -16,6 +16,7 @@
 
 import { type RefObject, useState, useRef, useCallback } from 'react';
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import { Button, Popover } from '@mui/material';
 
 import { zoomList } from '../../../action/zoom';
@@ -82,8 +83,8 @@ const ShortcutLabel = styled('span')`
 `;
 
 const getIntegerFromString = (zoomInput: string | undefined): number => {
-  const zoomNumber = parseInt(zoomInput ?? '');
-  if (isNaN(zoomNumber)) {
+  const zoomNumber = Number.parseInt(zoomInput ?? '');
+  if (Number.isNaN(zoomNumber)) {
     return 0;
   }
   return zoomNumber;
@@ -125,7 +126,9 @@ export const ZoomControls = ({
   hiddenButtons,
   shortcuts,
 }: ZoomProps) => {
+  const { t } = useTranslation(['toolbar', 'toolbars']);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -149,9 +152,11 @@ export const ZoomControls = ({
       onZoomSubmit();
     }
     setIsExpanded(false);
+    setAnchorEl(null);
   };
 
   const onExpand = () => {
+    setAnchorEl(containerRef.current);
     setIsExpanded(true);
   };
 
@@ -171,7 +176,7 @@ export const ZoomControls = ({
       <Dropdown
         open={isExpanded}
         onClose={onClose}
-        anchorEl={containerRef.current}
+        anchorEl={anchorEl}
         container={
           document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
           document.querySelector(KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR)
@@ -191,31 +196,31 @@ export const ZoomControls = ({
           {!hiddenButtons.includes('zoom-out') && (
             <ZoomControlButton
               data-testid="zoom-out"
-              title="Zoom Out"
+              title={t('zoom.out')}
               onClick={onZoomOut}
               disabled={disabledButtons.includes('zoom-out')}
             >
-              <span>Zoom out</span>
+              <span>{t('toolbars:zoom.outLabel')}</span>
               <ShortcutLabel>{shortcuts['zoom-out']}</ShortcutLabel>
             </ZoomControlButton>
           )}
           {!hiddenButtons.includes('zoom-in') && (
             <ZoomControlButton
               data-testid="zoom-in"
-              title="Zoom In"
+              title={t('zoom.in')}
               onClick={onZoomIn}
               disabled={disabledButtons.includes('zoom-in')}
             >
-              <span>Zoom in</span>
+              <span>{t('toolbars:zoom.inLabel')}</span>
               <ShortcutLabel>{shortcuts['zoom-in']}</ShortcutLabel>
             </ZoomControlButton>
           )}
           <ZoomControlButton
             data-testid="zoom-default"
-            title="Zoom 100%"
+            title={t('toolbars:zoom.reset')}
             onClick={resetZoom}
           >
-            <span>Zoom 100%</span>
+            <span>{t('toolbars:zoom.reset')}</span>
             <ShortcutLabel>{shortcuts.zoom}</ShortcutLabel>
           </ZoomControlButton>
         </DropDownContent>

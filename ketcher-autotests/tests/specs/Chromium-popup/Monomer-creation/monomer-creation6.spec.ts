@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
@@ -668,7 +665,9 @@ test(`14. Verify that by default the functionality of saving new monomers from c
    * Version 3.10
    */
   await page.evaluate(() =>
-    window.ketcher.setSettings({ persistMonomerLibraryUpdates: true }),
+    globalThis.window.ketcher.setSettings({
+      persistMonomerLibraryUpdates: true,
+    }),
   );
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -710,7 +709,9 @@ test(`15. Verify that by default the functionality of saving new monomers from c
    * Version 3.10
    */
   await page.evaluate(() =>
-    window.ketcher.setSettings({ persistMonomerLibraryUpdates: false }),
+    globalThis.window.ketcher.setSettings({
+      persistMonomerLibraryUpdates: false,
+    }),
   );
   await pasteFromClipboardAndOpenAsNewProject(
     page,

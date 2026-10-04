@@ -10,11 +10,7 @@ export type SettingsFormValue = Partial<
 > & {
   readonly imageResolution?: Settings['imageResolution'] | string;
   readonly stereoLabelStyle?:
-    | Settings['stereoLabelStyle']
-    | 'Iupac'
-    | 'Classic'
-    | 'On'
-    | 'Off';
+    Settings['stereoLabelStyle'] | 'Iupac' | 'Classic' | 'On' | 'Off';
   readonly showHydrogenLabels?: Settings['showHydrogenLabels'] | 'all';
   readonly init?: unknown;
 };
@@ -111,7 +107,7 @@ export function normalizeSettingsForCore(
   }
 
   if (typeof settings.imageResolution === 'string') {
-    transformed.imageResolution = parseInt(settings.imageResolution, 10);
+    transformed.imageResolution = Number.parseInt(settings.imageResolution, 10);
   }
 
   if (settings.showHydrogenLabels === 'all') {

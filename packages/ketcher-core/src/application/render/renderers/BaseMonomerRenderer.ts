@@ -1,3 +1,4 @@
+import { editorEvents } from 'application/editor/editorEvents';
 import type { CoreEditor } from 'application/editor/Editor';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -25,20 +26,21 @@ import {
   getMonomerSize,
   setMonomerSize,
 } from 'application/render/renderers/monomerSizeState';
+import {
+  type HighlightPathData,
+  createRectHighlightPath,
+} from 'application/render/renderers/monomerHighlightShapes';
 
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
 export const MONOMER_CSS_CLASS = 'monomer';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
+  private readonly editorEvents: typeof editorEvents;
   private readonly editor: CoreEditor;
-  private get editorEvents() {
-    return provideEditorInstance().events;
-  }
-
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
-  public declare bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
+  declare public bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
@@ -77,6 +79,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   ) {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
+    this.editorEvents = editorEvents;
     this.editor = provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
@@ -116,6 +119,23 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     return new Vec2(
       this.scaledMonomerPosition.x + this.monomerSize.width / 2,
       this.scaledMonomerPosition.y + this.monomerSize.height / 2,
+    );
+  }
+
+  /**
+   * The path that outlines this monomer's replacement-highlight area.
+   *
+   * The default is a rectangle matching the monomer body; renderers with a
+   * different body shape (e.g. phosphates, RNA bases) override this. The
+   * optional offset lets transient views request an inflated path while keeping
+   * the body-shape knowledge inside the renderer.
+   */
+  public getHighlightPath(offset = 0): HighlightPathData {
+    return createRectHighlightPath(
+      this.center,
+      this.monomerSize.width,
+      this.monomerSize.height,
+      offset,
     );
   }
 
@@ -208,7 +228,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     appendFn?: (
       apName: AttachmentPointName,
       customAngle?: number,
-    ) => AttachmentPoint,
+    ) => Pick<AttachmentPoint, 'getAngle'>,
   ) {
     if (this.attachmentPoints.length) {
       return;

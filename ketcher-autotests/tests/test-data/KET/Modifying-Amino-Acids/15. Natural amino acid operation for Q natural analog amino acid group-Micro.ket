@@ -278,6 +278,9 @@
                 }
             }
         ],
+        "modificationTypes": [
+            "Natural amino acid"
+        ],
         "naturalAnalogShort": "Q"
     },
     "monomer1": {

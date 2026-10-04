@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/static-components */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *

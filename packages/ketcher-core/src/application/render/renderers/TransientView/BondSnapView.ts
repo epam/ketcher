@@ -2,11 +2,8 @@ import { Coordinates } from 'application/editor/shared/coordinates';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
-import { TransientView } from './TransientView';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-export class BondSnapView extends TransientView {
+export class BondSnapView {
   public static readonly viewName = 'BondSnapView';
 
   public static show<P extends PolymerBond>(

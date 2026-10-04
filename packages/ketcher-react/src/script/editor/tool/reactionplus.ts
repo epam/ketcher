@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -36,7 +37,7 @@ class ReactionPlusTool implements Tool {
     const rnd = this.editor.render;
     const ci = this.editor.findItem(event, ['rxnPluses']);
 
-    if (ci && ci.map === 'rxnPluses') {
+    if (ci?.map === 'rxnPluses') {
       this.editor.hover(null);
       this.editor.selection({ rxnPluses: [ci.id] });
       this.dragCtx = { xy0: CoordinateTransformation.pageToModel(event, rnd) };
@@ -47,7 +48,7 @@ class ReactionPlusTool implements Tool {
     const editor = this.editor;
     const rnd = editor.render;
 
-    if ('dragCtx' in this) {
+    if (this.dragCtx) {
       if (this.dragCtx.action) {
         this.dragCtx.action.perform(rnd.ctab);
       }
@@ -76,7 +77,7 @@ class ReactionPlusTool implements Tool {
         this.editor.update(this.dragCtx.action); // TODO investigate, subsequent undo/redo fails
       }
 
-      delete this.dragCtx;
+      this.dragCtx = undefined;
     }
 
     return true;

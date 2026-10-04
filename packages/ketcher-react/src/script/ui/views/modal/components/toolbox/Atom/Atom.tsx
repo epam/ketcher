@@ -21,6 +21,7 @@ import Form, {
   CustomQueryField,
 } from '../../../../../component/form/form/form';
 import { type FC, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Dialog } from '../../../../components';
 import {
@@ -28,7 +29,10 @@ import {
   SettingsManager,
   getAtomCustomQuery,
 } from 'ketcher-core';
-import { atom as atomSchema } from '../../../../../data/schema/struct-schema';
+import {
+  atom as atomSchema,
+  CUSTOM_QUERY_MAX_LENGTH,
+} from '../../../../../data/schema/struct-schema';
 import classes from './Atom.module.less';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
@@ -85,6 +89,7 @@ const querySpecificFields: Array<{
 ];
 
 const Atom: FC<Props> = (props: Props) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   const {
     formState,
     isMultipleAtoms = false,
@@ -125,9 +130,9 @@ const Atom: FC<Props> = (props: Props) => {
     }
 
     const query = value ? getAtomCustomQuery(formState) : '';
-    setCustomQuery(query);
     setIsCustomQuery(value);
     setExpandedAccordions([]);
+    setCustomQuery(query);
   };
 
   const customValid = useMemo(() => {
@@ -150,6 +155,7 @@ const Atom: FC<Props> = (props: Props) => {
   const itemGroups = [
     {
       groupName: 'General',
+      groupLabel: t('dialogs:toolbox.atom.generalGroup'),
       component: (
         <div>
           <AtomElement formState={formState}></AtomElement>
@@ -167,13 +173,13 @@ const Atom: FC<Props> = (props: Props) => {
           <Field
             name="explicitValence"
             component={Select}
-            options={getSelectOptionsFromSchema(atomProps.explicitValence)}
+            options={getSelectOptionsFromSchema(atomProps.explicitValence, t)}
             data-testid="explicitValence"
           />
           <Field
             name="radical"
             component={Select}
-            options={getSelectOptionsFromSchema(atomProps.radical)}
+            options={getSelectOptionsFromSchema(atomProps.radical, t)}
             data-testid="radical"
           />
         </div>
@@ -181,6 +187,7 @@ const Atom: FC<Props> = (props: Props) => {
     },
     {
       groupName: 'Query specific',
+      groupLabel: t('dialogs:toolbox.atom.querySpecificGroup'),
       component: (
         <div className={classes.querySpecific}>
           {querySpecificFields.map((field) => {
@@ -190,7 +197,7 @@ const Atom: FC<Props> = (props: Props) => {
                   key={field.name}
                   name={field.name}
                   component={Select}
-                  options={getSelectOptionsFromSchema(atomProps[field.name])}
+                  options={getSelectOptionsFromSchema(atomProps[field.name], t)}
                   data-testid={field.name}
                 />
               );
@@ -203,12 +210,13 @@ const Atom: FC<Props> = (props: Props) => {
     },
     {
       groupName: 'Reaction flags',
+      groupLabel: t('dialogs:toolbox.atom.reactionFlagsGroup'),
       component: (
         <div className={classes.reactionFlags}>
           <Field
             name="invRet"
             component={Select}
-            options={getSelectOptionsFromSchema(atomProps.invRet)}
+            options={getSelectOptionsFromSchema(atomProps.invRet, t)}
             data-testid="inversion"
           />
           <Field
@@ -223,12 +231,12 @@ const Atom: FC<Props> = (props: Props) => {
 
   return (
     <Dialog
-      title="Atom Properties"
+      title={t('dialogs:toolbox.atom.dialogTitle')}
       className={classes.atomProps}
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}
-      buttonsNameMap={{ OK: 'Apply' }}
+      buttonsNameMap={{ OK: t('common:button.apply') }}
       buttons={['Cancel', 'OK']}
       withDivider
     >
@@ -239,7 +247,7 @@ const Atom: FC<Props> = (props: Props) => {
         {...formState}
       >
         <div className={classes.accordionWrapper}>
-          {itemGroups.map(({ groupName, component }) => {
+          {itemGroups.map(({ groupName, groupLabel, component }) => {
             const shouldGroupBeRended = expandedAccordions.includes(groupName);
             const isDisabled =
               isMonomerCreationWizardActive &&
@@ -255,7 +263,7 @@ const Atom: FC<Props> = (props: Props) => {
                   type="button"
                 >
                   <div className={classes.accordionSummary}>
-                    <span>{groupName}</span>
+                    <span>{groupLabel}</span>
                     <Icon
                       className={clsx({
                         [classes.expandIcon]: true,
@@ -289,6 +297,7 @@ const Atom: FC<Props> = (props: Props) => {
                 disabled={!isCustomQuery}
                 checkboxValue={isCustomQuery}
                 onCheckboxChange={handleCustomQueryCheckBoxChange}
+                maxLength={CUSTOM_QUERY_MAX_LENGTH}
                 data-testid="atom-custom-query"
               />
             </div>

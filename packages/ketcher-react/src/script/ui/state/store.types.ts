@@ -17,7 +17,7 @@
 import type { Struct } from 'ketcher-core';
 import type { OptionsState } from './options/types';
 import Editor from 'src/script/editor';
-import { Api } from 'src/script/api';
+import type { Api } from 'src/script/api';
 
 export type {
   AnalyseRoundName,

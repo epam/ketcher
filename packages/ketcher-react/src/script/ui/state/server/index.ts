@@ -29,13 +29,13 @@ import { indigoVerification } from '../request';
 import { load } from '../shared';
 
 import type { AppDispatch } from '../hooks';
-import {
+import type {
   AutomapRequest,
   KetcherCheckErrors,
   ServerTransformMethod,
   StoreState,
 } from '../store.types';
-import { CheckOption, ServerSettings } from '../options/types';
+import type { CheckOption, ServerSettings } from '../options/types';
 import Editor from 'src/script/editor';
 import { Api } from 'src/script/api';
 import { StereoFlag } from 'ketcher-core';

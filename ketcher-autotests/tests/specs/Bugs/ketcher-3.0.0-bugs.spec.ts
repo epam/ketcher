@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
@@ -898,6 +894,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      */
 
     await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([
       Preset.A,
       Preset.U,

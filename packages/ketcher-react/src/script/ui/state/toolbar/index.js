@@ -54,7 +54,7 @@ export function initResize() {
       state.editor.render.update();
       dispatch({ type: 'CLEAR_VISIBLE', data: state.actionState.activeTool });
     });
-    addEventListener('resize', onResize); // eslint-disable-line
+    addEventListener('resize', onResize);
   };
 }
 

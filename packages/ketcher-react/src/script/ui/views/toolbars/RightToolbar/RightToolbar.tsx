@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/refs */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -35,8 +37,10 @@ const Group: FC<{ className?: string } & PropsWithChildren> = ({
   className,
 }) => <div className={clsx(classes.group, className)}>{children}</div>;
 
-interface RightToolbarProps
-  extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
+interface RightToolbarProps extends Omit<
+  ToolbarGroupItemProps,
+  'id' | 'options'
+> {
   className?: string;
   active?: {
     opts: any;

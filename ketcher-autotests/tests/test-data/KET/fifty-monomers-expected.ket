@@ -1040,6 +1040,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "N-methylation"
+        ],
         "naturalAnalogShort": "C"
     },
     "monomer2": {
@@ -1560,6 +1563,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "Inversion"
+        ],
         "naturalAnalogShort": "D"
     },
     "monomer4": {
@@ -2012,6 +2018,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "F"
     },
@@ -2961,6 +2970,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "I"
     },
@@ -4274,6 +4286,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "Inversion"
+        ],
         "naturalAnalogShort": "Q"
     },
     "monomer23": {
@@ -4678,6 +4693,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "N-methylation"
         ],
         "naturalAnalogShort": "S"
     },
@@ -6630,6 +6648,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "N-methylation"
+        ],
         "naturalAnalogShort": "R"
     },
     "monomer43": {
@@ -7238,6 +7259,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "N-methylation"
+        ],
         "naturalAnalogShort": "L"
     },
     "monomer46": {
@@ -7708,6 +7732,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "N-methylation"
         ],
         "naturalAnalogShort": "H"
     },

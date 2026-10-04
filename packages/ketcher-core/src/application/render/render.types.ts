@@ -1,14 +1,17 @@
 import type { RxnArrowMode } from 'domain/entities/rxnArrow';
 import type { Vec2 } from 'domain/entities/vec2';
+import type { Element, RaphaelSet } from 'raphael';
 import type {
   StereoColoringType,
   StereoLabelStyleType,
 } from 'application/render/restruct/generalEnumTypes';
+import type { ShowHydrogenLabels } from 'application/render/restruct/showHydrogenLabels';
 import type { UsageInMacromolecule } from './render.constants';
 
 export { UsageInMacromolecule } from './render.constants';
 
 export type RenderOptionStyles = Record<string, string | number>;
+export type RenderPath = Element | RaphaelSet;
 
 export enum MeasurementUnits {
   Px = 'px',
@@ -51,7 +54,7 @@ export type RenderOptions = {
   hideTerminalLabels: boolean;
   carbonExplicitly: boolean;
   showCharge: boolean;
-  showHydrogenLabels: string;
+  showHydrogenLabels: ShowHydrogenLabels;
   showValence: boolean;
   aromaticCircle: boolean;
   microModeScale: number;
@@ -92,6 +95,10 @@ export type RenderOptions = {
 
   stereoLabelStyle?: StereoLabelStyleType;
   colorStereogenicCenters: StereoColoringType;
+  colorOfAbsoluteCenters?: string;
+  colorOfAndCenters?: string;
+  colorOfOrCenters?: string;
+  autoFadeOfStereoLabels?: boolean;
 
   previewOpacity: number;
 

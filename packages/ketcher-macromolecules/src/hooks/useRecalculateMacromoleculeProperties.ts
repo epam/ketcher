@@ -50,12 +50,17 @@ export const useRecalculateMacromoleculeProperties = () => {
       ...drawingEntitiesManagerToCalculateProperties.monomers.values(),
     ]);
     const firstMonomer = chainsCollection.firstNode?.monomer;
+    const allowedMonomers = new Set(
+      drawingEntitiesManagerToCalculateProperties.monomers.values(),
+    );
     const areAllMonomersConnectedByCovalentOrHydrogenBonds =
       !firstMonomer ||
       chainsCollection.chains.reduce(
         (acc: number, chain: Chain) => acc + chain.monomers.length,
         0,
-      ) <= getAllConnectedMonomersRecursively(firstMonomer).length;
+      ) <=
+        getAllConnectedMonomersRecursively(firstMonomer, allowedMonomers)
+          .length;
 
     const hasNoChainsButMultipleFragments =
       chainsCollection.chains.length === 0 &&

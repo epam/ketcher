@@ -160,7 +160,7 @@ export const calculateBondPreviewPosition = (
   const width = right - left;
   const height = bottom - top;
 
-  let style: PreviewStyle = {};
+  let style: PreviewStyle;
 
   if (width > height) {
     const leftValue = left + width / 2;

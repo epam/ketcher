@@ -1,6 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
-import type { AnyAction, Dispatch } from 'redux';
+import type { AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
 import type { StoreState } from './store.types';
 
-export const useAppDispatch = useDispatch.withTypes<Dispatch<AnyAction>>();
+export type AppDispatch = ThunkDispatch<StoreState, undefined, AnyAction>;
+
+export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
 export const useAppSelector = useSelector.withTypes<StoreState>();

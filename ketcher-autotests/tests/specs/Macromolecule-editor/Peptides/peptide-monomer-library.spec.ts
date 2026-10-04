@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
@@ -125,7 +124,7 @@ test.describe('Peptide library testing', () => {
       y: 0,
       fromCenter: true,
     });
-    // eslint-disable-next-line no-magic-numbers
+
     await clickOnCanvas(page, 100, 100);
     await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Peptide.dA).hover();
@@ -183,7 +182,7 @@ test.describe('Peptide library testing', () => {
       y: 0,
       fromCenter: true,
     });
-    // eslint-disable-next-line no-magic-numbers
+
     await clickOnCanvas(page, 100, 100);
     await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Chem.Test_6_Ch).hover();

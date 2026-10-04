@@ -1678,7 +1678,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
         peptideMonomerItem,
@@ -1822,7 +1822,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       // Add a monomer
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
@@ -1908,7 +1908,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
         peptideMonomerItem,
@@ -1940,7 +1940,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       // Add a monomer
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
@@ -1993,7 +1993,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       // Add multiple monomers
       const modelChanges1 = editor.drawingEntitiesManager.addMonomer(

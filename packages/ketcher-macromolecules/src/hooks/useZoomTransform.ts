@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { ZoomTransform } from 'd3';
 import { ZoomTool } from 'ketcher-core';

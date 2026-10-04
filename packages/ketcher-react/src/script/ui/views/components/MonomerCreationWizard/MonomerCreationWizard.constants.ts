@@ -92,6 +92,7 @@ export const NotificationMessages: WizardNotificationMessageMap = {
     "You must choose the position of the phosphate (5' or 3').",
   editAllPresetWarning: '',
   editAllPresetError: '',
+  usedAttachmentPointsWarning: '',
 };
 
 export const NotificationTypes: WizardNotificationTypeMap = {
@@ -129,6 +130,7 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   phosphatePositionNotSelected: 'error',
   editAllPresetWarning: 'warning',
   editAllPresetError: 'error',
+  usedAttachmentPointsWarning: 'info',
 };
 
 export const MonomerCreationExternalNotificationAction =

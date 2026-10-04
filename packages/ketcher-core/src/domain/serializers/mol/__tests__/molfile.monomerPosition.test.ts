@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import { Atom, SGroup, Struct, Vec2 } from 'domain/entities';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Molfile } from '../molfile';
@@ -5,6 +7,19 @@ import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
 
 const PRECISION = 4;
+
+type AssertDefined = <Value>(
+  value: Value,
+  message?: string,
+) => NonNullable<Value>;
+
+// Keep this as require(): a static import from __tests__ pulls the helper into
+// the ketcher-core production build graph and breaks the package build.
+const {
+  assertDefined,
+}: {
+  assertDefined: AssertDefined;
+} = require('../../../../../__tests__/utilities/assertDefined'); // eslint-disable-line @typescript-eslint/no-require-imports
 
 function buildMonomerStruct(
   monomerLabel: string,
@@ -51,7 +66,7 @@ function roundTrip(struct: Struct): Struct {
 describe('centerMonomerMicromoleculeAtoms', () => {
   it('geometric center of sgroup atoms in v2000 equals monomer position from KET', () => {
     const monomerPosition = new Vec2(5, 3);
-    // Atom offsets are NOT centered at origin — simulating real molecular geometry
+    // Atom offsets are NOT centered at origin - simulating real molecular geometry
     const atomOffsets = [
       new Vec2(0.3, 0.5),
       new Vec2(-0.5, -0.2),
@@ -62,11 +77,8 @@ describe('centerMonomerMicromoleculeAtoms', () => {
       buildMonomerStruct('TestMon', monomerPosition, atomOffsets),
     );
 
-    const sgroup = findSgroupByName(parsed, 'TestMon');
-    expect(sgroup).toBeDefined();
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const positions = getAtomPositions(sgroup!.atoms, parsed.atoms);
+    const sgroup = assertDefined(findSgroupByName(parsed, 'TestMon'));
+    const positions = getAtomPositions(sgroup.atoms, parsed.atoms);
     const center = geometricCenter(positions);
     expect(center.x).toBeCloseTo(monomerPosition.x, PRECISION);
     expect(center.y).toBeCloseTo(monomerPosition.y, PRECISION);
@@ -86,11 +98,8 @@ describe('centerMonomerMicromoleculeAtoms', () => {
       buildMonomerStruct('CenMon', monomerPosition, atomOffsets),
     );
 
-    const sgroup = findSgroupByName(parsed, 'CenMon');
-    expect(sgroup).toBeDefined();
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const positions = getAtomPositions(sgroup!.atoms, parsed.atoms);
+    const sgroup = assertDefined(findSgroupByName(parsed, 'CenMon'));
+    const positions = getAtomPositions(sgroup.atoms, parsed.atoms);
     const center = geometricCenter(positions);
     expect(center.x).toBeCloseTo(monomerPosition.x, PRECISION);
     expect(center.y).toBeCloseTo(monomerPosition.y, PRECISION);
@@ -104,11 +113,8 @@ describe('centerMonomerMicromoleculeAtoms', () => {
       buildMonomerStruct('GeoMon', monomerPosition, atomOffsets),
     );
 
-    const sgroup = findSgroupByName(parsed, 'GeoMon');
-    expect(sgroup).toBeDefined();
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const parsedPositions = getAtomPositions(sgroup!.atoms, parsed.atoms);
+    const sgroup = assertDefined(findSgroupByName(parsed, 'GeoMon'));
+    const parsedPositions = getAtomPositions(sgroup.atoms, parsed.atoms);
 
     // Bond length between first two atoms should be preserved (distance = 2)
     const dx = parsedPositions[0].x - parsedPositions[1].x;

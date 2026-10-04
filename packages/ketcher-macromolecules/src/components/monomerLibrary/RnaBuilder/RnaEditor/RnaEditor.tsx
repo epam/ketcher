@@ -42,31 +42,49 @@ export const RnaEditor = ({ duplicatePreset }) => {
 
   const dispatch = useAppDispatch();
 
-  const [expanded, setExpanded] = useState(false);
+  const shouldExpand = Boolean(activePreset?.name) || isEditMode;
+  const [expanded, setExpanded] = useState(shouldExpand);
+  const [prevActivePreset, setPrevActivePreset] = useState(activePreset);
+
+  // Activating a preset opens the editor. isEditMode is read to decide whether
+  // it should open, but it is deliberately not a trigger: expandEditor turns
+  // edit mode on while collapsing an unsaved preset, so reacting to that would
+  // immediately re-expand the panel the user just closed.
+  if (activePreset !== prevActivePreset) {
+    setPrevActivePreset(activePreset);
+    if (activePreset && shouldExpand) {
+      setExpanded(true);
+    }
+  }
 
   useEffect(() => {
-    if (activePreset) {
-      if (activePreset.name || isEditMode) setExpanded(true);
-      return;
+    if (!activePreset) {
+      dispatch(createNewPreset());
+      dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
     }
+  }, [activePreset, dispatch]);
 
-    dispatch(createNewPreset());
-    dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
-  }, [activePreset]);
+  const [prevIsEditMode, setPrevIsEditMode] = useState(isEditMode);
+  if (isEditMode !== prevIsEditMode) {
+    setPrevIsEditMode(isEditMode);
+    if (activePreset && isEditMode) {
+      setExpanded(true);
+    }
+  }
 
   useEffect(() => {
     dispatch(
       recalculateRnaBuilderValidations({ rnaPreset: activePreset, isEditMode }),
     );
-  }, [isEditMode]);
-
-  useEffect(() => {
-    dispatch(setIsEditMode(expanded));
-  }, [expanded]);
+  }, [isEditMode, dispatch, activePreset]);
 
   const expandEditor = () => {
-    setExpanded(!expanded);
-    if (!activePreset?.nameInList) {
+    const nextExpanded = !expanded;
+    setExpanded(nextExpanded);
+
+    if (!nextExpanded) {
+      dispatch(setIsEditMode(false));
+    } else if (!activePreset?.nameInList) {
       dispatch(setIsEditMode(true));
     }
   };

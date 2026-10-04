@@ -5,29 +5,29 @@
 
 ## Business Domain Terms
 
-| Term                    | Definition                                                                                                                        | Used In                                                    |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| Atom                    | Fundamental chemical particle with properties (element, charge, isotope, radical, stereochemistry)                                | Domain entities, Molfile serializers, rendering engine     |
-| Atom List               | A query atom representing a set of allowed elements, displayed as `[C,N,O]`; the complement (not-list) is displayed as `![C,N,O]` | Domain entities, Periodic Table dialog, AtomRenderer       |
-| Bond                    | Chemical connection between two atoms with type (single, double, triple, aromatic) and stereochemistry                            | Domain entities, bond operations, structure validation     |
-| Molecule                | Collection of atoms and bonds representing a chemical compound                                                                    | Struct entity, serializers, editor operations              |
-| Fragment                | Connected group of atoms within a structure, used for structure decomposition                                                     | Domain entities, fragment operations, R-group definitions  |
-| Structure (Struct)      | Complete chemical structure containing atoms, bonds, fragments, S-groups, and metadata                                            | Core domain entity, all serializers, editor state          |
-| R-Group                 | Generic substituent placeholder in chemical structures (R1, R2, etc.)                                                             | R-group entities, Molfile V2000/V3000, template library    |
-| S-Group (Special Group) | Logical grouping of atoms with special meaning (superatom, data, multiple, repeating)                                             | SGroup entity, Molfile serializers, abbreviations          |
-| Superatom               | Collapsed representation of a group of atoms shown as single label                                                                | S-Group types, functional groups, abbreviations            |
-| Functional Group        | Common chemical substructure with known properties (e.g., COOH, NH2)                                                              | Abbreviations, functional group helpers, template library  |
-| Reaction                | Chemical transformation with reactants, products, and reaction arrow                                                              | RxnArrow/RxnPlus entities, RXN format, reaction tools      |
-| Stereochemistry         | 3D spatial arrangement of atoms (chiral centers, E/Z isomers, R/S labels)                                                         | Atom/Bond stereo properties, stereo validation, Molfile    |
-| Valence                 | Number of bonds an atom can form based on its element and charge                                                                  | Valence validation, implicit hydrogen calculation          |
-| Aromatization           | Detection/assignment of aromatic ring systems in structures                                                                       | Indigo service, structure cleanup, ring detection          |
-| Monomer                 | Building block unit in polymer/macromolecule structures                                                                           | BaseMonomer, Peptide, Nucleotide, macromolecules editor    |
-| Polymer                 | Large molecule composed of repeating monomer units (proteins, RNA, DNA)                                                           | Macromolecules package, PolymerBond, sequence rendering    |
-| Nucleotide              | RNA/DNA building block composed of nucleobase, sugar, and phosphate                                                               | Nucleotide entity, RNA builder, sequence editor            |
-| Peptide                 | Amino acid monomer in protein chains                                                                                              | Peptide entity, HELM format, protein editor                |
-| Attachment Point        | Connection site on a monomer where bonds can form                                                                                 | Attachment point entities, monomer connections, HELM       |
-| Template                | Pre-defined chemical structure or monomer for quick insertion                                                                     | Template library, monomer library, ketcher-react templates |
-| Layout                  | Spatial arrangement of atoms in 2D space (auto-layout, cleanup)                                                                   | Indigo service, structure cleanup, coordinate calculation  |
+| Term                    | Definition                                                                                                                                                                                                     | Used In                                                   |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Atom                    | Fundamental chemical particle with properties (element, charge, isotope, radical, stereochemistry)                                                                                                             | Domain entities, Molfile serializers, rendering engine    |
+| Atom List               | A query atom representing a set of allowed elements, displayed as `[C,N,O]`; the complement (not-list) is displayed as `![C,N,O]`                                                                              | Domain entities, Periodic Table dialog, AtomRenderer      |
+| Bond                    | Chemical connection between two atoms with type (single, double, triple, aromatic) and stereochemistry                                                                                                         | Domain entities, bond operations, structure validation    |
+| Molecule                | Collection of atoms and bonds representing a chemical compound                                                                                                                                                 | Struct entity, serializers, editor operations             |
+| Fragment                | Connected group of atoms within a structure, used for structure decomposition                                                                                                                                  | Domain entities, fragment operations, R-group definitions |
+| Structure (Struct)      | Complete chemical structure containing atoms, bonds, fragments, S-groups, and metadata                                                                                                                         | Core domain entity, all serializers, editor state         |
+| R-Group                 | Generic substituent placeholder in chemical structures (R1, R2, etc.)                                                                                                                                          | R-group entities, Molfile V2000/V3000, template library   |
+| S-Group (Special Group) | Logical grouping of atoms with special meaning (superatom, data, multiple, repeating)                                                                                                                          | SGroup entity, Molfile serializers, abbreviations         |
+| Superatom               | Collapsed representation of a group of atoms shown as single label                                                                                                                                             | S-Group types, functional groups, abbreviations           |
+| Functional Group        | Common chemical substructure with known properties (e.g., COOH, NH2)                                                                                                                                           | Abbreviations, functional group helpers, template library |
+| Reaction                | Chemical transformation with reactants, products, and reaction arrow                                                                                                                                           | RxnArrow/RxnPlus entities, RXN format, reaction tools     |
+| Stereochemistry         | 3D spatial arrangement of atoms (chiral centers, E/Z isomers, R/S labels)                                                                                                                                      | Atom/Bond stereo properties, stereo validation, Molfile   |
+| Valence                 | Number of bonds an atom can form based on its element and charge                                                                                                                                               | Valence validation, implicit hydrogen calculation         |
+| Aromatization           | Detection/assignment of aromatic ring systems in structures                                                                                                                                                    | Indigo service, structure cleanup, ring detection         |
+| Monomer                 | Building block unit in polymer/macromolecule structures                                                                                                                                                        | BaseMonomer, Peptide, Nucleotide, macromolecules editor   |
+| Polymer                 | Large molecule composed of repeating monomer units (proteins, RNA, DNA)                                                                                                                                        | Macromolecules package, PolymerBond, sequence rendering   |
+| Nucleotide              | RNA/DNA building block composed of nucleobase, sugar, and phosphate                                                                                                                                            | Nucleotide entity, RNA builder, sequence editor           |
+| Peptide                 | Amino acid monomer in protein chains                                                                                                                                                                           | Peptide entity, HELM format, protein editor               |
+| Attachment Point        | Connection site on a monomer where bonds can form                                                                                                                                                              | Attachment point entities, monomer connections, HELM      |
+| Preset Geometry         | The structural signature of an RNA preset: which components are present (sugar, base, phosphate) and the phosphate's position (5′/left or 3′/right). Two presets are same-geometry if and only if these match. | Monomer replacement drag-drop, RNA Builder                |
+| Layout                  | Spatial arrangement of atoms in 2D space (auto-layout, cleanup)                                                                                                                                                | Indigo service, structure cleanup, coordinate calculation |
 
 ## Technical Terms
 
@@ -83,78 +83,74 @@
 
 ## Term Relationships
 
-```
-Struct (Root Entity)
-├── Atom
-│   ├── AtomList (query atoms)
-│   ├── AttachmentPoints
-│   └── StereoLabel
-├── Bond
-│   ├── BondType (single, double, triple, aromatic)
-│   └── BondStereo (up, down, either)
-├── Fragment
-│   └── StereoFlag
-├── SGroup (Special Group)
-│   ├── Superatom (SUP)
-│   ├── Multiple Group (MUL)
-│   ├── Data Group (DAT)
-│   └── SGroupAttachmentPoint
-├── RGroup (Generic Substituent)
-│   └── RGroupAttachmentPoint
-├── FunctionalGroup
-├── Reaction Elements
-│   ├── RxnArrow
-│   └── RxnPlus
-└── SimpleObject (Annotations)
-    ├── Text
-    ├── Image
-    └── MultitailArrow
+**Struct** (root micromolecule entity)
 
-BaseMonomer (Macromolecules)
-├── Peptide (Amino Acid)
-├── Chem (Chemical Modifier)
-├── Nucleotide Components
-│   ├── RNABase
-│   ├── Sugar
-│   └── Phosphate
-├── Nucleoside (Base + Sugar)
-├── Nucleotide (Base + Sugar + Phosphate)
-├── AmbiguousMonomer
-├── UnresolvedMonomer
-└── EmptyMonomer
+| Entity              | Children / Notes                                                                       |
+| ------------------- | -------------------------------------------------------------------------------------- |
+| `Atom`              | `AtomList` (query atoms), `AttachmentPoints`, `StereoLabel`                            |
+| `Bond`              | `BondType` (single, double, triple, aromatic), `BondStereo` (up, down, either)         |
+| `Fragment`          | `StereoFlag`                                                                           |
+| `SGroup`            | `Superatom` (SUP), `Multiple Group` (MUL), `Data Group` (DAT), `SGroupAttachmentPoint` |
+| `RGroup`            | `RGroupAttachmentPoint`                                                                |
+| `FunctionalGroup`   | —                                                                                      |
+| `Reaction Elements` | `RxnArrow`, `RxnPlus`                                                                  |
+| `SimpleObject`      | `Text`, `Image`, `MultitailArrow`                                                      |
 
-PolymerBond (Connections)
-├── HydrogenBond
-└── MonomerToAtomBond
+**BaseMonomer** subtypes (macromolecules)
 
-Editor Architecture
-├── Tool (User Interaction)
-├── Operation (Command Pattern)
-├── Action (State Change)
-└── Formatter (Format Conversion)
+| Subtype             | Notes                                  |
+| ------------------- | -------------------------------------- |
+| `Peptide`           | Amino acid                             |
+| `Chem`              | Chemical modifier                      |
+| `RNABase`           | Nucleotide component                   |
+| `Sugar`             | Nucleotide component                   |
+| `Phosphate`         | Nucleotide component                   |
+| `Nucleoside`        | Base + Sugar (no phosphate)            |
+| `Nucleotide`        | Base + Sugar + Phosphate               |
+| `AmbiguousMonomer`  | Represents any of several alternatives |
+| `UnresolvedMonomer` | Unknown / not-yet-resolved             |
+| `EmptyMonomer`      | Structural placeholder                 |
 
-Rendering Pipeline
-├── Struct (Domain Model)
-├── ReStruct (Rendering Model)
-├── Renderer (Raphael.js/Paper.js)
-└── SVG (Output)
+**Bond types**
 
-Serialization
-├── KET (JSON)
-├── Molfile (V2000/V3000)
-├── SMILES/SMARTS
-├── InChI/InChIKey
-├── CDX/CDXML
-├── CML
-├── RXN
-├── SDF
-├── FASTA/HELM/IDT (Macromolecules)
-└── Sequence (Macromolecules)
+| Type                | Notes                                                        |
+| ------------------- | ------------------------------------------------------------ |
+| `PolymerBond`       | Covalent inter-monomer bond                                  |
+| `HydrogenBond`      | Non-covalent base-pairing bond                               |
+| `MonomerToAtomBond` | Connects a monomer attachment point to a small-molecule atom |
 
-Clean Architecture Layers
-├── Domain (Entities, Serializers)
-├── Application (Editor, Render, Formatters, Settings)
-└── Infrastructure (Services, Indigo Integration)
-```
+**Editor architecture terms**
+
+| Term        | Role                                                       |
+| ----------- | ---------------------------------------------------------- |
+| `Tool`      | Handles user interaction for a specific editing mode       |
+| `Operation` | Command-pattern unit with `execute()` / `invert()`         |
+| `Action`    | State change dispatched to Redux                           |
+| `Formatter` | Application-layer service for format conversion via Indigo |
+
+**Rendering pipeline**
+
+| Stage      | Description                                          |
+| ---------- | ---------------------------------------------------- |
+| `Struct`   | Domain model                                         |
+| `ReStruct` | Rendering model (augmented Struct with SVG metadata) |
+| `Renderer` | Raphael.js (micro) or D3/SVG (macro)                 |
+| `SVG`      | Final output                                         |
+
+**Serialization formats**
+
+| Category          | Formats                                                  |
+| ----------------- | -------------------------------------------------------- |
+| Local (no Indigo) | KET (JSON), Molfile V2000/V3000                          |
+| Via Indigo        | SMILES, SMARTS, InChI/InChIKey, CDX/CDXML, CML, RXN, SDF |
+| Macromolecules    | FASTA, HELM, IDT, Sequence                               |
+
+**Clean Architecture layers**
+
+| Layer          | Contents                             |
+| -------------- | ------------------------------------ |
+| Domain         | Entities, Serializers                |
+| Application    | Editor, Render, Formatters, Settings |
+| Infrastructure | Services, Indigo Integration         |
 
 ---

@@ -1,9 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable promise/param-names */
-/* eslint-disable no-inline-comments */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   keyboardPressOnCanvas,
@@ -773,12 +767,10 @@ test.describe('Calculate Properties tests', () => {
       'KET/single-benzene-ring.ket',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C6H6');
     expect(molecularMass).toEqual('78.114');
@@ -800,12 +792,10 @@ test.describe('Calculate Properties tests', () => {
     );
     await selectPartOfMolecules(page, 10);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C3H3');
     expect(molecularMass).toEqual('39.057');
@@ -829,12 +819,10 @@ test.describe('Calculate Properties tests', () => {
     );
     await selectPartOfMolecules(page, -80);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C2H2');
     expect(molecularMass).toEqual('26.038');
@@ -858,12 +846,10 @@ test.describe('Calculate Properties tests', () => {
     );
     await selectPartOfMolecules(page, -80);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C3H3');
     expect(molecularMass).toEqual('39.057');
@@ -887,12 +873,10 @@ test.describe('Calculate Properties tests', () => {
     );
     await selectAllStructuresOnCanvas(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C9H11NO');
     expect(molecularMass).toEqual('149.193');
@@ -916,12 +900,10 @@ test.describe('Calculate Properties tests', () => {
     );
     await selectAllStructuresOnCanvas(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C16H18N5O6P');
     expect(molecularMass).toEqual('407.323');
@@ -941,12 +923,10 @@ test.describe('Calculate Properties tests', () => {
     await openFileAndAddToCanvasAsNewProjectMacro(page, 'KET/naphthalene.ket');
     await selectAllStructuresOnCanvas(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C10H8');
     expect(molecularMass).toEqual('128.174');
@@ -965,12 +945,10 @@ test.describe('Calculate Properties tests', () => {
      */
     await Library(page).selectMonomer(Peptide.A);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C3H7NO2');
     expect(molecularMass).toEqual('89.094');
@@ -987,12 +965,10 @@ test.describe('Calculate Properties tests', () => {
      */
     await Library(page).selectMonomer(Preset.A);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C10H14N5O7P');
     expect(molecularMass).toEqual('347.224');
@@ -1009,12 +985,10 @@ test.describe('Calculate Properties tests', () => {
      */
     await Library(page).selectMonomer(Chem.Test_6_Ch);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C14H28BrClINO2');
     expect(molecularMass).toEqual('484.637');
@@ -1038,12 +1012,10 @@ test.describe('Calculate Properties tests', () => {
     );
     await selectAllStructuresOnCanvas(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C33H43N5O10S');
     expect(molecularMass).toEqual('701.792');
@@ -1063,9 +1035,8 @@ test.describe('Calculate Properties tests', () => {
     await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'AAAAA');
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const isoelectricPoint = await CalculateVariablesPanel(
-      page,
-    ).getIsoelectricPointValue();
+    const isoelectricPoint =
+      await CalculateVariablesPanel(page).getIsoelectricPointValue();
 
     expect(isoelectricPoint).toEqual('6.11');
   });
@@ -1085,9 +1056,8 @@ test.describe('Calculate Properties tests', () => {
       'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const meltingTemperature = await CalculateVariablesPanel(
-      page,
-    ).getMeltingTemperatureValue();
+    const meltingTemperature =
+      await CalculateVariablesPanel(page).getMeltingTemperatureValue();
 
     expect(meltingTemperature).toEqual('-12.4');
   });
@@ -1107,9 +1077,8 @@ test.describe('Calculate Properties tests', () => {
       'RNA1{[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const meltingTemperature = await CalculateVariablesPanel(
-      page,
-    ).getMeltingTemperatureValue();
+    const meltingTemperature =
+      await CalculateVariablesPanel(page).getMeltingTemperatureValue();
 
     expect(meltingTemperature).toEqual('-12.4');
   });

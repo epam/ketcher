@@ -46,8 +46,7 @@ const TOPOLOGY_OFFSET_Y_MULTIPLIER = 1;
 
 export class BondRenderer extends BaseRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGPathElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGPathElement, void> | undefined;
 
   constructor(public bond: Bond) {
     super(bond);

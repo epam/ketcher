@@ -5,7 +5,10 @@ import type { ReStruct } from 'application/render';
 import { Scale } from 'domain/helpers';
 
 export class ImageMove extends BaseOperation {
-  constructor(private readonly id: number, private readonly offset: Vec2) {
+  constructor(
+    private readonly id: number,
+    private readonly offset: Vec2,
+  ) {
     super(OperationType.IMAGE_MOVE);
   }
 

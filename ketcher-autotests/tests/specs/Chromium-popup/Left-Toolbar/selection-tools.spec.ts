@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';

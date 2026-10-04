@@ -1,5 +1,5 @@
+/* eslint-disable no-redeclare */
 /* eslint-disable prettier/prettier */
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import {
   AllSettingsOptions,

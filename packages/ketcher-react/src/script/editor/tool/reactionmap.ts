@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -51,7 +52,7 @@ class ReactionMapTool implements Tool {
     const editor = this.editor;
     const rnd = editor.render;
 
-    if ('dragCtx' in this) {
+    if (this.dragCtx) {
       const closestItem = this.editor.findItem(
         event,
         ['atoms'],
@@ -93,7 +94,7 @@ class ReactionMapTool implements Tool {
   }
 
   mouseup(event) {
-    if ('dragCtx' in this) {
+    if (this.dragCtx) {
       const rnd = this.editor.render;
       const closestItem = this.editor.findItem(event, ['atoms']);
 
@@ -107,7 +108,6 @@ class ReactionMapTool implements Tool {
 
         if (!aam1 || aam1 !== aam2) {
           if ((aam1 && aam1 !== aam2) || (!aam1 && aam2)) {
-            // eslint-disable-line no-mixed-operators
             atoms.forEach((atom, aid) => {
               if (
                 aid !== this.dragCtx.item.id &&
@@ -153,7 +153,7 @@ class ReactionMapTool implements Tool {
         }
       }
       this.updateLine(null, null);
-      delete this.dragCtx;
+      this.dragCtx = undefined;
     }
     this.editor.hover(this.editor.findItem(event, ['atoms']), null, event);
   }

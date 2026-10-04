@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* eslint-disable react-hooks/refs */
+
 import { type RefObject, useState, useRef, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';

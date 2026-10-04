@@ -1,3 +1,4 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +15,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type CSSProperties, type RefObject, useEffect, useState } from 'react';
+import {
+  type CSSProperties,
+  type RefObject,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
 type HookParams = [
@@ -32,7 +38,8 @@ function usePortalStyle([
 ]: HookParams): [CSSProperties] {
   const [portalStyle, setPortalStyle] = useState<CSSProperties>({});
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler -- false positive: this measures DOM layout after mount/open, it isn't an event handler that belongs in the parent
     if (!ref.current) {
       return;
     }
@@ -55,6 +62,7 @@ function usePortalStyle([
       (isTop ? 0 : spaceBetween + menuItemRect.width) -
       (isTop ? alignmentOffset : 0);
 
+    // eslint-disable-next-line react-you-might-not-need-an-effect/no-derived-state -- false positive: portalStyle depends on DOM measurements only available after layout, it can't be computed synchronously during render
     setPortalStyle({ top: `${top}px`, left: `${left}px` });
   }, [ref, isOpen, isTop, rootElementSelector]);
 

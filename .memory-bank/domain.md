@@ -122,27 +122,33 @@ Via the formatter factory and the Indigo service:
 
 ## Domain Model
 
-```
-Struct (micromolecules)
-├── Pool<Atom>
-├── Pool<Bond>
-├── Pool<SGroup>   ← MonomerMicromolecule (SUP type) bridges macro ↔ micro
-├── Pool<Fragment>
-└── Pool<RGroup>
+**Struct** (micromolecules root entity)
 
-DrawingEntitiesManager (macromolecules)
-├── Map<id, BaseMonomer>
-│   ├── Peptide / Sugar / Phosphate / RNABase / Chem / AmbiguousMonomer
-│   └── attachmentPointsToBonds → PolymerBond
-├── Map<id, PolymerBond>     ← covalent inter-monomer bonds
-├── Map<id, HydrogenBond>    ← H-bonds between bases
-├── Map<id, Atom>            ← atoms drawn directly on macro canvas
-├── Map<id, Bond>            ← bonds drawn directly on macro canvas
-├── Map<id, MonomerToAtomBond>
-└── micromoleculesHiddenEntities: Struct ← serialization bridge
+| Member    | Type / Notes                                                             |
+| --------- | ------------------------------------------------------------------------ |
+| `atoms`   | `Pool<Atom>`                                                             |
+| `bonds`   | `Pool<Bond>`                                                             |
+| `sgroups` | `Pool<SGroup>` — `MonomerMicromolecule` (SUP type) bridges macro ↔ micro |
+| `frags`   | `Pool<Fragment>`                                                         |
+| `rgroups` | `Pool<RGroup>`                                                           |
 
-ChainsCollection
-└── Chain[]
-    └── SubChain[] (PeptideSubChain | RnaSubChain | PhosphateSubChain | ChemSubChain)
-        └── SubChainNode[] (Nucleotide | Nucleoside | MonomerSequenceNode | …)
-```
+**DrawingEntitiesManager** (macromolecules root entity)
+
+| Member                         | Type / Notes                                                                                  |
+| ------------------------------ | --------------------------------------------------------------------------------------------- |
+| `monomers`                     | `Map<id, BaseMonomer>` — subtypes: Peptide, Sugar, Phosphate, RNABase, Chem, AmbiguousMonomer |
+| `polymerBonds`                 | `Map<id, PolymerBond>` — covalent inter-monomer bonds                                         |
+| `hydrogenBonds`                | `Map<id, HydrogenBond>` — H-bonds between bases                                               |
+| `atoms`                        | `Map<id, Atom>` — atoms drawn directly on macro canvas                                        |
+| `bonds`                        | `Map<id, Bond>` — bonds drawn directly on macro canvas                                        |
+| `monomerToAtomBonds`           | `Map<id, MonomerToAtomBond>`                                                                  |
+| `micromoleculesHiddenEntities` | `Struct` — serialization bridge                                                               |
+
+**ChainsCollection** hierarchy
+
+| Level   | Type                                                                                 |
+| ------- | ------------------------------------------------------------------------------------ |
+| Root    | `ChainsCollection`                                                                   |
+| Level 1 | `Chain[]`                                                                            |
+| Level 2 | `SubChain[]` — `PeptideSubChain \| RnaSubChain \| PhosphateSubChain \| ChemSubChain` |
+| Level 3 | `SubChainNode[]` — `Nucleotide \| Nucleoside \| MonomerSequenceNode \| …`            |

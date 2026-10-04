@@ -76,7 +76,7 @@ Look at the following [link](packages/ketcher-react/README.md) for details.
 ### Configure indigo service
 
 You can find the instruction for service installation
-[here](http://lifescience.opensource.epam.com/indigo/service/index.html).
+[here](https://lifescience.opensource.epam.com/indigo/service/index.html).
 
 ## Packages
 

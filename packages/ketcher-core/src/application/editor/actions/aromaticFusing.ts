@@ -14,24 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-/**
- * @param restruct { ReStruct }
- * @param _events { Array<PipelineSubscription> }
- * @param bid { number }
- * @param template {{
- * 		molecule: Struct,
- * 		bid: number
- *  }}
- * @param simpleFusing { Function }
- * @returns { Promise }
- */
+import type { ReStruct } from 'application/render';
+import type { Action } from './action';
+import type { EditorTemplate, PasteItems } from './template.types';
+
+type SimpleFusing = (
+  restruct: ReStruct,
+  template: EditorTemplate,
+  bid: number,
+) => [Action, PasteItems];
+
 export function fromAromaticTemplateOnBond(
-  restruct,
-  template,
-  bid,
-  _events,
-  simpleFusing,
-) {
-  const action = simpleFusing(restruct, template, bid);
-  return Promise.resolve(action);
+  restruct: ReStruct,
+  template: EditorTemplate,
+  bid: number,
+  _events: unknown,
+  simpleFusing: SimpleFusing,
+): Promise<[Action, PasteItems]> {
+  const pasteResult = simpleFusing(restruct, template, bid);
+  return Promise.resolve(pasteResult);
 }

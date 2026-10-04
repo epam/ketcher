@@ -17,7 +17,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Save } from 'components/modal/save';
 import userEvent from '@testing-library/user-event';
-import { Struct } from 'ketcher-core';
+import { type CoreEditor, Struct } from 'ketcher-core';
 import * as ketcherCore from 'ketcher-core';
 
 const mockOnClose = jest.fn();
@@ -52,8 +52,7 @@ describe('Save modal', () => {
         viewModel: {
           initialize: jest.fn(),
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any;
+      } as unknown as CoreEditor;
     });
     const view = render(withThemeAndStoreProvider(<Save {...mockProps} />));
 
@@ -85,7 +84,7 @@ describe('Save modal', () => {
     expect(option2).toBeVisible();
   });
 
-  it.skip('renders buttons correctly', () => {
+  it.skip('renders buttons correctly', async () => {
     render(withThemeProvider(<Save {...mockProps} />));
 
     const saveButton = screen.getByRole('button', { name: 'Save as file' });
@@ -93,9 +92,8 @@ describe('Save modal', () => {
       name: 'File name:',
     });
 
-    // eslint-disable-next-line testing-library/no-unnecessary-act
-    act(() => {
-      userEvent.clear(filenameInput);
+    await act(async () => {
+      await userEvent.clear(filenameInput);
     });
 
     expect(saveButton).toBeDisabled();

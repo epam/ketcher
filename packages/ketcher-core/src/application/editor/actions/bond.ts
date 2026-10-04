@@ -243,7 +243,7 @@ export function fromBondsMerge(
     const bondCI = struct.bonds.get(dstId);
     if (!bond || !bondCI) return;
     const params = utils.mergeBondsParams(struct, bond, struct, bondCI);
-    if (!params.merged) return;
+    if (!params?.merged) return;
     atomPairs.set(bond.begin, !params.cross ? bondCI.begin : bondCI.end);
     atomPairs.set(bond.end, !params.cross ? bondCI.end : bondCI.begin);
   });

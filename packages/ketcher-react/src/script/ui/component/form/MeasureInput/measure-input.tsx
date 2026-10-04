@@ -1,3 +1,4 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +15,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type HTMLAttributes, useEffect, useRef, useState } from 'react';
+import {
+  type HTMLAttributes,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import clsx from 'clsx';
 
 import Input from '../Input/Input';
@@ -22,9 +29,15 @@ import Select from '../Select';
 import styles from './measure-input.module.less';
 import formClasses from '../form/form.module.less';
 import { ErrorPopover } from '../form/errorPopover';
-import { getSelectOptionsFromSchema } from '../../../utils';
+import {
+  getSelectOptionsFromSchema,
+  resolveTranslatableText,
+} from '../../../utils';
 import { MeasurementUnits } from 'src/script/ui/data/schema/options-schema';
 import { usePopoverAnchor } from '../../../../../hooks';
+import { Icon } from 'components';
+import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 interface Schema {
   title?: string;
@@ -47,6 +60,7 @@ interface MeasureInputProps extends Omit<
   onExtraChange: (value: string) => void;
   name?: string;
   error?: string;
+  tooltip?: string;
 }
 
 interface GetNewFloatResult {
@@ -54,9 +68,12 @@ interface GetNewFloatResult {
   float?: string;
 }
 
-const selectOptions = getSelectOptionsFromSchema({
-  enum: Object.values(MeasurementUnits),
-});
+const UNIT_ENUM_NAMES = [
+  'settings:units.px',
+  'settings:units.cm',
+  'settings:units.pt',
+  'settings:units.inch',
+];
 
 const getNewFloat = (value: string): GetNewFloatResult => {
   const [int, float] = value.split('.');
@@ -104,6 +121,7 @@ const MeasureInput = ({
   name: _name,
   error,
   className,
+  tooltip,
   ...rest
 }: MeasureInputProps) => {
   const stringifiedValue = String(value);
@@ -120,11 +138,14 @@ const MeasureInput = ({
   if (prevPropValue !== stringifiedValue) {
     setPrevPropValue(stringifiedValue);
     setInternalValue(stringifiedValue);
+    internalValueRef.current = stringifiedValue;
   }
 
   useEffect(() => {
-    internalValueRef.current = internalValue;
-  }, [internalValue]);
+    if (internalValue !== stringifiedValue) {
+      onChange(Number.parseFloat(internalValue));
+    }
+  }, [internalValue, stringifiedValue, onChange]);
 
   const handleChange = (value: unknown) => {
     const newStringifiedValue = String(value);
@@ -136,7 +157,7 @@ const MeasureInput = ({
       startsWithZero && !zeroWithDot
         ? newStringifiedValue.replace(/^0/, '')
         : newStringifiedValue || '0';
-    const isNumber = !isNaN(Number(endorcedValue));
+    const isNumber = !Number.isNaN(Number(endorcedValue));
 
     if (!isNumber) {
       return;
@@ -148,17 +169,34 @@ const MeasureInput = ({
     );
     internalValueRef.current = newInternalValue;
     setInternalValue(newInternalValue);
-
-    if (newInternalValue !== stringifiedValue) {
-      onChange(parseFloat(newInternalValue));
-    }
   };
 
   const desc = schema;
+  const { t } = useTranslation();
+  const title = resolveTranslatableText(rest.title || desc?.title, t);
+  const selectOptions = useMemo(
+    () =>
+      getSelectOptionsFromSchema(
+        { enum: Object.values(MeasurementUnits), enumNames: UNIT_ENUM_NAMES },
+        t,
+      ),
+    [t],
+  );
 
   return (
     <div className={clsx(styles.measureInput, className)} {...rest}>
-      <span>{rest.title || desc?.title}</span>
+      {tooltip ? (
+        <div className={formClasses.divWithTooltipAndAboutIcon}>
+          <span>{title}</span>
+          <Tooltip title={tooltip}>
+            <div>
+              <Icon name="about"></Icon>
+            </div>
+          </Tooltip>
+        </div>
+      ) : (
+        <span>{title}</span>
+      )}
       <div style={{ display: 'flex' }}>
         <div className={clsx(error && formClasses.dataError)}>
           <span
@@ -172,7 +210,7 @@ const MeasureInput = ({
               value={internalValue}
               onChange={handleChange}
               type="text"
-              data-testid={`${desc?.title}-value-input`}
+              data-testid={`${title}-value-input`}
             />
           </span>
           {error && anchorEl && (
@@ -189,7 +227,7 @@ const MeasureInput = ({
           options={selectOptions}
           value={extraValue}
           className={styles.select}
-          data-testid={`${desc?.title}-measure-input`}
+          data-testid={`${title}-measure-input`}
         />
       </div>
     </div>

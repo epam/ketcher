@@ -5,17 +5,17 @@ import type { Bond } from 'domain/entities/CoreBond';
 export class HalfEdge {
   public direction: Vec2;
   public loopId: number;
-  // eslint-disable-next-line no-use-before-define
+
   public oppositeHalfEdge: HalfEdge | undefined;
-  // eslint-disable-next-line no-use-before-define
+
   public nextHalfEdge: HalfEdge | undefined;
   public sinToLeftNeighborHalfEdge: number;
   public cosToLeftNeighborHalfEdge: number;
-  // eslint-disable-next-line no-use-before-define
+
   public leftNeighborHalfEdge: HalfEdge | undefined;
   public sinToRightNeighborHalfEdge: number;
   public cosToRightNeighborHalfEdge: number;
-  // eslint-disable-next-line no-use-before-define
+
   public rightNeighborHalfEdge: HalfEdge | undefined;
 
   constructor(

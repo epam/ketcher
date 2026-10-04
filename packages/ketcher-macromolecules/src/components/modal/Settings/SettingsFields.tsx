@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetcherLogger, Settings, SettingsFormValue } from 'ketcher-core';
+import { KetcherLogger, SettingsFormValue } from 'ketcher-core';
 import { SettingsField } from './SettingsField';
-import { FIELD_DEFINITIONS } from './fieldGroups';
+import { FIELD_DEFINITIONS, SettingFieldName } from './fieldGroups';
 import { FieldsContainer } from './Settings.styles';
 
 interface SettingsFieldsProps {
-  fields: Array<keyof Settings>;
+  fields: Array<SettingFieldName>;
   settings: SettingsFormValue;
   onChange: (partial: Partial<SettingsFormValue>) => void;
 }
@@ -45,20 +45,14 @@ export const SettingsFields = ({
           <SettingsField
             key={String(fieldName)}
             name={String(fieldName)}
-            label={field.label}
+            labelKey={field.labelKey}
             type={field.type}
-            value={
-              settings[fieldName] as
-                | string
-                | number
-                | boolean
-                | null
-                | undefined
-            }
+            value={settings[fieldName]}
             options={field.options}
             min={field.min}
             max={field.max}
             step={field.step}
+            tooltipKey={field.tooltipKey}
             onChange={(value) => onChange({ [fieldName]: value })}
           />
         );

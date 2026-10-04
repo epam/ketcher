@@ -58,6 +58,22 @@ export const useLibraryItemDrag = <T extends HTMLElement>(
             const mouseWithinCanvas =
               x >= left && x <= right && y >= top && y <= bottom;
             if (mouseWithinCanvas) {
+              // Re-evaluate the replacement target at the exact drop position
+              // before dispatching the place event. The last drag (mousemove)
+              // event may have fired at a slightly different cursor position,
+              // so dragReplaceTarget could be stale or cleared. Dispatching
+              // here with the real drop coordinates ensures the replacement
+              // highlight and target are correct at the moment of the drop.
+              editor.events.setLibraryItemDragState.dispatch({
+                item,
+                position: {
+                  x:
+                    x -
+                    (editor.ketcherRootElementBoundingClientRect?.left || 0),
+                  y:
+                    y - (editor.ketcherRootElementBoundingClientRect?.top || 0),
+                },
+              });
               editor.events.placeLibraryItemOnCanvas.dispatch(item, {
                 x: scaledX,
                 y: scaledY,

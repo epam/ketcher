@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';

@@ -1,5 +1,4 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-import { TransientView } from './TransientView';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { getRnaPresetPhosphatePosition } from 'application/editor/tools/rnaPresetConnections';
@@ -17,7 +16,7 @@ export type AutochainPreviewViewParams = {
   selectedMonomerToConnect?: BaseMonomer;
 };
 
-export class AutochainPreviewView extends TransientView {
+export class AutochainPreviewView {
   public static readonly viewName = 'AutochainPreviewView';
 
   private static showSingleMonomerPreview(

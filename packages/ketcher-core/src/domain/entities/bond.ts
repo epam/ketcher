@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -41,6 +43,12 @@ export interface BondAttributes {
   endSuperatomAttachmentPointNumber?: number;
   beginSgroup?: SGroup;
   endSgroup?: SGroup;
+  len?: number;
+  sb?: number;
+  sa?: number;
+  angle?: number;
+  hb1?: number;
+  hb2?: number;
 }
 
 export class Bond extends BaseMicromoleculeEntity {
@@ -151,18 +159,22 @@ export class Bond extends BaseMicromoleculeEntity {
     this.center = new Vec2();
   }
 
-  static getAttrHash(bond: Bond) {
-    const attrs = {};
+  static getAttrHash(
+    bond: Bond,
+  ): Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> {
+    const attrs: Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> = {};
     for (const attr in Bond.attrlist) {
-      if (bond[attr] || attr === 'stereo') {
-        attrs[attr] = bond[attr];
+      const key = attr as keyof typeof Bond.attrlist;
+      if (bond[key] || key === 'stereo') {
+        attrs[key] = bond[key] as never;
       }
     }
     return attrs;
   }
 
   static getBondNeighbourIds(struct: Struct, bondId: number) {
-    const bond = struct.bonds.get(bondId)!;
+    const bond = struct.bonds.get(bondId);
+    if (!bond) return { beginBondIds: [], endBondIds: [] };
     const { begin, end } = bond;
     const beginBondIds = Atom.getConnectedBondIds(struct, begin).filter(
       (id) => id !== bondId,
@@ -301,16 +313,19 @@ export class Bond extends BaseMicromoleculeEntity {
   }
 
   getDir(struct: any): Vec2 {
-    const p1 = struct.atoms.get(this.begin)!.pp;
-    const p2 = struct.atoms.get(this.end)!.pp;
+    const p1 = struct.atoms.get(this.begin)?.pp;
+    const p2 = struct.atoms.get(this.end)?.pp;
+    if (!p1 || !p2) return new Vec2();
     return p2.sub(p1).normalized();
   }
 
   clone(aidMap?: Map<number, number> | null): Bond {
     const cp = new Bond(this);
     if (aidMap) {
-      cp.begin = aidMap.get(cp.begin)!;
-      cp.end = aidMap.get(cp.end)!;
+      const newBegin = aidMap.get(cp.begin);
+      const newEnd = aidMap.get(cp.end);
+      if (newBegin !== undefined) cp.begin = newBegin;
+      if (newEnd !== undefined) cp.end = newEnd;
     }
     return cp;
   }

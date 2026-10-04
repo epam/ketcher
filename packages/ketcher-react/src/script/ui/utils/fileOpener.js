@@ -18,11 +18,11 @@ import * as CFB from 'cfb';
 export function fileOpener(server) {
   return new Promise((resolve, reject) => {
     // TODO: refactor return
-    if (global.FileReader) {
+    if (globalThis.FileReader) {
       resolve(throughFileReader);
-    } else if (global.ActiveXObject) {
+    } else if (globalThis.ActiveXObject) {
       try {
-        const fso = new ActiveXObject('Scripting.FileSystemObject'); // eslint-disable-line no-undef
+        const fso = new globalThis.ActiveXObject('Scripting.FileSystemObject');
         resolve((file) => Promise.resolve(throughFileSystemObject(fso, file)));
       } catch (e) {
         reject(
@@ -62,7 +62,7 @@ function throughFileReader(file) {
   }
 
   return new Promise((resolve, reject) => {
-    const rd = new FileReader(); // eslint-disable-line no-undef
+    const rd = new FileReader();
 
     rd.onload = (e) => {
       let content, structures;

@@ -14,24 +14,39 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Select, MenuItem, FormControl, Switch } from '@mui/material';
-import { FieldWrapper } from './Settings.styles';
+import { Select, MenuItem, FormControl, Switch, Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
+import { Icon } from 'ketcher-react';
+import { FieldWrapper, FieldLabelContent } from './Settings.styles';
+import type { SettingFieldValue } from './fieldGroups';
+
+/**
+ * `labelKey`/`options[].labelKey` are a mix of real "settings.*" translation
+ * keys and plain literal text that must never be translated (unit
+ * abbreviations px/pt/cm/inch, font family names) - resolving the literal
+ * ones through t() would just log a spurious missing-key warning for text
+ * that's supposed to render unchanged in every language.
+ */
+const resolveSettingLabel = (key: string, t: TFunction) =>
+  key.startsWith('settings.') ? t(key) : key;
 
 interface SettingsFieldProps {
   name: string;
-  label: string;
+  labelKey: string;
   type: 'checkbox' | 'number' | 'text' | 'select' | 'color';
-  value: string | boolean | number | null | undefined;
-  onChange: (value: string | boolean | number) => void;
-  options?: Array<{ value: string | boolean; label: string }>;
+  value: SettingFieldValue | undefined;
+  onChange: (value: SettingFieldValue) => void;
+  options?: Array<{ value: SettingFieldValue; labelKey: string }>;
   min?: number;
   max?: number;
   step?: number;
+  tooltipKey?: string;
 }
 
 export const SettingsField = ({
   name,
-  label,
+  labelKey,
   type,
   value,
   onChange,
@@ -39,14 +54,37 @@ export const SettingsField = ({
   min,
   max,
   step,
+  tooltipKey,
 }: SettingsFieldProps) => {
-  const nonBooleanValue = typeof value === 'boolean' ? String(value) : value;
+  const { t } = useTranslation('macromoleculesDialogs');
+  const label = resolveSettingLabel(labelKey, t);
+  const tooltip = tooltipKey ? resolveSettingLabel(tooltipKey, t) : undefined;
+  const labelContent = tooltip ? (
+    <FieldLabelContent>
+      <span>{label}</span>
+      <Tooltip title={tooltip}>
+        <div>
+          <Icon name="about" />
+        </div>
+      </Tooltip>
+    </FieldLabelContent>
+  ) : (
+    <span>{label}</span>
+  );
+  const stringValue = typeof value === 'string' ? value : undefined;
+  const numberValue = typeof value === 'number' ? value : undefined;
+  let selectValue: string | number = '';
+  if (typeof value === 'boolean') {
+    selectValue = String(value);
+  } else if (value !== undefined) {
+    selectValue = value;
+  }
   const renderField = () => {
     switch (type) {
       case 'checkbox':
         return (
           <label>
-            <span>{label}</span>
+            {labelContent}
             <Switch
               checked={Boolean(value)}
               onChange={(e) => onChange(e.target.checked)}
@@ -59,10 +97,10 @@ export const SettingsField = ({
       case 'number':
         return (
           <label>
-            <span>{label}</span>
+            {labelContent}
             <input
               type="number"
-              value={nonBooleanValue ?? ''}
+              value={numberValue ?? ''}
               onChange={(e) => onChange(Number(e.target.value))}
               min={min}
               max={max}
@@ -82,11 +120,16 @@ export const SettingsField = ({
       case 'select':
         return (
           <label>
-            <span>{label}</span>
+            {labelContent}
             <FormControl size="small" sx={{ border: 'none' }}>
               <Select
-                value={nonBooleanValue ?? ''}
-                onChange={(e) => onChange(e.target.value)}
+                value={selectValue}
+                onChange={(e) => {
+                  const option = options?.find(
+                    (opt) => String(opt.value) === e.target.value,
+                  );
+                  onChange(option?.value ?? e.target.value);
+                }}
                 displayEmpty
                 data-testid={`setting-${name}`}
                 sx={{
@@ -110,7 +153,7 @@ export const SettingsField = ({
                     value={String(opt.value)}
                     sx={{ fontSize: '12px' }}
                   >
-                    {opt.label}
+                    {resolveSettingLabel(opt.labelKey, t)}
                   </MenuItem>
                 ))}
               </Select>
@@ -121,11 +164,11 @@ export const SettingsField = ({
       case 'color':
         return (
           <label>
-            <span>{label}</span>
+            {labelContent}
             <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
               <input
                 type="color"
-                value={nonBooleanValue ?? '#000000'}
+                value={stringValue ?? '#000000'}
                 onChange={(e) => onChange(e.target.value)}
                 data-testid={`setting-${name}`}
                 style={{
@@ -139,7 +182,7 @@ export const SettingsField = ({
               />
               <input
                 type="text"
-                value={nonBooleanValue ?? '#000000'}
+                value={stringValue ?? '#000000'}
                 onChange={(e) => onChange(e.target.value)}
                 style={{
                   width: '85px',
@@ -158,10 +201,10 @@ export const SettingsField = ({
       default:
         return (
           <label>
-            <span>{label}</span>
+            {labelContent}
             <input
               type="text"
-              value={nonBooleanValue ?? ''}
+              value={stringValue ?? ''}
               onChange={(e) => onChange(e.target.value)}
               data-testid={`setting-${name}`}
               style={{

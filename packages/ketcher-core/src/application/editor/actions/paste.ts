@@ -223,7 +223,7 @@ export function fromPaste(
     const attachmentPoints: ReadonlyArray<SGroupAttachmentPoint> = (() => {
       try {
         return sg.cloneAttachmentPoints(aidMap);
-      } catch (_e) {
+      } catch {
         // For macromolecules, attachment points may reference atoms not in aidMap
         // This is expected behavior, use empty array instead
         return [];
@@ -267,7 +267,10 @@ export function fromPaste(
       rxnArrow.height,
     ).perform(restruct);
     action.addOp(operation);
-    items.rxnArrows.push(operation.data.id);
+    const rxnArrowId = operation.data.id;
+    if (rxnArrowId != null) {
+      items.rxnArrows.push(rxnArrowId);
+    }
   });
 
   pstruct.rxnPluses.forEach((plus) => {

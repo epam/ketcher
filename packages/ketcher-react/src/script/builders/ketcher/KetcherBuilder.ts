@@ -180,8 +180,7 @@ class KetcherBuilder {
     editor.errorHandler =
       errorHandler && typeof errorHandler === 'function'
         ? errorHandler
-        : // eslint-disable-next-line @typescript-eslint/no-empty-function
-          () => {};
+        : () => {};
 
     return { cleanup, setServer };
   }
@@ -207,8 +206,8 @@ class KetcherBuilder {
       // Use singleton pattern - getInstance() will create the instance only once
       // and reuse it on subsequent calls (see SettingsService for details)
       settingsService = await SettingsService.getInstance({
-        storage: this.storageAdapter || new LocalStorageAdapter(),
-        defaults: this.initialSettings || undefined,
+        storage: this.storageAdapter ?? new LocalStorageAdapter(),
+        defaults: this.initialSettings ?? undefined,
         autoSave: true,
         migrateOnLoad: true,
       });

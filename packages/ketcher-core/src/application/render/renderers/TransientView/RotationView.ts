@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { TransientView } from 'application/render/renderers/TransientView/TransientView';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { Vec2 } from 'domain/entities';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import { TransientView } from './TransientView';
 
 export type RotationViewParams = {
   center: Vec2;
@@ -115,8 +115,6 @@ const getRotationArcPath = (
   );
 };
 
-// RotationView extends TransientView and overrides the static show() method
-// with specific parameter types following the established TransientView pattern.
 export class RotationView extends TransientView {
   private static lastSnappingRadius?: number;
   private static wasRotating = false;
@@ -185,7 +183,7 @@ export class RotationView extends TransientView {
       isRotating && cursor ? Coordinates.viewToCanvas(cursor) : undefined;
 
     const handleCenterX = isRotating
-      ? cursorInCanvas?.x ?? center.x
+      ? (cursorInCanvas?.x ?? center.x)
       : boundingBox.left + boundingBox.width / 2;
     const handleCenterY =
       cursorInCanvas?.y ??
@@ -338,7 +336,7 @@ export class RotationView extends TransientView {
       const snappedToStep =
         Math.round(rawRadius / STYLE.PROTRACTOR_RADIUS_STEP) *
         STYLE.PROTRACTOR_RADIUS_STEP;
-      let radius = snappedToStep > 0 ? snappedToStep : 0;
+      let radius = Math.max(snappedToStep, 0);
 
       const lastSnappingRadius = RotationView.lastSnappingRadius;
       if (radius > 0) {

@@ -2,14 +2,13 @@ import { Coordinates } from 'application/editor/shared/coordinates';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
-import { TransientView } from './TransientView';
 
-export class BondSnapView extends TransientView {
+export class BondSnapView {
   public static readonly viewName = 'BondSnapView';
 
-  public static show(
+  public static show<P extends PolymerBond>(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
-    bond: PolymerBond,
+    bond: P,
   ) {
     const startPositionInPixels = Coordinates.modelToCanvas(bond.startPosition);
     const endPositionInPixels = Coordinates.modelToCanvas(bond.endPosition);

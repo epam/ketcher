@@ -17,30 +17,26 @@ Provides the React + Redux + MUI component tree that hosts the D3/SVG-based macr
 
 ## Internal Structure
 
-```
-src/
-├── Editor.tsx              # Root: Provider, ThemeProvider, canvas setup, CoreEditor creation
-├── EditorEvents.tsx        # Wires CoreEditor events to Redux actions
-├── state/
-│   ├── common/
-│   │   └── editorSlice.ts  # Primary Redux slice: editor, layout, tool, preview
-│   ├── library/            # Monomer library search/filter state
-│   ├── modal/              # Modals state
-│   └── rna-builder/        # RNA builder panel state
-├── components/
-│   ├── monomerLibrary/     # Monomer panel (search, tabs, items)
-│   ├── TopMenuComponent/   # Top toolbar (file ops, undo/redo, zoom)
-│   ├── LeftMenuComponent/  # Left toolbar (tool selection)
-│   ├── contextMenu/        # Right-click context menus
-│   ├── modal/              # All dialogs (error, RNA builder, bond creation, etc.)
-│   ├── Layout/             # Canvas + sidepanel layout wrappers
-│   ├── Ruler/              # Chain-length ruler overlay
-│   ├── ZoomControls/       # Zoom in/out/fit buttons
-│   ├── FloatingTools/      # Context-sensitive floating toolbar
-│   └── shared/             # Reusable components (monomer avatars, styled toasts, etc.)
-├── hooks/                  # Custom React hooks (useLoading, useSetRnaPresets, hotkeys, …)
-└── theming/                # MUI theme, Emotion global styles, defaultTheme
-```
+| Path                                | Purpose                                                          |
+| ----------------------------------- | ---------------------------------------------------------------- |
+| `src/Editor.tsx`                    | Root: Provider, ThemeProvider, canvas setup, CoreEditor creation |
+| `src/EditorEvents.tsx`              | Wires CoreEditor events to Redux actions                         |
+| `src/state/common/editorSlice.ts`   | Primary Redux slice: editor, layout, tool, preview               |
+| `src/state/library/`                | Monomer library search/filter state                              |
+| `src/state/modal/`                  | Modals state                                                     |
+| `src/state/rna-builder/`            | RNA builder panel state                                          |
+| `src/components/monomerLibrary/`    | Monomer panel (search, tabs, items)                              |
+| `src/components/TopMenuComponent/`  | Top toolbar (file ops, undo/redo, zoom)                          |
+| `src/components/LeftMenuComponent/` | Left toolbar (tool selection)                                    |
+| `src/components/contextMenu/`       | Right-click context menus                                        |
+| `src/components/modal/`             | All dialogs (error, RNA builder, bond creation, etc.)            |
+| `src/components/Layout/`            | Canvas + sidepanel layout wrappers                               |
+| `src/components/Ruler/`             | Chain-length ruler overlay                                       |
+| `src/components/ZoomControls/`      | Zoom in/out/fit buttons                                          |
+| `src/components/FloatingTools/`     | Context-sensitive floating toolbar                               |
+| `src/components/shared/`            | Reusable components (monomer avatars, styled toasts, etc.)       |
+| `src/hooks/`                        | Custom React hooks (useLoading, useSetRnaPresets, hotkeys, …)    |
+| `src/theming/`                      | MUI theme, Emotion global styles, defaultTheme                   |
 
 ## State Management
 
@@ -58,7 +54,7 @@ Uses **Redux Toolkit** with a single `store` (`src/state/store.ts`). Key in `edi
 Three layout modes managed by `BaseMode` subclasses:
 
 | Mode                   | Class          | Description                              |
-| ---------------------- | -------------- |------------------------------------------|
+| ---------------------- | -------------- | ---------------------------------------- |
 | `flex-layout-mode`     | `FlexMode`     | Free-form 2D canvas placement            |
 | `snake-layout-mode`    | `SnakeMode`    | Auto-arranged snake-like layouted chains |
 | `sequence-layout-mode` | `SequenceMode` | Text-editor-like sequence input/editing  |

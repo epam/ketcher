@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -2738,8 +2734,6 @@ const shortMonomerList: IMonomer[] = [
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Nucleotide._2_damdA,
     unsplitNucleotide: true,
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/6173',
   },
   {
     monomerDescription: '7.1. Unsplit monomer 5NitInd (from library)',
@@ -2749,8 +2743,6 @@ const shortMonomerList: IMonomer[] = [
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Nucleotide._5NitInd,
     unsplitNucleotide: true,
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/6173',
   },
   {
     monomerDescription: '8. Unknown monomer',
@@ -2847,6 +2839,12 @@ const shortMonomerList: IMonomer[] = [
   },
 ];
 
+// An ineligible chain in the selection does not block the antisense creation
+// for the other chains (requirement 1.3 of #5678)
+const isEligibleForAntisenseChain = (monomer: IMonomer) =>
+  monomer.eligibleForAntisense &&
+  (monomer.baseWithR3R1ConnectionPresent || monomer.unsplitNucleotide);
+
 for (const monomer1 of shortMonomerList) {
   for (const monomer2 of shortMonomerList) {
     test(`4. Antisence for two chains: ${monomer1.monomerDescription} and ${monomer2.monomerDescription}`, async () => {
@@ -2879,22 +2877,8 @@ for (const monomer1 of shortMonomerList) {
       ).first();
 
       if (
-        (monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        (monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          !monomer2.eligibleForAntisense &&
-          !monomer2.baseWithR3R1ConnectionPresent &&
-          !monomer2.unsplitNucleotide) ||
-        (!monomer1.eligibleForAntisense &&
-          !monomer1.baseWithR3R1ConnectionPresent &&
-          !monomer1.unsplitNucleotide &&
-          monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        (monomer1.eligibleForAntisense && monomer1.unsplitNucleotide) ||
-        (monomer2.eligibleForAntisense && monomer2.unsplitNucleotide)
+        isEligibleForAntisenseChain(monomer1) ||
+        isEligibleForAntisenseChain(monomer2)
       ) {
         await selectAllStructuresOnCanvas(page);
         await ContextMenu(page, monomerLocator).click(
@@ -2937,8 +2921,7 @@ const chainWithAllTypeOfConnections: IMonomer = {
   unsplitNucleotide: false,
 };
 
-test.skip(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored`, async () => {
-  // Failed because of bug: https://github.com/epam/ketcher/issues/6173
+test(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6134
    * Description: Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored
@@ -4121,22 +4104,8 @@ for (const monomer1 of shortMonomerList) {
       await loadMonomerOnCanvas(page, monomer2);
 
       if (
-        (monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        (monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          !monomer2.eligibleForAntisense &&
-          !monomer2.baseWithR3R1ConnectionPresent &&
-          !monomer2.unsplitNucleotide) ||
-        (!monomer1.eligibleForAntisense &&
-          !monomer1.baseWithR3R1ConnectionPresent &&
-          !monomer1.unsplitNucleotide &&
-          monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        (monomer1.eligibleForAntisense && monomer1.unsplitNucleotide) ||
-        (monomer2.eligibleForAntisense && monomer2.unsplitNucleotide)
+        isEligibleForAntisenseChain(monomer1) ||
+        isEligibleForAntisenseChain(monomer2)
       ) {
         await selectAllStructuresOnCanvas(page);
         await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
@@ -4205,22 +4174,8 @@ for (const monomer1 of shortMonomerList) {
       await loadMonomerOnCanvas(page, monomer2);
 
       if (
-        (monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        (monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          !monomer2.eligibleForAntisense &&
-          !monomer2.baseWithR3R1ConnectionPresent &&
-          !monomer2.unsplitNucleotide) ||
-        (!monomer1.eligibleForAntisense &&
-          !monomer1.baseWithR3R1ConnectionPresent &&
-          !monomer1.unsplitNucleotide &&
-          monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        (monomer1.eligibleForAntisense && monomer1.unsplitNucleotide) ||
-        (monomer2.eligibleForAntisense && monomer2.unsplitNucleotide)
+        isEligibleForAntisenseChain(monomer1) ||
+        isEligibleForAntisenseChain(monomer2)
       ) {
         await selectAllStructuresOnCanvas(page);
         await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
@@ -4257,8 +4212,7 @@ for (const monomer1 of shortMonomerList) {
   }
 }
 
-test.skip(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (RNA)`, async () => {
-  // Failed because of bug: https://github.com/epam/ketcher/issues/6173
+test(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (RNA)`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
@@ -4288,8 +4242,7 @@ test.skip(`26.5.1 Check that all non R1-R2 connections of backbone monomers (exc
   });
 });
 
-test.skip(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (DNA)`, async () => {
-  // Failed because of bug: https://github.com/epam/ketcher/issues/6173
+test(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (DNA)`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
@@ -4512,54 +4465,47 @@ test(`26.8.2 Check that all other monomers in the backbone that are not a part o
   });
 });
 
-test.fail(
-  `27. Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense chain, the sync icon should appear on the top bar and be enabled/toggled on by default`,
-  { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
-    /*
-     * !!! Incorrect result because of bug: https://github.com/epam/ketcher/issues/7701
-     *
-     * Test task: https://github.com/epam/ketcher/issues/6684
-     * Description: Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense
-     *              chain, the sync icon should appear on the top bar and be enabled/toggled on by default
-     * Case:
-     *       1. Swticth to Sequence mode (clear canvas)
-     *       2. Check that SYNC button is NOT present
-     *       3. Paste on the canvas single chain
-     *       4. Check that SYNC button is NOT present
-     *       5. Create Antisense RNA Strand
-     *       6. Check that SYNC button is present and enabled
-     */
-    test.setTimeout(20000);
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+test(`27. Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense chain, the sync icon should appear on the top bar and be enabled/toggled on by default`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6684
+   * Description: Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense
+   *              chain, the sync icon should appear on the top bar and be enabled/toggled on by default
+   * Case:
+   *       1. Swticth to Sequence mode (clear canvas)
+   *       2. Check that SYNC button is NOT present
+   *       3. Paste on the canvas single chain
+   *       4. Check that SYNC button is NOT present
+   *       5. Create Antisense RNA Strand
+   *       6. Check that SYNC button is present and enabled
+   */
+  test.setTimeout(20000);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
-    const syncButton =
-      MacromoleculesTopToolbar(page).syncSequenceEditModeButton;
-    // checking that SYNC button is not present
-    await expect(syncButton).toHaveCount(0);
+  const syncButton = MacromoleculesTopToolbar(page).syncSequenceEditModeButton;
+  // checking that SYNC button is not present
+  await expect(syncButton).toHaveCount(0);
 
-    await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      page,
-      MacroFileType.HELM,
-      `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r(C,G,T)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)p.r(C)p.r(G)p.r(T)p.r(U)p}$$$$V2.0`,
-    );
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r(C,G,T)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)p.r(C)p.r(G)p.r(T)p.r(U)p}$$$$V2.0`,
+  );
 
-    // checking that SYNC button is not present
-    await expect(syncButton).toHaveCount(0);
+  // checking that SYNC button is not present
+  await expect(syncButton).toHaveCount(0);
 
-    await selectAllStructuresOnCanvas(page);
+  await selectAllStructuresOnCanvas(page);
 
-    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
-    await createDNAAntisenseChain(page, anySymbolA);
+  const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+  await createDNAAntisenseChain(page, anySymbolA);
 
-    // checking that SYNC button is not present
-    await expect(syncButton).toHaveCount(1);
-    // checking that SYNC button is active
-    await expect(syncButton).toHaveAttribute('data-isactive', 'true');
-  },
-);
+  // checking that SYNC button is present
+  await expect(syncButton).toHaveCount(1);
+  // checking that SYNC button is active
+  await expect(syncButton).toHaveAttribute('data-isactive', 'true');
+});
 
 const unsplitAntisenseCases: {
   description: string;

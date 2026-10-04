@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable guard-for-in */ // todo
+// todo
 
 import { Atom, AttachmentPoints, StereoLabel } from 'domain/entities/atom';
 import { AtomList } from 'domain/entities/atomList';
@@ -45,9 +45,9 @@ function parseAtomLine(atomLine: string): Atom {
   const params = {
     // generic
     pp: new Vec2(
-      parseFloat(atomSplit[0]),
-      -parseFloat(atomSplit[1]),
-      parseFloat(atomSplit[2]),
+      Number.parseFloat(atomSplit[0]),
+      -Number.parseFloat(atomSplit[1]),
+      Number.parseFloat(atomSplit[2]),
     ),
     label: atomSplit[4].trim(),
     explicitValence:
@@ -506,7 +506,6 @@ function parseCTabV2000(
   countsSplit: string[],
   ignoreChiralFlag?: boolean,
 ): Struct {
-  // eslint-disable-line max-statements
   /* reader */
   const ctab = new Struct();
   let i: number;
@@ -593,7 +592,7 @@ function parseCTabV2000(
     ctab.sgroups.delete(emptyGroups[i]);
   }
   for (const id in rLogic) {
-    const rgid = parseInt(id, 10);
+    const rgid = Number.parseInt(id, 10);
     ctab.rgroups.set(rgid, new RGroup(rLogic[rgid]));
   }
 
@@ -604,7 +603,6 @@ function parseCTabV2000(
 }
 
 function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
-  // eslint-disable-line max-statements
   ctabLines = ctabLines.slice(7);
   if (ctabLines[0].trim() !== '$CTAB') throw new Error('RGFile format invalid');
   let i = 1;
@@ -616,7 +614,6 @@ function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   ctabLines = ctabLines.slice(i + 1);
   const fragmentLines: Record<number, string[][]> = {};
   while (true) {
-    // eslint-disable-line no-constant-condition
     if (ctabLines.length === 0) throw new Error('Unexpected end of file');
     let line = ctabLines[0].trim();
     if (line === '$END MOL') {
@@ -624,11 +621,10 @@ function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
     }
     if (line !== '$RGP') throw new Error('RGFile format invalid');
 
-    const rgid = parseInt(ctabLines[1].trim(), 10);
+    const rgid = Number.parseInt(ctabLines[1].trim(), 10);
     fragmentLines[rgid] = [];
     ctabLines = ctabLines.slice(2);
     while (true) {
-      // eslint-disable-line no-constant-condition
       if (ctabLines.length === 0) throw new Error('Unexpected end of file');
       line = ctabLines[0].trim();
       if (line === '$END RGP') {
@@ -650,7 +646,7 @@ function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   const frag: Record<number, Struct[]> = {};
   if (loadRGroupFragments) {
     for (const strId in fragmentLines) {
-      const id = parseInt(strId, 10);
+      const id = Number.parseInt(strId, 10);
       frag[id] = [];
       for (const fragmentLine of fragmentLines[id]) {
         frag[id].push(parseCTab(fragmentLine, ignoreChiralFlag));
@@ -665,16 +661,15 @@ function parseRxn2000(
   shouldReactionRelayout?: boolean,
   ignoreChiralFlag?: boolean,
 ): Struct {
-  // eslint-disable-line max-statements
   /* reader */
   ctabLines = ctabLines.slice(4);
   const countsSplit = utils.partitionLine(
     ctabLines[0],
     utils.fmtInfo.rxnItemsPartition,
   );
-  const nReactants = countsSplit[0] - 0;
-  const nProducts = countsSplit[1] - 0;
-  const nAgents = countsSplit[2] - 0;
+  const nReactants = utils.parseDecimalInt(countsSplit[0]);
+  const nProducts = utils.parseDecimalInt(countsSplit[1]);
+  const nAgents = utils.parseDecimalInt(countsSplit[2]);
   ctabLines = ctabLines.slice(1); // consume counts line
   const mols: Struct[] = [];
   while (ctabLines.length > 0 && ctabLines[0].startsWith('$MOL')) {

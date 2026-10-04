@@ -33,6 +33,7 @@ import { notifyRenderComplete } from './notifyRenderComplete';
 import type { AttachmentPointName } from 'domain/types';
 import type { KetMonomerClass } from 'application/formatters/types/ket';
 import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export type EditAllInstancesPresetRequirements = {
   type: KetMonomerClass;
@@ -85,6 +86,13 @@ export type MonomerCreationState = {
   // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
   connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
   editInstanceInitialValues?: MonomerCreationInitialValues;
+  attachmentAtomIdsWithExternalBonds?: Map<
+    AttachmentPointName,
+    [number, number]
+  >;
+  // Reference to the BaseMonomer entity on the macromolecules canvas being
+  // edited. Populated only when editing an existing monomer.
+  editingMonomer?: BaseMonomer;
 } | null;
 
 export class Render {
@@ -98,7 +106,7 @@ export class Render {
   public options: RenderOptions;
   public combinedHover: Visel | null = null;
   public viewBox!: ViewBox;
-  private readonly userOpts: RenderOptions;
+  private userOpts: Partial<RenderOptions>;
   private oldCb: Box2Abs | null = null;
   private scrollbar: ScrollbarContainer;
   private resizeObserver: ResizeObserver | null = null;
@@ -106,7 +114,7 @@ export class Render {
 
   constructor(
     clientArea: HTMLElement,
-    options: RenderOptions,
+    options: Partial<RenderOptions>,
     currentRender?: Render,
     reuseRestructIfExist?: boolean,
   ) {
@@ -150,10 +158,20 @@ export class Render {
     this.resizeObserver = null;
   };
 
+  /**
+   * The options this render was asked for, without the values defaultOptions
+   * derives from them. This is the right base for building a render with
+   * changed options: the derived values get recomputed instead of carried over.
+   */
+  get userOptions(): Partial<RenderOptions> {
+    return this.userOpts;
+  }
+
   updateOptions(opts: string) {
     try {
       const passedOptions = JSON.parse(opts);
       if (passedOptions && typeof passedOptions === 'object') {
+        this.userOpts = { ...this.userOpts, ...passedOptions };
         this.options = { ...this.options, ...passedOptions };
         return this.options;
       }
@@ -272,7 +290,6 @@ export class Render {
   }
 
   update(force = false, viewSz: Vec2 | null = null) {
-    // eslint-disable-line max-statements
     viewSz =
       viewSz ??
       new Vec2(
@@ -293,11 +310,7 @@ export class Render {
       }
 
       const isAutoScale = this.options.autoScale || this.options.downScale;
-      if (!isAutoScale) {
-        if (!this.oldCb) this.oldCb = new Box2Abs();
-        this.scrollbar.update();
-        this.options.offset = this.options.offset ?? new Vec2();
-      } else {
+      if (isAutoScale) {
         const sz1 = bb.sz();
         const marg = this.options.autoScaleMargin;
         const mv = new Vec2(marg, marg);
@@ -321,6 +334,10 @@ export class Render {
           csz.x * rescale,
           csz.y * rescale,
         );
+      } else {
+        if (!this.oldCb) this.oldCb = new Box2Abs();
+        this.scrollbar.update();
+        this.options.offset = this.options.offset ?? new Vec2();
       }
 
       notifyRenderComplete();

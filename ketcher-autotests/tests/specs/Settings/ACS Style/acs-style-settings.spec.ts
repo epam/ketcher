@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { SettingsSection } from '@tests/pages/constants/settingsDialog/Constants';
 import {

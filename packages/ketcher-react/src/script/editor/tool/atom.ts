@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -237,7 +238,7 @@ class AtomTool implements Tool {
       rnd.ctab,
       this.#bondProps,
       atomId,
-      { ...(atomProps ?? {}) },
+      { ...atomProps },
       undefined,
       newAtomPos,
     )[0];

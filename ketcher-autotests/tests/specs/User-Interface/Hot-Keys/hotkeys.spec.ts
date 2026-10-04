@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { expect, test } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
@@ -52,6 +51,7 @@ test.describe('Hot keys', () => {
 
   test('Shift+Tab to switch selection tool', async ({ page }) => {
     await clickInTheMiddleOfTheCanvas(page);
+    await page.keyboard.press('Shift+Tab');
     await page.keyboard.press('Shift+Tab');
     await page.keyboard.press('Shift+Tab');
     await expect(page.getByTestId(SelectionToolType.Fragment)).toBeVisible();

@@ -7,7 +7,7 @@ import {
   type MonomerCreationState,
 } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
-import assert from 'assert';
+import { assert } from 'utilities';
 import type Restruct from 'application/render/restruct/restruct';
 
 export class RemoveAttachmentPointOperation extends BaseOperation {

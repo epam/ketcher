@@ -103,8 +103,10 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     onConnectionLeavingAtomChange,
     connectionLeavingAtoms,
   } = props;
-  const assignedAttachmentPoints =
-    monomerCreationState?.assignedAttachmentPoints ?? new Map();
+  const assignedAttachmentPoints = useMemo(
+    () => monomerCreationState?.assignedAttachmentPoints ?? new Map(),
+    [monomerCreationState?.assignedAttachmentPoints],
+  );
   const struct = editor.struct();
   // Memoized so the connectivity check does not re-run on every wizard
   // keystroke / tab switch.

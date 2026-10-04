@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -160,9 +161,7 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
  */
 function isKetV2Format(ketItem: any): ketItem is KETTextV2 {
   return (
-    ketItem &&
-    ketItem.boundingBox !== undefined &&
-    ketItem.paragraphs !== undefined
+    ketItem?.boundingBox !== undefined && ketItem?.paragraphs !== undefined
   );
 }
 
@@ -191,7 +190,7 @@ export function textToStruct(ketItem: any, struct: Struct) {
           const lexical = convertDraftToLexical(parsed as DraftEditorState);
           node.content = JSON.stringify(lexical);
         }
-      } catch (_e) {
+      } catch {
         // Leave content as-is if parsing/conversion fails
         // (content may already be Lexical or plain text)
       }

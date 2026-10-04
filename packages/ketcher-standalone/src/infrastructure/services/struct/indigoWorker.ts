@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable no-restricted-globals */
 
 import {
   AromatizeCommandData,
@@ -291,6 +290,6 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
     }
 
     default:
-      throw Error('Unsupported enum type');
+      throw new Error('Unsupported enum type');
   }
 };

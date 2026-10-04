@@ -15,10 +15,11 @@
  ***************************************************************************/
 
 import type { Struct } from 'domain/entities/struct';
+import type { KetHeader } from 'domain/serializers/ket/types';
 import { ifDef } from 'utilities';
 
-export function headerToKet(struct: Struct): any {
-  const header = {};
+export function headerToKet(struct: Struct): KetHeader | null {
+  const header: KetHeader = {};
 
   ifDef(header, 'moleculeName', struct.name, '');
   ifDef(header, 'creatorProgram', null, '');

@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable max-len */
 import * as fs from 'fs';
 import * as path from 'path';
 import { Page } from '@playwright/test';
@@ -404,7 +402,7 @@ export async function receiveMolFileComparisonData(
     .filter((_str, index) => !metaDataIndexes.includes(index));
   const molFile = (
     await page.evaluate(
-      (fileType) => window.ketcher.getMolfile(fileType),
+      (fileType) => globalThis.window.ketcher.getMolfile(fileType),
       molFileType,
     )
   )

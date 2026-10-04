@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -333,7 +331,7 @@ Object.values(monomersWithNoFreeAttachmentPoint).forEach((leftMonomer) => {
      *              3. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center)
      *              4. Take screenshot to witness established connection
      */
-    // eslint-disable-next-line max-len
+
     test(`2. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) having them no free connection points`, async () => {
       test.setTimeout(25000);
 
@@ -447,7 +445,7 @@ Object.values(monomers).forEach((leftMonomer) => {
      *              5. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center)
      *              5. Validate error message
      */
-    // eslint-disable-next-line max-len
+
     test(`4. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) already connected with single bond`, async () => {
       test.setTimeout(35000);
 
@@ -827,6 +825,7 @@ test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen b
   await takeEditorScreenshot(page);
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -893,6 +892,7 @@ test(`12. Verify that hydrogen bonds cannot be established between small molecul
   await takeEditorScreenshot(page);
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(

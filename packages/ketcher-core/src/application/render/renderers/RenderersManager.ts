@@ -1,8 +1,4 @@
-import {
-  provideEditorInstance,
-  setEditorRenderingContext,
-} from 'application/editor/editorSingleton';
-import type { CoreEditor } from 'application/editor/Editor';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { monomerFactory } from './monomerFactory';
 import { notifyRenderComplete } from 'application/render/internal';
 import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
@@ -34,6 +30,7 @@ import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerT
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/sequence/MonomerToAtomBondSequenceRenderer';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import type { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
@@ -55,15 +52,12 @@ import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SGroupRenderer } from 'application/render/renderers/SGroupRenderer';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
-  | FlexModePolymerBondRenderer
-  | SnakeModePolymerBondRenderer;
+  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
 
 type ThemeType = DeepPartial<{ ketcher: EditorTheme }>;
 
 export class RenderersManager {
   private readonly theme: ThemeType;
-  public zoomTool?: ZoomTool;
-  public editor?: CoreEditor;
   public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
     new Map();
 
@@ -323,6 +317,15 @@ export class RenderersManager {
     });
   }
 
+  private resetSubChainEnumeration(subChain: BaseSubChain) {
+    subChain.nodes.forEach((node) => {
+      node.monomers.forEach((monomer) => {
+        monomer.renderer?.setEnumeration(null);
+        monomer.renderer?.redrawEnumeration(false);
+      });
+    });
+  }
+
   private recalculateMonomersEnumeration() {
     const editor = provideEditorInstance();
     const chainsCollection = ChainsCollection.fromMonomers([
@@ -338,6 +341,8 @@ export class RenderersManager {
           subChain instanceof PhosphateSubChain
         ) {
           this.recalculateRnaChainEnumeration(subChain, chain.isCyclic);
+        } else {
+          this.resetSubChainEnumeration(subChain);
         }
       });
     });
@@ -395,23 +400,16 @@ export class RenderersManager {
   }
 
   public reinitializeViewModel() {
-    const editor = this.editor ?? provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
   }
 
   public update(modelChanges?: Command) {
-    if (this.zoomTool) ZoomTool.setRenderingContext(this.zoomTool);
-    if (this.editor) setEditorRenderingContext(this.editor);
-    try {
-      this.reinitializeViewModel();
-      modelChanges?.execute(this);
-      this.runPostRenderMethods();
-      notifyRenderComplete();
-    } finally {
-      if (this.zoomTool) ZoomTool.setRenderingContext(undefined);
-      if (this.editor) setEditorRenderingContext(undefined);
-    }
+    this.reinitializeViewModel();
+    modelChanges?.execute(this);
+    this.runPostRenderMethods();
+    notifyRenderComplete();
   }
 
   public addAtom(atom: Atom) {
@@ -706,7 +704,7 @@ export class RenderersManager {
       );
       center = center.add(atomPos);
     });
-    center = center.scaled(1.0 / loop.halfEdges.length);
+    center = center.scaled(1 / loop.halfEdges.length);
 
     // Calculate the radius as the minimum distance from center to any bond
     let radius = -1;

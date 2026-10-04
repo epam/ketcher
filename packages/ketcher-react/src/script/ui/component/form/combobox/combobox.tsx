@@ -47,8 +47,7 @@ class ComboBox extends Component<ComboBoxProps, ComboBoxState> {
 
   updateInput(
     event:
-      | React.MouseEvent<HTMLButtonElement>
-      | React.ChangeEvent<HTMLInputElement>,
+      React.MouseEvent<HTMLButtonElement> | React.ChangeEvent<HTMLInputElement>,
   ) {
     const target = event.target as HTMLButtonElement | HTMLInputElement;
     let value = '';

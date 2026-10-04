@@ -1,4 +1,3 @@
-/* eslint-disable no-inline-comments */
 import * as path from 'path';
 import { Page, expect } from '@playwright/test';
 import { Ketcher } from 'ketcher-core';
@@ -51,7 +50,8 @@ type FileTypeHandler =
 
 const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.KET]: getKet,
-  [FileType.CDX]: getCdx, // This actually returns Base64 CDX content. https://www.youtube.com/watch?v=-Ui4prpCZ0w
+  // This actually returns Base64 CDX content. https://www.youtube.com/watch?v=-Ui4prpCZ0w
+  [FileType.CDX]: getCdx,
   [FileType.CDXML]: getCdxml,
   [FileType.SMARTS]: getSmarts,
   [FileType.SMILES]: getSmiles,
@@ -206,10 +206,12 @@ async function receiveFile({
     ? { method: methodName, format: fileFormat }
     : { method: methodName };
 
-  await page.waitForFunction(() => window.ketcher);
+  await page.waitForFunction(() => globalThis.window.ketcher);
 
   const file = await page.evaluate(({ method, format }) => {
-    return format ? window.ketcher[method](format) : window.ketcher[method]();
+    return format
+      ? globalThis.window.ketcher[method](format)
+      : globalThis.window.ketcher[method]();
   }, pageData);
 
   return file.split('\n');
@@ -276,9 +278,8 @@ export async function verifyAxoLabsExport(
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.AxoLabs,
   );
-  const AxoLabsExportResult = await SaveStructureDialog(
-    page,
-  ).getTextAreaValue();
+  const AxoLabsExportResult =
+    await SaveStructureDialog(page).getTextAreaValue();
 
   expect(AxoLabsExportResult).toEqual(AxoLabsExportExpected);
 
@@ -329,9 +330,8 @@ export async function verifySequence1LetterCodeExport(
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence1LetterCode,
   );
-  const Sequence1LetterCodeExportResult = await SaveStructureDialog(
-    page,
-  ).getTextAreaValue();
+  const Sequence1LetterCodeExportResult =
+    await SaveStructureDialog(page).getTextAreaValue();
 
   expect(Sequence1LetterCodeExportResult).toEqual(
     Sequence1LetterCodeExportExpected,
@@ -406,9 +406,8 @@ export async function verifyInChIKeyExport(
   await SaveStructureDialog(page).chooseFileFormat(
     MoleculesFileFormatType.InChIKey,
   );
-  const InChIKeyExportResult = await SaveStructureDialog(
-    page,
-  ).getTextAreaValue();
+  const InChIKeyExportResult =
+    await SaveStructureDialog(page).getTextAreaValue();
 
   expect(InChIKeyExportResult).toEqual(InChIKeyExportExpected);
 

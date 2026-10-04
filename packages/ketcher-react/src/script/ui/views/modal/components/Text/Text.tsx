@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,6 +16,7 @@
  ***************************************************************************/
 
 import React, { useCallback, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   type LexicalEditor,
   type TextFormatType,
@@ -122,6 +124,7 @@ const TextEditorInner = (props: {
   params: TextProps;
 }) => {
   const { formState, position, id, params } = props;
+  const { t } = useTranslation(['common', 'dialogs']);
   const [editor] = useLexicalComposerContext();
   const [activeFormats, setActiveFormats] = useState<Set<string>>(new Set());
   const editorRef = React.useRef<LexicalEditor | null>(null);
@@ -187,11 +190,11 @@ const TextEditorInner = (props: {
   return (
     <Dialog
       className={classes.textEditor}
-      title="Text Editor"
+      title={t('dialogs:text.dialogTitle')}
       params={params}
       result={result}
       valid={() => formState.form.valid}
-      buttonsNameMap={{ OK: 'Apply' }}
+      buttonsNameMap={{ OK: t('common:button.apply') }}
       buttons={['Cancel', 'OK']}
       withDivider
     >
@@ -201,7 +204,7 @@ const TextEditorInner = (props: {
         onKeyDown={handleKeyDown}
         role="toolbar"
         tabIndex={0}
-        aria-label="Text formatting toolbar"
+        aria-label={t('dialogs:text.toolbarAriaLabel')}
       >
         {buttons.map((button) => {
           return (
@@ -214,10 +217,10 @@ const TextEditorInner = (props: {
           );
         })}
         <SpecialSymbolsButton editor={editor} />
-        <span>Font Size</span>
+        <span>{t('dialogs:text.fontSizeLabel')}</span>
         <FontControl editor={editor} />
       </div>
-      <span>Text:</span>
+      <span>{t('dialogs:text.textLabel')}</span>
       <RichTextPlugin
         contentEditable={
           <ContentEditable

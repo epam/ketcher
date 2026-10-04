@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -37,7 +38,7 @@ import {
   isPasteContentAvailable,
   DeepPartial,
 } from 'ketcher-core';
-import { configureAppStore } from 'state';
+import { store } from 'state';
 import {
   defaultTheme,
   EditorTheme,
@@ -145,7 +146,6 @@ function EditorContainer({
   monomersLibraryReplace,
   isMacromoleculesEditorTurnedOn,
 }: Readonly<EditorContainerProps>) {
-  const [store] = useState(() => configureAppStore());
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
@@ -157,7 +157,7 @@ function EditorContainer({
 
   useEffect(() => {
     store.dispatch(initKetcherId(ketcherId));
-  }, [ketcherId, store]);
+  }, [ketcherId]);
 
   return (
     <Provider store={store}>
@@ -184,7 +184,6 @@ function EditorContainer({
 }
 
 function Editor({
-  ketcherId,
   theme,
   togglerComponent,
   monomersLibraryUpdate,
@@ -204,8 +203,11 @@ function Editor({
   const [selectedMonomers, setSelectedMonomers] = useState<BaseMonomer[]>([]);
   const [isPasteAvailable, setIsPasteAvailable] = useState(true);
   const updatePasteAvailability = useCallback(() => {
-    isPasteContentAvailable().then(setIsPasteAvailable);
-  }, []);
+    if (!editor) return;
+    isPasteContentAvailable((content) =>
+      editor.mode.isPasteContentValid(content),
+    ).then(setIsPasteAvailable);
+  }, [editor]);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
   });
@@ -216,7 +218,6 @@ function Editor({
   useEffect(() => {
     dispatch(
       createEditor({
-        ketcherId,
         theme,
         canvas: canvasRef.current,
         monomersLibraryUpdate,

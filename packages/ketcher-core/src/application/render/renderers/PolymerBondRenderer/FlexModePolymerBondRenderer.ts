@@ -1,4 +1,5 @@
 import { editorEvents } from 'application/editor/editorEvents';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,

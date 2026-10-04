@@ -11,6 +11,7 @@ import {
   GeneralSetting,
   MeasurementUnit,
   ResetToSelectToolOption,
+  SettingsSection,
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
@@ -1211,6 +1212,8 @@ test.describe('Negative cases for General Settings', () => {
     a negative value should not be allowed to be entered
     */
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Reactions);
     await SettingsDialog(page).setOptionValue(
       GeneralSetting.ReactionComponentMarginSizeUnits,
       MeasurementUnit.Px,
@@ -1231,6 +1234,8 @@ test.describe('Negative cases for General Settings', () => {
     a negative value should not be allowed to be entered
     */
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Reactions);
     await SettingsDialog(page).setOptionValue(
       GeneralSetting.ReactionComponentMarginSizeUnits,
       MeasurementUnit.Cm,
@@ -1251,6 +1256,8 @@ test.describe('Negative cases for General Settings', () => {
     a negative value should not be allowed to be entered
     */
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Reactions);
     await SettingsDialog(page).setOptionValue(
       GeneralSetting.ReactionComponentMarginSizeUnits,
       MeasurementUnit.Pt,
@@ -1271,6 +1278,8 @@ test.describe('Negative cases for General Settings', () => {
     a negative value should not be allowed to be entered
     */
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Reactions);
     await SettingsDialog(page).setOptionValue(
       GeneralSetting.ReactionComponentMarginSizeUnits,
       MeasurementUnit.Inch,
@@ -1291,6 +1300,8 @@ test.describe('Negative cases for General Settings', () => {
     0 value should not be allowed to be entered
     */
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Reactions);
     await SettingsDialog(page).setOptionValue(
       GeneralSetting.ReactionComponentMarginSizeUnits,
       MeasurementUnit.Px,
@@ -1311,6 +1322,8 @@ test.describe('Negative cases for General Settings', () => {
     0 should not be allowed to be entered
     */
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Reactions);
     await SettingsDialog(page).setOptionValue(
       GeneralSetting.ReactionComponentMarginSizeUnits,
       MeasurementUnit.Cm,
@@ -1331,6 +1344,8 @@ test.describe('Negative cases for General Settings', () => {
     0 should not be allowed to be entered
     */
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Reactions);
     await SettingsDialog(page).setOptionValue(
       GeneralSetting.ReactionComponentMarginSizeUnits,
       MeasurementUnit.Pt,
@@ -1351,6 +1366,8 @@ test.describe('Negative cases for General Settings', () => {
     0 should not be allowed to be entered
     */
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Reactions);
     await SettingsDialog(page).setOptionValue(
       GeneralSetting.ReactionComponentMarginSizeUnits,
       MeasurementUnit.Inch,
@@ -1375,6 +1392,8 @@ test.describe('Negative cases for General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Reactions);
     await SettingsDialog(page).setOptionValue(
       GeneralSetting.ReactionComponentMarginSizeUnits,
       MeasurementUnit.Px,
@@ -1399,6 +1418,8 @@ test.describe('Negative cases for General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Reactions);
     await SettingsDialog(page).setOptionValue(
       GeneralSetting.ReactionComponentMarginSizeUnits,
       MeasurementUnit.Cm,
@@ -1423,6 +1444,8 @@ test.describe('Negative cases for General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Reactions);
     await SettingsDialog(page).setOptionValue(
       GeneralSetting.ReactionComponentMarginSizeUnits,
       MeasurementUnit.Pt,
@@ -1447,6 +1470,8 @@ test.describe('Negative cases for General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Reactions);
     await SettingsDialog(page).setOptionValue(
       GeneralSetting.ReactionComponentMarginSizeUnits,
       MeasurementUnit.Inch,

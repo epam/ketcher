@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useTranslation } from 'react-i18next';
 import {
   GroupBlockContainer,
   GroupName,
@@ -21,7 +22,7 @@ import {
   TextContainer,
 } from './styles';
 import { IGroupBlockProps } from './types';
-import { groupNameToRnaEditorItemLabel } from './utils';
+import { groupNameToRnaEditorItemLabelKey } from './utils';
 import { useAppSelector } from 'hooks';
 import { selectIsEditMode } from 'state/rna-builder';
 import GroupIcon from './GroupIcon';
@@ -36,6 +37,7 @@ export const GroupBlockWide = ({
   testid,
   children,
 }: IGroupBlockProps & PropsWithChildren) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const isEditMode = useAppSelector(selectIsEditMode);
 
   const empty = !monomerName;
@@ -51,10 +53,10 @@ export const GroupBlockWide = ({
         <GroupIcon name={iconName} selected={selected} empty={empty} />
         <TextContainer>
           <GroupName selected={selected}>
-            {groupNameToRnaEditorItemLabel[groupName]}
+            {t(groupNameToRnaEditorItemLabelKey[groupName])}
           </GroupName>
           <MonomerName empty={empty} selected={selected}>
-            {monomerName ?? 'Not selected'}
+            {monomerName ?? t('monomerLibrary.notSelected')}
           </MonomerName>
         </TextContainer>
         {children}

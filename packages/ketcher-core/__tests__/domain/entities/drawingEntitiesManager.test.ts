@@ -51,6 +51,7 @@ function createStructWithSGroup(type = SGroup.TYPES.MUL) {
     }),
   );
   const sgroup = new SGroup(type);
+  sgroup.data.fieldName = 'FieldName';
   sgroup.data.fieldValue = 'Value';
   const sgroupId = struct.sgroups.add(sgroup);
   struct.atomAddToSGroup(sgroupId, firstAtomId);
@@ -420,6 +421,9 @@ describe('Drawing Entities Manager', () => {
     editor.renderersContainer.update(modelChanges);
 
     expect(document.querySelector('[data-label-text="Value"]')).toBeTruthy();
+    expect(
+      [...editor.renderersContainer.sgroups.values()][0].labelTooltipText,
+    ).toBe('FieldName=Value');
   });
 
   it('should render imported molecule text in macromolecules mode', () => {

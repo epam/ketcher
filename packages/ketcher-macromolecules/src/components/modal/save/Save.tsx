@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useState, type MouseEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Modal } from 'components/shared/modal';
 import { Option } from 'components/shared/dropDown/dropDown';
@@ -89,6 +90,7 @@ export const Save = ({
   onClose,
   isModalOpen,
 }: RequiredModalProps): JSX.Element => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const indigo = IndigoProvider.getIndigo() as StructService;
   const editor = provideEditorInstance();
@@ -124,9 +126,7 @@ export const Save = ({
     }
     if (fileFormat === 'helm') {
       if (editor.drawingEntitiesManager.molecules.length > 0) {
-        editor.events.error.dispatch(
-          'The molecule will be exported using inline SMILES, and on load will appear as a CHEM monomer',
-        );
+        editor.events.error.dispatch(t('save.helmSmilesExportNotice'));
       }
       if (
         !isHelmCompatible(
@@ -134,9 +134,7 @@ export const Save = ({
           editor.monomersLibrary,
         )
       ) {
-        editor.events.error.dispatch(
-          'Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.',
-        );
+        editor.events.error.dispatch(t('save.helmAliasExportNotice'));
       }
     }
 
@@ -150,9 +148,7 @@ export const Save = ({
         const isValid =
           editor.drawingEntitiesManager.validateIfApplicableForFasta();
         if (!isValid) {
-          throw new Error(
-            'Error during sequence type recognition(RNA, DNA or Peptide)',
-          );
+          throw new Error(t('save.sequenceTypeRecognitionError'));
         }
       }
       const formatProperties = getPropertiesByFormat(fileFormat);
@@ -173,7 +169,7 @@ export const Save = ({
       } else {
         stringError = typeof error === 'string' ? error : JSON.stringify(error);
       }
-      const errorMessage = 'Convert error! ' + stringError;
+      const errorMessage = t('save.convertError', { error: stringError });
       dispatch(openErrorModal(errorMessage));
       KetcherLogger.error(errorMessage);
       setCurrentFileFormat('ket');
@@ -210,19 +206,19 @@ export const Save = ({
     event.preventDefault();
 
     if (!isClipboardAPIAvailable()) {
-      dispatch(openErrorModal('This feature is not available in your browser'));
+      dispatch(openErrorModal(t('common:errors.featureNotAvailableInBrowser')));
       return;
     }
 
     navigator.clipboard.writeText(struct).catch((e) => {
       KetcherLogger.error('copyAs.js::copyAs', e);
-      dispatch(openErrorModal('This feature is not available in your browser'));
+      dispatch(openErrorModal(t('common:errors.featureNotAvailableInBrowser')));
     });
   };
 
   return (
     <StyledModal
-      title="save structure"
+      title={t('save.title')}
       isOpen={isModalOpen}
       onClose={onClose}
       testId="save-structure-dialog"
@@ -235,12 +231,12 @@ export const Save = ({
                 value={currentFileName}
                 id="filename"
                 onChange={handleInputChange}
-                label="File name:"
+                label={t('save.fileName')}
                 data-testid="filename-input"
               />
             </div>
             <StyledDropdown
-              label="File format:"
+              label={t('save.fileFormat')}
               options={options}
               currentSelection={currentFileFormat}
               selectionHandler={(value) =>
@@ -261,7 +257,7 @@ export const Save = ({
               <IconButton
                 onClick={handleCopy}
                 iconName="copy"
-                title="Copy to clipboard"
+                title={t('save.copyToClipboard')}
                 testId="copy-to-clipboard"
               />
               {isLoading && (
@@ -276,14 +272,14 @@ export const Save = ({
 
       <Modal.Footer>
         <ActionButton
-          label="Cancel"
+          label={t('common:button.cancel')}
           styleType="secondary"
           clickHandler={onClose}
           data-testid="cancel-button"
         />
 
         <ActionButton
-          label="Save"
+          label={t('common:button.save')}
           clickHandler={handleSave}
           disabled={!currentFileName}
           data-testid="save-button"

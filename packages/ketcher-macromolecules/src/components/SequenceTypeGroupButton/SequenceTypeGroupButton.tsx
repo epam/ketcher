@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
@@ -72,6 +73,7 @@ const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
 }));
 
 export const SequenceTypeGroupButton = () => {
+  const { t } = useTranslation('macromolecules');
   const editor = useAppSelector(selectEditor);
 
   const [activeSequenceType, setActiveSequenceType] = useState<SequenceType>(
@@ -117,7 +119,9 @@ export const SequenceTypeGroupButton = () => {
       <ButtonGroup disabled={isDisabled}>
         <SequenceTypeButton
           data-testid={`${SequenceType.RNA}Btn`}
-          title={`RNA (${hotkeysShortcuts.RNASequenceType})`}
+          title={t('sequenceType.rnaTooltip', {
+            shortcut: hotkeysShortcuts.RNASequenceType,
+          })}
           variant={
             activeSequenceType === SequenceType.RNA ? 'contained' : 'outlined'
           }
@@ -127,7 +131,9 @@ export const SequenceTypeGroupButton = () => {
         </SequenceTypeButton>
         <SequenceTypeButton
           data-testid={`${SequenceType.DNA}Btn`}
-          title={`DNA (${hotkeysShortcuts.DNASequenceType})`}
+          title={t('sequenceType.dnaTooltip', {
+            shortcut: hotkeysShortcuts.DNASequenceType,
+          })}
           variant={
             activeSequenceType === SequenceType.DNA ? 'contained' : 'outlined'
           }
@@ -137,7 +143,9 @@ export const SequenceTypeGroupButton = () => {
         </SequenceTypeButton>
         <SequenceTypeButton
           data-testid={`${SequenceType.PEPTIDE}Btn`}
-          title={`Peptides (${hotkeysShortcuts.PEPTIDESequenceTYpe})`}
+          title={t('sequenceType.peptidesTooltip', {
+            shortcut: hotkeysShortcuts.PEPTIDESequenceTYpe,
+          })}
           variant={
             activeSequenceType === SequenceType.PEPTIDE
               ? 'contained'

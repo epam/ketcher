@@ -22,6 +22,7 @@ import {
   type GenerateImageOptions,
 } from 'ketcher-core';
 import type { CurrentAppState } from './types';
+import i18n from '../../../i18n/i18n';
 
 declare global {
   interface Window {
@@ -30,7 +31,7 @@ declare global {
 }
 
 async function copyImageToClipboard(): Promise<void> {
-  const state: CurrentAppState = (global as unknown as Window).currentState;
+  const state: CurrentAppState = globalThis.currentState;
   const editor = state.editor;
   const options = state.options;
   const struct = editor.structSelected();
@@ -54,13 +55,13 @@ async function copyImageToClipboard(): Promise<void> {
     );
 
     // eslint-disable-next-line no-undef
-    const item = new ClipboardItem({ [image.type]: image });
-    await navigator.clipboard.write([item]);
+    const item = new globalThis.ClipboardItem({ [image.type]: image });
+    await globalThis.navigator.clipboard.write([item]);
   } catch (e: unknown) {
     KetcherLogger.error('copyImageToClipboard.ts::copyImageToClipboard', e);
 
     if (errorHandler) {
-      errorHandler('This feature is not available in your browser');
+      errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));
     }
   }
 }

@@ -21,6 +21,7 @@ import type { RenderOptions } from './render.types';
 import {
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
+  SELECTION_OUTLINE_COLOR,
 } from 'application/render/renderers/constants';
 
 function defaultOptions(renderOptions: Partial<RenderOptions>): RenderOptions {
@@ -114,7 +115,7 @@ function defaultOptions(renderOptions: Partial<RenderOptions>): RenderOptions {
       'stroke-width': (0.5 * scaleFactorMicro) / 20,
     },
     lassoStyle: {
-      stroke: 'gray',
+      stroke: SELECTION_OUTLINE_COLOR,
       'stroke-width': '1px',
     },
     selectionStyleSimpleObject: {

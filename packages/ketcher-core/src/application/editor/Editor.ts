@@ -152,49 +152,6 @@ const turnOnScrollAnimation = (
   canvas.style('transition', `transform ${SCROLL_SMOOTHNESS_IM_MS}ms ease`);
 };
 
-export interface SkippedMonomerItem {
-  name: string;
-  reason: string;
-}
-
-/**
- * Thrown by `CoreEditor.updateMonomersLibrary` when one or more incoming
- * monomer definitions are invalid and could not be committed to the library.
- *
- * `partialSuccess` is `true` when at least one item from the payload was
- * committed successfully alongside the failures, and `false` when every item
- * was rejected.
- *
- * `skippedItems` holds a structured list of every rejected item — `name` is
- * the monomer or template identifier, `reason` is a human-readable explanation
- * of why it was skipped.
- *
- * @example
- * try {
- *   await ketcher.updateMonomersLibrary(data);
- * } catch (err) {
- *   if (err instanceof MonomerLibraryUpdateError) {
- *     console.warn(`Partial success: ${err.partialSuccess}`);
- *     err.skippedItems.forEach(({ name, reason }) =>
- *       console.warn(`Skipped ${name}: ${reason}`)
- *     );
- *   }
- * }
- */
-export class MonomerLibraryUpdateError extends Error {
-  readonly partialSuccess: boolean;
-  readonly skippedItems: SkippedMonomerItem[];
-
-  constructor(skippedItems: SkippedMonomerItem[], partialSuccess: boolean) {
-    super(
-      skippedItems.map(({ name, reason }) => `${name}: ${reason}`).join('\n'),
-    );
-    this.name = 'MonomerLibraryUpdateError';
-    this.skippedItems = [...skippedItems];
-    this.partialSuccess = partialSuccess;
-  }
-}
-
 export class MonomerLibraryConvertError extends Error {
   constructor(message: string, cause?: Error) {
     super(message, { cause });
@@ -488,12 +445,7 @@ export class CoreEditor {
 
   /**
    * Upserts the provided monomer definitions into the in-memory library.
-   *
-   * @throws {MonomerLibraryUpdateError} When one or more items fail validation.
-   *   `skippedItems` lists every rejected monomer with a `name` and `reason`.
-   *   `partialSuccess` is `true` when at least one item was committed before
-   *   the error was raised. There is no rollback, so items committed before
-   *   the first failure remain in the library.
+   * Invalid items are logged and skipped.
    */
   public updateMonomersLibrary(monomersDataRaw: string | JSON) {
     // `_monomersLibraryParsedJson` is always initialized by `setMonomersLibrary`
@@ -512,12 +464,12 @@ export class CoreEditor {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
-    const skippedItems: SkippedMonomerItem[] = [];
     const reportValidationError = (name: string, reason: string) => {
-      KetcherLogger.error('Editor::updateMonomersLibrary', reason);
-      skippedItems.push({ name, reason });
+      KetcherLogger.error(
+        'Editor::updateMonomersLibrary',
+        `${name}: ${reason}`,
+      );
     };
-    let didCommitAnyItem = false;
 
     const areSameMonomers = (
       firstMonomer?: MonomerItemType,
@@ -737,7 +689,15 @@ export class CoreEditor {
       const newMonomerTemplateRef =
         getMonomerTemplateRefFromMonomerItem(newMonomer);
 
-      if (existingMonomerIndex !== -1) {
+      if (existingMonomerIndex === -1) {
+        this._monomersLibrary.push(newMonomer);
+
+        monomersLibraryParsedJson.root.templates.push(
+          getKetRef(newMonomerTemplateRef),
+        );
+        monomersLibraryParsedJson[newMonomerTemplateRef] =
+          newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
+      } else {
         const existingMonomerTemplateRef = getMonomerTemplateRefFromMonomerItem(
           this._monomersLibrary[existingMonomerIndex],
         );
@@ -746,33 +706,23 @@ export class CoreEditor {
           monomersLibraryParsedJson.root.templates.findIndex(
             (template) => template.$ref === existingMonomerTemplateRef,
           );
-        if (existingMonomerRefIndex !== -1) {
+        if (existingMonomerRefIndex === -1) {
+          // This case should never happen because if we have a monomer in the library it should have a reference in the parsed JSON
+          KetcherLogger.error(
+            'Editor::updateMonomersLibrary: A ref is missing for a monomer in library',
+            existingMonomerTemplateRef,
+          );
+        } else {
           const existingMonomer = this._monomersLibrary[existingMonomerIndex];
           const { id } = existingMonomer.props;
           const existingMonomerId = id ?? getMonomerUniqueKey(existingMonomer);
           this._monomersLibrary[existingMonomerIndex] = newMonomer;
           this._monomersLibrary[existingMonomerIndex].props.id =
             existingMonomerId;
-          didCommitAnyItem = true;
 
           monomersLibraryParsedJson[existingMonomerTemplateRef] =
             newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
-        } else {
-          // This case should never happen because if we have a monomer in the library it should have a reference in the parsed JSON
-          KetcherLogger.error(
-            'Editor::updateMonomersLibrary: A ref is missing for a monomer in library',
-            existingMonomerTemplateRef,
-          );
         }
-      } else {
-        this._monomersLibrary.push(newMonomer);
-        didCommitAnyItem = true;
-
-        monomersLibraryParsedJson.root.templates.push(
-          getKetRef(newMonomerTemplateRef),
-        );
-        monomersLibraryParsedJson[newMonomerTemplateRef] =
-          newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
       }
     });
 
@@ -872,7 +822,6 @@ export class CoreEditor {
       }
 
       monomersLibraryParsedJson[templateRef.$ref] = templateDefinition;
-      didCommitAnyItem = true;
       if (
         !monomersLibraryParsedJson.root.templates.find(
           (existingTemplateRef) =>
@@ -884,10 +833,6 @@ export class CoreEditor {
     });
 
     this.events.updateMonomersLibrary.dispatch();
-
-    if (skippedItems.length > 0) {
-      throw new MonomerLibraryUpdateError(skippedItems, didCommitAnyItem);
-    }
   }
 
   public get monomersLibraryParsedJson() {
@@ -1167,13 +1112,34 @@ export class CoreEditor {
           selectedMonomers,
         ]);
       } else if (isClickOnCanvas) {
-        if (this.mode.modeName === 'sequence-layout-mode') {
-          this.events.rightClickCanvasSequence.dispatch([
+        if (
+          typeof document.elementsFromPoint === 'function' &&
+          document
+            .elementsFromPoint(event.clientX, event.clientY)
+            .some((el) => el.__data__?.drawingEntity?.selected)
+        ) {
+          this.events.rightClickSelectedMonomers.dispatch([
             event,
-            sequenceSelections,
+            selectedMonomers,
           ]);
+          return false;
+        }
+
+        const modelChanges =
+          this.drawingEntitiesManager.unselectAllDrawingEntities();
+
+        if (this.mode.modeName === 'sequence-layout-mode') {
+          modelChanges.merge(
+            SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(),
+          );
+        }
+
+        this.renderersContainer.update(modelChanges);
+
+        if (this.mode.modeName === 'sequence-layout-mode') {
+          this.events.rightClickCanvasSequence.dispatch([event, []]);
         } else {
-          this.events.rightClickCanvas.dispatch([event, selectedMonomers]);
+          this.events.rightClickCanvas.dispatch([event, []]);
         }
       }
 
@@ -1985,18 +1951,7 @@ export class CoreEditor {
     const ModeConstructor = getModeConstructor(mode);
     const history = EditorHistory.getInstance(this);
     const hasModeChanged = this.mode.modeName !== mode;
-    const isLastCommandTurnOnSnakeMode =
-      history.previousCommand?.operations.some((operation) => {
-        return (
-          operation instanceof SelectLayoutModeOperation &&
-          operation.mode === 'snake-layout-mode' &&
-          operation.prevMode !== 'snake-layout-mode'
-        );
-      });
-
-    if (isLastCommandTurnOnSnakeMode) {
-      history.undo();
-    }
+    this.undoLatestSnakeLayout();
 
     this.mode.destroy();
     this.previousModes.push(this.mode);
@@ -2006,6 +1961,22 @@ export class CoreEditor {
       command,
       typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
     );
+  }
+
+  private undoLatestSnakeLayout() {
+    const history = EditorHistory.getInstance(this);
+    const isLatestCommandTurningOnSnakeMode =
+      history.previousCommand?.operations.some((operation) => {
+        return (
+          operation instanceof SelectLayoutModeOperation &&
+          operation.mode === 'snake-layout-mode' &&
+          operation.prevMode !== 'snake-layout-mode'
+        );
+      });
+
+    if (isLatestCommandTurningOnSnakeMode) {
+      history.undo();
+    }
   }
 
   public setMode(mode: BaseMode) {
@@ -2337,6 +2308,12 @@ export class CoreEditor {
       this.micromoleculesEditor?.update(true);
       return;
     }
+
+    // Snake layout is a temporary macro-mode presentation. Follow the same
+    // path used when leaving Snake for another macro layout, so its generated
+    // positions are not exported to the molecules editor.
+    this.undoLatestSnakeLayout();
+
     const restorePreviousMode = this.captureModeState();
     const struct = new Struct();
     const zoomTool = ZoomTool.instance;

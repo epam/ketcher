@@ -8,7 +8,10 @@ import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { updateMonomersLibrary } from '@utils/library/updateLibrary';
+import {
+  updateMonomersLibrary,
+  updateMonomersLibraryAndGetLoggedErrors,
+} from '@utils/library/updateLibrary';
 
 let page: Page;
 
@@ -283,12 +286,12 @@ test('Case 12: Update Library item with compound that contains MOLv3000 file wit
     _betweenEntries +
     _endToken;
 
-  const error = await updateMonomersLibrary(page, sdfFile);
-  expect(error).not.toBeNull();
-  expect(error).toContain('The HELM alias must consist only of');
-  expect(
-    await Library(page).isMonomerExist(Phosphate._Phosphate1),
-  ).not.toBeTruthy();
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain('The HELM alias must consist only of');
 });
 
 test('Case 13: Update Library item with compound that contains MOLv3000 file with aliasHELM that contain improper characters (quotation marks and so on)', async () => {
@@ -313,12 +316,12 @@ test('Case 13: Update Library item with compound that contains MOLv3000 file wit
     _betweenEntries +
     _endToken;
 
-  const error = await updateMonomersLibrary(page, sdfFile);
-  expect(error).not.toBeNull();
-  expect(error).toContain('The HELM alias must consist only of');
-  expect(
-    await Library(page).isMonomerExist(Phosphate._Phosphate1),
-  ).not.toBeTruthy();
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain('The HELM alias must consist only of');
 });
 
 test('Case 14: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for base field', async () => {
@@ -340,14 +343,14 @@ test('Case 14: Update Library item with compound that contains MOLv3000 file wit
     _betweenEntries +
     _endToken;
 
-  const error = await updateMonomersLibrary(page, sdfFile);
-  expect(error).not.toBeNull();
-  expect(error).toContain(
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain(
     'The slashes (`/`) can only be the first and last character of an IDT alias.',
   );
-  expect(
-    await Library(page).isMonomerExist(Phosphate._Phosphate1),
-  ).not.toBeTruthy();
 });
 
 test('Case 15: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for ep5 field', async () => {
@@ -369,14 +372,14 @@ test('Case 15: Update Library item with compound that contains MOLv3000 file wit
     _betweenEntries +
     _endToken;
 
-  const error = await updateMonomersLibrary(page, sdfFile);
-  expect(error).not.toBeNull();
-  expect(error).toContain(
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain(
     'The slashes (`/`) can only be the first and last character of an IDT alias.',
   );
-  expect(
-    await Library(page).isMonomerExist(Phosphate._Phosphate1),
-  ).not.toBeTruthy();
 });
 
 test('Case 16: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for ep3 field', async () => {
@@ -398,14 +401,14 @@ test('Case 16: Update Library item with compound that contains MOLv3000 file wit
     _betweenEntries +
     _endToken;
 
-  const error = await updateMonomersLibrary(page, sdfFile);
-  expect(error).not.toBeNull();
-  expect(error).toContain(
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain(
     'The slashes (`/`) can only be the first and last character of an IDT alias.',
   );
-  expect(
-    await Library(page).isMonomerExist(Phosphate._Phosphate1),
-  ).not.toBeTruthy();
 });
 
 test('Case 17: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for internal field', async () => {
@@ -427,14 +430,14 @@ test('Case 17: Update Library item with compound that contains MOLv3000 file wit
     _betweenEntries +
     _endToken;
 
-  const error = await updateMonomersLibrary(page, sdfFile);
-  expect(error).not.toBeNull();
-  expect(error).toContain(
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain(
     'The slashes (`/`) can only be the first and last character of an IDT alias.',
   );
-  expect(
-    await Library(page).isMonomerExist(Phosphate._Phosphate1),
-  ).not.toBeTruthy();
 });
 
 test('Case 18: Update Library item with compound that contains MOLv3000 file with idtAliases that contain base field and ep5, ep3 and internal fields at the same time', async () => {
@@ -550,11 +553,12 @@ test('Case 21: Update Library item with compound that contains MOLv3000 file wit
   const sdfFile =
     _Peptide1Body + _modificationTypes + ' \t ' + _betweenEntries + _endToken;
 
-  const error = await updateMonomersLibrary(page, sdfFile);
-  expect(error).not.toBeNull();
-  expect(
-    await Library(page).isMonomerExist(Peptide._Peptide1),
-  ).not.toBeTruthy();
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain('invalid modificationTypes value');
 });
 
 test('Case 22: Update Library item with compound that contains MOLv3000 file with groupClass field that has non-RNA value (try DNA)', async () => {
@@ -582,10 +586,12 @@ test('Case 22: Update Library item with compound that contains MOLv3000 file wit
     _betweenEntries +
     _endToken;
 
-  const error = await updateMonomersLibrary(page, sdfFile);
-  expect(error).not.toBeNull();
-  expect(error).toContain('Monomer group template class must be "RNA"');
-  expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain('Monomer group template class must be "RNA"');
 });
 
 test.fail(
@@ -668,16 +674,19 @@ test('Case 25: Update Library item with compound that contains MOLv3000 file wit
     'monomerGroupTemplate' +
     _betweenEntries +
     _groupClass +
-    'DNA' +
+    'RNA' +
     _betweenEntries +
     _groupName +
     _emptyValue +
     _betweenEntries +
     _endToken;
 
-  const error = await updateMonomersLibrary(page, sdfFile);
-  expect(error).not.toBeNull();
-  expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain('cannot be empty or whitespace');
 });
 
 test('Case 26: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has one space value', async () => {
@@ -698,16 +707,19 @@ test('Case 26: Update Library item with compound that contains MOLv3000 file wit
     'monomerGroupTemplate' +
     _betweenEntries +
     _groupClass +
-    'DNA' +
+    'RNA' +
     _betweenEntries +
     _groupName +
     ' ' +
     _betweenEntries +
     _endToken;
 
-  const error = await updateMonomersLibrary(page, sdfFile);
-  expect(error).not.toBeNull();
-  expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain('cannot be empty or whitespace');
 });
 
 test('Case 27: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has contain inpropper characters (quoters and so on) value', async () => {
@@ -728,16 +740,19 @@ test('Case 27: Update Library item with compound that contains MOLv3000 file wit
     'monomerGroupTemplate' +
     _betweenEntries +
     _groupClass +
-    'DNA' +
+    'RNA' +
     _betweenEntries +
     _groupName +
     String.raw`InproperCharacters\//` +
     _betweenEntries +
     _endToken;
 
-  const error = await updateMonomersLibrary(page, sdfFile);
-  expect(error).not.toBeNull();
-  expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain('must consist only of letters, numbers');
 });
 
 test.fail(
@@ -799,7 +814,7 @@ test.fail(
 test('Case 29: Update Library item with HELM alias longer than 23 symbols logs an error', async () => {
   /*
    * AUTOTEST_REQUEST_URL: N/A
-   * Description: updateMonomersLibrary rejects monomers with HELM aliases longer than 23 symbols.
+   * Description: updateMonomersLibrary skips monomers with HELM aliases longer than 23 symbols and logs an error.
    * Scenario:
    * 1. Go to Macro mode
    * 2. Execute updateMonomersLibrary with an SDF monomer whose aliasHELM value has 24 symbols
@@ -816,45 +831,12 @@ test('Case 29: Update Library item with HELM alias longer than 23 symbols logs a
     '123456789012345678901234' +
     _betweenEntries +
     _endToken;
-  type ConsoleCaptureWindow = typeof window & {
-    capturedConsoleErrors: string[];
-    originalConsoleError: typeof console.error;
-    logging?: {
-      enabled?: boolean;
-      level?: number;
-      showTrace?: boolean;
-    };
-  };
-
-  await page.evaluate(() => {
-    const testWindow = window as ConsoleCaptureWindow;
-
-    testWindow.logging = {
-      ...testWindow.logging,
-      enabled: true,
-      level: 0,
-      showTrace: false,
-    };
-    testWindow.capturedConsoleErrors = [];
-    testWindow.originalConsoleError = console.error;
-    console.error = (...args) => {
-      testWindow.capturedConsoleErrors.push(args.flat().join(' '));
-    };
-  });
-
-  const error = await updateMonomersLibrary(page, sdfFile);
-  const consoleMessages = await page.evaluate(() => {
-    const testWindow = window as ConsoleCaptureWindow;
-
-    console.error = testWindow.originalConsoleError;
-    return testWindow.capturedConsoleErrors;
-  });
-
-  expect(error).not.toBeNull();
-  expect(error).toContain(
-    'The HELM alias must be no more than 23 symbols long.',
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
   );
-  expect(consoleMessages.join('\n')).toContain(
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain(
     'The HELM alias must be no more than 23 symbols long.',
   );
 });

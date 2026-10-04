@@ -29,6 +29,7 @@ import { TopToolbarIconButton } from './TopToolbarIconButton';
 import { CustomButtons } from './CustomButtons';
 import { ketcherProvider } from 'ketcher-core';
 import { cloneElement, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { CustomButton } from '../../../../builders/ketcher/CustomButtons';
 
 type VoidFunction = () => void;
@@ -160,6 +161,7 @@ export const TopToolbar = ({
   customButtons,
 }: PanelProps) => {
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>();
+  const { t } = useTranslation('toolbar');
   const { ketcherId } = useAppContext();
   const ketcher = useMemo(
     () => ketcherProvider.getKetcher(ketcherId),
@@ -192,7 +194,7 @@ export const TopToolbar = ({
     >
       <BtnsWpapper>
         <TopToolbarIconButton
-          title="Clear Canvas"
+          title={t('menu.clear')}
           onClick={onClear}
           iconName="clear"
           shortcut={shortcuts.clear}

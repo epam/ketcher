@@ -69,7 +69,7 @@ export class ReactionArrowAddTool implements ArrowAddTool {
       // TODO: need to rework  actions/operations logic
       const firstOp = action.operations[0];
       if (!(firstOp instanceof RxnArrowDelete)) {
-        throw new Error(
+        throw new TypeError(
           'Expected RxnArrowDelete as the first operation of fromArrowAddition',
         );
       }
@@ -87,7 +87,7 @@ export class ReactionArrowAddTool implements ArrowAddTool {
     }
 
     const dragCtx = this.dragCtx;
-    assert(dragCtx != null && dragCtx.action != null);
+    assert(dragCtx?.action != null);
     this.updateResizingState(dragCtx.itemId, true);
     const isSnappingEnabled = !event.ctrlKey;
     dragCtx.action = fromArrowResizing(

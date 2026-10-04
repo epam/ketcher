@@ -2,6 +2,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { type Atom, AtomRadical } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import { editorEvents } from 'application/editor/editorEvents';
 import { ketcherProvider } from 'application/ketcherProvider';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import type { D3SvgElementSelection } from 'application/render/types';
@@ -108,11 +109,11 @@ export class AtomRenderer extends BaseRenderer {
 
     rootElement
       ?.on('mouseover', (event) => {
-        provideEditorInstance().events.mouseOverDrawingEntity.dispatch(event);
+        editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.showHover();
       })
       .on('mouseleave', (event) => {
-        provideEditorInstance().events.mouseLeaveDrawingEntity.dispatch(event);
+        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.hideHover();
       })
       .on('mouseup', (event) => {

@@ -79,7 +79,7 @@ test('Case 2: Check that last selection saves and the icon display the last sele
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await takeLeftToolbarMacromoleculeScreenshot(page);
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await takeLeftToolbarMacromoleculeScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -134,8 +134,8 @@ test('Case 4: Verify that the shortcut as in molecules mode Lasso Selection and 
       title: 'Lasso selection (Shift+Tab)',
     },
     {
-      tool: SelectionToolType.Fragment,
-      testId: SelectionToolType.Fragment,
+      tool: SelectionToolType.Structure,
+      testId: SelectionToolType.Structure,
       title: 'Structure Selection (Shift+Tab)',
     },
   ];
@@ -1085,7 +1085,7 @@ test('Case 30: Check that the user can click on any monomer in the structure to 
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getMonomerLocator(page, Sugar.R).first().click();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -1116,7 +1116,7 @@ test('Case 31: Check that the user can click on any monomer in the structure to 
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getMonomerLocator(page, Sugar.R).first().click();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -1147,7 +1147,7 @@ test('Case 32: Check that the user can click on any monomer in the structure to 
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getSymbolLocator(page, {
     symbolAlias: 'A',
     nodeIndexOverall: 0,
@@ -1179,7 +1179,7 @@ test('Case 33: Check deletion of selected structure by Fragment and Undo ( Flex 
     page,
     'KET/rna-connected-to-benzene-ring.ket',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getMonomerLocator(page, Sugar.R).click();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -1220,7 +1220,7 @@ test('Case 34: Check deletion of selected structure by Fragment and Undo ( Snake
     page,
     'KET/rna-connected-to-benzene-ring.ket',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getMonomerLocator(page, Sugar.R).click();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -1260,7 +1260,7 @@ test('Case 35: Check deletion of selected structure by Fragment and Undo ( Seque
     page,
     'KET/rna-connected-to-benzene-ring.ket',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getSymbolLocator(page, {
     symbolAlias: 'A',
     nodeIndexOverall: 0,
@@ -1304,7 +1304,7 @@ test('Case 36: Check deletion of selected structure by Fragment through right-cl
     page,
     'KET/rna-connected-to-benzene-ring.ket',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getMonomerLocator(page, Sugar.R).click();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -1351,7 +1351,7 @@ test('Case 37: Check deletion of selected structure by Fragment through right-cl
     page,
     'KET/rna-connected-to-benzene-ring.ket',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getMonomerLocator(page, Sugar.R).click();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -1398,7 +1398,7 @@ test('Case 38: Check deletion of selected structure by Fragment through right-cl
     page,
     'KET/rna-connected-to-benzene-ring.ket',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getSymbolLocator(page, {
     symbolAlias: 'A',
     nodeIndexOverall: 0,
@@ -1444,7 +1444,7 @@ test('Case 39: Check that Calculate properties works for selection by Fragment (
     page,
     'KET/rna-connected-to-benzene-ring.ket',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getMonomerLocator(page, Sugar.R).click();
   await MacromoleculesTopToolbar(page).calculateProperties();
   expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
@@ -1474,7 +1474,7 @@ test('Case 40: Check that Calculate properties works for selection by Fragment (
     page,
     'KET/rna-connected-to-benzene-ring.ket',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getMonomerLocator(page, Sugar.R).click();
   await MacromoleculesTopToolbar(page).calculateProperties();
   expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
@@ -1504,7 +1504,7 @@ test('Case 41: Check that Calculate properties works for selection by Fragment (
     page,
     'KET/rna-connected-to-benzene-ring.ket',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getSymbolLocator(page, {
     symbolAlias: 'A',
     nodeIndexOverall: 0,
@@ -1538,7 +1538,7 @@ test('Case 42: Check that Create antisence strand (toolbar icon) works for selec
     MacroFileType.HELM,
     'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getMonomerLocator(page, Sugar.R).first().click();
   await MacromoleculesTopToolbar(page).createAntisenseStrand();
   await takeEditorScreenshot(page, {
@@ -1566,7 +1566,7 @@ test('Case 43: Check that Create antisence strand (toolbar icon) works for selec
     MacroFileType.HELM,
     'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getMonomerLocator(page, Sugar.R).first().click();
   await MacromoleculesTopToolbar(page).createAntisenseStrand();
   await takeEditorScreenshot(page, {
@@ -1594,7 +1594,7 @@ test('Case 44: Check that Create antisence strand (toolbar icon) works for selec
     MacroFileType.HELM,
     'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getSymbolLocator(page, {
     symbolAlias: 'A',
     nodeIndexOverall: 0,
@@ -1625,7 +1625,7 @@ test('Case 45: Check that Create antisence strand (right-click menu) works for s
     MacroFileType.HELM,
     'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getMonomerLocator(page, Sugar.R).first().click();
   const anySymbol = getMonomerLocator(page, {}).first();
   await ContextMenu(page, anySymbol).click(
@@ -1656,7 +1656,7 @@ test('Case 46: Check that Create antisence strand (right-click menu) works for s
     MacroFileType.HELM,
     'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getMonomerLocator(page, Sugar.R).first().click();
   const anySymbol = getMonomerLocator(page, {}).first();
   await ContextMenu(page, anySymbol).click(
@@ -1687,7 +1687,7 @@ test('Case 47: Check that Create antisence strand (right-click menu) works for s
     MacroFileType.HELM,
     'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getSymbolLocator(page, {
     symbolAlias: 'A',
     nodeIndexOverall: 0,
@@ -1720,7 +1720,7 @@ test('Case 48: Check that Fragment selection clearing for micro and macro struct
     page,
     'KET/rna-connected-to-benzene-ring.ket',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getMonomerLocator(page, Sugar.R).first().click();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -1751,7 +1751,7 @@ test('Case 49: Check that Fragment selection clearing for micro and macro struct
     page,
     'KET/rna-connected-to-benzene-ring.ket',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getMonomerLocator(page, Sugar.R).first().click();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -1782,7 +1782,7 @@ test('Case 50: Check that Fragment selection clearing for micro and macro struct
     page,
     'KET/rna-connected-to-benzene-ring.ket',
   );
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await getSymbolLocator(page, {
     symbolAlias: 'A',
     nodeIndexOverall: 0,

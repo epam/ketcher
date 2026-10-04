@@ -33,7 +33,7 @@ class ChargeTool implements Tool {
     const struct = this.editor.render.ctab;
     const molecule = struct.molecule;
     const ci = this.editor.findItem(event, ['atoms']);
-    const atom = ci && ci.map === 'atoms' ? molecule.atoms.get(ci.id) : null;
+    const atom = ci?.map === 'atoms' ? molecule.atoms.get(ci.id) : null;
     if (atom && this.isChargeableAtom(atom)) {
       this.editor.hover(ci);
     } else {
@@ -87,7 +87,7 @@ class ChargeTool implements Tool {
       }
     }
 
-    if (ci && ci.map === 'atoms') {
+    if (ci?.map === 'atoms') {
       const atom = molecule.atoms.get(ci.id);
       if (atom && this.isChargeableAtom(atom)) {
         this.editor.hover(ci);

@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-// stylelint-disable selector-pseudo-class-no-unknown
 @import '../../../../style/variables';
 
 .lookupContainer {
@@ -29,13 +28,15 @@
 .input {
   width: 100%;
 
-  &.input[type=text] {
+  &.input[type='text'] {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     border: 1.5px solid @color-primary-green;
     padding: 5px 8px 5px 24px;
     font-size: 12px;
     line-height: 14px;
 
     &:hover {
+      /* stylelint-disable-next-line declaration-property-value-no-unknown */
       border: 1.5px solid @color-primary-green;
     }
   }
@@ -47,7 +48,7 @@
   color: @color-primary;
   position: absolute;
   top: 50%;
-  left: 6px;
+  inset-inline-start: 6px;
   transform: translate(0, -50%);
 }
 
@@ -60,7 +61,7 @@
 .optionItem {
   li&:global(.MuiAutocomplete-option) {
     padding: 7px 8px 7px 6px;
-    border-left: 2px solid transparent;
+    border-inline-start: 2px solid transparent;
     font-size: 12px;
     line-height: 14px;
     font-weight: 400;
@@ -77,6 +78,7 @@
   line-height: 14px;
 
   &:global(.MuiAutocomplete-noOptions) {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     padding: 8px;
   }
 }
@@ -87,8 +89,10 @@
     padding-bottom: 4px;
   }
 
-  :global(li.MuiAutocomplete-option.Mui-focused), :global(li.MuiAutocomplete-option.Mui-focusVisible) {
-    border-left: 2px solid @color-primary-green;
-    background-color: #F3F5F7;
+  :global(li.MuiAutocomplete-option.Mui-focused),
+  :global(li.MuiAutocomplete-option.Mui-focusVisible) {
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
+    border-inline-start: 2px solid @color-primary-green;
+    background-color: #f3f5f7;
   }
 }

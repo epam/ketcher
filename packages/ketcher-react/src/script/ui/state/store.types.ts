@@ -16,8 +16,11 @@
 
 import type { Struct } from 'ketcher-core';
 import type { OptionsState } from './options/types';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import type { Api } from 'src/script/api';
+import type { ToolVariant } from '../action';
+import type { ThunkAction } from 'redux-thunk';
+import type { Action } from 'redux';
 
 export type {
   AnalyseRoundName,
@@ -62,6 +65,11 @@ export interface StoreState {
   server: Api;
   templates: TemplatesState;
   modal: ModalState;
+  toolbar: {
+    visibleTools: {
+      select: ToolVariant;
+    };
+  };
   options: OptionsState;
   struct?: Struct;
 }
@@ -93,3 +101,10 @@ export type ServerTransformMethod =
   | 'automap'
   | 'check'
   | 'calculate';
+
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  StoreState,
+  unknown,
+  Action<string>
+>;

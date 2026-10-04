@@ -53,6 +53,8 @@ import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import { IconButton } from 'components';
 import type { ThunkDispatch } from 'redux-thunk';
 import type { AnyAction } from 'redux';
+import type { StoreState } from 'src/script/ui/state/store.types';
+import type { CheckOption } from 'src/script/ui/state/options/types';
 
 const saveSchema = {
   title: 'Save',
@@ -114,7 +116,7 @@ interface FormState {
 }
 
 interface CheckState {
-  checkOptions: unknown;
+  checkOptions: CheckOption[];
 }
 
 interface Editor {
@@ -136,7 +138,7 @@ interface SaveDialogProps {
   checkState: CheckState;
   ignoreChiralFlag: boolean;
   editor: Editor;
-  onCheck: (checkOptions: unknown) => void;
+  onCheck: (checkOptions: CheckOption[]) => void;
   onTmplSave: (struct: Struct) => void;
   onResetForm: (prevState: FormState) => void;
   onOk: (result?: unknown) => void;
@@ -731,12 +733,26 @@ const mapStateToProps = (state: AppState) => ({
   editor: state.editor,
 });
 
+type SaveDialogDispatchProps = {
+  onCheck: (checkOptions: CheckOption[]) => void;
+  onTmplSave: (struct: Struct) => void;
+  onResetForm: (prevState: FormState) => void;
+};
+
 const mapDispatchToProps = (
-  dispatch: ThunkDispatch<AppState, undefined, AnyAction>,
-) => ({
-  onCheck: (checkOptions: unknown) => dispatch(check(checkOptions)),
-  onTmplSave: (struct: Struct) => dispatch(saveUserTmpl(struct)),
-  onResetForm: (prevState: FormState) => dispatch(updateFormState(prevState)),
+  dispatch: ThunkDispatch<StoreState, undefined, AnyAction>,
+): SaveDialogDispatchProps => ({
+  onCheck: (checkOptions: CheckOption[]) => {
+    dispatch(check(checkOptions));
+  },
+
+  onTmplSave: (struct: Struct) => {
+    dispatch(saveUserTmpl(struct));
+  },
+
+  onResetForm: (prevState: FormState) => {
+    dispatch(updateFormState(prevState));
+  },
 });
 
 export default connect(

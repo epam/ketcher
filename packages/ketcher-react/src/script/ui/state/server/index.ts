@@ -18,7 +18,8 @@ import {
   ChemicalMimeType,
   KetcherLogger,
   KetSerializer,
-  Struct,
+  type Struct,
+  StereoFlag,
 } from 'ketcher-core';
 import { appUpdate } from '../options/actions';
 import { setStruct } from '../options';
@@ -30,15 +31,15 @@ import { load } from '../shared';
 
 import type { AppDispatch } from '../hooks';
 import type {
+  AppThunk,
   AutomapRequest,
   KetcherCheckErrors,
   ServerTransformMethod,
   StoreState,
 } from '../store.types';
 import type { CheckOption, ServerSettings } from '../options/types';
-import Editor from 'src/script/editor';
-import { Api } from 'src/script/api';
-import { StereoFlag } from 'ketcher-core';
+import type Editor from 'src/script/editor';
+import type { Api } from 'src/script/api';
 
 export function checkServer() {
   return (dispatch: AppDispatch, getState: () => StoreState) => {
@@ -109,10 +110,12 @@ function ketcherCheck(struct: Struct, checkParams: CheckOption[]) {
   return errors;
 }
 
-export function check(optsTypes: CheckOption[]) {
+export function check(optsTypes: CheckOption[]): AppThunk<Promise<void>> {
   return (dispatch: AppDispatch, getState: () => StoreState) => {
     const { editor, server } = getState();
-    if (!editor) return;
+    if (!editor) {
+      return Promise.resolve();
+    }
     const struct = editor.struct();
 
     // recalculate implicit hydrogens before validation
@@ -142,8 +145,8 @@ export function automap(res: AutomapRequest) {
   return serverTransform('automap', res);
 }
 
-export function analyse() {
-  return (dispatch: AppDispatch, getState: () => StoreState) => {
+export function analyse(): AppThunk {
+  return (dispatch, getState) => {
     // reset values to initial state
     dispatch({
       type: 'ANALYSE_LOADING',
@@ -178,7 +181,7 @@ export function analyse() {
 
 export function serverTransform(
   method: ServerTransformMethod,
-  data: Record<string, unknown>,
+  data: Record<string, unknown> = {},
   struct?: Struct,
 ) {
   return (dispatch: AppDispatch, getState: () => StoreState): void => {

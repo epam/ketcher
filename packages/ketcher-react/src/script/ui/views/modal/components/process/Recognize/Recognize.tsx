@@ -15,8 +15,6 @@
  ***************************************************************************/
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { AnyAction } from 'redux';
-import type { ThunkDispatch } from 'redux-thunk';
 import { changeImage, changeVersion } from '../../../../../state/options';
 import type { RecognizeImageFile } from '../../../../../state/options/types';
 
@@ -33,6 +31,7 @@ import { DialogActionButton } from 'src/script/ui/views/modal/components/documen
 import { Icon, StructRender } from 'components';
 import { type Struct, ketcherProvider } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
+import type { AppDispatch } from 'src/script/ui/state/hooks';
 
 type StructStringOrPromise = string | Promise<unknown> | null;
 function isImage(file: File | null): boolean {
@@ -255,9 +254,7 @@ const mapStateToProps = (state: RecognizeState) => ({
     state.options.recognize.version ?? state.options.app.imagoVersions[1],
 });
 
-const mapDispatchToProps = (
-  dispatch: ThunkDispatch<RecognizeState, undefined, AnyAction>,
-) => ({
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
   onImage: (file: RecognizeImageFile) => dispatch(changeImage(file)),
   onRecognize: (file: File | null, ver: string) =>
     dispatch(recognize(file, ver)),

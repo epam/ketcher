@@ -1,5 +1,7 @@
-import type { FC } from 'react';
+import { type FC, useMemo } from 'react';
 import { Item, Submenu } from 'react-contexify';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import MenuSeparator from '../MenuSeparator';
 import useAtomEdit from '../hooks/useAtomEdit';
 import useAtomStereo from '../hooks/useAtomStereo';
@@ -24,6 +26,7 @@ import {
   ketcherProvider,
 } from 'ketcher-core';
 import { atom } from '../../../../data/schema/struct-schema';
+import { resolveTranslatableText } from 'src/script/ui/utils';
 import styles from '../ContextMenu.module.less';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { Icon } from 'components';
@@ -45,67 +48,74 @@ const properties: Array<AtomQueryPropertiesName> = [
   'chirality',
 ];
 
-const atomPropertiesForSubMenu: {
+function getAtomPropertiesForSubMenu(t: TFunction): {
   title: string;
   key: AtomAllAttributeName;
   buttons: { label: string; value: AtomAllAttributeValue }[];
-}[] = [
-  {
-    title: ringBondCount.title,
-    key: 'ringBondCount',
-    buttons:
-      ringBondCount.enumNames?.map((label, id) => ({
-        label,
-        value: ringBondCount.enum?.[id] as AtomAllAttributeValue,
-      })) ?? [],
-  },
-  {
-    title: hCount.title,
-    key: 'hCount',
-    buttons:
-      hCount.enumNames?.map((label, id) => ({
-        label,
-        value: hCount.enum?.[id] as AtomAllAttributeValue,
-      })) ?? [],
-  },
-  {
-    title: substitutionCount.title,
-    key: 'substitutionCount',
-    buttons:
-      substitutionCount.enumNames?.map((label, id) => ({
-        label,
-        value: substitutionCount.enum?.[id] as AtomAllAttributeValue,
-      })) ?? [],
-  },
-  {
-    title: unsaturatedAtom.title,
-    key: 'unsaturatedAtom',
-    buttons: [
-      { label: 'Unsaturated', value: 1 },
-      { label: 'Saturated', value: 0 },
-    ],
-  },
-  {
-    title: implicitHCount.title,
-    key: 'implicitHCount',
-    buttons:
-      implicitHCount.enumNames?.map((label, id) => ({
-        label,
-        value: implicitHCount.enum?.[id] as AtomAllAttributeValue,
-      })) ?? [],
-  },
-  ...properties.map((name) => ({
-    title: atom.properties[name].title,
-    key: name,
-    buttons:
-      atom.properties[name].enumNames?.map((label: string, id: number) => ({
-        label,
-        value: atom.properties[name].enum?.[id] as AtomAllAttributeValue,
-      })) ?? [],
-  })),
-];
+}[] {
+  return [
+    {
+      title: resolveTranslatableText(ringBondCount.title, t) ?? '',
+      key: 'ringBondCount',
+      buttons:
+        ringBondCount.enumNames?.map((label, id) => ({
+          label: resolveTranslatableText(label, t) ?? label,
+          value: ringBondCount.enum?.[id] as AtomAllAttributeValue,
+        })) ?? [],
+    },
+    {
+      title: resolveTranslatableText(hCount.title, t) ?? '',
+      key: 'hCount',
+      buttons:
+        hCount.enumNames?.map((label, id) => ({
+          label: resolveTranslatableText(label, t) ?? label,
+          value: hCount.enum?.[id] as AtomAllAttributeValue,
+        })) ?? [],
+    },
+    {
+      title: resolveTranslatableText(substitutionCount.title, t) ?? '',
+      key: 'substitutionCount',
+      buttons:
+        substitutionCount.enumNames?.map((label, id) => ({
+          label: resolveTranslatableText(label, t) ?? label,
+          value: substitutionCount.enum?.[id] as AtomAllAttributeValue,
+        })) ?? [],
+    },
+    {
+      title: resolveTranslatableText(unsaturatedAtom.title, t) ?? '',
+      key: 'unsaturatedAtom',
+      buttons: [
+        { label: t('components:contextMenu.unsaturated'), value: 1 },
+        { label: t('components:contextMenu.saturated'), value: 0 },
+      ],
+    },
+    {
+      title: resolveTranslatableText(implicitHCount.title, t) ?? '',
+      key: 'implicitHCount',
+      buttons:
+        implicitHCount.enumNames?.map((label, id) => ({
+          label: resolveTranslatableText(label, t) ?? label,
+          value: implicitHCount.enum?.[id] as AtomAllAttributeValue,
+        })) ?? [],
+    },
+    ...properties.map((name) => ({
+      title: resolveTranslatableText(atom.properties[name].title, t) ?? '',
+      key: name,
+      buttons:
+        atom.properties[name].enumNames?.map((label: string, id: number) => ({
+          label: resolveTranslatableText(label, t) ?? label,
+          value: atom.properties[name].enum?.[id] as AtomAllAttributeValue,
+        })) ?? [],
+    })),
+  ];
+}
 
 const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
+  const { t } = useTranslation(['components', 'common']);
+  const atomPropertiesForSubMenu = useMemo(
+    () => getAtomPropertiesForSubMenu(t),
+    [t],
+  );
   const [handleEdit] = useAtomEdit();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
@@ -184,7 +194,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         <MenuSeparator />
         <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
           <Icon name="deleteMenu" className={styles.icon} />
-          <span className={styles.contextMenuText}>Delete</span>
+          <span className={styles.contextMenuText}>{t('common:delete')}</span>
         </Item>
       </>
     );
@@ -193,6 +203,9 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const editMenuItemTitle = props.propsFromTrigger?.extraItemsSelected
     ? 'Edit selected atoms...'
     : 'Edit...';
+  const editMenuItemLabel = props.propsFromTrigger?.extraItemsSelected
+    ? t('components:contextMenu.editSelectedAtomsEllipsis')
+    : t('components:contextMenu.editEllipsis');
 
   const disabledForMonomerCreation = editor.isMonomerCreationWizardActive;
   const showMarkAsMenu = markAsIsVisible();
@@ -204,7 +217,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         <Submenu
           {...props}
           data-testid="Mark as a...-option"
-          label="Mark as a..."
+          label={t('components:contextMenu.markAsMenu')}
           disabled={markAsDisabled}
           className={styles.subMenu}
         >
@@ -217,7 +230,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
               name="base"
               className={clsx(styles.icon, styles.markAsComponentIcon)}
             />
-            <span>Base</span>
+            <span>{t('common:monomerType.base')}</span>
           </Item>
           <Item
             {...props}
@@ -228,7 +241,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
               name="sugar"
               className={clsx(styles.icon, styles.markAsComponentIcon)}
             />
-            <span>Sugar</span>
+            <span>{t('common:monomerType.sugar')}</span>
           </Item>
           <Item
             {...props}
@@ -239,7 +252,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
               name="phosphate"
               className={clsx(styles.icon, styles.markAsComponentIcon)}
             />
-            <span>Phosphate</span>
+            <span>{t('common:monomerType.phosphate')}</span>
           </Item>
         </Submenu>
       )}
@@ -255,7 +268,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         onClick={handleEdit}
       >
         <Icon name="editMenu" className={styles.icon} />
-        <span className={styles.contextMenuText}>{editMenuItemTitle}</span>
+        <span className={styles.contextMenuText}>{editMenuItemLabel}</span>
       </Item>
       <Item
         {...props}
@@ -263,11 +276,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         disabled={stereoDisabled}
         onClick={handleStereo}
       >
-        Enhanced stereochemistry...
+        {t('components:contextMenu.enhancedStereochemistryEllipsis')}
       </Item>
       <Submenu
         {...props}
-        label="Query properties"
+        label={t('components:contextMenu.queryPropertiesMenu')}
         data-testid="Query properties-option"
         style={{ overflow: 'visible' }}
         disabled={disabledForMonomerCreation}
@@ -300,7 +313,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       <MenuSeparator />
       <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         <Icon name="deleteMenu" className={styles.icon} />
-        <span className={styles.contextMenuText}>Delete</span>
+        <span className={styles.contextMenuText}>{t('common:delete')}</span>
       </Item>
     </>
   );

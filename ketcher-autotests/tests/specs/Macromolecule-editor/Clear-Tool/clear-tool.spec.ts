@@ -7,7 +7,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import {} from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';

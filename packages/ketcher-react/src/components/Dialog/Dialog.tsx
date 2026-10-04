@@ -23,6 +23,7 @@ import {
 } from 'react';
 
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 import { Icon } from '../Icon';
 import styles from './Dialog.module.less';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
@@ -86,6 +87,16 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     useDraggable<HTMLDialogElement>({
       enabled: draggable,
     });
+  const { t } = useTranslation('common');
+  // `button` values are also semantic identifiers (see isButtonOk/exit below)
+  // and testids — only their *displayed* text is translated here, by default,
+  // for the well-known tokens. Anything else (or a buttonsNameMap override)
+  // is the caller's own text, untouched.
+  const defaultButtonLabels: Record<string, string> = {
+    OK: t('button.ok'),
+    Cancel: t('button.cancel'),
+    Save: t('button.save'),
+  };
 
   useLayoutEffect(() => {
     const dialogElement = targetRef.current;
@@ -239,7 +250,11 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
                     isPrimary(button) ? styles.ok : styles.cancel,
                     button === 'Save' && styles.save,
                   )}
-                  value={buttonsNameMap?.[button] ?? button}
+                  value={
+                    buttonsNameMap?.[button] ??
+                    defaultButtonLabels[button] ??
+                    button
+                  }
                   disabled={isButtonOk(button) && !valid()}
                   onClick={() => exit(button)}
                   data-testid={button}

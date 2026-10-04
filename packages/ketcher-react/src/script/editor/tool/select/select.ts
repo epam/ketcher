@@ -44,6 +44,7 @@ import { dropAndMerge } from '../helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
 import { updateSelectedAtoms } from '../../../ui/state/modal/atoms';
 import { updateSelectedBonds } from '../../../ui/state/modal/bonds';
+import { isHydrogenBondBetweenMonomers } from '../../../ui/views/components/ContextMenu/utils';
 import { filterNotInContractedSGroup } from '../helper/filterNotInCollapsedSGroup';
 import type { HoverTarget, Tool } from '../Tool';
 import { handleMovingPosibilityCursor } from '../../utils';
@@ -110,7 +111,7 @@ class SelectTool implements Tool {
     this.#lassoHelper = new LassoHelper(
       this.#mode === 'lasso' ? 0 : 1,
       editor,
-      this.#mode === 'fragment',
+      this.#mode === 'structure',
     );
   }
 
@@ -544,6 +545,10 @@ class SelectTool implements Tool {
       });
     } else if (ci.map === 'bonds') {
       const bonds = getSelectedBonds(selection, molecule);
+      if (bonds.some((bond) => isHydrogenBondBetweenMonomers(bond, molecule))) {
+        return true;
+      }
+
       const changeBondPromise = editor.event.bondEdit.dispatch(bonds);
       updateSelectedBonds({
         bonds: selection?.bonds ?? [],

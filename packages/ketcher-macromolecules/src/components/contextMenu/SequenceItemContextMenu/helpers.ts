@@ -1,4 +1,5 @@
 import { flatten, get, merge } from 'lodash';
+import type { TFunction } from 'i18next';
 import {
   Nucleotide,
   Nucleoside,
@@ -102,7 +103,8 @@ const generateNucleoelementTitle = (
 };
 
 export const generateSequenceContextMenuProps = (
-  selections?: NodesSelection,
+  selections: NodesSelection | undefined,
+  t: TFunction,
 ) => {
   if (!selections?.length) return;
 
@@ -156,8 +158,12 @@ export const generateSequenceContextMenuProps = (
     title = generateNucleoelementTitle(selectedSequenceLabeledNodes);
   } else {
     title = isSelectedOnlyNucleoelements
-      ? `${countOfNucleoelements} nucleotides`
-      : `${countOfSelections} elements`;
+      ? t('contextMenu.sequenceItem.nucleotidesCount', {
+          count: countOfNucleoelements,
+        })
+      : t('contextMenu.sequenceItem.elementsCount', {
+          count: countOfSelections,
+        });
   }
 
   return {

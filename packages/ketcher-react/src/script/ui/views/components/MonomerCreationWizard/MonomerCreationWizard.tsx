@@ -2123,7 +2123,9 @@ const MonomerCreationWizardInternal = ({
       <div className={styles.leftColumn}>
         <p className={styles.wizardTitle}>
           <Icon name={CREATE_MONOMER_TOOL_NAME} />
-          {originalMonomerItem ? 'Edit Monomer' : {t('components:contextMenu.createMonomerItem')}}
+          {originalMonomerItem
+            ? 'Edit Monomer'
+            : t('components:contextMenu.createMonomerItem')}
         </p>
 
         <div className={styles.notificationsArea}>

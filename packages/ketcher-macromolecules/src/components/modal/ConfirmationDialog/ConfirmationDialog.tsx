@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { useTranslation } from 'react-i18next';
 import { ConfirmationDialogProps } from 'components/modal/modalContainer';
 import { Modal } from 'components/shared/modal';
 import { ActionButton } from 'components/shared/actionButton';
@@ -11,6 +11,7 @@ export const ConfirmationDialog = ({
   isModalOpen,
   onClose,
 }: ConfirmationDialogProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const handleConfirm = () => {
     onConfirm?.();
     onClose();
@@ -19,7 +20,7 @@ export const ConfirmationDialog = ({
   return (
     <Modal
       isOpen={isModalOpen}
-      title={title ?? 'Confirm your action'}
+      title={title ?? t('confirmationDialog.defaultTitle')}
       onClose={onClose}
       testId="confirmation-dialog"
     >
@@ -30,12 +31,12 @@ export const ConfirmationDialog = ({
       </Modal.Content>
       <Modal.Footer>
         <ActionButton
-          label="Cancel"
+          label={t('common:button.cancel')}
           clickHandler={onClose}
           data-testid="cancel-button"
         />
         <ActionButton
-          label="Yes"
+          label={t('common:button.yes')}
           clickHandler={handleConfirm}
           styleType="secondary"
           data-testid="yes-button"

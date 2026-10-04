@@ -1,6 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -17,7 +15,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { MenuList } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
@@ -47,6 +46,7 @@ export const CDXStructuresViewer = ({
   inputHandler,
   fileName,
 }: CDXStructuresViewerProps) => {
+  const { t } = useTranslation('dialogs');
   const server = useSelector(serverSelector);
   const editorOptions = useSelector(editorOptionsSelector);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -61,27 +61,32 @@ export const CDXStructuresViewer = ({
     }
   }, [inputHandler, itemsMap, selectedIndex]);
 
-  const getImage = (str, index) => {
-    parseStruct(str, server)
-      .then((struct) => {
-        setItemsMap((state) => ({
-          ...state,
-          [index]: { base64struct: str, struct },
-        }));
-      })
-      .catch((error) => {
-        setItemsMap((state) => ({
-          ...state,
-          [index]: { base64struct: str, error: error.message || error },
-        }));
-      });
-  };
+  const getImage = useCallback(
+    (str, index) => {
+      parseStruct(str, server)
+        .then((struct) => {
+          setItemsMap((state) => ({
+            ...state,
+            [index]: { base64struct: str, struct },
+          }));
+        })
+        .catch((error) => {
+          setItemsMap((state) => ({
+            ...state,
+            [index]: { base64struct: str, error: error.message || error },
+          }));
+        });
+    },
+    [server],
+  );
+
+  const currentStructItem = structList[selectedIndex];
 
   useEffect(() => {
-    if (structList[selectedIndex] && !itemsMap[selectedIndex]) {
-      getImage(structList[selectedIndex], selectedIndex);
+    if (currentStructItem && !itemsMap[selectedIndex]) {
+      getImage(currentStructItem, selectedIndex);
     }
-  }, [itemsMap, selectedIndex]);
+  }, [getImage, itemsMap, selectedIndex, currentStructItem]);
 
   const renderStructure = (structure: item) => {
     if (loading) {
@@ -92,7 +97,11 @@ export const CDXStructuresViewer = ({
       );
     }
     if (structure?.error) {
-      return <div>Error: {itemsMap[selectedIndex]?.error}</div>;
+      return (
+        <div>
+          {t('document.cdxViewer.errorLabel')} {itemsMap[selectedIndex]?.error}
+        </div>
+      );
     }
     if (structure?.struct) {
       return (
@@ -109,14 +118,16 @@ export const CDXStructuresViewer = ({
     if (!structList?.length) {
       return (
         <div className={styles.centerWrapper}>
-          <div>No embedded structures found in the file</div>
+          <div>{t('document.cdxViewer.noEmbeddedStructures')}</div>
         </div>
       );
     }
     return (
       <div className={styles.structuresWrapper}>
         <div className={styles.menuListWrapper}>
-          <div className={styles.header}>Select structure</div>
+          <div className={styles.header}>
+            {t('document.cdxViewer.selectStructure')}
+          </div>
           <MenuList>
             {structList.map((value, index) => (
               <MenuItem
@@ -125,7 +136,7 @@ export const CDXStructuresViewer = ({
                 selected={index === selectedIndex}
                 onClick={() => setSelectedIndex(index)}
               >
-                {`Structure ${index + 1}`}
+                {t('document.cdxViewer.structureN', { number: index + 1 })}
                 {itemsMap[index]?.error && <Icon name="error" />}
               </MenuItem>
             ))}
@@ -141,7 +152,8 @@ export const CDXStructuresViewer = ({
   return (
     <div className={styles.wrapper}>
       <div>
-        File: <span className={styles.fileName}>{fileName}</span>
+        {t('document.cdxViewer.fileLabel')}{' '}
+        <span className={styles.fileName}>{fileName}</span>
       </div>
       {renderStructures()}
     </div>

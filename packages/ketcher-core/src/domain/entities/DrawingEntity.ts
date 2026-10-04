@@ -131,7 +131,7 @@ export abstract class DrawingEntity {
     let w0 = new Vec2(0, 0);
     let counter = 0;
     const eps = 1e-5;
-    let flag1 = false;
+    let flag1: boolean;
     let flag0 = false;
 
     for (const point of r) {

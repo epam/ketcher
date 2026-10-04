@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable react-hooks/immutability */
-
 import { xor } from 'lodash/fp';
 
 interface Schema {
@@ -56,12 +54,11 @@ function ButtonList({
   classes,
   testId,
 }: Readonly<ButtonListProps>) {
-  let className: string;
   const selected = classes.selected ?? 'selected';
   return (
     <ul>
       {schema.items.enum.map((item, i) => {
-        className = value.includes(item) ? selected : '';
+        const className = value.includes(item) ? selected : '';
         return (
           <li key={item}>
             <button

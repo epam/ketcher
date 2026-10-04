@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -100,7 +98,7 @@ export class KetcherBuilder {
     let settingsService = this.#settingsService;
     if (!settingsService) {
       settingsService = await SettingsService.getInstance({
-        storage: this.#storageAdapter || new LocalStorageAdapter(),
+        storage: this.#storageAdapter ?? new LocalStorageAdapter(),
         defaults: this.#initialSettings,
         autoSave: true,
         migrateOnLoad: true,

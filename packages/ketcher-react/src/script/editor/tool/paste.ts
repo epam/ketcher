@@ -17,7 +17,7 @@
 
 import {
   type Struct,
-  expandSGroupWithMultipleAttachmentPoint,
+  type EditorTemplate,
   fromItemsFuse,
   fromPaste,
   fromTemplateOnAtom,
@@ -52,8 +52,7 @@ const debouncedSetAndHoverMergeItems = debounce(function (
   );
   pasteToolInstance.setMergeItems(mergeItems);
   notifyItemsToMergeInitializationComplete();
-},
-50);
+}, 50);
 
 class PasteTool implements Tool {
   private readonly editor: Editor;
@@ -74,24 +73,21 @@ class PasteTool implements Tool {
     const rnd = this.editor.render;
     const { clientHeight, clientWidth } = rnd.clientArea;
     const clientAreaRect = rnd.clientArea.getBoundingClientRect();
-    const point = this.editor.lastEvent
-      ? CoordinateTransformation.pageToModel(
-          this.editor.lastEvent as MouseEvent,
-          rnd,
-        )
-      : CoordinateTransformation.pageToModel(
-          {
-            clientX: clientAreaRect.left + clientWidth / 2,
-            clientY: clientAreaRect.top + clientHeight / 2,
-          },
-          rnd,
-        );
+    // Always center the pasted element initially. The mousemove handler will
+    // update the position as the user moves the mouse. Using lastEvent here
+    // would place the element at the position of a previous mouse event,
+    // which could be over an existing element and cause unwanted movement.
+    const point = CoordinateTransformation.pageToModel(
+      {
+        clientX: clientAreaRect.left + clientWidth / 2,
+        clientY: clientAreaRect.top + clientHeight / 2,
+      },
+      rnd,
+    );
 
     const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point);
     this.action = action;
     this.editor.update(this.action, true);
-
-    action.mergeWith(expandSGroupWithMultipleAttachmentPoint(this.restruct));
 
     this.editor.update(this.action, true);
 
@@ -178,7 +174,7 @@ class PasteTool implements Tool {
         pos0 = atom?.pp;
       }
 
-      if (!pos0) {
+      if (!pos0 || atomId === undefined) {
         // Invariant: dragCtx.item always refers to a functional group with a
         // resolvable attachment atom (validated in mousedown). Reaching here
         // with no position indicates a programming error, not a runtime case.
@@ -311,16 +307,8 @@ class PasteTool implements Tool {
   }
 }
 
-type Template = {
-  aid?: number;
-  molecule?: Struct;
-  xy0?: Vec2;
-  angle0?: number;
-};
-
 /** Adds position and angle info to the molecule, similar to Template tool native behavior */
-function prepareTemplateFromSingleGroup(molecule: Struct): Template | null {
-  const template: Template = {};
+function prepareTemplateFromSingleGroup(molecule: Struct): EditorTemplate {
   const sgroup = molecule.sgroups.get(0);
   const xy0 = new Vec2();
 
@@ -328,16 +316,16 @@ function prepareTemplateFromSingleGroup(molecule: Struct): Template | null {
     xy0.add_(atom.pp);
   });
 
-  template.aid = sgroup?.getAttachmentAtomId() ?? 0;
-  template.molecule = molecule;
-  template.xy0 = xy0.scaled(1 / (molecule.atoms.size || 1)); // template center
+  const xy0Center = xy0.scaled(1 / (molecule.atoms.size || 1)); // template center
+  const aid = sgroup?.getAttachmentAtomId() ?? 0;
+  const atom = molecule.atoms.get(aid);
 
-  const atom = molecule.atoms.get(template.aid);
-  if (atom) {
-    template.angle0 = vectorUtils.calcAngle(atom.pp, template.xy0); // center tilt
-  }
-
-  return template;
+  return {
+    aid,
+    bid: 0,
+    molecule,
+    angle0: atom ? vectorUtils.calcAngle(atom.pp, xy0Center) : 0, // center tilt
+  };
 }
 
 export default PasteTool;

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Dialog,
   DialogActions,
@@ -7,6 +6,7 @@ import {
   IconButton,
 } from '@mui/material';
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Icon, KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
@@ -49,7 +49,7 @@ const Header = styled(DialogTitle)<{ hideborder?: boolean }>(
 );
 
 const Title = styled.div({
-  marginRight: '10px',
+  marginInlineEnd: '10px',
   fontSize: '14px',
 });
 
@@ -101,6 +101,7 @@ export const Modal = ({
   testId,
   hideHeaderBorder,
 }: ModalProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const theme = useTheme();
 
   const paperProps = useMemo(
@@ -172,7 +173,9 @@ export const Modal = ({
           <span>
             {showExpandButton && (
               <IconButton
-                title={expanded ? 'Minimize window' : 'Expand window'}
+                title={
+                  expanded ? t('modal.minimizeWindow') : t('modal.expandWindow')
+                }
                 data-testid={'expand-window-button'}
                 className={styles.expandButton}
                 onClick={() => {
@@ -184,7 +187,7 @@ export const Modal = ({
             )}
             {showCloseButton && (
               <IconButton
-                title={'Close window'}
+                title={t('modal.closeWindow')}
                 onClick={onClose}
                 data-testid="close-window-button"
               >

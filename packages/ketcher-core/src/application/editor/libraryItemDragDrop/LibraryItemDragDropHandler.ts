@@ -441,8 +441,9 @@ export class LibraryItemDragDropHandler {
       // renderer.center is already in canvas-space pixels — compare directly.
       const center = renderer.center;
 
-      const dist = Math.sqrt(
-        (cursorCanvas.x - center.x) ** 2 + (cursorCanvas.y - center.y) ** 2,
+      const dist = Math.hypot(
+        cursorCanvas.x - center.x,
+        cursorCanvas.y - center.y,
       );
 
       if (dist < minDist) {
@@ -482,7 +483,7 @@ export class LibraryItemDragDropHandler {
         // The hit monomer must itself be one of the matched components,
         // otherwise the user is hovering a part that the dragged preset does
         // not provide (e.g. a phosphate while dragging a sugar+base preset).
-        if (presetComponents && presetComponents.includes(nearestMonomer)) {
+        if (presetComponents?.includes(nearestMonomer)) {
           return {
             monomer: nearestMonomer,
             kind: 'same-geometry-preset',
@@ -607,7 +608,7 @@ export class LibraryItemDragDropHandler {
         ? this.findPresetMonomerForBonding(addedMonomers, targetAP)
         : monomersAddResult.firstMonomer;
 
-      if (droppedMonomer && droppedMonomer.hasFreeAttachmentPoint) {
+      if (droppedMonomer?.hasFreeAttachmentPoint) {
         targetMonomer.setPotentialSecondAttachmentPoint(targetAP);
         const sourceAP = droppedMonomer.getValidSourcePoint(targetMonomer);
         targetMonomer.setPotentialSecondAttachmentPoint(null);
@@ -1118,9 +1119,9 @@ export class LibraryItemDragDropHandler {
           apName,
         );
 
-        const dist = Math.sqrt(
-          (cursorCanvas.x - apCanvasPos.x) ** 2 +
-            (cursorCanvas.y - apCanvasPos.y) ** 2,
+        const dist = Math.hypot(
+          cursorCanvas.x - apCanvasPos.x,
+          cursorCanvas.y - apCanvasPos.y,
         );
 
         if (dist < minDist) {

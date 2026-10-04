@@ -42,7 +42,6 @@ class ReRxnPlus extends ReObject {
     const s = render.options.microModeScale;
 
     return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8);
-    /* eslint-enable no-mixed-operators */
   }
 
   drawHover(render: Render) {

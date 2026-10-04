@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -96,8 +94,8 @@ class ReRxnArrow extends ReObject {
       dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
     });
 
-    const minDist: MinDistanceWithReferencePoint = dist.reduce((acc, current) =>
-      acc.minDist < current.minDist ? acc : current,
+    const minDist: MinDistanceWithReferencePoint = dist.reduce(
+      (acc, current) => (acc.minDist < current.minDist ? acc : current),
     );
 
     return minDist;

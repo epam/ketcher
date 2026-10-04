@@ -1,3 +1,4 @@
+import { editorEvents } from 'application/editor/editorEvents';
 import type { CoreEditor } from 'application/editor/Editor';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -35,14 +36,11 @@ const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
 export const MONOMER_CSS_CLASS = 'monomer';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
+  private readonly editorEvents: typeof editorEvents;
   private readonly editor: CoreEditor;
-  private get editorEvents() {
-    return provideEditorInstance().events;
-  }
-
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
-  public declare bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
+  declare public bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
@@ -81,6 +79,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   ) {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
+    this.editorEvents = editorEvents;
     this.editor = provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,

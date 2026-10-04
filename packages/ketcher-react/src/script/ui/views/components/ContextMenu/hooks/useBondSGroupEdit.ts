@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import { type ReStruct, ketcherProvider, Pile } from 'ketcher-core';
 import { useCallback, useRef } from 'react';
 import { useAppContext } from 'src/hooks';

@@ -50,8 +50,7 @@ export type ConcreteMonomerEntityClass =
 
 /** All monomer entity classes, including ambiguous. */
 export type MonomerEntityClass =
-  | ConcreteMonomerEntityClass
-  | typeof AmbiguousMonomer;
+  ConcreteMonomerEntityClass | typeof AmbiguousMonomer;
 
 /**
  * Maps a monomer library item (concrete or ambiguous) to the corresponding

@@ -28,7 +28,6 @@ const safePostMessage = (
 };
 
 const StandaloneStructServiceProvider =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   StandaloneStructServiceProviderType as unknown as new () => any;
 
 const structServiceProvider = new StandaloneStructServiceProvider();

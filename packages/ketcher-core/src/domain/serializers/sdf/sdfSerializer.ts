@@ -49,7 +49,7 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
             if (m) {
               const field = m[1];
               const valueArr = pc.split('\n').slice(1, -1);
-              let value = '';
+              let value: string;
               if (valueArr.length > 1) {
                 value = valueArr.join(',');
               } else {

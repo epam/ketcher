@@ -247,12 +247,10 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     );
     await selectPartOfMolecules(page, 10);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
     expect(molecularFormula).toEqual('C3H3');
     expect(molecularMass).toEqual('39.057');
     await CalculateVariablesPanel(page).closeWindow();
@@ -478,7 +476,10 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     );
     await expect(
       CalculateVariablesPanel(page).rnaTab.meltingTemperatureValue,
-    ).not.toBeVisible();
+    ).toBeVisible();
+    await expect(
+      CalculateVariablesPanel(page).rnaTab.meltingTemperatureValue,
+    ).toHaveText('-');
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
@@ -652,7 +653,10 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     );
     await expect(
       CalculateVariablesPanel(page).rnaTab.meltingTemperatureValue,
-    ).not.toBeVisible();
+    ).toBeVisible();
+    await expect(
+      CalculateVariablesPanel(page).rnaTab.meltingTemperatureValue,
+    ).toHaveText('-');
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 

@@ -25,7 +25,7 @@ import ReObject from './reobject';
 import type { Loop } from 'domain/entities/loop';
 import type { Struct } from 'domain/entities/struct';
 import type ReStruct from './restruct';
-import type { RenderOptions } from '../render.types';
+import type { RenderOptions, RenderPath } from '../render.types';
 
 class ReLoop extends ReObject {
   loop: Loop;
@@ -88,7 +88,7 @@ class ReLoop extends ReObject {
       }
     }
 
-    this.centre = this.centre.scaled(1.0 / halfBondIds.length);
+    this.centre = this.centre.scaled(1 / halfBondIds.length);
     this.radius = -1;
     for (const halfBondId of halfBondIds) {
       const halfBond = molecule.halfBonds.get(halfBondId);
@@ -141,7 +141,7 @@ class ReLoop extends ReObject {
       }
     }
 
-    let path = null;
+    let path: RenderPath;
     if (loop.convex && options.aromaticCircle) {
       path = paper.circle(this.centre.x, this.centre.y, this.radius).attr({
         stroke: '#000',
@@ -192,7 +192,7 @@ class ReLoop extends ReObject {
     const { halfBonds } = struct;
     return this.loop.hbs.every((halfBondId) => {
       const halfBond = halfBonds.get(halfBondId);
-      return halfBond !== undefined && halfBond.loop === rlid;
+      return halfBond?.loop === rlid;
     });
   }
 }

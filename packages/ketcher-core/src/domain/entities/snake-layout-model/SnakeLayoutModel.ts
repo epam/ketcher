@@ -191,61 +191,132 @@ export class SnakeLayoutModel {
                 lastTwoStrandedNodeWithHydrogenBondIndex)
           ) {
             nodesBeforeHydrogenConnectionToBase.push(snakeLayoutNode);
+            const previousTwoStrandedNodeWithHydrogenBond =
+              lastTwoStrandedNodeWithHydrogenBond;
             lastTwoStrandedNodeWithHydrogenBond =
               this.nodes[twoStrandedSnakeLayoutNodeIndex];
-            for (
-              let i = 0;
-              i < nodesBeforeHydrogenConnectionToBase.length;
-              i++
-            ) {
-              // need to get rid of this repeated index lookup to reduce complexity
-              twoStrandedSnakeLayoutNodeIndex = twoStrandedSnakeLayoutNode
-                ? this.nodes.indexOf(twoStrandedSnakeLayoutNode)
-                : -1;
 
-              const currentTwoStrandedSnakeLayoutNodeIndex =
-                twoStrandedSnakeLayoutNodeIndex - i;
-              const currentTwoStrandedSnakeLayoutNode =
-                this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
-              const currentNodeBeforeHydrogenConnectionToBase =
-                nodesBeforeHydrogenConnectionToBase[
-                  nodesBeforeHydrogenConnectionToBase.length - 1 - i
-                ];
-              const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =
-                lastTwoStrandedNodeWithHydrogenBond?.senseNode?.monomers[0];
-              const firstMonomerInCurrentTwoStrandedSnakeLayoutNode =
-                currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers[0];
-              const isNodeInSameChain =
-                firstMonomerInLastTwoStrandedNodeWithHydrogenBond &&
-                firstMonomerInCurrentTwoStrandedSnakeLayoutNode &&
-                monomerToChain.get(
-                  firstMonomerInLastTwoStrandedNodeWithHydrogenBond,
-                ) ===
-                  monomerToChain.get(
-                    firstMonomerInCurrentTwoStrandedSnakeLayoutNode,
-                  );
-
-              if (
-                currentTwoStrandedSnakeLayoutNode &&
-                !currentTwoStrandedSnakeLayoutNode.antisenseNode &&
-                isNodeInSameChain
+            if (previousTwoStrandedNodeWithHydrogenBond) {
+              for (
+                let i = 0;
+                i < nodesBeforeHydrogenConnectionToBase.length;
+                i++
               ) {
-                currentTwoStrandedSnakeLayoutNode.antisenseNode =
-                  currentNodeBeforeHydrogenConnectionToBase;
-              } else if (currentTwoStrandedSnakeLayoutNodeIndex < 0) {
-                this.nodes.unshift({
-                  antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
-                  chain: lastTwoStrandedNodeWithHydrogenBond.chain,
-                });
-              } else {
-                this.nodes.splice(
-                  currentTwoStrandedSnakeLayoutNodeIndex + 1,
-                  0,
-                  {
+                // need to get rid of this repeated index lookup to reduce complexity
+                twoStrandedSnakeLayoutNodeIndex = twoStrandedSnakeLayoutNode
+                  ? this.nodes.indexOf(twoStrandedSnakeLayoutNode)
+                  : -1;
+
+                const isLastNodeBeforeHydrogenConnection =
+                  i === nodesBeforeHydrogenConnectionToBase.length - 1;
+                const previousTwoStrandedNodeWithHydrogenBondIndex =
+                  this.nodes.indexOf(previousTwoStrandedNodeWithHydrogenBond);
+                const currentTwoStrandedSnakeLayoutNodeIndex =
+                  isLastNodeBeforeHydrogenConnection
+                    ? twoStrandedSnakeLayoutNodeIndex
+                    : Math.min(
+                        previousTwoStrandedNodeWithHydrogenBondIndex + 1 + i,
+                        twoStrandedSnakeLayoutNodeIndex,
+                      );
+                const currentTwoStrandedSnakeLayoutNode =
+                  this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
+                const currentNodeBeforeHydrogenConnectionToBase =
+                  nodesBeforeHydrogenConnectionToBase[i];
+                const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =
+                  previousTwoStrandedNodeWithHydrogenBond?.senseNode
+                    ?.monomers[0];
+                const firstMonomerInCurrentTwoStrandedSnakeLayoutNode =
+                  currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers[0];
+                const isNodeInSameChain =
+                  firstMonomerInLastTwoStrandedNodeWithHydrogenBond &&
+                  firstMonomerInCurrentTwoStrandedSnakeLayoutNode &&
+                  monomerToChain.get(
+                    firstMonomerInLastTwoStrandedNodeWithHydrogenBond,
+                  ) ===
+                    monomerToChain.get(
+                      firstMonomerInCurrentTwoStrandedSnakeLayoutNode,
+                    );
+
+                if (
+                  currentTwoStrandedSnakeLayoutNode &&
+                  currentTwoStrandedSnakeLayoutNode !==
+                    twoStrandedSnakeLayoutNode &&
+                  !currentTwoStrandedSnakeLayoutNode.antisenseNode &&
+                  isNodeInSameChain
+                ) {
+                  currentTwoStrandedSnakeLayoutNode.antisenseNode =
+                    currentNodeBeforeHydrogenConnectionToBase;
+                } else if (
+                  currentTwoStrandedSnakeLayoutNode ===
+                    twoStrandedSnakeLayoutNode &&
+                  isLastNodeBeforeHydrogenConnection &&
+                  !currentTwoStrandedSnakeLayoutNode.antisenseNode &&
+                  isNodeInSameChain
+                ) {
+                  currentTwoStrandedSnakeLayoutNode.antisenseNode =
+                    currentNodeBeforeHydrogenConnectionToBase;
+                } else {
+                  this.nodes.splice(currentTwoStrandedSnakeLayoutNodeIndex, 0, {
                     antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
                     chain: lastTwoStrandedNodeWithHydrogenBond.chain,
-                  },
-                );
+                  });
+                }
+              }
+            } else {
+              for (
+                let i = 0;
+                i < nodesBeforeHydrogenConnectionToBase.length;
+                i++
+              ) {
+                // need to get rid of this repeated index lookup to reduce complexity
+                twoStrandedSnakeLayoutNodeIndex = twoStrandedSnakeLayoutNode
+                  ? this.nodes.indexOf(twoStrandedSnakeLayoutNode)
+                  : -1;
+
+                const currentTwoStrandedSnakeLayoutNodeIndex =
+                  twoStrandedSnakeLayoutNodeIndex - i;
+                const currentTwoStrandedSnakeLayoutNode =
+                  this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
+                const currentNodeBeforeHydrogenConnectionToBase =
+                  nodesBeforeHydrogenConnectionToBase[
+                    nodesBeforeHydrogenConnectionToBase.length - 1 - i
+                  ];
+                const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =
+                  lastTwoStrandedNodeWithHydrogenBond?.senseNode?.monomers[0];
+                const firstMonomerInCurrentTwoStrandedSnakeLayoutNode =
+                  currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers[0];
+                const isNodeInSameChain =
+                  firstMonomerInLastTwoStrandedNodeWithHydrogenBond &&
+                  firstMonomerInCurrentTwoStrandedSnakeLayoutNode &&
+                  monomerToChain.get(
+                    firstMonomerInLastTwoStrandedNodeWithHydrogenBond,
+                  ) ===
+                    monomerToChain.get(
+                      firstMonomerInCurrentTwoStrandedSnakeLayoutNode,
+                    );
+
+                if (
+                  currentTwoStrandedSnakeLayoutNode &&
+                  !currentTwoStrandedSnakeLayoutNode.antisenseNode &&
+                  isNodeInSameChain
+                ) {
+                  currentTwoStrandedSnakeLayoutNode.antisenseNode =
+                    currentNodeBeforeHydrogenConnectionToBase;
+                } else if (currentTwoStrandedSnakeLayoutNodeIndex < 0) {
+                  this.nodes.unshift({
+                    antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
+                    chain: lastTwoStrandedNodeWithHydrogenBond.chain,
+                  });
+                } else {
+                  this.nodes.splice(
+                    currentTwoStrandedSnakeLayoutNodeIndex + 1,
+                    0,
+                    {
+                      antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
+                      chain: lastTwoStrandedNodeWithHydrogenBond.chain,
+                    },
+                  );
+                }
               }
             }
 

@@ -32,7 +32,7 @@ interface Props {
 const Label = styled.label(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  marginRight: '8px',
+  marginInlineEnd: '8px',
   color: theme.ketcher.color.text.primary,
   fontSize: '12px',
 }));

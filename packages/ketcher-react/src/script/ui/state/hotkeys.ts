@@ -36,6 +36,7 @@ import {
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
+import { restorePersistedSelectionTool } from './selectionToolPersistence';
 
 import actions from '../action';
 import { isIE } from 'react-device-detect';
@@ -128,7 +129,9 @@ function handleAbbreviationLookup(key: string, state, dispatch, event) {
     clearTimeout(abbreviationLookupTimeoutId);
     abbreviationLookupTimeoutId = undefined;
 
-    const resetAction = SettingsManager.getSettings().selectionTool;
+    const resetAction = restorePersistedSelectionTool(
+      SettingsManager.getSelectionTool('micro'),
+    );
     dispatch(onAction(resetAction));
 
     event.preventDefault();
@@ -178,7 +181,7 @@ function handleRotateEscape(editor) {
 
 function isActionDisabledOrHidden(actionState, actName): boolean {
   return (
-    (actionState[actName] && actionState[actName].disabled === true) ||
+    actionState[actName]?.disabled === true ||
     actionState[actName]?.hidden === true
   );
 }
@@ -202,7 +205,9 @@ function shouldHandleItemDirectly(
 
 function handleSelectTool(newAction, key: string, index: number) {
   if (key === 'Escape') {
-    return SettingsManager.getSettings().selectionTool;
+    return restorePersistedSelectionTool(
+      SettingsManager.getSelectionTool('micro'),
+    );
   }
   if (index === -1) {
     return {};
@@ -248,6 +253,13 @@ function handleHotkeyGroup(
     event.preventDefault();
     return;
   }
+
+  if (actName === 'undo' || actName === 'redo') {
+    // A history entry can switch editors while this key event is still bubbling.
+    event.stopImmediatePropagation();
+  }
+
+  removeNotRenderedStruct(actionTool, group, undefined, dispatch);
 
   if (clipArea.actions.indexOf(actName) === -1) {
     let newAction = getNextAction(actName);
@@ -306,7 +318,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   const hoveredItem =
     getHoveredItem(render.ctab, editor) ?? getHoveredItemFromCursor(editor);
 
-  if (key && key.length === 1 && !hoveredItem) {
+  if (key?.length === 1 && !hoveredItem) {
     const abbreviationLookupHandled = handleAbbreviationLookup(
       key,
       state,

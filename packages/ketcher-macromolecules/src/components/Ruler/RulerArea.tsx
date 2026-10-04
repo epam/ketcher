@@ -175,10 +175,7 @@ export const RulerArea = () => {
   const scrollToKeepHandleVisible = useCallback(
     (sliderTranslateValue: number, dragDelta = 0) => {
       const zoomTool = editor?.zoomTool;
-      const visibleEdges = getVisibleEdges(
-        editor?.canvas.parentElement,
-        rootWidth,
-      );
+      const visibleEdges = getVisibleEdges(canvasContainer, rootWidth);
       if (!zoomTool || !visibleEdges) {
         return;
       }
@@ -200,7 +197,7 @@ export const RulerArea = () => {
         zoomTool.scrollBy(leftOvershoot, 0);
       }
     },
-    [editor?.zoomTool, editor?.canvas.parentElement, rootWidth],
+    [editor?.zoomTool, canvasContainer, rootWidth],
   );
 
   const handleDrag = useCallback(

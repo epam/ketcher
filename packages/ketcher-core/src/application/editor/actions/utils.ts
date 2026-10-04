@@ -265,7 +265,7 @@ function getSpatialPenalty(
     Math.cos(candidateAngle),
     Math.sin(candidateAngle),
   );
-  candidatePos.add_(origin); // eslint-disable-line no-underscore-dangle
+  candidatePos.add_(origin);
 
   const atomPenalty = nearbyAtoms.reduce((score, atomPos) => {
     const distance = Vec2.dist(candidatePos, atomPos);
@@ -396,7 +396,7 @@ export function atomForNewBond(
     neighbours.push({ id: nei.aid, v: neiDirection });
     blockedAngles.push(Math.atan2(neiDirection.y, neiDirection.x));
 
-    restruct.molecule.atomGetNeighbors(nei.aid).forEach((neiNei) => {
+    (restruct.molecule.atomGetNeighbors(nei.aid) ?? []).forEach((neiNei) => {
       if (neiNei.aid === id) {
         return;
       }

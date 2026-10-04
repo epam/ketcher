@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/use-memo */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -43,6 +42,9 @@ import {
   ToolName,
   AtomRenderer,
   BaseRenderer,
+  BondRenderer,
+  SGroupRenderer,
+  SettingsManager,
   guardForMacromoleculesEditor,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
@@ -58,6 +60,11 @@ import {
 } from 'state/types';
 import { calculateBondPreviewPosition } from 'ketcher-react';
 import { loadDefaultPresets, loadMonomerLibrary } from 'state/library';
+import {
+  isMacroSelectionTool,
+  MACRO_SELECTION_TOOL_OPTIONS,
+} from 'components/menu/constants';
+import { useIndigoVersionToRedux } from './hooks/useIndigoVersionToRedux';
 
 const noPreviewTools = [ToolName.bondSingle, ToolName.selectRectangle];
 
@@ -77,6 +84,8 @@ export const EditorEvents = () => {
     dispatch(loadDefaultPresets(editor?.defaultRnaPresetsLibraryItems));
   }, [editor]);
 
+  useIndigoVersionToRedux();
+
   useEffect(() => {
     editor?.events.updateMonomersLibrary.add(handleMonomersLibraryUpdate);
 
@@ -88,7 +97,6 @@ export const EditorEvents = () => {
   useEffect(() => {
     const onSelectSelectionTool = () => {
       editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);
-      dispatch(selectTool(lastSelectedSelectionMenuItem));
     };
 
     if (editor) {
@@ -101,8 +109,15 @@ export const EditorEvents = () => {
   }, [dispatch, editor, lastSelectedSelectionMenuItem]);
 
   useEffect(() => {
-    const handler = ([toolName]: [string]) => {
+    const selectToolHandler = ([toolName]: [string]) => {
       dispatch(selectTool(toolName));
+
+      if (isMacroSelectionTool(toolName)) {
+        SettingsManager.setSelectionTool('macro', {
+          tool: 'select',
+          opts: MACRO_SELECTION_TOOL_OPTIONS[toolName],
+        });
+      }
     };
     const handleError = (errorText: string) => {
       dispatch(openErrorTooltip(errorText));
@@ -122,18 +137,24 @@ export const EditorEvents = () => {
     if (editor) {
       editor.events.error.add(handleError);
       editor.events.openErrorModal.add(handleOpenErrorModal);
-      dispatch(selectTool('select-rectangle'));
-      editor.events.selectTool.dispatch(['select-rectangle']);
       editor.events.openMonomerConnectionModal.add(
         handleOpenMonomerConnectionModal,
       );
       editor.events.openConfirmationDialog.add(handleOpenConfirmationDialog);
-      editor.events.selectTool.add(handler);
+      editor.events.selectTool.add(selectToolHandler);
+
+      // Initialize with saved selection tool or default to rectangle
+      const savedSelectionTool = SettingsManager.getSelectionTool('macro');
+      const initialTool = savedSelectionTool?.opts
+        ? `select-${savedSelectionTool.opts}`
+        : 'select-rectangle';
+
+      editor.events.selectTool.dispatch([initialTool]);
     }
 
     return () => {
       dispatch(selectTool(null));
-      editor?.events.selectTool.remove(handler);
+      editor?.events.selectTool.remove(selectToolHandler);
       editor?.events.error.remove(handleError);
       editor?.events.openErrorModal.remove(handleOpenErrorModal);
       editor?.events.openMonomerConnectionModal.remove(
@@ -313,11 +334,15 @@ export const EditorEvents = () => {
     [handleOpenBondPreview, debouncedShowPreview, presets, isContextMenuActive],
   );
 
-  const handleOpenAtomLabelTooltip = useCallback(
+  const handleOpenDrawingEntityTooltip = useCallback(
     (e) => {
       const renderer: BaseRenderer = e.target.__data__;
 
-      if (!(renderer instanceof AtomRenderer)) {
+      if (
+        !(renderer instanceof AtomRenderer) &&
+        !(renderer instanceof BondRenderer) &&
+        !(renderer instanceof SGroupRenderer)
+      ) {
         return;
       }
 
@@ -344,7 +369,7 @@ export const EditorEvents = () => {
     editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
     editor?.events.mouseOverPolymerBond.add(handleOpenPreview);
     editor?.events.mouseLeavePolymerBond.add(handleClosePreview);
-    editor?.events.mouseOverDrawingEntity.add(handleOpenAtomLabelTooltip);
+    editor?.events.mouseOverDrawingEntity.add(handleOpenDrawingEntityTooltip);
     editor?.events.mouseLeaveDrawingEntity.add(handleClosePreview);
 
     const onMoveHandler = (e) => {
@@ -372,7 +397,9 @@ export const EditorEvents = () => {
       editor?.events.mouseLeaveSequenceItem.remove(handleClosePreview);
       editor?.events.mouseOverPolymerBond.remove(handleOpenPreview);
       editor?.events.mouseLeavePolymerBond.remove(handleClosePreview);
-      editor?.events.mouseOverDrawingEntity.remove(handleOpenAtomLabelTooltip);
+      editor?.events.mouseOverDrawingEntity.remove(
+        handleOpenDrawingEntityTooltip,
+      );
       editor?.events.mouseLeaveDrawingEntity.remove(handleClosePreview);
 
       editor?.events.mouseOnMoveMonomer.remove(onMoveHandler);
@@ -387,7 +414,7 @@ export const EditorEvents = () => {
     activeTool,
     handleOpenPreview,
     handleClosePreview,
-    handleOpenAtomLabelTooltip,
+    handleOpenDrawingEntityTooltip,
   ]);
 
   useEffect(() => {

@@ -87,9 +87,8 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
 
     await dialog.submit();
 
-    const notificationText = await NotificationBannerOnMicro(
-      page,
-    ).getNotificationText();
+    const notificationText =
+      await NotificationBannerOnMicro(page).getNotificationText();
     expect(notificationText).toContain(
       'The preset was successfully added to the library',
     );
@@ -150,9 +149,8 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
 
     await dialog.submit();
 
-    const notificationText = await NotificationBannerOnMicro(
-      page,
-    ).getNotificationText();
+    const notificationText =
+      await NotificationBannerOnMicro(page).getNotificationText();
     expect(notificationText).toContain(
       'The preset was successfully added to the library',
     );
@@ -304,9 +302,8 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await dialog.submit();
 
     // Verify success message appears
-    const notificationText = await NotificationBannerOnMicro(
-      page,
-    ).getNotificationText();
+    const notificationText =
+      await NotificationBannerOnMicro(page).getNotificationText();
     expect(notificationText).toContain(
       'The preset was successfully added to the library',
     );
@@ -345,9 +342,8 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
 
     await dialog.submit();
 
-    const notificationText = await NotificationBannerOnMicro(
-      page,
-    ).getNotificationText();
+    const notificationText =
+      await NotificationBannerOnMicro(page).getNotificationText();
     expect(notificationText).toContain(
       'The monomer was successfully added to the library',
     );

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,9 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable react-hooks/refs */
-
 import { useState, useRef, useCallback, useEffect, RefObject } from 'react';
+import { useTranslation } from 'react-i18next';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR, Icon } from 'ketcher-react';
 import { ZoomInput } from 'components/ZoomControls/ZoomInput';
 import { ZoomTool } from 'ketcher-core';
@@ -36,18 +34,35 @@ import {
   hotkeysShortcuts,
   updateInputString,
 } from 'components/ZoomControls/helpers';
+import { useAppSelector } from 'hooks';
+import { selectEditor } from 'state/common';
 
 export const ZoomControls = () => {
+  const { t } = useTranslation('macromolecules');
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [currentZoom, setCurrentZoom] = useState<number>(100);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerElement, setContainerElement] =
+    useState<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const editor = useAppSelector(selectEditor);
+  const zoomTool = editor?.zoomTool;
+
   useEffect(() => {
-    ZoomTool?.instance?.subscribeOnZoomEvent(() => {
-      setCurrentZoom(Math.round(ZoomTool?.instance?.getZoomLevel() * 100));
-    });
-  }, [ZoomTool?.instance]);
+    if (!zoomTool) {
+      return;
+    }
+
+    const handler = () => {
+      setCurrentZoom(Math.round(zoomTool.getZoomLevel() * 100));
+    };
+
+    zoomTool.subscribeOnZoomEvent(handler);
+
+    return () => {
+      zoomTool.unsubscribeOnZoomEvent(handler);
+    };
+  }, [zoomTool]);
 
   const onZoomSubmit = useCallback(() => {
     const inputEl = inputRef.current;
@@ -83,7 +98,7 @@ export const ZoomControls = () => {
   };
 
   return (
-    <ElementAndDropdown ref={containerRef}>
+    <ElementAndDropdown ref={setContainerElement}>
       <DropDownButton onClick={onExpand} data-testid="zoom-selector">
         <ZoomLabel data-testid="zoom-input">{currentZoom}%</ZoomLabel>
         <Icon name="chevron" />
@@ -92,7 +107,7 @@ export const ZoomControls = () => {
       <Dropdown
         open={isExpanded}
         onClose={onClose}
-        anchorEl={containerRef.current}
+        anchorEl={containerElement}
         container={document.querySelector(
           KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
         )}
@@ -114,26 +129,26 @@ export const ZoomControls = () => {
           />
           <ZoomControlButton
             data-testid="zoom-out"
-            title="Zoom Out"
+            title={t('zoom.zoomOutTitle')}
             onClick={onZoomOut}
           >
-            <span>Zoom out</span>
+            <span>{t('zoom.zoomOutLabel')}</span>
             <ShortcutLabel>{hotkeysShortcuts['zoom-minus']}</ShortcutLabel>
           </ZoomControlButton>
           <ZoomControlButton
             data-testid="zoom-in"
-            title="Zoom In"
+            title={t('zoom.zoomInTitle')}
             onClick={onZoomIn}
           >
-            <span>Zoom in</span>
+            <span>{t('zoom.zoomInLabel')}</span>
             <ShortcutLabel>{hotkeysShortcuts['zoom-plus']}</ShortcutLabel>
           </ZoomControlButton>
           <ZoomControlButton
             data-testid="zoom-default"
-            title="Zoom 100%"
+            title={t('zoom.zoomReset')}
             onClick={onZoomReset}
           >
-            <span>Zoom 100%</span>
+            <span>{t('zoom.zoomReset')}</span>
             <ShortcutLabel>{hotkeysShortcuts['zoom-reset']}</ShortcutLabel>
           </ZoomControlButton>
         </DropDownContent>

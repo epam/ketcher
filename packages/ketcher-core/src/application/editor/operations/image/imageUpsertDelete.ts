@@ -31,7 +31,10 @@ interface ImageDeleteData {
 
 export class ImageUpsert extends BaseOperation<ImageUpsertData> {
   readonly data: ImageUpsertData;
-  constructor(private readonly image: Image, id?: number) {
+  constructor(
+    private readonly image: Image,
+    id?: number,
+  ) {
     super(OperationType.IMAGE_UPSERT);
     this.data = { id };
   }
@@ -39,10 +42,8 @@ export class ImageUpsert extends BaseOperation<ImageUpsertData> {
   execute(reStruct: ReStruct) {
     const struct = reStruct.molecule;
 
-    if (this.data.id === undefined) {
-      this.data.id = struct.images.newId();
-    }
-    const id = this.data.id;
+    const id = this.data.id ?? struct.images.newId();
+    this.data.id = id;
     const item = this.image.clone();
     struct.images.set(id, item);
     reStruct.images.set(id, new ReImage(item));

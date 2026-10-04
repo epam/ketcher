@@ -29,7 +29,10 @@ import { EditorStatePreview, RootState } from 'state';
 import { PreviewType } from 'state/types';
 import { ThemeType } from 'theming/defaultTheme';
 import { PresetPosition } from 'ketcher-react';
-import { SELECT_SUBMENU_ID } from 'components/menu/constants';
+import {
+  isMacroSelectionTool,
+  SELECT_SUBMENU_ID,
+} from 'components/menu/constants';
 
 export enum MolarMeasurementUnit {
   nanoMol = 'nM',
@@ -53,7 +56,7 @@ interface AppMeta {
 interface EditorState {
   ketcherId: string;
   isReady: boolean | null;
-  activeTool: string;
+  activeTool: string | null;
   editor: CoreEditor | undefined;
   monomerLibraryLoadError: string | null;
   editorLayoutMode: LayoutMode | undefined;
@@ -125,8 +128,12 @@ export const editorSlice: Slice<EditorState> = createSlice({
     ) => {
       state.monomerLibraryLoadError = action.payload;
     },
-    selectTool: (state, action: PayloadAction<string>) => {
+    selectTool: (state, action: PayloadAction<string | null>) => {
       state.activeTool = action.payload;
+
+      if (isMacroSelectionTool(action.payload)) {
+        state.selectedMenuGroupItems[SELECT_SUBMENU_ID] = action.payload;
+      }
     },
     setPosition: (state, action: PayloadAction<PresetPosition>) => {
       state.position = action.payload;
@@ -146,7 +153,6 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state.monomerLibraryLoadError = null;
 
       const editor = new CoreEditor({
-        ketcherId: action.payload.ketcherId,
         theme: action.payload.theme,
         canvas: action.payload.canvas,
         renderersContainer: new RenderersManager({
@@ -229,17 +235,8 @@ export const editorSlice: Slice<EditorState> = createSlice({
     setOligonucleotidesValue: (state, action: PayloadAction<number>) => {
       state.oligonucleotidesValue = action.payload;
     },
-    setAppMeta: (state, action: PayloadAction<AppMeta>) => {
-      state.app = action.payload;
-    },
-    setSelectedMenuGroupItem: (
-      state,
-      action: PayloadAction<{ groupName: string; activeItemName: string }>,
-    ) => {
-      state.selectedMenuGroupItems = {
-        ...state.selectedMenuGroupItems,
-        [action.payload.groupName]: action.payload.activeItemName,
-      };
+    setIndigoVersion: (state, action: PayloadAction<string>) => {
+      state.app.indigoVersion = action.payload;
     },
   },
 });
@@ -265,8 +262,7 @@ export const {
   setEditorLineLength,
   setUnipositiveIonsValue,
   setOligonucleotidesValue,
-  setAppMeta,
-  setSelectedMenuGroupItem,
+  setIndigoVersion,
 } = editorSlice.actions;
 
 export const selectShowPreview = (state: RootState): EditorStatePreview =>

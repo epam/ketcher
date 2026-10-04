@@ -19,7 +19,10 @@ import { assert } from 'utilities';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class MonomerMicromolecule extends SGroup {
-  constructor(type: string, public monomer: BaseMonomer) {
+  constructor(
+    type: string,
+    public monomer: BaseMonomer,
+  ) {
     super(type);
     this.data.absolute = false;
     this.data.attached = false;

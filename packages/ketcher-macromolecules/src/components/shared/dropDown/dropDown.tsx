@@ -42,12 +42,13 @@ const DropDownSelect = styled(Select)`
     open &&
     css`
       background-color: white;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
     `}
 
   & .MuiSelect-select {
-    padding: 0 24px 0 8px;
+    padding-block: 0;
+    padding-inline: 8px 24px;
     height: 100%;
     display: flex;
     align-items: center;
@@ -79,7 +80,7 @@ const DropDownItem = styled(MenuItem)`
   font-size: 12px;
 
   &.MuiButtonBase-root:hover {
-    border-left: 2px solid #167782;
+    border-inline-start: 2px solid #167782;
   }
 
   & .MuiTypography-root {
@@ -121,11 +122,11 @@ export const DropDown = ({
     : undefined;
 
   const renderLabelById = (value: unknown) => {
-    const selectedOption = options.filter(
+    const selectedOption = options.find(
       (option) => option.id === (value as typeof currentSelection),
-    )[0];
+    );
 
-    return <span>{selectedOption.label}</span>;
+    return <span>{selectedOption?.label ?? ''}</span>;
   };
 
   const handleSelection = (event) => {
@@ -146,7 +147,7 @@ export const DropDown = ({
 
   return (
     <StyledFormControl className={className}>
-      {label && <label htmlFor="fileformat">File format:</label>}
+      {label && <label htmlFor="fileformat">{label}</label>}
       <DropDownSelect
         value={currentSelection}
         onChange={handleSelection}

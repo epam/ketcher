@@ -19,7 +19,7 @@ const createMonomer = (
       label,
       props,
     },
-  } as BaseMonomer);
+  }) as BaseMonomer;
 
 describe('getEditInstanceInitialValues', () => {
   it('loads amino acid fields for Edit Instance with copies for user-editable aliases', () => {

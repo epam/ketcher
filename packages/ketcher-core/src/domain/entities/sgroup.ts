@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -64,7 +62,7 @@ export class SGroupBracketParams {
   }
 }
 
-type SGroupContext = typeof SgContexts[keyof typeof SgContexts];
+type SGroupContext = (typeof SgContexts)[keyof typeof SgContexts];
 
 interface SGroupData {
   [key: string]: unknown;
@@ -321,9 +319,11 @@ export class SGroup {
     validateUniqueness = true,
   ): void {
     const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
-      ({ atomId, leaveAtomId }) =>
+      ({ atomId, leaveAtomId, attachmentId, attachmentPointNumber }) =>
         attachmentPoint.atomId === atomId &&
-        attachmentPoint.leaveAtomId === leaveAtomId,
+        attachmentPoint.leaveAtomId === leaveAtomId &&
+        attachmentPoint.attachmentId === attachmentId &&
+        attachmentPoint.attachmentPointNumber === attachmentPointNumber,
     );
 
     if (isAttachmentPointAlreadyExist && validateUniqueness) {
@@ -337,8 +337,7 @@ export class SGroup {
 
   addAttachmentPoints(
     attachmentPoints:
-      | ReadonlyArray<SGroupAttachmentPoint>
-      | SGroupAttachmentPoint[],
+      ReadonlyArray<SGroupAttachmentPoint> | SGroupAttachmentPoint[],
     validateUniqueness = true,
   ): void {
     for (const attachmentPoint of attachmentPoints) {
@@ -719,7 +718,7 @@ export class SGroup {
           const d = atomSet.has(b.begin)
             ? b.getDir(mol)
             : b.getDir(mol).negated();
-          brackets.push(new SGroupBracketParams(c, d, 0.2, 1.0));
+          brackets.push(new SGroupBracketParams(c, d, 0.2, 1));
         }
       })();
     }
@@ -794,7 +793,7 @@ export class SGroup {
     });
 
     if (xBonds.length !== 0 && xBonds.length !== 2) {
-      throw Error('Unsupported cross-bonds number');
+      throw new Error('Unsupported cross-bonds number');
     }
 
     let xAtom1 = -1;
@@ -872,7 +871,7 @@ export class SGroup {
     for (const atomId of atoms) {
       const atom = mol.atoms.get(atomId);
       assert(atom, `SGroup.getMassCentre: atom ${atomId} is not found`);
-      c = c.addScaled(atom.pp, 1.0 / atoms.length);
+      c = c.addScaled(atom.pp, 1 / atoms.length);
     }
     return c;
   }

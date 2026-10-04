@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/use-memo */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -25,7 +23,11 @@ import {
   MonomerOrAmbiguousType,
   isAmbiguousMonomerLibraryItem,
 } from 'ketcher-core';
-import { useAppSelector, useDebouncedShowPreview } from 'hooks';
+import {
+  useAppSelector,
+  useDebouncedShowPreview,
+  useSequenceEditInRNABuilderMode,
+} from 'hooks';
 import { selectEditor } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
 import { PreviewType } from 'state';
@@ -46,17 +48,23 @@ const MonomerGroup = ({
 }: IMonomerGroupProps) => {
   const editor = useAppSelector(selectEditor);
   const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
+  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
   const isMonomerDisabled = (monomer: MonomerOrAmbiguousType) => {
-    if (isAmbiguousMonomerLibraryItem(monomer)) {
-      return false;
-    }
-
-    const monomerItem = monomer as MonomerItemType;
-
     if (disabled) {
       return disabled;
     }
 
+    if (isAmbiguousMonomerLibraryItem(monomer)) {
+      if (isSequenceEditInRNABuilderMode) {
+        return false;
+      }
+      const groupValidations = groupName
+        ? activeGroupItemValidations[groupName]
+        : undefined;
+      return groupValidations?.includes('DISABLED') ?? false;
+    }
+
+    const monomerItem = monomer as MonomerItemType;
     const monomerValidations =
       activeGroupItemValidations[`${monomerItem.props?.MonomerClass}s`];
     if (monomerValidations?.length > 0 && monomerItem.props?.MonomerCaps) {

@@ -24,6 +24,5 @@ export function imageToKet(imageNode: KetFileNode) {
     format: (imageNode as KetFileImageNode).format,
     boundingBox: (imageNode as KetFileImageNode).boundingBox,
     data: imageNode.data,
-    selected: imageNode.selected,
   };
 }

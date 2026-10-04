@@ -59,21 +59,21 @@ export function paperPathFromSVGElement(
 
   if (tagName === 'circle') {
     // Convert circle to Paper.js Path.Circle
-    const cx = parseFloat(element.getAttribute('cx') ?? '0');
-    const cy = parseFloat(element.getAttribute('cy') ?? '0');
-    const r = parseFloat(element.getAttribute('r') ?? '0');
+    const cx = Number.parseFloat(element.getAttribute('cx') ?? '0');
+    const cy = Number.parseFloat(element.getAttribute('cy') ?? '0');
+    const r = Number.parseFloat(element.getAttribute('r') ?? '0');
     path = new paperjs.Path.Circle(new paperjs.Point(cx, cy), r);
   } else if (tagName === 'rect') {
     // Convert rectangle to Paper.js Path.Rectangle
-    const x = parseFloat(element.getAttribute('x') ?? '0');
-    const y = parseFloat(element.getAttribute('y') ?? '0');
-    const width = parseFloat(element.getAttribute('width') ?? '0');
-    const height = parseFloat(element.getAttribute('height') ?? '0');
+    const x = Number.parseFloat(element.getAttribute('x') ?? '0');
+    const y = Number.parseFloat(element.getAttribute('y') ?? '0');
+    const width = Number.parseFloat(element.getAttribute('width') ?? '0');
+    const height = Number.parseFloat(element.getAttribute('height') ?? '0');
     path = new paperjs.Path.Rectangle(
       new paperjs.Rectangle(x, y, width, height),
       new paperjs.Size(
-        parseFloat(element.getAttribute('rx') || '0'),
-        parseFloat(element.getAttribute('ry') || '0'),
+        Number.parseFloat(element.getAttribute('rx') || '0'),
+        Number.parseFloat(element.getAttribute('ry') || '0'),
       ),
     );
   } else if (tagName === 'path') {
@@ -283,12 +283,12 @@ class ReSGroup extends ReObject {
         const atom = render?.ctab?.atoms?.get(aid);
 
         hoversToCombine.push(atom?.makeHoverPlate(render));
-      }, this);
+      });
       SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach((bid) => {
         hoversToCombine.push(
           render?.ctab?.bonds?.get(bid)?.makeHoverPlate(render),
         );
-      }, this);
+      });
 
       const elements: SVGElement[] = [];
 
@@ -371,7 +371,7 @@ class ReSGroup extends ReObject {
         const atom = render?.ctab?.atoms?.get(aid);
 
         set.push(atom?.makeMonomerAttachmentPointHighlightPlate(render));
-      }, this);
+      });
 
       render.ctab.addReObjectPath(LayerMap.atom, this.visel, set);
       this.expandedMonomerAttachmentPoints = render.paper.setFinish();

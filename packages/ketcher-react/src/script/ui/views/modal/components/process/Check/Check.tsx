@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,6 +15,7 @@
  ***************************************************************************/
 
 import { type ComponentType, type FC, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
@@ -27,26 +27,17 @@ import { Dialog } from '../../../../components';
 import ErrorsCheck from './components';
 import { check } from '../../../../../state/server';
 import { checkOpts } from '../../../../../state/options';
+import type {
+  CheckOption,
+  OptionsCheckState,
+} from '../../../../../state/options/types';
 import style from './Check.module.less';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
+import i18n from 'src/i18n/i18n';
 
 interface MoleculeErrors {
   [key: string]: string;
 }
-
-type CheckOption =
-  | 'valence'
-  | 'radicals'
-  | 'isotopes'
-  | 'pseudoatoms'
-  | 'stereo'
-  | 'query'
-  | 'overlapping_atoms'
-  | 'overlapping_bonds'
-  | 'rgroups'
-  | 'chiral'
-  | '3d'
-  | 'chiral_flag';
 
 interface CheckSchema {
   title: string;
@@ -64,10 +55,7 @@ interface CheckSchema {
   };
 }
 
-interface CheckState {
-  checkOptions: CheckOption[];
-  [key: string]: unknown;
-}
+type CheckState = OptionsCheckState;
 
 interface CheckFormState extends FormState<CheckState> {
   moleculeErrors: MoleculeErrors;
@@ -102,11 +90,11 @@ interface State {
 }
 
 const checkSchema: CheckSchema = {
-  title: 'Check',
+  title: i18n.t('dialogs:process.check.schemaTitle'),
   type: 'object',
   properties: {
     checkOptions: {
-      title: 'Settings',
+      title: i18n.t('toolbar:menu.settings'),
       type: 'array',
       items: {
         type: 'string',
@@ -125,18 +113,18 @@ const checkSchema: CheckSchema = {
           '3d',
         ],
         enumNames: [
-          'Valence',
-          'Radical',
-          'Isotopes',
-          'Pseudoatom',
-          'Stereochemistry',
-          'Chirality',
-          'Chiral flag',
-          'Query',
-          'Overlapping Atoms',
-          'Overlapping Bonds',
-          'R-Groups',
-          '3D Structure',
+          i18n.t('dialogs:process.check.options.valence'),
+          i18n.t('dialogs:process.check.options.radical'),
+          i18n.t('dialogs:process.check.options.isotopes'),
+          i18n.t('dialogs:process.check.options.pseudoatom'),
+          i18n.t('dialogs:process.check.options.stereochemistry'),
+          i18n.t('dialogs:process.check.options.chirality'),
+          i18n.t('dialogs:process.check.options.chiralFlag'),
+          i18n.t('dialogs:process.check.options.query'),
+          i18n.t('dialogs:process.check.options.overlappingAtoms'),
+          i18n.t('dialogs:process.check.options.overlappingBonds'),
+          i18n.t('dialogs:process.check.options.rGroups'),
+          i18n.t('dialogs:process.check.options.structure3d'),
         ],
       },
     },
@@ -169,6 +157,7 @@ const FooterContent: FC<FooterContentProps> = ({
   isStructureChecking,
   isCheckedWithNewSettings,
 }) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   return (
     <div className={style.buttons}>
       <div>
@@ -182,7 +171,7 @@ const FooterContent: FC<FooterContentProps> = ({
           disabled={!isStructureChecking}
           data-testid="Check"
         >
-          Check
+          {t('dialogs:process.check.checkButton')}
         </button>
       </div>
       <div className={style.buttonsRight}>
@@ -191,7 +180,7 @@ const FooterContent: FC<FooterContentProps> = ({
           onClick={onCancel}
           data-testid="Cancel"
         >
-          Cancel
+          {t('common:button.cancel')}
         </button>
         <button
           className={style.buttonPrimary}
@@ -199,7 +188,7 @@ const FooterContent: FC<FooterContentProps> = ({
           disabled={!isStructureChecking}
           data-testid="Apply"
         >
-          Apply
+          {t('common:button.apply')}
         </button>
       </div>
     </div>
@@ -207,6 +196,7 @@ const FooterContent: FC<FooterContentProps> = ({
 };
 
 const CheckDialog: FC<CheckDialogProps> = (props) => {
+  const { t } = useTranslation('dialogs');
   const { formState, checkState, onCheck, onApply, onCancel, ...restProps } =
     props;
   const { result = checkState, moleculeErrors } = formState;
@@ -229,13 +219,15 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
   const handleSettingsChange = () => setIsCheckedWithNewSettings(false);
 
   useEffect(() => {
+    // Decided to suppress because this is intended behaviour for this component
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     handleCheck();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <Dialog
-      title="Structure Check"
+      title={t('process.check.dialogTitle')}
       className={style.dialog_body}
       params={{ ...restProps, onCancel }}
       buttons={[]}
@@ -258,7 +250,9 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
       >
         <div className={style.wrapper}>
           <div className={style.settings}>
-            <span className={style.sectionTitle}>Settings</span>
+            <span className={style.sectionTitle}>
+              {t('toolbar:menu.settings')}
+            </span>
             <div
               className={!isStructureChecking ? style.checkBoxesDisabled : ''}
             >
@@ -274,7 +268,7 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
           </div>
           <div className={style.checkInfo}>
             <span data-testid={'checkInfo-lastCheck'}>
-              Last check:{' '}
+              {t('process.check.lastCheck')}{' '}
               {lastCheckDate && getFormattedDateString(lastCheckDate)}
             </span>
             <div
@@ -304,6 +298,15 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
             </div>
           </div>
         </div>
+        <p
+          className={style.idsExplanation}
+          data-testid="check-structure-id-explanation"
+        >
+          Some checks will return atom or bond IDs for the elements causing the
+          error. To visualize them toggle on the &apos;Show Atom IDs&apos; and
+          &apos;Show Bond IDs&apos; in the &apos;Debugging&apos; section of
+          Settings.
+        </p>
       </Form>
     </Dialog>
   );

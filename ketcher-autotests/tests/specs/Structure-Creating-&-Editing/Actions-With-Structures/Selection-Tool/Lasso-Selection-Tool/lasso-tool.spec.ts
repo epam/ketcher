@@ -21,6 +21,26 @@ import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
+const xAxis = 250;
+const yAxis = 200;
+
+async function selectObjects(page: Page, xAxis: number, yAxis: number) {
+  const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
+  await page.mouse.move(point.x - xAxis, point.y - yAxis);
+  await page.mouse.down();
+  await page.mouse.move(point.x + xAxis, point.y - yAxis);
+  await page.mouse.move(point.x + xAxis, point.y + yAxis);
+  await page.mouse.move(point.x - xAxis, point.y + yAxis);
+  await waitForRender(page, async () => {
+    await page.mouse.up();
+  });
+  return point;
+}
+
+async function clickCanvas(page: Page) {
+  await clickOnCanvas(page, xAxis, yAxis, { from: 'pageTopLeft' });
+}
+
 test.describe('Lasso Selection tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -28,25 +48,6 @@ test.describe('Lasso Selection tool', () => {
 
   const xDelta = 30;
   const yDelta = 60;
-  const xAxis = 250;
-  const yAxis = 200;
-
-  async function selectObjects(page: Page, xAxis: number, yAxis: number) {
-    const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await page.mouse.move(point.x - xAxis, point.y - yAxis);
-    await page.mouse.down();
-    await page.mouse.move(point.x + xAxis, point.y - yAxis);
-    await page.mouse.move(point.x + xAxis, point.y + yAxis);
-    await page.mouse.move(point.x - xAxis, point.y + yAxis);
-    await waitForRender(page, async () => {
-      await page.mouse.up();
-    });
-    return point;
-  }
-
-  async function clickCanvas(page: Page) {
-    await clickOnCanvas(page, xAxis, yAxis, { from: 'pageTopLeft' });
-  }
 
   test('Selection of atom/bond/molecule', async ({ page }) => {
     /*

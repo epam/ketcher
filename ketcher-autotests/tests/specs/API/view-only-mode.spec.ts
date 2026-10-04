@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { expect, test } from '@fixtures';
 import {
   waitForPageInit,
@@ -122,7 +121,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       }
     });
     await page.evaluate(() => {
-      window.ketcher.editor.setOptions(
+      globalThis.window.ketcher.editor.setOptions(
         JSON.stringify({ viewOnlyMode123: `false123` }),
       );
     });

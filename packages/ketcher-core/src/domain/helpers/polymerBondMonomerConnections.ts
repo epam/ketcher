@@ -25,9 +25,9 @@ const getMonomerClass = (monomer?: BaseMonomer) =>
 const isPolymerBondLike = (bond: unknown): bond is PolymerBondLike =>
   Boolean(
     bond &&
-      typeof bond === 'object' &&
-      'getAnotherMonomer' in bond &&
-      !(bond instanceof MonomerToAtomBond),
+    typeof bond === 'object' &&
+    'getAnotherMonomer' in bond &&
+    !(bond instanceof MonomerToAtomBond),
   );
 
 const isRnaBaseOrAmbiguousRnaBase = (monomer?: BaseMonomer): boolean =>
@@ -83,9 +83,9 @@ export const isMonomerConnectedToR2RnaBase = (
 
   return Boolean(
     isRnaBaseOrAmbiguousRnaBase(r1ConnectedMonomer) &&
-      getSugarFromRnaBase(r1ConnectedMonomer) &&
-      isPolymerBondLike(r2PolymerBond) &&
-      r2PolymerBond.getAnotherMonomer(r1ConnectedMonomer) === monomer,
+    getSugarFromRnaBase(r1ConnectedMonomer) &&
+    isPolymerBondLike(r2PolymerBond) &&
+    r2PolymerBond.getAnotherMonomer(r1ConnectedMonomer) === monomer,
   );
 };
 

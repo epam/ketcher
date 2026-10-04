@@ -1,4 +1,3 @@
-/* eslint-disable no-empty-pattern */
 import { test as utils } from '../utilsFixtures';
 import { test as pageObjects } from '../commonPageObjectFixtures';
 import { waitForIndigoToLoad, waitForKetcherInit } from '@utils';
@@ -17,6 +16,7 @@ export const test = mergeTests(utils, pageObjects).extend<
       CommonTopRightToolbar,
       resetZoomLevelToDefault,
       clearLocalStorage,
+      resetClipboard,
       resetSettingsValuesToDefault,
     },
     use,
@@ -35,6 +35,7 @@ export const test = mergeTests(utils, pageObjects).extend<
     await resetZoomLevelToDefault(page);
     await resetSettingsValuesToDefault(page);
     await clearLocalStorage(page);
+    await resetClipboard(page);
     await use();
   },
   initMoleculesCanvas: [

@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 
 type NotificationBannerOnMacroLocators = {
@@ -25,7 +24,7 @@ export const NotificationBannerOnMacro = (page: Page) => {
     async waitForBecomeVisible(timeout?: number) {
       return await locators.message.waitFor({
         state: 'visible',
-        ...(timeout !== undefined ? { timeout } : {}),
+        ...(timeout === undefined ? {} : { timeout }),
       });
     },
 

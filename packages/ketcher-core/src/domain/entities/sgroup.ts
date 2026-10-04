@@ -37,6 +37,15 @@ export enum SUPERATOM_CLASS {
   PHOSPHATE = 'PHOSPHATE',
 }
 
+export const SUPERATOM_CLASS_TEXT = {
+  [SUPERATOM_CLASS.BASE]: 'Base',
+  [SUPERATOM_CLASS.SUGAR]: 'Sugar',
+  [SUPERATOM_CLASS.PHOSPHATE]: 'Phosphate',
+};
+
+const isSuperatomClass = (value?: string | null): value is SUPERATOM_CLASS =>
+  typeof value === 'string' && value in SUPERATOM_CLASS_TEXT;
+
 export class SGroupBracketParams {
   readonly c: Vec2;
   readonly d: Vec2;
@@ -53,7 +62,7 @@ export class SGroupBracketParams {
   }
 }
 
-type SGroupContext = typeof SgContexts[keyof typeof SgContexts];
+type SGroupContext = (typeof SgContexts)[keyof typeof SgContexts];
 
 interface SGroupData {
   [key: string]: unknown;
@@ -310,9 +319,11 @@ export class SGroup {
     validateUniqueness = true,
   ): void {
     const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
-      ({ atomId, leaveAtomId }) =>
+      ({ atomId, leaveAtomId, attachmentId, attachmentPointNumber }) =>
         attachmentPoint.atomId === atomId &&
-        attachmentPoint.leaveAtomId === leaveAtomId,
+        attachmentPoint.leaveAtomId === leaveAtomId &&
+        attachmentPoint.attachmentId === attachmentId &&
+        attachmentPoint.attachmentPointNumber === attachmentPointNumber,
     );
 
     if (isAttachmentPointAlreadyExist && validateUniqueness) {
@@ -326,8 +337,7 @@ export class SGroup {
 
   addAttachmentPoints(
     attachmentPoints:
-      | ReadonlyArray<SGroupAttachmentPoint>
-      | SGroupAttachmentPoint[],
+      ReadonlyArray<SGroupAttachmentPoint> | SGroupAttachmentPoint[],
     validateUniqueness = true,
   ): void {
     for (const attachmentPoint of attachmentPoints) {
@@ -428,6 +438,20 @@ export class SGroup {
 
   public get isMonomer() {
     return false;
+  }
+
+  public get superatomLabel(): string {
+    const name = this.data.name?.trim();
+    if (name) {
+      return name;
+    }
+
+    const superatomClass = this.data.class;
+    if (isSuperatomClass(superatomClass)) {
+      return SUPERATOM_CLASS_TEXT[superatomClass];
+    }
+
+    return '';
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {
@@ -608,7 +632,7 @@ export class SGroup {
     const currentRender = render ?? window.ketcher?.editor?.render;
     assert(currentRender, 'SGroup.bracketPos: render instance is required');
     let attachmentPointsVBox =
-      currentRender.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms);
+      currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms) ?? null;
     attachmentPointsVBox = attachmentPointsVBox
       ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
       : attachmentPointsVBox;
@@ -694,7 +718,7 @@ export class SGroup {
           const d = atomSet.has(b.begin)
             ? b.getDir(mol)
             : b.getDir(mol).negated();
-          brackets.push(new SGroupBracketParams(c, d, 0.2, 1.0));
+          brackets.push(new SGroupBracketParams(c, d, 0.2, 1));
         }
       })();
     }
@@ -769,7 +793,7 @@ export class SGroup {
     });
 
     if (xBonds.length !== 0 && xBonds.length !== 2) {
-      throw Error('Unsupported cross-bonds number');
+      throw new Error('Unsupported cross-bonds number');
     }
 
     let xAtom1 = -1;
@@ -847,7 +871,7 @@ export class SGroup {
     for (const atomId of atoms) {
       const atom = mol.atoms.get(atomId);
       assert(atom, `SGroup.getMassCentre: atom ${atomId} is not found`);
-      c = c.addScaled(atom.pp, 1.0 / atoms.length);
+      c = c.addScaled(atom.pp, 1 / atoms.length);
     }
     return c;
   }

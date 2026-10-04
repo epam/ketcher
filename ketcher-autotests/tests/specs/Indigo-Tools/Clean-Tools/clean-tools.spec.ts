@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { Page, test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
@@ -300,8 +298,8 @@ test.describe('Indigo Tools - Clean Tools', () => {
     const doubleBond = getBondLocator(page, { bondId: 18 });
     const box = await doubleBond.boundingBox();
     if (!box) throw new Error('Bond bounding box not found');
-    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
-    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
     await page.mouse.move(
       coordinatesToStartSelection,
       coordinatesToStartSelection,
@@ -327,8 +325,8 @@ test.describe('Indigo Tools - Clean Tools', () => {
     const doubleBond = getBondLocator(page, { bondId: 18 });
     const box = await doubleBond.boundingBox();
     if (!box) throw new Error('Bond bounding box not found');
-    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
-    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
     await page.mouse.move(
       coordinatesToStartSelection,
       coordinatesToStartSelection,

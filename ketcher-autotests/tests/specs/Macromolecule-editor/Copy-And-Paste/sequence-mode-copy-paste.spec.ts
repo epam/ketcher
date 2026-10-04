@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -165,7 +164,6 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
       await copyToClipboardByKeyboard(page);
       await takeEditorScreenshot(page);
 
-      await CommonTopLeftToolbar(page).undo();
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
     },

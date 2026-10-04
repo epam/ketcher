@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type RefObject, useRef } from 'react';
 import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
 import {
   type ToolbarGroupItemCallProps,
@@ -40,11 +39,13 @@ import { RGroup } from './RGroup';
 import { Shape } from './Shape';
 import classes from './LeftToolbar.module.less';
 import clsx from 'clsx';
-import { useInView } from 'react-intersection-observer';
 import { useResizeObserver } from '../../../../../hooks';
+import { useVerticalToolbarScroll } from '../useVerticalToolbarScroll';
 
-interface LeftToolbarProps
-  extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
+interface LeftToolbarProps extends Omit<
+  ToolbarGroupItemProps,
+  'id' | 'options'
+> {
   className?: string;
 }
 
@@ -115,26 +116,17 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
 const LeftToolbar = (props: Props) => {
   const { className, ...rest } = props;
   const { ref, height } = useResizeObserver<HTMLDivElement>();
-  const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
-  const [startRef, startInView] = useInView({ threshold: 1 });
-  const [endRef, endInView] = useInView({ threshold: 1 });
-  const sizeRef = useRef(null) as RefObject<HTMLDivElement | null>;
-
-  const scrollUp = () => {
-    if (!scrollRef.current || !sizeRef.current) {
-      return;
-    }
-
-    scrollRef.current.scrollTop -= sizeRef.current.offsetHeight;
-  };
-
-  const scrollDown = () => {
-    if (!scrollRef.current || !sizeRef.current) {
-      return;
-    }
-
-    scrollRef.current.scrollTop += sizeRef.current.offsetHeight;
-  };
+  const {
+    scrollContainerRef,
+    scrollStepRef,
+    startRef,
+    endRef,
+    startInView,
+    endInView,
+    isOverflowing,
+    scrollBack,
+    scrollForward,
+  } = useVerticalToolbarScroll();
 
   return (
     <div
@@ -144,7 +136,7 @@ const LeftToolbar = (props: Props) => {
     >
       <div
         className={classes.buttons}
-        ref={scrollRef}
+        ref={scrollContainerRef}
         data-testid="left-toolbar-buttons"
       >
         <div className={classes.listener} ref={startRef}>
@@ -180,7 +172,7 @@ const LeftToolbar = (props: Props) => {
           height={height}
           rest={rest}
         />
-        <div className={classes.listener} ref={sizeRef}>
+        <div className={classes.listener} ref={scrollStepRef}>
           <Group
             className={classes.groupItem}
             items={[
@@ -220,12 +212,12 @@ const LeftToolbar = (props: Props) => {
           />
         </div>
       </div>
-      {height && (scrollRef?.current?.scrollHeight || 0) > height && (
+      {height && isOverflowing && (
         <ArrowScroll
           startInView={startInView}
           endInView={endInView}
-          scrollForward={scrollDown}
-          scrollBack={scrollUp}
+          scrollForward={scrollForward}
+          scrollBack={scrollBack}
         />
       )}
     </div>

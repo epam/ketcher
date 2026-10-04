@@ -54,11 +54,13 @@ export class Action {
   }
 
   isDummy(restruct?: ReStruct) {
-    return (
-      this.operations.find(
-        // TODO [RB] the condition is always true for op.* operations
-        (operation) => (restruct ? !operation.isDummy(restruct) : true),
-      ) === undefined
+    // An action is a dummy when every one of its operations is a no-op.
+    // When `restruct` is provided each operation is asked whether it changes
+    // anything (operations that don't override `isDummy` always count as a
+    // real change). Without `restruct` we can only tell that an action with no
+    // operations is a dummy.
+    return !this.operations.some((operation) =>
+      restruct ? !operation.isDummy(restruct) : true,
     );
   }
 }

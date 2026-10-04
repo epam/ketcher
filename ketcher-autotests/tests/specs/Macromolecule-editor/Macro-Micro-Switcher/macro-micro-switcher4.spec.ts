@@ -1,6 +1,3 @@
-/* eslint-disable no-self-compare */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -72,7 +69,7 @@ test(`Verify that undo/redo functionality restores deleted bonds correctly in ma
   await CommonLeftToolbar(page).erase();
 
   const bondsToDelete = [
-    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
+    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 138 },
     { bondType: BondType.Double, bondStereo: BondStereo.None },
     { bondType: BondType.Triple },
     { bondType: BondType.Any },
@@ -188,11 +185,11 @@ test(`Verify that deleting a bond in macro mode removes the bond while maintaini
   await takeEditorScreenshot(page);
 
   await CommonLeftToolbar(page).erase();
-  // 106 113 120 121
-  await getBondLocator(page, { bondId: 106 }).first().click({ force: true });
-  await getBondLocator(page, { bondId: 113 }).first().click({ force: true });
-  await getBondLocator(page, { bondId: 120 }).first().click({ force: true });
-  await getBondLocator(page, { bondId: 121 }).first().click({ force: true });
+  // 108 115 122 123
+  await getBondLocator(page, { bondId: 108 }).first().click({ force: true });
+  await getBondLocator(page, { bondId: 115 }).first().click({ force: true });
+  await getBondLocator(page, { bondId: 122 }).first().click({ force: true });
+  await getBondLocator(page, { bondId: 123 }).first().click({ force: true });
 
   await takeEditorScreenshot(page);
 });
@@ -237,6 +234,31 @@ test(`Verify that small molecules with any bond type retain their representation
   await openFileAndAddToCanvasAsNewProject(
     page,
     'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
+  );
+  await takeEditorScreenshot(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await takeEditorScreenshot(page);
+});
+
+test(`Verify that a thick foreground bond flanked by wedges renders identically in molecules and macromolecules modes`, async ({
+  MoleculesCanvas: _,
+}) => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6234
+   * Description: A Single Up bond whose both atoms are the wide end of a
+   *              neighboring Single Up bond renders as a uniform "thick
+   *              foreground" parallelogram, and the flanking wedges join it
+   *              seamlessly. This representation must not change when switching
+   *              from molecules to macromolecules mode (no taper, no sliver).
+   *
+   * Case: 1. Load a structure with a thick foreground bond flanked by two wedges at Micro
+   *       2. Take screenshot to witness the molecules-mode representation
+   *       3. Switch to Macro
+   *       4. Take screenshot - the bond and the wedge joins must match molecules mode
+   */
+  await openFileAndAddToCanvasAsNewProject(
+    page,
+    'KET/Micro-Macro-Switcher/Thick foreground bond flanked by wedges.mol',
   );
   await takeEditorScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -640,7 +662,7 @@ test(`Verify that selecting a bond highlights it properly, even in complex struc
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
 
   const bondsToDrag = [
-    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
+    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 138 },
     { bondType: BondType.Double, bondStereo: BondStereo.None },
     { bondType: BondType.Triple },
     { bondType: BondType.Any },

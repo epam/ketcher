@@ -22,6 +22,65 @@ export const MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH = 200;
 
 export const MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE = `The monomer group template name must not exceed ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH} characters.`;
 
+export const MODIFICATION_TYPES_MAX_LENGTH = 200;
+
+export const MODIFICATION_TYPES_EMPTY_ERROR_MESSAGE =
+  "The modificationTypes couldn't be empty";
+
+// Modification types that mark a monomer as unknown, ambiguous, or a plain
+// molecule. Such monomers must not be added to or shown in the library (#8133).
+export const DISALLOWED_MONOMER_MODIFICATION_TYPES = [
+  'Ambiguous mixed peptide',
+  'Unknown peptide',
+  'Ambiguous alternative sugar',
+  'Ambiguous mixed sugar',
+  'Unknown sugar',
+  'Ambiguous mixed DNA base',
+  'Ambiguous mixed RNA base',
+  'Ambiguous mixed base',
+  'Unknown base',
+  'Ambiguous alternative phosphate',
+  'Ambiguous mixed phosphate',
+  'Unknown phosphate',
+  'Unknown unsplit nucleotide',
+  'Ambiguous alternative CHEM',
+  'Ambiguous mixed CHEM',
+  'Unknown CHEM',
+  'Unknown monomer',
+  'Molecule',
+  'Micromolecule',
+] as const;
+
+export const DISALLOWED_MODIFICATION_TYPE_ERROR_MESSAGE =
+  'Monomers with an unknown, ambiguous, or molecule modification type cannot be added to the library.';
+
+const disallowedModificationTypesSet = new Set<string>(
+  DISALLOWED_MONOMER_MODIFICATION_TYPES,
+);
+
+/**
+ * Returns the modification types of a monomer that are not allowed in the
+ * library (unknown / ambiguous / molecule markers). Returns an empty array when
+ * the monomer has no modification types or all of them are allowed.
+ *
+ * `modificationTypes` originates from parsed, untrusted library JSON, so it may
+ * not actually be an array at runtime (e.g. a caller passing a bare string).
+ * The `Array.isArray` guard turns such malformed input into an empty result
+ * instead of a `TypeError`, which would otherwise escape the per-monomer loop
+ * in `Editor.updateMonomersLibrary` and abort the whole chunk.
+ */
+export function getDisallowedModificationTypes(
+  modificationTypes?: string[],
+): string[] {
+  if (!Array.isArray(modificationTypes)) {
+    return [];
+  }
+
+  return modificationTypes.filter((type) =>
+    disallowedModificationTypesSet.has(type),
+  );
+}
+
 const HELM_ALIAS_REGEX = /^(?!.*\s)[A-Za-z0-9_*.[\]()-]+$/;
 const BILN_ALIAS_REGEX = /^[A-Za-z0-9_*-]+$/;
 
@@ -76,4 +135,46 @@ export function isMonomerSgroupWithAttachmentPoints(monomer: BaseMonomer) {
     monomer.monomerItem.props.isMicromoleculeFragment &&
     sgroups.some((sgroup) => sgroup.isSuperatomWithoutLabel)
   );
+}
+
+/**
+ * Validates the modificationTypes value according to the format requirements:
+ * - Optional field
+ * - Max length 200 characters (total sum of all elements)
+ * - Any symbol except formatting ones (tabs, newlines, etc.)
+ * - Spaces allowed
+ * - An empty array is valid (no modification types)
+ * - Cannot contain only whitespace/formatting characters
+ *
+ * @param modificationTypes - The value to validate (can be string[] or undefined)
+ * @returns true if valid, false if invalid
+ */
+export function isValidModificationTypes(
+  modificationTypes?: string[],
+): boolean {
+  // If modificationTypes is not provided or is not an array, it's valid (optional field)
+  if (!modificationTypes || !Array.isArray(modificationTypes)) {
+    return true;
+  }
+
+  if (modificationTypes.length === 0) {
+    return true;
+  }
+
+  // Trim spaces from all elements before validation
+  const trimmedTypes = modificationTypes.map((type) => type.trim());
+
+  // Check if all elements are empty after trimming
+  const hasNonEmptyContent = trimmedTypes.some((type) => type.length > 0);
+  if (!hasNonEmptyContent) {
+    return false;
+  }
+
+  // Check total length of all trimmed elements combined
+  const totalLength = trimmedTypes.reduce((sum, type) => sum + type.length, 0);
+  if (totalLength > MODIFICATION_TYPES_MAX_LENGTH) {
+    return false;
+  }
+
+  return true;
 }

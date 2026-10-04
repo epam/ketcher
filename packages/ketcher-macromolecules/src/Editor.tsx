@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -34,6 +35,8 @@ import {
   SetEditorLineLengthAction,
   NodeSelection,
   NodesSelection,
+  isPasteContentAvailable,
+  DeepPartial,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -66,7 +69,6 @@ import {
 } from 'hooks';
 import { closeErrorTooltip, selectErrorTooltips } from 'state/modal';
 import { ModalContainer } from 'components/modal/modalContainer';
-import { DeepPartial } from './types';
 import { EditorClassName } from 'ketcher-react';
 import { Snackbar } from '@mui/material';
 import {
@@ -132,7 +134,6 @@ interface EditorProps {
 }
 
 interface EditorContainerProps extends EditorProps {
-  onInit?: (editor: CoreEditor) => void;
   isMacromoleculesEditorTurnedOn?: boolean;
 }
 
@@ -200,6 +201,13 @@ function Editor({
   const [selections, setSelections] = useState<NodeSelection[][]>();
   const [contextMenuEvent, setContextMenuEvent] = useState<PointerEvent>();
   const [selectedMonomers, setSelectedMonomers] = useState<BaseMonomer[]>([]);
+  const [isPasteAvailable, setIsPasteAvailable] = useState(true);
+  const updatePasteAvailability = useCallback(() => {
+    if (!editor) return;
+    isPasteContentAvailable((content) =>
+      editor.mode.isPasteContentValid(content),
+    ).then(setIsPasteAvailable);
+  }, [editor]);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
   });
@@ -239,6 +247,7 @@ function Editor({
     editor?.events.rightClickSequence.add(([event, selections]) => {
       setSelections(selections);
       setContextMenuEvent(event);
+      updatePasteAvailability();
       window.dispatchEvent(new Event('hidePreview'));
       dispatch(setContextMenuActive(true));
       showSequenceContextMenu({
@@ -268,6 +277,7 @@ function Editor({
       ([event, selectedMonomers]: [PointerEvent, BaseMonomer[]]) => {
         setSelectedMonomers(selectedMonomers);
         setContextMenuEvent(event);
+        updatePasteAvailability();
         showSelectedMonomersContextMenu({
           event,
           props: { selectedMonomers },
@@ -277,6 +287,7 @@ function Editor({
     editor?.events.rightClickCanvas.add(
       ([event, selections]: [PointerEvent, BaseMonomer[]]) => {
         setContextMenuEvent(event);
+        updatePasteAvailability();
         window.dispatchEvent(new Event('hidePreview'));
         dispatch(setContextMenuActive(true));
         setSelectedMonomers(selections);
@@ -289,6 +300,7 @@ function Editor({
     editor?.events.rightClickCanvasSequence.add(
       ([event, selections]: [PointerEvent, NodesSelection]) => {
         setContextMenuEvent(event);
+        updatePasteAvailability();
         window.dispatchEvent(new Event('hidePreview'));
         dispatch(setContextMenuActive(true));
         setSelections(selections);
@@ -331,7 +343,7 @@ function Editor({
     };
   }, [dispatch]);
 
-  const handleCloseErrorTooltip = (text?: string) => {
+  const handleCloseErrorTooltip = (text: string) => {
     dispatch(closeErrorTooltip(text));
   };
 
@@ -433,18 +445,18 @@ function Editor({
       <SequenceItemContextMenu
         selections={selections}
         contextMenuEvent={contextMenuEvent}
+        isPasteAvailable={isPasteAvailable}
       />
       <SelectedMonomersContextMenu
         selectedMonomers={selectedMonomers}
         contextMenuEvent={contextMenuEvent}
+        isPasteAvailable={isPasteAvailable}
       />
       <ModalContainer />
       <ErrorModal />
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={errorTooltips.length > 0}
-        onClose={() => handleCloseErrorTooltip()}
-        autoHideDuration={6000}
       >
         <StyledToastContainer
           id="error-tooltip-list"

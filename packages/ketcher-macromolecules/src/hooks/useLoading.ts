@@ -11,7 +11,7 @@ import { selectKetcherId } from 'state/common';
 export function useLoading() {
   const ketcherId = useAppSelector(selectKetcherId);
   const [isLoading, setIsLoading] = useState(false);
-  let ketcher: Ketcher;
+  let ketcher: Ketcher | undefined;
 
   // TODO remove this try-catch and investigate why code execution comes here when ketcher instance is already removed
   //  This can happen when open/close several times the editor in duo mode
@@ -49,8 +49,6 @@ export function useLoading() {
         onLoadingFinish,
       );
     };
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
   }, [ketcher?.eventBus, onLoadingFinish, onLoadingStart]);
 
   return isLoading;

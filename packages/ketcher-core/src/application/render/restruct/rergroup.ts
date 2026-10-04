@@ -111,7 +111,7 @@ class ReRGroup extends ReObject {
     const p1 = Scale.modelToCanvas(bb.p1, options);
     const brackets = render.paper.set();
 
-    rGroupdrawBrackets(brackets, render, bb); // eslint-disable-line new-cap
+    rGroupdrawBrackets(brackets, render, bb);
 
     ret.data.push(brackets);
     const key = render.ctab.rgroups.keyOf(this);
@@ -161,7 +161,6 @@ class ReRGroup extends ReObject {
   }
 
   _draw(render: Render, _rgid: number, attrs: Record<string, unknown>) {
-    // eslint-disable-line no-underscore-dangle
     const vbox = this.getVBoxObj(render);
     if (!vbox) {
       return null;
@@ -189,7 +188,7 @@ class ReRGroup extends ReObject {
       return null;
     }
 
-    const ret = this._draw(render, rgid, render.options.hoverStyle); // eslint-disable-line no-underscore-dangle
+    const ret = this._draw(render, rgid, render.options.hoverStyle);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
 
     this.item.frags.forEach((_fnum, fid) => {
@@ -200,20 +199,17 @@ class ReRGroup extends ReObject {
   }
 
   show(restruct: ReStruct, _id: number, options: RenderOptions): void {
-    const drawing = this.draw(restruct.render, options);
+    const { data } = this.draw(restruct.render, options);
 
-    Object.keys(drawing).forEach((group) => {
-      const items = drawing[group as keyof typeof drawing] as unknown[];
-      while (items.length > 0) {
-        restruct.addReObjectPath(
-          LayerMap.data,
-          this.visel,
-          items.shift(),
-          null,
-          true,
-        );
-      }
-    });
+    while (data.length > 0) {
+      restruct.addReObjectPath(
+        LayerMap.data,
+        this.visel,
+        data.shift(),
+        null,
+        true,
+      );
+    }
   }
 }
 

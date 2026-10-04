@@ -15,7 +15,50 @@
  ***************************************************************************/
 import { IKetMacromoleculesContent } from 'ketcher-core';
 
-// TODO add typings for Indigo standalone object
+export interface IndigoVectorInt {
+  push_back(value: number): void;
+}
+
+export interface IndigoOptions {
+  set(key: string, value: string): void;
+}
+
+export interface IndigoModule {
+  MapStringString: new () => IndigoOptions;
+  VectorInt: new () => IndigoVectorInt;
+  render(struct: string, options: IndigoOptions): string;
+  layout(struct: string, format: string, options: IndigoOptions): string;
+  dearomatize(struct: string, format: string, options: IndigoOptions): string;
+  check(struct: string, types: string, options: IndigoOptions): string;
+  calculateCip(struct: string, format: string, options: IndigoOptions): string;
+  calculate(
+    struct: string,
+    options: IndigoOptions,
+    selectedAtoms: IndigoVectorInt,
+  ): string;
+  automap(
+    struct: string,
+    mode: string,
+    format: string,
+    options: IndigoOptions,
+  ): string;
+  aromatize(struct: string, format: string, options: IndigoOptions): string;
+  clean2d(
+    struct: string,
+    format: string,
+    options: IndigoOptions,
+    selectedAtoms: IndigoVectorInt,
+  ): string;
+  convert(struct: string, format: string, options: IndigoOptions): string;
+  version(): string;
+  convert_explicit_hydrogens(
+    struct: string,
+    mode: string,
+    format: string,
+    options: IndigoOptions,
+  ): string;
+  calculateMacroProperties(struct: string, options: IndigoOptions): string;
+}
 
 export const enum Command {
   Info,
@@ -93,11 +136,7 @@ export interface WithSelection {
 
 export interface CommandOptions {
   [key: string]:
-    | IKetMacromoleculesContent
-    | string
-    | number
-    | boolean
-    | undefined;
+    IKetMacromoleculesContent | string | number | boolean | undefined;
 }
 
 export interface CommandData {
@@ -109,14 +148,10 @@ export interface CheckCommandData extends CommandData, WithStruct {
 }
 
 export interface ConvertCommandData
-  extends CommandData,
-    WithStruct,
-    WithFormat {}
+  extends CommandData, WithStruct, WithFormat {}
 
 export interface ConvertCombinedCommandData
-  extends CommandData,
-    WithCombinedStruct,
-    WithFormat {}
+  extends CommandData, WithCombinedStruct, WithFormat {}
 
 export interface GenerateInchIKeyCommandData extends CommandData, WithStruct {}
 
@@ -127,30 +162,19 @@ export interface GenerateImageCommandData extends CommandData, WithStruct {
 }
 
 export interface LayoutCommandData
-  extends CommandData,
-    WithStruct,
-    WithFormat {}
+  extends CommandData, WithStruct, WithFormat {}
 
 export interface CleanCommandData
-  extends CommandData,
-    WithStruct,
-    WithSelection,
-    WithFormat {}
+  extends CommandData, WithStruct, WithSelection, WithFormat {}
 
 export interface AromatizeCommandData
-  extends CommandData,
-    WithStruct,
-    WithFormat {}
+  extends CommandData, WithStruct, WithFormat {}
 
 export interface DearomatizeCommandData
-  extends CommandData,
-    WithStruct,
-    WithFormat {}
+  extends CommandData, WithStruct, WithFormat {}
 
 export interface CalculateCipCommandData
-  extends CommandData,
-    WithStruct,
-    WithFormat {}
+  extends CommandData, WithStruct, WithFormat {}
 
 export type CalculateProps =
   | 'molecular-weight'
@@ -161,29 +185,22 @@ export type CalculateProps =
   | 'mass-composition';
 
 export interface CalculateCommandData
-  extends CommandData,
-    WithStruct,
-    WithSelection {
+  extends CommandData, WithStruct, WithSelection {
   properties: Array<string>;
 }
 
 export interface AutomapCommandData
-  extends CommandData,
-    WithStruct,
-    WithFormat {
+  extends CommandData, WithStruct, WithFormat {
   mode: string;
 }
 
 export interface ExplicitHydrogensCommandData
-  extends CommandData,
-    WithStruct,
-    WithFormat {
+  extends CommandData, WithStruct, WithFormat {
   mode: 'auto' | 'fold' | 'unfold';
 }
 
 export interface CalculateMacromoleculePropertiesCommandData
-  extends CommandData,
-    WithStruct {}
+  extends CommandData, WithStruct {}
 
 interface OutputMessageBase {
   type?: Command;
@@ -203,8 +220,7 @@ interface OutputMessageWithoutError<T> extends OutputMessageBase {
 }
 
 export type OutputMessage<T> =
-  | OutputMessageWithError
-  | OutputMessageWithoutError<T>;
+  OutputMessageWithError | OutputMessageWithoutError<T>;
 
 export interface InputMessage<T> {
   type: Command;

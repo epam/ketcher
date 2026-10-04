@@ -10,8 +10,7 @@ import util from '../util';
 
 export class MonomerToAtomBondRenderer extends BaseRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGLineElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGLineElement, void> | undefined;
 
   constructor(public monomerToAtomBond: MonomerToAtomBond) {
     super(monomerToAtomBond);
@@ -87,9 +86,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       // Calculate direction vector from start to end (bond direction)
       const directionX = endPositionInPixels.x - startPositionInPixels.x;
       const directionY = endPositionInPixels.y - startPositionInPixels.y;
-      const distance = Math.sqrt(
-        directionX * directionX + directionY * directionY,
-      );
+      const distance = Math.hypot(directionX, directionY);
 
       // Normalize the direction vector
       const normalizedDirectionX = directionX / distance;
@@ -169,8 +166,8 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
         'y2',
         this.scaledPosition.endPosition.y - this.scaledPosition.startPosition.y,
       )
-      .attr('stroke', '#333333')
-      .attr('stroke-width', 1);
+      .attr('stroke', '#000')
+      .attr('stroke-width', this.editorSettings.microModeScale / 20);
     this.appendHover();
   }
 

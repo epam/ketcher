@@ -1,10 +1,5 @@
-import {
-  AttachmentPointName,
-  AttachmentPointsToBonds,
-  LeavingGroup,
-} from 'ketcher-core';
+import { AttachmentPointName, AttachmentPointsToBonds } from 'ketcher-core';
 import { useMemo } from 'react';
-import hydrateLeavingGroup from 'helpers/hydrateLeavingGroup';
 
 type Props = {
   monomerCaps: Partial<Record<AttachmentPointName, string>> | undefined;
@@ -13,7 +8,7 @@ type Props = {
 
 export type PreparedAttachmentPointData = {
   id: string;
-  label: LeavingGroup;
+  label: string;
   connected: boolean;
 };
 
@@ -30,7 +25,25 @@ export const useAttachmentPoints = ({
     const preparedAttachmentPointsData: PreparedAttachmentPointData[] = [];
     const connectedAttachmentPoints: string[] = [];
 
-    if (!monomerCaps) {
+    const hasCaps = monomerCaps && Object.keys(monomerCaps).length > 0;
+
+    if (!hasCaps) {
+      if (!attachmentPointsToBonds) {
+        return { preparedAttachmentPointsData, connectedAttachmentPoints };
+      }
+
+      Object.keys(attachmentPointsToBonds).forEach((id) => {
+        const connected = Boolean(
+          attachmentPointsToBonds[id as AttachmentPointName],
+        );
+
+        if (connected) {
+          connectedAttachmentPoints.push(id);
+        }
+
+        preparedAttachmentPointsData.push({ id, label: '', connected });
+      });
+
       return { preparedAttachmentPointsData, connectedAttachmentPoints };
     }
 
@@ -43,7 +56,7 @@ export const useAttachmentPoints = ({
 
       const preparedData: PreparedAttachmentPointData = {
         id,
-        label: hydrateLeavingGroup(label as LeavingGroup),
+        label,
         connected,
       };
 

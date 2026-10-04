@@ -29,7 +29,7 @@ export const About = styled('div')(({ theme }) => ({
     },
 
     '.links': {
-      textAlign: 'right',
+      textAlign: 'end',
     },
 
     '.indigoVersion': {

@@ -19,19 +19,20 @@ import { StereoLabelStyleType } from '../../render/restruct/generalEnumTypes';
 import type ReStruct from '../../render/restruct/restruct';
 
 import type { OperationType } from './OperationType';
+import { KetcherLogger } from 'utilities';
 
 type ValueOf<TObject extends object> = Readonly<TObject[keyof TObject]>;
-type OperationType = ValueOf<typeof OperationType>;
+type OperationTypeValue = ValueOf<typeof OperationType>;
 
-class BaseOperation {
-  // eslint-disable-next-line no-use-before-define
+class BaseOperation<D = unknown> {
   private _inverted: BaseOperation | undefined;
-  type: OperationType;
+  type: OperationTypeValue;
   priority: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- operation payload shape varies by operation type
-  data: any;
+  data!: D;
 
-  constructor(type: OperationType, priority = 0) {
+  static InverseConstructor: new (...args: never[]) => BaseOperation;
+
+  constructor(type: OperationTypeValue, priority = 0) {
     this.type = type;
     this.priority = priority;
   }
@@ -41,24 +42,36 @@ class BaseOperation {
   }
 
   /** Returns inverted of this */
-  perform(restruct: ReStruct): BaseOperation {
+  perform(restruct: ReStruct): ReturnType<this['invert']> {
     this.execute(restruct);
     if (!this._inverted) {
       this._inverted = this.invert();
       this._inverted._inverted = this;
     }
-    return this._inverted;
+    return this._inverted as ReturnType<this['invert']>;
   }
 
   invert(): BaseOperation {
-    throw new Error('Operation.invert() is not implemented');
+    const InverseConstructor = (this.constructor as typeof BaseOperation)
+      .InverseConstructor;
+    if (!InverseConstructor) {
+      KetcherLogger.error('Operation.invert() is not implemented');
+      return this;
+    }
+    const inverted = new InverseConstructor();
+    inverted.data = this.data;
+    return inverted;
   }
 
   isDummy(_restruct: ReStruct): boolean {
     return false;
   }
 
-  protected static invalidateAtom(restruct: ReStruct, atomId: number, level?) {
+  protected static invalidateAtom(
+    restruct: ReStruct,
+    atomId: number,
+    level = 0,
+  ) {
     const atom = restruct.atoms.get(atomId);
     if (!atom) {
       return;
@@ -134,8 +147,7 @@ class BaseOperation {
     restruct: ReStruct,
     mapName: keyof typeof ReStruct.maps,
     id: number,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- matches legacy invalidate depth flag
-    level?: any,
+    level = 0,
   ) {
     if (mapName === 'atoms') {
       BaseOperation.invalidateAtom(restruct, id, level);

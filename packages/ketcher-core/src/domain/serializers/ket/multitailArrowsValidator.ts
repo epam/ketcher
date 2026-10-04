@@ -1,12 +1,14 @@
-import type { KetFileNode } from 'domain/serializers/serializers.types';
+import type {
+  KetFileNode,
+  KetFileRootContent,
+} from 'domain/serializers/serializers.types';
 import {
   type KetFileMultitailArrowNode,
   MultitailArrow,
 } from 'domain/entities/multitailArrow';
 import { MULTITAIL_ARROW_SERIALIZE_KEY } from 'domain/constants';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validateMultitailArrows = (json: any): boolean => {
+export const validateMultitailArrows = (json: KetFileRootContent): boolean => {
   const nodes: Array<KetFileNode<unknown>> = json.root.nodes;
   return nodes.every((node) => {
     if (node.type === MULTITAIL_ARROW_SERIALIZE_KEY) {

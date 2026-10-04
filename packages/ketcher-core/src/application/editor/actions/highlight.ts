@@ -25,6 +25,7 @@ type HighlightType = {
   bonds: number[];
   rgroupAttachmentPoints: number[];
   color: string;
+  outline?: boolean;
 };
 
 export function fromHighlightCreate(
@@ -34,9 +35,18 @@ export function fromHighlightCreate(
   const action = new Action();
 
   highlights.forEach((highlight) => {
-    const { atoms, bonds, rgroupAttachmentPoints, color } = highlight;
+    const { atoms, bonds, rgroupAttachmentPoints, color, outline } = highlight;
 
-    action.addOp(new HighlightAdd(atoms, bonds, rgroupAttachmentPoints, color));
+    action.addOp(
+      new HighlightAdd(
+        atoms,
+        bonds,
+        rgroupAttachmentPoints,
+        color,
+        undefined,
+        outline,
+      ),
+    );
   });
   return action.perform(restruct);
 }

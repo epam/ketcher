@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Dispatch } from 'redux';
 import {
   fromAtomAddition,
@@ -9,6 +10,7 @@ import {
   Atom,
   Action,
   KetcherLogger,
+  bondChangingAction,
 } from 'ketcher-core';
 import { STRUCT_TYPE } from 'src/constants';
 import { openDialog } from './modal';
@@ -26,6 +28,7 @@ import {
 import SGroupTool from '../../editor/tool/sgroup';
 import { deleteFunctionalGroups } from '../../editor/tool/helper/deleteFunctionalGroups';
 import TemplateTool from '../../editor/tool/template';
+import { dispatchMonomerOrGroupDialog } from '../../editor/tool/monomerDialog.helpers';
 
 type TNewAction = {
   tool?: string;
@@ -98,7 +101,9 @@ function handleEraser({
       { editor, hoveredItemId: item[itemType][0], newAction, dispatch },
       itemType,
     ).then((res) => {
-      res && eraseItem({ editor, item });
+      if (res) {
+        eraseItem({ editor, item });
+      }
     });
   } else {
     eraseItem({ editor, item });
@@ -261,6 +266,9 @@ function getToolHandler(itemType: string, toolName = '') {
       hand: ({ dispatch }: HandlersProps) =>
         dispatch(onAction({ tool: 'hand' })),
     },
+    bonds: {
+      bond: (props: HandlersProps) => handleBondTypeChangeTool(props),
+    },
     sgroups: {
       atom: (props: HandlersProps) => handleSgroupsTool(props),
     },
@@ -320,6 +328,21 @@ function handleBondTool({ hoveredItemId, newAction, editor }: HandlersProps) {
   editor.update(newBond);
 }
 
+function handleBondTypeChangeTool({
+  hoveredItemId,
+  newAction,
+  editor,
+}: HandlersProps) {
+  const restruct = editor.render.ctab;
+  const bond = restruct.bonds.get(hoveredItemId)?.b;
+  if (!bond) return;
+
+  const action = bondChangingAction(restruct, hoveredItemId, bond, {
+    ...newAction.opts,
+  });
+  editor.update(action);
+}
+
 function handleChargeTool({ hoveredItemId, newAction, editor }: HandlersProps) {
   const existingAtom = editor.render.ctab.atoms.get(hoveredItemId)?.a;
   if (existingAtom) {
@@ -360,7 +383,7 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
       rglabel,
       fragId: atom ? atom.fragment : null,
     });
-    element = { ...Atom.attrlist, ...(element || {}) };
+    element = { ...Atom.attrlist, ...element };
 
     if (!hoveredItemId && hoveredItemId !== 0 && element.rglabel) {
       editor.update(fromAtomAddition(editor.render.ctab, null, element));
@@ -402,7 +425,7 @@ async function isChangingFunctionalGroup(
   const fgId = getFunctionalGroupIdByItem(editor, hoveredItemId, type);
 
   if (fgId !== null) {
-    await editor.event.removeFG.dispatch({ fgIds: [fgId] });
+    dispatchMonomerOrGroupDialog(editor, [fgId]);
 
     return false;
   }

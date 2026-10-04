@@ -35,17 +35,16 @@ export function fromChain(
   nSect: number,
   atomId: number | null,
 ) {
-  // eslint-disable-line max-params
   const dx = Math.cos(Math.PI / 6);
   const dy = Math.sin(Math.PI / 6);
 
   let action = new Action();
 
   const frid =
-    atomId !== null
-      ? (atomGetAttr(restruct, atomId, 'fragment') as number)
-      : ((action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd)
-          .frid as number);
+    atomId === null
+      ? ((action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd)
+          .frid as number)
+      : (atomGetAttr(restruct, atomId, 'fragment') as number);
 
   const chainItems: { atoms: number[]; bonds: number[] } = {
     atoms: [],
@@ -55,13 +54,12 @@ export function fromChain(
   let addedAtoms = atomId ? -1 : 0;
 
   let id0: number =
-    atomId !== null
-      ? atomId
-      : ((
-          action.addOp(
-            new AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct),
-          ) as AtomAdd
-        ).data.aid as number);
+    atomId ??
+    ((
+      action.addOp(
+        new AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct),
+      ) as AtomAdd
+    ).data.aid as number);
 
   chainItems.atoms.push(id0);
   action.operations.reverse();
@@ -78,8 +76,8 @@ export function fromChain(
       pos,
     );
     action = ret[0].mergeWith(action);
-    id0 = ret[2] as number;
-    chainItems.bonds.push(ret[3] as number);
+    id0 = ret[2];
+    chainItems.bonds.push(ret[3]);
     chainItems.atoms.push(id0);
   }
 

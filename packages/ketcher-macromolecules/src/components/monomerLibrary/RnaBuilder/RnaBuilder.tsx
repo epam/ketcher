@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useTranslation } from 'react-i18next';
 import { RnaEditor } from './RnaEditor';
 import { RnaBuilderContainer } from './styles';
 import { useAppDispatch, useAppSelector, useIsCompactView } from 'hooks';
@@ -22,15 +23,19 @@ import {
   setUniqueNameError,
   selectInvalidPresetError,
   setInvalidPresetError,
+  selectInvalidPresetNameError,
+  setInvalidPresetNameError,
 } from 'state/rna-builder';
 import { Modal } from 'components/shared/modal';
 import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/styles';
 import { RnaElements } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/RnaElements';
 
 export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
+  const { t } = useTranslation(['macromoleculesDialogs', 'common']);
   const dispatch = useAppDispatch();
   const uniqueNameError = useAppSelector(selectUniqueNameError);
   const invalidPresetError = useAppSelector(selectInvalidPresetError);
+  const invalidPresetNameError = useAppSelector(selectInvalidPresetNameError);
 
   const isCompactView = useIsCompactView();
 
@@ -40,6 +45,9 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
     }
     if (invalidPresetError.length > 0) {
       dispatch(setInvalidPresetError(''));
+    }
+    if (invalidPresetNameError.length > 0) {
+      dispatch(setInvalidPresetNameError(''));
     }
   };
 
@@ -53,20 +61,28 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
         view={isCompactView ? 'tabs' : 'accordion'}
       />
       <Modal
-        isOpen={!!uniqueNameError || !!invalidPresetError}
-        title="Error Message"
+        isOpen={
+          Boolean(uniqueNameError) ||
+          Boolean(invalidPresetError) ||
+          Boolean(invalidPresetNameError)
+        }
+        title={t('monomerLibrary.errorModalTitle')}
         onClose={closeErrorModal}
       >
         <Modal.Content>
           <div style={{ padding: '12px' }}>
             {uniqueNameError &&
-              `Preset with name "${uniqueNameError}" already exists. Please choose another name.`}
+              t('monomerLibrary.presetNameExists', { name: uniqueNameError })}
             {invalidPresetError &&
-              `Preset with name "${invalidPresetError}" can't be used. Because it is impossible to establish bonds between monomers. Edit it's structure or choose another one.`}
+              t('monomerLibrary.invalidPreset', { name: invalidPresetError })}
+            {invalidPresetNameError &&
+              t('monomerLibrary.invalidPresetNameFormat')}
           </div>
         </Modal.Content>
         <Modal.Footer>
-          <StyledButton onClick={closeErrorModal}>Close</StyledButton>
+          <StyledButton onClick={closeErrorModal}>
+            {t('common:button.close')}
+          </StyledButton>
         </Modal.Footer>
       </Modal>
     </RnaBuilderContainer>

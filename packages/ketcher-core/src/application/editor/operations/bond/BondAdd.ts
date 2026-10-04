@@ -30,7 +30,6 @@ type Data = {
 
 class BondAdd extends BaseOperation {
   data: Data;
-  static InverseConstructor: new (bondId?: number) => BaseOperation;
 
   constructor(
     begin?: number,
@@ -50,7 +49,7 @@ class BondAdd extends BaseOperation {
 
   execute(restruct: ReStruct) {
     const { begin, bond, end } = this.data;
-    // eslint-disable-line max-statements
+
     const struct = restruct.molecule;
 
     if (begin === end) {
@@ -66,7 +65,7 @@ class BondAdd extends BaseOperation {
       type: Bond.PATTERN.TYPE.SINGLE,
       begin: begin as number,
       end: end as number,
-      ...(bond ?? {}),
+      ...bond,
     };
     pp.type = pp.type || Bond.PATTERN.TYPE.SINGLE;
     pp.begin = begin as number;
@@ -92,12 +91,6 @@ class BondAdd extends BaseOperation {
     // notifyBondAdded
     restruct.bonds.set(bid, new ReBond(structBond));
     restruct.markBond(bid, 1);
-  }
-
-  invert() {
-    const inverted = new BondAdd.InverseConstructor();
-    inverted.data = this.data;
-    return inverted;
   }
 }
 

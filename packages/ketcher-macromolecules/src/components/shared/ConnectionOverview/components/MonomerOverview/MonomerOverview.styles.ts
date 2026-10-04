@@ -5,9 +5,9 @@ interface IStyledStyledStructRender {
   isExpanded?: boolean;
 }
 
-export const StyledStructRender = styled(
-  StructRender,
-)<IStyledStyledStructRender>(({ theme, isExpanded }) => ({
+export const StyledStructRender = styled(StructRender, {
+  shouldForwardProp: (prop) => prop !== 'isExpanded',
+})<IStyledStyledStructRender>(({ theme, isExpanded }) => ({
   display: 'flex',
   border: `1.5px solid ${theme.ketcher.outline.color}`,
   borderRadius: '6px',
@@ -31,3 +31,12 @@ export const AttachmentPointList = styled.div({
   width: '100%',
   gap: '7px',
 });
+
+export const StyledUnresolvedMonomer = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'isExpanded',
+})<IStyledStyledStructRender>(({ isExpanded }) => ({
+  minHeight: '150px',
+  height: isExpanded ? 'auto' : '150px',
+  width: isExpanded ? 'auto' : '150px',
+  alignSelf: 'stretch',
+}));

@@ -4,8 +4,7 @@ import { createPolymerEditorCanvas } from '../../../helpers/dom';
 import { getFinishedPolymerBond } from '../../../mock-data';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
-  | FlexModePolymerBondRenderer
-  | SnakeModePolymerBondRenderer;
+  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
 
 // TODO: Split to two test files.
 describe('Polymer Bond Renderer', () => {
@@ -18,7 +17,7 @@ describe('Polymer Bond Renderer', () => {
     global.SVGElement.prototype.getBBox = jest.fn();
     jest
       .spyOn(global.SVGElement.prototype, 'getBBox')
-      .mockImplementation(() => ({ width: 30, height: 20 } as DOMRect));
+      .mockImplementation(() => ({ width: 30, height: 20 }) as DOMRect);
     polymerBondRenderer.show();
 
     expect(canvas).toMatchSnapshot();

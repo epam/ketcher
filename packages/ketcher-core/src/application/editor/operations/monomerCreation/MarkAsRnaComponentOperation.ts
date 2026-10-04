@@ -1,4 +1,5 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
+import type ReStruct from 'application/render/restruct/restruct';
 import type {
   MonomerCreationState,
   RnaComponentAtoms,
@@ -9,7 +10,7 @@ import {
   type RnaPresetComponentKey,
   MonomerCreationComponentStructureUpdateEvent,
 } from 'application/editor/shared/customEvents';
-import assert from 'assert';
+import { assert } from 'utilities';
 
 export class MarkAsRnaComponentOperation extends BaseOperation {
   constructor(
@@ -23,13 +24,11 @@ export class MarkAsRnaComponentOperation extends BaseOperation {
     super(OperationType.MONOMER_CREATION_MARK_RNA_COMPONENT);
   }
 
-  execute(): void {
+  execute(_restruct: ReStruct): void {
     assert(this.monomerCreationState);
 
-    if (!this.monomerCreationState.rnaComponentAtoms) {
-      this.monomerCreationState.rnaComponentAtoms =
-        new Map() as RnaComponentAtoms;
-    }
+    this.monomerCreationState.rnaComponentAtoms ??=
+      new Map() as RnaComponentAtoms;
 
     this.monomerCreationState.rnaComponentAtoms.set(this.componentKey, {
       atoms: [...this.newAtomIds],

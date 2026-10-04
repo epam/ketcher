@@ -25,8 +25,8 @@ import {
   type InfoResult,
   type OutputFormatType,
   type StructService,
-  ChemicalMimeType,
 } from 'domain/services';
+import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import type { StructOrString } from 'application/indigo.types';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import type { SequenceType } from 'domain/entities/monomer-chains/types';

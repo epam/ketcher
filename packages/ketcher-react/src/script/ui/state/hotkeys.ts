@@ -176,7 +176,7 @@ function handleRotateEscape(editor) {
 
 function isActionDisabledOrHidden(actionState, actName): boolean {
   return (
-    (actionState[actName] && actionState[actName].disabled === true) ||
+    actionState[actName]?.disabled === true ||
     actionState[actName]?.hidden === true
   );
 }
@@ -249,6 +249,11 @@ function handleHotkeyGroup(
     return;
   }
 
+  if (actName === 'undo' || actName === 'redo') {
+    // A history entry can switch editors while this key event is still bubbling.
+    event.stopImmediatePropagation();
+  }
+
   removeNotRenderedStruct(actionTool, group, dispatch);
 
   if (clipArea.actions.indexOf(actName) === -1) {
@@ -299,7 +304,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   const key = keyNorm(event);
   const hoveredItem = getHoveredItem(render.ctab);
 
-  if (key && key.length === 1 && !hoveredItem) {
+  if (key?.length === 1 && !hoveredItem) {
     const abbreviationLookupHandled = handleAbbreviationLookup(
       key,
       state,

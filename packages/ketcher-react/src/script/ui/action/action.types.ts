@@ -138,9 +138,7 @@ type ActionThunkState = {
   };
   actionState: {
     activeTool?:
-      | { tool?: string }
-      | ((editor: ActionStateEditor) => void)
-      | null;
+      { tool?: string } | ((editor: ActionStateEditor) => void) | null;
   };
 };
 

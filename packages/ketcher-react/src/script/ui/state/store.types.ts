@@ -16,6 +16,8 @@
 
 import type { Struct } from 'ketcher-core';
 import type { OptionsState } from './options/types';
+import Editor from 'src/script/editor';
+import { Api } from 'src/script/api';
 
 export type {
   AnalyseRoundName,
@@ -56,7 +58,38 @@ export interface ModalState {
 }
 
 export interface StoreState {
+  editor: Editor;
+  server: Api;
   templates: TemplatesState;
   modal: ModalState;
   options: OptionsState;
+  struct?: Struct;
 }
+
+export interface ServerResponse {
+  indigoVersion?: string;
+  imagoVersions?: string[];
+  isAvailable?: boolean;
+}
+
+export interface KetcherCheckErrors {
+  chiral_flag?: string;
+  valence?: string;
+}
+
+export type AutomapMode = 'discard' | 'keep' | 'alter' | 'clear';
+
+export type AutomapRequest = {
+  mode: AutomapMode;
+};
+
+export type ServerTransformMethod =
+  | 'layout'
+  | 'clean'
+  | 'aromatize'
+  | 'dearomatize'
+  | 'calculateCip'
+  | 'toggleExplicitHydrogens'
+  | 'automap'
+  | 'check'
+  | 'calculate';

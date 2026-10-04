@@ -60,6 +60,11 @@ export interface OptionsRecognizeState {
   version: string | null;
 }
 
+export interface ServerSettings {
+  data?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
 export interface OptionsState {
   app: OptionsAppState;
   analyse: AnalyseState;
@@ -69,7 +74,7 @@ export interface OptionsState {
   buttons?: Record<string, unknown>;
   customButtons?: unknown;
   getSettings: () => void;
-  getServerSettings: () => Record<string, unknown>;
+  getServerSettings: () => ServerSettings;
 }
 
 export type RecognizeActionType =

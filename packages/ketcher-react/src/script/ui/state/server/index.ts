@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ChemicalMimeType, KetcherLogger, KetSerializer } from 'ketcher-core';
+import {
+  ChemicalMimeType,
+  KetcherLogger,
+  KetSerializer,
+  Struct,
+} from 'ketcher-core';
 import { appUpdate } from '../options/actions';
 import { setStruct } from '../options';
 import { omit, without } from 'lodash/fp';
@@ -23,8 +28,20 @@ import { checkErrors } from '../modal/form';
 import { indigoVerification } from '../request';
 import { load } from '../shared';
 
+import type { AppDispatch } from '../hooks';
+import {
+  AutomapRequest,
+  KetcherCheckErrors,
+  ServerTransformMethod,
+  StoreState,
+} from '../store.types';
+import { CheckOption, ServerSettings } from '../options/types';
+import Editor from 'src/script/editor';
+import { Api } from 'src/script/api';
+import { StereoFlag } from 'ketcher-core';
+
 export function checkServer() {
-  return (dispatch, getState) => {
+  return (dispatch: AppDispatch, getState: () => StoreState) => {
     const { editor, server } = getState();
 
     server.then(
@@ -36,54 +53,66 @@ export function checkServer() {
             server: res?.isAvailable,
           }),
         ),
-      (e) => editor.errorHandler(e),
+      (e: unknown) => {
+        if (editor?.errorHandler) {
+          editor.errorHandler(e instanceof Error ? e.message : String(e));
+        }
+      },
     );
   };
 }
 
-export function recognize(file, version) {
-  return (dispatch, getState) => {
-    const rec = getState().server.recognize;
-    const editor = getState().editor;
+export function recognize(file: File | null, version: string) {
+  return (dispatch: AppDispatch, getState: () => StoreState) => {
+    const { server, editor } = getState();
+    const rec = server.recognize;
 
-    const process = rec(file, version).then(
+    const process = rec(file as Blob, version).then(
       (res) => {
         dispatch(setStruct(res.struct));
       },
       (e) => {
         dispatch(setStruct(null));
-        editor.errorHandler(e);
+        if (editor?.errorHandler) {
+          editor.errorHandler(e instanceof Error ? e.message : String(e));
+        }
       },
     );
     dispatch(setStruct(process));
   };
 }
 
-function ketcherCheck(struct, checkParams) {
-  const errors = {};
+function ketcherCheck(struct: Struct, checkParams: CheckOption[]) {
+  const errors: KetcherCheckErrors = {};
 
   if (checkParams.includes('chiral_flag')) {
-    const isAbs = Array.from(struct.frags.values()).some((fr) =>
-      fr ? fr.enhancedStereoFlag === 'abs' : false,
+    const isAbs = Array.from(struct.frags.values()).some(
+      (fr) => fr?.enhancedStereoFlag === StereoFlag.Abs,
     );
     if (isAbs) errors.chiral_flag = 'Chiral flag is present on the canvas';
   }
 
   if (checkParams.includes('valence')) {
     let badVal = 0;
-    struct.atoms.forEach((atom) => atom.badConn && badVal++);
-    if (badVal > 0)
+    struct.atoms.forEach((atom) => {
+      if (atom.badConn) {
+        badVal++;
+      }
+    });
+    if (badVal > 0) {
       errors.valence = `Structure contains ${badVal} atom${
         badVal !== 1 ? 's' : ''
       } with bad valence`;
+    }
   }
 
   return errors;
 }
 
-export function check(optsTypes) {
-  return (dispatch, getState) => {
+export function check(optsTypes: CheckOption[]) {
+  return (dispatch: AppDispatch, getState: () => StoreState) => {
     const { editor, server } = getState();
+    if (!editor) return;
     const struct = editor.struct();
 
     // recalculate implicit hydrogens before validation
@@ -102,17 +131,19 @@ export function check(optsTypes) {
       })
       .catch((e) => {
         KetcherLogger.error('index.js::check', e);
-        editor.errorHandler(e);
+        if (editor?.errorHandler) {
+          editor.errorHandler(e instanceof Error ? e.message : String(e));
+        }
       });
   };
 }
 
-export function automap(res) {
+export function automap(res: AutomapRequest) {
   return serverTransform('automap', res);
 }
 
 export function analyse() {
-  return (dispatch, getState) => {
+  return (dispatch: AppDispatch, getState: () => StoreState) => {
     // reset values to initial state
     dispatch({
       type: 'ANALYSE_LOADING',
@@ -138,13 +169,19 @@ export function analyse() {
       )
       .catch((e) => {
         KetcherLogger.error('index.js::analyse', e);
-        editor.errorHandler(e);
+        if (editor?.errorHandler) {
+          editor.errorHandler(e instanceof Error ? e.message : String(e));
+        }
       });
   };
 }
 
-export function serverTransform(method, data, struct) {
-  return (dispatch, getState) => {
+export function serverTransform(
+  method: ServerTransformMethod,
+  data: Record<string, unknown>,
+  struct?: Struct,
+) {
+  return (dispatch: AppDispatch, getState: () => StoreState): void => {
     const state = getState();
     const opts = state.options.getServerSettings();
 
@@ -166,7 +203,9 @@ export function serverTransform(method, data, struct) {
       })
       .catch((e) => {
         KetcherLogger.error('index.js::serverTransform', e);
-        state.editor.errorHandler(e);
+        if (state.editor?.errorHandler) {
+          state.editor.errorHandler(e instanceof Error ? e.message : String(e));
+        }
       })
       .finally(() => {
         dispatch(indigoVerification(false));
@@ -179,17 +218,30 @@ export function serverTransform(method, data, struct) {
   Indigo doesn't perform layout for enhancedFlags and just preserves their positions
   That results in structure being aligned and moved, but flags left as is.
 */
-function resetStereoFlagsPosition(struct) {
-  struct.frags.forEach((fragment) => (fragment.stereoFlagPosition = undefined));
+function resetStereoFlagsPosition(struct: Struct): void {
+  struct.frags.forEach((fragment) => {
+    if (fragment) {
+      fragment.stereoFlagPosition = undefined;
+    }
+  });
 }
 
 // TODO: serverCall function should not be exported
-export function serverCall(editor, server, method, options, struct) {
+export function serverCall(
+  editor: Editor,
+  server: Api,
+  method: ServerTransformMethod,
+  options: ServerSettings,
+  struct?: Struct,
+) {
   const selection = editor.selection();
-  let selectedAtoms = [];
-  let selectedBonds = [];
-  const aidMap = new Map();
-  const bidMap = new Map();
+
+  let selectedAtoms: number[] = [];
+  let selectedBonds: number[] = [];
+
+  const aidMap = new Map<number, number>();
+  const bidMap = new Map<number, number>();
+
   const currentStruct = (struct || editor.struct()).clone(
     null,
     null,
@@ -202,41 +254,42 @@ export function serverCall(editor, server, method, options, struct) {
     null,
     bidMap,
   );
+
   const expSel = editor.explicitSelected();
+
   if (selection) {
-    selectedAtoms = (selection.atoms ? selection.atoms : expSel.atoms).map(
-      (aid) => aidMap.get(aid),
-    );
-    selectedBonds = (selection.bonds ? selection.bonds : expSel.bonds).map(
-      (bid) => bidMap.get(bid),
-    );
+    selectedAtoms = (selection.atoms ?? expSel.atoms ?? [])
+      .map((aid) => aidMap.get(aid))
+      .filter((aid): aid is number => aid !== undefined);
+
+    selectedBonds = (selection.bonds ?? expSel.bonds ?? [])
+      .map((bid) => bidMap.get(bid))
+      .filter((bid): bid is number => bid !== undefined);
   }
+
   if (method === 'layout') {
     resetStereoFlagsPosition(currentStruct);
   }
 
   const ketSerializer = new KetSerializer();
+
   const serializedStruct = ketSerializer.serialize(currentStruct, undefined, {
     ...selection,
     atoms: selectedAtoms,
     bonds: selectedBonds,
   });
 
-  return server.then(() =>
-    server[method](
+  return server.then((api) =>
+    api[method](
       {
         struct: serializedStruct,
         ...(method !== 'calculate' && method !== 'check'
-          ? {
-              output_format: ChemicalMimeType.KET,
-            }
-          : null),
-        ...(selectedAtoms && selectedAtoms.length > 0
-          ? {
-              selected: selectedAtoms,
-            }
-          : null),
-        ...options.data,
+          ? { output_format: ChemicalMimeType.KET }
+          : {}),
+
+        ...(selectedAtoms.length > 0 ? { selected: selectedAtoms } : {}),
+
+        ...(options.data ?? {}),
       },
       omit('data', options),
     ),

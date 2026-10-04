@@ -166,7 +166,7 @@ class BondTool implements Tool {
     const item: BondItemRef | undefined =
       attachmentAtomId !== undefined
         ? { map: 'atoms', id: attachmentAtomId }
-        : ci ?? undefined;
+        : (ci ?? undefined);
 
     this.dragCtx = {
       xy0: CoordinateTransformation.pageToModel(event, rnd),
@@ -358,7 +358,7 @@ class BondTool implements Tool {
       );
       if (fgIds.length > 0) {
         dispatchMonomerOrGroupDialog(this.editor, fgIds);
-        delete this.dragCtx;
+        this.dragCtx = undefined;
         return { beginAtom, endAtom, beginPos, shouldReturn: true };
       }
     } else if (endAtom?.map === 'functionalGroups') {
@@ -489,7 +489,7 @@ class BondTool implements Tool {
           },
           render,
         );
-        const v = new Vec2(1.0 / 2, 0).rotate(
+        const v = new Vec2(1 / 2, 0).rotate(
           this.bondProps.type === Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0,
         );
         const bondAddition = fromBondAddition(
@@ -517,14 +517,14 @@ class BondTool implements Tool {
           delete dragCtx.existedBond;
         }
       } else if (dragCtx.item.map === 'bonds') {
-        const bondProps = { ...(this.bondProps || {}) };
+        const bondProps = { ...this.bondProps };
         const bond = struct.bonds.get(dragCtx.item.id) as Bond;
 
         this.editor.update(
           bondChangingAction(render.ctab, dragCtx.item.id, bond, bondProps),
         );
       }
-      delete this.dragCtx;
+      this.dragCtx = undefined;
     }
     this.editor.event.message.dispatch({
       info: false,

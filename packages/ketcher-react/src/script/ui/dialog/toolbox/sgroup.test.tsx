@@ -1,4 +1,9 @@
-import { screen, fireEvent, render as rtlRender } from '@testing-library/react';
+import {
+  screen,
+  fireEvent,
+  within,
+  render as rtlRender,
+} from '@testing-library/react';
 import { combineReducers, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { type ReactElement } from 'react';
@@ -89,6 +94,47 @@ describe('Copolymer S-Group type availability', () => {
   });
 });
 
+describe('Copolymer S-Group Subtype dropdown', () => {
+  const openSubtypeSelect = () => {
+    const { store } = renderWithMockStore(
+      <SGroup type="COP" selectedSruCount={2} />,
+      {
+        modal: {
+          name: 'SGroup',
+          form: {
+            errors: {},
+            result: {
+              type: 'COP',
+              subtype: 'ran',
+            },
+          },
+          prop: null,
+          parentModal: null,
+        },
+      },
+    );
+    const subtypeSelect = within(
+      screen.getByTestId('subtype-input-span'),
+    ).getByRole('combobox');
+    fireEvent.mouseDown(subtypeSelect);
+    return { store };
+  };
+
+  it('should include a blank option alongside Random, Block and Alternating', () => {
+    openSubtypeSelect();
+    expect(screen.getByTestId('<Blank>-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Random-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Block-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Alternating-option')).toBeInTheDocument();
+  });
+
+  it('should clear a previously selected subtype when the blank option is chosen', () => {
+    const { store } = openSubtypeSelect();
+    fireEvent.click(screen.getByTestId('<Blank>-option'));
+    expect(store.getState().modal?.form?.result?.subtype).toBeNull();
+  });
+});
+
 describe('S-Group DAT type rendering', () => {
   it('should render SDataFieldset when type is DAT', () => {
     renderWithMockStore(<SGroup type="DAT" />, {
@@ -108,6 +154,18 @@ describe('S-Group DAT type rendering', () => {
       },
     });
     expect(screen.getByText('S-Group Properties')).toBeInTheDocument();
+  });
+});
+
+describe('SRU S-Group defaults', () => {
+  it('should prefill the Polymer label field with n when SRU is selected', () => {
+    renderWithMockStore(<SGroup type="MUL" />);
+
+    const typeSelect = screen.getByRole('combobox');
+    fireEvent.mouseDown(typeSelect);
+    fireEvent.click(screen.getByRole('option', { name: 'SRU polymer' }));
+
+    expect(screen.getByLabelText('Polymer label')).toHaveValue('n');
   });
 });
 

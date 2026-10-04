@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
@@ -29,6 +30,7 @@ import {
   getPersistedSequenceType,
   persistSequenceType,
 } from 'helpers/sequenceTypeStorage';
+import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 
 const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
   color:
@@ -71,6 +73,7 @@ const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
 }));
 
 export const SequenceTypeGroupButton = () => {
+  const { t } = useTranslation('macromolecules');
   const editor = useAppSelector(selectEditor);
 
   const [activeSequenceType, setActiveSequenceType] = useState<SequenceType>(
@@ -105,7 +108,7 @@ export const SequenceTypeGroupButton = () => {
     return () => {
       editor?.events.changeSequenceTypeEnterMode.remove(onChangeSequenceType);
     };
-  }, [editor]);
+  }, [editor, dispatch]);
 
   const handleSelectSequenceType = (sequenceType: string) => {
     editor?.events.changeSequenceTypeEnterMode.dispatch(sequenceType);
@@ -116,7 +119,9 @@ export const SequenceTypeGroupButton = () => {
       <ButtonGroup disabled={isDisabled}>
         <SequenceTypeButton
           data-testid={`${SequenceType.RNA}Btn`}
-          title="RNA (Ctrl+Alt+R)"
+          title={t('sequenceType.rnaTooltip', {
+            shortcut: hotkeysShortcuts.RNASequenceType,
+          })}
           variant={
             activeSequenceType === SequenceType.RNA ? 'contained' : 'outlined'
           }
@@ -126,7 +131,9 @@ export const SequenceTypeGroupButton = () => {
         </SequenceTypeButton>
         <SequenceTypeButton
           data-testid={`${SequenceType.DNA}Btn`}
-          title="DNA (Ctrl+Alt+D)"
+          title={t('sequenceType.dnaTooltip', {
+            shortcut: hotkeysShortcuts.DNASequenceType,
+          })}
           variant={
             activeSequenceType === SequenceType.DNA ? 'contained' : 'outlined'
           }
@@ -136,7 +143,9 @@ export const SequenceTypeGroupButton = () => {
         </SequenceTypeButton>
         <SequenceTypeButton
           data-testid={`${SequenceType.PEPTIDE}Btn`}
-          title="Peptides (Ctrl+Alt+P)"
+          title={t('sequenceType.peptidesTooltip', {
+            shortcut: hotkeysShortcuts.PEPTIDESequenceTYpe,
+          })}
           variant={
             activeSequenceType === SequenceType.PEPTIDE
               ? 'contained'

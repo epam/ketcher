@@ -36,7 +36,10 @@ export type AtomAllAttributeName = AtomAttributeName | AtomQueryPropertiesName;
 export type AtomAllAttributeValue =
   | AtomAttributes[AtomAttributeName]
   | AtomQueryProperties[AtomQueryPropertiesName];
-type NormalizedEditorSelection = Record<typeof selectionKeys[number], number[]>;
+type NormalizedEditorSelection = Record<
+  (typeof selectionKeys)[number],
+  number[]
+>;
 type ClosestAtom = {
   id: number;
   dist: number;
@@ -209,7 +212,6 @@ export function atomForNewBond(
   atom: number | AtomAttributes,
   bond?: Partial<BondAttributes>,
 ): AtomForNewBondResult {
-  // eslint-disable-line max-statements
   const id = ensureAtomId(atom);
   const neighbours: Array<{ id: number; v: Vec2 }> = [];
   const pos = atomGetPos(restruct, id);
@@ -301,14 +303,14 @@ export function atomForNewBond(
     }
 
     const shallBe180DegToPrevBond =
-      (neighbours.length === 1 &&
-        prevBondType === bond?.type &&
+      neighbours.length === 1 &&
+      ((prevBondType === bond?.type &&
         (bond?.type === Bond.PATTERN.TYPE.DOUBLE ||
           bond?.type === Bond.PATTERN.TYPE.TRIPLE)) ||
-      (prevBondType === Bond.PATTERN.TYPE.SINGLE &&
-        bond?.type === Bond.PATTERN.TYPE.TRIPLE) ||
-      (prevBondType === Bond.PATTERN.TYPE.TRIPLE &&
-        bond?.type === Bond.PATTERN.TYPE.SINGLE);
+        (prevBondType === Bond.PATTERN.TYPE.SINGLE &&
+          bond?.type === Bond.PATTERN.TYPE.TRIPLE) ||
+        (prevBondType === Bond.PATTERN.TYPE.TRIPLE &&
+          bond?.type === Bond.PATTERN.TYPE.SINGLE));
 
     if (shallBe180DegToPrevBond) {
       const prevBondAngle = getBondAngle(restruct.molecule, prevBondId);
@@ -325,7 +327,7 @@ export function atomForNewBond(
     v = v.rotate(angle);
   }
 
-  v.add_(pos); // eslint-disable-line no-underscore-dangle
+  v.add_(pos);
 
   const closestAtom = findClosestAtom(restruct, v, null, 0.1);
   const a = closestAtom === null ? { label: 'C' } : closestAtom.id;

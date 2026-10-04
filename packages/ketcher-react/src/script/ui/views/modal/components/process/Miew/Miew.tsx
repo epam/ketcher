@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -25,6 +26,7 @@ import {
 } from 'react';
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
+import { useTranslation } from 'react-i18next';
 import { Dialog, LoadingCircles } from '../../../../components';
 import {
   type Struct,
@@ -38,14 +40,18 @@ import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema';
 import classes from './Miew.module.less';
 import { connect } from 'react-redux';
 import { load, parseStruct } from '../../../../../state/shared';
+import { showSnackbarNotification } from '../../../../../state/notifications';
 import { pick } from 'lodash/fp';
 import type { Miew as MiewAsType } from 'miew';
 import { createSelector } from 'reselect';
 import { useAppContext } from 'src/hooks';
 import {
   alignToCentroid,
+  collapseExpandedSuperatoms,
+  mergeCoordinatesFromResult,
   mergeMetaObjects,
   needsMetaPreservation,
+  needsStructurePreservation,
 } from './miewStructMerge';
 
 const Viewer = lazy(() =>
@@ -126,12 +132,12 @@ function createMiewOptions(userOpts) {
   return options;
 }
 /* ---------------- */
-const CHANGING_WARNING =
-  'Stereocenters can be changed after the strong 3D rotation';
-
-const FooterContent = () => (
-  <div className={classes.warning}>{CHANGING_WARNING}</div>
-);
+const FooterContent = () => {
+  const { t } = useTranslation('dialogs');
+  return (
+    <div className={classes.warning}>{t('process.miew.changingWarning')}</div>
+  );
+};
 
 const MiewDialog = ({
   miewOpts,
@@ -142,6 +148,7 @@ const MiewDialog = ({
   miewTheme = 'light',
   ...prop
 }: Props) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   const miewRef = useRef<MiewAsType>(undefined);
   const [isInitialized, setIsInitialized] = useState(false);
   const { ketcherId } = useAppContext();
@@ -181,29 +188,107 @@ const MiewDialog = ({
 
   const exportCML = useCallback(async () => {
     const cmlStruct = miewRef.current?.exportCML();
+
     if (!cmlStruct) {
+      KetcherLogger.error(
+        'Miew.tsx::MiewDialog::exportCML',
+        'Failed to export structure from 3D viewer',
+      );
+      dispatch(
+        showSnackbarNotification(t('dialogs:process.miew.exportFailedError')),
+      );
       return;
     }
 
-    if (!needsMetaPreservation(struct)) {
+    const shouldPreserveStructure = needsStructurePreservation(struct);
+    const shouldPreserveMeta = needsMetaPreservation(struct);
+
+    if (!shouldPreserveStructure && !shouldPreserveMeta) {
       dispatch(load(cmlStruct));
       return;
     }
 
+    let result: Struct;
+
     try {
-      const result = await parseStruct(cmlStruct, server, serverSettings);
+      result = await parseStruct(cmlStruct, server, serverSettings);
       result.rescale();
       alignToCentroid(result, struct);
+    } catch (e) {
+      KetcherLogger.error(
+        'Miew.tsx::MiewDialog::exportCML::parseAndPrepareResult',
+        e,
+      );
+      dispatch(
+        showSnackbarNotification(t('dialogs:process.miew.processFailedError')),
+      );
+      return;
+    }
+
+    if (shouldPreserveStructure) {
+      try {
+        const preserved = struct.clone();
+        preserved.enableInitiallySelected();
+
+        if (!mergeCoordinatesFromResult(result, preserved)) {
+          KetcherLogger.error(
+            'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
+            'Coordinate merge validation failed',
+          );
+          dispatch(
+            showSnackbarNotification(
+              t('dialogs:process.miew.mergeCoordinatesFailedError'),
+            ),
+          );
+          return;
+        }
+
+        collapseExpandedSuperatoms(preserved);
+        preserved.findConnectedComponents();
+        preserved.setImplicitHydrogen();
+        preserved.setStereoLabelsToAtoms();
+        preserved.markFragments();
+
+        dispatch(
+          load(preserved, {
+            preserveViewport: true,
+            skipCenter: true,
+          }),
+        );
+        return;
+      } catch (e) {
+        KetcherLogger.error(
+          'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
+          e,
+        );
+        dispatch(
+          showSnackbarNotification(
+            t('dialogs:process.miew.mergeCoordinatesFailedError'),
+          ),
+        );
+        return;
+      }
+    }
+
+    try {
       mergeMetaObjects(result, struct);
       dispatch(load(result, { preserveViewport: true, skipCenter: true }));
     } catch (e) {
-      KetcherLogger.error('Miew.tsx::MiewDialog::exportCML', e);
+      KetcherLogger.error(
+        'Miew.tsx::MiewDialog::exportCML::mergeMetaObjects',
+        e,
+      );
+      dispatch(
+        showSnackbarNotification(
+          t('dialogs:process.miew.mergeMetaFailedError'),
+        ),
+      );
     }
-  }, [dispatch, server, serverSettings, struct]);
+  }, [dispatch, server, serverSettings, struct, t]);
 
   return (
     <Dialog
-      title="Miew"
+      title={t('dialogs:process.miew.dialogTitle')}
       needMargin={false}
       params={prop}
       buttons={[
@@ -215,7 +300,7 @@ const MiewDialog = ({
           disabled={isDisabled}
           data-testid="miew-modal-button"
         >
-          Apply
+          {t('common:button.apply')}
         </button>,
       ]}
       footerContent={<FooterContent />}

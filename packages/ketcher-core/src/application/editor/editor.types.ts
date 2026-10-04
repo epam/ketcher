@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -35,7 +36,7 @@ export interface EditMonomerPayload {
 }
 
 export type EditorSelection = Partial<
-  Record<typeof selectionKeys[number], number[]>
+  Record<(typeof selectionKeys)[number], number[]>
 > & {
   enhancedFlags?: number[];
 };
@@ -70,6 +71,9 @@ export interface Editor {
   selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null;
   undo: () => void;
   redo: () => void;
+  historyStack: Action[];
+  historyPtr: number;
+  addHistoryAction: (action: Action) => void;
   clear: () => void;
   clearHistory: () => void;
   options(): RenderOptions;

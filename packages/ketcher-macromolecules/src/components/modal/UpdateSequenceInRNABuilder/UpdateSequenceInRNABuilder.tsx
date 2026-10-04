@@ -15,6 +15,7 @@
  ***************************************************************************/
 import { Modal } from 'components/shared/modal';
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { selectSequenceSelection } from 'state/rna-builder';
 import { ActionButton } from 'components/shared/actionButton';
@@ -33,6 +34,7 @@ const TextWrapper = styled.div`
 `;
 
 const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const sequenceSelection = useAppSelector(selectSequenceSelection);
   const editor = useAppSelector(selectEditor);
@@ -58,21 +60,20 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
   return (
     <Modal
       isOpen={isModalOpen}
-      title="Update sequence"
+      title={t('updateSequence.title')}
       onClose={onCloseCallback}
       testId="update-sequence-modal"
     >
       <Modal.Content data-testid="update-sequence-modal-body">
         <TextWrapper>
-          You are going to modify {countOfNucleoelements} nucleotides. Are you
-          sure?
+          {t('updateSequence.confirmText', { count: countOfNucleoelements })}
         </TextWrapper>
       </Modal.Content>
       <Modal.Footer>
         <ActionButton
           key="cancel"
           clickHandler={cancelHandler}
-          label="Cancel"
+          label={t('common:button.cancel')}
           styleType="secondary"
           title=""
           data-testid="update-sequence-cancel-button"
@@ -80,7 +81,7 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
         <ActionButton
           key="update"
           clickHandler={updateHandler}
-          label="Yes"
+          label={t('common:button.yes')}
           title=""
           data-testid="update-sequence-yes-button"
         />

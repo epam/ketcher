@@ -19,7 +19,7 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
       data-testid="rna-builder-slot--sugar"
     >
       <div
-        class="css-gcbx4i"
+        class="css-iaef42"
       />
       <div
         class="css-oavnn6"
@@ -40,7 +40,7 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
       data-testid="rna-builder-slot--base"
     >
       <div
-        class="css-gcbx4i"
+        class="css-iaef42"
       />
       <div
         class="css-oavnn6"
@@ -61,7 +61,7 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
       data-testid="rna-builder-slot--phosphate"
     >
       <div
-        class="css-gcbx4i"
+        class="css-iaef42"
       />
       <div
         class="css-oavnn6"
@@ -145,7 +145,7 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
       data-testid="rna-builder-slot--sugar"
     >
       <div
-        class="css-gcbx4i"
+        class="css-iaef42"
       />
       <div
         class="css-oavnn6"
@@ -166,7 +166,7 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
       data-testid="rna-builder-slot--base"
     >
       <div
-        class="css-gcbx4i"
+        class="css-iaef42"
       />
       <div
         class="css-oavnn6"
@@ -187,7 +187,7 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
       data-testid="rna-builder-slot--phosphate"
     >
       <div
-        class="css-gcbx4i"
+        class="css-iaef42"
       />
       <div
         class="css-oavnn6"
@@ -271,7 +271,7 @@ exports[`Test Rna Editor Expanded component should render correctly in view mode
       data-testid="rna-builder-slot--sugar"
     >
       <div
-        class="css-gcbx4i"
+        class="css-iaef42"
       />
       <div
         class="css-oavnn6"
@@ -292,7 +292,7 @@ exports[`Test Rna Editor Expanded component should render correctly in view mode
       data-testid="rna-builder-slot--base"
     >
       <div
-        class="css-gcbx4i"
+        class="css-iaef42"
       />
       <div
         class="css-oavnn6"
@@ -313,7 +313,7 @@ exports[`Test Rna Editor Expanded component should render correctly in view mode
       data-testid="rna-builder-slot--phosphate"
     >
       <div
-        class="css-gcbx4i"
+        class="css-iaef42"
       />
       <div
         class="css-oavnn6"

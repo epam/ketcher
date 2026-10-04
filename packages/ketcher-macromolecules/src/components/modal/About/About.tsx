@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 import Logo from './logo.svg';
+import { useTranslation } from 'react-i18next';
 import { Modal } from '../../shared/modal/Modal';
 import { About as AboutStyled } from './About.styles';
-import { useIndigoVersionToRedux } from 'src/hooks/useIndigoVersionToRedux';
 import { selectAppMeta } from 'state/common/editorSlice';
 import { useAppDispatch, useAppSelector } from 'src/hooks/stateHooks';
 
@@ -41,8 +41,8 @@ export function About({
   isOpen: boolean;
   onClose: () => void;
 }>) {
+  const { t } = useTranslation('dialogs');
   const dispatch = useAppDispatch();
-  useIndigoVersionToRedux();
   const { buildDate, indigoVersion, version } = useAppSelector(selectAppMeta);
   const formattedDate = formatDate(buildDate);
 
@@ -69,11 +69,11 @@ export function About({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Version {version}
+                  {t('meta.about.version', { value: version })}
                 </a>
               </dt>
               <dd data-testid="build-time">
-                Build at <time>{formattedDate}</time>
+                {t('meta.about.buildAt')} <time>{formattedDate}</time>
               </dd>
               <div className="infoLinks">
                 <dt>
@@ -82,7 +82,7 @@ export function About({
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Feedback
+                    {t('meta.about.feedback')}
                   </a>
                 </dt>
                 <dt>
@@ -91,20 +91,20 @@ export function About({
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    EPAM Life Sciences
+                    {t('meta.about.epamLifeSciences')}
                   </a>
                 </dt>
               </div>
               <div className="indigoVersion">
                 <a href={INDIGO_URL} target="_blank" rel="noopener noreferrer">
-                  Indigo Toolkit
+                  {t('meta.about.indigoToolkit')}
                 </a>
               </div>
               <div data-testid="build-indigo-version">
                 {indigoVersion ? (
-                  <dd>Version {indigoVersion}</dd>
+                  <dd>{t('meta.about.version', { value: indigoVersion })}</dd>
                 ) : (
-                  <p>Standalone</p>
+                  <p>{t('meta.about.standalone')}</p>
                 )}
               </div>
             </dl>
@@ -115,7 +115,7 @@ export function About({
               className="okButton"
               data-testid="ok-button"
             >
-              Ok
+              {t('meta.about.ok')}
             </button>
           </div>
         </AboutStyled>

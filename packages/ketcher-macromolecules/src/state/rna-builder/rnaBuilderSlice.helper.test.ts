@@ -18,10 +18,10 @@ import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { deriveRnaPresetAliasesFromDefaults } from './rnaBuilderSlice.helper';
 
 const monomer = (id: string): MonomerItemType =>
-  ({ props: { id } } as MonomerItemType);
+  ({ props: { id } }) as MonomerItemType;
 
 const idtAliases = (base: string): IKetIdtAliases =>
-  ({ base } as unknown as IKetIdtAliases);
+  ({ base }) as unknown as IKetIdtAliases;
 
 const fullPreset = (overrides: Partial<IRnaPreset> = {}): IRnaPreset => ({
   sugar: monomer('sugarR'),

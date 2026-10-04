@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import cloneDeep from 'lodash/cloneDeep';
+import i18next from 'i18next';
 import {
   Nucleotide,
   Nucleoside,
@@ -25,6 +26,20 @@ import {
   NodesSelection,
 } from 'ketcher-core';
 import { generateSequenceContextMenuProps } from 'components/contextMenu/SequenceItemContextMenu/helpers';
+import macromoleculesDialogs from '../../../locales/en/macromoleculesDialogs.json';
+
+// Plain i18next interpolation configured with the same {var} delimiters as
+// the real app's i18next-icu plugin (not the plugin itself - its
+// intl-messageformat dependency ships ESM this package's Jest config can't
+// transform inside node_modules). Plain variable substitution is all these
+// keys need.
+const i18nTestInstance = i18next.createInstance();
+i18nTestInstance.init({
+  lng: 'en',
+  resources: { en: { macromoleculesDialogs } },
+  interpolation: { escapeValue: false, prefix: '{', suffix: '}' },
+});
+const t = i18nTestInstance.getFixedT('en', 'macromoleculesDialogs');
 
 const instanceOfNucleotide = Object.create(Nucleotide.prototype);
 const instanceOfNucleoside = Object.create(Nucleoside.prototype);
@@ -209,13 +224,14 @@ const mockedSelections3Elements = [
 
 describe('SequenceItemContextMenu helpers', () => {
   it('should return undefined if no entry data', () => {
-    const result = generateSequenceContextMenuProps();
+    const result = generateSequenceContextMenuProps(undefined, t);
     expect(result).toBeUndefined();
   });
 
   it('should return correct data for first in chain selected Nucleotide', () => {
     const result = generateSequenceContextMenuProps(
       mockedSelectionsFirstNucleotide,
+      t,
     );
     const expectedResult = {
       title: 'R(A)P',
@@ -245,6 +261,7 @@ describe('SequenceItemContextMenu helpers', () => {
   it('should return correct data for not first in chain selected Nucleotide', () => {
     const result = generateSequenceContextMenuProps(
       mockedSelectionsNotFirstNucleotide,
+      t,
     );
     const expectedResult = {
       title: 'R(C)P',
@@ -274,6 +291,7 @@ describe('SequenceItemContextMenu helpers', () => {
   it('should return correct data for not first in chain selected Nucleoside', () => {
     const result = generateSequenceContextMenuProps(
       mockedSelectionsNotFirstNucleoside,
+      t,
     );
     const expectedResult = {
       title: 'R(C)',
@@ -303,6 +321,7 @@ describe('SequenceItemContextMenu helpers', () => {
   it('should return correct data for two selected Nucleotides', () => {
     const result = generateSequenceContextMenuProps(
       mockedSelections2Nucleotides,
+      t,
     );
     const expectedResult = {
       title: '2 nucleotides',
@@ -344,6 +363,7 @@ describe('SequenceItemContextMenu helpers', () => {
   it('should return correct data for connected and selected Nucleoside-Phosphate that can be interpreted as Nucleotide', () => {
     const result = generateSequenceContextMenuProps(
       mockedSelectionsNucleosideAndPhosphate,
+      t,
     );
     const expectedResult = {
       title: 'R(C)P',
@@ -379,6 +399,7 @@ describe('SequenceItemContextMenu helpers', () => {
   it('should return correct data for connected and selected Phosphate-Nucleoside that can not be interpreted as Nucleotide', () => {
     const result = generateSequenceContextMenuProps(
       mockedSelectionsPhosphateAndNucleoside,
+      t,
     );
     const expectedResult = {
       title: '2 elements',
@@ -412,7 +433,10 @@ describe('SequenceItemContextMenu helpers', () => {
   });
 
   it('should return correct data for three selected elements', () => {
-    const result = generateSequenceContextMenuProps(mockedSelections3Elements);
+    const result = generateSequenceContextMenuProps(
+      mockedSelections3Elements,
+      t,
+    );
     const expectedResult = {
       title: '3 elements',
       isSelectedAtLeastOneNucleoelement: true,
@@ -617,6 +641,7 @@ describe('SequenceItemContextMenu helpers', () => {
 
     const result = generateSequenceContextMenuProps(
       mockedSelectionsWithAntisense as unknown as NodesSelection,
+      t,
     );
 
     // When both sense and antisense are selected, we should get 4 nucleotides

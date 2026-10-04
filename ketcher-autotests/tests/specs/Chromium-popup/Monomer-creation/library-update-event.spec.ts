@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
@@ -44,7 +41,7 @@ const waitForLibraryUpdate = async (page: Page, timeout = 20_000) => {
           resolve(sdf);
         };
 
-        window.ketcher.editor.subscribe('libraryUpdate', handler);
+        globalThis.window.ketcher.editor.subscribe('libraryUpdate', handler);
 
         setTimeout(() => {
           if (!resolved) resolve('');

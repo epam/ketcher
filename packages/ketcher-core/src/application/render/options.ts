@@ -23,9 +23,10 @@ import {
   SELECTION_HANDLE_FILL_COLOR,
   SELECTION_HANDLE_STROKE_COLOR,
   SELECTION_HOVERED_COLOR,
+  SELECTION_OUTLINE_COLOR,
 } from 'application/render/renderers/constants';
 
-function defaultOptions(renderOptions: RenderOptions): RenderOptions {
+function defaultOptions(renderOptions: Partial<RenderOptions>): RenderOptions {
   const options = getOptionsWithConvertedUnits(renderOptions);
 
   const scaleFactorMicro = options.microModeScale || 100;
@@ -66,7 +67,7 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
 
     microModeScale: scaleFactorMicro,
     macroModeScale: scaleFactorMacro,
-    zoom: 1.0,
+    zoom: 1,
     offset: new Vec2(),
 
     lineWidth: scaleFactorMicro / 20,
@@ -97,7 +98,6 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
       stroke: '#365CFF',
       'stroke-width': options.bondThicknessInPx * 1.5,
     },
-    /* eslint-enable quote-props */
     selectionStyle: {
       fill: SELECTION_COLOR,
       stroke: SELECTION_COLOR,
@@ -117,7 +117,7 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
       'stroke-width': (0.5 * scaleFactorMicro) / 20,
     },
     lassoStyle: {
-      stroke: 'gray',
+      stroke: SELECTION_OUTLINE_COLOR,
       'stroke-width': '1px',
     },
     selectionStyleSimpleObject: {
@@ -154,7 +154,7 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
     viewOnlyMode: false,
   };
 
-  return { ...(defaultOptions || {}), ...(options || {}) };
+  return { ...defaultOptions, ...options };
 }
 
 const measureMap = {
@@ -185,7 +185,7 @@ function convertHashSpacingToPx(
 }
 
 export function getOptionsWithConvertedUnits(
-  options: RenderOptions,
+  options: Partial<RenderOptions>,
 ): RenderOptions {
   const convertedOptions: Partial<
     Pick<
@@ -268,7 +268,7 @@ export function getOptionsWithConvertedUnits(
   return {
     ...options,
     ...convertedOptions,
-  };
+  } as RenderOptions;
 }
 
 export default defaultOptions;

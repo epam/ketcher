@@ -22,7 +22,7 @@ import type { Struct } from 'domain/entities/struct';
 
 import type { SGroupMap, AtomMap, PostLoadHandler } from './mol.types';
 import utils from './utils';
-import assert from 'assert';
+import { assert } from 'utilities';
 
 function readKeyValuePairs(
   str: string,
@@ -53,12 +53,10 @@ function readKeyMultiValuePairs(
   const count = utils.parseDecimalInt(partition[0]);
   for (let i = 0; i < count; ++i) {
     ret.push([
-      /* eslint-disable no-mixed-operators */
       utils.parseDecimalInt(partition[2 * i + 1]) - 1,
       valueString
         ? partition[2 * i + 2].trim()
         : utils.parseDecimalInt(partition[2 * i + 2]),
-      /* eslint-enable no-mixed-operators */
     ]);
   }
   return ret;
@@ -67,7 +65,7 @@ function readKeyMultiValuePairs(
 function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
   if (!mol || !atomMap) return;
 
-  sgroup.data.mul = sgroup.data.subscript - 0;
+  sgroup.data.mul = Number(sgroup.data.subscript);
   const atomReductionMap: Record<number, number> = {};
 
   sgroup.atoms = SGroup.filterAtoms(sgroup.atoms, atomMap);
@@ -76,8 +74,8 @@ function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
   // mark repetitions for removal
   for (let k = 1; k < sgroup.data.mul; ++k) {
     for (let m = 0; m < sgroup.patoms.length; ++m) {
-      const raid = sgroup.atoms[k * sgroup.patoms.length + m]; // eslint-disable-line no-mixed-operators
-      if (raid < 0) continue; // eslint-disable-line no-continue
+      const raid = sgroup.atoms[k * sgroup.patoms.length + m];
+      if (raid < 0) continue;
       if (sgroup.patoms[m] < 0) throw new Error('parent atom missing');
       atomReductionMap[raid] = sgroup.patoms[m]; // "merge" atom in parent
     }
@@ -304,8 +302,8 @@ function applyDataSGroupInfo(sg: SGroup, propData: string): void {
     false,
   );
 
-  const x = parseFloat(split[0]);
-  const y = parseFloat(split[1]);
+  const x = Number.parseFloat(split[0]);
+  const y = Number.parseFloat(split[1]);
   const attached = split[3].trim() === 'A';
   const absolute = split[4].trim() === 'A';
   const showUnits = split[5].trim() === 'U';
@@ -325,9 +323,9 @@ function applyDataSGroupInfo(sg: SGroup, propData: string): void {
 }
 
 function applyDataSGroupInfoLine(sGroups: SGroupMap, propData: string): void {
-  const id = utils.parseDecimalInt(propData.substr(0, 4)) - 1;
+  const id = utils.parseDecimalInt(propData.substring(0, 4)) - 1;
   const sg = sGroups[id];
-  applyDataSGroupInfo(sg, propData.substr(5));
+  applyDataSGroupInfo(sg, propData.substring(5));
 }
 
 function applyDataSGroupData(
@@ -342,9 +340,9 @@ function applyDataSGroupData(
       sg.data.fieldValue.startsWith('"') &&
       sg.data.fieldValue.endsWith('"')
     ) {
-      sg.data.fieldValue = sg.data.fieldValue.substr(
+      sg.data.fieldValue = sg.data.fieldValue.substring(
         1,
-        sg.data.fieldValue.length - 2,
+        sg.data.fieldValue.length - 1,
       );
     }
   }
@@ -355,8 +353,8 @@ function applyDataSGroupDataLine(
   propData: string,
   finalize: boolean,
 ): void {
-  const id = utils.parseDecimalInt(propData.substr(0, 5)) - 1;
-  const data = propData.substr(5);
+  const id = utils.parseDecimalInt(propData.substring(0, 5)) - 1;
+  const data = propData.substring(5);
   const sg = sGroups[id];
   applyDataSGroupData(sg, data, finalize);
 }

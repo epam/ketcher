@@ -26,15 +26,19 @@ export function fileOpener() {
   });
 }
 
-function throughFileReader(file: File) {
+function throughFileReader(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const rd = new FileReader();
 
     rd.onload = () => {
       const content = rd.result;
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore msClose doesn't exist in File type
-      if (file.msClose) file.msClose();
+      // readAsText below always yields a string result, but FileReader.result
+      // is typed as string | ArrayBuffer | null, so narrow it explicitly
+      // rather than trusting a cast.
+      if (typeof content !== 'string') {
+        reject(new Error('Failed to read file as text'));
+        return;
+      }
       resolve(content);
     };
 

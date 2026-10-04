@@ -15,6 +15,7 @@ import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureL
 import {
   AromaticsTemplate,
   FunctionalGroupsTabItems,
+  SaltsAndSolventsTabItems,
   TabSection,
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
@@ -67,6 +68,9 @@ test.describe('Open Ketcher', () => {
     await StructureLibraryDialog(page).openTab(TabSection.SaltsAndSolvents);
     await PasteFromClipboardDialog(page).closeWindowButton.click();
     await BottomToolbar(page).structureLibrary();
+    await expect(
+      page.getByTestId(SaltsAndSolventsTabItems.TwoEthylhexanol).locator('svg'),
+    ).toBeVisible();
     await takeEditorScreenshot(page);
   });
 

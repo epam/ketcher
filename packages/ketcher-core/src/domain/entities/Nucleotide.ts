@@ -2,7 +2,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 import type { RNABase } from 'domain/entities/RNABase';
 import type { Phosphate } from 'domain/entities/Phosphate';
 import { Sugar } from 'domain/entities/Sugar';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   getPhosphateFromSugar,
   getRnaBaseFromSugar,
@@ -84,9 +84,9 @@ export class Nucleotide {
       KetMonomerClass.Sugar,
     );
 
-    assert(sugarLibraryItem);
-    assert(rnaBaseLibraryItem);
-    assert(phosphateLibraryItem);
+    if (!sugarLibraryItem || !rnaBaseLibraryItem || !phosphateLibraryItem) {
+      return;
+    }
 
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(

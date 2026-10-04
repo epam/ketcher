@@ -7,6 +7,7 @@ import styles from './NaturalAnaloguePicker.module.less';
 import NaturalAnalogueChip from '../NaturalAnalogueChip/NaturalAnalogueChip';
 import { Icon } from 'components';
 import { KetMonomerClass } from 'ketcher-core';
+import { useTranslation } from 'react-i18next';
 
 interface ChipGridSelectProps {
   monomerType: KetMonomerClass | 'rnaPreset' | undefined;
@@ -72,6 +73,7 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
   className,
   error,
 }) => {
+  const { t } = useTranslation('components');
   const disabled = !isNaturalAnalogueRequired(monomerType);
 
   const options =
@@ -81,7 +83,11 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
     (selected: unknown) => {
       const selectedOption = options.find((o) => o.value === selected);
       if (!selectedOption) {
-        return <span className={styles.placeholder}>Select an analogue</span>;
+        return (
+          <span className={styles.placeholder}>
+            {t('monomerCreationWizard.selectAnalogue')}
+          </span>
+        );
       }
 
       return (
@@ -89,11 +95,11 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
           label={selectedOption.label}
           color={selectedOption.color}
           className={styles.selectedChip}
-          data-testid={`natural-analogue-picker-selected-${selectedOption.value}`}
+          testId={`natural-analogue-picker-selected-${selectedOption.value}`}
         />
       );
     },
-    [options],
+    [options, t],
   );
 
   const menuProps: Partial<MenuProps> = useMemo(

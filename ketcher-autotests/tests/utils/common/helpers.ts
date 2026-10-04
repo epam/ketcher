@@ -1,19 +1,21 @@
 import { Page } from '@playwright/test';
 import { waitForKetcherInit } from './loaders/waitForKetcherInit/waitForKetcherInit';
 import { waitForIndigoToLoad } from './loaders/waitForIndigoToLoad';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 export async function emptyFunction() {
   // Intentionally empty callback used as a default async no-op in wait helpers.
 }
 
 export async function pageReload(page: Page) {
-  const { CommonTopRightToolbar } = await import(
-    './../../pages/common/CommonTopRightToolbar'
-  );
+  const { CommonTopRightToolbar } =
+    await import('./../../pages/common/CommonTopRightToolbar');
   await page.reload();
   await page.goto('', { waitUntil: 'domcontentloaded' });
   await waitForKetcherInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 }
 
 export async function pageReloadMicro(page: Page) {
@@ -32,5 +34,24 @@ export async function pageReloadMicro(page: Page) {
 export async function clearLocalStorage(page: Page) {
   await page.evaluate(() => {
     localStorage.clear();
+  });
+}
+
+/**
+ * Clears the system clipboard.
+ *
+ * The browser process is shared by every test in a Playwright worker, so the
+ * system clipboard survives from one test to the next. Ketcher reads it in
+ * isPasteContentAvailable() to decide whether the context menu's "Paste" item
+ * is enabled, which makes any screenshot containing a context menu depend on
+ * whichever test happened to run before it in the same worker.
+ */
+export async function resetClipboard(page: Page) {
+  await page.evaluate(async () => {
+    try {
+      await navigator.clipboard.writeText('');
+    } catch {
+      // No clipboard permission in this context - nothing to reset.
+    }
   });
 }

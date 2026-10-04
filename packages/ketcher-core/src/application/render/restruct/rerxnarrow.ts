@@ -23,9 +23,12 @@ import Raphael from '../raphael-ext';
 import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
+import type { RenderOptions } from '../render.types';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
+import { toFixed } from 'utilities';
+import type { RaphaelPaper, RaphaelSet } from 'raphael';
 
 type Arrow = {
   pos: Array<Vec2>;
@@ -56,7 +59,7 @@ class ReRxnArrow extends ReObject {
     return true;
   }
 
-  calcDistance(p: Vec2, s: any): MinDistanceWithReferencePoint {
+  calcDistance(p: Vec2, s: number): MinDistanceWithReferencePoint {
     const point: Vec2 = new Vec2(p.x, p.y);
     const distRef: MinDistanceWithReferencePoint =
       this.getReferencePointDistance(p);
@@ -80,21 +83,14 @@ class ReRxnArrow extends ReObject {
   }
 
   getReferencePointDistance(p: Vec2): MinDistanceWithReferencePoint {
-    const dist: any = [];
+    const dist: MinDistanceWithReferencePoint[] = [];
     const refPoints = this.getReferencePoints();
     refPoints.forEach((rp) => {
       dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
     });
 
     const minDist: MinDistanceWithReferencePoint = dist.reduce(
-      (acc, current) => {
-        if (!acc) {
-          return current;
-        }
-
-        return acc.minDist < current.minDist ? acc : current;
-      },
-      null,
+      (acc, current) => (acc.minDist < current.minDist ? acc : current),
     );
 
     return minDist;
@@ -120,8 +116,8 @@ class ReRxnArrow extends ReObject {
     refPoints.push(new Vec2(a.x, a.y));
     refPoints.push(new Vec2(b.x, b.y));
 
-    if (RxnArrow.isElliptical(item)) {
-      const middlePoint = util.findMiddlePoint(height!, a, b);
+    if (RxnArrow.isElliptical(item) && height !== undefined) {
+      const middlePoint = findMiddlePoint(height, a, b);
       refPoints.push(middlePoint);
     }
     return refPoints;
@@ -142,7 +138,11 @@ class ReRxnArrow extends ReObject {
     return selectionSet;
   }
 
-  makeSelectionPlate(restruct: ReStruct, _paper, styles) {
+  makeSelectionPlate(
+    restruct: ReStruct,
+    _paper: RaphaelPaper,
+    styles: RenderOptions,
+  ): RaphaelSet {
     const render = restruct.render;
     const options = restruct.render.options;
     const selectionSet = restruct.render.paper.set();
@@ -155,7 +155,7 @@ class ReRxnArrow extends ReObject {
     return selectionSet;
   }
 
-  generatePath(render: Render, options, type) {
+  generatePath(render: Render, options: RenderOptions, type: string) {
     let path;
     const item = this.item;
     const height =
@@ -196,14 +196,14 @@ class ReRxnArrow extends ReObject {
     return path;
   }
 
-  getArrowParams(x1, y1, x2, y2): ArrowParams {
+  getArrowParams(x1: number, y1: number, x2: number, y2: number): ArrowParams {
     const length = Math.hypot(x2 - x1, y2 - y1);
     const angle = Raphael.angle(x1, y1, x2, y2) - 180;
 
     return { length, angle };
   }
 
-  show(restruct: ReStruct, _id, options) {
+  show(restruct: ReStruct, _id: number, options: RenderOptions) {
     const path = this.generatePath(restruct.render, options, 'arrow');
     path.node?.setAttribute('data-testid', 'rxn-arrow');
     path.node?.setAttribute('data-arrowtype', this.item.mode + '-arrow');
@@ -216,6 +216,61 @@ class ReRxnArrow extends ReObject {
 
     this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
   }
+}
+
+function findMiddlePoint(height: number, a: Vec2, b: Vec2) {
+  if (+toFixed(height) === 0) {
+    const minX = Math.min(a.x, b.x);
+    const minY = Math.min(a.y, b.y);
+    const x = minX + Math.abs(a.x - b.x) / 2;
+    const y = minY + Math.abs(a.y - b.y) / 2;
+    return new Vec2(x, y);
+  }
+
+  const length = Math.hypot(b.x - a.x, b.y - a.y);
+  const lengthHyp = Math.hypot(length / 2, height);
+  const coordinates1 = util.calcCoordinates(a, b, lengthHyp).pos1;
+  const coordinates2 = util.calcCoordinates(a, b, lengthHyp).pos2;
+
+  if (height > 0) {
+    if (b.x < a.x) {
+      return new Vec2(coordinates1?.x, coordinates1?.y);
+    }
+    if (b.x > a.x) {
+      return new Vec2(coordinates2?.x, coordinates2?.y);
+    }
+    if (b.x === a.x) {
+      if (b.y > a.y) {
+        return new Vec2(coordinates2?.x, coordinates2?.y);
+      }
+      if (b.y < a.y) {
+        return new Vec2(coordinates1?.x, coordinates1?.y);
+      }
+      if (b.y === a.y) {
+        return new Vec2(a.x, a.y);
+      }
+    }
+  } else {
+    if (b.x > a.x) {
+      return new Vec2(coordinates1?.x, coordinates1?.y);
+    }
+    if (b.x < a.x) {
+      return new Vec2(coordinates2?.x, coordinates2?.y);
+    }
+    if (b.x === a.x) {
+      if (b.y > a.y) {
+        return new Vec2(coordinates1?.x, coordinates1?.y);
+      }
+      if (b.y < a.y) {
+        return new Vec2(coordinates2?.x, coordinates2?.y);
+      }
+      if (b.y === a.y) {
+        return new Vec2(a.x, a.y);
+      }
+    }
+  }
+
+  return new Vec2(a.x, a.y);
 }
 
 export default ReRxnArrow;

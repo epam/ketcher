@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { EmptyFunction } from 'helpers';
+import { useTranslation } from 'react-i18next';
 import { Card } from './styles';
 import { IRNAPresetItemProps } from './types';
 import { memo, MouseEvent, useCallback, useRef, useState } from 'react';
@@ -46,6 +47,7 @@ const RnaPresetItem = ({
   onMouseMove = EmptyFunction,
   onStarClick = EmptyFunction,
 }: IRNAPresetItemProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const isSequenceMode = useAppSelector(selectIsSequenceMode);
@@ -79,8 +81,9 @@ const RnaPresetItem = ({
 
   const onMouseOver = useCallback(
     () =>
-      editor && cardMouseOverHandler(editor, preset, setAutochainErrorMessage),
-    [editor, preset],
+      editor &&
+      cardMouseOverHandler(editor, preset, setAutochainErrorMessage, t),
+    [editor, preset, t],
   );
 
   const onAutochainIconMouseOver = useCallback(() => {
@@ -95,9 +98,6 @@ const RnaPresetItem = ({
     editor?.events.removeAutochainPreview.dispatch(preset);
   }, [editor, preset]);
 
-  // TODO suppressed after upgrade to react 19. Need to fix
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   useLibraryItemDrag(preset, cardRef);
 
   return (

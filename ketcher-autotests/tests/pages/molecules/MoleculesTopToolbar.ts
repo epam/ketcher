@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import {
   waitForRender,
@@ -80,7 +79,7 @@ export const MoleculesTopToolbar = (page: Page) => {
           .getByTestId('copy-button-dropdown-triangle')
           .click();
         await copyToolbar.waitFor({ state: 'visible', timeout: 5000 });
-      } catch (error) {
+      } catch (_error) {
         console.warn(
           "Copy dropdown section didn't appeared after click in 5 seconds",
         );

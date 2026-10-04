@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -23,6 +24,9 @@ import {
   useRef,
   useState,
 } from 'react';
+import type { AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
+import { useTranslation } from 'react-i18next';
 import { Dialog, LoadingCircles } from '../../../../components';
 import {
   type Struct,
@@ -35,11 +39,20 @@ import {
 import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema';
 import classes from './Miew.module.less';
 import { connect } from 'react-redux';
-import { load } from '../../../../../state';
+import { load, parseStruct } from '../../../../../state/shared';
+import { showSnackbarNotification } from '../../../../../state/notifications';
 import { pick } from 'lodash/fp';
 import type { Miew as MiewAsType } from 'miew';
 import { createSelector } from 'reselect';
 import { useAppContext } from 'src/hooks';
+import {
+  alignToCentroid,
+  collapseExpandedSuperatoms,
+  mergeCoordinatesFromResult,
+  mergeMetaObjects,
+  needsMetaPreservation,
+  needsStructurePreservation,
+} from './miewStructMerge';
 
 const Viewer = lazy(() =>
   import('miew-react').then((module) => ({
@@ -56,7 +69,8 @@ type MiewDialogProps = {
   miewTheme: 'dark' | 'light';
 };
 type MiewDialogCallProps = {
-  onExportCML: (cmlStruct: string) => void;
+  dispatch: ThunkDispatch<unknown, undefined, AnyAction>;
+  serverSettings: Record<string, unknown>;
 };
 type Props = MiewDialogProps & MiewDialogCallProps;
 
@@ -118,21 +132,23 @@ function createMiewOptions(userOpts) {
   return options;
 }
 /* ---------------- */
-const CHANGING_WARNING =
-  'Stereocenters can be changed after the strong 3D rotation';
-
-const FooterContent = () => (
-  <div className={classes.warning}>{CHANGING_WARNING}</div>
-);
+const FooterContent = () => {
+  const { t } = useTranslation('dialogs');
+  return (
+    <div className={classes.warning}>{t('process.miew.changingWarning')}</div>
+  );
+};
 
 const MiewDialog = ({
   miewOpts,
   server,
   struct,
-  onExportCML,
+  dispatch,
+  serverSettings,
   miewTheme = 'light',
   ...prop
 }: Props) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   const miewRef = useRef<MiewAsType>(undefined);
   const [isInitialized, setIsInitialized] = useState(false);
   const { ketcherId } = useAppContext();
@@ -152,9 +168,10 @@ const MiewDialog = ({
       miewRef.current = miew;
       const factory = new FormatterFactory(server);
       const service = factory.create(SupportedFormat.cml);
+      const moleculeOnlyStruct = struct.clone(null, null, true);
 
       service
-        .getStringFromStructureAsync(struct)
+        .getStringFromStructureAsync(moleculeOnlyStruct)
         .then((res) =>
           miew.load(res, { sourceType: 'immediate', fileType: 'cml' }),
         )
@@ -169,17 +186,109 @@ const MiewDialog = ({
     [miewOpts, server, struct],
   );
 
-  const exportCML = useCallback(() => {
+  const exportCML = useCallback(async () => {
     const cmlStruct = miewRef.current?.exportCML();
+
     if (!cmlStruct) {
+      KetcherLogger.error(
+        'Miew.tsx::MiewDialog::exportCML',
+        'Failed to export structure from 3D viewer',
+      );
+      dispatch(
+        showSnackbarNotification(t('dialogs:process.miew.exportFailedError')),
+      );
       return;
     }
-    onExportCML(cmlStruct);
-  }, [onExportCML, miewRef]);
+
+    const shouldPreserveStructure = needsStructurePreservation(struct);
+    const shouldPreserveMeta = needsMetaPreservation(struct);
+
+    if (!shouldPreserveStructure && !shouldPreserveMeta) {
+      dispatch(load(cmlStruct));
+      return;
+    }
+
+    let result: Struct;
+
+    try {
+      result = await parseStruct(cmlStruct, server, serverSettings);
+      result.rescale();
+      alignToCentroid(result, struct);
+    } catch (e) {
+      KetcherLogger.error(
+        'Miew.tsx::MiewDialog::exportCML::parseAndPrepareResult',
+        e,
+      );
+      dispatch(
+        showSnackbarNotification(t('dialogs:process.miew.processFailedError')),
+      );
+      return;
+    }
+
+    if (shouldPreserveStructure) {
+      try {
+        const preserved = struct.clone();
+        preserved.enableInitiallySelected();
+
+        if (!mergeCoordinatesFromResult(result, preserved)) {
+          KetcherLogger.error(
+            'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
+            'Coordinate merge validation failed',
+          );
+          dispatch(
+            showSnackbarNotification(
+              t('dialogs:process.miew.mergeCoordinatesFailedError'),
+            ),
+          );
+          return;
+        }
+
+        collapseExpandedSuperatoms(preserved);
+        preserved.findConnectedComponents();
+        preserved.setImplicitHydrogen();
+        preserved.setStereoLabelsToAtoms();
+        preserved.markFragments();
+
+        dispatch(
+          load(preserved, {
+            preserveViewport: true,
+            skipCenter: true,
+          }),
+        );
+        return;
+      } catch (e) {
+        KetcherLogger.error(
+          'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
+          e,
+        );
+        dispatch(
+          showSnackbarNotification(
+            t('dialogs:process.miew.mergeCoordinatesFailedError'),
+          ),
+        );
+        return;
+      }
+    }
+
+    try {
+      mergeMetaObjects(result, struct);
+      dispatch(load(result, { preserveViewport: true, skipCenter: true }));
+    } catch (e) {
+      KetcherLogger.error(
+        'Miew.tsx::MiewDialog::exportCML::mergeMetaObjects',
+        e,
+      );
+      dispatch(
+        showSnackbarNotification(
+          t('dialogs:process.miew.mergeMetaFailedError'),
+        ),
+      );
+    }
+  }, [dispatch, server, serverSettings, struct, t]);
 
   return (
     <Dialog
-      title="Miew"
+      title={t('dialogs:process.miew.dialogTitle')}
       needMargin={false}
       params={prop}
       buttons={[
@@ -191,7 +300,7 @@ const MiewDialog = ({
           disabled={isDisabled}
           data-testid="miew-modal-button"
         >
-          Apply
+          {t('common:button.apply')}
         </button>,
       ]}
       footerContent={<FooterContent />}
@@ -228,14 +337,11 @@ const mapStateToProps = (state) => ({
   server: state.options.app.server ? state.server : null,
   struct: state.editor.struct(),
   miewTheme: state.options.settings.miewTheme,
+  serverSettings: state.options.getServerSettings(),
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onExportCML: (cmlStruct) => {
-    dispatch(load(cmlStruct));
-    // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
-    // See PR #731 (https://github.com/epam/ketcher/pull/731)
-  },
+  dispatch,
 });
 
 const Miew = connect(mapStateToProps, mapDispatchToProps)(MiewDialog);

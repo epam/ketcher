@@ -11,7 +11,12 @@
       "utilities": ["../ketcher-core/src/utilities"],
       "types": ["../ketcher-core/src/types"]
     },
+    "moduleResolution": "bundler",
     "rootDir": "../.."
   },
-  "include": ["src", "rollup-plugin-shims.d.ts"]
+  "include": [
+    "src",
+    "rollup-plugin-shims.d.ts",
+    "../ketcher-core/src/typing.d.ts"
+  ]
 }

@@ -442,7 +442,6 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           currentSelection={formatSelection}
           selectionHandler={setFormatSelection}
           customStylesForExpanded={stylesForExpanded}
-          key={formatSelection}
         />
         {formatSelection === SEQ || formatSelection === FASTA ? (
           <FooterSequenceSelector
@@ -450,7 +449,6 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
             currentSelection={additionalSelection}
             selectionHandler={setAdditionalSelection}
             customStylesForExpanded={stylesForExpanded}
-            key={additionalSelection}
             testId="dropdown-select-type"
           />
         ) : null}

@@ -89,13 +89,14 @@ const RnaElementsTabsView = ({
               className={clsx(selected && 'rna-tab--selected')}
             >
               <RnaTab
-                label={caption}
                 title={label}
                 selected={selected}
-                icon={<Icon name={iconName as IconName} />}
                 onClick={() => dispatch(setActiveRnaBuilderItem(groupName))}
                 data-testid={`summary-${groupName}`}
-              />
+              >
+                <Icon name={iconName as IconName} />
+                {caption != null && <span>{caption}</span>}
+              </RnaTab>
             </RnaTabWrapper>
           );
         })}

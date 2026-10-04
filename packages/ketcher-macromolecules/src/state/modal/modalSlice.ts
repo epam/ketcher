@@ -45,7 +45,7 @@ export type ModalName =
   | 'confirmationDialog'
   | 'settings';
 
-export const modalSlice = createSlice({
+const modalSlice = createSlice({
   name: 'modal',
   initialState,
   reducers: {
@@ -110,16 +110,21 @@ export const {
 
 export const selectModalName = (state: RootState): string | null =>
   state.modal.name;
+
 export const selectModalIsOpen = (state: RootState): boolean =>
   state.modal.isOpen;
+
 export const selectAdditionalProps = (
   state: RootState,
 ): AdditionalModalProps | null => state.modal.additionalProps;
+
 export const selectErrorTooltips = (state: RootState): string[] =>
   state.modal.errorTooltips;
+
 export const selectErrorModalText = (state: RootState): string => {
   return state.modal.errorModalText;
 };
+
 export const selectErrorModalTitle = (state: RootState): string => {
   return state.modal.errorModalTitle;
 };

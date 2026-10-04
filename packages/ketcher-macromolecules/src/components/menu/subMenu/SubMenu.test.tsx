@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ThemeProvider } from '@emotion/react';
+import { ThemeProvider } from '@mui/material/styles';
 import { createTheme } from '@mui/material/styles';
 import { Provider as StoreProvider } from 'react-redux';
 import { Menu, MenuContext } from 'components/menu';

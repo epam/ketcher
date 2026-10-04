@@ -75,14 +75,14 @@ exports[`Save Dialog should be rendered correctly should render opened file form
                   role="none"
                 >
                   <div
-                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer file-format-list css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer file-format-list MuiSelect-root css-sc8y68-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
                     data-testid="file-format-list"
                   >
                     <div
                       aria-controls="_r_0_"
                       aria-expanded="true"
                       aria-haspopup="listbox"
-                      class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+                      class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-jbz0k-MuiNativeSelect-root-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
                       role="combobox"
                       tabindex="0"
                     >
@@ -91,21 +91,23 @@ exports[`Save Dialog should be rendered correctly should render opened file form
                     <input
                       aria-hidden="true"
                       aria-invalid="false"
-                      class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                      class="MuiSelect-nativeInput css-j0riat-MuiSelect-nativeInput"
+                      id="_r_1_"
                       tabindex="-1"
                       value="mol"
                     />
                     <icon-chevron.svg
-                      class="MuiSelect-icon MuiSelect-iconOutlined MuiSelect-iconOpen css-10q54uo-MuiSelect-icon"
+                      class="MuiSelect-icon MuiSelect-iconOpen css-7hu6ns-MuiNativeSelect-root-MuiSelect-icon"
                     />
                     <fieldset
                       aria-hidden="true"
-                      class="MuiOutlinedInput-notchedOutline css-r01yff-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
+                      class="MuiOutlinedInput-notchedOutline css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
                     >
                       <legend
-                        class="css-1whs34k-MuiNotchedOutlined-root"
+                        class="css-1nf2c5d-MuiNotchedOutlined-root"
                       >
                         <span
+                          aria-hidden="true"
                           class="notranslate"
                         >
                           ​
@@ -185,13 +187,13 @@ exports[`Save Dialog should be rendered correctly should render opened file form
       </dialog>
     </div>
     <div
-      class="MuiPopover-root MuiMenu-root dropdownList MuiModal-root css-10nakn3-MuiModal-root-MuiPopover-root-MuiMenu-root"
+      class="MuiPopover-root MuiMenu-root dropdownList MuiModal-root css-pa188r-MuiModal-root-MuiPopover-root-MuiMenu-root"
       id="menu-"
       role="presentation"
     >
       <div
         aria-hidden="true"
-        class="MuiBackdrop-root MuiBackdrop-invisible MuiModal-backdrop css-g3hgs1-MuiBackdrop-root-MuiModal-backdrop"
+        class="MuiBackdrop-root MuiBackdrop-invisible MuiModal-backdrop css-vl6bb4-MuiBackdrop-root-MuiModal-backdrop"
         style="opacity: 1; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
       />
       <div
@@ -199,19 +201,19 @@ exports[`Save Dialog should be rendered correctly should render opened file form
         tabindex="0"
       />
       <div
-        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation8 MuiPopover-paper MuiMenu-paper MuiMenu-paper css-3dzjca-MuiPaper-root-MuiPopover-paper-MuiMenu-paper"
-        style="opacity: 1; transform: none; min-width: 0; transition: opacity 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; top: 16px; left: 16px; transform-origin: -16px -16px;"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation8 MuiPopover-paper MuiMenu-paper css-1tktgsa-MuiPaper-root-MuiPopover-paper-MuiMenu-paper"
+        style="--Paper-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12); opacity: 1; transform: none; min-width: 0; transition: opacity 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; top: 16px; left: 16px; transform-origin: -16px -16px;"
         tabindex="-1"
       >
         <ul
-          class="MuiList-root MuiList-padding MuiMenu-list css-6hp17o-MuiList-root-MuiMenu-list"
+          class="MuiList-root MuiList-padding MuiMenu-list css-1toxriw-MuiList-root-MuiMenu-list"
           id="_r_0_"
           role="listbox"
           tabindex="-1"
         >
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="Ket Format-option"
             data-value="ket"
             role="option"
@@ -221,7 +223,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="true"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters Mui-selected MuiMenuItem-root MuiMenuItem-gutters Mui-selected css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters Mui-selected css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="MDL Molfile V2000-option"
             data-value="mol"
             role="option"
@@ -231,7 +233,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="MDL Molfile V3000-option"
             data-value="molV3000"
             role="option"
@@ -241,7 +243,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="SDF V2000-option"
             data-value="sdf"
             role="option"
@@ -251,7 +253,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="SDF V3000-option"
             data-value="sdfV3000"
             role="option"
@@ -261,7 +263,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="RDF V2000-option"
             data-value="rdf"
             role="option"
@@ -271,7 +273,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="RDF V3000-option"
             data-value="rdfV3000"
             role="option"
@@ -281,7 +283,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="Daylight SMARTS-option"
             data-value="smarts"
             role="option"
@@ -291,7 +293,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="Daylight SMILES-option"
             data-value="smiles"
             role="option"
@@ -301,7 +303,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="Extended SMILES-option"
             data-value="smilesExt"
             role="option"
@@ -311,7 +313,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="CML-option"
             data-value="cml"
             role="option"
@@ -321,12 +323,12 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <hr
             aria-selected="false"
-            class="MuiDivider-root MuiDivider-fullWidth listDivider css-9mgopn-MuiDivider-root"
+            class="MuiDivider-root MuiDivider-fullWidth listDivider css-1jpc804-MuiDivider-root"
             role="option"
           />
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="InChI-option"
             data-value="inChI"
             role="option"
@@ -336,7 +338,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="InChI AuxInfo-option"
             data-value="inChIAuxInfo"
             role="option"
@@ -346,7 +348,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="InChIKey-option"
             data-value="inChIKey"
             role="option"
@@ -356,12 +358,12 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <hr
             aria-selected="false"
-            class="MuiDivider-root MuiDivider-fullWidth listDivider css-9mgopn-MuiDivider-root"
+            class="MuiDivider-root MuiDivider-fullWidth listDivider css-1jpc804-MuiDivider-root"
             role="option"
           />
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="SVG Document-option"
             data-value="svg"
             role="option"
@@ -371,7 +373,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="PNG Image-option"
             data-value="png"
             role="option"
@@ -381,7 +383,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="CDXML-option"
             data-value="cdxml"
             role="option"
@@ -391,7 +393,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="Base64 CDX-option"
             data-value="cdx"
             role="option"
@@ -401,7 +403,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <li
             aria-selected="false"
-            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-11adcq1-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="CDX-option"
             data-value="binaryCdx"
             role="option"
@@ -486,14 +488,14 @@ exports[`Save Dialog should be rendered correctly should render opened file form
                 role="none"
               >
                 <div
-                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer file-format-list css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer file-format-list MuiSelect-root css-sc8y68-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
                   data-testid="file-format-list"
                 >
                   <div
                     aria-controls="_r_0_"
                     aria-expanded="true"
                     aria-haspopup="listbox"
-                    class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+                    class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-jbz0k-MuiNativeSelect-root-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
                     role="combobox"
                     tabindex="0"
                   >
@@ -502,21 +504,23 @@ exports[`Save Dialog should be rendered correctly should render opened file form
                   <input
                     aria-hidden="true"
                     aria-invalid="false"
-                    class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                    class="MuiSelect-nativeInput css-j0riat-MuiSelect-nativeInput"
+                    id="_r_1_"
                     tabindex="-1"
                     value="mol"
                   />
                   <icon-chevron.svg
-                    class="MuiSelect-icon MuiSelect-iconOutlined MuiSelect-iconOpen css-10q54uo-MuiSelect-icon"
+                    class="MuiSelect-icon MuiSelect-iconOpen css-7hu6ns-MuiNativeSelect-root-MuiSelect-icon"
                   />
                   <fieldset
                     aria-hidden="true"
-                    class="MuiOutlinedInput-notchedOutline css-r01yff-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
+                    class="MuiOutlinedInput-notchedOutline css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
                   >
                     <legend
-                      class="css-1whs34k-MuiNotchedOutlined-root"
+                      class="css-1nf2c5d-MuiNotchedOutlined-root"
                     >
                       <span
+                        aria-hidden="true"
                         class="notranslate"
                       >
                         ​

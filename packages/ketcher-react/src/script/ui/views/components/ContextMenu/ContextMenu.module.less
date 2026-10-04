@@ -23,7 +23,7 @@
   /* react-contexify uses these camelCase custom property names as its public API. */
   /* stylelint-disable custom-property-pattern */
   --contexify-menu-bgColor: @color-background-primary;
-  --contexify-item-color:@color-text-primary;
+  --contexify-item-color: @color-text-primary;
   --contexify-activeItem-color: @color-text-secondary;
   --contexify-activeItem-bgColor: @color-grey-3;
   --contexify-rightSlot-color: @color-text-secondary;
@@ -64,7 +64,7 @@
     display: flex;
     align-items: center;
     line-height: var(--ketcher-font-size-regular);
-  }  
+  }
 
   :global(.contexify_submenu) {
     max-height: 400px;
@@ -88,7 +88,7 @@
     gap: 4px;
   }
 
-  :global(.contexify_item):not(.sameGroup,:last-child) {
+  :global(.contexify_item):not(.sameGroup, :last-child) {
     &::after {
       content: none;
     }
@@ -108,10 +108,9 @@
 
   .devider {
     content: '';
-      display: block;
-      /* stylelint-disable-next-line declaration-property-value-no-unknown */
-      border-top: 1px solid @border-color;
-      margin: 3px 0;
+    display: block;
+    /* stylelint-disable-next-line declaration-property-value-no-unknown */
+    border-top: 1px solid @border-color;
+    margin: 3px 0;
   }
-
 }

@@ -71,6 +71,7 @@ const readPersistedPresetPhosphateFilter = (): PresetPhosphateFilter => {
   const stored: unknown = localStorageWrapper.getItem(
     PRESET_PHOSPHATE_FILTER_STORAGE_KEY,
   );
+
   if (
     stored &&
     typeof stored === 'object' &&
@@ -80,6 +81,7 @@ const readPersistedPresetPhosphateFilter = (): PresetPhosphateFilter => {
   ) {
     return stored as PresetPhosphateFilter;
   }
+
   return { fivePrime: false, threePrime: false, noPhosphate: false };
 };
 
@@ -131,13 +133,14 @@ const initialState: IRnaBuilderState = {
   activePresetForContextMenu: null,
   presetPhosphateFilter: readPersistedPresetPhosphateFilter(),
 };
+
 export const monomerGroupToPresetGroup = {
   [MonomerGroups.BASES]: 'base',
   [MonomerGroups.SUGARS]: 'sugar',
   [MonomerGroups.PHOSPHATES]: 'phosphate',
 };
 
-export const rnaBuilderSlice = createSlice({
+const rnaBuilderSlice = createSlice({
   name: 'rna-builder',
   initialState,
   reducers: {
@@ -150,38 +153,45 @@ export const rnaBuilderSlice = createSlice({
         nameInList: '',
       };
     },
+
     setActivePreset: (state, action: PayloadAction<IRnaPreset>) => {
       state.activePreset = {
         ...action.payload,
         nameInList: action.payload.name,
       };
     },
+
     setSequenceSelection: (
       state: RootState,
       action: PayloadAction<LabeledNodesWithPositionInSequence[]>,
     ) => {
       state.sequenceSelection = [...action.payload];
     },
+
     setSequenceSelectionName: (state, action: PayloadAction<string>) => {
       state.sequenceSelectionName = action.payload;
     },
+
     setIsSequenceFirstsOnlyNucleoelementsSelected: (
       state,
       action: PayloadAction<boolean>,
     ) => {
       state.isSequenceFirstsOnlyNucleoelementsSelected = action.payload;
     },
+
     setActivePresetForContextMenu: (
       state,
       action: PayloadAction<IRnaPreset>,
     ) => {
       state.activePresetForContextMenu = action.payload;
     },
+
     setPresetPhosphateFilter: (
       state,
       action: PayloadAction<PresetPhosphateFilter>,
     ) => {
       state.presetPhosphateFilter = action.payload;
+
       // Persist the filter to localStorage so the user's choice survives
       // page reloads (spec 7.5).
       localStorageWrapper.setItem(
@@ -189,16 +199,19 @@ export const rnaBuilderSlice = createSlice({
         action.payload,
       );
     },
+
     setActivePresetName: (state, action: PayloadAction<string>) => {
       if (!state.activePreset) return;
       state.activePreset.name = action.payload;
     },
+
     setActiveRnaBuilderItem: (
       state,
       action: PayloadAction<RnaBuilderItem | null>,
     ) => {
       state.activeRnaBuilderItem = action.payload;
     },
+
     recalculateRnaBuilderValidations: (
       state,
       action: PayloadAction<{
@@ -225,6 +238,7 @@ export const rnaBuilderSlice = createSlice({
       state.groupItemValidations[MonomerGroups.PHOSPHATES] =
         phosphateValidations;
     },
+
     setActivePresetMonomerGroup: (
       state,
       action: PayloadAction<{
@@ -233,10 +247,10 @@ export const rnaBuilderSlice = createSlice({
       } | null>,
     ) => {
       state.activePresetMonomerGroup = action.payload
-        ? // use castDraft to bypass the Immer draft type checking, allowing us to assign a possibly non-draft value to the state. This is necessary because the groupItem can be either a MonomerItemType or an AmbiguousMonomerType, and Immer's type checking can be too strict in this case.
-          castDraft(action.payload)
+        ? castDraft(action.payload)
         : null;
     },
+
     savePreset: (state, action: PayloadAction<IRnaPreset>) => {
       const preset = action.payload;
       const newPreset = { ...preset };
@@ -248,7 +262,9 @@ export const rnaBuilderSlice = createSlice({
         const presetIndexInList = state.presetsCustom.findIndex(
           (presetInList) => presetInList.name === newPreset.nameInList,
         );
+
         newPreset.nameInList = newPreset.name;
+
         if (presetIndexInList === -1) {
           state.presetsCustom.push(newPreset);
         } else {
@@ -261,6 +277,7 @@ export const rnaBuilderSlice = createSlice({
       if (!state.activePreset) return;
       state.activePreset.nameInList = newPreset.name;
     },
+
     deletePreset: (state, action: PayloadAction<IRnaPreset>) => {
       const preset = action.payload;
 
@@ -270,40 +287,51 @@ export const rnaBuilderSlice = createSlice({
       const presetIndexInList = state.presetsCustom.findIndex(
         (presetInList) => presetInList.name === preset.name,
       );
+
       state.presetsCustom.splice(presetIndexInList, 1);
 
       if (preset.nameInList) {
         state.activePreset = null;
       }
     },
+
     setIsEditMode: (state, action: PayloadAction<boolean>) => {
       state.isEditMode = action.payload;
     },
+
     setUniqueNameError: (state, action: PayloadAction<string>) => {
       state.uniqueNameError = action.payload;
     },
+
     setInvalidPresetError: (state, action: PayloadAction<string>) => {
       state.invalidPresetError = action.payload;
     },
+
     setInvalidPresetNameError: (state, action: PayloadAction<string>) => {
       state.invalidPresetNameError = action.payload;
     },
+
     setDefaultPresets: (
       state: RootState,
       action: PayloadAction<IRnaPreset[]>,
     ) => {
       const defaultNucleotide = action.payload[0];
+
       if (!defaultNucleotide) {
         return;
       }
+
       const presetExists = state.presetsDefault.find(
         (item: IRnaPreset) => item.name === defaultNucleotide.name,
       );
+
       if (presetExists) {
         return;
       }
+
       state.presetsDefault = action.payload;
     },
+
     setCustomPresets: (
       state: RootState,
       action: PayloadAction<IRnaPreset[]>,
@@ -351,6 +379,7 @@ export const rnaBuilderSlice = createSlice({
       const presetIndex = state.presetsDefault.findIndex(
         (presetInList) => presetInList.name === action.payload.name,
       );
+
       // Find preset to update in custom presets
       const presetCustomIndex = state.presetsCustom.findIndex(
         (presetInList) => presetInList.name === action.payload.name,
@@ -360,11 +389,11 @@ export const rnaBuilderSlice = createSlice({
       if (presetIndex >= 0) {
         const favorite = state.presetsDefault[presetIndex].favorite;
         state.presetsDefault[presetIndex].favorite = !favorite;
-        // If updating custom preset
       } else if (presetCustomIndex >= 0) {
         toggleCachedCustomRnaPresetFavorites(
           state.presetsCustom[presetCustomIndex].name,
         );
+
         const favorite = state.presetsCustom[presetCustomIndex].favorite;
         state.presetsCustom[presetCustomIndex].favorite = !favorite;
         return;
@@ -388,6 +417,7 @@ export const rnaBuilderSlice = createSlice({
         );
       } else {
         favoriteItemsUniqueKeys.push(uniquePresetKey);
+
         localStorageWrapper.setItem(
           FAVORITE_ITEMS_UNIQUE_KEYS,
           favoriteItemsUniqueKeys,
@@ -444,10 +474,12 @@ export const selectIsEditMode = (state: RootState): boolean => {
 
 export const selectPresetFullName = (preset: IRnaPreset): string => {
   if (!preset) return '';
+
   const sugar = preset.sugar?.label ?? preset.sugar?.props.MonomerName ?? '';
   const base = preset.base?.label ?? preset.base?.props.MonomerName ?? '';
   const phosphate =
     preset.phosphate?.label ?? preset.phosphate?.props.MonomerName ?? '';
+
   let fullName = sugar;
 
   if (sugar && phosphate) {
@@ -482,6 +514,7 @@ export const selectInvalidPresetNameError = (state: RootState) => {
 
 export const selectIsActivePresetNewAndEmpty = (state: RootState): boolean => {
   const activePreset = state.rnaBuilder.activePreset;
+
   return (
     activePreset &&
     !activePreset.nameInList &&
@@ -511,6 +544,7 @@ export const selectAllPresets = createSelector(
   selectRnaBuilderSlice,
   (rnaBuilderSlice): Array<IRnaPreset & { favorite?: boolean }> => {
     const { presetsDefault = [], presetsCustom = [] } = rnaBuilderSlice;
+
     return [...presetsDefault, ...presetsCustom];
   },
 );
@@ -540,16 +574,20 @@ export const selectFilteredPresets = createSelector(
         const phosphateName = item.phosphate?.label?.toLowerCase();
         const baseName = item.base?.label?.toLowerCase();
         const idtName = item.idtAliases?.base?.toLowerCase();
+
         const axoLabsAlias =
           item.aliasAxoLabs?.toLowerCase() ??
           (name ? axoLabsAliasesByPresetName.get(name) : undefined) ??
           '';
+
         const modifications = item.idtAliases?.modifications;
+
         const modificationAliases = modifications
           ? Object.values(modifications).filter(
               (mod): mod is string => typeof mod === 'string',
             )
           : [];
+
         let transformedIdtText = idtName;
 
         if (idtName && item.name?.includes('MOE')) {
@@ -558,6 +596,7 @@ export const selectFilteredPresets = createSelector(
           const internal = modifications?.internal ?? `i${base}`;
           transformedIdtText = `${endpoint5}, ${internal}`;
         }
+
         const slashCount = (searchText.match(/\//g) ?? []).length;
         const parts = searchText.split('/');
 
@@ -567,6 +606,7 @@ export const selectFilteredPresets = createSelector(
 
         if (searchText.startsWith('/') && searchText.length > 1) {
           const aliasRest = searchText.slice(1);
+
           return (
             transformedIdtText?.toLowerCase().startsWith(aliasRest) ||
             idtName?.startsWith(aliasRest) ||
@@ -616,18 +656,23 @@ export const selectFilteredPresets = createSelector(
         if (!phosphateFilter) {
           return true;
         }
+
         const { fivePrime, threePrime, noPhosphate } = phosphateFilter;
         const allOn = fivePrime && threePrime && noPhosphate;
         const allOff = !fivePrime && !threePrime && !noPhosphate;
+
         if (allOn || allOff) {
           return true;
         }
+
         if (!item.phosphate) {
           return noPhosphate;
         }
+
         const position = getRnaPresetPhosphatePosition(
           item as RnaPresetWithOptionalFields,
         );
+
         return position === 'left' ? fivePrime : threePrime;
       });
   },

@@ -14,31 +14,42 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 
 import { Open } from './Open';
 import { IndigoProvider } from 'ketcher-react';
 import { type CoreEditor, Struct } from 'ketcher-core';
 import * as ketcherCore from 'ketcher-core';
 
-jest.spyOn(React, 'useEffect').mockImplementation(() => {});
+jest.mock('./fileOpener', () => ({
+  fileOpener: jest.fn().mockResolvedValue(() => Promise.resolve('')),
+}));
 global.ketcher = {
   logging: jest.fn(),
 };
 
 describe('Open component', () => {
-  it('should render correctly', () => {
-    expect(
-      render(
-        withThemeAndStoreProvider(
-          <Open isModalOpen={true} onClose={jest.fn()} />,
-        ),
+  it('should render correctly', async () => {
+    const renderResult = render(
+      withThemeAndStoreProvider(
+        <Open isModalOpen={true} onClose={jest.fn()} />,
       ),
-    ).toMatchSnapshot();
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(renderResult).toMatchSnapshot();
   });
 
-  it('paste from clipboard', () => {
+  it('paste from clipboard', async () => {
     const mockProps = {
       isModalOpen: true,
       onClose: () => expect(mockProps.onClose).toHaveBeenCalled(),
@@ -65,25 +76,53 @@ describe('Open component', () => {
       },
     } as unknown as ReturnType<typeof IndigoProvider.getIndigo>);
     const mockTypedText = 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC';
-    render(withThemeAndStoreProvider(<Open {...mockProps} />));
-    const clipboardButton = screen.getByText('Paste from clipboard');
-    fireEvent.click(clipboardButton);
 
-    const clipboardTextarea = screen.getByRole('textbox');
-    fireEvent.change(clipboardTextarea, { target: { value: mockTypedText } });
-    expect(clipboardTextarea).toBeInTheDocument();
-    expect(clipboardTextarea).toHaveValue(mockTypedText);
+    const fileOpenerMock = jest.requireMock('./fileOpener')
+      .fileOpener as jest.Mock;
+
+    await act(async () => {
+      render(withThemeAndStoreProvider(<Open {...mockProps} />));
+      await Promise.resolve();
+    });
+    await waitFor(() => {
+      expect(fileOpenerMock).toHaveBeenCalled();
+    });
+
+    const clipboardButton = screen.getByText('Paste from clipboard');
+    await act(async () => {
+      fireEvent.click(clipboardButton);
+      await Promise.resolve();
+    });
+
+    const clipboardTextarea = await screen.findByTestId(
+      'open-structure-textarea',
+    );
+    await act(async () => {
+      fireEvent.change(clipboardTextarea, { target: { value: mockTypedText } });
+      await Promise.resolve();
+    });
+
+    expect(screen.getByTestId('open-structure-textarea')).toBeInTheDocument();
+    expect(screen.getByTestId('open-structure-textarea')).toHaveValue(
+      mockTypedText,
+    );
   });
 
-  it('buttons should be disabled when textarea is empty', () => {
+  it('buttons should be disabled when textarea is empty', async () => {
     const mockProps = {
       isModalOpen: true,
       onClose: jest.fn(),
     };
 
-    render(withThemeAndStoreProvider(<Open {...mockProps} />));
+    await act(async () => {
+      render(withThemeAndStoreProvider(<Open {...mockProps} />));
+      await Promise.resolve();
+    });
     const clipboardButton = screen.getByText('Paste from clipboard');
-    fireEvent.click(clipboardButton);
+    await act(async () => {
+      fireEvent.click(clipboardButton);
+      await Promise.resolve();
+    });
 
     const openButton = screen.getByTestId('open-as-new-button');
     const addToCanvasButton = screen.getByTestId('add-to-canvas-button');
@@ -92,18 +131,27 @@ describe('Open component', () => {
     expect(addToCanvasButton).toBeDisabled();
   });
 
-  it('buttons should be disabled when textarea contains only whitespace', () => {
+  it('buttons should be disabled when textarea contains only whitespace', async () => {
     const mockProps = {
       isModalOpen: true,
       onClose: jest.fn(),
     };
 
-    render(withThemeAndStoreProvider(<Open {...mockProps} />));
+    await act(async () => {
+      render(withThemeAndStoreProvider(<Open {...mockProps} />));
+      await Promise.resolve();
+    });
     const clipboardButton = screen.getByText('Paste from clipboard');
-    fireEvent.click(clipboardButton);
+    await act(async () => {
+      fireEvent.click(clipboardButton);
+      await Promise.resolve();
+    });
 
-    const clipboardTextarea = screen.getByRole('textbox');
-    fireEvent.change(clipboardTextarea, { target: { value: '   \n\t  ' } });
+    const clipboardTextarea = screen.getByTestId('open-structure-textarea');
+    await act(async () => {
+      fireEvent.change(clipboardTextarea, { target: { value: '   \n\t  ' } });
+      await Promise.resolve();
+    });
 
     const openButton = screen.getByTestId('open-as-new-button');
     const addToCanvasButton = screen.getByTestId('add-to-canvas-button');
@@ -112,18 +160,29 @@ describe('Open component', () => {
     expect(addToCanvasButton).toBeDisabled();
   });
 
-  it('buttons should be enabled when textarea has valid content', () => {
+  it('buttons should be enabled when textarea has valid content', async () => {
     const mockProps = {
       isModalOpen: true,
       onClose: jest.fn(),
     };
 
-    render(withThemeAndStoreProvider(<Open {...mockProps} />));
+    await act(async () => {
+      render(withThemeAndStoreProvider(<Open {...mockProps} />));
+      await Promise.resolve();
+    });
     const clipboardButton = screen.getByText('Paste from clipboard');
-    fireEvent.click(clipboardButton);
+    await act(async () => {
+      fireEvent.click(clipboardButton);
+      await Promise.resolve();
+    });
 
-    const clipboardTextarea = screen.getByRole('textbox');
-    fireEvent.change(clipboardTextarea, { target: { value: 'Valid content' } });
+    const clipboardTextarea = screen.getByTestId('open-structure-textarea');
+    await act(async () => {
+      fireEvent.change(clipboardTextarea, {
+        target: { value: 'Valid content' },
+      });
+      await Promise.resolve();
+    });
 
     const openButton = screen.getByTestId('open-as-new-button');
     const addToCanvasButton = screen.getByTestId('add-to-canvas-button');

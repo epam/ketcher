@@ -87,7 +87,6 @@ const Select = ({
       displayEmpty
       multiple={multiple}
       disabled={disabled}
-      placeholder={placeholder}
       MenuProps={{
         container: portalContainer,
         className: styles.dropdownList,

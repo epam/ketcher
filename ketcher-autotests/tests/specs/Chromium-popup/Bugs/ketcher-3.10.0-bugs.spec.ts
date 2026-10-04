@@ -511,6 +511,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await expect(PasteFromClipboardDialog(page).contentTypeSelector).toHaveText(
       'AxoLabs',
     );
+    await page.waitForTimeout(1000);
     await PasteFromClipboardDialog(page).selectContentType(
       MacroFileType.KetFormat,
     );

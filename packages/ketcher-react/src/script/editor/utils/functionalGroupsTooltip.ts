@@ -1,5 +1,4 @@
-import assert from 'assert';
-import { MonomerMicromolecule, SGroup, Struct } from 'ketcher-core';
+import { MonomerMicromolecule, SGroup, Struct, assert } from 'ketcher-core';
 import type Editor from '../Editor';
 
 let showTooltipTimer: ReturnType<typeof setTimeout> | null = null;
@@ -36,6 +35,18 @@ function convertSGroupAttachmentPointsToRGroupAttachmentPoints(
 }
 
 function makeStruct(editor: Editor, sGroup: SGroup) {
+  // For MonomerMicromolecule, use the monomer template struct directly.
+  // The template struct has rglabel set on leaving-group atoms (via
+  // fillStructRgLabelsByMonomerTemplate), so attachment points render as
+  // R1/R2/etc. instead of H. Using the canvas struct would show H atoms
+  // without rglabel (they are only set after a mode-switch round-trip).
+  if (sGroup instanceof MonomerMicromolecule) {
+    const monomerStruct = sGroup.monomer?.monomerItem?.struct;
+    if (monomerStruct) {
+      return monomerStruct.clone();
+    }
+  }
+
   const existingStruct = editor.struct();
   const struct = new Struct();
 

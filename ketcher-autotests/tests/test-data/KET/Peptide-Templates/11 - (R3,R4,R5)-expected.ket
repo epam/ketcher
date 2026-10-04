@@ -41,7 +41,8 @@
                     -9.0509,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",

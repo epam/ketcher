@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { ContextMenu } from '../ContextMenu';
 import { MultiTailedArrowOption } from '@tests/pages/constants/contextMenu/Constants';

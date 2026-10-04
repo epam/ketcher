@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component, useCallback, useState } from 'react';
+import { Component } from 'react';
 
 import { type ValidationError, type Schema, Validator } from 'jsonschema';
 import { ErrorPopover } from './errorPopover';
@@ -29,20 +29,22 @@ import Select from '../Select';
 import classes from './form.module.less';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
-import { getSelectOptionsFromSchema } from '../../../utils';
+import {
+  getSelectOptionsFromSchema,
+  resolveTranslatableText,
+} from '../../../utils';
 import { updateFormState } from '../../../state/modal/form';
-import { useFormContext } from '../../../../../hooks';
+import { useFormContext, usePopoverAnchor } from '../../../../../hooks';
 import { cloneDeep, omit } from 'lodash';
 import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export interface FormOwnProps {
   children: React.ReactNode;
   schema: FormSchema;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  init?: Record<string, any> | null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  customValid?: Record<string, (value: any) => boolean | string>;
+  init?: Record<string, unknown> | null;
+  customValid?: Record<string, (value: string) => boolean | string>;
   serialize?: Record<string, string>;
   deserialize?: Record<string, string>;
 }
@@ -56,14 +58,12 @@ interface FormDispatchProps {
 }
 
 interface FormStateProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  result: Record<string, any>;
+  result: Record<string, unknown>;
   errors?: Record<string, string>;
 }
 
 // Generic shareable FormState interface for use in dialogs
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface FormState<TResult = Record<string, any>> {
+export interface FormState<TResult = Record<string, unknown>> {
   result: TResult;
   valid: boolean;
   errors?: Record<string, string>;
@@ -71,14 +71,32 @@ export interface FormState<TResult = Record<string, any>> {
 
 type FormProps = FormOwnProps & FormDispatchProps & FormStateProps;
 
+function applySchemaDefaults<T extends Record<string, unknown>>(
+  state: T,
+  schema: FormSchema,
+): T {
+  const defaultsApplied: Record<string, unknown> = { ...state };
+
+  Object.entries(schema.properties ?? {}).forEach(([name, property]) => {
+    if (property !== null && typeof property === 'object') {
+      const defaultValue = (property as SchemaProperty).default;
+      // Only set default if key is completely missing from state
+      if (defaultValue !== undefined && !(name in defaultsApplied)) {
+        defaultsApplied[name] = defaultValue;
+      }
+    }
+  });
+
+  return defaultsApplied as T;
+}
+
 // Keep backward-compatible export
 export type { FormProps };
 
 export interface FieldProps {
   title?: string;
   name?: string;
-  // Select props is not assignable to Record<string, unknown> causes error in components
-  component?: React.ComponentType<any> | string; // eslint-disable-line @typescript-eslint/no-explicit-any
+  component?: React.ElementType | string;
   options?: Array<{ value: string; label: string }>;
   disabled?: boolean;
   formName?: string;
@@ -89,13 +107,11 @@ export interface FieldProps {
   extraName?: string;
   tooltip?: string;
   extraLabel?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  schema?: SchemaProperty | any[];
+  schema?: SchemaProperty | unknown[];
   extraSchema?: SchemaProperty;
   type?: string;
   value?: string | number | boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onChange?: (value: any) => void;
+  onChange?: (value: unknown) => void;
   placeholder?: string;
   checked?: boolean;
   multiple?: boolean;
@@ -105,8 +121,7 @@ export interface FieldProps {
 }
 
 export interface FieldWithModalProps extends FieldProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onEdit?: (onChange: (value: any) => void) => void;
+  onEdit?: (onChange: (value: unknown) => void) => void;
   autoFocus?: boolean;
 }
 
@@ -118,12 +133,9 @@ export interface CustomQueryFieldProps extends FieldProps {
   checkboxValue?: boolean;
   onCheckboxChange?: (
     value: boolean,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    formState: any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onChange: (value: any) => void,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    updateFormState: (settings: any) => void,
+    formState: Record<string, unknown>,
+    onChange: (value: unknown) => void,
+    updateFormState: (settings: Record<string, unknown>) => void,
   ) => void;
 }
 
@@ -156,9 +168,9 @@ class Form extends Component<FormProps> {
     this.schema = propSchema(schema, props);
 
     if (init) {
-      const { valid, errors } = this.schema.serialize(init);
+      const initialState = applySchemaDefaults({ ...init, init: true }, schema);
+      const { valid, errors } = this.schema.serialize(initialState);
       const errs = getErrorsObj(errors);
-      const initialState = { ...init, init: true };
       onUpdate(initialState, valid, errs);
     }
     this.updateState = this.updateState.bind(this);
@@ -168,14 +180,16 @@ class Form extends Component<FormProps> {
 
   componentDidUpdate(prevProps: FormProps) {
     const { schema, result, customValid, serialize, deserialize } = this.props;
+
     if (
       (schema.key && schema.key !== prevProps.schema.key) ||
       (customValid !== prevProps.customValid &&
         (schema.title === 'Atom' || schema.title === 'Bond'))
     ) {
       this.schema = propSchema(schema, { customValid, serialize, deserialize });
-      this.schema.serialize(result);
-      this.updateState(result);
+      const stateWithDefaults = applySchemaDefaults(result, schema);
+      this.schema.serialize(stateWithDefaults);
+      this.updateState(stateWithDefaults);
     }
   }
 
@@ -239,8 +253,9 @@ export default connect(null, (dispatch) => ({
     dispatch(updateFormState({ result, valid, errors }));
   },
   // Workaround: @types/react version conflict — react-redux's types reference a different @types/react than what Ketcher uses.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-}))(Form as any) as React.ComponentType<FormOwnProps & FormStateProps>;
+}))(Form as unknown as React.ComponentClass<FormProps>) as React.ComponentType<
+  FormOwnProps & FormStateProps
+>;
 
 interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
   labelPos?: string | boolean;
@@ -313,25 +328,18 @@ function Label({
   children,
   ...props
 }: Readonly<LabelProps>) {
+  const { t } = useTranslation();
+  const resolvedTitle = resolveTranslatableText(title, t) ?? '';
+  const resolvedTooltip = resolveTranslatableText(tooltip, t) ?? null;
   return (
     <label {...props}>
-      {labelPos !== 'after' && renderLabelContent(title ?? '', tooltip ?? null)}
+      {labelPos !== 'after' &&
+        renderLabelContent(resolvedTitle, resolvedTooltip)}
       {children}
       {labelPos === 'after' &&
-        renderLabelContentAfter(title ?? '', tooltip ?? null)}
+        renderLabelContentAfter(resolvedTitle, resolvedTooltip)}
     </label>
   );
-}
-
-function usePopoverAnchor() {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const handleOpen = useCallback((event: React.MouseEvent) => {
-    setAnchorEl(event.currentTarget as HTMLElement);
-  }, []);
-  const handleClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
-  return { anchorEl, handleOpen, handleClose };
 }
 
 function Field(props: Readonly<FieldProps>) {
@@ -358,8 +366,7 @@ function Field(props: Readonly<FieldProps>) {
   const { dataError, onExtraChange, extraValue, ...fieldOpts } =
     stateStore.field(name ?? '', onChange, extraName);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const Component = component as React.ComponentType<any>;
+  const Component = component;
   const formField = Component ? (
     <Component
       name={name}
@@ -367,6 +374,7 @@ function Field(props: Readonly<FieldProps>) {
       className={className}
       onExtraChange={onExtraChange}
       extraValue={extraValue}
+      {...(labelPos === false && { error: dataError })}
       {...(extraName && {
         extraSchema: rest.extraSchema || schema?.properties?.[extraName],
       })}
@@ -384,7 +392,43 @@ function Field(props: Readonly<FieldProps>) {
     />
   );
 
-  if (labelPos === false) return formField;
+  if (labelPos === false) {
+    if (Component) {
+      return formField;
+    }
+
+    const isSelectableControl =
+      rest.type === 'radio' || rest.type === 'checkbox';
+    const showError = Boolean(dataError) && !isSelectableControl;
+
+    return (
+      <>
+        <span className={clsx({ [classes.dataError]: showError }, className)}>
+          <span
+            className={classes.inputWrapper}
+            onMouseEnter={handlePopoverOpen}
+            onMouseLeave={handlePopoverClose}
+            data-testid={
+              props['data-testid']
+                ? `${props['data-testid']}-input-span`
+                : undefined
+            }
+            role="none"
+          >
+            {formField}
+          </span>
+        </span>
+        {showError && dataError && anchorEl && (
+          <ErrorPopover
+            anchorEl={anchorEl}
+            open={!!anchorEl}
+            error={dataError}
+            onClose={handlePopoverClose}
+          />
+        )}
+      </>
+    );
+  }
   return (
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}
@@ -508,9 +552,9 @@ function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
       schema?.properties?.[name ?? '']) ??
     {};
   const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
-  const handleCheckboxChange = (value: boolean) => {
+  const handleCheckboxChange = (value: unknown) => {
     onCheckboxChange?.(
-      value,
+      value as boolean,
       stateStore.props.result,
       fieldOpts.onChange,
       stateStore.updateState,
@@ -560,6 +604,7 @@ function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
 
 const SelectOneOf = (props: SelectOneOfProps) => {
   const { title, name, schema, ...prop } = props;
+  const { t } = useTranslation();
 
   const selectDesc: {
     title?: string;
@@ -583,7 +628,7 @@ const SelectOneOf = (props: SelectOneOfProps) => {
   return (
     <Field
       name={name}
-      options={getSelectOptionsFromSchema(selectDesc)}
+      options={getSelectOptionsFromSchema(selectDesc, t)}
       title={title}
       {...prop}
       component={Select}
@@ -599,7 +644,7 @@ function propSchema(
     serialize = {},
     deserialize = {},
   }: {
-    customValid?: Record<string, (value: unknown) => boolean | string>;
+    customValid?: Record<string, (value: string) => boolean | string>;
     serialize?: Record<string, string>;
     deserialize?: Record<string, string>;
   },
@@ -699,4 +744,4 @@ function getErrorsObj(errors: FormValidationError[]): Record<string, string> {
   return errs;
 }
 
-export { Field, CustomQueryField, FieldWithModal, SelectOneOf };
+export { Field, CustomQueryField, FieldWithModal, SelectOneOf, Label };

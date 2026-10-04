@@ -29,9 +29,12 @@ interface ImageDeleteData {
   id: number;
 }
 
-export class ImageUpsert extends BaseOperation {
+export class ImageUpsert extends BaseOperation<ImageUpsertData> {
   readonly data: ImageUpsertData;
-  constructor(private readonly image: Image, id?: number) {
+  constructor(
+    private readonly image: Image,
+    id?: number,
+  ) {
     super(OperationType.IMAGE_UPSERT);
     this.data = { id };
   }
@@ -39,10 +42,8 @@ export class ImageUpsert extends BaseOperation {
   execute(reStruct: ReStruct) {
     const struct = reStruct.molecule;
 
-    if (this.data.id === undefined) {
-      this.data.id = struct.images.newId();
-    }
-    const id = this.data.id;
+    const id = this.data.id ?? struct.images.newId();
+    this.data.id = id;
     const item = this.image.clone();
     struct.images.set(id, item);
     reStruct.images.set(id, new ReImage(item));
@@ -50,7 +51,7 @@ export class ImageUpsert extends BaseOperation {
     BaseOperation.invalidateItem(reStruct, IMAGE_KEY, id, 1);
   }
 
-  invert(): BaseOperation {
+  invert(): ImageDelete {
     // `data.id` is always assigned by `execute` before `invert` can be
     // meaningfully called; a missing id here indicates a programming error.
     if (this.data.id === undefined) {
@@ -61,7 +62,7 @@ export class ImageUpsert extends BaseOperation {
   }
 }
 
-export class ImageDelete extends BaseOperation {
+export class ImageDelete extends BaseOperation<ImageDeleteData> {
   private image?: Image;
   readonly data: ImageDeleteData;
   constructor(id: number) {

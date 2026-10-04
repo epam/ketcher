@@ -4,6 +4,7 @@ import AttachmentPointControls from '../AttachmentPointControls/AttachmentPointC
 import type Editor from '../../../../../../editor';
 import styles from '../AttachmentPoint/AttachmentPoint.module.less';
 import { createReadonlyAttachmentPointSelectData } from '../../hooks/useAttachmentPointSelectsData';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   name: AttachmentPointName;
@@ -31,16 +32,9 @@ const ReadonlyAttachmentPoint = ({
   atomId,
   onLeavingAtomChange,
 }: Props) => {
+  const { t } = useTranslation('components');
   const containerRef = useRef<HTMLDivElement>(null);
   const [highlight, setHighlight] = useState(false);
-  // Track the currently selected leaving atom so the select reflects user changes.
-  const [currentLeavingAtomLabel, setCurrentLeavingAtomLabel] =
-    useState<AtomLabel>(leavingAtomLabel);
-
-  // Reset when the default label changes (e.g. component re-assigned).
-  useEffect(() => {
-    setCurrentLeavingAtomLabel(leavingAtomLabel);
-  }, [leavingAtomLabel]);
 
   // Panel hover → canvas highlight
   useEffect(() => {
@@ -49,12 +43,12 @@ const ReadonlyAttachmentPoint = ({
 
     const mouseOverHandler = () => {
       if (atomId !== undefined) {
-        // Use atom-specific highlighting to avoid AP name collisions between components.
         editor.highlightAtomById(atomId);
       } else {
         editor.highlightConnectionAttachmentPoint(name);
       }
     };
+
     const mouseLeaveHandler = () => {
       if (atomId !== undefined) {
         editor.highlightAtomById(null);
@@ -78,8 +72,10 @@ const ReadonlyAttachmentPoint = ({
       const apName = (event as CustomEvent<AttachmentPointName>).detail;
       setHighlight(apName === name);
     };
+
     const handleReset = (event: Event) => {
       const apName = (event as CustomEvent<AttachmentPointName>).detail;
+
       if (apName === name) {
         setHighlight(false);
       }
@@ -108,11 +104,10 @@ const ReadonlyAttachmentPoint = ({
 
   const selectsData = createReadonlyAttachmentPointSelectData(
     name,
-    currentLeavingAtomLabel,
+    leavingAtomLabel,
   );
 
   const handleLeavingAtomChange = (newLabel: AtomLabel) => {
-    setCurrentLeavingAtomLabel(newLabel);
     onLeavingAtomChange?.(name, newLabel);
   };
 
@@ -124,7 +119,9 @@ const ReadonlyAttachmentPoint = ({
       className={styles.selects}
       highlight={highlight}
       disabledName
-      nameTooltip="Attachment point numbers of internal attachment points determined by the phosphate position switcher."
+      nameTooltip={t(
+        'monomerCreationWizard.internalAttachmentPointNameTooltip',
+      )}
       disabled={!onLeavingAtomChange}
       ref={containerRef}
     />

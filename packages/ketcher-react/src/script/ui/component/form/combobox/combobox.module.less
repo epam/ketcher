@@ -16,11 +16,12 @@
 @import 'src/style/variables';
 
 .suggestList {
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @main-color;
   position: absolute;
   background-color: white;
-  margin-left: 3px;
-  padding-left: 3px;
+  margin-inline-start: 3px;
+  padding-inline-start: 3px;
   width: 93%;
   z-index: 3;
 }
@@ -37,7 +38,7 @@
   font: inherit;
   cursor: pointer;
   width: 100%;
-  text-align: left;
+  text-align: start;
 }
 
 .suggestButton:hover {

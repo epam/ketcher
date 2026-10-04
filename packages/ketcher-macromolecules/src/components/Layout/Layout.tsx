@@ -30,7 +30,7 @@ const Column = styled.div<{ fullWidth?: boolean; withPaddingRight?: boolean }>(
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    paddingRight: withPaddingRight ? '12px' : 0,
+    paddingInlineEnd: withPaddingRight ? '12px' : 0,
     overflow: fullWidth ? 'hidden' : 'initial',
   }),
 );
@@ -101,7 +101,7 @@ const StyledArrowScrollWrapper = styled.div`
   height: 36px;
   display: flex;
   position: relative;
-  right: 0;
+  inset-inline-end: 0;
   cursor: pointer;
   background: white;
   box-shadow: ${({ theme }) => theme.ketcher.shadow.mainLayoutBlocks};
@@ -128,12 +128,7 @@ const DummyDiv = styled.div({
 });
 
 type LayoutSection =
-  | 'Left'
-  | 'Right'
-  | 'Main'
-  | 'Top'
-  | 'Bottom'
-  | 'InsideRoot';
+  'Left' | 'Right' | 'Main' | 'Top' | 'Bottom' | 'InsideRoot';
 
 const Top = (
   props: React.HTMLAttributes<HTMLDivElement> & { shortened?: boolean },

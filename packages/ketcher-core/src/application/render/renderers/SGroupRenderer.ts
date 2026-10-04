@@ -1,16 +1,15 @@
+/* eslint-disable no-undef */
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { Scale } from 'domain/helpers';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { SGroup, Vec2 } from 'domain/entities';
-import type { SUPERATOM_CLASS } from 'domain/entities/sgroup';
 import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SgContexts } from 'application/editor/shared/constants';
-import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import type { BondRenderer } from 'application/render/renderers/BondRenderer';
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { editorEvents } from 'application/editor/editorEvents';
 import paperjs from 'paper';
 
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
@@ -61,6 +60,14 @@ export class SGroupRenderer extends BaseRenderer {
 
   private get sgroup() {
     return this.sgroupDrawingEntity.sgroup;
+  }
+
+  public get labelTooltipText(): string | null {
+    if (this.sgroup.type !== SGroup.TYPES.DAT) {
+      return null;
+    }
+
+    return `${this.sgroup.data.fieldName}=${this.sgroup.data.fieldValue}`;
   }
 
   private addLabelElement<ElementType extends SVGElement>(
@@ -136,7 +143,7 @@ export class SGroupRenderer extends BaseRenderer {
         }
         break;
       case SGroup.TYPES.SUP:
-        options.lowerIndexText = this.getSuperatomLabel();
+        options.lowerIndexText = this.sgroup.superatomLabel;
         options.indexAttribute = { 'font-style': 'italic' };
         break;
       default:
@@ -146,15 +153,8 @@ export class SGroupRenderer extends BaseRenderer {
     this.drawBrackets(bracketBox, options);
   }
 
-  private getSuperatomLabel(): string | undefined {
-    return (
-      this.sgroup.data.name ||
-      SUPERATOM_CLASS_TEXT[this.sgroup.data.class as SUPERATOM_CLASS]
-    );
-  }
-
   private drawContractedSGroupLabel(): void {
-    const label = this.getSuperatomLabel();
+    const label = this.sgroup.superatomLabel;
 
     if (!label) {
       return;
@@ -616,7 +616,7 @@ export class SGroupRenderer extends BaseRenderer {
       ),
       ...this.getSGroupBondRenderers()
         .map((bondRenderer) => this.getBondHoverPath(bondRenderer))
-        .filter((path): path is paper.CompoundPath => Boolean(path)),
+        .filter((path): path is paper.CompoundPath => path !== null),
     ];
 
     let combinedPath: paper.PathItem | undefined;
@@ -693,11 +693,11 @@ export class SGroupRenderer extends BaseRenderer {
 
     this.hoverAreaElement
       .on('mouseover', (event) => {
-        provideEditorInstance().events.mouseOverDrawingEntity.dispatch(event);
+        editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.appendHover();
       })
       .on('mouseleave', (event) => {
-        provideEditorInstance().events.mouseLeaveDrawingEntity.dispatch(event);
+        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.removeHover();
       });
   }

@@ -64,7 +64,7 @@ describe('TemplateTable', () => {
         value: originalRequestIdleCallback,
       });
     } else {
-      delete window.requestIdleCallback;
+      Reflect.deleteProperty(window, 'requestIdleCallback');
     }
 
     if (originalCancelIdleCallback) {
@@ -73,7 +73,7 @@ describe('TemplateTable', () => {
         value: originalCancelIdleCallback,
       });
     } else {
-      delete window.cancelIdleCallback;
+      Reflect.deleteProperty(window, 'cancelIdleCallback');
     }
   });
 

@@ -5,12 +5,12 @@
 let _indigoWorker: Worker | null = null;
 
 export function getIndigoWorker(): Worker {
-  if (!_indigoWorker) {
-    _indigoWorker = new Worker(
-      new URL('./../indigoWorker.ts', import.meta.url),
-      { type: 'module' },
-    );
-  }
+  _indigoWorker ??= new Worker(
+    new URL('./../indigoWorker.ts', import.meta.url),
+    {
+      type: 'module',
+    },
+  );
   return _indigoWorker;
 }
 

@@ -43,10 +43,10 @@ export const Panel = ({
   const showAtomIds = () => {
     const atoms = KetcherFunctions.getSelectedAtomId();
 
-    if (!atoms) {
-      printToTerminal('No atoms selected');
-    } else {
+    if (atoms) {
       printToTerminal('Selected atoms: ' + atoms);
+    } else {
+      printToTerminal('No atoms selected');
     }
   };
 

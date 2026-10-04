@@ -8,8 +8,8 @@ Cross-cutting deep-dive. Every mutation of model in Ketcher is an operation; the
 | ------- | -------------------------------------- | ------------------------------------- |
 | Unit    | Base operation (class, self-inverting) | Operation (interface)                 |
 | Group   | Action                                 | Command                               |
-| History | held by the micro editor               | history singleton                     |
-| Size    | capped at 32 steps                     | capped at 32 steps                    |
+| History | shared stack held by the micro editor  | EditorHistory adapter to that stack   |
+| Size    | 32 steps total, including mode switches | same shared limit                    |
 | Render  | re-render via the ReStruct pipeline    | re-render via the renderers container |
 
 ## Micromolecules: Action + Base operation
@@ -52,19 +52,25 @@ Action factory functions (the `fromXxx(...)` helpers, organized by concern such 
 - **execute** — runs each operation's `execute`, reinitializes the view model, runs the after-all-operations hooks, then runs post-render methods.
 - **invert** — builds the operation list (reversed and/or priority-sorted per its flags), runs each operation's `invert`, then the same post-steps.
 
-**History singleton** (macro):
+**EditorHistory** (macro):
 
-- A single shared instance obtained per editor and cleared on teardown, capped at 32 steps.
-- A stack of Commands with a pointer.
+- An instance per CoreEditor, released on teardown.
+- In the combined editor, `EditorHistoryAction` adapts Command inversion/execution to the micro editor's Action stack. Macro-only core consumers retain a local Command stack.
 - **update** — either merges into the latest Command or inserts at the pointer, shifting out the oldest when over the cap.
 - **undo** — decrements the pointer, inverts the Command, unselects all entities, and re-renders. **The same Command object is re-invoked** — unlike micro, which swaps in the inverse Action.
 - **redo** — the mirror, re-executing the Command.
 
-**Standard macro mutation pattern** (repeated across the editor, modes, and tools): get the history singleton, build a Command from a drawing-entities-manager method, then hand the Command to both the history and the renderers container. The drawing-entities manager is the factory that produces Commands, and it is where the vast majority of Command construction happens.
+**Mode transitions**:
+
+- A transition is one `EditorHistoryAction`, restoring the original micro Struct, macro DrawingEntitiesManager, and layout mode rather than converting them again.
+- Micro-to-macro conversion works on a clone so scaling and conversion cannot invalidate earlier micro operations. Restored macro commands retain their original model references.
+- `CoreEditor` sets the restored editor type before notifying the UI, making the resulting mode-switch effect a no-op instead of a second conversion/history entry.
+
+**Standard macro mutation pattern** (repeated across the editor, modes, and tools): get the editor's history adapter, build a Command from a drawing-entities-manager method, then hand the Command to both the history and the renderers container. The drawing-entities manager is the factory that produces Commands, and it is where the vast majority of Command construction happens.
 
 ## Assumptions & constraints
 
 - UI/tools must never mutate `Struct` or the drawing-entities manager directly — always go through an Action/Command.
-- Both histories cap at 32 steps.
+- The combined history caps at 32 steps across both modes.
 - Micro inverts by swapping the stack slot for the returned inverse Action; macro re-invokes the same Command with execute/invert.
 - See [editor-engine](./editor-engine.md) for who triggers these and [rendering](./rendering.md) for what re-rendering does.

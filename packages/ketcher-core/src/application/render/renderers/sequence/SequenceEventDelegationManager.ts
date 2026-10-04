@@ -16,10 +16,8 @@ export class SequenceEventDelegationManager {
     new Map();
 
   public static get instance() {
-    if (!SequenceEventDelegationManager._instance) {
-      SequenceEventDelegationManager._instance =
-        new SequenceEventDelegationManager();
-    }
+    SequenceEventDelegationManager._instance ??=
+      new SequenceEventDelegationManager();
     return SequenceEventDelegationManager._instance;
   }
 

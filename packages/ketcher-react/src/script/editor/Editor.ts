@@ -302,7 +302,7 @@ class Editor implements KetcherEditor {
       clientArea,
       {
         microModeScale: SCALE,
-        ...(options ?? {}),
+        ...options,
       } as RenderOptions,
       prevEditor?.render,
       options?.reuseRestructIfExist !== false,
@@ -502,10 +502,14 @@ class Editor implements KetcherEditor {
     this.render.clientArea.innerHTML = '';
     const wasViewOnlyEnabled = !!this.render.options.viewOnlyMode;
 
+    // Keep the options the current render was built with (the user settings,
+    // plus anything applied through setOptions) and put the new values on
+    // top, otherwise every setting not passed here is lost with the old render.
     this.render = new Render(this.render.clientArea, {
       microModeScale: SCALE,
+      ...this.render.userOptions,
       ...(value ?? {}),
-    } as RenderOptions);
+    });
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
     this.render.setMolecule(struct);
 
@@ -705,9 +709,7 @@ class Editor implements KetcherEditor {
     const state = this.monomerCreationState;
     if (!state) return;
 
-    if (!state.rnaComponentAtoms) {
-      state.rnaComponentAtoms = new Map();
-    }
+    state.rnaComponentAtoms ??= new Map();
 
     const prevComponentData = state.rnaComponentAtoms.get(componentKey);
     const prevAtomIds = prevComponentData?.atoms ?? [];
@@ -2605,7 +2607,7 @@ class Editor implements KetcherEditor {
     assert(this.monomerCreationState);
 
     this.monomerCreationState.problematicAttachmentPoints = problematicPoints;
-    this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
+    this.monomerCreationState = { ...this.monomerCreationState };
     this.render.update(true);
   }
 
@@ -2619,7 +2621,7 @@ class Editor implements KetcherEditor {
     }
 
     this.monomerCreationState.problematicAtoms = problematicAtoms;
-    this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
+    this.monomerCreationState = { ...this.monomerCreationState };
     this.render.update(true);
   }
 
@@ -3255,7 +3257,7 @@ class Editor implements KetcherEditor {
 
                 // Check if the other end (bond.end) can be a leaving atom (has only one neighbor)
                 const endAtom = this.struct().atoms.get(bond.end);
-                if (endAtom && endAtom.neighbors.length === 1) {
+                if (endAtom?.neighbors.length === 1) {
                   const updatedLeavingAtomIds = new Set(leavingAtomIds);
                   updatedLeavingAtomIds.add(bond.end);
                   this.monomerCreationState.potentialAttachmentPoints.set(
@@ -3279,7 +3281,7 @@ class Editor implements KetcherEditor {
 
                 // Check if the other end (bond.begin) can be a leaving atom (has only one neighbor)
                 const beginAtom = this.struct().atoms.get(bond.begin);
-                if (beginAtom && beginAtom.neighbors.length === 1) {
+                if (beginAtom?.neighbors.length === 1) {
                   const updatedLeavingAtomIds = new Set(leavingAtomIds);
                   updatedLeavingAtomIds.add(bond.begin);
                   this.monomerCreationState.potentialAttachmentPoints.set(
@@ -3310,7 +3312,7 @@ class Editor implements KetcherEditor {
       }
     }
 
-    this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
+    this.monomerCreationState = { ...this.monomerCreationState };
   }
 
   public setRnaMonomerCreationMode(isActive: boolean) {
@@ -3359,7 +3361,7 @@ class Editor implements KetcherEditor {
       const res: Selection = {};
 
       Object.keys(resolvedCi).forEach((key) => {
-        if (resolvedCi && resolvedCi[key] && resolvedCi[key].length > 0)
+        if (resolvedCi[key]?.length > 0)
           // TODO: deep merge
           res[key] = resolvedCi[key].slice();
       });
@@ -3451,16 +3453,20 @@ class Editor implements KetcherEditor {
       this.render.update(true, null); // force
     } else {
       if (!ignoreHistory && !action.isDummy(this.render.ctab)) {
-        this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action);
-        if (this.historyStack.length > HISTORY_SIZE) {
-          this.historyStack.shift();
-        }
-        this.historyPtr = this.historyStack.length;
-        this.event.change.dispatch(action); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
-        ketcherProvider.getKetcher(this.ketcherId).changeEvent.dispatch(action);
+        this.addHistoryAction(action);
       }
       this.render.update(false, null);
     }
+  }
+
+  addHistoryAction(action: Action) {
+    this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action);
+    if (this.historyStack.length > HISTORY_SIZE) {
+      this.historyStack.shift();
+    }
+    this.historyPtr = this.historyStack.length;
+    this.event.change.dispatch(action);
+    ketcherProvider.getKetcher(this.ketcherId).changeEvent.dispatch(action);
   }
 
   historySize(): { readonly undo: number; readonly redo: number } {
@@ -3803,7 +3809,7 @@ function useToolIfNeeded(
     isContextMenuClosed(editor.contextMenu),
   ];
 
-  if (conditions.every((condition) => condition)) {
+  if (conditions.every(Boolean)) {
     editorTool[eventHandlerName]?.(event);
     return true;
   }

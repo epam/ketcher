@@ -41,7 +41,7 @@ exports[`Save modal renders correctly 1`] = `
             id="_r_0_"
           >
             <div
-              class="css-1uarmuk"
+              class="css-1g1p06n"
             >
               save structure
             </div>
@@ -76,7 +76,7 @@ exports[`Save modal renders correctly 1`] = `
               >
                 <div>
                   <label
-                    class="css-zv32v0"
+                    class="css-1n2uu3y"
                     for="filename"
                   >
                     <span>
@@ -100,7 +100,7 @@ exports[`Save modal renders correctly 1`] = `
                     File format:
                   </label>
                   <div
-                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-1ydgb7t-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-79rdsb-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
                     data-testid="file-format-list"
                   >
                     <div
@@ -123,7 +123,7 @@ exports[`Save modal renders correctly 1`] = `
                       value="ket"
                     />
                     <svg
-                      class="MuiSelect-icon MuiSelect-iconOutlined css-1bn8sss-MuiSelect-icon"
+                      class="MuiSelect-icon MuiSelect-iconOutlined css-mj9kck-MuiSelect-icon"
                       name="chevron"
                     />
                     <fieldset
@@ -144,7 +144,7 @@ exports[`Save modal renders correctly 1`] = `
                 </div>
               </div>
               <div
-                class="css-4ly9h9"
+                class="css-1rc4gsb"
               >
                 <textarea
                   class="css-evzoup"

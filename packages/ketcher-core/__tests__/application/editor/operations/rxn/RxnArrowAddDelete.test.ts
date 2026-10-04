@@ -100,7 +100,7 @@ describe('RxnArrowAdd and RxnArrowDelete operations', () => {
       );
       const localRestruct = new ReStruct(struct, localRender);
       const pos = [new Vec2(0, 0), new Vec2(5, 0)];
-      const height = 3.0;
+      const height = 3;
 
       // Add arrow
       const addOp = new RxnArrowAdd(pos, mode, undefined, height);

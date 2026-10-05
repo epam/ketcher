@@ -483,7 +483,7 @@ Files: `src/application/editor/modes/SequenceMode.ts`; test `__tests__/applicati
 
 Produces: `public countMirroredBaseChanges(updatedSelection: LabeledNodesWithPositionInSequence[]): number` on `SequenceMode`.
 
-- [ ] 23.1 Write the failing tests (`buildTwoPositionDuplex`: sense A,C / antisense U,G; payload entries as in `antisenseDuplexSync`'s RNA Builder test, `type: Entities.Nucleotide`, `nodeIndexOverall`, `strandType`, `baseLabel`):
+- [x] 23.1 Write the failing tests (`buildTwoPositionDuplex`: sense A,C / antisense U,G; payload entries as in `antisenseDuplexSync`'s RNA Builder test, `type: Entities.Nucleotide`, `nodeIndexOverall`, `strandType`, `baseLabel`):
   - sense position 0 only selected, entry `{ nodeIndexOverall: 0, strandType: SENSE, baseLabel: 'C' }` → `1`.
   - sense positions 0 and 1 selected, entries `baseLabel: 'G'` for both → `1` (position 1 is already G: analogue unchanged).
   - sense position 0 selected, `baseLabel: 'A'` (unchanged) → `0`.
@@ -491,8 +491,8 @@ Produces: `public countMirroredBaseChanges(updatedSelection: LabeledNodesWithPos
   - both strands of position 0 selected, sense entry `baseLabel: 'C'` → `0` (partner selected).
   - fixture where the partner already carries the complement: sense position 0 selected, antisense position 0's base pre-set to `G` with `modifyMonomerItem`, entry `baseLabel: 'C'` → `0`.
   - after counting, every base label is unchanged and `history.historyStack.length` is unchanged (the count has no side effects).
-- [ ] 23.2 Run the new test file; expect failure (`countMirroredBaseChanges` is not a function).
-- [ ] 23.3 Extract the per-entry resolution at the top of `modifySequenceInRnaBuilder`'s loop into a private method, and use it there unchanged in behavior (`modifySequenceInRnaBuilder` keeps its `if (nodeIndexOverall === undefined) return;`):
+- [x] 23.2 Run the new test file; expect failure (`countMirroredBaseChanges` is not a function).
+- [x] 23.3 Extract the per-entry resolution at the top of `modifySequenceInRnaBuilder`'s loop into a private method, and use it there unchanged in behavior (`modifySequenceInRnaBuilder` keeps its `if (nodeIndexOverall === undefined) return;`):
     ```ts
     private resolveRnaBuilderEntry(
       editor: CoreEditor,
@@ -518,7 +518,7 @@ Produces: `public countMirroredBaseChanges(updatedSelection: LabeledNodesWithPos
     }
     ```
     (Use the editor type `modifySequenceInRnaBuilder` already receives from `provideEditorInstance()`.)
-- [ ] 23.4 Add the public method:
+- [x] 23.4 Add the public method:
     ```ts
     // How many unselected opposite bases modifySequenceInRnaBuilder would
     // rewrite for this payload. Runs the same entry resolution and the same
@@ -564,8 +564,8 @@ Produces: `public countMirroredBaseChanges(updatedSelection: LabeledNodesWithPos
       return rewrittenPartners.size;
     }
     ```
-- [ ] 23.5 Run `npm test` in `packages/ketcher-core`; green (including `antisenseDuplexSync`'s RNA Builder test, which guards the extraction).
-- [ ] 23.6 Commit: `#6595 - Count the opposite bases an RNA Builder update will rewrite`.
+- [x] 23.5 Run `npm test` in `packages/ketcher-core`; green (including `antisenseDuplexSync`'s RNA Builder test, which guards the extraction).
+- [x] 23.6 Commit: `#6595 - Count the opposite bases an RNA Builder update will rewrite`.
 
 ## 24. The update confirmation names the additional nucleotides (`ketcher-macromolecules`)
 

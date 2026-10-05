@@ -67,6 +67,7 @@ import {
   isBaseEligibleForDuplexSync,
   isSelectedAntisensePair,
   itemCarriesBase,
+  resolveMirroredBaseTarget,
 } from 'domain/helpers/antisenseBaseSync';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
@@ -373,6 +374,101 @@ export class SequenceMode extends BaseMode {
     }
   }
 
+  private resolveRnaBuilderEntry(
+    editor: CoreEditor,
+    labeledNucleoelement: LabeledNodesWithPositionInSequence,
+    nodeIndexOverall: number,
+  ) {
+    // Create monomerItem(s) based on label
+    const sugarMonomerItem = labeledNucleoelement.sugarLabel
+      ? getRnaPartLibraryItem(
+          editor,
+          labeledNucleoelement.sugarLabel,
+          KetMonomerClass.Sugar,
+        )
+      : undefined;
+    const baseMonomerItem = labeledNucleoelement.baseLabel
+      ? (labeledNucleoelement.rnaBaseMonomerItem ??
+        getRnaPartLibraryItem(
+          editor,
+          labeledNucleoelement.baseLabel,
+          KetMonomerClass.Base,
+        ))
+      : undefined;
+    const phosphateMonomerItem = labeledNucleoelement.phosphateLabel
+      ? getRnaPartLibraryItem(
+          editor,
+          labeledNucleoelement.phosphateLabel,
+          KetMonomerClass.Phosphate,
+        )
+      : undefined;
+    const nodeToModify = getNodeForStrand(
+      SequenceRenderer.getNodeByPointer(nodeIndexOverall),
+      labeledNucleoelement.strandType,
+    );
+
+    return {
+      nodeToModify,
+      sugarMonomerItem,
+      baseMonomerItem,
+      phosphateMonomerItem,
+    };
+  }
+
+  // How many unselected opposite bases modifySequenceInRnaBuilder would
+  // rewrite for this payload. Runs the same entry resolution and the same
+  // mirror decision as the update, without building a command, so the RNA
+  // Builder's confirmation can promise exactly what confirming does.
+  public countMirroredBaseChanges(
+    updatedSelection: LabeledNodesWithPositionInSequence[],
+  ): number {
+    const editor = provideEditorInstance();
+    const rewrittenPartners = new Set<BaseMonomer>();
+
+    for (const labeledNucleoelement of updatedSelection) {
+      const { nodeIndexOverall } = labeledNucleoelement;
+
+      if (nodeIndexOverall === undefined) {
+        continue;
+      }
+
+      const { nodeToModify, baseMonomerItem } = this.resolveRnaBuilderEntry(
+        editor,
+        labeledNucleoelement,
+        nodeIndexOverall,
+      );
+
+      if (
+        !baseMonomerItem ||
+        !(
+          nodeToModify instanceof Nucleotide ||
+          nodeToModify instanceof Nucleoside
+        ) ||
+        !nodeToModify.rnaBase
+      ) {
+        continue;
+      }
+
+      const target = resolveMirroredBaseTarget({
+        editedBase: nodeToModify.rnaBase,
+        previousNaturalAnalogue: getMonomerNaturalAnalogue(
+          nodeToModify.rnaBase,
+        ),
+        newBaseMonomerItem: baseMonomerItem,
+        isSyncEditMode: this.isSyncEditMode,
+      });
+
+      if (
+        target &&
+        getRnaPartLibraryItem(editor, target.targetLabel, KetMonomerClass.Base)
+      ) {
+        rewrittenPartners.add(target.partner);
+      }
+    }
+
+    return rewrittenPartners.size;
+  }
+
   public modifySequenceInRnaBuilder(
     updatedSelection: LabeledNodesWithPositionInSequence[],
   ) {
@@ -385,39 +481,15 @@ export class SequenceMode extends BaseMode {
 
       if (nodeIndexOverall === undefined) return;
 
-      // Create monomerItem(s) based on label
-      let sugarMonomerItem;
-      let baseMonomerItem;
-      let phosphateMonomerItem;
-      if (labeledNucleoelement.sugarLabel) {
-        sugarMonomerItem = getRnaPartLibraryItem(
-          editor,
-          labeledNucleoelement.sugarLabel,
-          KetMonomerClass.Sugar,
-        );
-      }
-      if (labeledNucleoelement.baseLabel) {
-        baseMonomerItem =
-          labeledNucleoelement.rnaBaseMonomerItem ??
-          getRnaPartLibraryItem(
-            editor,
-            labeledNucleoelement.baseLabel,
-            KetMonomerClass.Base,
-          );
-      }
-      if (labeledNucleoelement.phosphateLabel) {
-        phosphateMonomerItem = getRnaPartLibraryItem(
-          editor,
-          labeledNucleoelement.phosphateLabel,
-          KetMonomerClass.Phosphate,
-        );
-      }
-
-      const twoStrandedNodeToModify =
-        SequenceRenderer.getNodeByPointer(nodeIndexOverall);
-      const nodeToModify = getNodeForStrand(
-        twoStrandedNodeToModify,
-        labeledNucleoelement.strandType,
+      const {
+        nodeToModify,
+        sugarMonomerItem,
+        baseMonomerItem,
+        phosphateMonomerItem,
+      } = this.resolveRnaBuilderEntry(
+        editor,
+        labeledNucleoelement,
+        nodeIndexOverall,
       );
 
       if (

@@ -54,8 +54,7 @@ async function copyImageToClipboard(): Promise<void> {
       generateImageOptions,
     );
 
-    // eslint-disable-next-line no-undef
-    const item = new globalThis.ClipboardItem({ [image.type]: image });
+    const item = new ClipboardItem({ [image.type]: image });
     await globalThis.navigator.clipboard.write([item]);
   } catch (e: unknown) {
     KetcherLogger.error('copyImageToClipboard.ts::copyImageToClipboard', e);

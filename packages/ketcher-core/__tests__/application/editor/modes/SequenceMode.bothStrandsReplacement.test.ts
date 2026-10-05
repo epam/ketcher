@@ -279,22 +279,48 @@ describe('SequenceMode library replacement visits each strand separately', () =>
     expect(newSugars).toHaveLength(4);
   });
 
-  it('keeps each strand a backbone-bonded chain of the new monomers', () => {
+  // The new sugars of the sense row, left to right (replacement monomers are
+  // created where the replaced node was, so the row is told by its y).
+  const newSenseSugars = (originalIds: Set<number>, senseRowY: number) =>
+    newMonomersOf(originalIds, 'R')
+      .filter((monomer) => monomer.position.y === senseRowY)
+      .sort((first, second) => first.position.x - second.position.x);
+
+  // The antisense replacement of a position is re-bonded by hydrogen bond to
+  // the new sense monomer of that position (the sense pass runs first).
+  const hydrogenBondPartner = (monomer: BaseMonomer) =>
+    monomer.hydrogenBonds[0]?.getAnotherMonomer(monomer);
+
+  const requireMonomer = (monomer?: BaseMonomer) => {
+    if (!monomer) {
+      throw new Error('Expected a new sugar at this position');
+    }
+
+    return monomer;
+  };
+
+  it('bonds the new sense pair and the new antisense pair R2 to R1 in their own chain order', () => {
     const { senseNucleotides, antisenseNucleotides } =
       buildTwoPositionDuplex(editor);
     const originalIds = new Set(monomerIds());
+    const senseRowY = senseNucleotides[0].sugar.position.y;
 
     replaceBothStrandsWithSugar(senseNucleotides, antisenseNucleotides);
 
-    const newSugars = newMonomersOf(originalIds, 'R');
-    const bondedPairs = newSugars.flatMap((first) =>
-      newSugars
-        .filter((second) => isBondedR2ToR1(first, second))
-        .map((second) => [first, second]),
-    );
+    const newSense = newSenseSugars(originalIds, senseRowY);
+    expect(newSense).toHaveLength(2);
+    const [newSense0, newSense1] = newSense;
+    const newAntisense0 = requireMonomer(hydrogenBondPartner(newSense0));
+    const newAntisense1 = requireMonomer(hydrogenBondPartner(newSense1));
+    expect(newAntisense0.position.y).not.toBe(senseRowY);
+    expect(newAntisense1.position.y).not.toBe(senseRowY);
 
-    // One R2->R1 bond per strand.
-    expect(bondedPairs).toHaveLength(2);
+    expect(isBondedR2ToR1(newSense0, newSense1)).toBe(true);
+    // The antisense chain runs opposite to display order.
+    expect(isBondedR2ToR1(newAntisense1, newAntisense0)).toBe(true);
+    // The strands are not cross-linked.
+    expect(isBondedR2ToR1(newSense1, newAntisense0)).toBe(false);
+    expect(isBondedR2ToR1(newAntisense0, newSense1)).toBe(false);
   });
 
   it('undoes a both-strands replacement in one step, restoring monomers, backbones and the hydrogen bond', () => {
@@ -372,6 +398,7 @@ describe('SequenceMode library replacement visits each strand separately', () =>
     const { senseNucleotides, antisenseNucleotides } =
       buildTwoPositionDuplex(editor);
     const originalIds = new Set(monomerIds());
+    const senseRowY = senseNucleotides[0].sugar.position.y;
 
     // Sense position 1 loses its antisense partner and becomes an overhang.
     antisenseNucleotides[1].monomers.filter(Boolean).forEach((monomer) => {
@@ -387,6 +414,25 @@ describe('SequenceMode library replacement visits each strand separately', () =>
     );
 
     expect(newMonomersOf(originalIds, 'R')).toHaveLength(3);
+
+    const newSense = newSenseSugars(originalIds, senseRowY);
+    expect(newSense).toHaveLength(2);
+    const [newSense0, newSense1] = newSense;
+    const newAntisense0 = requireMonomer(hydrogenBondPartner(newSense0));
+    expect(hydrogenBondPartner(newSense1)).toBeUndefined();
+
+    expect(isBondedR2ToR1(newSense0, newSense1)).toBe(true);
+    // The overhang's partner is gone, so the lone antisense replacement has no
+    // backbone neighbour left, and no bond points at a deleted monomer.
+    expect(newAntisense0.attachmentPointsToBonds.R1).toBeFalsy();
+    expect(newAntisense0.attachmentPointsToBonds.R2).toBeFalsy();
+    const { monomers, polymerBonds } = editor.drawingEntitiesManager;
+    polymerBonds.forEach((bond) => {
+      expect(monomers.has(bond.firstMonomer.id)).toBe(true);
+      if (bond.secondMonomer) {
+        expect(monomers.has(bond.secondMonomer.id)).toBe(true);
+      }
+    });
   });
 
   it('finds a linker on the antisense node of a both-strands position', () => {

@@ -1,8 +1,14 @@
-import { type BaseMonomer, KetMonomerClass } from 'ketcher-core';
 import {
+  buildAssignedAttachmentPointsMap,
   getEditAllInstancesInitialValues,
   getEditInstanceInitialValues,
 } from './MonomerCreationWizard.utils';
+import {
+  AttachmentPointName,
+  type BaseMonomer,
+  KetMonomerClass,
+} from 'ketcher-core';
+import { WizardState } from './MonomerCreationWizard.types';
 
 const createMonomer = (
   props: BaseMonomer['monomerItem']['props'],
@@ -265,5 +271,59 @@ describe('getEditAllInstancesInitialValues', () => {
     );
 
     expect(values.name).toBe('Cysteine_Copy');
+  });
+});
+
+describe('buildAssignedAttachmentPointsMap', () => {
+  const mockWizardState = (atoms: number[]): WizardState => ({
+    values: {
+      type: KetMonomerClass.Base,
+      symbol: 'B',
+      name: 'Base',
+      naturalAnalogue: 'A',
+      aliasHELM: '',
+      aliasBILN: '',
+    },
+    errors: {},
+    notifications: new Map(),
+    structure: { atoms, bonds: [] },
+  });
+
+  const assignedAttachmentPoints = new Map<
+    AttachmentPointName,
+    [number, number]
+  >([
+    [AttachmentPointName.R1, [1, 10]],
+    [AttachmentPointName.R2, [2, 20]],
+  ]);
+
+  it('maps all attachment points to the single wizard state for non-RNA presets', () => {
+    const monomersToSave = [mockWizardState([1, 2])];
+    const map = buildAssignedAttachmentPointsMap(
+      monomersToSave,
+      assignedAttachmentPoints,
+      false,
+    );
+
+    expect(map.size).toBe(1);
+    expect(map.get(monomersToSave[0])).toEqual(assignedAttachmentPoints);
+  });
+
+  it('splits attachment points among components for RNA presets based on structure', () => {
+    const sugarState = mockWizardState([1]);
+    const baseState = mockWizardState([2]);
+    const monomersToSave = [sugarState, baseState];
+
+    const map = buildAssignedAttachmentPointsMap(
+      monomersToSave,
+      assignedAttachmentPoints,
+      true,
+    );
+
+    expect(map.size).toBe(2);
+    expect(map.get(sugarState)?.size).toBe(1);
+    expect(map.get(sugarState)?.get(AttachmentPointName.R1)).toEqual([1, 10]);
+    expect(map.get(baseState)?.size).toBe(1);
+    expect(map.get(baseState)?.get(AttachmentPointName.R2)).toEqual([2, 20]);
   });
 });

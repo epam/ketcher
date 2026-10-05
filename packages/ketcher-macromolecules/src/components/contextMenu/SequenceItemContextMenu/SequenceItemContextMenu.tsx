@@ -48,6 +48,7 @@ import {
 } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { LIBRARY_TAB_INDEX } from 'src/constants';
 import { PointerEvent } from 'react';
+import { useMonomerCreationMenu } from '../useMonomerCreationMenu';
 
 type SequenceItemContextMenuType = {
   selections?: NodesSelection;
@@ -83,6 +84,18 @@ export const SequenceItemContextMenu = ({
     selections?.flat()?.flatMap((nodeSelection) => {
       return nodeSelection.node.monomers;
     }) || [];
+  const clickedRenderer = (
+    contextMenuEvent?.target as
+      (EventTarget & { __data__?: BaseSequenceItemRenderer }) | undefined
+  )?.__data__;
+  const monomersToEdit = selectedMonomers.length
+    ? selectedMonomers
+    : (clickedRenderer?.node?.monomers ?? []);
+  const monomerCreationMenu = useMonomerCreationMenu(
+    editor,
+    monomersToEdit,
+    (selections?.flat().length ?? 0) <= 1 && monomersToEdit.length > 1,
+  );
   const monomersForAminoAcidModification = getMonomersForAminoAcidModification(
     selectedMonomers,
     contextMenuEvent,
@@ -231,6 +244,7 @@ export const SequenceItemContextMenu = ({
       subMenuItems: modifyAminoAcidsMenuItems,
       separator: true,
     },
+    ...monomerCreationMenu.menuItems,
     {
       name: SequenceItemContextMenuNames.delete,
       title: t('contextMenu.delete'),
@@ -240,6 +254,7 @@ export const SequenceItemContextMenu = ({
   ];
 
   const handleMenuChange = ({ id: menuItemId, props }: ItemParams) => {
+    if (monomerCreationMenu.handleMenuChange(menuItemId)) return;
     if (!editor) {
       return;
     }
@@ -432,6 +447,7 @@ export const SequenceItemContextMenu = ({
           id={CONTEXT_MENU_ID.FOR_SEQUENCE}
           handleMenuChange={handleMenuChange}
           menuItems={menuItems}
+          onVisibilityChange={monomerCreationMenu.onVisibilityChange}
         ></ContextMenu>,
         ketcherEditorRootElement,
       )

@@ -187,18 +187,21 @@ function isSvgImageDataValid(base64Data: string): boolean {
     return false;
   }
 
-  if (typeof DOMParser !== 'undefined') {
-    const parsedDocument = new DOMParser().parseFromString(
-      svgContent,
-      'image/svg+xml',
-    );
-    return (
-      !parsedDocument.querySelector('parsererror') &&
-      parsedDocument.documentElement.nodeName.toLowerCase() === 'svg'
-    );
+  const hasSvgRoot =
+    /^\s*(<\?xml[\s\S]*?\?>\s*)?<svg[\s>]/i.test(svgContent) &&
+    /<\/svg\s*>\s*$/i.test(svgContent);
+  if (!hasSvgRoot) {
+    return false;
   }
 
-  return /<svg[\s>]/i.test(svgContent) && /<\/svg\s*>/i.test(svgContent);
+  // Reject active/scriptable SVG content in validation stage.
+  const hasForbiddenContent =
+    /<script[\s>]/i.test(svgContent) ||
+    /\son\w+\s*=/i.test(svgContent) ||
+    /javascript:/i.test(svgContent) ||
+    /<foreignObject[\s>]/i.test(svgContent);
+
+  return !hasForbiddenContent;
 }
 
 function getKetImageNodes(ket: IKetMicromoleculeFile): Array<KetFileImageNode> {

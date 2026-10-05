@@ -1,11 +1,8 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { AbbreviationLookup } from './AbbreviationLookup';
-import {
-  ABBREVIATION_LOOKUP_TEST_ID,
-  NO_MATCHING_RESULTS_LABEL,
-  START_TYPING_NOTIFICATION_LABEL,
-} from './AbbreviationLookup.constants';
+import { ABBREVIATION_LOOKUP_TEST_ID } from './AbbreviationLookup.constants';
+import i18n from 'src/i18n/i18n';
 import {
   CLIP_AREA_TEST_ID,
   createOption,
@@ -71,7 +68,9 @@ describe('AbbreviationLookup', () => {
     render(<AbbreviationLookup options={[optionA, optionB]} />, {
       wrapper: KetcherWrapper,
     });
-    const notes = screen.getByText(NO_MATCHING_RESULTS_LABEL);
+    const notes = screen.getByText(
+      i18n.t('dialogs:toolbox.abbreviationLookup.noMatchingResults'),
+    );
     expect(notes).toBeInTheDocument();
   });
 
@@ -80,7 +79,9 @@ describe('AbbreviationLookup', () => {
     render(<AbbreviationLookup options={[optionA, optionB]} />, {
       wrapper: KetcherWrapper,
     });
-    const notes = screen.getByText(START_TYPING_NOTIFICATION_LABEL);
+    const notes = screen.getByText(
+      i18n.t('dialogs:toolbox.abbreviationLookup.startTypingPrompt'),
+    );
     expect(notes).toBeInTheDocument();
   });
 

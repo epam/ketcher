@@ -22,7 +22,7 @@
   gap: 8px;
 
   .title {
-    padding-right: 4px;
+    padding-inline-end: 4px;
   }
 
   .button {
@@ -55,7 +55,7 @@
   }
 
   ul {
-    >li {
+    > li {
       padding: 10px 16px;
     }
   }
@@ -74,16 +74,16 @@
       top: 0;
     }
 
-    span>div,
+    span > div,
     select,
     input {
       width: 120px;
-      margin-right: auto;
+      margin-inline-end: auto;
     }
 
     > :first-child {
       width: 168px;
-      margin-right: @margin-left-right;
+      margin-inline-end: @margin-left-right;
     }
   }
 }
@@ -94,23 +94,23 @@
   overflow: hidden;
 
   fieldset[disabled] {
-    label>span {
+    label > span {
       opacity: 0.3;
     }
 
-    label>div {
+    label > div {
       opacity: 0.6;
     }
   }
 
-  >header {
+  > header {
     flex-shrink: 0;
     /* stylelint-disable-next-line declaration-property-value-no-unknown */
     box-shadow: 0 2px 4px 0 @color-accordion-shadow;
     z-index: 10;
   }
 
-  >footer {
+  > footer {
     /* stylelint-disable-next-line declaration-property-value-no-unknown */
     box-shadow: 0 -2px 4px 0 @color-accordion-shadow;
     z-index: 10;
@@ -118,7 +118,7 @@
 }
 
 .acsStyleButton {
-  margin-right: auto;
+  margin-inline-end: auto;
 
   .button-primary();
 }

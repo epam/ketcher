@@ -87,6 +87,11 @@ abstract class SelectBase implements BaseTool {
   public mode:
     'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
     'standby';
+  /**
+   * Controls whether auto-scroll is active during a selection drag.
+   * Override to `false` in subclasses that should not auto-scroll
+   * (e.g. SelectLasso, where the lasso shape would distort on scroll).
+   */
   protected readonly autoScrollEnabled: boolean = true;
 
   protected rotationStartAngle = 0;
@@ -103,11 +108,8 @@ abstract class SelectBase implements BaseTool {
   };
   private static readonly AUTO_SCROLL_EDGE_THRESHOLD = 15; // pixels from edge to trigger auto-scroll
   private static readonly AUTO_SCROLL_SPEED = 5; // pixels to scroll per frame
-  private static readonly AUTO_SCROLL_INITIAL_DELAY = 150; // ms before first scroll fires
-  private static readonly AUTO_SCROLL_REPEAT_DELAY = 5; // ms between subsequent scrolls
-  private autoScrollTimerId: ReturnType<typeof setTimeout> | null = null;
-  private autoScrollDeltaX: number = 0;
-  private autoScrollDeltaY: number = 0;
+  private autoScrollRafId: number | null = null;
+  private autoScrollDelta: Vec2 = new Vec2(0, 0);
 
   /**
    * Reads renderer data from d3-bound event targets (`target.__data__`).
@@ -1015,10 +1017,7 @@ abstract class SelectBase implements BaseTool {
   }
 
   private handleAutoScrollDuringSelection(event: MouseEvent) {
-    if (
-      !this.autoScrollEnabled ||
-      this.editor.mode.modeName !== 'sequence-layout-mode'
-    ) {
+    if (!this.autoScrollEnabled) {
       this.cancelAutoScroll();
       return;
     }
@@ -1060,32 +1059,28 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
-    this.autoScrollDeltaX = deltaX;
-    this.autoScrollDeltaY = deltaY;
+    this.autoScrollDelta.x = deltaX;
+    this.autoScrollDelta.y = deltaY;
 
-    // Start the debounce timer only if not already running.
-    // The 150ms delay means fast test mouse moves (< 150ms in edge zone) never fire a scroll,
-    // while a real user holding the mouse at the edge will get continuous scrolling.
-    if (this.autoScrollTimerId === null) {
-      this.autoScrollTimerId = setTimeout(
-        () => this.performAutoScroll(),
-        SelectBase.AUTO_SCROLL_INITIAL_DELAY,
+    if (this.autoScrollRafId === null) {
+      this.autoScrollRafId = requestAnimationFrame(() =>
+        this.performAutoScroll(),
       );
     }
   }
 
   private performAutoScroll() {
-    if (this.mode !== 'selecting') {
-      this.autoScrollTimerId = null;
+    if (this.mode !== 'selecting' || this.autoScrollRafId === null) {
+      this.autoScrollRafId = null;
       return;
     }
 
-    this.editor.zoomTool.scrollBy(this.autoScrollDeltaX, this.autoScrollDeltaY);
-
-    // Schedule the next scroll tick
-    this.autoScrollTimerId = setTimeout(
-      () => this.performAutoScroll(),
-      SelectBase.AUTO_SCROLL_REPEAT_DELAY,
+    this.editor.zoomTool.scrollBy(
+      this.autoScrollDelta.x,
+      this.autoScrollDelta.y,
+    );
+    this.autoScrollRafId = requestAnimationFrame(() =>
+      this.performAutoScroll(),
     );
   }
 
@@ -1481,12 +1476,12 @@ abstract class SelectBase implements BaseTool {
   }
 
   private cancelAutoScroll() {
-    if (this.autoScrollTimerId !== null) {
-      clearTimeout(this.autoScrollTimerId);
-      this.autoScrollTimerId = null;
+    if (this.autoScrollRafId !== null) {
+      cancelAnimationFrame(this.autoScrollRafId);
+      this.autoScrollRafId = null;
     }
-    this.autoScrollDeltaX = 0;
-    this.autoScrollDeltaY = 0;
+    this.autoScrollDelta.x = 0;
+    this.autoScrollDelta.y = 0;
   }
 
   destroy() {

@@ -65,7 +65,7 @@ const zoom: ZoomActions = {
   },
   'zoom-out': {
     shortcut: ['Mod+Minus', 'Mod+NumpadSubtract'],
-    title: 'Zoom Out',
+    title: 'toolbar:zoom.out',
     enabledInViewOnly: true,
     disabled: (editor: ActionStateEditor): boolean =>
       editor.zoom() <= zoomList[0],
@@ -88,7 +88,7 @@ const zoom: ZoomActions = {
   },
   'zoom-in': {
     shortcut: ['Mod+Equal', 'Mod+NumpadAdd'],
-    title: 'Zoom In',
+    title: 'toolbar:zoom.in',
     enabledInViewOnly: true,
     disabled: (editor: ActionStateEditor): boolean =>
       zoomList[zoomList.length - 1] <= editor.zoom(),

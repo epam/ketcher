@@ -120,7 +120,7 @@ type ActionStateEditor = Editor & {
   struct(value: Struct | null): Struct;
 };
 
-export type ActionStateOptions = {
+type ActionStateOptions = {
   app: {
     server?: unknown;
     templates?: unknown;

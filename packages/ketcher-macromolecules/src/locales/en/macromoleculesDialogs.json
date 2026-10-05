@@ -224,7 +224,8 @@
   },
   "updateSequence": {
     "title": "Update sequence",
-    "confirmText": "You are going to modify {count} nucleotides. Are you sure?"
+    "confirmText": "You are going to modify {count} nucleotides. Are you sure?",
+    "duplexConfirmText": "You are going to modify ${count} nucleotides, and that will change ${mirroredCount} additional nucleotides. Are you sure?"
   },
   "monomerConnection": {
     "editTitle": "Edit Attachment Points",

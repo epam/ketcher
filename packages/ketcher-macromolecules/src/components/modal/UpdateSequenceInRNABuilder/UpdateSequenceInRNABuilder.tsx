@@ -73,7 +73,12 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
     >
       <Modal.Content data-testid="update-sequence-modal-body">
         <TextWrapper>
-          {t('updateSequence.confirmText', { count: countOfNucleoelements })}
+          {countOfMirroredNucleoelements > 0
+            ? t('updateSequence.duplexConfirmText', {
+                count: countOfNucleoelements,
+                mirroredCount: countOfMirroredNucleoelements,
+              })
+            : t('updateSequence.confirmText', { count: countOfNucleoelements })}
         </TextWrapper>
       </Modal.Content>
       <Modal.Footer>

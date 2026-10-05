@@ -20,7 +20,6 @@ import {
   type ReactElement,
   useEffect,
   useLayoutEffect,
-  useRef,
 } from 'react';
 
 import clsx from 'clsx';
@@ -29,6 +28,7 @@ import { Icon } from '../Icon';
 import styles from './Dialog.module.less';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 import { CLIP_AREA_BASE_CLASS } from '../../script/ui/component/cliparea/cliparea';
+import { useDraggable } from '../../hooks/useDraggable';
 
 interface DialogParamsCallProps {
   onCancel?: () => void;
@@ -38,6 +38,7 @@ interface DialogParamsCallProps {
 export interface DialogParams extends DialogParamsCallProps {
   className?: string;
   isNestedModal?: boolean;
+  draggable?: boolean;
 }
 
 interface DialogProps {
@@ -81,7 +82,11 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     primaryButtons,
     ...rest
   } = props;
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  const draggable = params?.draggable !== false; // Default to true unless explicitly set to false
+  const { position, isDragging, handleRef, targetRef } =
+    useDraggable<HTMLDialogElement>({
+      enabled: draggable,
+    });
   const { t } = useTranslation('common');
   // `button` values are also semantic identifiers (see isButtonOk/exit below)
   // and testids — only their *displayed* text is translated here, by default,
@@ -94,7 +99,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   };
 
   useLayoutEffect(() => {
-    const dialogElement = dialogRef.current;
+    const dialogElement = targetRef.current;
 
     // Use document.querySelector rather than dialogElement.closest() because
     // in popup mode the native <dialog> lives inside a MUI portal appended to
@@ -129,7 +134,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
         clipArea?.focus();
       }, 0);
     };
-  }, [focusable]);
+  }, [focusable, targetRef]);
 
   const isButtonOk = (button) => {
     return button === 'OK' || button === 'Save';
@@ -151,7 +156,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
   useEffect(() => {
     const keyDown = (event: KeyboardEvent) => {
-      const isFocusInsideDialog = dialogRef.current?.contains(
+      const isFocusInsideDialog = targetRef.current?.contains(
         document.activeElement,
       );
 
@@ -178,15 +183,39 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
   return (
     <dialog
-      ref={dialogRef}
+      ref={targetRef}
       open
       data-testid={'info-modal-window'}
       tabIndex={-1}
-      className={clsx(styles.dialog, className, params?.className)}
+      className={clsx(
+        styles.dialog,
+        className,
+        params?.className,
+        draggable && styles.draggable,
+        isDragging && styles.dragging,
+      )}
+      style={
+        draggable
+          ? {
+              transform: `translate(${position.x}px, ${position.y}px)`,
+              left: 0,
+              top: 0,
+              margin: 0,
+            }
+          : undefined
+      }
       {...rest}
     >
       <header
-        className={clsx(styles.header, withDivider && styles.withDivider)}
+        ref={
+          handleRef as React.RefObject<HTMLElement> &
+            React.RefObject<HTMLDivElement>
+        }
+        className={clsx(
+          styles.header,
+          withDivider && styles.withDivider,
+          draggable && styles.draggableHeader,
+        )}
       >
         {headerContent || <span>{title}</span>}
         <div className={styles.btnContainer}>

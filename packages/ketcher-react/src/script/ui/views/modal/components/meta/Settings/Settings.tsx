@@ -419,6 +419,15 @@ const SettingsDialog = (props: Props) => {
             )}
             data-testid="valence-mode"
           />
+          <Field
+            name="aromatize-skip-superatoms"
+            data-testid="aromatize-skip-superatoms"
+          />
+          <Field
+            name="dearomatize-on-load"
+            tooltip={t('dialogs:meta.settings.dearomatizeOnLoadTooltip')}
+            data-testid="dearomatize-on-load"
+          />
         </fieldset>
       </fieldset>
     ),
@@ -435,10 +444,26 @@ const SettingsDialog = (props: Props) => {
             data-testid="smart-layout"
           />
         </fieldset>
-        <Field name="showAtomIds" data-testid="show-atom-ids" />
-        <Field name="showBondIds" data-testid="show-bond-ids" />
-        <Field name="showHalfBondIds" data-testid="show-half-bond-ids" />
-        <Field name="showLoopIds" data-testid="show-loop-ids" />
+        <Field
+          name="showAtomIds"
+          tooltip={t('dialogs:meta.settings.showAtomIdsTooltip')}
+          data-testid="show-atom-ids"
+        />
+        <Field
+          name="showBondIds"
+          tooltip={t('dialogs:meta.settings.showBondIdsTooltip')}
+          data-testid="show-bond-ids"
+        />
+        <Field
+          name="showHalfBondIds"
+          tooltip={t('dialogs:meta.settings.showHalfBondIdsTooltip')}
+          data-testid="show-half-bond-ids"
+        />
+        <Field
+          name="showLoopIds"
+          tooltip={t('dialogs:meta.settings.showLoopIdsTooltip')}
+          data-testid="show-loop-ids"
+        />
       </fieldset>
     ),
   };

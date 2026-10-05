@@ -210,6 +210,20 @@ describe('SequenceItemContextMenu', () => {
         turnOnSequenceEditInRNABuilderMode: { dispatch: jest.fn() },
       },
       isSequenceEditInRNABuilderMode: false,
+      // useMonomerCreationMenu (called on every render) walks the drawing
+      // entities manager to decide whether the Create/Edit monomer items
+      // are available, regardless of the selection under test. Empty
+      // collections keep that path inert instead of throwing.
+      drawingEntitiesManager: {
+        atoms: new Map(),
+        bonds: new Map(),
+        polymerBonds: new Map(),
+        monomerToAtomBonds: new Map(),
+        rxnArrows: new Map(),
+        rxnPluses: new Map(),
+        multitailArrows: new Map(),
+        monomersArray: [],
+      },
     };
 
     const store = configureAppStore({

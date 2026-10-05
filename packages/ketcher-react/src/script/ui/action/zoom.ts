@@ -27,19 +27,12 @@ export const zoomList: number[] = [
   2.5, 3, 3.5, 4,
 ];
 
-type CurriedEditorAction = (
-  event: unknown,
-) => (editor: ActionStateEditor) => void;
-
 interface ZoomActions {
   zoom: UiAction;
   'zoom-out': UiAction;
   'zoom-in': UiAction;
   'zoom-list': UiAction;
 }
-
-const isWheelEvent = (event: unknown): event is WheelEvent =>
-  typeof WheelEvent !== 'undefined' && event instanceof WheelEvent;
 
 // Helper function to safely call tool mousemove
 const callToolMousemove = (
@@ -56,7 +49,7 @@ const zoom: ZoomActions = {
   zoom: {
     shortcut: ['Mod+0'],
     enabledInViewOnly: true,
-    selected: (editor: ActionStateEditor): boolean => editor.zoom() === 1,
+    selected: (editor: ActionStateEditor): boolean => Boolean(editor.zoom()),
     action: (editor: ActionStateEditor): void => {
       editor.zoom(1);
       callToolMousemove(editor, editor.lastEvent);
@@ -69,7 +62,7 @@ const zoom: ZoomActions = {
     enabledInViewOnly: true,
     disabled: (editor: ActionStateEditor): boolean =>
       editor.zoom() <= zoomList[0],
-    action: ((event: unknown): ((editor: ActionStateEditor) => void) => {
+    action: ((event?: WheelEvent): ((editor: ActionStateEditor) => void) => {
       return (editor: ActionStateEditor): void => {
         const currentZoom: number = editor.zoom();
         const i: number = findLastIndex(
@@ -78,11 +71,11 @@ const zoom: ZoomActions = {
         );
         editor.zoom(
           zoomList[zoomList[i] === currentZoom && i > 0 ? i - 1 : i],
-          isWheelEvent(event) ? event : undefined,
+          event,
         );
         callToolMousemove(editor, editor.lastEvent);
       };
-    }) as unknown as CurriedEditorAction,
+    }) as unknown as UiAction['action'],
     hidden: (options: ActionStateOptions): boolean =>
       isHidden(options, 'zoom-out'),
   },
@@ -92,7 +85,7 @@ const zoom: ZoomActions = {
     enabledInViewOnly: true,
     disabled: (editor: ActionStateEditor): boolean =>
       zoomList[zoomList.length - 1] <= editor.zoom(),
-    action: ((event: unknown): ((editor: ActionStateEditor) => void) => {
+    action: ((event?: WheelEvent): ((editor: ActionStateEditor) => void) => {
       return (editor: ActionStateEditor): void => {
         const currentZoom: number = editor.zoom();
         const i: number = findIndex((z: number) => z >= currentZoom, zoomList);
@@ -100,11 +93,11 @@ const zoom: ZoomActions = {
           zoomList[
             zoomList[i] === currentZoom && i < zoomList.length - 1 ? i + 1 : i
           ],
-          isWheelEvent(event) ? event : undefined,
+          event,
         );
         callToolMousemove(editor, editor.lastEvent);
       };
-    }) as unknown as CurriedEditorAction,
+    }) as unknown as UiAction['action'],
     hidden: (options: ActionStateOptions): boolean =>
       isHidden(options, 'zoom-in'),
   },

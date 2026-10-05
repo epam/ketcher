@@ -196,6 +196,5 @@ export type {
   UiAction,
   UiActionAction,
   ActionStateEditor,
-  ActionStateOptions,
   AtomActionOpts,
 };

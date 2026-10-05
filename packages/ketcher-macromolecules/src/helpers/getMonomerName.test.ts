@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import { BaseMonomer, KetMonomerClass } from 'ketcher-core';
+import { AmbiguousMonomer, BaseMonomer, KetMonomerClass } from 'ketcher-core';
 import getMonomerName from './getMonomerName';
 import macromoleculesDialogs from '../locales/en/macromoleculesDialogs.json';
 
@@ -48,16 +48,14 @@ jest.mock('ketcher-core', () => {
   };
 });
 
-// Import after mocking to get the mocked version
-
-const { AmbiguousMonomer } = require('ketcher-core');
-
 const createMockAmbiguousMonomer = (
   variantMonomerItem: MockVariantMonomerItem,
   monomerClass: string,
 ) => {
-  const monomer = new AmbiguousMonomer(variantMonomerItem);
-  monomer.monomerClass = monomerClass;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const monomer = new AmbiguousMonomer(variantMonomerItem as any);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (monomer as any).monomerClass = monomerClass;
   return monomer as unknown as BaseMonomer;
 };
 

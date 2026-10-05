@@ -132,6 +132,117 @@ interface IKetMicromoleculeSerializedResult {
   [key: string]: unknown;
 }
 
+const CORRUPTED_IMAGES_ERROR_MESSAGE =
+  "The file contains corrupted images and couldn't be loaded.";
+
+const PNG_SIGNATURE = [137, 80, 78, 71, 13, 10, 26, 10];
+const PNG_IEND_TRAILER = [0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130];
+
+function decodeBase64ToBytes(base64Data: string): Uint8Array | null {
+  if (typeof globalThis.atob !== 'function') {
+    return null;
+  }
+
+  try {
+    const binaryData = globalThis.atob(base64Data);
+    const bytes = new Uint8Array(binaryData.length);
+    for (let i = 0; i < binaryData.length; i++) {
+      bytes[i] = binaryData.charCodeAt(i);
+    }
+    return bytes;
+  } catch {
+    return null;
+  }
+}
+
+function isPngImageDataValid(base64Data: string): boolean {
+  const bytes = decodeBase64ToBytes(base64Data);
+
+  if (!bytes || bytes.length < PNG_SIGNATURE.length + PNG_IEND_TRAILER.length) {
+    return false;
+  }
+
+  const hasValidPngSignature = PNG_SIGNATURE.every(
+    (byte, index) => bytes[index] === byte,
+  );
+  if (!hasValidPngSignature) {
+    return false;
+  }
+
+  return PNG_IEND_TRAILER.every(
+    (byte, index) =>
+      bytes[bytes.length - PNG_IEND_TRAILER.length + index] === byte,
+  );
+}
+
+function isSvgImageDataValid(base64Data: string): boolean {
+  if (typeof globalThis.atob !== 'function') {
+    return false;
+  }
+
+  let svgContent: string;
+  try {
+    svgContent = globalThis.atob(base64Data).trim();
+  } catch {
+    return false;
+  }
+
+  if (typeof DOMParser !== 'undefined') {
+    const parsedDocument = new DOMParser().parseFromString(
+      svgContent,
+      'image/svg+xml',
+    );
+    return (
+      !parsedDocument.querySelector('parsererror') &&
+      parsedDocument.documentElement.nodeName.toLowerCase() === 'svg'
+    );
+  }
+
+  return /<svg[\s>]/i.test(svgContent) && /<\/svg\s*>/i.test(svgContent);
+}
+
+function getKetImageNodes(ket: IKetMicromoleculeFile): Array<KetFileImageNode> {
+  const nodes = ket.root?.nodes;
+  if (!Array.isArray(nodes)) {
+    return [];
+  }
+
+  return nodes
+    .map((node) => {
+      if (node.type) {
+        return node;
+      }
+
+      if (node.$ref && ket[node.$ref]) {
+        return ket[node.$ref] as KetMicromoleculeNode;
+      }
+
+      return null;
+    })
+    .filter(
+      (node): node is KetFileImageNode =>
+        !!node && node.type === IMAGE_SERIALIZE_KEY,
+    );
+}
+
+function validateKetImages(ket: IKetMicromoleculeFile): boolean {
+  return getKetImageNodes(ket).every((imageNode) => {
+    if (!imageNode.data) {
+      return false;
+    }
+
+    if (imageNode.format === 'image/png') {
+      return isPngImageDataValid(imageNode.data);
+    }
+
+    if (imageNode.format === 'image/svg+xml') {
+      return isSvgImageDataValid(imageNode.data);
+    }
+
+    return false;
+  });
+}
+
 function parseNode(node: KetMicromoleculeNode, struct: Struct) {
   const type = node.type;
   switch (type) {
@@ -199,6 +310,9 @@ export class KetSerializer implements Serializer<Struct> {
     const ket = JSON.parse(content);
     if (!validate(ket)) {
       throw new Error('Cannot deserialize input JSON.');
+    }
+    if (!validateKetImages(ket)) {
+      throw new Error(CORRUPTED_IMAGES_ERROR_MESSAGE);
     }
 
     return KetSerializer.fillStruct(ket);

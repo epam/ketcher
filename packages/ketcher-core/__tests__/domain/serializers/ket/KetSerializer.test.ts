@@ -49,6 +49,24 @@ import { CoreEditor } from 'application/editor';
 import { KetcherLogger } from 'utilities';
 
 const ket = new KetSerializer();
+const createKetWithImage = (format: string, data: string) =>
+  JSON.stringify({
+    root: {
+      nodes: [
+        {
+          type: 'image',
+          format,
+          boundingBox: {
+            x: 0,
+            y: 0,
+            width: 1,
+            height: 1,
+          },
+          data,
+        },
+      ],
+    },
+  });
 
 describe('deserialize (ToStruct)', () => {
   const canvas = createPolymerEditorCanvas();
@@ -212,6 +230,26 @@ describe('deserialize (ToStruct)', () => {
       'Cannot deserialize input JSON.',
     );
     expect(spy.mock.results[1].value).toBeFalsy();
+  });
+  it('throws a dedicated error for corrupted PNG images in KET', () => {
+    const corruptedPngKet = createKetWithImage('image/png', 'a'.repeat(160));
+
+    expect(() => ket.deserialize(corruptedPngKet)).toThrow(
+      "The file contains corrupted images and couldn't be loaded.",
+    );
+  });
+  it('throws a dedicated error for corrupted SVG images in KET', () => {
+    const corruptedSvgContent =
+      '<svg xmlns="http://www.w3.org/2000/svg">' + 'a'.repeat(180);
+    const corruptedSvgBase64 = globalThis.btoa(corruptedSvgContent);
+    const corruptedSvgKet = createKetWithImage(
+      'image/svg+xml',
+      corruptedSvgBase64,
+    );
+
+    expect(() => ket.deserialize(corruptedSvgKet)).toThrow(
+      "The file contains corrupted images and couldn't be loaded.",
+    );
   });
 });
 

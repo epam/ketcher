@@ -148,6 +148,7 @@ type ActionObj = {
   tool?: string;
   opts?: unknown;
   dialog?: string;
+  prop?: Record<string, unknown>;
   thunk?: (dispatch: Dispatch, getState: () => ActionThunkState) => void;
 };
 type ActionFn = (editor: ActionStateEditor) => void;

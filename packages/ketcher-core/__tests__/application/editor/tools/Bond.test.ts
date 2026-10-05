@@ -32,6 +32,7 @@ describe.each([
   ['Flex', FlexMode],
   ['Snake', SnakeMode],
 ] as const)('%s connection drawing', (_name, Mode) => {
+  const originalGetBBox = SVGElement.prototype.getBBox;
   let editor: CoreEditor;
   let tool: PolymerBond;
   let monomer: Peptide;
@@ -77,6 +78,15 @@ describe.each([
     editor.destroy();
     document.body.innerHTML = '';
     jest.restoreAllMocks();
+
+    if (originalGetBBox) {
+      Object.defineProperty(SVGElement.prototype, 'getBBox', {
+        configurable: true,
+        value: originalGetBBox,
+      });
+    } else {
+      Reflect.deleteProperty(SVGElement.prototype, 'getBBox');
+    }
   });
 
   const startDrawing = () => {

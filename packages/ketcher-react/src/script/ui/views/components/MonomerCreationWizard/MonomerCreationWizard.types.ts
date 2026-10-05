@@ -12,7 +12,15 @@ export type MonomerTypeSelectItem = {
 };
 
 export type WizardFormFieldId =
-  'type' | 'symbol' | 'name' | 'naturalAnalogue' | 'aliasHELM' | 'aliasBILN';
+  | 'type'
+  | 'symbol'
+  | 'name'
+  | 'naturalAnalogue'
+  | 'aliasHELM'
+  | 'aliasBILN'
+  | 'idtAlias5'
+  | 'idtAliasInternal'
+  | 'idtAlias3';
 
 export type RnaPresetWizardStateFieldId =
   'base' | 'sugar' | 'phosphate' | 'preset';
@@ -52,6 +60,10 @@ export type WizardNotificationId =
   | 'invalidHELMAlias'
   | 'notUniqueBILNAlias'
   | 'invalidBILNAlias'
+  | 'invalidIDTAlias'
+  | 'idtAliasNonTerminalSlash'
+  | 'idtAliasTooLong'
+  | 'notUniqueIDTAlias'
   | 'invalidRnaPresetStructure'
   | 'rnaPresetAtomsOutsideComponents'
   | 'rnaPresetAtomsInMultipleComponents'

@@ -1,4 +1,11 @@
-import { Bond, ketcherProvider } from 'ketcher-core';
+import {
+  Atom,
+  Bond,
+  KetMonomerClass,
+  Struct,
+  Vec2,
+  ketcherProvider,
+} from 'ketcher-core';
 import { Subscription } from 'subscription';
 import Editor from './Editor';
 
@@ -224,6 +231,65 @@ describe('Editor.isMonomerCreationWizardEnabled', () => {
   });
 });
 
+describe('Editor.saveNewMonomer', () => {
+  const createStructure = () => {
+    const struct = new Struct();
+    struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) }));
+    return struct;
+  };
+
+  const createEditor = () => {
+    const editor = Object.create(Editor.prototype) as Editor;
+    Reflect.set(editor, 'render', { monomerCreationState: {} });
+    return editor;
+  };
+
+  it('includes idtAliases on the built template when wizard IDT inputs are set', () => {
+    const { monomerTemplate } = createEditor().saveNewMonomer({
+      type: KetMonomerClass.CHEM,
+      symbol: 'Cy3',
+      name: 'Cy3',
+      naturalAnalogue: 'X',
+      modificationTypes: [],
+      aliasHELM: '',
+      aliasBILN: '',
+      idtAlias5: '5Cy3',
+      idtAliasInternal: 'iCy3',
+      idtAlias3: '3Cy3Sp',
+      structure: createStructure(),
+      attachmentPoints: new Map(),
+    });
+
+    expect(monomerTemplate.idtAliases).toEqual({
+      base: 'Cy3',
+      modifications: {
+        endpoint5: '/5Cy3/',
+        internal: '/iCy3/',
+        endpoint3: '/3Cy3Sp/',
+      },
+    });
+  });
+
+  it('omits idtAliases from the built template when all IDT inputs are blank', () => {
+    const { monomerTemplate } = createEditor().saveNewMonomer({
+      type: KetMonomerClass.CHEM,
+      symbol: 'X',
+      name: 'X',
+      naturalAnalogue: 'X',
+      modificationTypes: [],
+      aliasHELM: '',
+      aliasBILN: '',
+      idtAlias5: '',
+      idtAliasInternal: '',
+      idtAlias3: '',
+      structure: createStructure(),
+      attachmentPoints: new Map(),
+    });
+
+    expect(monomerTemplate.idtAliases).toBeUndefined();
+  });
+});
+
 describe('Editor.options', () => {
   const ketcherId = 'editor-options-test';
 
@@ -308,7 +374,7 @@ describe('Editor.options', () => {
     editor.zoom(2);
 
     const options = editor.options({ showAtomIds: true });
-
+    expect(options.zoom).toBe(2);
     expect(options.zoom).toBe(2);
   });
 });

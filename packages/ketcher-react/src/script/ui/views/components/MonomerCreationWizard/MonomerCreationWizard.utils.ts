@@ -1,6 +1,7 @@
 import {
   AttachmentPointName,
   type BaseMonomer,
+  expandIdtAliasesToWizardInputs,
   type FunctionalGroup,
   getMonomerTemplateRefFromMonomerItem,
   type MonomerCreationInitialValues,
@@ -22,6 +23,13 @@ const isNaturalAnalogueSupported = (
   monomerType === KetMonomerClass.Base ||
   monomerType === KetMonomerClass.RNA;
 
+const isIdtAliasSupported = (
+  monomerType: KetMonomerClass | 'rnaPreset' | undefined,
+) =>
+  monomerType === KetMonomerClass.RNA ||
+  monomerType === KetMonomerClass.CHEM ||
+  monomerType === KetMonomerClass.Phosphate;
+
 const getInitialValues = (
   monomer: BaseMonomer,
   shouldAppendCopySuffix: boolean,
@@ -39,6 +47,11 @@ const getInitialValues = (
   const position = monomer.position
     ? { position: new Vec2(monomer.position) }
     : {};
+  const idtAliases = isIdtAliasSupported(type)
+    ? expandIdtAliasesToWizardInputs(props.idtAliases)
+    : { idtAlias5: '', idtAliasInternal: '', idtAlias3: '' };
+  const modificationTypes =
+    type === KetMonomerClass.AminoAcid ? (props.modificationTypes ?? []) : [];
 
   return {
     type,
@@ -47,6 +60,8 @@ const getInitialValues = (
     naturalAnalogue,
     aliasHELM: getValue(props.aliasHELM),
     aliasBILN: getValue(props.aliasBILN),
+    ...idtAliases,
+    modificationTypes,
     originalType: type,
     originalSymbol: symbol,
     ...position,

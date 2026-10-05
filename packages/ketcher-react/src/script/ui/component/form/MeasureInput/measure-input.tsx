@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,13 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  type HTMLAttributes,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { type HTMLAttributes, useMemo, useState } from 'react';
 import clsx from 'clsx';
 
 import Input from '../Input/Input';
@@ -127,8 +120,6 @@ const MeasureInput = ({
   const stringifiedValue = String(value);
   const [internalValue, setInternalValue] = useState(stringifiedValue);
   const [prevPropValue, setPrevPropValue] = useState(stringifiedValue);
-
-  const internalValueRef = useRef(internalValue);
   const {
     anchorEl,
     handleOpen: handlePopoverOpen,
@@ -138,14 +129,7 @@ const MeasureInput = ({
   if (prevPropValue !== stringifiedValue) {
     setPrevPropValue(stringifiedValue);
     setInternalValue(stringifiedValue);
-    internalValueRef.current = stringifiedValue;
   }
-
-  useEffect(() => {
-    if (internalValue !== stringifiedValue) {
-      onChange(Number.parseFloat(internalValue));
-    }
-  }, [internalValue, stringifiedValue, onChange]);
 
   const handleChange = (value: unknown) => {
     const newStringifiedValue = String(value);
@@ -163,12 +147,12 @@ const MeasureInput = ({
       return;
     }
 
-    const newInternalValue = getNewInternalValue(
-      internalValueRef.current,
-      endorcedValue,
-    );
-    internalValueRef.current = newInternalValue;
+    const newInternalValue = getNewInternalValue(internalValue, endorcedValue);
     setInternalValue(newInternalValue);
+
+    if (newInternalValue !== stringifiedValue) {
+      onChange(Number.parseFloat(newInternalValue));
+    }
   };
 
   const desc = schema;

@@ -14,52 +14,14 @@ import {
   STRAND_TYPE,
   isSelectedAntisensePair,
   provideEditorInstance,
-  SequenceRenderer,
 } from 'ketcher-core';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
-
-// The editor's right-click handler emits one NodeSelection per selected
-// strand, so a duplex column arrives here twice (once per strand). Keep
-// only the entry belonging to the strand the selection gesture targeted:
-// - SENSE / ANTISENSE record: keep only that strand's entry per column.
-// - 'both' record: keep every entry. A genuine both-strands gesture needs
-//   both entries because the RNA Builder write-back
-//   (SequenceMode.modifySequenceInRnaBuilder) honours each payload entry's
-//   own strandType, and the both-strands block (keyed on
-//   isInSelectedAntisensePair) needs to still see a pair. A selection
-//   rectangle over a ragged duplex also derives 'both', but there no column
-//   is double-selected, so every entry survives unfiltered.
-// A single-partner column (an overhang, a plain single strand) has no
-// twoStrandedNode partner on the other side, so it is never mistakenly
-// dropped: it is only excluded if its own strand differs from the record,
-// which should not happen for a well-formed selection.
-const filterSelectionsToTargetedStrand = (
-  selectionsFlatten: NodeSelection[],
-): NodeSelection[] => {
-  const targetedStrand = SequenceRenderer.targetedStrand;
-
-  if (targetedStrand === 'both') {
-    return selectionsFlatten;
-  }
-
-  return selectionsFlatten.filter(({ node, twoStrandedNode }) => {
-    const strandType =
-      twoStrandedNode?.antisenseNode === node
-        ? STRAND_TYPE.ANTISENSE
-        : STRAND_TYPE.SENSE;
-
-    return strandType === targetedStrand;
-  });
-};
 
 const generateLabeledNodes = (
   selectionsFlatten: NodeSelection[],
 ): LabeledNodesWithPositionInSequence[] => {
   const labeledNodes: LabeledNodesWithPositionInSequence[] = [];
   const isSyncEditMode = Boolean(provideEditorInstance().mode.isSyncEditMode);
-  // Recorded once for the whole selection: the same value must apply to
-  // every node in this batch, not be re-derived per position.
-  const bothStrandsTargeted = SequenceRenderer.targetedStrand === 'both';
 
   for (const selection of selectionsFlatten) {
     const {
@@ -79,7 +41,6 @@ const generateLabeledNodes = (
         node instanceof Nucleotide || node instanceof Nucleoside
           ? node.rnaBase
           : node?.monomer,
-        bothStrandsTargeted,
       );
 
     if (node instanceof Nucleotide) {
@@ -164,9 +125,7 @@ export const generateSequenceContextMenuProps = (
 ) => {
   if (!selections?.length) return;
 
-  const selectionsFlatten: NodeSelection[] = filterSelectionsToTargetedStrand(
-    flatten(selections),
-  );
+  const selectionsFlatten: NodeSelection[] = flatten(selections);
   const countOfSelections = selectionsFlatten.length;
   const countOfNucleoelements = getCountOfNucleoelements(selectionsFlatten);
   let title: string;

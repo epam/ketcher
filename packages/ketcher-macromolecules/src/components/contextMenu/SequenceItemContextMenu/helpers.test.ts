@@ -30,8 +30,6 @@ import {
   HydrogenBond,
   AttachmentPointName,
   KetMonomerClass,
-  SequenceRenderer,
-  TargetedStrand,
 } from 'ketcher-core';
 import { generateSequenceContextMenuProps } from 'components/contextMenu/SequenceItemContextMenu/helpers';
 import macromoleculesDialogs from '../../../locales/en/macromoleculesDialogs.json';
@@ -53,16 +51,6 @@ const setSyncEditMode = (isSyncEditMode: boolean) => {
   jest.spyOn(ketcherCore, 'provideEditorInstance').mockReturnValue({
     mode: { isSyncEditMode },
   } as unknown as ketcherCore.CoreEditor);
-};
-
-// Mocks the strand a selection gesture targeted, exactly as
-// SequenceRenderer.targetedStrand would resolve it (either from an explicit
-// gesture record or derived from selection state) - helpers.ts only ever
-// reads the getter, so mocking it directly is sufficient here.
-const setTargetedStrand = (targetedStrand: TargetedStrand) => {
-  jest
-    .spyOn(SequenceRenderer, 'targetedStrand', 'get')
-    .mockReturnValue(targetedStrand);
 };
 
 const instanceOfNucleotide = Object.create(Nucleotide.prototype);
@@ -407,10 +395,6 @@ const mockedSelectionsWithAntisense = [
 describe('SequenceItemContextMenu helpers', () => {
   beforeEach(() => {
     setSyncEditMode(false);
-    // Default to 'both' so the pre-existing single-strand fixtures (which
-    // carry no twoStrandedNode) keep passing through the filter unchanged.
-    // Tests that care about the filter set their own targeted strand.
-    setTargetedStrand('both');
   });
 
   afterEach(() => {
@@ -679,21 +663,32 @@ describe('SequenceItemContextMenu helpers', () => {
     expect(result).toStrictEqual(expectedResult);
   });
 
-  it('should return correct count for sense and antisense chain selection when both strands are targeted', () => {
-    setTargetedStrand('both');
+  it('should return correct count when both strands of N positions are selected', () => {
     const result = generateSequenceContextMenuProps(
       mockedSelectionsWithAntisense as unknown as NodesSelection,
       t,
     );
 
-    // When both sense and antisense are targeted, both entries per column
-    // survive the filter, so we get 4 nucleotides for 2 duplex positions.
+    // 2 duplex positions with both strands selected: 2 * 2 nucleotides.
     expect(result?.title).toBe('4 nucleotides');
     expect(result?.selectedSequenceLabeledNodes).toHaveLength(4);
   });
 
+  it('should return correct count when N positions are selected on one strand', () => {
+    const senseOnlySelections = [
+      mockedSelectionsWithAntisense[0].filter(
+        ({ twoStrandedNode, node }) => twoStrandedNode?.senseNode === node,
+      ),
+    ];
+    const result = generateSequenceContextMenuProps(
+      senseOnlySelections as unknown as NodesSelection,
+    );
+
+    expect(result?.title).toBe('2 nucleotides');
+    expect(result?.selectedSequenceLabeledNodes).toHaveLength(2);
+  });
+
   it('marks each labeled node with the strand it was selected from', () => {
-    setTargetedStrand('both');
     const result = generateSequenceContextMenuProps(
       mockedSelectionsWithAntisense as unknown as NodesSelection,
     );
@@ -706,73 +701,6 @@ describe('SequenceItemContextMenu helpers', () => {
       STRAND_TYPE.SENSE,
       STRAND_TYPE.ANTISENSE,
     ]);
-  });
-
-  describe('one entry per duplex position', () => {
-    // mockedSelectionsWithAntisense carries the editor's right-click output
-    // for a 2-position duplex column selection: one NodeSelection per strand
-    // per position (4 entries total for 2 positions).
-    it('keeps only the sense entry per column when the record is SENSE', () => {
-      setTargetedStrand(STRAND_TYPE.SENSE);
-
-      const result = generateSequenceContextMenuProps(
-        mockedSelectionsWithAntisense as unknown as NodesSelection,
-      );
-
-      expect(result?.title).toBe('2 nucleotides');
-      expect(result?.selectedSequenceLabeledNodes).toHaveLength(2);
-      expect(
-        result?.selectedSequenceLabeledNodes.map((node) => node.strandType),
-      ).toEqual([STRAND_TYPE.SENSE, STRAND_TYPE.SENSE]);
-    });
-
-    it('keeps only the antisense entry per column when the record is ANTISENSE', () => {
-      setTargetedStrand(STRAND_TYPE.ANTISENSE);
-
-      const result = generateSequenceContextMenuProps(
-        mockedSelectionsWithAntisense as unknown as NodesSelection,
-      );
-
-      expect(result?.title).toBe('2 nucleotides');
-      expect(result?.selectedSequenceLabeledNodes).toHaveLength(2);
-      expect(
-        result?.selectedSequenceLabeledNodes.map((node) => node.strandType),
-      ).toEqual([STRAND_TYPE.ANTISENSE, STRAND_TYPE.ANTISENSE]);
-    });
-
-    it('keeps both entries per column when the record is derived as "both" (no explicit gesture record)', () => {
-      // Simulates the case where no gesture wrote a record and
-      // SequenceRenderer.targetedStrand derived 'both' from selection state
-      // (e.g. a selection rectangle spanning both strands).
-      setTargetedStrand('both');
-
-      const result = generateSequenceContextMenuProps(
-        mockedSelectionsWithAntisense as unknown as NodesSelection,
-      );
-
-      expect(result?.title).toBe('4 nucleotides');
-      expect(result?.selectedSequenceLabeledNodes).toHaveLength(4);
-      expect(
-        result?.selectedSequenceLabeledNodes.map((node) => node.strandType),
-      ).toEqual([
-        STRAND_TYPE.SENSE,
-        STRAND_TYPE.ANTISENSE,
-        STRAND_TYPE.SENSE,
-        STRAND_TYPE.ANTISENSE,
-      ]);
-    });
-
-    it('keeps every entry of a single-strand (no-partner) selection when the record is SENSE', () => {
-      setTargetedStrand(STRAND_TYPE.SENSE);
-
-      const result = generateSequenceContextMenuProps(
-        mockedSelections2Nucleotides,
-      );
-
-      // mockedSelections2Nucleotides carries no twoStrandedNode: both
-      // entries classify as SENSE and both must survive.
-      expect(result?.selectedSequenceLabeledNodes).toHaveLength(2);
-    });
   });
 
   describe('isInSelectedAntisensePair', () => {
@@ -842,9 +770,8 @@ describe('SequenceItemContextMenu helpers', () => {
       [{ node: nucleotide, nodeIndexOverall: 0, hasR1Connection: false }],
     ];
 
-    it('is true when both hydrogen-bonded, eligible bases are selected, sync editing is on, and the record is "both"', () => {
+    it('is true when both hydrogen-bonded, eligible bases are selected and sync editing is on', () => {
       setSyncEditMode(true);
-      setTargetedStrand('both');
       const sense = createConnectedBase({ label: 'A', selected: true });
       const antisense = createConnectedBase({ label: 'T', selected: true });
       linkHydrogenBond(sense.base, antisense.base);
@@ -858,38 +785,8 @@ describe('SequenceItemContextMenu helpers', () => {
       ).toBe(true);
     });
 
-    // Task 6: on a duplex, selection is column-based, so both bases of a
-    // pair are selected even when the gesture targeted only one strand.
-    // `isInSelectedAntisensePair` must be false whenever the record is not
-    // 'both', regardless of that selection state -- this is the same
-    // selection (both bases selected, hydrogen bonded, eligible) as the
-    // "is true" case above, with only the record changed.
-    //
-    // Only the SENSE record is exercised here, not ANTISENSE: `selectionFor`
-    // builds a bare NodeSelection with no `twoStrandedNode`, so
-    // `filterSelectionsToTargetedStrand` (helpers.ts) classifies it as SENSE
-    // by default and would filter it out entirely for an ANTISENSE record,
-    // leaving `selectedSequenceLabeledNodes` empty rather than exercising
-    // `isInSelectedAntisensePair` at all.
-    it('is false when the record is SENSE, even though both hydrogen-bonded, eligible bases are selected and sync editing is on', () => {
-      setSyncEditMode(true);
-      setTargetedStrand(STRAND_TYPE.SENSE);
-      const sense = createConnectedBase({ label: 'A', selected: true });
-      const antisense = createConnectedBase({ label: 'T', selected: true });
-      linkHydrogenBond(sense.base, antisense.base);
-
-      const result = generateSequenceContextMenuProps(
-        selectionFor(sense.nucleotide) as unknown as NodesSelection,
-      );
-
-      expect(
-        result?.selectedSequenceLabeledNodes[0].isInSelectedAntisensePair,
-      ).toBe(false);
-    });
-
     it('is false when only the sense side of the pair is selected', () => {
       setSyncEditMode(true);
-      setTargetedStrand('both');
       const sense = createConnectedBase({ label: 'A', selected: true });
       const antisense = createConnectedBase({ label: 'T', selected: false });
       linkHydrogenBond(sense.base, antisense.base);
@@ -905,7 +802,6 @@ describe('SequenceItemContextMenu helpers', () => {
 
     it('is false when both bases are selected but are not hydrogen bonded to each other', () => {
       setSyncEditMode(true);
-      setTargetedStrand('both');
       const sense = createConnectedBase({ label: 'A', selected: true });
       // Deliberately not linked with linkHydrogenBond.
       createConnectedBase({ label: 'T', selected: true });
@@ -921,7 +817,6 @@ describe('SequenceItemContextMenu helpers', () => {
 
     it('is false when the partner base is hydrogen bonded but its sugar has no backbone connection', () => {
       setSyncEditMode(true);
-      setTargetedStrand('both');
       const sense = createConnectedBase({ label: 'A', selected: true });
       const antisense = createConnectedBase({
         label: 'T',
@@ -941,7 +836,6 @@ describe('SequenceItemContextMenu helpers', () => {
 
     it('is false when both strands are selected but sync editing is off', () => {
       setSyncEditMode(false);
-      setTargetedStrand('both');
       const sense = createConnectedBase({ label: 'A', selected: true });
       const antisense = createConnectedBase({ label: 'T', selected: true });
       linkHydrogenBond(sense.base, antisense.base);

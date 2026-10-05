@@ -94,7 +94,6 @@ import {
   Sugar,
   Phosphate,
   STRAND_TYPE,
-  SequenceRenderer,
   NodesSelection,
   KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
   EditorClassName,
@@ -112,12 +111,6 @@ const setSyncEditMode = (isSyncEditMode: boolean) => {
     // walks editor.monomersLibrary regardless of the selection under test.
     monomersLibrary: [],
   } as unknown as ketcherCore.CoreEditor);
-};
-
-const setTargetedStrand = (targetedStrand: ketcherCore.TargetedStrand) => {
-  jest
-    .spyOn(SequenceRenderer, 'targetedStrand', 'get')
-    .mockReturnValue(targetedStrand);
 };
 
 // Builds a bare Nucleotide fixture sufficient for generateLabeledNodes
@@ -208,9 +201,8 @@ describe('SequenceItemContextMenu', () => {
     jest.restoreAllMocks();
   });
 
-  it('dispatches setSequenceSelection with one entry per duplex position when only the sense strand was targeted', () => {
+  it('dispatches setSequenceSelection with every selected entry when both strands of the duplex positions are selected', () => {
     setSyncEditMode(false);
-    setTargetedStrand(STRAND_TYPE.SENSE);
 
     const mockEditor = {
       events: {
@@ -275,15 +267,20 @@ describe('SequenceItemContextMenu', () => {
     const { sequenceSelection, sequenceSelectionName } =
       store.getState().rnaBuilder;
 
-    // 2 duplex positions, sense strand targeted -> exactly 2 entries reach
-    // redux, not the 4 the raw selection carried.
-    expect(sequenceSelection).toHaveLength(2);
+    // 2 duplex positions with both strands selected -> all 4 entries reach
+    // redux.
+    expect(sequenceSelection).toHaveLength(4);
     expect(
       sequenceSelection?.map(
         (node: ketcherCore.LabeledNodesWithPositionInSequence) =>
           node.strandType,
       ),
-    ).toEqual([STRAND_TYPE.SENSE, STRAND_TYPE.SENSE]);
-    expect(sequenceSelectionName).toBe('2 nucleotides');
+    ).toEqual([
+      STRAND_TYPE.SENSE,
+      STRAND_TYPE.ANTISENSE,
+      STRAND_TYPE.SENSE,
+      STRAND_TYPE.ANTISENSE,
+    ]);
+    expect(sequenceSelectionName).toBe('4 nucleotides');
   });
 });

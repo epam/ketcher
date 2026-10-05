@@ -395,12 +395,12 @@ Produces (later sections rely on these exact names): `isSelectedAntisensePair(ba
 
 Files: `src/components/contextMenu/SequenceItemContextMenu/helpers.ts`, `helpers.test.ts`, `SequenceItemContextMenu.test.tsx`. Consumes `isSelectedAntisensePair(base)` from section 20.
 
-- [ ] 21.1 Run `npm run build` in `packages/ketcher-core` so this package sees section 20's API.
-- [ ] 21.2 Rewrite the tests in `helpers.test.ts`: delete `describe('one entry per duplex position')`; replace `should return correct count for sense and antisense chain selection when both strands are targeted` with one that selects both strands of N positions and expects the title `${2 * N} nucleotides` and `selectedSequenceLabeledNodes` of length 2N, plus one that selects N positions on one strand and expects `${N} nucleotides`; in `describe('isInSelectedAntisensePair')` drop every record setup, rename the "record is 'both'" case to "is true when both hydrogen-bonded, eligible bases are selected and sync editing is on", and delete "is false when the record is SENSE…". Remove record references from `SequenceItemContextMenu.test.tsx` the same way.
-- [ ] 21.3 Run `npx jest src/components/contextMenu/SequenceItemContextMenu`; expect failures.
-- [ ] 21.4 In `helpers.ts`: delete `filterSelectionsToTargetedStrand` and its comment; in `generateSequenceContextMenuProps` use `const selectionsFlatten: NodeSelection[] = flatten(selections);`; in `generateLabeledNodes` delete `bothStrandsTargeted` and call `isSelectedAntisensePair(base)`; drop the `SequenceRenderer` import if unused.
-- [ ] 21.5 Run `npm test` in `packages/ketcher-macromolecules`; green.
-- [ ] 21.6 Commit: `#6595 - Count and flag the context menu from the actual selection`.
+- [x] 21.1 Run `npm run build` in `packages/ketcher-core` so this package sees section 20's API.
+- [x] 21.2 Rewrite the tests in `helpers.test.ts`: delete `describe('one entry per duplex position')`; replace `should return correct count for sense and antisense chain selection when both strands are targeted` with one that selects both strands of N positions and expects the title `${2 * N} nucleotides` and `selectedSequenceLabeledNodes` of length 2N, plus one that selects N positions on one strand and expects `${N} nucleotides`; in `describe('isInSelectedAntisensePair')` drop every record setup, rename the "record is 'both'" case to "is true when both hydrogen-bonded, eligible bases are selected and sync editing is on", and delete "is false when the record is SENSE…". Remove record references from `SequenceItemContextMenu.test.tsx` the same way.
+- [x] 21.3 Run `npx jest src/components/contextMenu/SequenceItemContextMenu`; expect failures.
+- [x] 21.4 In `helpers.ts`: delete `filterSelectionsToTargetedStrand` and its comment; in `generateSequenceContextMenuProps` use `const selectionsFlatten: NodeSelection[] = flatten(selections);`; in `generateLabeledNodes` delete `bothStrandsTargeted` and call `isSelectedAntisensePair(base)`; drop the `SequenceRenderer` import if unused.
+- [x] 21.5 Run `npm test` in `packages/ketcher-macromolecules`; green.
+- [x] 21.6 Commit: `#6595 - Count and flag the context menu from the actual selection`.
 
 ## 22. Library replacement visits each strand separately (`ketcher-core`)
 

@@ -423,7 +423,11 @@ const SettingsDialog = (props: Props) => {
             name="aromatize-skip-superatoms"
             data-testid="aromatize-skip-superatoms"
           />
-          <Field name="dearomatize-on-load" data-testid="dearomatize-on-load" />
+          <Field
+            name="dearomatize-on-load"
+            tooltip={t('dialogs:meta.settings.dearomatizeOnLoadTooltip')}
+            data-testid="dearomatize-on-load"
+          />
         </fieldset>
       </fieldset>
     ),

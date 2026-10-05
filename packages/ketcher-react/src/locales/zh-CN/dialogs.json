@@ -100,6 +100,7 @@
       "showValenceWarningsTooltip": "价态超出范围的原子显示红色下划线",
       "ignoreStereochemistryErrorsTooltip": "允许转换立体化学信息无效结构的文件格式",
       "smartLayoutTooltip": "开启时环显示为正多边形，关闭时显示为不规则多边形",
+      "dearomatizeOnLoadTooltip": "从 molfile 加载结构时进行脱芳构化。",
       "showAtomIdsTooltip": "内部原子索引编号，用于排查结构文件问题",
       "showBondIdsTooltip": "内部键索引编号，用于排查结构文件问题",
       "showHalfBondIdsTooltip": "内部有向半键索引编号，除调试外很少需要",

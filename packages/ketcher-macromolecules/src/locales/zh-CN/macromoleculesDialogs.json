@@ -170,6 +170,7 @@
       "grossFormulaAddIsotopes": "质量计算时添加同位素",
       "aromatizeSkipSuperatoms": "芳构化时跳过超原子",
       "dearomatizeOnLoad": "加载时脱芳构化",
+      "dearomatizeOnLoadTooltip": "从 molfile 加载结构时进行脱芳构化。",
       "miewMode": "显示模式",
       "miewModeLines": "线条",
       "miewModeBallAndStick": "球棍模型",

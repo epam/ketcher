@@ -474,6 +474,7 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
   'dearomatize-on-load': {
     labelKey: 'settings.fields.dearomatizeOnLoad',
     type: 'checkbox',
+    tooltipKey: 'settings.fields.dearomatizeOnLoadTooltip',
   },
 
   // 3D Viewer

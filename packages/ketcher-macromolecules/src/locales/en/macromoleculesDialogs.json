@@ -170,6 +170,7 @@
       "grossFormulaAddIsotopes": "Add Isotopes at mass calculation",
       "aromatizeSkipSuperatoms": "Skip Superatoms at aromatization",
       "dearomatizeOnLoad": "Dearomatize on file load",
+      "dearomatizeOnLoadTooltip": "Dearomatize structures when loading from molfiles.",
       "miewMode": "Display mode",
       "miewModeLines": "Lines",
       "miewModeBallAndStick": "Balls and Sticks",

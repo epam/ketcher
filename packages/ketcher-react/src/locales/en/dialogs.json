@@ -100,6 +100,7 @@
       "showValenceWarningsTooltip": "Red underline on atoms with exceeded valence",
       "ignoreStereochemistryErrorsTooltip": "Allow format conversion for structures with invalid stereochemistry",
       "smartLayoutTooltip": "Regular polygons for rings when on; irregular when off",
+      "dearomatizeOnLoadTooltip": "Dearomatize structures when loading from molfiles.",
       "showAtomIdsTooltip": "Internal atom index numbers, for troubleshooting structure files",
       "showBondIdsTooltip": "Internal bond index numbers, for troubleshooting structure files",
       "showHalfBondIdsTooltip": "Internal directional bond-half index numbers, rarely needed outside debugging",

@@ -13,6 +13,16 @@ import {
   createRenderersManager,
 } from '../../../helpers/dom';
 
+const createNucleotideNode = (base: string, position: Vec2) => {
+  const created = Nucleotide.createOnCanvas(base, position);
+
+  if (!created) {
+    throw new Error(`Fixture setup failed: nucleotide ${base} not created`);
+  }
+
+  return created.node;
+};
+
 const testRenderTheme = {
   monomer: {
     color: {
@@ -57,9 +67,8 @@ const rerenderSequence = (editor: CoreEditor) => {
 // hydrogen bonds) with antisense 'U','G' respectively.
 const buildTwoPositionDuplex = (editor: CoreEditor) => {
   const drawingEntitiesManager = editor.drawingEntitiesManager;
-  const senseNucleotides = ['A', 'C'].map(
-    (base, index) =>
-      Nucleotide.createOnCanvas(base, new Vec2(index * 1.6, 0)).node,
+  const senseNucleotides = ['A', 'C'].map((base, index) =>
+    createNucleotideNode(base, new Vec2(index * 1.6, 0)),
   );
 
   drawingEntitiesManager.createPolymerBond(
@@ -198,9 +207,8 @@ describe('SequenceMode base-carrying refusal (task 19.1-19.4)', () => {
   it('does not refuse when there is no hydrogen-bonded pair, even with a both-strands selection', () => {
     // A single-stranded chain: no antisense partner anywhere, so the rule's
     // structural condition is absent even if both strands were selected.
-    const nucleotides = ['A', 'C'].map(
-      (base, index) =>
-        Nucleotide.createOnCanvas(base, new Vec2(index * 1.6, 0)).node,
+    const nucleotides = ['A', 'C'].map((base, index) =>
+      createNucleotideNode(base, new Vec2(index * 1.6, 0)),
     );
 
     editor.drawingEntitiesManager.createPolymerBond(

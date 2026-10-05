@@ -29,6 +29,16 @@ import {
 // the replacement's natural analog code. 'R' and 'P' are also supplied so
 // that inverting a command that deletes-and-recreates a sugar/phosphate
 // (e.g. undoing a library replacement) can render the recreated monomers.
+const createNucleotideNode = (base: string, position: Vec2) => {
+  const created = Nucleotide.createOnCanvas(base, position);
+
+  if (!created) {
+    throw new Error(`Fixture setup failed: nucleotide ${base} not created`);
+  }
+
+  return created.node;
+};
+
 const testRenderTheme = {
   monomer: {
     color: {
@@ -167,9 +177,8 @@ const callGetFirstMissingAttachmentPoint = (
 // antisenseNucleotides[3] -> [2] -> [1] -> [0].
 const buildFourNucleotideDuplex = (editor: CoreEditor) => {
   const drawingEntitiesManager = editor.drawingEntitiesManager;
-  const senseNucleotides = ['A', 'C', 'G', 'U'].map(
-    (base, index) =>
-      Nucleotide.createOnCanvas(base, new Vec2(index * 1.6, 0)).node,
+  const senseNucleotides = ['A', 'C', 'G', 'U'].map((base, index) =>
+    createNucleotideNode(base, new Vec2(index * 1.6, 0)),
   );
 
   for (let index = 0; index < senseNucleotides.length - 1; index++) {
@@ -273,11 +282,8 @@ describe('antisense chain direction', () => {
 
   it('runs an antisense chain in the opposite direction to the sense chain', () => {
     const drawingEntitiesManager = editor.drawingEntitiesManager;
-    const firstNucleotide = Nucleotide.createOnCanvas('A', new Vec2(0, 0)).node;
-    const secondNucleotide = Nucleotide.createOnCanvas(
-      'C',
-      new Vec2(1.6, 0),
-    ).node;
+    const firstNucleotide = createNucleotideNode('A', new Vec2(0, 0));
+    const secondNucleotide = createNucleotideNode('C', new Vec2(1.6, 0));
 
     drawingEntitiesManager.createPolymerBond(
       firstNucleotide.phosphate,
@@ -460,6 +466,10 @@ describe('antisense chain direction', () => {
 
     const history = EditorHistory.getInstance(editor);
     const appliedCommand = history.previousCommand;
+
+    if (!appliedCommand) {
+      throw new Error('Fixture setup failed: no command in history');
+    }
 
     appliedCommand.invert(editor.renderersContainer);
 

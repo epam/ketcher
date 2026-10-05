@@ -26,6 +26,16 @@ import {
 // what is actually selected. A one-strand selection is made the way a
 // view-mode drag makes it: by selecting only that strand's monomers.
 
+const createNucleotideNode = (base: string, position: Vec2) => {
+  const created = Nucleotide.createOnCanvas(base, position);
+
+  if (!created) {
+    throw new Error(`Fixture setup failed: nucleotide ${base} not created`);
+  }
+
+  return created.node;
+};
+
 const testRenderTheme = {
   monomer: {
     color: {
@@ -70,9 +80,8 @@ const rerenderSequence = (editor: CoreEditor) => {
 // hydrogen bonds) with antisense 'U','G' respectively.
 const buildTwoPositionDuplex = (editor: CoreEditor) => {
   const drawingEntitiesManager = editor.drawingEntitiesManager;
-  const senseNucleotides = ['A', 'C'].map(
-    (base, index) =>
-      Nucleotide.createOnCanvas(base, new Vec2(index * 1.6, 0)).node,
+  const senseNucleotides = ['A', 'C'].map((base, index) =>
+    createNucleotideNode(base, new Vec2(index * 1.6, 0)),
   );
 
   drawingEntitiesManager.createPolymerBond(
@@ -283,8 +292,9 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
     // The spec (design Decision behind #6595's sync propagation) says the
     // mirrored edit and the original edit "are applied as a single undo
     // step". Nothing exercised that until now: this drives a real
-    // propagating replacement through a single sense symbol, then proves ONE undo() reverts BOTH bases and moves the
-    // history pointer back by exactly one -- not two separate steps.
+    // propagating replacement through a single sense symbol, then proves ONE
+    // undo() reverts BOTH bases and moves the history pointer back by exactly
+    // one -- not two separate steps.
     it('undoes a propagating replacement as a single history step, restoring both bases; redo reapplies both', () => {
       const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
       const senseLabelBefore = senseNucleotides[0].rnaBase.label;

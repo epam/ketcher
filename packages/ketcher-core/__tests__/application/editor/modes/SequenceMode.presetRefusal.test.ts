@@ -27,6 +27,16 @@ import {
 // strands of a pair. The duplex fixture is copied from
 // SequenceMode.antisenseDuplexSync.test.ts.
 
+const createNucleotideNode = (base: string, position: Vec2) => {
+  const created = Nucleotide.createOnCanvas(base, position);
+
+  if (!created) {
+    throw new Error(`Fixture setup failed: nucleotide ${base} not created`);
+  }
+
+  return created.node;
+};
+
 const testRenderTheme = {
   monomer: {
     color: {
@@ -71,9 +81,8 @@ const rerenderSequence = (editor: CoreEditor) => {
 // hydrogen bonds) with antisense 'U','G' respectively.
 const buildTwoPositionDuplex = (editor: CoreEditor) => {
   const drawingEntitiesManager = editor.drawingEntitiesManager;
-  const senseNucleotides = ['A', 'C'].map(
-    (base, index) =>
-      Nucleotide.createOnCanvas(base, new Vec2(index * 1.6, 0)).node,
+  const senseNucleotides = ['A', 'C'].map((base, index) =>
+    createNucleotideNode(base, new Vec2(index * 1.6, 0)),
   );
 
   drawingEntitiesManager.createPolymerBond(

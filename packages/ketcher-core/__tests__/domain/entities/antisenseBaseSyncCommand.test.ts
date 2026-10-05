@@ -28,6 +28,26 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 
+const createNucleotideNode = (base: string, position: Vec2) => {
+  const created = Nucleotide.createOnCanvas(base, position);
+
+  if (!created) {
+    throw new Error(`Fixture setup failed: nucleotide ${base} not created`);
+  }
+
+  return created.node;
+};
+
+const createNucleosideNode = (base: string, position: Vec2) => {
+  const created = Nucleoside.createOnCanvas(base, position);
+
+  if (!created) {
+    throw new Error(`Fixture setup failed: nucleoside ${base} not created`);
+  }
+
+  return created.node;
+};
+
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
@@ -164,7 +184,7 @@ describe('duplex traversal', () => {
     // Nucleoside: sugar + base, no phosphate, so the sugar has no R2 backbone
     // bond. The base is still reachable through R1/R3, so this exercises the
     // ineligible branch rather than the "no sugar at all" branch.
-    const { node } = Nucleoside.createOnCanvas('A', new Vec2(0, 0));
+    const node = createNucleosideNode('A', new Vec2(0, 0));
 
     expect(isBaseEligibleForDuplexSync(node.rnaBase as BaseMonomer)).toBe(
       false,
@@ -191,8 +211,8 @@ describe('duplex traversal', () => {
   });
 
   it('reports a pair as not selected when both are selected but not hydrogen bonded', () => {
-    const first = Nucleotide.createOnCanvas('A', new Vec2(0, 0)).node;
-    const second = Nucleotide.createOnCanvas('C', new Vec2(0, 10)).node;
+    const first = createNucleotideNode('A', new Vec2(0, 0));
+    const second = createNucleotideNode('C', new Vec2(0, 10));
     const firstBase = first.rnaBase as BaseMonomer;
     const secondBase = second.rnaBase as BaseMonomer;
     editor.drawingEntitiesManager.selectDrawingEntities([
@@ -458,7 +478,7 @@ describe('createMirroredBaseCommand', () => {
     // `partner` is supplied directly below, so this base does not need a
     // real hydrogen bond of its own -- only its own (in)eligibility matters
     // for this test.
-    const { node } = Nucleoside.createOnCanvas('C', new Vec2(5, 0));
+    const node = createNucleosideNode('C', new Vec2(5, 0));
     const floatingBase = node.rnaBase as BaseMonomer;
 
     expect(isBaseEligibleForDuplexSync(floatingBase)).toBe(false);

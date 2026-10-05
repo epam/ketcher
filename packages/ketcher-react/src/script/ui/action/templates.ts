@@ -32,7 +32,7 @@ const isToolWithMode = (tool: Tool | null): tool is ToolWithMode =>
 const templateLib: Record<string, UiAction> = {
   'template-lib': {
     shortcut: 'Shift+t',
-    title: 'Structure Library',
+    title: 'toolbar:templates.structureLibrary',
     action: { dialog: 'templates', prop: { tab: null } },
     selected: (editor) =>
       isToolWithMode(editor._tool) && editor._tool.mode === 'classic',

@@ -157,10 +157,9 @@ export function fromTemplateOnAtom(
     atom = atom1;
     delta = utils.calcAngle(clickedAtom.pp, atom.pp) - template.angle0;
   } else {
-    if (angle === null) {
-      angle = utils.calcAngle(atom.pp, atomForNewBond(restruct, aid).pos);
-    }
-    delta = angle - template.angle0;
+    delta =
+      (angle ?? utils.calcAngle(atom.pp, atomForNewBond(restruct, aid).pos)) -
+      template.angle0;
   }
 
   const map = new Map<number, number>();

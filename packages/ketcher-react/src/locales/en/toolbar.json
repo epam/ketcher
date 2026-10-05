@@ -1,0 +1,125 @@
+{
+  "menu": {
+    "clear": "Clear Canvas",
+    "open": "Open…",
+    "save": "Save As…",
+    "atomProps": "Atom Properties",
+    "bondProps": "Bond Properties",
+    "undo": "Undo",
+    "redo": "Redo",
+    "cut": "Cut",
+    "copy": "Copy",
+    "copyImage": "Copy Image",
+    "copyMol": "Copy as MOL",
+    "copyKet": "Copy as KET",
+    "paste": "Paste",
+    "settings": "Settings",
+    "about": "About",
+    "reactionAutomap": "Reaction Auto-Mapping Tool",
+    "periodTable": "Periodic Table",
+    "extendedTable": "Extended Table",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "selectDescriptors": "Select descriptors",
+    "anyAtom": "Any atom",
+    "errorMessage": "Error message"
+  },
+  "tools": {
+    "hand": "Hand tool",
+    "selectRectangle": "Rectangle Selection",
+    "selectLasso": "Lasso Selection",
+    "selectStructure": "Structure Selection",
+    "selectFragment": "Fragment Selection",
+    "erase": "Erase",
+    "chain": "Chain",
+    "stereochemistry": "Stereochemistry",
+    "chargePlus": "Charge Plus",
+    "chargeMinus": "Charge Minus",
+    "rotate": "Rotate Tool",
+    "flipHorizontal": "Horizontal Flip",
+    "flipVertical": "Vertical Flip",
+    "sgroup": "S-Group",
+    "arrowOpenAngle": "Arrow Open Angle Tool",
+    "arrowFilledTriangle": "Arrow Filled Triangle Tool",
+    "arrowFilledBow": "Arrow Filled Bow Tool",
+    "arrowDashedOpenAngle": "Arrow Dashed Open Angle Tool",
+    "arrowFailed": "Failed Arrow Tool",
+    "arrowRetrosynthetic": "Retrosynthetic Arrow Tool",
+    "arrowBothEndsFilledTriangle": "Arrow Both Ends Filled Triangle Tool",
+    "arrowEquilibriumFilledHalfBow": "Arrow Equilibrium Filled Half Bow Tool",
+    "arrowEquilibriumFilledTriangle": "Arrow Equilibrium Filled Triangle Tool",
+    "arrowEquilibriumOpenAngle": "Arrow Equilibrium Open Angle Tool",
+    "arrowUnbalancedEquilibriumFilledHalfBow": "Arrow Unbalanced Equilibrium Filled Half Bow Tool",
+    "arrowUnbalancedEquilibriumOpenHalfAngle": "Arrow Unbalanced Equilibrium Open Half Angle Tool",
+    "arrowUnbalancedEquilibriumLargeFilledHalfBow": "Arrow Unbalanced Equilibrium Large Filled Half Bow Tool",
+    "arrowUnbalancedEquilibriumFilledHalfTriangle": "Arrow Unbalanced Equilibrium Filled Half Triangle Tool",
+    "arrowEllipticalArcFilledBow": "Arrow Elliptical Arc Filled Bow Tool",
+    "arrowEllipticalArcFilledTriangle": "Arrow Elliptical Arc Filled Triangle Tool",
+    "arrowEllipticalArcOpenAngle": "Arrow Elliptical Arc Open Angle Tool",
+    "arrowEllipticalArcOpenHalfAngle": "Arrow Elliptical Arc Open Half Angle Tool",
+    "multitailArrow": "Multi-Tailed Arrow Tool",
+    "reactionPlus": "Reaction Plus Tool",
+    "reactionMap": "Reaction Mapping Tool",
+    "reactionUnmap": "Reaction Unmapping Tool",
+    "rgroupLabel": "R-Group Label Tool",
+    "rgroupFragment": "R-Group Fragment Tool",
+    "attachmentPoint": "Attachment Point Tool",
+    "createMonomer": "Create a monomer",
+    "shapeEllipse": "Shape Ellipse",
+    "shapeRectangle": "Shape Rectangle",
+    "shapeLine": "Shape Line",
+    "addText": "Add text",
+    "addImage": "Add Image",
+    "bondTypeTitles": {
+      "single": "Single Bond",
+      "up": "Single Up Bond",
+      "down": "Single Down Bond",
+      "updown": "Single Up/Down Bond",
+      "double": "Double Bond",
+      "crossed": "Double Cis/Trans Bond",
+      "triple": "Triple Bond",
+      "aromatic": "Aromatic Bond",
+      "any": "Any Bond",
+      "hydrogen": "Hydrogen Bond",
+      "singledouble": "Single/Double Bond",
+      "singlearomatic": "Single/Aromatic Bond",
+      "doublearomatic": "Double/Aromatic Bond",
+      "dative": "Dative Bond"
+    }
+  },
+  "server": {
+    "layout": "Layout",
+    "clean": "Clean Up",
+    "aromatize": "Aromatize",
+    "dearomatize": "Dearomatize",
+    "calculateCip": "Calculate CIP",
+    "checkStructure": "Check Structure",
+    "calculatedValues": "Calculated Values",
+    "recognizeMolecule": "Recognize Molecule",
+    "viewer3d": "3D Viewer",
+    "explicitHydrogens": "Add/Remove explicit hydrogens"
+  },
+  "zoom": {
+    "in": "Zoom In",
+    "out": "Zoom Out"
+  },
+  "templates": {
+    "structureLibrary": "Structure Library"
+  },
+  "functionalGroups": {
+    "title": "Functional Groups"
+  },
+  "fullscreen": {
+    "title": "Fullscreen mode"
+  },
+  "atoms": {
+    "title": "Atom {symbol}"
+  },
+  "highlight": {
+    "label": "Highlight",
+    "noHighlight": "No highlight"
+  },
+  "copy": {
+    "notAvailableForSimpleObjects": "This feature is not available for Simple objects and Text objects"
+  }
+}

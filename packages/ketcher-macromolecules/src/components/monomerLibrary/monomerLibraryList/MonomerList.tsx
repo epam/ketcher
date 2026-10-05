@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useTranslation } from 'react-i18next';
 import { MonomerGroup } from '../monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
 import { MonomerListContainer } from './styles';
@@ -55,6 +56,7 @@ const MonomerList = ({
   duplicatePreset,
   editPreset,
 }: IMonomerListProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const monomers = useAppSelector(selectFilteredMonomers);
   const presets = useAppSelector(selectFilteredPresets);
   const isFavoriteTab = libraryName === MONOMER_LIBRARY_FAVORITES;
@@ -76,7 +78,9 @@ const MonomerList = ({
     : selectAmbiguousMonomersInCategory(monomers, MonomerGroups.PEPTIDES);
   return (
     <MonomerListContainer>
-      {isFavoriteTab && monomerGroups.length > 0 && <div>Monomers</div>}
+      {isFavoriteTab && monomerGroups.length > 0 && (
+        <div>{t('monomerLibrary.monomersSectionHeader')}</div>
+      )}
       {monomerGroups.map(({ groupItems, groupTitle }, _index, groups) => {
         return (
           <MonomerGroup
@@ -90,7 +94,7 @@ const MonomerList = ({
       })}
       {isFavoriteTab && (items as Favorites).presets.length > 0 && (
         <>
-          <div>Presets</div>
+          <div>{t('monomerLibrary.presetsSectionHeader')}</div>
           <RnaPresetGroup
             duplicatePreset={duplicatePreset}
             editPreset={editPreset}

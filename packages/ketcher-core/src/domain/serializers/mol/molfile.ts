@@ -76,7 +76,7 @@ export class Molfile {
   parseCTFile(props: ParseCTFileProps): Struct {
     const { molfileLines, shouldReactionRelayout, ignoreChiralFlag } = props;
     let ret: Struct;
-    if (molfileLines[0].search('\\$RXN') === 0) {
+    if (molfileLines[0].search(String.raw`\$RXN`) === 0) {
       ret = common.parseRxn(
         molfileLines,
         shouldReactionRelayout,
@@ -131,7 +131,7 @@ export class Molfile {
           errors += +errorIgnore;
           toRemove.push(sgroup.id);
         }
-      }, this);
+      });
 
     if (errors) {
       throw new Error(
@@ -356,14 +356,14 @@ export class Molfile {
       this.writeAtom(atom, label);
 
       this.mapping[id] = i++;
-    }, this);
+    });
 
     this.bondMapping = {};
     i = 1;
     molecule.bonds.forEach((bond, id) => {
       this.bondMapping[id] = i++;
       this.writeBond(bond);
-    }, this);
+    });
 
     while (atomsProps.length > 0) {
       this.writeAtomProps(atomsProps[0]);
@@ -613,12 +613,12 @@ export class Molfile {
     this.writePaddedNumber(0, 3);
     this.writePaddedNumber(0, 3);
 
-    if (typeof atom.hCount === 'undefined') {
+    if (atom.hCount === undefined) {
       atom.hCount = 0;
     }
     this.writePaddedNumber(atom.hCount, 3);
 
-    if (typeof atom.stereoCare === 'undefined') {
+    if (atom.stereoCare === undefined) {
       atom.stereoCare = 0;
     }
     this.writePaddedNumber(atom.stereoCare, 3);
@@ -637,17 +637,17 @@ export class Molfile {
     this.writePaddedNumber(0, 3);
     this.writePaddedNumber(0, 3);
 
-    if (typeof atom.aam === 'undefined') {
+    if (atom.aam === undefined) {
       atom.aam = 0;
     }
     this.writePaddedNumber(atom.aam, 3);
 
-    if (typeof atom.invRet === 'undefined') {
+    if (atom.invRet === undefined) {
       atom.invRet = 0;
     }
     this.writePaddedNumber(atom.invRet, 3);
 
-    if (typeof atom.exactChangeFlag === 'undefined') {
+    if (atom.exactChangeFlag === undefined) {
       atom.exactChangeFlag = 0;
     }
     this.writePaddedNumber(atom.exactChangeFlag, 3);
@@ -660,19 +660,19 @@ export class Molfile {
     this.writePaddedNumber(this.mapping[bond.end], 3);
     this.writePaddedNumber(bond.type, 3);
 
-    if (typeof bond.stereo === 'undefined') {
+    if (bond.stereo === undefined) {
       bond.stereo = 0;
     }
     this.writePaddedNumber(bond.stereo, 3);
 
     this.writePadded(bond.xxx, 3);
 
-    if (typeof bond.topology === 'undefined') {
+    if (bond.topology === undefined) {
       bond.topology = 0;
     }
     this.writePaddedNumber(bond.topology, 3);
 
-    if (typeof bond.reactingCenterStatus === 'undefined') {
+    if (bond.reactingCenterStatus === undefined) {
       bond.reactingCenterStatus = 0;
     }
     this.writePaddedNumber(bond.reactingCenterStatus, 3);

@@ -994,10 +994,14 @@ export class Struct {
   getBondLengths(): number[] {
     const lengths: number[] = [];
     this.bonds.forEach((bond) => {
-      const a1 = this.atoms.get(bond.begin);
-      const a2 = this.atoms.get(bond.end);
-      assert(a1, `Atom ${bond.begin} not found`);
-      assert(a2, `Atom ${bond.end} not found`);
+      // Haptic bonds have variable lengths and must not determine the scale
+      // of ordinary bonds when importing or pasting a structure.
+      if (bond.type === Bond.PATTERN.TYPE.HAPTIC) return;
+
+      const a1 = this.getBondEndpoint(bond.begin);
+      const a2 = this.getBondEndpoint(bond.end);
+      assert(a1, `Bond endpoint ${bond.begin} not found`);
+      assert(a2, `Bond endpoint ${bond.end} not found`);
       lengths.push(Vec2.dist(a1.pp, a2.pp));
     });
     return lengths;

@@ -2481,6 +2481,9 @@ export class CoreEditor {
   }
 
   public destroy() {
+    if (isBaseTool(this.selectedTool)) {
+      this.selectedTool.destroy();
+    }
     this.unsubscribeEvents();
     resetEditorInstance();
   }

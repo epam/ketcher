@@ -6,6 +6,7 @@ import { Scale } from 'domain/helpers';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { SGroup, Vec2 } from 'domain/entities';
 import { geometricCenter } from 'domain/entities/geometry';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SgContexts } from 'application/editor/shared/constants';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
@@ -64,11 +65,26 @@ export class SGroupRenderer extends BaseRenderer {
   }
 
   private get isUnconnectedMicromoleculeFragment(): boolean {
-    return (
-      Boolean(
-        this.sgroupDrawingEntity.monomer.monomerItem.props
-          .isMicromoleculeFragment,
-      ) && this.sgroup.getAttachmentPoints().length === 0
+    if (
+      !this.sgroupDrawingEntity.monomer.monomerItem.props
+        .isMicromoleculeFragment ||
+      this.sgroup.getAttachmentPoints().length > 0
+    ) {
+      return false;
+    }
+
+    const sgroupAtomIds = this.getSGroupAtomIds();
+
+    return this.getSGroupAtomRenderers().every(({ atom }) =>
+      atom.bonds.every(
+        (bond) =>
+          !(bond instanceof MonomerToAtomBond) &&
+          [bond.firstAtom, bond.secondAtom].every(
+            (bondAtom) =>
+              bondAtom.monomer === this.sgroupDrawingEntity.monomer &&
+              sgroupAtomIds.has(bondAtom.atomIdInMicroMode),
+          ),
+      ),
     );
   }
 

@@ -1,4 +1,8 @@
-import type { AttachmentPointName, AtomLabel } from 'ketcher-core';
+import type {
+  AttachmentPointId,
+  AttachmentPointName,
+  AtomLabel,
+} from 'ketcher-core';
 import { useEffect, useRef, useState } from 'react';
 import AttachmentPointControls from '../AttachmentPointControls/AttachmentPointControls';
 import type Editor from '../../../../../../editor';
@@ -8,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 
 type Props = {
   name: AttachmentPointName;
+  id?: AttachmentPointId;
   leavingAtomLabel: AtomLabel;
   editor: Editor;
   /** When provided, hover highlights this specific atom instead of using the
@@ -27,6 +32,7 @@ type Props = {
  */
 const ReadonlyAttachmentPoint = ({
   name,
+  id,
   leavingAtomLabel,
   editor,
   atomId,
@@ -69,14 +75,24 @@ const ReadonlyAttachmentPoint = ({
   // Canvas hover → panel highlight
   useEffect(() => {
     const handleHighlight = (event: Event) => {
-      const apName = (event as CustomEvent<AttachmentPointName>).detail;
-      setHighlight(apName === name);
+      const attachmentPointId = (
+        event as CustomEvent<AttachmentPointId | AttachmentPointName>
+      ).detail;
+      setHighlight(
+        id !== undefined
+          ? attachmentPointId === id
+          : attachmentPointId === name,
+      );
     };
 
     const handleReset = (event: Event) => {
-      const apName = (event as CustomEvent<AttachmentPointName>).detail;
-
-      if (apName === name) {
+      const attachmentPointId = (
+        event as CustomEvent<AttachmentPointId | AttachmentPointName>
+      ).detail;
+      if (
+        (id !== undefined && attachmentPointId === id) ||
+        (id === undefined && attachmentPointId === name)
+      ) {
         setHighlight(false);
       }
     };
@@ -100,7 +116,7 @@ const ReadonlyAttachmentPoint = ({
         handleReset,
       );
     };
-  }, [name]);
+  }, [id, name]);
 
   const selectsData = createReadonlyAttachmentPointSelectData(
     name,

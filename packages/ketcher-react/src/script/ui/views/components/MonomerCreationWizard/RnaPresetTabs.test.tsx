@@ -16,7 +16,11 @@
 
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { AttachmentPointName, KetMonomerClass } from 'ketcher-core';
+import {
+  AttachmentPointName,
+  KetMonomerClass,
+  type AssignedAttachmentPoints,
+} from 'ketcher-core';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
 import type { ReactNode } from 'react';
@@ -60,7 +64,7 @@ jest.mock('./MonomerCreationWizardFields', () => ({
     readonlyAttachmentPoints,
     attachmentPointsExtra,
   }: {
-    assignedAttachmentPoints?: Map<string, [number, number]>;
+    assignedAttachmentPoints?: AssignedAttachmentPoints;
     readonlyAttachmentPoints?: Array<{ name: string }>;
     attachmentPointsExtra?: ReactNode;
   }) => (
@@ -68,7 +72,9 @@ jest.mock('./MonomerCreationWizardFields', () => ({
       <div data-testid="attachment-points-section">Attachment points</div>
       <div data-testid="attachment-points-values">
         {[
-          ...Array.from(assignedAttachmentPoints?.keys() ?? []),
+          ...Array.from(assignedAttachmentPoints?.values() ?? []).map(
+            ({ name }) => name,
+          ),
           ...(readonlyAttachmentPoints?.map(({ name }) => name) ?? []),
         ].join(',')}
       </div>
@@ -97,6 +103,16 @@ const createMockStore = (
   });
   return createStore(reducer);
 };
+
+const createAssignedAttachmentPoints = (
+  attachmentPoints: Array<[number, AttachmentPointName, [number, number]]>,
+): AssignedAttachmentPoints =>
+  new Map(
+    attachmentPoints.map(([id, name, [attachmentAtomId, leavingAtomId]]) => [
+      id,
+      { name, attachmentAtomId, leavingAtomId },
+    ]),
+  );
 
 // Mock Editor with highlights API
 const createMockEditor = () => {
@@ -564,10 +580,10 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 
   it('shows only non-occupied attachment points on the preset tab', () => {
     mockStore = createMockStore(undefined, {
-      assignedAttachmentPoints: new Map([
-        [AttachmentPointName.R1, [1, 11]],
-        [AttachmentPointName.R2, [2, 12]],
-        [AttachmentPointName.R4, [4, 14]],
+      assignedAttachmentPoints: createAssignedAttachmentPoints([
+        [0, AttachmentPointName.R1, [1, 11]],
+        [1, AttachmentPointName.R2, [2, 12]],
+        [2, AttachmentPointName.R4, [4, 14]],
       ]),
     });
     wizardState.base.structure = {
@@ -621,10 +637,10 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 
   it('passes all component attachment points to the selected component tab', () => {
     mockStore = createMockStore(undefined, {
-      assignedAttachmentPoints: new Map([
-        [AttachmentPointName.R1, [1, 11]],
-        [AttachmentPointName.R2, [2, 12]],
-        [AttachmentPointName.R3, [3, 13]],
+      assignedAttachmentPoints: createAssignedAttachmentPoints([
+        [0, AttachmentPointName.R1, [1, 11]],
+        [1, AttachmentPointName.R2, [2, 12]],
+        [2, AttachmentPointName.R3, [3, 13]],
       ]),
     });
     wizardState.base.structure = {
@@ -805,9 +821,9 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 
   it('shows both explicit and connection attachment points when they share the same label', () => {
     mockStore = createMockStore(undefined, {
-      assignedAttachmentPoints: new Map([
-        [AttachmentPointName.R2, [2, 12]],
-        [AttachmentPointName.R1, [3, 13]],
+      assignedAttachmentPoints: createAssignedAttachmentPoints([
+        [0, AttachmentPointName.R2, [2, 12]],
+        [1, AttachmentPointName.R1, [3, 13]],
       ]),
     });
     wizardState.sugar.structure = {
@@ -849,9 +865,9 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 
   it('keeps connection attachment points hidden on the preset tab', () => {
     mockStore = createMockStore(undefined, {
-      assignedAttachmentPoints: new Map([
-        [AttachmentPointName.R1, [1, 11]],
-        [AttachmentPointName.R3, [2, 12]],
+      assignedAttachmentPoints: createAssignedAttachmentPoints([
+        [0, AttachmentPointName.R1, [1, 11]],
+        [1, AttachmentPointName.R3, [2, 12]],
       ]),
     });
     wizardState.base.structure = {

@@ -31,8 +31,8 @@ it('keeps the popup above both atoms and the R-label as the canvas moves', async
     { attribute: 'data-atom-id', value: '0', left: 100, top: 180 },
     { attribute: 'data-atom-id', value: '1', left: 140, top: 150 },
     {
-      attribute: 'data-attachment-point-alias',
-      value: 'R1',
+      attribute: 'data-attachment-point-id',
+      value: '0',
       left: 160,
       top: 170,
     },
@@ -60,13 +60,23 @@ it('keeps the popup above both atoms and the R-label as the canvas moves', async
   const editor = {
     render: { paper: { canvas } },
     monomerCreationState: {
-      assignedAttachmentPoints: new Map([['R1', [0, 1]]]),
+      assignedAttachmentPoints: new Map([
+        [
+          0,
+          {
+            name: AttachmentPointName.R1,
+            attachmentAtomId: 0,
+            leavingAtomId: 1,
+          },
+        ],
+      ]),
     },
   } as unknown as Editor;
 
   const { unmount } = render(
     <AttachmentPointEditPopup
       data={{
+        attachmentPointId: 0,
         attachmentPointName: AttachmentPointName.R1,
         position: new Vec2(),
       }}

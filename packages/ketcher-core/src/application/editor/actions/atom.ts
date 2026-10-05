@@ -172,7 +172,7 @@ export function mergeFragmentsIfNeeded(
     const struct = restruct.molecule;
 
     const rgid = RGroup.findRGroupByFragment(struct.rgroups, frid2);
-    if (typeof rgid !== 'undefined') {
+    if (rgid !== undefined) {
       action
         .mergeWith(fromRGroupFragment(restruct, null, frid2))
         .mergeWith(fromUpdateIfThen(restruct, 0, rgid));

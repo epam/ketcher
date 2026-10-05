@@ -52,6 +52,30 @@ export const getOtherLibraryMonomers = (
           item.props.MonomerClass !== original.props.MonomerClass;
   });
 
+/*
+ * A HELM alias only has to be unique within the polymer type it is written
+ * under, because that is the scope HELM resolves it in. Sugars, bases and
+ * phosphates share the RNA polymer type, so they share one namespace, while
+ * peptides and CHEM monomers each have their own. That is why an amino acid
+ * such as 1Nal does not block a base with the same HELM alias.
+ */
+const getHelmNamespace = (type: KetMonomerClass | 'rnaPreset' | undefined) => {
+  switch (type) {
+    case KetMonomerClass.AminoAcid:
+      return 'peptide';
+    case KetMonomerClass.Sugar:
+    case KetMonomerClass.Base:
+    case KetMonomerClass.Phosphate:
+    case KetMonomerClass.RNA:
+      return 'rna';
+    case KetMonomerClass.CHEM:
+      return 'chem';
+    default:
+      // Unrecognised classes keep their own namespace rather than losing the check.
+      return type;
+  }
+};
+
 export const hasMonomerFieldCollision = (
   library: MonomerItemType[],
   field: 'symbol' | 'aliasHELM' | 'aliasBILN',
@@ -63,12 +87,16 @@ export const hasMonomerFieldCollision = (
     field === 'symbol'
       ? (original?.props.MonomerCode ?? original?.props.MonomerName)
       : original?.props[field];
-  if (
-    originalValue === value &&
-    (field !== 'symbol' || original?.props.MonomerClass === type)
-  ) {
+  const scopeUnchanged =
+    field === 'symbol'
+      ? original?.props.MonomerClass === type
+      : field === 'aliasBILN' ||
+        getHelmNamespace(original?.props.MonomerClass) ===
+          getHelmNamespace(type);
+  if (originalValue === value && scopeUnchanged) {
     return false;
   }
+  const helmNamespace = getHelmNamespace(type);
   return library.some(({ props }) => {
     if (field === 'aliasBILN') {
       return (
@@ -77,10 +105,15 @@ export const hasMonomerFieldCollision = (
         props.aliasBILN === value
       );
     }
+    if (field === 'aliasHELM') {
+      return (
+        getHelmNamespace(props.MonomerClass) === helmNamespace &&
+        (props.MonomerName === value || props.aliasHELM === value)
+      );
+    }
     return (
-      (props.MonomerClass === type &&
-        (props.MonomerName === value || props.aliasHELM === value)) ||
-      (field === 'aliasHELM' && props.aliasHELM === value)
+      props.MonomerClass === type &&
+      (props.MonomerName === value || props.aliasHELM === value)
     );
   });
 };

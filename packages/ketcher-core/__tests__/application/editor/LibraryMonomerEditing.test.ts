@@ -165,6 +165,32 @@ describe('editing monomer library entries by identity', () => {
     },
   );
 
+  it('accepts a HELM alias that is only used under another polymer type', () => {
+    const editor = makeEditor();
+    editor.updateMonomersLibrary(
+      libraryData({
+        ...template('peptide', '1Nal'),
+        class: 'AminoAcid',
+        classHELM: 'PEPTIDE',
+        aliasHELM: '1Nal',
+      }),
+    );
+    expect(() =>
+      editor.updateMonomersLibrary(
+        libraryData({
+          ...template('base', 'MyBase'),
+          class: 'Base',
+          classHELM: 'RNA',
+          aliasHELM: '1Nal',
+        }),
+      ),
+    ).not.toThrow();
+    expect(KetcherLogger.error).not.toHaveBeenCalled();
+    expect(
+      editor.monomersLibrary.map(({ props }) => props.MonomerName),
+    ).toEqual(['1Nal', 'MyBase']);
+  });
+
   it('persists deletion and refuses to leave dangling RNA preset references', () => {
     const editor = makeEditor();
     const persist = jest

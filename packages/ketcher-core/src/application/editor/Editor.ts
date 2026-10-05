@@ -207,6 +207,31 @@ const hasBilnAliasUniquenessScope = (
   monomerClass === KetMonomerClass.AminoAcid ||
   monomerClass === KetMonomerClass.CHEM;
 
+/**
+ * A HELM alias is resolved within the polymer type it is written under, so it
+ * only has to be unique there. Sugars, bases and phosphates share the RNA
+ * polymer type and therefore one namespace; peptides and CHEM monomers each
+ * have their own. An amino acid alias never collides with a base alias.
+ */
+const getHelmAliasUniquenessScope = (
+  monomerClass: KetMonomerClass | undefined,
+) => {
+  switch (monomerClass) {
+    case KetMonomerClass.AminoAcid:
+      return 'peptide';
+    case KetMonomerClass.Sugar:
+    case KetMonomerClass.Base:
+    case KetMonomerClass.Phosphate:
+    case KetMonomerClass.RNA:
+      return 'rna';
+    case KetMonomerClass.CHEM:
+      return 'chem';
+    default:
+      // Unrecognised classes keep their own namespace rather than losing the check.
+      return monomerClass;
+  }
+};
+
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
   null;
@@ -614,6 +639,9 @@ export class CoreEditor {
       const newMonomerHasBilnAliasUniquenessScope = hasBilnAliasUniquenessScope(
         newMonomer.props?.MonomerClass,
       );
+      const newMonomerHelmAliasUniquenessScope = getHelmAliasUniquenessScope(
+        newMonomer.props?.MonomerClass,
+      );
       if (
         newMonomer.props?.aliasHELM &&
         !isValidHelmAlias(newMonomer.props.aliasHELM)
@@ -684,6 +712,8 @@ export class CoreEditor {
                 monomer.props.MonomerName === newMonomer.props.aliasHELM))) ||
           (Boolean(newMonomer.props?.aliasHELM) &&
             hasChangedHelmAlias &&
+            getHelmAliasUniquenessScope(monomer.props?.MonomerClass) ===
+              newMonomerHelmAliasUniquenessScope &&
             monomer.props?.aliasHELM === newMonomer.props?.aliasHELM) ||
           (newMonomerHasBilnAliasUniquenessScope &&
             Boolean(newMonomer.props?.aliasBILN) &&

@@ -105,25 +105,40 @@ describe('library edit field uniqueness', () => {
     ).toBe(true);
   });
 
-  it('rejects a HELM alias used in another class', () => {
+  it.each([KetMonomerClass.CHEM, KetMonomerClass.Base])(
+    'allows a peptide HELM alias to be reused by a %s monomer',
+    (type) => {
+      expect(
+        hasMonomerFieldCollision([other], 'aliasHELM', 'helmB', type),
+      ).toBe(false);
+    },
+  );
+
+  it.each([
+    KetMonomerClass.Sugar,
+    KetMonomerClass.Base,
+    KetMonomerClass.Phosphate,
+  ])('rejects a HELM alias already used by a %s monomer', (type) => {
+    const rnaEntry: MonomerItemType = {
+      ...other,
+      props: { ...other.props, MonomerClass: KetMonomerClass.Sugar },
+    };
     expect(
-      hasMonomerFieldCollision(
-        [other],
-        'aliasHELM',
-        'helmB',
-        KetMonomerClass.CHEM,
-      ),
+      hasMonomerFieldCollision([rnaEntry], 'aliasHELM', 'helmB', type),
     ).toBe(true);
   });
 
-  it.each(['aliasHELM', 'aliasBILN'] as const)(
+  it.each([
+    ['aliasHELM', KetMonomerClass.AminoAcid],
+    ['aliasBILN', KetMonomerClass.CHEM],
+  ] as const)(
     'allows an unchanged %s even when bundled entries share it',
-    (field) => {
+    (field, sharedEntryClass) => {
       const sharedAliasEntry: MonomerItemType = {
         ...other,
         props: {
           ...other.props,
-          MonomerClass: KetMonomerClass.CHEM,
+          MonomerClass: sharedEntryClass,
           [field]: original.props[field],
         },
       };

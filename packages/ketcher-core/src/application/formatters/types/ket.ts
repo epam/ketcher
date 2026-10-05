@@ -38,6 +38,7 @@ export interface IKetMonomerNode {
   expanded?: boolean;
   transformation?: MonomerTransformation;
   selected?: boolean;
+  InChI?: string;
 }
 
 export interface IKetAmbiguousMonomerNode {

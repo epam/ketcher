@@ -122,6 +122,10 @@ export interface WithStruct {
   struct: string;
 }
 
+export interface WithCombinedStruct {
+  struct: string | string[];
+}
+
 export interface WithFormat {
   format: SupportedFormat;
 }
@@ -145,6 +149,9 @@ export interface CheckCommandData extends CommandData, WithStruct {
 
 export interface ConvertCommandData
   extends CommandData, WithStruct, WithFormat {}
+
+export interface ConvertCombinedCommandData
+  extends CommandData, WithCombinedStruct, WithFormat {}
 
 export interface GenerateInchIKeyCommandData extends CommandData, WithStruct {}
 

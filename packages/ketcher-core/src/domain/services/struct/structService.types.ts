@@ -43,6 +43,10 @@ export enum ChemicalMimeType {
   MonomerLibrary = 'chemical/x-monomer-library',
 }
 
+export interface WithCombinedStruct {
+  struct: string | string[];
+}
+
 export interface WithStruct {
   struct: string;
 }
@@ -85,6 +89,9 @@ export interface CheckResult {
 
 export interface ConvertData
   extends WithStruct, WithOutputFormat, WithInputFormat {}
+
+export interface ConvertCombinedData
+  extends WithCombinedStruct, WithOutputFormat, WithInputFormat {}
 
 export interface ConvertResult extends WithStruct, WithFormat {}
 
@@ -179,7 +186,7 @@ export interface StructService {
   addKetcherId: (id: string) => void;
   info: () => Promise<InfoResult>;
   convert: (
-    data: ConvertData,
+    data: ConvertCombinedData,
     options?: StructServiceOptions,
   ) => Promise<ConvertResult>;
   layout: (

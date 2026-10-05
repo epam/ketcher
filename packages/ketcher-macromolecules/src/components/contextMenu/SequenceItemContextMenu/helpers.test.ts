@@ -682,6 +682,7 @@ describe('SequenceItemContextMenu helpers', () => {
     ];
     const result = generateSequenceContextMenuProps(
       senseOnlySelections as unknown as NodesSelection,
+      t,
     );
 
     expect(result?.title).toBe('2 nucleotides');
@@ -691,6 +692,7 @@ describe('SequenceItemContextMenu helpers', () => {
   it('marks each labeled node with the strand it was selected from', () => {
     const result = generateSequenceContextMenuProps(
       mockedSelectionsWithAntisense as unknown as NodesSelection,
+      t,
     );
 
     expect(
@@ -778,6 +780,7 @@ describe('SequenceItemContextMenu helpers', () => {
 
       const result = generateSequenceContextMenuProps(
         selectionFor(sense.nucleotide) as unknown as NodesSelection,
+        t,
       );
 
       expect(
@@ -793,6 +796,7 @@ describe('SequenceItemContextMenu helpers', () => {
 
       const result = generateSequenceContextMenuProps(
         selectionFor(sense.nucleotide) as unknown as NodesSelection,
+        t,
       );
 
       expect(
@@ -808,6 +812,7 @@ describe('SequenceItemContextMenu helpers', () => {
 
       const result = generateSequenceContextMenuProps(
         selectionFor(sense.nucleotide) as unknown as NodesSelection,
+        t,
       );
 
       expect(
@@ -827,6 +832,7 @@ describe('SequenceItemContextMenu helpers', () => {
 
       const result = generateSequenceContextMenuProps(
         selectionFor(sense.nucleotide) as unknown as NodesSelection,
+        t,
       );
 
       expect(
@@ -842,6 +848,7 @@ describe('SequenceItemContextMenu helpers', () => {
 
       const result = generateSequenceContextMenuProps(
         selectionFor(sense.nucleotide) as unknown as NodesSelection,
+        t,
       );
 
       expect(

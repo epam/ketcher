@@ -114,44 +114,10 @@ interface PreservedSideChainConnection {
   secondMonomerAttachmentPointName: AttachmentPointName;
 }
 
+// Which strand is selected at this position; sense when both are.
 function getSelectedStrandType(
   twoStrandedNode: ITwoStrandedChainItem,
 ): STRAND_TYPE {
-  const targetedStrand = SequenceRenderer.targetedStrand;
-
-  // A single-strand answer (SENSE or ANTISENSE) is honored uniformly for
-  // every position, whether it came from an explicit per-gesture record
-  // (a drag, shift-arrow, or click that targeted one row) or from
-  // SequenceRenderer.targetedStrand's own selection-derived fallback used
-  // when there is no record at all. In the fallback case it can only be
-  // single-strand because that is the only strand selected ANYWHERE in
-  // the current selection, so every selected position necessarily agrees
-  // with it already -- resolving per position here would just recompute
-  // the same answer node by node.
-  if (targetedStrand !== 'both') {
-    return targetedStrand;
-  }
-
-  // targetedStrand is 'both' for one of two different reasons, and both
-  // resolve correctly per position from this node's own selection state:
-  //
-  // - No gesture record was written at all, and the selection itself
-  //   spans both strands at different positions -- e.g. a rectangle drag
-  //   (SelectRectangle.onSelectionMove) selects individual monomers by
-  //   bounding box, with no column/strand pairing, and never calls
-  //   SequenceRenderer.setTargetedStrand. On a duplex whose strands don't
-  //   line up column for column (an siRNA overhang), that can select the
-  //   sense node at some positions and the antisense node at others.
-  //   Answering uniformly here (as an earlier version of this function
-  //   did) silently edited never-selected sense nodes while the actually
-  //   selected antisense nodes stood untouched. Per-position resolution
-  //   recovers the real strand touched at each position.
-  // - An explicit 'both' record was written by a gesture that DOES select
-  //   both strands at every touched column (select-all, or shift-combined
-  //   column clicks). There, every position's sense node is selected, so
-  //   resolving per position trivially and correctly answers SENSE
-  //   everywhere -- the same outcome as a hard-coded SENSE default, but
-  //   honestly derived from actual selection state instead.
   return twoStrandedNode.senseNode?.monomer.selected
     ? STRAND_TYPE.SENSE
     : STRAND_TYPE.ANTISENSE;
@@ -413,10 +379,6 @@ export class SequenceMode extends BaseMode {
     const editor = provideEditorInstance();
     const history = EditorHistory.getInstance(editor);
     const modelChanges = new Command();
-    // Recorded once for the whole gesture: the same value must apply to
-    // every node touched by this call, not be re-derived per position.
-    const bothStrandsTargeted = SequenceRenderer.targetedStrand === 'both';
-
     // Update Nucleotides one by one
     for (const labeledNucleoelement of updatedSelection) {
       const nodeIndexOverall = labeledNucleoelement.nodeIndexOverall;
@@ -513,7 +475,6 @@ export class SequenceMode extends BaseMode {
               getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
             partner: partnerBeforeEdit,
             wasEditedBaseEligible,
-            bothStrandsTargeted,
           });
 
           if (mirroredBaseCommand) {
@@ -605,12 +566,6 @@ export class SequenceMode extends BaseMode {
 
     this.turnOnEditMode(eventData);
     this.setAntisenseEditMode(Boolean(eventData.isAntisenseNode));
-    // Record the row this drag begins on. `_isAntisenseEditMode` above
-    // tracks the caret's location for layout purposes; this is the
-    // selection-gesture record consumed by the write-back layer.
-    SequenceRenderer.setTargetedStrand(
-      eventData.isAntisenseNode ? STRAND_TYPE.ANTISENSE : STRAND_TYPE.SENSE,
-    );
   }
 
   public mousedown(event: MouseEvent) {
@@ -660,15 +615,10 @@ export class SequenceMode extends BaseMode {
 
       SequenceRenderer.resetLastUserDefinedCaretPosition();
 
-      // `unselectAllEntities` above resets the targeted-strand record, so
-      // the write below must come after it or it is silently wiped.
       this.unselectAllEntities();
       this.selectionStarted = true;
       this.selectionStartCaretPosition = SequenceRenderer.caretPosition;
       this.setAntisenseEditMode(Boolean(eventData.isAntisenseNode));
-      SequenceRenderer.setTargetedStrand(
-        eventData.isAntisenseNode ? STRAND_TYPE.ANTISENSE : STRAND_TYPE.SENSE,
-      );
     }
   }
 
@@ -699,14 +649,7 @@ export class SequenceMode extends BaseMode {
         startCaretPosition,
         endCaretPosition,
       );
-      // `unselectAllEntities` resets the targeted-strand record on every
-      // tick of this drag (it re-selects the whole caret range from
-      // scratch), so the record must be re-applied after it here, on every
-      // tick, rather than relying on the mousedown write to persist.
       this.unselectAllEntities();
-      SequenceRenderer.setTargetedStrand(
-        this.isAntisenseEditMode ? STRAND_TYPE.ANTISENSE : STRAND_TYPE.SENSE,
-      );
       const { command: modelChanges } =
         editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
           monomers,
@@ -2380,10 +2323,6 @@ export class SequenceMode extends BaseMode {
     const history = EditorHistory.getInstance(editor);
     const modelChanges = new Command();
 
-    // Recorded once for the whole gesture: the same value must apply to
-    // every node touched by this call, not be re-derived per position.
-    const bothStrandsTargeted = SequenceRenderer.targetedStrand === 'both';
-
     // A range coming out of SequenceRenderer.selections can mix strands, but
     // the loop below resolves the strand once per range and carries state
     // across its iterations, so it is run over one strand's worth of
@@ -2457,7 +2396,6 @@ export class SequenceMode extends BaseMode {
               getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
             partner: partnerBeforeEdit,
             wasEditedBaseEligible,
-            bothStrandsTargeted,
           });
 
           if (mirroredBaseCommand) {
@@ -2717,9 +2655,9 @@ export class SequenceMode extends BaseMode {
   /**
    * Rule 1.3 of epam/ketcher#6595, for every path that sets a new base
    * through the library. Refuses, and reports the refusal, when sync
-   * editing is on, the gesture targeted BOTH strands, the selection holds
-   * at least one eligible hydrogen-bonded pair, and the clicked item would
-   * set a new base.
+   * editing is on, the selection holds both strands of at least one
+   * eligible hydrogen-bonded pair, and the clicked item would set a new
+   * base.
    *
    * It lives here, called from both library entry points before any
    * confirmation dialog, rather than inside the replacement loops: a
@@ -2727,7 +2665,7 @@ export class SequenceMode extends BaseMode {
    * already confirmed a destructive-sounding dialog, and keying it off the
    * item's monomer class let unsplit nucleotides through, rewriting the
    * sense base while propagation was suppressed for the very same
-   * both-strands record.
+   * both-strands selection.
    *
    * Returns true when the caller must stop.
    */
@@ -2743,7 +2681,6 @@ export class SequenceMode extends BaseMode {
       return false;
     }
 
-    const bothStrandsTargeted = SequenceRenderer.targetedStrand === 'both';
     const hasSelectedAntisensePair = selections.some((selectionRange) =>
       selectionRange.some((nodeSelection) => {
         const nodeToReplace = getNodeForStrand(
@@ -2756,7 +2693,7 @@ export class SequenceMode extends BaseMode {
             ? nodeToReplace.rnaBase
             : undefined;
 
-        return isSelectedAntisensePair(editedBase, bothStrandsTargeted);
+        return isSelectedAntisensePair(editedBase);
       }),
     );
 
@@ -3065,10 +3002,6 @@ export class SequenceMode extends BaseMode {
     const history = EditorHistory.getInstance(editor);
     const modelChanges = new Command();
 
-    // Recorded once for the whole gesture: the same value must apply to
-    // every node touched by this call, not be re-derived per position.
-    const bothStrandsTargeted = SequenceRenderer.targetedStrand === 'both';
-
     // One range must be one strand: the loop below resolves the strand once
     // per range and carries `previousReplacedNode` across its iterations on
     // the strength of that. Mirrors replaceSelectionsWithMonomer.
@@ -3142,7 +3075,6 @@ export class SequenceMode extends BaseMode {
               getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
             partner: partnerBeforeEdit,
             wasEditedBaseEligible,
-            bothStrandsTargeted,
           });
 
           if (mirroredBaseCommand) {
@@ -3523,10 +3455,6 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(),
     );
     editor.renderersContainer.update(modelChanges);
-    // A stale targeted strand from a previous gesture must not steer the
-    // next edit. This call ends a selection gesture in every call site of
-    // `unselectAllEntities`, so resetting here is safe.
-    SequenceRenderer.resetTargetedStrand();
   }
 
   private createHydrogenBondForTwoStrandedNode(

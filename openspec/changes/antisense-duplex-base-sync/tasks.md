@@ -201,7 +201,7 @@ Files: `src/domain/helpers/antisenseBaseSync.ts`; `src/application/editor/modes/
 
 Produces (later sections rely on these exact names): `isSelectedAntisensePair(base?: BaseMonomer): boolean`; `resolveMirroredBaseTarget(params): MirroredBaseTarget | undefined` with `interface MirroredBaseTarget { partner: BaseMonomer; targetLabel: string }`; `createMirroredBaseCommand` without `bothStrandsTargeted`.
 
-- [ ] 20.1 Rewrite the predicate tests in `antisenseBaseSyncCommand.test.ts` (they fail until 20.3):
+- [x] 20.1 Rewrite the predicate tests in `antisenseBaseSyncCommand.test.ts` (they fail until 20.3):
   - Replace the three `isSelectedAntisensePair(…, true|false)` tests with: true when both bases are selected and eligible; false when only one side is selected; false when both are selected but not hydrogen bonded (call with one argument).
   - Delete `does nothing when both strands were targeted` and its "even with partner and eligibility supplied explicitly" twin; drop `bothStrandsTargeted` from every other `createMirroredBaseCommand` call.
   - Add, in `describe('createMirroredBaseCommand')`:
@@ -245,7 +245,7 @@ Produces (later sections rely on these exact names): `isSelectedAntisensePair(ba
     });
     ```
   - Add `describe('resolveMirroredBaseTarget')` (same `beforeEach`/`afterEach` as `createMirroredBaseCommand`): returns `{ partner: antisenseBase, targetLabel: 'G' }` for sense A→C with sync on and nothing selected; `undefined` when sync is off; `undefined` when the partner is selected; `undefined` when the analogue is unchanged (A→A); `undefined` when the partner already carries the target — `buildDuplex(editor, 'C')` (antisense `G`), `previousNaturalAnalogue: 'T'`, new item `C`: the target is `G`, which the partner already is. Each case also asserts the antisense label is unchanged (the helper builds no command).
-- [ ] 20.2 Rewrite the `SequenceMode` suites so a one-strand selection is made the way a view-mode drag makes it — by selecting only that strand's monomers — instead of through the record:
+- [x] 20.2 Rewrite the `SequenceMode` suites so a one-strand selection is made the way a view-mode drag makes it — by selecting only that strand's monomers — instead of through the record:
   - In `SequenceMode.antisenseDuplexSync.test.ts` add the helper below; drop every `setTargetedStrand`/`resetTargetedStrand` call and every `expect(SequenceRenderer.targetedStrand)…`; drive Step 3 and Step 5 through `selectOnly([...])` instead of `dragAcrossBothPositions`; make Step 4's `selectBothStrandsAtPositionZero` select both strands without writing a record.
     ```ts
     // A view-mode drag over one row selects exactly the symbols it covers.
@@ -303,8 +303,8 @@ Produces (later sections rely on these exact names): `isSelectedAntisensePair(ba
     For the second test, if `insertMonomerFromLibrary`'s missing-attachment-point pre-check interferes for a lone base, keep calling the private `replaceSelectionsWithMonomer` as shown (it is the code under test).
   - In `SequenceMode.baseCarryingRefusal.test.ts`, `SequenceMode.presetRefusal.test.ts` and `SequenceMode.presetStrandAware.test.ts`: replace `setTargetedStrand('both')` with selecting both strands' monomers; replace one-strand setups that relied on a drag or click plus record with `selectOnly`-style selection of that strand only; delete the `targetedStrand` assertions and the `resetTargetedStrand` calls.
   - Delete `SequenceMode.targetedStrand.test.ts`, `SelectBase.targetedStrand.test.ts` and `SequenceRenderer.targetedStrand.test.ts`; the behavior they pinned no longer exists, and the edit-mode drag case is now covered by the first new test above.
-- [ ] 20.3 Run `npx jest __tests__/domain/entities/antisenseBaseSyncCommand.test.ts __tests__/application/editor/modes` in `packages/ketcher-core`; expect failures (signature and behavior not yet changed).
-- [ ] 20.4 In `antisenseBaseSync.ts`:
+- [x] 20.3 Run `npx jest __tests__/domain/entities/antisenseBaseSyncCommand.test.ts __tests__/application/editor/modes` in `packages/ketcher-core`; expect failures (signature and behavior not yet changed).
+- [x] 20.4 In `antisenseBaseSync.ts`:
   - `isSelectedAntisensePair(base?: BaseMonomer)`: drop the `bothStrandsTargeted` parameter and its guard; keep `base.selected && partner.selected && isBaseEligibleForDuplexSync(base) && isBaseEligibleForDuplexSync(partner)`. Rewrite the doc comment: rule 1.3, judged from selection — a column-based gesture really does select both strands.
   - Add, above `createMirroredBaseCommand`:
     ```ts
@@ -374,7 +374,7 @@ Produces (later sections rely on these exact names): `isSelectedAntisensePair(ba
     const { partner, targetLabel } = target;
     ```
     keeping the existing `resolveBaseLibraryItem(targetLabel)` lookup and the ambiguous/in-place branch below it. Keep the `partner`/`wasEditedBaseEligible` doc comments on the params object.
-- [ ] 20.5 Remove the gesture record:
+- [x] 20.5 Remove the gesture record:
   - `SequenceRenderer.ts`: delete the `TargetedStrand` type, `targetedStrandRecord`, `setTargetedStrand`, `resetTargetedStrand` and the `targetedStrand` getter, and the `setTargetedStrand(...)` block plus its comment at the top of `shiftArrowSelectionInEditMode`.
   - `SequenceMode.ts`: delete the `setTargetedStrand` calls in `mousedownBetweenSequenceItems`, `mousedown` and `mousemove` (and the comment above the `mousemove` one); delete `SequenceRenderer.resetTargetedStrand()` and its comment in `unselectAllEntities`; delete every `const bothStrandsTargeted = SequenceRenderer.targetedStrand === 'both';` and the `bothStrandsTargeted` arguments (in `modifySequenceInRnaBuilder`, `replaceSelectionsWithMonomer`, `replaceSelectionsWithPreset`); in `refuseIfBaseModificationBlocked` call `isSelectedAntisensePair(editedBase)` and update its doc comment ("a both-strands selection", not "record").
   - Reduce `getSelectedStrandType` to its per-position answer and replace its comment with one line ("Which strand is selected at this position; sense when both are."):
@@ -388,8 +388,8 @@ Produces (later sections rely on these exact names): `isSelectedAntisensePair(ba
   - `EditorHistory.ts`: delete the redo-path `resetTargetedStrand()` and its comment.
   - `Editor.ts`: delete `isSequenceAntisenseEditMode`; `modes/types/sequenceMode.ts`: delete `isAntisenseEditMode` from the type if nothing else reads it (`grep -rn "isAntisenseEditMode" packages/*/src`; `SequenceMode` keeps its own getter).
   - `grep -rn "TargetedStrand\|targetedStrand\|bothStrandsTargeted\|isSequenceAntisenseEditMode" packages/ketcher-core/src packages/ketcher-core/__tests__` returns nothing.
-- [ ] 20.6 Run `npm test` in `packages/ketcher-core`; all green (the `ketcher-macromolecules` call to `isSelectedAntisensePair` is fixed in section 21).
-- [ ] 20.7 Commit: `#6595 - Judge duplex sync per pair from the selection and drop the gesture record`.
+- [x] 20.6 Run `npm test` in `packages/ketcher-core`; all green (the `ketcher-macromolecules` call to `isSelectedAntisensePair` is fixed in section 21).
+- [x] 20.7 Commit: `#6595 - Judge duplex sync per pair from the selection and drop the gesture record`.
 
 ## 21. Context menu counts and blocked-pair flags follow the selection (`ketcher-macromolecules`)
 

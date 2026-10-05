@@ -54,8 +54,7 @@ const rerenderSequence = (editor: CoreEditor) => {
 };
 
 // Builds a 2-position sense/antisense duplex: sense 'A','C' paired (via
-// hydrogen bonds) with antisense 'U','G' respectively. Copied from
-// SequenceMode.targetedStrand.test.ts.
+// hydrogen bonds) with antisense 'U','G' respectively.
 const buildTwoPositionDuplex = (editor: CoreEditor) => {
   const drawingEntitiesManager = editor.drawingEntitiesManager;
   const senseNucleotides = ['A', 'C'].map(
@@ -121,7 +120,6 @@ describe('SequenceMode base-carrying refusal (task 19.1-19.4)', () => {
   });
 
   afterEach(() => {
-    SequenceRenderer.resetTargetedStrand();
     // EditorHistory is a process-wide singleton keyed only by the first
     // editor it ever saw; without this reset a later test keeps getting
     // this test's instance, pointed at this test's removed editor.
@@ -129,9 +127,7 @@ describe('SequenceMode base-carrying refusal (task 19.1-19.4)', () => {
     canvas.remove();
   });
 
-  // Selects both strands at position 0 and records 'both'. Copied from
-  // SequenceMode.antisenseDuplexSync.test.ts: the drag gesture never
-  // records 'both' for a single mousedown+mousemove on this fixture.
+  // Selects both strands at position 0.
   const selectBothStrandsAtPositionZero = (
     senseNucleotides: Nucleotide[],
     antisenseNucleotides: Nucleotide[],
@@ -142,7 +138,6 @@ describe('SequenceMode base-carrying refusal (task 19.1-19.4)', () => {
         ...antisenseNucleotides[0].monomers,
       ].filter(Boolean),
     );
-    SequenceRenderer.setTargetedStrand('both');
   };
 
   it('refuses an unsplit nucleotide with the mandated message, instead of rewriting the sense base and leaving its partner stale', () => {
@@ -200,9 +195,9 @@ describe('SequenceMode base-carrying refusal (task 19.1-19.4)', () => {
     confirmationSpy.mockRestore();
   });
 
-  it('does not refuse when there is no hydrogen-bonded pair, even with a both-strands record', () => {
+  it('does not refuse when there is no hydrogen-bonded pair, even with a both-strands selection', () => {
     // A single-stranded chain: no antisense partner anywhere, so the rule's
-    // structural condition is absent even though the record says 'both'.
+    // structural condition is absent even if both strands were selected.
     const nucleotides = ['A', 'C'].map(
       (base, index) =>
         Nucleotide.createOnCanvas(base, new Vec2(index * 1.6, 0)).node,
@@ -219,7 +214,6 @@ describe('SequenceMode base-carrying refusal (task 19.1-19.4)', () => {
     editor.drawingEntitiesManager.selectDrawingEntities([
       ...nucleotides[0].monomers.filter(Boolean),
     ]);
-    SequenceRenderer.setTargetedStrand('both');
 
     const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
 

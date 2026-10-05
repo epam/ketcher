@@ -21,14 +21,10 @@ import {
   createRenderersManager,
 } from '../../../helpers/dom';
 
-// This suite exercises the behavior Task 6 of epam/ketcher#6595 makes
-// reachable for the first time: base replacement propagating to the
-// hydrogen-bonded partner on a real duplex, and the both-strands block
-// firing (or not) on the record it now actually depends on. The fixtures
-// and gesture-simulation pattern (buildTwoPositionDuplex, mousedown +
-// mousemove ticks, callReplaceSelectionsWithMonomer) are copied from
-// SequenceMode.targetedStrand.test.ts, which already establishes them as
-// the way to drive a real one-strand vs. both-strands selection gesture.
+// This suite exercises base replacement propagating to the hydrogen-bonded
+// partner on a real duplex, and the both-strands block firing (or not) on
+// what is actually selected. A one-strand selection is made the way a
+// view-mode drag makes it: by selecting only that strand's monomers.
 
 const testRenderTheme = {
   monomer: {
@@ -71,8 +67,7 @@ const rerenderSequence = (editor: CoreEditor) => {
 };
 
 // Builds a 2-position sense/antisense duplex: sense 'A','C' paired (via
-// hydrogen bonds) with antisense 'U','G' respectively. Copied from
-// SequenceMode.targetedStrand.test.ts.
+// hydrogen bonds) with antisense 'U','G' respectively.
 const buildTwoPositionDuplex = (editor: CoreEditor) => {
   const drawingEntitiesManager = editor.drawingEntitiesManager;
   const senseNucleotides = ['A', 'C'].map(
@@ -124,7 +119,7 @@ const mousedownEventFor = (renderer: BaseSequenceItemRenderer) =>
 
 // Calls the private SequenceMode#replaceSelectionsWithMonomer, following the
 // cast-through-prototype pattern used elsewhere (see
-// SequenceMode.targetedStrand.test.ts / antisenseChainDirection.test.ts).
+// antisenseChainDirection.test.ts).
 const callReplaceSelectionsWithMonomer = (
   mode: SequenceMode,
   selections: TwoStrandedNodesSelection,
@@ -174,7 +169,6 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
   });
 
   afterEach(() => {
-    SequenceRenderer.resetTargetedStrand();
     // EditorHistory is a process-wide singleton keyed only by the first
     // editor it ever saw (see EditorHistory.getInstance): without an
     // explicit reset here, a later test's getInstance(newEditor) call would
@@ -184,8 +178,7 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
     canvas.remove();
   });
 
-  // Enters edit mode via a first click on the sense row, exactly like
-  // SequenceMode.targetedStrand.test.ts.
+  // Enters edit mode via a first click on the sense row.
   const enterEditMode = (editorInstance: CoreEditor) => {
     const { senseNucleotides, antisenseNucleotides } =
       buildTwoPositionDuplex(editorInstance);
@@ -193,23 +186,28 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
     mode.mousedownBetweenSequenceItems(
       mousedownEventFor(rendererForMonomer(senseNucleotides[0])),
     );
-    SequenceRenderer.resetTargetedStrand();
 
     return { senseNucleotides, antisenseNucleotides };
   };
 
-  // A real one-strand drag: mousedown on the given row records that row,
-  // then mousemove ticks select the caret range, which -- per the "columns
-  // select both strands" behavior at the heart of #6595 -- pulls in BOTH
-  // strands' monomers at every touched position even though only one row
-  // was dragged.
+  // A view-mode drag over one row selects exactly the symbols it covers.
+  const selectOnly = (nucleotides: Nucleotide[]) => {
+    editor.drawingEntitiesManager.unselectAllDrawingEntities();
+    editor.drawingEntitiesManager.selectDrawingEntities(
+      // A chain-terminal nucleotide has no phosphate, hence the filter.
+      nucleotides.flatMap((nucleotide) => nucleotide.monomers).filter(Boolean),
+    );
+  };
+
+  // An edit-mode drag: mousedown, then mousemove ticks select the caret
+  // range, which -- per the "columns select both strands" behavior at the
+  // heart of #6595 -- pulls in BOTH strands' monomers at every touched
+  // position even though only one row was dragged.
   //
   // `endNode` is re-resolved to a fresh renderer on every tick, not passed
   // as a pre-fetched renderer: mousedown/mousemove can rebuild the sequence
-  // view model and destroy prior renderer instances (see the "Each call
-  // re-fetches the renderer fresh" comment in SequenceMode.targetedStrand
-  // .test.ts), so a renderer captured before the loop can go stale partway
-  // through it.
+  // view model and destroy prior renderer instances, so a renderer captured
+  // before the loop can go stale partway through it.
   const dragAcrossBothPositions = (
     startNode: Nucleotide,
     endNode: Nucleotide,
@@ -222,18 +220,15 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
   };
 
   describe('Step 3: a one-strand gesture propagates the complement (main behavior is reachable)', () => {
-    it('propagates sense -> antisense through replaceSelectionsWithMonomer, for a gesture that only targeted the sense row', () => {
+    it('propagates sense -> antisense through replaceSelectionsWithMonomer, for a selection that only holds the sense row', () => {
       const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
 
-      dragAcrossBothPositions(senseNucleotides[0], antisenseNucleotides[1]);
-      expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
+      selectOnly(senseNucleotides);
 
-      // Sanity: the drag really did select both strands at every touched
-      // column (the root cause of #6595), so the propagation below is only
-      // meaningful because it is keyed on the SENSE record, not because the
-      // antisense row was left unselected.
+      // Sanity: the antisense row is not selected, so the propagation below
+      // is keyed on the selection, not on a gesture record.
       expect(senseNucleotides[0].rnaBase.selected).toBe(true);
-      expect(antisenseNucleotides[0].rnaBase.selected).toBe(true);
+      expect(antisenseNucleotides[0].rnaBase.selected).toBe(false);
 
       const selections = SequenceRenderer.selections;
       const newBaseItem = requireBaseLibraryItem(editor, 'C');
@@ -246,12 +241,11 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
       expect(antisenseNucleotides[0].rnaBase.label).toBe('G');
     });
 
-    it('propagates antisense -> sense through modifySequenceInRnaBuilder, for a gesture that only targeted the antisense row', () => {
+    it('propagates antisense -> sense through modifySequenceInRnaBuilder, for a selection that only holds the antisense row', () => {
       const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
 
-      dragAcrossBothPositions(antisenseNucleotides[0], senseNucleotides[1]);
-      expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.ANTISENSE);
-      expect(senseNucleotides[0].rnaBase.selected).toBe(true);
+      selectOnly(antisenseNucleotides);
+      expect(senseNucleotides[0].rnaBase.selected).toBe(false);
       expect(antisenseNucleotides[0].rnaBase.selected).toBe(true);
 
       // modifySequenceInRnaBuilder is driven by the RNA Builder's own
@@ -289,10 +283,7 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
     // The spec (design Decision behind #6595's sync propagation) says the
     // mirrored edit and the original edit "are applied as a single undo
     // step". Nothing exercised that until now: this drives a real
-    // propagating replacement through a single column (both strands
-    // selected at that column, exactly as a real gesture produces per the
-    // "columns select both strands" behavior documented throughout this
-    // file), then proves ONE undo() reverts BOTH bases and moves the
+    // propagating replacement through a single sense symbol, then proves ONE undo() reverts BOTH bases and moves the
     // history pointer back by exactly one -- not two separate steps.
     it('undoes a propagating replacement as a single history step, restoring both bases; redo reapplies both', () => {
       const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
@@ -300,10 +291,7 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
       const antisenseLabelBefore = antisenseNucleotides[0].rnaBase.label;
       const originalSenseBaseId = senseNucleotides[0].rnaBase.id;
 
-      // Single-column drag: sense[0] to antisense[0], both ends at position
-      // 0, so the record is SENSE and both strands are selected there.
-      dragAcrossBothPositions(senseNucleotides[0], antisenseNucleotides[0]);
-      expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
+      selectOnly([senseNucleotides[0]]);
 
       const selections = SequenceRenderer.selections
         .map((range) =>
@@ -376,9 +364,8 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
   });
 
   describe('Step 4: the both-strands block still fires', () => {
-    // Selects both strands at position 0 directly (bypassing the drag
-    // gesture, which never records 'both' for a single mousedown+mousemove
-    // sequence on this fixture) and asserts the refusal path.
+    // Selects both strands at position 0 directly and asserts the refusal
+    // path.
     const selectBothStrandsAtPositionZero = (
       senseNucleotides: Nucleotide[],
       antisenseNucleotides: Nucleotide[],
@@ -389,7 +376,6 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
           ...antisenseNucleotides[0].monomers,
         ].filter(Boolean),
       );
-      SequenceRenderer.setTargetedStrand('both');
 
       const selections: TwoStrandedNodesSelection = SequenceRenderer.selections
         .map((range) =>
@@ -400,7 +386,7 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
       return selections;
     };
 
-    it('refuses base replacement with the mandated message and leaves the canvas unchanged, when sync is on and both strands are the record', () => {
+    it('refuses base replacement with the mandated message and leaves the canvas unchanged, when sync is on and both strands are selected', () => {
       const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
       const senseLabelBefore = senseNucleotides[0].rnaBase.label;
       const antisenseLabelBefore = antisenseNucleotides[0].rnaBase.label;
@@ -422,11 +408,11 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
       dispatchSpy.mockRestore();
     });
 
-    it('does NOT block base replacement for a both-strands record when sync editing is OFF', () => {
+    it('does NOT block base replacement for a both-strands selection when sync editing is OFF', () => {
       const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
 
       // Cast-through-prototype flag flip, same pattern used for
-      // _isAntisenseEditMode in SequenceMode.targetedStrand.test.ts:
+      // _isAntisenseEditMode elsewhere in these suites:
       // avoids the initialize() re-render that turnOffSyncEditMode()
       // would trigger, which would tear down the renderers this test
       // already captured references for.
@@ -474,14 +460,71 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
     });
   });
 
+  describe('selection decides, per pair', () => {
+    it('treats an edit-mode drag as a both-strands selection and refuses base replacement', () => {
+      const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
+      dragAcrossBothPositions(senseNucleotides[0], antisenseNucleotides[1]);
+      const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
+
+      mode.insertMonomerFromLibrary(requireBaseLibraryItem(editor, 'C'));
+
+      expect(dispatchSpy).toHaveBeenCalledWith(
+        BASE_MODIFICATION_DISABLED_IN_SYNC_MODE,
+      );
+      expect(senseNucleotides[0].rnaBase.label).toBe('A');
+      expect(antisenseNucleotides[0].rnaBase.label).toBe('U');
+      dispatchSpy.mockRestore();
+    });
+
+    it('mirrors each selected base to its own partner when unpaired symbols on both rows are selected', () => {
+      const { senseNucleotides, antisenseNucleotides } =
+        buildTwoPositionDuplex(editor);
+      // sense position 0 (A, partner U) and antisense position 1 (G, partner C)
+      selectOnly([senseNucleotides[0], antisenseNucleotides[1]]);
+      const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
+
+      callReplaceSelectionsWithMonomer(
+        mode,
+        SequenceRenderer.selections,
+        requireBaseLibraryItem(editor, 'U'),
+      );
+
+      expect(dispatchSpy).not.toHaveBeenCalled();
+      // sense A -> U mirrors its partner U -> A
+      expect(antisenseNucleotides[0].rnaBase.label).toBe('A');
+      // antisense G -> U mirrors its partner C -> A (ribose)
+      expect(senseNucleotides[1].rnaBase.label).toBe('A');
+      dispatchSpy.mockRestore();
+    });
+
+    it('refuses the whole base edit when one pair is fully selected among one-strand positions', () => {
+      const { senseNucleotides, antisenseNucleotides } =
+        buildTwoPositionDuplex(editor);
+      selectOnly([
+        senseNucleotides[0],
+        antisenseNucleotides[0],
+        senseNucleotides[1],
+      ]);
+      const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
+
+      mode.insertMonomerFromLibrary(requireBaseLibraryItem(editor, 'U'));
+
+      expect(dispatchSpy).toHaveBeenCalledWith(
+        BASE_MODIFICATION_DISABLED_IN_SYNC_MODE,
+      );
+      expect(senseNucleotides[1].rnaBase.label).toBe('C');
+      expect(antisenseNucleotides[1].rnaBase.label).toBe('G');
+      dispatchSpy.mockRestore();
+    });
+  });
+
   describe('Step 5: nothing empty reaches history', () => {
     it('grows the history stack by exactly one entry when a sense replacement preserves the natural analogue, and leaves the antisense partner untouched', () => {
       const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
       const antisenseLabelBefore = antisenseNucleotides[0].rnaBase.label;
       const antisenseMonomerBefore = antisenseNucleotides[0].rnaBase;
 
-      dragAcrossBothPositions(senseNucleotides[0], antisenseNucleotides[0]);
-      expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
+      selectOnly([senseNucleotides[0]]);
 
       const selections = SequenceRenderer.selections
         .map((range) =>

@@ -5,7 +5,6 @@ import type { IRnaPreset } from 'application/editor/tools/Tool';
 export interface SequenceMode {
   readonly isEditMode: boolean;
   readonly isEditInRNABuilderMode: boolean;
-  readonly isAntisenseEditMode: boolean;
   deleteSelection(): void;
   turnOnEditMode(sequenceItemRenderer?: BaseSequenceItemRenderer): void;
   turnOffEditMode(needToRemoveSelection?: boolean): void;

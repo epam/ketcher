@@ -10,6 +10,7 @@ import {
 } from 'domain/constants/monomers';
 import {
   createMirroredBaseCommand,
+  resolveMirroredBaseTarget,
   getHydrogenBondedPartner,
   getLibraryItemMonomerClass,
   isBaseEligibleForDuplexSync,
@@ -170,38 +171,36 @@ describe('duplex traversal', () => {
     );
   });
 
-  it('reports a pair as selected only when both sides are selected AND both strands were targeted', () => {
+  it('reports a pair as selected when both bases are selected and eligible', () => {
     const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
-
-    editor.drawingEntitiesManager.selectDrawingEntities([senseBase]);
-    expect(isSelectedAntisensePair(senseBase, true)).toBe(false);
-
     editor.drawingEntitiesManager.selectDrawingEntities([
       senseBase,
       antisenseBase,
     ]);
-    expect(isSelectedAntisensePair(senseBase, true)).toBe(true);
+
+    expect(isSelectedAntisensePair(senseBase)).toBe(true);
+    expect(isSelectedAntisensePair(antisenseBase)).toBe(true);
   });
 
   it('reports a pair as not selected when only one side is selected', () => {
-    const { senseBase } = buildDuplex(editor, 'A');
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
     editor.drawingEntitiesManager.selectDrawingEntities([senseBase]);
 
-    expect(isSelectedAntisensePair(senseBase, true)).toBe(false);
+    expect(isSelectedAntisensePair(senseBase)).toBe(false);
+    expect(isSelectedAntisensePair(antisenseBase)).toBe(false);
   });
 
-  // The bug this parameter fixes: on a duplex, selection is column-based, so
-  // both bases of a pair are selected even when the gesture targeted only
-  // one strand. `bothStrandsTargeted: false` must suppress the pair report
-  // regardless of that selection state.
-  it('reports a pair as not selected when both bases are selected but the gesture did not target both strands', () => {
-    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+  it('reports a pair as not selected when both are selected but not hydrogen bonded', () => {
+    const first = Nucleotide.createOnCanvas('A', new Vec2(0, 0)).node;
+    const second = Nucleotide.createOnCanvas('C', new Vec2(0, 10)).node;
+    const firstBase = first.rnaBase as BaseMonomer;
+    const secondBase = second.rnaBase as BaseMonomer;
     editor.drawingEntitiesManager.selectDrawingEntities([
-      senseBase,
-      antisenseBase,
+      firstBase,
+      secondBase,
     ]);
 
-    expect(isSelectedAntisensePair(senseBase, false)).toBe(false);
+    expect(isSelectedAntisensePair(firstBase)).toBe(false);
   });
 
   it('derives the monomer class of an ambiguous base library item from its constituent monomers', () => {
@@ -276,7 +275,6 @@ describe('createMirroredBaseCommand', () => {
       newBaseMonomerItem: newBaseItem,
       isSyncEditMode: true,
       resolveBaseLibraryItem,
-      bothStrandsTargeted: false,
     });
 
     expect(command).toBeDefined();
@@ -300,7 +298,6 @@ describe('createMirroredBaseCommand', () => {
       newBaseMonomerItem: newBaseItem,
       isSyncEditMode: true,
       resolveBaseLibraryItem,
-      bothStrandsTargeted: false,
     });
 
     expect(command).toBeDefined();
@@ -324,7 +321,6 @@ describe('createMirroredBaseCommand', () => {
       newBaseMonomerItem: newBaseItem,
       isSyncEditMode: true,
       resolveBaseLibraryItem,
-      bothStrandsTargeted: false,
     });
 
     expect(command).toBeUndefined();
@@ -347,49 +343,13 @@ describe('createMirroredBaseCommand', () => {
       newBaseMonomerItem: newBaseItem,
       isSyncEditMode: false,
       resolveBaseLibraryItem,
-      bothStrandsTargeted: false,
     });
 
     expect(command).toBeUndefined();
     expect(antisenseBase.label).toBe(labelBefore);
   });
 
-  // Previously: "does nothing when the paired base is itself selected"
-  // (asserted with `partner.selected` true and no `bothStrandsTargeted`
-  // parameter at all, since it didn't exist). That condition was the bug
-  // rule 1.1 used to rest on: on a duplex, selection is column-based, so the
-  // partner is selected in every touched column regardless of which strand
-  // the gesture targeted -- `partner.selected` was therefore always true and
-  // propagation never ran. The new condition is `bothStrandsTargeted`, so
-  // this test now selects only the edited base (not its partner) and
-  // instead asserts that a `bothStrandsTargeted: true` record alone
-  // suppresses the mirror, independent of the partner's own selection state.
-  it('does nothing when both strands were targeted', () => {
-    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
-    const labelBefore = antisenseBase.label;
-    editor.drawingEntitiesManager.selectDrawingEntities([senseBase]);
-    const newBaseItem = resolveBaseLibraryItem('C');
-
-    if (!newBaseItem) {
-      throw new Error('Library item C not found');
-    }
-
-    const command = createMirroredBaseCommand({
-      drawingEntitiesManager: editor.drawingEntitiesManager,
-      editedBase: senseBase,
-      previousNaturalAnalogue: 'A',
-      newBaseMonomerItem: newBaseItem,
-      isSyncEditMode: true,
-      resolveBaseLibraryItem,
-      bothStrandsTargeted: true,
-    });
-
-    expect(command).toBeUndefined();
-    expect(antisenseBase.label).toBe(labelBefore);
-  });
-
-  // The three tests above (unchanged analogue, sync off, both strands
-  // targeted) all rely on createMirroredBaseCommand deriving `partner` and
+  // The tests above (unchanged analogue, sync off) all rely on createMirroredBaseCommand deriving `partner` and
   // eligibility itself. The `partner`/`wasEditedBaseEligible` short-circuit
   // added for the ambiguous-replace and library-replace call sites must not
   // weaken any of those suppression rules when a caller happens to supply
@@ -412,7 +372,6 @@ describe('createMirroredBaseCommand', () => {
       resolveBaseLibraryItem,
       partner: antisenseBase,
       wasEditedBaseEligible: true,
-      bothStrandsTargeted: false,
     });
 
     expect(command).toBeUndefined();
@@ -437,25 +396,21 @@ describe('createMirroredBaseCommand', () => {
       resolveBaseLibraryItem,
       partner: antisenseBase,
       wasEditedBaseEligible: true,
-      bothStrandsTargeted: false,
     });
 
     expect(command).toBeUndefined();
     expect(antisenseBase.label).toBe(labelBefore);
   });
 
-  // Previously: "does nothing when the paired base is itself selected, even
-  // with partner and eligibility supplied explicitly" (see the rewrite
-  // above for why `partner.selected` was replaced by `bothStrandsTargeted`).
-  it('does nothing when both strands were targeted, even with partner and eligibility supplied explicitly', () => {
+  it('does nothing when the paired base is itself selected', () => {
     const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
     const labelBefore = antisenseBase.label;
-    editor.drawingEntitiesManager.selectDrawingEntities([senseBase]);
+    editor.drawingEntitiesManager.selectDrawingEntities([
+      senseBase,
+      antisenseBase,
+    ]);
     const newBaseItem = resolveBaseLibraryItem('C');
-
-    if (!newBaseItem) {
-      throw new Error('Library item C not found');
-    }
+    if (!newBaseItem) throw new Error('Library item C not found');
 
     const command = createMirroredBaseCommand({
       drawingEntitiesManager: editor.drawingEntitiesManager,
@@ -464,13 +419,28 @@ describe('createMirroredBaseCommand', () => {
       newBaseMonomerItem: newBaseItem,
       isSyncEditMode: true,
       resolveBaseLibraryItem,
-      partner: antisenseBase,
-      wasEditedBaseEligible: true,
-      bothStrandsTargeted: true,
     });
 
     expect(command).toBeUndefined();
     expect(antisenseBase.label).toBe(labelBefore);
+  });
+
+  it('mirrors when only the edited base is selected', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    editor.drawingEntitiesManager.selectDrawingEntities([senseBase]);
+    const newBaseItem = resolveBaseLibraryItem('C');
+    if (!newBaseItem) throw new Error('Library item C not found');
+
+    createMirroredBaseCommand({
+      drawingEntitiesManager: editor.drawingEntitiesManager,
+      editedBase: senseBase,
+      previousNaturalAnalogue: 'A',
+      newBaseMonomerItem: newBaseItem,
+      isSyncEditMode: true,
+      resolveBaseLibraryItem,
+    });
+
+    expect(antisenseBase.label).toBe('G');
   });
 
   it('does not mirror an edited base that is not structurally eligible, even when an eligible partner is supplied', () => {
@@ -512,7 +482,6 @@ describe('createMirroredBaseCommand', () => {
       isSyncEditMode: true,
       resolveBaseLibraryItem,
       partner: antisenseBase,
-      bothStrandsTargeted: false,
     });
 
     expect(command).toBeUndefined();
@@ -551,7 +520,6 @@ describe('createMirroredBaseCommand', () => {
       newBaseMonomerItem: newBaseItem,
       isSyncEditMode: true,
       resolveBaseLibraryItem,
-      bothStrandsTargeted: false,
     });
 
     const partnerSugarAfter = getSugarFromRnaBase(antisenseBase);
@@ -588,7 +556,6 @@ describe('createMirroredBaseCommand', () => {
       newBaseMonomerItem: newBaseItem,
       isSyncEditMode: true,
       resolveBaseLibraryItem,
-      bothStrandsTargeted: false,
     });
 
     expect(command).toBeDefined();
@@ -620,7 +587,6 @@ describe('createMirroredBaseCommand', () => {
       newBaseMonomerItem: newBaseItem,
       isSyncEditMode: true,
       resolveBaseLibraryItem,
-      bothStrandsTargeted: false,
     });
 
     expect(command).toBeDefined();
@@ -674,7 +640,6 @@ describe('createMirroredBaseCommand', () => {
       newBaseMonomerItem: newBaseItem,
       isSyncEditMode: true,
       resolveBaseLibraryItem,
-      bothStrandsTargeted: false,
     });
 
     // Plain complement, not a modified one: the modification is gone.
@@ -726,7 +691,6 @@ describe('createMirroredBaseCommand', () => {
       resolveBaseLibraryItem,
       partner: partnerBeforeEdit,
       wasEditedBaseEligible,
-      bothStrandsTargeted: false,
     });
 
     expect(command).toBeDefined();
@@ -749,11 +713,116 @@ describe('createMirroredBaseCommand', () => {
       newBaseMonomerItem: newBaseItem,
       isSyncEditMode: true,
       resolveBaseLibraryItem,
-      bothStrandsTargeted: false,
     });
 
     command?.invert(editor.renderersContainer);
 
+    expect(antisenseBase.label).toBe(labelBefore);
+  });
+});
+
+describe('resolveMirroredBaseTarget', () => {
+  let canvas: SVGSVGElement;
+  let editor: CoreEditor;
+
+  beforeEach(() => {
+    canvas = createPolymerEditorCanvas();
+    stubCanvasDimensions(canvas);
+    editor = new CoreEditor({
+      canvas,
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+  });
+
+  afterEach(() => {
+    canvas.remove();
+  });
+
+  const resolveBaseLibraryItem = (label: string) =>
+    getRnaPartLibraryItem(editor, label, KetMonomerClass.Base);
+
+  const requireItem = (label: string) => {
+    const item = resolveBaseLibraryItem(label);
+    if (!item) throw new Error(`Library item ${label} not found`);
+    return item;
+  };
+
+  it('returns the partner and the complement for a sense A to C edit with nothing selected', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+
+    const target = resolveMirroredBaseTarget({
+      editedBase: senseBase,
+      previousNaturalAnalogue: 'A',
+      newBaseMonomerItem: requireItem('C'),
+      isSyncEditMode: true,
+    });
+
+    expect(target).toEqual({ partner: antisenseBase, targetLabel: 'G' });
+    expect(antisenseBase.label).toBe('U');
+  });
+
+  it('returns undefined when sync edit mode is off', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    const labelBefore = antisenseBase.label;
+
+    expect(
+      resolveMirroredBaseTarget({
+        editedBase: senseBase,
+        previousNaturalAnalogue: 'A',
+        newBaseMonomerItem: requireItem('C'),
+        isSyncEditMode: false,
+      }),
+    ).toBeUndefined();
+    expect(antisenseBase.label).toBe(labelBefore);
+  });
+
+  it('returns undefined when the partner is selected', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    const labelBefore = antisenseBase.label;
+    editor.drawingEntitiesManager.selectDrawingEntities([antisenseBase]);
+
+    expect(
+      resolveMirroredBaseTarget({
+        editedBase: senseBase,
+        previousNaturalAnalogue: 'A',
+        newBaseMonomerItem: requireItem('C'),
+        isSyncEditMode: true,
+      }),
+    ).toBeUndefined();
+    expect(antisenseBase.label).toBe(labelBefore);
+  });
+
+  it('returns undefined when the natural analogue is unchanged', () => {
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'A');
+    const labelBefore = antisenseBase.label;
+
+    expect(
+      resolveMirroredBaseTarget({
+        editedBase: senseBase,
+        previousNaturalAnalogue: 'A',
+        newBaseMonomerItem: requireItem('A'),
+        isSyncEditMode: true,
+      }),
+    ).toBeUndefined();
+    expect(antisenseBase.label).toBe(labelBefore);
+  });
+
+  it('returns undefined when the partner already carries the target', () => {
+    // Sense C pairs with antisense G; editing the sense base T -> C targets
+    // G, which the partner already is.
+    const { senseBase, antisenseBase } = buildDuplex(editor, 'C');
+    const labelBefore = antisenseBase.label;
+
+    expect(labelBefore).toBe('G');
+    expect(
+      resolveMirroredBaseTarget({
+        editedBase: senseBase,
+        previousNaturalAnalogue: 'T',
+        newBaseMonomerItem: requireItem('C'),
+        isSyncEditMode: true,
+      }),
+    ).toBeUndefined();
     expect(antisenseBase.label).toBe(labelBefore);
   });
 });

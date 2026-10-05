@@ -9,7 +9,6 @@ import type { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
 import { AttachmentPointName } from 'domain/types';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
-import { STRAND_TYPE } from 'domain/constants';
 import { KetMonomerClass } from 'domain/constants/monomers';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
@@ -20,11 +19,9 @@ import {
 
 // This suite exercises Task 2 of epam/ketcher#6595's preset-duplex-replacement
 // change: replaceSelectionsWithPreset becoming strand-aware in the same way
-// replaceSelectionsWithMonomer already is. The fixtures and gesture-
-// simulation pattern (buildTwoPositionDuplex, mousedown + mousemove ticks,
-// callReplaceSelectionsWithPreset) are copied from
-// SequenceMode.antisenseDuplexSync.test.ts, which already establishes them
-// as the way to drive a real one-strand vs. both-strands selection gesture.
+// replaceSelectionsWithMonomer already is. The fixtures and selection
+// helpers (buildTwoPositionDuplex, selectOnly, callReplaceSelectionsWithPreset)
+// are copied from SequenceMode.antisenseDuplexSync.test.ts.
 
 const testRenderTheme = {
   monomer: {
@@ -176,7 +173,6 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
   });
 
   afterEach(() => {
-    SequenceRenderer.resetTargetedStrand();
     // EditorHistory is a process-wide singleton keyed only by the first
     // editor it ever saw (see EditorHistory.getInstance): without an
     // explicit reset here, a later test's getInstance(newEditor) call would
@@ -195,36 +191,25 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
     mode.mousedownBetweenSequenceItems(
       mousedownEventFor(rendererForMonomer(senseNucleotides[0])),
     );
-    SequenceRenderer.resetTargetedStrand();
 
     return { senseNucleotides, antisenseNucleotides };
   };
 
-  // A real one-strand drag: mousedown on the given row records that row,
-  // then mousemove ticks select the caret range, which -- per the "columns
-  // select both strands" behavior at the heart of #6595 -- pulls in BOTH
-  // strands' monomers at every touched position even though only one row
-  // was dragged.
-  const dragAcrossBothPositions = (
-    startNode: Nucleotide,
-    endNode: Nucleotide,
-  ) => {
-    mode.mousedown(mousedownEventFor(rendererForMonomer(startNode)));
-
-    for (let tick = 0; tick < 3; tick++) {
-      mode.mousemove(mousedownEventFor(rendererForMonomer(endNode)));
-    }
+  // A view-mode drag over one row selects exactly the symbols it covers.
+  const selectOnly = (nucleotides: Nucleotide[]) => {
+    editor.drawingEntitiesManager.unselectAllDrawingEntities();
+    editor.drawingEntitiesManager.selectDrawingEntities(
+      // A chain-terminal nucleotide has no phosphate, hence the filter.
+      nucleotides.flatMap((nucleotide) => nucleotide.monomers).filter(Boolean),
+    );
   };
 
-  it('replaces the antisense node when the gesture targeted the antisense row, leaving the sense node alone', () => {
+  it('replaces the antisense node when only the antisense row is selected, leaving the sense node alone', () => {
     const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
 
-    dragAcrossBothPositions(antisenseNucleotides[0], senseNucleotides[1]);
-    expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.ANTISENSE);
-    // Sanity: the drag selected both strands at every touched column, so
-    // the assertion below is meaningful only because the record says
-    // ANTISENSE -- not because the sense row was left unselected.
-    expect(senseNucleotides[0].rnaBase.selected).toBe(true);
+    selectOnly(antisenseNucleotides);
+    // Sanity: the sense row is not selected.
+    expect(senseNucleotides[0].rnaBase.selected).toBe(false);
     expect(antisenseNucleotides[0].rnaBase.selected).toBe(true);
 
     const senseBaseIdsBefore = new Set(
@@ -241,8 +226,8 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
     senseBaseIdsBefore.forEach((id) => {
       expect(editor.drawingEntitiesManager.monomers.has(id)).toBe(true);
     });
-    // Their base LABELS do change, though (Task 4): this is a genuine
-    // single-strand (ANTISENSE) gesture, so rule 1.1 mirrors the preset's
+    // Their base LABELS do change, though (Task 4): only the antisense
+    // row is selected, so rule 1.1 mirrors the preset's
     // base onto each touched position's hydrogen-bonded partner. Position 0:
     // antisense U -> C, so partner sense A mirrors to complement(C) = G.
     // Position 1: antisense G -> C, so partner sense C mirrors to G too.
@@ -254,7 +239,7 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
     const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
 
     // A geometric, rectangle-style selection: the sense node at position 0
-    // and the antisense node at position 1, no record written. This is the
+    // and the antisense node at position 1. This is the
     // shape SelectRectangle produces on a duplex whose strands do not line
     // up column for column, and SequenceRenderer.selections returns it as
     // ONE contiguous range because it breaks only on an unselected
@@ -263,8 +248,6 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
       ...senseNucleotides[0].monomers.filter(Boolean),
       ...antisenseNucleotides[1].monomers.filter(Boolean),
     ]);
-    SequenceRenderer.resetTargetedStrand();
-    expect(SequenceRenderer.targetedStrand).toBe('both');
 
     const untouchedIds = [
       ...senseNucleotides[1].monomers.filter(Boolean),
@@ -291,8 +274,7 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
     // Replace the antisense node in the MIDDLE of its range, so the seed
     // for `previousReplacedNode` has to come from the chain-first end of
     // the range rather than from selectionRange[0].
-    dragAcrossBothPositions(antisenseNucleotides[0], antisenseNucleotides[1]);
-    expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.ANTISENSE);
+    selectOnly(antisenseNucleotides);
 
     const chainCountBefore = ChainsCollection.fromMonomers([
       ...editor.drawingEntitiesManager.monomers.values(),
@@ -321,10 +303,7 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
   it('rewrites the hydrogen-bonded partner when the preset changes the natural analogue', () => {
     const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
 
-    // A one-strand drag along the sense row: both strands end up selected
-    // at every touched column, but the record says SENSE.
-    dragAcrossBothPositions(senseNucleotides[0], senseNucleotides[0]);
-    expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
+    selectOnly([senseNucleotides[0]]);
 
     const selections = SequenceRenderer.selections
       .map((range) =>
@@ -343,7 +322,7 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
   it('leaves the partner alone when the preset keeps the natural analogue', () => {
     const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
 
-    dragAcrossBothPositions(senseNucleotides[0], senseNucleotides[0]);
+    selectOnly([senseNucleotides[0]]);
 
     const selections = SequenceRenderer.selections
       .map((range) =>
@@ -360,7 +339,7 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
   it('leaves the partner alone in non-sync mode', () => {
     const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
 
-    dragAcrossBothPositions(senseNucleotides[0], senseNucleotides[0]);
+    selectOnly([senseNucleotides[0]]);
 
     // Set the field directly: turnOffSyncEditMode() calls initialize(),
     // which re-lays-out the canvas and destroys the selection under test.
@@ -391,7 +370,7 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
     const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
     const antisenseLabelBefore = antisenseNucleotides[0].rnaBase.label;
 
-    dragAcrossBothPositions(senseNucleotides[0], senseNucleotides[0]);
+    selectOnly([senseNucleotides[0]]);
 
     const selections = SequenceRenderer.selections
       .map((range) =>
@@ -416,7 +395,7 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
     const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
     const antisensePartner = antisenseNucleotides[0].rnaBase;
 
-    dragAcrossBothPositions(senseNucleotides[0], senseNucleotides[0]);
+    selectOnly([senseNucleotides[0]]);
 
     const selections = SequenceRenderer.selections
       .map((range) =>

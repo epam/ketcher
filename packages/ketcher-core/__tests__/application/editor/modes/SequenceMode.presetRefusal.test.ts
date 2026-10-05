@@ -9,7 +9,6 @@ import { Sugar } from 'domain/entities/Sugar';
 import { AttachmentPointName } from 'domain/types';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { BASE_MODIFICATION_DISABLED_IN_SYNC_MODE } from 'domain/helpers/antisenseBaseSync';
-import { STRAND_TYPE } from 'domain/constants';
 import { KetMonomerClass } from 'domain/constants/monomers';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
@@ -24,10 +23,9 @@ import {
 // this gesture and also refused a plain sense-only selection in non-sync
 // mode, against item 2.1. The blanket guard is gone; the preset entry point
 // now goes through the same shared refusal (rule 1.3) as the other library
-// entry point, and only refuses when the gesture actually targeted BOTH
-// strands. The duplex-fixture and gesture pattern is copied from
-// SequenceMode.antisenseDuplexSync.test.ts, which already establishes it as
-// the way to build a real sense/antisense pair selected together.
+// entry point, and only refuses when the selection actually holds both
+// strands of a pair. The duplex fixture is copied from
+// SequenceMode.antisenseDuplexSync.test.ts.
 
 const testRenderTheme = {
   monomer: {
@@ -141,26 +139,21 @@ const buildPreset = (
   return { name: baseLabel ?? 'R-P', sugar, phosphate, base };
 };
 
-// A real gesture, copied from SequenceMode.antisenseDuplexSync.test.ts:
-// enter edit mode with a first click on the sense row, then mousedown +
-// mousemove ticks on the SAME position. Selection on a duplex is
-// column-based, so this pulls in BOTH strands' monomers at position 0 even
-// though only the sense row was dragged, but the gesture still records
-// SENSE -- the "one strand targeted" shape the preset path must now handle.
+// Enters edit mode with a first click on the sense row, then selects only
+// the sense symbol at position 0, the way a view-mode drag over one row does.
 const selectSenseRowAtPositionZero = (
+  editor: CoreEditor,
   mode: SequenceMode,
   senseNucleotides: Nucleotide[],
 ) => {
   mode.mousedownBetweenSequenceItems(
     mousedownEventFor(rendererForMonomer(senseNucleotides[0])),
   );
-  SequenceRenderer.resetTargetedStrand();
 
-  mode.mousedown(mousedownEventFor(rendererForMonomer(senseNucleotides[0])));
-
-  for (let tick = 0; tick < 3; tick++) {
-    mode.mousemove(mousedownEventFor(rendererForMonomer(senseNucleotides[0])));
-  }
+  editor.drawingEntitiesManager.unselectAllDrawingEntities();
+  editor.drawingEntitiesManager.selectDrawingEntities(
+    senseNucleotides[0].monomers.filter(Boolean),
+  );
 };
 
 describe('SequenceMode.insertPresetFromLibrary duplex refusal (task 3)', () => {
@@ -168,9 +161,7 @@ describe('SequenceMode.insertPresetFromLibrary duplex refusal (task 3)', () => {
   let editor: CoreEditor;
   let mode: SequenceMode;
 
-  // Selects both strands at position 0 and records 'both'. Copied from
-  // SequenceMode.antisenseDuplexSync.test.ts: the drag gesture never records
-  // 'both' for a single mousedown+mousemove on this fixture.
+  // Selects both strands at position 0.
   const selectBothStrandsAtPositionZero = (
     senseNucleotides: Nucleotide[],
     antisenseNucleotides: Nucleotide[],
@@ -181,7 +172,6 @@ describe('SequenceMode.insertPresetFromLibrary duplex refusal (task 3)', () => {
         ...antisenseNucleotides[0].monomers,
       ].filter(Boolean),
     );
-    SequenceRenderer.setTargetedStrand('both');
   };
 
   beforeEach(() => {
@@ -197,18 +187,15 @@ describe('SequenceMode.insertPresetFromLibrary duplex refusal (task 3)', () => {
   });
 
   afterEach(() => {
-    SequenceRenderer.resetTargetedStrand();
     canvas.remove();
   });
 
-  it('replaces the sense nucleotides and reports nothing, for a one-strand gesture on a duplex', () => {
+  it('replaces the sense nucleotides and reports nothing, for a one-strand selection on a duplex', () => {
     const { senseNucleotides, antisenseNucleotides } =
       buildTwoPositionDuplex(editor);
 
-    // The gesture the file already models: a drag along the sense row,
-    // which selects both strands at every touched column but records SENSE.
-    selectSenseRowAtPositionZero(mode, senseNucleotides);
-    expect(SequenceRenderer.targetedStrand).toBe(STRAND_TYPE.SENSE);
+    selectSenseRowAtPositionZero(editor, mode, senseNucleotides);
+    expect(antisenseNucleotides[0].rnaBase.selected).toBe(false);
 
     const antisenseMonomerIds = antisenseNucleotides[0].monomers
       .filter(Boolean)
@@ -232,7 +219,7 @@ describe('SequenceMode.insertPresetFromLibrary duplex refusal (task 3)', () => {
     dispatchSpy.mockRestore();
   });
 
-  it('refuses a preset with the mandated message when the gesture targeted both strands', () => {
+  it('refuses a preset with the mandated message when both strands are selected', () => {
     const { senseNucleotides, antisenseNucleotides } =
       buildTwoPositionDuplex(editor);
 

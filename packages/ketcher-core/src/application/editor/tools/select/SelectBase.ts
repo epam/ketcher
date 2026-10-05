@@ -37,7 +37,6 @@ import { vectorUtils } from 'application/editor/shared/vectorUtils';
 import {
   HalfMonomerSize,
   MonomerSize,
-  STRAND_TYPE,
   StandardBondLength,
 } from 'domain/constants';
 import { getStructureBbox } from 'domain/entities/structureBbox';
@@ -158,10 +157,6 @@ abstract class SelectBase implements BaseTool {
         );
         SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
         this.editor.renderersContainer.update(modelChanges);
-        // This click clears selection and starts a fresh selection-rectangle
-        // gesture, which derives its own targeted strand from selection
-        // state. Reset so a record from a previous click doesn't leak in.
-        SequenceRenderer.resetTargetedStrand();
       }
       this.onSelectionStart();
     } else {
@@ -174,9 +169,6 @@ abstract class SelectBase implements BaseTool {
         );
         SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
         this.editor.renderersContainer.update(modelChanges);
-        // Clicked something with no renderer payload: selection is cleared
-        // and no new gesture starts, so clear the record too.
-        SequenceRenderer.resetTargetedStrand();
         return;
       }
 
@@ -322,21 +314,10 @@ abstract class SelectBase implements BaseTool {
           drawingEntitiesToSelect,
         );
       modelChanges.merge(selectModelChanges);
-      // Record which row was clicked. Written after the unselect call above
-      // so it survives the gesture instead of being overwritten by it.
-      if (isSequenceItem) {
-        SequenceRenderer.setTargetedStrand(
-          renderer.isAntisenseNode ? STRAND_TYPE.ANTISENSE : STRAND_TYPE.SENSE,
-        );
-      }
     } else if (shiftKey) {
       if (renderer.drawingEntity.selected) {
         return;
       }
-      // Captured before this click's own entities are merged into the
-      // selection below (`turnOnSelection` mutates synchronously), so this
-      // reflects the strand(s) targeted prior to the current click.
-      const existingStrand = SequenceRenderer.targetedStrand;
       const drawingEntities: DrawingEntity[] = [
         ...this.editor.drawingEntitiesManager.selectedEntitiesArr,
         ...drawingEntitiesToSelect,
@@ -346,17 +327,6 @@ abstract class SelectBase implements BaseTool {
           drawingEntities,
         );
       modelChanges.merge(selectModelChanges);
-      // Shift-extension combines rather than overwrites: a shift-click on
-      // the opposite row from the existing record means the gesture now
-      // reaches both strands.
-      if (renderer instanceof BaseSequenceItemRenderer) {
-        const clickedStrand = renderer.isAntisenseNode
-          ? STRAND_TYPE.ANTISENSE
-          : STRAND_TYPE.SENSE;
-        SequenceRenderer.setTargetedStrand(
-          existingStrand === clickedStrand ? clickedStrand : 'both',
-        );
-      }
     } else if (renderer instanceof BaseSequenceItemRenderer && modKey) {
       let drawingEntities: DrawingEntity[] = renderer.currentChain.nodes
         .map((node) => {
@@ -377,10 +347,6 @@ abstract class SelectBase implements BaseTool {
           drawingEntities,
         ),
       );
-      // The mod-key gesture selects a whole chain, which is already
-      // strand-scoped via `currentChain`. Clear the record so the resolver
-      // derives the answer from selection state instead of a stale record.
-      SequenceRenderer.resetTargetedStrand();
     } else if (
       altKey &&
       this.editor.mode.modeName !== 'sequence-layout-mode' &&
@@ -1442,14 +1408,6 @@ abstract class SelectBase implements BaseTool {
       SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
 
       this.editor.renderersContainer.update(modelChanges);
-
-      // The record's lifetime must match the selection it describes: this
-      // branch is the one that clears selection, so it's the one that
-      // clears the record. Switching to the eraser tool deliberately keeps
-      // selection alive (see the `if` above), so it must keep the record
-      // alive too -- otherwise the resolver would fall back to deriving
-      // from that still-selected duplex and answer "both".
-      SequenceRenderer.resetTargetedStrand();
     }
   }
 

@@ -157,25 +157,17 @@ export function isBaseEligibleForDuplexSync(base?: BaseMonomer): boolean {
 }
 
 /**
- * True when the gesture targeted BOTH strands (`bothStrandsTargeted`) and
- * this base and the base it is hydrogen bonded to are both selected and both
- * eligible. Rule 1.3 blocks base modification entirely when this is true for
- * a base in the selection.
- *
- * `base.selected && partner.selected` alone is NOT enough: selection on a
- * duplex is column-based, so a gesture that targets only one strand still
- * leaves the partner selected in every touched column. `bothStrandsTargeted`
- * -- derived by the caller from `SequenceRenderer.targetedStrand` -- is what
- * actually distinguishes "the user selected both strands" from "the partner
- * happens to be selected because selection works that way".
+ * True when this base and the base it is hydrogen bonded to are both selected
+ * and both eligible. Rule 1.3 blocks base modification entirely when this is
+ * true for a base in the selection. It is judged from the selection itself: a
+ * column-based gesture (click, shift-click, select-all, any edit-mode
+ * selection) really does select both strands, while a view-mode drag over one
+ * row selects only that strand.
  */
-export function isSelectedAntisensePair(
-  base: BaseMonomer | undefined,
-  bothStrandsTargeted: boolean,
-): boolean {
+export function isSelectedAntisensePair(base?: BaseMonomer): boolean {
   const partner = getHydrogenBondedPartner(base);
 
-  if (!base || !partner || !bothStrandsTargeted) {
+  if (!base || !partner) {
     return false;
   }
 
@@ -187,6 +179,69 @@ export function isSelectedAntisensePair(
   );
 }
 
+export interface MirroredBaseTarget {
+  partner: BaseMonomer;
+  targetLabel: string;
+}
+
+/**
+ * The decision half of createMirroredBaseCommand: which base the edit
+ * rewrites, and to what. Returns undefined when nothing will change -- sync
+ * off, no eligible partner, the partner is itself selected (rule 1.1: "that
+ * symbol is not selected itself"), the natural analogue is unchanged, or the
+ * partner already carries the complement. Shared with
+ * SequenceMode.countMirroredBaseChanges so the confirmation's count and the
+ * edit cannot disagree.
+ */
+export function resolveMirroredBaseTarget(params: {
+  editedBase: BaseMonomer;
+  previousNaturalAnalogue?: string;
+  newBaseMonomerItem: MonomerOrAmbiguousType;
+  isSyncEditMode: boolean;
+  partner?: BaseMonomer;
+  wasEditedBaseEligible?: boolean;
+}): MirroredBaseTarget | undefined {
+  const {
+    editedBase,
+    previousNaturalAnalogue,
+    newBaseMonomerItem,
+    isSyncEditMode,
+    partner: partnerCapturedBeforeEdit,
+    wasEditedBaseEligible,
+  } = params;
+
+  // Rule 2.1: non-sync mode never touches the opposite strand.
+  if (!isSyncEditMode) {
+    return undefined;
+  }
+
+  const partner =
+    partnerCapturedBeforeEdit ?? getHydrogenBondedPartner(editedBase);
+  const editedBaseEligible =
+    wasEditedBaseEligible ?? isBaseEligibleForDuplexSync(editedBase);
+
+  if (
+    !partner ||
+    partner.selected ||
+    !editedBaseEligible ||
+    !isBaseEligibleForDuplexSync(partner)
+  ) {
+    return undefined;
+  }
+
+  const targetLabel = resolveMirroredBaseLabel({
+    previousNaturalAnalogue,
+    newNaturalAnalogue: getLibraryItemNaturalAnalogue(newBaseMonomerItem),
+    oppositeSugarLabel: getSugarFromRnaBase(partner)?.label,
+  });
+
+  if (!targetLabel || targetLabel === partner.label) {
+    return undefined;
+  }
+
+  return { partner, targetLabel };
+}
+
 /**
  * Builds the command that rewrites the hydrogen-bonded partner of
  * `editedBase` so the pair stays complementary. Direction-agnostic: the same
@@ -194,7 +249,7 @@ export function isSelectedAntisensePair(
  * always mirrors from whichever base was actually edited to its partner.
  *
  * Returns undefined when there is nothing to mirror (sync mode is off, there
- * is no eligible partner, both strands were targeted, or the natural
+ * is no eligible partner, the partner is itself selected, or the natural
  * analogue did not change), so the caller can tell "no-op" apart from a real
  * command to merge into its own.
  */
@@ -212,18 +267,6 @@ export function createMirroredBaseCommand(params: {
    * partner.
    */
   isSyncEditMode: boolean;
-  /**
-   * Whether the selection gesture targeted BOTH strands, derived by the
-   * caller from `SequenceRenderer.targetedStrand`. Rule 1.1: when the
-   * gesture targeted only one strand, the paired base gets its own mirrored
-   * edit from this function and must not be skipped just because it happens
-   * to be selected too -- selection on a duplex is column-based, so the
-   * partner is selected in every touched column regardless of which strand
-   * the user actually meant to edit. Propagation is skipped only when the
-   * gesture targeted both strands, in which case the partner is being edited
-   * in its own right by the caller's own loop over the selection.
-   */
-  bothStrandsTargeted: boolean;
   resolveBaseLibraryItem: (label: string) => MonomerOrAmbiguousType | undefined;
   /**
    * The hydrogen-bonded partner of `editedBase`, captured by the caller
@@ -255,58 +298,14 @@ export function createMirroredBaseCommand(params: {
    */
   wasEditedBaseEligible?: boolean;
 }): Command | undefined {
-  const {
-    drawingEntitiesManager,
-    editedBase,
-    previousNaturalAnalogue,
-    newBaseMonomerItem,
-    isSyncEditMode,
-    bothStrandsTargeted,
-    resolveBaseLibraryItem,
-    partner: partnerCapturedBeforeEdit,
-    wasEditedBaseEligible,
-  } = params;
+  const { drawingEntitiesManager, resolveBaseLibraryItem } = params;
+  const target = resolveMirroredBaseTarget(params);
 
-  // Rule 2.1: non-sync mode never touches the opposite strand.
-  if (!isSyncEditMode) {
+  if (!target) {
     return undefined;
   }
 
-  const partner =
-    partnerCapturedBeforeEdit ?? getHydrogenBondedPartner(editedBase);
-  const editedBaseEligible =
-    wasEditedBaseEligible ?? isBaseEligibleForDuplexSync(editedBase);
-
-  if (
-    !partner ||
-    !editedBaseEligible ||
-    !isBaseEligibleForDuplexSync(partner)
-  ) {
-    return undefined;
-  }
-
-  // Rule 1.1: when both strands were targeted, the paired base is being
-  // edited in its own right by the caller's own loop over the selection, so
-  // it must not be overwritten by this mirror. `partner.selected` alone
-  // cannot detect this: selection on a duplex is column-based, so the
-  // partner is selected in every touched column regardless of which strand
-  // the gesture actually targeted -- that flaw is why this used to skip
-  // propagation on every duplex edit. `bothStrandsTargeted` is what
-  // distinguishes a real both-strands gesture from an ordinary one-strand
-  // edit on a duplex.
-  if (bothStrandsTargeted) {
-    return undefined;
-  }
-
-  const targetLabel = resolveMirroredBaseLabel({
-    previousNaturalAnalogue,
-    newNaturalAnalogue: getLibraryItemNaturalAnalogue(newBaseMonomerItem),
-    oppositeSugarLabel: getSugarFromRnaBase(partner)?.label,
-  });
-
-  if (!targetLabel) {
-    return undefined;
-  }
+  const { partner, targetLabel } = target;
 
   const targetMonomerItem = resolveBaseLibraryItem(targetLabel);
 

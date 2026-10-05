@@ -96,6 +96,7 @@ class ReRxnArrow extends ReObject {
 
     const minDist: MinDistanceWithReferencePoint = dist.reduce(
       (acc, current) => (acc.minDist < current.minDist ? acc : current),
+      { minDist: Infinity, refPoint: null },
     );
 
     return minDist;

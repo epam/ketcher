@@ -28,7 +28,6 @@ import {
   fromSgroupDeletion,
   FunctionalGroup,
   SGroup,
-  expandSGroupWithMultipleAttachmentPoint,
   KetcherLogger,
 } from 'ketcher-core';
 
@@ -829,8 +828,6 @@ class SGroupTool implements Tool {
               sg.atoms,
               newSg.attrs,
             ).mergeWith(fromSgroupDeletion(restruct, id));
-
-            action.mergeWith(expandSGroupWithMultipleAttachmentPoint(restruct));
 
             editor.update(action);
             editor.selection(selection);

@@ -428,8 +428,10 @@ export class SequenceMode extends BaseMode {
     for (const labeledNucleoelement of updatedSelection) {
       const { nodeIndexOverall } = labeledNucleoelement;
 
+      // modifySequenceInRnaBuilder aborts the whole update here, so no
+      // opposite base is rewritten
       if (nodeIndexOverall === undefined) {
-        continue;
+        return 0;
       }
 
       const { nodeToModify, baseMonomerItem } = this.resolveRnaBuilderEntry(

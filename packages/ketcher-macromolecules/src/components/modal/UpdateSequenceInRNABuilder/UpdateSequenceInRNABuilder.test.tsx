@@ -34,6 +34,10 @@ const mockProps = {
 };
 
 describe('UpdateSequenceInRNABuilder modal component', () => {
+  afterEach(() => {
+    (getCountOfMirroredNucleoelements as jest.Mock).mockReturnValue(0);
+  });
+
   const labeledNucleotide: LabeledNodesWithPositionInSequence = {
     type: Entities.Nucleotide,
     baseLabel: 'A',
@@ -140,7 +144,7 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
     });
 
     it('names the additional nucleotides when the update will change some', () => {
-      (getCountOfMirroredNucleoelements as jest.Mock).mockReturnValueOnce(2);
+      (getCountOfMirroredNucleoelements as jest.Mock).mockReturnValue(2);
       render(
         withThemeAndStoreProvider(
           <UpdateSequenceInRNABuilder {...mockProps} />,

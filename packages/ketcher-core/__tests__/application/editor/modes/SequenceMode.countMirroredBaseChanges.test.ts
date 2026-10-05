@@ -239,6 +239,22 @@ describe('SequenceMode#countMirroredBaseChanges', () => {
     ).toBe(0);
   });
 
+  it('counts 0 when any entry has no position, as the edit aborts', () => {
+    const { senseNucleotides } = buildTwoPositionDuplex(editor);
+    selectOnly([senseNucleotides[0]]);
+
+    expect(
+      mode.countMirroredBaseChanges([
+        entry(0, STRAND_TYPE.SENSE, 'C'),
+        // the type requires a number, but the selection can lack a position
+        {
+          ...entry(1, STRAND_TYPE.SENSE, 'C'),
+          nodeIndexOverall: undefined as unknown as number,
+        },
+      ]),
+    ).toBe(0);
+  });
+
   it('has no side effects on base labels or history', () => {
     const { senseNucleotides, antisenseNucleotides } =
       buildTwoPositionDuplex(editor);

@@ -647,7 +647,7 @@ Produces: `getCountOfMirroredNucleoelements(editor: CoreEditor | undefined, sequ
 
 ## 25. Verify and hand off
 
-- [ ] 25.1 Run the full gates in order: `npm test` in `packages/ketcher-core`, `npm run build` in `packages/ketcher-core`, `npm test` in `packages/ketcher-macromolecules`. Paste failures verbatim if any.
-- [ ] 25.2 `grep -rn "targetedStrand\|TargetedStrand\|bothStrandsTargeted\|filterSelectionsToTargetedStrand\|isSequenceAntisenseEditMode" packages/*/src packages/*/__tests__` returns nothing.
+- [x] 25.1 Run the full gates in order: `npm test` in `packages/ketcher-core`, `npm run build` in `packages/ketcher-core`, `npm test` in `packages/ketcher-macromolecules`. Paste failures verbatim if any.
+- [x] 25.2 `grep -rn "targetedStrand\|TargetedStrand\|bothStrandsTargeted\|filterSelectionsToTargetedStrand\|isSequenceAntisenseEditMode" packages/*/src packages/*/__tests__` returns nothing.
 - [ ] 25.3 Manual smoke check in sequence mode, sync on — requires a browser; hand the matrix to the human reviewer: drag over sense symbols and change a base in the RNA Builder (confirmation names m; partner mirrors); same from the antisense row; one symbol only (confirmation appears with n = 1, m = 1); click a symbol, edit-mode drag, shift+arrows → bases `[disabled]`/refused, context menu names 2N; shift+drag unpaired symbols on both rows → each mirrors; click a column and replace with a sugar from the library → both strands replaced, backbone intact, one undo; repeat the last with a preset in non-sync mode.
 - [ ] 25.4 Update the PR #11816 description's behavior list (selection rule, n/m confirmation, both-strands library replacement) — ask the user before editing the PR.

@@ -408,7 +408,7 @@ Files: `src/application/editor/modes/SequenceMode.ts`; test `__tests__/applicati
 
 Produces: module-level `splitSelectionsIntoStrandRuns(selections: TwoStrandedNodesSelection): StrandRun[]` with `interface StrandRun { strandType: STRAND_TYPE; selectionRange: TwoStrandedNodeSelection[] }`. `getSelectedStrandType` and `splitSelectionRangeByStrand` are deleted.
 
-- [ ] 22.1 Write the failing tests, sync editing off unless stated (turn it off with the `_isSyncEditMode` prototype-cast already used in `antisenseDuplexSync`):
+- [x] 22.1 Write the failing tests, sync editing off unless stated (turn it off with the `_isSyncEditMode` prototype-cast already used in `antisenseDuplexSync`):
   - Both strands of both positions selected, replaced with the sugar `R` through `replaceSelectionsWithMonomer`: no original sense or antisense monomer of either position remains in `drawingEntitiesManager.monomers`; exactly four new `R` monomers exist; each pair of new sense monomers is bonded R2→R1, and the same holds for the new antisense pair.
   - Same replacement, then `history.undo()` once: `historyPointer` moves back by one; every original monomer id is back; `senseNucleotides[i].rnaBase.hydrogenBonds[0].getAnotherMonomer(senseNucleotides[i].rnaBase)` is `antisenseNucleotides[i].rnaBase` for both positions.
   - Both strands of position 0 selected, replaced through `replaceSelectionsWithPreset` with the RNA preset for `A` (get it the way `SequenceMode.presetStrandAware.test.ts` does): both position-0 nucleotides are new nucleotides; the two new bases are hydrogen bonded to each other; position 1 is untouched on both strands.
@@ -428,8 +428,8 @@ Produces: module-level `splitSelectionsIntoStrandRuns(selections: TwoStrandedNod
     expect(callSelectionsContainLinkerNode(mode, selections)).toBe(true);
     ```
     (`callSelectionsContainLinkerNode` follows the same prototype-cast pattern as `callReplaceSelectionsWithMonomer`; today it returns `false` because only the sense node is checked.)
-- [ ] 22.2 Run `npx jest __tests__/application/editor/modes/SequenceMode.bothStrandsReplacement.test.ts`; expect the replacement tests to fail on the antisense side (only sense is replaced today).
-- [ ] 22.3 In `SequenceMode.ts`, replace `getSelectedStrandType` and `splitSelectionRangeByStrand` (and its doc comment) with:
+- [x] 22.2 Run `npx jest __tests__/application/editor/modes/SequenceMode.bothStrandsReplacement.test.ts`; expect the replacement tests to fail on the antisense side (only sense is replaced today).
+- [x] 22.3 In `SequenceMode.ts`, replace `getSelectedStrandType` and `splitSelectionRangeByStrand` (and its doc comment) with:
     ```ts
     interface StrandRun {
       strandType: STRAND_TYPE;
@@ -472,10 +472,10 @@ Produces: module-level `splitSelectionsIntoStrandRuns(selections: TwoStrandedNod
       return runs;
     }
     ```
-- [ ] 22.4 In `replaceSelectionsWithMonomer` and `replaceSelectionsWithPreset`, replace the `sameStrandSelectionRanges` block and `getSelectedStrandType(selectionRange[0].node)` with `splitSelectionsIntoStrandRuns(selections).forEach(({ strandType, selectionRange }) => { … })`; the loop body is unchanged. Update the comment above each to say each run is one strand and both strands of a position are visited.
-- [ ] 22.5 Make the pre-checks iterate the same runs: in `selectionsContainLinkerNode`, `getFirstMissingAttachmentPoint`, `selectionsCantPreserveConnectionsWithPreset` and `refuseIfBaseModificationBlocked`, replace the `selections.some(range => range.some(...))` / nested `for` over `selections` with iteration over `splitSelectionsIntoStrandRuns(selections)`, resolving `getNodeForStrand(nodeSelection.node, strandType)`. Keep each method's early-return semantics (`getFirstMissingAttachmentPoint` still returns the first missing point it finds).
-- [ ] 22.6 `grep -n "getSelectedStrandType\|splitSelectionRangeByStrand" packages/ketcher-core/src` returns nothing. Run `npm test` in `packages/ketcher-core`; green, including the suites from section 20.
-- [ ] 22.7 Commit: `#6595 - Replace both strands of a both-selected position from the library`.
+- [x] 22.4 In `replaceSelectionsWithMonomer` and `replaceSelectionsWithPreset`, replace the `sameStrandSelectionRanges` block and `getSelectedStrandType(selectionRange[0].node)` with `splitSelectionsIntoStrandRuns(selections).forEach(({ strandType, selectionRange }) => { … })`; the loop body is unchanged. Update the comment above each to say each run is one strand and both strands of a position are visited.
+- [x] 22.5 Make the pre-checks iterate the same runs: in `selectionsContainLinkerNode`, `getFirstMissingAttachmentPoint`, `selectionsCantPreserveConnectionsWithPreset` and `refuseIfBaseModificationBlocked`, replace the `selections.some(range => range.some(...))` / nested `for` over `selections` with iteration over `splitSelectionsIntoStrandRuns(selections)`, resolving `getNodeForStrand(nodeSelection.node, strandType)`. Keep each method's early-return semantics (`getFirstMissingAttachmentPoint` still returns the first missing point it finds).
+- [x] 22.6 `grep -n "getSelectedStrandType\|splitSelectionRangeByStrand" packages/ketcher-core/src` returns nothing. Run `npm test` in `packages/ketcher-core`; green, including the suites from section 20.
+- [x] 22.7 Commit: `#6595 - Replace both strands of a both-selected position from the library`.
 
 ## 23. Count the opposite bases an RNA Builder update will rewrite (`ketcher-core`)
 

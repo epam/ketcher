@@ -679,7 +679,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const contentTypeFontSize = await contentTypeSelector
       .locator('span')
       .first()
-      .evaluate((element) => window.getComputedStyle(element).fontSize);
+      .evaluate((element) => globalThis.getComputedStyle(element).fontSize);
     expect(contentTypeFontSize).toBe('12px');
 
     await PasteFromClipboardDialog(page).selectMonomerType(
@@ -688,7 +688,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const monomerTypeFontSize = await monomerTypeSelector
       .locator('span')
       .first()
-      .evaluate((element) => window.getComputedStyle(element).fontSize);
+      .evaluate((element) => globalThis.getComputedStyle(element).fontSize);
     expect(monomerTypeFontSize).toBe('12px');
 
     await PasteFromClipboardDialog(page).selectPeptideLetterType(
@@ -697,7 +697,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const peptideLetterFontSize = await peptideLettersSelector
       .locator('span')
       .first()
-      .evaluate((element) => window.getComputedStyle(element).fontSize);
+      .evaluate((element) => globalThis.getComputedStyle(element).fontSize);
     expect(peptideLetterFontSize).toBe('12px');
 
     await takeEditorScreenshot(page);
@@ -1150,12 +1150,22 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       'Molfiles-V2000/complex-molecule-for-layout.mol',
     );
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
-    await selectWithLasso(page, 420, 290, [
-      { x: 740, y: 170 },
-      { x: 740, y: 455 },
-      { x: 300, y: 455 },
-      { x: 300, y: 170 },
-      { x: 420, y: 290 },
+    // Start on empty canvas: starting on an atom or bracket drags it instead of
+    // drawing the lasso. Edges keep >= 12px from every atom, so a few pixels of
+    // canvas offset left by earlier tests cannot change what gets selected.
+    await selectWithLasso(page, 300, 180, [
+      { x: 620, y: 180 },
+      { x: 620, y: 285 },
+      { x: 735, y: 285 },
+      { x: 735, y: 312 },
+      { x: 765, y: 312 },
+      { x: 765, y: 470 },
+      { x: 600, y: 470 },
+      { x: 600, y: 437 },
+      { x: 428, y: 437 },
+      { x: 428, y: 480 },
+      { x: 300, y: 480 },
+      { x: 300, y: 180 },
     ]);
     await layout(page);
     await CommonTopRightToolbar(page).setZoomInputValue('40');

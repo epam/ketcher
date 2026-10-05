@@ -121,7 +121,7 @@ type ActionStateEditor = Editor & {
   struct(value: Struct | null): Struct;
 };
 
-type ActionStateOptions = {
+export type ActionStateOptions = {
   app: {
     server?: unknown;
     templates?: unknown;
@@ -137,6 +137,11 @@ type ActionThunkState = {
       select: ToolVariant;
     };
   };
+};
+
+// Specific action option types
+type AtomActionOpts = {
+  label: string;
 };
 
 // todo: find out types
@@ -160,7 +165,7 @@ type GetDisabledState = (
   server: unknown,
   options: ActionStateOptions,
 ) => boolean;
-type GetHiddenState = (options: ActionStateOptions) => boolean;
+export type GetHiddenState = (options: ActionStateOptions) => boolean;
 
 export type GetActionState =
   GetSelectedState | GetDisabledState | GetHiddenState;
@@ -170,7 +175,10 @@ type IsDisabledState = boolean | GetDisabledState;
 type IsHiddenState = boolean | GetHiddenState;
 
 interface UiAction {
+  /** Translation key (namespace:key) resolved by the consuming component via t(), not display text. */
   title?: string;
+  /** Interpolation values for ICU placeholders in the title key, e.g. { symbol: 'H' }. */
+  titleParams?: Record<string, string>;
   shortcut?: string | Array<string>;
   enabledInViewOnly?: true;
   action: UiActionAction;
@@ -184,4 +192,4 @@ type Tools = {
   [key in ToolVariant]: UiAction;
 };
 
-export type { Tools, UiAction, UiActionAction };
+export type { Tools, UiAction, UiActionAction, AtomActionOpts };

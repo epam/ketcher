@@ -3,10 +3,13 @@ import {
   Bond,
   isAtomPartOfAttachmentGroup,
   MonomerMicromolecule,
+  type Bond as BondType,
   type Struct,
 } from 'ketcher-core';
 import type { Selection } from 'src/script/editor/Editor';
 import { isStructureContinuous } from 'src/script/editor/utils/structureContinuity';
+import type { TFunction } from 'i18next';
+import { resolveTranslatableText } from 'src/script/ui/utils';
 
 const ATTACHMENT_GROUP_SELECTION_IGNORED_KEYS = ['enhancedFlags', 'frags'];
 const ATTACHMENT_GROUP_REMOVAL_ALLOWED_KEYS = new Set([
@@ -17,14 +20,19 @@ const ATTACHMENT_GROUP_REMOVAL_ALLOWED_KEYS = new Set([
 ]);
 
 /**
- * Remove the word `bond` out of the title
- *
- * @example
- * formatTitle('Single Bond') === 'Single'
+ * Bond-type menu items only want the bare type name (e.g. "Single",
+ * "Double") - a translation key shared with Bond.tsx's Type dropdown, not
+ * the full "{type} Bond" sentence used for the toolbar action's own title.
+ * Read it directly from titleParams instead of stripping a fixed-length
+ * suffix off the resolved, translated string: that used to work by
+ * coincidence in English (" Bond" is 5 characters) but corrupted the type
+ * name in any locale where the translated suffix isn't also 5 characters
+ * (e.g. zh-CN's "键" is 1 character).
  */
-export const formatTitle = (title: string) => {
-  return title.slice(0, -5);
-};
+export const getBondTypeName = (
+  action: { titleParams?: Record<string, string> } | null | undefined,
+  t: TFunction,
+) => resolveTranslatableText(action?.titleParams?.type ?? '', t);
 
 /**
  * Get bond names from default export of `src/script/ui/action/tools.js`
@@ -80,7 +88,7 @@ export const getBondNamesForContextMenu = (tools) =>
  * Check whether a bond connects two distinct monomers
  */
 export const isBondBetweenMonomers = (
-  bond: Bond | null | undefined,
+  bond: BondType | null | undefined,
   struct: Struct,
 ) => {
   if (!bond) {
@@ -96,6 +104,13 @@ export const isBondBetweenMonomers = (
     beginAtomSgroup !== endAtomSgroup
   );
 };
+
+export const isHydrogenBondBetweenMonomers = (
+  bond: BondType | null | undefined,
+  struct: Struct,
+) =>
+  bond?.type === Bond.PATTERN.TYPE.HYDROGEN &&
+  isBondBetweenMonomers(bond, struct);
 
 export const noOperation = () => null;
 

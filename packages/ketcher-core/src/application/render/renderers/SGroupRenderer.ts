@@ -62,6 +62,14 @@ export class SGroupRenderer extends BaseRenderer {
     return this.sgroupDrawingEntity.sgroup;
   }
 
+  public get labelTooltipText(): string | null {
+    if (this.sgroup.type !== SGroup.TYPES.DAT) {
+      return null;
+    }
+
+    return `${this.sgroup.data.fieldName}=${this.sgroup.data.fieldValue}`;
+  }
+
   private addLabelElement<ElementType extends SVGElement>(
     element: D3SvgElementSelection<ElementType, void>,
   ): D3SvgElementSelection<ElementType, void> {
@@ -608,7 +616,7 @@ export class SGroupRenderer extends BaseRenderer {
       ),
       ...this.getSGroupBondRenderers()
         .map((bondRenderer) => this.getBondHoverPath(bondRenderer))
-        .filter((path): path is paper.CompoundPath => Boolean(path)),
+        .filter((path): path is paper.CompoundPath => path !== null),
     ];
 
     let combinedPath: paper.PathItem | undefined;

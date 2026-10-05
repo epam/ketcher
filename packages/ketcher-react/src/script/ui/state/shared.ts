@@ -241,7 +241,7 @@ export function load(struct: string | Struct, options?) {
       }
 
       const isIndigoFunctionCalled = !!method;
-      if (!isPaste && !isIndigoFunctionCalled && !skipCenter) {
+      if (!fragment && !isPaste && !isIndigoFunctionCalled && !skipCenter) {
         editor.centerStruct();
       }
       if (!fragment) {

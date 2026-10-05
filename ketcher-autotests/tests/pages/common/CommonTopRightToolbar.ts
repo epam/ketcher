@@ -156,7 +156,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       if (options.disableAutozoom !== false) {
         await page.evaluate(() => {
           // Temporary solution to disable autozoom for the macro editor in e2e tests
-          window._ketcher_isAutozoomDisabled = true;
+          globalThis.window._ketcher_isAutozoomDisabled = true;
         });
       }
     },

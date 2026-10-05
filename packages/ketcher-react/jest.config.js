@@ -13,6 +13,8 @@ module.exports = {
     '^src(.*)$': '<rootDir>/src/$1',
     '^components$': '<rootDir>/src/components',
     '^d3$': '<rootDir>/../../node_modules/d3/dist/d3.min.js',
+    // intl-messageformat is ESM-only (no CJS build) — see testIntlMessageFormatMock.js
+    '^intl-messageformat$': '<rootDir>/testIntlMessageFormatMock.js',
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   setupFiles: ['./jest.setup.js'],

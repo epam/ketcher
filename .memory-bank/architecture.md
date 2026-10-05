@@ -53,6 +53,7 @@ The shared foundation that both UI packages build on. It owns the entire domain 
 - `MicromoleculesEditor.tsx` — mounts the Raphael canvas and Redux store
 - `script/editor/Editor.ts` — editor instance (wraps Raphael render + tool system)
 - `script/ui/` — all React UI: toolbars, dialogs, state (Redux), hotkeys
+- `src/i18n/` — `react-i18next` UI-text localization (English + Simplified Chinese today); see [modules/i18n.md](./modules/i18n.md). The shared `i18next` instance lives here and also serves `ketcher-macromolecules` (see below) — both packages' UI translate together as one unit.
 
 ### 3. `ketcher-macromolecules`
 
@@ -60,6 +61,8 @@ The shared foundation that both UI packages build on. It owns the entire domain 
 - `Editor.tsx` — creates `CoreEditor`, owns the D3/SVG canvas, mounts Redux store
 - `state/common/editorSlice.ts` — primary Redux slice (editor instance, layout mode, tools, preview, line-length)
 - `components/` — MonomerLibrary, ContextMenu, TopMenu, LeftMenu, ZoomControls, Ruler, Modals, etc.
+- Own translation namespaces (`macromolecules`, `macromoleculesDialogs`) registered into `ketcher-react`'s shared `i18next` instance at runtime — see [modules/i18n.md](./modules/i18n.md).
+- **Dependency on `ketcher-react`:** `ketcher-react/src/Editor.tsx` lazily imports this package (`import('ketcher-macromolecules')`). `ketcher-macromolecules` is declared as a regular dependency in `ketcher-react/package.json`, so `rollup-plugin-peer-deps-external` externalizes the import — `ketcher-react`'s build never inlines a snapshot of this package, it leaves the dynamic import for the final consumer to resolve. Because of this, `build:packages`' build order between the two is no longer load-bearing for staleness (`core → (standalone ‖ react) → macromolecules`); verified by injecting a unique marker string into this package's source and confirming it never appears in `ketcher-react`'s bundle output regardless of build order.
 
 ### 4. `ketcher-standalone`
 

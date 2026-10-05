@@ -28,13 +28,11 @@ const includePattern = 'src/**/*';
 
 const config = {
   input: pkg.source,
-  external: /^node:/,
   output: [
     {
       dir: 'dist',
       exports: 'named',
       format: 'cjs',
-      paths: { 'node:events': 'events' },
       banner: license,
       preserveModules: true,
       preserveModulesRoot: 'src',
@@ -44,7 +42,6 @@ const config = {
       dir: 'dist',
       exports: 'named',
       format: 'es',
-      paths: { 'node:events': 'events' },
       banner: license,
       preserveModules: true,
       preserveModulesRoot: 'src',

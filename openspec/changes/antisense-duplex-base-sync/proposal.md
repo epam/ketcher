@@ -9,7 +9,7 @@ GitHub issue: epam/ketcher#6595.
 ## What Changes
 
 - The three blanket antisense guards are removed: the two on the RNA Builder and the monomer library, and the one on preset replacement. Selecting part of a duplex no longer disables "Modify in RNA Builder...", and no longer makes library replacement a silent no-op. The narrow blocked-pair rule below takes their place.
-- Both replacement paths now edit the selected strand. Previously they resolved the target by index and then took the sense node, so an antisense selection would have rewritten the sense strand. Whether one or both bases of a pair are being edited is read from the selection itself, per pair.
+- Both replacement paths now edit the selected strand, and when both strands of a position are selected they both edit both monomers: library replacement visits each strand in its own pass instead of picking the sense node. Previously they resolved the target by index and then took the sense node, so an antisense selection would have rewritten the sense strand. Whether one or both bases of a pair are being edited is read from the selection itself, per pair.
 - In sequence mode with sync editing on, replacing a base changes the H-bonded base on the opposite strand so the pair stays complementary. This works in either direction, sense to antisense or antisense to sense. It applies to both the RNA Builder update flow and the select-and-replace-from-library flow.
 - Propagation happens only when the replacement changes the base's natural analogue. Swapping a base for a different modification of the same natural analogue leaves the opposite strand untouched.
 - The mirrored base is chosen from the DNA complement table when the opposite nucleotide's sugar is deoxyribose, and from the RNA table otherwise. Adenine is the only analogue whose complement differs between the two tables.
@@ -91,6 +91,7 @@ nucleotides the update will change. That is added here.
 - **`ketcher-macromolecules`** — `RnaEditorExpanded.selectGroup`: dispatch the error toast when the blocked bases section is clicked.
 - **`ketcher-core`** — `SequenceMode.getSelectedStrandType`: answer per position from that position's own selection state.
 - **`ketcher-core`** — `domain/helpers/antisenseBaseSync.ts`: the mirror and blocked-pair predicates decide per pair from `selected`, and the mirror decision is split into a pure helper shared by the command builder and the new count.
+- **`ketcher-core`** — `SequenceMode.replaceSelectionsWithMonomer`, `replaceSelectionsWithPreset` and the linker, attachment-point and side-chain pre-checks: iterate per-strand runs so both monomers of a both-strands position are replaced and checked.
 - **`ketcher-core`** — `SequenceMode.countMirroredBaseChanges`: new public method counting the opposite bases an RNA Builder update will rewrite.
 - **`ketcher-macromolecules`** — `UpdateSequenceInRNABuilder` and `RnaEditorExpanded.onUpdateSequence`: the n/m confirmation text, shown when n > 1 or m > 0.
 - **`ketcher-core`** — `SequenceMode.insertPresetFromLibrary`: drop the blanket antisense guard; refuse only the both-strands case, through the shared rule below.

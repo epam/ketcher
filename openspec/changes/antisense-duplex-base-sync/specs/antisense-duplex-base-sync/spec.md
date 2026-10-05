@@ -74,6 +74,8 @@ The system SHALL allow a selection that covers part of a double-stranded sequenc
 
 When the user modifies a selection through the RNA Builder or the monomer library, the system SHALL apply the modification to the selected monomers, and SHALL NOT apply it to an unselected monomer on the opposite strand except through the propagation specified below.
 
+When both strands of a position are selected, a modification that is not blocked SHALL apply to both selected monomers, and the RNA Builder and the monomer library SHALL agree on this. Each strand's backbone SHALL be rebuilt in its own chain direction, and the confirmations a replacement raises SHALL take every selected monomer into account.
+
 #### Scenario: An antisense selection edits the antisense strand
 
 - **WHEN** the user selects a nucleotide on the antisense strand of a duplex, and not its sense partner
@@ -91,6 +93,35 @@ When the user modifies a selection through the RNA Builder or the monomer librar
 
 - **WHEN** the user's selection covers both strands of N positions
 - **THEN** the sequence context menu title names 2N nucleotides
+
+#### Scenario: Library replacement on a both-strands selection replaces both strands
+
+- **WHEN** the selection covers both strands of one or more positions of a duplex
+- **AND** the user clicks a library item that sets no base, such as a sugar, a phosphate or a CHEM monomer
+- **THEN** the sense and the antisense monomer at each such position are both replaced
+- **AND** each strand remains a single chain, connected to the same neighbors it had
+- **AND** the whole replacement is a single undo step
+
+#### Scenario: Preset replacement on a both-strands selection replaces both strands
+
+- **WHEN** sync editing is off
+- **AND** the selection covers both strands of one or more positions of a duplex
+- **AND** the user clicks a preset in the library
+- **THEN** the sense and the antisense nucleotide at each such position are both replaced with the preset
+- **AND** each strand remains a single chain, connected to the same neighbors it had
+- **AND** the hydrogen bond between the two positions is carried over to the two new bases
+
+#### Scenario: A both-strands selection agrees between the two paths
+
+- **WHEN** the selection covers both strands of a position
+- **AND** the user changes the sugar through the RNA Builder, or replaces with the same sugar through the library
+- **THEN** both paths change the sugar of both selected nucleotides
+
+#### Scenario: Confirmations consider the antisense monomer of a both-strands position
+
+- **WHEN** the selection covers both strands of a position
+- **AND** only the antisense monomer at that position would raise a replacement confirmation, such as a `@` linker node or a node whose side chain connections cannot be kept
+- **THEN** that confirmation is raised
 
 #### Scenario: The RNA Builder shows the selected strand's symbols
 

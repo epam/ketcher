@@ -224,7 +224,8 @@
   },
   "updateSequence": {
     "title": "更新序列",
-    "confirmText": "您将修改 {count} 个核苷酸。是否确定？"
+    "confirmText": "您将修改 {count} 个核苷酸。是否确定？",
+    "duplexConfirmText": "您将修改 {count} 个核苷酸，这将同时改变另外 {mirroredCount} 个核苷酸。是否确定？"
   },
   "monomerConnection": {
     "editTitle": "编辑连接点",

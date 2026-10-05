@@ -16,7 +16,7 @@
 
 import { KetcherLogger, KetSerializer, MolSerializer } from 'ketcher-core';
 import i18n from '../../../i18n/i18n';
-import type { SerializationType, StructSerializer } from './copyAs.types';
+import type { SerializationType, StructSerializer } from '../../../types';
 
 /**
  * Copies the selected structure to clipboard in the specified format (MOL or KET).

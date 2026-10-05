@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Struct, Serializer } from 'ketcher-core';
-import type Editor from '../../editor/Editor';
+import type { Serializer, Struct } from 'ketcher-core';
+import type Editor from './script/editor/Editor';
 
 /**
  * Supported serialization format types for structure copying.

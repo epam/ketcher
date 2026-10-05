@@ -1,5 +1,5 @@
 import type { BaseRenderer, Ketcher } from 'ketcher-core';
-import type { CurrentState } from './script/ui/action/copyAs.types';
+import type { CurrentState } from './types';
 
 declare global {
   var currentState: CurrentState | undefined;

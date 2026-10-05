@@ -21,6 +21,12 @@ import {
   STRAND_TYPE,
 } from 'ketcher-core';
 import { UpdateSequenceInRNABuilder } from './UpdateSequenceInRNABuilder';
+import { getCountOfMirroredNucleoelements } from 'helpers/countNucleoelents';
+
+jest.mock('helpers/countNucleoelents', () => ({
+  ...jest.requireActual('helpers/countNucleoelents'),
+  getCountOfMirroredNucleoelements: jest.fn(() => 0),
+}));
 
 const mockProps = {
   isModalOpen: true,
@@ -38,6 +44,14 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
     strandType: STRAND_TYPE.SENSE,
   };
 
+  // Distinct nodes (not the same object 3 times) so a length-vs-identity
+  // mixup in the write-back would be visible if it occurred.
+  const threeSenseDuplexPositions: LabeledNodesWithPositionInSequence[] = [
+    { ...labeledNucleotide, nodeIndexOverall: 0 },
+    { ...labeledNucleotide, nodeIndexOverall: 1 },
+    { ...labeledNucleotide, nodeIndexOverall: 2 },
+  ];
+
   it('should render correctly', () => {
     expect(
       render(
@@ -53,6 +67,7 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
     ).toMatchSnapshot();
   });
   it('should close modal', () => {
+    const modifySequenceInRnaBuilderDispatch = jest.fn();
     render(
       withThemeAndStoreProvider(<UpdateSequenceInRNABuilder {...mockProps} />, {
         rnaBuilder: {
@@ -61,6 +76,9 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
         editor: {
           editor: {
             events: {
+              modifySequenceInRnaBuilder: {
+                dispatch: modifySequenceInRnaBuilderDispatch,
+              },
               turnOffSequenceEditInRNABuilderMode: { dispatch: () => true },
             },
           },
@@ -70,6 +88,7 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
     const cancelButton = screen.getByTestId('update-sequence-cancel-button');
     fireEvent.click(cancelButton);
     expect(mockProps.onClose).toHaveBeenCalled();
+    expect(modifySequenceInRnaBuilderDispatch).not.toHaveBeenCalled();
   });
 
   it('should execute update', () => {
@@ -101,14 +120,6 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
   // and its own real "Yes" handler dispatches modifySequenceInRnaBuilder
   // with exactly that N-length array - not a re-derived count.
   describe('for a one-strand selection of N duplex positions', () => {
-    // Distinct nodes (not the same object 3 times) so a length-vs-identity
-    // mixup in the write-back would be visible if it occurred.
-    const threeSenseDuplexPositions: LabeledNodesWithPositionInSequence[] = [
-      { ...labeledNucleotide, nodeIndexOverall: 0 },
-      { ...labeledNucleotide, nodeIndexOverall: 1 },
-      { ...labeledNucleotide, nodeIndexOverall: 2 },
-    ];
-
     it('names N in its own rendered confirmation text', () => {
       render(
         withThemeAndStoreProvider(
@@ -125,6 +136,24 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
         screen.getByTestId('update-sequence-modal-body'),
       ).toHaveTextContent(
         'You are going to modify 3 nucleotides. Are you sure?',
+      );
+    });
+
+    it('names the additional nucleotides when the update will change some', () => {
+      (getCountOfMirroredNucleoelements as jest.Mock).mockReturnValueOnce(2);
+      render(
+        withThemeAndStoreProvider(
+          <UpdateSequenceInRNABuilder {...mockProps} />,
+          {
+            rnaBuilder: { sequenceSelection: threeSenseDuplexPositions },
+          },
+        ),
+      );
+
+      expect(
+        screen.getByTestId('update-sequence-modal-body'),
+      ).toHaveTextContent(
+        'You are going to modify 3 nucleotides, and that will change 2 additional nucleotides. Are you sure?',
       );
     });
 

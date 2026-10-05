@@ -21,7 +21,10 @@ import { selectSequenceSelection } from 'state/rna-builder';
 import { ActionButton } from 'components/shared/actionButton';
 import styled from '@emotion/styled';
 import { selectEditor } from 'state/common';
-import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
+import {
+  getCountOfMirroredNucleoelements,
+  getCountOfNucleoelements,
+} from 'helpers/countNucleoelents';
 import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 
 export interface Props {
@@ -39,6 +42,10 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
   const sequenceSelection = useAppSelector(selectSequenceSelection);
   const editor = useAppSelector(selectEditor);
   const countOfNucleoelements = getCountOfNucleoelements(sequenceSelection);
+  const countOfMirroredNucleoelements = getCountOfMirroredNucleoelements(
+    editor,
+    sequenceSelection,
+  );
   const onCloseCallback = useCallback(() => {
     onClose();
   }, [onClose]);

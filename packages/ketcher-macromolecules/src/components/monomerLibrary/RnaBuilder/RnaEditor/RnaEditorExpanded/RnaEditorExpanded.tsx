@@ -80,10 +80,14 @@ import {
   generateSequenceSelectionGroupNames,
   generateSequenceSelectionName,
   resetRnaBuilder,
+  isUpdateSequenceConfirmationNeeded,
   resetRnaBuilderAfterSequenceUpdate,
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 import { openModal } from 'state/modal';
-import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
+import {
+  getCountOfMirroredNucleoelements,
+  getCountOfNucleoelements,
+} from 'helpers/countNucleoelents';
 import clsx from 'clsx';
 import Tooltip from '@mui/material/Tooltip';
 import {
@@ -560,7 +564,12 @@ export const RnaEditorExpanded = ({
   };
 
   const onUpdateSequence = () => {
-    if (getCountOfNucleoelements(sequenceSelection) > 1) {
+    if (
+      isUpdateSequenceConfirmationNeeded(
+        getCountOfNucleoelements(sequenceSelection),
+        getCountOfMirroredNucleoelements(editor, sequenceSelection),
+      )
+    ) {
       dispatch(openModal('updateSequenceInRNABuilder'));
     } else {
       editor?.events.modifySequenceInRnaBuilder.dispatch(sequenceSelection);

@@ -573,7 +573,7 @@ Files: `src/helpers/countNucleoelents.ts`; `src/components/modal/UpdateSequenceI
 
 Produces: `getCountOfMirroredNucleoelements(editor: CoreEditor | undefined, sequenceSelection: LabeledNodesWithPositionInSequence[]): number`.
 
-- [ ] 24.1 Run `npm run build` in `packages/ketcher-core`. Write the failing tests:
+- [x] 24.1 Run `npm run build` in `packages/ketcher-core`. Write the failing tests:
   - In `UpdateSequenceInRNABuilder.test.tsx`, mock the helper module, keeping the real `getCountOfNucleoelements`:
     ```ts
     jest.mock('helpers/countNucleoelents', () => ({
@@ -609,8 +609,8 @@ Produces: `getCountOfMirroredNucleoelements(editor: CoreEditor | undefined, sequ
     ) => countOfNucleoelements > 1 || countOfMirroredNucleoelements > 0;
     ```
     Tests: `(2, 0)` true; `(1, 1)` true; `(1, 0)` false; `(0, 0)` false.
-- [ ] 24.2 Run `npx jest src/helpers src/components/modal/UpdateSequenceInRNABuilder src/components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded`; expect failures.
-- [ ] 24.3 Implement:
+- [x] 24.2 Run `npx jest src/helpers src/components/modal/UpdateSequenceInRNABuilder src/components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded`; expect failures.
+- [x] 24.3 Implement:
   - `countNucleoelents.ts`:
     ```ts
     export const getCountOfMirroredNucleoelements = (
@@ -641,9 +641,9 @@ Produces: `getCountOfMirroredNucleoelements(editor: CoreEditor | undefined, sequ
       dispatch(openModal('updateSequenceInRNABuilder'));
     } else { /* unchanged */ }
     ```
-- [ ] 24.4 Run the tests from 24.2; green. Update the snapshot only if its diff is limited to the text node becoming a single string (`npx jest src/components/modal/UpdateSequenceInRNABuilder -u`, then read the `.snap` diff before keeping it).
-- [ ] 24.5 Run `npm test` in `packages/ketcher-macromolecules`; green.
-- [ ] 24.6 Commit: `#6595 - Name the additional nucleotides in the RNA Builder update confirmation`.
+- [x] 24.4 Run the tests from 24.2; green. Update the snapshot only if its diff is limited to the text node becoming a single string (`npx jest src/components/modal/UpdateSequenceInRNABuilder -u`, then read the `.snap` diff before keeping it).
+- [x] 24.5 Run `npm test` in `packages/ketcher-macromolecules`; green.
+- [x] 24.6 Commit: `#6595 - Name the additional nucleotides in the RNA Builder update confirmation`.
 
 ## 25. Verify and hand off
 

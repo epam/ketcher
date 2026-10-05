@@ -160,6 +160,7 @@ export const ModeControl = ({
 }: ModeProps) => {
   const { t } = useTranslation('toolbars');
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const handleModeSwitch = (isPolymer: boolean) => {
@@ -175,7 +176,10 @@ export const ModeControl = ({
   };
 
   const onClose = () => setIsExpanded(false);
-  const onExpand = () => setIsExpanded(true);
+  const onExpand = () => {
+    setAnchorEl(btnRef.current);
+    setIsExpanded(true);
+  };
 
   const modeLabel = isPolymerEditor
     ? t('modeControl.macromolecules')
@@ -211,7 +215,7 @@ export const ModeControl = ({
         title=""
         open={isExpanded}
         onClose={onClose}
-        anchorEl={btnRef.current}
+        anchorEl={anchorEl}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',

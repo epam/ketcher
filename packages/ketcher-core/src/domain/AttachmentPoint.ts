@@ -15,7 +15,6 @@ import { editorEvents } from 'application/editor/editorEvents';
 import {
   type AttachmentPointConstructorParams,
   AttachmentPointName,
-  type MouseEventWithAttachmentPoint,
 } from './types';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
@@ -241,9 +240,13 @@ export class AttachmentPoint {
       );
 
     hoverableAreaElement
-      .on('mouseover', (event: MouseEventWithAttachmentPoint) => {
-        event.attachmentPointName = this.attachmentPointName;
-        this.editorEvents.mouseOverAttachmentPoint.dispatch(event);
+      .on('mouseover', (event: MouseEvent) => {
+        const attachmentPointEvent = Object.assign(event, {
+          attachmentPointName: this.attachmentPointName,
+        });
+        this.editorEvents.mouseOverAttachmentPoint.dispatch(
+          attachmentPointEvent,
+        );
       })
       .on('mouseleave', (event: MouseEvent) => {
         this.editorEvents.mouseLeaveAttachmentPoint.dispatch(event);
@@ -251,13 +254,19 @@ export class AttachmentPoint {
       .on('mousemove', (event: MouseEvent) => {
         this.editorEvents.mouseMoveAttachmentPoint.dispatch(event);
       })
-      .on('mousedown', (event: MouseEventWithAttachmentPoint) => {
-        event.attachmentPointName = this.attachmentPointName;
-        this.editorEvents.mouseDownAttachmentPoint.dispatch(event);
+      .on('mousedown', (event: MouseEvent) => {
+        const attachmentPointEvent = Object.assign(event, {
+          attachmentPointName: this.attachmentPointName,
+        });
+        this.editorEvents.mouseDownAttachmentPoint.dispatch(
+          attachmentPointEvent,
+        );
       })
-      .on('mouseup', (event: MouseEventWithAttachmentPoint) => {
-        event.attachmentPointName = this.attachmentPointName;
-        this.editorEvents.mouseUpAttachmentPoint.dispatch(event);
+      .on('mouseup', (event: MouseEvent) => {
+        const attachmentPointEvent = Object.assign(event, {
+          attachmentPointName: this.attachmentPointName,
+        });
+        this.editorEvents.mouseUpAttachmentPoint.dispatch(attachmentPointEvent);
       });
 
     return hoverableAreaElement;

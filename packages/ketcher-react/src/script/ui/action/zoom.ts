@@ -27,6 +27,9 @@ export const zoomList: number[] = [
   2.5, 3, 3.5, 4,
 ];
 
+const isWheelEvent = (event: unknown): event is WheelEvent =>
+  typeof WheelEvent !== 'undefined' && event instanceof WheelEvent;
+
 interface ZoomActions {
   zoom: UiAction;
   'zoom-out': UiAction;
@@ -49,7 +52,7 @@ const zoom: ZoomActions = {
   zoom: {
     shortcut: ['Mod+0'],
     enabledInViewOnly: true,
-    selected: (editor: ActionStateEditor): boolean => Boolean(editor.zoom()),
+    selected: (editor: ActionStateEditor): boolean => editor.zoom() === 1,
     action: (editor: ActionStateEditor): void => {
       editor.zoom(1);
       callToolMousemove(editor, editor.lastEvent);
@@ -62,7 +65,7 @@ const zoom: ZoomActions = {
     enabledInViewOnly: true,
     disabled: (editor: ActionStateEditor): boolean =>
       editor.zoom() <= zoomList[0],
-    action: ((event?: WheelEvent): ((editor: ActionStateEditor) => void) => {
+    action: ((event: unknown): ((editor: ActionStateEditor) => void) => {
       return (editor: ActionStateEditor): void => {
         const currentZoom: number = editor.zoom();
         const i: number = findLastIndex(
@@ -71,7 +74,7 @@ const zoom: ZoomActions = {
         );
         editor.zoom(
           zoomList[zoomList[i] === currentZoom && i > 0 ? i - 1 : i],
-          event,
+          isWheelEvent(event) ? event : undefined,
         );
         callToolMousemove(editor, editor.lastEvent);
       };
@@ -85,7 +88,7 @@ const zoom: ZoomActions = {
     enabledInViewOnly: true,
     disabled: (editor: ActionStateEditor): boolean =>
       zoomList[zoomList.length - 1] <= editor.zoom(),
-    action: ((event?: WheelEvent): ((editor: ActionStateEditor) => void) => {
+    action: ((event: unknown): ((editor: ActionStateEditor) => void) => {
       return (editor: ActionStateEditor): void => {
         const currentZoom: number = editor.zoom();
         const i: number = findIndex((z: number) => z >= currentZoom, zoomList);
@@ -93,7 +96,7 @@ const zoom: ZoomActions = {
           zoomList[
             zoomList[i] === currentZoom && i < zoomList.length - 1 ? i + 1 : i
           ],
-          event,
+          isWheelEvent(event) ? event : undefined,
         );
         callToolMousemove(editor, editor.lastEvent);
       };

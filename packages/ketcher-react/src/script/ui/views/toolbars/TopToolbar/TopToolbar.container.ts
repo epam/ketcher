@@ -61,7 +61,7 @@ const shortcuts = generateMenuShortcuts<typeof action>(action);
 
 const mapStateToProps = (state: any) => {
   return {
-    currentZoom: Math.round(state.actionState?.zoom?.selected * 100),
+    currentZoom: Math.round((state.editor?.zoom() ?? 1) * 100),
     disabledButtons: disabledButtonsSelector(state),
     hiddenButtons: hiddenButtonsSelector(state),
     isModeSwitcherDisabled: Boolean(

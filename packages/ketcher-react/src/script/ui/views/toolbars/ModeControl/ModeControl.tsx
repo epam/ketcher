@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable react-hooks/refs */
-
 import { useState, useRef } from 'react';
 import styled from '@emotion/styled';
 import { useTranslation } from 'react-i18next';

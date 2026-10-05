@@ -38,6 +38,9 @@ interface ZoomActions {
   'zoom-list': UiAction;
 }
 
+const isWheelEvent = (event: unknown): event is WheelEvent =>
+  typeof WheelEvent !== 'undefined' && event instanceof WheelEvent;
+
 // Helper function to safely call tool mousemove
 const callToolMousemove = (
   editor: ActionStateEditor,
@@ -75,7 +78,7 @@ const zoom: ZoomActions = {
         );
         editor.zoom(
           zoomList[zoomList[i] === currentZoom && i > 0 ? i - 1 : i],
-          event as WheelEvent | undefined,
+          isWheelEvent(event) ? event : undefined,
         );
         callToolMousemove(editor, editor.lastEvent);
       };
@@ -97,7 +100,7 @@ const zoom: ZoomActions = {
           zoomList[
             zoomList[i] === currentZoom && i < zoomList.length - 1 ? i + 1 : i
           ],
-          event as WheelEvent | undefined,
+          isWheelEvent(event) ? event : undefined,
         );
         callToolMousemove(editor, editor.lastEvent);
       };

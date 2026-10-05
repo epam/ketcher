@@ -37,11 +37,11 @@ export function selectListOf(schema, prop) {
     });
   }
   return schema.oneOf.map((ds) =>
-    !ds.title
-      ? constant(ds, prop)
-      : {
+    ds.title
+      ? {
           title: ds.title,
           value: constant(ds, prop),
-        },
+        }
+      : constant(ds, prop),
   );
 }

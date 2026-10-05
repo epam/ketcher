@@ -2546,6 +2546,9 @@ export class CoreEditor {
   }
 
   public destroy() {
+    if (isBaseTool(this.selectedTool)) {
+      this.selectedTool.destroy();
+    }
     EditorHistory.getInstance(this).destroy();
     this.unsubscribeEvents();
     resetEditorInstance();

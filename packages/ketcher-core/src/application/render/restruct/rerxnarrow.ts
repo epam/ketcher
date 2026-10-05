@@ -66,19 +66,14 @@ class ReRxnArrow extends ReObject {
     const item = this.item;
     const pos = item.pos;
 
-    let dist: number = point.calculateDistanceToLine([pos[0], pos[1]]);
-
-    if (RxnArrow.isElliptical(item)) {
-      // currently an elliptical arrow is highlighted if a pointer is close to one of the 3 virtual lines
-      // that form a triangle from the arrow's 3 reference points
-      // TODO: make a better detection (maybe rectangular, so it's similar to visual highlight/selection)
-      const [startPoint, endPoint, middlePoint] = this.getReferencePoints();
-      dist = Math.min(
-        dist,
-        point.calculateDistanceToLine([startPoint, middlePoint]),
-        point.calculateDistanceToLine([middlePoint, endPoint]),
-      );
-    }
+    let dist: number = RxnArrow.isElliptical(item)
+      ? util.calculateDistanceToEllipticalArc(
+          point,
+          pos[0],
+          pos[1],
+          item.height ?? 0,
+        )
+      : point.calculateDistanceToLine([pos[0], pos[1]]);
 
     const refPoint: Vec2 | null =
       distRef.minDist <= 8 / s ? distRef.refPoint : null;
@@ -109,7 +104,7 @@ class ReRxnArrow extends ReObject {
   }
 
   drawHover(render: Render) {
-    const ret = this.hoverPath(render).attr(render.options.hoverStyle);
+    const ret = this.hoverPath(render).attr(render.options.arrowHoverStyle);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     return ret;
   }
@@ -130,16 +125,14 @@ class ReRxnArrow extends ReObject {
   }
 
   makeAdditionalInfo(restruct: ReStruct) {
-    const scaleFactor = restruct.render.options.microModeScale;
     const refPoints = this.getReferencePoints();
     const selectionSet = restruct.render.paper.set();
+    const options = restruct.render.options;
 
     refPoints.forEach((rp) => {
-      const scaledRP = Scale.modelToCanvas(rp, restruct.render.options);
+      const scaledRP = Scale.modelToCanvas(rp, options);
       selectionSet.push(
-        restruct.render.paper
-          .circle(scaledRP.x, scaledRP.y, scaleFactor / 8)
-          .attr({ fill: 'black' }),
+        draw.selectionHandle(restruct.render.paper, scaledRP, options),
       );
     });
 
@@ -158,7 +151,7 @@ class ReRxnArrow extends ReObject {
     selectionSet.push(
       render.paper
         .path(this.generatePath(render, options, 'selection'))
-        .attr(styles.selectionStyle),
+        .attr(styles.arrowSelectionStyle),
     );
     return selectionSet;
   }
@@ -182,11 +175,11 @@ class ReRxnArrow extends ReObject {
 
     switch (type) {
       case 'selection':
-        path = draw.rectangleArrowHighlightAndSelection(
-          render.paper,
-          { pos, height },
+        path = draw.getArrowPath(
+          { ...item, pos, height },
           length,
           angle,
+          options,
         );
         break;
       case 'arrow':
@@ -234,6 +227,7 @@ function findMiddlePoint(height: number, a: Vec2, b: Vec2) {
     const y = minY + Math.abs(a.y - b.y) / 2;
     return new Vec2(x, y);
   }
+
   const length = Math.hypot(b.x - a.x, b.y - a.y);
   const lengthHyp = Math.hypot(length / 2, height);
   const coordinates1 = util.calcCoordinates(a, b, lengthHyp).pos1;
@@ -276,6 +270,7 @@ function findMiddlePoint(height: number, a: Vec2, b: Vec2) {
       }
     }
   }
+
   return new Vec2(a.x, a.y);
 }
 

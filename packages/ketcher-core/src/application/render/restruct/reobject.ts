@@ -36,7 +36,7 @@ class ReObject {
 
   changeSelectionStyle(options: RenderOptions, drawOutline = true) {
     const { hoverStyle } = options;
-    if (['simpleObject', IMAGE_KEY].includes(this.visel.type)) {
+    if (['simpleObject', IMAGE_KEY, 'rxnArrow'].includes(this.visel.type)) {
       this.hovering?.attr({
         'fill-opacity': this.selected ? 1 : 0,
       });

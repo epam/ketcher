@@ -263,6 +263,15 @@ class Attach extends Component<AttachProps> {
     ketcher.addEditor(this.oldKetcherEditor);
   }
 
+  handleEditorInit = (editor: Editor) => {
+    // Auto-zoom and center the structure in the template editor
+    if ('centerViewportAccordingToStruct' in editor) {
+      (
+        editor as Editor & { centerViewportAccordingToStruct(): void }
+      ).centerViewportAccordingToStruct();
+    }
+  };
+
   onResult() {
     const { name, atomid, bondid } = this.props;
     return name &&
@@ -335,6 +344,8 @@ class Attach extends Component<AttachProps> {
                 ketcherId={this.props.ketcherId}
                 struct={struct}
                 onAttachEdit={onAttachEdit}
+                onInit={this.handleEditorInit}
+                disableScroll={true}
                 tool="attach"
                 toolOpts={{ atomid, bondid }}
                 options={options}

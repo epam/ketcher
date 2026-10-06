@@ -1,50 +1,50 @@
-import { useCallback } from 'react'
+import { useCallback } from 'react';
 import {
   Select,
   FormControl,
   MenuItem,
   ListItemText,
   Checkbox,
-  SelectChangeEvent
-} from '@mui/material'
+  SelectChangeEvent,
+} from '@mui/material';
 
-import { PanelButton as Button } from './shared/Buttons'
-import { allButtons, buttonLabelMap } from '../constants/buttons'
-import styled from '@emotion/styled'
+import { PanelButton as Button } from './shared/Buttons';
+import { allButtons, buttonLabelMap } from '../constants/buttons';
+import styled from '@emotion/styled';
 
 const ButtonsBox = styled('div')`
   display: flex;
   justify-content: space-between;
   gap: 10px;
-`
+`;
 
 type ButtonSelectProps = {
-  hiddenButtons: string[]
-  setHiddenButtons: (arg: string[]) => void
-}
+  hiddenButtons: string[];
+  setHiddenButtons: (arg: string[]) => void;
+};
 
 export const ButtonsSelect = ({
   hiddenButtons,
-  setHiddenButtons
+  setHiddenButtons,
 }: ButtonSelectProps) => {
   const handleChange = useCallback(
     (event: SelectChangeEvent<string[]>) => {
-      const value = event.target.value
+      const value = event.target.value;
       const selectedButtons =
-        typeof value === 'string' ? value.split(',') : value
-      const hiddenButtons = getHiddenButtons(selectedButtons)
-      setHiddenButtons(hiddenButtons)
+        typeof value === 'string' ? value.split(',') : value;
+      const hiddenButtons = getHiddenButtons(selectedButtons);
+      setHiddenButtons(hiddenButtons);
     },
-    [setHiddenButtons]
-  )
+    [setHiddenButtons],
+  );
 
   const hideAllButtons = useCallback(() => {
-    setHiddenButtons(allButtons)
-  }, [setHiddenButtons])
+    setHiddenButtons(allButtons);
+  }, [setHiddenButtons]);
 
   const showAllButtons = useCallback(() => {
-    setHiddenButtons([])
-  }, [setHiddenButtons])
+    setHiddenButtons([]);
+  }, [setHiddenButtons]);
 
   return (
     <FormControl>
@@ -59,7 +59,7 @@ export const ButtonsSelect = ({
       >
         {allButtons.map((buttonKey) => (
           <MenuItem key={buttonKey} value={buttonKey}>
-            <Checkbox checked={hiddenButtons.indexOf(buttonKey) < 0} />
+            <Checkbox checked={!hiddenButtons.includes(buttonKey)} />
             <ListItemText primary={buttonLabelMap[buttonKey]} />
           </MenuItem>
         ))}
@@ -83,19 +83,19 @@ export const ButtonsSelect = ({
         </Button>
       </ButtonsBox>
     </FormControl>
-  )
-}
+  );
+};
 
 function getVisibleButtons(hiddenButtons: string[]) {
   const visibleButtons = allButtons.filter(
-    (button) => !hiddenButtons.includes(button)
-  )
-  return visibleButtons
+    (button) => !hiddenButtons.includes(button),
+  );
+  return visibleButtons;
 }
 
 function getHiddenButtons(visibleButtons: string[]) {
   const hiddenButtons = allButtons.filter(
-    (button) => !visibleButtons.includes(button)
-  )
-  return hiddenButtons
+    (button) => !visibleButtons.includes(button),
+  );
+  return hiddenButtons;
 }

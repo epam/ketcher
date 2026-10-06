@@ -1,5 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-/* eslint-disable react-hooks/refs */
 import {
   isLibraryItemRnaPreset,
   LibraryItemDragState,
@@ -32,6 +30,13 @@ export const DragGhost = () => {
     }
 
     const handleLibraryItemDrag = (state: LibraryItemDragState) => {
+      if (ZoomTool.instance) {
+        const canvasWrapper = ZoomTool.instance.canvasWrapper.node();
+        if (canvasWrapper) {
+          canvasBBoxRef.current = canvasWrapper.getBoundingClientRect();
+        }
+      }
+
       setLibraryItemDragData(state);
     };
 
@@ -42,28 +47,8 @@ export const DragGhost = () => {
     };
   }, [editor]);
 
-  useEffect(() => {
-    if (!ZoomTool.instance || !libraryItemDragData) {
-      return;
-    }
-
-    const canvasWrapper = ZoomTool.instance.canvasWrapper.node();
-    if (!canvasWrapper) {
-      return;
-    }
-
-    canvasBBoxRef.current = canvasWrapper.getBoundingClientRect();
-  }, [libraryItemDragData]);
   const leftOffset = editor?.ketcherRootElementBoundingClientRect?.left || 0;
   const topOffset = editor?.ketcherRootElementBoundingClientRect?.top || 0;
-  const dragOverCanvas =
-    canvasBBoxRef.current &&
-    libraryItemDragData &&
-    libraryItemDragData.position.x + leftOffset >= canvasBBoxRef.current.left &&
-    libraryItemDragData.position.x + leftOffset <=
-      canvasBBoxRef.current.right &&
-    libraryItemDragData.position.y + topOffset >= canvasBBoxRef.current.top &&
-    libraryItemDragData.position.y + topOffset <= canvasBBoxRef.current.bottom;
 
   useLayoutEffect(() => {
     const element = ghostWrapperRef.current;
@@ -71,10 +56,17 @@ export const DragGhost = () => {
       return;
     }
 
-    animateRef.current = requestAnimationFrame(() => {
-      const { x, y } = libraryItemDragData.position;
+    const { x, y } = libraryItemDragData.position;
+    const canvasBBox = canvasBBoxRef.current;
+    const dragOverCanvas =
+      canvasBBox &&
+      x + leftOffset >= canvasBBox.left &&
+      x + leftOffset <= canvasBBox.right &&
+      y + topOffset >= canvasBBox.top &&
+      y + topOffset <= canvasBBox.bottom;
 
-      if (dragOverCanvas && canvasBBoxRef.current) {
+    animateRef.current = requestAnimationFrame(() => {
+      if (dragOverCanvas) {
         const scale = transform.k;
 
         element.style.transformOrigin = '0 0';
@@ -90,7 +82,7 @@ export const DragGhost = () => {
         animateRef.current = null;
       }
     };
-  }, [dragOverCanvas, libraryItemDragData, transform.k]);
+  }, [leftOffset, libraryItemDragData, topOffset, transform.k]);
 
   if (!libraryItemDragData) {
     return null;

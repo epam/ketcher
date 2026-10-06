@@ -23,16 +23,14 @@
 
   .controlPanel {
     display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
+    flex-flow: row nowrap;
     align-items: center;
     justify-content: space-between;
     margin: 12px 0;
     height: 28px;
 
     > span {
-      margin-right: 4px;
-      margin-left: 34px;
+      margin-inline: 34px 4px;
       white-space: nowrap;
     }
   }
@@ -40,7 +38,7 @@
   .editorInput {
     height: 182px;
     padding: 12px;
-    word-wrap: break-word;
+    overflow-wrap: break-word;
     line-height: normal;
     border: 1px solid @color-grey-4;
     border-radius: 4px;

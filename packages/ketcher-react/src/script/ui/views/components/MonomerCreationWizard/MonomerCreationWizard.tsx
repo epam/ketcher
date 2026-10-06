@@ -9,6 +9,7 @@ import {
   type ComponentStructureUpdateData,
   type MonomerCreationInitialValues,
   type MonomerCreationState,
+  type MonomerItemType,
   type RnaPresetComponentKey,
   type Struct,
   AttachmentPointName,
@@ -84,10 +85,18 @@ import {
 import { ensureMonomersLibraryLoadedForSubmit } from './MonomerCreationWizard.utils';
 import type {
   FinishNewMonomersCreationData,
+  FinishNewMonomersCreationOptions,
   Selection,
 } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
+import { useTranslation } from 'react-i18next';
+import {
+  getOtherLibraryMonomers,
+  hasMonomerFieldCollision,
+  isValidMonomerName,
+} from './MonomerCreationWizardFields.utils';
+import { saveLibraryMonomer } from './MonomerCreationWizard.library';
 
 const getInitialWizardState = (
   type = KetMonomerClass.CHEM,
@@ -590,8 +599,14 @@ const validateInputs = (
   values: WizardValues,
   skipUniquenessChecks = false,
   skipMandatoryCheck = false,
+  originalMonomerItem?: MonomerItemType,
+  initialName?: string,
 ) => {
   const editor = provideEditorInstance();
+  const library = getOtherLibraryMonomers(
+    editor.monomersLibrary,
+    originalMonomerItem,
+  );
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
   const notifications = new Map<WizardNotificationId, WizardNotification>();
   const optionalFields = new Set(['aliasHELM', 'aliasBILN', 'name']);
@@ -626,7 +641,13 @@ const validateInputs = (
 
       if (
         !skipUniquenessChecks &&
-        editor?.checkIfMonomerSymbolClassPairExists(value, values.type)
+        hasMonomerFieldCollision(
+          library,
+          'symbol',
+          value,
+          values.type,
+          originalMonomerItem,
+        )
       ) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('symbolExists', {
@@ -637,8 +658,7 @@ const validateInputs = (
     }
 
     if (key === 'name') {
-      const nameRegex = /^[a-zA-Z0-9-_* ]*$/;
-      if (!nameRegex.test(value)) {
+      if (!isValidMonomerName(value, initialName)) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('invalidName', {
           type: 'error',
@@ -662,7 +682,13 @@ const validateInputs = (
 
       if (
         !skipUniquenessChecks &&
-        editor.checkIfMonomerSymbolClassPairExists(value, values.type)
+        hasMonomerFieldCollision(
+          library,
+          'aliasHELM',
+          value,
+          values.type,
+          originalMonomerItem,
+        )
       ) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('notUniqueHELMAlias', {
@@ -683,7 +709,16 @@ const validateInputs = (
         return;
       }
 
-      if (!skipUniquenessChecks && editor.checkIfBilnAliasExists(value)) {
+      if (
+        !skipUniquenessChecks &&
+        hasMonomerFieldCollision(
+          library,
+          'aliasBILN',
+          value,
+          values.type,
+          originalMonomerItem,
+        )
+      ) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('notUniqueBILNAlias', {
           type: 'error',
@@ -783,12 +818,21 @@ const validateStructure = (structure: Struct, editor: Editor) => {
 const validateModificationTypes = (
   modificationTypes: string[],
   naturalAnalogue: string,
+  originalMonomerItem?: MonomerItemType,
 ) => {
   const editor = provideEditorInstance();
   const notifications = new Map<WizardNotificationId, WizardNotification>();
   const errors: Record<string, boolean> = {};
-  const modificationTypesGroupedByNaturalAnalogue =
-    editor?.getAllAminoAcidsModificationTypesGroupedByNaturalAnalogue() ?? {};
+  const existingModificationTypes = getOtherLibraryMonomers(
+    editor?.monomersLibrary,
+    originalMonomerItem,
+  )
+    .filter(
+      ({ props }) =>
+        props.MonomerClass === KetMonomerClass.AminoAcid &&
+        props.MonomerNaturalAnalogCode === naturalAnalogue,
+    )
+    .flatMap(({ props }) => props.modificationTypes ?? []);
   const hasEmptyType = modificationTypes.some(
     (modificationType) => !modificationType.trim(),
   );
@@ -818,7 +862,7 @@ const validateModificationTypes = (
   });
 
   // Check if same modification types exist for same natural analogues
-  modificationTypesGroupedByNaturalAnalogue[naturalAnalogue]?.forEach(
+  existingModificationTypes.forEach(
     (modificationTypeInsideSameNaturalAnalogue) => {
       if (
         modificationTypes.includes(modificationTypeInsideSameNaturalAnalogue)
@@ -842,6 +886,7 @@ type MonomerCreationWizardInternalProps = {
 const MonomerCreationWizardInternal = ({
   monomerCreationState,
 }: MonomerCreationWizardInternalProps) => {
+  const { t } = useTranslation(['components', 'common']);
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
@@ -875,7 +920,14 @@ const MonomerCreationWizardInternal = ({
     errors,
   } = wizardState;
   const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
-  const [modificationTypes, setModificationTypes] = useState<string[]>([]);
+  const originalMonomerItem =
+    monomerCreationState.editInstanceInitialValues?.originalMonomerItem;
+  const libraryOnly =
+    monomerCreationState.editInstanceInitialValues?.libraryOnly;
+  const [modificationTypes, setModificationTypes] = useState<string[]>(
+    () =>
+      monomerCreationState.editInstanceInitialValues?.modificationTypes ?? [],
+  );
   // Bumped once when the lazily fetched default monomers library resolves
   // (see the `updateMonomersLibrary` handler below). Nothing here reads the
   // counter itself - components such as ModificationTypeDropdown read the
@@ -892,6 +944,7 @@ const MonomerCreationWizardInternal = ({
     KetMonomerClass | string | null
   >(null);
   const [showTypeChangeDialog, setShowTypeChangeDialog] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [phosphatePosition, setPhosphatePosition] = useState<
     '3' | '5' | undefined
   >();
@@ -1204,7 +1257,9 @@ const MonomerCreationWizardInternal = ({
 
   const monomerTypeSelectOptions = useMemo(
     () =>
-      MonomerTypeSelectConfig.map((option) => ({
+      MonomerTypeSelectConfig.filter(
+        (option) => !libraryOnly || option.value !== 'rnaPreset',
+      ).map((option) => ({
         ...option,
         children: (
           <div className={styles.typeOption}>
@@ -1213,7 +1268,7 @@ const MonomerCreationWizardInternal = ({
           </div>
         ),
       })),
-    [],
+    [libraryOnly],
   );
 
   const resetWizard = () => {
@@ -1336,7 +1391,10 @@ const MonomerCreationWizardInternal = ({
     const attachmentPointsList = Array.from(
       attachmentAtomIdsWithExternalBonds.keys(),
     ).join(' and ');
-    const message = `Deleting attachment point ${attachmentPointsList} will result in deleting of bonds that use those attachment points after saving.`;
+    const message = t(
+      'components:monomerCreationWizard.notifications.usedAttachmentPointsWarning',
+      { points: attachmentPointsList },
+    );
 
     wizardStateDispatch({
       type: 'SetNotifications',
@@ -1350,7 +1408,7 @@ const MonomerCreationWizardInternal = ({
         ],
       ]),
     });
-  }, []);
+  }, [t]);
 
   const { assignedAttachmentPoints } = monomerCreationState;
 
@@ -1434,7 +1492,13 @@ const MonomerCreationWizardInternal = ({
     const structure = editor.structSelected(wizardState.structure);
     const { values: valuesToSave } = wizardState;
     const { errors: inputsErrors, notifications: inputsNotifications } =
-      validateInputs(valuesToSave);
+      validateInputs(
+        valuesToSave,
+        false,
+        false,
+        originalMonomerItem,
+        monomerCreationState.editInstanceInitialValues?.name,
+      );
     if (Object.keys(inputsErrors).length > 0) {
       wizardStateDispatch({ type: 'SetErrors', errors: inputsErrors });
       wizardStateDispatch({
@@ -1462,7 +1526,11 @@ const MonomerCreationWizardInternal = ({
     const {
       errors: modificationTypesErrors,
       notifications: modificationTypesNotifications,
-    } = validateModificationTypes(modificationTypes, naturalAnalogue);
+    } = validateModificationTypes(
+      modificationTypes,
+      naturalAnalogue,
+      originalMonomerItem,
+    );
     if (Object.keys(modificationTypesErrors).length > 0) {
       wizardStateDispatch({
         type: 'SetErrors',
@@ -1812,7 +1880,37 @@ const MonomerCreationWizardInternal = ({
     }
   };
 
+  const finishMonomerCreation = async (
+    data: FinishNewMonomersCreationData[],
+    options?: FinishNewMonomersCreationOptions,
+  ) => {
+    setIsSaving(true);
+    try {
+      if (libraryOnly) {
+        await saveLibraryMonomer(ketcher, data[0], originalMonomerItem);
+        editor.closeMonomerCreationWizard(true);
+      } else {
+        await editor.finishNewMonomersCreation(data, options);
+      }
+      return true;
+    } catch (error) {
+      KetcherLogger.error('Unable to save monomer', error);
+      dispatch(
+        showSnackbarNotification(
+          error instanceof Error ? error.message : 'Unable to save monomer.',
+        ),
+      );
+      return false;
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleSubmit = async () => {
+    if (isSaving) {
+      return;
+    }
+
     // See ensureMonomersLibraryLoadedForSubmit's own comment for why this
     // must run before any validation below (validateMonomerWizard/
     // validateRnaPresetWizard, via validateOnSubmit).
@@ -2108,10 +2206,13 @@ const MonomerCreationWizardInternal = ({
         });
       });
 
-      editor.finishNewMonomersCreation(monomersData, {
+      const saved = await finishMonomerCreation(monomersData, {
         rnaPresetName: rnaPresetWizardState.preset.name,
         phosphatePosition,
       });
+      if (!saved) {
+        return;
+      }
 
       dispatch(onAction(selectRectangleAction));
       resetWizard();
@@ -2119,7 +2220,9 @@ const MonomerCreationWizardInternal = ({
         showSnackbarNotification(
           isRnaPresetType
             ? NotificationMessages.creationRNASuccessful
-            : NotificationMessages.creationSuccessful,
+            : originalMonomerItem
+              ? 'The monomer was successfully updated in the library.'
+              : NotificationMessages.creationSuccessful,
         ),
       );
     }
@@ -2140,7 +2243,9 @@ const MonomerCreationWizardInternal = ({
       <div className={styles.leftColumn}>
         <p className={styles.wizardTitle}>
           <Icon name={CREATE_MONOMER_TOOL_NAME} />
-          Create Monomer
+          {originalMonomerItem
+            ? 'Edit Monomer'
+            : t('components:contextMenu.createMonomerItem')}
         </p>
 
         <div className={styles.notificationsArea}>
@@ -2167,12 +2272,14 @@ const MonomerCreationWizardInternal = ({
             )}
           >
             <AttributeField
-              title="Type"
+              title={t('components:monomerCreationWizard.typeFieldLabel')}
               control={
                 <Select
                   className={styles.input}
                   options={monomerTypeSelectOptions}
-                  placeholder="Select monomer type"
+                  placeholder={t(
+                    'components:monomerCreationWizard.typeFieldPlaceholder',
+                  )}
                   data-testid="type-select"
                   value={type}
                   onChange={(value) => {
@@ -2183,7 +2290,9 @@ const MonomerCreationWizardInternal = ({
               }
               required
             />
-            <p className={styles.attributesTitle}>Attributes</p>
+            <p className={styles.attributesTitle}>
+              {t('components:monomerCreationWizard.attributesTitle')}
+            </p>
             {isPresetType ? (
               <RnaPresetTabs
                 wizardState={rnaPresetWizardState}
@@ -2198,7 +2307,9 @@ const MonomerCreationWizardInternal = ({
               />
             ) : (
               <MonomerCreationWizardFields
+                key={`${type}-${naturalAnalogue}`}
                 wizardState={wizardState}
+                initialModificationTypes={modificationTypes}
                 assignedAttachmentPoints={assignedAttachmentPoints}
                 onFieldChange={(fieldId: WizardFormFieldId, value: string) => {
                   handleFieldChange(fieldId, value);
@@ -2228,15 +2339,17 @@ const MonomerCreationWizardInternal = ({
             className={styles.buttonDiscard}
             onClick={handleDiscard}
             data-testid="discard-button"
+            disabled={isSaving}
           >
-            Discard
+            {t('components:monomerCreationWizard.discardButton')}
           </button>
           <button
             className={styles.buttonSubmit}
             onClick={handleSubmit}
             data-testid="submit-button"
+            disabled={isSaving}
           >
-            Submit
+            {t('components:monomerCreationWizard.submitButton')}
           </button>
         </div>
       </div>
@@ -2246,7 +2359,9 @@ const MonomerCreationWizardInternal = ({
           <div className={styles.dialogOverlay}>
             <Dialog
               className={styles.smallDialog}
-              title="Confirm type change"
+              title={t(
+                'components:monomerCreationWizard.confirmTypeChangeTitle',
+              )}
               withDivider={true}
               valid={() => true}
               params={{
@@ -2263,12 +2378,14 @@ const MonomerCreationWizardInternal = ({
                 },
               }}
               buttons={['OK', 'Cancel']}
-              buttonsNameMap={{ OK: 'Yes', Cancel: 'Cancel' }}
+              buttonsNameMap={{
+                OK: t('common:button.yes'),
+                Cancel: t('common:button.cancel'),
+              }}
               primaryButtons={['Cancel']}
             >
               <div className={styles.DialogMessage}>
-                Changing the type will result in a loss of inputted data. Do you
-                wish to proceed?
+                {t('components:monomerCreationWizard.confirmTypeChangeMessage')}
               </div>
             </Dialog>
           </div>,
@@ -2280,11 +2397,13 @@ const MonomerCreationWizardInternal = ({
           <div className={styles.dialogOverlay}>
             <Dialog
               className={styles.smallDialog}
-              title="Non-typical attachment points"
+              title={t(
+                'components:monomerCreationWizard.nonTypicalAttachmentPointsTitle',
+              )}
               withDivider={true}
               valid={() => true}
               params={{
-                onOk: () => {
+                onOk: async () => {
                   setLeavingGroupDialogMessage('');
 
                   wizardState.structure = {
@@ -2314,13 +2433,16 @@ const MonomerCreationWizardInternal = ({
                     structure,
                   });
 
-                  editor.finishNewMonomersCreation([
+                  const saved = await finishMonomerCreation([
                     {
                       ...monomerData,
                       monomerStructureInWizard: wizardState.structure,
                       atomIdMap,
                     },
                   ]);
+                  if (!saved) {
+                    return;
+                  }
 
                   dispatch(onAction(selectRectangleAction));
                   resetWizard();
@@ -2328,7 +2450,10 @@ const MonomerCreationWizardInternal = ({
                 onCancel: () => setLeavingGroupDialogMessage(''),
               }}
               buttons={['OK', 'Cancel']}
-              buttonsNameMap={{ OK: 'Yes', Cancel: 'Cancel' }}
+              buttonsNameMap={{
+                OK: t('common:button.yes'),
+                Cancel: t('common:button.cancel'),
+              }}
               primaryButtons={['Cancel']}
             >
               <div className={styles.DialogMessage}>

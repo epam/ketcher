@@ -30,6 +30,7 @@ export const test = mergeTests(utils, pageObjects).extend<
       CommonTopRightToolbar,
       resetZoomLevelToDefault,
       clearLocalStorage,
+      resetClipboard,
       resetSettingsValuesToDefault,
     },
     use,
@@ -49,6 +50,7 @@ export const test = mergeTests(utils, pageObjects).extend<
     await resetCanvasPan(page);
     await resetSettingsValuesToDefault(page);
     await clearLocalStorage(page);
+    await resetClipboard(page);
     await use();
   },
   initMoleculesCanvas: [

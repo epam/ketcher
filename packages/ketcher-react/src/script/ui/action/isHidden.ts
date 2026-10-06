@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,6 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-export default function isHidden(options: any, buttonName: string): boolean {
+import type { ActionStateOptions } from './action.types';
+
+export default function isHidden(
+  options: ActionStateOptions,
+  buttonName: string,
+): boolean {
   return Boolean(options.buttons?.[buttonName]?.hidden);
 }

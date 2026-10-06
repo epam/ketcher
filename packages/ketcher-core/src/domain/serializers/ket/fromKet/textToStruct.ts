@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,65 +15,34 @@
  ***************************************************************************/
 
 import type { Struct } from 'domain/entities/struct';
-import { Text } from 'domain/entities/text';
+import { type TextAttributes, Text } from 'domain/entities/text';
 import { getNodeWithInvertedYCoord } from '../helpers';
+import type { KetTextNode, KetTextV2Node } from '../types';
 import {
   type DraftEditorState,
   convertDraftToLexical,
 } from 'application/render/restruct/draftToLexical';
+import type {
+  SerializedEditorState,
+  SerializedParagraphNode,
+  SerializedTextNode,
+} from 'application/render/restruct/retext';
 
 const IS_BOLD = 1;
 const IS_ITALIC = 2;
 const IS_SUBSCRIPT = 32;
 const IS_SUPERSCRIPT = 64;
 
-interface KETFont {
-  family?: string;
-  size?: number;
-}
-
-interface KETFontStyleOverrides {
-  font?: KETFont;
-  color?: string;
-  bold?: boolean;
-  italic?: boolean;
-  superscript?: boolean;
-  subscript?: boolean;
-}
-
-interface KETTextPart extends KETFontStyleOverrides {
-  text: string;
-}
-
-interface KETParagraph extends KETFontStyleOverrides {
-  alignment?: string;
-  indent?: number | { first_line?: number; left?: number; right?: number };
-  parts: KETTextPart[];
-}
-
-interface KETTextV2 extends KETFontStyleOverrides {
-  type: 'text';
-  boundingBox: {
-    x: number;
-    y: number;
-    z?: number;
-    width: number;
-    height: number;
-  };
-  alignment?: string;
-  indent?: number | { first_line?: number; left?: number; right?: number };
-  paragraphs: KETParagraph[];
-  selected?: boolean;
-}
+type LexicalTextNodeWithFont = SerializedTextNode & { font?: string };
+type LexicalParagraphNodeWithTextFormat = SerializedParagraphNode & {
+  textFormat: number;
+  textStyle: string;
+};
 
 /**
  * Convert KET v2.0 format to internal format (pos array + Lexical content).
  */
-function convertKetV2ToInternal(ketText: KETTextV2): {
-  position: { x: number; y: number; z?: number };
-  pos: Array<{ x: number; y: number; z?: number }>;
-  content: string;
-} {
+function convertKetV2ToInternal(ketText: KetTextV2Node): TextAttributes {
   const { boundingBox, paragraphs } = ketText;
   const { x, y, z, width, height } = boundingBox;
 
@@ -87,10 +55,10 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
   ];
 
   // Convert paragraphs to Lexical format
-  const lexicalRoot = {
+  const lexicalRoot: SerializedEditorState = {
     root: {
       children: paragraphs.map((para) => {
-        const paragraphNode: any = {
+        const paragraphNode: LexicalParagraphNodeWithTextFormat = {
           children: (para.parts || []).map((part) => {
             let format = 0;
             if (part.bold) format |= IS_BOLD;
@@ -98,7 +66,7 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
             if (part.subscript) format |= IS_SUBSCRIPT;
             if (part.superscript) format |= IS_SUPERSCRIPT;
 
-            const textNode: any = {
+            const textNode: LexicalTextNodeWithFont = {
               detail: 0,
               format,
               mode: 'normal',
@@ -159,14 +127,12 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
 /**
  * Check if the ketItem is in KET v2.0 format (has boundingBox and paragraphs directly).
  */
-function isKetV2Format(ketItem: any): ketItem is KETTextV2 {
-  return (
-    ketItem?.boundingBox !== undefined && ketItem?.paragraphs !== undefined
-  );
+function isKetV2Format(ketItem: KetTextNode): ketItem is KetTextV2Node {
+  return 'boundingBox' in ketItem && 'paragraphs' in ketItem;
 }
 
-export function textToStruct(ketItem: any, struct: Struct) {
-  let node: any;
+export function textToStruct(ketItem: KetTextNode, struct: Struct) {
+  let node: TextAttributes;
 
   if (isKetV2Format(ketItem)) {
     // KET v2.0 format: convert to internal format
@@ -176,18 +142,15 @@ export function textToStruct(ketItem: any, struct: Struct) {
     // Old format with data wrapper
     node = getNodeWithInvertedYCoord(ketItem.data);
 
-    // If the incoming node.content is Draft.js shape (stringified or object),
+    // If the incoming node.content is stringified Draft.js shape,
     // convert it to Lexical format at parse time so we store only Lexical JSON.
     if (node?.content) {
       try {
         // If content is a JSON string, try to parse it
-        const parsed =
-          typeof node.content === 'string'
-            ? JSON.parse(node.content)
-            : node.content;
+        const parsed: DraftEditorState | null = JSON.parse(node.content);
 
-        if (parsed && Array.isArray((parsed as DraftEditorState).blocks)) {
-          const lexical = convertDraftToLexical(parsed as DraftEditorState);
+        if (parsed && Array.isArray(parsed.blocks)) {
+          const lexical = convertDraftToLexical(parsed);
           node.content = JSON.stringify(lexical);
         }
       } catch {

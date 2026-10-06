@@ -138,6 +138,8 @@ export const FIELD_GROUPS: FieldGroup[] = [
       'showValenceWarnings',
       'ignore-stereochemistry-errors',
       'mass-skip-error-on-pseudoatoms',
+      'aromatize-skip-superatoms',
+      'dearomatize-on-load',
     ],
   },
   {
@@ -465,6 +467,15 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
     labelKey: 'settings.fields.grossFormulaAddIsotopes',
     type: 'checkbox',
   },
+  'aromatize-skip-superatoms': {
+    labelKey: 'settings.fields.aromatizeSkipSuperatoms',
+    type: 'checkbox',
+  },
+  'dearomatize-on-load': {
+    labelKey: 'settings.fields.dearomatizeOnLoad',
+    type: 'checkbox',
+    tooltipKey: 'settings.fields.dearomatizeOnLoadTooltip',
+  },
 
   // 3D Viewer
   miewMode: {
@@ -502,17 +513,21 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
   showAtomIds: {
     labelKey: 'settings.fields.showAtomIds',
     type: 'checkbox',
+    tooltipKey: 'settings.fields.showAtomIdsTooltip',
   },
   showBondIds: {
     labelKey: 'settings.fields.showBondIds',
     type: 'checkbox',
+    tooltipKey: 'settings.fields.showBondIdsTooltip',
   },
   showHalfBondIds: {
     labelKey: 'settings.fields.showHalfBondIds',
     type: 'checkbox',
+    tooltipKey: 'settings.fields.showHalfBondIdsTooltip',
   },
   showLoopIds: {
     labelKey: 'settings.fields.showLoopIds',
     type: 'checkbox',
+    tooltipKey: 'settings.fields.showLoopIdsTooltip',
   },
 };

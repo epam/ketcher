@@ -96,9 +96,14 @@ npm run dev:standalone
 npm run dev:remote
 ```
 
-**NB!** We use Vite for development and react-app-rewired(Webpack based) for build. To make sure your implementation has consistent behavior both in development and production, after you finish developing with Vite, you'd better check your implementation with react-app-rewired before creating a new PR. Please follow the following steps:
+**NB!** Vite is used for both development and production builds. The dev server
+serves the workspace sources directly, while a production build goes through
+Rolldown with aggressive code splitting, so behaviour can still differ between
+the two. Before opening a PR, check your change against a production build as
+well (see [Verifying a production build](#verifying-a-production-build) below).
 
-Component libraries and application should be started separately. First should be started ketcher-core package.
+To develop against the libraries with rebuilds on change, start them separately.
+ketcher-core must be started first.
 
 #### Build ketcher-core package
 
@@ -125,9 +130,27 @@ npm start
 
 ```sh
 cd example
-npm run start:remote
+npm run dev:standalone
   or
-npm run start:standalone
+npm run dev:remote
+```
+
+#### Verifying a production build
+
+`start:standalone` and `start:remote` are aliases of the `dev:*` scripts above,
+so they run the same dev server. To exercise the production output - minified,
+Rolldown-split and served as static files - build it and serve it:
+
+```sh
+cd example
+
+# Standalone, served on http://127.0.0.1:4002
+npm run build:standalone
+npm run serve:standalone
+
+# Or remote, served on http://127.0.0.1:4001
+npm run build:remote
+npm run serve:remote
 ```
 
 ## Indigo service

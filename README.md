@@ -1629,16 +1629,14 @@ try {
 
 ## Browser Compatibility
 
-Ketcher supports modern browsers:
+Ketcher's Vite builds target `baseline-widely-available`. With Vite 8, this corresponds to:
 
-- Chrome/Edge (latest 2 versions)
-- Firefox (latest 2 versions)
-- Safari (latest 2 versions)
+- Chrome and Edge 111+
+- Firefox 114+
+- Safari 16.4+
 
-**Requirements:**
-- ES6+ JavaScript support
-- WebAssembly support (for standalone mode)
-- SVG rendering
+This is the JavaScript syntax target; it does not add runtime API polyfills. Standalone mode
+also requires WebAssembly, and all modes require SVG support.
 
 ---
 

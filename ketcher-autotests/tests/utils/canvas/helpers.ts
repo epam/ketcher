@@ -33,6 +33,8 @@ export async function takeElementScreenshot(
     padding?: number;
     paddingWidth?: number;
     paddingHeight?: number;
+    paddingLeft?: number;
+    paddingRight?: number;
   },
 ) {
   if (options?.hideMonomerPreview) {
@@ -50,7 +52,13 @@ export async function takeElementScreenshot(
 
   await element.waitFor({ state: 'visible' });
 
-  if (!options?.padding && !options?.paddingWidth && !options?.paddingHeight) {
+  if (
+    !options?.padding &&
+    !options?.paddingWidth &&
+    !options?.paddingHeight &&
+    !options?.paddingLeft &&
+    !options?.paddingRight
+  ) {
     await expect(element).toHaveScreenshot(options);
     return;
   }
@@ -58,13 +66,16 @@ export async function takeElementScreenshot(
   const box = await element.boundingBox();
   if (!box) throw new Error('Cannot get bounding box of element');
 
-  const px = options.paddingWidth ?? options.padding ?? 0;
+  const paddingLeft =
+    options.paddingLeft ?? options.paddingWidth ?? options.padding ?? 0;
+  const paddingRight =
+    options.paddingRight ?? options.paddingWidth ?? options.padding ?? 0;
   const py = options.paddingHeight ?? options.padding ?? 0;
 
   const clip = {
-    x: Math.max(box.x - px, 0),
+    x: Math.max(box.x - paddingLeft, 0),
     y: Math.max(box.y - py, 0),
-    width: box.width + px * 2,
+    width: box.width + paddingLeft + paddingRight,
     height: box.height + py * 2,
   };
 

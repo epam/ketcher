@@ -218,7 +218,12 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 7: Screenshot stereogenic center to verify stereo bonds persist
     const collapsedLabel = getAbbreviationLocator(page, { name: 'sssS' });
-    await takeElementScreenshot(page, collapsedLabel, { padding: 180 });
+    await takeElementScreenshot(page, collapsedLabel, {
+      paddingLeft: 55,
+      paddingRight: 100,
+      paddingHeight: 110,
+      delay: 500,
+    });
   });
 
   test('Case 5 — Save Structure dialog causes memory leak when switching formats repeatedly', async () => {

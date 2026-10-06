@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
 import autoprefixer from 'autoprefixer';
@@ -18,7 +19,7 @@ const pkg = JSON.parse(
 );
 
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
-const rootDir = new URL('.', import.meta.url).pathname;
+const rootDir = fileURLToPath(new URL('.', import.meta.url));
 
 // Note that `ketcher-core` and `ketcher-react` are regular `dependencies`
 // here (not peer), so peerDepsExternal's `includeDependencies: true`

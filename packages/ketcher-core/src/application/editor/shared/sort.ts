@@ -17,8 +17,6 @@
 import { compareStrings } from 'utilities';
 import { NATURAL_AMINO_ACID_MODIFICATION_TYPE } from '../Editor';
 
-export { compareStrings };
-
 export function compareStringsWithNaturalFirst(a: string, b: string): number {
   const aTitle = (a || '').toLowerCase();
   const bTitle = (b || '').toLowerCase();

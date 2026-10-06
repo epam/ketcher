@@ -1,3 +1,5 @@
+jest.mock('paper', () => ({}));
+
 import { ChemicalMimeType } from 'ketcher-core';
 import StandaloneStructService from '../../../../src/infrastructure/services/struct/standaloneStructService';
 

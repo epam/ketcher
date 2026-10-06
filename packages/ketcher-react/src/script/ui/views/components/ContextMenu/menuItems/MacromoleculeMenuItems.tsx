@@ -14,6 +14,7 @@ import {
   isAmbiguousMonomerLibraryItem,
   ketcherProvider,
   MonomerMicromolecule,
+  provideEditorInstance,
 } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';

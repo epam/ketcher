@@ -188,7 +188,9 @@ function isSvgImageDataValid(base64Data: string): boolean {
   }
 
   const hasSvgRoot =
-    /^\s*(<\?xml[\s\S]*?\?>\s*)?<svg[\s>]/i.test(svgContent) &&
+    /^\s*(<\?xml[\s\S]*?\?>\s*)?(?:<!--[\s\S]*?-->\s*)*<svg[\s>]/i.test(
+      svgContent,
+    ) &&
     /<\/svg\s*>\s*$/i.test(svgContent);
   if (!hasSvgRoot) {
     return false;

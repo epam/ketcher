@@ -251,6 +251,16 @@ describe('deserialize (ToStruct)', () => {
       "The file contains corrupted images and couldn't be loaded.",
     );
   });
+  it('accepts SVG images with comments before the root element', () => {
+    const svgContent =
+      '<?xml version="1.0" encoding="utf-8"?><!-- SVG Repo --><svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>';
+    const svgKet = createKetWithImage(
+      'image/svg+xml',
+      globalThis.btoa(svgContent),
+    );
+
+    expect(() => ket.deserialize(svgKet)).not.toThrow();
+  });
 });
 
 describe('serialize (ToKet)', () => {

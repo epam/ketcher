@@ -74,11 +74,15 @@ export class SnakeLayoutModel {
 
     if (node instanceof Nucleotide) {
       if (isAntisense) {
-        nodes.push(new SingleMonomerSnakeLayoutNode(node.phosphate));
-        nodes.push(new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase));
+        nodes.push(
+          new SingleMonomerSnakeLayoutNode(node.phosphate),
+          new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase),
+        );
       } else {
-        nodes.push(new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase));
-        nodes.push(new SingleMonomerSnakeLayoutNode(node.phosphate));
+        nodes.push(
+          new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase),
+          new SingleMonomerSnakeLayoutNode(node.phosphate),
+        );
       }
     } else if (node instanceof Nucleoside) {
       nodes.push(new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase));

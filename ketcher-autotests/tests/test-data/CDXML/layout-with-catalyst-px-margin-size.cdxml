@@ -29,8 +29,8 @@
             <n id="9" p="202.549240 247.191437" Geometry="Tetrahedral" BondOrdering="8 13 10 5" EnhancedStereoType="Absolute"/>
             <n id="10" p="228.529984 262.191437"/>
             <n id="11" p="254.510773 247.191406"/>
-            <n id="12" Element="8" NumHydrogens="0" p="280.491516 262.191406">
-                <t p="280.491516 262.191406" LabelJustification="Left">
+            <n id="12" Element="8" NumHydrogens="0" p="280.491516 262.191437">
+                <t p="280.491516 262.191437" LabelJustification="Left">
                     <s font="3" size="10" face="96">O</s>
                 </t>
             </n>
@@ -71,13 +71,13 @@
                     <s font="3" size="10" face="96">N</s>
                 </t>
             </n>
-            <n id="18" Element="7" NumHydrogens="0" p="299.016541 227.016434">
-                <t p="299.016541 227.016434" LabelJustification="Left">
+            <n id="18" Element="7" NumHydrogens="0" p="299.016510 227.016434">
+                <t p="299.016510 227.016434" LabelJustification="Left">
                     <s font="3" size="10" face="96">N</s>
                 </t>
             </n>
-            <n id="19" Element="7" NumHydrogens="0" p="299.016541 197.016434">
-                <t p="299.016541 197.016434" LabelJustification="Left">
+            <n id="19" Element="7" NumHydrogens="0" p="299.016510 197.016434">
+                <t p="299.016510 197.016434" LabelJustification="Left">
                     <s font="3" size="10" face="96">N</s>
                 </t>
             </n>
@@ -86,13 +86,13 @@
                     <s font="3" size="10" face="96">N</s>
                 </t>
             </n>
-            <n id="21" Element="7" NumHydrogens="0" p="350.978088 197.016434">
-                <t p="350.978088 197.016434" LabelJustification="Left">
+            <n id="21" Element="7" NumHydrogens="0" p="350.978058 197.016434">
+                <t p="350.978058 197.016434" LabelJustification="Left">
                     <s font="3" size="10" face="96">N</s>
                 </t>
             </n>
-            <n id="22" Element="7" NumHydrogens="0" p="350.978088 227.016418">
-                <t p="350.978088 227.016418" LabelJustification="Left">
+            <n id="22" Element="7" NumHydrogens="0" p="350.978058 227.016418">
+                <t p="350.978058 227.016418" LabelJustification="Left">
                     <s font="3" size="10" face="96">N</s>
                 </t>
             </n>
@@ -104,8 +104,8 @@
             <b id="78" B="18" E="19"/>
         </fragment>
         <fragment id="23">
-            <n id="24" p="384.511078 188.933807"/>
-            <n id="25" p="369.511078 235.099060"/>
+            <n id="24" p="384.511047 188.933807"/>
+            <n id="25" p="369.511047 235.099060"/>
             <n id="26" p="360.240540 206.567352"/>
             <n id="27" p="399.511047 235.099060"/>
             <n id="28" p="408.781555 206.567352"/>

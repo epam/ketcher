@@ -68,7 +68,7 @@
     width: 7px;
     height: 7px;
     position: absolute;
-    right: 0;
+    inset-inline-end: 0;
     bottom: 0;
   }
   &:hover > svg {
@@ -90,7 +90,9 @@
 }
 
 .highlight-shadow(inset, @color: @active-color) {
-  box-shadow: 0 -1px 6px fade(@color, 5%) inset, 0 1px 3px @color inset;
+  box-shadow:
+    0 -1px 6px fade(@color, 5%) inset,
+    0 1px 3px @color inset;
 }
 
 .highlight-shadow(@color: @active-color) when (iscolor(@color)) {
@@ -113,7 +115,9 @@
 
 .highlight-symbol-invert() {
   background: @main-color;
-  text-shadow: 0 1px 10px white, 0 -1px 10px white;
+  text-shadow:
+    0 1px 10px white,
+    0 -1px 10px white;
 }
 
 .highlight-invert() {
@@ -156,7 +160,9 @@
 .transition-zoom(@time: 0.3s) {
   opacity: 1;
   transform: scale(1);
-  transition: transform @time, opacity @time;
+  transition:
+    transform @time,
+    opacity @time;
 
   &.hide {
     opacity: 0.2;
@@ -264,7 +270,7 @@
 
   text-indent: @wider-than-any-screen * @approximate-em-value;
   overflow: hidden;
-  text-align: left;
+  text-align: start;
 }
 
 .text-hide() {
@@ -342,14 +348,14 @@
 
   & > input[type='file'] {
     // hide file input
-    left: -9999px;
+    inset-inline-start: -9999px;
     position: absolute;
   }
 
   & + button,
   & + input[type='submit'],
   & + input[type='reset'] {
-    margin-left: 0.3em;
+    margin-inline-start: 0.3em;
   }
 }
 

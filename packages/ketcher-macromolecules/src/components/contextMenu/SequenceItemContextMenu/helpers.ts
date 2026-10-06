@@ -1,4 +1,5 @@
 import { flatten, get, merge } from 'lodash';
+import type { TFunction } from 'i18next';
 import {
   Nucleotide,
   Nucleoside,
@@ -10,6 +11,9 @@ import {
   SequenceNode,
   isTwoStrandedNodeRestrictedForHydrogenBondCreation,
   AmbiguousMonomer,
+  STRAND_TYPE,
+  isSelectedAntisensePair,
+  provideEditorInstance,
 } from 'ketcher-core';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 
@@ -17,6 +21,7 @@ const generateLabeledNodes = (
   selectionsFlatten: NodeSelection[],
 ): LabeledNodesWithPositionInSequence[] => {
   const labeledNodes: LabeledNodesWithPositionInSequence[] = [];
+  const isSyncEditMode = Boolean(provideEditorInstance().mode.isSyncEditMode);
 
   for (const selection of selectionsFlatten) {
     const {
@@ -26,7 +31,17 @@ const generateLabeledNodes = (
       hasR1Connection,
       twoStrandedNode,
     } = selection;
-    const hasAntisense = Boolean(twoStrandedNode?.antisenseNode);
+    const strandType =
+      twoStrandedNode?.antisenseNode === node
+        ? STRAND_TYPE.ANTISENSE
+        : STRAND_TYPE.SENSE;
+    const isInSelectedAntisensePair =
+      isSyncEditMode &&
+      isSelectedAntisensePair(
+        node instanceof Nucleotide || node instanceof Nucleoside
+          ? node.rnaBase
+          : node?.monomer,
+      );
 
     if (node instanceof Nucleotide) {
       labeledNodes.push({
@@ -40,7 +55,8 @@ const generateLabeledNodes = (
             : node.rnaBase.monomerItem,
         hasR1Connection,
         nodeIndexOverall,
-        hasAntisense,
+        strandType,
+        isInSelectedAntisensePair,
       });
     } else if (node instanceof Nucleoside) {
       labeledNodes.push({
@@ -54,14 +70,16 @@ const generateLabeledNodes = (
         isNucleosideConnectedAndSelectedWithPhosphate,
         hasR1Connection,
         nodeIndexOverall,
-        hasAntisense,
+        strandType,
+        isInSelectedAntisensePair,
       });
     } else if (node?.monomer instanceof Phosphate) {
       labeledNodes.push({
         type: Entities.Phosphate,
         phosphateLabel: node?.monomer?.label,
         nodeIndexOverall,
-        hasAntisense,
+        strandType,
+        isInSelectedAntisensePair,
       });
     }
   }
@@ -102,7 +120,8 @@ const generateNucleoelementTitle = (
 };
 
 export const generateSequenceContextMenuProps = (
-  selections?: NodesSelection,
+  selections: NodesSelection | undefined,
+  t: TFunction,
 ) => {
   if (!selections?.length) return;
 
@@ -112,7 +131,6 @@ export const generateSequenceContextMenuProps = (
   let title: string;
   let isSelectedAtLeastOneNucleoelement = false;
   let isSelectedOnlyNucleoelements = true;
-  let hasAntisense = false;
   let isSequenceFirstsOnlyNucleoelementsSelected = true;
 
   // Generate labeled elements for RNA Builder
@@ -137,10 +155,6 @@ export const generateSequenceContextMenuProps = (
       isSequenceFirstsOnlyNucleoelementsSelected = false;
       isSelectedOnlyNucleoelements = false;
     }
-
-    if (node.hasAntisense) {
-      hasAntisense = true;
-    }
   }
   if (countOfSelections > countOfNucleoelements) {
     if (!selectionsFlatten.every(isNucleotideNucleosideOrPhosphate)) {
@@ -156,8 +170,12 @@ export const generateSequenceContextMenuProps = (
     title = generateNucleoelementTitle(selectedSequenceLabeledNodes);
   } else {
     title = isSelectedOnlyNucleoelements
-      ? `${countOfNucleoelements} nucleotides`
-      : `${countOfSelections} elements`;
+      ? t('contextMenu.sequenceItem.nucleotidesCount', {
+          count: countOfNucleoelements,
+        })
+      : t('contextMenu.sequenceItem.elementsCount', {
+          count: countOfSelections,
+        });
   }
 
   return {
@@ -166,7 +184,6 @@ export const generateSequenceContextMenuProps = (
     isSelectedOnlyNucleoelements,
     isSelectedAtLeastOneNucleoelement,
     isSequenceFirstsOnlyNucleoelementsSelected,
-    hasAntisense,
   };
 };
 

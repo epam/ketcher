@@ -104,9 +104,9 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
       if (editor.isMonomerCreationWizardActive) {
         const rLabelElement = target.closest('[data-attachment-point-alias]');
         if (rLabelElement) {
-          const attachmentPointName = rLabelElement.getAttribute(
-            'data-attachment-point-alias',
-          );
+          const attachmentPointName = (
+            rLabelElement as HTMLElement | SVGElement
+          ).dataset.attachmentPointAlias;
           if (attachmentPointName) {
             show({
               id: CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId,

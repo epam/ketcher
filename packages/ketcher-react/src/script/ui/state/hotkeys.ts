@@ -36,6 +36,7 @@ import {
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
+import { restorePersistedSelectionTool } from './selectionToolPersistence';
 
 import actions from '../action';
 import { isIE } from 'react-device-detect';
@@ -52,6 +53,8 @@ import { isArrowKey, moveSelectedItems } from './moveSelectedItems';
 import { handleHotkeyOverItem } from './handleHotkeysOverItem';
 
 let keydownListener: ((event: KeyboardEvent) => void) | null = null;
+const affectedTools = new Set(['paste', 'template']);
+const zoomActionNames = new Set(['zoom-in', 'zoom-out']);
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -71,15 +74,14 @@ export function removeKeydownListener(element) {
 }
 
 function removeNotRenderedStruct(actionTool, group, dispatch) {
-  const affectedTools = ['paste', 'template'];
-  if (affectedTools.includes(actionTool.tool) && group?.includes('save')) {
+  if (affectedTools.has(actionTool.tool) && group?.includes('save')) {
     dispatch(removeStructAction());
   }
 }
 
 let abbreviationLookupTimeoutId: number | undefined;
 const ABBREVIATION_LOOKUP_TYPING_TIMEOUT = 1000;
-const shortcutKeys = [
+const shortcutKeys = new Set([
   '0',
   '1',
   '2',
@@ -96,7 +98,7 @@ const shortcutKeys = [
   'b',
   '+',
   '-',
-];
+]);
 
 function shouldIgnoreKeyEvent(state, event): boolean {
   if (window.isPolymerEditorTurnedOn) {
@@ -112,7 +114,7 @@ function shouldIgnoreKeyEvent(state, event): boolean {
 
 function shouldShowAbbreviationLookup(key: string, state): boolean {
   const currentlyPressedKeys = selectAbbreviationLookupValue(state);
-  const isShortcutKey = shortcutKeys.includes(key.toLowerCase());
+  const isShortcutKey = shortcutKeys.has(key.toLowerCase());
   const isTheSameKey = key.toLowerCase() === currentlyPressedKeys;
   return Boolean((!isTheSameKey || !isShortcutKey) && currentlyPressedKeys);
 }
@@ -123,7 +125,9 @@ function handleAbbreviationLookup(key: string, state, dispatch, event) {
     clearTimeout(abbreviationLookupTimeoutId);
     abbreviationLookupTimeoutId = undefined;
 
-    const resetAction = SettingsManager.getSettings().selectionTool;
+    const resetAction = restorePersistedSelectionTool(
+      SettingsManager.getSelectionTool('micro'),
+    );
     dispatch(onAction(resetAction));
 
     event.preventDefault();
@@ -173,13 +177,13 @@ function handleRotateEscape(editor) {
 
 function isActionDisabledOrHidden(actionState, actName): boolean {
   return (
-    (actionState[actName] && actionState[actName].disabled === true) ||
+    actionState[actName]?.disabled === true ||
     actionState[actName]?.hidden === true
   );
 }
 
 function getNextAction(actName) {
-  return ['zoom-in', 'zoom-out'].includes(actName)
+  return zoomActionNames.has(actName)
     ? actions[actName].action()
     : actions[actName].action;
 }
@@ -197,7 +201,9 @@ function shouldHandleItemDirectly(
 
 function handleSelectTool(newAction, key: string, index: number) {
   if (key === 'Escape') {
-    return SettingsManager.getSettings().selectionTool;
+    return restorePersistedSelectionTool(
+      SettingsManager.getSelectionTool('micro'),
+    );
   }
   if (index === -1) {
     return {};
@@ -244,9 +250,14 @@ function handleHotkeyGroup(
     return;
   }
 
+  if (actName === 'undo' || actName === 'redo') {
+    // A history entry can switch editors while this key event is still bubbling.
+    event.stopImmediatePropagation();
+  }
+
   removeNotRenderedStruct(actionTool, group, dispatch);
 
-  if (clipArea.actions.indexOf(actName) === -1) {
+  if (!clipArea.actions.includes(actName)) {
     let newAction = getNextAction(actName);
     const hoveredItem = getHoveredItem(render.ctab);
     const { atoms, bonds } = editor.selection() ?? {};
@@ -294,7 +305,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   const key = keyNorm(event);
   const hoveredItem = getHoveredItem(render.ctab);
 
-  if (key && key.length === 1 && !hoveredItem) {
+  if (key?.length === 1 && !hoveredItem) {
     const abbreviationLookupHandled = handleAbbreviationLookup(
       key,
       state,

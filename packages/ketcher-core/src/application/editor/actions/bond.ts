@@ -213,7 +213,11 @@ export function fromBondsAttrs(
 
       const value = key in attrs ? attrs[key] : Bond.attrGetDefault(key);
 
-      action.addOp(new BondAttr(bid, key, value).perform(restruct));
+      action.addOp(
+        new BondAttr(bid, key as keyof typeof Bond.attrlist, value).perform(
+          restruct,
+        ),
+      );
       if (key === 'stereo' && key in attrs) {
         const bond = struct.bonds.get(bid);
         if (bond) {
@@ -244,8 +248,8 @@ export function fromBondsMerge(
     if (!bond || !bondCI) return;
     const params = utils.mergeBondsParams(struct, bond, struct, bondCI);
     if (!params?.merged) return;
-    atomPairs.set(bond.begin, !params.cross ? bondCI.begin : bondCI.end);
-    atomPairs.set(bond.end, !params.cross ? bondCI.end : bondCI.begin);
+    atomPairs.set(bond.begin, params.cross ? bondCI.end : bondCI.begin);
+    atomPairs.set(bond.end, params.cross ? bondCI.begin : bondCI.end);
   });
 
   // Shared vertex atoms fused earlier in this batch may already be deleted;

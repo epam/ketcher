@@ -88,7 +88,7 @@ class APointTool implements Tool {
       }
     }
 
-    if (ci && ci.map === 'atoms') {
+    if (ci?.map === 'atoms') {
       this.editor.hover(null);
       const atom = molecule.atoms.get(ci.id);
       assert(atom != null);

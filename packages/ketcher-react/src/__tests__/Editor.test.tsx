@@ -27,7 +27,7 @@ jest.mock('../MicromoleculesEditor', () => {
         onSetKetcherId?.('disable-macromolecules-test');
         onInit?.({
           id: 'disable-macromolecules-test',
-          editor: {},
+          editor: mockMoleculesEditor,
         });
       }, [onInit, onSetKetcherId]);
 
@@ -59,10 +59,15 @@ jest.mock(
   { virtual: true },
 );
 
+const mockMoleculesEditor = {
+  event: {
+    monomerWizardStateChange: { add: jest.fn(), remove: jest.fn() },
+  },
+};
 const TEST_KETCHER_ID = 'disable-macromolecules-test';
 const testKetcher = {
   id: TEST_KETCHER_ID,
-  editor: {},
+  editor: mockMoleculesEditor,
 } as unknown as Ketcher;
 const editorProps: Omit<
   ReactTypes.ComponentProps<typeof Editor>,

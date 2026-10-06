@@ -215,7 +215,6 @@ export const Editor = (props: Props) => {
         );
       } catch (error) {
         // Roll back the imperative transition if opening the wizard failed.
-        // eslint-disable-next-line react-you-might-not-need-an-effect/no-chain-state-updates
         if (wizardSessionActive.current) finishSession(false);
         moleculesEditor.errorHandler?.(
           error instanceof Error ? error.message : String(error),

@@ -125,6 +125,7 @@
   },
   "sideEffects": [
     "*.css",
-    "dist/index.css"
+    "dist/index.css",
+    "src/i18n/registerNamespaces.ts"
   ]
 }

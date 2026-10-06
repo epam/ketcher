@@ -62,7 +62,14 @@ export default function initEditor(dispatch, getState, ketcherId) {
       const state = getState();
       const activeToolAction = state.actionState?.activeTool;
       const activeTool = activeToolAction?.tool;
-      if (!activeTool || (activeTool === 'select' && !force)) return;
+      if (!activeTool || (activeTool === 'select' && !force)) {
+        // Even when the active tool doesn't need to be reset (e.g. a
+        // context-menu action like "Remove Grouping"/"Expand Monomer" runs
+        // while the select tool is already active), button states such as
+        // Undo/Redo still need to be refreshed to reflect the new history.
+        updateAction();
+        return;
+      }
       const selectMode = state.toolbar.visibleTools.select;
       const resetOption = state.options.settings.resetToSelect;
       if (

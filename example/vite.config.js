@@ -550,7 +550,12 @@ logger.warn = (msg, options) => {
   loggerWarn(msg, options);
 };
 
+const publicUrlBase = process.env.PUBLIC_URL
+  ? `${process.env.PUBLIC_URL.replace(/\/$/, '')}/`
+  : '/';
+
 export default defineConfig({
+  base: publicUrlBase,
   server: {
     host: '127.0.0.1',
     open: true,

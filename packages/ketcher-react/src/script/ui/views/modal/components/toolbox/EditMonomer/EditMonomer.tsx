@@ -24,17 +24,9 @@ import {
   Action,
   fromSgroupDeletion,
   ketcherProvider,
-  MonomerMicromolecule,
-  provideEditorInstance,
   type EditMonomerVariant,
-  type Bond,
 } from 'ketcher-core';
 import type Editor from 'src/script/editor';
-import {
-  getEditAllInstancesInitialValues,
-  getEditInstanceInitialValues,
-  isSameMonomerType,
-} from '../../../../components/MonomerCreationWizard/MonomerCreationWizard.utils';
 
 interface EditMonomerDialogProps extends BaseProps {
   fgIds: number[];
@@ -69,56 +61,9 @@ const EditMonomer = (props: Props) => {
   };
 
   const handleEditMonomer = (editAllInstances = false) => {
-    const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-    const struct = editor.struct();
-    const firstSgroup = struct.sgroups.get(fgIds[0]);
-
-    if (!(firstSgroup instanceof MonomerMicromolecule)) {
-      return;
+    if (editor.openEditMonomerWizard(fgIds, editAllInstances)) {
+      onOk(true);
     }
-
-    const atoms = [...firstSgroup.atoms];
-    const bonds: number[] = [];
-    struct.bonds.forEach((bond: Bond, bondId: number) => {
-      if (atoms.includes(bond.begin) && atoms.includes(bond.end)) {
-        bonds.push(bondId);
-      }
-    });
-
-    let editAllInitialValues = getEditAllInstancesInitialValues(
-      firstSgroup.monomer,
-      provideEditorInstance()?.monomersLibraryParsedJson,
-    );
-
-    if (editAllInstances && fgIds.length > 1) {
-      const selectedSGroupIds = fgIds.filter((id) => {
-        const sg = struct.sgroups.get(id);
-        return (
-          sg instanceof MonomerMicromolecule &&
-          isSameMonomerType(sg, firstSgroup.monomer)
-        );
-      });
-      if (selectedSGroupIds.length > 1) {
-        editAllInitialValues = { ...editAllInitialValues, selectedSGroupIds };
-      }
-    }
-
-    editor.openMonomerCreationWizard(
-      {
-        atoms,
-        bonds,
-        rxnArrows: [],
-        rxnPluses: [],
-        texts: [],
-        rgroupAttachmentPoints: [],
-      },
-      editAllInstances
-        ? editAllInitialValues
-        : getEditInstanceInitialValues(firstSgroup.monomer),
-      firstSgroup.getAttachmentPoints(),
-    );
-
-    onOk(true);
   };
 
   const footerContent = (

@@ -175,21 +175,24 @@ const reducer = combineReducers({
 
 function renderWithMockStore(
   component: ReactElement,
-  initialState: Partial<ReturnType<typeof reducer>> = {
-    modal: {
-      name: '',
-      prop: null,
-      parentModal: null,
-      form: {
-        errors: {},
-        result: {
-          type: 'MUL',
+  initialState?: Partial<ReturnType<typeof reducer>>,
+) {
+  const store = createStore(
+    reducer,
+    initialState ?? {
+      modal: {
+        name: '',
+        prop: null,
+        parentModal: null,
+        form: {
+          errors: {},
+          result: {
+            type: 'MUL',
+          },
         },
       },
     },
-  },
-) {
-  const store = createStore(reducer, initialState);
+  );
   return {
     ...rtlRender(<Provider store={store}>{component}</Provider>),
     store,

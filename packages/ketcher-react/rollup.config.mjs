@@ -1,12 +1,14 @@
 import autoprefixer from 'autoprefixer';
 import babel from '@rollup/plugin-babel';
-import { execSync } from 'child_process';
+import { execSync } from 'node:child_process';
 import cleanup from 'rollup-plugin-cleanup';
 import commonjs from '@rollup/plugin-commonjs';
 import copy from 'rollup-plugin-copy';
 import del from 'rollup-plugin-delete';
+import { config as loadEnv } from 'dotenv';
 import json from '@rollup/plugin-json';
 import nodeResolve from '@rollup/plugin-node-resolve';
+import path from 'node:path';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import { readFileSync } from 'node:fs';
 import postcss from 'rollup-plugin-postcss';
@@ -14,8 +16,21 @@ import replace from '@rollup/plugin-replace';
 import strip from '@rollup/plugin-strip';
 import svgr from '@svgr/rollup';
 import typescript from 'rollup-plugin-typescript2';
+import { fileURLToPath } from 'node:url';
 import { license } from '../../license-banner.mjs';
 import { string } from 'rollup-plugin-string';
+
+// Loads a repo-root .env file, if present, without overriding variables
+// already set in the shell (dotenv's default: existing process.env values
+// win). This lets a consumer set KETCHER_MULTI_LANGUAGE_BUILD=true in a
+// local .env instead of exporting it before every build invocation — see
+// packages/ketcher-react/src/locales/README.md for the full flag docs.
+loadEnv({
+  path: path.resolve(
+    fileURLToPath(new URL('.', import.meta.url)),
+    '../../.env',
+  ),
+});
 
 const svgrPlugin = svgr.default ?? svgr;
 const babelPlugin = babel.default ?? babel;
@@ -54,8 +69,15 @@ export const valuesToReplace = {
   // TODO: add logic to init BUILD_NUMBER
   'process.env.BUILD_NUMBER': JSON.stringify(undefined),
   'process.env.HELP_LINK': JSON.stringify(getTagName()),
-  'process.env.INDIGO_VERSION': JSON.stringify(process.env.INDIGO_VERSION || ''),
-  'process.env.INDIGO_MACHINE': JSON.stringify(process.env.INDIGO_MACHINE || ''),
+  'process.env.INDIGO_VERSION': JSON.stringify(
+    process.env.INDIGO_VERSION || '',
+  ),
+  'process.env.INDIGO_MACHINE': JSON.stringify(
+    process.env.INDIGO_MACHINE || '',
+  ),
+  'process.env.KETCHER_MULTI_LANGUAGE_BUILD': JSON.stringify(
+    process.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true' ? 'true' : 'false',
+  ),
 };
 
 const config = {

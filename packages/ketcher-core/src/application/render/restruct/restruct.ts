@@ -990,13 +990,14 @@ class ReStruct {
               sGroupAtoms.some((atom) => atom.selected);
           }
 
-          let selected = selection?.[map]
-            ? selection[map].indexOf(id) > -1
-            : item.selected;
-
-          if (selection === null) {
-            selected = false;
-          }
+          // No argument means "redraw the current selection", so what each
+          // item already holds is kept. Any explicit selection - `null`
+          // included - describes the complete new state, so a map absent from
+          // it no longer has anything selected.
+          const selected =
+            selection === undefined
+              ? item.selected
+              : (selection?.[map]?.includes(id) ?? false);
 
           this.showItemSelection(item, selected);
         });
@@ -1085,7 +1086,7 @@ function scaleRPath(path, scaleFactor: number): void {
       scaleRPath(pathItem, scaleFactor);
     }
   } else {
-    if (typeof path.attrs !== 'undefined') {
+    if (path.attrs !== undefined) {
       if ('font-size' in path.attrs) {
         path.attr('font-size', path.attrs['font-size'] * scaleFactor);
       } else if ('stroke-width' in path.attrs) {

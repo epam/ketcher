@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import { useTranslation } from 'react-i18next';
 import { Dialog } from '../../../../components';
 import dialogClasses from '../../../../../../../components/Dialog/Dialog.module.less';
 import styles from './EditMonomer.module.less';
@@ -23,17 +24,9 @@ import {
   Action,
   fromSgroupDeletion,
   ketcherProvider,
-  MonomerMicromolecule,
-  provideEditorInstance,
   type EditMonomerVariant,
-  type Bond,
 } from 'ketcher-core';
 import type Editor from 'src/script/editor';
-import {
-  getEditAllInstancesInitialValues,
-  getEditInstanceInitialValues,
-  isSameMonomerType,
-} from '../../../../components/MonomerCreationWizard/MonomerCreationWizard.utils';
 
 interface EditMonomerDialogProps extends BaseProps {
   fgIds: number[];
@@ -42,16 +35,13 @@ interface EditMonomerDialogProps extends BaseProps {
 
 type Props = EditMonomerDialogProps & BaseCallProps;
 
-const BODY_TEXT: Record<EditMonomerVariant, string> = {
-  single:
-    '"Edit Monomer" will open the Monomer Creation Wizard and allow editing of this instance of the monomer. "Remove Grouping" will turn the monomer into a purely chemical structure. How do you wish to proceed?',
-  identical:
-    '"Edit All Monomers" will open the Monomer Creation Wizard and allow editing of all selected instances of the monomer. "Remove Grouping" will turn the monomers into a purely chemical structure. How do you wish to proceed?',
-  'non-identical':
-    '"Remove Grouping" will turn the monomers into purely chemical structures. How do you wish to proceed?',
-};
-
 const EditMonomer = (props: Props) => {
+  const { t } = useTranslation(['common', 'dialogs']);
+  const BODY_TEXT: Record<EditMonomerVariant, string> = {
+    single: t('dialogs:toolbox.editMonomer.bodyTextSingle'),
+    identical: t('dialogs:toolbox.editMonomer.bodyTextIdentical'),
+    'non-identical': t('dialogs:toolbox.editMonomer.bodyTextNonIdentical'),
+  };
   const { ketcherId } = useAppContext();
   const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
   const { fgIds, variant, onOk } = props;
@@ -71,56 +61,9 @@ const EditMonomer = (props: Props) => {
   };
 
   const handleEditMonomer = (editAllInstances = false) => {
-    const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-    const struct = editor.struct();
-    const firstSgroup = struct.sgroups.get(fgIds[0]);
-
-    if (!(firstSgroup instanceof MonomerMicromolecule)) {
-      return;
+    if (editor.openEditMonomerWizard(fgIds, editAllInstances)) {
+      onOk(true);
     }
-
-    const atoms = [...firstSgroup.atoms];
-    const bonds: number[] = [];
-    struct.bonds.forEach((bond: Bond, bondId: number) => {
-      if (atoms.includes(bond.begin) && atoms.includes(bond.end)) {
-        bonds.push(bondId);
-      }
-    });
-
-    let editAllInitialValues = getEditAllInstancesInitialValues(
-      firstSgroup.monomer,
-      provideEditorInstance()?.monomersLibraryParsedJson,
-    );
-
-    if (editAllInstances && fgIds.length > 1) {
-      const selectedSGroupIds = fgIds.filter((id) => {
-        const sg = struct.sgroups.get(id);
-        return (
-          sg instanceof MonomerMicromolecule &&
-          isSameMonomerType(sg, firstSgroup.monomer)
-        );
-      });
-      if (selectedSGroupIds.length > 1) {
-        editAllInitialValues = { ...editAllInitialValues, selectedSGroupIds };
-      }
-    }
-
-    editor.openMonomerCreationWizard(
-      {
-        atoms,
-        bonds,
-        rxnArrows: [],
-        rxnPluses: [],
-        texts: [],
-        rgroupAttachmentPoints: [],
-      },
-      editAllInstances
-        ? editAllInitialValues
-        : getEditInstanceInitialValues(firstSgroup.monomer),
-      firstSgroup.getAttachmentPoints(),
-    );
-
-    onOk(true);
   };
 
   const footerContent = (
@@ -128,7 +71,7 @@ const EditMonomer = (props: Props) => {
       {variant === 'single' && (
         <input
           type="button"
-          value="Edit Monomer"
+          value={t('dialogs:toolbox.editMonomer.editMonomer')}
           className={dialogClasses.cancel}
           onClick={() => handleEditMonomer(false)}
           data-testid="edit-monomer-button"
@@ -137,7 +80,7 @@ const EditMonomer = (props: Props) => {
       {variant === 'identical' && (
         <input
           type="button"
-          value="Edit All Monomers"
+          value={t('dialogs:toolbox.editMonomer.editAllMonomers')}
           className={dialogClasses.cancel}
           onClick={() => handleEditMonomer(true)}
           data-testid="edit-all-monomers-button"
@@ -145,14 +88,14 @@ const EditMonomer = (props: Props) => {
       )}
       <input
         type="button"
-        value="Remove Grouping"
+        value={t('dialogs:toolbox.editMonomer.removeGrouping')}
         className={dialogClasses.cancel}
         onClick={handleRemoveGrouping}
         data-testid="remove-abbreviation-button"
       />
       <input
         type="button"
-        value="Cancel"
+        value={t('common:button.cancel')}
         className={dialogClasses.ok}
         onClick={handleCancel}
         data-testid="Cancel"
@@ -162,7 +105,7 @@ const EditMonomer = (props: Props) => {
 
   return (
     <Dialog
-      title="Edit Monomer"
+      title={t('dialogs:toolbox.editMonomer.dialogTitle')}
       className={
         variant === 'non-identical' ? styles.windowSmall : styles.window
       }

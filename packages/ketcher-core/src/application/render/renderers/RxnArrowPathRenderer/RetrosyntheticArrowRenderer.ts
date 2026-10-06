@@ -18,7 +18,7 @@ export class RetrosyntheticArrowRenderer {
 
     const pathParts: string[] = [];
 
-    // First arrow and arrowhead
+    // First and second arrows with arrowheads
     pathParts.push(
       `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
         `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -26,10 +26,6 @@ export class RetrosyntheticArrowRenderer {
           start.y - arrowHeadWidth - arrowOffset,
         )}` +
         `L${toFixed(endX + arrowHeadLength)},${toFixed(start.y)}`,
-    );
-
-    // Second arrow and arrowhead
-    pathParts.push(
       `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
         `L${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
         `L${toFixed(endX - arrowHeadLength)},${toFixed(

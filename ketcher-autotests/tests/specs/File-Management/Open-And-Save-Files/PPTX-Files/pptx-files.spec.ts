@@ -11,17 +11,19 @@ import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
   filePath: string,
-  numberOf: {
-    Structure: number;
-  } = { Structure: 1 },
+  numberOf?: {
+    Structure?: number;
+  },
 ) {
+  const { Structure = 1 } = numberOf ?? {};
+
   await CommonTopLeftToolbar(page).openFile();
   await waitForSpinnerFinishedWork(page, async () => {
     await openFile(page, filePath);
   });
   const openPPTXFileDialog = OpenPPTXFileDialog(page);
-  if (numberOf.Structure !== 1) {
-    await openPPTXFileDialog.selectStructure(numberOf);
+  if (Structure !== 1) {
+    await openPPTXFileDialog.selectStructure({ Structure });
   }
   await takeEditorScreenshot(page);
   await openPPTXFileDialog.pressOpenAsNewProjectButton();
@@ -174,7 +176,7 @@ test.describe('PPTX files', () => {
       test.setTimeout(maxTimeout);
 
       const structures = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-      for await (const count of structures) {
+      for (const count of structures) {
         await openPPTXFileAndValidateStructurePreview(
           page,
           'PPTX/ARROWS.pptx',

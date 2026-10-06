@@ -132,7 +132,7 @@ describe('SequenceMode#countMirroredBaseChanges', () => {
   let editor: CoreEditor;
   let mode: SequenceMode;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     mode = new SequenceMode();
@@ -142,6 +142,7 @@ describe('SequenceMode#countMirroredBaseChanges', () => {
       renderersContainer: createRenderersManager(testRenderTheme),
       mode,
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {

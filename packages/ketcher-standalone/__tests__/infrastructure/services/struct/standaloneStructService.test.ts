@@ -21,6 +21,8 @@ const fakeEditor = {
   },
 };
 
+jest.mock('paper', () => ({}));
+
 jest.mock('ketcher-core', () => ({
   ...jest.requireActual('ketcher-core'),
   provideEditorInstance: jest.fn(() => fakeEditor),

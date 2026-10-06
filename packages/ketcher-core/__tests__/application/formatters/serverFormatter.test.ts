@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { ServerFormatter } from 'application/formatters/serverFormatter';
 import { SupportedFormat } from 'application/formatters/structFormatter.types';
 import type { StructService } from 'domain/services';
@@ -5,8 +6,8 @@ import type { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 
 describe('ServerFormatter', () => {
   it('uses convert (not layout) for IDT input', () => {
-    const convert = jest.fn();
-    const layout = jest.fn();
+    const convert = vi.fn();
+    const layout = vi.fn();
     const structService = { convert, layout } as unknown as StructService;
     const formatter = new ServerFormatter(
       structService,
@@ -26,8 +27,8 @@ describe('ServerFormatter', () => {
     ['trailing CR', 'P\r\r\r'],
     ['leading newlines', '\n\nP'],
   ])('trims %s from SMILES input', (_caseName, stringifiedStruct) => {
-    const convert = jest.fn();
-    const layout = jest.fn();
+    const convert = vi.fn();
+    const layout = vi.fn();
     const structService = { convert, layout } as unknown as StructService;
     const formatter = new ServerFormatter(
       structService,
@@ -47,8 +48,8 @@ describe('ServerFormatter', () => {
   });
 
   it('keeps using convert for extended SMILES with coordinates', () => {
-    const convert = jest.fn();
-    const layout = jest.fn();
+    const convert = vi.fn();
+    const layout = vi.fn();
     const structService = { convert, layout } as unknown as StructService;
     const formatter = new ServerFormatter(
       structService,

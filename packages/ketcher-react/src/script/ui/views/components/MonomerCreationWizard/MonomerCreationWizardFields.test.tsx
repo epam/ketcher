@@ -2,27 +2,27 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { KetMonomerClass } from 'ketcher-core';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
 
-jest.mock('ketcher-core', () => ({
-  ...jest.requireActual('ketcher-core'),
+vi.mock('ketcher-core', async () => ({
+  ...(await vi.importActual('ketcher-core')),
   ketcherProvider: {
     getKetcher: () => ({
-      editor: { setMonomerCreationSelectedType: jest.fn() },
+      editor: { setMonomerCreationSelectedType: vi.fn() },
     }),
   },
 }));
-jest.mock('../../../../../hooks', () => ({
+vi.mock('../../../../../hooks', () => ({
   useAppContext: () => ({ ketcherId: 'test' }),
 }));
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
+vi.mock('react-redux', async () => ({
+  ...(await vi.importActual('react-redux')),
   useSelector: () => ({ assignedAttachmentPoints: new Map() }),
 }));
-jest.mock('./components/NaturalAnaloguePicker/NaturalAnaloguePicker', () => ({
+vi.mock('./components/NaturalAnaloguePicker/NaturalAnaloguePicker', () => ({
   __esModule: true,
   default: () => null,
   isNaturalAnalogueRequired: () => true,
 }));
-jest.mock(
+vi.mock(
   './components/ModificationTypeDropdown/ModificationTypeDropdown',
   () => ({
     __esModule: true,
@@ -38,7 +38,7 @@ jest.mock(
 
 describe('library modification types', () => {
   it('loads and edits the original modification types without adding a copy', () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     render(
       <MonomerCreationWizardFields
         wizardState={{
@@ -56,7 +56,7 @@ describe('library modification types', () => {
         assignedAttachmentPoints={new Map()}
         initialModificationTypes={['Natural amino acid']}
         onChangeModificationTypes={onChange}
-        onFieldChange={jest.fn()}
+        onFieldChange={vi.fn()}
       />,
     );
 

@@ -17,7 +17,7 @@ describe('reference point distances', () => {
   it.each(objects)(
     'returns no reference point when there are none',
     (object) => {
-      jest.spyOn(object, 'getReferencePoints').mockReturnValueOnce([]);
+      vi.spyOn(object, 'getReferencePoints').mockReturnValueOnce([]);
 
       expect(object.getReferencePointDistance(new Vec2(2, 0))).toEqual({
         minDist: Infinity,

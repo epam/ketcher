@@ -1,3 +1,5 @@
+import { type Mock, vi } from 'vitest';
+
 import {
   act,
   fireEvent,
@@ -11,14 +13,14 @@ import { useEffect, useState } from 'react';
 import ColorPicker from './ColorPicker';
 import { useSettings } from 'src/hooks';
 
-jest.mock('src/hooks', () => ({
-  useSettings: jest.fn(),
+vi.mock('src/hooks', () => ({
+  useSettings: vi.fn(),
 }));
 
 const defaultProps = {
   value: '#000000',
   name: 'testname',
-  onChange: jest.fn(),
+  onChange: vi.fn(),
 };
 
 type MockSettings = { colorPickerCustomColors: string[] };
@@ -27,9 +29,8 @@ type MockSettings = { colorPickerCustomColors: string[] };
 // mirroring the real settingsService that all useSettings() calls subscribe to.
 let mockSettings: MockSettings;
 let subscribers: Set<(settings: MockSettings) => void>;
-let mockUpdateSettings: jest.Mock<
-  Promise<MockSettings>,
-  [Partial<MockSettings>]
+let mockUpdateSettings: Mock<
+  (partial: Partial<MockSettings>) => Promise<MockSettings>
 >;
 
 const renderColorPicker = (props = {}) => {
@@ -40,13 +41,13 @@ const renderColorPicker = (props = {}) => {
 beforeEach(() => {
   mockSettings = { colorPickerCustomColors: [] };
   subscribers = new Set();
-  mockUpdateSettings = jest.fn((partial) => {
+  mockUpdateSettings = vi.fn((partial) => {
     mockSettings = { ...mockSettings, ...partial };
     subscribers.forEach((setSettings) => setSettings(mockSettings));
     return Promise.resolve(mockSettings);
   });
 
-  (useSettings as jest.Mock).mockImplementation(() => {
+  (useSettings as Mock).mockImplementation(() => {
     const [settings, setSettings] = useState(mockSettings);
 
     useEffect(() => {
@@ -97,7 +98,7 @@ describe('should toggle color picker dialog', () => {
 
 describe('should pick color correctly', () => {
   it('should call onChange callback with picked color', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     renderColorPicker({ onChange });
     await openPreset();
     await openPalette();
@@ -154,8 +155,8 @@ describe('should pick color correctly', () => {
 
     render(
       <>
-        <ColorPicker value="#000000" name="picker-a" onChange={jest.fn()} />
-        <ColorPicker value="#000000" name="picker-b" onChange={jest.fn()} />
+        <ColorPicker value="#000000" name="picker-a" onChange={vi.fn()} />
+        <ColorPicker value="#000000" name="picker-b" onChange={vi.fn()} />
       </>,
     );
 
@@ -182,7 +183,7 @@ describe('should pick color correctly', () => {
 
 describe('Cancel and Apply actions', () => {
   it('should NOT call onChange when Cancel is clicked', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     renderColorPicker({ onChange });
     await openPreset();
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
@@ -201,7 +202,7 @@ describe('Cancel and Apply actions', () => {
   });
 
   it('should call onChange with the preset color when a swatch is clicked and Apply is pressed', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     renderColorPicker({ onChange });
     await openPreset();
     // Click the first swatch in the preset grid (#B2B2FF)
@@ -234,7 +235,7 @@ describe('Hex input validation', () => {
   });
 
   it('should not apply color for partial hex input (fewer than 6 chars)', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     renderColorPicker({ onChange });
     await openPreset();
     await openPalette();
@@ -246,7 +247,7 @@ describe('Hex input validation', () => {
   });
 
   it('should apply color when exactly 6 valid hex chars are typed', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     renderColorPicker({ onChange });
     await openPreset();
     await openPalette();

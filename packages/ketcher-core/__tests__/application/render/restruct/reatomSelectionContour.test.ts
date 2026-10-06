@@ -1,3 +1,4 @@
+import { type Mock, vi } from 'vitest';
 import ReAtom from 'application/render/restruct/reatom';
 import type { Render } from 'application/render/raphaelRender';
 import type { RenderOptions } from 'application/render/render.types';
@@ -33,7 +34,7 @@ function createReatom() {
   return reatom;
 }
 
-function createFakeRender(rect: jest.Mock) {
+function createFakeRender(rect: Mock) {
   const options = {
     microModeScale,
     fontszInPx,
@@ -73,7 +74,7 @@ describe('ReAtom selection contour with an invRet annotation', () => {
 
   it('sizes the labeled selection contour around the atom label, not the annotation', () => {
     const reatom = createReatom();
-    const rect = jest.fn();
+    const rect = vi.fn();
     const render = createFakeRender(rect);
 
     reatom.getSelectionContour(render);
@@ -99,7 +100,7 @@ describe('ReAtom selection contour with an invRet annotation', () => {
     const reatom = createReatom();
     reatom.visel.boxes.splice(1, 0, new Box2Abs(5, -5, 15, 5));
     (reatom as unknown as { labelBoxCount: number }).labelBoxCount = 2;
-    const rect = jest.fn();
+    const rect = vi.fn();
 
     reatom.getSelectionContour(createFakeRender(rect));
 

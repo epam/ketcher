@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ComboBox component should be rendered correctly should render combobox with suggestions 1`] = `
+exports[`ComboBox component should be rendered correctly > should render combobox with suggestions 1`] = `
 <DocumentFragment>
   <div>
     <input
@@ -9,12 +9,12 @@ exports[`ComboBox component should be rendered correctly should render combobox 
       value="Option1"
     />
     <ul
-      class="suggestList"
+      class="_suggestList_c3ade9"
       style="display: none;"
     >
       <li>
         <button
-          class="suggestButton"
+          class="_suggestButton_c3ade9"
           type="button"
         >
           Option2
@@ -22,7 +22,7 @@ exports[`ComboBox component should be rendered correctly should render combobox 
       </li>
       <li>
         <button
-          class="suggestButton"
+          class="_suggestButton_c3ade9"
           type="button"
         >
           Option3

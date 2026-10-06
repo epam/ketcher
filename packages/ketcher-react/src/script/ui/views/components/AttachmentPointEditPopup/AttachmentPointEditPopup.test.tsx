@@ -3,18 +3,17 @@ import { AttachmentPointName, Vec2 } from 'ketcher-core';
 import type { Editor } from '../../../../editor';
 import AttachmentPointEditPopup from './AttachmentPointEditPopup';
 
-jest.mock(
-  '../MonomerCreationWizard/hooks/useAttachmentPointSelectsData',
-  () => ({ useAttachmentPointSelectsData: () => ({}) }),
-);
-jest.mock(
+vi.mock('../MonomerCreationWizard/hooks/useAttachmentPointSelectsData', () => ({
+  useAttachmentPointSelectsData: () => ({}),
+}));
+vi.mock(
   '../MonomerCreationWizard/components/AttachmentPointControls/AttachmentPointControls',
-  () => () => null,
+  () => ({ default: () => null }),
 );
 
 afterEach(() => {
   cleanup();
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
   document.body.innerHTML = '';
   document.body.scrollLeft = 0;
   document.body.scrollTop = 0;
@@ -49,12 +48,12 @@ it('keeps the popup above both atoms and the R-label as the canvas moves', async
       }) as DOMRect;
     canvas.appendChild(element);
   });
-  const offsetParent = jest
+  const offsetParent = vi
     .spyOn(HTMLElement.prototype, 'offsetParent', 'get')
     .mockReturnValue(document.body);
   let height = 60;
-  jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(132);
-  const popupHeight = jest
+  vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(132);
+  const popupHeight = vi
     .spyOn(HTMLElement.prototype, 'offsetHeight', 'get')
     .mockImplementation(() => height);
   const editor = {
@@ -71,9 +70,9 @@ it('keeps the popup above both atoms and the R-label as the canvas moves', async
         position: new Vec2(),
       }}
       editor={editor}
-      onNameChange={jest.fn()}
-      onLeavingAtomChange={jest.fn()}
-      onClose={jest.fn()}
+      onNameChange={vi.fn()}
+      onLeavingAtomChange={vi.fn()}
+      onClose={vi.fn()}
     />,
   );
   const popup = screen.getByTestId('attachment-point-edit-popup');
@@ -96,12 +95,12 @@ it('keeps the popup above both atoms and the R-label as the canvas moves', async
   await waitFor(() => expect(popup.style.top).toBe('152px'));
 
   // The portal's positioned parent can be offset, bordered, and scrolled.
-  jest.spyOn(document.body, 'getBoundingClientRect').mockReturnValue({
+  vi.spyOn(document.body, 'getBoundingClientRect').mockReturnValue({
     left: 30,
     top: 40,
   } as DOMRect);
-  jest.spyOn(document.body, 'clientLeft', 'get').mockReturnValue(2);
-  jest.spyOn(document.body, 'clientTop', 'get').mockReturnValue(3);
+  vi.spyOn(document.body, 'clientLeft', 'get').mockReturnValue(2);
+  vi.spyOn(document.body, 'clientTop', 'get').mockReturnValue(3);
   document.body.scrollLeft = 10;
   document.body.scrollTop = 20;
   window.dispatchEvent(new Event('resize'));
@@ -110,7 +109,7 @@ it('keeps the popup above both atoms and the R-label as the canvas moves', async
     expect(popup.style.top).toBe('129px');
   });
 
-  const measure = jest.spyOn(canvas, 'querySelectorAll');
+  const measure = vi.spyOn(canvas, 'querySelectorAll');
   canvas.firstElementChild?.setAttribute('fill', 'red');
   await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
   expect(measure).not.toHaveBeenCalled();

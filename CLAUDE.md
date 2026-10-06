@@ -27,7 +27,7 @@ The `.memory-bank/` directory at the repo root is the **canonical knowledge base
 ├── domain.md           # Domain concepts: atoms, bonds, monomers, reactions, etc.
 ├── glossary.md         # Term definitions used in code and product
 ├── invariants.md       # Rules that must never be broken (architectural + domain)
-├── testing.md          # Testing strategy: unit (Jest), integration, E2E (Playwright)
+├── testing.md          # Testing strategy: unit (Vitest), integration, E2E (Playwright)
 │
 ├── features/           # Current observable behavior of each product feature
 │   ├── README.md       # Index + format convention

@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import ColorSlider from './ColorSlider';
@@ -6,7 +8,7 @@ const defaultProps = {
   value: 50,
   min: 0,
   max: 100,
-  onValueChange: jest.fn(),
+  onValueChange: vi.fn(),
   background: 'linear-gradient(to right, #fff, #000)',
   thumbColor: '#808080',
   ariaLabel: 'Test slider',
@@ -27,7 +29,7 @@ describe('ColorSlider', () => {
   });
 
   it('calls onValueChange with numeric value when range input changes', () => {
-    const onValueChange = jest.fn();
+    const onValueChange = vi.fn();
     render(<ColorSlider {...defaultProps} onValueChange={onValueChange} />);
     const slider = screen.getByRole('slider', { name: 'Test slider' });
     fireEvent.change(slider, { target: { value: '75' } });

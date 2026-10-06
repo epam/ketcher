@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import {
   Bond,
   ketcherProvider,
@@ -138,12 +140,12 @@ const createMockEditorForRGroupBond = (
 
 describe('Editor.isMonomerCreationWizardEnabled', () => {
   beforeEach(() => {
-    jest.spyOn(window, 'dispatchEvent').mockImplementation(() => true);
+    vi.spyOn(window, 'dispatchEvent').mockImplementation(() => true);
     setEditorInstance({} as unknown as CoreEditor);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     resetEditorInstance();
   });
 

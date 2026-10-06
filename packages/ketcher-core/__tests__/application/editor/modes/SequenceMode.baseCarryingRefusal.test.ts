@@ -33,13 +33,13 @@ const testRenderTheme = {
   },
 };
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
-SVGElement.prototype.getBBox = jest
+SVGElement.prototype.getBBox = vi
   .fn()
   .mockReturnValue({ x: 0, y: 0, width: 12, height: 12 });
 
@@ -166,7 +166,7 @@ describe('SequenceMode base-carrying refusal (task 19.1-19.4)', () => {
     // so before this change it rewrote the sense base and left the
     // antisense 'U' stale, with no message at all.
     const unsplitNucleotide = requireLibraryItem(editor, '5hMedC');
-    const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
+    const dispatchSpy = vi.spyOn(editor.events.error, 'dispatch');
 
     mode.insertMonomerFromLibrary(unsplitNucleotide);
 
@@ -188,8 +188,8 @@ describe('SequenceMode base-carrying refusal (task 19.1-19.4)', () => {
 
     selectBothStrandsAtPositionZero(senseNucleotides, antisenseNucleotides);
 
-    const errorSpy = jest.spyOn(editor.events.error, 'dispatch');
-    const confirmationSpy = jest.spyOn(
+    const errorSpy = vi.spyOn(editor.events.error, 'dispatch');
+    const confirmationSpy = vi.spyOn(
       editor.events.openConfirmationDialog,
       'dispatch',
     );
@@ -224,7 +224,7 @@ describe('SequenceMode base-carrying refusal (task 19.1-19.4)', () => {
       ...nucleotides[0].monomers.filter(Boolean),
     ]);
 
-    const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
+    const dispatchSpy = vi.spyOn(editor.events.error, 'dispatch');
 
     mode.insertMonomerFromLibrary(requireLibraryItem(editor, '5hMedC'));
 
@@ -241,7 +241,7 @@ describe('SequenceMode base-carrying refusal (task 19.1-19.4)', () => {
 
     selectBothStrandsAtPositionZero(senseNucleotides, antisenseNucleotides);
 
-    const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
+    const dispatchSpy = vi.spyOn(editor.events.error, 'dispatch');
 
     // 'R' is a sugar: replacing a node with it destroys that node either
     // way and gives it no base, so rule 1.3 has nothing to be ambiguous

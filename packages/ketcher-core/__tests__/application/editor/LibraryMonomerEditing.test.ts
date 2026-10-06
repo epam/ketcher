@@ -34,17 +34,17 @@ const makeEditor = () => {
   Object.assign(editor, {
     _monomersLibrary: [],
     _monomersLibraryParsedJson: { root: { templates: [] } },
-    events: { updateMonomersLibrary: { dispatch: jest.fn() } },
+    events: { updateMonomersLibrary: { dispatch: vi.fn() } },
   });
   return editor;
 };
 
 describe('editing monomer library entries by identity', () => {
   beforeEach(() => {
-    jest.spyOn(KetcherLogger, 'error').mockImplementation();
+    vi.spyOn(KetcherLogger, 'error').mockImplementation(() => undefined);
   });
 
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   it('accepts unchanged built-in aliases shared by templates in the initial library', () => {
     const editor = makeEditor();
@@ -193,9 +193,9 @@ describe('editing monomer library entries by identity', () => {
 
   it('persists deletion and refuses to leave dangling RNA preset references', () => {
     const editor = makeEditor();
-    const persist = jest
+    const persist = vi
       .spyOn(SettingsManager, 'addMonomerLibraryUpdate')
-      .mockImplementation();
+      .mockImplementation(() => undefined);
     editor.updateMonomersLibrary(libraryData(template('original', 'A')));
     const item = editor.monomersLibrary[0];
     editor.removeMonomerFromLibrary(item);

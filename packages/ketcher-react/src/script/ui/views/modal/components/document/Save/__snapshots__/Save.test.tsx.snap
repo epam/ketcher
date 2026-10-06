@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Save Dialog should be rendered correctly should render opened file format dropdown when the closed dropdown is clicked 1`] = `
+exports[`Save Dialog should be rendered correctly > should render opened file format dropdown when the closed dropdown is clicked 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body
@@ -10,36 +10,46 @@ exports[`Save Dialog should be rendered correctly should render opened file form
       aria-hidden="true"
     >
       <dialog
-        class="dialog dialog"
+        class="_dialog_f84003 _dialog_60c758"
         data-testid="info-modal-window"
         open=""
         tabindex="-1"
       >
         <header
-          class="header withDivider"
+          class="_header_f84003 _withDivider_f84003"
         >
           <span>
             Save Structure
           </span>
           <div
-            class="btnContainer"
+            class="_btnContainer_f84003"
           >
             <button
-              class="buttonTop"
+              class="_buttonTop_f84003"
               data-testid="close-window-button"
             >
-              <icon-close.svg
-                class="closeButton"
-              />
+              <svg
+                class="_closeButton_f84003"
+                fill="none"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13.4617 12.0459L19.8327 18.4169L18.4187 19.8309L12.0477 13.4599L5.72072 19.7859L4.30672 18.3719L10.6337 12.0459L4.26172 5.67387L5.67572 4.25987L12.0477 10.6319L18.4647 4.21387L19.8787 5.62787L13.4617 12.0459Z"
+                  fill="currentColor"
+                />
+              </svg>
             </button>
           </div>
         </header>
         <div
-          class="body"
+          class="_body_f84003"
           data-testid="info-modal-body"
         >
           <div
-            class="formContainer"
+            class="_formContainer_60c758"
           >
             <form>
               <label
@@ -49,12 +59,12 @@ exports[`Save Dialog should be rendered correctly should render opened file form
                   File name:
                 </span>
                 <span
-                  class="inputWrapper"
+                  class="_inputWrapper_71aeb6"
                   data-testid="undefined-input-span"
                   role="none"
                 >
                   <input
-                    class="input genericInput"
+                    class="_input_7bdd01 _genericInput_7bdd01"
                     data-testid="filename-input"
                     name="filename"
                     type="text"
@@ -70,12 +80,12 @@ exports[`Save Dialog should be rendered correctly should render opened file form
                   File format:
                 </span>
                 <span
-                  class="inputWrapper"
+                  class="_inputWrapper_71aeb6"
                   data-testid="file-format-list-input-span"
                   role="none"
                 >
                   <div
-                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer file-format-list css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused _selectContainer_65bb13 file-format-list css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
                     data-testid="file-format-list"
                   >
                     <div
@@ -95,9 +105,19 @@ exports[`Save Dialog should be rendered correctly should render opened file form
                       tabindex="-1"
                       value="mol"
                     />
-                    <icon-chevron.svg
+                    <svg
                       class="MuiSelect-icon MuiSelect-iconOutlined MuiSelect-iconOpen css-10q54uo-MuiSelect-icon"
-                    />
+                      fill="none"
+                      height="48"
+                      viewBox="0 0 48 48"
+                      width="48"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M24.0002 33.2303L9.78223 19.0123L12.6102 16.1843L24.0002 27.5743L35.3882 16.1843L38.2182 19.0123L24.0002 33.2303Z"
+                        fill="#231F20"
+                      />
+                    </svg>
                     <fieldset
                       aria-hidden="true"
                       class="MuiOutlinedInput-notchedOutline css-r01yff-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
@@ -118,14 +138,14 @@ exports[`Save Dialog should be rendered correctly should render opened file form
             </form>
             <div>
               <ul
-                class="tabs"
+                class="_tabs_60c758"
                 tabindex="0"
               >
                 <li
-                  class="tabs"
+                  class="_tabs_e9c8a7"
                 >
                   <button
-                    class="active"
+                    class="_active_e9c8a7"
                     data-testid="Preview-tab"
                     tabindex="0"
                     type="button"
@@ -136,10 +156,10 @@ exports[`Save Dialog should be rendered correctly should render opened file form
               </ul>
               <div>
                 <div
-                  class="previewBackground"
+                  class="_previewBackground_60c758"
                 >
                   <textarea
-                    class="previewArea"
+                    class="_previewArea_60c758"
                     data-testid="preview-area"
                     readonly=""
                   />
@@ -148,9 +168,19 @@ exports[`Save Dialog should be rendered correctly should render opened file form
                     data-testid="copy-to-clipboard"
                     title="Copy to clipboard"
                   >
-                    <icon-copy.svg
+                    <svg
                       class="css-2ntgcm"
-                    />
+                      fill="none"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M17.25 18.75H9V8.25H17.25V18.75ZM17.25 6.75H9C8.60217 6.75 8.22064 6.90803 7.93934 7.18934C7.65803 7.47064 7.5 7.85217 7.5 8.25V18.75C7.5 19.1478 7.65803 19.5294 7.93934 19.8107C8.22064 20.092 8.60217 20.25 9 20.25H17.25C17.6478 20.25 18.0294 20.092 18.3107 19.8107C18.592 19.5294 18.75 19.1478 18.75 18.75V8.25C18.75 7.85217 18.592 7.47064 18.3107 7.18934C18.0294 6.90803 17.6478 6.75 17.25 6.75ZM15 3.75H6C5.60217 3.75 5.22064 3.90804 4.93934 4.18934C4.65804 4.47064 4.5 4.85217 4.5 5.25V15.75H6V5.25H15V3.75Z"
+                        fill="currentcolor"
+                      />
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -158,24 +188,24 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </div>
         </div>
         <footer
-          class="footer"
+          class="_footer_f84003"
         >
           <button
-            class="saveTmpl"
+            class="_saveTmpl_60c758"
             data-testid="save-to-templates-button"
             disabled=""
           >
             Save to Templates
           </button>
           <button
-            class="cancel"
+            class="_cancel_60c758"
             data-testid="cancel-button"
             type="button"
           >
             Cancel
           </button>
           <button
-            class="ok"
+            class="_ok_60c758"
             data-testid="save-button"
             disabled=""
           >
@@ -185,7 +215,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
       </dialog>
     </div>
     <div
-      class="MuiPopover-root MuiMenu-root dropdownList MuiModal-root css-10nakn3-MuiModal-root-MuiPopover-root-MuiMenu-root"
+      class="MuiPopover-root MuiMenu-root _dropdownList_65bb13 MuiModal-root css-10nakn3-MuiModal-root-MuiPopover-root-MuiMenu-root"
       id="menu-"
       role="presentation"
     >
@@ -321,7 +351,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <hr
             aria-selected="false"
-            class="MuiDivider-root MuiDivider-fullWidth listDivider css-9mgopn-MuiDivider-root"
+            class="MuiDivider-root MuiDivider-fullWidth _listDivider_65bb13 css-9mgopn-MuiDivider-root"
             role="option"
           />
           <li
@@ -356,7 +386,7 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </li>
           <hr
             aria-selected="false"
-            class="MuiDivider-root MuiDivider-fullWidth listDivider css-9mgopn-MuiDivider-root"
+            class="MuiDivider-root MuiDivider-fullWidth _listDivider_65bb13 css-9mgopn-MuiDivider-root"
             role="option"
           />
           <li
@@ -421,36 +451,46 @@ exports[`Save Dialog should be rendered correctly should render opened file form
     aria-hidden="true"
   >
     <dialog
-      class="dialog dialog"
+      class="_dialog_f84003 _dialog_60c758"
       data-testid="info-modal-window"
       open=""
       tabindex="-1"
     >
       <header
-        class="header withDivider"
+        class="_header_f84003 _withDivider_f84003"
       >
         <span>
           Save Structure
         </span>
         <div
-          class="btnContainer"
+          class="_btnContainer_f84003"
         >
           <button
-            class="buttonTop"
+            class="_buttonTop_f84003"
             data-testid="close-window-button"
           >
-            <icon-close.svg
-              class="closeButton"
-            />
+            <svg
+              class="_closeButton_f84003"
+              fill="none"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M13.4617 12.0459L19.8327 18.4169L18.4187 19.8309L12.0477 13.4599L5.72072 19.7859L4.30672 18.3719L10.6337 12.0459L4.26172 5.67387L5.67572 4.25987L12.0477 10.6319L18.4647 4.21387L19.8787 5.62787L13.4617 12.0459Z"
+                fill="currentColor"
+              />
+            </svg>
           </button>
         </div>
       </header>
       <div
-        class="body"
+        class="_body_f84003"
         data-testid="info-modal-body"
       >
         <div
-          class="formContainer"
+          class="_formContainer_60c758"
         >
           <form>
             <label
@@ -460,12 +500,12 @@ exports[`Save Dialog should be rendered correctly should render opened file form
                 File name:
               </span>
               <span
-                class="inputWrapper"
+                class="_inputWrapper_71aeb6"
                 data-testid="undefined-input-span"
                 role="none"
               >
                 <input
-                  class="input genericInput"
+                  class="_input_7bdd01 _genericInput_7bdd01"
                   data-testid="filename-input"
                   name="filename"
                   type="text"
@@ -481,12 +521,12 @@ exports[`Save Dialog should be rendered correctly should render opened file form
                 File format:
               </span>
               <span
-                class="inputWrapper"
+                class="_inputWrapper_71aeb6"
                 data-testid="file-format-list-input-span"
                 role="none"
               >
                 <div
-                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer file-format-list css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused _selectContainer_65bb13 file-format-list css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
                   data-testid="file-format-list"
                 >
                   <div
@@ -506,9 +546,19 @@ exports[`Save Dialog should be rendered correctly should render opened file form
                     tabindex="-1"
                     value="mol"
                   />
-                  <icon-chevron.svg
+                  <svg
                     class="MuiSelect-icon MuiSelect-iconOutlined MuiSelect-iconOpen css-10q54uo-MuiSelect-icon"
-                  />
+                    fill="none"
+                    height="48"
+                    viewBox="0 0 48 48"
+                    width="48"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M24.0002 33.2303L9.78223 19.0123L12.6102 16.1843L24.0002 27.5743L35.3882 16.1843L38.2182 19.0123L24.0002 33.2303Z"
+                      fill="#231F20"
+                    />
+                  </svg>
                   <fieldset
                     aria-hidden="true"
                     class="MuiOutlinedInput-notchedOutline css-r01yff-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
@@ -529,14 +579,14 @@ exports[`Save Dialog should be rendered correctly should render opened file form
           </form>
           <div>
             <ul
-              class="tabs"
+              class="_tabs_60c758"
               tabindex="0"
             >
               <li
-                class="tabs"
+                class="_tabs_e9c8a7"
               >
                 <button
-                  class="active"
+                  class="_active_e9c8a7"
                   data-testid="Preview-tab"
                   tabindex="0"
                   type="button"
@@ -547,10 +597,10 @@ exports[`Save Dialog should be rendered correctly should render opened file form
             </ul>
             <div>
               <div
-                class="previewBackground"
+                class="_previewBackground_60c758"
               >
                 <textarea
-                  class="previewArea"
+                  class="_previewArea_60c758"
                   data-testid="preview-area"
                   readonly=""
                 />
@@ -559,9 +609,19 @@ exports[`Save Dialog should be rendered correctly should render opened file form
                   data-testid="copy-to-clipboard"
                   title="Copy to clipboard"
                 >
-                  <icon-copy.svg
+                  <svg
                     class="css-2ntgcm"
-                  />
+                    fill="none"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M17.25 18.75H9V8.25H17.25V18.75ZM17.25 6.75H9C8.60217 6.75 8.22064 6.90803 7.93934 7.18934C7.65803 7.47064 7.5 7.85217 7.5 8.25V18.75C7.5 19.1478 7.65803 19.5294 7.93934 19.8107C8.22064 20.092 8.60217 20.25 9 20.25H17.25C17.6478 20.25 18.0294 20.092 18.3107 19.8107C18.592 19.5294 18.75 19.1478 18.75 18.75V8.25C18.75 7.85217 18.592 7.47064 18.3107 7.18934C18.0294 6.90803 17.6478 6.75 17.25 6.75ZM15 3.75H6C5.60217 3.75 5.22064 3.90804 4.93934 4.18934C4.65804 4.47064 4.5 4.85217 4.5 5.25V15.75H6V5.25H15V3.75Z"
+                      fill="currentcolor"
+                    />
+                  </svg>
                 </button>
               </div>
             </div>
@@ -569,24 +629,24 @@ exports[`Save Dialog should be rendered correctly should render opened file form
         </div>
       </div>
       <footer
-        class="footer"
+        class="_footer_f84003"
       >
         <button
-          class="saveTmpl"
+          class="_saveTmpl_60c758"
           data-testid="save-to-templates-button"
           disabled=""
         >
           Save to Templates
         </button>
         <button
-          class="cancel"
+          class="_cancel_60c758"
           data-testid="cancel-button"
           type="button"
         >
           Cancel
         </button>
         <button
-          class="ok"
+          class="_ok_60c758"
           data-testid="save-button"
           disabled=""
         >

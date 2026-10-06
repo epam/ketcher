@@ -1,15 +1,15 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`AnalyzingFile component should render correctly 1`] = `
+exports[`AnalyzingFile component > should render correctly 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
       <div
-        class="css-1ro7qq4"
+        class="css-1ckndid-RootContainer enrnqb20"
       >
         <div
-          class="loading-spinner css-rmxyg7"
+          class="loading-spinner css-1ocpz3q-LoadContainer ejf830p0"
           data-testid="loading-spinner"
         >
           <span />
@@ -21,10 +21,10 @@ exports[`AnalyzingFile component should render correctly 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-1ro7qq4"
+      class="css-1ckndid-RootContainer enrnqb20"
     >
       <div
-        class="loading-spinner css-rmxyg7"
+        class="loading-spinner css-1ocpz3q-LoadContainer ejf830p0"
         data-testid="loading-spinner"
       >
         <span />

@@ -19,39 +19,40 @@ const createEditor = (modeName = 'flex-layout-mode') => {
   const editor = Object.create(CoreEditor.prototype) as CoreEditor;
   const struct = new Struct();
   const manager = new DrawingEntitiesManager();
-  jest
-    .spyOn(DrawingEntitiesManager.prototype, 'clearCanvas')
-    .mockImplementation(() => undefined);
-  jest
-    .spyOn(DrawingEntitiesManager.prototype, 'unselectAllDrawingEntities')
-    .mockImplementation(() => new Command());
+  vi.spyOn(DrawingEntitiesManager.prototype, 'clearCanvas').mockImplementation(
+    () => undefined,
+  );
+  vi.spyOn(
+    DrawingEntitiesManager.prototype,
+    'unselectAllDrawingEntities',
+  ).mockImplementation(() => new Command());
   Object.assign(editor, {
-    transientDrawingView: { clear: jest.fn(), update: jest.fn() },
+    transientDrawingView: { clear: vi.fn(), update: vi.fn() },
     _type: EditorType.Macromolecules,
-    mode: { modeName, initialize: jest.fn() },
+    mode: { modeName, initialize: vi.fn() },
     drawingEntitiesManager: manager,
     micromoleculesEditor: {
       struct: () => struct,
-      clear: jest.fn(),
-      clearHistory: jest.fn(),
+      clear: vi.fn(),
+      clearHistory: vi.fn(),
     },
-    rescaleStructForModeTransition: jest.fn(() => 1),
-    viewModel: { initialize: jest.fn() },
+    rescaleStructForModeTransition: vi.fn(() => 1),
+    viewModel: { initialize: vi.fn() },
     renderersContainer: {
-      update: jest.fn(),
-      reinitializeViewModel: jest.fn(),
-      runPostRenderMethods: jest.fn(),
-      addSGroup: jest.fn(),
-      addStereoFlag: jest.fn(),
+      update: vi.fn(),
+      reinitializeViewModel: vi.fn(),
+      runPostRenderMethods: vi.fn(),
+      addSGroup: vi.fn(),
+      addStereoFlag: vi.fn(),
     },
-    events: { modelChange: { dispatch: jest.fn() } },
+    events: { modelChange: { dispatch: vi.fn() } },
   });
   return { editor, manager, struct };
 };
 
 describe('temporary monomer wizard mode session', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     EditorHistory.getInstance({} as CoreEditor).destroy();
   });
 
@@ -85,15 +86,17 @@ describe('temporary monomer wizard mode session', () => {
     'applies only the original structured layout after a canvas save in %s',
     (modeName) => {
       const { editor, manager } = createEditor(modeName);
-      const snake = jest
+      const snake = vi
         .spyOn(DrawingEntitiesManager.prototype, 'applySnakeLayout')
         .mockReturnValue(new Command());
-      jest
-        .spyOn(DrawingEntitiesManager.prototype, 'recalculateAntisenseChains')
-        .mockReturnValue(new Command());
-      jest
-        .spyOn(MacromoleculesConverter, 'convertStructToDrawingEntities')
-        .mockReturnValue({ modelChanges: new Command() } as never);
+      vi.spyOn(
+        DrawingEntitiesManager.prototype,
+        'recalculateAntisenseChains',
+      ).mockReturnValue(new Command());
+      vi.spyOn(
+        MacromoleculesConverter,
+        'convertStructToDrawingEntities',
+      ).mockReturnValue({ modelChanges: new Command() } as never);
 
       editor.beginMonomerWizardSession();
       editor.finishMonomerWizardSession(true);
@@ -113,9 +116,10 @@ describe('temporary monomer wizard mode session', () => {
 
   it('drops transient views and selection left over from before the session', () => {
     const { editor } = createEditor();
-    jest
-      .spyOn(MacromoleculesConverter, 'convertStructToDrawingEntities')
-      .mockReturnValue({ modelChanges: new Command() } as never);
+    vi.spyOn(
+      MacromoleculesConverter,
+      'convertStructToDrawingEntities',
+    ).mockReturnValue({ modelChanges: new Command() } as never);
 
     editor.beginMonomerWizardSession();
     expect(editor.transientDrawingView.clear).not.toHaveBeenCalled();
@@ -157,7 +161,7 @@ describe('temporary monomer wizard mode session', () => {
         [2, createMonomer('A', KetMonomerClass.CHEM)],
         [3, createMonomer('C', KetMonomerClass.AminoAcid)],
       ]);
-      const replace = jest
+      const replace = vi
         .spyOn(manager, 'replaceMonomer')
         .mockReturnValue({ command: new Command(), newMonomer: {} as never });
 
@@ -217,11 +221,12 @@ describe('temporary monomer wizard mode session', () => {
   it('keeps the original canvas and exits the session if saved conversion fails', () => {
     const { editor, manager } = createEditor();
     editor.beginMonomerWizardSession();
-    jest
-      .spyOn(MacromoleculesConverter, 'convertStructToDrawingEntities')
-      .mockImplementation(() => {
-        throw new Error('Cannot convert');
-      });
+    vi.spyOn(
+      MacromoleculesConverter,
+      'convertStructToDrawingEntities',
+    ).mockImplementation(() => {
+      throw new Error('Cannot convert');
+    });
 
     expect(() => editor.finishMonomerWizardSession(true)).toThrow(
       'Cannot convert',
@@ -234,7 +239,7 @@ describe('temporary monomer wizard mode session', () => {
 
   it('does not convert the canvas for library editing or duplication', () => {
     const { editor, manager } = createEditor();
-    const convert = jest.spyOn(
+    const convert = vi.spyOn(
       MacromoleculesConverter,
       'convertDrawingEntitiesToStruct',
     );
@@ -249,25 +254,29 @@ describe('temporary monomer wizard mode session', () => {
     (modeName) => {
       const { editor, manager } = createEditor(modeName);
       const history = EditorHistory.getInstance(editor);
-      const previousOperation = { execute: jest.fn(), invert: jest.fn() };
+      const previousOperation = { execute: vi.fn(), invert: vi.fn() };
       const previousCommand = new Command();
       previousCommand.addOperation(previousOperation);
       history.update(previousCommand);
-      jest
-        .spyOn(DrawingEntitiesManager.prototype, 'unselectAllDrawingEntities')
-        .mockReturnValue(new Command());
-      const snake = jest
+      vi.spyOn(
+        DrawingEntitiesManager.prototype,
+        'unselectAllDrawingEntities',
+      ).mockReturnValue(new Command());
+      const snake = vi
         .spyOn(DrawingEntitiesManager.prototype, 'applySnakeLayout')
         .mockReturnValue(new Command());
-      jest
-        .spyOn(DrawingEntitiesManager.prototype, 'applyFlexLayoutMode')
-        .mockReturnValue(new Command());
-      jest
-        .spyOn(DrawingEntitiesManager.prototype, 'recalculateAntisenseChains')
-        .mockReturnValue(new Command());
-      jest
-        .spyOn(MacromoleculesConverter, 'convertStructToDrawingEntities')
-        .mockReturnValue({ modelChanges: new Command() } as never);
+      vi.spyOn(
+        DrawingEntitiesManager.prototype,
+        'applyFlexLayoutMode',
+      ).mockReturnValue(new Command());
+      vi.spyOn(
+        DrawingEntitiesManager.prototype,
+        'recalculateAntisenseChains',
+      ).mockReturnValue(new Command());
+      vi.spyOn(
+        MacromoleculesConverter,
+        'convertStructToDrawingEntities',
+      ).mockReturnValue({ modelChanges: new Command() } as never);
 
       editor.beginMonomerWizardSession();
       editor.finishMonomerWizardSession(true);
@@ -298,20 +307,21 @@ describe('temporary monomer wizard mode session', () => {
     manager.monomers.set(originalMonomer.id, originalMonomer);
     const history = EditorHistory.getInstance(editor);
     history.update(new Command());
-    jest
-      .spyOn(DrawingEntitiesManager.prototype, 'applyFlexLayoutMode')
-      .mockReturnValue(new Command());
-    jest
-      .spyOn(DrawingEntitiesManager.prototype, 'recalculateAntisenseChains')
-      .mockReturnValue(new Command());
-    jest
-      .spyOn(MacromoleculesConverter, 'convertStructToDrawingEntities')
-      .mockReturnValue({ modelChanges: new Command() } as never);
-    jest
-      .spyOn(editor.renderersContainer, 'update')
-      .mockImplementationOnce(() => {
-        throw new Error('Render failed');
-      });
+    vi.spyOn(
+      DrawingEntitiesManager.prototype,
+      'applyFlexLayoutMode',
+    ).mockReturnValue(new Command());
+    vi.spyOn(
+      DrawingEntitiesManager.prototype,
+      'recalculateAntisenseChains',
+    ).mockReturnValue(new Command());
+    vi.spyOn(
+      MacromoleculesConverter,
+      'convertStructToDrawingEntities',
+    ).mockReturnValue({ modelChanges: new Command() } as never);
+    vi.spyOn(editor.renderersContainer, 'update').mockImplementationOnce(() => {
+      throw new Error('Render failed');
+    });
 
     editor.beginMonomerWizardSession(false);
     expect(() => editor.finishMonomerWizardSession(true)).toThrow(
@@ -336,7 +346,7 @@ describe('temporary monomer wizard mode session', () => {
     const fragment = new Fragment([7], new Vec2(5, 6));
     fragment.updateStereoFlag(struct);
     struct.frags.set(0, fragment);
-    jest.spyOn(manager, 'getStereoFlagForMonomer').mockReturnValue({
+    vi.spyOn(manager, 'getStereoFlagForMonomer').mockReturnValue({
       position: new Vec2(10, 20),
     } as never);
     const monomer = new Peptide(

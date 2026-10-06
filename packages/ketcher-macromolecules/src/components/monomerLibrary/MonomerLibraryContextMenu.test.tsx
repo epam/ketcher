@@ -6,28 +6,27 @@ import {
   MonomerItemType,
   Struct,
 } from 'ketcher-core';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
 import { MonomerItem } from './monomerLibraryItem/MonomerItem';
 import { MonomerLibraryContextMenu } from './MonomerLibraryContextMenu';
 
-jest.mock('react-contexify', () =>
-  jest.requireActual(
-    '../../../../../node_modules/react-contexify/dist/index.js',
-  ),
+vi.mock('react-contexify', () =>
+  vi.importActual('../../../../../node_modules/react-contexify/dist/index.js'),
 );
 
-jest.mock('./monomerLibraryItem/hooks/useLibraryItemDrag', () => ({
-  useLibraryItemDrag: jest.fn(),
+vi.mock('./monomerLibraryItem/hooks/useLibraryItemDrag', () => ({
+  useLibraryItemDrag: vi.fn(),
 }));
 
 describe('monomer library menu', () => {
-  const openWizard = jest.fn();
-  const removeMonomer = jest.fn();
-  const onClick = jest.fn();
+  const openWizard = vi.fn();
+  const removeMonomer = vi.fn();
+  const onClick = vi.fn();
   let root: HTMLDivElement;
   let monomer: MonomerItemType;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     root = document.createElement('div');
     root.className = 'Ketcher-macromolecules-root';
     document.body.appendChild(root);
@@ -52,7 +51,7 @@ describe('monomer library menu', () => {
     const editor = {
       events: { openMonomerCreationWizard: { dispatch: openWizard } },
       removeMonomerFromLibrary: removeMonomer,
-      isMonomerReferencedInLibrary: jest.fn(() => false),
+      isMonomerReferencedInLibrary: vi.fn(() => false),
     } as unknown as CoreEditor;
     render(
       withThemeAndStoreProvider(

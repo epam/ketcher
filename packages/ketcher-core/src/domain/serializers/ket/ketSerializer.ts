@@ -187,12 +187,41 @@ function isSvgImageDataValid(base64Data: string): boolean {
     return false;
   }
 
-  const hasSvgRoot =
-    /^\s*(<\?xml[\s\S]*?\?>\s*)?(?:<!--[\s\S]*?-->\s*)*<svg[\s>]/i.test(
-      svgContent,
-    ) &&
+  let position = 0;
+
+  // Skip leading whitespace.
+  while (position < svgContent.length && /\s/.test(svgContent[position])) {
+    position++;
+  }
+
+  // Optional XML declaration: <?xml ... ?>
+  if (svgContent.startsWith('<?xml', position)) {
+    const xmlEnd = svgContent.indexOf('?>', position + 5);
+    if (xmlEnd === -1) {
+      return false;
+    }
+    position = xmlEnd + 2;
+    while (position < svgContent.length && /\s/.test(svgContent[position])) {
+      position++;
+    }
+  }
+
+  // Optional leading comments: <!-- ... -->
+  while (svgContent.startsWith('<!--', position)) {
+    const commentEnd = svgContent.indexOf('-->', position + 4);
+    if (commentEnd === -1) {
+      return false;
+    }
+    position = commentEnd + 3;
+    while (position < svgContent.length && /\s/.test(svgContent[position])) {
+      position++;
+    }
+  }
+
+  const startsWithSvgRoot =
+    /^<svg[\s>]/i.test(svgContent.slice(position)) &&
     /<\/svg\s*>\s*$/i.test(svgContent);
-  if (!hasSvgRoot) {
+  if (!startsWithSvgRoot) {
     return false;
   }
 

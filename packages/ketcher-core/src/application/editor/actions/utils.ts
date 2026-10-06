@@ -292,10 +292,12 @@ export function atomForNewBond(
           neiNeighborAngles.push(ang);
         });
         neiNeighborAngles.sort((nei1, nei2) => nei1 - nei2);
+        const lastNeiNeighborAngle = neiNeighborAngles.at(-1);
 
         if (
           neiNeighborAngles[0] <= Math.PI * 1.01 &&
-          (neiNeighborAngles.at(-1) as number) <= 1.01 * Math.PI
+          lastNeiNeighborAngle !== undefined &&
+          lastNeiNeighborAngle <= 1.01 * Math.PI
         ) {
           maxAngle *= -1;
         }

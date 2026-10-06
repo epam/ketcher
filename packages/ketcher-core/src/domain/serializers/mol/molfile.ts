@@ -346,7 +346,7 @@ export class Molfile {
         atomsProps.push({ id, value: atom.alias });
       } else if (
         !Elements.get(atom.label) &&
-        ['A', 'Q', 'X', '*', 'R#'].indexOf(atom.label) === -1
+        !['A', 'Q', 'X', '*', 'R#'].includes(atom.label)
       ) {
         // search in generics?
         label = 'C';

@@ -35,7 +35,7 @@ exports[`AbbreviationLookup Utils highlightOptionLabel Should return marked abbr
 
 exports[`AbbreviationLookup Utils highlightOptionLabel Should return marked name 1`] = `
 <React.Fragment>
-  SHORTABBR (Very 
+  SHORTABBR (Very\u0020
   <mark>
     long
   </mark>

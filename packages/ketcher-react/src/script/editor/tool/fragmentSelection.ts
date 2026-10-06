@@ -67,7 +67,7 @@ export default class FragmentSelectionTool implements Tool {
       };
       const currentSelection = this.editor.selection();
       const mergedSelection = event.shiftKey
-        ? selMerge({ ...(currentSelection || {}) }, selection, false)
+        ? selMerge({ ...currentSelection }, selection, false)
         : selection;
 
       this.editor.selection(mergedSelection);

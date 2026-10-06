@@ -28,6 +28,7 @@ const createUnsplit = (
   cloneDeep(
     Object.assign(Object.create(UnsplitNucleotide.prototype), {
       hydrogenBonds,
+      attachmentPointsToBonds: {},
       monomerItem: {
         props: {
           MonomerNaturalAnalogCode: naturalAnalogCode,
@@ -74,9 +75,18 @@ describe('SelectedMonomersContextMenu helpers — unsplit nucleotides', () => {
     expect(isAntisenseCreationDisabled([createUnsplit('A')])).toBe(false);
   });
 
-  it('poisons the whole selection when one unsplit is ineligible', () => {
+  it('keeps antisense available when another selected chain is ineligible', () => {
     expect(
       isAntisenseCreationDisabled([createUnsplit('A'), createUnsplit('X')]),
+    ).toBe(false);
+  });
+
+  it('disables antisense when every selected chain is ineligible', () => {
+    expect(
+      isAntisenseCreationDisabled([
+        createUnsplit('X'),
+        createUnsplit('A', [{ id: 1 }]),
+      ]),
     ).toBe(true);
   });
 

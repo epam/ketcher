@@ -43,7 +43,7 @@ import {
   selectAxoLabsAliasesByPresetName,
   selectSearchFilter,
 } from 'state/library';
-import { castDraft } from 'immer';
+import { castDraft, type Draft } from 'immer';
 
 export enum RnaBuilderPresetsItem {
   Presets = 'Presets',
@@ -141,7 +141,7 @@ export const rnaBuilderSlice = createSlice({
   name: 'rna-builder',
   initialState,
   reducers: {
-    createNewPreset: (state) => {
+    createNewPreset: (state: Draft<IRnaBuilderState>) => {
       state.activePreset = {
         base: undefined,
         sugar: undefined,
@@ -150,7 +150,10 @@ export const rnaBuilderSlice = createSlice({
         nameInList: '',
       };
     },
-    setActivePreset: (state, action: PayloadAction<IRnaPreset>) => {
+    setActivePreset: (
+      state: Draft<IRnaBuilderState>,
+      action: PayloadAction<IRnaPreset>,
+    ) => {
       state.activePreset = {
         ...action.payload,
         nameInList: action.payload.name,
@@ -162,23 +165,26 @@ export const rnaBuilderSlice = createSlice({
     ) => {
       state.sequenceSelection = [...action.payload];
     },
-    setSequenceSelectionName: (state, action: PayloadAction<string>) => {
+    setSequenceSelectionName: (
+      state: Draft<IRnaBuilderState>,
+      action: PayloadAction<string>,
+    ) => {
       state.sequenceSelectionName = action.payload;
     },
     setIsSequenceFirstsOnlyNucleoelementsSelected: (
-      state,
+      state: Draft<IRnaBuilderState>,
       action: PayloadAction<boolean>,
     ) => {
       state.isSequenceFirstsOnlyNucleoelementsSelected = action.payload;
     },
     setActivePresetForContextMenu: (
-      state,
+      state: Draft<IRnaBuilderState>,
       action: PayloadAction<IRnaPreset>,
     ) => {
       state.activePresetForContextMenu = action.payload;
     },
     setPresetPhosphateFilter: (
-      state,
+      state: Draft<IRnaBuilderState>,
       action: PayloadAction<PresetPhosphateFilter>,
     ) => {
       state.presetPhosphateFilter = action.payload;
@@ -189,18 +195,21 @@ export const rnaBuilderSlice = createSlice({
         action.payload,
       );
     },
-    setActivePresetName: (state, action: PayloadAction<string>) => {
+    setActivePresetName: (
+      state: Draft<IRnaBuilderState>,
+      action: PayloadAction<string>,
+    ) => {
       if (!state.activePreset) return;
       state.activePreset.name = action.payload;
     },
     setActiveRnaBuilderItem: (
-      state,
+      state: Draft<IRnaBuilderState>,
       action: PayloadAction<RnaBuilderItem | null>,
     ) => {
       state.activeRnaBuilderItem = action.payload;
     },
     recalculateRnaBuilderValidations: (
-      state,
+      state: Draft<IRnaBuilderState>,
       action: PayloadAction<{
         rnaPreset: IRnaPreset;
         isEditMode: boolean;
@@ -226,7 +235,7 @@ export const rnaBuilderSlice = createSlice({
         phosphateValidations;
     },
     setActivePresetMonomerGroup: (
-      state,
+      state: Draft<IRnaBuilderState>,
       action: PayloadAction<{
         groupName: MonomerGroups;
         groupItem: MonomerOrAmbiguousType;
@@ -237,7 +246,10 @@ export const rnaBuilderSlice = createSlice({
           castDraft(action.payload)
         : null;
     },
-    savePreset: (state, action: PayloadAction<IRnaPreset>) => {
+    savePreset: (
+      state: Draft<IRnaBuilderState>,
+      action: PayloadAction<IRnaPreset>,
+    ) => {
       const preset = action.payload;
       const newPreset = { ...preset };
 
@@ -261,7 +273,10 @@ export const rnaBuilderSlice = createSlice({
       if (!state.activePreset) return;
       state.activePreset.nameInList = newPreset.name;
     },
-    deletePreset: (state, action: PayloadAction<IRnaPreset>) => {
+    deletePreset: (
+      state: Draft<IRnaBuilderState>,
+      action: PayloadAction<IRnaPreset>,
+    ) => {
       const preset = action.payload;
 
       deleteCachedCustomRnaPreset(preset.name);
@@ -276,16 +291,28 @@ export const rnaBuilderSlice = createSlice({
         state.activePreset = null;
       }
     },
-    setIsEditMode: (state, action: PayloadAction<boolean>) => {
+    setIsEditMode: (
+      state: Draft<IRnaBuilderState>,
+      action: PayloadAction<boolean>,
+    ) => {
       state.isEditMode = action.payload;
     },
-    setUniqueNameError: (state, action: PayloadAction<string>) => {
+    setUniqueNameError: (
+      state: Draft<IRnaBuilderState>,
+      action: PayloadAction<string>,
+    ) => {
       state.uniqueNameError = action.payload;
     },
-    setInvalidPresetError: (state, action: PayloadAction<string>) => {
+    setInvalidPresetError: (
+      state: Draft<IRnaBuilderState>,
+      action: PayloadAction<string>,
+    ) => {
       state.invalidPresetError = action.payload;
     },
-    setInvalidPresetNameError: (state, action: PayloadAction<string>) => {
+    setInvalidPresetNameError: (
+      state: Draft<IRnaBuilderState>,
+      action: PayloadAction<string>,
+    ) => {
       state.invalidPresetNameError = action.payload;
     },
     setDefaultPresets: (
@@ -342,11 +369,17 @@ export const rnaBuilderSlice = createSlice({
       state.presetsDefault = [];
     },
 
-    setActiveMonomerKey: (state, action: PayloadAction<string>) => {
+    setActiveMonomerKey: (
+      state: Draft<IRnaBuilderState>,
+      action: PayloadAction<string>,
+    ) => {
       state.activeMonomerKey = action.payload;
     },
 
-    togglePresetFavorites: (state, action: PayloadAction<IRnaPreset>) => {
+    togglePresetFavorites: (
+      state: Draft<IRnaBuilderState>,
+      action: PayloadAction<IRnaPreset>,
+    ) => {
       // Find preset to update in default presets
       const presetIndex = state.presetsDefault.findIndex(
         (presetInList) => presetInList.name === action.payload.name,

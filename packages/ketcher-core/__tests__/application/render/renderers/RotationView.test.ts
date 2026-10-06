@@ -10,6 +10,65 @@ describe('RotationView', () => {
     jest.restoreAllMocks();
   });
 
+  it.each([
+    [
+      'rotation handle',
+      '.rotation-handle',
+      RotationView.subscribeRotationHandle,
+    ],
+    [
+      'rotation center',
+      '.rotation-center-handle rect',
+      RotationView.subscribeRotationCenter,
+    ],
+  ] as const)(
+    'dispatches mouse down and drag events for the %s',
+    (_, selector, subscribe) => {
+      const svg = createSvgElement('svg') as SVGSVGElement;
+      const layer = createSvgElement('g') as SVGGElement;
+      svg.appendChild(layer);
+      RotationView.show(
+        select(layer) as unknown as D3SvgElementSelection<SVGGElement, void>,
+        {
+          center: new Vec2(100, 100),
+          boundingBox: { left: 80, top: 80, width: 40, height: 40 },
+          isRotating: false,
+        },
+      );
+      const target = svg.querySelector(selector);
+      const listener = jest.fn();
+      const unsubscribe = subscribe(listener);
+      const mouseDown = new MouseEvent('mousedown', {
+        buttons: 1,
+        bubbles: true,
+        cancelable: true,
+      });
+      const mouseMove = new MouseEvent('mousemove', { buttons: 1 });
+
+      try {
+        expect(target).not.toBeNull();
+        target?.dispatchEvent(mouseDown);
+        expect(listener).toHaveBeenNthCalledWith(1, {
+          type: 'down',
+          event: mouseDown,
+        });
+        expect(mouseDown.defaultPrevented).toBe(true);
+
+        target?.dispatchEvent(new MouseEvent('mousemove', { buttons: 0 }));
+        expect(listener).toHaveBeenCalledTimes(1);
+
+        target?.dispatchEvent(mouseMove);
+        expect(listener).toHaveBeenNthCalledWith(2, {
+          type: 'drag',
+          event: mouseMove,
+        });
+        expect(listener).toHaveBeenCalledTimes(2);
+      } finally {
+        unsubscribe();
+      }
+    },
+  );
+
   it('should render active rotation handle style in rotating mode', () => {
     const svg = createSvgElement('svg') as SVGSVGElement;
     const layer = createSvgElement('g') as SVGGElement;

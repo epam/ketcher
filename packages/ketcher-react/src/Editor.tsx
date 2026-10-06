@@ -178,50 +178,69 @@ export const Editor = (props: Props) => {
   }, [showPolymerEditor]);
 
   useEffect(() => {
-    if (moleculesEditor && macromoleculesEditor) {
-      if (skipModeConversion.current) {
-        skipModeConversion.current = false;
-        return;
-      }
-      const request = pendingWizard.current;
-      if (request) {
-        pendingWizard.current = undefined;
-        /*
-         * Only schedules the restore: rebuilding the macromolecules canvas
-         * measures the DOM (monomer labels are laid out from getBBox), and
-         * that canvas is still hidden until React re-renders in macro mode.
-         * The layout effect above performs it once the canvas is on screen.
-         */
-        const finishSession = (savedCanvas: boolean) => {
-          wizardSessionActive.current = false;
-          skipModeConversion.current = true;
-          pendingWizardFinish.current = savedCanvas;
-          setIsMonomerWizardOpen(false);
-          togglePolymerEditor(true);
-        };
-        try {
-          moleculesEditor.openMonomerCreationWizardFromMacro(
-            request,
-            finishSession,
-          );
-        } catch (error) {
-          // Roll back the imperative transition if opening the wizard failed.
-          // eslint-disable-next-line react-you-might-not-need-an-effect/no-chain-state-updates
-          if (wizardSessionActive.current) finishSession(false);
-          moleculesEditor.errorHandler?.(
-            error instanceof Error ? error.message : String(error),
-          );
-        }
-        return;
-      }
-      if (showPolymerEditor) {
-        moleculesEditor?.closeMonomerCreationWizard?.();
-        macromoleculesEditor?.switchToMacromolecules();
-      } else {
-        macromoleculesEditor?.switchToMicromolecules();
-        moleculesEditor?.focusCliparea();
-      }
+    if (!moleculesEditor || !macromoleculesEditor) {
+      return;
     }
+
+    if (skipModeConversion.current) {
+      skipModeConversion.current = false;
+      return;
+    }
+    const request = pendingWizard.current;
+    if (request) {
+      pendingWizard.current = undefined;
+      /*
+       * Only schedules the restore: rebuilding the macromolecules canvas
+       * measures the DOM (monomer labels are laid out from getBBox), and
+       * that canvas is still hidden until React re-renders in macro mode.
+       * The layout effect above performs it once the canvas is on screen.
+       */
+      const finishSession = (savedCanvas: boolean) => {
+        wizardSessionActive.current = false;
+        skipModeConversion.current = true;
+        pendingWizardFinish.current = savedCanvas;
+        setIsMonomerWizardOpen(false);
+        togglePolymerEditor(true);
+      };
+      try {
+        moleculesEditor.openMonomerCreationWizardFromMacro(
+          request,
+          finishSession,
+        );
+      } catch (error) {
+        // Roll back the imperative transition if opening the wizard failed.
+        if (wizardSessionActive.current) finishSession(false);
+        moleculesEditor.errorHandler?.(
+          error instanceof Error ? error.message : String(error),
+        );
+      }
+      return;
+    }
+
+    if (!showPolymerEditor) {
+      macromoleculesEditor.switchToMicromolecules();
+      moleculesEditor.focusCliparea();
+      return;
+    }
+
+    moleculesEditor.closeMonomerCreationWizard?.();
+
+    // The default monomers library is a lazily fetched asset, so it may not be
+    // resolved yet. switchToMacromolecules converts the struct into drawing
+    // entities and needs the library present, so wait for it before switching.
+    // ensureDefaultMonomersLibraryLoaded is idempotent, so only the first
+    // switch actually fetches.
+    let cancelled = false;
+
+    macromoleculesEditor.ensureDefaultMonomersLibraryLoaded().then(() => {
+      if (!cancelled) {
+        macromoleculesEditor.switchToMacromolecules();
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [showPolymerEditor]);
 
   useEffect(() => {

@@ -17,6 +17,7 @@ const mockMacroEditor = {
     switchToMoleculesMode: new Subscription(),
     openMonomerCreationWizard: new Subscription<MonomerCreationWizardRequest>(),
   },
+  ensureDefaultMonomersLibraryLoaded: jest.fn(() => Promise.resolve()),
   switchToMacromolecules: jest.fn(),
   switchToMicromolecules: jest.fn(),
   finishMonomerWizardSession: jest.fn(),
@@ -100,6 +101,9 @@ const initialize = async () => {
   fireEvent.click(screen.getByText('Init micro'));
   fireEvent.click(await screen.findByTestId('init-macro'));
   act(() => mockMacroEditor.events.switchToMacromoleculesMode.dispatch());
+  await act(async () => {
+    await Promise.resolve();
+  });
   jest.clearAllMocks();
 };
 

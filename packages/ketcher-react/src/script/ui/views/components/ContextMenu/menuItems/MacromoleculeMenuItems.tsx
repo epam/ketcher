@@ -14,6 +14,7 @@ import {
   isAmbiguousMonomerLibraryItem,
   ketcherProvider,
   MonomerMicromolecule,
+  provideEditorInstance,
 } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
@@ -72,7 +73,12 @@ const MacromoleculeMenuItems = (
       ? sgroup.monomer.monomerItem.label
       : '';
 
-  const handleEdit = (editAllInstances = false) => {
+  const handleEdit = async (editAllInstances = false) => {
+    // The default monomers library is a lazily fetched asset, so make sure it
+    // has resolved before reading it below - this menu is reachable from
+    // molecules mode, without macromolecules mode ever being opened.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const sgroupIds = (functionalGroups ?? []).map((fg) => fg.relatedSGroupId);
 

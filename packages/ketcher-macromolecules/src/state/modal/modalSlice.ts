@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { castDraft } from 'immer';
+import { castDraft, type Draft } from 'immer';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AdditionalModalProps } from 'components/modal/modalContainer/types';
 import { RootState } from 'state';
@@ -50,7 +50,7 @@ export const modalSlice = createSlice({
   initialState,
   reducers: {
     openModal: (
-      state,
+      state: Draft<ModalState>,
       action: PayloadAction<
         ModalName | { name: ModalName; additionalProps: AdditionalModalProps }
       >,
@@ -64,23 +64,29 @@ export const modalSlice = createSlice({
 
       state.isOpen = true;
     },
-    closeModal: (state) => {
+    closeModal: (state: Draft<ModalState>) => {
       state.name = null;
       state.isOpen = false;
       state.additionalProps = null;
     },
-    openErrorTooltip: (state, action: PayloadAction<string>) => {
+    openErrorTooltip: (
+      state: Draft<ModalState>,
+      action: PayloadAction<string>,
+    ) => {
       if (!state.errorTooltips.includes(action.payload)) {
         state.errorTooltips.push(action.payload);
       }
     },
-    closeErrorTooltip: (state, action: PayloadAction<string | undefined>) => {
+    closeErrorTooltip: (
+      state: Draft<ModalState>,
+      action: PayloadAction<string | undefined>,
+    ) => {
       state.errorTooltips = action.payload
         ? state.errorTooltips.filter((text) => text !== action.payload)
         : [];
     },
     openErrorModal: (
-      state,
+      state: Draft<ModalState>,
       action: PayloadAction<
         string | { errorMessage: string; errorTitle: string }
       >,
@@ -93,7 +99,7 @@ export const modalSlice = createSlice({
         state.errorModalTitle = errorTitle;
       }
     },
-    closeErrorModal: (state) => {
+    closeErrorModal: (state: Draft<ModalState>) => {
       state.errorModalText = '';
     },
   },

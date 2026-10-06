@@ -1,51 +1,9 @@
 'use client';
 
-import { StandaloneStructServiceProvider as StandaloneStructServiceProviderType } from 'ketcher-standalone';
-import { Editor } from 'ketcher-react';
+import dynamic from 'next/dynamic';
 
-import 'ketcher-react/dist/index.css';
-
-const safePostMessage = (
-  message: Record<string, unknown>,
-  fallbackOrigin: string = window.location.origin,
-): void => {
-  if (window.parent === window) return;
-
-  let parentOrigin = fallbackOrigin;
-  try {
-    parentOrigin = window.parent.location.origin || fallbackOrigin;
-  } catch {}
-
-  if (
-    !parentOrigin ||
-    parentOrigin === 'null' ||
-    parentOrigin === 'undefined'
-  ) {
-    parentOrigin = fallbackOrigin;
-  }
-
-  window.parent.postMessage(message, parentOrigin);
-};
-
-const StandaloneStructServiceProvider =
-  StandaloneStructServiceProviderType as unknown as new () => any;
-
-const structServiceProvider = new StandaloneStructServiceProvider();
-
-export function EditorComponent() {
-  return (
-    <Editor
-      staticResourcesUrl={process.env.PUBLIC_URL || ''}
-      structServiceProvider={structServiceProvider}
-      errorHandler={(message: string) => {
-        console.error(message);
-      }}
-      onInit={(ketcher) => {
-        window.ketcher = ketcher;
-        safePostMessage({
-          eventType: 'init',
-        });
-      }}
-    />
-  );
-}
+export const EditorComponent = dynamic(
+  () =>
+    import('./editor-client').then(({ EditorComponent }) => EditorComponent),
+  { ssr: false },
+);

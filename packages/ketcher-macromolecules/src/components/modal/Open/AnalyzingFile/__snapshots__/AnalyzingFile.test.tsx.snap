@@ -6,7 +6,7 @@ exports[`AnalyzingFile component > should render correctly 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="css-1ckndid-RootContainer e1kxjf920"
+        class="css-1ckndid-RootContainer enrnqb20"
       >
         <div
           class="loading-spinner css-1ocpz3q-LoadContainer ejf830p0"
@@ -21,7 +21,7 @@ exports[`AnalyzingFile component > should render correctly 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-1ckndid-RootContainer e1kxjf920"
+      class="css-1ckndid-RootContainer enrnqb20"
     >
       <div
         class="loading-spinner css-1ocpz3q-LoadContainer ejf830p0"

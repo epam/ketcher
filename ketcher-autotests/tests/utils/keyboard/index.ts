@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import * as os from 'os';
+import * as os from 'node:os';
 import { waitForRender } from '../common/loaders/waitForRender';
 
 let cachedAltModifier: string | null = null;

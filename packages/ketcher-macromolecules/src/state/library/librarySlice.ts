@@ -339,7 +339,7 @@ export const selectAmbiguousMonomersInCategory = (
     });
   }
 
-  const firstAmbiguousMonomersInLibrary = ['X', 'N'];
+  const firstAmbiguousMonomersInLibrary = new Set(['X', 'N']);
 
   groupedAmbiguousMonomerLibraryItems.forEach((group) => {
     group.groupItems.sort(
@@ -350,9 +350,7 @@ export const selectAmbiguousMonomersInCategory = (
     );
 
     group.groupItems.sort((ambiguousMonomerLibraryItem) =>
-      firstAmbiguousMonomersInLibrary.includes(
-        ambiguousMonomerLibraryItem.label,
-      )
+      firstAmbiguousMonomersInLibrary.has(ambiguousMonomerLibraryItem.label)
         ? -1
         : 1,
     );

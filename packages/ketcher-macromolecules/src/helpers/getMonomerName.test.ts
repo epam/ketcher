@@ -1,7 +1,21 @@
 import { vi } from 'vitest';
 
+import i18next from 'i18next';
 import { BaseMonomer, KetMonomerClass } from 'ketcher-core';
 import getMonomerName from './getMonomerName';
+import macromoleculesDialogs from '../locales/en/macromoleculesDialogs.json';
+
+// Plain i18next interpolation configured with the same {var} delimiters as
+// the real app's i18next-icu plugin (not the plugin itself - its
+// intl-messageformat dependency ships ESM the test runner can't transform
+// inside node_modules). Plain variable substitution is all these keys need.
+const i18nTestInstance = i18next.createInstance();
+i18nTestInstance.init({
+  lng: 'en',
+  resources: { en: { macromoleculesDialogs } },
+  interpolation: { escapeValue: false, prefix: '{', suffix: '}' },
+});
+const t = i18nTestInstance.getFixedT('en', 'macromoleculesDialogs');
 
 interface MockVariantMonomerItem {
   label: string;
@@ -45,7 +59,7 @@ describe('getMonomerName', () => {
         monomerItem: { props: { Name: 'Adenine' } },
       } as unknown as BaseMonomer;
 
-      const result = getMonomerName(mockMonomer);
+      const result = getMonomerName(mockMonomer, t);
 
       expect(result).toBe('Adenine');
     });
@@ -58,7 +72,7 @@ describe('getMonomerName', () => {
         KetMonomerClass.Base,
       );
 
-      const result = getMonomerName(mockMonomer);
+      const result = getMonomerName(mockMonomer, t);
 
       expect(result).toBe('Any DNA base');
     });
@@ -69,7 +83,7 @@ describe('getMonomerName', () => {
         KetMonomerClass.Base,
       );
 
-      const result = getMonomerName(mockMonomer);
+      const result = getMonomerName(mockMonomer, t);
 
       expect(result).toBe('Ambiguous DNA Base');
     });
@@ -82,7 +96,7 @@ describe('getMonomerName', () => {
           KetMonomerClass.Base,
         );
 
-        const result = getMonomerName(mockMonomer);
+        const result = getMonomerName(mockMonomer, t);
 
         expect(result).toBe('Ambiguous DNA Base');
       });
@@ -96,7 +110,7 @@ describe('getMonomerName', () => {
         KetMonomerClass.Base,
       );
 
-      const result = getMonomerName(mockMonomer);
+      const result = getMonomerName(mockMonomer, t);
 
       expect(result).toBe('Any RNA Base');
     });
@@ -107,7 +121,7 @@ describe('getMonomerName', () => {
         KetMonomerClass.Base,
       );
 
-      const result = getMonomerName(mockMonomer);
+      const result = getMonomerName(mockMonomer, t);
 
       expect(result).toBe('Ambiguous RNA Base');
     });
@@ -120,7 +134,7 @@ describe('getMonomerName', () => {
           KetMonomerClass.Base,
         );
 
-        const result = getMonomerName(mockMonomer);
+        const result = getMonomerName(mockMonomer, t);
 
         expect(result).toBe('Ambiguous RNA Base');
       });
@@ -137,7 +151,7 @@ describe('getMonomerName', () => {
           KetMonomerClass.Base,
         );
 
-        const result = getMonomerName(mockMonomer);
+        const result = getMonomerName(mockMonomer, t);
 
         expect(result).toBe('Ambiguous Base');
       });
@@ -151,7 +165,7 @@ describe('getMonomerName', () => {
         KetMonomerClass.AminoAcid,
       );
 
-      const result = getMonomerName(mockMonomer);
+      const result = getMonomerName(mockMonomer, t);
 
       expect(result).toBe('Any Amino acid');
     });
@@ -162,7 +176,7 @@ describe('getMonomerName', () => {
         KetMonomerClass.AminoAcid,
       );
 
-      const result = getMonomerName(mockMonomer);
+      const result = getMonomerName(mockMonomer, t);
 
       expect(result).toBe('Ambiguous Amino acid');
     });
@@ -175,7 +189,7 @@ describe('getMonomerName', () => {
           KetMonomerClass.AminoAcid,
         );
 
-        const result = getMonomerName(mockMonomer);
+        const result = getMonomerName(mockMonomer, t);
 
         expect(result).toBe('Ambiguous Amino acid');
       });
@@ -189,7 +203,7 @@ describe('getMonomerName', () => {
         KetMonomerClass.CHEM,
       );
 
-      const result = getMonomerName(mockMonomer);
+      const result = getMonomerName(mockMonomer, t);
 
       expect(result).toBe('Ambiguous CHEM');
     });

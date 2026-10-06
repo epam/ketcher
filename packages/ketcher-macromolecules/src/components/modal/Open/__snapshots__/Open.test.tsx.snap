@@ -10,7 +10,7 @@ exports[`Open component > should render correctly 1`] = `
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root epw1vd60 e1p7mi8t0 MuiModal-root css-1gjtmjz-MuiModal-root-MuiDialog-root-StyledDialog-OpenModal"
+      class="MuiDialog-root exr439o0 e9123g50 MuiModal-root css-1gjtmjz-MuiModal-root-MuiDialog-root-StyledDialog-OpenModal"
       role="presentation"
     >
       <div
@@ -37,11 +37,11 @@ exports[`Open component > should render correctly 1`] = `
           testid="openStructureModal"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root e1p7mi8t1 css-1qwf79-MuiTypography-root-MuiDialogTitle-root-Header"
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root e9123g51 css-1qwf79-MuiTypography-root-MuiDialogTitle-root-Header"
             id="_r_0_"
           >
             <div
-              class="css-exf1lv-Title e1p7mi8t2"
+              class="css-u244t4-Title e9123g52"
             >
               Open Structure
             </div>
@@ -54,7 +54,7 @@ exports[`Open component > should render correctly 1`] = `
                 type="button"
               >
                 <svg
-                  class="css-1w4ja22-StyledIcon e1p7mi8t3"
+                  class="css-1w4ja22-StyledIcon e9123g53"
                   name="close"
                 />
                 <span
@@ -64,16 +64,16 @@ exports[`Open component > should render correctly 1`] = `
             </span>
           </h2>
           <div
-            class="MuiDialogContent-root e1p7mi8t4 css-1p0tn8w-MuiDialogContent-root-Content-scrollbarThin"
+            class="MuiDialogContent-root e9123g54 css-1p0tn8w-MuiDialogContent-root-Content-scrollbarThin"
           >
             <div
-              class="css-g19x08-OpenFileWrapper ef17xw00"
+              class="css-g19x08-OpenFileWrapper eirroug0"
             >
               <div
-                class="css-jnb4b2-RootContainer et9048s0"
+                class="css-18k32lv-RootContainer e1qgh90c0"
               >
                 <div
-                  class="css-vhyujj-DropContainer et9048s1"
+                  class="css-vhyujj-DropContainer e1qgh90c1"
                   data-testid="paste-from-clipboard-button"
                 >
                   <svg
@@ -86,11 +86,11 @@ exports[`Open component > should render correctly 1`] = `
                   </p>
                 </div>
                 <div
-                  class="css-vhyujj-DropContainer et9048s1"
+                  class="css-vhyujj-DropContainer e1qgh90c1"
                   data-testid="open-from-file-button"
                 >
                   <button
-                    class="css-1e3isln-DropzoneButton e1s5y1va2"
+                    class="css-1e3isln-DropzoneButton e1o15pgq2"
                     style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
                     tabindex="0"
                     type="button"
@@ -102,11 +102,11 @@ exports[`Open component > should render correctly 1`] = `
                       type="file"
                     />
                     <svg
-                      class="css-8ctlu6-StyledIcon e1s5y1va0"
+                      class="css-8ctlu6-StyledIcon e1o15pgq0"
                       name="open-window-upload-icon"
                     />
                     <div
-                      class="css-jm0alk-ButtonContainer e1s5y1va1"
+                      class="css-jm0alk-ButtonContainer e1o15pgq1"
                     >
                       <span>
                         or drag file here
@@ -120,11 +120,11 @@ exports[`Open component > should render correctly 1`] = `
                   </button>
                 </div>
                 <div
-                  class="css-vhyujj-DropContainer et9048s1"
+                  class="css-vhyujj-DropContainer e1qgh90c1"
                   data-testid="open-from-image-button"
                 >
                   <button
-                    class="css-1e3isln-DropzoneButton e1s5y1va2"
+                    class="css-1e3isln-DropzoneButton e1o15pgq2"
                     disabled=""
                     style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
                     tabindex="-1"
@@ -138,7 +138,7 @@ exports[`Open component > should render correctly 1`] = `
                       type="file"
                     />
                     <svg
-                      class="css-1yp754b-StyledIcon e1s5y1va0"
+                      class="css-1yp754b-StyledIcon e1o15pgq0"
                       disabled=""
                       name="image-frame"
                     />

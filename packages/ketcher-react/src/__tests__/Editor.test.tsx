@@ -29,7 +29,7 @@ vi.mock('../MicromoleculesEditor', async () => {
         onSetKetcherId?.('disable-macromolecules-test');
         onInit?.({
           id: 'disable-macromolecules-test',
-          editor: {},
+          editor: mockMoleculesEditor,
         });
       }, [onInit, onSetKetcherId]);
 
@@ -57,10 +57,15 @@ vi.mock('ketcher-macromolecules', async () => {
   };
 });
 
+const mockMoleculesEditor = {
+  event: {
+    monomerWizardStateChange: { add: vi.fn(), remove: vi.fn() },
+  },
+};
 const TEST_KETCHER_ID = 'disable-macromolecules-test';
 const testKetcher = {
   id: TEST_KETCHER_ID,
-  editor: {},
+  editor: mockMoleculesEditor,
 } as unknown as Ketcher;
 const editorProps: Omit<
   ReactTypes.ComponentProps<typeof Editor>,

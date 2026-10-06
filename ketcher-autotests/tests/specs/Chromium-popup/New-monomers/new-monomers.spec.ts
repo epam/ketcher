@@ -1104,7 +1104,7 @@ test(`27. Check that newly added nineteen standalone nucleotide can be saved and
   }
 });
 
-const abnormalCHEMs = [
+const abnormalCHEMs = new Set([
   Chem._5TAMRA,
   Chem.SCY5,
   Chem._56FAM,
@@ -1129,9 +1129,9 @@ const abnormalCHEMs = [
   Chem.A700,
   Chem.A425,
   Chem._5SUN,
-];
+]);
 
-const fivePrimeR2s = [Chem.SpC3, Chem.UAmM, Chem.ThiP, Chem.PCS];
+const fivePrimeR2s = new Set([Chem.SpC3, Chem.UAmM, Chem.ThiP, Chem.PCS]);
 test(`28. Check that newly added sixty-five new CHEMs can be saved and opened for IDT`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7910
@@ -1151,11 +1151,11 @@ test(`28. Check that newly added sixty-five new CHEMs can be saved and opened fo
    * Version 3.8
    */
   test.slow();
-  const verifiableCHEMs = newCHEMs.filter((c) => !abnormalCHEMs.includes(c));
+  const verifiableCHEMs = newCHEMs.filter((c) => !abnormalCHEMs.has(c));
 
   for (const chem of verifiableCHEMs) {
     await CommonTopLeftToolbar(page).clearCanvas();
-    if (verifiableCHEMs.some((chem) => fivePrimeR2s.includes(chem))) {
+    if (verifiableCHEMs.some((chem) => fivePrimeR2s.has(chem))) {
       await Library(page).clickMonomerAutochain(chem);
       await Library(page).clickMonomerAutochain(Chem.Sp18P);
     } else {

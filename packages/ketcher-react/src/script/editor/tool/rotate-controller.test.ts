@@ -1,5 +1,3 @@
-import { vi } from 'vitest';
-
 import { Vec2 } from 'ketcher-core';
 import Editor from '../Editor';
 import RotateTool from './rotate';
@@ -155,13 +153,12 @@ describe('Rotate controller', () => {
   });
 
   it('adds test id to rotation center handle hitbox', () => {
-    const setAttribute = vi.fn();
     const cross = {
       attr: vi.fn().mockReturnThis(),
     };
     const circle = {
       attr: vi.fn().mockReturnThis(),
-      node: { setAttribute },
+      node: { dataset: {} as DOMStringMap },
     };
     const crossSet = {
       push: vi.fn(),
@@ -187,10 +184,7 @@ describe('Rotate controller', () => {
     // @ts-ignore
     controller.drawCross();
 
-    expect(setAttribute).toHaveBeenCalledWith(
-      'data-testid',
-      'rotation-center-handle',
-    );
+    expect(circle.node.dataset.testid).toBe('rotation-center-handle');
     expect(crossSet.push).toHaveBeenCalledWith(cross, circle);
   });
 

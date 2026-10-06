@@ -4,6 +4,7 @@ import { renderHook } from '@testing-library/react';
 import { MonomerGroups, MonomerItemType, Struct } from 'ketcher-core';
 import { useSelector } from 'react-redux';
 import { useAppSelector } from 'hooks';
+import { selectIsBaseModificationBlocked } from 'state/rna-builder';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 
 vi.mock('react-redux', () => ({
@@ -16,6 +17,13 @@ vi.mock('hooks', () => ({
 
 const mockUseSelector = vi.mocked(useSelector);
 const mockUseAppSelector = vi.mocked(useAppSelector);
+
+// isSequenceEditInRNABuilderMode: true, isBaseModificationBlocked: false
+const mockAppSelectorsUnblocked = () => {
+  mockUseAppSelector.mockImplementation((selector) =>
+    selector === selectIsBaseModificationBlocked ? false : true,
+  );
+};
 
 const monomer: MonomerItemType = {
   label: 'for test',
@@ -39,7 +47,7 @@ describe('useDisabledForSequenceMode hook', () => {
 
   describe('for Bases', () => {
     it('should return false if there is R1', () => {
-      mockUseAppSelector.mockReturnValue(true);
+      mockAppSelectorsUnblocked();
       monomer.props.MonomerCaps = { R1: 'H' };
       const { result } = renderHook(() =>
         useDisabledForSequenceMode(monomer, MonomerGroups.BASES),
@@ -63,6 +71,15 @@ describe('useDisabledForSequenceMode hook', () => {
         useDisabledForSequenceMode(monomer, MonomerGroups.BASES),
       );
       expect(result.current).toBe(false);
+    });
+
+    it('should return true if base modification is blocked even if there is R1', () => {
+      mockUseAppSelector.mockReturnValue(true);
+      monomer.props.MonomerCaps = { R1: 'H' };
+      const { result } = renderHook(() =>
+        useDisabledForSequenceMode(monomer, MonomerGroups.BASES),
+      );
+      expect(result.current).toBe(true);
     });
   });
 

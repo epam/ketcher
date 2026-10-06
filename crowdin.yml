@@ -1,0 +1,57 @@
+# Crowdin CLI config — scoped test, not a configured pipeline.
+#
+# Purpose: verify that our existing i18n file layout (flat nested JSON,
+# i18next-icu single-brace placeholders like {count}/{shortcut}) round-trips
+# through Crowdin without the platform mangling keys or placeholders.
+# Intentionally limited to two ketcher-react namespaces — common.json has no
+# placeholders (structure-only check), dialogs.json has several ({value},
+# {error}, {number}, {name}) and is the actual placeholder-protection check.
+# See packages/ketcher-react/src/locales/README.md for why no single built-in
+# Crowdin JSON type (i18next_json expects {{double}} braces; react_intl
+# expects a different {defaultMessage, description} JSON shape) matches our
+# format exactly, and what to check for in Crowdin's editor as a result.
+#
+# Run with your own Crowdin credentials (not stored here — the CLI reads
+# these two standard env var names automatically, no reference needed below):
+#   export CROWDIN_PROJECT_ID=<your numeric project id>
+#   export CROWDIN_PERSONAL_TOKEN=<your personal access token>
+#   npx @crowdin/cli config lint                     # validate this file, no auth needed
+#   npx @crowdin/cli upload sources                  # push common.json/dialogs.json as sources
+#   npx @crowdin/cli download --language zh-CN       # pull back ONLY zh-CN
+#   npx @crowdin/cli download --language es-ES       # pull back ONLY Spanish (written to locales/es/ via languages_mapping below)
+#
+# --language MUST use Crowdin's own internal locale code, not the
+# languages_mapping override — e.g. "es-ES", not "es" (Spanish's actual
+# Crowdin code is "es-ES" even though we remap the output folder to "es").
+# Passing a code that doesn't match any configured language silently
+# falls back to exporting ALL approved languages instead of erroring —
+# confirmed empirically: `--language es` (wrong) re-exported zh-TW too,
+# a target language configured on this project but not registered in
+# ketcher's own i18n.ts, which then had to be deleted from the repo.
+#
+# Spanish (es) is a second, independent test language — added to check
+# whether a *new* language (not already registered in i18n.ts, unlike
+# zh-CN) round-trips the same way. It is NOT wired into ketcher's actual
+# SUPPORTED_LANGUAGES/i18n.ts — this only tests Crowdin's file handling,
+# not the app actually offering Spanish as a selectable language.
+
+"base_path": "."
+"preserve_hierarchy": true
+
+"languages_mapping":
+  "locale":
+    "zh-CN": "zh-CN"
+    "es-ES": "es"
+
+"files": [
+  {
+    "source": "/packages/ketcher-react/src/locales/en/common.json",
+    "translation": "/packages/ketcher-react/src/locales/%locale%/common.json",
+    "type": "json"
+  },
+  {
+    "source": "/packages/ketcher-react/src/locales/en/dialogs.json",
+    "translation": "/packages/ketcher-react/src/locales/%locale%/dialogs.json",
+    "type": "json"
+  }
+]

@@ -15,6 +15,21 @@
  ***************************************************************************/
 
 import { execSync } from 'node:child_process';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { config as loadEnv } from 'dotenv';
+
+// Loads a repo-root .env file, if present, without overriding variables
+// already set in the shell (dotenv's default: existing process.env values
+// win). This lets a consumer set KETCHER_MULTI_LANGUAGE_BUILD=true in a
+// local .env instead of exporting it before every build invocation - see
+// packages/ketcher-react/src/locales/README.md for the full flag docs.
+loadEnv({
+  path: path.resolve(
+    fileURLToPath(new URL('.', import.meta.url)),
+    '../.env',
+  ),
+});
 
 /**
  * Build-time constants shared by every package build and by the `example` app.
@@ -103,5 +118,8 @@ export const createReplaceValues = ({ version, isProduction }) => ({
   ),
   'process.env.INDIGO_MACHINE': JSON.stringify(
     process.env.INDIGO_MACHINE || '',
+  ),
+  'process.env.KETCHER_MULTI_LANGUAGE_BUILD': JSON.stringify(
+    process.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true' ? 'true' : 'false',
   ),
 });

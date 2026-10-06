@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheCanvas,
@@ -218,9 +218,7 @@ export async function openImageAndAddToCanvas(
   if (!(await ErrorMessageDialog(page).isVisible())) {
     const imageBoxId = await getImageLocator(page, {}).evaluateAll(
       (elements) => {
-        const ids = elements.map((element) =>
-          Number(element.getAttribute('data-image-id')),
-        );
+        const ids = elements.map((element) => Number(element.dataset.imageId));
         const validIds = ids.filter(Number.isFinite);
         return validIds.length > 0 ? Math.max(...validIds) : null;
       },

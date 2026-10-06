@@ -20,6 +20,9 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/vitest';
 import ButtonGroup from './ToggleButtonGroup';
 import classes from './ToggleButtonGroup.module.less';
+import i18n from 'src/i18n/i18n';
+
+const noneLabel = i18n.t('components:contextMenu.none');
 
 describe('ButtonGroup', () => {
   const buttons = [
@@ -44,7 +47,7 @@ describe('ButtonGroup', () => {
     );
 
     buttons.forEach(({ label }) => {
-      const buttonElement = screen.getByText(label || 'none');
+      const buttonElement = screen.getByText(label || noneLabel);
       expect(buttonElement).toBeInTheDocument();
     });
   });
@@ -60,7 +63,7 @@ describe('ButtonGroup', () => {
 
     buttons.forEach(({ value }) => {
       const buttonElement = screen.getByText(
-        value !== '3' ? `Label ${value}` : 'none',
+        value !== '3' ? `Label ${value}` : noneLabel,
       );
       fireEvent.click(buttonElement);
       expect(onClickMock).toHaveBeenCalledWith(value);
@@ -170,7 +173,9 @@ describe('ButtonGroup', () => {
 
       expect(screen.getByRole('button', { name: 'Alpha' })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Beta' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'none' })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: noneLabel }),
+      ).toBeInTheDocument();
     });
   });
 

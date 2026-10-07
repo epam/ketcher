@@ -59,6 +59,8 @@ Monomer add uses the factory to pick the renderer class; bond add uses a polymer
 
 ### Polymer-bond rendering
 
+Selection dragging executes movement operations on the model synchronously. It keeps at most one pending animation frame, deduplicates affected entities, and draws their current state with the latest snap overlay. `renderAppliedDragMovement` runs the view-model, after-operation, post-render, and notification hooks without executing movement again. Mouseup, selection-tool/editor cleanup, and history execution flush pending visuals and cancel the frame. Other commands retain the normal execution pipeline.
+
 A factory chooses the bond renderer: hydrogen bonds always use the Snake-mode renderer; other bonds use Flex or Snake according to the editor mode.
 
 - The Flex renderer draws a straight line/path.

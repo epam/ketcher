@@ -3,6 +3,8 @@ declare module '*.less' {
   export default classes;
 }
 
+declare module '*.css';
+
 declare namespace JSX {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   type Element = React.ReactElement<any, any>;

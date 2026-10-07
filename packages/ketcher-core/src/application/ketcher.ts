@@ -261,7 +261,7 @@ export class Ketcher {
 
   async getMolfile(molfileFormat?: MolfileFormat): Promise<string> {
     if (this.containsReaction()) {
-      throw Error(
+      throw new Error(
         'The structure cannot be saved as *.MOL due to reaction arrows.',
       );
     }
@@ -308,7 +308,7 @@ export class Ketcher {
       throw new Error('RXN format is not available in macro mode');
     }
     if (!this.containsReaction()) {
-      throw Error(
+      throw new Error(
         'The structure cannot be saved as *.RXN: there is no reaction arrows.',
       );
     }
@@ -779,13 +779,13 @@ export class Ketcher {
 
   async generateImage(
     data: string,
-    options: GenerateImageOptions = {
-      outputFormat: 'png',
-    },
+    options?: GenerateImageOptions,
   ): Promise<Blob> {
+    const { outputFormat = 'png', ...imageOptions } = (options ??
+      {}) as Partial<GenerateImageOptions>;
     let meta: string;
 
-    switch (options.outputFormat) {
+    switch (outputFormat) {
       case 'svg':
         meta = 'image/svg+xml';
         break;
@@ -793,13 +793,13 @@ export class Ketcher {
       case 'png':
       default:
         meta = 'image/png';
-        options.outputFormat = 'png';
     }
     const serverSettings = this.editor.serverSettings;
 
     const base64 = await this.structService.generateImageAsBase64(data, {
       ...serverSettings,
-      ...options,
+      ...imageOptions,
+      outputFormat: outputFormat === 'svg' ? 'svg' : 'png',
     });
     const byteCharacters = atob(base64);
     const byteNumbers = new Array(byteCharacters.length);

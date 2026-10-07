@@ -157,27 +157,42 @@ describe('S-Group DAT type rendering', () => {
   });
 });
 
+describe('SRU S-Group defaults', () => {
+  it('should prefill the Polymer label field with n when SRU is selected', () => {
+    renderWithMockStore(<SGroup type="MUL" />);
+
+    const typeSelect = screen.getByRole('combobox');
+    fireEvent.mouseDown(typeSelect);
+    fireEvent.click(screen.getByRole('option', { name: 'SRU polymer' }));
+
+    expect(screen.getByLabelText('Polymer label')).toHaveValue('n');
+  });
+});
+
 const reducer = combineReducers({
   modal: modalReducer,
 });
 
 function renderWithMockStore(
   component: ReactElement,
-  initialState: Partial<ReturnType<typeof reducer>> = {
-    modal: {
-      name: '',
-      prop: null,
-      parentModal: null,
-      form: {
-        errors: {},
-        result: {
-          type: 'MUL',
+  initialState?: Partial<ReturnType<typeof reducer>>,
+) {
+  const store = createStore(
+    reducer,
+    initialState ?? {
+      modal: {
+        name: '',
+        prop: null,
+        parentModal: null,
+        form: {
+          errors: {},
+          result: {
+            type: 'MUL',
+          },
         },
       },
     },
-  },
-) {
-  const store = createStore(reducer, initialState);
+  );
   return {
     ...rtlRender(<Provider store={store}>{component}</Provider>),
     store,

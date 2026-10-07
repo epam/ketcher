@@ -44,7 +44,7 @@ export class SGroupForest {
         break;
       }
       const children = this.children.get(id);
-      if (typeof children === 'undefined') {
+      if (children === undefined) {
         break;
       }
 
@@ -140,7 +140,7 @@ export class SGroupForest {
 
   private resetParentLink(childId: number, id: number) {
     const parentId = this.parent.get(childId);
-    if (typeof parentId === 'undefined') {
+    if (parentId === undefined) {
       return;
     }
 
@@ -164,7 +164,7 @@ export class SGroupForest {
     }
 
     const parentId = this.parent.get(id);
-    if (typeof parentId === 'undefined') return;
+    if (parentId === undefined) return;
 
     const childs = this.children.get(parentId);
     if (!childs) return;
@@ -195,8 +195,8 @@ export function checkOverlapping(
       const sgAtoms = SGroup.getAtoms(struct, sg);
 
       return sgAtoms.length < atoms.length
-        ? sgAtoms.findIndex((aid) => atoms.indexOf(aid) === -1) >= 0
-        : atoms.findIndex((aid) => sgAtoms.indexOf(aid) === -1) >= 0;
+        ? sgAtoms.some((aid) => !atoms.includes(aid))
+        : atoms.some((aid) => !sgAtoms.includes(aid));
     },
     queryComponent: (sid: number) => {
       const sg = struct.sgroups.get(sid);

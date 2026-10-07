@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Tabs } from 'components/shared/Tabs';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
 import { useAppDispatch, useAppSelector } from 'hooks';
@@ -40,6 +41,7 @@ import {
   MonomerLibraryToggle,
 } from './styles';
 import { Icon } from 'ketcher-react';
+import { MonomerLibraryContextMenu } from './MonomerLibraryContextMenu';
 
 const COPY = '_Copy';
 
@@ -48,6 +50,7 @@ type Props = {
 };
 
 const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
   const presets = useAppSelector(selectAllPresets);
@@ -102,8 +105,8 @@ const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
   );
 
   const tabs = useMemo(
-    () => tabsContent(duplicatePreset, editPreset),
-    [duplicatePreset, editPreset],
+    () => tabsContent(t, duplicatePreset, editPreset),
+    [t, duplicatePreset, editPreset],
   );
 
   const handleTabChange = useCallback(
@@ -122,11 +125,11 @@ const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
             type="search"
             data-testid="monomer-library-input"
             onChange={filterResults}
-            placeholder="Search by name..."
+            placeholder={t('monomerLibrary.searchPlaceholder')}
           />
         </MonomerLibraryInputContainer>
         <MonomerLibraryToggle
-          title="Hide library"
+          title={t('monomerLibrary.hideLibrary')}
           onClick={toggleLibraryVisibility}
           data-testid="hide-monomer-library"
         >
@@ -138,6 +141,7 @@ const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
         selectedTabIndex={selectedTabIndex}
         onChange={handleTabChange}
       />
+      <MonomerLibraryContextMenu />
     </MonomerLibraryContainer>
   );
 };

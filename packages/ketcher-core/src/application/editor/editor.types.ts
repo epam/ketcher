@@ -25,8 +25,18 @@ import type { Struct } from 'domain/entities/struct';
 import type { selectionKeys } from './shared/constants';
 import type { PipelineSubscription, Subscription } from 'subscription';
 import type { IRnaPreset } from './tools/Tool';
-import type { MonomerOrAmbiguousType, AttachmentPointName } from 'domain/types';
+import type {
+  MonomerOrAmbiguousType,
+  AttachmentPointName,
+  MonomerItemType,
+} from 'domain/types';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+
+export type MonomerCreationWizardRequest = {
+  mode: 'create' | 'instance' | 'all' | 'library' | 'duplicate';
+  monomer?: BaseMonomer;
+  libraryItem?: MonomerItemType;
+};
 
 export type EditMonomerVariant = 'single' | 'identical' | 'non-identical';
 
@@ -71,6 +81,9 @@ export interface Editor {
   selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null;
   undo: () => void;
   redo: () => void;
+  historyStack: Action[];
+  historyPtr: number;
+  addHistoryAction: (action: Action) => void;
   clear: () => void;
   clearHistory: () => void;
   options(): RenderOptions;
@@ -106,6 +119,7 @@ export interface Editor {
     apiSettings: PipelineSubscription;
     cursor: Subscription;
     updateFloatingTools: Subscription<FloatingToolsParams>;
+    monomerWizardStateChange: Subscription<boolean>;
   };
   update: (
     action: Action | true,
@@ -121,6 +135,10 @@ export interface Editor {
   serverSettings: object;
   focusCliparea: () => void;
   closeMonomerCreationWizard: () => void;
+  openMonomerCreationWizardFromMacro: (
+    request: MonomerCreationWizardRequest,
+    onFinish: (savedCanvas: boolean) => void,
+  ) => void;
   ketcherId: string;
   isMonomerCreationWizardActive: boolean;
   monomerCreationState: MonomerCreationState;

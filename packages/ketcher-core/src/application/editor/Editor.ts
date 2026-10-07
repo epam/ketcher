@@ -2119,6 +2119,10 @@ export class CoreEditor {
     this.previousModes.push(this.mode);
     this.mode = new ModeConstructor(this.mode.modeName);
     command.merge(this.mode.initialize(true, false, !hasModeChanged));
+    this.transientDrawingView.clear();
+    if (hasModeChanged && this.isSequenceMode) {
+      this.mode.scrollForView();
+    }
     history.update(
       command,
       typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,

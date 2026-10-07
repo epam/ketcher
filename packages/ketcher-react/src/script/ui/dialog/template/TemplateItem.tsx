@@ -24,6 +24,7 @@ import {
   type IStructRenderProps,
 } from 'components';
 import type { Template } from './TemplateTable';
+import { PREVIEW_AUTO_SCALE_MARGIN } from 'ketcher-core';
 
 const isSaltOrSolventTemplate = (template: Template) =>
   template.props.group === 'Salts and Solvents';
@@ -105,7 +106,7 @@ const TemplateItem: FC<TemplateItemProps> = memo(
                   fullsize={true}
                   options={{
                     ...renderOptions,
-                    autoScaleMargin: 10,
+                    autoScaleMargin: PREVIEW_AUTO_SCALE_MARGIN,
                     cachePrefix: 'templates',
                     downScale: true,
                   }}

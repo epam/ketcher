@@ -62,6 +62,8 @@ export interface MacromoleculeContextMenuProps extends BaseContextMenuProps {
   totalMonomerCount?: number;
   /** True when the selection contains at least one non-monomer chemical structure element */
   hasNonMonomerStructure?: boolean;
+  /** True when the selection forms a single connected component */
+  isContinuous?: boolean;
 }
 
 export interface MultitailArrowContextMenuProps {

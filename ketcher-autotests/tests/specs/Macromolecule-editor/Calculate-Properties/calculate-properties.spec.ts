@@ -233,13 +233,13 @@ test.describe('Calculate Properties tests', () => {
      * 8. Check that the window is closed
      */
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await takePageScreenshot(page);
+    await expect(CalculateVariablesPanel(page).panel).toBeVisible();
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await takePageScreenshot(page);
+    await expect(CalculateVariablesPanel(page).panel).toBeHidden();
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await takePageScreenshot(page);
+    await expect(CalculateVariablesPanel(page).panel).toBeVisible();
     await CalculateVariablesPanel(page).closeWindow();
-    await takePageScreenshot(page);
+    await expect(CalculateVariablesPanel(page).panel).toBeHidden();
   });
 
   test('Case 9: Verify that within the drop-down menu for units of Molecular mass there three options Da, kDa, and MDa', async () => {

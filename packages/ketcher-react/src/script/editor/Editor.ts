@@ -116,6 +116,7 @@ import type {
   ToolEventHandlerName,
 } from './tool/Tool';
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
+import { createMonomerCreationWizardZoomCalculator } from './utils/monomerCreationWizardZoom';
 import { isNumber } from 'lodash';
 import paperjs from 'paper';
 import {
@@ -260,6 +261,8 @@ class Editor implements KetcherEditor {
   ketcherId: string;
   #origin?: Action | null;
   render: Render;
+  private readonly getMonomerCreationWizardZoom =
+    createMonomerCreationWizardZoomCalculator();
   _selection: Selection | null;
   _tool: Tool | null;
   historyStack: Action[];
@@ -613,6 +616,64 @@ class Editor implements KetcherEditor {
     const structureToMove = getSelectionMap(structure);
 
     const action = fromMultipleMove(structure, structureToMove, shiftVector);
+    this.update(action, true);
+  }
+
+  /**
+   * Zooms and centers the structure loaded into the monomer creation wizard
+   * so that it fits the area left free by the wizard's panels.
+   *
+   * @param viewportElement the element that covers the available viewport
+   */
+  public fitStructToMonomerCreationViewport(viewportElement: HTMLElement) {
+    const structure = this.render.ctab;
+
+    if (structure.molecule.atoms.size === 0) {
+      return;
+    }
+
+    if (!this.render.viewBox.width || !this.render.viewBox.height) {
+      this.render.resizeViewBox();
+    }
+
+    const clientAreaRect = this.render.clientArea.getBoundingClientRect();
+    const viewportRect = viewportElement.getBoundingClientRect();
+    const viewportLeft = viewportRect.left - clientAreaRect.left;
+    const viewportTop = viewportRect.top - clientAreaRect.top;
+    const structBoundingBox = structure.molecule.getCoordBoundingBox();
+    const newZoom = this.getMonomerCreationWizardZoom({
+      structBoundingBox,
+      microModeScale: this.render.options.microModeScale,
+      viewportWidth: viewportRect.width,
+      viewportHeight: viewportRect.height,
+      currentZoom: this.render.options.zoom,
+    });
+
+    if (newZoom !== this.render.options.zoom) {
+      this.zoom(newZoom);
+      this.event.zoomChanged.dispatch();
+    }
+
+    const { viewBox, options } = this.render;
+    const viewportCenterInCanvas = new Vec2(
+      viewBox.minX + (viewportLeft + viewportRect.width / 2) / options.zoom,
+      viewBox.minY + (viewportTop + viewportRect.height / 2) / options.zoom,
+    );
+    const viewportCenterInModel = Scale.canvasToModel(
+      viewportCenterInCanvas,
+      options,
+    );
+    const structCenter = new Vec2(
+      (structBoundingBox.min.x + structBoundingBox.max.x) / 2,
+      (structBoundingBox.min.y + structBoundingBox.max.y) / 2,
+    );
+    const shiftVector = viewportCenterInModel.sub(structCenter);
+
+    const action = fromMultipleMove(
+      structure,
+      getSelectionMap(structure),
+      shiftVector,
+    );
     this.update(action, true);
   }
 

@@ -4,7 +4,6 @@ import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import {
   MonomerType,
   PresetType,
-  shiftCanvas,
   takeEditorScreenshot,
   takeElementScreenshot,
 } from '@utils/index';
@@ -97,7 +96,6 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName(Preset.Preset.alias);
     await presetSection.setupSugar({
@@ -160,7 +158,6 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName(presetData.alias);
     await presetSection.setupSugar({
@@ -221,7 +218,6 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName(presetData.alias);
     await presetSection.setupSugar({
@@ -276,7 +272,6 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('PresetNonUniqueAliases');
     // Use known library aliases to simulate non-unique codes
@@ -332,7 +327,6 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('PresetInvalidComponents');
 
@@ -411,7 +405,6 @@ test.describe('Wizard exit confirmation for nucleotide preset', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('PresetExitConfirmation');
     await presetSection.setupSugar({
@@ -452,7 +445,6 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotideMonomer);
     await expect(dialog.typeCombobox).toHaveText('Nucleotide (monomer)');
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
@@ -493,7 +485,6 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('Preset');
     await presetSection.setupSugar({ atomIds: [2, 3], bondIds: [2] });
@@ -533,7 +524,6 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('Preset');
     await presetSection.setupSugar({ atomIds: [1, 2], bondIds: [1] });
@@ -578,7 +568,6 @@ test.describe('Mark as... context menu for Nucleotide (preset) components', () =
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await selectAtomAndBonds(page, { atomIds: [0, 1], bondIds: [0] });
     await ContextMenu(page, getAtomLocator(page, { atomId: 0 })).click([
@@ -618,7 +607,6 @@ test.describe('Mark as... context menu for Nucleotide (preset) components', () =
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     // Ensure Preset tab is initially opened
     await presetSection.openTab(NucleotidePresetTab.Preset);
@@ -648,7 +636,6 @@ test.describe('Mark as... context menu for Nucleotide (preset) components', () =
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await selectAtomAndBonds(page, { atomIds: [0, 2], bondIds: [0] });
     await ContextMenu(page, getAtomLocator(page, { atomId: 0 })).hover(
@@ -675,7 +662,6 @@ test.describe('Mark as... context menu for Nucleotide (preset) components', () =
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.CHEM);
     await selectAtomAndBonds(page, { atomIds: [0, 1], bondIds: [0] });
     await ContextMenu(page, getAtomLocator(page, { atomId: 0 })).open();
@@ -704,7 +690,6 @@ test.describe('Preset code formatting and default component code behavior', () =
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('<invalid name>');
     await dialog.submit();
@@ -740,7 +725,6 @@ test.describe('Preset code formatting and default component code behavior', () =
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     await presetSection.setName('Preset');
@@ -775,7 +759,6 @@ test.describe('Preset code formatting and default component code behavior', () =
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     await presetSection.setName('Preset');
@@ -819,7 +802,6 @@ test('Problematic atom is highlighted in red when Phosphate tab is active', asyn
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
   await LeftToolbar(page).createMonomer();
-  await shiftCanvas(page, -150, 50);
   await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
   await presetSection.setName('Issue 10248 preset');
 

@@ -1,4 +1,4 @@
-import * as path from 'path';
+import * as path from 'node:path';
 import { Page, expect } from '@playwright/test';
 import { Ketcher } from 'ketcher-core';
 import { getTestDataDirectory, readFileContent, saveToFile } from './readFile';

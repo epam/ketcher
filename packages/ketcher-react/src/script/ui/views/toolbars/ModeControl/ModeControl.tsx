@@ -14,10 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable react-hooks/refs */
-
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import { Button, Popover } from '@mui/material';
 import { Icon } from 'components';
 interface IStyledIconProps {
@@ -157,14 +156,15 @@ export const ModeControl = ({
   isPolymerEditor,
   disabled = false,
 }: ModeProps) => {
+  const { t } = useTranslation('toolbars');
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const btnRef = useRef<HTMLButtonElement>(null);
+  const [btnElement, setBtnElement] = useState<HTMLButtonElement | null>(null);
 
   const handleModeSwitch = (isPolymer: boolean) => {
     toggle(isPolymer);
     setIsExpanded(false);
     setTimeout(() => {
-      if (btnRef.current) btnRef.current.blur();
+      btnElement?.blur();
       document.body.style.overflow = '';
       document.body.style.paddingRight = '';
       const canvas = document.querySelector('canvas') as HTMLElement;
@@ -175,11 +175,13 @@ export const ModeControl = ({
   const onClose = () => setIsExpanded(false);
   const onExpand = () => setIsExpanded(true);
 
-  const modeLabel = isPolymerEditor ? 'Macromolecules' : 'Molecules';
+  const modeLabel = isPolymerEditor
+    ? t('modeControl.macromolecules')
+    : t('modeControl.molecules');
   const modeIcon = isPolymerEditor ? 'macromolecules-mode' : 'molecules-mode';
   const title = isPolymerEditor
-    ? 'Switch to Ketcher mode'
-    : 'Switch to Macromolecule mode';
+    ? t('modeControl.switchToKetcherMode')
+    : t('modeControl.switchToMacromoleculeMode');
 
   return (
     <ElementAndDropdown title={title}>
@@ -187,7 +189,7 @@ export const ModeControl = ({
         data-testid="polymer-toggler"
         disabled={disabled}
         onClick={onExpand}
-        ref={btnRef}
+        ref={setBtnElement}
       >
         <ModeIconWrapper
           disabled={disabled}
@@ -207,7 +209,7 @@ export const ModeControl = ({
         title=""
         open={isExpanded}
         onClose={onClose}
-        anchorEl={btnRef.current}
+        anchorEl={btnElement}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
@@ -222,7 +224,7 @@ export const ModeControl = ({
             }}
           >
             <Icon name="molecules-mode" />
-            <ModeButtonLable>Molecules</ModeButtonLable>
+            <ModeButtonLable>{t('modeControl.molecules')}</ModeButtonLable>
             {!isPolymerEditor && <StyledIcon name="check-mark" />}
           </ModeControlButton>
 
@@ -233,7 +235,7 @@ export const ModeControl = ({
             }}
           >
             <Icon name="macromolecules-mode" />
-            <ModeButtonLable>Macromolecules</ModeButtonLable>
+            <ModeButtonLable>{t('modeControl.macromolecules')}</ModeButtonLable>
             {isPolymerEditor && <StyledIcon name="check-mark" />}
           </ModeControlButton>
         </DropDownContent>

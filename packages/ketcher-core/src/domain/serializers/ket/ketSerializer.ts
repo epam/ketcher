@@ -317,6 +317,10 @@ function isPngImageDataValid(base64Data: string): boolean {
   return false;
 }
 
+function containsForbiddenXmlDeclarations(xmlContent: string): boolean {
+  return /<!DOCTYPE|<!ENTITY/i.test(xmlContent);
+}
+
 function isSvgImageDataValid(base64Data: string): boolean {
   const bytes = decodeBase64ToBytes(base64Data);
   if (!bytes || typeof globalThis.DOMParser !== 'function') {
@@ -327,6 +331,10 @@ function isSvgImageDataValid(base64Data: string): boolean {
   try {
     svgContent = decodeUtf8(bytes);
   } catch {
+    return false;
+  }
+
+  if (containsForbiddenXmlDeclarations(svgContent)) {
     return false;
   }
 

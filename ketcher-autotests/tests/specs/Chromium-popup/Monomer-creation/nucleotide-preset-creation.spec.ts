@@ -3,6 +3,7 @@ import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import {
   MonomerType,
+  PresetType,
   shiftCanvas,
   takeEditorScreenshot,
   takeElementScreenshot,
@@ -33,6 +34,29 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerWizardOption } from '@tests/pages/constants/contextMenu/Constants';
 import { NotificationBannerOnMicro } from '@tests/pages/molecules/canvas/NotificationBannerOnMicro';
+
+// Default component codes are derived from the preset name (e.g. "<name>S")
+// and preset names must be unique, since all tests share one page.
+const getPresetWithDefaultComponents = (alias: string): PresetType => ({
+  ...Preset.PresetWithDefaultComponents,
+  alias,
+  testId: `${alias}_${alias}B_${alias}S_${alias}P`,
+  sugar: {
+    ...Preset.PresetWithDefaultComponents.sugar,
+    alias: `${alias}S`,
+    testId: `${alias}S___${alias}S`,
+  },
+  base: {
+    monomerType: MonomerType.Base,
+    alias: `${alias}B`,
+    testId: `${alias}B___${alias}B`,
+  },
+  phosphate: {
+    monomerType: MonomerType.Phosphate,
+    alias: `${alias}P`,
+    testId: `${alias}P___${alias}P`,
+  },
+});
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;
@@ -126,7 +150,7 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
      *
      * Version 3.12
      */
-    const presetData = Preset.PresetWithDefaultComponents;
+    const presetData = getPresetWithDefaultComponents('PresetOnCanvas');
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
@@ -192,7 +216,7 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
      *
      * Version 3.12
      */
-    const presetData = Preset.PresetWithDefaultComponents;
+    const presetData = getPresetWithDefaultComponents('PresetDefaults');
 
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -254,7 +278,7 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    await presetSection.setName(Preset.Preset.alias);
+    await presetSection.setName('PresetNonUniqueAliases');
     // Use known library aliases to simulate non-unique codes
     await presetSection.setupSugar({
       atomIds: [2, 3],
@@ -282,7 +306,7 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     expect(
       await Library(page).isMonomerExist({
         ...Preset.A,
-        alias: Preset.Preset.alias,
+        alias: 'PresetNonUniqueAliases',
       }),
     ).toBeTruthy();
     expect(await Library(page).isMonomerExist(Sugar.R)).toBeTruthy();
@@ -389,7 +413,7 @@ test.describe('Wizard exit confirmation for nucleotide preset', () => {
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    await presetSection.setName(Preset.Preset.alias);
+    await presetSection.setName('PresetExitConfirmation');
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],

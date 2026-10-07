@@ -14,4 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-export type { FileContent, OpenerFunction } from '../../utils/fileOpener.types';
+export type PPTXFileContent = { structures: string[]; isPPTX: true };
+
+export type FileContent = string | PPTXFileContent;
+
+export type OpenerFunction = (file: File) => Promise<FileContent>;
+
+// IE-only extension of File that must be released after reading
+export type FileWithMsClose = File & { msClose?: () => void };
+
+// Minimal subset of the IE ActiveX Scripting.FileSystemObject API used here
+export interface FileSystemObject {
+  OpenTextFile(fileName: string, ioMode: number): TextStream;
+}
+
+export interface TextStream {
+  ReadAll(): string;
+  Close(): void;
+}
+
+export type ActiveXObjectConstructor = new (progId: string) => FileSystemObject;

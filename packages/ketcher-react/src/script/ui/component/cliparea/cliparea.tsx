@@ -287,6 +287,8 @@ class ClipArea extends Component<ClipAreaProps> {
         contentEditable
         autoFocus // eslint-disable-line jsx-a11y/no-autofocus
         suppressContentEditableWarning={true}
+        readOnly
+        inputMode="none"
       />
     );
   }

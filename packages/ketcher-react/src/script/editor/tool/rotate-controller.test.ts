@@ -1,4 +1,4 @@
-import { Vec2 } from 'ketcher-core';
+import { Render, Vec2 } from 'ketcher-core';
 import Editor from '../Editor';
 import RotateTool from './rotate';
 import SelectTool from './select/select';
@@ -14,8 +14,14 @@ describe('Rotate controller', () => {
    * Select one atom / functional group using Select Tool
    */
   it(`hides for only one visible atom`, () => {
-    // @ts-ignore
-    const tool = () => new SelectTool();
+    const ketcherId = '1';
+    const mockEditor = new Editor(
+      ketcherId,
+      document as unknown as HTMLElement,
+      {},
+      {},
+    );
+    const tool = () => new SelectTool(mockEditor, 'rectangle');
     const paper = jest.fn();
     const selection = () => null;
     const visibleAtoms = [1];
@@ -32,20 +38,16 @@ describe('Rotate controller', () => {
       },
     };
     const controller = new RotateController(editor as any);
-    // @ts-ignore
     controller.rotateTool.getCenter = () => new Vec2();
     expect(tool()).toBeInstanceOf(SelectTool);
     expect(selection()).toBe(null);
 
-    // @ts-ignore
     controller.show();
     expect(paper).toHaveBeenCalledTimes(0);
 
     visibleAtoms.push(2);
-    // @ts-ignore
     controller.rotateTool.getCenter = () => new Vec2();
     expect(() => {
-      // @ts-ignore
       controller.show();
     }).toThrow();
   });
@@ -72,18 +74,15 @@ describe('Rotate controller', () => {
       render: {
         paper,
         ctab: {
-          // @ts-ignore
           molecule: {
             getSelectedVisibleAtoms: () => visibleAtoms,
           },
         },
       },
     } as any);
-    // @ts-ignore
     controller.rotateTool.getCenter = () => new Vec2();
     expect(visibleAtoms.length).toBeGreaterThan(1);
 
-    // @ts-ignore
     controller.show();
 
     expect(paper).toHaveBeenCalledTimes(0);
@@ -115,16 +114,14 @@ describe('Rotate controller', () => {
   it('can be only dragged by left mouse button', () => {
     const controller = new RotateController({ selection: () => null } as any);
     const changeCrossColor = jest.fn();
-    // @ts-ignore
     controller.cross = {
       attr: changeCrossColor,
     };
 
-    // @ts-ignore
     controller.dragStart({
       buttons: 2, // Right button
       stopPropagation: () => null,
-    });
+    } as unknown as MouseEvent);
 
     expect(changeCrossColor).toHaveBeenCalledTimes(0);
   });
@@ -136,9 +133,7 @@ describe('Rotate controller', () => {
    */
   test('center changes with `scale` and `offset`', () => {
     const controller = new RotateController({ selection: () => null } as any);
-    // @ts-ignore
     controller.originalCenter = new Vec2(1, 1);
-    // @ts-ignore
     controller.editor.render = {
       options: {
         microModeScale: 2,
@@ -146,9 +141,7 @@ describe('Rotate controller', () => {
       },
     } as any;
 
-    // @ts-ignore
     expect(controller.center.x).toBe(3);
-    // @ts-ignore
     expect(controller.center.y).toBe(3);
   });
 
@@ -166,9 +159,7 @@ describe('Rotate controller', () => {
     };
 
     const controller = new RotateController({ selection: () => null } as any);
-    // @ts-ignore
     controller.originalCenter = new Vec2(1, 1);
-    // @ts-ignore
     controller.editor.render = {
       paper: {
         path: jest.fn().mockReturnValue(cross),
@@ -179,9 +170,8 @@ describe('Rotate controller', () => {
         microModeScale: 1,
         offset: new Vec2(),
       } as any,
-    };
+    } as Render;
 
-    // @ts-ignore
     controller.drawCross();
 
     expect(circle.node.dataset.testid).toBe('rotation-center-handle');
@@ -258,7 +248,6 @@ describe('Rotate controller', () => {
       {},
     );
     editor.render.ctab.molecule.getSelectedVisibleAtoms = () => [];
-    // @ts-ignore
     editor.rotateController.rotateTool.dragCtx = {
       action: { operations: [], perform: () => undefined },
     };

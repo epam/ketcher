@@ -227,6 +227,41 @@ export abstract class BaseMode {
     }
   }
 
+  async isPasteContentValid(pastedStr: string): Promise<boolean> {
+    if (!pastedStr.trim()) {
+      return false;
+    }
+
+    try {
+      const editor = provideEditorInstance();
+      const format = identifyStructFormat(pastedStr, true);
+      let ketStruct = pastedStr;
+
+      if (format !== SupportedFormat.ket) {
+        const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
+        const convertedStruct = await indigo.convert(pastedStr, {
+          outputFormat: ChemicalMimeType.KET,
+          sequenceType: editor.sequenceTypeEnterMode,
+        });
+
+        ketStruct = convertedStruct.struct;
+      }
+
+      const ketSerializer = new KetSerializer();
+      const deserialisedKet =
+        ketSerializer.deserializeToDrawingEntities(ketStruct);
+      const drawingEntitiesManager = deserialisedKet?.drawingEntitiesManager;
+
+      return Boolean(
+        drawingEntitiesManager &&
+        this.isPasteAllowedByMode(drawingEntitiesManager),
+      );
+    } catch (error) {
+      KetcherLogger.error('BaseMode.ts::isPasteContentValid', error);
+      return false;
+    }
+  }
+
   async pasteFromClipboard(clipboardData: ClipboardData): Promise<void> {
     let pasteOperations: Command | undefined;
     const editor = provideEditorInstance();

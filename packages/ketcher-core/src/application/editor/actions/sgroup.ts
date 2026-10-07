@@ -392,7 +392,16 @@ export function setExpandMonomerSGroup(
       return false;
     }
 
-    return (atomsToMove.get(index) ?? []).some((atomId) =>
+    const fragmentAtoms = new Set(atomsToMove.get(index));
+    // Moving a fragment bonded to the group more than once would break a ring.
+    const bondsToFragment = attachmentAtomsFromOutside.filter((atomId) =>
+      fragmentAtoms.has(atomId),
+    ).length;
+    if (bondsToFragment !== 1) {
+      return false;
+    }
+
+    return [...fragmentAtoms].some((atomId) =>
       isCollidingWithSGroupAtoms(struct, atomId, sGroupAtoms),
     );
   };

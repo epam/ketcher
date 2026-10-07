@@ -411,6 +411,7 @@ describe('setExpandMonomerSGroup for functional groups', () => {
     outsideAtomPositions: [Vec2, Vec2],
     expanded: boolean,
     withAttachmentPoint = true,
+    closeRingThroughGroup = false,
   ) => {
     const struct = new Struct();
     const addAtom = (label: string, pp: Vec2) =>
@@ -426,6 +427,9 @@ describe('setExpandMonomerSGroup for functional groups', () => {
     const groupAtomIds = [attachmentAtomId, addAtom('O', new Vec2(2.732, 0))];
     addBond(outsideAtomIds[0], outsideAtomIds[1]);
     addBond(outsideAtomIds[1], attachmentAtomId);
+    if (closeRingThroughGroup) {
+      addBond(outsideAtomIds[0], attachmentAtomId);
+    }
     addBond(groupAtomIds[0], groupAtomIds[1]);
     struct.initNeighbors();
 
@@ -514,5 +518,20 @@ describe('setExpandMonomerSGroup for functional groups', () => {
 
     expect(getOutsidePositions()).toEqual(outsidePositionsBefore);
     expect(getGroupPositions()).toEqual(groupPositionsBefore);
+  });
+
+  it('keeps a ring closed through the group in place even when it collides with the expanded group', () => {
+    const { restruct, sgroupId, getOutsidePositions } =
+      createStructWithFunctionalGroup(
+        [new Vec2(2.7, 0.1), new Vec2(1, 0)],
+        false,
+        true,
+        true,
+      );
+    const positionsBefore = getOutsidePositions();
+
+    setExpandMonomerSGroup(restruct, sgroupId, { expanded: true });
+
+    expect(getOutsidePositions()).toEqual(positionsBefore);
   });
 });

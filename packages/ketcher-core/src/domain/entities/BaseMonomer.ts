@@ -176,8 +176,11 @@ export abstract class BaseMonomer extends DrawingEntity {
     for (const attachmentPoint in this.attachmentPointsToBonds) {
       const match = /R(\d+)/.exec(attachmentPoint);
       if (match) {
-        const pointNumber = parseInt(match[1]);
-        if (!isNaN(pointNumber) && pointNumber > maxAttachmentPointNumber) {
+        const pointNumber = Number.parseInt(match[1]);
+        if (
+          !Number.isNaN(pointNumber) &&
+          pointNumber > maxAttachmentPointNumber
+        ) {
           maxAttachmentPointNumber = pointNumber;
         }
       }
@@ -599,15 +602,16 @@ export abstract class BaseMonomer extends DrawingEntity {
       ...(naturalAnalogThreeLettersCode ? [naturalAnalogThreeLettersCode] : []),
       naturalAnalogCode,
     ];
+    const naturalAnaloguesToCompareSet = new Set(naturalAnaloguesToCompare);
 
     return namesToCompareNaturalAnalog.every((nameToCompare) => {
-      if (naturalAnaloguesToCompare.includes(nameToCompare)) {
+      if (naturalAnaloguesToCompareSet.has(nameToCompare)) {
         return false;
       }
       // Check if the name is a variation with asterisk (e.g., D* for D)
       // These are the same monomers with different R groups and should not be marked as modified
       const nameWithoutAsterisk = nameToCompare.replace(/\*$/, '');
-      return !naturalAnaloguesToCompare.includes(nameWithoutAsterisk);
+      return !naturalAnaloguesToCompareSet.has(nameWithoutAsterisk);
     });
   }
 

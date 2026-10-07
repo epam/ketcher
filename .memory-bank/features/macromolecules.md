@@ -7,7 +7,8 @@ Beyond small molecules, users work with biopolymers — peptides and nucleic aci
 ## User interaction
 
 - **Mode switch** — the _Molecules/Macromolecules switcher_ enters macromolecules mode.
-- **Monomer library** — Favorites, Peptides, RNA, and CHEM tabs; search by name, symbol, or IDT alias; hover a card for a preview. The _RNA Builder_ creates sugar-base-phosphate presets, and a _Monomer Creation Wizard_ (`Ctrl+M`)(available through molecules mode) defines custom monomers/presets with attachment points.
+- **Monomer library** — Favorites, Peptides, RNA, and CHEM tabs; search by name, symbol, or IDT alias; hover a card for a preview. The _RNA Builder_ creates sugar-base-phosphate presets, and a _Monomer Creation Wizard_ (`Ctrl+M`)(available through molecules mode) defines custom monomers/presets with attachment points.Macromolecule canvas context menus and non-ambiguous library cards also provide wizard entry points.
+  - Exact `-` and `_` searches match only the short name displayed on monomer and RNA preset cards, avoiding matches from internal alias or metadata fields.
 - **Layout modes** — the _modes switcher_ toggles **Sequence** (single-letter, text-editor-like), **Snake** (auto-layouted shapes), and **Flex** (free shapes) views. A _Sequence typing type switcher_ selects RNA/DNA/Peptide interpretation for keyboard input (`Ctrl+Alt+R/D/P`).
 - **Adding monomers** — type/paste in sequence mode, drag-and-drop from the library, use the card _arrow icon_ (autochain), or open/paste files.
 - **Bonds** — the _Bond tool_ makes single covalent bonds (at attachment points or centers, with a _Select Attachment Points_ dialog when a default bond is ambiguous) and hydrogen bonds (center-to-center only).
@@ -17,6 +18,13 @@ Beyond small molecules, users work with biopolymers — peptides and nucleic aci
 ## Expected behavior
 
 Monomers connect through defined attachment points, sequences render as single-letter codes, and layout modes present the same chemistry differently.
+
+#### Scenario: Editing an attachment point in the monomer creation wizard
+
+- **WHEN** the user chooses _Edit connection point_ from an R-label's context menu
+- **THEN** the dialog prefers a position above the attachment atom, leaving atom, and R-label without covering them; when space above is insufficient, it uses space below or to either side
+- **AND** it follows the attachment point when the canvas is scrolled or zoomed
+- **AND** its position is constrained to the visible canvas; when no non-overlapping placement fits, keeping the controls reachable takes priority
 
 #### Scenario: Default backbone connection
 
@@ -95,10 +103,42 @@ Monomers connect through defined attachment points, sequences render as single-l
 - **THEN** Ketcher numbers each eligible monomer sequentially along the chain, including a lone sugar-base-phosphate unit
 - **AND** if no monomer in the chain satisfies that starting condition, no enumeration is shown
 
+#### Scenario: Creating a monomer from the macromolecule canvas
+
+- **WHEN** a selection contains one small molecule, or a connected combination of monomers and chemical structure
+- **THEN** _Create monomer_ appears above _Delete_ in Flex, Snake, and Sequence modes
+- **AND** choosing it temporarily opens the structure in the molecules-mode wizard without retaining the selected monomers' library attributes
+
+#### Scenario: Editing canvas monomers
+
+- **WHEN** the user right-clicks a single monomer or a sequence symbol representing one monomer
+- **THEN** _Edit Monomer_ and _Edit All [code] (count)_ appear above _Delete_
+- **AND** hovering _Edit All_ highlights the affected instances; saving replaces those instances with the new library monomer
+- **AND** both editing options remain visible but disabled for sequence symbols representing multiple monomers
+
+#### Scenario: Editing library monomers
+
+- **WHEN** the user opens a non-ambiguous monomer card's three-dot menu
+- **THEN** _Edit_ loads the original attributes, while _Duplicate and Edit_ loads copied attributes with the existing copy suffix rules
+- **AND** saving a duplicate adds a new library monomer without replacing the original canvas instances
+
+#### Scenario: Returning from the monomer wizard
+
+- **WHEN** a wizard opened from macromolecules mode is saved or discarded
+- **THEN** the previous Flex, Snake, or Sequence mode is restored
+- **AND** discarding preserves the original canvas; saving canvas changes preserves Flex placement and lays out structured modes
+
 #### Scenario: Enumeration removed when a monomer leaves its preset chain
 
 - **WHEN** the sugar and/or phosphate that made a base part of a numbered preset chain are deleted, leaving the base without a valid enumerable chain
 - **THEN** the base's enumeration number is cleared rather than left showing a stale value
+
+#### Scenario: Hover previews near editor boundaries
+
+- **WHEN** a monomer or bond preview does not fit on either preferred side of its target
+- **THEN** its position is constrained to keep it visible within the editor (provided the preview fits the available area), even if it must overlap the target
+- **AND** positioning works both at the page origin and in an offset popup
+- **AND** canvas previews without interactive content allow pointer events to reach the canvas underneath
 
 ## Guarantees
 

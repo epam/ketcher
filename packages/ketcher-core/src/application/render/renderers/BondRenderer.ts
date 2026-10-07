@@ -4,6 +4,7 @@ import type { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { type Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
 import { Bond as StructBond } from 'domain/entities/bond';
+import { SGroup } from 'domain/entities/sgroup';
 import { Scale } from 'domain/helpers';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
@@ -52,6 +53,28 @@ export class BondRenderer extends BaseRenderer {
   constructor(public bond: Bond) {
     super(bond);
     bond.setRenderer(this);
+  }
+
+  public get labelTooltipText(): string | null {
+    const struct = this.bond.firstAtom.monomer.monomerItem.struct;
+    if (!struct) {
+      return null;
+    }
+
+    let tooltipText: string | null = null;
+    struct.sgroups.forEach((sgroup) => {
+      if (
+        tooltipText ||
+        sgroup.type !== SGroup.TYPES.DAT ||
+        !SGroup.getBonds(struct, sgroup).includes(this.bond.bondIdInMicroMode)
+      ) {
+        return;
+      }
+
+      tooltipText = `${sgroup.data.fieldName}=${sgroup.data.fieldValue}`;
+    });
+
+    return tooltipText;
   }
 
   private get scaledPosition() {
@@ -837,7 +860,7 @@ export class BondRenderer extends BaseRenderer {
     const alongIntMadeBroken = 2 * lw;
     const alongSz = 1.5 * bs;
     const acrossInt = 1.5 * bs;
-    const acrossSz = 3.0 * bs;
+    const acrossSz = 3 * bs;
     const tiltTan = 0.2;
 
     const points: Vec2[] = [];
@@ -848,18 +871,12 @@ export class BondRenderer extends BaseRenderer {
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, tiltTan * acrossSz),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -tiltTan * acrossSz),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, -tiltTan * acrossSz),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, tiltTan * acrossSz),
@@ -871,35 +888,21 @@ export class BondRenderer extends BaseRenderer {
             .addScaled(normal, acrossSz)
             .addScaled(direction, tiltTan * acrossSz)
             .addScaled(direction, alongIntRc),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -tiltTan * acrossSz)
             .addScaled(direction, alongIntRc),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, tiltTan * acrossSz)
             .addScaled(direction, -alongIntRc),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -tiltTan * acrossSz)
             .addScaled(direction, -alongIntRc),
-        );
-        points.push(
           center.addScaled(direction, alongSz).addScaled(normal, acrossInt),
-        );
-        points.push(
           center.addScaled(direction, -alongSz).addScaled(normal, acrossInt),
-        );
-        points.push(
           center.addScaled(direction, alongSz).addScaled(normal, -acrossInt),
-        );
-        points.push(
           center.addScaled(direction, -alongSz).addScaled(normal, -acrossInt),
         );
         break;
@@ -908,50 +911,40 @@ export class BondRenderer extends BaseRenderer {
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
         );
         break;
       case StructBond.PATTERN.REACTING_CENTER.ORDER_CHANGED: // |
-        points.push(center.addScaled(normal, acrossSz));
-        points.push(center.addScaled(normal, -acrossSz));
+        points.push(
+          center.addScaled(normal, acrossSz),
+          center.addScaled(normal, -acrossSz),
+        );
         break;
       case StructBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED: // ||| combined
         points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
+          center.addScaled(normal, acrossSz),
+          center.addScaled(normal, -acrossSz),
         );
-        points.push(center.addScaled(normal, acrossSz));
-        points.push(center.addScaled(normal, -acrossSz));
         break;
       default:
         return;

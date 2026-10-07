@@ -439,7 +439,7 @@ export class RenderersManager {
 
     // redraw connected atoms labels as their connections numbers can be updated after bond is added
     [bond.firstAtom, bond.secondAtom].forEach((bondAtom) => {
-      if (bondAtom.bonds.indexOf(bond) !== -1) return;
+      if (bondAtom.bonds.includes(bond)) return;
 
       bondAtom.addBond(bond);
       this.atoms.forEach((atom) => {
@@ -704,7 +704,7 @@ export class RenderersManager {
       );
       center = center.add(atomPos);
     });
-    center = center.scaled(1.0 / loop.halfEdges.length);
+    center = center.scaled(1 / loop.halfEdges.length);
 
     // Calculate the radius as the minimum distance from center to any bond
     let radius = -1;

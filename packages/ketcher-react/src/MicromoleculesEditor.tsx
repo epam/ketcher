@@ -1,3 +1,4 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,11 +15,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import 'intersection-observer';
-import 'element-closest-polyfill';
-import 'regenerator-runtime/runtime';
-import 'url-search-params-polyfill';
-import 'whatwg-fetch';
 import './index.less';
 
 import init, { type Config } from './script';
@@ -55,9 +51,6 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const { structServiceProvider, ketcherId } = props;
   const [initialProps] = useState(props);
 
-  const ketcherIdRef = useRef(ketcherId);
-  ketcherIdRef.current = ketcherId;
-
   const rootElRef = useRef<HTMLDivElement>(null);
 
   const { height, width } = useResizeObserver<HTMLDivElement>({
@@ -65,16 +58,16 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   });
 
   useEffect(() => {
-    if (!ketcherIdRef.current) {
+    if (!ketcherId) {
       return;
     }
+
     ketcherBuilderRef.current?.reinitializeApi(
-      ketcherIdRef.current,
+      ketcherId,
       structServiceProvider,
       setServerRef.current,
     );
-  }, [structServiceProvider]);
-
+  }, [ketcherId, structServiceProvider]);
   useEffect(() => {
     const initKetcher = async () => {
       appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);

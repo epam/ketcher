@@ -275,4 +275,51 @@ describe('Test Rna Editor Expanded component', () => {
     // disabled until a monomer is actually picked again.
     expect(screen.getByTestId('save-btn')).toBeDisabled();
   });
+
+  it('merges a picked monomer into the preset name in preset edit mode', () => {
+    const sugar = { label: 'R' } as MonomerOrAmbiguousType;
+
+    const store = configureAppStore({
+      rnaBuilder: {
+        activePreset: {},
+        presetsDefault: [],
+        presetsCustom: [],
+        activeRnaBuilderItem: MonomerGroups.SUGARS,
+      },
+    });
+
+    const tree = (
+      <ThemeProvider theme={testTheme}>
+        <StoreProvider store={store}>
+          <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />
+        </StoreProvider>
+      </ThemeProvider>
+    );
+
+    const { rerender } = render(tree);
+
+    const nameInput = screen.getByTestId(
+      'name-your-structure-editbox',
+    ) as HTMLInputElement;
+    // No monomer picked yet: the preset name is still empty.
+    expect(nameInput.value).toBe('');
+
+    // Picking a sugar in preset edit mode must fold it into the local preset
+    // copy and recompute the full name during render (previously done via an
+    // effect reacting to the redux monomer selection).
+    act(() => {
+      store.dispatch(
+        setActivePresetMonomerGroup({
+          groupName: MonomerGroups.SUGARS,
+          groupItem: sugar,
+        }),
+      );
+    });
+    rerender(tree);
+
+    expect(
+      (screen.getByTestId('name-your-structure-editbox') as HTMLInputElement)
+        .value,
+    ).toBe('R');
+  });
 });

@@ -136,7 +136,6 @@ const CORRUPTED_IMAGES_ERROR_MESSAGE =
   "The file contains corrupted images and couldn't be loaded.";
 
 const PNG_SIGNATURE = [137, 80, 78, 71, 13, 10, 26, 10];
-const PNG_IEND_TRAILER = [0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130];
 
 function decodeBase64ToBytes(base64Data: string): Uint8Array | null {
   if (typeof globalThis.atob !== 'function') {
@@ -155,84 +154,207 @@ function decodeBase64ToBytes(base64Data: string): Uint8Array | null {
   }
 }
 
-function isPngImageDataValid(base64Data: string): boolean {
-  const bytes = decodeBase64ToBytes(base64Data);
-
-  if (!bytes || bytes.length < PNG_SIGNATURE.length + PNG_IEND_TRAILER.length) {
-    return false;
+function decodeUtf8(bytes: Uint8Array): string {
+  if (typeof globalThis.TextDecoder === 'function') {
+    return new globalThis.TextDecoder('utf-8', { fatal: true }).decode(bytes);
   }
 
-  const hasValidPngSignature = PNG_SIGNATURE.every(
-    (byte, index) => bytes[index] === byte,
-  );
-  if (!hasValidPngSignature) {
-    return false;
-  }
+  const encodedBytes = Array.from(
+    bytes,
+    (byte) => `%${byte.toString(16).padStart(2, '0')}`,
+  ).join('');
+  return decodeURIComponent(encodedBytes);
+}
 
-  return PNG_IEND_TRAILER.every(
-    (byte, index) =>
-      bytes[bytes.length - PNG_IEND_TRAILER.length + index] === byte,
+function getPngUint32(bytes: Uint8Array, offset: number): number {
+  return (
+    ((bytes[offset] << 24) |
+      (bytes[offset + 1] << 16) |
+      (bytes[offset + 2] << 8) |
+      bytes[offset + 3]) >>>
+    0
   );
 }
 
+function calculatePngCrc32(
+  bytes: Uint8Array,
+  start: number,
+  end: number,
+): number {
+  let crc = 0xffffffff;
+
+  for (let index = start; index < end; index++) {
+    crc ^= bytes[index];
+    for (let bit = 0; bit < 8; bit++) {
+      crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
+    }
+  }
+
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function isPngImageDataValid(base64Data: string): boolean {
+  const bytes = decodeBase64ToBytes(base64Data);
+
+  if (!bytes || bytes.length < PNG_SIGNATURE.length + 12) {
+    return false;
+  }
+
+  if (!PNG_SIGNATURE.every((byte, index) => bytes[index] === byte)) {
+    return false;
+  }
+
+  let offset = PNG_SIGNATURE.length;
+  let hasHeader = false;
+  let hasImageData = false;
+  let imageDataEnded = false;
+  let hasPalette = false;
+  let imageDataLength = 0;
+  let colorType = -1;
+
+  while (offset < bytes.length) {
+    if (offset + 12 > bytes.length) {
+      return false;
+    }
+
+    const chunkLength = getPngUint32(bytes, offset);
+    const chunkEnd = offset + chunkLength + 12;
+    if (chunkEnd > bytes.length) {
+      return false;
+    }
+
+    const chunkType = String.fromCharCode(
+      bytes[offset + 4],
+      bytes[offset + 5],
+      bytes[offset + 6],
+      bytes[offset + 7],
+    );
+    if (!/^[A-Za-z]{4}$/.test(chunkType)) {
+      return false;
+    }
+    if (
+      chunkType[2] !== chunkType[2].toUpperCase() ||
+      (chunkType[0] === chunkType[0].toUpperCase() &&
+        !['IHDR', 'PLTE', 'IDAT', 'IEND'].includes(chunkType))
+    ) {
+      return false;
+    }
+
+    const dataStart = offset + 8;
+    const crcOffset = dataStart + chunkLength;
+    if (
+      calculatePngCrc32(bytes, offset + 4, crcOffset) !==
+      getPngUint32(bytes, crcOffset)
+    ) {
+      return false;
+    }
+
+    if (!hasHeader) {
+      if (chunkType !== 'IHDR' || chunkLength !== 13) {
+        return false;
+      }
+      const bitDepth = bytes[dataStart + 8];
+      colorType = bytes[dataStart + 9];
+      const validBitDepths: Record<number, number[]> = {
+        0: [1, 2, 4, 8, 16],
+        2: [8, 16],
+        3: [1, 2, 4, 8],
+        4: [8, 16],
+        6: [8, 16],
+      };
+      if (
+        getPngUint32(bytes, dataStart) === 0 ||
+        getPngUint32(bytes, dataStart + 4) === 0 ||
+        !validBitDepths[colorType]?.includes(bitDepth) ||
+        bytes[dataStart + 10] !== 0 ||
+        bytes[dataStart + 11] !== 0 ||
+        bytes[dataStart + 12] > 1
+      ) {
+        return false;
+      }
+      hasHeader = true;
+    } else if (chunkType === 'IHDR') {
+      return false;
+    }
+
+    if (chunkType === 'PLTE') {
+      if (
+        hasPalette ||
+        hasImageData ||
+        chunkLength === 0 ||
+        chunkLength > 768 ||
+        chunkLength % 3 !== 0 ||
+        colorType === 0 ||
+        colorType === 4
+      ) {
+        return false;
+      }
+      hasPalette = true;
+    }
+
+    if (chunkType === 'IDAT') {
+      if (imageDataEnded || (colorType === 3 && !hasPalette)) {
+        return false;
+      }
+      hasImageData = true;
+      imageDataLength += chunkLength;
+    } else if (hasImageData && chunkType !== 'IEND') {
+      imageDataEnded = true;
+    }
+
+    if (chunkType === 'IEND') {
+      return (
+        chunkLength === 0 &&
+        hasImageData &&
+        imageDataLength > 0 &&
+        chunkEnd === bytes.length
+      );
+    }
+
+    offset = chunkEnd;
+  }
+
+  return false;
+}
+
 function isSvgImageDataValid(base64Data: string): boolean {
-  if (typeof globalThis.atob !== 'function') {
+  const bytes = decodeBase64ToBytes(base64Data);
+  if (!bytes || typeof globalThis.DOMParser !== 'function') {
     return false;
   }
 
   let svgContent: string;
   try {
-    svgContent = globalThis.atob(base64Data).trim();
+    svgContent = decodeUtf8(bytes);
   } catch {
     return false;
   }
 
-  let position = 0;
-
-  // Skip leading whitespace.
-  while (position < svgContent.length && /\s/.test(svgContent[position])) {
-    position++;
-  }
-
-  // Optional XML declaration: <?xml ... ?>
-  if (svgContent.startsWith('<?xml', position)) {
-    const xmlEnd = svgContent.indexOf('?>', position + 5);
-    if (xmlEnd === -1) {
-      return false;
-    }
-    position = xmlEnd + 2;
-    while (position < svgContent.length && /\s/.test(svgContent[position])) {
-      position++;
-    }
-  }
-
-  // Optional leading comments: <!-- ... -->
-  while (svgContent.startsWith('<!--', position)) {
-    const commentEnd = svgContent.indexOf('-->', position + 4);
-    if (commentEnd === -1) {
-      return false;
-    }
-    position = commentEnd + 3;
-    while (position < svgContent.length && /\s/.test(svgContent[position])) {
-      position++;
-    }
-  }
-
-  const startsWithSvgRoot =
-    /^<svg[\s>]/i.test(svgContent.slice(position)) &&
-    /<\/svg\s*>\s*$/i.test(svgContent);
-  if (!startsWithSvgRoot) {
+  const document = new DOMParser().parseFromString(svgContent, 'image/svg+xml');
+  const root = document.documentElement;
+  if (
+    root.localName.toLowerCase() !== 'svg' ||
+    root.namespaceURI !== 'http://www.w3.org/2000/svg'
+  ) {
     return false;
   }
 
-  // Reject active/scriptable SVG content in validation stage.
-  const hasForbiddenContent =
-    /<script[\s>]/i.test(svgContent) ||
-    /\son\w+\s*=/i.test(svgContent) ||
-    /javascript:/i.test(svgContent) ||
-    /<foreignObject[\s>]/i.test(svgContent);
+  const elements = [root, ...Array.from(root.getElementsByTagName('*'))];
+  return elements.every((element) => {
+    if (['script', 'foreignobject'].includes(element.localName.toLowerCase())) {
+      return false;
+    }
 
-  return !hasForbiddenContent;
+    return Array.from(element.attributes).every((attribute) => {
+      const attributeName = attribute.localName.toLowerCase();
+      const normalizedValue = attribute.value.replace(/\s+/g, '').toLowerCase();
+
+      return (
+        !attributeName.startsWith('on') &&
+        !normalizedValue.includes('javascript:')
+      );
+    });
+  });
 }
 
 function getKetImageNodes(ket: IKetMicromoleculeFile): Array<KetFileImageNode> {

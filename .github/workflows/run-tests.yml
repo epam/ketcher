@@ -26,7 +26,7 @@ jobs:
     container: node:24-trixie-slim
     steps:
       - name: Install dependencies
-        run: apt-get update -y && apt-get install -y git
+        run: apt-get -o Acquire::Check-Valid-Until=false update -y && apt-get install -y git
       - name: Checkout
         uses: actions/checkout@v7
         with:

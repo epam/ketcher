@@ -18,6 +18,7 @@ import {
   IMAGE_SERIALIZE_KEY,
   MULTITAIL_ARROW_SERIALIZE_KEY,
 } from 'domain/constants';
+import { KetItem } from '../types';
 
 function parseNode(node, struct) {
   const type = node.type;
@@ -43,7 +44,7 @@ function parseNode(node, struct) {
       break;
     }
     case 'rgroup': {
-      rgroupToStruct(node).mergeInto(struct);
+      rgroupToStruct(node as unknown as KetItem).mergeInto(struct);
       break;
     }
     case 'text': {

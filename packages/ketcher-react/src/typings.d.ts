@@ -89,3 +89,9 @@ declare module 'ketcher-macromolecules' {
   const MacromoleculesEditor: React.ComponentType<MacromoleculesEditorProps>;
   export default MacromoleculesEditor;
 }
+
+declare module 'redux-logger' {
+  import type { Middleware } from 'redux';
+
+  export const logger: Middleware;
+}

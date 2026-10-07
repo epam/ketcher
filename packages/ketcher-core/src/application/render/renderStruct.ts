@@ -148,9 +148,8 @@ export class RenderStruct {
           if (hasWrapperSize) {
             extendedOptions.width = wrapperElementBoundingRect.width;
             extendedOptions.height = wrapperElementBoundingRect.height;
-            // Do not zoom in beyond 1:1, so small monomers are not blown up
-            // (maxBondLength is compared against the auto-scale ratio)
-            extendedOptions.maxBondLength = 1;
+            // Small monomers must not be zoomed in beyond the micro mode 100% scale
+            extendedOptions.limitZoomToMicroScale = true;
           }
         } else {
           extendedOptions.width = svgSize;

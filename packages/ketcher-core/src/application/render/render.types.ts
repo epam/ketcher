@@ -35,6 +35,7 @@ export type RenderOptions = {
 
   downScale?: boolean;
   rescaleAmount?: number;
+  limitZoomToMicroScale?: boolean;
   radiusScaleFactor: number;
 
   'dearomatize-on-load'?: boolean;

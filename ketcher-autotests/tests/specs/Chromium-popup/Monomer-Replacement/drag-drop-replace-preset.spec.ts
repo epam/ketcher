@@ -7,7 +7,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { openFileAndAddToCanvasMacro, undoByKeyboard } from '@utils/index';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { getMonomerLocator, moveMonomer } from '@utils/macromolecules/monomer';
 import {
   countMonomerBonds,
   getMonomerId,
@@ -300,13 +300,26 @@ test.describe('Drag-and-drop preset replacement (issue #7455)', () => {
      * Test case: #7455 - Monomer replacement via drag-and-drop from library
      * Description: With standard bond lengths/angles, replacing a preset does
      * not trigger a new layout — the neighboring preset keeps its positions
-     * (req. 12.1, flex).
+     * (req. 12.1, flex). The fixture is saved already laid out, so a
+     * re-triggered layout would be invisible; C's base is moved off its grid
+     * cell first — any re-layout on replacement would snap it back.
      */
     await openFileAndAddToCanvasMacro(page, PRESET_CHAIN_FIXTURE);
     const sugarA = await extremeMonomer(
       getMonomerLocator(page, Sugar.R),
       'left',
     );
+
+    // Move C's base away from its layout position so a re-triggered layout is visible.
+    const baseC = getMonomerLocator(page, Base.C);
+    const originalBaseC = await getCenterPoint(baseC);
+    await moveMonomer(
+      page,
+      baseC,
+      originalBaseC.x + 120,
+      originalBaseC.y + 120,
+    );
+
     const presetC = await capturePresetC();
 
     await dragLibraryItemOntoMonomer(page, Preset.G, sugarA);
@@ -332,7 +345,10 @@ test.describe('Drag-and-drop preset replacement (issue #7455)', () => {
      * Test case: #7455 - Monomer replacement via drag-and-drop from library
      * Description: With standard bond lengths/angles, replacing a preset does
      * not trigger a new layout in snake mode either — the neighboring preset
-     * keeps its positions (req. 12.1, snake).
+     * keeps its positions (req. 12.1, snake). The fixture is saved already
+     * laid out, so a re-triggered layout would be invisible; C's base is moved
+     * off its grid cell first — the snake layout always anchors the chain at a
+     * fixed canvas origin, so any re-layout on replacement would snap it back.
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasMacro(page, PRESET_CHAIN_FIXTURE);
@@ -340,6 +356,17 @@ test.describe('Drag-and-drop preset replacement (issue #7455)', () => {
       getMonomerLocator(page, Sugar.R),
       'left',
     );
+
+    // Move C's base away from its layout position so a re-triggered layout is visible.
+    const baseC = getMonomerLocator(page, Base.C);
+    const originalBaseC = await getCenterPoint(baseC);
+    await moveMonomer(
+      page,
+      baseC,
+      originalBaseC.x + 120,
+      originalBaseC.y + 120,
+    );
+
     const presetC = await capturePresetC();
 
     await dragLibraryItemOntoMonomer(page, Preset.G, sugarA);

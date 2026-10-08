@@ -16,6 +16,7 @@ import {
   AttachmentPoint,
   getMonomerLocator,
   MonomerLocatorOptions,
+  moveMonomer,
 } from '@utils/macromolecules/monomer';
 import {
   countMonomerBonds,
@@ -42,8 +43,10 @@ const PRESET_X = 300;
 const PRESET_Y = 300;
 const CHEM_X = 300;
 const CHEM_Y = 420;
-// Tolerance for "monomer did not move" bounding-box comparisons.
-const BBOX_TOLERANCE_PX = 1;
+// Tolerance for "monomer did not move" bounding-box comparisons. A few px of
+// slack is needed: the monomer bbox differs slightly between selection states
+// (a re-triggered layout would shift a monomer by whole grid cells, ~60 px).
+const BBOX_TOLERANCE_PX = 3;
 
 interface Point {
   x: number;
@@ -384,7 +387,10 @@ test.describe('Drag-and-drop monomer replacement (issue #7455)', () => {
      * Test case: #7455 - Monomer replacement via drag-and-drop from library
      * Description: Replacing a monomer with another monomer does not trigger a
      * new layout in any mode — in snake mode the neighbors of the replaced
-     * monomer keep their positions (req. 11).
+     * monomer keep their positions (req. 11). The fixture is saved already
+     * laid out, so a re-triggered layout would be invisible; D is moved off
+     * its grid cell first — the snake layout always anchors the chain at a
+     * fixed canvas origin, so any re-layout on replacement would snap D back.
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasMacro(page, CHAIN_FIXTURE);
@@ -392,14 +398,17 @@ test.describe('Drag-and-drop monomer replacement (issue #7455)', () => {
     const monomerC = getMonomerLocator(page, Peptide.C);
     const monomerD = getMonomerLocator(page, Peptide.D);
 
+    // Move D away from its layout position so a re-triggered layout is visible.
+    const originalD = await getCenterPoint(monomerD);
+    await moveMonomer(page, monomerD, originalD.x + 120, originalD.y + 120);
+    const movedD = await getCenterPoint(monomerD);
     const centerA = await getCenterPoint(monomerA);
-    const centerD = await getCenterPoint(monomerD);
 
     await dragLibraryItemOntoMonomer(page, Peptide.F, monomerC);
 
     expect(await monomerC.count()).toBe(0);
     expect(await getMonomerLocator(page, Peptide.F).count()).toBe(1);
     await expectMonomerKeptPosition(monomerA, centerA);
-    await expectMonomerKeptPosition(monomerD, centerD);
+    await expectMonomerKeptPosition(monomerD, movedD);
   });
 });

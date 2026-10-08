@@ -35,6 +35,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     | D3SvgElementSelection<SVGGElement, void>;
 
   public antisenseNodeRenderer?: this;
+  private horizontalIndexInRow?: number;
 
   constructor(
     public readonly node: SequenceNode,
@@ -109,7 +110,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   public get scaledMonomerPositionForSequence() {
     const lineLength = SettingsManager.editorLineLength['sequence-layout-mode'];
-    const indexInRow = this.monomerIndexInChain % lineLength;
+    const indexInRow =
+      this.horizontalIndexInRow ?? this.monomerIndexInChain % lineLength;
     const rowIndex = Math.floor(this.monomerIndexInChain / lineLength);
 
     return new Vec2(
@@ -120,6 +122,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         47 * rowIndex +
         53 * this.previousRowsWithAntisense,
     );
+  }
+
+  public setHorizontalIndexInRow(index: number) {
+    this.horizontalIndexInRow = index;
   }
 
   public get center() {
@@ -360,7 +366,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return rootElement
       .append('text')
       .attr('x', '2')
-      .attr('y', this.node.monomer.monomerItem.isAntisense ? '24' : '-24')
+      .attr(
+        'y',
+        this.hasAntisenseInChain
+          ? this.isAntisenseNode
+            ? '-24'
+            : '24'
+          : '-24',
+      )
       .text(this.counterNumber)
       .attr('font-family', 'Courier New')
       .attr('font-size', '12px')

@@ -10,6 +10,7 @@ import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import {
   deleteMonomerWithPresets,
   getDeleteConfirmation,
+  getReferencingCustomPresets,
 } from './MonomerLibraryContextMenu.utils';
 
 type LibraryMenuProps = { libraryItem?: MonomerItemType };
@@ -40,7 +41,14 @@ export const MonomerLibraryContextMenu = () => {
       });
     } else if (id === 'delete') {
       const referencingPresets = editor.getReferencingPresets(libraryItem);
-      const deleteMonomer = () =>
+      const referencingCustomPresets = getReferencingCustomPresets(
+        libraryItem,
+        presetsCustom,
+      );
+      const deleteMonomer = () => {
+        referencingCustomPresets.forEach((preset) =>
+          dispatch(deletePreset(preset)),
+        );
         deleteMonomerWithPresets(
           editor,
           libraryItem,
@@ -48,9 +56,10 @@ export const MonomerLibraryContextMenu = () => {
           presetsCustom,
           (preset) => dispatch(deletePreset(preset)),
         );
+      };
       const confirmation = getDeleteConfirmation(
         editor.isMonomerPlacedOnCanvas(libraryItem),
-        referencingPresets.length > 0,
+        referencingPresets.length > 0 || referencingCustomPresets.length > 0,
       );
 
       if (confirmation) {

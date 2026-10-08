@@ -2,8 +2,10 @@ import {
   type CoreEditor,
   type IKetMonomerGroupTemplate,
   type MonomerItemType,
+  setMonomerTemplatePrefix,
 } from 'ketcher-core';
 import { type IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
+import { getMonomerUniqueKey } from 'state/library';
 
 export const DELETE_CONFIRMATION = {
   onCanvas: {
@@ -54,6 +56,30 @@ export const deleteMonomerWithPresets = (
   });
 
   editor.removeMonomerFromLibrary(monomer);
+};
+
+/**
+ * Custom RNA presets (created in the RNA Builder) are stored in Redux state
+ * and localStorage, NOT in `_monomersLibraryParsedJson`. This function checks
+ * those presets so the delete confirmation covers them too.
+ */
+export const getReferencingCustomPresets = (
+  monomer: MonomerItemType,
+  customPresets: IRnaPreset[],
+): IRnaPreset[] => {
+  const ref = setMonomerTemplatePrefix(
+    monomer.props.id || getMonomerUniqueKey(monomer),
+  );
+  return customPresets.filter((preset) =>
+    [preset.sugar, preset.base, preset.phosphate].some((component) => {
+      if (!component) return false;
+      return (
+        setMonomerTemplatePrefix(
+          component.props.id || getMonomerUniqueKey(component),
+        ) === ref
+      );
+    }),
+  );
 };
 
 export const getDeleteConfirmation = (

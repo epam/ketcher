@@ -29,6 +29,11 @@ export const MonomerLibraryContextMenu = () => {
     );
   };
 
+  const isDeleteHidden = ({ props }: { props?: object }) => {
+    const item = (props as LibraryMenuProps | undefined)?.libraryItem;
+    return !item || !editor || !editor.isUserMadeMonomer(item);
+  };
+
   const handleMenuChange = ({ id, props }: ItemParams<LibraryMenuProps>) => {
     const libraryItem = props?.libraryItem;
     if (!editor || !libraryItem) {
@@ -83,16 +88,12 @@ export const MonomerLibraryContextMenu = () => {
               name: 'duplicateandedit',
               title: 'Duplicate and Edit',
               disabled: editingDisabled,
-              separator: true,
             },
             {
               name: 'delete',
               title: 'Delete',
-              hidden: ({ props }) => {
-                const item = (props as LibraryMenuProps | undefined)
-                  ?.libraryItem;
-                return !item || !editor || !editor.isUserMadeMonomer(item);
-              },
+              itemClassName: 'context_menu-delete-item',
+              hidden: isDeleteHidden,
               disabled: ({ props }) => {
                 const item = (props as LibraryMenuProps | undefined)
                   ?.libraryItem;

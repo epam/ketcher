@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import type Editor from '../../../editor/Editor';
-import type { UiActionAction } from '../../action/action.types';
+import type { ToolVariant, UiActionAction } from '../../action/action.types';
 import type { Struct } from 'ketcher-core';
 
 /** The slice of Redux store state accessed by initEditor. */
@@ -26,7 +26,7 @@ export interface EditorInitState {
   };
   toolbar: {
     visibleTools: {
-      select: string;
+      select: ToolVariant;
     };
   };
   options: {

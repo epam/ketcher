@@ -39,7 +39,6 @@ import {
   type Struct,
 } from 'ketcher-core';
 import acts from '../../action';
-import type { UiActionAction } from '../../action/action.types';
 import { debounce } from 'lodash/fp';
 import { openDialog } from '../modal';
 import { highlightFG } from '../functionalGroups';
@@ -87,10 +86,7 @@ export default function initEditor(
       const state = getState();
       const activeToolAction = state.actionState?.activeTool;
       const toolAction =
-        typeof activeToolAction !== 'function'
-          ? (activeToolAction as
-              { tool?: string; opts?: unknown } | null | undefined)
-          : null;
+        typeof activeToolAction !== 'function' ? activeToolAction : null;
       const activeTool = toolAction?.tool;
       if (!activeTool || (activeTool === 'select' && !force)) return;
       const selectMode = state.toolbar.visibleTools.select;
@@ -104,12 +100,7 @@ export default function initEditor(
         force === true
       )
         // example: 'paste'
-        dispatch({
-          type: 'ACTION',
-          action: (acts as Record<string, { action: UiActionAction }>)[
-            selectMode
-          ].action,
-        });
+        dispatch({ type: 'ACTION', action: acts[selectMode].action });
       else updateAction();
     };
 
@@ -130,10 +121,9 @@ export default function initEditor(
     },
     onElementEdit: (selem: Atom | Atom[]) => {
       if (isAtomsArray(selem)) {
-        const atomsArray = selem as unknown as Atom[];
         const atomAttributes = generateCommonProperties(
-          atomsArray,
-          fromAtom(atomsArray[0]),
+          selem,
+          fromAtom(selem[0]),
         );
         return openDialog(dispatch, 'atomProps', {
           ...atomAttributes,
@@ -141,39 +131,38 @@ export default function initEditor(
         }).then((res) => toElement(res as ElementFormData));
       }
       const singleElem = selem as Atom & { type?: string };
-      const elem =
-        singleElem.type === 'text'
-          ? (selem as unknown as ElementFormData)
-          : // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            fromElement(selem as Atom)!;
-      let dlg: Promise<unknown>;
-      if ((elem as ElementFormData).type === 'text') {
+      if (singleElem.type === 'text') {
         // TODO: move textdialog opening logic to another place
-        return openDialog(dispatch, 'text', elem as Record<string, unknown>);
-      } else if (Elements.get((elem as ElementFormData).label ?? '')) {
+        return openDialog(
+          dispatch,
+          'text',
+          Object.fromEntries(Object.entries(singleElem)),
+        );
+      }
+      const fromResult = fromElement(selem);
+      if (!fromResult) return;
+      const elem = fromResult as ElementFormData;
+      let dlg: Promise<unknown>;
+      if (Elements.get(elem.label ?? '')) {
         dlg = openDialog(
           dispatch,
           'atomProps',
           elem as Record<string, unknown>,
         );
-      } else if (
-        Object.keys(elem as object).length === 1 &&
-        'ap' in (elem as object)
-      ) {
+      } else if (Object.keys(elem).length === 1 && 'ap' in elem) {
         dlg = openDialog(
           dispatch,
           'attachmentPoints',
-          (elem as ElementFormData).ap as Record<string, unknown>,
+          elem.ap as Record<string, unknown>,
         ).then((res) => ({ ap: res }));
-      } else if ((elem as ElementFormData).type === 'rlabel') {
+      } else if (elem.type === 'rlabel') {
         const rgroups = getState().editor.struct().rgroups;
         const params = {
           type: 'atom',
-          values: (elem as ElementFormData).values,
+          values: elem.values,
           disabledIds: Array.from(rgroups.entries()).reduce<number[]>(
             (acc, [rgid, rg]) => {
-              if (rg.frags.has((elem as ElementFormData).fragId as number))
-                acc.push(rgid);
+              if (rg.frags.has(elem.fragId as number)) acc.push(rgid);
               return acc;
             },
             [],
@@ -187,11 +176,8 @@ export default function initEditor(
         // list/not-list and all other pseudo elements share this dialog flow
         dlg = openDialog(
           dispatch,
-          !(elem as ElementFormData).pseudo ? 'period-table' : 'extended-table',
-          {
-            ...(elem as Record<string, unknown>),
-            pseudo: (elem as ElementFormData).pseudo,
-          },
+          !elem.pseudo ? 'period-table' : 'extended-table',
+          { ...(elem as Record<string, unknown>), pseudo: elem.pseudo },
         );
       }
       return dlg.then((res) => toElement(res as ElementFormData));

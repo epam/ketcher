@@ -151,6 +151,26 @@ export const Save = ({
           throw new Error(t('save.sequenceTypeRecognitionError'));
         }
       }
+      if (
+        fileFormat === 'fasta' ||
+        fileFormat === 'sequence' ||
+        fileFormat === 'sequence-3-letter'
+      ) {
+        if (
+          editor.drawingEntitiesManager.hasModificationsLostInSequenceFormats()
+        ) {
+          editor.events.error.dispatch(
+            t('save.sequenceModifiedMonomersExportNotice'),
+          );
+        }
+        if (
+          editor.drawingEntitiesManager.hasConnectionsLostInSequenceFormats()
+        ) {
+          editor.events.error.dispatch(
+            t('save.sequenceSideChainsExportNotice'),
+          );
+        }
+      }
       const formatProperties = getPropertiesByFormat(fileFormat);
       // Pass format-specific options (e.g., 'molfile-saving-mode': '3000' for MOL V3000)
       // to ensure correct format version is used during conversion

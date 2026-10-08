@@ -33,6 +33,8 @@ import { MacromoleculesConverter } from 'application/editor/MacromoleculesConver
 import { INVALID } from 'domain/entities/BaseMicromoleculeEntity';
 import { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { Struct } from 'domain/entities/struct';
+import { KetMonomerClass } from 'domain/constants/monomers';
+import { AttachmentPointName, type MonomerItemType } from 'domain/types';
 
 function createStructWithSGroup(type = SGroup.TYPES.MUL) {
   const struct = new Struct();
@@ -440,5 +442,131 @@ describe('Drawing Entities Manager', () => {
         DrawingEntitiesManager.getAntisenseBaseLabel(label, isDnaAntisense),
       ).toBe(expected);
     });
+  });
+
+  describe('sequence formats export notices', () => {
+    const monomerItem = (
+      label: string,
+      monomerClass: KetMonomerClass,
+      naturalAnalog: string,
+    ): MonomerItemType => ({
+      ...peptideMonomerItem,
+      label,
+      props: {
+        ...peptideMonomerItem.props,
+        MonomerName: label,
+        MonomerType:
+          monomerClass === KetMonomerClass.AminoAcid ? 'PEPTIDE' : 'RNA',
+        MonomerClass: monomerClass,
+        MonomerNaturalAnalogCode: naturalAnalog,
+      },
+    });
+    const aminoAcid = (label: string, naturalAnalog = label) =>
+      monomerItem(label, KetMonomerClass.AminoAcid, naturalAnalog);
+
+    const addChain = (
+      drawingEntitiesManager: DrawingEntitiesManager,
+      items: MonomerItemType[],
+    ) => {
+      const monomers = items.map((item, index) => {
+        drawingEntitiesManager.addMonomer(item, new Vec2(index, 0));
+        return [...drawingEntitiesManager.monomers.values()].at(-1) as Peptide;
+      });
+      monomers.slice(1).forEach((monomer, index) => {
+        drawingEntitiesManager.finishPolymerBondCreationModelChange(
+          monomers[index],
+          monomer,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        );
+      });
+      return monomers;
+    };
+
+    it('should not report anything for a linear chain of natural monomers', () => {
+      const drawingEntitiesManager = new DrawingEntitiesManager();
+      addChain(drawingEntitiesManager, [
+        aminoAcid('C'),
+        aminoAcid('A'),
+        aminoAcid('T'),
+      ]);
+
+      expect(drawingEntitiesManager.hasConnectionsLostInSequenceFormats()).toBe(
+        false,
+      );
+      expect(
+        drawingEntitiesManager.hasModificationsLostInSequenceFormats(),
+      ).toBe(false);
+    });
+
+    it('should report a side-chain connection', () => {
+      const drawingEntitiesManager = new DrawingEntitiesManager();
+      const [first, , third] = addChain(drawingEntitiesManager, [
+        aminoAcid('C'),
+        aminoAcid('A'),
+        aminoAcid('C'),
+      ]);
+      drawingEntitiesManager.finishPolymerBondCreationModelChange(
+        first,
+        third,
+        AttachmentPointName.R3,
+        AttachmentPointName.R3,
+      );
+
+      expect(drawingEntitiesManager.hasConnectionsLostInSequenceFormats()).toBe(
+        true,
+      );
+    });
+
+    it('should report a cyclic chain', () => {
+      const drawingEntitiesManager = new DrawingEntitiesManager();
+      const monomers = addChain(drawingEntitiesManager, [
+        aminoAcid('C'),
+        aminoAcid('A'),
+        aminoAcid('T'),
+      ]);
+      drawingEntitiesManager.finishPolymerBondCreationModelChange(
+        monomers[2],
+        monomers[0],
+        AttachmentPointName.R2,
+        AttachmentPointName.R1,
+      );
+
+      expect(drawingEntitiesManager.hasConnectionsLostInSequenceFormats()).toBe(
+        true,
+      );
+    });
+
+    it('should report a modified amino acid', () => {
+      const drawingEntitiesManager = new DrawingEntitiesManager();
+      addChain(drawingEntitiesManager, [aminoAcid('A'), aminoAcid('Aib', 'X')]);
+
+      expect(
+        drawingEntitiesManager.hasModificationsLostInSequenceFormats(),
+      ).toBe(true);
+    });
+
+    it.each([
+      ['RNA base 5meC', '5meC', KetMonomerClass.Base, 'C', true],
+      ['sugar mR', 'mR', KetMonomerClass.Sugar, 'R', true],
+      ['phosphate sP', 'sP', KetMonomerClass.Phosphate, 'P', true],
+      ['RNA sugar R', 'R', KetMonomerClass.Sugar, 'R', false],
+      ['phosphate P', 'P', KetMonomerClass.Phosphate, 'P', false],
+      ['DNA sugar dR', 'dR', KetMonomerClass.Sugar, 'R', false],
+      ['amino acid dR', 'dR', KetMonomerClass.AminoAcid, 'R', true],
+    ])(
+      'should report modification for %s: %s',
+      (_, label, monomerClass, naturalAnalog, expected) => {
+        const drawingEntitiesManager = new DrawingEntitiesManager();
+        drawingEntitiesManager.addMonomer(
+          monomerItem(label, monomerClass, naturalAnalog),
+          new Vec2(0, 0),
+        );
+
+        expect(
+          drawingEntitiesManager.hasModificationsLostInSequenceFormats(),
+        ).toBe(expected);
+      },
+    );
   });
 });

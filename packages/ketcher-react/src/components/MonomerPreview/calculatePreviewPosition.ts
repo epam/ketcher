@@ -49,19 +49,36 @@ function calculateTop(
     relativeTargetTop - preview.gap - height - preview.topPadding;
   const bottomPreviewPosition = relativeTargetBottom + preview.gap;
 
-  if (relativeTargetTop > height + preview.gap + preview.topPadding) {
-    return topPreviewPosition;
-  }
-
   const editorRootHeight = ketcherEditorRootBoundingClientRect?.height ?? 0;
-  const exceedsBottomBoundary = target.top + height > editorRootHeight;
-  const isLowerHalf = target.top > editorRootHeight / 2;
+  const minTop = preview.topPadding;
+  const maxTop =
+    editorRootHeight > 0
+      ? Math.max(editorRootHeight - height - preview.topPadding, minTop)
+      : undefined;
+  const clamp = (value: number) =>
+    maxTop !== undefined
+      ? Math.min(Math.max(value, minTop), maxTop)
+      : Math.max(value, minTop);
 
-  if (exceedsBottomBoundary && isLowerHalf) {
-    return topPreviewPosition;
+  const fitsAbove =
+    relativeTargetTop >= height + preview.gap + preview.topPadding;
+  const fitsBelow =
+    relativeTargetBottom + height + preview.gap <= editorRootHeight;
+
+  if (fitsAbove) {
+    return clamp(topPreviewPosition);
   }
 
-  return bottomPreviewPosition;
+  if (fitsBelow) {
+    return clamp(bottomPreviewPosition);
+  }
+
+  const spaceAbove = relativeTargetTop;
+  const spaceBelow = editorRootHeight - relativeTargetBottom;
+
+  return clamp(
+    spaceBelow >= spaceAbove ? bottomPreviewPosition : topPreviewPosition,
+  );
 }
 
 function createCalculatePreviewTopFunction(

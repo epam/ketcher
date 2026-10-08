@@ -50,6 +50,9 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const { structServiceProvider, ketcherId } = props;
   const [initialProps] = useState(props);
 
+  const ketcherIdRef = useRef(ketcherId);
+  ketcherIdRef.current = ketcherId;
+
   const rootElRef = useRef<HTMLDivElement>(null);
 
   const { height, width } = useResizeObserver<HTMLDivElement>({
@@ -58,16 +61,16 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
 
   useEffect(() => {
     // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
-    if (!ketcherId) {
+    if (!ketcherIdRef.current) {
       return;
     }
 
     ketcherBuilderRef.current?.reinitializeApi(
-      ketcherId,
+      ketcherIdRef.current,
       structServiceProvider,
       setServerRef.current,
     );
-  }, [ketcherId, structServiceProvider]);
+  }, [structServiceProvider]);
   useEffect(() => {
     const initKetcher = async () => {
       appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);

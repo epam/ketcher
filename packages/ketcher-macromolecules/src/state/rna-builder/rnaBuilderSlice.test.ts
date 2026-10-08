@@ -15,7 +15,13 @@
  ***************************************************************************/
 
 import { buildRnaPresetConnections, IRnaPreset } from 'ketcher-core';
-import { selectFilteredPresets, selectPresetFullName } from './rnaBuilderSlice';
+import {
+  rnaBuilderReducer,
+  selectFilteredPresets,
+  selectPresetFullName,
+  setActivePreset,
+  startPresetDuplication,
+} from './rnaBuilderSlice';
 import { RootState } from 'state';
 
 const presetMonomers = {
@@ -94,5 +100,34 @@ describe('selectFilteredPresets — hyphen and underscore', () => {
     expect(
       selectFilteredPresets(buildPresetState(char, presets)).map((p) => p.name),
     ).toEqual([`name${char}match`]);
+  });
+});
+
+describe('preset duplication', () => {
+  const original = { name: 'A', ...presetMonomers } as IRnaPreset;
+  const copy = { ...original, name: 'A_Copy' } as IRnaPreset;
+  const stateWithActive = (preset: IRnaPreset) =>
+    rnaBuilderReducer(undefined, setActivePreset(preset));
+
+  it('remembers the active preset when a duplicate starts', () => {
+    const state = rnaBuilderReducer(
+      stateWithActive(original),
+      startPresetDuplication(copy),
+    );
+
+    expect(state.activePreset?.name).toBe('A_Copy');
+    expect(state.activePreset?.nameInList).toBe('A_Copy');
+    expect(state.presetBeforeDuplicate?.name).toBe('A');
+  });
+
+  it('forgets the remembered preset once another preset becomes active', () => {
+    const duplicating = rnaBuilderReducer(
+      stateWithActive(original),
+      startPresetDuplication(copy),
+    );
+
+    const state = rnaBuilderReducer(duplicating, setActivePreset(copy));
+
+    expect(state.presetBeforeDuplicate).toBeNull();
   });
 });

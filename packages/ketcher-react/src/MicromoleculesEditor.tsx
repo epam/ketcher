@@ -56,8 +56,8 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
     ref: rootElRef as RefObject<HTMLDivElement>,
   });
 
-  // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
   useEffect(() => {
+    // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
     if (!ketcherId) {
       return;
     }

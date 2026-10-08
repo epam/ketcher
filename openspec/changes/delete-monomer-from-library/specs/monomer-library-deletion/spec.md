@@ -1,14 +1,14 @@
 ## ADDED Requirements
 
 ### Requirement: Delete option visibility on library cards
-The `Delete` option in a monomer library card's three-dot menu SHALL be shown only for user-made monomers. A user-made monomer is one that was explicitly created or duplicated via the Monomer Creation Wizard in the current browser session or restored from a persisted wizard-created entry. Monomers from the bundled default library and monomers added by the embedding application via `ketcher.updateMonomersLibrary` or `ketcher.replaceMonomersLibrary` are NOT user-made.
+The `Delete` option in a monomer library card's three-dot menu SHALL be shown only for user-made monomers. A user-made monomer is one that: (a) was created or duplicated via the Monomer Creation Wizard in the current session, or (b) is present in the persisted `localStorage` monomer-library updates (regardless of how it was stored — wizard or API with `shouldPersist:true`). Monomers from the bundled default library and monomers added at runtime without persistence via `ketcher.updateMonomersLibrary` or `ketcher.replaceMonomersLibrary` are NOT user-made.
 
 #### Scenario: Default monomer card has no Delete option
 - **WHEN** the user opens the three-dot menu on a card for a monomer that ships with the default library
 - **THEN** no `Delete` option is shown in the menu
 
-#### Scenario: API-added monomer card has no Delete option
-- **WHEN** the embedding application adds monomers via `ketcher.updateMonomersLibrary` or `ketcher.replaceMonomersLibrary`
+#### Scenario: Runtime-only API-added monomer card has no Delete option
+- **WHEN** the embedding application adds monomers via `ketcher.updateMonomersLibrary` or `ketcher.replaceMonomersLibrary` without `shouldPersist: true`
 - **AND** the user opens the three-dot menu on a card for such a monomer
 - **THEN** no `Delete` option is shown in the menu
 

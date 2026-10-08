@@ -21,13 +21,11 @@ Two facts drive the design:
 
 ## Decisions
 
-### 1. Track wizard-created monomer refs with a positive-inclusion set
+### 1. Track user-made monomer refs with a positive-inclusion set
 
-Add a module-scope `persistentUserCreatedMonomerRefs: Set<string>` in `Editor.ts`. A monomer ref is added to this set only when `updateMonomersLibrary` is called with `isUserCreated: true` — which the Monomer Creation Wizard always passes. The embedding-app public API methods `ketcher.updateMonomersLibrary` / `ketcher.replaceMonomersLibrary` never pass `isUserCreated: true`, so their additions are never deletable. Expose `Editor.isUserMadeMonomer(monomer)` as `persistentUserCreatedMonomerRefs.has(ref)`.
+Add a module-scope `persistentUserCreatedMonomerRefs: Set<string>` in `Editor.ts`. A monomer ref is added to this set only when `updateMonomersLibrary` is called with `isUserCreated: true`. During `setMonomersLibrary` replay, every localStorage entry is replayed with `isUserCreated: true` — the presence of an entry in localStorage means the user (or the host app with `shouldPersist:true`) explicitly added it. At runtime, the Monomer Creation Wizard passes `isUserCreated: true`; `ketcher.updateMonomersLibrary` / `ketcher.replaceMonomersLibrary` do not, so their additions are not deletable unless persisted. Expose `Editor.isUserMadeMonomer(monomer)` as `persistentUserCreatedMonomerRefs.has(ref)`.
 
-During `setMonomersLibrary` replay, localStorage entries are classified by a `source` tag: only entries with `source:'wizard'` are replayed with `isUserCreated: true` — any other value (or absence of the field) produces `isUserCreated: false`. The MCW storage format includes `source:'wizard'`; the public API, when persisting with `shouldPersist:true`, stores `source:'api'`.
-
-**Alternative considered:** use `!persistentDefaultMonomerRefs.has(ref)` (original implementation). Rejected: this approach misclassifies monomers added by `ketcher.updateMonomersLibrary` / `ketcher.replaceMonomersLibrary` at runtime as user-made, since those refs are not in the default set. Positive-inclusion tracking matches intent exactly: only wizard-created monomers are deletable.
+**Alternative considered:** use `!persistentDefaultMonomerRefs.has(ref)` (original implementation). Rejected: this approach misclassifies monomers added by `ketcher.updateMonomersLibrary` / `ketcher.replaceMonomersLibrary` at runtime as user-made, since those refs are not in the default set. Positive-inclusion tracking matches intent: only monomers the user (or a host app intentionally persisting) added are deletable.
 
 ### 2. Reuse the generic confirmation-dialog event, not a bespoke modal component
 
@@ -62,14 +60,14 @@ Add `Editor.isMonomerPlacedOnCanvas(monomer)`: `drawingEntitiesManager.monomersA
 
 ## Risks / Trade-offs
 
-- **[Risk]** Pre-existing localStorage entries written before the `source` field was introduced (by the old MCW) will no longer be classified as user-created on replay, so monomers created by the old wizard would lose their `Delete` option after the first reload. → **Accepted:** this is a one-time migration cost. The user can recreate the custom monomer via the wizard; the alternative (treating no-source as wizard-created) would misclassify any API-persisted entry.
+- **[Risk]** A host app using `ketcher.updateMonomersLibrary` with `shouldPersist:true` will have those monomers treated as user-made (deletable). → **Accepted:** persisting an entry is an explicit opt-in signal from the host app to make it part of the user's library; the user should be able to manage it.
 - **[Risk]** Cascading preset deletion removes presets the user didn't realize referenced the monomer. → **Mitigation:** the modal text (per issue copy) explicitly names the consequence before the user confirms; default is "Cancel".
 - **[Risk]** Two preset-deletion entry points (RNA Builder's own delete action and this cascade) drifting again in the future. → **Mitigation:** both route through the same new `removePresetFromLibrary`, eliminating the current divergence rather than adding a third path.
 - **[Trade-off]** Ambiguous-template participation remains a hard block (no modal, matching today's behavior) rather than getting its own confirmation flow, since the issue doesn't specify copy for that case and it's an unrelated, rarer scenario.
 
 ## Migration Plan
 
-No stored-data migration is required. The `persistentUserCreatedMonomerRefs` set is populated at runtime from `localStorage` replay and from live wizard creates. Existing `localStorage` monomer-library updates (`removedMonomerRef`, edits, replacements) continue to replay unchanged. Entries without a `source` tag will not be classified as user-created after the migration; users who previously created monomers via the old wizard will need to recreate them to regain the `Delete` option. The preset-removal persistence reuses the same `SettingsManager.addMonomerLibraryUpdate` mechanism, so no new storage schema is introduced.
+No stored-data migration is required. The `persistentUserCreatedMonomerRefs` set is populated at runtime from `localStorage` replay (all non-removal, non-replacement entries) and from live wizard creates. No storage schema changes are required. The preset-removal persistence reuses the same `SettingsManager.addMonomerLibraryUpdate` mechanism.
 
 ## Open Questions
 

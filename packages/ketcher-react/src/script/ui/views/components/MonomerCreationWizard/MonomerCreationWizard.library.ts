@@ -103,12 +103,8 @@ export const saveLibraryMonomer = async (
   if (SettingsManager.persistMonomerLibraryUpdates) {
     SettingsManager.addMonomerLibraryUpdate(
       originalRef
-        ? JSON.stringify({
-            data: ket,
-            editedMonomerRef: originalRef,
-            source: 'wizard',
-          })
-        : JSON.stringify({ data: ket, source: 'wizard' }),
+        ? JSON.stringify({ data: ket, editedMonomerRef: originalRef })
+        : ket,
     );
   }
   ketcher.libraryUpdateEvent.dispatch(sdf);

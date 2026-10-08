@@ -915,9 +915,7 @@ export class Ketcher {
     editor.updateMonomersLibrary(dataInKetFormat);
     if (SettingsManager.persistMonomerLibraryUpdates && params?.shouldPersist) {
       const updateString = ensureString(dataInKetFormat);
-      SettingsManager.addMonomerLibraryUpdate(
-        JSON.stringify({ data: updateString, source: 'api' }),
-      );
+      SettingsManager.addMonomerLibraryUpdate(updateString);
     }
     if (params?.needDispatchLibraryUpdateEvent) {
       this.libraryUpdateEvent.dispatch(dataInSdfFormat);

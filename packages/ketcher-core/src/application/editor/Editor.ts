@@ -503,16 +503,14 @@ export class CoreEditor {
         }
       } else if (parsedUpdate.replacement) {
         this.clearMonomersLibrary();
-        this.updateMonomersLibrary(parsedUpdate.data);
+        this.updateMonomersLibrary(parsedUpdate.data, undefined, true);
       } else {
-        // Only entries explicitly tagged source:'wizard' (written by the MCW
-        // since this field was introduced) are treated as user-created.
-        const isUserCreated = parsedUpdate.source === 'wizard';
-
+        // Every entry in localStorage was placed there by user action
+        // (MCW create/edit, or ketcher.updateMonomersLibrary with shouldPersist).
         this.updateMonomersLibrary(
           parsedUpdate.data || update,
           parsedUpdate.editedMonomerRef,
-          isUserCreated,
+          true,
         );
       }
     });

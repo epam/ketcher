@@ -29,6 +29,7 @@ import type { Point } from 'domain/entities/vec2';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import type { Serializer } from '../serializers.types';
 import { headerToKet } from './toKet/headerToKet';
+import { isSvgMarkupValid } from './ketSvgValidation';
 import { moleculeToKet } from './toKet/moleculeToKet';
 import { moleculeToStruct } from './fromKet/moleculeToStruct';
 import { prepareStructForKet } from './toKet/prepare';
@@ -334,57 +335,17 @@ function isPngImageDataValid(base64Data: string): boolean {
   return false;
 }
 
-function containsEntityDeclarations(xmlContent: string): boolean {
-  return xmlContent.includes('<!ENTITY');
-}
-
 function isSvgImageDataValid(base64Data: string): boolean {
   const bytes = decodeBase64ToBytes(base64Data);
-  if (!bytes || typeof globalThis.DOMParser !== 'function') {
+  if (!bytes) {
     return false;
   }
 
-  let svgContent: string;
   try {
-    svgContent = decodeUtf8(bytes);
+    return isSvgMarkupValid(decodeUtf8(bytes));
   } catch {
     return false;
   }
-
-  if (containsEntityDeclarations(svgContent)) {
-    return false;
-  }
-
-  const document = new DOMParser().parseFromString(svgContent, 'image/svg+xml');
-  const root = document.documentElement;
-  if (
-    root.localName.toLowerCase() !== 'svg' ||
-    root.namespaceURI !== 'http://www.w3.org/2000/svg'
-  ) {
-    return false;
-  }
-
-  // Chromium keeps the partially parsed root and injects a <parsererror> child
-  if (document.getElementsByTagName('parsererror').length > 0) {
-    return false;
-  }
-
-  const elements = [root, ...Array.from(root.getElementsByTagName('*'))];
-  return elements.every((element) => {
-    if (['script', 'foreignobject'].includes(element.localName.toLowerCase())) {
-      return false;
-    }
-
-    return Array.from(element.attributes).every((attribute) => {
-      const attributeName = attribute.localName.toLowerCase();
-      const normalizedValue = attribute.value.replace(/\s+/g, '').toLowerCase();
-
-      return (
-        !attributeName.startsWith('on') &&
-        !normalizedValue.includes('javascript:')
-      );
-    });
-  });
 }
 
 function getKetImageNodes(ket: IKetMicromoleculeFile): Array<KetFileImageNode> {

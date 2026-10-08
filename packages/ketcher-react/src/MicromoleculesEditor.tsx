@@ -17,7 +17,13 @@
 import './index.less';
 
 import init, { type Config } from './script';
-import { type RefObject, useEffect, useRef, useState } from 'react';
+import {
+  type RefObject,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { type Root, createRoot } from 'react-dom/client';
 
 import type { Ketcher, StructService } from 'ketcher-core';
@@ -51,7 +57,9 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const [initialProps] = useState(props);
 
   const ketcherIdRef = useRef(ketcherId);
-  ketcherIdRef.current = ketcherId;
+  useLayoutEffect(() => {
+    ketcherIdRef.current = ketcherId;
+  }, [ketcherId]);
 
   const rootElRef = useRef<HTMLDivElement>(null);
 
@@ -60,7 +68,6 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   });
 
   useEffect(() => {
-    // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler
     if (!ketcherIdRef.current) {
       return;
     }

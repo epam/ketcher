@@ -221,6 +221,24 @@ describe('editing monomer library entries by identity', () => {
     expect(editor.monomersLibrary).toHaveLength(0);
   });
 
+  it('marks a monomer as user-made when updateMonomersLibrary is called with isUserCreated=true', () => {
+    const editor = makeEditor();
+    editor.updateMonomersLibrary(
+      libraryData(template('wizard-created', 'WizardCreated')),
+      undefined,
+      true,
+    );
+    expect(editor.isUserMadeMonomer(editor.monomersLibrary[0])).toBe(true);
+  });
+
+  it('does not mark a monomer as user-made when updateMonomersLibrary is called without isUserCreated', () => {
+    const editor = makeEditor();
+    editor.updateMonomersLibrary(
+      libraryData(template('api-added', 'ApiAdded')),
+    );
+    expect(editor.isUserMadeMonomer(editor.monomersLibrary[0])).toBe(false);
+  });
+
   it('replays persisted edits and deletions after a reload', () => {
     const editor = makeEditor();
     const updates = SettingsManager.monomerLibraryUpdates;

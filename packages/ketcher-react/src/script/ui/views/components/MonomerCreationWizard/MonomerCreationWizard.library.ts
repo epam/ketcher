@@ -74,7 +74,7 @@ export const saveLibraryMonomer = async (
   ) {
     throw new Error('A monomer with this code already exists.');
   }
-  editor.updateMonomersLibrary(ket, originalRef);
+  editor.updateMonomersLibrary(ket, originalRef, true);
 
   /*
    * Submitting after "Edit" replaces every instance of that monomer on the
@@ -103,8 +103,12 @@ export const saveLibraryMonomer = async (
   if (SettingsManager.persistMonomerLibraryUpdates) {
     SettingsManager.addMonomerLibraryUpdate(
       originalRef
-        ? JSON.stringify({ data: ket, editedMonomerRef: originalRef })
-        : ket,
+        ? JSON.stringify({
+            data: ket,
+            editedMonomerRef: originalRef,
+            source: 'wizard',
+          })
+        : JSON.stringify({ data: ket, source: 'wizard' }),
     );
   }
   ketcher.libraryUpdateEvent.dispatch(sdf);

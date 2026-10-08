@@ -23,7 +23,6 @@ describe('monomer library menu', () => {
   const openWizard = jest.fn();
   const removeMonomer = jest.fn();
   const removePreset = jest.fn();
-  const revertMonomer = jest.fn();
   const openConfirmation = jest.fn();
   const onClick = jest.fn();
   let root: HTMLDivElement;
@@ -56,7 +55,6 @@ describe('monomer library menu', () => {
   const renderMenu = ({
     isUserMade = true,
     isOnCanvas = false,
-    isEdited = false,
     presets = [] as object[],
   } = {}) => {
     const editor = {
@@ -68,8 +66,6 @@ describe('monomer library menu', () => {
       removePresetFromLibrary: removePreset,
       isMonomerReferencedInLibrary: jest.fn(() => false),
       isUserMadeMonomer: jest.fn(() => isUserMade),
-      isEditedDefaultMonomer: jest.fn(() => isEdited),
-      revertMonomerToDefault: revertMonomer,
       isMonomerPlacedOnCanvas: jest.fn(() => isOnCanvas),
       getReferencingPresets: jest.fn(() => presets),
       monomersLibraryParsedJson: {
@@ -131,17 +127,6 @@ describe('monomer library menu', () => {
     expect(screen.getByTestId('duplicateandedit')).toHaveClass(
       'contexify_item-disabled',
     );
-  });
-
-  it('offers Revert to Default only for edited default monomers', () => {
-    renderMenu();
-    expect(screen.queryByTestId('revert')).not.toBeInTheDocument();
-  });
-
-  it('reverts an edited default monomer', () => {
-    renderMenu({ isUserMade: false, isEdited: true });
-    fireEvent.click(screen.getByTestId('revert'));
-    expect(revertMonomer).toHaveBeenCalledWith(monomer);
   });
 
   it('hides Delete for default library monomers', () => {

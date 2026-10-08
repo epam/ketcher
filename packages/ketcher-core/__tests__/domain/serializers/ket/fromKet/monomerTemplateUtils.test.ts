@@ -1,5 +1,47 @@
 import { Struct, Atom, Bond } from 'domain/entities';
-import { getLeavingGroupLabelWithHydrogens } from 'domain/serializers/ket/fromKet/monomerTemplateUtils';
+import {
+  getLeavingGroupLabelWithHydrogens,
+  normalizeAttachmentPointLabels,
+} from 'domain/serializers/ket/fromKet/monomerTemplateUtils';
+
+describe('normalizeAttachmentPointLabels', () => {
+  it('adds generated labels for attachment points without explicit labels', () => {
+    const attachmentPoints = [
+      { attachmentAtom: 9, leavingGroup: { atoms: [10] } },
+      { attachmentAtom: 8, leavingGroup: { atoms: [12] } },
+    ];
+
+    expect(normalizeAttachmentPointLabels(attachmentPoints)).toEqual([
+      { ...attachmentPoints[0], label: 'R1' },
+      { ...attachmentPoints[1], label: 'R2' },
+    ]);
+  });
+
+  it('respects attachment point types and existing labels', () => {
+    const attachmentPoints = [
+      {
+        attachmentAtom: 0,
+        leavingGroup: { atoms: [] },
+        type: 'right' as const,
+      },
+      {
+        attachmentAtom: 1,
+        leavingGroup: { atoms: [] },
+        type: 'side' as const,
+        label: 'R7',
+      },
+    ];
+
+    expect(normalizeAttachmentPointLabels(attachmentPoints)).toEqual([
+      { ...attachmentPoints[0], label: 'R2' },
+      attachmentPoints[1],
+    ]);
+  });
+
+  it('keeps undefined attachment points undefined', () => {
+    expect(normalizeAttachmentPointLabels(undefined)).toBeUndefined();
+  });
+});
 
 describe('getLeavingGroupLabelWithHydrogens', () => {
   /**

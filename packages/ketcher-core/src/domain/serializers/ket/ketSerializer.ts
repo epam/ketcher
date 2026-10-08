@@ -69,6 +69,7 @@ import {
   convertMonomerTemplateToStruct,
   fillStructRgLabelsByMonomerTemplate,
   getTemplateAttachmentPoints,
+  normalizeAttachmentPointLabels,
 } from 'domain/serializers/ket/fromKet/monomerTemplateUtils';
 import { assert, KetcherLogger } from 'utilities';
 import { Chem } from 'domain/entities/Chem';
@@ -721,7 +722,9 @@ export class KetSerializer implements Serializer<Struct> {
       aliasHELM: monomer.monomerItem.props.aliasHELM,
       aliasBILN: monomer.monomerItem.props.aliasBILN,
       aliasAxoLabs: monomer.monomerItem.props.aliasAxoLabs,
-      attachmentPoints: monomer.monomerItem.attachmentPoints,
+      attachmentPoints: normalizeAttachmentPointLabels(
+        monomer.monomerItem.attachmentPoints,
+      ),
       idtAliases: monomer.monomerItem.props.idtAliases,
       unresolved: monomer.monomerItem.props.unresolved ? true : undefined,
       modificationTypes: monomer.monomerItem.props.modificationTypes,

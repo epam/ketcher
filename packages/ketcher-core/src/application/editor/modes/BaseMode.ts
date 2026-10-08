@@ -56,8 +56,9 @@ export abstract class BaseMode {
   ): void {
     editor.events.layoutModeChange.dispatch(modeName);
     const ModeConstructor = getModeConstructor(modeName);
+    const previousModeName = editor.mode.modeName;
     editor.mode.destroy();
-    editor.setMode(new ModeConstructor());
+    editor.setMode(new ModeConstructor(previousModeName));
     editor.mode.initialize(true, isUndo, false);
   }
 

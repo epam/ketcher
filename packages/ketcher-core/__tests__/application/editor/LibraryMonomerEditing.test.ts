@@ -191,7 +191,7 @@ describe('editing monomer library entries by identity', () => {
     ).toEqual(['1Nal', 'MyBase']);
   });
 
-  it('persists deletion and refuses to leave dangling RNA preset references', () => {
+  it('persists deletion and no longer blocks on dangling RNA preset references', () => {
     const editor = makeEditor();
     const persist = jest
       .spyOn(SettingsManager, 'addMonomerLibraryUpdate')
@@ -214,8 +214,11 @@ describe('editing monomer library entries by identity', () => {
       name: 'preset',
       templates: [{ $ref: 'monomerTemplate-original' }],
     } as (typeof parsed)[string];
-    expect(() => editor.removeMonomerFromLibrary(item)).toThrow('RNA preset');
-    expect(editor.monomersLibrary).toHaveLength(1);
+    // Preset participation no longer blocks deletion — the cascade-delete
+    // flow (removing referencing presets) is driven by the caller via
+    // `getReferencingPresets` + `removePresetFromLibrary` instead.
+    expect(() => editor.removeMonomerFromLibrary(item)).not.toThrow();
+    expect(editor.monomersLibrary).toHaveLength(0);
   });
 
   it('replays persisted edits and deletions after a reload', () => {

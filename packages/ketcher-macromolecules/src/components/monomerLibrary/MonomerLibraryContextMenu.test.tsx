@@ -22,6 +22,9 @@ jest.mock('./monomerLibraryItem/hooks/useLibraryItemDrag', () => ({
 describe('monomer library menu', () => {
   const openWizard = jest.fn();
   const removeMonomer = jest.fn();
+  const removePreset = jest.fn();
+  const revertMonomer = jest.fn();
+  const openConfirmation = jest.fn();
   const onClick = jest.fn();
   let root: HTMLDivElement;
   let monomer: MonomerItemType;
@@ -48,11 +51,31 @@ describe('monomer library menu', () => {
 
   afterEach(() => root.remove());
 
-  const renderMenu = () => {
+  const presetTemplate = { id: 'preset', name: 'MyPreset' };
+
+  const renderMenu = ({
+    isUserMade = true,
+    isOnCanvas = false,
+    isEdited = false,
+    presets = [] as object[],
+  } = {}) => {
     const editor = {
-      events: { openMonomerCreationWizard: { dispatch: openWizard } },
+      events: {
+        openMonomerCreationWizard: { dispatch: openWizard },
+        openConfirmationDialog: { dispatch: openConfirmation },
+      },
       removeMonomerFromLibrary: removeMonomer,
+      removePresetFromLibrary: removePreset,
       isMonomerReferencedInLibrary: jest.fn(() => false),
+      isUserMadeMonomer: jest.fn(() => isUserMade),
+      isEditedDefaultMonomer: jest.fn(() => isEdited),
+      revertMonomerToDefault: revertMonomer,
+      isMonomerPlacedOnCanvas: jest.fn(() => isOnCanvas),
+      getReferencingPresets: jest.fn(() => presets),
+      monomersLibraryParsedJson: {
+        root: { templates: [{ $ref: 'preset' }] },
+        preset: presetTemplate,
+      },
     } as unknown as CoreEditor;
     render(
       withThemeAndStoreProvider(
@@ -110,9 +133,48 @@ describe('monomer library menu', () => {
     );
   });
 
-  it('deletes only the chosen library entry', () => {
+  it('offers Revert to Default only for edited default monomers', () => {
+    renderMenu();
+    expect(screen.queryByTestId('revert')).not.toBeInTheDocument();
+  });
+
+  it('reverts an edited default monomer', () => {
+    renderMenu({ isUserMade: false, isEdited: true });
+    fireEvent.click(screen.getByTestId('revert'));
+    expect(revertMonomer).toHaveBeenCalledWith(monomer);
+  });
+
+  it('hides Delete for default library monomers', () => {
+    renderMenu({ isUserMade: false });
+    expect(screen.queryByTestId('delete')).not.toBeInTheDocument();
+  });
+
+  it('deletes immediately without a modal when monomer is unused', () => {
     renderMenu();
     fireEvent.click(screen.getByTestId('delete'));
+    expect(openConfirmation).not.toHaveBeenCalled();
     expect(removeMonomer).toHaveBeenCalledWith(monomer);
+  });
+
+  it.each([
+    [{ isOnCanvas: true }, 'Monomer present on canvas', 0],
+    [{ presets: [presetTemplate] }, 'Monomer participates in a preset', 1],
+    [
+      { isOnCanvas: true, presets: [presetTemplate] },
+      'Monomer present on canvas and participates in a preset',
+      1,
+    ],
+  ])('asks for confirmation before deleting (%#)', (options, title, count) => {
+    renderMenu(options);
+    fireEvent.click(screen.getByTestId('delete'));
+    expect(removeMonomer).not.toHaveBeenCalled();
+    expect(openConfirmation).toHaveBeenCalledWith(
+      expect.objectContaining({ title, onConfirm: expect.any(Function) }),
+    );
+
+    openConfirmation.mock.calls[0][0].onConfirm();
+    expect(removeMonomer).toHaveBeenCalledWith(monomer);
+    expect(removePreset).toHaveBeenCalledTimes(count);
+    if (count) expect(removePreset).toHaveBeenCalledWith('preset');
   });
 });

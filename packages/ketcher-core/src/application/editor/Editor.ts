@@ -235,6 +235,19 @@ const getHelmAliasUniquenessScope = (
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
   null;
+// Template refs of monomers that shipped with the bundled default library,
+// captured once per page load before any custom/stored updates are applied.
+// Used to distinguish user-made monomers (eligible for deletion) from
+// default library monomers (never deletable). See Editor.isUserMadeMonomer.
+let persistentDefaultMonomerRefs: Set<string> = new Set();
+// Pristine bundled monomers and their KET templates keyed by template ref,
+// captured at the same point. Edits replace library entries by assigning new
+// objects (never mutating these), so they are safe to restore later. See
+// Editor.revertMonomerToDefault.
+let persistentDefaultMonomers: Map<
+  string,
+  { item: MonomerItemType; template: IKetMacromoleculesContent[string] }
+> = new Map();
 
 export class CoreEditor {
   public events: IEditorEvents;
@@ -471,18 +484,44 @@ export class CoreEditor {
       parseMonomersLibrary(monomersDataRaw);
     this._monomersLibrary = monomersLibrary;
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
+    // Capture the bundled default library's monomer refs now, while the
+    // parsed data is still exactly the bundled default JSON — i.e. strictly
+    // before any stored/custom updates are replayed below. Capturing this
+    // after the replay loop would misclassify restored custom monomers as
+    // default.
+    persistentDefaultMonomerRefs = new Set(
+      this._monomersLibrary
+        .filter((item) => !isAmbiguousMonomerLibraryItem(item))
+        .map((item) => getMonomerTemplateRefFromMonomerItem(item)),
+    );
+    persistentDefaultMonomers = new Map();
+    this._monomersLibrary.forEach((item) => {
+      if (isAmbiguousMonomerLibraryItem(item)) return;
+      const ref = getMonomerTemplateRefFromMonomerItem(item);
+      const template = this._monomersLibraryParsedJson?.[ref];
+      if (template) persistentDefaultMonomers.set(ref, { item, template });
+    });
     const storedMonomerLibraryUpdates = SettingsManager.monomerLibraryUpdates;
     storedMonomerLibraryUpdates.forEach((update) => {
       const parsedUpdate = JSON.parse(update);
 
       if (parsedUpdate.removedMonomerRef) {
+        const ref = parsedUpdate.removedMonomerRef;
         const monomer = this._monomersLibrary.find(
           (item) =>
             !isAmbiguousMonomerLibraryItem(item) &&
-            getMonomerTemplateRefFromMonomerItem(item) ===
-              parsedUpdate.removedMonomerRef,
+            getMonomerTemplateRefFromMonomerItem(item) === ref,
         );
-        if (monomer) this.removeMonomerFromLibrary(monomer, false);
+        if (monomer) {
+          this.removeMonomerFromLibrary(monomer, false);
+        } else if (
+          this._monomersLibraryParsedJson?.[ref]?.type ===
+          KetTemplateType.MONOMER_GROUP_TEMPLATE
+        ) {
+          // `removedMonomerRef` is reused for preset removal (see
+          // `removePresetFromLibrary`) since both are persisted the same way.
+          this.removePresetFromLibrary(ref, false);
+        }
       } else if (parsedUpdate.replacement) {
         this.clearMonomersLibrary();
         this.updateMonomersLibrary(parsedUpdate.data);
@@ -957,22 +996,86 @@ export class CoreEditor {
     return (
       this._monomersLibraryParsedJson?.root.templates.some(({ $ref }) => {
         const template = this._monomersLibraryParsedJson?.[$ref];
-        if (
+        return (
           template?.type === KetTemplateType.AMBIGUOUS_MONOMER_TEMPLATE &&
-          'options' in template
-        ) {
-          return template.options.some(
+          'options' in template &&
+          template.options.some(
             ({ templateId }) =>
               templateId === ref ||
               setMonomerTemplatePrefix(templateId) === ref,
-          );
-        }
-        return (
-          template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
-          template.templates.some((component) => component.$ref === ref)
+          )
         );
       }) ?? false
     );
+  }
+
+  /**
+   * Returns every library preset (`MONOMER_GROUP_TEMPLATE`) that references
+   * `monomer` as one of its components. Unlike `isMonomerReferencedInLibrary`
+   * (which only guards against ambiguous-template membership), preset
+   * participation does not block deletion by itself — callers use this list
+   * to drive the delete-confirmation/cascade flow instead.
+   */
+  public getReferencingPresets(
+    monomer: MonomerItemType,
+  ): IKetMonomerGroupTemplate[] {
+    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    const parsedJson = this._monomersLibraryParsedJson;
+    if (!parsedJson) return [];
+    const presets: IKetMonomerGroupTemplate[] = [];
+    parsedJson.root.templates.forEach(({ $ref }) => {
+      const template = parsedJson[$ref];
+      if (
+        template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
+        template.templates.some((component) => component.$ref === ref)
+      ) {
+        presets.push(template);
+      }
+    });
+    return presets;
+  }
+
+  /**
+   * A monomer is "user-made" when its template ref was not present in the
+   * bundled default library at first parse (see `persistentDefaultMonomerRefs`
+   * / `setMonomersLibrary`). Used to gate the `Delete` library-card action to
+   * monomers the user created or duplicated via the Monomer Creation Wizard.
+   */
+  public isUserMadeMonomer(monomer: MonomerItemType): boolean {
+    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    return !persistentDefaultMonomerRefs.has(ref);
+  }
+
+  /**
+   * True when `monomer` is a bundled default monomer whose library entry has
+   * since been replaced by an edit (so "Revert to Default" is meaningful).
+   */
+  public isEditedDefaultMonomer(monomer: MonomerItemType): boolean {
+    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    const defaultEntry = persistentDefaultMonomers.get(ref);
+    if (!defaultEntry) return false;
+    const current = this._monomersLibrary.find(
+      (item) =>
+        !isAmbiguousMonomerLibraryItem(item) &&
+        getMonomerTemplateRefFromMonomerItem(item) === ref,
+    );
+    return Boolean(current) && current !== defaultEntry.item;
+  }
+
+  /**
+   * Whether at least one instance of `monomer` is currently placed on the
+   * canvas, following the same ref-comparison idiom used elsewhere (e.g.
+   * `invalidateNextAutochainPositionIfNeeded`, `replaceMonomerInstances`).
+   */
+  public isMonomerPlacedOnCanvas(monomer: MonomerItemType): boolean {
+    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    return this.drawingEntitiesManager.monomersArray.some((placedMonomer) => {
+      const placedMonomerItem = placedMonomer.monomerItem;
+      return (
+        !isAmbiguousMonomerLibraryItem(placedMonomerItem) &&
+        getMonomerTemplateRefFromMonomerItem(placedMonomerItem) === ref
+      );
+    });
   }
 
   public removeMonomerFromLibrary(
@@ -981,7 +1084,7 @@ export class CoreEditor {
   ) {
     if (this.isMonomerReferencedInLibrary(monomer)) {
       throw new Error(
-        'A monomer used in an RNA preset or ambiguous monomer cannot be deleted.',
+        'A monomer used in an ambiguous monomer cannot be deleted.',
       );
     }
     const ref = getMonomerTemplateRefFromMonomerItem(monomer);
@@ -1000,6 +1103,26 @@ export class CoreEditor {
     if (shouldPersist && SettingsManager.persistMonomerLibraryUpdates) {
       SettingsManager.addMonomerLibraryUpdate(
         JSON.stringify({ removedMonomerRef: ref }),
+      );
+    }
+    this.events.updateMonomersLibrary.dispatch();
+  }
+
+  /**
+   * Removes a library preset (`MONOMER_GROUP_TEMPLATE`) by its template ref,
+   * mirroring `removeMonomerFromLibrary`'s splice/filter/delete/persist/dispatch
+   * shape. Does not touch the preset's component monomers.
+   */
+  public removePresetFromLibrary(presetRef: string, shouldPersist = true) {
+    if (!this._monomersLibraryParsedJson) return;
+    this._monomersLibraryParsedJson.root.templates =
+      this._monomersLibraryParsedJson.root.templates.filter(
+        ({ $ref }) => $ref !== presetRef,
+      );
+    delete this._monomersLibraryParsedJson[presetRef];
+    if (shouldPersist && SettingsManager.persistMonomerLibraryUpdates) {
+      SettingsManager.addMonomerLibraryUpdate(
+        JSON.stringify({ removedMonomerRef: presetRef }),
       );
     }
     this.events.updateMonomersLibrary.dispatch();

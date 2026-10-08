@@ -368,11 +368,13 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('x', '2')
       .attr(
         'y',
-        this.hasAntisenseInChain
+        this.horizontalIndexInRow !== undefined
           ? this.isAntisenseNode
             ? '-24'
             : '24'
-          : '-24',
+          : this.node.monomer.monomerItem.isAntisense
+            ? '24'
+            : '-24',
       )
       .text(this.counterNumber)
       .attr('font-family', 'Courier New')

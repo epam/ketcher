@@ -194,12 +194,20 @@ export class SequenceRenderer {
       chain.forEachRow((row) => {
         hasAntisenseInRow = false;
         let currentMonomerIndexInRow = 0;
-        const senseRowPosition = chain.hasAntisense
+        const isMultiStrandRow =
+          chain.hasAntisense &&
+          row.sequenceViewModelItems.some(
+            (item) =>
+              SequenceRenderer.chainsCollection.getComplimentaryChainsWithData(
+                item.chain,
+              ).length > 1,
+          );
+        const senseRowPosition = isMultiStrandRow
           ? currentChainStartPosition.add(
               new Vec2(0, TWO_STRANDED_ROW_Y_OFFSET),
             )
           : currentChainStartPosition;
-        const antisenseRowPosition = chain.hasAntisense
+        const antisenseRowPosition = isMultiStrandRow
           ? currentChainStartPosition
           : currentChainStartPosition.add(
               new Vec2(0, TWO_STRANDED_ROW_Y_OFFSET),
@@ -230,7 +238,7 @@ export class SequenceRenderer {
               chainItem.antisenseNode?.monomer?.renderer,
               previousRowsWithAntisense,
             );
-            if (chain.hasAntisense) {
+            if (isMultiStrandRow) {
               antisenseNodeRenderer.setHorizontalIndexInRow(
                 row.sequenceViewModelItems.length -
                   1 -
@@ -274,7 +282,7 @@ export class SequenceRenderer {
             node.monomer.renderer,
             previousRowsWithAntisense,
           );
-          if (chain.hasAntisense) {
+          if (isMultiStrandRow) {
             renderer.setHorizontalIndexInRow(
               row.sequenceViewModelItems.length - 1 - currentMonomerIndexInRow,
             );

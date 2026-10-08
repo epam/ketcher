@@ -337,6 +337,43 @@ describe('deserialize (ToStruct)', () => {
       "The file contains corrupted images and couldn't be loaded.",
     );
   });
+  it('rejects SVG images that declare XML entities', () => {
+    const svgContent =
+      '<!DOCTYPE svg [<!ENTITY a "aaaa">]><svg xmlns="http://www.w3.org/2000/svg"><title>' +
+      'a'.repeat(140) +
+      '</title><text>&a;</text></svg>';
+    const svgKet = createKetWithImage(
+      'image/svg+xml',
+      encodeUtf8ToBase64(svgContent),
+    );
+
+    expect(() => ket.deserialize(svgKet)).toThrow(
+      "The file contains corrupted images and couldn't be loaded.",
+    );
+  });
+  it('does not load any content when a valid structure is combined with a corrupted image', () => {
+    const ketWithMoleculeAndCorruptedImage = JSON.stringify({
+      root: {
+        nodes: [
+          { $ref: 'mol0' },
+          {
+            type: 'image',
+            format: 'image/png',
+            boundingBox: { x: 0, y: 0, width: 1, height: 1 },
+            data: 'a'.repeat(160),
+          },
+        ],
+      },
+      mol0: {
+        type: 'molecule',
+        atoms: [{ label: 'C', location: [0, 0, 0] }],
+      },
+    });
+
+    expect(() => ket.deserialize(ketWithMoleculeAndCorruptedImage)).toThrow(
+      "The file contains corrupted images and couldn't be loaded.",
+    );
+  });
 });
 
 describe('serialize (ToKet)', () => {

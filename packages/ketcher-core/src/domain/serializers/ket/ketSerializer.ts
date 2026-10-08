@@ -176,18 +176,35 @@ function getPngUint32(bytes: Uint8Array, offset: number): number {
   );
 }
 
+let pngCrcTable: Uint32Array | null = null;
+
+function getPngCrcTable(): Uint32Array {
+  if (pngCrcTable) {
+    return pngCrcTable;
+  }
+
+  const table = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) {
+    let c = n;
+    for (let bit = 0; bit < 8; bit++) {
+      c = (c >>> 1) ^ (0xedb88320 & -(c & 1));
+    }
+    table[n] = c >>> 0;
+  }
+  pngCrcTable = table;
+  return table;
+}
+
 function calculatePngCrc32(
   bytes: Uint8Array,
   start: number,
   end: number,
 ): number {
+  const table = getPngCrcTable();
   let crc = 0xffffffff;
 
   for (let index = start; index < end; index++) {
-    crc ^= bytes[index];
-    for (let bit = 0; bit < 8; bit++) {
-      crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
-    }
+    crc = table[(crc ^ bytes[index]) & 0xff] ^ (crc >>> 8);
   }
 
   return (crc ^ 0xffffffff) >>> 0;
@@ -317,8 +334,8 @@ function isPngImageDataValid(base64Data: string): boolean {
   return false;
 }
 
-function containsForbiddenXmlDeclarations(xmlContent: string): boolean {
-  return /<!DOCTYPE|<!ENTITY/i.test(xmlContent);
+function containsEntityDeclarations(xmlContent: string): boolean {
+  return xmlContent.includes('<!ENTITY');
 }
 
 function isSvgImageDataValid(base64Data: string): boolean {
@@ -334,7 +351,7 @@ function isSvgImageDataValid(base64Data: string): boolean {
     return false;
   }
 
-  if (containsForbiddenXmlDeclarations(svgContent)) {
+  if (containsEntityDeclarations(svgContent)) {
     return false;
   }
 
@@ -344,6 +361,11 @@ function isSvgImageDataValid(base64Data: string): boolean {
     root.localName.toLowerCase() !== 'svg' ||
     root.namespaceURI !== 'http://www.w3.org/2000/svg'
   ) {
+    return false;
+  }
+
+  // Chromium keeps the partially parsed root and injects a <parsererror> child
+  if (document.getElementsByTagName('parsererror').length > 0) {
     return false;
   }
 

@@ -12,6 +12,11 @@ The `Delete` option in a monomer library card's three-dot menu SHALL be shown on
 - **AND** the user opens the three-dot menu on a card for such a monomer
 - **THEN** no `Delete` option is shown in the menu
 
+#### Scenario: Persisted API-added monomer card has a Delete option
+- **WHEN** the embedding application adds monomers via `ketcher.updateMonomersLibrary` with `shouldPersist: true` (persisting them to `localStorage`)
+- **AND** the user opens the three-dot menu on a card for such a monomer
+- **THEN** a `Delete` option is shown in the menu
+
 #### Scenario: User-made monomer card has a Delete option
 - **WHEN** the user opens the three-dot menu on a card for a monomer created or duplicated via the Monomer Creation Wizard
 - **THEN** a `Delete` option is shown in the menu

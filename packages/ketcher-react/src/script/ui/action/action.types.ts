@@ -192,7 +192,6 @@ type Tools = {
   [key in ToolVariant]: UiAction;
 };
 
-<<<<<<< HEAD
 export type {
   ActionStateOptions,
   Tools,

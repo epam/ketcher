@@ -1,7 +1,7 @@
 ## 1. User-made monomer tracking
 
 - [x] 1.1 Add a module-scope `persistentUserCreatedMonomerRefs: Set<string>` in `packages/ketcher-core/src/application/editor/Editor.ts`, alongside the existing `persistentMonomersLibrary`/`persistentMonomersLibraryParsedJson` caches.
-- [x] 1.2 Populate it in `updateMonomersLibrary` when `isUserCreated: true` is passed (only for new monomers, `existingMonomerIndex === -1`). In `setMonomersLibrary` replay, pass `isUserCreated = (parsedUpdate.source !== 'api')` — legacy entries without a `source` tag are treated as user-created for backward compatibility.
+- [x] 1.2 Populate it in `updateMonomersLibrary` when `isUserCreated: true` is passed (only for new monomers, `existingMonomerIndex === -1`). In `setMonomersLibrary` replay, pass `isUserCreated = (parsedUpdate.source === 'wizard')` — only entries explicitly tagged by the MCW are treated as user-created.
 - [x] 1.3 Add `Editor.isUserMadeMonomer(monomer: MonomerItemType): boolean` returning `persistentUserCreatedMonomerRefs.has(ref)`.
 - [x] 1.4 Unit test: seed a `localStorage` "add custom monomer" update, reload the editor, and assert `isUserMadeMonomer` is `true` for the restored custom monomer and `false` for a default one.
 

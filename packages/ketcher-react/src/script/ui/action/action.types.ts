@@ -138,11 +138,17 @@ type ActionThunkState = {
   };
 };
 
+// Specific action option types
+type AtomActionOpts = {
+  label: string;
+};
+
 // todo: find out types
 type ActionObj = {
   tool?: string;
   opts?: unknown;
   dialog?: string;
+  prop?: Record<string, unknown>;
   thunk?: (dispatch: Dispatch, getState: () => ActionThunkState) => void;
 };
 type ActionFn = (editor: ActionStateEditor) => void;
@@ -159,7 +165,7 @@ type GetDisabledState = (
   server: unknown,
   options: ActionStateOptions,
 ) => boolean;
-type GetHiddenState = (options: ActionStateOptions) => boolean;
+export type GetHiddenState = (options: ActionStateOptions) => boolean;
 
 export type GetActionState =
   GetSelectedState | GetDisabledState | GetHiddenState;
@@ -169,7 +175,10 @@ type IsDisabledState = boolean | GetDisabledState;
 type IsHiddenState = boolean | GetHiddenState;
 
 interface UiAction {
+  /** Translation key (namespace:key) resolved by the consuming component via t(), not display text. */
   title?: string;
+  /** Interpolation values for ICU placeholders in the title key, e.g. { symbol: 'H' }. */
+  titleParams?: Record<string, string>;
   shortcut?: string | Array<string>;
   enabledInViewOnly?: true;
   action: UiActionAction;
@@ -183,4 +192,12 @@ type Tools = {
   [key in ToolVariant]: UiAction;
 };
 
-export type { Tools, UiAction, UiActionAction, ToolVariant };
+<<<<<<< HEAD
+export type {
+  ActionStateOptions,
+  Tools,
+  UiAction,
+  UiActionAction,
+  AtomActionOpts,
+  ToolVariant,
+};

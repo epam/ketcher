@@ -176,8 +176,8 @@ export default function initEditor(
         // list/not-list and all other pseudo elements share this dialog flow
         dlg = openDialog(
           dispatch,
-          !elem.pseudo ? 'period-table' : 'extended-table',
-          { ...(elem as Record<string, unknown>), pseudo: elem.pseudo },
+          elem.pseudo ? 'extended-table' : 'period-table',
+          { ...elem, pseudo: elem.pseudo },
         );
       }
       return dlg.then((res) => toElement(res as ElementFormData));

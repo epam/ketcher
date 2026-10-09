@@ -300,6 +300,10 @@ export function fromBondFlipping(restruct: ReStruct, id: number): Action {
     const bondAddOp = new BondAdd(bond?.end, bond?.begin, bond);
     action.addOp(bondAddOp.perform(restruct));
 
+    if (bond?.type === Bond.PATTERN.TYPE.DATIVE) {
+      action.addOp(new CalcImplicitH([bond.begin, bond.end]).perform(restruct));
+    }
+
     if (bond?.stereo && bond.stereo !== Bond.PATTERN.STEREO.NONE) {
       const oldBeginId = bond.begin;
       const oldEndId = bond.end; // becomes new begin after flip

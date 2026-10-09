@@ -816,6 +816,45 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     );
   });
 
+  it("swaps the user-created phosphate attachment point name when phosphate position changes from 5' to 3'", () => {
+    mockStore = createMockStore(undefined, {
+      assignedAttachmentPoints: new Map([[AttachmentPointName.R1, [3, 13]]]),
+    });
+    wizardState.sugar.structure = {
+      atoms: [2],
+      bonds: [],
+    };
+    wizardState.phosphate.structure = {
+      atoms: [3],
+      bonds: [],
+    };
+    mockEditor.struct.mockReturnValue({
+      atoms: new Map(),
+      bonds: new Map([[1, { begin: 2, end: 3 }]]),
+      halfBonds: new Map(),
+    });
+
+    render(
+      <Provider store={mockStore}>
+        <RnaPresetTabs
+          wizardState={wizardState}
+          editor={mockEditor}
+          wizardStateDispatch={mockDispatch}
+          phosphatePosition="5"
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
+        />
+      </Provider>,
+    );
+
+    fireEvent.click(screen.getByTestId('nucleotide-phosphate-tab'));
+    fireEvent.click(screen.getByTestId('phosphate-position-3-button'));
+
+    expect(mockEditor.reassignAttachmentPoint).toHaveBeenCalledWith(
+      AttachmentPointName.R1,
+      AttachmentPointName.R2,
+    );
+  });
+
   it('shows both explicit and connection attachment points when they share the same label', () => {
     mockStore = createMockStore(undefined, {
       assignedAttachmentPoints: new Map([

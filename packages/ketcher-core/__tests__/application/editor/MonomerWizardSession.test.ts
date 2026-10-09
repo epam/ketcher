@@ -176,7 +176,7 @@ describe('temporary monomer wizard mode session', () => {
       editor.finishMonomerWizardSession(false);
 
       expect(replace).toHaveBeenCalledTimes(1);
-      expect(replace).toHaveBeenCalledWith(target, newMonomerItem);
+      expect(replace).toHaveBeenCalledWith(target, newMonomerItem, new Map());
       expect(editor.renderersContainer.update).toHaveBeenCalled();
     });
 

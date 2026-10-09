@@ -145,6 +145,7 @@ import {
   LibraryItemDragDropHandler,
   type IAutochainMonomerAddResult,
 } from 'application/editor/libraryItemDragDrop';
+import { getAttachmentPointRenames } from 'application/editor/libraryItemDragDrop/replacementHelpers';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 
@@ -2601,8 +2602,11 @@ export class CoreEditor {
       }
 
       command.merge(
-        this.drawingEntitiesManager.replaceMonomer(monomer, newMonomerItem)
-          .command,
+        this.drawingEntitiesManager.replaceMonomer(
+          monomer,
+          newMonomerItem,
+          getAttachmentPointRenames(monomerItem, newMonomerItem),
+        ).command,
       );
       replacedAnyMonomer = true;
     });

@@ -4636,6 +4636,8 @@ export class DrawingEntitiesManager {
   /**
    * Replaces `oldMonomer` with a new monomer created from `newTemplate` at
    * the same canvas position, re-establishing all compatible polymer bonds.
+   * `attachmentPointRenames` maps the old monomer's attachment-point names to
+   * the names used on the new monomer, so a bond stays on the same atom.
    *
    * The entire operation (delete + add + reconnect) is wrapped in a single
    * `Command` so undo/redo treats it as one atomic step.
@@ -4646,6 +4648,10 @@ export class DrawingEntitiesManager {
   public replaceMonomer(
     oldMonomer: BaseMonomer,
     newTemplate: MonomerOrAmbiguousType,
+    attachmentPointRenames: ReadonlyMap<
+      AttachmentPointName,
+      AttachmentPointName
+    > = new Map(),
   ): { command: Command; newMonomer: BaseMonomer } {
     const command = new Command();
     const position = new Vec2(oldMonomer.position.x, oldMonomer.position.y);
@@ -4663,7 +4669,11 @@ export class DrawingEntitiesManager {
     const newMonomer = monomerAddOp.monomer;
 
     // 3. Compute re-establishment plan
-    const plan = computeReestablishableBonds(originalBonds, newMonomer);
+    const plan = computeReestablishableBonds(
+      originalBonds,
+      newMonomer,
+      attachmentPointRenames,
+    );
 
     // 4. Delete the old monomer WITHOUT deleting its connected bonds so we can
     //    re-establish them on the new monomer.

@@ -151,16 +151,21 @@ function handleAliasProperty(
 }
 
 /**
- * Handles simple atom property types (CHG, RAD, ISO, RBC, UNS, APO)
+ * Handles simple atom property types (CHG, RAD, ISO, RBC, UNS, APO).
+ * Repeated lines of the same type merge into one pool; a later entry for the same atom wins.
  */
 function handleSimpleAtomProperty(
   propName: string,
   propertyData: string,
   props: MPropertyProps,
 ): void {
-  if (!props.get(propName)) {
-    props.set(propName, sGroup.readKeyValuePairs(propertyData, false));
+  const values = sGroup.readKeyValuePairs(propertyData, false);
+  const pool = props.get(propName);
+  if (!pool) {
+    props.set(propName, values);
+    return;
   }
+  values.forEach((value, aid) => pool.set(aid, value));
 }
 
 /**

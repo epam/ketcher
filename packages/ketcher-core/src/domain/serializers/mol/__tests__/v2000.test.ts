@@ -425,6 +425,70 @@ describe('parseCTabV2000', () => {
       expect(struct.atoms.get(1)!.charge).toBe(2);
     });
 
+    it('should merge repeated M  CHG lines', () => {
+      const atomLine =
+        '   14.0000   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0';
+      const lines = [
+        ...Array(10).fill(atomLine),
+        'M  CHG  8   1   1   2   1   3   1   4   1   5   1   6   1   7   1   8   1',
+        'M  CHG  2   9   1  10  -1',
+      ];
+
+      const struct = molParsers.parseCTabV2000(lines, createCountsLine(10));
+
+      expect(struct.atoms.get(0)!.charge).toBe(1);
+      expect(struct.atoms.get(7)!.charge).toBe(1);
+      expect(struct.atoms.get(8)!.charge).toBe(1);
+      expect(struct.atoms.get(9)!.charge).toBe(-1);
+    });
+
+    it('should let a later M  CHG entry override an earlier one for the same atom', () => {
+      const atomLine =
+        '   14.0000   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0';
+      const lines = [
+        atomLine,
+        atomLine,
+        'M  CHG  2   1   2   2   3',
+        'M  CHG  1   2  -1',
+      ];
+
+      const struct = molParsers.parseCTabV2000(lines, createCountsLine(2));
+
+      expect(struct.atoms.get(0)!.charge).toBe(2);
+      expect(struct.atoms.get(1)!.charge).toBe(-1);
+    });
+
+    it.each([
+      ['RAD', 'radical', 1, 2],
+      ['ISO', 'isotope', 13, 14],
+      ['RBC', 'ringBondCount', 1, 2],
+      ['UNS', 'unsaturatedAtom', 1, 1],
+      ['APO', 'attachmentPoints', 1, 2],
+    ])(
+      'should merge repeated M  %s lines',
+      (propName, field, firstValue, laterValue) => {
+        const atomLine =
+          '   14.0000   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0';
+        const entries = (aids: number[], value: number) =>
+          aids
+            .map(
+              (aid) => `${String(aid).padStart(4)}${String(value).padStart(4)}`,
+            )
+            .join('');
+        const lines = [
+          ...Array(10).fill(atomLine),
+          `M  ${propName}  8${entries([1, 2, 3, 4, 5, 6, 7, 8], firstValue)}`,
+          `M  ${propName}  1${entries([9], laterValue)}`,
+        ];
+
+        const struct = molParsers.parseCTabV2000(lines, createCountsLine(10));
+
+        expect(struct.atoms.get(0)).toMatchObject({ [field]: firstValue });
+        expect(struct.atoms.get(7)).toMatchObject({ [field]: firstValue });
+        expect(struct.atoms.get(8)).toMatchObject({ [field]: laterValue });
+      },
+    );
+
     it('should parse radical', () => {
       const lines = [
         '   14.0000   -3.0000    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0',

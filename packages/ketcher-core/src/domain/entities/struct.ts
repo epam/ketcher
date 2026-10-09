@@ -17,9 +17,12 @@
 import { assert } from 'utilities';
 import { Atom, radicalElectrons } from './atom';
 import type { EditorSelection } from 'application/editor/editor.types';
+import { calcDativeValence } from './atomDativeValence';
 import { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Elements } from 'domain/constants';
+import { DATIVE_IMPLICIT_HYDROGEN_LABELS } from 'domain/constants/dativeValence';
+import type { ElementLabel } from 'domain/constants/element.types';
 import { Fragment } from './fragment';
 import { FunctionalGroup } from './functionalGroup';
 import { HalfBond } from './halfBond';
@@ -1348,6 +1351,20 @@ export class Struct {
       return;
     }
 
+    // Aromatic atoms keep the legacy path: req 1.1 (dearomatize) needs Indigo, which is async and not on the render path.
+    if (
+      !isAromatic &&
+      atom.explicitValence < 0 &&
+      this.calcDativeImplicitHydrogen(
+        aid,
+        atom,
+        correctConn,
+        includeAtomsInCollapsedSgroups,
+      )
+    ) {
+      return;
+    }
+
     if (atom.explicitValence >= 0) {
       const elem = Elements.get(atom.label);
       atom.implicitH = elem
@@ -1360,6 +1377,76 @@ export class Struct {
     } else {
       atom.calcValence(correctConn);
     }
+  }
+
+  private calcDativeImplicitHydrogen(
+    aid: number,
+    atom: Atom,
+    bondOrderSum: number,
+    includeAtomsInCollapsedSgroups: boolean,
+  ): boolean {
+    const { donorCount, acceptorCount } = this.countDativeBonds(
+      aid,
+      atom,
+      includeAtomsInCollapsedSgroups,
+    );
+    if (donorCount + acceptorCount === 0) {
+      return false;
+    }
+
+    const result = calcDativeValence({
+      label: atom.label,
+      charge: atom.charge ?? 0,
+      radicalCount: radicalElectrons(atom.radical),
+      bondOrderSum,
+      donorCount,
+      acceptorCount,
+    });
+    if (!result) {
+      return false;
+    }
+
+    const covalentError =
+      DATIVE_IMPLICIT_HYDROGEN_LABELS.has(atom.label as ElementLabel) &&
+      !atom.calcValence(bondOrderSum);
+    atom.implicitH = atom.implicitHCount ?? result.implicitHydrogenCount;
+    atom.badConn = result.hasValenceError || covalentError;
+    atom.valence =
+      bondOrderSum + radicalElectrons(atom.radical) + atom.implicitH;
+    return true;
+  }
+
+  private countDativeBonds(
+    aid: number,
+    atom: Atom,
+    includeAtomsInCollapsedSgroups: boolean,
+  ) {
+    let donorCount = 0;
+    let acceptorCount = 0;
+    for (const neighborId of atom.neighbors) {
+      const hb = this.halfBonds.get(neighborId);
+      assert(hb, `HalfBond ${neighborId} not found`);
+      const bond = this.bonds.get(hb.bid);
+      assert(bond, `Bond ${hb.bid} not found`);
+
+      if (
+        bond.type !== Bond.PATTERN.TYPE.DATIVE ||
+        Bond.isBondToHiddenLeavingGroup(
+          this,
+          bond,
+          includeAtomsInCollapsedSgroups,
+        )
+      ) {
+        continue;
+      }
+
+      if (bond.begin === aid) {
+        donorCount++;
+      } else {
+        acceptorCount++;
+      }
+    }
+    return { donorCount, acceptorCount };
   }
 
   setImplicitHydrogen(

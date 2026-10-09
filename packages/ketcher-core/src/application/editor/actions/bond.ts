@@ -221,13 +221,15 @@ export function fromBondsAttrs(
       if (key === 'stereo' && key in attrs) {
         const bond = struct.bonds.get(bid);
         if (bond) {
-          action.addOp(
-            new CalcImplicitH([bond.begin, bond.end]).perform(restruct),
-          );
           action.mergeWith(fromBondStereoUpdate(restruct, bond));
         }
       }
     });
+
+    const bond = struct.bonds.get(bid);
+    if (bond && ('type' in attrs || 'stereo' in attrs)) {
+      action.addOp(new CalcImplicitH([bond.begin, bond.end]).perform(restruct));
+    }
   });
 
   return action;
@@ -299,6 +301,10 @@ export function fromBondFlipping(restruct: ReStruct, id: number): Action {
   if (Number.isInteger(bond?.end) && Number.isInteger(bond?.begin)) {
     const bondAddOp = new BondAdd(bond?.end, bond?.begin, bond);
     action.addOp(bondAddOp.perform(restruct));
+
+    if (bond?.type === Bond.PATTERN.TYPE.DATIVE) {
+      action.addOp(new CalcImplicitH([bond.begin, bond.end]).perform(restruct));
+    }
 
     if (bond?.stereo && bond.stereo !== Bond.PATTERN.STEREO.NONE) {
       const oldBeginId = bond.begin;

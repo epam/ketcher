@@ -235,6 +235,14 @@ const getHelmAliasUniquenessScope = (
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
   null;
+// Template refs of monomers explicitly created via the Monomer Creation Wizard.
+// Only refs in this set are eligible for deletion by the user.
+// Populated by updateMonomersLibrary(…, …, isUserCreated=true) and replayed
+// from localStorage updates tagged source:'wizard' (or legacy entries without
+// a source tag, which are always from the wizard). API-added monomers —
+// via ketcher.updateMonomersLibrary or ketcher.replaceMonomersLibrary — are
+// never added here. See Editor.isUserMadeMonomer.
+let persistentUserCreatedMonomerRefs: Set<string> = new Set();
 
 export class CoreEditor {
   public events: IEditorEvents;
@@ -471,25 +479,38 @@ export class CoreEditor {
       parseMonomersLibrary(monomersDataRaw);
     this._monomersLibrary = monomersLibrary;
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
+
     const storedMonomerLibraryUpdates = SettingsManager.monomerLibraryUpdates;
     storedMonomerLibraryUpdates.forEach((update) => {
       const parsedUpdate = JSON.parse(update);
 
       if (parsedUpdate.removedMonomerRef) {
+        const ref = parsedUpdate.removedMonomerRef;
         const monomer = this._monomersLibrary.find(
           (item) =>
             !isAmbiguousMonomerLibraryItem(item) &&
-            getMonomerTemplateRefFromMonomerItem(item) ===
-              parsedUpdate.removedMonomerRef,
+            getMonomerTemplateRefFromMonomerItem(item) === ref,
         );
-        if (monomer) this.removeMonomerFromLibrary(monomer, false);
+        if (monomer) {
+          this.removeMonomerFromLibrary(monomer, false);
+        } else if (
+          this._monomersLibraryParsedJson?.[ref]?.type ===
+          KetTemplateType.MONOMER_GROUP_TEMPLATE
+        ) {
+          // `removedMonomerRef` is reused for preset removal (see
+          // `removePresetFromLibrary`) since both are persisted the same way.
+          this.removePresetFromLibrary(ref, false);
+        }
       } else if (parsedUpdate.replacement) {
         this.clearMonomersLibrary();
-        this.updateMonomersLibrary(parsedUpdate.data);
+        this.updateMonomersLibrary(parsedUpdate.data, undefined, true);
       } else {
+        // Every entry in localStorage was placed there by user action
+        // (MCW create/edit, or ketcher.updateMonomersLibrary with shouldPersist).
         this.updateMonomersLibrary(
           parsedUpdate.data || update,
           parsedUpdate.editedMonomerRef,
+          true,
         );
       }
     });
@@ -505,6 +526,7 @@ export class CoreEditor {
   public updateMonomersLibrary(
     monomersDataRaw: string | JSON,
     editedMonomerRef?: string,
+    isUserCreated?: boolean,
   ) {
     // `_monomersLibraryParsedJson` is always initialized by `setMonomersLibrary`
     // in the constructor before any consumer can call `updateMonomersLibrary`.
@@ -804,6 +826,9 @@ export class CoreEditor {
         );
         monomersLibraryParsedJson[newMonomerTemplateRef] =
           newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
+        if (isUserCreated) {
+          persistentUserCreatedMonomerRefs.add(newMonomerTemplateRef);
+        }
       } else {
         const existingMonomerTemplateRef = getMonomerTemplateRefFromMonomerItem(
           this._monomersLibrary[existingMonomerIndex],
@@ -957,22 +982,71 @@ export class CoreEditor {
     return (
       this._monomersLibraryParsedJson?.root.templates.some(({ $ref }) => {
         const template = this._monomersLibraryParsedJson?.[$ref];
-        if (
+        return (
           template?.type === KetTemplateType.AMBIGUOUS_MONOMER_TEMPLATE &&
-          'options' in template
-        ) {
-          return template.options.some(
+          'options' in template &&
+          template.options.some(
             ({ templateId }) =>
               templateId === ref ||
               setMonomerTemplatePrefix(templateId) === ref,
-          );
-        }
-        return (
-          template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
-          template.templates.some((component) => component.$ref === ref)
+          )
         );
       }) ?? false
     );
+  }
+
+  /**
+   * Returns every library preset (`MONOMER_GROUP_TEMPLATE`) that references
+   * `monomer` as one of its components. Unlike `isMonomerReferencedInLibrary`
+   * (which only guards against ambiguous-template membership), preset
+   * participation does not block deletion by itself — callers use this list
+   * to drive the delete-confirmation/cascade flow instead.
+   */
+  public getReferencingPresets(
+    monomer: MonomerItemType,
+  ): IKetMonomerGroupTemplate[] {
+    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    const parsedJson = this._monomersLibraryParsedJson;
+    if (!parsedJson) return [];
+    const presets: IKetMonomerGroupTemplate[] = [];
+    parsedJson.root.templates.forEach(({ $ref }) => {
+      const template = parsedJson[$ref];
+      if (
+        template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
+        template.templates.some((component) => component.$ref === ref)
+      ) {
+        presets.push(template);
+      }
+    });
+    return presets;
+  }
+
+  /**
+   * A monomer is "user-made" when its template ref was explicitly added via the
+   * Monomer Creation Wizard (see `persistentUserCreatedMonomerRefs`). Monomers
+   * from the bundled default library and monomers added by the embedding app
+   * via ketcher.updateMonomersLibrary / ketcher.replaceMonomersLibrary are NOT
+   * user-made and cannot be deleted by the user.
+   */
+  public isUserMadeMonomer(monomer: MonomerItemType): boolean {
+    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    return persistentUserCreatedMonomerRefs.has(ref);
+  }
+
+  /**
+   * Whether at least one instance of `monomer` is currently placed on the
+   * canvas, following the same ref-comparison idiom used elsewhere (e.g.
+   * `invalidateNextAutochainPositionIfNeeded`, `replaceMonomerInstances`).
+   */
+  public isMonomerPlacedOnCanvas(monomer: MonomerItemType): boolean {
+    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    return this.drawingEntitiesManager.monomersArray.some((placedMonomer) => {
+      const placedMonomerItem = placedMonomer.monomerItem;
+      return (
+        !isAmbiguousMonomerLibraryItem(placedMonomerItem) &&
+        getMonomerTemplateRefFromMonomerItem(placedMonomerItem) === ref
+      );
+    });
   }
 
   public removeMonomerFromLibrary(
@@ -981,7 +1055,7 @@ export class CoreEditor {
   ) {
     if (this.isMonomerReferencedInLibrary(monomer)) {
       throw new Error(
-        'A monomer used in an RNA preset or ambiguous monomer cannot be deleted.',
+        'A monomer used in an ambiguous monomer cannot be deleted.',
       );
     }
     const ref = getMonomerTemplateRefFromMonomerItem(monomer);
@@ -1000,6 +1074,26 @@ export class CoreEditor {
     if (shouldPersist && SettingsManager.persistMonomerLibraryUpdates) {
       SettingsManager.addMonomerLibraryUpdate(
         JSON.stringify({ removedMonomerRef: ref }),
+      );
+    }
+    this.events.updateMonomersLibrary.dispatch();
+  }
+
+  /**
+   * Removes a library preset (`MONOMER_GROUP_TEMPLATE`) by its template ref,
+   * mirroring `removeMonomerFromLibrary`'s splice/filter/delete/persist/dispatch
+   * shape. Does not touch the preset's component monomers.
+   */
+  public removePresetFromLibrary(presetRef: string, shouldPersist = true) {
+    if (!this._monomersLibraryParsedJson) return;
+    this._monomersLibraryParsedJson.root.templates =
+      this._monomersLibraryParsedJson.root.templates.filter(
+        ({ $ref }) => $ref !== presetRef,
+      );
+    delete this._monomersLibraryParsedJson[presetRef];
+    if (shouldPersist && SettingsManager.persistMonomerLibraryUpdates) {
+      SettingsManager.addMonomerLibraryUpdate(
+        JSON.stringify({ removedMonomerRef: presetRef }),
       );
     }
     this.events.updateMonomersLibrary.dispatch();

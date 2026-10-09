@@ -159,8 +159,9 @@ function handleAliasProperty(
 }
 
 /**
-Handles simple atom property types (CHG, RAD, ISO, RBC, UNS, APO)
-*/
+ * Handles simple atom property types (CHG, RAD, ISO, RBC, UNS, APO).
+ * Repeated lines of the same type merge into one pool; a later entry for the same atom wins.
+ */
 function handleSimpleAtomProperty(
   propName: string,
   propertyData: string,

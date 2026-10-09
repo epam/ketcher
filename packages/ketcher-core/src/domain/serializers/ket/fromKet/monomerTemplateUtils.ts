@@ -107,18 +107,38 @@ export function normalizeTemplateAttachmentPoints(
   });
 }
 
+export function normalizeAttachmentPointLabels(
+  attachmentPoints: IKetAttachmentPoint[] | undefined,
+): IKetAttachmentPoint[] | undefined {
+  if (!attachmentPoints) {
+    return undefined;
+  }
+
+  const { attachmentPointsList } =
+    BaseMonomer.getAttachmentPointDictFromMonomerDefinition(attachmentPoints);
+
+  return attachmentPoints.map((attachmentPoint, index) => ({
+    ...attachmentPoint,
+    label: attachmentPoint.label ?? attachmentPointsList[index],
+  }));
+}
+
 export function getTemplateAttachmentPoints(
   template: IKetMonomerTemplate,
 ): IKetAttachmentPoint[] {
-  const attachmentPoints = normalizeTemplateAttachmentPoints(template) ?? [];
+  const attachmentPoints =
+    normalizeAttachmentPointLabels(
+      normalizeTemplateAttachmentPoints(template) ?? [],
+    ) ?? [];
 
   return template.unresolved
-    ? attachmentPoints.map((_, index) => {
+    ? attachmentPoints.map((attachmentPoint, index) => {
         return {
           attachmentAtom: index,
           leavingGroup: {
             atoms: [],
           },
+          label: attachmentPoint.label,
         };
       })
     : attachmentPoints;

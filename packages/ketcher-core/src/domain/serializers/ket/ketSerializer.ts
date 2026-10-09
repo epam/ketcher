@@ -29,6 +29,7 @@ import type { Point } from 'domain/entities/vec2';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import type { Serializer } from '../serializers.types';
 import { headerToKet } from './toKet/headerToKet';
+import { isSvgMarkupValid } from './ketSvgValidation';
 import { moleculeToKet } from './toKet/moleculeToKet';
 import { moleculeToStruct } from './fromKet/moleculeToStruct';
 import { prepareStructForKet } from './toKet/prepare';
@@ -132,6 +133,263 @@ interface IKetMicromoleculeSerializedResult {
   [key: string]: unknown;
 }
 
+const CORRUPTED_IMAGES_ERROR_MESSAGE =
+  "The file contains corrupted images and couldn't be loaded.";
+
+const PNG_SIGNATURE = [137, 80, 78, 71, 13, 10, 26, 10];
+
+function decodeBase64ToBytes(base64Data: string): Uint8Array | null {
+  if (typeof globalThis.atob !== 'function') {
+    return null;
+  }
+
+  try {
+    const binaryData = globalThis.atob(base64Data);
+    const bytes = new Uint8Array(binaryData.length);
+    for (let i = 0; i < binaryData.length; i++) {
+      bytes[i] = binaryData.charCodeAt(i);
+    }
+    return bytes;
+  } catch {
+    return null;
+  }
+}
+
+function decodeUtf8(bytes: Uint8Array): string {
+  if (typeof globalThis.TextDecoder === 'function') {
+    return new globalThis.TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  }
+
+  const encodedBytes = Array.from(
+    bytes,
+    (byte) => `%${byte.toString(16).padStart(2, '0')}`,
+  ).join('');
+  return decodeURIComponent(encodedBytes);
+}
+
+function getPngUint32(bytes: Uint8Array, offset: number): number {
+  return (
+    ((bytes[offset] << 24) |
+      (bytes[offset + 1] << 16) |
+      (bytes[offset + 2] << 8) |
+      bytes[offset + 3]) >>>
+    0
+  );
+}
+
+let pngCrcTable: Uint32Array | null = null;
+
+function getPngCrcTable(): Uint32Array {
+  if (pngCrcTable) {
+    return pngCrcTable;
+  }
+
+  const table = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) {
+    let c = n;
+    for (let bit = 0; bit < 8; bit++) {
+      c = (c >>> 1) ^ (0xedb88320 & -(c & 1));
+    }
+    table[n] = c >>> 0;
+  }
+  pngCrcTable = table;
+  return table;
+}
+
+function calculatePngCrc32(
+  bytes: Uint8Array,
+  start: number,
+  end: number,
+): number {
+  const table = getPngCrcTable();
+  let crc = 0xffffffff;
+
+  for (let index = start; index < end; index++) {
+    crc = table[(crc ^ bytes[index]) & 0xff] ^ (crc >>> 8);
+  }
+
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function isPngImageDataValid(base64Data: string): boolean {
+  const bytes = decodeBase64ToBytes(base64Data);
+
+  if (!bytes || bytes.length < PNG_SIGNATURE.length + 12) {
+    return false;
+  }
+
+  if (!PNG_SIGNATURE.every((byte, index) => bytes[index] === byte)) {
+    return false;
+  }
+
+  let offset = PNG_SIGNATURE.length;
+  let hasHeader = false;
+  let hasImageData = false;
+  let imageDataEnded = false;
+  let hasPalette = false;
+  let imageDataLength = 0;
+  let colorType = -1;
+
+  while (offset < bytes.length) {
+    if (offset + 12 > bytes.length) {
+      return false;
+    }
+
+    const chunkLength = getPngUint32(bytes, offset);
+    const chunkEnd = offset + chunkLength + 12;
+    if (chunkEnd > bytes.length) {
+      return false;
+    }
+
+    const chunkType = String.fromCharCode(
+      bytes[offset + 4],
+      bytes[offset + 5],
+      bytes[offset + 6],
+      bytes[offset + 7],
+    );
+    if (!/^[A-Za-z]{4}$/.test(chunkType)) {
+      return false;
+    }
+    if (
+      chunkType[2] !== chunkType[2].toUpperCase() ||
+      (chunkType[0] === chunkType[0].toUpperCase() &&
+        !['IHDR', 'PLTE', 'IDAT', 'IEND'].includes(chunkType))
+    ) {
+      return false;
+    }
+
+    const dataStart = offset + 8;
+    const crcOffset = dataStart + chunkLength;
+    if (
+      calculatePngCrc32(bytes, offset + 4, crcOffset) !==
+      getPngUint32(bytes, crcOffset)
+    ) {
+      return false;
+    }
+
+    if (!hasHeader) {
+      if (chunkType !== 'IHDR' || chunkLength !== 13) {
+        return false;
+      }
+      const bitDepth = bytes[dataStart + 8];
+      colorType = bytes[dataStart + 9];
+      const validBitDepths: Record<number, number[]> = {
+        0: [1, 2, 4, 8, 16],
+        2: [8, 16],
+        3: [1, 2, 4, 8],
+        4: [8, 16],
+        6: [8, 16],
+      };
+      if (
+        getPngUint32(bytes, dataStart) === 0 ||
+        getPngUint32(bytes, dataStart + 4) === 0 ||
+        !validBitDepths[colorType]?.includes(bitDepth) ||
+        bytes[dataStart + 10] !== 0 ||
+        bytes[dataStart + 11] !== 0 ||
+        bytes[dataStart + 12] > 1
+      ) {
+        return false;
+      }
+      hasHeader = true;
+    } else if (chunkType === 'IHDR') {
+      return false;
+    }
+
+    if (chunkType === 'PLTE') {
+      if (
+        hasPalette ||
+        hasImageData ||
+        chunkLength === 0 ||
+        chunkLength > 768 ||
+        chunkLength % 3 !== 0 ||
+        colorType === 0 ||
+        colorType === 4
+      ) {
+        return false;
+      }
+      hasPalette = true;
+    }
+
+    if (chunkType === 'IDAT') {
+      if (imageDataEnded || (colorType === 3 && !hasPalette)) {
+        return false;
+      }
+      hasImageData = true;
+      imageDataLength += chunkLength;
+    } else if (hasImageData && chunkType !== 'IEND') {
+      imageDataEnded = true;
+    }
+
+    if (chunkType === 'IEND') {
+      return (
+        chunkLength === 0 &&
+        hasImageData &&
+        imageDataLength > 0 &&
+        chunkEnd === bytes.length
+      );
+    }
+
+    offset = chunkEnd;
+  }
+
+  return false;
+}
+
+function isSvgImageDataValid(base64Data: string): boolean {
+  const bytes = decodeBase64ToBytes(base64Data);
+  if (!bytes) {
+    return false;
+  }
+
+  try {
+    return isSvgMarkupValid(decodeUtf8(bytes));
+  } catch {
+    return false;
+  }
+}
+
+function getKetImageNodes(ket: IKetMicromoleculeFile): Array<KetFileImageNode> {
+  const nodes = ket.root?.nodes;
+  if (!Array.isArray(nodes)) {
+    return [];
+  }
+
+  return nodes
+    .map((node) => {
+      if (node.type) {
+        return node;
+      }
+
+      if (node.$ref && ket[node.$ref]) {
+        return ket[node.$ref] as KetMicromoleculeNode;
+      }
+
+      return null;
+    })
+    .filter(
+      (node): node is KetFileImageNode =>
+        !!node && node.type === IMAGE_SERIALIZE_KEY,
+    );
+}
+
+function validateKetImages(ket: IKetMicromoleculeFile): boolean {
+  return getKetImageNodes(ket).every((imageNode) => {
+    if (!imageNode.data) {
+      return false;
+    }
+
+    if (imageNode.format === 'image/png') {
+      return isPngImageDataValid(imageNode.data);
+    }
+
+    if (imageNode.format === 'image/svg+xml') {
+      return isSvgImageDataValid(imageNode.data);
+    }
+
+    return false;
+  });
+}
+
 function parseNode(node: KetMicromoleculeNode, struct: Struct) {
   const type = node.type;
   switch (type) {
@@ -199,6 +457,9 @@ export class KetSerializer implements Serializer<Struct> {
     const ket = JSON.parse(content);
     if (!validate(ket)) {
       throw new Error('Cannot deserialize input JSON.');
+    }
+    if (!validateKetImages(ket)) {
+      throw new Error(CORRUPTED_IMAGES_ERROR_MESSAGE);
     }
 
     return KetSerializer.fillStruct(ket);

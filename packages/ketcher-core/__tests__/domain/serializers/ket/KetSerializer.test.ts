@@ -49,6 +49,28 @@ import { CoreEditor } from 'application/editor';
 import { KetcherLogger } from 'utilities';
 
 const ket = new KetSerializer();
+const createKetWithImage = (format: string, data: string) =>
+  JSON.stringify({
+    root: {
+      nodes: [
+        {
+          type: 'image',
+          format,
+          boundingBox: {
+            x: 0,
+            y: 0,
+            width: 1,
+            height: 1,
+          },
+          data,
+        },
+      ],
+    },
+  });
+const encodeUtf8ToBase64 = (content: string) =>
+  Buffer.from(content, 'utf8').toString('base64');
+const VALID_PNG_BASE64 =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAbHRFWHRDb21tZW50AHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHgJFqa2AAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==';
 
 describe('deserialize (ToStruct)', () => {
   const canvas = createPolymerEditorCanvas();
@@ -212,6 +234,145 @@ describe('deserialize (ToStruct)', () => {
       'Cannot deserialize input JSON.',
     );
     expect(spy.mock.results[1].value).toBeFalsy();
+  });
+  it('throws a dedicated error for corrupted PNG images in KET', () => {
+    const corruptedPngKet = createKetWithImage('image/png', 'a'.repeat(160));
+
+    expect(() => ket.deserialize(corruptedPngKet)).toThrow(
+      "The file contains corrupted images and couldn't be loaded.",
+    );
+  });
+  it('rejects a PNG containing only a signature, arbitrary data, and IEND trailer', () => {
+    const fakePng = new Uint8Array(200).fill(0x61);
+    fakePng.set([137, 80, 78, 71, 13, 10, 26, 10]);
+    fakePng.set(
+      [0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130],
+      fakePng.length - 12,
+    );
+    const pngBase64 = globalThis.btoa(
+      Array.from(fakePng, (byte) => String.fromCharCode(byte)).join(''),
+    );
+
+    expect(() =>
+      ket.deserialize(createKetWithImage('image/png', pngBase64)),
+    ).toThrow("The file contains corrupted images and couldn't be loaded.");
+  });
+  it('rejects PNG data with an invalid chunk checksum', () => {
+    const pngBytes = Uint8Array.from(
+      globalThis.atob(VALID_PNG_BASE64),
+      (byte) => byte.charCodeAt(0),
+    );
+    pngBytes[29] ^= 1;
+    const pngBase64 = globalThis.btoa(
+      Array.from(pngBytes, (byte) => String.fromCharCode(byte)).join(''),
+    );
+
+    expect(() =>
+      ket.deserialize(createKetWithImage('image/png', pngBase64)),
+    ).toThrow("The file contains corrupted images and couldn't be loaded.");
+  });
+  it('accepts a valid PNG image in KET', () => {
+    expect(() =>
+      ket.deserialize(createKetWithImage('image/png', VALID_PNG_BASE64)),
+    ).not.toThrow();
+  });
+  it('throws a dedicated error for corrupted SVG images in KET', () => {
+    const corruptedSvgContent =
+      '<svg xmlns="http://www.w3.org/2000/svg">' + 'a'.repeat(180);
+    const corruptedSvgBase64 = globalThis.btoa(corruptedSvgContent);
+    const corruptedSvgKet = createKetWithImage(
+      'image/svg+xml',
+      corruptedSvgBase64,
+    );
+
+    expect(() => ket.deserialize(corruptedSvgKet)).toThrow(
+      "The file contains corrupted images and couldn't be loaded.",
+    );
+  });
+  it('accepts SVG images with comments before the root element', () => {
+    const svgContent =
+      '<?xml version="1.0" encoding="utf-8"?><!-- SVG Repo --><svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>';
+    const svgKet = createKetWithImage(
+      'image/svg+xml',
+      globalThis.btoa(svgContent),
+    );
+
+    expect(() => ket.deserialize(svgKet)).not.toThrow();
+  });
+  it('rejects malformed nested SVG markup', () => {
+    const svgContent =
+      '<svg xmlns="http://www.w3.org/2000/svg"><!--' +
+      'a'.repeat(140) +
+      '--><g></svg>';
+    const svgKet = createKetWithImage(
+      'image/svg+xml',
+      encodeUtf8ToBase64(svgContent),
+    );
+
+    expect(() => ket.deserialize(svgKet)).toThrow(
+      "The file contains corrupted images and couldn't be loaded.",
+    );
+  });
+  it('accepts an SVG with a doctype and UTF-8 BOM', () => {
+    const svgContent =
+      '\uFEFF<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>';
+    const svgKet = createKetWithImage(
+      'image/svg+xml',
+      encodeUtf8ToBase64(svgContent),
+    );
+
+    expect(() => ket.deserialize(svgKet)).not.toThrow();
+  });
+  it('rejects active content in parsed SVG nodes and attributes', () => {
+    const svgContent =
+      '<svg xmlns="http://www.w3.org/2000/svg"><title>' +
+      'a'.repeat(140) +
+      '</title><g onload="alert(1)"/></svg>';
+    const svgKet = createKetWithImage(
+      'image/svg+xml',
+      encodeUtf8ToBase64(svgContent),
+    );
+
+    expect(() => ket.deserialize(svgKet)).toThrow(
+      "The file contains corrupted images and couldn't be loaded.",
+    );
+  });
+  it('rejects SVG images that declare XML entities', () => {
+    const svgContent =
+      '<!DOCTYPE svg [<!ENTITY a "aaaa">]><svg xmlns="http://www.w3.org/2000/svg"><title>' +
+      'a'.repeat(140) +
+      '</title><text>&a;</text></svg>';
+    const svgKet = createKetWithImage(
+      'image/svg+xml',
+      encodeUtf8ToBase64(svgContent),
+    );
+
+    expect(() => ket.deserialize(svgKet)).toThrow(
+      "The file contains corrupted images and couldn't be loaded.",
+    );
+  });
+  it('does not load any content when a valid structure is combined with a corrupted image', () => {
+    const ketWithMoleculeAndCorruptedImage = JSON.stringify({
+      root: {
+        nodes: [
+          { $ref: 'mol0' },
+          {
+            type: 'image',
+            format: 'image/png',
+            boundingBox: { x: 0, y: 0, width: 1, height: 1 },
+            data: 'a'.repeat(160),
+          },
+        ],
+      },
+      mol0: {
+        type: 'molecule',
+        atoms: [{ label: 'C', location: [0, 0, 0] }],
+      },
+    });
+
+    expect(() => ket.deserialize(ketWithMoleculeAndCorruptedImage)).toThrow(
+      "The file contains corrupted images and couldn't be loaded.",
+    );
   });
 });
 

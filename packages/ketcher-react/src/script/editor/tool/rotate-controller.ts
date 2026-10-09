@@ -918,4 +918,4 @@ class RotateController {
 }
 
 export default RotateController;
-export { getDifference };
+export { getDifference } from './rotate-controller.utils';

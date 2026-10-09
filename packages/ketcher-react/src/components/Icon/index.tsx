@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Icon from './Icon';
-import type { IconName, IIconProps } from './types';
-import { getIconName } from './utils/getIconName';
-
-export { Icon, getIconName, type IconName, type IIconProps };
+export { default as Icon } from './Icon';
+export type { IconName, IIconProps } from './types';
+export { getIconName } from './utils/getIconName';

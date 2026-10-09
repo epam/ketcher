@@ -229,4 +229,5 @@ export interface StructService {
     options?: StructServiceOptions,
   ) => Promise<CalculateMacromoleculePropertiesResult>;
   destroy?: () => void;
+  terminateWorker?: () => void;
 }

@@ -30,6 +30,7 @@ import {
   StructService,
   KetcherLogger,
   getSvgFromDrawnStructures,
+  hasTerminalPhosphate,
   isClipboardAPIAvailable,
   isHelmCompatible,
   provideEditorInstance,
@@ -114,6 +115,9 @@ export const Save = ({
       editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
       editor.drawingEntitiesManager,
     );
+    const monomers = Array.from(
+      editor.drawingEntitiesManager.monomers.values(),
+    );
     setSvgData(undefined);
     if (fileFormat === 'ket') {
       setStruct(serializedKet);
@@ -128,12 +132,7 @@ export const Save = ({
       if (editor.drawingEntitiesManager.molecules.length > 0) {
         editor.events.error.dispatch(t('save.helmSmilesExportNotice'));
       }
-      if (
-        !isHelmCompatible(
-          Array.from(editor.drawingEntitiesManager.monomers.values()),
-          editor.monomersLibrary,
-        )
-      ) {
+      if (!isHelmCompatible(monomers, editor.monomersLibrary)) {
         editor.events.error.dispatch(t('save.helmAliasExportNotice'));
       }
     }
@@ -149,6 +148,9 @@ export const Save = ({
           editor.drawingEntitiesManager.validateIfApplicableForFasta();
         if (!isValid) {
           throw new Error(t('save.sequenceTypeRecognitionError'));
+        }
+        if (fileFormat === 'fasta' && hasTerminalPhosphate(monomers)) {
+          editor.events.error.dispatch(t('save.fastaPhosphateLossNotice'));
         }
       }
       const formatProperties = getPropertiesByFormat(fileFormat);

@@ -37,6 +37,10 @@ import {
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
 import { restorePersistedSelectionTool } from './selectionToolPersistence';
+import {
+  createStructWithImage,
+  readImageFile,
+} from '../../editor/tool/imageFile';
 
 import actions from '../action';
 import { isIE } from 'react-device-detect';
@@ -466,6 +470,21 @@ export function initClipboard(dispatch, getState) {
         }
       }, ketcherInstance.eventBus);
       return result;
+    },
+    async onPasteImage(file: File) {
+      const editor = getState().editor;
+      const ketcherInstance = ketcherProvider.getKetcher(editor.ketcherId);
+      await runAsyncAction(async () => {
+        try {
+          const image = await readImageFile(file, editor.render.options);
+          dispatch(
+            onAction({ tool: 'paste', opts: createStructWithImage(image) }),
+          );
+        } catch (error) {
+          KetcherLogger.error('hotkeys.ts::onPasteImage', error);
+          editor.errorHandler?.((error as Error).message);
+        }
+      }, ketcherInstance.eventBus);
     },
     onLegacyPaste(data, isSmarts: boolean) {
       const structStr =

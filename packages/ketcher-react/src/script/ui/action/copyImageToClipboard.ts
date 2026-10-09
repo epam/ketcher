@@ -19,29 +19,49 @@ import {
   KetcherLogger,
   ketcherProvider,
   KetSerializer,
+  type GenerateImageOptions,
 } from 'ketcher-core';
+import type { CurrentAppState } from './types';
 import i18n from '../../../i18n/i18n';
 
-async function copyImageToClipboard() {
-  const state = globalThis.currentState;
+declare global {
+  interface Window {
+    currentState: CurrentAppState;
+  }
+}
+
+async function copyImageToClipboard(): Promise<void> {
+  const state: CurrentAppState = globalThis.currentState;
   const editor = state.editor;
   const options = state.options;
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
+
   try {
     const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
     const ketSerializer = new KetSerializer();
-    const structStr = ketSerializer.serialize(struct);
-    const image = await ketcher.generateImage(structStr, {
+    const structStr: string = ketSerializer.serialize(struct);
+
+    const generateImageOptions: GenerateImageOptions = {
       outputFormat: 'png',
       backgroundColor: '255, 255, 255',
-      bondThickness: options.settings.bondThickness || defaultBondThickness,
-    });
-    const item = new globalThis.ClipboardItem({ [image.type]: image });
+      bondThickness:
+        (options.settings.bondThickness as number) || defaultBondThickness,
+    };
+
+    const image: Blob = await ketcher.generateImage(
+      structStr,
+      generateImageOptions,
+    );
+
+    const item = new ClipboardItem({ [image.type]: image });
     await globalThis.navigator.clipboard.write([item]);
-  } catch (e) {
-    KetcherLogger.error('copyImageToClipboard.js::copyImageToClipboard', e);
-    errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));
+  } catch (e: unknown) {
+    KetcherLogger.error('copyImageToClipboard.ts::copyImageToClipboard', e);
+
+    if (errorHandler) {
+      errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));
+    }
   }
 }
 

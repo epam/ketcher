@@ -45,7 +45,29 @@ type FlexModeOrSnakeModePolymerBondRenderer =
   FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
 
 class PolymerBond implements BaseTool {
-  private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
+  private _bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
+
+  private get bondRenderer() {
+    return this._bondRenderer;
+  }
+
+  private set bondRenderer(
+    renderer: FlexModeOrSnakeModePolymerBondRenderer | undefined,
+  ) {
+    const isStartingConnection = !this._bondRenderer && Boolean(renderer);
+    this._bondRenderer = renderer;
+    this.editor.canvas.toggleAttribute(
+      'data-drawing-connection',
+      Boolean(renderer),
+    );
+    if (isStartingConnection) {
+      // Hover contours live outside bond groups and must be cleared explicitly.
+      this.editor.drawingEntitiesManager.bonds.forEach((bond) => {
+        bond.turnOffHover();
+        bond.renderer?.redrawHover();
+      });
+    }
+  }
   private isBondConnectionModalOpen = false;
   private readonly history: EditorHistory;
   private readonly bondType: MACROMOLECULES_BOND_TYPES;
@@ -84,17 +106,13 @@ class PolymerBond implements BaseTool {
   }
 
   private removeBond() {
-    if (this.bondRenderer) {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+    const modelChanges = this.bondRenderer
+      ? this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
           this.bondRenderer.polymerBond,
-        );
-      this.bondRenderer = undefined;
-
-      return modelChanges;
-    } else {
-      return new Command();
-    }
+        )
+      : new Command();
+    this.bondRenderer = undefined;
+    return modelChanges;
   }
 
   public mousedown(event: MouseEvent) {
@@ -600,6 +618,7 @@ class PolymerBond implements BaseTool {
 
   public destroy() {
     const modelChanges = this.removeBond();
+    this.isBondConnectionModalOpen = false;
     modelChanges.merge(
       this.editor.drawingEntitiesManager.removeHoverForAllMonomers(),
     );

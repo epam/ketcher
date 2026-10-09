@@ -21,6 +21,8 @@ import { calcDativeValence } from './atomDativeValence';
 import { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Elements } from 'domain/constants';
+import { DATIVE_IMPLICIT_HYDROGEN_LABELS } from 'domain/constants/dativeValence';
+import type { ElementLabel } from 'domain/constants/element.types';
 import { Fragment } from './fragment';
 import { FunctionalGroup } from './functionalGroup';
 import { HalfBond } from './halfBond';
@@ -1404,9 +1406,13 @@ export class Struct {
       return false;
     }
 
+    const covalentError =
+      DATIVE_IMPLICIT_HYDROGEN_LABELS.has(atom.label as ElementLabel) &&
+      !atom.calcValence(bondOrderSum);
     atom.implicitH = atom.implicitHCount ?? result.implicitHydrogenCount;
-    atom.badConn = result.hasValenceError;
-    atom.valence = bondOrderSum + donorCount + acceptorCount + atom.implicitH;
+    atom.badConn = result.hasValenceError || covalentError;
+    atom.valence =
+      bondOrderSum + radicalElectrons(atom.radical) + atom.implicitH;
     return true;
   }
 

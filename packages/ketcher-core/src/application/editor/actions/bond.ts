@@ -221,13 +221,15 @@ export function fromBondsAttrs(
       if (key === 'stereo' && key in attrs) {
         const bond = struct.bonds.get(bid);
         if (bond) {
-          action.addOp(
-            new CalcImplicitH([bond.begin, bond.end]).perform(restruct),
-          );
           action.mergeWith(fromBondStereoUpdate(restruct, bond));
         }
       }
     });
+
+    const bond = struct.bonds.get(bid);
+    if (bond && ('type' in attrs || 'stereo' in attrs)) {
+      action.addOp(new CalcImplicitH([bond.begin, bond.end]).perform(restruct));
+    }
   });
 
   return action;

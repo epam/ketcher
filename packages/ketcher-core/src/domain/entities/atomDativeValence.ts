@@ -33,14 +33,9 @@ export function calcDativeValence(
   const elementLabel = label as ElementLabel;
   const config = DATIVE_VALENCE_TABLE[elementLabel];
 
-  const eligibleElectrons = Math.max(
-    0,
-    config.valenceElectrons - charge - bondOrderSum - radicalCount,
-  );
-  const eligibleOrbitals = Math.max(
-    0,
-    config.valenceOrbitals - bondOrderSum - radicalCount,
-  );
+  const eligibleElectrons =
+    config.valenceElectrons - charge - bondOrderSum - radicalCount;
+  const eligibleOrbitals = config.valenceOrbitals - bondOrderSum - radicalCount;
 
   const maxDonors = allowedCapacity(
     Math.floor(eligibleElectrons / 2),

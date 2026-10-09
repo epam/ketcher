@@ -115,6 +115,58 @@ describe('Struct dative bond valence', () => {
       expect(carbon?.implicitH).toBe(4);
     });
 
+    it('underlines a carbon with five single bonds even when one donor and one acceptor cancel', () => {
+      const { struct, ids } = buildStruct(
+        [
+          { label: 'C' },
+          ...Array.from({ length: 5 }, () => ({ label: 'C' })),
+          { label: 'N' },
+          { label: 'N' },
+        ],
+        [
+          ...Array.from({ length: 5 }, (_, index) => ({
+            begin: 0,
+            end: index + 1,
+            type: SINGLE,
+          })),
+          { begin: 0, end: 6, type: DATIVE },
+          { begin: 7, end: 0, type: DATIVE },
+        ],
+      );
+      const carbon = struct.atoms.get(ids[0]);
+      expect(carbon?.badConn).toBe(true);
+      expect(carbon?.implicitH).toBe(0);
+    });
+
+    it('keeps nickel with one single bond and one dative acceptor unflagged', () => {
+      const { struct, ids } = buildStruct(
+        [{ label: 'Ni' }, { label: 'C' }, { label: 'N' }],
+        [
+          { begin: 0, end: 1, type: SINGLE },
+          { begin: 2, end: 0, type: DATIVE },
+        ],
+      );
+      expect(struct.atoms.get(ids[0])?.badConn).toBe(false);
+    });
+
+    it('sets valence from bond orders, radicals and implicit hydrogen for a phosphorus donor and acceptor', () => {
+      const { struct, ids } = buildStruct(
+        [{ label: 'P' }, { label: 'P' }],
+        [{ begin: 0, end: 1, type: DATIVE }],
+      );
+      expect(struct.atoms.get(ids[0])?.valence).toBe(3);
+      expect(struct.atoms.get(ids[1])?.valence).toBe(1);
+    });
+
+    it('sets valence from bond orders, radicals and implicit hydrogen for a carbon donor and acceptor', () => {
+      const { struct, ids } = buildStruct(
+        [{ label: 'C' }, { label: 'C' }],
+        [{ begin: 0, end: 1, type: DATIVE }],
+      );
+      expect(struct.atoms.get(ids[0])?.valence).toBe(2);
+      expect(struct.atoms.get(ids[1])?.valence).toBe(2);
+    });
+
     it('keeps explicit valence atoms on the legacy path', () => {
       const withDative = buildStruct(
         [{ label: 'N', explicitValence: 3 }, { label: 'C' }],
@@ -178,10 +230,8 @@ M  END`;
 
   it('does not underline any atom', () => {
     const struct = new MolSerializer().deserialize(molfile);
-    // The V2000 reader keeps only the first "M  CHG" line, so the +1 charges of the last two oxygens
-    // (second "M  CHG" line in the template) are not loaded. Restore them so the template is checked as drawn.
-    struct.atoms.get(9)!.charge = 1;
-    struct.atoms.get(10)!.charge = 1;
+    expect(struct.atoms.get(9)?.charge).toBe(1);
+    expect(struct.atoms.get(10)?.charge).toBe(1);
     struct.initHalfBonds();
     struct.initNeighbors();
     struct.setImplicitHydrogen();
@@ -194,8 +244,8 @@ M  END`;
 
   it('gives carbonyl carbons and iron no implicit hydrogens', () => {
     const struct = new MolSerializer().deserialize(molfile);
-    struct.atoms.get(9)!.charge = 1;
-    struct.atoms.get(10)!.charge = 1;
+    expect(struct.atoms.get(9)?.charge).toBe(1);
+    expect(struct.atoms.get(10)?.charge).toBe(1);
     struct.initHalfBonds();
     struct.initNeighbors();
     struct.setImplicitHydrogen();

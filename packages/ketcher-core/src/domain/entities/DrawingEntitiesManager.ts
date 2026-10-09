@@ -55,6 +55,7 @@ import { monomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import {
   isAmbiguousMonomerLibraryItem,
+  isRnaBaseApplicableForAntisense,
   isRnaBaseOrAmbiguousRnaBase,
   isPhosphateOrAmbiguousPhosphate,
   isSugarOrAmbiguousSugar,
@@ -3604,6 +3605,8 @@ export class DrawingEntitiesManager {
       ...this.monomers.values(),
     ]);
     const handledChains = new Set<Chain>();
+    const standaloneChains: Chain[] = [];
+    const duplexSenseChains = new Set<Chain>();
 
     if (needRecalculateOldAntisense) {
       this.monomers.forEach((monomer) => {
@@ -3734,9 +3737,16 @@ export class DrawingEntitiesManager {
 
       const { group: senseGroup } = senseChain;
 
+      if (chainsToCheck.length === 1) {
+        standaloneChains.push(chain);
+      }
+
       chainsToCheck.forEach(({ chain, group }) => {
         handledChains.add(chain);
         if (group === senseGroup) {
+          if (chainsToCheck.length > 1) {
+            duplexSenseChains.add(chain);
+          }
           chain.monomers.forEach((monomer) => {
             command.merge(this.markMonomerAsSense(monomer));
           });
@@ -3749,7 +3759,70 @@ export class DrawingEntitiesManager {
       });
     });
 
+    command.merge(
+      this.attachChainsHydrogenBondedToDuplexes(
+        chainsCollection,
+        standaloneChains,
+        duplexSenseChains,
+      ),
+    );
+
     return command;
+  }
+
+  private attachChainsHydrogenBondedToDuplexes(
+    chainsCollection: ChainsCollection,
+    standaloneChains: Chain[],
+    duplexSenseChains: Set<Chain>,
+  ) {
+    const command = new Command();
+    const monomerToChain = chainsCollection.monomerToChain;
+
+    standaloneChains.forEach((chain) => {
+      const senseChain = this.findDuplexSenseChainHydrogenBondedToChain(
+        chain,
+        monomerToChain,
+        duplexSenseChains,
+      );
+
+      if (!senseChain) {
+        return;
+      }
+
+      chain.monomers.forEach((monomer) => {
+        command.merge(this.markMonomerAsAntisense(monomer));
+        this.antisenseMonomerToSenseChain.set(monomer, senseChain);
+      });
+    });
+
+    return command;
+  }
+
+  private findDuplexSenseChainHydrogenBondedToChain(
+    chain: Chain,
+    monomerToChain: Map<BaseMonomer, Chain>,
+    duplexSenseChains: Set<Chain>,
+  ): Chain | undefined {
+    for (const monomer of chain.monomers) {
+      if (!isRnaBaseApplicableForAntisense(monomer)) {
+        continue;
+      }
+
+      for (const hydrogenBond of monomer.hydrogenBonds) {
+        const pairedMonomer = hydrogenBond.getAnotherMonomer(monomer);
+        const pairedChain = pairedMonomer && monomerToChain.get(pairedMonomer);
+
+        if (
+          pairedChain &&
+          !isRnaBaseApplicableForAntisense(pairedMonomer) &&
+          duplexSenseChains.has(pairedChain)
+        ) {
+          return pairedChain;
+        }
+      }
+    }
+
+    return undefined;
   }
 
   public get hasAntisenseChains() {

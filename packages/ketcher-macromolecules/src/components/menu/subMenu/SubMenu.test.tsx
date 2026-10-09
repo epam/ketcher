@@ -13,7 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render, screen, fireEvent } from '@testing-library/react';
+import {
+  act,
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react';
+import { Subscription } from 'subscription';
 import { ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { Provider as StoreProvider } from 'react-redux';
@@ -94,5 +101,50 @@ describe('Test SubMenu component', () => {
 
     expect(collapse).not.toBeNull();
     expect(collapse).toHaveStyle(`z-index: ${customOverlayZIndex}`);
+  });
+
+  describe('closes the opened dropdown when a sequence is started (#4412)', () => {
+    const renderOpenedSubMenu = () => {
+      const startNewSequence = new Subscription();
+      const store = configureAppStore({
+        editor: { editor: { events: { startNewSequence } } },
+      });
+
+      render(
+        <ThemeProvider theme={{ ...createTheme(), ketcher: defaultTheme }}>
+          <StoreProvider store={store}>{mockSubMenu()}</StoreProvider>
+        </ThemeProvider>,
+      );
+      fireEvent.click(screen.getByTestId('dropdown-expand'));
+      expect(screen.getByTestId('multi-tool-dropdown')).toBeInTheDocument();
+
+      return { startNewSequence };
+    };
+
+    it('on typing', async () => {
+      renderOpenedSubMenu();
+
+      fireEvent.keyDown(document, { key: 'A' });
+
+      await waitFor(() =>
+        expect(
+          screen.queryByTestId('multi-tool-dropdown'),
+        ).not.toBeInTheDocument(),
+      );
+    });
+
+    it('on the "Start new sequence" action', async () => {
+      const { startNewSequence } = renderOpenedSubMenu();
+
+      act(() => {
+        startNewSequence.dispatch({});
+      });
+
+      await waitFor(() =>
+        expect(
+          screen.queryByTestId('multi-tool-dropdown'),
+        ).not.toBeInTheDocument(),
+      );
+    });
   });
 });

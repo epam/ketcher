@@ -2,7 +2,6 @@ import { expect, test, Page } from '@fixtures';
 import {
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  takeEditorScreenshot,
 } from '@utils';
 import {
   getMonomerLocator,
@@ -12,6 +11,7 @@ import {
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 let page: Page;
 
@@ -34,7 +34,7 @@ test('Case 1: Sequence appears in viewport and no selection controls remain afte
    * Case:
    *       1. Open Macromolecules canvas - Flex mode
    *       2. Load from HELM: RNA1{R(A)P.R(A)P.R(A)P}$$$$V2.0
-   *       3. Select the sequence and move it to the center of the canvas
+   *       3. Move the sequence to the center of the canvas and select it
    *       4. Switch to Sequence mode
    */
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -42,13 +42,14 @@ test('Case 1: Sequence appears in viewport and no selection controls remain afte
     MacroFileType.HELM,
     'RNA1{R(A)P.R(A)P.R(A)P}$$$$V2.0',
   );
-  await selectAllStructuresOnCanvas(page);
   await moveMonomer(
     page,
     getMonomerLocator(page, { monomerAlias: 'A' }).first(),
     600,
     500,
   );
+  await selectAllStructuresOnCanvas(page);
+  await expect(RotationTool(page).rotationHandle).toBeVisible();
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
@@ -57,5 +58,6 @@ test('Case 1: Sequence appears in viewport and no selection controls remain afte
   await expect(
     getSymbolLocator(page, { symbolAlias: 'A' }).first(),
   ).toBeInViewport();
-  await takeEditorScreenshot(page);
+  await expect(RotationTool(page).rotationHandle).toHaveCount(0);
+  await expect(RotationTool(page).rotationCenterHandle).toHaveCount(0);
 });

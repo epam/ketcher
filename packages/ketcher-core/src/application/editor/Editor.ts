@@ -2135,16 +2135,23 @@ export class CoreEditor {
   }
 
   private isSequenceStartInViewport() {
-    const { x, y, k } = this.zoomTool.zoomTransform;
     const { left, top } = SequenceRenderer.getRenderedStructuresBbox();
-    const screenX = left * k + x;
-    const screenY = top * k + y;
+    const canvasMatrix = this.zoomTool.canvas.node()?.getScreenCTM();
+    const wrapperRect = this.zoomTool.canvasWrapper
+      .node()
+      ?.getBoundingClientRect();
+
+    if (!canvasMatrix || !wrapperRect) {
+      return true;
+    }
+
+    const point = new DOMPoint(left, top).matrixTransform(canvasMatrix);
 
     return (
-      screenX >= 0 &&
-      screenY >= 0 &&
-      screenX <= this.zoomTool.canvasWrapperWidth &&
-      screenY <= this.zoomTool.canvasWrapperHeight
+      point.x >= wrapperRect.left &&
+      point.x <= wrapperRect.right &&
+      point.y >= wrapperRect.top &&
+      point.y <= wrapperRect.bottom
     );
   }
 

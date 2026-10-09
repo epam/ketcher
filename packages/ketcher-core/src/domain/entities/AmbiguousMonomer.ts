@@ -21,6 +21,7 @@ import { RNABase } from 'domain/entities/RNABase';
 import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
+import { compareStrings } from 'utilities';
 
 export const DEFAULT_VARIANT_MONOMER_LABEL = '%';
 
@@ -141,7 +142,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   public get isModification() {
     const ownTemplateIds = this.variantMonomerItem.options
       .map((option) => option.templateId)
-      .sort();
+      .sort(compareStrings);
 
     const monomersLibrary = provideEditorInstance()?.monomersLibrary ?? [];
 
@@ -155,7 +156,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
 
       const libraryTemplateIds = libraryItem.options
         .map((option) => option.templateId)
-        .sort();
+        .sort(compareStrings);
 
       return (
         libraryTemplateIds.length === ownTemplateIds.length &&

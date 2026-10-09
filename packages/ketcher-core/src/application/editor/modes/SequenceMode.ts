@@ -40,6 +40,7 @@ import {
   getRnaPartLibraryItem,
   getSugarBySequenceType,
 } from 'domain/helpers/rna';
+import { isPeptideOrAmbiguousPeptide } from 'domain/helpers/monomers';
 import {
   type RnaDnaNaturalAnaloguesEnum,
   peptideNaturalAnalogues,
@@ -841,9 +842,21 @@ export class SequenceMode extends BaseMode {
   ) {
     const editor = provideEditorInstance();
     const modelChanges = new Command();
+    const nextNode =
+      nextNodeToConnect instanceof BackBoneSequenceNode
+        ? nextNodeToConnect.secondConnectedNode
+        : nextNodeToConnect;
+    const previousNode =
+      previousNodeToConnect instanceof BackBoneSequenceNode
+        ? previousNodeToConnect.firstConnectedNode
+        : previousNodeToConnect;
+    const isBetweenPeptides =
+      isPeptideOrAmbiguousPeptide(previousNode?.lastMonomerInNode) &&
+      isPeptideOrAmbiguousPeptide(nextNode?.firstMonomerInNode);
     const creationResult =
       nextNodeToConnect instanceof Nucleotide ||
       nextNodeToConnect instanceof Nucleoside ||
+      isBetweenPeptides ||
       (nextNodeToConnect instanceof BackBoneSequenceNode &&
         (nextNodeToConnect.secondConnectedNode instanceof Nucleotide ||
           nextNodeToConnect.secondConnectedNode instanceof Nucleoside))
@@ -873,15 +886,7 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(addedNodeModelChanges);
 
     modelChanges.merge(
-      this.insertNewSequenceFragment(
-        nodeToAdd,
-        nextNodeToConnect instanceof BackBoneSequenceNode
-          ? nextNodeToConnect.secondConnectedNode
-          : nextNodeToConnect,
-        previousNodeToConnect instanceof BackBoneSequenceNode
-          ? previousNodeToConnect.firstConnectedNode
-          : previousNodeToConnect,
-      ),
+      this.insertNewSequenceFragment(nodeToAdd, nextNode, previousNode),
     );
 
     return { modelChanges, node: nodeToAdd };

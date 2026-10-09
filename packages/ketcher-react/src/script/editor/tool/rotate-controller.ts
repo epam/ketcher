@@ -160,15 +160,22 @@ class RotateController {
     const visibleAtoms =
       this.render.ctab.molecule.getSelectedVisibleAtoms(selection);
 
-    const { texts, rxnArrows, rxnPluses } = selection || {};
+    const { texts, rxnArrows, rxnPluses, bonds } = selection || {};
 
-    const isMoreThanOneItemBeingSelected =
-      visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
-        .length > 1;
+    const rotatableItems = visibleAtoms.concat(
+      texts || [],
+      rxnArrows || [],
+      rxnPluses || [],
+    );
+    const isMoreThanOneItemBeingSelected = rotatableItems.length > 1;
+    // Only bonds, without any of their atoms: they can be flipped or deleted
+    // but rotation moves atoms, so the frame is shown without its handle
+    const isOnlyBondsSelected =
+      rotatableItems.length === 0 && (bonds?.length ?? 0) > 1;
 
     const currentTool = this.editor.tool();
     const enable =
-      isMoreThanOneItemBeingSelected &&
+      (isMoreThanOneItemBeingSelected || isOnlyBondsSelected) &&
       (currentTool instanceof SelectTool ||
         currentTool instanceof FragmentSelectionTool) &&
       originalCenter;
@@ -184,7 +191,7 @@ class RotateController {
       texts,
       rxnArrows,
       rxnPluses,
-      selection?.bonds,
+      bonds,
       selection?.rgroupAttachmentPoints,
     );
 
@@ -201,6 +208,10 @@ class RotateController {
       visible: true,
       rotateHandlePosition: handleCenterInViewport,
     });
+
+    if (isOnlyBondsSelected) {
+      return;
+    }
 
     this.drawLink();
     this.drawCross();

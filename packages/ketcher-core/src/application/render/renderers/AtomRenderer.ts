@@ -1,6 +1,7 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { type Atom, AtomRadical } from 'domain/entities/CoreAtom';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { editorEvents } from 'application/editor/editorEvents';
 import { ketcherProvider } from 'application/ketcherProvider';
@@ -344,9 +345,17 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
-    return (
-      !atomNeighborsHalfEdges?.length || atomNeighborsHalfEdges.length === 1
-    );
+    // Bonds to monomers (attachment points) are real connections, but they are
+    // not represented as half-edges. Count them so an attachment atom that still
+    // has a bond is not treated as terminal (otherwise it would be labelled,
+    // e.g. "CH₂" appearing at an attachment point after a Micro↔Macro switch).
+    const monomerBondCount = this.atom.bonds.filter(
+      (bond) => bond instanceof MonomerToAtomBond,
+    ).length;
+    const neighborCount =
+      (atomNeighborsHalfEdges?.length ?? 0) + monomerBondCount;
+
+    return neighborCount <= 1;
   }
 
   public get isLabelVisible() {

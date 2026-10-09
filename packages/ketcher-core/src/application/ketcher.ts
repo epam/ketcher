@@ -912,7 +912,11 @@ export class Ketcher {
       params,
     );
 
-    editor.updateMonomersLibrary(dataInKetFormat);
+    editor.updateMonomersLibrary(
+      dataInKetFormat,
+      undefined,
+      params?.shouldPersist,
+    );
     if (SettingsManager.persistMonomerLibraryUpdates && params?.shouldPersist) {
       const updateString = ensureString(dataInKetFormat);
       SettingsManager.addMonomerLibraryUpdate(updateString);

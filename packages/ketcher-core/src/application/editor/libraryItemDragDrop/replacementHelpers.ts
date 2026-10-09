@@ -9,8 +9,9 @@
  */
 
 import type { IRnaPreset } from 'application/editor/tools/Tool';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { AttachmentPointName } from 'domain/types';
+import type { IKetAttachmentPoint } from 'application/formatters/types/ket';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { AttachmentPointName, type MonomerItemType } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import type { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
@@ -187,6 +188,70 @@ export function computeReestablishableBonds(
   }
 
   return { reestablishable, lost };
+}
+
+/**
+ * Maps each attachment-point name of `oldMonomerItem` to the name that the
+ * same atoms carry on `newMonomerItem`. Reassigning attachment-point names
+ * (for example swapping R1 and R2) must not move a bond to a different atom,
+ * so re-establishing a bond uses the renamed point. Only changed names are
+ * returned; an attachment point whose atoms are not found keeps its name.
+ */
+export function getAttachmentPointRenames(
+  oldMonomerItem: MonomerItemType,
+  newMonomerItem: MonomerItemType,
+): Map<AttachmentPointName, AttachmentPointName> {
+  const newNamesByAtoms = new Map<string, AttachmentPointName>();
+  getAttachmentPointAtomKeys(newMonomerItem).forEach(([name, key]) => {
+    if (key) newNamesByAtoms.set(key, name);
+  });
+
+  const renames = new Map<AttachmentPointName, AttachmentPointName>();
+  getAttachmentPointAtomKeys(oldMonomerItem).forEach(([oldName, key]) => {
+    const newName = key ? newNamesByAtoms.get(key) : undefined;
+    if (newName && newName !== oldName) {
+      renames.set(oldName, newName);
+    }
+  });
+
+  return renames;
+}
+
+function getAttachmentPointAtomKeys(
+  monomerItem: MonomerItemType,
+): [AttachmentPointName, string | null][] {
+  if (!monomerItem.attachmentPoints) return [];
+
+  const { attachmentPointsList } =
+    BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
+      monomerItem.attachmentPoints,
+    );
+
+  return monomerItem.attachmentPoints.map(
+    (attachmentPoint, index): [AttachmentPointName, string | null] => [
+      attachmentPointsList[index],
+      getAttachmentPointAtomKey(monomerItem, attachmentPoint),
+    ],
+  );
+}
+
+function getAttachmentPointAtomKey(
+  monomerItem: MonomerItemType,
+  attachmentPoint: IKetAttachmentPoint,
+): string | null {
+  const { atoms } = monomerItem.struct;
+  const attachmentAtom = atoms.get(attachmentPoint.attachmentAtom);
+  if (!attachmentAtom) return null;
+
+  const leavingAtomId = attachmentPoint.leavingGroup.atoms[0];
+  const leavingAtom = atoms.get(leavingAtomId);
+
+  return [
+    attachmentPoint.attachmentAtom,
+    attachmentAtom.label,
+    leavingAtomId,
+    leavingAtom?.label,
+  ].join(':');
 }
 
 /**

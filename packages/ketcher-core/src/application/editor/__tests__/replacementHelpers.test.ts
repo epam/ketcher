@@ -19,8 +19,10 @@ import {
   getPresetComponentRole,
   computeLostBondsForMonomerReplacement,
   computeLostBondsForPresetReplacement,
+  getAttachmentPointRenames,
 } from 'application/editor/libraryItemDragDrop/replacementHelpers';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
+import type { IKetAttachmentPoint } from 'application/formatters/types/ket';
 import { AttachmentPointName, type MonomerItemType } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
@@ -28,6 +30,8 @@ import { Sugar } from 'domain/entities/Sugar';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { Struct } from 'domain/entities/struct';
+import { Atom } from 'domain/entities/atom';
+import { Vec2 } from 'domain/entities/vec2';
 import { KetMonomerClass } from 'domain/constants/monomers';
 
 // ---------------------------------------------------------------------------
@@ -793,5 +797,88 @@ describe('computeLostBondsForPresetReplacement', () => {
     );
     expect(lost).toHaveLength(1);
     expect(lost[0].attachmentPointName).toBe('R2');
+  });
+});
+
+describe('getAttachmentPointRenames', () => {
+  // Atom 2 (O) with leaving atom 3 (H) is R1; atom 8 (N) with leaving atom 9
+  // (H) is R2. Swapping the names moves R1 to N and R2 to O.
+  const labels = { 2: 'O', 3: 'H', 8: 'N', 9: 'H' };
+  const makeStruct = (atomLabels: Record<number, string>) => {
+    const struct = new Struct();
+    Object.entries(atomLabels).forEach(([id, label]) => {
+      struct.atoms.set(Number(id), new Atom({ label, pp: new Vec2() }));
+    });
+    return struct;
+  };
+  const makeItem = (
+    attachmentPoints: IKetAttachmentPoint[] | undefined,
+    atomLabels: Record<number, string> = labels,
+  ) =>
+    ({
+      ...makeMonomerItem('X'),
+      struct: makeStruct(atomLabels),
+      attachmentPoints,
+    }) as unknown as MonomerItemType;
+
+  const original = [
+    { attachmentAtom: 2, leavingGroup: { atoms: [3] }, type: 'left' as const },
+    { attachmentAtom: 8, leavingGroup: { atoms: [9] }, type: 'right' as const },
+  ];
+  const swapped = [
+    { attachmentAtom: 8, leavingGroup: { atoms: [9] }, type: 'left' as const },
+    { attachmentAtom: 2, leavingGroup: { atoms: [3] }, type: 'right' as const },
+  ];
+
+  it('maps each attachment point to the name carrying its atoms after a swap', () => {
+    const renames = getAttachmentPointRenames(
+      makeItem(original),
+      makeItem(swapped),
+    );
+
+    expect(Object.fromEntries(renames)).toEqual({
+      [AttachmentPointName.R1]: AttachmentPointName.R2,
+      [AttachmentPointName.R2]: AttachmentPointName.R1,
+    });
+  });
+
+  it('returns no renames when the names are unchanged', () => {
+    const renames = getAttachmentPointRenames(
+      makeItem(original),
+      makeItem(original),
+    );
+
+    expect(renames.size).toBe(0);
+  });
+
+  it('keeps the name of an attachment point whose atoms are absent from the new monomer', () => {
+    const renames = getAttachmentPointRenames(
+      makeItem(original),
+      makeItem([swapped[0]]),
+    );
+
+    expect(Object.fromEntries(renames)).toEqual({
+      [AttachmentPointName.R2]: AttachmentPointName.R1,
+    });
+  });
+
+  it('does not match atoms whose element differs in the new monomer', () => {
+    const renames = getAttachmentPointRenames(
+      makeItem(original),
+      makeItem(swapped, { ...labels, 2: 'S' }),
+    );
+
+    expect(Object.fromEntries(renames)).toEqual({
+      [AttachmentPointName.R2]: AttachmentPointName.R1,
+    });
+  });
+
+  it('returns no renames when a monomer has no attachment point definitions', () => {
+    const renames = getAttachmentPointRenames(
+      makeItem(undefined),
+      makeItem(swapped),
+    );
+
+    expect(renames.size).toBe(0);
   });
 });

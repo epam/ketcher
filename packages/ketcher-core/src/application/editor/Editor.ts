@@ -2213,9 +2213,39 @@ export class CoreEditor {
     this.previousModes.push(this.mode);
     this.mode = new ModeConstructor(this.mode.modeName);
     command.merge(this.mode.initialize(true, false, !hasModeChanged));
+    this.transientDrawingView.clear();
+    if (
+      hasModeChanged &&
+      this.isSequenceMode &&
+      SequenceRenderer.chainsCollection.length > 0 &&
+      !this.isSequenceStartInViewport()
+    ) {
+      this.mode.scrollForView();
+    }
     history.update(
       command,
       typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
+    );
+  }
+
+  private isSequenceStartInViewport() {
+    const { left, top } = SequenceRenderer.getRenderedStructuresBbox();
+    const canvasMatrix = this.zoomTool.canvas.node()?.getScreenCTM();
+    const wrapperRect = this.zoomTool.canvasWrapper
+      .node()
+      ?.getBoundingClientRect();
+
+    if (!canvasMatrix || !wrapperRect) {
+      return true;
+    }
+
+    const point = new DOMPoint(left, top).matrixTransform(canvasMatrix);
+
+    return (
+      point.x >= wrapperRect.left &&
+      point.x <= wrapperRect.right &&
+      point.y >= wrapperRect.top &&
+      point.y <= wrapperRect.bottom
     );
   }
 

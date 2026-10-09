@@ -20,6 +20,7 @@ import {
   AmbiguousMonomer,
   BaseMonomer,
   LinkerSequenceNode,
+  Peptide,
   Phosphate,
   RNABase,
   SequenceType,
@@ -841,22 +842,21 @@ export class SequenceMode extends BaseMode {
   ) {
     const editor = provideEditorInstance();
     const modelChanges = new Command();
-    const creationResult =
-      nextNodeToConnect instanceof Nucleotide ||
-      nextNodeToConnect instanceof Nucleoside ||
-      (nextNodeToConnect instanceof BackBoneSequenceNode &&
-        (nextNodeToConnect.secondConnectedNode instanceof Nucleotide ||
-          nextNodeToConnect.secondConnectedNode instanceof Nucleoside))
-        ? Nucleotide.createOnCanvas(
-            enteredSymbol,
-            newNodePosition,
-            getSugarBySequenceType(editor.sequenceTypeEnterMode),
-          )
-        : Nucleoside.createOnCanvas(
-            enteredSymbol,
-            newNodePosition,
-            getSugarBySequenceType(editor.sequenceTypeEnterMode),
-          );
+    const nextNode =
+      nextNodeToConnect instanceof BackBoneSequenceNode
+        ? nextNodeToConnect.secondConnectedNode
+        : nextNodeToConnect;
+    const needsOwnPhosphate =
+      nextNode instanceof Nucleotide ||
+      nextNode instanceof Nucleoside ||
+      nextNode?.firstMonomerInNode instanceof Peptide;
+    const creationResult = (
+      needsOwnPhosphate ? Nucleotide : Nucleoside
+    ).createOnCanvas(
+      enteredSymbol,
+      newNodePosition,
+      getSugarBySequenceType(editor.sequenceTypeEnterMode),
+    );
 
     if (!creationResult) {
       return;
@@ -875,9 +875,7 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         nodeToAdd,
-        nextNodeToConnect instanceof BackBoneSequenceNode
-          ? nextNodeToConnect.secondConnectedNode
-          : nextNodeToConnect,
+        nextNode,
         previousNodeToConnect instanceof BackBoneSequenceNode
           ? previousNodeToConnect.firstConnectedNode
           : previousNodeToConnect,

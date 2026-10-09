@@ -36,3 +36,18 @@ export const getSmoothScrollDelta = (delta: number, zoom: number) => {
   const SMOOTH_FACTOR = 0.4;
   return (delta / zoom) * SMOOTH_FACTOR;
 };
+
+export const isFileDrag = (dataTransfer: DataTransfer | null): boolean =>
+  Array.from(dataTransfer?.types ?? []).includes('Files');
+
+// Browsers may hide the MIME type of a dragged file until it is dropped
+export const isImageFileDrag = (dataTransfer: DataTransfer | null): boolean => {
+  if (!isFileDrag(dataTransfer)) {
+    return false;
+  }
+
+  const firstFile = Array.from(dataTransfer?.items ?? []).find(
+    (item) => item.kind === 'file',
+  );
+  return !firstFile?.type || firstFile.type.startsWith('image/');
+};

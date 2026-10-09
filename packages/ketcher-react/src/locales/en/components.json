@@ -40,7 +40,8 @@
     "title": "Edit connection point"
   },
   "structEditor": {
-    "queryComponent": "Query component"
+    "queryComponent": "Query component",
+    "dropImageHere": "Drop image here"
   },
   "monomerCreationWizard": {
     "types": {

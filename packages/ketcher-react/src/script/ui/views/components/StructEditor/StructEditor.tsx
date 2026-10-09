@@ -16,6 +16,7 @@
 
 import {
   type ComponentType,
+  type DragEvent,
   type ElementType,
   type RefObject,
   Component,
@@ -23,6 +24,11 @@ import {
 } from 'react';
 
 import Editor from '../../../../editor';
+import { placePastedContentUnderPointer } from '../../../../editor/tool/pasteUnderPointer';
+import {
+  createStructWithImage,
+  readImageFile,
+} from '../../../../editor/tool/imageFile';
 import { LoadingCircles } from '../Spinner/LoadingCircles';
 import classes from './StructEditor.module.less';
 import clsx from 'clsx';
@@ -32,7 +38,8 @@ import { FloatingToolContainer } from '../../toolbars';
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
 import InfoPanel from './InfoPanel';
 import { type Struct, KetcherLogger, ketcherProvider } from 'ketcher-core';
-import { getSmoothScrollDelta } from './helpers';
+import { getSmoothScrollDelta, isFileDrag, isImageFileDrag } from './helpers';
+import ImageDropOverlay from './ImageDropOverlay';
 import InfoTooltip from './InfoTooltip';
 import MonomerCreationWizard from '../MonomerCreationWizard/MonomerCreationWizard';
 import MonomerCreationWizardBackdrop from '../MonomerCreationWizard/MonomerCreationWizardBackdrop';
@@ -56,6 +63,7 @@ interface StructEditorProps {
   onInit?: (editor: Editor) => void;
   onZoomIn?: (event: WheelEvent) => void;
   onZoomOut?: (event: WheelEvent) => void;
+  onDropImage?: (struct: Struct) => void;
   onShowMacromoleculesErrorMessage?: (error: string) => void;
   [key: string]: unknown;
 }
@@ -63,6 +71,7 @@ interface StructEditorProps {
 interface StructEditorState {
   enableCursor: boolean;
   tooltip: string;
+  isImageDragOver: boolean;
 }
 
 // TODO: need to update component after making refactoring of store
@@ -128,10 +137,78 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     this.state = {
       enableCursor: false,
       tooltip: '',
+      isImageDragOver: false,
     };
     this.editorRef = createRef();
     this.logRef = createRef();
   }
+
+  // dragenter/dragleave also fire for every child element the pointer crosses
+  imageDragDepth = 0;
+
+  resetImageDrag() {
+    this.imageDragDepth = 0;
+    this.setState({ isImageDragOver: false });
+  }
+
+  // Without a drop handler (e.g. the template attachment dialog) images are not accepted
+  acceptsDroppedImages() {
+    return Boolean(this.props.onDropImage);
+  }
+
+  handleDragEnter = (event: DragEvent<HTMLElement>) => {
+    if (!this.acceptsDroppedImages() || !isImageFileDrag(event.dataTransfer)) {
+      return;
+    }
+    event.preventDefault();
+    this.imageDragDepth++;
+    this.setState({ isImageDragOver: true });
+  };
+
+  handleDragOver = (event: DragEvent<HTMLElement>) => {
+    if (!this.acceptsDroppedImages() || !isFileDrag(event.dataTransfer)) {
+      return;
+    }
+    // Always cancel the default so a missed drop never navigates away from the editor
+    event.preventDefault();
+    event.dataTransfer.dropEffect = isImageFileDrag(event.dataTransfer)
+      ? 'copy'
+      : 'none';
+  };
+
+  handleDragLeave = (event: DragEvent<HTMLElement>) => {
+    if (!this.acceptsDroppedImages() || !isImageFileDrag(event.dataTransfer)) {
+      return;
+    }
+    this.imageDragDepth = Math.max(0, this.imageDragDepth - 1);
+    if (this.imageDragDepth === 0) {
+      this.setState({ isImageDragOver: false });
+    }
+  };
+
+  handleDrop = async (event: DragEvent<HTMLElement>) => {
+    if (!this.acceptsDroppedImages() || !isFileDrag(event.dataTransfer)) {
+      return;
+    }
+    event.preventDefault();
+    this.resetImageDrag();
+
+    // The data transfer is emptied once the handler yields
+    const file = event.dataTransfer.files[0];
+    const { clientX, clientY } = event;
+    if (!file?.type.startsWith('image/')) {
+      return;
+    }
+
+    try {
+      const image = await readImageFile(file, this.editor.render.options);
+      this.editor.event.dropImage.dispatch(createStructWithImage(image));
+      placePastedContentUnderPointer(this.editor, { clientX, clientY });
+    } catch (error) {
+      KetcherLogger.error('StructEditor.tsx::handleDrop', error);
+      this.editor.errorHandler?.((error as Error).message);
+    }
+  };
 
   handleWheel = (event: WheelEvent) => {
     if (event.ctrlKey) {
@@ -200,7 +277,8 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     return (
       this.props.indigoVerification !== nextProps.indigoVerification ||
       nextState.enableCursor !== this.state.enableCursor ||
-      nextState.tooltip !== this.state.tooltip
+      nextState.tooltip !== this.state.tooltip ||
+      nextState.isImageDragOver !== this.state.isImageDragOver
     );
   }
 
@@ -364,13 +442,14 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
       'showAttachmentPoints',
       'onUpdateFloatingTools',
       'onShowMacromoleculesErrorMessage',
+      'onDropImage',
       'serverSettings',
     ];
 
     const remaining = omit(this.props, omittedProps) as StructEditorProps;
     const { Tag = 'div', className, indigoVerification, ...props } = remaining;
 
-    const { tooltip } = this.state;
+    const { tooltip, isImageDragOver } = this.state;
     const lastCursorPosition = this.editor?.lastCursorPosition;
 
     const TagComponent = (Tag || 'div') as ElementType;
@@ -394,8 +473,14 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
         dir="ltr"
         data-testid="ketcher-canvas"
         data-canvasmode="molecules-mode"
+        onDragEnter={this.handleDragEnter}
+        onDragOver={this.handleDragOver}
+        onDragLeave={this.handleDragLeave}
+        onDrop={this.handleDrop}
       >
         <MonomerCreationWizardBackdrop />
+
+        {isImageDragOver && <ImageDropOverlay />}
 
         <ContextMenuTrigger>
           <div

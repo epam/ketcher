@@ -26,6 +26,7 @@ import {
   isSelectionOutsideElement,
   notifyCopyCut,
 } from 'ketcher-core';
+import { getImageFileFromClipboardData } from './clipboardImage';
 
 const ieCb: DataTransfer | undefined =
   typeof window !== 'undefined'
@@ -80,6 +81,7 @@ interface ClipAreaProps {
   onLegacyCopy: () => ClipboardData | null | undefined;
   onLegacyCut: () => ClipboardData | null | undefined;
   onLegacyPaste: (data: ClipboardData, isSmarts?: boolean) => void;
+  onPasteImage?: (file: File) => Promise<void> | void;
   target?: HTMLElement;
 }
 
@@ -204,6 +206,14 @@ class ClipArea extends Component<ClipAreaProps> {
       },
       paste: (event: ClipboardEvent) => {
         if (!this.props.focused() || isUserEditing()) {
+          return;
+        }
+        const imageFile = getImageFileFromClipboardData(event.clipboardData);
+        if (imageFile && this.props.onPasteImage) {
+          event.preventDefault();
+          Promise.resolve(this.props.onPasteImage(imageFile)).then(() =>
+            notifyRequestCompleted(),
+          );
           return;
         }
         if (isClipboardAPIAvailable()) {

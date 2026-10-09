@@ -85,7 +85,7 @@ describe('monomer library menu', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Actions for A' }));
   };
 
-  it('offers Edit before Duplicate and Edit, then a separator before Delete', () => {
+  it('offers Edit before Duplicate and Edit, with Delete separated below', () => {
     renderMenu();
     const items = root.querySelectorAll('.contexify_item');
     expect(Array.from(items, (item) => item.textContent)).toEqual([
@@ -93,9 +93,9 @@ describe('monomer library menu', () => {
       'Duplicate and Edit',
       'Delete',
     ]);
-    expect(
-      screen.getByTestId('duplicateandedit').nextElementSibling,
-    ).toHaveClass('contexify_separator');
+    expect(screen.getByTestId('delete')).toHaveClass(
+      'context_menu-delete-item',
+    );
     expect(onClick).not.toHaveBeenCalled();
   });
 

@@ -52,7 +52,7 @@ export const Peptide = createMonomerGroup(MonomerType.Peptide, {
   D_OAla: { alias: 'D-OAla', testId: 'D-OAla___D-Lactic acid' },
   E: { alias: 'E', testId: 'E___Glutamic acid' },
   Edc: { alias: 'Edc', testId: 'Edc___S-ethylthiocysteine' },
-  F: { alias: 'F', testId: 'F___Phenylalanine-ethylthiocysteine' },
+  F: { alias: 'F', testId: 'F___Phenylalanine' },
   K: { alias: 'K', testId: 'K___Lysine' },
   meC: { alias: 'meC', testId: 'meC___N-Methyl-Cysteine' },
   meD: { alias: 'meD', testId: 'meD___N-Methyl-Aspartic acid' },

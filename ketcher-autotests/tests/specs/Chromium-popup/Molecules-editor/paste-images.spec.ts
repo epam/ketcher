@@ -66,34 +66,38 @@ test.describe('Paste images from the clipboard', () => {
     await closePage();
   });
 
-  test('Verify that a PNG image on the clipboard is pasted and sticks to the mouse pointer', async () => {
+  test('Verify that a PNG image on the clipboard is pasted under the mouse pointer and sticks to it', async () => {
     /*
     Test case: #4913
-    Description: Ctrl+V attaches the image to the pointer, it is not placed until a click
+    Description: Ctrl+V attaches the image to the pointer where it is, without moving the mouse
     */
-    const movedPoint = await getTargetPoint();
+    const pointerPoint = await getTargetPoint();
+    const movedPoint = await getCanvasCenter(page);
     await putImageOnClipboard(page, PNG_IMAGE);
-    await moveMouseTo(await getCanvasCenter(page));
+    await moveMouseTo(pointerPoint);
 
     await pasteFromClipboardByKeyboard(page);
 
     await expect(getImageLocator(page, {})).toHaveCount(1);
+    await expect
+      .poll(() => getDistanceFromImageTo(page, pointerPoint))
+      .toBeLessThan(POSITION_TOLERANCE_IN_PIXELS);
+
     await moveMouseTo(movedPoint);
     await expect
       .poll(() => getDistanceFromImageTo(page, movedPoint))
       .toBeLessThan(POSITION_TOLERANCE_IN_PIXELS);
   });
 
-  test('Verify that a pasted PNG image is placed on the canvas by a click', async () => {
+  test('Verify that a pasted PNG image is placed on the canvas by a click under the pointer', async () => {
     /*
     Test case: #4913
-    Description: Click places the pasted image at the pointer position and it stays there
+    Description: Click without moving the mouse after Ctrl+V places the image at the pointer position
     */
     const placePoint = await getTargetPoint();
     await putImageOnClipboard(page, PNG_IMAGE);
-    await moveMouseTo(await getCanvasCenter(page));
-    await pasteFromClipboardByKeyboard(page);
     await moveMouseTo(placePoint);
+    await pasteFromClipboardByKeyboard(page);
 
     await placePastedContent(placePoint);
 

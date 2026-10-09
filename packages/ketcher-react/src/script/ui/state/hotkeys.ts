@@ -41,6 +41,10 @@ import {
   createStructWithImage,
   readImageFile,
 } from '../../editor/tool/imageFile';
+import {
+  getPointerPositionOnCanvas,
+  placePastedContentUnderPointer,
+} from '../../editor/tool/pasteUnderPointer';
 
 import actions from '../action';
 import { isIE } from 'react-device-detect';
@@ -480,6 +484,10 @@ export function initClipboard(dispatch, getState) {
           dispatch(
             onAction({ tool: 'paste', opts: createStructWithImage(image) }),
           );
+          const pointer = getPointerPositionOnCanvas(editor);
+          if (pointer) {
+            placePastedContentUnderPointer(editor, pointer);
+          }
         } catch (error) {
           KetcherLogger.error('hotkeys.ts::onPasteImage', error);
           editor.errorHandler?.((error as Error).message);

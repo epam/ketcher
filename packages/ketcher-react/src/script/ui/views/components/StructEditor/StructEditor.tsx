@@ -24,7 +24,7 @@ import {
 } from 'react';
 
 import Editor from '../../../../editor';
-import PasteTool from '../../../../editor/tool/paste';
+import { placePastedContentUnderPointer } from '../../../../editor/tool/pasteUnderPointer';
 import {
   createStructWithImage,
   readImageFile,
@@ -63,6 +63,7 @@ interface StructEditorProps {
   onInit?: (editor: Editor) => void;
   onZoomIn?: (event: WheelEvent) => void;
   onZoomOut?: (event: WheelEvent) => void;
+  onDropImage?: (struct: Struct) => void;
   onShowMacromoleculesErrorMessage?: (error: string) => void;
   [key: string]: unknown;
 }
@@ -72,8 +73,6 @@ interface StructEditorState {
   tooltip: string;
   isImageDragOver: boolean;
 }
-
-const PLACE_UNDER_POINTER_MAX_ATTEMPTS = 10;
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(
@@ -152,8 +151,13 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     this.setState({ isImageDragOver: false });
   }
 
+  // Without a drop handler (e.g. the template attachment dialog) images are not accepted
+  acceptsDroppedImages() {
+    return Boolean(this.props.onDropImage);
+  }
+
   handleDragEnter = (event: DragEvent<HTMLElement>) => {
-    if (!isImageFileDrag(event.dataTransfer)) {
+    if (!this.acceptsDroppedImages() || !isImageFileDrag(event.dataTransfer)) {
       return;
     }
     event.preventDefault();
@@ -162,7 +166,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
   };
 
   handleDragOver = (event: DragEvent<HTMLElement>) => {
-    if (!isFileDrag(event.dataTransfer)) {
+    if (!this.acceptsDroppedImages() || !isFileDrag(event.dataTransfer)) {
       return;
     }
     // Always cancel the default so a missed drop never navigates away from the editor
@@ -173,7 +177,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
   };
 
   handleDragLeave = (event: DragEvent<HTMLElement>) => {
-    if (!isImageFileDrag(event.dataTransfer)) {
+    if (!this.acceptsDroppedImages() || !isImageFileDrag(event.dataTransfer)) {
       return;
     }
     this.imageDragDepth = Math.max(0, this.imageDragDepth - 1);
@@ -183,7 +187,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
   };
 
   handleDrop = async (event: DragEvent<HTMLElement>) => {
-    if (!isFileDrag(event.dataTransfer)) {
+    if (!this.acceptsDroppedImages() || !isFileDrag(event.dataTransfer)) {
       return;
     }
     event.preventDefault();
@@ -199,27 +203,12 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     try {
       const image = await readImageFile(file, this.editor.render.options);
       this.editor.event.dropImage.dispatch(createStructWithImage(image));
-      this.placePastedContentUnderPointer({ clientX, clientY });
+      placePastedContentUnderPointer(this.editor, { clientX, clientY });
     } catch (error) {
       KetcherLogger.error('StructEditor.tsx::handleDrop', error);
       this.editor.errorHandler?.((error as Error).message);
     }
   };
-
-  // The paste tool is created asynchronously by the Redux flow and starts at the canvas center
-  placePastedContentUnderPointer(
-    position: { clientX: number; clientY: number },
-    attemptsLeft = PLACE_UNDER_POINTER_MAX_ATTEMPTS,
-  ) {
-    const tool = this.editor.tool();
-    if (tool instanceof PasteTool) {
-      tool.mousemove(new MouseEvent('mousemove', position));
-    } else if (attemptsLeft > 0) {
-      requestAnimationFrame(() =>
-        this.placePastedContentUnderPointer(position, attemptsLeft - 1),
-      );
-    }
-  }
 
   handleWheel = (event: WheelEvent) => {
     if (event.ctrlKey) {

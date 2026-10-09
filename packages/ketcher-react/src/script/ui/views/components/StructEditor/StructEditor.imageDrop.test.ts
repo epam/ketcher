@@ -46,7 +46,10 @@ describe('StructEditor image drag and drop', () => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(() => 0);
     readImageFileMock.mockReset();
 
-    instance = new (StructEditor as any)({ ketcherId: 'test' });
+    instance = new (StructEditor as any)({
+      ketcherId: 'test',
+      onDropImage: jest.fn(),
+    });
     instance.setState = jest.fn();
     editor = {
       render: { options: { microModeScale: 1 } },
@@ -204,6 +207,34 @@ describe('StructEditor image drag and drop', () => {
 
       expect(event.preventDefault).not.toHaveBeenCalled();
       expect(readImageFileMock).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('without a drop handler (e.g. the template attachment dialog)', () => {
+    beforeEach(() => {
+      instance = new (StructEditor as any)({ ketcherId: 'test' });
+      instance.setState = jest.fn();
+      instance.editor = editor;
+    });
+
+    it('does not show the highlight and leaves the default drag behavior', () => {
+      const event = createEvent(createFile('image/png'));
+
+      instance.handleDragEnter(event);
+      instance.handleDragOver(event);
+
+      expect(event.preventDefault).not.toHaveBeenCalled();
+      expect(instance.setState).not.toHaveBeenCalled();
+    });
+
+    it('does not read or insert a dropped image', async () => {
+      const event = createEvent(createFile('image/png'));
+
+      await instance.handleDrop(event);
+
+      expect(event.preventDefault).not.toHaveBeenCalled();
+      expect(readImageFileMock).not.toHaveBeenCalled();
+      expect(editor.event.dropImage.dispatch).not.toHaveBeenCalled();
     });
   });
 });

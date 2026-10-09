@@ -1,6 +1,7 @@
 import { ketcherProvider } from 'ketcher-core';
 import { initClipboard } from './hotkeys';
 import { readImageFile } from '../../editor/tool/imageFile';
+import PasteTool from '../../editor/tool/paste';
 
 jest.mock('../../editor/tool/imageFile', () => ({
   readImageFile: jest.fn(),
@@ -15,18 +16,43 @@ describe('initClipboard onPasteImage', () => {
   let dispatch: jest.Mock;
   let editor: {
     ketcherId: string;
-    render: { options: typeof options };
+    render: {
+      options: typeof options;
+      clientArea: { getBoundingClientRect: () => Record<string, number> };
+    };
+    lastCursorPosition: { x: number; y: number };
+    tool: jest.Mock;
     errorHandler: jest.Mock;
   };
+  let pasteTool: { mousemove: jest.Mock };
   let eventBus: { emit: jest.Mock };
   let clipboard: ReturnType<typeof initClipboard>;
+
+  const pasteImage = () =>
+    clipboard.onPasteImage(
+      new File(['content'], 'image.png', { type: 'image/png' }),
+    );
 
   beforeEach(() => {
     readImageFileMock.mockReset();
     dispatch = jest.fn();
+    pasteTool = Object.create(PasteTool.prototype);
+    pasteTool.mousemove = jest.fn();
     editor = {
       ketcherId: 'test',
-      render: { options },
+      render: {
+        options,
+        clientArea: {
+          getBoundingClientRect: () => ({
+            x: 100,
+            y: 50,
+            width: 800,
+            height: 600,
+          }),
+        },
+      },
+      lastCursorPosition: { x: 200, y: 120 },
+      tool: jest.fn(() => pasteTool),
       errorHandler: jest.fn(),
     };
     eventBus = { emit: jest.fn() };
@@ -64,15 +90,47 @@ describe('initClipboard onPasteImage', () => {
 
     expect(editor.errorHandler).toHaveBeenCalledWith('Unsupported image type');
     expect(dispatch).not.toHaveBeenCalled();
+    expect(pasteTool.mousemove).not.toHaveBeenCalled();
   });
 
   it('keeps the async event lifecycle of the other paste handlers', async () => {
     readImageFileMock.mockResolvedValue(loadedImage);
 
-    await clipboard.onPasteImage(
-      new File(['c'], 'i.png', { type: 'image/png' }),
-    );
+    await pasteImage();
 
     expect(eventBus.emit).toHaveBeenCalledTimes(2);
+  });
+
+  describe('pointer position', () => {
+    beforeEach(() => {
+      readImageFileMock.mockResolvedValue(loadedImage);
+    });
+
+    it('puts the pasted image under the pointer so that a click places it there', async () => {
+      await pasteImage();
+
+      expect(pasteTool.mousemove).toHaveBeenCalledTimes(1);
+      const [moveEvent] = pasteTool.mousemove.mock.calls[0];
+      expect(moveEvent.clientX).toBe(300);
+      expect(moveEvent.clientY).toBe(170);
+    });
+
+    it('keeps the canvas center when the pointer has not moved over the canvas yet', async () => {
+      editor.lastCursorPosition = { x: 0, y: 0 };
+
+      await pasteImage();
+
+      expect(pasteTool.mousemove).not.toHaveBeenCalled();
+      expect(dispatch).toHaveBeenCalled();
+    });
+
+    it('keeps the canvas center when the pointer is outside the canvas', async () => {
+      editor.lastCursorPosition = { x: 900, y: 120 };
+
+      await pasteImage();
+
+      expect(pasteTool.mousemove).not.toHaveBeenCalled();
+      expect(dispatch).toHaveBeenCalled();
+    });
   });
 });

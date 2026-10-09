@@ -28,6 +28,7 @@ import { IRnaPreset } from './RnaBuilder/types';
 import {
   selectAllPresets,
   setActivePreset,
+  startPresetDuplication,
   setIsEditMode,
   setUniqueNameError,
 } from 'state/rna-builder';
@@ -89,7 +90,7 @@ const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
         default: false,
         favorite: false,
       };
-      dispatch(setActivePreset(duplicatedPreset));
+      dispatch(startPresetDuplication(duplicatedPreset));
       dispatch(setIsEditMode(true));
       scrollToSelectedPreset(preset?.name);
     },

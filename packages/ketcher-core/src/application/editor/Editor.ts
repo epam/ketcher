@@ -2375,6 +2375,12 @@ export class CoreEditor {
     );
   }
 
+  public flushPendingDragRender() {
+    if (this.tool instanceof SelectBase) {
+      this.tool.flushPendingDragRender();
+    }
+  }
+
   public onSelectHistory(name: HistoryOperationType) {
     const history = EditorHistory.getInstance(this);
     if (name === 'undo') {
@@ -2988,6 +2994,9 @@ export class CoreEditor {
   }
 
   public destroy() {
+    if (this.tool instanceof SelectBase) {
+      this.tool.destroy();
+    }
     EditorHistory.getInstance(this).destroy();
     this.unsubscribeEvents();
     resetEditorInstance();

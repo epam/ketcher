@@ -6,6 +6,10 @@ import { Render } from './raphaelRender';
 import type { RenderOptions } from './render.types';
 import type ReAtom from './restruct/reatom';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import {
+  PREVIEW_AUTO_SCALE_MARGIN,
+  UsageInMacromolecule,
+} from './render.constants';
 
 /**
  * Is used to improve search and opening tab performance in Template Dialog
@@ -136,8 +140,25 @@ export class RenderStruct {
       if (window.isPolymerEditorTurnedOn) {
         extendedOptions.fontsz = 30;
         extendedOptions.fontszsub = 20;
-        extendedOptions.width = svgSize;
-        extendedOptions.height = svgSize;
+        const isMonomerPreview =
+          renderOptions.usageInMacromolecule ===
+          UsageInMacromolecule.MonomerPreview;
+        const hasWrapperSize =
+          wrapperElementBoundingRect.width > 0 &&
+          wrapperElementBoundingRect.height > 0;
+
+        if (isMonomerPreview) {
+          if (hasWrapperSize) {
+            extendedOptions.width = wrapperElementBoundingRect.width;
+            extendedOptions.height = wrapperElementBoundingRect.height;
+            extendedOptions.autoScaleMargin = PREVIEW_AUTO_SCALE_MARGIN;
+            // Small monomers must not be zoomed in beyond the micro mode 100% scale
+            extendedOptions.limitZoomToMicroScale = true;
+          }
+        } else {
+          extendedOptions.width = svgSize;
+          extendedOptions.height = svgSize;
+        }
       }
 
       const rnd = new Render(wrapperElement, extendedOptions);

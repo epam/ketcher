@@ -321,6 +321,15 @@ export class Render {
           this.options.rescaleAmount ??
           Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
 
+        if (this.options.limitZoomToMicroScale) {
+          // Macro mode canvas units are larger than micro mode ones, so a 1:1 view box
+          // would display structures bigger than on the micro mode canvas at 100% zoom
+          rescale = Math.max(
+            rescale,
+            this.options.macroModeScale / this.options.microModeScale,
+          );
+        }
+
         const isForceDownscale = this.options.downScale && rescale < 1;
         const isBondsLengthFit = this.options.maxBondLength / rescale > 1;
         if (isBondsLengthFit || isForceDownscale) {

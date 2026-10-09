@@ -2120,12 +2120,31 @@ export class CoreEditor {
     this.mode = new ModeConstructor(this.mode.modeName);
     command.merge(this.mode.initialize(true, false, !hasModeChanged));
     this.transientDrawingView.clear();
-    if (hasModeChanged && this.isSequenceMode) {
+    if (
+      hasModeChanged &&
+      this.isSequenceMode &&
+      SequenceRenderer.chainsCollection.length > 0 &&
+      !this.isSequenceStartInViewport()
+    ) {
       this.mode.scrollForView();
     }
     history.update(
       command,
       typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
+    );
+  }
+
+  private isSequenceStartInViewport() {
+    const { x, y, k } = this.zoomTool.zoomTransform;
+    const { left, top } = SequenceRenderer.getRenderedStructuresBbox();
+    const screenX = left * k + x;
+    const screenY = top * k + y;
+
+    return (
+      screenX >= 0 &&
+      screenY >= 0 &&
+      screenX <= this.zoomTool.canvasWrapperWidth &&
+      screenY <= this.zoomTool.canvasWrapperHeight
     );
   }
 

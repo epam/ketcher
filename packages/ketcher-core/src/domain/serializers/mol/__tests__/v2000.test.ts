@@ -425,6 +425,39 @@ describe('parseCTabV2000', () => {
       expect(struct.atoms.get(1)!.charge).toBe(2);
     });
 
+    it('should merge repeated M  CHG lines', () => {
+      const atomLine =
+        '   14.0000   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0';
+      const lines = [
+        ...Array(10).fill(atomLine),
+        'M  CHG  8   1   1   2   1   3   1   4   1   5   1   6   1   7   1   8   1',
+        'M  CHG  2   9   1  10  -1',
+      ];
+
+      const struct = molParsers.parseCTabV2000(lines, createCountsLine(10));
+
+      expect(struct.atoms.get(0)!.charge).toBe(1);
+      expect(struct.atoms.get(7)!.charge).toBe(1);
+      expect(struct.atoms.get(8)!.charge).toBe(1);
+      expect(struct.atoms.get(9)!.charge).toBe(-1);
+    });
+
+    it('should let a later M  CHG entry override an earlier one for the same atom', () => {
+      const atomLine =
+        '   14.0000   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0';
+      const lines = [
+        atomLine,
+        atomLine,
+        'M  CHG  2   1   2   2   3',
+        'M  CHG  1   2  -1',
+      ];
+
+      const struct = molParsers.parseCTabV2000(lines, createCountsLine(2));
+
+      expect(struct.atoms.get(0)!.charge).toBe(2);
+      expect(struct.atoms.get(1)!.charge).toBe(-1);
+    });
+
     it('should parse radical', () => {
       const lines = [
         '   14.0000   -3.0000    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0',

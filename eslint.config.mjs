@@ -79,6 +79,7 @@ export default [
         console: 'readonly',
         process: 'readonly',
         Buffer: 'readonly',
+        ClipboardItem: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
         JSX: 'readonly',

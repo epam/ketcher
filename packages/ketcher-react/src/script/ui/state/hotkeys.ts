@@ -53,6 +53,8 @@ import { isArrowKey, moveSelectedItems } from './moveSelectedItems';
 import { handleHotkeyOverItem } from './handleHotkeysOverItem';
 
 let keydownListener: ((event: KeyboardEvent) => void) | null = null;
+const affectedTools = new Set(['paste', 'template']);
+const zoomActionNames = new Set(['zoom-in', 'zoom-out']);
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -72,11 +74,10 @@ export function removeKeydownListener(element) {
 }
 
 function removeNotRenderedStruct(actionTool, group, newAction, dispatch) {
-  const affectedTools = ['paste', 'template'];
-  const isPreviewTool = affectedTools.includes(actionTool.tool);
+  const isPreviewTool = affectedTools.has(actionTool.tool);
   const isSaveAction = group?.includes('save');
   const shouldResetPreviewTool =
-    Boolean(newAction?.tool) && !affectedTools.includes(newAction.tool);
+    Boolean(newAction?.tool) && !affectedTools.has(newAction.tool);
 
   if (isPreviewTool && (isSaveAction || shouldResetPreviewTool)) {
     dispatch(removeStructAction());
@@ -85,7 +86,7 @@ function removeNotRenderedStruct(actionTool, group, newAction, dispatch) {
 
 let abbreviationLookupTimeoutId: number | undefined;
 const ABBREVIATION_LOOKUP_TYPING_TIMEOUT = 1000;
-const shortcutKeys = [
+const shortcutKeys = new Set([
   '0',
   '1',
   '2',
@@ -102,7 +103,7 @@ const shortcutKeys = [
   'b',
   '+',
   '-',
-];
+]);
 
 function shouldIgnoreKeyEvent(state, event): boolean {
   if (window.isPolymerEditorTurnedOn) {
@@ -118,7 +119,7 @@ function shouldIgnoreKeyEvent(state, event): boolean {
 
 function shouldShowAbbreviationLookup(key: string, state): boolean {
   const currentlyPressedKeys = selectAbbreviationLookupValue(state);
-  const isShortcutKey = shortcutKeys.includes(key.toLowerCase());
+  const isShortcutKey = shortcutKeys.has(key.toLowerCase());
   const isTheSameKey = key.toLowerCase() === currentlyPressedKeys;
   return Boolean((!isTheSameKey || !isShortcutKey) && currentlyPressedKeys);
 }
@@ -187,7 +188,7 @@ function isActionDisabledOrHidden(actionState, actName): boolean {
 }
 
 function getNextAction(actName) {
-  return ['zoom-in', 'zoom-out'].includes(actName)
+  return zoomActionNames.has(actName)
     ? actions[actName].action()
     : actions[actName].action;
 }
@@ -261,7 +262,7 @@ function handleHotkeyGroup(
 
   removeNotRenderedStruct(actionTool, group, undefined, dispatch);
 
-  if (clipArea.actions.indexOf(actName) === -1) {
+  if (!clipArea.actions.includes(actName)) {
     let newAction = getNextAction(actName);
     removeNotRenderedStruct(actionTool, group, newAction, dispatch);
 

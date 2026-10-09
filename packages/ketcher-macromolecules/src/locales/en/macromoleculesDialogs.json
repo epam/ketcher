@@ -227,7 +227,9 @@
     "convertError": "Convert error! {error}",
     "helmSmilesExportNotice": "The molecule will be exported using inline SMILES, and on load will appear as a CHEM monomer",
     "helmAliasExportNotice": "Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.",
-    "sequenceTypeRecognitionError": "Error during sequence type recognition(RNA, DNA or Peptide)"
+    "sequenceTypeRecognitionError": "Error during sequence type recognition(RNA, DNA or Peptide)",
+    "sequenceModifiedMonomersExportNotice": "The chosen format doesn't support modified monomers, they will be replaced by unmodified versions.",
+    "sequenceSideChainsExportNotice": "The chosen format doesn't support side-chain connections. These connections will be lost."
   },
   "updateSequence": {
     "title": "Update sequence",

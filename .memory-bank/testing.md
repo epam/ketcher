@@ -40,6 +40,10 @@ TypeScript type checks run separately per package: `npm run test:types --workspa
 
 ### 4. Published Package Metadata
 
+Run `node --test scripts/check-library-build-paths.test.mjs` to check all four library
+configs' entry paths and the standalone worker shim path against native filesystem paths.
+Run this check on Windows to catch drive-letter corruption from `file:` URL handling.
+
 After `npm run build`, run `npm run check:package-metadata` to pack all four publishable
 workspaces and check each tarball with `publint` (errors) and Are The Types Wrong. The CI build job
 runs the same check, so it validates packed files rather than workspace links.

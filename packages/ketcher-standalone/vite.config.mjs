@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import { license } from '../../license-banner.mjs';
 import { BROWSER_BUILD_TARGET } from '../../build-config/browser-target.mjs';
@@ -12,7 +13,7 @@ const pkg = JSON.parse(
 );
 
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
-const rootDir = new URL('.', import.meta.url).pathname;
+const rootDir = fileURLToPath(new URL('.', import.meta.url));
 
 // INDIGO_WORKER_IMPORTS paths are relative to the directory that performs the
 // `_indigo-worker-import-alias_` import, so they are resolved against it here.

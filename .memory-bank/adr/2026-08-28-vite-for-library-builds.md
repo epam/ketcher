@@ -8,6 +8,10 @@
 Build every package in this repository with **Vite 8** (Rolldown), replacing Rollup 2 in all four
 publishable packages and `react-scripts` (webpack) in `demo`.
 
+Library configs convert their directory's `file:` URL with Node's `fileURLToPath`, not
+`URL.pathname`, so entry points and worker shim paths resolve correctly on Windows and
+in directories containing URL-encoded characters.
+
 Two targets are explicitly excluded:
 
 - **`example-ssr`** stays on Next.js. It is an SSR application with its own bundler; moving it

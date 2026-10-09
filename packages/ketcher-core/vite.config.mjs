@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import { license } from '../../license-banner.mjs';
 import { mode } from '../../build-config/replace-values.mjs';
@@ -13,7 +14,7 @@ const pkg = JSON.parse(
 );
 
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
-const rootDir = new URL('.', import.meta.url).pathname;
+const rootDir = fileURLToPath(new URL('.', import.meta.url));
 
 // Rolldown resolves bare 'events' to a bundled polyfill where Rollup left it
 // external (nothing else under src/ imports a Node builtin - confirmed by

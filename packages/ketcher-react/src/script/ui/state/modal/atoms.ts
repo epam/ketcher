@@ -8,10 +8,12 @@ import {
 } from 'ketcher-core';
 import { updateOnlyChangedProperties } from './utils';
 
-export function isAtomsArray(selectedElements: Atom | Atom[]): boolean {
+export function isAtomsArray(
+  selectedElements: Atom | Atom[],
+): selectedElements is Atom[] {
   return (
     Array.isArray(selectedElements) &&
-    selectedElements?.every((element) => element instanceof Atom)
+    selectedElements.every((element) => element instanceof Atom)
   );
 }
 

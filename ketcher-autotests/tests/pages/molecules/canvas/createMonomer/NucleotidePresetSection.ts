@@ -96,6 +96,10 @@ export const NucleotidePresetSection = (page: Page) => {
       await page.getByTestId(`phosphate-position-${position}-button`).click();
     },
 
+    attachmentPointControls(name: 'R1' | 'R2' | 'R3') {
+      return page.getByTestId(`attachment-point-controls-${name}`);
+    },
+
     async isTabOpened(tab: NucleotidePresetTab) {
       const tabButton = page.getByTestId(tab);
       const ariaSelected = await tabButton.getAttribute('aria-selected');

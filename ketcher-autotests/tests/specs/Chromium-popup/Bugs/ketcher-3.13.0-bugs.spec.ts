@@ -28,9 +28,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
-import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
-import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -554,7 +552,10 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
      * 5. Configure Base/Sugar/Phosphate per picture from the issue and set APs:
      *    - Sugar: R2 is already defined (user tries to define it again)
      *    - Phosphate: R1 is already defined (user tries to define it again)
-     * 6. Try to submit
+     * 6. Change phosphate position to 3'
+     *
+     * Expected Result (#12133): user-created sugar/phosphate APs are swapped when the
+     * phosphate position changes, so no invalid connection banner is shown.
      */
 
     // Step 1–2: Load structure from file as a new project (Molecules mode)
@@ -605,27 +606,12 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       bondIds: [21, 23, 24],
     });
 
-    // Select phosphate position (required field; without it the validation dispatches
-    // phosphatePositionNotSelected which replaces invalidRnaPresetStructure in the reducer)
+    // Select phosphate position: inferred as 5' from sugar R2 / phosphate R1, then changed to 3'.
+    // The user-created sugar R2 and phosphate R1 are swapped to R1 and R2 instead of conflicting.
     await presetSection.setPhosphatePosition('3');
 
-    // Step 6: Try to submit with invalid AP configuration (duplicates)
-    await dialog.submit();
-
-    // When position is set, validator step 2a fires:
-    // hasPhosphatePositionAttachmentPointConflict → dispatches
-    // invalidPhosphatePositionAttachmentPoints to preset (replacing step 1's
-    // invalidRnaPresetStructure). Step 3 (phosphatePositionNotSelected) does not fire.
-    const invalidPhosphatePositionMessage = NotificationMessageBanner(
-      page,
-      ErrorMessage.rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints,
-    );
-
-    expect(
-      await invalidPhosphatePositionMessage.getNotificationMessage(),
-    ).toEqual(
-      'The bond between sugar and phosphate must be established between R2 of one monomer and R1 of the other.',
-    );
+    await expect(presetSection.attachmentPointControls('R1')).toHaveCount(1);
+    await expect(presetSection.attachmentPointControls('R2')).toHaveCount(1);
 
     await dialog.discard();
   });

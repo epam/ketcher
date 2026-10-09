@@ -38,9 +38,9 @@ const RIGHT_ARROW_PATH =
 
 class RotateController {
   isRotating!: boolean;
-  private readonly editor: Editor;
-  private readonly rotateTool: RotateTool;
-  private originalCenter!: Vec2;
+  public readonly editor: Editor;
+  public readonly rotateTool: RotateTool;
+  public originalCenter!: Vec2;
   private normalizedCenterInitialHandleVec!: Vec2;
   private handleCenter!: Vec2;
   private initialRadius!: number;
@@ -48,7 +48,7 @@ class RotateController {
 
   private handle?: RaphaelElement;
   private boundingRect?: RaphaelElement;
-  private cross?: RaphaelElement;
+  public cross?: RaphaelElement;
   private link?: RaphaelElement;
   private protractor?: RaphaelElement;
   private rotateArc?: RaphaelElement;
@@ -77,7 +77,7 @@ class RotateController {
     return this.render.paper;
   }
 
-  private get center() {
+  public get center() {
     return this.originalCenter
       .scaled(this.render.options.microModeScale)
       .add(this.render.options.offset);
@@ -154,7 +154,7 @@ class RotateController {
     );
   }
 
-  private show() {
+  public show() {
     const originalCenter = this.rotateTool.getCenter();
     const selection = this.editor.selection();
     const visibleAtoms =
@@ -230,7 +230,7 @@ class RotateController {
     );
   }
 
-  private drawCross(state?: CrossState) {
+  public drawCross(state?: CrossState) {
     switch (state) {
       case 'active': {
         this.cross?.attr({
@@ -632,7 +632,7 @@ class RotateController {
     ] as const;
   }
 
-  private readonly dragStart = (event: MouseEvent) => {
+  public readonly dragStart = (event: MouseEvent) => {
     event.stopPropagation(); // Avoid triggering SelectTool's mousedown
 
     const isLeftButtonPressed = event.buttons === 1;

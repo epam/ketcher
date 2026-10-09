@@ -413,10 +413,14 @@ class SelectTool implements Tool {
     const isDraggingCustomSgroupOnStructure =
       SGroup.isSuperAtom(possibleSaltOrSolvent?.item) &&
       !FunctionalGroup.isFunctionalGroup(possibleSaltOrSolvent?.item);
+    const isDraggingLabeledCustomSgroupOnStructure =
+      isDraggingCustomSgroupOnStructure &&
+      !possibleSaltOrSolvent?.item?.isSuperatomWithoutLabel;
+    // Runs before the salt guard; monomer FGs are skipped to keep macro merging unchanged.
     if (
       isSelectionMoveDragContext(dragCtx) &&
       !isDraggingSaltOrSolventOnStructure &&
-      !isDraggingCustomSgroupOnStructure
+      !isDraggingLabeledCustomSgroupOnStructure
     ) {
       const fgIds = getFunctionalGroupIdsOfMergeTargets(
         molecule,
@@ -425,7 +429,8 @@ class SelectTool implements Tool {
       if (fgIds.length) {
         dragCtx.action?.perform(struct);
         dragCtx.copyAction?.perform(struct);
-        editor.update(true);
+        struct.needRecalculateVisibleAtomsAndBonds = true;
+        editor.render.update();
         editor.hover(null);
         editor.selection(null);
         editor.event.message.dispatch({ info: false });

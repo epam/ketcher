@@ -32,6 +32,8 @@ import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors'
 import { Icon } from 'components';
 import useMakeAttachmentPointMenuItems from '../hooks/useMakeAttachmentPointMenuItems';
 import clsx from 'clsx';
+import { getEditableAtomIds } from '../utils';
+import AttachmentGroupActionMenuItem from './AttachmentGroupActionMenuItem';
 
 const {
   ringBondCount,
@@ -116,7 +118,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     () => getAtomPropertiesForSubMenu(t),
     [t],
   );
-  const [handleEdit] = useAtomEdit();
+  const [handleEdit, editDisabled] = useAtomEdit();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
   const {
@@ -128,11 +130,15 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
   const struct = editor.struct();
+  const editableAtomIds = getEditableAtomIds(
+    struct,
+    props.propsFromTrigger?.atomIds ?? [],
+  );
 
   const getPropertyValue = (key: AtomAllAttributeName) => {
     const { ctab } = editor.render;
-    if (props.propsFromTrigger?.atomIds) {
-      const atomId = props.propsFromTrigger?.atomIds[0] as number;
+    if (editableAtomIds.length > 0) {
+      const atomId = editableAtomIds[0];
       if (properties.includes(key as AtomQueryPropertiesName)) {
         return atomGetAttr(ctab, atomId, 'queryProperties')?.[key];
       } else {
@@ -145,10 +151,9 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     key: AtomAllAttributeName,
     value: AtomAllAttributeValue,
   ) => {
-    const atomIds = props.propsFromTrigger?.atomIds;
-    if (atomIds) {
+    if (editableAtomIds.length > 0) {
       updateSelectedAtoms({
-        atoms: atomIds,
+        atoms: editableAtomIds,
         editor,
         changeAtomPromise: Promise.resolve(
           properties.includes(key as AtomQueryPropertiesName)
@@ -210,7 +215,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const disabledForMonomerCreation = editor.isMonomerCreationWizardActive;
   const showMarkAsMenu = markAsIsVisible();
   const markAsDisabled = markAsIsDisabled();
-
+  const showAttachmentGroupCreate = editableAtomIds.length > 1;
   return (
     <>
       {showMarkAsMenu && (
@@ -266,10 +271,16 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         {...props}
         data-testid={editMenuItemTitle.concat('-option')}
         onClick={handleEdit}
+        disabled={editDisabled}
       >
         <Icon name="editMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>{editMenuItemLabel}</span>
       </Item>
+
+      <AttachmentGroupActionMenuItem
+        {...props}
+        showCreate={showAttachmentGroupCreate}
+      />
       <Item
         {...props}
         data-testid="Enhanced stereochemistry...-option"
@@ -283,7 +294,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         label={t('components:contextMenu.queryPropertiesMenu')}
         data-testid="Query properties-option"
         style={{ overflow: 'visible' }}
-        disabled={disabledForMonomerCreation}
+        disabled={disabledForMonomerCreation || editableAtomIds.length === 0}
       >
         {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
           return (

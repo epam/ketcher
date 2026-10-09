@@ -29,6 +29,7 @@ import { isNumber } from 'lodash';
 import type { AtomCIP } from './types';
 import { SGroup } from 'domain/entities/sgroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import type { BondEndpoint } from './bondEndpoint';
 
 /**
  * Return unions of Pick.
@@ -129,7 +130,7 @@ type ValenceComputationResult = {
   hydrogenCount: number;
 };
 
-export class Atom extends BaseMicromoleculeEntity {
+export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   static readonly PATTERN = {
     RADICAL: {
       NONE: 0,
@@ -329,13 +330,7 @@ export class Atom extends BaseMicromoleculeEntity {
   }
 
   static getConnectedBondIds(struct: Struct, atomId: number): number[] {
-    const result: number[] = [];
-    for (const [bondId, bond] of struct.bonds.entries()) {
-      if (bond.begin === atomId || bond.end === atomId) {
-        result.push(bondId);
-      }
-    }
-    return result;
+    return struct.getConnectedBondIds(atomId);
   }
 
   static getAttrHash(atom: Atom) {

@@ -16,6 +16,7 @@
 
 import {
   AtomMove,
+  AttachmentGroupAttr,
   BondMove,
   EnhancedFlagMove,
   FragmentAdd,
@@ -183,24 +184,24 @@ export function fromStereoFlagUpdate(restruct, frid, flag = null) {
  * @returns { Action }
  */
 function processAtom(restruct, aid, frid, newfrid) {
-  const queue = [aid];
-  const usedIds = new Pile<number>(queue);
+  const struct = restruct.molecule;
+  const atomIds = struct
+    .findConnectedComponent(aid)
+    .filter((id) => struct.atoms.get(id).fragment === frid);
+  const atomAction = fromAtomsFragmentAttr(restruct, atomIds, newfrid);
+  const action = new Action();
 
-  while (queue.length > 0) {
-    const id = queue.shift();
+  struct.attachmentGroups.forEach((group, groupId) => {
+    if (group.atomIds.some((id) => atomIds.has(id))) {
+      action.addOp(
+        new AttachmentGroupAttr(groupId, 'fragment', newfrid).perform(restruct),
+      );
+    }
+  });
 
-    restruct.molecule.atomGetNeighbors(id).forEach((nei) => {
-      if (
-        restruct.molecule.atoms.get(nei.aid).fragment === frid &&
-        !usedIds.has(nei.aid)
-      ) {
-        usedIds.add(nei.aid);
-        queue.push(nei.aid);
-      }
-    });
-  }
-
-  return fromAtomsFragmentAttr(restruct, usedIds, newfrid);
+  // fromFragmentSplit reverses these operations so undo restores atoms before
+  // the group recalculates its fragment from its members.
+  return action.mergeWith(atomAction);
 }
 
 /**

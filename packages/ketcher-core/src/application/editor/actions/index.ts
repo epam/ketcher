@@ -1,6 +1,7 @@
 export * from './action';
 export * from './aromaticFusing';
 export * from './atom';
+export * from './attachmentGroup';
 export * from './atomMerge';
 export * from './basic';
 export * from './bond';

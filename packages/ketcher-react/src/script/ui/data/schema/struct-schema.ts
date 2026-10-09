@@ -357,6 +357,7 @@ export const bond: StructSchema = {
         'singlearomatic',
         'doublearomatic',
         'dative',
+        'haptic',
       ],
       enumNames: [
         '',
@@ -374,6 +375,7 @@ export const bond: StructSchema = {
         'dialogs:toolbox.structSchema.bond.type.enumSingleAromatic',
         'dialogs:toolbox.structSchema.bond.type.enumDoubleAromatic',
         'dialogs:toolbox.structSchema.bond.type.enumDative',
+        'dialogs:toolbox.structSchema.bond.type.enumHaptic',
       ],
       default: 'single',
     },

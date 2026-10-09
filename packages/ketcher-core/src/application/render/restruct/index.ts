@@ -18,6 +18,7 @@
 
 import ReObject from './reobject';
 import ReAtom from './reatom';
+import { ReAttachmentGroup } from './reattachmentGroup';
 import ReBond from './rebond';
 import ReEnhancedFlag from './reenhancedFlag';
 import ReFrag from './refrag';
@@ -32,6 +33,7 @@ import Visel from './visel';
 
 export * from './generalEnumTypes';
 export * from './reatom';
+export * from './reattachmentGroup';
 export * from './showHydrogenLabels';
 export * from './rergroupAttachmentPoint';
 export * from './reImage';
@@ -40,6 +42,7 @@ export * from './draftToLexical';
 export {
   ReObject,
   ReAtom,
+  ReAttachmentGroup,
   ReBond,
   ReRxnPlus,
   ReRxnArrow,

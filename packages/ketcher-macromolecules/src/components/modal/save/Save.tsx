@@ -138,6 +138,16 @@ export const Save = ({
       }
     }
 
+    if (
+      fileFormat === 'fasta' &&
+      editor.drawingEntitiesManager.hasBranchesBetweenChains()
+    ) {
+      dispatch(openErrorModal(t('save.fastaBranchedStructureError')));
+      setCurrentFileFormat('ket');
+      setStruct(serializedKet);
+      return;
+    }
+
     try {
       setIsLoading(true);
       if (

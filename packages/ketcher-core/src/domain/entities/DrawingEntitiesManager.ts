@@ -3055,6 +3055,21 @@ export class DrawingEntitiesManager {
     return isValid;
   }
 
+  public hasBranchesBetweenChains() {
+    const monomerToChain = ChainsCollection.fromMonomers([
+      ...this.monomers.values(),
+    ]).monomerToChain;
+
+    return [...this.polymerBonds.values()].some(
+      (bond) =>
+        bond instanceof PolymerBond &&
+        bond.secondMonomer &&
+        bond.isSideChainConnection &&
+        monomerToChain.get(bond.firstMonomer) !==
+          monomerToChain.get(bond.secondMonomer),
+    );
+  }
+
   public moveMonomer(monomer: BaseMonomer, position: Vec2) {
     const oldMonomerPosition = monomer.position;
     const command = new Command();

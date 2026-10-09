@@ -41,9 +41,17 @@ export function identifyStructFormat(
   }
 
   const isRXN = sanitizedString.includes('$RXN');
+  const isRDF = /^\$RDFILE\b/.test(sanitizedString);
   const isSDF = sanitizedString.includes('\n$$$$');
   const isV2000 = sanitizedString.includes('V2000');
   const isV3000 = sanitizedString.includes('V3000');
+
+  if (isRDF) {
+    const isRdfV3000 =
+      /^\$RXN\s+V3000\s*$/m.test(sanitizedString) ||
+      /^\s*\d+\s+\d+\s+\d+.*\bV3000\s*$/m.test(sanitizedString);
+    return isRdfV3000 ? SupportedFormat.rdfV3000 : SupportedFormat.rdf;
+  }
 
   if (isRXN) {
     return SupportedFormat.rxn;

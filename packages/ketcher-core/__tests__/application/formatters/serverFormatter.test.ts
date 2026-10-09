@@ -4,6 +4,49 @@ import type { StructService } from 'domain/services';
 import type { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 
 describe('ServerFormatter', () => {
+  it.each([
+    [SupportedFormat.rdf, 'Given string could not be loaded as a molecule'],
+    [SupportedFormat.rdf, 'Molfile version unknown: '],
+    [
+      SupportedFormat.rdfV3000,
+      'struct data not recognized as molecule, query, reaction or reaction query.',
+    ],
+  ] as const)(
+    'normalizes %s parser failure %s',
+    async (format, parserError) => {
+      const structService = {
+        convert: jest.fn().mockRejectedValue(new Error(parserError)),
+      } as unknown as StructService;
+      const formatter = new ServerFormatter(
+        structService,
+        {} as unknown as KetSerializer,
+        format,
+      );
+
+      await expect(
+        formatter.getStructureFromStringAsync('$RDFILE 1'),
+      ).rejects.toHaveProperty(
+        'message',
+        'Convert error!\nstruct data not recognized as molecule, query, reaction or reaction query.',
+      );
+    },
+  );
+
+  it('preserves non-parser errors for RDF input', async () => {
+    const structService = {
+      convert: jest.fn().mockRejectedValue(new Error('Network unavailable')),
+    } as unknown as StructService;
+    const formatter = new ServerFormatter(
+      structService,
+      {} as unknown as KetSerializer,
+      SupportedFormat.rdf,
+    );
+
+    await expect(
+      formatter.getStructureFromStringAsync('$RDFILE 1'),
+    ).rejects.toHaveProperty('message', 'Convert error!\nNetwork unavailable');
+  });
+
   it('uses convert (not layout) for IDT input', () => {
     const convert = jest.fn();
     const layout = jest.fn();

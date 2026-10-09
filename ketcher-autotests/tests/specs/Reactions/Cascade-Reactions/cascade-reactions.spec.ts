@@ -84,8 +84,6 @@ test.describe('Cascade Reactions', () => {
     Test case: https://github.com/epam/Indigo/issues/2102
     Description: RDF file with elements without reaction MOL V2000 can't be loaded and error is displayed -
     Convert error! struct data not recognized as molecule, query, reaction or reaction query.
-    We have a bug https://github.com/epam/ketcher/issues/5273
-    After fix we should update snapshot.
     */
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -94,7 +92,9 @@ test.describe('Cascade Reactions', () => {
       true,
     );
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-    expect(errorMessage).toContain('Molfile version unknown:');
+    expect(errorMessage.replace(/\s+/g, ' ')).toBe(
+      'Convert error! struct data not recognized as molecule, query, reaction or reaction query.',
+    );
     await ErrorMessageDialog(page).close();
     await PasteFromClipboardDialog(page).cancel();
   });
@@ -2765,27 +2765,22 @@ test.describe('Cascade Reactions', () => {
     });
   });
 
-  test.fail(
-    'Verify that RDF file with elements without reaction MOL V3000 cant be loaded and error is displayed',
-    async () => {
-      // Test fail due to specs/Reactions/Cascade-Reactions/cascade-reactions.spec.ts:113
-      /*
+  test('Verify that RDF file with elements without reaction MOL V3000 cannot be loaded and error is displayed', async () => {
+    /*
     Test case: https://github.com/epam/Indigo/issues/2102
-    Description: RDF file with elements without reaction MOL V3000 can't be loaded and error is displayed -
-    Convert error! struct data not recognized as molecule, query, reaction or reaction query.
+    Description: RDF file with elements without reaction MOL V3000 can't be loaded and displays a conversion error.
     */
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'RDF-V3000/rdf-mol-v3000-no-reaction-3-elements.rdf',
-        // error expected
-        true,
-      );
-      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(
-        "Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'scanner: readIntFix(3): invalid number representation: \"M  \"', 'RXN loader: bad header ', 'SEQUENCE loader: Unknown polymer type ''.', 'scanner: readIntFix(3): invalid number representation: \"M  \"', 'scanner: readIntFix(3): invalid number representation: \"M  \"', 'RXN loader: bad header '",
-      );
-      await ErrorMessageDialog(page).close();
-      await PasteFromClipboardDialog(page).cancel();
-    },
-  );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'RDF-V3000/rdf-mol-v3000-no-reaction-3-elements.rdf',
+      // error expected
+      true,
+    );
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage.replace(/\s+/g, ' ')).toBe(
+      'Convert error! struct data not recognized as molecule, query, reaction or reaction query.',
+    );
+    await ErrorMessageDialog(page).close();
+    await PasteFromClipboardDialog(page).cancel();
+  });
 });

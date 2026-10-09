@@ -41,6 +41,26 @@ type LayoutPromise = (
   options?: StructServiceOptions,
 ) => Promise<LayoutResult>;
 
+const RDF_STRUCTURE_NOT_RECOGNIZED_ERROR =
+  'struct data not recognized as molecule, query, reaction or reaction query.';
+
+function getConversionErrorDetails(
+  error: unknown,
+  format: SupportedFormat,
+): string {
+  const details = error instanceof Error ? error.message : String(error);
+  const isRdfFormat =
+    format === SupportedFormat.rdf || format === SupportedFormat.rdfV3000;
+  const isUnrecognizedStructureError =
+    /Given string could not be loaded|struct data not recognized as molecule|Molfile version unknown/i.test(
+      details,
+    );
+
+  return isRdfFormat && isUnrecognizedStructureError
+    ? RDF_STRUCTURE_NOT_RECOGNIZED_ERROR
+    : details;
+}
+
 export class ServerFormatter implements StructFormatter {
   readonly #structService: StructService;
   readonly #ketSerializer: KetSerializer;
@@ -150,7 +170,7 @@ export class ServerFormatter implements StructFormatter {
           'serverFormatter.ts::getStructureFromStringAsync',
           e,
         );
-        const details = e instanceof Error ? e.message : String(e);
+        const details = getConversionErrorDetails(e, this.#format);
         throw new Error(`Convert error!\n${details}`, { cause: e });
       }
 

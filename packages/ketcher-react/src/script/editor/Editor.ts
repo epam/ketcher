@@ -2040,19 +2040,26 @@ class Editor implements KetcherEditor {
     atomId: number,
     attachmentPointNumber?: number,
   ): SGroupAttachmentPoint | undefined {
-    const attachmentPointByNumber = isNumber(attachmentPointNumber)
+    // Prefer atom-ID lookup: if the bond endpoint is already on an attachment
+    // atom use that AP directly. This correctly handles AP renames/swaps where
+    // the stored AP number may be stale.
+    const attachmentPointByAtomId = attachmentPoints.find(
+      (attachmentPoint) => attachmentPoint.atomId === atomId,
+    );
+
+    if (attachmentPointByAtomId) {
+      return attachmentPointByAtomId;
+    }
+
+    // Fall back to AP-number lookup when the atom ID doesn't match any AP
+    // (e.g. when the bond endpoint still needs to be re-pointed to the correct
+    // AP atom).
+    return isNumber(attachmentPointNumber)
       ? attachmentPoints.find(
           (attachmentPoint) =>
             attachmentPoint.attachmentPointNumber === attachmentPointNumber,
         )
       : undefined;
-
-    return (
-      attachmentPointByNumber ??
-      attachmentPoints.find(
-        (attachmentPoint) => attachmentPoint.atomId === atomId,
-      )
-    );
   }
 
   private updateBondEndpointByAttachmentPoint(
@@ -2841,6 +2848,29 @@ class Editor implements KetcherEditor {
       selectedOriginalAtomId,
     );
 
+    // If the bond's atom is still an attachment atom in the final state
+    // (possibly under a different AP name after a rename/swap), keep the bond
+    // connected to that same atom.  This ensures that renaming APs does not
+    // silently move a bond to a different atom.
+    if (isNumber(selectedWizardAtomId)) {
+      const isAtomStillAttachmentAtom = Array.from(
+        finalAssignedAttachmentPoints.values(),
+      ).some((atomId) => atomId === selectedWizardAtomId);
+
+      if (isAtomStillAttachmentAtom) {
+        this.rebindExternalBondEndpoint(
+          struct,
+          bond,
+          selectedEndpoint,
+          newAtomIdMap.get(selectedWizardAtomId),
+        );
+        return;
+      }
+    }
+
+    // The bond's original atom is no longer an attachment atom in the final
+    // state.  Use the AP name to find where the AP moved to (handles the case
+    // where the user reassigned the AP to a different atom).
     const oldAttachmentPointName = this.findAttachmentPointForAtom(
       attachmentAtomIdsWithExternalBonds,
       selectedWizardAtomId,
@@ -2857,25 +2887,11 @@ class Editor implements KetcherEditor {
     }
 
     // The attachment point moved to a different atom: re-point the bond there.
-    if (newAttachmentAtomId !== selectedWizardAtomId) {
-      this.rebindExternalBondEndpoint(
-        struct,
-        bond,
-        selectedEndpoint,
-        newAtomIdMap.get(newAttachmentAtomId),
-      );
-      return;
-    }
-
-    // The attachment point stayed on the same atom: re-establish the original
-    // bond, remapping the selected endpoint to its atom in the merged struct.
     this.rebindExternalBondEndpoint(
       struct,
       bond,
       selectedEndpoint,
-      isNumber(selectedWizardAtomId)
-        ? newAtomIdMap.get(selectedWizardAtomId)
-        : undefined,
+      newAtomIdMap.get(newAttachmentAtomId),
     );
   }
 

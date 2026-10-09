@@ -210,6 +210,19 @@ describe('calcDativeValence', () => {
         maxAcceptors: 0,
       });
     });
+
+    it('forbids acceptors when Or - roundup(El / 2) is negative (lithium with three bonds)', () => {
+      const lithium = { ...base, label: 'Li', bondOrderSum: 3 };
+      expect(calcDativeValence(lithium)).toMatchObject({
+        eligibleElectrons: -2,
+        eligibleOrbitals: 1,
+        maxDonors: 0,
+        maxAcceptors: 0,
+      });
+      expect(
+        calcDativeValence({ ...lithium, acceptorCount: 1 })?.hasValenceError,
+      ).toBe(true);
+    });
   });
 
   describe('implicit hydrogen (req 7 and req 8)', () => {

@@ -17,6 +17,7 @@
 
 import {
   type Editor as KetcherEditor,
+  type EditorSubscriber,
   type FloatingToolsParams,
   type IKetAttachmentPoint,
   type IKetTemplateConnection,
@@ -1124,9 +1125,8 @@ class Editor implements KetcherEditor {
   private originalHistoryPointer = 0;
   private readonly selectedToOriginalAtomsIdMap = new Map<number, number>();
 
-  private changeEventSubscriber: {
-    handler: ((action?: unknown) => void) | ((data: ChangeEventData[]) => void);
-  } | null = null;
+  private changeEventSubscriber: EditorSubscriber<ChangeEventData[]> | null =
+    null;
 
   private onMonomerWizardFinish?: (savedCanvas: boolean) => void;
 
@@ -3461,8 +3461,12 @@ class Editor implements KetcherEditor {
       return;
     }
 
-    const handleChangeEvent = (data: ChangeEventData[]) => {
-      if (!this.isMonomerCreationWizardActive || data.length === 0) {
+    const handleChangeEvent = (data: ChangeEventData[] = []) => {
+      if (!this.isMonomerCreationWizardActive) {
+        return;
+      }
+
+      if (data.length === 0) {
         return;
       }
 
@@ -4016,23 +4020,18 @@ class Editor implements KetcherEditor {
     this.historyPtr = 0;
   }
 
-  subscribe(
+  subscribe<T = unknown>(
     eventName: string,
-    handler: ((data?: unknown) => void) | ((data: ChangeEventData[]) => void),
-  ) {
-    const subscriber: {
-      handler: ((data?: unknown) => void) | ((data: ChangeEventData[]) => void);
-    } = {
+    handler: (data?: T) => void,
+  ): EditorSubscriber<T> {
+    const subscriber: EditorSubscriber<T> = {
       handler,
     };
 
     switch (eventName) {
       case 'change': {
         const subscribeFuncWrapper = (action: unknown) => {
-          customOnChangeHandler(
-            action as unknown,
-            handler as (data?: unknown) => void,
-          );
+          customOnChangeHandler(action as unknown, handler);
         };
         subscriber.handler = subscribeFuncWrapper;
         ketcherProvider
@@ -4055,11 +4054,9 @@ class Editor implements KetcherEditor {
     return subscriber;
   }
 
-  unsubscribe(
+  unsubscribe<T = unknown>(
     eventName: string,
-    subscriber: {
-      handler: ((data?: unknown) => void) | ((data: ChangeEventData[]) => void);
-    },
+    subscriber: EditorSubscriber<T>,
   ): void {
     switch (eventName) {
       case 'change': {

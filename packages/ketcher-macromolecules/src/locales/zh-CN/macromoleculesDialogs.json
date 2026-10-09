@@ -227,7 +227,8 @@
     "convertError": "转换错误！{error}",
     "helmSmilesExportNotice": "该分子将使用内联 SMILES 导出，加载后将显示为 CHEM 单体",
     "helmAliasExportNotice": "部分单体在 HELM 核心库中没有别名 - 它们将使用 Ketcher 别名导出。",
-    "sequenceTypeRecognitionError": "序列类型识别时出错（RNA、DNA 或多肽）"
+    "sequenceTypeRecognitionError": "序列类型识别时出错（RNA、DNA 或多肽）",
+    "fastaBranchedStructureError": "不支持将分支结构导出为 FASTA。"
   },
   "updateSequence": {
     "title": "更新序列",

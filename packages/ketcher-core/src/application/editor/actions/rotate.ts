@@ -19,6 +19,7 @@ import {
   BondAttr,
   EnhancedFlagMove,
   EnhancedFlagClear,
+  MultitailArrowMove,
   RxnArrowMove,
   RxnArrowRotate,
   RxnPlusMove,
@@ -294,6 +295,20 @@ export function fromRotate(restruct, selection, center, angle: number) {
   if (selection.rxnArrows) {
     selection.rxnArrows.forEach((arrowId) => {
       action.addOp(new RxnArrowRotate(arrowId, angle, center));
+    });
+  }
+
+  if (selection.multitailArrows) {
+    selection.multitailArrows.forEach((arrowId) => {
+      const multitailArrow = struct.multitailArrows.get(arrowId);
+      if (!multitailArrow) return;
+
+      action.addOp(
+        new MultitailArrowMove(
+          arrowId,
+          rotateDelta(multitailArrow.center(), center, angle),
+        ),
+      );
     });
   }
 

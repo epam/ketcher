@@ -160,15 +160,21 @@ class RotateController {
     const visibleAtoms =
       this.render.ctab.molecule.getSelectedVisibleAtoms(selection);
 
-    const { texts, rxnArrows, rxnPluses } = selection || {};
+    const { texts, rxnArrows, rxnPluses, multitailArrows } = selection || {};
 
     const isMoreThanOneItemBeingSelected =
-      visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
-        .length > 1;
+      visibleAtoms.concat(
+        texts || [],
+        rxnArrows || [],
+        rxnPluses || [],
+        multitailArrows || [],
+      ).length > 1;
+    const isRotatableSelection =
+      isMoreThanOneItemBeingSelected || Boolean(rxnArrows?.length);
 
     const currentTool = this.editor.tool();
     const enable =
-      isMoreThanOneItemBeingSelected &&
+      isRotatableSelection &&
       (currentTool instanceof SelectTool ||
         currentTool instanceof FragmentSelectionTool) &&
       originalCenter;
@@ -186,6 +192,7 @@ class RotateController {
       rxnPluses,
       selection?.bonds,
       selection?.rgroupAttachmentPoints,
+      multitailArrows,
     );
 
     this.handleCenter = new Vec2(
@@ -282,6 +289,7 @@ class RotateController {
     rxnPluses?: number[],
     bonds?: number[],
     rgroupAttachmentPoints?: number[],
+    multitailArrows?: number[],
   ) {
     const RECT_RADIUS = 20;
     const RECT_PADDING = 10;
@@ -298,6 +306,7 @@ class RotateController {
         }),
         bonds,
         rgroupAttachmentPoints,
+        multitailArrows,
       })
       .transform(Scale.modelToCanvas, this.render.options)
       .translate(this.render.options.offset || new Vec2());

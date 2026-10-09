@@ -368,6 +368,36 @@ describe('computeReestablishableBonds', () => {
     expect(plan.reestablishable).toHaveLength(0);
     expect(plan.lost).toHaveLength(2);
   });
+
+  it('gives a name claimed by a renamed bond to that bond, not to an unmatched one', () => {
+    const originalSugar = makeSugar();
+    const newSugar = makeSugar();
+    const phosphate1 = makePhosphate();
+    const phosphate2 = makePhosphate();
+
+    const bondOnR1 = new PolymerBond(originalSugar, phosphate1);
+    originalSugar.attachmentPointsToBonds.R1 = bondOnR1;
+    phosphate1.attachmentPointsToBonds.R2 = bondOnR1;
+
+    const bondOnR2 = new PolymerBond(originalSugar, phosphate2);
+    originalSugar.attachmentPointsToBonds.R2 = bondOnR2;
+    phosphate2.attachmentPointsToBonds.R1 = bondOnR2;
+
+    const records = collectMonomerBonds(originalSugar);
+    const plan = computeReestablishableBonds(
+      records,
+      newSugar,
+      new Map([[AttachmentPointName.R2, AttachmentPointName.R1]]),
+    );
+
+    expect(plan.reestablishable).toHaveLength(1);
+    expect(plan.reestablishable[0].bond).toBe(bondOnR2);
+    expect(plan.reestablishable[0].attachmentPointName).toBe(
+      AttachmentPointName.R1,
+    );
+    expect(plan.lost).toHaveLength(1);
+    expect(plan.lost[0].bond).toBe(bondOnR1);
+  });
 });
 
 // ---------------------------------------------------------------------------

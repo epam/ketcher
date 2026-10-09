@@ -161,18 +161,35 @@ export function collectMonomerBonds(monomer: BaseMonomer): BondRecord[] {
  * Given the bonds collected from an original monomer and a new replacement
  * monomer, returns two lists:
  *
- * - `reestablishable`: bonds whose attachment point exists and is free on
- *   `newMonomer`
+ * - `reestablishable`: bonds whose target attachment point exists and is free
+ *   on `newMonomer`; `attachmentPointName` is set to that target name
  * - `lost`: bonds that cannot be re-established
+ *
+ * `attachmentPointRenames` maps old names to the names carrying the same atoms
+ * on `newMonomer`. Renamed bonds claim their target first, so a bond that
+ * keeps its old name cannot take a name a renamed bond moved onto; the
+ * displaced bond is reported as lost. A name is never claimed twice.
  */
 export function computeReestablishableBonds(
   originalBonds: BondRecord[],
   newMonomer: BaseMonomer,
+  attachmentPointRenames: ReadonlyMap<
+    AttachmentPointName,
+    AttachmentPointName
+  > = new Map(),
 ): BondReestablishmentPlan {
   const reestablishable: BondRecord[] = [];
   const lost: BondRecord[] = [];
+  const claimedAttachmentPoints = new Set<AttachmentPointName>();
 
-  for (const record of originalBonds) {
+  const isRenamed = (record: BondRecord) =>
+    attachmentPointRenames.has(record.attachmentPointName);
+  const prioritizedBonds = [
+    ...originalBonds.filter(isRenamed),
+    ...originalBonds.filter((record) => !isRenamed(record)),
+  ];
+
+  for (const record of prioritizedBonds) {
     if (record.attachmentPointName === ('hydrogen' as AttachmentPointName)) {
       // Hydrogen bonds are always re-established on the same entity — they
       // don't go through named Rn APs, so they are always reestablishable.
@@ -180,8 +197,15 @@ export function computeReestablishableBonds(
       continue;
     }
 
-    if (newMonomer.isAttachmentPointExistAndFree(record.attachmentPointName)) {
-      reestablishable.push(record);
+    const targetName =
+      attachmentPointRenames.get(record.attachmentPointName) ??
+      record.attachmentPointName;
+    if (
+      !claimedAttachmentPoints.has(targetName) &&
+      newMonomer.isAttachmentPointExistAndFree(targetName)
+    ) {
+      claimedAttachmentPoints.add(targetName);
+      reestablishable.push({ ...record, attachmentPointName: targetName });
     } else {
       lost.push(record);
     }
@@ -196,18 +220,22 @@ export function computeReestablishableBonds(
  * (for example swapping R1 and R2) must not move a bond to a different atom,
  * so re-establishing a bond uses the renamed point. Only changed names are
  * returned; an attachment point whose atoms are not found keeps its name.
+ *
+ * Atoms are matched by id and label, so this relies on atom ids surviving the
+ * monomer wizard edit. When they do not match, the attachment point keeps its
+ * name and its bond is re-established by name.
  */
 export function getAttachmentPointRenames(
   oldMonomerItem: MonomerItemType,
   newMonomerItem: MonomerItemType,
 ): Map<AttachmentPointName, AttachmentPointName> {
   const newNamesByAtoms = new Map<string, AttachmentPointName>();
-  getAttachmentPointAtomKeys(newMonomerItem).forEach(([name, key]) => {
+  getAttachmentPointKeysByName(newMonomerItem).forEach(([name, key]) => {
     if (key) newNamesByAtoms.set(key, name);
   });
 
   const renames = new Map<AttachmentPointName, AttachmentPointName>();
-  getAttachmentPointAtomKeys(oldMonomerItem).forEach(([oldName, key]) => {
+  getAttachmentPointKeysByName(oldMonomerItem).forEach(([oldName, key]) => {
     const newName = key ? newNamesByAtoms.get(key) : undefined;
     if (newName && newName !== oldName) {
       renames.set(oldName, newName);
@@ -217,7 +245,7 @@ export function getAttachmentPointRenames(
   return renames;
 }
 
-function getAttachmentPointAtomKeys(
+function getAttachmentPointKeysByName(
   monomerItem: MonomerItemType,
 ): [AttachmentPointName, string | null][] {
   if (!monomerItem.attachmentPoints) return [];
@@ -230,12 +258,12 @@ function getAttachmentPointAtomKeys(
   return monomerItem.attachmentPoints.map(
     (attachmentPoint, index): [AttachmentPointName, string | null] => [
       attachmentPointsList[index],
-      getAttachmentPointAtomKey(monomerItem, attachmentPoint),
+      computeAttachmentPointAtomKey(monomerItem, attachmentPoint),
     ],
   );
 }
 
-function getAttachmentPointAtomKey(
+function computeAttachmentPointAtomKey(
   monomerItem: MonomerItemType,
   attachmentPoint: IKetAttachmentPoint,
 ): string | null {

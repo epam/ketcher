@@ -4657,12 +4657,7 @@ export class DrawingEntitiesManager {
     const position = new Vec2(oldMonomer.position.x, oldMonomer.position.y);
 
     // 1. Collect all bonds before deleting
-    const originalBonds = collectMonomerBonds(oldMonomer).map((record) => ({
-      ...record,
-      attachmentPointName:
-        attachmentPointRenames.get(record.attachmentPointName) ??
-        record.attachmentPointName,
-    }));
+    const originalBonds = collectMonomerBonds(oldMonomer);
 
     // 2. Add new monomer at same position (before deletion so we can pass the
     //    instance to re-establishment below)
@@ -4674,7 +4669,11 @@ export class DrawingEntitiesManager {
     const newMonomer = monomerAddOp.monomer;
 
     // 3. Compute re-establishment plan
-    const plan = computeReestablishableBonds(originalBonds, newMonomer);
+    const plan = computeReestablishableBonds(
+      originalBonds,
+      newMonomer,
+      attachmentPointRenames,
+    );
 
     // 4. Delete the old monomer WITHOUT deleting its connected bonds so we can
     //    re-establish them on the new monomer.

@@ -72,7 +72,12 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
 }
 
 function parametrizeUrl(url, params) {
-  return url.replace(/:(\w+)/g, (_, val) => params[val]);
+  return url
+    .split(/:(\w+)/)
+    .map((segment, index) =>
+      index % 2 === 1 ? String(params[segment]) : segment,
+    )
+    .join('');
 }
 
 function request(

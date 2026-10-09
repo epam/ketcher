@@ -34,7 +34,7 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
     const molSerializer = new MolSerializer(this.molSerializerOptions);
     let m: any = DelimeterRegex.exec(content);
     while (m !== null) {
-      const chunk = m[0].replace(/\r/g, '').trim(); // TODO: normalize newline?
+      const chunk = m[0].replaceAll('\r', '').trim(); // TODO: normalize newline?
       const end = chunk.indexOf('M  END');
       if (end !== -1) {
         const propChunks: any = chunk

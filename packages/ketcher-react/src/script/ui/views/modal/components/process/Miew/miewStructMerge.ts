@@ -137,10 +137,6 @@ export function collapseExpandedSuperatoms(struct: Struct): void {
 }
 
 export function mergeMetaObjects(result: Struct, original: Struct): void {
-  if (original.rxnArrows.size || original.rxnPluses.size) {
-    result.isReaction = true;
-  }
-
   original.rxnArrows.forEach((item) => result.addRxnArrow(cloneMeta(item)));
   original.rxnPluses.forEach((item) => result.rxnPluses.add(cloneMeta(item)));
   original.texts.forEach((item) => result.texts.add(cloneMeta(item)));

@@ -39,7 +39,7 @@ export const MonomerName = styled.p<{ isLongName?: boolean }>`
     props.isLongName ? '8px' : props.theme.ketcher.font.size.regular};
   font-weight: 700;
   word-break: break-all;
-  text-align: left;
+  text-align: start;
   margin: 0;
   white-space: pre-wrap;
   ${(props) =>

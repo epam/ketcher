@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { Item } from 'react-contexify';
+import { useTranslation } from 'react-i18next';
 import useFunctionalGroupEoc from '../hooks/useFunctionalGroupEoc';
 import useFunctionalGroupRemove from '../hooks/useFunctionalGroupRemove';
 import type {
@@ -10,6 +11,7 @@ import type {
 const FunctionalGroupMenuItems: FC<
   MenuItemsProps<FunctionalGroupsContextMenuProps>
 > = (props) => {
+  const { t } = useTranslation(['components', 'dialogs']);
   const [handleExpandOrContract, ExpandOrContractHidden] =
     useFunctionalGroupEoc();
   const handleRemove = useFunctionalGroupRemove();
@@ -22,7 +24,7 @@ const FunctionalGroupMenuItems: FC<
         hidden={(params) => ExpandOrContractHidden(params, true)}
         onClick={(params) => handleExpandOrContract(params, true)}
       >
-        Expand Abbreviation
+        {t('components:contextMenu.expandAbbreviation')}
       </Item>
       <Item
         {...props}
@@ -30,14 +32,14 @@ const FunctionalGroupMenuItems: FC<
         hidden={(params) => ExpandOrContractHidden(params, false)}
         onClick={(params) => handleExpandOrContract(params, false)}
       >
-        Contract Abbreviation
+        {t('components:contextMenu.contractAbbreviation')}
       </Item>
       <Item
         {...props}
         data-testid="Remove Abbreviation-option"
         onClick={handleRemove}
       >
-        Remove Abbreviation
+        {t('dialogs:toolbox.removeFG.removeAbbreviation')}
       </Item>
     </>
   );

@@ -7,6 +7,9 @@ export const BAD_VALENCE_LINE_OFFSET = 2;
 
 export const SELECTION_COLOR = '#57FF8F';
 export const SELECTION_HOVERED_COLOR = '#CCFFDD';
+// Outline of the rectangle/lasso area while a selection is being dragged,
+// shared by both modes so the tools look the same everywhere.
+export const SELECTION_OUTLINE_COLOR = 'gray';
 
 export const MONOMER_SYMBOLS_IDS = {
   [KetMonomerClass.AminoAcid]: {

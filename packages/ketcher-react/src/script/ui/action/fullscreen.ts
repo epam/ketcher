@@ -61,7 +61,7 @@ const toggleFullscreen = () => {
 
 export default {
   fullscreen: {
-    title: 'Fullscreen mode',
+    title: 'toolbar:fullscreen.title',
     enabledInViewOnly: true,
     action: () => toggleFullscreen(),
     hidden: (options) => isHidden(options, 'fullscreen'),

@@ -25,7 +25,7 @@ type ServerConfig = {
 const config: ServerConfig = {
   layout: {
     shortcut: 'Mod+l',
-    title: 'Layout',
+    title: 'toolbar:server.layout',
     action: {
       thunk: serverTransform('layout'),
     },
@@ -34,7 +34,7 @@ const config: ServerConfig = {
   },
   clean: {
     shortcut: 'Mod+Shift+l',
-    title: 'Clean Up',
+    title: 'toolbar:server.clean',
     action: {
       thunk: serverTransform('clean'),
     },
@@ -43,7 +43,7 @@ const config: ServerConfig = {
   },
   arom: {
     shortcut: 'Alt+a',
-    title: 'Aromatize',
+    title: 'toolbar:server.aromatize',
     action: {
       thunk: serverTransform('aromatize'),
     },
@@ -52,7 +52,7 @@ const config: ServerConfig = {
   },
   dearom: {
     shortcut: 'Mod+Alt+a',
-    title: 'Dearomatize',
+    title: 'toolbar:server.dearomatize',
     action: {
       thunk: serverTransform('dearomatize'),
     },
@@ -61,7 +61,7 @@ const config: ServerConfig = {
   },
   cip: {
     shortcut: 'Mod+p',
-    title: 'Calculate CIP',
+    title: 'toolbar:server.calculateCip',
     action: {
       thunk: serverTransform('calculateCip'),
     },
@@ -71,7 +71,7 @@ const config: ServerConfig = {
   check: {
     shortcut: 'Alt+s',
     enabledInViewOnly: true,
-    title: 'Check Structure',
+    title: 'toolbar:server.checkStructure',
     action: { dialog: 'check' },
     disabled: (_editor, _server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'check'),
@@ -79,13 +79,13 @@ const config: ServerConfig = {
   analyse: {
     shortcut: 'Alt+c',
     enabledInViewOnly: true,
-    title: 'Calculated Values',
+    title: 'toolbar:server.calculatedValues',
     action: { dialog: 'analyse' },
     disabled: (_editor, _server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'analyse'),
   },
   recognize: {
-    title: 'Recognize Molecule',
+    title: 'toolbar:server.recognizeMolecule',
     action: { dialog: 'recognize' },
     disabled: (_editor, _server, options) =>
       !options.app.server ||
@@ -93,13 +93,13 @@ const config: ServerConfig = {
     hidden: (options) => isHidden(options, 'recognize'),
   },
   miew: {
-    title: '3D Viewer',
+    title: 'toolbar:server.viewer3d',
     enabledInViewOnly: true,
     action: { dialog: 'miew' },
     hidden: (options) => isHidden(options, 'miew'),
   },
   'explicit-hydrogens': {
-    title: 'Add/Remove explicit hydrogens',
+    title: 'toolbar:server.explicitHydrogens',
     action: {
       thunk: serverTransform('toggleExplicitHydrogens'),
     },

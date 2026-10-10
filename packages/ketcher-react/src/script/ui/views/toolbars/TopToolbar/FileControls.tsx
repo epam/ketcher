@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { useTranslation } from 'react-i18next';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
 interface FileControlsProps {
@@ -30,10 +31,12 @@ export const FileControls = ({
   hiddenButtons,
   disabledButtons,
 }: FileControlsProps) => {
+  const { t } = useTranslation('toolbar');
+
   return (
     <>
       <TopToolbarIconButton
-        title="Open..."
+        title={t('menu.open')}
         onClick={onFileOpen}
         iconName="open"
         shortcut={shortcuts.open}
@@ -42,7 +45,7 @@ export const FileControls = ({
         testId="open-file-button"
       />
       <TopToolbarIconButton
-        title="Save as..."
+        title={t('menu.save')}
         onClick={onSave}
         iconName="save"
         shortcut={shortcuts.save}

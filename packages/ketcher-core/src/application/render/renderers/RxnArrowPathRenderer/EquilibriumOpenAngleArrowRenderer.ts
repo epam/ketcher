@@ -17,17 +17,13 @@ export class EquilibriumOpenAngleArrowRenderer {
     const endX = start.x + arrowLength;
     const pathParts: string[] = [];
 
-    // First arrow
+    // First and second arrow
     pathParts.push(
       `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
         `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
         `L${toFixed(endX - arrowHeadLength)},${toFixed(
           start.y - arrowHeadWidth - arrowOffset,
         )}`,
-    );
-
-    // Second arrow
-    pathParts.push(
       `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
         `L${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
         `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   selectAmbiguousMonomersInCategory,
   selectFilteredMonomers,
@@ -26,6 +27,7 @@ import {
   FilterIconButton,
 } from './styles';
 import { PresetPhosphateFilterPopup } from './PresetPhosphateFilterPopup';
+import { groupNameToTabLabelKey } from './groupNameToTabLabelKey';
 import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPresetGroup';
 import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
 import { memo, useState } from 'react';
@@ -48,6 +50,7 @@ const RnaElementsAccordionView = ({
   editPreset,
   libraryName,
 }: Props) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useDispatch();
   const presets = useAppSelector(selectFilteredPresets);
   const monomers = useAppSelector(selectFilteredMonomers);
@@ -103,6 +106,7 @@ const RnaElementsAccordionView = ({
           <Summary
             iconName={groupData.iconName as IconName}
             groupName={groupData.groupName}
+            label={t(groupNameToTabLabelKey[groupData.groupName])}
             quantity={quantity}
             expanded={expanded}
           />
@@ -115,7 +119,7 @@ const RnaElementsAccordionView = ({
                   onClick={onNewPresetClick}
                   data-testid="new-preset-button"
                 >
-                  Add new
+                  {t('monomerLibrary.addNewPreset')}
                 </NewPresetButton>
                 <FilterIconButton
                   type="button"
@@ -125,7 +129,7 @@ const RnaElementsAccordionView = ({
                     event.stopPropagation();
                     setIsFilterOpen((prev) => !prev);
                   }}
-                  aria-label="Filter presets by phosphate position"
+                  aria-label={t('monomerLibrary.filterPresetsAriaLabel')}
                   data-testid="preset-filter-button"
                 >
                   <Icon name="filter" />

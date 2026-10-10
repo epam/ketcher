@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useTranslation } from 'react-i18next';
 import { ElementWithDropdown } from './ElementWithDropdown';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
@@ -40,28 +41,29 @@ export const ClipboardControls = ({
   disabledButtons,
   hiddenButtons,
 }: ClipboardControlsProps) => {
+  const { t } = useTranslation('toolbar');
   const copyButtons = [
     {
       name: 'copy',
-      title: 'Copy',
+      title: t('menu.copy'),
       handler: onCopy,
       testId: 'copy-button',
     },
     {
       name: 'copy-mol',
-      title: 'Copy as MOL',
+      title: t('menu.copyMol'),
       handler: onCopyMol,
       testId: 'copy-mol-button',
     },
     {
       name: 'copy-ket',
-      title: 'Copy as KET',
+      title: t('menu.copyKet'),
       handler: onCopyKet,
       testId: 'copy-ket-button',
     },
     {
       name: 'copy-image',
-      title: 'Copy Image',
+      title: t('menu.copyImage'),
       handler: onCopyImage,
       testId: 'copy-image-button',
     },
@@ -96,7 +98,7 @@ export const ClipboardControls = ({
         />
       )}
       <TopToolbarIconButton
-        title="Paste"
+        title={t('menu.paste')}
         testId="paste-button"
         onClick={onPaste}
         iconName="paste"
@@ -105,7 +107,7 @@ export const ClipboardControls = ({
         isHidden={hiddenButtons.includes('paste')}
       />
       <TopToolbarIconButton
-        title="Cut"
+        title={t('menu.cut')}
         testId="cut-button"
         onClick={onCut}
         iconName="cut"

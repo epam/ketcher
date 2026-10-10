@@ -2,6 +2,7 @@ import { type BaseMonomer, KetMonomerClass } from 'ketcher-core';
 import {
   getEditAllInstancesInitialValues,
   getEditInstanceInitialValues,
+  getLibraryEditInitialValues,
 } from './MonomerCreationWizard.utils';
 
 const createMonomer = (
@@ -73,11 +74,58 @@ describe('getEditInstanceInitialValues', () => {
       name: 'Phosporothioate_Copy',
       naturalAnalogue: '',
       aliasHELM: 'sp_Copy',
-      aliasBILN: 'sp_Copy',
+      aliasBILN: '',
       editMode: 'instance',
       originalType: KetMonomerClass.Phosphate,
       originalSymbol: 'sP',
     });
+  });
+});
+
+describe('library editing initial values', () => {
+  const item = createMonomer({
+    id: 'original',
+    Name: 'Cysteine',
+    MonomerClass: KetMonomerClass.AminoAcid,
+    MonomerCode: 'C',
+    MonomerName: 'C',
+    MonomerFullName: 'Cysteine',
+    MonomerNaturalAnalogCode: 'C',
+    aliasHELM: 'C',
+    aliasBILN: 'C',
+    modificationTypes: ['Natural amino acid'],
+    aliasAxoLabs: 'custom-axo',
+    idtAliases: { base: 'custom-idt' },
+  }).monomerItem;
+
+  it('preserves original properties and identity instead of creating a copy', () => {
+    const values = getLibraryEditInitialValues(item);
+
+    expect(values).toMatchObject({
+      symbol: 'C',
+      name: 'Cysteine',
+      aliasHELM: 'C',
+      aliasBILN: 'C',
+      modificationTypes: ['Natural amino acid'],
+      libraryOnly: true,
+    });
+    expect(values.originalMonomerItem).toBe(item);
+    expect(values.modificationTypes).not.toBe(item.props.modificationTypes);
+  });
+
+  it('duplicates library items with suffixed fields, no original identity or modification types', () => {
+    const values = getEditInstanceInitialValues(item);
+
+    expect(values).toMatchObject({
+      symbol: 'C_Copy',
+      name: 'Cysteine_Copy',
+      aliasHELM: 'C_Copy',
+      aliasBILN: 'C_Copy',
+    });
+    expect(values).not.toHaveProperty('originalMonomerItem');
+    expect(values).not.toHaveProperty('modificationTypes');
+    expect(values).not.toHaveProperty('aliasAxoLabs');
+    expect(values).not.toHaveProperty('idtAliases');
   });
 });
 

@@ -18,9 +18,8 @@
     &:not(:last-child)::after {
       content: '';
       position: absolute;
-      left: 0;
+      inset-inline: 0;
       bottom: 0;
-      right: 0;
       height: 1px;
       margin: 0 auto;
       background-color: @color-grey-5;
@@ -40,16 +39,17 @@
 
   :global(.MuiAccordionDetails-root) {
     background-color: @color-primary-light;
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     box-shadow: inset 0 -2px 8px 0 @color-accordion-shadow;
     padding: 12px 14px 4px;
   }
 
   :global(.MuiButtonBase-root.MuiAccordionSummary-root.Mui-expanded),
-  :global(.MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters) {
+  :global(
+    .MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters
+  ) {
     min-height: 40px;
     height: 40px;
-    padding-left: 12px;
+    padding-inline-start: 12px;
   }
 
   .expandIcon {

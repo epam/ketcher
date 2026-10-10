@@ -1,8 +1,11 @@
 declare module 'ketcher-react' {
   import type * as React from 'react';
+  import type { i18n as I18nInstance } from 'i18next';
 
   export type IconName = string;
   export type PresetPosition = string;
+
+  export const i18n: I18nInstance;
 
   export const Icon: React.ComponentType<Record<string, unknown>>;
   export const IconButton: React.ComponentType<Record<string, unknown>>;

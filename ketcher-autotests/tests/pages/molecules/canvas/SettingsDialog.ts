@@ -81,6 +81,8 @@ type ReactionsSectionLocators = {
 type ValidationSectionLocators = {
   ignoreStereochemistryErrorsSwitcher: Locator;
   ignorePseudoatomsAtMassSwitcher: Locator;
+  skipSuperatomsAtAromatizationSwitcher: Locator;
+  dearomatizeOnFileLoadSwitcher: Locator;
 };
 
 type ThreeDViewerSectionLocators = {
@@ -246,6 +248,12 @@ export const SettingsDialog = (page: Page) => {
       ),
       ignorePseudoatomsAtMassSwitcher: page.getByTestId(
         ServerSetting.IgnorePseudoatomsAtMass,
+      ),
+      skipSuperatomsAtAromatizationSwitcher: page.getByTestId(
+        ServerSetting.SkipSuperatomsAtAromatization,
+      ),
+      dearomatizeOnFileLoadSwitcher: page.getByTestId(
+        ServerSetting.DearomatizeOnFileLoad,
       ),
     },
   );

@@ -13,5 +13,5 @@ export const OpenFileWrapper = styled.div<OpenFileWrapperProps>`
 `;
 
 export const CancelButton = styled(ActionButton)`
-  margin-right: auto;
+  margin-inline-end: auto;
 `;

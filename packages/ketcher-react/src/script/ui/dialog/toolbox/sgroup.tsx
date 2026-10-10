@@ -16,6 +16,7 @@
 
 import Form, { SelectOneOf } from '../../component/form/form/form';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { sgroupMap as schemes } from '../../data/schema/struct-schema';
 import { Dialog, type DialogParams } from '../../views/components';
 import SDataFieldset from './SDataFieldset';
@@ -50,6 +51,7 @@ interface SgroupProps extends SgroupOwnProps {
 
 function Sgroup({ formState, ...props }: Readonly<SgroupProps>) {
   const { result, valid } = formState;
+  const { t } = useTranslation(['common', 'dialogs']);
 
   const type = result.type;
   const availableSchemes = schemes;
@@ -71,12 +73,12 @@ function Sgroup({ formState, ...props }: Readonly<SgroupProps>) {
 
   return (
     <Dialog
-      title="S-Group Properties"
+      title={t('dialogs:toolbox.sgroupDialog.dialogTitle')}
       className={classes.sgroup}
       result={() => result}
       valid={() => valid}
       buttons={['Cancel', 'OK']}
-      buttonsNameMap={{ OK: 'Apply' }}
+      buttonsNameMap={{ OK: t('common:button.apply') }}
       withDivider={true}
       params={props}
     >
@@ -91,7 +93,10 @@ function Sgroup({ formState, ...props }: Readonly<SgroupProps>) {
           name="type"
           schema={availableSchemes}
           data-testid="s-group-type"
-          {...({ title: 'Type' } as Record<string, unknown>)}
+          {...({ title: t('dialogs:toolbox.sgroupDialog.typeLabel') } as Record<
+            string,
+            unknown
+          >)}
         />
 
         {type === 'DAT' ? (

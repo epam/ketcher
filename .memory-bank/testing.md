@@ -459,5 +459,9 @@ Every new feature must have e2e tests that cover:
 - File format round-trip (if applicable)
 - Switching between editor modes (if applicable)
 
+### E2E Test Plans
+
+Before writing a **new spec file or folder** of E2E tests, draft an E2E test plan following [e2e-test-plan-template.md](./e2e-test-plan-template.md) and get user approval before writing spec code. The template covers structure (requirements table, verified codebase facts, infrastructure, per-file test case tables, verification strategy, fixtures, phased implementation with a spike phase, open questions) and lessons learned from past planning exercises.
+
 ## Other rules to follow
 - Run tests after implementation to ensure they pass and do what they are supposed to do.

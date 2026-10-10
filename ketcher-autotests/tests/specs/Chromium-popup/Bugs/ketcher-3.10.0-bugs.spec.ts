@@ -383,6 +383,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
       page,
       'KET/Chromium-popup/Bugs/ketcher-3.10.0-bugs/benzene-ring.ket',
     );
+    await clickInTheMiddleOfTheCanvas(page);
     await deselectAtomAndBonds(page);
     await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
     await LeftToolbar(page).createMonomer();

@@ -1,4 +1,5 @@
 import { Item } from 'react-contexify';
+import { useTranslation } from 'react-i18next';
 import {
   useMultitailArrowTailsAdd,
   useMultitailArrowTailsRemove,
@@ -11,6 +12,7 @@ import type {
 export function MultitailArrowMenuItems(
   props: Readonly<MenuItemsProps<MultitailArrowContextMenuProps>>,
 ) {
+  const { t } = useTranslation('components');
   const { addTail, isAddTailDisabled } = useMultitailArrowTailsAdd();
   const { removeTail, removeTailHidden } = useMultitailArrowTailsRemove();
   return (
@@ -21,7 +23,7 @@ export function MultitailArrowMenuItems(
         onClick={removeTail}
         hidden={removeTailHidden}
       >
-        Remove tail
+        {t('contextMenu.removeTail')}
       </Item>
       <Item
         {...props}
@@ -29,7 +31,7 @@ export function MultitailArrowMenuItems(
         onClick={addTail}
         disabled={isAddTailDisabled}
       >
-        Add new tail
+        {t('contextMenu.addNewTail')}
       </Item>
     </>
   );

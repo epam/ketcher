@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { Item, Submenu } from 'react-contexify';
+import { useTranslation } from 'react-i18next';
 import MenuSeparator from '../MenuSeparator';
 import tools from '../../../../action/tools';
 import styles from '../ContextMenu.module.less';
@@ -11,7 +12,7 @@ import useDelete from '../hooks/useDelete';
 import useCreateMonomer from '../hooks/useCreateMonomer';
 import useMarkAs from '../hooks/useMarkAs';
 import {
-  formatTitle,
+  getBondTypeName,
   getBondNames,
   monomerWizardDisallowedBondNames,
 } from '../utils';
@@ -34,6 +35,7 @@ const bondNames = getBondNames(tools);
 const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   props,
 ) => {
+  const { t } = useTranslation(['toolbar', 'components', 'common']);
   const { ketcherId } = useAppContext();
   const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
   const [handleBondEdit, bondEditDisabled] = useBondEdit();
@@ -70,7 +72,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
         <Submenu
           {...props}
           data-testid="Mark as a...-option"
-          label="Mark as a..."
+          label={t('components:contextMenu.markAsMenu')}
           disabled={markAsDisabled}
           className={styles.subMenu}
         >
@@ -83,7 +85,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
               name="base"
               className={clsx(styles.icon, styles.markAsComponentIcon)}
             />
-            <span>Base</span>
+            <span>{t('common:monomerType.base')}</span>
           </Item>
           <Item
             {...props}
@@ -94,7 +96,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
               name="sugar"
               className={clsx(styles.icon, styles.markAsComponentIcon)}
             />
-            <span>Sugar</span>
+            <span>{t('common:monomerType.sugar')}</span>
           </Item>
           <Item
             {...props}
@@ -105,7 +107,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
               name="phosphate"
               className={clsx(styles.icon, styles.markAsComponentIcon)}
             />
-            <span>Phosphate</span>
+            <span>{t('common:monomerType.phosphate')}</span>
           </Item>
         </Submenu>
       )}
@@ -116,7 +118,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
         disabled={bondEditDisabled}
         onClick={handleBondEdit}
       >
-        Edit selected bonds...
+        {t('components:contextMenu.editSelectedBondsEllipsis')}
       </Item>
 
       <Item
@@ -125,13 +127,13 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
         disabled={atomEditDisabled}
         onClick={handleAtomEdit}
       >
-        Edit selected atoms...
+        {t('components:contextMenu.editSelectedAtomsEllipsis')}
       </Item>
 
       <Submenu
         {...props}
         data-testid="Bond type-option"
-        label="Bond type"
+        label={t('components:contextMenu.bondTypeMenu')}
         disabled={bondTypeChangeDisabled}
         className={styles.subMenu}
       >
@@ -148,7 +150,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
               disabled={isDisabledForMonomerWizard}
             >
               {iconName && <Icon name={iconName} className={styles.icon} />}
-              <span>{formatTitle(tools[name].title ?? '')}</span>
+              <span>{getBondTypeName(tools[name], t)}</span>
             </Item>
           );
         })}
@@ -161,7 +163,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
           onClick={handleCreateMonomer}
           disabled={createMonomerDisabled}
         >
-          Create a monomer
+          {t('components:contextMenu.createMonomerAction')}
         </Item>
       )}
 
@@ -171,12 +173,12 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
         disabled={atomStereoDisabled}
         onClick={handleAtomStereo}
       >
-        Enhanced stereochemistry...
+        {t('components:contextMenu.enhancedStereochemistryEllipsis')}
       </Item>
       <HighlightMenu onHighlight={highlightBondWithColor} />
       <MenuSeparator />
       <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
-        Delete
+        {t('common:delete')}
       </Item>
     </>
   );

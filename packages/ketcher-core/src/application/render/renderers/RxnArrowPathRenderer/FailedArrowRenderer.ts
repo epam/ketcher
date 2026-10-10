@@ -22,7 +22,7 @@ export class FailedArrowRenderer {
 
     const pathParts: string[] = [];
 
-    // Arrow with arrowhead
+    // Arrow with arrowhead and failed sign lines
     pathParts.push(
       `M${toFixed(start.x)},${toFixed(start.y)}` +
         `L${toFixed(endX)},${toFixed(start.y)}` +
@@ -36,20 +36,12 @@ export class FailedArrowRenderer {
           start.y - arrowHeadWidth,
         )}` +
         `L${toFixed(endX)},${toFixed(start.y)}Z`,
-    );
-
-    // Failed sign line 1
-    pathParts.push(
       `M${toFixed(arrowCenter + failSignWidth)},${toFixed(
         start.y + failSignWidth,
       )}` +
         `L${toFixed(arrowCenter - failSignWidth)},${toFixed(
           start.y - failSignWidth,
         )}`,
-    );
-
-    // Failed sign line 2
-    pathParts.push(
       `M${toFixed(arrowCenter + failSignWidth)},${toFixed(
         start.y - failSignWidth,
       )}` +

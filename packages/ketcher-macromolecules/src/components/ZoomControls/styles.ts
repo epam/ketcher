@@ -8,11 +8,11 @@ export const ElementAndDropdown = styled('div')`
 export const DropDownButton = styled(Button)`
   display: flex;
   color: ${({ theme }) => theme.ketcher.color.dropdown.primary};
-  padding-right: 0;
-  padding-left: 0;
+  padding-inline-end: 0;
+  padding-inline-start: 0;
 
   & svg {
-    margin-left: 2px;
+    margin-inline-start: 2px;
     width: 1rem;
     height: 1rem;
   }

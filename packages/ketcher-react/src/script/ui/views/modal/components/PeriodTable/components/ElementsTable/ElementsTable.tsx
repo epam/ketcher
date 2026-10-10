@@ -19,13 +19,14 @@ import { Component } from 'react';
 
 import { type Element, Elements } from 'ketcher-core';
 import styles from './ElementsTable.module.less';
+import i18n from 'src/i18n/i18n';
 
-const metalPrefix = [
+const metalPrefix = new Set([
   'alkali',
   'alkaline-earth',
   'transition',
   'post-transition',
-]; // 'lanthanide', 'actinide'
+]); // 'lanthanide', 'actinide'
 const atomClassNames = {
   metal: 'metal',
   unknownProps: 'unknown-props',
@@ -95,7 +96,7 @@ class ElementsTable extends Component<ElementsTableProps> {
   getAtomClassNames = (item: Element): string[] => {
     const { selected } = this.props;
 
-    const type = metalPrefix.includes(item.type ?? '')
+    const type = metalPrefix.has(item.type ?? '')
       ? `${item.type} ${atomClassNames.metal}`
       : (item.type ?? atomClassNames.unknownProps);
 
@@ -118,7 +119,7 @@ class ElementsTable extends Component<ElementsTableProps> {
     return (
       <table
         className={styles.table}
-        summary="Periodic table of the chemical elements"
+        summary={i18n.t('dialogs:periodTable.tableSummary')}
       >
         <Header />
         {main.map((row, index) => (

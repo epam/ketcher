@@ -94,4 +94,21 @@ describe('ReAtom selection contour with an invRet annotation', () => {
     expect(width).toBeCloseTo(10 + padding * 2);
     expect(rectHeight).toBeCloseTo(height + padding * 2);
   });
+
+  it('unions multiple label boxes without including the annotation', () => {
+    const reatom = createReatom();
+    reatom.visel.boxes.splice(1, 0, new Box2Abs(5, -5, 15, 5));
+    (reatom as unknown as { labelBoxCount: number }).labelBoxCount = 2;
+    const rect = jest.fn();
+
+    reatom.getSelectionContour(createFakeRender(rect));
+
+    expect(rect).toHaveBeenCalledWith(
+      -5 - padding,
+      -5 - padding,
+      20 + padding * 2,
+      height + padding * 2,
+      fontszInPx * radiusScaleFactor * 2,
+    );
+  });
 });

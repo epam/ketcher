@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,14 +15,13 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
+import { forwardRef } from 'react';
 import { scrollbarThin } from 'theming/mixins';
-import { useEffect, useRef } from 'react';
 
 export type TextEditorProps = {
   value: string;
   inputHandler?: (str: string) => void;
   readonly?: boolean;
-  selectOnInit?: boolean;
   className?: string;
   testId?: string;
 };
@@ -49,30 +47,21 @@ const StyledTextarea = styled.textarea`
   ${({ theme }) => scrollbarThin(theme)};
 `;
 
-export const TextArea = ({
-  value,
-  inputHandler,
-  readonly = false,
-  selectOnInit = false,
-  className,
-  testId,
-}: TextEditorProps) => {
-  const textArea = useRef<HTMLTextAreaElement>(null);
+export const TextArea = forwardRef<HTMLTextAreaElement, TextEditorProps>(
+  ({ value, inputHandler, readonly = false, className, testId }, ref) => {
+    return (
+      <StyledTextarea
+        value={value}
+        readOnly={readonly}
+        onChange={
+          inputHandler ? (event) => inputHandler(event.target.value) : undefined
+        }
+        ref={ref}
+        className={className}
+        data-testid={testId}
+      />
+    );
+  },
+);
 
-  useEffect(() => {
-    if (selectOnInit) {
-      textArea.current?.select();
-    }
-  }, [textArea, value, selectOnInit]);
-
-  return (
-    <StyledTextarea
-      value={value}
-      readOnly={readonly}
-      onChange={inputHandler && ((event) => inputHandler(event.target.value))}
-      ref={textArea}
-      className={className}
-      data-testid={testId}
-    />
-  );
-};
+TextArea.displayName = 'TextArea';

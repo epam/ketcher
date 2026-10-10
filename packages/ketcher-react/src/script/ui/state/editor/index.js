@@ -133,7 +133,7 @@ export default function initEditor(dispatch, getState, ketcherId) {
         // list/not-list and all other pseudo elements share this dialog flow
         dlg = openDialog(
           dispatch,
-          !elem.pseudo ? 'period-table' : 'extended-table',
+          elem.pseudo ? 'extended-table' : 'period-table',
           { ...elem, pseudo: elem.pseudo },
         );
       }

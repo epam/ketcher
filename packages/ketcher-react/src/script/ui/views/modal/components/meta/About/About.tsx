@@ -19,6 +19,7 @@ import Logo from './logo.svg';
 import classes from './About.module.less';
 import { connect } from 'react-redux';
 import { Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
 
 const FEEDBACK_URL =
@@ -40,6 +41,7 @@ interface AboutDialogProps {
 }
 
 function AboutDialog(props: Readonly<AboutDialogProps>) {
+  const { t } = useTranslation('dialogs');
   const indigoInfo = props.indigoVersion?.split('.r') || []; // Indigo version and build info
 
   const dialogParams: DialogParams = {
@@ -58,7 +60,7 @@ function AboutDialog(props: Readonly<AboutDialogProps>) {
           key="ok"
           data-testid="ok-button"
         >
-          Ok
+          {t('meta.about.ok')}
         </button>,
       ]}
     >
@@ -77,11 +79,11 @@ function AboutDialog(props: Readonly<AboutDialogProps>) {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Version {props.version}
+                {t('meta.about.version', { value: props.version })}
               </a>
             </dt>
             <dd data-testid="build-time">
-              Build at <time>{props.date}</time>
+              {t('meta.about.buildAt')} <time>{props.date}</time>
             </dd>
             <div className={classes.infoLinks}>
               <dt>
@@ -90,7 +92,7 @@ function AboutDialog(props: Readonly<AboutDialogProps>) {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Feedback
+                  {t('meta.about.feedback')}
                 </a>
               </dt>
               <dt>
@@ -99,7 +101,7 @@ function AboutDialog(props: Readonly<AboutDialogProps>) {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  EPAM Life Sciences
+                  {t('meta.about.epamLifeSciences')}
                 </a>
               </dt>
             </div>
@@ -107,18 +109,20 @@ function AboutDialog(props: Readonly<AboutDialogProps>) {
             <div className={classes.indigoVersion}>
               <a href={INDIGO_URL} target="_blank" rel="noopener noreferrer">
                 {' '}
-                Indigo Toolkit
+                {t('meta.about.indigoToolkit')}
               </a>
               {props.indigoMachine && <div>{props.indigoMachine}</div>}
             </div>
             <div data-testid="build-indigo-version">
               {props.indigoVersion ? (
                 <Fragment>
-                  <dd>Version {indigoInfo[0]}</dd>
-                  {indigoInfo[1] && <dd>Build {indigoInfo[1]}</dd>}
+                  <dd>{t('meta.about.version', { value: indigoInfo[0] })}</dd>
+                  {indigoInfo[1] && (
+                    <dd>{t('meta.about.build', { value: indigoInfo[1] })}</dd>
+                  )}
                 </Fragment>
               ) : (
-                <p>Standalone</p>
+                <p>{t('meta.about.standalone')}</p>
               )}
             </div>
           </dl>

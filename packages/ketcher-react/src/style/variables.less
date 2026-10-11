@@ -43,6 +43,9 @@
 @color-input: escape(@color-primary);
 @color-input-hover-svg: escape(@color-button-primary-clicked);
 @color-input-default: escape(@color-grey-5);
+@color-input-disabled: escape(@color-grey-3);
+@color-input-checked-disabled-color: mix(@color-primary, @color-grey-3, 40%);
+@color-input-checked-disabled: escape(~'@{color-input-checked-disabled-color}');
 
 // new styles
 @color-primary-light: #eff2f5;

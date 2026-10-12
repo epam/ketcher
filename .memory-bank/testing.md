@@ -191,6 +191,8 @@ test('some test', async ({ page }) => {
 | `SnakeCanvas`     | Switch to macro editor, select Snake layout                                          | (similar to Flex)                                                      |
 | `SequenceCanvas`  | Switch to macro editor, select Sequence layout                                       | (similar to Flex)                                                      |
 
+**Caveat — history entries from fixture cleanup:** the `resetSettingsValuesToDefault` step of the canvas fixtures leaves **one entry in the undo/redo stack** (verified 2026-10-09: `clearCanvas` and `resetZoomLevelToDefault` leave none). Tests that assert undo/redo stack boundaries (e.g. "undo button disabled at history start") must account for this extra entry — loop until the button is disabled rather than hardcoding the expected undo count.
+
 ### `initXxxCanvas` Worker Fixtures
 
 Each canvas fixture also provides an `initXxxCanvas` worker fixture that creates a fresh page already initialized in the right mode. Used only in `test.beforeAll`.

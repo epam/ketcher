@@ -21,6 +21,7 @@ import {
 import {
   dragTo,
   MolFileFormat,
+  moveMouseAway,
   SdfFileFormat,
   SequenceFileFormat,
   shiftCanvas,
@@ -119,10 +120,10 @@ test('2. Check that tooltip appears on hovering to wizard button', async () => {
    */
   const createMonomerButton = LeftToolbar(page).createMonomerButton;
   await createMonomerButton.hover();
-  await expect(createMonomerButton).toHaveAttribute(
-    'title',
+  await expect(page.getByRole('tooltip')).toHaveText(
     'Create a monomer (Ctrl+M)',
   );
+  await moveMouseAway(page);
 });
 
 interface IMoleculesForMonomerCreation {

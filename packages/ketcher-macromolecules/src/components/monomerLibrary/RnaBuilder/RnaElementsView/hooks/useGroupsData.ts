@@ -19,7 +19,9 @@ export const useGroupsData = (libraryName: LibraryNameType) => {
   const items = selectMonomersInCategory(monomers, libraryName);
   const groups = selectMonomerGroups(items);
   const nucleotideItems = selectUnsplitNucleotides(monomers);
-  const nucleotideGroups = selectMonomerGroups(nucleotideItems);
+  const nucleotideGroups = selectMonomerGroups(nucleotideItems, {
+    groupUnknownAnalogueAsNone: true,
+  });
 
   return useMemo(
     () => [

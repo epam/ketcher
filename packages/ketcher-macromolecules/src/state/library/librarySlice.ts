@@ -34,6 +34,7 @@ import {
   IKetIdtAliases,
   IKetMonomerGroupTemplate,
   isAmbiguousMonomerLibraryItem,
+  NO_NATURAL_ANALOGUE,
 } from 'ketcher-core';
 import {
   LibraryNameType,
@@ -666,13 +667,21 @@ export const selectMonomers = (state: RootState) => {
   return state.library.monomers;
 };
 
-export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
+export const selectMonomerGroups = (
+  monomers: MonomerItemType[],
+  { groupUnknownAnalogueAsNone = false } = {},
+) => {
   const preparedData: Record<string, MonomerItemType[]> = monomers.reduce(
     (result, monomerItem) => {
       // separate monomers by NaturalAnalogCode
-      const code =
-        monomerItem.props.MonomerNaturalAnalogCode ||
-        NoNaturalAnalogueGroupCode;
+      const naturalAnalogCode = monomerItem.props.MonomerNaturalAnalogCode;
+      const hasNoNaturalAnalogue =
+        !naturalAnalogCode ||
+        (groupUnknownAnalogueAsNone &&
+          naturalAnalogCode === NO_NATURAL_ANALOGUE);
+      const code = hasNoNaturalAnalogue
+        ? NoNaturalAnalogueGroupCode
+        : naturalAnalogCode;
       if (!result[code]) {
         result[code] = [];
       }

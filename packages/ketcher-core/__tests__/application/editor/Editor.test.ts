@@ -24,12 +24,16 @@ import {
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
 } from 'utilities';
 
-import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import {
+  type NodeSelection,
+  SequenceRenderer,
+} from 'application/render/renderers/sequence/SequenceRenderer';
 import { SnakeMode } from 'application/editor/modes/SnakeMode';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { FlexMode } from 'application/editor/modes/FlexMode';
 import type { LibraryItemDragDropHandlerDeps } from 'application/editor/libraryItemDragDrop/LibraryItemDragDropHandler';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 
 type RescaleStructForModeTransitionContext = {
   micromoleculesEditor: {
@@ -1764,6 +1768,69 @@ describe('CoreEditor', () => {
       );
 
       monomerDomElement.remove();
+      if (initialGetBBox) {
+        svgElementWithBBox.getBBox = initialGetBBox;
+      } else {
+        Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
+      }
+    });
+
+    it('should select the right-clicked sequence item instead of the current selection', () => {
+      // editor defaults to sequence-layout-mode (DEFAULT_LAYOUT_MODE)
+      const svgElementWithBBox = SVGElement.prototype as SVGElement & {
+        getBBox?: () => DOMRect;
+      };
+      const initialGetBBox = svgElementWithBBox.getBBox;
+      svgElementWithBBox.getBBox = () =>
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
+
+      editor.renderersContainer.update(
+        editor.drawingEntitiesManager.addMonomer(
+          peptideMonomerItem,
+          new Vec2(0, 0),
+        ),
+      );
+      editor.renderersContainer.update(
+        editor.drawingEntitiesManager.addMonomer(
+          peptideMonomerItem,
+          new Vec2(10, 0),
+        ),
+      );
+      const [selectedMonomer, clickedMonomer] = [
+        ...editor.drawingEntitiesManager.monomers.values(),
+      ];
+      editor.drawingEntitiesManager.clearCanvas();
+      SequenceRenderer.show(
+        ChainsCollection.fromMonomers([selectedMonomer, clickedMonomer]),
+      );
+      editor.renderersContainer.update(
+        editor.drawingEntitiesManager.selectDrawingEntity(selectedMonomer),
+      );
+
+      const rightClickSequenceHandler = jest.fn();
+      editor.events.rightClickSequence.add(rightClickSequenceHandler);
+      const sequenceItemElement = document.createElement('div');
+      (sequenceItemElement as unknown as { __data__: unknown }).__data__ =
+        clickedMonomer.renderer;
+      rootElement.appendChild(sequenceItemElement);
+
+      sequenceItemElement.dispatchEvent(
+        new MouseEvent('contextmenu', {
+          bubbles: true,
+          clientX: 0,
+          clientY: 0,
+        }),
+      );
+
+      expect(selectedMonomer.selected).toBe(false);
+      expect(clickedMonomer.selected).toBe(true);
+      const [, selections] = rightClickSequenceHandler.mock.calls[0][0];
+      expect(
+        selections.flat().map(({ node }: NodeSelection) => node.monomer),
+      ).toEqual([clickedMonomer]);
+
+      SequenceRenderer.clear();
+      sequenceItemElement.remove();
       if (initialGetBBox) {
         svgElementWithBBox.getBBox = initialGetBBox;
       } else {

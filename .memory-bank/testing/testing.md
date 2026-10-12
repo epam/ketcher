@@ -481,7 +481,8 @@ Every new feature must have e2e tests that cover:
 
 ### E2E Test Plans
 
-Before writing a **new spec file or folder** of E2E tests, draft an E2E test plan following [e2e-test-plan-template.md](./e2e-test-plan-template.md) and get user approval before writing spec code. The template covers structure (requirements table, verified codebase facts, infrastructure, per-file test case tables, verification strategy, fixtures, phased implementation with a spike phase, open questions) and lessons learned from past planning exercises.
+- Before writing a **new spec file or folder** of E2E tests, draft an E2E test plan following [e2e-test-plan-template.md](./e2e-test-plan-template.md) and get user approval before writing spec code. The template covers structure (requirements table, verified codebase facts, infrastructure, per-file test case tables, verification strategy, fixtures, phased implementation with a spike phase, open questions) and lessons learned from past planning exercises.
+- **Keep `.memory-bank/testing/` current:** when you learn a reusable lesson about E2E testing or planning (a gotcha, a new helper, a pattern trade-off), add it to the right file — `testing/testing.md` for how-to-write guidance, `testing/e2e-test-plan-template.md` for planning-process lessons. Do this as you go and again when you finish writing/planning tests, so future sessions inherit the knowledge.
 
 ## Other rules to follow
 - Run tests after implementation to ensure they pass and do what they are supposed to do.

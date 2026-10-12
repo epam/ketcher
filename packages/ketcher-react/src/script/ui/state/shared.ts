@@ -227,6 +227,11 @@ export function load(struct: string | Struct, options?) {
           dispatch(removeStructAction());
           dispatch(showSnackbarNotification('No structure'));
         } else {
+          // Zoom before the paste tool places the preview: a later zoom change
+          // would leave it away from the cursor until the mouse moves
+          if (!preserveViewport) {
+            editor.zoomAccordingContent(parsedStruct);
+          }
           dispatch(onAction({ tool: 'paste', opts: parsedStruct }));
         }
       } else {
@@ -234,10 +239,9 @@ export function load(struct: string | Struct, options?) {
         if (parsedStruct.isBlank()) {
           dispatch(showSnackbarNotification('No structure'));
         }
-      }
-
-      if (!preserveViewport) {
-        editor.zoomAccordingContent(parsedStruct);
+        if (!preserveViewport) {
+          editor.zoomAccordingContent(parsedStruct);
+        }
       }
 
       const isIndigoFunctionCalled = !!method;

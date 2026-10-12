@@ -44,7 +44,6 @@ import { fromSgroupAddition } from './sgroup';
 import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type { Image } from 'domain/entities/image';
-import { getOrThrow } from '../../../utilities';
 import { KetcherLogger } from 'utilities';
 
 export type CreatedItems = {
@@ -353,67 +352,32 @@ function getStructCenter(struct: Struct): Vec2 {
       }
     }
   }
-  if (struct.atoms.size > 0) {
-    let xmin = 1e50;
-    let ymin = xmin;
-    let xmax = -xmin;
-    let ymax = -ymin;
+  // Center of the whole content, so mixed content (e.g. a reaction with text
+  // or images) lands centered under the cursor, not just its molecules.
+  // Struct.getCoordBoundingBox() is not used: it skips images and multi-tailed
+  // arrows and returns a non-empty default box for a struct without its items.
+  // Text adds only its anchor point: its size is known only after rendering.
+  const points: Vec2[] = [];
+  struct.atoms.forEach((atom) => points.push(atom.pp));
+  struct.rxnArrows.forEach((rxnArrow) => points.push(...rxnArrow.pos));
+  struct.rxnPluses.forEach((rxnPlus) => points.push(rxnPlus.pp));
+  struct.simpleObjects.forEach((simpleObject) =>
+    points.push(...simpleObject.pos),
+  );
+  struct.texts.forEach((text) => points.push(text.position));
+  struct.images.forEach((image) => {
+    const { topLeftPosition, bottomRightPosition } =
+      image.getReferencePositions();
+    points.push(topLeftPosition, bottomRightPosition);
+  });
+  struct.multitailArrows.forEach((multitailArrow) =>
+    points.push(...multitailArrow.getReferencePositionsArray()),
+  );
 
-    struct.atoms.forEach((atom) => {
-      xmin = Math.min(xmin, atom.pp.x);
-      ymin = Math.min(ymin, atom.pp.y);
-      xmax = Math.max(xmax, atom.pp.x);
-      ymax = Math.max(ymax, atom.pp.y);
-    });
-    return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2);
-  }
-  if (struct.rxnArrows.size > 0) {
-    const rxnArrow = getOrThrow(
-      struct.rxnArrows,
-      0,
-      'getStructCenter: rxnArrows pool is missing id 0',
-    );
-    return rxnArrow.center();
-  }
-  if (struct.rxnPluses.size > 0) {
-    const rxnPlus = getOrThrow(
-      struct.rxnPluses,
-      0,
-      'getStructCenter: rxnPluses pool is missing id 0',
-    );
-    return rxnPlus.pp;
-  }
-  if (struct.simpleObjects.size > 0) {
-    const simpleObject = getOrThrow(
-      struct.simpleObjects,
-      0,
-      'getStructCenter: simpleObjects pool is missing id 0',
-    );
-    return simpleObject.center();
-  }
-  if (struct.texts.size > 0) {
-    const text = getOrThrow(
-      struct.texts,
-      0,
-      'getStructCenter: texts pool is missing id 0',
-    );
-    return text.position;
-  }
-  if (struct.images.size > 0) {
-    const image = getOrThrow(
-      struct.images,
-      0,
-      'getStructCenter: images pool is missing id 0',
-    );
-    return image.center();
-  }
-  if (struct.multitailArrows.size > 0) {
-    const multitailArrow = getOrThrow(
-      struct.multitailArrows,
-      0,
-      'getStructCenter: multitailArrows pool is missing id 0',
-    );
-    return multitailArrow.center();
+  if (points.length > 0) {
+    const min = points.reduce((acc, point) => Vec2.min(acc, point));
+    const max = points.reduce((acc, point) => Vec2.max(acc, point));
+    return Vec2.centre(min, max);
   }
 
   return new Vec2(0, 0);

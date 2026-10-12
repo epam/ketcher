@@ -15,15 +15,17 @@
  ***************************************************************************/
 
 import isHidden from './isHidden';
+import type { UiAction } from './action.types';
 
-const openHelpLink = () =>
+const openHelpLink = (): void => {
   window
     .open(
       `https://github.com/epam/ketcher/blob/${process.env.HELP_LINK}/documentation/help.md#ketcher-overview`,
     )
     ?.focus();
+};
 
-export default {
+const helpActions: Record<'help', UiAction> = {
   help: {
     enabledInViewOnly: true,
     shortcut: ['?', '&', 'Shift+/'],
@@ -31,3 +33,5 @@ export default {
     hidden: (options) => isHidden(options, 'help'),
   },
 };
+
+export default helpActions;

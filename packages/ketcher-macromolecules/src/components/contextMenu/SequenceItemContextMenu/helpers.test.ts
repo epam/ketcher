@@ -15,6 +15,7 @@
  ***************************************************************************/
 import cloneDeep from 'lodash/cloneDeep';
 import i18next from 'i18next';
+import * as ketcherCore from 'ketcher-core';
 import {
   Nucleotide,
   Nucleoside,
@@ -24,6 +25,11 @@ import {
   MonomerSequenceNode,
   Entities,
   NodesSelection,
+  STRAND_TYPE,
+  PolymerBond,
+  HydrogenBond,
+  AttachmentPointName,
+  KetMonomerClass,
 } from 'ketcher-core';
 import { generateSequenceContextMenuProps } from 'components/contextMenu/SequenceItemContextMenu/helpers';
 import macromoleculesDialogs from '../../../locales/en/macromoleculesDialogs.json';
@@ -40,6 +46,12 @@ i18nTestInstance.init({
   interpolation: { escapeValue: false, prefix: '{', suffix: '}' },
 });
 const t = i18nTestInstance.getFixedT('en', 'macromoleculesDialogs');
+
+const setSyncEditMode = (isSyncEditMode: boolean) => {
+  jest.spyOn(ketcherCore, 'provideEditorInstance').mockReturnValue({
+    mode: { isSyncEditMode },
+  } as unknown as ketcherCore.CoreEditor);
+};
 
 const instanceOfNucleotide = Object.create(Nucleotide.prototype);
 const instanceOfNucleoside = Object.create(Nucleoside.prototype);
@@ -222,7 +234,173 @@ const mockedSelections3Elements = [
   ],
 ];
 
+// Create mock nodes with antisense property - sense nodes
+const senseNodeNucleotide1 = cloneDeep(
+  Object.assign(instanceOfNucleotide, {
+    phosphate: Object.assign(instanceOfPhosphate, {
+      monomerItem: {
+        label: 'P',
+      },
+    }),
+    rnaBase: Object.assign(instanceOfRNABase, {
+      monomerItem: {
+        label: 'A',
+      },
+    }),
+    sugar: Object.assign(instanceOfSugar, {
+      attachmentPointsToBonds: {
+        R1: null,
+      },
+      monomerItem: {
+        label: 'R',
+      },
+    }),
+  }),
+);
+
+const senseNodeNucleotide2 = cloneDeep(
+  Object.assign(instanceOfNucleotide, {
+    phosphate: Object.assign(instanceOfPhosphate, {
+      monomerItem: {
+        label: 'P',
+      },
+    }),
+    rnaBase: Object.assign(instanceOfRNABase, {
+      monomerItem: {
+        label: 'C',
+      },
+    }),
+    sugar: Object.assign(instanceOfSugar, {
+      attachmentPointsToBonds: {
+        R1: {
+          id: 1,
+        },
+      },
+      monomerItem: {
+        label: 'R',
+      },
+    }),
+  }),
+);
+
+// Create antisense nodes
+const antisenseNodeNucleotide1 = cloneDeep(
+  Object.assign(instanceOfNucleotide, {
+    phosphate: Object.assign(instanceOfPhosphate, {
+      monomerItem: {
+        label: 'P',
+      },
+    }),
+    rnaBase: Object.assign(instanceOfRNABase, {
+      monomerItem: {
+        label: 'T',
+      },
+    }),
+    sugar: Object.assign(instanceOfSugar, {
+      attachmentPointsToBonds: {
+        R1: null,
+      },
+      monomerItem: {
+        label: 'R',
+      },
+    }),
+  }),
+);
+
+const antisenseNodeNucleotide2 = cloneDeep(
+  Object.assign(instanceOfNucleotide, {
+    phosphate: Object.assign(instanceOfPhosphate, {
+      monomerItem: {
+        label: 'P',
+      },
+    }),
+    rnaBase: Object.assign(instanceOfRNABase, {
+      monomerItem: {
+        label: 'G',
+      },
+    }),
+    sugar: Object.assign(instanceOfSugar, {
+      attachmentPointsToBonds: {
+        R1: {
+          id: 1,
+        },
+      },
+      monomerItem: {
+        label: 'R',
+      },
+    }),
+  }),
+);
+
+// Mock selection where both sense and antisense nodes are selected
+// This simulates the output after the fix in Editor.ts where both sense and antisense
+// nodes are included as separate selections
+const mockedSelectionsWithAntisense = [
+  [
+    {
+      node: senseNodeNucleotide1,
+      nodeIndexOverall: 0,
+      hasR1Connection: false,
+      twoStrandedNode: {
+        senseNode: senseNodeNucleotide1,
+        senseNodeIndex: 0,
+        chain: {},
+        antisenseNode: antisenseNodeNucleotide1,
+        antisenseNodeIndex: 0,
+        antisenseChain: {},
+      },
+    },
+    {
+      node: antisenseNodeNucleotide1,
+      nodeIndexOverall: 0,
+      hasR1Connection: false,
+      twoStrandedNode: {
+        senseNode: senseNodeNucleotide1,
+        senseNodeIndex: 0,
+        chain: {},
+        antisenseNode: antisenseNodeNucleotide1,
+        antisenseNodeIndex: 0,
+        antisenseChain: {},
+      },
+    },
+    {
+      node: senseNodeNucleotide2,
+      nodeIndexOverall: 1,
+      hasR1Connection: true,
+      twoStrandedNode: {
+        senseNode: senseNodeNucleotide2,
+        senseNodeIndex: 1,
+        chain: {},
+        antisenseNode: antisenseNodeNucleotide2,
+        antisenseNodeIndex: 1,
+        antisenseChain: {},
+      },
+    },
+    {
+      node: antisenseNodeNucleotide2,
+      nodeIndexOverall: 1,
+      hasR1Connection: true,
+      twoStrandedNode: {
+        senseNode: senseNodeNucleotide2,
+        senseNodeIndex: 1,
+        chain: {},
+        antisenseNode: antisenseNodeNucleotide2,
+        antisenseNodeIndex: 1,
+        antisenseChain: {},
+      },
+    },
+  ],
+];
+
 describe('SequenceItemContextMenu helpers', () => {
+  beforeEach(() => {
+    setSyncEditMode(false);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it('should return undefined if no entry data', () => {
     const result = generateSequenceContextMenuProps(undefined, t);
     expect(result).toBeUndefined();
@@ -238,7 +416,6 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: true,
       isSequenceFirstsOnlyNucleoelementsSelected: true,
-      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Nucleotide,
@@ -250,7 +427,8 @@ describe('SequenceItemContextMenu helpers', () => {
           sugarLabel: 'R',
           nodeIndexOverall: 0,
           hasR1Connection: false,
-          hasAntisense: false,
+          strandType: STRAND_TYPE.SENSE,
+          isInSelectedAntisensePair: false,
         },
       ],
     };
@@ -268,7 +446,6 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: true,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
-      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Nucleotide,
@@ -280,7 +457,8 @@ describe('SequenceItemContextMenu helpers', () => {
           sugarLabel: 'R',
           nodeIndexOverall: 1,
           hasR1Connection: true,
-          hasAntisense: false,
+          strandType: STRAND_TYPE.SENSE,
+          isInSelectedAntisensePair: false,
         },
       ],
     };
@@ -298,7 +476,6 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: true,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
-      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Nucleoside,
@@ -310,7 +487,8 @@ describe('SequenceItemContextMenu helpers', () => {
           },
           isNucleosideConnectedAndSelectedWithPhosphate: undefined,
           hasR1Connection: true,
-          hasAntisense: false,
+          strandType: STRAND_TYPE.SENSE,
+          isInSelectedAntisensePair: false,
         },
       ],
     };
@@ -328,7 +506,6 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: true,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
-      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Nucleotide,
@@ -340,7 +517,8 @@ describe('SequenceItemContextMenu helpers', () => {
             label: 'A',
           },
           hasR1Connection: false,
-          hasAntisense: false,
+          strandType: STRAND_TYPE.SENSE,
+          isInSelectedAntisensePair: false,
         },
         {
           type: Entities.Nucleotide,
@@ -352,7 +530,8 @@ describe('SequenceItemContextMenu helpers', () => {
             label: 'C',
           },
           hasR1Connection: true,
-          hasAntisense: false,
+          strandType: STRAND_TYPE.SENSE,
+          isInSelectedAntisensePair: false,
         },
       ],
     };
@@ -370,7 +549,6 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: true,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
-      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Nucleoside,
@@ -382,13 +560,15 @@ describe('SequenceItemContextMenu helpers', () => {
           },
           hasR1Connection: true,
           isNucleosideConnectedAndSelectedWithPhosphate: true,
-          hasAntisense: false,
+          strandType: STRAND_TYPE.SENSE,
+          isInSelectedAntisensePair: false,
         },
         {
           type: Entities.Phosphate,
           phosphateLabel: 'P',
           nodeIndexOverall: 2,
-          hasAntisense: false,
+          strandType: STRAND_TYPE.SENSE,
+          isInSelectedAntisensePair: false,
         },
       ],
     };
@@ -406,13 +586,13 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: false,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
-      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Phosphate,
           phosphateLabel: 'P',
           nodeIndexOverall: 2,
-          hasAntisense: false,
+          strandType: STRAND_TYPE.SENSE,
+          isInSelectedAntisensePair: false,
         },
         {
           type: Entities.Nucleoside,
@@ -424,7 +604,8 @@ describe('SequenceItemContextMenu helpers', () => {
           },
           hasR1Connection: true,
           isNucleosideConnectedAndSelectedWithPhosphate: false,
-          hasAntisense: false,
+          strandType: STRAND_TYPE.SENSE,
+          isInSelectedAntisensePair: false,
         },
       ],
     };
@@ -442,7 +623,6 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: false,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
-      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           baseLabel: 'A',
@@ -454,7 +634,8 @@ describe('SequenceItemContextMenu helpers', () => {
           sugarLabel: 'R',
           type: Entities.Nucleotide,
           hasR1Connection: false,
-          hasAntisense: false,
+          strandType: STRAND_TYPE.SENSE,
+          isInSelectedAntisensePair: false,
         },
         {
           baseLabel: 'C',
@@ -466,13 +647,15 @@ describe('SequenceItemContextMenu helpers', () => {
           sugarLabel: 'R',
           type: Entities.Nucleotide,
           hasR1Connection: true,
-          hasAntisense: false,
+          strandType: STRAND_TYPE.SENSE,
+          isInSelectedAntisensePair: false,
         },
         {
           nodeIndexOverall: 2,
           phosphateLabel: 'P',
           type: Entities.Phosphate,
-          hasAntisense: false,
+          strandType: STRAND_TYPE.SENSE,
+          isInSelectedAntisensePair: false,
         },
       ],
     };
@@ -480,173 +663,197 @@ describe('SequenceItemContextMenu helpers', () => {
     expect(result).toStrictEqual(expectedResult);
   });
 
-  it('should return correct count for sense and antisense chain selection', () => {
-    // Create mock nodes with antisense property - sense nodes
-    const senseNodeNucleotide1 = cloneDeep(
-      Object.assign(instanceOfNucleotide, {
-        phosphate: Object.assign(instanceOfPhosphate, {
-          monomerItem: {
-            label: 'P',
-          },
-        }),
-        rnaBase: Object.assign(instanceOfRNABase, {
-          monomerItem: {
-            label: 'A',
-          },
-        }),
-        sugar: Object.assign(instanceOfSugar, {
-          attachmentPointsToBonds: {
-            R1: null,
-          },
-          monomerItem: {
-            label: 'R',
-          },
-        }),
-      }),
-    );
-
-    const senseNodeNucleotide2 = cloneDeep(
-      Object.assign(instanceOfNucleotide, {
-        phosphate: Object.assign(instanceOfPhosphate, {
-          monomerItem: {
-            label: 'P',
-          },
-        }),
-        rnaBase: Object.assign(instanceOfRNABase, {
-          monomerItem: {
-            label: 'C',
-          },
-        }),
-        sugar: Object.assign(instanceOfSugar, {
-          attachmentPointsToBonds: {
-            R1: {
-              id: 1,
-            },
-          },
-          monomerItem: {
-            label: 'R',
-          },
-        }),
-      }),
-    );
-
-    // Create antisense nodes
-    const antisenseNodeNucleotide1 = cloneDeep(
-      Object.assign(instanceOfNucleotide, {
-        phosphate: Object.assign(instanceOfPhosphate, {
-          monomerItem: {
-            label: 'P',
-          },
-        }),
-        rnaBase: Object.assign(instanceOfRNABase, {
-          monomerItem: {
-            label: 'T',
-          },
-        }),
-        sugar: Object.assign(instanceOfSugar, {
-          attachmentPointsToBonds: {
-            R1: null,
-          },
-          monomerItem: {
-            label: 'R',
-          },
-        }),
-      }),
-    );
-
-    const antisenseNodeNucleotide2 = cloneDeep(
-      Object.assign(instanceOfNucleotide, {
-        phosphate: Object.assign(instanceOfPhosphate, {
-          monomerItem: {
-            label: 'P',
-          },
-        }),
-        rnaBase: Object.assign(instanceOfRNABase, {
-          monomerItem: {
-            label: 'G',
-          },
-        }),
-        sugar: Object.assign(instanceOfSugar, {
-          attachmentPointsToBonds: {
-            R1: {
-              id: 1,
-            },
-          },
-          monomerItem: {
-            label: 'R',
-          },
-        }),
-      }),
-    );
-
-    // Mock selection where both sense and antisense nodes are selected
-    // This simulates the output after the fix in Editor.ts where both sense and antisense
-    // nodes are included as separate selections
-    const mockedSelectionsWithAntisense = [
-      [
-        {
-          node: senseNodeNucleotide1,
-          nodeIndexOverall: 0,
-          hasR1Connection: false,
-          twoStrandedNode: {
-            senseNode: senseNodeNucleotide1,
-            senseNodeIndex: 0,
-            chain: {},
-            antisenseNode: antisenseNodeNucleotide1,
-            antisenseNodeIndex: 0,
-            antisenseChain: {},
-          },
-        },
-        {
-          node: antisenseNodeNucleotide1,
-          nodeIndexOverall: 0,
-          hasR1Connection: false,
-          twoStrandedNode: {
-            senseNode: senseNodeNucleotide1,
-            senseNodeIndex: 0,
-            chain: {},
-            antisenseNode: antisenseNodeNucleotide1,
-            antisenseNodeIndex: 0,
-            antisenseChain: {},
-          },
-        },
-        {
-          node: senseNodeNucleotide2,
-          nodeIndexOverall: 1,
-          hasR1Connection: true,
-          twoStrandedNode: {
-            senseNode: senseNodeNucleotide2,
-            senseNodeIndex: 1,
-            chain: {},
-            antisenseNode: antisenseNodeNucleotide2,
-            antisenseNodeIndex: 1,
-            antisenseChain: {},
-          },
-        },
-        {
-          node: antisenseNodeNucleotide2,
-          nodeIndexOverall: 1,
-          hasR1Connection: true,
-          twoStrandedNode: {
-            senseNode: senseNodeNucleotide2,
-            senseNodeIndex: 1,
-            chain: {},
-            antisenseNode: antisenseNodeNucleotide2,
-            antisenseNodeIndex: 1,
-            antisenseChain: {},
-          },
-        },
-      ],
-    ];
-
+  it('should return correct count when both strands of N positions are selected', () => {
     const result = generateSequenceContextMenuProps(
       mockedSelectionsWithAntisense as unknown as NodesSelection,
       t,
     );
 
-    // When both sense and antisense are selected, we should get 4 nucleotides
+    // 2 duplex positions with both strands selected: 2 * 2 nucleotides.
     expect(result?.title).toBe('4 nucleotides');
-    expect(result?.hasAntisense).toBe(true);
     expect(result?.selectedSequenceLabeledNodes).toHaveLength(4);
+  });
+
+  it('should return correct count when N positions are selected on one strand', () => {
+    const senseOnlySelections = [
+      mockedSelectionsWithAntisense[0].filter(
+        ({ twoStrandedNode, node }) => twoStrandedNode?.senseNode === node,
+      ),
+    ];
+    const result = generateSequenceContextMenuProps(
+      senseOnlySelections as unknown as NodesSelection,
+      t,
+    );
+
+    expect(result?.title).toBe('2 nucleotides');
+    expect(result?.selectedSequenceLabeledNodes).toHaveLength(2);
+  });
+
+  it('marks each labeled node with the strand it was selected from', () => {
+    const result = generateSequenceContextMenuProps(
+      mockedSelectionsWithAntisense as unknown as NodesSelection,
+      t,
+    );
+
+    expect(
+      result?.selectedSequenceLabeledNodes.map((node) => node.strandType),
+    ).toEqual([
+      STRAND_TYPE.SENSE,
+      STRAND_TYPE.ANTISENSE,
+      STRAND_TYPE.SENSE,
+      STRAND_TYPE.ANTISENSE,
+    ]);
+  });
+
+  describe('isInSelectedAntisensePair', () => {
+    // Builds a real RNABase wired to a real Sugar through the R1/R3 pairing
+    // (and, unless withBackbone is false, the sugar on to a real Phosphate
+    // through R2/R1), so isBaseEligibleForDuplexSync can walk the actual
+    // domain graph instead of a label-only fixture.
+    const createConnectedBase = ({
+      label,
+      selected,
+      withBackbone = true,
+    }: {
+      label: string;
+      selected: boolean;
+      withBackbone?: boolean;
+    }) => {
+      const base = Object.assign(Object.create(RNABase.prototype), {
+        monomerItem: { label, props: { MonomerClass: KetMonomerClass.Base } },
+        attachmentPointsToBonds: {},
+        hydrogenBonds: [],
+        selected,
+      }) as RNABase;
+
+      const sugar = Object.assign(Object.create(Sugar.prototype), {
+        monomerItem: {
+          label: 'R',
+          props: { MonomerClass: KetMonomerClass.Sugar },
+        },
+        attachmentPointsToBonds: {},
+        hydrogenBonds: [],
+      }) as Sugar;
+
+      const baseSugarBond = new PolymerBond(base, sugar);
+      base.setBond(AttachmentPointName.R1, baseSugarBond);
+      sugar.setBond(AttachmentPointName.R3, baseSugarBond);
+
+      if (withBackbone) {
+        const phosphate = Object.assign(Object.create(Phosphate.prototype), {
+          monomerItem: {
+            label: 'P',
+            props: { MonomerClass: KetMonomerClass.Phosphate },
+          },
+          attachmentPointsToBonds: {},
+          hydrogenBonds: [],
+        }) as Phosphate;
+
+        const backboneBond = new PolymerBond(sugar, phosphate);
+        sugar.setBond(AttachmentPointName.R2, backboneBond);
+        phosphate.setBond(AttachmentPointName.R1, backboneBond);
+      }
+
+      const nucleotide = Object.assign(Object.create(Nucleotide.prototype), {
+        rnaBase: base,
+        sugar,
+      });
+
+      return { base, nucleotide };
+    };
+
+    const linkHydrogenBond = (baseA: RNABase, baseB: RNABase) => {
+      const hydrogenBond = new HydrogenBond(baseA, baseB);
+      baseA.setBond(AttachmentPointName.HYDROGEN, hydrogenBond);
+      baseB.setBond(AttachmentPointName.HYDROGEN, hydrogenBond);
+    };
+
+    const selectionFor = (nucleotide: Nucleotide) => [
+      [{ node: nucleotide, nodeIndexOverall: 0, hasR1Connection: false }],
+    ];
+
+    it('is true when both hydrogen-bonded, eligible bases are selected and sync editing is on', () => {
+      setSyncEditMode(true);
+      const sense = createConnectedBase({ label: 'A', selected: true });
+      const antisense = createConnectedBase({ label: 'T', selected: true });
+      linkHydrogenBond(sense.base, antisense.base);
+
+      const result = generateSequenceContextMenuProps(
+        selectionFor(sense.nucleotide) as unknown as NodesSelection,
+        t,
+      );
+
+      expect(
+        result?.selectedSequenceLabeledNodes[0].isInSelectedAntisensePair,
+      ).toBe(true);
+    });
+
+    it('is false when only the sense side of the pair is selected', () => {
+      setSyncEditMode(true);
+      const sense = createConnectedBase({ label: 'A', selected: true });
+      const antisense = createConnectedBase({ label: 'T', selected: false });
+      linkHydrogenBond(sense.base, antisense.base);
+
+      const result = generateSequenceContextMenuProps(
+        selectionFor(sense.nucleotide) as unknown as NodesSelection,
+        t,
+      );
+
+      expect(
+        result?.selectedSequenceLabeledNodes[0].isInSelectedAntisensePair,
+      ).toBe(false);
+    });
+
+    it('is false when both bases are selected but are not hydrogen bonded to each other', () => {
+      setSyncEditMode(true);
+      const sense = createConnectedBase({ label: 'A', selected: true });
+      // Deliberately not linked with linkHydrogenBond.
+      createConnectedBase({ label: 'T', selected: true });
+
+      const result = generateSequenceContextMenuProps(
+        selectionFor(sense.nucleotide) as unknown as NodesSelection,
+        t,
+      );
+
+      expect(
+        result?.selectedSequenceLabeledNodes[0].isInSelectedAntisensePair,
+      ).toBe(false);
+    });
+
+    it('is false when the partner base is hydrogen bonded but its sugar has no backbone connection', () => {
+      setSyncEditMode(true);
+      const sense = createConnectedBase({ label: 'A', selected: true });
+      const antisense = createConnectedBase({
+        label: 'T',
+        selected: true,
+        withBackbone: false,
+      });
+      linkHydrogenBond(sense.base, antisense.base);
+
+      const result = generateSequenceContextMenuProps(
+        selectionFor(sense.nucleotide) as unknown as NodesSelection,
+        t,
+      );
+
+      expect(
+        result?.selectedSequenceLabeledNodes[0].isInSelectedAntisensePair,
+      ).toBe(false);
+    });
+
+    it('is false when both strands are selected but sync editing is off', () => {
+      setSyncEditMode(false);
+      const sense = createConnectedBase({ label: 'A', selected: true });
+      const antisense = createConnectedBase({ label: 'T', selected: true });
+      linkHydrogenBond(sense.base, antisense.base);
+
+      const result = generateSequenceContextMenuProps(
+        selectionFor(sense.nucleotide) as unknown as NodesSelection,
+        t,
+      );
+
+      expect(
+        result?.selectedSequenceLabeledNodes[0].isInSelectedAntisensePair,
+      ).toBe(false);
+    });
   });
 });

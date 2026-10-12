@@ -175,8 +175,6 @@ class ReSimpleObject extends ReObject {
           new Vec2(p0.x + w, p0.y + 0.5 * h),
           new Vec2(p0.x + 0.5 * w, p0.y + h),
           new Vec2(p0.x, p0.y + 0.5 * h),
-        );
-        refPoints.push(
           p0,
           new Vec2(p0.x, p0.y + h),
           new Vec2(p0.x + w, p0.y + h),
@@ -365,23 +363,15 @@ class ReSimpleObject extends ReObject {
           'M',
           p0.x + ((k * scaleFactor) / 8) * Math.sin(angle),
           p0.y - ((k * scaleFactor) / 8) * Math.cos(angle),
-        );
-        poly.push(
           'L',
           p1.x + ((k * scaleFactor) / 8) * Math.sin(angle),
           p1.y - ((k * scaleFactor) / 8) * Math.cos(angle),
-        );
-        poly.push(
           'L',
           p1.x - ((k * scaleFactor) / 8) * Math.sin(angle),
           p1.y + ((k * scaleFactor) / 8) * Math.cos(angle),
-        );
-        poly.push(
           'L',
           p0.x - ((k * scaleFactor) / 8) * Math.sin(angle),
           p0.y + ((k * scaleFactor) / 8) * Math.cos(angle),
-        );
-        poly.push(
           'L',
           p0.x + ((k * scaleFactor) / 8) * Math.sin(angle),
           p0.y - ((k * scaleFactor) / 8) * Math.cos(angle),

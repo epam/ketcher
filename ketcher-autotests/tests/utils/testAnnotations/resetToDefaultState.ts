@@ -59,14 +59,16 @@ export const processResetToDefaultState = async (
     return;
   }
 
-  const resetActions = testInfo.annotations
-    .filter((a) => a.type === 'reset')
-    .map((a) => a.description as ResetStateType);
+  const resetActions = new Set(
+    testInfo.annotations
+      .filter((a) => a.type === 'reset')
+      .map((a) => a.description as ResetStateType),
+  );
 
   for (const resetTypeStr in resetStateTypes) {
     const resetType = resetTypeStr as ResetStateType;
 
-    if (resetActions.includes(resetType)) {
+    if (resetActions.has(resetType)) {
       await resetStateTypes[resetType](page);
     }
   }

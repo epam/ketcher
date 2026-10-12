@@ -19,17 +19,13 @@ export class UnbalancedEquilibriumOpenHalfAngleArrowRenderer {
     const endX = start.x + arrowLength;
     const pathParts: string[] = [];
 
-    // First arrow
+    // First and second (unbalanced) arrows
     pathParts.push(
       `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
         `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
         `L${toFixed(endX - arrowHeadLength)},${toFixed(
           start.y - arrowHeadWidth - arrowOffset,
         )}`,
-    );
-
-    // Second (Unbalanced) arrow
-    pathParts.push(
       `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
         `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
         `M${toFixed(start.x + unbalanceVal)},${toFixed(

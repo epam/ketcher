@@ -19,6 +19,7 @@
 
 import { useTranslation } from 'react-i18next';
 import {
+  BASE_MODIFICATION_DISABLED_IN_SYNC_MODE,
   buildRnaPresetConnections,
   Entities,
   getRnaPresetPhosphatePosition,
@@ -49,6 +50,7 @@ import {
   selectCurrentMonomerGroup,
   selectActivePresetMonomerGroup,
   selectActiveRnaBuilderItem,
+  selectIsBaseModificationBlocked,
   selectIsPresetReadyToSave,
   selectAllPresets,
   setActivePreset,
@@ -78,10 +80,14 @@ import {
   generateSequenceSelectionGroupNames,
   generateSequenceSelectionName,
   resetRnaBuilder,
+  isUpdateSequenceConfirmationNeeded,
   resetRnaBuilderAfterSequenceUpdate,
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 import { openModal } from 'state/modal';
-import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
+import {
+  getCountOfMirroredNucleoelements,
+  getCountOfNucleoelements,
+} from 'helpers/countNucleoelents';
 import clsx from 'clsx';
 import Tooltip from '@mui/material/Tooltip';
 import {
@@ -190,6 +196,9 @@ export const RnaEditorExpanded = ({
   const sequenceSelectionName = useAppSelector(selectSequenceSelectionName);
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
+  );
+  const isBaseModificationBlocked = useAppSelector(
+    selectIsBaseModificationBlocked,
   );
   const [isSequenceSelectionUpdated, setIsSequenceSelectionUpdated] =
     useState<boolean>(false);
@@ -348,6 +357,14 @@ export const RnaEditorExpanded = ({
   };
 
   const selectGroup = (selectedGroup) => () => {
+    if (
+      selectedGroup === MonomerGroups.BASES &&
+      isBaseModificationBlocked &&
+      isSequenceEditInRNABuilderMode
+    ) {
+      editor?.events.error.dispatch(BASE_MODIFICATION_DISABLED_IN_SYNC_MODE);
+    }
+
     const selectedRNAPartMonomer = selectCurrentMonomerGroup(
       newPreset,
       selectedGroup,
@@ -547,7 +564,12 @@ export const RnaEditorExpanded = ({
   };
 
   const onUpdateSequence = () => {
-    if (getCountOfNucleoelements(sequenceSelection) > 1) {
+    if (
+      isUpdateSequenceConfirmationNeeded(
+        getCountOfNucleoelements(sequenceSelection),
+        getCountOfMirroredNucleoelements(editor, sequenceSelection),
+      )
+    ) {
       dispatch(openModal('updateSequenceInRNABuilder'));
     } else {
       editor?.events.modifySequenceInRnaBuilder.dispatch(sequenceSelection);

@@ -475,9 +475,7 @@ export class SGroup {
     const onlySaltsOrSolvents = sgroupsOnCanvas.filter((sgroup) =>
       this.isSaltOrSolvent(sgroup.data.name),
     );
-    return onlySaltsOrSolvents.some(({ atoms }) =>
-      atoms.some((atomIdInSaltOrSolvent) => atomIdInSaltOrSolvent === atomId),
-    );
+    return onlySaltsOrSolvents.some(({ atoms }) => atoms.includes(atomId));
   }
 
   static isBondInSaltOrSolvent(

@@ -156,11 +156,11 @@ class RotateController {
 
   private show() {
     const originalCenter = this.rotateTool.getCenter();
-    const selection = this.editor.selection();
+    const selection = this.editor.explicitSelected();
     const visibleAtoms =
       this.render.ctab.molecule.getSelectedVisibleAtoms(selection);
 
-    const { texts, rxnArrows, rxnPluses, multitailArrows } = selection || {};
+    const { texts, rxnArrows, rxnPluses, multitailArrows } = selection;
 
     const isMoreThanOneItemBeingSelected =
       visibleAtoms.concat(
@@ -190,8 +190,8 @@ class RotateController {
       texts,
       rxnArrows,
       rxnPluses,
-      selection?.bonds,
-      selection?.rgroupAttachmentPoints,
+      selection.bonds,
+      selection.rgroupAttachmentPoints,
       multitailArrows,
     );
 

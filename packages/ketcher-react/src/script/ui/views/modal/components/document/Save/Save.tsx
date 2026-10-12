@@ -444,18 +444,20 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     }
 
     if (moleculeErrors) {
-      const filteredMoleculeErrors = Object.values(moleculeErrors).filter(
-        (error) => {
-          if (
-            format === SupportedFormat.smarts ||
-            format === SupportedFormat.ket
-          ) {
-            return !error.includes('Structure contains query features');
-          } else {
-            return true;
-          }
-        },
-      );
+      const filteredMoleculeErrors = Object.values(
+        structFormat.filterAttachmentPointStereoWarnings(
+          struct,
+          moleculeErrors,
+        ),
+      ).filter((error) => {
+        if (
+          format === SupportedFormat.smarts ||
+          format === SupportedFormat.ket
+        ) {
+          return !error.includes('Structure contains query features');
+        }
+        return true;
+      });
       warnings.push(...filteredMoleculeErrors);
     }
     return warnings;

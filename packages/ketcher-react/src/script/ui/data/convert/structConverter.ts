@@ -195,3 +195,82 @@ export function couldBeSaved(
 
   return null;
 }
+
+const undefinedStereoConfigurationPattern =
+  /Structure contains stereocenters with undefined stereo configuration:\s*\(([^)]*)\)/i;
+
+/**
+ * Indigo can report superatom attachment atoms as stereocenters even though
+ * their configuration is intentionally unspecified. Ignore that warning only
+ * when every reported atom is an S-group attachment atom.
+ */
+export function filterAttachmentPointStereoWarnings(
+  struct: Struct,
+  moleculeErrors: Record<string, string>,
+): Record<string, string> {
+  const attachmentAtomIds = new Set<number>();
+  const superatomsWithAttachmentPoints: Array<{
+    atomIds: number[];
+    attachmentPointCount: number;
+  }> = [];
+  struct.sgroups.forEach((sgroup) => {
+    if (sgroup.type !== 'SUP') return;
+    const attachmentPoints = sgroup.getAttachmentPoints();
+    attachmentPoints.forEach(({ atomId }) => attachmentAtomIds.add(atomId));
+    if (attachmentPoints.length > 0) {
+      superatomsWithAttachmentPoints.push({
+        atomIds: sgroup.atoms,
+        attachmentPointCount: attachmentPoints.length,
+      });
+    }
+  });
+
+  if (attachmentAtomIds.size === 0) return moleculeErrors;
+
+  const atomIdMap = new Map<number, number>();
+  struct.clone(null, null, false, atomIdMap);
+  const remappedAttachmentAtomIds = new Set(
+    Array.from(attachmentAtomIds)
+      .map((atomId) => atomIdMap.get(atomId))
+      .filter((atomId): atomId is number => atomId !== undefined),
+  );
+  const remappedSuperatoms = superatomsWithAttachmentPoints.map(
+    ({ atomIds, attachmentPointCount }) => ({
+      atomIds: new Set(
+        atomIds
+          .map((atomId) => atomIdMap.get(atomId))
+          .filter((atomId): atomId is number => atomId !== undefined),
+      ),
+      attachmentPointCount,
+    }),
+  );
+
+  return Object.entries(moleculeErrors).reduce<Record<string, string>>(
+    (filteredErrors, [errorType, error]) => {
+      const match = undefinedStereoConfigurationPattern.exec(error);
+      const reportedAtomIds = match?.[1]
+        .split(',')
+        .map((atomId) => Number(atomId.trim()));
+      const isOnlyAttachmentPointStereoWarning =
+        reportedAtomIds?.length &&
+        (reportedAtomIds.every(
+          (atomId) =>
+            Number.isInteger(atomId) && remappedAttachmentAtomIds.has(atomId),
+        ) ||
+          remappedSuperatoms.some(
+            ({ atomIds, attachmentPointCount }) =>
+              reportedAtomIds.length === attachmentPointCount &&
+              reportedAtomIds.every(
+                (atomId) => Number.isInteger(atomId) && atomIds.has(atomId),
+              ),
+          ));
+
+      if (!isOnlyAttachmentPointStereoWarning) {
+        filteredErrors[errorType] = error;
+      }
+
+      return filteredErrors;
+    },
+    {},
+  );
+}

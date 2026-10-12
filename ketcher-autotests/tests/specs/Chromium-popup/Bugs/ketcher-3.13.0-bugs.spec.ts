@@ -532,6 +532,10 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await page.mouse.move(298, 710, { steps: 8 });
     await page.mouse.up();
 
+    // Wait for the canvas to stabilize after scroll-heavy interaction before
+    // taking the screenshot, to avoid flakiness caused by in-flight repaints.
+    await page.waitForTimeout(500);
+
     // Visual result validation: screenshot of the entire canvas
     await takeEditorScreenshot(page);
   });

@@ -588,7 +588,14 @@ class Editor implements KetcherEditor {
     return this.render.options.zoom;
   }
 
-  centerStruct() {
+  /**
+   * Moves the structure so that its center is in the center of the view.
+   *
+   * @param viewportElement optional element that covers the part of the
+   * canvas the structure should be centered in (e.g. the area left free by
+   * the monomer creation wizard's panels). The whole canvas is used if omitted.
+   */
+  centerStruct(viewportElement?: HTMLElement) {
     const structure = this.render.ctab;
 
     /*
@@ -603,12 +610,8 @@ class Editor implements KetcherEditor {
     }
 
     const structCenter = getStructCenter(structure);
-    const viewBoxCenter = new Vec2(
-      this.render.viewBox.minX + this.render.viewBox.width / 2,
-      this.render.viewBox.minY + this.render.viewBox.height / 2,
-    );
     const viewBoxCenterInProto = Scale.canvasToModel(
-      viewBoxCenter,
+      this.getViewportCenterInCanvas(viewportElement),
       this.render.options,
     );
     const shiftVector = viewBoxCenterInProto.sub(structCenter);
@@ -619,6 +622,27 @@ class Editor implements KetcherEditor {
     this.update(action, true);
   }
 
+  private getViewportCenterInCanvas(viewportElement?: HTMLElement): Vec2 {
+    const { viewBox, options } = this.render;
+
+    if (!viewportElement) {
+      return new Vec2(
+        viewBox.minX + viewBox.width / 2,
+        viewBox.minY + viewBox.height / 2,
+      );
+    }
+
+    const clientAreaRect = this.render.clientArea.getBoundingClientRect();
+    const viewportRect = viewportElement.getBoundingClientRect();
+    const viewportLeft = viewportRect.left - clientAreaRect.left;
+    const viewportTop = viewportRect.top - clientAreaRect.top;
+
+    return new Vec2(
+      viewBox.minX + (viewportLeft + viewportRect.width / 2) / options.zoom,
+      viewBox.minY + (viewportTop + viewportRect.height / 2) / options.zoom,
+    );
+  }
+
   /**
    * Zooms and centers the structure loaded into the monomer creation wizard
    * so that it fits the area left free by the wizard's panels.
@@ -626,23 +650,13 @@ class Editor implements KetcherEditor {
    * @param viewportElement the element that covers the available viewport
    */
   public fitStructToMonomerCreationViewport(viewportElement: HTMLElement) {
-    const structure = this.render.ctab;
-
-    if (structure.molecule.atoms.size === 0) {
+    if (this.render.ctab.molecule.atoms.size === 0) {
       return;
     }
 
-    if (!this.render.viewBox.width || !this.render.viewBox.height) {
-      this.render.resizeViewBox();
-    }
-
-    const clientAreaRect = this.render.clientArea.getBoundingClientRect();
     const viewportRect = viewportElement.getBoundingClientRect();
-    const viewportLeft = viewportRect.left - clientAreaRect.left;
-    const viewportTop = viewportRect.top - clientAreaRect.top;
-    const structBoundingBox = structure.molecule.getCoordBoundingBox();
     const newZoom = this.getMonomerCreationWizardZoom({
-      structBoundingBox,
+      structBoundingBox: this.render.ctab.molecule.getCoordBoundingBox(),
       microModeScale: this.render.options.microModeScale,
       viewportWidth: viewportRect.width,
       viewportHeight: viewportRect.height,
@@ -654,27 +668,7 @@ class Editor implements KetcherEditor {
       this.event.zoomChanged.dispatch();
     }
 
-    const { viewBox, options } = this.render;
-    const viewportCenterInCanvas = new Vec2(
-      viewBox.minX + (viewportLeft + viewportRect.width / 2) / options.zoom,
-      viewBox.minY + (viewportTop + viewportRect.height / 2) / options.zoom,
-    );
-    const viewportCenterInModel = Scale.canvasToModel(
-      viewportCenterInCanvas,
-      options,
-    );
-    const structCenter = new Vec2(
-      (structBoundingBox.min.x + structBoundingBox.max.x) / 2,
-      (structBoundingBox.min.y + structBoundingBox.max.y) / 2,
-    );
-    const shiftVector = viewportCenterInModel.sub(structCenter);
-
-    const action = fromMultipleMove(
-      structure,
-      getSelectionMap(structure),
-      shiftVector,
-    );
-    this.update(action, true);
+    this.centerStruct(viewportElement);
   }
 
   public centerViewportAccordingToStruct(struct: Struct = this.struct()) {

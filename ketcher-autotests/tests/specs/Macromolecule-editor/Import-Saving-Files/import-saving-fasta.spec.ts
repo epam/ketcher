@@ -140,6 +140,21 @@ test.describe('Import-Saving .fasta Files', () => {
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
+  // Should not convert to Fasta type when canvas has a mix of RNA and DNA sequences
+  // https://github.com/epam/ketcher/issues/4321
+  test('Should not convert .ket file with mixed RNA and DNA to .fasta format and show error', async () => {
+    await openFileAndAddToCanvasMacro(page, 'KET/dna-rna-separate.ket');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.FASTA,
+    );
+    const convertErrorMessage =
+      await ErrorMessageDialog(page).getErrorMessage();
+    const expectedErrorMessage =
+      'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
+    expect(convertErrorMessage).toEqual(expectedErrorMessage);
+  });
+
   // const testData = [
   //   {
   //     filename: 'FASTA/fasta-dna-24.fasta',

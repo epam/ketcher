@@ -3036,6 +3036,8 @@ export class DrawingEntitiesManager {
 
     const monomerTypes: Set<string | undefined> = new Set();
     let isValid = true;
+    let hasRnaContent = false;
+    let hasDnaContent = false;
 
     this.monomers.forEach((monomer) => {
       let monomerType = monomer.monomerItem.props.MonomerType;
@@ -3050,7 +3052,32 @@ export class DrawingEntitiesManager {
       if (monomerType === MONOMER_CONST.CHEM || monomerTypes.size > 1) {
         isValid = false;
       }
+
+      // Both RNA and DNA share MonomerType='RNA', so we must check the sugar
+      // label (split nucleotides) or MonomerClass (unsplit nucleotides) to
+      // detect a forbidden mix of RNA and DNA sequences on the canvas.
+      if (monomer instanceof Sugar) {
+        if (monomer.monomerItem.label === RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA) {
+          hasRnaContent = true;
+        } else if (
+          monomer.monomerItem.label === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA
+        ) {
+          hasDnaContent = true;
+        }
+      } else if (monomer instanceof UnsplitNucleotide) {
+        if (monomer.monomerItem.props.MonomerClass === KetMonomerClass.RNA) {
+          hasRnaContent = true;
+        } else if (
+          monomer.monomerItem.props.MonomerClass === KetMonomerClass.DNA
+        ) {
+          hasDnaContent = true;
+        }
+      }
     });
+
+    if (hasRnaContent && hasDnaContent) {
+      isValid = false;
+    }
 
     return isValid;
   }

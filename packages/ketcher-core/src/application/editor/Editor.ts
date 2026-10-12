@@ -1299,8 +1299,12 @@ export class CoreEditor {
         event.clientY <= canvasBoundingClientRect.bottom;
 
       // A right-click outside the selection selects the clicked item the same
-      // way a click does, so the menu is offered for it, as in Micro mode
-      if (eventData instanceof BaseSequenceItemRenderer) {
+      // way a click does, so the menu is offered for it, as in Micro mode.
+      // Without any selection the menu keeps Copy and Delete disabled (#6472)
+      if (
+        eventData instanceof BaseSequenceItemRenderer &&
+        this.drawingEntitiesManager.selectedEntitiesArr.length > 0
+      ) {
         const clickedMonomers = [
           eventData.twoStrandedNode.senseNode?.monomer,
           eventData.twoStrandedNode.antisenseNode?.monomer,

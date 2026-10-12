@@ -34,6 +34,7 @@ import { FlexMode } from 'application/editor/modes/FlexMode';
 import type { LibraryItemDragDropHandlerDeps } from 'application/editor/libraryItemDragDrop/LibraryItemDragDropHandler';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 type RescaleStructForModeTransitionContext = {
   micromoleculesEditor: {
@@ -1775,67 +1776,92 @@ describe('CoreEditor', () => {
       }
     });
 
-    it('should select the right-clicked sequence item instead of the current selection', () => {
-      // editor defaults to sequence-layout-mode (DEFAULT_LAYOUT_MODE)
+    describe('right-click on a sequence item (#4446)', () => {
       const svgElementWithBBox = SVGElement.prototype as SVGElement & {
         getBBox?: () => DOMRect;
       };
-      const initialGetBBox = svgElementWithBBox.getBBox;
-      svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
+      let initialGetBBox: (() => DOMRect) | undefined;
+      let firstMonomer: BaseMonomer;
+      let secondMonomer: BaseMonomer;
+      let rightClickSequenceHandler: jest.Mock;
 
-      editor.renderersContainer.update(
-        editor.drawingEntitiesManager.addMonomer(
-          peptideMonomerItem,
-          new Vec2(0, 0),
-        ),
-      );
-      editor.renderersContainer.update(
-        editor.drawingEntitiesManager.addMonomer(
-          peptideMonomerItem,
-          new Vec2(10, 0),
-        ),
-      );
-      const [selectedMonomer, clickedMonomer] = [
-        ...editor.drawingEntitiesManager.monomers.values(),
-      ];
-      editor.drawingEntitiesManager.clearCanvas();
-      SequenceRenderer.show(
-        ChainsCollection.fromMonomers([selectedMonomer, clickedMonomer]),
-      );
-      editor.renderersContainer.update(
-        editor.drawingEntitiesManager.selectDrawingEntity(selectedMonomer),
-      );
+      const rightClick = (monomer: BaseMonomer) => {
+        const sequenceItemElement = document.createElement('div');
+        (sequenceItemElement as unknown as { __data__: unknown }).__data__ =
+          monomer.renderer;
+        rootElement.appendChild(sequenceItemElement);
+        sequenceItemElement.dispatchEvent(
+          new MouseEvent('contextmenu', {
+            bubbles: true,
+            clientX: 0,
+            clientY: 0,
+          }),
+        );
+        sequenceItemElement.remove();
+      };
 
-      const rightClickSequenceHandler = jest.fn();
-      editor.events.rightClickSequence.add(rightClickSequenceHandler);
-      const sequenceItemElement = document.createElement('div');
-      (sequenceItemElement as unknown as { __data__: unknown }).__data__ =
-        clickedMonomer.renderer;
-      rootElement.appendChild(sequenceItemElement);
+      const getMenuSelection = () => {
+        const [, selections] = rightClickSequenceHandler.mock.calls[0][0];
+        return selections.flat().map(({ node }: NodeSelection) => node.monomer);
+      };
 
-      sequenceItemElement.dispatchEvent(
-        new MouseEvent('contextmenu', {
-          bubbles: true,
-          clientX: 0,
-          clientY: 0,
-        }),
-      );
+      beforeEach(() => {
+        // editor defaults to sequence-layout-mode (DEFAULT_LAYOUT_MODE)
+        initialGetBBox = svgElementWithBBox.getBBox;
+        svgElementWithBBox.getBBox = () =>
+          ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
-      expect(selectedMonomer.selected).toBe(false);
-      expect(clickedMonomer.selected).toBe(true);
-      const [, selections] = rightClickSequenceHandler.mock.calls[0][0];
-      expect(
-        selections.flat().map(({ node }: NodeSelection) => node.monomer),
-      ).toEqual([clickedMonomer]);
+        editor.renderersContainer.update(
+          editor.drawingEntitiesManager.addMonomer(
+            peptideMonomerItem,
+            new Vec2(0, 0),
+          ),
+        );
+        editor.renderersContainer.update(
+          editor.drawingEntitiesManager.addMonomer(
+            peptideMonomerItem,
+            new Vec2(10, 0),
+          ),
+        );
+        [firstMonomer, secondMonomer] = [
+          ...editor.drawingEntitiesManager.monomers.values(),
+        ];
+        editor.drawingEntitiesManager.clearCanvas();
+        SequenceRenderer.show(
+          ChainsCollection.fromMonomers([firstMonomer, secondMonomer]),
+        );
 
-      SequenceRenderer.clear();
-      sequenceItemElement.remove();
-      if (initialGetBBox) {
-        svgElementWithBBox.getBBox = initialGetBBox;
-      } else {
-        Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
-      }
+        rightClickSequenceHandler = jest.fn();
+        editor.events.rightClickSequence.add(rightClickSequenceHandler);
+      });
+
+      afterEach(() => {
+        SequenceRenderer.clear();
+        if (initialGetBBox) {
+          svgElementWithBBox.getBBox = initialGetBBox;
+        } else {
+          Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
+        }
+      });
+
+      it('should select the clicked item instead of the current selection', () => {
+        editor.renderersContainer.update(
+          editor.drawingEntitiesManager.selectDrawingEntity(firstMonomer),
+        );
+
+        rightClick(secondMonomer);
+
+        expect(firstMonomer.selected).toBe(false);
+        expect(secondMonomer.selected).toBe(true);
+        expect(getMenuSelection()).toEqual([secondMonomer]);
+      });
+
+      it('should keep the selection empty when nothing is selected (#6472)', () => {
+        rightClick(secondMonomer);
+
+        expect(secondMonomer.selected).toBeFalsy();
+        expect(getMenuSelection()).toEqual([]);
+      });
     });
 
     it('should clear selection and dispatch rightClickCanvas in flex mode on right-click on empty canvas', () => {

@@ -25,7 +25,7 @@ import {
 import { modalComponentList } from 'components/modal/modalContainer';
 import { openModal } from 'state/modal';
 import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
-import { BaseMonomer } from 'ketcher-core';
+import { BaseMonomer, shortcutStr } from 'ketcher-core';
 import {
   hasOnlyDeoxyriboseSugars,
   hasOnlyRiboseSugars,
@@ -118,6 +118,18 @@ export function TopMenuComponent() {
       );
     } else if (name === 'arrange-ring') {
       editor?.events.layoutCircular.dispatch();
+    } else if (name === 'copy') {
+      editor?.events.copySelectedStructure.dispatch();
+    } else if (name === 'copy-ket') {
+      editor?.events.copySelectedStructureAs.dispatch('ket');
+    } else if (name === 'copy-mol') {
+      editor?.events.copySelectedStructureAs.dispatch('mol');
+    } else if (name === 'copy-image') {
+      editor?.events.copySelectedStructureAs.dispatch('image');
+    } else if (name === 'cut') {
+      editor?.events.cutSelectedStructure.dispatch();
+    } else if (name === 'paste') {
+      editor?.events.pasteFromClipboard.dispatch();
     }
   };
 
@@ -157,6 +169,56 @@ export function TopMenuComponent() {
           title={t('topMenu.redo', { shortcut: hotkeysShortcuts.redo })}
           disabled={isDisabled}
           testId="redo"
+        />
+      </Menu.Group>
+      <Menu.Group isHorizontal={true} divider={true}>
+        <Menu.Submenu
+          disabled={isDisabled || !selectedEntities?.length}
+          testId="copy-dropdown-button"
+          activeItem="copy"
+        >
+          <Menu.Item
+            itemId="copy"
+            title={t('topMenu.copy', { shortcut: shortcutStr('Mod+c') })}
+            disabled={isDisabled || !selectedEntities?.length}
+            testId="copy-button"
+          />
+          <Menu.Item
+            itemId="copy-ket"
+            title={t('topMenu.copyAsKet', {
+              shortcut: shortcutStr('Mod+Shift+k'),
+            })}
+            disabled={isDisabled || !selectedEntities?.length}
+            testId="copy-ket-button"
+          />
+          <Menu.Item
+            itemId="copy-mol"
+            title={t('topMenu.copyAsMol', {
+              shortcut: shortcutStr('Mod+Shift+m'),
+            })}
+            disabled={isDisabled || !selectedEntities?.length}
+            testId="copy-mol-button"
+          />
+          <Menu.Item
+            itemId="copy-image"
+            title={t('topMenu.copyImage', {
+              shortcut: shortcutStr('Mod+Shift+f'),
+            })}
+            disabled={isDisabled || !selectedEntities?.length}
+            testId="copy-image-button"
+          />
+        </Menu.Submenu>
+        <Menu.Item
+          itemId="paste"
+          title={t('topMenu.paste', { shortcut: shortcutStr('Mod+v') })}
+          disabled={isDisabled}
+          testId="paste-button"
+        />
+        <Menu.Item
+          itemId="cut"
+          title={t('topMenu.cut', { shortcut: shortcutStr('Mod+x') })}
+          disabled={isDisabled || !selectedEntities?.length}
+          testId="cut-button"
         />
       </Menu.Group>
       {isFlexMode && (

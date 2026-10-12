@@ -183,6 +183,59 @@ export abstract class BaseMode {
     }
   }
 
+  async onCopyAs(format: 'ket' | 'mol' | 'image'): Promise<void> {
+    const editor = provideEditorInstance();
+
+    if (editor.drawingEntitiesManager.selectedEntities.length === 0) {
+      return;
+    }
+
+    const drawingEntitiesManager =
+      editor.drawingEntitiesManager.filterSelection();
+    const serializedKet = new KetSerializer().serialize(
+      new Struct(),
+      drawingEntitiesManager,
+    );
+
+    try {
+      if (format === 'image') {
+        const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
+        const image = await ketcher.generateImage(serializedKet, {
+          outputFormat: 'png',
+          backgroundColor: '255, 255, 255',
+        });
+        await navigator.clipboard.write([
+          new ClipboardItem({ [image.type]: image }),
+        ]);
+        return;
+      }
+
+      const text =
+        format === 'mol'
+          ? await this.convertKetToMol(serializedKet)
+          : serializedKet;
+
+      await navigator.clipboard.writeText(text);
+    } catch (error) {
+      KetcherLogger.error('BaseMode.ts::onCopyAs', error);
+      editor.events.openErrorModal.dispatch({
+        errorTitle: 'Error Message',
+        errorMessage: normalizeError(error).message,
+      });
+    }
+  }
+
+  private async convertKetToMol(ket: string): Promise<string> {
+    const editor = provideEditorInstance();
+    const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
+    const result = await ketcher.structService.convert(
+      { struct: ket, output_format: ChemicalMimeType.Mol },
+      { 'molfile-saving-mode': '3000' },
+    );
+
+    return result.struct;
+  }
+
   async onPaste(event?: ClipboardEvent): Promise<void> {
     if (event && this.checkIfTargetIsInput(event)) {
       return;

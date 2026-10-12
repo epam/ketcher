@@ -133,6 +133,22 @@ describe('Test SubMenu component', () => {
       );
     });
 
+    it('but not on keyboard shortcuts or bare modifier keys', async () => {
+      renderOpenedSubMenu();
+
+      fireEvent.keyDown(document, { key: 'b', ctrlKey: true });
+      fireEvent.keyDown(document, { key: 'z', metaKey: true });
+      fireEvent.keyDown(document, { key: 'Shift', shiftKey: true });
+
+      await expect(
+        waitFor(() =>
+          expect(
+            screen.queryByTestId('multi-tool-dropdown'),
+          ).not.toBeInTheDocument(),
+        ),
+      ).rejects.toThrow();
+    });
+
     it('on the "Start new sequence" action', async () => {
       const { startNewSequence } = renderOpenedSubMenu();
 

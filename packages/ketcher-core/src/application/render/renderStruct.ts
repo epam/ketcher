@@ -17,7 +17,7 @@ type RenderStructOptions = Partial<RenderOptions> & {
   wrapperDimensions?: Pick<DOMRectReadOnly, 'width' | 'height'>;
 };
 
-const renderCache = new Map<string, string>();
+let renderCache = new WeakMap<Struct, string>();
 let previousOptions: RenderStructOptions | undefined;
 const MIN_ATTACHMENT_POINT_SIZE = 8;
 const attachmentPointRegExp = /^R[1-8]$/;
@@ -74,19 +74,18 @@ export class RenderStruct {
   ) {
     if (wrapperElement && struct) {
       const {
-        cachePrefix = '',
+        cachePrefix: _cachePrefix,
         needCache = true,
         wrapperDimensions,
         ...renderOptions
       } = options;
-      const cacheKey = `${cachePrefix}${struct.name}`;
 
       if (!isEqual(previousOptions, options)) {
-        renderCache.clear();
+        renderCache = new WeakMap<Struct, string>();
         previousOptions = options;
       }
 
-      const cachedSvg = renderCache.get(cacheKey);
+      const cachedSvg = renderCache.get(struct);
 
       if (needCache && cachedSvg !== undefined) {
         wrapperElement.innerHTML = cachedSvg;
@@ -159,7 +158,7 @@ export class RenderStruct {
       this.removeSmallAttachmentPointLabelsInModal(rnd, options);
 
       if (needCache) {
-        renderCache.set(cacheKey, rnd.clientArea.innerHTML);
+        renderCache.set(struct, rnd.clientArea.innerHTML);
       }
     }
   }

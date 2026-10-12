@@ -576,41 +576,40 @@ test.describe('Import-Saving .fasta Files', () => {
     );
   });
 
-  test(
-    'Saving ambiguous (common) bases (with mapping, mixed) in FASTA format',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
+  test('Saving ambiguous (common) bases (with mapping, mixed) in FASTA format', async () => {
+    /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 16.10 Verify saving ambiguous (common) bases (with mapping, mixed) in FASTA format (macro mode)
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose FASTA option
           4. Take screenshot to make sure export is correct
+    Fix: https://github.com/epam/ketcher/issues/4321 - mixed RNA+DNA is now caught by
+         a pre-flight check before Indigo is called, so the error is the sequence-type
+         recognition error rather than the Indigo-level '%' error.
     */
-      await openFileAndAddToCanvasAsNewProjectMacro(
-        page,
-        'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
-      );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
+    );
 
-      await zoomWithMouseWheel(page, -200);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+    await zoomWithMouseWheel(page, -200);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
 
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MacromoleculesFileFormatType.FASTA,
-      );
-      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(
-        "Convert error! Sequence saver: Can't save '%' to sequence format",
-      );
-      await ErrorMessageDialog(page).close();
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.FASTA,
+    );
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)',
+    );
+    await ErrorMessageDialog(page).close();
 
-      await SaveStructureDialog(page).cancel();
-      await zoomWithMouseWheel(page, 200);
-    },
-  );
+    await SaveStructureDialog(page).cancel();
+    await zoomWithMouseWheel(page, 200);
+  });
 });
 
 test.describe('Import correct FASTA file: ', () => {

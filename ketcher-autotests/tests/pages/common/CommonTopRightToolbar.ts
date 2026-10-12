@@ -4,6 +4,7 @@ import { Mode } from '../constants/commonTopRightToolbar/Constants';
 import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
 import { hideRuler } from '@utils/canvas/ruler/helpers';
+import { getCanvasByMode } from '@utils/canvas/canvasLocators';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -52,19 +53,9 @@ export const CommonTopRightToolbar = (page: Page) => {
     zoomDefaultButton: page.getByTestId('zoom-default'),
   };
 
-  const canvasLocators = {
-    moleculesCanvas: page.locator(
-      '[data-testid="ketcher-canvas"][data-canvasmode="molecules-mode"]',
-    ),
-    macromoleculesCanvas: page.locator(
-      '[data-testid="ketcher-canvas"][data-canvasmode="macromolecules-mode"]',
-    ),
-  };
-
   return {
     ...locators,
     ...zoomLocators,
-    ...canvasLocators,
 
     async help() {
       await locators.helpButton.click();
@@ -133,7 +124,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       }
       const switcher = locators.ketcherModeSwitcherCombobox;
       const macroOption = page.getByTestId(Mode.Macromolecules);
-      const macromoleculesCanvas = canvasLocators.macromoleculesCanvas;
+      const macromoleculesCanvas = getCanvasByMode(page, 'macromolecules');
 
       if (!(await macromoleculesCanvas.isVisible())) {
         await waitForRender(page, async () => {
@@ -165,7 +156,7 @@ export const CommonTopRightToolbar = (page: Page) => {
     async turnOnMicromoleculesEditor() {
       const switcher = locators.ketcherModeSwitcherCombobox;
       const microOption = page.getByTestId(Mode.Molecules);
-      const moleculesCanvas = canvasLocators.moleculesCanvas;
+      const moleculesCanvas = getCanvasByMode(page, 'molecules');
 
       if (!(await moleculesCanvas.isVisible())) {
         await waitForRender(page, async () => {

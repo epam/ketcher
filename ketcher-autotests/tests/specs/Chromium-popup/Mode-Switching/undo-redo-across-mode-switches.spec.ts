@@ -1,5 +1,5 @@
 import { test, expect, Page } from '@fixtures';
-import { waitForPageInit } from '@utils';
+import { waitForPageInit, getCanvasByMode } from '@utils';
 import { undoByKeyboard, redoByKeyboard } from '@utils/canvas';
 import { addAtoms } from '@utils/canvas/atoms/addAtoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -27,11 +27,11 @@ const MONOMER_2_X = 450;
 const MONOMER_2_Y = 300;
 
 async function expectMicroMode(page: Page) {
-  await expect(CommonTopRightToolbar(page).moleculesCanvas).toBeVisible();
+  await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
 }
 
 async function expectMacroMode(page: Page) {
-  await expect(CommonTopRightToolbar(page).macromoleculesCanvas).toBeVisible();
+  await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
 }
 
 const carbonCount = (page: Page) =>

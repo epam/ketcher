@@ -3036,8 +3036,6 @@ export class DrawingEntitiesManager {
 
     const monomerTypes: Set<string | undefined> = new Set();
     let isValid = true;
-    let hasRnaContent = false;
-    let hasDnaContent = false;
 
     this.monomers.forEach((monomer) => {
       let monomerType = monomer.monomerItem.props.MonomerType;
@@ -3052,10 +3050,29 @@ export class DrawingEntitiesManager {
       if (monomerType === MONOMER_CONST.CHEM || monomerTypes.size > 1) {
         isValid = false;
       }
+    });
 
-      // Both RNA and DNA share MonomerType='RNA', so we must check the sugar
-      // label (split nucleotides) or MonomerClass (unsplit nucleotides) to
-      // detect a forbidden mix of RNA and DNA sequences on the canvas.
+    return isValid;
+  }
+
+  /**
+   * Returns true when the canvas contains both RNA and DNA sequences.
+   *
+   * Both monomer types share MonomerType='RNA' in the library, so they cannot
+   * be distinguished via the generic monomerTypes Set used in
+   * validateIfApplicableForFasta(). This check is therefore kept separate so
+   * that formats which CAN represent mixed RNA/DNA (e.g. IDT) do not trigger
+   * a false validation error.
+   *
+   * Detection strategy:
+   *  - Split nucleotides: inspect the Sugar monomer label ('R' = RNA, 'dR' = DNA)
+   *  - Unsplit nucleotides: inspect MonomerClass (KetMonomerClass.RNA vs .DNA)
+   */
+  public hasRnaAndDnaMix(): boolean {
+    let hasRnaContent = false;
+    let hasDnaContent = false;
+
+    this.monomers.forEach((monomer) => {
       if (monomer instanceof Sugar) {
         if (monomer.monomerItem.label === RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA) {
           hasRnaContent = true;
@@ -3075,11 +3092,7 @@ export class DrawingEntitiesManager {
       }
     });
 
-    if (hasRnaContent && hasDnaContent) {
-      isValid = false;
-    }
-
-    return isValid;
+    return hasRnaContent && hasDnaContent;
   }
 
   public moveMonomer(monomer: BaseMonomer, position: Vec2) {

@@ -151,9 +151,7 @@ class ReSGroup extends ReObject {
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
           SGroupdrawBracketsOptions.superatomClass = superatomClass;
-          if (sgroup instanceof MonomerMicromolecule) {
-            set.push(drawExpandedMonomerLabel(remol, sgroup, bracketBox));
-          }
+          // An expanded monomer shows its structure, so it needs no label
           break;
         }
         case 'DAT': {
@@ -580,28 +578,6 @@ function showValue(
   const set = paper.set();
   set.push(rect, text.toFront());
   return set;
-}
-
-function drawExpandedMonomerLabel(
-  restruct: ReStruct,
-  sgroup: MonomerMicromolecule,
-  monomerBBox: Box2Abs,
-): RaphaelSet {
-  const { render } = restruct;
-  const labelPosition = monomerBBox.p1
-    .add(new Vec2(0, 0.3))
-    .scaled(render.options.microModeScale);
-  const label = showValue(
-    render.paper,
-    labelPosition,
-    sgroup,
-    render.options,
-    sgroup.data.name || '?',
-  );
-  const labelBBox = util.relBox(label.getBBox());
-  label.translateAbs(0.5 * labelBBox.width, -0.5 * labelBBox.height);
-
-  return label;
 }
 
 function drawGroupDat(restruct: ReStruct, sgroup: SGroup) {

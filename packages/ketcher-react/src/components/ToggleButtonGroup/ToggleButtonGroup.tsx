@@ -2,6 +2,7 @@ import { ToggleButton } from '@mui/material';
 import classes from './ToggleButtonGroup.module.less';
 import clsx from 'clsx';
 import { useCallback, useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ButtonItem<T> {
   label: string;
@@ -28,6 +29,7 @@ export default function ButtonGroup<T>({
   defaultValue,
   title,
 }: Readonly<ToggleButtonGroupProps<T>>) {
+  const { t } = useTranslation('components');
   const [value, setValue] = useState(defaultValue);
 
   const handleChange = useCallback(
@@ -148,7 +150,7 @@ export default function ButtonGroup<T>({
           })}
           style={getTextButtonStyles(buttonValue)}
         >
-          {label || 'none'}
+          {label || t('contextMenu.none')}
         </ToggleButton>
       ))}
     </div>

@@ -27,7 +27,7 @@ class FragmentAdd extends BaseOperation {
 
   constructor(fragmentId?: number | null, properties?: Array<StructProperty>) {
     super(OperationType.FRAGMENT_ADD);
-    this.frid = typeof fragmentId === 'undefined' ? null : fragmentId;
+    this.frid = fragmentId === undefined ? null : fragmentId;
     if (properties) {
       this.properties = properties;
     }

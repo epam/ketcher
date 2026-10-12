@@ -1,5 +1,6 @@
 import type { D3SvgElementSelection } from 'application/render/types';
-import { line as d3Line } from 'd3';
+import { SELECTION_OUTLINE_COLOR } from 'application/render/renderers/constants';
+import { curveLinearClosed, line as d3Line } from 'd3';
 
 export type SelectionRectangleViewParams = {
   type: 'rectangle';
@@ -34,34 +35,27 @@ export class SelectionView {
         .attr('y', y)
         .attr('width', width)
         .attr('height', height)
-        .attr('fill', 'transparent')
-        .attr('stroke', '#B4B9D6')
+        .attr('fill', 'none')
+        .attr('stroke', SELECTION_OUTLINE_COLOR)
         .attr('style', 'pointer-events: none');
       return;
     }
 
     if (params.type === 'lasso') {
-      const { path } = params;
+      // A closed curve gives the same outline the molecules mode draws:
+      // one path back to the starting point, without a filled area.
       const line = d3Line()
         .x((d) => d[0])
-        .y((d) => d[1]);
+        .y((d) => d[1])
+        .curve(curveLinearClosed);
+
       transientLayer
         .append('path')
-        .datum(path)
+        .datum(params.path)
         .attr('d', line)
-        .attr('fill', '#E1E5EA')
-        .attr('fill-opacity', 0.5)
-        .attr('stroke', '#B4B9D6')
+        .attr('fill', 'none')
+        .attr('stroke', SELECTION_OUTLINE_COLOR)
         .attr('style', 'pointer-events: none');
-      if (path.length > 1) {
-        const linePoints = [path[0], path[path.length - 1]];
-        transientLayer
-          .append('path')
-          .datum(linePoints)
-          .attr('d', line)
-          .attr('stroke', '#B4B9D6')
-          .attr('style', 'pointer-events: none');
-      }
     }
   }
 

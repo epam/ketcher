@@ -13,7 +13,7 @@ module.exports = {
         },
       },
     ],
-    '\\.ket': '<rootDir>/textFileTransformer.js',
+    '\\.ket': '<rootDir>/textFileTransformer.ts',
   },
   moduleNameMapper: {
     '^application(.*)$': '<rootDir>/src/application/$1',

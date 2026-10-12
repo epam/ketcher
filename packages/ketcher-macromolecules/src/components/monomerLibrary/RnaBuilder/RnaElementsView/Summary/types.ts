@@ -18,6 +18,7 @@ import { IconName } from 'ketcher-react';
 
 export interface ISummaryProps {
   groupName: string;
+  label: string;
   quantity: number;
   expanded: boolean;
   iconName: IconName;

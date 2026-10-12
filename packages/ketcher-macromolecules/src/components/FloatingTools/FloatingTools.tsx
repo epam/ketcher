@@ -16,6 +16,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import { Icon, IconName } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
@@ -75,6 +76,7 @@ export interface FloatingToolsProps {
 const POSITION_EPSILON = 0.1; // view-pixel threshold to avoid noisy updates
 
 export const FloatingTools = () => {
+  const { t } = useTranslation('macromolecules');
   const editor = useAppSelector(selectEditor);
   const [visible, setVisible] = useState(false);
   const [position, setPosition] = useState<Vec2>(new Vec2(0, 0));
@@ -179,21 +181,21 @@ export const FloatingTools = () => {
     <FloatingToolsWrapper left={position.x} top={position.y}>
       <ToolButton
         onClick={handleFlipHorizontal}
-        title="Flip horizontally"
+        title={t('floatingTools.flipHorizontally')}
         data-testid="transform-flip-h"
       >
         <Icon name={'transform-flip-h' as IconName} />
       </ToolButton>
       <ToolButton
         onClick={handleFlipVertical}
-        title="Flip vertically"
+        title={t('floatingTools.flipVertically')}
         data-testid="transform-flip-v"
       >
         <Icon name={'transform-flip-v' as IconName} />
       </ToolButton>
       <ToolButton
         onClick={handleDelete}
-        title="Delete"
+        title={t('floatingTools.delete')}
         data-testid="float-delete"
       >
         <Icon name={'delete' as IconName} />

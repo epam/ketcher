@@ -36,11 +36,12 @@ const isSugarPhosphateConnection = (
     connection.endpoint1.templateId,
     connection.endpoint2.templateId,
   ];
+  const endpointIdsSet = new Set(endpointIds);
 
   if (sugarTemplateId && phosphateTemplateId) {
     return (
-      endpointIds.includes(sugarTemplateId) &&
-      endpointIds.includes(phosphateTemplateId)
+      endpointIdsSet.has(sugarTemplateId) &&
+      endpointIdsSet.has(phosphateTemplateId)
     );
   }
 
@@ -48,11 +49,12 @@ const isSugarPhosphateConnection = (
     connection.endpoint1.attachmentPointId,
     connection.endpoint2.attachmentPointId,
   ];
+  const endpointAttachmentPointsSet = new Set(endpointAttachmentPoints);
 
   return (
-    !endpointAttachmentPoints.includes(AttachmentPointName.R3) &&
-    endpointAttachmentPoints.includes(AttachmentPointName.R1) &&
-    endpointAttachmentPoints.includes(AttachmentPointName.R2)
+    !endpointAttachmentPointsSet.has(AttachmentPointName.R3) &&
+    endpointAttachmentPointsSet.has(AttachmentPointName.R1) &&
+    endpointAttachmentPointsSet.has(AttachmentPointName.R2)
   );
 };
 

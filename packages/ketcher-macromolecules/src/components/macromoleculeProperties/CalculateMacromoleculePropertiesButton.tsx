@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useAppDispatch, useAppSelector } from 'hooks';
+import { useTranslation } from 'react-i18next';
 import {
   selectIsMacromoleculesPropertiesWindowOpened,
   toggleMacromoleculesPropertiesWindowVisibility,
@@ -50,6 +51,7 @@ const StyledButton = styled(Button)<{ isActive?: boolean }>(
 );
 
 export const CalculateMacromoleculePropertiesButton = () => {
+  const { t } = useTranslation('macromolecules');
   const dispatch = useAppDispatch();
 
   const isMacromoleculesPropertiesWindowOpened = useAppSelector(
@@ -72,7 +74,9 @@ export const CalculateMacromoleculePropertiesButton = () => {
     <StyledButton
       isActive={isMacromoleculesPropertiesWindowOpened}
       onClick={handleClick}
-      title={`Calculate properties (${hotkeysShortcuts.toggleMacromoleculesPropertiesVisibility})`}
+      title={t('macromoleculeProperties.calculateProperties', {
+        shortcut: hotkeysShortcuts.toggleMacromoleculesPropertiesVisibility,
+      })}
       data-testid="calculate-macromolecule-properties-button"
     >
       <svg

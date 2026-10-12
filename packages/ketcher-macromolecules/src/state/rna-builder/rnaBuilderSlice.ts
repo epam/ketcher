@@ -375,9 +375,8 @@ export const rnaBuilderSlice = createSlice({
         FAVORITE_ITEMS_UNIQUE_KEYS,
       ) ?? []) as string[];
 
-      const isKeyAlreadyExisted: boolean = favoriteItemsUniqueKeys.some(
-        (targetKey) => targetKey === uniquePresetKey,
-      );
+      const isKeyAlreadyExisted: boolean =
+        favoriteItemsUniqueKeys.includes(uniquePresetKey);
 
       if (isKeyAlreadyExisted) {
         localStorageWrapper.setItem(
@@ -419,6 +418,13 @@ export const selectSequenceSelectionName = (state: RootState): string =>
 export const selectIsSequenceFirstsOnlyNucleotidesSelected = (
   state: RootState,
 ): boolean => state.rnaBuilder.isSequenceFirstsOnlyNucleoelementsSelected;
+
+export const selectIsBaseModificationBlocked = (state: RootState): boolean =>
+  Boolean(
+    state.rnaBuilder.sequenceSelection?.some(
+      (labeledNode) => labeledNode.isInSelectedAntisensePair,
+    ),
+  );
 
 export const selectCurrentMonomerGroup = (
   preset: IRnaPreset,

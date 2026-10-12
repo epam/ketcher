@@ -165,7 +165,7 @@ export function fromFragmentDeletion(restruct, rawSelection) {
 
   selection.atoms.forEach((aid) => {
     restruct.molecule.atomGetNeighbors(aid).forEach((nei) => {
-      if (selection.bonds.indexOf(nei.bid) === -1) {
+      if (!selection.bonds.includes(nei.bid)) {
         selection.bonds = selection.bonds.concat([nei.bid]);
       }
     });

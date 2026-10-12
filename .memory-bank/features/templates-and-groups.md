@@ -30,6 +30,12 @@ Inserting a template or group produces a well-formed structure; abbreviated grou
 - **WHEN** the user chooses _Expand_ on a contracted functional group and later _Contract_
 - **THEN** the group's internal atoms/bonds are shown and then re-collapsed to the label, preserving chemistry
 
+#### Scenario: Neighbour structures follow an expanding or contracting abbreviation
+
+- **WHEN** the user expands or contracts an abbreviation that is bonded to surrounding structure
+- **THEN** each neighbouring fragment is shifted as a rigid piece so that its bonds to the abbreviation keep the length and angle they had before, whether they end on the collapsed label or on the attachment atom
+- **AND** expanding and then contracting again returns every neighbouring atom to its original position
+
 #### Scenario: Editing atoms inside an abbreviation is blocked
 
 - **WHEN** the user applies an incompatible tool to an atom inside a functional group
@@ -51,6 +57,7 @@ Inserting a template or group produces a well-formed structure; abbreviated grou
 - The set of built-in functional groups is fixed and not user-editable.
 - _Aromatize_ / _Dearomatize_ do not apply to rings that are part of a functional group.
 - Individual atoms/bonds of an abbreviation are inaccessible until the abbreviation is removed.
+- A neighbouring fragment that itself contains further abbreviations is repositioned by an approximate row-based heuristic rather than by exact bond geometry, so expanding or contracting a chain of abbreviations can still distort the bonds between them.
 - This is a **molecules-mode** feature.
 
 ## Related

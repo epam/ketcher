@@ -2,38 +2,38 @@
 <cml>
     <molecule>
         <atomArray>
-            <atom id="a0" elementType="C" x2="8.91112" y2="-7.55826"/>
-            <atom id="a1" elementType="C" x2="8.90742" y2="-6.56553"/>
-            <atom id="a2" elementType="C" x2="7.90161" y2="-7.54538"/>
-            <atom id="a3" elementType="C" x2="7.89912" y2="-6.56553"/>
-            <atom id="a4" elementType="C" x2="9.92815" y2="-7.56195"/>
-            <atom id="a5" elementType="C" x2="10.6318" y2="-5.85825"/>
-            <atom id="a6" elementType="C" x2="10.632" y2="-8.26564"/>
-            <atom id="a7" elementType="C" x2="11.632" y2="-8.26564"/>
-            <atom id="a8" elementType="C" x2="12.3357" y2="-7.56195"/>
-            <atom id="a9" elementType="C" x2="12.3356" y2="-6.56184"/>
-            <atom id="a10" elementType="C" x2="11.632" y2="-5.85815"/>
-            <atom id="a11" elementType="C" x2="7.90481" y2="-9.99038"/>
-            <atom id="a12" elementType="C" x2="8.60416" y2="-9.2858"/>
-            <atom id="a13" elementType="C" x2="7.20009" y2="-9.26744"/>
-            <atom id="a14" elementType="C" x2="9.88492" y2="-6.5714"/>
-            <atom id="a15" elementType="C" x2="7.88648" y2="-8.56367"/>
-            <atom id="a16" elementType="C" x2="17.171" y2="-7.47223"/>
-            <atom id="a17" elementType="C" x2="17.1673" y2="-6.4795"/>
-            <atom id="a18" elementType="C" x2="16.1615" y2="-7.45935"/>
-            <atom id="a19" elementType="C" x2="16.159" y2="-6.4795"/>
-            <atom id="a20" elementType="C" x2="18.188" y2="-7.47592"/>
-            <atom id="a21" elementType="C" x2="18.8917" y2="-5.77222"/>
-            <atom id="a22" elementType="C" x2="18.8919" y2="-8.17961"/>
-            <atom id="a23" elementType="C" x2="19.8919" y2="-8.17961"/>
-            <atom id="a24" elementType="C" x2="20.5956" y2="-7.47592"/>
-            <atom id="a25" elementType="C" x2="20.5955" y2="-6.47581"/>
-            <atom id="a26" elementType="C" x2="19.8919" y2="-5.77212"/>
-            <atom id="a27" elementType="C" x2="16.1647" y2="-9.90435"/>
-            <atom id="a28" elementType="C" x2="16.864" y2="-9.19977"/>
-            <atom id="a29" elementType="C" x2="15.46" y2="-9.18141"/>
-            <atom id="a30" elementType="C" x2="18.1448" y2="-6.48537"/>
-            <atom id="a31" elementType="C" x2="16.1464" y2="-8.47764"/>
+            <atom id="a0" elementType="C" x2="8.89942" y2="-7.5575"/>
+            <atom id="a1" elementType="C" x2="8.89571" y2="-6.56244"/>
+            <atom id="a2" elementType="C" x2="7.88754" y2="-7.54459"/>
+            <atom id="a3" elementType="C" x2="7.88504" y2="-6.56244"/>
+            <atom id="a4" elementType="C" x2="9.91884" y2="-7.5612"/>
+            <atom id="a5" elementType="C" x2="10.6242" y2="-5.8535"/>
+            <atom id="a6" elementType="C" x2="10.6244" y2="-8.26654"/>
+            <atom id="a7" elementType="C" x2="11.6267" y2="-8.26654"/>
+            <atom id="a8" elementType="C" x2="12.3321" y2="-7.5612"/>
+            <atom id="a9" elementType="C" x2="12.332" y2="-6.55875"/>
+            <atom id="a10" elementType="C" x2="11.6267" y2="-5.8534"/>
+            <atom id="a11" elementType="C" x2="7.89074" y2="-9.99533"/>
+            <atom id="a12" elementType="C" x2="8.59174" y2="-9.2891"/>
+            <atom id="a13" elementType="C" x2="7.18437" y2="-9.2707"/>
+            <atom id="a14" elementType="C" x2="9.8755" y2="-6.56832"/>
+            <atom id="a15" elementType="C" x2="7.87238" y2="-8.56527"/>
+            <atom id="a16" elementType="C" x2="17.1787" y2="-7.47127"/>
+            <atom id="a17" elementType="C" x2="17.175" y2="-6.47621"/>
+            <atom id="a18" elementType="C" x2="16.1668" y2="-7.45836"/>
+            <atom id="a19" elementType="C" x2="16.1643" y2="-6.47621"/>
+            <atom id="a20" elementType="C" x2="18.1981" y2="-7.47497"/>
+            <atom id="a21" elementType="C" x2="18.9034" y2="-5.76727"/>
+            <atom id="a22" elementType="C" x2="18.9036" y2="-8.18031"/>
+            <atom id="a23" elementType="C" x2="19.906" y2="-8.18031"/>
+            <atom id="a24" elementType="C" x2="20.6113" y2="-7.47497"/>
+            <atom id="a25" elementType="C" x2="20.6112" y2="-6.47251"/>
+            <atom id="a26" elementType="C" x2="19.906" y2="-5.76717"/>
+            <atom id="a27" elementType="C" x2="16.17" y2="-9.9091"/>
+            <atom id="a28" elementType="C" x2="16.871" y2="-9.20287"/>
+            <atom id="a29" elementType="C" x2="15.4636" y2="-9.18447"/>
+            <atom id="a30" elementType="C" x2="18.1548" y2="-6.48209"/>
+            <atom id="a31" elementType="C" x2="16.1516" y2="-8.47904"/>
         </atomArray>
         <bondArray>
             <bond atomRefs2="a0 a1" order="1"/>

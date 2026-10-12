@@ -17,7 +17,7 @@ import {
   MacroFileType,
   MolFileFormat,
 } from '@utils';
-import { selectRectangleArea } from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   getMonomerLocator,
   AttachmentPoint,
@@ -321,8 +321,11 @@ test.describe('Common connection rules: ', () => {
       'KET/Common-Bond-Tests/4 connected by Bond A6OH.ket',
     );
 
-    // Check that 4 connected by Bond A6OH monomers can moving after using Rectangle Selection
-    await selectRectangleArea(page, 100, 100, 800, 800);
+    // Check that 4 connected by Bond A6OH monomers can moving after using area selection.
+    // Ctrl+A is used instead of a drag-select rectangle to avoid accidentally triggering
+    // the auto-scroll feature: a drag ending near the canvas edge fires one extra RAF
+    // tick of scrollBy, shifting the exported monomer coordinates by ~0.125 units.
+    await selectAllStructuresOnCanvas(page);
     await grabSelectionAndMoveTo(page, Chem.A6OH, 200, 200);
     await moveMouseAway(page);
     await waitForRender(page);

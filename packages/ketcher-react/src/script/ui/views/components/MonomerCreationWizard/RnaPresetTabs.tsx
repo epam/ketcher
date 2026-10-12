@@ -1,6 +1,6 @@
 /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 import Tab from '@mui/material/Tab';
-import { Icon } from 'components';
+import { Icon, Tooltip } from 'components';
 import Tabs from '@mui/material/Tabs';
 import {
   type AtomLabel,
@@ -91,6 +91,9 @@ const RNA_COMPONENT_HINTS = {
 
 export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const { t } = useTranslation(['components', 'common']);
+  const attachmentPointInfoText = t(
+    'components:monomerCreationWizard.attachmentPointInfoText',
+  );
   const [selectedTab, setSelectedTab] = useState(0);
   const structureSelection = useSelector(selectionSelector);
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
@@ -452,17 +455,19 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                 >
                   {t('components:monomerCreationWizard.attachmentPointsTitle')}
                 </p>
-                <span
-                  className={
-                    monomerCreationWizardStyles.attachmentPointInfoIcon
-                  }
-                  title={t(
-                    'components:monomerCreationWizard.attachmentPointInfoText',
-                  )}
-                  data-testid="attachment-point-info-icon"
-                >
-                  <Icon name="about" />
-                </span>
+                <Tooltip title={attachmentPointInfoText}>
+                  <span
+                    className={
+                      monomerCreationWizardStyles.attachmentPointInfoIcon
+                    }
+                    role="img"
+                    aria-label={attachmentPointInfoText}
+                    tabIndex={0}
+                    data-testid="attachment-point-info-icon"
+                  >
+                    <Icon name="about" />
+                  </span>
+                </Tooltip>
               </div>
               {presetAttachmentPoints.size > 0 && (
                 <div className={monomerCreationWizardStyles.attachmentPoints}>

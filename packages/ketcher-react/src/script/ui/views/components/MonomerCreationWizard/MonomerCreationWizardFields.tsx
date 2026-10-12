@@ -1,6 +1,6 @@
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
-import { Icon, IconButton } from 'components';
+import { Icon, IconButton, Tooltip } from 'components';
 import {
   type AtomLabel,
   type AttachmentPointName,
@@ -65,6 +65,9 @@ const MonomerCreationWizardFields = (
   props: IMonomerCreationWizardFieldsProps,
 ) => {
   const { t } = useTranslation('components');
+  const attachmentPointInfoText = t(
+    'components:monomerCreationWizard.attachmentPointInfoText',
+  );
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
@@ -231,15 +234,17 @@ const MonomerCreationWizardFields = (
           <p className={styles.attachmentPointsTitle}>
             {t('components:monomerCreationWizard.attachmentPointsTitle')}
           </p>
-          <span
-            className={styles.attachmentPointInfoIcon}
-            title={t(
-              'components:monomerCreationWizard.attachmentPointInfoText',
-            )}
-            data-testid="attachment-point-info-icon"
-          >
-            <Icon name="about" />
-          </span>
+          <Tooltip title={attachmentPointInfoText}>
+            <span
+              className={styles.attachmentPointInfoIcon}
+              role="img"
+              aria-label={attachmentPointInfoText}
+              tabIndex={0}
+              data-testid="attachment-point-info-icon"
+            >
+              <Icon name="about" />
+            </span>
+          </Tooltip>
         </div>
         {(assignedAttachmentPoints.size > 0 ||
           readonlyAttachmentPoints.length > 0) && (

@@ -24,7 +24,8 @@ import {
 } from 'state/common';
 import { modalComponentList } from 'components/modal/modalContainer';
 import { openModal } from 'state/modal';
-import { BaseMonomer, shortcutStr } from 'ketcher-core';
+import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
+import { BaseMonomer } from 'ketcher-core';
 import {
   hasOnlyDeoxyriboseSugars,
   hasOnlyRiboseSugars,
@@ -38,7 +39,6 @@ import { IconName } from 'ketcher-react';
 import { CalculateMacromoleculePropertiesButton } from 'components/macromoleculeProperties';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 import { useTranslation } from 'react-i18next';
-import { createMenuItemHandlers, MenuItemName } from './menuItemHandlers';
 
 export function TopMenuComponent() {
   const { t } = useTranslation('macromolecules');
@@ -101,20 +101,24 @@ export function TopMenuComponent() {
     };
   }, [editor]);
 
-  const menuItemHandlers = createMenuItemHandlers({
-    editor,
-    dispatch,
-    lastSelectedSelectionMenuItem,
-    isSequenceEditInRNABuilderMode,
-  });
-
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
-      return;
+    } else if (name === 'undo' || name === 'redo') {
+      editor?.events.selectHistory.dispatch(name);
+    } else if (name === 'clear') {
+      editor?.events.resetSequenceEditMode.dispatch();
+      editor?.events.selectTool.dispatch([name]);
+      editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);
+      if (isSequenceEditInRNABuilderMode)
+        resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
+    } else if (name === 'antisenseRnaStrand' || name === 'antisenseDnaStrand') {
+      editor?.events.createAntisenseChain.dispatch(
+        name === 'antisenseDnaStrand',
+      );
+    } else if (name === 'arrange-ring') {
+      editor?.events.layoutCircular.dispatch();
     }
-
-    menuItemHandlers[name as MenuItemName]?.();
   };
 
   return (
@@ -153,56 +157,6 @@ export function TopMenuComponent() {
           title={t('topMenu.redo', { shortcut: hotkeysShortcuts.redo })}
           disabled={isDisabled}
           testId="redo"
-        />
-      </Menu.Group>
-      <Menu.Group isHorizontal={true} divider={true}>
-        <Menu.Submenu
-          disabled={isDisabled || !selectedEntities?.length}
-          testId="copy-dropdown-button"
-          activeItem="copy"
-        >
-          <Menu.Item
-            itemId="copy"
-            title={t('topMenu.copy', { shortcut: shortcutStr('Mod+c') })}
-            disabled={isDisabled || !selectedEntities?.length}
-            testId="copy-button"
-          />
-          <Menu.Item
-            itemId="copy-ket"
-            title={t('topMenu.copyAsKet', {
-              shortcut: shortcutStr('Mod+Shift+k'),
-            })}
-            disabled={isDisabled || !selectedEntities?.length}
-            testId="copy-ket-button"
-          />
-          <Menu.Item
-            itemId="copy-mol"
-            title={t('topMenu.copyAsMol', {
-              shortcut: shortcutStr('Mod+Shift+m'),
-            })}
-            disabled={isDisabled || !selectedEntities?.length}
-            testId="copy-mol-button"
-          />
-          <Menu.Item
-            itemId="copy-image"
-            title={t('topMenu.copyImage', {
-              shortcut: shortcutStr('Mod+Shift+f'),
-            })}
-            disabled={isDisabled || !selectedEntities?.length}
-            testId="copy-image-button"
-          />
-        </Menu.Submenu>
-        <Menu.Item
-          itemId="paste"
-          title={t('topMenu.paste', { shortcut: shortcutStr('Mod+v') })}
-          disabled={isDisabled}
-          testId="paste-button"
-        />
-        <Menu.Item
-          itemId="cut"
-          title={t('topMenu.cut', { shortcut: shortcutStr('Mod+x') })}
-          disabled={isDisabled || !selectedEntities?.length}
-          testId="cut-button"
         />
       </Menu.Group>
       {isFlexMode && (

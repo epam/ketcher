@@ -24,7 +24,6 @@ import {
 } from 'state/common';
 import { modalComponentList } from 'components/modal/modalContainer';
 import { openModal } from 'state/modal';
-import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 import { BaseMonomer, shortcutStr } from 'ketcher-core';
 import {
   hasOnlyDeoxyriboseSugars,
@@ -39,6 +38,7 @@ import { IconName } from 'ketcher-react';
 import { CalculateMacromoleculePropertiesButton } from 'components/macromoleculeProperties';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 import { useTranslation } from 'react-i18next';
+import { createMenuItemHandlers, MenuItemName } from './menuItemHandlers';
 
 export function TopMenuComponent() {
   const { t } = useTranslation('macromolecules');
@@ -101,36 +101,20 @@ export function TopMenuComponent() {
     };
   }, [editor]);
 
+  const menuItemHandlers = createMenuItemHandlers({
+    editor,
+    dispatch,
+    lastSelectedSelectionMenuItem,
+    isSequenceEditInRNABuilderMode,
+  });
+
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
-    } else if (name === 'undo' || name === 'redo') {
-      editor?.events.selectHistory.dispatch(name);
-    } else if (name === 'clear') {
-      editor?.events.resetSequenceEditMode.dispatch();
-      editor?.events.selectTool.dispatch([name]);
-      editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);
-      if (isSequenceEditInRNABuilderMode)
-        resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
-    } else if (name === 'antisenseRnaStrand' || name === 'antisenseDnaStrand') {
-      editor?.events.createAntisenseChain.dispatch(
-        name === 'antisenseDnaStrand',
-      );
-    } else if (name === 'arrange-ring') {
-      editor?.events.layoutCircular.dispatch();
-    } else if (name === 'copy') {
-      editor?.events.copySelectedStructure.dispatch();
-    } else if (name === 'copy-ket') {
-      editor?.events.copySelectedStructureAs.dispatch('ket');
-    } else if (name === 'copy-mol') {
-      editor?.events.copySelectedStructureAs.dispatch('mol');
-    } else if (name === 'copy-image') {
-      editor?.events.copySelectedStructureAs.dispatch('image');
-    } else if (name === 'cut') {
-      editor?.events.cutSelectedStructure.dispatch();
-    } else if (name === 'paste') {
-      editor?.events.pasteFromClipboard.dispatch();
+      return;
     }
+
+    menuItemHandlers[name as MenuItemName]?.();
   };
 
   return (

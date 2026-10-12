@@ -48,7 +48,7 @@ List anything the tests need that doesn't exist yet:
 
 ### 5. Test cases
 
-Per spec file: a table with columns **Test | Steps | Assert**. Conventions to state up front: shared-page vs. per-test page pattern choice, standard comment block with issue number, named coordinate constants (no magic numbers). Each row should name the assertion mechanism (locator count, bond attribute helper, bounding-box delta, dialog text) — not just "verify it works".
+Per spec file: a table with columns **Test | Steps | Assert**. Conventions to state up front: shared-page vs. per-test page pattern choice (pick by state-isolation needs, not just speed — see Lessons learned), standard comment block with issue number, named coordinate constants (no magic numbers). Each row should name the assertion mechanism (locator count, bond attribute helper, bounding-box delta, dialog text) — not just "verify it works".
 
 ### 6. Verification strategy
 
@@ -94,3 +94,6 @@ Table: question → mitigation. **Resolve in place** as phases answer them (mark
 - **Structural > visual.** The whole suite ended up screenshot-free because every claim had a structural form (counts, bond attributes, bounding-box deltas) — which also eliminated Docker snapshot generation entirely.
 - **Identical elements are a locator trap.** After an operation that duplicates an element, first-match locators resolve to the wrong one; track elements by stable IDs captured *before* the action.
 - **One-shot mouse moves can be missed** by hover/drag handlers — move in steps when asserting an intermediate state of a gesture (e.g. mid-drag).
+- **Verify the build under test actually contains the change.** For bug-fix specs, confirm the served build has the fix (rebase onto latest master, rebuild, re-serve) before running — a control that is enabled but does nothing can mask a fix that isn't in the build you're testing against.
+- **Choose the page pattern by state-isolation needs, not just speed.** The shared-page canvas fixtures reset canvas/zoom/localStorage/settings but do *not* fully reset the undo/redo history (and can leave other residual state); use per-test fresh pages when tests assert on stack boundaries or depend on a clean editor state.
+- **Deliberately drop brittle, low-value assertions.** Asserting an exact stack depth or a large-N element count is slow and flaky — mark such cases explicitly out of scope (or as open questions) instead of forcing them in.

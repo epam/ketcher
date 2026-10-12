@@ -112,11 +112,17 @@
 
 .cancelButton {
   .button-secondary();
+
+  font-weight: 400;
+  text-transform: none;
   cursor: pointer;
 }
 
 .applyButton {
   .button-primary();
+
+  font-weight: 400;
+  text-transform: none;
   cursor: pointer;
 }
 
@@ -148,7 +154,8 @@
   font: inherit;
   font-size: @font-size-regular;
   line-height: @line-height-regular;
-  font-weight: @font-weight-medium;
+  font-weight: 400;
+  text-transform: none;
   color: @color-text-primary;
   text-align: start;
   cursor: pointer;
@@ -288,11 +295,11 @@
   }
 
   input[type='number'] {
-    width: 64px;
+    width: 58px;
   }
 
   select {
-    min-width: 64px;
+    min-width: 58px;
     padding-inline-end: 24px;
     appearance: none;
     cursor: pointer;
@@ -346,16 +353,20 @@
     }
   }
 
-  // Colour swatch
+  // Colour swatch with a trailing chevron, matching the micro colour picker
   input[type='color'] {
     box-sizing: border-box;
     flex-shrink: 0;
-    width: 24px;
+    width: 48px;
     height: 24px;
-    padding: 2px;
+    padding: 3px 20px 3px 3px;
     border: 1px solid @settings-control-border;
     border-radius: @settings-panel-radius;
     background-color: @color-background-primary;
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23333333' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 2px center;
+    background-size: 16px;
     cursor: pointer;
 
     &::-webkit-color-swatch-wrapper {
@@ -372,11 +383,6 @@
       border-radius: 2px;
     }
   }
-}
-
-// A colour field's hex text input is narrower than a number input
-.fieldRow[data-layout='color'] input[type='text'] {
-  width: 80px;
 }
 
 // Standalone dropdowns fill the row

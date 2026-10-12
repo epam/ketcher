@@ -126,20 +126,12 @@ export const SettingsFieldControl = ({
 
       case 'color':
         return (
-          <>
-            <input
-              type="color"
-              value={stringValue ?? '#000000'}
-              onChange={(event) => onChange(event.target.value)}
-              data-testid={testId}
-            />
-            <input
-              type="text"
-              value={stringValue ?? '#000000'}
-              onChange={(event) => onChange(event.target.value)}
-              data-testid={`${testId}-value`}
-            />
-          </>
+          <input
+            type="color"
+            value={stringValue ?? '#000000'}
+            onChange={(event) => onChange(event.target.value)}
+            data-testid={testId}
+          />
         );
 
       case 'text':

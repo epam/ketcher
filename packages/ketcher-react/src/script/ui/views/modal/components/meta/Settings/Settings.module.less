@@ -91,9 +91,73 @@
     }
 
     > :first-child {
-      width: 160px;
+      flex: 1 1 auto;
+      width: auto;
       margin-inline-end: @margin-left-right;
     }
+
+    // The control is pinned to the right edge of the row
+    > :nth-child(2) {
+      flex: 0 0 auto;
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+  // Measure rows (value + unit) carry their own bottom margin; the fieldset gap
+  // already spaces the rows, and the margin would leave them looser than in macro
+  fieldset > div,
+  fieldset > div > div:first-child {
+    margin-bottom: 0;
+  }
+
+  // Typed values and dropdown text use the panel's 12px, as in macro mode
+  input[type='text'],
+  [role='combobox'] {
+    font-size: @font-size-regular;
+  }
+
+  // The colour picker hugs the right edge of the row instead of a 120px box
+  label:not(.stackedField) span > [data-testid='color-picker-field'] {
+    width: auto;
+    margin-inline-end: 0;
+  }
+
+  // Single-value inputs share the width of the value box in measure rows
+  label:not(.stackedField) input[type='text'] {
+    width: 58px;
+  }
+
+  // Dropdown fields: the label sits above a full-width control, as in macro mode
+  .stackedField {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    min-height: 0;
+
+    > :first-child {
+      width: auto;
+      margin-inline-end: 0;
+    }
+
+    > span,
+    span > div,
+    select,
+    input {
+      width: 100%;
+    }
+
+    [role='combobox'] {
+      font-size: @font-size-regular;
+    }
+  }
+
+  // Switch thumb carries a check glyph while on, as in macro mode
+  input[type='checkbox']:checked + span::before {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 12px;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.5 8.5l3 3 6-6.5' stroke='%23167782' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   }
 
   fieldset[disabled] {

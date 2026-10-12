@@ -40,18 +40,22 @@ export const HeaderIconButton = styled.button`
 /** Set ACS Settings sits in the title row next to the icon controls */
 export const HeaderTextButton = styled.button`
   background-color: ${({ theme }) => theme.ketcher.color.background.primary};
-  border: 1px solid ${({ theme }) => theme.ketcher.color.text.secondary};
+  border: 1px solid #585858;
   border-radius: 4px;
-  color: ${({ theme }) => theme.ketcher.color.text.secondary};
+  color: #585858;
   height: 20px;
+  min-width: 0;
   padding: 0 6px;
   font-size: 10px;
+  font-weight: 400;
+  line-height: 14px;
+  text-transform: none;
   white-space: nowrap;
   cursor: pointer;
 
   &:hover {
-    border-color: ${({ theme }) => theme.ketcher.color.text.primary};
-    color: ${({ theme }) => theme.ketcher.color.text.primary};
+    border-color: #333333;
+    color: #333333;
   }
 
   &:disabled {

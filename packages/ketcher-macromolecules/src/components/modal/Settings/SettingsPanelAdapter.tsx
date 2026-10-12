@@ -15,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -53,8 +53,6 @@ export const SettingsPanelAdapter = ({
 
   const [currentSettings, setCurrentSettings] =
     useState<SettingsFormValue | null>(null);
-  const [initialSettings, setInitialSettings] =
-    useState<SettingsFormValue | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // The panel is clamped inside the canvas area and portalled into it, so it can
@@ -71,17 +69,11 @@ export const SettingsPanelAdapter = ({
     const coreSettings = settingsService.getSettings();
     const formSettings = normalizeSettingsForForm(coreSettings);
     setCurrentSettings(formSettings);
-    setInitialSettings(formSettings);
 
     return settingsService.subscribe((newCoreSettings) => {
       setCurrentSettings(normalizeSettingsForForm(newCoreSettings));
     });
   }, [settingsService, isModalOpen]);
-
-  const hasChanges = useMemo(() => {
-    if (!currentSettings || !initialSettings) return false;
-    return JSON.stringify(currentSettings) !== JSON.stringify(initialSettings);
-  }, [currentSettings, initialSettings]);
 
   const handleFieldChange = (name: string, value: SettingFieldValue) => {
     setCurrentSettings((previous) =>
@@ -97,7 +89,6 @@ export const SettingsPanelAdapter = ({
       await settingsService.updateSettings(
         normalizeSettingsForCore(currentSettings),
       );
-      setInitialSettings(currentSettings);
       onClose();
     } catch (error) {
       KetcherLogger.error('Failed to save settings:', error);
@@ -115,7 +106,6 @@ export const SettingsPanelAdapter = ({
         await settingsService.resetToDefaults(),
       );
       setCurrentSettings(formDefaults);
-      setInitialSettings(formDefaults);
     } catch (error) {
       KetcherLogger.error('Failed to reset settings:', error);
     } finally {
@@ -266,7 +256,7 @@ export const SettingsPanelAdapter = ({
         headerControls={headerControls}
         groups={groups}
         boundsElement={boundsElement}
-        isApplyDisabled={!hasChanges || isLoading}
+        isApplyDisabled={isLoading}
         onApply={handleApply}
         onCancel={onClose}
         onClose={onClose}

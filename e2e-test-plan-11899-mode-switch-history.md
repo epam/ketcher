@@ -1,7 +1,7 @@
 # E2E Test Plan — Retain history between macro and micro molecule modes
 
 > Issue: [epam/ketcher#11899](https://github.com/epam/ketcher/issues/11899) (resolved by PR #11964, merged 2026-09-24)
-> Status: COMPLETE — all phases done, 8/8 tests green (2026-10-09)
+> Status: COMPLETE — all phases done, 8/8 tests green (2026-10-09). Reworked to per-test fresh pages (Pattern B) on 2026-10-12 for full test isolation; re-run 8/8 green.
 
 ## 1. Feature summary (what must be tested)
 
@@ -62,7 +62,7 @@ One file is sufficient (~8 tests, shared-page pattern). Named after the behavior
 
 ## 5. Test cases
 
-Conventions: shared-page pattern (Pattern A) with `initMoleculesCanvas` + `MoleculesCanvas` fixture (micro editor, cleared canvas per test — each test starts in micro mode on an empty canvas and drives its own switches); comment block with issue number per test; named coordinate constants (`ATOM_X/Y`, `MONOMER1_X/Y`, …); undo/redo via `CommonTopLeftToolbar` buttons except R7 (keyboard).
+Conventions: **per-test fresh page (Pattern B)** — built-in `{ page }` fixture (new browser context per test) + `waitForPageInit(page)` in `beforeEach`. Each test therefore starts in micro mode on an empty canvas with an **empty undo/redo history** and no leftover fixture-cleanup entry, so no state leaks between tests. (Originally Pattern A shared-page; switched 2026-10-12 — see Results.) Comment block with issue number per test; named coordinate constants (`ATOM_X/Y`, `MONOMER1_X/Y`, …); undo/redo via `CommonTopLeftToolbar` buttons except R7 (keyboard).
 
 | Test | Steps | Assert |
 | ---- | ----- | ------ |
@@ -73,7 +73,7 @@ Conventions: shared-page pattern (Pattern A) with `initMoleculesCanvas` + `Molec
 | 5. New edit invalidates shared redo (R5) | Draw C atom → switch to macro → undo (back in micro, atom present) → draw a 2nd C atom → redo | state unchanged: still micro mode, atom count = 2 (redo was invalidated); if spike shows `disabled` attribute on `redo` button, assert that instead/additionally |
 | 6. Consecutive switches are separate undo steps (R6) | Switch micro→macro→micro (no edits) → undo ×2 | after 1st undo: macro canvas visible; after 2nd: micro canvas visible |
 | 7. Keyboard undo/redo work in both modes (R7) | Draw C atom → switch to macro → `undoByKeyboard` → `redoByKeyboard` → `undoByKeyboard` | each step flips mode as expected and atom count preserved throughout (proves no double-interception / dead shortcuts) |
-| 8. Undo at history start is a no-op (R8, negative) | Switch micro→macro→micro → undo until disabled (loop; fixture adds one extra entry) | undo button disabled, micro mode visible, canvas empty; extra keyboard undo is a no-op |
+| 8. Undo at history start is a no-op (R8, negative) | Switch micro→macro→micro → undo ×2 (fresh page = empty history, so the two switches are the only entries) | after each undo mode flips as expected; undo button disabled, canvas empty; extra keyboard undo is a no-op |
 
 ## 6. Verification strategy
 
@@ -118,6 +118,7 @@ Run the new specs locally and fix before moving on, per phase.
   - **New spec (after fixes): 8/8 passed** (13.6s).
   - **Full `chromium-popup` run (1525 tests, 26.9m): 620 passed / 861 failed / 44 skipped.** All 8 Mode-Switching tests passed. The 861 failures are pre-existing/environmental: ~all are "A snapshot doesn't exist … `-darwin.png`" — snapshot baselines are Linux-only (generated via Docker per testing.md), so the screenshot suite cannot pass on this macOS machine. A handful of unrelated flaky-UI errors (e.g. `Unknown key: "Option"`, click timeouts) appear in Bugs/Snake-Mode specs, untouched by this change. The diff for this work is additive (two new POM locators + one new spec file) and cannot affect other specs.
   - Side effect cleaned up: the full run with `GENERATE_DATA=true` rewrote ~185 expected files under `tests/test-data/`; all restored via `git checkout`. Working tree now contains only the intended changes (POM + new spec + this plan).
+- **Pattern B rework (2026-10-12):** switched from Pattern A (shared page + `MoleculesCanvas` clear-canvas cleanup) to Pattern B (built-in per-test `{ page }` fixture + `waitForPageInit` in `beforeEach`). Motivation: full per-test isolation — a fresh browser context resets canvas, history, localStorage and settings, so no state can leak between tests. This also removes the Q4 fragility for this spec: with an empty initial history the two switches in test 8 are exactly two undo entries, so its "loop until disabled" workaround was replaced by two hardcoded undos (verified green). Re-run: **8/8 passed** (13.4s) against the served build on :4002; `tsc --noEmit` clean. The Q4 caveat in `.memory-bank/testing.md` remains valid for other Pattern A specs that still use the canvas fixtures.
 
 ## 9. Rules & constraints to respect
 

@@ -1,5 +1,5 @@
 import { test, expect, Page } from '@fixtures';
-import { clickOnCanvas, moveMouseAway } from '@utils';
+import { clickOnCanvas, moveMouseAway, waitForPageInit } from '@utils';
 import { undoByKeyboard, redoByKeyboard } from '@utils/canvas';
 import { keyboardPressOnCanvas } from '@utils/keyboard';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -27,19 +27,10 @@ const MONOMER_1_Y = 300;
 const MONOMER_2_X = 450;
 const MONOMER_2_Y = 300;
 
-let page: Page;
-
-test.beforeAll(async ({ initMoleculesCanvas }) => {
-  page = await initMoleculesCanvas();
-});
-
-test.afterAll(async ({ closePage }) => {
-  await closePage();
-});
-
-test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
-
-async function drawCarbons(points: Array<{ x: number; y: number }>) {
+async function drawCarbons(
+  page: Page,
+  points: Array<{ x: number; y: number }>,
+) {
   await RightToolbar(page).clickAtom(Atom.Carbon);
   for (const point of points) {
     await clickOnCanvas(page, point.x, point.y);
@@ -48,71 +39,85 @@ async function drawCarbons(points: Array<{ x: number; y: number }>) {
   await moveMouseAway(page);
 }
 
-async function expectMicroMode() {
+async function expectMicroMode(page: Page) {
   await expect(CommonTopRightToolbar(page).moleculesCanvas).toBeVisible();
 }
 
-async function expectMacroMode() {
+async function expectMacroMode(page: Page) {
   await expect(CommonTopRightToolbar(page).macromoleculesCanvas).toBeVisible();
 }
 
-const carbonCount = () => getAtomLocator(page, { atomLabel: 'C' }).count();
-const tzaCount = () => getMonomerLocator(page, Peptide.Tza).count();
-const peptideBondCount = () =>
+const carbonCount = (page: Page) =>
+  getAtomLocator(page, { atomLabel: 'C' }).count();
+const tzaCount = (page: Page) => getMonomerLocator(page, Peptide.Tza).count();
+const peptideBondCount = (page: Page) =>
   getBondLocator(page, { bondType: MacroBondType.Single }).count();
 
 test.describe('Undo/redo across micro-macro mode switches', () => {
-  test('Undo reverts a micro-to-macro switch and keeps the micro structure', async () => {
+  // Pattern B: each test gets a fresh page (new browser context), so the canvas
+  // is empty and the undo/redo history starts clean — no state leaks between
+  // tests and no leftover fixture-cleanup history entry to account for.
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test('Undo reverts a micro-to-macro switch and keeps the micro structure', async ({
+    page,
+  }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/11899 - R1
     Description: Edits made in molecules mode remain undoable after switching
                  to macromolecules mode; undoing the switch returns to molecules
                  mode with the structure intact.
     */
-    await drawCarbons([
+    await drawCarbons(page, [
       { x: CARBON_1_X, y: CARBON_1_Y },
       { x: CARBON_2_X, y: CARBON_2_Y },
     ]);
-    expect(await carbonCount()).toBe(2);
+    expect(await carbonCount(page)).toBe(2);
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await expectMacroMode();
+    await expectMacroMode(page);
 
     await CommonTopLeftToolbar(page).undo();
-    await expectMicroMode();
-    expect(await carbonCount()).toBe(2);
+    await expectMicroMode(page);
+    expect(await carbonCount(page)).toBe(2);
   });
 
-  test('Undo continues into pre-switch micro edits one step at a time', async () => {
+  test('Undo continues into pre-switch micro edits one step at a time', async ({
+    page,
+  }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/11899 - R2
     Description: After undoing the mode switch, further undos revert the
                  original molecules-mode edits.
     */
-    await drawCarbons([
+    await drawCarbons(page, [
       { x: CARBON_1_X, y: CARBON_1_Y },
       { x: CARBON_2_X, y: CARBON_2_Y },
     ]);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await CommonTopLeftToolbar(page).undo();
-    await expectMicroMode();
-    expect(await carbonCount()).toBe(2);
+    await expectMicroMode(page);
+    expect(await carbonCount(page)).toBe(2);
 
     await CommonTopLeftToolbar(page).undo();
-    expect(await carbonCount()).toBe(1);
+    expect(await carbonCount(page)).toBe(1);
 
     await CommonTopLeftToolbar(page).undo();
-    expect(await carbonCount()).toBe(0);
+    expect(await carbonCount(page)).toBe(0);
   });
 
-  test('Redo restores the micro edits and the mode switch in reverse order', async () => {
+  test('Redo restores the micro edits and the mode switch in reverse order', async ({
+    page,
+  }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/11899 - R3
     Description: After undoing everything (edits + switch), redo replays the
                  edits first and re-applies the mode switch last.
     */
-    await drawCarbons([
+    await drawCarbons(page, [
       { x: CARBON_1_X, y: CARBON_1_Y },
       { x: CARBON_2_X, y: CARBON_2_Y },
     ]);
@@ -121,20 +126,22 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).undo();
-    await expectMicroMode();
-    expect(await carbonCount()).toBe(0);
+    await expectMicroMode(page);
+    expect(await carbonCount(page)).toBe(0);
 
     await CommonTopLeftToolbar(page).redo();
-    expect(await carbonCount()).toBe(1);
+    expect(await carbonCount(page)).toBe(1);
 
     await CommonTopLeftToolbar(page).redo();
-    expect(await carbonCount()).toBe(2);
+    expect(await carbonCount(page)).toBe(2);
 
     await CommonTopLeftToolbar(page).redo();
-    await expectMacroMode();
+    await expectMacroMode(page);
   });
 
-  test('Undo chain across a macro-to-micro switch reverts switch, bond and monomers', async () => {
+  test('Undo chain across a macro-to-micro switch reverts switch, bond and monomers', async ({
+    page,
+  }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/11899 - R4
     Description: Monomer and bond additions in macromolecules mode remain
@@ -157,45 +164,47 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
       monomer1.nth(0),
       getMonomerLocator(page, Peptide.Tza).nth(1),
     );
-    expect(await tzaCount()).toBe(2);
-    expect(await peptideBondCount()).toBe(1);
+    expect(await tzaCount(page)).toBe(2);
+    expect(await peptideBondCount(page)).toBe(1);
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await expectMicroMode();
+    await expectMicroMode(page);
 
     // undo #1 — the mode switch itself
     await CommonTopLeftToolbar(page).undo();
-    await expectMacroMode();
-    expect(await tzaCount()).toBe(2);
-    expect(await peptideBondCount()).toBe(1);
+    await expectMacroMode(page);
+    expect(await tzaCount(page)).toBe(2);
+    expect(await peptideBondCount(page)).toBe(1);
 
     // undo #2 — the bond
     await CommonTopLeftToolbar(page).undo();
-    expect(await tzaCount()).toBe(2);
-    expect(await peptideBondCount()).toBe(0);
+    expect(await tzaCount(page)).toBe(2);
+    expect(await peptideBondCount(page)).toBe(0);
 
     // undo #3 and #4 — the monomers
     await CommonTopLeftToolbar(page).undo();
-    expect(await tzaCount()).toBe(1);
+    expect(await tzaCount(page)).toBe(1);
     await CommonTopLeftToolbar(page).undo();
-    expect(await tzaCount()).toBe(0);
+    expect(await tzaCount(page)).toBe(0);
   });
 
-  test('A new edit after undo invalidates redo in the shared history', async () => {
+  test('A new edit after undo invalidates redo in the shared history', async ({
+    page,
+  }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/11899 - R5
     Description: Making a new edit after undoing clears the redo portion of
                  the shared stack, even when the undone entry was a mode switch.
     */
-    await drawCarbons([{ x: CARBON_1_X, y: CARBON_1_Y }]);
+    await drawCarbons(page, [{ x: CARBON_1_X, y: CARBON_1_Y }]);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await CommonTopLeftToolbar(page).undo();
-    await expectMicroMode();
-    expect(await carbonCount()).toBe(1);
+    await expectMicroMode(page);
+    expect(await carbonCount(page)).toBe(1);
 
-    await drawCarbons([{ x: CARBON_2_X, y: CARBON_2_Y }]);
-    expect(await carbonCount()).toBe(2);
+    await drawCarbons(page, [{ x: CARBON_2_X, y: CARBON_2_Y }]);
+    expect(await carbonCount(page)).toBe(2);
 
     const redoButton = page
       .getByTestId('redo')
@@ -203,47 +212,53 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     await expect(redoButton).toBeDisabled();
   });
 
-  test('Consecutive mode switches are separate undo steps', async () => {
+  test('Consecutive mode switches are separate undo steps', async ({
+    page,
+  }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/11899 - R6
     Description: Each mode switch is its own history entry; a single undo
                  reverts exactly one switch.
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await expectMacroMode();
+    await expectMacroMode(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await expectMicroMode();
+    await expectMicroMode(page);
 
     await CommonTopLeftToolbar(page).undo();
-    await expectMacroMode();
+    await expectMacroMode(page);
 
     await CommonTopLeftToolbar(page).undo();
-    await expectMicroMode();
+    await expectMicroMode(page);
   });
 
-  test('Keyboard undo and redo work in both modes after a switch', async () => {
+  test('Keyboard undo and redo work in both modes after a switch', async ({
+    page,
+  }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/11899 - R7
     Description: Ctrl+Z / Ctrl+Shift+Z revert and re-apply the mode switch
                  from either editor without being intercepted twice.
     */
-    await drawCarbons([{ x: CARBON_1_X, y: CARBON_1_Y }]);
+    await drawCarbons(page, [{ x: CARBON_1_X, y: CARBON_1_Y }]);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await expectMacroMode();
+    await expectMacroMode(page);
 
     await undoByKeyboard(page);
-    await expectMicroMode();
-    expect(await carbonCount()).toBe(1);
+    await expectMicroMode(page);
+    expect(await carbonCount(page)).toBe(1);
 
     await redoByKeyboard(page);
-    await expectMacroMode();
+    await expectMacroMode(page);
 
     await undoByKeyboard(page);
-    await expectMicroMode();
-    expect(await carbonCount()).toBe(1);
+    await expectMicroMode(page);
+    expect(await carbonCount(page)).toBe(1);
   });
 
-  test('Undo at the start of history is a no-op across mode switches', async () => {
+  test('Undo at the start of history is a no-op across mode switches', async ({
+    page,
+  }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/11899 - R8 (negative)
     Description: Once all entries are undone, the undo button is disabled and
@@ -252,23 +267,23 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
-    // Undo until the stack is exhausted. Besides the two switch entries the
-    // shared-page fixture leaves one entry of its own (settings reset), so
-    // loop instead of hardcoding the count.
+    // A fresh page starts with an empty history, so the two switches are the
+    // only two undoable entries — two undos exhaust the stack.
+    await CommonTopLeftToolbar(page).undo();
+    await expectMacroMode(page);
+    await CommonTopLeftToolbar(page).undo();
+    await expectMicroMode(page);
+
     const undoButton = page
       .getByTestId('undo')
       .filter({ has: page.locator(':visible') });
-    for (let i = 0; i < 10 && !(await undoButton.isDisabled()); i++) {
-      await CommonTopLeftToolbar(page).undo();
-    }
     await expect(undoButton).toBeDisabled();
-    await expectMicroMode();
     expect(await getAtomLocator(page, {}).count()).toBe(0);
 
     // extra undo via keyboard — must be a no-op (clicking the disabled
     // button is not possible, so the shortcut is the safe probe)
     await undoByKeyboard(page);
-    await expectMicroMode();
+    await expectMicroMode(page);
     expect(await getAtomLocator(page, {}).count()).toBe(0);
   });
 });

@@ -23,7 +23,7 @@ import {
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import { modalComponentList } from 'components/modal/modalContainer';
-import { openModal } from 'state/modal';
+import { openModal, selectIsSettingsPanelOpen } from 'state/modal';
 import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 import { BaseMonomer } from 'ketcher-core';
 import {
@@ -54,8 +54,9 @@ export function TopMenuComponent() {
     useState<boolean>(false);
   const [antisenseActiveOption, setAntisenseActiveOption] =
     useState<IconName>();
+  const isSettingsPanelOpen = useAppSelector(selectIsSettingsPanelOpen);
   const activeMenuItems = [activeTool];
-  const isDisabled = isSequenceEditInRNABuilderMode;
+  const isDisabled = isSequenceEditInRNABuilderMode || isSettingsPanelOpen;
   const lastSelectedSelectionMenuItem = useAppSelector(
     selectLastSelectedSelectionMenuItem,
   );
@@ -64,6 +65,12 @@ export function TopMenuComponent() {
   const selectedMonomers = selectedEntities.filter(
     (entity) => entity && typeof entity.forEachBond === 'function',
   );
+
+  const isAntisenseDisabled =
+    isSettingsPanelOpen ||
+    !selectedEntities?.length ||
+    !isAntisenseOptionVisible(selectedEntities) ||
+    isAntisenseCreationDisabled(selectedEntities);
 
   const cyclicStructureFormationDisabled =
     (editor?.drawingEntitiesManager.selectedMicromoleculeEntities.length ?? 0) >
@@ -131,6 +138,7 @@ export function TopMenuComponent() {
         <Menu.Item
           itemId="clear"
           title={t('topMenu.clearCanvas', { shortcut: hotkeysShortcuts.clear })}
+          disabled={isSettingsPanelOpen}
           testId="clear-canvas"
         />
         <Menu.Item
@@ -142,6 +150,7 @@ export function TopMenuComponent() {
         <Menu.Item
           itemId="save"
           title={t('topMenu.saveAs')}
+          disabled={isSettingsPanelOpen}
           testId="save-file-button"
         />
       </Menu.Group>
@@ -166,18 +175,14 @@ export function TopMenuComponent() {
             title={t('topMenu.arrangeAsRing', {
               shortcut: hotkeysShortcuts.arrangeRing,
             })}
-            disabled={cyclicStructureFormationDisabled}
+            disabled={isSettingsPanelOpen || cyclicStructureFormationDisabled}
             testId="arrange-ring"
           />
         </Menu.Group>
       )}
       <Menu.Group isHorizontal={true}>
         <Menu.Submenu
-          disabled={
-            !selectedEntities?.length ||
-            !isAntisenseOptionVisible(selectedEntities) ||
-            isAntisenseCreationDisabled(selectedEntities)
-          }
+          disabled={isAntisenseDisabled}
           needOpenByMenuItemClick={needOpenByMenuItemClick}
           vertical={true}
           autoSize={true}
@@ -191,11 +196,7 @@ export function TopMenuComponent() {
             title={t('topMenu.createRnaAntisenseStrand', {
               shortcut: hotkeysShortcuts.createRnaAntisenseStrand,
             })}
-            disabled={
-              !selectedEntities?.length ||
-              !isAntisenseOptionVisible(selectedEntities) ||
-              isAntisenseCreationDisabled(selectedEntities)
-            }
+            disabled={isAntisenseDisabled}
             testId="antisenseRnaStrand"
             type="button"
           />
@@ -204,11 +205,7 @@ export function TopMenuComponent() {
             title={t('topMenu.createDnaAntisenseStrand', {
               shortcut: hotkeysShortcuts.createDnaAntisenseStrand,
             })}
-            disabled={
-              !selectedEntities?.length ||
-              !isAntisenseOptionVisible(selectedEntities) ||
-              isAntisenseCreationDisabled(selectedEntities)
-            }
+            disabled={isAntisenseDisabled}
             testId="antisenseDnaStrand"
             type="button"
           />

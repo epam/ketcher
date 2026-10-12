@@ -114,6 +114,13 @@ const Bottom = styled.div`
   }
 `;
 
+/**
+ * The canvas area. Floating windows that must stay clear of the toolbars and the
+ * monomer library (the Settings window) are portalled into this element and
+ * clamped to its box, so it is addressable from outside the layout.
+ */
+export const MACROMOLECULES_MAIN_AREA_TEST_ID = 'macromolecules-main-area';
+
 const Main = styled.div({
   height: '100%',
   width: '100%',

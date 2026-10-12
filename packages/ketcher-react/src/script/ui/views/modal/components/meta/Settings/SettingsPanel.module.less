@@ -1,0 +1,385 @@
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+
+@import '../../../../../../../style/variables.less';
+@import '../../../../../../../style/mixins.less';
+
+// Mockup tokens local to the settings panel
+@settings-panel-width: 340px;
+@settings-panel-radius: 4px;
+@settings-panel-shadow: 0 2px 5px @color-select-box-shadow;
+@settings-section-header-bg: #f3f5f7;
+@settings-control-border: #7c7c7f;
+@settings-toggle-on: @color-primary-green;
+@settings-toggle-off: @color-primary-light;
+@settings-gutter: 8px;
+@settings-row-gap: 12px;
+
+.panel {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: @settings-panel-width;
+  background-color: @color-background-primary;
+  border-radius: @settings-panel-radius;
+  box-shadow: @settings-panel-shadow;
+  overflow: hidden;
+  font-family: @Inter;
+  pointer-events: auto;
+  // Above the macro canvas capture layer, which would otherwise swallow input
+  z-index: 10;
+}
+
+.header {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: @settings-gutter;
+  padding: 10px 12px;
+  background-color: @color-background-primary;
+  cursor: move;
+  user-select: none;
+  touch-action: none;
+}
+
+.title {
+  flex: 1 1 auto;
+  font-size: @font-size-header;
+  line-height: 16px;
+  font-weight: @font-weight-medium;
+  color: @color-text-primary;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headerControls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: @settings-gutter;
+  cursor: default;
+}
+
+.closeButton {
+  .reset-button();
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: @color-icon-active;
+  cursor: pointer;
+
+  &:hover {
+    color: @color-icon-hover;
+  }
+}
+
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden auto;
+  background-color: @color-background-primary;
+  .scrollbar();
+}
+
+.footer {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: @settings-gutter;
+  padding: 10px 12px;
+  background-color: @color-background-primary;
+}
+
+.cancelButton {
+  .button-secondary();
+  cursor: pointer;
+}
+
+.applyButton {
+  .button-primary();
+  cursor: pointer;
+}
+
+//
+// Accordion
+//
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+}
+
+.accordionSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionHeader {
+  .reset-button();
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  background-color: @settings-section-header-bg;
+  border-bottom: 1px solid @color-background-primary;
+  font: inherit;
+  font-size: @font-size-regular;
+  line-height: @line-height-regular;
+  font-weight: @font-weight-medium;
+  color: @color-text-primary;
+  text-align: start;
+  cursor: pointer;
+}
+
+.sectionLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-inline-start: @settings-gutter;
+  color: @color-icon-active;
+  transform: rotate(0deg);
+  transition: transform 200ms ease-in-out;
+}
+
+.chevronExpanded {
+  transform: rotate(180deg);
+}
+
+.sectionContent {
+  display: flex;
+  flex-direction: column;
+  gap: @settings-row-gap;
+  padding: 12px;
+  background-color: @color-background-primary;
+}
+
+//
+// Field rows
+//
+
+.fieldRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fieldRowInline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: @settings-row-gap;
+}
+
+.fieldRowStacked {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.fieldLabel {
+  flex: 1 1 auto;
+  font-size: @font-size-regular;
+  line-height: @line-height-regular;
+  color: @color-text-primary;
+}
+
+.fieldControl {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+
+  input,
+  select,
+  > div {
+    border-radius: @settings-panel-radius;
+  }
+}
+
+.fieldControlStacked {
+  display: flex;
+  width: 100%;
+
+  input,
+  select,
+  > div {
+    width: 100%;
+    border-radius: @settings-panel-radius;
+  }
+}
+
+.hint {
+  font-size: 10px;
+  line-height: 12px;
+  color: @color-text-secondary;
+}
+
+//
+// Shared control appearance inside the panel
+//
+
+.panel {
+  input[type='text'],
+  input[type='number'],
+  select {
+    border: 1px solid @settings-control-border;
+    border-radius: @settings-panel-radius;
+  }
+}
+
+// Native controls rendered by the adapters (macro mode) carry no styling of
+// their own, so field rows give them the mockup look. Micro mode renders its
+// own form controls and is not affected.
+.fieldRow {
+  input[type='text'],
+  input[type='number'],
+  select {
+    box-sizing: border-box;
+    height: 24px;
+    padding: 0 8px;
+    border: 1px solid @settings-control-border;
+    border-radius: @settings-panel-radius;
+    background-color: @color-background-primary;
+    font-family: @Inter;
+    font-size: @font-size-regular;
+    color: @color-text-primary;
+    outline: none;
+
+    &:focus {
+      border-color: @settings-toggle-on;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  input[type='number'] {
+    width: 64px;
+  }
+
+  select {
+    min-width: 64px;
+    padding-inline-end: 24px;
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23333333' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    background-size: 16px;
+  }
+
+  // Switch: 38 x 20 track, check glyph on the thumb when on
+  input[type='checkbox'] {
+    position: relative;
+    flex-shrink: 0;
+    width: 38px;
+    height: 20px;
+    margin: 0;
+    appearance: none;
+    border-radius: 10px;
+    background-color: @settings-toggle-off;
+    cursor: pointer;
+    transition: background-color 200ms ease-in-out;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      inset-inline-start: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: @color-background-primary;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 12px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      transition: transform 200ms ease-in-out;
+    }
+
+    &:checked {
+      background-color: @settings-toggle-on;
+
+      &::before {
+        transform: translateX(18px);
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.5 8.5l3 3 6-6.5' stroke='%23167782' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      }
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  // Colour swatch
+  input[type='color'] {
+    box-sizing: border-box;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    padding: 2px;
+    border: 1px solid @settings-control-border;
+    border-radius: @settings-panel-radius;
+    background-color: @color-background-primary;
+    cursor: pointer;
+
+    &::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    &::-webkit-color-swatch {
+      border: none;
+      border-radius: 2px;
+    }
+
+    &::-moz-color-swatch {
+      border: none;
+      border-radius: 2px;
+    }
+  }
+}
+
+// A colour field's hex text input is narrower than a number input
+.fieldRow[data-layout='color'] input[type='text'] {
+  width: 80px;
+}
+
+// Standalone dropdowns fill the row
+.fieldControlStacked select {
+  width: 100%;
+}

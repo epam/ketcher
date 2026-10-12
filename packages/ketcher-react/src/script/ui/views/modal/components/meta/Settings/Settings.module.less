@@ -17,33 +17,39 @@
 @import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
 
-.headerContent {
-  display: flex;
-  gap: 8px;
+// Icon controls in the panel title row: Open from File, Save to File, Reset
+.button {
+  background-color: transparent;
+  border: none;
+  color: @color-icon-active;
+  padding: 0;
+  font-size: 0;
+  cursor: pointer;
 
-  .title {
-    padding-inline-end: 4px;
+  input[type='file'] {
+    display: none;
   }
 
-  .button {
-    background-color: transparent;
-    border: none;
-    color: @color-icon-active;
-    padding: 0;
-    font-size: 0;
-
-    input[type='file'] {
-      display: none;
-    }
-
-    &:hover {
-      color: @color-icon-hover;
-    }
-
-    &:disabled {
-      color: @color-icon-disabled;
-    }
+  &:hover {
+    color: @color-icon-hover;
   }
+
+  &:disabled {
+    color: @color-icon-disabled;
+    cursor: default;
+  }
+}
+
+// Set ACS Settings sits in the title row next to the icon controls
+.acsStyleButton {
+  .button-secondary();
+
+  min-width: 0;
+  height: 20px;
+  padding: 0 6px;
+  font-size: 10px;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
 .accordion {
@@ -51,7 +57,10 @@
     border: none;
     display: flex;
     flex-direction: column;
+    gap: 12px;
     padding: 0;
+    margin: 0;
+    min-width: 0;
   }
 
   ul {
@@ -63,12 +72,12 @@
   label {
     display: flex;
     justify-content: flex-start;
-    font-size: 12px;
+    font-size: @font-size-regular;
     align-items: center;
-    line-height: 14px;
-    margin-bottom: 12px;
+    line-height: @line-height-regular;
+    margin-bottom: 0;
     color: @color-text-primary;
-    height: 24px;
+    min-height: 24px;
 
     input[type='checkbox'] {
       top: 0;
@@ -82,17 +91,10 @@
     }
 
     > :first-child {
-      width: 168px;
+      width: 160px;
       margin-inline-end: @margin-left-right;
     }
   }
-}
-
-.settings {
-  width: @width-settings;
-  height: 70vh;
-  max-height: 90%;
-  overflow: hidden;
 
   fieldset[disabled] {
     label > span {
@@ -103,21 +105,4 @@
       opacity: 0.6;
     }
   }
-
-  > header {
-    flex-shrink: 0;
-    box-shadow: 0 2px 4px 0 @color-accordion-shadow;
-    z-index: 10;
-  }
-
-  > footer {
-    box-shadow: 0 -2px 4px 0 @color-accordion-shadow;
-    z-index: 10;
-  }
-}
-
-.acsStyleButton {
-  margin-inline-end: auto;
-
-  .button-primary();
 }

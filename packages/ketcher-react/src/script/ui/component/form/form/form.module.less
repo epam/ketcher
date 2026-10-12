@@ -26,6 +26,20 @@
   margin-top: 12px;
 }
 
+// A field with an inline description: the control keeps its own row and the
+// description sits directly underneath it as static text.
+.fieldWithHint {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fieldHint {
+  font-size: 10px;
+  line-height: 12px;
+  color: @color-text-secondary;
+}
+
 .dataError {
   .inputWrapper {
     position: relative;

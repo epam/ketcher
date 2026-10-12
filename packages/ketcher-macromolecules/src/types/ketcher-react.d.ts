@@ -43,6 +43,46 @@ declare module 'ketcher-react' {
   };
   export const PresetPosition: string;
 
+  // Shared Settings window, mounted here over SettingsService
+  export interface SettingsGroup {
+    key: string;
+    label: string;
+    content: React.ReactNode;
+  }
+
+  export interface SettingsPanelProps {
+    title: string;
+    headerControls?: React.ReactNode;
+    groups?: SettingsGroup[];
+    children?: React.ReactNode;
+    boundsElement?: HTMLElement | null;
+    isApplyDisabled?: boolean;
+    onApply: () => void;
+    onCancel: () => void;
+    onClose: () => void;
+    className?: string;
+  }
+  export const SettingsPanel: React.ComponentType<SettingsPanelProps>;
+
+  export interface SettingsAccordionProps {
+    groups: SettingsGroup[];
+    defaultExpandedGroups?: string[];
+    className?: string;
+  }
+  export const SettingsAccordion: React.ComponentType<SettingsAccordionProps>;
+
+  export type SettingsFieldLayout = 'toggle' | 'measure' | 'select' | 'color';
+
+  export interface SettingsFieldRowProps {
+    label: string;
+    layout: SettingsFieldLayout;
+    hint?: string;
+    children: React.ReactNode;
+    className?: string;
+    testId?: string;
+  }
+  export const SettingsFieldRow: React.ComponentType<SettingsFieldRowProps>;
+
   export function usePortalStyle(...args: unknown[]): [React.CSSProperties];
   export function calculateAmbiguousMonomerPreviewTop(
     monomer: unknown,

@@ -38,6 +38,7 @@
   },
   "buttons": {
     "help": "Help (?)",
+    "settings": "Settings",
     "about": "About"
   },
   "sequenceType": {

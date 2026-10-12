@@ -38,6 +38,7 @@
   },
   "buttons": {
     "help": "帮助 (?)",
+    "settings": "设置",
     "about": "关于"
   },
   "sequenceType": {

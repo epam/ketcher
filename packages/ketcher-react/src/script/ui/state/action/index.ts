@@ -37,6 +37,11 @@ type ActionParams = {
     };
     buttons?: Record<string, { hidden?: boolean }>;
   };
+  /**
+   * The Settings window is non-modal: the canvas stays visible, so every toolbar
+   * button has to be reported disabled for as long as the window is open.
+   */
+  isSettingsPanelOpen?: boolean;
 };
 
 type ExecuteParams = ActionParams & {
@@ -118,7 +123,7 @@ function status(
   const actObj = actions[actionName];
   return pickBy((x) => x, {
     selected: selected(actObj, activeTool, params),
-    disabled: disabled(actObj, params),
+    disabled: params.isSettingsPanelOpen || disabled(actObj, params),
     hidden: hidden(actObj, params),
   });
 }
@@ -190,6 +195,13 @@ export default function (
         activeTool || state?.activeTool,
         params as ActionParams,
       );
+
+    // Opening or closing a dialog flips `isSettingsPanelOpen`, so the statuses
+    // have to be recomputed on those actions as well.
+    case 'MODAL_OPEN':
+    case 'MODAL_CLOSE':
+      if (!state) return state;
+      return buildStateWithStatuses(state.activeTool, params as ActionParams);
 
     default:
       return state;

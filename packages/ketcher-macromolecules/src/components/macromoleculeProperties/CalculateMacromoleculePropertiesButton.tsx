@@ -20,6 +20,7 @@ import {
   selectIsMacromoleculesPropertiesWindowOpened,
   toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
+import { selectIsSettingsPanelOpen } from 'state/modal';
 import styled from '@emotion/styled';
 import { Button } from 'ketcher-react';
 import { blurActiveElement } from 'helpers/canvas';
@@ -57,6 +58,7 @@ export const CalculateMacromoleculePropertiesButton = () => {
   const isMacromoleculesPropertiesWindowOpened = useAppSelector(
     selectIsMacromoleculesPropertiesWindowOpened,
   );
+  const isSettingsPanelOpen = useAppSelector(selectIsSettingsPanelOpen);
 
   const recalculateMacromoleculeProperties =
     useRecalculateMacromoleculeProperties();
@@ -74,6 +76,7 @@ export const CalculateMacromoleculePropertiesButton = () => {
     <StyledButton
       isActive={isMacromoleculesPropertiesWindowOpened}
       onClick={handleClick}
+      disabled={isSettingsPanelOpen}
       title={t('macromoleculeProperties.calculateProperties', {
         shortcut: hotkeysShortcuts.toggleMacromoleculesPropertiesVisibility,
       })}

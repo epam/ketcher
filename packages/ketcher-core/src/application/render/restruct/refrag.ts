@@ -48,8 +48,8 @@ class ReFrag extends ReObject {
         return false;
       }
 
-      const firstFrag = restruct.atoms.get(bond.begin)?.a.fragment;
-      const secondFrag = restruct.atoms.get(bond.end)?.a.fragment;
+      const firstFrag = restruct.getBondEndpoint(bond.begin)?.a.fragment;
+      const secondFrag = restruct.getBondEndpoint(bond.end)?.a.fragment;
 
       return firstFrag === fid && secondFrag === fid;
     });
@@ -131,7 +131,7 @@ class ReFrag extends ReObject {
     });
 
     render.ctab.bonds.forEach((bond) => {
-      if (render.ctab.atoms.get(bond.b.begin)?.a.fragment === fid) {
+      if (render.ctab.getBondEndpoint(bond.b.begin)?.a.fragment === fid) {
         bond.setHover(hover, render);
       }
     });

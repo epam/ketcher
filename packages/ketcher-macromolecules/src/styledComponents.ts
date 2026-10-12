@@ -14,8 +14,10 @@ export const TogglerComponentWrapper = styled.div((): CSSObject => ({
   background: '',
   '&.toggler-component-wrapper--disabled': {
     opacity: 0.4,
-    pointerEvents: 'none',
-    cursor: 'default',
+    cursor: 'not-allowed',
+    '& *': {
+      pointerEvents: 'none',
+    },
   },
 }));
 

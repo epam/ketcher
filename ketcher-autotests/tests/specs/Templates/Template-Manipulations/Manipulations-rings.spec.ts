@@ -37,7 +37,10 @@ function getRingButtonName(value: RingButton): string | undefined {
 async function checkTooltip(type: RingButton, page: Page) {
   const templateButton = BottomToolbar(page).getButtonLocator(type);
   const buttonName = getRingButtonName(type);
-  await expect(templateButton).toHaveAttribute('title', `${buttonName} (T)`);
+  await expect(templateButton).toHaveAttribute(
+    'aria-label',
+    `${buttonName} (T)`,
+  );
 }
 
 async function placeTwoRingsMergedByAtom(type: RingButton, page: Page) {

@@ -175,6 +175,7 @@ test.describe('R-Group Label Tool', () => {
 
     await selectAllStructuresOnCanvas(page);
     await RotationTool(page).flipVertically();
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

@@ -3,6 +3,7 @@ import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   clickOnCanvas,
+  moveMouseAway,
   waitForPageInit,
   waitForSpinnerFinishedWork,
 } from '@utils';
@@ -42,10 +43,11 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       ReactionMappingType.ReactionMapping,
     );
     await reactionMappingToolsButton.click();
-    expect(reactionMappingToolsButton).toHaveAttribute(
-      'title',
+    await expect(reactionMappingToolsButton).toHaveAttribute(
+      'aria-label',
       'Reaction Mapping Tool',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

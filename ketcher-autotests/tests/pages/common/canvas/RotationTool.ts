@@ -1,5 +1,6 @@
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
+import { moveMouseAway } from '@utils/moveMouseAway';
 
 type RotationToolLocators = {
   flipHorizontallyButton: Locator;
@@ -49,6 +50,7 @@ export const RotationTool = (page: Page) => {
         await page.mouse.move(coordinates.x, coordinates.y);
         if (performMouseUp) {
           await page.mouse.up();
+          await moveMouseAway(page);
         }
       });
     },

@@ -118,6 +118,12 @@ npm run docker:update file_name:N   # Regenerate single test snapshot
 npm run docker:update-popup file_name:N   # Regenerate single test snapshot
 ```
 
+### Local run caveats
+
+- **Verify the served build contains the change under test** before running bug-fix E2E specs — rebase onto latest master, rebuild and re-serve. A control that is enabled but does nothing can mask a fix that isn't actually in the build.
+- **Screenshot/snapshot tests only pass where Linux baselines exist.** On macOS they fail with `A snapshot doesn't exist … -darwin.png` because baselines are generated via Docker. Run the screenshot suite through Docker (or CI); don't treat local `-darwin.png` misses as real regressions.
+- **`GENERATE_DATA=true` rewrites many expected files** under `tests/test-data/`. If that was unintended, restore them with `git checkout`.
+
 ### Playwright Projects
 
 | Project name     | Test match                               | Viewport | Base URL       |
@@ -181,6 +187,8 @@ test('some test', async ({ page }) => {
 ```
 
 **When to use**: Small suites, isolated tests, or tests that need a fresh page each time.
+
+**Choosing between A and B.** Pattern A reuses one page for the whole suite, so it is fast — but the canvas fixtures only reset the canvas, zoom, localStorage and settings; they do **not** fully reset the undo/redo history (some cleanup steps leave entries behind), and other subtle editor state can persist across tests. Use Pattern B when a test asserts on undo/redo stack depth or boundaries, or otherwise depends on a fully clean editor state — the extra per-test page-init cost is worth the isolation.
 
 ### Canvas Fixtures (what they do)
 
@@ -329,6 +337,13 @@ const peptide1 = getMonomerLocator(page, Peptide.Tza).nth(0);
 
 Each entry has `{ alias, testId }`. Always use these enums — never hardcode monomer strings.
 
+### Editor-mode content-creation caveats
+
+- **Micro mode — placing atoms:** use the `addAtoms(page, atom, points)` helper (`@utils/canvas/atoms/addAtoms`) — it selects the element tool once, clicks each point in turn (the tool stays active between clicks), then presses Escape and moves the mouse away. Note: typing an element symbol on the canvas does *not* place an atom; it only selects that element in the periodic-table panel.
+- **Macro mode — adding monomers depends on the layout mode.** The way you place monomers/bases differs by the selected layout (`LayoutMode.Flex` / `Snake` / `Sequence`):
+  - **Flex & Snake:** drag from the library with `Library(page).dragMonomerOnCanvas(monomer, { x, y })`.
+  - **Sequence:** dragging from the library is not available. Add monomers by clicking on monomer card in library.
+
 ---
 
 ## Good Practices to Follow
@@ -346,7 +361,7 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 
 ### Test Structure
 
-6. **Use the shared-page pattern (`initXxxCanvas`)** for suites with more than ~5 tests — it significantly reduces test suite execution time.
+6. **Use the shared-page pattern (`initXxxCanvas`)** for suites with more than ~5 tests — it significantly reduces test suite execution time. Prefer a per-test page (Pattern B) instead when tests assert on undo/redo stack boundaries or need a fully clean editor state, since the shared canvas fixtures do not fully reset history.
 7. **One behavior per test**. Do not pack multiple unrelated assertions into one test.
 8. **Add a comment block** in each test with the test case ID and description:
    ```ts
@@ -359,6 +374,8 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 9. **Use `test.describe`** to group related tests. This enables parallel workers to efficiently schedule them.
 
 ### Screenshot Testing
+
+Prefer **structural assertions over screenshots** for editor mode and content presence where possible: the canvas exposes a `data-canvasmode` attribute, atoms/monomers/bonds have stable test ids, and toolbar buttons expose disabled state. These are deterministic and don't depend on Docker-generated Linux snapshots — reserve screenshots for genuine visual-regression checks.
 
 10. **Use `takeEditorScreenshot`** for canvas comparisons, not `takePageScreenshot`. Canvas screenshots are more stable across viewport changes.
 11. **Add `hideMacromoleculeEditorScrollBars: true`** when macromolecule editor scroll bars might appear and affect snapshots.
@@ -399,6 +416,7 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 - **`await page.waitForTimeout(N)`** as a wait for an action to complete — fragile and slow. Use `waitForRender`, `waitFor({ state })`, or structural waits instead. Raw `waitForTimeout` is only acceptable in rare edge cases (e.g. after a spinner disappears, to allow animation to settle) and must have a comment explaining why.
 - **Bare `await page.keyboard.press(key)`** for canvas actions — always wrap in `waitForRender` or use `keyboardPressOnCanvas`.
 - **Bare `await locator.click()`** without waiting for any result — use the POM method that wraps with the appropriate wait.
+- **Clicking a disabled button via a POM method** — Playwright waits for the element to become enabled, and with `actionTimeout: 0` (no timeout) this hangs forever. To check that a control is disabled, assert `toBeDisabled()`;
 
 ### Selector Anti-Patterns
 

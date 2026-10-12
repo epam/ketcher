@@ -1,12 +1,11 @@
 import { test, expect, Page } from '@fixtures';
-import { clickOnCanvas, moveMouseAway, waitForPageInit } from '@utils';
+import { waitForPageInit } from '@utils';
 import { undoByKeyboard, redoByKeyboard } from '@utils/canvas';
-import { keyboardPressOnCanvas } from '@utils/keyboard';
+import { addAtoms } from '@utils/canvas/atoms/addAtoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -26,18 +25,6 @@ const MONOMER_1_X = 300;
 const MONOMER_1_Y = 300;
 const MONOMER_2_X = 450;
 const MONOMER_2_Y = 300;
-
-async function drawCarbons(
-  page: Page,
-  points: Array<{ x: number; y: number }>,
-) {
-  await RightToolbar(page).clickAtom(Atom.Carbon);
-  for (const point of points) {
-    await clickOnCanvas(page, point.x, point.y);
-  }
-  await keyboardPressOnCanvas(page, 'Escape');
-  await moveMouseAway(page);
-}
 
 async function expectMicroMode(page: Page) {
   await expect(CommonTopRightToolbar(page).moleculesCanvas).toBeVisible();
@@ -70,7 +57,7 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
                  to macromolecules mode; undoing the switch returns to molecules
                  mode with the structure intact.
     */
-    await drawCarbons(page, [
+    await addAtoms(page, Atom.Carbon, [
       { x: CARBON_1_X, y: CARBON_1_Y },
       { x: CARBON_2_X, y: CARBON_2_Y },
     ]);
@@ -92,7 +79,7 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     Description: After undoing the mode switch, further undos revert the
                  original molecules-mode edits.
     */
-    await drawCarbons(page, [
+    await addAtoms(page, Atom.Carbon, [
       { x: CARBON_1_X, y: CARBON_1_Y },
       { x: CARBON_2_X, y: CARBON_2_Y },
     ]);
@@ -117,7 +104,7 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     Description: After undoing everything (edits + switch), redo replays the
                  edits first and re-applies the mode switch last.
     */
-    await drawCarbons(page, [
+    await addAtoms(page, Atom.Carbon, [
       { x: CARBON_1_X, y: CARBON_1_Y },
       { x: CARBON_2_X, y: CARBON_2_Y },
     ]);
@@ -196,14 +183,14 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     Description: Making a new edit after undoing clears the redo portion of
                  the shared stack, even when the undone entry was a mode switch.
     */
-    await drawCarbons(page, [{ x: CARBON_1_X, y: CARBON_1_Y }]);
+    await addAtoms(page, Atom.Carbon, [{ x: CARBON_1_X, y: CARBON_1_Y }]);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await CommonTopLeftToolbar(page).undo();
     await expectMicroMode(page);
     expect(await carbonCount(page)).toBe(1);
 
-    await drawCarbons(page, [{ x: CARBON_2_X, y: CARBON_2_Y }]);
+    await addAtoms(page, Atom.Carbon, [{ x: CARBON_2_X, y: CARBON_2_Y }]);
     expect(await carbonCount(page)).toBe(2);
 
     const redoButton = page
@@ -240,7 +227,7 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     Description: Ctrl+Z / Ctrl+Shift+Z revert and re-apply the mode switch
                  from either editor without being intercepted twice.
     */
-    await drawCarbons(page, [{ x: CARBON_1_X, y: CARBON_1_Y }]);
+    await addAtoms(page, Atom.Carbon, [{ x: CARBON_1_X, y: CARBON_1_Y }]);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await expectMacroMode(page);
 

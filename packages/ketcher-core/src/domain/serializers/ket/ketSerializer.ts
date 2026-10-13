@@ -409,6 +409,16 @@ export class KetSerializer implements Serializer<Struct> {
       );
       return { error: true };
     }
+
+    const missingTemplate = parsedFileContent.root.templates?.find(
+      ({ $ref }) => !parsedFileContent[$ref],
+    );
+    if (missingTemplate) {
+      throw new Error(
+        `File doesn't contain definition for "${missingTemplate.$ref}" template`,
+      );
+    }
+
     let error = false;
     parsedFileContent.root.nodes.forEach((node) => {
       const nodeDefinition = parsedFileContent[node.$ref];

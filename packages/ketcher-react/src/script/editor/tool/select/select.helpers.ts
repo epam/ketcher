@@ -1,5 +1,12 @@
 import { xor } from 'lodash/fp';
-import { type Atom, type Bond, type ReStruct, SGroup } from 'ketcher-core';
+import {
+  type Atom,
+  type Bond,
+  type ReStruct,
+  type Struct,
+  Bond as BondEntity,
+  SGroup,
+} from 'ketcher-core';
 import type { Editor, Selection } from '../../Editor';
 import type LassoHelper from '../helper/lasso';
 import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
@@ -35,6 +42,29 @@ export function getSelectedBonds(selection, molecule) {
     return mapBondIdsToBonds(selection?.bonds, molecule);
   }
   return [];
+}
+
+export function canOpenAtomProperties(molecule: Struct, atomId: number) {
+  return molecule.atoms.has(atomId);
+}
+
+export function getMovableAtomIdsForBond(
+  molecule: Struct,
+  bondId: number,
+  atomIds: number[],
+) {
+  const bond = molecule.bonds.get(bondId);
+  if (bond?.type !== BondEntity.PATTERN.TYPE.HAPTIC) {
+    return atomIds;
+  }
+
+  const attachmentGroupId = [bond.begin, bond.end].find((endpointId) =>
+    molecule.attachmentGroups.has(endpointId),
+  );
+
+  return attachmentGroupId === undefined
+    ? atomIds
+    : atomIds.filter((atomId) => atomId !== attachmentGroupId);
 }
 
 export function mapAtomIdsToAtoms(atomsIds: number[], molecule): Atom[] {
@@ -98,6 +128,21 @@ export function isItemSelected(
   };
 
   switch (ci.map) {
+    case 'attachmentGroups': {
+      const attachmentGroupSelection = getAttachmentGroupSelection(
+        restruct.molecule,
+        ci.id,
+      );
+      return (
+        selection.attachmentGroups?.includes(ci.id) === true &&
+        attachmentGroupSelection.atoms?.every((atomId) =>
+          selection.atoms?.includes(atomId),
+        ) === true &&
+        attachmentGroupSelection.bonds?.every((bondId) =>
+          selection.bonds?.includes(bondId),
+        ) === true
+      );
+    }
     case 'sgroups':
     case 'functionalGroups': {
       const sgroup = restruct.sgroups.get(ci.id)?.item;
@@ -160,6 +205,28 @@ export function getNewSelectedItems(editor: Editor, selectedSgroups: number[]) {
   }
 
   return newSelected;
+}
+
+export function getAttachmentGroupSelection(
+  molecule: Struct,
+  attachmentGroupId: number,
+): Selection {
+  const atomIds =
+    molecule.attachmentGroups.get(attachmentGroupId)?.atomIds ?? [];
+  const atomIdSet = new Set(atomIds);
+  const bondIds: number[] = [];
+
+  molecule.bonds.forEach((bond, bondId) => {
+    if (atomIdSet.has(bond.begin) && atomIdSet.has(bond.end)) {
+      bondIds.push(bondId);
+    }
+  });
+
+  return {
+    attachmentGroups: [attachmentGroupId],
+    atoms: [...atomIds],
+    bonds: bondIds,
+  };
 }
 
 export function selectElementsOnCanvas(

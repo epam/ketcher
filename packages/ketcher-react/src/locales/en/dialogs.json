@@ -352,7 +352,8 @@
           "enumSingleDouble": "Single/Double",
           "enumSingleAromatic": "Single/Aromatic",
           "enumDoubleAromatic": "Double/Aromatic",
-          "enumDative": "Dative"
+          "enumDative": "Dative",
+          "enumHaptic": "Haptic"
         },
         "topology": {
           "title": "Topology",

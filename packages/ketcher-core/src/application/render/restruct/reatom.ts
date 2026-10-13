@@ -21,6 +21,7 @@ import {
   StereoLabel,
 } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
+import { AttachmentGroup } from 'domain/entities/attachmentGroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
@@ -38,7 +39,7 @@ import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import type { Element, RaphaelSet } from 'raphael';
-import { Scale } from 'domain/helpers';
+import { Scale, isAttachmentGroupWithHapticBond } from 'domain/helpers';
 import draw, {
   AP_PATH_SCALE,
   AP_WAVE_HALF_PERP,
@@ -59,6 +60,7 @@ import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculati
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
 import { ShowHydrogenLabels } from './showHydrogenLabels';
+import type { ReBondEndpoint } from './rebondEndpoint';
 
 interface ElemAttr {
   text: string;
@@ -71,6 +73,7 @@ const StereoLabelMinOpacity = 0.3;
 const DEFAULT_ATOM_COLOR = '#000';
 const DEFAULT_STEREO_COLOR = '#000';
 const MAX_LABEL_LENGTH = 8;
+const monomerAttachmentPointNames = new Set(attachmentPointNames);
 
 export enum ShowHydrogenLabelNames {
   Off = 'Off',
@@ -80,7 +83,7 @@ export enum ShowHydrogenLabelNames {
   On = 'On',
 }
 
-class ReAtom extends ReObject {
+class ReAtom extends ReObject implements ReBondEndpoint {
   a: Atom;
   showLabel: boolean;
   showInfoLabel: boolean;
@@ -121,7 +124,7 @@ class ReAtom extends ReObject {
     this.component = -1;
   }
 
-  static isSelectable(): true {
+  static isSelectable(): boolean {
     return true;
   }
 
@@ -305,7 +308,9 @@ class ReAtom extends ReObject {
     if (labelBoxes.length === 0) {
       return this.getVBoxObj(render);
     }
-    let vbox = labelBoxes.reduce((union, box) => Box2Abs.union(union, box));
+    let vbox = labelBoxes
+      .slice(1)
+      .reduce((union, box) => Box2Abs.union(union, box), labelBoxes[0]);
     if (render.options.offset) {
       vbox = vbox.translate(render.options.offset.negated());
     }
@@ -556,9 +561,9 @@ class ReAtom extends ReObject {
 
           path.node?.setAttribute('data-testid', 's-group-label');
           path.node?.setAttribute('data-label-text', sGroupName);
-          path.node?.setAttribute('data-sgroup-id', sgroup.id);
+          path.node?.setAttribute('data-sgroup-id', String(sgroup.id));
           path.node?.setAttribute('data-sgroup-name', sGroupName);
-          path.node?.setAttribute('data-sgroup-type', sgroup.type);
+          path.node?.setAttribute('data-sgroup-type', String(sgroup.type));
 
           restruct.addReObjectPath(
             LayerMap.data,
@@ -775,27 +780,20 @@ class ReAtom extends ReObject {
           assignedAttachmentPoints.values(),
         ).reduce(
           (acc, currentPair) => {
-            let attachmentAtomsIds = acc[0];
             const attachmentAtomId = currentPair[0];
-            if (!attachmentAtomsIds.includes(attachmentAtomId)) {
-              attachmentAtomsIds = attachmentAtomsIds.concat(attachmentAtomId);
-            }
+            acc[0].add(attachmentAtomId);
 
-            let leavingAtomsIds = acc[1];
             const leavingAtomId = currentPair[1];
-            if (!leavingAtomsIds.includes(leavingAtomId)) {
-              leavingAtomsIds = leavingAtomsIds.concat(leavingAtomId);
-            }
-
-            return [attachmentAtomsIds, leavingAtomsIds];
+            acc[1].add(leavingAtomId);
+            return acc;
           },
-          [[], []] as [number[], number[]],
+          [new Set<number>(), new Set<number>()] as [Set<number>, Set<number>],
         );
 
         let style: RenderOptionStyles | undefined;
-        if (attachmentAtoms.includes(aid)) {
+        if (attachmentAtoms.has(aid)) {
           style = { fill: 'none', stroke: '#4da3f8', 'stroke-width': '2px' };
-        } else if (leavingGroups.includes(aid)) {
+        } else if (leavingGroups.has(aid)) {
           style = {
             fill: '#fff8c5',
             stroke: '#f8dc8f',
@@ -1093,7 +1091,7 @@ class ReAtom extends ReObject {
 
     // we render them together to avoid possible collisions
 
-    const fragmentId = Number(restruct.atoms.get(aid)?.a.fragment);
+    const fragmentId = Number(this.a.fragment);
     // TODO: fragment should not be null
     const fragment = restruct.molecule.frags.get(fragmentId);
 
@@ -1315,62 +1313,83 @@ class ReAtom extends ReObject {
     atomElement?.node?.setAttribute('data-testid', 'atom');
     atomElement?.node?.setAttribute(
       'data-atom-id',
-      restruct.molecule.atoms.keyOf(this.a ?? ''),
+      String(restruct.molecule.atoms.keyOf(this.a ?? '')),
     );
-    atomElement?.node?.setAttribute('data-atom-type', getAtomType(this.a));
-    atomElement?.node?.setAttribute('data-atomLabel', this.a.label ?? '');
-    atomElement?.node?.setAttribute('data-atomCharge', this.a.charge ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atom-type',
+      String(getAtomType(this.a)),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomLabel',
+      String(this.a.label ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomCharge',
+      String(this.a.charge ?? ''),
+    );
     atomElement?.node?.setAttribute(
       'data-atomIsotopeAtomicMass',
-      this.a.isotope ?? '',
+      String(this.a.isotope ?? ''),
     );
-    atomElement?.node?.setAttribute('data-atomValence', this.a.valence ?? '');
-    atomElement?.node?.setAttribute('data-atomRadical', this.a.radical ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atomValence',
+      String(this.a.valence ?? ''),
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomRadical',
+      String(this.a.radical ?? ''),
+    );
     atomElement?.node?.setAttribute(
       'data-atomRingBondCount',
-      this.a.ringBondCount ?? '',
+      String(this.a.ringBondCount ?? ''),
     );
-    atomElement?.node?.setAttribute('data-atomHCount', this.a.hCount ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atomHCount',
+      String(this.a.hCount ?? ''),
+    );
     atomElement?.node?.setAttribute(
       'data-atomSubstitutionCount',
-      this.a.substitutionCount ?? '',
+      String(this.a.substitutionCount ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomUnsaturated',
-      this.a.unsaturatedAtom ?? '',
+      String(this.a.unsaturatedAtom ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomAromaticity',
-      this.a.queryProperties.aromaticity ?? '',
+      String(this.a.queryProperties.aromaticity ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomImplicitHCount',
-      this.a.implicitHCount ?? '',
+      String(this.a.implicitHCount ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomRingMembership',
-      this.a.queryProperties.ringMembership ?? '',
+      String(this.a.queryProperties.ringMembership ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomRingSize',
-      this.a.queryProperties.ringSize ?? '',
+      String(this.a.queryProperties.ringSize ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomConnectivity',
-      this.a.queryProperties.connectivity ?? '',
+      String(this.a.queryProperties.connectivity ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomChirality',
-      this.a.queryProperties.chirality ?? '',
+      String(this.a.queryProperties.chirality ?? ''),
     );
-    atomElement?.node?.setAttribute('data-atomInversion', this.a.invRet ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atomInversion',
+      String(this.a.invRet ?? ''),
+    );
     atomElement?.node?.setAttribute(
       'data-atomExactChange',
-      this.a.exactChangeFlag ?? '',
+      String(this.a.exactChangeFlag ?? ''),
     );
     atomElement?.node?.setAttribute(
       'data-atomCustomQuery',
-      this.a.queryProperties.customQuery ?? '',
+      String(this.a.queryProperties.customQuery ?? ''),
     );
   }
 
@@ -1502,6 +1521,18 @@ function isLabelVisible(
   options: RenderOptions,
   atom: ReAtom,
 ) {
+  const attachmentGroupId =
+    atom.a instanceof AttachmentGroup
+      ? restruct.molecule.attachmentGroups.keyOf(atom.a)
+      : null;
+
+  if (
+    attachmentGroupId !== null &&
+    isAttachmentGroupWithHapticBond(restruct.molecule, attachmentGroupId)
+  ) {
+    return false;
+  }
+
   const isAttachmentPointAtom = Boolean(atom.a.attachmentPoints);
   const isCarbon = atom.a.label.toLowerCase() === 'c';
   const visibleNeighbors = getVisibleNeighborHalfBondIds(
@@ -1661,7 +1692,7 @@ function buildLabel(
   }
 
   const shouldStyleLabel = usageInMacromolecule !== undefined;
-  const isMonomerAttachmentPoint = attachmentPointNames.includes(text);
+  const isMonomerAttachmentPoint = monomerAttachmentPointNames.has(text);
   const isMonomerAttachmentPointSelected =
     currentlySelectedMonomerAttachmentPoint === text;
   const isMonomerAttachmentPointUsed =
@@ -2186,11 +2217,11 @@ type AtomCustomQueryPattern = {
   format: (value: string) => string;
 };
 
-const EXCLUDED_QUERY_ATTRIBUTES: readonly AtomCustomQueryPropertyName[] = [
+const EXCLUDED_QUERY_ATTRIBUTES = new Set<AtomCustomQueryPropertyName>([
   'charge',
   'explicitValence',
   'isotope',
-];
+]);
 
 const atomCustomQueryPatterns: readonly AtomCustomQueryPattern[] = [
   {
@@ -2318,7 +2349,7 @@ export function getAtomCustomQuery(
   for (const { propertyName, getValue, format } of atomCustomQueryPatterns) {
     if (
       includeOnlyQueryAttributes &&
-      EXCLUDED_QUERY_ATTRIBUTES.includes(propertyName)
+      EXCLUDED_QUERY_ATTRIBUTES.has(propertyName)
     ) {
       continue;
     }

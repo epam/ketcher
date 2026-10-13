@@ -146,7 +146,7 @@ export const NameContainer = styled.div<{ selected?: boolean }>((props) => ({
 export const NameLine = styled.span<{ selected?: boolean }>((props) => ({
   position: 'absolute',
   top: '0',
-  left: '0',
+  insetInlineStart: '0',
   width: '100%',
   height: '8px',
   backgroundColor: props.selected

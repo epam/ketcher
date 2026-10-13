@@ -26,7 +26,7 @@ export const Card = styled(MonomerCard)<{ code?: string; selected?: boolean }>`
   .dots {
     visibility: hidden;
     position: absolute;
-    right: 2px;
+    inset-inline-end: 2px;
     top: 10px;
   }
 
@@ -35,8 +35,8 @@ export const Card = styled(MonomerCard)<{ code?: string; selected?: boolean }>`
   }
 
   > .star {
-    right: 0;
-    left: calc(50% - 7px);
+    inset-inline-end: 0;
+    inset-inline-start: calc(50% - 7px);
     top: 11px;
     width: min-content;
   }

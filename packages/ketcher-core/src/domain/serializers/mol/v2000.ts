@@ -667,9 +667,9 @@ function parseRxn2000(
     ctabLines[0],
     utils.fmtInfo.rxnItemsPartition,
   );
-  const nReactants = countsSplit[0] - 0;
-  const nProducts = countsSplit[1] - 0;
-  const nAgents = countsSplit[2] - 0;
+  const nReactants = utils.parseDecimalInt(countsSplit[0]);
+  const nProducts = utils.parseDecimalInt(countsSplit[1]);
+  const nAgents = utils.parseDecimalInt(countsSplit[2]);
   ctabLines = ctabLines.slice(1); // consume counts line
   const mols: Struct[] = [];
   while (ctabLines.length > 0 && ctabLines[0].startsWith('$MOL')) {

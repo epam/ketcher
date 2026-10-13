@@ -151,7 +151,7 @@ export const FilterIconButton = styled.button<{
   width: 24px;
   height: 24px;
   padding: 0;
-  margin-left: auto;
+  margin-inline-start: auto;
   background-color: transparent;
   border: none;
   border-radius: 4px;
@@ -172,7 +172,7 @@ export const FilterIconButton = styled.button<{
       content: '';
       position: absolute;
       top: 5px;
-      right: 5px;
+      inset-inline-end: 5px;
       width: 6px;
       height: 6px;
       border-radius: 50%;
@@ -186,7 +186,7 @@ export const FilterIconButton = styled.button<{
 export const FilterPopup = styled.div`
   position: absolute;
   top: calc(100% + 4px);
-  right: 0;
+  inset-inline-end: 0;
   z-index: 10;
   display: flex;
   flex-direction: column;
@@ -206,7 +206,7 @@ export const FilterPopupOption = styled.label`
   gap: 5px;
   cursor: pointer;
   user-select: none;
-  margin-left: 6px;
+  margin-inline-start: 6px;
   margin-top: 10px;
 `;
 
@@ -265,8 +265,7 @@ export const FilterPopupActionButton = styled(ActionButton)`
   &.MuiButtonBase-root {
     width: auto;
     min-width: unset;
-    padding-left: 7px;
-    padding-right: 7px;
+    padding-inline: 7px;
     border-radius: 4px;
   }
 `;
@@ -277,9 +276,9 @@ export const FilterPopupActionButton = styled(ActionButton)`
 export const FilterPopupResetButton = styled(FilterPopupActionButton)`
   &.MuiButtonBase-root {
     border: none;
-    margin-right: auto;
-    padding-left: 0;
-    margin-left: 6px;
+    margin-inline-end: auto;
+    padding-inline-start: 0;
+    margin-inline-start: 6px;
     color: #167782;
   }
 `;
@@ -290,7 +289,7 @@ export const DisabledArea = styled.div`
   background-color: #eff2f594;
   position: absolute;
   top: 0;
-  left: 0;
+  inset-inline-start: 0;
 `;
 
 export const RnaTabsContainer = styled.div`
@@ -315,8 +314,7 @@ export const RnaTabWrapper = styled.div`
       content: '';
       position: absolute;
       bottom: -4px;
-      left: 0;
-      right: 0;
+      inset-inline: 0;
       height: 8px;
       background-color: #f7f9fa;
     }

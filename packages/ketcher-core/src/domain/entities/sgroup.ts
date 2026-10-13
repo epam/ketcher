@@ -319,9 +319,11 @@ export class SGroup {
     validateUniqueness = true,
   ): void {
     const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
-      ({ atomId, leaveAtomId }) =>
+      ({ atomId, leaveAtomId, attachmentId, attachmentPointNumber }) =>
         attachmentPoint.atomId === atomId &&
-        attachmentPoint.leaveAtomId === leaveAtomId,
+        attachmentPoint.leaveAtomId === leaveAtomId &&
+        attachmentPoint.attachmentId === attachmentId &&
+        attachmentPoint.attachmentPointNumber === attachmentPointNumber,
     );
 
     if (isAttachmentPointAlreadyExist && validateUniqueness) {
@@ -473,9 +475,7 @@ export class SGroup {
     const onlySaltsOrSolvents = sgroupsOnCanvas.filter((sgroup) =>
       this.isSaltOrSolvent(sgroup.data.name),
     );
-    return onlySaltsOrSolvents.some(({ atoms }) =>
-      atoms.some((atomIdInSaltOrSolvent) => atomIdInSaltOrSolvent === atomId),
-    );
+    return onlySaltsOrSolvents.some(({ atoms }) => atoms.includes(atomId));
   }
 
   static isBondInSaltOrSolvent(

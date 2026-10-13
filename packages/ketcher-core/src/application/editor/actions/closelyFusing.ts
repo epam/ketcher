@@ -19,6 +19,7 @@ import { checkAtomValence } from './atom';
 import { fromAtomMerge } from './atomMerge';
 import { fromBondsMerge } from './bond';
 import utils from '../shared/utils';
+import { isHapticBondWithAttachmentGroup } from 'domain/helpers/hapticBond';
 
 export function fromItemsFuse(restruct, items) {
   let action = new Action();
@@ -115,6 +116,18 @@ function closestToMerge(struct, closestMap) {
     const bondCI = struct.bonds.get(dstId);
     if (!bond || !bondCI) {
       mergeMap.bonds.delete(srcId);
+      return;
+    }
+
+    if (
+      isHapticBondWithAttachmentGroup(struct, bond) ||
+      isHapticBondWithAttachmentGroup(struct, bondCI)
+    ) {
+      mergeMap.bonds.delete(srcId);
+      if (bond) {
+        mergeMap.atoms.delete(bond.begin);
+        mergeMap.atoms.delete(bond.end);
+      }
       return;
     }
 

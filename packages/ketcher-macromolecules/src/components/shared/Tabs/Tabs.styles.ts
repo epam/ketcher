@@ -8,7 +8,8 @@ export const StyledTabs = styled(Tabs, {
   min-height: 32px;
   list-style-type: none;
   margin: 0;
-  padding: 4px 8px 0 8px;
+  padding-block: 4px 0;
+  padding-inline: 8px;
   border-bottom: ${({ theme }) =>
     `1px solid ${theme.ketcher.color.border.primary}`};
   overflow: unset;
@@ -22,7 +23,8 @@ export const StyledTabs = styled(Tabs, {
   & .MuiTabs-flexContainer {
     justify-content: ${({ isLayoutToRight }) =>
       isLayoutToRight ? 'flex-end' : 'flex-start'};
-    padding-right: ${({ isLayoutToRight }) => (isLayoutToRight ? '16px' : '0')};
+    padding-inline-end: ${({ isLayoutToRight }) =>
+      isLayoutToRight ? '16px' : '0'};
   }
 
   & .MuiTabs-indicator {
@@ -46,7 +48,7 @@ export const StyledTab = styled(Tab, {
   background-color: ${({ theme }) => theme.ketcher.color.tab.regular};
   color: ${({ theme }) => theme.ketcher.color.text.light};
   list-style-type: none;
-  margin-left: 1px;
+  margin-inline-start: 1px;
   align-items: center;
   flex: ${({ isLayoutToRight }) => (isLayoutToRight ? undefined : '1 1 auto;')};
   border: 1px solid transparent;
@@ -54,7 +56,7 @@ export const StyledTab = styled(Tab, {
   border-radius: 4px 4px 0 0;
 
   &:first-of-type {
-    margin-left: 0;
+    margin-inline-start: 0;
   }
 
   &:hover {
@@ -73,7 +75,7 @@ export const StyledTab = styled(Tab, {
     &::after {
       content: '';
       position: absolute;
-      left: 0;
+      inset-inline-start: 0;
       bottom: -1px; /* Adjust to cover the parent's bottom border */
       height: 1px;
       background-color: ${({ theme }) => theme.ketcher.color.tab.active};

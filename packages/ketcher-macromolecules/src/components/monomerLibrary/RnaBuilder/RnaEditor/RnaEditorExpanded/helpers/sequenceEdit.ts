@@ -1,8 +1,18 @@
 import { Entities, LabeledNodesWithPositionInSequence } from 'ketcher-core';
 
-const getNucleotideMonomerGroupName = (nameSet: Set<string>): string => {
+export const MULTIPLE_MONOMERS_LABEL = '[multiple]';
+export const DISABLED_MONOMERS_LABEL = '[disabled]';
+
+const getNucleotideMonomerGroupName = (
+  nameSet: Set<string>,
+  isBaseModificationBlocked = false,
+): string => {
   if (nameSet.size === 0) return '';
-  return nameSet.size === 1 ? [...nameSet][0] : '[multiple]';
+  if (nameSet.size === 1) return [...nameSet][0];
+
+  return isBaseModificationBlocked
+    ? DISABLED_MONOMERS_LABEL
+    : MULTIPLE_MONOMERS_LABEL;
 };
 
 export const generateSequenceSelectionGroupNames = (
@@ -28,9 +38,16 @@ export const generateSequenceSelectionGroupNames = (
     }
   }
 
+  const isBaseModificationBlocked = labeledNucleotides.some(
+    (labeledNucleotide) => labeledNucleotide.isInSelectedAntisensePair,
+  );
+
   return {
     Sugars: getNucleotideMonomerGroupName(namesSets.sugarLabel),
-    Bases: getNucleotideMonomerGroupName(namesSets.baseLabel),
+    Bases: getNucleotideMonomerGroupName(
+      namesSets.baseLabel,
+      isBaseModificationBlocked,
+    ),
     Phosphates: getNucleotideMonomerGroupName(namesSets.phosphateLabel),
   };
 };

@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal } from 'components/shared/modal';
 import { ActionButton } from 'components/shared/actionButton';
 import { SettingsAccordion } from './SettingsAccordion';
@@ -37,6 +38,7 @@ import {
 import { Icon } from 'ketcher-react';
 
 export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const settingsService = window.ketcher?.settingsService;
 
   const [currentSettings, setCurrentSettings] =
@@ -130,9 +132,9 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
         KetcherLogger.error('Failed to import settings:', error);
         // eslint-disable-next-line no-alert
         alert(
-          `Import failed: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
+          t('settings.importFailed', {
+            message: error instanceof Error ? error.message : String(error),
+          }),
         );
       } finally {
         setIsLoading(false);
@@ -159,7 +161,7 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
     } catch (error) {
       KetcherLogger.error('Failed to export settings:', error);
       // eslint-disable-next-line no-alert
-      alert('Export failed');
+      alert(t('settings.exportFailed'));
     }
   };
 
@@ -185,11 +187,11 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
   const headerTitle = (
     <HeaderContent>
-      <HeaderTitle>Settings</HeaderTitle>
+      <HeaderTitle>{t('settings.title')}</HeaderTitle>
       <HeaderButton
         onClick={handleImport}
         disabled={isLoading}
-        title="Open from File"
+        title={t('settings.openFromFile')}
         data-testid="open-settings-from-file-button"
       >
         <Icon name="open-1" />
@@ -197,7 +199,7 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
       <HeaderButton
         onClick={handleExport}
         disabled={isLoading}
-        title="Save to File"
+        title={t('settings.saveToFile')}
         data-testid="save-settings-to-file-button"
       >
         <Icon name="save-1" />
@@ -205,7 +207,7 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
       <HeaderButton
         onClick={handleReset}
         disabled={isLoading}
-        title="Reset"
+        title={t('settings.reset')}
         data-testid="reset-settings-button"
       >
         <Icon name="reset" />
@@ -235,7 +237,7 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
       <Modal.Footer>
         <FooterLeft>
           <ActionButton
-            label="Set ACS Settings"
+            label={t('settings.setAcsSettings')}
             styleType="secondary"
             clickHandler={handleACSStyle}
             disabled={isLoading}
@@ -244,13 +246,13 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
         </FooterLeft>
         <FooterRight>
           <ActionButton
-            label="Cancel"
+            label={t('common:button.cancel')}
             styleType="secondary"
             clickHandler={handleCancel}
             disabled={isLoading}
           />
           <ActionButton
-            label="Apply"
+            label={t('common:button.apply')}
             clickHandler={handleApply}
             disabled={!hasChanges || isLoading}
           />

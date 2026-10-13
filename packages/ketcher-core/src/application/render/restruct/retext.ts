@@ -221,9 +221,8 @@ class ReText extends ReObject {
           'text-anchor': 'start',
           fill: '#000000',
         });
-        path.node.setAttribute('data-testid', 'text-label');
-        path.node.setAttribute(
-          'data-text-id',
+        path.node.dataset.testid = 'text-label';
+        path.node.dataset.textId = String(
           restruct.molecule.texts.keyOf(this.item),
         );
         path.translateAbs(0, shiftY);
@@ -241,9 +240,8 @@ class ReText extends ReObject {
             fill: '#000000',
             ...styles,
           });
-          path.node.setAttribute('data-testid', 'text-label');
-          path.node.setAttribute(
-            'data-text-id',
+          path.node.dataset.testid = 'text-label';
+          path.node.dataset.textId = String(
             restruct.molecule.texts.keyOf(this.item),
           );
           path.translateAbs(shiftX, shiftY + (styles.shiftY || 0));

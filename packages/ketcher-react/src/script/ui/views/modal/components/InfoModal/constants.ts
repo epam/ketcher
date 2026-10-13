@@ -1,9 +1,14 @@
-export const pasteErrorText =
-  "Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.";
+import i18n from 'src/i18n/i18n';
 
-export const shortcut = { hotKey: 'CTRL/Cmd + V', label: 'for paste' };
+export const pasteErrorText = i18n.t('dialogs:infoModal.pasteErrorText');
+
+// hotKey is a literal key-combo representation, not translatable UI copy
+export const shortcut = {
+  hotKey: 'CTRL/Cmd + V',
+  label: i18n.t('dialogs:infoModal.shortcutForPaste'),
+};
 
 export const error = {
-  message: 'Error Message',
-  close: 'Close',
+  message: i18n.t('dialogs:infoModal.errorMessage'),
+  close: i18n.t('common:button.close'),
 };

@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { Field } from '../../component/form/form/form';
 import { getSelectOptionsFromSchema } from '../../utils';
 import Select from '../../component/form/Select';
@@ -43,6 +45,7 @@ const content = (
   _fieldValue: string,
   checked: boolean,
   isContextEmpty: boolean,
+  t: TFunction,
 ) =>
   Object.keys(schema.properties)
     .filter(
@@ -65,7 +68,7 @@ const content = (
           <Field
             name={prop}
             key={`${context}-${fieldName}-${prop}-select`}
-            placeholder="Enter value"
+            placeholder={t('dialogs:toolbox.sdata.fieldValuePlaceholder')}
             disabled={isContextEmpty}
           />
         );
@@ -83,6 +86,7 @@ const content = (
 
 function SDataFieldset({ formState }: Readonly<SDataFieldsetProps>) {
   const { result } = formState;
+  const { t } = useTranslation();
   const formSchema = sdataCustomSchema;
   const validContextValues = formSchema.properties.context.enum;
   const isContextEmpty =
@@ -92,13 +96,13 @@ function SDataFieldset({ formState }: Readonly<SDataFieldsetProps>) {
     <fieldset className="sdata">
       <Field
         name="context"
-        options={getSelectOptionsFromSchema(formSchema.properties.context)}
+        options={getSelectOptionsFromSchema(formSchema.properties.context, t)}
         component={Select}
         data-testid="context"
       />
       <Field
         name="fieldName"
-        placeholder="Enter name"
+        placeholder={t('dialogs:toolbox.sdata.fieldNamePlaceholder')}
         disabled={isContextEmpty}
       />
       {content(
@@ -108,6 +112,7 @@ function SDataFieldset({ formState }: Readonly<SDataFieldsetProps>) {
         result.fieldValue,
         result.radiobuttons,
         isContextEmpty,
+        t,
       )}
     </fieldset>
   );

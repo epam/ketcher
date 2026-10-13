@@ -6,7 +6,7 @@ exports[`OpenOptions component should render correctly 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="css-9brf46"
+        class="css-12covgd"
       >
         <div
           class="css-uve29d"
@@ -90,7 +90,7 @@ exports[`OpenOptions component should render correctly 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-9brf46"
+      class="css-12covgd"
     >
       <div
         class="css-uve29d"

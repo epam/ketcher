@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -37,7 +36,8 @@ import type {
   RaphaelSet,
 } from 'raphael';
 import type { RenderOptions } from '../render.types';
-import paperjs from 'paper';
+import { uniteHoverPaths } from './hoverPath';
+export { paperPathFromSVGElement } from './hoverPath';
 interface SGroupdrawBracketsOptions {
   set: RaphaelSet;
   render: Render;
@@ -48,40 +48,6 @@ interface SGroupdrawBracketsOptions {
   upperIndexText?: string | null;
   indexAttribute?: Record<string, string>;
   superatomClass?: SUPERATOM_CLASS;
-}
-
-// Helper function to convert SVG elements into Paper.js paths
-export function paperPathFromSVGElement(
-  element: SVGElement,
-): paper.Path | paper.CompoundPath | undefined {
-  const tagName = element.tagName;
-  let path: paper.Path | paper.CompoundPath | undefined;
-
-  if (tagName === 'circle') {
-    // Convert circle to Paper.js Path.Circle
-    const cx = Number.parseFloat(element.getAttribute('cx') ?? '0');
-    const cy = Number.parseFloat(element.getAttribute('cy') ?? '0');
-    const r = Number.parseFloat(element.getAttribute('r') ?? '0');
-    path = new paperjs.Path.Circle(new paperjs.Point(cx, cy), r);
-  } else if (tagName === 'rect') {
-    // Convert rectangle to Paper.js Path.Rectangle
-    const x = Number.parseFloat(element.getAttribute('x') ?? '0');
-    const y = Number.parseFloat(element.getAttribute('y') ?? '0');
-    const width = Number.parseFloat(element.getAttribute('width') ?? '0');
-    const height = Number.parseFloat(element.getAttribute('height') ?? '0');
-    path = new paperjs.Path.Rectangle(
-      new paperjs.Rectangle(x, y, width, height),
-      new paperjs.Size(
-        Number.parseFloat(element.getAttribute('rx') || '0'),
-        Number.parseFloat(element.getAttribute('ry') || '0'),
-      ),
-    );
-  } else if (tagName === 'path') {
-    // Use the `d` attribute directly for Path data
-    const d = element.getAttribute('d');
-    path = d ? new paperjs.CompoundPath(d) : undefined;
-  }
-  return path;
 }
 
 class ReSGroup extends ReObject {
@@ -151,9 +117,7 @@ class ReSGroup extends ReObject {
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
           SGroupdrawBracketsOptions.superatomClass = superatomClass;
-          if (sgroup instanceof MonomerMicromolecule) {
-            set.push(drawExpandedMonomerLabel(remol, sgroup, bracketBox));
-          }
+          // An expanded monomer shows its structure, so it needs no label
           break;
         }
         case 'DAT': {
@@ -290,48 +254,15 @@ class ReSGroup extends ReObject {
         );
       });
 
-      const elements: SVGElement[] = [];
-
-      hoversToCombine.forEach((item) => {
-        if (item?.node) {
-          elements.push(item.node);
-          item.node.remove();
-        }
-      });
-
-      paperjs.setup(document.createElement('canvas')); // Paper.js works on an offscreen canvas
-
-      // Generate Paper.js paths from all SVG elements
-      let combinedPath: paper.PathItem | undefined;
-
-      elements.forEach((el) => {
-        const paperPath = paperPathFromSVGElement(el);
-
-        if (!paperPath) {
-          return;
-        }
-
-        if (!paperPath.closed) {
-          paperPath.closePath();
-        }
-
-        if (!combinedPath) {
-          combinedPath = paperPath;
-        } else {
-          combinedPath = combinedPath.unite(paperPath);
-        }
-      });
-
-      if (!combinedPath) {
+      const combinedPathData = uniteHoverPaths(hoversToCombine);
+      if (!combinedPathData) {
         return;
       }
-
-      const combinedPathD = combinedPath.pathData;
 
       render.ctab.addReObjectPath(
         LayerMap.hovering,
         this.visel,
-        paper.path(combinedPathD).attr(options.hoverStyle),
+        paper.path(combinedPathData).attr(options.hoverStyle),
       );
       render.ctab.addReObjectPath(LayerMap.hovering, this.visel, otherHovers);
     }
@@ -580,28 +511,6 @@ function showValue(
   const set = paper.set();
   set.push(rect, text.toFront());
   return set;
-}
-
-function drawExpandedMonomerLabel(
-  restruct: ReStruct,
-  sgroup: MonomerMicromolecule,
-  monomerBBox: Box2Abs,
-): RaphaelSet {
-  const { render } = restruct;
-  const labelPosition = monomerBBox.p1
-    .add(new Vec2(0, 0.3))
-    .scaled(render.options.microModeScale);
-  const label = showValue(
-    render.paper,
-    labelPosition,
-    sgroup,
-    render.options,
-    sgroup.data.name || '?',
-  );
-  const labelBBox = util.relBox(label.getBBox());
-  label.translateAbs(0.5 * labelBBox.width, -0.5 * labelBBox.height);
-
-  return label;
 }
 
 function drawGroupDat(restruct: ReStruct, sgroup: SGroup) {

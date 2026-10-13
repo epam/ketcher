@@ -122,8 +122,6 @@ function addRGroupAttachmentPointsToStruct(
   } else if (attachmentPoints === AttachmentPoints.BothSides) {
     rgroupAttachmentPoints.push(
       new RGroupAttachmentPoint(attachedAtomId, 'primary', initiallySelected),
-    );
-    rgroupAttachmentPoints.push(
       new RGroupAttachmentPoint(attachedAtomId, 'secondary', initiallySelected),
     );
   }

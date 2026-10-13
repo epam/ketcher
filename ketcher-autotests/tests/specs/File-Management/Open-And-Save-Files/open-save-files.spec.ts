@@ -15,7 +15,7 @@ test.describe('Open Ketcher', () => {
   test('Open button tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-1833
     const button = CommonTopLeftToolbar(page).openButton;
-    await expect(button).toHaveAttribute('title', 'Open... (Ctrl+O)');
+    await expect(button).toHaveAttribute('title', 'Open… (Ctrl+O)');
   });
 
   test('Open button UI', async ({ page }) => {
@@ -27,7 +27,7 @@ test.describe('Open Ketcher', () => {
   test('Save button tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-1842
     const button = CommonTopLeftToolbar(page).saveButton;
-    await expect(button).toHaveAttribute('title', 'Save as... (Ctrl+S)');
+    await expect(button).toHaveAttribute('title', 'Save As… (Ctrl+S)');
   });
 
   test('Save button UI', async ({ page }) => {

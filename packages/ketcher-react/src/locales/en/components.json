@@ -117,6 +117,7 @@
       "sugarLeavingGroupWarning": "Sugar monomers typically have a hydrogen as the leaving group for R1 and R2, and a hydroxyl as a leaving group for R3. Do you wish to proceed with the current attachment points?",
       "baseLeavingGroupWarning": "Base monomers typically have a hydrogen as the leaving group for R1. Do you wish to proceed with the current attachment points?",
       "phosphateLeavingGroupWarning": "Phosphate monomers typically have a hydroxyl as the leaving group for R1 and R2. Do you wish to proceed with the current attachment points?",
+      "sugarPhosphateLeavingGroupWarning": "Sugar monomers typically have a hydrogen as the leaving group for R1 and R2, and a hydroxyl as a leaving group for R3. Phosphate monomers typically have a hydroxyl as the leaving group for R1 and R2. Do you wish to proceed with the current attachment points?",
       "nucleotideLeavingGroupWarning": "Nucleotide monomers typically have a hydrogen as the leaving group for R1, and a hydroxyl as a leaving group for R2. Do you wish to proceed with the current attachment points?"
     }
   }

@@ -865,9 +865,13 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
           const selectedClass =
             render.monomerCreationState?.selectedMonomerClass;
+          const rnaComponentKey = Array.from(
+            render.monomerCreationState?.rnaComponentAtoms ?? [],
+          ).find(([, { atoms }]) => atoms.includes(attachmentAtomId))?.[0];
           const apTooltip = getAttachmentPointTooltip(
             selectedClass,
             attachmentPointName,
+            rnaComponentKey,
           );
           if (apTooltip) {
             addTooltip(rLabelElement.node, apTooltip);

@@ -1,4 +1,4 @@
-import { Page, test } from '@fixtures';
+import { expect, Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
@@ -26,6 +26,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 let page: Page;
 
@@ -68,6 +69,20 @@ test.describe('Side chain connections', () => {
 
     await openFileAndAddToCanvasMacro(page, `KET/side-connections-peptide.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  test('Hydrogen side-chain connections use the standard Snake connection style', async () => {
+    await openFileAndAddToCanvasMacro(
+      page,
+      'KET/two-peptides-connected-by-hydrogen-bond.ket',
+    );
+
+    const hydrogenBond = getBondLocator(page, {
+      bondType: MacroBondType.Hydrogen,
+    });
+
+    await expect(hydrogenBond).toHaveAttribute('stroke', '#43B5C0');
+    await expect(hydrogenBond).toHaveAttribute('stroke-dasharray', '0');
   });
 
   test('Open file with cycled side chain connection', async () => {

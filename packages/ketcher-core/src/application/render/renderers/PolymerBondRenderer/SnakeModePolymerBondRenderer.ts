@@ -455,16 +455,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.bodyElement = rootElement
       .append('path')
       .attr('class', `${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`)
-      .attr(
-        'stroke',
-        this.isHydrogenBond || this.isSideChainLikeBackbone
-          ? '#333333'
-          : '#43B5C0',
-      )
+      .attr('stroke', this.isSideChainLikeBackbone ? '#333333' : '#43B5C0')
       .attr('stroke-width', 1)
       .attr('d', pathDAttributeValue)
       .attr('fill', 'none')
-      .attr('stroke-dasharray', this.isHydrogenBond ? '2' : '0')
+      .attr('stroke-dasharray', '0')
       .attr('pointer-events', 'all')
       .attr('data-testid', 'bond')
       .attr('data-bondtype', this.isHydrogenBond ? 'hydrogen' : 'covalent')
@@ -1039,9 +1034,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     assert(this.bodyElement);
 
     if (this.polymerBond.isSideChainConnection) {
-      this.updateAllSideConnectionBondsColor((renderer) =>
-        renderer.isHydrogenBond ? 'lightgrey' : '#C0E2E6',
-      );
+      this.updateAllSideConnectionBondsColor(() => '#C0E2E6');
     }
 
     this.bodyElement.attr('stroke', '#0097A8').attr('pointer-events', 'none');
@@ -1058,18 +1051,14 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
     if (this.polymerBond.isSideChainConnection) {
       this.updateAllSideConnectionBondsColor((renderer) =>
-        renderer.polymerBond.isSideChainConnection && !renderer.isHydrogenBond
-          ? '#43B5C0'
-          : '#333333',
+        renderer.polymerBond.isSideChainConnection ? '#43B5C0' : '#333333',
       );
     }
 
     this.bodyElement
       .attr(
         'stroke',
-        this.polymerBond.isSideChainConnection && !this.isHydrogenBond
-          ? '#43B5C0'
-          : '#333333',
+        this.polymerBond.isSideChainConnection ? '#43B5C0' : '#333333',
       )
       .attr('pointer-events', 'stroke');
 
@@ -1114,9 +1103,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     // After a side-chain bond is removed, set all remaining side-chain bonds to the default color (#43B5C0)
     if (isSideChainConnection) {
       this.updateAllSideConnectionBondsColor((renderer) =>
-        renderer.polymerBond.isSideChainConnection && !renderer.isHydrogenBond
-          ? '#43B5C0'
-          : '#333333',
+        renderer.polymerBond.isSideChainConnection ? '#43B5C0' : '#333333',
       );
     }
   }

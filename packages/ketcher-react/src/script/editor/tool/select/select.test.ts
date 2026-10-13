@@ -108,3 +108,50 @@ describe('SelectTool Attachment Group selection', () => {
     );
   });
 });
+
+describe('SelectTool Structure hover', () => {
+  it('hovers the fragment itself, not its merge items, in Structure selection mode', () => {
+    const hover = jest.fn();
+    const editor = {
+      findItem: jest.fn().mockReturnValue({ map: 'frags', id: 3 }),
+      render: {
+        clientArea: {
+          getBoundingClientRect: () => ({ left: 0, top: 0 }),
+        },
+        ctab: {
+          molecule: new Struct(),
+          bonds: new Map(),
+          rgroups: new Map(),
+          sgroups: new Map(),
+        },
+        paper: {
+          canvas: document.createElement('canvas'),
+        },
+        options: {
+          microModeScale: 40,
+          zoom: 1,
+          movingStyle: { cursor: 'default' },
+        },
+        viewBox: {
+          minX: 0,
+          minY: 0,
+        },
+      },
+      selection: jest.fn(),
+      hover,
+      explicitSelected: () => ({ bonds: [] }),
+      struct: () => new Struct(),
+    } as unknown as Editor;
+    const tool = new SelectTool(editor, 'structure');
+    const event = {
+      clientX: 0,
+      clientY: 0,
+      ctrlKey: false,
+      shiftKey: false,
+    } as PointerEvent;
+
+    tool.mousemove(event);
+
+    expect(hover).toHaveBeenCalledWith({ map: 'frags', id: 3 }, null, event);
+  });
+});

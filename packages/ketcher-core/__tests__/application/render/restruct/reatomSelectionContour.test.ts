@@ -69,7 +69,11 @@ function createFakeRender(rect: jest.Mock) {
 // the original bug report).
 describe('ReAtom selection contour with an invRet annotation', () => {
   const padding = fontszInPx * radiusScaleFactor;
-  const height = fontszInPx * 1.23;
+  // Height of the atom's own label box (see labelBox in createReatom): the
+  // selection contour must be sized from the label's real measured extent,
+  // not a fixed font-size heuristic (which breaks when Sub font size
+  // differs from Font size).
+  const height = 10;
 
   it('sizes the labeled selection contour around the atom label, not the annotation', () => {
     const reatom = createReatom();

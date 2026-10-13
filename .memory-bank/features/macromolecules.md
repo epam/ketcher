@@ -97,6 +97,13 @@ Monomers connect through defined attachment points, sequences render as single-l
 - **WHEN** the user enters snake mode
 - **THEN** monomers and small molecules on the canvas are automatically laid out; entering flex mode applies no layout
 
+#### Scenario: Moving a selection with arrow keys
+
+- **WHEN** the user presses an arrow key with a selection in flex or snake mode
+- **THEN** the selection moves 1 px in that direction; holding `Shift` moves it 10 px
+- **AND** each key press is a single undo step
+- **AND** in sequence mode the selection does not move
+
 #### Scenario: Chain enumeration
 
 - **WHEN** a peptide chain forms, or an RNA/DNA sugar-phosphate chain starts from a sugar/phosphate that has no R1 attachment point, a free R1 attachment point, or an R1 occupied by a bond to another attachment point than R2

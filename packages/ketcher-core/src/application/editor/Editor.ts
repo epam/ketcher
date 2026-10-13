@@ -2783,10 +2783,15 @@ export class CoreEditor {
       'macroToMicro',
     );
 
+    // Capture the macro ZoomTransform before resetting it so we can map the
+    // structure's screen position in macro mode to the micro-mode viewport.
+    const macroZoomTransform = zoomTool.zoomTransform;
+
     this.drawingEntitiesManager.clearCanvas();
     zoomTool.resetZoom();
     struct.applyMonomersTransformations(scaleFactor);
     this.micromoleculesEditor.render.setMolecule(struct);
+    this.scrollMicroViewportToStructIfNeeded(struct, macroZoomTransform);
 
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -2834,6 +2839,11 @@ export class CoreEditor {
     this.clearTransientViews();
     this.clearSelection();
 
+    // Capture the micro-mode viewport before we clear it, so we can restore
+    // the equivalent screen position in the macro canvas afterwards.
+    const microViewBox = this.micromoleculesEditor?.render.viewBox;
+    const microZoom = this.micromoleculesEditor?.render.options.zoom ?? 1;
+
     const struct = this.micromoleculesEditor?.struct().clone() ?? new Struct();
 
     // Rescale coords from micro to macro so the visual position is preserved
@@ -2863,6 +2873,19 @@ export class CoreEditor {
       this.mode.initialize(false, false, false);
     } else {
       this.renderersContainer.update(modelChanges);
+    }
+
+    // Restore the macro-mode viewport to match the micro-mode screen position.
+    // In micro mode:  screen = (canvas - viewBox.min) * microZoom
+    // In macro mode:  screen = canvas * k + tx
+    // Setting k = microZoom, tx = -viewBox.min * microZoom keeps every canvas
+    // point at the same screen position it had in micro mode.
+    if (microViewBox && microViewBox.width && microViewBox.height) {
+      this.zoomTool.applyZoomTransform(
+        microZoom,
+        -microViewBox.minX * microZoom,
+        -microViewBox.minY * microZoom,
+      );
     }
 
     this.micromoleculesEditor?.render.setMolecule(new Struct());
@@ -2985,6 +3008,58 @@ export class CoreEditor {
       MONOMER_START_Y_POSITION - SnakeLayoutCellWidth / 4,
       false,
     );
+  }
+
+  /**
+   * Positions the micro-molecules viewport so the structure appears at the
+   * same screen location it occupied in the macro-mode canvas.
+   *
+   * When macroModeScale === microModeScale, the canvas coordinates are
+   * identical in both editors.  The macro editor uses a D3 ZoomTransform
+   * (k, tx, ty) to map a canvas point cx to screen position cx*k + tx.
+   * The micro editor uses an SVG viewBox: a canvas point cx appears at
+   * screen position cx - viewBox.minX (when micro zoom = 1).
+   *
+   * For the same screen position:
+   *   cx - viewBox.minX = cx*k + tx
+   *   viewBox.minX = cx*(1 - k) - tx
+   *
+   * Substituting the struct's canvas center gives the viewBox origin that
+   * puts the structure at the same screen location it had in macro mode.
+   */
+  private scrollMicroViewportToStructIfNeeded(
+    struct: Struct,
+    macroZoomTransform: { k: number; x: number; y: number },
+  ): void {
+    const render = this.micromoleculesEditor.render;
+
+    // When the micro canvas is hidden during macro mode the ResizeObserver
+    // collapses the viewBox to 0x0. Restore the correct dimensions first.
+    if (!render.viewBox.width || !render.viewBox.height) {
+      render.resizeViewBox();
+    }
+
+    if (!render.viewBox.width || !render.viewBox.height) {
+      return;
+    }
+
+    const microModeScale = render.options.microModeScale;
+    const bbox = struct.getCoordBoundingBox();
+    const canvasCenterX = ((bbox.min.x + bbox.max.x) / 2) * microModeScale;
+    const canvasCenterY = ((bbox.min.y + bbox.max.y) / 2) * microModeScale;
+
+    // viewBox.min that keeps the struct center at the same screen position
+    // it occupied in the macro canvas.
+    const newMinX =
+      canvasCenterX * (1 - macroZoomTransform.k) - macroZoomTransform.x;
+    const newMinY =
+      canvasCenterY * (1 - macroZoomTransform.k) - macroZoomTransform.y;
+
+    render.setViewBox({
+      ...render.viewBox,
+      minX: newMinX,
+      minY: newMinY,
+    });
   }
 
   public destroy() {

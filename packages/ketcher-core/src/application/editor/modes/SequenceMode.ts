@@ -287,6 +287,14 @@ export class SequenceMode extends BaseMode {
     if (firstMonomerPosition && needScroll && !this.isFirstInit) {
       zoom.scrollTo(firstMonomerPosition);
     }
+
+    if (
+      firstMonomerPosition &&
+      this.isFirstInit &&
+      !zoom.isPositionInViewport(firstMonomerPosition)
+    ) {
+      zoom.resetZoom();
+    }
     this.isFirstInit = false;
 
     if (this.isEditMode) {

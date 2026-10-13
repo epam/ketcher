@@ -431,6 +431,13 @@ export class ZoomTool implements BaseTool {
     return -event.deltaY * wheelDeltaFactor;
   }
 
+  public isPositionInViewport(position: Vec2) {
+    const { width, height } = this.canvasWrapperSize;
+    const { x, y } = this.scaleCoordinates(position);
+
+    return x >= 0 && x <= width && y >= 0 && y <= height;
+  }
+
   scaleCoordinates(position: Vec2) {
     const newX = this._zoomTransform.applyX(position.x);
     const newY = this._zoomTransform.applyY(position.y);

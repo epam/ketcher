@@ -272,6 +272,11 @@ export class CoreEditor {
   public nextAutochainPosition?: Vec2 = undefined;
 
   private libraryItemDragCancelled = false;
+  private _macroZoomTransformBeforeMicroMode: {
+    k: number;
+    x: number;
+    y: number;
+  } | null = null;
 
   public theme: CoreEditorTheme;
   /** Handles all drag-and-drop attachment-point logic for library items. */
@@ -2783,9 +2788,11 @@ export class CoreEditor {
       'macroToMicro',
     );
 
-    // Capture the macro ZoomTransform before resetting it so we can map the
-    // structure's screen position in macro mode to the micro-mode viewport.
+    // Capture the macro ZoomTransform before resetting it so we can:
+    // 1. map the structure's screen position to the micro-mode viewport, and
+    // 2. restore the macro viewport when the user switches back.
     const macroZoomTransform = zoomTool.zoomTransform;
+    this._macroZoomTransformBeforeMicroMode = macroZoomTransform;
 
     this.drawingEntitiesManager.clearCanvas();
     zoomTool.resetZoom();
@@ -2839,11 +2846,6 @@ export class CoreEditor {
     this.clearTransientViews();
     this.clearSelection();
 
-    // Capture the micro-mode viewport before we clear it, so we can restore
-    // the equivalent screen position in the macro canvas afterwards.
-    const microViewBox = this.micromoleculesEditor?.render.viewBox;
-    const microZoom = this.micromoleculesEditor?.render.options.zoom ?? 1;
-
     const struct = this.micromoleculesEditor?.struct().clone() ?? new Struct();
 
     // Rescale coords from micro to macro so the visual position is preserved
@@ -2875,17 +2877,13 @@ export class CoreEditor {
       this.renderersContainer.update(modelChanges);
     }
 
-    // Restore the macro-mode viewport to match the micro-mode screen position.
-    // In micro mode:  screen = (canvas - viewBox.min) * microZoom
-    // In macro mode:  screen = canvas * k + tx
-    // Setting k = microZoom, tx = -viewBox.min * microZoom keeps every canvas
-    // point at the same screen position it had in micro mode.
-    if (microViewBox && microViewBox.width && microViewBox.height) {
-      this.zoomTool.applyZoomTransform(
-        microZoom,
-        -microViewBox.minX * microZoom,
-        -microViewBox.minY * microZoom,
-      );
+    // Restore the macro viewport to the same zoom/pan that was in effect when
+    // the user left macro mode.  resetZoom() cleared it during switchToMicro;
+    // without this restore the structure appears at a different position.
+    if (this._macroZoomTransformBeforeMicroMode) {
+      const { k, x, y } = this._macroZoomTransformBeforeMicroMode;
+      this.zoomTool.applyZoomTransform(k, x, y);
+      this._macroZoomTransformBeforeMicroMode = null;
     }
 
     this.micromoleculesEditor?.render.setMolecule(new Struct());

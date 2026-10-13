@@ -414,7 +414,7 @@ export class ZoomTool implements BaseTool {
 
   /**
    * Applies an arbitrary ZoomTransform to the canvas.
-   * Used to set the viewport position when switching between editor modes.
+   * Used to restore the viewport when switching between editor modes.
    */
   public applyZoomTransform(k: number, tx: number, ty: number) {
     const canvasWrapperNode = this.canvasWrapper.node();

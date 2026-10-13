@@ -103,8 +103,6 @@ class SelectTool implements Tool {
   isReadyForCopy = false;
   isCopied = false;
   readonly isMoving = false;
-  private lastHoveredFragmentId?: number;
-  private lastHoveredFragmentTarget: HoverTarget | null = null;
   private readonly multitailArrowMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
   private readonly reactionArrowMoveTool: ArrowMoveTool<ReactionArrowClosestItem>;
 
@@ -373,32 +371,21 @@ class SelectTool implements Tool {
         let hoverTarget: HoverTarget | null = item;
         let cursorTarget: ClosestItemWithMap | null = item;
 
-        if (item?.map === 'frags') {
-          if (this.lastHoveredFragmentId !== item.id) {
-            this.lastHoveredFragmentId = item.id;
-            this.lastHoveredFragmentTarget = getHoverTarget(item, editor);
-          }
-          hoverTarget = this.lastHoveredFragmentTarget;
-        } else {
-          this.lastHoveredFragmentId = undefined;
-          this.lastHoveredFragmentTarget = null;
+        if (item?.map === 'bonds') {
+          const molecule = editor.struct();
+          const attachmentGroupId = getAttachmentGroupIdForHapticBondHalf(
+            molecule,
+            molecule.bonds.get(item.id),
+            CoordinateTransformation.pageToModel(event, editor.render),
+          );
 
-          if (item?.map === 'bonds') {
-            const molecule = editor.struct();
-            const attachmentGroupId = getAttachmentGroupIdForHapticBondHalf(
-              molecule,
-              molecule.bonds.get(item.id),
-              CoordinateTransformation.pageToModel(event, editor.render),
-            );
-
-            if (attachmentGroupId !== null) {
-              cursorTarget = {
-                map: 'attachmentGroups',
-                id: attachmentGroupId,
-                dist: item.dist,
-              };
-              hoverTarget = cursorTarget;
-            }
+          if (attachmentGroupId !== null) {
+            cursorTarget = {
+              map: 'attachmentGroups',
+              id: attachmentGroupId,
+              dist: item.dist,
+            };
+            hoverTarget = cursorTarget;
           }
         }
 
@@ -657,8 +644,6 @@ class SelectTool implements Tool {
     onSelectionLeave(this.editor, this.#lassoHelper);
 
     this.dragCtx = null;
-    this.lastHoveredFragmentId = undefined;
-    this.lastHoveredFragmentTarget = null;
 
     this.editor.hover(null);
   }
@@ -778,28 +763,6 @@ function isSelected(
   item: ClosestSelectableItem,
 ): boolean {
   return selection?.[item.map]?.includes(item.id) ?? false;
-}
-
-function getHoverTarget(
-  item: ClosestItemWithMap | null,
-  editor: Editor,
-): HoverTarget | null {
-  if (item?.map !== 'frags') {
-    return item;
-  }
-
-  const ctab = editor.render.ctab;
-  const fragSelection = getFragSelection(ctab, item.id);
-
-  if (!fragSelection) {
-    return item;
-  }
-
-  return {
-    map: 'merge',
-    id: item.id,
-    items: fragSelection,
-  };
 }
 
 function preventSaltAndSolventsMerge(

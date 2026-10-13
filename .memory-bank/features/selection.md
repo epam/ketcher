@@ -33,6 +33,11 @@ Selection is reversible and non-destructive; manipulation acts only on the curre
 - **WHEN** the user clicks an atom with the _Rectangle_ or _Lasso_ tool
 - **THEN** only that atom becomes selected
 
+#### Scenario: Hovering a structure with Structure Selection
+
+- **WHEN** the user hovers over a structure in molecules mode with the _Structure Selection_ tool
+- **THEN** the whole structure is highlighted as a single smooth united outline, like an S-group highlight
+
 #### Scenario: Adding to a selection
 
 - **WHEN** the user `Shift-click`s additional atoms or bonds

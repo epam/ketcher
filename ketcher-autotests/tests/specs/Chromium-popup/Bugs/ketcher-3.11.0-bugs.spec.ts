@@ -286,7 +286,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await ContextMenu(page, getBondLocator(page, { bondId: 3 })).open();
     await takeElementScreenshot(page, getBondLocator(page, { bondId: 3 }), {
-      padding: 200,
+      padding: 230,
     });
   });
 

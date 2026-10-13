@@ -26,6 +26,18 @@ Monomers connect through defined attachment points, sequences render as single-l
 - **AND** it follows the attachment point when the canvas is scrolled or zoomed
 - **AND** its position is constrained to the visible canvas; when no non-overlapping placement fits, keeping the controls reachable takes priority
 
+#### Scenario: RNA preset attachment point tooltips
+
+- **WHEN** the user hovers the R-labels of an RNA preset in the monomer creation wizard
+- **THEN** the sugar R1 label shows the tooltip 5' and the phosphate R2 label shows the tooltip 3'
+
+#### Scenario: Non-typical attachment points confirmation
+
+- **WHEN** the user submits an RNA preset in the monomer creation wizard and the sugar R1 leaving group is not H and/or the phosphate R2 leaving group is not O (hydroxyl)
+- **THEN** a _Non-typical attachment points_ confirmation is shown before the preset is saved
+- **AND** a single combined message is shown when both leaving groups differ
+- **AND** _Cancel_ is the default button; _OK_ saves the preset with the current attachment points
+
 #### Scenario: Default backbone connection
 
 - **WHEN** the user types or joins monomers within one sequence
@@ -96,6 +108,13 @@ Monomers connect through defined attachment points, sequences render as single-l
 
 - **WHEN** the user enters snake mode
 - **THEN** monomers and small molecules on the canvas are automatically laid out; entering flex mode applies no layout
+
+#### Scenario: Moving a selection with arrow keys
+
+- **WHEN** the user presses an arrow key with a selection in flex or snake mode
+- **THEN** the selection moves 1 px in that direction; holding `Shift` moves it 10 px
+- **AND** each key press is a single undo step
+- **AND** in sequence mode the selection does not move
 
 #### Scenario: Chain enumeration
 

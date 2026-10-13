@@ -1,4 +1,8 @@
-import { AtomLabel, AttachmentPointName, KetMonomerClass } from 'ketcher-core';
+import {
+  type AtomLabel,
+  AttachmentPointName,
+  KetMonomerClass,
+} from 'ketcher-core';
 import { getValidationRuleForMonomerType } from './MonomerValidationRules';
 import type { WizardNotification } from './MonomerCreationWizard.types';
 import type { Editor } from 'src/script/editor/Editor';
@@ -23,51 +27,6 @@ const getNotificationIdForMonomerType = (
   }
 };
 
-export const validateMonomerLeavingGroups = (
-  editor: Editor,
-  monomerType: KetMonomerClass | 'rnaPreset',
-  assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>,
-): Map<string, WizardNotification> => {
-  const notifications = new Map<string, WizardNotification>();
-  const validationRule = getValidationRuleForMonomerType(monomerType);
-
-  if (!validationRule) {
-    return notifications;
-  }
-
-  const struct = editor.struct();
-  let hasWarning = false;
-
-  for (const requirement of validationRule.requirements) {
-    const attachmentPoint = assignedAttachmentPoints.get(
-      requirement.attachmentPoint,
-    );
-
-    if (attachmentPoint) {
-      const [, leavingAtomId] = attachmentPoint;
-      const leavingAtom = struct.atoms.get(leavingAtomId);
-
-      if (
-        leavingAtom &&
-        leavingAtom.label !== requirement.expectedLeavingGroup
-      ) {
-        hasWarning = true;
-        break;
-      }
-    }
-  }
-
-  if (hasWarning) {
-    const notificationId = getNotificationIdForMonomerType(monomerType);
-    notifications.set(notificationId, {
-      type: 'warning',
-      message: validationRule.warningMessage,
-    });
-  }
-
-  return notifications;
-};
-
 const getLeavingAtomLabel = (
   editor: Editor,
   assignedAttachmentPoints:
@@ -81,6 +40,55 @@ const getLeavingAtomLabel = (
   }
 
   return editor.struct().atoms.get(leavingAtomId)?.label;
+};
+
+const getExpectedLeavingGroup = (
+  monomerType: KetMonomerClass,
+  attachmentPointName: AttachmentPointName,
+): AtomLabel | undefined =>
+  getValidationRuleForMonomerType(monomerType)?.requirements.find(
+    (requirement) => requirement.attachmentPoint === attachmentPointName,
+  )?.expectedLeavingGroup;
+
+export const validateMonomerLeavingGroups = (
+  editor: Editor,
+  monomerType: KetMonomerClass | 'rnaPreset',
+  assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>,
+): Map<string, WizardNotification> => {
+  const notifications = new Map<string, WizardNotification>();
+  const validationRule = getValidationRuleForMonomerType(monomerType);
+
+  if (!validationRule) {
+    return notifications;
+  }
+
+  let hasWarning = false;
+
+  for (const requirement of validationRule.requirements) {
+    const leavingGroup = getLeavingAtomLabel(
+      editor,
+      assignedAttachmentPoints,
+      requirement.attachmentPoint,
+    );
+
+    if (
+      leavingGroup !== undefined &&
+      leavingGroup !== requirement.expectedLeavingGroup
+    ) {
+      hasWarning = true;
+      break;
+    }
+  }
+
+  if (hasWarning) {
+    const notificationId = getNotificationIdForMonomerType(monomerType);
+    notifications.set(notificationId, {
+      type: 'warning',
+      message: validationRule.warningMessage,
+    });
+  }
+
+  return notifications;
 };
 
 export const getRnaPresetLeavingGroupWarningMessage = (
@@ -99,10 +107,16 @@ export const getRnaPresetLeavingGroupWarningMessage = (
     AttachmentPointName.R2,
   );
   const hasSugarWarning =
-    sugarR1LeavingGroup !== undefined && sugarR1LeavingGroup !== AtomLabel.H;
+    sugarR1LeavingGroup !== undefined &&
+    sugarR1LeavingGroup !==
+      getExpectedLeavingGroup(KetMonomerClass.Sugar, AttachmentPointName.R1);
   const hasPhosphateWarning =
     phosphateR2LeavingGroup !== undefined &&
-    phosphateR2LeavingGroup !== AtomLabel.O;
+    phosphateR2LeavingGroup !==
+      getExpectedLeavingGroup(
+        KetMonomerClass.Phosphate,
+        AttachmentPointName.R2,
+      );
 
   if (hasSugarWarning && hasPhosphateWarning) {
     return i18n.t(

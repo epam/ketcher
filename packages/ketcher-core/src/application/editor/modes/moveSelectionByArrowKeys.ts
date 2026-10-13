@@ -3,6 +3,7 @@ import { provideEditorInstance } from '../editorSingleton';
 import { EditorHistory } from '../EditorHistory';
 import { Coordinates } from '../shared/coordinates';
 
+// One arrow key press moves the selection by 1 canvas px; holding Shift multiplies that step by 10.
 const SHIFT_STEP_MULTIPLIER = 10;
 
 const arrowKeyUnitVectors: Record<string, Vec2> = {

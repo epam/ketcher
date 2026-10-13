@@ -37,7 +37,7 @@ import {
 
 import ReObject from './reobject';
 import type ReStruct from './restruct';
-import type { Render } from '../raphaelRender';
+import type { RnaComponentAtoms, Render } from '../raphaelRender';
 import type { Element, RaphaelSet } from 'raphael';
 import { Scale, isAttachmentGroupWithHapticBond } from 'domain/helpers';
 import draw, {
@@ -74,6 +74,19 @@ const DEFAULT_ATOM_COLOR = '#000';
 const DEFAULT_STEREO_COLOR = '#000';
 const MAX_LABEL_LENGTH = 8;
 const monomerAttachmentPointNames = new Set(attachmentPointNames);
+
+const getRnaComponentKeyOfAtom = (
+  rnaComponentAtoms: RnaComponentAtoms | undefined,
+  atomId: number,
+) => {
+  for (const [componentKey, { atoms }] of rnaComponentAtoms ?? []) {
+    if (atoms.includes(atomId)) {
+      return componentKey;
+    }
+  }
+
+  return undefined;
+};
 
 export enum ShowHydrogenLabelNames {
   Off = 'Off',
@@ -865,9 +878,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
           const selectedClass =
             render.monomerCreationState?.selectedMonomerClass;
-          const rnaComponentKey = Array.from(
-            render.monomerCreationState?.rnaComponentAtoms ?? [],
-          ).find(([, { atoms }]) => atoms.includes(attachmentAtomId))?.[0];
+          const rnaComponentKey = getRnaComponentKeyOfAtom(
+            render.monomerCreationState?.rnaComponentAtoms,
+            attachmentAtomId,
+          );
           const apTooltip = getAttachmentPointTooltip(
             selectedClass,
             attachmentPointName,

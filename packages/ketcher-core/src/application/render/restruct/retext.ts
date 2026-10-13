@@ -36,6 +36,7 @@ export interface SerializedTextNode {
   text: string;
   type: string;
   version?: number;
+  font?: string;
 }
 
 export interface SerializedParagraphNode {
@@ -45,6 +46,8 @@ export interface SerializedParagraphNode {
   indent?: number;
   type: string;
   version?: number;
+  textFormat?: number;
+  textStyle?: string;
 }
 
 export interface SerializedRootNode {

@@ -33,12 +33,6 @@ const IS_ITALIC = 2;
 const IS_SUBSCRIPT = 32;
 const IS_SUPERSCRIPT = 64;
 
-type LexicalTextNodeWithFont = SerializedTextNode & { font?: string };
-type LexicalParagraphNodeWithTextFormat = SerializedParagraphNode & {
-  textFormat: number;
-  textStyle: string;
-};
-
 /**
  * Convert KET v2.0 format to internal format (pos array + Lexical content).
  */
@@ -58,7 +52,7 @@ function convertKetV2ToInternal(ketText: KetTextV2Node): TextAttributes {
   const lexicalRoot: SerializedEditorState = {
     root: {
       children: paragraphs.map((para) => {
-        const paragraphNode: LexicalParagraphNodeWithTextFormat = {
+        const paragraphNode: SerializedParagraphNode = {
           children: (para.parts || []).map((part) => {
             let format = 0;
             if (part.bold) format |= IS_BOLD;
@@ -66,7 +60,7 @@ function convertKetV2ToInternal(ketText: KetTextV2Node): TextAttributes {
             if (part.subscript) format |= IS_SUBSCRIPT;
             if (part.superscript) format |= IS_SUPERSCRIPT;
 
-            const textNode: LexicalTextNodeWithFont = {
+            const textNode: SerializedTextNode = {
               detail: 0,
               format,
               mode: 'normal',

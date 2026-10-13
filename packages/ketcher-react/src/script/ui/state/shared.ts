@@ -227,8 +227,7 @@ export function load(struct: string | Struct, options?) {
           dispatch(removeStructAction());
           dispatch(showSnackbarNotification('No structure'));
         } else {
-          // Zoom before the paste tool places the preview: a later zoom change
-          // would leave it away from the cursor until the mouse moves
+          // Zoom before the paste tool places the preview
           if (!preserveViewport) {
             editor.zoomAccordingContent(parsedStruct);
           }

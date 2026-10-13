@@ -44,6 +44,7 @@ import { fromSgroupAddition } from './sgroup';
 import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type { Image } from 'domain/entities/image';
+import type { Text } from 'domain/entities/text';
 import { KetcherLogger } from 'utilities';
 
 export type CreatedItems = {
@@ -340,31 +341,61 @@ export function fromPaste(
   return [action, pasteItems, items];
 }
 
+function getTextPoints(text: Text): Vec2[] {
+  // Only the size is taken from pos: after KET v2 import the box goes up from
+  // the anchor, after rendering it goes down. pos is all zeros when unknown.
+  if (text.pos.length === 0) {
+    return [text.position];
+  }
+  const min = text.pos.reduce((acc, point) => Vec2.min(acc, point));
+  const max = text.pos.reduce((acc, point) => Vec2.max(acc, point));
+  const size = Vec2.diff(max, min);
+  return [text.position, text.position.add(new Vec2(size.x, size.y))];
+}
+
+function hasOnlyMolecules(struct: Struct): boolean {
+  return (
+    struct.rxnArrows.size === 0 &&
+    struct.rxnPluses.size === 0 &&
+    struct.simpleObjects.size === 0 &&
+    struct.texts.size === 0 &&
+    struct.images.size === 0 &&
+    struct.multitailArrows.size === 0
+  );
+}
+
 function getStructCenter(struct: Struct): Vec2 {
-  const isOnlyOneSGroup = struct.sgroups.size === 1;
-  if (isOnlyOneSGroup) {
-    const sgroupIterator = struct.sgroups.keys().next();
-    if (!sgroupIterator.done) {
-      const onlyOneStructsSgroupId = sgroupIterator.value;
-      const sgroup = struct.sgroups.get(onlyOneStructsSgroupId);
-      if (sgroup?.isContracted()) {
-        return sgroup.getContractedPosition(struct).position;
-      }
+  // Molecules with one contracted group are placed by the group label.
+  if (struct.sgroups.size === 1 && hasOnlyMolecules(struct)) {
+    const sgroup = struct.sgroups.values().next().value;
+    if (sgroup?.isContracted()) {
+      return sgroup.getContractedPosition(struct).position;
     }
   }
-  // Center of the whole content, so mixed content (e.g. a reaction with text
-  // or images) lands centered under the cursor, not just its molecules.
-  // Struct.getCoordBoundingBox() is not used: it skips images and multi-tailed
-  // arrows and returns a non-empty default box for a struct without its items.
-  // Text adds only its anchor point: its size is known only after rendering.
+  // Not getCoordBoundingBox(): it skips images and multi-tailed arrows.
+  // A contracted group counts as its label, not as its hidden atoms.
   const points: Vec2[] = [];
-  struct.atoms.forEach((atom) => points.push(atom.pp));
+  const hiddenAtomIds = new Set<number>();
+  struct.sgroups.forEach((sgroup) => {
+    if (
+      sgroup.isContracted() &&
+      sgroup.atoms.some((atomId) => struct.atoms.has(atomId))
+    ) {
+      points.push(sgroup.getContractedPosition(struct).position);
+      sgroup.atoms.forEach((atomId) => hiddenAtomIds.add(atomId));
+    }
+  });
+  struct.atoms.forEach((atom, atomId) => {
+    if (!hiddenAtomIds.has(atomId)) {
+      points.push(atom.pp);
+    }
+  });
   struct.rxnArrows.forEach((rxnArrow) => points.push(...rxnArrow.pos));
   struct.rxnPluses.forEach((rxnPlus) => points.push(rxnPlus.pp));
   struct.simpleObjects.forEach((simpleObject) =>
     points.push(...simpleObject.pos),
   );
-  struct.texts.forEach((text) => points.push(text.position));
+  struct.texts.forEach((text) => points.push(...getTextPoints(text)));
   struct.images.forEach((image) => {
     const { topLeftPosition, bottomRightPosition } =
       image.getReferencePositions();

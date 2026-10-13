@@ -73,12 +73,8 @@ class PasteTool implements Tool {
     const rnd = this.editor.render;
     const { clientHeight, clientWidth } = rnd.clientArea;
     const clientAreaRect = rnd.clientArea.getBoundingClientRect();
-    // Put the pasted content under the cursor when it is over the canvas
-    // (e.g. after clicking "Add to Canvas" in a dialog above it), otherwise
-    // in the center. lastEvent is not used: it holds the last canvas event,
-    // which may be far from where the cursor is now. lastCursorPosition starts
-    // at {0, 0} before any mouse event, so the strict checks fall back to the
-    // center in that case.
+    // Under the cursor if it is over the canvas, otherwise in the center.
+    // lastCursorPosition is {0, 0} before any mouse event.
     const { x: cursorX, y: cursorY } = this.editor.lastCursorPosition;
     const isCursorOverCanvas =
       cursorX > 0 &&

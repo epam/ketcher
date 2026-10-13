@@ -246,3 +246,33 @@ export const isSameMonomerType = (
     symbol === primarySymbol
   );
 };
+
+const LEAVING_ATOM_BOND_LENGTH = 1;
+
+/**
+ * Position for a leaving group atom created when a bond between two RNA preset
+ * components is cut: along the cut bond, one bond length from the attachment
+ * atom but no further than the bond's midpoint. Placing it past the
+ * midpoint stretches the monomer's bounding box over the neighbor, and both
+ * ends of the cut bond get a leaving atom.
+ */
+export const getLeavingAtomPositionTowardsNeighbor = (
+  attachmentAtomPosition?: Vec2,
+  neighborAtomPosition?: Vec2,
+): Vec2 | undefined => {
+  if (!attachmentAtomPosition || !neighborAtomPosition) {
+    return undefined;
+  }
+
+  const bondVector = neighborAtomPosition.sub(attachmentAtomPosition);
+  const bondLength = bondVector.length();
+  if (bondLength === 0) {
+    return undefined;
+  }
+
+  return attachmentAtomPosition.add(
+    bondVector.scaled(
+      Math.min(LEAVING_ATOM_BOND_LENGTH, bondLength / 2) / bondLength,
+    ),
+  );
+};

@@ -1,8 +1,9 @@
-import { type BaseMonomer, KetMonomerClass } from 'ketcher-core';
+import { type BaseMonomer, KetMonomerClass, Vec2 } from 'ketcher-core';
 import {
   getEditAllInstancesInitialValues,
   getEditInstanceInitialValues,
   getLibraryEditInitialValues,
+  getLeavingAtomPositionTowardsNeighbor,
 } from './MonomerCreationWizard.utils';
 
 const createMonomer = (
@@ -313,5 +314,69 @@ describe('getEditAllInstancesInitialValues', () => {
     );
 
     expect(values.name).toBe('Cysteine_Copy');
+  });
+});
+
+describe('getLeavingAtomPositionTowardsNeighbor', () => {
+  it('places the leaving atom one bond length from the attachment atom, towards the neighbor', () => {
+    const position = getLeavingAtomPositionTowardsNeighbor(
+      new Vec2(31.19, 5.58),
+      new Vec2(28.08, 5.58),
+    );
+
+    expect(position?.x).toBeCloseTo(30.19);
+    expect(position?.y).toBeCloseTo(5.58);
+  });
+
+  it('keeps the direction of a diagonal bond', () => {
+    const position = getLeavingAtomPositionTowardsNeighbor(
+      new Vec2(0, 0),
+      new Vec2(3, 4),
+    );
+
+    expect(position?.x).toBeCloseTo(0.6);
+    expect(position?.y).toBeCloseTo(0.8);
+  });
+
+  it.each([0.5, 1, 1.5, 2])(
+    'stops at the midpoint of a bond of length %d',
+    (bondLength) => {
+      const position = getLeavingAtomPositionTowardsNeighbor(
+        new Vec2(0, 0),
+        new Vec2(bondLength, 0),
+      );
+
+      expect(position?.x).toBeCloseTo(bondLength / 2);
+      expect(position?.y).toBeCloseTo(0);
+    },
+  );
+
+  it('keeps the leaving atoms of both ends of a standard bond off the neighbor atoms', () => {
+    const sugarAtom = new Vec2(0, 0);
+    const baseAtom = new Vec2(1, 0);
+
+    const sugarLeavingAtom = getLeavingAtomPositionTowardsNeighbor(
+      sugarAtom,
+      baseAtom,
+    );
+    const baseLeavingAtom = getLeavingAtomPositionTowardsNeighbor(
+      baseAtom,
+      sugarAtom,
+    );
+
+    expect(sugarLeavingAtom?.x).toBeLessThanOrEqual(0.5);
+    expect(baseLeavingAtom?.x).toBeGreaterThanOrEqual(0.5);
+  });
+
+  it('returns undefined when a position is missing or both atoms coincide', () => {
+    expect(
+      getLeavingAtomPositionTowardsNeighbor(undefined, new Vec2(1, 1)),
+    ).toBeUndefined();
+    expect(
+      getLeavingAtomPositionTowardsNeighbor(new Vec2(1, 1), undefined),
+    ).toBeUndefined();
+    expect(
+      getLeavingAtomPositionTowardsNeighbor(new Vec2(1, 1), new Vec2(1, 1)),
+    ).toBeUndefined();
   });
 });

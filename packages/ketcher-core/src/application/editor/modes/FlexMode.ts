@@ -21,7 +21,7 @@ export class FlexMode extends BaseMode {
     const modelChanges =
       editor.drawingEntitiesManager.applyFlexLayoutMode(true);
 
-    command.merge(editor.drawingEntitiesManager.recalculateCanvasMatrix());
+    command.merge(modelChanges);
 
     modelChanges.merge(antisenseChanges);
     editor.renderersContainer.update(modelChanges);

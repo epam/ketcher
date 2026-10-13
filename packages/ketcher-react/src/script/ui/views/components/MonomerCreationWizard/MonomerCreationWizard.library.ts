@@ -74,7 +74,7 @@ export const saveLibraryMonomer = async (
   ) {
     throw new Error('A monomer with this code already exists.');
   }
-  editor.updateMonomersLibrary(ket, originalRef);
+  editor.updateMonomersLibrary(ket, originalRef, true);
 
   /*
    * Submitting after "Edit" replaces every instance of that monomer on the

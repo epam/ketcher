@@ -132,6 +132,7 @@ export class ReplacementHighlightView extends TransientView {
 
     transientLayer
       .append('path')
+      .attr('data-testid', 'replacement-highlight')
       .attr('d', pathData)
       .attr('fill', '#fff')
       .attr('opacity', '0.65')

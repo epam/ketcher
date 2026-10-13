@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 export * from './atom';
+export * from './attachmentGroup';
 export * from './bond';
 export * from './CanvasLoad';
 export * from './descriptors';

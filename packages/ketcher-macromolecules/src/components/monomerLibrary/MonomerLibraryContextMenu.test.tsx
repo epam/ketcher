@@ -21,6 +21,8 @@ vi.mock('./monomerLibraryItem/hooks/useLibraryItemDrag', () => ({
 describe('monomer library menu', () => {
   const openWizard = vi.fn();
   const removeMonomer = vi.fn();
+  const removePreset = vi.fn();
+  const openConfirmation = vi.fn();
   const onClick = vi.fn();
   let root: HTMLDivElement;
   let monomer: MonomerItemType;
@@ -47,11 +49,28 @@ describe('monomer library menu', () => {
 
   afterEach(() => root.remove());
 
-  const renderMenu = () => {
+  const presetTemplate = { id: 'preset', name: 'MyPreset' };
+
+  const renderMenu = ({
+    isUserMade = true,
+    isOnCanvas = false,
+    presets = [] as object[],
+  } = {}) => {
     const editor = {
-      events: { openMonomerCreationWizard: { dispatch: openWizard } },
+      events: {
+        openMonomerCreationWizard: { dispatch: openWizard },
+        openConfirmationDialog: { dispatch: openConfirmation },
+      },
       removeMonomerFromLibrary: removeMonomer,
+      removePresetFromLibrary: removePreset,
       isMonomerReferencedInLibrary: vi.fn(() => false),
+      isUserMadeMonomer: vi.fn(() => isUserMade),
+      isMonomerPlacedOnCanvas: vi.fn(() => isOnCanvas),
+      getReferencingPresets: vi.fn(() => presets),
+      monomersLibraryParsedJson: {
+        root: { templates: [{ $ref: 'preset' }] },
+        preset: presetTemplate,
+      },
     } as unknown as CoreEditor;
     render(
       withThemeAndStoreProvider(
@@ -65,7 +84,7 @@ describe('monomer library menu', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Actions for A' }));
   };
 
-  it('offers Edit before Duplicate and Edit, then a separator before Delete', () => {
+  it('offers Edit before Duplicate and Edit, then Delete with a separator class', () => {
     renderMenu();
     const items = root.querySelectorAll('.contexify_item');
     expect(Array.from(items, (item) => item.textContent)).toEqual([
@@ -75,7 +94,7 @@ describe('monomer library menu', () => {
     ]);
     expect(
       screen.getByTestId('duplicateandedit').nextElementSibling,
-    ).toHaveClass('contexify_separator');
+    ).toHaveClass('context_menu-delete-item');
     expect(onClick).not.toHaveBeenCalled();
   });
 
@@ -109,9 +128,37 @@ describe('monomer library menu', () => {
     );
   });
 
-  it('deletes only the chosen library entry', () => {
+  it('hides Delete for default library monomers', () => {
+    renderMenu({ isUserMade: false });
+    expect(screen.queryByTestId('delete')).not.toBeInTheDocument();
+  });
+
+  it('deletes immediately without a modal when monomer is unused', () => {
     renderMenu();
     fireEvent.click(screen.getByTestId('delete'));
+    expect(openConfirmation).not.toHaveBeenCalled();
     expect(removeMonomer).toHaveBeenCalledWith(monomer);
+  });
+
+  it.each([
+    [{ isOnCanvas: true }, 'Monomer present on canvas', 0],
+    [{ presets: [presetTemplate] }, 'Monomer participates in a preset', 1],
+    [
+      { isOnCanvas: true, presets: [presetTemplate] },
+      'Monomer present on canvas and participates in a preset',
+      1,
+    ],
+  ])('asks for confirmation before deleting (%#)', (options, title, count) => {
+    renderMenu(options);
+    fireEvent.click(screen.getByTestId('delete'));
+    expect(removeMonomer).not.toHaveBeenCalled();
+    expect(openConfirmation).toHaveBeenCalledWith(
+      expect.objectContaining({ title, onConfirm: expect.any(Function) }),
+    );
+
+    openConfirmation.mock.calls[0][0].onConfirm();
+    expect(removeMonomer).toHaveBeenCalledWith(monomer);
+    expect(removePreset).toHaveBeenCalledTimes(count);
+    if (count) expect(removePreset).toHaveBeenCalledWith('preset');
   });
 });

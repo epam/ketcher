@@ -46,44 +46,9 @@ export function convertDraftToLexical(
     };
   }
 
-  const children: SerializedParagraphNode[] = draftState.blocks.map((block) => {
-    const textChildren: (SerializedTextNode | { type: string })[] = [];
-
-    if (block.text.length === 0) {
-      // Empty block — Lexical doesn't have a 'br' node type in serialized state.
-      // Emit an empty text node instead so Lexical can parse it and
-      // the renderer will treat it as an empty paragraph.
-      textChildren.push({
-        type: 'text',
-        text: '',
-        format: 0,
-        style: '',
-        version: 1,
-      });
-    } else {
-      // Build text segments with their respective styles
-      const segments = buildTextSegments(
-        block.text,
-        block.inlineStyleRanges || [],
-      );
-
-      segments.forEach((segment) => {
-        textChildren.push({
-          type: 'text',
-          text: segment.text,
-          format: segment.format,
-          style: segment.style,
-          version: 1,
-        });
-      });
-    }
-
-    return {
-      type: 'paragraph',
-      children: textChildren,
-      version: 1,
-    };
-  });
+  const children: SerializedParagraphNode[] = draftState.blocks.flatMap(
+    (block) => blockToParagraphs(block),
+  );
 
   return {
     root: {
@@ -92,6 +57,51 @@ export function convertDraftToLexical(
       version: 1,
     },
   };
+}
+
+const LINE_BREAK = /\r\n|\r|\n/;
+
+function createTextNode(
+  text: string,
+  format: number,
+  style: string,
+): SerializedTextNode {
+  return { type: 'text', text, format, style, version: 1 };
+}
+
+/**
+ * A Draft.js block may contain line breaks ("\n") inside its text, e.g. a
+ * multi-line caption converted from CDXML by Indigo. The renderer places the
+ * text nodes of a paragraph in one row, so every line has to be its own
+ * paragraph; otherwise the text after a line break overlaps the other lines.
+ * An empty line becomes a paragraph with an empty text node.
+ */
+function blockToParagraphs(block: DraftBlock): SerializedParagraphNode[] {
+  const lines: SerializedTextNode[][] = [[]];
+
+  buildTextSegments(block.text, block.inlineStyleRanges || []).forEach(
+    (segment) => {
+      segment.text.split(LINE_BREAK).forEach((lineText, index) => {
+        if (index > 0) {
+          lines.push([]);
+        }
+        if (lineText !== '') {
+          lines[lines.length - 1].push(
+            createTextNode(lineText, segment.format, segment.style),
+          );
+        }
+      });
+    },
+  );
+
+  return lines.map((textNodes) => ({
+    type: 'paragraph',
+    // Lexical doesn't have a 'br' node type in serialized state. Emit an empty
+    // text node instead so Lexical can parse it and the renderer will treat it
+    // as an empty paragraph.
+    children: textNodes.length > 0 ? textNodes : [createTextNode('', 0, '')],
+    version: 1,
+  }));
 }
 
 interface TextSegment {

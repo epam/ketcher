@@ -95,6 +95,9 @@ export const createReadonlyAttachmentPointSelectData = (
 export const useAttachmentPointSelectsData = (
   editor: Editor,
   attachmentPointName: AttachmentPointName,
+  connectionPointNames: AttachmentPointName[] = Array.from(
+    editor.monomerCreationState?.connectionAttachmentPoints?.keys() ?? [],
+  ),
 ): AttachmentPointSelectData | null => {
   if (!editor.monomerCreationState) {
     return null;
@@ -118,19 +121,30 @@ export const useAttachmentPointSelectsData = (
     return null;
   }
 
-  const usedNumbers = Array.from(assignedAttachmentPoints.keys()).map((name) =>
+  const allNames = new Set([
+    ...assignedAttachmentPoints.keys(),
+    ...connectionPointNames,
+  ]);
+  const usedNumbers = Array.from(allNames).map((name) =>
     getAttachmentPointNumberFromLabel(name),
   );
   const maxUsedNumber = Math.max(...usedNumbers);
 
-  const attachmentPointNameOptionsLength =
-    maxUsedNumber <= 3 ? 3 : Math.min(maxUsedNumber, 8);
-
-  const usedNames = new Set(
-    Array.from(assignedAttachmentPoints.keys()).filter(
-      (name) => name !== attachmentPointName,
+  const attachmentPointNameOptionsLength = Math.min(
+    Math.max(
+      3,
+      maxUsedNumber,
+      connectionPointNames.length ? allNames.size + 1 : 0,
     ),
+    8,
   );
+
+  const usedNames = new Set([
+    ...Array.from(assignedAttachmentPoints.keys()).filter(
+      (name) => connectionPointNames.length > 0 || name !== attachmentPointName,
+    ),
+    ...connectionPointNames,
+  ]);
 
   const nameOptions: Option[] = Array.from({
     length: attachmentPointNameOptionsLength,
@@ -140,6 +154,9 @@ export const useAttachmentPointSelectsData = (
       value: name,
       label: name,
       markedAsUsed: usedNames.has(name as AttachmentPointName),
+      disabled:
+        connectionPointNames.length > 0 &&
+        usedNames.has(name as AttachmentPointName),
     };
   });
 

@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 type Props = {
   name: AttachmentPointName;
   editor: Editor;
+  connectionPointNames?: AttachmentPointName[];
   onNameChange: (
     currentName: AttachmentPointName,
     newName: AttachmentPointName,
@@ -25,6 +26,7 @@ type Props = {
 const AttachmentPoint = ({
   name,
   editor,
+  connectionPointNames,
   onNameChange,
   onLeavingAtomChange,
   onRemove,
@@ -92,7 +94,11 @@ const AttachmentPoint = ({
     };
   }, [name]);
 
-  const selectsData = useAttachmentPointSelectsData(editor, name);
+  const selectsData = useAttachmentPointSelectsData(
+    editor,
+    name,
+    connectionPointNames,
+  );
 
   if (!selectsData) {
     return null;

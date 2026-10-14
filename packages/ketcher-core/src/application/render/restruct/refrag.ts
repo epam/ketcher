@@ -22,6 +22,8 @@ import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
+import { LayerMap } from './generalEnumTypes';
+import { uniteHoverPaths } from './hoverPath';
 
 class ReFrag extends ReObject {
   public item: Fragment;
@@ -110,31 +112,33 @@ class ReFrag extends ReObject {
     return null;
   }
 
-  drawHover(_render: Render): void {
-    // Do nothing. This method shouldn't actually be called.
-  }
+  drawHover(render: Render): void {
+    const fid = render.ctab.frags.keyOf(this);
 
-  setHover(hover: boolean, render: Render): void {
-    let fid = render.ctab.frags.keyOf(this);
-
-    if (!fid && fid !== 0) {
+    if (fid === null) {
       console.warn('Fragment does not belong to the render');
       return;
     }
 
-    fid = Number.parseInt(String(fid), 10);
+    const hoversToCombine = [
+      ...this.fragGetAtoms(render.ctab, fid).map((aid) =>
+        render.ctab.atoms.get(aid)?.makeHoverPlate(render),
+      ),
+      ...this.fragGetBonds(render.ctab, fid).map((bid) =>
+        render.ctab.bonds.get(bid)?.makeHoverPlate(render),
+      ),
+    ];
 
-    render.ctab.atoms.forEach((atom) => {
-      if (atom.a.fragment === fid) {
-        atom.setHover(hover, render);
-      }
-    });
+    const combinedPathData = uniteHoverPaths(hoversToCombine);
+    if (!combinedPathData) {
+      return;
+    }
 
-    render.ctab.bonds.forEach((bond) => {
-      if (render.ctab.getBondEndpoint(bond.b.begin)?.a.fragment === fid) {
-        bond.setHover(hover, render);
-      }
-    });
+    render.ctab.addReObjectPath(
+      LayerMap.hovering,
+      this.visel,
+      render.paper.path(combinedPathData).attr(render.options.hoverStyle),
+    );
   }
 }
 export default ReFrag;

@@ -560,7 +560,6 @@ export default defineConfig({
     host: '127.0.0.1',
     open: true,
   },
-  assetsInclude: ['**/*.ket'],
   optimizeDeps: {
     include: [
       '@emotion/react',
@@ -597,7 +596,7 @@ export default defineConfig({
       },
     }),
     vitePluginRaw({
-      match: /\.sdf/,
+      match: /\.sdf|\.ket/,
     }),
     replace({
       include: '**/ketcher-react/src/**',

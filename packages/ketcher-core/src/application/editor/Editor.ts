@@ -243,35 +243,9 @@ let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
 // never added here. See Editor.isUserMadeMonomer.
 let persistentUserCreatedMonomerRefs: Set<string> = new Set();
 
-const MONOMERS_DATA_URL_REGEXP = /^(?:\/|\.\/|\.\.\/|https?:\/\/|data:)/;
+const loadDefaultMonomersData = async () =>
+  (await import('./data/monomers.ket')).default;
 
-const isMonomersDataUrl = (monomersData: string) =>
-  MONOMERS_DATA_URL_REGEXP.test(monomersData);
-
-const fetchMonomersData = async (monomersDataUrl: string) => {
-  if (typeof fetch !== 'function') {
-    throw new Error('Default monomers library asset requires fetch.');
-  }
-
-  const response = await fetch(monomersDataUrl);
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to load default monomers library: ${response.status} ${response.statusText}`,
-    );
-  }
-
-  return response.text();
-};
-
-const loadDefaultMonomersData = async () => {
-  const monomersDataModule = await import('./data/monomers.ket');
-  const monomersData = await monomersDataModule.default;
-
-  return isMonomersDataUrl(monomersData)
-    ? fetchMonomersData(monomersData)
-    : monomersData;
-};
 export class CoreEditor {
   public events: IEditorEvents;
   public ketcherId?: string;

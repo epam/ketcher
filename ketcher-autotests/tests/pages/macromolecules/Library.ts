@@ -141,8 +141,9 @@ export const Library = (page: Page) => {
     },
 
     async isTabOpened(libraryTab: LibraryTab): Promise<boolean> {
-      const ariaSelected =
-        await getElement(libraryTab).getAttribute('aria-selected');
+      const ariaSelected = await getElement(libraryTab).getAttribute(
+        'aria-selected',
+      );
       return ariaSelected === 'true';
     },
 
@@ -175,8 +176,9 @@ export const Library = (page: Page) => {
      * Navigates to the tab and section (if applicable) where the monomer is located.
      */
     async goToMonomerLibraryLocation(monomer: Monomer | PresetType) {
-      const { libraryTab, rnaSection } =
-        await this.getMonomerLibraryLocation(monomer);
+      const { libraryTab, rnaSection } = await this.getMonomerLibraryLocation(
+        monomer,
+      );
 
       await this.openTab(libraryTab);
 

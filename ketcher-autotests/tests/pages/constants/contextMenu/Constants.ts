@@ -263,6 +263,7 @@ export enum MultiTailedArrowOption {
 export enum LibraryPresetOption {
   DuplicateAndEdit = 'duplicateandedit',
   Edit = 'edit',
+  Delete = 'delete',
   DeletePreset = 'deletepreset',
 }
 

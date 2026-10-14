@@ -18,7 +18,10 @@
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { MacroMonomerOption } from '@tests/pages/constants/contextMenu/Constants';
+import {
+  MacroMonomerOption,
+  MonomerOption,
+} from '@tests/pages/constants/contextMenu/Constants';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -35,31 +38,13 @@ import { openFileAndAddToCanvasAsNewProjectMacro } from '@utils';
 const SEQUENCE_FIXTURE =
   'KET/Chromium-popup/Bugs/ketcher-3.9.0-bugs/micro-and-macro-structures.ket';
 const NEW_MONOMER_CODE = 'ZZ';
-// Canvas drop positions for the monomers dragged from the library.
-const FIRST_A_POSITION = { x: 200, y: 250 };
-const SECOND_A_POSITION = { x: 380, y: 420 };
-const C_POSITION = { x: 560, y: 250 };
-
-/** Returns the active layout mode by expanding the layout-mode dropdown. */
-async function getActiveLayoutMode(page: Page): Promise<LayoutMode | null> {
-  await page.getByTestId('layout-mode').click();
-  for (const mode of [LayoutMode.Flex, LayoutMode.Snake, LayoutMode.Sequence]) {
-    const item = page.getByTestId(mode).first();
-    if ((await item.getAttribute('class'))?.includes('active')) {
-      await page.keyboard.press('Escape');
-      return mode;
-    }
-  }
-  await page.keyboard.press('Escape');
-  return null;
-}
 
 /** Drags two alanines from the library; the last drop leaves it selected. */
 async function dragTwoAs(page: Page): Promise<void> {
   const library = Library(page);
   await library.switchToPeptidesTab();
-  await library.dragMonomerOnCanvas(Peptide.A, FIRST_A_POSITION);
-  await library.dragMonomerOnCanvas(Peptide.A, SECOND_A_POSITION);
+  await library.dragMonomerOnCanvas(Peptide.A, { x: 200, y: 250 });
+  await library.dragMonomerOnCanvas(Peptide.A, { x: 380, y: 420 });
 }
 
 let page: Page;
@@ -77,12 +62,14 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
 
   test('2.0a: In flex, right-clicking a single monomer shows enabled edit options', async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/9370 (requirement 2.0)
+     * Test task: https://github.com/epam/ketcher/issues/9370 (requirement 2.0)
      * Description: Right-clicking a selection of exactly one monomer in flex mode shows
      * "Edit Monomer" and "Edit All [code] (N)", both enabled.
      * Scenario:
      * 1. Drag two alanines onto the flex canvas (the last drop is selected)
      * 2. Right-click the selected alanine and check the menu
+     *
+     * Version 3.21.0
      */
     await dragTwoAs(page);
     const monomerA = getMonomerLocator(page, Peptide.A).last();
@@ -104,16 +91,18 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
 
   test('2.1: Edit options sit in their own section above Delete, Edit Monomer first', async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/9370 (requirement 2.1)
+     * Test task: https://github.com/epam/ketcher/issues/9370 (requirement 2.1)
      * Description: "Edit Monomer" is listed before "Edit All", and the pair sits in a
      * separate section above "Delete" (a separator line between them).
      * Scenario:
      * 1. Drag one alanine onto the flex canvas
      * 2. Right-click it and compare the vertical order of the menu items
+     *
+     * Version 3.21.0
      */
     const library = Library(page);
     await library.switchToPeptidesTab();
-    await library.dragMonomerOnCanvas(Peptide.A, FIRST_A_POSITION);
+    await library.dragMonomerOnCanvas(Peptide.A, { x: 200, y: 250 });
     const monomerA = getMonomerLocator(page, Peptide.A).first();
     const menu = ContextMenu(page, monomerA);
     await menu.open();
@@ -124,12 +113,14 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
     const editAllBox = (await menu
       .getOptionLocator(MacroMonomerOption.EditAllMonomers)
       .boundingBox())!;
-    const deleteBox = (await menu.getOptionLocator('delete').boundingBox())!;
+    const deleteBox = (await menu
+      .getOptionLocator(MonomerOption.Delete)
+      .boundingBox())!;
 
     expect(editBox.y).toBeLessThan(editAllBox.y);
     expect(editAllBox.y).toBeLessThan(deleteBox.y);
     // A separator line is rendered between the edit section and Delete.
-    const separators = page.getByRole('menu').locator('.contexify_separator');
+    const separators = menu.getSeparatorLocator();
     const separatorCount = await separators.count();
     let hasSeparatorBetween = false;
     for (let i = 0; i < separatorCount; i++) {
@@ -143,12 +134,14 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
 
   test('2.3a: "Edit Monomer" opens the wizard with the monomer properties', async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/9370 (requirement 2.3)
+     * Test task: https://github.com/epam/ketcher/issues/9370 (requirement 2.3)
      * Description: Clicking "Edit Monomer" opens the monomer creation wizard pre-filled
      * with the selected monomer's properties; the code field carries a "_Copy" suffix.
      * Scenario:
      * 1. Drag two alanines, right-click the selected one, click "Edit Monomer"
      * 2. Check the wizard's code and type fields
+     *
+     * Version 3.21.0
      */
     await dragTwoAs(page);
     const monomerA = getMonomerLocator(page, Peptide.A).last();
@@ -163,13 +156,15 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
 
   test('2.3b: Saving "Edit Monomer" updates only that canvas instance', async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/9370 (requirement 2.3)
+     * Test task: https://github.com/epam/ketcher/issues/9370 (requirement 2.3)
      * Description: Saving the wizard with a new code replaces the edited monomer on the
      * canvas; the other alanine is untouched. The save is not an undo entry (verified).
      * Scenario:
      * 1. Drag two alanines, open "Edit Monomer" on the selected one
      * 2. Set a new code and submit
      * 3. Check that exactly one monomer has the new code and one alanine remains
+     *
+     * Version 3.21.0
      */
     await dragTwoAs(page);
     const monomerA = getMonomerLocator(page, Peptide.A).last();
@@ -181,7 +176,9 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
     await dialog.submit({ ignoreWarning: true });
 
     await expect(dialog.window).toBeHidden();
-    expect(await getActiveLayoutMode(page)).toBe(LayoutMode.Flex);
+    expect(await MacromoleculesTopToolbar(page).getActiveLayoutMode()).toBe(
+      LayoutMode.Flex,
+    );
     const newMonomer = getMonomerLocator(page, {
       monomerAlias: NEW_MONOMER_CODE,
     });
@@ -191,19 +188,21 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
 
   test('2.4a: Hovering "Edit All" highlights all matching monomers only', async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/9370 (requirement 2.4)
+     * Test task: https://github.com/epam/ketcher/issues/9370 (requirement 2.4)
      * Description: Hovering the "Edit All A (N)" menu item highlights every alanine on
      * the canvas and no other monomer.
      * Scenario:
      * 1. Drag alanine, cysteine, alanine onto the flex canvas (the last drop is selected)
      * 2. Right-click the selected alanine and hover "Edit All"
      * 3. Check the highlight signature on each monomer (helper)
+     *
+     * Version 3.21.0
      */
     const library = Library(page);
     await library.switchToPeptidesTab();
-    await library.dragMonomerOnCanvas(Peptide.A, FIRST_A_POSITION);
-    await library.dragMonomerOnCanvas(Peptide.C, C_POSITION);
-    await library.dragMonomerOnCanvas(Peptide.A, SECOND_A_POSITION);
+    await library.dragMonomerOnCanvas(Peptide.A, { x: 200, y: 250 });
+    await library.dragMonomerOnCanvas(Peptide.C, { x: 560, y: 250 });
+    await library.dragMonomerOnCanvas(Peptide.A, { x: 380, y: 420 });
     const monomerA = getMonomerLocator(page, Peptide.A).last();
     const menu = ContextMenu(page, monomerA);
 
@@ -217,13 +216,15 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
 
   test('2.4b: Clicking "Edit All" opens a confirmation dialog before the wizard', async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/9370 (requirement 2.4)
+     * Test task: https://github.com/epam/ketcher/issues/9370 (requirement 2.4)
      * Description: Clicking "Edit All A (N)" asks for confirmation ("You are going to
      * edit N monomers. Are you sure?"); confirming opens the wizard.
      * Scenario:
      * 1. Drag two alanines, right-click the selected one, click "Edit All"
      * 2. Check the dialog text and confirm
      * 3. Check that the wizard opens
+     *
+     * Version 3.21.0
      */
     await dragTwoAs(page);
     const monomerA = getMonomerLocator(page, Peptide.A).last();
@@ -243,13 +244,15 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
 
   test('2.4c: Cancelling the "Edit All" confirmation leaves the canvas unchanged', async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/9370 (requirement 2.4)
+     * Test task: https://github.com/epam/ketcher/issues/9370 (requirement 2.4)
      * Description: Cancelling the confirmation dialog does not open the wizard and does
      * not modify the canvas.
      * Scenario:
      * 1. Drag two alanines, capture their positions, click "Edit All"
      * 2. Cancel the dialog
      * 3. Check that the wizard is closed and both alanines are in place
+     *
+     * Version 3.21.0
      */
     await dragTwoAs(page);
     const monomerA = getMonomerLocator(page, Peptide.A).last();
@@ -279,13 +282,15 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
 
   test('2.4d: Saving "Edit All" updates all matching instances', async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/9370 (requirement 2.4)
+     * Test task: https://github.com/epam/ketcher/issues/9370 (requirement 2.4)
      * Description: Confirming and saving the wizard with a new code replaces every
      * matching monomer on the canvas.
      * Scenario:
      * 1. Drag two alanines, click "Edit All" and confirm
      * 2. Set a new code and submit
      * 3. Check that both instances carry the new code and no alanine remains
+     *
+     * Version 3.21.0
      */
     await dragTwoAs(page);
     const monomerA = getMonomerLocator(page, Peptide.A).last();
@@ -298,7 +303,9 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
     await dialog.submit({ ignoreWarning: true });
 
     await expect(dialog.window).toBeHidden();
-    expect(await getActiveLayoutMode(page)).toBe(LayoutMode.Flex);
+    expect(await MacromoleculesTopToolbar(page).getActiveLayoutMode()).toBe(
+      LayoutMode.Flex,
+    );
     const newMonomers = getMonomerLocator(page, {
       monomerAlias: NEW_MONOMER_CODE,
     });
@@ -308,13 +315,15 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
 
   test('2.5: Discarding "Edit Monomer" in snake returns to snake with the layout intact', async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/9370 (requirement 2.5)
+     * Test task: https://github.com/epam/ketcher/issues/9370 (requirement 2.5)
      * Description: Discarding the edit wizard in snake mode returns to snake with the
      * monomers and their layout unchanged.
      * Scenario:
      * 1. Switch to snake, drag two alanines, open "Edit Monomer" on the selected one
      * 2. Discard the wizard
      * 3. Check that snake mode is back and both alanines are in place
+     *
+     * Version 3.21.0
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await dragTwoAs(page);
@@ -327,7 +336,9 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
     await dialog.discard();
 
     await expect(dialog.window).toBeHidden();
-    expect(await getActiveLayoutMode(page)).toBe(LayoutMode.Snake);
+    expect(await MacromoleculesTopToolbar(page).getActiveLayoutMode()).toBe(
+      LayoutMode.Snake,
+    );
     expect(await getMonomerLocator(page, Peptide.A).count()).toBe(2);
     const positionAfter = (await monomerA.boundingBox())!;
     expect(positionAfter.x).toBeCloseTo(positionBefore.x, 0);
@@ -348,12 +359,14 @@ test.describe('#9370 Editing monomers from the sequence canvas', () => {
 
   test('2.0c: In sequence, right-clicking a composite symbol shows the edit options', async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/9370 (requirement 2.0)
+     * Test task: https://github.com/epam/ketcher/issues/9370 (requirement 2.0)
      * Description: Right-clicking a sequence symbol that represents several monomers
      * (the composite nucleotide "A") shows both edit options.
      * Scenario:
      * 1. Open the macro fixture with sequence symbols in sequence mode
      * 2. Right-click the composite "A" symbol and check the menu
+     *
+     * Version 3.21.0
      */
     await openFileAndAddToCanvasAsNewProjectMacro(page, SEQUENCE_FIXTURE);
     const symbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
@@ -370,12 +383,14 @@ test.describe('#9370 Editing monomers from the sequence canvas', () => {
 
   test('2.2a: Composite sequence symbols show the edit options disabled', async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/9370 (requirement 2.2)
+     * Test task: https://github.com/epam/ketcher/issues/9370 (requirement 2.2)
      * Description: A composite symbol (one symbol = several monomers) shows both edit
      * options but disabled; the "Edit All" title refers to the group code.
      * Scenario:
      * 1. Open the macro fixture with sequence symbols in sequence mode
      * 2. Right-click the composite "A" symbol and check the enabled states
+     *
+     * Version 3.21.0
      */
     await openFileAndAddToCanvasAsNewProjectMacro(page, SEQUENCE_FIXTURE);
     const symbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();

@@ -107,9 +107,11 @@ Project: `ketcher-autotests`, **chromium-popup** only. Folder: `tests/specs/Chro
 2. **Hover-highlight assertion helper** (req 2.4) — shape fixed by Phase 0 (S7): hovering `edit_all_monomers` adds exactly one child node to each matching `g.monomer` and sets `style=cursor: move;`. Helper: capture `childElementCount` + `style` of every monomer element before/after hover; assert +1 and the cursor style on matches, unchanged on non-matches. No screenshot fallback needed.
 3. **No source changes planned.** If the spike finds a state that is genuinely unassertable (e.g. "library entry overwritten / default version hidden"), prefer asserting via observable UI (card count in library, canvas instance code) over adding testids.
 
+POM additions made while normalizing the implemented specs to the updated conventions (2026-10-14): `MacromoleculesTopToolbar.getActiveLayoutMode()`, `ContextMenu.getSeparatorLocator()`, and on `Library`: `getMonomerCardDotsButton()`, `getMonomerCardByCodeAndNameLocator()`, `openMonomerCardMenu()`, `getCardMenuItemLocator()`, `clickCardMenuItem()` (the documented `dispatchEvent` exception). Plus `LibraryPresetOption.Delete`.
+
 ## 5. Test cases
 
-Conventions: shared-page pattern (Pattern A) with `initFlexCanvas`/`initSnakeCanvas`/`initSequenceCanvas`, one `describe` per layout mode; switch to Pattern B if state leakage appears. Standard comment block with issue number per test. Named coordinate constants. Assertion mechanisms named in the table.
+Conventions: shared-page pattern (Pattern A) with `initFlexCanvas`/`initSnakeCanvas`/`initSequenceCanvas`, one `describe` per layout mode; switch to Pattern B if state leakage appears. Standard comment block per test (`Test task:` issue link, `Description:`, numbered `Scenario:` steps, `Version` line — Ketcher release from `packages/ketcher-react/package.json` minus any `-rc.N` suffix). Direct coordinate numbers inline in tests (no named coordinate constants). Assertion mechanisms named in the table.
 
 ### 5.1 `create-monomer-from-macro-selection.spec.ts` (R1) — IMPLEMENTED, 12/12 passing (2026-10-13)
 
@@ -162,7 +164,7 @@ Conventions: shared-page pattern (Pattern A) with `initFlexCanvas`/`initSnakeCan
 
 **Implementation deviations from the original design (probed while writing the spec):**
 - The card menu contains exactly `edit` then `duplicateandedit` — **no separator line**, and `delete` is hidden for default (non-user-made) monomers (absent from the DOM).
-- The menu eases into its final position after opening (~0.3px/frame decay), which perpetually fails Playwright's stability check; regular clicks time out at 60s. Items are clicked via `dispatchEvent('click')` instead.
+- The menu eases into its final position after opening (~0.3px/frame decay), which perpetually fails Playwright's stability check; regular clicks time out at 60s. Items are clicked via `dispatchEvent('click')` — encapsulated in the `Library.clickCardMenuItem()` POM method, which documents the exception to the no-raw-locators rule (revisit if the easing changes).
 - "Duplicate and Edit" pre-fills code/name with a `_Copy` suffix (`A_Copy`/`Alanine_Copy`); "Edit" pre-fills the originals (`A`/`Alanine`). Card testid format: `${code}___${name}`.
 - **3.2.4 gap (probed):** saving "Edit" with only the code changed is a **silent no-op** — the wizard closes as if saved, but no new library entry appears, the original entry is untouched and canvas instances keep their code. (Contrast: changing the *type* does create a new entry — see 3.2.3.) The test documents actual behavior.
 - Preset-participation entry warning (3.2.2) and submit-time preset validation (3.2.3) are **not implemented** — documented as gaps in the tests.
@@ -249,9 +251,9 @@ Do **not** use for sequence probes: `KET/dna-AAAAAA-sequence-expected.ket`, `KET
 
 ## 9. Rules & constraints to respect
 
-- New specs in **chromium-popup** project only; import `test`/`expect`/`Page` from `@fixtures`; POMs for all reusable UI; no raw `page.locator` for stable testids.
+- New specs in **chromium-popup** project only; import `test`/`expect`/`Page` from `@fixtures`; POMs for all reusable UI — interactions *and* assertions; no raw `page.locator` / `page.getByTestId` in spec files (assert through locators the POM exposes).
 - No `waitForTimeout` as a wait mechanism (the 100 ms settle inside `ContextMenu.click` is existing infrastructure, not something to add).
-- One behavior per test; comment block with issue number (#9370 + requirement number); named coordinate constants; no `as any`.
+- One behavior per test; standard comment block (issue link #9370 + requirement number, description, numbered scenario, Ketcher version line); direct coordinate numbers inline (no named coordinate constants); no `as any`.
 - Monomer enum catalogs (`Peptide.*`, `Sugar.*`, …) instead of hardcoded strings.
 - Shared-page pattern by default (state-isolation caveat: canvas fixtures don't fully reset undo history — loop-to-disabled if asserting stack boundaries).
 - Memory bank updated **only at archive time** (per CLAUDE.md opsx rules); reusable E2E lessons added to `.memory-bank/testing/` as they surface.

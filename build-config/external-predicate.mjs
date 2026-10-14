@@ -26,32 +26,26 @@
  * name. Rolldown's `external` array only does exact-string matching, so this
  * is reproduced as a predicate function.
  *
- * `nodeBuiltins` and `extraExternals` let each package add to its own
- * external set without changing another package's: `ketcher-core` adds the
- * `events` Node builtin (resolved to a bundled polyfill by Rolldown where
- * Rollup left it external), and `ketcher-react` adds its own `pkg.name`
+ * Node builtins that a package imports (such as `events`) are externalized the
+ * same way when the package lists them in `dependencies`, as ketcher-core and
+ * ketcher-standalone do. Nothing else is needed for them.
+ *
+ * `extraExternals` lets a package add to its own external set without
+ * changing another package's: `ketcher-react` adds its own `pkg.name`
  * (`ketcher-macromolecules`' bundled ESM entry re-imports the real
  * `ketcher-react` package - a documented circular-dependency workaround
  * Rollup only ever warned about and left external; Rolldown hard-fails
  * unless it is listed explicitly).
  */
-export const createExternalPredicate = ({
-  pkg,
-  nodeBuiltins = [],
-  extraExternals = [],
-}) => {
-  const packageExternals = [
+export const createExternalPredicate = ({ pkg, extraExternals = [] }) => {
+  const allExternals = [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
     ...extraExternals,
   ];
 
-  const nodeBuiltinExternals = [...nodeBuiltins];
-
-  const allExternals = [...packageExternals, ...nodeBuiltinExternals];
-
   const external = (id) =>
     allExternals.some((dep) => id === dep || id.startsWith(`${dep}/`));
 
-  return { external, packageExternals, nodeBuiltinExternals, allExternals };
+  return { external };
 };

@@ -67,7 +67,7 @@ const VARIANTS = {
 
 const variant = VARIANTS[process.env.INDIGO_MODULE_NAME] || VARIANTS.base64;
 
-const { external } = createExternalPredicate({ pkg, nodeBuiltins: ['events'] });
+const { external } = createExternalPredicate({ pkg });
 
 // The two fetch-based variants exist precisely so the .wasm is downloaded at
 // runtime instead of embedded. Indigo's emscripten glue locates it with

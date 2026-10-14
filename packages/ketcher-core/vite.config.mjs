@@ -16,10 +16,10 @@ const pkg = JSON.parse(
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const rootDir = fileURLToPath(new URL('.', import.meta.url));
 
-// Rolldown resolves bare 'events' to a bundled polyfill where Rollup left it
-// external (nothing else under src/ imports a Node builtin - confirmed by
-// grep). Explicit per .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
-const { external } = createExternalPredicate({ pkg, nodeBuiltins: ['events'] });
+// `events` is external because it is listed in `dependencies`, which
+// createExternalPredicate externalizes. See
+// .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
+const { external } = createExternalPredicate({ pkg });
 
 const ketRawTextPlugin = createRawTextPlugin({
   name: 'ketcher-core-ket-raw-text',

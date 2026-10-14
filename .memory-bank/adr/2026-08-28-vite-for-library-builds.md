@@ -97,7 +97,7 @@ must configure against explicitly rather than inherit:
 | Difference                                                                                           | Resolution                                                                                                                     |
 | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | Rolldown minifies library output by default                                                          | `build.minify: false` — publishing minified library code destroys downstream stack traces, and makes output diffing impossible |
-| `events` (a Node builtin) is resolved to a local polyfill and bundled, where Rollup left it external | Explicit Node-builtin `external` list                                                                                          |
+| `events` (a Node builtin) is resolved to a local polyfill and bundled, where Rollup left it external | Listed in `dependencies`, so it is external                                                                                    |
 | `rollup-plugin-string` has no equivalent, so `.ket` imports fail to parse                            | A small inline raw-text transform in the shared build config                                                                   |
 
 Babel is dropped along with the `@babel/runtime` runtime dependency, since Vite transpiles

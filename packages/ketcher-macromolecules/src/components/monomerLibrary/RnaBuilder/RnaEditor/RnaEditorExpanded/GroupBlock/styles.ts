@@ -117,13 +117,30 @@ export const MonomerName = styled('span', {
   opacity: ${({ selected, empty }) => (selected && empty ? 0.4 : 1)};
 `;
 
-export const GroupIconContainer = styled.div`
+export const GroupIconContainer = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'multiple',
+})<{ multiple?: boolean }>`
   position: relative;
   width: 16px;
   height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+
+  ${({ multiple }) =>
+    multiple &&
+    `
+      display: grid;
+      grid-template-columns: repeat(2, 7px);
+      grid-template-rows: repeat(2, 7px);
+      gap: 2px;
+
+      & svg {
+        width: 7px;
+        height: 7px;
+      }
+    `}
 `;
 
 export const GroupIcon = styled(Icon, {

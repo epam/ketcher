@@ -1301,6 +1301,111 @@ export class SequenceRenderer {
     return modelChanges;
   }
 
+  private static isPlaceholderSequenceNode(
+    node?: SequenceNode,
+  ): node is BackBoneSequenceNode | EmptySequenceNode {
+    return (
+      node instanceof BackBoneSequenceNode || node instanceof EmptySequenceNode
+    );
+  }
+
+  /**
+   * Redraws the selection of placeholder nodes: the backbone "-" node and the
+   * empty gap nodes used to align antisense strands. These nodes have no real
+   * monomer of their own, so per-entity selection operations never reach them
+   * and they would stay unselected, leaving visual holes in an otherwise
+   * contiguous selection.
+   *
+   * A placeholder is shown selected when either:
+   *  - the real nodes bounding it on the SAME visual line are both selected, so
+   *    it sits inside a selected range (the dash and antisense gaps highlight
+   *    with their neighbors, #6794); or
+   *  - the node facing it in the other strand at the same column is a selected
+   *    real monomer. Selection also marks where a monomer could be (re-)placed,
+   *    and a placeholder across from a selected monomer is such a spot — so the
+   *    empty cell below/above a selected monomer highlights even at a line end
+   *    where it has no same-line neighbor.
+   */
+  public static redrawPlaceholderNodesSelection() {
+    const senseRow: Array<SequenceNode | undefined> = [];
+    const antisenseRow: Array<SequenceNode | undefined> = [];
+
+    SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
+      senseRow.push(twoStrandedNode.senseNode);
+      antisenseRow.push(twoStrandedNode.antisenseNode);
+    });
+
+    // The two rows are built in one pass, so a shared index is the same column.
+    this.redrawPlaceholderNodesInRow(senseRow, antisenseRow);
+    this.redrawPlaceholderNodesInRow(antisenseRow, senseRow);
+  }
+
+  // Whether a node is a real (non-placeholder) monomer that is selected.
+  private static isSelectedRealNode(node?: SequenceNode): boolean {
+    return Boolean(
+      node && !this.isPlaceholderSequenceNode(node) && node.monomer?.selected,
+    );
+  }
+
+  // Vertical position of the row a node is rendered on. Nodes on the same
+  // visual line share it exactly; a line break (row wrap or new chain) yields a
+  // different value, which is how placeholder highlighting is kept from bleeding
+  // across lines.
+  private static getRowY(node: SequenceNode): number | undefined {
+    const renderer = node.renderer;
+    return renderer instanceof BaseSequenceItemRenderer
+      ? renderer.scaledMonomerPositionForSequence.y
+      : undefined;
+  }
+
+  private static redrawPlaceholderNodesInRow(
+    row: Array<SequenceNode | undefined>,
+    partnerRow: Array<SequenceNode | undefined>,
+  ) {
+    const realNodes = row.flatMap((node, index) =>
+      node && !this.isPlaceholderSequenceNode(node)
+        ? [
+            {
+              selected: Boolean(node.monomer?.selected),
+              index,
+              rowY: this.getRowY(node),
+            },
+          ]
+        : [],
+    );
+
+    row.forEach((node, idx) => {
+      if (!this.isPlaceholderSequenceNode(node)) {
+        return;
+      }
+
+      // Closest real neighbor on each side of the placeholder.
+      const leftReal = realNodes.filter(({ index }) => index < idx).at(-1);
+      const rightReal = realNodes.find(({ index }) => index > idx);
+
+      // Horizontal rule: the placeholder sits inside a selected range on the
+      // SAME visual line — both bounding real nodes selected and sharing a row.
+      // The same-row guard stops a trailing placeholder at a line end from
+      // borrowing the next line's first node as its right neighbor and staying
+      // green with nothing after it on that line (#6794).
+      const betweenSelectedOnSameLine = Boolean(
+        leftReal?.selected &&
+        rightReal?.selected &&
+        leftReal.rowY !== undefined &&
+        leftReal.rowY === rightReal.rowY,
+      );
+
+      // Vertical rule: the node across from it in the other strand at the same
+      // column is a selected real monomer, marking this cell as a spot where a
+      // monomer could be (re-)placed.
+      const facingSelectedMonomer = this.isSelectedRealNode(partnerRow[idx]);
+
+      node.renderer?.applySelectionState(
+        betweenSelectedOnSameLine || facingSelectedMonomer,
+      );
+    });
+  }
+
   public static unselectEmptyAndBackboneSequenceNodes() {
     const command = new Command();
     const editor = provideEditorInstance();

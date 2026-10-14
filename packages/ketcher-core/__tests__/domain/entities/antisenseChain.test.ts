@@ -89,6 +89,19 @@ const selectAllMonomers = (editor: CoreEditor) => {
   ]);
 };
 
+const getAntisensePhosphates = (editor: CoreEditor) =>
+  [...editor.drawingEntitiesManager.monomers.values()].filter(
+    (monomer) =>
+      monomer.monomerItem.isAntisense &&
+      monomer.label === RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
+  );
+
+const getDanglingAntisensePhosphates = (editor: CoreEditor) =>
+  getAntisensePhosphates(editor).filter(
+    (phosphate) =>
+      !(phosphate.attachmentPointsToBonds.R1 instanceof PolymerBond),
+  );
+
 describe('createAntisenseChain with unsplit nucleotides', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
@@ -354,6 +367,113 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     expect(
       antisenseMonomers.some((monomer) => monomer.label === '2-damdA'),
     ).toBe(false);
+  });
+
+  describe('for a chain of four nucleotides', () => {
+    const createNucleotideChain = (isCyclic: boolean) => {
+      const dem = editor.drawingEntitiesManager;
+      const nucleotides = ['A', 'U', 'G', 'C'].map((base, index) => {
+        const creationResult = Nucleotide.createOnCanvas(
+          base,
+          new Vec2(index * 3, 0),
+        );
+
+        if (!creationResult) {
+          throw new Error(`Nucleotide ${base} was not created`);
+        }
+
+        return creationResult.node;
+      });
+
+      nucleotides.slice(1).forEach((nucleotide, index) => {
+        dem.createPolymerBond(
+          nucleotides[index].phosphate,
+          nucleotide.sugar,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        );
+      });
+
+      if (isCyclic) {
+        dem.createPolymerBond(
+          nucleotides[nucleotides.length - 1].phosphate,
+          nucleotides[0].sugar,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        );
+      }
+
+      return nucleotides;
+    };
+
+    const selectNucleotides = (nucleotides: Nucleotide[]) => {
+      editor.drawingEntitiesManager.selectDrawingEntities(
+        nucleotides.flatMap(({ sugar, rnaBase, phosphate }) => [
+          sugar,
+          rnaBase,
+          phosphate,
+        ]),
+      );
+    };
+
+    it('does not mirror the ring-closing phosphate of a cyclic chain', () => {
+      createNucleotideChain(true);
+      selectAllMonomers(editor);
+      editor.drawingEntitiesManager.createAntisenseChain(false);
+
+      expect(getAntisensePhosphates(editor)).toHaveLength(3);
+      expect(getDanglingAntisensePhosphates(editor)).toHaveLength(0);
+    });
+
+    it('mirrors the trailing phosphate of a linear chain', () => {
+      createNucleotideChain(false);
+      selectAllMonomers(editor);
+      editor.drawingEntitiesManager.createAntisenseChain(false);
+
+      expect(getAntisensePhosphates(editor)).toHaveLength(4);
+    });
+
+    it('mirrors the last phosphate of a cyclic chain whose first nucleotide is not selected', () => {
+      const nucleotides = createNucleotideChain(true);
+      selectNucleotides(nucleotides.slice(1));
+      editor.drawingEntitiesManager.createAntisenseChain(false);
+
+      expect(getAntisensePhosphates(editor)).toHaveLength(3);
+      expect(getDanglingAntisensePhosphates(editor)).toHaveLength(1);
+    });
+
+    it('treats a selection across the ring seam as two linear pieces', () => {
+      const nucleotides = createNucleotideChain(true);
+      selectNucleotides([nucleotides[0], nucleotides[3]]);
+      editor.drawingEntitiesManager.createAntisenseChain(false);
+
+      expect(getAntisensePhosphates(editor)).toHaveLength(2);
+      expect(getDanglingAntisensePhosphates(editor)).toHaveLength(2);
+    });
+  });
+
+  it('does not mirror the ring-closing phosphate of a cyclic chain of unsplit nucleotides', () => {
+    const dem = editor.drawingEntitiesManager;
+    const unsplitNucleotides = [0, 1, 2].map((index) =>
+      addUnsplitNucleotide(editor, '2-damdA', new Vec2(index * 3, 0)),
+    );
+
+    [...unsplitNucleotides, unsplitNucleotides[0]]
+      .slice(1)
+      .forEach((unsplitNucleotide, index) => {
+        dem.createPolymerBond(
+          unsplitNucleotides[index],
+          unsplitNucleotide,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        );
+      });
+
+    selectAllMonomers(editor);
+    dem.createAntisenseChain(false);
+
+    expect(getAntisensePhosphates(editor)).toHaveLength(2);
+    expect(getDanglingAntisensePhosphates(editor)).toHaveLength(0);
   });
 
   it.each(['Dab', 'ddC', '3InvdT', '3Puro', '5Ade', 'InvddT'])(

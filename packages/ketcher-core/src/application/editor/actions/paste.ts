@@ -362,6 +362,17 @@ export function fromPaste(
   return [action, pasteItems, items];
 }
 
+function hasOnlyMolecules(struct: Struct): boolean {
+  return (
+    struct.rxnArrows.size === 0 &&
+    struct.rxnPluses.size === 0 &&
+    struct.simpleObjects.size === 0 &&
+    struct.texts.size === 0 &&
+    struct.images.size === 0 &&
+    struct.multitailArrows.size === 0
+  );
+}
+
 function getTextPoints(text: Text): Vec2[] {
   // Only the size is taken from pos: after KET v2 import the box goes up from
   // the anchor, after rendering it goes down. pos is all zeros when unknown.
@@ -374,17 +385,6 @@ function getTextPoints(text: Text): Vec2[] {
   return [text.position, text.position.add(new Vec2(size.x, size.y))];
 }
 
-function hasOnlyMolecules(struct: Struct): boolean {
-  return (
-    struct.rxnArrows.size === 0 &&
-    struct.rxnPluses.size === 0 &&
-    struct.simpleObjects.size === 0 &&
-    struct.texts.size === 0 &&
-    struct.images.size === 0 &&
-    struct.multitailArrows.size === 0
-  );
-}
-
 function getStructCenter(struct: Struct): Vec2 {
   // Molecules with one contracted group are placed by the group label.
   if (struct.sgroups.size === 1 && hasOnlyMolecules(struct)) {
@@ -394,23 +394,8 @@ function getStructCenter(struct: Struct): Vec2 {
     }
   }
   // Not getCoordBoundingBox(): it skips images and multi-tailed arrows.
-  // A contracted group counts as its label, not as its hidden atoms.
   const points: Vec2[] = [];
-  const hiddenAtomIds = new Set<number>();
-  struct.sgroups.forEach((sgroup) => {
-    if (
-      sgroup.isContracted() &&
-      sgroup.atoms.some((atomId) => struct.atoms.has(atomId))
-    ) {
-      points.push(sgroup.getContractedPosition(struct).position);
-      sgroup.atoms.forEach((atomId) => hiddenAtomIds.add(atomId));
-    }
-  });
-  struct.atoms.forEach((atom, atomId) => {
-    if (!hiddenAtomIds.has(atomId)) {
-      points.push(atom.pp);
-    }
-  });
+  struct.atoms.forEach((atom) => points.push(atom.pp));
   struct.rxnArrows.forEach((rxnArrow) => points.push(...rxnArrow.pos));
   struct.rxnPluses.forEach((rxnPlus) => points.push(rxnPlus.pp));
   struct.simpleObjects.forEach((simpleObject) =>

@@ -117,39 +117,6 @@ describe('fromPaste', () => {
     expect(getPastedAtomPosition(restruct)).toEqual(new Vec2(10, 10));
   });
 
-  it('includes the text box in the pasted content center', () => {
-    const struct = createStructWithAtomAt(new Vec2(0, 0));
-    struct.texts.add(
-      new Text({
-        content: '',
-        position: new Vec2(0, 4),
-        pos: [new Vec2(0, 4), new Vec2(0, 6), new Vec2(6, 6), new Vec2(6, 4)],
-      }),
-    );
-    const restruct = createRestruct();
-
-    fromPaste(restruct, struct, new Vec2(10, 10));
-
-    expect(getPastedAtomPosition(restruct)).toEqual(new Vec2(7, 7));
-  });
-
-  it('takes the text box down from the anchor whichever way pos goes', () => {
-    const struct = createStructWithAtomAt(new Vec2(0, 0));
-    // After KET v2 import pos goes up from the anchor
-    struct.texts.add(
-      new Text({
-        content: '',
-        position: new Vec2(0, 4),
-        pos: [new Vec2(0, 4), new Vec2(0, 2), new Vec2(6, 2), new Vec2(6, 4)],
-      }),
-    );
-    const restruct = createRestruct();
-
-    fromPaste(restruct, struct, new Vec2(10, 10));
-
-    expect(getPastedAtomPosition(restruct)).toEqual(new Vec2(7, 7));
-  });
-
   it('includes a reaction plus in the pasted content center', () => {
     const struct = createStructWithAtomAt(new Vec2(0, 0));
     struct.rxnPluses.add(new RxnPlus({ pp: new Vec2(4, 2) }));
@@ -189,19 +156,37 @@ describe('fromPaste', () => {
     expect(getPastedAtomPosition(restruct)).toEqual(new Vec2(9.5, 10));
   });
 
-  it('counts a contracted group by its label, not its hidden atoms', () => {
-    const struct = createStructWithContractedGroup([0, 1], [5]);
-    struct.rxnArrows.add(
-      new RxnArrow({
-        mode: RxnArrowMode.OpenAngle,
-        pos: [new Vec2(6, 0), new Vec2(7, 0)],
+  it('includes the text box in the pasted content center', () => {
+    const struct = createStructWithAtomAt(new Vec2(0, 0));
+    struct.texts.add(
+      new Text({
+        content: '',
+        position: new Vec2(0, 4),
+        pos: [new Vec2(0, 4), new Vec2(0, 6), new Vec2(6, 6), new Vec2(6, 4)],
       }),
     );
     const restruct = createRestruct();
 
     fromPaste(restruct, struct, new Vec2(10, 10));
 
-    expect(getPastedAtomPosition(restruct)).toEqual(new Vec2(6.25, 10));
+    expect(getPastedAtomPosition(restruct)).toEqual(new Vec2(7, 7));
+  });
+
+  it('takes the text box down from the anchor whichever way pos goes', () => {
+    const struct = createStructWithAtomAt(new Vec2(0, 0));
+    // After KET v2 import pos goes up from the anchor
+    struct.texts.add(
+      new Text({
+        content: '',
+        position: new Vec2(0, 4),
+        pos: [new Vec2(0, 4), new Vec2(0, 2), new Vec2(6, 2), new Vec2(6, 4)],
+      }),
+    );
+    const restruct = createRestruct();
+
+    fromPaste(restruct, struct, new Vec2(10, 10));
+
+    expect(getPastedAtomPosition(restruct)).toEqual(new Vec2(7, 7));
   });
 
   it('centers a contracted group with an arrow by the whole content', () => {
@@ -216,6 +201,6 @@ describe('fromPaste', () => {
 
     fromPaste(restruct, struct, new Vec2(10, 10));
 
-    expect(getPastedAtomPosition(restruct)).toEqual(new Vec2(5.5, 10));
+    expect(getPastedAtomPosition(restruct)).toEqual(new Vec2(6.5, 10));
   });
 });

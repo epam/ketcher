@@ -3,7 +3,11 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
+import {
+  clickOnCanvas,
+  openFileAndAddToCanvasAtOffset,
+  waitForPageInit,
+} from '@utils';
 import { takeEditorScreenshot } from '@utils/canvas/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -125,9 +129,15 @@ test.describe('Draw Rectangle', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1958
-    await openFileAndAddToCanvas(
+    // The content is centered under the click: this offset puts the first
+    // rectangle where the drag points below expect it.
+    await openFileAndAddToCanvasAtOffset(
       page,
       'KET/rectangle-test-EPMLSOPKET-1977.ket',
+      {
+        x: 233,
+        y: 3,
+      },
     );
     await separetingAndMovingRecatngles(page);
     await takeEditorScreenshot(page);

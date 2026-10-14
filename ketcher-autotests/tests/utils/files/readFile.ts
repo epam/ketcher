@@ -151,6 +151,25 @@ export async function openFileAndAddToCanvas(
   }
 }
 
+/**
+ * Adds the file content to the canvas with the content center at the given
+ * offset from the canvas center.
+ */
+export async function openFileAndAddToCanvasAtOffset(
+  page: Page,
+  filename: string,
+  offset: { x: number; y: number },
+) {
+  await CommonTopLeftToolbar(page).openFile();
+  await openFile(page, filename);
+
+  await waitForLoadAndRender(page, async () => {
+    await PasteFromClipboardDialog(page).addToCanvasButton.click();
+  });
+
+  await clickOnCanvas(page, offset.x, offset.y, { from: 'canvasCenter' });
+}
+
 export async function openFileAndAddToCanvasMacro(
   page: Page,
   filename: string,

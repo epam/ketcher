@@ -16,9 +16,6 @@ const pkg = JSON.parse(
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const rootDir = fileURLToPath(new URL('.', import.meta.url));
 
-// `events` is external because it is listed in `dependencies`, which
-// createExternalPredicate externalizes. See
-// .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
 const { external } = createExternalPredicate({ pkg });
 
 const ketRawTextPlugin = createRawTextPlugin({

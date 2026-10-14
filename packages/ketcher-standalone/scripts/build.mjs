@@ -4,21 +4,12 @@ import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build } from 'vite';
-import { VARIANTS } from '../vite.config.mjs';
+import { VARIANTS } from '../build-variants.mjs';
 
 const rootDir = fileURLToPath(new URL('..', import.meta.url));
 const typesDir = join(rootDir, '.types');
 
-const variants = [
-  { name: 'base64' },
-  { name: 'base64Cjs' },
-  { name: 'wasm' },
-  { name: 'base64WithoutRender', separateIndigoRender: true },
-  { name: 'base64WithoutRenderCjs', separateIndigoRender: true },
-  { name: 'wasmWithoutRender', separateIndigoRender: true },
-];
-
-for (const { name, separateIndigoRender } of variants) {
+for (const [name, { separateIndigoRender }] of Object.entries(VARIANTS)) {
   process.env.NODE_ENV = 'production';
   process.env.INDIGO_MODULE_NAME = name;
 
@@ -41,7 +32,7 @@ execFileSync(process.execPath, [tscBin, '-p', 'tsconfig.build.json'], {
   stdio: 'inherit',
 });
 
-for (const { name } of variants) {
+for (const name of Object.keys(VARIANTS)) {
   cpSync(typesDir, join(rootDir, VARIANTS[name].dir), { recursive: true });
 }
 

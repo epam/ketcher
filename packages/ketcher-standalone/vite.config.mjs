@@ -6,7 +6,7 @@ import { license } from '../../license-banner.mjs';
 import { BROWSER_BUILD_TARGET } from '../../build-config/browser-target.mjs';
 import { mode } from '../../build-config/replace-values.mjs';
 import { createExternalPredicate } from '../../build-config/external-predicate.mjs';
-import { INDIGO_WORKER_IMPORTS } from '../../build-config/indigo-worker-imports.mjs';
+import { VARIANTS } from './build-variants.mjs';
 
 const pkg = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
@@ -19,51 +19,6 @@ const rootDir = fileURLToPath(new URL('.', import.meta.url));
 // `_indigo-worker-import-alias_` import, so they are resolved against it here.
 const workerShim = (shim) =>
   resolve(rootDir, 'src/infrastructure/services/struct', shim);
-
-// The six published build variants, selected by INDIGO_MODULE_NAME exactly as
-// the Rollup build did. `dir` and `format` are part of the frozen published
-// contract - see package.json's `exports` map.
-export const VARIANTS = {
-  base64: {
-    dir: 'dist',
-    format: 'es',
-    indigo: 'indigo-ketcher',
-    worker: INDIGO_WORKER_IMPORTS.INLINE,
-    clean: true,
-  },
-  base64Cjs: {
-    dir: 'dist/cjs',
-    format: 'cjs',
-    indigo: 'indigo-ketcher',
-    worker: INDIGO_WORKER_IMPORTS.INLINE,
-  },
-  wasm: {
-    dir: 'dist/binaryWasm',
-    format: 'es',
-    indigo: 'indigo-ketcher/binaryWasm',
-    worker: INDIGO_WORKER_IMPORTS.WORKER_URL,
-    copyWasm: true,
-  },
-  base64WithoutRender: {
-    dir: 'dist/jsNoRender',
-    format: 'es',
-    indigo: 'indigo-ketcher/jsNoRender',
-    worker: INDIGO_WORKER_IMPORTS.INLINE,
-  },
-  base64WithoutRenderCjs: {
-    dir: 'dist/cjs/jsNoRender',
-    format: 'cjs',
-    indigo: 'indigo-ketcher/jsNoRender',
-    worker: INDIGO_WORKER_IMPORTS.INLINE,
-  },
-  wasmWithoutRender: {
-    dir: 'dist/binaryWasmNoRender',
-    format: 'es',
-    indigo: 'indigo-ketcher/binaryWasmNoRender',
-    worker: INDIGO_WORKER_IMPORTS.WORKER_URL,
-    copyWasm: true,
-  },
-};
 
 const variant = VARIANTS[process.env.INDIGO_MODULE_NAME] || VARIANTS.base64;
 

@@ -17,15 +17,6 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
-const CARBON_1_X = 400;
-const CARBON_1_Y = 300;
-const CARBON_2_X = 500;
-const CARBON_2_Y = 300;
-const MONOMER_1_X = 300;
-const MONOMER_1_Y = 300;
-const MONOMER_2_X = 450;
-const MONOMER_2_Y = 300;
-
 async function expectMicroMode(page: Page) {
   await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
 }
@@ -52,14 +43,21 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     page,
   }) => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/11899 - R1
-    Description: Edits made in molecules mode remain undoable after switching
-                 to macromolecules mode; undoing the switch returns to molecules
-                 mode with the structure intact.
-    */
+     * Test task: https://github.com/epam/ketcher/issues/11899
+     * Description: Edits made in molecules mode remain undoable after switching
+     *              to macromolecules mode; undoing the switch returns to molecules
+     *              mode with the structure intact.
+     * Scenario:
+     * 1. Add two carbon atoms in Molecules mode
+     * 2. Switch to Macromolecules mode
+     * 3. Press Undo
+     * 4. Verify that Molecules mode is shown again and both carbons are on the canvas
+     *
+     * Version 3.21.0
+     */
     await addAtoms(page, Atom.Carbon, [
-      { x: CARBON_1_X, y: CARBON_1_Y },
-      { x: CARBON_2_X, y: CARBON_2_Y },
+      { x: 400, y: 300 },
+      { x: 500, y: 300 },
     ]);
     expect(await carbonCount(page)).toBe(2);
 
@@ -75,13 +73,21 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     page,
   }) => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/11899 - R2
-    Description: After undoing the mode switch, further undos revert the
-                 original molecules-mode edits.
-    */
+     * Test task: https://github.com/epam/ketcher/issues/11899
+     * Description: After undoing the mode switch, further undos revert the
+     *              original molecules-mode edits.
+     * Scenario:
+     * 1. Add two carbon atoms in Molecules mode
+     * 2. Switch to Macromolecules mode
+     * 3. Undo — back in Molecules mode with both carbons
+     * 4. Undo — one carbon is removed
+     * 5. Undo — the canvas is empty
+     *
+     * Version 3.21.0
+     */
     await addAtoms(page, Atom.Carbon, [
-      { x: CARBON_1_X, y: CARBON_1_Y },
-      { x: CARBON_2_X, y: CARBON_2_Y },
+      { x: 400, y: 300 },
+      { x: 500, y: 300 },
     ]);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
@@ -100,13 +106,22 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     page,
   }) => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/11899 - R3
-    Description: After undoing everything (edits + switch), redo replays the
-                 edits first and re-applies the mode switch last.
-    */
+     * Test task: https://github.com/epam/ketcher/issues/11899
+     * Description: After undoing everything (edits + switch), redo replays the
+     *              edits first and re-applies the mode switch last.
+     * Scenario:
+     * 1. Add two carbon atoms in Molecules mode
+     * 2. Switch to Macromolecules mode
+     * 3. Undo three times — back to an empty Molecules canvas
+     * 4. Redo — the first carbon is restored
+     * 5. Redo — the second carbon is restored
+     * 6. Redo — Macromolecules mode is shown again
+     *
+     * Version 3.21.0
+     */
     await addAtoms(page, Atom.Carbon, [
-      { x: CARBON_1_X, y: CARBON_1_Y },
-      { x: CARBON_2_X, y: CARBON_2_Y },
+      { x: 400, y: 300 },
+      { x: 500, y: 300 },
     ]);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
@@ -130,22 +145,25 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     page,
   }) => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/11899 - R4
-    Description: Monomer and bond additions in macromolecules mode remain
-                 undoable after switching to molecules mode.
-    */
+     * Test task: https://github.com/epam/ketcher/issues/11899
+     * Description: Monomer and bond additions in macromolecules mode remain
+     *              undoable after switching to molecules mode.
+     * Scenario:
+     * 1. Switch to Macromolecules mode with Flex layout
+     * 2. Drag two Tza monomers onto the canvas and connect them with a bond
+     * 3. Switch to Molecules mode
+     * 4. Undo — back in Macro mode, both monomers and the bond are intact
+     * 5. Undo — the bond is removed
+     * 6. Undo twice — the monomers are removed one by one
+     *
+     * Version 3.21.0
+     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     // Flex layout is required for dragged monomers to appear as canvas items
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const monomer1 = getMonomerLocator(page, Peptide.Tza);
-    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
-      x: MONOMER_1_X,
-      y: MONOMER_1_Y,
-    });
-    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
-      x: MONOMER_2_X,
-      y: MONOMER_2_Y,
-    });
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 450, y: 300 });
     await bondTwoMonomers(
       page,
       monomer1.nth(0),
@@ -179,34 +197,46 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     page,
   }) => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/11899 - R5
-    Description: Making a new edit after undoing clears the redo portion of
-                 the shared stack, even when the undone entry was a mode switch.
-    */
-    await addAtoms(page, Atom.Carbon, [{ x: CARBON_1_X, y: CARBON_1_Y }]);
+     * Test task: https://github.com/epam/ketcher/issues/11899
+     * Description: Making a new edit after undoing clears the redo portion of
+     *              the shared stack, even when the undone entry was a mode switch.
+     * Scenario:
+     * 1. Add a carbon atom in Molecules mode
+     * 2. Switch to Macromolecules mode
+     * 3. Undo — back in Molecules mode with the carbon
+     * 4. Add another carbon atom
+     * 5. Verify that the Redo button is disabled
+     *
+     * Version 3.21.0
+     */
+    await addAtoms(page, Atom.Carbon, [{ x: 400, y: 300 }]);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await CommonTopLeftToolbar(page).undo();
     await expectMicroMode(page);
     expect(await carbonCount(page)).toBe(1);
 
-    await addAtoms(page, Atom.Carbon, [{ x: CARBON_2_X, y: CARBON_2_Y }]);
+    await addAtoms(page, Atom.Carbon, [{ x: 500, y: 300 }]);
     expect(await carbonCount(page)).toBe(2);
 
-    const redoButton = page
-      .getByTestId('redo')
-      .filter({ has: page.locator(':visible') });
-    await expect(redoButton).toBeDisabled();
+    await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
   });
 
   test('Consecutive mode switches are separate undo steps', async ({
     page,
   }) => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/11899 - R6
-    Description: Each mode switch is its own history entry; a single undo
-                 reverts exactly one switch.
-    */
+     * Test task: https://github.com/epam/ketcher/issues/11899
+     * Description: Each mode switch is its own history entry; a single undo
+     *              reverts exactly one switch.
+     * Scenario:
+     * 1. Switch to Macromolecules mode
+     * 2. Switch back to Molecules mode
+     * 3. Undo — Macromolecules mode is shown again
+     * 4. Undo — Molecules mode is shown again
+     *
+     * Version 3.21.0
+     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await expectMacroMode(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -223,11 +253,19 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     page,
   }) => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/11899 - R7
-    Description: Ctrl+Z / Ctrl+Shift+Z revert and re-apply the mode switch
-                 from either editor without being intercepted twice.
-    */
-    await addAtoms(page, Atom.Carbon, [{ x: CARBON_1_X, y: CARBON_1_Y }]);
+     * Test task: https://github.com/epam/ketcher/issues/11899
+     * Description: Ctrl+Z / Ctrl+Shift+Z revert and re-apply the mode switch
+     *              from either editor without being intercepted twice.
+     * Scenario:
+     * 1. Add a carbon atom in Molecules mode
+     * 2. Switch to Macromolecules mode
+     * 3. Press Ctrl+Z — back in Molecules mode with the carbon
+     * 4. Press Ctrl+Shift+Z — Macromolecules mode is shown again
+     * 5. Press Ctrl+Z — back in Molecules mode with the carbon
+     *
+     * Version 3.21.0
+     */
+    await addAtoms(page, Atom.Carbon, [{ x: 400, y: 300 }]);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await expectMacroMode(page);
 
@@ -247,10 +285,17 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     page,
   }) => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/11899 - R8 (negative)
-    Description: Once all entries are undone, the undo button is disabled and
-                 an extra undo changes nothing.
-    */
+     * Test task: https://github.com/epam/ketcher/issues/11899
+     * Description: Once all entries are undone, the undo button is disabled and
+     *              an extra undo changes nothing.
+     * Scenario:
+     * 1. Switch to Macromolecules mode and back to Molecules mode
+     * 2. Undo twice — the two switch entries are exhausted, the canvas is empty
+     * 3. Verify that the Undo button is disabled
+     * 4. Press Ctrl+Z — nothing changes on the canvas
+     *
+     * Version 3.21.0
+     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
@@ -261,10 +306,7 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     await CommonTopLeftToolbar(page).undo();
     await expectMicroMode(page);
 
-    const undoButton = page
-      .getByTestId('undo')
-      .filter({ has: page.locator(':visible') });
-    await expect(undoButton).toBeDisabled();
+    await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
     expect(await getAtomLocator(page, {}).count()).toBe(0);
 
     // extra undo via keyboard — must be a no-op (clicking the disabled

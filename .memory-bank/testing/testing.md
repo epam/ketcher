@@ -209,7 +209,7 @@ Each canvas fixture also provides an `initXxxCanvas` worker fixture that creates
 
 ## Page Object Model (POM)
 
-All UI interactions go through POM objects. Never interact with raw `page.locator` in test files for reusable UI elements.
+All UI interactions **and assertions** go through POM objects. Never use raw `page.locator` / `page.getByTestId` in test files for reusable UI elements — including state checks like `expect(page.getByTestId('undo')).toBeDisabled()`. Use the locator the POM already exposes (e.g. `expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled()`).
 
 ### POM Style: factory function, not class
 
@@ -363,14 +363,22 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 
 6. **Use the shared-page pattern (`initXxxCanvas`)** for suites with more than ~5 tests — it significantly reduces test suite execution time. Prefer a per-test page (Pattern B) instead when tests assert on undo/redo stack boundaries or need a fully clean editor state, since the shared canvas fixtures do not fully reset history.
 7. **One behavior per test**. Do not pack multiple unrelated assertions into one test.
-8. **Add a comment block** in each test with the test case ID and description:
+8. **Add a comment block** in each test following the standard pattern — issue link, description, numbered scenario steps, and the Ketcher version the test was written for:
    ```ts
-   test('Create bond between two peptides', async () => {
+   test('Copy action stays enabled after switching to Macro mode', async () => {
      /*
-     Test case: #2334 - Create peptide chain
-     Description: Polymer bond tool
-     */
+      * Test task: https://github.com/epam/ketcher/issues/9999
+      * Description: Copy action stays enabled for selected microstructure after switching to Macro mode
+      * Scenario:
+      * 1. Draw a benzene ring in Molecules mode
+      * 2. Switch to Macro mode
+      * 3. Select the structure on the canvas
+      * 4. Verify that Copy is enabled in the context menu
+      *
+      * Version 3.12.0
+      */
    ```
+   The `Version` line is the Ketcher release the test targets (take it from `packages/ketcher-react/package.json`, dropping any `-rc.N` suffix).
 9. **Use `test.describe`** to group related tests. This enables parallel workers to efficiently schedule them.
 
 ### Screenshot Testing
@@ -394,14 +402,9 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
 
 ### TypeScript Discipline
 
-18. **No magic numbers** — extract coordinate constants to named variables:
+18. **Use direct coordinate numbers inline** in tests — do not extract canvas coordinates into named constants (e.g. `const CARBON_1_X = 400`). Inline literals keep each test self-contained and readable, and a changed constant would silently move the setup of every test that shares it:
     ```ts
-    const PEPTIDE_X = 300;
-    const PEPTIDE_Y = 300;
-    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
-      x: PEPTIDE_X,
-      y: PEPTIDE_Y,
-    });
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
     ```
     (The codebase heavily uses `/* eslint-disable no-magic-numbers */` as a workaround; new tests should avoid needing it.)
 19. **No `as any`** — use proper types or generics.

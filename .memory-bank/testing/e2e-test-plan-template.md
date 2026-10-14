@@ -48,7 +48,7 @@ List anything the tests need that doesn't exist yet:
 
 ### 5. Test cases
 
-Per spec file: a table with columns **Test | Steps | Assert**. Conventions to state up front: shared-page vs. per-test page pattern choice (pick by state-isolation needs, not just speed — see Lessons learned), standard comment block with issue number, named coordinate constants (no magic numbers). Each row should name the assertion mechanism (locator count, bond attribute helper, bounding-box delta, dialog text) — not just "verify it works".
+Per spec file: a table with columns **Test | Steps | Assert**. Conventions to state up front: shared-page vs. per-test page pattern choice (pick by state-isolation needs, not just speed — see Lessons learned), the standard test comment block (`Test task:` issue link, `Description:`, numbered `Scenario:` steps, `Version` line), and direct coordinate numbers inline in tests (no named coordinate constants). Each row should name the assertion mechanism (locator count, bond attribute helper, bounding-box delta, dialog text) — not just "verify it works".
 
 ### 6. Verification strategy
 
@@ -79,7 +79,7 @@ Last: snapshot generation via Docker **only if** the suite actually uses screens
 
 ### 9. Rules & constraints to respect
 
-Short checklist copied/adapted from CLAUDE.md and testing.md so the implementer (possibly a fresh AI session) doesn't have to re-derive them: project choice, imports from `@fixtures`, POM usage, no `waitForTimeout`, one behavior per test, comment blocks, named constants, memory-bank update timing.
+Short checklist copied/adapted from CLAUDE.md and testing.md so the implementer (possibly a fresh AI session) doesn't have to re-derive them: project choice, imports from `@fixtures`, POM usage (interactions *and* assertions — no raw `page.getByTestId` in spec files), no `waitForTimeout`, one behavior per test, standard comment blocks, direct coordinate numbers, memory-bank update timing.
 
 ### 10. Open questions / risks
 
@@ -97,3 +97,4 @@ Table: question → mitigation. **Resolve in place** as phases answer them (mark
 - **Verify the build under test actually contains the change.** For bug-fix specs, confirm the served build has the fix (rebase onto latest master, rebuild, re-serve) before running — a control that is enabled but does nothing can mask a fix that isn't in the build you're testing against.
 - **Choose the page pattern by state-isolation needs, not just speed.** The shared-page canvas fixtures reset canvas/zoom/localStorage/settings but do *not* fully reset the undo/redo history (and can leave other residual state); use per-test fresh pages when tests assert on stack boundaries or depend on a clean editor state.
 - **Deliberately drop brittle, low-value assertions.** Asserting an exact stack depth or a large-N element count is slow and flaky — mark such cases explicitly out of scope (or as open questions) instead of forcing them in.
+- **Keep each test self-contained and POM-driven** Write canvas coordinates as direct numbers inline rather than shared named constants (a constant change would silently move the setup of every test that shares it), and assert toolbar/button state through locators the POM exposes (`CommonTopLeftToolbar(page).undoButton`) instead of raw `page.getByTestId(...)` in spec files.

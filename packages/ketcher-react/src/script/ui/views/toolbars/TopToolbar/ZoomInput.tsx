@@ -23,7 +23,7 @@ import {
   useCallback,
 } from 'react';
 import styled from '@emotion/styled';
-import { isTouchDevice } from 'react-device-detect';
+import { isTouchDevice } from '../../../../../utils';
 
 const StyledInput = styled('input')`
   border: 1px solid #cad3dd;

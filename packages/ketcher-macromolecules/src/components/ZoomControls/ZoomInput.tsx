@@ -22,7 +22,7 @@ import {
   useCallback,
   RefObject,
 } from 'react';
-import { isTouchDevice } from 'react-device-detect';
+import { isTouchDevice } from 'ketcher-react';
 import { StyledInput } from 'components/ZoomControls/styles';
 import {
   hotkeysShortcuts,

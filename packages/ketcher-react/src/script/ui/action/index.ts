@@ -239,8 +239,17 @@ const config: Record<string, UiAction> = {
     shortcut: 'Mod+a',
     action: {
       thunk: (dispatch, getState) => {
-        const selectionTool = getState().toolbar.visibleTools.select;
-        dispatch({ type: 'ACTION', action: tools[selectionTool].action });
+        const activeTool = getState().actionState?.activeTool;
+        const isSelectionToolActive =
+          typeof activeTool !== 'function' &&
+          (activeTool?.tool === 'select' ||
+            activeTool?.tool === 'fragmentSelection');
+        if (!isSelectionToolActive) {
+          dispatch({
+            type: 'ACTION',
+            action: tools['select-rectangle'].action,
+          });
+        }
         getState().editor.selection('all');
       },
     },

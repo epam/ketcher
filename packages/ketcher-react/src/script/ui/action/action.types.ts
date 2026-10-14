@@ -137,6 +137,10 @@ type ActionThunkState = {
       select: ToolVariant;
     };
   };
+  actionState: {
+    activeTool?:
+      { tool?: string } | ((editor: ActionStateEditor) => void) | null;
+  };
 };
 
 // Specific action option types

@@ -21,24 +21,19 @@ import {
   type Ketcher,
   type Editor as MoleculesEditor,
   type CoreEditor,
+  type MacromoleculesEditorProps,
   ketcherProvider,
   type MonomerCreationWizardRequest,
 } from 'ketcher-core';
 
-type Props = Omit<EditorProps, 'ketcherId'> & {
-  disableMacromoleculesEditor?: boolean;
-  monomersLibraryUpdate?: string | JSON;
-  monomersLibraryReplace?: string | JSON;
-};
+type Props = Omit<EditorProps, 'ketcherId'> &
+  Pick<
+    MacromoleculesEditorProps,
+    'monomersLibraryUpdate' | 'monomersLibraryReplace'
+  > & {
+    disableMacromoleculesEditor?: boolean;
+  };
 
-interface MacromoleculesEditorProps {
-  ketcherId: string;
-  togglerComponent?: JSX.Element;
-  isMacromoleculesEditorTurnedOn?: boolean;
-  monomersLibraryUpdate?: string | JSON;
-  monomersLibraryReplace?: string | JSON;
-  onInit(macromoleculesEditor: CoreEditor): void;
-}
 /*
  * TODO:
  *  ketcher-macromolecules is imported asynchronously to avoid circular dependencies between it and ketcher-react
@@ -55,7 +50,7 @@ interface MacromoleculesEditorProps {
 const MacromoleculesEditorComponent = lazy(
   () => import('ketcher-macromolecules'),
 ) as unknown as React.LazyExoticComponent<
-  React.ComponentType<MacromoleculesEditorProps>
+  React.ComponentType<MacromoleculesEditorProps<JSX.Element>>
 >;
 
 export const Editor = (props: Props) => {
@@ -68,8 +63,13 @@ export const Editor = (props: Props) => {
   const [ketcher, setKetcher] = useState<Ketcher>();
   const [macromoleculesEditor, setMacromoleculesEditor] =
     useState<CoreEditor>();
+  const initializedKetcherId = useRef<string | undefined>(undefined);
 
   const [ketcherId, setKetcherId] = useState<string>('');
+  const isMacromoleculesEditorEnabled = !props.disableMacromoleculesEditor;
+  const isMacromoleculesEditorTurnedOn =
+    isMacromoleculesEditorEnabled && showPolymerEditor;
+
   const [isMonomerWizardOpen, setIsMonomerWizardOpen] = useState(false);
   const pendingWizard = useRef<MonomerCreationWizardRequest | undefined>(
     undefined,
@@ -78,16 +78,17 @@ export const Editor = (props: Props) => {
   const skipModeConversion = useRef(false);
   const pendingWizardFinish = useRef<boolean | undefined>(undefined);
   const togglePolymerEditor = (toggleValue: boolean) => {
-    setShowPolymerEditor(toggleValue);
-    window.isPolymerEditorTurnedOn = toggleValue;
+    const nextValue = isMacromoleculesEditorEnabled && toggleValue;
+    setShowPolymerEditor(nextValue);
+    window.isPolymerEditorTurnedOn = nextValue;
   };
 
-  const togglerComponent = !props.disableMacromoleculesEditor ? (
+  const togglerComponent = isMacromoleculesEditorEnabled ? (
     <ModeControl
       toggle={(value) => {
         if (!isMonomerWizardOpen) togglePolymerEditor(value);
       }}
-      isPolymerEditor={showPolymerEditor}
+      isPolymerEditor={isMacromoleculesEditorTurnedOn}
       disabled={isMonomerWizardOpen}
     />
   ) : undefined;
@@ -121,7 +122,7 @@ export const Editor = (props: Props) => {
       togglePolymerEditor(false);
     };
 
-    if (macromoleculesEditor) {
+    if (macromoleculesEditor && isMacromoleculesEditorEnabled) {
       macromoleculesEditor.events.switchToMacromoleculesMode.add(
         switchToMacromoleculesModeHandler,
       );
@@ -146,7 +147,7 @@ export const Editor = (props: Props) => {
         );
       }
     };
-  }, [macromoleculesEditor]);
+  }, [macromoleculesEditor, isMacromoleculesEditorEnabled]);
 
   useEffect(() => {
     return () => {
@@ -178,51 +179,75 @@ export const Editor = (props: Props) => {
   }, [showPolymerEditor]);
 
   useEffect(() => {
-    if (moleculesEditor && macromoleculesEditor) {
-      if (skipModeConversion.current) {
-        skipModeConversion.current = false;
-        return;
-      }
-      const request = pendingWizard.current;
-      if (request) {
-        pendingWizard.current = undefined;
-        /*
-         * Only schedules the restore: rebuilding the macromolecules canvas
-         * measures the DOM (monomer labels are laid out from getBBox), and
-         * that canvas is still hidden until React re-renders in macro mode.
-         * The layout effect above performs it once the canvas is on screen.
-         */
-        const finishSession = (savedCanvas: boolean) => {
-          wizardSessionActive.current = false;
-          skipModeConversion.current = true;
-          pendingWizardFinish.current = savedCanvas;
-          setIsMonomerWizardOpen(false);
-          togglePolymerEditor(true);
-        };
-        try {
-          moleculesEditor.openMonomerCreationWizardFromMacro(
-            request,
-            finishSession,
-          );
-        } catch (error) {
-          // Roll back the imperative transition if opening the wizard failed.
-          // eslint-disable-next-line react-you-might-not-need-an-effect/no-chain-state-updates
-          if (wizardSessionActive.current) finishSession(false);
-          moleculesEditor.errorHandler?.(
-            error instanceof Error ? error.message : String(error),
-          );
-        }
-        return;
-      }
-      if (showPolymerEditor) {
-        moleculesEditor?.closeMonomerCreationWizard?.();
-        macromoleculesEditor?.switchToMacromolecules();
-      } else {
-        macromoleculesEditor?.switchToMicromolecules();
-        moleculesEditor?.focusCliparea();
-      }
+    window.isPolymerEditorTurnedOn = isMacromoleculesEditorTurnedOn;
+  }, [isMacromoleculesEditorTurnedOn]);
+
+  useEffect(() => {
+    if (!moleculesEditor || !macromoleculesEditor) {
+      return;
     }
-  }, [showPolymerEditor]);
+
+    if (skipModeConversion.current) {
+      skipModeConversion.current = false;
+      return;
+    }
+
+    const request = pendingWizard.current;
+    if (request) {
+      pendingWizard.current = undefined;
+      /*
+       * Only schedules the restore: rebuilding the macromolecules canvas
+       * measures the DOM (monomer labels are laid out from getBBox), and
+       * that canvas is still hidden until React re-renders in macro mode.
+       * The layout effect above performs it once the canvas is on screen.
+       */
+      const finishSession = (savedCanvas: boolean) => {
+        wizardSessionActive.current = false;
+        skipModeConversion.current = true;
+        pendingWizardFinish.current = savedCanvas;
+        setIsMonomerWizardOpen(false);
+        togglePolymerEditor(true);
+      };
+      try {
+        moleculesEditor.openMonomerCreationWizardFromMacro(
+          request,
+          finishSession,
+        );
+      } catch (error) {
+        // Roll back the imperative transition if opening the wizard failed.
+        if (wizardSessionActive.current) finishSession(false);
+        moleculesEditor.errorHandler?.(
+          error instanceof Error ? error.message : String(error),
+        );
+      }
+      return;
+    }
+
+    if (!isMacromoleculesEditorTurnedOn) {
+      macromoleculesEditor.switchToMicromolecules();
+      moleculesEditor.focusCliparea();
+      return;
+    }
+
+    moleculesEditor.closeMonomerCreationWizard?.();
+
+    // The default monomers library is a lazily fetched asset, so it may not be
+    // resolved yet. switchToMacromolecules converts the struct into drawing
+    // entities and needs the library present, so wait for it before switching.
+    // ensureDefaultMonomersLibraryLoaded is idempotent, so only the first
+    // switch actually fetches.
+    let cancelled = false;
+
+    macromoleculesEditor.ensureDefaultMonomersLibraryLoaded().then(() => {
+      if (!cancelled) {
+        macromoleculesEditor.switchToMacromolecules();
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isMacromoleculesEditorTurnedOn]);
 
   useEffect(() => {
     if (
@@ -230,11 +255,20 @@ export const Editor = (props: Props) => {
       moleculesEditor &&
       (macromoleculesEditor || props.disableMacromoleculesEditor)
     ) {
-      if (ketcherProvider.getIndexById(ketcher.id) !== -1) {
-        props.onInit?.(ketcher);
+      if (
+        props.onInit &&
+        initializedKetcherId.current !== ketcher.id &&
+        ketcherProvider.getIndexById(ketcher.id) !== -1
+      ) {
+        props.onInit(ketcher);
+        initializedKetcherId.current = ketcher.id;
       }
     }
-  }, [moleculesEditor, macromoleculesEditor]);
+  }, [
+    moleculesEditor,
+    macromoleculesEditor,
+    props.disableMacromoleculesEditor,
+  ]);
 
   const onInitMoleculesEditor = (ketcher: Ketcher) => {
     setKetcher(ketcher);
@@ -252,7 +286,7 @@ export const Editor = (props: Props) => {
           data-ketcher-editor
           className={styles.editorsWrapper}
           style={{
-            display: showPolymerEditor ? undefined : 'none',
+            display: isMacromoleculesEditorTurnedOn ? undefined : 'none',
           }}
         >
           <Suspense
@@ -262,11 +296,11 @@ export const Editor = (props: Props) => {
               </div>
             }
           >
-            {ketcherId && (
+            {ketcherId && isMacromoleculesEditorEnabled && (
               <MacromoleculesEditorComponent
                 togglerComponent={togglerComponent}
                 ketcherId={ketcherId}
-                isMacromoleculesEditorTurnedOn={showPolymerEditor}
+                isMacromoleculesEditorTurnedOn={isMacromoleculesEditorTurnedOn}
                 monomersLibraryUpdate={props.monomersLibraryUpdate}
                 monomersLibraryReplace={props.monomersLibraryReplace}
                 onInit={onInitMacromoleculesEditor}
@@ -278,7 +312,7 @@ export const Editor = (props: Props) => {
           data-ketcher-editor
           className={styles.editorsWrapper}
           style={{
-            display: showPolymerEditor ? 'none' : undefined,
+            display: isMacromoleculesEditorTurnedOn ? 'none' : undefined,
           }}
         >
           <MicromoleculesEditorComponent

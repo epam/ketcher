@@ -15,14 +15,40 @@ const outputPath = path.resolve(
 const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
 const ajv = new Ajv({
   allErrors: true,
-  code: { source: true, esm: false },
+  code: { source: true, esm: true },
   strict: false,
 });
 const validate = ajv.compile(schema);
 
-const generatedCode = standaloneCode(ajv, validate).replace(
-  /const (\w+) = require\("ajv\/dist\/runtime\/([^"]+)"\)\.default;/g,
-  'const $1Module = require("ajv/dist/runtime/$2");const $1 = typeof $1Module === "function" ? $1Module : typeof $1Module.default === "function" ? $1Module.default : $1Module.default.default;',
+let generatedCode = standaloneCode(ajv, validate);
+
+// Convert any remaining require() calls to ES imports
+const requireMatches = generatedCode.match(
+  /const (\w+) = require\("([^"]+)"\)\.default;/g,
 );
+if (requireMatches) {
+  const imports = [];
+  requireMatches.forEach((match) => {
+    const [, varName, modulePath] = match.match(
+      /const (\w+) = require\("([^"]+)"\)\.default;/,
+    );
+    imports.push(`import ${varName} from "${modulePath}";`);
+    generatedCode = generatedCode.replace(match, '');
+  });
+  generatedCode = imports.join('\n') + '\n' + generatedCode;
+}
+
+// The rewrite above only recognises `const X = require("m").default;`. Any other
+// require() form would survive into this ESM output and throw at runtime, so fail
+// the build loudly instead of shipping a module that cannot load.
+const leftoverRequire = /\brequire\s*\(/.exec(generatedCode);
+if (leftoverRequire) {
+  const line = generatedCode.slice(0, leftoverRequire.index).split('\n').length;
+  throw new Error(
+    `compile-ket-schema: unconverted require() at generated line ${line}. ` +
+      'The rewriter only handles `const X = require("m").default;` - extend it ' +
+      'to cover this form.',
+  );
+}
 
 fs.writeFileSync(outputPath, `${generatedCode}\n`, 'utf8');

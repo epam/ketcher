@@ -20,6 +20,7 @@ const mockMacroEditor = {
   switchToMacromolecules: jest.fn(),
   switchToMicromolecules: jest.fn(),
   finishMonomerWizardSession: jest.fn(),
+  ensureDefaultMonomersLibraryLoaded: jest.fn().mockResolvedValue(undefined),
 };
 
 jest.mock('ketcher-core', () => ({
@@ -99,7 +100,9 @@ const initialize = async () => {
   render(<Editor {...({} as ComponentProps<typeof Editor>)} />);
   fireEvent.click(screen.getByText('Init micro'));
   fireEvent.click(await screen.findByTestId('init-macro'));
-  act(() => mockMacroEditor.events.switchToMacromoleculesMode.dispatch());
+  await act(async () =>
+    mockMacroEditor.events.switchToMacromoleculesMode.dispatch(),
+  );
   jest.clearAllMocks();
 };
 

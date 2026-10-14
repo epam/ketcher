@@ -183,7 +183,7 @@ describe('SequenceMode.insertPresetFromLibrary duplex refusal (task 3)', () => {
     );
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     mode = new SequenceMode();
@@ -193,6 +193,7 @@ describe('SequenceMode.insertPresetFromLibrary duplex refusal (task 3)', () => {
       renderersContainer: createRenderersManager(testRenderTheme),
       mode,
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {

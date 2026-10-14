@@ -13,6 +13,14 @@ export enum MonomerOption {
   Delete = 'delete',
 }
 
+// Right-click menu items for monomers in the macromolecules editor canvas
+// (flex/snake/sequence), rendered by the ketcher-macromolecules context menus.
+export enum MacroMonomerOption {
+  CreateMonomer = 'create_monomer',
+  EditMonomer = 'edit_monomer',
+  EditAllMonomers = 'edit_all_monomers',
+}
+
 export enum ModifyAminoAcidsOption {
   NaturalAminoAcid = 'aminoAcidModification-Natural amino acid',
   Citrullination = 'aminoAcidModification-Citrullination',
@@ -251,6 +259,7 @@ export enum MultiTailedArrowOption {
   RemoveTail = 'Remove tail-option',
 }
 
+// Three-dot menu of monomer/preset cards in the macromolecules library panel.
 export enum LibraryPresetOption {
   DuplicateAndEdit = 'duplicateandedit',
   Edit = 'edit',
@@ -273,6 +282,7 @@ export enum MonomerWizardOption {
 
 export type ContextMenuOption =
   | MonomerOption
+  | MacroMonomerOption
   | ModifyAminoAcidsOption
   | MonomerOnMicroOption
   | SuperatomOption
